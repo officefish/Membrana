@@ -1,0 +1,24 @@
+{
+  "commands": [
+    {
+      "name": "ai:fix-all",
+      "description": "Запустить AI фикс для всего монорепа",
+      "command": ".cursor/scripts/ai-fix-all.sh"
+    },
+    {
+      "name": "ai:review-pr",
+      "description": "Запросить AI ревью текущих изменений",
+      "command": "echo 'Код для ревью:' && git diff && claude-code review --diff"
+    },
+    {
+      "name": "ai:explain",
+      "description": "Объяснить сложный код во всех пакетах",
+      "command": "cursor-agent explain --recursive $(git diff --name-only)"
+    },
+    {
+      "name": "membrana:status",
+      "description": "Статус всех пакетов с AI анализом",
+      "command": "node .cursor/scripts/membrana-status.js"
+    }
+  ]
+}

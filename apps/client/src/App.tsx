@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   MembranaProvider,
   Dashboard,
@@ -9,6 +9,7 @@ import {
 import { FFTModule } from './modules/FFTModule';
 import { SpectrumModule } from './modules/SpectrumModule';
 import { OscilloscopeModule } from './modules/OscilloscopeModule';
+import { AudioFileUploadModule } from './modules/AudioFileUploadModule';
 
 function initializeModules() {
   const store = useMembranaStore.getState();
@@ -46,6 +47,22 @@ function initializeModules() {
     activePlugins: []
   });
   
+  store.registerModule({
+    id: 'audio-file-upload',
+    name: 'Загрузка аудио',
+    description: 'Файл → превью волны и спектр при воспроизведении',
+    version: '1.0.0',
+    category: 'Источники',
+    Component: AudioFileUploadModule,
+    defaultConfig: {
+      fftSize: 2048,
+      waveformBins: 512,
+      showSpectrumWhilePlaying: true,
+    },
+    enabled: true,
+    activePlugins: [],
+  });
+
   store.registerModule({
     id: 'oscilloscope',
     name: 'Осциллограф',

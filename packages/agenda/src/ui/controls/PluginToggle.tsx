@@ -14,18 +14,19 @@ export const PluginToggle: React.FC<PluginToggleProps> = ({
   showLabel = true,
   className = ''
 }) => {
-  const { isActive, toggle } = useModulePlugins(moduleId);
-  
+  const { activeIds, toggle } = useModulePlugins(moduleId);
+  const isOn = activeIds.includes(pluginId);
+
   return (
     <button
       onClick={() => toggle(pluginId)}
       className={`px-2 py-1 rounded text-xs transition-colors ${
-        isActive(pluginId)
+        isOn
           ? 'bg-purple-500 text-white hover:bg-purple-600'
           : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
       } ${className}`}
     >
-      {showLabel && (isActive(pluginId) ? '✓' : '✗')}
+      {showLabel && (isOn ? '✓' : '✗')}
     </button>
   );
 };

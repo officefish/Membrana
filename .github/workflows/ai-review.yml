@@ -1,0 +1,62 @@
+name: AI Pull Request Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+    paths:
+      - 'packages/**'
+      - 'apps/**'
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Полная история для diff
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      # Определяем измененные пакеты
+      - name: Get changed packages
+        id: changed-packages
+        run: |
+          CHANGED=$(pnpm turbo run build --dry=json | jq -r '.packages[]')
+          echo "packages=$CHANGED" >> $GITHUB_OUTPUT
+
+      # Запускаем анализ с Claude
+      - name: AI Code Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          review_mode: 'pr_review'
+          focus_packages: ${{ steps.changed-packages.outputs.packages }}
+          custom_instructions: |
+            Проанализируй изменения в пакетах Membrana:
+            1. Проверь совместимость API между пакетами
+            2. Убедись, что нет циклических зависимостей
+            3. Проверь, что тесты покрывают новые возможности
+            4. Оцени влияние на Electron клиент
+
+            Если находишь проблемы:
+            - Предложи конкретные исправления
+            - Укажи на потенциальные breaking changes
+            - Отметь места, где нужна документация
+
+      # Автоматическое создание follow-up задач
+      - name: Create issues for suggestions
+        if: steps.ai-review.outputs.has_suggestions == 'true'
+        run: |
+          node .github/scripts/create-ai-issues.js \
+            --review-output ${{ steps.ai-review.outputs.review_file }}

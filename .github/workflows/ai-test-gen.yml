@@ -1,0 +1,51 @@
+name: AI Test Generator
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'packages/**/src/**/*.ts'
+      - '!**/__tests__/**'
+
+jobs:
+  generate-tests:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.actor != 'ai-agent[bot]'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Находим файлы без тестов
+      - name: Find untested files
+        id: untested
+        run: |
+          find packages -name "*.ts" \
+            -not -path "*/__tests__/*" \
+            -not -name "*.test.ts" \
+            -not -name "*.spec.ts" | \
+            while read file; do
+              test_file="${file%.ts}.test.ts"
+              if [ ! -f "$test_file" ]; then
+                echo "$file" >> untested.txt
+              fi
+            done
+          echo "files=$(cat untested.txt | wc -l)" >> $GITHUB_OUTPUT
+
+      # Генерируем тесты через Claude
+      - name: Generate missing tests
+        if: steps.untested.outputs.files > 0
+        uses: anthropics/claude-code-action@v1
+        with:
+          task: |
+            Сгенерируй unit-тесты для файлов:
+            $(cat untested.txt)
+
+            Правила:
+            - Используй Vitest
+            - Для core: тестируй математические алгоритмы
+            - Для agenda: тестируй lifecycle хуки
+            - Для device-board: тестируй реакции UI
+
+            Помести тесты в __tests__ рядом с исходным файлом
+          auto_create_pr: true
+          pr_title: '🤖 AI: Добавлены автоматические тесты'

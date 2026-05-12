@@ -14,15 +14,15 @@ canvas {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--b2, #1f2937);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: color-mix(in oklab, var(--bc, #9ca3af) 32%, var(--b3, #374151));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: color-mix(in oklab, var(--bc, #9ca3af) 48%, var(--b3, #374151));
 }

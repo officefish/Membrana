@@ -61,7 +61,7 @@ const CategoryListItem: React.FC<{
   renderCategory?: (category: string, anyEnabled: boolean, toggleAll: () => void, modulesCount: number) => React.ReactNode;
   defaultRender: (category: string, anyEnabled: boolean, toggleAll: () => void, modulesCount: number) => React.ReactNode;
   showModuleCount: boolean;
-}> = ({ category, renderCategory, defaultRender, showModuleCount }) => {
+}> = ({ category, renderCategory, defaultRender, showModuleCount: _showModuleCount }) => {
   const { anyEnabled, toggleAll, modules } = useCategory(category);
   
   return renderCategory

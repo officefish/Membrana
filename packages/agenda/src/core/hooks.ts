@@ -74,6 +74,18 @@ export const useModuleToggle = (moduleId: string) => {
   return { isEnabled, toggle };
 };
 
+/** Панель модуля: сущность, флаг enabled и toggle без лишних селекторов. */
+export const useModule = (moduleId: string) => {
+  const module = useMembranaStore((state) => state.getModule(moduleId));
+  const toggleModule = useMembranaStore((state) => state.toggleModule);
+  const enabled = module?.enabled ?? false;
+  const toggle = useCallback(() => {
+    toggleModule(moduleId);
+  }, [toggleModule, moduleId]);
+
+  return { module, enabled, toggle, state: module };
+};
+
 // Получение пропсов для модуля
 export const useModuleProps = <TConfig = any>(
   moduleId: string,

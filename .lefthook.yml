@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      run: pnpm prettier --write {staged_files}
+    lint:
+      run: pnpm eslint {staged_files} --fix
+
+    # AI ревью изменений
+    ai-review:
+      run: |
+        npx @anthropic-ai/claude-code review \
+          --files {staged_files} \
+          --output-format github-annotation \
+          --rules .ai-review-rules.md
+      glob: '*.{ts,tsx,js,jsx}'
+
+    # Авто-фикс импортов
+    fix-imports:
+      run: |
+        node scripts/fix-imports-with-claude.js {staged_files}
+      glob: '*.{ts,tsx}'

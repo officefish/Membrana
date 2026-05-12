@@ -4,7 +4,13 @@ export * from './core/types';
 export * from './core/hooks';
 export * from './core/registry'
 
-export { MembranaProvider } from './core/provider'
+export {
+  MembranaProvider,
+  useTheme,
+  useMembranaTheme,
+  AVAILABLE_THEMES,
+  type DaisyTheme,
+} from './core/provider';
 
 // UI
 export { Dashboard } from './ui/layout/Dashboard';

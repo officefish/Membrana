@@ -20,7 +20,7 @@ export const CategoryToggle: React.FC<CategoryToggleProps> = ({
         <span className="font-medium">{categoryId}</span>
         {showCount && (
           <span className="ml-2 text-sm text-gray-500">
-            ({modules.filter(m => m.state?.enabled).length}/{modules.length})
+            ({modules.filter((m) => m.enabled).length}/{modules.length})
           </span>
         )}
       </div>

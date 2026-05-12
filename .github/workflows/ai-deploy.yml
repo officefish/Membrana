@@ -1,0 +1,65 @@
+name: AI-Assisted Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to deploy (core/agenda/device-board/client)'
+        required: true
+      environment:
+        description: 'Environment (staging/production)'
+        required: true
+        default: 'staging'
+
+jobs:
+  deploy-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # AI проверяет готовность к деплою
+      - name: AI Readiness Check
+        uses: anthropics/claude-code-action@v1
+        with:
+          task: |
+            Проверь возможность деплоя @membrana/${{ inputs.package }} в ${{ inputs.environment }}
+
+            Проверки:
+            1. Все ли тесты проходят в affected пакетах
+            2. Нет ли открытых issues с severity=critical
+            3. Совместима ли версия с зависимыми пакетами
+            4. Обновлена ли документация
+
+            Ответь JSON с полями:
+            - ready (boolean)
+            - blocking_issues (array)
+            - recommendations (array)
+
+          output_format: json
+
+      - name: Parse AI Decision
+        id: ai-decision
+        run: |
+          echo "ready=$(echo '${{ steps.ai-readiness.outputs.result }}' | jq -r '.ready')" >> $GITHUB_OUTPUT
+
+      # Авто-откат если AI нашел проблемы
+      - name: Automatic Rollback Decision
+        if: steps.ai-decision.outputs.ready == 'false'
+        run: |
+          echo "❌ AI отменил деплой: $(echo '${{ steps.ai-readiness.outputs.result }}' | jq -r '.blocking_issues')"
+          exit 1
+
+      # Сам деплой
+      - name: Deploy to ${{ inputs.environment }}
+        if: steps.ai-decision.outputs.ready == 'true'
+        run: |
+          pnpm run deploy --filter=@membrana/${{ inputs.package }}
+
+      # Пост-деплой анализ
+      - name: AI Post-Deployment Analysis
+        if: success()
+        run: |
+          node .github/scripts/ai-post-deploy.js \
+            --package ${{ inputs.package }} \
+            --env ${{ inputs.environment }}

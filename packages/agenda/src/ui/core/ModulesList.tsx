@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useAllModules, useMembranaStore } from '../../core/hooks';
 import { Module } from '../../core/types';
-import { useTheme } from '../../core/provider';
-
 export const ModulesList: React.FC = () => {
   const allModules = useAllModules();
   const selectedModuleId = useMembranaStore((state) => state.selectedModuleId);
@@ -72,8 +70,6 @@ const ModuleCard: React.FC<{
     () => toggleModuleFn(module.id),
     [toggleModuleFn, module.id],
   );
-  const { theme } = useTheme();
-  
   return (
     <div
       className={`card cursor-pointer transition-all ${

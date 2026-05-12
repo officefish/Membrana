@@ -1,8 +1,6 @@
 import React from 'react';
 import { Sidebar } from '../panels/Sidebar';
 import { ModuleRenderer } from '../core/ModuleRenderer';
-import { ThemeSelector } from '../controls/ThemeSelector';
-import { useTheme } from '../../core/provider';
 
 interface DashboardProps {
   showSidebar?: boolean;
@@ -21,8 +19,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   sidebarClassName = '',
   contentClassName = ''
 }) => {
-  const { theme, setTheme } = useTheme();
-
   return (
     <div className={`flex flex-col h-screen bg-base-100 ${className}`}>
       {header && (

@@ -115,11 +115,6 @@ const ModuleItem: React.FC<{
     toggle();
   };
   
-  const handlePluginToggle = (e: React.MouseEvent, pluginId: string) => {
-    e.stopPropagation();
-    togglePlugin(pluginId);
-  };
-  
   return (
     <div 
       className={`p-3 hover:bg-base-300/50 cursor-pointer transition-colors ${
