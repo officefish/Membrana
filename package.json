@@ -13,7 +13,9 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean && rimraf node_modules"
+    "clean": "turbo run clean && rimraf node_modules",
+    "anthropic:smoke": "node scripts/anthropic-smoke.mjs",
+    "anthropic:task": "node scripts/anthropic-task.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

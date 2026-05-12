@@ -26,6 +26,7 @@
 - **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск.
 - **Релиз**: `.github/workflows/release.yml` — при push тега вида `v*` собирается монорепо и создаётся GitHub Release с автогенерацией текста.
 - **Опционально**: `.github/workflows/optional-claude-pr-review.yml` — дополнительный обзор PR через Claude, только если в секретах репозитория задан `ANTHROPIC_API_KEY` (не заменяет обязательный CI и ревью людей).
+- **Локальный CLI**: в корне `yarn anthropic:smoke` и `yarn anthropic:task` (ключ только в `.env`, см. `.env.example`). Навык агента: `.cursor/skills/membrana-anthropic-cli/SKILL.md`.
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
 
 ## Коммиты
