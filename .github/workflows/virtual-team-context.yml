@@ -29,13 +29,21 @@ jobs:
             echo "| Промпт координатора | \`docs/VIRTUAL_TEAM_PROMPT.md\` |"
             echo "| Архитектура | \`docs/ARCHITECTURE.md\` |"
             echo "| Дизайн | \`docs/DESIGN.md\` |"
+            echo "| UI/UX (верстка, темы) | \`docs/UI_UX_DEVELOPER_PROMPT.md\` |"
             echo "| Contributing / CI | \`docs/CONTRIBUTING.md\` |"
+            echo ""
+            echo "### Ежедневный цикл в GitHub Actions"
+            echo "- **CI** (\`.github/workflows/ci.yml\`): push/PR в \`main\` / \`master\` / \`develop\` — \`yarn turbo run lint typecheck test build\`."
+            echo "- **Scheduled CI** (\`.github/workflows/scheduled-ci.yml\`): по понедельникам + вручную."
+            echo "- **Release** (\`.github/workflows/release.yml\`): тег \`v*\` — сборка и GitHub Release с автозаметками."
+            echo "- **Optional Claude PR review** (\`.github/workflows/optional-claude-pr-review.yml\`): только при наличии \`ANTHROPIC_API_KEY\`."
+            echo "- **Deploy stub** (\`.github/workflows/deploy-stub.yml\`): ручной заготовочный workflow под ваш хостинг."
             echo ""
             echo "### Чеклист для одного прогона агента"
             echo "1. Прочитать \`docs/VIRTUAL_TEAM_PROMPT.md\`."
-            echo "2. Для кода UI — \`docs/DESIGN.md\`."
+            echo "2. Для кода UI — \`docs/DESIGN.md\` и при необходимости \`docs/UI_UX_DEVELOPER_PROMPT.md\`."
             echo "3. Для границ модулей и плагинов — \`docs/ARCHITECTURE.md\`."
-            echo "4. Для процесса PR — \`docs/CONTRIBUTING.md\`."
+            echo "4. Для процесса PR и ссылок на CI — \`docs/CONTRIBUTING.md\`."
             echo ""
             if [ -n "$TASK_HINT" ]; then
               echo "### Подсказка задачи от оператора"
@@ -51,4 +59,9 @@ jobs:
           for f in docs/VIRTUAL_TEAM_PROMPT.md docs/ARCHITECTURE.md docs/DESIGN.md docs/CONTRIBUTING.md; do
             test -f "$f" || { echo "Missing $f"; exit 1; }
           done
+          if [ -f docs/UI_UX_DEVELOPER_PROMPT.md ]; then
+            echo "Optional UI/UX prompt present."
+          else
+            echo "Note: docs/UI_UX_DEVELOPER_PROMPT.md not found (optional)."
+          fi
           echo "All required docs present."

@@ -1,0 +1,58 @@
+# Ежедневный цикл: каждый push в основные ветки и каждый PR проходят одну и ту же проверку,
+# что соответствует ролям «Структурщик» / Teamlead из docs/VIRTUAL_TEAM_PROMPT.md (границы пакетов, сборка).
+
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack (Yarn 4 из packageManager)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Turbo — lint, typecheck, test, build
+        run: yarn turbo run lint typecheck test build --continue
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## CI (Membrana)"
+            echo ""
+            echo "- Менеджер пакетов: **Yarn 4** (\`packageManager\` в корневом \`package.json\`)."
+            echo "- Команда: \`yarn turbo run lint typecheck test build\`."
+            echo ""
+            echo "Перед PR локально выполните то же самое (см. \`docs/CONTRIBUTING.md\`)."
+            echo ""
+            echo "### Виртуальная команда"
+            echo "Чеклист ролей и документов: workflow **Virtual team context** (\`.github/workflows/virtual-team-context.yml\`)."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,37 @@
+# Еженедельная проверка «здоровья» main: ловит поломки при обновлениях транзитивных зависимостей,
+# даже если в репозитории не было коммитов.
+
+name: Scheduled CI
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Full verify
+        run: yarn turbo run lint typecheck test build --continue

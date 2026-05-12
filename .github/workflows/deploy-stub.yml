@@ -1,0 +1,33 @@
+# Заготовка под деплой: подключите сюда шаги для вашего окружения (Vercel, S3, K8s и т.д.).
+# Ранее workflow ссылался на несуществующие скрипты и pnpm — заменён на явный no-op + summary.
+
+name: Deploy (manual stub)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Целевое окружение (например staging / production)'
+        required: true
+        default: 'staging'
+
+permissions:
+  contents: read
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Summary
+        run: |
+          {
+            echo "## Deploy stub"
+            echo ""
+            echo "Окружение: **${{ inputs.environment }}**"
+            echo ""
+            echo "Добавьте в этот workflow реальные шаги (сборка артефакта, вызов CLI хостинга, миграции БД)."
+            echo "До этого момента job завершается успешно и не публикует ничего наружу."
+          } >> "$GITHUB_STEP_SUMMARY"
