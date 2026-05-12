@@ -10,7 +10,13 @@
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { defaultModel, getAnthropicKey, loadDotEnv } from './_anthropic-env.mjs';
+import {
+  anthropicPost,
+  defaultModel,
+  getAnthropicKey,
+  loadDotEnv,
+  printAnthropicHttpError,
+} from './_anthropic-env.mjs';
 
 loadDotEnv();
 
@@ -48,7 +54,7 @@ if (doc.length > MAX_CHARS) {
 
 const model = defaultModel();
 
-const body = {
+const bodyJson = {
   model,
   max_tokens: 2048,
   messages: [
@@ -68,30 +74,40 @@ const body = {
   ],
 };
 
-const res = await fetch('https://api.anthropic.com/v1/messages', {
-  method: 'POST',
-  headers: {
-    'content-type': 'application/json',
-    'x-api-key': key,
-    'anthropic-version': '2023-06-01',
-  },
-  body: JSON.stringify(body),
-});
-
-const text = await res.text();
-if (!res.ok) {
-  console.error(`HTTP ${res.status}:`, text);
-  process.exit(1);
-}
-
+let exitCode = 0;
 try {
-  const json = JSON.parse(text);
-  const parts = json?.content ?? [];
-  const out = parts
-    .filter((b) => b?.type === 'text')
-    .map((b) => b.text)
-    .join('\n');
-  console.log(out || JSON.stringify(parts, null, 2));
-} catch {
-  console.log(text);
+  const { ok, status, text } = await anthropicPost('https://api.anthropic.com/v1/messages', {
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+    },
+    bodyJson,
+  });
+
+  if (!ok) {
+    printAnthropicHttpError(status, text);
+    exitCode = 1;
+  } else {
+    try {
+      const json = JSON.parse(text);
+      const parts = json?.content ?? [];
+      const out = parts
+        .filter((b) => b?.type === 'text')
+        .map((b) => b.text)
+        .join('\n');
+      console.log(out || JSON.stringify(parts, null, 2));
+    } catch {
+      console.log(text);
+    }
+  }
+} catch (e) {
+  console.error(e);
+  exitCode = 1;
 }
+
+if (exitCode === 0) {
+  // См. anthropic-smoke.mjs: задержка после close() dispatcher на Windows.
+  await new Promise((r) => setTimeout(r, 150));
+}
+process.exit(exitCode);

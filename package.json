@@ -15,7 +15,9 @@
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rimraf node_modules",
     "anthropic:smoke": "node scripts/anthropic-smoke.mjs",
-    "anthropic:task": "node scripts/anthropic-task.mjs"
+    "anthropic:task": "node scripts/anthropic-task.mjs",
+    "code-review": "node scripts/code-review.mjs",
+    "code-review:full": "node scripts/code-review.mjs --full"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -23,7 +25,8 @@
     "prettier": "^3.2.0",
     "rimraf": "^5.0.0",
     "turbo": "^2.0.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "undici": "^6.21.0"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -1,9 +1,12 @@
 /**
  * Общая загрузка корневого `.env` без зависимостей (UTF-8 BOM, комментарии в конце строки).
+ * POST к Anthropic через undici с отдельным dispatcher на запрос — после чтения тела агент
+ * закрывается (иначе на Windows возможен assert libuv при выходе процесса).
  * Не логируйте значения переменных.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fetch as undiciFetch, ProxyAgent, Agent } from 'undici';
 
 export function loadDotEnv(cwd = process.cwd()) {
   const envPath = resolve(cwd, '.env');
@@ -28,6 +31,40 @@ export function loadDotEnv(cwd = process.cwd()) {
   }
 }
 
+function proxyUrlFromEnv() {
+  return (
+    process.env.HTTPS_PROXY?.trim() ||
+    process.env.HTTP_PROXY?.trim() ||
+    process.env.ANTHROPIC_HTTPS_PROXY?.trim() ||
+    ''
+  );
+}
+
+/**
+ * POST JSON: один dispatcher на вызов, закрыт после полного чтения ответа.
+ * Прокси: HTTPS_PROXY / HTTP_PROXY / ANTHROPIC_HTTPS_PROXY (например http://127.0.0.1:12334).
+ */
+export async function anthropicPost(url, { headers, bodyJson }) {
+  const proxy = proxyUrlFromEnv();
+  const dispatcher = proxy ? new ProxyAgent(proxy) : new Agent();
+  try {
+    const res = await undiciFetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(bodyJson),
+      dispatcher,
+    });
+    const text = await res.text();
+    return { ok: res.ok, status: res.status, text };
+  } finally {
+    try {
+      await dispatcher.close();
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 export function getAnthropicKey() {
   const key = process.env.ANTHROPIC_API_KEY?.trim();
   if (!key) {
@@ -40,4 +77,30 @@ export function getAnthropicKey() {
 
 export function defaultModel() {
   return process.env.ANTHROPIC_MODEL?.trim() || 'claude-haiku-4-5-20251001';
+}
+
+export function printAnthropicHttpError(status, bodyText) {
+  console.error(`HTTP ${status}:`, bodyText);
+  if (status === 403) {
+    console.error('');
+    console.error(
+      "Подсказка по 403 «Request not allowed»: часто это регион/политика доступа или маршрут без VPN.",
+    );
+    console.error(
+      '- Если VPN «только браузер», терминал может ходить напрямую. Включите TUN/системный VPN или задайте прокси клиента (Clash, v2rayN):',
+    );
+    console.error('    HTTPS_PROXY=http://127.0.0.1:7890   (порт замените на свой HTTP-порт)');
+    console.error('  Можно добавить эту строку в корневой `.env` рядом с ANTHROPIC_API_KEY.');
+    console.error(
+      '- Проверьте в консоли Anthropic: ключ активен, биллинг, доступ к выбранной модели.',
+    );
+    console.error('');
+  }
+  let reqId = '';
+  try {
+    reqId = JSON.parse(bodyText)?.request_id;
+  } catch {
+    /* ignore */
+  }
+  if (reqId) console.error('request_id (для поддержки Anthropic):', reqId);
 }
