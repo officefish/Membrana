@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./.tsbuildinfo.app",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "noEmit": true,
+
+    "paths": {
+      "@membrana/core": ["../../packages/core/src/index.ts"],
+      "@membrana/core/*": ["../../packages/core/src/*"],
+      "@membrana/agenda": ["../../packages/agenda/src/index.ts"],
+      "@membrana/agenda/*": ["../../packages/agenda/src/*"],
+      "@membrana/device-board": ["../../packages/device-board/src/index.ts"],
+      "@membrana/device-board/*": ["../../packages/device-board/src/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/agenda" },
+    { "path": "../../packages/device-board" }
+  ]
+}

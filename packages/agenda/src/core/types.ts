@@ -1,0 +1,91 @@
+import React from 'react';
+
+// Контекст модуля для плагинов
+export interface ModuleContext<TConfig = any> {
+  moduleId: string;
+  config: TConfig;
+  updateConfig: (updates: Partial<TConfig>) => void;
+  getPlugin: (pluginId: string) => any;
+}
+
+// Плагин с состоянием
+export interface Plugin<TConfig = any> {
+  id: string;
+  name: string;
+  description?: string;
+  version: string;
+  active: boolean;
+  config?: TConfig;
+  install: (context: ModuleContext<TConfig>) => void | Promise<void>;
+}
+
+// Модуль с состоянием
+export interface Module<TConfig = any> {
+  id: string;
+  name: string;
+  description?: string;
+  version: string;
+  category: string;
+  enabled: boolean;
+  config: TConfig;
+  activePlugins: string[];
+  Component: React.ComponentType<ModuleProps<TConfig>>;
+  defaultConfig?: Partial<TConfig>;
+  availablePlugins?: Plugin[];
+}
+
+// Пропсы для компонента модуля
+export interface ModuleProps<TConfig = any> {
+  module: Module<TConfig>;
+  onUpdateConfig: (updates: Partial<TConfig>) => void;
+  onTogglePlugin?: (pluginId: string) => void;
+}
+
+// Фильтры
+export interface MembranaFilters {
+  categories?: string[];
+  search?: string;
+  tags?: string[];
+}
+
+// Состояние store
+export interface MembranaState {
+  modules: Map<string, Module>;
+  plugins: Map<string, Map<string, Plugin>>;
+  categories: Map<string, Set<string>>;
+  activeFilters: MembranaFilters;
+  selectedModuleId: string | null;
+  
+  // Actions
+  registerModule: <TConfig>(module: Omit<Module<TConfig>, 'enabled' | 'config' | 'activePlugins'> & { 
+    enabled?: boolean; 
+    config?: TConfig;
+    activePlugins?: string[];
+  }) => void;
+  registerPlugin: (moduleId: string, plugin: Plugin) => void;
+  
+  enableModule: (moduleId: string) => void;
+  disableModule: (moduleId: string) => void;
+  toggleModule: (moduleId: string) => void;
+  updateModuleConfig: <TConfig>(moduleId: string, config: Partial<TConfig>) => void;
+  
+  enableCategory: (category: string) => void;
+  disableCategory: (category: string) => void;
+  
+  activatePlugin: (moduleId: string, pluginId: string) => void;
+  deactivatePlugin: (moduleId: string, pluginId: string) => void;
+  togglePlugin: (moduleId: string, pluginId: string) => void;
+  
+  setFilters: (filters: Partial<MembranaFilters>) => void;
+  
+  // Selectors
+  getModule: (moduleId: string) => Module | undefined;
+  getPlugin: (moduleId: string, pluginId: string) => Plugin | undefined;
+  getEnabledModules: () => Module[];
+  getModulesByCategory: (category: string) => Module[];
+  getAllCategories: () => string[];
+  getFilteredModules: () => Module[];
+  isModuleEnabled: (moduleId: string) => boolean;  
+
+  selectModule: (moduleId: string | null) => void;
+}

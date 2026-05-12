@@ -1,0 +1,49 @@
+# Зависимости
+node_modules/
+
+# Сборка
+dist/
+build/
+*.tsbuildinfo
+
+# Кэш Turbo
+.turbo/
+
+# Покрытие тестов
+coverage/
+
+# Логи
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Окружение
+.env
+.env.local
+.env.*.local
+
+# Редакторы
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Временные файлы
+*.tmp
+*.temp
+
+# Lockfile-ы других пакетных менеджеров (используем yarn.lock)
+package-lock.json
+pnpm-lock.yaml
+
+# Yarn 4 (Berry) — служебные файлы.
+# yarn.lock мы коммитим, всё остальное — нет.
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

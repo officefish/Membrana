@@ -1,0 +1,31 @@
+{
+  "project": {
+    "name": "Membrana",
+    "description": "Монорепо на TypeScript: ядро + модули расписания и устройств + клиент",
+    "language": "ru",
+    "stack": ["TypeScript", "Node.js", "Turbo", "npm workspaces"]
+  },
+  "context": {
+    "rules": [
+      "Это монорепо с npm workspaces и Turbo.",
+      "Пакеты живут в packages/*, приложения — в apps/*.",
+      "Все межпакетные импорты через @membrana/<имя-пакета>.",
+      "@membrana/core ни от кого не зависит.",
+      "Модули agenda и device-board зависят только от core.",
+      "Используется TypeScript project references — каждый пакет composite: true.",
+      "Единая точка входа в пакет — src/index.ts.",
+      "Строгий TypeScript: noImplicitAny, strictNullChecks включены."
+    ],
+    "conventions": {
+      "fileNaming": "kebab-case",
+      "typeNaming": "PascalCase",
+      "functionNaming": "camelCase",
+      "constantNaming": "UPPER_SNAKE_CASE"
+    }
+  },
+  "behavior": {
+    "alwaysReadCursorRules": true,
+    "preferEdit": true,
+    "askBeforeStructuralChanges": true
+  }
+}
