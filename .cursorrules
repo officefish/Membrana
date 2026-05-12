@@ -1,8 +1,16 @@
 # Membrana — правила для Cursor
 
 ## Контекст проекта
+
 Это монорепо на TypeScript с использованием npm workspaces и Turbo.
-Структура: packages/* (библиотеки) + apps/* (приложения).
+Структура: packages/_ (библиотеки) + apps/_ (приложения).
+
+## Структура проекта
+
+- packages/core - ядро пространственной разведки (не зависит от других)
+- packages/agenda - плагин-фреймворк (зависит от core)
+- packages/device-board - UI для скриптинга (зависит от agenda)
+- apps/client - Electron приложение (зависит от всех)
 
 ## Общие правила
 
@@ -21,6 +29,13 @@
 - `@membrana/agenda` и `@membrana/device-board` зависят ТОЛЬКО от `@membrana/core`, но не друг от друга.
 - `apps/client` — может зависеть от любых пакетов.
 
+## Правила для AI
+
+1. При ответе всегда указывай, какой пакет изменяется
+2. Не предлагай изменения в core из-за специфики client
+3. Используй imports через @membrana/\*, не относительные пути через ../../
+4. При рефакторинге проверяй все зависимости через граф
+
 ## Именование
 
 - Файлы: `kebab-case.ts` (`user-service.ts`)
@@ -28,6 +43,18 @@
 - Функции / переменные: `camelCase`
 - Константы: `UPPER_SNAKE_CASE`
 - React-компоненты (если будут): `PascalCase.tsx`
+
+## Команды для разработки
+
+- pnpm dev:core - разработка только core
+- pnpm dev:agenda - разработка agenda (пересоберет core при изменениях)
+- pnpm test:affected - тестирование только измененных пакетов
+
+## TypeScript пути (для автодополнения)
+
+- @membrana/core -> packages/core/src
+- @membrana/agenda -> packages/agenda/src
+- @membrana/device-board -> packages/device-board/src
 
 ## Тестирование
 

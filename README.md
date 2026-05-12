@@ -83,6 +83,10 @@ yarn workspaces foreach -A run build
 - **ESLint + Prettier** для качества кода
 - **Cursor / Claude** — правила в `.cursorrules` и `.claude/`
 
+## Виртуальная команда AI (аудио / архитектура UI)
+
+Промпты и нормативные документы для оркестрации ролей (Teamlead, структурщик, математик, музыкант, верстальщик) лежат в каталоге [`docs/`](./docs/README.md). В GitHub Actions доступен ручной запуск workflow **Virtual team context** (`.github/workflows/virtual-team-context.yml`): в summary появятся пути к файлам и чеклист для агента.
+
 ## Документация по пакетам
 
 Каждый пакет содержит свой `README.md` с описанием API и примерами использования.

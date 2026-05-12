@@ -1,0 +1,54 @@
+name: Virtual team context
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_hint:
+        description: "Краткое описание задачи для агента (опционально)"
+        required: false
+        default: ""
+
+jobs:
+  print-context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Emit agent context to job summary
+        env:
+          TASK_HINT: ${{ inputs.task_hint }}
+        run: |
+          {
+            echo "## Virtual team — пути к документам"
+            echo ""
+            echo "Подключите эти файлы в контекст агента (Cursor, CLI, другой оркестратор):"
+            echo ""
+            echo "| Документ | Путь |"
+            echo "|----------|------|"
+            echo "| Промпт координатора | \`docs/VIRTUAL_TEAM_PROMPT.md\` |"
+            echo "| Архитектура | \`docs/ARCHITECTURE.md\` |"
+            echo "| Дизайн | \`docs/DESIGN.md\` |"
+            echo "| Contributing / CI | \`docs/CONTRIBUTING.md\` |"
+            echo ""
+            echo "### Чеклист для одного прогона агента"
+            echo "1. Прочитать \`docs/VIRTUAL_TEAM_PROMPT.md\`."
+            echo "2. Для кода UI — \`docs/DESIGN.md\`."
+            echo "3. Для границ модулей и плагинов — \`docs/ARCHITECTURE.md\`."
+            echo "4. Для процесса PR — \`docs/CONTRIBUTING.md\`."
+            echo ""
+            if [ -n "$TASK_HINT" ]; then
+              echo "### Подсказка задачи от оператора"
+              echo "$TASK_HINT"
+              echo ""
+            fi
+            echo "_Workflow: \`.github/workflows/virtual-team-context.yml\`_"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify docs exist
+        run: |
+          set -e
+          for f in docs/VIRTUAL_TEAM_PROMPT.md docs/ARCHITECTURE.md docs/DESIGN.md docs/CONTRIBUTING.md; do
+            test -f "$f" || { echo "Missing $f"; exit 1; }
+          done
+          echo "All required docs present."
