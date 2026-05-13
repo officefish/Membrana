@@ -16,6 +16,17 @@ import {
 
 loadDotEnv();
 
+if (process.argv.includes('--help') || process.argv.includes('-h')) {
+  console.log(`Usage: node scripts/code-review.mjs [--full] [--help]
+
+  --full   Передать в контекст расширенный вывод context-collector.
+  --help   Эта справка.
+
+Требуется ANTHROPIC_API_KEY в .env. Результат: docs/DAILY_CODE_REVIEW.md (перезапись).
+Опционально: ANTHROPIC_MODEL (см. .env.example).`);
+  process.exit(0);
+}
+
 const full = process.argv.includes('--full');
 const promptPath = resolve(process.cwd(), 'docs/VIRTUAL_TEAM_PROMPT.md');
 const dailyReviewPath = resolve(process.cwd(), 'docs/DAILY_CODE_REVIEW.md');
@@ -46,6 +57,7 @@ const context = collectRepositoryContext({ full });
 
 const userQuestion = `Ты координатор виртуальной команды (см. блок «Промпт» ниже). По блоку «Контекст репозитория» дай структурированный code review текущего состояния: что сделано сегодня, риски, возможные нарушения границ пакетов и слоёв, что стоит проверить в тестах и линтере. Соблюдай формат ответа координатора из промпта. Язык: русский.`;
 
+/** Верхняя граница символов контекста перед запросом к API (стриминга нет — один JSON). */
 const MAX_CONTEXT = 80_000;
 const contextTrimmed =
   context.length > MAX_CONTEXT

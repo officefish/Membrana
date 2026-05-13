@@ -391,7 +391,7 @@ export const useMembranaStore = create<MembranaState>()(
           const hasRuntimeModules =
             currentState.modules instanceof Map && currentState.modules.size > 0;
 
-          let modules = new Map(currentState.modules);
+          const modules = new Map(currentState.modules);
           let pendingModulePrefs: Record<string, ModuleUserPrefsSnapshot> | null =
             null;
 

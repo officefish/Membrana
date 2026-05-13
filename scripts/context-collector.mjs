@@ -7,6 +7,8 @@ import { readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { CONTEXT_COLLECT_IGNORE_GLOBS, shouldSkipContextPath } from './context-collector-paths.mjs';
+
 const maxBuffer = 12 * 1024 * 1024;
 
 function captureError(e) {
@@ -53,7 +55,8 @@ function listTopLevel(maxEntries) {
     return '(не удалось прочитать каталог)';
   }
   const lines = [];
-  for (const name of names.slice(0, maxEntries)) {
+  const visible = names.filter((name) => !shouldSkipContextPath(name));
+  for (const name of visible.slice(0, maxEntries)) {
     const p = join(cwd, name);
     let st;
     try {
@@ -64,8 +67,8 @@ function listTopLevel(maxEntries) {
     const kind = st.isDirectory() ? 'dir' : 'file';
     lines.push(`${kind}\t${st.size}\t${name}`);
   }
-  if (names.length > maxEntries) {
-    lines.push(`… ещё ${names.length - maxEntries} элемент(ов)`);
+  if (visible.length > maxEntries) {
+    lines.push(`… ещё ${visible.length - maxEntries} элемент(ов)`);
   }
   return lines.join('\n') || '(пусто)';
 }
@@ -116,6 +119,7 @@ export function collectRepositoryContext(options = {}) {
   const parts = [
     '=== REPOSITORY CONTEXT ===',
     'Project: Membrana',
+    `Sensitive-path policy (globs): ${CONTEXT_COLLECT_IGNORE_GLOBS.join(', ')}`,
     `Path: ${process.cwd()}`,
     `Branch: ${branch}`,
     `Last commit: ${lastCommit}`,
@@ -157,6 +161,16 @@ const selfPath = fileURLToPath(import.meta.url);
 const isMain =
   process.argv[1] && resolve(process.argv[1]) === resolve(selfPath);
 if (isMain) {
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    console.log(`Usage: node scripts/context-collector.mjs [--full] [--help]
+
+  --full   Включить расширенный снимок (diff --stat, больше строк тестов/lint).
+  --help   Эта справка.
+
+Скрипт не обходит дерево исходников: только git, yarn и ограниченный список
+верхнего уровня каталога (node_modules/.git/.env скрыты из списка).`);
+    process.exit(0);
+  }
   const full = process.argv.includes('--full');
   if (process.stderr.isTTY) {
     console.error('Собираю контекст репозитория Membrana…');

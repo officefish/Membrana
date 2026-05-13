@@ -215,8 +215,11 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
     setIsRecording(false);
   };
 
+  const stopAudioRef = useRef(stopAudio);
+  stopAudioRef.current = stopAudio;
+
   useEffect(() => {
-    return () => stopAudio();
+    return () => stopAudioRef.current();
   }, []);
 
   const handleConfigUpdate = (updates: Partial<OscilloscopeConfig>) => {

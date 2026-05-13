@@ -77,8 +77,10 @@ export const MembranaProvider: React.FC<MembranaProviderProps> = ({
   useEffect(() => {
     const savedTheme = localStorage.getItem('membrana-theme');
     if (isDaisyTheme(savedTheme) && savedTheme !== config.theme) {
-      setConfigState(prev => ({ ...prev, theme: savedTheme }));
+      setConfigState((prev) => ({ ...prev, theme: savedTheme }));
     }
+    // Только гидратация из localStorage при монтировании; не синхронизируем при смене config.theme.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- см. выше
   }, []);
 
   const setTheme = (theme: DaisyTheme) => {

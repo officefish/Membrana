@@ -76,8 +76,11 @@ export const FFTModule: React.FC<ModuleProps<FFTConfig>> = ({
     setIsRecording(false);
   };
 
+  const stopAudioRef = useRef(stopAudio);
+  stopAudioRef.current = stopAudio;
+
   useEffect(() => {
-    return () => stopAudio();
+    return () => stopAudioRef.current();
   }, []);
 
   useEffect(() => {

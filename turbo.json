@@ -13,7 +13,7 @@
     },
     "lint": {
       "outputs": [],
-      "inputs": ["src/**", ".eslintrc*", "package.json"]
+      "inputs": ["src/**", ".eslintrc*", "eslint.config.*", "package.json"]
     },
     "typecheck": {
       "dependsOn": ["^build"],
