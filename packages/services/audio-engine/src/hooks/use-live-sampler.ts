@@ -33,6 +33,14 @@ export interface UseLiveSamplerReturn {
   readonly start: (stream?: MediaStream) => Promise<void>;
   readonly stop: () => Promise<void>;
   readonly sampler: LiveSampler;
+  /**
+   * AnalyserNode engine'а — `null`, пока sampler не запущен.
+   * Нужен визуализациям, которые рендерятся напрямую с Web Audio
+   * (виджеты `@membrana/audio-data-viz`).
+   */
+  readonly analyserNode: AnalyserNode | null;
+  /** AudioContext engine'а — `null`, пока sampler не запущен. */
+  readonly audioContext: AudioContext | null;
 }
 
 export function useLiveSampler(
