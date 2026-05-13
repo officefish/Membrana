@@ -21,6 +21,10 @@
     "code-review": "node scripts/code-review.mjs",
     "save-code-review": "yarn run archive:daily-review",
     "code-review:full": "node scripts/code-review.mjs --full",
+    "plan:day": "node scripts/strategic-plan-day.mjs",
+    "plan:day:full": "node scripts/strategic-plan-day.mjs --full",
+    "plan:week": "node scripts/strategic-plan-week.mjs",
+    "plan:week:full": "node scripts/strategic-plan-week.mjs --full",
     "archive:daily-review": "node scripts/archive-daily-code-review.mjs",
     "test:scripts": "node --test scripts/context-collector-paths.test.mjs"
   },
