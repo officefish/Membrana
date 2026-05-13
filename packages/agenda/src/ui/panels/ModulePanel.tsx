@@ -48,7 +48,7 @@ export const ModulePanel: React.FC<ModulePanelProps> = ({
         </div>
       )}
       
-      {showConfig && state?.config && (
+      {showConfig && state != null && typeof state.config === 'object' && state.config !== null && (
         <div className="text-sm text-gray-500">
           <details>
             <summary className="cursor-pointer">Конфигурация</summary>

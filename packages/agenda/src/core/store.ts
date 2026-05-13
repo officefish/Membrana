@@ -3,6 +3,15 @@ import { devtools, persist } from 'zustand/middleware';
 import { isRenderableComponentType } from './isRenderableComponentType';
 import { MembranaState, Module, ModuleUserPrefsSnapshot, Plugin } from './types';
 
+/** Поля, которые persist rehydrate может передать в `merge` (не полный `MembranaState`). */
+interface PersistedRehydratePayload {
+  modulePrefs?: Record<string, ModuleUserPrefsSnapshot>;
+  modules?: unknown;
+  plugins?: unknown;
+  activeFilters?: MembranaState['activeFilters'];
+  selectedModuleId?: string | null;
+}
+
 function prefsFromLegacyPersistedModules(
   modules: unknown,
 ): Record<string, ModuleUserPrefsSnapshot> {
@@ -35,30 +44,38 @@ export const useMembranaStore = create<MembranaState>()(
         selectedModuleId: null,
         pendingModulePrefs: null,
 
-        registerModule: (moduleInput) => {
+        registerModule: <TConfig,>(
+          moduleInput: Omit<Module<TConfig>, 'enabled' | 'config' | 'activePlugins'> & {
+            enabled?: boolean;
+            config?: TConfig;
+            activePlugins?: string[];
+          },
+        ) => {
           set((state) => {
             const newModules = new Map(state.modules);
             const pendingSnap = state.pendingModulePrefs?.[moduleInput.id];
             const existing = newModules.get(moduleInput.id);
-            const baseDefaults = { ...(moduleInput.defaultConfig || {}) };
+            const baseDefaults = { ...(moduleInput.defaultConfig || {}) } as Record<string, unknown>;
 
             const enabled = pendingSnap
               ? pendingSnap.enabled
               : existing !== undefined
                 ? existing.enabled
                 : (moduleInput.enabled ?? true);
-            const config = pendingSnap
-              ? { ...baseDefaults, ...pendingSnap.config }
-              : existing !== undefined
-                ? { ...baseDefaults, ...existing.config }
-                : (moduleInput.config ?? { ...baseDefaults });
+            const config = (
+              pendingSnap
+                ? { ...baseDefaults, ...pendingSnap.config }
+                : existing !== undefined
+                  ? { ...baseDefaults, ...(existing.config as Record<string, unknown>) }
+                  : { ...baseDefaults, ...((moduleInput.config ?? {}) as Record<string, unknown>) }
+            ) as TConfig;
             const activePlugins = pendingSnap
               ? pendingSnap.activePlugins
               : existing !== undefined
                 ? existing.activePlugins
                 : (moduleInput.activePlugins ?? []);
 
-            const module: Module = {
+            const module: Module<TConfig> = {
               id: moduleInput.id,
               name: moduleInput.name,
               description: moduleInput.description,
@@ -71,7 +88,7 @@ export const useMembranaStore = create<MembranaState>()(
               config,
               activePlugins,
             };
-            newModules.set(module.id, module);
+            newModules.set(module.id, module as Module);
             
             const newCategories = new Map(state.categories);
             const categoryModules = newCategories.get(module.category) || new Set();
@@ -194,7 +211,10 @@ export const useMembranaStore = create<MembranaState>()(
             if (module) {
               newModules.set(moduleId, {
                 ...module,
-                config: { ...module.config, ...config }
+                config: {
+                  ...(module.config as Record<string, unknown>),
+                  ...(config as Record<string, unknown>),
+                } as typeof module.config,
               });
             }
             return { modules: newModules };
@@ -376,11 +396,11 @@ export const useMembranaStore = create<MembranaState>()(
           selectedModuleId: state.selectedModuleId,
         }),
         merge: (persistedState, currentState) => {
-          const state = persistedState as any;
+          const state = persistedState as PersistedRehydratePayload;
 
-          const fromLegacy = prefsFromLegacyPersistedModules(state?.modules);
+          const fromLegacy = prefsFromLegacyPersistedModules(state.modules);
           const fromNew =
-            state?.modulePrefs && typeof state.modulePrefs === 'object'
+            state.modulePrefs && typeof state.modulePrefs === 'object'
               ? (state.modulePrefs as Record<string, ModuleUserPrefsSnapshot>)
               : {};
           const mergedPrefs: Record<string, ModuleUserPrefsSnapshot> = {
@@ -416,17 +436,24 @@ export const useMembranaStore = create<MembranaState>()(
             }
           }
 
-          const plugins = new Map();
-          if (state?.plugins && Array.isArray(state.plugins)) {
-            state.plugins.forEach(([moduleId, pluginEntries]: [string, any]) => {
-              const modulePlugins = new Map();
+          const plugins = new Map<string, Map<string, Plugin>>();
+          if (Array.isArray(state.plugins)) {
+            for (const row of state.plugins) {
+              if (!Array.isArray(row) || row.length < 2) continue;
+              const [moduleId, pluginEntries] = row as [string, unknown];
+              if (typeof moduleId !== 'string') continue;
+              const modulePlugins = new Map<string, Plugin>();
               if (Array.isArray(pluginEntries)) {
-                pluginEntries.forEach(([pluginId, plugin]: [string, Plugin]) => {
-                  modulePlugins.set(pluginId, plugin);
-                });
+                for (const pair of pluginEntries) {
+                  if (!Array.isArray(pair) || pair.length < 2) continue;
+                  const [pluginId, plugin] = pair as [string, Plugin];
+                  if (typeof pluginId === 'string' && plugin && typeof plugin === 'object') {
+                    modulePlugins.set(pluginId, plugin);
+                  }
+                }
               }
               plugins.set(moduleId, modulePlugins);
-            });
+            }
           }
 
           const categories = new Map<string, Set<string>>();
@@ -445,8 +472,8 @@ export const useMembranaStore = create<MembranaState>()(
             categories,
             pendingModulePrefs,
             plugins,
-            activeFilters: state?.activeFilters || {},
-            selectedModuleId: state?.selectedModuleId ?? null,
+            activeFilters: state.activeFilters || {},
+            selectedModuleId: state.selectedModuleId ?? null,
           };
         },
       }

@@ -87,7 +87,7 @@ export const useModule = (moduleId: string) => {
 };
 
 // Получение пропсов для модуля
-export const useModuleProps = <TConfig = any>(
+export const useModuleProps = <TConfig = Record<string, unknown>>(
   moduleId: string,
 ): ModuleProps<TConfig> | null => {
   const module = useMembranaStore((state) => state.getModule(moduleId)) as

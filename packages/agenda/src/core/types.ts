@@ -1,15 +1,15 @@
 import React from 'react';
 
 // Контекст модуля для плагинов
-export interface ModuleContext<TConfig = any> {
+export interface ModuleContext<TConfig = Record<string, unknown>> {
   moduleId: string;
   config: TConfig;
   updateConfig: (updates: Partial<TConfig>) => void;
-  getPlugin: (pluginId: string) => any;
+  getPlugin: (pluginId: string) => Plugin | undefined;
 }
 
 // Плагин с состоянием
-export interface Plugin<TConfig = any> {
+export interface Plugin<TConfig = Record<string, unknown>> {
   id: string;
   name: string;
   description?: string;
@@ -20,7 +20,7 @@ export interface Plugin<TConfig = any> {
 }
 
 // Модуль с состоянием
-export interface Module<TConfig = any> {
+export interface Module<TConfig = Record<string, unknown>> {
   id: string;
   name: string;
   description?: string;
@@ -38,7 +38,7 @@ export interface Module<TConfig = any> {
 }
 
 // Пропсы для компонента модуля
-export interface ModuleProps<TConfig = any> {
+export interface ModuleProps<TConfig = Record<string, unknown>> {
   module: Module<TConfig>;
   onUpdateConfig: (updates: Partial<TConfig>) => void;
   onTogglePlugin?: (pluginId: string) => void;

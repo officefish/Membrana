@@ -1,22 +1,23 @@
-[Teamlead]: Снимок после мер по `CURRENT_TASK` (optional Claude, артефакты TS, ESLint `any`, индекс документов, расхождение lifecycle).
+[Teamlead]: После падения CI из‑за `@typescript-eslint/no-explicit-any` в `@membrana/agenda` типы приведены в порядок без ослабления ESLint.
 
-Сделано в репозитории:
+Сделано в коде:
 
-- **Optional Claude PR review:** в `.github/workflows/optional-claude-pr-review.yml` убран недопустимый `if` с `secrets.*` на уровне job; job выполняется при **`vars.ENABLE_CLAUDE_PR_REVIEW == 'true'`** (и по-прежнему нужен секрет `ANTHROPIC_API_KEY` для шага с action). Описано в `docs/CONTRIBUTING.md` и в summary `virtual-team-context.yml`.
-- **Tracked tsbuildinfo:** `apps/client/.tsbuildinfo.app` и `.tsbuildinfo.node` сняты с индекса (`git rm --cached`), в `.gitignore` добавлен шаблон `**/.tsbuildinfo.*`; в `apps/client` скрипт `clean` удаляет суффиксные кэши.
-- **ESLint:** `@typescript-eslint/no-explicit-any` снова **`error`** в `.eslintrc.cjs` (и для `.ts`, и для `.tsx`).
-- **MODULE_AND_PLUGIN_UI.md:** добавлен в `docs/README.md`, в чеклист `virtual-team-context.yml`, в шапку и PR-чеклист `CONTRIBUTING.md`; в §4 добавлено примечание, что `store.ts` при toggle плагина пока **не** вызывает `plugin.install()` — целевой контракт vs фактический код.
+- **`packages/agenda/src/core/types.ts`**: дефолтный дженерик `Record<string, unknown>` для `ModuleContext`, `Plugin`, `Module`, `ModuleProps`; `getPlugin` возвращает `Plugin | undefined`.
+- **`hooks.ts`**: `useModuleProps<TConfig = Record<string, unknown>>`.
+- **`store.ts`**: интерфейс `PersistedRehydratePayload` вместо `as any` в `persist.merge`; явные циклы при разборе `plugins` из storage; типизированный `registerModule<TConfig>`; безопасные spread для `config`; `newModules.set(..., module as Module)` для гетерогенной `Map<string, Module>`.
+- **`registry.ts`**: `registerPlugin` передаёт в store `plugin as Plugin` (узкий дженерик плагина → общий тип store).
+- **`ModulePanel.tsx`**: условие показа конфига через `typeof state.config === 'object'`, без рендера `unknown` как `ReactNode`.
 
-Действие владельца репозитория на GitHub: при необходимости опционального Claude-review создать variable **`ENABLE_CLAUDE_PR_REVIEW`** = `true` (Settings → Secrets and variables → Actions → Variables).
+Локально: `yarn workspace @membrana/agenda run lint` и `typecheck`, а также `yarn turbo run lint typecheck --continue` — успешно.
 
-[Структурщик]: Обязательный CI по-прежнему `ci.yml`; optional workflow теперь валиден и не блокирует разработку при выключенной переменной.
+[Структурщик]: Остаточный техдолг — выровнять lifecycle `install()` в store с `MODULE_AND_PLUGIN_UI.md` (отдельная задача), не связанный с `any`.
 
 [Математик]: —
 
 [Музыкант]: —
 
-[Верстальщик]: Игнор и `clean` для client tsbuildinfo снижают шум в PR и соответствуют правилу не коммитить артефакты сборки.
+[Верстальщик]: —
 
-Приоритет на будущее (не блокер CI): выровнять lifecycle плагинов в `packages/agenda/src/core/store.ts` с документом или перенести подписки на поток в слой, где `install()` гарантирован.
+Приоритет: дождаться зелёного прогона обязательного CI на GitHub после push.
 
-Definition of Done (неизменно): обязательный CI зелёный на PR/push; реальный deploy только после этого.
+Definition of Done: обязательный CI зелёный; `no-explicit-any` остаётся `error`.
