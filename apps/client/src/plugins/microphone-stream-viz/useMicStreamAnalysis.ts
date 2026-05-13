@@ -1,8 +1,30 @@
 import { useEffect, useRef, useState, type MutableRefObject } from 'react';
+import {
+  LiveSampler,
+  type AudioSampleFrame,
+} from '@membrana/audio-engine-service';
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
+
+/**
+ * useMicStreamAnalysis — анализ MediaStream из модуля «Микрофон».
+ *
+ * Архитектурно:
+ *  1. Подписывается на hub модуля «Микрофон» и получает MediaStream.
+ *  2. Поднимает на этом stream `LiveSampler` из `@membrana/audio-engine-service`.
+ *     Никакого ручного `new AudioContext()` / `createAnalyser` / RAF здесь нет —
+ *     engine отвечает за весь жизненный цикл Web Audio.
+ *  3. На каждый `AudioSampleFrame` считает метрики (volume, waveform, spectrum)
+ *     — это уже ЧИСТАЯ математика над Float32Array.
+ *  4. Параллельно выставляет `analyserRef` на тот же AnalyserNode, что
+ *     использует engine, чтобы виджеты `@membrana/audio-data-viz`
+ *     (`LiveFftBarsCanvas`, `LiveSpectrumLineCanvas`) могли рендериться напрямую,
+ *     не дублируя AnalyserNode.
+ */
 
 const WF_LEN = 200;
 const SPEC_BARS = 32;
+const FFT_SIZE = 2048;
+const SMOOTHING = 0.75;
 
 function calculateQuality(volume: number): {
   qualityScore: number;
@@ -37,99 +59,113 @@ export function useMicStreamAnalysis(moduleId: string): {
 
   useEffect(() => {
     let cancelled = false;
-    let rafId = 0;
-    let teardown: (() => void) | null = null;
+    let activeSampler: LiveSampler | null = null;
+
+    const teardown = async (): Promise<void> => {
+      analyserRef.current = null;
+      if (activeSampler) {
+        const s = activeSampler;
+        activeSampler = null;
+        await s.stop();
+      }
+    };
 
     const unlisten = subscribeMicrophoneStream(moduleId, (stream) => {
-      if (teardown) {
-        teardown();
-        teardown = null;
-      }
-      cancelAnimationFrame(rafId);
-
-      if (!stream || stream.getAudioTracks().length === 0) {
-        analyserRef.current = null;
-        setLive(false);
-        setMetrics(initialMetrics);
-        return;
-      }
-
-      const ctx = new AudioContext();
-      const source = ctx.createMediaStreamSource(stream);
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 2048;
-      analyser.smoothingTimeConstant = 0.75;
-      source.connect(analyser);
-      analyserRef.current = analyser;
-
-      const timeData = new Uint8Array(analyser.fftSize);
-      const freqData = new Uint8Array(analyser.frequencyBinCount);
-
-      const loop = () => {
+      // На любую смену потока — останавливаем текущий sampler.
+      void teardown().then(() => {
         if (cancelled) return;
-        analyser.getByteTimeDomainData(timeData);
-        analyser.getByteFrequencyData(freqData);
 
-        let sum = 0;
-        for (let i = 0; i < timeData.length; i++) {
-          const v = (timeData[i]! - 128) / 128;
-          sum += v * v;
-        }
-        const rms = Math.min(1, Math.sqrt(sum / timeData.length) * 2.5);
-
-        const waveformData: number[] = new Array(WF_LEN);
-        const step = timeData.length / WF_LEN;
-        for (let i = 0; i < WF_LEN; i++) {
-          const idx = Math.min(timeData.length - 1, Math.floor(i * step));
-          waveformData[i] = (timeData[idx]! - 128) / 128;
+        if (!stream || stream.getAudioTracks().length === 0) {
+          setLive(false);
+          setMetrics(initialMetrics);
+          return;
         }
 
-        const spectrumData: number[] = new Array(SPEC_BARS);
-        const binsPerBar = Math.max(1, Math.floor(freqData.length / SPEC_BARS));
-        for (let b = 0; b < SPEC_BARS; b++) {
-          let max = 0;
-          const start = b * binsPerBar;
-          for (let j = 0; j < binsPerBar && start + j < freqData.length; j++) {
-            max = Math.max(max, freqData[start + j]! / 255);
-          }
-          spectrumData[b] = max;
-        }
-
-        const q = calculateQuality(rms);
-        setMetrics({
-          volume: rms,
-          qualityScore: q.qualityScore,
-          snr: q.snr,
-          noise: q.noise,
-          waveformData,
-          spectrumData,
+        const sampler = new LiveSampler({
+          bufferSize: FFT_SIZE,
+          smoothingTimeConstant: SMOOTHING,
         });
-        setLive(true);
-        rafId = requestAnimationFrame(loop);
-      };
+        activeSampler = sampler;
 
-      rafId = requestAnimationFrame(loop);
-      void ctx.resume();
+        sampler.on('frame', (frame: AudioSampleFrame) => {
+          if (cancelled) return;
+          const samples = frame.samples;
 
-      teardown = () => {
-        analyserRef.current = null;
-        cancelAnimationFrame(rafId);
-        rafId = 0;
-        try {
-          source.disconnect();
-        } catch {
-          /* ignore */
-        }
-        void ctx.close();
-      };
+          // RMS — чистая математика на временных данных engine'а.
+          let sum = 0;
+          for (let i = 0; i < samples.length; i++) {
+            sum += samples[i]! * samples[i]!;
+          }
+          const rms = Math.min(1, Math.sqrt(sum / samples.length) * 2.5);
+
+          // Waveform — даунсэмплинг временного буфера в WF_LEN точек.
+          const waveformData: number[] = new Array(WF_LEN);
+          const step = samples.length / WF_LEN;
+          for (let i = 0; i < WF_LEN; i++) {
+            const idx = Math.min(samples.length - 1, Math.floor(i * step));
+            waveformData[i] = samples[idx]!;
+          }
+
+          // Spectrum — берём из AnalyserNode engine'а (он уже посчитал FFT).
+          const an = sampler.getAnalyserNode();
+          let spectrumData: number[];
+          if (an) {
+            const freqData = new Uint8Array(an.frequencyBinCount);
+            an.getByteFrequencyData(freqData);
+            spectrumData = new Array(SPEC_BARS);
+            const binsPerBar = Math.max(1, Math.floor(freqData.length / SPEC_BARS));
+            for (let b = 0; b < SPEC_BARS; b++) {
+              let max = 0;
+              const start = b * binsPerBar;
+              for (let j = 0; j < binsPerBar && start + j < freqData.length; j++) {
+                max = Math.max(max, freqData[start + j]! / 255);
+              }
+              spectrumData[b] = max;
+            }
+          } else {
+            spectrumData = initialMetrics.spectrumData;
+          }
+
+          const q = calculateQuality(rms);
+          setMetrics({
+            volume: rms,
+            qualityScore: q.qualityScore,
+            snr: q.snr,
+            noise: q.noise,
+            waveformData,
+            spectrumData,
+          });
+        });
+
+        sampler.on('start', () => {
+          if (cancelled) return;
+          // Виджеты audio-data-viz получают тот же AnalyserNode, что и hook.
+          analyserRef.current = sampler.getAnalyserNode();
+          setLive(true);
+        });
+
+        sampler.on('stop', () => {
+          if (cancelled) return;
+          analyserRef.current = null;
+          setLive(false);
+        });
+
+        sampler.on('error', () => {
+          if (cancelled) return;
+          analyserRef.current = null;
+          setLive(false);
+          setMetrics(initialMetrics);
+        });
+
+        // Передаём готовый MediaStream из hub — engine не запрашивает микрофон повторно.
+        void sampler.start(stream).catch(() => undefined);
+      });
     });
 
     return () => {
       cancelled = true;
-      analyserRef.current = null;
-      cancelAnimationFrame(rafId);
-      teardown?.();
       unlisten();
+      void teardown();
       setLive(false);
       setMetrics(initialMetrics);
     };

@@ -162,3 +162,4 @@
 - Не использовать `console.log` в production-коде (только через логгер из `@membrana/core`).
 - Не коммитить `node_modules`, `dist`, `.turbo`, `.env`.
 - Не нарушать границы пакетов: внутренние модули — приватны.
+- **Не работать с Web Audio API напрямую** из модулей / плагинов / других сервисов. Только через `@membrana/audio-engine-service` (см. `docs/ARCHITECTURE.md`, раздел «1b. Центральный узел первичной обработки аудио»). Запрещены: `new AudioContext()`, `navigator.mediaDevices.getUserMedia(...)`, `createAnalyser()`, `decodeAudioData()`, `enumerateDevices()` — всё это уже обёрнуто в engine. Эталон интеграции — `apps/client/src/modules/microphone/`.

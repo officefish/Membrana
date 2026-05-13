@@ -2,20 +2,33 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
+  acquireMicrophone,
+  getAudioInputDevices,
+  releaseMediaStream,
+} from '@membrana/audio-engine-service';
+import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
 import { publishMicrophoneStream } from './microphoneStreamHub';
 
+/**
+ * Модуль «Микрофон» — точка входа в первичную обработку звука.
+ *
+ * ВАЖНО: модуль НЕ управляет AudioContext / AnalyserNode напрямую — это работа
+ * `@membrana/audio-engine-service`. Здесь только:
+ *  1. Получение списка устройств через engine (`getAudioInputDevices`).
+ *  2. Захват MediaStream через engine (`acquireMicrophone`).
+ *  3. Освобождение MediaStream через engine (`releaseMediaStream`).
+ *  4. Публикация полученного MediaStream в hub для плагинов.
+ *
+ * Плагины подписываются на hub и при необходимости поднимают свой `LiveSampler`
+ * на этом stream (см. `useMicStreamAnalysis`).
+ */
+
 export interface MicrophoneConfig {
   /** Пустая строка — устройство по умолчанию браузера */
   selectedDeviceId: string;
-}
-
-function listAudioInputs(): Promise<MediaDeviceInfo[]> {
-  return navigator.mediaDevices
-    .enumerateDevices()
-    .then((list) => list.filter((d) => d.kind === 'audioinput'));
 }
 
 export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
@@ -38,7 +51,7 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
   const refreshDevices = useCallback(async () => {
     try {
       setLoadingDevices(true);
-      const inputs = await listAudioInputs();
+      const inputs = await getAudioInputDevices();
       setDevices(inputs);
       setError(null);
     } catch (e) {
@@ -57,10 +70,7 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
   }, [refreshDevices]);
 
   const stopStream = useCallback(() => {
-    const s = streamRef.current;
-    if (s) {
-      s.getTracks().forEach((t) => t.stop());
-    }
+    releaseMediaStream(streamRef.current);
     streamRef.current = null;
     setStream(null);
     publishMicrophoneStream(module.id, null);
@@ -71,9 +81,12 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
       setError(null);
       const id = deviceIdOverride !== undefined ? deviceIdOverride : selectedDeviceId;
       try {
-        const audio: MediaTrackConstraints | boolean = id ? { deviceId: { exact: id } } : true;
-        const s = await navigator.mediaDevices.getUserMedia({ audio });
-        stopStream();
+        const audio: MediaTrackConstraints | true = id
+          ? { deviceId: { exact: id } }
+          : true;
+        const s = await acquireMicrophone(audio);
+        // Останавливаем предыдущий поток ПОСЛЕ успешного получения нового.
+        releaseMediaStream(streamRef.current);
         streamRef.current = s;
         setStream(s);
         publishMicrophoneStream(module.id, s);
@@ -87,15 +100,13 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
         );
       }
     },
-    [module.id, selectedDeviceId, stopStream, refreshDevices],
+    [module.id, selectedDeviceId, refreshDevices],
   );
 
+  // Cleanup при размонтировании модуля.
   useEffect(() => {
     return () => {
-      const s = streamRef.current;
-      if (s) {
-        s.getTracks().forEach((t) => t.stop());
-      }
+      releaseMediaStream(streamRef.current);
       streamRef.current = null;
       publishMicrophoneStream(module.id, null);
     };
@@ -103,7 +114,7 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
   const isLive = stream !== null;
 
-  const onDeviceSelect = (deviceId: string) => {
+  const onDeviceSelect = (deviceId: string): void => {
     onUpdateConfig({ selectedDeviceId: deviceId });
     if (isLive) {
       void startStream(deviceId);
@@ -165,7 +176,11 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
           >
             {isLive ? 'Остановить поток' : 'Запустить поток'}
           </button>
-          <button type="button" className="btn btn-ghost btn-outline min-h-10" onClick={() => void refreshDevices()}>
+          <button
+            type="button"
+            className="btn btn-ghost btn-outline min-h-10"
+            onClick={() => void refreshDevices()}
+          >
             Обновить список устройств
           </button>
         </div>
@@ -183,10 +198,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
             Поток публикуется через{' '}
             <code className="text-primary">publishMicrophoneStream</code> /{' '}
             <code className="text-primary">subscribeMicrophoneStream</code> в{' '}
-            <code className="text-xs">microphoneStreamHub.ts</code>. В{' '}
-            <code className="text-xs">install()</code> плагина вызовите{' '}
-            <code className="text-xs">subscribeMicrophoneStream(context.moduleId, …)</code> и сохраните функцию
-            отписки. Включение плагинов и их настройки — во вкладке «Плагины» в боковой панели.
+            <code className="text-xs">microphoneStreamHub.ts</code>. Получение
+            устройств и MediaStream идёт через{' '}
+            <code className="text-xs">@membrana/audio-engine-service</code>,
+            модуль не управляет Web Audio напрямую.
           </p>
         </div>
 

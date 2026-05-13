@@ -56,6 +56,12 @@ export function useLiveSampler(
   );
 
   const [state, setState] = useState<LiveSamplerState>(sampler.getState());
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(
+    sampler.getAnalyserNode(),
+  );
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(
+    sampler.getAudioContext(),
+  );
 
   // Свежий onFrame в ref — чтобы не пересоздавать подписку каждый рендер.
   const onFrameRef = useRef<SampleFrameHandler | undefined>(onFrame);
@@ -69,10 +75,21 @@ export function useLiveSampler(
     };
     const handleError = (err: Error): void => {
       setState('error');
+      setAnalyserNode(null);
+      setAudioContext(null);
       onErrorRef.current?.(err);
     };
-    const handleStart = (): void => setState('running');
-    const handleStop = (): void => setState('stopped');
+    const handleStart = (): void => {
+      setState('running');
+      // На момент события start engine уже создал AnalyserNode/AudioContext.
+      setAnalyserNode(sampler.getAnalyserNode());
+      setAudioContext(sampler.getAudioContext());
+    };
+    const handleStop = (): void => {
+      setState('stopped');
+      setAnalyserNode(null);
+      setAudioContext(null);
+    };
 
     sampler.on('frame', handleFrame);
     sampler.on('error', handleError);
@@ -111,5 +128,7 @@ export function useLiveSampler(
     start,
     stop,
     sampler,
+    analyserNode,
+    audioContext,
   };
 }

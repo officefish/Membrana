@@ -28,6 +28,23 @@
 Эталоны: `packages/services/audio-engine/` (foundation) + `packages/services/fft-analyzer/` (analyzer).
 Разделение **foundation ↔ analyzer** позволяет переиспользовать одну инфраструктуру для разных видов анализа (FFT, нейросети, LLM).
 
+### 1b. Центральный узел первичной обработки аудио
+
+`@membrana/audio-engine-service` — **единственный** узел, который имеет право обращаться к Web Audio API напрямую (`AudioContext`, `AnalyserNode`, `getUserMedia`, `decodeAudioData`, `MediaStream`). Все клиентские модули и плагины используют только публичный API engine'а:
+
+| Сценарий | Через что |
+|----------|-----------|
+| Получить список input-устройств | `getAudioInputDevices()` |
+| Захватить микрофон | `acquireMicrophone()` |
+| Освободить MediaStream | `releaseMediaStream()` |
+| Декодировать файл в `AudioBuffer` | `loadAudioBuffer()` / `useAudioFile()` |
+| Получать кадры с потока | `LiveSampler` / `useLiveSampler()` / `useMicrophone()` |
+| Прямой `AnalyserNode` (для виджетов аудио-визуализации) | `LiveSampler.getAnalyserNode()` / `useLiveSampler().analyserNode` |
+
+**Запрет.** Новые модули и плагины **не** пишут `new AudioContext()`, `navigator.mediaDevices.getUserMedia(...)`, `createAnalyser()` и подобное напрямую. Это работа engine'а.
+
+**Реализованный эталон.** Модуль `apps/client/src/modules/microphone/MicrophoneModule.tsx` + плагин `apps/client/src/plugins/microphone-stream-viz/*` — паттерн, на который ориентируется любая будущая аудио-фича: модуль через engine добывает `MediaStream`, публикует его в hub; плагин(ы) подписываются на hub и поднимают `LiveSampler` на этом stream для своих метрик/визуализаций.
+
 ## 2. Плагины и слабая связанность (домен аудио)
 
 - **Запрещены прямые импорты между плагинами** друг друга.

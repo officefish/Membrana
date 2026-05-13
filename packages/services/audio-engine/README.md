@@ -41,7 +41,19 @@
 | `loadAudioBuffer(file)` | fn | Чистая обёртка над `decodeAudioData`. |
 | `getMonoChannel(buffer)` | fn | Смешивает каналы в моно. |
 | `acquireMicrophone(constraints)` | fn | Запрос `MediaStream` с понятной ошибкой. |
+| `releaseMediaStream(stream)` | fn | Остановка всех треков потока. |
+| `getAudioInputDevices()` | fn | Список input-устройств для `<select>` микрофона. |
 | `AudioSampleFrame` | type | `{ samples: Float32Array, sampleRate, timestamp }` |
+
+### Прямой доступ к AnalyserNode / AudioContext
+
+Некоторые визуализации (например, виджеты из `@membrana/audio-data-viz`) рендерятся **напрямую от Web Audio** через `AnalyserNode`. Чтобы не плодить второй `AudioContext + AnalyserNode` поверх того же потока, engine выставляет свои:
+
+- `LiveSampler.getAnalyserNode(): AnalyserNode | null`
+- `LiveSampler.getAudioContext(): AudioContext | null`
+- В хуке `useLiveSampler()` они приходят как реактивные поля `analyserNode` / `audioContext`.
+
+Это рекомендованный путь, когда модуль/плагин уже **владеет** `MediaStream` (например, модуль «Микрофон») и хочет рендерить визуализации без дублирования Web Audio.
 
 ## Использование анализатором (FFT, нейросеть, LLM)
 
