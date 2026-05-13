@@ -1,16 +1,30 @@
 # Membrana — правила для Cursor
 
+## Стратегические документы (читать ПЕРЕД любой задачей)
+
+Любой агент Cursor / Claude обязан опираться на эти документы в `docs/`:
+
+1. [`docs/VIRTUAL_TEAM_PROMPT.md`](./docs/VIRTUAL_TEAM_PROMPT.md) — состав AI-команды (5 ролей), формат ответа, ярлыки `/architect`, `/refactor`, `/math`, `/audio`, `/ui`, `/service`, `/review`.
+2. [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — границы пакетов, слои, плагины, шина событий.
+3. [`docs/SERVICES.md`](./docs/SERVICES.md) — соглашения для пакетов в `packages/services/*`.
+4. [`docs/DESIGN.md`](./docs/DESIGN.md) — токены UI, цвета, отступы, типографика, темы.
+5. [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — процесс PR, добавление сервиса, запуск ревью.
+6. [`docs/UI_UX_DEVELOPER_PROMPT.md`](./docs/UI_UX_DEVELOPER_PROMPT.md) — расширенный промпт роли Верстальщика.
+
+При конфликте этих правил с .cursorrules выигрывают документы в `docs/` и решение Teamlead.
+
 ## Контекст проекта
 
-Это монорепо на TypeScript с использованием npm workspaces и Turbo.
-Структура: packages/_ (библиотеки) + apps/_ (приложения).
+Это монорепо на TypeScript с использованием **yarn 4 (Berry)** workspaces и Turbo.
+Структура: `packages/*` (библиотеки), `packages/services/*` (автономные сервисы), `apps/*` (приложения).
 
 ## Структура проекта
 
-- packages/core - ядро пространственной разведки (не зависит от других)
-- packages/agenda - плагин-фреймворк (зависит от core)
-- packages/device-board - UI для скриптинга (зависит от agenda)
-- apps/client - Electron приложение (зависит от всех)
+- `packages/core` — базовые типы, ошибки, контракты, утилиты (не зависит от других).
+- `packages/agenda` — модули, плагины, store на Zustand, UI-обвязка (зависит от core).
+- `packages/device-board` — управление устройствами (зависит от core).
+- `packages/services/*` — **автономные vite-ts-react пакеты-сервисы** с чистой бизнес-логикой и React-хуками. См. `docs/SERVICES.md`. Пример: `packages/services/audio-analyzer`.
+- `apps/client` — клиент на Vite + React + DaisyUI (зависит от всех вышеперечисленных).
 
 ## Общие правила
 
@@ -27,7 +41,18 @@
 
 - `@membrana/core` — НИ ОТ КОГО не зависит (кроме внешних npm-пакетов).
 - `@membrana/agenda` и `@membrana/device-board` зависят ТОЛЬКО от `@membrana/core`, но не друг от друга.
-- `apps/client` — может зависеть от любых пакетов.
+- `@membrana/<name>-service` (`packages/services/*`) зависит ТОЛЬКО от `@membrana/core`. Сервисы НЕ зависят друг от друга, НЕ зависят от agenda / device-board / client.
+- `apps/client` — может зависеть от любых пакетов и сервисов.
+
+### Правила сервисов (`packages/services/*`)
+
+Полный документ — `docs/SERVICES.md`. Кратко:
+
+1. Каждый сервис имеет свой `package.json`, `tsconfig.json`, `vite.config.ts`.
+2. Имя пакета: `@membrana/<имя>-service`.
+3. Структура `src/`: `service.ts` (чистое ядро без React/DOM/Web Audio), `hooks.ts` (тонкая React-обёртка), `types.ts`, `index.ts` (единый публичный API).
+4. Хуки запрещено наполнять бизнес-логикой; они только мемоизируют сервис и подписываются на события.
+5. Клиент потребляет сервис через alias на `src/index.ts` (vite + tsconfig paths) — без шага сборки в dev.
 
 ## Правила для AI
 
@@ -46,15 +71,18 @@
 
 ## Команды для разработки
 
-- pnpm dev:core - разработка только core
-- pnpm dev:agenda - разработка agenda (пересоберет core при изменениях)
-- pnpm test:affected - тестирование только измененных пакетов
+- `yarn workspace @membrana/client dev` — поднять клиент на Vite (http://localhost:5173).
+- `yarn workspace @membrana/<имя>-service dev` — поднять конкретный сервис в изоляции (playground).
+- `yarn build` — собрать всё через Turbo.
+- `yarn typecheck` / `yarn lint` / `yarn test` — соответствующие проверки.
 
 ## TypeScript пути (для автодополнения)
 
-- @membrana/core -> packages/core/src
-- @membrana/agenda -> packages/agenda/src
-- @membrana/device-board -> packages/device-board/src
+- `@membrana/core` → `packages/core/src/index.ts`
+- `@membrana/agenda` → `packages/agenda/src/index.ts`
+- `@membrana/device-board` → `packages/device-board/src/index.ts`
+- `@membrana/audio-analyzer-service` → `packages/services/audio-analyzer/src/index.ts`
+- `@membrana/<новый>-service` → `packages/services/<новый>/src/index.ts` (добавить alias в `apps/client/vite.config.ts` и `apps/client/tsconfig.app.json`)
 
 ## Тестирование
 
@@ -100,6 +128,25 @@
 2. Запусти тесты
 3. Сгенерируй описание PR на основе изменений
 4. Если есть conflicts — предложи решение
+
+### /service `<name>`
+
+Создай новый автономный сервис в `packages/services/<name>` строго по `docs/SERVICES.md`:
+
+1. Скопируй структуру `packages/services/audio-analyzer` как образец.
+2. Заполни `package.json` (`@membrana/<name>-service`), `tsconfig.json`, `vite.config.ts`.
+3. Создай `src/`:
+   - `service.ts` — чистое ядро без React/DOM/Web Audio.
+   - `hooks.ts` — тонкая React-обвязка.
+   - `types.ts`, `index.ts`.
+4. Пропиши alias в `apps/client/vite.config.ts` и `apps/client/tsconfig.app.json`.
+5. Добавь reference в корневой `tsconfig.json`.
+6. Добавь строку в таблицу `packages/services/README.md`.
+7. Запроси `LGTM` у Teamlead.
+
+### /architect, /refactor, /math, /audio, /ui, /review
+
+Делегируй соответствующей роли из `docs/VIRTUAL_TEAM_PROMPT.md`. Формат ответа — как описано там.
 
 ## Что НЕ делать
 

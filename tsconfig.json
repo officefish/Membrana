@@ -5,6 +5,7 @@
     { "path": "./packages/core" },
     { "path": "./packages/agenda" },
     { "path": "./packages/device-board" },
+    { "path": "./packages/services/audio-analyzer" },
     { "path": "./apps/client/tsconfig.app.json" },
     { "path": "./apps/client/tsconfig.node.json" }
   ]

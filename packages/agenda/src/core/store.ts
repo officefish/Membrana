@@ -1,6 +1,28 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { MembranaState, Module, Plugin } from './types';
+import { isRenderableComponentType } from './isRenderableComponentType';
+import { MembranaState, Module, ModuleUserPrefsSnapshot, Plugin } from './types';
+
+function prefsFromLegacyPersistedModules(
+  modules: unknown,
+): Record<string, ModuleUserPrefsSnapshot> {
+  const out: Record<string, ModuleUserPrefsSnapshot> = {};
+  if (!Array.isArray(modules)) return out;
+  for (const entry of modules) {
+    if (!Array.isArray(entry) || entry.length < 2) continue;
+    const [id, value] = entry as [string, Partial<Module>];
+    if (typeof id !== 'string' || !value || typeof value !== 'object') continue;
+    out[id] = {
+      enabled: !!value.enabled,
+      config:
+        value.config && typeof value.config === 'object'
+          ? (value.config as Record<string, unknown>)
+          : {},
+      activePlugins: Array.isArray(value.activePlugins) ? value.activePlugins : [],
+    };
+  }
+  return out;
+}
 
 export const useMembranaStore = create<MembranaState>()(
   devtools(
@@ -11,15 +33,43 @@ export const useMembranaStore = create<MembranaState>()(
         categories: new Map(),
         activeFilters: {},
         selectedModuleId: null,
+        pendingModulePrefs: null,
 
         registerModule: (moduleInput) => {
           set((state) => {
             const newModules = new Map(state.modules);
+            const pendingSnap = state.pendingModulePrefs?.[moduleInput.id];
+            const existing = newModules.get(moduleInput.id);
+            const baseDefaults = { ...(moduleInput.defaultConfig || {}) };
+
+            const enabled = pendingSnap
+              ? pendingSnap.enabled
+              : existing !== undefined
+                ? existing.enabled
+                : (moduleInput.enabled ?? true);
+            const config = pendingSnap
+              ? { ...baseDefaults, ...pendingSnap.config }
+              : existing !== undefined
+                ? { ...baseDefaults, ...existing.config }
+                : (moduleInput.config ?? { ...baseDefaults });
+            const activePlugins = pendingSnap
+              ? pendingSnap.activePlugins
+              : existing !== undefined
+                ? existing.activePlugins
+                : (moduleInput.activePlugins ?? []);
+
             const module: Module = {
-              ...moduleInput,
-              enabled: moduleInput.enabled ?? true,
-              config: moduleInput.config ?? (moduleInput.defaultConfig || {}),
-              activePlugins: moduleInput.activePlugins ?? [],
+              id: moduleInput.id,
+              name: moduleInput.name,
+              description: moduleInput.description,
+              version: moduleInput.version,
+              category: moduleInput.category,
+              Component: moduleInput.Component,
+              defaultConfig: moduleInput.defaultConfig,
+              availablePlugins: moduleInput.availablePlugins,
+              enabled,
+              config,
+              activePlugins,
             };
             newModules.set(module.id, module);
             
@@ -258,31 +308,71 @@ export const useMembranaStore = create<MembranaState>()(
       {
         name: 'membrana-storage',
         partialize: (state) => ({
-          // Преобразуем Map в объекты для сохранения
-          modules: state.modules instanceof Map ? Array.from(state.modules.entries()) : [],
-          plugins: state.plugins instanceof Map 
-            ? Array.from(state.plugins.entries()).map(([k, v]) => [
-                k, 
-                v instanceof Map ? Array.from(v.entries()) : []
-              ])
-            : [],
-          categories: state.categories instanceof Map ? Array.from(state.categories.entries()) : [],
+          // Только сериализуемые prefs — не кладём React-компоненты и Map modules в JSON.
+          modulePrefs:
+            state.modules instanceof Map
+              ? Object.fromEntries(
+                  [...state.modules.entries()].map(([id, m]) => [
+                    id,
+                    {
+                      enabled: m.enabled,
+                      config: m.config as Record<string, unknown>,
+                      activePlugins: m.activePlugins,
+                    },
+                  ]),
+                )
+              : {},
+          plugins:
+            state.plugins instanceof Map
+              ? Array.from(state.plugins.entries()).map(([k, v]) => [
+                  k,
+                  v instanceof Map ? Array.from(v.entries()) : [],
+                ])
+              : [],
           activeFilters: state.activeFilters,
-          selectedModuleId: state.selectedModuleId
+          selectedModuleId: state.selectedModuleId,
         }),
-        // Восстанавливаем Map из сохраненных данных
         merge: (persistedState, currentState) => {
           const state = persistedState as any;
-          
-          // Восстанавливаем modules как Map
-          const modules = new Map();
-          if (state?.modules && Array.isArray(state.modules)) {
-            state.modules.forEach(([key, value]: [string, Module]) => {
-              modules.set(key, value);
-            });
+
+          const fromLegacy = prefsFromLegacyPersistedModules(state?.modules);
+          const fromNew =
+            state?.modulePrefs && typeof state.modulePrefs === 'object'
+              ? (state.modulePrefs as Record<string, ModuleUserPrefsSnapshot>)
+              : {};
+          const mergedPrefs: Record<string, ModuleUserPrefsSnapshot> = {
+            ...fromLegacy,
+            ...fromNew,
+          };
+
+          const hasRuntimeModules =
+            currentState.modules instanceof Map && currentState.modules.size > 0;
+
+          let modules = new Map(currentState.modules);
+          let pendingModulePrefs: Record<string, ModuleUserPrefsSnapshot> | null =
+            null;
+
+          if (Object.keys(mergedPrefs).length > 0) {
+            if (hasRuntimeModules) {
+              for (const [id, snap] of Object.entries(mergedPrefs)) {
+                const mod = modules.get(id);
+                if (mod && isRenderableComponentType(mod.Component)) {
+                  modules.set(id, {
+                    ...mod,
+                    enabled: snap.enabled,
+                    config: {
+                      ...(mod.defaultConfig || {}),
+                      ...snap.config,
+                    },
+                    activePlugins: snap.activePlugins,
+                  });
+                }
+              }
+            } else {
+              pendingModulePrefs = mergedPrefs;
+            }
           }
-          
-          // Восстанавливаем plugins как Map of Maps
+
           const plugins = new Map();
           if (state?.plugins && Array.isArray(state.plugins)) {
             state.plugins.forEach(([moduleId, pluginEntries]: [string, any]) => {
@@ -295,24 +385,27 @@ export const useMembranaStore = create<MembranaState>()(
               plugins.set(moduleId, modulePlugins);
             });
           }
-          
-          // Восстанавливаем categories как Map
-          const categories = new Map();
-          if (state?.categories && Array.isArray(state.categories)) {
-            state.categories.forEach(([key, value]: [string, string[]]) => {
-              categories.set(key, new Set(value));
-            });
-          }
-          
+
+          const categories = new Map<string, Set<string>>();
+          modules.forEach((mod) => {
+            let set = categories.get(mod.category);
+            if (!set) {
+              set = new Set();
+              categories.set(mod.category, set);
+            }
+            set.add(mod.id);
+          });
+
           return {
             ...currentState,
             modules,
-            plugins,
             categories,
+            pendingModulePrefs,
+            plugins,
             activeFilters: state?.activeFilters || {},
-            selectedModuleId: state?.selectedModuleId || null
+            selectedModuleId: state?.selectedModuleId ?? null,
           };
-        }
+        },
       }
     ),
     { name: 'MembranaStore' }

@@ -1,5 +1,14 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useMembranaStore, useModuleProps } from '../../core/hooks';
+import { isRenderableComponentType } from '../../core/isRenderableComponentType';
+import type { ModuleProps } from '../../core/types';
+
+const ModuleLoadingFallback: React.FC = () => (
+  <div className="flex flex-col items-center justify-center min-h-[400px] gap-3 text-base-content/60">
+    <span className="loading loading-spinner loading-lg text-primary" aria-hidden />
+    <span className="text-sm">Загрузка модуля…</span>
+  </div>
+);
 
 interface ModuleRendererProps {
   emptyMessage?: React.ReactNode;
@@ -38,10 +47,24 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({
       </div>
     );
   }
-  
+
+  if (!isRenderableComponentType(module.Component)) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <div className="text-center text-base-content/60 text-sm">
+          Модуль «{module.name}» ещё не готов к отображению (нет компонента).
+        </div>
+      </div>
+    );
+  }
+
+  const ModuleView = module.Component as React.ComponentType<ModuleProps>;
+
   return (
     <div className={className}>
-      <module.Component {...props} />
+      <Suspense fallback={<ModuleLoadingFallback />}>
+        <ModuleView {...props} />
+      </Suspense>
     </div>
   );
 };

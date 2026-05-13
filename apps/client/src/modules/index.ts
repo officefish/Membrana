@@ -1,6 +1,8 @@
-import { FFTModule } from './FFTModule';
-import { SpectrumModule } from './SpectrumModule';
-import { OscilloscopeModule } from './OscilloscopeModule';
-import { AudioFileUploadModule } from './AudioFileUploadModule';
-
-export { FFTModule, SpectrumModule, OscilloscopeModule, AudioFileUploadModule };
+/**
+ * Реализации модулей грузятся лениво. Точка входа регистрации — registerClientModules.
+ */
+export { registerClientModules } from './registerClientModules';
+export type { FFTConfig } from './FFTModule';
+export type { SpectrumConfig } from './SpectrumModule';
+export type { OscilloscopeConfig } from './OscilloscopeModule';
+export type { AudioFileUploadConfig } from './AudioFileUploadModule';

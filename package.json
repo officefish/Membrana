@@ -5,6 +5,7 @@
   "description": "Membrana — модульная платформа управления устройствами и расписанием",
   "workspaces": [
     "packages/*",
+    "packages/services/*",
     "apps/*"
   ],
   "scripts": {

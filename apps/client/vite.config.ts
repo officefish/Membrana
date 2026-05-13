@@ -27,6 +27,11 @@ export default defineConfig({
       '@membrana/device-board': fileURLToPath(
         new URL('../../packages/device-board/src/index.ts', import.meta.url),
       ),
+      // Сервисы из packages/services/* — alias-им на исходники,
+      // чтобы dev-HMR работал без шага сборки. См. docs/SERVICES.md.
+      '@membrana/audio-analyzer-service': fileURLToPath(
+        new URL('../../packages/services/audio-analyzer/src/index.ts', import.meta.url),
+      ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },

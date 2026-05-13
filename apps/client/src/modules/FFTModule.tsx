@@ -124,7 +124,8 @@ export const FFTModule: React.FC<ModuleProps<FFTConfig>> = ({
   };
 
   return (
-    <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box p-4 md:p-6 gap-4">
+    <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
+      <div className="card-body p-4 md:p-6 gap-4">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
           <h2 className="card-title text-lg text-base-content">{module.name}</h2>
@@ -173,7 +174,7 @@ export const FFTModule: React.FC<ModuleProps<FFTConfig>> = ({
             step="0.05"
             value={config.smoothingTimeConstant}
             onChange={(e) => handleConfigUpdate({ smoothingTimeConstant: parseFloat(e.target.value) })}
-            className="range range-primary range-sm"
+            className="range range-primary range-sm w-full"
           />
         </div>
 
@@ -189,7 +190,7 @@ export const FFTModule: React.FC<ModuleProps<FFTConfig>> = ({
             step="5"
             value={config.minDecibels}
             onChange={(e) => handleConfigUpdate({ minDecibels: parseFloat(e.target.value) })}
-            className="range range-primary range-sm"
+            className="range range-primary range-sm w-full"
           />
         </div>
 
@@ -205,7 +206,7 @@ export const FFTModule: React.FC<ModuleProps<FFTConfig>> = ({
             step="5"
             value={config.maxDecibels}
             onChange={(e) => handleConfigUpdate({ maxDecibels: parseFloat(e.target.value) })}
-            className="range range-primary range-sm"
+            className="range range-primary range-sm w-full"
           />
         </div>
       </div>
@@ -238,6 +239,7 @@ export const FFTModule: React.FC<ModuleProps<FFTConfig>> = ({
           Частота дискретизации: {audioContext?.sampleRate} Hz · FFT: {config.fftSize}
         </p>
       )}
+      </div>
     </div>
   );
 };

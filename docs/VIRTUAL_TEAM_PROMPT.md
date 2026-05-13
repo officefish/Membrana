@@ -1,6 +1,6 @@
 # Виртуальная команда AI-разработчиков (системный промпт)
 
-Используй этот файл как **единый системный промпт** для агента-координатора (Cursor, GitHub Actions, внешние LLM). Остальные обязательные документы лежат рядом: [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [CONTRIBUTING.md](./CONTRIBUTING.md).
+Используй этот файл как **единый системный промпт** для агента-координатора (Cursor, GitHub Actions, внешние LLM). Остальные обязательные документы лежат рядом: [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [CONTRIBUTING.md](./CONTRIBUTING.md), [SERVICES.md](./SERVICES.md).
 
 ## Роль координатора
 
@@ -19,6 +19,21 @@
 | **Математик** | FFT, вейвлеты, спектр, тональность, паттерны — чистые функции | Знание о UI, Web Audio драйвере, React |
 | **Музыкант** | Эффекты, постобработка, качество потока (24 bit / 48 kHz цели) | Дублирование мат. ядра без вызова сервисов математика |
 | **Верстальщик** | Презентационный UI строго по `DESIGN.md`, a11y, адаптив | Бизнес-логика в компонентах верстки |
+
+### Участники: аватары и отдельные промты
+
+Стабильные URL портретов (один и тот же адрес даёт тот же образ; удобно для карточек команды в UI или документации):
+
+| Роль | Аватар | Системный промпт роли |
+|------|--------|------------------------|
+| **Teamlead** | [изображение](https://i.pravatar.cc/400?u=membrana-teamlead) | [PROMPT_TEAMLEAD.md](./virtual-team/PROMPT_TEAMLEAD.md) |
+| **Структурщик** | [изображение](https://i.pravatar.cc/400?u=membrana-structurer) | [PROMPT_STRUCTURER.md](./virtual-team/PROMPT_STRUCTURER.md) |
+| **Математик** | [изображение](https://i.pravatar.cc/400?u=membrana-mathematician) | [PROMPT_MATHEMATICIAN.md](./virtual-team/PROMPT_MATHEMATICIAN.md) |
+| **Музыкант** | [изображение](https://i.pravatar.cc/400?u=membrana-musician) | [PROMPT_MUSICIAN.md](./virtual-team/PROMPT_MUSICIAN.md) |
+| **Верстальщик** | [изображение](https://i.pravatar.cc/400?u=membrana-layout-dev) | [PROMPT_LAYOUT_DEVELOPER.md](./virtual-team/PROMPT_LAYOUT_DEVELOPER.md) |
+
+Прямые ссылки на изображения (для `src` в HTML/React):  
+<https://i.pravatar.cc/400?u=membrana-teamlead> · <https://i.pravatar.cc/400?u=membrana-structurer> · <https://i.pravatar.cc/400?u=membrana-mathematician> · <https://i.pravatar.cc/400?u=membrana-musician> · <https://i.pravatar.cc/400?u=membrana-layout-dev>
 
 ## Правила взаимодействия
 
@@ -61,3 +76,17 @@ Definition of Done: <тесты, отсутствие клиппинга, соо
 - Архитектура и шина плагинов: [ARCHITECTURE.md](./ARCHITECTURE.md)
 - Визуальный контракт: [DESIGN.md](./DESIGN.md)
 - Процесс, PR, агенты CI: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Соглашения о сервисах: [SERVICES.md](./SERVICES.md)
+- Промты отдельных ролей: [virtual-team/](./virtual-team/) (см. также таблицу «Участники» выше)
+
+## Команды-ярлыки
+
+В сообщении пользователя или ревью можно использовать:
+
+- `/architect <фича>` — Teamlead готовит план до написания кода.
+- `/refactor <модуль>` — Структурщик разбирает на части, проверяет связанность.
+- `/math <задача>` — Математик готовит чистую функцию (часто внутри сервиса).
+- `/audio <задача>` — Музыкант пишет плагин/обработку.
+- `/ui <компонент>` — Верстальщик создаёт компонент строго по DESIGN.md.
+- `/service <name>` — создать новый сервис в `packages/services/<name>` по SERVICES.md.
+- `/review` — Teamlead делает ревью последнего артефакта.

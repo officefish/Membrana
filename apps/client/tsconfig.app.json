@@ -18,6 +18,8 @@
       "@membrana/agenda/*": ["../../packages/agenda/src/*"],
       "@membrana/device-board": ["../../packages/device-board/src/index.ts"],
       "@membrana/device-board/*": ["../../packages/device-board/src/*"],
+      "@membrana/audio-analyzer-service": ["../../packages/services/audio-analyzer/src/index.ts"],
+      "@membrana/audio-analyzer-service/*": ["../../packages/services/audio-analyzer/src/*"],
       "@/*": ["./src/*"]
     }
   },
@@ -26,6 +28,7 @@
   "references": [
     { "path": "../../packages/core" },
     { "path": "../../packages/agenda" },
-    { "path": "../../packages/device-board" }
+    { "path": "../../packages/device-board" },
+    { "path": "../../packages/services/audio-analyzer" }
   ]
 }

@@ -1,6 +1,6 @@
 # CONTRIBUTING — процесс для людей и CI-агентов
 
-Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md).
+Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [SERVICES.md](./SERVICES.md).
 
 ## Локальная разработка
 
@@ -9,10 +9,29 @@
 
 ## Pull requests
 
-1. Описание PR: **что**, **зачем**, **какие пакеты** затронуты (`apps/client`, `packages/*`).
+1. Описание PR: **что**, **зачем**, **какие пакеты** затронуты (`apps/client`, `packages/*`, `packages/services/*`).
 2. Если фича затрагивает аудио+UI: кратко укажи согласование с ролями **Teamlead** / **Музыкант** / **Верстальщик** (можно ссылкой на комментарий в issue).
 3. Нет прямых импортов между плагинами; соблюдение [ARCHITECTURE.md](./ARCHITECTURE.md).
 4. UI: соответствие [DESIGN.md](./DESIGN.md).
+5. Новый сервис: соответствие [SERVICES.md](./SERVICES.md), Definition of Done выполнен.
+
+## Добавление нового сервиса (`packages/services/<name>`)
+
+Шаги (полный чек-лист — в [SERVICES.md](./SERVICES.md#создание-нового-сервиса)):
+
+1. Скопировать `packages/services/audio-analyzer/` как образец, переименовать.
+2. Прописать в `package.json` имя `@membrana/<name>-service`.
+3. Добавить alias в `apps/client/vite.config.ts` и `tsconfig.app.json`.
+4. Добавить запись в таблицу `packages/services/README.md`.
+5. Добавить ссылку в `references` корневого `tsconfig.json`.
+6. Получить `LGTM` от Teamlead.
+
+Что Teamlead проверит на ревью:
+
+- Ядро сервиса не импортирует React/DOM/Web Audio.
+- Хуки не содержат бизнес-логики.
+- Граф зависимостей не нарушен (только `@membrana/core`).
+- Есть README с разделами **Что делает**, **API**, **Использование**.
 
 ## Виртуальные агенты (Cursor / GitHub Actions)
 

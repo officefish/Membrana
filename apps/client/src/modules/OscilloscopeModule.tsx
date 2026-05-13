@@ -15,11 +15,16 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
   onUpdateConfig,
 }) => {
   const config = module.config as OscilloscopeConfig;
+  const timeScale = Number(config.timeScale) || 1;
+  const amplitudeScale = Number(config.amplitudeScale) || 1;
+  const configRef = useRef(config);
+  configRef.current = config;
+
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [isTriggered, setIsTriggered] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
 
   const { plugins, activeIds, toggle: togglePlugin } = useModulePlugins(module.id);
 
@@ -34,16 +39,23 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
       processor.connect(context.destination);
 
       sourceRef.current = source;
+      processorRef.current = processor;
       setAudioContext(context);
 
       let samples: number[] = [];
       let lastTriggerTime = 0;
+      /** Индикатор на canvas без setState (иначе React забивается сотнями обновлений/с). */
+      let triggerHoldBuffers = 0;
 
       processor.onaudioprocess = (event) => {
+        const cfg = configRef.current;
+        const ts = Number(cfg.timeScale) || 1;
+        const amp = Number(cfg.amplitudeScale) || 1;
+
         const inputData = event.inputBuffer.getChannelData(0);
         samples = [...samples, ...Array.from(inputData)];
 
-        const maxSamples = Math.floor(1024 / config.timeScale);
+        const maxSamples = Math.floor(1024 / ts);
         if (samples.length > maxSamples) {
           samples = samples.slice(-maxSamples);
         }
@@ -66,10 +78,10 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
 
           const centerY = height / 2;
 
-          ctx.fillStyle = config.colorScheme === 'monochrome' ? colors.bg : colors.bg;
+          ctx.fillStyle = cfg.colorScheme === 'monochrome' ? colors.bg : colors.bg;
           ctx.fillRect(0, 0, width, height);
 
-          if (config.showGrid) {
+          if (cfg.showGrid) {
             ctx.strokeStyle = colors.grid;
             ctx.globalAlpha = 0.2;
             ctx.lineWidth = 0.5;
@@ -103,7 +115,7 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
           const step = width / samples.length;
 
           let lineColor: string;
-          switch (config.colorScheme) {
+          switch (cfg.colorScheme) {
             case 'neon':
               lineColor = colors.success;
               break;
@@ -119,7 +131,7 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
           ctx.beginPath();
 
           let triggerIndex = -1;
-          if (config.triggerMode === 'auto' || config.triggerMode === 'normal') {
+          if (cfg.triggerMode === 'auto' || cfg.triggerMode === 'normal') {
             for (let i = 1; i < samples.length; i++) {
               const currentTime = Date.now();
               const s0 = samples[i] ?? 0;
@@ -127,11 +139,11 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
               if (
                 s0 > 0.1 &&
                 s1 <= 0.1 &&
-                (currentTime - lastTriggerTime > 200 || config.triggerMode === 'normal')
+                (currentTime - lastTriggerTime > 200 || cfg.triggerMode === 'normal')
               ) {
                 triggerIndex = i;
                 lastTriggerTime = currentTime;
-                setIsTriggered(true);
+                triggerHoldBuffers = 18;
                 break;
               }
             }
@@ -141,8 +153,8 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
           let x = 0;
           for (let i = startIndex; i < samples.length; i++) {
             const sample = samples[i] ?? 0;
-            const y = centerY - sample * (height / 2) * config.amplitudeScale;
-            const currentX = x * step * config.timeScale;
+            const y = centerY - sample * (height / 2) * amp;
+            const currentX = x * step * ts;
 
             if (i === startIndex) {
               ctx.moveTo(currentX, y);
@@ -156,12 +168,15 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
 
           ctx.stroke();
 
-          if (isTriggered && config.triggerMode !== 'auto') {
-            ctx.fillStyle = colors.danger;
-            ctx.fillRect(10, 10, 8, 8);
-            ctx.fillStyle = colors.text;
-            ctx.font = '10px ui-monospace, monospace';
-            ctx.fillText('TRIGGERED', 25, 18);
+          if (triggerHoldBuffers > 0) {
+            triggerHoldBuffers -= 1;
+            if (cfg.triggerMode !== 'auto') {
+              ctx.fillStyle = colors.danger;
+              ctx.fillRect(10, 10, 8, 8);
+              ctx.fillStyle = colors.text;
+              ctx.font = '10px ui-monospace, monospace';
+              ctx.fillText('TRIGGERED', 25, 18);
+            }
           }
 
           const rms = Math.sqrt(samples.reduce((sum, s) => sum + s * s, 0) / Math.max(samples.length, 1));
@@ -180,6 +195,15 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
   };
 
   const stopAudio = () => {
+    if (processorRef.current) {
+      try {
+        processorRef.current.disconnect();
+        processorRef.current.onaudioprocess = null;
+      } catch {
+        /* already disconnected */
+      }
+      processorRef.current = null;
+    }
     if (audioContext) {
       void audioContext.close();
       setAudioContext(null);
@@ -189,7 +213,6 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
       sourceRef.current = null;
     }
     setIsRecording(false);
-    setIsTriggered(false);
   };
 
   useEffect(() => {
@@ -201,7 +224,8 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
   };
 
   return (
-    <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box p-4 md:p-6 gap-4">
+    <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
+      <div className="card-body p-4 md:p-6 gap-4">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
           <h2 className="card-title text-lg text-base-content">{module.name}</h2>
@@ -223,7 +247,7 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="form-control">
           <label className="label" htmlFor={`${module.id}-time`}>
-            <span className="label-text tabular-nums">Time Scale: {config.timeScale.toFixed(2)}</span>
+            <span className="label-text tabular-nums">Time Scale: {timeScale.toFixed(2)}</span>
           </label>
           <input
             id={`${module.id}-time`}
@@ -231,15 +255,15 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
             min="0.5"
             max="3"
             step="0.05"
-            value={config.timeScale}
+            value={timeScale}
             onChange={(e) => handleConfigUpdate({ timeScale: parseFloat(e.target.value) })}
-            className="range range-primary range-sm"
+            className="range range-primary range-sm w-full"
           />
         </div>
 
         <div className="form-control">
           <label className="label" htmlFor={`${module.id}-amp`}>
-            <span className="label-text tabular-nums">Amplitude: {config.amplitudeScale.toFixed(2)}</span>
+            <span className="label-text tabular-nums">Amplitude: {amplitudeScale.toFixed(2)}</span>
           </label>
           <input
             id={`${module.id}-amp`}
@@ -247,9 +271,9 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
             min="0.5"
             max="2"
             step="0.05"
-            value={config.amplitudeScale}
+            value={amplitudeScale}
             onChange={(e) => handleConfigUpdate({ amplitudeScale: parseFloat(e.target.value) })}
-            className="range range-primary range-sm"
+            className="range range-primary range-sm w-full"
           />
         </div>
 
@@ -320,9 +344,10 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
 
       {isRecording && (
         <p className="text-sm text-base-content/60 tabular-nums">
-          Частота: {audioContext?.sampleRate} Hz · {isTriggered ? 'Triggered' : 'Waiting'}
+          Частота: {audioContext?.sampleRate} Hz · запись активна
         </p>
       )}
+      </div>
     </div>
   );
 };

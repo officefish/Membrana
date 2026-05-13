@@ -51,6 +51,9 @@ export const SpectrumModule: React.FC<ModuleProps<SpectrumConfig>> = ({ module, 
     const pixelWidth = width / (spectrumData[0]?.length || 1);
     const pixelHeight = height / spectrumData.length;
 
+    ctx.fillStyle = colors.bg;
+    ctx.fillRect(0, 0, width, height);
+
     for (let y = 0; y < spectrumData.length; y++) {
       const row = spectrumData[y];
       if (!row) continue;
@@ -100,7 +103,8 @@ export const SpectrumModule: React.FC<ModuleProps<SpectrumConfig>> = ({ module, 
   };
 
   return (
-    <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box p-4 md:p-6 gap-4">
+    <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
+      <div className="card-body p-4 md:p-6 gap-4">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
           <h2 className="card-title text-lg text-base-content">{module.name}</h2>
@@ -158,13 +162,14 @@ export const SpectrumModule: React.FC<ModuleProps<SpectrumConfig>> = ({ module, 
           step="0.05"
           value={config.persistence}
           onChange={(e) => handleConfigUpdate({ persistence: parseFloat(e.target.value) })}
-          className="range range-primary range-sm"
+          className="range range-primary range-sm w-full"
         />
       </div>
 
       <p className="text-xs text-base-content/50 tabular-nums">
         Кадров: {spectrumData.length} · ширина буфера: {spectrumData[0]?.length ?? 0}
       </p>
+      </div>
     </div>
   );
 };

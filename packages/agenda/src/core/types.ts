@@ -29,7 +29,10 @@ export interface Module<TConfig = any> {
   enabled: boolean;
   config: TConfig;
   activePlugins: string[];
-  Component: React.ComponentType<ModuleProps<TConfig>>;
+  /** Синхронный компонент или React.lazy — чанк подгружается при первом монтировании. */
+  Component:
+    | React.ComponentType<ModuleProps<TConfig>>
+    | React.LazyExoticComponent<React.ComponentType<ModuleProps<TConfig>>>;
   defaultConfig?: Partial<TConfig>;
   availablePlugins?: Plugin[];
 }
@@ -48,6 +51,13 @@ export interface MembranaFilters {
   tags?: string[];
 }
 
+/** Сериализуемые настройки модуля (без React-компонента). */
+export interface ModuleUserPrefsSnapshot {
+  enabled: boolean;
+  config: Record<string, unknown>;
+  activePlugins: string[];
+}
+
 // Состояние store
 export interface MembranaState {
   modules: Map<string, Module>;
@@ -55,6 +65,11 @@ export interface MembranaState {
   categories: Map<string, Set<string>>;
   activeFilters: MembranaFilters;
   selectedModuleId: string | null;
+  /**
+   * После rehydrate: если карта модулей ещё пуста, накладывается в registerModule.
+   * Если модули уже есть — merge сразу применяет prefs и сбрасывает в null.
+   */
+  pendingModulePrefs: Record<string, ModuleUserPrefsSnapshot> | null;
   
   // Actions
   registerModule: <TConfig>(module: Omit<Module<TConfig>, 'enabled' | 'config' | 'activePlugins'> & { 
