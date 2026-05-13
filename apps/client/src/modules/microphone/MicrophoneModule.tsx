@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ModuleProps, useModulePlugins } from '@membrana/agenda';
+import {
+  MIC_STREAM_VIZ_PLUGIN_ID,
+  MicStreamVizPluginPanel,
+} from '../../plugins/microphone-stream-viz';
 import { publishMicrophoneStream } from './microphoneStreamHub';
 
 export interface MicrophoneConfig {
@@ -206,6 +210,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
               ))}
             </div>
           </div>
+        )}
+
+        {activeIds.includes(MIC_STREAM_VIZ_PLUGIN_ID) && (
+          <MicStreamVizPluginPanel moduleId={module.id} />
         )}
       </div>
     </div>

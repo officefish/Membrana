@@ -1,5 +1,6 @@
 import { useMembranaStore } from '@membrana/agenda';
 import { lazy } from 'react';
+import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 
 const FFTModule = lazy(() => import('./FFTModule').then((m) => ({ default: m.FFTModule })));
 const SpectrumModule = lazy(() =>
@@ -105,6 +106,8 @@ export function registerClientModules(): void {
     enabled: true,
     activePlugins: [],
   });
+
+  store.registerPlugin('microphone', createMicStreamVizPlugin());
 
   useMembranaStore.setState({ pendingModulePrefs: null });
 }

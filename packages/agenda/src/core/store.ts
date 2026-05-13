@@ -105,11 +105,54 @@ export const useMembranaStore = create<MembranaState>()(
               modulePlugins = new Map();
             }
             
-            // Устанавливаем плагин
-            modulePlugins.set(plugin.id, plugin);
+            const prev = modulePlugins.get(plugin.id);
+            const merged: Plugin =
+              prev !== undefined
+                ? {
+                    ...plugin,
+                    active: prev.active,
+                    config: { ...(plugin.config ?? {}), ...(prev.config ?? {}) },
+                  }
+                : plugin;
+
+            modulePlugins.set(plugin.id, merged);
             newPlugins.set(moduleId, modulePlugins);
-            
+
             return { plugins: newPlugins };
+          });
+        },
+
+        updatePluginConfig: (moduleId, pluginId, updates) => {
+          set((state) => {
+            let newPlugins = state.plugins;
+            if (!(newPlugins instanceof Map)) {
+              newPlugins = new Map();
+              if (state.plugins && typeof state.plugins === 'object') {
+                Object.entries(state.plugins).forEach(([k, v]) => {
+                  newPlugins.set(k, new Map(Object.entries(v as object)));
+                });
+              }
+            }
+
+            const modulePlugins = newPlugins.get(moduleId);
+            if (!(modulePlugins instanceof Map)) {
+              return {};
+            }
+
+            const plugin = modulePlugins.get(pluginId);
+            if (!plugin) {
+              return {};
+            }
+
+            const nextPlugins = new Map(newPlugins);
+            const nextModulePlugins = new Map(modulePlugins);
+            nextModulePlugins.set(pluginId, {
+              ...plugin,
+              config: { ...(plugin.config ?? {}), ...updates },
+            });
+            nextPlugins.set(moduleId, nextModulePlugins);
+
+            return { plugins: nextPlugins };
           });
         },
 
