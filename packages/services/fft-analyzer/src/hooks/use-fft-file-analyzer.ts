@@ -1,25 +1,28 @@
 /**
- * useFileAnalyzer — специализированный хук для batch-анализа файлов.
+ * useFftFileAnalyzer — batch-анализ файла через FFT.
  *
- * Не запускает live-цикл, не трогает микрофон. Вход: File / Blob / AudioBuffer.
+ * Использует useAudioFile из engine для декодирования и FftAnalyzer
+ * для математики. Возвращает прогресс и результат.
  */
 
 import { useCallback, useMemo, useState } from 'react';
 
-import { AudioAnalyzer } from '../core/audio-analyzer.js';
+import { useAudioFile } from '@membrana/audio-engine-service';
+
+import { FftAnalyzer } from '../core/fft-analyzer.js';
 import type {
   AudioAnalyzerConfig,
   FileAnalysisResult,
 } from '../types.js';
 
-export interface UseFileAnalyzerOptions {
+export interface UseFftFileAnalyzerOptions {
   readonly config?: Partial<AudioAnalyzerConfig>;
   readonly onProgress?: (progress: number) => void;
   readonly onComplete?: (result: FileAnalysisResult) => void;
   readonly onError?: (error: Error) => void;
 }
 
-export interface UseFileAnalyzerReturn {
+export interface UseFftFileAnalyzerReturn {
   readonly isAnalyzing: boolean;
   readonly progress: number;
   readonly result: FileAnalysisResult | null;
@@ -30,12 +33,18 @@ export interface UseFileAnalyzerReturn {
   readonly reset: () => void;
 }
 
-export function useFileAnalyzer(
-  options: UseFileAnalyzerOptions = {},
-): UseFileAnalyzerReturn {
+export function useFftFileAnalyzer(
+  options: UseFftFileAnalyzerOptions = {},
+): UseFftFileAnalyzerReturn {
   const { config, onProgress, onComplete, onError } = options;
 
-  const analyzer = useMemo(() => new AudioAnalyzer(config), [config?.fftSize]); // eslint-disable-line react-hooks/exhaustive-deps
+  const analyzer = useMemo(
+    () => new FftAnalyzer(config),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [config?.fftSize],
+  );
+
+  const fileLoader = useAudioFile();
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -49,7 +58,9 @@ export function useFileAnalyzer(
       setError(null);
 
       try {
-        const r = await analyzer.analyzeFile(source, (p) => {
+        const buffer =
+          source instanceof AudioBuffer ? source : await fileLoader.load(source);
+        const r = await analyzer.analyzeAudioBuffer(buffer, (p) => {
           setProgress(p);
           onProgress?.(p);
         });
@@ -66,7 +77,7 @@ export function useFileAnalyzer(
         setIsAnalyzing(false);
       }
     },
-    [analyzer, onProgress, onComplete, onError],
+    [analyzer, fileLoader, onProgress, onComplete, onError],
   );
 
   const reset = useCallback(() => {

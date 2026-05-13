@@ -21,20 +21,35 @@
 
 ## Граф зависимостей
 
+Сервисы делятся на **два слоя**:
+
 ```
 @membrana/core
    │
-   └── @membrana/services/<name>   ← один сервис
-            │
-            ├── используется в @membrana/agenda / device-board (опционально)
-            └── используется в apps/client (через хуки в плагинах и модулях)
+   ├── @membrana/<foundation>-service        ← foundation: общая инфраструктура
+   │       │   (audio-engine, io-engine, ...)
+   │       │
+   │       ├── @membrana/<analyzer>-service   ← analyzer: специализированный
+   │       │       (fft-analyzer, neural-analyzer, llm-analyzer, ...)
+   │       │
+   │       └── @membrana/<analyzer-2>-service
+   │
+   └── используется в @membrana/agenda / device-board / apps/client
 ```
 
-**Запреты:**
+### Правила
 
-- Сервис **не зависит** от других сервисов. Если возникла нужда — переноси общий код в `@membrana/core`.
-- Сервис **не зависит** от `@membrana/agenda` / `@membrana/device-board` / `apps/client`. Только наоборот.
+- **Foundation-сервисы** зависят ТОЛЬКО от `@membrana/core` + внешних npm-пакетов.
+- **Analyzer-сервисы** зависят от `@membrana/core` + одного или нескольких foundation-сервисов. **НЕ** зависят от других analyzer-сервисов.
+- Циклические зависимости запрещены на любом уровне.
+- Сервисы **не зависят** от `@membrana/agenda` / `@membrana/device-board` / `apps/client`. Только наоборот.
 - Сервис **не импортирует** React-компоненты — только React API (`useState`, `useEffect`, …).
+
+### Когда выделять foundation
+
+Создавай новый foundation-сервис, если **несколько** будущих analyzer-сервисов будут переиспользовать одну и ту же инфраструктуру. Пример: `audio-engine` появился, когда стало ясно, что FFT-, нейросетевой- и LLM-анализаторы будут получать данные одинаково (микрофон / файл / поток).
+
+Если общий код нужен только одному сервису — не выделяй, держи внутри.
 
 ## Структура файлов
 
@@ -56,7 +71,7 @@ packages/services/<name>/
     └── types.ts        # Типы и интерфейсы
 ```
 
-**Папочная (для сложных сервисов, эталон — `audio-analyzer`):**
+**Папочная (для сложных сервисов, эталон — `fft-analyzer` поверх `audio-engine`):**
 
 ```
 packages/services/<name>/
@@ -121,7 +136,7 @@ packages/services/<name>/
 
 ## Создание нового сервиса
 
-1. Скопировать `packages/services/_template/` (если он есть) или взять `audio-analyzer` как образец.
+1. Скопировать подходящий эталон: `audio-engine` (для foundation) или `fft-analyzer` (для analyzer).
 2. Переименовать в `package.json`: `@membrana/<имя>-service`.
 3. Прописать алиас в `apps/client/vite.config.ts`:
    ```ts
@@ -147,6 +162,9 @@ packages/services/<name>/
 - [ ] `yarn typecheck` и `yarn build` проходят.
 - [ ] (Желательно) есть unit-тесты на `service.ts` через Vitest.
 
-## Эталонный сервис
+## Эталонные сервисы
 
-См. `packages/services/audio-analyzer/` — образцовый пример. Любое сомнение в архитектуре — сравнивай с ним.
+- **Foundation**: `packages/services/audio-engine/` — поставка кадров, без анализа.
+- **Analyzer**: `packages/services/fft-analyzer/` — поверх engine, чистая математика + хуки.
+
+Любое сомнение в архитектуре — сравнивай с этими двумя.

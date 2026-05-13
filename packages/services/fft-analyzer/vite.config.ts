@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { resolve } from 'node:path';
 
 /**
- * Vite library-mode конфиг для сервиса @membrana/audio-analyzer-service.
+ * Vite library-mode конфиг для сервиса @membrana/fft-analyzer-service.
  *
  * Цель — собрать сервис как ESM-библиотеку, пригодную для использования
  * за пределами монорепо. Внутри монорепо клиент резолвит сервис через
@@ -30,6 +30,9 @@ export default defineConfig({
       '@membrana/core': fileURLToPath(
         new URL('../../core/src/index.ts', import.meta.url),
       ),
+      '@membrana/audio-engine-service': fileURLToPath(
+        new URL('../audio-engine/src/index.ts', import.meta.url),
+      ),
     },
   },
 
@@ -40,7 +43,13 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', '@membrana/core'],
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        '@membrana/core',
+        '@membrana/audio-engine-service',
+      ],
     },
     sourcemap: true,
     target: 'es2022',

@@ -1,23 +1,19 @@
 /**
- * @membrana/audio-analyzer-service — публичное API.
+ * @membrana/fft-analyzer-service — публичное API.
  *
- * Единственная точка входа. Всё, что не реэкспортировано отсюда, — приватно.
+ * Зависит от @membrana/audio-engine-service: engine поставляет кадры,
+ * а этот сервис применяет FFT и считает метрики.
  *
- * См. docs/SERVICES.md для архитектурных правил.
+ * См. docs/SERVICES.md.
  */
 
-// ============= Главный класс (engine) =============
+// ============= Главный класс (математика) =============
+export { FftAnalyzer } from './core/fft-analyzer.js';
+
+/** @deprecated Используй FftAnalyzer. */
 export { AudioAnalyzer } from './core/audio-analyzer.js';
 
-// ============= Хелперы engine-слоя =============
-export {
-  createAudioContext,
-  loadAudioBuffer,
-  checkMicrophonePermission,
-  getAudioInputDevices,
-} from './core/audio-helpers.js';
-
-// ============= Чистая математика (pure) =============
+// ============= Чистая математика =============
 export { FftCore } from './math/fft.js';
 export {
   SpectralFluxTracker,
@@ -34,15 +30,34 @@ export { mean, std, minOf, maxOf, summarize } from './math/statistics.js';
 
 // ============= React-хуки =============
 export {
+  useFftAnalyzer,
+  type UseFftAnalyzerOptions,
+  type UseFftAnalyzerReturn,
+} from './hooks/use-fft-analyzer.js';
+export {
+  useFftFileAnalyzer,
+  type UseFftFileAnalyzerOptions,
+  type UseFftFileAnalyzerReturn,
+} from './hooks/use-fft-file-analyzer.js';
+export {
+  useFftMicrophoneAnalyzer,
+  type UseFftMicrophoneAnalyzerOptions,
+  type UseFftMicrophoneAnalyzerReturn,
+} from './hooks/use-fft-microphone-analyzer.js';
+
+/** @deprecated Используй useFftAnalyzer / useFftFileAnalyzer / useFftMicrophoneAnalyzer. */
+export {
   useAudioAnalyzer,
   type UseAudioAnalyzerOptions,
   type UseAudioAnalyzerReturn,
 } from './hooks/use-audio-analyzer.js';
+/** @deprecated */
 export {
   useFileAnalyzer,
   type UseFileAnalyzerOptions,
   type UseFileAnalyzerReturn,
 } from './hooks/use-file-analyzer.js';
+/** @deprecated */
 export {
   useMicrophoneAnalyzer,
   type UseMicrophoneAnalyzerOptions,

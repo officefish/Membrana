@@ -23,7 +23,10 @@
 - `packages/core` — базовые типы, ошибки, контракты, утилиты (не зависит от других).
 - `packages/agenda` — модули, плагины, store на Zustand, UI-обвязка (зависит от core).
 - `packages/device-board` — управление устройствами (зависит от core).
-- `packages/services/*` — **автономные vite-ts-react пакеты-сервисы** с чистой бизнес-логикой и React-хуками. См. `docs/SERVICES.md`. Пример: `packages/services/audio-analyzer`.
+- `packages/services/*` — **автономные vite-ts-react пакеты-сервисы** с чистой бизнес-логикой и React-хуками. Делятся на два слоя:
+  - **foundation** (общая инфраструктура, зависит только от core) — пример: `packages/services/audio-engine`;
+  - **analyzer** (поверх foundation, специализированный анализ) — пример: `packages/services/fft-analyzer`.
+  Подробно: `docs/SERVICES.md`.
 - `apps/client` — клиент на Vite + React + DaisyUI (зависит от всех вышеперечисленных).
 
 ## Общие правила
@@ -41,7 +44,10 @@
 
 - `@membrana/core` — НИ ОТ КОГО не зависит (кроме внешних npm-пакетов).
 - `@membrana/agenda` и `@membrana/device-board` зависят ТОЛЬКО от `@membrana/core`, но не друг от друга.
-- `@membrana/<name>-service` (`packages/services/*`) зависит ТОЛЬКО от `@membrana/core`. Сервисы НЕ зависят друг от друга, НЕ зависят от agenda / device-board / client.
+- `@membrana/<name>-service` (`packages/services/*`):
+  - **foundation-сервисы** зависят ТОЛЬКО от `@membrana/core`.
+  - **analyzer-сервисы** зависят от `@membrana/core` + foundation-сервисов, но НЕ от других analyzer-сервисов.
+  - Все сервисы НЕ зависят от agenda / device-board / client. Циклы запрещены.
 - `apps/client` — может зависеть от любых пакетов и сервисов.
 
 ### Правила сервисов (`packages/services/*`)
@@ -81,7 +87,8 @@
 - `@membrana/core` → `packages/core/src/index.ts`
 - `@membrana/agenda` → `packages/agenda/src/index.ts`
 - `@membrana/device-board` → `packages/device-board/src/index.ts`
-- `@membrana/audio-analyzer-service` → `packages/services/audio-analyzer/src/index.ts`
+- `@membrana/audio-engine-service` → `packages/services/audio-engine/src/index.ts` (foundation)
+- `@membrana/fft-analyzer-service` → `packages/services/fft-analyzer/src/index.ts` (analyzer, depends on audio-engine)
 - `@membrana/<новый>-service` → `packages/services/<новый>/src/index.ts` (добавить alias в `apps/client/vite.config.ts` и `apps/client/tsconfig.app.json`)
 
 ## Тестирование
@@ -133,7 +140,8 @@
 
 Создай новый автономный сервис в `packages/services/<name>` строго по `docs/SERVICES.md`:
 
-1. Скопируй структуру `packages/services/audio-analyzer` как образец.
+1. Определи слой: foundation (если общая инфра для нескольких analyzer'ов) или analyzer (специализированный анализ поверх foundation).
+2. Скопируй подходящий эталон: `packages/services/audio-engine` (foundation) или `packages/services/fft-analyzer` (analyzer).
 2. Заполни `package.json` (`@membrana/<name>-service`), `tsconfig.json`, `vite.config.ts`.
 3. Создай `src/`:
    - `service.ts` — чистое ядро без React/DOM/Web Audio.

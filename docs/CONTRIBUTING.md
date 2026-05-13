@@ -19,7 +19,7 @@
 
 Шаги (полный чек-лист — в [SERVICES.md](./SERVICES.md#создание-нового-сервиса)):
 
-1. Скопировать `packages/services/audio-analyzer/` как образец, переименовать.
+1. Скопировать подходящий эталон: `packages/services/audio-engine/` для foundation или `packages/services/fft-analyzer/` для analyzer, переименовать.
 2. Прописать в `package.json` имя `@membrana/<name>-service`.
 3. Добавить alias в `apps/client/vite.config.ts` и `tsconfig.app.json`.
 4. Добавить запись в таблицу `packages/services/README.md`.

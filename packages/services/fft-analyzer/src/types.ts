@@ -1,5 +1,5 @@
 /**
- * Типы и контракты сервиса @membrana/audio-analyzer-service.
+ * Типы и контракты сервиса @membrana/fft-analyzer-service.
  * Этот файл не зависит ни от чего, кроме TypeScript.
  */
 

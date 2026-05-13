@@ -1,7 +1,7 @@
 {
-  "name": "@membrana/audio-analyzer-service",
+  "name": "@membrana/fft-analyzer-service",
   "version": "0.1.0",
-  "description": "Унифицированный сервис анализа аудио: live (микрофон/MediaStream) и file (File/Blob/AudioBuffer) режимы с метриками FFT, центроида, flux, RMS и детекцией по порогам. Чистая математика + React-хуки.",
+  "description": "FFT-анализатор аудио: спектральный центроид, flux, RMS, детекция по порогам. Использует @membrana/audio-engine-service для подачи данных.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -26,7 +26,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@membrana/core": "*"
+    "@membrana/core": "*",
+    "@membrana/audio-engine-service": "*"
   },
   "peerDependencies": {
     "react": "^18.0.0"

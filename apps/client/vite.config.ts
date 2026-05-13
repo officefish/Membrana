@@ -29,8 +29,11 @@ export default defineConfig({
       ),
       // Сервисы из packages/services/* — alias-им на исходники,
       // чтобы dev-HMR работал без шага сборки. См. docs/SERVICES.md.
-      '@membrana/audio-analyzer-service': fileURLToPath(
-        new URL('../../packages/services/audio-analyzer/src/index.ts', import.meta.url),
+      '@membrana/audio-engine-service': fileURLToPath(
+        new URL('../../packages/services/audio-engine/src/index.ts', import.meta.url),
+      ),
+      '@membrana/fft-analyzer-service': fileURLToPath(
+        new URL('../../packages/services/fft-analyzer/src/index.ts', import.meta.url),
       ),
       '@membrana/audio-data-viz': fileURLToPath(
         new URL('../../packages/libs/audioDataViz/src/index.ts', import.meta.url),

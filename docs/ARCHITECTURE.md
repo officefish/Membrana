@@ -19,13 +19,14 @@
 Самостоятельные **vite-ts-react** пакеты с чистой бизнес-логикой и тонким React-слоем. Подробные правила: [SERVICES.md](./SERVICES.md).
 
 - Каждый сервис лежит в `packages/services/<имя>/` и имеет собственные `package.json`, `tsconfig.json`, `vite.config.ts`.
-- Имя пакета: `@membrana/<имя>-service` (например, `@membrana/audio-analyzer-service`).
+- Имя пакета: `@membrana/<имя>-service` (например, `@membrana/audio-engine-service`, `@membrana/fft-analyzer-service`).
 - Допустимые зависимости: **только** `@membrana/core` + внешние npm-пакеты.
 - **Нельзя**: зависеть от других сервисов, от `@membrana/agenda` / `@membrana/device-board` / `apps/client`.
 - Публичный API — через `src/index.ts`. Внутреннее деление: `service.ts` (чистая логика), `hooks.ts` (React-обёртка), `types.ts`.
 - Клиент потребляет сервисы через alias в `apps/client/vite.config.ts` (на исходники) — без шага сборки в dev.
 
-Эталон — `packages/services/audio-analyzer/`.
+Эталоны: `packages/services/audio-engine/` (foundation) + `packages/services/fft-analyzer/` (analyzer).
+Разделение **foundation ↔ analyzer** позволяет переиспользовать одну инфраструктуру для разных видов анализа (FFT, нейросети, LLM).
 
 ## 2. Плагины и слабая связанность (домен аудио)
 
