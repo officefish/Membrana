@@ -101,6 +101,25 @@ export class LiveSampler {
     return this.config;
   }
 
+  /**
+   * AnalyserNode, через который engine выбирает сэмплы. Нужен визуализациям,
+   * которые умеют рендериться напрямую от Web Audio (например, виджеты из
+   * @membrana/audio-data-viz). Возвращает null, когда sampler не запущен.
+   */
+  getAnalyserNode(): AnalyserNode | null {
+    return this.analyserNode;
+  }
+
+  /** AudioContext, активный в данный момент. null до start() / после stop(). */
+  getAudioContext(): AudioContext | null {
+    return this.audioContext;
+  }
+
+  /** Текущий MediaStream, если sampler запущен. */
+  getMediaStream(): MediaStream | null {
+    return this.liveStream;
+  }
+
   updateConfig(patch: Partial<LiveCaptureConfig>): void {
     this.config = { ...this.config, ...patch };
     if (this.analyserNode) {

@@ -1,0 +1,112 @@
+[Teamlead]: Сейчас в репозитории тестов почти нет: найден только scripts/context-collector-paths.test.mjs. При этом CI уже запускает yarn turbo run lint typecheck test build --continue, но пакеты используют vitest run --passWithNoTests, поэтому тестовый слой пока в основном пустой.
+
+Что написать в первую очередь
+
+1. packages/agenda — store/registry tests
+   Самый важный пакет сейчас: @membrana/agenda.
+
+Покрыть:
+
+registerModule
+
+сохраняет enabled, config, activePlugins;
+накладывает defaultConfig;
+корректно применяет pendingModulePrefs.
+registerPlugin<TConfig>
+
+принимает типизированный Plugin<MicStreamVizPluginConfig>;
+сохраняет active;
+при повторной регистрации мержит config;
+не теряет предыдущее пользовательское состояние.
+activatePlugin / deactivatePlugin / togglePlugin
+
+меняют plugin.active;
+синхронизируют module.activePlugins.
+persist.merge
+
+читает новый modulePrefs;
+читает legacy modules;
+не кладёт React-компоненты в persisted state.
+В ежедневный CI: да, обязательно.
+
+2. apps/client — регистрация модулей и плагинов
+   Покрыть apps/client/src/modules/registerClientModules.ts.
+
+Проверить:
+
+регистрируются FFT, Spectrum, AudioFileUpload, Oscilloscope, Microphone;
+microphone получает plugin microphone-stream-viz;
+createMicStreamVizPlugin() проходит через прямой store.registerPlugin;
+после регистрации pendingModulePrefs сбрасывается.
+Это поймало бы свежую проблему с Plugin<MicStreamVizPluginConfig> раньше, если добавить type/build check уже есть, а runtime test подтвердит поведение store.
+
+В ежедневный CI: да.
+
+3. apps/client/src/modules/microphone/microphoneStreamHub.ts
+   Очень маленький, но важный тест.
+
+Покрыть:
+
+late subscriber сразу получает последний MediaStream;
+late subscriber получает null, если поток уже остановлен;
+unsubscribe удаляет listener;
+публикация в один moduleId не затрагивает другой.
+В ежедневный CI: да.
+
+4. packages/services/fft-analyzer — чистая математика
+   Начать с src/math/\*:
+
+fft.ts
+metrics.ts
+statistics.ts
+Проверить на фиксированных входах:
+
+zero signal;
+constant signal;
+simple sine-like buffer;
+RMS;
+spectral centroid;
+threshold detection;
+edge cases: пустой массив, маленький буфер, некорректный window size.
+В ежедневный CI: да, это быстрые deterministic unit tests.
+
+5. apps/client/src/plugins/microphone-stream-viz/types.ts
+   Покрыть resolveMicStreamVizConfig.
+
+Проверить:
+
+undefined → default config;
+частичный config → default + override;
+неправильные типы игнорируются;
+все boolean-флаги сохраняются.
+В ежедневный CI: да.
+
+Что добавить в CI прямо сейчас
+Текущий CI уже делает:
+
+yarn turbo run lint typecheck test build --continue
+Я бы добавил отдельным шагом:
+
+yarn test:scripts
+Потому что scripts/context-collector-paths.test.mjs сейчас живёт на root-уровне и не входит в workspace turbo run test.
+
+Итого daily CI:
+
+yarn install --immutable
+yarn test:scripts
+yarn turbo run lint typecheck test build --continue
+Что НЕ включать в ежедневный CI пока
+реальные тесты микрофона через браузерные permissions;
+реальные Web Audio integration tests;
+Anthropic/API code-review;
+E2E с настоящим устройством ввода.
+Это лучше вынести в manual или scheduled workflow позже.
+
+Мой рекомендуемый порядок
+@membrana/agenda store tests.
+apps/client registration smoke test.
+microphoneStreamHub replay tests.
+fft-analyzer math tests.
+resolveMicStreamVizConfig tests.
+Добавить yarn test:scripts в CI.
+Итог: в ежедневный CI включать все быстрые unit/integration tests без браузерных permissions и внешних API.
