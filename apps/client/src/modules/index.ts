@@ -6,3 +6,4 @@ export type { FFTConfig } from './FFTModule';
 export type { SpectrumConfig } from './SpectrumModule';
 export type { OscilloscopeConfig } from './OscilloscopeModule';
 export type { AudioFileUploadConfig } from './AudioFileUploadModule';
+export type { MicrophoneConfig } from './microphone/MicrophoneModule';

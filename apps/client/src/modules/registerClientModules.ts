@@ -1,9 +1,7 @@
-import { lazy } from 'react';
 import { useMembranaStore } from '@membrana/agenda';
+import { lazy } from 'react';
 
-const FFTModule = lazy(() =>
-  import('./FFTModule').then((m) => ({ default: m.FFTModule })),
-);
+const FFTModule = lazy(() => import('./FFTModule').then((m) => ({ default: m.FFTModule })));
 const SpectrumModule = lazy(() =>
   import('./SpectrumModule').then((m) => ({ default: m.SpectrumModule })),
 );
@@ -14,6 +12,9 @@ const AudioFileUploadModule = lazy(() =>
 );
 const OscilloscopeModule = lazy(() =>
   import('./OscilloscopeModule').then((m) => ({ default: m.OscilloscopeModule })),
+);
+const MicrophoneModule = lazy(() =>
+  import('./microphone/MicrophoneModule').then((m) => ({ default: m.MicrophoneModule })),
 );
 
 /**
@@ -29,7 +30,7 @@ export function registerClientModules(): void {
     name: 'FFT Анализатор',
     description: 'Быстрое преобразование Фурье для анализа частот',
     version: '1.0.0',
-    category: 'Анализаторы',
+    category: 'Анализ',
     Component: FFTModule,
     defaultConfig: {
       fftSize: 2048,
@@ -78,7 +79,7 @@ export function registerClientModules(): void {
     name: 'Осциллограф',
     description: 'Визуализация волновой формы сигнала',
     version: '1.0.0',
-    category: 'Анализаторы',
+    category: 'Анализ',
     Component: OscilloscopeModule,
     defaultConfig: {
       timeScale: 1,
@@ -86,6 +87,20 @@ export function registerClientModules(): void {
       showGrid: true,
       triggerMode: 'auto',
       colorScheme: 'classic',
+    },
+    enabled: true,
+    activePlugins: [],
+  });
+
+  store.registerModule({
+    id: 'microphone',
+    name: 'Микрофон',
+    description: 'Выбор источника звука и запуск потока для анализа и плагинов',
+    version: '1.0.0',
+    category: 'Устройства',
+    Component: MicrophoneModule,
+    defaultConfig: {
+      selectedDeviceId: '',
     },
     enabled: true,
     activePlugins: [],
