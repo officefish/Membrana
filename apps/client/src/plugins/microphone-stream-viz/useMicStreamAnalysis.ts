@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type MutableRefObject } from 'react';
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
 
 const WF_LEN = 200;
@@ -29,9 +29,11 @@ export type MicStreamMetrics = typeof initialMetrics;
 export function useMicStreamAnalysis(moduleId: string): {
   live: boolean;
   metrics: MicStreamMetrics;
+  analyserRef: MutableRefObject<AnalyserNode | null>;
 } {
   const [live, setLive] = useState(false);
   const [metrics, setMetrics] = useState<MicStreamMetrics>(initialMetrics);
+  const analyserRef = useRef<AnalyserNode | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,6 +48,7 @@ export function useMicStreamAnalysis(moduleId: string): {
       cancelAnimationFrame(rafId);
 
       if (!stream || stream.getAudioTracks().length === 0) {
+        analyserRef.current = null;
         setLive(false);
         setMetrics(initialMetrics);
         return;
@@ -57,6 +60,7 @@ export function useMicStreamAnalysis(moduleId: string): {
       analyser.fftSize = 2048;
       analyser.smoothingTimeConstant = 0.75;
       source.connect(analyser);
+      analyserRef.current = analyser;
 
       const timeData = new Uint8Array(analyser.fftSize);
       const freqData = new Uint8Array(analyser.frequencyBinCount);
@@ -108,6 +112,7 @@ export function useMicStreamAnalysis(moduleId: string): {
       void ctx.resume();
 
       teardown = () => {
+        analyserRef.current = null;
         cancelAnimationFrame(rafId);
         rafId = 0;
         try {
@@ -121,6 +126,7 @@ export function useMicStreamAnalysis(moduleId: string): {
 
     return () => {
       cancelled = true;
+      analyserRef.current = null;
       cancelAnimationFrame(rafId);
       teardown?.();
       unlisten();
@@ -129,5 +135,5 @@ export function useMicStreamAnalysis(moduleId: string): {
     };
   }, [moduleId]);
 
-  return { live, metrics };
+  return { live, metrics, analyserRef };
 }

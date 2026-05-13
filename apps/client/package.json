@@ -16,9 +16,10 @@
   },
   "dependencies": {
     "@membrana/agenda": "*",
+    "@membrana/audio-analyzer-service": "*",
+    "@membrana/audio-data-viz": "*",
     "@membrana/core": "*",
     "@membrana/device-board": "*",
-    "@membrana/audio-analyzer-service": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

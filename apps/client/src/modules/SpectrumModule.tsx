@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ModuleProps, useTheme } from '@membrana/agenda';
-import { getCanvasThemeColors } from '../utils/themeCanvasColors';
+import { getCanvasThemeColors } from '@membrana/audio-data-viz';
 
 export interface SpectrumConfig {
   colormap: string;

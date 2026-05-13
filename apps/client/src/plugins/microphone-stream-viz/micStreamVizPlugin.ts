@@ -13,7 +13,7 @@ export function createMicStreamVizPlugin(): Plugin<MicStreamVizPluginConfig> {
   return {
     id: MIC_STREAM_VIZ_PLUGIN_ID,
     name: 'Визуализация потока',
-    description: 'Громкость, качество, осциллограмма и спектр по потоку микрофона',
+    description: 'Громкость, качество, осциллограмма, спектр, FFT-столбики и кривая спектра',
     version: '1.0.0',
     active: false,
     config: { ...defaultMicStreamVizConfig },

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ModuleProps, useTheme } from '@membrana/agenda';
 import { downsampleToPeaks } from '../utils/downsamplePeaks';
-import { getCanvasThemeColors } from '../utils/themeCanvasColors';
+import { getCanvasThemeColors } from '@membrana/audio-data-viz';
 
 export interface AudioFileUploadConfig {
   fftSize: 512 | 1024 | 2048 | 4096;

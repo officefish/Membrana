@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ModuleProps, useModulePlugins } from '@membrana/agenda';
-import { getCanvasThemeColors } from '../utils/themeCanvasColors';
+import { renderFftBarsCanvas } from '@membrana/audio-data-viz';
 
 export interface FFTConfig {
   fftSize: number;
@@ -56,37 +56,7 @@ export const FFTModule: React.FC<ModuleProps<FFTConfig>> = ({
       analyserNode.getByteFrequencyData(dataArray);
 
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const colors = getCanvasThemeColors();
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const cssW = Math.max(320, Math.floor(rect.width));
-      const cssH = Math.max(180, Math.floor(rect.height));
-      canvas.width = Math.floor(cssW * dpr);
-      canvas.height = Math.floor(cssH * dpr);
-      canvas.style.width = `${cssW}px`;
-      canvas.style.height = `${cssH}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const width = cssW;
-      const height = cssH;
-      const barWidth = width / dataArray.length;
-
-      ctx.fillStyle = colors.bg;
-      ctx.fillRect(0, 0, width, height);
-
-      for (let i = 0; i < dataArray.length; i++) {
-        const value = dataArray[i] ?? 0;
-        const barHeight = (value / 255) * height;
-        const x = i * barWidth;
-        const y = height - barHeight;
-        ctx.fillStyle = colors.accent;
-        ctx.globalAlpha = 0.35 + (value / 255) * 0.65;
-        ctx.fillRect(x, y, Math.max(1, barWidth - 1), barHeight);
-      }
-      ctx.globalAlpha = 1;
+      renderFftBarsCanvas(canvas, dataArray, { minCssWidth: 320, minCssHeight: 180 });
 
       animationRef.current = requestAnimationFrame(draw);
     };

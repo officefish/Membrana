@@ -32,6 +32,9 @@ export default defineConfig({
       '@membrana/audio-analyzer-service': fileURLToPath(
         new URL('../../packages/services/audio-analyzer/src/index.ts', import.meta.url),
       ),
+      '@membrana/audio-data-viz': fileURLToPath(
+        new URL('../../packages/libs/audioDataViz/src/index.ts', import.meta.url),
+      ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
