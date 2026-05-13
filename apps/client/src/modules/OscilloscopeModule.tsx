@@ -226,11 +226,7 @@ export const OscilloscopeModule: React.FC<ModuleProps<OscilloscopeConfig>> = ({
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
       <div className="card-body p-4 md:p-6 gap-4">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h2 className="card-title text-lg text-base-content">{module.name}</h2>
-          <p className="text-sm text-base-content/60">{module.description}</p>
-        </div>
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
           onClick={isRecording ? stopAudio : initAudio}

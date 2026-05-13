@@ -12,6 +12,7 @@ export default {
     '../../packages/agenda/src/**/*.{ts,tsx}',
     '../../packages/core/src/**/*.{ts,tsx}',
     '../../packages/device-board/src/**/*.{ts,tsx}',
+    '../../packages/libs/audioDataViz/src/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {},

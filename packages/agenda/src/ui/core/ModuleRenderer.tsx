@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { useMembranaStore, useModuleProps } from '../../core/hooks';
 import { isRenderableComponentType } from '../../core/isRenderableComponentType';
 import type { ModuleProps } from '../../core/types';
+import { ModuleHeader } from './ModuleHeader';
 
 const ModuleLoadingFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] gap-3 text-base-content/60">
@@ -26,10 +27,12 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({
   if (!selectedModuleId || !module || !props) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <div className="text-center text-gray-500">
-          <div className="text-6xl mb-4">📦</div>
-          <div className="text-lg">{emptyMessage}</div>
-          <div className="text-sm mt-2">Активируйте модуль и выберите его в сайдбаре</div>
+        <div className="text-center max-w-sm px-4">
+          <div className="mx-auto mb-4 h-14 w-14 rounded-box border border-base-300 bg-base-200/80" aria-hidden />
+          <p className="text-base text-base-content">{emptyMessage}</p>
+          <p className="text-xs text-base-content/55 mt-2 leading-relaxed">
+            Активируйте модуль и выберите его в боковой панели.
+          </p>
         </div>
       </div>
     );
@@ -39,10 +42,15 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({
   if (!module.enabled) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <div className="text-center text-gray-500">
-          <div className="text-6xl mb-4">⚠️</div>
-          <div className="text-lg">Модуль "{module.name}" отключен</div>
-          <div className="text-sm mt-2">Включите модуль в сайдбаре</div>
+        <div className="text-center max-w-sm px-4">
+          <div
+            className="mx-auto mb-4 h-14 w-14 rounded-box border border-warning/40 bg-warning/10"
+            aria-hidden
+          />
+          <p className="text-base text-base-content">Модуль «{module.name}» отключён</p>
+          <p className="text-xs text-base-content/55 mt-2 leading-relaxed">
+            Включите модуль в боковой панели.
+          </p>
         </div>
       </div>
     );
@@ -61,7 +69,8 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({
   const ModuleView = module.Component as React.ComponentType<ModuleProps>;
 
   return (
-    <div className={className}>
+    <div className={`flex flex-col gap-6 ${className}`}>
+      <ModuleHeader title={module.name} description={module.description} />
       <Suspense fallback={<ModuleLoadingFallback />}>
         <ModuleView {...props} />
       </Suspense>

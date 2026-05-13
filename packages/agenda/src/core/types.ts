@@ -44,6 +44,14 @@ export interface ModuleProps<TConfig = any> {
   onTogglePlugin?: (pluginId: string) => void;
 }
 
+/** Аргументы кастомного рендера настроек плагина в сайдбаре (вкладка «Плагины»). */
+export interface PluginSidebarDetailsArgs {
+  moduleId: string;
+  pluginId: string;
+  pluginName: string;
+  config: unknown;
+}
+
 // Фильтры
 export interface MembranaFilters {
   categories?: string[];

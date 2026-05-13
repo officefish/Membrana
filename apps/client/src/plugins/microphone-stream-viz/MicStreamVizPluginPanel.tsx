@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useMembranaStore } from '@membrana/agenda';
 import {
   LiveFftBarsCanvas,
@@ -9,12 +9,7 @@ import {
   Waveform,
 } from '@membrana/audio-data-viz';
 import { useMicStreamAnalysis } from './useMicStreamAnalysis';
-import { StreamVizPluginControls, type StreamVizToggleKey } from './StreamVizPluginControls';
-import {
-  MIC_STREAM_VIZ_PLUGIN_ID,
-  resolveMicStreamVizConfig,
-  type MicStreamVizPluginConfig,
-} from './types';
+import { MIC_STREAM_VIZ_PLUGIN_ID, resolveMicStreamVizConfig } from './types';
 
 export interface MicStreamVizPluginPanelProps {
   moduleId: string;
@@ -23,16 +18,6 @@ export interface MicStreamVizPluginPanelProps {
 export const MicStreamVizPluginPanel: React.FC<MicStreamVizPluginPanelProps> = ({ moduleId }) => {
   const rawConfig = useMembranaStore((s) => s.getPlugin(moduleId, MIC_STREAM_VIZ_PLUGIN_ID)?.config);
   const pluginConfig = useMemo(() => resolveMicStreamVizConfig(rawConfig), [rawConfig]);
-  const updatePluginConfig = useMembranaStore((s) => s.updatePluginConfig);
-
-  const onToggleWidget = useCallback(
-    (key: StreamVizToggleKey) => {
-      updatePluginConfig<MicStreamVizPluginConfig>(moduleId, MIC_STREAM_VIZ_PLUGIN_ID, {
-        [key]: !pluginConfig[key],
-      });
-    },
-    [moduleId, pluginConfig, updatePluginConfig],
-  );
 
   const { live, metrics, analyserRef } = useMicStreamAnalysis(moduleId);
 
@@ -41,11 +26,9 @@ export const MicStreamVizPluginPanel: React.FC<MicStreamVizPluginPanelProps> = (
       <div>
         <h3 className="text-sm font-semibold text-base-content">Визуализация потока</h3>
         <p className="text-xs text-base-content/60 mt-0.5">
-          Плагин «Поток микрофона»: виджеты и их видимость хранятся в конфигурации плагина.
+          Видимость виджетов настраивается во вкладке «Плагины» слева (блок «Настройки» у этого плагина).
         </p>
       </div>
-
-      <StreamVizPluginControls pluginConfig={pluginConfig} onToggle={onToggleWidget} />
 
       {!live && (
         <p className="text-xs text-center text-base-content/50 py-2">

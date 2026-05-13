@@ -20,6 +20,7 @@ export { PluginsList } from './ui/core/PluginsList';
 export { ModuleGrid } from './ui/core/ModuleGrid';
 export { CategoryList } from './ui/core/CategoryList';
 export { ModuleRenderer } from './ui/core/ModuleRenderer';
+export { ModuleHeader } from './ui/core/ModuleHeader';
 export { ModuleToggle, ModuleSwitch } from './ui/controls/ModuleToggle';
 export { PluginToggle, PluginList } from './ui/controls/PluginToggle';
 export { ThemeSelector } from './ui/controls/ThemeSelector';

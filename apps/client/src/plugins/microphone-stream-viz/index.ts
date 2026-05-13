@@ -5,4 +5,5 @@ export {
   type MicStreamVizPluginConfig,
 } from './types';
 export { MicStreamVizPluginPanel } from './MicStreamVizPluginPanel';
+export { StreamVizPluginWidgetRadios } from './StreamVizPluginWidgetRadios';
 export { createMicStreamVizPlugin } from './micStreamVizPlugin';

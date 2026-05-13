@@ -17,11 +17,14 @@ const themeIcons: Record<(typeof themes)[number], string> = {
 interface ThemeSelectorProps {
   className?: string;
   showLabel?: boolean;
+  /** When false, theme emojis are omitted in the trigger and list (checkmark remains). */
+  showIcons?: boolean;
 }
 
-export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ 
-  className = '', 
-  showLabel = true 
+export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
+  className = '',
+  showLabel = true,
+  showIcons = true,
 }) => {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +34,10 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   return (
     <div className={`relative ${className}`}>
       {showLabel && (
-        <span className="text-sm text-base-content/70 mr-2">🎨 Тема:</span>
+        <span className="text-sm text-base-content/70 mr-2">
+          {showIcons ? '🎨 ' : ''}
+          Тема:
+        </span>
       )}
       
       <div className="dropdown dropdown-end">
@@ -39,7 +45,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
           onClick={() => setIsOpen(!isOpen)}
           className="btn btn-sm btn-ghost gap-2"
         >
-          <span className="text-lg">{themeIcons[currentTheme]}</span>
+          {showIcons ? <span className="text-lg">{themeIcons[currentTheme]}</span> : null}
           <span className="capitalize">{currentTheme}</span>
         </button>
         
@@ -54,7 +60,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
                   }}
                   className={`capitalize ${theme === t ? 'active' : ''}`}
                 >
-                  <span className="text-lg">{themeIcons[t]}</span>
+                  {showIcons ? <span className="text-lg">{themeIcons[t]}</span> : null}
                   {t}
                   {theme === t && <span className="ml-auto">✓</span>}
                 </button>

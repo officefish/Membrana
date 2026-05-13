@@ -6,6 +6,9 @@ type StreamListener = (stream: MediaStream | null) => void;
 
 const byModule = new Map<string, Set<StreamListener>>();
 
+/** Last value published per module — replayed when a subscriber attaches after the stream already started. */
+const lastStreamByModule = new Map<string, MediaStream | null>();
+
 export function subscribeMicrophoneStream(
   moduleId: string,
   listener: StreamListener,
@@ -16,6 +19,9 @@ export function subscribeMicrophoneStream(
     byModule.set(moduleId, set);
   }
   set.add(listener);
+  if (lastStreamByModule.has(moduleId)) {
+    listener(lastStreamByModule.get(moduleId)!);
+  }
   return () => {
     set!.delete(listener);
     if (set!.size === 0) {
@@ -28,6 +34,7 @@ export function publishMicrophoneStream(
   moduleId: string,
   stream: MediaStream | null,
 ): void {
+  lastStreamByModule.set(moduleId, stream);
   const set = byModule.get(moduleId);
   if (!set) return;
   for (const fn of set) {

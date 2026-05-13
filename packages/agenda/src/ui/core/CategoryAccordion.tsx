@@ -24,64 +24,27 @@ const CategoryItem: React.FC<{
   mode: 'all' | 'favorites';
 }> = ({ category, mode }) => {
   const modules = useModulesByCategory(category);
-  const store = useMembranaStore.getState();
-  
-  const anyModuleEnabled = modules.some(m => m.enabled);
-  const allModulesEnabled = modules.length > 0 && modules.every(m => m.enabled);
-  
-  // Фильтруем избранные модули
-  const favoriteModules = modules.filter(module => {
+
+  const favoriteModules = modules.filter((module) => {
     return module.enabled || module.activePlugins.length > 0;
   });
-  
+
   const displayModules = mode === 'all' ? modules : favoriteModules;
-  
+
   if (displayModules.length === 0 && mode === 'favorites') return null;
-  
-  const handleCategoryToggle = (e: React.ChangeEvent) => {
-    e.stopPropagation();
-    if (allModulesEnabled) {
-      store.disableCategory(category);
-    } else {
-      store.enableCategory(category);
-    }
-  };
-  
+
   return (
     <div className="collapse collapse-arrow bg-base-200 rounded-box">
-      {/* Заголовок категории - кликабельный для раскрытия */}
       <input type="checkbox" className="peer" defaultChecked={true} />
-      
-      <div className="collapse-title flex items-center justify-between p-3">
-        <div className="flex items-center gap-2">
-          <span className="font-medium text-base-content">{category}</span>
-          <span className="text-xs text-base-content/50">({displayModules.length})</span>
-        </div>
-        
-        {mode === 'all' && (
-          <label className="flex items-center gap-2 cursor-pointer" onClick={(e) => e.stopPropagation()}>
-            <input
-              type="checkbox"
-              checked={allModulesEnabled}
-              ref={input => {
-                if (input) {
-                  input.indeterminate = anyModuleEnabled && !allModulesEnabled && modules.length > 0;
-                }
-              }}
-              onChange={handleCategoryToggle}
-              className="checkbox checkbox-sm checkbox-primary"
-            />
-            <span className="text-xs text-base-content/60">
-              {allModulesEnabled ? 'Выкл все' : 'Вкл все'}
-            </span>
-          </label>
-        )}
+
+      <div className="collapse-title flex items-center gap-2 min-w-0 p-3 min-h-0">
+        <span className="text-sm font-medium text-base-content truncate">{category}</span>
+        <span className="text-[11px] text-base-content/45 tabular-nums shrink-0">({displayModules.length})</span>
       </div>
-      
-      {/* Контент категории - список модулей */}
+
       <div className="collapse-content p-0">
         <div className="divide-y divide-base-300">
-          {displayModules.map(module => (
+          {displayModules.map((module) => (
             <ModuleItem key={module.id} module={module} mode={mode} />
           ))}
         </div>
@@ -135,7 +98,7 @@ const ModuleItem: React.FC<{
               />
             )}
             
-            <span className={`font-medium text-sm ${isSelected ? 'text-primary' : 'text-base-content'}`}>
+            <span className={`font-medium text-xs sm:text-sm ${isSelected ? 'text-primary' : 'text-base-content'}`}>
               {module.name}
             </span>
             
@@ -156,18 +119,12 @@ const ModuleItem: React.FC<{
           </div>
           
           {module.description && (
-            <div className="text-xs text-base-content/60 mt-1 ml-7">{module.description}</div>
+            <div className="text-[11px] text-base-content/55 mt-1 ml-7 leading-snug">{module.description}</div>
           )}
         </div>
         
-        {mode === 'all' && plugins.length === 0 && (
-          <div className={`badge badge-sm ${isEnabled ? 'badge-success' : 'badge-ghost'}`}>
-            {isEnabled ? 'Активен' : 'Неактивен'}
-          </div>
-        )}
-        
         {mode === 'favorites' && isEnabled && (
-          <div className="text-warning text-sm">⭐</div>
+          <span className="badge badge-xs badge-success badge-outline whitespace-nowrap">Вкл</span>
         )}
       </div>
       

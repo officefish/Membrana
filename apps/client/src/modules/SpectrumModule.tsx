@@ -105,11 +105,7 @@ export const SpectrumModule: React.FC<ModuleProps<SpectrumConfig>> = ({ module, 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
       <div className="card-body p-4 md:p-6 gap-4">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h2 className="card-title text-lg text-base-content">{module.name}</h2>
-          <p className="text-sm text-base-content/60">{module.description}</p>
-        </div>
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <div className="badge badge-outline text-base-content/80 tabular-nums">
           {module.enabled ? 'Активен' : 'Неактивен'}
         </div>

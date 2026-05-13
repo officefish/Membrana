@@ -4,6 +4,7 @@ export { PluginsList } from './core/PluginsList';
 export { ModuleGrid } from './core/ModuleGrid';
 export { CategoryList } from './core/CategoryList';
 export { ModuleRenderer } from './core/ModuleRenderer';
+export { ModuleHeader } from './core/ModuleHeader';
 
 // Элементы управления
 export { ModuleToggle, ModuleSwitch } from './controls/ModuleToggle';

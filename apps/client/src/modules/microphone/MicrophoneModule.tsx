@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ModuleProps, useModulePlugins } from '@membrana/agenda';
+import { ModuleProps, useMembranaStore } from '@membrana/agenda';
+import { useShallow } from 'zustand/react/shallow';
 import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   MicStreamVizPluginPanel,
@@ -30,7 +31,9 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
   const [error, setError] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  const { plugins, activeIds, toggle: togglePlugin } = useModulePlugins(module.id);
+  const activeIds = useMembranaStore(
+    useShallow((state) => state.getModule(module.id)?.activePlugins ?? []),
+  );
 
   const refreshDevices = useCallback(async () => {
     try {
@@ -110,11 +113,7 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
       <div className="card-body p-4 md:p-6 gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h2 className="card-title text-lg text-base-content">{module.name}</h2>
-            <p className="text-sm text-base-content/60">{module.description}</p>
-          </div>
+        <div className="flex flex-wrap items-center justify-end gap-2">
           <div className="badge badge-outline text-base-content/80 tabular-nums">
             {isLive ? 'Поток активен' : 'Поток остановлен'}
           </div>
@@ -187,30 +186,9 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
             <code className="text-xs">microphoneStreamHub.ts</code>. В{' '}
             <code className="text-xs">install()</code> плагина вызовите{' '}
             <code className="text-xs">subscribeMicrophoneStream(context.moduleId, …)</code> и сохраните функцию
-            отписки.
+            отписки. Включение плагинов и их настройки — во вкладке «Плагины» в боковой панели.
           </p>
         </div>
-
-        {plugins.length > 0 && <div className="divider my-1" />}
-        {plugins.length > 0 && (
-          <div>
-            <h3 className="text-sm font-medium text-base-content mb-2">Плагины модуля</h3>
-            <div className="flex flex-wrap gap-2">
-              {plugins.map((plugin) => (
-                <button
-                  key={plugin.id}
-                  type="button"
-                  onClick={() => togglePlugin(plugin.id)}
-                  className={`btn btn-sm min-h-9 ${
-                    activeIds.includes(plugin.id) ? 'btn-primary' : 'btn-ghost border border-base-300'
-                  }`}
-                >
-                  {plugin.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {activeIds.includes(MIC_STREAM_VIZ_PLUGIN_ID) && (
           <MicStreamVizPluginPanel moduleId={module.id} />
