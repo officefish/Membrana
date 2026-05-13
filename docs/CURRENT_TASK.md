@@ -34,16 +34,16 @@ CD / Deploy
 Вспомогательные workflow
 
 virtual-team-context.yml — ручной чеклист документов для агентов.
-optional-claude-pr-review.yml — опциональное Claude-review при наличии ANTHROPIC_API_KEY.
-claude-review.yml — сейчас выглядит как проблемный/устаревший workflow.
-Что я советую в первую очередь: привести обязательный CI в зелёное состояние. Последний CI сейчас падает ещё на этапе Setup Node.js: GitHub Actions пытается использовать глобальный Yarn 1.22.22, хотя проект требует yarn@4.5.0 через Corepack. То есть проверки lint/typecheck/test/build фактически даже не стартуют.
+optional-claude-pr-review.yml — опциональное Claude-review при наличии ANTHROPIC_API_KEY (устаревший дубликат `claude-review.yml` удалён).
+
+Что я советую в первую очередь: держать обязательный CI зелёным. Ранее CI падал на этапе после `actions/setup-node` с `cache: yarn` (раннер тянул Yarn 1 до Corepack). Сейчас в `ci.yml`, `scheduled-ci.yml`, `release.yml` и `optional-claude-pr-review.yml`: без встроенного yarn-кеша в setup-node, `corepack prepare yarn@4.5.0 --activate` и кеш Berry через `actions/cache`.
 
 Приоритетный порядок:
 
-Исправить Corepack/Yarn setup в .github/workflows/ci.yml и scheduled-ci.yml.
-После этого добиться прохождения:
+Поддерживать Corepack/Yarn 4 в workflows (см. выше).
+Локально и в CI проверять:
 yarn turbo run lint typecheck test build --continue
-Удалить или починить проблемный .github/workflows/claude-review.yml.
+Устаревший `claude-review.yml` удалён; опциональный Claude — только `optional-claude-pr-review.yml`.
 Затем уже настраивать настоящий CD вместо deploy-stub.yml.
 Итоговый артефакт: обзор текущего CI/CD процесса и первый рекомендуемый шаг.
 Definition of Done: обязательный CI проходит на PR/push и только после этого добавляется реальный deploy.
