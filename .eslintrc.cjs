@@ -29,7 +29,7 @@ module.exports = {
           'error',
           { argsIgnorePattern: '^_', caughtErrors: 'none', varsIgnorePattern: '^_' },
         ],
-        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-explicit-any': 'error',
       },
     },
     {
@@ -55,7 +55,7 @@ module.exports = {
           'error',
           { argsIgnorePattern: '^_', caughtErrors: 'none', varsIgnorePattern: '^_' },
         ],
-        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-explicit-any': 'error',
       },
     },
   ],

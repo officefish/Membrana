@@ -1,49 +1,22 @@
-[Teamlead]: Сейчас CI/CD запускается через GitHub Actions и локально через Yarn/Turbo. Пакеты не изменялись; речь про инфраструктуру .github/workflows/\*.
+[Teamlead]: Снимок после мер по `CURRENT_TASK` (optional Claude, артефакты TS, ESLint `any`, индекс документов, расхождение lifecycle).
 
-[Структурщик]: Текущий основной процесс такой:
+Сделано в репозитории:
 
-Автоматический CI
+- **Optional Claude PR review:** в `.github/workflows/optional-claude-pr-review.yml` убран недопустимый `if` с `secrets.*` на уровне job; job выполняется при **`vars.ENABLE_CLAUDE_PR_REVIEW == 'true'`** (и по-прежнему нужен секрет `ANTHROPIC_API_KEY` для шага с action). Описано в `docs/CONTRIBUTING.md` и в summary `virtual-team-context.yml`.
+- **Tracked tsbuildinfo:** `apps/client/.tsbuildinfo.app` и `.tsbuildinfo.node` сняты с индекса (`git rm --cached`), в `.gitignore` добавлен шаблон `**/.tsbuildinfo.*`; в `apps/client` скрипт `clean` удаляет суффиксные кэши.
+- **ESLint:** `@typescript-eslint/no-explicit-any` снова **`error`** в `.eslintrc.cjs` (и для `.ts`, и для `.tsx`).
+- **MODULE_AND_PLUGIN_UI.md:** добавлен в `docs/README.md`, в чеклист `virtual-team-context.yml`, в шапку и PR-чеклист `CONTRIBUTING.md`; в §4 добавлено примечание, что `store.ts` при toggle плагина пока **не** вызывает `plugin.install()` — целевой контракт vs фактический код.
 
-.github/workflows/ci.yml
-Запускается на push и pull_request в ветки main, master, develop.
-Команда внутри:
-yarn install --immutable
-yarn turbo run lint typecheck test build --continue
-Ручной/еженедельный CI
+Действие владельца репозитория на GitHub: при необходимости опционального Claude-review создать variable **`ENABLE_CLAUDE_PR_REVIEW`** = `true` (Settings → Secrets and variables → Actions → Variables).
 
-.github/workflows/scheduled-ci.yml
-Запускается по расписанию: понедельник 06:00 UTC.
-Можно запустить вручную через GitHub Actions → Scheduled CI → Run workflow.
-Локальный аналог CI В корне репозитория:
+[Структурщик]: Обязательный CI по-прежнему `ci.yml`; optional workflow теперь валиден и не блокирует разработку при выключенной переменной.
 
-corepack enable
-corepack prepare yarn@4.5.0 --activate
-yarn install --immutable
-yarn turbo run lint typecheck test build --continue
-Release
+[Математик]: —
 
-.github/workflows/release.yml
-Запускается при push тега вида:
-git tag v0.1.0
-git push origin v0.1.0
-Собирает монорепо и создаёт GitHub Release.
-CD / Deploy
+[Музыкант]: —
 
-.github/workflows/deploy-stub.yml
-Сейчас это только ручная заглушка. Реального деплоя наружу пока нет.
-Вспомогательные workflow
+[Верстальщик]: Игнор и `clean` для client tsbuildinfo снижают шум в PR и соответствуют правилу не коммитить артефакты сборки.
 
-virtual-team-context.yml — ручной чеклист документов для агентов.
-optional-claude-pr-review.yml — опциональное Claude-review при наличии ANTHROPIC_API_KEY (устаревший дубликат `claude-review.yml` удалён).
+Приоритет на будущее (не блокер CI): выровнять lifecycle плагинов в `packages/agenda/src/core/store.ts` с документом или перенести подписки на поток в слой, где `install()` гарантирован.
 
-Что я советую в первую очередь: держать обязательный CI зелёным. Ранее CI падал на этапе после `actions/setup-node` с `cache: yarn` (раннер тянул Yarn 1 до Corepack). Сейчас в `ci.yml`, `scheduled-ci.yml`, `release.yml` и `optional-claude-pr-review.yml`: без встроенного yarn-кеша в setup-node, `corepack prepare yarn@4.5.0 --activate` и кеш Berry через `actions/cache`.
-
-Приоритетный порядок:
-
-Поддерживать Corepack/Yarn 4 в workflows (см. выше).
-Локально и в CI проверять:
-yarn turbo run lint typecheck test build --continue
-Устаревший `claude-review.yml` удалён; опциональный Claude — только `optional-claude-pr-review.yml`.
-Затем уже настраивать настоящий CD вместо deploy-stub.yml.
-Итоговый артефакт: обзор текущего CI/CD процесса и первый рекомендуемый шаг.
-Definition of Done: обязательный CI проходит на PR/push и только после этого добавляется реальный deploy.
+Definition of Done (неизменно): обязательный CI зелёный на PR/push; реальный deploy только после этого.

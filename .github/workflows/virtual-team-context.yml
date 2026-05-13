@@ -30,19 +30,20 @@ jobs:
             echo "| Архитектура | \`docs/ARCHITECTURE.md\` |"
             echo "| Дизайн | \`docs/DESIGN.md\` |"
             echo "| UI/UX (верстка, темы) | \`docs/UI_UX_DEVELOPER_PROMPT.md\` |"
+            echo "| Модули и плагины (UI) | \`docs/MODULE_AND_PLUGIN_UI.md\` |"
             echo "| Contributing / CI | \`docs/CONTRIBUTING.md\` |"
             echo ""
             echo "### Ежедневный цикл в GitHub Actions"
             echo "- **CI** (\`.github/workflows/ci.yml\`): push/PR в \`main\` / \`master\` / \`develop\` — \`yarn turbo run lint typecheck test build\`."
             echo "- **Scheduled CI** (\`.github/workflows/scheduled-ci.yml\`): по понедельникам + вручную."
             echo "- **Release** (\`.github/workflows/release.yml\`): тег \`v*\` — сборка и GitHub Release с автозаметками."
-            echo "- **Optional Claude PR review** (\`.github/workflows/optional-claude-pr-review.yml\`): только при наличии \`ANTHROPIC_API_KEY\`."
+            echo "- **Optional Claude PR review** (\`.github/workflows/optional-claude-pr-review.yml\`): при \`vars.ENABLE_CLAUDE_PR_REVIEW == true\`; для API — секрет \`ANTHROPIC_API_KEY\`."
             echo "- **Deploy stub** (\`.github/workflows/deploy-stub.yml\`): ручной заготовочный workflow под ваш хостинг."
             echo ""
             echo "### Чеклист для одного прогона агента"
             echo "1. Прочитать \`docs/VIRTUAL_TEAM_PROMPT.md\`."
             echo "2. Для кода UI — \`docs/DESIGN.md\` и при необходимости \`docs/UI_UX_DEVELOPER_PROMPT.md\`."
-            echo "3. Для границ модулей и плагинов — \`docs/ARCHITECTURE.md\`."
+            echo "3. Для границ модулей и плагинов — \`docs/ARCHITECTURE.md\` и \`docs/MODULE_AND_PLUGIN_UI.md\` (разметка, сайдбар)."
             echo "4. Для процесса PR и ссылок на CI — \`docs/CONTRIBUTING.md\`."
             echo ""
             if [ -n "$TASK_HINT" ]; then
@@ -64,4 +65,5 @@ jobs:
           else
             echo "Note: docs/UI_UX_DEVELOPER_PROMPT.md not found (optional)."
           fi
+          test -f docs/MODULE_AND_PLUGIN_UI.md || { echo "Missing docs/MODULE_AND_PLUGIN_UI.md"; exit 1; }
           echo "All required docs present."

@@ -5,6 +5,8 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+# Инкрементальные кэши TS с суффиксами (клиент: tsconfig.app / tsconfig.node)
+**/.tsbuildinfo.*
 
 # Кэш Turbo
 .turbo/
