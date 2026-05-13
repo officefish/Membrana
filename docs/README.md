@@ -2,6 +2,7 @@
 
 | Файл | Назначение |
 |------|------------|
+| [../WHITE_PAPER.md](../WHITE_PAPER.md) | Стратегический концепт: цель — распределённая разведка нижнего неба |
 | [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) | Системный промпт координатора и формат ответа |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Границы пакетов Membrana + правила плагинов и аудио-слоёв |
 | [SERVICES.md](./SERVICES.md) | Соглашения о пакетах-сервисах в `packages/services/*` |
@@ -13,6 +14,7 @@
 
 ## Порядок чтения для новых агентов
 
+0. [../WHITE_PAPER.md](../WHITE_PAPER.md) — зачем существует проект и какую систему мы строим.
 1. [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) — кто я и в какой команде работаю.
 2. [ARCHITECTURE.md](./ARCHITECTURE.md) — где границы пакетов и слоёв.
 3. [SERVICES.md](./SERVICES.md) — если задача про чистую логику + хуки.
