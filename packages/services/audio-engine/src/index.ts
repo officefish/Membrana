@@ -14,6 +14,12 @@ export type {
   LiveSamplerEvent,
   LiveSamplerEventMap,
 } from './core/live-sampler.js';
+export { BufferPlayer } from './core/buffer-player.js';
+export type {
+  BufferPlayerEvent,
+  BufferPlayerEventMap,
+  BufferPlayerState,
+} from './core/buffer-player.js';
 
 // Web Audio helpers
 export {
@@ -46,6 +52,11 @@ export {
   useAudioFile,
   type UseAudioFileReturn,
 } from './hooks/use-audio-file.js';
+export {
+  useBufferPlayer,
+  type UseBufferPlayerOptions,
+  type UseBufferPlayerReturn,
+} from './hooks/use-buffer-player.js';
 
 // Типы
 export type {
