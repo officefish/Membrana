@@ -9,7 +9,7 @@ export const MembranaRegistry = {
   },
   
   registerPlugin: <TConfig,>(moduleId: string, plugin: Plugin<TConfig>) => {
-    useMembranaStore.getState().registerPlugin(moduleId, plugin as Plugin);
+    useMembranaStore.getState().registerPlugin(moduleId, plugin);
   },
 
   updatePluginConfig: <TConfig>(

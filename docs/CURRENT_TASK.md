@@ -1,16 +1,12 @@
-[Teamlead]: После падения CI из‑за `@typescript-eslint/no-explicit-any` в `@membrana/agenda` типы приведены в порядок без ослабления ESLint.
+[Teamlead]: После 692980a CI падал на **`@membrana/client#build`**: `Plugin<MicStreamVizPluginConfig>` не укладывался в `registerPlugin(..., plugin: Plugin)` (= `Plugin<Record<string, unknown>>`), т.к. клиент вызывает `useMembranaStore.getState().registerPlugin` напрямую.
 
-Сделано в коде:
+**Исправление:** в `MembranaState` и реализации store объявлено  
+`registerPlugin: <TConfig>(moduleId: string, plugin: Plugin<TConfig>) => void`  
+Внутри store при записи в `Map<string, Plugin>` по-прежнему выполняется приведение к общему `Plugin` (эрasure в рантайме тот же). `MembranaRegistry.registerPlugin` вызывает store без лишнего `as Plugin`.
 
-- **`packages/agenda/src/core/types.ts`**: дефолтный дженерик `Record<string, unknown>` для `ModuleContext`, `Plugin`, `Module`, `ModuleProps`; `getPlugin` возвращает `Plugin | undefined`.
-- **`hooks.ts`**: `useModuleProps<TConfig = Record<string, unknown>>`.
-- **`store.ts`**: интерфейс `PersistedRehydratePayload` вместо `as any` в `persist.merge`; явные циклы при разборе `plugins` из storage; типизированный `registerModule<TConfig>`; безопасные spread для `config`; `newModules.set(..., module as Module)` для гетерогенной `Map<string, Module>`.
-- **`registry.ts`**: `registerPlugin` передаёт в store `plugin as Plugin` (узкий дженерик плагина → общий тип store).
-- **`ModulePanel.tsx`**: условие показа конфига через `typeof state.config === 'object'`, без рендера `unknown` как `ReactNode`.
+Проверка: `yarn workspace @membrana/client run build` — успешно; для полного CI имеет смысл прогнать `yarn turbo run lint typecheck test build --continue`.
 
-Локально: `yarn workspace @membrana/agenda run lint` и `typecheck`, а также `yarn turbo run lint typecheck --continue` — успешно.
-
-[Структурщик]: Остаточный техдолг — выровнять lifecycle `install()` в store с `MODULE_AND_PLUGIN_UI.md` (отдельная задача), не связанный с `any`.
+[Структурщик]: Публичный API store теперь согласован с вызовом из `registerClientModules.ts`.
 
 [Математик]: —
 
@@ -18,6 +14,6 @@
 
 [Верстальщик]: —
 
-Приоритет: дождаться зелёного прогона обязательного CI на GitHub после push.
+Отложено (отдельная задача): вызов `plugin.install()` из store при toggle/activate.
 
-Definition of Done: обязательный CI зелёный; `no-explicit-any` остаётся `error`.
+Definition of Done: обязательный CI зелёный после merge.

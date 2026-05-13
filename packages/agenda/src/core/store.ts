@@ -102,7 +102,7 @@ export const useMembranaStore = create<MembranaState>()(
           });
         },
 
-        registerPlugin: (moduleId, plugin) => {
+        registerPlugin: <TConfig,>(moduleId: string, plugin: Plugin<TConfig>) => {
           set((state) => {
             // Убеждаемся, что plugins это Map
             let newPlugins = state.plugins;
@@ -115,22 +115,25 @@ export const useMembranaStore = create<MembranaState>()(
                 });
               }
             }
-            
+
             // Получаем или создаем Map для модуля
             let modulePlugins = newPlugins.get(moduleId);
             if (!(modulePlugins instanceof Map)) {
               modulePlugins = new Map();
             }
-            
+
             const prev = modulePlugins.get(plugin.id);
             const merged: Plugin =
               prev !== undefined
-                ? {
+                ? ({
                     ...plugin,
                     active: prev.active,
-                    config: { ...(plugin.config ?? {}), ...(prev.config ?? {}) },
-                  }
-                : plugin;
+                    config: {
+                      ...(plugin.config as Record<string, unknown>),
+                      ...(prev.config as Record<string, unknown>),
+                    },
+                  } as Plugin)
+                : (plugin as Plugin);
 
             modulePlugins.set(plugin.id, merged);
             newPlugins.set(moduleId, modulePlugins);

@@ -85,7 +85,7 @@ export interface MembranaState {
     config?: TConfig;
     activePlugins?: string[];
   }) => void;
-  registerPlugin: (moduleId: string, plugin: Plugin) => void;
+  registerPlugin: <TConfig>(moduleId: string, plugin: Plugin<TConfig>) => void;
   updatePluginConfig: <TConfig>(
     moduleId: string,
     pluginId: string,
