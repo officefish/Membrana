@@ -12,6 +12,7 @@
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | PR, агенты, ссылки на документы выше |
 | [UI_UX_DEVELOPER_PROMPT.md](./UI_UX_DEVELOPER_PROMPT.md) | Расширение роли Верстальщика — детали для UI-агента |
 | [DAILY_CODE_REVIEW.md](./DAILY_CODE_REVIEW.md) | Авто-генерируемый отчёт ежедневного ревью (`yarn code-review`) |
+| [prompts/](./prompts/) | Task-промпты: задания на крупные работы (новые пакеты, новые интеграции). |
 
 ## Порядок чтения для новых агентов
 
