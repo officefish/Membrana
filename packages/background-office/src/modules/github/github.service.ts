@@ -1,6 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Inject } from '@nestjs/common';
-import { Octokit } from '@octokit/rest';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import type { Octokit } from '@octokit/rest' with { 'resolution-mode': 'import' };
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 
@@ -19,19 +18,9 @@ export interface GhIssueShape {
 @Injectable()
 export class GithubService {
   private readonly logger = new Logger(GithubService.name);
-  private readonly octokit: Octokit;
+  private octokitPromise: Promise<Octokit> | undefined;
 
-  constructor(@Inject(APP_CONFIG) config: AppConfig) {
-    this.octokit = new Octokit({
-      auth: config.GITHUB_TOKEN,
-      request: {
-        fetch: (url: string | URL | Request, options?: RequestInit) =>
-          fetch(url, {
-            ...options,
-            signal: AbortSignal.timeout(30_000),
-          }),
-      },
-    });
+  constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {
     this.owner = config.GITHUB_OWNER;
     this.repo = config.GITHUB_REPO;
   }
@@ -39,14 +28,33 @@ export class GithubService {
   private readonly owner: string;
   private readonly repo: string;
 
+  private async getOctokit(): Promise<Octokit> {
+    if (!this.octokitPromise) {
+      this.octokitPromise = import('@octokit/rest').then(({ Octokit }) => {
+        return new Octokit({
+          auth: this.config.GITHUB_TOKEN,
+          request: {
+            fetch: (url: string | URL | Request, options?: RequestInit) =>
+              fetch(url, {
+                ...options,
+                signal: AbortSignal.timeout(30_000),
+              }),
+          },
+        });
+      });
+    }
+    return this.octokitPromise;
+  }
+
   async fetchIssueWithComments(issueNumber: number): Promise<GhIssueShape> {
     this.logger.debug({ issueNumber }, 'github.fetchIssue');
-    const issue = await this.octokit.rest.issues.get({
+    const octokit = await this.getOctokit();
+    const issue = await octokit.rest.issues.get({
       owner: this.owner,
       repo: this.repo,
       issue_number: issueNumber,
     });
-    const comments = await this.octokit.rest.issues.listComments({
+    const comments = await octokit.rest.issues.listComments({
       owner: this.owner,
       repo: this.repo,
       issue_number: issueNumber,
