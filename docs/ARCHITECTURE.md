@@ -45,6 +45,10 @@
 
 **Реализованный эталон.** Модуль `apps/client/src/modules/microphone/MicrophoneModule.tsx` + плагин `apps/client/src/plugins/microphone-stream-viz/*` — паттерн, на который ориентируется любая будущая аудио-фича: модуль через engine добывает `MediaStream`, публикует его в hub; плагин(ы) подписываются на hub и поднимают `LiveSampler` на этом stream для своих метрик/визуализаций.
 
+### 1c. `packages/background-office` — централизованный HTTP-шлюз
+
+Пакет `@membrana/background-office` — **Node.js + TypeScript** сервер (NestJS), не входит в граф `packages/services/*` и **не** зависит от `@membrana/core`, `@membrana/agenda`, `@membrana/device-board`, `apps/client` (v0.1 автономен: только внешние npm и локальные типы). Назначение: единая точка для вызовов Anthropic (Claude), Linear API, приёма подписанных Linear webhooks и (через Octokit) чтения GitHub Issues для persona-контекста. Клиенты внутреннего API аутентифицируются заголовком `X-Membrana-Token`. В перспективе рядом могут появиться другие `packages/background-*`; до этого момента офис остаётся самостоятельным артефактом деплоя.
+
 ## 2. Плагины и слабая связанность (домен аудио)
 
 - **Запрещены прямые импорты между плагинами** друг друга.

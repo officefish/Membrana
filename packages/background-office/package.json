@@ -1,0 +1,46 @@
+{
+  "name": "@membrana/background-office",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Централизованный HTTP-шлюз к внешним API Membrana (Claude, Linear, webhooks).",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prepare": "node ./scripts/copy-prompts.cjs",
+    "build": "yarn prepare && tsc -b",
+    "dev": "yarn prepare && tsx watch src/main.ts",
+    "start": "node ./dist/main.js",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "yarn prepare && vitest run"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.4.15",
+    "@nestjs/core": "^10.4.15",
+    "@nestjs/platform-express": "^10.4.15",
+    "@octokit/rest": "^21.0.2",
+    "dotenv": "^16.4.5",
+    "nestjs-pino": "^4.1.0",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "undici": "^6.21.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^10.4.15",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "@types/supertest": "^6.0.2",
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

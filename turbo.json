@@ -22,7 +22,7 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"],
-      "inputs": ["src/**", "tests/**"]
+      "inputs": ["src/**", "test/**", "tests/**"]
     },
     "clean": {
       "cache": false,
