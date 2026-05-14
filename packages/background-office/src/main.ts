@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
@@ -23,6 +24,32 @@ async function bootstrap(): Promise<void> {
 
   const config = app.get<AppConfig>(APP_CONFIG);
   const port = config.PORT;
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('@membrana/background-office')
+    .setDescription('Centralized HTTP gateway to external Membrana APIs (Claude, Linear, webhooks)')
+    .setVersion(config.APP_VERSION || '0.0.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'token',
+        description: 'API token via X-Membrana-Token header',
+      },
+      'api-token',
+    )
+    .addTag('Health', 'Server health check')
+    .addTag('Claude', 'Anthropic Claude API integration')
+    .addTag('Linear', 'Linear issue management integration')
+    .addTag('Webhooks', 'External webhook receivers')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   const server = await app.listen(port);
   logger.log(`Listening on http://localhost:${port}`);

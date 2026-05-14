@@ -18,6 +18,7 @@
     "clean": "turbo run clean && rimraf node_modules",
     "anthropic:smoke": "node scripts/anthropic-smoke.mjs",
     "anthropic:task": "node scripts/anthropic-task.mjs",
+    "claude:code": "node scripts/claude-code-with-proxy.mjs",
     "code-review": "node scripts/code-review.mjs",
     "save-code-review": "yarn run archive:daily-review",
     "code-review:full": "node scripts/code-review.mjs --full",
