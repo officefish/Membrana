@@ -9,7 +9,8 @@
  *
  * Запуск:
  *   yarn ask vesnin --gh-issue 12 "стоит ли сейчас вводить отдельный transport-service?"
- *   yarn ask dynin  --gh-issue 10 --save-as TEC-42-fft "какие edge cases точно покрывать?"
+ *   yarn ask dynin   --gh-issue 10 --save-as TEC-42-fft "какие edge cases точно покрывать?"
+ *   yarn ask ozhegov --gh-issue 11 --save-as MEM-88-registry "как разбить тесты agenda?"
  *   yarn ask vesnin --ticket-file ./ticket.md "сформулируй кратко границы"
  *   yarn ask vesnin --no-context "одной фразой: нужен ли ADR сейчас?"
  *   node scripts/ask-persona.mjs --help
@@ -44,6 +45,12 @@ const PERSONAS = {
     role: 'Teamlead',
     promptFile: 'docs/virtual-team/PROMPT_TEAMLEAD.md',
     description: 'Vesnin — Teamlead. Архитектура, стратегия, границы модулей.',
+  },
+  ozhegov: {
+    role: 'Структурщик',
+    promptFile: 'docs/virtual-team/PROMPT_STRUCTURER.md',
+    description:
+      'Ozhegov — Структурщик. Сервисы, сторы, фасады, слабая связанность (образ: С. И. Ожегов, лексикограф).',
   },
   dynin: {
     role: 'Математик',
