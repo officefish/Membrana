@@ -23,6 +23,7 @@ import {
   SpectralFluxTracker,
   applyFrequencyFilter,
   lowEnergyPercent,
+  matchesDetectionThresholds,
   rms,
   spectralCentroid,
   spectralFlatness,
@@ -99,7 +100,12 @@ export class FftAnalyzer {
     const centroid = spectralCentroid(filtered, frequencies);
     const fluxValue = this.flux.next(filtered);
     const rmsValue = rms(samples);
-    const isDetected = this.detect(centroid, fluxValue, rmsValue);
+    const isDetected = matchesDetectionThresholds(
+      centroid,
+      fluxValue,
+      rmsValue,
+      this.config.detectionThresholds,
+    );
 
     const adv = this.config.advancedAnalysis;
     return {
@@ -175,18 +181,6 @@ export class FftAnalyzer {
   }
 
   // ============= Внутреннее =============
-
-  private detect(centroid: number, flux: number, rmsValue: number): boolean {
-    const t = this.config.detectionThresholds;
-    return (
-      centroid >= t.centroidMin &&
-      centroid <= t.centroidMax &&
-      flux >= t.fluxMin &&
-      flux <= t.fluxMax &&
-      rmsValue >= t.rmsMin &&
-      rmsValue <= t.rmsMax
-    );
-  }
 
   private computeStatistics(frames: readonly LiveFrameResult[]): AnalysisStatistics {
     const centroids = frames.map((f) => f.centroid);

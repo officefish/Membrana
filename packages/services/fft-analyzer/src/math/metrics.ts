@@ -7,6 +7,29 @@
  * как класс или принимает предыдущее состояние явным параметром.
  */
 
+import type { DetectionThresholds } from '../types.js';
+
+/**
+ * Пороговая детекция кадра: все три метрики должны одновременно попасть
+ * в диапазоны из `thresholds` (инклюзивные границы).
+ */
+export function matchesDetectionThresholds(
+  centroid: number,
+  flux: number,
+  rmsValue: number,
+  thresholds: DetectionThresholds,
+): boolean {
+  const t = thresholds;
+  return (
+    centroid >= t.centroidMin &&
+    centroid <= t.centroidMax &&
+    flux >= t.fluxMin &&
+    flux <= t.fluxMax &&
+    rmsValue >= t.rmsMin &&
+    rmsValue <= t.rmsMax
+  );
+}
+
 /**
  * Спектральный центроид: «центр тяжести» спектра в Гц.
  * Σ(f_i * mag_i) / Σ(mag_i).

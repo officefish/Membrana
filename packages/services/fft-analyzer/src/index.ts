@@ -25,6 +25,7 @@ export {
   zeroCrossingRate,
   spectralRolloff,
   spectralFlatness,
+  matchesDetectionThresholds,
 } from './math/metrics.js';
 export { mean, std, minOf, maxOf, summarize } from './math/statistics.js';
 

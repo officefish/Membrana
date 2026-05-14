@@ -4,6 +4,7 @@ import {
   SpectralFluxTracker,
   applyFrequencyFilter,
   lowEnergyPercent,
+  matchesDetectionThresholds,
   rms,
   spectralCentroid,
   spectralFlatness,
@@ -11,6 +12,48 @@ import {
   stabilityFromFlux,
   zeroCrossingRate,
 } from '../../src/math/metrics.js';
+
+function sampleThresholds() {
+  return {
+    centroidMin: 100,
+    centroidMax: 5000,
+    fluxMin: 0,
+    fluxMax: 2,
+    rmsMin: 0.01,
+    rmsMax: 1,
+  } as const;
+}
+
+describe('matchesDetectionThresholds', () => {
+  const t = sampleThresholds();
+
+  it('true, когда все метрики строго внутри диапазона', () => {
+    expect(matchesDetectionThresholds(1000, 0.5, 0.5, t)).toBe(true);
+  });
+
+  it('true на инклюзивных границах (min/max)', () => {
+    expect(matchesDetectionThresholds(100, 0, 0.01, t)).toBe(true);
+    expect(matchesDetectionThresholds(5000, 2, 1, t)).toBe(true);
+  });
+
+  it('false, если centroid ниже centroidMin', () => {
+    expect(matchesDetectionThresholds(99, 0.5, 0.5, t)).toBe(false);
+  });
+
+  it('false, если centroid выше centroidMax', () => {
+    expect(matchesDetectionThresholds(5001, 0.5, 0.5, t)).toBe(false);
+  });
+
+  it('false, если flux вне диапазона', () => {
+    expect(matchesDetectionThresholds(1000, -0.001, 0.5, t)).toBe(false);
+    expect(matchesDetectionThresholds(1000, 2.001, 0.5, t)).toBe(false);
+  });
+
+  it('false, если rms вне диапазона', () => {
+    expect(matchesDetectionThresholds(1000, 0.5, 0.009, t)).toBe(false);
+    expect(matchesDetectionThresholds(1000, 0.5, 1.001, t)).toBe(false);
+  });
+});
 
 describe('rms', () => {
   it('пустой буфер возвращает 0', () => {
