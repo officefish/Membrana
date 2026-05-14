@@ -22,6 +22,8 @@
       "@membrana/audio-engine-service/*": ["../../packages/services/audio-engine/src/*"],
       "@membrana/fft-analyzer-service": ["../../packages/services/fft-analyzer/src/index.ts"],
       "@membrana/fft-analyzer-service/*": ["../../packages/services/fft-analyzer/src/*"],
+      "@membrana/telemetry-service": ["../../packages/services/telemetry/src/index.ts"],
+      "@membrana/telemetry-service/*": ["../../packages/services/telemetry/src/*"],
       "@membrana/audio-data-viz": ["../../packages/libs/audioDataViz/src/index.ts"],
       "@membrana/audio-data-viz/*": ["../../packages/libs/audioDataViz/src/*"],
       "@/*": ["./src/*"]
@@ -35,6 +37,7 @@
     { "path": "../../packages/device-board" },
     { "path": "../../packages/services/audio-engine" },
     { "path": "../../packages/services/fft-analyzer" },
+    { "path": "../../packages/services/telemetry" },
     { "path": "../../packages/libs/audioDataViz" }
   ]
 }

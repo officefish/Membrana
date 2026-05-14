@@ -22,6 +22,13 @@ import {
   defaultMicStreamVizConfig,
   type MicStreamVizPluginConfig,
 } from './types';
+import {
+  clearMicTelemetryThrottle,
+  logMicMetricsAggregateThrottled,
+  logMicSamplerError,
+  logMicSamplerStart,
+  logMicSamplerStop,
+} from './micStreamTelemetry';
 
 /**
  * Плагин модуля «Микрофон»: визуализация входящего потока.
@@ -134,7 +141,14 @@ export function createMicStreamVizPlugin(): Plugin<MicStreamVizPluginConfig> {
       const handleFrame = (frame: AudioSampleFrame): void => {
         if (disposed || !currentSampler) return;
         const analyser = currentSampler.getAnalyserNode();
-        micStreamPluginState.setMetrics(computeMetrics(frame.samples, analyser));
+        const metrics = computeMetrics(frame.samples, analyser);
+        micStreamPluginState.setMetrics(metrics);
+        logMicMetricsAggregateThrottled(context.moduleId, {
+          volume: metrics.volume,
+          qualityScore: metrics.qualityScore,
+          snr: metrics.snr,
+          noise: metrics.noise,
+        });
       };
 
       // Подписка на shared-hub микрофонного модуля. Replay даёт стартовое
@@ -159,15 +173,18 @@ export function createMicStreamVizPlugin(): Plugin<MicStreamVizPluginConfig> {
               if (disposed) return;
               micStreamPluginState.setAnalyserNode(sampler.getAnalyserNode());
               micStreamPluginState.setLive(true);
+              logMicSamplerStart(context.moduleId);
             });
             sampler.on('stop', () => {
               micStreamPluginState.setAnalyserNode(null);
               micStreamPluginState.setLive(false);
+              logMicSamplerStop(context.moduleId);
             });
             sampler.on('error', () => {
               micStreamPluginState.setAnalyserNode(null);
               micStreamPluginState.setLive(false);
               micStreamPluginState.setMetrics(initialMicStreamMetrics);
+              logMicSamplerError(context.moduleId);
             });
 
             // Передаём готовый MediaStream из hub — engine не запрашивает
@@ -181,6 +198,7 @@ export function createMicStreamVizPlugin(): Plugin<MicStreamVizPluginConfig> {
       return (): Promise<void> => {
         disposed = true;
         unlisten();
+        clearMicTelemetryThrottle(context.moduleId);
         return stopSampler().then(() => {
           micStreamPluginState.reset();
         });

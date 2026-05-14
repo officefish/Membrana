@@ -35,6 +35,9 @@ export default defineConfig({
       '@membrana/fft-analyzer-service': fileURLToPath(
         new URL('../../packages/services/fft-analyzer/src/index.ts', import.meta.url),
       ),
+      '@membrana/telemetry-service': fileURLToPath(
+        new URL('../../packages/services/telemetry/src/index.ts', import.meta.url),
+      ),
       '@membrana/audio-data-viz': fileURLToPath(
         new URL('../../packages/libs/audioDataViz/src/index.ts', import.meta.url),
       ),
