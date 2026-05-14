@@ -1,0 +1,129 @@
+# Еженедельный запуск `yarn plan:week`: читает docs/WHITE_PAPER.md и git log за 7 дней,
+# через Anthropic генерирует план следующей недели и коммитит docs/STRATEGIC_PLAN_WEEK.md в main.
+#
+# Расписание: понедельник 07:00 UTC — после того, как `Scheduled CI` проверил здоровье main (06:00 UTC).
+# Ручной запуск: вкладка Actions → Weekly strategic plan → Run workflow.
+#
+# Требуется секрет ANTHROPIC_API_KEY в Settings → Secrets and variables → Actions.
+# Опционально: vars.ANTHROPIC_MODEL для переопределения модели (см. .env.example).
+
+name: Weekly strategic plan
+
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+    inputs:
+      since:
+        description: 'Период для git log (например "7 days ago", "2 weeks ago"). Пусто = по умолчанию.'
+        required: false
+        default: ''
+      full:
+        description: 'Добавить --shortstat в git log.'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+concurrency:
+  group: weekly-strategic-plan
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  plan-week:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # `_strategic-plan.mjs` зовёт `git log --since="7 days ago"` —
+          # с дефолтным fetch-depth: 1 это вернуло бы один коммит. Нужна полная история.
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+          echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> "$GITHUB_ENV"
+
+      - name: Yarn Berry cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.YARN_CACHE_FOLDER }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Verify ANTHROPIC_API_KEY
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "${ANTHROPIC_API_KEY}" ]; then
+            echo "::error::Секрет ANTHROPIC_API_KEY не задан. Добавьте в Settings → Secrets and variables → Actions → New repository secret."
+            exit 1
+          fi
+
+      - name: Generate weekly strategic plan
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          PLAN_SINCE: ${{ inputs.since }}
+          PLAN_FULL: ${{ inputs.full }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ -n "${PLAN_SINCE:-}" ]; then
+            ARGS+=("--since=${PLAN_SINCE}")
+          fi
+          if [ "${PLAN_FULL:-}" = "true" ]; then
+            ARGS+=("--full")
+          fi
+          node scripts/strategic-plan-week.mjs "${ARGS[@]}"
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain docs/STRATEGIC_PLAN_WEEK.md)" ]; then
+            git add docs/STRATEGIC_PLAN_WEEK.md
+            git commit -m "docs(plan): обновлён еженедельный стратегический план [skip ci]"
+            git push origin HEAD:${GITHUB_REF_NAME}
+            echo "PLAN_COMMITTED=true" >> "$GITHUB_ENV"
+          else
+            echo "Файл docs/STRATEGIC_PLAN_WEEK.md не изменился — коммитить нечего."
+            echo "PLAN_COMMITTED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Weekly strategic plan"
+            echo ""
+            echo "- Скрипт: \`yarn plan:week\` (см. \`scripts/strategic-plan-week.mjs\`)."
+            echo "- Источник цели: \`docs/WHITE_PAPER.md\`."
+            echo "- Период: последние 7 дней (если не переопределён через \`since\`)."
+            echo "- Выход: \`docs/STRATEGIC_PLAN_WEEK.md\`."
+            if [ "${PLAN_COMMITTED:-false}" = "true" ]; then
+              echo "- Результат: коммит запушен в \`${GITHUB_REF_NAME}\`."
+            else
+              echo "- Результат: изменений не было или генерация не дошла до коммита."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
