@@ -2,6 +2,12 @@
 
 Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
 
+## Жизненный цикл задачи
+
+Любое пожелание, баг или недоделка оформляется как **GitHub Issue** по шаблонам в [`.github/ISSUE_TEMPLATE/`](../.github/ISSUE_TEMPLATE/) (`wish`, `bug`, `imperfection`). Дальше задача конвертируется в **Linear**, где идут декомпозиция и внутренние обсуждения; PR в GitHub связывается с Issue через `Closes #N`. Перед закрытием GitHub Issue автор оставляет формальный отчёт.
+
+Полный регламент: [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md).
+
 ## Локальная разработка
 
 - Установка и скрипты — см. корневой `README.md` (если отсутствует — `package.json`).

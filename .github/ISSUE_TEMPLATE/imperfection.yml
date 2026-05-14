@@ -1,0 +1,59 @@
+name: Imperfection — недоделка / технический долг
+description: Не баг и не фича, а накопившаяся мелочь — рефакторинг, дублирование, пропущенные тесты, устаревшая документация
+title: '[Imperfection] '
+labels:
+  - imperfection
+  - 'status:triage'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Фиксация недоделок — отдельный тип задач: они не блокируют функциональность,
+        но накапливаются и со временем мешают развитию. Жизненный цикл:
+        [docs/TASKS_MANAGEMENT.md](../blob/main/docs/TASKS_MANAGEMENT.md).
+  - type: textarea
+    id: where
+    attributes:
+      label: Где
+      description: Какой файл / пакет / слой это касается.
+      placeholder: 'packages/services/audio-engine/src/core/live-sampler.ts'
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Что не так
+      description: Конкретно опишите дефект — что сейчас неправильно или неполноценно.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Почему стоит починить
+      description: Какие риски / неудобства / технический долг это создаёт сейчас и в будущем.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Как мы поймём, что недоделка устранена. 2–5 проверяемых пунктов.
+      placeholder: |
+        - [ ] …
+        - [ ] …
+    validations:
+      required: true
+  - type: input
+    id: white-paper
+    attributes:
+      label: Связь с WHITE_PAPER.md (опционально)
+      placeholder: 'Этап 1, принцип «чистая математика отдельно от железа»'
+    validations:
+      required: false
+  - type: checkboxes
+    id: declaration
+    attributes:
+      label: Понимаю процесс
+      options:
+        - label: Прочитал(а) [docs/TASKS_MANAGEMENT.md](../blob/main/docs/TASKS_MANAGEMENT.md) и понимаю, что внутренние обсуждения пойдут в Linear, а перед закрытием Issue здесь будет формальный отчёт.
+          required: true
