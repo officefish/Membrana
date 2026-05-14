@@ -37,9 +37,13 @@ const CategoryItem: React.FC<{
     <div className="collapse collapse-arrow bg-base-200 rounded-box">
       <input type="checkbox" className="peer" defaultChecked={true} />
 
-      <div className="collapse-title flex items-center gap-2 min-w-0 p-3 min-h-0">
-        <span className="text-sm font-medium text-base-content truncate">{category}</span>
-        <span className="text-[11px] text-base-content/45 tabular-nums shrink-0">({displayModules.length})</span>
+      <div className="collapse-title flex items-center gap-1.5 min-w-0 min-h-8 px-2 py-1.5 pr-10">
+        <span className="text-xs font-semibold leading-tight text-base-content/90 truncate">
+          {category}
+        </span>
+        <span className="text-[10px] text-base-content/45 tabular-nums shrink-0 leading-none">
+          ({displayModules.length})
+        </span>
       </div>
 
       <div className="collapse-content p-0">
