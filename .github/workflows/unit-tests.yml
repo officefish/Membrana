@@ -1,0 +1,72 @@
+# Выделенный прогон юнит-тестов всех воркспейсов через Turbo.
+# В отличие от `ci.yml`, этот workflow запускает ТОЛЬКО `yarn turbo run test`,
+# без lint/typecheck/build — чтобы быстро отлавливать падения тестов
+# и иметь отдельный обязательный статус «Unit tests» в PR.
+#
+# Соответствует ролям «Структурщик» / Teamlead из docs/VIRTUAL_TEAM_PROMPT.md
+# (контроль контрактов пакетов через автотесты).
+
+name: Unit tests
+
+on:
+  push:
+    branches: [main, master, develop, vesnin]
+  pull_request:
+    branches: [main, master, develop, vesnin]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Turbo unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # На раннере setup-node ставит Yarn 1, поэтому Yarn 4 активируем через Corepack.
+      - name: Enable Corepack (Yarn 4 из packageManager)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+          echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> "$GITHUB_ENV"
+
+      - name: Yarn Berry cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.YARN_CACHE_FOLDER }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Turbo — test (все воркспейсы)
+        run: yarn turbo run test --continue
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Unit tests (Membrana)"
+            echo ""
+            echo "- Команда: \`yarn turbo run test --continue\`"
+            echo "- Пакетный менеджер: **Yarn 4** (\`packageManager\` в корневом \`package.json\`)."
+            echo "- В каждом воркспейсе тесты поднимает Vitest (\`vitest run\`)."
+            echo ""
+            echo "Локально перед PR выполните \`yarn test\` (см. \`docs/CONTRIBUTING.md\`)."
+          } >> "$GITHUB_STEP_SUMMARY"
