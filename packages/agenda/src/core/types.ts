@@ -8,6 +8,19 @@ export interface ModuleContext<TConfig = Record<string, unknown>> {
   getPlugin: (pluginId: string) => Plugin | undefined;
 }
 
+/**
+ * Колбэк очистки, который плагин может вернуть из `install`.
+ * Вызывается store при деактивации плагина / разрегистрации модуля /
+ * unmount приложения.
+ */
+export type PluginTeardown = () => void | Promise<void>;
+
+/** Что может вернуть `install`: ничего, sync teardown, async с/без teardown. */
+export type PluginInstallResult =
+  | void
+  | PluginTeardown
+  | Promise<void | PluginTeardown>;
+
 // Плагин с состоянием
 export interface Plugin<TConfig = Record<string, unknown>> {
   id: string;
@@ -16,7 +29,16 @@ export interface Plugin<TConfig = Record<string, unknown>> {
   version: string;
   active: boolean;
   config?: TConfig;
-  install: (context: ModuleContext<TConfig>) => void | Promise<void>;
+  /**
+   * Вызывается store ОДИН раз при первой активации плагина (`activatePlugin` /
+   * `togglePlugin` → on, либо при `registerPlugin` если `active: true`).
+   * Может вернуть teardown — store сохранит его и вызовет при деактивации.
+   *
+   * Используйте install/teardown для подписок на shared-хабы и для регистрации
+   * слушателей в engine-сервисах — это устраняет необходимость дублировать
+   * подписки в UI-компонентах.
+   */
+  install: (context: ModuleContext<TConfig>) => PluginInstallResult;
 }
 
 // Модуль с состоянием
@@ -105,6 +127,9 @@ export interface MembranaState {
   togglePlugin: (moduleId: string, pluginId: string) => void;
   
   setFilters: (filters: Partial<MembranaFilters>) => void;
+
+  /** Завершение фазы регистрации: сбрасывает pendingModulePrefs. */
+  clearPendingPrefs: () => void;
   
   // Selectors
   getModule: (moduleId: string) => Module | undefined;

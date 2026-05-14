@@ -163,3 +163,10 @@
 - Не коммитить `node_modules`, `dist`, `.turbo`, `.env`.
 - Не нарушать границы пакетов: внутренние модули — приватны.
 - **Не работать с Web Audio API напрямую** из модулей / плагинов / других сервисов. Только через `@membrana/audio-engine-service` (см. `docs/ARCHITECTURE.md`, раздел «1b. Центральный узел первичной обработки аудио»). Запрещены: `new AudioContext()`, `navigator.mediaDevices.getUserMedia(...)`, `createAnalyser()`, `decodeAudioData()`, `enumerateDevices()` — всё это уже обёрнуто в engine. Эталон интеграции — `apps/client/src/modules/microphone/`.
+- **Не регистрировать модули/плагины напрямую через store**. Канонический путь — `MembranaRegistry` из `@membrana/agenda`: `MembranaRegistry.registerLazyModule({...})`, `MembranaRegistry.registerPlugin(moduleId, factory())`, в конце `MembranaRegistry.finalizeRegistration()`. Прямые вызовы `useMembranaStore.getState().registerModule(...)` или `setState({ pendingModulePrefs: null })` запрещены. См. `docs/MODULE_AND_PLUGIN_UI.md` §0 и `docs/ARCHITECTURE.md` §1c.
+
+## Архитектурная ветка `vesnin`
+
+Изменения, затрагивающие критические архитектурные элементы (контракты `@membrana/core` и `agenda`, `MembranaRegistry`, lifecycle плагинов, ядро `audio-engine`, граф зависимостей сервисов, базовые типы store), ведутся в отдельной ветке **`vesnin`** (в честь братьев Весниных). Точечные правки UI и багфиксы — в обычных feature-ветках.
+
+Подробно: `docs/CONTRIBUTING.md` → раздел «Архитектурная ветка `vesnin`».

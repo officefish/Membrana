@@ -13,6 +13,35 @@
 - Установка и скрипты — см. корневой `README.md` (если отсутствует — `package.json`).
 - Перед PR: те же проверки, что в CI — `yarn install --immutable` (при необходимости) и `yarn turbo run lint typecheck test build` для затронутых пакетов или всего монорепо.
 
+## Архитектурная ветка `vesnin`
+
+Для изменений, затрагивающих **критические архитектурные элементы** (контракты `@membrana/core` и `agenda`, фасады регистрации модулей, lifecycle плагинов, ядро `audio-engine`, граф зависимостей сервисов, базовые типы store), работа ведётся в отдельной ветке `vesnin` (в честь братьев Весниных, русских архитекторов-авангардистов).
+
+**Когда обязательно `vesnin`:**
+- Изменение `MembranaRegistry`, `MembranaState`, типов `Module` / `Plugin` в `@membrana/agenda`.
+- Изменение публичного API `@membrana/core` или сервисов в `packages/services/*`.
+- Внедрение новых архитектурных паттернов (например, lifecycle `plugin.install()` в store).
+- Обновление стратегических документов (`ARCHITECTURE.md`, `SERVICES.md`, `MODULE_AND_PLUGIN_UI.md`).
+
+**Когда не нужно:**
+- Точечные правки UI внутри одного модуля без изменения контрактов.
+- Багфиксы с малой областью влияния.
+- Документация, которая описывает уже существующее поведение (без изменения кода).
+
+**Workflow:**
+
+```bash
+git checkout main
+git pull
+git checkout -b vesnin            # или git checkout vesnin && git pull
+# … изменения …
+yarn typecheck && yarn lint && yarn test && yarn build
+git push -u origin vesnin
+# Открыть PR с базой main; в описании указать [vesnin] и затронутые контракты.
+```
+
+После merge `vesnin → main` ветка локально удаляется (`git branch -d vesnin`) и заводится заново при следующей архитектурной задаче. Решение, нужна ли ветка `vesnin`, принимает **Teamlead** при формулировке задачи.
+
 ## Pull requests
 
 1. Описание PR: **что**, **зачем**, **какие пакеты** затронуты (`apps/client`, `packages/*`, `packages/services/*`).
@@ -38,6 +67,18 @@
 - Хуки не содержат бизнес-логики.
 - Граф зависимостей не нарушен (только `@membrana/core`).
 - Есть README с разделами **Что делает**, **API**, **Использование**.
+
+## Добавление нового модуля или плагина клиента
+
+Полный чек-лист — в [MODULE_AND_PLUGIN_UI.md §0](./MODULE_AND_PLUGIN_UI.md#0-регистрация-модулей-и-lazy-loading). Кратко:
+
+1. Создать `apps/client/src/modules/<Name>Module.tsx` (для модуля) или `apps/client/src/plugins/<name>/` (для плагина).
+2. Зарегистрировать в `apps/client/src/modules/registerClientModules.ts` через `MembranaRegistry.registerLazyModule({ ..., loader })` или `MembranaRegistry.registerPlugin(moduleId, factory())`.
+3. **Запрещено** дёргать `useMembranaStore.getState().registerModule(...)` напрямую — только через фасад.
+4. Если плагин имеет UI настроек — добавить ветку в `apps/client/src/pluginSidebarDetails.tsx`.
+5. Если работаете с аудио — только через `@membrana/audio-engine-service` (см. [ARCHITECTURE.md §1b](./ARCHITECTURE.md)).
+
+Изменения, затрагивающие сам фасад `MembranaRegistry` или контракты `Module` / `Plugin` — через ветку **`vesnin`** (см. выше).
 
 ## Виртуальные агенты (Cursor / GitHub Actions)
 
