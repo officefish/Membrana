@@ -10,6 +10,7 @@
 4. [`docs/DESIGN.md`](./docs/DESIGN.md) — токены UI, цвета, отступы, типографика, темы.
 5. [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — процесс PR, добавление сервиса, запуск ревью.
 6. [`docs/UI_UX_DEVELOPER_PROMPT.md`](./docs/UI_UX_DEVELOPER_PROMPT.md) — расширенный промпт роли Верстальщика.
+7. [`docs/INTEGRATIONS_STRATEGY.md`](./docs/INTEGRATIONS_STRATEGY.md) — стратегия экспериментальных интеграций анализа звука: эшелоны «локально → свой сервер → внешний API», приоритет zero-shot и open-weights. Читать перед любой задачей, добавляющей ML/DSP-детектор.
 
 При конфликте этих правил с .cursorrules выигрывают документы в `docs/` и решение Teamlead.
 
