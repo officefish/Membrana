@@ -1,7 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ModuleProps, useTheme } from '@membrana/agenda';
+import {
+  useAudioFile,
+  useBufferPlayer,
+} from '@membrana/audio-engine-service';
 import { downsampleToPeaks } from '../utils/downsamplePeaks';
 import { getCanvasThemeColors } from '@membrana/audio-data-viz';
+
+/**
+ * AudioFileUploadModule — загрузка аудиофайла и его воспроизведение.
+ *
+ * Web Audio (AudioContext, decodeAudioData, BufferSourceNode, AnalyserNode)
+ * НЕ управляется здесь напрямую. Engine отвечает за всё:
+ *   - useAudioFile()        — декодирование File/Blob → AudioBuffer.
+ *   - useBufferPlayer()     — воспроизведение AudioBuffer + поток frames + AnalyserNode.
+ *
+ * Этот модуль остаётся «чисто пользовательским»: волна (превью), спектр
+ * во время воспроизведения, кнопки «Слушать» / «Стоп».
+ */
 
 export interface AudioFileUploadConfig {
   fftSize: 512 | 1024 | 2048 | 4096;
@@ -25,8 +41,8 @@ function sizeCanvasToCss(canvas: HTMLCanvasElement, cssW: number, cssH: number) 
 function drawWaveform(
   canvas: HTMLCanvasElement,
   peaks: Float32Array,
-  colors: ReturnType<typeof getCanvasThemeColors>
-) {
+  colors: ReturnType<typeof getCanvasThemeColors>,
+): void {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const rect = canvas.getBoundingClientRect();
@@ -66,8 +82,8 @@ function drawWaveform(
 function drawSpectrum(
   canvas: HTMLCanvasElement,
   data: Uint8Array,
-  colors: ReturnType<typeof getCanvasThemeColors>
-) {
+  colors: ReturnType<typeof getCanvasThemeColors>,
+): void {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const rect = canvas.getBoundingClientRect();
@@ -102,8 +118,6 @@ export const AudioFileUploadModule: React.FC<ModuleProps<AudioFileUploadConfig>>
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [buffer, setBuffer] = useState<AudioBuffer | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [status, setStatus] = useState<string>('Файл не выбран');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -112,58 +126,53 @@ export const AudioFileUploadModule: React.FC<ModuleProps<AudioFileUploadConfig>>
   const specCanvasRef = useRef<HTMLCanvasElement>(null);
   const peaksRef = useRef<Float32Array | null>(null);
 
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const rafRef = useRef<number>();
+  // Декодирование через engine — никаких new AudioContext().
+  const fileLoader = useAudioFile();
 
-  const stopPlayback = useCallback(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = undefined;
-    try {
-      sourceRef.current?.stop();
-    } catch {
-      /* already stopped */
-    }
-    sourceRef.current = null;
-    analyserRef.current = null;
-    if (audioContextRef.current) {
-      void audioContextRef.current.close();
-      audioContextRef.current = null;
-    }
-    setIsPlaying(false);
-  }, []);
+  // Воспроизведение и анализ через engine. На каждом кадре читаем
+  // частотные данные из engine'ового AnalyserNode и рисуем спектр.
+  const player = useBufferPlayer({
+    config: { bufferSize: config.fftSize, smoothingTimeConstant: 0.65 },
+    onFrame: () => {
+      const an = player.analyserNode;
+      const specCanvas = specCanvasRef.current;
+      if (!an || !specCanvas) return;
+      const freq = new Uint8Array(an.frequencyBinCount);
+      an.getByteFrequencyData(freq);
+      drawSpectrum(specCanvas, freq, getCanvasThemeColors());
+    },
+    onEnded: () => setStatus('Воспроизведение завершено'),
+  });
 
-  const decodeFile = useCallback(async (file: File) => {
-    setError(null);
-    setStatus('Декодирование…');
-    stopPlayback();
-    setBuffer(null);
-    peaksRef.current = null;
-    try {
-      const ctx = new AudioContext();
-      const ab = await file.arrayBuffer();
-      const audioBuffer = await ctx.decodeAudioData(ab.slice(0));
-      await ctx.close();
-      setBuffer(audioBuffer);
-      setFileName(file.name);
-      setStatus('Готово к воспроизведению');
-    } catch (e) {
-      console.error(e);
-      setError('Не удалось прочитать или декодировать файл.');
-      setStatus('Ошибка');
-      setFileName(null);
-    }
-  }, [stopPlayback]);
+  const decodeFile = useCallback(
+    async (file: File) => {
+      setError(null);
+      setStatus('Декодирование…');
+      void player.stop();
+      peaksRef.current = null;
+      try {
+        await fileLoader.load(file);
+        setFileName(file.name);
+        setStatus('Готово к воспроизведению');
+      } catch (e) {
+        console.error(e);
+        setError('Не удалось прочитать или декодировать файл.');
+        setStatus('Ошибка');
+        setFileName(null);
+      }
+    },
+    [fileLoader, player],
+  );
 
+  // Обновляем огибающую при появлении/смене буфера или изменении waveformBins.
   useEffect(() => {
-    if (!buffer) {
+    if (!fileLoader.buffer) {
       peaksRef.current = null;
       return;
     }
-    const ch0 = buffer.getChannelData(0);
+    const ch0 = fileLoader.buffer.getChannelData(0);
     peaksRef.current = downsampleToPeaks(ch0, config.waveformBins);
-  }, [buffer, config.waveformBins]);
+  }, [fileLoader.buffer, config.waveformBins]);
 
   const redrawWaveform = useCallback(() => {
     const canvas = waveCanvasRef.current;
@@ -174,7 +183,7 @@ export const AudioFileUploadModule: React.FC<ModuleProps<AudioFileUploadConfig>>
 
   useEffect(() => {
     redrawWaveform();
-  }, [buffer, theme, config.waveformBins, redrawWaveform]);
+  }, [fileLoader.buffer, theme, config.waveformBins, redrawWaveform]);
 
   useEffect(() => {
     const el = waveWrapRef.current;
@@ -182,7 +191,7 @@ export const AudioFileUploadModule: React.FC<ModuleProps<AudioFileUploadConfig>>
     const ro = new ResizeObserver(() => redrawWaveform());
     ro.observe(el);
     return () => ro.disconnect();
-  }, [redrawWaveform, buffer]);
+  }, [redrawWaveform, fileLoader.buffer]);
 
   const onFileChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const f = e.target.files?.[0];
@@ -196,46 +205,27 @@ export const AudioFileUploadModule: React.FC<ModuleProps<AudioFileUploadConfig>>
   };
 
   const startPlayback = useCallback(async () => {
-    if (!buffer) return;
-    stopPlayback();
-    const ctx = new AudioContext();
-    audioContextRef.current = ctx;
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    const analyser = ctx.createAnalyser();
-    analyser.fftSize = config.fftSize;
-    analyser.smoothingTimeConstant = 0.65;
-    source.connect(analyser);
-    analyser.connect(ctx.destination);
-    sourceRef.current = source;
-    analyserRef.current = analyser;
-    source.onended = () => {
-      stopPlayback();
-    };
-    await ctx.resume();
-    source.start(0);
-    setIsPlaying(true);
-    setStatus('Воспроизведение…');
+    const buf = fileLoader.buffer;
+    if (!buf) return;
+    try {
+      await player.play(buf);
+      setStatus('Воспроизведение…');
+    } catch (e) {
+      console.error(e);
+      setError('Не удалось запустить воспроизведение.');
+    }
+  }, [fileLoader.buffer, player]);
 
-    if (!config.showSpectrumWhilePlaying) return;
+  const stopPlayback = useCallback(() => {
+    void player.stop();
+  }, [player]);
 
-    const freq = new Uint8Array(analyser.frequencyBinCount);
-    const tick = () => {
-      const a = analyserRef.current;
-      const specCanvas = specCanvasRef.current;
-      if (!a || !specCanvas) return;
-      a.getByteFrequencyData(freq);
-      drawSpectrum(specCanvas, freq, getCanvasThemeColors());
-      rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-  }, [buffer, config.fftSize, config.showSpectrumWhilePlaying, stopPlayback]);
-
-  useEffect(() => () => stopPlayback(), [stopPlayback]);
-
-  const handleConfig = (updates: Partial<AudioFileUploadConfig>) => {
+  const handleConfig = (updates: Partial<AudioFileUploadConfig>): void => {
     onUpdateConfig(updates);
   };
+
+  const isPlaying = player.isPlaying;
+  const hasBuffer = fileLoader.buffer !== null;
 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
@@ -252,7 +242,7 @@ export const AudioFileUploadModule: React.FC<ModuleProps<AudioFileUploadConfig>>
           <button
             type="button"
             className="btn btn-outline btn-primary min-h-10"
-            disabled={!buffer || isPlaying}
+            disabled={!hasBuffer || isPlaying}
             onClick={() => void startPlayback()}
           >
             Слушать
@@ -267,111 +257,121 @@ export const AudioFileUploadModule: React.FC<ModuleProps<AudioFileUploadConfig>>
           </button>
         </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={ACCEPT}
-        className="hidden"
-        onChange={onFileChange}
-        aria-hidden
-      />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={ACCEPT}
+          className="hidden"
+          onChange={onFileChange}
+          aria-hidden
+        />
 
-      <div
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            fileInputRef.current?.click();
-          }
-        }}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={onDrop}
-        onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-base-300 rounded-box bg-base-200/50 hover:bg-base-200 transition-colors duration-200 p-6 text-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
-        aria-label="Перетащите аудиофайл сюда или нажмите, чтобы выбрать"
-      >
-        <p className="text-base-content font-medium">Перетащите аудио сюда или нажмите для выбора</p>
-        <p className="text-sm text-base-content/60 mt-2 tabular-nums">
-          {fileName ? `Загружено: ${fileName}` : 'Поддерживаются распространённые форматы (WAV, MP3, OGG…).'}
-        </p>
-      </div>
-
-      {error && (
-        <div className="alert alert-error text-sm" role="alert">
-          <span>{error}</span>
-        </div>
-      )}
-
-      <div className="grid gap-4 lg:grid-cols-1">
-        <div className="form-control">
-          <span className="label-text text-base-content/80 mb-2">Превью волны</span>
-          <div
-            ref={waveWrapRef}
-            className="w-full rounded-box border border-base-300 overflow-hidden bg-base-300/30 min-h-[200px]"
-          >
-            <canvas ref={waveCanvasRef} className="w-full h-[200px] block" />
-          </div>
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={onDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className="border-2 border-dashed border-base-300 rounded-box bg-base-200/50 hover:bg-base-200 transition-colors duration-200 p-6 text-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100"
+          aria-label="Перетащите аудиофайл сюда или нажмите, чтобы выбрать"
+        >
+          <p className="text-base-content font-medium">
+            Перетащите аудио сюда или нажмите для выбора
+          </p>
+          <p className="text-sm text-base-content/60 mt-2 tabular-nums">
+            {fileName ? `Загружено: ${fileName}` : 'Поддерживаются распространённые форматы (WAV, MP3, OGG…).'}
+          </p>
         </div>
 
-        {config.showSpectrumWhilePlaying && (
-          <div className="form-control">
-            <span className="label-text text-base-content/80 mb-2">Спектр при воспроизведении</span>
-            <div className="w-full rounded-box border border-base-300 overflow-hidden bg-base-300/30 min-h-[160px]">
-              <canvas ref={specCanvasRef} className="w-full h-[160px] block" />
-            </div>
+        {error && (
+          <div className="alert alert-error text-sm" role="alert">
+            <span>{error}</span>
           </div>
         )}
-      </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="form-control">
-          <label className="label" htmlFor={`${module.id}-fft`}>
-            <span className="label-text">Размер FFT</span>
-          </label>
-          <select
-            id={`${module.id}-fft`}
-            className="select select-bordered select-sm w-full"
-            value={config.fftSize}
-            onChange={(e) =>
-              handleConfig({ fftSize: Number(e.target.value) as AudioFileUploadConfig['fftSize'] })
-            }
-          >
-            <option value={512}>512</option>
-            <option value={1024}>1024</option>
-            <option value={2048}>2048</option>
-            <option value={4096}>4096</option>
-          </select>
+        <div className="grid gap-4 lg:grid-cols-1">
+          <div className="form-control">
+            <span className="label-text text-base-content/80 mb-2">Превью волны</span>
+            <div
+              ref={waveWrapRef}
+              className="w-full rounded-box border border-base-300 overflow-hidden bg-base-300/30 min-h-[200px]"
+            >
+              <canvas ref={waveCanvasRef} className="w-full h-[200px] block" />
+            </div>
+          </div>
+
+          {config.showSpectrumWhilePlaying && (
+            <div className="form-control">
+              <span className="label-text text-base-content/80 mb-2">
+                Спектр при воспроизведении
+              </span>
+              <div className="w-full rounded-box border border-base-300 overflow-hidden bg-base-300/30 min-h-[160px]">
+                <canvas ref={specCanvasRef} className="w-full h-[160px] block" />
+              </div>
+            </div>
+          )}
         </div>
-        <div className="form-control">
-          <label className="label" htmlFor={`${module.id}-bins`}>
-            <span className="label-text">Точек превью: {config.waveformBins}</span>
-          </label>
-          <input
-            id={`${module.id}-bins`}
-            type="range"
-            min={128}
-            max={2048}
-            step={64}
-            className="range range-primary range-sm w-full"
-            value={config.waveformBins}
-            onChange={(e) => handleConfig({ waveformBins: Number(e.target.value) })}
-          />
-        </div>
-        <div className="form-control sm:col-span-2">
-          <label className="label cursor-pointer justify-start gap-3 py-1">
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="form-control">
+            <label className="label" htmlFor={`${module.id}-fft`}>
+              <span className="label-text">Размер FFT</span>
+            </label>
+            <select
+              id={`${module.id}-fft`}
+              className="select select-bordered select-sm w-full"
+              value={config.fftSize}
+              onChange={(e) =>
+                handleConfig({
+                  fftSize: Number(e.target.value) as AudioFileUploadConfig['fftSize'],
+                })
+              }
+            >
+              <option value={512}>512</option>
+              <option value={1024}>1024</option>
+              <option value={2048}>2048</option>
+              <option value={4096}>4096</option>
+            </select>
+          </div>
+          <div className="form-control">
+            <label className="label" htmlFor={`${module.id}-bins`}>
+              <span className="label-text">Точек превью: {config.waveformBins}</span>
+            </label>
             <input
-              type="checkbox"
-              className="checkbox checkbox-primary"
-              checked={config.showSpectrumWhilePlaying}
-              onChange={(e) => handleConfig({ showSpectrumWhilePlaying: e.target.checked })}
+              id={`${module.id}-bins`}
+              type="range"
+              min={128}
+              max={2048}
+              step={64}
+              className="range range-primary range-sm w-full"
+              value={config.waveformBins}
+              onChange={(e) => handleConfig({ waveformBins: Number(e.target.value) })}
             />
-            <span className="label-text">Показывать спектр во время воспроизведения</span>
-          </label>
+          </div>
+          <div className="form-control sm:col-span-2">
+            <label className="label cursor-pointer justify-start gap-3 py-1">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary"
+                checked={config.showSpectrumWhilePlaying}
+                onChange={(e) =>
+                  handleConfig({ showSpectrumWhilePlaying: e.target.checked })
+                }
+              />
+              <span className="label-text">Показывать спектр во время воспроизведения</span>
+            </label>
+          </div>
         </div>
-      </div>
 
-      <p className="text-sm text-base-content/60 tabular-nums">{status}</p>
+        <p className="text-sm text-base-content/60 tabular-nums">
+          {fileLoader.isLoading ? 'Декодирование…' : status}
+        </p>
       </div>
     </div>
   );
