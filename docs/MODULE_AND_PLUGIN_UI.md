@@ -4,6 +4,115 @@
 
 ---
 
+## 0. Регистрация модулей и lazy-loading
+
+**Канонический путь — только через `MembranaRegistry`** из `@membrana/agenda`. Прямые вызовы `useMembranaStore.getState().registerModule(...)` / `registerPlugin(...)` запрещены: они привязывают клиента к внутренней реализации store и обходят будущие хуки lifecycle.
+
+**Где живёт точка регистрации:** `apps/client/src/modules/registerClientModules.ts`. Эта функция вызывается **один раз** в `apps/client/src/main.tsx` на старте приложения.
+
+### Lazy-загрузка модуля
+
+Все модули регистрируются как ленивые: компонент приходит чанком только когда `ModuleRenderer` (`@membrana/agenda`) монтирует выбранный модуль через `React.Suspense`. Используйте `MembranaRegistry.registerLazyModule(...)` — он сам обернёт `loader` в `React.lazy`:
+
+```ts
+import { MembranaRegistry } from '@membrana/agenda';
+
+MembranaRegistry.registerLazyModule({
+  id: 'microphone',
+  name: 'Микрофон',
+  description: 'Выбор источника звука и запуск потока',
+  version: '1.0.0',
+  category: 'Устройства',
+  enabled: true,
+  activePlugins: [],
+  defaultConfig: { selectedDeviceId: '' },
+  loader: () =>
+    import('./microphone/MicrophoneModule')
+      .then((m) => ({ default: m.MicrophoneModule })),
+});
+```
+
+**Важно:** `loader` обязан возвращать `{ default: Component }` — это совместимо с сигнатурой `React.lazy`. Если ваш модуль экспортируется именованно (`export const FFTModule`), оборачивайте в `.then((m) => ({ default: m.FFTModule }))`.
+
+### Регистрация плагина
+
+```ts
+MembranaRegistry.registerPlugin('microphone', createMicStreamVizPlugin());
+```
+
+Плагин принадлежит конкретному модулю; идентификатор модуля — первый аргумент. Конфиг плагина (`defaultConfig` через `config` в фабрике) сохраняется и переиспользуется при rehydrate.
+
+### Завершение фазы регистрации
+
+В конце `registerClientModules()` обязательно вызовите:
+
+```ts
+MembranaRegistry.finalizeRegistration();
+```
+
+Это сбрасывает `pendingModulePrefs` (persisted-настройки уже применены при `registerModule`). Раньше клиент делал это через `useMembranaStore.setState({ pendingModulePrefs: null })` — это нарушение инкапсуляции, **больше так делать нельзя**.
+
+### Чек-лист добавления нового модуля
+
+1. Создать `apps/client/src/modules/<Name>Module.tsx`. Не дублировать заголовок (см. §1).
+2. Если у модуля будут плагины — создать их в `apps/client/src/plugins/<name>/` с фабрикой `create<Name>Plugin()`.
+3. В `registerClientModules.ts` добавить вызов `MembranaRegistry.registerLazyModule({...})` с уникальным `id` и `loader`.
+4. Если у плагина есть UI настроек — добавить ветку в `apps/client/src/pluginSidebarDetails.tsx` (см. §3).
+5. Если модуль/плагин подключаются к аудио-потоку — использовать `@membrana/audio-engine-service` (см. `ARCHITECTURE.md` §1b).
+
+### Lifecycle `plugin.install()` / teardown
+
+**Реализовано** в ветке `vesnin`. Store вызывает `plugin.install(context)`:
+
+- при первой активации через `activatePlugin` / `togglePlugin`;
+- при `registerPlugin`, если плагин уже `active: true` после rehydrate.
+
+Если `install` вернул функцию — store сохраняет её как **teardown** и вызывает при `deactivatePlugin` (либо при следующем `togglePlugin`-в-выкл). Teardown'ы хранятся вне Zustand state (в module-scope `Map`), потому что функции не сериализуются в persist.
+
+```ts
+// Эталонный плагин с install/teardown
+import type { Plugin, PluginTeardown } from '@membrana/agenda';
+
+export function createMyPlugin(): Plugin<MyConfig> {
+  return {
+    id: 'my-plugin',
+    name: 'My plugin',
+    version: '1.0.0',
+    active: false,
+    config: { /* ... */ },
+    install(context): PluginTeardown {
+      const unsubscribe = sharedHub.subscribe(context.moduleId, (data) => {
+        // обработка событий шины
+      });
+      return unsubscribe; // ← teardown вызовется при deactivate
+    },
+  };
+}
+```
+
+**Контракт `install`:**
+
+- Получает `ModuleContext<TConfig>`: `moduleId`, `config` (на момент вызова), `updateConfig`, `getPlugin`.
+- Может быть `async`. Store ждёт промис перед сохранением teardown.
+- Может вернуть `void`, `() => void` или `Promise<void | (() => void)>`.
+- Идемпотентен: повторная активация уже активного плагина — no-op.
+
+**Что лучше делать в `install`:**
+
+- Подписки на shared-хабы (как `microphoneStreamHub`).
+- Регистрация слушателей в engine-сервисах (`@membrana/audio-engine-service` LiveSampler / BufferPlayer).
+- Создание долгоживущих ресурсов плагина (Web Worker, MessageChannel).
+
+**Что НЕ делать в `install`:**
+
+- React-side эффекты (это работа компонента плагина — в `useEffect`).
+- Тяжёлые вычисления — install должен возвращаться быстро.
+- Прямую работу с DOM (плагин не имеет DOM-контекста).
+
+**Эталон сейчас.** `apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts` имеет реализованный `install`/teardown, но подписку на `microphoneStreamHub` пока удерживает в UI-хуке `useMicStreamAnalysis` — потому что хуку нужен `analyserRef` для виджетов `@membrana/audio-data-viz`. Полный перевод подписки в `install` — отдельная задача (требует отдельного канала «engine → виджеты», без `analyserRef` через React-ref). Новые плагины **без** прямой работы с виджетами audio-data-viz должны сразу подписываться в `install`.
+
+---
+
 ## 1. Каноническая оболочка модуля (agenda)
 
 **Где живёт оболочка:** `packages/agenda/src/ui/core/ModuleRenderer.tsx` и `packages/agenda/src/ui/core/ModuleHeader.tsx`.
@@ -71,7 +180,7 @@
 - [ ] Подписываться в `install()` плагина, отписываться в возвращаемом callback.
 - [ ] Не предполагать, что первое событие придёт «только после следующего» `publishMicrophoneStream`: стартовое состояние может прийти из replay.
 
-**Согласование с кодом agenda:** в `packages/agenda/src/core/store.ts` переключение активности плагина (`activatePlugin` / `deactivatePlugin` / `togglePlugin`) сейчас меняет только флаги в Zustand и **не** вызывает `plugin.install()` / teardown контракта плагина. Пункт про `install()` выше описывает **целевой** жизненный цикл для подписок на внешние хабы; до выравнивения store с этим контрактом подписку можно инициировать из другого места, где гарантированно вызывается `install()` (например при первой загрузке модуля), либо отдельно синхронизировать с `active` в UI.
+**Согласование с кодом agenda (актуально с ветки `vesnin`):** store теперь **вызывает** `plugin.install()` при `activatePlugin` / `togglePlugin` и сохраняет teardown для `deactivatePlugin` (см. §0 «Lifecycle `plugin.install()` / teardown»). Новые плагины с подписками на shared-хабы должны использовать `install`. Старый шаблон с подпиской из UI-хука (`useMicStreamAnalysis`) допустим только для плагинов, которые удерживают `analyserRef` для виджетов `@membrana/audio-data-viz` — это переходный кейс.
 
 ---
 
