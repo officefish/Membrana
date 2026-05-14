@@ -25,6 +25,8 @@
     "plan:day:full": "node scripts/strategic-plan-day.mjs --full",
     "plan:week": "node scripts/strategic-plan-week.mjs",
     "plan:week:full": "node scripts/strategic-plan-week.mjs --full",
+    "analyzers:research:week": "node scripts/analyzers-research-week.mjs",
+    "analyzers:research:week:dry": "node scripts/analyzers-research-week.mjs --dry-run",
     "ask": "node scripts/ask-persona.mjs",
     "archive:daily-review": "node scripts/archive-daily-code-review.mjs",
     "test:scripts": "node --test scripts/context-collector-paths.test.mjs",
