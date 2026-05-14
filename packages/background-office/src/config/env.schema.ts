@@ -4,6 +4,7 @@ export const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  APP_VERSION: z.string().optional(),
   API_INTERNAL_TOKEN: z.string().min(1, 'API_INTERNAL_TOKEN is required'),
   ANTHROPIC_API_KEY: z.string().min(1, 'ANTHROPIC_API_KEY is required'),
   ANTHROPIC_MODEL: z.string().optional(),

@@ -8,6 +8,7 @@ import {
   Res,
   type RawBodyRequest,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { createHash } from 'node:crypto';
 import type { AppConfig } from '../../config/env.schema';
@@ -16,6 +17,7 @@ import { WebhookDeliveryCache } from './webhook-delivery.cache';
 import { verifyLinearWebhookSignature } from './linear-signature';
 import { getLinearWebhookRawBody } from './webhook-raw-body';
 
+@ApiTags('Webhooks')
 @Controller('webhooks')
 export class LinearWebhookController {
   private readonly logger = new Logger(LinearWebhookController.name);
@@ -26,7 +28,26 @@ export class LinearWebhookController {
   ) {}
 
   @Post('linear')
-  handle(@Req() req: RawBodyRequest<Request>, @Res() res: Response): void {
+  @ApiOperation({ summary: 'Linear webhook receiver' })
+  @ApiHeader({
+    name: 'Linear-Signature',
+    description: 'HMAC-SHA256 signature of the raw body (hex encoded)',
+    required: true,
+  })
+  @ApiHeader({
+    name: 'Linear-Delivery',
+    description: 'Unique delivery identifier for idempotency',
+    required: false,
+  })
+  @ApiHeader({
+    name: 'Linear-Event',
+    description: 'Type of Linear event',
+    required: false,
+  })
+  @ApiResponse({ status: 200, description: 'Webhook received', schema: { type: 'object', properties: { received: { type: 'boolean' } } } })
+  @ApiResponse({ status: 400, description: 'Missing raw JSON body' })
+  @ApiResponse({ status: 403, description: 'Invalid webhook signature' })
+  handle(@Req() req: RawBodyRequest<Request>, @Res({ passthrough: true }) res: Response): void {
     const raw = getLinearWebhookRawBody(req);
     if (!raw) {
       throw new BadRequestException('Expected raw JSON body');
