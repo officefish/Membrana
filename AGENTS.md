@@ -21,10 +21,13 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Test | `yarn test` |
 | Build all | `yarn build` |
 | Dev all (Turbo) | `yarn dev` |
+| Full CI pipeline | `yarn turbo run lint typecheck test build --continue` (34 tasks) |
 
 ### Gotchas for Cloud Agents
 
-- **Yarn 4 via corepack**: The VM ships with Yarn Classic. The update script activates Yarn 4 via `corepack enable && corepack prepare yarn@4.5.0 --activate`. If `yarn --version` doesn't show `4.x`, run those commands manually.
+- **Yarn 4 via corepack**: The VM ships with Yarn Classic 1.x. The update script runs `corepack enable` which makes the `yarn` shim read `"packageManager"` from `package.json` and resolve to Yarn 4.x automatically. If `yarn -v` still shows `1.22.x`, run `corepack enable` manually.
+- **`--immutable` installs**: The update script uses `yarn install --immutable`. If it fails, `yarn.lock` and `package.json` are out of sync — fix the lockfile (`yarn install` without `--immutable`) and commit the updated `yarn.lock` before pushing.
+- **Turbo cache warmup**: The update script pre-builds library packages (`--filter='!@membrana/client'`) so the first `yarn turbo run lint typecheck test build --continue` is fast. The client is excluded because it depends on all libraries and rebuilds on every relevant change anyway.
 - **No `.env` needed for client dev**: The client app starts without any environment variables. The `background-office` backend requires `ANTHROPIC_API_KEY`, `LINEAR_API_KEY`, etc. — but it is optional for client development.
 - **Service builds are prerequisites**: `yarn typecheck` and `yarn test` depend on `^build` (builds of upstream packages). Turbo handles this automatically, so just run the top-level commands.
 - **Audio features require a browser**: Microphone/audio modules need Web Audio API in a real browser. In headless Cloud Agent testing, expect "no device selected" or similar errors — this is normal.
