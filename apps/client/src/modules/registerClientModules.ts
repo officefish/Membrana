@@ -94,7 +94,7 @@ export function registerClientModules(): void {
     name: 'Журнал телеметрии',
     description: 'Просмотр записей телеметрии (анализ, события, системные)',
     version: '1.0.0',
-    category: 'Наблюдаемость',
+    category: 'Мониторинг',
     enabled: true,
     activePlugins: [],
     defaultConfig: {},
