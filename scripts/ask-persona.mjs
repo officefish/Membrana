@@ -4,7 +4,9 @@
  * «Спросить совета у виртуального члена команды».
  * Шаг 1 — локальный CLI, без интеграции с Linear API.
  *   • Контекст задачи берётся из GitHub Issue (`--gh-issue`) или из markdown-файла (`--ticket-file`).
- *   • Ответ сохраняется в `docs/discussions/<name>.md` (append).
+ *   • Каждый вызов (кроме --no-save) пишет в `docs/discussions/<id>.md` (append).
+ *     Явный id: `--discussion <id>` или `--save-as <id>`. Без них — авто id `discussion-…`.
+ *     Если файл треда уже есть, его содержимое читается в промпт как история переписки.
  * Шаг 2 (будущий PR) добавит флаги `--linear MEM-X` и `--post` для работы напрямую с Linear.
  *
  * Запуск:
@@ -12,7 +14,9 @@
  *   yarn ask dynin   --gh-issue 10 --save-as TEC-42-fft "какие edge cases точно покрывать?"
  *   yarn ask ozhegov --gh-issue 11 --save-as MEM-88-registry "как разбить тесты agenda?"
  *   yarn ask vesnin --ticket-file ./ticket.md "сформулируй кратко границы"
- *   yarn ask vesnin --no-context "одной фразой: нужен ли ADR сейчас?"
+ *   yarn ask vesnin --discussion TEC-42 "уточни по прошлому ответу"
+ *   yarn ask vesnin --no-context "одной фразой: нужен ли ADR сейчас?"   # всё равно пишет в discussion-… .md
+ *   yarn ask vesnin --no-save --no-context "черновик без файла"
  *   node scripts/ask-persona.mjs --help
  *
  * Что подкладывается в промпт:
@@ -20,11 +24,13 @@
  *   2) Стратегический контекст (docs/WHITE_PAPER.md), если не --no-context.
  *   3) Выдержки из docs/ARCHITECTURE.md и docs/SERVICES.md, если не --no-context.
  *   4) Контекст задачи: GitHub Issue (--gh-issue), файл (--ticket-file) или строка (--task).
- *   5) Вопрос пользователя.
+ *   5) История треда из docs/discussions/<id>.md, если файл существует.
+ *   6) Вопрос пользователя.
  *
  * Требуется ANTHROPIC_API_KEY в .env. Опционально ANTHROPIC_MODEL.
  * Для --gh-issue нужен установленный и авторизованный `gh` CLI.
  */
+import { randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'node:fs';
 import { resolve, basename } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -65,6 +71,7 @@ const MAX_WHITE_PAPER_CHARS = 30_000;
 const MAX_ARCH_CHARS = 6_000;
 const MAX_TICKET_CHARS = 20_000;
 const MAX_TASK_TEXT_CHARS = 8_000;
+const MAX_DISCUSSION_HISTORY_CHARS = 35_000;
 
 const DISCUSSIONS_DIR = 'docs/discussions';
 
@@ -78,7 +85,9 @@ function printHelp() {
   console.log(`Usage: yarn ask <persona> [options] "<question>"
 
 Persona-aware CLI для совета у виртуального члена команды.
-Шаг 1: контекст из GitHub Issue или файла; ответ в stdout + (опц.) в docs/discussions/<name>.md.
+Шаг 1: контекст из GitHub Issue или файла; ответ в stdout + запись в docs/discussions/<id>.md
+  (кроме --no-save). Без явного id файла задаётся автоматически (см. stderr после ответа).
+  Если файл треда уже есть — его содержимое подмешивается в промпт (память переписки).
 Шаг 2 (позже): --linear MEM-X и --post для работы напрямую с тикетами Linear.
 
 Personas:
@@ -88,8 +97,9 @@ Options:
   --gh-issue <N>            Подгрузить тело и комментарии GitHub Issue #N через gh CLI.
   --ticket-file <path>      Прочитать тело задачи из markdown-файла.
   --task "<text>"           Текст задачи строкой (можно вместо файла).
-  --save-as <name>          Имя файла обсуждения в docs/discussions/<name>.md (append).
-  --no-save                 Принудительно не сохранять (по умолчанию сохраняется при --gh-issue / --ticket-file / --save-as).
+  --discussion <id>         Id треда: docs/discussions/<id>.md (append). Если файл есть — читается история.
+  --save-as <id>            То же, что --discussion (синоним для совместимости).
+  --no-save                 Не писать в docs/discussions и не подгружать историю из файла.
   --no-context              Не подгружать WHITE_PAPER / ARCHITECTURE / SERVICES.
   --help, -h                Эта справка.
 
@@ -111,6 +121,7 @@ function parseArgs(argv) {
   let ticketFile = '';
   let ghIssue = '';
   let saveAs = '';
+  let discussion = '';
   let noSave = false;
   let noContext = false;
 
@@ -124,6 +135,8 @@ function parseArgs(argv) {
     if (arg.startsWith('--gh-issue=')) { ghIssue = arg.slice('--gh-issue='.length); continue; }
     if (arg === '--save-as') { saveAs = argv[++i] ?? ''; continue; }
     if (arg.startsWith('--save-as=')) { saveAs = arg.slice('--save-as='.length); continue; }
+    if (arg === '--discussion') { discussion = argv[++i] ?? ''; continue; }
+    if (arg.startsWith('--discussion=')) { discussion = arg.slice('--discussion='.length); continue; }
     if (arg === '--no-save') { noSave = true; continue; }
     if (arg === '--no-context') { noContext = true; continue; }
     rest.push(arg);
@@ -150,7 +163,14 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { persona, question, task, ticketFile, ghIssue, saveAs, noSave, noContext };
+  const d = discussion.trim();
+  const s = saveAs.trim();
+  if (d && s && d !== s) {
+    console.error('--discussion и --save-as заданы разными значениями. Оставь один флаг.');
+    process.exit(1);
+  }
+
+  return { persona, question, task, ticketFile, ghIssue, saveAs, discussion, noSave, noContext };
 }
 
 // ---------------------------------------------------------------------------
@@ -165,6 +185,76 @@ function readBounded(absPath, maxChars, optional = false) {
   let text = readFileSync(absPath, 'utf8');
   if (text.length > maxChars) {
     text = text.slice(0, maxChars) + `\n\n[… документ обрезан до ${maxChars} символов …]\n`;
+  }
+  return text;
+}
+
+function sanitizeDiscussionStem(raw) {
+  let s = String(raw ?? '').trim();
+  if (!s) {
+    console.error('Пустой id переписки.');
+    process.exit(1);
+  }
+  if (s.toLowerCase().endsWith('.md')) s = s.slice(0, -3).trim();
+  if (!s) {
+    console.error('Пустой id переписки после удаления .md.');
+    process.exit(1);
+  }
+  if (/[/\\]/.test(s) || s.includes('..')) {
+    console.error('id переписки: не используй путь, слэши или «..».');
+    process.exit(1);
+  }
+  if (s.length > 120) s = s.slice(0, 120);
+  return s;
+}
+
+function generateAutoDiscussionStem() {
+  const d = new Date();
+  const y = d.getUTCFullYear();
+  const mo = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  const h = String(d.getUTCHours()).padStart(2, '0');
+  const mi = String(d.getUTCMinutes()).padStart(2, '0');
+  const sec = String(d.getUTCSeconds()).padStart(2, '0');
+  const hex = randomBytes(4).toString('hex');
+  return `discussion-${y}${mo}${day}-${h}${mi}${sec}-${hex}`;
+}
+
+/** Явный id из --discussion / --save-as (уже проверен на конфликт в parseArgs). */
+function explicitDiscussionStem(cli) {
+  const raw = (cli.discussion || '').trim() || (cli.saveAs || '').trim();
+  return raw ? sanitizeDiscussionStem(raw) : '';
+}
+
+/**
+ * Имя файла треда без .md. null при --no-save.
+ * Приоритет: явный id → gh-issue-N → basename тикета → авто discussion-…
+ */
+function deriveDiscussionStem(cli) {
+  if (cli.noSave) return null;
+  const explicit = explicitDiscussionStem(cli);
+  if (explicit) return explicit;
+  if (cli.ghIssue) return sanitizeDiscussionStem(`gh-issue-${cli.ghIssue}`);
+  if (cli.ticketFile) {
+    const base = basename(cli.ticketFile).replace(/\.md$/i, '');
+    return sanitizeDiscussionStem(base || 'ticket');
+  }
+  return generateAutoDiscussionStem();
+}
+
+function discussionFilePath(stem) {
+  return resolve(process.cwd(), DISCUSSIONS_DIR, `${stem}.md`);
+}
+
+/** Текст существующего треда для промпта; пустая строка если файла нет. */
+function loadDiscussionHistory(stem) {
+  const abs = discussionFilePath(stem);
+  if (!existsSync(abs)) return '';
+  let text = readFileSync(abs, 'utf8');
+  if (text.length > MAX_DISCUSSION_HISTORY_CHARS) {
+    text =
+      text.slice(0, MAX_DISCUSSION_HISTORY_CHARS) +
+      `\n\n[… история переписки обрезана до ${MAX_DISCUSSION_HISTORY_CHARS} символов …]\n`;
   }
   return text;
 }
@@ -238,7 +328,16 @@ function formatGhIssueAsTicket(issue) {
 // ---------------------------------------------------------------------------
 // Сборка промпта
 
-function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueData }) {
+function buildPrompt({
+  persona,
+  question,
+  task,
+  ticketFile,
+  noContext,
+  ghIssueData,
+  discussionHistory,
+  discussionStem,
+}) {
   const cwd = process.cwd();
   const personaCfg = PERSONAS[persona];
 
@@ -302,6 +401,19 @@ function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueDa
     }
   }
 
+  if (discussionHistory && discussionStem) {
+    const label = `${DISCUSSIONS_DIR}/${discussionStem}.md`;
+    parts.push(
+      '---',
+      '## История переписки в этом треде',
+      '',
+      `Файл: ${label}. Ниже предыдущие обмены (вопросы и ответы). Учти уже согласованное; не повторяй без необходимости; продолжай линию рассуждения.`,
+      '',
+      discussionHistory,
+      '',
+    );
+  }
+
   parts.push('---', '## Вопрос', '', question, '');
 
   const assembled = parts.join('\n');
@@ -317,16 +429,6 @@ function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueDa
 
 // ---------------------------------------------------------------------------
 // Сохранение обсуждения
-
-function deriveDiscussionName({ saveAs, ghIssue, ticketFile }) {
-  if (saveAs) return saveAs;
-  if (ghIssue) return `gh-issue-${ghIssue}`;
-  if (ticketFile) {
-    const base = basename(ticketFile).replace(/\.md$/i, '');
-    return base;
-  }
-  return null;
-}
 
 function saveExchange({ name, persona, question, answer, ticketSourceLabel }) {
   const dir = resolve(process.cwd(), DISCUSSIONS_DIR);
@@ -383,7 +485,23 @@ async function main() {
     ghIssueData = fetchGhIssue(cli.ghIssue);
   }
 
-  const { text: bodyText, ticketSourceLabel } = buildPrompt({ ...cli, ghIssueData });
+  const discussionStem = deriveDiscussionStem(cli);
+  let discussionHistory = '';
+  if (discussionStem) {
+    discussionHistory = loadDiscussionHistory(discussionStem);
+    if (discussionHistory && process.stderr.isTTY) {
+      console.error(
+        `→ подмешана история переписки (${discussionHistory.length} символов): ${DISCUSSIONS_DIR}/${discussionStem}.md`,
+      );
+    }
+  }
+
+  const { text: bodyText, ticketSourceLabel } = buildPrompt({
+    ...cli,
+    ghIssueData,
+    discussionHistory,
+    discussionStem: discussionStem || '',
+  });
   const model = defaultModel();
 
   if (process.stderr.isTTY) {
@@ -430,19 +548,20 @@ async function main() {
 
   console.log(answer);
 
-  // Сохраняем, если есть имя обсуждения и не отключено явно --no-save.
-  const discussionName = deriveDiscussionName(cli);
-  if (discussionName && !cli.noSave) {
+  if (discussionStem && !cli.noSave) {
     const file = saveExchange({
-      name: discussionName,
+      name: discussionStem,
       persona: cli.persona,
       question: cli.question,
       answer,
       ticketSourceLabel,
     });
     console.error(`→ сохранено: ${file}`);
-  } else if (process.stderr.isTTY && !cli.noSave) {
-    console.error('→ не сохранено (нет --gh-issue / --ticket-file / --save-as).');
+    if (process.stderr.isTTY) {
+      console.error(`→ id переписки: ${discussionStem}  (продолжить: --discussion ${discussionStem})`);
+    }
+  } else if (process.stderr.isTTY && cli.noSave) {
+    console.error('→ без записи в docs/discussions (--no-save).');
   }
 
   await new Promise((r) => setTimeout(r, 150));

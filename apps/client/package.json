@@ -12,7 +12,8 @@
     "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.app .tsbuildinfo.node",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:ui": "vitest --ui --passWithNoTests"
   },
   "dependencies": {
     "@membrana/agenda": "*",
@@ -29,6 +30,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/ui": "^1.4.0",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.12.10",
     "eslint": "^8.57.0",

@@ -22,9 +22,11 @@
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:ui": "vitest --ui --passWithNoTests"
   },
   "devDependencies": {
+    "@vitest/ui": "^1.4.0",
     "eslint": "^8.57.0",
     "rimraf": "^5.0.0",
     "typescript": "^5.4.0",
