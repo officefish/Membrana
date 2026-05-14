@@ -27,7 +27,9 @@
     "plan:week:full": "node scripts/strategic-plan-week.mjs --full",
     "ask": "node scripts/ask-persona.mjs",
     "archive:daily-review": "node scripts/archive-daily-code-review.mjs",
-    "test:scripts": "node --test scripts/context-collector-paths.test.mjs"
+    "test:scripts": "node --test scripts/context-collector-paths.test.mjs",
+    "office:dev": "yarn workspace @membrana/background-office dev",
+    "office:build": "yarn workspace @membrana/background-office build"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

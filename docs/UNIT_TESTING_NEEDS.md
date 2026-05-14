@@ -1,6 +1,55 @@
 [Teamlead]: Сейчас в репозитории тестов почти нет: найден только scripts/context-collector-paths.test.mjs. При этом CI уже запускает yarn turbo run lint typecheck test build --continue, но пакеты используют vitest run --passWithNoTests, поэтому тестовый слой пока в основном пустой.
 
-Что написать в первую очередь
+## 🔴 ВЫСОКИЙ ПРИОРИТЕТ — добавлено в ветке `vesnin`
+
+### Тесты на жизненный цикл плагинов (`packages/agenda/src/core/plugin-lifecycle.ts`)
+
+Контракт `Plugin.install()` / teardown теперь реализован в store. Без тестов любая регрессия здесь будет тихо ломать подписки плагинов на shared-хабы и engine-сервисы. Покрыть:
+
+**`invokePluginInstall`:**
+- Вызывается ровно один раз при `activatePlugin`. Повторный `activatePlugin` без deactivate — не зовёт install второй раз.
+- Вызывается также при `registerPlugin`, если `merged.active === true` (rehydrate-сценарий).
+- Корректно строит `ModuleContext`: `moduleId`, `config` (из плагина на момент install), `updateConfig` пробрасывает в `store.updatePluginConfig`, `getPlugin` через store.
+- Поддерживает все три формы возврата: `void`, `() => void`, `Promise<void | () => void>`.
+- Async install: store ждёт промис до сохранения teardown; если промис отклонён — ошибка логируется через `@membrana/core/logger`, store не падает.
+- Если `install` бросил — состояние store не повреждено, плагин помечен active.
+
+**`invokePluginTeardown`:**
+- Вызывается при `deactivatePlugin` и при `togglePlugin` (плагин был active → off).
+- Вызывается ДО `set` — плагин ещё видит активное состояние.
+- Если плагин не был установлен (нет teardown) — no-op без ошибок.
+- Async teardown ждётся, ошибки в нём логируются и НЕ пробрасываются.
+
+**Полный сценарий activate → deactivate → activate:**
+- Первый install получает teardown.
+- deactivate вызывает teardown, удаляет запись.
+- Второй activate снова зовёт install — teardown пересоздаётся.
+
+**Persist + rehydrate:**
+- После rehydrate с `active: true` плагином, `registerPlugin` зовёт install один раз.
+- После rehydrate teardown'ы НЕ переносятся (они и не должны — функции не сериализуются).
+
+### Тесты на `MembranaRegistry` (`packages/agenda/src/core/registry.ts`)
+
+После канонизации фасада тесты обязательны:
+
+- `registerLazyModule({...loader})` оборачивает loader в `React.lazy` и зовёт `store.registerModule` с компонентом-LazyExoticComponent.
+- `registerLazyModules([...])` — батч.
+- `registerModules([...])` — батч готовых модулей.
+- `registerPlugin<TConfig>(moduleId, plugin)` — типобезопасный generic, `Plugin<MicStreamVizPluginConfig>` принимается без `as`.
+- `finalizeRegistration()` зовёт `store.clearPendingPrefs()`, после которого `pendingModulePrefs === null`.
+- `MembranaRegistry.enableModule` / `disableModule` / `activatePlugin` / `deactivatePlugin` — корректно делегируют в store (со срабатыванием lifecycle).
+
+### Тесты на новый action `clearPendingPrefs`
+
+- После вызова: `pendingModulePrefs === null`, остальные поля state не изменены.
+- Идемпотентен: повторный вызов — no-op.
+
+В ежедневный CI: **да, обязательно**. Это критическая инфраструктура регистрации.
+
+---
+
+## Что написать в первую очередь
 
 1. packages/agenda — store/registry tests
    Самый важный пакет сейчас: @membrana/agenda.
