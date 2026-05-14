@@ -21,6 +21,7 @@
     "@membrana/core": "*",
     "@membrana/device-board": "*",
     "@membrana/fft-analyzer-service": "*",
+    "@membrana/telemetry-service": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

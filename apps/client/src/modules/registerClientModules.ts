@@ -90,6 +90,21 @@ export function registerClientModules(): void {
   });
 
   MembranaRegistry.registerLazyModule({
+    id: 'telemetry-journal',
+    name: 'Журнал телеметрии',
+    description: 'Просмотр записей телеметрии (анализ, события, системные)',
+    version: '1.0.0',
+    category: 'Наблюдаемость',
+    enabled: true,
+    activePlugins: [],
+    defaultConfig: {},
+    loader: () =>
+      import('./telemetry-journal/TelemetryJournalModule').then((m) => ({
+        default: m.TelemetryJournalModule,
+      })),
+  });
+
+  MembranaRegistry.registerLazyModule({
     id: 'microphone',
     name: 'Микрофон',
     description: 'Выбор источника звука и запуск потока для анализа и плагинов',

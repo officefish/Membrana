@@ -812,6 +812,7 @@ __metadata:
     "@membrana/core": "npm:*"
     "@membrana/device-board": "npm:*"
     "@membrana/fft-analyzer-service": "npm:*"
+    "@membrana/telemetry-service": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"
@@ -874,7 +875,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/telemetry-service@workspace:packages/services/telemetry":
+"@membrana/telemetry-service@npm:*, @membrana/telemetry-service@workspace:packages/services/telemetry":
   version: 0.0.0-use.local
   resolution: "@membrana/telemetry-service@workspace:packages/services/telemetry"
   dependencies:
