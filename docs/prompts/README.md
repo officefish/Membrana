@@ -16,4 +16,9 @@ Task-промпты:
 
 | Файл | Что задаёт |
 |------|------------|
-| [`API_SERVER_BOOTSTRAP_PROMPT.md`](./API_SERVER_BOOTSTRAP_PROMPT.md) | Бутстрап `packages/background-office/` — централизованный сервер с интеграциями Claude и Linear. |
+| [`API_SERVER_BOOTSTRAP_PROMPT.md`](./API_SERVER_BOOTSTRAP_PROMPT.md) | **Этап 1 (бутстрап).** Создаёт `packages/background-office/` — централизованный сервер с интеграциями Claude и Linear. Модель аутентификации (shared secret, Linear-секреты, GitHub-credentials) сейчас в фазе уточнения — см. PR #17, отложен. |
+| [`SERVER_DEPLOYMENT_PROMPT.md`](./SERVER_DEPLOYMENT_PROMPT.md) | **Этап 5 (продовый деплой).** Регистрация домена, DNS, HTTPS, выбор хостинга (PaaS vs VPS), секреты в env провайдера, боевой Linear webhook. Зависит от завершения этапа 1; результат — публичный `https://<domain>/health` → `200`. |
+
+Сквозной журнал работы по пакету `background-office` (от идеи до прода) —
+[`../discussions/background-office-v0.1.md`](../discussions/background-office-v0.1.md).
+Этот журнал дополняется после каждого этапа.
