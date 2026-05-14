@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import type {
   ModuleContext,
   Plugin,
@@ -17,6 +18,9 @@ import {
   micStreamPluginState,
   type MicStreamMetrics,
 } from './micStreamPluginState';
+=======
+import type { ModuleContext, Plugin, PluginTeardown } from '@membrana/agenda';
+>>>>>>> c8eeaa4 (feat(agenda): registry, plugin lifecycle, client registration)
 import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   defaultMicStreamVizConfig,
@@ -26,6 +30,7 @@ import {
 /**
  * Плагин модуля «Микрофон»: визуализация входящего потока.
  *
+<<<<<<< HEAD
  * АРХИТЕКТУРА (по новому контракту lifecycle из ветки `vesnin`):
  *  - Подписка на `microphoneStreamHub` и поднятие `LiveSampler` живут здесь,
  *    в `install()`. Это вызывается store при первой активации плагина и
@@ -41,6 +46,17 @@ import {
  * ВАЖНО: эта реализация требует, чтобы store вызывал `plugin.install()` при
  * активации (см. коммит c8eeaa4 в ветке vesnin). Без lifecycle install
  * подписка не будет поднята.
+=======
+ * UI и анализ потока живут в {@link MicStreamVizPluginPanel} и
+ * {@link useMicStreamAnalysis}. На текущей итерации подписки на
+ * `microphoneStreamHub` находятся в UI-хуке, потому что он удерживает
+ * `analyserRef` для виджетов `@membrana/audio-data-viz`.
+ *
+ * Lifecycle store ВКЛЮЧЁН: `install` вызывается при активации плагина,
+ * teardown (если будет возвращён) — при деактивации. Сейчас install
+ * выполняет только инициализацию состояния плагина и оставляет teardown
+ * на случай будущих подписок engine-уровня.
+>>>>>>> c8eeaa4 (feat(agenda): registry, plugin lifecycle, client registration)
  */
 
 const FFT_SIZE = 2048;
@@ -118,6 +134,7 @@ export function createMicStreamVizPlugin(): Plugin<MicStreamVizPluginConfig> {
     version: '1.0.0',
     active: false,
     config: { ...defaultMicStreamVizConfig },
+<<<<<<< HEAD
     install(context: ModuleContext<MicStreamVizPluginConfig>): PluginTeardown {
       let currentSampler: LiveSampler | null = null;
       let disposed = false;
@@ -184,6 +201,15 @@ export function createMicStreamVizPlugin(): Plugin<MicStreamVizPluginConfig> {
         return stopSampler().then(() => {
           micStreamPluginState.reset();
         });
+=======
+    install(_context: ModuleContext<MicStreamVizPluginConfig>): PluginTeardown {
+      // Инициализация на стороне плагина (нет долгоживущих подписок здесь).
+      // Подписка на microphoneStreamHub живёт в useMicStreamAnalysis (UI-хук),
+      // так как ему нужен AnalyserNode для виджетов audio-data-viz.
+      return () => {
+        // Teardown: место для очистки ресурсов engine-уровня, когда плагин
+        // будет переведён на install-pattern полностью.
+>>>>>>> c8eeaa4 (feat(agenda): registry, plugin lifecycle, client registration)
       };
     },
   };

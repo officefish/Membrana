@@ -45,9 +45,26 @@
 
 **Реализованный эталон.** Модуль `apps/client/src/modules/microphone/MicrophoneModule.tsx` + плагин `apps/client/src/plugins/microphone-stream-viz/*` — паттерн, на который ориентируется любая будущая аудио-фича: модуль через engine добывает `MediaStream`, публикует его в hub; плагин(ы) подписываются на hub и поднимают `LiveSampler` на этом stream для своих метрик/визуализаций.
 
+<<<<<<< HEAD
 ### 1c. `packages/background-office` — централизованный HTTP-шлюз
 
 Пакет `@membrana/background-office` — **Node.js + TypeScript** сервер (NestJS), не входит в граф `packages/services/*` и **не** зависит от `@membrana/core`, `@membrana/agenda`, `@membrana/device-board`, `apps/client` (v0.1 автономен: только внешние npm и локальные типы). Назначение: единая точка для вызовов Anthropic (Claude), Linear API, приёма подписанных Linear webhooks и (через Octokit) чтения GitHub Issues для persona-контекста. Клиенты внутреннего API аутентифицируются заголовком `X-Membrana-Token`. В перспективе рядом могут появиться другие `packages/background-*`; до этого момента офис остаётся самостоятельным артефактом деплоя.
+=======
+### 1c. Регистрация модулей и плагинов клиента
+
+Канонический фасад регистрации — **`MembranaRegistry`** из `@membrana/agenda` (`packages/agenda/src/core/registry.ts`).
+
+- Все модули клиента регистрируются как **lazy** через `MembranaRegistry.registerLazyModule({ ..., loader })`. Фасад сам оборачивает loader в `React.lazy` — чанк Vite приходит только при монтировании модуля.
+- Плагины регистрируются через `MembranaRegistry.registerPlugin(moduleId, factory())`.
+- В конце фазы регистрации вызывается `MembranaRegistry.finalizeRegistration()` — единая публичная точка сброса `pendingModulePrefs`.
+- **Прямой `useMembranaStore.getState().registerModule(...)` запрещён** — обходит фасад и привязывает клиента к внутреннему API store.
+
+Точка входа: `apps/client/src/modules/registerClientModules.ts` (вызывается один раз из `apps/client/src/main.tsx`).
+
+Подробный процесс и чек-лист — [MODULE_AND_PLUGIN_UI.md §0](./MODULE_AND_PLUGIN_UI.md#0-регистрация-модулей-и-lazy-loading).
+
+**Lifecycle `plugin.install()` / teardown:** реализован в ветке `vesnin`. Store вызывает `install` при активации (включая повторную регистрацию активного плагина после rehydrate) и teardown при деактивации. Контракт и эталон — `MODULE_AND_PLUGIN_UI.md §0` и `apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts`. Полный перевод подписок из UI-хуков на `install` для существующих плагинов с `analyserRef` — отдельная задача (нужен engine-канал «AnalyserNode без React-ref»).
+>>>>>>> c8eeaa4 (feat(agenda): registry, plugin lifecycle, client registration)
 
 ## 2. Плагины и слабая связанность (домен аудио)
 

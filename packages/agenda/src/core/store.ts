@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { isRenderableComponentType } from './isRenderableComponentType';
+import {
+  invokePluginInstall,
+  invokePluginTeardown,
+} from './plugin-lifecycle';
 import { MembranaState, Module, ModuleUserPrefsSnapshot, Plugin } from './types';
 
 /** Поля, которые persist rehydrate может передать в `merge` (не полный `MembranaState`). */
@@ -103,6 +107,7 @@ export const useMembranaStore = create<MembranaState>()(
         },
 
         registerPlugin: <TConfig,>(moduleId: string, plugin: Plugin<TConfig>) => {
+          let mergedForInstall: Plugin | undefined;
           set((state) => {
             // Убеждаемся, что plugins это Map
             let newPlugins = state.plugins;
@@ -138,8 +143,19 @@ export const useMembranaStore = create<MembranaState>()(
             modulePlugins.set(plugin.id, merged);
             newPlugins.set(moduleId, modulePlugins);
 
+            if (merged.active) mergedForInstall = merged;
             return { plugins: newPlugins };
           });
+
+          // Lifecycle: если плагин уже активен после rehydrate (или сразу
+          // зарегистрирован активным) — вызываем install.
+          if (mergedForInstall) {
+            void invokePluginInstall(moduleId, mergedForInstall, {
+              updatePluginConfig: (updates) =>
+                get().updatePluginConfig(moduleId, plugin.id, updates),
+              getPluginById: (id) => get().getPlugin(moduleId, id),
+            });
+          }
         },
 
         updatePluginConfig: (moduleId, pluginId, updates) => {
@@ -235,24 +251,27 @@ export const useMembranaStore = create<MembranaState>()(
         },
 
         activatePlugin: (moduleId, pluginId) => {
+          let pluginToInstall: Plugin | undefined;
           set((state) => {
             // Убеждаемся, что plugins это Map
             let newPlugins = state.plugins;
             if (!(newPlugins instanceof Map)) {
               newPlugins = new Map();
             }
-            
+
             let modulePlugins = newPlugins.get(moduleId);
             if (!(modulePlugins instanceof Map)) {
               modulePlugins = new Map();
             }
-            
+
             const plugin = modulePlugins.get(pluginId);
             if (plugin) {
-              modulePlugins.set(pluginId, { ...plugin, active: true });
+              const next = { ...plugin, active: true };
+              modulePlugins.set(pluginId, next);
               newPlugins.set(moduleId, modulePlugins);
+              pluginToInstall = next;
             }
-            
+
             const newModules = new Map(state.modules);
             const module = newModules.get(moduleId);
             if (module && !module.activePlugins.includes(pluginId)) {
@@ -261,29 +280,43 @@ export const useMembranaStore = create<MembranaState>()(
                 activePlugins: [...module.activePlugins, pluginId]
               });
             }
-            
+
             return { plugins: newPlugins, modules: newModules };
           });
+
+          // Lifecycle: install вызывается после set, чтобы плагин уже был
+          // в state на момент install (например, для getPlugin внутри context).
+          if (pluginToInstall) {
+            void invokePluginInstall(moduleId, pluginToInstall, {
+              updatePluginConfig: (updates) =>
+                get().updatePluginConfig(moduleId, pluginId, updates),
+              getPluginById: (id) => get().getPlugin(moduleId, id),
+            });
+          }
         },
 
         deactivatePlugin: (moduleId, pluginId) => {
+          // Lifecycle: teardown вызывается ДО set, чтобы плагин ещё видел
+          // текущее состояние. Ошибки teardown логируются, не пробрасываются.
+          void invokePluginTeardown(moduleId, pluginId);
+
           set((state) => {
             let newPlugins = state.plugins;
             if (!(newPlugins instanceof Map)) {
               newPlugins = new Map();
             }
-            
+
             let modulePlugins = newPlugins.get(moduleId);
             if (!(modulePlugins instanceof Map)) {
               modulePlugins = new Map();
             }
-            
+
             const plugin = modulePlugins.get(pluginId);
             if (plugin) {
               modulePlugins.set(pluginId, { ...plugin, active: false });
               newPlugins.set(moduleId, modulePlugins);
             }
-            
+
             const newModules = new Map(state.modules);
             const module = newModules.get(moduleId);
             if (module) {
@@ -292,7 +325,7 @@ export const useMembranaStore = create<MembranaState>()(
                 activePlugins: module.activePlugins.filter(id => id !== pluginId)
               });
             }
-            
+
             return { plugins: newPlugins, modules: newModules };
           });
         },
@@ -314,6 +347,15 @@ export const useMembranaStore = create<MembranaState>()(
 
         selectModule: (moduleId) => {
           set({ selectedModuleId: moduleId });
+        },
+
+        /**
+         * Сбрасывает pendingModulePrefs.
+         * Вызывается через MembranaRegistry.finalizeRegistration() — клиент НЕ
+         * должен сам править внутреннее состояние store через setState.
+         */
+        clearPendingPrefs: () => {
+          set({ pendingModulePrefs: null });
         },
 
         getModule: (moduleId) => {
