@@ -70,14 +70,11 @@ export const TelemetryJournalModule: React.FC<
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
       <div className="card-body p-4 md:p-6 gap-4">
-        <div>
-          <h2 className="card-title text-base">Журнал телеметрии</h2>
-          <p className="text-sm text-base-content/60 mt-1">
-            Записи из{' '}
-            <code className="text-xs text-primary">@membrana/telemetry-service</code> (в
-            памяти вкладки). Источники — модули и плагины, например агрегаты микрофона.
-          </p>
-        </div>
+        <p className="text-sm text-base-content/60">
+          Записи из{' '}
+          <code className="text-xs text-primary">@membrana/telemetry-service</code> в памяти
+          вкладки; источники — модули и плагины (например, агрегаты микрофона).
+        </p>
 
         <div className="flex flex-wrap gap-2 text-xs">
           <span className="badge badge-outline">всего: {stats.total}</span>
