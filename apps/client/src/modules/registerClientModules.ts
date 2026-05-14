@@ -1,87 +1,81 @@
-import { useMembranaStore } from '@membrana/agenda';
-import { lazy } from 'react';
+import { MembranaRegistry } from '@membrana/agenda';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 
-const FFTModule = lazy(() => import('./FFTModule').then((m) => ({ default: m.FFTModule })));
-const SpectrumModule = lazy(() =>
-  import('./SpectrumModule').then((m) => ({ default: m.SpectrumModule })),
-);
-const AudioFileUploadModule = lazy(() =>
-  import('./AudioFileUploadModule').then((m) => ({
-    default: m.AudioFileUploadModule,
-  })),
-);
-const OscilloscopeModule = lazy(() =>
-  import('./OscilloscopeModule').then((m) => ({ default: m.OscilloscopeModule })),
-);
-const MicrophoneModule = lazy(() =>
-  import('./microphone/MicrophoneModule').then((m) => ({ default: m.MicrophoneModule })),
-);
-
 /**
- * Регистрирует модули в сторе. Вызывается один раз при загрузке приложения.
- * Компоненты — React.lazy: чанк Vite подтягивается только когда модуль
- * выбран в UI и включён (см. ModuleRenderer в @membrana/agenda).
+ * Регистрация всех клиентских модулей и плагинов.
+ *
+ * КАНОНИЧЕСКИЙ путь — только через `MembranaRegistry`. Прямые вызовы
+ * `useMembranaStore.getState().registerModule(...)` запрещены — см.
+ * `docs/MODULE_AND_PLUGIN_UI.md` (раздел «Регистрация модулей и lazy-loading»).
+ *
+ * Все модули регистрируются как **lazy** — чанк Vite приходит только когда
+ * `ModuleRenderer` (`@membrana/agenda`) монтирует выбранный модуль.
+ *
+ * Вызывается ОДИН раз в `apps/client/src/main.tsx` при загрузке приложения.
  */
 export function registerClientModules(): void {
-  const store = useMembranaStore.getState();
-
-  store.registerModule({
+  MembranaRegistry.registerLazyModule({
     id: 'fft-analyzer',
     name: 'FFT Анализатор',
     description: 'Быстрое преобразование Фурье для анализа частот',
     version: '1.0.0',
     category: 'Анализ',
-    Component: FFTModule,
+    enabled: true,
+    activePlugins: [],
     defaultConfig: {
       fftSize: 2048,
       smoothingTimeConstant: 0.8,
       minDecibels: -100,
       maxDecibels: -30,
     },
-    enabled: true,
-    activePlugins: [],
+    loader: () =>
+      import('./FFTModule').then((m) => ({ default: m.FFTModule })),
   });
 
-  store.registerModule({
+  MembranaRegistry.registerLazyModule({
     id: 'spectrum-3d',
     name: '3D Спектрограмма',
     description: 'Трехмерная визуализация спектра',
     version: '1.0.0',
     category: 'Визуализация',
-    Component: SpectrumModule,
+    enabled: false,
+    activePlugins: [],
     defaultConfig: {
       colormap: 'viridis',
       showGrid: true,
       persistence: 0.5,
     },
-    enabled: false,
-    activePlugins: [],
+    loader: () =>
+      import('./SpectrumModule').then((m) => ({ default: m.SpectrumModule })),
   });
 
-  store.registerModule({
+  MembranaRegistry.registerLazyModule({
     id: 'audio-file-upload',
     name: 'Загрузка аудио',
     description: 'Файл → превью волны и спектр при воспроизведении',
     version: '1.0.0',
     category: 'Источники',
-    Component: AudioFileUploadModule,
+    enabled: true,
+    activePlugins: [],
     defaultConfig: {
       fftSize: 2048,
       waveformBins: 512,
       showSpectrumWhilePlaying: true,
     },
-    enabled: true,
-    activePlugins: [],
+    loader: () =>
+      import('./AudioFileUploadModule').then((m) => ({
+        default: m.AudioFileUploadModule,
+      })),
   });
 
-  store.registerModule({
+  MembranaRegistry.registerLazyModule({
     id: 'oscilloscope',
     name: 'Осциллограф',
     description: 'Визуализация волновой формы сигнала',
     version: '1.0.0',
     category: 'Анализ',
-    Component: OscilloscopeModule,
+    enabled: true,
+    activePlugins: [],
     defaultConfig: {
       timeScale: 1,
       amplitudeScale: 1,
@@ -89,25 +83,30 @@ export function registerClientModules(): void {
       triggerMode: 'auto',
       colorScheme: 'classic',
     },
-    enabled: true,
-    activePlugins: [],
+    loader: () =>
+      import('./OscilloscopeModule').then((m) => ({
+        default: m.OscilloscopeModule,
+      })),
   });
 
-  store.registerModule({
+  MembranaRegistry.registerLazyModule({
     id: 'microphone',
     name: 'Микрофон',
     description: 'Выбор источника звука и запуск потока для анализа и плагинов',
     version: '1.0.0',
     category: 'Устройства',
-    Component: MicrophoneModule,
-    defaultConfig: {
-      selectedDeviceId: '',
-    },
     enabled: true,
     activePlugins: [],
+    defaultConfig: { selectedDeviceId: '' },
+    loader: () =>
+      import('./microphone/MicrophoneModule').then((m) => ({
+        default: m.MicrophoneModule,
+      })),
   });
 
-  store.registerPlugin('microphone', createMicStreamVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createMicStreamVizPlugin());
 
-  useMembranaStore.setState({ pendingModulePrefs: null });
+  // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs
+  // уже применены в registerModule, дальше держать pendingModulePrefs смысла нет.
+  MembranaRegistry.finalizeRegistration();
 }
