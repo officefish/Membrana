@@ -90,3 +90,27 @@ Definition of Done: <тесты, отсутствие клиппинга, соо
 - `/ui <компонент>` — Верстальщик создаёт компонент строго по DESIGN.md.
 - `/service <name>` — создать новый сервис в `packages/services/<name>` по SERVICES.md.
 - `/review` — Teamlead делает ревью последнего артефакта.
+
+## Спросить совета у персонажа
+
+Для адресного обсуждения задачи с конкретным «виртуальным программистом» есть CLI:
+
+```bash
+yarn ask vesnin "стоит ли сейчас вводить отдельный transport-service?"
+yarn ask dynin --task "edge cases для FFT" "что добавить к проверке маленького буфера?"
+yarn ask vesnin --ticket-file ./ticket.md "сформулируй кратко границы"
+yarn ask vesnin --no-context "одной фразой: нужен ли ADR сейчас?"
+```
+
+Что подкладывается в контекст:
+
+1. Системный промпт персонажа из [`virtual-team/PROMPT_*.md`](./virtual-team/).
+2. Стратегический контекст из [`WHITE_PAPER.md`](./WHITE_PAPER.md).
+3. Выдержки из [`ARCHITECTURE.md`](./ARCHITECTURE.md) и [`SERVICES.md`](./SERVICES.md).
+4. Опциональный контекст задачи (`--task` / `--ticket-file`).
+
+Ответ печатается в stdout. Шаг 1 — однонаправленный (без сохранения в Linear);
+Шаг 2 (будущий PR) добавит чтение Linear-тикета и пост ответа в его комментарий.
+
+Текущие персонажи: `vesnin`, `dynin`. Расширение — через `scripts/ask-persona.mjs`
+(добавь запись в `PERSONAS` и создай `PROMPT_<ROLE>.md`).
