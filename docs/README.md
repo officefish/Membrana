@@ -8,6 +8,7 @@
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Границы пакетов Membrana + правила плагинов и аудио-слоёв |
 | [SERVICES.md](./SERVICES.md) | Соглашения о пакетах-сервисах в `packages/services/*` |
 | [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) | Стратегия экспериментальных интеграций анализа звука (эшелоны локально → сервер → API) |
+| [WEEKLY_ANALYZERS_RESEARCH.md](./WEEKLY_ANALYZERS_RESEARCH.md) | Авто-генерируемый еженедельный «радар»: новые модели/работы для каталога §4 INTEGRATIONS_STRATEGY (`yarn analyzers:research:week`). Используется недельным планом, не дневным code-review |
 | [DESIGN.md](./DESIGN.md) | Токены UI для аудио-интерфейса |
 | [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) | Оболочка модулей, сайдбар плагинов, карточки, Tailwind `content` |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | PR, агенты, ссылки на документы выше |
