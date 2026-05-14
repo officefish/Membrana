@@ -16,4 +16,4 @@ Task-промпты:
 
 | Файл | Что задаёт |
 |------|------------|
-| [`API_SERVER_BOOTSTRAP_PROMPT.md`](./API_SERVER_BOOTSTRAP_PROMPT.md) | Бутстрап `packages/background-office/` — централизованный сервер с интеграциями Claude и Linear. |
+| [`API_SERVER_BOOTSTRAP_PROMPT.md`](./API_SERVER_BOOTSTRAP_PROMPT.md) | Бутстрап `packages/background-office/` — централизованный сервер с интеграциями Claude и Linear. Включает модель аутентификации: shared secret для internal API, personal key + webhook signing secret для Linear, **GitHub App** (а не PAT) для чтения Issues и будущего приёма GitHub webhooks. |

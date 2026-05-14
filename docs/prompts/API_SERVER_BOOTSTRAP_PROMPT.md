@@ -72,11 +72,17 @@ Membrana — проект пространственной разведки ни
 - **Валидация env:** `zod` — все обязательные переменные проверяются на старте; при отсутствии — внятная ошибка и `exit 1`.
 - **Валидация запросов:** `zod` (для обоих фреймворков) или `class-validator` (если выбран NestJS).
 - **HTTP-клиент:** `undici` (уже в монорепо) или `node:fetch`. Не добавляй axios.
-- **GitHub-доступ для контекста persona-эндпоинта:** через `@octokit/rest`, НЕ через shell-out на `gh`.
+- **GitHub-доступ для контекста persona-эндпоинта:** через **GitHub App-аутентификацию** — `@octokit/auth-app` (генерирует JWT, обменивает на installation access token) + `@octokit/rest` для самих запросов. НЕ через shell-out на `gh`, НЕ через статический Personal Access Token. Подробнее — раздел «Подсказки и риски» → «Почему GitHub App, а не PAT?».
 - **Тесты:** Vitest (как в монорепо). Минимум — интеграционные тесты на каждый эндпоинт с моками внешних API через `nock` или `msw/node`.
 - **Lint/Format:** наследует root ESLint и Prettier; никаких отдельных конфигов, кроме `tsconfig.json` пакета.
 
 #### Конфигурация (.env, валидируется zod-схемой)
+
+Все секреты разбиты на три семьи, **не смешивай их назначение**:
+
+1. **Internal API gate** (`API_INTERNAL_TOKEN`) — shared secret, которым клиенты Membrana авторизуются перед сервером (`X-Membrana-Token`). Один на инсталляцию, ротируется руками.
+2. **Outbound credentials** (Anthropic key, Linear personal API key, GitHub App) — сервер использует их, **чтобы ходить наружу**. Anthropic — статичный ключ. Linear — personal API key (можно вынести на сервисную учётку). GitHub — **только GitHub App**, см. раздел «Подсказки и риски» (статичный Personal Access Token принципиально не используем).
+3. **Inbound signing secrets** (`LINEAR_WEBHOOK_SECRET`, `GITHUB_WEBHOOK_SECRET`) — секреты для верификации **входящих** webhook'ов через HMAC. Это **разные** секреты, чем outbound credentials, даже для того же сервиса. Каждый webhook в Linear/GitHub имеет свой signing secret.
 
 Минимальный набор переменных:
 
@@ -85,19 +91,33 @@ PORT=3000
 NODE_ENV=development
 LOG_LEVEL=info
 
+# Внутренний шлюз
 API_INTERNAL_TOKEN=...               # shared secret для /v1/* эндпоинтов
+
+# Outbound: Anthropic
 ANTHROPIC_API_KEY=...                # для /v1/claude/*
 ANTHROPIC_MODEL=claude-haiku-4-5-20251001   # опционально
 
-LINEAR_API_KEY=...                   # для /v1/linear/*
-LINEAR_WEBHOOK_SECRET=...            # для верификации подписи /webhooks/linear
+# Outbound: Linear (исходящие GraphQL-вызовы — читать тикеты, постить комментарии)
+LINEAR_API_KEY=...                   # Linear → Settings → API → Personal API keys
 
-GITHUB_TOKEN=...                     # для подгрузки тела GitHub Issue (read-only достаточно)
+# Inbound: Linear webhooks (верификация подписи /webhooks/linear)
+LINEAR_WEBHOOK_SECRET=...            # signing secret конкретного webhook'а в Linear
+
+# Outbound: GitHub (как GitHub App — НЕ как Personal Access Token).
+# Сервер на лету подписывает JWT приватным ключом App'а и обменивает его
+# на installation access token (~1 час TTL). См. «Подсказки и риски».
+GITHUB_APP_ID=...                    # numeric App ID (GitHub → Developer settings → GitHub Apps)
+GITHUB_APP_PRIVATE_KEY=...           # PEM-ключ App'а; многострочный или base64 — выбор фиксируется в README
+GITHUB_APP_INSTALLATION_ID=...       # id установки App'а на нужный org/repo (статичен в v0.1)
 GITHUB_OWNER=officefish
 GITHUB_REPO=Membrana
+
+# Inbound: GitHub webhooks — пусто в v0.1, заполняется в следующей итерации
+GITHUB_WEBHOOK_SECRET=
 ```
 
-**Никаких secrets в логах, никогда.** Уровень `debug` может печатать имена ключей, но не значения. При попытке логгера сериализовать объект с подозрительным ключом (`*key*`, `*secret*`, `*token*`) — маскируй значение.
+**Никаких secrets в логах, никогда.** Уровень `debug` может печатать имена ключей, но не значения. При попытке логгера сериализовать объект с подозрительным ключом (`*key*`, `*secret*`, `*token*`, `*private*`) — маскируй значение. Особое внимание — `GITHUB_APP_PRIVATE_KEY` и сгенерированные installation tokens: эти строки не должны попасть в логи **никогда**, даже на `trace`.
 
 ### Эндпоинты — первая итерация
 
@@ -173,7 +193,8 @@ GITHUB_REPO=Membrana
    │   │   │   └── linear.controller.ts  # /v1/linear/*
    │   │   ├── github/
    │   │   │   ├── github.module.ts
-   │   │   │   └── github.service.ts     # Octokit, чтение Issues
+   │   │   │   ├── github-auth.service.ts # GitHub App: JWT → installation token, LRU+TTL кеш
+   │   │   │   └── github.service.ts      # Octokit (использует свежий installation token), чтение Issues
    │   │   └── webhooks/
    │   │       ├── webhooks.module.ts
    │   │       └── linear-webhook.controller.ts
@@ -201,8 +222,8 @@ GITHUB_REPO=Membrana
 - [ ] Все эндпоинты `/v1/*` работают при правильном `X-Membrana-Token`; без токена → 401.
 - [ ] `/webhooks/linear` отвергает запросы с неверной подписью → 403; валидные → 200 за < 1 с.
 - [ ] Идемпотентность webhook'ов: повторный event с тем же id не приводит к повторной обработке.
-- [ ] `.env.example` в корне репо дополнен новыми переменными (PORT, API_INTERNAL_TOKEN, LINEAR_API_KEY, LINEAR_WEBHOOK_SECRET, GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO).
-- [ ] `packages/background-office/README.md` — что это, как запустить (dev / prod), список эндпоинтов с примерами `curl`, выбор фреймворка с аргументацией.
+- [ ] `.env.example` в корне репо дополнен новыми переменными (PORT, API_INTERNAL_TOKEN, LINEAR_API_KEY, LINEAR_WEBHOOK_SECRET, GITHUB_APP_ID, GITHUB_APP_PRIVATE_KEY, GITHUB_APP_INSTALLATION_ID, GITHUB_WEBHOOK_SECRET, GITHUB_OWNER, GITHUB_REPO). Статичного `GITHUB_TOKEN` (PAT) в `.env.example` быть **не должно**.
+- [ ] `packages/background-office/README.md` — что это, как запустить (dev / prod), список эндпоинтов с примерами `curl`, выбор фреймворка с аргументацией, **раздел «Регистрация GitHub App»** (пошаговая инструкция: создать App → permission `Repository → Issues: Read-only` → сгенерировать PEM → установить App на нужный repo/org → положить App ID + Installation ID + PEM в `.env`), **раздел «Linear: два секрета»** (чем `LINEAR_API_KEY` отличается от `LINEAR_WEBHOOK_SECRET` и где каждый создавать).
 - [ ] В `docs/ARCHITECTURE.md` — короткий раздел про `packages/background-office` (где в графе зависимостей, какие границы; пакет автономен в v0.1).
 - [ ] В корневой `package.json` — алиасы `"office:dev": "yarn workspace @membrana/background-office dev"`, `"office:build": "yarn workspace @membrana/background-office build"`.
 - [ ] Все интеграционные тесты используют моки внешних API; никаких реальных вызовов в тестах.
@@ -229,6 +250,25 @@ GITHUB_REPO=Membrana
 - При выборе **Fastify** обрати внимание, что `@fastify/raw-body` несовместим с body-parser плагином по умолчанию — порядок регистрации плагинов важен.
 - При выборе **NestJS** используй `NestFactory.create(AppModule, { rawBody: true })` для корректной работы с raw body на webhook-роуте.
 
+- **Linear: два разных секрета, не путать.** В Linear буквально есть две точки выпуска секретов и они закрывают разные сценарии:
+  - `LINEAR_API_KEY` — **personal API key** (Linear → Settings → API → Personal API keys). Используется только для **исходящих** GraphQL-вызовов (читать тикеты, постить комментарии). Привязан к пользователю — в проде имеет смысл завести сервисную учётку и выпустить ключ под неё. На будущее (если сервер начнёт действовать от имени разных людей) — Linear OAuth2 application; в v0.1 этого не нужно.
+  - `LINEAR_WEBHOOK_SECRET` — **signing secret конкретного webhook'а** (Linear → Settings → API → Webhooks → создать webhook → скопировать «Signing secret»). Используется только для **входящих** запросов на `/webhooks/linear` (HMAC-SHA256 от raw body). НИКОГДА не используется для исходящих вызовов. Если в Linear заведено несколько webhook'ов — у каждого свой secret; в v0.1 поддерживаем один.
+  - Эти два секрета **независимы**: ротация одного не требует ротации другого. Их назначение должно быть явно прописано в комментариях `.env.example` и в zod-схеме (`describe(...)`).
+
+- **Почему GitHub App, а не Personal Access Token (PAT)?** Сервер задуман как точка приёма webhook'ов от GitHub в следующей итерации (см. Out of scope). Статичный PAT в этом сценарии — антипаттерн: он привязан к личному аккаунту разработчика, не имеет fine-grained scope под конкретный репозиторий, не ротируется автоматически и не масштабируется на множественные установки. GitHub App снимает все четыре проблемы:
+  - **Аутентификация как «бот»**: токены не привязаны к человеку, ротация — автоматическая.
+  - **Fine-grained permissions per-installation**: выдаём только то, что нужно (для v0.1 — `Repository → Issues: Read-only`).
+  - **Динамические installation access tokens** с TTL ~1 час. Сервер хранит только PEM-приватный ключ App'а; на каждый запрос (или раз в час с кешем) подписывает короткоживущий JWT (≤10 мин) и обменивает его на installation access token через `POST /app/installations/:installation_id/access_tokens`. **Это и есть пресловутый «временный токен на каждый запрос»** — но из-за TTL ~1 час разумно кешировать.
+  - **Готовность к webhook'ам**: когда в v0.2 пойдут GitHub webhooks, `installation.id` достаётся прямо из payload, и `github-auth.service.ts` отрабатывает без изменений auth-слоя.
+
+  Реализация:
+  - `@octokit/auth-app` инкапсулирует JWT-подпись (RS256) и обмен на installation access token. Не пиши JWT/обмен руками — это легко ошибиться с алгоритмом или временными границами.
+  - `github-auth.service.ts` хранит `App`-клиент (создаётся один раз на старте из `GITHUB_APP_ID` + PEM) и кеширует installation-токены: ключ кеша — `installationId`, значение — `{ token, expiresAt }`, TTL чуть меньше часа (например 50 минут), чтобы не нарваться на гонку с истечением.
+  - `github.service.ts` запрашивает свежий token у `github-auth.service.ts` и инстанцирует `@octokit/rest` (или вызывает через installation-aware клиент) — внешний слой не знает про JWT/обмен.
+  - PEM-ключ из env: либо многострочный PEM (`\n` в env — экранировать как `\\n` и распаковывать на старте), либо base64 (распаковка на старте). **Выбор формата зафиксируй в README** и в zod-схеме (`refine` валидирует, что после распаковки строка начинается с `-----BEGIN`).
+  - Никогда не логгируй ни PEM, ни installation token, ни JWT — даже на `debug`.
+  - На старте — однократный `getInstallationToken()` с явным `await`, чтобы быстро упасть, если App не установлен / id неверный / PEM битый. Лучше ошибка на старте, чем загадочные 401 в рантайме.
+
 ### Формат финального PR
 
 1. Заголовок: `feat(background-office): bootstrap packages/background-office with Claude + Linear integrations`.
@@ -249,7 +289,17 @@ GITHUB_REPO=Membrana
 1. **Заведи Linear-ticket** (например `TEC-API-1`) с label'ом `vesnin` (архитектура / инфра). В описании — короткая выжимка из этого промпта и ссылка на файл `docs/prompts/API_SERVER_BOOTSTRAP_PROMPT.md`.
 2. **Создай GitHub Issue** через шаблон `wish` (см. `.github/ISSUE_TEMPLATE/`). Опять же — ссылка на этот файл в теле.
 3. **Заведи ветку** `vesnin` (или продолжи существующую), от свежего `main`.
-4. **Получи API-ключи** заранее: Linear personal API key, Linear webhook secret (при создании webhook'а в Linear settings), GitHub token с правами `repo:read`. Anthropic уже есть.
+4. **Получи API-ключи** заранее (это **четыре независимых секрета**, не путать назначение):
+   - **Linear personal API key** — Linear → Settings → API → Personal API keys → «Create key». Это **outbound** ключ (читать тикеты, постить комментарии). В проде имеет смысл выпустить под сервисную учётку, а не под себя.
+   - **Linear webhook signing secret** — Linear → Settings → API → Webhooks → создать webhook (URL пока заглушка, например `https://example.com/webhooks/linear`), скопировать «Signing secret». Это **inbound** ключ — нужен только для HMAC-проверки тела входящих webhook'ов. К исходящим вызовам отношения не имеет.
+   - **GitHub App** (не Personal Access Token!) — GitHub → Settings → Developer settings → GitHub Apps → «New GitHub App». Поля:
+     - Homepage URL — ссылка на репо.
+     - Webhook URL — пока заглушка (приём GitHub webhook'ов — следующая итерация); webhook можно временно выключить (`Active` off).
+     - Permissions: `Repository permissions → Issues: Read-only` (для v0.1 достаточно).
+     - Where can this GitHub App be installed: только на «Only on this account».
+     - Generate a private key — скачать PEM-файл, положить под `.env` (или закодировать в base64). **Запиши App ID** — он показан на странице App'а.
+     - Install App на `officefish/Membrana` (Install App → Only select repositories → Membrana). **Запиши Installation ID** — берётся из URL после установки (`/settings/installations/<ID>`) или из ответа `/users/{username}/installation` через API.
+   - **Anthropic API key** — уже есть (`console.anthropic.com`).
 
 ### Что я делаю **после** того, как агент сдал PR
 
