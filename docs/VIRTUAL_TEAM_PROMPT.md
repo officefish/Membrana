@@ -90,3 +90,45 @@ Definition of Done: <тесты, отсутствие клиппинга, соо
 - `/ui <компонент>` — Верстальщик создаёт компонент строго по DESIGN.md.
 - `/service <name>` — создать новый сервис в `packages/services/<name>` по SERVICES.md.
 - `/review` — Teamlead делает ревью последнего артефакта.
+
+## Спросить совета у персонажа
+
+Для адресного обсуждения задачи с конкретным «виртуальным программистом» есть CLI:
+
+```bash
+# Самый частый сценарий: разобрать GitHub Issue, к которому привязан Linear-ticket
+yarn ask vesnin --gh-issue 12 "стоит ли сейчас вводить отдельный transport-service?"
+
+# С явным именем дискуссии (удобно подвязать к Linear-ID, например TEC-42)
+yarn ask dynin --gh-issue 10 --save-as TEC-42-fft-math "какие edge cases точно покрывать?"
+
+# Когда задача — отдельный markdown-файл
+yarn ask vesnin --ticket-file ./ticket.md "сформулируй кратко границы"
+
+# Свободный вопрос без задачи (по умолчанию НЕ сохраняется)
+yarn ask vesnin --no-context "одной фразой: нужен ли ADR сейчас?"
+```
+
+Что подкладывается в контекст:
+
+1. Системный промпт персонажа из [`virtual-team/PROMPT_*.md`](./virtual-team/).
+2. Стратегический контекст из [`WHITE_PAPER.md`](./WHITE_PAPER.md).
+3. Выдержки из [`ARCHITECTURE.md`](./ARCHITECTURE.md) и [`SERVICES.md`](./SERVICES.md).
+4. Контекст задачи: GitHub Issue (`--gh-issue`), markdown-файл (`--ticket-file`) или строка (`--task`).
+
+Сохранение обсуждения:
+
+- При `--gh-issue N` → автоматически в `docs/discussions/gh-issue-N.md` (append).
+- При `--ticket-file foo.md` → автоматически в `docs/discussions/foo.md` (append).
+- С `--save-as <name>` → в `docs/discussions/<name>.md` (имя обычно совпадает с Linear-ID).
+- Можно отключить флагом `--no-save`.
+- Свободные вопросы (без контекста задачи и без `--save-as`) **не сохраняются** — это режим черновика.
+
+Каждый вызов **дописывает** новый блок в файл, поэтому файл превращается в хронологический
+тред: вопрос → ответ → вопрос → ответ. Файлы коммитятся в репо — это и есть «архив»
+обсуждений, доступный и людям, и агентам.
+
+Шаг 2 (будущий PR) добавит чтение Linear-тикета через API и пост ответа в Linear-комментарий.
+
+Текущие персонажи: `vesnin`, `dynin`. Расширение — через `scripts/ask-persona.mjs`
+(добавь запись в `PERSONAS` и создай `PROMPT_<ROLE>.md`).
