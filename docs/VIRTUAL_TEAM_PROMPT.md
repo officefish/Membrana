@@ -20,20 +20,26 @@
 | **Музыкант** | Эффекты, постобработка, качество потока (24 bit / 48 kHz цели) | Дублирование мат. ядра без вызова сервисов математика |
 | **Верстальщик** | Презентационный UI строго по `DESIGN.md`, a11y, адаптив | Бизнес-логика в компонентах верстки |
 
-### Участники: аватары и отдельные промты
+### Участники: персонажи, label'ы, ветки, промпты
 
-Стабильные URL портретов (один и тот же адрес даёт тот же образ; удобно для карточек команды в UI или документации):
+Каждая роль имеет имя-персонажа с исторической отсылкой. Имя используется как
+Linear-label (для назначения задачи на «виртуального программиста») и одновременно
+как имя git-ветки (всю работу по этому персонажу складываем в одну ветку, PR в `main`).
+Те роли, для которых имя ещё не закреплено, помечены «—»; их можно добавить тем же
+паттерном.
 
-| Роль | Аватар | Системный промпт роли |
-|------|--------|------------------------|
-| **Teamlead** | [изображение](https://i.pravatar.cc/400?u=membrana-teamlead) | [PROMPT_TEAMLEAD.md](./virtual-team/PROMPT_TEAMLEAD.md) |
-| **Структурщик** | [изображение](https://i.pravatar.cc/400?u=membrana-structurer) | [PROMPT_STRUCTURER.md](./virtual-team/PROMPT_STRUCTURER.md) |
-| **Математик** | [изображение](https://i.pravatar.cc/400?u=membrana-mathematician) | [PROMPT_MATHEMATICIAN.md](./virtual-team/PROMPT_MATHEMATICIAN.md) |
-| **Музыкант** | [изображение](https://i.pravatar.cc/400?u=membrana-musician) | [PROMPT_MUSICIAN.md](./virtual-team/PROMPT_MUSICIAN.md) |
-| **Верстальщик** | [изображение](https://i.pravatar.cc/400?u=membrana-layout-dev) | [PROMPT_LAYOUT_DEVELOPER.md](./virtual-team/PROMPT_LAYOUT_DEVELOPER.md) |
+| Роль | Персонаж | Linear label | Git branch | Аватар | Системный промпт |
+|------|----------|--------------|------------|--------|------------------|
+| **Teamlead** | **Vesnin** (русский архитектурный авангард, конструктивизм; братья Веснины) | `vesnin` | `vesnin` | [аватар](https://i.pravatar.cc/400?u=membrana-vesnin-1923) | [PROMPT_TEAMLEAD.md](./virtual-team/PROMPT_TEAMLEAD.md) |
+| **Структурщик** | — | — | — | [аватар](https://i.pravatar.cc/400?u=membrana-structurer) | [PROMPT_STRUCTURER.md](./virtual-team/PROMPT_STRUCTURER.md) |
+| **Математик** | **Dynin** (русская математическая школа о неслучайности биологической жизни) | `dynin` | `dynin` | [аватар](https://i.pravatar.cc/400?u=membrana-dynin-math) | [PROMPT_MATHEMATICIAN.md](./virtual-team/PROMPT_MATHEMATICIAN.md) |
+| **Музыкант** | — | — | — | [аватар](https://i.pravatar.cc/400?u=membrana-musician) | [PROMPT_MUSICIAN.md](./virtual-team/PROMPT_MUSICIAN.md) |
+| **Верстальщик** | — | — | — | [аватар](https://i.pravatar.cc/400?u=membrana-layout-dev) | [PROMPT_LAYOUT_DEVELOPER.md](./virtual-team/PROMPT_LAYOUT_DEVELOPER.md) |
 
-Прямые ссылки на изображения (для `src` в HTML/React):  
-<https://i.pravatar.cc/400?u=membrana-teamlead> · <https://i.pravatar.cc/400?u=membrana-structurer> · <https://i.pravatar.cc/400?u=membrana-mathematician> · <https://i.pravatar.cc/400?u=membrana-musician> · <https://i.pravatar.cc/400?u=membrana-layout-dev>
+Соглашение про ветки: см. [TASKS_MANAGEMENT.md → Ветки персонажей](./TASKS_MANAGEMENT.md#ветки-персонажей).
+
+Прямые ссылки на изображения (для `src` в HTML/React):
+<https://i.pravatar.cc/400?u=membrana-vesnin-1923> · <https://i.pravatar.cc/400?u=membrana-structurer> · <https://i.pravatar.cc/400?u=membrana-dynin-math> · <https://i.pravatar.cc/400?u=membrana-musician> · <https://i.pravatar.cc/400?u=membrana-layout-dev>
 
 ## Правила взаимодействия
 
