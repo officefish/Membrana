@@ -1,0 +1,57 @@
+name: Wish — пожелание / идея / фича
+description: Любое расширение возможностей проекта Membrana
+title: '[Wish] '
+labels:
+  - wish
+  - 'status:triage'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Спасибо за пожелание. Этот Issue — **точка входа**. После триажа Teamlead
+        конвертирует его в задачу в Linear, где пойдёт декомпозиция и работа.
+        Жизненный цикл: [docs/TASKS_MANAGEMENT.md](../blob/main/docs/TASKS_MANAGEMENT.md).
+
+        Заголовок Issue — в форме «глагол + цель». Префикс `[Wish] ` будет проставлен автоматически.
+  - type: textarea
+    id: context
+    attributes:
+      label: Контекст
+      description: Зачем это нужно — какую боль или возможность это закрывает.
+      placeholder: |
+        Сейчас не получается …
+        Хотелось бы …
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Идея решения (опционально)
+      description: Если есть мысли «как» — опиши. Не план реализации; план — задача Linear.
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Как мы поймём, что задача сделана. 2–5 проверяемых пунктов.
+      placeholder: |
+        - [ ] …
+        - [ ] …
+    validations:
+      required: true
+  - type: input
+    id: white-paper
+    attributes:
+      label: Связь с WHITE_PAPER.md
+      description: Этап дорожной карты или раздел White Paper. Можно пропустить, но желательно.
+      placeholder: 'Этап 1 — Одинокий слушатель / раздел 4.4 Слияние данных'
+    validations:
+      required: false
+  - type: checkboxes
+    id: declaration
+    attributes:
+      label: Понимаю процесс
+      options:
+        - label: Прочитал(а) [docs/TASKS_MANAGEMENT.md](../blob/main/docs/TASKS_MANAGEMENT.md) и понимаю, что внутренние обсуждения пойдут в Linear, а перед закрытием Issue здесь будет формальный отчёт.
+          required: true

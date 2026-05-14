@@ -2,7 +2,8 @@
 
 | Файл | Назначение |
 |------|------------|
-| [../WHITE_PAPER.md](../WHITE_PAPER.md) | Стратегический концепт: цель — распределённая разведка нижнего неба |
+| [WHITE_PAPER.md](./WHITE_PAPER.md) | Стратегический концепт: цель — распределённая разведка нижнего неба |
+| [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md) | Методология задач: GitHub Issues (вход) + Linear (работа) + отчёт перед закрытием |
 | [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) | Системный промпт координатора и формат ответа |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Границы пакетов Membrana + правила плагинов и аудио-слоёв |
 | [SERVICES.md](./SERVICES.md) | Соглашения о пакетах-сервисах в `packages/services/*` |
@@ -14,12 +15,13 @@
 
 ## Порядок чтения для новых агентов
 
-0. [../WHITE_PAPER.md](../WHITE_PAPER.md) — зачем существует проект и какую систему мы строим.
-1. [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) — кто я и в какой команде работаю.
-2. [ARCHITECTURE.md](./ARCHITECTURE.md) — где границы пакетов и слоёв.
-3. [SERVICES.md](./SERVICES.md) — если задача про чистую логику + хуки.
-4. [DESIGN.md](./DESIGN.md) — если задача про вёрстку.
-5. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
-6. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
+0. [WHITE_PAPER.md](./WHITE_PAPER.md) — зачем существует проект и какую систему мы строим.
+1. [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md) — как живут задачи (GitHub Issues + Linear, отчёт перед закрытием).
+2. [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) — кто я и в какой команде работаю.
+3. [ARCHITECTURE.md](./ARCHITECTURE.md) — где границы пакетов и слоёв.
+4. [SERVICES.md](./SERVICES.md) — если задача про чистую логику + хуки.
+5. [DESIGN.md](./DESIGN.md) — если задача про вёрстку.
+6. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
+7. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
 
 GitHub Actions: workflow `virtual-team-context` выводит эти пути в summary при ручном запуске.

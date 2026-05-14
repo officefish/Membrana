@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Методология работы с задачами
+    url: https://github.com/officefish/Membrana/blob/main/docs/TASKS_MANAGEMENT.md
+    about: Прежде чем создавать Issue — посмотрите процесс. GitHub Issues — единственный вход; внутренние обсуждения идут в Linear.
+  - name: Стратегическая цель проекта
+    url: https://github.com/officefish/Membrana/blob/main/docs/WHITE_PAPER.md
+    about: Что Membrana строит в долгосрочной перспективе. По возможности привязывайте Issue к этапу дорожной карты.
