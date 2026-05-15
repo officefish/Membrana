@@ -88,8 +88,8 @@ describe('exportFftThresholdReport', () => {
     const text = toPlainText(report);
     expect(text).toContain('Обнаружено');
     expect(text).toContain('Кадры:');
-    expect(text.match(/\n  1 \|/g)?.length).toBe(1);
-    expect(text.match(/\n  3 \|/g)?.length).toBe(1);
+    expect(text.match(/\n {2}1 \|/g)?.length).toBe(1);
+    expect(text.match(/\n {2}3 \|/g)?.length).toBe(1);
   });
 
   it('текст для не-детекции', () => {

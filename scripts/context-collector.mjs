@@ -110,10 +110,10 @@ export function collectRepositoryContext(options = {}) {
     diffStat = runGit(['diff', '--stat']) || '';
   }
 
-  const testOut = runYarnScript('yarn test -- --passWithNoTests --silent');
+  const testOut = runYarnScript('yarn turbo run test --concurrency=3 --continue');
   const testSnippet = testOut.split(/\r?\n/).slice(0, testLines).join('\n');
 
-  const lintOut = runYarnScript('yarn lint -- --quiet');
+  const lintOut = runYarnScript('yarn turbo run lint --concurrency=3 --continue');
   const lintSnippet = lintOut.split(/\r?\n/).slice(0, lintLines).join('\n');
 
   const parts = [
