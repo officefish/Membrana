@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "node ./scripts/copy-prompts.cjs",
     "build": "yarn prepare && tsc -b",
-    "dev": "yarn prepare && tsx watch src/main.ts",
+    "dev": "yarn prepare && node --watch -r ts-node/register ./src/main.ts",
     "start": "node ./dist/main.js",
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
@@ -38,6 +38,7 @@
     "eslint": "^8.57.0",
     "rimraf": "^5.0.0",
     "supertest": "^7.0.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.4.0",
     "vitest": "^1.4.0"

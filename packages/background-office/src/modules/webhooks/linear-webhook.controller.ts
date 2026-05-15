@@ -1,15 +1,17 @@
 import {
   BadRequestException,
   Controller,
+  ForbiddenException,
+  HttpCode,
+  HttpStatus,
   Inject,
   Logger,
   Post,
   Req,
-  Res,
   type RawBodyRequest,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
+import type { Request } from 'express';
 import { createHash } from 'node:crypto';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
@@ -47,7 +49,8 @@ export class LinearWebhookController {
   @ApiResponse({ status: 200, description: 'Webhook received', schema: { type: 'object', properties: { received: { type: 'boolean' } } } })
   @ApiResponse({ status: 400, description: 'Missing raw JSON body' })
   @ApiResponse({ status: 403, description: 'Invalid webhook signature' })
-  handle(@Req() req: RawBodyRequest<Request>, @Res({ passthrough: true }) res: Response): void {
+  @HttpCode(HttpStatus.OK)
+  handle(@Req() req: RawBodyRequest<Request>): { received: boolean } {
     const raw = getLinearWebhookRawBody(req);
     if (!raw) {
       throw new BadRequestException('Expected raw JSON body');
@@ -65,8 +68,7 @@ export class LinearWebhookController {
         sig,
       )
     ) {
-      res.status(403).end();
-      return;
+      throw new ForbiddenException();
     }
 
     const deliveryHeader =
@@ -76,8 +78,7 @@ export class LinearWebhookController {
       createHash('sha256').update(raw).digest('hex');
 
     if (this.deliveries.has(deliveryId)) {
-      res.status(200).json({ received: true });
-      return;
+      return { received: true };
     }
 
     this.deliveries.remember(deliveryId);
@@ -95,6 +96,6 @@ export class LinearWebhookController {
       );
     });
 
-    res.status(200).json({ received: true });
+    return { received: true };
   }
 }
