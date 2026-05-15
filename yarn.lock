@@ -837,6 +837,7 @@ __metadata:
     "@membrana/telemetry-service": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
+    "@uiw/react-json-view": "npm:2.0.0-alpha.42"
     "@vitejs/plugin-react": "npm:^4.3.1"
     autoprefixer: "npm:^10.4.19"
     daisyui: "npm:^4.12.10"
@@ -2032,6 +2033,17 @@ __metadata:
     "@typescript-eslint/types": "npm:7.18.0"
     eslint-visitor-keys: "npm:^3.4.3"
   checksum: 10c0/538b645f8ff1d9debf264865c69a317074eaff0255e63d7407046176b0f6a6beba34a6c51d511f12444bae12a98c69891eb6f403c9f54c6c2e2849d1c1cb73c0
+  languageName: node
+  linkType: hard
+
+"@uiw/react-json-view@npm:2.0.0-alpha.42":
+  version: 2.0.0-alpha.42
+  resolution: "@uiw/react-json-view@npm:2.0.0-alpha.42"
+  peerDependencies:
+    "@babel/runtime": ">=7.10.0"
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: 10c0/abd5d1aacf492ecbee985658d7cda53e711a618ceff6e4d4786224a0142ecd8ee6f5ef68f15d6995962fc8c91ae497e5959be94b194cab63c82fb5eccc41b769
   languageName: node
   linkType: hard
 

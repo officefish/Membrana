@@ -5,12 +5,24 @@ import {
   type TelemetryEntryType,
   useTelemetryJournal,
 } from '@membrana/telemetry-service';
-import { JournalEntryRow } from './components/JournalEntryRow';
+
+import { JournalEntryItem } from './components/JournalEntryItem';
+import {
+  matchesTagFilter,
+  type TelemetryTagFilter,
+} from './filters/matchesTagFilter';
 import type { TelemetryJournalModuleConfig } from './types';
 
 type FilterKind = 'all' | TelemetryEntryType | 'system';
 
-function matchesFilter(entry: TelemetryEntry, filter: FilterKind): boolean {
+const TAG_FILTER_OPTIONS: { value: TelemetryTagFilter; label: string }[] = [
+  { value: 'all', label: 'Все теги' },
+  { value: 'analysis', label: 'Анализ' },
+  { value: 'detection', label: 'Обнаружено' },
+  { value: 'clear', label: 'Чисто' },
+];
+
+function matchesTypeFilter(entry: TelemetryEntry, filter: FilterKind): boolean {
   if (filter === 'all') return true;
   if (filter === 'system') {
     return entry.type === 'module_start' || entry.type === 'module_stop';
@@ -22,13 +34,16 @@ export const TelemetryJournalModule: React.FC<
   ModuleProps<TelemetryJournalModuleConfig>
 > = ({ module: _module }) => {
   const { snapshot, journal } = useTelemetryJournal();
-  const [filter, setFilter] = useState<FilterKind>('all');
+  const [typeFilter, setTypeFilter] = useState<FilterKind>('all');
+  const [tagFilter, setTagFilter] = useState<TelemetryTagFilter>('all');
   const [search, setSearch] = useState('');
 
   const stats = useMemo(() => journal.getStats(), [journal, snapshot.version]);
 
   const displayed = useMemo(() => {
-    let list = snapshot.entries.filter((e) => matchesFilter(e, filter));
+    let list = snapshot.entries.filter(
+      (e) => matchesTypeFilter(e, typeFilter) && matchesTagFilter(e, tagFilter),
+    );
     const q = search.trim().toLowerCase();
     if (q) {
       list = list.filter((e) => {
@@ -43,7 +58,7 @@ export const TelemetryJournalModule: React.FC<
       });
     }
     return [...list].sort((a, b) => b.timestamp - a.timestamp);
-  }, [snapshot.entries, snapshot.version, filter, search]);
+  }, [snapshot.entries, snapshot.version, typeFilter, tagFilter, search]);
 
   const exportJson = () => {
     const blob = new Blob([JSON.stringify(displayed, null, 2)], {
@@ -79,57 +94,83 @@ export const TelemetryJournalModule: React.FC<
         <div className="flex flex-wrap gap-2 text-xs">
           <span className="badge badge-outline">всего: {stats.total}</span>
           <span className="badge badge-outline">анализ: {stats.analysis}</span>
+          <span className="badge badge-outline">detection: {stats.detection}</span>
+          <span className="badge badge-outline">clear: {stats.clear}</span>
           <span className="badge badge-outline">события: {stats.events}</span>
           <span className="badge badge-outline">система: {stats.system}</span>
           <span className="badge badge-ghost">в списке: {displayed.length}</span>
         </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
-          <label className="form-control w-full sm:w-auto sm:min-w-[11rem]">
-            <span className="label py-0"><span className="label-text text-xs">Тип</span></span>
-            <select
-              className="select select-bordered select-sm"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as FilterKind)}
-            >
-              <option value="all">Все</option>
-              <option value="analysis">Анализ</option>
-              <option value="event">События</option>
-              <option value="system">Система (модули)</option>
-              <option value="module_start">module_start</option>
-              <option value="module_stop">module_stop</option>
-            </select>
-          </label>
-          <label className="form-control flex-1 min-w-[12rem]">
-            <span className="label py-0"><span className="label-text text-xs">Поиск</span></span>
-            <input
-              type="search"
-              className="input input-bordered input-sm w-full"
-              placeholder="модуль, тег, фрагмент JSON…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" className="btn btn-sm btn-outline" onClick={exportJson}>
-              Экспорт JSON
-            </button>
-            <button type="button" className="btn btn-sm btn-error btn-outline" onClick={onClear}>
-              Очистить
-            </button>
+        <div className="flex flex-col gap-3">
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="Фильтр по тегам отчёта"
+          >
+            {TAG_FILTER_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                className={`btn btn-xs min-h-10 ${tagFilter === value ? 'btn-primary' : 'btn-ghost'}`}
+                aria-pressed={tagFilter === value}
+                onClick={() => setTagFilter(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
+            <label className="form-control w-full sm:w-auto sm:min-w-[11rem]">
+              <span className="label py-0">
+                <span className="label-text text-xs">Тип записи</span>
+              </span>
+              <select
+                className="select select-bordered select-sm"
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value as FilterKind)}
+              >
+                <option value="all">Все типы</option>
+                <option value="analysis">Анализ</option>
+                <option value="event">События</option>
+                <option value="system">Система (модули)</option>
+                <option value="module_start">module_start</option>
+                <option value="module_stop">module_stop</option>
+              </select>
+            </label>
+            <label className="form-control flex-1 min-w-[12rem]">
+              <span className="label py-0">
+                <span className="label-text text-xs">Поиск</span>
+              </span>
+              <input
+                type="search"
+                className="input input-bordered input-sm w-full"
+                placeholder="модуль, тег, фрагмент JSON…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" className="btn btn-sm btn-outline" onClick={exportJson}>
+                Экспорт JSON
+              </button>
+              <button type="button" className="btn btn-sm btn-error btn-outline" onClick={onClear}>
+                Очистить
+              </button>
+            </div>
           </div>
         </div>
 
         {displayed.length === 0 ? (
           <p className="text-sm text-center text-base-content/50 py-8 border border-dashed border-base-300 rounded-box">
-            Нет записей. Запустите модуль «Микрофон» и визуализацию — в журнал попадут
-            события и периодические агрегаты.
+            Нет записей. Запустите модуль «Микрофон» и fft-threshold-test — в журнал попадут
+            отчёты анализа и события.
           </p>
         ) : (
           <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
             {displayed.map((e) => (
               <li key={e.id}>
-                <JournalEntryRow entry={e} />
+                <JournalEntryItem entry={e} />
               </li>
             ))}
           </ul>
