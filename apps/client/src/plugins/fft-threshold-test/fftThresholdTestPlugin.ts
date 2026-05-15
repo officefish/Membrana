@@ -21,6 +21,8 @@ import {
   verdictsToTickStates,
   type FrameTickState as UiTickState,
 } from './fftThresholdPluginState';
+import { buildFftThresholdTestReport } from './buildFftThresholdTestReport';
+import { fftThresholdReportHistory } from './fftThresholdReportHistory';
 import {
   logFftThresholdStreamStart,
   logFftThresholdStreamStop,
@@ -151,8 +153,10 @@ export function createFftThresholdTestPlugin(): Plugin<FftThresholdTestPluginCon
           finishedAt,
         });
         const ticks = verdictsToTickStates(result.frames);
+        const report = buildFftThresholdTestReport(result);
+        fftThresholdReportHistory.push(report);
         fftThresholdPluginState.finishTest(result, ticks);
-        logFftThresholdTestResult(moduleId, result);
+        logFftThresholdTestResult(moduleId, report);
 
         if (config.mode === 'auto' && !disposed && currentSampler) {
           clearAutoRestart();
@@ -317,6 +321,7 @@ export function createFftThresholdTestPlugin(): Plugin<FftThresholdTestPluginCon
         clearAutoRestart();
         return stopSampler().then(() => {
           fftThresholdPluginState.reset();
+          fftThresholdReportHistory.clear();
         });
       };
     },

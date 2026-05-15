@@ -19,6 +19,7 @@ Task-промпты:
 | [`API_SERVER_BOOTSTRAP_PROMPT.md`](./API_SERVER_BOOTSTRAP_PROMPT.md) | **Этап 1 (бутстрап).** Создаёт `packages/background-office/` — централизованный сервер с интеграциями Claude и Linear. Модель аутентификации (shared secret, Linear-секреты, GitHub-credentials) сейчас в фазе уточнения — см. PR #17, отложен. |
 | [`SERVER_DEPLOYMENT_PROMPT.md`](./SERVER_DEPLOYMENT_PROMPT.md) | **Этап 5 (продовый деплой).** Регистрация домена, DNS, HTTPS, выбор хостинга (PaaS vs VPS), секреты в env провайдера, боевой Linear webhook. Зависит от завершения этапа 1; результат — публичный `https://<domain>/health` → `200`. |
 | [`FFT_THRESHOLD_TEST_PLUGIN_PROMPT.md`](./FFT_THRESHOLD_TEST_PLUGIN_PROMPT.md) | **Плагин микрофона:** пороговый FFT-тест (ручной/авто, 3–10 кадров, строгость лёгкий/средний/строгий), UI-такты, телеметрия. Математика в `fft-analyzer-service`, UI в `apps/client`. |
+| [`FFT_THRESHOLD_TEST_REPORTS_PROMPT.md`](./FFT_THRESHOLD_TEST_REPORTS_PROMPT.md) | **Продолжение плагина:** локальная история 5 отчётов (свёрнуто/развёрнуто, матрица raw+norm), экспорт JSON/txt, телеметрия `schema` v0.2. Рендер в журнале — отдельная задача. |
 
 Сквозной журнал работы по пакету `background-office` (от идеи до прода) —
 [`../discussions/background-office-v0.1.md`](../discussions/background-office-v0.1.md).

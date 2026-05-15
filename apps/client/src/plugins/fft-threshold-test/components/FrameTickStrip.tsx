@@ -8,11 +8,7 @@ export interface FrameTickStripProps {
 
 /** Компактный ряд ✓/✗ по кадрам (свёрнутый отчёт). */
 export const FrameTickStrip: React.FC<FrameTickStripProps> = ({ frames }) => (
-  <motion.div
-    className="flex flex-wrap gap-0.5"
-    role="list"
-    aria-label="Результаты кадров"
-  >
+  <div className="flex flex-wrap gap-0.5" role="list" aria-label="Результаты кадров">
     {frames.map((frame) => (
       <span
         key={frame.index}

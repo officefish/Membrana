@@ -1,0 +1,94 @@
+import React from 'react';
+
+import type { FftThresholdTestReport } from '../buildFftThresholdTestReport';
+import { downloadReportJson, downloadReportText } from '../exportFftThresholdReport';
+import { STRICTNESS_LABELS } from '../types';
+
+import { FrameTickStrip } from './FrameTickStrip';
+import { ReportMatrix } from './ReportMatrix';
+
+export interface ReportCardProps {
+  readonly report: FftThresholdTestReport;
+  readonly expanded: boolean;
+  readonly onToggle: () => void;
+}
+
+export const ReportCard: React.FC<ReportCardProps> = ({
+  report,
+  expanded,
+  onToggle,
+}) => {
+  const finishedLabel = new Date(report.finishedAt).toLocaleString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+  const modeLabel = report.mode === 'auto' ? 'авто' : 'ручной';
+
+  return (
+    <article
+      className={`rounded-lg border ${
+        report.isDetected ? 'border-success/30 bg-success/5' : 'border-base-300 bg-base-300/20'
+      }`}
+    >
+      <header className="flex flex-wrap items-center gap-2 p-2 min-h-10">
+        <button
+          type="button"
+          className="flex flex-1 min-w-0 items-center gap-2 text-left min-h-10"
+          aria-expanded={expanded}
+          onClick={onToggle}
+        >
+          <span className="text-[10px] text-base-content/50 shrink-0" aria-hidden>
+            {expanded ? '▼' : '▶'}
+          </span>
+          <span className="text-xs text-base-content/70 tabular-nums truncate">{finishedLabel}</span>
+          <FrameTickStrip frames={report.frames} />
+          <span
+            className={`text-xs font-semibold shrink-0 ${
+              report.isDetected ? 'text-success' : 'text-base-content'
+            }`}
+          >
+            {report.isDetected ? 'Обнаружено' : 'Не обнаружено'}
+          </span>
+          <span className="text-[10px] text-base-content/50 tabular-nums shrink-0">
+            {report.passedCount}/{report.frameCount}
+          </span>
+        </button>
+        <div className="flex gap-1 shrink-0">
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs min-h-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              downloadReportJson(report);
+            }}
+          >
+            JSON
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs min-h-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              downloadReportText(report);
+            }}
+          >
+            Текст
+          </button>
+        </div>
+      </header>
+
+      {expanded && (
+        <div className="px-2 pb-2 space-y-2 border-t border-base-300/50 pt-2">
+          <p className="text-[10px] text-base-content/60">
+            {modeLabel} · {STRICTNESS_LABELS[report.strictness]} · интервал {report.intervalMs} мс ·{' '}
+            {(report.passRate * 100).toFixed(0)}% кадров
+          </p>
+          <ReportMatrix report={report} />
+        </div>
+      )}
+    </article>
+  );
+};

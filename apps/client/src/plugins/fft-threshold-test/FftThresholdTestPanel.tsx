@@ -8,6 +8,7 @@ import {
 } from '@membrana/fft-analyzer-service';
 
 import { FrameTicks } from './components/FrameTicks';
+import { ReportHistory } from './components/ReportHistory';
 import { MetricWithRaw } from './components/MetricWithRaw';
 import { NormalizedThresholdRow } from './components/NormalizedThresholdRow';
 import {
@@ -99,7 +100,6 @@ export const FftThresholdTestPanel: React.FC<FftThresholdTestPanelProps> = ({
     config.mode === 'manual' && snapshot.live && !isCollecting;
   const canStop = isCollecting;
 
-  const last = snapshot.lastResult;
   const frame = snapshot.currentFrame;
 
   return (
@@ -227,25 +227,7 @@ export const FftThresholdTestPanel: React.FC<FftThresholdTestPanelProps> = ({
         </div>
       )}
 
-      {last && snapshot.phase === 'result' && (
-        <div
-          className={`rounded-lg p-3 border ${
-            last.isDetected
-              ? 'bg-success/10 border-success/30'
-              : 'bg-base-300/50 border-base-300'
-          }`}
-          role="status"
-          aria-live="polite"
-        >
-          <p className="text-sm font-semibold text-base-content">
-            {last.isDetected ? 'Обнаружено' : 'Не обнаружено'}
-          </p>
-          <p className="text-xs text-base-content/60 mt-1 tabular-nums">
-            Пройдено кадров: {last.passedCount}/{last.frameCount} (
-            {(last.passRate * 100).toFixed(0)}%) · {STRICTNESS_LABELS[last.strictness]}
-          </p>
-        </div>
-      )}
+      <ReportHistory />
 
       <button
         type="button"
