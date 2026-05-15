@@ -25,7 +25,7 @@
       "createdAt": "2026-05-15",
       "archivedAt": "2026-05-15",
       "archiveNotes": "GitHub #42; приёмка 2026-05-15. Плагин sound-quality-viz: SNR/clarity/dynamics/peak/overall, sound-quality.ts в fft-analyzer, sidebar + panel.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-05-15"
     }
   ]
 }
