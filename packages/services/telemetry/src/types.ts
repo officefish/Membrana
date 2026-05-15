@@ -38,7 +38,13 @@ export interface RegisteredModule {
 export interface TelemetryJournalStats {
   total: number;
   analysis: number;
+  /** Записи анализа с тегом `detection` (или устаревший `detected`). */
+  detection: number;
+  /** Записи анализа с тегом `clear` (или устаревший `not-detected`). */
+  clear: number;
+  /** @deprecated Используйте `detection`; оставлено для обратной совместимости счётчиков. */
   drone: number;
+  /** @deprecated Используйте `clear`; оставлено для обратной совместимости счётчиков. */
   calm: number;
   events: number;
   system: number;

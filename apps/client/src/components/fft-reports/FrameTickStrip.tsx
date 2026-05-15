@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { FftThresholdFrameReportRow } from '../buildFftThresholdTestReport';
+import type { FftThresholdFrameReportRow } from '../../plugins/fft-threshold-test/buildFftThresholdTestReport';
 
 export interface FrameTickStripProps {
   readonly frames: readonly FftThresholdFrameReportRow[];

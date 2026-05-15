@@ -102,7 +102,7 @@ describe('TelemetryJournal', () => {
     ).toBe(true);
   });
 
-  it('getStats считает analysis и теги drone/calm', () => {
+  it('getStats считает analysis и теги detection/clear по entry.tags', () => {
     const j = new TelemetryJournal();
     j.addEntry(
       baseEntry({
@@ -113,12 +113,15 @@ describe('TelemetryJournal', () => {
     );
     j.addReportEntry(
       baseEntry({
-        data: { reportUniqueId: 'x', tags: ['drone', 'calm'] },
+        data: { reportUniqueId: 'x' },
+        tags: ['analysis', 'detection', 'clear'],
       }),
     );
     const s = j.getStats();
     expect(s.total).toBe(2);
     expect(s.analysis).toBe(1);
+    expect(s.detection).toBe(1);
+    expect(s.clear).toBe(1);
     expect(s.drone).toBe(1);
     expect(s.calm).toBe(1);
     expect(s.events).toBe(1);

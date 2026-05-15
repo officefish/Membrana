@@ -34,9 +34,10 @@ export function logFftThresholdTestResult(
       frames: report.frames,
     },
     tags: [
+      'analysis',
       'fft',
       'threshold-test',
-      report.isDetected ? 'detected' : 'not-detected',
+      report.isDetected ? 'detection' : 'clear',
     ],
   });
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import type { FftThresholdTestReport } from '../buildFftThresholdTestReport';
+import type { FftThresholdTestReport } from '../../plugins/fft-threshold-test/buildFftThresholdTestReport';
 import {
   formatRawCentroid,
   formatRawFlux,
   formatRawLoudness,
-} from '../normalizeMetrics';
+} from '../../plugins/fft-threshold-test/normalizeMetrics';
 
 export interface ReportMatrixProps {
   readonly report: FftThresholdTestReport;

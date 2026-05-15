@@ -1,34 +1,38 @@
 import React, { useMemo, useState } from 'react';
 import { ModuleProps } from '@membrana/agenda';
+import { useTelemetryJournal } from '@membrana/telemetry-service';
+
+import { JournalEntryItem } from './components/JournalEntryItem';
 import {
-  type TelemetryEntry,
-  type TelemetryEntryType,
-  useTelemetryJournal,
-} from '@membrana/telemetry-service';
-import { JournalEntryRow } from './components/JournalEntryRow';
+  countJournalFilters,
+  matchesJournalFilter,
+  type TelemetryJournalFilter,
+} from './filters/matchesTagFilter';
 import type { TelemetryJournalModuleConfig } from './types';
 
-type FilterKind = 'all' | TelemetryEntryType | 'system';
-
-function matchesFilter(entry: TelemetryEntry, filter: FilterKind): boolean {
-  if (filter === 'all') return true;
-  if (filter === 'system') {
-    return entry.type === 'module_start' || entry.type === 'module_stop';
-  }
-  return entry.type === filter;
-}
+const FILTER_OPTIONS: { value: TelemetryJournalFilter; label: string }[] = [
+  { value: 'all', label: 'Все' },
+  { value: 'analysis', label: 'Анализ' },
+  { value: 'detection', label: 'Обнаружено' },
+  { value: 'clear', label: 'Чисто' },
+  { value: 'event', label: 'События' },
+  { value: 'system', label: 'Система' },
+];
 
 export const TelemetryJournalModule: React.FC<
   ModuleProps<TelemetryJournalModuleConfig>
 > = ({ module: _module }) => {
   const { snapshot, journal } = useTelemetryJournal();
-  const [filter, setFilter] = useState<FilterKind>('all');
+  const [filter, setFilter] = useState<TelemetryJournalFilter>('all');
   const [search, setSearch] = useState('');
 
-  const stats = useMemo(() => journal.getStats(), [journal, snapshot.version]);
+  const filterCounts = useMemo(
+    () => countJournalFilters(snapshot.entries),
+    [snapshot.entries, snapshot.version],
+  );
 
   const displayed = useMemo(() => {
-    let list = snapshot.entries.filter((e) => matchesFilter(e, filter));
+    let list = snapshot.entries.filter((e) => matchesJournalFilter(e, filter));
     const q = search.trim().toLowerCase();
     if (q) {
       list = list.filter((e) => {
@@ -76,60 +80,62 @@ export const TelemetryJournalModule: React.FC<
           вкладки; источники — модули и плагины (например, агрегаты микрофона).
         </p>
 
-        <div className="flex flex-wrap gap-2 text-xs">
-          <span className="badge badge-outline">всего: {stats.total}</span>
-          <span className="badge badge-outline">анализ: {stats.analysis}</span>
-          <span className="badge badge-outline">события: {stats.events}</span>
-          <span className="badge badge-outline">система: {stats.system}</span>
-          <span className="badge badge-ghost">в списке: {displayed.length}</span>
-        </div>
+        <div className="flex flex-col gap-3">
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="Фильтр записей журнала"
+          >
+            {FILTER_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                className={`btn btn-xs min-h-10 ${filter === value ? 'btn-primary' : 'btn-ghost'}`}
+                aria-pressed={filter === value}
+                onClick={() => setFilter(value)}
+              >
+                {label} ({filterCounts[value]})
+              </button>
+            ))}
+          </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
-          <label className="form-control w-full sm:w-auto sm:min-w-[11rem]">
-            <span className="label py-0"><span className="label-text text-xs">Тип</span></span>
-            <select
-              className="select select-bordered select-sm"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as FilterKind)}
-            >
-              <option value="all">Все</option>
-              <option value="analysis">Анализ</option>
-              <option value="event">События</option>
-              <option value="system">Система (модули)</option>
-              <option value="module_start">module_start</option>
-              <option value="module_stop">module_stop</option>
-            </select>
-          </label>
-          <label className="form-control flex-1 min-w-[12rem]">
-            <span className="label py-0"><span className="label-text text-xs">Поиск</span></span>
-            <input
-              type="search"
-              className="input input-bordered input-sm w-full"
-              placeholder="модуль, тег, фрагмент JSON…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" className="btn btn-sm btn-outline" onClick={exportJson}>
-              Экспорт JSON
-            </button>
-            <button type="button" className="btn btn-sm btn-error btn-outline" onClick={onClear}>
-              Очистить
-            </button>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
+            <label className="form-control flex-1 min-w-[12rem]">
+              <span className="label py-0">
+                <span className="label-text text-xs">Поиск</span>
+                <span className="label-text-alt text-xs text-base-content/50">
+                  показано: {displayed.length}
+                </span>
+              </span>
+              <input
+                type="search"
+                className="input input-bordered input-sm w-full"
+                placeholder="модуль, тег, фрагмент JSON…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" className="btn btn-sm btn-outline" onClick={exportJson}>
+                Экспорт JSON
+              </button>
+              <button type="button" className="btn btn-sm btn-error btn-outline" onClick={onClear}>
+                Очистить
+              </button>
+            </div>
           </div>
         </div>
 
         {displayed.length === 0 ? (
           <p className="text-sm text-center text-base-content/50 py-8 border border-dashed border-base-300 rounded-box">
-            Нет записей. Запустите модуль «Микрофон» и визуализацию — в журнал попадут
-            события и периодические агрегаты.
+            Нет записей. Запустите модуль «Микрофон» и fft-threshold-test — в журнал попадут
+            отчёты анализа и события.
           </p>
         ) : (
           <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
             {displayed.map((e) => (
               <li key={e.id}>
-                <JournalEntryRow entry={e} />
+                <JournalEntryItem entry={e} />
               </li>
             ))}
           </ul>

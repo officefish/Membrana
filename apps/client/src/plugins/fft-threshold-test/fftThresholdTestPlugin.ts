@@ -95,7 +95,6 @@ export function createFftThresholdTestPlugin(): Plugin<FftThresholdTestPluginCon
       let testId = '';
       let lastSampleAt = 0;
       let lastAudioFrame: AudioSampleFrame | null = null;
-      let lastLiveMetrics: LiveFrameResult | null = null;
       /** Flux только между замерами теста (intervalMs), не между RAF-кадрами. */
       let collectionFluxTracker: SpectralFluxTracker | null = null;
 
@@ -193,7 +192,7 @@ export function createFftThresholdTestPlugin(): Plugin<FftThresholdTestPluginCon
 
       const processLiveFrame = (frame: AudioSampleFrame): void => {
         lastAudioFrame = frame;
-        lastLiveMetrics = analyzer.analyzeFrame(frame);
+        analyzer.analyzeFrame(frame);
       };
 
       const trySampleFrame = (): void => {

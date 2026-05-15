@@ -32,12 +32,25 @@ function extractReportDedupeKey(data: TelemetryEntryPayload): string | null {
   return null;
 }
 
-function tagsInclude(entry: TelemetryEntry, tag: string): boolean {
-  const tags = entry.data['tags'];
-  if (!Array.isArray(tags)) {
-    return false;
-  }
-  return tags.some((t: unknown) => typeof t === 'string' && t === tag);
+function entryHasTag(entry: TelemetryEntry, tag: string): boolean {
+  return entry.tags.includes(tag);
+}
+
+/** Устаревшие теги FFT-отчёта до миграции на `detection` / `clear`. */
+function entryHasLegacyDetectionTag(entry: TelemetryEntry): boolean {
+  return (
+    entryHasTag(entry, 'detection') ||
+    entryHasTag(entry, 'detected') ||
+    entryHasTag(entry, 'drone')
+  );
+}
+
+function entryHasLegacyClearTag(entry: TelemetryEntry): boolean {
+  return (
+    entryHasTag(entry, 'clear') ||
+    entryHasTag(entry, 'not-detected') ||
+    entryHasTag(entry, 'calm')
+  );
 }
 
 /**
@@ -188,8 +201,10 @@ export class TelemetryJournal {
     return {
       total: entries.length,
       analysis: analysisEntries.length,
-      drone: analysisEntries.filter((e) => tagsInclude(e, 'drone')).length,
-      calm: analysisEntries.filter((e) => tagsInclude(e, 'calm')).length,
+      detection: analysisEntries.filter((e) => entryHasLegacyDetectionTag(e)).length,
+      clear: analysisEntries.filter((e) => entryHasLegacyClearTag(e)).length,
+      drone: analysisEntries.filter((e) => entryHasLegacyDetectionTag(e)).length,
+      calm: analysisEntries.filter((e) => entryHasLegacyClearTag(e)).length,
       events: entries.filter((e) => e.type === 'event').length,
       system: entries.filter(
         (e) => e.type === 'module_start' || e.type === 'module_stop',

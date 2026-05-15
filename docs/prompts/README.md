@@ -38,7 +38,8 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`DRONE_DETECTION_HEADER_SENSOR_PROMPT.md`](./DRONE_DETECTION_HEADER_SENSOR_PROMPT.md) | Датчик дрона в шапке |
 | [`FFT_INDICES_VIZ_PLUGIN_PROMPT.md`](./FFT_INDICES_VIZ_PLUGIN_PROMPT.md) | Live FFT-индексы (`fft-indices-viz`, архив) |
 | [`SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md`](./SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md) | Качество звука (`sound-quality-viz`, архив) |
-| [`TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md`](./TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md) | **Активная задача** `telemetry-journal-report-viz` — карточки отчётов в журнале |
+| [`TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md`](./TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md) | Карточки отчётов в журнале (`telemetry-journal-report-viz`, архив) |
+| [`DSP_DRONE_DETECTOR_PROMPT.md`](./DSP_DRONE_DETECTOR_PROMPT.md) | **Активная задача** `dsp-drone-detector` — сервис, демо, плагин (L, 3 фазы) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

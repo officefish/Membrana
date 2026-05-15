@@ -14,10 +14,6 @@ export function toJsonString(report: FftThresholdTestReport): string {
   return JSON.stringify(report, null, 2);
 }
 
-function boolMark(ok: boolean): string {
-  return ok ? 'да' : 'нет';
-}
-
 function tickMark(passed: boolean): string {
   return passed ? '✓' : '✗';
 }

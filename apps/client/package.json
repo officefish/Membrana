@@ -15,6 +15,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@babel/runtime": "^7.26.0",
     "@membrana/agenda": "*",
     "@membrana/audio-data-viz": "*",
     "@membrana/audio-engine-service": "*",
@@ -22,6 +23,7 @@
     "@membrana/device-board": "*",
     "@membrana/fft-analyzer-service": "*",
     "@membrana/telemetry-service": "*",
+    "@uiw/react-json-view": "2.0.0-alpha.42",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

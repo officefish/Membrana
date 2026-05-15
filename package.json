@@ -12,8 +12,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
+    "lint": "turbo run lint --concurrency=3",
+    "test": "turbo run test --concurrency=3",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rimraf node_modules",
     "morning-care": "node scripts/morning-care.mjs",

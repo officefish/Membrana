@@ -1,22 +1,30 @@
 import React from 'react';
 
-import type { FftThresholdTestReport } from '../buildFftThresholdTestReport';
-import { downloadReportJson, downloadReportText } from '../exportFftThresholdReport';
-import { STRICTNESS_LABELS } from '../types';
-
+import type { FftThresholdTestReport } from '../../../plugins/fft-threshold-test/buildFftThresholdTestReport';
+import {
+  downloadReportJson,
+  downloadReportText,
+} from '../../../plugins/fft-threshold-test/exportFftThresholdReport';
 import { FrameTickStrip } from '../../../components/fft-reports/FrameTickStrip';
-import { ReportMatrix } from '../../../components/fft-reports/ReportMatrix';
 
-export interface ReportCardProps {
+import { TelemetryJsonView } from './TelemetryJsonView';
+
+export interface TelemetryReportCardProps {
   readonly report: FftThresholdTestReport;
   readonly expanded: boolean;
   readonly onToggle: () => void;
+  readonly jsonPayload: Record<string, unknown>;
+  readonly meta: React.ReactNode;
+  readonly matrix: React.ReactNode;
 }
 
-export const ReportCard: React.FC<ReportCardProps> = ({
+export const TelemetryReportCard: React.FC<TelemetryReportCardProps> = ({
   report,
   expanded,
   onToggle,
+  jsonPayload,
+  meta,
+  matrix,
 }) => {
   const finishedLabel = new Date(report.finishedAt).toLocaleString('ru-RU', {
     day: '2-digit',
@@ -25,7 +33,6 @@ export const ReportCard: React.FC<ReportCardProps> = ({
     minute: '2-digit',
     second: '2-digit',
   });
-  const modeLabel = report.mode === 'auto' ? 'авто' : 'ручной';
 
   return (
     <article
@@ -82,11 +89,12 @@ export const ReportCard: React.FC<ReportCardProps> = ({
 
       {expanded && (
         <div className="px-2 pb-2 space-y-2 border-t border-base-300/50 pt-2">
-          <p className="text-[10px] text-base-content/60">
-            {modeLabel} · {STRICTNESS_LABELS[report.strictness]} · интервал {report.intervalMs} мс ·{' '}
-            {(report.passRate * 100).toFixed(0)}% кадров
-          </p>
-          <ReportMatrix report={report} />
+          {meta}
+          {matrix}
+          <div>
+            <p className="text-[10px] text-base-content/60 mb-1">Данные (JSON)</p>
+            <TelemetryJsonView value={jsonPayload} />
+          </div>
         </div>
       )}
     </article>
