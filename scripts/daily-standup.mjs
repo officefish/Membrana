@@ -5,7 +5,7 @@
  *   - docs/VIRTUAL_TEAM_PROMPT.md
  *   - docs/STRATEGIC_PLAN_DAY.md
  *   - docs/DAILY_CODE_REVIEW.md
- *   - docs/CURRENT_TASK.md (фрагмент)
+ *   - docs/MAIN_DAY_ISSUE.md, docs/CURRENT_TASK.md (буфер, опционально)
  *   - открытые GitHub Issues
  *   - наброски packages/temp/*
  *

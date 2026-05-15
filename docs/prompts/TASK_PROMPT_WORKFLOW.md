@@ -16,7 +16,32 @@
 | Linear ticket | Декомпозиция, статусы, исполнитель (после triage) |
 | **Task-промпт** | Полная спецификация для агента (DoD, out of scope, архитектура) |
 | **Реестр** [`docs/tasks/`](../tasks/) | Какие задачи **активны** / **в архиве** |
+| **`MAIN_DAY_ISSUE.md`** | Один обязательный фокус дня (`yarn main-day-issue`) |
 | PR + CI | Реализация и LGTM |
+
+---
+
+## MAIN_DAY_ISSUE и CURRENT_TASK (фокус дня)
+
+Два разных документа; не путать при работе агента и при закрытии задачи.
+
+| Документ | Как появляется | Роль |
+|----------|----------------|------|
+| [`MAIN_DAY_ISSUE.md`](../MAIN_DAY_ISSUE.md) | `yarn main-day-issue` после `yarn standup` | **Канон:** одна центральная задача дня, DoD, «не делаем сегодня» |
+| [`CURRENT_TASK.md`](../CURRENT_TASK.md) | вручную человеком / агентом | **Буфер:** черновики, детали, ссылки; **может содержать мусор и устаревшее** |
+
+**Порядок чтения перед кодом (M/L):**
+
+1. `MAIN_DAY_ISSUE.md` — что делаем **сегодня**.
+2. Task-промпт из реестра (`docs/prompts/*_PROMPT.md`) — полная спецификация.
+3. GitHub Issue — triage и отчёт.
+4. `CURRENT_TASK.md` — **только** если нужны доп. детали и они **не противоречат** п.1–3.
+
+**Для постановщика:** в Issue и в промпте ссылайтесь на `id` реестра; утром после ритуала проверяйте, что `primaryFocusId` в `MAIN_DAY_ISSUE` совпадает с активной задачей.
+
+**Для агента:** не трактовать `CURRENT_TASK` как источник приоритетов. При конфликте — побеждают `MAIN_DAY_ISSUE`, реестр, task-промпт.
+
+Подробнее: [`DEVELOPER_RHYTHM.md`](../DEVELOPER_RHYTHM.md).
 
 ---
 
@@ -178,6 +203,7 @@ yarn task:archive <id> --notes "PR #…, краткий итог"
 | `yarn task:sync-readme` | Пересобрать `docs/tasks/README.md` из registry |
 | `yarn task:archive <id>` | Архивировать задачу (после [`TASK_CLOSURE_REGULATION.md`](./TASK_CLOSURE_REGULATION.md)) |
 | `yarn task:archive <id> --notes "..."` | + заметка в карточке архива |
+| `yarn main-day-issue` | Сгенерировать канон дня → `docs/MAIN_DAY_ISSUE.md` |
 
 ---
 

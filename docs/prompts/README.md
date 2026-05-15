@@ -10,8 +10,9 @@
 | **[`TASK_CLOSURE_REGULATION.md`](./TASK_CLOSURE_REGULATION.md)** | Регламент закрытия: DoD, отчёт в Issue, `task:archive` |
 | **[`TASK_PROMPT_TEMPLATE.md`](./TASK_PROMPT_TEMPLATE.md)** | Шаблон нового `*_PROMPT.md` |
 | **[`docs/tasks/README.md`](../tasks/README.md)** | Активные и архивные задачи |
+| **[`CONSILIUM_PROMPT.md`](./CONSILIUM_PROMPT.md)** | Консилиум всех ролей → `docs/seanses/` |
 
-Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`.
+Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn consilium "<вопрос>"`.
 
 ---
 

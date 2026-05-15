@@ -38,7 +38,7 @@
       "createdAt": "2026-05-15",
       "archivedAt": "2026-05-15",
       "archiveNotes": "GitHub #43; приёмка 2026-05-15. Ветка feat/telemetry-journal-report-viz (e2ca0d0). Карточки fft-threshold-test, фильтры со счётчиками, JSON view DaisyUI.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-05-15"
     },
     {
       "id": "dsp-drone-detector",

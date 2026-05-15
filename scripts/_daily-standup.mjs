@@ -1,7 +1,7 @@
 /**
  * Движок «ежедневного стендапа» виртуальной команды.
  *
- * Синтезирует уже существующие артефакты (code-review, дневной план, issues, наброски
+ * Синтезирует уже существующие артефакты (вчерашнее вечернее code-review, план дня, issues, наброски
  * в packages/temp) в один согласованный план работы на сегодня.
  *
  * Используется обёрткой `daily-standup.mjs` → `yarn standup`.
@@ -28,8 +28,17 @@ const MAX_ISSUE_BODY_CHARS = 1_200;
 const DOC_INPUTS = [
   { rel: 'docs/VIRTUAL_TEAM_PROMPT.md', required: true, label: 'Промпт виртуальной команды' },
   { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'Стратегический план на день' },
-  { rel: 'docs/DAILY_CODE_REVIEW.md', required: false, label: 'Ежедневное code-review' },
-  { rel: 'docs/CURRENT_TASK.md', required: false, label: 'Текущая задача / интеграции' },
+  {
+    rel: 'docs/DAILY_CODE_REVIEW.md',
+    required: false,
+    label: 'Вчерашнее вечернее code-review (не генерировать утром)',
+  },
+  { rel: 'docs/MAIN_DAY_ISSUE.md', required: false, label: 'Предыдущий MAIN_DAY_ISSUE (канон)' },
+  {
+    rel: 'docs/CURRENT_TASK.md',
+    required: false,
+    label: 'Буфер CURRENT_TASK (черновики; может содержать шум — не канон)',
+  },
 ];
 
 const TEMP_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.md']);
@@ -252,7 +261,7 @@ export function collectTempDrafts({ full }) {
   };
 }
 
-function collectStatusSnapshot() {
+export function collectStatusSnapshot() {
   const branch = runGit(['branch', '--show-current']) || 'detached';
   const last = runGit(['log', '-1', '--format=%h - %s (%an, %ar)']) || 'no commits';
   const status = runGit(['status', '--short']) || '(чистое рабочее дерево)';
@@ -362,7 +371,7 @@ export async function runDailyStandup(options) {
 
   const sections = [
     'Ты — координатор виртуальной команды Membrana (см. промпт ниже).',
-    'Проведи «ежедневный стендап»: сведи code-review, дневной стратегический план,',
+    'Проведи «ежедневный стендап»: сведи вчерашнее вечернее code-review, дневной стратегический план,',
     'открытые GitHub Issues и наброски packages/temp в единый план на сегодня.',
     '',
     '---',
@@ -503,7 +512,9 @@ export function parseStandupArgs(argv) {
 
   Issues: сначала gh CLI; иначе GitHub API по origin (GITHUB_TOKEN опционален).
   Рекомендуемый ритуал:
-    yarn plan:day && yarn code-review && yarn standup`);
+    yarn plan:day && yarn standup && yarn main-day-issue
+
+  Вечером перед сном: yarn code-review (см. DEVELOPER_RHYTHM.md).`);
     process.exit(0);
   }
 

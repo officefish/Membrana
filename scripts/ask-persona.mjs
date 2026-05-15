@@ -50,6 +50,16 @@ const PERSONAS = {
     promptFile: 'docs/virtual-team/PROMPT_MATHEMATICIAN.md',
     description: 'Dynin — Математик. Чистые функции, спектр, статистика.',
   },
+  ozhegov: {
+    role: 'Структурщик',
+    promptFile: 'docs/virtual-team/PROMPT_STRUCTURER.md',
+    description: 'Ozhegov — Структурщик. Термины, границы пакетов, слабая связанность.',
+  },
+  rodchenko: {
+    role: 'Верстальщик',
+    promptFile: 'docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md',
+    description: 'Rodchenko — Верстальщик. DESIGN.md, конструктивизм, a11y.',
+  },
 };
 
 const MAX_CONTEXT_CHARS = 90_000;

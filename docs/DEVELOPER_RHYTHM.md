@@ -1,0 +1,218 @@
+# Ритм разработки Membrana
+
+Практический регламент: **какие `yarn`-команды запускать утром, вечером, раз в неделю и по ситуации**, чтобы повестка дня оставалась связной со стратегией ([`WHITE_PAPER.md`](./WHITE_PAPER.md)), архитектурой и открытыми задачами.
+
+Скрипты пишут артефакты в `docs/` — их можно коммитить, читать агентам и использовать как вход для Cursor.
+
+**Требования для «умных» скриптов:** `ANTHROPIC_API_KEY` в корневом `.env` (см. `.env.example`). Для Issues — `gh auth login`. Прокси при необходимости: `HTTPS_PROXY` / `ANTHROPIC_HTTPS_PROXY`.
+
+---
+
+## Сводная таблица
+
+| Когда | Команды (порядок) | Артефакт |
+|-------|-------------------|----------|
+| **Утро** | `morning-care` → `plan:day` → `standup` → **`main-day-issue`** | читает вчерашний `DAILY_CODE_REVIEW.md`; пишет `STRATEGIC_PLAN_DAY`, `DAILY_STANDUP`, **`MAIN_DAY_ISSUE`** |
+| **Вечер** | **`code-review`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | `DAILY_CODE_REVIEW.md` (+ архив), реестр, Issues |
+| **Понедельник / неделя** | `analyzers:research:week` → `plan:week` | `WEEKLY_ANALYZERS_RESEARCH.md`, `STRATEGIC_PLAN_WEEK.md` |
+| **По необходимости** | `consilium`, `ask`, `task:list`, CI | `docs/seanses/*`, `docs/discussions/*` |
+
+---
+
+## Утро (10–20 минут)
+
+Цель: спланировать день, **учитывая вчерашнее вечернее code-review** (`docs/DAILY_CODE_REVIEW.md`), и зафиксировать один фокус.
+
+> **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход).
+
+```bash
+# 1. Среда: прокси, git, быстрый тест скриптов; опционально ping Anthropic
+yarn morning-care
+# без траты токенов:
+yarn morning-care --no-anthropic
+
+# 2. План на день (WHITE_PAPER + git за сутки)
+yarn plan:day
+yarn plan:day:full
+
+# 3. Стендап: план + вчерашнее ревью + Issues + наброски packages/temp
+yarn standup
+
+# 4. Центральная задача дня (последний шаг утра — канон для агентов)
+yarn main-day-issue
+# зафиксировать focus вручную:
+yarn main-day-issue --focus dsp-drone-detector
+
+# без API (только локальная сборка):
+yarn standup:dry
+# больше текста из temp:
+yarn standup:full
+
+# вся цепочка одной командой:
+yarn ritual:day
+# без вызовов Anthropic (только standup dry + main-day-issue с предупреждением):
+yarn ritual:day:no-api
+```
+
+**Что читать после:** [`docs/MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) — **обязательный фокус**; стендап и планы — контекст. [`docs/CURRENT_TASK.md`](./CURRENT_TASK.md) — только вспомогательный буфер (может содержать шум; см. [`TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md)).
+
+**Минимальный утренний набор** (нет API / экономия токенов):
+
+```bash
+yarn morning-care --no-anthropic
+yarn standup:dry
+yarn task:list
+```
+
+---
+
+## В течение дня
+
+| Действие | Команда |
+|----------|---------|
+| Список активных task-промптов | `yarn task:list` |
+| Синхронизировать README реестра | `yarn task:sync-readme` |
+| Совет **одной** роли по Issue | `yarn ask vesnin --gh-issue N "…"` |
+| Коллективное решение (5 ролей, ≥20 реплик) | `yarn consilium --save-as topic "…"` |
+| Локальная проверка перед PR | `yarn turbo run lint typecheck test build --continue` |
+| Dev-клиент | `yarn workspace @membrana/client dev` |
+
+После приёмки задачи M/L — сразу **`yarn task:archive <id>`** (не откладывать на вечер). Регламент: [`prompts/TASK_CLOSURE_REGULATION.md`](./prompts/TASK_CLOSURE_REGULATION.md).
+
+---
+
+## Вечер (15–25 минут)
+
+Цель: **сгенерировать code-review** на сегодняшний код, зафиксировать закрытые задачи, сохранить снимок ревью, закрыть Issues батчем.
+
+```bash
+# 1. Code-review (вечерняя процедура → docs/DAILY_CODE_REVIEW.md)
+yarn code-review
+yarn code-review:full
+
+# 2. Архив task-промптов, принятых за день (можно было и днём)
+yarn task:archive <id> --notes "кратко: что сделано, PR, Issue"
+
+# 3. Снимок ревью в docs/archive/daily-code-review/ (на завтра — история)
+yarn save-code-review
+
+# 4. Очередь и закрытие Issues на GitHub
+yarn task:close-github:dry
+yarn task:close-github
+
+# ревью + архив снимка одной командой:
+yarn ritual:evening
+```
+
+**Перед уходом** (по желанию): полный CI и `git status` — завтрашний `plan:day` увидит свежий лог.
+
+---
+
+## Раз в неделю
+
+Рекомендуемый порядок: **сначала «радар» внешних идей**, потом **недельный план** (он подмешивает радар).
+
+```bash
+# Понедельник или воскресенье вечером — идеи для INTEGRATIONS_STRATEGY §4
+yarn analyzers:research:week
+# без Anthropic (только сбор ссылок):
+yarn analyzers:research:week:dry
+
+# План на следующую неделю (git за 7 дней + WHITE_PAPER + радар)
+yarn plan:week
+yarn plan:week:full
+```
+
+**Что читать:** [`WEEKLY_ANALYZERS_RESEARCH.md`](./WEEKLY_ANALYZERS_RESEARCH.md), [`STRATEGIC_PLAN_WEEK.md`](./STRATEGIC_PLAN_WEEK.md).
+
+Раз в неделю имеет смысл **`yarn standup:full`**, если в `packages/temp/` накопились крупные наброски — они попадут в повестку.
+
+---
+
+## Периодически — «оживить» повестку
+
+Эти команды **не ежедневные**; они добавляют глубину и неожиданные темы в планирование.
+
+| Задача | Команда | Куда пишется |
+|--------|---------|--------------|
+| Спорное архитектурное решение (все роли) | `yarn consilium "вопрос"` | [`docs/seanses/`](./seanses/) |
+| Уточнить границы у Teamlead / математика / верстки | `yarn ask <persona> --gh-issue N "…"` | [`docs/discussions/`](./discussions/) |
+| Аудит одного документа | `yarn anthropic:task docs/ARCHITECTURE.md "…"` | stdout |
+| Проверка ключа / прокси | `yarn anthropic:smoke` | stdout |
+| Исследование новых аналайзеров | `yarn analyzers:research:week` | `WEEKLY_ANALYZERS_RESEARCH.md` |
+| Ревью через Claude Code CLI | `yarn claude:code` | по сценарию в промпте |
+
+**Персонажи `yarn ask`:** `vesnin`, `ozhegov`, `dynin`, `rodchenko` (см. [`VIRTUAL_TEAM_PROMPT.md`](./VIRTUAL_TEAM_PROMPT.md)).
+
+**Когда звать консилиум, а не `ask`:** вопрос затрагивает UI + аудио + пакеты + нужен **единый консенсус** в репозитории — см. [`prompts/CONSILIUM_PROMPT.md`](./prompts/CONSILIUM_PROMPT.md).
+
+---
+
+## Схема потока
+
+```mermaid
+flowchart TB
+  subgraph morning [Утро]
+    MC[morning-care]
+    PD[plan:day]
+    ST[standup]
+    MDI[main-day-issue]
+    REV_IN[DAILY_CODE_REVIEW вчера]
+    REV_IN -.-> ST
+    REV_IN -.-> MDI
+    MC --> PD --> ST --> MDI
+  end
+
+  subgraph day [День]
+    DEV[разработка / PR]
+    ASK[ask / consilium]
+    ARCH[task:archive]
+  end
+
+  subgraph evening [Вечер]
+    CR[code-review]
+    SAVE[save-code-review]
+    GH[task:close-github]
+    CR --> SAVE
+  end
+
+  subgraph week [Неделя]
+    ARW[analyzers:research:week]
+    PW[plan:week]
+    ARW --> PW
+  end
+
+  ST --> DEV
+  DEV --> ARCH
+  ARCH --> SAVE --> GH
+  PW -.-> PD
+```
+
+---
+
+## Артефакты по папкам
+
+| Папка / файл | Кто создаёт |
+|--------------|-------------|
+| `docs/DAILY_STANDUP.md` | `yarn standup` |
+| `docs/MAIN_DAY_ISSUE.md` | `yarn main-day-issue` (после standup) |
+| `docs/CURRENT_TASK.md` | вручную / агент (буфер, не канон) |
+| `docs/STRATEGIC_PLAN_DAY.md` | `yarn plan:day` |
+| `docs/STRATEGIC_PLAN_WEEK.md` | `yarn plan:week` |
+| `docs/DAILY_CODE_REVIEW.md` | `yarn code-review` (**вечер**); утром только читается |
+| `docs/archive/daily-code-review/` | `yarn save-code-review` |
+| `docs/WEEKLY_ANALYZERS_RESEARCH.md` | `yarn analyzers:research:week` |
+| `docs/seanses/` | `yarn consilium` |
+| `docs/discussions/` | `yarn ask` |
+| `docs/tasks/` | `yarn task:archive`, реестр |
+
+---
+
+## Связанные документы
+
+- [`VIRTUAL_TEAM_PROMPT.md`](./VIRTUAL_TEAM_PROMPT.md) — роли, `ask`, `consilium`, стендап
+- [`TASKS_MANAGEMENT.md`](./TASKS_MANAGEMENT.md) — Issues, Linear, планирование
+- [`prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md) — постановка M/L задач
+- [`prompts/TASK_CLOSURE_REGULATION.md`](./prompts/TASK_CLOSURE_REGULATION.md) — закрытие вечером
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — PR и CI
+- [`AGENTS.md`](../AGENTS.md) — шпаргалка для Cloud Agents

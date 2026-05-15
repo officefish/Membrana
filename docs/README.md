@@ -2,6 +2,7 @@
 
 | Файл | Назначение |
 |------|------------|
+| [DEVELOPER_RHYTHM.md](./DEVELOPER_RHYTHM.md) | **Ритм разработки:** утро / вечер / неделя / периодические `yarn`-команды |
 | [WHITE_PAPER.md](./WHITE_PAPER.md) | Стратегический концепт: цель — распределённая разведка нижнего неба |
 | [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md) | Методология задач: GitHub Issues (вход) + Linear (работа) + отчёт перед закрытием |
 | [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) | Системный промпт координатора и формат ответа |
@@ -13,9 +14,14 @@
 | [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) | Оболочка модулей, сайдбар плагинов, карточки, Tailwind `content` |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | PR, агенты, ссылки на документы выше |
 | [UI_UX_DEVELOPER_PROMPT.md](./UI_UX_DEVELOPER_PROMPT.md) | Расширение роли Верстальщика — детали для UI-агента |
-| [DAILY_CODE_REVIEW.md](./DAILY_CODE_REVIEW.md) | Авто-генерируемый отчёт ежедневного ревью (`yarn code-review`) |
+| [DAILY_CODE_REVIEW.md](./DAILY_CODE_REVIEW.md) | Вечернее ревью (`yarn code-review`); утром — вход для standup |
 | [STRATEGIC_PLAN_DAY.md](./STRATEGIC_PLAN_DAY.md) | План на следующий день по WHITE_PAPER и git (`yarn plan:day`) |
 | [DAILY_STANDUP.md](./DAILY_STANDUP.md) | Ежедневный стендап: сводка review + план + issues + наброски (`yarn standup`) |
+| [MAIN_DAY_ISSUE.md](./MAIN_DAY_ISSUE.md) | **Центральная задача дня** (`yarn main-day-issue`, после standup) |
+| [CURRENT_TASK.md](./CURRENT_TASK.md) | Вспомогательный буфер черновиков (может содержать шум; не канон) |
+| [STRATEGIC_PLAN_WEEK.md](./STRATEGIC_PLAN_WEEK.md) | План на неделю (`yarn plan:week`; учитывает радар аналайзеров) |
+| [seanses/](./seanses/) | Протоколы консилиумов (`yarn consilium`) |
+| [discussions/](./discussions/) | Треды `yarn ask` по одному персонажу |
 | [prompts/](./prompts/) | Task-промпты: задания на крупные работы (новые пакеты, новые интеграции). |
 
 ## Порядок чтения для новых агентов
