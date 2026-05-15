@@ -134,6 +134,28 @@ packages/services/<name>/
 
 **В prod:** `yarn build` (через Turbo) собирает каждый сервис в `dist/` через Vite в library mode. Клиент при prod-сборке тоже резолвит через alias, так что dist сервисов нужен только для внешнего потребления / тестов сервиса в изоляции.
 
+## Параметры захвата для анализа (v0.1)
+
+Норматив для цепочки **микрофон → `@membrana/audio-engine-service` → `@membrana/fft-analyzer-service` → analyzer-сервисы** (в т.ч. будущий `@membrana/dsp-drone-detector-service`). Задача Музыканта / подготовка к полевым тестам ([`DAY_ISSUES.md`](./DAY_ISSUES.md), Этап 1 WHITE_PAPER).
+
+| Параметр | Значение v0.1 | Где задаётся |
+|----------|---------------|--------------|
+| **sampleRate** | **48 000 Гц** (целевой); **44 100 Гц** — допустимый fallback браузера/устройства | `AudioContext.sampleRate`; в telemetry при fallback — явная пометка `sampleRate` в записи |
+| **fftSize / bufferSize** | **2048** (степень 2) | `LiveCaptureConfig.bufferSize` в audio-engine; `AudioAnalyzerConfig.fftSize` в fft-analyzer (`DEFAULT_CONFIG`, `DEFAULT_LIVE_CAPTURE_CONFIG`) |
+| **overlap (наложение окон)** | **50 %** между соседними спектральными кадрами для **классификаторов по гармоникам** | Целевой hop = `fftSize / 2` (1024 сэмпла ≈ 21,3 мс при 48 kHz); см. [`discussions/dsp-drone-detector-v0.1.md`](./discussions/dsp-drone-detector-v0.1.md) |
+
+**Почему 48 kHz:** Nyquist 24 kHz покрывает гармоники дрона до 2–5 kHz (WHITE_PAPER §5.1) с запасом; единый rate упрощает сравнение полевых записей и синтетических тестов.
+
+**Почему 2048:** компромисс разрешения по частоте Δf ≈ `sampleRate / fftSize` (≈ 23,4 Гц при 48 kHz) и задержки окна; достаточно для несущей 80–250 Гц и нескольких гармоник.
+
+**Почему 50 % overlap:** сглаживает дребезг confidence при live-потоке; соседние БПФ-кадры коррелированы — усреднение/голосование по 2–3 кадрам стабильнее, чем один снимок.
+
+**Связанные пакеты:** [`packages/services/audio-engine/`](../packages/services/audio-engine/) (кадры `AudioSampleFrame`), [`packages/services/fft-analyzer/`](../packages/services/fft-analyzer/) (магнитуды и метрики). Analyzer **не** создаёт второй `AudioContext` — только потребляет кадры engine.
+
+**Не путать с legacy-демо:** centroid/flux/RMS-пороги из `packages/temp/fft/` — отдельный эксперимент; production-детектор дрона — гармонический классификатор поверх magnitudes (см. ADR выше).
+
+---
+
 ## Создание нового сервиса
 
 1. Скопировать подходящий эталон: `audio-engine` (для foundation) или `fft-analyzer` (для analyzer).
