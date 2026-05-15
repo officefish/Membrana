@@ -16,7 +16,9 @@
 
 ## Активные задачи
 
-_Нет активных задач. Новую добавь в `registry.json` (см. workflow)._
+| ID | Название | Размер | Промпт | GitHub |
+|----|----------|--------|--------|--------|
+| `dsp-drone-detector` | DSP-детектор дрона: сервис, демо-приложение, плагин микрофона | L | [`DSP_DRONE_DETECTOR_PROMPT.md`](../docs/prompts/DSP_DRONE_DETECTOR_PROMPT.md) | [#45](https://github.com/officefish/Membrana/issues/45) |
 
 ---
 

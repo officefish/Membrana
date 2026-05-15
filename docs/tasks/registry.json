@@ -39,6 +39,18 @@
       "archivedAt": "2026-05-15",
       "archiveNotes": "GitHub #43; приёмка 2026-05-15. Ветка feat/telemetry-journal-report-viz (e2ca0d0). Карточки fft-threshold-test, фильтры со счётчиками, JSON view DaisyUI.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "dsp-drone-detector",
+      "title": "DSP-детектор дрона: сервис, демо-приложение, плагин микрофона",
+      "promptPath": "docs/prompts/DSP_DRONE_DETECTOR_PROMPT.md",
+      "githubIssue": 45,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-05-15",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }
