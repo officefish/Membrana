@@ -16,9 +16,7 @@
 
 ## Активные задачи
 
-| ID | Название | Размер | Промпт | GitHub |
-|----|----------|--------|--------|--------|
-| `telemetry-journal-report-viz` | Журнал телеметрии: визуализация отчётов анализа | M | [`TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md) | [#43](https://github.com/officefish/Membrana/issues/43) |
+_Нет активных задач. Новую добавь в `registry.json` (см. workflow)._
 
 ---
 
@@ -28,6 +26,7 @@
 |----|----------|--------------|--------|--------|----------|
 | `fft-indices-viz` | Плагин микрофона: live-визуализация FFT-индексов | 2026-05-15 | [`FFT_INDICES_VIZ_PLUGIN_PROMPT.md`](../docs/prompts/FFT_INDICES_VIZ_PLUGIN_PROMPT.md) | #41 | [карточка](./archive/fft-indices-viz.md) |
 | `sound-quality-viz` | Плагин микрофона: мониторинг качества звука | 2026-05-15 | [`SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md`](../docs/prompts/SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md) | #42 | [карточка](./archive/sound-quality-viz.md) |
+| `telemetry-journal-report-viz` | Журнал телеметрии: визуализация отчётов анализа | 2026-05-15 | [`TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md) | #43 (Issue открыт) | [карточка](./archive/telemetry-journal-report-viz.md) |
 
 ---
 
