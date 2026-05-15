@@ -180,6 +180,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.26.0":
+  version: 7.29.2
+  resolution: "@babel/runtime@npm:7.29.2"
+  checksum: 10c0/30b80a0140d16467792e1bbeb06f655b0dab70407da38dfac7fedae9c859f9ae9d846ef14ad77bd3814c064295fe9b1bc551f1541ea14646ae9f22b71a8bc17a
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.28.6":
   version: 7.28.6
   resolution: "@babel/template@npm:7.28.6"
@@ -828,6 +835,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/client@workspace:apps/client"
   dependencies:
+    "@babel/runtime": "npm:^7.26.0"
     "@membrana/agenda": "npm:*"
     "@membrana/audio-data-viz": "npm:*"
     "@membrana/audio-engine-service": "npm:*"

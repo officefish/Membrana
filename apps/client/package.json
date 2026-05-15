@@ -15,6 +15,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@babel/runtime": "^7.26.0",
     "@membrana/agenda": "*",
     "@membrana/audio-data-viz": "*",
     "@membrana/audio-engine-service": "*",
