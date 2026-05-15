@@ -1,4 +1,5 @@
 import { MembranaRegistry } from '@membrana/agenda';
+import { createFftThresholdTestPlugin } from '../plugins/fft-threshold-test';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 
 /**
@@ -120,6 +121,7 @@ export function registerClientModules(): void {
   });
 
   MembranaRegistry.registerPlugin('microphone', createMicStreamVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createFftThresholdTestPlugin());
 
   // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs
   // уже применены в registerModule, дальше держать pendingModulePrefs смысла нет.

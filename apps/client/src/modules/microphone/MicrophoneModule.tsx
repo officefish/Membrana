@@ -7,6 +7,10 @@ import {
   releaseMediaStream,
 } from '@membrana/audio-engine-service';
 import {
+  FFT_THRESHOLD_TEST_PLUGIN_ID,
+  FftThresholdTestPanel,
+} from '../../plugins/fft-threshold-test';
+import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
@@ -207,6 +211,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(MIC_STREAM_VIZ_PLUGIN_ID) && (
           <MicStreamVizPluginPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(FFT_THRESHOLD_TEST_PLUGIN_ID) && (
+          <FftThresholdTestPanel moduleId={module.id} />
         )}
       </div>
     </div>

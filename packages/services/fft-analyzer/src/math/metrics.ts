@@ -37,6 +37,45 @@ export function rms(samples: Float32Array): number {
 }
 
 /**
+ * Громкость кадра для live-микрофона: max(RMS, peak×k).
+ * Офисный фон даёт низкий RMS при заметных пиках — blend чувствительнее к реальной сцене.
+ */
+export function frameLoudness(samples: Float32Array, peakWeight = 0.45): number {
+  if (samples.length === 0) return 0;
+  let sumSquares = 0;
+  let peak = 0;
+  for (let i = 0; i < samples.length; i++) {
+    const s = samples[i]!;
+    sumSquares += s * s;
+    const a = Math.abs(s);
+    if (a > peak) peak = a;
+  }
+  const rmsVal = Math.sqrt(sumSquares / samples.length);
+  return Math.max(rmsVal, peak * peakWeight);
+}
+
+/** Как в three-param-analyzer: спектр 0…255, L2-норма / 10 → типично 0.2…1.5. */
+export const SPECTRAL_FLUX_BYTE_SCALE = 255;
+export const SPECTRAL_FLUX_L2_DIVISOR = 10;
+
+/**
+ * L2 spectral flux между двумя спектрами (масштаб byte + делитель как в демо).
+ * Pure-функция для тестов и кастомных трекеров.
+ */
+export function spectralFluxL2(
+  current: Float32Array,
+  previous: Float32Array,
+): number {
+  const scale = SPECTRAL_FLUX_BYTE_SCALE;
+  let sumSq = 0;
+  for (let i = 0; i < current.length; i++) {
+    const diff = current[i]! * scale - previous[i]! * scale;
+    sumSq += diff * diff;
+  }
+  return Math.sqrt(sumSq / current.length) / SPECTRAL_FLUX_L2_DIVISOR;
+}
+
+/**
  * Спектральный flux — мера изменения спектра между двумя кадрами.
  * Stateful по природе, поэтому оформлен классом — хранит предыдущий спектр.
  */
@@ -46,18 +85,13 @@ export class SpectralFluxTracker {
   /** Считает flux относительно предыдущего вызова. Первый вызов возвращает 0. */
   next(current: Float32Array): number {
     const prev = this.previous;
-    this.previous = new Float32Array(current); // копия, чтобы дальнейшая мутация current не сломала state
+    this.previous = new Float32Array(current);
 
     if (prev === null || prev.length !== current.length) {
       return 0;
     }
 
-    let sum = 0;
-    for (let i = 0; i < current.length; i++) {
-      const diff = current[i]! - prev[i]!;
-      sum += diff * diff;
-    }
-    return Math.sqrt(sum) / current.length;
+    return spectralFluxL2(current, prev);
   }
 
   /** Сбрасывает состояние — нужно при начале нового анализа. */

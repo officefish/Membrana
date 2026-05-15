@@ -61,6 +61,7 @@ src/
 | `useFftFileAnalyzer(options)` | hook | Только batch-анализ файлов с прогрессом |
 | `useFftMicrophoneAnalyzer(options)` | hook | Сахар: автоматически запрашивает микрофон |
 | `PRESETS.drone` / `speech` / `music` | const | Готовые наборы порогов |
+| `evaluateFrameVerdict` / `evaluateThresholdTest` | fn | Пороговый FFT-тест (серия кадров, строгость easy/normal/strict) |
 
 ## Использование (Live, микрофон)
 
