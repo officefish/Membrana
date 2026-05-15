@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeSelector, useSelectedModule } from '@membrana/agenda';
 import { SpatialIntelLogo } from './SpatialIntelLogo';
-import { StorageRuntimeIndicator } from './StorageRuntimeIndicator';
+import { DroneDetectionHeaderSensor } from './DroneDetectionHeaderSensor';
 
 export const AppHeader: React.FC = () => {
   const { module, selectedModuleId } = useSelectedModule();
@@ -33,12 +33,12 @@ export const AppHeader: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex shrink-0 flex-wrap items-end justify-end gap-3 md:gap-4">
-        <StorageRuntimeIndicator />
-        <div className="flex flex-col items-end gap-0.5">
-          <span className="text-[10px] uppercase tracking-wide text-base-content/45">тема</span>
-          <ThemeSelector showLabel={false} showIcons={false} className="[&_.btn]:btn-xs [&_.btn]:min-h-8" />
-        </div>
+      <div
+        className="flex w-full shrink-0 flex-wrap items-center justify-end gap-3 border-t border-base-200 pt-2 md:w-auto md:gap-4 md:border-t-0 md:pt-0"
+        aria-label="Тема и датчик детекции"
+      >
+        <ThemeSelector showLabel={false} showIcons={false} className="[&_.btn]:btn-xs [&_.btn]:min-h-8" />
+        <DroneDetectionHeaderSensor />
       </div>
 
       {/* На узких экранах блок модуля под основной строкой */}

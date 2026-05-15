@@ -13,6 +13,7 @@ import {
   type LiveFrameResult,
 } from '@membrana/fft-analyzer-service';
 
+import { publishDroneDetected } from '../../lib/droneDetectionHub';
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
 
 import {
@@ -157,6 +158,14 @@ export function createFftThresholdTestPlugin(): Plugin<FftThresholdTestPluginCon
         fftThresholdReportHistory.push(report);
         fftThresholdPluginState.finishTest(result, ticks);
         logFftThresholdTestResult(moduleId, report);
+
+        if (result.isDetected) {
+          publishDroneDetected({
+            sourceId: FFT_THRESHOLD_TEST_PLUGIN_ID,
+            sourceLabel: 'FFT пороговый тест',
+            timestamp: finishedAt,
+          });
+        }
 
         if (config.mode === 'auto' && !disposed && currentSampler) {
           clearAutoRestart();

@@ -14,8 +14,29 @@ const MODES: { id: RuntimeStorageMode; label: string; hint: string }[] = [
   },
 ];
 
-export const StorageRuntimeIndicator: React.FC = () => {
+export interface StorageRuntimeIndicatorProps {
+  /** Компактный badge для футера */
+  compact?: boolean;
+}
+
+export const StorageRuntimeIndicator: React.FC<StorageRuntimeIndicatorProps> = ({
+  compact = false,
+}) => {
   const active = useMemo(() => getRuntimeStorageMode(), []);
+  const mode = MODES.find((m) => m.id === active)!;
+
+  if (compact) {
+    const short = active === 'web-localstorage' ? 'Web' : 'Electron';
+    return (
+      <span
+        className="shrink-0 text-[9px] tabular-nums text-base-content/35"
+        title={`${mode.label} — ${mode.hint}`}
+        aria-label={`Режим хранения: ${mode.label}`}
+      >
+        {short}
+      </span>
+    );
+  }
 
   return (
     <div
