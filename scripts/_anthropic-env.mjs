@@ -40,13 +40,24 @@ function proxyUrlFromEnv() {
   );
 }
 
+/** Таймаут TCP/TLS/connect (undici по умолчанию ~10s — на Windows+прокси иногда мало). */
+function connectTimeoutMs() {
+  const raw = process.env.ANTHROPIC_CONNECT_TIMEOUT_MS?.trim();
+  const n = raw ? Number.parseInt(raw, 10) : NaN;
+  if (Number.isFinite(n) && n > 0) return n;
+  return 60_000;
+}
+
 /**
  * POST JSON: один dispatcher на вызов, закрыт после полного чтения ответа.
  * Прокси: HTTPS_PROXY / HTTP_PROXY / ANTHROPIC_HTTPS_PROXY (например http://127.0.0.1:12334).
  */
 export async function anthropicPost(url, { headers, bodyJson }) {
   const proxy = proxyUrlFromEnv();
-  const dispatcher = proxy ? new ProxyAgent(proxy) : new Agent();
+  const connectTimeout = connectTimeoutMs();
+  const dispatcher = proxy
+    ? new ProxyAgent({ uri: proxy, connectTimeout })
+    : new Agent({ connectTimeout });
   try {
     const res = await undiciFetch(url, {
       method: 'POST',

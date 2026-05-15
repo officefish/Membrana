@@ -97,6 +97,18 @@ Definition of Done: <тесты, отсутствие клиппинга, соо
 - `/service <name>` — создать новый сервис в `packages/services/<name>` по SERVICES.md.
 - `/review` — Teamlead делает ревью последнего артефакта.
 
+## Ежедневный стендап (автоматизация)
+
+Синхронизационное «собрание» виртуальной команды (daily standup / daily sync) — один markdown с планом на сегодня:
+
+```bash
+yarn plan:day        # сначала план на день → docs/STRATEGIC_PLAN_DAY.md
+yarn code-review     # затем ревью → docs/DAILY_CODE_REVIEW.md
+yarn standup         # сводка → docs/DAILY_STANDUP.md
+```
+
+`yarn standup` подмешивает открытые GitHub Issues и наброски из `packages/temp/`. Без API: `yarn standup:dry`. Расширенный контекст набросков: `yarn standup:full`.
+
 ## Спросить совета у персонажа
 
 Для адресного обсуждения задачи с конкретным «виртуальным программистом» есть CLI:

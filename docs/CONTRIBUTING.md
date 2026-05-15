@@ -99,11 +99,12 @@ git push -u origin vesnin
 |--------|---------|-----------------|---------------------|
 | `scripts/context-collector.mjs` | `node scripts/context-collector.mjs` / `--full` / `--help` | Перед ручным разбором или из `code-review.mjs` | Текст в stdout: git, yarn test/lint (фрагменты), верхний уровень каталога (без `node_modules`, `.git`, `.env*`). |
 | `scripts/code-review.mjs` | `yarn code-review` / `yarn code-review:full` / `--help` | Локально при наличии `ANTHROPIC_API_KEY` | Перезапись `docs/DAILY_CODE_REVIEW.md` + дублирование в stdout. Модель: `ANTHROPIC_MODEL` или значение по умолчанию в `_anthropic-env.mjs`. Контекст обрезается по длине (см. комментарий в скрипте). |
+| `scripts/daily-standup.mjs` | `yarn standup` / `yarn standup:full` / `yarn standup:dry` / `--help` | После `plan:day` и `code-review` | Перезапись `docs/DAILY_STANDUP.md` — ежедневный стендап: сводка плана, ревью, GitHub Issues, `packages/temp`. Issues: `gh` CLI или GitHub API. |
 | `scripts/generate_report.mjs` | `node scripts/generate_report.mjs` / `--help` | Диагностика без вызова Anthropic | JSON в `%TEMP%/membrana-code-review/code-review-context.json` (Windows) или `$TMPDIR/membrana-code-review/` (Unix). |
 
 Переменные окружения для этих сценариев: `ANTHROPIC_API_KEY` (обязательно для `code-review`), опционально `ANTHROPIC_MODEL`, прокси `HTTPS_PROXY` / `HTTP_PROXY` (см. `.env.example`).
 
-- Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`).
+- Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`, `scripts/daily-standup-paths.mjs`).
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
 
 ## Коммиты

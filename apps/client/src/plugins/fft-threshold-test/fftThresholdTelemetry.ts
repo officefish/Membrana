@@ -1,7 +1,9 @@
 import { getDefaultTelemetryJournal } from '@membrana/telemetry-service';
-import type { ThresholdTestResult } from '@membrana/fft-analyzer-service';
+
+import type { FftThresholdTestReport } from './buildFftThresholdTestReport';
 
 const MODULE_NAME = 'fft-threshold-test';
+const SCHEMA = 'fft-threshold-test/v0.2';
 
 function journal() {
   return getDefaultTelemetryJournal();
@@ -9,32 +11,32 @@ function journal() {
 
 export function logFftThresholdTestResult(
   moduleId: string,
-  result: ThresholdTestResult,
+  report: FftThresholdTestReport,
 ): void {
   journal().addReportEntry({
     type: 'analysis',
     moduleId,
     moduleName: MODULE_NAME,
     data: {
-      reportUniqueId: `fft-test-${result.testId}`,
-      schema: 'fft-threshold-test/v0.1',
-      isDetected: result.isDetected,
-      passRate: result.passRate,
-      passedCount: result.passedCount,
-      frameCount: result.frameCount,
-      strictness: result.strictness,
-      mode: result.mode,
-      thresholds: result.thresholds,
-      intervalMs: result.intervalMs,
-      framesSummary: result.frames.map((f) => ({
-        framePassed: f.framePassed,
-        metricsInRangeCount: f.metricsInRangeCount,
-      })),
+      reportUniqueId: `fft-test-${report.testId}`,
+      schema: SCHEMA,
+      isDetected: report.isDetected,
+      passRate: report.passRate,
+      passedCount: report.passedCount,
+      frameCount: report.frameCount,
+      strictness: report.strictness,
+      mode: report.mode,
+      thresholds: report.thresholds,
+      intervalMs: report.intervalMs,
+      startedAt: report.startedAt,
+      finishedAt: report.finishedAt,
+      normalization: report.normalization,
+      frames: report.frames,
     },
     tags: [
       'fft',
       'threshold-test',
-      result.isDetected ? 'detected' : 'not-detected',
+      report.isDetected ? 'detected' : 'not-detected',
     ],
   });
 }

@@ -22,6 +22,8 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Build all | `yarn build` |
 | Dev all (Turbo) | `yarn dev` |
 | Full CI pipeline | `yarn turbo run lint typecheck test build --continue` (34 tasks) |
+| Morning checks (proxy, git, script tests, Anthropic) | `yarn morning-care` (без API: `--no-anthropic`) |
+| Daily standup (plan + review + issues → один документ) | `yarn standup` (после `yarn plan:day` и `yarn code-review`; dry: `yarn standup:dry`) |
 
 ### Gotchas for Cloud Agents
 

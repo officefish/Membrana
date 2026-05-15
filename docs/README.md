@@ -14,6 +14,8 @@
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | PR, агенты, ссылки на документы выше |
 | [UI_UX_DEVELOPER_PROMPT.md](./UI_UX_DEVELOPER_PROMPT.md) | Расширение роли Верстальщика — детали для UI-агента |
 | [DAILY_CODE_REVIEW.md](./DAILY_CODE_REVIEW.md) | Авто-генерируемый отчёт ежедневного ревью (`yarn code-review`) |
+| [STRATEGIC_PLAN_DAY.md](./STRATEGIC_PLAN_DAY.md) | План на следующий день по WHITE_PAPER и git (`yarn plan:day`) |
+| [DAILY_STANDUP.md](./DAILY_STANDUP.md) | Ежедневный стендап: сводка review + план + issues + наброски (`yarn standup`) |
 | [prompts/](./prompts/) | Task-промпты: задания на крупные работы (новые пакеты, новые интеграции). |
 
 ## Порядок чтения для новых агентов
