@@ -77,6 +77,14 @@ Definition of Done: <тесты, отсутствие клиппинга, соо
 - **Стек вычислений**: Python при отдельном мат. сервисе; иначе TS с ограниченным набором библиотек по `ARCHITECTURE.md`.
 - **Продукт**: аудио-редактор / анализатор (целевой домен виртуальной команды для этого репозитория).
 
+## Постановка крупных задач (task prompts)
+
+Задачи размера **M/L** для агента оформляются по
+[`docs/prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md):
+GitHub Issue → запись в [`docs/tasks/registry.json`](./tasks/registry.json) →
+файл `docs/prompts/*_PROMPT.md` → работа → `yarn task:archive <id>`.
+Активные и архивные задачи: [`docs/tasks/README.md`](./tasks/README.md).
+
 ## Ссылки на артефакты репозитория
 
 - Архитектура и шина плагинов: [ARCHITECTURE.md](./ARCHITECTURE.md)

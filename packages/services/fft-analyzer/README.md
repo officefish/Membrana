@@ -62,6 +62,30 @@ src/
 | `useFftMicrophoneAnalyzer(options)` | hook | Сахар: автоматически запрашивает микрофон |
 | `PRESETS.drone` / `speech` / `music` | const | Готовые наборы порогов |
 | `evaluateFrameVerdict` / `evaluateThresholdTest` | fn | Пороговый FFT-тест (серия кадров, строгость easy/normal/strict) |
+| `evaluateSoundQuality` / `soundQualityHint` | fn | Live-оценка качества потока (SNR, clarity, dynamics, peak, overall) — см. § Sound quality API |
+
+## Sound quality API
+
+Pure-функции в `src/math/sound-quality.ts` (эвристики из демо `three-param-analyzer`):
+
+```ts
+import {
+  evaluateSoundQuality,
+  soundQualityHint,
+  type SoundQualityInput,
+} from '@membrana/fft-analyzer-service';
+
+const metrics = evaluateSoundQuality({
+  centroidHz: live.centroid,
+  flux: live.flux,
+  rms: loudness,
+  rmsHistory: ringBuffer,
+}, { loudnessRefMax: 0.35 });
+
+const message = soundQualityHint(metrics, input, { loudnessRefMax: 0.35 });
+```
+
+Плагин клиента: `sound-quality-viz` в модуле «Микрофон».
 
 ## Использование (Live, микрофон)
 

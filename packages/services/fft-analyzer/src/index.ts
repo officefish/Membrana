@@ -32,6 +32,18 @@ export {
 } from './math/metrics.js';
 export { mean, std, minOf, maxOf, summarize } from './math/statistics.js';
 export {
+  estimateNoiseFloor,
+  evaluateSoundQuality,
+  soundQualityBadge,
+  soundQualityHint,
+  type SoundQualityBadge,
+  type SoundQualityBadgeTone,
+  type SoundQualityInput,
+  type SoundQualityMetrics,
+  type SoundQualityOptions,
+  type SoundQualityWeights,
+} from './math/sound-quality.js';
+export {
   THRESHOLD_TEST_FRAME_COUNTS,
   evaluateFrameVerdict,
   evaluateThresholdTest,

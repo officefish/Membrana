@@ -8,6 +8,8 @@ Membrana is a TypeScript monorepo using **Yarn 4 (Berry)** workspaces + **Turbor
 
 For detailed architecture, conventions, and coding rules, see `.cursorrules` and `docs/ARCHITECTURE.md`, `docs/SERVICES.md`, `docs/DESIGN.md`, `docs/CONTRIBUTING.md`.
 
+For **new M/L agent tasks**, follow `docs/prompts/TASK_PROMPT_WORKFLOW.md` and register in `docs/tasks/registry.json`. **Closing a task:** `docs/prompts/TASK_CLOSURE_REGULATION.md` → `yarn task:archive <id>` (day) → `yarn task:close-github` (EOD batch for Issues). Active/archive: `docs/tasks/README.md`.
+
 ### Key commands
 
 All standard dev commands are documented in the root `README.md` and `package.json`:

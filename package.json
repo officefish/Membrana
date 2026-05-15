@@ -34,7 +34,12 @@
     "analyzers:research:week:dry": "node scripts/analyzers-research-week.mjs --dry-run",
     "ask": "node scripts/ask-persona.mjs",
     "archive:daily-review": "node scripts/archive-daily-code-review.mjs",
-    "test:scripts": "node --test scripts/context-collector-paths.test.mjs scripts/daily-standup-paths.test.mjs",
+    "test:scripts": "node --test scripts/context-collector-paths.test.mjs scripts/daily-standup-paths.test.mjs scripts/task-registry.test.mjs",
+    "task:list": "node scripts/task-list.mjs",
+    "task:sync-readme": "node scripts/task-list.mjs --sync-readme",
+    "task:archive": "node scripts/archive-task.mjs",
+    "task:close-github": "node scripts/task-close-github-issues.mjs",
+    "task:close-github:dry": "node scripts/task-close-github-issues.mjs --dry-run",
     "office:dev": "yarn workspace @membrana/background-office dev",
     "office:build": "yarn workspace @membrana/background-office build"
   },

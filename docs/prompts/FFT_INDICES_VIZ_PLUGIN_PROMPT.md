@@ -1,119 +1,75 @@
 # Промпт: плагин визуализации FFT-индексов (микрофон)
 
 > **Task-промпт для агента-разработчика** (Cursor IDE / Claude / другой LLM).
+> Процесс постановки: [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
 > Скопируй блок **«Промпт целиком»** в начало диалога. Размер задачи: **M**.
-> Ожидаемый артефакт: **1 PR** — плагин live-визуализации трёх индексов (центроид, спектральный поток, RMS) в модуле «Микрофон».
+> Ожидаемый артефакт: **1 PR** — плагин live-визуализации трёх FFT-индексов в модуле «Микрофон».
+> Реестр: `id` = **`fft-indices-viz`** в [`docs/tasks/registry.json`](../tasks/registry.json).
 
 ---
 
 ## Контекст
 
-В Membrana уже есть:
+В Membrana уже есть `@membrana/fft-analyzer-service`, плагин **`fft-threshold-test`** (нормализация ÷5000 / ÷1 / ÷0.35), **`microphone-stream-viz`** и хаб **`microphoneStreamHub`**. Нужен отдельный плагин **только для наглядного мониторинга** центроида, спектрального потока и RMS — без порогового теста и без классификатора сцен из демо.
 
-- `@membrana/fft-analyzer-service` — `FftAnalyzer.analyzeFrame`, `SpectralFluxTracker`, метрики кадра;
-- плагин **`fft-threshold-test`** — пороговый тест, нормализация метрик (`normalizeMetrics.ts`, делители как в демо: ÷5000, ÷1, ÷0.35);
-- плагин **`microphone-stream-viz`** — осциллограф/спектрограмма;
-- хаб **`microphoneStreamHub`** — поток `MediaStream` для плагинов.
-
-**Референс UX (идеи, не архитектура):** `packages/temp/three-param-analyzer` — блок «Визуализация параметров»:
-
-- переключатель режимов: **радар** | **линейные индикаторы** | **треугольник**;
-- три «легенды» с сырым значением, норм. %, полосой прогресса и **зелёной зоной дрона**;
-- мини-график **истории спектрального потока** (`fluxCanvas`).
-
-**Цель:** отдельный **микрофонный плагин** только для наглядного мониторинга трёх индексов в реальном времени — без порогового теста, без классификатора состояний (😴/💨/🗣️/🚁) из демо.
+**Референс UX (идеи, не архитектура):** `packages/temp/three-param-analyzer` — радар / линейные полосы / треугольник, легенды с зоной дрона, история flux.
 
 **Связанные документы:**
 
 | Документ | Зачем |
 |----------|--------|
-| [`FFT_THRESHOLD_TEST_PLUGIN_PROMPT.md`](./FFT_THRESHOLD_TEST_PLUGIN_PROMPT.md) | Паттерн плагина, `LiveSampler`, нормализация |
-| [`DRONE_DETECTION_HEADER_SENSOR_PROMPT.md`](./DRONE_DETECTION_HEADER_SENSOR_PROMPT.md) | Публикация `publishDroneDetected` — **не** в scope этого плагина |
-| [`MODULE_AND_PLUGIN_UI.md`](../MODULE_AND_PLUGIN_UI.md) | Lifecycle, сайдбар |
-| [`DESIGN.md`](../DESIGN.md) | Токены DaisyUI, a11y |
-| `packages/temp/three-param-analyzer/src/main.js` | § `drawRadar`, `drawGauges`, `drawTriangle`, `drawFluxHistory`, `updateParamDisplay` |
+| [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md) | Процесс постановки и закрытия |
+| [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли команды |
+| [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | GitHub Issue / PR |
+| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Плагины, hub |
+| [`MODULE_AND_PLUGIN_UI.md`](../MODULE_AND_PLUGIN_UI.md) | `install` / teardown |
+| [`DESIGN.md`](../DESIGN.md) | UI, a11y |
+| [`FFT_THRESHOLD_TEST_PLUGIN_PROMPT.md`](./FFT_THRESHOLD_TEST_PLUGIN_PROMPT.md) | Паттерн sampler + нормализация |
+| `packages/temp/three-param-analyzer/src/main.js` | `drawRadar`, `drawGauges`, `drawTriangle`, `drawFluxHistory` |
+
+**GitHub Issue:** создать (`wish`) — «Добавить плагин live-визуализации FFT-индексов в модуль Микрофон»; в теле ссылка на этот файл и `id: fft-indices-viz`.
 
 ---
 
 ## Промпт целиком (для вставки агенту)
 
+> Всё ниже до раздела **«Заметки для человека-постановщика»** — текст задания для агента.
+
 ---
 
 ### Кто ты
 
-Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Математика FFT — в `fft-analyzer-service`; оркестрация и canvas/React — в плагине клиента. **Не** дублируй вычисление центроида/flux/RMS в UI-слое.
+Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Перед кодом — краткий план (1–2 абзаца + список файлов). Соблюдай [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) и [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md). Математика FFT — в сервисе; canvas/React — в плагине. **Не** дублируй вычисление центроида/flux/RMS в UI.
 
 ---
 
 ### Что построить (продуктовое описание)
 
-**Плагин `fft-indices-viz`** (рабочее имя; зафиксировать в `types.ts` как `FFT_INDICES_VIZ_PLUGIN_ID`):
+**Плагин `fft-indices-viz`** (`FFT_INDICES_VIZ_PLUGIN_ID`):
 
-1. **Подписка на поток микрофона** через `subscribeMicrophoneStream` + `LiveSampler` + `FftAnalyzer` (как `fft-threshold-test`).
-2. **Обновление UI на каждом кадре анализа** (RAF или callback sampler; не блокировать main thread тяжёлой математикой).
-3. **Три метрики** (сырые + нормализованные 0…1):
-   - спектральный **центроид** (Гц);
-   - **спектральный поток** (L2 на byte-спектре, `/10` — как в сервисе и демо);
-   - **RMS** громкость.
-4. **Визуализация** (минимум в v1):
-   - переключатель режима: `radar` | `bars` | `triangle` (аналог демо);
-   - под основным видом — **три строки-легенды** с полосой, % нормализации, сырым значением;
-   - **зелёная зона** на полосах — опциональный оверлей «зоны дрона» из `plugin.config` (дефолт = `DEMO_DRONE_THRESHOLDS` из `fft-threshold-test/normalizeMetrics.ts` или вынесенный общий модуль).
-   - **история flux** — лента последних ~200 нормализованных значений (canvas или SVG), зелёная полоса диапазона flux.
-5. **Настройки в `plugin.config`** (persist через agenda):
-   - режим визуализации по умолчанию;
-   - показывать/скрывать зону дрона на полосах;
-   - опционально: коэффициент сглаживания EMA (0…0.95, дефолт ~0.7 как в демо) — только для **отображения**, не для телеметрии теста.
-6. **Статус:** «ожидание потока» / «анализ» / «нет микрофона» — `aria-live="polite"`.
+1. Подписка на поток: `subscribeMicrophoneStream` + `LiveSampler` + `FftAnalyzer` (как `fft-threshold-test`).
+2. Обновление UI на каждом кадре (без тяжёлой математики в RAF).
+3. Три метрики — сырые + нормализованные 0…1: **центроид (Гц)**, **спектральный поток** (L2 byte-спектр, `/10`), **RMS**.
+4. Визуализация v1:
+   - режимы: `radar` | `bars` | `triangle`;
+   - три строки-легенды: полоса, % норм., сырое значение, опциональная **зона дрона** (дефолт `DEMO_DRONE_THRESHOLDS`);
+   - история flux (~200 норм. значений), зелёная полоса диапазона flux на графике.
+5. `plugin.config` (persist): режим визуализации, показ зоны дрона, EMA-сглаживание отображения (0…0.95, дефолт ~0.7).
+6. Статус потока: ожидание / анализ / нет микрофона — `aria-live="polite"`.
 
-**Не делать в этом плагине:** пороговый тест, такты, отчёты, классификатор IDLE/WIND/PEOPLE/DRONE, выбор устройства (это модуль микрофона).
+**Не в scope плагина:** пороговый тест, такты, отчёты, классификатор IDLE/WIND/PEOPLE/DRONE, выбор устройства, `publishDroneDetected`.
 
 ---
 
-### Архитектура (Teamlead + Структурщик)
+### Архитектура / контракт
 
 | Слой | Путь | Ответственность |
 |------|------|-----------------|
-| Сервис | `@membrana/fft-analyzer-service` | Только переиспользование; новый код — только если нужен общий `smoothMetrics` (опционально) |
-| Нормализация | `apps/client/src/lib/fftMetricNormalize.ts` **или** реэкспорт из общего пакета | Единые делители с `fft-threshold-test` (÷5000, ÷1, ÷0.35) |
-| Плагин | `apps/client/src/plugins/fft-indices-viz/` | `createFftIndicesVizPlugin`, state singleton, panel |
-| UI canvas | `FftIndicesCanvas.tsx`, `FluxHistoryCanvas.tsx` | Отрисовка; `resizeObserver` / `devicePixelRatio` |
-| Регистрация | `registerClientModules.ts`, `MicrophoneModule.tsx`, `pluginSidebarDetails.tsx` | Как у соседних плагинов |
-
-**Запрещено:**
-
-- Импорт UI других плагинов;
-- Второй экземпляр `AudioContext` в обход `LiveSampler`;
-- Копирование legacy из `packages/temp` без адаптации к React + DaisyUI.
-
-**Рекомендуемая структура файлов:**
-
-```
-apps/client/src/plugins/fft-indices-viz/
-  types.ts
-  fftIndicesVizPlugin.ts      # install / teardown
-  fftIndicesVizPluginState.ts # current metrics, flux ring buffer, viz mode
-  useFftIndicesViz.ts
-  FftIndicesVizPanel.tsx
-  FftIndicesCanvas.tsx
-  FluxHistoryCanvas.tsx
-  ParamLegendRow.tsx
-  index.ts
-```
-
----
-
-### Визуальный дизайн (Верстальщик)
-
-- Референс компоновки: демо § `viz-container`, `param-legend`, `fluxCanvas` — **перевести** на токены `DESIGN.md` (`base-content`, `primary`, `success` для зоны дрона, `warning` при превышении шкалы).
-- Предупреждение «>100% нормализации» — текст + иконка, не только красный цвет.
-- Canvas: фон `base-200`, сетка приглушённая; основной полигон/точка — `primary` или `success`.
-- Переключатель режима — `btn-group` / radio, `aria-pressed` на активной кнопке.
-- Минимальная высота canvas на mobile — не ломать layout `MicrophoneModule`.
-
----
-
-### Контракт данных (для state)
+| Сервис | `@membrana/fft-analyzer-service` | `analyzeFrame`, `SpectralFluxTracker` — переиспользование |
+| Нормализация | `apps/client/src/lib/fftMetricNormalize.ts` (или общий модуль) | ÷5000, ÷1, ÷0.35 — как `fft-threshold-test` |
+| Плагин | `apps/client/src/plugins/fft-indices-viz/` | install, state, panel |
+| UI | `FftIndicesCanvas.tsx`, `FluxHistoryCanvas.tsx`, `ParamLegendRow.tsx` | canvas + легенды |
+| Регистрация | `registerClientModules.ts`, `MicrophoneModule.tsx`, `pluginSidebarDetails.tsx` | как у соседних плагинов |
 
 ```ts
 interface FftIndicesSnapshot {
@@ -123,18 +79,25 @@ interface FftIndicesSnapshot {
   readonly centroidNorm: number;
   readonly fluxNorm: number;
   readonly rmsNorm: number;
-  readonly fluxHistory: readonly number[]; // нормализованные, max 200
+  readonly fluxHistory: readonly number[]; // max 200, normalized
   readonly streamActive: boolean;
 }
 ```
 
-Сглаживание (если включено в config): EMA по каждой метрике **после** `analyzeFrame`, до записи в snapshot.
+**Запрещено:**
+
+- Импорт UI других плагинов;
+- второй `AudioContext` в обход `LiveSampler`;
+- копирование legacy из `packages/temp` без React + DaisyUI.
 
 ---
 
-### Телеметрия (опционально, не блокирует DoD)
+### Визуальный дизайн
 
-Периодический снимок (например раз в 30 с при активном потоке) в journal с `schema: 'fft-indices-viz/v0.1'` — **Out of scope v1**, если не успеваете; достаточно заглушки `logFftIndicesSnapshot` за feature-flag в config.
+- Токены `DESIGN.md`: `base-content`, `primary`, `success` (зона дрона), `warning` при >100% шкалы.
+- Canvas: фон `base-200`; переключатель режима — `btn-group`, `aria-pressed`.
+- Предупреждение о переполнении шкалы — текст + иконка, не только цвет.
+- Компоновка по мотивам демо `viz-container` / `param-legend` / `fluxCanvas`.
 
 ---
 
@@ -142,52 +105,74 @@ interface FftIndicesSnapshot {
 
 | Область | Минимум |
 |---------|---------|
-| Нормализация | reuse / unit-тесты делителей (если вынесен общий модуль) |
-| State | ring buffer flux, обрезка до 200 |
-| Canvas | smoke: функция `drawRadar` не падает на нулевых значениях (pure helper в `.ts` без DOM — предпочтительно) |
+| Нормализация | unit-тесты общего модуля (если вынесен) |
+| State | ring buffer flux, обрезка 200 |
+| Canvas helpers | pure TS: `drawRadar` / аналог не падает на нулях |
 
 ---
 
 ### Definition of Done
 
-- [ ] Плагин `fft-indices-viz` зарегистрирован на модуле `microphone`, корректный teardown.
-- [ ] При активном микрофоне три метрики обновляются live; совпадают по порядку величины с `fft-threshold-test` / демо (не «крошечные» flux из-за другой формулы).
-- [ ] Три режима визуализации переключаются; легенды показывают raw + norm%; зона дрона на полосах (если включена в config).
-- [ ] История flux рисуется и движется.
-- [ ] a11y: статус потока, подписи кнопок режима.
-- [ ] `yarn workspace @membrana/client typecheck` и тесты — зелёные.
-- [ ] LGTM Teamlead.
+- [x] Плагин зарегистрирован на `microphone`, корректный teardown.
+- [x] Live-метрики согласованы с `fft-threshold-test` / демо (flux не «микроскопический»).
+- [x] Три режима визуализации, легенды активности, история flux; настройки в сайдбаре.
+- [x] a11y: статус потока, подписи режимов.
+- [x] `yarn workspace @membrana/client typecheck` и `test` — зелёный.
+- [x] LGTM Teamlead (приёмка 2026-05-15).
 
 ---
 
 ### Out of scope
 
-- Пороговый тест и `evaluateThresholdTest`.
-- Классификатор акустических сцен (ветер/люди/дрон) из демо `StateClassifier`.
-- Блок «общее качество звука» — отдельный промпт [`SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md`](./SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md).
-- Журнал отчётов каждые 3 с из демо.
-- Storybook.
+- `evaluateThresholdTest`, телеметрия тестов, датчик в шапке.
+- Классификатор сцен из демо `StateClassifier`.
+- Плагин качества звука — [`SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md`](./SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md) (отдельная задача `sound-quality-viz`).
+- Журнал отчётов каждые 3 с из демо; Storybook.
 
 ---
 
 ### Порядок работы ролей
 
-1. **Teamlead** — утвердить id плагина и вынос `fftMetricNormalize` (если нужен).
-2. **Структурщик** — plugin + state + sampler wiring.
-3. **Музыкант** — сверка метрик с демо на live-микрофоне.
-4. **Верстальщик** — panel + canvas + легенды.
+1. **Teamlead** — id плагина, вынос `fftMetricNormalize`.
+2. **Структурщик** — plugin, state, hub, регистрация.
+3. **Музыкант** — сверка live с демо.
+4. **Верстальщик** — panel, canvas, легенды.
 5. **Teamlead** — LGTM.
+
+---
+
+### Формат ответа координатора (планирование)
+
+```text
+[Teamlead]: …
+[Структурщик]: …
+[Математик]: …
+[Музыкант]: …
+[Верстальщик]: …
+
+Итоговый артефакт: …
+Definition of Done: …
+```
 
 ---
 
 ## Заметки для человека-постановщика
 
-- GitHub Issue: «Microphone plugin: FFT indices live visualization» + ссылка на этот файл.
-- Зависимость: `fft-threshold-test` уже на main — переиспользовать `METRIC_NORM` / flux tracker pattern.
-- После merge можно добавить ссылку на плагин в `docs/prompts/README.md`.
+1. GitHub Issue (`wish`) + ссылка на этот промпт и `fft-indices-viz` в [`registry.json`](../tasks/registry.json).
+2. Запись уже в реестре (`status: active`); при смене Issue — обновить `githubIssue`.
+3. После merge PR: отчёт в Issue → `yarn task:archive fft-indices-viz --notes "PR #…"`.
+
+### Проверка после PR
+
+```bash
+yarn workspace @membrana/client dev
+# Микрофон → включить fft-indices-viz → сравнить метрики с fft-threshold-test / демо three-param-analyzer
+yarn workspace @membrana/client typecheck
+yarn workspace @membrana/client test
+```
 
 ---
 
 ## Связь с дорожной картой
 
-Инструмент **калибровки и обучения оператора** перед полевыми тестами; дополняет `fft-threshold-test`, не заменяет детектор в шапке.
+Инструмент калибровки и обучения оператора; дополняет `fft-threshold-test`, не заменяет глобальный датчик дрона.

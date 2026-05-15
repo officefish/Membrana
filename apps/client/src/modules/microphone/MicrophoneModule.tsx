@@ -7,6 +7,14 @@ import {
   releaseMediaStream,
 } from '@membrana/audio-engine-service';
 import {
+  FFT_INDICES_VIZ_PLUGIN_ID,
+  FftIndicesVizPanel,
+} from '../../plugins/fft-indices-viz';
+import {
+  SOUND_QUALITY_VIZ_PLUGIN_ID,
+  SoundQualityVizPanel,
+} from '../../plugins/sound-quality-viz';
+import {
   FFT_THRESHOLD_TEST_PLUGIN_ID,
   FftThresholdTestPanel,
 } from '../../plugins/fft-threshold-test';
@@ -215,6 +223,14 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(FFT_THRESHOLD_TEST_PLUGIN_ID) && (
           <FftThresholdTestPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(FFT_INDICES_VIZ_PLUGIN_ID) && (
+          <FftIndicesVizPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(SOUND_QUALITY_VIZ_PLUGIN_ID) && (
+          <SoundQualityVizPanel moduleId={module.id} />
         )}
       </div>
     </div>

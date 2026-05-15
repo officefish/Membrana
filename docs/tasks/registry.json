@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "fft-indices-viz",
+      "title": "Плагин микрофона: live-визуализация FFT-индексов",
+      "promptPath": "docs/prompts/FFT_INDICES_VIZ_PLUGIN_PROMPT.md",
+      "githubIssue": 41,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-05-15",
+      "archivedAt": "2026-05-15",
+      "archiveNotes": "GitHub #41; приёмка 2026-05-15. Плагин fft-indices-viz: live centroid/flux/RMS, adaptive activity, theme error/info/success, sidebar. PR в main — по запросу.",
+      "githubIssueClosedAt": "2026-05-15"
+    },
+    {
+      "id": "sound-quality-viz",
+      "title": "Плагин микрофона: мониторинг качества звука",
+      "promptPath": "docs/prompts/SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md",
+      "githubIssue": 42,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-05-15",
+      "archivedAt": "2026-05-15",
+      "archiveNotes": "GitHub #42; приёмка 2026-05-15. Плагин sound-quality-viz: SNR/clarity/dynamics/peak/overall, sound-quality.ts в fft-analyzer, sidebar + panel.",
+      "githubIssueClosedAt": null
+    }
+  ]
+}
