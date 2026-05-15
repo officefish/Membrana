@@ -25,9 +25,21 @@
 | `yarn workspace @membrana/background-office dev` | `prepare` + `tsx watch src/main.ts` |
 | `yarn workspace @membrana/background-office start` | `node dist/main.js` (после `build`) |
 | `yarn workspace @membrana/background-office test` | Vitest, интеграционные тесты с моком `fetch` |
+| `yarn workspace @membrana/background-office verify:swagger` | Проверка Swagger UI и `/docs-json` (без реальных API-ключей) |
 | `yarn workspace @membrana/background-office lint` | ESLint из корня монорепо |
 
-Из корня репозитория: `yarn office:dev`, `yarn office:build`.
+Из корня репозитория: `yarn office:dev`, `yarn office:build`, `yarn office:verify-swagger`.
+
+## Swagger
+
+При запущенном сервере (`yarn office:dev`):
+
+| URL | Назначение |
+|-----|------------|
+| `http://localhost:<PORT>/docs` | Swagger UI |
+| `http://localhost:<PORT>/docs-json` | OpenAPI JSON |
+
+Быстрая проверка без `.env` и без поднятия порта: `yarn office:verify-swagger` (сборка + HTTP к in-memory приложению).
 
 ## Эндпоинты
 

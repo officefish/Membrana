@@ -48,7 +48,8 @@
     "task:close-github": "node scripts/task-close-github-issues.mjs",
     "task:close-github:dry": "node scripts/task-close-github-issues.mjs --dry-run",
     "office:dev": "yarn workspace @membrana/background-office dev",
-    "office:build": "yarn workspace @membrana/background-office build"
+    "office:build": "yarn workspace @membrana/background-office build",
+    "office:verify-swagger": "yarn workspace @membrana/background-office verify:swagger"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

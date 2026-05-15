@@ -12,7 +12,8 @@
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "yarn prepare && vitest run"
+    "test": "yarn prepare && vitest run",
+    "verify:swagger": "yarn build && node scripts/verify-swagger.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",
