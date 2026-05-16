@@ -16,7 +16,7 @@
 |---------------------|----------------------|
 | 1. Сервис `dsp-drone-detector-service` | **`@membrana/harmonic-detector-service`** + ADR [`dsp-drone-detector-v0.1.md`](./dsp-drone-detector-v0.1.md) |
 | 2. Демо в пакете сервиса | `packages/services/detectors/harmonic/demo/` (порт UI из DSP_DRONE_DETECTOR_PROMPT фаза 2) |
-| 3. Плагин `dsp-drone-detector-viz` | `apps/client/src/plugins/harmonic-detector-viz/` (или `drone-detector-viz` — id в PR) |
+| 3. Плагин `harmonic-detector-viz` (normal + **fullscreen**) | [`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](../prompts/HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md) · `apps/client/src/plugins/harmonic-detector-viz/` |
 
 **Out of scope #45 без изменения Issue:** отдельный пакет с именем `dsp-drone-detector-service` (дублировал бы harmonic).
 
@@ -53,7 +53,7 @@
 - [x] Реализация math/hooks (фаза 1).
 - [x] Demo `harmonic/demo/` — `yarn workspace @membrana/harmonic-detector-service dev:demo`.
 - [x] UI-регламент: [`LIVE_DETECTION_UI.md`](../LIVE_DETECTION_UI.md).
-- [ ] Плагин клиента (фаза 3).
+- [ ] Плагин клиента (фаза 3) — в разработке: `harmonic-detector-viz` ([`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](../prompts/HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md)).
 - [ ] `yarn benchmark:detectors` (отдельный промпт, параллельно #47).
 
 ---
@@ -67,7 +67,8 @@ git pull origin techies68
 # Прочитать (порядок):
 # 1. этот файл
 # 2. docs/prompts/HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md
-# 3. docs/discussions/dsp-drone-detector-v0.1.md
+# 3. docs/prompts/HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md  (перед кодом фазы 3)
+# 4. docs/discussions/dsp-drone-detector-v0.1.md
 
 yarn workspace @membrana/harmonic-detector-service test
 yarn turbo run lint typecheck test build --filter=@membrana/harmonic-detector-service --continue

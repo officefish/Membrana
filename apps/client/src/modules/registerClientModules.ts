@@ -2,6 +2,7 @@ import { MembranaRegistry } from '@membrana/agenda';
 import { createFftIndicesVizPlugin } from '../plugins/fft-indices-viz';
 import { createSoundQualityVizPlugin } from '../plugins/sound-quality-viz';
 import { createFftThresholdTestPlugin } from '../plugins/fft-threshold-test';
+import { createHarmonicDetectorVizPlugin } from '../plugins/harmonic-detector-viz';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 
 /**
@@ -126,6 +127,7 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createFftThresholdTestPlugin());
   MembranaRegistry.registerPlugin('microphone', createFftIndicesVizPlugin());
   MembranaRegistry.registerPlugin('microphone', createSoundQualityVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createHarmonicDetectorVizPlugin());
 
   // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs
   // уже применены в registerModule, дальше держать pendingModulePrefs смысла нет.

@@ -47,6 +47,7 @@
       "implementationPrompt": "docs/prompts/HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md",
       "executionBridge": "docs/discussions/issue-45-harmonic-bridge.md",
       "implementationPackage": "@membrana/harmonic-detector-service",
+      "pluginPrompt": "docs/prompts/HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md",
       "githubIssue": 45,
       "linearId": null,
       "size": "L",
