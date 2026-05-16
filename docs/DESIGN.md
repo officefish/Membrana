@@ -49,3 +49,24 @@
 ## Адаптив
 
 - Мобильные узкие экраны: приоритет одной колонки; осциллограмма / спектр могут уходить в табы или сворачиваемую панель — поведение описывается в задаче, визуал — из этих токенов.
+
+## Карточка детектора (placeholder, Этап 1.B)
+
+> Макет для live-UI после stage-gate scaffolding. Реализация плагина — отдельный
+> промпт; на Этапе 1.A достаточно CLI и unit-тестов.
+
+**Контейнер:** `card` на `--color-surface`, скругление **8 px**, padding **16 px**.
+
+| Элемент | Стиль |
+|---------|--------|
+| Иконка семейства | `dsp` / `neural` / `agentic` — badge `badge-sm`, цвет по семейству (dsp: `info`, neural: `accent`, agentic: `warning`) |
+| Имя детектора | `text-sm font-medium`, `--color-text` |
+| Confidence | горизонтальный `progress` DaisyUI, `tabular-nums`, подпись `NN %` |
+| Reasoning | `text-xs`, `--color-text-muted`, до 3 строк, `line-clamp` |
+| Latency | `text-xs` справа, `--color-text-muted`, «NN ms» |
+| Состояние loading (async 1.B) | `skeleton` на progress + `aria-busy="true"` |
+
+**Ensemble-строка (после gate):** отдельная карточка шире, акцент `--color-accent`, итоговый `isDrone` + confidence.
+
+**a11y:** `aria-live="polite"` на смену confidence; не только цвет для «дрон / не дрон»
+(иконка + текст «Обнаружен» / «Нет»).

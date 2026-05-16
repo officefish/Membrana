@@ -13,7 +13,7 @@
 | Когда | Команды (порядок) | Артефакт |
 |-------|-------------------|----------|
 | **Утро** | `morning-care` → `plan:day` → `standup` → **`main-day-issue`** | читает вчерашний `DAILY_CODE_REVIEW.md`; пишет `STRATEGIC_PLAN_DAY`, `DAILY_STANDUP`, **`MAIN_DAY_ISSUE`** |
-| **Вечер** | **`code-review`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | `DAILY_CODE_REVIEW.md` (+ архив), реестр, Issues |
+| **Вечер** | **`archive:daily-day`** → **`code-review`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | архив плана/стендапа/фокуса, `DAILY_CODE_REVIEW.md` (+ архив), реестр, Issues |
 | **Понедельник / неделя** | `analyzers:research:week` → `plan:week` | `WEEKLY_ANALYZERS_RESEARCH.md`, `STRATEGIC_PLAN_WEEK.md` |
 | **По необходимости** | `consilium`, `ask`, `task:list`, CI | `docs/seanses/*`, `docs/discussions/*` |
 
@@ -25,7 +25,22 @@
 
 > **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход).
 
+### Рабочая ветка: `techies68`
+
+Повседневная интеграционная ветка — **`techies68`** (не `cursor/*` и не персональные `vesnin`/`dynin`, если Teamlead не назначил иное). В начале дня переключаемся на неё и подтягиваем remote:
+
 ```bash
+git checkout techies68
+git pull origin techies68
+```
+
+`yarn morning-care` делает это автоматически (если рабочее дерево чистое). Переопределение: `MEMBRANA_WORK_BRANCH=my-branch yarn morning-care`.
+
+Ветки `cursor/*` — для разовых Cloud-задач; после merge переносим результат в `techies68`.
+
+```bash
+# 0. (вручную или через morning-care) рабочая ветка techies68
+
 # 1. Среда: прокси, git, быстрый тест скриптов; опционально ping Anthropic
 yarn morning-care
 # без траты токенов:
@@ -83,9 +98,18 @@ yarn task:list
 
 ## Вечер (15–25 минут)
 
-Цель: **сгенерировать code-review** на сегодняшний код, зафиксировать закрытые задачи, сохранить снимок ревью, закрыть Issues батчем.
+Цель: **сохранить утренние артефакты дня**, **сгенерировать code-review** на сегодняшний код, зафиксировать закрытые задачи, сохранить снимок ревью, закрыть Issues батчем.
+
+> **Порядок важен.** Утром `plan:day`, `standup` и `main-day-issue` **перезаписывают** `STRATEGIC_PLAN_DAY.md`, `DAILY_STANDUP.md`, `MAIN_DAY_ISSUE.md`. Вечером их нужно **сначала** уложить в архив, **потом** запускать code-review.
 
 ```bash
+# 0. Снимок утренних артефактов (до code-review)
+yarn archive:daily-day
+# alias:
+yarn save-daily-day
+# принудительно второй снимок за тот же день:
+yarn archive:daily-day --force
+
 # 1. Code-review (вечерняя процедура → docs/DAILY_CODE_REVIEW.md)
 yarn code-review
 yarn code-review:full
@@ -100,9 +124,27 @@ yarn save-code-review
 yarn task:close-github:dry
 yarn task:close-github
 
-# ревью + архив снимка одной командой:
+# архив дня + ревью + снимок ревью одной командой:
 yarn ritual:evening
 ```
+
+### Архивация утренних артефактов (`archive:daily-day`)
+
+| Что | Куда |
+|-----|------|
+| `docs/STRATEGIC_PLAN_DAY.md` | `docs/archive/daily-day/<YYYY-MM-DD>/STRATEGIC_PLAN_DAY.md` |
+| `docs/DAILY_STANDUP.md` | `…/DAILY_STANDUP.md` |
+| `docs/MAIN_DAY_ISSUE.md` | `…/MAIN_DAY_ISSUE.md` |
+| метаданные | `…/manifest.json` (`archivedAt`, размеры, источники) |
+
+**Ключ папки `<YYYY-MM-DD>`** берётся из дат в тексте (стендап `**YYYY-MM-DD**`, `MAIN_DAY_ISSUE` → `Дата`, комментарий `Сгенерировано`). Если файлов нет или дат нет — используется локальная календарная дата.
+
+**Поведение:**
+
+- Исходники в `docs/` **не удаляются** — только копия в архив.
+- Повторный запуск без `--force` **пропускается**, если тот же набор байт уже лежит в архиве за этот день (в т.ч. в папке `<YYYY-MM-DD>_<время>`).
+- Отсутствующий файл (не запускали утренний ритуал) — **предупреждение**, остальные копируются; если нет ни одного — exit 1.
+- Навигация по архиву: [`docs/archive/README.md`](./archive/README.md).
 
 **Перед уходом** (по желанию): полный CI и `git status` — завтрашний `plan:day` увидит свежий лог.
 
@@ -170,10 +212,11 @@ flowchart TB
   end
 
   subgraph evening [Вечер]
+    ADAY[archive:daily-day]
     CR[code-review]
     SAVE[save-code-review]
     GH[task:close-github]
-    CR --> SAVE
+    ADAY --> CR --> SAVE
   end
 
   subgraph week [Неделя]
@@ -184,7 +227,9 @@ flowchart TB
 
   ST --> DEV
   DEV --> ARCH
-  ARCH --> SAVE --> GH
+  MDI --> ADAY
+  ARCH --> ADAY
+  SAVE --> GH
   PW -.-> PD
 ```
 
@@ -200,7 +245,9 @@ flowchart TB
 | `docs/STRATEGIC_PLAN_DAY.md` | `yarn plan:day` |
 | `docs/STRATEGIC_PLAN_WEEK.md` | `yarn plan:week` |
 | `docs/DAILY_CODE_REVIEW.md` | `yarn code-review` (**вечер**); утром только читается |
+| `docs/archive/daily-day/<YYYY-MM-DD>/` | `yarn archive:daily-day` (**вечер**, до code-review) |
 | `docs/archive/daily-code-review/` | `yarn save-code-review` |
+| [`docs/archive/README.md`](./archive/README.md) | навигация по снимкам |
 | `docs/WEEKLY_ANALYZERS_RESEARCH.md` | `yarn analyzers:research:week` |
 | `docs/seanses/` | `yarn consilium` |
 | `docs/discussions/` | `yarn ask` |

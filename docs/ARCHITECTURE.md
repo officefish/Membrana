@@ -20,7 +20,9 @@
 
 - Каждый сервис лежит в `packages/services/<имя>/` и имеет собственные `package.json`, `tsconfig.json`, `vite.config.ts`.
 - Имя пакета: `@membrana/<имя>-service` (например, `@membrana/audio-engine-service`, `@membrana/fft-analyzer-service`).
-- Допустимые зависимости: **только** `@membrana/core` + внешние npm-пакеты.
+- Допустимые зависимости: **только** `@membrana/core` + внешние npm-пакеты;
+  **исключение:** пакеты в `packages/services/detectors/*` — см. §1e (`detector-base`
+  + `audio-engine-service` для типов окна).
 - **Нельзя**: зависеть от других сервисов, от `@membrana/agenda` / `@membrana/device-board` / `apps/client`.
 - Публичный API — через `src/index.ts`. Внутреннее деление: `service.ts` (чистая логика), `hooks.ts` (React-обёртка), `types.ts`.
 - Клиент потребляет сервисы через alias в `apps/client/vite.config.ts` (на исходники) — без шага сборки в dev.
@@ -59,6 +61,65 @@
 Подробный процесс и чек-лист — [MODULE_AND_PLUGIN_UI.md §0](./MODULE_AND_PLUGIN_UI.md#0-регистрация-модулей-и-lazy-loading).
 
 **Lifecycle `plugin.install()` / teardown:** контракт `Plugin.install(ctx) => teardown?` реализован в `packages/agenda/src/core/plugin-lifecycle.ts`. Store вызывает `install` при активации (включая повторную регистрацию активного плагина после rehydrate) и teardown при деактивации. Эталон — `apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts`: подписка на `microphoneStreamHub` и поднятие `LiveSampler` живут в `install()`, UI-компонент только читает singleton-state через `useSyncExternalStore`. Полный перевод подписок из UI-хуков на `install` для существующих плагинов с `analyserRef` — отдельная задача (нужен engine-канал «AnalyserNode без React-ref»).
+
+### 1e. Семейства детекторов (`packages/services/detectors/*`)
+
+Стратегия **Single-Node Detection First** (см. [`WHITE_PAPER.md`](./WHITE_PAPER.md) §8,
+консилиум `docs/seanses/single-node-detection-first-2026-05-16.md`): до stage-gate 1→2
+все усилия на **качество детекции на одном узле**; TDOA и мультиузел — после шлюза.
+
+| Пакет | Статус | Семейство |
+|-------|--------|-----------|
+| `@membrana/detector-base` | scaffold | контракты `DroneDetector`, `DetectionResult`, `AudioWindow` |
+| `@membrana/harmonic-detector-service` | scaffold | dsp |
+| `@membrana/cepstral-detector-service` | scaffold | dsp |
+| `@membrana/spectral-flux-detector-service` | scaffold | dsp |
+| `@membrana/yamnet-detector-service` | scaffold | neural |
+| `@membrana/clap-detector-service` | scaffold | neural |
+| `@membrana/agentic-detector-service` | scaffold | agentic |
+| `@membrana/detection-ensemble-service` | план (после gate) | агрегатор |
+| `@membrana/tdoa-service` | frozen @stage 2 | сеть |
+
+**Контракт (единый для всех детекторов):**
+
+```typescript
+interface DroneDetector {
+  readonly name: string;
+  readonly family: 'dsp' | 'neural' | 'agentic';
+  detect(window: AudioWindow): Promise<DetectionResult>;
+}
+
+interface DetectionResult {
+  isDrone: boolean;
+  confidence: number; // 0..1, калибровано (порог / softmax / модель)
+  reasoning?: string; // обязательно для agentic
+  features?: Record<string, number>;
+  latencyMs: number;
+}
+
+interface AudioWindow {
+  readonly samples: Float32Array;
+  readonly sampleRate: number;
+  readonly timestamp: number; // мс от начала потока
+  readonly durationSec: number;
+}
+```
+
+`AudioWindow` строится из кадров `@membrana/audio-engine-service` (`AudioSampleFrame`);
+детекторы **не** обращаются к Web Audio напрямую.
+
+**Правила зависимостей:**
+
+- `@membrana/detector-base` → `@membrana/core`, `@membrana/audio-engine-service`.
+- Каждый `*-detector-service` → `@membrana/core`, `@membrana/detector-base` **только**.
+- **Запрещены** импорты между детекторами (harmonic ↔ yamnet и т.д.).
+- Analyzer-сервисы вне `detectors/` (например `fft-analyzer`) не импортируют детекторы.
+
+**Stage-gate 1→2:** precision ≥ 85%, recall ≥ 90% на тестовом наборе;
+протокол — [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md).
+
+**Ensemble:** `@membrana/detection-ensemble-service` — отдельный пакет после ranking
+одиночных детекторов; не блокирует gate.
 
 ### 1d. `packages/background-office` — централизованный HTTP-шлюз
 

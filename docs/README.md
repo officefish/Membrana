@@ -4,6 +4,8 @@
 |------|------------|
 | [DEVELOPER_RHYTHM.md](./DEVELOPER_RHYTHM.md) | **Ритм разработки:** утро / вечер / неделя / периодические `yarn`-команды |
 | [WHITE_PAPER.md](./WHITE_PAPER.md) | Стратегический концепт: цель — распределённая разведка нижнего неба |
+| [DETECTOR_BENCHMARK.md](./DETECTOR_BENCHMARK.md) | Бенчмарк детекторов и критерии stage-gate 1→2 |
+| [DATASET.md](./DATASET.md) | Структура датасета для сравнения детекторов на одном узле |
 | [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md) | Методология задач: GitHub Issues (вход) + Linear (работа) + отчёт перед закрытием |
 | [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) | Системный промпт координатора и формат ответа |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Границы пакетов Membrana + правила плагинов и аудио-слоёв |
@@ -18,6 +20,7 @@
 | [STRATEGIC_PLAN_DAY.md](./STRATEGIC_PLAN_DAY.md) | План на следующий день по WHITE_PAPER и git (`yarn plan:day`) |
 | [DAILY_STANDUP.md](./DAILY_STANDUP.md) | Ежедневный стендап: сводка review + план + issues + наброски (`yarn standup`) |
 | [MAIN_DAY_ISSUE.md](./MAIN_DAY_ISSUE.md) | **Центральная задача дня** (`yarn main-day-issue`, после standup) |
+| [archive/](./archive/) | Снимки перезаписываемых артефактов (`yarn archive:daily-day`, `yarn save-code-review`) |
 | [CURRENT_TASK.md](./CURRENT_TASK.md) | Вспомогательный буфер черновиков (может содержать шум; не канон) |
 | [STRATEGIC_PLAN_WEEK.md](./STRATEGIC_PLAN_WEEK.md) | План на неделю (`yarn plan:week`; учитывает радар аналайзеров) |
 | [seanses/](./seanses/) | Протоколы консилиумов (`yarn consilium`) |

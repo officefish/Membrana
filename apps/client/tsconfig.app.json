@@ -26,6 +26,10 @@
       "@membrana/telemetry-service/*": ["../../packages/services/telemetry/src/*"],
       "@membrana/audio-data-viz": ["../../packages/libs/audioDataViz/src/index.ts"],
       "@membrana/audio-data-viz/*": ["../../packages/libs/audioDataViz/src/*"],
+      "@membrana/detector-base": ["../../packages/services/detectors/base/src/index.ts"],
+      "@membrana/detector-base/*": ["../../packages/services/detectors/base/src/*"],
+      "@membrana/harmonic-detector-service": ["../../packages/services/detectors/harmonic/src/index.ts"],
+      "@membrana/harmonic-detector-service/*": ["../../packages/services/detectors/harmonic/src/*"],
       "@/*": ["./src/*"]
     }
   },
@@ -38,6 +42,8 @@
     { "path": "../../packages/services/audio-engine" },
     { "path": "../../packages/services/fft-analyzer" },
     { "path": "../../packages/services/telemetry" },
-    { "path": "../../packages/libs/audioDataViz" }
+    { "path": "../../packages/libs/audioDataViz" },
+    { "path": "../../packages/services/detectors/base" },
+    { "path": "../../packages/services/detectors/harmonic" }
   ]
 }

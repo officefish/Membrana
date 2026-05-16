@@ -167,6 +167,74 @@ async function runAnthropicProbe() {
   }
 }
 
+const DEFAULT_WORK_BRANCH = process.env.MEMBRANA_WORK_BRANCH?.trim() || 'techies68';
+
+function ensureWorkBranch(cwd, branchName) {
+  try {
+    execFileSync('git', ['rev-parse', '--is-inside-work-tree'], {
+      cwd,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+  } catch {
+    return { ok: false, skipped: true, detail: 'не git-репозиторий' };
+  }
+
+  let current = '';
+  try {
+    current = execFileSync('git', ['branch', '--show-current'], {
+      cwd,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim();
+  } catch {
+    return { ok: false, skipped: false, detail: 'не удалось прочитать текущую ветку' };
+  }
+
+  if (current === branchName) {
+    try {
+      execFileSync('git', ['pull', '--ff-only', 'origin', branchName], {
+        cwd,
+        stdio: 'inherit',
+      });
+      return { ok: true, detail: `уже на ${branchName}, pull выполнен` };
+    } catch {
+      return { ok: false, detail: `на ${branchName}, но pull не удался` };
+    }
+  }
+
+  let dirty = false;
+  try {
+    const status = execFileSync('git', ['status', '--porcelain'], {
+      cwd,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim();
+    dirty = status.length > 0;
+  } catch {
+    return { ok: false, detail: 'не удалось проверить чистоту рабочего дерева' };
+  }
+
+  if (dirty) {
+    return {
+      ok: false,
+      skipped: true,
+      detail: `сейчас ${current || '(detached)'}, есть незакоммиченные изменения — checkout ${branchName} вручную`,
+    };
+  }
+
+  try {
+    execFileSync('git', ['checkout', branchName], { cwd, stdio: 'inherit' });
+    execFileSync('git', ['pull', '--ff-only', 'origin', branchName], {
+      cwd,
+      stdio: 'inherit',
+    });
+    return { ok: true, detail: `переключено ${current || '?'} → ${branchName}` };
+  } catch {
+    return { ok: false, detail: `checkout/pull ${branchName} не удался` };
+  }
+}
+
 const cwd = process.cwd();
 const { noAnthropic, help } = parseArgs(process.argv.slice(2));
 
@@ -213,6 +281,17 @@ if (proxyUrl) {
   }
 } else {
   console.log('[инфо] прокси не задан — запросы к Anthropic пойдут напрямую');
+}
+
+console.log(`\n--- рабочая ветка (${DEFAULT_WORK_BRANCH}) ---`);
+const branchSwitch = ensureWorkBranch(cwd, DEFAULT_WORK_BRANCH);
+if (branchSwitch.skipped) {
+  console.log(`[warn] ${branchSwitch.detail}`);
+} else if (branchSwitch.ok) {
+  console.log(`[ok]   ${branchSwitch.detail}`);
+} else {
+  console.log(`[fail] ${branchSwitch.detail}`);
+  failed = true;
 }
 
 const git = gitSnapshot(cwd);

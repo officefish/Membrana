@@ -41,6 +41,12 @@ export default defineConfig({
       '@membrana/audio-data-viz': fileURLToPath(
         new URL('../../packages/libs/audioDataViz/src/index.ts', import.meta.url),
       ),
+      '@membrana/detector-base': fileURLToPath(
+        new URL('../../packages/services/detectors/base/src/index.ts', import.meta.url),
+      ),
+      '@membrana/harmonic-detector-service': fileURLToPath(
+        new URL('../../packages/services/detectors/harmonic/src/index.ts', import.meta.url),
+      ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
