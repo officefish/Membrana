@@ -24,6 +24,7 @@
     "code-review": "node scripts/code-review.mjs",
     "save-code-review": "yarn run archive:daily-review",
     "archive:daily-day": "node scripts/archive-daily-day-artifacts.mjs",
+    "dataset:generate": "node scripts/generate-dataset-synthetics.mjs",
     "save-daily-day": "yarn run archive:daily-day",
     "code-review:full": "node scripts/code-review.mjs --full",
     "plan:day": "node scripts/strategic-plan-day.mjs",
