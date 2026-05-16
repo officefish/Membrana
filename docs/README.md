@@ -13,6 +13,7 @@
 | [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) | Стратегия экспериментальных интеграций анализа звука (эшелоны локально → сервер → API) |
 | [WEEKLY_ANALYZERS_RESEARCH.md](./WEEKLY_ANALYZERS_RESEARCH.md) | Авто-генерируемый еженедельный «радар»: новые модели/работы для каталога §4 INTEGRATIONS_STRATEGY (`yarn analyzers:research:week`). Используется недельным планом, не дневным code-review |
 | [DESIGN.md](./DESIGN.md) | Токены UI для аудио-интерфейса |
+| [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) | Live-детекция: сглаживание isDrone/confidence, вёрстка demo |
 | [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) | Оболочка модулей, сайдбар плагинов, карточки, Tailwind `content` |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | PR, агенты, ссылки на документы выше |
 | [UI_UX_DEVELOPER_PROMPT.md](./UI_UX_DEVELOPER_PROMPT.md) | Расширение роли Верстальщика — детали для UI-агента |
@@ -36,7 +37,8 @@
 4. [SERVICES.md](./SERVICES.md) — если задача про чистую логику + хуки.
 5. [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) — если задача про подключение новой ML/DSP-модели для анализа звука.
 6. [DESIGN.md](./DESIGN.md) — если задача про вёрстку.
-7. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
-8. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
+7. [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) — если live-детектор, demo в `packages/services/*/demo/`, anti-flicker.
+8. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
+9. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
 
 GitHub Actions: workflow `virtual-team-context` выводит эти пути в summary при ручном запуске.

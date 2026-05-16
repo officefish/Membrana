@@ -20,6 +20,12 @@
     },
     {
       "path": "../base"
+    },
+    {
+      "path": "../../fft-analyzer"
+    },
+    {
+      "path": "../../audio-engine"
     }
   ]
 }

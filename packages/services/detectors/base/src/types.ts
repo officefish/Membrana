@@ -15,6 +15,8 @@ export interface DetectionResult {
   readonly isDrone: boolean;
   readonly confidence: number;
   readonly reasoning?: string;
+  /** Частоты несущих/гармоник (Гц), если детектор их оценил. */
+  readonly fundamentalsHz?: readonly number[];
   readonly features?: Readonly<Record<string, number>>;
   readonly latencyMs: number;
 }

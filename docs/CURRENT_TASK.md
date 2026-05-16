@@ -1,29 +1,32 @@
-# CURRENT_TASK — буфер (подготовка #45)
+# CURRENT_TASK — буфер (benchmark runner #47)
 
-> **Канон дня:** [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) (#47 harmonic + benchmark).  
-> **Этот буфер:** готовность к **GitHub #45** (`dsp-drone-detector`).
+> **Канон дня:** [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) (#47 dataset + benchmark).  
+> **Датасет v0.1:** ✅ [`DATASET_BOOTSTRAP_PROMPT.md`](./prompts/DATASET_BOOTSTRAP_PROMPT.md).
 
 ## Статус подготовки (2026-05-16)
 
 | Шаг | Статус |
 |-----|--------|
-| Мост #45 → `@membrana/harmonic-detector-service` | ✅ [`issue-45-harmonic-bridge.md`](./discussions/issue-45-harmonic-bridge.md) |
-| Промпт фазы 1 | ✅ [`HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md`](./prompts/HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md) |
-| Реестр `implementationPrompt` / `executionBridge` | ✅ `registry.json` |
-| Scaffold: `constants.ts`, `types.ts`, `core/harmonic-detector.ts` | ✅ |
-| Client aliases (vite + tsconfig) | ✅ |
-| Реализация math + hooks | ⏳ следующая сессия |
-| Demo + плагин (фазы 2–3 #45) | ⏳ после фазы 1 |
+| Промпт benchmark | ✅ [`BENCHMARK_RUNNER_PROMPT.md`](./prompts/BENCHMARK_RUNNER_PROMPT.md) |
+| Датасет + `yarn dataset:generate` | ✅ |
+| `yarn benchmark:detectors` | ✅ harmonic: P=50% R=100% F1=66.7% (v0.1 synthetic) |
+| `docs/DETECTOR_BENCHMARK.md` автоген | ✅ |
+| `test:scripts` (metrics) | ✅ |
 
 ## Перед стартом кода
 
 ```bash
 git checkout techies68
-git pull origin techies68
+yarn dataset:generate
+yarn turbo run build --filter=@membrana/harmonic-detector-service
 ```
 
-Читать по порядку: мост → `HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md` → `dsp-drone-detector-v0.1.md`.
+Читать: [`BENCHMARK_RUNNER_PROMPT.md`](./prompts/BENCHMARK_RUNNER_PROMPT.md) → [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md) → [`data/detectors-benchmark/v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json).
 
 ## Ветка
 
-`dynin` (Математик) или `techies68` — по договорённости; не `cursor/office-verify-swagger`.
+`techies68`
+
+## После приёмки benchmark
+
+Инфраструктура #47 (dataset + runner) готова. Следующее: расширение датасета, настройка классификатора, CI для `benchmark:detectors`, вечером `yarn task:close-github` (#45).

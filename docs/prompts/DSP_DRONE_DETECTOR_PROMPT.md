@@ -40,6 +40,7 @@
 | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Сервисы, hub, плагины |
 | [`SERVICES.md`](../SERVICES.md) | Структура analyzer-пакета |
 | [`DESIGN.md`](../DESIGN.md) | UI демо и плагина |
+| [`LIVE_DETECTION_UI.md`](../LIVE_DETECTION_UI.md) | Сглаживание live-статуса, вёрстка demo |
 | [`MODULE_AND_PLUGIN_UI.md`](../MODULE_AND_PLUGIN_UI.md) | Регистрация, сайдбар |
 | [`WHITE_PAPER.md`](../WHITE_PAPER.md) | §5.1 портрет дрона, Этап 1 |
 | [`INTEGRATIONS_STRATEGY.md`](../INTEGRATIONS_STRATEGY.md) | Эшелон 0.1, `drone-analyzer-board` |
@@ -209,21 +210,22 @@ packages/services/dsp-drone-detector/demo/
 
 ## Фаза 3 — Плагин модуля «Микрофон»
 
+> **Детальная постановка (2026-05-16):** [`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](./HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md) — id `harmonic-detector-viz`, режимы **normal + fullscreen**, синхронизация с модулем «Микрофон» и `droneDetectionHub`. Код — после явной команды Teamlead.
+
 ### Продукт
 
-Плагин **`dsp-drone-detector-viz`** (id согласован с реестром задач):
+Плагин **`harmonic-detector-viz`** (id согласован с реестром задач и мостом #45):
 
 ```
-apps/client/src/plugins/dsp-drone-detector-viz/
-├── index.ts
-├── types.ts
-├── dspDroneDetectorVizPlugin.ts    # install / teardown
-├── dspDroneDetectorPluginState.ts  # singleton + useSyncExternalStore
-├── useDspDroneDetectorAnalysis.ts
-├── DspDroneDetectorVizPanel.tsx
-├── components/                     # порт UI из demo (фаза 2)
-└── DspDroneDetectorSidebar.tsx     # опционально: порог, сглаживание
+apps/client/src/plugins/harmonic-detector-viz/
+├── harmonicDetectorVizPlugin.ts    # install / teardown
+├── harmonicDetectorPluginState.ts
+├── HarmonicDetectorVizPanel.tsx      # normal
+├── HarmonicDetectorFullscreen.tsx  # fullscreen overlay
+└── components/                     # порт из harmonic/demo
 ```
+
+Полное дерево и контракт синхронизации — в [`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](./HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md).
 
 ### Интеграция
 

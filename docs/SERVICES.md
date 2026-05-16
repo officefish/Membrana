@@ -166,6 +166,34 @@ packages/services/<name>/
 
 ---
 
+## Demo-приложения (`packages/services/<name>/demo/`)
+
+Отдельный Vite+React UI для отладки сервиса без `apps/client`. Эталон: `packages/services/detectors/harmonic/demo/`.
+
+| Требование | Регламент |
+|------------|-----------|
+| Команда | `dev:demo` в `package.json` сервиса (порт **5178** или свободный) |
+| Зависимости UI | Только публичный API сервиса + foundation (`audio-engine`); не `apps/client` |
+| Live-детекция | [`LIVE_DETECTION_UI.md`](./LIVE_DETECTION_UI.md) §1 — EMA, гистерезис, debounce по кадрам |
+| Вёрстка экрана | [`LIVE_DETECTION_UI.md`](./LIVE_DETECTION_UI.md) §2 — `h-full`, без прыгающего scrollbar, статические строки |
+| PostCSS/Tailwind | Явный путь к `tailwind.config.js` в `demo/postcss.config.js` (cwd монорепо ≠ cwd demo) |
+
+Структура:
+
+```text
+packages/services/<name>/demo/
+├── index.html          # html/body/#root: h-full, body overflow-hidden
+├── main.tsx
+├── index.css           # scrollbar-gutter: stable
+├── vite.config.ts
+├── postcss.config.js
+├── tailwind.config.js
+├── App.tsx
+└── hooks/              # useLive* + detection-smooth.ts
+```
+
+---
+
 ## Создание нового сервиса
 
 1. Скопировать подходящий эталон: `audio-engine` (для foundation) или `fft-analyzer` (для analyzer).

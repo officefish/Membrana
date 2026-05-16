@@ -41,6 +41,8 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md`](./SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md) | Качество звука (`sound-quality-viz`, архив) |
 | [`TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md`](./TELEMETRY_JOURNAL_REPORT_VIZ_PROMPT.md) | Карточки отчётов в журнале (`telemetry-journal-report-viz`, архив) |
 | [`DSP_DRONE_DETECTOR_PROMPT.md`](./DSP_DRONE_DETECTOR_PROMPT.md) | **Активная задача** `dsp-drone-detector` — сервис, демо, плагин (L, 3 фазы) |
+| [`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](./HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md) | **Фаза 3 #45** — плагин микрофона (normal + fullscreen), синхрон с шапкой |
+| [`HARMONIC_DEMO_APPS_DEMOS_ANALYSIS_PROMPT.md`](./HARMONIC_DEMO_APPS_DEMOS_ANALYSIS_PROMPT.md) | UX-анализ Replit lab → demo/плагин |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

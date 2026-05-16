@@ -3,6 +3,7 @@ node_modules/
 
 # Сборка
 dist/
+dist-demo/
 build/
 *.tsbuildinfo
 # Инкрементальные кэши TS с суффиксами (клиент: tsconfig.app / tsconfig.node)
