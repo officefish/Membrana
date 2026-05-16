@@ -3,9 +3,10 @@
  * Исходники в docs/ не удаляются. Запускать до code-review (перед перезаписью утром).
  */
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 
 import {
+  allocateAlternateBundleDir,
   allocateBundleDir,
   copyIfChanged,
   findExistingBundleDir,
@@ -39,7 +40,7 @@ if (process.argv.includes('--help') || process.argv.includes('-h')) {
   console.log(`Usage: node scripts/archive-daily-day-artifacts.mjs [--help] [--force]
 
   --help   Эта справка.
-  --force  Создать новый снимок даже если байт-в-байт совпадает с существующим бандлом дня.
+  --force  Новый снимок в отдельной папке <YYYY-MM-DD>_<ISO-время>, даже если совпадает с архивом.
 
 Копирует три утренних артефакта в ${ARCHIVE_ROOT_REL}/<YYYY-MM-DD>/:
   STRATEGIC_PLAN_DAY.md, DAILY_STANDUP.md, MAIN_DAY_ISSUE.md
@@ -74,8 +75,7 @@ if (present.length === 0) {
   process.exit(1);
 }
 
-const missing = ARTIFACTS.filter((a) => !existsSync(resolve(cwd, a.rel)));
-for (const m of missing) {
+for (const m of ARTIFACTS.filter((a) => !existsSync(resolve(cwd, a.rel)))) {
   console.warn('Пропуск (файл отсутствует):', m.rel);
 }
 
@@ -88,6 +88,7 @@ const fileOps = present.map((p) => ({
   archiveName: p.archiveName,
   sourcePath: p.sourcePath,
   label: p.label,
+  rel: p.rel,
 }));
 
 if (!force) {
@@ -98,14 +99,13 @@ if (!force) {
   }
 }
 
-const needNewBundle =
-  force &&
-  existsSync(join(archiveRoot, dayKey)) &&
-  !fileOps.every((f) => findExistingBundleDir(archiveRoot, dayKey, [f]));
+const bundleDir = force
+  ? allocateAlternateBundleDir(archiveRoot, dayKey)
+  : allocateBundleDir(archiveRoot, dayKey);
 
-const bundleDir = allocateBundleDir(archiveRoot, dayKey, needNewBundle && force);
 const archivedAt = new Date().toISOString();
 const manifestFiles = [];
+let copied = 0;
 
 for (const p of present) {
   const destPath = join(bundleDir, p.archiveName);
@@ -119,6 +119,7 @@ for (const p of present) {
     action: result,
   });
   if (result === 'copied') {
+    copied += 1;
     console.log('→', destPath);
   } else if (result === 'skipped-identical') {
     console.log('= (без изменений)', destPath);
@@ -129,8 +130,11 @@ writeManifest(bundleDir, {
   dayKey,
   archivedAt,
   command: 'yarn archive:daily-day',
-  bundleDir: join(ARCHIVE_ROOT_REL, bundleDir.split(/[/\\]/).slice(-1)[0]),
+  bundleDir: `${ARCHIVE_ROOT_REL}/${basename(bundleDir)}`,
   files: manifestFiles,
 });
 
 console.log('manifest:', join(bundleDir, 'manifest.json'));
+if (copied === 0 && !force) {
+  console.log('Новых файлов не скопировано (все совпадают с уже лежащими в папке).');
+}

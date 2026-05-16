@@ -122,7 +122,8 @@ yarn main-day-issue  # центральная задача дня → docs/MAIN_
 **Вечер:**
 
 ```bash
-yarn code-review     # ревью → docs/DAILY_CODE_REVIEW.md (на завтра утром)
+yarn archive:daily-day   # снимок STRATEGIC_PLAN_DAY + DAILY_STANDUP + MAIN_DAY_ISSUE → docs/archive/daily-day/
+yarn code-review         # ревью → docs/DAILY_CODE_REVIEW.md (на завтра утром)
 yarn save-code-review
 ```
 

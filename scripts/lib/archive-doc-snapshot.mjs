@@ -130,17 +130,21 @@ export function resolveDayKey(parts, fallbackDayKey) {
  * @param {string} dayKey YYYY-MM-DD
  */
 export function allocateBundleDir(archiveRoot, dayKey) {
-  const primary = join(archiveRoot, dayKey);
-  if (!existsSync(primary)) {
-    return primary;
-  }
-  const stamp = isoStampForFilename().replace(/T.*/, '').length
-    ? isoStampForFilename().split('T')[1]?.slice(0, 8)
-    : '';
-  const fine = `${dayKey}T${isoStampForFilename().replace(`${dayKey}T`, '')}`;
-  const alt = join(archiveRoot, fine.replace(/[^\d-]/g, (ch) => (ch === 'T' ? 'T' : '-')));
-  if (!existsSync(alt)) {
-    return join(archiveRoot, `${dayKey}_${isoStampForFilename().slice(11, 19)}`);
+  mkdirSync(archiveRoot, { recursive: true });
+  return join(archiveRoot, dayKey);
+}
+
+/**
+ * Второй и последующие снимки за тот же календарный день (--force).
+ * @param {string} archiveRoot
+ * @param {string} dayKey
+ */
+export function allocateAlternateBundleDir(archiveRoot, dayKey) {
+  mkdirSync(archiveRoot, { recursive: true });
+  const stamp = isoStampForFilename();
+  const timed = join(archiveRoot, `${dayKey}_${stamp}`);
+  if (!existsSync(timed)) {
+    return timed;
   }
   for (let n = 2; n < 10_000; n++) {
     const candidate = join(archiveRoot, `${dayKey}_${n}`);
@@ -149,6 +153,31 @@ export function allocateBundleDir(archiveRoot, dayKey) {
     }
   }
   return join(archiveRoot, `${dayKey}_${process.hrtime.bigint()}`);
+}
+
+/**
+ * @param {string} archiveRoot
+ * @param {string} dayKey
+ * @param {{ archiveName: string, sourcePath: string }[]} files
+ */
+export function findExistingBundleDir(archiveRoot, dayKey, files) {
+  if (!existsSync(archiveRoot)) {
+    return null;
+  }
+  const dirs = readdirSync(archiveRoot)
+    .filter((n) => n === dayKey || n.startsWith(`${dayKey}_`))
+    .map((n) => join(archiveRoot, n))
+    .filter((p) => existsSync(p) && statSync(p).isDirectory());
+  for (const dir of dirs) {
+    const allMatch = files
+      .filter((f) => existsSync(f.sourcePath))
+      .every((f) => bundleFileIdentical(dir, f.archiveName, f.sourcePath));
+    const hasArchive = files.some((f) => existsSync(join(dir, f.archiveName)));
+    if (allMatch && hasArchive) {
+      return dir;
+    }
+  }
+  return null;
 }
 
 /** @param {string} bundleDir */

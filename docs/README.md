@@ -18,6 +18,7 @@
 | [STRATEGIC_PLAN_DAY.md](./STRATEGIC_PLAN_DAY.md) | План на следующий день по WHITE_PAPER и git (`yarn plan:day`) |
 | [DAILY_STANDUP.md](./DAILY_STANDUP.md) | Ежедневный стендап: сводка review + план + issues + наброски (`yarn standup`) |
 | [MAIN_DAY_ISSUE.md](./MAIN_DAY_ISSUE.md) | **Центральная задача дня** (`yarn main-day-issue`, после standup) |
+| [archive/](./archive/) | Снимки перезаписываемых артефактов (`yarn archive:daily-day`, `yarn save-code-review`) |
 | [CURRENT_TASK.md](./CURRENT_TASK.md) | Вспомогательный буфер черновиков (может содержать шум; не канон) |
 | [STRATEGIC_PLAN_WEEK.md](./STRATEGIC_PLAN_WEEK.md) | План на неделю (`yarn plan:week`; учитывает радар аналайзеров) |
 | [seanses/](./seanses/) | Протоколы консилиумов (`yarn consilium`) |
