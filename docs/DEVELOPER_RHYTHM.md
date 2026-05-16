@@ -25,7 +25,22 @@
 
 > **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход).
 
+### Рабочая ветка: `techies68`
+
+Повседневная интеграционная ветка — **`techies68`** (не `cursor/*` и не персональные `vesnin`/`dynin`, если Teamlead не назначил иное). В начале дня переключаемся на неё и подтягиваем remote:
+
 ```bash
+git checkout techies68
+git pull origin techies68
+```
+
+`yarn morning-care` делает это автоматически (если рабочее дерево чистое). Переопределение: `MEMBRANA_WORK_BRANCH=my-branch yarn morning-care`.
+
+Ветки `cursor/*` — для разовых Cloud-задач; после merge переносим результат в `techies68`.
+
+```bash
+# 0. (вручную или через morning-care) рабочая ветка techies68
+
 # 1. Среда: прокси, git, быстрый тест скриптов; опционально ping Anthropic
 yarn morning-care
 # без траты токенов:
