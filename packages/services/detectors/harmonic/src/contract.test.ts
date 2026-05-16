@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { harmonicDroneWindow, sineWindow, whiteNoiseWindow } from '@membrana/detector-base';
-import { HarmonicDetector } from './detector.js';
+import { HarmonicDetector } from './core/harmonic-detector.js';
 
 describe('harmonic detector contract', () => {
   const detector = new HarmonicDetector();

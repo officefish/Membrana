@@ -1,3 +1,7 @@
+/**
+ * Реализация DroneDetector — см. docs/prompts/HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md
+ * Issue #45, фаза 1.
+ */
 import {
   NotImplementedError,
   type AudioWindow,

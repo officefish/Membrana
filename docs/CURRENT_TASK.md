@@ -1,30 +1,29 @@
-# CURRENT_TASK — вспомогательный буфер
+# CURRENT_TASK — буфер (подготовка #45)
 
-> **Не канон.** Центральная задача дня — в [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) (`yarn main-day-issue` после стендапа).
-> Регламент: [`prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md) · [`TASKS_MANAGEMENT.md`](./TASKS_MANAGEMENT.md).
+> **Канон дня:** [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) (#47 harmonic + benchmark).  
+> **Этот буфер:** готовность к **GitHub #45** (`dsp-drone-detector`).
 
-## Назначение
+## Статус подготовки (2026-05-16)
 
-`docs/CURRENT_TASK.md` — **черновой буфер** для заметок, фрагментов контекста и деталей, которые агент или человек накидывает в процессе работы.
+| Шаг | Статус |
+|-----|--------|
+| Мост #45 → `@membrana/harmonic-detector-service` | ✅ [`issue-45-harmonic-bridge.md`](./discussions/issue-45-harmonic-bridge.md) |
+| Промпт фазы 1 | ✅ [`HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md`](./prompts/HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md) |
+| Реестр `implementationPrompt` / `executionBridge` | ✅ `registry.json` |
+| Scaffold: `constants.ts`, `types.ts`, `core/harmonic-detector.ts` | ✅ |
+| Client aliases (vite + tsconfig) | ✅ |
+| Реализация math + hooks | ⏳ следующая сессия |
+| Demo + плагин (фазы 2–3 #45) | ⏳ после фазы 1 |
 
-| | `MAIN_DAY_ISSUE.md` | `CURRENT_TASK.md` |
-|---|---------------------|-------------------|
-| Кто пишет | `yarn main-day-issue` (авто, последний шаг утра) | человек / агент вручную |
-| Роль | **единственный обязательный фокус** дня | доп. детали, если нужны |
-| Доверие | канон для приоритетов | **может содержать шум**, устаревшее, противоречия |
-| Перед работой | читать **всегда** | читать **опционально** |
+## Перед стартом кода
 
-## Правила для агентов
+```bash
+git checkout techies68
+git pull origin techies68
+```
 
-1. **Приоритет:** `MAIN_DAY_ISSUE` → task-промпт (`docs/prompts/*`) → GitHub Issue → `CURRENT_TASK` (только если не противоречит канону).
-2. Если `CURRENT_TASK` расходится со стендапом, реестром или `MAIN_DAY_ISSUE` — **игнорировать буфер** и следовать канону.
-3. Не копировать содержимое буфера в отчёты и PR как «официальное решение».
-4. Крупные решения — в Issue, task-промпт или `docs/seanses/`, не только в буфер.
+Читать по порядку: мост → `HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md` → `dsp-drone-detector-v0.1.md`.
 
-## Что сюда класть (по желанию)
+## Ветка
 
-- Уточнения по интеграции, ссылки, черновые чек-листы.
-- Заметки с сессии, пока не оформлены в Issue.
-- Временные напоминания («не забыть проверить X»).
-
-Список активных task-промптов: [`docs/tasks/README.md`](./tasks/README.md).
+`dynin` (Математик) или `techies68` — по договорённости; не `cursor/office-verify-swagger`.

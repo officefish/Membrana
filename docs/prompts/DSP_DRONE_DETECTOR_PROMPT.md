@@ -1,5 +1,7 @@
 # Промпт: DSP-детектор дрона (сервис, демо-приложение, плагин микрофона)
 
+> **Исполнение фазы 1 (2026-05-16):** пакет `@membrana/dsp-drone-detector-service` **не создаём** — фаза 1 Issue [#45](https://github.com/officefish/Membrana/issues/45) идёт в [`@membrana/harmonic-detector-service`](../packages/services/detectors/harmonic/) по [`HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md`](./HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md) и мосту [`issue-45-harmonic-bridge.md`](../discussions/issue-45-harmonic-bridge.md). Ниже — полная спецификация фаз 2–3 и исторический контракт ADR.
+
 > **Task-промпт для агента-разработчика** (Cursor IDE / Claude / другой LLM).
 > Процесс постановки: [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
 > Скопируй блок **«Промпт целиком»** в начало диалога. Размер задачи: **L**.
