@@ -19,7 +19,6 @@ export function HarmonicDetectorVizPanel({ moduleId }: Props) {
           Гармонический детектор
         </p>
         <HarmonicDetectorLabView
-          compact
           onThresholdChange={setConfidenceThreshold}
           footer={
             <button

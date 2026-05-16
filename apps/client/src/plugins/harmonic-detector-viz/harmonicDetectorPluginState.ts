@@ -48,6 +48,19 @@ class HarmonicDetectorPluginStateImpl {
   }
 
   setDetection(detection: HarmonicDetectionSnapshot | null): void {
+    if (detection === this.detection) return;
+    if (
+      detection != null &&
+      this.detection != null &&
+      detection.isDrone === this.detection.isDrone &&
+      detection.confidence === this.detection.confidence &&
+      detection.reasoning === this.detection.reasoning &&
+      detection.latencyMs === this.detection.latencyMs &&
+      detection.rawConfidence === this.detection.rawConfidence &&
+      detection.fundamentals === this.detection.fundamentals
+    ) {
+      return;
+    }
     this.detection = detection;
     this.rebuild();
   }

@@ -53,8 +53,8 @@
 - [x] Реализация math/hooks (фаза 1).
 - [x] Demo `harmonic/demo/` — `yarn workspace @membrana/harmonic-detector-service dev:demo`.
 - [x] UI-регламент: [`LIVE_DETECTION_UI.md`](../LIVE_DETECTION_UI.md).
-- [ ] Плагин клиента (фаза 3) — в разработке: `harmonic-detector-viz` ([`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](../prompts/HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md)).
-- [ ] `yarn benchmark:detectors` (отдельный промпт, параллельно #47).
+- [x] Плагин клиента (фаза 3): `harmonic-detector-viz` — normal + fullscreen, `microphoneCaptureCoordinator`, hub → header ([`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](../prompts/HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md)); приёмка 2026-05-16.
+- [ ] `yarn benchmark:detectors` (отдельный промпт, параллельно #47 — **вне scope #45**).
 
 ---
 

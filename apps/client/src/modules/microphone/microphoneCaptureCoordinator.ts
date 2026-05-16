@@ -9,7 +9,10 @@ export interface MicrophoneCaptureOwner {
   readonly getSnapshot: () => MicrophoneCaptureSnapshot;
 }
 
+const IDLE_CAPTURE_SNAPSHOT: MicrophoneCaptureSnapshot = { isLive: false, error: null };
+
 let owner: MicrophoneCaptureOwner | null = null;
+let snapshotCache: MicrophoneCaptureSnapshot = IDLE_CAPTURE_SNAPSHOT;
 const listeners = new Set<() => void>();
 
 function emit(): void {
@@ -18,13 +21,28 @@ function emit(): void {
   }
 }
 
+function refreshSnapshotCache(): void {
+  const next = owner?.getSnapshot() ?? IDLE_CAPTURE_SNAPSHOT;
+  if (snapshotCache.isLive === next.isLive && snapshotCache.error === next.error) {
+    return;
+  }
+  snapshotCache =
+    next.isLive === IDLE_CAPTURE_SNAPSHOT.isLive && next.error === IDLE_CAPTURE_SNAPSHOT.error
+      ? IDLE_CAPTURE_SNAPSHOT
+      : { isLive: next.isLive, error: next.error };
+  emit();
+}
+
 export function registerMicrophoneCaptureOwner(handlers: MicrophoneCaptureOwner): () => void {
   owner = handlers;
-  emit();
+  refreshSnapshotCache();
   return () => {
     if (owner === handlers) {
       owner = null;
-      emit();
+      if (snapshotCache !== IDLE_CAPTURE_SNAPSHOT) {
+        snapshotCache = IDLE_CAPTURE_SNAPSHOT;
+        emit();
+      }
     }
   };
 }
@@ -37,7 +55,7 @@ export function subscribeMicrophoneCapture(listener: () => void): () => void {
 }
 
 export function getMicrophoneCaptureSnapshot(): MicrophoneCaptureSnapshot {
-  return owner?.getSnapshot() ?? { isLive: false, error: null };
+  return snapshotCache;
 }
 
 export async function requestMicrophoneStart(): Promise<void> {
@@ -53,5 +71,5 @@ export function requestMicrophoneStop(): void {
 
 /** Вызывается модулем при смене isLive / error. */
 export function notifyMicrophoneCaptureChanged(): void {
-  emit();
+  refreshSnapshotCache();
 }

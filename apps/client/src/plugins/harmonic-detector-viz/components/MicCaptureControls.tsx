@@ -1,3 +1,5 @@
+import { SensitivityThresholdSlider } from './SensitivityThresholdSlider.js';
+
 interface Props {
   readonly isLive: boolean;
   readonly captureError: string | null;
@@ -53,23 +55,10 @@ export function MicCaptureControls({
       ) : null}
 
       {showThreshold ? (
-        <label className="form-control w-full max-w-xs">
-          <div className="label py-0">
-            <span className="label-text">Порог confidence</span>
-            <span className="label-text-alt font-mono text-warning">
-              {Math.round(confidenceThreshold * 100)}%
-            </span>
-          </div>
-          <input
-            type="range"
-            min={0.2}
-            max={0.9}
-            step={0.01}
-            value={confidenceThreshold}
-            className="range range-warning range-sm"
-            onChange={(e) => onThresholdChange(Number(e.target.value))}
-          />
-        </label>
+        <SensitivityThresholdSlider
+          value={confidenceThreshold}
+          onChange={onThresholdChange}
+        />
       ) : null}
     </div>
   );

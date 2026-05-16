@@ -6,14 +6,12 @@ import { useHarmonicDetectorAnalysis } from './useHarmonicDetectorAnalysis';
 import { useMicrophoneCaptureActions } from './useMicrophoneCaptureActions';
 
 interface Props {
-  readonly compact?: boolean;
   readonly showMicControls?: boolean;
   readonly footer?: React.ReactNode;
   readonly onThresholdChange: (value: number) => void;
 }
 
 export function HarmonicDetectorLabView({
-  compact = false,
   showMicControls = true,
   footer,
   onThresholdChange,
@@ -33,11 +31,11 @@ export function HarmonicDetectorLabView({
   const isDrone = detection?.isDrone ?? false;
 
   return (
-    <div className={`flex flex-col gap-4 ${compact ? '' : 'min-h-0'}`}>
+    <div className="flex flex-col gap-4 min-h-0">
       <DetectionStatus
         isDrone={analyzing ? isDrone : false}
         isRunning={isRunning}
-        compact={compact}
+        confidence={detection?.confidence ?? 0}
       />
       <ConfidenceMeter
         confidence={detection?.confidence ?? null}

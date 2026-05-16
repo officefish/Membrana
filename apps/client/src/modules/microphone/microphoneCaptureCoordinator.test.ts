@@ -31,15 +31,16 @@ describe('microphoneCaptureCoordinator', () => {
     unregister();
   });
 
-  it('notifies subscribers on register', () => {
+  it('notifies subscribers when capture state changes on register', () => {
     const listener = vi.fn();
     const unsub = subscribeMicrophoneCapture(listener);
     registerMicrophoneCaptureOwner({
       start: async () => undefined,
       stop: () => undefined,
-      getSnapshot: () => ({ isLive: false, error: null }),
+      getSnapshot: () => ({ isLive: true, error: null }),
     });
     expect(listener).toHaveBeenCalled();
+    expect(getMicrophoneCaptureSnapshot().isLive).toBe(true);
     unsub();
   });
 });
