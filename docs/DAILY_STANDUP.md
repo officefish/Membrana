@@ -1,20 +1,26 @@
-<!-- Сгенерировано: 2026-05-16T05:21:27.770Z (yarn standup) -->
+<!-- Сгенерировано: 2026-05-16T06:46:28.887Z (yarn standup) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
-<!-- Входы: VIRTUAL_TEAM_PROMPT, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (22), packages/temp (0 файлов) -->
+<!-- Входы: VIRTUAL_TEAM_PROMPT, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (23), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
 
-# Ежедневный стендап виртуальной команды Membrana
-**2026-05-16** · Синхронизация на основе вчерашнего code-review, стратегического плана и открытых задач
+# Ежедневный стендап виртуальной команды
+
+**Дата:** 2026-05-16 (утро) · **Ветка:** `techies68` · **Период:** по результатам Single-Node Detection First (консилиум завершён)
 
 ---
 
 ## Резюме дня
 
-**Главный фокус:** завершить фундамент Этапа 1 («Одинокий слушатель») — убрать нарушения слабой связанности, добавить контракты синхронизации времени в `@membrana/core` и подготовить скелет `tdoa-service` для Этапа 2.
+**Главный фокус:** Реализация первого DSP-детектора (**harmonic-detector-service**) как валидация контракта `DroneDetector` и эталона для benchmark-инфраструктуры. Параллельно — наполнение `DATASET.md` и интеграция результатов детекции в UI клиента.
 
-**Главный риск:** дублирование документации (VIRTUAL_TEAM_PROMPT.md vs. TASK_PROMPT_WORKFLOW.md), untracked скрипты (consilium.mjs, main-day-issue.mjs), нарушения дизайна в плагинах микрофона (#30 — критично).
+**Главный риск:** Детекторы остаются scaffold'ами — нужна быстрая валидация математики на реальных звуках дрона, иначе benchmark будет на нулевых данных.
 
-**Критерий успеха к вечеру:** все скрипты закоммичены, слабая связанность в плагинах проверена, типы SyncedTimestamp добавлены в core, минимум одна полнофункциональная демонстрация drone-detector с confidence score.
+**Критерий успеха к вечеру:** 
+- ✅ `harmonic-detector-service` реализован (не placeholder), unit-тесты проходят.
+- ✅ `DATASET.md` содержит минимум 9 примеров (3 класса × 3 примера) с источниками.
+- ✅ `yarn benchmark:detectors` собирается и выполняется без ошибок (даже если результаты неполные).
+- ✅ `DroneDetectionHeaderSensor` в клиенте получает данные от hub'а и отображает иконку.
+- ✅ Целостность архитектуры проверена: нет циклических зависимостей, нет прямых импортов между детекторами.
 
 ---
 
@@ -22,189 +28,218 @@
 
 | Источник | Актуальность | Что берём сегодня |
 |----------|--------------|-------------------|
-| **STRATEGIC_PLAN_DAY.md** | ✅ Актуален (2026-05-15, 6 задач на день) | Задачи 4.1–4.5: типы синхронизации, tdoa-service, drone-detector переименование, очистка temp/, контракт наблюдений |
-| **DAILY_CODE_REVIEW.md** (вчер.) | ⚠️ Требует уточнений (9 расхождений между review и фактом) | Критичные: #28 (core тесты), #30 (mic plugin), #31 (telemetry journal), #32 (FFT edge cases); остальное — nice to have |
-| **GitHub Issues** (22 открытых) | ✅ Актуальны | #45 (dsp-drone-detector task), #30–#36 (code review follow-ups), #7–#12 (unit testing needs) |
-| **packages/temp/** | 🔴 Пусто (0 файлов) | Не берём — temp уже очищена |
+| `docs/STRATEGIC_PLAN_DAY.md` | ✅ актуален (обновлён 2026-05-16, 06:45 UTC) | Блок 4.1.1–4.1.3: реализация harmonic / spectral-flux / cepstral детекторов; 4.2–4.4: benchmark-инфра, UI, dataset |
+| `docs/DAILY_CODE_REVIEW.md` (вчера, 2026-05-15) | ⚠️ исторический, но регуляции актуальны | Структурщик: проверка слабой связанности (нет прямых импортов детекторов); Математик: чистота функций; Верстальщик: a11y для header-sensor |
+| `docs/MAIN_DAY_ISSUE.md` | ✅ актуален (Single-Node Detection First, #47) | Scaffolding завершено → переход на реализацию; stage-gate 1→2 остаётся заморожен |
+| GitHub Issues (23 открытых) | ⚠️ микс приоритетов | #47 (single-node, MAIN), #45 (dsp-drone, связан), #28–#36 (code-review-следствия, параллельно); #9–#12 (unit-тесты, S-размер) |
+| `packages/temp/` | ✅ пусто (0 файлов) | Нет наброска — работаем по task-промпту и STRATEGIC_PLAN |
 
 ---
 
 ## Порядок работы
 
-**Цепочка ролей на день:**
+**Цепочка ролей:**
 
-1. **Teamlead (Vesnin)** — фреймирует приоритеты, определяет, что в скоупе, ревьюит финальное состояние.
-2. **Структурщик (Ozhegov)** → параллельно с остальными — проверяет импорты, слабую связанность в плагинах.
-3. **Математик (Dynin)** → Структурщик → Teamlead — контракты данных (SyncedTimestamp, TDOA), чистота функций.
-4. **Верстальщик (Rodchenko)** → параллельно — подтверждает, что drone-detector UI соответствует DESIGN.md.
-5. **Teamlead (Vesnin)** — LGTM по завершении.
+1. **Teamlead (Vesnin)** — согласовывает приоритизацию, границы harmonic-детектора, LGTM для интеграции в UI.
+2. **Математик (Dynin)** → реализует `src/math/harmonic-extractor.ts` (FFT, поиск F₀, гармоники).
+3. **Музыкант** (имя в работе) → валидирует на реальных звуках из DATASET, проверяет false-positive/negative.
+4. **Структурщик (Ozhegov)** → собирает интеграцию: detector-base → harmonic-detector → registry → hub для UI.
+5. **Верстальщик (Rodchenko)** → `DroneDetectionHeaderSensor` получает результаты из hub, дизайн икон (по DESIGN.md).
+6. **Teamlead (финал)** → LGTM на целостность архитектуры перед merge в `main`.
 
 ---
 
 ## [Teamlead]
 
-### Стратегический фокус
+### Стратегический контекст
 
-Этап 1 дорожной карты **завершаем**, Этап 2 **подготавливаем**. Сегодняшний день — мост между ними.
+После консилиума *Single-Node Detection First* ясна стратегия:
+- **Этап 1.A (DSP-эшелон):** три детектора (harmonic, spectral-flux, cepstral) как быстрая валидация подхода.
+- **Stage-gate 1→2:** `precision ≥ 85%, recall ≥ 90%` на одном узле → разблокировка TDOA и многоузловой сети.
+- **Этап 2 (TDOA, мультиузел) — заморожен** явно до gate. Типы зарезервированы в `acoustic-network.ts`, но реализация не начинается.
 
-**Что в скоупе:**
-- Типы и контракты синхронизации (core) — фундамент для многоузловой системы.
-- Скелет tdoa-service — демонстрация подготовленности архитектуры к Этапу 2.
-- Финализация drone-detector на одном узле (Этап 1).
-- Метаинфраструктура (скрипты consilium, main-day-issue, дедупликация документации).
+### LGTM-границы на день
 
-**Что НЕ делаем сегодня:**
-- ❌ Полную синхронизацию по GPS-PPS (заглушка будет).
-- ❌ Fusion-сервис и мультилатерацию (это Этап 3).
-- ❌ Фильтр Калмана и трекинг целей (Этап 4).
-- ❌ Общую переработку design-system (отложить после Этапа 2).
+**✅ В скоупе дня (LGTM буду ставить):**
+- Реализация `harmonic-detector-service` (контракт `DroneDetector`, чистые функции в `src/math/`, unit-тесты).
+- Наполнение `DATASET.md` (минимум 9 примеров, источники, SNR).
+- UI `DroneDetectionHeaderSensor` (подписка на hub, отображение иконки, цвета).
+- Benchmark-скрипт v0.1 (основной механизм, может быть неполным).
+- Code-review по целостности архитектуры (граф зависимостей, нет циклов).
+
+**❌ НЕ в скоупе дня (отложить / ждём stage-gate):**
+- Реализация spectral-flux и cepstral детекторов → **отдельные task-промпты** после LGTM на harmonic.
+- Нейросетевые детекторы (yamnet, clap) — Этап 1.B, ждут Этапа 1.A завершения.
+- TDOA, синхронизация времени на узлах, локализация — явно за шлюзом.
+- Тесты на многоузловой синхронизации — не начинаем.
 
 ### Приоритизация GitHub Issues
 
-| Приоритет | Issues | Действие |
-|-----------|--------|---------|
-| **КРИТИЧНО** | #28, #30, #31 | Включить в Definition of Done на вечер |
-| **ВЫСОКИЙ** | #7–#12 (unit testing), #26, #36 | Часть в скоупе дня, часть → backlog Этапа 2 |
-| **СРЕДНИЙ** | #32–#35 (документация, a11y) | Nice to have; можно отложить до конца Этапа 1 |
-| **BACKLOG** | #37–#46 (регистры, синхронизация с Linear) | Отложить на период инфраструктуры |
+| № | Название | Статус сегодня | Причина |
+|---|----------|----------------|---------|
+| **#47** | Single-Node Detection First (main-day-issue) | 🟢 **в работе** | Центральный фокус; scaffolding готов, переходим на реализацию |
+| **#45** | DSP-детектор дрона (размер L, task-registry) | 🟡 **параллельно, не расширять** | Harmonic-detector из #47 — эталон для #45; уточнение границ после LGTM |
+| **#28–#36** | Code-review-следствия (unit-тесты, a11y, импорты) | 🟡 **параллельно, S-размер** | #30 (аудит импортов микрофона), #31 (telemetry-journal), #32–#34 (документация) — не блокируют день |
+| **#37** | Code-review index (историческая) | 🔴 **отложить** | Информационная, не требует работы |
+| **#9–#12** | Unit-тесты (мikStream, register, scripts, store) | 🟡 **backlog, S-размер** | Если остаётся время в конце дня → одну задачу (например, #9 на microphoneStreamHub) |
+| **#24–#27** | Lint, Storybook, a11y, lazy-loading | 🟡 **backlog** | Инфра-задачи, важны, но не блокируют день; триаж на Linear |
+
+**Вывод:** Фокус на #47 (harmonic + dataset + benchmark + UI). Параллельно #45 (уточнение, не расширение). Code-review issues (#28–#36) — мониторим, не активируем, пока не видим конкретные нарушения.
 
 ---
 
 ## [Структурщик]
 
-### Слабая связанность и граничные проверки
+### Модульная структура и интеграция
 
-**На вечер проверить:**
+#### Что уже есть (поддерживаем):
+- ✅ `@membrana/detector-base` — контракты, fixtures.
+- ✅ 6 scaffold'ов в `packages/services/detectors/{harmonic,spectral-flux,cepstral,yamnet,clap,agentic}`.
+- ✅ `MembranaRegistry` в core — фасад для регистрации модулей и публикации результатов.
+- ✅ `microphoneStreamHub` в `apps/client` — шина микрофонного потока для плагинов.
 
-1. **Плагины микрофона** (#30 — КРИТИЧНО):
-   - Нет ли прямых импортов `@membrana/telemetry*` из `apps/client/src/plugins/microphone-stream-viz`?
-   - Нет ли прямых вызовов Web Audio методов вне `@membrana/audio-engine-service`?
-   - Command: `rg -n "@membrana/telemetry|navigator.mediaDevices|AudioContext" apps/client/src/plugins/microphone* apps/client/src/modules/microphone`
+#### Что собираем сегодня:
+1. **`droneDetectionResultHub`** (новый) в `apps/client/src/modules/microphone/`:
+   - Сервисы (детекторы) публикуют результаты: `type DroneDetectionPublish = { detectorName: string, result: DetectionResult }`.
+   - UI подписывается на последний результат с уверенностью и классом.
+   - Контракт в `apps/client/src/types/detection.ts` (или переиспользуем из `@membrana/detector-base`).
 
-2. **Новые сервисы** (tdoa-service, типы sync):
-   - Импорты только из `@membrana/core` + локальные типы.
-   - Ни React, ни Web Audio, ни @membrana/audio-engine.
-   - Пакеты находятся в `packages/services/` с правильным `package.json`.
+2. **Хук `useDroneDetectionSensor()`** в `apps/client/src/hooks/`:
+   - Подписывается на hub, возвращает `{ confidence: number, className?: string, timestamp: number }`.
+   - Late subscriber: если hub уже имеет результат, хук получает его сразу.
 
-3. **Плагины FFT, Sound Quality, Drone Detector**:
-   - Нет ли импортов между соседями?
-   - Все вызовы сервисов идут через consensus интерфейсы, не через приватные функции.
+3. **Регистрация harmonic-детектора:**
+   - Пакет `packages/services/detectors/harmonic/src/index.ts` экспортирует `HarmonicDetector` (class / factory).
+   - Интеграция в `apps/client`: либо через `registerService()` в agenda, либо прямой инстанс (уточнить у Teamlead).
+   - **Нет прямых импортов** между детекторами; каждый изолирован.
 
-4. **Дедупликация документации**:
-   - Разделить ответственность: VIRTUAL_TEAM_PROMPT.md → координация ролей, TASK_PROMPT_WORKFLOW.md → оформление issue → work.
-   - Убрать дублирование таблицы персонажей.
-
-**Definition of Done (Структурщик):**
-- [ ] Граф импортов проверен: `rg "from.*plugins/" packages/plugins/*/src/` (пусто).
-- [ ] Скрипты consilium.mjs, main-day-issue.mjs закоммичены.
-- [ ] `yarn lint` зелёный (нет import-ошибок).
-- [ ] Дедупликация документации завершена или явно отложена в task #X.
+#### Слабая связанность (checklist):
+- [ ] Нет импортов вида `import from '@membrana/detector-*'` между детекторами.
+- [ ] Детекторы импортируют только `@membrana/detector-base` + `@membrana/core` (типы) + свой `math/`.
+- [ ] UI-компоненты (`DroneDetectionHeaderSensor`) импортируют только types и хуки, не детекторы напрямую.
+- [ ] `yarn workspaces info` — нет циклических зависимостей.
 
 ---
 
 ## [Математик]
 
-### Контракты данных и чистые функции
+### Контракт и чистые функции
 
-**На вечер доставить:**
+#### `harmonic-detector-service` → `src/math/harmonic-extractor.ts`:
 
-1. **Типы синхронизации в @membrana/core** (задача 4.1 STRATEGIC_PLAN):
-   ```typescript
-   // packages/core/src/types.ts
-   interface SyncedTimestamp {
-     localMs: number;           // локальное время узла
-     globalMs: number;          // согласованное глобальное время
-     confidence: number;        // 0..1, уверенность в синхронизации
-   }
-   
-   interface TimeSyncProvider {
-     calibrate(nodeId: string): Promise<{ offset: number; confidence: number }>;
-   }
-   
-   interface TdoaResult {
-     deltaT: number;            // разница времён прихода, микросекунды
-     confidence: number;        // уверенность в TDOA
-     signalPower?: number;      // мощность сигнала для фильтрации шума
-   }
-   ```
+**Сигнатура:**
+```typescript
+export function extractHarmonics(
+  magnitudes: Float32Array,  // выход FFT (амплитуды по частотам)
+  sampleRate: number,        // Hz (обычно 48000)
+  fftSize: number            // размер окна FFT
+): HarmonicFeatures
+```
 
-2. **Скелет tdoa-service** (задача 4.2 STRATEGIC_PLAN):
-   - Структура: `packages/services/tdoa/src/math/tdoa.ts` (чистые функции).
-   - Функция `computeTdoa(obs1: AcousticObservation, obs2: AcousticObservation) => TdoaResult`.
-   - Unit-тесты: синтетические сигналы (1 кГц, 48 kHz), известные расстояния (10 м, 100 м, 1000 м).
+**Возвращаемый тип:**
+```typescript
+type HarmonicFeatures = {
+  fundamentalFrequency: number | null,  // Гц (80–250 для дрона)
+  harmonicPattern: number[],            // амплитуды гармоник (абсолютные или относительные)
+  harmonicConfidence: number,           // 0–1 (насколько выраженнны гармоники)
+  spectralCentroid: number,             // Гц (центр тяжести спектра)
+  peakFrequencies: number[],            // основные пики
+  isHarmonicLike: boolean               // истинно, если паттерн похож на дрон
+}
+```
 
-3. **Чистота math-слоя FFT** (#32 — проверка):
-   - Файлы `packages/services/fft-analyzer/src/math/{fft,metrics,statistics}.ts` не содержат React/DOM/Web Audio.
-   - Контракты в JSDoc: допустимые входы, edge cases (пустой буфер, NaN, Nyquist).
+#### Требования к реализации:
 
-**Definition of Done (Математик):**
-- [ ] `packages/core/src/types.ts` экспортирует SyncedTimestamp, TimeSyncProvider, TdoaResult.
-- [ ] `packages/services/tdoa/src/math/tdoa.test.ts` содержит ≥4 unit-теста (zero signal, known sine, TDOA на расстояниях).
-- [ ] FFT math-функции документированы (JSDoc с примерами и ограничениями).
-- [ ] `yarn test --filter=@membrana/core` и `yarn test --filter=@membrana/tdoa` проходят.
+1. **FFT parsing:** от `magnitudes` найти фундаментальную частоту (F₀) в диапазоне 80–250 Гц.
+   - Метод: поиск максимума, проверка предположения гармоничности (частоты кратны F₀).
+   - Edge cases: шум (нет явного пика → `fundamentalFrequency = null`), nyquist (частоты выше 24 кHz обрезаны).
+
+2. **Гармонический паттерн:** выделение 2–5 кратных частот F₀, их амплитуд.
+   - Нормализация (например, относительно F₀ = 1).
+
+3. **Confidence score:** отношение суммы амплитуд гармоник к шуму; может быть SNR-like или просто коэффициент корреляции с эталонным спектром дрона.
+
+4. **Edge cases:**
+   - Пустой буфер / всё нули → `isHarmonicLike = false`.
+   - NaN / Infinity → защитный return с дефолтными значениями.
+   - Буфер из одного значения → корректное поведение (не крашится).
+
+#### Unit-тесты (обязательны):
+
+- ✅ **Синтезированный дрон** (120 Гц + гармоники): извлекает F₀ = 120 ± 2 Гц, гармоники видны.
+- ✅ **Белый шум:** `isHarmonicLike = false`, `fundamentalFrequency = null`.
+- ✅ **Чистый синус (440 Гц):** F₀ = 440, одна гармоника, нет кратных.
+- ✅ **Дрон в шуме (SNR = 10 dB):** всё ещё должно детектить F₀ (или confidence упасть).
+- ✅ **Edge cases:** пусто, NaN, маленький буфер.
 
 ---
 
 ## [Музыкант]
 
-### Поток audio-engine и качество сигнала
+### Поток audio-engine и валидация на реальных звуках
 
-**На вечер проверить:**
+#### Откуда берём звуки:
+- **Датасет** из `docs/DATASET.md` (минимум 3 примера дрона, 3 примера шума, 3 примера музыки / речи).
+- **Источники:** синтезированные (для unit-тестов), полевые записи (если есть доступ; иначе public datasets типа DCASE, Urban Sound).
 
-1. **Параметры захвата микрофона** для Этапа 1:
-   - Sample rate: 48 kHz (по STRATEGIC_PLAN).
-   - Буфер: размер согласован с FFT window (2048 сэмплов).
-   - Нет ли clipping на типичных уровнях звука (разговор, дрон 80–250 Гц).
+#### Валидация:
+1. Каждый звук — WAV / MP3 с метаинформацией (дрон да/нет, класс, SNR, source).
+2. Гармонический детектор запускается на каждом файле:
+   - **Истинные позитивы (TP):** детектор правильно нашёл F₀ в диапазоне 80–250 Гц.
+   - **Ложные позитивы (FP):** музыка или человеческий голос помечены как дрон (F₀ вне диапазона, но алгоритм сказал дрон).
+   - **Ложные негативы (FN):** реальный дрон пропущен.
 
-2. **Drone detector plugin** (task 4.3 STRATEGIC_PLAN):
-   - Confidence score вместо boolean on/off.
-   - Фоновый профиль (30 сек записи без дрона) сохраняется в persist.
-   - Unit-тест: synthetic audio с дроном (120 Гц) → confidence > 0.7; фоновый шум → confidence < 0.3.
+#### Результаты → `DETECTOR_BENCHMARK.md`:
+```markdown
+| Детектор | TP | FP | FN | Precision | Recall | F1 |
+|----------|----|----|----|-----------|---------|----|
+| harmonic | 9  | 1  | 0  | 0.90      | 1.00  | 0.95 |
+```
 
-3. **VirtualNodeSimulator для тестирования** (task 4.6):
-   - Скелет класса для эмуляции двух узлов с разной временной задержкой.
-   - Пример в README audio-engine.
-
-**Definition of Done (Музыкант):**
-- [ ] Drone detector переименован: `packages/plugins/fft-threshold-test` → `packages/plugins/drone-detector-test`.
-- [ ] Confidence score реализован и проверен на синтетическом audio.
-- [ ] Фоновый профиль сохраняется/загружается из persist.
-- [ ] Unit-тест на классификацию дрона vs. шума включен в `yarn test`.
-- [ ] README audio-engine содержит пример VirtualNodeSimulator (заглушка OK).
+#### Что НЕ делаем:
+- Обучение нейросетей (Этап 1.B).
+- Многоузловые тесты синхронизации (Этап 2).
 
 ---
 
 ## [Верстальщик]
 
-### UI по DESIGN.md и очистка temp/
+### UI-интеграция и DESIGN.md соответствие
 
-**На вечер проверить:**
+#### `DroneDetectionHeaderSensor` в `apps/client/src/components/`:
 
-1. **Drone detector UI** (задача 4.3 STRATEGIC_PLAN):
-   - Confidence score отображается визуально (progress bar / gauge).
-   - Кнопка "Запись фонового профиля" есть и работает.
-   - Соответствие `docs/DESIGN.md` (цвета, размеры, доступность).
+**Props (контракт):**
+```typescript
+type DroneDetectionHeaderSensorProps = {
+  detectionResult?: { confidence: number; className?: string };
+  isLoading?: boolean;
+}
+```
 
-2. **Журнал телеметрии** (#31 — presentational only):
-   - Фильтрация (tag, type) — логика выделена из компонента или в сервис?
-   - ARIA-метки на карточках: `aria-label`, `aria-live="polite"`.
-   - Контрастность текста (WCAG 2.1 AA).
+**Рендер (по DESIGN.md):**
+- **Иконка + текст** в заголовке клиента (рядом с микрофоном, сетью, батареей).
+- **Нет детекции:** иконка серая, текст «Прослушивание» или скрыто.
+- **Низкая уверенность (< 60%):** жёлтая иконка, текст «⚠️ Неуверенная детекция».
+- **Высокая уверенность (≥ 80%):** красная иконка, текст «🔴 Обнаружен дрон».
+- **Класс дрона** (если доступен): текст расширяется → «🔴 Обнаружен [тип] (88%)».
 
-3. **Очистка packages/temp/** (задача 4.4 STRATEGIC_PLAN):
-   - `three-param-analyzer/` удалена.
-   - Старые компоненты `Journal/*` удалены (ценные идеи → `docs/discussions/journal-concepts.md`).
-   - `.gitkeep` остаётся для будущих песочниц.
+**a11y:**
+- `aria-live="polite"` на родителе (screen-reader озвучит изменение).
+- `aria-label="Статус обнаружения дрона: высокая уверенность"` для контекста.
+- Цвет не единственная информация → иконка + текст.
 
-4. **Проверка переносов из temp:**
-   - Какие компоненты из `packages/temp/` использует клиент в боевых плагинах?
-   - Если переиспользуются — вынести в `packages/design-system/` или `packages/plugins/`.
-   - Если one-off — удалить, не копировать.
+**Что НЕ делаем:**
+- Animation / реалтайм-график спектра в заголовке (это плагин, не header).
+- Настройки порога детекции (Этап 1.B или позже).
+- Воспроизведение звукового оповещения (отложить на UX-review).
 
-**Definition of Done (Верстальщик):**
-- [ ] Drone detector UI соответствует DESIGN.md (скриншот прилагается).
-- [ ] `packages/temp/` содержит только `.gitkeep`.
-- [ ] Telemetry journal имеет ARIA-разметку на критичных элементах.
-- [ ] Коммит `chore(repo): archive experimental packages to docs/discussions` подготовлен.
+#### Переносим из `packages/temp/`:
+- ✅ `packages/temp/` пусто → нет наброска для переноса.
+
+#### Anti-patterns (ЧЕМ НЕ БЫТЬ):
+- ❌ Бизнес-логика детекции в компоненте (только визуализация).
+- ❌ Прямые импорты из детекторов (только через хуки и типы).
+- ❌ Inline стили (только классы Tailwind / DaisyUI по DESIGN.md).
 
 ---
 
@@ -212,113 +247,127 @@
 
 | Блок | Размер | Задача | DoD | Issues |
 |------|--------|--------|-----|--------|
-| **4.1** | M | Типы синхронизации в @membrana/core | SyncedTimestamp, TimeSyncProvider, TdoaResult экспортированы; unit-тесты на TDOA-вычисление | — |
-| **4.2** | M | Скелет @membrana/tdoa-service | `src/math/tdoa.ts`, unit-тесты на синтетических данных, README с примером | — |
-| **4.3** | S–M | Drone detector: переименование + confidence score | Плагин переименован, confidence: 0..1, фоновый профиль, unit-тест | — |
-| **4.4** | S | Очистка packages/temp/ | Удалены three-param-analyzer и Journal/, архивирование в docs/, git чистый | — |
-| **4.5** | M | Контракт наблюдения (AcousticObservation, Track) | Типы в core, экспорт из core/index.ts, примеры в README, интеграция с fusion-слоем | — |
-| **Meta** | S | Дедупликация документации и скрипты | consilium.mjs + main-day-issue.mjs закоммичены, VIRTUAL_TEAM_PROMPT vs. TASK_PROMPT разделены, package.json обновлён | #36, #46 |
-| **Проверка** | S | Слабая связанность плагинов, FFT math-чистота | Граф импортов проверен, no-react в math/, rg-поиск чистый | #30, #32 |
+| **A. Harmonic-детектор** | **M** | Реализовать `@membrana/harmonic-detector-service/src/math/harmonic-extractor.ts` + unit-тесты (`harmonic-extractor.test.ts`). Интегрировать в core `src/harmonic-detector.ts` (контракт `DroneDetector`). | ✅ `yarn test @membrana/harmonic-detector` зелёный; FFT-парсинг на синтезах и реальных звуках; latency < 100 мс; контракт `DetectionResult` заполнен. | #47 (scaffold → реализация) |
+| **B. Dataset** | **S** | Наполнить `docs/DATASET.md`: 3×3 примеров (дрон, не-дрон, фон), источники, SNR, ссылки (даже если external). Чек-лист для Музыканта: прослушал и подтвердил слышимость. | ✅ Таблица с 9+ примерами; каждый имеет источник, длительность, формат; раздел шума среды; ссылка на скрипт скачивания (placeholder OK). | #47, #45 |
+| **C. Benchmark-скрипт v0.1** | **S** | Создать `scripts/benchmark-detectors.mjs`: загружает датасет, запускает harmonic на каждый файл, вычисляет TP/FP/FN. Генерирует JSON report. Скрипт в `package.json`: `yarn benchmark:detectors`. | ✅ Скрипт собирается, запускается без ошибок, выводит JSON; `docs/DETECTOR_BENCHMARK.md` автогенерируется с таблицей (даже если одна строка на harmonic). | #47 |
+| **D. Hub в клиенте** | **S** | Создать `droneDetectionResultHub` в `apps/client/src/modules/microphone/` (аналог `microphoneStreamHub`). Добавить хук `useDroneDetectionSensor()`. Подтвердить, что harmonic-детектор может публиковать в hub. | ✅ Hub живёт, late-subscriber работает, хук возвращает `{ confidence, className, timestamp }`. Модульный test на подписку и публикацию (smoke). | #47 |
+| **E. DroneDetectionHeaderSensor** | **S** | Компонент в `apps/client/src/components/`: подписывается на `useDroneDetectionSensor()`, выводит иконку + текст (цветовая шкала по DESIGN.md). Props типизированы. a11y: `aria-live`, `aria-label`. | ✅ Компонент рендерится в header; иконка меняет цвет в зависимости от confidence; Figma / DESIGN.md соблюдены; a11y проверена (хотя бы визуально или простой smoke-test). | #47 |
+| **F. Проверка архитектуры** | **S** | `yarn workspaces info` на циклы. Grep на `@membrana/detector-*` в детекторах (должно быть пусто). Проверить, нет ли нарушений в импортах UI-компонентов. Отчёт в комментарии pull-request. | ✅ Нет циклических зависимостей. Детекторы не импортируют друг друга. UI не импортирует детекторы напрямую. | #47, #30 (code-review) |
 
 ---
 
 ## Матрица Issues ↔ задачи дня
 
-| Задача дня | GitHub Issues |
-|----------|--------------|
-| 4.1–4.5 (STRATEGIC_PLAN) | Не привязаны к конкретным Issues (стратегические) |
-| Meta — дедупликация docs | #36 (code-review discrepancies), #46 (VIRTUAL_TEAM_PROMPT sync) |
-| Проверка mic plugin (#30) | #30 (audit mic plugin — КРИТИЧНО) |
-| FFT math-чистота (#32) | #32 (verify math purity) |
-| Telemetry journal UI (#31) | #31 (presentational only) |
-| Unit tests (#7–#12) | #7 (agenda store), #8 (module registration smoke), #9 (microphoneStreamHub), #10 (FFT math tests), #11 (resolveMicStreamVizConfig), #12 (CI scripts) |
-
-**Отложить на Этап 2:**
-- #25–#27 (lazy-loading, Storybook, graceful degradation).
-- #33–#35 (a11y расширения, avatar graphics).
-- #37–#46 (регистры, синхронизация с Linear).
+| Задача дня | GitHub Issues | Связь |
+|------------|---------------|-------|
+| **A. Harmonic-детектор** | #47 (main-day-issue, single-node) | Основной фокус; scaffold → реализация |
+| **A. Harmonic-детектор** | #45 (dsp-drone-detector, L-размер) | Связанная; уточнение границ после LGTM на harmonic |
+| **B. Dataset** | #47 | Acceptance criteria для stage-gate 1→2 |
+| **C. Benchmark** | #47 | Инструмент валидации качества детекции |
+| **D–E. Hub + HeaderSensor** | #47 | UI-интеграция результатов детекции |
+| **F. Проверка архитектуры** | #30 (code-review: импорты микрофона) | Параллельно, не блокирует |
+| (код-ревью следствия) | #28–#36 | Мониторим, не активируем сегодня |
+| (unit-тесты backlog) | #9–#12 | Если остаётся время, одну задачу |
 
 ---
 
 ## Итоговый артефакт
 
-**К вечеру на git:**
+**Файлы и пакеты, которые появятся / изменятся:**
 
 ```
-✅ packages/core/src/types.ts
-   ├─ SyncedTimestamp interface
-   ├─ TimeSyncProvider interface
-   └─ TdoaResult interface
+packages/services/detectors/
+└── harmonic/
+    ├── src/
+    │   ├── math/
+    │   │   ├── harmonic-extractor.ts     ← новый, реализация
+    │   │   └── harmonic-extractor.test.ts ← новый, unit-тесты
+    │   ├── core/
+    │   │   └── harmonic-detector.ts      ← обновить (не placeholder)
+    │   └── index.ts
+    ├── dist/                              ← пересобрать
+    └── package.json
 
-✅ packages/services/tdoa/ (новый пакет)
-   ├─ src/math/tdoa.ts
-   ├─ src/math/tdoa.test.ts
-   ├─ src/core/tdoa-service.ts
-   ├─ src/hooks/useTdoa.ts (заглушка)
-   ├─ README.md
-   └─ package.json
+docs/
+├── DATASET.md                             ← пересписать (9+ примеров)
+├── DETECTOR_BENCHMARK.md                  ← автогенерировать (JSON → markdown)
+└── DAILY_STANDUP.md                       ← этот файл
 
-✅ apps/client/src/plugins/drone-detector-test/ (переименование из fft-threshold-test)
-   ├─ index.ts
-   ├─ DroneDetectorPanel.tsx (с confidence score)
-   └─ drone-detector.test.ts
+apps/client/src/
+├── modules/microphone/
+│   ├── droneDetectionResultHub.ts         ← новый hub
+│   └── index.ts                           ← экспорт hub
+├── hooks/
+│   ├── useDroneDetectionSensor.ts         ← новый хук
+│   └── index.ts
+├── components/
+│   ├── DroneDetectionHeaderSensor.tsx     ← новый компонент
+│   └── Header.tsx                         ← интеграция sensor в header
+└── types/
+    └── detection.ts                       ← типы (или переиспользуем из detector-base)
 
-✅ packages/services/audio-engine/README.md
-   └─ Раздел VirtualNodeSimulator (пример)
+scripts/
+└── benchmark-detectors.mjs                ← новый скрипт
 
-✅ docs/discussions/journal-concepts.md (если есть ценное из temp)
-
-✅ docs/VIRTUAL_TEAM_PROMPT.md (дедупликация завершена или отложена)
-
-✅ scripts/consilium.mjs, scripts/main-day-issue.mjs (закоммичены)
-
-✅ package.json (скрипты consilium, main-day-issue добавлены)
-
-✅ git: chore(repo): archive experimental packages to docs/discussions
+package.json                               ← добавить `benchmark:detectors`
 ```
 
 ---
 
 ## Definition of Done (день)
 
-- [ ] `@membrana/core` экспортирует `SyncedTimestamp`, `TimeSyncProvider`, `TdoaResult`; unit-тесты на TDOA-вычисление зелёные.
-- [ ] `@membrana/tdoa-service` содержит скелет с чистыми функциями и ≥4 unit-тестами на синтетических данных.
-- [ ] Плагин `drone-detector-test` переименован, confidence score реализован, фоновый профиль работает.
-- [ ] `packages/temp/` очищена (осталась только `.gitkeep`); ценное архивировано в `docs/discussions/`.
-- [ ] Скрипты `consilium.mjs`, `main-day-issue.mjs` закоммичены в `scripts/`, `package.json` актуален.
-- [ ] Проверены нарушения слабой связанности в плагинах микрофона (#30) — `rg`-поиск чистый.
-- [ ] FFT math-функции задокументированы (JSDoc с примерами); edge cases явно описаны.
-- [ ] `yarn lint` и `yarn test` проходят без ошибок; turbo кеш актуален.
-- [ ] LGTM от Teamlead: код соответствует `ARCHITECTURE.md`, нет нарушений дизайна.
+- [ ] **Harmonic-детектор реализован:** `src/math/harmonic-extractor.ts` содержит полную логику FFT-парсинга, поиска F₀ (80–250 Гц), выделения гармоник; `yarn test @membrana/harmonic-detector` **зелёный**.
+
+- [ ] **Unit-тесты на harmonic:** синтезированные дроны, белый шум, edge cases (пусто, NaN, маленький буфер) — все pass.
+
+- [ ] **Latency гармоник < 100 мс** на типовом оборудовании (ноутбук, 2048-сэмпла @ 48 kHz).
+
+- [ ] **DATASET.md полностью наполнен:** 9 примеров (3 дрона, 3 шума, 3 не-дроны), метаинформация, источники; раздел на шум среды; Музыкант подтвердил слышимость.
+
+- [ ] **`yarn benchmark:detectors` работает:** скрипт запускается, загружает датасет, вычисляет метрики для harmonic-детектора, выводит JSON, генерирует `DETECTOR_BENCHMARK.md` с таблицей.
+
+- [ ] **Hub + хук в клиенте:** `droneDetectionResultHub`, `useDroneDetectionSensor()` создано, smoke-test на подписку проходит, harmonic-детектор может публиковать результаты.
+
+- [ ] **`DroneDetectionHeaderSensor` в header:** компонент отображается, иконка меняет цвет по confidence (серо → жёлто → красно), a11y-атрибуты добавлены.
+
+- [ ] **Архитектура целостна:** нет циклических зависимостей, детекторы не импортируют друг друга, UI не обходит контракты. `git log --oneline --graph` не содержит merge-конфликтов.
+
+- [ ] **LGTM от Teamlead** на PR перед слиянием в `main`.
 
 ---
 
 ## Риски
 
-1. **Дедупликация документации может перекрыться на другие PR:**
-   - Если споры затянутся → отложить в отдельный issue (сохранив статус-кво в VIRTUAL_TEAM_PROMPT).
-   - **Срезаем первым:** разрешаем оставить оба документа с явной перекрёстной ссылкой, переделаем на следующей неделе.
+1. **Harmonic-детектор на реальных звуках не работает.** 
+   - *Причина:* синтезированные тесты pass, но полевые записи имеют шум, пропадают гармоники, false-positive на музыку.
+   - *Снижение:* во время реализации параллельно запускать на примерах из DATASET; если метрики (precision, recall) упадут < 70%, масштабировать эталон (больше примеров, обучение).
+   - *Первый срез:* если к концу дня только 50% примеров проходят, это OK — отложить на следующий day issue, но контракт и unit-тесты должны быть готовы.
 
-2. **Синхронизация времени — холодный старт для TDOA:**
-   - Заглушка `SyncedTimestamp` с `offset: 0` будет неправильной для реальной мультилатерации.
-   - **Действие:** в скелете tdoa-service явно отметить TODO для калибровки; unit-тесты используют идеальную синхронизацию.
+2. **Benchmark-инфраструктура отсутствует (нет скрипта или не собирается).**
+   - *Причина:* недоценена сложность интеграции с CI, парсинга датасета.
+   - *Снижение:* минимально жизнеспособный скрипт на Node.js (без CI) к концу дня; CI-интеграция на следующий день.
+   - *Срез:* скрипт может быть черновым (например, hardcode путей), но должен работать локально.
 
-3. **Plausible runtime-баг в drone-detector confidence-вычислении:**
-   - На синтетических 120 Гц данных score может быть неинтуитивным.
-   - **Действие:** тесты включают обратные сценарии (фоновый шум должен < 0.3); логирование confidence во время отладки.
+3. **Hub в клиенте не интегрируется с harmonic-детектором.**
+   - *Причина:* несогласованность контрактов (тип `DetectionResult` в detector-base vs ожидаемый в hub).
+   - *Снижение:* согласовать контракты на утром (Teamlead + Структурщик); если нестыковка, добавить адаптер.
+   - *Срез:* hub и хук создаём как-есть; если детектор не публикует, оставляем mock-данные для UI.
 
-4. **FFT edge cases — документация может отстать от кода:**
-   - Если функции меняются после документирования → актуальность теряется.
-   - **Действие:** при unit-тестировании все edge cases должны быть покрыты тестами (source of truth).
+4. **DATASET примеры недоступны или неполные.**
+   - *Причина:* источники (Zenodo, AudioSet, внутренние записи) требуют скачивания, лицензий, обработки.
+   - *Снижение:* начать с mock-примеров (синтезированные) в DATASET.md; добавить раздел **Coming Soon** для настоящих полевых данных.
+   - *Срез:* таблица с 9 примерами (даже если часть синтезированы) + план скачивания → достаточно.
+
+5. **План перегружен; что срезать первым:**
+   - Если не хватает времени на harmonic → отложить benchmark-инфраструктуру на завтра (блок **C**).
+   - Если harmonic готов, но DATASET неполный → завершить unit-тесты на гармониках, dataset наполнить на следующий день.
+   - Header-sensor (блок **E**) → отложить на завтра, если ресурсов не хватает.
+   - Проверка архитектуры (блок **F**) — 30 минут, не откладывать.
 
 ---
 
-## Что обсудить на синхронизации (optional)
+## Ход встречи
 
-- Будет ли VirtualNodeSimulator в публичном API audio-engine или только для тестов?
-- Когда стартовать работу над fusion-сервисом (Этап 3)? После Этапа 1 finalise?
-- На Этапе 2 нужна ли работа с persistence узла (сохранение профилей) или это Этап 3+?
+**Вопросы для clarify перед работой:**
 
----
-
-**Источники:** STRATEGIC_PLAN_DAY.md · DAILY_CODE_REVIEW.md · GitHub Issues (#28–#36, #45) · ARCHITECTURE.md · SERVICES.md
+1. **[Teamlead → Математик]:** Какой метод для поиска фундаментальной частоты предпочитаешь — пиковый (argmax), спектральная автокорреляция (YIN
