@@ -180,20 +180,79 @@ export function findExistingBundleDir(archiveRoot, dayKey, files) {
   return null;
 }
 
+/** Маркер в HTML-комментарии в начале архивных копий. */
+export const ARCHIVE_SNAPSHOT_ROLE = 'archive-snapshot';
+
+/**
+ * Баннер: архивная копия ≠ канон в docs/ (перезаписывается утром).
+ * @param {{ dayKey: string, archivedAt: string, sourceRel: string, canonicalRel: string }} meta
+ */
+export function formatArchiveSnapshotBanner(meta) {
+  return `<!--
+  archive-role: ${ARCHIVE_SNAPSHOT_ROLE}
+  archive-day: ${meta.dayKey}
+  archived-at: ${meta.archivedAt}
+  source: ${meta.sourceRel}
+  canonical: ${meta.canonicalRel} (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
+`;
+}
+
+/**
+ * Убирает баннер archive-snapshot для сравнения с живым файлом в docs/.
+ * @param {string} text
+ */
+export function stripArchiveSnapshotBanner(text) {
+  if (!text.startsWith('<!--')) {
+    return text;
+  }
+  const end = text.indexOf('-->');
+  if (end === -1 || !text.slice(0, end + 3).includes(ARCHIVE_SNAPSHOT_ROLE)) {
+    return text;
+  }
+  return text.slice(end + 3).replace(/^[\r\n]+/, '');
+}
+
+/**
+ * @param {string} sourcePath
+ * @param {string} destPath
+ * @param {{ dayKey: string, archivedAt: string, sourceRel: string, canonicalRel: string }} meta
+ * @param {boolean} force
+ * @returns {'copied' | 'skipped-identical' | 'missing'}
+ */
+export function copyAsArchiveSnapshot(sourcePath, destPath, meta, force) {
+  if (!existsSync(sourcePath)) {
+    return 'missing';
+  }
+  mkdirSync(join(destPath, '..'), { recursive: true });
+  const srcText = readFileSync(sourcePath, 'utf8');
+  const body = formatArchiveSnapshotBanner(meta) + srcText;
+  if (!force && existsSync(destPath)) {
+    const prevText = readFileSync(destPath, 'utf8');
+    if (stripArchiveSnapshotBanner(prevText) === srcText) {
+      return 'skipped-identical';
+    }
+  }
+  writeFileSync(destPath, body, 'utf8');
+  return 'copied';
+}
+
 /** @param {string} bundleDir */
 export function bundleFileIdentical(bundleDir, archiveName, sourcePath) {
   const dest = join(bundleDir, archiveName);
   if (!existsSync(sourcePath) || !existsSync(dest)) {
     return false;
   }
-  const a = readFileSync(sourcePath);
-  const b = readFileSync(dest);
-  return a.length === b.length && Buffer.compare(a, b) === 0;
+  const a = readFileSync(sourcePath, 'utf8');
+  const b = stripArchiveSnapshotBanner(readFileSync(dest, 'utf8'));
+  return a === b;
 }
 
 /**
  * @param {string} bundleDir
- * @param {{ archivedAt: string, dayKey: string, command: string, files: object[] }} manifest
+ * @param {object} manifest
  */
 export function writeManifest(bundleDir, manifest) {
   writeFileSync(join(bundleDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');

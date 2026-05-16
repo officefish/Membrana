@@ -8,7 +8,8 @@ import { basename, join, resolve } from 'node:path';
 import {
   allocateAlternateBundleDir,
   allocateBundleDir,
-  copyIfChanged,
+  ARCHIVE_SNAPSHOT_ROLE,
+  copyAsArchiveSnapshot,
   findExistingBundleDir,
   resolveDayKey,
   writeManifest,
@@ -109,13 +110,19 @@ let copied = 0;
 
 for (const p of present) {
   const destPath = join(bundleDir, p.archiveName);
-  const result = copyIfChanged(p.sourcePath, destPath, force);
+  const result = copyAsArchiveSnapshot(p.sourcePath, destPath, {
+    dayKey,
+    archivedAt,
+    sourceRel: p.rel,
+    canonicalRel: p.rel,
+  }, force);
   const stat = statSync(p.sourcePath);
   manifestFiles.push({
     label: p.label,
     source: p.rel,
     archiveName: p.archiveName,
     bytes: stat.size,
+    archiveRole: ARCHIVE_SNAPSHOT_ROLE,
     action: result,
   });
   if (result === 'copied') {
@@ -131,6 +138,9 @@ writeManifest(bundleDir, {
   archivedAt,
   command: 'yarn archive:daily-day',
   bundleDir: `${ARCHIVE_ROOT_REL}/${basename(bundleDir)}`,
+  role: ARCHIVE_SNAPSHOT_ROLE,
+  note: 'Не канон сегодняшнего дня; побочный снимок для ретроспективы и анализа. Актуальные файлы — в docs/.',
+  canonicalPaths: Object.fromEntries(ARTIFACTS.map((a) => [a.label, a.rel])),
   files: manifestFiles,
 });
 

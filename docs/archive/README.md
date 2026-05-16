@@ -12,8 +12,10 @@
 ## Как найти снимок за день
 
 1. **Утренний контекст (план, стендап, фокус):** `docs/archive/daily-day/YYYY-MM-DD/`  
-   - Имена файлов совпадают с каноническими в `docs/`.  
-   - В `manifest.json` — `archivedAt`, список файлов и размеры.
+   - Имена файлов совпадают с каноническими в `docs/`, но это **не** основные документы дня.  
+   - В начале каждого `.md` — баннер `archive-role: archive-snapshot` (побочный снимок для анализа).  
+   - Канон для агентов и людей: `docs/STRATEGIC_PLAN_DAY.md`, `docs/DAILY_STANDUP.md`, `docs/MAIN_DAY_ISSUE.md`.  
+   - В `manifest.json` — `role`, `archivedAt`, `canonicalPaths`, список файлов.
 
 2. **Вечернее code-review:** `docs/archive/daily-code-review/DAILY_CODE_REVIEW-*.md`  
    - Сортировка по имени ≈ по времени снимка.

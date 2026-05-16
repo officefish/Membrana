@@ -3,8 +3,10 @@ import test from 'node:test';
 
 import {
   extractIsoDates,
+  formatArchiveSnapshotBanner,
   isoStampForFilename,
   resolveDayKey,
+  stripArchiveSnapshotBanner,
 } from './lib/archive-doc-snapshot.mjs';
 
 test('extractIsoDates from standup and main-day-issue headers', () => {
@@ -30,4 +32,17 @@ test('isoStampForFilename replaces colons', () => {
   const stamp = isoStampForFilename(new Date('2026-05-16T12:34:56.789Z'));
   assert.ok(!stamp.includes(':'));
   assert.match(stamp, /2026-05-16/);
+});
+
+test('archive snapshot banner round-trip', () => {
+  const body = '# Title\n\ncontent';
+  const banner = formatArchiveSnapshotBanner({
+    dayKey: '2026-05-16',
+    archivedAt: '2026-05-16T10:00:00.000Z',
+    sourceRel: 'docs/MAIN_DAY_ISSUE.md',
+    canonicalRel: 'docs/MAIN_DAY_ISSUE.md',
+  });
+  const wrapped = banner + body;
+  assert.ok(wrapped.includes('archive-role: archive-snapshot'));
+  assert.equal(stripArchiveSnapshotBanner(wrapped), body);
 });

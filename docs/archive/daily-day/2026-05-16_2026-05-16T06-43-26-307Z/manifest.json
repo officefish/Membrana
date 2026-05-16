@@ -1,0 +1,39 @@
+{
+  "dayKey": "2026-05-16",
+  "archivedAt": "2026-05-16T06:43:26.309Z",
+  "command": "yarn archive:daily-day",
+  "bundleDir": "docs/archive/daily-day/2026-05-16_2026-05-16T06-43-26-307Z",
+  "role": "archive-snapshot",
+  "note": "Не канон сегодняшнего дня; побочный снимок для ретроспективы и анализа. Актуальные файлы — в docs/.",
+  "canonicalPaths": {
+    "STRATEGIC_PLAN_DAY": "docs/STRATEGIC_PLAN_DAY.md",
+    "DAILY_STANDUP": "docs/DAILY_STANDUP.md",
+    "MAIN_DAY_ISSUE": "docs/MAIN_DAY_ISSUE.md"
+  },
+  "files": [
+    {
+      "label": "STRATEGIC_PLAN_DAY",
+      "source": "docs/STRATEGIC_PLAN_DAY.md",
+      "archiveName": "STRATEGIC_PLAN_DAY.md",
+      "bytes": 20510,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    },
+    {
+      "label": "DAILY_STANDUP",
+      "source": "docs/DAILY_STANDUP.md",
+      "archiveName": "DAILY_STANDUP.md",
+      "bytes": 20767,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    },
+    {
+      "label": "MAIN_DAY_ISSUE",
+      "source": "docs/MAIN_DAY_ISSUE.md",
+      "archiveName": "MAIN_DAY_ISSUE.md",
+      "bytes": 3442,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    }
+  ]
+}
