@@ -19,6 +19,20 @@
 |--------|------|-----------|------|
 | [`audio-engine`](./audio-engine) | foundation | Web Audio, файлы, микрофон, `LiveSampler` — поток `AudioSampleFrame`. Не делает анализа. | Структурщик + Музыкант |
 | [`fft-analyzer`](./fft-analyzer) | analyzer | Спектральный анализ через FFT: центроид, flux, RMS, детекция, пресеты. | Математик |
+| [`detectors/`](./detetectors/) | analyzer | Семейства детекторов дрона (Single-Node Detection First): `detector-base` + 6 реализаций. | Математик + Структурщик |
+| [`tdoa`](./tdoa) | analyzer | TDOA — **frozen** до stage-gate 1→2. | — |
+
+### Детекторы (`detectors/`)
+
+| Пакет | Семейство | Статус |
+|-------|-----------|--------|
+| [`detector-base`](./detectors/base) | контракт | scaffold |
+| [`harmonic`](./detectors/harmonic) | dsp | scaffold |
+| [`cepstral`](./detectors/cepstral) | dsp | scaffold |
+| [`spectral-flux`](./detectors/spectral-flux) | dsp | scaffold |
+| [`yamnet`](./detectors/yamnet) | neural | scaffold |
+| [`clap`](./detectors/clap) | neural | scaffold |
+| [`agentic-claude`](./detectors/agentic-claude) | agentic | scaffold |
 
 **Планируется добавить:**
 

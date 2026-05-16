@@ -1,71 +1,61 @@
-<!-- Сгенерировано: 2026-05-16T05:35:38.993Z (yarn main-day-issue) -->
-<!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
-<!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: dsp-drone-detector -->
+<!-- Обновлено: 2026-05-16 — Single-Node Detection First (#47, консилиум) -->
+<!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) -->
+<!-- active в реестре: single-node-detection-first -->
 
 # MAIN_DAY_ISSUE — Центральная задача дня
 
 > **Дата:** 2026-05-16 · **Роль:** Teamlead (Vesnin)  
-> **Источники:** `DAILY_STANDUP.md`, `STRATEGIC_PLAN_DAY.md`, `DAILY_CODE_REVIEW.md`, GitHub Issues (#28–#36, #45)
+> **Источники:** консилиум `docs/seanses/single-node-detection-first-2026-05-16.md`, task-промпт #47
 
 ---
 
 ## 🎯 Обязательный фокус дня
 
-### **Завершить фундамент Этапа 1 — убрать нарушения слабой связанности и добавить контракты синхронизации**
+### **Single-Node Detection First — дорожная карта + scaffolding детекторов**
 
-**Одна задача, три компоненты:**
+**Реестр:** `single-node-detection-first` · **GitHub:** [#47](https://github.com/officefish/Membrana/issues/47)  
+**Промпт:** [`docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](./prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md)
 
-1. **Слабая связанность плагинов микрофона** (#30 — КРИТИЧНО)
-   - Проверить: нет ли прямых импортов `@membrana/telemetry*` из `apps/client/src/plugins/microphone-stream-viz`?
-   - Проверить: нет ли прямых вызовов Web Audio вне `@membrana/audio-engine-service`?
-   - **Command:** `rg -n "@membrana/telemetry|navigator.mediaDevices|AudioContext" apps/client/src/plugins/microphone* apps/client/src/modules/microphone`
-   - **Результат:** граф импортов чистый (no direct plugin-to-plugin, all telemetry через agenda).
+**Одна задача, пять блоков:**
 
-2. **Типы синхронизации в `@membrana/core`** (задача 4.1 STRATEGIC_PLAN)
-   - Добавить интерфейсы: `SyncedTimestamp`, `TimeSyncProvider`, `TdoaResult`.
-   - **File:** `packages/core/src/types.ts`
-   - **Экспорт:** из `core/index.ts`
-   - **Результат:** `yarn test --filter=@membrana/core` зелёный (TDOA unit-тесты на синтетических данных).
-
-3. **Скелет `@membrana/tdoa-service`** (задача 4.2 STRATEGIC_PLAN)
-   - Структура: `src/math/tdoa.ts` (чистые функции), `src/core/tdoa-service.ts`, `src/hooks/`.
-   - **Функция:** `computeTdoa(obs1, obs2) => TdoaResult`.
-   - **Тесты:** ≥4 unit-теста (zero signal, known sine, TDOA на расстояниях 10/100/1000 м).
-   - **Результат:** `yarn test --filter=@membrana/tdoa` зелёный.
+1. **Стратегические документы** — `WHITE_PAPER` (1.A / 1.B, stage-gate), `ARCHITECTURE` §1e, `INTEGRATIONS_STRATEGY` §4, `DESIGN` (карточка детектора), `DETECTOR_BENCHMARK.md`, `DATASET.md`.
+2. **`@membrana/detector-base`** — контракты `DroneDetector`, `DetectionResult`, `AudioWindow`, фикстуры для тестов.
+3. **Scaffolding** — 6 пакетов в `packages/services/detectors/*` (placeholder + unit-тесты контракта).
+4. **Заморозка TDOA** — `@experimental @stage 2` типы в core; `packages/services/tdoa/` frozen; milestone Stage 2 — Network.
+5. **Связь с #45** — `dsp-drone-detector` **не расширять**; эталон → `harmonic-detector` в следующем промпте.
 
 ---
 
 ## 📋 Definition of Done (к вечеру)
 
-- [ ] **#30 закрыта:** `rg`-поиск на слабую связанность чистый; плагины импортируют только из `@membrana/*-service` и core.
-- [ ] **`@membrana/core/src/types.ts`** экспортирует `SyncedTimestamp`, `TimeSyncProvider`, `TdoaResult`.
-- [ ] **`@membrana/tdoa-service`** содержит скелет с ≥4 unit-тестами; `yarn test --filter=@membrana/tdoa` ✅.
-- [ ] **FFT math-функции** задокументированы (JSDoc с примерами и edge cases).
-- [ ] **`packages/temp/`** очищена (осталась только `.gitkeep`); ценное в `docs/discussions/`.
-- [ ] **Скрипты** `consilium.mjs`, `main-day-issue.mjs` закоммичены в `scripts/`; `package.json` обновлён.
-- [ ] **`yarn lint` и `yarn test`** проходят без ошибок.
-- [ ] **LGTM от Teamlead:** код соответствует `ARCHITECTURE.md`, нет нарушений дизайна.
+- [ ] Документы обновлены (см. промпт §3.1–3.2).
+- [ ] `yarn test:detectors` и `yarn build` зелёные на detector-пакетах.
+- [ ] TDOA/мультиузел явно в «не делаем» (`STRATEGIC_PLAN_DAY.md`).
+- [ ] GitHub: milestone «Stage 1: Single-Node Detection» + issues детекторов (по возможности).
+- [ ] LGTM Vesnin.
 
 ---
 
-## ⏱️ Таймбокс (3 блока × 2.5–3 ч)
+## ⏱️ Таймбокс
 
-| Блок | Время | Что делать | Роли |
-|------|-------|-----------|------|
-| **A. Аудит #30 + типы core** | 09:00–11:30 | Проверить слабую связанность; добавить `SyncedTimestamp`, `TimeSyncProvider`, `TdoaResult` в core. | Структурщик, Математик |
-| **B. Скелет tdoa-service** | 12:00–15:00 | Создать пакет, функция `computeTdoa`, ≥4 unit-теста. | Математик, Структурщик |
-| **C. Очистка + финализация** | 15:00–18:00 | Убрать `packages/temp/` (архив в docs/), закоммитить скрипты, LGTM. | Верстальщик, Teamlead |
-
----
-
-## 🚀 Следующие шаги (после MAIN_DAY_ISSUE)
-
-1. **Drone-detector-service** (эшелон 0.1) — задача задачи 4.3 из STRATEGIC_PLAN.
-2. **Контракт наблюдения (AcousticObservation, Track)** — задача 4.5.
-3. **VirtualNodeSimulator** для тестирования на двух узлах — задача 4.6.
+| Блок | Содержание | Роли |
+|------|------------|------|
+| A | WHITE_PAPER, ARCHITECTURE, INTEGRATIONS, DESIGN, скелеты benchmark/dataset | Teamlead, Математик |
+| B | detector-base + 6 scaffold-пакетов, turbo/yarn workspaces | Структурщик, Математик |
+| C | Заморозка TDOA, issues/milestones, CI | Структурщик, Teamlead |
 
 ---
 
-**Источник:** STRATEGIC_PLAN_DAY.md (задачи 4.1–4.5) · DAILY_CODE_REVIEW.md (критичные issues) · DAILY_STANDUP.md (приоритизация)
+## 🚫 Что НЕ делаем сегодня
+
+- **TDOA, многоузловая синхронизация, локализация** — заморожены до stage-gate 1→2.
+- **Реализация детекторов** (кроме placeholder) — отдельные промпты, первый: `HARMONIC_DETECTOR_IMPLEMENTATION`.
+- **Расширение #45** (`dsp-drone-detector`) без согласования с Teamlead.
+
+---
+
+## 🚀 Следующие шаги
+
+1. `HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md` — эталонный DSP-детектор.
+2. `DATASET_BOOTSTRAP_PROMPT.md` · `BENCHMARK_RUNNER_PROMPT.md`.
+3. Остальные детекторы 1.A / 1.B → `STAGE_GATE_1_TO_2_REVIEW`.

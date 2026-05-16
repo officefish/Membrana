@@ -51,6 +51,18 @@
       "createdAt": "2026-05-15",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "single-node-detection-first",
+      "title": "Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов",
+      "promptPath": "docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-05-16",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

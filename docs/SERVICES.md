@@ -45,6 +45,16 @@
 - Сервисы **не зависят** от `@membrana/agenda` / `@membrana/device-board` / `apps/client`. Только наоборот.
 - Сервис **не импортирует** React-компоненты — только React API (`useState`, `useEffect`, …).
 
+### Подкаталог `packages/services/detectors/*`
+
+Семейства детекторов дрона (Single-Node Detection First) живут в отдельной иерархии:
+
+- `@membrana/detector-base` — контракты `DroneDetector`, `DetectionResult`, `AudioWindow`.
+- `@membrana/<name>-detector-service` — одна реализация на пакет; **без импортов** между детекторами.
+- Зависимости: `detector-base` → `core` + `audio-engine-service`; каждый детектор → `core` + `detector-base`.
+
+Подробности: [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1e, [`WHITE_PAPER.md`](./WHITE_PAPER.md) §8.
+
 ### Когда выделять foundation
 
 Создавай новый foundation-сервис, если **несколько** будущих analyzer-сервисов будут переиспользовать одну и ту же инфраструктуру. Пример: `audio-engine` появился, когда стало ясно, что FFT-, нейросетевой- и LLM-анализаторы будут получать данные одинаково (микрофон / файл / поток).
