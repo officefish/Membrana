@@ -37,6 +37,7 @@ export class HarmonicDetector implements DroneDetector {
       isDrone: spectrum.isDrone,
       confidence: spectrum.confidence,
       reasoning: spectrum.reasoning,
+      fundamentalsHz: spectrum.fundamentals,
       features: {
         fundamentalHz: spectrum.fundamentals?.[0] ?? 0,
         harmonicCount: spectrum.fundamentals?.length ?? 0,

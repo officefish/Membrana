@@ -50,7 +50,10 @@
 - [x] Промпт исполнения: [`HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md`](../prompts/HARMONIC_DETECTOR_IMPLEMENTATION_PROMPT.md).
 - [x] Алиасы client: `@membrana/detector-base`, `@membrana/harmonic-detector-service`.
 - [x] `DroneDetectionHeaderSensor` + `droneDetectionHub` (плагин должен вызывать `publishDroneDetected`).
-- [ ] Реализация math/hooks (следующий шаг).
+- [x] Реализация math/hooks (фаза 1).
+- [x] Demo `harmonic/demo/` — `yarn workspace @membrana/harmonic-detector-service dev:demo`.
+- [x] UI-регламент: [`LIVE_DETECTION_UI.md`](../LIVE_DETECTION_UI.md).
+- [ ] Плагин клиента (фаза 3).
 - [ ] `yarn benchmark:detectors` (отдельный промпт, параллельно #47).
 
 ---

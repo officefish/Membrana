@@ -40,6 +40,7 @@
 | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Сервисы, hub, плагины |
 | [`SERVICES.md`](../SERVICES.md) | Структура analyzer-пакета |
 | [`DESIGN.md`](../DESIGN.md) | UI демо и плагина |
+| [`LIVE_DETECTION_UI.md`](../LIVE_DETECTION_UI.md) | Сглаживание live-статуса, вёрстка demo |
 | [`MODULE_AND_PLUGIN_UI.md`](../MODULE_AND_PLUGIN_UI.md) | Регистрация, сайдбар |
 | [`WHITE_PAPER.md`](../WHITE_PAPER.md) | §5.1 портрет дрона, Этап 1 |
 | [`INTEGRATIONS_STRATEGY.md`](../INTEGRATIONS_STRATEGY.md) | Эшелон 0.1, `drone-analyzer-board` |

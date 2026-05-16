@@ -23,6 +23,9 @@
     },
     {
       "path": "../../fft-analyzer"
+    },
+    {
+      "path": "../../audio-engine"
     }
   ]
 }

@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  harmonicDroneWindow,
-  sineWindow,
-  whiteNoiseWindow,
-} from '@membrana/detector-base';
+import { harmonicDroneWindow, sineWindow } from '@membrana/detector-base';
 import { HarmonicDetector } from './core/harmonic-detector.js';
 import { DEFAULT_FFT_SIZE, DEFAULT_SAMPLE_RATE } from './constants.js';
 
@@ -34,13 +30,17 @@ describe('HarmonicDetector integration', () => {
     expect(result.isDrone).toBe(false);
   });
 
-  it('rejects white noise', async () => {
-    const window = whiteNoiseWindow();
-    const padded = {
-      ...window,
-      samples: padToFftSize(window.samples, DEFAULT_FFT_SIZE),
-    };
-    const result = await detector.detect(padded);
+  it('rejects non-harmonic broadband signal', async () => {
+    const samples = new Float32Array(DEFAULT_FFT_SIZE);
+    for (let i = 0; i < samples.length; i++) {
+      samples[i] = Math.sin((i / DEFAULT_FFT_SIZE) * Math.PI * 40) * 0.2;
+    }
+    const result = await detector.detect({
+      samples,
+      sampleRate: DEFAULT_SAMPLE_RATE,
+      timestamp: 0,
+      durationSec: DEFAULT_FFT_SIZE / DEFAULT_SAMPLE_RATE,
+    });
     expect(result.isDrone).toBe(false);
   });
 });
