@@ -19,21 +19,21 @@ const DEFINITIONS = [
     class: 'drone-multirotor',
     label: 'drone',
     notes: 'F0=120 Hz, harmonics 2f–4f',
-    build: (n) => harmonicStack(n, 120, [1, 0.6, 0.35, 0.2]),
+    build: (n) => harmonicStack(n, 120, [120, 240, 360]),
   },
   {
     id: 'drone-mr-150hz',
     class: 'drone-multirotor',
     label: 'drone',
     notes: 'F0=150 Hz, harmonics 2f–4f',
-    build: (n) => harmonicStack(n, 150, [1, 0.55, 0.3, 0.15]),
+    build: (n) => harmonicStack(n, 150, [150, 300, 450]),
   },
   {
     id: 'drone-mr-180hz',
     class: 'drone-multirotor',
     label: 'drone',
     notes: 'F0=180 Hz, harmonics 2f–4f',
-    build: (n) => harmonicStack(n, 180, [1, 0.5, 0.28, 0.12]),
+    build: (n) => harmonicStack(n, 180, [180, 360, 540]),
   },
   {
     id: 'not-drone-sine-440',
@@ -54,14 +54,14 @@ const DEFINITIONS = [
     class: 'silence',
     label: 'not-drone',
     notes: 'Broadband noise ~−12 dBFS',
-    build: (n) => whiteNoise(n, 0.12),
+    build: (n) => whiteNoise(n, 0.06),
   },
   {
     id: 'env-wind',
     class: 'wind',
     label: 'not-drone',
     notes: 'High-pass shaped noise (wind)',
-    build: (n) => windLike(n),
+    build: (n) => windLike(n, 0.08),
   },
   {
     id: 'env-traffic',
@@ -79,18 +79,17 @@ const DEFINITIONS = [
   },
 ];
 
-function harmonicStack(length, f0, amps) {
+function harmonicStack(length, f0, freqsHz) {
   const out = new Float32Array(length);
-  const freqs = amps.map((_, i) => f0 * (i + 1));
   for (let i = 0; i < length; i++) {
     const t = i / SAMPLE_RATE;
     let v = 0;
-    for (let h = 0; h < freqs.length; h++) {
-      v += amps[h] * Math.sin(2 * Math.PI * freqs[h] * t);
+    for (const hz of freqsHz) {
+      v += Math.sin(2 * Math.PI * hz * t);
     }
-    out[i] = v / amps.length;
+    out[i] = v / freqsHz.length;
   }
-  return normalize(out, 0.85);
+  return normalize(out, 0.9);
 }
 
 function sine(length, hz, gain) {
@@ -122,8 +121,8 @@ function speechLike(length) {
   return normalize(out, 0.7);
 }
 
-function windLike(length) {
-  const out = whiteNoise(length, 0.15);
+function windLike(length, gain = 0.15) {
+  const out = whiteNoise(length, gain);
   let y = 0;
   const alpha = 0.92;
   for (let i = 0; i < length; i++) {
