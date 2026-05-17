@@ -1,32 +1,25 @@
-# CURRENT_TASK — буфер (benchmark runner #47)
+# CURRENT_TASK — буфер (#47 single-node)
 
-> **Канон дня:** [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) (#47 dataset + benchmark).  
-> **Датасет v0.1:** ✅ [`DATASET_BOOTSTRAP_PROMPT.md`](./prompts/DATASET_BOOTSTRAP_PROMPT.md).
+> **Канон дня:** [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) (#47).  
+> **#45:** ✅ архив + GitHub закрыт (2026-05-16).
 
-## Статус подготовки (2026-05-16)
+## Выполнено сегодня
 
-| Шаг | Статус |
-|-----|--------|
-| Промпт benchmark | ✅ [`BENCHMARK_RUNNER_PROMPT.md`](./prompts/BENCHMARK_RUNNER_PROMPT.md) |
-| Датасет + `yarn dataset:generate` | ✅ |
-| `yarn benchmark:detectors` | ✅ harmonic: P=50% R=100% F1=66.7% (v0.1 synthetic) |
-| `docs/DETECTOR_BENCHMARK.md` автоген | ✅ |
-| `test:scripts` (metrics) | ✅ |
+| Блок | Статус |
+|------|--------|
+| Harmonic service + demo + плагин | ✅ в `main` (`cf931ea`) |
+| Dataset v0.1 + `yarn dataset:generate` | ✅ |
+| `yarn benchmark:detectors` | ✅ |
+| `yarn task:archive dsp-drone-detector` | ✅ |
+| `yarn task:close-github` (#45) | ✅ |
 
-## Перед стартом кода
+## Следующий фокус (#47, active)
 
-```bash
-git checkout techies68
-yarn dataset:generate
-yarn turbo run build --filter=@membrana/harmonic-detector-service
-```
-
-Читать: [`BENCHMARK_RUNNER_PROMPT.md`](./prompts/BENCHMARK_RUNNER_PROMPT.md) → [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md) → [`data/detectors-benchmark/v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json).
+1. Снизить FP harmonic на v0.1 synthetic (классификатор / датасет).
+2. Расширить `DATASET.md` полевыми записями.
+3. CI: `benchmark:detectors` в pipeline.
+4. Аудит #30 (импорты mic-плагинов) — параллельно, S.
 
 ## Ветка
 
-`techies68`
-
-## После приёмки benchmark
-
-Инфраструктура #47 (dataset + runner) готова. Следующее: расширение датасета, настройка классификатора, CI для `benchmark:detectors`, вечером `yarn task:close-github` (#45).
+`techies68` (= `main` после merge).
