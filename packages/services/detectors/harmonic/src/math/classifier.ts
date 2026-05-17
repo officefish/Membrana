@@ -7,7 +7,7 @@ import {
   HARMONIC_MAX_HZ,
 } from '../constants.js';
 import type { HarmonicDetectorConfig, HarmonicSpectrumResult } from '../types.js';
-import { mergeFundamentals, scoreHarmonicStack } from './harmonics.js';
+import { mergeFundamentals, MIN_HARMONICS_FOR_SCORE, scoreHarmonicStack } from './harmonics.js';
 import { findSpectralPeaks } from './peaks.js';
 
 export const DEFAULT_HARMONIC_DETECTOR_CONFIG: HarmonicDetectorConfig = {
@@ -74,13 +74,17 @@ export function classifySpectrum(
   const fundamentals = mergeFundamentals(
     bestScore > 0 ? [bestFundamental] : [],
   );
-  const isDrone = bestScore >= config.confidenceThreshold;
+  const meetsThreshold = bestScore >= config.confidenceThreshold;
+  const meetsHarmonicCount = bestHarmonicCount >= MIN_HARMONICS_FOR_SCORE;
+  const isDrone = meetsThreshold && meetsHarmonicCount;
 
   const reasoning = isDrone
     ? `Гармонический стек: ~${Math.round(bestFundamental)} Гц, ${bestHarmonicCount} гармоник, confidence ${(bestScore * 100).toFixed(0)}%.`
-    : bestScore > 0.2
-      ? `Слабый гармонический след (~${Math.round(bestFundamental)} Гц), confidence ${(bestScore * 100).toFixed(0)}% — ниже порога.`
-      : 'Нет устойчивого гармонического стека в полосе 80–250 Гц.';
+    : meetsThreshold && !meetsHarmonicCount
+      ? `Порог confidence достигнут, но гармоник ${bestHarmonicCount} < ${MIN_HARMONICS_FOR_SCORE} — не дрон.`
+      : bestScore > 0.2
+        ? `Слабый гармонический след (~${Math.round(bestFundamental)} Гц), confidence ${(bestScore * 100).toFixed(0)}% — ниже порога.`
+        : 'Нет устойчивого гармонического стека в полосе 80–250 Гц.';
 
   return {
     isDrone,

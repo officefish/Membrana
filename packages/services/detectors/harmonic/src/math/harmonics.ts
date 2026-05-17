@@ -1,7 +1,8 @@
 import type { HarmonicDetectorConfig } from '../types.js';
 import { hzToBin } from './frequencies.js';
 
-const MIN_HARMONICS_FOR_SCORE = 3;
+/** Минимум подтверждённых гармоник для положительной классификации дрона. */
+export const MIN_HARMONICS_FOR_SCORE = 3;
 const MAX_HARMONICS_TO_SCORE = 8;
 const HARMONIC_MAG_RATIO = 0.18;
 const FUNDAMENTAL_MIN_RATIO = 0.12;
