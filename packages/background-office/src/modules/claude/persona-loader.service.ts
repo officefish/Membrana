@@ -4,7 +4,10 @@ import { getPromptsDir } from '../../lib/paths';
 
 const PERSONA_FILES: Record<string, string> = {
   vesnin: 'PROMPT_TEAMLEAD.md',
+  ozhegov: 'PROMPT_STRUCTURER.md',
   dynin: 'PROMPT_MATHEMATICIAN.md',
+  boyarskiy: 'PROMPT_MUSICIAN.md',
+  rodchenko: 'PROMPT_LAYOUT_DEVELOPER.md',
 };
 
 @Injectable()
@@ -20,7 +23,10 @@ export class PersonaLoaderService implements OnModuleInit {
     }
     for (const file of [
       'PROMPT_TEAMLEAD.md',
+      'PROMPT_STRUCTURER.md',
       'PROMPT_MATHEMATICIAN.md',
+      'PROMPT_MUSICIAN.md',
+      'PROMPT_LAYOUT_DEVELOPER.md',
       'WHITE_PAPER.md',
       'ARCHITECTURE.md',
       'SERVICES.md',

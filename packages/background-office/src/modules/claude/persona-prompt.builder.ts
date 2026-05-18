@@ -14,7 +14,10 @@ export interface PersonaMeta {
 
 export const PERSONA_META: Record<string, PersonaMeta> = {
   vesnin: { role: 'Teamlead', promptLabel: 'PROMPT_TEAMLEAD.md' },
+  ozhegov: { role: 'Структурщик', promptLabel: 'PROMPT_STRUCTURER.md' },
   dynin: { role: 'Математик', promptLabel: 'PROMPT_MATHEMATICIAN.md' },
+  boyarskiy: { role: 'Музыкант', promptLabel: 'PROMPT_MUSICIAN.md' },
+  rodchenko: { role: 'Верстальщик', promptLabel: 'PROMPT_LAYOUT_DEVELOPER.md' },
 };
 
 export interface BuildPersonaPromptInput {

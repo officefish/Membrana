@@ -136,6 +136,8 @@ export function createMyPlugin(): Plugin<MyConfig> {
 
 **Назначение:** визуально отделить рабочую область модуля от фона дашборда и согласоваться с DaisyUI.
 
+**Эталон захвата микрофона:** презентационный блок `apps/client/src/modules/microphone/components/MicrophoneCapturePanel.tsx` (выбор устройства + start/stop). Логика потока остаётся в `MicrophoneModule` + `microphoneStreamHub`; плагины **не** рисуют свой duplicate capture UI. Консилиум: [`seanses/microphone-capture-ui-2026-05-18.md`](./seanses/microphone-capture-ui-2026-05-18.md).
+
 **Ориентир по коду:** например `apps/client/src/modules/microphone/MicrophoneModule.tsx` — обёртка вида:
 
 - внешний контейнер: классы уровня `card bg-base-100 border border-base-200 shadow-sm rounded-box w-full`;
@@ -218,6 +220,7 @@ export function createMyPlugin(): Plugin<MyConfig> {
 | Типы пропов и сайдбара плагина | `packages/agenda/src/core/types.ts` |
 | Tailwind content | `apps/client/tailwind.config.js` |
 | Пример `card` в модуле | `apps/client/src/modules/microphone/MicrophoneModule.tsx` |
+| Эталон capture UI | `apps/client/src/modules/microphone/components/MicrophoneCapturePanel.tsx` |
 | Шина потока микрофона | `apps/client/src/modules/microphone/microphoneStreamHub.ts` |
 
 ---

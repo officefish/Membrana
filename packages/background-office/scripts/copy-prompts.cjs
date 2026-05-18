@@ -11,7 +11,10 @@ const destDir = path.join(pkgRoot, 'prompts');
 
 const FILES = [
   ['docs/virtual-team/PROMPT_TEAMLEAD.md', 'PROMPT_TEAMLEAD.md'],
+  ['docs/virtual-team/PROMPT_STRUCTURER.md', 'PROMPT_STRUCTURER.md'],
   ['docs/virtual-team/PROMPT_MATHEMATICIAN.md', 'PROMPT_MATHEMATICIAN.md'],
+  ['docs/virtual-team/PROMPT_MUSICIAN.md', 'PROMPT_MUSICIAN.md'],
+  ['docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md', 'PROMPT_LAYOUT_DEVELOPER.md'],
   ['docs/WHITE_PAPER.md', 'WHITE_PAPER.md'],
   ['docs/ARCHITECTURE.md', 'ARCHITECTURE.md'],
   ['docs/SERVICES.md', 'SERVICES.md'],

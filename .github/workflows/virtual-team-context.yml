@@ -27,6 +27,8 @@ jobs:
             echo "| Документ | Путь |"
             echo "|----------|------|"
             echo "| Промпт координатора | \`docs/VIRTUAL_TEAM_PROMPT.md\` |"
+            echo "| Персонажи (role-промпты) | \`docs/virtual-team/PROMPT_*.md\` |"
+            echo "| Музыкант (Boyarskiy) | \`docs/virtual-team/PROMPT_MUSICIAN.md\` · ветка \`boyarskiy\` |"
             echo "| Архитектура | \`docs/ARCHITECTURE.md\` |"
             echo "| Дизайн | \`docs/DESIGN.md\` |"
             echo "| UI/UX (верстка, темы) | \`docs/UI_UX_DEVELOPER_PROMPT.md\` |"

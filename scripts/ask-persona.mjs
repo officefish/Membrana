@@ -60,6 +60,12 @@ const PERSONAS = {
     promptFile: 'docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md',
     description: 'Rodchenko — Верстальщик. DESIGN.md, конструктивизм, a11y.',
   },
+  boyarskiy: {
+    role: 'Музыкант',
+    promptFile: 'docs/virtual-team/PROMPT_MUSICIAN.md',
+    description:
+      'Boyarskiy — Музыкант. Аудио-поток, датасет, live-микрофон; кредо Pourquoi pas.',
+  },
 };
 
 const MAX_CONTEXT_CHARS = 90_000;

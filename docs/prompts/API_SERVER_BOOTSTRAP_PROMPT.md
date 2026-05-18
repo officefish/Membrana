@@ -135,7 +135,7 @@ GITHUB_WEBHOOK_SECRET=
   - Ошибки 4xx/5xx Anthropic — **проксируются** с понятным телом, не глотать.
 
 - **`POST /v1/claude/persona/:name/ask`** — persona-aware.
-  - `:name` ∈ `{ vesnin, dynin }` (зашитая мапа на `PROMPT_*.md`). Невалидное имя → 404.
+  - `:name` ∈ `{ vesnin, ozhegov, dynin, boyarskiy, rodchenko }` (мапа на `PROMPT_*.md`, см. [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md)). Невалидное имя → 404.
   - Тело: `{ question: string, context?: ContextRef, includeStrategicDocs?: boolean }`.
   - `ContextRef` — discriminated union:
     - `{ source: "github-issue", issueNumber: number }` — через Octokit грузим issue + комментарии.

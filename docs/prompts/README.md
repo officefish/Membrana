@@ -20,7 +20,7 @@
 
 | Категория | Где живёт | Зачем |
 |-----------|-----------|-------|
-| **Role-промпт** | `docs/virtual-team/PROMPT_*.md` | Личность и зона ответственности роли (Vesnin, Dynin, …). |
+| **Role-промпт** | `docs/virtual-team/PROMPT_*.md` | Личность и зона ответственности роли (Vesnin, Dynin, Boyarskiy, …). |
 | **Task-промпт** | `docs/prompts/*.md` | Спецификация задачи: DoD, out of scope, архитектура. |
 | **Реестр** | `docs/tasks/registry.json` | Статус задачи: active / archived |
 

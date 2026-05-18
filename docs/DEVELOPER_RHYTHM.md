@@ -27,7 +27,7 @@
 
 ### Рабочая ветка: `techies68`
 
-Повседневная интеграционная ветка — **`techies68`** (не `cursor/*` и не персональные `vesnin`/`dynin`, если Teamlead не назначил иное). В начале дня переключаемся на неё и подтягиваем remote:
+Повседневная интеграционная ветка — **`techies68`** (не `cursor/*` и не персональные `vesnin` / `ozhegov` / `dynin` / `boyarskiy` / `rodchenko`, если Teamlead не назначил иное). В начале дня переключаемся на неё и подтягиваем remote:
 
 ```bash
 git checkout techies68
@@ -184,7 +184,7 @@ yarn plan:week:full
 | Исследование новых аналайзеров | `yarn analyzers:research:week` | `WEEKLY_ANALYZERS_RESEARCH.md` |
 | Ревью через Claude Code CLI | `yarn claude:code` | по сценарию в промпте |
 
-**Персонажи `yarn ask`:** `vesnin`, `ozhegov`, `dynin`, `rodchenko` (см. [`VIRTUAL_TEAM_PROMPT.md`](./VIRTUAL_TEAM_PROMPT.md)).
+**Персонажи `yarn ask`:** `vesnin`, `ozhegov`, `dynin`, `boyarskiy`, `rodchenko` (см. [`VIRTUAL_TEAM_PROMPT.md`](./VIRTUAL_TEAM_PROMPT.md)).
 
 **Когда звать консилиум, а не `ask`:** вопрос затрагивает UI + аудио + пакеты + нужен **единый консенсус** в репозитории — см. [`prompts/CONSILIUM_PROMPT.md`](./prompts/CONSILIUM_PROMPT.md).
 

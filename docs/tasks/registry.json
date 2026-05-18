@@ -68,6 +68,18 @@
       "createdAt": "2026-05-16",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "microphone-capture-ui",
+      "title": "Выразительный блок захвата микрофона (MicrophoneCapturePanel)",
+      "promptPath": "docs/prompts/MICROPHONE_CAPTURE_UI_PROMPT.md",
+      "githubIssue": 49,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-05-18",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

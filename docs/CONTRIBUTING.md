@@ -45,7 +45,7 @@ git push -u origin vesnin
 ## Pull requests
 
 1. Описание PR: **что**, **зачем**, **какие пакеты** затронуты (`apps/client`, `packages/*`, `packages/services/*`).
-2. Если фича затрагивает аудио+UI: кратко укажи согласование с ролями **Teamlead** / **Музыкант** / **Верстальщик** (можно ссылкой на комментарий в issue).
+2. Если фича затрагивает аудио+UI: кратко укажи согласование с ролями **Teamlead (Vesnin)** / **Музыкант (Boyarskiy)** / **Верстальщик (Rodchenko)** (можно ссылкой на комментарий в issue; персонажи — [`VIRTUAL_TEAM_PROMPT.md`](./VIRTUAL_TEAM_PROMPT.md)).
 3. Нет прямых импортов между плагинами; соблюдение [ARCHITECTURE.md](./ARCHITECTURE.md).
 4. UI: соответствие [DESIGN.md](./DESIGN.md) и при работе с модулями/плагинами в UI — [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md).
 5. Новый сервис: соответствие [SERVICES.md](./SERVICES.md), Definition of Done выполнен.

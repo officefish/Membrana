@@ -60,7 +60,7 @@ curl -sS -X POST "http://localhost:3000/v1/claude/ask" \
   -d '{"messages":[{"role":"user","content":"Привет"}]}'
 ```
 
-**`POST /v1/claude/persona/:name/ask`** — persona (`vesnin` | `dynin`), сборка промпта как в `scripts/ask-persona.mjs` (документы из `prompts/`).
+**`POST /v1/claude/persona/:name/ask`** — persona (`vesnin` | `ozhegov` | `dynin` | `boyarskiy` | `rodchenko`), сборка промпта как в `scripts/ask-persona.mjs` (документы из `prompts/`).
 
 ```bash
 curl -sS -X POST "http://localhost:3000/v1/claude/persona/vesnin/ask" \
