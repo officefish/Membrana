@@ -232,7 +232,7 @@
 - Harmonic-детектор: пороги `HARMONIC_ENERGY_THRESHOLD`, `FUNDAMENTAL_FREQUENCY_RANGE` могут требовать тюнинга под датасет.
 - Cepstral или Spectral-flux: начать с классического DSP без ML, затем (если понадобится) добавить нейросеть.
 
-### Музыкант
+### Музыкант (Boyarskiy)
 - Синтез: используй `packages/services/detectors/harmonic/src/math/harmonics.ts` как эталон для частот дронов.
 - Датасет: слой шума должен быть реалистичным — раннее внимание к SNR-ratio.
 

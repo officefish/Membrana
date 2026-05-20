@@ -42,7 +42,7 @@
 
 1. **Teamlead (Vesnin)** — согласовывает приоритизацию, границы harmonic-детектора, LGTM для интеграции в UI.
 2. **Математик (Dynin)** → реализует `src/math/harmonic-extractor.ts` (FFT, поиск F₀, гармоники).
-3. **Музыкант** (имя в работе) → валидирует на реальных звуках из DATASET, проверяет false-positive/negative.
+3. **Музыкант** (Boyarskiy) → валидирует на реальных звуках из DATASET, проверяет false-positive/negative.
 4. **Структурщик (Ozhegov)** → собирает интеграцию: detector-base → harmonic-detector → registry → hub для UI.
 5. **Верстальщик (Rodchenko)** → `DroneDetectionHeaderSensor` получает результаты из hub, дизайн икон (по DESIGN.md).
 6. **Teamlead (финал)** → LGTM на целостность архитектуры перед merge в `main`.
