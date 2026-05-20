@@ -6,7 +6,7 @@
 >
 > Статус: **v0.1 — рабочая стратегия экспериментов.** Утверждается Teamlead-ом; правки — через PR.
 >
-> Согласуется с: [`WHITE_PAPER.md`](./WHITE_PAPER.md), [`ARCHITECTURE.md`](./ARCHITECTURE.md), [`SERVICES.md`](./SERVICES.md), [`MODULE_AND_PLUGIN_UI.md`](./MODULE_AND_PLUGIN_UI.md).
+> Согласуется с: [`WHITE_PAPER.md`](./WHITE_PAPER.md), [`ARCHITECTURE.md`](./ARCHITECTURE.md), [`SERVICES.md`](./SERVICES.md), [`MODULE_AND_PLUGIN_UI.md`](./MODULE_AND_PLUGIN_UI.md), [`MCP_INTEGRATION_STRATEGY.md`](./MCP_INTEGRATION_STRATEGY.md) (Perplexity MCP — отраслевый research; внедрение моделей — по эшелонам ниже, не через MCP).
 
 ---
 

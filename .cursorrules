@@ -11,6 +11,7 @@
 5. [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — процесс PR, добавление сервиса, запуск ревью.
 6. [`docs/UI_UX_DEVELOPER_PROMPT.md`](./docs/UI_UX_DEVELOPER_PROMPT.md) — расширенный промпт роли Верстальщика.
 7. [`docs/INTEGRATIONS_STRATEGY.md`](./docs/INTEGRATIONS_STRATEGY.md) — стратегия экспериментальных интеграций анализа звука: эшелоны «локально → свой сервер → внешний API», приоритет zero-shot и open-weights. Читать перед любой задачей, добавляющей ML/DSP-детектор.
+8. [`docs/MCP_INTEGRATION_STRATEGY.md`](./docs/MCP_INTEGRATION_STRATEGY.md) — MCP-серверы в Cursor/Claude Desktop: состав, привязка к ролям виртуальной команды, безопасность, сценарии по типам задач. Установка: [`docs/TZ_MCP_Servers_Membrana_v3.md`](./docs/TZ_MCP_Servers_Membrana_v3.md). MCP дополняет, не заменяет `yarn`-ритуалы и task-промпты.
 
 При конфликте этих правил с .cursorrules выигрывают документы в `docs/` и решение Teamlead.
 

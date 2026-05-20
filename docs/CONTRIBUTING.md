@@ -1,6 +1,6 @@
 # CONTRIBUTING — процесс для людей и CI-агентов
 
-Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
+Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md). MCP-серверы в среде агента (Cursor / Claude Desktop): [MCP_INTEGRATION_STRATEGY.md](./MCP_INTEGRATION_STRATEGY.md); установка — [TZ_MCP_Servers_Membrana_v3.md](./TZ_MCP_Servers_Membrana_v3.md).
 
 ## Жизненный цикл задачи
 
@@ -107,10 +107,16 @@ git push -u origin vesnin
 - Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`, `scripts/daily-standup-paths.mjs`).
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
 
+## MCP-окружение агента
+
+- Политика: [`MCP_INTEGRATION_STRATEGY.md`](./MCP_INTEGRATION_STRATEGY.md). Установка: [`TZ_MCP_Servers_Membrana_v3.md`](./TZ_MCP_Servers_Membrana_v3.md).
+- После крупных изменений в `packages/services/*` — `gitnexus analyze` в корне репозитория (см. стратегию §7).
+- Не коммитить локальные MCP-конфиги с API-ключами; в git допустим только `.cursor/mcp.json` без секретов.
+
 ## Коммиты
 
 - Сообщения в повелительном наклонении, на английском или русском — как принято в команде; главное — единообразие в PR.
-- Не коммитить секреты, `node_modules`, артефакты сборки.
+- Не коммитить секреты, `node_modules`, артефакты сборки, ключи Perplexity/GlyphMCP.
 
 ## Разрешение споров
 

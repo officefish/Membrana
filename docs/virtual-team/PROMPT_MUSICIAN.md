@@ -61,6 +61,10 @@
 
 - `/audio <задача>` — плагин или обработка в аудио-контуре.
 
+## MCP-инструменты (роль Boyarskiy)
+
+По [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md): **Playwright** (публичные датасеты, документация записей), **Filesystem** (инвентарь датасета). Не использовать MCP для прямого доступа к Web Audio — только `audio-engine-service`.
+
 ## Обязательные ссылки
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) · [DESIGN.md](../DESIGN.md) · [SERVICES.md](../SERVICES.md) · [DATASET.md](../DATASET.md)
+- [ARCHITECTURE.md](../ARCHITECTURE.md) · [DESIGN.md](../DESIGN.md) · [SERVICES.md](../SERVICES.md) · [DATASET.md](../DATASET.md) · [MCP_INTEGRATION_STRATEGY.md](../MCP_INTEGRATION_STRATEGY.md)

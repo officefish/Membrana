@@ -11,6 +11,7 @@
 | **[`TASK_PROMPT_TEMPLATE.md`](./TASK_PROMPT_TEMPLATE.md)** | Шаблон нового `*_PROMPT.md` |
 | **[`docs/tasks/README.md`](../tasks/README.md)** | Активные и архивные задачи |
 | **[`CONSILIUM_PROMPT.md`](./CONSILIUM_PROMPT.md)** | Консилиум всех ролей → `docs/seanses/` |
+| **[`../MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md)** | MCP в среде агента: когда указывать в task-промпте |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn consilium "<вопрос>"`.
 
@@ -43,6 +44,18 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`DSP_DRONE_DETECTOR_PROMPT.md`](./DSP_DRONE_DETECTOR_PROMPT.md) | **Активная задача** `dsp-drone-detector` — сервис, демо, плагин (L, 3 фазы) |
 | [`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](./HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md) | **Фаза 3 #45** — плагин микрофона (normal + fullscreen), синхрон с шапкой |
 | [`HARMONIC_DEMO_APPS_DEMOS_ANALYSIS_PROMPT.md`](./HARMONIC_DEMO_APPS_DEMOS_ANALYSIS_PROMPT.md) | UX-анализ Replit lab → demo/плагин |
+
+### Цепочка внедрения MCP (2026-05-20)
+
+План: [`MCP_ROLLOUT_PLAN.md`](../MCP_ROLLOUT_PLAN.md). Политика: [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md). **Старт:** `mcp-repo-bootstrap` → [#50](https://github.com/officefish/Membrana/issues/50).
+
+| Файл | `id` реестра |
+|------|----------------|
+| [`MCP_REPO_BOOTSTRAP_PROMPT.md`](./MCP_REPO_BOOTSTRAP_PROMPT.md) | `mcp-repo-bootstrap` |
+| [`MCP_WORKSTATION_PHASE_A_PROMPT.md`](./MCP_WORKSTATION_PHASE_A_PROMPT.md) | `mcp-workstation-phase-a` |
+| [`MCP_WORKSTATION_PHASE_B_PROMPT.md`](./MCP_WORKSTATION_PHASE_B_PROMPT.md) | `mcp-workstation-phase-b` |
+| [`MCP_WORKSTATION_PHASE_C_PROMPT.md`](./MCP_WORKSTATION_PHASE_C_PROMPT.md) | `mcp-workstation-phase-c` |
+| [`MCP_ROLLOUT_ACCEPTANCE_PROMPT.md`](./MCP_ROLLOUT_ACCEPTANCE_PROMPT.md) | `mcp-rollout-acceptance` |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

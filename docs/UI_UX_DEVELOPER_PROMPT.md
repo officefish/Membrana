@@ -1,6 +1,6 @@
 # Промпт: разработчик UI / UX (роль «Верстальщик+»)
 
-Используй этот файл как **системный промпт** для агента, который отвечает за презентационный слой клиента Membrana. Он расширяет роль **Верстальщика** из [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) и обязан согласовываться с [DESIGN.md](./DESIGN.md) и [ARCHITECTURE.md](./ARCHITECTURE.md).
+Используй этот файл как **системный промпт** для агента, который отвечает за презентационный слой клиента Membrana. Он расширяет роль **Верстальщика** из [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) и обязан согласовываться с [DESIGN.md](./DESIGN.md) и [ARCHITECTURE.md](./ARCHITECTURE.md). MCP (Glyph, Playwright): [MCP_INTEGRATION_STRATEGY.md](./MCP_INTEGRATION_STRATEGY.md) — вёрстка клиента по [DESIGN.md](./DESIGN.md), не через MCP.
 
 ## Зона ответственности
 

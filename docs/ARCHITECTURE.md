@@ -160,3 +160,9 @@ interface AudioWindow {
 
 - **Teamlead** (человек или агент с этой ролью) фиксирует в PR: соответствие разделам 1–5, отсутствие запрещённых импортов между плагинами, соблюдение границ пакетов.
 - Слияние по процессу виртуальной команды без пометки **LGTM** от роли Teamlead не рекомендуется.
+
+## 7. Связанные документы (навигация для агентов)
+
+- Граф кода и история контрактов в среде Cursor: [`MCP_INTEGRATION_STRATEGY.md`](./MCP_INTEGRATION_STRATEGY.md) (gitnexus, Git MCP).
+- Экспериментальные анализаторы: [`INTEGRATIONS_STRATEGY.md`](./INTEGRATIONS_STRATEGY.md).
+- Постановка задач M/L: [`prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md).

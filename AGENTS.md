@@ -6,7 +6,7 @@
 
 Membrana is a TypeScript monorepo using **Yarn 4 (Berry)** workspaces + **Turborepo**. The main application is `apps/client` (Vite + React + DaisyUI), with shared packages in `packages/` and autonomous services in `packages/services/`. An optional NestJS backend lives in `packages/background-office`.
 
-For detailed architecture, conventions, and coding rules, see `.cursorrules` and `docs/ARCHITECTURE.md`, `docs/SERVICES.md`, `docs/DESIGN.md`, `docs/CONTRIBUTING.md`.
+For detailed architecture, conventions, and coding rules, see `.cursorrules` and `docs/ARCHITECTURE.md`, `docs/SERVICES.md`, `docs/DESIGN.md`, `docs/CONTRIBUTING.md`, `docs/MCP_INTEGRATION_STRATEGY.md` (MCP tools in Cursor/Claude Desktop; install runbook: `docs/TZ_MCP_Servers_Membrana_v3.md`).
 
 For **new M/L agent tasks**, follow `docs/prompts/TASK_PROMPT_WORKFLOW.md` and register in `docs/tasks/registry.json`. **Closing a task:** `docs/prompts/TASK_CLOSURE_REGULATION.md` → `yarn task:archive <id>` (day) → `yarn task:close-github` (EOD batch for Issues). Active/archive: `docs/tasks/README.md`.
 

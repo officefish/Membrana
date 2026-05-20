@@ -3,6 +3,7 @@
 > **Формат коллективного обсуждения** перед крупным архитектурным или продуктовым решением.
 > Запуск локально: `yarn consilium "<вопрос>"` → протокол в [`docs/seanses/`](../seanses/).
 > Роли и персонажи: [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md).
+> MCP-серверы: [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md) — консилиум **не заменяется** вызовами MCP; протокол сохраняется в `docs/seanses/`.
 
 ---
 

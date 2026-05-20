@@ -34,6 +34,7 @@ jobs:
             echo "| UI/UX (верстка, темы) | \`docs/UI_UX_DEVELOPER_PROMPT.md\` |"
             echo "| Модули и плагины (UI) | \`docs/MODULE_AND_PLUGIN_UI.md\` |"
             echo "| Contributing / CI | \`docs/CONTRIBUTING.md\` |"
+            echo "| MCP в процессе разработки | \`docs/MCP_INTEGRATION_STRATEGY.md\` · установка: \`docs/TZ_MCP_Servers_Membrana_v3.md\` |"
             echo ""
             echo "### Ежедневный цикл в GitHub Actions"
             echo "- **CI** (\`.github/workflows/ci.yml\`): push/PR в \`main\` / \`master\` / \`develop\` — \`yarn turbo run lint typecheck test build\`."
@@ -47,6 +48,7 @@ jobs:
             echo "2. Для кода UI — \`docs/DESIGN.md\` и при необходимости \`docs/UI_UX_DEVELOPER_PROMPT.md\`."
             echo "3. Для границ модулей и плагинов — \`docs/ARCHITECTURE.md\` и \`docs/MODULE_AND_PLUGIN_UI.md\` (разметка, сайдбар)."
             echo "4. Для процесса PR и ссылок на CI — \`docs/CONTRIBUTING.md\`."
+            echo "5. Если агент в Cursor/Claude Desktop с MCP — \`docs/MCP_INTEGRATION_STRATEGY.md\` (не заменяет \`yarn\`-ритуалы)."
             echo ""
             if [ -n "$TASK_HINT" ]; then
               echo "### Подсказка задачи от оператора"

@@ -92,6 +92,7 @@
 5. **`STRATEGIC_PLAN_DAY.md`**, **`DAILY_STANDUP.md`**, **`MAIN_DAY_ISSUE.md`** — текущее состояние работы команды.
 6. **`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`** — стратегический task-prompt про шлюз single-node detection.
 7. **`MEMBRANA_ONE_PAGER.md`** — наш one-pager, как стилистический эталон для всех остальных документов. Если возникает сомнение «какой тон уместен» — сверяйся с ним.
+8. **`MCP_INTEGRATION_STRATEGY.md`** — если в Claude Project подключены MCP (Perplexity, Glyph): только обобщённые схемы и публичный research; без имён заказчиков и точных метрик stage-gate в промптах Glyph.
 
 При написании ссылайся на эти источники по необходимости («согласно WHITE_PAPER §5.1...»), но в выходных документах эти ссылки не цитируй прямо — переформулируй своими словами для внешней аудитории.
 

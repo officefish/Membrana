@@ -102,6 +102,10 @@ yarn workspaces foreach -A run build
 
 Промпты и нормативные документы для оркестрации ролей (Teamlead, структурщик, математик, музыкант, верстальщик) лежат в каталоге [`docs/`](./docs/README.md). Ритм вызова скриптов — [`docs/DEVELOPER_RHYTHM.md`](./docs/DEVELOPER_RHYTHM.md).
 
+## MCP-окружение разработчика (Cursor / Claude Desktop)
+
+Стратегия интеграции MCP-серверов в процесс: [`docs/MCP_INTEGRATION_STRATEGY.md`](./docs/MCP_INTEGRATION_STRATEGY.md). Процедура установки (Windows, шесть серверов, приёмочные тесты): [`docs/TZ_MCP_Servers_Membrana_v3.md`](./docs/TZ_MCP_Servers_Membrana_v3.md). MCP дополняет `yarn`-ритуалы и task-промпты; секреты не коммитятся в git.
+
 В GitHub Actions доступен ручной запуск workflow **Virtual team context** (`.github/workflows/virtual-team-context.yml`): в summary появятся пути к файлам и чеклист для агента.
 
 ## Документация по пакетам

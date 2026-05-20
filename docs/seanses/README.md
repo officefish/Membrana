@@ -8,6 +8,8 @@
 | `yarn consilium --save-as <slug> "…"` | `<slug>-<дата>.md` |
 | Вручную в Cursor | По [`CONSILIUM_PROMPT.md`](../prompts/CONSILIUM_PROMPT.md), затем сохранить сюда |
 
+MCP-серверы не заменяют консилиум; протокол остаётся в этом каталоге — см. [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md).
+
 ## Соглашение по именам
 
 | Источник | Имя файла |

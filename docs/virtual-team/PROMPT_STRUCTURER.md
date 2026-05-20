@@ -44,6 +44,10 @@
 - `/refactor <модуль>` — разбор на части и проверка связанности.
 - `/service <name>` — новый сервис в `packages/services/<name>` по SERVICES.md.
 
+## MCP-инструменты (роль Ozhegov)
+
+По [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md): **gitnexus** (граф зависимостей, реализации контрактов), **Git MCP** (история изменений пакетов). После крупного рефакторинга — напомнить про `gitnexus analyze`.
+
 ## Обязательные ссылки
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) · [SERVICES.md](../SERVICES.md) · [CONTRIBUTING.md](../CONTRIBUTING.md)
+- [ARCHITECTURE.md](../ARCHITECTURE.md) · [SERVICES.md](../SERVICES.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [MCP_INTEGRATION_STRATEGY.md](../MCP_INTEGRATION_STRATEGY.md)

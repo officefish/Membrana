@@ -46,6 +46,10 @@
 
 - `/ui <компонент>` — компонент строго по DESIGN.md.
 
+## MCP-инструменты (роль Rodchenko)
+
+По [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md): **GlyphMCP** (схемы для промптов — только обобщённые слои), **Playwright** (скриншоты demo). Вёрстка клиента — канон [`DESIGN.md`](../DESIGN.md), не через MCP.
+
 ## Обязательные ссылки
 
-- [DESIGN.md](../DESIGN.md) · [ARCHITECTURE.md](../ARCHITECTURE.md) · [UI_UX_DEVELOPER_PROMPT.md](../UI_UX_DEVELOPER_PROMPT.md)
+- [DESIGN.md](../DESIGN.md) · [ARCHITECTURE.md](../ARCHITECTURE.md) · [UI_UX_DEVELOPER_PROMPT.md](../UI_UX_DEVELOPER_PROMPT.md) · [MCP_INTEGRATION_STRATEGY.md](../MCP_INTEGRATION_STRATEGY.md)

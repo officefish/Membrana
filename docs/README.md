@@ -12,6 +12,8 @@
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Границы пакетов Membrana + правила плагинов и аудио-слоёв |
 | [SERVICES.md](./SERVICES.md) | Соглашения о пакетах-сервисах в `packages/services/*` |
 | [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) | Стратегия экспериментальных интеграций анализа звука (эшелоны локально → сервер → API) |
+| [MCP_INTEGRATION_STRATEGY.md](./MCP_INTEGRATION_STRATEGY.md) | **MCP-серверы в среде агента:** состав, роли, безопасность, когда использовать; установка — [`TZ_MCP_Servers_Membrana_v3.md`](./TZ_MCP_Servers_Membrana_v3.md) |
+| [MCP_ROLLOUT_PLAN.md](./MCP_ROLLOUT_PLAN.md) | **Внедрение MCP:** 5 задач реестра, порядок, шаблоны GitHub Issues |
 | [WEEKLY_ANALYZERS_RESEARCH.md](./WEEKLY_ANALYZERS_RESEARCH.md) | Авто-генерируемый еженедельный «радар»: новые модели/работы для каталога §4 INTEGRATIONS_STRATEGY (`yarn analyzers:research:week`). Используется недельным планом, не дневным code-review |
 | [DESIGN.md](./DESIGN.md) | Токены UI для аудио-интерфейса |
 | [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) | Live-детекция: сглаживание isDrone/confidence, вёрстка demo |
@@ -37,9 +39,10 @@
 3. [ARCHITECTURE.md](./ARCHITECTURE.md) — где границы пакетов и слоёв.
 4. [SERVICES.md](./SERVICES.md) — если задача про чистую логику + хуки.
 5. [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) — если задача про подключение новой ML/DSP-модели для анализа звука.
-6. [DESIGN.md](./DESIGN.md) — если задача про вёрстку.
-7. [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) — если live-детектор, demo в `packages/services/*/demo/`, anti-flicker.
-8. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
-9. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
+6. [MCP_INTEGRATION_STRATEGY.md](./MCP_INTEGRATION_STRATEGY.md) — если агент работает в Cursor/Claude Desktop с MCP (research, граф кода, датасеты, диаграммы).
+7. [DESIGN.md](./DESIGN.md) — если задача про вёрстку.
+8. [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) — если live-детектор, demo в `packages/services/*/demo/`, anti-flicker.
+9. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
+10. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
 
 GitHub Actions: workflow `virtual-team-context` выводит эти пути в summary при ручном запуске.

@@ -80,6 +80,66 @@
       "createdAt": "2026-05-18",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "mcp-repo-bootstrap",
+      "title": "MCP: bootstrap артефактов в репозитории (шаблоны конфига, gitignore)",
+      "promptPath": "docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md",
+      "githubIssue": 50,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-05-20",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "mcp-workstation-phase-a",
+      "title": "MCP фаза A: gitnexus + Git + Filesystem на рабочей станции",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_A_PROMPT.md",
+      "githubIssue": 51,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-05-20",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "mcp-workstation-phase-b",
+      "title": "MCP фаза B: Perplexity + Playwright на рабочей станции",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_B_PROMPT.md",
+      "githubIssue": 52,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-05-20",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "mcp-workstation-phase-c",
+      "title": "MCP фаза C: GlyphMCP и правило конфиденциальности",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_C_PROMPT.md",
+      "githubIssue": 53,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-05-20",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "mcp-rollout-acceptance",
+      "title": "MCP: финальная приёмка (тест 7.7, gate «MCP развёрнут»)",
+      "promptPath": "docs/prompts/MCP_ROLLOUT_ACCEPTANCE_PROMPT.md",
+      "githubIssue": 54,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-05-20",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

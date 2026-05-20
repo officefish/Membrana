@@ -20,6 +20,7 @@
 | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Границы модулей |
 | [`DESIGN.md`](../DESIGN.md) | UI (если есть) |
 | [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | Issue / PR |
+| [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md) | Какие MCP уместны (если агент в Cursor с MCP) |
 | <другие> | … |
 
 **Референс (только идеи UX, не копировать код):** `packages/temp/...` — если есть.
@@ -37,6 +38,23 @@
 ### Кто ты
 
 Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Перед кодом — краткий план (1–2 абзаца + список файлов). Соблюдай [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) и [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
+
+---
+
+### MCP при выполнении (если доступны в Cursor / Claude Desktop)
+
+См. [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md) §4. Для этой задачи:
+
+| Сервер | Использовать | Не использовать |
+|--------|--------------|-----------------|
+| gitnexus | да / нет | — |
+| Git MCP | да / нет | — |
+| Filesystem | да / нет | чтение бинарных WAV в промпт |
+| Perplexity | да / нет | — |
+| Playwright | да / нет | — |
+| GlyphMCP | да / нет | имена заказчиков, точные метрики |
+
+Правило Glyph: только обобщённые названия компонентов. Артефакты — в репозиторий / Issue.
 
 ---
 

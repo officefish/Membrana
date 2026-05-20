@@ -16,6 +16,7 @@
 | **Вечер** | **`archive:daily-day`** → **`code-review`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | архив плана/стендапа/фокуса, `DAILY_CODE_REVIEW.md` (+ архив), реестр, Issues |
 | **Понедельник / неделя** | `analyzers:research:week` → `plan:week` | `WEEKLY_ANALYZERS_RESEARCH.md`, `STRATEGIC_PLAN_WEEK.md` |
 | **По необходимости** | `consilium`, `ask`, `task:list`, CI | `docs/seanses/*`, `docs/discussions/*` |
+| **Среда агента (MCP)** | Cursor / Claude Desktop — см. [`MCP_INTEGRATION_STRATEGY.md`](./MCP_INTEGRATION_STRATEGY.md) | не заменяет `yarn`-ритуалы; установка — [`TZ_MCP_Servers_Membrana_v3.md`](./TZ_MCP_Servers_Membrana_v3.md) |
 
 ---
 
@@ -262,4 +263,6 @@ flowchart TB
 - [`prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md) — постановка M/L задач
 - [`prompts/TASK_CLOSURE_REGULATION.md`](./prompts/TASK_CLOSURE_REGULATION.md) — закрытие вечером
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — PR и CI
+- [`MCP_INTEGRATION_STRATEGY.md`](./MCP_INTEGRATION_STRATEGY.md) — MCP в Cursor/Claude Desktop
+- [`TZ_MCP_Servers_Membrana_v3.md`](./TZ_MCP_Servers_Membrana_v3.md) — установка MCP (runbook)
 - [`AGENTS.md`](../AGENTS.md) — шпаргалка для Cloud Agents

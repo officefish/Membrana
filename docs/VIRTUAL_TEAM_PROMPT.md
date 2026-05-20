@@ -84,12 +84,24 @@ GitHub Issue → запись в [`docs/tasks/registry.json`](./tasks/registry.j
 файл `docs/prompts/*_PROMPT.md` → работа → `yarn task:archive <id>`.
 Активные и архивные задачи: [`docs/tasks/README.md`](./tasks/README.md).
 
+## MCP-инструменты агента
+
+Среда Cursor / Claude Desktop может подключать MCP-серверы по
+[`MCP_INTEGRATION_STRATEGY.md`](./MCP_INTEGRATION_STRATEGY.md) (установка —
+[`TZ_MCP_Servers_Membrana_v3.md`](./TZ_MCP_Servers_Membrana_v3.md)).
+
+- MCP **дополняет** роли, но **не заменяет** `yarn consilium`, `yarn ask`, task-промпты и вечерний `code-review`.
+- Привязка серверов к персонажам — в §3 стратегии; кратко — в [`virtual-team/PROMPT_*.md`](./virtual-team/).
+- **GlyphMCP:** только обобщённые описания (без имён заказчиков и точных метрик stage-gate).
+- **Chrome MCP** в стандартном контуре **не используется**.
+
 ## Ссылки на артефакты репозитория
 
 - Архитектура и шина плагинов: [ARCHITECTURE.md](./ARCHITECTURE.md)
 - Визуальный контракт: [DESIGN.md](./DESIGN.md)
 - Процесс, PR, агенты CI: [CONTRIBUTING.md](./CONTRIBUTING.md)
 - Соглашения о сервисах: [SERVICES.md](./SERVICES.md)
+- MCP в процессе разработки: [MCP_INTEGRATION_STRATEGY.md](./MCP_INTEGRATION_STRATEGY.md)
 - Промты отдельных ролей: [virtual-team/](./virtual-team/) (см. также таблицу «Участники» выше)
 
 ## Команды-ярлыки

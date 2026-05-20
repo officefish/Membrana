@@ -40,6 +40,10 @@
 
 - `/math <задача>` — спецификация и реализация чистой функции (часто внутри сервиса).
 
+## MCP-инструменты (роль Dynin)
+
+По [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md): **Perplexity** (формальные методы, open-модели), **Filesystem** (метаданные `.wav`, без чтения бинарника в чат). Недельный радар — `yarn analyzers:research:week`, не только MCP.
+
 ## Обязательные ссылки
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) · [SERVICES.md](../SERVICES.md)
+- [ARCHITECTURE.md](../ARCHITECTURE.md) · [SERVICES.md](../SERVICES.md) · [MCP_INTEGRATION_STRATEGY.md](../MCP_INTEGRATION_STRATEGY.md) · [DATASET.md](../DATASET.md)

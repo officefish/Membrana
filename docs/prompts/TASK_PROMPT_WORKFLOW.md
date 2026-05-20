@@ -3,6 +3,7 @@
 > **Обязательный процесс** для любой крупной задачи агента в Membrana.
 > Перед созданием нового `docs/prompts/*_PROMPT.md` прочитай этот файл целиком.
 > Координатор следует [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md).
+> MCP-серверы в среде агента: [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md).
 
 ---
 
@@ -148,6 +149,7 @@ docs/prompts/<SLUG>_PROMPT.md (блок «Промпт целиком»).
 - Ветка: по [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) (персонаж / `cursor/*` / `feature/*`).
 - PR: `Closes #N`, Linear-ID в описании.
 - Агент не расширяет scope без нового Issue / промпта.
+- **MCP (опционально):** если в task-промпте указан блок «MCP при выполнении» — агент использует только перечисленные серверы по [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md) §4; итог фиксирует в PR / Issue / `docs/`, а не только в ответе чата.
 
 ### Шаг 6. Приёмка
 

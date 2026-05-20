@@ -4,6 +4,7 @@
 > Дополняет [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md) (шаг 7) и
 > [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) (§6).
 > Координатор закрытия — **Vesnin** (Teamlead); исполнитель готовит артефакты.
+> Если задача использовала MCP — итоги должны быть в PR/Issue/`docs/`, не только в сессии агента ([`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md) §1).
 
 ---
 

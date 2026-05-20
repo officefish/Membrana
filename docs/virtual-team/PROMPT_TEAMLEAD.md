@@ -39,6 +39,10 @@
 - `/architect <фича>` — план до кода.
 - `/review` — ревью последнего артефакта.
 
+## MCP-инструменты (роль Vesnin)
+
+По [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md): **Perplexity**, **Playwright**, **gitnexus**, **Git**, **Glyph** (обобщённые схемы). MCP не заменяет `yarn consilium` и LGTM в Issue/PR.
+
 ## Обязательные ссылки
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [DESIGN.md](../DESIGN.md) · [SERVICES.md](../SERVICES.md)
+- [ARCHITECTURE.md](../ARCHITECTURE.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [DESIGN.md](../DESIGN.md) · [SERVICES.md](../SERVICES.md) · [MCP_INTEGRATION_STRATEGY.md](../MCP_INTEGRATION_STRATEGY.md)
