@@ -1,71 +1,95 @@
-<!-- Сгенерировано: 2026-05-16T05:35:38.993Z (yarn main-day-issue) -->
+<!--
+  archive-role: archive-snapshot
+  archive-day: 2026-05-16
+  archived-at: 2026-05-20T19:42:34.745Z
+  source: docs/MAIN_DAY_ISSUE.md
+  canonical: docs/MAIN_DAY_ISSUE.md (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
+<!-- Сгенерировано: 2026-05-16T06:46:47.271Z (yarn main-day-issue) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: dsp-drone-detector -->
+<!-- active в реестре: dsp-drone-detector, single-node-detection-first -->
 
-# MAIN_DAY_ISSUE — Центральная задача дня
+# MAIN_DAY_ISSUE
 
-> **Дата:** 2026-05-16 · **Роль:** Teamlead (Vesnin)  
-> **Источники:** `DAILY_STANDUP.md`, `STRATEGIC_PLAN_DAY.md`, `DAILY_CODE_REVIEW.md`, GitHub Issues (#28–#36, #45)
-
----
-
-## 🎯 Обязательный фокус дня
-
-### **Завершить фундамент Этапа 1 — убрать нарушения слабой связанности и добавить контракты синхронизации**
-
-**Одна задача, три компоненты:**
-
-1. **Слабая связанность плагинов микрофона** (#30 — КРИТИЧНО)
-   - Проверить: нет ли прямых импортов `@membrana/telemetry*` из `apps/client/src/plugins/microphone-stream-viz`?
-   - Проверить: нет ли прямых вызовов Web Audio вне `@membrana/audio-engine-service`?
-   - **Command:** `rg -n "@membrana/telemetry|navigator.mediaDevices|AudioContext" apps/client/src/plugins/microphone* apps/client/src/modules/microphone`
-   - **Результат:** граф импортов чистый (no direct plugin-to-plugin, all telemetry через agenda).
-
-2. **Типы синхронизации в `@membrana/core`** (задача 4.1 STRATEGIC_PLAN)
-   - Добавить интерфейсы: `SyncedTimestamp`, `TimeSyncProvider`, `TdoaResult`.
-   - **File:** `packages/core/src/types.ts`
-   - **Экспорт:** из `core/index.ts`
-   - **Результат:** `yarn test --filter=@membrana/core` зелёный (TDOA unit-тесты на синтетических данных).
-
-3. **Скелет `@membrana/tdoa-service`** (задача 4.2 STRATEGIC_PLAN)
-   - Структура: `src/math/tdoa.ts` (чистые функции), `src/core/tdoa-service.ts`, `src/hooks/`.
-   - **Функция:** `computeTdoa(obs1, obs2) => TdoaResult`.
-   - **Тесты:** ≥4 unit-теста (zero signal, known sine, TDOA на расстояниях 10/100/1000 м).
-   - **Результат:** `yarn test --filter=@membrana/tdoa` зелёный.
+**Дата:** 2026-05-16 (утро, после стендапа)  
+**Роль:** Teamlead (Vesnin)  
+**Период:** Single-Node Detection First (консилиум завершён)
 
 ---
 
-## 📋 Definition of Done (к вечеру)
+## 🎯 Один обязательный фокус дня
 
-- [ ] **#30 закрыта:** `rg`-поиск на слабую связанность чистый; плагины импортируют только из `@membrana/*-service` и core.
-- [ ] **`@membrana/core/src/types.ts`** экспортирует `SyncedTimestamp`, `TimeSyncProvider`, `TdoaResult`.
-- [ ] **`@membrana/tdoa-service`** содержит скелет с ≥4 unit-тестами; `yarn test --filter=@membrana/tdoa` ✅.
-- [ ] **FFT math-функции** задокументированы (JSDoc с примерами и edge cases).
-- [ ] **`packages/temp/`** очищена (осталась только `.gitkeep`); ценное в `docs/discussions/`.
-- [ ] **Скрипты** `consilium.mjs`, `main-day-issue.mjs` закоммичены в `scripts/`; `package.json` обновлён.
-- [ ] **`yarn lint` и `yarn test`** проходят без ошибок.
-- [ ] **LGTM от Teamlead:** код соответствует `ARCHITECTURE.md`, нет нарушений дизайна.
+### **Реализация harmonic-detector-service + dataset + benchmark + UI интеграция**
 
----
+**GitHub:** [#47](https://github.com/officefish/Membrana/issues/47) (Single-Node Detection First)  
+**Реестр:** `single-node-detection-first` (scaffold → реализация)
 
-## ⏱️ Таймбокс (3 блока × 2.5–3 ч)
+После консилиума и утреннего стендапа **scaffolding завершено**. Переходим на **реальную реализацию** DSP-эшелона **Этапа 1.A**.
 
-| Блок | Время | Что делать | Роли |
-|------|-------|-----------|------|
-| **A. Аудит #30 + типы core** | 09:00–11:30 | Проверить слабую связанность; добавить `SyncedTimestamp`, `TimeSyncProvider`, `TdoaResult` в core. | Структурщик, Математик |
-| **B. Скелет tdoa-service** | 12:00–15:00 | Создать пакет, функция `computeTdoa`, ≥4 unit-теста. | Математик, Структурщик |
-| **C. Очистка + финализация** | 15:00–18:00 | Убрать `packages/temp/` (архив в docs/), закоммитить скрипты, LGTM. | Верстальщик, Teamlead |
+**Четыре параллельных блока:**
+
+1. **Harmonic-детектор** — `@membrana/harmonic-detector-service/src/math/harmonic-extractor.ts` (FFT-парсинг, F₀ 80–250 Гц, гармоники).
+2. **Dataset + Benchmark** — `docs/DATASET.md` (9+ примеров), `yarn benchmark:detectors` (TP/FP/FN).
+3. **Hub + Хок в клиенте** — `droneDetectionResultHub`, `useDroneDetectionSensor()` для подписки плагинов.
+4. **UI-компонент** — `DroneDetectionHeaderSensor` (иконка, текст, цветовая шкала по уверенности).
 
 ---
 
-## 🚀 Следующие шаги (после MAIN_DAY_ISSUE)
+## 📋 Definition of Done
 
-1. **Drone-detector-service** (эшелон 0.1) — задача задачи 4.3 из STRATEGIC_PLAN.
-2. **Контракт наблюдения (AcousticObservation, Track)** — задача 4.5.
-3. **VirtualNodeSimulator** для тестирования на двух узлах — задача 4.6.
+- [ ] `@membrana/harmonic-detector-service` реализован полностью (не placeholder); `yarn test` **зелёный**.
+- [ ] Unit-тесты на синтезированных дронах, шуме, edge cases; latency < 100 мс.
+- [ ] `docs/DATASET.md` содержит минимум 9 примеров с источниками и метаинформацией.
+- [ ] `yarn benchmark:detectors` собирается и выполняется; результаты в JSON + `DETECTOR_BENCHMARK.md`.
+- [ ] `DroneDetectionHeaderSensor` в заголовке клиента отображает иконку + текст (цвет по confidence).
+- [ ] Hub и хук работают; детектор может публиковать результаты в hub, UI получает их.
+- [ ] **Архитектурная целостность:** нет циклических зависимостей, нет прямых импортов между детекторами.
+- [ ] **LGTM от Vesnin** на PR перед слиянием в `main`.
 
 ---
 
-**Источник:** STRATEGIC_PLAN_DAY.md (задачи 4.1–4.5) · DAILY_CODE_REVIEW.md (критичные issues) · DAILY_STANDUP.md (приоритизация)
+## ⏱️ Порядок работы (цепочка ролей)
+
+| Фаза | Роль | Содержание | Выход |
+|------|------|-----------|-------|
+| **1** | Teamlead | Согласовать контракт, границы, LGTM-критерии | ADR (1 абзац) |
+| **2** | Математик | Реализовать `harmonic-extractor.ts` + unit-тесты | FFT-классификатор, тесты pass |
+| **3** | Музыкант | Валидировать на реальных звуках из DATASET | Recall ≥ 80%, precision ≥ 70% |
+| **4** | Структурщик | Собрать интеграцию (hub, хук, детектор в registry) | Модульная структура, нет циклов |
+| **5** | Верстальщик | UI-компонент, a11y, интеграция в header | Компонент в клиенте, проверка a11y |
+| **6** | Teamlead | LGTM на целостность архитектуры, merge | Завершение |
+
+---
+
+## 🚫 Что НЕ делаем сегодня
+
+- ❌ Реализация spectral-flux и cepstral детекторов → отдельные task-промпты после LGTM на harmonic.
+- ❌ YAMNet, CLAP, Agentic детекторы → Этап 1.B, после Этапа 1.A.
+- ❌ TDOA, синхронизация, многоузловая локализация → явно за stage-gate 1→2.
+- ❌ Расширение #45 без согласования → отложить.
+
+---
+
+## 📊 Матрица Issues ↔ день
+
+| Задача дня | GitHub | Статус |
+|------------|--------|--------|
+| Harmonic-детектор | #47 (main-day-issue) | 🟢 в работе |
+| Dataset | #47 | 🟢 в работе |
+| Benchmark | #47 | 🟢 в работе |
+| Hub + HeaderSensor | #47 | 🟢 в работе |
+| Проверка архитектуры | #47, #30 | 🟢 параллельно |
+| Code-review issues | #28–#36 | 🟡 backlog (мониторим) |
+| Unit-тесты backlog | #9–#12 | 🟡 если остаётся время |
+
+---
+
+## 🚀 Следующие шаги
+
+1. **После LGTM harmonic** → task-промпты на spectral-flux, cepstral.
+2. **После stage-gate 1→2** (precision ≥ 85%, recall ≥ 90%) → разблокировка TDOA, Этап 2.
+3. **Параллельно** → разведка синхронизации времени для Этапа 2 (`TIME_SYNCHRONIZATION_STRATEGY.md`).
