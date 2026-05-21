@@ -76,6 +76,71 @@ function firstProxyUrl() {
   );
 }
 
+/** Git for Windows (schannel) often breaks TLS when HTTPS_PROXY is set; use -c http.proxy instead. */
+function gitEnvWithoutProxyEnv() {
+  const env = { ...process.env };
+  for (const key of [
+    'HTTPS_PROXY',
+    'HTTP_PROXY',
+    'ALL_PROXY',
+    'https_proxy',
+    'http_proxy',
+    'all_proxy',
+  ]) {
+    delete env[key];
+  }
+  return env;
+}
+
+function gitPullArgv(branchName, proxy) {
+  const pull = ['pull', '--ff-only', 'origin', branchName];
+  if (!proxy) return pull;
+  return ['-c', `http.proxy=${proxy}`, '-c', `https.proxy=${proxy}`, ...pull];
+}
+
+function gitBehindOrigin(cwd, branchName) {
+  try {
+    const line = execFileSync(
+      'git',
+      ['rev-list', '--left-right', '--count', `origin/${branchName}...HEAD`],
+      { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], env: gitEnvWithoutProxyEnv() },
+    ).trim();
+    const [behind] = line.split(/\s+/).map((n) => Number(n));
+    return Number.isFinite(behind) ? behind : null;
+  } catch {
+    return null;
+  }
+}
+
+function runGitPull(cwd, branchName) {
+  const proxy = firstProxyUrl();
+  const attempts = proxy
+    ? [
+        { argv: gitPullArgv(branchName, proxy), label: 'через http.proxy' },
+        { argv: gitPullArgv(branchName, ''), label: 'напрямую (без прокси)' },
+      ]
+    : [{ argv: gitPullArgv(branchName, ''), label: 'напрямую' }];
+
+  let lastErr;
+  for (const { argv, label } of attempts) {
+    try {
+      execFileSync('git', argv, { cwd, stdio: 'inherit', env: gitEnvWithoutProxyEnv() });
+      return { ok: true, detail: label };
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+
+  const behind = gitBehindOrigin(cwd, branchName);
+  if (behind === 0) {
+    return {
+      ok: true,
+      detail: 'pull не удался (сеть/прокси), но локально не отстаём от origin',
+    };
+  }
+  return { ok: false, detail: lastErr?.message || 'pull не удался' };
+}
+
 function runScriptTests(cwd) {
   const testFile = resolve(cwd, 'scripts/context-collector-paths.test.mjs');
   if (!existsSync(testFile)) {
@@ -192,15 +257,11 @@ function ensureWorkBranch(cwd, branchName) {
   }
 
   if (current === branchName) {
-    try {
-      execFileSync('git', ['pull', '--ff-only', 'origin', branchName], {
-        cwd,
-        stdio: 'inherit',
-      });
-      return { ok: true, detail: `уже на ${branchName}, pull выполнен` };
-    } catch {
-      return { ok: false, detail: `на ${branchName}, но pull не удался` };
+    const pull = runGitPull(cwd, branchName);
+    if (pull.ok) {
+      return { ok: true, detail: `уже на ${branchName}, ${pull.detail}` };
     }
+    return { ok: false, detail: `на ${branchName}, но pull не удался` };
   }
 
   let dirty = false;
@@ -225,11 +286,9 @@ function ensureWorkBranch(cwd, branchName) {
 
   try {
     execFileSync('git', ['checkout', branchName], { cwd, stdio: 'inherit' });
-    execFileSync('git', ['pull', '--ff-only', 'origin', branchName], {
-      cwd,
-      stdio: 'inherit',
-    });
-    return { ok: true, detail: `переключено ${current || '?'} → ${branchName}` };
+    const pull = runGitPull(cwd, branchName);
+    if (!pull.ok) throw new Error('pull failed');
+    return { ok: true, detail: `переключено ${current || '?'} → ${branchName} (${pull.detail})` };
   } catch {
     return { ok: false, detail: `checkout/pull ${branchName} не удался` };
   }
