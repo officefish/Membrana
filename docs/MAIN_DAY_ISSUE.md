@@ -1,86 +1,108 @@
-<!-- Сгенерировано: 2026-05-16T06:46:47.271Z (yarn main-day-issue) -->
+<!-- Сгенерировано: 2026-05-21T09:30:30.923Z (yarn main-day-issue) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: dsp-drone-detector, single-node-detection-first -->
+<!-- active в реестре: single-node-detection-first -->
 
-# MAIN_DAY_ISSUE
+# MAIN_DAY_ISSUE — 2026-05-17
 
-**Дата:** 2026-05-16 (утро, после стендапа)  
+**Дата:** 2026-05-17 (утро)  
 **Роль:** Teamlead (Vesnin)  
-**Период:** Single-Node Detection First (консилиум завершён)
+**Статус:** Stage-gate 1→2 в процессе验证
 
 ---
 
 ## 🎯 Один обязательный фокус дня
 
-### **Реализация harmonic-detector-service + dataset + benchmark + UI интеграция**
+### **Валидация harmonic-detector на реальном датасете и прохождение stage-gate 1→2**
 
 **GitHub:** [#47](https://github.com/officefish/Membrana/issues/47) (Single-Node Detection First)  
-**Реестр:** `single-node-detection-first` (scaffold → реализация)
+**Реестр:** `single-node-detection-first` (реализация → gate decision)  
+**Метрики шлюза:** precision ≥ 85%, recall ≥ 90%
 
-После консилиума и утреннего стендапа **scaffolding завершено**. Переходим на **реальную реализацию** DSP-эшелона **Этапа 1.A**.
+---
 
-**Четыре параллельных блока:**
+## 📋 Содержание дня
 
-1. **Harmonic-детектор** — `@membrana/harmonic-detector-service/src/math/harmonic-extractor.ts` (FFT-парсинг, F₀ 80–250 Гц, гармоники).
-2. **Dataset + Benchmark** — `docs/DATASET.md` (9+ примеров), `yarn benchmark:detectors` (TP/FP/FN).
-3. **Hub + Хок в клиенте** — `droneDetectionResultHub`, `useDroneDetectionSensor()` для подписки плагинов.
-4. **UI-компонент** — `DroneDetectionHeaderSensor` (иконка, текст, цветовая шкала по уверенности).
+После вчерашней реализации harmonic-detector-service (FFT-парсинг, гармонический классификатор, unit-тесты) **сегодня — финальная валидация на синтетическом датасете и консилиум-решение** по проходу gate.
+
+**Три блока работы:**
+
+1. **Benchmark гармоник на датасете v0.1** — запуск `yarn benchmark:detectors`, анализ TP/FP/FN, сравнение с целевыми метриками.
+2. **Консилиум gate-решение** — если метрики достаточны, разморозка Этапа 2 (TDOA); иначе — итерация.
+3. **Разведка Этапа 2** — синхронизация времени, архитектура TDOA (параллельно, если gate пройден).
 
 ---
 
 ## 📋 Definition of Done
 
-- [ ] `@membrana/harmonic-detector-service` реализован полностью (не placeholder); `yarn test` **зелёный**.
-- [ ] Unit-тесты на синтезированных дронах, шуме, edge cases; latency < 100 мс.
-- [ ] `docs/DATASET.md` содержит минимум 9 примеров с источниками и метаинформацией.
-- [ ] `yarn benchmark:detectors` собирается и выполняется; результаты в JSON + `DETECTOR_BENCHMARK.md`.
-- [ ] `DroneDetectionHeaderSensor` в заголовке клиента отображает иконку + текст (цвет по confidence).
-- [ ] Hub и хук работают; детектор может публиковать результаты в hub, UI получает их.
-- [ ] **Архитектурная целостность:** нет циклических зависимостей, нет прямых импортов между детекторами.
-- [ ] **LGTM от Vesnin** на PR перед слиянием в `main`.
+- [ ] `yarn benchmark:detectors` запущен; результаты в JSON + `docs/DETECTOR_BENCHMARK.md`.
+- [ ] Таблица метрик заполнена: harmonic v0.1 показывает precision, recall, F1.
+- [ ] **Gate decision** — если precision ≥ 85% И recall ≥ 90%: ✅ ПРОЙДЕН → разморозка Stage 2.
+- [ ] Иначе: 🔴 ОТЛОЖЕН → анализ причин (пороги, датасет, алгоритм), issue `imperfection:classifier` или `dataset:insufficient`.
+- [ ] **Консилиум-отчёт** в `docs/seanses/single-node-detection-first-gate-decision-2026-05-17.md`.
+- [ ] Обновлены: `docs/MAIN_DAY_ISSUE.md`, `docs/STRATEGIC_PLAN_WEEK.md`, GitHub Issue #47.
 
 ---
 
-## ⏱️ Порядок работы (цепочка ролей)
+## ⏱️ Порядок работы
 
 | Фаза | Роль | Содержание | Выход |
 |------|------|-----------|-------|
-| **1** | Teamlead | Согласовать контракт, границы, LGTM-критерии | ADR (1 абзац) |
-| **2** | Математик | Реализовать `harmonic-extractor.ts` + unit-тесты | FFT-классификатор, тесты pass |
-| **3** | Музыкант | Валидировать на реальных звуках из DATASET | Recall ≥ 80%, precision ≥ 70% |
-| **4** | Структурщик | Собрать интеграцию (hub, хук, детектор в registry) | Модульная структура, нет циклов |
-| **5** | Верстальщик | UI-компонент, a11y, интеграция в header | Компонент в клиенте, проверка a11y |
-| **6** | Teamlead | LGTM на целостность архитектуры, merge | Завершение |
+| **09:00–10:00** | Математик + CI | Запуск benchmark, отладка скрипта | JSON отчёт |
+| **10:00–11:30** | Математик | Анализ метрик, выявление bottleneck'ов | Root-cause анализ |
+| **11:30–12:30** | Музыкант | Проверка датасета (качество примеров, SNR) | Заключение о полноте данных |
+| **13:00–14:00** | Консилиум (все роли) | Обсуждение результатов, gate-решение | Decision + консилиум-отчёт |
+| **14:00–16:00** | Структурщик (если gate пройден) | Разморозка TDOA, контракты Stage 2 | Live сервис, типы готовы |
+| **16:00–18:00** | Математик (параллельно) | Разведка синхронизации времени | `TIME_SYNCHRONIZATION_STRATEGY.md` |
+| **18:00–19:00** | Teamlead | LGTM на решение, merge PR, архив | Завершение дня |
 
 ---
 
 ## 🚫 Что НЕ делаем сегодня
 
-- ❌ Реализация spectral-flux и cepstral детекторов → отдельные task-промпты после LGTM на harmonic.
-- ❌ YAMNet, CLAP, Agentic детекторы → Этап 1.B, после Этапа 1.A.
-- ❌ TDOA, синхронизация, многоузловая локализация → явно за stage-gate 1→2.
-- ❌ Расширение #45 без согласования → отложить.
+- ❌ Реализация 2-го и 3-го детекторов (spectral-flux, cepstral) → отдельные task-промпты.
+- ❌ Расширение датасета сверх v0.1 → завтра (параллельно с TDOA).
+- ❌ YAMNet/CLAP нейросетевые детекторы → Этап 1.B, после gate.
+- ❌ Полевая валидация дронов → в плане следующей недели.
 
 ---
 
 ## 📊 Матрица Issues ↔ день
 
-| Задача дня | GitHub | Статус |
-|------------|--------|--------|
-| Harmonic-детектор | #47 (main-day-issue) | 🟢 в работе |
-| Dataset | #47 | 🟢 в работе |
-| Benchmark | #47 | 🟢 в работе |
-| Hub + HeaderSensor | #47 | 🟢 в работе |
-| Проверка архитектуры | #47, #30 | 🟢 параллельно |
-| Code-review issues | #28–#36 | 🟡 backlog (мониторим) |
-| Unit-тесты backlog | #9–#12 | 🟡 если остаётся время |
+| GitHub | Статус | Связь |
+|--------|--------|-------|
+| **#47** (main-day-issue) | 🟢 **в работе** | Центральный фокус: gate decision |
+| **#45** (DSP-детектор, task-промпт) | 🟡 отложен | Ждёт результатов gate; уточнение границ |
+| **#28–#36** (code-review issues) | 🟡 backlog | Мониторим, не активируем |
+| **#49** (UI микрофона) | 🟡 backlog | После gate; параллельно с TDOA |
+| **#50–54** (MCP infra) | 🟡 backlog | После завершения Single-Node |
 
 ---
 
-## 🚀 Следующие шаги
+## 🚀 Предусловия для успеха
 
-1. **После LGTM harmonic** → task-промпты на spectral-flux, cepstral.
-2. **После stage-gate 1→2** (precision ≥ 85%, recall ≥ 90%) → разблокировка TDOA, Этап 2.
-3. **Параллельно** → разведка синхронизации времени для Этапа 2 (`TIME_SYNCHRONIZATION_STRATEGY.md`).
+1. **Benchmark-скрипт готов** (вчера завершён, тесты проходят).
+2. **Датасет v0.1 собран** — 9 WAV-файлов с разметкой.
+3. **Harmonic-детектор реализован** и работает на синтетике (unit-тесты pass).
+4. **Интеграция с hub завершена** — детектор может публиковать результаты.
+
+---
+
+## 🎯 Успех дня = Gate decision + документирование
+
+**Если precision ≥ 85%, recall ≥ 90%:**
+- ✅ Stage-gate 1→2 **ПРОЙДЕН**.
+- ✅ Разморозка Этапа 2 (TDOA, синхронизация, мультиузел).
+- ✅ Задача `single-node-detection-first` архивируется.
+- ✅ Открытие task-промптов на spectral-flux, cepstral, TDOA.
+
+**Если метрики ниже:**
+- 🔴 Stage-gate **ОТЛОЖЕН**.
+- 🔴 Анализ причин и возможные итерации.
+- 🔴 Остановка Этапа 2 до улучшения детектора.
+
+---
+
+**Хранитель дня:** Teamlead (Vesnin).  
+**Консилиум:** [`docs/seanses/single-node-detection-first-gate-decision-*.md`](docs/seanses/).
