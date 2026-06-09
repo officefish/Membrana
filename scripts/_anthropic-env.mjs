@@ -32,6 +32,8 @@ export function loadDotEnv(cwd = process.cwd()) {
 }
 
 function proxyUrlFromEnv() {
+  const noProxy = process.env.ANTHROPIC_NO_PROXY?.trim().toLowerCase();
+  if (noProxy === '1' || noProxy === 'true' || noProxy === 'yes') return '';
   return (
     process.env.HTTPS_PROXY?.trim() ||
     process.env.HTTP_PROXY?.trim() ||
