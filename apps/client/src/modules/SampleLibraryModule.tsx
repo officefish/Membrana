@@ -3,6 +3,7 @@ import { ModuleProps } from '@membrana/agenda';
 import {
   BUFFER_COLLECTION_ID,
   SYSTEM_BENCHMARK_COLLECTION_ID,
+  isQuotaFull,
   useMediaLibrary,
   type Collection,
   type MediaSample,
@@ -35,6 +36,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
   const samples = snapshot.samplesByCollection[selectedId] ?? [];
   const selected = snapshot.collections.find((c) => c.id === selectedId);
+  const quotaBlocked = isQuotaFull(snapshot.quota);
 
   const userCollections = snapshot.collections.filter((c) => c.kind === 'user');
   const moveTargets = snapshot.collections.filter(
@@ -195,12 +197,22 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             {selected?.kind === 'system' ? (
               <span className="badge badge-neutral badge-sm">системная</span>
             ) : null}
-            <label className="btn btn-sm btn-primary ml-auto cursor-pointer">
+            <label
+              className={`btn btn-sm btn-primary ml-auto cursor-pointer ${
+                quotaBlocked ? 'btn-disabled pointer-events-none opacity-50' : ''
+              }`}
+              title={
+                quotaBlocked
+                  ? 'Квота исчерпана — удалите сэмплы или подключите media-server'
+                  : undefined
+              }
+            >
               Импорт WAV
               <input
                 type="file"
                 accept="audio/*,.wav"
                 className="hidden"
+                disabled={quotaBlocked}
                 onChange={(e) => {
                   const f = e.target.files?.[0];
                   if (f) void handleImport(f);

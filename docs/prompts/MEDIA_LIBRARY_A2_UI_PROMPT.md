@@ -11,10 +11,10 @@
 
 ## DoD
 
-- [ ] `SampleLibraryModule` зарегистрирован в `registerClientModules`
-- [ ] `MediaLibraryQuotaBanner` при `browser-limited-fallback`
-- [ ] Vite alias `@membrana/media-library-service`
-- [ ] Ручной smoke: import → buffer → move → system collection
+- [x] `SampleLibraryModule` зарегистрирован в `registerClientModules`
+- [x] `MediaLibraryQuotaBanner` при `browser-limited-fallback`
+- [x] Vite alias `@membrana/media-library-service`
+- [x] Ручной smoke: import → buffer → move → system collection
 
 ## Out of scope
 

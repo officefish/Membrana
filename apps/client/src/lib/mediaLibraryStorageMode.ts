@@ -7,6 +7,7 @@ export type MediaLibraryStorageMode =
   | 'remote-server'
   | 'browser-limited-fallback';
 
+/** Target mode after A4/A5 wiring; UI banner uses `resolveMediaLibraryStorageMode(quota)` from service. */
 export function getMediaLibraryStorageMode(): MediaLibraryStorageMode {
   const runtime: RuntimeStorageMode = getRuntimeStorageMode();
   if (runtime === 'electron-system-files') {

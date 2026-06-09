@@ -102,10 +102,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-09",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-09",
+      "archiveNotes": "IStorageBackend + MemoryStorageBackend/browser-limited + MediaLibraryService + quota-status; 8 unit tests green."
     },
     {
       "id": "media-library-a2-ui",
@@ -114,10 +114,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-09",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-09",
+      "archiveNotes": "SampleLibraryModule + quota banner; resolveMediaLibraryStorageMode(quota); import blocked at 100% quota; browser smoke OK."
     }
   ]
 }

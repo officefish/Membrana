@@ -2,6 +2,7 @@ import { DomainError } from '@membrana/core';
 
 import {
   BUFFER_COLLECTION_ID,
+  DEFAULT_LOCAL_QUOTA_BYTES,
   SYSTEM_BENCHMARK_COLLECTION_ID,
 } from '../constants.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
@@ -30,7 +31,7 @@ export interface MemoryStorageBackendOptions {
   serverReachable?: boolean;
 }
 
-/** In-memory backend with quota — tests and browser-limited v1 (session). */
+/** In-memory backend with quota — tests and browser-limited v1 (session; IndexedDB later). */
 export class MemoryStorageBackend implements IStorageBackend {
   private readonly limitBytes: number;
 
@@ -204,7 +205,7 @@ export function createBrowserLimitedStorageBackend(
   limitBytes?: number,
 ): IStorageBackend {
   return new MemoryStorageBackend({
-    limitBytes,
+    limitBytes: limitBytes ?? DEFAULT_LOCAL_QUOTA_BYTES,
     backend: 'browser-limited',
     serverReachable: false,
   });

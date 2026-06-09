@@ -40,3 +40,13 @@ export {
 } from './media-library-service.js';
 
 export { useMediaLibrary, type UseMediaLibraryResult } from './hooks.js';
+
+export {
+  QUOTA_WARNING_RATIO,
+  getQuotaLevel,
+  isQuotaFull,
+  isQuotaWarning,
+  resolveMediaLibraryStorageMode,
+  type MediaLibraryStorageMode,
+  type QuotaLevel,
+} from './quota-status.js';

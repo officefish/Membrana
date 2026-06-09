@@ -11,10 +11,10 @@
 
 ## DoD
 
-- [ ] Типы Collection / MediaSample / StorageQuota
-- [ ] Reserved: `__buffer__`, `__system_benchmark__` (system undeletable)
-- [ ] moveSample, quota, delete guards
-- [ ] `yarn workspace @membrana/media-library-service test` зелёный
+- [x] Типы Collection / MediaSample / StorageQuota
+- [x] Reserved: `__buffer__`, `__system_benchmark__` (system undeletable)
+- [x] moveSample, quota, delete guards
+- [x] `yarn workspace @membrana/media-library-service test` зелёный
 
 ## Out of scope
 
