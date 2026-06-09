@@ -1,0 +1,6 @@
+{
+  "glyph": {
+    "command": "uv",
+    "args": ["run", "--directory", "__GLYPH_ROOT__", "glyph-mcp"]
+  }
+}

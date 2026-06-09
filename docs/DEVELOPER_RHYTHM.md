@@ -15,7 +15,7 @@
 | **Утро** | `morning-care` → `plan:day` → `standup` → **`main-day-issue`** | читает вчерашний `DAILY_CODE_REVIEW.md`; пишет `STRATEGIC_PLAN_DAY`, `DAILY_STANDUP`, **`MAIN_DAY_ISSUE`** |
 | **Вечер** | **`archive:daily-day`** → **`code-review`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | архив плана/стендапа/фокуса, `DAILY_CODE_REVIEW.md` (+ архив), реестр, Issues |
 | **Понедельник / неделя** | `analyzers:research:week` → `plan:week` | `WEEKLY_ANALYZERS_RESEARCH.md`, `STRATEGIC_PLAN_WEEK.md` |
-| **По необходимости** | `consilium`, `ask`, `task:list`, CI | `docs/seanses/*`, `docs/discussions/*` |
+| **По необходимости** | `consilium`, `ask`, `task:list`, CI, **`mcp:verify-bootstrap`** | `docs/seanses/*`, `docs/discussions/*`, MCP docs |
 
 ---
 
@@ -252,6 +252,7 @@ flowchart TB
 | `docs/seanses/` | `yarn consilium` |
 | `docs/discussions/` | `yarn ask` |
 | `docs/tasks/` | `yarn task:archive`, реестр |
+| `docs/MCP_*.md`, `docs/mcp/` | MCP rollout (#50–#54); `yarn mcp:verify-bootstrap` |
 
 ---
 
@@ -262,4 +263,5 @@ flowchart TB
 - [`prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md) — постановка M/L задач
 - [`prompts/TASK_CLOSURE_REGULATION.md`](./prompts/TASK_CLOSURE_REGULATION.md) — закрытие вечером
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — PR и CI
+- [`MCP_ROLLOUT_PLAN.md`](./MCP_ROLLOUT_PLAN.md) — фазы MCP (#50–#54), fallback без ключей
 - [`AGENTS.md`](../AGENTS.md) — шпаргалка для Cloud Agents

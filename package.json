@@ -46,7 +46,7 @@
     "ask": "node scripts/ask-persona.mjs",
     "consilium": "node scripts/consilium.mjs",
     "archive:daily-review": "node scripts/archive-daily-code-review.mjs",
-    "test:scripts": "node --test scripts/context-collector-paths.test.mjs scripts/consilium-paths.test.mjs scripts/main-day-issue-paths.test.mjs scripts/daily-standup-paths.test.mjs scripts/task-registry.test.mjs scripts/archive-doc-snapshot.test.mjs scripts/benchmark-metrics.test.mjs",
+    "test:scripts": "node --test scripts/context-collector-paths.test.mjs scripts/consilium-paths.test.mjs scripts/main-day-issue-paths.test.mjs scripts/daily-standup-paths.test.mjs scripts/task-registry.test.mjs scripts/archive-doc-snapshot.test.mjs scripts/benchmark-metrics.test.mjs scripts/verify-mcp-bootstrap.test.mjs",
     "task:list": "node scripts/task-list.mjs",
     "task:sync-readme": "node scripts/task-list.mjs --sync-readme",
     "task:archive": "node scripts/archive-task.mjs",
@@ -56,7 +56,8 @@
     "lint:detectors": "turbo run lint --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/yamnet-detector-service --filter=@membrana/clap-detector-service --filter=@membrana/agentic-detector-service",
     "office:dev": "yarn workspace @membrana/background-office dev",
     "office:build": "yarn workspace @membrana/background-office build",
-    "office:verify-swagger": "yarn workspace @membrana/background-office verify:swagger"
+    "office:verify-swagger": "yarn workspace @membrana/background-office verify:swagger",
+    "mcp:verify-bootstrap": "node scripts/verify-mcp-bootstrap.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

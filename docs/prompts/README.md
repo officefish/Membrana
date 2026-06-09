@@ -43,6 +43,11 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`DSP_DRONE_DETECTOR_PROMPT.md`](./DSP_DRONE_DETECTOR_PROMPT.md) | **Активная задача** `dsp-drone-detector` — сервис, демо, плагин (L, 3 фазы) |
 | [`HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md`](./HARMONIC_DETECTOR_MICROPHONE_PLUGIN_PROMPT.md) | **Фаза 3 #45** — плагин микрофона (normal + fullscreen), синхрон с шапкой |
 | [`HARMONIC_DEMO_APPS_DEMOS_ANALYSIS_PROMPT.md`](./HARMONIC_DEMO_APPS_DEMOS_ANALYSIS_PROMPT.md) | UX-анализ Replit lab → demo/плагин |
+| [`MCP_REPO_BOOTSTRAP_PROMPT.md`](./MCP_REPO_BOOTSTRAP_PROMPT.md) | **Активная** `mcp-repo-bootstrap` — MCP bootstrap (#50) |
+| [`MCP_WORKSTATION_PHASE_A_PROMPT.md`](./MCP_WORKSTATION_PHASE_A_PROMPT.md) | MCP фаза A: gitnexus, Git, FS (#51) |
+| [`MCP_WORKSTATION_PHASE_B_PROMPT.md`](./MCP_WORKSTATION_PHASE_B_PROMPT.md) | MCP фаза B: Perplexity, Playwright (#52, опционально) |
+| [`MCP_WORKSTATION_PHASE_C_PROMPT.md`](./MCP_WORKSTATION_PHASE_C_PROMPT.md) | MCP фаза C: Glyph (#53, опционально) |
+| [`MCP_ROLLOUT_ACCEPTANCE_PROMPT.md`](./MCP_ROLLOUT_ACCEPTANCE_PROMPT.md) | MCP acceptance (#54) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

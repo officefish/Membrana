@@ -68,6 +68,18 @@
       "createdAt": "2026-05-16",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "mcp-repo-bootstrap",
+      "title": "MCP repo bootstrap: example configs, gitignore, verify script",
+      "promptPath": "docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md",
+      "githubIssue": 50,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-09",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }
