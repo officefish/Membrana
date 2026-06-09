@@ -82,6 +82,8 @@ Glyph по ТЗ §3 (clone + `uv sync` вне репо).
 
 ```bash
 yarn mcp:verify-bootstrap          # CI: артефакты bootstrap без ключей
+yarn mcp:phase-a                   # фаза A: smoke + отчёт (без записи config)
+yarn mcp:phase-a:install           # фаза A: записать tier0 в ~/.cursor/mcp.json
 yarn task:list                     # статус mcp-* в реестре
 yarn task:archive mcp-repo-bootstrap --notes "PR #…"
 ```

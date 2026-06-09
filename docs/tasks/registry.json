@@ -76,6 +76,18 @@
       "githubIssue": 50,
       "linearId": null,
       "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-09",
+      "archivedAt": "2026-06-09",
+      "archiveNotes": "techies68 e4cf038; yarn mcp:verify-bootstrap; docs/mcp/*, MCP strategy/usage, task prompts #50–#54."
+    },
+    {
+      "id": "mcp-workstation-phase-a",
+      "title": "MCP phase A: gitnexus, Git, Filesystem on workstation",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_A_PROMPT.md",
+      "githubIssue": 51,
+      "linearId": null,
+      "size": "S",
       "status": "active",
       "createdAt": "2026-06-09",
       "archivedAt": null,

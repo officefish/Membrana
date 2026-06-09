@@ -57,7 +57,9 @@
     "office:dev": "yarn workspace @membrana/background-office dev",
     "office:build": "yarn workspace @membrana/background-office build",
     "office:verify-swagger": "yarn workspace @membrana/background-office verify:swagger",
-    "mcp:verify-bootstrap": "node scripts/verify-mcp-bootstrap.mjs"
+    "mcp:verify-bootstrap": "node scripts/verify-mcp-bootstrap.mjs",
+    "mcp:phase-a": "node scripts/mcp-workstation-phase-a.mjs",
+    "mcp:phase-a:install": "node scripts/mcp-workstation-phase-a.mjs --write"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

@@ -30,6 +30,7 @@ pnpm-debug.log*
 # MCP (локальные индексы и конфиги с ключами)
 .gitnexus/
 claude_desktop_config.json
+docs/discussions/mcp-tier0.generated.json
 
 # Редакторы
 .idea/
