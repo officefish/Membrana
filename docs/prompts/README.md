@@ -48,6 +48,8 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`MCP_WORKSTATION_PHASE_B_PROMPT.md`](./MCP_WORKSTATION_PHASE_B_PROMPT.md) | MCP фаза B: Perplexity, Playwright (#52, опционально) |
 | [`MCP_WORKSTATION_PHASE_C_PROMPT.md`](./MCP_WORKSTATION_PHASE_C_PROMPT.md) | MCP фаза C: Glyph (#53, опционально) |
 | [`MCP_ROLLOUT_ACCEPTANCE_PROMPT.md`](./MCP_ROLLOUT_ACCEPTANCE_PROMPT.md) | MCP acceptance (#54) |
+| [`MEDIA_LIBRARY_A1_STORAGE_PROMPT.md`](./MEDIA_LIBRARY_A1_STORAGE_PROMPT.md) | **Активная** `media-library-a1-storage` — storage backend, domain (фаза A1) |
+| [`MEDIA_LIBRARY_A2_UI_PROMPT.md`](./MEDIA_LIBRARY_A2_UI_PROMPT.md) | **Активная** `media-library-a2-ui` — UI «Библиотека сэмплов», quota banner (фаза A2) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

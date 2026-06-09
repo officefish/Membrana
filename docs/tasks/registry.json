@@ -94,6 +94,30 @@
       "archivedAt": "2026-06-09",
       "archiveNotes": "Issue #51; tier0 in ~/.cursor/mcp.json; gitnexus list OK; analyze skip (upstream); fallback MCP_USAGE.",
       "githubIssueClosedAt": "2026-06-09"
+    },
+    {
+      "id": "media-library-a1-storage",
+      "title": "Media library A1: storage backend and domain service",
+      "promptPath": "docs/prompts/MEDIA_LIBRARY_A1_STORAGE_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-09",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "media-library-a2-ui",
+      "title": "Media library A2: sample library UI and quota banner",
+      "promptPath": "docs/prompts/MEDIA_LIBRARY_A2_UI_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-09",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

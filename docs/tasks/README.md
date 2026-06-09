@@ -19,6 +19,8 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `media-library-a1-storage` | Media library A1: storage backend and domain service | M | [`MEDIA_LIBRARY_A1_STORAGE_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A1_STORAGE_PROMPT.md) | — |
+| `media-library-a2-ui` | Media library A2: sample library UI and quota banner | M | [`MEDIA_LIBRARY_A2_UI_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A2_UI_PROMPT.md) | — |
 
 ---
 

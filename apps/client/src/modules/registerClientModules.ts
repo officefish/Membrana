@@ -109,6 +109,23 @@ export function registerClientModules(): void {
   });
 
   MembranaRegistry.registerLazyModule({
+    id: 'sample-library',
+    name: 'Библиотека сэмплов',
+    description: 'Буфер, коллекции, импорт WAV для датасета и benchmark',
+    version: '0.1.0',
+    category: 'Источники',
+    enabled: true,
+    activePlugins: [],
+    defaultConfig: {
+      defaultImportClass: 'unlabeled',
+    },
+    loader: () =>
+      import('./SampleLibraryModule').then((m) => ({
+        default: m.SampleLibraryModule,
+      })),
+  });
+
+  MembranaRegistry.registerLazyModule({
     id: 'microphone',
     name: 'Микрофон',
     description: 'Выбор источника звука и запуск потока для анализа и плагинов',
