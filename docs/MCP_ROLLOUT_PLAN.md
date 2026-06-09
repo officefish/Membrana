@@ -12,9 +12,19 @@
 ## Очередь выполнения
 
 ```
-#50 bootstrap (PR) → #51 phase A → #52 phase B ─┐
+#50 bootstrap ✅ → #51 phase A ✅ → #52 phase B ⏸ (ждём PERPLEXITY_API_KEY)
                               → #53 phase C  ─┴→ #54 acceptance
 ```
+
+| Issue | Фаза | Статус |
+|-------|------|--------|
+| #50 | Bootstrap | ✅ closed |
+| #51 | Tier 0 workstation | ✅ closed |
+| #52 | Perplexity + Playwright | ⏸ **отложено** до появления `pplx-…` ключа |
+| #53 | Glyph | backlog (можно параллельно B, без ключа) |
+| #54 | Acceptance | после B (+ рекомендуется C) |
+
+**Возобновление #52:** получить ключ → merge `docs/mcp/tier1-perplexity.fragment.json` в локальный MCP config → промпт `MCP_WORKSTATION_PHASE_B_PROMPT.md` → зарегистрировать `mcp-workstation-phase-b` в реестре.
 
 ---
 
@@ -49,8 +59,10 @@
 
 ## Фаза B — Research + browser (#52)
 
+> ⏸ **Отложено** (2026-06-09): нет `PERPLEXITY_API_KEY`. Playwright можно поставить отдельно, но фаза B стартует вместе с Perplexity по решению команды. Fallback: [`MCP_USAGE.md`](./MCP_USAGE.md) § Tier 1–2.
+
 **Task-промпт:** [`prompts/MCP_WORKSTATION_PHASE_B_PROMPT.md`](./prompts/MCP_WORKSTATION_PHASE_B_PROMPT.md)  
-**Реестр:** `mcp-workstation-phase-b`
+**Реестр:** `mcp-workstation-phase-b` (создать при появлении ключа)
 
 Perplexity + Playwright — **только локальный конфиг**, ключ в vault.
 

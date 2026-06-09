@@ -19,7 +19,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
-| `mcp-workstation-phase-a` | MCP phase A: gitnexus, Git, Filesystem on workstation | S | [`MCP_WORKSTATION_PHASE_A_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_A_PROMPT.md) | [#51](https://github.com/officefish/Membrana/issues/51) |
 
 ---
 
@@ -27,7 +26,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `mcp-repo-bootstrap` | MCP repo bootstrap: example configs, gitignore, verify script | 2026-06-09 | [`MCP_REPO_BOOTSTRAP_PROMPT.md`](../docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md) | #50 (Issue открыт) | [карточка](./archive/mcp-repo-bootstrap.md) |
+| `mcp-repo-bootstrap` | MCP repo bootstrap: example configs, gitignore, verify script | 2026-06-09 | [`MCP_REPO_BOOTSTRAP_PROMPT.md`](../docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md) | #50 | [карточка](./archive/mcp-repo-bootstrap.md) |
+| `mcp-workstation-phase-a` | MCP phase A: gitnexus, Git, Filesystem on workstation | 2026-06-09 | [`MCP_WORKSTATION_PHASE_A_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_A_PROMPT.md) | #51 | [карточка](./archive/mcp-workstation-phase-a.md) |
 | `dsp-drone-detector` | DSP-детектор дрона: сервис, демо-приложение, плагин микрофона | 2026-05-16 | [`DSP_DRONE_DETECTOR_PROMPT.md`](../docs/prompts/DSP_DRONE_DETECTOR_PROMPT.md) | #45 | [карточка](./archive/dsp-drone-detector.md) |
 | `fft-indices-viz` | Плагин микрофона: live-визуализация FFT-индексов | 2026-05-15 | [`FFT_INDICES_VIZ_PLUGIN_PROMPT.md`](../docs/prompts/FFT_INDICES_VIZ_PLUGIN_PROMPT.md) | #41 | [карточка](./archive/fft-indices-viz.md) |
 | `sound-quality-viz` | Плагин микрофона: мониторинг качества звука | 2026-05-15 | [`SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md`](../docs/prompts/SOUND_QUALITY_VIZ_PLUGIN_PROMPT.md) | #42 | [карточка](./archive/sound-quality-viz.md) |

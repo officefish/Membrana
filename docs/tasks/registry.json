@@ -79,7 +79,8 @@
       "status": "archived",
       "createdAt": "2026-06-09",
       "archivedAt": "2026-06-09",
-      "archiveNotes": "techies68 e4cf038; yarn mcp:verify-bootstrap; docs/mcp/*, MCP strategy/usage, task prompts #50–#54."
+      "archiveNotes": "techies68 e4cf038; yarn mcp:verify-bootstrap; docs/mcp/*, MCP strategy/usage, task prompts #50–#54.",
+      "githubIssueClosedAt": "2026-06-09"
     },
     {
       "id": "mcp-workstation-phase-a",
@@ -88,10 +89,11 @@
       "githubIssue": 51,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-09",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-09",
+      "archiveNotes": "Issue #51; tier0 in ~/.cursor/mcp.json; gitnexus list OK; analyze skip (upstream); fallback MCP_USAGE.",
+      "githubIssueClosedAt": "2026-06-09"
     }
   ]
 }
