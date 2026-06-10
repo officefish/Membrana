@@ -130,6 +130,71 @@
       "createdAt": "2026-06-10",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "detection-base-contract",
+      "title": "Detection: detector-base contract and metrics types",
+      "promptPath": "docs/prompts/DETECTION_BASE_CONTRACT_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "DetectionMetrics mock detector",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "detection-dataset-v01",
+      "title": "Detection: DATASET.md and synthetic v0.1 manifest",
+      "promptPath": "docs/prompts/DETECTION_DATASET_V01_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "DATASET.md v0.1 synthetic verified",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "detection-benchmark-runner",
+      "title": "Detection: yarn benchmark:detectors runner and DETECTOR_BENCHMARK.md",
+      "promptPath": "docs/prompts/DETECTION_BENCHMARK_RUNNER_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "benchmark:detectors green",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "detection-harmonic-gate",
+      "title": "Detection: harmonic-detector v0.1 on benchmark",
+      "promptPath": "docs/prompts/DETECTION_HARMONIC_GATE_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "harmonic on benchmark",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "detection-architecture-freeze",
+      "title": "Detection: Single-Node freeze in ARCHITECTURE and PR checklist",
+      "promptPath": "docs/prompts/DETECTION_ARCHITECTURE_FREEZE_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "ARCHITECTURE freeze PR template",
+      "githubIssueClosedAt": null
     }
   ]
 }

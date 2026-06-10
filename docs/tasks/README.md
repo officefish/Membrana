@@ -27,6 +27,11 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `detection-base-contract` | Detection: detector-base contract and metrics types | 2026-06-10 | [`DETECTION_BASE_CONTRACT_PROMPT.md`](../docs/prompts/DETECTION_BASE_CONTRACT_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-base-contract.md) |
+| `detection-dataset-v01` | Detection: DATASET.md and synthetic v0.1 manifest | 2026-06-10 | [`DETECTION_DATASET_V01_PROMPT.md`](../docs/prompts/DETECTION_DATASET_V01_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-dataset-v01.md) |
+| `detection-benchmark-runner` | Detection: yarn benchmark:detectors runner and DETECTOR_BENCHMARK.md | 2026-06-10 | [`DETECTION_BENCHMARK_RUNNER_PROMPT.md`](../docs/prompts/DETECTION_BENCHMARK_RUNNER_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-benchmark-runner.md) |
+| `detection-harmonic-gate` | Detection: harmonic-detector v0.1 on benchmark | 2026-06-10 | [`DETECTION_HARMONIC_GATE_PROMPT.md`](../docs/prompts/DETECTION_HARMONIC_GATE_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-harmonic-gate.md) |
+| `detection-architecture-freeze` | Detection: Single-Node freeze in ARCHITECTURE and PR checklist | 2026-06-10 | [`DETECTION_ARCHITECTURE_FREEZE_PROMPT.md`](../docs/prompts/DETECTION_ARCHITECTURE_FREEZE_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-architecture-freeze.md) |
 | `mcp-repo-bootstrap` | MCP repo bootstrap: example configs, gitignore, verify script | 2026-06-09 | [`MCP_REPO_BOOTSTRAP_PROMPT.md`](../docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md) | #50 | [карточка](./archive/mcp-repo-bootstrap.md) |
 | `mcp-workstation-phase-a` | MCP phase A: gitnexus, Git, Filesystem on workstation | 2026-06-09 | [`MCP_WORKSTATION_PHASE_A_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_A_PROMPT.md) | #51 | [карточка](./archive/mcp-workstation-phase-a.md) |
 | `media-library-a1-storage` | Media library A1: storage backend and domain service | 2026-06-09 | [`MEDIA_LIBRARY_A1_STORAGE_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A1_STORAGE_PROMPT.md) | — | [карточка](./archive/media-library-a1-storage.md) |

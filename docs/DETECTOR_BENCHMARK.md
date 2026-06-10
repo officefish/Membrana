@@ -30,7 +30,7 @@
 
 <!-- BENCHMARK:auto:start -->
 
-> **Автогенерация:** `yarn benchmark:detectors` · 2026-05-17T09:42:20.257Z
+> **Автогенерация:** `yarn benchmark:detectors` · 2026-06-10T05:54:14.334Z
 > **Датасет:** v1 · test-split: 9 файлов
 
 ### Результаты последнего прогона
@@ -45,6 +45,8 @@
 | agentic-claude | agentic | — | — | — | — | — | — | — | — | — | scaffold |
 
 <!-- BENCHMARK:auto:end -->
+
+
 
 
 

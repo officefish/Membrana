@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-17T09:42:20.257Z",
+  "generatedAt": "2026-06-10T05:54:14.334Z",
   "datasetVersion": "v1",
   "sampleCount": 9,
   "manifestPath": "data/detectors-benchmark/v0.1/manifest.json",
@@ -16,8 +16,8 @@
         "precision": 0.5,
         "recall": 1,
         "f1": 0.6666666666666666,
-        "latencyP50Ms": 0.12360000000001037,
-        "latencyP95Ms": 0.34389999999999077
+        "latencyP50Ms": 0.08979999999999677,
+        "latencyP95Ms": 0.25449999999997885
       },
       "perSample": [
         {

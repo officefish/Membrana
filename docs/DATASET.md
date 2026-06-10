@@ -1,7 +1,7 @@
 # DATASET — датасет для бенчмарка детекторов
 
-> **Статус:** **v0.1 bootstrap** (2026-05-16) — 9 синтетических сэмплов, test-split.  
-> Промпт: [`prompts/DATASET_BOOTSTRAP_PROMPT.md`](./prompts/DATASET_BOOTSTRAP_PROMPT.md).  
+> **Статус:** **v0.1 bootstrap** (2026-06-10) — 9 синтетических сэмплов, test-split; полевые записи — out of scope v0.1.  
+> Промпт: [`prompts/DETECTION_DATASET_V01_PROMPT.md`](./prompts/DETECTION_DATASET_V01_PROMPT.md) · legacy: [`DATASET_BOOTSTRAP_PROMPT.md`](./prompts/DATASET_BOOTSTRAP_PROMPT.md).  
 > Манифест: [`data/detectors-benchmark/v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json).
 
 ## v0.1 — каталог

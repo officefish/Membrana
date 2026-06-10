@@ -70,8 +70,8 @@
 
 | Пакет | Статус | Семейство |
 |-------|--------|-----------|
-| `@membrana/detector-base` | scaffold | контракты `DroneDetector`, `DetectionResult`, `AudioWindow` |
-| `@membrana/harmonic-detector-service` | scaffold | dsp |
+| `@membrana/detector-base` | **stable v0.1** | контракты `DroneDetector`, `DetectionResult`, `AudioWindow`, `DetectionMetrics` |
+| `@membrana/harmonic-detector-service` | implemented v0.1 | dsp |
 | `@membrana/cepstral-detector-service` | scaffold | dsp |
 | `@membrana/spectral-flux-detector-service` | scaffold | dsp |
 | `@membrana/yamnet-detector-service` | scaffold | neural |
@@ -79,6 +79,13 @@
 | `@membrana/agentic-detector-service` | scaffold | agentic |
 | `@membrana/detection-ensemble-service` | план (после gate) | агрегатор |
 | `@membrana/tdoa-service` | frozen @stage 2 | сеть |
+| `@membrana/localizer-service` | frozen @stage 2 | сеть |
+| `@membrana/tracker-service` | frozen @stage 2 | сеть |
+| `@membrana/transport-service` | frozen @stage 2 | сеть |
+
+**Заморозка до stage-gate 1→2:** пакеты `tdoa-service`, `localizer-service`, `tracker-service`,
+`transport-service` не реализуются и не подключаются в клиент до precision ≥85% и recall ≥90%
+на бенчмарке ([`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md)).
 
 **Контракт (единый для всех детекторов):**
 
@@ -95,6 +102,15 @@ interface DetectionResult {
   reasoning?: string; // обязательно для agentic
   features?: Record<string, number>;
   latencyMs: number;
+}
+
+interface DetectionMetrics {
+  precision: number;
+  recall: number;
+  f1: number;
+  latencyP50Ms: number;
+  latencyP95Ms: number;
+  sampleCount: number;
 }
 
 interface AudioWindow {
