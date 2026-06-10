@@ -23,6 +23,10 @@ import {
   HarmonicDetectorVizPanel,
 } from '../../plugins/harmonic-detector-viz';
 import {
+  MIC_BUFFER_RECORDER_PLUGIN_ID,
+  MicBufferRecorderPanel,
+} from '../../plugins/mic-buffer-recorder';
+import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
@@ -266,6 +270,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(HARMONIC_DETECTOR_VIZ_PLUGIN_ID) && (
           <HarmonicDetectorVizPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(MIC_BUFFER_RECORDER_PLUGIN_ID) && (
+          <MicBufferRecorderPanel moduleId={module.id} />
         )}
       </div>
     </div>

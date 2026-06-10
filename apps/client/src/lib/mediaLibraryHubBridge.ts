@@ -1,6 +1,7 @@
 import {
   BUFFER_COLLECTION_ID,
   getDefaultMediaLibraryService,
+  isQuotaFull,
 } from '@membrana/media-library-service';
 
 import {
@@ -16,10 +17,14 @@ function pushQuotaSnapshot(): void {
   const svc = getDefaultMediaLibraryService();
   const snap = svc.getSnapshot();
   const samples = snap.samplesByCollection[BUFFER_COLLECTION_ID] ?? [];
+  const maxBufferSamples = svc.getConfig().maxBufferSamples;
+  const sampleCount = samples.length;
   publishMediaLibraryQuotaUpdated({
     usedBytes: snap.quota.usedBytes,
     limitBytes: snap.quota.limitBytes,
-    sampleCount: samples.length,
+    sampleCount,
+    maxBufferSamples,
+    recordingBlocked: isQuotaFull(snap.quota) || sampleCount >= maxBufferSamples,
   });
 }
 
@@ -63,6 +68,11 @@ export function initMediaLibraryHubBridge(): () => void {
     bridgeInstalled = false;
     unsubService();
   };
+}
+
+/** Tests: reset bridge singleton. */
+export function resetMediaLibraryHubBridgeForTests(): void {
+  bridgeInstalled = false;
 }
 
 export async function requestClearMediaLibraryBuffer(): Promise<void> {

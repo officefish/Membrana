@@ -37,6 +37,7 @@ export {
   createMediaLibraryService,
   getDefaultMediaLibraryService,
   resetDefaultMediaLibraryServiceForTests,
+  setDefaultMediaLibraryServiceForTests,
 } from './media-library-service.js';
 
 export { useMediaLibrary, type UseMediaLibraryResult } from './hooks.js';

@@ -11,6 +11,10 @@ import {
   HARMONIC_DETECTOR_VIZ_PLUGIN_ID,
   HarmonicDetectorSidebarSettings,
 } from './plugins/harmonic-detector-viz';
+import {
+  MIC_BUFFER_RECORDER_PLUGIN_ID,
+  MicBufferRecorderSidebarSettings,
+} from './plugins/mic-buffer-recorder';
 import { MIC_STREAM_VIZ_PLUGIN_ID, StreamVizPluginWidgetRadios } from './plugins/microphone-stream-viz';
 
 export function renderPluginSidebarDetails(args: PluginSidebarDetailsArgs) {
@@ -25,6 +29,9 @@ export function renderPluginSidebarDetails(args: PluginSidebarDetailsArgs) {
   }
   if (args.pluginId === HARMONIC_DETECTOR_VIZ_PLUGIN_ID) {
     return <HarmonicDetectorSidebarSettings moduleId={args.moduleId} />;
+  }
+  if (args.pluginId === MIC_BUFFER_RECORDER_PLUGIN_ID) {
+    return <MicBufferRecorderSidebarSettings moduleId={args.moduleId} />;
   }
   return null;
 }

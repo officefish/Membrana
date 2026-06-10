@@ -35,6 +35,8 @@ export interface MediaLibraryQuotaUpdatedPayload {
   usedBytes: number;
   limitBytes: number;
   sampleCount: number;
+  maxBufferSamples: number;
+  recordingBlocked: boolean;
 }
 
 export const MEDIA_LIBRARY_HUB = {

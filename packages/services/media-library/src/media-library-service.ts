@@ -49,6 +49,10 @@ export class MediaLibraryService {
     return this.snapshot;
   }
 
+  getConfig(): MediaLibraryConfig {
+    return this.config;
+  }
+
   private emit(): void {
     this.version += 1;
     this.listeners.forEach((l) => l());
@@ -146,4 +150,8 @@ export function getDefaultMediaLibraryService(): MediaLibraryService {
 
 export function resetDefaultMediaLibraryServiceForTests(): void {
   defaultService = null;
+}
+
+export function setDefaultMediaLibraryServiceForTests(service: MediaLibraryService): void {
+  defaultService = service;
 }
