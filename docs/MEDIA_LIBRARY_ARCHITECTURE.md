@@ -260,7 +260,7 @@ Auth: тот же паттерн `X-Membrana-Token` / internal gate, что в [
 | **A0** | Этот документ + типы в `@membrana/core` или `media-library-service/types` |
 | **A1** | `IStorageBackend` + `BrowserLimitedStorageBackend` + in-memory buffer; unit tests · task `media-library-a1-storage` |
 | **A2** | Client module: коллекции user/system/buffer, quota banner · task `media-library-a2-ui` |
-| **A3** | Mic hub → buffer record *(задача — следующие дни)* |
+| **A3** | Mic hub → buffer record · task `media-library-a3-mic-recorder` |
 | **A4** | `ElectronFsStorageBackend` + preload API *(следующие дни)* |
 | **A5** | `packages/background-media` + `ServerStorageBackend` *(следующие дни)* |
 | **A6** | Export manifest → `yarn benchmark:detectors` *(следующие дни)* |

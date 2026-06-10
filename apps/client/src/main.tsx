@@ -4,8 +4,10 @@ import { useMembranaStore } from '@membrana/agenda'
 import './index.css'
 import App from './App'
 import { registerClientModules } from './modules/registerClientModules'
+import { initMediaLibraryHubBridge } from './lib/mediaLibraryHubBridge'
 
 registerClientModules()
+initMediaLibraryHubBridge()
 useMembranaStore.persist.onFinishHydration(() => {
   registerClientModules()
 })

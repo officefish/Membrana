@@ -118,6 +118,18 @@
       "createdAt": "2026-06-09",
       "archivedAt": "2026-06-09",
       "archiveNotes": "SampleLibraryModule + quota banner; resolveMediaLibraryStorageMode(quota); import blocked at 100% quota; browser smoke OK."
+    },
+    {
+      "id": "media-library-a3-mic-recorder",
+      "title": "Media library A3: mic buffer recorder plugin",
+      "promptPath": "docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-10",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

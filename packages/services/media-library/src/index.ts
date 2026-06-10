@@ -50,3 +50,15 @@ export {
   type MediaLibraryStorageMode,
   type QuotaLevel,
 } from './quota-status.js';
+
+export {
+  MEDIA_LIBRARY_HUB,
+  type MediaLibraryCaptureCancelPayload,
+  type MediaLibraryCaptureFormat,
+  type MediaLibraryCaptureStartPayload,
+  type MediaLibraryCaptureStopPayload,
+  type MediaLibraryCaptureStopReason,
+  type MediaLibraryHubEventName,
+  type MediaLibraryQuotaUpdatedPayload,
+  type MediaLibraryRecordingMode,
+} from './hub-events.js';
