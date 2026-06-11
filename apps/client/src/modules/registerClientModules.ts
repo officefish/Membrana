@@ -6,6 +6,7 @@ import { createHarmonicDetectorVizPlugin } from '../plugins/harmonic-detector-vi
 import { createMicBufferRecorderPlugin } from '../plugins/mic-buffer-recorder';
 import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-player';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
+import { createTrendsFftAnalyzerPlugin } from '../plugins/trends-fft-analyzer';
 
 /**
  * Регистрация всех клиентских модулей и плагинов.
@@ -147,6 +148,7 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createFftIndicesVizPlugin());
   MembranaRegistry.registerPlugin('microphone', createSoundQualityVizPlugin());
   MembranaRegistry.registerPlugin('microphone', createHarmonicDetectorVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createTrendsFftAnalyzerPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicBufferRecorderPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
 

@@ -30,6 +30,8 @@
       "@membrana/detector-base/*": ["../../packages/services/detectors/base/src/*"],
       "@membrana/harmonic-detector-service": ["../../packages/services/detectors/harmonic/src/index.ts"],
       "@membrana/harmonic-detector-service/*": ["../../packages/services/detectors/harmonic/src/*"],
+      "@membrana/trends-detector-service": ["../../packages/services/trends-detector/src/index.ts"],
+      "@membrana/trends-detector-service/*": ["../../packages/services/trends-detector/src/*"],
       "@/*": ["./src/*"]
     }
   },
@@ -44,6 +46,7 @@
     { "path": "../../packages/services/telemetry" },
     { "path": "../../packages/libs/audioDataViz" },
     { "path": "../../packages/services/detectors/base" },
-    { "path": "../../packages/services/detectors/harmonic" }
+    { "path": "../../packages/services/detectors/harmonic" },
+    { "path": "../../packages/services/trends-detector" }
   ]
 }

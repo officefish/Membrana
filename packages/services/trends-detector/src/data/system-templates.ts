@@ -1,0 +1,202 @@
+import type { PatternTemplate } from '../types.js';
+
+/** Системные шаблоны акустических сцен (порт из trendsFFT demo + восстановленные классы). */
+export const SYSTEM_TEMPLATES: readonly PatternTemplate[] = [
+  {
+    key: 'WIND',
+    name: 'Ветер',
+    icon: '💨',
+    color: '#a0c4ff',
+    description: 'Постоянный ровный шум с низкой частотой, высокая стабильность',
+    thresholds: {
+      centroid: { min: 100, max: 800 },
+      flux: { min: 0.1, max: 0.6 },
+      rms: { min: 0.04, max: 0.18 },
+    },
+    temporalPatterns: {
+      centroidStd: { min: 5, max: 80 },
+      fluxStd: { min: 0.02, max: 0.15 },
+      rmsStd: { min: 0.005, max: 0.04 },
+      activityRatio: { min: 0.9, max: 1.0 },
+      avgSilenceDuration: { min: 0, max: 0.05 },
+      avgBurstDuration: { min: 5, max: 60 },
+      frequencyJumps: {
+        enabled: false,
+        minJumpsRequired: 10,
+        densityPerSecond: { max: 2 },
+      },
+      volumeTrend: ['stable'],
+      frequencyTrend: ['stable'],
+      longTermStability: ['high', 'veryHigh'],
+      periodicity: ['none', 'irregular'],
+      envelopeShape: ['sustained'],
+      peakToAverageRatio: { min: 1.0, max: 1.5 },
+    },
+  },
+  {
+    key: 'QUIET',
+    name: 'Тишина',
+    icon: '🤫',
+    color: '#c8c8c8',
+    description: 'Низкий уровень сигнала, минимальная активность',
+    thresholds: {
+      centroid: { min: 0, max: 1500 },
+      flux: { min: 0, max: 0.15 },
+      rms: { min: 0, max: 0.025 },
+    },
+    temporalPatterns: {
+      centroidStd: { min: 0, max: 100 },
+      fluxStd: { min: 0, max: 0.08 },
+      rmsStd: { min: 0, max: 0.01 },
+      activityRatio: { min: 0, max: 0.15 },
+      avgSilenceDuration: { min: 0.5, max: 60 },
+      avgBurstDuration: { min: 0, max: 0.1 },
+      frequencyJumps: {
+        enabled: false,
+        minJumpsRequired: 5,
+        densityPerSecond: { max: 1 },
+      },
+      volumeTrend: ['stable', 'decreasing'],
+      frequencyTrend: ['stable'],
+      longTermStability: ['high', 'veryHigh'],
+      periodicity: ['none'],
+      envelopeShape: ['sustained'],
+      peakToAverageRatio: { min: 1.0, max: 2.0 },
+    },
+  },
+  {
+    key: 'TRAFFIC',
+    name: 'Трафик',
+    icon: '🚗',
+    color: '#ffd166',
+    description: 'Уличный шум: переменная громкость, средние частоты',
+    thresholds: {
+      centroid: { min: 300, max: 2500 },
+      flux: { min: 0.2, max: 1.5 },
+      rms: { min: 0.05, max: 0.35 },
+    },
+    temporalPatterns: {
+      centroidStd: { min: 80, max: 600 },
+      fluxStd: { min: 0.1, max: 0.8 },
+      rmsStd: { min: 0.02, max: 0.12 },
+      activityRatio: { min: 0.6, max: 1.0 },
+      avgSilenceDuration: { min: 0, max: 0.3 },
+      avgBurstDuration: { min: 0.2, max: 3 },
+      frequencyJumps: {
+        enabled: true,
+        minJumpsRequired: 3,
+        densityPerSecond: { max: 15 },
+      },
+      volumeTrend: ['oscillating', 'fluctuating', 'increasing'],
+      frequencyTrend: ['oscillating', 'fluctuating'],
+      longTermStability: ['low', 'medium'],
+      periodicity: ['irregular', 'semiRegular'],
+      envelopeShape: ['complex', 'attackDecay'],
+      peakToAverageRatio: { min: 1.5, max: 6 },
+    },
+  },
+  {
+    key: 'DRONE',
+    name: 'Дрон (bootstrap)',
+    icon: '🛸',
+    color: '#ff6b6b',
+    description: 'Высокочастотный устойчивый тон моторов, периодичность',
+    thresholds: {
+      centroid: { min: 800, max: 4000 },
+      flux: { min: 0.05, max: 0.8 },
+      rms: { min: 0.03, max: 0.25 },
+    },
+    temporalPatterns: {
+      centroidStd: { min: 20, max: 200 },
+      fluxStd: { min: 0.02, max: 0.3 },
+      rmsStd: { min: 0.005, max: 0.06 },
+      activityRatio: { min: 0.85, max: 1.0 },
+      avgSilenceDuration: { min: 0, max: 0.1 },
+      avgBurstDuration: { min: 2, max: 60 },
+      frequencyJumps: {
+        enabled: false,
+        minJumpsRequired: 8,
+        densityPerSecond: { max: 3 },
+      },
+      volumeTrend: ['stable', 'increasing'],
+      frequencyTrend: ['stable'],
+      longTermStability: ['high', 'veryHigh'],
+      periodicity: ['regular', 'semiRegular'],
+      envelopeShape: ['sustained'],
+      peakToAverageRatio: { min: 1.0, max: 2.5 },
+    },
+  },
+  {
+    key: 'BIRDS',
+    name: 'Птицы',
+    icon: '🐦',
+    color: '#90be6d',
+    description: 'Короткие всплески, частотные скачки, нерегулярная активность',
+    thresholds: {
+      centroid: { min: 500, max: 5000 },
+      flux: { min: 0.15, max: 2.0 },
+      rms: { min: 0.02, max: 0.2 },
+    },
+    temporalPatterns: {
+      centroidStd: { min: 150, max: 1200 },
+      fluxStd: { min: 0.15, max: 1.0 },
+      rmsStd: { min: 0.02, max: 0.15 },
+      activityRatio: { min: 0.2, max: 0.7 },
+      avgSilenceDuration: { min: 0.1, max: 2 },
+      avgBurstDuration: { min: 0.05, max: 0.8 },
+      frequencyJumps: {
+        enabled: true,
+        minJumpsRequired: 4,
+        densityPerSecond: { max: 25 },
+      },
+      volumeTrend: ['oscillating', 'fluctuating'],
+      frequencyTrend: ['oscillating', 'increasing'],
+      longTermStability: ['low', 'medium'],
+      periodicity: ['irregular', 'semiRegular'],
+      envelopeShape: ['impulsive', 'pluck', 'attackDecay'],
+      peakToAverageRatio: { min: 2, max: 10 },
+    },
+  },
+  {
+    key: 'VOICE',
+    name: 'Речь',
+    icon: '🗣️',
+    color: '#b5838d',
+    description: 'Слоговая модуляция, средние частоты, чередование пауз',
+    thresholds: {
+      centroid: { min: 400, max: 2800 },
+      flux: { min: 0.2, max: 1.8 },
+      rms: { min: 0.04, max: 0.35 },
+    },
+    temporalPatterns: {
+      centroidStd: { min: 100, max: 800 },
+      fluxStd: { min: 0.1, max: 0.9 },
+      rmsStd: { min: 0.02, max: 0.12 },
+      activityRatio: { min: 0.35, max: 0.85 },
+      avgSilenceDuration: { min: 0.05, max: 0.8 },
+      avgBurstDuration: { min: 0.1, max: 1.5 },
+      frequencyJumps: {
+        enabled: true,
+        minJumpsRequired: 2,
+        densityPerSecond: { max: 12 },
+      },
+      volumeTrend: ['oscillating', 'fluctuating'],
+      frequencyTrend: ['oscillating', 'fluctuating'],
+      longTermStability: ['medium'],
+      periodicity: ['semiRegular', 'irregular'],
+      envelopeShape: ['attackDecay', 'complex'],
+      peakToAverageRatio: { min: 1.5, max: 5 },
+    },
+  },
+] as const;
+
+export const SYSTEM_TEMPLATE_KEYS = SYSTEM_TEMPLATES.map((t) => t.key);
+
+export function getSystemTemplate(key: string): PatternTemplate | undefined {
+  return SYSTEM_TEMPLATES.find((t) => t.key === key);
+}
+
+export function resolveEnabledTemplates(keys: readonly string[]): PatternTemplate[] {
+  const set = new Set(keys);
+  return SYSTEM_TEMPLATES.filter((t) => set.has(t.key));
+}

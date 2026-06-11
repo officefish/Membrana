@@ -31,6 +31,10 @@ import {
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
 import {
+  TRENDS_FFT_ANALYZER_PLUGIN_ID,
+  TrendsFftAnalyzerPanel,
+} from '../../plugins/trends-fft-analyzer';
+import {
   notifyMicrophoneCaptureChanged,
   registerMicrophoneCaptureOwner,
 } from './microphoneCaptureCoordinator';
@@ -270,6 +274,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(HARMONIC_DETECTOR_VIZ_PLUGIN_ID) && (
           <HarmonicDetectorVizPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(TRENDS_FFT_ANALYZER_PLUGIN_ID) && (
+          <TrendsFftAnalyzerPanel moduleId={module.id} />
         )}
 
         {activeIds.includes(MIC_BUFFER_RECORDER_PLUGIN_ID) && (

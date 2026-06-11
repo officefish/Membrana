@@ -50,6 +50,9 @@ export default defineConfig({
       '@membrana/harmonic-detector-service': fileURLToPath(
         new URL('../../packages/services/detectors/harmonic/src/index.ts', import.meta.url),
       ),
+      '@membrana/trends-detector-service': fileURLToPath(
+        new URL('../../packages/services/trends-detector/src/index.ts', import.meta.url),
+      ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },

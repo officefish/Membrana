@@ -26,6 +26,7 @@
     "@membrana/harmonic-detector-service": "*",
     "@membrana/media-library-service": "*",
     "@membrana/telemetry-service": "*",
+    "@membrana/trends-detector-service": "*",
     "@uiw/react-json-view": "2.0.0-alpha.42",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
