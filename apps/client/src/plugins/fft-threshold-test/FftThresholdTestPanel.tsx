@@ -27,6 +27,7 @@ import {
   thresholdsToNormalized,
   type NormalizedThresholds,
 } from './normalizeMetrics';
+import { AnalysisSourceSelect } from '../../lib/audioAnalysis/AnalysisSourceSelect';
 import {
   FFT_THRESHOLD_TEST_PLUGIN_ID,
   STRICTNESS_LABELS,
@@ -112,6 +113,11 @@ export const FftThresholdTestPanel: React.FC<FftThresholdTestPanelProps> = ({
         </p>
       </div>
 
+      <AnalysisSourceSelect
+        value={config.analysisSource}
+        onChange={(analysisSource) => patchConfig({ analysisSource })}
+      />
+
       <div className="flex gap-1 p-0.5 rounded-lg bg-base-300/50" role="group" aria-label="Режим теста">
         {(['auto', 'manual'] as const).map((mode) => (
           <button
@@ -143,17 +149,23 @@ export const FftThresholdTestPanel: React.FC<FftThresholdTestPanelProps> = ({
             aria-hidden
           />
           <span className="text-xs text-base-content/70">
-            {config.mode === 'auto'
+            {config.analysisSource === 'sample-library'
               ? snapshot.live
                 ? isCollecting
-                  ? 'Автосбор кадров…'
-                  : 'Ожидание следующего теста'
-                : 'Ожидание микрофона'
-              : isCollecting
-                ? `Сбор ${snapshot.collectedCount}/${snapshot.frameCount}`
-                : snapshot.live
-                  ? 'Готов к запуску'
-                  : 'Ожидание микрофона'}
+                  ? 'Анализ сэмпла…'
+                  : 'Сэмпл готов к анализу'
+                : 'Выберите сэмпл в библиотеке'
+              : config.mode === 'auto'
+                ? snapshot.live
+                  ? isCollecting
+                    ? 'Автосбор кадров…'
+                    : 'Ожидание следующего теста'
+                  : 'Ожидание микрофона'
+                : isCollecting
+                  ? `Сбор ${snapshot.collectedCount}/${snapshot.frameCount}`
+                  : snapshot.live
+                    ? 'Готов к запуску'
+                    : 'Ожидание микрофона'}
           </span>
         </div>
         {config.mode === 'manual' && (
@@ -179,8 +191,10 @@ export const FftThresholdTestPanel: React.FC<FftThresholdTestPanelProps> = ({
       </div>
 
       {!snapshot.live && (
-        <p className="text-xs text-center text-base-content/50 py-1">
-          Запустите поток микрофона в модуле выше.
+        <p className="text-xs text-center text-base-content/50 py-1" role="status">
+          {config.analysisSource === 'sample-library'
+            ? 'Выберите сэмпл в модуле «Библиотека сэмплов».'
+            : 'Запустите поток микрофона в модуле выше.'}
         </p>
       )}
 

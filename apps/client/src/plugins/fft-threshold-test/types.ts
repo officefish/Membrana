@@ -4,10 +4,16 @@ import type {
   ThresholdTestThresholds,
 } from '@membrana/fft-analyzer-service';
 
+import type { AnalysisSourceKind } from '../../lib/audioAnalysis';
+
 import { thresholdsFromNormalized, DEFAULT_NORMALIZED_THRESHOLDS } from './normalizeMetrics';
 
 export const FFT_THRESHOLD_TEST_PLUGIN_ID = 'fft-threshold-test';
 
+/**
+ * Целевой nodeKind для device-board D1:
+ * category: 'analyzer', inputs: AudioFrame, outputs: Detection | FftMetrics
+ */
 export interface FftThresholdTestPluginConfig {
   readonly mode: 'manual' | 'auto';
   readonly intervalMs: number;
@@ -15,6 +21,7 @@ export interface FftThresholdTestPluginConfig {
   readonly strictness: StrictnessLevel;
   readonly thresholds: ThresholdTestThresholds;
   readonly autoRestartDelayMs: number;
+  readonly analysisSource: AnalysisSourceKind;
 }
 
 export const defaultFftThresholdTestConfig: FftThresholdTestPluginConfig = {
@@ -24,6 +31,7 @@ export const defaultFftThresholdTestConfig: FftThresholdTestPluginConfig = {
   strictness: 'normal',
   thresholds: thresholdsFromNormalized(DEFAULT_NORMALIZED_THRESHOLDS),
   autoRestartDelayMs: 500,
+  analysisSource: 'microphone',
 };
 
 export function resolveFftThresholdTestConfig(
@@ -57,7 +65,17 @@ export function resolveFftThresholdTestConfig(
       typeof c.autoRestartDelayMs === 'number' && c.autoRestartDelayMs >= 0
         ? c.autoRestartDelayMs
         : base.autoRestartDelayMs,
+    analysisSource:
+      c.analysisSource === 'sample-library' || c.analysisSource === 'graph'
+        ? c.analysisSource
+        : 'microphone',
   };
+}
+
+export function fftThresholdDroneSourceId(analysisSource: AnalysisSourceKind): string {
+  return analysisSource === 'sample-library'
+    ? `${FFT_THRESHOLD_TEST_PLUGIN_ID}-sample`
+    : FFT_THRESHOLD_TEST_PLUGIN_ID;
 }
 
 export const STRICTNESS_LABELS: Record<StrictnessLevel, string> = {

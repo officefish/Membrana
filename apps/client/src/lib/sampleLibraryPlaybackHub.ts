@@ -121,7 +121,8 @@ export function resetSamplePlaybackHubForTests(): void {
   listeners.clear();
 }
 
-async function loadSampleBuffer(sampleId: string): Promise<AudioBuffer> {
+/** Загрузка декодированного буфера сэмпла (кэш hub). Для offline-анализа. */
+export async function loadSampleBufferById(sampleId: string): Promise<AudioBuffer> {
   const cached = bufferCache.get(sampleId);
   if (cached) return cached;
   if (!blobReader) {
@@ -167,7 +168,7 @@ export async function selectSample(sample: MediaSample | null): Promise<void> {
   });
 
   try {
-    const buffer = await loadSampleBuffer(sample.id);
+    const buffer = await loadSampleBufferById(sample.id);
     setSnapshot({
       status: 'paused',
       currentTimeSec: 0,
@@ -204,7 +205,7 @@ export async function togglePlayPause(): Promise<void> {
 
   setSnapshot({ status: 'loading', errorMessage: null });
   try {
-    const buffer = await loadSampleBuffer(snapshot.selectedSampleId);
+    const buffer = await loadSampleBufferById(snapshot.selectedSampleId);
     await player.play(buffer);
     syncProgress();
   } catch (error) {
