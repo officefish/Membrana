@@ -207,6 +207,31 @@
       "archivedAt": "2026-06-10",
       "archiveNotes": "ARCHITECTURE freeze PR template",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "analyzer-frame-feed-refactor",
+      "title": "Анализаторы: AudioFrameFeed и миграция fft-threshold-test + harmonic-detector-viz",
+      "promptPath": "docs/prompts/ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md",
+      "githubIssue": 55,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "trends-fft-microphone-plugin",
+      "title": "Плагин микрофона: анализатор тенденций FFT (trends-fft-analyzer)",
+      "promptPath": "docs/prompts/TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md",
+      "githubIssue": 56,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": ["analyzer-frame-feed-refactor"]
     }
   ]
 }

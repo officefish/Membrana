@@ -52,6 +52,8 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`MEDIA_LIBRARY_A2_UI_PROMPT.md`](./MEDIA_LIBRARY_A2_UI_PROMPT.md) | **Архив** `media-library-a2-ui` — UI «Библиотека сэмплов», quota banner (фаза A2) |
 | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](./MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | **Активная** `media-library-a3-mic-recorder` — плагин записи в буфер (фаза A3) |
 | [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](./MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | **Активная** `media-library-a4-sample-player` — play/export, крупный плеер с осциллограммой (фаза A4) |
+| [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](./ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | **Активная** `analyzer-frame-feed-refactor` — AudioFrameFeed; миграция fft-threshold-test + harmonic-detector-viz |
+| [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](./TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | **Активная** `trends-fft-microphone-plugin` — trends-detector-service + плагин trends-fft-analyzer (после feed-refactor) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

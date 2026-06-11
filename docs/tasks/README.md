@@ -21,6 +21,8 @@
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
 | `media-library-a4-sample-player` | Media library A4: sample playback, export, and waveform player plugin | M | [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | — |
+| `analyzer-frame-feed-refactor` | Анализаторы: AudioFrameFeed и миграция fft-threshold-test + harmonic-detector-viz | M | [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](../docs/prompts/ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | [#55](https://github.com/officefish/Membrana/issues/55) |
+| `trends-fft-microphone-plugin` | Плагин микрофона: анализатор тенденций FFT (trends-fft-analyzer) | M | [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](../docs/prompts/TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | [#56](https://github.com/officefish/Membrana/issues/56) |
 
 ---
 
