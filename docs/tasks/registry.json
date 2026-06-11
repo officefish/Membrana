@@ -228,12 +228,28 @@
       "githubIssue": 56,
       "linearId": null,
       "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-11",
+      "archivedAt": "2026-06-11",
+      "archiveNotes": "techies68 9b40fa4 + 655acf1",
+      "dependsOn": [
+        "analyzer-frame-feed-refactor"
+      ],
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "trends-fft-template-editor",
+      "title": "Редактор пользовательских шаблонов trends-fft",
+      "promptPath": "docs/prompts/TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md",
+      "githubIssue": 57,
+      "linearId": null,
+      "size": "L",
       "status": "active",
       "createdAt": "2026-06-11",
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [
-        "analyzer-frame-feed-refactor"
+        "trends-fft-microphone-plugin"
       ]
     }
   ]

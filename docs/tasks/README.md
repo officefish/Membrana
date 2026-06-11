@@ -21,7 +21,7 @@
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
 | `media-library-a4-sample-player` | Media library A4: sample playback, export, and waveform player plugin | M | [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | — |
-| `trends-fft-microphone-plugin` | Плагин микрофона: анализатор тенденций FFT (trends-fft-analyzer) | M | [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](../docs/prompts/TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | [#56](https://github.com/officefish/Membrana/issues/56) |
+| `trends-fft-template-editor` | Редактор пользовательских шаблонов trends-fft | L | [`TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md`](../docs/prompts/TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md) | [#57](https://github.com/officefish/Membrana/issues/57) |
 
 ---
 
@@ -29,12 +29,13 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `analyzer-frame-feed-refactor` | Анализаторы: AudioFrameFeed и миграция fft-threshold-test + harmonic-detector-viz | 2026-06-11 | [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](../docs/prompts/ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | #55 (Issue открыт) | [карточка](./archive/analyzer-frame-feed-refactor.md) |
-| `detection-base-contract` | Detection: detector-base contract and metrics types | 2026-06-10 | [`DETECTION_BASE_CONTRACT_PROMPT.md`](../docs/prompts/DETECTION_BASE_CONTRACT_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-base-contract.md) |
-| `detection-dataset-v01` | Detection: DATASET.md and synthetic v0.1 manifest | 2026-06-10 | [`DETECTION_DATASET_V01_PROMPT.md`](../docs/prompts/DETECTION_DATASET_V01_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-dataset-v01.md) |
-| `detection-benchmark-runner` | Detection: yarn benchmark:detectors runner and DETECTOR_BENCHMARK.md | 2026-06-10 | [`DETECTION_BENCHMARK_RUNNER_PROMPT.md`](../docs/prompts/DETECTION_BENCHMARK_RUNNER_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-benchmark-runner.md) |
-| `detection-harmonic-gate` | Detection: harmonic-detector v0.1 on benchmark | 2026-06-10 | [`DETECTION_HARMONIC_GATE_PROMPT.md`](../docs/prompts/DETECTION_HARMONIC_GATE_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-harmonic-gate.md) |
-| `detection-architecture-freeze` | Detection: Single-Node freeze in ARCHITECTURE and PR checklist | 2026-06-10 | [`DETECTION_ARCHITECTURE_FREEZE_PROMPT.md`](../docs/prompts/DETECTION_ARCHITECTURE_FREEZE_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/detection-architecture-freeze.md) |
+| `analyzer-frame-feed-refactor` | Анализаторы: AudioFrameFeed и миграция fft-threshold-test + harmonic-detector-viz | 2026-06-11 | [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](../docs/prompts/ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | #55 | [карточка](./archive/analyzer-frame-feed-refactor.md) |
+| `trends-fft-microphone-plugin` | Плагин микрофона: анализатор тенденций FFT (trends-fft-analyzer) | 2026-06-11 | [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](../docs/prompts/TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | #56 | [карточка](./archive/trends-fft-microphone-plugin.md) |
+| `detection-base-contract` | Detection: detector-base contract and metrics types | 2026-06-10 | [`DETECTION_BASE_CONTRACT_PROMPT.md`](../docs/prompts/DETECTION_BASE_CONTRACT_PROMPT.md) | #47 | [карточка](./archive/detection-base-contract.md) |
+| `detection-dataset-v01` | Detection: DATASET.md and synthetic v0.1 manifest | 2026-06-10 | [`DETECTION_DATASET_V01_PROMPT.md`](../docs/prompts/DETECTION_DATASET_V01_PROMPT.md) | #47 | [карточка](./archive/detection-dataset-v01.md) |
+| `detection-benchmark-runner` | Detection: yarn benchmark:detectors runner and DETECTOR_BENCHMARK.md | 2026-06-10 | [`DETECTION_BENCHMARK_RUNNER_PROMPT.md`](../docs/prompts/DETECTION_BENCHMARK_RUNNER_PROMPT.md) | #47 | [карточка](./archive/detection-benchmark-runner.md) |
+| `detection-harmonic-gate` | Detection: harmonic-detector v0.1 on benchmark | 2026-06-10 | [`DETECTION_HARMONIC_GATE_PROMPT.md`](../docs/prompts/DETECTION_HARMONIC_GATE_PROMPT.md) | #47 | [карточка](./archive/detection-harmonic-gate.md) |
+| `detection-architecture-freeze` | Detection: Single-Node freeze in ARCHITECTURE and PR checklist | 2026-06-10 | [`DETECTION_ARCHITECTURE_FREEZE_PROMPT.md`](../docs/prompts/DETECTION_ARCHITECTURE_FREEZE_PROMPT.md) | #47 | [карточка](./archive/detection-architecture-freeze.md) |
 | `mcp-repo-bootstrap` | MCP repo bootstrap: example configs, gitignore, verify script | 2026-06-09 | [`MCP_REPO_BOOTSTRAP_PROMPT.md`](../docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md) | #50 | [карточка](./archive/mcp-repo-bootstrap.md) |
 | `mcp-workstation-phase-a` | MCP phase A: gitnexus, Git, Filesystem on workstation | 2026-06-09 | [`MCP_WORKSTATION_PHASE_A_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_A_PROMPT.md) | #51 | [карточка](./archive/mcp-workstation-phase-a.md) |
 | `media-library-a1-storage` | Media library A1: storage backend and domain service | 2026-06-09 | [`MEDIA_LIBRARY_A1_STORAGE_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A1_STORAGE_PROMPT.md) | — | [карточка](./archive/media-library-a1-storage.md) |
