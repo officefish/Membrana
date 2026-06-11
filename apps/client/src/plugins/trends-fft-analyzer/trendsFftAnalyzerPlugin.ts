@@ -10,7 +10,7 @@ import {
 } from '@membrana/fft-analyzer-service';
 import {
   classifyTrends,
-  resolveEnabledTemplates,
+  resolveTemplates,
   type MetricSample,
 } from '@membrana/trends-detector-service';
 
@@ -33,6 +33,7 @@ import {
   type TrendsFftAnalyzerPluginConfig,
   type TrendsDetectionMode,
 } from './types';
+import { userTemplatesStore } from './userTemplatesStore';
 
 const FFT_SIZE = 2048;
 const SMOOTHING = 0.8;
@@ -148,7 +149,10 @@ export function createTrendsFftAnalyzerPlugin(): Plugin<TrendsFftAnalyzerPluginC
         stopSampleInterval();
         collectionActive = false;
         const finishedAt = Date.now();
-        const templates = resolveEnabledTemplates(config.enabledTemplateKeys);
+        const templates = resolveTemplates(
+          config.enabledTemplateKeys,
+          userTemplatesStore.getTemplates(),
+        );
         const result = classifyTrends(collectedSamples, templates, {
           minConfidence: config.minConfidence,
           activityRmsThreshold: config.minRms,

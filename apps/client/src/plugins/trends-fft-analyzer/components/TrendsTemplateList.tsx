@@ -1,9 +1,27 @@
-import React from 'react';
-import { SYSTEM_TEMPLATES } from '@membrana/trends-detector-service';
+import React, { useCallback, useState } from 'react';
+import {
+  SYSTEM_TEMPLATES,
+  type PatternTemplate,
+} from '@membrana/trends-detector-service';
+
+import {
+  buildTemplateFromAnalysis,
+  canBuildTemplateFromAnalysis,
+} from '../buildTemplateFromAnalysis';
+import {
+  cloneTemplateForUser,
+  createEmptyUserTemplate,
+  isUserTemplateKey,
+} from '../templateEditorDefaults';
+import { userTemplatesStore } from '../userTemplatesStore';
+import { useTrendsFftAnalyzer } from '../useTrendsFftAnalyzer';
+import { useUserTemplates } from '../useUserTemplates';
+import { TrendsTemplateEditor } from './TrendsTemplateEditor';
 
 export interface TrendsTemplateListProps {
   readonly enabledKeys: readonly string[];
   readonly onToggle: (key: string, enabled: boolean) => void;
+  readonly onUserTemplateSaved?: (key: string) => void;
   readonly compact?: boolean;
   readonly bounded?: boolean;
 }
@@ -11,51 +29,225 @@ export interface TrendsTemplateListProps {
 export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
   enabledKeys,
   onToggle,
+  onUserTemplateSaved,
   compact = false,
   bounded = true,
 }) => {
+  const userTemplates = useUserTemplates();
+  const { lastResult } = useTrendsFftAnalyzer();
+  const canPrefillFromAnalysis = canBuildTemplateFromAnalysis(lastResult);
   const enabledSet = new Set(enabledKeys);
+  const [editing, setEditing] = useState<PatternTemplate | null>(null);
+  const [isNew, setIsNew] = useState(false);
+
+  const allKeys = [
+    ...SYSTEM_TEMPLATES.map((t) => t.key),
+    ...userTemplates.map((t) => t.key),
+  ];
+
+  const startCreate = useCallback(() => {
+    setEditing(createEmptyUserTemplate(allKeys));
+    setIsNew(true);
+  }, [allKeys]);
+
+  const startEdit = useCallback((template: PatternTemplate) => {
+    setEditing(structuredClone(template));
+    setIsNew(false);
+  }, []);
+
+  const startCopyFromSystem = useCallback(
+    (source: PatternTemplate) => {
+      setEditing(cloneTemplateForUser(source, allKeys));
+      setIsNew(true);
+    },
+    [allKeys],
+  );
+
+  const startCreateFromAnalysis = useCallback(() => {
+    if (!canBuildTemplateFromAnalysis(lastResult)) return;
+    setEditing(buildTemplateFromAnalysis(lastResult, allKeys));
+    setIsNew(true);
+  }, [lastResult, allKeys]);
+
+  const handleSave = useCallback(
+    (template: PatternTemplate) => {
+      userTemplatesStore.upsert(template);
+      if (!enabledSet.has(template.key)) {
+        onUserTemplateSaved?.(template.key);
+      }
+      setEditing(null);
+      setIsNew(false);
+    },
+    [enabledSet, onUserTemplateSaved],
+  );
+
+  const handleDelete = useCallback(
+    (key: string) => {
+      userTemplatesStore.remove(key);
+      if (enabledSet.has(key)) {
+        onToggle(key, false);
+      }
+    },
+    [enabledSet, onToggle],
+  );
+
+  if (editing) {
+    return (
+      <TrendsTemplateEditor
+        template={editing}
+        existingKeys={allKeys}
+        isNew={isNew}
+        onSave={handleSave}
+        onCancel={() => {
+          setEditing(null);
+          setIsNew(false);
+        }}
+      />
+    );
+  }
 
   return (
-    <div
-      className={`flex flex-col gap-2 min-h-0 ${
-        bounded && !compact ? 'max-h-64 overflow-y-auto pr-1' : ''
-      }`}
-    >
-      {SYSTEM_TEMPLATES.map((template) => {
-        const checked = enabledSet.has(template.key);
-        return (
-          <label
-            key={template.key}
-            className={`flex items-start gap-2 rounded-lg border p-2 cursor-pointer transition-colors ${
-              checked
-                ? 'border-primary/40 bg-primary/5'
-                : 'border-base-300 bg-base-200/30 opacity-75'
-            }`}
-          >
-            <input
-              type="checkbox"
-              className="checkbox checkbox-sm mt-0.5"
-              checked={checked}
-              onChange={(e) => onToggle(template.key, e.target.checked)}
-            />
-            <span className="min-w-0">
-              <span className="block text-sm font-medium">
-                {template.icon} {template.name}
-              </span>
-              {!compact && (
-                <span className="block text-xs text-base-content/60 leading-snug mt-0.5">
-                  {template.description}
+    <div className="flex flex-col gap-3 min-h-0">
+      <div className="flex flex-wrap gap-2 shrink-0">
+        <button type="button" className="btn btn-primary btn-xs" onClick={startCreate}>
+          Создать
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline btn-primary btn-xs"
+          disabled={!canPrefillFromAnalysis}
+          title={
+            canPrefillFromAnalysis
+              ? 'Заполнить поля шаблона данными последнего завершённого анализа'
+              : 'Сначала завершите хотя бы один цикл анализа на вкладке «Детектор»'
+          }
+          onClick={startCreateFromAnalysis}
+        >
+          Создать шаблон на основе анализа
+        </button>
+      </div>
+
+      <div
+        className={`flex flex-col gap-2 min-h-0 ${
+          bounded && !compact ? 'max-h-64 overflow-y-auto pr-1' : ''
+        }`}
+      >
+        <div className="text-[11px] font-medium text-base-content/50 uppercase tracking-wide">
+          Системные
+        </div>
+        {SYSTEM_TEMPLATES.map((template) => {
+          const checked = enabledSet.has(template.key);
+          return (
+            <div
+              key={template.key}
+              className={`flex items-start gap-2 rounded-lg border p-2 transition-colors ${
+                checked
+                  ? 'border-primary/40 bg-primary/5'
+                  : 'border-base-300 bg-base-200/30 opacity-90'
+              }`}
+            >
+              <label className="flex items-start gap-2 flex-1 cursor-pointer min-w-0">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm mt-0.5 shrink-0"
+                  checked={checked}
+                  onChange={(e) => onToggle(template.key, e.target.checked)}
+                />
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium">
+                    <span className="opacity-60" aria-hidden title="Только чтение">
+                      🔒
+                    </span>{' '}
+                    {template.icon} {template.name}
+                  </span>
+                  {!compact && (
+                    <span className="block text-xs text-base-content/60 leading-snug mt-0.5">
+                      {template.description}
+                    </span>
+                  )}
                 </span>
-              )}
-            </span>
-          </label>
-        );
-      })}
-      <p className="text-[11px] text-base-content/50 leading-snug">
-        Полный редактор пользовательских шаблонов (создание из WAV, спектральные и
-        временные пороги) — отдельная задача; сейчас доступны только системные классы.
-      </p>
+              </label>
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs shrink-0"
+                title="Копировать в пользовательский"
+                onClick={() => startCopyFromSystem(template)}
+              >
+                Копировать
+              </button>
+            </div>
+          );
+        })}
+
+        {userTemplates.length > 0 ? (
+          <>
+            <div className="text-[11px] font-medium text-base-content/50 uppercase tracking-wide mt-2">
+              Пользовательские
+            </div>
+            {userTemplates.map((template) => {
+              const checked = enabledSet.has(template.key);
+              return (
+                <div
+                  key={template.key}
+                  className={`flex items-start gap-2 rounded-lg border p-2 transition-colors ${
+                    checked
+                      ? 'border-primary/40 bg-primary/5'
+                      : 'border-base-300 bg-base-200/30'
+                  }`}
+                >
+                  <label className="flex items-start gap-2 flex-1 cursor-pointer min-w-0">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-sm mt-0.5 shrink-0"
+                      checked={checked}
+                      onChange={(e) => onToggle(template.key, e.target.checked)}
+                    />
+                    <span className="min-w-0">
+                      <span
+                        className="block text-sm font-medium"
+                        style={{ color: template.color }}
+                      >
+                        {template.icon} {template.name}
+                      </span>
+                      {!compact && template.description ? (
+                        <span className="block text-xs text-base-content/60 leading-snug mt-0.5">
+                          {template.description}
+                        </span>
+                      ) : null}
+                    </span>
+                  </label>
+                  <div className="flex gap-1 shrink-0">
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs"
+                      onClick={() => startEdit(template)}
+                    >
+                      Изменить
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs text-error"
+                      onClick={() => handleDelete(template.key)}
+                    >
+                      Удалить
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          <p className="text-xs text-base-content/50 leading-snug">
+            Пользовательских шаблонов пока нет. Создайте новый или скопируйте системный.
+          </p>
+        )}
+      </div>
+
+      {userTemplates.some((t) => isUserTemplateKey(t.key)) ? (
+        <p className="text-[11px] text-base-content/50 leading-snug">
+          Пользовательские шаблоны сохраняются в браузере (localStorage).
+        </p>
+      ) : null}
     </div>
   );
 };

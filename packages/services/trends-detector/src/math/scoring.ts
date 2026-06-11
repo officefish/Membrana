@@ -2,9 +2,11 @@ import type {
   FrequencyJumpsFeatures,
   FrequencyJumpsSpec,
   PatternTemplate,
+  SpectralThresholds,
   TemporalFeatures,
   TemporalPatternSpec,
 } from '../types.js';
+import { DEFAULT_FRAME_HIT_RATIO } from '../types.js';
 import { mean, membership } from './stats.js';
 
 const TEMPORAL_WEIGHTS: Record<string, number> = {
@@ -143,30 +145,55 @@ export function scoreTemporalPatterns(
   return totalWeight > 0 ? score / totalWeight : 0;
 }
 
+export function isSampleInSpectralBounds(
+  sample: { centroid: number; flux: number; rms: number },
+  thresholds: SpectralThresholds,
+): boolean {
+  return (
+    sample.centroid >= thresholds.centroid.min &&
+    sample.centroid <= thresholds.centroid.max &&
+    sample.flux >= thresholds.flux.min &&
+    sample.flux <= thresholds.flux.max &&
+    sample.rms >= thresholds.rms.min &&
+    sample.rms <= thresholds.rms.max
+  );
+}
+
+export function computeFrameHitRatio(
+  samples: readonly { centroid: number; flux: number; rms: number }[],
+  thresholds: SpectralThresholds,
+): number {
+  if (samples.length === 0) return 0;
+  let hits = 0;
+  for (const sample of samples) {
+    if (isSampleInSpectralBounds(sample, thresholds)) hits++;
+  }
+  return hits / samples.length;
+}
+
 export function scoreSpectral(
   template: PatternTemplate,
   centroidMean: number,
   fluxMean: number,
   rmsMean: number,
+  samples: readonly { centroid: number; flux: number; rms: number }[] = [],
 ): number {
-  let spectralScore = 0;
-  let spectralWeight = 0;
-
   const { thresholds } = template;
 
   const centroidScore = membership(centroidMean, thresholds.centroid.min, thresholds.centroid.max);
-  spectralScore += centroidScore * 0.35;
-  spectralWeight += 0.35;
-
   const fluxScore = membership(fluxMean, thresholds.flux.min, thresholds.flux.max);
-  spectralScore += fluxScore * 0.25;
-  spectralWeight += 0.25;
-
   const rmsScore = membership(rmsMean, thresholds.rms.min, thresholds.rms.max);
-  spectralScore += rmsScore * 0.2;
-  spectralWeight += 0.2;
+  const meanPart = (centroidScore * 0.35 + fluxScore * 0.25 + rmsScore * 0.2) / 0.8;
 
-  return spectralWeight > 0 ? spectralScore / spectralWeight : 0;
+  const actualHitRatio = computeFrameHitRatio(samples, thresholds);
+  const expectedHitRatio = thresholds.frameHitRatio ?? DEFAULT_FRAME_HIT_RATIO;
+  const hitScore = membership(
+    actualHitRatio,
+    expectedHitRatio.min,
+    expectedHitRatio.max,
+  );
+
+  return meanPart * 0.7 + hitScore * 0.3;
 }
 
 export function scoreTemplate(
@@ -178,7 +205,13 @@ export function scoreTemplate(
   const fluxMean = mean(samples.map((s) => s.flux));
   const rmsMean = mean(samples.map((s) => s.rms));
 
-  const spectralScore = scoreSpectral(template, centroidMean, fluxMean, rmsMean);
+  const spectralScore = scoreSpectral(
+    template,
+    centroidMean,
+    fluxMean,
+    rmsMean,
+    samples,
+  );
   const temporalScore = scoreTemporalPatterns(features, template.temporalPatterns);
   const score = (spectralScore * 0.3 + temporalScore * 0.7) * 100;
 

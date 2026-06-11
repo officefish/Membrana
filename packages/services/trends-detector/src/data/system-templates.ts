@@ -192,11 +192,4 @@ export const SYSTEM_TEMPLATES: readonly PatternTemplate[] = [
 
 export const SYSTEM_TEMPLATE_KEYS = SYSTEM_TEMPLATES.map((t) => t.key);
 
-export function getSystemTemplate(key: string): PatternTemplate | undefined {
-  return SYSTEM_TEMPLATES.find((t) => t.key === key);
-}
-
-export function resolveEnabledTemplates(keys: readonly string[]): PatternTemplate[] {
-  const set = new Set(keys);
-  return SYSTEM_TEMPLATES.filter((t) => set.has(t.key));
-}
+export { getSystemTemplate, resolveEnabledTemplates } from './resolve-templates.js';

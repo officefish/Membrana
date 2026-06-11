@@ -62,17 +62,23 @@ export interface MetricSample {
   readonly rms: number;
 }
 
+export interface SpectralThresholds {
+  readonly centroid: Bounds;
+  readonly flux: Bounds;
+  readonly rms: Bounds;
+  /** Доля тактов, где centroid, flux и rms одновременно в диапазоне. Default 0.5–0.8. */
+  readonly frameHitRatio?: Bounds;
+}
+
+export const DEFAULT_FRAME_HIT_RATIO: Bounds = { min: 0.5, max: 0.8 };
+
 export interface PatternTemplate {
   readonly key: string;
   readonly name: string;
   readonly icon: string;
   readonly color: string;
   readonly description: string;
-  readonly thresholds: {
-    readonly centroid: Bounds;
-    readonly flux: Bounds;
-    readonly rms: Bounds;
-  };
+  readonly thresholds: SpectralThresholds;
   readonly temporalPatterns: TemporalPatternSpec;
 }
 

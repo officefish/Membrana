@@ -48,6 +48,12 @@ export function TrendsFftSidebarSettings({ moduleId }: Props) {
     });
   };
 
+  const enableUserTemplate = (key: string) => {
+    const set = new Set(config.enabledTemplateKeys);
+    set.add(key);
+    patch({ enabledTemplateKeys: [...set] });
+  };
+
   const durationSec = analysisDurationSec(config.measurementsCount, config.intervalMs);
 
   return (
@@ -149,6 +155,7 @@ export function TrendsFftSidebarSettings({ moduleId }: Props) {
         <TrendsTemplateList
           enabledKeys={config.enabledTemplateKeys}
           onToggle={toggleTemplate}
+          onUserTemplateSaved={enableUserTemplate}
           compact
         />
       </div>

@@ -1,5 +1,6 @@
 import {
   SYSTEM_TEMPLATE_KEYS,
+  isUserTemplateKey,
   type PatternTemplate,
 } from '@membrana/trends-detector-service';
 
@@ -70,8 +71,10 @@ export function resolveTrendsFftAnalyzerConfig(
   );
 
   const enabledTemplateKeys = Array.isArray(raw?.enabledTemplateKeys)
-    ? raw.enabledTemplateKeys.filter((k) =>
-        (SYSTEM_TEMPLATE_KEYS as readonly string[]).includes(k),
+    ? raw.enabledTemplateKeys.filter(
+        (k) =>
+          (SYSTEM_TEMPLATE_KEYS as readonly string[]).includes(k) ||
+          isUserTemplateKey(k),
       )
     : DEFAULT_ENABLED_TEMPLATE_KEYS;
 

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMembranaStore } from '@membrana/agenda';
-import { getSystemTemplate } from '@membrana/trends-detector-service';
 
 import { QuickPresetButtons } from './components/QuickPresetButtons';
 import { TrendsCollapsibleSection } from './components/TrendsCollapsibleSection';
@@ -25,6 +24,7 @@ import {
   requestStopTrendsCollection,
   trendsFftPluginState,
 } from './trendsFftPluginState';
+import { useTemplateCatalog } from './useTemplateCatalog';
 import { useTrendsFftAnalyzer } from './useTrendsFftAnalyzer';
 import {
   TRENDS_FFT_ANALYZER_PLUGIN_ID,
@@ -48,6 +48,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
 }) => {
   const isFullscreen = layout === 'fullscreen';
   const snapshot = useTrendsFftAnalyzer();
+  const { getTemplate } = useTemplateCatalog();
   const rawConfig = useMembranaStore((s) =>
     s.getPlugin(moduleId, TRENDS_FFT_ANALYZER_PLUGIN_ID)?.config,
   );
@@ -108,6 +109,15 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
     [config.enabledTemplateKeys, patchConfig],
   );
 
+  const enableUserTemplate = useCallback(
+    (key: string) => {
+      const set = new Set(config.enabledTemplateKeys);
+      set.add(key);
+      patchConfig({ enabledTemplateKeys: [...set] });
+    },
+    [config.enabledTemplateKeys, patchConfig],
+  );
+
   const isCollecting = snapshot.phase === 'collecting';
   const activeIndex = Math.min(
     snapshot.collectedCount,
@@ -132,15 +142,15 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
 
   const selectedBreakdown = useMemo(() => {
     if (!result || !selectedDetailKey) return null;
-    return buildBreakdownForResult(result, selectedDetailKey);
-  }, [result, selectedDetailKey]);
+    return buildBreakdownForResult(result, selectedDetailKey, getTemplate);
+  }, [result, selectedDetailKey, getTemplate]);
 
   const detailSubtitlePrefix = useMemo(() => {
     if (!selectedDetailKey || !result) return '';
     if (selectedDetailKey === result.detectedState) return '';
-    const template = getSystemTemplate(selectedDetailKey);
+    const template = getTemplate(selectedDetailKey);
     return template ? `для «${template.name}» · ` : '';
-  }, [result, selectedDetailKey]);
+  }, [result, selectedDetailKey, getTemplate]);
 
   const selectTemplateDetail = useCallback((key: string) => {
     setSelectedDetailKey(key);
@@ -174,6 +184,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
           <TrendsTemplateList
             enabledKeys={config.enabledTemplateKeys}
             onToggle={toggleTemplate}
+            onUserTemplateSaved={enableUserTemplate}
             bounded={!isFullscreen}
           />
         </div>
@@ -336,6 +347,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                       scores={result.scores}
                       selectedKey={selectedDetailKey}
                       onSelect={selectTemplateDetail}
+                      getTemplate={getTemplate}
                       compact={false}
                     />
                   ) : (
@@ -349,6 +361,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                         scores={result.scores}
                         selectedKey={selectedDetailKey}
                         onSelect={selectTemplateDetail}
+                        getTemplate={getTemplate}
                         compact
                         hideTitle
                       />
@@ -361,6 +374,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                     <TrendsMatchDetailTable
                       result={result}
                       templateKey={selectedDetailKey}
+                      getTemplate={getTemplate}
                       compact={false}
                       hideTemplateHeader
                     />
@@ -375,6 +389,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                         <TrendsMatchDetailTable
                           result={result}
                           templateKey={selectedDetailKey}
+                          getTemplate={getTemplate}
                           compact
                           section="spectral"
                           hideTemplateHeader
@@ -389,6 +404,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                         <TrendsMatchDetailTable
                           result={result}
                           templateKey={selectedDetailKey}
+                          getTemplate={getTemplate}
                           compact
                           section="temporal"
                           hideTemplateHeader

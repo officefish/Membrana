@@ -7,8 +7,9 @@ import type {
   TemporalPatternSpec,
   TemplateMatchBreakdown,
 } from '../types.js';
+import { DEFAULT_FRAME_HIT_RATIO } from '../types.js';
 import { mean, membership } from './stats.js';
-import { scorePatternField, scoreTemplate } from './scoring.js';
+import { computeFrameHitRatio, scorePatternField, scoreTemplate } from './scoring.js';
 
 const SPECTRAL_FIELDS = [
   { field: 'centroid', weight: 0.35, unit: 'Hz', decimals: 0 },
@@ -125,6 +126,7 @@ function buildSpectralFields(
   centroidMean: number,
   fluxMean: number,
   rmsMean: number,
+  samples: readonly { centroid: number; flux: number; rms: number }[],
 ): MatchFieldBreakdown[] {
   const means = {
     centroid: centroidMean,
@@ -132,19 +134,37 @@ function buildSpectralFields(
     rms: rmsMean,
   };
 
-  return SPECTRAL_FIELDS.map(({ field, weight, unit, decimals }) => {
+  const rows: MatchFieldBreakdown[] = SPECTRAL_FIELDS.map(({ field, weight, unit, decimals }) => {
     const threshold = template.thresholds[field];
     const actualValue = means[field];
     const match = membership(actualValue, threshold.min, threshold.max);
     return {
       field,
-      category: 'spectral',
+      category: 'spectral' as const,
       actual: formatNumber(actualValue, decimals, unit),
       expected: formatBounds(threshold.min, threshold.max, unit, decimals),
       matchPercent: Math.round(match * 100),
       weight,
     };
   });
+
+  const actualHitRatio = computeFrameHitRatio(samples, template.thresholds);
+  const expectedHitRatio = template.thresholds.frameHitRatio ?? DEFAULT_FRAME_HIT_RATIO;
+  const hitMatch = membership(
+    actualHitRatio,
+    expectedHitRatio.min,
+    expectedHitRatio.max,
+  );
+  rows.push({
+    field: 'frameHitRatio',
+    category: 'spectral',
+    actual: `${(actualHitRatio * 100).toFixed(1)}%`,
+    expected: `${(expectedHitRatio.min * 100).toFixed(0)}% – ${(expectedHitRatio.max * 100).toFixed(0)}%`,
+    matchPercent: Math.round(hitMatch * 100),
+    weight: 0.3,
+  });
+
+  return rows;
 }
 
 function buildTemporalFields(
@@ -188,7 +208,7 @@ export function buildTemplateMatchBreakdown(
     spectralScore: Math.round(scored.spectralScore),
     temporalScore: Math.round(scored.temporalScore),
     fields: [
-      ...buildSpectralFields(template, centroidMean, fluxMean, rmsMean),
+      ...buildSpectralFields(template, centroidMean, fluxMean, rmsMean, samples),
       ...buildTemporalFields(features, template.temporalPatterns),
     ],
   };

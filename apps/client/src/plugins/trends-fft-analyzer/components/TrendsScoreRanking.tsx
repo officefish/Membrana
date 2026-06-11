@@ -1,11 +1,11 @@
 import React from 'react';
-import type { TemplateScore } from '@membrana/trends-detector-service';
-import { getSystemTemplate } from '@membrana/trends-detector-service';
+import type { PatternTemplate, TemplateScore } from '@membrana/trends-detector-service';
 
 export interface TrendsScoreRankingProps {
   readonly scores: readonly TemplateScore[];
   readonly selectedKey: string | null;
   readonly onSelect: (key: string) => void;
+  readonly getTemplate?: (key: string) => PatternTemplate | undefined;
   readonly compact?: boolean;
   readonly hideTitle?: boolean;
 }
@@ -16,6 +16,7 @@ export const TrendsScoreRanking: React.FC<TrendsScoreRankingProps> = ({
   scores,
   selectedKey,
   onSelect,
+  getTemplate,
   compact = false,
   hideTitle = false,
 }) => {
@@ -31,7 +32,7 @@ export const TrendsScoreRanking: React.FC<TrendsScoreRankingProps> = ({
       ) : null}
       <ul className="flex flex-col gap-1.5">
         {top3.map((entry, index) => {
-          const template = getSystemTemplate(entry.key);
+          const template = getTemplate?.(entry.key);
           const label = template?.name ?? entry.key;
           const icon = template?.icon ?? '❓';
           const color = template?.color ?? '#999';

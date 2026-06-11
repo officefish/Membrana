@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import {
   buildTemplateMatchBreakdown,
-  getSystemTemplate,
   type MatchFieldBreakdown,
+  type PatternTemplate,
   type TemplateMatchBreakdown,
   type TrendsDetectionResult,
 } from '@membrana/trends-detector-service';
@@ -11,6 +11,7 @@ const FIELD_LABELS: Record<string, string> = {
   centroid: 'Спектральный центр (среднее)',
   flux: 'Спектральный поток (среднее)',
   rms: 'Громкость RMS (среднее)',
+  frameHitRatio: 'Доля тактов в диапазоне',
   centroidStd: 'Разброс центра (σ)',
   fluxStd: 'Разброс потока (σ)',
   rmsStd: 'Разброс громкости (σ)',
@@ -67,6 +68,7 @@ export type TrendsMatchDetailSection = 'all' | 'spectral' | 'temporal';
 export interface TrendsMatchDetailTableProps {
   readonly result: TrendsDetectionResult;
   readonly templateKey: string;
+  readonly getTemplate?: (key: string) => PatternTemplate | undefined;
   readonly compact?: boolean;
   readonly section?: TrendsMatchDetailSection;
   readonly hideTemplateHeader?: boolean;
@@ -75,9 +77,10 @@ export interface TrendsMatchDetailTableProps {
 export function buildBreakdownForResult(
   result: TrendsDetectionResult,
   templateKey: string,
+  getTemplate?: (key: string) => PatternTemplate | undefined,
 ): TemplateMatchBreakdown | null {
   if (!result.temporalFeatures) return null;
-  const template = getSystemTemplate(templateKey);
+  const template = getTemplate?.(templateKey);
   if (!template) return null;
   return buildTemplateMatchBreakdown(
     result.temporalFeatures,
@@ -89,15 +92,16 @@ export function buildBreakdownForResult(
 export const TrendsMatchDetailTable: React.FC<TrendsMatchDetailTableProps> = ({
   result,
   templateKey,
+  getTemplate,
   compact = false,
   section = 'all',
   hideTemplateHeader = false,
 }) => {
   const breakdown = useMemo(
-    () => buildBreakdownForResult(result, templateKey),
-    [result, templateKey],
+    () => buildBreakdownForResult(result, templateKey, getTemplate),
+    [result, templateKey, getTemplate],
   );
-  const template = getSystemTemplate(templateKey);
+  const template = getTemplate?.(templateKey);
 
   if (!breakdown || !template) {
     return (
