@@ -102,3 +102,22 @@ export interface ClassifyTrendsOptions {
   readonly minConfidence?: number;
   readonly activityRmsThreshold?: number;
 }
+
+export type MatchFieldCategory = 'spectral' | 'temporal';
+
+export interface MatchFieldBreakdown {
+  readonly field: string;
+  readonly category: MatchFieldCategory;
+  readonly actual: string;
+  readonly expected: string;
+  readonly matchPercent: number;
+  readonly weight: number;
+}
+
+export interface TemplateMatchBreakdown {
+  readonly templateKey: string;
+  readonly overallScore: number;
+  readonly spectralScore: number;
+  readonly temporalScore: number;
+  readonly fields: readonly MatchFieldBreakdown[];
+}

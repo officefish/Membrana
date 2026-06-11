@@ -40,7 +40,7 @@ export function TrendsFftFullscreen({ moduleId, onClose }: TrendsFftFullscreenPr
           Закрыть
         </button>
       </header>
-      <main className="flex flex-1 min-h-0 flex-col overflow-hidden p-4 max-w-5xl mx-auto w-full">
+      <main className="flex-1 min-h-0 overflow-y-auto p-4 max-w-5xl mx-auto w-full">
         <TrendsFftLabView moduleId={moduleId} layout="fullscreen" />
       </main>
       <footer className="shrink-0 border-t border-base-300 px-4 py-2 text-center text-[10px] font-mono text-base-content/50">

@@ -91,7 +91,7 @@ function scoreFrequencyJumps(
   return weightSum > 0 ? score / weightSum : 0;
 }
 
-function scorePatternField(
+export function scorePatternField(
   patternName: string,
   actual: unknown,
   expected: unknown,

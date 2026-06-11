@@ -14,8 +14,8 @@ export const TrendsFftAnalyzerPanel: React.FC<TrendsFftAnalyzerPanelProps> = ({
 
   return (
     <>
-      <div className="card card-bordered bg-base-100 shadow-sm h-full min-h-0">
-        <div className="card-body gap-3 p-4 min-h-0">
+      <div className="card card-bordered bg-base-100 shadow-sm">
+        <div className="card-body gap-3 p-4">
           <TrendsFftLabView
             moduleId={moduleId}
             layout="panel"

@@ -5,17 +5,23 @@ export interface TrendsTemplateListProps {
   readonly enabledKeys: readonly string[];
   readonly onToggle: (key: string, enabled: boolean) => void;
   readonly compact?: boolean;
+  readonly bounded?: boolean;
 }
 
 export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
   enabledKeys,
   onToggle,
   compact = false,
+  bounded = true,
 }) => {
   const enabledSet = new Set(enabledKeys);
 
   return (
-    <div className={`flex flex-col gap-2 min-h-0 ${compact ? '' : 'max-h-64 overflow-y-auto pr-1'}`}>
+    <div
+      className={`flex flex-col gap-2 min-h-0 ${
+        bounded && !compact ? 'max-h-64 overflow-y-auto pr-1' : ''
+      }`}
+    >
       {SYSTEM_TEMPLATES.map((template) => {
         const checked = enabledSet.has(template.key);
         return (
