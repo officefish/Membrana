@@ -1,0 +1,20 @@
+# Локальный PostgreSQL для разработки (полный стек media — в A5b).
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: membrana
+      POSTGRES_PASSWORD: membrana
+      POSTGRES_DB: membrana_media
+    volumes:
+      - media-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U membrana -d membrana_media']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  media-pg-data:

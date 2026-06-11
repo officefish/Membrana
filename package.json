@@ -57,6 +57,11 @@
     "office:dev": "yarn workspace @membrana/background-office dev",
     "office:build": "yarn workspace @membrana/background-office build",
     "office:verify-swagger": "yarn workspace @membrana/background-office verify:swagger",
+    "media:dev": "yarn workspace @membrana/background-media dev",
+    "media:build": "yarn workspace @membrana/background-media build",
+    "media:migrate": "yarn workspace @membrana/background-media prisma:migrate",
+    "media:db:up": "docker compose -f packages/background-media/docker-compose.dev.yml up -d",
+    "media:db:down": "docker compose -f packages/background-media/docker-compose.dev.yml down",
     "mcp:verify-bootstrap": "node scripts/verify-mcp-bootstrap.mjs",
     "mcp:phase-a": "node scripts/mcp-workstation-phase-a.mjs",
     "mcp:phase-a:install": "node scripts/mcp-workstation-phase-a.mjs --write"

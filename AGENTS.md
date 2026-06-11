@@ -7,7 +7,7 @@
 Membrana is a TypeScript monorepo using **Yarn 4 (Berry)** workspaces + **Turborepo**. The main application is `apps/client` (Vite + React + DaisyUI), with shared packages in `packages/` and autonomous services in `packages/services/`. Optional NestJS backends live in `packages/background-*`:
 
 - **`background-office`** — integrations (Claude, Linear, GitHub); stateless; `yarn office:dev` (port 3000).
-- **`background-media`** — web data-plane: sample library blobs (multi-format audio) + trends templates per `deviceId`; NestJS+Fastify, Prisma+PostgreSQL, blob volume; epic #58; `yarn media:dev` (port 3010, after A5a).
+- **`background-media`** — web data-plane: sample library blobs (multi-format audio) + trends templates per `deviceId`; NestJS+Fastify, Prisma+PostgreSQL, blob volume; epic #58; `yarn media:db:up` → `yarn media:migrate` → `yarn media:dev` (port 3010).
 
 Do **not** put WAV storage or user templates in office. Do **not** put Claude/Linear in media. See `docs/BACKGROUND_SERVERS.md`.
 
