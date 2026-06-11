@@ -154,7 +154,7 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "DetectionMetrics mock detector",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-11"
     },
     {
       "id": "detection-dataset-v01",
@@ -167,7 +167,7 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "DATASET.md v0.1 synthetic verified",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-11"
     },
     {
       "id": "detection-benchmark-runner",
@@ -180,7 +180,7 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "benchmark:detectors green",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-11"
     },
     {
       "id": "detection-harmonic-gate",
@@ -193,7 +193,7 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "harmonic on benchmark",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-11"
     },
     {
       "id": "detection-architecture-freeze",
@@ -206,7 +206,7 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "ARCHITECTURE freeze PR template",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-11"
     },
     {
       "id": "analyzer-frame-feed-refactor",
@@ -215,10 +215,11 @@
       "githubIssue": 55,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-11",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-11",
+      "archiveNotes": "techies68 ff5c8b5; AudioFrameFeed + fft-threshold-test + harmonic-detector-viz sample-library mode",
+      "githubIssueClosedAt": "2026-06-11"
     },
     {
       "id": "trends-fft-microphone-plugin",
@@ -231,7 +232,9 @@
       "createdAt": "2026-06-11",
       "archivedAt": null,
       "archiveNotes": null,
-      "dependsOn": ["analyzer-frame-feed-refactor"]
+      "dependsOn": [
+        "analyzer-frame-feed-refactor"
+      ]
     }
   ]
 }
