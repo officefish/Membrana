@@ -128,6 +128,10 @@ export class MediaLibraryService {
   getBackend(): IStorageBackend {
     return this.backend;
   }
+
+  async getSampleBlob(sampleId: string): Promise<Blob> {
+    return this.backend.readBlob(sampleId);
+  }
 }
 
 let defaultService: MediaLibraryService | null = null;

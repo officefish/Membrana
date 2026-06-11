@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { audioWindowFromFrame, harmonicDroneWindow, sineWindow } from './index.js';
+import { audioWindowFromFrame, harmonicDroneWindow, sineWindow, whiteNoiseWindow } from './index.js';
 
 describe('detector-base types', () => {
   it('audioWindowFromFrame computes duration', () => {
@@ -22,5 +22,11 @@ describe('detector-base types', () => {
   it('harmonicDroneWindow is non-empty', () => {
     const w = harmonicDroneWindow();
     expect(w.samples.some((s) => Math.abs(s) > 0.01)).toBe(true);
+  });
+
+  it('whiteNoiseWindow is deterministic for the same seed', () => {
+    const a = whiteNoiseWindow(48_000, 42);
+    const b = whiteNoiseWindow(48_000, 42);
+    expect([...a.samples]).toEqual([...b.samples]);
   });
 });

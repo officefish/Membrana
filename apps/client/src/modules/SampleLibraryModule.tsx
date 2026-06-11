@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { ModuleProps } from '@membrana/agenda';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ModuleProps, useMembranaStore } from '@membrana/agenda';
+import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
   SYSTEM_BENCHMARK_COLLECTION_ID,
@@ -10,6 +11,19 @@ import {
 } from '@membrana/media-library-service';
 
 import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
+import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
+import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
+import {
+  bindSamplePlaybackBlobReader,
+  disposeSamplePlayback,
+  selectSample,
+  togglePlayPause,
+} from '../lib/sampleLibraryPlaybackHub';
+import { useSamplePlayback } from '../lib/useSamplePlayback';
+import {
+  SAMPLE_LIBRARY_PLAYER_PLUGIN_ID,
+  SampleLibraryPlayerPanel,
+} from '../plugins/sample-library-player';
 
 const CLASS_OPTIONS = [
   'drone-multirotor',
@@ -30,15 +44,25 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 }) => {
   const config = module.config as SampleLibraryConfig;
   const { snapshot, service } = useMediaLibrary();
+  const playback = useSamplePlayback();
+  const activePluginIds = useMembranaStore(
+    useShallow((state) => state.getModule(module.id)?.activePlugins ?? []),
+  );
   const [selectedId, setSelectedId] = useState<string>(BUFFER_COLLECTION_ID);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
+    return () => {
+      void disposeSamplePlayback();
+    };
+  }, [service]);
 
   const samples = snapshot.samplesByCollection[selectedId] ?? [];
   const selected = snapshot.collections.find((c) => c.id === selectedId);
   const quotaBlocked = isQuotaFull(snapshot.quota);
 
-  const userCollections = snapshot.collections.filter((c) => c.kind === 'user');
   const moveTargets = snapshot.collections.filter(
     (c) => c.id !== selectedId && c.kind !== 'buffer',
   );
@@ -119,8 +143,35 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     }
   }, [service]);
 
+  const handleSelectSample = useCallback(async (sample: MediaSample) => {
+    setError(null);
+    try {
+      await selectSample(sample);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }, []);
+
+  const handleExportSample = useCallback(
+    async (sample: MediaSample) => {
+      setError(null);
+      try {
+        const blob = await service.getSampleBlob(sample.id);
+        const ext = extensionFromMime(blob.type);
+        downloadBlob(blob, `${sample.title}.${ext}`);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      }
+    },
+    [service],
+  );
+
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
+      {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
+        <SampleLibraryPlayerPanel moduleId={module.id} />
+      ) : null}
+
       <MediaLibraryQuotaBanner quota={snapshot.quota} />
 
       {error ? (
@@ -222,6 +273,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             </label>
           </div>
 
+          <SamplePlaybackBar playback={playback} compact />
+
           <div className="overflow-x-auto rounded-lg border border-base-300">
             <table className="table table-sm">
               <thead>
@@ -245,8 +298,14 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                   </tr>
                 ) : (
                   samples.map((s: MediaSample) => (
-                    <tr key={s.id}>
-                      <td className="max-w-[12rem] truncate">{s.title}</td>
+                    <tr
+                      key={s.id}
+                      className={
+                        playback.selectedSampleId === s.id ? 'bg-primary/10' : undefined
+                      }
+                      onClick={() => void handleSelectSample(s)}
+                    >
+                      <td className="max-w-[12rem] truncate cursor-pointer">{s.title}</td>
                       <td>{s.class}</td>
                       <td>{s.label}</td>
                       <td>{s.source}</td>
@@ -254,6 +313,39 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         {(s.sizeBytes / 1024).toFixed(0)} KB
                       </td>
                       <td className="flex flex-wrap justify-end gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-ghost"
+                          aria-label={
+                            playback.selectedSampleId === s.id && playback.status === 'playing'
+                              ? 'Пауза'
+                              : 'Воспроизвести'
+                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void (async () => {
+                              if (playback.selectedSampleId !== s.id) {
+                                await handleSelectSample(s);
+                              }
+                              await togglePlayPause();
+                            })();
+                          }}
+                        >
+                          {playback.selectedSampleId === s.id && playback.status === 'playing'
+                            ? '⏸'
+                            : '▶'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-ghost"
+                          aria-label="Экспорт"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void handleExportSample(s);
+                          }}
+                        >
+                          ↓
+                        </button>
                         {selectedId === BUFFER_COLLECTION_ID && moveTargets.length > 0 ? (
                           <select
                             className="select select-bordered select-xs max-w-[8rem]"
@@ -287,13 +379,6 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               </tbody>
             </table>
           </div>
-
-          {selectedId === BUFFER_COLLECTION_ID && userCollections.length > 0 ? (
-            <p className="text-xs text-base-content/55">
-              Запись с микрофона (фаза A3) появится позже. Сейчас: импорт с диска → буфер →
-              перенос в коллекцию.
-            </p>
-          ) : null}
         </section>
       </div>
     </div>

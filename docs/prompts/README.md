@@ -51,6 +51,7 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`MEDIA_LIBRARY_A1_STORAGE_PROMPT.md`](./MEDIA_LIBRARY_A1_STORAGE_PROMPT.md) | **Архив** `media-library-a1-storage` — storage backend, domain (фаза A1) |
 | [`MEDIA_LIBRARY_A2_UI_PROMPT.md`](./MEDIA_LIBRARY_A2_UI_PROMPT.md) | **Архив** `media-library-a2-ui` — UI «Библиотека сэмплов», quota banner (фаза A2) |
 | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](./MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | **Активная** `media-library-a3-mic-recorder` — плагин записи в буфер (фаза A3) |
+| [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](./MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | **Активная** `media-library-a4-sample-player` — play/export, крупный плеер с осциллограммой (фаза A4) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

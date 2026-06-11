@@ -39,13 +39,23 @@ export function harmonicDroneWindow(sampleRate = DEFAULT_SR): AudioWindow {
   return { samples, sampleRate, timestamp: 0, durationSec };
 }
 
-/** Белый шум для негативных тестов. */
-export function whiteNoiseWindow(sampleRate = DEFAULT_SR): AudioWindow {
+/** Детерминированный PRNG для воспроизводимых фикстур (не Math.random). */
+function seededUnitRandom(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (state * 1_664_525 + 1_013_904_223) >>> 0;
+    return state / 0x1_0000_0000;
+  };
+}
+
+/** Белый шум для негативных тестов (фиксированный seed — без флака). */
+export function whiteNoiseWindow(sampleRate = DEFAULT_SR, seed = 0xdecafbad): AudioWindow {
   const durationSec = 0.05;
   const length = Math.floor(durationSec * sampleRate);
   const samples = new Float32Array(length);
+  const rand = seededUnitRandom(seed);
   for (let i = 0; i < length; i++) {
-    samples[i] = Math.random() * 2 - 1;
+    samples[i] = rand() * 2 - 1;
   }
   return { samples, sampleRate, timestamp: 0, durationSec };
 }

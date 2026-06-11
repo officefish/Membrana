@@ -4,6 +4,7 @@ import { createSoundQualityVizPlugin } from '../plugins/sound-quality-viz';
 import { createFftThresholdTestPlugin } from '../plugins/fft-threshold-test';
 import { createHarmonicDetectorVizPlugin } from '../plugins/harmonic-detector-viz';
 import { createMicBufferRecorderPlugin } from '../plugins/mic-buffer-recorder';
+import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-player';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 
 /**
@@ -147,6 +148,7 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createSoundQualityVizPlugin());
   MembranaRegistry.registerPlugin('microphone', createHarmonicDetectorVizPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicBufferRecorderPlugin());
+  MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
 
   // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs
   // уже применены в registerModule, дальше держать pendingModulePrefs смысла нет.

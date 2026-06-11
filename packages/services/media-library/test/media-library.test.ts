@@ -73,6 +73,24 @@ describe('MediaLibraryService', () => {
     expect(svc.getSnapshot().samplesByCollection[BUFFER_COLLECTION_ID]).toHaveLength(0);
   });
 
+  it('reads sample blob via getSampleBlob', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 });
+    const svc = createMediaLibraryService(backend);
+    await svc.init();
+    const bytes = new Uint8Array([1, 2, 3, 4]);
+    const sample = await svc.importBlob(BUFFER_COLLECTION_ID, new Blob([bytes], { type: 'audio/wav' }), {
+      title: 'blob-test',
+      class: 'unlabeled',
+      label: 'unlabeled',
+      source: 'disk-import',
+      durationSec: 1,
+      sampleRate: 48000,
+    });
+    const blob = await svc.getSampleBlob(sample.id);
+    const out = new Uint8Array(await blob.arrayBuffer());
+    expect(out).toEqual(bytes);
+  });
+
   it('moves from buffer to system benchmark collection', async () => {
     const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 1_000_000 }));
     await svc.init();

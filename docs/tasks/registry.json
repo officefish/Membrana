@@ -132,6 +132,18 @@
       "archiveNotes": null
     },
     {
+      "id": "media-library-a4-sample-player",
+      "title": "Media library A4: sample playback, export, and waveform player plugin",
+      "promptPath": "docs/prompts/MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-10",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
       "id": "detection-base-contract",
       "title": "Detection: detector-base contract and metrics types",
       "promptPath": "docs/prompts/DETECTION_BASE_CONTRACT_PROMPT.md",
