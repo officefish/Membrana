@@ -53,8 +53,13 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](./MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | **Активная** `media-library-a3-mic-recorder` — плагин записи в буфер (фаза A3) |
 | [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](./MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | **Активная** `media-library-a4-sample-player` — play/export, крупный плеер с осциллограммой (фаза A4) |
 | [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](./ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | **Архив** `analyzer-frame-feed-refactor` — AudioFrameFeed; миграция fft-threshold-test + harmonic-detector-viz (#55) |
-| [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](./TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | **Активная** `trends-fft-microphone-plugin` — trends-detector-service + плагин trends-fft-analyzer (после feed-refactor) |
+| [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](./TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | **Архив** `trends-fft-microphone-plugin` — trends-detector-service + плагин trends-fft-analyzer (#56) |
+| [`TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md`](./TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md) | **Активная** `trends-fft-template-editor` — редактор пользовательских шаблонов (#57) |
+| [`BACKGROUND_MEDIA_V1_EPIC_PROMPT.md`](./BACKGROUND_MEDIA_V1_EPIC_PROMPT.md) | **Активная** `background-media-v1` — эпик web data-plane (3 PR) |
+| [`BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](./BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md) | **Активная** `background-media-a5a-server` — NestJS + PG + API |
+| [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](./BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | **Активная** `background-media-a5b-docker` — Docker Compose |
+| [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](./BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | **Активная** `background-media-a5c-deploy` — прод-деплой |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 
-Сквозной журнал `background-office` — [`../discussions/background-office-v0.1.md`](../discussions/background-office-v0.1.md).
+Сквозные журналы: [`background-office-v0.1.md`](../discussions/background-office-v0.1.md); консилиум media — [`../seanses/background-media-v1-consilium-2026-06-11.md`](../seanses/background-media-v1-consilium-2026-06-11.md). Канон границ серверов — [`../BACKGROUND_SERVERS.md`](../BACKGROUND_SERVERS.md).

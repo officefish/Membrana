@@ -251,6 +251,66 @@
       "dependsOn": [
         "trends-fft-microphone-plugin"
       ]
+    },
+    {
+      "id": "background-media-v1",
+      "title": "background-media v1: web data-plane (эпик)",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_V1_EPIC_PROMPT.md",
+      "githubIssue": 58,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "media-library-a2-ui"
+      ]
+    },
+    {
+      "id": "background-media-a5a-server",
+      "title": "background-media A5a: NestJS API, PostgreSQL, client ServerStorageBackend",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md",
+      "githubIssue": 58,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-v1"
+      ]
+    },
+    {
+      "id": "background-media-a5b-docker",
+      "title": "background-media A5b: Docker Compose (API + PostgreSQL + volumes)",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md",
+      "githubIssue": 58,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5a-server"
+      ]
+    },
+    {
+      "id": "background-media-a5c-deploy",
+      "title": "background-media A5c: продовый деплой (TLS, DNS, docs)",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md",
+      "githubIssue": 58,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5b-docker"
+      ]
     }
   ]
 }

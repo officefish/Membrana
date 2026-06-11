@@ -28,6 +28,7 @@ jobs:
             echo "|----------|------|"
             echo "| Промпт координатора | \`docs/VIRTUAL_TEAM_PROMPT.md\` |"
             echo "| Архитектура | \`docs/ARCHITECTURE.md\` |"
+            echo "| Фоновые серверы (office / media) | \`docs/BACKGROUND_SERVERS.md\` |"
             echo "| Дизайн | \`docs/DESIGN.md\` |"
             echo "| UI/UX (верстка, темы) | \`docs/UI_UX_DEVELOPER_PROMPT.md\` |"
             echo "| Модули и плагины (UI) | \`docs/MODULE_AND_PLUGIN_UI.md\` |"
@@ -44,6 +45,7 @@ jobs:
             echo "1. Прочитать \`docs/VIRTUAL_TEAM_PROMPT.md\`."
             echo "2. Для кода UI — \`docs/DESIGN.md\` и при необходимости \`docs/UI_UX_DEVELOPER_PROMPT.md\`."
             echo "3. Для границ модулей и плагинов — \`docs/ARCHITECTURE.md\` и \`docs/MODULE_AND_PLUGIN_UI.md\` (разметка, сайдбар)."
+            echo "3b. Для \`packages/background-*\` — \`docs/BACKGROUND_SERVERS.md\` (не смешивать office и media)."
             echo "4. Для процесса PR и ссылок на CI — \`docs/CONTRIBUTING.md\`."
             echo ""
             if [ -n "$TASK_HINT" ]; then
@@ -57,7 +59,7 @@ jobs:
       - name: Verify docs exist
         run: |
           set -e
-          for f in docs/VIRTUAL_TEAM_PROMPT.md docs/ARCHITECTURE.md docs/DESIGN.md docs/CONTRIBUTING.md; do
+          for f in docs/VIRTUAL_TEAM_PROMPT.md docs/ARCHITECTURE.md docs/BACKGROUND_SERVERS.md docs/DESIGN.md docs/CONTRIBUTING.md; do
             test -f "$f" || { echo "Missing $f"; exit 1; }
           done
           if [ -f docs/UI_UX_DEVELOPER_PROMPT.md ]; then

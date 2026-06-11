@@ -1,6 +1,6 @@
 # CONTRIBUTING — процесс для людей и CI-агентов
 
-Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
+Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
 
 ## Жизненный цикл задачи
 
@@ -20,8 +20,9 @@
 **Когда обязательно `vesnin`:**
 - Изменение `MembranaRegistry`, `MembranaState`, типов `Module` / `Plugin` в `@membrana/agenda`.
 - Изменение публичного API `@membrana/core` или сервисов в `packages/services/*`.
+- Новый или существенный API в `packages/background-office` / `packages/background-media` (границы — [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md)).
 - Внедрение новых архитектурных паттернов (например, lifecycle `plugin.install()` в store).
-- Обновление стратегических документов (`ARCHITECTURE.md`, `SERVICES.md`, `MODULE_AND_PLUGIN_UI.md`).
+- Обновление стратегических документов (`ARCHITECTURE.md`, `BACKGROUND_SERVERS.md`, `SERVICES.md`, `MODULE_AND_PLUGIN_UI.md`).
 
 **Когда не нужно:**
 - Точечные правки UI внутри одного модуля без изменения контрактов.

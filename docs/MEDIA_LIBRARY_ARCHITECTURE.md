@@ -1,8 +1,9 @@
 # Архитектура: медиа-библиотека (Sample Library)
 
 > Решение консилиума: [`seanses/media-library-dataset-2026-06-09.md`](./seanses/media-library-dataset-2026-06-09.md)  
+> Web data-plane: [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md), эпик [#58](https://github.com/officefish/Membrana/issues/58)  
 > Связь с датасетом: [`DATASET.md`](./DATASET.md), [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md)  
-> Ограничения engine/hub: [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1b–1c
+> Ограничения engine/hub: [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1b–1c, §1d
 
 Документ задаёт **целевую архитектуру** модуля библиотеки звуков: буфер записи, коллекции пользователя, системная коллекция, web vs Electron vs сервер.
 
@@ -56,8 +57,15 @@ interface MediaSample {
   /** Путь/blob-key в backend; не для UI. */
   storageRef: string;
   notes?: string;
+  /** Контейнер аудио (v1 server + import). */
+  audioFormat?: 'wav' | 'mp3' | 'flac' | 'ogg';
+  /** MIME для stream download (`Content-Type`). */
+  contentType?: string;
+  sizeBytes: number;
 }
 ```
+
+Сервер `background-media` хранит blob **в исходном формате**; метаданные `durationSec`, `sampleRate`, `channels` извлекаются при upload (`music-metadata`; для WAV дополнительно `wavefile` при валидации PCM). Подробности стека — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md) § «Стек background-media».
 
 ### 2.2. Три типа коллекций
 
@@ -106,8 +114,10 @@ packages/services/media-library/       # @membrana/media-library-service
   ├── ports/storage-backend.ts         # интерфейс IStorageBackend
   └── hooks/                           # useSampleLibrary, useCollections
 
-packages/background-media/             # опционально, web-сервер файлов (NestJS)
-  └── REST: collections, samples, blobs
+packages/background-media/             # NestJS + Fastify, Prisma, PostgreSQL
+  ├── prisma/schema.prisma             # devices, collections, samples, templates
+  ├── blob/                          # volume: wav, mp3, flac, ogg (как загружено)
+  └── REST: collections, samples, blobs (multipart)
 
 apps/electron/                         # preload: electronAPI.mediaLibrary.*
 ```
@@ -173,20 +183,27 @@ function resolveStorageMode(): MediaLibraryStorageMode {
 
 ### 4.2. Web-сервер (`background-media`)
 
-Отдельный пакет (по аналогии с `background-office`):
+**Статус:** в разработке (фаза **A5**, промпты `BACKGROUND_MEDIA_A5*`, реестр `background-media-v1`). Канон границ и стека — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md).
+
+Отдельный пакет `@membrana/background-media` (dev **:3010**): **NestJS + Fastify**, **Prisma + PostgreSQL**, blob volume. Не расширять `background-office`: office — только интеграции (Claude/Linear/GitHub).
+
+**Мульти-узел:** все ресурсы под префиксом `/v1/devices/:deviceId/…`. Клиент регистрирует узел (`POST /v1/devices`) и передаёт `deviceId` в path и заголовке `X-Membrana-Device-Id`. Узел A не видит коллекции узла B.
 
 | Endpoint | Назначение |
 |----------|------------|
 | `GET /health` | ping для `resolveStorageMode` |
-| `GET /v1/quota` | used/limit |
-| `CRUD /v1/collections` | user + system (system read-only delete) |
-| `POST /v1/collections/:id/samples` | multipart upload |
-| `DELETE /v1/samples/:id` | удаление blob |
-| `POST /v1/samples/:id/move` | смена коллекции |
+| `POST /v1/devices` | регистрация узла → `deviceId` |
+| `GET /v1/devices/:deviceId/quota` | used/limit |
+| `CRUD …/collections` | user + system (system read-only delete) |
+| `POST …/collections/:id/samples` | multipart upload (wav, mp3, flac, ogg) |
+| `GET …/samples/:id/blob` | stream с `Content-Type` из `contentType` |
+| `DELETE …/samples/:id` | удаление blob |
+| `POST …/samples/:id/move` | смена коллекции |
+| `GET/PUT …/trends-templates` | JSON шаблоны trends (`user:*` keys) для `userTemplatesPersistence` |
 
-Auth: тот же паттерн `X-Membrana-Token` / internal gate, что в [`background-office`](../packages/background-office/README.md). **Не** смешивать с Claude/Linear модулями office.
+Auth: `X-Membrana-Token` на `/v1/*` (как в [`background-office`](../packages/background-office/README.md)).
 
-**Fallback:** если `GET /health` fail → `BrowserLimitedStorageBackend` + **persistent banner** в UI (см. §5).
+**Fallback:** если `GET /health` fail → `BrowserLimitedStorageBackend` + trends в localStorage + **persistent banner** в UI (см. §5).
 
 ### 4.3. Browser-limited fallback
 
@@ -262,7 +279,7 @@ Auth: тот же паттерн `X-Membrana-Token` / internal gate, что в [
 | **A2** | Client module: коллекции user/system/buffer, quota banner · task `media-library-a2-ui` |
 | **A3** | Mic hub → buffer record · task `media-library-a3-mic-recorder` |
 | **A4** | `ElectronFsStorageBackend` + preload API *(следующие дни)* |
-| **A5** | `packages/background-media` + `ServerStorageBackend` *(следующие дни)* |
+| **A5** | **`packages/background-media`** + `ServerStorageBackend` + device-scoped trends API · [#58](https://github.com/officefish/Membrana/issues/58) · **в работе** |
 | **A6** | Export manifest → `yarn benchmark:detectors` *(следующие дни)* |
 
 Приоритет: **A1–A3** не блокируют #47; **A5** параллельно infra; **A6** для stage-gate.

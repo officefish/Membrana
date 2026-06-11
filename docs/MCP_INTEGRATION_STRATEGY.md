@@ -47,7 +47,7 @@
 
 - содержимое `.env`, API-ключи, токены
 - приватные WAV и сырые записи микрофона
-- непубличные credentials `background-office`
+- непубличные credentials `background-office` и `background-media` (`X-Membrana-Token`, device scope)
 
 Research по DSP — только обезличенные ссылки на публичные статьи. Датасеты — пути в `datasets/`, не бинарники в Perplexity.
 

@@ -7,6 +7,8 @@
 
 **Сервис** — это автономный пакет с **чистой бизнес-логикой** + **тонким слоем React-хуков**, размещённый в `packages/services/<name>`. Каждый сервис:
 
+> **Не путать с `packages/background-*`:** NestJS-серверы (`background-office`, `background-media`) — отдельное семейство вне этого документа. Они не экспортируют React-хуки и не входят в граф foundation/analyzer. Роли и границы — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md). Клиентский `@membrana/media-library-service` общается с **media** по HTTP, но сам остаётся сервисом в `packages/services/`.
+
 - Имеет **собственный** `package.json`, `tsconfig.json`, `vite.config.ts`.
 - Разрабатывается **независимо** от других сервисов и приложения.
 - Экспортирует две вещи: ядро (pure TS) и хуки для React-компонентов.

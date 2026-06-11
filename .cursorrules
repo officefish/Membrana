@@ -6,18 +6,19 @@
 
 1. [`docs/VIRTUAL_TEAM_PROMPT.md`](./docs/VIRTUAL_TEAM_PROMPT.md) — состав AI-команды (5 ролей), формат ответа, ярлыки `/architect`, `/refactor`, `/math`, `/audio`, `/ui`, `/service`, `/review`.
 2. [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — границы пакетов, слои, плагины, шина событий.
-3. [`docs/SERVICES.md`](./docs/SERVICES.md) — соглашения для пакетов в `packages/services/*`.
-4. [`docs/DESIGN.md`](./docs/DESIGN.md) — токены UI, цвета, отступы, типографика, темы.
-5. [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — процесс PR, добавление сервиса, запуск ревью.
-6. [`docs/UI_UX_DEVELOPER_PROMPT.md`](./docs/UI_UX_DEVELOPER_PROMPT.md) — расширенный промпт роли Верстальщика.
-7. [`docs/INTEGRATIONS_STRATEGY.md`](./docs/INTEGRATIONS_STRATEGY.md) — стратегия экспериментальных интеграций анализа звука: эшелоны «локально → свой сервер → внешний API», приоритет zero-shot и open-weights. Читать перед любой задачей, добавляющей ML/DSP-детектор.
+3. [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md) — `background-office` (интеграции) vs `background-media` (сэмплы, trends-шаблоны, deviceId). Не смешивать.
+4. [`docs/SERVICES.md`](./docs/SERVICES.md) — соглашения для пакетов в `packages/services/*`.
+5. [`docs/DESIGN.md`](./docs/DESIGN.md) — токены UI, цвета, отступы, типографика, темы.
+6. [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — процесс PR, добавление сервиса, запуск ревью.
+7. [`docs/UI_UX_DEVELOPER_PROMPT.md`](./docs/UI_UX_DEVELOPER_PROMPT.md) — расширенный промпт роли Верстальщика.
+8. [`docs/INTEGRATIONS_STRATEGY.md`](./docs/INTEGRATIONS_STRATEGY.md) — стратегия экспериментальных интеграций анализа звука: эшелоны «локально → свой сервер → внешний API», приоритет zero-shot и open-weights. Читать перед любой задачей, добавляющей ML/DSP-детектор.
 
 При конфликте этих правил с .cursorrules выигрывают документы в `docs/` и решение Teamlead.
 
 ## Контекст проекта
 
 Это монорепо на TypeScript с использованием **yarn 4 (Berry)** workspaces и Turbo.
-Структура: `packages/*` (библиотеки), `packages/services/*` (автономные сервисы), `apps/*` (приложения).
+Структура: `packages/*` (библиотеки), `packages/services/*` (автономные TS-сервисы), `packages/background-*` (NestJS data-plane и интеграции — см. `docs/BACKGROUND_SERVERS.md`), `apps/*` (приложения).
 
 ## Структура проекта
 

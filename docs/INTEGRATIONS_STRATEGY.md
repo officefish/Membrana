@@ -6,7 +6,7 @@
 >
 > Статус: **v0.1 — рабочая стратегия экспериментов.** Утверждается Teamlead-ом; правки — через PR.
 >
-> Согласуется с: [`WHITE_PAPER.md`](./WHITE_PAPER.md), [`ARCHITECTURE.md`](./ARCHITECTURE.md), [`SERVICES.md`](./SERVICES.md), [`MODULE_AND_PLUGIN_UI.md`](./MODULE_AND_PLUGIN_UI.md).
+> Согласуется с: [`WHITE_PAPER.md`](./WHITE_PAPER.md), [`ARCHITECTURE.md`](./ARCHITECTURE.md), [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md), [`SERVICES.md`](./SERVICES.md), [`MODULE_AND_PLUGIN_UI.md`](./MODULE_AND_PLUGIN_UI.md).
 
 ---
 
@@ -35,12 +35,14 @@
     ▼ если не помещается / нет нужной библиотеки
 [Эшелон 1]  Локальный узел рядом с микрофоном (Node.js, Python sidecar, ONNX Runtime, на той же машине)
     ▼ если нужны GPU / большая модель / общий доступ
-[Эшелон 2]  Свой сервер (расширение `packages/background-*`, FastAPI/Node, self-host open-weights)
+[Эшелон 2]  Свой сервер (новый `packages/background-*` или sidecar; **не** путать с data-plane — см. ниже)
     ▼ если своих ресурсов нет или нужно сравнить с эталоном
 [Эшелон 3]  Внешний платный API (HuggingFace Inference, Replicate, ...)
 ```
 
 Правило выбора: **никогда не подниматься на следующий эшелон, пока на текущем не исчерпаны разумные кандидаты**. «Разумные» = публично доступные, с понятной лицензией, с шансом дать сигнал на нашей задаче.
+
+**Эшелон 2 и семейство `background-*`:** [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md) фиксирует два уже запланированных сервера. **`background-office`** — только Claude/Linear/GitHub (не хранит WAV и не запускает inference). **`background-media`** — хранение датасетов и trends-шаблонов по `deviceId` (не ML). Self-host **open-weights** детектора на GPU — отдельный пакет (напр. будущий `background-inference`), а не расширение office или media v1.
 
 ### 1.2 Иерархия способа применения модели
 

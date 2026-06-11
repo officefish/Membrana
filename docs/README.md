@@ -9,6 +9,8 @@
 | [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md) | Методология задач: GitHub Issues (вход) + Linear (работа) + отчёт перед закрытием |
 | [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) | Системный промпт координатора и формат ответа |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Границы пакетов Membrana + правила плагинов и аудио-слоёв |
+| [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md) | **`background-office`** vs **`background-media`**: роли, границы, deviceId, чеклист «куда класть фичу» |
+| [MEDIA_LIBRARY_ARCHITECTURE.md](./MEDIA_LIBRARY_ARCHITECTURE.md) | Sample library: буфер, коллекции, storage-backend, связь с `background-media` |
 | [SERVICES.md](./SERVICES.md) | Соглашения о пакетах-сервисах в `packages/services/*` |
 | [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) | Стратегия экспериментальных интеграций анализа звука (эшелоны локально → сервер → API) |
 | [WEEKLY_ANALYZERS_RESEARCH.md](./WEEKLY_ANALYZERS_RESEARCH.md) | Авто-генерируемый еженедельный «радар»: новые модели/работы для каталога §4 INTEGRATIONS_STRATEGY (`yarn analyzers:research:week`). Используется недельным планом, не дневным code-review |
@@ -34,11 +36,12 @@
 1. [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md) — как живут задачи (GitHub Issues + Linear, отчёт перед закрытием).
 2. [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) — кто я и в какой команде работаю.
 3. [ARCHITECTURE.md](./ARCHITECTURE.md) — где границы пакетов и слоёв.
-4. [SERVICES.md](./SERVICES.md) — если задача про чистую логику + хуки.
-5. [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) — если задача про подключение новой ML/DSP-модели для анализа звука.
-6. [DESIGN.md](./DESIGN.md) — если задача про вёрстку.
-7. [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) — если live-детектор, demo в `packages/services/*/demo/`, anti-flicker.
-8. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
-9. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
+4. [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md) — если задача касается `packages/background-*` (office vs media).
+5. [SERVICES.md](./SERVICES.md) — если задача про чистую логику + хуки.
+6. [INTEGRATIONS_STRATEGY.md](./INTEGRATIONS_STRATEGY.md) — если задача про подключение новой ML/DSP-модели для анализа звука.
+7. [DESIGN.md](./DESIGN.md) — если задача про вёрстку.
+8. [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) — если live-детектор, demo в `packages/services/*/demo/`, anti-flicker.
+9. [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) — если задача про модули/плагины в UI.
+10. [CONTRIBUTING.md](./CONTRIBUTING.md) — как оформить PR и пройти ревью.
 
 GitHub Actions: workflow `virtual-team-context` выводит эти пути в summary при ручном запуске.

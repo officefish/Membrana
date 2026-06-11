@@ -22,6 +22,10 @@
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
 | `media-library-a4-sample-player` | Media library A4: sample playback, export, and waveform player plugin | M | [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | — |
 | `trends-fft-template-editor` | Редактор пользовательских шаблонов trends-fft | L | [`TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md`](../docs/prompts/TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md) | [#57](https://github.com/officefish/Membrana/issues/57) |
+| `background-media-v1` | background-media v1: web data-plane (эпик) | L | [`BACKGROUND_MEDIA_V1_EPIC_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_V1_EPIC_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
+| `background-media-a5a-server` | background-media A5a: NestJS API, PostgreSQL, client ServerStorageBackend | L | [`BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
+| `background-media-a5b-docker` | background-media A5b: Docker Compose (API + PostgreSQL + volumes) | M | [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
+| `background-media-a5c-deploy` | background-media A5c: продовый деплой (TLS, DNS, docs) | M | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
 
 ---
 
