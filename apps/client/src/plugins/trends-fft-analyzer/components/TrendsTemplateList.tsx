@@ -14,14 +14,18 @@ import {
   isUserTemplateKey,
 } from '../templateEditorDefaults';
 import { userTemplatesStore } from '../userTemplatesStore';
-import { useTrendsFftAnalyzer } from '../useTrendsFftAnalyzer';
+import type { TrendsDetectionResult } from '@membrana/trends-detector-service';
+
+import { getUserTemplatesStorageBackendLabel } from '../userTemplatesZustandStore';
 import { useUserTemplates } from '../useUserTemplates';
+import { useUserTemplatesZustandStore } from '../userTemplatesZustandStore';
 import { TrendsTemplateEditor } from './TrendsTemplateEditor';
 
 export interface TrendsTemplateListProps {
   readonly enabledKeys: readonly string[];
   readonly onToggle: (key: string, enabled: boolean) => void;
   readonly onUserTemplateSaved?: (key: string) => void;
+  readonly lastAnalysisResult?: TrendsDetectionResult | null;
   readonly compact?: boolean;
   readonly bounded?: boolean;
 }
@@ -30,11 +34,13 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
   enabledKeys,
   onToggle,
   onUserTemplateSaved,
+  lastAnalysisResult,
   compact = false,
   bounded = true,
 }) => {
   const userTemplates = useUserTemplates();
-  const { lastResult } = useTrendsFftAnalyzer();
+  const storageBackend = useUserTemplatesZustandStore((s) => s.storageBackend);
+  const lastResult = lastAnalysisResult ?? null;
   const canPrefillFromAnalysis = canBuildTemplateFromAnalysis(lastResult);
   const enabledSet = new Set(enabledKeys);
   const [editing, setEditing] = useState<PatternTemplate | null>(null);
@@ -245,7 +251,7 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
 
       {userTemplates.some((t) => isUserTemplateKey(t.key)) ? (
         <p className="text-[11px] text-base-content/50 leading-snug">
-          Пользовательские шаблоны сохраняются в браузере (localStorage).
+          Пользовательские шаблоны (JSON): {getUserTemplatesStorageBackendLabel(storageBackend)}.
         </p>
       ) : null}
     </div>

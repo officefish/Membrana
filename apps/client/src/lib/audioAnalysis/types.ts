@@ -36,12 +36,15 @@ export interface BufferFrameFeedOptions extends BaseFrameFeedOptions {
   readonly emitIntervalMs?: number;
   /** Шаг метки времени между кадрами (мс); по умолчанию — длительность hop. */
   readonly timestampStepMs?: number;
+  /** Ограничить offline-scan первыми N секундами буфера. */
+  readonly maxAnalysisDurationSec?: number;
 }
 
 export interface SampleLibraryFrameFeedOptions extends BaseFrameFeedOptions {
   readonly hopSize?: number;
   readonly emitIntervalMs?: number;
   readonly timestampStepMs?: number;
+  readonly maxAnalysisDurationSec?: number;
 }
 
 export interface AnalysisFrameFeedOptions extends BaseFrameFeedOptions {
@@ -51,4 +54,5 @@ export interface AnalysisFrameFeedOptions extends BaseFrameFeedOptions {
   readonly hopSize?: number;
   readonly emitIntervalMs?: number;
   readonly timestampStepMs?: number;
+  readonly maxAnalysisDurationSec?: number;
 }

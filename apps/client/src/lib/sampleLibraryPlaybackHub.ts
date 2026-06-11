@@ -235,6 +235,25 @@ export async function stopSamplePlayback(): Promise<void> {
   }
 }
 
+/** Перезапуск выбранного сэмпла с начала (для синхронного прослушивания и анализа). */
+export async function restartSamplePlayback(): Promise<void> {
+  if (!snapshot.selectedSampleId) return;
+
+  await player.stop();
+  setSnapshot({ status: 'loading', currentTimeSec: 0, errorMessage: null });
+
+  try {
+    const buffer = await loadSampleBufferById(snapshot.selectedSampleId);
+    await player.play(buffer);
+    syncProgress();
+  } catch (error) {
+    setSnapshot({
+      status: 'error',
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 export async function disposeSamplePlayback(): Promise<void> {
   await player.stop();
   bufferCache.clear();

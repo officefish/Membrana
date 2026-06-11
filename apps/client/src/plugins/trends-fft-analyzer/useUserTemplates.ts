@@ -1,11 +1,14 @@
-import { useSyncExternalStore } from 'react';
+import { useEffect } from 'react';
 
-import { userTemplatesStore } from './userTemplatesStore';
+import { useUserTemplatesZustandStore } from './userTemplatesZustandStore';
 
 export function useUserTemplates() {
-  return useSyncExternalStore(
-    userTemplatesStore.subscribe,
-    userTemplatesStore.getTemplates,
-    userTemplatesStore.getTemplates,
-  );
+  const templates = useUserTemplatesZustandStore((s) => s.templates);
+  const hydrate = useUserTemplatesZustandStore((s) => s.hydrate);
+
+  useEffect(() => {
+    void hydrate();
+  }, [hydrate]);
+
+  return templates;
 }

@@ -14,6 +14,7 @@ export function createBufferFrameFeed(options: BufferFrameFeedOptions): AudioFra
     hopSize,
     emitIntervalMs = 0,
     timestampStepMs,
+    maxAnalysisDurationSec,
     onStart,
     onStop,
     onError,
@@ -39,7 +40,7 @@ export function createBufferFrameFeed(options: BufferFrameFeedOptions): AudioFra
     try {
       const frames: Parameters<FrameHandler>[0][] = [];
       extractBufferFrames(
-        { buffer, bufferSize, hopSize, timestampStepMs },
+        { buffer, bufferSize, hopSize, timestampStepMs, maxAnalysisDurationSec },
         (frame) => frames.push(frame),
         () => aborted,
       );

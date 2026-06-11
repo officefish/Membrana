@@ -7,6 +7,8 @@ export interface ExtractBufferFramesOptions {
   readonly hopSize?: number;
   readonly timestampStepMs?: number;
   readonly originTimestampMs?: number;
+  /** Не эмитировать кадры за пределами первых N секунд (по метке времени). */
+  readonly maxAnalysisDurationSec?: number;
 }
 
 /**
@@ -24,6 +26,7 @@ export function extractBufferFrames(
     hopSize = bufferSize,
     timestampStepMs,
     originTimestampMs = Date.now(),
+    maxAnalysisDurationSec,
   } = options;
 
   const mono = getMonoChannel(buffer);
@@ -34,6 +37,12 @@ export function extractBufferFrames(
   let frameIndex = 0;
   for (let offset = 0; offset + bufferSize <= mono.length; offset += hopSize) {
     if (isAborted()) break;
+    if (
+      maxAnalysisDurationSec !== undefined &&
+      frameIndex * stepMs >= maxAnalysisDurationSec * 1000
+    ) {
+      break;
+    }
     const slice = mono.subarray(offset, offset + bufferSize);
     onFrame({
       samples: new Float32Array(slice),

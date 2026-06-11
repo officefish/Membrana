@@ -24,6 +24,10 @@ import {
   SAMPLE_LIBRARY_PLAYER_PLUGIN_ID,
   SampleLibraryPlayerPanel,
 } from '../plugins/sample-library-player';
+import {
+  TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
+  TrendsFftSampleAnalyzerPanel,
+} from '../plugins/trends-fft-sample-analyzer';
 
 const CLASS_OPTIONS = [
   'drone-multirotor',
@@ -170,6 +174,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
       {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
         <SampleLibraryPlayerPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
+        <TrendsFftSampleAnalyzerPanel moduleId={module.id} />
       ) : null}
 
       <MediaLibraryQuotaBanner quota={snapshot.quota} />

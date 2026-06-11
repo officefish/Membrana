@@ -19,6 +19,7 @@ export function createAnalysisFrameFeed(options: AnalysisFrameFeedOptions): Audi
       hopSize: options.hopSize,
       emitIntervalMs: options.emitIntervalMs,
       timestampStepMs: options.timestampStepMs,
+      maxAnalysisDurationSec: options.maxAnalysisDurationSec,
       onStart,
       onStop,
       onError,

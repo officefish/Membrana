@@ -9,6 +9,7 @@ import {
   TrendsMatchDetailTable,
 } from './components/TrendsMatchDetailTable';
 import { TrendsScoreRanking } from './components/TrendsScoreRanking';
+import { TrendsCreateTemplateFromAnalysis } from './components/TrendsCreateTemplateFromAnalysis';
 import { TrendsTemplateList } from './components/TrendsTemplateList';
 import {
   INTERVAL_MS_MAX,
@@ -24,6 +25,16 @@ import {
   requestStopTrendsCollection,
   trendsFftPluginState,
 } from './trendsFftPluginState';
+import {
+  requestTrendsSampleAnalysis,
+  trendsFftSamplePluginState,
+} from '../trends-fft-sample-analyzer/trendsFftSamplePluginState';
+import { useTrendsFftSampleAnalyzer } from '../trends-fft-sample-analyzer/useTrendsFftSampleAnalyzer';
+import {
+  resolveTrendsFftSampleAnalyzerConfig,
+  TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
+  toSharedTrendsConfig,
+} from '../trends-fft-sample-analyzer/types';
 import { useTemplateCatalog } from './useTemplateCatalog';
 import { useTrendsFftAnalyzer } from './useTrendsFftAnalyzer';
 import {
@@ -34,28 +45,51 @@ import {
 } from './types';
 
 type PanelTab = 'detector' | 'templates';
+export type TrendsFftLabVariant = 'microphone' | 'sample-library';
 
 export interface TrendsFftLabViewProps {
   readonly moduleId: string;
   readonly layout?: 'panel' | 'fullscreen';
   readonly footer?: React.ReactNode;
+  readonly variant?: TrendsFftLabVariant;
 }
 
 export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
   moduleId,
   layout = 'panel',
   footer,
+  variant = 'microphone',
 }) => {
+  const isSample = variant === 'sample-library';
+  const pluginId = isSample
+    ? TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID
+    : TRENDS_FFT_ANALYZER_PLUGIN_ID;
   const isFullscreen = layout === 'fullscreen';
-  const snapshot = useTrendsFftAnalyzer();
+  const micSnapshot = useTrendsFftAnalyzer();
+  const sampleSnapshot = useTrendsFftSampleAnalyzer();
+  const snapshot = isSample
+    ? {
+        live: sampleSnapshot.ready,
+        phase: sampleSnapshot.phase,
+        mode: 'manual' as const,
+        measurementsCount: sampleSnapshot.measurementsCount,
+        collectedCount: sampleSnapshot.collectedCount,
+        tickStates: sampleSnapshot.tickStates,
+        currentSample: sampleSnapshot.currentSample,
+        lastResult: sampleSnapshot.lastResult,
+        intervalMs: sampleSnapshot.intervalMs,
+        minRms: sampleSnapshot.minRms,
+      }
+    : micSnapshot;
   const { getTemplate } = useTemplateCatalog();
-  const rawConfig = useMembranaStore((s) =>
-    s.getPlugin(moduleId, TRENDS_FFT_ANALYZER_PLUGIN_ID)?.config,
-  );
+  const rawConfig = useMembranaStore((s) => s.getPlugin(moduleId, pluginId)?.config);
   const updatePluginConfig = useMembranaStore((s) => s.updatePluginConfig);
   const config = useMemo(
-    () => resolveTrendsFftAnalyzerConfig(rawConfig),
-    [rawConfig],
+    () =>
+      isSample
+        ? toSharedTrendsConfig(resolveTrendsFftSampleAnalyzerConfig(rawConfig))
+        : resolveTrendsFftAnalyzerConfig(rawConfig),
+    [isSample, rawConfig],
   );
   const [activeTab, setActiveTab] = useState<PanelTab>('detector');
   const [showSettings, setShowSettings] = useState(false);
@@ -65,13 +99,22 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
   const [temporalExpanded, setTemporalExpanded] = useState(false);
 
   useEffect(() => {
-    trendsFftPluginState.syncConfig({
-      mode: config.detectionMode,
-      measurementsCount: config.measurementsCount,
-      intervalMs: config.intervalMs,
-      minRms: config.minRms,
-    });
+    if (isSample) {
+      trendsFftSamplePluginState.syncConfig({
+        measurementsCount: config.measurementsCount,
+        intervalMs: config.intervalMs,
+        minRms: config.minRms,
+      });
+    } else {
+      trendsFftPluginState.syncConfig({
+        mode: config.detectionMode,
+        measurementsCount: config.measurementsCount,
+        intervalMs: config.intervalMs,
+        minRms: config.minRms,
+      });
+    }
   }, [
+    isSample,
     config.detectionMode,
     config.measurementsCount,
     config.intervalMs,
@@ -80,13 +123,17 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
 
   const patchConfig = useCallback(
     (updates: Partial<TrendsFftAnalyzerPluginConfig>) => {
-      updatePluginConfig<TrendsFftAnalyzerPluginConfig>(
-        moduleId,
-        TRENDS_FFT_ANALYZER_PLUGIN_ID,
-        updates,
-      );
+      if (isSample) {
+        updatePluginConfig(moduleId, pluginId, updates);
+      } else {
+        updatePluginConfig<TrendsFftAnalyzerPluginConfig>(
+          moduleId,
+          TRENDS_FFT_ANALYZER_PLUGIN_ID,
+          updates,
+        );
+      }
     },
-    [moduleId, updatePluginConfig],
+    [isSample, moduleId, pluginId, updatePluginConfig],
   );
 
   const setMode = useCallback(
@@ -185,27 +232,48 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
             enabledKeys={config.enabledTemplateKeys}
             onToggle={toggleTemplate}
             onUserTemplateSaved={enableUserTemplate}
+            lastAnalysisResult={isSample ? sampleSnapshot.lastResult : micSnapshot.lastResult}
             bounded={!isFullscreen}
           />
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap gap-1 rounded-lg bg-base-200/50 p-1 shrink-0">
-            <button
-              type="button"
-              className={`btn btn-xs flex-1 min-h-9 ${config.detectionMode === 'auto' ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setMode('auto')}
-            >
-              Авторежим
-            </button>
-            <button
-              type="button"
-              className={`btn btn-xs flex-1 min-h-9 ${config.detectionMode === 'manual' ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setMode('manual')}
-            >
-              Ручной
-            </button>
-          </div>
+          {isSample && sampleSnapshot.selectedSampleTitle ? (
+            <p className="text-xs text-base-content/70 shrink-0">
+              Сэмпл: <span className="font-medium">{sampleSnapshot.selectedSampleTitle}</span>
+              {sampleSnapshot.durationPlan
+                ? ` · ${sampleSnapshot.durationPlan.fileDurationSec.toFixed(1)} с`
+                : null}
+            </p>
+          ) : null}
+          {isSample && sampleSnapshot.durationPlan?.message ? (
+            <div className="alert alert-info py-2 text-xs shrink-0">
+              {sampleSnapshot.durationPlan.message}
+            </div>
+          ) : null}
+          {isSample && sampleSnapshot.blockedReason ? (
+            <div className="alert alert-warning py-2 text-xs shrink-0" role="alert">
+              {sampleSnapshot.blockedReason}
+            </div>
+          ) : null}
+          {!isSample ? (
+            <div className="flex flex-wrap gap-1 rounded-lg bg-base-200/50 p-1 shrink-0">
+              <button
+                type="button"
+                className={`btn btn-xs flex-1 min-h-9 ${config.detectionMode === 'auto' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setMode('auto')}
+              >
+                Авторежим
+              </button>
+              <button
+                type="button"
+                className={`btn btn-xs flex-1 min-h-9 ${config.detectionMode === 'manual' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setMode('manual')}
+              >
+                Ручной
+              </button>
+            </div>
+          ) : null}
 
           <div className="flex items-start justify-between gap-2 shrink-0">
             <div className="min-w-0">
@@ -214,7 +282,9 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                   isFullscreen ? 'text-2xl font-bold' : 'card-title text-base'
                 }
               >
-                Анализатор тенденций FFT
+                {isSample
+                  ? 'Анализатор тенденций FFT — сэмпл'
+                  : 'Анализатор тенденций FFT'}
               </h3>
               <p className="text-xs text-base-content/60">
                 <span
@@ -227,20 +297,44 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                   }`}
                   aria-hidden
                 />
-                {snapshot.live
-                  ? config.detectionMode === 'auto'
-                    ? isCollecting
-                      ? 'Автоанализ: сбор замеров'
-                      : snapshot.phase === 'result'
-                        ? 'Автоанализ: пауза перед следующим циклом'
-                        : 'Автоанализ: ожидание'
-                    : isCollecting
-                      ? 'Ручной сбор замеров'
-                      : 'Ручной режим: нажмите Старт'
-                  : 'Запустите поток микрофона в модуле'}
+                {isSample
+                  ? isCollecting
+                    ? 'Анализ: сбор замеров по треку'
+                    : snapshot.phase === 'result'
+                      ? 'Готово — нажмите «Проанализировать» для повтора'
+                      : snapshot.live
+                        ? 'Нажмите «Проанализировать»'
+                        : sampleSnapshot.blockedReason ??
+                          (sampleSnapshot.selectedSampleId
+                            ? 'Загрузка сэмпла…'
+                            : 'Выберите сэмпл в таблице')
+                  : snapshot.live
+                    ? config.detectionMode === 'auto'
+                      ? isCollecting
+                        ? 'Автоанализ: сбор замеров'
+                        : snapshot.phase === 'result'
+                          ? 'Автоанализ: пауза перед следующим циклом'
+                          : 'Автоанализ: ожидание'
+                      : isCollecting
+                        ? 'Ручной сбор замеров'
+                        : 'Ручной режим: нажмите Старт'
+                    : 'Запустите поток микрофона в модуле'}
               </p>
             </div>
-            {config.detectionMode === 'manual' && (
+            {isSample ? (
+              <button
+                type="button"
+                className="btn btn-primary btn-sm min-h-9 shrink-0"
+                disabled={
+                  !snapshot.live ||
+                  isCollecting ||
+                  Boolean(sampleSnapshot.blockedReason)
+                }
+                onClick={requestTrendsSampleAnalysis}
+              >
+                Проанализировать
+              </button>
+            ) : config.detectionMode === 'manual' ? (
               <div className="flex shrink-0 gap-1">
                 <button
                   type="button"
@@ -259,7 +353,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                   Стоп
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
 
           <section className="flex flex-col gap-2 min-w-0" aria-label="Прогресс замеров">
@@ -413,6 +507,13 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                     </>
                   )
                 ) : null}
+
+                <TrendsCreateTemplateFromAnalysis
+                  result={result}
+                  enabledKeys={config.enabledTemplateKeys}
+                  onUserTemplateSaved={enableUserTemplate}
+                  compact={!isFullscreen}
+                />
               </>
             ) : (
               <p className="text-sm text-base-content/60">
@@ -440,6 +541,12 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                 isFullscreen ? '' : 'max-h-64 overflow-y-auto'
               }`}
             >
+              {isSample && snapshot.phase === 'result' ? (
+                <p className="text-[11px] text-base-content/55 leading-snug">
+                  Изменение числа замеров или интервала автоматически перезапустит анализ
+                  выбранного сэмпла.
+                </p>
+              ) : null}
               <QuickPresetButtons
                 label={`Замеров (${MEASUREMENTS_MIN}–${MEASUREMENTS_MAX})`}
                 values={MEASUREMENT_COUNT_PRESETS}
