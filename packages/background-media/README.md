@@ -49,6 +49,59 @@ curl -X POST http://localhost:3010/v1/devices \
   -d "{\"name\":\"lab-node\",\"kind\":\"microphone\"}"
 ```
 
+## Docker Compose (полный стек, A5b)
+
+API + PostgreSQL + persistent blob volume. Нужен Docker Desktop / Engine.
+
+```bash
+# из корня репозитория
+cp packages/background-media/.env.docker.example packages/background-media/.env.docker
+# задайте API_INTERNAL_TOKEN и POSTGRES_PASSWORD
+
+yarn media:docker:build
+yarn media:docker:up
+curl http://localhost:3010/health
+```
+
+| Команда (корень) | Назначение |
+|------------------|------------|
+| `yarn media:docker:build` | собрать образ `membrana/background-media:local` |
+| `yarn media:docker:up` | поднять `postgres` + `media-api` |
+| `yarn media:docker:down` | остановить (volumes сохраняются) |
+| `yarn media:docker:logs` | логи API |
+
+При старте контейнера `media-api` автоматически выполняется `prisma migrate deploy`.
+
+**Только PostgreSQL для dev** (без API в Docker): `yarn media:db:up` → `docker-compose.dev.yml` (порт **5433**).
+
+## Production deployment (VPS, A5c)
+
+Целевая схема: **VPS + Docker Compose + Caddy (TLS)**. Office (`:3000`) и media (`:3010`) — отдельные upstream'ы.
+
+| Шаг | Действие |
+|-----|----------|
+| 1 | DNS `media.<domain>` → A-record VPS |
+| 2 | `deploy/generate-media-env.sh` → `/etc/membrana/media.env` |
+| 3 | `deploy/media-stack.sh build && deploy/media-stack.sh up` |
+| 4 | Caddy: `deploy/Caddyfile.media.example` |
+| 5 | `curl https://media.<domain>/health` |
+
+Полный чеклист: [`docs/deploy/BACKGROUND_MEDIA_DEPLOY.md`](../../docs/deploy/BACKGROUND_MEDIA_DEPLOY.md).
+
+| Env (сервер) | Назначение |
+|--------------|------------|
+| `API_INTERNAL_TOKEN` | `X-Membrana-Token` для всех `/v1/*` |
+| `DATABASE_URL` | задаётся в compose из `POSTGRES_*` |
+| `MEDIA_BLOB_DIR` | `/data/blobs` в контейнере; на хосте — `MEDIA_BLOB_HOST_DIR` |
+| `MEDIA_QUOTA_BYTES_PER_DEVICE` | квота на устройство (default 1 GiB) |
+
+| Env (клиент, Vite build) | Пример |
+|---------------------------|--------|
+| `VITE_MEDIA_SERVER_URL` | `https://media.<domain>` |
+| `VITE_MEDIA_API_TOKEN` | тот же `API_INTERNAL_TOKEN` |
+
+Секреты — только на сервере и в CI/build env клиента, **не в git**.
+
 ## Скрипты
 
 | Команда (корень) | Назначение |
@@ -56,6 +109,7 @@ curl -X POST http://localhost:3010/v1/devices \
 | `yarn media:dev` | dev-сервер (watch) |
 | `yarn media:build` | prisma generate + tsc |
 | `yarn media:migrate` | `prisma migrate deploy` |
+| `yarn media:db:up` / `media:db:down` | только PG (dev) |
 
 | Workspace | Назначение |
 |-----------|------------|

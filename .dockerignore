@@ -1,0 +1,25 @@
+# Docker build context exclusions (background-media image; monorepo root context)
+.git
+.github
+.turbo
+**/.turbo
+**/node_modules
+**/dist
+**/.tsbuildinfo
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.docker.example
+**/data
+apps
+packages/agenda
+packages/core
+packages/device-board
+packages/libs
+packages/services
+packages/background-office
+docs
+scripts
+node_modules
+*.md
+!packages/background-media/README.md

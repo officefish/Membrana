@@ -96,6 +96,32 @@
       "githubIssueClosedAt": "2026-06-09"
     },
     {
+      "id": "mcp-workstation-phase-b",
+      "title": "MCP phase B: Perplexity + Playwright on workstation",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_B_PROMPT.md",
+      "githubIssue": 52,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-12",
+      "archivedAt": "2026-06-12",
+      "archiveNotes": "all 5 MCP servers green: gitnexus git filesystem perplexity playwright; git fixed uvx mcp-server-git",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "mcp-workstation-phase-c",
+      "title": "MCP phase C: Glyph on workstation",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_C_PROMPT.md",
+      "githubIssue": 53,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-12",
+      "archivedAt": "2026-06-12",
+      "archiveNotes": "glyph go install OK; WinLibs gcc; mcp.json 6 servers; glyph C:/Users/user190825/go/bin/glyph.exe mcp",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "media-library-a1-storage",
       "title": "Media library A1: storage backend and domain service",
       "promptPath": "docs/prompts/MEDIA_LIBRARY_A1_STORAGE_PROMPT.md",
@@ -301,7 +327,7 @@
       "id": "background-media-a5c-deploy",
       "title": "background-media A5c: продовый деплой (TLS, DNS, docs)",
       "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md",
-      "githubIssue": 58,
+      "githubIssue": 59,
       "linearId": null,
       "size": "M",
       "status": "active",

@@ -25,7 +25,7 @@
 | `background-media-v1` | background-media v1: web data-plane (эпик) | L | [`BACKGROUND_MEDIA_V1_EPIC_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_V1_EPIC_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
 | `background-media-a5a-server` | background-media A5a: NestJS API, PostgreSQL, client ServerStorageBackend | L | [`BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
 | `background-media-a5b-docker` | background-media A5b: Docker Compose (API + PostgreSQL + volumes) | M | [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
-| `background-media-a5c-deploy` | background-media A5c: продовый деплой (TLS, DNS, docs) | M | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
+| `background-media-a5c-deploy` | background-media A5c: продовый деплой (TLS, DNS, docs) | M | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | [#59](https://github.com/officefish/Membrana/issues/59) |
 
 ---
 
@@ -33,6 +33,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `mcp-workstation-phase-b` | MCP phase B: Perplexity + Playwright on workstation | 2026-06-12 | [`MCP_WORKSTATION_PHASE_B_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_B_PROMPT.md) | #52 (Issue открыт) | [карточка](./archive/mcp-workstation-phase-b.md) |
+| `mcp-workstation-phase-c` | MCP phase C: Glyph on workstation | 2026-06-12 | [`MCP_WORKSTATION_PHASE_C_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_C_PROMPT.md) | #53 (Issue открыт) | [карточка](./archive/mcp-workstation-phase-c.md) |
 | `analyzer-frame-feed-refactor` | Анализаторы: AudioFrameFeed и миграция fft-threshold-test + harmonic-detector-viz | 2026-06-11 | [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](../docs/prompts/ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | #55 | [карточка](./archive/analyzer-frame-feed-refactor.md) |
 | `trends-fft-microphone-plugin` | Плагин микрофона: анализатор тенденций FFT (trends-fft-analyzer) | 2026-06-11 | [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](../docs/prompts/TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | #56 | [карточка](./archive/trends-fft-microphone-plugin.md) |
 | `detection-base-contract` | Detection: detector-base contract and metrics types | 2026-06-10 | [`DETECTION_BASE_CONTRACT_PROMPT.md`](../docs/prompts/DETECTION_BASE_CONTRACT_PROMPT.md) | #47 | [карточка](./archive/detection-base-contract.md) |
@@ -58,4 +60,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-11.*
+*Файл обновлён автоматически: 2026-06-12.*

@@ -171,10 +171,11 @@ Device (deviceId)
 | Задача | Команда / путь |
 |--------|----------------|
 | Dev office | `yarn office:dev` |
-| Dev media (после A5a) | `yarn media:dev` (планируется) |
-| Docker media (после A5b) | `yarn media:docker:up` (планируется) |
+| Dev media | `yarn media:dev` |
+| Docker media (локально / staging) | `yarn media:docker:up` |
+| Docker media (VPS prod) | `deploy/media-stack.sh` + [`docs/deploy/BACKGROUND_MEDIA_DEPLOY.md`](./deploy/BACKGROUND_MEDIA_DEPLOY.md) |
 | README office | [`packages/background-office/README.md`](../packages/background-office/README.md) |
-| README media | `packages/background-media/README.md` (после A5a) |
+| README media | [`packages/background-media/README.md`](../packages/background-media/README.md) |
 
 ---
 

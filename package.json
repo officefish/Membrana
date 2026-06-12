@@ -62,9 +62,19 @@
     "media:migrate": "yarn workspace @membrana/background-media prisma:migrate",
     "media:db:up": "docker compose -f packages/background-media/docker-compose.dev.yml up -d",
     "media:db:down": "docker compose -f packages/background-media/docker-compose.dev.yml down",
+    "media:docker:build": "docker compose -f packages/background-media/docker-compose.yml build",
+    "media:docker:up": "docker compose -f packages/background-media/docker-compose.yml up -d",
+    "media:docker:down": "docker compose -f packages/background-media/docker-compose.yml down",
+    "media:docker:logs": "docker compose -f packages/background-media/docker-compose.yml logs -f media-api",
+    "media:docker:prod:build": "docker compose -f packages/background-media/docker-compose.yml -f deploy/background-media.prod.compose.yml build",
+    "media:docker:prod:up": "docker compose -f packages/background-media/docker-compose.yml -f deploy/background-media.prod.compose.yml --env-file /etc/membrana/media.env up -d",
     "mcp:verify-bootstrap": "node scripts/verify-mcp-bootstrap.mjs",
     "mcp:phase-a": "node scripts/mcp-workstation-phase-a.mjs",
-    "mcp:phase-a:install": "node scripts/mcp-workstation-phase-a.mjs --write"
+    "mcp:phase-a:install": "node scripts/mcp-workstation-phase-a.mjs --write",
+    "mcp:phase-b": "node scripts/mcp-workstation-phase-b.mjs",
+    "mcp:phase-b:install": "node scripts/mcp-workstation-phase-b.mjs --write",
+    "mcp:phase-c": "node scripts/mcp-workstation-phase-c.mjs",
+    "mcp:phase-c:install": "node scripts/mcp-workstation-phase-c.mjs --write"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
