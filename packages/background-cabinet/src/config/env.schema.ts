@@ -23,11 +23,18 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   SESSION_TTL_HOURS: z.coerce.number().int().positive().default(168),
   CABINET_CORS_ORIGINS: corsOrigins.default('http://localhost:5174'),
+  /** Origins for apps/client pairing (MP3). Merged with CABINET_CORS_ORIGINS. */
+  CLIENT_CORS_ORIGINS: corsOrigins.default('http://localhost:5173'),
+  /** background-media base URL for device registration during pairing. */
+  MEDIA_API_URL: z.string().url().default('http://localhost:3010'),
+  /** Token for cabinet → media service calls (usually same as media API_INTERNAL_TOKEN). */
+  MEDIA_API_TOKEN: z.string().min(1).optional(),
   ALLOW_REGISTRATION: boolFromEnv.optional(),
 });
 
 const envSchemaWithDefaults = envSchema.transform((data) => ({
   ...data,
+  MEDIA_API_TOKEN: data.MEDIA_API_TOKEN ?? data.API_INTERNAL_TOKEN,
   ALLOW_REGISTRATION: data.ALLOW_REGISTRATION ?? data.NODE_ENV === 'development',
 }));
 

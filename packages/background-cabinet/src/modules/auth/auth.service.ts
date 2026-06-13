@@ -71,6 +71,23 @@ export class AuthService {
     return { id: session.user.id, login: session.user.login };
   }
 
+  /** Pairing (MP3): session capped by key expiry. */
+  async createSessionForUserWithExpiry(
+    userId: string,
+    login: string,
+    expiresAt: Date,
+  ): Promise<LoginResult> {
+    const token = createSessionToken();
+    await this.prisma.session.create({
+      data: { userId, token, expiresAt },
+    });
+    return {
+      token,
+      expiresAt: expiresAt.toISOString(),
+      user: { id: userId, login },
+    };
+  }
+
   private async createSessionForUser(userId: string, login: string): Promise<LoginResult> {
     const token = createSessionToken();
     const expiresAt = sessionExpiresAt(this.config.SESSION_TTL_HOURS);

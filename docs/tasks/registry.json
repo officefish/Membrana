@@ -407,17 +407,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-13",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Prod smoke OK 2026-06-13. MP2 API + cabinet UI deployed @ af9abca.",
       "dependsOn": [
         "membrane-platform-mp1-auth-cabinet"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-platform-mp3-client-pairing",
-      "title": "Membrane Platform MP3: pairing в apps/client",
+      "title": "Membrane Platform MP3: pairing + автономный режим узла в apps/client",
       "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
       "githubIssue": 67,
       "linearId": null,

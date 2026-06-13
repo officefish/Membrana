@@ -20,8 +20,9 @@ async function bootstrap(): Promise<void> {
   );
 
   const config = app.get<AppConfig>(APP_CONFIG);
+  const corsOrigins = [...new Set([...config.CABINET_CORS_ORIGINS, ...config.CLIENT_CORS_ORIGINS])];
   await app.register(cors, {
-    origin: config.CABINET_CORS_ORIGINS,
+    origin: corsOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id'],

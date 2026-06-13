@@ -19,7 +19,7 @@
 | # | Тема | Решение v1 |
 |---|------|------------|
 | 1 | Аутентификация | Login + password (без OAuth в v1) |
-| 2 | Десктоп | Тот же `apps/client`; режим «Связь с мембраной» |
+| 2 | Десктоп | Тот же `apps/client`; **автономный узел** (ФС) или «Связь с мембраной» |
 | 3 | **Формат ключа доступа** | **Не** QR/токен-тип, а **срок действия (TTL)** — enum `NodeAccessKeyDuration` |
 | 4 | Квоты | Отдельно **dataset** и **buffer**; значения из объекта **Tariff** |
 | 5 | Журнал | Серверные сущности **TelemetryReport** + **TelemetryLiveRecord**; shared render payload с клиентским журналом |
@@ -113,7 +113,7 @@ erDiagram
 | MP0 | `membrane-platform-mp0-domain` | Глоссарий, `MEMBRANE_PLATFORM.md`, consilium |
 | MP1 | `membrane-platform-mp1-auth-cabinet` | `background-cabinet` bootstrap, login/password, shell `apps/cabinet` |
 | MP2 | `membrane-platform-mp2-membrane-node-keys` | Membrane, Tariff, Node, ключи с TTL enum |
-| MP3 | `membrane-platform-mp3-client-pairing` | Режим pairing в `apps/client` |
+| MP3 | `membrane-platform-mp3-client-pairing` | Pairing + автономный режим узла в `apps/client` |
 | MP4 | `membrane-platform-mp4-media-membrane` | Media scope по мембране, отдельные квоты |
 | MP5 | `membrane-platform-mp5-telemetry-journal` | Report + LiveRecord, shared journal UI |
 | MP6 | `membrane-platform-mp6-prod-deploy` | DNS `cabinet.membrana.space`, TLS, env |

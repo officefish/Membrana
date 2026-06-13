@@ -14,7 +14,7 @@
 | `membrana.space` | Маркетинг + вход (login) |
 | `cabinet.membrana.space` | Личный кабинет (`apps/cabinet`) |
 | `media.membrana.space` | Data-plane (`background-media`) |
-| `apps/client` (десктоп/браузер) | Полевой анализ; режим pairing |
+| `apps/client` (десктоп/браузер) | Полевой анализ; **автономный узел** или pairing |
 
 ---
 
@@ -26,6 +26,7 @@
 | **Узел (Node)** | Логический шлюз между мембраной и одним экземпляром `apps/client`. v1: **один на мембрану**. |
 | **Ключ доступа (Node Access Key)** | Секрет для pairing клиента с узлом. **Формат** в UI = выбор **срока действия** (TTL), не тип QR/файл. |
 | **Устройство (Device)** | Запись paired-клиента; маппится на `deviceId` в `background-media`. |
+| **Режим узла (Node connection mode)** | Состояние `apps/client`: **связанный** (pairing с кабинетом) или **автономный** (локальная ФС, без облака). Пользователь **всегда** может выбрать автономный режим. |
 | **Тариф (Tariff)** | Набор лимитов (`datasetQuotaBytes`, `bufferQuotaBytes`, …). v1 seed: `free-v1`. |
 | **TelemetryReport** | Серверная сущность: отчёт/снимок анализа (аналог записи client journal). |
 | **TelemetryLiveRecord** | Серверная сущность: live-сессия / потоковая запись. |
@@ -97,6 +98,31 @@ Seed v1:
 
 ---
 
+## Режимы работы узла (`apps/client`)
+
+Полевой клиент **не обязан** быть связан с кабинетом. Pairing — опция, не единственный путь.
+
+| Режим | `nodeConnectionMode` | Хранилище данных | Связь с платформой |
+|-------|----------------------|------------------|-------------------|
+| **Автономный** | `autonomous` | Файловая система (`electron-fs` / локальный fallback в web) | Нет pairing; сэмплы, шаблоны, журнал — локально |
+| **Связанный** | `paired` | `remote-server` (`background-media`, scope мембраны) | Pairing по ключу из кабинета; sync журнала (MP5) |
+
+### Правила UX (MP3, канон)
+
+1. **Выбор при старте и в настройках** — пользователь в любой момент может выбрать «Автономный узел» или «Связь с мембраной» (pairing по ключу).
+2. **Футер** — при `autonomous` в футере `apps/client` постоянное предупреждение: узел работает автономно (данные только локально, облачный кабинет не используется). При `paired` — индикатор связи (мембрана / узел / статус media).
+3. **Ошибка связи с сервером** — если клиент в режиме `paired` и запрос к `background-cabinet` или `background-media` завершается сетевой/доступностной ошибкой, UI **предлагает перейти в автономный режим** (не блокирует работу анализа). Переход сохраняет локальные данные; повторный pairing — отдельное действие пользователя.
+4. **Автономный режим не требует** cabinet, media-server, ключа доступа или интернета для основной работы (микрофон, анализ, локальная библиотека).
+
+Существующие индикаторы `StorageRuntimeIndicator` / `MediaLibraryStorageMode` расширяются в MP3: помимо backend хранения показывают **режим узла** (autonomous vs paired).
+
+```typescript
+/** Режим связи полевого узла с Membrane Platform (MP3). */
+export type NodeConnectionMode = 'autonomous' | 'paired';
+```
+
+---
+
 ## Поток данных
 
 ```mermaid
@@ -158,7 +184,7 @@ sequenceDiagram
 | MP0 | `membrane-platform-mp0-domain` | Этот документ + consilium |
 | MP1 | `membrane-platform-mp1-auth-cabinet` | Auth + shell cabinet |
 | MP2 | `membrane-platform-mp2-membrane-node-keys` | Domain + TTL keys |
-| MP3 | `membrane-platform-mp3-client-pairing` | Pairing в client |
+| MP3 | `membrane-platform-mp3-client-pairing` | Pairing + **автономный режим узла** в client |
 | MP4 | `membrane-platform-mp4-media-membrane` | Media per membrane |
 | MP5 | `membrane-platform-mp5-telemetry-journal` | Cloud journal |
 | MP6 | `membrane-platform-mp6-prod-deploy` | Финальная prod-регрессия + runbook |
@@ -175,4 +201,4 @@ sequenceDiagram
 
 ---
 
-*Версия: 2026-06-13 · Источник решений: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md)*
+*Версия: 2026-06-13 · Источник решений: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md); автономный режим узла — уточнение 2026-06-13.*

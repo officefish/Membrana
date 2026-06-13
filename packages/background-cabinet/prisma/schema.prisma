@@ -64,7 +64,21 @@ model Node {
   membrane   Membrane        @relation(fields: [membraneId], references: [id], onDelete: Cascade)
   label      String
   accessKeys NodeAccessKey[]
+  device     Device?
   createdAt  DateTime        @default(now())
+}
+
+model Device {
+  id            String   @id @default(uuid()) @db.Uuid
+  nodeId        String   @unique @db.Uuid
+  node          Node     @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  mediaDeviceId String   @unique @db.Uuid
+  label         String?
+  pairedKeyId   String?  @db.Uuid
+  pairedAt      DateTime @default(now())
+  lastSeenAt    DateTime @default(now())
+
+  @@index([mediaDeviceId])
 }
 
 model NodeAccessKey {

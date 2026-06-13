@@ -44,6 +44,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-membrana}:${POSTGRES_PASSWORD:-membrana}@postgres:5432/${POSTGRES_DB:-membrana_cabinet}
       SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-168}
       CABINET_CORS_ORIGINS: ${CABINET_CORS_ORIGINS:-http://localhost:8080}
+      CLIENT_CORS_ORIGINS: ${CLIENT_CORS_ORIGINS:-http://localhost:5173}
+      MEDIA_API_URL: ${MEDIA_API_URL:-http://host.docker.internal:3010}
+      MEDIA_API_TOKEN: ${MEDIA_API_TOKEN:-}
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
       CABINET_RUN_SEED: ${CABINET_RUN_SEED:-true}
       CABINET_BOOTSTRAP_LOGIN: ${CABINET_BOOTSTRAP_LOGIN:-demo}

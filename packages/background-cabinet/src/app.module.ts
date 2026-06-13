@@ -8,6 +8,7 @@ import { HealthController } from './health.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MembraneModule } from './modules/membrane/membrane.module';
+import { PairModule } from './modules/pair/pair.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -35,7 +36,7 @@ const testImports =
       ];
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule],
+  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule],
   controllers: [HealthController],
 })
 export class AppModule {}

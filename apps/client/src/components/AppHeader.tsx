@@ -2,9 +2,12 @@ import React from 'react';
 import { ThemeSelector, useSelectedModule } from '@membrana/agenda';
 import { SpatialIntelLogo } from './SpatialIntelLogo';
 import { DroneDetectionHeaderSensor } from './DroneDetectionHeaderSensor';
+import { useNodeConnectionStore } from '../stores/nodeConnectionStore';
 
 export const AppHeader: React.FC = () => {
   const { module, selectedModuleId } = useSelectedModule();
+  const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
+  const mode = useNodeConnectionStore((s) => s.mode);
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
@@ -35,8 +38,16 @@ export const AppHeader: React.FC = () => {
 
       <div
         className="flex w-full shrink-0 flex-wrap items-center justify-end gap-3 border-t border-base-200 pt-2 md:w-auto md:gap-4 md:border-t-0 md:pt-0"
-        aria-label="Тема и датчик детекции"
+        aria-label="Тема, узел и датчик детекции"
       >
+        <button
+          type="button"
+          className="btn btn-ghost btn-xs min-h-8"
+          onClick={() => openModePicker()}
+          title="Режим узла: автономный или связь с мембраной"
+        >
+          {mode === 'paired' ? 'связан' : mode === 'autonomous' ? 'автономно' : 'режим узла'}
+        </button>
         <ThemeSelector showLabel={false} showIcons={false} className="[&_.btn]:btn-xs [&_.btn]:min-h-8" />
         <DroneDetectionHeaderSensor />
       </div>
