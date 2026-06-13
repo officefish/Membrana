@@ -94,6 +94,7 @@ curl http://localhost:3010/health
 | `DATABASE_URL` | задаётся в compose из `POSTGRES_*` |
 | `MEDIA_BLOB_DIR` | `/data/blobs` в контейнере; на хосте — `MEDIA_BLOB_HOST_DIR` |
 | `MEDIA_QUOTA_BYTES_PER_DEVICE` | квота на устройство (default 1 GiB) |
+| `SWAGGER_ENABLED` | `false` в prod (default); `true` — `/docs` и `/docs-json` для интеграторов |
 
 | Env (клиент, Vite build) | Пример |
 |---------------------------|--------|
@@ -110,11 +111,30 @@ curl http://localhost:3010/health
 | `yarn media:build` | prisma generate + tsc |
 | `yarn media:migrate` | `prisma migrate deploy` |
 | `yarn media:db:up` / `media:db:down` | только PG (dev) |
+| `yarn media:verify-swagger` | OpenAPI smoke (`/docs`, `/docs-json`) без живой БД |
 
 | Workspace | Назначение |
 |-----------|------------|
 | `yarn workspace @membrana/background-media test` | unit-тесты |
+| `yarn workspace @membrana/background-media verify:swagger` | то же, из пакета |
 | `yarn workspace @membrana/background-media prisma:migrate:dev` | новая миграция в dev |
+
+## Swagger / OpenAPI
+
+| URL | Назначение |
+|-----|------------|
+| `/docs` | Swagger UI |
+| `/docs-json` | OpenAPI 3 JSON |
+
+**Включение:** `SWAGGER_ENABLED` (default: `true` в development/test, `false` в production). В Swagger UI нажмите **Authorize** и введите `API_INTERNAL_TOKEN` как `X-Membrana-Token`.
+
+Теги: Health, Devices, Collections, Samples, Trends templates — полное описание request/response и multipart upload.
+
+Проверка без поднятия порта:
+
+```bash
+yarn media:verify-swagger
+```
 
 ## API (v1)
 

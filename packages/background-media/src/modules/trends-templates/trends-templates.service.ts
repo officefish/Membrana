@@ -1,11 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import type { TrendsTemplatePackDto } from './trends-templates.dto';
 
-export interface TrendsTemplatePackDto {
-  version: 1;
-  templates: Array<Record<string, unknown>>;
-}
+export type { TrendsTemplatePackDto } from './trends-templates.dto';
 
 @Injectable()
 export class TrendsTemplatesService {

@@ -23,12 +23,21 @@ export const envSchema = z.object({
   MEDIA_ALLOWED_MIME: mimeList.default(
     'audio/wav,audio/wave,audio/mpeg,audio/flac,audio/ogg',
   ),
+  SWAGGER_ENABLED: z
+    .union([z.literal('true'), z.literal('false'), z.literal('1'), z.literal('0')])
+    .optional()
+    .transform((v) => (v === undefined ? undefined : v === 'true' || v === '1')),
 });
 
-export type AppConfig = z.infer<typeof envSchema>;
+const envSchemaWithDefaults = envSchema.transform((data) => ({
+  ...data,
+  SWAGGER_ENABLED: data.SWAGGER_ENABLED ?? data.NODE_ENV !== 'production',
+}));
+
+export type AppConfig = z.infer<typeof envSchemaWithDefaults>;
 
 export function parseEnv(env: NodeJS.ProcessEnv): AppConfig {
-  const parsed = envSchema.safeParse(env);
+  const parsed = envSchemaWithDefaults.safeParse(env);
   if (!parsed.success) {
     console.error('Invalid environment variables:', parsed.error.flatten().fieldErrors);
     process.exit(1);

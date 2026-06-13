@@ -10,23 +10,46 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiConsumes, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiProduces,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import { ApiBadRequest, ApiStandardErrors } from '../../common/swagger/api-decorators';
+import { OkResponseDto } from '../../common/swagger/common.dto';
+import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
 import { DeviceGuard } from '../../common/guards/device.guard';
+import {
+  MoveSampleDto,
+  SampleResponseDto,
+  UploadSampleMultipartDto,
+} from './samples.dto';
 import type { UploadMetaOverride } from './samples.service';
 import { SamplesService } from './samples.service';
 
 @ApiTags('Samples')
 @Controller('v1/devices/:deviceId')
 @UseGuards(ApiTokenGuard, DeviceGuard)
+@ApiSecurity(API_TOKEN_SECURITY)
 @ApiHeader({ name: 'X-Membrana-Token', required: true })
 @ApiHeader({ name: 'X-Membrana-Device-Id', required: false })
+@ApiParam({ name: 'deviceId', format: 'uuid' })
 export class SamplesController {
   constructor(private readonly samples: SamplesService) {}
 
   @Get('collections/:collectionId/samples')
   @ApiOperation({ summary: 'List samples in collection' })
+  @ApiParam({ name: 'collectionId' })
+  @ApiResponse({ status: 200, type: [SampleResponseDto] })
+  @ApiStandardErrors()
   list(
     @Param('deviceId') deviceId: string,
     @Param('collectionId') collectionId: string,
@@ -36,7 +59,13 @@ export class SamplesController {
 
   @Post('collections/:collectionId/samples')
   @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UploadSampleMultipartDto })
   @ApiOperation({ summary: 'Upload audio sample (multipart: file, optional meta JSON field)' })
+  @ApiParam({ name: 'collectionId' })
+  @ApiResponse({ status: 201, type: SampleResponseDto })
+  @ApiStandardErrors()
+  @ApiBadRequest()
+  @ApiResponse({ status: 413, description: 'Device storage quota exceeded' })
   async upload(
     @Param('deviceId') deviceId: string,
     @Param('collectionId') collectionId: string,
@@ -60,7 +89,11 @@ export class SamplesController {
   }
 
   @Get('samples/:sampleId/blob')
+  @ApiProduces('audio/wav', 'audio/mpeg', 'audio/flac', 'audio/ogg', 'application/octet-stream')
   @ApiOperation({ summary: 'Stream sample audio blob' })
+  @ApiParam({ name: 'sampleId', format: 'uuid' })
+  @ApiResponse({ status: 200, description: 'Binary audio stream' })
+  @ApiStandardErrors()
   async blob(
     @Param('deviceId') deviceId: string,
     @Param('sampleId') sampleId: string,
@@ -73,6 +106,9 @@ export class SamplesController {
 
   @Delete('samples/:sampleId')
   @ApiOperation({ summary: 'Delete sample and blob' })
+  @ApiParam({ name: 'sampleId', format: 'uuid' })
+  @ApiResponse({ status: 200, type: OkResponseDto })
+  @ApiStandardErrors()
   async remove(
     @Param('deviceId') deviceId: string,
     @Param('sampleId') sampleId: string,
@@ -83,10 +119,14 @@ export class SamplesController {
 
   @Post('samples/:sampleId/move')
   @ApiOperation({ summary: 'Move sample to another collection' })
+  @ApiParam({ name: 'sampleId', format: 'uuid' })
+  @ApiResponse({ status: 200, type: SampleResponseDto })
+  @ApiStandardErrors()
+  @ApiBadRequest()
   move(
     @Param('deviceId') deviceId: string,
     @Param('sampleId') sampleId: string,
-    @Body() body: { toCollectionId: string },
+    @Body() body: MoveSampleDto,
   ) {
     if (!body?.toCollectionId) {
       throw new BadRequestException('toCollectionId required');

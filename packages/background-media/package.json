@@ -14,7 +14,8 @@
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "verify:swagger": "yarn build && node scripts/verify-swagger.mjs"
   },
   "dependencies": {
     "@fastify/multipart": "^8.3.0",

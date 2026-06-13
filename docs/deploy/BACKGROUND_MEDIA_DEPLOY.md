@@ -77,6 +77,7 @@ sudo ./deploy/generate-media-env.sh /etc/membrana/media.env
 
 ```bash
 MEDIA_BLOB_HOST_DIR=/var/lib/membrana/media-blobs
+# SWAGGER_ENABLED=true   # default off in production; exposes /docs and /docs-json
 ```
 
 Firewall (если ufw включён):
@@ -173,6 +174,8 @@ curl -X POST https://media.<domain>/v1/devices \
 - [ ] Trends template PUT/GET per `deviceId`
 - [ ] Секреты только на сервере (`/etc/membrana/media.env`, mode 600)
 - [ ] CORS настроен, если клиент на другом origin (follow-up в API)
+- [ ] `yarn media:verify-swagger` — зелёный в CI/перед релизом
+- [ ] (опц.) `SWAGGER_ENABLED=true` + `https://media.<domain>/docs` для интеграторов
 
 ---
 

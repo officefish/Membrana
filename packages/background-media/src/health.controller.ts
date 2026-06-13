@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { readFileSync } from 'node:fs';
+import { HealthResponseDto } from './health.dto';
 import { getPackageJsonPath } from './lib/paths';
 
 let cachedVersion: string | undefined;
@@ -22,8 +23,8 @@ function readVersion(): string {
 export class HealthController {
   @Get('health')
   @ApiOperation({ summary: 'Server health check' })
-  @ApiResponse({ status: 200, description: 'Server is healthy' })
-  health(): { status: string; version: string; uptime: number } {
+  @ApiResponse({ status: 200, description: 'Server is healthy', type: HealthResponseDto })
+  health(): HealthResponseDto {
     return {
       status: 'ok',
       version: readVersion(),
