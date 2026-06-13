@@ -59,6 +59,7 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](./BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md) | **Активная** `background-media-a5a-server` — NestJS + PG + API |
 | [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](./BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | **Активная** `background-media-a5b-docker` — Docker Compose |
 | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](./BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | **Активная** `background-media-a5c-deploy` — прод-деплой |
+| [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](./BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | **Активная** `background-media-a5d-swagger` — Swagger/OpenAPI (#64) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

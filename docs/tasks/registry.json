@@ -337,6 +337,21 @@
       "dependsOn": [
         "background-media-a5b-docker"
       ]
+    },
+    {
+      "id": "background-media-a5d-swagger",
+      "title": "background-media A5d: полная Swagger/OpenAPI документация",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md",
+      "githubIssue": 64,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5a-server"
+      ]
     }
   ]
 }

@@ -26,6 +26,7 @@
 | `background-media-a5a-server` | background-media A5a: NestJS API, PostgreSQL, client ServerStorageBackend | L | [`BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
 | `background-media-a5b-docker` | background-media A5b: Docker Compose (API + PostgreSQL + volumes) | M | [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | [#58](https://github.com/officefish/Membrana/issues/58) |
 | `background-media-a5c-deploy` | background-media A5c: продовый деплой (TLS, DNS, docs) | M | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | [#59](https://github.com/officefish/Membrana/issues/59) |
+| `background-media-a5d-swagger` | background-media A5d: полная Swagger/OpenAPI документация | M | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | [#64](https://github.com/officefish/Membrana/issues/64) |
 
 ---
 
@@ -60,4 +61,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-12.*
+*Файл обновлён автоматически: 2026-06-13.*
