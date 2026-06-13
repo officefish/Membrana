@@ -1,0 +1,13 @@
+# Caddy v2 — Membrane cabinet (MP1).
+# Copy to VPS: /etc/caddy/Caddyfile.d/cabinet.caddy
+# Replace domains if needed, then: sudo systemctl reload caddy
+
+cabinet-api.membrana.space {
+	encode gzip
+	reverse_proxy 127.0.0.1:3020
+}
+
+cabinet.membrana.space {
+	encode gzip
+	reverse_proxy 127.0.0.1:8080
+}

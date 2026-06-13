@@ -60,7 +60,8 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](./BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | **Активная** `background-media-a5b-docker` — Docker Compose |
 | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](./BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | **Активная** `background-media-a5c-deploy` — прод-деплой |
 | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](./BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | **Активная** `background-media-a5d-swagger` — Swagger/OpenAPI (#64) |
+| [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](./MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | **Активная** `membrane-platform-v1` — эпик cabinet, pairing, tariff, journal (#67) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 
-Сквозные журналы: [`background-office-v0.1.md`](../discussions/background-office-v0.1.md); консилиум media — [`../seanses/background-media-v1-consilium-2026-06-11.md`](../seanses/background-media-v1-consilium-2026-06-11.md). Канон границ серверов — [`../BACKGROUND_SERVERS.md`](../BACKGROUND_SERVERS.md).
+Сквозные журналы: [`background-office-v0.1.md`](../discussions/background-office-v0.1.md); консилиум media — [`../seanses/background-media-v1-consilium-2026-06-11.md`](../seanses/background-media-v1-consilium-2026-06-11.md); консилиум Membrane Platform — [`../discussions/membrane-platform-consilium-2026-06-13.md`](../discussions/membrane-platform-consilium-2026-06-13.md). Канон границ серверов — [`../BACKGROUND_SERVERS.md`](../BACKGROUND_SERVERS.md); кабинет — [`../MEMBRANE_PLATFORM.md`](../MEMBRANE_PLATFORM.md).

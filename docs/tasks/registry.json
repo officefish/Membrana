@@ -352,6 +352,128 @@
       "dependsOn": [
         "background-media-a5a-server"
       ]
+    },
+    {
+      "id": "membrane-platform-v1",
+      "title": "Membrane Platform v1: cabinet, pairing, tariff, cloud journal (эпик)",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5a-server"
+      ]
+    },
+    {
+      "id": "membrane-platform-mp0-domain",
+      "title": "Membrane Platform MP0: домен, глоссарий, MEMBRANE_PLATFORM.md",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "docs: consilium, MEMBRANE_PLATFORM.md, epic #67",
+      "dependsOn": [
+        "membrane-platform-v1"
+      ],
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "membrane-platform-mp1-auth-cabinet",
+      "title": "Membrane Platform MP1: background-cabinet auth + apps/cabinet shell",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp0-domain"
+      ]
+    },
+    {
+      "id": "membrane-platform-mp2-membrane-node-keys",
+      "title": "Membrane Platform MP2: Membrane, Tariff, Node, ключи TTL enum",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp1-auth-cabinet"
+      ]
+    },
+    {
+      "id": "membrane-platform-mp3-client-pairing",
+      "title": "Membrane Platform MP3: pairing в apps/client",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp2-membrane-node-keys"
+      ]
+    },
+    {
+      "id": "membrane-platform-mp4-media-membrane",
+      "title": "Membrane Platform MP4: media scope по мембране, квоты dataset/buffer",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp3-client-pairing"
+      ]
+    },
+    {
+      "id": "membrane-platform-mp5-telemetry-journal",
+      "title": "Membrane Platform MP5: TelemetryReport + LiveRecord, journal UI",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp1-auth-cabinet"
+      ]
+    },
+    {
+      "id": "membrane-platform-mp6-prod-deploy",
+      "title": "Membrane Platform MP6: prod deploy cabinet.membrana.space",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp4-media-membrane",
+        "membrane-platform-mp5-telemetry-journal"
+      ]
     }
   ]
 }

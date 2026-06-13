@@ -21,7 +21,9 @@ Membrana — прежде всего **клиент** (браузер / Electron
 
 ---
 
-## Два сервера — две роли (не смешивать)
+## Три сервера — три роли (не смешивать)
+
+> **Планируется:** `@membrana/background-cabinet` (эпик [#67](https://github.com/officefish/Membrana/issues/67)) — auth, мембраны, узлы, ключи TTL, тарифы. Канон: [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md).
 
 ```mermaid
 flowchart LR
@@ -49,7 +51,8 @@ flowchart LR
 | Пакет | Порт (dev) | Stateful? | Назначение |
 |-------|------------|-----------|------------|
 | **`@membrana/background-office`** | 3000 | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст). Скрипты `yarn ask`, CI, dev-tools. |
-| **`@membrana/background-media`** | 3010 | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент). Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
+| **`@membrana/background-media`** | 3010 | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент); v2 эпика #67 — scope по **`membraneId`**. Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
+| **`@membrana/background-cabinet`** *(план)* | 3020 | **Да** | **Identity + domain:** users (login/password), membranes, nodes, access keys (TTL enum), tariffs, telemetry metadata. SPA: `apps/cabinet` → `cabinet.membrana.space`. |
 
 ### Жёсткие границы
 
@@ -65,7 +68,14 @@ flowchart LR
 - вызовы Anthropic / Linear / GitHub;
 - приём webhook'ов тикет-трекеров;
 - persona-промпты из `docs/virtual-team/`;
-- тяжёлый inference ML (эшелон 2 для моделей — отдельный пакет в будущем, не office и не media v1).
+- тяжёлый inference ML (эшелон 2 для моделей — отдельный пакет в будущем, не office и не media v1);
+- login/password и CRUD пользователей (→ `background-cabinet`).
+
+**В `background-cabinet` НЕ добавлять:**
+
+- хранение WAV / multipart audio (→ `background-media`);
+- вызовы Anthropic / Linear / GitHub (→ `background-office`);
+- FFT / детекторы (→ `packages/services/*`).
 
 **Общее для обоих:**
 
@@ -157,6 +167,8 @@ Device (deviceId)
 | Новый внешний API или webhook? | `background-office` (новый Nest-модуль) |
 | Пользовательское аудио (wav/mp3/flac/ogg) / коллекция / export manifest? | `background-media` |
 | Пользовательский шаблон trends (JSON)? | `background-media` (не office) |
+| Login, мембрана, узел, ключ доступа (TTL)? | `background-cabinet` + `apps/cabinet` |
+| Pairing `apps/client` с мембраной? | `apps/client` + API `background-cabinet` |
 | Чистая математика FFT/детектор? | `packages/services/*` |
 | UI плагин? | `apps/client` |
 | Синхронизация offline ↔ server | клиент + media API (отдельная задача) |
@@ -172,6 +184,8 @@ Device (deviceId)
 |--------|----------------|
 | Dev office | `yarn office:dev` |
 | Dev media | `yarn media:dev` |
+| Dev cabinet *(план)* | `yarn cabinet:dev` / `yarn cabinet:app:dev` |
+| Docker cabinet | `yarn cabinet:docker:up` · VPS: `deploy/cabinet-stack.sh` |
 | Docker media (локально / staging) | `yarn media:docker:up` |
 | Docker media (VPS prod) | `deploy/media-stack.sh` + [`docs/deploy/BACKGROUND_MEDIA_DEPLOY.md`](./deploy/BACKGROUND_MEDIA_DEPLOY.md) |
 | README office | [`packages/background-office/README.md`](../packages/background-office/README.md) |
@@ -186,6 +200,7 @@ Device (deviceId)
 | GitHub Issue (эпик) | [#58](https://github.com/officefish/Membrana/issues/58) |
 | Реестр | `background-media-v1`, `background-media-a5a-server`, … |
 | Консилиум 2026-06-11 | [`seanses/background-media-v1-consilium-2026-06-11.md`](./seanses/background-media-v1-consilium-2026-06-11.md) |
+| Membrane Platform (эпик) | [#67](https://github.com/officefish/Membrana/issues/67), [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md), prod-smoke [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md) |
 | Журнал office v0.1 | [`discussions/background-office-v0.1.md`](./discussions/background-office-v0.1.md) |
 
 ---

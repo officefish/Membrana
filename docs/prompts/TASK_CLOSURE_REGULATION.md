@@ -20,6 +20,21 @@
 
 Без архивации в реестре задача остаётся **active** — даже если Issue уже closed.
 
+### Исключение: эпик Membrane Platform (#67)
+
+Задачи `membrane-platform-mp1` … `membrane-platform-mp5` **не архивировать** только по локальному dev/CI.
+
+Дополнительный критерий **Продукт**:
+
+| Шаг | Действие |
+|-----|----------|
+| 1 | Деплой фазы на VPS (тот же хост, что `media.membrana.space`) |
+| 2 | Prod-smoke по [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](../deploy/MEMBRANE_PLATFORM_DEPLOY.md) |
+| 3 | В `archiveNotes`: `Prod smoke OK <YYYY-MM-DD>` + URL |
+| 4 | Отчёт в Issue #67 с чеклистом smoke |
+
+MP0 (только docs) и MP6 (финальная регрессия) — см. тот же deploy-документ.
+
 ---
 
 ## Двухфазное закрытие (реестр днём → GitHub вечером)
