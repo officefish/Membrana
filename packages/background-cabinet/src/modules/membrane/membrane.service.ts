@@ -177,6 +177,21 @@ export class MembraneService {
     return { accessKey: serializeAccessKey(revoked) };
   }
 
+  async purgeRevokedAccessKeys(userId: string, nodeId: string) {
+    const node = await this.prisma.node.findUnique({
+      where: { id: nodeId },
+      include: { membrane: true },
+    });
+    if (!node) throw new NotFoundException('Node not found');
+    if (node.membrane.userId !== userId) throw new ForbiddenException('Node access denied');
+
+    const result = await this.prisma.nodeAccessKey.deleteMany({
+      where: { nodeId: node.id, revokedAt: { not: null } },
+    });
+
+    return { deletedCount: result.count };
+  }
+
   /** Ensures free-v1 tariff exists (idempotent, used by seed). */
   async ensureFreeTariff(): Promise<void> {
     await this.prisma.tariff.upsert({

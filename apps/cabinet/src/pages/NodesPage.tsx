@@ -4,6 +4,7 @@ import {
   createNode,
   DURATION_OPTIONS,
   fetchMembraneMe,
+  purgeRevokedAccessKeys,
   revokeAccessKey,
   type MembraneView,
   type NodeAccessKeyDuration,
@@ -16,6 +17,7 @@ export function NodesPage() {
   const [busy, setBusy] = useState(false);
   const [duration, setDuration] = useState<NodeAccessKeyDuration>('days_3');
   const [revealedKey, setRevealedKey] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -51,12 +53,47 @@ export function NodesPage() {
     setBusy(true);
     setError(null);
     setRevealedKey(null);
+    setCopied(false);
     try {
       const result = await createAccessKey(data.node.id, duration);
       setRevealedKey(result.key);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не удалось создать ключ');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleCopyKey = async () => {
+    if (!revealedKey) return;
+    try {
+      await navigator.clipboard.writeText(revealedKey);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError('Не удалось скопировать ключ');
+    }
+  };
+
+  const handlePurgeRevoked = async () => {
+    if (!data?.node) return;
+    const revokedCount = data.node.accessKeys.filter((key) => key.revokedAt).length;
+    if (revokedCount === 0) return;
+    if (
+      !window.confirm(
+        `Удалить ${revokedCount} отозванн${revokedCount === 1 ? 'ый ключ' : revokedCount < 5 ? 'ых ключа' : 'ых ключей'}? Это действие необратимо.`,
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await purgeRevokedAccessKeys(data.node.id);
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось удалить отозванные ключи');
     } finally {
       setBusy(false);
     }
@@ -80,6 +117,7 @@ export function NodesPage() {
   }
 
   const node = data?.node ?? null;
+  const revokedKeyCount = node?.accessKeys.filter((key) => key.revokedAt).length ?? 0;
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -147,9 +185,19 @@ export function NodesPage() {
               </button>
               {revealedKey ? (
                 <div className="alert alert-warning">
-                  <div>
+                  <div className="w-full space-y-2">
                     <p className="font-semibold">Скопируйте ключ сейчас — он больше не покажется:</p>
-                    <code className="mt-2 block break-all text-sm">{revealedKey}</code>
+                    <div className="flex flex-wrap items-start gap-2">
+                      <code className="min-w-0 flex-1 break-all text-sm">{revealedKey}</code>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline shrink-0"
+                        disabled={busy}
+                        onClick={() => void handleCopyKey()}
+                      >
+                        {copied ? 'Скопировано' : 'Копировать'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ) : null}
@@ -158,7 +206,19 @@ export function NodesPage() {
 
           <div className="card bg-base-200">
             <div className="card-body">
-              <h2 className="card-title text-lg">Ключи</h2>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="card-title text-lg">Ключи</h2>
+                {revokedKeyCount > 0 ? (
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    disabled={busy}
+                    onClick={() => void handlePurgeRevoked()}
+                  >
+                    Удалить отозванные ({revokedKeyCount})
+                  </button>
+                ) : null}
+              </div>
               {node.accessKeys.length === 0 ? (
                 <p className="text-base-content/60">Пока нет ключей.</p>
               ) : (

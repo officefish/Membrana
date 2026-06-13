@@ -31,4 +31,12 @@ export class MembraneController {
   revokeAccessKey(@Req() req: AuthenticatedRequest, @Param('keyId') keyId: string) {
     return this.membraneService.revokeAccessKey(req.authUser!.id, keyId);
   }
+
+  @Post('nodes/:nodeId/access-keys/purge-revoked')
+  purgeRevokedAccessKeys(
+    @Req() req: AuthenticatedRequest,
+    @Param('nodeId') nodeId: string,
+  ) {
+    return this.membraneService.purgeRevokedAccessKeys(req.authUser!.id, nodeId);
+  }
 }

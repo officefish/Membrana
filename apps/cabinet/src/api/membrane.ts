@@ -101,3 +101,13 @@ export async function revokeAccessKey(keyId: string): Promise<{ accessKey: Acces
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as { accessKey: AccessKeyView };
 }
+
+export async function purgeRevokedAccessKeys(
+  nodeId: string,
+): Promise<{ deletedCount: number }> {
+  const res = await authFetch(`/v1/nodes/${nodeId}/access-keys/purge-revoked`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { deletedCount: number };
+}
