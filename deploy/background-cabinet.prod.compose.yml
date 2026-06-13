@@ -21,12 +21,12 @@ services:
       - default
       - membrana-platform
 
-networks:
-  membrana-platform:
-    external: true
-    name: membrana-platform
-
   cabinet-web:
     restart: unless-stopped
     ports: !override
       - '127.0.0.1:${CABINET_WEB_PORT:-8080}:80'
+
+networks:
+  membrana-platform:
+    external: true
+    name: membrana-platform
