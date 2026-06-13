@@ -12,13 +12,13 @@ name: membrana-media
 
 services:
   postgres:
-    ports: []
+    ports: !override []
     restart: unless-stopped
 
   media-api:
     restart: unless-stopped
     # Bind to localhost only; expose 443 via Caddy/nginx on the host
-    ports:
+    ports: !override
       - '127.0.0.1:${MEDIA_PORT:-3010}:3010'
     # Host path for straightforward backup/rsync (see BACKGROUND_MEDIA_DEPLOY.md §7)
     volumes:
