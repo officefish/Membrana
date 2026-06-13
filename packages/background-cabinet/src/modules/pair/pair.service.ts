@@ -87,7 +87,7 @@ export class PairService {
       expiresAt: session.expiresAt,
       deviceId: mediaDeviceId,
       mediaToken: this.config.MEDIA_API_TOKEN,
-      mediaApiUrl: this.config.MEDIA_API_URL.replace(/\/$/, ''),
+      mediaApiUrl: this.config.MEDIA_PUBLIC_API_URL,
       membrane: { id: node.membrane.id },
       node: { id: node.id, label: node.label },
     };

@@ -32,10 +32,11 @@ upsert() {
 
 upsert CLIENT_CORS_ORIGINS "http://localhost:5173,http://localhost:4173"
 upsert MEDIA_API_URL "http://media-api:3010"
+upsert MEDIA_PUBLIC_API_URL "https://media.membrana.space"
 upsert MEDIA_API_TOKEN "$MEDIA_TOKEN"
 
 echo "=== cabinet.env MP3 keys ==="
-grep -E '^(CLIENT_CORS_ORIGINS|MEDIA_API_URL|MEDIA_API_TOKEN)=' "$ENV"
+grep -E '^(CLIENT_CORS_ORIGINS|MEDIA_API_URL|MEDIA_PUBLIC_API_URL|MEDIA_API_TOKEN)=' "$ENV"
 
 cd /root/membrana
 git fetch origin feat/background-media-swagger

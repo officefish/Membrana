@@ -27,6 +27,7 @@ MEDIA_QUOTA_BYTES_PER_DEVICE=1073741824
 MAX_UPLOAD_BYTES=52428800
 MEDIA_ALLOWED_MIME=audio/wav,audio/wave,audio/mpeg,audio/flac,audio/ogg
 MEDIA_BLOB_HOST_DIR=/var/lib/membrana/media-blobs
+CLIENT_CORS_ORIGINS=http://localhost:5173,http://localhost:4173
 EOF
 
 chmod 600 "$OUT"

@@ -991,6 +991,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/background-media@workspace:packages/background-media"
   dependencies:
+    "@fastify/cors": "npm:^9.0.1"
     "@fastify/multipart": "npm:^8.3.0"
     "@fastify/static": "npm:^7.0.0"
     "@nestjs/common": "npm:^10.4.15"

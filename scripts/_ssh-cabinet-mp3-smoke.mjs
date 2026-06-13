@@ -60,6 +60,7 @@ d=json.load(sys.stdin)
 assert d.get('deviceId'), 'deviceId missing'
 assert d.get('token'), 'token missing'
 assert d.get('mediaApiUrl'), 'mediaApiUrl missing'
+assert d['mediaApiUrl'].startswith('https://media.membrana.space'), 'mediaApiUrl must be public'
 assert d.get('membrane',{}).get('id'), 'membrane.id missing'
 assert d.get('node',{}).get('id'), 'node.id missing'
 print('pair ok, deviceId='+d['deviceId'][:8]+'…')

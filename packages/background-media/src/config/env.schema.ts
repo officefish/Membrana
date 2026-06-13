@@ -1,5 +1,15 @@
 import { z } from 'zod';
 
+const corsOrigins = z
+  .string()
+  .transform((s) =>
+    s
+      .split(',')
+      .map((o) => o.trim())
+      .filter(Boolean),
+  )
+  .pipe(z.array(z.string().min(1)));
+
 const mimeList = z
   .string()
   .transform((s) =>
@@ -27,6 +37,8 @@ export const envSchema = z.object({
     .union([z.literal('true'), z.literal('false'), z.literal('1'), z.literal('0')])
     .optional()
     .transform((v) => (v === undefined ? undefined : v === 'true' || v === '1')),
+  /** Browser origins for apps/client paired mode (MP3 E2E). Empty = CORS disabled. */
+  CLIENT_CORS_ORIGINS: corsOrigins.default('http://localhost:5173,http://localhost:4173'),
 });
 
 const envSchemaWithDefaults = envSchema.transform((data) => ({

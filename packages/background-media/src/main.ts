@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -21,6 +22,20 @@ async function bootstrap(): Promise<void> {
   );
 
   const config = app.get<AppConfig>(APP_CONFIG);
+  if (config.CLIENT_CORS_ORIGINS.length > 0) {
+    await app.register(cors, {
+      origin: config.CLIENT_CORS_ORIGINS,
+      credentials: false,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Request-Id',
+        'X-Membrana-Token',
+        'X-Membrana-Device-Id',
+      ],
+    });
+  }
   await app.register(multipart, {
     limits: { fileSize: config.MAX_UPLOAD_BYTES },
   });

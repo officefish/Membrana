@@ -29,6 +29,7 @@ SESSION_TTL_HOURS=168
 CABINET_CORS_ORIGINS=https://cabinet.membrana.space
 CLIENT_CORS_ORIGINS=http://localhost:5173,http://localhost:4173
 MEDIA_API_URL=http://media-api:3010
+MEDIA_PUBLIC_API_URL=https://media.membrana.space
 ALLOW_REGISTRATION=false
 CABINET_RUN_SEED=true
 CABINET_BOOTSTRAP_LOGIN=admin
