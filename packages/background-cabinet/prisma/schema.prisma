@@ -7,12 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum NodeAccessKeyDuration {
+  hours_4
+  days_3
+  weeks_2
+  month_1
+  months_3
+}
+
 model User {
-  id           String    @id @default(uuid()) @db.Uuid
-  login        String    @unique
+  id           String     @id @default(uuid()) @db.Uuid
+  login        String     @unique
   passwordHash String
-  createdAt    DateTime  @default(now())
+  createdAt    DateTime   @default(now())
   sessions     Session[]
+  membrane     Membrane?
 }
 
 model Session {
@@ -24,5 +33,50 @@ model Session {
   createdAt DateTime @default(now())
 
   @@index([userId])
+  @@index([expiresAt])
+}
+
+model Tariff {
+  id                   String     @id
+  name                 String
+  datasetQuotaBytes    BigInt
+  bufferQuotaBytes     BigInt
+  maxActiveKeysPerNode Int        @default(1)
+  createdAt            DateTime   @default(now())
+  membranes            Membrane[]
+}
+
+model Membrane {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tariffId  String
+  tariff    Tariff   @relation(fields: [tariffId], references: [id])
+  nodes     Node[]
+  createdAt DateTime @default(now())
+
+  @@index([tariffId])
+}
+
+model Node {
+  id         String          @id @default(uuid()) @db.Uuid
+  membraneId String          @unique @db.Uuid
+  membrane   Membrane        @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  label      String
+  accessKeys NodeAccessKey[]
+  createdAt  DateTime        @default(now())
+}
+
+model NodeAccessKey {
+  id         String                @id @default(uuid()) @db.Uuid
+  nodeId     String                @db.Uuid
+  node       Node                  @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  secretHash String
+  duration   NodeAccessKeyDuration
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime              @default(now())
+
+  @@index([nodeId])
   @@index([expiresAt])
 }

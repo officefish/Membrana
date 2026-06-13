@@ -1,17 +1,39 @@
+import { useState } from 'react';
 import type { AuthUser } from '@/api/auth';
+import { MembranePage } from '@/pages/MembranePage';
+import { NodesPage } from '@/pages/NodesPage';
 
 interface CabinetShellProps {
   user: AuthUser;
   onLogout: () => void;
 }
 
-const NAV_ITEMS = [
-  { id: 'membrane', label: 'Мембрана', hint: 'MP2' },
-  { id: 'nodes', label: 'Узлы и ключи', hint: 'MP2' },
-  { id: 'journal', label: 'Журнал', hint: 'MP5' },
-] as const;
+type SectionId = 'membrane' | 'nodes' | 'journal';
+
+const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string }[] = [
+  { id: 'membrane', label: 'Мембрана', enabled: true },
+  { id: 'nodes', label: 'Узлы и ключи', enabled: true },
+  { id: 'journal', label: 'Журнал', enabled: false, hint: 'MP5' },
+];
+
+function SectionContent({ section }: { section: SectionId }) {
+  switch (section) {
+    case 'membrane':
+      return <MembranePage />;
+    case 'nodes':
+      return <NodesPage />;
+    case 'journal':
+      return (
+        <p className="text-base-content/70">Облачный журнал телеметрии — фаза MP5 эпика #67.</p>
+      );
+    default:
+      return null;
+  }
+}
 
 export function CabinetShell({ user, onLogout }: CabinetShellProps) {
+  const [section, setSection] = useState<SectionId>('membrane');
+
   return (
     <div className="flex min-h-screen">
       <aside className="flex w-64 flex-col border-r border-base-content/10 bg-base-200 p-4">
@@ -24,9 +46,10 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
             <button
               key={item.id}
               type="button"
-              className="btn btn-ghost justify-start opacity-60"
-              disabled
-              title={`Скоро (${item.hint})`}
+              className={`btn btn-ghost justify-start ${section === item.id ? 'btn-active' : ''} ${!item.enabled ? 'opacity-60' : ''}`}
+              disabled={!item.enabled}
+              title={item.hint ? `Скоро (${item.hint})` : undefined}
+              onClick={() => item.enabled && setSection(item.id)}
             >
               {item.label}
             </button>
@@ -41,25 +64,7 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
       </aside>
 
       <main className="flex flex-1 flex-col p-8">
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold">Добро пожаловать</h1>
-          <p className="mt-2 max-w-xl text-base-content/70">
-            MP1: авторизация и оболочка кабинета. Мембрана, узлы с ключами TTL и облачный журнал —
-            в следующих фазах эпика #67.
-          </p>
-        </header>
-
-        <section className="grid gap-4 md:grid-cols-3">
-          {NAV_ITEMS.map((item) => (
-            <article key={item.id} className="card bg-base-200">
-              <div className="card-body">
-                <h2 className="card-title text-base">{item.label}</h2>
-                <p className="text-sm text-base-content/60">Фаза {item.hint}</p>
-                <span className="badge badge-outline badge-sm w-fit">скоро</span>
-              </div>
-            </article>
-          ))}
-        </section>
+        <SectionContent section={section} />
       </main>
     </div>
   );

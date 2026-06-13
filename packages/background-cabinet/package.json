@@ -2,7 +2,7 @@
   "name": "@membrana/background-cabinet",
   "version": "0.1.0",
   "private": true,
-  "description": "Identity and domain API: users, sessions, membranes (MP1: auth).",
+  "description": "Identity and domain API: users, sessions, membranes, nodes, keys (MP1–MP2).",
   "main": "./dist/main.js",
   "scripts": {
     "prisma:generate": "prisma generate",

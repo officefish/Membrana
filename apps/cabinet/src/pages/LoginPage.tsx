@@ -70,9 +70,15 @@ export function LoginPage() {
             </button>
           </form>
 
-          <p className="text-xs text-base-content/50">
-            Dev: demo / demo12345 после <code className="text-xs">yarn cabinet:seed</code>
-          </p>
+          {import.meta.env.DEV ? (
+            <p className="text-xs text-base-content/50">
+              Dev: demo / demo12345 после <code className="text-xs">yarn cabinet:seed</code>
+            </p>
+          ) : (
+            <p className="text-xs text-base-content/50">
+              Prod: учётная запись выдаётся администратором при деплое.
+            </p>
+          )}
         </div>
       </div>
     </div>

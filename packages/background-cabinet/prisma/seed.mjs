@@ -3,8 +3,25 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 const BCRYPT_ROUNDS = 12;
+const FREE_TARIFF_ID = 'free-v1';
+const GIB = 1024n * 1024n * 1024n;
 
-async function main() {
+async function seedTariff() {
+  await prisma.tariff.upsert({
+    where: { id: FREE_TARIFF_ID },
+    create: {
+      id: FREE_TARIFF_ID,
+      name: 'Free v1',
+      datasetQuotaBytes: GIB,
+      bufferQuotaBytes: GIB,
+      maxActiveKeysPerNode: 1,
+    },
+    update: {},
+  });
+  console.log(`Seed ok: tariff "${FREE_TARIFF_ID}"`);
+}
+
+async function seedBootstrapUser() {
   const login = (process.env.CABINET_BOOTSTRAP_LOGIN || 'demo').trim().toLowerCase();
   const password = process.env.CABINET_BOOTSTRAP_PASSWORD || 'demo12345';
 
@@ -21,6 +38,11 @@ async function main() {
   const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
   await prisma.user.create({ data: { login, passwordHash } });
   console.log(`Seed ok: user "${login}" created`);
+}
+
+async function main() {
+  await seedTariff();
+  await seedBootstrapUser();
 }
 
 main()
