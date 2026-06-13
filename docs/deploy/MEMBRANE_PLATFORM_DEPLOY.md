@@ -29,8 +29,8 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 | DNS | Сервис | Порт (внутри) | Фаза появления |
 |-----|--------|---------------|----------------|
 | `media.membrana.space` | `background-media` | 3010 | уже есть (#58–#66) |
-| `cabinet.membrana.space` | `apps/cabinet` (static) | — | **MP1** |
-| `cabinet-api.membrana.space` | `background-cabinet` | 3020 | **MP1** |
+| `cabinet.membrana.space` | `apps/cabinet` + API paths `/health`, `/v1/*` | 3020 / 8080 | **MP1** |
+| `cabinet-api.membrana.space` | `background-cabinet` (опционально) | 3020 | MP1+DNS |
 
 Один VPS (как media): Caddy TLS, Docker Compose, секреты в `/etc/membrana/*.env`.
 
@@ -46,9 +46,9 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 
 | # | Проверка | Ожидание |
 |---|----------|----------|
-| 1 | `GET https://cabinet-api.membrana.space/health` | `200`, `status: "ok"` |
-| 2 | `POST …/v1/auth/login` (prod user) | `200`, `token`, `user.login` |
-| 3 | `GET …/v1/auth/me` + `Authorization: Bearer` | `200`, тот же user |
+| 1 | `GET https://cabinet.membrana.space/health` | `200`, `status: "ok"` |
+| 2 | `POST https://cabinet.membrana.space/v1/auth/login` (prod user) | `200`, `token`, `user.login` |
+| 3 | `GET https://cabinet.membrana.space/v1/auth/me` + `Authorization: Bearer` | `200`, тот же user |
 | 4 | `GET https://cabinet.membrana.space/` | SPA загружается (200) |
 | 5 | Login в браузере | Shell после входа, logout работает |
 | 6 | `ALLOW_REGISTRATION` на проде | `false` (регистрация только admin/seed) |
@@ -137,7 +137,7 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 ```bash
 # VPS
 ./deploy/cabinet-stack.sh build && ./deploy/cabinet-stack.sh up && ./deploy/cabinet-stack.sh smoke
-curl -fsS https://cabinet-api.membrana.space/health
+curl -fsS https://cabinet.membrana.space/health
 ```
 
 Локально: `yarn cabinet:docker:up` или dev: `yarn cabinet:db:up` → `yarn cabinet:migrate` → `yarn cabinet:seed` → `yarn cabinet:dev` + `yarn cabinet:app:dev`.

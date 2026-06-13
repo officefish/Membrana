@@ -10,8 +10,8 @@
 
 | Запись | Тип | Назначение |
 |--------|-----|------------|
-| `cabinet.membrana.space` | A | VPS IP |
-| `cabinet-api.membrana.space` | A | VPS IP |
+| `cabinet.membrana.space` | A | VPS IP (SPA + API `/health`, `/v1/*` через Caddy) |
+| `cabinet-api.membrana.space` | A | VPS IP (**опционально**, отдельный API-хост) |
 
 ---
 
@@ -79,9 +79,9 @@ sudo sed -i 's/^CABINET_RUN_SEED=.*/CABINET_RUN_SEED=false/' /etc/membrana/cabin
 ## 3. Prod-smoke (MP1)
 
 ```bash
-curl -fsS https://cabinet-api.membrana.space/health
+curl -fsS https://cabinet.membrana.space/health
 
-curl -fsS -X POST https://cabinet-api.membrana.space/v1/auth/login \
+curl -fsS -X POST https://cabinet.membrana.space/v1/auth/login \
   -H 'Content-Type: application/json' \
   -d '{"login":"admin","password":"<BOOTSTRAP_PASSWORD>"}'
 
@@ -116,7 +116,7 @@ curl -o /dev/null -w "%{http_code}\n" http://localhost:8080/
 
 ## 6. Чеклист приёмки MP1
 
-- [ ] `https://cabinet-api.membrana.space/health` → 200
+- [ ] `https://cabinet.membrana.space/health` → 200
 - [ ] Login API + `/v1/auth/me`
 - [ ] `https://cabinet.membrana.space/` → SPA
 - [ ] Login в браузере
@@ -129,7 +129,7 @@ curl -o /dev/null -w "%{http_code}\n" http://localhost:8080/
 ## Prod URL
 
 ```
-API_HEALTH=https://cabinet-api.membrana.space/health
+API_HEALTH=https://cabinet.membrana.space/health
 SPA_URL=https://cabinet.membrana.space/
 DEPLOYED_AT=
 NOTES=

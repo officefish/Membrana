@@ -26,7 +26,7 @@ yarn workspace @membrana/cabinet dev   # UI :5174
 
 ```bash
 # build-time API URL baked into SPA image
-VITE_CABINET_API_URL=https://cabinet-api.membrana.space
+VITE_CABINET_API_URL=https://cabinet.membrana.space
 ```
 
 См. [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](../../docs/deploy/BACKGROUND_CABINET_DEPLOY.md).

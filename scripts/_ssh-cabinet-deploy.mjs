@@ -38,10 +38,13 @@ fi
 ln -sf /etc/membrana/cabinet.env packages/background-cabinet/.env.docker
 chmod +x deploy/cabinet-stack.sh
 
-if [ ! -f /etc/caddy/Caddyfile.d/cabinet.caddy ]; then
-  echo "=== install Caddy cabinet.caddy ==="
-  cp deploy/Caddyfile.cabinet.example /etc/caddy/Caddyfile.d/cabinet.caddy
-  systemctl reload caddy || true
+echo "=== sync Caddy cabinet.caddy ==="
+cp deploy/Caddyfile.cabinet.example /etc/caddy/Caddyfile.d/cabinet.caddy
+caddy validate --config /etc/caddy/Caddyfile 2>/dev/null || true
+systemctl reload caddy || true
+
+if grep -q 'cabinet-api.membrana.space' /etc/membrana/cabinet.env 2>/dev/null; then
+  sed -i 's|VITE_CABINET_API_URL=https://cabinet-api.membrana.space|VITE_CABINET_API_URL=https://cabinet.membrana.space|' /etc/membrana/cabinet.env
 fi
 
 echo "=== docker build ==="
@@ -57,7 +60,7 @@ echo "=== local smoke ==="
 ./deploy/cabinet-stack.sh smoke
 
 echo "=== https smoke ==="
-curl -sk -o /dev/null -w "cabinet-api health: %{http_code}\\n" https://cabinet-api.membrana.space/health || true
+curl -fsS https://cabinet.membrana.space/health; echo
 curl -sk -o /dev/null -w "cabinet SPA: %{http_code}\\n" https://cabinet.membrana.space/ || true
 
 ./deploy/cabinet-stack.sh ps

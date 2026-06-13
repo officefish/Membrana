@@ -31,7 +31,7 @@ ALLOW_REGISTRATION=false
 CABINET_RUN_SEED=true
 CABINET_BOOTSTRAP_LOGIN=admin
 CABINET_BOOTSTRAP_PASSWORD=${bootstrap_pass}
-VITE_CABINET_API_URL=https://cabinet-api.membrana.space
+VITE_CABINET_API_URL=https://cabinet.membrana.space
 EOF
 
 chmod 600 "$OUT"

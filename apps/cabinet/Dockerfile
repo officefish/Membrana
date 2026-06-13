@@ -4,7 +4,7 @@
 FROM node:20-alpine AS build
 RUN corepack enable
 
-ARG VITE_CABINET_API_URL=https://cabinet-api.membrana.space
+ARG VITE_CABINET_API_URL=https://cabinet.membrana.space
 ENV VITE_CABINET_API_URL=$VITE_CABINET_API_URL
 
 WORKDIR /app
