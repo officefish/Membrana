@@ -391,13 +391,14 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-13",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Prod smoke OK 2026-06-13. Deploy @ 23afa52. https://cabinet.membrana.space API on same host. CABINET_RUN_SEED=false.",
       "dependsOn": [
         "membrane-platform-mp0-domain"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-platform-mp2-membrane-node-keys",

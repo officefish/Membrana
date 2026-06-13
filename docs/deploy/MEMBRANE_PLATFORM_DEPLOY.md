@@ -149,7 +149,7 @@ curl -fsS https://cabinet.membrana.space/health
 | Фаза | Код | Prod deploy | Архив |
 |------|-----|-------------|-------|
 | MP0 | docs | — | archived |
-| **MP1** | auth + shell | **готов** (compose + Caddy) | active — после prod-smoke |
+| **MP1** | auth + shell | **prod** 2026-06-13 | **archived** |
 | MP2–MP6 | — | — | active |
 
 Подробный чеклист: [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
