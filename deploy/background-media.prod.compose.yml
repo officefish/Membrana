@@ -23,3 +23,11 @@ services:
     # Host path for straightforward backup/rsync (see BACKGROUND_MEDIA_DEPLOY.md §7)
     volumes:
       - ${MEDIA_BLOB_HOST_DIR:-/var/lib/membrana/media-blobs}:/data/blobs
+    networks:
+      - default
+      - membrana-platform
+
+networks:
+  membrana-platform:
+    name: membrana-platform
+    driver: bridge

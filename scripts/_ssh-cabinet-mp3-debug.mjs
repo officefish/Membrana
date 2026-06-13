@@ -18,10 +18,22 @@ echo "=== migrate status ==="
 docker compose -f packages/background-cabinet/docker-compose.yml -f deploy/background-cabinet.prod.compose.yml --env-file /etc/membrana/cabinet.env exec -T cabinet-api sh -c 'cd /app/packages/background-cabinet && npx prisma migrate status' 2>&1 | tail -20
 
 echo "=== media from host ==="
-curl -fsS http://127.0.0.1:3010/health; echo || echo media host fail
+curl -fsS http://127.0.0.1:3010/health; echo || echo "media host fail"
+
+echo "=== media stack ps ==="
+docker compose -f packages/background-media/docker-compose.yml -f deploy/background-media.prod.compose.yml --env-file /etc/membrana/media.env ps 2>&1 || true
+
+echo "=== pair error body (local) ==="
+PASS=$(grep '^CABINET_BOOTSTRAP_PASSWORD=' /etc/membrana/cabinet.env | cut -d= -f2-)
+TOKEN=$(curl -fsS -X POST http://127.0.0.1:3020/v1/auth/login -H 'Content-Type: application/json' -d "{\\"login\\":\\"admin\\",\\"password\\":\\"$PASS\\"}" | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+KEY_RESP=$(curl -fsS -X POST http://127.0.0.1:3020/v1/nodes/f18b490d-44b1-47ae-848e-83bb6c14e75a/access-keys -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"duration":"hours_4"}' 2>/dev/null || true)
+PLAIN=$(echo "$KEY_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('key',''))" 2>/dev/null || true)
+if [ -n "$PLAIN" ]; then
+  curl -sS -X POST http://127.0.0.1:3020/v1/pair -H 'Content-Type: application/json' -d "{\\"accessKey\\":\\"$PLAIN\\"}"; echo
+fi
 
 echo "=== media from cabinet container ==="
-docker compose -f packages/background-cabinet/docker-compose.yml -f deploy/background-cabinet.prod.compose.yml --env-file /etc/membrana/cabinet.env exec -T cabinet-api sh -c 'wget -qO- http://127.0.0.1:3010/health || wget -qO- http://host.docker.internal:3010/health || echo container media fail'; echo
+docker compose -f packages/background-cabinet/docker-compose.yml -f deploy/background-cabinet.prod.compose.yml --env-file /etc/membrana/cabinet.env exec -T cabinet-api sh -c 'wget -qO- http://host.docker.internal:3010/health || echo container media fail'; echo
 `;
 
 const conn = new Client();

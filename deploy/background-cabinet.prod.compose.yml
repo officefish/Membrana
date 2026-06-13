@@ -15,10 +15,16 @@ services:
 
   cabinet-api:
     restart: unless-stopped
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
     ports: !override
       - '127.0.0.1:${CABINET_API_PORT:-3020}:3020'
+    networks:
+      - default
+      - membrana-platform
+
+networks:
+  membrana-platform:
+    external: true
+    name: membrana-platform
 
   cabinet-web:
     restart: unless-stopped

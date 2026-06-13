@@ -31,7 +31,7 @@ upsert() {
 }
 
 upsert CLIENT_CORS_ORIGINS "http://localhost:5173,http://localhost:4173"
-upsert MEDIA_API_URL "http://host.docker.internal:3010"
+upsert MEDIA_API_URL "http://media-api:3010"
 upsert MEDIA_API_TOKEN "$MEDIA_TOKEN"
 
 echo "=== cabinet.env MP3 keys ==="
@@ -40,6 +40,10 @@ grep -E '^(CLIENT_CORS_ORIGINS|MEDIA_API_URL|MEDIA_API_TOKEN)=' "$ENV"
 cd /root/membrana
 git fetch origin feat/background-media-swagger
 git reset --hard FETCH_HEAD
+
+chmod +x deploy/media-stack.sh deploy/cabinet-stack.sh
+./deploy/media-stack.sh up
+sleep 10
 ln -sf /etc/membrana/cabinet.env packages/background-cabinet/.env.docker
 chmod +x deploy/cabinet-stack.sh
 ./deploy/cabinet-stack.sh build
