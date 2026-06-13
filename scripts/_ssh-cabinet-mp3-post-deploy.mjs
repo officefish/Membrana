@@ -23,21 +23,23 @@ MEDIA_TOKEN=$(grep '^API_INTERNAL_TOKEN=' "$MEDIA_ENV" | cut -d= -f2-)
 
 upsert() {
   local key="$1" val="$2"
-  if grep -q "^${key}=" "$ENV"; then
-    sed -i "s|^${key}=.*|${key}=${val}|" "$ENV"
+  if grep -q "^\${key}=" "$ENV"; then
+    sed -i "s|^\${key}=.*|\${key}=\${val}|" "$ENV"
   else
-    echo "${key}=${val}" >> "$ENV"
+    echo "\${key}=\${val}" >> "$ENV"
   fi
 }
 
 upsert CLIENT_CORS_ORIGINS "http://localhost:5173,http://localhost:4173"
-upsert MEDIA_API_URL "http://127.0.0.1:3010"
+upsert MEDIA_API_URL "http://host.docker.internal:3010"
 upsert MEDIA_API_TOKEN "$MEDIA_TOKEN"
 
 echo "=== cabinet.env MP3 keys ==="
 grep -E '^(CLIENT_CORS_ORIGINS|MEDIA_API_URL|MEDIA_API_TOKEN)=' "$ENV"
 
 cd /root/membrana
+git fetch origin feat/background-media-swagger
+git reset --hard FETCH_HEAD
 ln -sf /etc/membrana/cabinet.env packages/background-cabinet/.env.docker
 chmod +x deploy/cabinet-stack.sh
 ./deploy/cabinet-stack.sh build

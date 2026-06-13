@@ -16,14 +16,20 @@ export class MediaBridgeService {
 
   async registerDevice(name: string): Promise<MediaDeviceRegistration> {
     const base = this.config.MEDIA_API_URL.replace(/\/$/, '');
-    const res = await fetch(`${base}/v1/devices`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Membrana-Token': this.config.MEDIA_API_TOKEN,
-      },
-      body: JSON.stringify({ name, kind: 'other' }),
-    });
+    let res: Response;
+    try {
+      res = await fetch(`${base}/v1/devices`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Membrana-Token': this.config.MEDIA_API_TOKEN,
+        },
+        body: JSON.stringify({ name, kind: 'other' }),
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'fetch failed';
+      throw new ServiceUnavailableException(`Media server unreachable: ${msg}`);
+    }
 
     if (!res.ok) {
       const detail = await res.text().catch(() => res.statusText);
