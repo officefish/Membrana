@@ -18,16 +18,15 @@ if (!existsSync(envPath)) {
 
 const envText = readFileSync(envPath, 'utf8');
 const get = (key) => envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
-const branch = get('CABINET_GIT_BRANCH') || get('GIT_BRANCH') || 'techies68';
+const branch = get('CABINET_GIT_BRANCH') || get('GIT_BRANCH') || 'feat/background-media-swagger';
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail
 cd /root/membrana
 
 echo "=== git pull (${branch}) ==="
-git fetch origin ${branch}
-git checkout ${branch}
-git reset --hard origin/${branch}
+git fetch origin "${branch}"
+git reset --hard FETCH_HEAD
 git log -1 --oneline
 
 if [ ! -f /etc/membrana/cabinet.env ]; then

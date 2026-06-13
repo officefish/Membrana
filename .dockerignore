@@ -11,7 +11,9 @@
 !**/.env.example
 !**/.env.docker.example
 **/data
-apps
+apps/**
+!apps/cabinet
+!apps/cabinet/**
 packages/agenda
 packages/core
 packages/device-board
