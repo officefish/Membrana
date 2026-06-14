@@ -1,0 +1,72 @@
+import type { MembraneCatalogSample } from '@/api/sampleLibrary';
+import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
+import { CabinetSampleTable } from '@/components/sample-library/CabinetSampleTable';
+import type { SamplePlaybackSnapshot } from '@/lib/sampleLibraryPlaybackHub';
+import type { Collection, MediaSample } from '@membrana/media-library-service';
+
+export interface CabinetSampleCollectionBodyProps {
+  readonly libLoading: boolean;
+  readonly playback: SamplePlaybackSnapshot;
+  readonly playbackDisabled: boolean;
+  readonly selectedSample: MediaSample | MembraneCatalogSample | null;
+  readonly rows: MembraneCatalogSample[] | MediaSample[];
+  readonly mode: 'catalog' | 'node';
+  readonly onSelectRow: (row: MembraneCatalogSample | MediaSample) => void;
+  readonly onTogglePlay: (row: MembraneCatalogSample | MediaSample) => void;
+  readonly onExportSelected?: () => void;
+  readonly readOnly?: boolean;
+  readonly canMutate?: boolean;
+  readonly showMoveFromBuffer?: boolean;
+  readonly moveTargets?: Collection[];
+  readonly onRemove?: (id: string) => void;
+  readonly onMove?: (id: string, toId: string) => void;
+  readonly onExport?: (sample: MediaSample) => void;
+}
+
+/** Одна колонка: плеер под шапкой коллекции, затем таблица сэмплов. */
+export function CabinetSampleCollectionBody({
+  libLoading,
+  playback,
+  playbackDisabled,
+  selectedSample,
+  rows,
+  mode,
+  onSelectRow,
+  onTogglePlay,
+  onExportSelected,
+  readOnly,
+  canMutate,
+  showMoveFromBuffer,
+  moveTargets,
+  onRemove,
+  onMove,
+  onExport,
+}: CabinetSampleCollectionBodyProps) {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col gap-3">
+      <CabinetSamplePlayerSection
+        playback={playback}
+        selectedSample={selectedSample}
+        onExport={onExportSelected}
+      />
+      {libLoading ? (
+        <span className="loading loading-spinner loading-sm" aria-label="Загрузка медиа" />
+      ) : null}
+      <CabinetSampleTable
+        rows={rows}
+        playback={playback}
+        playbackDisabled={playbackDisabled}
+        onSelectRow={onSelectRow}
+        onTogglePlay={onTogglePlay}
+        mode={mode}
+        readOnly={readOnly}
+        canMutate={canMutate}
+        showMoveFromBuffer={showMoveFromBuffer}
+        moveTargets={moveTargets}
+        onRemove={onRemove}
+        onMove={onMove}
+        onExport={onExport}
+      />
+    </div>
+  );
+}

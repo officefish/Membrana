@@ -17,12 +17,10 @@ import {
 import { fetchMembraneMe } from '@/api/membrane';
 import { CabinetToast } from '@/components/CabinetToast';
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
-import { SampleLibraryPlayerPanel } from '@/components/sample-library/SampleLibraryPlayerPanel';
-import { SamplePlaybackBar } from '@/components/sample-playback/SamplePlaybackBar';
+import { CabinetSampleCollectionBody } from '@/components/sample-library/CabinetSampleCollectionBody';
 import { catalogSampleToMedia } from '@/lib/catalogSampleAdapter';
 import { invalidateCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
 import { downloadBlob, extensionFromMime } from '@/lib/downloadBlob';
-import { formatBytes } from '@/lib/formatBytes';
 import {
   bindSamplePlaybackBlobReader,
   disposeSamplePlayback,
@@ -561,36 +559,21 @@ export function SampleLibraryPage() {
                   pairing.
                 </div>
               ) : null}
-              {libLoading ? (
-                <span className="loading loading-spinner loading-sm" aria-label="Загрузка медиа" />
-              ) : null}
-              <div className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
-                <div className="flex min-w-0 flex-col gap-2">
-                  <SamplePlaybackBar playback={playback} compact />
-                  <SampleTable
-                    rows={catalogSamples}
-                    playback={playback}
-                    playbackDisabled={playbackDisabled}
-                    onSelectRow={(row) => void handleSelectPlaybackSample(row, 'catalog')}
-                    onTogglePlay={(row) => void handleTogglePlayback(row, 'catalog')}
-                    mode="catalog"
-                  />
-                </div>
-                <div className="card min-w-0 border border-base-300 bg-base-200/30 shadow-sm">
-                  <div className="card-body gap-3 p-4">
-                    <h3 className="card-title text-sm font-semibold">Плеер сэмпла</h3>
-                    <SampleLibraryPlayerPanel
-                      playback={playback}
-                      selectedSample={selectedPlaybackSample}
-                      onExport={
-                        selectedPlaybackSample && active
-                          ? () => void handleExportSelected()
-                          : undefined
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
+              <CabinetSampleCollectionBody
+                libLoading={libLoading}
+                playback={playback}
+                playbackDisabled={playbackDisabled}
+                selectedSample={selectedPlaybackSample}
+                rows={catalogSamples}
+                mode="catalog"
+                onSelectRow={(row) => void handleSelectPlaybackSample(row, 'catalog')}
+                onTogglePlay={(row) => void handleTogglePlayback(row, 'catalog')}
+                onExportSelected={
+                  selectedPlaybackSample && active
+                    ? () => void handleExportSelected()
+                    : undefined
+                }
+              />
             </>
           ) : (
             <>
@@ -632,47 +615,32 @@ export function SampleLibraryPage() {
                   </label>
                 )}
               </div>
-              {libLoading ? (
-                <span className="loading loading-spinner loading-sm" aria-label="Загрузка медиа" />
-              ) : null}
-              <div className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
-                <div className="flex min-w-0 flex-col gap-2">
-                  <SamplePlaybackBar playback={playback} compact />
-                  <SampleTable
-                    rows={nodeSamples}
-                    playback={playback}
-                    playbackDisabled={playbackDisabled}
-                    onSelectRow={(row) => void handleSelectPlaybackSample(row, 'node')}
-                    onTogglePlay={(row) => void handleTogglePlayback(row, 'node')}
-                    mode="node"
-                    readOnly={readOnlyCollection}
-                    canMutate={canMutate}
-                    showMoveFromBuffer={
-                      selection.kind === 'node' &&
-                      selection.collectionId === BUFFER_COLLECTION_ID &&
-                      moveTargets.length > 0
-                    }
-                    moveTargets={moveTargets}
-                    onRemove={(id) => void handleRemove(id)}
-                    onMove={(id, toId) => void handleMove(id, toId)}
-                    onExport={(sample) => void handleExport(sample)}
-                  />
-                </div>
-                <div className="card min-w-0 border border-base-300 bg-base-200/30 shadow-sm">
-                  <div className="card-body gap-3 p-4">
-                    <h3 className="card-title text-sm font-semibold">Плеер сэмпла</h3>
-                    <SampleLibraryPlayerPanel
-                      playback={playback}
-                      selectedSample={selectedPlaybackSample}
-                      onExport={
-                        selectedPlaybackSample && active
-                          ? () => void handleExportSelected()
-                          : undefined
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
+              <CabinetSampleCollectionBody
+                libLoading={libLoading}
+                playback={playback}
+                playbackDisabled={playbackDisabled}
+                selectedSample={selectedPlaybackSample}
+                rows={nodeSamples}
+                mode="node"
+                onSelectRow={(row) => void handleSelectPlaybackSample(row, 'node')}
+                onTogglePlay={(row) => void handleTogglePlayback(row, 'node')}
+                onExportSelected={
+                  selectedPlaybackSample && active
+                    ? () => void handleExportSelected()
+                    : undefined
+                }
+                readOnly={readOnlyCollection}
+                canMutate={canMutate}
+                showMoveFromBuffer={
+                  selection.kind === 'node' &&
+                  selection.collectionId === BUFFER_COLLECTION_ID &&
+                  moveTargets.length > 0
+                }
+                moveTargets={moveTargets}
+                onRemove={(id) => void handleRemove(id)}
+                onMove={(id, toId) => void handleMove(id, toId)}
+                onExport={(sample) => void handleExport(sample)}
+              />
             </>
           )}
         </section>
@@ -681,150 +649,6 @@ export function SampleLibraryPage() {
       {membraneId ? (
         <p className="text-xs font-mono text-base-content/40">membrane: {membraneId}</p>
       ) : null}
-    </div>
-  );
-}
-
-import type { SamplePlaybackSnapshot } from '@/lib/sampleLibraryPlaybackHub';
-
-interface SampleTableProps {
-  rows: MembraneCatalogSample[] | MediaSample[];
-  playback: SamplePlaybackSnapshot;
-  playbackDisabled: boolean;
-  onSelectRow: (row: MembraneCatalogSample | MediaSample) => void;
-  onTogglePlay: (row: MembraneCatalogSample | MediaSample) => void;
-  mode: 'catalog' | 'node';
-  readOnly?: boolean;
-  canMutate?: boolean;
-  showMoveFromBuffer?: boolean;
-  moveTargets?: Collection[];
-  onRemove?: (id: string) => void;
-  onMove?: (id: string, toId: string) => void;
-  onExport?: (sample: MediaSample) => void;
-}
-
-function SampleTable({
-  rows,
-  playback,
-  playbackDisabled,
-  onSelectRow,
-  onTogglePlay,
-  mode,
-  readOnly = true,
-  canMutate = false,
-  showMoveFromBuffer = false,
-  moveTargets = [],
-  onRemove,
-  onMove,
-  onExport,
-}: SampleTableProps) {
-  const colSpan = mode === 'node' ? 6 : 5;
-  const playingId = playback.selectedSampleId;
-  const playbackStatus = playback.status;
-
-  return (
-    <div className="overflow-x-auto rounded-lg border border-base-300">
-      <table className="table table-sm">
-        <thead>
-          <tr>
-            <th>Название</th>
-            <th>class</th>
-            <th>label</th>
-            {mode === 'node' ? <th>источник</th> : null}
-            <th className="text-right">размер</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length === 0 ? (
-            <tr>
-              <td colSpan={colSpan} className="text-center text-base-content/50">
-                Нет сэмплов.
-              </td>
-            </tr>
-          ) : (
-            rows.map((row) => {
-              const id = row.id;
-              const isPlaying = playingId === id && playbackStatus === 'playing';
-              const isLoading = playingId === id && playbackStatus === 'loading';
-              const source = mode === 'node' ? (row as MediaSample).source : undefined;
-              const sample = mode === 'node' ? (row as MediaSample) : null;
-
-              return (
-                <tr
-                  key={id}
-                  className={`cursor-pointer ${playingId === id ? 'bg-primary/10' : undefined}`}
-                  onClick={() => onSelectRow(row)}
-                >
-                  <td className="max-w-[14rem] truncate">{row.title}</td>
-                  <td>{row.class}</td>
-                  <td>{row.label}</td>
-                  {mode === 'node' ? <td>{source}</td> : null}
-                  <td className="text-right tabular-nums">{formatBytes(row.sizeBytes)}</td>
-                  <td>
-                    <div className="flex flex-wrap justify-end gap-1">
-                      <button
-                        type="button"
-                        className="btn btn-xs btn-ghost"
-                        disabled={playbackDisabled}
-                        aria-label={isPlaying ? 'Пауза' : 'Воспроизвести'}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onTogglePlay(row);
-                        }}
-                      >
-                        {isLoading ? '…' : isPlaying ? '⏸' : '▶'}
-                      </button>
-                      {mode === 'node' && sample && onExport ? (
-                        <button
-                          type="button"
-                          className="btn btn-xs btn-ghost"
-                          disabled={playbackDisabled}
-                          aria-label="Экспорт"
-                          onClick={() => onExport(sample)}
-                        >
-                          ↓
-                        </button>
-                      ) : null}
-                      {showMoveFromBuffer && canMutate && onMove ? (
-                        <select
-                          className="select select-bordered select-xs max-w-[8rem]"
-                          defaultValue=""
-                          disabled={playbackDisabled}
-                          onChange={(e) => {
-                            const toId = e.target.value;
-                            if (toId) onMove(id, toId);
-                            e.target.value = '';
-                          }}
-                        >
-                          <option value="" disabled>
-                            Перенести…
-                          </option>
-                          {moveTargets.map((c) => (
-                            <option key={c.id} value={c.id}>
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
-                      ) : null}
-                      {mode === 'node' && !readOnly && canMutate && onRemove ? (
-                        <button
-                          type="button"
-                          className="btn btn-xs btn-ghost text-error"
-                          disabled={playbackDisabled}
-                          onClick={() => onRemove(id)}
-                        >
-                          Удалить
-                        </button>
-                      ) : null}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })
-          )}
-        </tbody>
-      </table>
     </div>
   );
 }
