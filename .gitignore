@@ -46,6 +46,9 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Кэш загрузки внешних датасетов (WAV остаются в real-collection/)
+docs/datasets/samples/.cache/
+
 # Lockfile-ы других пакетных менеджеров (используем yarn.lock)
 package-lock.json
 pnpm-lock.yaml
