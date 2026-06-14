@@ -41,13 +41,21 @@ enum AudioFormat {
 }
 
 model Device {
-  id             String          @id @default(uuid()) @db.Uuid
-  name           String
-  kind           DeviceKind
-  createdAt      DateTime        @default(now())
-  collections    Collection[]
-  samples        Sample[]
-  trendTemplates TrendTemplate[]
+  id                      String          @id @default(uuid()) @db.Uuid
+  name                    String
+  kind                    DeviceKind
+  /** Cabinet membrane that owns this field device (MP4 scope). */
+  membraneId              String?         @db.Uuid
+  /** Per-device limits copied from membrane tariff at pair/register; env fallback when null. */
+  userStorageQuotaBytes   BigInt?
+  bufferQuotaBytes        BigInt?
+  datasetCatalogId        String?
+  createdAt               DateTime        @default(now())
+  collections             Collection[]
+  samples                 Sample[]
+  trendTemplates          TrendTemplate[]
+
+  @@index([membraneId])
 }
 
 model Collection {

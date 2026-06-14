@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { Device, DeviceKind } from '../../prisma/client';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';
 import { PrismaService } from '../../prisma/prisma.service';
+import { resolveDeviceLimits } from './device-limits';
 
 export interface QuotaBucketDto {
   usedBytes: number;
@@ -22,6 +23,13 @@ export interface DeviceQuotaDto {
   dataset: DatasetQuotaInfoDto;
 }
 
+export interface DeviceMembraneContext {
+  membraneId: string;
+  userStorageQuotaBytes: bigint | number | string;
+  bufferQuotaBytes: bigint | number | string;
+  datasetCatalogId: string;
+}
+
 @Injectable()
 export class DevicesService {
   constructor(
@@ -29,9 +37,41 @@ export class DevicesService {
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
-  async register(name: string, kind: DeviceKind): Promise<Device> {
+  async register(
+    name: string,
+    kind: DeviceKind,
+    membraneContext?: DeviceMembraneContext,
+  ): Promise<Device> {
     return this.prisma.device.create({
-      data: { name, kind },
+      data: {
+        name,
+        kind,
+        ...(membraneContext
+          ? {
+              membraneId: membraneContext.membraneId,
+              userStorageQuotaBytes: BigInt(membraneContext.userStorageQuotaBytes),
+              bufferQuotaBytes: BigInt(membraneContext.bufferQuotaBytes),
+              datasetCatalogId: membraneContext.datasetCatalogId,
+            }
+          : {}),
+      },
+    });
+  }
+
+  async syncMembraneContext(deviceId: string, membraneContext: DeviceMembraneContext): Promise<Device> {
+    const existing = await this.prisma.device.findUnique({ where: { id: deviceId } });
+    if (!existing) {
+      throw new NotFoundException(`Device ${deviceId} not found`);
+    }
+
+    return this.prisma.device.update({
+      where: { id: deviceId },
+      data: {
+        membraneId: membraneContext.membraneId,
+        userStorageQuotaBytes: BigInt(membraneContext.userStorageQuotaBytes),
+        bufferQuotaBytes: BigInt(membraneContext.bufferQuotaBytes),
+        datasetCatalogId: membraneContext.datasetCatalogId,
+      },
     });
   }
 
@@ -40,6 +80,13 @@ export class DevicesService {
   }
 
   async getQuota(deviceId: string): Promise<DeviceQuotaDto> {
+    const device = await this.prisma.device.findUnique({ where: { id: deviceId } });
+    if (!device) {
+      throw new NotFoundException(`Device ${deviceId} not found`);
+    }
+
+    const limits = resolveDeviceLimits(device, this.config);
+
     const rows = await this.prisma.sample.findMany({
       where: { deviceId },
       select: {
@@ -66,16 +113,16 @@ export class DevicesService {
     return {
       userStorage: {
         usedBytes: userStorageUsed,
-        limitBytes: this.config.MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE,
+        limitBytes: limits.userStorageQuotaBytes,
         backend: 'server',
       },
       buffer: {
         usedBytes: bufferUsed,
-        limitBytes: this.config.MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE,
+        limitBytes: limits.bufferQuotaBytes,
         backend: 'server',
       },
       dataset: {
-        catalogId: this.config.MEDIA_DEFAULT_DATASET_CATALOG_ID,
+        catalogId: limits.datasetCatalogId,
         sampleCount: datasetSampleCount,
       },
     };

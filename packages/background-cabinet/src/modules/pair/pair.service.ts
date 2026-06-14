@@ -39,7 +39,7 @@ export class PairService {
     const node = await this.prisma.node.findUnique({
       where: { id: matched.nodeId },
       include: {
-        membrane: { include: { user: true } },
+        membrane: { include: { user: true, tariff: true } },
         device: true,
       },
     });
@@ -49,11 +49,18 @@ export class PairService {
 
     const now = new Date();
     let mediaDeviceId = node.device?.mediaDeviceId ?? null;
+    const membraneContext = {
+      membraneId: node.membrane.id,
+      userStorageQuotaBytes: node.membrane.tariff.userStorageQuotaBytes.toString(),
+      bufferQuotaBytes: node.membrane.tariff.bufferQuotaBytes.toString(),
+      datasetCatalogId: node.membrane.tariff.datasetCatalogId,
+    };
 
     if (!mediaDeviceId) {
       const label = clientLabel?.trim() || node.label;
-      const mediaDevice = await this.mediaBridge.registerDevice(label);
+      const mediaDevice = await this.mediaBridge.registerDevice(label, membraneContext);
       mediaDeviceId = mediaDevice.id;
+      await this.mediaBridge.ensureReservedCollections(mediaDeviceId);
       await this.prisma.device.create({
         data: {
           nodeId: node.id,
@@ -64,6 +71,8 @@ export class PairService {
         },
       });
     } else {
+      await this.mediaBridge.syncMembraneContext(mediaDeviceId, membraneContext);
+      await this.mediaBridge.ensureReservedCollections(mediaDeviceId);
       await this.prisma.device.update({
         where: { nodeId: node.id },
         data: {

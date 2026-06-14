@@ -107,7 +107,7 @@ export interface Tariff {
 }
 ```
 
-Media-server читает лимиты из tariff мембраны при upload (MP4: service-to-service или token claims). До MP4 — env fallback `MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE` / `MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE`.
+Media-server читает лимиты из tariff мембраны при upload (MP4: копируются на `Device` при pair/register; env — fallback для legacy).
 
 ### Автономный режим (`nodeConnectionMode: autonomous`)
 

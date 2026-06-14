@@ -1,5 +1,19 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { DEVICE_KINDS } from '../../common/swagger/openapi.constants';
+
+export class DeviceMembraneContextDto {
+  @ApiProperty({ format: 'uuid' })
+  membraneId!: string;
+
+  @ApiProperty({ example: '1073741824', description: 'User storage quota in bytes (string or number)' })
+  userStorageQuotaBytes!: string | number;
+
+  @ApiProperty({ example: '1073741824', description: 'Buffer quota in bytes (string or number)' })
+  bufferQuotaBytes!: string | number;
+
+  @ApiProperty({ example: 'free-v1-catalog' })
+  datasetCatalogId!: string;
+}
 
 export class RegisterDeviceDto {
   @ApiProperty({ example: 'lab-node' })
@@ -7,6 +21,14 @@ export class RegisterDeviceDto {
 
   @ApiProperty({ enum: DEVICE_KINDS, example: 'microphone' })
   kind!: (typeof DEVICE_KINDS)[number];
+
+  @ApiPropertyOptional({ type: DeviceMembraneContextDto })
+  membrane?: DeviceMembraneContextDto;
+}
+
+export class PatchDeviceMembraneContextDto {
+  @ApiProperty({ type: DeviceMembraneContextDto })
+  membrane!: DeviceMembraneContextDto;
 }
 
 export class DeviceResponseDto {
