@@ -74,7 +74,7 @@ print('pair/status OK', d['deviceId'][:8])
 "
 
 echo "=== revoke key → pair/status inactive ==="
-KEY_ID=$(echo "$KEY_RESP" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+KEY_ID=$(echo "$KEY_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('accessKey',{}).get('id') or d.get('id',''))")
 curl -fsS -X POST "$API/v1/access-keys/$KEY_ID/revoke" -H "Authorization: Bearer $TOKEN" >/dev/null
 REVOKED=$(curl -fsS "$API/v1/pair/status" -H "Authorization: Bearer $PAIR_TOKEN")
 echo "$REVOKED" | python3 -c "
