@@ -153,6 +153,7 @@ yarn cabinet:mp6:prod   # MP6: full MP1–MP5 regression (one session)
 | MP1 | auth + shell | **prod** 2026-06-13 | **archived** |
 | MP2 | keys + tariff | **prod** | **archived** |
 | MP3 | client pairing | **prod** | **archived** |
+| **MP4** | media per membrane | **prod** 2026-06-12 | **archived** |
 | **MP5** | telemetry journal | **prod** 2026-06-14 | **archived** |
 | **MP6** | final regression | **prod** 2026-06-14 | **archived** |
 
