@@ -25,6 +25,8 @@
     "save-code-review": "yarn run archive:daily-review",
     "archive:daily-day": "node scripts/archive-daily-day-artifacts.mjs",
     "dataset:generate": "node scripts/generate-dataset-synthetics.mjs",
+    "dataset:fetch-real": "node scripts/fetch-real-dataset-collection.mjs",
+    "dataset:sync-free-v1": "node scripts/sync-free-v1-catalog.mjs",
     "benchmark:detectors": "yarn turbo run build --filter=@membrana/harmonic-detector-service && node scripts/benchmark-detectors.mjs",
     "save-daily-day": "yarn run archive:daily-day",
     "code-review:full": "node scripts/code-review.mjs --full",

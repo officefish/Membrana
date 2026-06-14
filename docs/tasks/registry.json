@@ -70,6 +70,110 @@
       "archiveNotes": null
     },
     {
+      "id": "real-dataset-live-calibration",
+      "title": "Real dataset v0.2: библиотеки → анализ → live matching → journal parity (неделя)",
+      "promptPath": "docs/prompts/REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "media-library-a2-ui",
+        "membrane-platform-mp5-telemetry-journal",
+        "tariff-dataset-v1"
+      ]
+    },
+    {
+      "id": "tariff-dataset-v1",
+      "title": "Tariff Dataset v1: убрать benchmark, free-v1 корпус (эпик DS1–DS5)",
+      "promptPath": "docs/prompts/TARIFF_DATASET_V1_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "tariff-dataset-ds1-corpus",
+      "title": "Tariff Dataset DS1: корпус free-v1 и скрипты sync",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS1_CORPUS_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "tariff-dataset-v1"
+      ]
+    },
+    {
+      "id": "tariff-dataset-ds2-domain",
+      "title": "Tariff Dataset DS2: domain model без benchmark",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS2_DOMAIN_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "tariff-dataset-ds1-corpus"
+      ]
+    },
+    {
+      "id": "tariff-dataset-ds3-client-bundled",
+      "title": "Tariff Dataset DS3: client bundled catalog и UI",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS3_CLIENT_BUNDLED_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "tariff-dataset-ds2-domain"
+      ]
+    },
+    {
+      "id": "tariff-dataset-ds4-benchmark-v02",
+      "title": "Tariff Dataset DS4: benchmark runner на v0.2",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS4_BENCHMARK_V02_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "tariff-dataset-ds1-corpus"
+      ]
+    },
+    {
+      "id": "tariff-dataset-ds5-server-provision",
+      "title": "Tariff Dataset DS5: provisioning каталога на media-server при pair",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS5_SERVER_PROVISION_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "tariff-dataset-ds2-domain"
+      ]
+    },
+    {
       "id": "mcp-repo-bootstrap",
       "title": "MCP repo bootstrap: example configs, gitignore, verify script",
       "promptPath": "docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md",
