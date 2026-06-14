@@ -101,7 +101,7 @@ export interface Tariff {
 
 ```typescript
 {
-  userStorage: QuotaUsage;  // used/limit по kind=user + benchmark system
+  userStorage: QuotaUsage;  // used/limit по kind=user (tariff-dataset не входит)
   buffer: QuotaUsage;       // used/limit по kind=buffer
   dataset: { catalogId: string; sampleCount: number }; // информационно, read-only каталог
 }

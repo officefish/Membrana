@@ -7,7 +7,8 @@ export type SampleSource =
   | 'disk-import'
   | 'synthetic'
   | 'move'
-  | 'copy';
+  | 'copy'
+  | 'catalog';
 
 export interface Collection {
   id: string;
@@ -15,7 +16,7 @@ export interface Collection {
   kind: CollectionKind;
   createdAt: string;
   updatedAt: string;
-  systemKey?: 'benchmark' | 'tariff-dataset';
+  systemKey?: 'tariff-dataset';
 }
 
 export interface MediaSample {

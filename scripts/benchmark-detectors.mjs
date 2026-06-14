@@ -1,5 +1,5 @@
 /**
- * Benchmark detectors on data/detectors-benchmark manifest (v0.1+).
+ * Benchmark detectors on data/detectors-benchmark manifest (v0.2 free-v1 catalog).
  * Usage: yarn benchmark:detectors
  */
 import { access, readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -18,7 +18,7 @@ import { patchDetectorBenchmarkMd } from './lib/benchmark-report-md.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.1');
+const DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
 const MANIFEST_PATH = join(DATASET_DIR, 'manifest.json');
 const REPORT_JSON = join(DATASET_DIR, 'reports', 'latest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
@@ -146,9 +146,10 @@ async function main() {
   await ensureHarmonicBuilt();
 
   const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
-  const testSamples = manifest.samples.filter((s) => s.split === 'test');
+  const withSplit = manifest.samples.filter((s) => s.split === 'test');
+  const testSamples = withSplit.length > 0 ? withSplit : manifest.samples;
   if (testSamples.length === 0) {
-    throw new Error('No test-split samples in manifest');
+    throw new Error('No samples in manifest — run yarn dataset:sync-free-v1');
   }
 
   console.log(`Benchmark: ${testSamples.length} samples (dataset v${manifest.version})`);
@@ -160,7 +161,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     datasetVersion: `v${manifest.version}`,
     sampleCount: testSamples.length,
-    manifestPath: 'data/detectors-benchmark/v0.1/manifest.json',
+    manifestPath: 'data/detectors-benchmark/v0.2/manifest.json',
     detectors,
   };
 

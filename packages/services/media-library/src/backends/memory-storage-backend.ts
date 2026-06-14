@@ -3,7 +3,8 @@ import { DomainError } from '@membrana/core';
 import {
   BUFFER_COLLECTION_ID,
   DEFAULT_LOCAL_QUOTA_BYTES,
-  SYSTEM_BENCHMARK_COLLECTION_ID,
+  TARIFF_DATASET_COLLECTION_ID,
+  TARIFF_DATASET_SYSTEM_KEY,
 } from '../constants.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
@@ -22,7 +23,11 @@ function newId(): string {
 }
 
 function isReservedCollection(id: string): boolean {
-  return id === BUFFER_COLLECTION_ID || id === SYSTEM_BENCHMARK_COLLECTION_ID;
+  return id === BUFFER_COLLECTION_ID || id === TARIFF_DATASET_COLLECTION_ID;
+}
+
+function isTariffDatasetCollection(col: Collection | undefined): boolean {
+  return col?.kind === 'system' && col.systemKey === TARIFF_DATASET_SYSTEM_KEY;
 }
 
 export interface MemoryStorageBackendOptions {
@@ -53,9 +58,19 @@ export class MemoryStorageBackend implements IStorageBackend {
     this.serverReachable = options.serverReachable ?? false;
   }
 
+  private userUsedBytes(): number {
+    let used = 0;
+    for (const sample of this.samples.values()) {
+      const col = this.collections.get(sample.collectionId);
+      if (isTariffDatasetCollection(col)) continue;
+      used += sample.sizeBytes;
+    }
+    return used;
+  }
+
   async getQuota(): Promise<StorageQuota> {
     return {
-      usedBytes: this.usedBytes,
+      usedBytes: this.userUsedBytes(),
       limitBytes: this.limitBytes,
       backend: this.backendKind,
       serverReachable: this.serverReachable,
@@ -73,12 +88,12 @@ export class MemoryStorageBackend implements IStorageBackend {
         updatedAt: t,
       });
     }
-    if (!this.collections.has(SYSTEM_BENCHMARK_COLLECTION_ID)) {
-      this.collections.set(SYSTEM_BENCHMARK_COLLECTION_ID, {
-        id: SYSTEM_BENCHMARK_COLLECTION_ID,
-        name: 'Benchmark (системная)',
+    if (!this.collections.has(TARIFF_DATASET_COLLECTION_ID)) {
+      this.collections.set(TARIFF_DATASET_COLLECTION_ID, {
+        id: TARIFF_DATASET_COLLECTION_ID,
+        name: 'Базовый набор (free-v1)',
         kind: 'system',
-        systemKey: 'benchmark',
+        systemKey: TARIFF_DATASET_SYSTEM_KEY,
         createdAt: t,
         updatedAt: t,
       });
@@ -136,11 +151,15 @@ export class MemoryStorageBackend implements IStorageBackend {
     meta: NewSampleMeta,
   ): Promise<MediaSample> {
     await this.ensureReservedCollections();
-    if (!this.collections.has(collectionId)) {
+    const col = this.collections.get(collectionId);
+    if (!col) {
       throw new DomainError('Collection not found', 'NOT_FOUND');
     }
+    if (isTariffDatasetCollection(col)) {
+      throw new DomainError('Cannot upload to tariff dataset collection', 'FORBIDDEN');
+    }
     const size = blob.size;
-    if (this.usedBytes + size > this.limitBytes) {
+    if (this.userUsedBytes() + size > this.limitBytes) {
       throw new DomainError('Storage quota exceeded', 'QUOTA_EXCEEDED');
     }
     const id = newId();
@@ -162,7 +181,44 @@ export class MemoryStorageBackend implements IStorageBackend {
     this.samples.set(id, sample);
     this.blobs.set(id, blob);
     this.usedBytes += size;
-    const col = this.collections.get(collectionId)!;
+    this.collections.set(collectionId, { ...col, updatedAt: nowIso() });
+    return sample;
+  }
+
+  /** Import read-only catalog sample (no user quota). */
+  async importCatalogSample(
+    collectionId: string,
+    blob: Blob,
+    meta: NewSampleMeta,
+    fixedId: string,
+  ): Promise<MediaSample> {
+    await this.ensureReservedCollections();
+    const col = this.collections.get(collectionId);
+    if (!col || !isTariffDatasetCollection(col)) {
+      throw new DomainError('Catalog import only allowed for tariff dataset', 'FORBIDDEN');
+    }
+    if (this.samples.has(fixedId)) {
+      return this.samples.get(fixedId)!;
+    }
+    const size = blob.size;
+    const sample: MediaSample = {
+      id: fixedId,
+      collectionId,
+      title: meta.title,
+      class: meta.class,
+      label: meta.label,
+      source: meta.source,
+      durationSec: meta.durationSec,
+      sampleRate: meta.sampleRate,
+      channels: meta.channels ?? 1,
+      createdAt: nowIso(),
+      storageRef: fixedId,
+      notes: meta.notes,
+      sizeBytes: size,
+    };
+    this.samples.set(fixedId, sample);
+    this.blobs.set(fixedId, blob);
+    this.usedBytes += size;
     this.collections.set(collectionId, { ...col, updatedAt: nowIso() });
     return sample;
   }
@@ -170,6 +226,10 @@ export class MemoryStorageBackend implements IStorageBackend {
   async removeSample(sampleId: string): Promise<void> {
     const sample = this.samples.get(sampleId);
     if (!sample) return;
+    const col = this.collections.get(sample.collectionId);
+    if (isTariffDatasetCollection(col)) {
+      throw new DomainError('Cannot delete catalog samples', 'FORBIDDEN');
+    }
     this.samples.delete(sampleId);
     this.blobs.delete(sampleId);
     this.usedBytes = Math.max(0, this.usedBytes - sample.sizeBytes);
@@ -180,7 +240,12 @@ export class MemoryStorageBackend implements IStorageBackend {
     if (!sample) {
       throw new DomainError('Sample not found', 'NOT_FOUND');
     }
-    if (!this.collections.has(toCollectionId)) {
+    const fromCol = this.collections.get(sample.collectionId);
+    const toCol = this.collections.get(toCollectionId);
+    if (isTariffDatasetCollection(fromCol) || isTariffDatasetCollection(toCol)) {
+      throw new DomainError('Cannot move catalog samples', 'FORBIDDEN');
+    }
+    if (!toCol) {
       throw new DomainError('Target collection not found', 'NOT_FOUND');
     }
     const updated: MediaSample = {

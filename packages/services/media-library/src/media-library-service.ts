@@ -1,6 +1,7 @@
 import { DomainError } from '@membrana/core';
 
 import { createBrowserLimitedStorageBackend } from './backends/memory-storage-backend.js';
+import { seedBundledCatalogIfEmpty } from './bundled-catalog.js';
 import {
   BUFFER_COLLECTION_ID,
   DEFAULT_MEDIA_LIBRARY_CONFIG,
@@ -76,6 +77,10 @@ export class MediaLibraryService {
   }
 
   async init(): Promise<void> {
+    await this.backend.ensureReservedCollections();
+    await seedBundledCatalogIfEmpty(this.backend, {
+      assetBaseUrl: '/catalog/free-v1',
+    });
     await this.refresh();
   }
 

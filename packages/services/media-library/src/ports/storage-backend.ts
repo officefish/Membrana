@@ -21,4 +21,11 @@ export interface IStorageBackend {
   moveSample(sampleId: string, toCollectionId: string): Promise<MediaSample>;
   readBlob(sampleId: string): Promise<Blob>;
   ensureReservedCollections(): Promise<void>;
+  /** Optional: seed read-only tariff catalog (MemoryStorageBackend). */
+  importCatalogSample?(
+    collectionId: string,
+    blob: Blob,
+    meta: NewSampleMeta,
+    fixedId: string,
+  ): Promise<MediaSample>;
 }

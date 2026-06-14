@@ -39,7 +39,7 @@ interface Collection {
   createdAt: string;
   updatedAt: string;
   /** Только для kind === 'system'. */
-  systemKey?: 'benchmark' | 'tariff-dataset';
+  systemKey?: 'tariff-dataset';
 }
 
 /** Метаданные + ссылка на бинарник в storage-backend. */
@@ -75,22 +75,21 @@ interface MediaSample {
 | **user** | uuid | ✅ пользователем | Произвольные наборы («полевые июнь», «ветер балкон»); суммарный объём → `userStorageQuotaBytes` |
 | **system** | см. ниже | ❌ коллекцию | Системные библиотеки; не входят в user-квоту, если read-only dataset |
 
-**System-коллекции (два разных назначения):**
+**System-коллекция (тарифный датасет):**
 
 | systemKey | ID | Редактирование | Назначение |
 |-----------|-----|----------------|------------|
-| `benchmark` | `__system_benchmark__` | пользователь добавляет/удаляет сэмплы | Stage-gate / export manifest |
-| `tariff-dataset` | `__tariff_dataset__` | **read-only** (paired/cloud) | Каталог по тарифу (`datasetCatalogId`); состав задаёт платформа; влияет на обучение детекторов |
+| `tariff-dataset` | `__tariff_dataset__` | **read-only** | Каталог по тарифу; free = `free-v1-catalog` (120 × 5 с); stage-gate benchmark и детекторы |
 
-**Автономный client:** вместо облачного `tariff-dataset` — **bundled library** (мини-набор в сборке, фиксирован, не меняется при смене тарифа).
+**Автономный client:** при первом `init()` — **bundled catalog** из `apps/client/public/catalog/free-v1/` (тот же состав, что `data/detectors-benchmark/v0.2/`). После pairing сервер provisioning подменяет/дополняет каталог по тарифу.
 
 **Правила:**
 
-- Пользователь **не удаляет** системные коллекции; в `benchmark` может удалить сэмплы; в `tariff-dataset` — только чтение.
-- Загрузка в `tariff-dataset` с клиента **запрещена** (provisioning — платформа).
+- Пользователь **не удаляет** системные коллекции; в `tariff-dataset` — только чтение (нет upload/delete/move).
+- Загрузка в `tariff-dataset` с клиента **запрещена** (provisioning — платформа / bundled seed).
 - Из **буфера** сэмплы **переносятся** (move), не копируются по умолчанию — буфер освобождается.
 - Copy в другую коллекцию — явное действие «дублировать».
-- **Export manifest** — из `__system_benchmark__` (не из tariff-dataset).
+- **Benchmark детекторов** — `yarn benchmark:detectors` на `data/detectors-benchmark/v0.2/manifest.json` (синхронизация: `yarn dataset:sync-free-v1`).
 
 ### 2.3. Буфер записи
 
@@ -260,11 +259,10 @@ Auth: `X-Membrana-Token` на `/v1/*` (как в [`background-office`](../packag
 
 ## 6. Связь с benchmark
 
-- **Export manifest** только из системной коллекции `__system_benchmark__`:
-  - `yarn media:export-manifest --out data/detectors-benchmark/v0.2/manifest.json`
-  - или кнопка UI «Export for benchmark»
+- **Канонический корпус:** `data/detectors-benchmark/v0.2/` — 120 реальных WAV (free-v1), manifest с `split: 'test'`.
+- **Синхронизация:** `yarn dataset:sync-free-v1` из `docs/datasets/samples/real-collection/` → v0.2 + `apps/client/public/catalog/free-v1/`.
+- **Прогон детекторов:** `yarn benchmark:detectors` (читает v0.2; v0.1 синтетика — только CI-smoke legacy).
 - Формат строк manifest совместим с [`data/detectors-benchmark/v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json).
-- WAV на export: symlink/copy в `data/…` для CI **только синтетика**; полевые остаются на backend path + manifest с `storageRef` или relative path при Electron.
 
 ---
 

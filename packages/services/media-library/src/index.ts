@@ -5,7 +5,9 @@
 
 export {
   BUFFER_COLLECTION_ID,
-  SYSTEM_BENCHMARK_COLLECTION_ID,
+  TARIFF_DATASET_COLLECTION_ID,
+  TARIFF_DATASET_SYSTEM_KEY,
+  FREE_V1_CATALOG_ID,
   DEFAULT_LOCAL_QUOTA_BYTES,
   DEFAULT_MAX_BUFFER_SAMPLES,
   DEFAULT_MEDIA_LIBRARY_CONFIG,
@@ -51,6 +53,16 @@ export {
   type MediaLibraryStorageMode,
   type QuotaLevel,
 } from './quota-status.js';
+
+export {
+  DEFAULT_BUNDLED_CATALOG_MANIFEST_URL,
+  fetchBundledCatalogManifest,
+  loadBundledCatalogManifestFromRepo,
+  seedBundledCatalogIfEmpty,
+  type BundledCatalogManifest,
+  type BundledCatalogManifestEntry,
+  type BundledCatalogSeedOptions,
+} from './bundled-catalog.js';
 
 export {
   MEDIA_LIBRARY_HUB,
