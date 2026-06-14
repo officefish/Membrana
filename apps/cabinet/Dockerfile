@@ -17,7 +17,7 @@ COPY packages/services/media-library packages/services/media-library
 COPY apps/cabinet apps/cabinet
 
 RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/media-library-service --all \
-  && yarn workspace @membrana/cabinet build
+  && yarn workspace @membrana/cabinet exec vite build
 
 FROM nginx:1.27-alpine AS runtime
 COPY apps/cabinet/docker/nginx.conf /etc/nginx/conf.d/default.conf

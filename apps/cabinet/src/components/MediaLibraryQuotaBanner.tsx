@@ -43,9 +43,9 @@ export function MediaLibraryQuotaBanner({ quota, nodeLabel }: MediaLibraryQuotaB
         <span className="text-xs tabular-nums">
           Использовано {used} / {limit} ({pct.toFixed(0)}%)
         </span>
-        {quota.bufferLimitBytes > 0 ? (
+        {quota.bufferLimitBytes != null && quota.bufferLimitBytes > 0 ? (
           <span className="text-xs tabular-nums opacity-80">
-            Буфер: {formatQuotaMb(quota.bufferUsedBytes)} /{' '}
+            Буфер: {formatQuotaMb(quota.bufferUsedBytes ?? 0)} /{' '}
             {formatQuotaMb(quota.bufferLimitBytes)}
           </span>
         ) : null}
