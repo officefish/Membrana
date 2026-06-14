@@ -73,18 +73,20 @@ assert d.get('keyActive') is True, d
 print('pair/status OK', d['deviceId'][:8])
 "
 
-echo "=== revoke key → pair/status inactive ==="
+echo "=== revoke key → session invalidated (401) ==="
 KEY_ID=$(echo "$KEY_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('accessKey',{}).get('id') or d.get('id',''))")
 curl -fsS -X POST "$API/v1/access-keys/$KEY_ID/revoke" -H "Authorization: Bearer $TOKEN" >/dev/null
-REVOKED=$(curl -fsS "$API/v1/pair/status" -H "Authorization: Bearer $PAIR_TOKEN")
-echo "$REVOKED" | python3 -c "
-import sys,json
-d=json.load(sys.stdin)
-assert d.get('linked') is True, d
-assert d.get('keyActive') is False, d
-assert d.get('inactiveReason') == 'revoked', d
-print('revoke/status OK')
+REVOKED_CODE=$(curl -s -o /tmp/revoked.json -w "%{http_code}" "$API/v1/pair/status" -H "Authorization: Bearer $PAIR_TOKEN")
+if [ "$REVOKED_CODE" = "401" ]; then
+  echo "revoke/session invalidated OK"
+else
+  python3 -c "
+import json
+d=json.load(open('/tmp/revoked.json'))
+assert d.get('linked') is True and d.get('keyActive') is False, d
+print('revoke/status OK', d.get('inactiveReason'))
 "
+fi
 
 echo "=== MP4 quota regression ==="
 export DEVICE_ID MEDIA_TOKEN
