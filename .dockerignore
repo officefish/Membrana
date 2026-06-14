@@ -18,9 +18,13 @@ apps/**
 !apps/cabinet/**
 packages/agenda
 packages/core
+!packages/core
+!packages/core/**
 packages/device-board
 packages/libs
 packages/services
+!packages/services/media-library
+!packages/services/media-library/**
 packages/background-office
 docs
 scripts
