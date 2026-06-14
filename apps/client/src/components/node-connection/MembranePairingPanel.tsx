@@ -32,6 +32,7 @@ export const MembranePairingPanel: React.FC = () => {
         membraneId: result.membrane.id,
         nodeId: result.node.id,
         nodeLabel: result.node.label,
+        pairedKeyId: result.pairedKeyId,
       });
       setAccessKey('');
     } catch (err) {

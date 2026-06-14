@@ -6,6 +6,7 @@ export const NodeConnectionModePicker: React.FC = () => {
   const showModePicker = useNodeConnectionStore((s) => s.showModePicker);
   const chooseAutonomous = useNodeConnectionStore((s) => s.chooseAutonomous);
   const openPairingPanel = useNodeConnectionStore((s) => s.openPairingPanel);
+  const openConnectionSettings = useNodeConnectionStore((s) => s.openConnectionSettings);
   const closeModePicker = useNodeConnectionStore((s) => s.closeModePicker);
   const mode = useNodeConnectionStore((s) => s.mode);
 
@@ -25,7 +26,11 @@ export const NodeConnectionModePicker: React.FC = () => {
           <button type="button" className="btn btn-primary flex-1" onClick={() => chooseAutonomous()}>
             Автономный узел
           </button>
-          <button type="button" className="btn btn-outline flex-1" onClick={() => openPairingPanel()}>
+          <button
+            type="button"
+            className="btn btn-outline flex-1"
+            onClick={() => (mode === 'paired' ? openConnectionSettings() : openPairingPanel())}
+          >
             Связь с мембраной
           </button>
         </div>

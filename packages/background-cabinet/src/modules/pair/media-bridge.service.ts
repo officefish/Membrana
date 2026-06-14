@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
@@ -19,6 +19,8 @@ export interface MediaDeviceRegistration {
 
 @Injectable()
 export class MediaBridgeService {
+  private readonly logger = new Logger(MediaBridgeService.name);
+
   constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {}
 
   private mediaHeaders(): Record<string, string> {
@@ -73,11 +75,16 @@ export class MediaBridgeService {
     await this.assertOk(res, 'Media membrane context sync');
   }
 
+  /** Best-effort; pairing must succeed even if collections already exist or media hiccups. */
   async ensureReservedCollections(deviceId: string): Promise<void> {
     const res = await this.mediaFetch(`/v1/devices/${deviceId}/collections/ensure-reserved`, {
       method: 'POST',
       headers: this.mediaHeaders(),
     });
-    await this.assertOk(res, 'Media ensure-reserved collections');
+    if (res.ok) return;
+    const detail = await res.text().catch(() => res.statusText);
+    this.logger.warn(
+      `ensure-reserved failed for device ${deviceId} (${res.status}): ${detail}`,
+    );
   }
 }

@@ -1,10 +1,26 @@
-/** API base: dev proxy `/api-cabinet` or explicit env. */
+const DEFAULT_CABINET_API_URL = 'https://cabinet.membrana.space';
+const DEFAULT_MEDIA_API_URL = 'https://media.membrana.space';
+
+/** API base: env override or prod cabinet (dev and prod hit membrana.space directly). */
 export function getCabinetApiBase(): string {
   const fromEnv = import.meta.env.VITE_CABINET_API_URL as string | undefined;
   if (fromEnv && fromEnv.length > 0) {
     return fromEnv.replace(/\/$/, '');
   }
-  return '/api-cabinet';
+  return DEFAULT_CABINET_API_URL;
+}
+
+/** Media API: env override, pairing response, or prod default. */
+export function resolveMediaApiBase(urlFromPairing: string): string {
+  const fromEnv = import.meta.env.VITE_MEDIA_API_URL as string | undefined;
+  if (fromEnv && fromEnv.length > 0) {
+    return fromEnv.replace(/\/$/, '');
+  }
+  const trimmed = urlFromPairing.replace(/\/$/, '');
+  if (trimmed.length > 0) {
+    return trimmed;
+  }
+  return DEFAULT_MEDIA_API_URL;
 }
 
 export interface PairResponse {
@@ -15,7 +31,25 @@ export interface PairResponse {
   mediaApiUrl: string;
   membrane: { id: string };
   node: { id: string; label: string };
+  pairedKeyId?: string;
 }
+
+export interface PairStatusLinked {
+  linked: true;
+  keyActive: boolean;
+  inactiveReason: 'revoked' | 'expired' | null;
+  membrane: { id: string };
+  node: { id: string; label: string };
+  deviceId: string;
+  pairedKeyId: string | null;
+  sessionExpiresAt: string | null;
+}
+
+export interface PairStatusUnlinked {
+  linked: false;
+}
+
+export type PairStatusResponse = PairStatusLinked | PairStatusUnlinked;
 
 async function parseError(res: Response): Promise<string> {
   try {
@@ -41,6 +75,18 @@ export async function pairWithAccessKey(
   return (await res.json()) as PairResponse;
 }
 
+export async function fetchPairStatus(
+  token: string,
+): Promise<PairStatusResponse | 'session_expired' | 'endpoint_unavailable'> {
+  const res = await fetch(`${getCabinetApiBase()}/v1/pair/status`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status === 401) return 'session_expired';
+  if (res.status === 404) return 'endpoint_unavailable';
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as PairStatusResponse;
+}
+
 /** Lightweight reachability check for paired mode (cabinet health). */
 export async function pingCabinetApi(): Promise<boolean> {
   try {
@@ -52,7 +98,7 @@ export async function pingCabinetApi(): Promise<boolean> {
 }
 
 export async function pingMediaApi(mediaApiUrl: string, mediaToken: string, deviceId: string): Promise<boolean> {
-  const base = mediaApiUrl.replace(/\/$/, '');
+  const base = resolveMediaApiBase(mediaApiUrl);
   try {
     const res = await fetch(`${base}/v1/devices/${deviceId}`, {
       headers: {

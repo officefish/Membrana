@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { pingCabinetApi, pingMediaApi } from '../../api/pairing';
+import { pingMediaApi } from '../../api/pairing';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
 
 export interface NodeConnectionFooterIndicatorProps {
@@ -12,8 +12,8 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
 }) => {
   const mode = useNodeConnectionStore((s) => s.mode);
   const pairing = useNodeConnectionStore((s) => s.pairing);
+  const openConnectionSettings = useNodeConnectionStore((s) => s.openConnectionSettings);
   const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
-  const reportConnectionError = useNodeConnectionStore((s) => s.reportConnectionError);
   const [linkOk, setLinkOk] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -23,33 +23,27 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
     }
 
     let cancelled = false;
-    let wasOk = true;
 
-    const check = async (): Promise<void> => {
-      const cabinetOk = await pingCabinetApi();
-      const mediaOk = cabinetOk
-        ? await pingMediaApi(pairing.mediaApiUrl, pairing.mediaToken, pairing.deviceId)
-        : false;
-      if (cancelled) return;
-      const ok = cabinetOk && mediaOk;
-      setLinkOk(ok);
-      if (!ok && wasOk) {
-        reportConnectionError('cabinet/media unreachable');
-      }
-      wasOk = ok;
+    const checkMedia = async (): Promise<void> => {
+      const mediaOk = await pingMediaApi(pairing.mediaApiUrl, pairing.mediaToken, pairing.deviceId);
+      if (!cancelled) setLinkOk(mediaOk);
     };
 
-    void check();
-    const timer = window.setInterval(() => void check(), 60_000);
+    void checkMedia();
+    const timer = window.setInterval(() => void checkMedia(), 60_000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [mode, pairing, reportConnectionError]);
+  }, [mode, pairing]);
 
   if (mode === null) {
     return (
-      <button type="button" className="btn btn-ghost btn-xs h-6 min-h-6 px-2 text-[10px]" onClick={() => openModePicker()}>
+      <button
+        type="button"
+        className="btn btn-ghost btn-xs h-6 min-h-6 px-2 text-[10px]"
+        onClick={() => openModePicker()}
+      >
         выбрать режим
       </button>
     );
@@ -77,8 +71,7 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
   }
 
   const label = pairing?.nodeLabel ?? 'связан';
-  const status =
-    linkOk === null ? '…' : linkOk ? 'online' : 'offline';
+  const status = linkOk === null ? '…' : linkOk ? 'online' : 'offline';
 
   if (compact) {
     return (
@@ -88,7 +81,7 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
           linkOk === false ? 'text-warning' : 'text-base-content/45'
         }`}
         title={`Связан с мембраной · ${label} · ${status}`}
-        onClick={() => openModePicker()}
+        onClick={() => openConnectionSettings()}
       >
         {linkOk === false ? 'связь?' : 'связан'}
       </button>
@@ -100,8 +93,8 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
       <span>
         Связан: {label} · {status}
       </span>
-      <button type="button" className="btn btn-ghost btn-xs" onClick={() => openModePicker()}>
-        сменить
+      <button type="button" className="btn btn-ghost btn-xs" onClick={() => openConnectionSettings()}>
+        связь
       </button>
     </div>
   );

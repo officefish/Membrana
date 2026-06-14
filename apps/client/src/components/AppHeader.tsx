@@ -6,6 +6,7 @@ import { useNodeConnectionStore } from '../stores/nodeConnectionStore';
 
 export const AppHeader: React.FC = () => {
   const { module, selectedModuleId } = useSelectedModule();
+  const openConnectionSettings = useNodeConnectionStore((s) => s.openConnectionSettings);
   const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
   const mode = useNodeConnectionStore((s) => s.mode);
 
@@ -43,7 +44,7 @@ export const AppHeader: React.FC = () => {
         <button
           type="button"
           className="btn btn-ghost btn-xs min-h-8"
-          onClick={() => openModePicker()}
+          onClick={() => (mode === 'paired' ? openConnectionSettings() : openModePicker())}
           title="Режим узла: автономный или связь с мембраной"
         >
           {mode === 'paired' ? 'связан' : mode === 'autonomous' ? 'автономно' : 'режим узла'}

@@ -91,6 +91,11 @@ export class PairService {
       sessionExpiresAt,
     );
 
+    await this.prisma.device.update({
+      where: { nodeId: node.id },
+      data: { lastPairSessionToken: session.token },
+    });
+
     return {
       token: session.token,
       expiresAt: session.expiresAt,
@@ -99,6 +104,55 @@ export class PairService {
       mediaApiUrl: this.config.MEDIA_PUBLIC_API_URL,
       membrane: { id: node.membrane.id },
       node: { id: node.id, label: node.label },
+      pairedKeyId: matched.id,
+    };
+  }
+
+  async getPairStatus(userId: string, sessionToken: string) {
+    const membrane = await this.prisma.membrane.findUnique({
+      where: { userId },
+      include: {
+        nodes: {
+          include: { device: true },
+          take: 1,
+        },
+      },
+    });
+
+    const node = membrane?.nodes[0];
+    const device = node?.device;
+    if (!membrane || !node || !device) {
+      return { linked: false as const };
+    }
+
+    const session = await this.prisma.session.findUnique({ where: { token: sessionToken } });
+
+    let keyActive = false;
+    let inactiveReason: 'revoked' | 'expired' | null = null;
+
+    if (device.pairedKeyId) {
+      const key = await this.prisma.nodeAccessKey.findUnique({
+        where: { id: device.pairedKeyId },
+      });
+      if (key) {
+        keyActive = isAccessKeyActive(key.expiresAt, key.revokedAt);
+        if (!keyActive) {
+          inactiveReason = key.revokedAt ? 'revoked' : 'expired';
+        }
+      } else {
+        inactiveReason = 'revoked';
+      }
+    }
+
+    return {
+      linked: true as const,
+      keyActive,
+      inactiveReason,
+      membrane: { id: membrane.id },
+      node: { id: node.id, label: node.label },
+      deviceId: device.mediaDeviceId,
+      pairedKeyId: device.pairedKeyId,
+      sessionExpiresAt: session?.expiresAt.toISOString() ?? null,
     };
   }
 

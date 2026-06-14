@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { NodeConnectionMode, PairedNodeCredentials } from '../lib/nodeConnectionMode';
+import type { NodeConnectionMode, PairedNodeCredentials, PairingInvalidReason } from '../lib/nodeConnectionMode';
 
 const STORAGE_KEY = 'membrana.client.nodeConnection';
 
@@ -13,15 +13,24 @@ interface NodeConnectionState extends PersistedNodeConnection {
   hydrated: boolean;
   showModePicker: boolean;
   showPairingPanel: boolean;
+  showLinkedPanel: boolean;
   showFallbackDialog: boolean;
+  showPairingInvalidDialog: boolean;
+  pairingInvalidReason: PairingInvalidReason | null;
   lastConnectionError: string | null;
   hydrate: () => void;
   openModePicker: () => void;
   closeModePicker: () => void;
   openPairingPanel: () => void;
   closePairingPanel: () => void;
+  openLinkedPanel: () => void;
+  closeLinkedPanel: () => void;
+  openConnectionSettings: () => void;
   chooseAutonomous: () => void;
   applyPairing: (pairing: PairedNodeCredentials) => void;
+  disconnectFromMembrane: () => void;
+  handlePairingInvalid: (reason: PairingInvalidReason) => void;
+  dismissPairingInvalidDialog: () => void;
   clearPairing: () => void;
   reportConnectionError: (message: string) => void;
   dismissFallbackDialog: () => void;
@@ -59,7 +68,10 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
   hydrated: false,
   showModePicker: false,
   showPairingPanel: false,
+  showLinkedPanel: false,
   showFallbackDialog: false,
+  showPairingInvalidDialog: false,
+  pairingInvalidReason: null,
   lastConnectionError: null,
 
   hydrate: () => {
@@ -72,11 +84,26 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
     });
   },
 
-  openModePicker: () => set({ showModePicker: true }),
+  openModePicker: () =>
+    set({ showModePicker: true, showLinkedPanel: false, showPairingPanel: false }),
   closeModePicker: () => set({ showModePicker: false }),
 
-  openPairingPanel: () => set({ showPairingPanel: true, showModePicker: false }),
+  openPairingPanel: () =>
+    set({ showPairingPanel: true, showModePicker: false, showLinkedPanel: false }),
   closePairingPanel: () => set({ showPairingPanel: false }),
+
+  openLinkedPanel: () =>
+    set({ showLinkedPanel: true, showModePicker: false, showPairingPanel: false }),
+  closeLinkedPanel: () => set({ showLinkedPanel: false }),
+
+  openConnectionSettings: () => {
+    const { mode } = get();
+    if (mode === 'paired') {
+      get().openLinkedPanel();
+    } else {
+      get().openModePicker();
+    }
+  },
 
   chooseAutonomous: () => {
     const next = { mode: 'autonomous' as const, pairing: null };
@@ -85,7 +112,10 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       ...next,
       showModePicker: false,
       showPairingPanel: false,
+      showLinkedPanel: false,
       showFallbackDialog: false,
+      showPairingInvalidDialog: false,
+      pairingInvalidReason: null,
       lastConnectionError: null,
     });
   },
@@ -97,21 +127,50 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       ...next,
       showModePicker: false,
       showPairingPanel: false,
+      showLinkedPanel: false,
       showFallbackDialog: false,
+      showPairingInvalidDialog: false,
+      pairingInvalidReason: null,
       lastConnectionError: null,
     });
   },
 
-  clearPairing: () => {
+  disconnectFromMembrane: () => {
     const next = { mode: null as NodeConnectionMode | null, pairing: null };
     writePersisted(next);
     set({
       ...next,
-      showModePicker: true,
-      showPairingPanel: false,
+      showLinkedPanel: false,
+      showPairingPanel: true,
+      showModePicker: false,
       showFallbackDialog: false,
+      showPairingInvalidDialog: false,
+      pairingInvalidReason: null,
       lastConnectionError: null,
     });
+  },
+
+  handlePairingInvalid: (reason) => {
+    const next = { mode: null as NodeConnectionMode | null, pairing: null };
+    writePersisted(next);
+    set({
+      ...next,
+      showLinkedPanel: false,
+      showPairingPanel: false,
+      showModePicker: false,
+      showFallbackDialog: false,
+      showPairingInvalidDialog: true,
+      pairingInvalidReason: reason,
+      lastConnectionError: null,
+    });
+  },
+
+  dismissPairingInvalidDialog: () => {
+    set({ showPairingInvalidDialog: false, pairingInvalidReason: null, showPairingPanel: true });
+  },
+
+  clearPairing: () => {
+    get().disconnectFromMembrane();
   },
 
   reportConnectionError: (message) => {
@@ -138,7 +197,10 @@ export function resetNodeConnectionStoreForTests(): void {
     hydrated: false,
     showModePicker: false,
     showPairingPanel: false,
+    showLinkedPanel: false,
     showFallbackDialog: false,
+    showPairingInvalidDialog: false,
+    pairingInvalidReason: null,
     lastConnectionError: null,
   });
 }

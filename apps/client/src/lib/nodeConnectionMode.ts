@@ -10,4 +10,7 @@ export interface PairedNodeCredentials {
   membraneId: string;
   nodeId: string;
   nodeLabel: string;
+  pairedKeyId?: string;
 }
+
+export type PairingInvalidReason = 'revoked' | 'expired' | 'session_expired';

@@ -74,16 +74,19 @@ model Node {
 }
 
 model Device {
-  id            String   @id @default(uuid()) @db.Uuid
-  nodeId        String   @unique @db.Uuid
-  node          Node     @relation(fields: [nodeId], references: [id], onDelete: Cascade)
-  mediaDeviceId String   @unique @db.Uuid
-  label         String?
-  pairedKeyId   String?  @db.Uuid
-  pairedAt      DateTime @default(now())
-  lastSeenAt    DateTime @default(now())
+  id                   String   @id @default(uuid()) @db.Uuid
+  nodeId               String   @unique @db.Uuid
+  node                 Node     @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  mediaDeviceId        String   @unique @db.Uuid
+  label                String?
+  pairedKeyId          String?  @db.Uuid
+  /** Last pairing session token — invalidated when access key is revoked. */
+  lastPairSessionToken String?  @unique
+  pairedAt             DateTime @default(now())
+  lastSeenAt           DateTime @default(now())
 
   @@index([mediaDeviceId])
+  @@index([pairedKeyId])
 }
 
 model NodeAccessKey {

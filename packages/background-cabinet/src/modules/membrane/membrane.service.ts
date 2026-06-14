@@ -176,6 +176,20 @@ export class MembraneService {
       data: { revokedAt: new Date() },
     });
 
+    const pairedDevice = await this.prisma.device.findFirst({
+      where: { pairedKeyId: keyId },
+      select: { lastPairSessionToken: true },
+    });
+    if (pairedDevice?.lastPairSessionToken) {
+      await this.prisma.session.deleteMany({
+        where: { token: pairedDevice.lastPairSessionToken },
+      });
+      await this.prisma.device.updateMany({
+        where: { pairedKeyId: keyId },
+        data: { lastPairSessionToken: null },
+      });
+    }
+
     return { accessKey: serializeAccessKey(revoked) };
   }
 

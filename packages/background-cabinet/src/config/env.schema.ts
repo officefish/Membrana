@@ -24,7 +24,7 @@ export const envSchema = z.object({
   SESSION_TTL_HOURS: z.coerce.number().int().positive().default(168),
   CABINET_CORS_ORIGINS: corsOrigins.default('http://localhost:5174'),
   /** Origins for apps/client pairing (MP3). Merged with CABINET_CORS_ORIGINS. */
-  CLIENT_CORS_ORIGINS: corsOrigins.default('http://localhost:5173'),
+  CLIENT_CORS_ORIGINS: corsOrigins.default('http://localhost:5173,http://localhost:5174'),
   /** background-media base URL for cabinet → media service calls (may be internal Docker host). */
   MEDIA_API_URL: z.string().url().default('http://localhost:3010'),
   /** Public media URL returned to apps/client after pairing (defaults to MEDIA_API_URL). */

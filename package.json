@@ -94,6 +94,7 @@
     "cabinet:mp3:prod": "node scripts/_ssh-cabinet-mp3-prod.mjs",
     "cabinet:quota-refactor:prod": "node scripts/_ssh-cabinet-quota-refactor-prod.mjs",
     "cabinet:mp4:prod": "node scripts/_ssh-cabinet-mp4-prod.mjs",
+    "cabinet:pair-unlink:prod": "node scripts/_ssh-cabinet-pair-unlink-prod.mjs",
     "cabinet:pairing:e2e:deploy": "node scripts/_ssh-cabinet-pairing-e2e-deploy.mjs"
   },
   "devDependencies": {
