@@ -93,10 +93,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "Epic complete PR #70-#75. Prod smoke OK 2026-06-14.",
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "tariff-dataset-ds1-corpus",
@@ -105,13 +106,14 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #70 merged 2026-06-14.",
       "dependsOn": [
         "tariff-dataset-v1"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "tariff-dataset-ds2-domain",
@@ -120,13 +122,14 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #71 merged 2026-06-14.",
       "dependsOn": [
         "tariff-dataset-ds1-corpus"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "tariff-dataset-ds3-client-bundled",
@@ -135,13 +138,14 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #72 merged 2026-06-14.",
       "dependsOn": [
         "tariff-dataset-ds2-domain"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "tariff-dataset-ds4-benchmark-v02",
@@ -150,13 +154,14 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #73 merged 2026-06-14.",
       "dependsOn": [
         "tariff-dataset-ds1-corpus"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "tariff-dataset-ds5-server-provision",
@@ -165,13 +170,14 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #75 merged 2026-06-14. Prod smoke OK 2026-06-14 media.membrana.space",
       "dependsOn": [
         "tariff-dataset-ds2-domain"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "mcp-repo-bootstrap",
