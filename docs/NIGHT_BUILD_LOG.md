@@ -20,3 +20,8 @@
 ## Checkpoint NB3 — 2026-06-14T18:22:12.660Z
 - Status: **pass**
 - Note: LRU cache N=20, Escape dispose, OpenAPI sketch, a11y region on player
+
+## Close — final
+- Status: **done**
+- Commit: `51447c6`, PR https://github.com/officefish/Membrana/pull/76
+- Разработка epic завершена; merge/review отложены на утро
