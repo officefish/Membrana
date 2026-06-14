@@ -3,7 +3,8 @@ import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
-  SYSTEM_BENCHMARK_COLLECTION_ID,
+  TARIFF_DATASET_COLLECTION_ID,
+  TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
   useMediaLibrary,
   type Collection,
@@ -66,9 +67,11 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const samples = snapshot.samplesByCollection[selectedId] ?? [];
   const selected = snapshot.collections.find((c) => c.id === selectedId);
   const quotaBlocked = isQuotaFull(snapshot.quota);
+  const isTariffDataset =
+    selected?.kind === 'system' && selected.systemKey === TARIFF_DATASET_SYSTEM_KEY;
 
   const moveTargets = snapshot.collections.filter(
-    (c) => c.id !== selectedId && c.kind !== 'buffer',
+    (c) => c.id !== selectedId && c.kind !== 'buffer' && c.kind !== 'system',
   );
 
   const handleCreateCollection = useCallback(async () => {
@@ -254,8 +257,9 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-semibold">{selected?.name ?? '—'}</h2>
             {selected?.kind === 'system' ? (
-              <span className="badge badge-neutral badge-sm">системная</span>
+              <span className="badge badge-neutral badge-sm">системный датасет</span>
             ) : null}
+            {!isTariffDataset ? (
             <label
               className={`btn btn-sm btn-primary ml-auto cursor-pointer ${
                 quotaBlocked ? 'btn-disabled pointer-events-none opacity-50' : ''
@@ -279,6 +283,9 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 }}
               />
             </label>
+            ) : (
+              <span className="ml-auto text-sm text-base-content/60">Только чтение</span>
+            )}
           </div>
 
           <SamplePlaybackBar playback={playback} compact />
@@ -299,8 +306,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 {samples.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center text-base-content/50">
-                      {selectedId === SYSTEM_BENCHMARK_COLLECTION_ID
-                        ? 'Системная коллекция может быть пустой.'
+                      {isTariffDataset
+                        ? 'Загрузка базового набора… (запустите yarn dataset:sync-free-v1 при dev)'
                         : 'Нет сэмплов.'}
                     </td>
                   </tr>
@@ -373,6 +380,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                             ))}
                           </select>
                         ) : null}
+                        {!isTariffDataset ? (
                         <button
                           type="button"
                           className="btn btn-xs btn-ghost text-error"
@@ -380,6 +388,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         >
                           Удалить
                         </button>
+                        ) : null}
                       </td>
                     </tr>
                   ))
