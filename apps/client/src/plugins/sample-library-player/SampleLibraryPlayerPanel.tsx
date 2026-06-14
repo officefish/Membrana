@@ -3,7 +3,7 @@ import { useMediaLibrary } from '@membrana/media-library-service';
 
 import { SamplePlaybackBar } from '../../components/sample-playback/SamplePlaybackBar';
 import { downloadBlob, extensionFromMime } from '../../lib/downloadBlob';
-import { useSamplePlayback } from '../../lib/useSamplePlayback';
+import { useSamplePlayback } from '@membrana/sample-playback-service';
 
 export interface SampleLibraryPlayerPanelProps {
   readonly moduleId: string;

@@ -25,6 +25,7 @@
     "@membrana/fft-analyzer-service": "*",
     "@membrana/harmonic-detector-service": "*",
     "@membrana/media-library-service": "*",
+    "@membrana/sample-playback-service": "*",
     "@membrana/telemetry-service": "*",
     "@membrana/trends-detector-service": "*",
     "@uiw/react-json-view": "2.0.0-alpha.42",

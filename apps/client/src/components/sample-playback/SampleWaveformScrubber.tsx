@@ -1,6 +1,6 @@
 import React, { useCallback, useId, useRef } from 'react';
 
-import { ratioToOffsetSec } from '../../lib/sampleWaveform';
+import { ratioToOffsetSec } from '@membrana/sample-playback-service';
 
 export interface SampleWaveformScrubberProps {
   readonly waveform: readonly number[];

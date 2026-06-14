@@ -14,6 +14,7 @@
 |-------|-------------------|----------|
 | **Утро** | `morning-care` → `plan:day` → `standup` → **`main-day-issue`** | читает вчерашний `DAILY_CODE_REVIEW.md`; пишет `STRATEGIC_PLAN_DAY`, `DAILY_STANDUP`, **`MAIN_DAY_ISSUE`** |
 | **Вечер** | **`archive:daily-day`** → **`code-review`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | архив плана/стендапа/фокуса, `DAILY_CODE_REVIEW.md` (+ архив), реестр, Issues |
+| **Night Build** (опционально) | **`night:open`** → агент NB0…NBn → **`night:checkpoint`** → **`night:close`** → утро merge | `NIGHT_BUILD_ACTIVE.md`, `NIGHT_BUILD_LOG.md`, handoff в `docs/archive/night-build/` |
 | **Понедельник / неделя** | `analyzers:research:week` → `plan:week` | `WEEKLY_ANALYZERS_RESEARCH.md`, `STRATEGIC_PLAN_WEEK.md` |
 | **По необходимости** | `consilium`, `ask`, `task:list`, CI, **`mcp:verify-bootstrap`** | `docs/seanses/*`, `docs/discussions/*`, MCP docs |
 
@@ -147,6 +148,37 @@ yarn ritual:evening
 - Навигация по архиву: [`docs/archive/README.md`](./archive/README.md).
 
 **Перед уходом** (по желанию): полный CI и `git status` — завтрашний `plan:day` увидит свежий лог.
+
+---
+
+## Night Build (ночной спринт)
+
+Цель: **автономная работа агента между вечером и утром** — рефакторинг, DRY, quality gate **без prod-deploy** и без расширения scope.
+
+Полный регламент: [`NIGHT_SPRINT_REGULATION.md`](./NIGHT_SPRINT_REGULATION.md).
+
+```bash
+# После yarn ritual:evening — открыть sprint
+yarn night:open --id cabinet-mp4-hardening-night-build
+
+# Во время ночи (после каждой фазы NB0…NB3)
+yarn night:checkpoint --phase NB0 --status pass --note "lint green"
+
+# Перед сном / утром до ritual:day
+yarn night:close --id cabinet-mp4-hardening-night-build
+```
+
+**Порядок:**
+
+1. Вечер: `ritual:evening` → выбрать epic с `sprintKind: night-build` в реестре.
+2. `night:open` — фиксирует ветку `night/<epic-id>-<date>`, чеклист NB*.
+3. Агент работает по epic-промпту (блок «Night Build — промпт целиком»).
+4. `night:close` — handoff в `docs/archive/night-build/<date>/HANDOFF.md`.
+5. Утро: прочитать handoff → `yarn ritual:day` → merge PR в `techies68` → `yarn task:archive` по фазам.
+
+**Не путать с дневным фокусом:** ночью канон — `NIGHT_BUILD_ACTIVE.md`, не `MAIN_DAY_ISSUE.md`.
+
+**Первый эталонный эпик:** [`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md).
 
 ---
 

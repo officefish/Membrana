@@ -42,6 +42,9 @@
     "main-day-issue:full": "node scripts/main-day-issue.mjs --full",
     "ritual:day": "node scripts/morning-care.mjs && node scripts/strategic-plan-day.mjs && node scripts/daily-standup.mjs && node scripts/main-day-issue.mjs",
     "ritual:evening": "node scripts/archive-daily-day-artifacts.mjs && node scripts/code-review.mjs && node scripts/archive-daily-code-review.mjs",
+    "night:open": "node scripts/night-build-open.mjs",
+    "night:close": "node scripts/night-build-close.mjs",
+    "night:checkpoint": "node scripts/night-build-checkpoint.mjs",
     "ritual:day:no-api": "node scripts/morning-care.mjs --no-anthropic && node scripts/daily-standup.mjs --dry-run && node scripts/main-day-issue.mjs --allow-missing-standup",
     "analyzers:research:week": "node scripts/analyzers-research-week.mjs",
     "analyzers:research:week:dry": "node scripts/analyzers-research-week.mjs --dry-run",
@@ -119,6 +122,9 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "resolutions": {
+    "estree-walker": "2.0.2"
   },
   "packageManager": "yarn@4.5.0"
 }

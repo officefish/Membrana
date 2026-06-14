@@ -1059,6 +1059,7 @@ __metadata:
     "@membrana/audio-engine-service": "npm:*"
     "@membrana/core": "npm:*"
     "@membrana/media-library-service": "npm:*"
+    "@membrana/sample-playback-service": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"
@@ -1120,6 +1121,7 @@ __metadata:
     "@membrana/fft-analyzer-service": "npm:*"
     "@membrana/harmonic-detector-service": "npm:*"
     "@membrana/media-library-service": "npm:*"
+    "@membrana/sample-playback-service": "npm:*"
     "@membrana/telemetry-service": "npm:*"
     "@membrana/trends-detector-service": "npm:*"
     "@types/react": "npm:^18.3.3"
@@ -1231,6 +1233,27 @@ __metadata:
   resolution: "@membrana/media-library-service@workspace:packages/services/media-library"
   dependencies:
     "@membrana/core": "npm:*"
+    "@types/react": "npm:^18.3.3"
+    "@types/react-dom": "npm:^18.3.0"
+    "@vitejs/plugin-react": "npm:^4.3.1"
+    eslint: "npm:^8.57.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vite: "npm:^5.3.0"
+    vite-plugin-dts: "npm:^3.9.1"
+    vitest: "npm:^1.4.0"
+  peerDependencies:
+    react: ^18.0.0
+  languageName: unknown
+  linkType: soft
+
+"@membrana/sample-playback-service@npm:*, @membrana/sample-playback-service@workspace:packages/services/sample-playback":
+  version: 0.0.0-use.local
+  resolution: "@membrana/sample-playback-service@workspace:packages/services/sample-playback"
+  dependencies:
+    "@membrana/audio-engine-service": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"
@@ -4460,19 +4483,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"estree-walker@npm:^2.0.2":
+"estree-walker@npm:2.0.2":
   version: 2.0.2
   resolution: "estree-walker@npm:2.0.2"
   checksum: 10c0/53a6c54e2019b8c914dc395890153ffdc2322781acf4bd7d1a32d7aedc1710807bdcd866ac133903d5629ec601fbb50abe8c2e5553c7f5a0afdd9b6af6c945af
-  languageName: node
-  linkType: hard
-
-"estree-walker@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "estree-walker@npm:3.0.3"
-  dependencies:
-    "@types/estree": "npm:^1.0.0"
-  checksum: 10c0/c12e3c2b2642d2bcae7d5aa495c60fa2f299160946535763969a1c83fc74518ffa9c2cd3a8b69ac56aea547df6a8aac25f729a342992ef0bbac5f1c73e78995d
   languageName: node
   linkType: hard
 

@@ -1,9 +1,9 @@
-import { formatPlaybackTime } from '@/lib/sampleWaveform';
 import {
+  formatPlaybackTime,
   seekSamplePlayback,
   togglePlayPause,
   type SamplePlaybackSnapshot,
-} from '@/lib/sampleLibraryPlaybackHub';
+} from '@membrana/sample-playback-service';
 
 import { SampleWaveformScrubber } from './SampleWaveformScrubber';
 

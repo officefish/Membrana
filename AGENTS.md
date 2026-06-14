@@ -35,6 +35,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Архив утренних артефактов (вечер, до code-review) | `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/` |
 | Code-review (вечер) | `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`; утром только читается |
 | Вечер одной командой | `yarn ritual:evening` (= archive:daily-day + code-review + save-code-review) |
+| Night Build (после вечера) | `yarn night:open --id <epic-id>` → агент → `yarn night:close`; регламент: `docs/NIGHT_SPRINT_REGULATION.md` |
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 

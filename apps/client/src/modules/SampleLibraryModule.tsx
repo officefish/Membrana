@@ -3,7 +3,6 @@ import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
-  TARIFF_DATASET_COLLECTION_ID,
   TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
   useMediaLibrary,
@@ -19,8 +18,8 @@ import {
   disposeSamplePlayback,
   selectSample,
   togglePlayPause,
-} from '../lib/sampleLibraryPlaybackHub';
-import { useSamplePlayback } from '../lib/useSamplePlayback';
+  useSamplePlayback,
+} from '@membrana/sample-playback-service';
 import {
   SAMPLE_LIBRARY_PLAYER_PLUGIN_ID,
   SampleLibraryPlayerPanel,

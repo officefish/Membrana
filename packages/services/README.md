@@ -18,6 +18,7 @@
 | Сервис | Слой | Назначение | Роль |
 |--------|------|-----------|------|
 | [`audio-engine`](./audio-engine) | foundation | Web Audio, файлы, микрофон, `LiveSampler` — поток `AudioSampleFrame`. Не делает анализа. | Структурщик + Музыкант |
+| [`sample-playback`](./sample-playback) | foundation | Shared hub воспроизведения сэмплов (BufferPlayer + waveform) для client/cabinet. | Структурщик |
 | [`fft-analyzer`](./fft-analyzer) | analyzer | Спектральный анализ через FFT: центроид, flux, RMS, детекция, пресеты. | Математик |
 | [`detectors/`](./detetectors/) | analyzer | Семейства детекторов дрона (Single-Node Detection First): `detector-base` + 6 реализаций. | Математик + Структурщик |
 | [`tdoa`](./tdoa) | analyzer | TDOA — **frozen** до stage-gate 1→2. | — |

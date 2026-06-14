@@ -556,7 +556,7 @@
       "dependsOn": [
         "membrane-platform-mp3-client-pairing"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "membrane-platform-mp5-telemetry-journal",
@@ -572,7 +572,7 @@
       "dependsOn": [
         "membrane-platform-mp1-auth-cabinet"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "membrane-platform-mp6-prod-deploy",
@@ -589,7 +589,7 @@
         "membrane-platform-mp4-media-membrane",
         "membrane-platform-mp5-telemetry-journal"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "cabinet-sample-library-v1",
@@ -650,6 +650,90 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-sample-library-csl2-ui"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-hardening-night-build",
+      "title": "Night Build: Cabinet MP4 hardening — DRY playback, facade, quality gate",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp4-media-membrane"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb0-merge-gate",
+      "title": "NB0: merge gate — lint, tests, dependency graph audit",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-hardening-night-build"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb1-sample-playback-dry",
+      "title": "NB1: extract @membrana/sample-playback-service, migrate client + cabinet",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-nb0-merge-gate"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb2-cabinet-facade",
+      "title": "NB2: cabinet hooks, split SampleLibraryPage, reset media session",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-nb1-sample-playback-dry"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb3-quality-contracts",
+      "title": "NB3: LRU cache, a11y Escape, OpenAPI sketch media bridge",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-nb2-cabinet-facade"
       ]
     }
   ]

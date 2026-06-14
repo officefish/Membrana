@@ -2,7 +2,7 @@ import {
   getSamplePlaybackSnapshot,
   loadSampleBufferById,
   subscribeSamplePlayback,
-} from '../sampleLibraryPlaybackHub';
+} from '@membrana/sample-playback-service';
 
 import { createBufferFrameFeed } from './bufferFrameFeed';
 import type { AudioFrameFeed, FrameHandler, SampleLibraryFrameFeedOptions } from './types';

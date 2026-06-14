@@ -6,6 +6,7 @@
     { "path": "./packages/agenda" },
     { "path": "./packages/device-board" },
     { "path": "./packages/services/audio-engine" },
+    { "path": "./packages/services/sample-playback" },
     { "path": "./packages/services/fft-analyzer" },
     { "path": "./packages/libs/audioDataViz" },
     { "path": "./apps/client/tsconfig.app.json" },
