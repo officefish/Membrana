@@ -155,8 +155,8 @@ curl -fsS https://cabinet.membrana.space/health
 | MP1 | auth + shell | **prod** 2026-06-13 | **archived** |
 | MP2 | keys + tariff | **prod** | **archived** |
 | MP3 | client pairing | **prod** | **archived** |
-| **MP4** | media per membrane | **prod** 2026-06-12 | **archived** |
-| MP5–MP6 | journal + final | — | active |
+| **MP5** | telemetry journal | **prod** 2026-06-14 | **archived** |
+| MP6 | final regression | — | active |
 
 Подробный чеклист: [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
 

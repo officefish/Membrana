@@ -28,7 +28,6 @@
 | `background-media-a5c-deploy` | background-media A5c: продовый деплой (TLS, DNS, docs) | M | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | [#59](https://github.com/officefish/Membrana/issues/59) |
 | `background-media-a5d-swagger` | background-media A5d: полная Swagger/OpenAPI документация | M | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | [#64](https://github.com/officefish/Membrana/issues/64) |
 | `membrane-platform-v1` | Membrane Platform v1: cabinet, pairing, tariff, cloud journal (эпик) | L | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
-| `membrane-platform-mp5-telemetry-journal` | Membrane Platform MP5: TelemetryReport + LiveRecord, journal UI | M | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
 | `membrane-platform-mp6-prod-deploy` | Membrane Platform MP6: prod deploy cabinet.membrana.space | S | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
 
 ---
@@ -38,6 +37,7 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `membrane-platform-mp4-media-membrane` | Membrane Platform MP4: media scope по мембране, квоты userStorage/buffer, tariff dataset | 2026-06-14 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/membrane-platform-mp4-media-membrane.md) |
+| `membrane-platform-mp5-telemetry-journal` | Membrane Platform MP5: TelemetryReport + LiveRecord, journal UI | 2026-06-14 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/membrane-platform-mp5-telemetry-journal.md) |
 | `membrane-platform-mp0-domain` | Membrane Platform MP0: домен, глоссарий, MEMBRANE_PLATFORM.md | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp0-domain.md) |
 | `membrane-platform-mp1-auth-cabinet` | Membrane Platform MP1: background-cabinet auth + apps/cabinet shell | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp1-auth-cabinet.md) |
 | `membrane-platform-mp2-membrane-node-keys` | Membrane Platform MP2: Membrane, Tariff, Node, ключи TTL enum | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp2-membrane-node-keys.md) |
