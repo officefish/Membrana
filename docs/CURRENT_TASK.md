@@ -1,33 +1,19 @@
-# CURRENT_TASK — неделя закрыта (2026-05-17)
+# CURRENT_TASK — Membrane Platform MP4
 
-> **Канон на следующую неделю:** [`STRATEGIC_PLAN_WEEK.md`](./STRATEGIC_PLAN_WEEK.md) (сгенерирован `yarn plan:week`).  
-> **Вчерашнее ревью:** [`DAILY_CODE_REVIEW.md`](./DAILY_CODE_REVIEW.md) → архив `docs/archive/daily-code-review/`.
+> **Эпик:** [#67](https://github.com/officefish/Membrana/issues/67) · **PR:** [#68](https://github.com/officefish/Membrana/pull/68) (`feat/background-media-swagger` → `vesnin`).
 
-## Закрыто за неделю 2026-05-14 … 2026-05-17
+## Закрыто (merge)
 
 | Блок | Статус |
 |------|--------|
-| Single-Node консилиум + scaffold 6 детекторов | ✅ |
-| #45 harmonic service + demo + плагин | ✅ архив + Issue closed |
-| Dataset v0.1 + `yarn benchmark:detectors` | ✅ |
-| Merge в `main` | ✅ `45e8c5d` + ритуалы |
-| Аудит #30 mic-plugin | ✅ [`issue-30-mic-plugin-audit-2026-05-17.md`](./discussions/issue-30-mic-plugin-audit-2026-05-17.md) |
-| Вечер: `archive:daily-day`, `code-review`, `plan:week` | ✅ 2026-05-17 |
+| Vesnin: `MembranaRegistry`, lifecycle `plugin.install()` / teardown | ✅ |
+| MP1–MP3 + quota refactor (`userStorage` / `buffer` / `datasetCatalogId`) | ✅ prod smoke 2026-06-14 |
 
-## Активная задача в реестре
+## Активная задача
 
-`single-node-detection-first` (#47) — **остаётся active** (stage-gate не пройден; spectral-flux/cepstral впереди).
+`membrane-platform-mp4-media-membrane` — media scope по мембране, enforcement квот из tariff, provisioning tariff dataset.
 
-## Известный долг (не блокирует паузу)
+## Известный долг
 
 - Harmonic benchmark v0.1: precision 50%, recall 100% (3 FP на synthetic).
 - `micStreamTelemetry.ts` → прямой `@membrana/telemetry-service` (#30).
-- `apps/demos/` — не в git (локальный Replit-export).
-
-## После возвращения
-
-```bash
-git checkout techies68 && git pull
-yarn morning-care
-# читать STRATEGIC_PLAN_WEEK.md → задача 1 (метрики gate)
-```

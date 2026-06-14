@@ -60,7 +60,7 @@
 
 Подробный процесс и чек-лист — [MODULE_AND_PLUGIN_UI.md §0](./MODULE_AND_PLUGIN_UI.md#0-регистрация-модулей-и-lazy-loading).
 
-**Lifecycle `plugin.install()` / teardown:** контракт `Plugin.install(ctx) => teardown?` реализован в `packages/agenda/src/core/plugin-lifecycle.ts`. Store вызывает `install` при активации (включая повторную регистрацию активного плагина после rehydrate) и teardown при деактивации. Эталон — `apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts`: подписка на `microphoneStreamHub` и поднятие `LiveSampler` живут в `install()`, UI-компонент только читает singleton-state через `useSyncExternalStore`. Полный перевод подписок из UI-хуков на `install` для существующих плагинов с `analyserRef` — отдельная задача (нужен engine-канал «AnalyserNode без React-ref»).
+**Lifecycle `plugin.install()` / teardown:** контракт `Plugin.install(ctx) => teardown?` реализован в `packages/agenda/src/core/plugin-lifecycle.ts`. Store вызывает `install` при активации (включая повторную регистрацию активного плагина после rehydrate) и teardown при деактивации. Эталон — `apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts`: подписка на `microphoneStreamHub` и поднятие `LiveSampler` живут в `install()`, UI-компонент только читает singleton-state через `useSyncExternalStore`.
 
 ### 1e. Семейства детекторов (`packages/services/detectors/*`)
 
