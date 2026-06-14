@@ -38,7 +38,9 @@ export class CollectionsService {
     if (row.kind === 'buffer' || row.kind === 'system') {
       throw new BadRequestException('Cannot delete reserved collection');
     }
-    await this.prisma.collection.delete({ where: { id: collectionId } });
+    await this.prisma.collection.delete({
+      where: { deviceId_id: { deviceId, id: collectionId } },
+    });
   }
 
   async ensureReserved(deviceId: string): Promise<CollectionDto[]> {

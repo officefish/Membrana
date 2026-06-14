@@ -60,7 +60,7 @@ model Device {
 }
 
 model Collection {
-  id        String         @id
+  id        String
   deviceId  String         @db.Uuid
   device    Device         @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   name      String
@@ -70,6 +70,7 @@ model Collection {
   updatedAt DateTime       @updatedAt
   samples   Sample[]
 
+  @@id([deviceId, id])
   @@index([deviceId])
 }
 
@@ -78,7 +79,7 @@ model Sample {
   deviceId     String       @db.Uuid
   device       Device       @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   collectionId String
-  collection   Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection   Collection   @relation(fields: [deviceId, collectionId], references: [deviceId, id], onDelete: Cascade)
   title        String
   class        String
   label        SampleLabel
