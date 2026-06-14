@@ -91,6 +91,7 @@
     "cabinet:deploy:prod": "node scripts/_ssh-cabinet-deploy.mjs",
     "cabinet:mp3:post-deploy": "node scripts/_ssh-cabinet-mp3-post-deploy.mjs",
     "cabinet:mp3:smoke": "node scripts/_ssh-cabinet-mp3-smoke.mjs",
+    "cabinet:mp3:prod": "node scripts/_ssh-cabinet-mp3-prod.mjs",
     "cabinet:pairing:e2e:deploy": "node scripts/_ssh-cabinet-pairing-e2e-deploy.mjs"
   },
   "devDependencies": {

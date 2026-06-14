@@ -117,6 +117,7 @@ git push -u origin vesnin
 | `yarn cabinet:deploy:prod` | Cabinet stack: pull, build, up, Caddy, smoke |
 | `yarn cabinet:pairing:e2e:deploy` | Hotfix pairing: `MEDIA_PUBLIC_API_URL`, media CORS, rebuild cabinet+media |
 | `yarn cabinet:mp3:smoke` | Prod smoke MP1–MP3 (pair + media device) |
+| `yarn cabinet:mp3:prod` | MP3 post-deploy + smoke (media docker net + pairing) |
 | `yarn cabinet:mp3:post-deploy` | Patch `cabinet.env` (CLIENT_CORS, MEDIA_API_*) |
 
 Подробно: [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md), [`docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
