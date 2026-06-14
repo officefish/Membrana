@@ -71,6 +71,7 @@
     "media:docker:prod:build": "docker compose -f packages/background-media/docker-compose.yml -f deploy/background-media.prod.compose.yml build",
     "media:docker:prod:up": "docker compose -f packages/background-media/docker-compose.yml -f deploy/background-media.prod.compose.yml --env-file /etc/membrana/media.env up -d",
     "media:verify-swagger": "yarn workspace @membrana/background-media verify:swagger",
+    "media:cors:cabinet-prod": "node scripts/_ssh-media-cabinet-cors-fix.mjs",
     "media:provision-catalog": "node scripts/media-provision-catalog.mjs",
     "cabinet:dev": "yarn workspace @membrana/background-cabinet dev",
     "cabinet:build": "yarn workspace @membrana/background-cabinet build",

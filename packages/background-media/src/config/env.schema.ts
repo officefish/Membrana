@@ -47,8 +47,10 @@ export const envSchema = z.object({
     .union([z.literal('true'), z.literal('false'), z.literal('1'), z.literal('0')])
     .optional()
     .transform((v) => (v === undefined ? undefined : v === 'true' || v === '1')),
-  /** Browser origins for apps/client paired mode (MP3 E2E). Empty = CORS disabled. */
-  CLIENT_CORS_ORIGINS: corsOrigins.default('http://localhost:5173,http://localhost:4173'),
+  /** Browser origins: apps/client paired mode + apps/cabinet sample library (MP3/CSL2). */
+  CLIENT_CORS_ORIGINS: corsOrigins.default(
+    'http://localhost:5173,http://localhost:4173,http://localhost:5174,https://cabinet.membrana.space',
+  ),
 });
 
 const envSchemaWithDefaults = envSchema.transform((data) => ({
