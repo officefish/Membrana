@@ -138,9 +138,7 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 ## Команды
 
 ```bash
-# VPS
-./deploy/cabinet-stack.sh build && ./deploy/cabinet-stack.sh up && ./deploy/cabinet-stack.sh smoke
-curl -fsS https://cabinet.membrana.space/health
+yarn cabinet:mp6:prod   # MP6: full MP1–MP5 regression (one session)
 ```
 
 Локально: `yarn cabinet:docker:up` или dev: `yarn cabinet:db:up` → `yarn cabinet:migrate` → `yarn cabinet:seed` → `yarn cabinet:dev` + `yarn cabinet:app:dev`.
@@ -156,7 +154,7 @@ curl -fsS https://cabinet.membrana.space/health
 | MP2 | keys + tariff | **prod** | **archived** |
 | MP3 | client pairing | **prod** | **archived** |
 | **MP5** | telemetry journal | **prod** 2026-06-14 | **archived** |
-| MP6 | final regression | — | active |
+| **MP6** | final regression | **prod** 2026-06-14 | **archived** |
 
 Подробный чеклист: [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
 

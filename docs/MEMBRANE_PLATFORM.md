@@ -201,7 +201,9 @@ sequenceDiagram
 | `TelemetryReport` | Завершённый отчёт, снимок метрик | Shared **render payload** для карточки в UI |
 | `TelemetryLiveRecord` | Активная/недавняя live-сессия | Те же компоненты, другой lifecycle badge |
 
-Клиентский `@membrana/telemetry-service` остаётся источником на узле; sync в cabinet — отдельная подзадача MP5.
+Клиентский `@membrana/telemetry-service` остаётся источником на узле; sync в cabinet — MP5 (базовый upload + список).
+
+**Отложено (post-v1):** калибровка журнала и **единый рендеринг** client ↔ cabinet (parity карточек, live-badge, фильтры) — отдельная дорожная карта после консилиума; не блокирует MP6.
 
 ---
 
