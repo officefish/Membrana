@@ -11,7 +11,7 @@
 | DS2 Domain | `tariff-dataset-ds2-domain` | `feat/tariff-dataset-ds2-domain` | **готово к PR** | media-library + background-media |
 | DS3 Client | `tariff-dataset-ds3-client-bundled` | `feat/tariff-dataset-ds3-client-bundled` | **готово к PR** | UI + `public/catalog/free-v1/` |
 | DS4 Benchmark | `tariff-dataset-ds4-benchmark-v02` | `feat/tariff-dataset-ds4-benchmark-v02` | **готово к PR** | runner v0.2; полный прогон — после fix audio-engine build |
-| DS5 Server | `tariff-dataset-ds5-server-provision` | `feat/tariff-dataset-ds5-server-provision` | **не начато** | provisioning при pair |
+| DS5 Server | `tariff-dataset-ds5-server-provision` | `feat/tariff-dataset-ds5-server-provision` | **в работе** | provisioning при pair |
 
 ⚠️ Сейчас все изменения DS1–DS4 лежат **в одном рабочем дереве** на `feat/membrane-platform-mp4`. Перед PR — **разнести по веткам** по таблице файлов ниже.
 

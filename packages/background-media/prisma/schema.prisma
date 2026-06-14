@@ -31,6 +31,7 @@ enum SampleSource {
   disk_import
   synthetic
   move
+  catalog
 }
 
 enum AudioFormat {
