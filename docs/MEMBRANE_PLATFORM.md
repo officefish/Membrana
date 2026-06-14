@@ -27,7 +27,7 @@
 | **Ключ доступа (Node Access Key)** | Секрет для pairing клиента с узлом. **Формат** в UI = выбор **срока действия** (TTL), не тип QR/файл. |
 | **Устройство (Device)** | Запись paired-клиента; маппится на `deviceId` в `background-media`. |
 | **Режим узла (Node connection mode)** | Состояние `apps/client`: **связанный** (pairing с кабинетом) или **автономный** (локальная ФС, без облака). Пользователь **всегда** может выбрать автономный режим. |
-| **Тариф (Tariff)** | Набор лимитов (`datasetQuotaBytes`, `bufferQuotaBytes`, …). v1 seed: `free-v1`. |
+| **Тариф (Tariff)** | Лимиты пользовательского хранилища (`userStorageQuotaBytes`), буфера live (`bufferQuotaBytes`) и **состав** системного dataset (`datasetCatalogId`). v1 seed: `free-v1`. |
 | **TelemetryReport** | Серверная сущность: отчёт/снимок анализа (аналог записи client journal). |
 | **TelemetryLiveRecord** | Серверная сущность: live-сессия / потоковая запись. |
 
@@ -76,25 +76,52 @@ export interface NodeAccessKey {
 
 ---
 
-## Тариф и квоты
+## Тариф, квоты и dataset
+
+Тариф задаёт **три независимые оси** — не смешивать в одно поле:
+
+| Ось | Поле Tariff | Тип | Назначение |
+|-----|-------------|-----|------------|
+| **Пользовательские библиотеки** | `userStorageQuotaBytes` | байты | Суммарный объём звуков, которые пользователь хранит в **своих** коллекциях на сервере (paired) |
+| **Буфер live** | `bufferQuotaBytes` | байты | Ёмкость `__buffer__`; live-запись пишет сюда; больший буфер → больше устройств мембраны может обрабатывать одновременно |
+| **Системный dataset** | `datasetCatalogId` | каталог (id) | Read-only библиотека от разработчиков; **состав** звуков по тарифу; в будущем — база для обучения детекторов (дороже тариф → больше звуков → выше чувствительность) |
 
 ```typescript
 export interface Tariff {
   id: string; // e.g. 'free-v1'
   name: string;
-  datasetQuotaBytes: number; // лимит датасета (коллекции user/system)
-  bufferQuotaBytes: number;  // лимит buffer-коллекции
-  maxActiveKeysPerNode?: number; // default 1
+  userStorageQuotaBytes: number; // лимит user-коллекций (суммарно)
+  bufferQuotaBytes: number;       // лимит buffer-коллекции
+  datasetCatalogId: string;       // e.g. 'free-v1-catalog' — не байтовая квота
+  maxActiveKeysPerNode?: number;  // default 1
 }
 ```
 
-Квоты **не суммируются в одно поле**: `GET /v1/membranes/:id/quota` возвращает `{ dataset: QuotaUsage, buffer: QuotaUsage }`. Media-server читает лимиты из tariff мембраны при `POST` upload и `GET .../quota`.
+**Квоты не суммируются:** `GET /v1/devices/:deviceId/quota` (media) возвращает:
+
+```typescript
+{
+  userStorage: QuotaUsage;  // used/limit по kind=user + benchmark system
+  buffer: QuotaUsage;       // used/limit по kind=buffer
+  dataset: { catalogId: string; sampleCount: number }; // информационно, read-only каталог
+}
+```
+
+Media-server читает лимиты из tariff мембраны при upload (MP4: service-to-service или token claims). До MP4 — env fallback `MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE` / `MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE`.
+
+### Автономный режим (`nodeConnectionMode: autonomous`)
+
+| Слой | Paired (облако) | Autonomous (локально) |
+|------|-----------------|------------------------|
+| User-коллекции | Сервер, `userStorageQuotaBytes` | Локальная ФС, без облачной квоты |
+| Buffer | Сервер, `bufferQuotaBytes` | Локальный буфер |
+| System dataset | Каталог `datasetCatalogId` в media | **Bundled library** в сборке client — фиксированный мини-набор, не зависит от тарифа |
 
 Seed v1:
 
-| id | dataset | buffer |
-|----|---------|--------|
-| `free-v1` | 1 GiB | 1 GiB |
+| id | userStorage | buffer | datasetCatalogId |
+|----|-------------|--------|------------------|
+| `free-v1` | 1 GiB | 1 GiB | `free-v1-catalog` |
 
 ---
 
@@ -201,4 +228,4 @@ sequenceDiagram
 
 ---
 
-*Версия: 2026-06-13 · Источник решений: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md); автономный режим узла — уточнение 2026-06-13.*
+*Версия: 2026-06-12 · Источник решений: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md); квоты userStorage/buffer + dataset catalog — уточнение 2026-06-12.*

@@ -434,7 +434,7 @@
     },
     {
       "id": "membrane-platform-mp4-media-membrane",
-      "title": "Membrane Platform MP4: media scope по мембране, квоты dataset/buffer",
+      "title": "Membrane Platform MP4: media scope по мембране, квоты userStorage/buffer, tariff dataset",
       "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
       "githubIssue": 67,
       "linearId": null,

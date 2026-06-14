@@ -23,7 +23,7 @@ export class DeviceResponseDto {
   createdAt!: string;
 }
 
-export class QuotaResponseDto {
+export class QuotaBucketResponseDto {
   @ApiProperty({ example: 1048576 })
   usedBytes!: number;
 
@@ -32,4 +32,23 @@ export class QuotaResponseDto {
 
   @ApiProperty({ enum: ['server'], example: 'server' })
   backend!: 'server';
+}
+
+export class DatasetQuotaInfoResponseDto {
+  @ApiProperty({ example: 'free-v1-catalog' })
+  catalogId!: string;
+
+  @ApiProperty({ example: 42 })
+  sampleCount!: number;
+}
+
+export class QuotaResponseDto {
+  @ApiProperty({ type: QuotaBucketResponseDto })
+  userStorage!: QuotaBucketResponseDto;
+
+  @ApiProperty({ type: QuotaBucketResponseDto })
+  buffer!: QuotaBucketResponseDto;
+
+  @ApiProperty({ type: DatasetQuotaInfoResponseDto })
+  dataset!: DatasetQuotaInfoResponseDto;
 }

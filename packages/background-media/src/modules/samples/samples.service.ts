@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
-import type { SampleLabel } from '@prisma/client';
+import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import type { Collection, SampleLabel } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { AudioIngestService } from '../../audio/audio-ingest.service';
 import { BlobStorageService } from '../../blob/blob-storage.service';
+import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';
 import {
   sampleSourceFromApi,
   sampleToDto,
@@ -49,12 +50,25 @@ export class SamplesService {
     mimeType: string | undefined,
     meta?: UploadMetaOverride,
   ): Promise<SampleDto> {
-    await this.collections.getOwned(deviceId, collectionId);
+    const collection = await this.collections.getOwned(deviceId, collectionId);
+    this.assertUploadAllowed(collection);
 
     const parsed = await this.audio.parseUpload(fileBuffer, mimeType);
     const quota = await this.devices.getQuota(deviceId);
-    if (quota.usedBytes + parsed.sizeBytes > quota.limitBytes) {
-      throw new PayloadTooLargeException('Device storage quota exceeded');
+    const bucket =
+      collection.kind === 'buffer'
+        ? quota.buffer
+        : collection.kind === 'user' ||
+            (collection.kind === 'system' && collection.systemKey !== TARIFF_DATASET_SYSTEM_KEY)
+          ? quota.userStorage
+          : null;
+
+    if (bucket && bucket.usedBytes + parsed.sizeBytes > bucket.limitBytes) {
+      throw new PayloadTooLargeException(
+        collection.kind === 'buffer'
+          ? 'Buffer storage quota exceeded'
+          : 'User storage quota exceeded',
+      );
     }
 
     const sampleId = randomUUID();
@@ -106,6 +120,9 @@ export class SamplesService {
 
   async delete(deviceId: string, sampleId: string): Promise<void> {
     const row = await this.getOwnedSample(deviceId, sampleId);
+    if (row.collection.systemKey === TARIFF_DATASET_SYSTEM_KEY) {
+      throw new BadRequestException('Cannot delete samples from tariff dataset collection');
+    }
     await this.blobs.delete(row.storageRef);
     await this.prisma.sample.delete({ where: { id: sampleId } });
   }
@@ -115,8 +132,12 @@ export class SamplesService {
     sampleId: string,
     toCollectionId: string,
   ): Promise<SampleDto> {
-    await this.collections.getOwned(deviceId, toCollectionId);
+    const toCollection = await this.collections.getOwned(deviceId, toCollectionId);
     const row = await this.getOwnedSample(deviceId, sampleId);
+    if (row.collection.systemKey === TARIFF_DATASET_SYSTEM_KEY) {
+      throw new BadRequestException('Cannot move samples from tariff dataset collection');
+    }
+    this.assertUploadAllowed(toCollection);
     if (row.collectionId === toCollectionId) {
       return sampleToDto(row);
     }
@@ -133,10 +154,17 @@ export class SamplesService {
   private async getOwnedSample(deviceId: string, sampleId: string) {
     const row = await this.prisma.sample.findFirst({
       where: { id: sampleId, deviceId },
+      include: { collection: true },
     });
     if (!row) {
       throw new NotFoundException(`Sample ${sampleId} not found for device`);
     }
     return row;
+  }
+
+  private assertUploadAllowed(collection: Collection): void {
+    if (collection.kind === 'system' && collection.systemKey === TARIFF_DATASET_SYSTEM_KEY) {
+      throw new BadRequestException('Cannot upload to tariff dataset collection');
+    }
   }
 }

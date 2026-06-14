@@ -39,7 +39,7 @@ interface Collection {
   createdAt: string;
   updatedAt: string;
   /** Только для kind === 'system'. */
-  systemKey?: 'benchmark' | string;
+  systemKey?: 'benchmark' | 'tariff-dataset';
 }
 
 /** Метаданные + ссылка на бинарник в storage-backend. */
@@ -67,20 +67,30 @@ interface MediaSample {
 
 Сервер `background-media` хранит blob **в исходном формате**; метаданные `durationSec`, `sampleRate`, `channels` извлекаются при upload (`music-metadata`; для WAV дополнительно `wavefile` при валидации PCM). Подробности стека — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md) § «Стек background-media».
 
-### 2.2. Три типа коллекций
+### 2.2. Типы коллекций
 
 | kind | ID | Удаление | Назначение |
 |------|-----|----------|------------|
-| **buffer** | фикс. `__buffer__` | нет (очищается) | **Временная** запись с микрофона; один активный буфер на профиль/устройство |
-| **user** | uuid | ✅ пользователем | Произвольные наборы («полевые июнь», «ветер балкон») |
-| **system** | фикс. `__system_benchmark__` | ❌ коллекцию | **Benchmark / датасет**; может быть **пустой**; сэмплы добавляются/удаляются |
+| **buffer** | фикс. `__buffer__` | нет (очищается) | **Временная** запись с микрофона / live; один активный буфер на профиль/устройство; квота `bufferQuotaBytes` |
+| **user** | uuid | ✅ пользователем | Произвольные наборы («полевые июнь», «ветер балкон»); суммарный объём → `userStorageQuotaBytes` |
+| **system** | см. ниже | ❌ коллекцию | Системные библиотеки; не входят в user-квоту, если read-only dataset |
+
+**System-коллекции (два разных назначения):**
+
+| systemKey | ID | Редактирование | Назначение |
+|-----------|-----|----------------|------------|
+| `benchmark` | `__system_benchmark__` | пользователь добавляет/удаляет сэмплы | Stage-gate / export manifest |
+| `tariff-dataset` | `__tariff_dataset__` | **read-only** (paired/cloud) | Каталог по тарифу (`datasetCatalogId`); состав задаёт платформа; влияет на обучение детекторов |
+
+**Автономный client:** вместо облачного `tariff-dataset` — **bundled library** (мини-набор в сборке, фиксирован, не меняется при смене тарифа).
 
 **Правила:**
 
-- Пользователь **не удаляет** системную коллекцию; может удалить все сэмплы внутри.
+- Пользователь **не удаляет** системные коллекции; в `benchmark` может удалить сэмплы; в `tariff-dataset` — только чтение.
+- Загрузка в `tariff-dataset` с клиента **запрещена** (provisioning — платформа).
 - Из **буфера** сэмплы **переносятся** (move), не копируются по умолчанию — буфер освобождается.
 - Copy в другую коллекцию — явное действие «дублировать».
-- Системная коллекция — единственный источник для **Export manifest** (кнопка в UI / CLI).
+- **Export manifest** — из `__system_benchmark__` (не из tariff-dataset).
 
 ### 2.3. Буфер записи
 
@@ -193,7 +203,7 @@ function resolveStorageMode(): MediaLibraryStorageMode {
 |----------|------------|
 | `GET /health` | ping для `resolveStorageMode` |
 | `POST /v1/devices` | регистрация узла → `deviceId` |
-| `GET /v1/devices/:deviceId/quota` | used/limit |
+| `GET /v1/devices/:deviceId/quota` | `userStorage`, `buffer`, `dataset.catalogId` |
 | `CRUD …/collections` | user + system (system read-only delete) |
 | `POST …/collections/:id/samples` | multipart upload (wav, mp3, flac, ogg) |
 | `GET …/samples/:id/blob` | stream с `Content-Type` из `contentType` |

@@ -21,7 +21,7 @@
 | 1 | Аутентификация | Login + password (без OAuth в v1) |
 | 2 | Десктоп | Тот же `apps/client`; **автономный узел** (ФС) или «Связь с мембраной» |
 | 3 | **Формат ключа доступа** | **Не** QR/токен-тип, а **срок действия (TTL)** — enum `NodeAccessKeyDuration` |
-| 4 | Квоты | Отдельно **dataset** и **buffer**; значения из объекта **Tariff** |
+| 4 | Квоты | Отдельно **userStorage** (user-коллекции) и **buffer** (live); **dataset** — состав каталога (`datasetCatalogId`), не байтовая квота |
 | 5 | Журнал | Серверные сущности **TelemetryReport** + **TelemetryLiveRecord**; shared render payload с клиентским журналом |
 
 ---
@@ -72,7 +72,7 @@ erDiagram
 |----------|----------|------------|
 | **User** | — | Учётная запись (login/password) |
 | **Membrane** | 1 на пользователя | Единое поле/контекст устройств и квот |
-| **Tariff** | seed `free-v1` | `datasetQuotaBytes`, `bufferQuotaBytes`, будущие лимиты |
+| **Tariff** | seed `free-v1` | `userStorageQuotaBytes`, `bufferQuotaBytes`, `datasetCatalogId` |
 | **Node** | 1 на мембрану | Шлюз к десктопному `apps/client` |
 | **NodeAccessKey** | управляемые | Секрет + `duration` enum + `expiresAt` |
 | **Device** | 1 на paired client | Связь с `deviceId` в `background-media` |
@@ -84,7 +84,7 @@ erDiagram
 ## UX-поток (cabinet)
 
 1. Пользователь логинится на **membrana.space** → редирект в **cabinet.membrana.space**.
-2. Видит мембрану (создаётся автоматически при регистрации), тариф `free-v1`, квоты dataset/buffer.
+2. Видит мембрану (создаётся автоматически при регистрации), тариф `free-v1`, квоты userStorage/buffer, `datasetCatalogId`.
 3. Создаёт **узел** → генерирует **ключ** с выбором срока (4ч … 3мес).
 4. На полевом ПК открывает `apps/client` → «Связь с мембраной» → ввод ключа → pairing.
 5. Клиент работает в `remote-server` против `background-media`, scope по `membraneId` / `deviceId`.

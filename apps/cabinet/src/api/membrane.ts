@@ -18,8 +18,9 @@ export const DURATION_OPTIONS: { value: NodeAccessKeyDuration; label: string }[]
 export interface TariffView {
   id: string;
   name: string;
-  datasetQuotaBytes: string;
+  userStorageQuotaBytes: string;
   bufferQuotaBytes: string;
+  datasetCatalogId: string;
   maxActiveKeysPerNode: number;
 }
 

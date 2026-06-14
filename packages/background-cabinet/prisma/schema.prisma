@@ -37,13 +37,17 @@ model Session {
 }
 
 model Tariff {
-  id                   String     @id
-  name                 String
-  datasetQuotaBytes    BigInt
-  bufferQuotaBytes     BigInt
-  maxActiveKeysPerNode Int        @default(1)
-  createdAt            DateTime   @default(now())
-  membranes            Membrane[]
+  id                     String     @id
+  name                   String
+  /** Total bytes user may store across their collections on the server (paired mode). */
+  userStorageQuotaBytes  BigInt
+  /** Live recording buffer capacity; larger buffer supports more concurrent devices. */
+  bufferQuotaBytes       BigInt
+  /** Read-only system dataset catalog id provisioned for this tariff (not a byte quota). */
+  datasetCatalogId       String
+  maxActiveKeysPerNode   Int        @default(1)
+  createdAt              DateTime   @default(now())
+  membranes              Membrane[]
 }
 
 model Membrane {

@@ -28,7 +28,15 @@ export const envSchema = z.object({
   API_INTERNAL_TOKEN: z.string().min(1, 'API_INTERNAL_TOKEN is required'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   MEDIA_BLOB_DIR: z.string().min(1).default('./data/blobs'),
-  MEDIA_QUOTA_BYTES_PER_DEVICE: z.coerce.number().int().positive().default(1_073_741_824),
+  /** @deprecated Use MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE. Kept for existing deploy env files. */
+  MEDIA_QUOTA_BYTES_PER_DEVICE: z.coerce.number().int().positive().optional(),
+  MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE: z.coerce.number().int().positive().optional(),
+  MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(1_073_741_824),
+  MEDIA_DEFAULT_DATASET_CATALOG_ID: z.string().min(1).default('free-v1-catalog'),
   MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(52_428_800),
   MEDIA_ALLOWED_MIME: mimeList.default(
     'audio/wav,audio/wave,audio/mpeg,audio/flac,audio/ogg',
@@ -44,6 +52,10 @@ export const envSchema = z.object({
 const envSchemaWithDefaults = envSchema.transform((data) => ({
   ...data,
   SWAGGER_ENABLED: data.SWAGGER_ENABLED ?? data.NODE_ENV !== 'production',
+  MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE:
+    data.MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE ??
+    data.MEDIA_QUOTA_BYTES_PER_DEVICE ??
+    1_073_741_824,
 }));
 
 export type AppConfig = z.infer<typeof envSchemaWithDefaults>;

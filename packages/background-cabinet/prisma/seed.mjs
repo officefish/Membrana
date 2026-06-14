@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 const BCRYPT_ROUNDS = 12;
 const FREE_TARIFF_ID = 'free-v1';
+const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
 const GIB = 1024n * 1024n * 1024n;
 
 async function seedTariff() {
@@ -12,11 +13,14 @@ async function seedTariff() {
     create: {
       id: FREE_TARIFF_ID,
       name: 'Free v1',
-      datasetQuotaBytes: GIB,
+      userStorageQuotaBytes: GIB,
       bufferQuotaBytes: GIB,
+      datasetCatalogId: FREE_DATASET_CATALOG_ID,
       maxActiveKeysPerNode: 1,
     },
-    update: {},
+    update: {
+      datasetCatalogId: FREE_DATASET_CATALOG_ID,
+    },
   });
   console.log(`Seed ok: tariff "${FREE_TARIFF_ID}"`);
 }

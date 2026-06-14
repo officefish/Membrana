@@ -18,14 +18,16 @@ import {
 } from './access-key.util';
 
 const FREE_TARIFF_ID = 'free-v1';
+const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
 const GIB = 1024n * 1024n * 1024n;
 
 function serializeTariff(tariff: Tariff) {
   return {
     id: tariff.id,
     name: tariff.name,
-    datasetQuotaBytes: tariff.datasetQuotaBytes.toString(),
+    userStorageQuotaBytes: tariff.userStorageQuotaBytes.toString(),
     bufferQuotaBytes: tariff.bufferQuotaBytes.toString(),
+    datasetCatalogId: tariff.datasetCatalogId,
     maxActiveKeysPerNode: tariff.maxActiveKeysPerNode,
   };
 }
@@ -199,11 +201,14 @@ export class MembraneService {
       create: {
         id: FREE_TARIFF_ID,
         name: 'Free v1',
-        datasetQuotaBytes: GIB,
+        userStorageQuotaBytes: GIB,
         bufferQuotaBytes: GIB,
+        datasetCatalogId: FREE_DATASET_CATALOG_ID,
         maxActiveKeysPerNode: 1,
       },
-      update: {},
+      update: {
+        datasetCatalogId: FREE_DATASET_CATALOG_ID,
+      },
     });
   }
 }

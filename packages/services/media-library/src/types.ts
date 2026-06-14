@@ -15,7 +15,7 @@ export interface Collection {
   kind: CollectionKind;
   createdAt: string;
   updatedAt: string;
-  systemKey?: 'benchmark';
+  systemKey?: 'benchmark' | 'tariff-dataset';
 }
 
 export interface MediaSample {

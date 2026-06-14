@@ -62,7 +62,7 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 | # | Проверка | Ожидание |
 |---|----------|----------|
 | 1 | MP1 smoke | без регрессии |
-| 2 | UI: раздел «Мембрана» | тариф `free-v1`, квоты dataset/buffer |
+| 2 | UI: раздел «Мембрана» | тариф `free-v1`, квоты userStorage/buffer, `datasetCatalogId` |
 | 3 | Создать узел | 1 узел на мембрану |
 | 4 | Создать ключ с каждым `NodeAccessKeyDuration` | plaintext один раз, `expiresAt` корректен |
 | 5 | Отзыв / ротация ключа | старый не принимается |
@@ -89,8 +89,8 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 | # | Проверка | Ожидание |
 |---|----------|----------|
 | 1 | MP1–MP3 smoke | без регрессии |
-| 2 | `GET media…/quota` для paired device | отдельно `dataset` и `buffer` |
-| 3 | Upload sample | учёт квоты tariff |
+| 2 | `GET media…/quota` для paired device | отдельно `userStorage` и `buffer`; `dataset.catalogId` |
+| 3 | Upload sample в user/buffer | учёт соответствующей квоты tariff |
 | 4 | Второй membrane / device | изоляция данных |
 
 ---

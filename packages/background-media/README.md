@@ -93,7 +93,9 @@ curl http://localhost:3010/health
 | `API_INTERNAL_TOKEN` | `X-Membrana-Token` для всех `/v1/*` |
 | `DATABASE_URL` | задаётся в compose из `POSTGRES_*` |
 | `MEDIA_BLOB_DIR` | `/data/blobs` в контейнере; на хосте — `MEDIA_BLOB_HOST_DIR` |
-| `MEDIA_QUOTA_BYTES_PER_DEVICE` | квота на устройство (default 1 GiB) |
+| `MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE` | квота user-коллекций (default 1 GiB); legacy alias `MEDIA_QUOTA_BYTES_PER_DEVICE` |
+| `MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE` | квота буфера live (default 1 GiB) |
+| `MEDIA_DEFAULT_DATASET_CATALOG_ID` | id каталога tariff dataset (default `free-v1-catalog`) |
 | `SWAGGER_ENABLED` | `false` в prod (default); `true` — `/docs` и `/docs-json` для интеграторов |
 
 | Env (клиент, Vite build) | Пример |

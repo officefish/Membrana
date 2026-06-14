@@ -11,9 +11,13 @@ function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     API_INTERNAL_TOKEN: 't',
     DATABASE_URL: 'postgresql://x',
     MEDIA_BLOB_DIR: './data/blobs',
-    MEDIA_QUOTA_BYTES_PER_DEVICE: 1_000_000,
+    MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE: 1_000_000,
+    MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE: 500_000,
+    MEDIA_DEFAULT_DATASET_CATALOG_ID: 'free-v1-catalog',
     MAX_UPLOAD_BYTES: 500_000,
     MEDIA_ALLOWED_MIME: ['audio/wav', 'audio/mpeg'],
+    CLIENT_CORS_ORIGINS: [],
+    SWAGGER_ENABLED: false,
     ...overrides,
   };
 }

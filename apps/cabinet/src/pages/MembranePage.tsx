@@ -45,8 +45,8 @@ export function MembranePage() {
       <div>
         <h1 className="text-2xl font-semibold">Мембрана</h1>
         <p className="mt-2 text-base-content/70">
-          v1: одна мембрана на пользователя. Тариф задаёт квоты dataset и buffer для облачного
-          media (MP4).
+          v1: одна мембрана на пользователя. Тариф задаёт объём пользовательских библиотек, буфер
+          live и состав системного dataset (MP4).
         </p>
       </div>
 
@@ -57,13 +57,24 @@ export function MembranePage() {
           <p className="font-mono text-sm text-base-content/60">{tariff.id}</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="rounded-lg bg-base-100 p-4">
-              <p className="text-sm text-base-content/60">Dataset</p>
-              <p className="text-xl font-semibold">{formatBytes(tariff.datasetQuotaBytes)}</p>
+              <p className="text-sm text-base-content/60">Пользовательские библиотеки</p>
+              <p className="text-xl font-semibold">{formatBytes(tariff.userStorageQuotaBytes)}</p>
+              <p className="mt-1 text-xs text-base-content/50">Суммарный объём ваших коллекций на сервере</p>
             </div>
             <div className="rounded-lg bg-base-100 p-4">
-              <p className="text-sm text-base-content/60">Buffer</p>
+              <p className="text-sm text-base-content/60">Буфер live</p>
               <p className="text-xl font-semibold">{formatBytes(tariff.bufferQuotaBytes)}</p>
+              <p className="mt-1 text-xs text-base-content/50">
+                Ёмкость записи с микрофона; больше буфер — больше устройств в live
+              </p>
             </div>
+          </div>
+          <div className="mt-3 rounded-lg bg-base-100 p-4">
+            <p className="text-sm text-base-content/60">Системный dataset (read-only)</p>
+            <p className="font-mono text-lg font-semibold">{tariff.datasetCatalogId}</p>
+            <p className="mt-1 text-xs text-base-content/50">
+              Состав каталога по тарифу; влияет на качество детекторов (обучающая выборка)
+            </p>
           </div>
           <p className="mt-2 text-sm text-base-content/60">
             Активных ключей на узел: {tariff.maxActiveKeysPerNode}
