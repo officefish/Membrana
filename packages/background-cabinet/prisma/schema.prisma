@@ -58,6 +58,8 @@ model Membrane {
   tariffId  String
   tariff    Tariff   @relation(fields: [tariffId], references: [id])
   nodes     Node[]
+  reports   TelemetryReport[]
+  liveRecords TelemetryLiveRecord[]
   createdAt DateTime @default(now())
 
   @@index([tariffId])
@@ -101,4 +103,50 @@ model NodeAccessKey {
 
   @@index([nodeId])
   @@index([expiresAt])
+}
+
+enum TelemetryLiveStatus {
+  active
+  ended
+}
+
+/** Completed analysis snapshot uploaded from paired client (shared render payload). */
+model TelemetryReport {
+  id            String   @id @default(uuid()) @db.Uuid
+  membraneId    String   @db.Uuid
+  membrane      Membrane @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  nodeId        String?  @db.Uuid
+  mediaDeviceId String?  @db.Uuid
+  reportKind    String
+  moduleId      String?
+  moduleName    String?
+  clientEntryId String?
+  finishedAt    DateTime
+  payload       Json
+  tags          String[] @default([])
+  createdAt     DateTime @default(now())
+
+  @@index([membraneId, finishedAt(sort: Desc)])
+  @@unique([membraneId, clientEntryId])
+}
+
+/** Active or recent live telemetry session from paired client. */
+model TelemetryLiveRecord {
+  id             String              @id @default(uuid()) @db.Uuid
+  membraneId     String              @db.Uuid
+  membrane       Membrane            @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  nodeId         String?             @db.Uuid
+  mediaDeviceId  String?             @db.Uuid
+  recordKind     String
+  moduleId       String?
+  clientRecordId String?
+  status         TelemetryLiveStatus @default(active)
+  startedAt      DateTime
+  endedAt        DateTime?
+  payload        Json
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([membraneId, status, startedAt(sort: Desc)])
+  @@unique([membraneId, clientRecordId])
 }

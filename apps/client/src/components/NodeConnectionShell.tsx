@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { usePairStatusMonitor } from '@/hooks/usePairStatusMonitor';
+import { useTelemetryCloudSync } from '@/hooks/useTelemetryCloudSync';
 import { ConnectionFallbackDialog } from './node-connection/ConnectionFallbackDialog';
 import { MembraneLinkedPanel } from './node-connection/MembraneLinkedPanel';
 import { MembranePairingPanel } from './node-connection/MembranePairingPanel';
@@ -17,6 +18,7 @@ export const NodeConnectionShell: React.FC = () => {
   }, [hydrate]);
 
   usePairStatusMonitor();
+  useTelemetryCloudSync();
 
   return (
     <>

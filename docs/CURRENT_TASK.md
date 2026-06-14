@@ -1,19 +1,20 @@
-# CURRENT_TASK — Membrane Platform MP4
+# Membrane Platform MP5 — Cloud telemetry journal
 
-> **Эпик:** [#67](https://github.com/officefish/Membrana/issues/67) · **PR:** [#68](https://github.com/officefish/Membrana/pull/68) (`feat/background-media-swagger` → `vesnin`).
-
-## Закрыто (merge)
-
-| Блок | Статус |
-|------|--------|
-| Vesnin: `MembranaRegistry`, lifecycle `plugin.install()` / teardown | ✅ |
-| MP1–MP3 + quota refactor (`userStorage` / `buffer` / `datasetCatalogId`) | ✅ prod smoke 2026-06-14 |
+> **Эпик:** [#67](https://github.com/officefish/Membrana/issues/67) · **Реестр:** `membrane-platform-mp5-telemetry-journal`
 
 ## Активная задача
 
-`membrane-platform-mp4-media-membrane` — media scope по мембране, enforcement квот из tariff, provisioning tariff dataset.
+MP5: облачный журнал телеметрии — API + sync client + UI cabinet.
 
-## Известный долг
+| Блок | Статус |
+|------|--------|
+| Prisma `TelemetryReport` + `TelemetryLiveRecord` | ✅ schema + migration |
+| Cabinet API `POST/GET /v1/telemetry/reports` | ✅ |
+| Cabinet API `POST/PATCH/GET /v1/telemetry/live-records` | ✅ |
+| Client sync upload (paired mode) | ✅ |
+| Cabinet journal UI (shared payload cards) | ✅ |
+| Prod deploy + smoke MP5 | ⏳ `yarn cabinet:mp5:prod` |
 
-- Harmonic benchmark v0.1: precision 50%, recall 100% (3 FP на synthetic).
-- `micStreamTelemetry.ts` → прямой `@membrana/telemetry-service` (#30).
+## Закрыто ранее
+
+MP4 archived 2026-06-12 @ `50584bf` (pair/status, unlink, quota regression).

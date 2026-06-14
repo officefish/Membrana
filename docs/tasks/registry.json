@@ -439,13 +439,14 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-13",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "Prod smoke OK 2026-06-12 @ 50584bf",
       "dependsOn": [
         "membrane-platform-mp3-client-pairing"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-platform-mp5-telemetry-journal",

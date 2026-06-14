@@ -9,6 +9,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MembraneModule } from './modules/membrane/membrane.module';
 import { PairModule } from './modules/pair/pair.module';
+import { JournalModule } from './modules/journal/journal.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -36,7 +37,7 @@ const testImports =
       ];
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule],
+  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule],
   controllers: [HealthController],
 })
 export class AppModule {}

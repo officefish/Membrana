@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { AuthUser } from '@/api/auth';
 import { MembranePage } from '@/pages/MembranePage';
 import { NodesPage } from '@/pages/NodesPage';
+import { JournalPage } from '@/pages/JournalPage';
 
 interface CabinetShellProps {
   user: AuthUser;
@@ -13,7 +14,7 @@ type SectionId = 'membrane' | 'nodes' | 'journal';
 const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string }[] = [
   { id: 'membrane', label: 'Мембрана', enabled: true },
   { id: 'nodes', label: 'Узлы и ключи', enabled: true },
-  { id: 'journal', label: 'Журнал', enabled: false, hint: 'MP5' },
+  { id: 'journal', label: 'Журнал', enabled: true },
 ];
 
 function SectionContent({ section }: { section: SectionId }) {
@@ -23,9 +24,7 @@ function SectionContent({ section }: { section: SectionId }) {
     case 'nodes':
       return <NodesPage />;
     case 'journal':
-      return (
-        <p className="text-base-content/70">Облачный журнал телеметрии — фаза MP5 эпика #67.</p>
-      );
+      return <JournalPage />;
     default:
       return null;
   }
