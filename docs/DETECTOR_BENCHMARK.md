@@ -1,6 +1,6 @@
 # DETECTOR_BENCHMARK — бенчмарк детекторов (stage-gate 1→2)
 
-> **Статус:** runner v0.1 (`yarn benchmark:detectors`). Метрики harmonic — автоген ниже.
+> **Статус:** runner v0.2 (`yarn benchmark:detectors` на `data/detectors-benchmark/v0.2/`). Метрики harmonic — автоген ниже.
 >
 > **Дисклеймер:** после появления скрипта бенчмарка ручные правки в таблице
 > результатов **не сохраняются** — источник истины автогенерация.
@@ -57,10 +57,10 @@
 yarn benchmark:detectors
 ```
 
-1. Загрузить test-split из [`DATASET.md`](./DATASET.md) (`data/detectors-benchmark/v0.1/manifest.json`).
+1. Загрузить test-split из [`DATASET.md`](./DATASET.md) (`data/detectors-benchmark/v0.2/manifest.json`, 120 файлов free-v1).
 2. Для каждого реализованного `@membrana/*-detector-service` — скользящие окна FFT + `detect(AudioWindow)`.
 3. Собрать confusion matrix, precision/recall/F1, latency p50/p95.
-4. JSON: [`data/detectors-benchmark/v0.1/reports/latest.json`](../data/detectors-benchmark/v0.1/reports/latest.json).
+4. JSON: [`data/detectors-benchmark/v0.2/reports/latest.json`](../data/detectors-benchmark/v0.2/reports/latest.json).
 5. Перезаписать авто-блок таблицы в этом файле.
 
 ## Связанные документы
