@@ -25,6 +25,8 @@ packages/libs
 packages/services
 !packages/services/media-library
 !packages/services/media-library/**
+!packages/services/audio-engine
+!packages/services/audio-engine/**
 packages/background-office
 docs
 scripts

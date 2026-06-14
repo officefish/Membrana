@@ -17,12 +17,21 @@ import {
 import { fetchMembraneMe } from '@/api/membrane';
 import { CabinetToast } from '@/components/CabinetToast';
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
+import { SampleLibraryPlayerPanel } from '@/components/sample-library/SampleLibraryPlayerPanel';
+import { SamplePlaybackBar } from '@/components/sample-playback/SamplePlaybackBar';
+import { catalogSampleToMedia } from '@/lib/catalogSampleAdapter';
 import { invalidateCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
 import { downloadBlob, extensionFromMime } from '@/lib/downloadBlob';
 import { formatBytes } from '@/lib/formatBytes';
+import {
+  bindSamplePlaybackBlobReader,
+  disposeSamplePlayback,
+  selectSample,
+  togglePlayPause,
+} from '@/lib/sampleLibraryPlaybackHub';
 import { useCabinetMediaLibrary } from '@/lib/useCabinetMediaLibrary';
 import { useCabinetToast } from '@/lib/useCabinetToast';
-import { useSimpleSamplePlayback } from '@/lib/useSimpleSamplePlayback';
+import { useSamplePlayback } from '@/lib/useSamplePlayback';
 
 const DEFAULT_IMPORT_CLASS = 'unlabeled';
 
@@ -85,12 +94,15 @@ export function SampleLibraryPage() {
   const { snapshot, service, loading: libLoading, loadError, active, refresh } =
     useCabinetMediaLibrary(activeDeviceId, mediaReloadNonce);
 
-  const getBlob = useMemo(() => {
-    if (!active || !service) return null;
-    return (sampleId: string) => service.getSampleBlob(sampleId);
-  }, [active, service]);
+  const playback = useSamplePlayback();
 
-  const playback = useSimpleSamplePlayback(getBlob);
+  useEffect(() => {
+    if (!active || !service) return;
+    bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
+    return () => {
+      void disposeSamplePlayback();
+    };
+  }, [active, service]);
 
   const retryMediaLibrary = useCallback(() => {
     invalidateCabinetMediaLibrary();
@@ -141,11 +153,14 @@ export function SampleLibraryPage() {
     setSelection({ kind: 'node-offline', nodeId: node.id, label: node.label });
   };
 
-  const catalogSamples = catalog?.samples ?? [];
-  const nodeSamples =
-    selection.kind === 'node'
-      ? (snapshot.samplesByCollection[selection.collectionId] ?? [])
-      : [];
+  const catalogSamples = useMemo(() => catalog?.samples ?? [], [catalog?.samples]);
+  const nodeSamples = useMemo(
+    () =>
+      selection.kind === 'node'
+        ? (snapshot.samplesByCollection[selection.collectionId] ?? [])
+        : [],
+    [selection, snapshot.samplesByCollection],
+  );
 
   const selectedCollection: Collection | undefined =
     selection.kind === 'node'
@@ -177,6 +192,48 @@ export function SampleLibraryPage() {
       ),
     [isNodeView, selection, snapshot.collections],
   );
+
+  const selectedPlaybackSample = useMemo((): MediaSample | MembraneCatalogSample | null => {
+    if (!playback.selectedSampleId) return null;
+    if (isNodeView) {
+      return nodeSamples.find((s) => s.id === playback.selectedSampleId) ?? null;
+    }
+    if (isCatalogView) {
+      return catalogSamples.find((s) => s.id === playback.selectedSampleId) ?? null;
+    }
+    return null;
+  }, [catalogSamples, isCatalogView, isNodeView, nodeSamples, playback.selectedSampleId]);
+
+  const playbackDisabled =
+    busy || (isCatalogView ? catalogPlaybackBlocked || !active : !active);
+
+  const handleSelectPlaybackSample = useCallback(
+    async (row: MembraneCatalogSample | MediaSample, mode: 'catalog' | 'node') => {
+      const media = mode === 'catalog' ? catalogSampleToMedia(row as MembraneCatalogSample) : (row as MediaSample);
+      await selectSample(media);
+    },
+    [],
+  );
+
+  const handleTogglePlayback = useCallback(
+    async (row: MembraneCatalogSample | MediaSample, mode: 'catalog' | 'node') => {
+      const id = row.id;
+      if (playback.selectedSampleId !== id) {
+        await handleSelectPlaybackSample(row, mode);
+      }
+      await togglePlayPause();
+    },
+    [handleSelectPlaybackSample, playback.selectedSampleId],
+  );
+
+  const handleExportSelected = useCallback(async () => {
+    if (!selectedPlaybackSample || !service) return;
+    await runMediaOp('Экспорт', async () => {
+      const blob = await service.getSampleBlob(selectedPlaybackSample.id);
+      const ext = extensionFromMime(blob.type);
+      downloadBlob(blob, `${selectedPlaybackSample.title}.${ext}`);
+    });
+  }, [runMediaOp, selectedPlaybackSample, service]);
 
   const handleCreateCollection = useCallback(async () => {
     const name = newCollectionName.trim();
@@ -223,11 +280,11 @@ export function SampleLibraryPage() {
       if (readOnlyCollection) return;
       await runMediaOp('Удаление сэмпла', async () => {
         await service!.removeSample(sampleId);
-        if (playback.selectedSampleId === sampleId) playback.stop();
+        if (playback.selectedSampleId === sampleId) await selectSample(null);
         showSuccess('Сэмпл удалён');
       });
     },
-    [playback, readOnlyCollection, runMediaOp, service, showSuccess],
+    [playback.selectedSampleId, readOnlyCollection, runMediaOp, service, showSuccess],
   );
 
   const handleMove = useCallback(
@@ -245,10 +302,10 @@ export function SampleLibraryPage() {
     if (selection.kind !== 'node') return;
     await runMediaOp('Очистка буфера', async () => {
       await service!.clearBuffer();
-      playback.stop();
+      await selectSample(null);
       showSuccess('Буфер очищен');
     });
-  }, [playback, runMediaOp, selection, service, showSuccess]);
+  }, [runMediaOp, selection, service, showSuccess]);
 
   const handleExport = useCallback(
     async (sample: MediaSample) => {
@@ -301,28 +358,28 @@ export function SampleLibraryPage() {
         </div>
       ) : null}
 
-      {playback.error ? (
+      {playback.errorMessage ? (
         <div className="alert alert-warning text-sm" role="alert">
-          <span>{playback.error}</span>
+          <span>{playback.errorMessage}</span>
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 gap-4">
-        <aside className="flex w-60 shrink-0 flex-col gap-3 overflow-y-auto rounded-lg border border-base-300 bg-base-200/40 p-3">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+        <aside className="flex w-full shrink-0 flex-col gap-3 overflow-y-auto rounded-lg border border-base-300 bg-base-200/40 p-3 lg:w-56 xl:w-64">
           <div>
             <span className="text-[10px] uppercase tracking-wide text-base-content/50">
               Мембрана
             </span>
             <button
               type="button"
-              className={`btn btn-sm mt-1 w-full justify-start truncate ${
+              className={`btn btn-sm mt-1 h-auto min-h-0 w-full flex-col items-stretch gap-0.5 py-2 normal-case ${
                 isCatalogView ? 'btn-primary' : 'btn-ghost'
               }`}
               onClick={() => setSelection({ kind: 'catalog' })}
             >
-              Базовый набор
+              <span className="w-full text-left font-medium leading-tight">Базовый набор</span>
               {catalog ? (
-                <span className="ml-auto truncate font-mono text-xs opacity-70">
+                <span className="w-full truncate text-left font-mono text-[11px] leading-tight opacity-70">
                   {catalog.catalogId}
                 </span>
               ) : null}
@@ -392,7 +449,7 @@ export function SampleLibraryPage() {
                             <li key={col.id}>
                               <button
                                 type="button"
-                                className={`btn btn-xs w-full justify-start truncate ${
+                                className={`btn btn-xs h-auto min-h-8 w-full justify-between gap-2 py-1.5 normal-case ${
                                   selection.kind === 'node' &&
                                   selection.collectionId === col.id
                                     ? 'btn-outline btn-primary'
@@ -409,8 +466,8 @@ export function SampleLibraryPage() {
                                   });
                                 }}
                               >
-                                {col.name}
-                                <span className="ml-auto tabular-nums opacity-70">
+                                <span className="min-w-0 truncate text-left">{col.name}</span>
+                                <span className="badge badge-ghost badge-xs shrink-0 tabular-nums">
                                   {(snapshot.samplesByCollection[col.id] ?? []).length}
                                 </span>
                               </button>
@@ -487,11 +544,16 @@ export function SampleLibraryPage() {
           ) : isCatalogView ? (
             <>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-lg font-semibold">
-                  Базовый набор {catalog ? `(${catalog.catalogId})` : ''}
+                <h2 className="min-w-0 text-lg font-semibold">
+                  <span className="block truncate">Базовый набор</span>
+                  {catalog ? (
+                    <span className="block truncate font-mono text-sm font-normal text-base-content/60">
+                      {catalog.catalogId}
+                    </span>
+                  ) : null}
                 </h2>
-                <span className="badge badge-neutral badge-sm">системный датасет</span>
-                <span className="ml-auto text-sm text-base-content/60">Только чтение</span>
+                <span className="badge badge-neutral badge-sm shrink-0">системный датасет</span>
+                <span className="ml-auto shrink-0 text-sm text-base-content/60">Только чтение</span>
               </div>
               {catalogPlaybackBlocked ? (
                 <div className="alert alert-warning text-sm">
@@ -502,14 +564,33 @@ export function SampleLibraryPage() {
               {libLoading ? (
                 <span className="loading loading-spinner loading-sm" aria-label="Загрузка медиа" />
               ) : null}
-              <SampleTable
-                rows={catalogSamples}
-                playingId={playback.selectedSampleId}
-                playbackStatus={playback.status}
-                playbackDisabled={catalogPlaybackBlocked || !active}
-                onTogglePlay={(id) => void playback.toggleSample(id)}
-                mode="catalog"
-              />
+              <div className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
+                <div className="flex min-w-0 flex-col gap-2">
+                  <SamplePlaybackBar playback={playback} compact />
+                  <SampleTable
+                    rows={catalogSamples}
+                    playback={playback}
+                    playbackDisabled={playbackDisabled}
+                    onSelectRow={(row) => void handleSelectPlaybackSample(row, 'catalog')}
+                    onTogglePlay={(row) => void handleTogglePlayback(row, 'catalog')}
+                    mode="catalog"
+                  />
+                </div>
+                <div className="card min-w-0 border border-base-300 bg-base-200/30 shadow-sm">
+                  <div className="card-body gap-3 p-4">
+                    <h3 className="card-title text-sm font-semibold">Плеер сэмпла</h3>
+                    <SampleLibraryPlayerPanel
+                      playback={playback}
+                      selectedSample={selectedPlaybackSample}
+                      onExport={
+                        selectedPlaybackSample && active
+                          ? () => void handleExportSelected()
+                          : undefined
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -554,25 +635,44 @@ export function SampleLibraryPage() {
               {libLoading ? (
                 <span className="loading loading-spinner loading-sm" aria-label="Загрузка медиа" />
               ) : null}
-              <SampleTable
-                rows={nodeSamples}
-                playingId={playback.selectedSampleId}
-                playbackStatus={playback.status}
-                playbackDisabled={!active || busy}
-                onTogglePlay={(id) => void playback.toggleSample(id)}
-                mode="node"
-                readOnly={readOnlyCollection}
-                canMutate={canMutate}
-                showMoveFromBuffer={
-                  selection.kind === 'node' &&
-                  selection.collectionId === BUFFER_COLLECTION_ID &&
-                  moveTargets.length > 0
-                }
-                moveTargets={moveTargets}
-                onRemove={(id) => void handleRemove(id)}
-                onMove={(id, toId) => void handleMove(id, toId)}
-                onExport={(sample) => void handleExport(sample)}
-              />
+              <div className="grid min-h-0 flex-1 gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
+                <div className="flex min-w-0 flex-col gap-2">
+                  <SamplePlaybackBar playback={playback} compact />
+                  <SampleTable
+                    rows={nodeSamples}
+                    playback={playback}
+                    playbackDisabled={playbackDisabled}
+                    onSelectRow={(row) => void handleSelectPlaybackSample(row, 'node')}
+                    onTogglePlay={(row) => void handleTogglePlayback(row, 'node')}
+                    mode="node"
+                    readOnly={readOnlyCollection}
+                    canMutate={canMutate}
+                    showMoveFromBuffer={
+                      selection.kind === 'node' &&
+                      selection.collectionId === BUFFER_COLLECTION_ID &&
+                      moveTargets.length > 0
+                    }
+                    moveTargets={moveTargets}
+                    onRemove={(id) => void handleRemove(id)}
+                    onMove={(id, toId) => void handleMove(id, toId)}
+                    onExport={(sample) => void handleExport(sample)}
+                  />
+                </div>
+                <div className="card min-w-0 border border-base-300 bg-base-200/30 shadow-sm">
+                  <div className="card-body gap-3 p-4">
+                    <h3 className="card-title text-sm font-semibold">Плеер сэмпла</h3>
+                    <SampleLibraryPlayerPanel
+                      playback={playback}
+                      selectedSample={selectedPlaybackSample}
+                      onExport={
+                        selectedPlaybackSample && active
+                          ? () => void handleExportSelected()
+                          : undefined
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
             </>
           )}
         </section>
@@ -585,12 +685,14 @@ export function SampleLibraryPage() {
   );
 }
 
+import type { SamplePlaybackSnapshot } from '@/lib/sampleLibraryPlaybackHub';
+
 interface SampleTableProps {
   rows: MembraneCatalogSample[] | MediaSample[];
-  playingId: string | null;
-  playbackStatus: 'idle' | 'loading' | 'playing' | 'error';
+  playback: SamplePlaybackSnapshot;
   playbackDisabled: boolean;
-  onTogglePlay: (id: string) => void;
+  onSelectRow: (row: MembraneCatalogSample | MediaSample) => void;
+  onTogglePlay: (row: MembraneCatalogSample | MediaSample) => void;
   mode: 'catalog' | 'node';
   readOnly?: boolean;
   canMutate?: boolean;
@@ -603,9 +705,9 @@ interface SampleTableProps {
 
 function SampleTable({
   rows,
-  playingId,
-  playbackStatus,
+  playback,
   playbackDisabled,
+  onSelectRow,
   onTogglePlay,
   mode,
   readOnly = true,
@@ -617,6 +719,8 @@ function SampleTable({
   onExport,
 }: SampleTableProps) {
   const colSpan = mode === 'node' ? 6 : 5;
+  const playingId = playback.selectedSampleId;
+  const playbackStatus = playback.status;
 
   return (
     <div className="overflow-x-auto rounded-lg border border-base-300">
@@ -647,7 +751,11 @@ function SampleTable({
               const sample = mode === 'node' ? (row as MediaSample) : null;
 
               return (
-                <tr key={id} className={playingId === id ? 'bg-primary/10' : undefined}>
+                <tr
+                  key={id}
+                  className={`cursor-pointer ${playingId === id ? 'bg-primary/10' : undefined}`}
+                  onClick={() => onSelectRow(row)}
+                >
                   <td className="max-w-[14rem] truncate">{row.title}</td>
                   <td>{row.class}</td>
                   <td>{row.label}</td>
@@ -660,7 +768,10 @@ function SampleTable({
                         className="btn btn-xs btn-ghost"
                         disabled={playbackDisabled}
                         aria-label={isPlaying ? 'Пауза' : 'Воспроизвести'}
-                        onClick={() => onTogglePlay(id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onTogglePlay(row);
+                        }}
                       >
                         {isLoading ? '…' : isPlaying ? '⏸' : '▶'}
                       </button>

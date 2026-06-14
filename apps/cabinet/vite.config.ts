@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => {
       '@membrana/media-library-service': fileURLToPath(
         new URL('../../packages/services/media-library/src/index.ts', import.meta.url),
       ),
+      '@membrana/audio-engine-service': fileURLToPath(
+        new URL('../../packages/services/audio-engine/src/index.ts', import.meta.url),
+      ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },

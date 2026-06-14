@@ -1056,6 +1056,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/cabinet@workspace:apps/cabinet"
   dependencies:
+    "@membrana/audio-engine-service": "npm:*"
     "@membrana/core": "npm:*"
     "@membrana/media-library-service": "npm:*"
     "@types/react": "npm:^18.3.3"

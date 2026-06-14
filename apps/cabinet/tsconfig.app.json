@@ -15,6 +15,8 @@
       "@membrana/core/*": ["../../packages/core/src/*"],
       "@membrana/media-library-service": ["../../packages/services/media-library/src/index.ts"],
       "@membrana/media-library-service/*": ["../../packages/services/media-library/src/*"],
+      "@membrana/audio-engine-service": ["../../packages/services/audio-engine/src/index.ts"],
+      "@membrana/audio-engine-service/*": ["../../packages/services/audio-engine/src/*"],
       "@/*": ["./src/*"]
     }
   },
