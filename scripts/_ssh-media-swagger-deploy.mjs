@@ -31,6 +31,7 @@ grep SWAGGER /etc/membrana/media.env
 
 ln -sf /etc/membrana/media.env packages/background-media/.env.docker
 chmod +x deploy/media-stack.sh
+pkill -9 -f 'node dist/main.js' || true
 
 echo "=== docker build ==="
 ./deploy/media-stack.sh build

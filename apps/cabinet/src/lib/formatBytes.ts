@@ -1,7 +1,7 @@
 const UNITS = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ'] as const;
 
 export function formatBytes(value: string | number | bigint): string {
-  let bytes = typeof value === 'bigint' ? Number(value) : Number(value);
+  const bytes = typeof value === 'bigint' ? Number(value) : Number(value);
   if (!Number.isFinite(bytes) || bytes < 0) return '—';
   if (bytes === 0) return '0 Б';
 

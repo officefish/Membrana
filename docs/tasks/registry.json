@@ -106,7 +106,7 @@
       "createdAt": "2026-06-12",
       "archivedAt": "2026-06-12",
       "archiveNotes": "all 5 MCP servers green: gitnexus git filesystem perplexity playwright; git fixed uvx mcp-server-git",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "mcp-workstation-phase-c",
@@ -119,7 +119,7 @@
       "createdAt": "2026-06-12",
       "archivedAt": "2026-06-12",
       "archiveNotes": "glyph go install OK; WinLibs gcc; mcp.json 6 servers; glyph C:/Users/user190825/go/bin/glyph.exe mcp",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "media-library-a1-storage",
@@ -382,7 +382,7 @@
       "dependsOn": [
         "membrane-platform-v1"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-13"
     },
     {
       "id": "membrane-platform-mp1-auth-cabinet",
@@ -398,7 +398,7 @@
       "dependsOn": [
         "membrane-platform-mp0-domain"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-13"
     },
     {
       "id": "membrane-platform-mp2-membrane-node-keys",
@@ -414,7 +414,7 @@
       "dependsOn": [
         "membrane-platform-mp1-auth-cabinet"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-13"
     },
     {
       "id": "membrane-platform-mp3-client-pairing",
@@ -423,13 +423,14 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-13",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "API prod smoke OK 2026-06-13 @ cbbc435. Pair + Device + media bridge. Client UI: autonomous/paired modes. Browser pairing: VITE_CABINET_API_URL=https://cabinet.membrana.space",
       "dependsOn": [
         "membrane-platform-mp2-membrane-node-keys"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-13"
     },
     {
       "id": "membrane-platform-mp4-media-membrane",

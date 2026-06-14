@@ -26,6 +26,10 @@ pnpm-debug.log*
 .env
 .env.local
 .env.*.local
+**/.env.docker
+
+# Локальные TLS-ключи (не коммитить)
+ssl/
 
 # MCP (локальные индексы и конфиги с ключами)
 .gitnexus/

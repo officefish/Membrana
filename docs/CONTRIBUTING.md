@@ -108,6 +108,21 @@ git push -u origin vesnin
 - Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`, `scripts/daily-standup-paths.mjs`).
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
 
+### VPS deploy (SSH-скрипты)
+
+Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`.
+
+| Команда | Назначение |
+|---------|------------|
+| `yarn cabinet:deploy:prod` | Cabinet stack: pull, build, up, Caddy, smoke |
+| `yarn cabinet:pairing:e2e:deploy` | Hotfix pairing: `MEDIA_PUBLIC_API_URL`, media CORS, rebuild cabinet+media |
+| `yarn cabinet:mp3:smoke` | Prod smoke MP1–MP3 (pair + media device) |
+| `yarn cabinet:mp3:post-deploy` | Patch `cabinet.env` (CLIENT_CORS, MEDIA_API_*) |
+
+Подробно: [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md), [`docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
+
+**Не коммитить:** `**/.env.docker` (синк из `.env`), `ssl/` (TLS-ключи), корневой `.env`.
+
 ## Коммиты
 
 - Сообщения в повелительном наклонении, на английском или русском — как принято в команде; главное — единообразие в PR.
