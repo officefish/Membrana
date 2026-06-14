@@ -22,6 +22,6 @@ export class CollectionResponseDto {
   @ApiProperty({ format: 'date-time' })
   updatedAt!: string;
 
-  @ApiPropertyOptional({ example: 'benchmark' })
+  @ApiPropertyOptional({ example: 'tariff-dataset' })
   systemKey?: string;
 }

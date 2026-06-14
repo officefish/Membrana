@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   BUFFER_COLLECTION_ID,
-  SYSTEM_BENCHMARK_COLLECTION_ID,
+  TARIFF_DATASET_COLLECTION_ID,
 } from '../src/constants.js';
 import { MemoryStorageBackend } from '../src/backends/memory-storage-backend.js';
+import { seedBundledCatalogIfEmpty } from '../src/bundled-catalog.js';
 import { createMediaLibraryService } from '../src/media-library-service.js';
 import { DEFAULT_MEDIA_LIBRARY_CONFIG } from '../src/constants.js';
 import { getQuotaLevel, isQuotaFull, isQuotaWarning, resolveMediaLibraryStorageMode } from '../src/quota-status.js';
@@ -39,22 +40,22 @@ describe('quota-status', () => {
 });
 
 describe('MediaLibraryService', () => {
-  it('seeds buffer and system collections', async () => {
+  it('seeds buffer and tariff dataset collections', async () => {
     const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 1_000_000 }));
     await svc.init();
     const ids = svc.getSnapshot().collections.map((c) => c.id);
     expect(ids).toContain(BUFFER_COLLECTION_ID);
-    expect(ids).toContain(SYSTEM_BENCHMARK_COLLECTION_ID);
+    expect(ids).toContain(TARIFF_DATASET_COLLECTION_ID);
   });
 
   it('forbids deleting reserved collections', async () => {
     const svc = createMediaLibraryService(new MemoryStorageBackend());
     await svc.init();
-    await expect(svc.deleteUserCollection(SYSTEM_BENCHMARK_COLLECTION_ID)).rejects.toThrow();
+    await expect(svc.deleteUserCollection(TARIFF_DATASET_COLLECTION_ID)).rejects.toThrow();
     await expect(svc.deleteUserCollection(BUFFER_COLLECTION_ID)).rejects.toThrow();
   });
 
-  it('imports blob and moves between collections', async () => {
+  it('imports blob and moves between user collections', async () => {
     const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 1_000_000 }));
     await svc.init();
     const user = await svc.createUserCollection('field');
@@ -91,24 +92,33 @@ describe('MediaLibraryService', () => {
     expect(out).toEqual(bytes);
   });
 
-  it('moves from buffer to system benchmark collection', async () => {
-    const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 1_000_000 }));
+  it('forbids upload and move into tariff dataset', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 });
+    const svc = createMediaLibraryService(backend);
     await svc.init();
     const blob = new Blob([new Uint8Array(64)], { type: 'audio/wav' });
     const sample = await svc.importBlob(BUFFER_COLLECTION_ID, blob, {
-      title: 'bench-candidate',
-      class: 'drone-multirotor',
-      label: 'drone',
+      title: 'x',
+      class: 'wind',
+      label: 'not-drone',
       source: 'disk-import',
-      durationSec: 2,
+      durationSec: 1,
       sampleRate: 48000,
     });
-    const moved = await svc.moveSample(sample.id, SYSTEM_BENCHMARK_COLLECTION_ID);
-    expect(moved.collectionId).toBe(SYSTEM_BENCHMARK_COLLECTION_ID);
-    expect(svc.getSnapshot().samplesByCollection[SYSTEM_BENCHMARK_COLLECTION_ID]).toHaveLength(1);
+    await expect(svc.moveSample(sample.id, TARIFF_DATASET_COLLECTION_ID)).rejects.toThrow();
+    await expect(
+      svc.importBlob(TARIFF_DATASET_COLLECTION_ID, blob, {
+        title: 'bad',
+        class: 'wind',
+        label: 'not-drone',
+        source: 'disk-import',
+        durationSec: 1,
+        sampleRate: 48000,
+      }),
+    ).rejects.toThrow();
   });
 
-  it('enforces quota', async () => {
+  it('enforces quota (catalog samples excluded)', async () => {
     const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 50 }));
     await svc.init();
     const blob = new Blob([new Uint8Array(100)], { type: 'audio/wav' });
@@ -143,5 +153,20 @@ describe('MediaLibraryService', () => {
     await svc.importBlob(BUFFER_COLLECTION_ID, blob, meta);
     await expect(svc.importBlob(BUFFER_COLLECTION_ID, blob, meta)).rejects.toThrow();
     expect(DEFAULT_MEDIA_LIBRARY_CONFIG.maxBufferSamples).toBeGreaterThan(2);
+  });
+});
+
+describe('bundled catalog seed', () => {
+  it('seeds 120 samples from v0.2 manifest when dataset exists', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 512 * 1024 * 1024 });
+    const count = await seedBundledCatalogIfEmpty(backend);
+    if (count === 0) {
+      return;
+    }
+    expect(count).toBe(120);
+    const samples = await backend.listSamples(TARIFF_DATASET_COLLECTION_ID);
+    expect(samples).toHaveLength(120);
+    const quota = await backend.getQuota();
+    expect(quota.usedBytes).toBe(0);
   });
 });

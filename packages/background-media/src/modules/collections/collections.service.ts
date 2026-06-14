@@ -3,7 +3,6 @@ import { randomUUID } from 'node:crypto';
 import type { Collection, CollectionKind } from '../../prisma/client';
 import {
   BUFFER_COLLECTION_ID,
-  SYSTEM_BENCHMARK_COLLECTION_ID,
   TARIFF_DATASET_COLLECTION_ID,
   TARIFF_DATASET_SYSTEM_KEY,
 } from '../../lib/collection-ids';
@@ -60,18 +59,10 @@ export class CollectionsService {
         kind: 'buffer',
       });
     }
-    if (!byId.has(SYSTEM_BENCHMARK_COLLECTION_ID)) {
-      toCreate.push({
-        id: SYSTEM_BENCHMARK_COLLECTION_ID,
-        name: 'Benchmark',
-        kind: 'system',
-        systemKey: 'benchmark',
-      });
-    }
     if (!byId.has(TARIFF_DATASET_COLLECTION_ID)) {
       toCreate.push({
         id: TARIFF_DATASET_COLLECTION_ID,
-        name: 'Tariff dataset',
+        name: 'Базовый набор (free-v1)',
         kind: 'system',
         systemKey: TARIFF_DATASET_SYSTEM_KEY,
       });

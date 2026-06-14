@@ -43,7 +43,7 @@ export class CollectionsController {
   }
 
   @Post('ensure-reserved')
-  @ApiOperation({ summary: 'Ensure buffer and system benchmark collections exist' })
+  @ApiOperation({ summary: 'Ensure buffer and tariff dataset collections exist' })
   @ApiResponse({ status: 200, type: [CollectionResponseDto] })
   @ApiStandardErrors()
   ensureReserved(@Param('deviceId') deviceId: string) {
