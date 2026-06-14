@@ -15,7 +15,7 @@
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "prisma generate && vitest run"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",

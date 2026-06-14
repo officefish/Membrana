@@ -4,7 +4,7 @@ import {
   Injectable,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
-import type { AudioFormat } from '@prisma/client';
+import type { AudioFormat } from '../prisma/client';
 import { WaveFile } from 'wavefile';
 import type { AppConfig } from '../config/env.schema';
 import { APP_CONFIG } from '../config/config.tokens';

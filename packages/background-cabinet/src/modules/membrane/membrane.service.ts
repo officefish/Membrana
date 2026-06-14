@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { NodeAccessKeyDuration, Tariff } from '@prisma/client';
+import type { NodeAccessKeyDuration, Tariff } from '../../prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
   computeAccessKeyExpiresAt,

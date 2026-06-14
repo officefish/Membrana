@@ -3,7 +3,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
-import type { NodeAccessKey } from '@prisma/client';
+import type { NodeAccessKey } from '../../prisma/client';
 import { isAccessKeyActive } from '../../domain/node-access-key-duration';
 import { verifyAccessKeySecret } from '../membrane/access-key.util';
 import { AuthService } from '../auth/auth.service';

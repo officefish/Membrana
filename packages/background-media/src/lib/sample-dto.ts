@@ -1,4 +1,4 @@
-import type { Collection, Sample, SampleLabel, SampleSource } from '@prisma/client';
+import type { Collection, Sample, SampleLabel, SampleSource } from '../prisma/client';
 
 const SOURCE_TO_API: Record<SampleSource, string> = {
   mic_recording: 'mic-recording',

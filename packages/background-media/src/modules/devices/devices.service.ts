@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Device, DeviceKind } from '@prisma/client';
+import type { Device, DeviceKind } from '../../prisma/client';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';

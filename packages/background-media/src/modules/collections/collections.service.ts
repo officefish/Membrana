@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import type { Collection, CollectionKind } from '@prisma/client';
+import type { Collection, CollectionKind } from '../../prisma/client';
 import {
   BUFFER_COLLECTION_ID,
   SYSTEM_BENCHMARK_COLLECTION_ID,

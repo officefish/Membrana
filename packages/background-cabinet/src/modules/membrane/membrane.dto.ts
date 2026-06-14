@@ -1,4 +1,4 @@
-import type { NodeAccessKeyDuration } from '@prisma/client';
+import type { NodeAccessKeyDuration } from '../../prisma/client';
 
 export interface CreateAccessKeyDto {
   duration: NodeAccessKeyDuration;

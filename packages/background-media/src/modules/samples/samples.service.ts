@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
-import type { Collection, SampleLabel } from '@prisma/client';
+import type { Collection, SampleLabel } from '../../prisma/client';
 import { randomUUID } from 'node:crypto';
 import { AudioIngestService } from '../../audio/audio-ingest.service';
 import { BlobStorageService } from '../../blob/blob-storage.service';

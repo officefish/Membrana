@@ -1,4 +1,4 @@
-import { NodeAccessKeyDuration } from '@prisma/client';
+import { NodeAccessKeyDuration } from '../prisma/client';
 
 export { NodeAccessKeyDuration };
 
