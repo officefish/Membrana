@@ -132,7 +132,7 @@ Whitelist MIME и max upload — в env (`MEDIA_ALLOWED_MIME`, `MAX_UPLOAD_BYTES
 
 ```text
 Device (deviceId)
- ├── collections[]     — buffer / user / system benchmark
+ ├── collections[]     — buffer / user / system tariff-dataset (`__tariff_dataset__`)
  ├── samples[]         — метаданные в PG (Prisma), аудио-blob на volume
  └── trend_templates[] — JSON PatternTemplate (ключи user:*)
 ```
@@ -143,6 +143,8 @@ Device (deviceId)
 - Узел A **не видит** сэмплы и шаблоны узла B.
 
 Клиентский fallback при недоступности media-server: `BrowserLimitedStorageBackend` (IndexedDB) + localStorage для шаблонов — см. [`MEDIA_LIBRARY_ARCHITECTURE.md`](./MEDIA_LIBRARY_ARCHITECTURE.md) §4.3.
+
+**Tariff catalog (free-v1, DS5):** при `POST .../collections/ensure-reserved` (pair flow из `background-cabinet`) сервер идемпотентно заливает 120 × 5 с WAV в `__tariff_dataset__` из `MEDIA_CATALOG_ROOT` (Docker: `/app/catalog/free-v1`). Ручной прогон: `yarn media:provision-catalog <deviceId>`. Catalog samples **не входят** в `userStorage` quota.
 
 ---
 

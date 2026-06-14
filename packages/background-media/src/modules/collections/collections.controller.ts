@@ -12,7 +12,12 @@ import { OkResponseDto } from '../../common/swagger/common.dto';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
 import { DeviceGuard } from '../../common/guards/device.guard';
-import { CollectionResponseDto, CreateCollectionDto } from './collections.dto';
+import {
+  CollectionResponseDto,
+  CreateCollectionDto,
+  ProvisionCatalogResponseDto,
+} from './collections.dto';
+import { CatalogProvisionService } from './catalog-provision.service';
 import { CollectionsService } from './collections.service';
 
 @ApiTags('Collections')
@@ -23,7 +28,10 @@ import { CollectionsService } from './collections.service';
 @ApiHeader({ name: 'X-Membrana-Device-Id', required: false })
 @ApiParam({ name: 'deviceId', format: 'uuid' })
 export class CollectionsController {
-  constructor(private readonly collections: CollectionsService) {}
+  constructor(
+    private readonly collections: CollectionsService,
+    private readonly catalogProvision: CatalogProvisionService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'List collections for device' })
@@ -43,11 +51,21 @@ export class CollectionsController {
   }
 
   @Post('ensure-reserved')
-  @ApiOperation({ summary: 'Ensure buffer and tariff dataset collections exist' })
+  @ApiOperation({ summary: 'Ensure buffer and tariff dataset collections exist; provision free-v1 catalog' })
   @ApiResponse({ status: 200, type: [CollectionResponseDto] })
   @ApiStandardErrors()
-  ensureReserved(@Param('deviceId') deviceId: string) {
-    return this.collections.ensureReserved(deviceId);
+  async ensureReserved(@Param('deviceId') deviceId: string) {
+    const collections = await this.collections.ensureReserved(deviceId);
+    await this.catalogProvision.provisionTariffCatalogIfNeeded(deviceId);
+    return collections;
+  }
+
+  @Post('provision-catalog')
+  @ApiOperation({ summary: 'Provision tariff dataset catalog samples (idempotent)' })
+  @ApiResponse({ status: 200, type: ProvisionCatalogResponseDto })
+  @ApiStandardErrors()
+  provisionCatalog(@Param('deviceId') deviceId: string) {
+    return this.catalogProvision.provisionTariffCatalogIfNeeded(deviceId);
   }
 
   @Delete(':collectionId')

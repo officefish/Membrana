@@ -5,6 +5,7 @@ const SOURCE_TO_API: Record<SampleSource, string> = {
   disk_import: 'disk-import',
   synthetic: 'synthetic',
   move: 'move',
+  catalog: 'catalog',
 };
 
 const SOURCE_FROM_API: Record<string, SampleSource> = {
@@ -12,6 +13,7 @@ const SOURCE_FROM_API: Record<string, SampleSource> = {
   'disk-import': 'disk_import',
   synthetic: 'synthetic',
   move: 'move',
+  catalog: 'catalog',
 };
 
 export function sampleSourceToApi(source: SampleSource): string {

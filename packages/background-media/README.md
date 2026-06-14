@@ -96,6 +96,7 @@ curl http://localhost:3010/health
 | `MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE` | квота user-коллекций (default 1 GiB); legacy alias `MEDIA_QUOTA_BYTES_PER_DEVICE` |
 | `MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE` | квота буфера live (default 1 GiB) |
 | `MEDIA_DEFAULT_DATASET_CATALOG_ID` | id каталога tariff dataset (default `free-v1-catalog`) |
+| `MEDIA_CATALOG_ROOT` | путь к `manifest.json` + wav (dev: `data/detectors-benchmark/v0.2`; Docker: `/app/catalog/free-v1`) |
 | `SWAGGER_ENABLED` | `false` в prod (default); `true` — `/docs` и `/docs-json` для интеграторов |
 
 | Env (клиент, Vite build) | Пример |
@@ -114,6 +115,7 @@ curl http://localhost:3010/health
 | `yarn media:migrate` | `prisma migrate deploy` |
 | `yarn media:db:up` / `media:db:down` | только PG (dev) |
 | `yarn media:verify-swagger` | OpenAPI smoke (`/docs`, `/docs-json`) без живой БД |
+| `yarn media:provision-catalog <deviceId>` | залить free-v1 в `__tariff_dataset__` (идемпотентно) |
 
 | Workspace | Назначение |
 |-----------|------------|

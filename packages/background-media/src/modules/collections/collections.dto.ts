@@ -25,3 +25,17 @@ export class CollectionResponseDto {
   @ApiPropertyOptional({ example: 'tariff-dataset' })
   systemKey?: string;
 }
+
+export class ProvisionCatalogResponseDto {
+  @ApiProperty({ example: 'free-v1-catalog' })
+  catalogId!: string;
+
+  @ApiProperty({ example: 120, description: 'Samples imported this call' })
+  seeded!: number;
+
+  @ApiProperty({ example: 0, description: 'Samples already present (skipped)' })
+  skipped!: number;
+
+  @ApiProperty({ example: 120, description: 'Total entries in manifest' })
+  total!: number;
+}

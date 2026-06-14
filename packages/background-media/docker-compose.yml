@@ -48,6 +48,7 @@ services:
       MEDIA_QUOTA_BYTES_PER_DEVICE: ${MEDIA_QUOTA_BYTES_PER_DEVICE:-1073741824}
       MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-52428800}
       MEDIA_ALLOWED_MIME: ${MEDIA_ALLOWED_MIME:-audio/wav,audio/wave,audio/mpeg,audio/flac,audio/ogg}
+      MEDIA_CATALOG_ROOT: /app/catalog/free-v1
     volumes:
       - media-blobs:/data/blobs
     depends_on:
