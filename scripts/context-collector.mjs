@@ -80,6 +80,43 @@ function filterSourceExtensions(text) {
     .join('\n');
 }
 
+/** Сводка turbo: итог Tasks + строки с ошибками (не только заголовок запуска). */
+function extractTurboSnippet(output, maxLines) {
+  if (!output?.trim()) {
+    return '';
+  }
+
+  const lines = output.split(/\r?\n/);
+  const picked = new Set();
+
+  const push = (line) => {
+    const trimmed = line.trimEnd();
+    if (!trimmed || picked.has(trimmed)) {
+      return;
+    }
+    picked.add(trimmed);
+  };
+
+  for (const line of lines) {
+    if (
+      / Tasks:/i.test(line) ||
+      /Failed:/i.test(line) ||
+      /ERROR\s+.*exited/i.test(line) ||
+      /#(?:test|lint):.*(?:FAIL|ERROR|failed)/i.test(line) ||
+      /Test Files\s+\d+ failed/i.test(line) ||
+      /Usage Error:/i.test(line)
+    ) {
+      push(line);
+    }
+  }
+
+  for (const line of lines.slice(-12)) {
+    push(line);
+  }
+
+  return [...picked].slice(0, maxLines).join('\n');
+}
+
 /**
  * @param {{ full?: boolean }} [options]
  * @returns {string}
@@ -110,11 +147,11 @@ export function collectRepositoryContext(options = {}) {
     diffStat = runGit(['diff', '--stat']) || '';
   }
 
-  const testOut = runYarnScript('yarn test -- --passWithNoTests --silent');
-  const testSnippet = testOut.split(/\r?\n/).slice(0, testLines).join('\n');
+  const testOut = runYarnScript('yarn turbo run test --concurrency=3 --continue');
+  const testSnippet = extractTurboSnippet(testOut, testLines);
 
-  const lintOut = runYarnScript('yarn lint -- --quiet');
-  const lintSnippet = lintOut.split(/\r?\n/).slice(0, lintLines).join('\n');
+  const lintOut = runYarnScript('yarn turbo run lint --concurrency=3 --continue');
+  const lintSnippet = extractTurboSnippet(lintOut, lintLines);
 
   const parts = [
     '=== REPOSITORY CONTEXT ===',

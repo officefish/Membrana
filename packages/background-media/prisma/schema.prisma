@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DeviceKind {
+  microphone
+  antenna
+  other
+}
+
+enum CollectionKind {
+  buffer
+  user
+  system
+}
+
+enum SampleLabel {
+  drone
+  not_drone
+  unlabeled
+}
+
+enum SampleSource {
+  mic_recording
+  disk_import
+  synthetic
+  move
+}
+
+enum AudioFormat {
+  wav
+  mp3
+  flac
+  ogg
+}
+
+model Device {
+  id             String          @id @default(uuid()) @db.Uuid
+  name           String
+  kind           DeviceKind
+  createdAt      DateTime        @default(now())
+  collections    Collection[]
+  samples        Sample[]
+  trendTemplates TrendTemplate[]
+}
+
+model Collection {
+  id        String         @id
+  deviceId  String         @db.Uuid
+  device    Device         @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  name      String
+  kind      CollectionKind
+  systemKey String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  samples   Sample[]
+
+  @@index([deviceId])
+}
+
+model Sample {
+  id           String       @id @default(uuid()) @db.Uuid
+  deviceId     String       @db.Uuid
+  device       Device       @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  collectionId String
+  collection   Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  title        String
+  class        String
+  label        SampleLabel
+  source       SampleSource
+  durationSec  Float
+  sampleRate   Int
+  channels     Int
+  audioFormat  AudioFormat
+  contentType  String
+  sizeBytes    Int
+  storageRef   String
+  notes        String?
+  createdAt    DateTime     @default(now())
+
+  @@index([deviceId])
+  @@index([deviceId, collectionId])
+}
+
+model TrendTemplate {
+  id        String   @id @default(uuid()) @db.Uuid
+  deviceId  String   @db.Uuid
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  key       String
+  payload   Json
+  updatedAt DateTime @updatedAt
+
+  @@unique([deviceId, key])
+  @@index([deviceId])
+}

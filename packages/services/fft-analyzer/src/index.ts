@@ -17,8 +17,12 @@ export { AudioAnalyzer } from './core/audio-analyzer.js';
 export { FftCore } from './math/fft.js';
 export {
   SpectralFluxTracker,
+  spectralFluxL2,
+  SPECTRAL_FLUX_BYTE_SCALE,
+  SPECTRAL_FLUX_L2_DIVISOR,
   spectralCentroid,
   rms,
+  frameLoudness,
   lowEnergyPercent,
   stabilityFromFlux,
   applyFrequencyFilter,
@@ -27,6 +31,33 @@ export {
   spectralFlatness,
 } from './math/metrics.js';
 export { mean, std, minOf, maxOf, summarize } from './math/statistics.js';
+export {
+  estimateNoiseFloor,
+  evaluateSoundQuality,
+  soundQualityBadge,
+  soundQualityHint,
+  type SoundQualityBadge,
+  type SoundQualityBadgeTone,
+  type SoundQualityInput,
+  type SoundQualityMetrics,
+  type SoundQualityOptions,
+  type SoundQualityWeights,
+} from './math/sound-quality.js';
+export {
+  THRESHOLD_TEST_FRAME_COUNTS,
+  evaluateFrameVerdict,
+  evaluateThresholdTest,
+  isThresholdTestFrameCount,
+  minPassRateForStrictness,
+  type FrameMetrics,
+  type FrameVerdict,
+  type StrictnessLevel,
+  type ThresholdBounds,
+  type ThresholdTestFrameCount,
+  type ThresholdTestMode,
+  type ThresholdTestResult,
+  type ThresholdTestThresholds,
+} from './math/threshold-test.js';
 
 // ============= React-хуки =============
 export {

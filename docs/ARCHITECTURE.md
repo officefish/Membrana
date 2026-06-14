@@ -1,6 +1,6 @@
 # Архитектура (Membrana + аудио-подсистема)
 
-Документ задаёт **стратегические** правила для человеческих и AI-агентов. Детали монорепо согласованы с корневыми правилами Cursor (`.cursorrules`).
+Документ задаёт **стратегические** правила для человеческих и AI-агентов. Детали монорепо согласованы с корневыми правилами Cursor (`.cursorrules`). Фоновые NestJS-серверы (`background-office`, `background-media`) — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md).
 
 ## 1. Монорепо Membrana (обязательное)
 
@@ -20,7 +20,9 @@
 
 - Каждый сервис лежит в `packages/services/<имя>/` и имеет собственные `package.json`, `tsconfig.json`, `vite.config.ts`.
 - Имя пакета: `@membrana/<имя>-service` (например, `@membrana/audio-engine-service`, `@membrana/fft-analyzer-service`).
-- Допустимые зависимости: **только** `@membrana/core` + внешние npm-пакеты.
+- Допустимые зависимости: **только** `@membrana/core` + внешние npm-пакеты;
+  **исключение:** пакеты в `packages/services/detectors/*` — см. §1e (`detector-base`
+  + `audio-engine-service` для типов окна).
 - **Нельзя**: зависеть от других сервисов, от `@membrana/agenda` / `@membrana/device-board` / `apps/client`.
 - Публичный API — через `src/index.ts`. Внутреннее деление: `service.ts` (чистая логика), `hooks.ts` (React-обёртка), `types.ts`.
 - Клиент потребляет сервисы через alias в `apps/client/vite.config.ts` (на исходники) — без шага сборки в dev.
@@ -58,7 +60,103 @@
 
 Подробный процесс и чек-лист — [MODULE_AND_PLUGIN_UI.md §0](./MODULE_AND_PLUGIN_UI.md#0-регистрация-модулей-и-lazy-loading).
 
-**Lifecycle `plugin.install()` / teardown:** реализован в ветке `vesnin`. Store вызывает `install` при активации (включая повторную регистрацию активного плагина после rehydrate) и teardown при деактивации. Контракт и эталон — `MODULE_AND_PLUGIN_UI.md §0` и `apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts`. Полный перевод подписок из UI-хуков на `install` для существующих плагинов с `analyserRef` — отдельная задача (нужен engine-канал «AnalyserNode без React-ref»).
+**Lifecycle `plugin.install()` / teardown:** контракт `Plugin.install(ctx) => teardown?` реализован в `packages/agenda/src/core/plugin-lifecycle.ts`. Store вызывает `install` при активации (включая повторную регистрацию активного плагина после rehydrate) и teardown при деактивации. Эталон — `apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts`: подписка на `microphoneStreamHub` и поднятие `LiveSampler` живут в `install()`, UI-компонент только читает singleton-state через `useSyncExternalStore`.
+
+### 1e. Семейства детекторов (`packages/services/detectors/*`)
+
+Стратегия **Single-Node Detection First** (см. [`WHITE_PAPER.md`](./WHITE_PAPER.md) §8,
+консилиум `docs/seanses/single-node-detection-first-2026-05-16.md`): до stage-gate 1→2
+все усилия на **качество детекции на одном узле**; TDOA и мультиузел — после шлюза.
+
+| Пакет | Статус | Семейство |
+|-------|--------|-----------|
+| `@membrana/detector-base` | **stable v0.1** | контракты `DroneDetector`, `DetectionResult`, `AudioWindow`, `DetectionMetrics` |
+| `@membrana/harmonic-detector-service` | implemented v0.1 | dsp |
+| `@membrana/cepstral-detector-service` | scaffold | dsp |
+| `@membrana/spectral-flux-detector-service` | scaffold | dsp |
+| `@membrana/yamnet-detector-service` | scaffold | neural |
+| `@membrana/clap-detector-service` | scaffold | neural |
+| `@membrana/agentic-detector-service` | scaffold | agentic |
+| `@membrana/detection-ensemble-service` | план (после gate) | агрегатор |
+| `@membrana/tdoa-service` | frozen @stage 2 | сеть |
+| `@membrana/localizer-service` | frozen @stage 2 | сеть |
+| `@membrana/tracker-service` | frozen @stage 2 | сеть |
+| `@membrana/transport-service` | frozen @stage 2 | сеть |
+
+**Заморозка до stage-gate 1→2:** пакеты `tdoa-service`, `localizer-service`, `tracker-service`,
+`transport-service` не реализуются и не подключаются в клиент до precision ≥85% и recall ≥90%
+на бенчмарке ([`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md)).
+
+**Контракт (единый для всех детекторов):**
+
+```typescript
+interface DroneDetector {
+  readonly name: string;
+  readonly family: 'dsp' | 'neural' | 'agentic';
+  detect(window: AudioWindow): Promise<DetectionResult>;
+}
+
+interface DetectionResult {
+  isDrone: boolean;
+  confidence: number; // 0..1, калибровано (порог / softmax / модель)
+  reasoning?: string; // обязательно для agentic
+  features?: Record<string, number>;
+  latencyMs: number;
+}
+
+interface DetectionMetrics {
+  precision: number;
+  recall: number;
+  f1: number;
+  latencyP50Ms: number;
+  latencyP95Ms: number;
+  sampleCount: number;
+}
+
+interface AudioWindow {
+  readonly samples: Float32Array;
+  readonly sampleRate: number;
+  readonly timestamp: number; // мс от начала потока
+  readonly durationSec: number;
+}
+```
+
+`AudioWindow` строится из кадров `@membrana/audio-engine-service` (`AudioSampleFrame`);
+детекторы **не** обращаются к Web Audio напрямую.
+
+**Правила зависимостей:**
+
+- `@membrana/detector-base` → `@membrana/core`, `@membrana/audio-engine-service`.
+- Каждый `*-detector-service` → `@membrana/core`, `@membrana/detector-base` **только**.
+- **Запрещены** импорты между детекторами (harmonic ↔ yamnet и т.д.).
+- Analyzer-сервисы вне `detectors/` (например `fft-analyzer`) не импортируют детекторы.
+
+**Stage-gate 1→2:** precision ≥ 85%, recall ≥ 90% на тестовом наборе;
+протокол — [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md).
+
+**Ensemble:** `@membrana/detection-ensemble-service` — отдельный пакет после ranking
+одиночных детекторов; не блокирует gate.
+
+### 1d. Семейство `packages/background-*` — фоновые Node-серверы
+
+Автономные **NestJS**-приложения вне графа `packages/services/*`: не зависят от `@membrana/core`, `@membrana/agenda`, `@membrana/device-board`, `apps/client`. Каноническое описание ролей, границ и чеклист «куда класть фичу» — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md).
+
+| Пакет | Роль | Stateful |
+|-------|------|----------|
+| `@membrana/background-office` | Интеграции: Claude, Linear, GitHub webhooks | Нет |
+| `@membrana/background-media` | Data-plane веб-клиента: сэмплы, trends-шаблоны, `deviceId` | PostgreSQL + blob volume |
+
+**Не смешивать:** пользовательские WAV и шаблоны trends — только **media**; секреты LLM/тикетов и webhook'и — только **office**.
+
+#### `background-office` — интеграционный HTTP-шлюз
+
+`@membrana/background-office` (порт dev **3000**): вызовы Anthropic (Claude), Linear GraphQL, приём подписанных Linear webhooks, чтение GitHub Issues для persona-контекста. Auth: `X-Membrana-Token` на `/v1/*`. README: `packages/background-office/README.md`.
+
+#### `background-media` — data-plane для sample library и шаблонов
+
+`@membrana/background-media` (порт dev **3010**, эпик [#58](https://github.com/officefish/Membrana/issues/58)): REST API для `@membrana/media-library-service` (`ServerStorageBackend`), хранение trends-шаблонов (JSON), изоляция данных по **`deviceId`**. Стек: **NestJS + Fastify** (не Express — office остаётся на Express для webhooks), **Prisma + PostgreSQL**, blob volume (мультиформат audio: wav/mp3/flac/ogg). Auth: `X-Membrana-Token` + scope по device. Спецификация: [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md), [`MEDIA_LIBRARY_ARCHITECTURE.md`](./MEDIA_LIBRARY_ARCHITECTURE.md) §4.2.
+
+Клиент при недоступности media-server: `browser-limited-fallback` (IndexedDB) — см. `MEDIA_LIBRARY_ARCHITECTURE.md` §4.3.
 
 ## 2. Плагины и слабая связанность (домен аудио)
 

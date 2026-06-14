@@ -1,0 +1,38 @@
+{
+  "name": "@membrana/cepstral-detector-service",
+  "version": "0.1.0",
+  "description": "Кепстральный пик периодики винта.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@membrana/core": "*",
+    "@membrana/detector-base": "*"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.3.0",
+    "vite-plugin-dts": "^3.9.1",
+    "vitest": "^1.4.0"
+  }
+}

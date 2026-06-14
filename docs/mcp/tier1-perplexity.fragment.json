@@ -1,0 +1,9 @@
+{
+  "perplexity": {
+    "command": "npx",
+    "args": ["-y", "@perplexity-ai/mcp-server"],
+    "env": {
+      "PERPLEXITY_API_KEY": "pplx-REPLACE_IN_LOCAL_CONFIG_ONLY"
+    }
+  }
+}

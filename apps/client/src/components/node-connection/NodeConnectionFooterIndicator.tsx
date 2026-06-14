@@ -1,0 +1,108 @@
+import React, { useEffect, useState } from 'react';
+
+import { pingCabinetApi, pingMediaApi } from '../../api/pairing';
+import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
+
+export interface NodeConnectionFooterIndicatorProps {
+  compact?: boolean;
+}
+
+export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicatorProps> = ({
+  compact = false,
+}) => {
+  const mode = useNodeConnectionStore((s) => s.mode);
+  const pairing = useNodeConnectionStore((s) => s.pairing);
+  const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
+  const reportConnectionError = useNodeConnectionStore((s) => s.reportConnectionError);
+  const [linkOk, setLinkOk] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (mode !== 'paired' || !pairing) {
+      setLinkOk(null);
+      return;
+    }
+
+    let cancelled = false;
+    let wasOk = true;
+
+    const check = async (): Promise<void> => {
+      const cabinetOk = await pingCabinetApi();
+      const mediaOk = cabinetOk
+        ? await pingMediaApi(pairing.mediaApiUrl, pairing.mediaToken, pairing.deviceId)
+        : false;
+      if (cancelled) return;
+      const ok = cabinetOk && mediaOk;
+      setLinkOk(ok);
+      if (!ok && wasOk) {
+        reportConnectionError('cabinet/media unreachable');
+      }
+      wasOk = ok;
+    };
+
+    void check();
+    const timer = window.setInterval(() => void check(), 60_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [mode, pairing, reportConnectionError]);
+
+  if (mode === null) {
+    return (
+      <button type="button" className="btn btn-ghost btn-xs h-6 min-h-6 px-2 text-[10px]" onClick={() => openModePicker()}>
+        выбрать режим
+      </button>
+    );
+  }
+
+  if (mode === 'autonomous') {
+    if (compact) {
+      return (
+        <span
+          className="shrink-0 rounded bg-warning/15 px-1.5 py-0.5 text-[9px] font-medium text-warning"
+          title="Узел работает автономно — данные только локально"
+        >
+          автономно
+        </span>
+      );
+    }
+    return (
+      <div className="alert alert-warning py-1 px-2 text-[10px] leading-snug" role="status">
+        <span>Узел работает автономно — данные только локально, кабинет не используется.</span>
+        <button type="button" className="btn btn-ghost btn-xs" onClick={() => openModePicker()}>
+          сменить
+        </button>
+      </div>
+    );
+  }
+
+  const label = pairing?.nodeLabel ?? 'связан';
+  const status =
+    linkOk === null ? '…' : linkOk ? 'online' : 'offline';
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        className={`shrink-0 text-[9px] tabular-nums underline-offset-2 hover:underline ${
+          linkOk === false ? 'text-warning' : 'text-base-content/45'
+        }`}
+        title={`Связан с мембраной · ${label} · ${status}`}
+        onClick={() => openModePicker()}
+      >
+        {linkOk === false ? 'связь?' : 'связан'}
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 text-[10px] text-base-content/55" role="status">
+      <span>
+        Связан: {label} · {status}
+      </span>
+      <button type="button" className="btn btn-ghost btn-xs" onClick={() => openModePicker()}>
+        сменить
+      </button>
+    </div>
+  );
+};

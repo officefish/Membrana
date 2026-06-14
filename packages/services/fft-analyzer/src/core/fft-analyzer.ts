@@ -76,8 +76,16 @@ export class FftAnalyzer {
    * Анализирует один кадр от engine. Подписавшись на AudioSampleFrame через
    * useLiveSampler / useMicrophone, передавай frame сюда — получишь результат.
    */
-  analyzeFrame(frame: AudioSampleFrame): LiveFrameResult {
-    return this.analyze(frame.samples, frame.sampleRate, frame.timestamp);
+  analyzeFrame(
+    frame: AudioSampleFrame,
+    fluxTracker?: SpectralFluxTracker,
+  ): LiveFrameResult {
+    return this.analyze(
+      frame.samples,
+      frame.sampleRate,
+      frame.timestamp,
+      fluxTracker,
+    );
   }
 
   /**
@@ -85,11 +93,13 @@ export class FftAnalyzer {
    * @param samples Float32Array длины >= fftSize
    * @param sampleRate sample rate в Гц
    * @param timestamp метка времени (по умолчанию Date.now())
+   * @param fluxTracker опциональный трекер flux (для серий с интервалом — сравнение с предыдущим замером, не с RAF-кадром)
    */
   analyze(
     samples: Float32Array,
     sampleRate: number,
     timestamp: number = Date.now(),
+    fluxTracker?: SpectralFluxTracker,
   ): LiveFrameResult {
     const frequencies = this.fft.computeFrequencies(sampleRate);
     const magnitudes = this.fft.computeMagnitudes(samples);
@@ -97,7 +107,7 @@ export class FftAnalyzer {
     const filtered = applyFrequencyFilter(magnitudes, frequencies, minF, maxF);
 
     const centroid = spectralCentroid(filtered, frequencies);
-    const fluxValue = this.flux.next(filtered);
+    const fluxValue = (fluxTracker ?? this.flux).next(filtered);
     const rmsValue = rms(samples);
     const isDetected = this.detect(centroid, fluxValue, rmsValue);
 

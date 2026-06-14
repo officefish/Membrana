@@ -1,0 +1,135 @@
+# Еженедельный «радар» внешних аналайзеров: обходит HuggingFace Hub и arXiv,
+# сопоставляет с каталогом §4 в `docs/INTEGRATIONS_STRATEGY.md` и через Anthropic
+# генерирует `docs/WEEKLY_ANALYZERS_RESEARCH.md` (файл перезаписывается, история — в git).
+#
+# Расписание: понедельник 06:00 UTC — на час раньше `Weekly strategic plan` (07:00 UTC),
+# чтобы недельный планировщик читал свежий отчёт из main.
+# Ручной запуск: вкладка Actions → Weekly analyzers research → Run workflow.
+#
+# Требуется секрет ANTHROPIC_API_KEY (тот же, что используется в weekly-strategic-plan).
+# Опционально: vars.ANTHROPIC_MODEL для переопределения модели.
+
+name: Weekly analyzers research
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      since_days:
+        description: 'Окно поиска новых HF-моделей в днях (по умолчанию 7).'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Только собрать источники, без вызова Anthropic (для отладки).'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+concurrency:
+  group: weekly-analyzers-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  research-week:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+          echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> "$GITHUB_ENV"
+
+      - name: Yarn Berry cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.YARN_CACHE_FOLDER }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Verify ANTHROPIC_API_KEY (skipped in dry-run)
+        if: ${{ inputs.dry_run != 'true' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "${ANTHROPIC_API_KEY}" ]; then
+            echo "::error::Секрет ANTHROPIC_API_KEY не задан. Добавьте в Settings → Secrets and variables → Actions → New repository secret."
+            exit 1
+          fi
+
+      - name: Generate weekly analyzers research
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          RESEARCH_SINCE_DAYS: ${{ inputs.since_days }}
+          RESEARCH_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ -n "${RESEARCH_SINCE_DAYS:-}" ]; then
+            ARGS+=("--since-days=${RESEARCH_SINCE_DAYS}")
+          fi
+          if [ "${RESEARCH_DRY_RUN:-}" = "true" ]; then
+            ARGS+=("--dry-run")
+          fi
+          node scripts/analyzers-research-week.mjs "${ARGS[@]}"
+
+      - name: Commit and push if changed
+        if: ${{ inputs.dry_run != 'true' }}
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain docs/WEEKLY_ANALYZERS_RESEARCH.md)" ]; then
+            git add docs/WEEKLY_ANALYZERS_RESEARCH.md
+            git commit -m "docs(research): обновлён еженедельный радар аналайзеров [skip ci]"
+            git push origin HEAD:${GITHUB_REF_NAME}
+            echo "RESEARCH_COMMITTED=true" >> "$GITHUB_ENV"
+          else
+            echo "Файл docs/WEEKLY_ANALYZERS_RESEARCH.md не изменился — коммитить нечего."
+            echo "RESEARCH_COMMITTED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Weekly analyzers research"
+            echo ""
+            echo "- Скрипт: \`yarn analyzers:research:week\` (см. \`scripts/analyzers-research-week.mjs\`)."
+            echo "- Источники: HuggingFace Hub (audio-classification) + arXiv (cs.SD / eess.AS)."
+            echo "- Каталог-источник: \`docs/INTEGRATIONS_STRATEGY.md\` §4."
+            echo "- Выход: \`docs/WEEKLY_ANALYZERS_RESEARCH.md\`."
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              echo "- Режим: \`--dry-run\` (без Anthropic, без коммита)."
+            elif [ "${RESEARCH_COMMITTED:-false}" = "true" ]; then
+              echo "- Результат: коммит запушен в \`${GITHUB_REF_NAME}\`."
+            else
+              echo "- Результат: изменений не было или генерация не дошла до коммита."
+            fi
+            echo ""
+            echo "Документ учитывается только недельным планировщиком \`yarn plan:week\` и не участвует в ежедневном code-review."
+          } >> "$GITHUB_STEP_SUMMARY"

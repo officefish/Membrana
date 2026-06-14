@@ -20,20 +20,26 @@
 | **Музыкант** | Эффекты, постобработка, качество потока (24 bit / 48 kHz цели) | Дублирование мат. ядра без вызова сервисов математика |
 | **Верстальщик** | Презентационный UI строго по `DESIGN.md`, a11y, адаптив | Бизнес-логика в компонентах верстки |
 
-### Участники: аватары и отдельные промты
+### Участники: персонажи, label'ы, ветки, промпты
 
-Стабильные URL портретов (один и тот же адрес даёт тот же образ; удобно для карточек команды в UI или документации):
+Каждая роль имеет имя-персонажа с исторической отсылкой. Имя используется как
+Linear-label (для назначения задачи на «виртуального программиста») и одновременно
+как имя git-ветки (всю работу по этому персонажу складываем в одну ветку, PR в `main`).
+Те роли, для которых имя ещё не закреплено, помечены «—»; их можно добавить тем же
+паттерном.
 
-| Роль | Аватар | Системный промпт роли |
-|------|--------|------------------------|
-| **Teamlead** | [изображение](https://i.pravatar.cc/400?u=membrana-teamlead) | [PROMPT_TEAMLEAD.md](./virtual-team/PROMPT_TEAMLEAD.md) |
-| **Структурщик** | [изображение](https://i.pravatar.cc/400?u=membrana-structurer) | [PROMPT_STRUCTURER.md](./virtual-team/PROMPT_STRUCTURER.md) |
-| **Математик** | [изображение](https://i.pravatar.cc/400?u=membrana-mathematician) | [PROMPT_MATHEMATICIAN.md](./virtual-team/PROMPT_MATHEMATICIAN.md) |
-| **Музыкант** | [изображение](https://i.pravatar.cc/400?u=membrana-musician) | [PROMPT_MUSICIAN.md](./virtual-team/PROMPT_MUSICIAN.md) |
-| **Верстальщик** | [изображение](https://i.pravatar.cc/400?u=membrana-layout-dev) | [PROMPT_LAYOUT_DEVELOPER.md](./virtual-team/PROMPT_LAYOUT_DEVELOPER.md) |
+| Роль | Персонаж | Linear label | Git branch | Аватар | Системный промпт |
+|------|----------|--------------|------------|--------|------------------|
+| **Teamlead** | **Vesnin** (русский архитектурный авангард, конструктивизм; братья Веснины) | `vesnin` | `vesnin` | [аватар](https://i.pravatar.cc/400?u=membrana-vesnin-1923) | [PROMPT_TEAMLEAD.md](./virtual-team/PROMPT_TEAMLEAD.md) |
+| **Структурщик** | **Ozhegov** (С. И. Ожегов — толковый словарь, точность термина) | `ozhegov` | `ozhegov` | [аватар](https://i.pravatar.cc/400?u=membrana-ozhegov) | [PROMPT_STRUCTURER.md](./virtual-team/PROMPT_STRUCTURER.md) |
+| **Математик** | **Dynin** (русская математическая школа о неслучайности биологической жизни) | `dynin` | `dynin` | [аватар](https://i.pravatar.cc/400?u=membrana-dynin-math) | [PROMPT_MATHEMATICIAN.md](./virtual-team/PROMPT_MATHEMATICIAN.md) |
+| **Музыкант** | — | — | — | [аватар](https://i.pravatar.cc/400?u=membrana-musician) | [PROMPT_MUSICIAN.md](./virtual-team/PROMPT_MUSICIAN.md) |
+| **Верстальщик** | **Rodchenko** (А. Родченко — конструктивизм, функциональная типографика) | `rodchenko` | `rodchenko` | [аватар](https://i.pravatar.cc/400?u=membrana-rodchenko) | [PROMPT_LAYOUT_DEVELOPER.md](./virtual-team/PROMPT_LAYOUT_DEVELOPER.md) |
 
-Прямые ссылки на изображения (для `src` в HTML/React):  
-<https://i.pravatar.cc/400?u=membrana-teamlead> · <https://i.pravatar.cc/400?u=membrana-structurer> · <https://i.pravatar.cc/400?u=membrana-mathematician> · <https://i.pravatar.cc/400?u=membrana-musician> · <https://i.pravatar.cc/400?u=membrana-layout-dev>
+Соглашение про ветки: см. [TASKS_MANAGEMENT.md → Ветки персонажей](./TASKS_MANAGEMENT.md#ветки-персонажей).
+
+Прямые ссылки на изображения (для `src` в HTML/React):
+<https://i.pravatar.cc/400?u=membrana-vesnin-1923> · <https://i.pravatar.cc/400?u=membrana-ozhegov> · <https://i.pravatar.cc/400?u=membrana-dynin-math> · <https://i.pravatar.cc/400?u=membrana-musician> · <https://i.pravatar.cc/400?u=membrana-rodchenko>
 
 ## Правила взаимодействия
 
@@ -71,6 +77,14 @@ Definition of Done: <тесты, отсутствие клиппинга, соо
 - **Стек вычислений**: Python при отдельном мат. сервисе; иначе TS с ограниченным набором библиотек по `ARCHITECTURE.md`.
 - **Продукт**: аудио-редактор / анализатор (целевой домен виртуальной команды для этого репозитория).
 
+## Постановка крупных задач (task prompts)
+
+Задачи размера **M/L** для агента оформляются по
+[`docs/prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md):
+GitHub Issue → запись в [`docs/tasks/registry.json`](./tasks/registry.json) →
+файл `docs/prompts/*_PROMPT.md` → работа → `yarn task:archive <id>`.
+Активные и архивные задачи: [`docs/tasks/README.md`](./tasks/README.md).
+
 ## Ссылки на артефакты репозитория
 
 - Архитектура и шина плагинов: [ARCHITECTURE.md](./ARCHITECTURE.md)
@@ -90,3 +104,89 @@ Definition of Done: <тесты, отсутствие клиппинга, соо
 - `/ui <компонент>` — Верстальщик создаёт компонент строго по DESIGN.md.
 - `/service <name>` — создать новый сервис в `packages/services/<name>` по SERVICES.md.
 - `/review` — Teamlead делает ревью последнего артефакта.
+
+## Ежедневный стендап (автоматизация)
+
+Полный регламент утра, вечера и недели: [`DEVELOPER_RHYTHM.md`](./DEVELOPER_RHYTHM.md).
+
+Синхронизационное «собрание» виртуальной команды (daily standup / daily sync) — один markdown с планом на сегодня:
+
+**Утро** (code-review **не** запускаем — только читаем вчерашний `DAILY_CODE_REVIEW.md`):
+
+```bash
+yarn plan:day        # план на день → docs/STRATEGIC_PLAN_DAY.md
+yarn standup         # сводка (в т.ч. вчерашнее ревью) → docs/DAILY_STANDUP.md
+yarn main-day-issue  # центральная задача дня → docs/MAIN_DAY_ISSUE.md
+```
+
+**Вечер:**
+
+```bash
+yarn archive:daily-day   # снимок STRATEGIC_PLAN_DAY + DAILY_STANDUP + MAIN_DAY_ISSUE → docs/archive/daily-day/
+yarn code-review         # ревью → docs/DAILY_CODE_REVIEW.md (на завтра утром)
+yarn save-code-review
+```
+
+`yarn standup` подмешивает открытые GitHub Issues и наброски из `packages/temp/`. Без API: `yarn standup:dry`. Цепочки: `yarn ritual:day`, `yarn ritual:evening`. Подробнее: [`DEVELOPER_RHYTHM.md`](./DEVELOPER_RHYTHM.md).
+
+## Спросить совета у персонажа
+
+Для адресного обсуждения задачи с конкретным «виртуальным программистом» есть CLI:
+
+```bash
+# Самый частый сценарий: разобрать GitHub Issue, к которому привязан Linear-ticket
+yarn ask vesnin --gh-issue 12 "стоит ли сейчас вводить отдельный transport-service?"
+
+# С явным именем дискуссии (удобно подвязать к Linear-ID, например TEC-42)
+yarn ask dynin --gh-issue 10 --save-as TEC-42-fft-math "какие edge cases точно покрывать?"
+
+# Когда задача — отдельный markdown-файл
+yarn ask vesnin --ticket-file ./ticket.md "сформулируй кратко границы"
+
+# Свободный вопрос без задачи (по умолчанию НЕ сохраняется)
+yarn ask vesnin --no-context "одной фразой: нужен ли ADR сейчас?"
+```
+
+Что подкладывается в контекст:
+
+1. Системный промпт персонажа из [`virtual-team/PROMPT_*.md`](./virtual-team/).
+2. Стратегический контекст из [`WHITE_PAPER.md`](./WHITE_PAPER.md).
+3. Выдержки из [`ARCHITECTURE.md`](./ARCHITECTURE.md) и [`SERVICES.md`](./SERVICES.md).
+4. Контекст задачи: GitHub Issue (`--gh-issue`), markdown-файл (`--ticket-file`) или строка (`--task`).
+
+Сохранение обсуждения:
+
+- При `--gh-issue N` → автоматически в `docs/discussions/gh-issue-N.md` (append).
+- При `--ticket-file foo.md` → автоматически в `docs/discussions/foo.md` (append).
+- С `--save-as <name>` → в `docs/discussions/<name>.md` (имя обычно совпадает с Linear-ID).
+- Можно отключить флагом `--no-save`.
+- Свободные вопросы (без контекста задачи и без `--save-as`) **не сохраняются** — это режим черновика.
+
+Каждый вызов **дописывает** новый блок в файл, поэтому файл превращается в хронологический
+тред: вопрос → ответ → вопрос → ответ. Файлы коммитятся в репо — это и есть «архив»
+обсуждений, доступный и людям, и агентам.
+
+Шаг 2 (будущий PR) добавит чтение Linear-тикета через API и пост ответа в Linear-комментарий
+без необходимости промежуточного `--gh-issue`. После переноса этой логики в
+`packages/background-office`, CLI станет тонкой клиент-обёрткой над HTTP-сервером.
+
+**Фоновые серверы:** `background-office` — интеграции (Claude, Linear, GitHub). Пользовательские WAV,
+коллекции и trends-шаблоны — **`background-media`** ([`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md)).
+Не предлагать хранение датасетов или шаблонов в office.
+
+Текущие персонажи: `vesnin`, `ozhegov`, `dynin`, `rodchenko`. Музыкант — имя в работе.
+Расширение — через `scripts/ask-persona.mjs` (запись в `PERSONAS` + `PROMPT_<ROLE>.md`).
+
+## Консилиум (все роли)
+
+Когда нужен **коллективный** разбор с консенсусом (≥20 реплик, каждая роль хотя бы раз):
+
+```bash
+yarn consilium "нужен ли отдельный пакет design-tokens?"
+yarn consilium --save-as brandbook "нужен ли пакет брендбука?"
+yarn consilium --gh-issue 12 "уточнить границы перед ADR"
+yarn consilium --seed 42 --dry-run "проверить размер промпта"
+```
+
+Протокол → [`docs/seanses/`](./seanses/). Правила и формат: [`prompts/CONSILIUM_PROMPT.md`](./prompts/CONSILIUM_PROMPT.md).
+Скрипт: `scripts/consilium.mjs`. Отличие от `yarn ask`: один персонаж vs пять ролей и итоговое решение.

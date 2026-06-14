@@ -1,6 +1,12 @@
 # CONTRIBUTING — процесс для людей и CI-агентов
 
-Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
+Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
+
+## Жизненный цикл задачи
+
+Любое пожелание, баг или недоделка оформляется как **GitHub Issue** по шаблонам в [`.github/ISSUE_TEMPLATE/`](../.github/ISSUE_TEMPLATE/) (`wish`, `bug`, `imperfection`). Дальше задача конвертируется в **Linear**, где идут декомпозиция и внутренние обсуждения; PR в GitHub связывается с Issue через `Closes #N`. Перед закрытием GitHub Issue автор оставляет формальный отчёт.
+
+Полный регламент: [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md).
 
 ## Локальная разработка
 
@@ -14,8 +20,9 @@
 **Когда обязательно `vesnin`:**
 - Изменение `MembranaRegistry`, `MembranaState`, типов `Module` / `Plugin` в `@membrana/agenda`.
 - Изменение публичного API `@membrana/core` или сервисов в `packages/services/*`.
+- Новый или существенный API в `packages/background-office` / `packages/background-media` (границы — [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md)).
 - Внедрение новых архитектурных паттернов (например, lifecycle `plugin.install()` в store).
-- Обновление стратегических документов (`ARCHITECTURE.md`, `SERVICES.md`, `MODULE_AND_PLUGIN_UI.md`).
+- Обновление стратегических документов (`ARCHITECTURE.md`, `BACKGROUND_SERVERS.md`, `SERVICES.md`, `MODULE_AND_PLUGIN_UI.md`).
 
 **Когда не нужно:**
 - Точечные правки UI внутри одного модуля без изменения контрактов.
@@ -92,13 +99,31 @@ git push -u origin vesnin
 | Скрипт | Команда | Когда запускать | Выход / назначение |
 |--------|---------|-----------------|---------------------|
 | `scripts/context-collector.mjs` | `node scripts/context-collector.mjs` / `--full` / `--help` | Перед ручным разбором или из `code-review.mjs` | Текст в stdout: git, yarn test/lint (фрагменты), верхний уровень каталога (без `node_modules`, `.git`, `.env*`). |
-| `scripts/code-review.mjs` | `yarn code-review` / `yarn code-review:full` / `--help` | Локально при наличии `ANTHROPIC_API_KEY` | Перезапись `docs/DAILY_CODE_REVIEW.md` + дублирование в stdout. Модель: `ANTHROPIC_MODEL` или значение по умолчанию в `_anthropic-env.mjs`. Контекст обрезается по длине (см. комментарий в скрипте). |
+| `scripts/code-review.mjs` | `yarn code-review` / `yarn code-review:full` / `--help` | **Вечер**; `ANTHROPIC_API_KEY` | Перезапись `docs/DAILY_CODE_REVIEW.md`. Утром не запускать — только читать файл в `standup` / `main-day-issue`. |
+| `scripts/daily-standup.mjs` | `yarn standup` / `yarn standup:full` / `yarn standup:dry` / `--help` | **Утро**, после `plan:day` | Перезапись `docs/DAILY_STANDUP.md`; вход — вчерашний `DAILY_CODE_REVIEW.md`, Issues, `packages/temp`. |
 | `scripts/generate_report.mjs` | `node scripts/generate_report.mjs` / `--help` | Диагностика без вызова Anthropic | JSON в `%TEMP%/membrana-code-review/code-review-context.json` (Windows) или `$TMPDIR/membrana-code-review/` (Unix). |
 
 Переменные окружения для этих сценариев: `ANTHROPIC_API_KEY` (обязательно для `code-review`), опционально `ANTHROPIC_MODEL`, прокси `HTTPS_PROXY` / `HTTP_PROXY` (см. `.env.example`).
 
-- Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`).
+- Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`, `scripts/daily-standup-paths.mjs`).
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
+
+### VPS deploy (SSH-скрипты)
+
+Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`.
+
+| Команда | Назначение |
+|---------|------------|
+| `yarn cabinet:deploy:prod` | Cabinet stack: pull, build, up, Caddy, smoke |
+| `yarn cabinet:pairing:e2e:deploy` | Hotfix pairing: `MEDIA_PUBLIC_API_URL`, media CORS, rebuild cabinet+media |
+| `yarn cabinet:mp3:smoke` | Prod smoke MP1–MP3 (pair + media device) |
+| `yarn cabinet:mp3:prod` | MP3 post-deploy + smoke (media docker net + pairing) |
+| `yarn cabinet:quota-refactor:prod` | Deploy tariff quota refactor (cabinet migrate + split media quota smoke) |
+| `yarn cabinet:mp3:post-deploy` | Patch `cabinet.env` (CLIENT_CORS, MEDIA_API_*) |
+
+Подробно: [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md), [`docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
+
+**Не коммитить:** `**/.env.docker` (синк из `.env`), `ssl/` (TLS-ключи), корневой `.env`.
 
 ## Коммиты
 

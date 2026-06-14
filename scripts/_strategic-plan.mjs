@@ -35,6 +35,13 @@ const MAX_WHITE_PAPER_CHARS = 30_000;
 /** Из ARCHITECTURE/SERVICES берём только верхушку — этого достаточно для соответствия слоям. */
 const MAX_ARCH_CHARS = 6_000;
 
+/**
+ * WEEKLY_ANALYZERS_RESEARCH.md — еженедельный «радар» новых внешних аналайзеров
+ * (HF Hub + arXiv). Подключается ТОЛЬКО к недельному плану, не к дневному.
+ * Берём верхушку: сводка + таблица новых кандидатов + предлагаемые правки §4.
+ */
+const MAX_ANALYZERS_RESEARCH_CHARS = 12_000;
+
 function captureError(e) {
   const err = e.stderr?.toString?.() ?? '';
   const out = e.stdout?.toString?.() ?? '';
@@ -172,6 +179,8 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName }) {
  * @property {string} outputPath      Абсолютный путь к выходному markdown-файлу.
  * @property {string} commandName     Имя yarn-команды (для шапки файла).
  * @property {boolean} [full]         Расширенный режим (добавляет --shortstat в git log).
+ * @property {boolean} [includeAnalyzersResearch]  Подключать ли `docs/WEEKLY_ANALYZERS_RESEARCH.md`
+ *                                    в контекст промпта. Включается ТОЛЬКО для недельного плана.
  */
 
 /**
@@ -217,6 +226,12 @@ export async function runStrategicPlan(options) {
   const architecture = readBoundedFile(archPath, MAX_ARCH_CHARS) ?? '(docs/ARCHITECTURE.md не найден)';
   const services = readBoundedFile(servicesPath, MAX_ARCH_CHARS) ?? '(docs/SERVICES.md не найден)';
 
+  let analyzersResearch = null;
+  if (options.includeAnalyzersResearch) {
+    const researchPath = resolve(process.cwd(), 'docs/WEEKLY_ANALYZERS_RESEARCH.md');
+    analyzersResearch = readBoundedFile(researchPath, MAX_ANALYZERS_RESEARCH_CHARS);
+  }
+
   const commits = collectCommitLog({
     since: options.since,
     until: options.until,
@@ -237,7 +252,7 @@ export async function runStrategicPlan(options) {
   });
 
   const whitePaperRel = whitePaperPathUsed.replace(process.cwd() + '/', '');
-  const assembled = [
+  const sections = [
     systemHeader,
     '',
     '---',
@@ -255,6 +270,23 @@ export async function runStrategicPlan(options) {
     '',
     services,
     '',
+  ];
+  if (analyzersResearch) {
+    sections.push(
+      '---',
+      '## docs/WEEKLY_ANALYZERS_RESEARCH.md (свежий радар новых аналайзеров)',
+      '',
+      'Учитывай этот документ при формировании раздела 4 плана: если в нём есть',
+      'кандидаты с высоким Σ и предлагаемые правки §4 INTEGRATIONS_STRATEGY.md —',
+      'явно отрази в плане задачу «проверить кандидат X на нашем датасете», но',
+      'НЕ ломай приоритеты §1 INTEGRATIONS_STRATEGY.md (локально > сервер > API;',
+      'без обучения > с обучением; без кредитов > с кредитами).',
+      '',
+      analyzersResearch,
+      '',
+    );
+  }
+  sections.push(
     '---',
     `## git log за период «${options.rangeLabel}»`,
     '',
@@ -267,7 +299,8 @@ export async function runStrategicPlan(options) {
     '',
     '---',
     task,
-  ].join('\n');
+  );
+  const assembled = sections.join('\n');
 
   const bodyText =
     assembled.length > MAX_CONTEXT_CHARS

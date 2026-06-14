@@ -7,9 +7,37 @@ import {
   releaseMediaStream,
 } from '@membrana/audio-engine-service';
 import {
+  FFT_INDICES_VIZ_PLUGIN_ID,
+  FftIndicesVizPanel,
+} from '../../plugins/fft-indices-viz';
+import {
+  SOUND_QUALITY_VIZ_PLUGIN_ID,
+  SoundQualityVizPanel,
+} from '../../plugins/sound-quality-viz';
+import {
+  FFT_THRESHOLD_TEST_PLUGIN_ID,
+  FftThresholdTestPanel,
+} from '../../plugins/fft-threshold-test';
+import {
+  HARMONIC_DETECTOR_VIZ_PLUGIN_ID,
+  HarmonicDetectorVizPanel,
+} from '../../plugins/harmonic-detector-viz';
+import {
+  MIC_BUFFER_RECORDER_PLUGIN_ID,
+  MicBufferRecorderPanel,
+} from '../../plugins/mic-buffer-recorder';
+import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
+import {
+  TRENDS_FFT_ANALYZER_PLUGIN_ID,
+  TrendsFftAnalyzerPanel,
+} from '../../plugins/trends-fft-analyzer';
+import {
+  notifyMicrophoneCaptureChanged,
+  registerMicrophoneCaptureOwner,
+} from './microphoneCaptureCoordinator';
 import { publishMicrophoneStream } from './microphoneStreamHub';
 
 /**
@@ -43,6 +71,8 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const errorRef = useRef<string | null>(null);
+  const isLiveRef = useRef(false);
 
   const activeIds = useMembranaStore(
     useShallow((state) => state.getModule(module.id)?.activePlugins ?? []),
@@ -74,6 +104,8 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
     streamRef.current = null;
     setStream(null);
     publishMicrophoneStream(module.id, null);
+    isLiveRef.current = false;
+    notifyMicrophoneCaptureChanged();
   }, [module.id]);
 
   const startStream = useCallback(
@@ -90,6 +122,8 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
         streamRef.current = s;
         setStream(s);
         publishMicrophoneStream(module.id, s);
+        isLiveRef.current = true;
+        notifyMicrophoneCaptureChanged();
         void refreshDevices();
       } catch (e) {
         console.error(e);
@@ -113,6 +147,23 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
   }, [module.id]);
 
   const isLive = stream !== null;
+
+  useEffect(() => {
+    errorRef.current = error;
+    isLiveRef.current = isLive;
+    notifyMicrophoneCaptureChanged();
+  }, [error, isLive]);
+
+  useEffect(() => {
+    return registerMicrophoneCaptureOwner({
+      start: () => startStream(),
+      stop: stopStream,
+      getSnapshot: () => ({
+        isLive: isLiveRef.current,
+        error: errorRef.current,
+      }),
+    });
+  }, [startStream, stopStream]);
 
   const onDeviceSelect = (deviceId: string): void => {
     onUpdateConfig({ selectedDeviceId: deviceId });
@@ -207,6 +258,30 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(MIC_STREAM_VIZ_PLUGIN_ID) && (
           <MicStreamVizPluginPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(FFT_THRESHOLD_TEST_PLUGIN_ID) && (
+          <FftThresholdTestPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(FFT_INDICES_VIZ_PLUGIN_ID) && (
+          <FftIndicesVizPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(SOUND_QUALITY_VIZ_PLUGIN_ID) && (
+          <SoundQualityVizPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(HARMONIC_DETECTOR_VIZ_PLUGIN_ID) && (
+          <HarmonicDetectorVizPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(TRENDS_FFT_ANALYZER_PLUGIN_ID) && (
+          <TrendsFftAnalyzerPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(MIC_BUFFER_RECORDER_PLUGIN_ID) && (
+          <MicBufferRecorderPanel moduleId={module.id} />
         )}
       </div>
     </div>

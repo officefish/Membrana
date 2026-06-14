@@ -35,8 +35,23 @@ export default defineConfig({
       '@membrana/fft-analyzer-service': fileURLToPath(
         new URL('../../packages/services/fft-analyzer/src/index.ts', import.meta.url),
       ),
+      '@membrana/telemetry-service': fileURLToPath(
+        new URL('../../packages/services/telemetry/src/index.ts', import.meta.url),
+      ),
+      '@membrana/media-library-service': fileURLToPath(
+        new URL('../../packages/services/media-library/src/index.ts', import.meta.url),
+      ),
       '@membrana/audio-data-viz': fileURLToPath(
         new URL('../../packages/libs/audioDataViz/src/index.ts', import.meta.url),
+      ),
+      '@membrana/detector-base': fileURLToPath(
+        new URL('../../packages/services/detectors/base/src/index.ts', import.meta.url),
+      ),
+      '@membrana/harmonic-detector-service': fileURLToPath(
+        new URL('../../packages/services/detectors/harmonic/src/index.ts', import.meta.url),
+      ),
+      '@membrana/trends-detector-service': fileURLToPath(
+        new URL('../../packages/services/trends-detector/src/index.ts', import.meta.url),
       ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
@@ -45,6 +60,13 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    proxy: {
+      '/api-cabinet': {
+        target: 'http://localhost:3020',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-cabinet/, ''),
+      },
+    },
   },
 
   build: {

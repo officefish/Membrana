@@ -61,6 +61,43 @@ src/
 | `useFftFileAnalyzer(options)` | hook | Только batch-анализ файлов с прогрессом |
 | `useFftMicrophoneAnalyzer(options)` | hook | Сахар: автоматически запрашивает микрофон |
 | `PRESETS.drone` / `speech` / `music` | const | Готовые наборы порогов |
+| `evaluateFrameVerdict` / `evaluateThresholdTest` | fn | Пороговый FFT-тест (серия кадров, строгость easy/normal/strict) |
+| `evaluateSoundQuality` / `soundQualityHint` | fn | Live-оценка качества потока (SNR, clarity, dynamics, peak, overall) — см. § Sound quality API |
+
+## Sound quality API
+
+Pure-функции в `src/math/sound-quality.ts` (эвристики из демо `three-param-analyzer`):
+
+```ts
+import {
+  evaluateSoundQuality,
+  soundQualityHint,
+  type SoundQualityInput,
+} from '@membrana/fft-analyzer-service';
+
+const metrics = evaluateSoundQuality({
+  centroidHz: live.centroid,
+  flux: live.flux,
+  rms: loudness,
+  rmsHistory: ringBuffer,
+}, { loudnessRefMax: 0.35 });
+
+const message = soundQualityHint(metrics, input, { loudnessRefMax: 0.35 });
+```
+
+Плагин клиента: `sound-quality-viz` в модуле «Микрофон».
+
+## Спектральное окно v0.1
+
+Норматив захвата для analyzer-сервисов (в т.ч. `dsp-drone-detector`): [`docs/SERVICES.md`](../../../docs/SERVICES.md) § Параметры захвата; детали окна и hop — [`docs/discussions/dsp-drone-detector-v0.1.md`](../../../docs/discussions/dsp-drone-detector-v0.1.md) (GitHub **#34**).
+
+| Параметр | Дефолт в коде | Примечание |
+|----------|---------------|------------|
+| `fftSize` | **2048** (`DEFAULT_CONFIG.fftSize`) | Степень 2; Δf ≈ `sampleRate / fftSize` |
+| `sampleRate` | из `AudioSampleFrame` / `AudioBuffer` | Целевой **48 000 Гц**; 44 100 — fallback |
+| hop (наложение) | live: период rAF; file: `liveMode.intervalMs` (**30 ms**) | **Цель v0.1:** 50 % overlap → hop **N/2** сэмплов для классификатора дрона |
+
+Магнитуды для downstream: `analyze(samples, sampleRate)` или `analyzeFrame` при `advancedAnalysis.calculateSpectrum: true`. Вспомогательные метрики (`spectralCentroid`, `rms`, …) — не заменяют гармонический классификатор.
 
 ## Использование (Live, микрофон)
 

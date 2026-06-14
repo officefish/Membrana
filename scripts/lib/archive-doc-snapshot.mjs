@@ -1,0 +1,259 @@
+/**
+ * Общие утилиты снимка markdown-артефактов в docs/archive/.
+ */
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+/** @param {Date} [date] */
+export function isoStampForFilename(date = new Date()) {
+  return date.toISOString().replace(/:/g, '-').replace(/\./g, '-');
+}
+
+/**
+ * @param {string} dir
+ * @param {string} prefix e.g. "DAILY_CODE_REVIEW-"
+ * @param {string} [ext]
+ */
+export function newestFileInDir(dir, prefix, ext = '.md') {
+  if (!existsSync(dir)) {
+    return null;
+  }
+  const names = readdirSync(dir).filter((n) => n.startsWith(prefix) && n.endsWith(ext));
+  if (names.length === 0) {
+    return null;
+  }
+  let bestPath = null;
+  let bestMtime = -Infinity;
+  for (const n of names) {
+    const p = join(dir, n);
+    const m = statSync(p).mtimeMs;
+    if (m >= bestMtime) {
+      bestMtime = m;
+      bestPath = p;
+    }
+  }
+  return bestPath;
+}
+
+/**
+ * @param {string} dir
+ * @param {string} baseName e.g. "DAILY_CODE_REVIEW-2026-05-16T12-00-00-000Z.md"
+ */
+export function allocateUniquePath(dir, baseName) {
+  let candidate = join(dir, baseName);
+  if (!existsSync(candidate)) {
+    return candidate;
+  }
+  const dot = baseName.lastIndexOf('.');
+  const stem = dot >= 0 ? baseName.slice(0, dot) : baseName;
+  const ext = dot >= 0 ? baseName.slice(dot) : '';
+  for (let n = 2; n < 10_000; n++) {
+    candidate = join(dir, `${stem}_${n}${ext}`);
+    if (!existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return join(dir, `${stem}-${process.hrtime.bigint()}${ext}`);
+}
+
+/**
+ * @param {string} sourcePath
+ * @param {string} destPath
+ * @param {boolean} force
+ * @returns {'copied' | 'skipped-identical' | 'missing'}
+ */
+export function copyIfChanged(sourcePath, destPath, force) {
+  if (!existsSync(sourcePath)) {
+    return 'missing';
+  }
+  mkdirSync(join(destPath, '..'), { recursive: true });
+  if (!force && existsSync(destPath)) {
+    const srcBuf = readFileSync(sourcePath);
+    const prevBuf = readFileSync(destPath);
+    if (srcBuf.length === prevBuf.length && Buffer.compare(srcBuf, prevBuf) === 0) {
+      return 'skipped-identical';
+    }
+  }
+  copyFileSync(sourcePath, destPath);
+  return 'copied';
+}
+
+/**
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function extractIsoDates(text) {
+  const found = new Set();
+  const patterns = [
+    /<!--\s*Сгенерировано:\s*(\d{4}-\d{2}-\d{2})T/i,
+    />\s*\*\*Дата:\*\*\s*(\d{4}-\d{2}-\d{2})/i,
+    /\*\*(\d{4}-\d{2}-\d{2})\*\*\s*·/,
+    /Membrana\s*\((\d{4}-\d{2}-\d{2})\)/,
+  ];
+  for (const re of patterns) {
+    const m = text.match(re);
+    if (m?.[1]) {
+      found.add(m[1]);
+    }
+  }
+  return [...found];
+}
+
+/**
+ * Выбирает ключ папки YYYY-MM-DD по содержимому утренних артефактов.
+ * @param {{ label: string, content: string }[]} parts
+ * @param {() => string} fallbackDayKey
+ */
+export function resolveDayKey(parts, fallbackDayKey) {
+  const counts = new Map();
+  for (const { content } of parts) {
+    for (const d of extractIsoDates(content)) {
+      counts.set(d, (counts.get(d) ?? 0) + 1);
+    }
+  }
+  if (counts.size === 0) {
+    return fallbackDayKey();
+  }
+  let best = null;
+  let bestCount = -1;
+  for (const [d, c] of counts) {
+    if (c > bestCount || (c === bestCount && d > best)) {
+      best = d;
+      bestCount = c;
+    }
+  }
+  return best;
+}
+
+/**
+ * @param {string} archiveRoot e.g. docs/archive/daily-day
+ * @param {string} dayKey YYYY-MM-DD
+ */
+export function allocateBundleDir(archiveRoot, dayKey) {
+  mkdirSync(archiveRoot, { recursive: true });
+  return join(archiveRoot, dayKey);
+}
+
+/**
+ * Второй и последующие снимки за тот же календарный день (--force).
+ * @param {string} archiveRoot
+ * @param {string} dayKey
+ */
+export function allocateAlternateBundleDir(archiveRoot, dayKey) {
+  mkdirSync(archiveRoot, { recursive: true });
+  const stamp = isoStampForFilename();
+  const timed = join(archiveRoot, `${dayKey}_${stamp}`);
+  if (!existsSync(timed)) {
+    return timed;
+  }
+  for (let n = 2; n < 10_000; n++) {
+    const candidate = join(archiveRoot, `${dayKey}_${n}`);
+    if (!existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return join(archiveRoot, `${dayKey}_${process.hrtime.bigint()}`);
+}
+
+/**
+ * @param {string} archiveRoot
+ * @param {string} dayKey
+ * @param {{ archiveName: string, sourcePath: string }[]} files
+ */
+export function findExistingBundleDir(archiveRoot, dayKey, files) {
+  if (!existsSync(archiveRoot)) {
+    return null;
+  }
+  const dirs = readdirSync(archiveRoot)
+    .filter((n) => n === dayKey || n.startsWith(`${dayKey}_`))
+    .map((n) => join(archiveRoot, n))
+    .filter((p) => existsSync(p) && statSync(p).isDirectory());
+  for (const dir of dirs) {
+    const allMatch = files
+      .filter((f) => existsSync(f.sourcePath))
+      .every((f) => bundleFileIdentical(dir, f.archiveName, f.sourcePath));
+    const hasArchive = files.some((f) => existsSync(join(dir, f.archiveName)));
+    if (allMatch && hasArchive) {
+      return dir;
+    }
+  }
+  return null;
+}
+
+/** Маркер в HTML-комментарии в начале архивных копий. */
+export const ARCHIVE_SNAPSHOT_ROLE = 'archive-snapshot';
+
+/**
+ * Баннер: архивная копия ≠ канон в docs/ (перезаписывается утром).
+ * @param {{ dayKey: string, archivedAt: string, sourceRel: string, canonicalRel: string }} meta
+ */
+export function formatArchiveSnapshotBanner(meta) {
+  return `<!--
+  archive-role: ${ARCHIVE_SNAPSHOT_ROLE}
+  archive-day: ${meta.dayKey}
+  archived-at: ${meta.archivedAt}
+  source: ${meta.sourceRel}
+  canonical: ${meta.canonicalRel} (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
+`;
+}
+
+/**
+ * Убирает баннер archive-snapshot для сравнения с живым файлом в docs/.
+ * @param {string} text
+ */
+export function stripArchiveSnapshotBanner(text) {
+  if (!text.startsWith('<!--')) {
+    return text;
+  }
+  const end = text.indexOf('-->');
+  if (end === -1 || !text.slice(0, end + 3).includes(ARCHIVE_SNAPSHOT_ROLE)) {
+    return text;
+  }
+  return text.slice(end + 3).replace(/^[\r\n]+/, '');
+}
+
+/**
+ * @param {string} sourcePath
+ * @param {string} destPath
+ * @param {{ dayKey: string, archivedAt: string, sourceRel: string, canonicalRel: string }} meta
+ * @param {boolean} force
+ * @returns {'copied' | 'skipped-identical' | 'missing'}
+ */
+export function copyAsArchiveSnapshot(sourcePath, destPath, meta, force) {
+  if (!existsSync(sourcePath)) {
+    return 'missing';
+  }
+  mkdirSync(join(destPath, '..'), { recursive: true });
+  const srcText = readFileSync(sourcePath, 'utf8');
+  const body = formatArchiveSnapshotBanner(meta) + srcText;
+  if (!force && existsSync(destPath)) {
+    const prevText = readFileSync(destPath, 'utf8');
+    if (stripArchiveSnapshotBanner(prevText) === srcText) {
+      return 'skipped-identical';
+    }
+  }
+  writeFileSync(destPath, body, 'utf8');
+  return 'copied';
+}
+
+/** @param {string} bundleDir */
+export function bundleFileIdentical(bundleDir, archiveName, sourcePath) {
+  const dest = join(bundleDir, archiveName);
+  if (!existsSync(sourcePath) || !existsSync(dest)) {
+    return false;
+  }
+  const a = readFileSync(sourcePath, 'utf8');
+  const b = stripArchiveSnapshotBanner(readFileSync(dest, 'utf8'));
+  return a === b;
+}
+
+/**
+ * @param {string} bundleDir
+ * @param {object} manifest
+ */
+export function writeManifest(bundleDir, manifest) {
+  writeFileSync(join(bundleDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+}

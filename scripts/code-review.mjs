@@ -1,5 +1,9 @@
 /**
  * Code review через Anthropic: контекст из context-collector + docs/VIRTUAL_TEAM_PROMPT.md
+ *
+ * **Вечерняя процедура.** Утром не запускать — standup/main-day-issue читают уже готовый
+ * docs/DAILY_CODE_REVIEW.md с прошлого вечера. См. docs/DEVELOPER_RHYTHM.md.
+ *
  * Запуск: yarn code-review или yarn code-review:full
  * Успешный ответ записывается в docs/DAILY_CODE_REVIEW.md (файл перезаписывается).
  */

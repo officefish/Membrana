@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-06-10T05:54:14.334Z",
+  "datasetVersion": "v1",
+  "sampleCount": 9,
+  "manifestPath": "data/detectors-benchmark/v0.1/manifest.json",
+  "detectors": [
+    {
+      "name": "harmonic",
+      "family": "dsp",
+      "status": "benchmarked",
+      "metrics": {
+        "tp": 3,
+        "fp": 3,
+        "fn": 0,
+        "tn": 3,
+        "precision": 0.5,
+        "recall": 1,
+        "f1": 0.6666666666666666,
+        "latencyP50Ms": 0.08979999999999677,
+        "latencyP95Ms": 0.25449999999997885
+      },
+      "perSample": [
+        {
+          "id": "drone-mr-120hz",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.6594757943993128
+        },
+        {
+          "id": "drone-mr-150hz",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.6431118355770399
+        },
+        {
+          "id": "drone-mr-180hz",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.6315798853276445
+        },
+        {
+          "id": "not-drone-sine-440",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0
+        },
+        {
+          "id": "not-drone-speech-like",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.12264564169951819
+        },
+        {
+          "id": "not-drone-white-noise",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.6992930616490393
+        },
+        {
+          "id": "env-wind",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.868646058936798
+        },
+        {
+          "id": "env-traffic",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.33450266128950507
+        },
+        {
+          "id": "env-silence",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.7027252035812006
+        }
+      ]
+    },
+    {
+      "name": "cepstral",
+      "family": "dsp",
+      "status": "scaffold",
+      "metrics": null,
+      "perSample": null
+    },
+    {
+      "name": "spectral-flux",
+      "family": "dsp",
+      "status": "scaffold",
+      "metrics": null,
+      "perSample": null
+    },
+    {
+      "name": "yamnet",
+      "family": "neural",
+      "status": "scaffold",
+      "metrics": null,
+      "perSample": null
+    },
+    {
+      "name": "clap",
+      "family": "neural",
+      "status": "scaffold",
+      "metrics": null,
+      "perSample": null
+    },
+    {
+      "name": "agentic-claude",
+      "family": "agentic",
+      "status": "scaffold",
+      "metrics": null,
+      "perSample": null
+    }
+  ]
+}

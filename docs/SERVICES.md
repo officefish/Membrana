@@ -7,6 +7,8 @@
 
 **Сервис** — это автономный пакет с **чистой бизнес-логикой** + **тонким слоем React-хуков**, размещённый в `packages/services/<name>`. Каждый сервис:
 
+> **Не путать с `packages/background-*`:** NestJS-серверы (`background-office`, `background-media`) — отдельное семейство вне этого документа. Они не экспортируют React-хуки и не входят в граф foundation/analyzer. Роли и границы — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md). Клиентский `@membrana/media-library-service` общается с **media** по HTTP, но сам остаётся сервисом в `packages/services/`.
+
 - Имеет **собственный** `package.json`, `tsconfig.json`, `vite.config.ts`.
 - Разрабатывается **независимо** от других сервисов и приложения.
 - Экспортирует две вещи: ядро (pure TS) и хуки для React-компонентов.
@@ -44,6 +46,16 @@
 - Циклические зависимости запрещены на любом уровне.
 - Сервисы **не зависят** от `@membrana/agenda` / `@membrana/device-board` / `apps/client`. Только наоборот.
 - Сервис **не импортирует** React-компоненты — только React API (`useState`, `useEffect`, …).
+
+### Подкаталог `packages/services/detectors/*`
+
+Семейства детекторов дрона (Single-Node Detection First) живут в отдельной иерархии:
+
+- `@membrana/detector-base` — контракты `DroneDetector`, `DetectionResult`, `AudioWindow`.
+- `@membrana/<name>-detector-service` — одна реализация на пакет; **без импортов** между детекторами.
+- Зависимости: `detector-base` → `core` + `audio-engine-service`; каждый детектор → `core` + `detector-base`.
+
+Подробности: [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1e, [`WHITE_PAPER.md`](./WHITE_PAPER.md) §8.
 
 ### Когда выделять foundation
 
@@ -133,6 +145,56 @@ packages/services/<name>/
 **В dev:** клиент (`apps/client`) видит сервис через alias в `vite.config.ts` клиента, который указывает на `packages/services/<name>/src/index.ts`. Никакой сборки сервиса для dev не требуется.
 
 **В prod:** `yarn build` (через Turbo) собирает каждый сервис в `dist/` через Vite в library mode. Клиент при prod-сборке тоже резолвит через alias, так что dist сервисов нужен только для внешнего потребления / тестов сервиса в изоляции.
+
+## Параметры захвата для анализа (v0.1)
+
+Норматив для цепочки **микрофон → `@membrana/audio-engine-service` → `@membrana/fft-analyzer-service` → analyzer-сервисы** (в т.ч. будущий `@membrana/dsp-drone-detector-service`). Задача Музыканта / подготовка к полевым тестам ([`DAY_ISSUES.md`](./DAY_ISSUES.md), Этап 1 WHITE_PAPER).
+
+| Параметр | Значение v0.1 | Где задаётся |
+|----------|---------------|--------------|
+| **sampleRate** | **48 000 Гц** (целевой); **44 100 Гц** — допустимый fallback браузера/устройства | `AudioContext.sampleRate`; в telemetry при fallback — явная пометка `sampleRate` в записи |
+| **fftSize / bufferSize** | **2048** (степень 2) | `LiveCaptureConfig.bufferSize` в audio-engine; `AudioAnalyzerConfig.fftSize` в fft-analyzer (`DEFAULT_CONFIG`, `DEFAULT_LIVE_CAPTURE_CONFIG`) |
+| **overlap (наложение окон)** | **50 %** между соседними спектральными кадрами для **классификаторов по гармоникам** | Целевой hop = `fftSize / 2` (1024 сэмпла ≈ 21,3 мс при 48 kHz); см. [`discussions/dsp-drone-detector-v0.1.md`](./discussions/dsp-drone-detector-v0.1.md) |
+
+**Почему 48 kHz:** Nyquist 24 kHz покрывает гармоники дрона до 2–5 kHz (WHITE_PAPER §5.1) с запасом; единый rate упрощает сравнение полевых записей и синтетических тестов.
+
+**Почему 2048:** компромисс разрешения по частоте Δf ≈ `sampleRate / fftSize` (≈ 23,4 Гц при 48 kHz) и задержки окна; достаточно для несущей 80–250 Гц и нескольких гармоник.
+
+**Почему 50 % overlap:** сглаживает дребезг confidence при live-потоке; соседние БПФ-кадры коррелированы — усреднение/голосование по 2–3 кадрам стабильнее, чем один снимок.
+
+**Связанные пакеты:** [`packages/services/audio-engine/`](../packages/services/audio-engine/) (кадры `AudioSampleFrame`), [`packages/services/fft-analyzer/`](../packages/services/fft-analyzer/) (магнитуды и метрики). Analyzer **не** создаёт второй `AudioContext` — только потребляет кадры engine.
+
+**Не путать с legacy-демо:** centroid/flux/RMS-пороги из `packages/temp/fft/` — отдельный эксперимент; production-детектор дрона — гармонический классификатор поверх magnitudes (см. ADR выше).
+
+---
+
+## Demo-приложения (`packages/services/<name>/demo/`)
+
+Отдельный Vite+React UI для отладки сервиса без `apps/client`. Эталон: `packages/services/detectors/harmonic/demo/`.
+
+| Требование | Регламент |
+|------------|-----------|
+| Команда | `dev:demo` в `package.json` сервиса (порт **5178** или свободный) |
+| Зависимости UI | Только публичный API сервиса + foundation (`audio-engine`); не `apps/client` |
+| Live-детекция | [`LIVE_DETECTION_UI.md`](./LIVE_DETECTION_UI.md) §1 — EMA, гистерезис, debounce по кадрам |
+| Вёрстка экрана | [`LIVE_DETECTION_UI.md`](./LIVE_DETECTION_UI.md) §2 — `h-full`, без прыгающего scrollbar, статические строки |
+| PostCSS/Tailwind | Явный путь к `tailwind.config.js` в `demo/postcss.config.js` (cwd монорепо ≠ cwd demo) |
+
+Структура:
+
+```text
+packages/services/<name>/demo/
+├── index.html          # html/body/#root: h-full, body overflow-hidden
+├── main.tsx
+├── index.css           # scrollbar-gutter: stable
+├── vite.config.ts
+├── postcss.config.js
+├── tailwind.config.js
+├── App.tsx
+└── hooks/              # useLive* + detection-smooth.ts
+```
+
+---
 
 ## Создание нового сервиса
 

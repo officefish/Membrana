@@ -22,8 +22,16 @@
       "@membrana/audio-engine-service/*": ["../../packages/services/audio-engine/src/*"],
       "@membrana/fft-analyzer-service": ["../../packages/services/fft-analyzer/src/index.ts"],
       "@membrana/fft-analyzer-service/*": ["../../packages/services/fft-analyzer/src/*"],
+      "@membrana/telemetry-service": ["../../packages/services/telemetry/src/index.ts"],
+      "@membrana/telemetry-service/*": ["../../packages/services/telemetry/src/*"],
       "@membrana/audio-data-viz": ["../../packages/libs/audioDataViz/src/index.ts"],
       "@membrana/audio-data-viz/*": ["../../packages/libs/audioDataViz/src/*"],
+      "@membrana/detector-base": ["../../packages/services/detectors/base/src/index.ts"],
+      "@membrana/detector-base/*": ["../../packages/services/detectors/base/src/*"],
+      "@membrana/harmonic-detector-service": ["../../packages/services/detectors/harmonic/src/index.ts"],
+      "@membrana/harmonic-detector-service/*": ["../../packages/services/detectors/harmonic/src/*"],
+      "@membrana/trends-detector-service": ["../../packages/services/trends-detector/src/index.ts"],
+      "@membrana/trends-detector-service/*": ["../../packages/services/trends-detector/src/*"],
       "@/*": ["./src/*"]
     }
   },
@@ -35,6 +43,10 @@
     { "path": "../../packages/device-board" },
     { "path": "../../packages/services/audio-engine" },
     { "path": "../../packages/services/fft-analyzer" },
-    { "path": "../../packages/libs/audioDataViz" }
+    { "path": "../../packages/services/telemetry" },
+    { "path": "../../packages/libs/audioDataViz" },
+    { "path": "../../packages/services/detectors/base" },
+    { "path": "../../packages/services/detectors/harmonic" },
+    { "path": "../../packages/services/trends-detector" }
   ]
 }

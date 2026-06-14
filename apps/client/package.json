@@ -15,12 +15,19 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@babel/runtime": "^7.26.0",
     "@membrana/agenda": "*",
     "@membrana/audio-data-viz": "*",
     "@membrana/audio-engine-service": "*",
     "@membrana/core": "*",
+    "@membrana/detector-base": "*",
     "@membrana/device-board": "*",
     "@membrana/fft-analyzer-service": "*",
+    "@membrana/harmonic-detector-service": "*",
+    "@membrana/media-library-service": "*",
+    "@membrana/telemetry-service": "*",
+    "@membrana/trends-detector-service": "*",
+    "@uiw/react-json-view": "2.0.0-alpha.42",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

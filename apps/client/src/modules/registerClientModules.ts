@@ -1,5 +1,13 @@
 import { MembranaRegistry } from '@membrana/agenda';
+import { createFftIndicesVizPlugin } from '../plugins/fft-indices-viz';
+import { createSoundQualityVizPlugin } from '../plugins/sound-quality-viz';
+import { createFftThresholdTestPlugin } from '../plugins/fft-threshold-test';
+import { createHarmonicDetectorVizPlugin } from '../plugins/harmonic-detector-viz';
+import { createMicBufferRecorderPlugin } from '../plugins/mic-buffer-recorder';
+import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-player';
+import { createTrendsFftSampleAnalyzerPlugin } from '../plugins/trends-fft-sample-analyzer';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
+import { createTrendsFftAnalyzerPlugin } from '../plugins/trends-fft-analyzer';
 
 /**
  * Регистрация всех клиентских модулей и плагинов.
@@ -90,6 +98,38 @@ export function registerClientModules(): void {
   });
 
   MembranaRegistry.registerLazyModule({
+    id: 'telemetry-journal',
+    name: 'Журнал телеметрии',
+    description: 'Просмотр записей телеметрии (анализ, события, системные)',
+    version: '1.0.0',
+    category: 'Мониторинг',
+    enabled: true,
+    activePlugins: [],
+    defaultConfig: {},
+    loader: () =>
+      import('./telemetry-journal/TelemetryJournalModule').then((m) => ({
+        default: m.TelemetryJournalModule,
+      })),
+  });
+
+  MembranaRegistry.registerLazyModule({
+    id: 'sample-library',
+    name: 'Библиотека сэмплов',
+    description: 'Буфер, коллекции, импорт WAV для датасета и benchmark',
+    version: '0.1.0',
+    category: 'Источники',
+    enabled: true,
+    activePlugins: [],
+    defaultConfig: {
+      defaultImportClass: 'unlabeled',
+    },
+    loader: () =>
+      import('./SampleLibraryModule').then((m) => ({
+        default: m.SampleLibraryModule,
+      })),
+  });
+
+  MembranaRegistry.registerLazyModule({
     id: 'microphone',
     name: 'Микрофон',
     description: 'Выбор источника звука и запуск потока для анализа и плагинов',
@@ -105,6 +145,14 @@ export function registerClientModules(): void {
   });
 
   MembranaRegistry.registerPlugin('microphone', createMicStreamVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createFftThresholdTestPlugin());
+  MembranaRegistry.registerPlugin('microphone', createFftIndicesVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createSoundQualityVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createHarmonicDetectorVizPlugin());
+  MembranaRegistry.registerPlugin('microphone', createTrendsFftAnalyzerPlugin());
+  MembranaRegistry.registerPlugin('microphone', createMicBufferRecorderPlugin());
+  MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
+  MembranaRegistry.registerPlugin('sample-library', createTrendsFftSampleAnalyzerPlugin());
 
   // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs
   // уже применены в registerModule, дальше держать pendingModulePrefs смысла нет.

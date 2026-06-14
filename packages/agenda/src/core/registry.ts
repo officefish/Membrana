@@ -15,7 +15,7 @@
 import { lazy, type ComponentType } from 'react';
 
 import { useMembranaStore } from './store';
-import type { Module, ModuleProps, Plugin } from './types';
+import type { Module, Plugin } from './types';
 
 /**
  * Метаданные нового модуля без поля `Component`.
@@ -32,11 +32,27 @@ export type ModuleMetadata<TConfig> = Omit<
 };
 
 /**
- * Параметры lazy-регистрации модуля. Loader должен возвращать default-export
- * с компонентом — это совместимо с сигнатурой React.lazy().
+ * Параметры lazy-регистрации модуля. Loader возвращает default-export
+ * с любым React-компонентом — это совместимо с сигнатурой React.lazy().
+ *
+ * Тип компонента в loader намеренно ослаблен до `ComponentType<any>`:
+ *
+ * - Компонент модуля параметризован своим собственным `XConfig`-интерфейсом
+ *   (`React.FC<ModuleProps<MicrophoneConfig>>` и т.п.), а `TConfig` в этом
+ *   обобщении выводится из `defaultConfig`. Это два структурно похожих, но
+ *   не идентичных источника одного и того же дженерика — TS не может их
+ *   унифицировать и сваливается в `ComponentType<ModuleProps<never>>` (TS2322).
+ * - Сделать loader совместимым через `ModuleProps<unknown>` / `<never>` мешает
+ *   контрвариантность `Validator<T>` внутри `WeakValidationMap` (`propTypes`):
+ *   `FC<X>` и `FC<Y>` несовместимы для любых `X ≠ Y` даже при `unknown`.
+ * - `ComponentType<any>` обходит и invariance в propTypes, и проблему вывода.
+ *   Привязка к корректному `TConfig` уже обеспечена в самом файле модуля
+ *   (`React.FC<ModuleProps<XConfig>>`), а на стороне store повторная
+ *   типизация не нужна.
  */
 export interface LazyModuleParams<TConfig> extends ModuleMetadata<TConfig> {
-  loader: () => Promise<{ default: ComponentType<ModuleProps<TConfig>> }>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- см. JSDoc выше
+  loader: () => Promise<{ default: ComponentType<any> }>;
 }
 
 export const MembranaRegistry = {

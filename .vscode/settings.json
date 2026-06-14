@@ -54,5 +54,11 @@
     "turborepo",
     "tsbuildinfo",
     "noemit"
+  ],
+  // Claude Code (anthropic.claude-code): прокси до Anthropic — HTTP CONNECT (Mixed/HTTP-порт Clash и т.п., не SOCKS).
+  // Совпадает с примером HTTPS_PROXY в корневом .env.example; поменяйте порт под свой клиент. Без прокси удалите блок.
+  "anthropic.claude-code.environmentVariables": [
+    { "name": "HTTPS_PROXY", "value": "http://127.0.0.1:7890" },
+    { "name": "HTTP_PROXY", "value": "http://127.0.0.1:7890" }
   ]
 }

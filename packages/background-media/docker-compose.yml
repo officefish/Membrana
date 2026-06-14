@@ -1,0 +1,71 @@
+# Полный локальный/staging стек: PostgreSQL + media API (A5b).
+# Из корня репозитория:
+#   cp packages/background-media/.env.docker.example packages/background-media/.env.docker
+#   yarn media:docker:up
+#
+# Dev-only PostgreSQL (без API): yarn media:db:up (docker-compose.dev.yml)
+
+name: membrana-media
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-membrana}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-membrana}
+      POSTGRES_DB: ${POSTGRES_DB:-membrana_media}
+    volumes:
+      - media-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-membrana} -d ${POSTGRES_DB:-membrana_media}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  media-api:
+    build:
+      context: ../..
+      dockerfile: packages/background-media/Dockerfile
+    image: membrana/background-media:local
+    restart: unless-stopped
+    ports:
+      - '${MEDIA_PORT:-3010}:3010'
+    env_file:
+      - .env.docker
+    environment:
+      NODE_ENV: production
+      PORT: 3010
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      API_INTERNAL_TOKEN: ${API_INTERNAL_TOKEN:-dev-token-change-me}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-membrana}:${POSTGRES_PASSWORD:-membrana}@postgres:5432/${POSTGRES_DB:-membrana_media}
+      MEDIA_BLOB_DIR: /data/blobs
+      MEDIA_QUOTA_BYTES_PER_DEVICE: ${MEDIA_QUOTA_BYTES_PER_DEVICE:-1073741824}
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-52428800}
+      MEDIA_ALLOWED_MIME: ${MEDIA_ALLOWED_MIME:-audio/wav,audio/wave,audio/mpeg,audio/flac,audio/ogg}
+    volumes:
+      - media-blobs:/data/blobs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3010/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  media-pg-data:
+  media-blobs:

@@ -33,3 +33,9 @@ export interface DomainEvent {
   readonly occurredAt: number;
   readonly payload: unknown;
 }
+
+export type {
+  SyncedTimestamp,
+  TimeSyncProvider,
+  TdoaResult,
+} from './acoustic-network.js';

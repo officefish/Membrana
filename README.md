@@ -8,14 +8,19 @@
 
 ```
 membrana/
-├── packages/         # Переиспользуемые библиотеки
-│   ├── core/         # Базовые сущности, контракты, утилиты
-│   ├── agenda/       # Модуль расписания (зависит от core)
-│   └── device-board/ # Модуль устройств (зависит от core)
+├── packages/
+│   ├── core/              # Базовые сущности, контракты, утилиты
+│   ├── agenda/            # Модули, плагины, store (зависит от core)
+│   ├── device-board/      # Устройства (зависит от core)
+│   ├── services/          # Автономные TS-сервисы (audio-engine, детекторы, …)
+│   ├── background-office/ # NestJS: Claude, Linear, GitHub (интеграции, :3000)
+│   └── background-media/  # NestJS: сэмплы + trends-шаблоны по deviceId (:3010, #58)
 │
 └── apps/
-    └── client/       # Клиентское приложение
+    └── client/            # Vite + React (основное приложение)
 ```
+
+Фоновые серверы `background-*` **не** входят в граф `packages/services/*`. Роли и границы — [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md).
 
 ## Принципы
 
@@ -55,6 +60,19 @@ yarn lint
 yarn test
 ```
 
+## Ритм разработки (утро / вечер / неделя)
+
+Подробный регламент: **[`docs/DEVELOPER_RHYTHM.md`](./docs/DEVELOPER_RHYTHM.md)**.
+
+| Когда | Что запустить |
+|-------|----------------|
+| **Утро** | `yarn morning-care` → `yarn plan:day` → `yarn standup` → **`yarn main-day-issue`** (учитывает вчерашний `DAILY_CODE_REVIEW.md`) |
+| **Вечер** | **`yarn archive:daily-day`** → **`yarn code-review`** → `yarn task:archive <id>` → `yarn save-code-review` → `yarn task:close-github` |
+| **Неделя** | `yarn analyzers:research:week` → `yarn plan:week` |
+| **По ситуации** | `yarn consilium "…"` (консенсус всех ролей), `yarn ask <persona> …` (совет одной роли) |
+
+Для скриптов с Claude нужен `ANTHROPIC_API_KEY` в `.env`. Утро: `yarn ritual:day`. Вечер: `yarn ritual:evening` (сначала архив плана/стендапа/фокуса, затем code-review). Code-review **не** утром. Фокус дня: `docs/MAIN_DAY_ISSUE.md`. Архив: [`docs/archive/README.md`](./docs/archive/README.md).
+
 ## Полезные yarn-команды
 
 ```bash
@@ -87,7 +105,9 @@ yarn workspaces foreach -A run build
 
 ## Виртуальная команда AI (аудио / архитектура UI)
 
-Промпты и нормативные документы для оркестрации ролей (Teamlead, структурщик, математик, музыкант, верстальщик) лежат в каталоге [`docs/`](./docs/README.md). В GitHub Actions доступен ручной запуск workflow **Virtual team context** (`.github/workflows/virtual-team-context.yml`): в summary появятся пути к файлам и чеклист для агента.
+Промпты и нормативные документы для оркестрации ролей (Teamlead, структурщик, математик, музыкант, верстальщик) лежат в каталоге [`docs/`](./docs/README.md). Ритм вызова скриптов — [`docs/DEVELOPER_RHYTHM.md`](./docs/DEVELOPER_RHYTHM.md).
+
+В GitHub Actions доступен ручной запуск workflow **Virtual team context** (`.github/workflows/virtual-team-context.yml`): в summary появятся пути к файлам и чеклист для агента.
 
 ## Документация по пакетам
 

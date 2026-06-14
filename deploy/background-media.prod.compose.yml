@@ -1,0 +1,33 @@
+# Production overrides for VPS deploy (A5c prep).
+# Usage on server (paths adjusted):
+#   docker compose \
+#     -f packages/background-media/docker-compose.yml \
+#     -f deploy/background-media.prod.compose.yml \
+#     --env-file /etc/membrana/media.env \
+#     up -d
+#
+# Do NOT commit real secrets. See docs/deploy/BACKGROUND_MEDIA_DEPLOY.md
+
+name: membrana-media
+
+services:
+  postgres:
+    ports: !override []
+    restart: unless-stopped
+
+  media-api:
+    restart: unless-stopped
+    # Bind to localhost only; expose 443 via Caddy/nginx on the host
+    ports: !override
+      - '127.0.0.1:${MEDIA_PORT:-3010}:3010'
+    # Host path for straightforward backup/rsync (see BACKGROUND_MEDIA_DEPLOY.md §7)
+    volumes:
+      - ${MEDIA_BLOB_HOST_DIR:-/var/lib/membrana/media-blobs}:/data/blobs
+    networks:
+      - default
+      - membrana-platform
+
+networks:
+  membrana-platform:
+    name: membrana-platform
+    driver: bridge

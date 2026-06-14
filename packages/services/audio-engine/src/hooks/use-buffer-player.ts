@@ -10,6 +10,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   BufferPlayer,
+  type BufferPlayerPlayOptions,
+  type BufferPlayerProgress,
   type BufferPlayerState,
 } from '../core/buffer-player.js';
 import type {
@@ -23,12 +25,18 @@ export interface UseBufferPlayerOptions {
   readonly onFrame?: SampleFrameHandler;
   readonly onError?: (error: Error) => void;
   readonly onEnded?: () => void;
+  readonly onProgress?: (progress: BufferPlayerProgress) => void;
 }
 
 export interface UseBufferPlayerReturn {
   readonly state: BufferPlayerState;
   readonly isPlaying: boolean;
-  readonly play: (buffer: AudioBuffer) => Promise<void>;
+  readonly currentTimeSec: number;
+  readonly durationSec: number;
+  readonly play: (buffer: AudioBuffer, options?: BufferPlayerPlayOptions) => Promise<void>;
+  readonly pause: () => Promise<void>;
+  readonly resume: () => Promise<void>;
+  readonly seek: (offsetSec: number) => Promise<void>;
   readonly stop: () => Promise<void>;
   readonly player: BufferPlayer;
   readonly analyserNode: AnalyserNode | null;
@@ -38,7 +46,7 @@ export interface UseBufferPlayerReturn {
 export function useBufferPlayer(
   options: UseBufferPlayerOptions = {},
 ): UseBufferPlayerReturn {
-  const { config, onFrame, onError, onEnded } = options;
+  const { config, onFrame, onError, onEnded, onProgress } = options;
 
   const player = useMemo(
     () => new BufferPlayer(config),
@@ -47,6 +55,8 @@ export function useBufferPlayer(
   );
 
   const [state, setState] = useState<BufferPlayerState>(player.getState());
+  const [currentTimeSec, setCurrentTimeSec] = useState(0);
+  const [durationSec, setDurationSec] = useState(0);
   const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(
     player.getAnalyserNode(),
   );
@@ -60,6 +70,8 @@ export function useBufferPlayer(
   onErrorRef.current = onError;
   const onEndedRef = useRef<typeof onEnded>(onEnded);
   onEndedRef.current = onEnded;
+  const onProgressRef = useRef<typeof onProgress>(onProgress);
+  onProgressRef.current = onProgress;
 
   useEffect(() => {
     const handleFrame = (frame: AudioSampleFrame): void => {
@@ -72,17 +84,26 @@ export function useBufferPlayer(
       onErrorRef.current?.(err);
     };
     const handleStart = (): void => {
-      setState('playing');
+      setState(player.getState());
+      setDurationSec(player.getDurationSec());
       setAnalyserNode(player.getAnalyserNode());
       setAudioContext(player.getAudioContext());
     };
     const handleStop = (): void => {
-      setState('stopped');
-      setAnalyserNode(null);
-      setAudioContext(null);
+      setState(player.getState());
+      setCurrentTimeSec(player.getCurrentTimeSec());
+      setAnalyserNode(player.getAnalyserNode());
+      setAudioContext(player.getAudioContext());
     };
     const handleEnded = (): void => {
+      setState(player.getState());
+      setCurrentTimeSec(player.getDurationSec());
       onEndedRef.current?.();
+    };
+    const handleProgress = (progress: BufferPlayerProgress): void => {
+      setCurrentTimeSec(progress.currentSec);
+      setDurationSec(progress.durationSec);
+      onProgressRef.current?.(progress);
     };
 
     player.on('frame', handleFrame);
@@ -90,6 +111,7 @@ export function useBufferPlayer(
     player.on('start', handleStart);
     player.on('stop', handleStop);
     player.on('ended', handleEnded);
+    player.on('progress', handleProgress);
 
     return () => {
       player.off('frame', handleFrame);
@@ -97,6 +119,7 @@ export function useBufferPlayer(
       player.off('start', handleStart);
       player.off('stop', handleStop);
       player.off('ended', handleEnded);
+      player.off('progress', handleProgress);
       if (player.isPlaying()) {
         void player.stop();
       }
@@ -108,15 +131,23 @@ export function useBufferPlayer(
   }, [player, config]);
 
   const play = useCallback(
-    (buffer: AudioBuffer) => player.play(buffer),
+    (buffer: AudioBuffer, options?: BufferPlayerPlayOptions) => player.play(buffer, options),
     [player],
   );
+  const pause = useCallback(() => player.pause(), [player]);
+  const resume = useCallback(() => player.resume(), [player]);
+  const seek = useCallback((offsetSec: number) => player.seek(offsetSec), [player]);
   const stop = useCallback(() => player.stop(), [player]);
 
   return {
     state,
     isPlaying: state === 'playing',
+    currentTimeSec,
+    durationSec,
     play,
+    pause,
+    resume,
+    seek,
     stop,
     player,
     analyserNode,

@@ -1,0 +1,3 @@
+# Локальные WAV и разметка для benchmark детекторов.
+# Большие файлы не коммитить — см. docs/DATASET.md (после scaffold #47).
+# Внешний путь допустим: переменная MEMBRANA_DATASETS_DIR в .env (не в git).
