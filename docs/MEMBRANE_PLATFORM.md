@@ -119,9 +119,14 @@ Media-server читает лимиты из tariff мембраны при uploa
 
 Seed v1:
 
-| id | userStorage | buffer | datasetCatalogId |
-|----|-------------|--------|------------------|
-| `free-v1` | 1 GiB | 1 GiB | `free-v1-catalog` |
+| id | userStorage | buffer | datasetCatalogId | samples в каталоге |
+|----|-------------|--------|------------------|-------------------|
+| `free-v1` | 1 GiB | 1 GiB | `free-v1-catalog` | **120** |
+| `indie-v1` | TBD | TBD | `indie-v1-catalog` | **600** (план) |
+| `business-v1` | TBD | TBD | `business-v1-catalog` | **3000** (план) |
+| `state-v1` | TBD | TBD | `state-v1-catalog` | **12000** (план) |
+
+В cabinet тарифный каталог показывается **один раз на мембрану**; буфер и user-коллекции — **per-node** (`deviceId`). См. [`discussions/cabinet-sample-library-consilium-2026-06-14.md`](./discussions/cabinet-sample-library-consilium-2026-06-14.md).
 
 ---
 

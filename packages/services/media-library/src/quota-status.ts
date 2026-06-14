@@ -31,3 +31,31 @@ export function isQuotaWarning(quota: StorageQuota): boolean {
   const level = getQuotaLevel(quota);
   return level === 'warning' || level === 'full';
 }
+
+/** Bytes/limit for `__buffer__` UI and recorder gating. */
+export function resolveBufferQuota(quota: StorageQuota): { usedBytes: number; limitBytes: number } {
+  return {
+    usedBytes: quota.bufferUsedBytes ?? quota.usedBytes,
+    limitBytes: quota.bufferLimitBytes ?? quota.limitBytes,
+  };
+}
+
+export function getBufferQuotaLevel(quota: StorageQuota): QuotaLevel {
+  const { usedBytes, limitBytes } = resolveBufferQuota(quota);
+  if (limitBytes <= 0) return 'ok';
+  if (usedBytes >= limitBytes) return 'full';
+  if (usedBytes >= limitBytes * QUOTA_WARNING_RATIO) return 'warning';
+  return 'ok';
+}
+
+export function isBufferQuotaFull(quota: StorageQuota): boolean {
+  return getBufferQuotaLevel(quota) === 'full';
+}
+
+export function isBufferRecordingBlocked(
+  quota: StorageQuota,
+  sampleCount: number,
+  maxBufferSamples: number,
+): boolean {
+  return isBufferQuotaFull(quota) || sampleCount >= maxBufferSamples;
+}

@@ -1,8 +1,15 @@
 import {
   BUFFER_COLLECTION_ID,
+  configureDefaultMediaLibraryService,
   getDefaultMediaLibraryService,
-  isQuotaFull,
+  isBufferRecordingBlocked,
+  resolveBufferQuota,
+  resolveMediaLibraryStorageMode,
+  type MediaLibraryService,
 } from '@membrana/media-library-service';
+
+import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
+import { resolveMediaLibraryBackend } from '@/lib/resolveMediaLibraryBackend';
 
 import {
   publishMediaLibraryBufferCleared,
@@ -12,6 +19,8 @@ import {
 } from './mediaLibraryHub';
 
 let bridgeInstalled = false;
+let serviceUnsub: (() => void) | null = null;
+let configureGeneration = 0;
 
 function pushQuotaSnapshot(): void {
   const svc = getDefaultMediaLibraryService();
@@ -19,18 +28,29 @@ function pushQuotaSnapshot(): void {
   const samples = snap.samplesByCollection[BUFFER_COLLECTION_ID] ?? [];
   const maxBufferSamples = svc.getConfig().maxBufferSamples;
   const sampleCount = samples.length;
+  const bufferQuota = resolveBufferQuota(snap.quota);
+  const storageMode = resolveMediaLibraryStorageMode(snap.quota);
   publishMediaLibraryQuotaUpdated({
-    usedBytes: snap.quota.usedBytes,
-    limitBytes: snap.quota.limitBytes,
+    usedBytes: bufferQuota.usedBytes,
+    limitBytes: bufferQuota.limitBytes,
     sampleCount,
     maxBufferSamples,
-    recordingBlocked: isQuotaFull(snap.quota) || sampleCount >= maxBufferSamples,
+    recordingBlocked: isBufferRecordingBlocked(snap.quota, sampleCount, maxBufferSamples),
+    storageMode,
   });
+}
+
+async function attachService(svc: MediaLibraryService): Promise<void> {
+  serviceUnsub?.();
+  await svc.init();
+  serviceUnsub = svc.subscribe(() => {
+    pushQuotaSnapshot();
+  });
+  pushQuotaSnapshot();
 }
 
 async function handleCaptureStop(payload: MediaLibraryCaptureStopPayload): Promise<void> {
   const svc = getDefaultMediaLibraryService();
-  await svc.init();
   await svc.importBlob(BUFFER_COLLECTION_ID, payload.blob, {
     title: payload.meta.title,
     class: payload.meta.class,
@@ -44,6 +64,19 @@ async function handleCaptureStop(payload: MediaLibraryCaptureStopPayload): Promi
   pushQuotaSnapshot();
 }
 
+/** Switch backend after pairing / disconnect and reload library snapshot. */
+export async function reconfigureMediaLibraryFromConnection(
+  mode?: NodeConnectionMode | null,
+  pairing?: PairedNodeCredentials | null,
+): Promise<void> {
+  const generation = ++configureGeneration;
+  const backend = await resolveMediaLibraryBackend(mode, pairing);
+  if (generation !== configureGeneration) return;
+  const svc = configureDefaultMediaLibraryService(backend);
+  if (generation !== configureGeneration) return;
+  await attachService(svc);
+}
+
 /** Wire hub → media-library-service (call once at app startup). */
 export function initMediaLibraryHubBridge(): () => void {
   if (bridgeInstalled) {
@@ -51,28 +84,26 @@ export function initMediaLibraryHubBridge(): () => void {
   }
   bridgeInstalled = true;
 
-  const svc = getDefaultMediaLibraryService();
-  const unsubService = svc.subscribe(() => {
-    pushQuotaSnapshot();
-  });
-
   subscribeMediaLibraryCaptureStop((payload) => {
     void handleCaptureStop(payload).catch((err) => {
       console.error('[mediaLibraryHubBridge] capture.stop failed', err);
     });
   });
 
-  void svc.init().then(() => pushQuotaSnapshot());
+  void reconfigureMediaLibraryFromConnection();
 
   return () => {
     bridgeInstalled = false;
-    unsubService();
+    serviceUnsub?.();
+    serviceUnsub = null;
   };
 }
 
 /** Tests: reset bridge singleton. */
 export function resetMediaLibraryHubBridgeForTests(): void {
   bridgeInstalled = false;
+  serviceUnsub = null;
+  configureGeneration = 0;
 }
 
 export async function requestClearMediaLibraryBuffer(): Promise<void> {

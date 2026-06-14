@@ -1,4 +1,5 @@
 import type { NewSampleMeta, SampleSource } from './types.js';
+import type { MediaLibraryStorageMode } from './quota-status.js';
 
 /** Output container for mic-buffer-recorder plugin. */
 export type MediaLibraryCaptureFormat = 'wav' | 'webm' | 'mp4';
@@ -37,6 +38,7 @@ export interface MediaLibraryQuotaUpdatedPayload {
   sampleCount: number;
   maxBufferSamples: number;
   recordingBlocked: boolean;
+  storageMode: MediaLibraryStorageMode;
 }
 
 export const MEDIA_LIBRARY_HUB = {

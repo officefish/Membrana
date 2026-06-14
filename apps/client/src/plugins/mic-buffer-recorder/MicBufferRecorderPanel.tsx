@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useMembranaStore } from '@membrana/agenda';
-import type { MediaLibraryCaptureFormat, MediaLibraryRecordingMode } from '@membrana/media-library-service';
+import type { MediaLibraryCaptureFormat, MediaLibraryRecordingMode, MediaLibraryStorageMode } from '@membrana/media-library-service';
 
 import { requestClearMediaLibraryBuffer } from '../../lib/mediaLibraryHubBridge';
 
@@ -33,6 +33,13 @@ function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
+
+const BUFFER_STORAGE_HINT: Record<MediaLibraryStorageMode, string> = {
+  'remote-server': 'Буфер на media-server — записи сохраняются между сессиями.',
+  'electron-fs': 'Буфер на диске (настольное приложение).',
+  'browser-limited-fallback':
+    'Локальный буфер сессии — данные пропадут при перезагрузке. Подключите сервер или используйте desktop.',
+};
 
 export function MicBufferRecorderPanel({ moduleId }: Props) {
   const snapshot = useMicBufferRecorder();
@@ -255,6 +262,15 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
       </div>
 
       <div className="rounded-box border border-base-300 bg-base-100/40 p-3 flex flex-col gap-2">
+        <p
+          className={`text-xs ${
+            snapshot.storageMode === 'browser-limited-fallback'
+              ? 'text-warning'
+              : 'text-base-content/70'
+          }`}
+        >
+          {BUFFER_STORAGE_HINT[snapshot.storageMode]}
+        </p>
         <div className="flex justify-between text-xs text-base-content/70">
           <span>Память буфера</span>
           <span className="tabular-nums">

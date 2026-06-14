@@ -590,6 +590,67 @@
         "membrane-platform-mp5-telemetry-journal"
       ],
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "cabinet-sample-library-v1",
+      "title": "Cabinet Sample Library v1: библиотека сэмплов в кабинете (эпик CSL1–CSL3)",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp4-media-membrane",
+        "tariff-dataset-v1"
+      ]
+    },
+    {
+      "id": "cabinet-sample-library-csl1-api",
+      "title": "Cabinet Sample Library CSL1: membrane-scoped API + cabinet auth to media",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-sample-library-v1"
+      ]
+    },
+    {
+      "id": "cabinet-sample-library-csl2-ui",
+      "title": "Cabinet Sample Library CSL2: SampleLibraryPage + N-ready node picker",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-sample-library-csl1-api"
+      ]
+    },
+    {
+      "id": "cabinet-sample-library-csl3-remote-ops",
+      "title": "Cabinet Sample Library CSL3: remote delete/move/import + offline empty states",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-sample-library-csl2-ui"
+      ]
     }
   ]
 }

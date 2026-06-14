@@ -38,10 +38,14 @@ export interface MediaSample {
 export type StorageBackendKind = 'server' | 'browser-limited' | 'electron-fs';
 
 export interface StorageQuota {
+  /** User collections quota (or combined quota for browser-limited). */
   usedBytes: number;
   limitBytes: number;
   backend: StorageBackendKind;
   serverReachable: boolean;
+  /** Buffer collection quota — set when backend tracks buffer separately (server). */
+  bufferUsedBytes?: number;
+  bufferLimitBytes?: number;
 }
 
 export interface NewSampleMeta {

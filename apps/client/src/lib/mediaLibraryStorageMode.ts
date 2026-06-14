@@ -7,13 +7,15 @@ export type MediaLibraryStorageMode =
   | 'remote-server'
   | 'browser-limited-fallback';
 
-/** Target mode after A4/A5 wiring; UI banner uses `resolveMediaLibraryStorageMode(quota)` from service. */
-export function getMediaLibraryStorageMode(): MediaLibraryStorageMode {
+/**
+ * Static hint for UI before media-library hydrates.
+ * Runtime mode comes from `resolveMediaLibraryStorageMode(quota)` on the live service.
+ */
+export function getMediaLibraryStorageModeHint(): MediaLibraryStorageMode {
   const runtime: RuntimeStorageMode = getRuntimeStorageMode();
   if (runtime === 'electron-system-files') {
     return 'electron-fs';
   }
-  // background-media ping — фаза A5; пока fallback
   return 'browser-limited-fallback';
 }
 

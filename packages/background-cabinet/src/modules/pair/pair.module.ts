@@ -8,5 +8,6 @@ import { PairService } from './pair.service';
   imports: [AuthModule],
   controllers: [PairController],
   providers: [PairService, MediaBridgeService],
+  exports: [MediaBridgeService],
 })
 export class PairModule {}

@@ -1,7 +1,3 @@
-import { readFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import {
   FREE_V1_CATALOG_ID,
   TARIFF_DATASET_COLLECTION_ID,
@@ -33,10 +29,19 @@ function isNodeRuntime(): boolean {
   return typeof process !== 'undefined' && Boolean(process.versions?.node);
 }
 
+async function getRepoCatalogDataDir(): Promise<string> {
+  const { dirname, join } = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
+  return join(root, 'data', 'detectors-benchmark', 'v0.2');
+}
+
 /** Resolve manifest for Node (tests, scripts) from repo data path. */
 export async function loadBundledCatalogManifestFromRepo(): Promise<BundledCatalogManifest> {
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
-  const path = join(root, 'data', 'detectors-benchmark', 'v0.2', 'manifest.json');
+  const { readFile } = await import('node:fs/promises');
+  const { join } = await import('node:path');
+  const dataDir = await getRepoCatalogDataDir();
+  const path = join(dataDir, 'manifest.json');
   const raw = JSON.parse(await readFile(path, 'utf8')) as BundledCatalogManifest & {
     version?: number;
   };
@@ -84,14 +89,16 @@ async function loadSampleBlob(
   options: BundledCatalogSeedOptions,
 ): Promise<Blob> {
   if (options.assetRootDir) {
-    const fs = await import('node:fs/promises');
-    const buf = await fs.readFile(join(options.assetRootDir, entry.path));
+    const { readFile } = await import('node:fs/promises');
+    const { join } = await import('node:path');
+    const buf = await readFile(join(options.assetRootDir, entry.path));
     return new Blob([buf], { type: 'audio/wav' });
   }
   if (isNodeRuntime()) {
-    const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
-    const fs = await import('node:fs/promises');
-    const buf = await fs.readFile(join(root, 'data', 'detectors-benchmark', 'v0.2', entry.path));
+    const { readFile } = await import('node:fs/promises');
+    const { join } = await import('node:path');
+    const dataDir = await getRepoCatalogDataDir();
+    const buf = await readFile(join(dataDir, entry.path));
     return new Blob([buf], { type: 'audio/wav' });
   }
   const base = (options.assetBaseUrl ?? '/catalog/free-v1').replace(/\/$/, '');

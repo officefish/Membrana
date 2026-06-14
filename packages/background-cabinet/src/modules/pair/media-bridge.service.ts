@@ -17,6 +17,43 @@ export interface MediaDeviceRegistration {
   createdAt: string;
 }
 
+export interface MediaQuotaBucket {
+  usedBytes: number;
+  limitBytes: number;
+  backend: 'server';
+}
+
+export interface MediaQuotaResponse {
+  userStorage: MediaQuotaBucket;
+  buffer: MediaQuotaBucket;
+  dataset: { catalogId: string; sampleCount: number };
+}
+
+export interface MediaCollectionSummary {
+  id: string;
+  name: string;
+  kind: string;
+  createdAt: string;
+  updatedAt: string;
+  systemKey?: string;
+}
+
+export interface MediaSampleSummary {
+  id: string;
+  collectionId: string;
+  title: string;
+  class: string;
+  label: string;
+  source: string;
+  durationSec: number;
+  sampleRate: number;
+  channels: 1 | 2;
+  createdAt: string;
+  storageRef: string;
+  notes?: string;
+  sizeBytes: number;
+}
+
 @Injectable()
 export class MediaBridgeService {
   private readonly logger = new Logger(MediaBridgeService.name);
@@ -86,5 +123,46 @@ export class MediaBridgeService {
     this.logger.warn(
       `ensure-reserved failed for device ${deviceId} (${res.status}): ${detail}`,
     );
+  }
+
+  async getQuota(deviceId: string): Promise<MediaQuotaResponse | null> {
+    const res = await this.mediaFetch(`/v1/devices/${deviceId}/quota`, {
+      method: 'GET',
+      headers: this.mediaHeaders(),
+    });
+    if (!res.ok) {
+      this.logger.warn(`quota fetch failed for device ${deviceId} (${res.status})`);
+      return null;
+    }
+    return (await res.json()) as MediaQuotaResponse;
+  }
+
+  async listCollections(deviceId: string): Promise<MediaCollectionSummary[]> {
+    const res = await this.mediaFetch(`/v1/devices/${deviceId}/collections`, {
+      method: 'GET',
+      headers: this.mediaHeaders(),
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => res.statusText);
+      throw new ServiceUnavailableException(
+        `Media collections list failed (${res.status}): ${detail}`,
+      );
+    }
+    return (await res.json()) as MediaCollectionSummary[];
+  }
+
+  async listSamples(deviceId: string, collectionId: string): Promise<MediaSampleSummary[]> {
+    const encoded = encodeURIComponent(collectionId);
+    const res = await this.mediaFetch(`/v1/devices/${deviceId}/collections/${encoded}/samples`, {
+      method: 'GET',
+      headers: this.mediaHeaders(),
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => res.statusText);
+      throw new ServiceUnavailableException(
+        `Media samples list failed (${res.status}): ${detail}`,
+      );
+    }
+    return (await res.json()) as MediaSampleSummary[];
   }
 }

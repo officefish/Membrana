@@ -8,7 +8,7 @@ import { MemoryStorageBackend } from '../src/backends/memory-storage-backend.js'
 import { seedBundledCatalogIfEmpty } from '../src/bundled-catalog.js';
 import { createMediaLibraryService } from '../src/media-library-service.js';
 import { DEFAULT_MEDIA_LIBRARY_CONFIG } from '../src/constants.js';
-import { getQuotaLevel, isQuotaFull, isQuotaWarning, resolveMediaLibraryStorageMode } from '../src/quota-status.js';
+import { getQuotaLevel, isQuotaFull, isQuotaWarning, resolveMediaLibraryStorageMode, isBufferRecordingBlocked, resolveBufferQuota } from '../src/quota-status.js';
 
 describe('quota-status', () => {
   it('detects warning and full levels', () => {
@@ -36,6 +36,20 @@ describe('quota-status', () => {
         serverReachable: true,
       }),
     ).toBe('remote-server');
+  });
+
+  it('uses buffer quota fields for recorder gating', () => {
+    const quota = {
+      usedBytes: 0,
+      limitBytes: 1_000_000,
+      backend: 'server' as const,
+      serverReachable: true,
+      bufferUsedBytes: 100,
+      bufferLimitBytes: 100,
+    };
+    expect(resolveBufferQuota(quota)).toEqual({ usedBytes: 100, limitBytes: 100 });
+    expect(isBufferRecordingBlocked(quota, 0, 10)).toBe(true);
+    expect(isBufferRecordingBlocked(quota, 10, 10)).toBe(true);
   });
 });
 

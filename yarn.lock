@@ -1056,6 +1056,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/cabinet@workspace:apps/cabinet"
   dependencies:
+    "@membrana/core": "npm:*"
+    "@membrana/media-library-service": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"

@@ -18,7 +18,11 @@ if (!existsSync(envPath)) {
 
 const envText = readFileSync(envPath, 'utf8');
 const get = (key) => envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
-const branch = get('CABINET_GIT_BRANCH') || get('GIT_BRANCH') || 'feat/background-media-swagger';
+const branch =
+  process.env.CABINET_GIT_BRANCH ||
+  get('CABINET_GIT_BRANCH') ||
+  get('GIT_BRANCH') ||
+  'feat/membrane-platform-mp4';
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail

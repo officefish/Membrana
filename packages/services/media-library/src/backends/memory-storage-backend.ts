@@ -68,12 +68,24 @@ export class MemoryStorageBackend implements IStorageBackend {
     return used;
   }
 
+  private bufferUsedBytes(): number {
+    let used = 0;
+    for (const sample of this.samples.values()) {
+      if (sample.collectionId !== BUFFER_COLLECTION_ID) continue;
+      used += sample.sizeBytes;
+    }
+    return used;
+  }
+
   async getQuota(): Promise<StorageQuota> {
+    const usedBytes = this.userUsedBytes();
     return {
-      usedBytes: this.userUsedBytes(),
+      usedBytes,
       limitBytes: this.limitBytes,
       backend: this.backendKind,
       serverReachable: this.serverReachable,
+      bufferUsedBytes: this.bufferUsedBytes(),
+      bufferLimitBytes: this.limitBytes,
     };
   }
 

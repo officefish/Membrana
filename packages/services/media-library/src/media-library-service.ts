@@ -157,6 +157,15 @@ export function getDefaultMediaLibraryService(): MediaLibraryService {
   return defaultService;
 }
 
+/** Replace singleton backend (e.g. switch to remote-server after pairing). */
+export function configureDefaultMediaLibraryService(
+  backend: IStorageBackend,
+  config?: Partial<MediaLibraryConfig>,
+): MediaLibraryService {
+  defaultService = createMediaLibraryService(backend, config);
+  return defaultService;
+}
+
 export function resetDefaultMediaLibraryServiceForTests(): void {
   defaultService = null;
 }

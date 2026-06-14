@@ -1,6 +1,7 @@
 import type {
   MediaLibraryCaptureFormat,
   MediaLibraryRecordingMode,
+  MediaLibraryStorageMode,
 } from '@membrana/media-library-service';
 
 import type { AutoSegmentPresetSec, ManualDurationPresetSec } from './types';
@@ -20,6 +21,7 @@ export interface MicBufferRecorderSnapshot {
   readonly sampleCount: number;
   readonly maxBufferSamples: number;
   readonly recordingBlocked: boolean;
+  readonly storageMode: MediaLibraryStorageMode;
   readonly error: string | null;
   readonly effectiveFormat: MediaLibraryCaptureFormat;
 }
@@ -39,6 +41,7 @@ class MicBufferRecorderPluginStateImpl {
   private sampleCount = 0;
   private maxBufferSamples = 10;
   private recordingBlocked = false;
+  private storageMode: MediaLibraryStorageMode = 'browser-limited-fallback';
   private error: string | null = null;
   private effectiveFormat: MediaLibraryCaptureFormat = 'wav';
 
@@ -107,12 +110,14 @@ class MicBufferRecorderPluginStateImpl {
     sampleCount: number;
     maxBufferSamples: number;
     recordingBlocked: boolean;
+    storageMode: MediaLibraryStorageMode;
   }): void {
     this.usedBytes = params.usedBytes;
     this.limitBytes = params.limitBytes;
     this.sampleCount = params.sampleCount;
     this.maxBufferSamples = params.maxBufferSamples;
     this.recordingBlocked = params.recordingBlocked;
+    this.storageMode = params.storageMode;
     this.rebuild();
   }
 
@@ -150,6 +155,7 @@ class MicBufferRecorderPluginStateImpl {
       sampleCount: this.sampleCount,
       maxBufferSamples: this.maxBufferSamples,
       recordingBlocked: this.recordingBlocked,
+      storageMode: this.storageMode,
       error: this.error,
       effectiveFormat: this.effectiveFormat,
     };

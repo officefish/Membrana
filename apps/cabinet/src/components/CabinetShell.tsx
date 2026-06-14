@@ -3,17 +3,19 @@ import type { AuthUser } from '@/api/auth';
 import { MembranePage } from '@/pages/MembranePage';
 import { NodesPage } from '@/pages/NodesPage';
 import { JournalPage } from '@/pages/JournalPage';
+import { SampleLibraryPage } from '@/pages/SampleLibraryPage';
 
 interface CabinetShellProps {
   user: AuthUser;
   onLogout: () => void;
 }
 
-type SectionId = 'membrane' | 'nodes' | 'journal';
+type SectionId = 'membrane' | 'nodes' | 'library' | 'journal';
 
 const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string }[] = [
   { id: 'membrane', label: 'Мембрана', enabled: true },
   { id: 'nodes', label: 'Узлы и ключи', enabled: true },
+  { id: 'library', label: 'Библиотека сэмплов', enabled: true },
   { id: 'journal', label: 'Журнал', enabled: true },
 ];
 
@@ -23,6 +25,8 @@ function SectionContent({ section }: { section: SectionId }) {
       return <MembranePage />;
     case 'nodes':
       return <NodesPage />;
+    case 'library':
+      return <SampleLibraryPage />;
     case 'journal':
       return <JournalPage />;
     default:
@@ -62,7 +66,7 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
         </div>
       </aside>
 
-      <main className="flex flex-1 flex-col p-8">
+      <main className="flex min-h-0 flex-1 flex-col p-8">
         <SectionContent section={section} />
       </main>
     </div>

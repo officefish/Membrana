@@ -27,6 +27,7 @@ export type {
 } from './types.js';
 
 export type { IStorageBackend } from './ports/storage-backend.js';
+export type { IElectronMediaLibraryPort } from './ports/electron-media-library-port.js';
 
 export {
   MemoryStorageBackend,
@@ -35,8 +36,20 @@ export {
 } from './backends/memory-storage-backend.js';
 
 export {
+  ElectronFsStorageBackend,
+  createElectronFsStorageBackend,
+} from './backends/electron-fs-storage-backend.js';
+
+export {
+  ServerStorageBackend,
+  createServerStorageBackend,
+  type ServerStorageBackendConfig,
+} from './backends/server-storage-backend.js';
+
+export {
   MediaLibraryService,
   createMediaLibraryService,
+  configureDefaultMediaLibraryService,
   getDefaultMediaLibraryService,
   resetDefaultMediaLibraryServiceForTests,
   setDefaultMediaLibraryServiceForTests,
@@ -46,9 +59,13 @@ export { useMediaLibrary, type UseMediaLibraryResult } from './hooks.js';
 
 export {
   QUOTA_WARNING_RATIO,
+  getBufferQuotaLevel,
   getQuotaLevel,
+  isBufferQuotaFull,
+  isBufferRecordingBlocked,
   isQuotaFull,
   isQuotaWarning,
+  resolveBufferQuota,
   resolveMediaLibraryStorageMode,
   type MediaLibraryStorageMode,
   type QuotaLevel,
