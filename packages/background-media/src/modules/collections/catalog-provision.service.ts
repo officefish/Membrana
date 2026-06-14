@@ -19,6 +19,7 @@ import { resolveCatalogRoot } from '../../lib/catalog-paths';
 import {
   TARIFF_DATASET_COLLECTION_ID,
 } from '../../lib/collection-ids';
+import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { resolveDeviceLimits } from '../devices/device-limits';
 import { CollectionsService } from './collections.service';
@@ -134,7 +135,7 @@ export class CatalogProvisionService {
           collectionId: TARIFF_DATASET_COLLECTION_ID,
           title: entry.id,
           class: entry.class,
-          label: entry.label,
+          label: normalizeSampleLabel(entry.label),
           source: 'catalog',
           durationSec: entry.durationSec ?? parsed.durationSec,
           sampleRate: entry.sampleRate ?? parsed.sampleRate,
