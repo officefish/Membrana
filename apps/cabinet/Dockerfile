@@ -5,14 +5,18 @@ FROM node:20-alpine AS build
 RUN corepack enable
 
 ARG VITE_CABINET_API_URL=https://cabinet.membrana.space
+ARG VITE_MEDIA_API_URL=https://media.membrana.space
 ENV VITE_CABINET_API_URL=$VITE_CABINET_API_URL
+ENV VITE_MEDIA_API_URL=$VITE_MEDIA_API_URL
 
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY tsconfig.base.json ./
+COPY packages/core packages/core
+COPY packages/services/media-library packages/services/media-library
 COPY apps/cabinet apps/cabinet
 
-RUN yarn workspaces focus @membrana/cabinet --all \
+RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/media-library-service --all \
   && yarn workspace @membrana/cabinet build
 
 FROM nginx:1.27-alpine AS runtime
