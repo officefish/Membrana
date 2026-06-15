@@ -9,6 +9,12 @@ import {
 import { micBufferRecorderPluginState } from '@/plugins/mic-buffer-recorder/micBufferRecorderPluginState';
 import { MIC_BUFFER_RECORDER_PLUGIN_ID } from '@/plugins/mic-buffer-recorder/types';
 
+export interface LiveJournalTrackAppendResult {
+  readonly trackId: string;
+  readonly sampleId: string;
+  readonly moduleId: string;
+}
+
 function createTrackId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
@@ -24,14 +30,14 @@ export function isLiveJournalTrackCaptureEnabled(): boolean {
 /** Append telemetry-track/v1 row after mic clip import (TJ3). */
 export async function appendLiveJournalTrackFromSampleImport(
   payload: MediaLibrarySampleImportedPayload,
-): Promise<void> {
-  if (payload.sourcePluginId !== MIC_BUFFER_RECORDER_PLUGIN_ID) return;
-  if (!isLiveJournalTrackCaptureEnabled()) return;
+): Promise<LiveJournalTrackAppendResult | null> {
+  if (payload.sourcePluginId !== MIC_BUFFER_RECORDER_PLUGIN_ID) return null;
+  if (!isLiveJournalTrackCaptureEnabled()) return null;
 
   const trackId = createTrackId();
   const createdAtIso = new Date().toISOString();
 
-  await getDefaultLiveJournalService().appendTrack({
+  const item = await getDefaultLiveJournalService().appendTrack({
     clientEntryId: liveJournalTrackClientEntryId(trackId),
     moduleId: payload.moduleId,
     moduleName: LIVE_JOURNAL_MODULE_NAME,
@@ -46,4 +52,12 @@ export async function appendLiveJournalTrackFromSampleImport(
       createdAtIso,
     },
   });
+
+  if (!item) return null;
+
+  return {
+    trackId,
+    sampleId: payload.sampleId,
+    moduleId: payload.moduleId,
+  };
 }

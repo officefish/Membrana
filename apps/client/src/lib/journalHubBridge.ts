@@ -6,7 +6,7 @@ import {
 } from '@membrana/telemetry-journal-service';
 
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
-import { appendLiveJournalTrackFromSampleImport } from '@/lib/liveJournalTrackWriter';
+import { runLiveJournalTrackAndDroneAnalysis } from '@/lib/liveJournalDronePipeline';
 import { resolveJournalBackend } from '@/lib/resolveJournalBackend';
 import { subscribeMediaLibrarySampleImported } from '@/lib/mediaLibraryHub';
 
@@ -102,8 +102,8 @@ export function initJournalHubBridge(): () => void {
   bridgeInstalled = true;
 
   subscribeMediaLibrarySampleImported((payload) => {
-    void appendLiveJournalTrackFromSampleImport(payload).catch((err) => {
-      console.error('[journalHubBridge] live track append failed', err);
+    void runLiveJournalTrackAndDroneAnalysis(payload).catch((err) => {
+      console.error('[journalHubBridge] live track/report pipeline failed', err);
     });
   });
 
