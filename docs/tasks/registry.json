@@ -929,6 +929,18 @@
         "vdr4-dsp-calibration-validated",
         "vdr5-template-match-detector"
       ]
+    },
+    {
+      "id": "drone-detector-detail-report",
+      "title": "Подробный отчёт детекторов дрона (DDR1–4)",
+      "promptPath": "docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md",
+      "githubIssue": 78,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

@@ -9,6 +9,7 @@
     { "path": "./packages/services/sample-playback" },
     { "path": "./packages/services/fft-analyzer" },
     { "path": "./packages/libs/audioDataViz" },
+    { "path": "./packages/libs/detector-report" },
     { "path": "./apps/client/tsconfig.app.json" },
     { "path": "./apps/client/tsconfig.node.json" }
   ]
