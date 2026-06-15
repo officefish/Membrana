@@ -80,11 +80,11 @@ print('sampleCount OK:', tariff['id'], tariff['sampleCount'])
 echo "=== cabinet catalog pagination smoke ==="
 PASS=$(grep '^CABINET_BOOTSTRAP_PASSWORD=' "$ENV" | cut -d= -f2-)
 TOK=$(curl -fsS -X POST https://cabinet.membrana.space/v1/auth/login -H "Content-Type: application/json" -d "{\\"login\\":\\"admin\\",\\"password\\":\\"$PASS\\"}" | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
-MID=$(curl -fsS https://cabinet.membrana.space/v1/auth/me -H "Authorization: Bearer $TOK" | python3 -c "import sys,json; print(json.load(sys.stdin)['membrane']['id'])")
-python3 -c "
-import json, subprocess, os
-tok = os.environ['TOK']
-mid = os.environ['MID']
+MID=$(curl -fsS https://cabinet.membrana.space/v1/membranes/me -H "Authorization: Bearer $TOK" | python3 -c "import sys,json; print(json.load(sys.stdin)['membrane']['id'])")
+python3 <<PY
+import json, subprocess
+tok = """$TOK"""
+mid = """$MID"""
 page1 = json.loads(subprocess.check_output([
   'curl', '-fsS',
   f'https://cabinet.membrana.space/v1/membranes/{mid}/catalog?page=1&limit=40',
@@ -100,7 +100,7 @@ page2 = json.loads(subprocess.check_output([
 ]))
 assert len(page2['samples']) == 40
 print('cabinet catalog pagination OK', page1['sampleCount'], 'total')
-" TOK="$TOK" MID="$MID"
+PY
 `;
 
 const conn = new Client();
