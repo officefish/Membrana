@@ -20,7 +20,7 @@ import {
   loadSampleBufferById,
   restartSamplePlayback,
   subscribeSamplePlayback,
-} from '../../lib/sampleLibraryPlaybackHub';
+} from '@membrana/sample-playback-service';
 import { userTemplatesStore } from '../trends-fft-analyzer/userTemplatesStore';
 import { resolveSampleDurationPlan } from './sampleDurationPolicy';
 import {

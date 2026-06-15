@@ -3,7 +3,7 @@ import { formatBytes } from '@/lib/formatBytes';
 import {
   seekSamplePlayback,
   type SamplePlaybackSnapshot,
-} from '@/lib/sampleLibraryPlaybackHub';
+} from '@membrana/sample-playback-service';
 import type { MembraneCatalogSample } from '@/api/sampleLibrary';
 import type { Collection, MediaSample } from '@membrana/media-library-service';
 

@@ -1,7 +1,7 @@
 import type { MembraneCatalogSample } from '@/api/sampleLibrary';
 import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
 import { CabinetSampleTable } from '@/components/sample-library/CabinetSampleTable';
-import type { SamplePlaybackSnapshot } from '@/lib/sampleLibraryPlaybackHub';
+import type { SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
 import type { Collection, MediaSample } from '@membrana/media-library-service';
 
 export interface CabinetSampleCollectionBodyProps {

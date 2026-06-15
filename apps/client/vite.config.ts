@@ -42,6 +42,9 @@ export default defineConfig(({ mode }) => {
         '@membrana/fft-analyzer-service': fileURLToPath(
           new URL('../../packages/services/fft-analyzer/src/index.ts', import.meta.url),
         ),
+        '@membrana/sample-playback-service': fileURLToPath(
+          new URL('../../packages/services/sample-playback/src/index.ts', import.meta.url),
+        ),
         '@membrana/telemetry-service': fileURLToPath(
           new URL('../../packages/services/telemetry/src/index.ts', import.meta.url),
         ),

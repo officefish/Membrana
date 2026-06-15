@@ -1,6 +1,6 @@
 import type { MembraneCatalogSample } from '@/api/sampleLibrary';
 import { SampleLibraryPlayerPanel } from '@/components/sample-library/SampleLibraryPlayerPanel';
-import type { SamplePlaybackSnapshot } from '@/lib/sampleLibraryPlaybackHub';
+import type { SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
 import type { MediaSample } from '@membrana/media-library-service';
 
 export interface CabinetSamplePlayerSectionProps {
@@ -16,7 +16,11 @@ export function CabinetSamplePlayerSection({
   onExport,
 }: CabinetSamplePlayerSectionProps) {
   return (
-    <div className="card border border-base-300 bg-base-200/30 shadow-sm">
+    <div
+      className="card border border-base-300 bg-base-200/30 shadow-sm"
+      role="region"
+      aria-label="Плеер сэмпла"
+    >
       <div className="card-body gap-3 p-4">
         <h3 className="card-title text-sm font-semibold">Плеер сэмпла</h3>
         <SampleLibraryPlayerPanel

@@ -1,7 +1,7 @@
 import type { MembraneCatalogSample } from '@/api/sampleLibrary';
 import { SamplePlaybackBar } from '@/components/sample-playback/SamplePlaybackBar';
 import { formatBytes } from '@/lib/formatBytes';
-import type { SamplePlaybackSnapshot } from '@/lib/sampleLibraryPlaybackHub';
+import type { SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
 import type { MediaSample } from '@membrana/media-library-service';
 
 export interface SampleLibraryPlayerPanelProps {

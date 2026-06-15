@@ -15,6 +15,8 @@ import {
   setStoredToken,
   type AuthUser,
 } from '@/api/auth';
+import { resetCabinetMediaSession } from '@/lib/cabinetMediaLibrary';
+import { disposeSamplePlayback } from '@membrana/sample-playback-service';
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -58,6 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setStoredToken(null);
     setUser(null);
+    resetCabinetMediaSession();
+    void disposeSamplePlayback();
   }, []);
 
   const value = useMemo(

@@ -207,6 +207,16 @@ yarn task:archive <id> --notes "PR #…, краткий итог"
 | `yarn task:archive <id> --notes "..."` | + заметка в карточке архива |
 | `yarn main-day-issue` | Сгенерировать канон дня → `docs/MAIN_DAY_ISSUE.md` |
 
+### Night Build
+
+Эпики с `"sprintKind": "night-build"` — [`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md).
+
+| Команда | Действие |
+|---------|----------|
+| `yarn night:open --id <epic-id>` | Старт ночного sprint → `NIGHT_BUILD_ACTIVE.md` |
+| `yarn night:checkpoint --phase NB<n> --status pass\|fail` | Append в `NIGHT_BUILD_LOG.md` |
+| `yarn night:close --id <epic-id>` | Handoff → `docs/archive/night-build/` |
+
 ---
 
 ## Чего не делать

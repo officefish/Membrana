@@ -5,9 +5,9 @@ import {
   resetSamplePlaybackHubForTests,
   selectSample,
   subscribeSamplePlayback,
-} from './sampleLibraryPlaybackHub';
+} from './service';
 
-describe('sampleLibraryPlaybackHub', () => {
+describe('samplePlayback service', () => {
   it('updates snapshot when sample is cleared', async () => {
     resetSamplePlaybackHubForTests();
     const seen: string[] = [];

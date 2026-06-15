@@ -4,9 +4,9 @@ import {
   computePeakEnvelope,
   formatPlaybackTime,
   ratioToOffsetSec,
-} from './sampleWaveform';
+} from './waveform';
 
-describe('sampleWaveform', () => {
+describe('waveform', () => {
   it('computePeakEnvelope returns normalized peaks', () => {
     const samples = new Float32Array(100);
     for (let i = 0; i < samples.length; i++) {

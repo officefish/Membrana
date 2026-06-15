@@ -58,8 +58,13 @@ export function invalidateCabinetMediaLibrary(): void {
   activeDeviceId = null;
 }
 
-export function resetCabinetMediaLibraryForTests(): void {
+/** Clears session + service cache (logout, switch membrane). */
+export function resetCabinetMediaSession(): void {
   sessionCache = null;
   service = null;
   activeDeviceId = null;
+}
+
+export function resetCabinetMediaLibraryForTests(): void {
+  resetCabinetMediaSession();
 }

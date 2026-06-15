@@ -3,33 +3,20 @@ import {
   getMonoChannel,
   loadAudioBuffer,
 } from '@membrana/audio-engine-service';
-import type { MediaSample } from '@membrana/media-library-service';
 
-import { computePeakEnvelope } from './sampleWaveform';
+import {
+  SAMPLE_PLAYBACK_CACHE_MAX_ENTRIES,
+  SAMPLE_PLAYBACK_WAVEFORM_POINTS,
+} from './constants';
+import { LruCache } from './lru-cache';
+import type { SamplePlaybackSnapshot, SamplePlaybackStatus, SamplePlaybackTarget } from './types';
+import { computePeakEnvelope } from './waveform';
 
-export type SamplePlaybackStatus =
-  | 'idle'
-  | 'loading'
-  | 'playing'
-  | 'paused'
-  | 'ended'
-  | 'error';
+export type { SamplePlaybackSnapshot, SamplePlaybackStatus, SamplePlaybackTarget };
 
-export interface SamplePlaybackSnapshot {
-  readonly selectedSampleId: string | null;
-  readonly selectedTitle: string | null;
-  readonly selectedCollectionId: string | null;
-  readonly status: SamplePlaybackStatus;
-  readonly currentTimeSec: number;
-  readonly durationSec: number;
-  readonly waveform: readonly number[];
-  readonly errorMessage: string | null;
-}
-
-const WAVEFORM_POINTS = 512;
 const player = new BufferPlayer();
-const waveformCache = new Map<string, readonly number[]>();
-const bufferCache = new Map<string, AudioBuffer>();
+const waveformCache = new LruCache<string, readonly number[]>(SAMPLE_PLAYBACK_CACHE_MAX_ENTRIES);
+const bufferCache = new LruCache<string, AudioBuffer>(SAMPLE_PLAYBACK_CACHE_MAX_ENTRIES);
 
 let blobReader: ((sampleId: string) => Promise<Blob>) | null = null;
 
@@ -104,6 +91,24 @@ export function bindSamplePlaybackBlobReader(
   blobReader = reader;
 }
 
+export function resetSamplePlaybackHubForTests(): void {
+  blobReader = null;
+  waveformCache.clear();
+  bufferCache.clear();
+  snapshot = {
+    selectedSampleId: null,
+    selectedTitle: null,
+    selectedCollectionId: null,
+    status: 'idle',
+    currentTimeSec: 0,
+    durationSec: 0,
+    waveform: [],
+    errorMessage: null,
+  };
+  listeners.clear();
+}
+
+/** Загрузка декодированного буфера сэмпла (кэш hub). Для offline-анализа. */
 export async function loadSampleBufferById(sampleId: string): Promise<AudioBuffer> {
   const cached = bufferCache.get(sampleId);
   if (cached) return cached;
@@ -120,12 +125,12 @@ function getWaveformForBuffer(sampleId: string, buffer: AudioBuffer): readonly n
   const cached = waveformCache.get(sampleId);
   if (cached) return cached;
   const mono = getMonoChannel(buffer);
-  const envelope = computePeakEnvelope(mono, WAVEFORM_POINTS);
+  const envelope = computePeakEnvelope(mono, SAMPLE_PLAYBACK_WAVEFORM_POINTS);
   waveformCache.set(sampleId, envelope);
   return envelope;
 }
 
-export async function selectSample(sample: MediaSample | null): Promise<void> {
+export async function selectSample(sample: SamplePlaybackTarget | null): Promise<void> {
   await player.stop();
   if (!sample) {
     setSnapshot({
@@ -205,9 +210,41 @@ export async function seekSamplePlayback(ratio: number): Promise<void> {
   syncProgress();
 }
 
+export async function stopSamplePlayback(): Promise<void> {
+  await player.stop();
+  if (snapshot.selectedSampleId) {
+    setSnapshot({
+      status: 'paused',
+      currentTimeSec: 0,
+    });
+  } else {
+    setSnapshot({ status: 'idle', currentTimeSec: 0 });
+  }
+}
+
+/** Перезапуск выбранного сэмпла с начала (синхронное прослушивание и анализ). */
+export async function restartSamplePlayback(): Promise<void> {
+  if (!snapshot.selectedSampleId) return;
+
+  await player.stop();
+  setSnapshot({ status: 'loading', currentTimeSec: 0, errorMessage: null });
+
+  try {
+    const buffer = await loadSampleBufferById(snapshot.selectedSampleId);
+    await player.play(buffer);
+    syncProgress();
+  } catch (error) {
+    setSnapshot({
+      status: 'error',
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 export async function disposeSamplePlayback(): Promise<void> {
   await player.stop();
   bufferCache.clear();
+  waveformCache.clear();
   setSnapshot({
     selectedSampleId: null,
     selectedTitle: null,
