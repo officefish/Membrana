@@ -85,6 +85,7 @@ export {
 export {
   SAMPLE_LABEL_OPTIONS,
   sampleLabelBadgeClass,
+  sampleLabelFromStorage,
   sampleLabelTitle,
 } from './sample-label-display.js';
 

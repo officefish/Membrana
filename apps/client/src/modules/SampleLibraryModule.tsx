@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
@@ -11,7 +11,7 @@ import {
   type UpdateSampleLabelNotes,
 } from '@membrana/media-library-service';
 
-import { SampleLabelNotesEditor } from '../components/sample-library/SampleLabelNotesEditor';
+import { SampleLabelEditor, SampleNotesEditor } from '../components/sample-library/SampleLabelNotesEditor';
 import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
 import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
 import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
@@ -340,37 +340,23 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 ) : (
                   samples.map((s: MediaSample) => {
                     const isSelected = playback.selectedSampleId === s.id;
+                    const saving = labelSavingId === s.id;
                     return (
+                    <Fragment key={s.id}>
                     <tr
-                      key={s.id}
                       className={isSelected ? 'bg-primary/10' : undefined}
                       onClick={() => void handleSelectSample(s)}
                     >
                       <td className="max-w-[12rem] align-top">
                         <p className="truncate cursor-pointer font-medium">{s.title}</p>
-                        {isSelected && canLabelAnnotate ? (
-                          <div className="mt-2" onClick={(e) => e.stopPropagation()}>
-                            <SampleLabelNotesEditor
-                              sampleId={s.id}
-                              label={s.label}
-                              notes={s.notes}
-                              editable
-                              saving={labelSavingId === s.id}
-                              showNotes
-                              onSave={handleUpdateLabelNotes}
-                            />
-                          </div>
-                        ) : null}
                       </td>
                       <td>{s.class}</td>
                       <td className="align-top">
-                        <SampleLabelNotesEditor
+                        <SampleLabelEditor
                           sampleId={s.id}
                           label={s.label}
-                          notes={s.notes}
                           editable={canLabelAnnotate}
-                          saving={labelSavingId === s.id}
-                          compact
+                          saving={saving}
                           onSave={handleUpdateLabelNotes}
                         />
                       </td>
@@ -442,6 +428,26 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         ) : null}
                       </td>
                     </tr>
+                    {isSelected && canLabelAnnotate ? (
+                      <tr className="bg-primary/10">
+                        <td colSpan={6} className="pt-0">
+                          <div
+                            className="py-2"
+                            onClick={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                          >
+                            <SampleNotesEditor
+                              sampleId={s.id}
+                              notes={s.notes}
+                              editable
+                              saving={saving}
+                              onSave={handleUpdateLabelNotes}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null}
+                    </Fragment>
                     );
                   })
                 )}

@@ -7,9 +7,16 @@ export const SAMPLE_LABEL_OPTIONS: ReadonlyArray<{ value: SampleLabel; title: st
   { value: 'not-drone', title: 'Не дрон' },
 ];
 
+/** Prisma/API underscore → UI kebab-case (`not_drone` → `not-drone`). */
+export function sampleLabelFromStorage(label: string): SampleLabel {
+  if (label === 'not_drone' || label === 'not-drone') return 'not-drone';
+  if (label === 'drone') return 'drone';
+  return 'unlabeled';
+}
+
 /** DaisyUI badge classes per label — see docs/DESIGN.md § Sample ground-truth labels. */
-export function sampleLabelBadgeClass(label: SampleLabel): string {
-  switch (label) {
+export function sampleLabelBadgeClass(label: string): string {
+  switch (sampleLabelFromStorage(label)) {
     case 'drone':
       return 'badge badge-warning badge-sm';
     case 'not-drone':
@@ -19,6 +26,7 @@ export function sampleLabelBadgeClass(label: SampleLabel): string {
   }
 }
 
-export function sampleLabelTitle(label: SampleLabel): string {
-  return SAMPLE_LABEL_OPTIONS.find((o) => o.value === label)?.title ?? label;
+export function sampleLabelTitle(label: string): string {
+  const normalized = sampleLabelFromStorage(label);
+  return SAMPLE_LABEL_OPTIONS.find((o) => o.value === normalized)?.title ?? normalized;
 }

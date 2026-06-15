@@ -112,6 +112,6 @@ describe('SamplesService.updateLabelNotes', () => {
 
     expect(prisma.sample.update).toHaveBeenCalled();
     expect(prisma.sample.updateMany).not.toHaveBeenCalled();
-    expect(result.label).toBe('not_drone');
+    expect(result.label).toBe('not-drone');
   });
 });

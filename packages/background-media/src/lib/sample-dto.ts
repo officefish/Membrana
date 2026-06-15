@@ -28,12 +28,18 @@ export function sampleSourceFromApi(source: string): SampleSource {
   return mapped;
 }
 
+/** Prisma enum → public API kebab-case (matches @membrana/media-library-service SampleLabel). */
+export function sampleLabelToApi(label: SampleLabel): string {
+  if (label === 'not_drone') return 'not-drone';
+  return label;
+}
+
 export interface SampleDto {
   id: string;
   collectionId: string;
   title: string;
   class: string;
-  label: SampleLabel;
+  label: string;
   source: string;
   durationSec: number;
   sampleRate: number;
@@ -53,7 +59,7 @@ export function sampleToDto(row: Sample): SampleDto {
     collectionId: row.collectionId,
     title: row.title,
     class: row.class,
-    label: row.label,
+    label: sampleLabelToApi(row.label),
     source: sampleSourceToApi(row.source),
     durationSec: row.durationSec,
     sampleRate: row.sampleRate,
