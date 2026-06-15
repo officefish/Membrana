@@ -13,12 +13,16 @@ WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY tsconfig.base.json ./
 COPY packages/core packages/core
+COPY packages/libs/detector-report packages/libs/detector-report
 COPY packages/services/media-library packages/services/media-library
 COPY packages/services/audio-engine packages/services/audio-engine
 COPY packages/services/sample-playback packages/services/sample-playback
+COPY packages/services/telemetry-journal packages/services/telemetry-journal
 COPY apps/cabinet apps/cabinet
 
-RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service --all \
+RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/detector-report @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service @membrana/telemetry-journal-service --all \
+  && yarn workspace @membrana/detector-report build \
+  && yarn workspace @membrana/telemetry-journal-service build \
   && yarn workspace @membrana/cabinet exec vite build
 
 FROM nginx:1.27-alpine AS runtime
