@@ -129,6 +129,8 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
             reason,
             blob: clip.blob,
             sourcePluginId: MIC_BUFFER_RECORDER_PLUGIN_ID,
+            moduleId: context.moduleId,
+            captureMode: runtimeMode,
             meta: {
               title: buildSampleTitle(runtimeMode, snap.effectiveFormat),
               class: 'unlabeled',
@@ -184,6 +186,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
           clipLengthSec: mode === 'auto' ? cfg.autoSegmentSec : undefined,
           intervalSec: mode === 'auto' ? cfg.pauseSec : undefined,
           sourcePluginId: MIC_BUFFER_RECORDER_PLUGIN_ID,
+          moduleId: context.moduleId,
         });
 
         try {

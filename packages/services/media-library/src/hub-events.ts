@@ -18,6 +18,8 @@ export interface MediaLibraryCaptureStartPayload {
   /** Auto: pause between clips (presets 3–30 s). */
   intervalSec?: number;
   sourcePluginId: string;
+  /** Owning agenda module (e.g. microphone). */
+  moduleId?: string;
 }
 
 export interface MediaLibraryCaptureStopPayload {
@@ -25,6 +27,20 @@ export interface MediaLibraryCaptureStopPayload {
   blob: Blob;
   meta: Omit<NewSampleMeta, 'source'> & { source?: SampleSource };
   sourcePluginId: string;
+  moduleId?: string;
+  captureMode?: MediaLibraryRecordingMode;
+}
+
+/** Emitted after mic clip lands in buffer collection (TJ3 live journal). */
+export interface MediaLibrarySampleImportedPayload {
+  sampleId: string;
+  moduleId: string;
+  sourcePluginId: string;
+  captureMode: MediaLibraryRecordingMode;
+  reason: MediaLibraryCaptureStopReason;
+  title: string;
+  durationSec: number;
+  sampleRate: number;
 }
 
 export interface MediaLibraryCaptureCancelPayload {
@@ -47,6 +63,7 @@ export const MEDIA_LIBRARY_HUB = {
   captureCancel: 'media-library.capture.cancel',
   quotaUpdated: 'media-library.quota.updated',
   bufferCleared: 'media-library.buffer.cleared',
+  sampleImported: 'media-library.sample.imported',
 } as const;
 
 export type MediaLibraryHubEventName =

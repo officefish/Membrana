@@ -3,6 +3,7 @@ import type {
   MediaLibraryCaptureStartPayload,
   MediaLibraryCaptureStopPayload,
   MediaLibraryQuotaUpdatedPayload,
+  MediaLibrarySampleImportedPayload,
 } from '@membrana/media-library-service';
 
 type HubListener<T> = (payload: T) => void;
@@ -12,6 +13,7 @@ const captureStopListeners = new Set<HubListener<MediaLibraryCaptureStopPayload>
 const captureCancelListeners = new Set<HubListener<MediaLibraryCaptureCancelPayload>>();
 const quotaUpdatedListeners = new Set<HubListener<MediaLibraryQuotaUpdatedPayload>>();
 const bufferClearedListeners = new Set<() => void>();
+const sampleImportedListeners = new Set<HubListener<MediaLibrarySampleImportedPayload>>();
 
 export function publishMediaLibraryCaptureStart(
   payload: MediaLibraryCaptureStartPayload,
@@ -39,6 +41,12 @@ export function publishMediaLibraryQuotaUpdated(
 
 export function publishMediaLibraryBufferCleared(): void {
   for (const fn of bufferClearedListeners) fn();
+}
+
+export function publishMediaLibrarySampleImported(
+  payload: MediaLibrarySampleImportedPayload,
+): void {
+  for (const fn of sampleImportedListeners) fn(payload);
 }
 
 export function subscribeMediaLibraryCaptureStart(
@@ -80,6 +88,13 @@ export function subscribeMediaLibraryBufferCleared(listener: () => void): () => 
   return () => bufferClearedListeners.delete(listener);
 }
 
+export function subscribeMediaLibrarySampleImported(
+  listener: HubListener<MediaLibrarySampleImportedPayload>,
+): () => void {
+  sampleImportedListeners.add(listener);
+  return () => sampleImportedListeners.delete(listener);
+}
+
 /** Tests: reset all listeners. */
 export function resetMediaLibraryHubForTests(): void {
   captureStartListeners.clear();
@@ -87,4 +102,5 @@ export function resetMediaLibraryHubForTests(): void {
   captureCancelListeners.clear();
   quotaUpdatedListeners.clear();
   bufferClearedListeners.clear();
+  sampleImportedListeners.clear();
 }

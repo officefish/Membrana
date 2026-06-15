@@ -16,6 +16,7 @@ import { resolveMediaLibraryBackend } from '@/lib/resolveMediaLibraryBackend';
 import {
   publishMediaLibraryBufferCleared,
   publishMediaLibraryQuotaUpdated,
+  publishMediaLibrarySampleImported,
   subscribeMediaLibraryCaptureStop,
   type MediaLibraryCaptureStopPayload,
 } from './mediaLibraryHub';
@@ -62,7 +63,7 @@ async function attachService(svc: MediaLibraryService): Promise<boolean> {
 
 async function handleCaptureStop(payload: MediaLibraryCaptureStopPayload): Promise<void> {
   const svc = getDefaultMediaLibraryService();
-  await svc.importBlob(BUFFER_COLLECTION_ID, payload.blob, {
+  const sample = await svc.importBlob(BUFFER_COLLECTION_ID, payload.blob, {
     title: payload.meta.title,
     class: payload.meta.class,
     label: payload.meta.label ?? 'unlabeled',
@@ -71,6 +72,16 @@ async function handleCaptureStop(payload: MediaLibraryCaptureStopPayload): Promi
     sampleRate: payload.meta.sampleRate,
     channels: payload.meta.channels,
     notes: payload.meta.notes,
+  });
+  publishMediaLibrarySampleImported({
+    sampleId: sample.id,
+    moduleId: payload.moduleId ?? 'microphone',
+    sourcePluginId: payload.sourcePluginId,
+    captureMode: payload.captureMode ?? 'manual',
+    reason: payload.reason,
+    title: sample.title,
+    durationSec: sample.durationSec,
+    sampleRate: sample.sampleRate,
   });
   pushQuotaSnapshot();
 }

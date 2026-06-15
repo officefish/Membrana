@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
 import { usePairStatusMonitor } from '@/hooks/usePairStatusMonitor';
-import { useTelemetryCloudSync } from '@/hooks/useTelemetryCloudSync';
 import { reconfigureMediaLibraryFromConnection, schedulePairedMediaLibraryUpgrade, stopPairedMediaLibraryUpgrade } from '@/lib/mediaLibraryHubBridge';
 import { reconfigureJournalFromConnection, schedulePairedJournalUpgrade, stopPairedJournalUpgrade } from '@/lib/journalHubBridge';
 import { ConnectionFallbackDialog } from './node-connection/ConnectionFallbackDialog';
@@ -50,7 +49,6 @@ export const NodeConnectionShell: React.FC = () => {
   }, [hydrated, mode, pairing]);
 
   usePairStatusMonitor();
-  useTelemetryCloudSync();
 
   return (
     <>
