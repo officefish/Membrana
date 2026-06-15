@@ -124,15 +124,15 @@ export async function listTelemetryLiveRecords(
   return (await res.json()) as { liveRecords: TelemetryLiveRecordRow[] };
 }
 
-import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
-
+/** Unified live journal list (TJ6). Returns null when cabinet-api has no route yet (404). */
 export async function listTelemetryJournalItems(
   token: string,
   limit = 200,
-): Promise<{ items: LiveJournalItem[] }> {
+): Promise<{ items: LiveJournalItem[] } | null> {
   const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/journal-items?limit=${limit}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (res.status === 404) return null;
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as { items: LiveJournalItem[] };
 }

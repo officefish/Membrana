@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ModuleProps } from '@membrana/agenda';
 import { getDefaultMediaLibraryService } from '@membrana/media-library-service';
+import { bindSamplePlaybackBlobReader } from '@membrana/sample-playback-service';
 import {
-  bindSamplePlaybackBlobReader,
   type LiveJournalFilter,
   countLiveJournalFilters,
   matchesLiveJournalFilter,
