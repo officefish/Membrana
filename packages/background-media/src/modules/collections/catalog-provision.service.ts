@@ -16,9 +16,8 @@ import { APP_CONFIG } from '../../config/config.tokens';
 import { FREE_V1_CATALOG_ID } from '../../lib/catalog-ids';
 import { loadCatalogManifest, type CatalogManifestEntry } from '../../lib/catalog-manifest';
 import { resolveCatalogRoot } from '../../lib/catalog-paths';
-import {
-  TARIFF_DATASET_COLLECTION_ID,
-} from '../../lib/collection-ids';
+import { TARIFF_DATASET_COLLECTION_ID } from '../../lib/collection-ids';
+import { isPrismaUniqueViolation } from '../../lib/prisma-errors';
 import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { resolveDeviceLimits } from '../devices/device-limits';
@@ -82,43 +81,70 @@ export class CatalogProvisionService {
       );
     }
 
-    const existing = await this.prisma.sample.findMany({
-      where: { deviceId, collectionId: TARIFF_DATASET_COLLECTION_ID },
-      select: { title: true },
-    });
-    const existingIds = new Set(existing.map((row) => row.title));
+    return this.withDeviceProvisionLock(deviceId, async () => {
+      const existing = await this.prisma.sample.findMany({
+        where: { deviceId, collectionId: TARIFF_DATASET_COLLECTION_ID },
+        select: { title: true },
+      });
+      const existingIds = new Set(existing.map((row) => row.title));
 
-    let seeded = 0;
-    let skipped = 0;
-    for (const entry of manifest.samples) {
-      if (existingIds.has(entry.id)) {
-        skipped += 1;
-        continue;
+      let seeded = 0;
+      let skipped = 0;
+      for (const entry of manifest.samples) {
+        if (existingIds.has(entry.id)) {
+          skipped += 1;
+          continue;
+        }
+        const imported = await this.importCatalogEntry(deviceId, catalogRoot, entry);
+        if (imported) {
+          seeded += 1;
+          existingIds.add(entry.id);
+        } else {
+          skipped += 1;
+          existingIds.add(entry.id);
+        }
       }
-      await this.importCatalogEntry(deviceId, catalogRoot, entry);
-      seeded += 1;
-      existingIds.add(entry.id);
-    }
 
-    if (seeded > 0) {
-      this.logger.log(
-        `Provisioned ${seeded} catalog samples for device ${deviceId} (${skipped} skipped)`,
-      );
-    }
+      if (seeded > 0) {
+        this.logger.log(
+          `Provisioned ${seeded} catalog samples for device ${deviceId} (${skipped} skipped)`,
+        );
+      }
 
-    return {
-      catalogId: FREE_V1_CATALOG_ID,
-      seeded,
-      skipped,
-      total: manifest.samples.length,
-    };
+      return {
+        catalogId: FREE_V1_CATALOG_ID,
+        seeded,
+        skipped,
+        total: manifest.samples.length,
+      };
+    });
   }
 
+  /** Serialize catalog provision per device (pair + ensure-reserved may run concurrently). */
+  private async withDeviceProvisionLock<T>(
+    deviceId: string,
+    fn: () => Promise<T>,
+  ): Promise<T> {
+    await this.prisma.$executeRawUnsafe(
+      'SELECT pg_advisory_lock(hashtext($1::text))',
+      deviceId,
+    );
+    try {
+      return await fn();
+    } finally {
+      await this.prisma.$executeRawUnsafe(
+        'SELECT pg_advisory_unlock(hashtext($1::text))',
+        deviceId,
+      );
+    }
+  }
+
+  /** @returns true when a new row was created; false when skipped or lost a race. */
   private async importCatalogEntry(
     deviceId: string,
     catalogRoot: string,
     entry: CatalogManifestEntry,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const filePath = join(catalogRoot, entry.path);
     const fileBuffer = await readFile(filePath);
     const parsed = await this.audio.parseUpload(fileBuffer, 'audio/wav');
@@ -147,8 +173,15 @@ export class CatalogProvisionService {
           notes: entry.notes ?? undefined,
         },
       });
+      return true;
     } catch (err) {
       await this.blobs.delete(storageRef);
+      if (isPrismaUniqueViolation(err)) {
+        this.logger.debug(
+          `Catalog sample ${entry.id} already provisioned for device ${deviceId} (race)`,
+        );
+        return false;
+      }
       throw err;
     }
   }

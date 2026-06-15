@@ -12,6 +12,7 @@ export function getApiBase(): string {
 export interface AuthUser {
   id: string;
   login: string;
+  role: 'admin' | 'user';
 }
 
 export interface LoginResponse {

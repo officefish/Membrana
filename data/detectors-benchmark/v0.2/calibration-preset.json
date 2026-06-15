@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-06-15T12:30:00.126Z",
+  "source": "scripts/calibrate-detectors.mjs",
+  "groundTruth": {
+    "exportedAt": "2026-06-15T12:17:45.914Z",
+    "exportedBy": "scripts/export-ground-truth-manifest.mjs",
+    "source": "snapshot:data/detectors-benchmark/v0.2/catalog-ground-truth-snapshot.json",
+    "membraneId": "c144a9ef-05f9-48ac-b73c-516c52149e20",
+    "catalogId": "free-v1-catalog",
+    "labeledCount": 120,
+    "unlabeledCount": 0
+  },
+  "detectors": {
+    "harmonic": {
+      "aggregation": "any-frame",
+      "sampleConfidenceThreshold": 0
+    },
+    "cepstral": {
+      "aggregation": "any-frame",
+      "sampleConfidenceThreshold": 0
+    },
+    "spectral-flux": {
+      "aggregation": "majority",
+      "sampleConfidenceThreshold": 0
+    }
+  },
+  "bestOverall": "cepstral"
+}

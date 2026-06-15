@@ -1,6 +1,9 @@
+export type UserRole = 'admin' | 'user';
+
 export interface AuthUser {
   id: string;
   login: string;
+  role: UserRole;
 }
 
 export interface AuthSession {

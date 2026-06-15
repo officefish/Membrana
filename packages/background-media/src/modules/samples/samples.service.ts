@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import type { Collection, SampleLabel } from '../../prisma/client';
 import { randomUUID } from 'node:crypto';
 import { AudioIngestService } from '../../audio/audio-ingest.service';
@@ -9,6 +9,8 @@ import {
   sampleToDto,
   type SampleDto,
 } from '../../lib/sample-dto';
+import { buildPageMeta, type PageMeta } from '../../lib/pagination';
+import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CollectionsService } from '../collections/collections.service';
 import { DevicesService } from '../devices/devices.service';
@@ -24,6 +26,20 @@ export interface UploadMetaOverride {
   notes?: string;
 }
 
+export interface PatchSampleLabelInput {
+  label?: string;
+  notes?: string | null;
+}
+
+export interface UpdateLabelNotesOptions {
+  /** Set by cabinet media-bridge when curator has admin role. */
+  readonly catalogAdmin?: boolean;
+}
+
+export interface PaginatedSamplesDto extends PageMeta {
+  items: SampleDto[];
+}
+
 @Injectable()
 export class SamplesService {
   constructor(
@@ -34,13 +50,28 @@ export class SamplesService {
     private readonly audio: AudioIngestService,
   ) {}
 
-  async list(deviceId: string, collectionId: string): Promise<SampleDto[]> {
+  async list(
+    deviceId: string,
+    collectionId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedSamplesDto> {
     await this.collections.getOwned(deviceId, collectionId);
-    const rows = await this.prisma.sample.findMany({
-      where: { deviceId, collectionId },
-      orderBy: { createdAt: 'desc' },
-    });
-    return rows.map(sampleToDto);
+    const where = { deviceId, collectionId };
+    const skip = (page - 1) * limit;
+    const [total, rows] = await Promise.all([
+      this.prisma.sample.count({ where }),
+      this.prisma.sample.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+    ]);
+    return {
+      items: rows.map(sampleToDto),
+      ...buildPageMeta(total, page, limit),
+    };
   }
 
   async upload(
@@ -147,6 +178,54 @@ export class SamplesService {
         collectionId: toCollectionId,
         source: 'move',
       },
+    });
+    return sampleToDto(updated);
+  }
+
+  async updateLabelNotes(
+    deviceId: string,
+    sampleId: string,
+    patch: PatchSampleLabelInput,
+    options: UpdateLabelNotesOptions = {},
+  ): Promise<SampleDto> {
+    const row = await this.getOwnedSample(deviceId, sampleId);
+    const isTariff = row.collection.systemKey === TARIFF_DATASET_SYSTEM_KEY;
+
+    if (isTariff && !options.catalogAdmin) {
+      throw new ForbiddenException(
+        'Tariff dataset label/notes require catalog admin (cabinet)',
+      );
+    }
+
+    const data: { label?: SampleLabel; notes?: string | null } = {};
+    if (patch.label !== undefined) {
+      data.label = normalizeSampleLabel(patch.label);
+    }
+    if (patch.notes !== undefined) {
+      data.notes = patch.notes;
+    }
+
+    if (isTariff && options.catalogAdmin) {
+      await this.prisma.sample.updateMany({
+        where: {
+          collectionId: row.collectionId,
+          title: row.title,
+          collection: { systemKey: TARIFF_DATASET_SYSTEM_KEY },
+        },
+        data,
+      });
+      const refreshed = await this.prisma.sample.findFirst({
+        where: { id: sampleId, deviceId },
+      });
+      if (!refreshed) {
+        throw new NotFoundException(`Sample ${sampleId} not found for device`);
+      }
+      return sampleToDto(refreshed);
+    }
+
+    const updated = await this.prisma.sample.update({
+      where: { id: sampleId },
+      data,
     });
     return sampleToDto(updated);
   }

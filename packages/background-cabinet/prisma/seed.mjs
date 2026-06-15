@@ -26,7 +26,7 @@ async function seedTariff() {
 }
 
 async function seedBootstrapUser() {
-  const login = (process.env.CABINET_BOOTSTRAP_LOGIN || 'demo').trim().toLowerCase();
+  const login = (process.env.CABINET_BOOTSTRAP_LOGIN || 'admin').trim().toLowerCase();
   const password = process.env.CABINET_BOOTSTRAP_PASSWORD || 'demo12345';
 
   if (login.length < 3 || password.length < 8) {
@@ -35,13 +35,18 @@ async function seedBootstrapUser() {
 
   const existing = await prisma.user.findUnique({ where: { login } });
   if (existing) {
-    console.log(`Seed skip: user "${login}" already exists`);
+    if (existing.role !== 'admin') {
+      await prisma.user.update({ where: { id: existing.id }, data: { role: 'admin' } });
+      console.log(`Seed ok: promoted user "${login}" to admin`);
+    } else {
+      console.log(`Seed skip: user "${login}" already exists`);
+    }
     return;
   }
 
   const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
-  await prisma.user.create({ data: { login, passwordHash } });
-  console.log(`Seed ok: user "${login}" created`);
+  await prisma.user.create({ data: { login, passwordHash, role: 'admin' } });
+  console.log(`Seed ok: admin user "${login}" created`);
 }
 
 async function main() {

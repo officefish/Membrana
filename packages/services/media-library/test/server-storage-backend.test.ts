@@ -37,6 +37,7 @@ describe('ServerStorageBackend', () => {
             kind: 'buffer',
             createdAt: '2026-01-01T00:00:00.000Z',
             updatedAt: '2026-01-01T00:00:00.000Z',
+            sampleCount: 3,
           },
         ]);
       }
@@ -66,6 +67,7 @@ describe('ServerStorageBackend', () => {
       bufferLimitBytes: 500_000,
     });
     expect(collections[0]?.id).toBe(BUFFER_COLLECTION_ID);
+    expect(collections[0]?.sampleCount).toBe(3);
     expect(fetchMock).toHaveBeenCalledWith(
       `${BASE}/v1/devices/${DEVICE}/quota`,
       expect.objectContaining({

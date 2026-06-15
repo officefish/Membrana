@@ -40,6 +40,8 @@ function makeService(overrides?: {
   const mediaBridge = {
     getQuota: vi.fn(),
     listSamples: vi.fn(),
+    listSamplesPage: vi.fn(),
+    patchSampleLabel: vi.fn(),
     ...overrides?.mediaBridge,
   } as unknown as MediaBridgeService;
 
@@ -139,29 +141,42 @@ describe('SampleLibraryService', () => {
       id: 'node-a',
       device: { mediaDeviceId: 'dev-a' },
     } as never);
-    vi.mocked(mediaBridge.listSamples).mockResolvedValue([
-      {
-        id: 's1',
-        collectionId: TARIFF_DATASET_COLLECTION_ID,
-        title: 'drone-1',
-        class: 'drone',
-        label: 'drone',
-        source: 'catalog',
-        durationSec: 5,
-        sampleRate: 48_000,
-        channels: 1,
-        createdAt: '2026-01-01T00:00:00.000Z',
-        storageRef: 's1.wav',
-        sizeBytes: 1000,
-      },
-    ]);
+    vi.mocked(mediaBridge.listSamplesPage).mockResolvedValue({
+      items: [
+        {
+          id: 's1',
+          collectionId: TARIFF_DATASET_COLLECTION_ID,
+          title: 'drone-1',
+          class: 'drone',
+          label: 'drone',
+          source: 'catalog',
+          durationSec: 5,
+          sampleRate: 48_000,
+          channels: 1,
+          createdAt: '2026-01-01T00:00:00.000Z',
+          storageRef: 's1.wav',
+          sizeBytes: 1000,
+        },
+      ],
+      page: 1,
+      limit: 40,
+      total: 1,
+      totalPages: 1,
+    });
 
     const catalog = await service.getCatalog('user-1', 'mem-1');
     expect(catalog.catalogId).toBe('free-v1-catalog');
     expect(catalog.sourceDeviceId).toBe('dev-a');
     expect(catalog.sampleCount).toBe(1);
-    expect(mediaBridge.listSamples).toHaveBeenCalledWith('dev-a', TARIFF_DATASET_COLLECTION_ID);
-    expect(mediaBridge.listSamples).not.toHaveBeenCalledWith('dev-b', expect.anything());
+    expect(catalog.page).toBe(1);
+    expect(catalog.totalPages).toBe(1);
+    expect(mediaBridge.listSamplesPage).toHaveBeenCalledWith(
+      'dev-a',
+      TARIFF_DATASET_COLLECTION_ID,
+      1,
+      40,
+    );
+    expect(mediaBridge.listSamplesPage).not.toHaveBeenCalledWith('dev-b', expect.anything());
   });
 
   it('returns media session scoped to paired devices', async () => {
@@ -190,5 +205,46 @@ describe('SampleLibraryService', () => {
     vi.mocked(prisma.membrane.findUnique).mockResolvedValue(null);
 
     await expect(service.getMediaSession('user-1')).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('patchCatalogSample delegates to media bridge on representative device', async () => {
+    const { service, prisma, mediaBridge } = makeService();
+    vi.mocked(prisma.membrane.findUnique).mockResolvedValue({
+      id: 'mem-1',
+      userId: 'user-1',
+      tariffId: 't1',
+      createdAt: new Date(),
+      tariff: { datasetCatalogId: 'free-v1-catalog' },
+    } as never);
+    vi.mocked(prisma.node.findFirst).mockResolvedValue({
+      device: { mediaDeviceId: 'dev-a' },
+    } as never);
+    vi.mocked(mediaBridge.patchSampleLabel).mockResolvedValue({
+      id: 's1',
+      collectionId: TARIFF_DATASET_COLLECTION_ID,
+      title: 'drone-mj-test',
+      class: 'drone-multirotor',
+      label: 'drone',
+      source: 'catalog',
+      durationSec: 5,
+      sampleRate: 48_000,
+      channels: 1,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      storageRef: 'ref',
+      notes: 'note',
+      sizeBytes: 1,
+    });
+
+    const row = await service.patchCatalogSample('user-1', 'mem-1', 's1', {
+      label: 'drone',
+      notes: 'note',
+    });
+
+    expect(mediaBridge.patchSampleLabel).toHaveBeenCalledWith('dev-a', 's1', {
+      label: 'drone',
+      notes: 'note',
+    });
+    expect(row.label).toBe('drone');
+    expect(row.notes).toBe('note');
   });
 });

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   BUFFER_COLLECTION_ID,
+  DEFAULT_SAMPLES_PAGE_SIZE,
   TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
   type Collection,
   type MediaSample,
+  type PaginatedSamples,
 } from '@membrana/media-library-service';
 import {
   bindSamplePlaybackBlobReader,
@@ -18,11 +20,13 @@ import {
 import {
   fetchMembraneCatalog,
   fetchMembraneNodes,
+  patchCatalogSample,
   type MembraneCatalog,
   type MembraneCatalogSample,
   type MembraneNodeLibrary,
 } from '@/api/sampleLibrary';
 import { fetchMembraneMe } from '@/api/membrane';
+import { useAuth } from '@/context/AuthContext';
 import { catalogSampleToMedia } from '@/lib/catalogSampleAdapter';
 import {
   DEFAULT_IMPORT_CLASS,
@@ -32,11 +36,15 @@ import { invalidateCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
 import { downloadBlob, extensionFromMime } from '@/lib/downloadBlob';
 import { useCabinetMediaLibrary } from '@/lib/useCabinetMediaLibrary';
 import { useCabinetToast } from '@/lib/useCabinetToast';
+import type { SampleLabel, UpdateSampleLabelNotes } from '@membrana/media-library-service';
 
 export type { LibrarySelection };
 
 export function useCabinetSampleLibrary() {
   useSamplePlaybackEscapeKey();
+
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   const [membraneId, setMembraneId] = useState<string | null>(null);
   const [catalog, setCatalog] = useState<MembraneCatalog | null>(null);
@@ -47,7 +55,15 @@ export function useCabinetSampleLibrary() {
   const [mediaReloadNonce, setMediaReloadNonce] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
+  const [labelAnnotateError, setLabelAnnotateError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [samplesPageByKey, setSamplesPageByKey] = useState<Record<string, number>>({});
+  const [samplesPageLoading, setSamplesPageLoading] = useState(false);
+  const [nodePageData, setNodePageData] = useState<PaginatedSamples | null>(null);
+  const [playbackRowSnapshot, setPlaybackRowSnapshot] = useState<
+    MediaSample | MembraneCatalogSample | null
+  >(null);
   const { toast, dismiss, showError, showSuccess } = useCabinetToast();
 
   const load = useCallback(async () => {
@@ -57,11 +73,7 @@ export function useCabinetSampleLibrary() {
       const me = await fetchMembraneMe();
       const id = me.membrane.id;
       setMembraneId(id);
-      const [catalogData, nodesData] = await Promise.all([
-        fetchMembraneCatalog(id),
-        fetchMembraneNodes(id),
-      ]);
-      setCatalog(catalogData);
+      const nodesData = await fetchMembraneNodes(id);
       setNodes(nodesData.nodes);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ошибка загрузки');
@@ -73,6 +85,45 @@ export function useCabinetSampleLibrary() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const collectionPageKey = useMemo(() => {
+    if (selection.kind === 'catalog') return 'catalog';
+    if (selection.kind === 'node') {
+      return `node:${selection.deviceId}:${selection.collectionId}`;
+    }
+    return null;
+  }, [selection]);
+
+  const samplesPage = collectionPageKey ? (samplesPageByKey[collectionPageKey] ?? 1) : 1;
+
+  const setSamplesPage = useCallback(
+    (page: number) => {
+      if (!collectionPageKey) return;
+      setSamplesPageByKey((prev) => ({ ...prev, [collectionPageKey]: page }));
+    },
+    [collectionPageKey],
+  );
+
+  useEffect(() => {
+    if (!membraneId || selection.kind !== 'catalog') return;
+    let cancelled = false;
+    setSamplesPageLoading(true);
+    void fetchMembraneCatalog(membraneId, samplesPage, DEFAULT_SAMPLES_PAGE_SIZE)
+      .then((data) => {
+        if (!cancelled) setCatalog(data);
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : 'Ошибка загрузки каталога');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setSamplesPageLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [membraneId, selection.kind, samplesPage]);
 
   const activeDeviceId = useMemo(() => {
     if (selection.kind === 'node') return selection.deviceId;
@@ -92,6 +143,39 @@ export function useCabinetSampleLibrary() {
     useCabinetMediaLibrary(activeDeviceId, mediaReloadNonce);
 
   const playback = useSamplePlayback();
+
+  useEffect(() => {
+    if (selection.kind !== 'node' || !service || !active) {
+      setNodePageData(null);
+      return;
+    }
+    const collectionId = selection.collectionId;
+    let cancelled = false;
+    setSamplesPageLoading(true);
+    void service
+      .listSamplesPage(collectionId, samplesPage, DEFAULT_SAMPLES_PAGE_SIZE)
+      .then((data) => {
+        if (!cancelled) setNodePageData(data);
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          const msg = e instanceof Error ? e.message : String(e);
+          showError(`Загрузка страницы: ${msg}`);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setSamplesPageLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [active, samplesPage, selection, service, showError]);
+
+  useEffect(() => {
+    if (!playback.selectedSampleId) {
+      setPlaybackRowSnapshot(null);
+    }
+  }, [playback.selectedSampleId]);
 
   useEffect(() => {
     if (!active || !service) return;
@@ -152,12 +236,29 @@ export function useCabinetSampleLibrary() {
 
   const catalogSamples = useMemo(() => catalog?.samples ?? [], [catalog?.samples]);
   const nodeSamples = useMemo(
-    () =>
-      selection.kind === 'node'
-        ? (snapshot.samplesByCollection[selection.collectionId] ?? [])
-        : [],
-    [selection, snapshot.samplesByCollection],
+    () => (selection.kind === 'node' ? (nodePageData?.items ?? []) : []),
+    [nodePageData?.items, selection.kind],
   );
+
+  const reloadSamplesPage = useCallback(async () => {
+    if (selection.kind === 'catalog' && membraneId) {
+      const data = await fetchMembraneCatalog(
+        membraneId,
+        samplesPage,
+        DEFAULT_SAMPLES_PAGE_SIZE,
+      );
+      setCatalog(data);
+      return;
+    }
+    if (selection.kind === 'node' && service && active) {
+      const data = await service.listSamplesPage(
+        selection.collectionId,
+        samplesPage,
+        DEFAULT_SAMPLES_PAGE_SIZE,
+      );
+      setNodePageData(data);
+    }
+  }, [active, membraneId, samplesPage, selection, service]);
 
   const selectedCollection: Collection | undefined =
     selection.kind === 'node'
@@ -169,6 +270,26 @@ export function useCabinetSampleLibrary() {
   const isNodeView = selection.kind === 'node';
   const catalogPlaybackBlocked = isCatalogView && !catalog?.sourceDeviceId;
 
+  const samplesPagination = useMemo(() => {
+    if (isCatalogView && catalog) {
+      return {
+        page: catalog.page,
+        totalPages: catalog.totalPages,
+        total: catalog.sampleCount,
+        limit: catalog.limit,
+      };
+    }
+    if (isNodeView && nodePageData) {
+      return {
+        page: nodePageData.page,
+        totalPages: nodePageData.totalPages,
+        total: nodePageData.total,
+        limit: nodePageData.limit,
+      };
+    }
+    return { page: 1, totalPages: 0, total: 0, limit: DEFAULT_SAMPLES_PAGE_SIZE };
+  }, [catalog, isCatalogView, isNodeView, nodePageData]);
+
   const isTariffDataset =
     selectedCollection?.kind === 'system' &&
     selectedCollection.systemKey === TARIFF_DATASET_SYSTEM_KEY;
@@ -176,6 +297,63 @@ export function useCabinetSampleLibrary() {
   const readOnlyCollection = isTariffDataset || selectedCollection?.kind === 'system';
   const quotaBlocked = active ? isQuotaFull(snapshot.quota) : false;
   const canMutate = isNodeView && active && !readOnlyCollection && !busy;
+  const canLabelCatalog = isCatalogView && isAdmin && Boolean(membraneId);
+
+  const handlePatchCatalogLabelNotes = useCallback(
+    async (sampleId: string, patch: UpdateSampleLabelNotes) => {
+      if (!membraneId || !canLabelCatalog) return;
+      setLabelSavingId(sampleId);
+      setLabelAnnotateError(null);
+      try {
+        const updated = await patchCatalogSample(membraneId, sampleId, patch);
+        setCatalog((prev) =>
+          prev
+            ? {
+                ...prev,
+                samples: prev.samples.map((s) => (s.id === sampleId ? updated : s)),
+              }
+            : prev,
+        );
+        showSuccess('Разметка сохранена');
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setLabelAnnotateError(msg);
+        showError(`Разметка: ${msg}`, () =>
+          void handlePatchCatalogLabelNotes(sampleId, patch),
+        );
+      } finally {
+        setLabelSavingId(null);
+      }
+    },
+    [canLabelCatalog, membraneId, showError, showSuccess],
+  );
+
+  const handlePatchNodeLabelNotes = useCallback(
+    async (sampleId: string, patch: UpdateSampleLabelNotes) => {
+      if (!service || !active || isTariffDataset) return;
+      setLabelSavingId(sampleId);
+      setLabelAnnotateError(null);
+      try {
+        const updated = await service.updateSampleLabelNotes(sampleId, patch);
+        setNodePageData((prev) =>
+          prev
+            ? {
+                ...prev,
+                items: prev.items.map((s) => (s.id === sampleId ? updated : s)),
+              }
+            : prev,
+        );
+        showSuccess('Разметка сохранена');
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setLabelAnnotateError(msg);
+        showError(`Разметка: ${msg}`, () => void handlePatchNodeLabelNotes(sampleId, patch));
+      } finally {
+        setLabelSavingId(null);
+      }
+    },
+    [active, isTariffDataset, service, showError, showSuccess],
+  );
 
   const moveTargets = useMemo(
     () =>
@@ -193,13 +371,28 @@ export function useCabinetSampleLibrary() {
   const selectedPlaybackSample = useMemo((): MediaSample | MembraneCatalogSample | null => {
     if (!playback.selectedSampleId) return null;
     if (isNodeView) {
-      return nodeSamples.find((s) => s.id === playback.selectedSampleId) ?? null;
+      const onPage = nodeSamples.find((s) => s.id === playback.selectedSampleId);
+      if (onPage) return onPage;
+      return playbackRowSnapshot?.id === playback.selectedSampleId
+        ? playbackRowSnapshot
+        : null;
     }
     if (isCatalogView) {
-      return catalogSamples.find((s) => s.id === playback.selectedSampleId) ?? null;
+      const onPage = catalogSamples.find((s) => s.id === playback.selectedSampleId);
+      if (onPage) return onPage;
+      return playbackRowSnapshot?.id === playback.selectedSampleId
+        ? playbackRowSnapshot
+        : null;
     }
     return null;
-  }, [catalogSamples, isCatalogView, isNodeView, nodeSamples, playback.selectedSampleId]);
+  }, [
+    catalogSamples,
+    isCatalogView,
+    isNodeView,
+    nodeSamples,
+    playback.selectedSampleId,
+    playbackRowSnapshot,
+  ]);
 
   const playbackDisabled =
     busy || (isCatalogView ? catalogPlaybackBlocked || !active : !active);
@@ -208,6 +401,7 @@ export function useCabinetSampleLibrary() {
     async (row: MembraneCatalogSample | MediaSample, mode: 'catalog' | 'node') => {
       const media =
         mode === 'catalog' ? catalogSampleToMedia(row as MembraneCatalogSample) : (row as MediaSample);
+      setPlaybackRowSnapshot(row);
       await selectSample(media);
     },
     [],
@@ -269,8 +463,9 @@ export function useCabinetSampleLibrary() {
         });
         showSuccess(`Импортирован: ${file.name}`);
       });
+      await reloadSamplesPage();
     },
-    [readOnlyCollection, runMediaOp, selectedCollection, selection, service, showSuccess],
+    [readOnlyCollection, reloadSamplesPage, runMediaOp, selectedCollection, selection, service, showSuccess],
   );
 
   const handleRemove = useCallback(
@@ -281,8 +476,9 @@ export function useCabinetSampleLibrary() {
         if (playback.selectedSampleId === sampleId) await selectSample(null);
         showSuccess('Сэмпл удалён');
       });
+      await reloadSamplesPage();
     },
-    [playback.selectedSampleId, readOnlyCollection, runMediaOp, service, showSuccess],
+    [playback.selectedSampleId, readOnlyCollection, reloadSamplesPage, runMediaOp, service, showSuccess],
   );
 
   const handleMove = useCallback(
@@ -292,8 +488,9 @@ export function useCabinetSampleLibrary() {
         await service!.moveSample(sampleId, toId);
         showSuccess('Сэмпл перенесён');
       });
+      await reloadSamplesPage();
     },
-    [readOnlyCollection, runMediaOp, service, showSuccess],
+    [readOnlyCollection, reloadSamplesPage, runMediaOp, service, showSuccess],
   );
 
   const handleClearBuffer = useCallback(async () => {
@@ -303,7 +500,8 @@ export function useCabinetSampleLibrary() {
       await selectSample(null);
       showSuccess('Буфер очищен');
     });
-  }, [runMediaOp, selection, service, showSuccess]);
+    await reloadSamplesPage();
+  }, [reloadSamplesPage, runMediaOp, selection, service, showSuccess]);
 
   const handleExport = useCallback(
     async (sample: MediaSample) => {
@@ -347,6 +545,7 @@ export function useCabinetSampleLibrary() {
     isCatalogView,
     isOfflineView,
     isNodeView,
+    isTariffDataset,
     catalogPlaybackBlocked,
     readOnlyCollection,
     quotaBlocked,
@@ -365,6 +564,16 @@ export function useCabinetSampleLibrary() {
     handleMove,
     handleClearBuffer,
     handleExport,
+    isAdmin,
+    canLabelCatalog,
+    labelSavingId,
+    labelAnnotateError,
+    handlePatchCatalogLabelNotes,
+    handlePatchNodeLabelNotes,
+    samplesPage,
+    setSamplesPage,
+    samplesPageLoading,
+    samplesPagination,
   };
 }
 

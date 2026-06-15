@@ -12,7 +12,8 @@
 | **[`docs/tasks/README.md`](../tasks/README.md)** | Активные и архивные задачи |
 | **[`CONSILIUM_PROMPT.md`](./CONSILIUM_PROMPT.md)** | Консилиум всех ролей → `docs/seanses/` |
 | **[`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md)** | Night Build между evening и morning ritual |
-| **[`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md)** | Активный night build — MP4 hardening NB0–NB3 |
+| **[`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md)** | Night build — MP4 hardening NB0–NB3 (закрыт) |
+| **[`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)** | **Активный эпик** — детекция на 5-с сэмплах, плагин `sample-library`, free-v1 120 |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
 

@@ -78,7 +78,6 @@ export function SampleLibraryPage() {
           setNewCollectionName={lib.setNewCollectionName}
           busy={lib.busy}
           selectedCollection={lib.selectedCollection}
-          nodeSamples={lib.nodeSamples}
           handleCreateCollection={lib.handleCreateCollection}
           handleDeleteCollection={lib.handleDeleteCollection}
           handleClearBuffer={lib.handleClearBuffer}
@@ -110,6 +109,15 @@ export function SampleLibraryPage() {
           handleRemove={lib.handleRemove}
           handleMove={lib.handleMove}
           handleExport={lib.handleExport}
+          canLabelCatalog={lib.canLabelCatalog}
+          labelSavingId={lib.labelSavingId}
+          labelAnnotateError={lib.labelAnnotateError}
+          handlePatchCatalogLabelNotes={lib.handlePatchCatalogLabelNotes}
+          handlePatchNodeLabelNotes={lib.handlePatchNodeLabelNotes}
+          isTariffDataset={lib.isTariffDataset}
+          setSamplesPage={lib.setSamplesPage}
+          samplesPageLoading={lib.samplesPageLoading}
+          samplesPagination={lib.samplesPagination}
         />
       </div>
 

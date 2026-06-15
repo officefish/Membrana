@@ -1,6 +1,6 @@
 import { DomainError } from '@membrana/core';
 
-import { TARIFF_DATASET_SYSTEM_KEY } from '../constants.js';
+import { TARIFF_DATASET_SYSTEM_KEY, DEFAULT_SAMPLES_PAGE_SIZE } from '../constants.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   Collection,
@@ -10,6 +10,8 @@ import type {
   SampleLabel,
   SampleSource,
   StorageQuota,
+  UpdateSampleLabelNotes,
+  PaginatedSamples,
 } from '../types.js';
 
 export interface ServerStorageBackendConfig {
@@ -25,6 +27,15 @@ interface ApiCollection {
   createdAt: string;
   updatedAt: string;
   systemKey?: string;
+  sampleCount?: number;
+}
+
+interface ApiPaginatedSamples {
+  items: ApiSample[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 interface ApiSample {
@@ -68,6 +79,7 @@ function mapCollection(dto: ApiCollection): Collection {
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
     systemKey: dto.systemKey === TARIFF_DATASET_SYSTEM_KEY ? TARIFF_DATASET_SYSTEM_KEY : undefined,
+    sampleCount: dto.sampleCount,
   };
 }
 
@@ -83,13 +95,19 @@ function mapSampleSource(source: string): SampleSource {
   return allowed.includes(source as SampleSource) ? (source as SampleSource) : 'disk-import';
 }
 
+function mapSampleLabel(label: string): SampleLabel {
+  if (label === 'not_drone' || label === 'not-drone') return 'not-drone';
+  if (label === 'drone') return 'drone';
+  return 'unlabeled';
+}
+
 function mapSample(dto: ApiSample): MediaSample {
   return {
     id: dto.id,
     collectionId: dto.collectionId,
     title: dto.title,
     class: dto.class,
-    label: dto.label,
+    label: mapSampleLabel(dto.label),
     source: mapSampleSource(dto.source),
     durationSec: dto.durationSec,
     sampleRate: dto.sampleRate,
@@ -219,11 +237,31 @@ export class ServerStorageBackend implements IStorageBackend {
     }
   }
 
-  async listSamples(collectionId: string): Promise<MediaSample[]> {
-    const rows = await this.requestJson<ApiSample[]>(
-      `/collections/${encodeURIComponent(collectionId)}/samples`,
+  async listSamplesPage(
+    collectionId: string,
+    page = 1,
+    limit = DEFAULT_SAMPLES_PAGE_SIZE,
+  ): Promise<PaginatedSamples> {
+    const data = await this.requestJson<ApiPaginatedSamples>(
+      `/collections/${encodeURIComponent(collectionId)}/samples?page=${page}&limit=${limit}`,
     );
-    return rows.map(mapSample);
+    return {
+      items: data.items.map(mapSample),
+      page: data.page,
+      limit: data.limit,
+      total: data.total,
+      totalPages: data.totalPages,
+    };
+  }
+
+  async listSamples(collectionId: string): Promise<MediaSample[]> {
+    const first = await this.listSamplesPage(collectionId, 1, DEFAULT_SAMPLES_PAGE_SIZE);
+    const rows = [...first.items];
+    for (let page = 2; page <= first.totalPages; page += 1) {
+      const next = await this.listSamplesPage(collectionId, page, first.limit);
+      rows.push(...next.items);
+    }
+    return rows;
   }
 
   async putSample(collectionId: string, blob: Blob, meta: NewSampleMeta): Promise<MediaSample> {
@@ -274,6 +312,24 @@ export class ServerStorageBackend implements IStorageBackend {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ toCollectionId }),
+      },
+    );
+    return mapSample(row);
+  }
+
+  async updateSampleLabelNotes(
+    sampleId: string,
+    patch: UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    const body: { label?: string; notes?: string | null } = {};
+    if (patch.label !== undefined) body.label = patch.label;
+    if (patch.notes !== undefined) body.notes = patch.notes;
+    const row = await this.requestJson<ApiSample>(
+      `/samples/${encodeURIComponent(sampleId)}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
       },
     );
     return mapSample(row);

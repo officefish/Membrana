@@ -5,6 +5,7 @@ import { seedBundledCatalogIfEmpty } from './bundled-catalog.js';
 import {
   BUFFER_COLLECTION_ID,
   DEFAULT_MEDIA_LIBRARY_CONFIG,
+  DEFAULT_SAMPLES_PAGE_SIZE,
   type MediaLibraryConfig,
 } from './constants.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
@@ -13,6 +14,7 @@ import type {
   MediaLibrarySnapshot,
   MediaSample,
   NewSampleMeta,
+  PaginatedSamples,
 } from './types.js';
 
 export class MediaLibraryService {
@@ -76,6 +78,14 @@ export class MediaLibraryService {
     this.emit();
   }
 
+  async listSamplesPage(
+    collectionId: string,
+    page = 1,
+    limit = DEFAULT_SAMPLES_PAGE_SIZE,
+  ): Promise<PaginatedSamples> {
+    return this.backend.listSamplesPage(collectionId, page, limit);
+  }
+
   async init(): Promise<void> {
     await this.backend.ensureReservedCollections();
     await seedBundledCatalogIfEmpty(this.backend, {
@@ -120,6 +130,15 @@ export class MediaLibraryService {
     const moved = await this.backend.moveSample(sampleId, toCollectionId);
     await this.refresh();
     return moved;
+  }
+
+  async updateSampleLabelNotes(
+    sampleId: string,
+    patch: import('./types.js').UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    const updated = await this.backend.updateSampleLabelNotes(sampleId, patch);
+    await this.refresh();
+    return updated;
   }
 
   async clearBuffer(): Promise<void> {

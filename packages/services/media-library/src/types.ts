@@ -17,6 +17,8 @@ export interface Collection {
   createdAt: string;
   updatedAt: string;
   systemKey?: 'tariff-dataset';
+  /** Server-reported count; may be set before samples are loaded into snapshot. */
+  sampleCount?: number;
 }
 
 export interface MediaSample {
@@ -59,9 +61,23 @@ export interface NewSampleMeta {
   notes?: string;
 }
 
+/** Partial update for ground-truth curation (VDR1). */
+export interface UpdateSampleLabelNotes {
+  label?: SampleLabel;
+  notes?: string | null;
+}
+
 export interface MediaLibrarySnapshot {
   collections: Collection[];
   samplesByCollection: Record<string, MediaSample[]>;
   quota: StorageQuota;
   version: number;
+}
+
+export interface PaginatedSamples<T = MediaSample> {
+  items: T[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }

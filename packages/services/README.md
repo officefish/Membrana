@@ -31,6 +31,7 @@
 | [`harmonic`](./detectors/harmonic) | dsp | scaffold |
 | [`cepstral`](./detectors/cepstral) | dsp | scaffold |
 | [`spectral-flux`](./detectors/spectral-flux) | dsp | scaffold |
+| [`template-match`](./detectors/template-match) | dsp | benchmark (VDR5) |
 | [`yamnet`](./detectors/yamnet) | neural | scaffold |
 | [`clap`](./detectors/clap) | neural | scaffold |
 | [`agentic-claude`](./detectors/agentic-claude) | agentic | scaffold |

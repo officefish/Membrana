@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
@@ -8,8 +8,10 @@ import {
   useMediaLibrary,
   type Collection,
   type MediaSample,
+  type UpdateSampleLabelNotes,
 } from '@membrana/media-library-service';
 
+import { SampleLabelEditor, SampleNotesEditor } from '../components/sample-library/SampleLabelNotesEditor';
 import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
 import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
 import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
@@ -24,6 +26,10 @@ import {
   SAMPLE_LIBRARY_PLAYER_PLUGIN_ID,
   SampleLibraryPlayerPanel,
 } from '../plugins/sample-library-player';
+import {
+  SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID,
+  SampleLibraryDroneAnalysisPanel,
+} from '../plugins/sample-library-drone-analysis';
 import {
   TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
   TrendsFftSampleAnalyzerPanel,
@@ -55,6 +61,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const [selectedId, setSelectedId] = useState<string>(BUFFER_COLLECTION_ID);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
 
   useEffect(() => {
     bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
@@ -68,6 +75,22 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const quotaBlocked = isQuotaFull(snapshot.quota);
   const isTariffDataset =
     selected?.kind === 'system' && selected.systemKey === TARIFF_DATASET_SYSTEM_KEY;
+  const canLabelAnnotate = !isTariffDataset;
+
+  const handleUpdateLabelNotes = useCallback(
+    async (sampleId: string, patch: UpdateSampleLabelNotes) => {
+      setError(null);
+      setLabelSavingId(sampleId);
+      try {
+        await service.updateSampleLabelNotes(sampleId, patch);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      } finally {
+        setLabelSavingId(null);
+      }
+    },
+    [service],
+  );
 
   const moveTargets = snapshot.collections.filter(
     (c) => c.id !== selectedId && c.kind !== 'buffer' && c.kind !== 'system',
@@ -176,6 +199,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
       {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
         <SampleLibraryPlayerPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
+        <SampleLibraryDroneAnalysisPanel moduleId={module.id} />
       ) : null}
 
       {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
@@ -311,17 +338,28 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                     </td>
                   </tr>
                 ) : (
-                  samples.map((s: MediaSample) => (
+                  samples.map((s: MediaSample) => {
+                    const isSelected = playback.selectedSampleId === s.id;
+                    const saving = labelSavingId === s.id;
+                    return (
+                    <Fragment key={s.id}>
                     <tr
-                      key={s.id}
-                      className={
-                        playback.selectedSampleId === s.id ? 'bg-primary/10' : undefined
-                      }
+                      className={isSelected ? 'bg-primary/10' : undefined}
                       onClick={() => void handleSelectSample(s)}
                     >
-                      <td className="max-w-[12rem] truncate cursor-pointer">{s.title}</td>
+                      <td className="max-w-[12rem] align-top">
+                        <p className="truncate cursor-pointer font-medium">{s.title}</p>
+                      </td>
                       <td>{s.class}</td>
-                      <td>{s.label}</td>
+                      <td className="align-top">
+                        <SampleLabelEditor
+                          sampleId={s.id}
+                          label={s.label}
+                          editable={canLabelAnnotate}
+                          saving={saving}
+                          onSave={handleUpdateLabelNotes}
+                        />
+                      </td>
                       <td>{s.source}</td>
                       <td className="text-right tabular-nums">
                         {(s.sizeBytes / 1024).toFixed(0)} KB
@@ -390,7 +428,28 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         ) : null}
                       </td>
                     </tr>
-                  ))
+                    {isSelected && canLabelAnnotate ? (
+                      <tr className="bg-primary/10">
+                        <td colSpan={6} className="pt-0">
+                          <div
+                            className="py-2"
+                            onClick={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                          >
+                            <SampleNotesEditor
+                              sampleId={s.id}
+                              notes={s.notes}
+                              editable
+                              saving={saving}
+                              onSave={handleUpdateLabelNotes}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null}
+                    </Fragment>
+                    );
+                  })
                 )}
               </tbody>
             </table>

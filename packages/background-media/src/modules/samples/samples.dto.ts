@@ -84,6 +84,14 @@ export class MoveSampleDto {
   toCollectionId!: string;
 }
 
+export class PatchSampleLabelDto {
+  @ApiPropertyOptional({ enum: SAMPLE_LABELS, description: 'drone | not_drone | unlabeled (not-drone accepted)' })
+  label?: string;
+
+  @ApiPropertyOptional({ nullable: true, description: 'Training / curation notes; null clears' })
+  notes?: string | null;
+}
+
 /** Multipart upload: `file` (binary) + optional `meta` (JSON string). */
 export class UploadSampleMultipartDto {
   @ApiProperty({ type: 'string', format: 'binary', description: MEDIA_MIME_EXAMPLES })
@@ -94,4 +102,21 @@ export class UploadSampleMultipartDto {
     description: 'JSON string matching UploadMetaOverrideDto',
   })
   meta?: string;
+}
+
+export class PaginatedSamplesResponseDto {
+  @ApiProperty({ type: [SampleResponseDto] })
+  items!: SampleResponseDto[];
+
+  @ApiProperty({ example: 1, description: '1-based page index' })
+  page!: number;
+
+  @ApiProperty({ example: 40 })
+  limit!: number;
+
+  @ApiProperty({ example: 120 })
+  total!: number;
+
+  @ApiProperty({ example: 3 })
+  totalPages!: number;
 }

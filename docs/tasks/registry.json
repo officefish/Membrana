@@ -735,6 +735,200 @@
       "dependsOn": [
         "cabinet-mp4-nb2-cabinet-facade"
       ]
+    },
+    {
+      "id": "sample-library-drone-detection",
+      "title": "Epic: Sample Library drone detection — 5s sample verdicts + plugin",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-15",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "single-node-detection-first",
+        "media-library-a4-sample-player"
+      ]
+    },
+    {
+      "id": "sld1-sample-detection-contract",
+      "title": "SLD1: SampleDetectionVerdict + analyzeSample; v0.2-only benchmark policy",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": "2026-06-15",
+      "archiveNotes": "PR #77; analyzeSample + benchmark v0.2",
+      "githubIssueClosedAt": null,
+      "dependsOn": [
+        "sample-library-drone-detection"
+      ]
+    },
+    {
+      "id": "sld2-sample-library-drone-plugin",
+      "title": "SLD2: sample-library-drone-analysis plugin + post-playback report UI",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": "2026-06-15",
+      "archiveNotes": "PR #77; sample-library-drone-analysis plugin",
+      "githubIssueClosedAt": null,
+      "dependsOn": [
+        "sld1-sample-detection-contract"
+      ]
+    },
+    {
+      "id": "sld3-dsp-detectors-free-v1",
+      "title": "SLD3: harmonic + cepstral + spectral-flux on free-v1 (120) in plugin + benchmark",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "sld2-sample-library-drone-plugin"
+      ]
+    },
+    {
+      "id": "sld4-stage-gate-calibration",
+      "title": "SLD4: threshold calibration on free-v1 + stage-gate report",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "sld3-dsp-detectors-free-v1"
+      ]
+    },
+    {
+      "id": "validated-drone-recognition",
+      "title": "Epic: Validated drone recognition — ground truth, ≥80% accuracy, templates",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "sld4-stage-gate-calibration"
+      ]
+    },
+    {
+      "id": "vdr1-sample-label-patch-api",
+      "title": "VDR1: PATCH sample label + notes API (background-media)",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "validated-drone-recognition"
+      ]
+    },
+    {
+      "id": "vdr2-label-notes-ui",
+      "title": "VDR2: label/notes UI — client user + cabinet admin",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr1-sample-label-patch-api"
+      ]
+    },
+    {
+      "id": "vdr3-ground-truth-export",
+      "title": "VDR3: export curated manifest + DATASET_CURATION protocol",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr2-label-notes-ui"
+      ]
+    },
+    {
+      "id": "vdr4-dsp-calibration-validated",
+      "title": "VDR4: DSP calibration on validated labels — target ≥80% val accuracy",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr3-ground-truth-export"
+      ]
+    },
+    {
+      "id": "vdr5-template-match-detector",
+      "title": "VDR5: template-match detector from validated drone templates",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr3-ground-truth-export"
+      ]
+    },
+    {
+      "id": "vdr6-recognition-report-gate",
+      "title": "VDR6: recognition report — best detector, gap to 80% and stage-gate",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr4-dsp-calibration-validated",
+        "vdr5-template-match-detector"
+      ]
     }
   ]
 }

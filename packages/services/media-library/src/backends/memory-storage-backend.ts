@@ -3,6 +3,7 @@ import { DomainError } from '@membrana/core';
 import {
   BUFFER_COLLECTION_ID,
   DEFAULT_LOCAL_QUOTA_BYTES,
+  DEFAULT_SAMPLES_PAGE_SIZE,
   TARIFF_DATASET_COLLECTION_ID,
   TARIFF_DATASET_SYSTEM_KEY,
 } from '../constants.js';
@@ -11,6 +12,7 @@ import type {
   Collection,
   MediaSample,
   NewSampleMeta,
+  PaginatedSamples,
   StorageQuota,
 } from '../types.js';
 
@@ -114,13 +116,19 @@ export class MemoryStorageBackend implements IStorageBackend {
 
   async listCollections(): Promise<Collection[]> {
     await this.ensureReservedCollections();
-    return [...this.collections.values()].sort((a, b) => {
-      const order = (c: Collection) =>
-        c.kind === 'buffer' ? 0 : c.kind === 'system' ? 1 : 2;
-      const d = order(a) - order(b);
-      if (d !== 0) return d;
-      return a.name.localeCompare(b.name);
-    });
+    const counts = new Map<string, number>();
+    for (const sample of this.samples.values()) {
+      counts.set(sample.collectionId, (counts.get(sample.collectionId) ?? 0) + 1);
+    }
+    return [...this.collections.values()]
+      .sort((a, b) => {
+        const order = (c: Collection) =>
+          c.kind === 'buffer' ? 0 : c.kind === 'system' ? 1 : 2;
+        const d = order(a) - order(b);
+        if (d !== 0) return d;
+        return a.name.localeCompare(b.name);
+      })
+      .map((col) => ({ ...col, sampleCount: counts.get(col.id) ?? 0 }));
   }
 
   async createCollection(name: string): Promise<Collection> {
@@ -155,6 +163,26 @@ export class MemoryStorageBackend implements IStorageBackend {
     return [...this.samples.values()]
       .filter((s) => s.collectionId === collectionId)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async listSamplesPage(
+    collectionId: string,
+    page = 1,
+    limit = DEFAULT_SAMPLES_PAGE_SIZE,
+  ): Promise<PaginatedSamples> {
+    const all = await this.listSamples(collectionId);
+    const total = all.length;
+    const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
+    const safePage =
+      totalPages === 0 ? 1 : Math.min(Math.max(1, page), totalPages);
+    const skip = (safePage - 1) * limit;
+    return {
+      items: all.slice(skip, skip + limit),
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+    };
   }
 
   async putSample(
@@ -264,6 +292,29 @@ export class MemoryStorageBackend implements IStorageBackend {
       ...sample,
       collectionId: toCollectionId,
       source: 'move',
+    };
+    this.samples.set(sampleId, updated);
+    return updated;
+  }
+
+  async updateSampleLabelNotes(
+    sampleId: string,
+    patch: import('../types.js').UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    const sample = this.samples.get(sampleId);
+    if (!sample) {
+      throw new DomainError('Sample not found', 'NOT_FOUND');
+    }
+    const col = this.collections.get(sample.collectionId);
+    if (isTariffDatasetCollection(col)) {
+      throw new DomainError('Tariff dataset labels require cabinet admin', 'FORBIDDEN');
+    }
+    const updated: MediaSample = {
+      ...sample,
+      ...(patch.label !== undefined ? { label: patch.label } : {}),
+      ...(patch.notes !== undefined
+        ? { notes: patch.notes === null ? undefined : patch.notes }
+        : {}),
     };
     this.samples.set(sampleId, updated);
     return updated;

@@ -88,6 +88,7 @@ export class PairService {
     const session = await this.authService.createSessionForUserWithExpiry(
       node.membrane.user.id,
       node.membrane.user.login,
+      node.membrane.user.role,
       sessionExpiresAt,
     );
 

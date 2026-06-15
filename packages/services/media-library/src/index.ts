@@ -11,6 +11,7 @@ export {
   DEFAULT_LOCAL_QUOTA_BYTES,
   DEFAULT_MAX_BUFFER_SAMPLES,
   DEFAULT_MEDIA_LIBRARY_CONFIG,
+  DEFAULT_SAMPLES_PAGE_SIZE,
   type MediaLibraryConfig,
 } from './constants.js';
 
@@ -24,6 +25,8 @@ export type {
   SampleSource,
   StorageBackendKind,
   StorageQuota,
+  UpdateSampleLabelNotes,
+  PaginatedSamples,
 } from './types.js';
 
 export type { IStorageBackend } from './ports/storage-backend.js';
@@ -80,6 +83,13 @@ export {
   type BundledCatalogManifestEntry,
   type BundledCatalogSeedOptions,
 } from './bundled-catalog.js';
+
+export {
+  SAMPLE_LABEL_OPTIONS,
+  sampleLabelBadgeClass,
+  sampleLabelFromStorage,
+  sampleLabelTitle,
+} from './sample-label-display.js';
 
 export {
   MEDIA_LIBRARY_HUB,

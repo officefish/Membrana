@@ -24,6 +24,9 @@ export class CollectionResponseDto {
 
   @ApiPropertyOptional({ example: 'tariff-dataset' })
   systemKey?: string;
+
+  @ApiProperty({ example: 120, description: 'Number of samples in this collection' })
+  sampleCount!: number;
 }
 
 export class ProvisionCatalogResponseDto {

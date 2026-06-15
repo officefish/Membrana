@@ -32,6 +32,15 @@ export type SampleLibraryMainPanelProps = Pick<
   | 'handleRemove'
   | 'handleMove'
   | 'handleExport'
+  | 'canLabelCatalog'
+  | 'labelSavingId'
+  | 'labelAnnotateError'
+  | 'handlePatchCatalogLabelNotes'
+  | 'handlePatchNodeLabelNotes'
+  | 'isTariffDataset'
+  | 'setSamplesPage'
+  | 'samplesPageLoading'
+  | 'samplesPagination'
 >;
 
 export function SampleLibraryMainPanel({
@@ -61,6 +70,15 @@ export function SampleLibraryMainPanel({
   handleRemove,
   handleMove,
   handleExport,
+  canLabelCatalog,
+  labelSavingId,
+  labelAnnotateError,
+  handlePatchCatalogLabelNotes,
+  handlePatchNodeLabelNotes,
+  isTariffDataset,
+  setSamplesPage,
+  samplesPageLoading,
+  samplesPagination,
 }: SampleLibraryMainPanelProps) {
   if (isOfflineView && selection.kind === 'node-offline') {
     return (
@@ -89,8 +107,17 @@ export function SampleLibraryMainPanel({
               </span>
             ) : null}
           </h2>
+          {catalog ? (
+            <span className="badge badge-ghost badge-sm shrink-0 tabular-nums">
+              {catalog.sampleCount} сэмплов
+            </span>
+          ) : null}
           <span className="badge badge-neutral badge-sm shrink-0">системный датасет</span>
-          <span className="ml-auto shrink-0 text-sm text-base-content/60">Только чтение</span>
+          {canLabelCatalog ? (
+            <span className="ml-auto shrink-0 text-sm text-success">Разметка ground truth (admin)</span>
+          ) : (
+            <span className="ml-auto shrink-0 text-sm text-base-content/60">Только чтение</span>
+          )}
         </div>
         {catalogPlaybackBlocked ? (
           <div className="alert alert-warning text-sm">
@@ -109,6 +136,16 @@ export function SampleLibraryMainPanel({
           onExportSelected={
             selectedPlaybackSample && active ? () => void handleExportSelected() : undefined
           }
+          canLabelAnnotate={canLabelCatalog}
+          labelSavingId={labelSavingId}
+          labelAnnotateError={labelAnnotateError}
+          onSaveLabelNotes={(id, patch) => void handlePatchCatalogLabelNotes(id, patch)}
+          samplesPage={samplesPagination.page}
+          samplesTotalPages={samplesPagination.totalPages}
+          samplesTotal={samplesPagination.total}
+          samplesPageSize={samplesPagination.limit}
+          samplesPageLoading={samplesPageLoading}
+          onSamplesPageChange={setSamplesPage}
         />
       </section>
     );
@@ -121,6 +158,11 @@ export function SampleLibraryMainPanel({
       ) : null}
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-lg font-semibold">{selectedCollection?.name ?? '—'}</h2>
+        {selectedCollection ? (
+          <span className="badge badge-ghost badge-sm tabular-nums">
+            {selectedCollection.sampleCount ?? samplesPagination.total} сэмплов
+          </span>
+        ) : null}
         {selectedCollection?.kind === 'system' ? (
           <span className="badge badge-neutral badge-sm">системный датасет</span>
         ) : null}
@@ -173,6 +215,16 @@ export function SampleLibraryMainPanel({
         onRemove={(id) => void handleRemove(id)}
         onMove={(id, toId) => void handleMove(id, toId)}
         onExport={(sample) => void handleExport(sample)}
+        canLabelAnnotate={!isTariffDataset && active}
+        labelSavingId={labelSavingId}
+        labelAnnotateError={labelAnnotateError}
+        onSaveLabelNotes={(id, patch) => void handlePatchNodeLabelNotes(id, patch)}
+        samplesPage={samplesPagination.page}
+        samplesTotalPages={samplesPagination.totalPages}
+        samplesTotal={samplesPagination.total}
+        samplesPageSize={samplesPagination.limit}
+        samplesPageLoading={samplesPageLoading}
+        onSamplesPageChange={setSamplesPage}
       />
     </section>
   );

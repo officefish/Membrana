@@ -25,7 +25,8 @@
   },
   "dependencies": {
     "@membrana/core": "*",
-    "@membrana/detector-base": "*"
+    "@membrana/detector-base": "*",
+    "@membrana/fft-analyzer-service": "*"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
