@@ -963,7 +963,6 @@ __metadata:
   resolution: "@membrana/background-cabinet@workspace:packages/background-cabinet"
   dependencies:
     "@fastify/cors": "npm:^9.0.1"
-    "@membrana/telemetry-journal-service": "npm:*"
     "@nestjs/common": "npm:^10.4.15"
     "@nestjs/core": "npm:^10.4.15"
     "@nestjs/platform-fastify": "npm:^10.4.15"
