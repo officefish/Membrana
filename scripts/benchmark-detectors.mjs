@@ -23,30 +23,47 @@ const MANIFEST_PATH = join(DATASET_DIR, 'manifest.json');
 const REPORT_JSON = join(DATASET_DIR, 'reports', 'latest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
 const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
-const HARMONIC_DIST = join(
-  ROOT,
-  'packages',
-  'services',
-  'detectors',
-  'harmonic',
-  'dist',
-  'index.js',
-);
+
+const DSP_DETECTORS = [
+  {
+    name: 'harmonic',
+    dist: join(ROOT, 'packages', 'services', 'detectors', 'harmonic', 'dist', 'index.js'),
+    label: 'harmonic-detector',
+    create: (mod) => mod.createHarmonicDetector(),
+    fftSize: (mod) => mod.DEFAULT_FFT_SIZE,
+  },
+  {
+    name: 'cepstral',
+    dist: join(ROOT, 'packages', 'services', 'detectors', 'cepstral', 'dist', 'index.js'),
+    label: 'cepstral-detector',
+    create: (mod) => mod.createCepstralDetector(),
+    fftSize: (mod) => mod.DEFAULT_FFT_SIZE,
+  },
+  {
+    name: 'spectral-flux',
+    dist: join(ROOT, 'packages', 'services', 'detectors', 'spectral-flux', 'dist', 'index.js'),
+    label: 'spectral-flux-detector',
+    create: (mod) => mod.createSpectralFluxDetector(),
+    fftSize: (mod) => mod.DEFAULT_FFT_SIZE,
+  },
+];
 
 async function ensureBuilt(distPath, label) {
   try {
     await access(distPath);
   } catch {
-    throw new Error(`${label} not built. Run: yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service`);
+    throw new Error(
+      `${label} not built. Run: yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service`,
+    );
   }
 }
 
-async function runHarmonic(manifestSamples) {
+async function runDetector(manifestSamples, spec) {
+  await ensureBuilt(spec.dist, spec.label);
   const { analyzeSample } = await import(pathToFileURL(DETECTOR_BASE_DIST).href);
-  const { createHarmonicDetector, DEFAULT_FFT_SIZE } = await import(
-    pathToFileURL(HARMONIC_DIST).href
-  );
-  const detector = createHarmonicDetector();
+  const mod = await import(pathToFileURL(spec.dist).href);
+  const detector = spec.create(mod);
+  const fftSize = spec.fftSize(mod);
 
   /** @type {{ id: string; truthDrone: boolean; predDrone: boolean; maxConfidence: number }[]} */
   const perSample = [];
@@ -56,7 +73,7 @@ async function runHarmonic(manifestSamples) {
     const wavPath = join(DATASET_DIR, entry.path);
     const { samples, sampleRate } = await readWavMono(wavPath);
     const { verdict, frameLatenciesMs } = await analyzeSample(samples, sampleRate, detector, {
-      fftSize: DEFAULT_FFT_SIZE,
+      fftSize,
     });
     const truthDrone = entry.label === 'drone';
     perSample.push({
@@ -78,7 +95,7 @@ async function runHarmonic(manifestSamples) {
   const sortedLat = sortNumbers(allLatencies);
 
   return {
-    name: 'harmonic',
+    name: spec.name,
     family: 'dsp',
     status: 'benchmarked',
     metrics: {
@@ -97,8 +114,6 @@ async function runHarmonic(manifestSamples) {
 }
 
 const SCAFFOLD_DETECTORS = [
-  { name: 'cepstral', family: 'dsp', status: 'scaffold' },
-  { name: 'spectral-flux', family: 'dsp', status: 'scaffold' },
   { name: 'yamnet', family: 'neural', status: 'scaffold' },
   { name: 'clap', family: 'neural', status: 'scaffold' },
   { name: 'agentic-claude', family: 'agentic', status: 'scaffold' },
@@ -106,7 +121,6 @@ const SCAFFOLD_DETECTORS = [
 
 async function main() {
   await ensureBuilt(DETECTOR_BASE_DIST, 'detector-base');
-  await ensureBuilt(HARMONIC_DIST, 'harmonic-detector');
 
   const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
   const withSplit = manifest.samples.filter((s) => s.split === 'test');
@@ -117,8 +131,20 @@ async function main() {
 
   console.log(`Benchmark: ${testSamples.length} samples (dataset v${manifest.version})`);
 
-  const harmonic = await runHarmonic(testSamples);
-  const detectors = [harmonic, ...SCAFFOLD_DETECTORS.map((d) => ({ ...d, metrics: null, perSample: null }))];
+  const benchmarked = [];
+  for (const spec of DSP_DETECTORS) {
+    const result = await runDetector(testSamples, spec);
+    benchmarked.push(result);
+    const m = result.metrics;
+    console.log(
+      `${spec.name}: precision=${m.precision?.toFixed(3) ?? '—'} recall=${m.recall?.toFixed(3) ?? '—'} F1=${m.f1?.toFixed(3) ?? '—'}`,
+    );
+  }
+
+  const detectors = [
+    ...benchmarked,
+    ...SCAFFOLD_DETECTORS.map((d) => ({ ...d, metrics: null, perSample: null })),
+  ];
 
   const report = {
     generatedAt: new Date().toISOString(),
@@ -136,11 +162,6 @@ async function main() {
   const patched = patchDetectorBenchmarkMd(md, report);
   await writeFile(BENCHMARK_MD, patched, 'utf8');
   console.log(`Updated ${BENCHMARK_MD}`);
-
-  const h = harmonic.metrics;
-  console.log(
-    `harmonic: precision=${h.precision?.toFixed(3) ?? '—'} recall=${h.recall?.toFixed(3) ?? '—'} F1=${h.f1?.toFixed(3) ?? '—'}`,
-  );
 }
 
 main().catch((err) => {

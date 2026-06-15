@@ -9,11 +9,16 @@ export default defineConfig({
     alias: {
       '@membrana/core': fileURLToPath(new URL('../../../core/src/index.ts', import.meta.url)),
       '@membrana/detector-base': fileURLToPath(new URL('../base/src/index.ts', import.meta.url)),
+      '@membrana/fft-analyzer-service': fileURLToPath(
+        new URL('../../fft-analyzer/src/index.ts', import.meta.url),
+      ),
     },
   },
   build: {
     lib: { entry: resolve(__dirname, 'src/index.ts'), formats: ['es'], fileName: 'index' },
-    rollupOptions: { external: ['@membrana/core', '@membrana/detector-base'] },
+    rollupOptions: {
+      external: ['@membrana/core', '@membrana/detector-base', '@membrana/fft-analyzer-service'],
+    },
     sourcemap: true,
     target: 'es2022',
   },

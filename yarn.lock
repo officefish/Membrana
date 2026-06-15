@@ -1077,12 +1077,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/cepstral-detector-service@workspace:packages/services/detectors/cepstral":
+"@membrana/cepstral-detector-service@npm:*, @membrana/cepstral-detector-service@workspace:packages/services/detectors/cepstral":
   version: 0.0.0-use.local
   resolution: "@membrana/cepstral-detector-service@workspace:packages/services/detectors/cepstral"
   dependencies:
     "@membrana/core": "npm:*"
     "@membrana/detector-base": "npm:*"
+    "@membrana/fft-analyzer-service": "npm:*"
     eslint: "npm:^8.57.0"
     rimraf: "npm:^5.0.0"
     typescript: "npm:^5.4.0"
@@ -1115,6 +1116,7 @@ __metadata:
     "@membrana/agenda": "npm:*"
     "@membrana/audio-data-viz": "npm:*"
     "@membrana/audio-engine-service": "npm:*"
+    "@membrana/cepstral-detector-service": "npm:*"
     "@membrana/core": "npm:*"
     "@membrana/detector-base": "npm:*"
     "@membrana/device-board": "npm:*"
@@ -1122,6 +1124,7 @@ __metadata:
     "@membrana/harmonic-detector-service": "npm:*"
     "@membrana/media-library-service": "npm:*"
     "@membrana/sample-playback-service": "npm:*"
+    "@membrana/spectral-flux-detector-service": "npm:*"
     "@membrana/telemetry-service": "npm:*"
     "@membrana/trends-detector-service": "npm:*"
     "@types/react": "npm:^18.3.3"
@@ -1270,12 +1273,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/spectral-flux-detector-service@workspace:packages/services/detectors/spectral-flux":
+"@membrana/spectral-flux-detector-service@npm:*, @membrana/spectral-flux-detector-service@workspace:packages/services/detectors/spectral-flux":
   version: 0.0.0-use.local
   resolution: "@membrana/spectral-flux-detector-service@workspace:packages/services/detectors/spectral-flux"
   dependencies:
     "@membrana/core": "npm:*"
     "@membrana/detector-base": "npm:*"
+    "@membrana/fft-analyzer-service": "npm:*"
     eslint: "npm:^8.57.0"
     rimraf: "npm:^5.0.0"
     typescript: "npm:^5.4.0"

@@ -60,6 +60,12 @@ export default defineConfig(({ mode }) => {
         '@membrana/harmonic-detector-service': fileURLToPath(
           new URL('../../packages/services/detectors/harmonic/src/index.ts', import.meta.url),
         ),
+        '@membrana/cepstral-detector-service': fileURLToPath(
+          new URL('../../packages/services/detectors/cepstral/src/index.ts', import.meta.url),
+        ),
+        '@membrana/spectral-flux-detector-service': fileURLToPath(
+          new URL('../../packages/services/detectors/spectral-flux/src/index.ts', import.meta.url),
+        ),
         '@membrana/trends-detector-service': fileURLToPath(
           new URL('../../packages/services/trends-detector/src/index.ts', import.meta.url),
         ),

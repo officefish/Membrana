@@ -759,11 +759,12 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "sample-library-drone-detection",
       "createdAt": "2026-06-15",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-15",
+      "archiveNotes": "PR #77; analyzeSample + benchmark v0.2",
+      "githubIssueClosedAt": null,
       "dependsOn": [
         "sample-library-drone-detection"
       ]
@@ -775,11 +776,12 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "sample-library-drone-detection",
       "createdAt": "2026-06-15",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-15",
+      "archiveNotes": "PR #77; sample-library-drone-analysis plugin",
+      "githubIssueClosedAt": null,
       "dependsOn": [
         "sld1-sample-detection-contract"
       ]

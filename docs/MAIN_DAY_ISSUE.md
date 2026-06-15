@@ -1,7 +1,7 @@
-<!-- Обновлено: 2026-06-15 (SLD1 — sample-library-drone-detection epic) -->
+<!-- Обновлено: 2026-06-15 (SLD3 — sample-library-drone-detection epic) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) -->
 <!-- Эпик: docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md -->
-<!-- Реестр: sld1-sample-detection-contract -->
+<!-- Реестр: sld3-dsp-detectors-free-v1 -->
 
 # MAIN_DAY_ISSUE — 2026-06-15
 
@@ -11,52 +11,40 @@
 
 ## Один обязательный фокус дня
 
-### **SLD1: контракт анализа 5-с сэмпла + benchmark на free-v1**
+### **SLD3: cepstral + spectral-flux на free-v1 (120)**
 
 **GitHub Issue:** [#47](https://github.com/officefish/Membrana/issues/47)  
 **Эпик:** `sample-library-drone-detection`  
-**Фаза:** `sld1-sample-detection-contract`  
+**Фаза:** `sld3-dsp-detectors-free-v1`  
 **Промпт:** [`docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)
 
----
-
-## Цель дня
-
-Заложить **единый путь** «декодированный сэмпл 5 с → вердикт детектора» для UI (плагин SLD2) и `yarn benchmark:detectors`. Канонический датасет — **free-v1 v0.2 (120 треков)**, не синтетика v0.1.
+**Закрыто сегодня:** SLD1 (`analyzeSample`), SLD2 (плагин) — PR [#77](https://github.com/officefish/Membrana/pull/77).
 
 ---
 
-## Definition of Done (SLD1)
+## Цель
 
-- [x] `@membrana/detector-base`: `SampleDetectionVerdict`, `analyzeSample()`
-- [x] `scripts/benchmark-detectors.mjs` вызывает `analyzeSample` (без дублирования цикла)
-- [x] Unit-тесты `analyze-sample.test.ts` green
-- [x] `yarn benchmark:detectors` на v0.2 (120) — harmonic F1≈0.53
-- [x] Docs: v0.1 = legacy smoke only ([`DATASET.md`](./DATASET.md))
-
-**В работе (SLD2):** плагин `sample-library-drone-analysis` — UI + auto-analyze после play.
+Три DSP-детектора (harmonic, cepstral, spectral-flux) в **benchmark** и **плагине библиотеки**; метрики на 120 free-v1.
 
 ---
 
-## Порядок работы
+## Definition of Done (SLD3)
 
-| Время | Задача |
-|-------|--------|
-| Утро | `analyzeSample` + тесты + benchmark refactor |
-| День | Прогон benchmark на 120; зафиксировать baseline harmonic |
-| Вечер | `yarn task:archive sld1-sample-detection-contract` после merge PR |
+- [x] `@membrana/cepstral-detector-service` — working `detect()`
+- [x] `@membrana/spectral-flux-detector-service` — working `detect()`
+- [x] Плагин показывает 3 строки вердикта
+- [x] `yarn benchmark:detectors` — три строки в `DETECTOR_BENCHMARK.md`
+
+**Baseline v0.2 (120):** harmonic F1≈0.53 · cepstral F1≈0.67 · spectral-flux F1≈0.61
+
+**Следующее:** SLD4 калибровка порогов + stage-gate отчёт.
 
 ---
 
 ## Команды
 
 ```bash
-yarn turbo run lint typecheck test build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service
+yarn turbo run lint typecheck test build --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service
+yarn turbo run lint typecheck --filter=@membrana/client
 yarn benchmark:detectors
 ```
-
----
-
-## Связь с продуктом
-
-После SLD1 → **SLD2** плагин библиотеки сэмплов показывает таблицу: детектор | family | isDrone | confidence после play/анализа 5-с трека.
