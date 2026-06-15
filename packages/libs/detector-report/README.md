@@ -51,4 +51,8 @@ downloadDroneDetectionReport(report, 'json');
 | `exportDroneDetectionReportJson` / `Txt` | Сериализация |
 | `downloadDroneDetectionReport` | Blob download (browser) |
 
-Этапы эпика: **DDR1** (этот пакет) → DDR2 (данные детекторов) → DDR3 (UI) → DDR4 (telemetry).
+Этапы эпика: **DDR1** (этот пакет) → DDR2 (данные детекторов) → **DDR3** (`apps/client/src/components/detector-report/`) → DDR4 (telemetry).
+
+## UI (DDR3)
+
+Переиспользуемый React-рендер: `apps/client/src/components/detector-report/DroneDetectionReportView.tsx` — подключается в журнале телеметрии при рефакторинге (schema `drone-detection-report/v1`).

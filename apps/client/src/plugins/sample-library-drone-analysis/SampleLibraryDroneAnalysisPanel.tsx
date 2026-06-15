@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { sampleLabelBadgeClass, sampleLabelTitle, useMediaLibrary } from '@membrana/media-library-service';
 
+import { DroneDetectionReportView } from '../../components/detector-report';
 import { requestSampleLibraryDroneAnalysis } from './sampleLibraryDronePluginState';
 import { useSampleLibraryDroneAnalysis } from './useSampleLibraryDroneAnalysis';
 
@@ -18,11 +19,17 @@ export const SampleLibraryDroneAnalysisPanel: React.FC<SampleLibraryDroneAnalysi
 }) => {
   const snapshot = useSampleLibraryDroneAnalysis();
   const { snapshot: librarySnapshot } = useMediaLibrary();
+  const [detailExpanded, setDetailExpanded] = useState(false);
   const hasSample = Boolean(snapshot.selectedSampleId);
   const showResults =
     snapshot.status === 'ready' &&
     snapshot.verdicts.length > 0 &&
     snapshot.analyzedSampleId === snapshot.selectedSampleId;
+  const hasDetailReport = showResults && snapshot.detectionReport !== null;
+
+  useEffect(() => {
+    setDetailExpanded(false);
+  }, [snapshot.selectedSampleId, snapshot.analyzedSampleId]);
 
   const groundTruthSample =
     snapshot.selectedSampleId != null
@@ -125,6 +132,22 @@ export const SampleLibraryDroneAnalysisPanel: React.FC<SampleLibraryDroneAnalysi
                 ))}
               </tbody>
             </table>
+          </div>
+        ) : null}
+
+        {hasDetailReport ? (
+          <div className="space-y-2">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline w-full sm:w-auto"
+              aria-expanded={detailExpanded}
+              onClick={() => setDetailExpanded((open) => !open)}
+            >
+              {detailExpanded ? 'Скрыть подробный отчёт' : 'Подробный отчёт'}
+            </button>
+            {detailExpanded && snapshot.detectionReport ? (
+              <DroneDetectionReportView report={snapshot.detectionReport} />
+            ) : null}
           </div>
         ) : null}
       </div>
