@@ -93,21 +93,45 @@ export class SampleLibraryService {
     return { nodes: mapped };
   }
 
-  async getCatalog(userId: string, membraneId: string): Promise<MembraneCatalogDto> {
+  async getCatalog(
+    userId: string,
+    membraneId: string,
+    rawPage?: string,
+    rawLimit?: string,
+  ): Promise<MembraneCatalogDto> {
     const membrane = await this.requireOwnedMembrane(userId, membraneId, true);
     const catalogId = membrane.tariff.datasetCatalogId;
     const sourceDeviceId = await this.findRepresentativeDeviceId(membrane.id);
+    const page = Math.max(1, Number.parseInt(rawPage ?? '1', 10) || 1);
+    const parsedLimit = Number.parseInt(rawLimit ?? '40', 10);
+    const limit = Math.min(100, Math.max(1, Number.isFinite(parsedLimit) ? parsedLimit : 40));
 
     if (!sourceDeviceId) {
-      return { catalogId, sampleCount: 0, samples: [], sourceDeviceId: null };
+      return {
+        catalogId,
+        sampleCount: 0,
+        samples: [],
+        sourceDeviceId: null,
+        page: 1,
+        limit,
+        totalPages: 0,
+      };
     }
 
-    const rows = await this.mediaBridge.listSamples(sourceDeviceId, TARIFF_DATASET_COLLECTION_ID);
+    const pageData = await this.mediaBridge.listSamplesPage(
+      sourceDeviceId,
+      TARIFF_DATASET_COLLECTION_ID,
+      page,
+      limit,
+    );
     return {
       catalogId,
-      sampleCount: rows.length,
-      samples: rows.map(mapCatalogSample),
+      sampleCount: pageData.total,
+      samples: pageData.items.map(mapCatalogSample),
       sourceDeviceId,
+      page: pageData.page,
+      limit: pageData.limit,
+      totalPages: pageData.totalPages,
     };
   }
 

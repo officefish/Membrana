@@ -11,6 +11,7 @@ export {
   DEFAULT_LOCAL_QUOTA_BYTES,
   DEFAULT_MAX_BUFFER_SAMPLES,
   DEFAULT_MEDIA_LIBRARY_CONFIG,
+  DEFAULT_SAMPLES_PAGE_SIZE,
   type MediaLibraryConfig,
 } from './constants.js';
 
@@ -25,6 +26,7 @@ export type {
   StorageBackendKind,
   StorageQuota,
   UpdateSampleLabelNotes,
+  PaginatedSamples,
 } from './types.js';
 
 export type { IStorageBackend } from './ports/storage-backend.js';

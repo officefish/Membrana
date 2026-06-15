@@ -36,6 +36,9 @@ export interface MembraneCatalogDto {
   sampleCount: number;
   samples: MembraneCatalogSampleDto[];
   sourceDeviceId: string | null;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface MediaSessionDeviceDto {

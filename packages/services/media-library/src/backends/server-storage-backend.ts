@@ -1,6 +1,6 @@
 import { DomainError } from '@membrana/core';
 
-import { TARIFF_DATASET_SYSTEM_KEY } from '../constants.js';
+import { TARIFF_DATASET_SYSTEM_KEY, DEFAULT_SAMPLES_PAGE_SIZE } from '../constants.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   Collection,
@@ -11,6 +11,7 @@ import type {
   SampleSource,
   StorageQuota,
   UpdateSampleLabelNotes,
+  PaginatedSamples,
 } from '../types.js';
 
 export interface ServerStorageBackendConfig {
@@ -236,18 +237,31 @@ export class ServerStorageBackend implements IStorageBackend {
     }
   }
 
-  async listSamples(collectionId: string): Promise<MediaSample[]> {
-    const first = await this.requestJson<ApiPaginatedSamples>(
-      `/collections/${encodeURIComponent(collectionId)}/samples?page=1&limit=40`,
+  async listSamplesPage(
+    collectionId: string,
+    page = 1,
+    limit = DEFAULT_SAMPLES_PAGE_SIZE,
+  ): Promise<PaginatedSamples> {
+    const data = await this.requestJson<ApiPaginatedSamples>(
+      `/collections/${encodeURIComponent(collectionId)}/samples?page=${page}&limit=${limit}`,
     );
+    return {
+      items: data.items.map(mapSample),
+      page: data.page,
+      limit: data.limit,
+      total: data.total,
+      totalPages: data.totalPages,
+    };
+  }
+
+  async listSamples(collectionId: string): Promise<MediaSample[]> {
+    const first = await this.listSamplesPage(collectionId, 1, DEFAULT_SAMPLES_PAGE_SIZE);
     const rows = [...first.items];
     for (let page = 2; page <= first.totalPages; page += 1) {
-      const next = await this.requestJson<ApiPaginatedSamples>(
-        `/collections/${encodeURIComponent(collectionId)}/samples?page=${page}&limit=${first.limit}`,
-      );
+      const next = await this.listSamplesPage(collectionId, page, first.limit);
       rows.push(...next.items);
     }
-    return rows.map(mapSample);
+    return rows;
   }
 
   async putSample(collectionId: string, blob: Blob, meta: NewSampleMeta): Promise<MediaSample> {

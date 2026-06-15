@@ -3,6 +3,7 @@ import { DomainError } from '@membrana/core';
 import {
   BUFFER_COLLECTION_ID,
   DEFAULT_LOCAL_QUOTA_BYTES,
+  DEFAULT_SAMPLES_PAGE_SIZE,
   TARIFF_DATASET_COLLECTION_ID,
   TARIFF_DATASET_SYSTEM_KEY,
 } from '../constants.js';
@@ -11,6 +12,7 @@ import type {
   Collection,
   MediaSample,
   NewSampleMeta,
+  PaginatedSamples,
   StorageQuota,
 } from '../types.js';
 
@@ -161,6 +163,26 @@ export class MemoryStorageBackend implements IStorageBackend {
     return [...this.samples.values()]
       .filter((s) => s.collectionId === collectionId)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async listSamplesPage(
+    collectionId: string,
+    page = 1,
+    limit = DEFAULT_SAMPLES_PAGE_SIZE,
+  ): Promise<PaginatedSamples> {
+    const all = await this.listSamples(collectionId);
+    const total = all.length;
+    const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
+    const safePage =
+      totalPages === 0 ? 1 : Math.min(Math.max(1, page), totalPages);
+    const skip = (safePage - 1) * limit;
+    return {
+      items: all.slice(skip, skip + limit),
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+    };
   }
 
   async putSample(

@@ -38,6 +38,9 @@ export type SampleLibraryMainPanelProps = Pick<
   | 'handlePatchCatalogLabelNotes'
   | 'handlePatchNodeLabelNotes'
   | 'isTariffDataset'
+  | 'setSamplesPage'
+  | 'samplesPageLoading'
+  | 'samplesPagination'
 >;
 
 export function SampleLibraryMainPanel({
@@ -73,6 +76,9 @@ export function SampleLibraryMainPanel({
   handlePatchCatalogLabelNotes,
   handlePatchNodeLabelNotes,
   isTariffDataset,
+  setSamplesPage,
+  samplesPageLoading,
+  samplesPagination,
 }: SampleLibraryMainPanelProps) {
   if (isOfflineView && selection.kind === 'node-offline') {
     return (
@@ -134,6 +140,12 @@ export function SampleLibraryMainPanel({
           labelSavingId={labelSavingId}
           labelAnnotateError={labelAnnotateError}
           onSaveLabelNotes={(id, patch) => void handlePatchCatalogLabelNotes(id, patch)}
+          samplesPage={samplesPagination.page}
+          samplesTotalPages={samplesPagination.totalPages}
+          samplesTotal={samplesPagination.total}
+          samplesPageSize={samplesPagination.limit}
+          samplesPageLoading={samplesPageLoading}
+          onSamplesPageChange={setSamplesPage}
         />
       </section>
     );
@@ -148,7 +160,7 @@ export function SampleLibraryMainPanel({
         <h2 className="text-lg font-semibold">{selectedCollection?.name ?? '—'}</h2>
         {selectedCollection ? (
           <span className="badge badge-ghost badge-sm tabular-nums">
-            {selectedCollection.sampleCount ?? nodeSamples.length} сэмплов
+            {selectedCollection.sampleCount ?? samplesPagination.total} сэмплов
           </span>
         ) : null}
         {selectedCollection?.kind === 'system' ? (
@@ -207,6 +219,12 @@ export function SampleLibraryMainPanel({
         labelSavingId={labelSavingId}
         labelAnnotateError={labelAnnotateError}
         onSaveLabelNotes={(id, patch) => void handlePatchNodeLabelNotes(id, patch)}
+        samplesPage={samplesPagination.page}
+        samplesTotalPages={samplesPagination.totalPages}
+        samplesTotal={samplesPagination.total}
+        samplesPageSize={samplesPagination.limit}
+        samplesPageLoading={samplesPageLoading}
+        onSamplesPageChange={setSamplesPage}
       />
     </section>
   );

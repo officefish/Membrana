@@ -2,6 +2,7 @@ import type {
   Collection,
   MediaSample,
   NewSampleMeta,
+  PaginatedSamples,
   StorageQuota,
   UpdateSampleLabelNotes,
 } from '../types.js';
@@ -13,6 +14,11 @@ export interface IStorageBackend {
   createCollection(name: string): Promise<Collection>;
   deleteCollection(id: string): Promise<void>;
   listSamples(collectionId: string): Promise<MediaSample[]>;
+  listSamplesPage(
+    collectionId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedSamples>;
   putSample(
     collectionId: string,
     blob: Blob,

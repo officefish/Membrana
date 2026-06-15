@@ -21,7 +21,6 @@ export type SampleLibrarySidebarProps = Pick<
   | 'setNewCollectionName'
   | 'busy'
   | 'selectedCollection'
-  | 'nodeSamples'
   | 'handleCreateCollection'
   | 'handleDeleteCollection'
   | 'handleClearBuffer'
@@ -44,7 +43,6 @@ export function SampleLibrarySidebar({
   setNewCollectionName,
   busy,
   selectedCollection,
-  nodeSamples,
   handleCreateCollection,
   handleDeleteCollection,
   handleClearBuffer,
@@ -148,7 +146,11 @@ export function SampleLibrarySidebar({
               <button
                 type="button"
                 className="btn btn-xs btn-ghost"
-                disabled={busy || nodeSamples.length === 0}
+                disabled={
+                  busy ||
+                  (selectedCollection?.sampleCount ??
+                    (snapshot.samplesByCollection[BUFFER_COLLECTION_ID] ?? []).length) === 0
+                }
                 onClick={() => void handleClearBuffer()}
               >
                 Очистить буфер

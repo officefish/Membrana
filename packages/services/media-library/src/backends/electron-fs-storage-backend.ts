@@ -4,6 +4,7 @@ import type {
   Collection,
   MediaSample,
   NewSampleMeta,
+  PaginatedSamples,
   StorageQuota,
 } from '../types.js';
 
@@ -40,6 +41,14 @@ export class ElectronFsStorageBackend implements IStorageBackend {
 
   listSamples(collectionId: string): Promise<MediaSample[]> {
     return this.port.listSamples(collectionId);
+  }
+
+  listSamplesPage(
+    collectionId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedSamples> {
+    return this.port.listSamplesPage(collectionId, page, limit);
   }
 
   putSample(collectionId: string, blob: Blob, meta: NewSampleMeta): Promise<MediaSample> {

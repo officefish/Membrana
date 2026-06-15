@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Body, Req, Query, UseGuards } from '@nestjs/common';
 import { AdminGuard } from '../../common/guards/admin.guard';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 import type { PatchCatalogSampleDto } from './sample-library.dto';
@@ -21,8 +21,10 @@ export class SampleLibraryController {
   getCatalog(
     @Req() req: AuthenticatedRequest,
     @Param('membraneId') membraneId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    return this.sampleLibrary.getCatalog(req.authUser!.id, membraneId);
+    return this.sampleLibrary.getCatalog(req.authUser!.id, membraneId, page, limit);
   }
 
   @Get('media/session')

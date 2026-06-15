@@ -8,6 +8,8 @@ export const FREE_V1_CATALOG_ID = 'free-v1-catalog';
 
 export const DEFAULT_LOCAL_QUOTA_BYTES = 100 * 1024 * 1024;
 export const DEFAULT_MAX_BUFFER_SAMPLES = 10;
+/** Matches `background-media` sample list pagination default. */
+export const DEFAULT_SAMPLES_PAGE_SIZE = 40;
 
 export const DEFAULT_MEDIA_LIBRARY_CONFIG = {
   localQuotaBytes: DEFAULT_LOCAL_QUOTA_BYTES,

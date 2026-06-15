@@ -33,6 +33,9 @@ export interface MembraneCatalog {
   sampleCount: number;
   samples: MembraneCatalogSample[];
   sourceDeviceId: string | null;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface MediaSessionDevice {
@@ -78,8 +81,16 @@ export async function fetchMembraneNodes(
   return (await res.json()) as { nodes: MembraneNodeLibrary[] };
 }
 
-export async function fetchMembraneCatalog(membraneId: string): Promise<MembraneCatalog> {
-  const res = await authFetch(`/v1/membranes/${membraneId}/catalog`);
+export async function fetchMembraneCatalog(
+  membraneId: string,
+  page = 1,
+  limit = 40,
+): Promise<MembraneCatalog> {
+  const query = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+  const res = await authFetch(`/v1/membranes/${membraneId}/catalog?${query}`);
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as MembraneCatalog;
 }

@@ -73,3 +73,11 @@ export interface MediaLibrarySnapshot {
   quota: StorageQuota;
   version: number;
 }
+
+export interface PaginatedSamples<T = MediaSample> {
+  items: T[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
