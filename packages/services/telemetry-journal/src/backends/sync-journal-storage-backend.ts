@@ -7,7 +7,10 @@ import {
   reportInputToCabinetReport,
   trackInputToCabinetLiveRecord,
 } from '../mappers/cabinet-journal-mapper.js';
-import type { ICabinetJournalPort } from '../ports/cabinet-journal-port.js';
+import type {
+  ICabinetJournalPort,
+  PaginatedCabinetJournalItems,
+} from '../ports/cabinet-journal-port.js';
 import type { IJournalStorageBackend } from '../ports/storage-backend.js';
 import type {
   AppendLiveJournalReportInput,
@@ -117,7 +120,9 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
   private async fetchRemoteItems(): Promise<LiveJournalItem[]> {
     if (this.port.listJournalItems) {
-      return [...(await this.port.listJournalItems({ limit: this.pullLimit }))];
+      const result = await this.port.listJournalItems({ limit: this.pullLimit });
+      const items = isPaginatedCabinetJournalItems(result) ? result.items : result;
+      return [...items];
     }
     const [reports, liveRecords] = await Promise.all([
       this.port.listReports(this.pullLimit),
@@ -132,4 +137,10 @@ export function createSyncJournalStorageBackend(
   options?: SyncJournalStorageBackendOptions,
 ): SyncJournalStorageBackend {
   return new SyncJournalStorageBackend(port, options);
+}
+
+function isPaginatedCabinetJournalItems(
+  result: readonly LiveJournalItem[] | PaginatedCabinetJournalItems,
+): result is PaginatedCabinetJournalItems {
+  return !Array.isArray(result);
 }

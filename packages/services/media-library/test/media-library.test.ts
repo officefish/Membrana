@@ -47,7 +47,7 @@ describe('quota-status', () => {
   });
 
   it('uses buffer quota fields for recorder gating', () => {
-    const quota = {
+    const quotaFull = {
       usedBytes: 0,
       limitBytes: 1_000_000,
       backend: 'server' as const,
@@ -55,8 +55,34 @@ describe('quota-status', () => {
       bufferUsedBytes: 100,
       bufferLimitBytes: 100,
     };
-    expect(resolveBufferQuota(quota)).toEqual({ usedBytes: 100, limitBytes: 100 });
-    expect(isBufferRecordingBlocked(quota, 0, 10)).toBe(true);
+    expect(resolveBufferQuota(quotaFull)).toEqual({ usedBytes: 100, limitBytes: 100 });
+    expect(isBufferRecordingBlocked(quotaFull, 0, 10)).toBe(true);
+    expect(isBufferRecordingBlocked(quotaFull, 10, 10)).toBe(true);
+  });
+
+  it('remote-server: byte quota ok with many samples is not blocked (BL1)', () => {
+    const quota = {
+      usedBytes: 5_000_000,
+      limitBytes: 1_073_741_824,
+      backend: 'server' as const,
+      serverReachable: true,
+      bufferUsedBytes: 5_000_000,
+      bufferLimitBytes: 1_073_741_824,
+    };
+    expect(isBufferRecordingBlocked(quota, 10, 10)).toBe(false);
+    expect(isBufferRecordingBlocked(quota, 100, 10)).toBe(false);
+  });
+
+  it('browser-limited-fallback: sample count cap still applies', () => {
+    const quota = {
+      usedBytes: 1_000,
+      limitBytes: 100_000_000,
+      backend: 'browser-limited' as const,
+      serverReachable: false,
+      bufferUsedBytes: 1_000,
+      bufferLimitBytes: 100_000_000,
+    };
+    expect(isBufferRecordingBlocked(quota, 9, 10)).toBe(false);
     expect(isBufferRecordingBlocked(quota, 10, 10)).toBe(true);
   });
 });
@@ -194,6 +220,73 @@ describe('MediaLibraryService', () => {
     await svc.importBlob(BUFFER_COLLECTION_ID, blob, meta);
     await expect(svc.importBlob(BUFFER_COLLECTION_ID, blob, meta)).rejects.toThrow();
     expect(DEFAULT_MEDIA_LIBRARY_CONFIG.maxBufferSamples).toBeGreaterThan(2);
+  });
+
+  it('skips buffer sample count cap on remote-server backend (BL1)', async () => {
+    const existing = Array.from({ length: 12 }, (_, i) => ({
+      id: `buf-${i}`,
+      collectionId: BUFFER_COLLECTION_ID,
+      title: `clip-${i}`,
+      class: 'wind',
+      label: 'unlabeled' as const,
+      source: 'mic-recording' as const,
+      durationSec: 5,
+      sampleRate: 48000,
+      sizeBytes: 1000,
+      createdAt: new Date().toISOString(),
+    }));
+    const putSample = vi.fn(async () => ({
+      id: 'buf-new',
+      collectionId: BUFFER_COLLECTION_ID,
+      title: 'new',
+      class: 'wind',
+      label: 'unlabeled' as const,
+      source: 'mic-recording' as const,
+      durationSec: 5,
+      sampleRate: 48000,
+      sizeBytes: 1000,
+      createdAt: new Date().toISOString(),
+    }));
+    const backend = {
+      ensureReservedCollections: vi.fn(async () => {}),
+      listCollections: vi.fn(async () => [
+        { id: BUFFER_COLLECTION_ID, name: 'Buffer', kind: 'buffer' as const },
+      ]),
+      listSamples: vi.fn(async (collectionId: string) =>
+        collectionId === BUFFER_COLLECTION_ID ? existing : [],
+      ),
+      listSamplesPage: vi.fn(async () => ({ items: [], page: 1, totalPages: 0, totalItems: 0 })),
+      getQuota: vi.fn(async () => ({
+        usedBytes: 5_000_000,
+        limitBytes: 1_073_741_824,
+        backend: 'server' as const,
+        serverReachable: true,
+        bufferUsedBytes: 5_000_000,
+        bufferLimitBytes: 1_073_741_824,
+      })),
+      putSample,
+      removeSample: vi.fn(async () => {}),
+      moveSample: vi.fn(async () => existing[0]!),
+      updateSampleLabelNotes: vi.fn(async () => existing[0]!),
+      createCollection: vi.fn(async () => ({ id: 'u', name: 'u', kind: 'user' as const })),
+      deleteCollection: vi.fn(async () => {}),
+      readBlob: vi.fn(async () => new Blob()),
+    } as unknown as import('../src/ports/storage-backend.js').IStorageBackend;
+
+    const svc = createMediaLibraryService(backend, { maxBufferSamples: 10 });
+    await svc.init();
+    const blob = new Blob([new Uint8Array(10)], { type: 'audio/wav' });
+    await expect(
+      svc.importBlob(BUFFER_COLLECTION_ID, blob, {
+        title: 'x',
+        class: 'wind',
+        label: 'unlabeled',
+        source: 'mic-recording',
+        durationSec: 5,
+        sampleRate: 48000,
+      }),
+    ).resolves.toMatchObject({ id: 'buf-new' });
+    expect(putSample).toHaveBeenCalledOnce();
   });
 });
 

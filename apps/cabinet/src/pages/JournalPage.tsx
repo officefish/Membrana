@@ -1,6 +1,7 @@
 import type { LiveJournalFilter } from '@membrana/telemetry-journal-service';
 
 import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJournalItemRow';
+import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
@@ -34,7 +35,7 @@ export function JournalPage() {
   }
 
   const exportJson = () => {
-    const blob = new Blob([JSON.stringify(journal.displayed, null, 2)], {
+    const blob = new Blob([JSON.stringify(journal.filtered, null, 2)], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
@@ -114,7 +115,7 @@ export function JournalPage() {
                 <span className="label py-0">
                   <span className="label-text text-xs">Поиск</span>
                   <span className="label-text-alt text-xs text-base-content/50">
-                    показано: {journal.displayed.length}
+                    показано: {journal.filtered.length}
                   </span>
                 </span>
                 <input
@@ -130,31 +131,38 @@ export function JournalPage() {
               </button>
             </div>
 
-            {journal.displayed.length === 0 ? (
+            {journal.filtered.length === 0 ? (
               <p className="text-sm text-center text-base-content/50 py-8 border border-dashed border-base-300 rounded-box">
                 Нет записей для выбранного узла. Запустите live-микрофон с авто-записью 5 с на paired-клиенте.
               </p>
             ) : (
-              <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
-                {journal.displayed.map((item) => {
-                  const track = item.track;
-                  const isActive = track != null && journal.playback.selectedSampleId === track.sampleId;
-                  const isPlaying = isActive && journal.playback.status === 'playing';
-                  return (
+              <>
+                <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
+                  {journal.displayed.map((item) => (
                     <li key={item.id}>
                       <CabinetLiveJournalItemRow
                         item={item}
                         linkedReportCount={journal.linkedReportCount(item)}
                         trackTitle={journal.trackTitleForReport(item)}
-                        isActive={isActive}
-                        isPlaying={isPlaying}
                         onPlay={() => journal.playTrack(item)}
                         onExportBlob={() => journal.exportTrackBlob(item)}
                       />
                     </li>
-                  );
-                })}
-              </ul>
+                  ))}
+                </ul>
+                {journal.totalPages > 1 ? (
+                  <LiveJournalPager
+                    page={journal.page}
+                    totalPages={journal.totalPages}
+                    pageSize={journal.pageSize}
+                    shownCount={journal.displayed.length}
+                    onPrev={() => journal.setPage((current) => Math.max(1, current - 1))}
+                    onNext={() =>
+                      journal.setPage((current) => Math.min(journal.totalPages, current + 1))
+                    }
+                  />
+                ) : null}
+              </>
             )}
           </div>
         </div>

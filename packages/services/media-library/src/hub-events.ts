@@ -41,6 +41,8 @@ export interface MediaLibrarySampleImportedPayload {
   title: string;
   durationSec: number;
   sampleRate: number;
+  /** Set when live journal track row was appended (TJ3/TJ10). */
+  journalTrackId?: string;
 }
 
 export interface MediaLibraryCaptureCancelPayload {

@@ -124,15 +124,33 @@ export async function listTelemetryLiveRecords(
   return (await res.json()) as { liveRecords: TelemetryLiveRecordRow[] };
 }
 
-/** Unified live journal list (TJ6). Returns null when cabinet-api has no route yet (404). */
+/** Unified live journal list (TJ6, TJ9). Returns null when cabinet-api has no route yet (404). */
+export interface ListTelemetryJournalItemsQuery {
+  readonly limit?: number;
+  readonly mediaDeviceId?: string;
+  readonly cursor?: string | null;
+  readonly filter?: 'all' | 'tracks' | 'reports' | 'detections';
+}
+
+export interface PaginatedTelemetryJournalItems {
+  readonly items: LiveJournalItem[];
+  readonly nextCursor: string | null;
+}
+
 export async function listTelemetryJournalItems(
   token: string,
-  limit = 200,
-): Promise<{ items: LiveJournalItem[] } | null> {
-  const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/journal-items?limit=${limit}`, {
+  query: ListTelemetryJournalItemsQuery = {},
+): Promise<PaginatedTelemetryJournalItems | null> {
+  const params = new URLSearchParams();
+  params.set('limit', String(query.limit ?? 50));
+  if (query.mediaDeviceId) params.set('mediaDeviceId', query.mediaDeviceId);
+  if (query.cursor) params.set('cursor', query.cursor);
+  if (query.filter && query.filter !== 'all') params.set('filter', query.filter);
+
+  const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/journal-items?${params.toString()}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(await parseError(res));
-  return (await res.json()) as { items: LiveJournalItem[] };
+  return (await res.json()) as PaginatedTelemetryJournalItems;
 }

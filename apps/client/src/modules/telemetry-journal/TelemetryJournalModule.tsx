@@ -4,12 +4,18 @@ import { getDefaultMediaLibraryService } from '@membrana/media-library-service';
 import { bindSamplePlaybackBlobReader } from '@membrana/sample-playback-service';
 import {
   type LiveJournalFilter,
+  LIVE_JOURNAL_PAGE_SIZE,
   countLiveJournalFilters,
+  countLiveJournalPages,
   matchesLiveJournalFilter,
+  matchesLiveJournalSearch,
+  sliceLiveJournalPage,
   useLiveJournal,
 } from '@membrana/telemetry-journal-service';
 
 import { LiveJournalItemRow } from './components/LiveJournalItemRow';
+import { LiveJournalPager } from './components/LiveJournalPager';
+import { useLiveJournalAutoRefresh } from './useLiveJournalAutoRefresh';
 import type { TelemetryJournalModuleConfig } from './types';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
@@ -31,6 +37,13 @@ export const TelemetryJournalModule: React.FC<
   const { snapshot, service } = useLiveJournal();
   const [filter, setFilter] = useState<LiveJournalFilter>('all');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+
+  useLiveJournalAutoRefresh(service);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter, search]);
 
   useEffect(() => {
     bindSamplePlaybackBlobReader((sampleId) => getDefaultMediaLibraryService().getSampleBlob(sampleId));
@@ -41,26 +54,24 @@ export const TelemetryJournalModule: React.FC<
     [snapshot.items, snapshot.version],
   );
 
-  const displayed = useMemo(() => {
+  const filtered = useMemo(() => {
     let list = snapshot.items.filter((item) => matchesLiveJournalFilter(item, filter));
-    const query = search.trim().toLowerCase();
-    if (query) {
-      list = list.filter((item) => {
-        if (item.moduleName.toLowerCase().includes(query)) return true;
-        if (item.moduleId.toLowerCase().includes(query)) return true;
-        if (item.tags.some((tag) => tag.toLowerCase().includes(query))) return true;
-        if (item.track?.title.toLowerCase().includes(query)) return true;
-        if (item.track?.sampleId.toLowerCase().includes(query)) return true;
-        if (item.report?.summaryText?.toLowerCase().includes(query)) return true;
-        if (item.report?.trackId.toLowerCase().includes(query)) return true;
-        return false;
-      });
+    if (search.trim()) {
+      list = list.filter((item) => matchesLiveJournalSearch(item, search));
     }
     return [...list].sort((a, b) => b.timestamp - a.timestamp);
   }, [snapshot.items, snapshot.version, filter, search]);
 
+  const totalPages = countLiveJournalPages(filtered.length);
+  const safePage = Math.min(page, totalPages);
+
+  const displayed = useMemo(
+    () => sliceLiveJournalPage(filtered, safePage - 1),
+    [filtered, safePage],
+  );
+
   const exportJson = () => {
-    const blob = new Blob([JSON.stringify(displayed, null, 2)], {
+    const blob = new Blob([JSON.stringify(filtered, null, 2)], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
@@ -115,7 +126,7 @@ export const TelemetryJournalModule: React.FC<
               <span className="label py-0">
                 <span className="label-text text-xs">Поиск</span>
                 <span className="label-text-alt text-xs text-base-content/50">
-                  показано: {displayed.length}
+                  показано: {filtered.length}
                 </span>
               </span>
               <input
@@ -134,19 +145,31 @@ export const TelemetryJournalModule: React.FC<
           </div>
         </div>
 
-        {displayed.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="text-sm text-center text-base-content/50 py-8 border border-dashed border-base-300 rounded-box">
             Нет записей. Запустите live-микрофон с авто-записью 5 с — появятся треки и отчёты
             анализа.
           </p>
         ) : (
-          <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
-            {displayed.map((item) => (
-              <li key={item.id}>
-                <LiveJournalItemRow item={item} items={snapshot.items} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
+              {displayed.map((item) => (
+                <li key={item.id}>
+                  <LiveJournalItemRow item={item} items={snapshot.items} />
+                </li>
+              ))}
+            </ul>
+            {totalPages > 1 ? (
+              <LiveJournalPager
+                page={safePage}
+                totalPages={totalPages}
+                pageSize={LIVE_JOURNAL_PAGE_SIZE}
+                shownCount={displayed.length}
+                onPrev={() => setPage((current) => Math.max(1, current - 1))}
+                onNext={() => setPage((current) => Math.min(totalPages, current + 1))}
+              />
+            ) : null}
+          </>
         )}
       </div>
     </div>

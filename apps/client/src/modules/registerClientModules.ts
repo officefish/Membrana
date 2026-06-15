@@ -4,6 +4,7 @@ import { createSoundQualityVizPlugin } from '../plugins/sound-quality-viz';
 import { createFftThresholdTestPlugin } from '../plugins/fft-threshold-test';
 import { createHarmonicDetectorVizPlugin } from '../plugins/harmonic-detector-viz';
 import { createMicBufferRecorderPlugin } from '../plugins/mic-buffer-recorder';
+import { createMicLiveDroneAnalysisPlugin } from '../plugins/mic-live-drone-analysis';
 import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-player';
 import { createSampleLibraryDroneAnalysisPlugin } from '../plugins/sample-library-drone-analysis';
 import { createTrendsFftSampleAnalyzerPlugin } from '../plugins/trends-fft-sample-analyzer';
@@ -152,6 +153,7 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createHarmonicDetectorVizPlugin());
   MembranaRegistry.registerPlugin('microphone', createTrendsFftAnalyzerPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicBufferRecorderPlugin());
+  MembranaRegistry.registerPlugin('microphone', createMicLiveDroneAnalysisPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryDroneAnalysisPlugin());
   MembranaRegistry.registerPlugin('sample-library', createTrendsFftSampleAnalyzerPlugin());

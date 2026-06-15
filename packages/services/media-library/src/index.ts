@@ -66,6 +66,7 @@ export {
   getQuotaLevel,
   isBufferQuotaFull,
   isBufferRecordingBlocked,
+  isBufferSampleCountCapActive,
   isQuotaFull,
   isQuotaWarning,
   resolveBufferQuota,

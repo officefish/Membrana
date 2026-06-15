@@ -7,8 +7,6 @@ export interface CabinetLiveJournalItemRowProps {
   readonly item: LiveJournalItem;
   readonly linkedReportCount: number;
   readonly trackTitle?: string | null;
-  readonly isPlaying: boolean;
-  readonly isActive: boolean;
   readonly onPlay: () => Promise<void>;
   readonly onExportBlob: () => Promise<Blob>;
 }
@@ -17,8 +15,6 @@ export function CabinetLiveJournalItemRow({
   item,
   linkedReportCount,
   trackTitle,
-  isPlaying,
-  isActive,
   onPlay,
   onExportBlob,
 }: CabinetLiveJournalItemRowProps) {
@@ -27,8 +23,6 @@ export function CabinetLiveJournalItemRow({
       <CabinetLiveJournalTrackCard
         item={item}
         linkedReportCount={linkedReportCount}
-        isPlaying={isPlaying}
-        isActive={isActive}
         onPlay={onPlay}
         onExportBlob={onExportBlob}
       />

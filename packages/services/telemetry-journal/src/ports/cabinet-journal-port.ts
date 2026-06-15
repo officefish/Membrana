@@ -39,12 +39,19 @@ export interface CreateCabinetTelemetryLiveRecordInput {
   readonly payload: Readonly<Record<string, unknown>>;
 }
 
-import type { LiveJournalItem } from '../types.js';
+import type { LiveJournalFilter, LiveJournalItem } from '../types.js';
 
-/** Query for unified live journal list (TJ6). */
+/** Query for unified live journal list (TJ6, TJ9). */
 export interface ListCabinetJournalItemsQuery {
   readonly limit?: number;
   readonly mediaDeviceId?: string;
+  readonly cursor?: string | null;
+  readonly filter?: LiveJournalFilter;
+}
+
+export interface PaginatedCabinetJournalItems {
+  readonly items: readonly LiveJournalItem[];
+  readonly nextCursor: string | null;
 }
 
 /** Remote journal persistence via cabinet API (TJ2). */
@@ -52,7 +59,9 @@ export interface ICabinetJournalPort {
   listReports(limit?: number): Promise<readonly CabinetTelemetryReportDto[]>;
   listLiveRecords(limit?: number): Promise<readonly CabinetTelemetryLiveRecordDto[]>;
   /** Unified live journal items (TJ6); optional — falls back to dual list. */
-  listJournalItems?(query?: ListCabinetJournalItemsQuery): Promise<readonly LiveJournalItem[]>;
+  listJournalItems?(
+    query?: ListCabinetJournalItemsQuery,
+  ): Promise<readonly LiveJournalItem[] | PaginatedCabinetJournalItems>;
   createReport(
     input: CreateCabinetTelemetryReportInput,
   ): Promise<{ readonly deduplicated: boolean }>;

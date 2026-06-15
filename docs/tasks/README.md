@@ -38,6 +38,19 @@
 | `cabinet-mp4-nb1-sample-playback-dry` | NB1: extract @membrana/sample-playback-service, migrate client + cabinet | L | [`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
 | `cabinet-mp4-nb2-cabinet-facade` | NB2: cabinet hooks, split SampleLibraryPage, reset media session | M | [`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
 | `cabinet-mp4-nb3-quality-contracts` | NB3: LRU cache, a11y Escape, OpenAPI sketch media bridge | M | [`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `sample-library-drone-detection` | Epic: Sample Library drone detection — 5s sample verdicts + plugin | L | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `sld3-dsp-detectors-free-v1` | SLD3: harmonic + cepstral + spectral-flux on free-v1 (120) in plugin + benchmark | L | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `sld4-stage-gate-calibration` | SLD4: threshold calibration on free-v1 + stage-gate report | M | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `validated-drone-recognition` | Epic: Validated drone recognition — ground truth, ≥80% accuracy, templates | L | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `vdr1-sample-label-patch-api` | VDR1: PATCH sample label + notes API (background-media) | M | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `vdr2-label-notes-ui` | VDR2: label/notes UI — client user + cabinet admin | L | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `vdr3-ground-truth-export` | VDR3: export curated manifest + DATASET_CURATION protocol | M | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `vdr4-dsp-calibration-validated` | VDR4: DSP calibration on validated labels — target ≥80% val accuracy | L | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `vdr5-template-match-detector` | VDR5: template-match detector from validated drone templates | L | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `vdr6-recognition-report-gate` | VDR6: recognition report — best detector, gap to 80% and stage-gate | M | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `drone-detector-detail-report` | Подробный отчёт детекторов дрона (DDR1–4) | L | [`DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md`](../docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md) | [#78](https://github.com/officefish/Membrana/issues/78) |
+| `telemetry-journal-live-refactor` | Live-журнал телеметрии (TJ1–TJ6) | L | [`TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md) | [#79](https://github.com/officefish/Membrana/issues/79) |
+| `telemetry-journal-ux-hardening` | Live-журнал UX: buffer gate, mic drone plugin, refresh, waveform, pagination (BL1, TJ7–TJ10) | L | [`TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md) | [#81](https://github.com/officefish/Membrana/issues/81) |
 
 ---
 
@@ -45,6 +58,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `sld1-sample-detection-contract` | SLD1: SampleDetectionVerdict + analyzeSample; v0.2-only benchmark policy | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/sld1-sample-detection-contract.md) |
+| `sld2-sample-library-drone-plugin` | SLD2: sample-library-drone-analysis plugin + post-playback report UI | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/sld2-sample-library-drone-plugin.md) |
 | `tariff-dataset-v1` | Tariff Dataset v1: убрать benchmark, free-v1 корпус (эпик DS1–DS5) | 2026-06-14 | [`TARIFF_DATASET_V1_EPIC_PROMPT.md`](../docs/prompts/TARIFF_DATASET_V1_EPIC_PROMPT.md) | #47 | [карточка](./archive/tariff-dataset-v1.md) |
 | `tariff-dataset-ds1-corpus` | Tariff Dataset DS1: корпус free-v1 и скрипты sync | 2026-06-14 | [`TARIFF_DATASET_DS1_CORPUS_PROMPT.md`](../docs/prompts/TARIFF_DATASET_DS1_CORPUS_PROMPT.md) | #47 | [карточка](./archive/tariff-dataset-ds1-corpus.md) |
 | `tariff-dataset-ds2-domain` | Tariff Dataset DS2: domain model без benchmark | 2026-06-14 | [`TARIFF_DATASET_DS2_DOMAIN_PROMPT.md`](../docs/prompts/TARIFF_DATASET_DS2_DOMAIN_PROMPT.md) | #47 | [карточка](./archive/tariff-dataset-ds2-domain.md) |
@@ -85,4 +100,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-14.*
+*Файл обновлён автоматически: 2026-06-15.*

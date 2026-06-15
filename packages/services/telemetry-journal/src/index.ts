@@ -11,6 +11,20 @@ export {
 } from './constants.js';
 
 export {
+  LIVE_JOURNAL_PAGE_SIZE,
+  countLiveJournalPages,
+  decodeLiveJournalCursor,
+  encodeLiveJournalCursor,
+  isLiveJournalItemBeforeCursor,
+  matchesLiveJournalSearch,
+  paginateLiveJournalItems,
+  sliceLiveJournalPage,
+  type LiveJournalCursor,
+  type PaginateLiveJournalItemsOptions,
+  type PaginatedLiveJournalItems,
+} from './pagination.js';
+
+export {
   TELEMETRY_TRACK_SCHEMA_VERSION,
   type AppendLiveJournalReportInput,
   type AppendLiveJournalTrackInput,
@@ -59,6 +73,7 @@ export type {
   CreateCabinetTelemetryReportInput,
   ICabinetJournalPort,
   ListCabinetJournalItemsQuery,
+  PaginatedCabinetJournalItems,
 } from './ports/cabinet-journal-port.js';
 
 export {

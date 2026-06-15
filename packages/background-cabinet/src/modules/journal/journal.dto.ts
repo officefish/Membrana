@@ -26,4 +26,8 @@ export interface ListJournalQueryDto {
   limit?: string;
   /** Filter journal rows by paired device (TJ6). */
   mediaDeviceId?: string;
+  /** Opaque cursor from prior page (TJ9). */
+  cursor?: string;
+  /** Live journal filter (TJ9). */
+  filter?: string;
 }

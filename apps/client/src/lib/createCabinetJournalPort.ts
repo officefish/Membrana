@@ -26,7 +26,12 @@ export function createCabinetJournalPort(token: string): ICabinetJournalPort {
       return res.liveRecords;
     },
     async listJournalItems(query?: ListCabinetJournalItemsQuery) {
-      const unified = await listTelemetryJournalItems(token, query?.limit);
+      const unified = await listTelemetryJournalItems(token, {
+        limit: query?.limit,
+        mediaDeviceId: query?.mediaDeviceId,
+        cursor: query?.cursor ?? undefined,
+        filter: query?.filter,
+      });
       if (unified) return unified.items;
 
       const [reports, liveRecords] = await Promise.all([

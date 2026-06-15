@@ -11,9 +11,15 @@ import type {
   UpdateTelemetryLiveRecordDto,
 } from './journal.dto';
 import { cabinetRowsToLiveJournalItems } from './live-journal-items.mapper';
+import {
+  LIVE_JOURNAL_PAGE_SIZE,
+  paginateLiveJournalItemRows,
+  parseLiveJournalFilter,
+} from './live-journal-pagination';
 
-const DEFAULT_LIST_LIMIT = 50;
-const MAX_LIST_LIMIT = 200;
+const DEFAULT_LIST_LIMIT = LIVE_JOURNAL_PAGE_SIZE;
+const MAX_LIST_LIMIT = LIVE_JOURNAL_PAGE_SIZE;
+const MERGED_FETCH_CAP = 1000;
 
 /** Parses list query limit for journal endpoints. */
 export function parseJournalListLimit(raw: string | undefined): number {
@@ -236,16 +242,31 @@ export class JournalService {
     return { liveRecords: rows.map(serializeLiveRecord) };
   }
 
-  /** Unified live journal items: TelemetryTrack rows + drone reports (TJ6). */
-  async listJournalItems(userId: string, limitRaw?: string, mediaDeviceId?: string) {
-    const limit = parseLimit(limitRaw);
+  /** Unified live journal items: TelemetryTrack rows + drone reports (TJ6, TJ9). */
+  async listJournalItems(
+    userId: string,
+    limitRaw?: string,
+    mediaDeviceId?: string,
+    cursor?: string,
+    filterRaw?: string,
+  ) {
+    const pageSize = parseLimit(limitRaw);
+    const filter = parseLiveJournalFilter(filterRaw);
     const [reportsResult, liveResult] = await Promise.all([
-      this.listReports(userId, String(limit), mediaDeviceId),
-      this.listLiveRecords(userId, String(limit), mediaDeviceId),
+      this.listReports(userId, String(MERGED_FETCH_CAP), mediaDeviceId),
+      this.listLiveRecords(userId, String(MERGED_FETCH_CAP), mediaDeviceId),
     ]);
 
-    const items = cabinetRowsToLiveJournalItems(reportsResult.reports, liveResult.liveRecords);
-    return { items: items.slice(0, limit) };
+    const merged = cabinetRowsToLiveJournalItems(
+      reportsResult.reports,
+      liveResult.liveRecords,
+    );
+    const page = paginateLiveJournalItemRows(merged, {
+      limit: pageSize,
+      cursor,
+      filter,
+    });
+    return { items: page.items, nextCursor: page.nextCursor };
   }
 
   private resolveMediaDeviceFilter(

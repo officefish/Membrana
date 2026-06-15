@@ -8,6 +8,7 @@ import {
   DEFAULT_SAMPLES_PAGE_SIZE,
   type MediaLibraryConfig,
 } from './constants.js';
+import { isBufferSampleCountCapActive } from './quota-status.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
   Collection,
@@ -129,9 +130,12 @@ export class MediaLibraryService {
     meta: NewSampleMeta,
   ): Promise<MediaSample> {
     if (collectionId === BUFFER_COLLECTION_ID) {
-      const bufferSamples = await this.backend.listSamples(BUFFER_COLLECTION_ID);
-      if (bufferSamples.length >= this.config.maxBufferSamples) {
-        throw new DomainError('Buffer sample limit reached', 'BUFFER_FULL');
+      const quota = this.snapshot.quota;
+      if (isBufferSampleCountCapActive(quota)) {
+        const bufferSamples = await this.backend.listSamples(BUFFER_COLLECTION_ID);
+        if (bufferSamples.length >= this.config.maxBufferSamples) {
+          throw new DomainError('Buffer sample limit reached', 'BUFFER_FULL');
+        }
       }
     }
     const sample = await this.backend.putSample(collectionId, blob, meta);

@@ -52,10 +52,17 @@ export function isBufferQuotaFull(quota: StorageQuota): boolean {
   return getBufferQuotaLevel(quota) === 'full';
 }
 
+/** Whether `__buffer__` applies a max sample count (browser-limited fallback only). */
+export function isBufferSampleCountCapActive(quota: StorageQuota): boolean {
+  return resolveMediaLibraryStorageMode(quota) === 'browser-limited-fallback';
+}
+
 export function isBufferRecordingBlocked(
   quota: StorageQuota,
   sampleCount: number,
   maxBufferSamples: number,
 ): boolean {
-  return isBufferQuotaFull(quota) || sampleCount >= maxBufferSamples;
+  if (isBufferQuotaFull(quota)) return true;
+  if (!isBufferSampleCountCapActive(quota)) return false;
+  return sampleCount >= maxBufferSamples;
 }

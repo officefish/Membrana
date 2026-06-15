@@ -11,7 +11,9 @@ import {
 } from '@membrana/media-library-service';
 
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
+import { appendLiveJournalTrackFromSampleImport } from '@/lib/liveJournalTrackWriter';
 import { resolveMediaLibraryBackend } from '@/lib/resolveMediaLibraryBackend';
+import { MIC_BUFFER_RECORDER_PLUGIN_ID } from '@/plugins/mic-buffer-recorder/types';
 
 import {
   publishMediaLibraryBufferCleared,
@@ -73,7 +75,7 @@ async function handleCaptureStop(payload: MediaLibraryCaptureStopPayload): Promi
     channels: payload.meta.channels,
     notes: payload.meta.notes,
   });
-  publishMediaLibrarySampleImported({
+  const importedPayload = {
     sampleId: sample.id,
     moduleId: payload.moduleId ?? 'microphone',
     sourcePluginId: payload.sourcePluginId,
@@ -82,6 +84,15 @@ async function handleCaptureStop(payload: MediaLibraryCaptureStopPayload): Promi
     title: sample.title,
     durationSec: sample.durationSec,
     sampleRate: sample.sampleRate,
+  } as const;
+  let journalTrackId: string | undefined;
+  if (payload.sourcePluginId === MIC_BUFFER_RECORDER_PLUGIN_ID) {
+    const trackResult = await appendLiveJournalTrackFromSampleImport(importedPayload);
+    journalTrackId = trackResult?.trackId;
+  }
+  publishMediaLibrarySampleImported({
+    ...importedPayload,
+    journalTrackId,
   });
   pushQuotaSnapshot();
 }

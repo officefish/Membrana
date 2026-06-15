@@ -953,6 +953,18 @@
       "createdAt": "2026-06-14",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "telemetry-journal-ux-hardening",
+      "title": "Live-журнал UX: buffer gate, mic drone plugin, refresh, waveform, pagination (BL1, TJ7–TJ10)",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

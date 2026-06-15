@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
+import { useSamplePlayback } from '@membrana/sample-playback-service';
 
+import { JournalTrackPlaybackSection } from '@/components/journal/JournalTrackPlaybackSection';
 import { downloadBlob, extensionFromMime } from '@/lib/downloadBlob';
 
 export interface CabinetLiveJournalTrackCardProps {
   readonly item: LiveJournalItem;
   readonly linkedReportCount: number;
-  readonly isPlaying: boolean;
-  readonly isActive: boolean;
   readonly onPlay: () => Promise<void>;
   readonly onExportBlob: () => Promise<Blob>;
 }
@@ -25,13 +25,16 @@ function formatTimestamp(timestamp: number): string {
 export function CabinetLiveJournalTrackCard({
   item,
   linkedReportCount,
-  isPlaying,
-  isActive,
   onPlay,
   onExportBlob,
 }: CabinetLiveJournalTrackCardProps) {
   const track = item.track;
+  const playback = useSamplePlayback();
   const [exportError, setExportError] = useState<string | null>(null);
+
+  const isActive = track != null && playback.selectedSampleId === track.sampleId;
+  const isPlaying = isActive && playback.status === 'playing';
+  const isLoading = isActive && playback.status === 'loading';
 
   const handleExport = useCallback(async () => {
     if (!track) return;
@@ -63,10 +66,18 @@ export function CabinetLiveJournalTrackCard({
           <button
             type="button"
             className="btn btn-ghost btn-xs min-h-10"
-            aria-label={isPlaying && isActive ? 'Пауза' : 'Воспроизвести live-клип'}
+            aria-label={isPlaying ? 'Пауза' : 'Воспроизвести live-клип'}
+            aria-busy={isLoading}
+            disabled={isLoading}
             onClick={() => void onPlay()}
           >
-            {isPlaying && isActive ? 'Пауза' : 'Play'}
+            {isLoading ? (
+              <span className="loading loading-spinner loading-xs" aria-hidden />
+            ) : isPlaying && isActive ? (
+              'Пауза'
+            ) : (
+              'Play'
+            )}
           </button>
           <button
             type="button"
@@ -78,6 +89,7 @@ export function CabinetLiveJournalTrackCard({
           </button>
         </div>
       </header>
+      <JournalTrackPlaybackSection sampleId={track.sampleId} playback={playback} />
       {exportError ? <p className="px-2 pb-2 text-xs text-error">{exportError}</p> : null}
     </article>
   );

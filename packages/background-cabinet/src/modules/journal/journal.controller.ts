@@ -65,6 +65,8 @@ export class JournalController {
       req.authUser!.id,
       query.limit,
       query.mediaDeviceId,
+      query.cursor,
+      query.filter,
     );
   }
 }

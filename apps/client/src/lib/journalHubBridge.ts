@@ -6,9 +6,8 @@ import {
 } from '@membrana/telemetry-journal-service';
 
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
-import { runLiveJournalTrackAndDroneAnalysis } from '@/lib/liveJournalDronePipeline';
-import { resolveJournalBackend } from '@/lib/resolveJournalBackend';
 import { subscribeMediaLibrarySampleImported } from '@/lib/mediaLibraryHub';
+import { resolveJournalBackend } from '@/lib/resolveJournalBackend';
 
 let bridgeInstalled = false;
 let serviceUnsub: (() => void) | null = null;
@@ -101,10 +100,12 @@ export function initJournalHubBridge(): () => void {
   }
   bridgeInstalled = true;
 
-  subscribeMediaLibrarySampleImported((payload) => {
-    void runLiveJournalTrackAndDroneAnalysis(payload).catch((err) => {
-      console.error('[journalHubBridge] live track/report pipeline failed', err);
-    });
+  subscribeMediaLibrarySampleImported(() => {
+    void getDefaultLiveJournalService()
+      .refresh()
+      .catch((err) => {
+        console.error('[journalHubBridge] refresh after sample import failed', err);
+      });
   });
 
   void reconfigureJournalFromConnection().catch((err) => {

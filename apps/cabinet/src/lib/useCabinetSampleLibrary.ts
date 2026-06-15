@@ -36,7 +36,7 @@ import { invalidateCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
 import { downloadBlob, extensionFromMime } from '@/lib/downloadBlob';
 import { useCabinetMediaLibrary } from '@/lib/useCabinetMediaLibrary';
 import { useCabinetToast } from '@/lib/useCabinetToast';
-import type { SampleLabel, UpdateSampleLabelNotes } from '@membrana/media-library-service';
+import type { UpdateSampleLabelNotes } from '@membrana/media-library-service';
 
 export type { LibrarySelection };
 

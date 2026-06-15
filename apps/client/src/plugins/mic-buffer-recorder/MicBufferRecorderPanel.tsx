@@ -284,10 +284,16 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
           aria-label="Заполнение квоты буфера"
         />
         <p className="text-xs text-base-content/60">
-          {snapshot.sampleCount} / {snapshot.maxBufferSamples} сэмплов в __buffer__
+          {snapshot.storageMode === 'browser-limited-fallback'
+            ? `${snapshot.sampleCount} / ${snapshot.maxBufferSamples} сэмплов в __buffer__`
+            : `${snapshot.sampleCount} сэмплов в __buffer__`}
         </p>
         {snapshot.recordingBlocked ? (
-          <p className="text-xs text-error">Запись заблокирована — квота или лимит сэмплов.</p>
+          <p className="text-xs text-error">
+            {snapshot.storageMode === 'browser-limited-fallback'
+              ? 'Запись заблокирована — квота или лимит сэмплов.'
+              : 'Запись заблокирована — квота буфера исчерпана.'}
+          </p>
         ) : null}
         <button
           type="button"
