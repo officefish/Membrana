@@ -80,3 +80,5 @@ export {
   ElectronJournalStorageBackend,
   createElectronJournalStorageBackend,
 } from './backends/electron-journal-storage-backend.js';
+
+export { useLiveJournal, type UseLiveJournalResult } from './hooks.js';

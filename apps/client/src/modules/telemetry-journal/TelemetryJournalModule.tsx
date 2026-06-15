@@ -1,90 +1,101 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ModuleProps } from '@membrana/agenda';
-import { useTelemetryJournal } from '@membrana/telemetry-service';
-
-import { JournalEntryItem } from './components/JournalEntryItem';
+import { getDefaultMediaLibraryService } from '@membrana/media-library-service';
 import {
-  countJournalFilters,
-  matchesJournalFilter,
-  type TelemetryJournalFilter,
-} from './filters/matchesTagFilter';
+  bindSamplePlaybackBlobReader,
+  type LiveJournalFilter,
+  countLiveJournalFilters,
+  matchesLiveJournalFilter,
+  useLiveJournal,
+} from '@membrana/telemetry-journal-service';
+
+import { LiveJournalItemRow } from './components/LiveJournalItemRow';
 import type { TelemetryJournalModuleConfig } from './types';
 
-const FILTER_OPTIONS: { value: TelemetryJournalFilter; label: string }[] = [
+const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'all', label: 'Все' },
-  { value: 'analysis', label: 'Анализ' },
-  { value: 'detection', label: 'Обнаружено' },
-  { value: 'clear', label: 'Чисто' },
-  { value: 'event', label: 'События' },
-  { value: 'system', label: 'Система' },
+  { value: 'tracks', label: 'Треки' },
+  { value: 'reports', label: 'Отчёты' },
+  { value: 'detections', label: 'Обнаружения' },
 ];
+
+const STORAGE_MODE_LABELS: Record<string, string> = {
+  'remote-server': 'Сервер',
+  'electron-fs': 'Desktop FS',
+  'browser-limited-fallback': 'Локально (сессия)',
+};
 
 export const TelemetryJournalModule: React.FC<
   ModuleProps<TelemetryJournalModuleConfig>
 > = ({ module: _module }) => {
-  const { snapshot, journal } = useTelemetryJournal();
-  const [filter, setFilter] = useState<TelemetryJournalFilter>('all');
+  const { snapshot, service } = useLiveJournal();
+  const [filter, setFilter] = useState<LiveJournalFilter>('all');
   const [search, setSearch] = useState('');
 
+  useEffect(() => {
+    bindSamplePlaybackBlobReader((sampleId) => getDefaultMediaLibraryService().getSampleBlob(sampleId));
+  }, []);
+
   const filterCounts = useMemo(
-    () => countJournalFilters(snapshot.entries),
-    [snapshot.entries, snapshot.version],
+    () => countLiveJournalFilters(snapshot.items),
+    [snapshot.items, snapshot.version],
   );
 
   const displayed = useMemo(() => {
-    let list = snapshot.entries.filter((e) => matchesJournalFilter(e, filter));
-    const q = search.trim().toLowerCase();
-    if (q) {
-      list = list.filter((e) => {
-        if (e.moduleName.toLowerCase().includes(q)) return true;
-        if (e.moduleId.toLowerCase().includes(q)) return true;
-        if (e.tags.some((t) => t.toLowerCase().includes(q))) return true;
-        try {
-          return JSON.stringify(e.data).toLowerCase().includes(q);
-        } catch {
-          return false;
-        }
+    let list = snapshot.items.filter((item) => matchesLiveJournalFilter(item, filter));
+    const query = search.trim().toLowerCase();
+    if (query) {
+      list = list.filter((item) => {
+        if (item.moduleName.toLowerCase().includes(query)) return true;
+        if (item.moduleId.toLowerCase().includes(query)) return true;
+        if (item.tags.some((tag) => tag.toLowerCase().includes(query))) return true;
+        if (item.track?.title.toLowerCase().includes(query)) return true;
+        if (item.track?.sampleId.toLowerCase().includes(query)) return true;
+        if (item.report?.summaryText?.toLowerCase().includes(query)) return true;
+        if (item.report?.trackId.toLowerCase().includes(query)) return true;
+        return false;
       });
     }
     return [...list].sort((a, b) => b.timestamp - a.timestamp);
-  }, [snapshot.entries, snapshot.version, filter, search]);
+  }, [snapshot.items, snapshot.version, filter, search]);
 
   const exportJson = () => {
     const blob = new Blob([JSON.stringify(displayed, null, 2)], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `telemetry_journal_${Date.now()}.json`;
-    a.click();
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `live_journal_${Date.now()}.json`;
+    anchor.click();
     URL.revokeObjectURL(url);
   };
 
-  const onClear = () => {
-    if (
-      confirm(
-        'Очистить весь журнал телеметрии в памяти? Действие необратимо для текущей вкладки.',
-      )
-    ) {
-      journal.clearEntries();
-    }
-  };
+  const storageLabel =
+    STORAGE_MODE_LABELS[snapshot.storageMode] ?? snapshot.storageMode;
 
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box w-full">
       <div className="card-body p-4 md:p-6 gap-4">
-        <p className="text-sm text-base-content/60">
-          Записи из{' '}
-          <code className="text-xs text-primary">@membrana/telemetry-service</code> в памяти
-          вкладки; источники — модули и плагины (например, агрегаты микрофона).
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-base-content/60 flex-1 min-w-[12rem]">
+            Live-журнал микрофона: 5‑с клипы и отчёты детекторов дрона.
+          </p>
+          <span className="badge badge-outline badge-sm">{storageLabel}</span>
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs min-h-8"
+            onClick={() => void service.refresh()}
+          >
+            Обновить
+          </button>
+        </div>
 
         <div className="flex flex-col gap-3">
           <div
             className="flex flex-wrap gap-2"
             role="group"
-            aria-label="Фильтр записей журнала"
+            aria-label="Фильтр live-журнала"
           >
             {FILTER_OPTIONS.map(({ value, label }) => (
               <button
@@ -110,17 +121,14 @@ export const TelemetryJournalModule: React.FC<
               <input
                 type="search"
                 className="input input-bordered input-sm w-full"
-                placeholder="модуль, тег, фрагмент JSON…"
+                placeholder="трек, sampleId, отчёт…"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(event) => setSearch(event.target.value)}
               />
             </label>
             <div className="flex flex-wrap gap-2">
               <button type="button" className="btn btn-sm btn-outline" onClick={exportJson}>
                 Экспорт JSON
-              </button>
-              <button type="button" className="btn btn-sm btn-error btn-outline" onClick={onClear}>
-                Очистить
               </button>
             </div>
           </div>
@@ -128,14 +136,14 @@ export const TelemetryJournalModule: React.FC<
 
         {displayed.length === 0 ? (
           <p className="text-sm text-center text-base-content/50 py-8 border border-dashed border-base-300 rounded-box">
-            Нет записей. Запустите модуль «Микрофон» и fft-threshold-test — в журнал попадут
-            отчёты анализа и события.
+            Нет записей. Запустите live-микрофон с авто-записью 5 с — появятся треки и отчёты
+            анализа.
           </p>
         ) : (
           <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
-            {displayed.map((e) => (
-              <li key={e.id}>
-                <JournalEntryItem entry={e} />
+            {displayed.map((item) => (
+              <li key={item.id}>
+                <LiveJournalItemRow item={item} items={snapshot.items} />
               </li>
             ))}
           </ul>
