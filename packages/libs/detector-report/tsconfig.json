@@ -7,8 +7,5 @@
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"],
-  "references": [
-    { "path": "../../services/detectors/base" }
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

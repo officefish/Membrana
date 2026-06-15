@@ -1,14 +1,11 @@
 import type {
-  AnalyzeSampleOptions,
-  SampleDetectionVerdict,
-  SampleFrameVerdict,
-} from '@membrana/detector-base';
-
-import type {
   CepstralBreakdown,
   CepstralFrameRow,
+  DetectorVerdictInput,
   DroneDetectorName,
   DroneDetectorVerdictSection,
+  DspAggregationOptions,
+  DspFrameVerdictInput,
   HarmonicBreakdown,
   HarmonicFrameRow,
   SpectralFluxBreakdown,
@@ -18,8 +15,8 @@ import type {
   TemplateScoreRow,
 } from './types.js';
 
-function pickFrameReasoning(frames: readonly SampleFrameVerdict[]): string | undefined {
-  let best: SampleFrameVerdict | undefined;
+function pickFrameReasoning(frames: readonly DspFrameVerdictInput[]): string | undefined {
+  let best: DspFrameVerdictInput | undefined;
   for (const frame of frames) {
     if (!best || frame.confidence > best.confidence) {
       best = frame;
@@ -28,7 +25,7 @@ function pickFrameReasoning(frames: readonly SampleFrameVerdict[]): string | und
   return best?.reasoning;
 }
 
-function resolveFundamentalHz(frame: SampleFrameVerdict): number | null {
+function resolveFundamentalHz(frame: DspFrameVerdictInput): number | null {
   const fromFeatures = frame.features?.fundamentalHz;
   if (fromFeatures !== undefined && fromFeatures > 0) {
     return fromFeatures;
@@ -39,9 +36,9 @@ function resolveFundamentalHz(frame: SampleFrameVerdict): number | null {
 
 function buildDspVerdictSectionBase(
   detectorName: DroneDetectorName,
-  verdict: SampleDetectionVerdict,
-  options: Pick<AnalyzeSampleOptions, 'aggregation' | 'sampleConfidenceThreshold'>,
-  frames: readonly SampleFrameVerdict[],
+  verdict: DetectorVerdictInput,
+  options: DspAggregationOptions,
+  frames: readonly DspFrameVerdictInput[],
   breakdown:
     | HarmonicBreakdown
     | CepstralBreakdown
@@ -63,8 +60,8 @@ function buildDspVerdictSectionBase(
 }
 
 export function mapHarmonicBreakdown(
-  frames: readonly SampleFrameVerdict[],
-  options: Pick<AnalyzeSampleOptions, 'aggregation' | 'sampleConfidenceThreshold'>,
+  frames: readonly DspFrameVerdictInput[],
+  options: DspAggregationOptions,
 ): HarmonicBreakdown {
   const rows: HarmonicFrameRow[] = frames.map((frame) => ({
     index: frame.index,
@@ -86,8 +83,8 @@ export function mapHarmonicBreakdown(
 }
 
 export function mapCepstralBreakdown(
-  frames: readonly SampleFrameVerdict[],
-  options: Pick<AnalyzeSampleOptions, 'aggregation' | 'sampleConfidenceThreshold'>,
+  frames: readonly DspFrameVerdictInput[],
+  options: DspAggregationOptions,
 ): CepstralBreakdown {
   const rows: CepstralFrameRow[] = frames.map((frame) => ({
     index: frame.index,
@@ -109,8 +106,8 @@ export function mapCepstralBreakdown(
 }
 
 export function mapSpectralFluxBreakdown(
-  frames: readonly SampleFrameVerdict[],
-  options: Pick<AnalyzeSampleOptions, 'aggregation' | 'sampleConfidenceThreshold'>,
+  frames: readonly DspFrameVerdictInput[],
+  options: DspAggregationOptions,
 ): SpectralFluxBreakdown {
   const rows: SpectralFluxFrameRow[] = frames.map((frame) => ({
     index: frame.index,
@@ -160,9 +157,9 @@ export function mapTemplateMatchBreakdown(input: {
 }
 
 export function buildHarmonicVerdictSection(
-  verdict: SampleDetectionVerdict,
-  frames: readonly SampleFrameVerdict[],
-  options: Pick<AnalyzeSampleOptions, 'aggregation' | 'sampleConfidenceThreshold'>,
+  verdict: DetectorVerdictInput,
+  frames: readonly DspFrameVerdictInput[],
+  options: DspAggregationOptions,
 ): DroneDetectorVerdictSection {
   return buildDspVerdictSectionBase(
     'harmonic',
@@ -174,9 +171,9 @@ export function buildHarmonicVerdictSection(
 }
 
 export function buildCepstralVerdictSection(
-  verdict: SampleDetectionVerdict,
-  frames: readonly SampleFrameVerdict[],
-  options: Pick<AnalyzeSampleOptions, 'aggregation' | 'sampleConfidenceThreshold'>,
+  verdict: DetectorVerdictInput,
+  frames: readonly DspFrameVerdictInput[],
+  options: DspAggregationOptions,
 ): DroneDetectorVerdictSection {
   return buildDspVerdictSectionBase(
     'cepstral',
@@ -188,9 +185,9 @@ export function buildCepstralVerdictSection(
 }
 
 export function buildSpectralFluxVerdictSection(
-  verdict: SampleDetectionVerdict,
-  frames: readonly SampleFrameVerdict[],
-  options: Pick<AnalyzeSampleOptions, 'aggregation' | 'sampleConfidenceThreshold'>,
+  verdict: DetectorVerdictInput,
+  frames: readonly DspFrameVerdictInput[],
+  options: DspAggregationOptions,
 ): DroneDetectorVerdictSection {
   return buildDspVerdictSectionBase(
     'spectral-flux',
@@ -202,7 +199,7 @@ export function buildSpectralFluxVerdictSection(
 }
 
 export function buildTemplateMatchVerdictSection(
-  verdict: SampleDetectionVerdict,
+  verdict: DetectorVerdictInput,
   breakdown: TemplateMatchBreakdown,
   reasoning?: string,
 ): DroneDetectorVerdictSection {

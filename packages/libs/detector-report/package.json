@@ -23,9 +23,6 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
-  "dependencies": {
-    "@membrana/detector-base": "*"
-  },
   "devDependencies": {
     "eslint": "^8.57.0",
     "rimraf": "^5.0.0",

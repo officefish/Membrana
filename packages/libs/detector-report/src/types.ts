@@ -134,3 +134,25 @@ export interface BuildDroneDetectionReportInput {
   readonly sample: BuildDroneDetectionReportSample;
   readonly verdicts: readonly DroneDetectorVerdictSection[];
 }
+
+/** Frame-level input for mapping DSP breakdown tables (DDR2). */
+export interface DspFrameVerdictInput {
+  readonly index: number;
+  readonly timestampMs: number;
+  readonly isDrone: boolean;
+  readonly confidence: number;
+  readonly reasoning?: string;
+  readonly fundamentalsHz?: readonly number[];
+  readonly features?: Readonly<Record<string, number>>;
+}
+
+/** Sample-level verdict input for report section headers. */
+export interface DetectorVerdictInput {
+  readonly isDrone: boolean;
+  readonly confidence: number;
+}
+
+export interface DspAggregationOptions {
+  readonly aggregation?: string;
+  readonly sampleConfidenceThreshold?: number;
+}
