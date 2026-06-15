@@ -22,6 +22,7 @@ const DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
 const MANIFEST_PATH = join(DATASET_DIR, 'manifest.json');
 const REPORT_JSON = join(DATASET_DIR, 'reports', 'latest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
+const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
 const HARMONIC_DIST = join(
   ROOT,
   'packages',
@@ -32,56 +33,20 @@ const HARMONIC_DIST = join(
   'index.js',
 );
 
-async function ensureHarmonicBuilt() {
+async function ensureBuilt(distPath, label) {
   try {
-    await access(HARMONIC_DIST);
+    await access(distPath);
   } catch {
-    throw new Error(
-      'Harmonic detector not built. Run: yarn turbo run build --filter=@membrana/harmonic-detector-service',
-    );
+    throw new Error(`${label} not built. Run: yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service`);
   }
-}
-
-/** @param {Float32Array} samples @param {number} fftSize @param {number} hop */
-function* iterWindows(samples, fftSize, hop) {
-  for (let start = 0; start + fftSize <= samples.length; start += hop) {
-    yield samples.subarray(start, start + fftSize);
-  }
-}
-
-/**
- * @param {import('@membrana/harmonic-detector-service').DroneDetector} detector
- * @param {Float32Array} samples
- * @param {number} sampleRate
- * @param {number} fftSize
- */
-async function evaluateFile(detector, samples, sampleRate, fftSize) {
-  const hop = Math.floor(fftSize / 2);
-  const latencies = [];
-  let predictedDrone = false;
-  let maxConfidence = 0;
-
-  for (const chunk of iterWindows(samples, fftSize, hop)) {
-    const result = await detector.detect({
-      samples: chunk,
-      sampleRate,
-      timestamp: 0,
-      durationSec: chunk.length / sampleRate,
-    });
-    latencies.push(result.latencyMs);
-    if (result.isDrone) predictedDrone = true;
-    if (result.confidence > maxConfidence) maxConfidence = result.confidence;
-  }
-
-  return { predictedDrone, maxConfidence, latencies };
 }
 
 async function runHarmonic(manifestSamples) {
+  const { analyzeSample } = await import(pathToFileURL(DETECTOR_BASE_DIST).href);
   const { createHarmonicDetector, DEFAULT_FFT_SIZE } = await import(
     pathToFileURL(HARMONIC_DIST).href
   );
   const detector = createHarmonicDetector();
-  const fftSize = DEFAULT_FFT_SIZE;
 
   /** @type {{ id: string; truthDrone: boolean; predDrone: boolean; maxConfidence: number }[]} */
   const perSample = [];
@@ -90,20 +55,17 @@ async function runHarmonic(manifestSamples) {
   for (const entry of manifestSamples) {
     const wavPath = join(DATASET_DIR, entry.path);
     const { samples, sampleRate } = await readWavMono(wavPath);
-    const { predictedDrone, maxConfidence, latencies } = await evaluateFile(
-      detector,
-      samples,
-      sampleRate,
-      fftSize,
-    );
+    const { verdict, frameLatenciesMs } = await analyzeSample(samples, sampleRate, detector, {
+      fftSize: DEFAULT_FFT_SIZE,
+    });
     const truthDrone = entry.label === 'drone';
     perSample.push({
       id: entry.id,
       truthDrone,
-      predDrone: predictedDrone,
-      maxConfidence,
+      predDrone: verdict.isDrone,
+      maxConfidence: verdict.confidence,
     });
-    allLatencies.push(...latencies);
+    allLatencies.push(...frameLatenciesMs);
   }
 
   const pairs = perSample.map((s) => ({
@@ -143,7 +105,8 @@ const SCAFFOLD_DETECTORS = [
 ];
 
 async function main() {
-  await ensureHarmonicBuilt();
+  await ensureBuilt(DETECTOR_BASE_DIST, 'detector-base');
+  await ensureBuilt(HARMONIC_DIST, 'harmonic-detector');
 
   const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
   const withSplit = manifest.samples.filter((s) => s.split === 'test');

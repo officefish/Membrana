@@ -6,6 +6,16 @@ export type {
   DroneDetector,
 } from './types.js';
 export { audioWindowFromFrame } from './types.js';
+export {
+  analyzeSample,
+  DEFAULT_ANALYZE_FFT_SIZE,
+  DEFAULT_ANALYZE_HOP_RATIO,
+} from './analyze-sample.js';
+export type {
+  AnalyzeSampleOptions,
+  AnalyzeSampleResult,
+  SampleDetectionVerdict,
+} from './analyze-sample.js';
 export { NotImplementedError } from './errors.js';
 export { createMockDroneDetector } from './mock-detector.js';
 export {

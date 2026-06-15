@@ -25,6 +25,10 @@ import {
   SampleLibraryPlayerPanel,
 } from '../plugins/sample-library-player';
 import {
+  SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID,
+  SampleLibraryDroneAnalysisPanel,
+} from '../plugins/sample-library-drone-analysis';
+import {
   TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
   TrendsFftSampleAnalyzerPanel,
 } from '../plugins/trends-fft-sample-analyzer';
@@ -176,6 +180,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
       {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
         <SampleLibraryPlayerPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
+        <SampleLibraryDroneAnalysisPanel moduleId={module.id} />
       ) : null}
 
       {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (

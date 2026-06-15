@@ -1,8 +1,8 @@
 # DATASET — датасет для бенчмарка детекторов
 
-> **Статус (канонический):** **v0.2 free-v1** (2026-06-14) — 120 реальных WAV × 5 с (60 drone / 60 not-drone), test-split; тарифный системный датасет + `yarn benchmark:detectors`.  
-> Манифест: [`data/detectors-benchmark/v0.2/manifest.json`](../data/detectors-benchmark/v0.2/manifest.json) · sync: `yarn dataset:sync-free-v1` из [`docs/datasets/samples/real-collection/`](../docs/datasets/samples/real-collection/).  
-> **Legacy v0.1** — 9 синтетических сэмплов для CI-smoke: [`data/detectors-benchmark/v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json).
+> **Статус (канонический):** **v0.2 free-v1** (2026-06-14) — 120 реальных WAV × 5 с (60 drone / 60 not-drone); агрегация через `@membrana/detector-base` **`analyzeSample()`**.  
+> Манифест: [`data/detectors-benchmark/v0.2/manifest.json`](../data/detectors-benchmark/v0.2/manifest.json) · sync: `yarn dataset:sync-free-v1`  
+> **Legacy v0.1** — 9 синтетических сэмплов: только CI-smoke, **не** для stage-gate и калибровки ([`v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json)).
 
 ## v0.2 — free-v1 (120 × 5 с)
 
