@@ -25,6 +25,19 @@ export interface AnalyzeSampleOptions {
   readonly minDroneFrameRatio?: number;
   /** Post-aggregation confidence gate; when set, `isDrone` also requires `confidence >=` this. */
   readonly sampleConfidenceThreshold?: number;
+  /** Include per-frame verdict rows in the result (for detailed reports). */
+  readonly includeFrameVerdicts?: boolean;
+}
+
+/** Per-frame detector output for sample-level analysis. */
+export interface SampleFrameVerdict {
+  readonly index: number;
+  readonly timestampMs: number;
+  readonly isDrone: boolean;
+  readonly confidence: number;
+  readonly reasoning?: string;
+  readonly fundamentalsHz?: readonly number[];
+  readonly features?: Readonly<Record<string, number>>;
 }
 
 /** Aggregated drone verdict for one 5 s sample and one detector. */
@@ -44,6 +57,7 @@ export interface SampleDetectionVerdict {
 export interface AnalyzeSampleResult {
   readonly verdict: SampleDetectionVerdict;
   readonly frameLatenciesMs: readonly number[];
+  readonly frameVerdicts?: readonly SampleFrameVerdict[];
 }
 
 function* iterWindows(
@@ -82,7 +96,9 @@ export async function analyzeSample(
 
   const frameResults: DetectionResult[] = [];
   const frameLatenciesMs: number[] = [];
+  const frameVerdicts: SampleFrameVerdict[] = [];
   let timestampMs = 0;
+  let frameIndex = 0;
 
   for (const chunk of iterWindows(samples, fftSize, hop)) {
     const durationSec = chunk.length / sampleRate;
@@ -95,6 +111,20 @@ export async function analyzeSample(
     const result = await detector.detect(window);
     frameResults.push(result);
     frameLatenciesMs.push(result.latencyMs);
+    if (options.includeFrameVerdicts) {
+      frameVerdicts.push({
+        index: frameIndex,
+        timestampMs,
+        isDrone: result.isDrone,
+        confidence: result.confidence,
+        ...(result.reasoning !== undefined ? { reasoning: result.reasoning } : {}),
+        ...(result.fundamentalsHz !== undefined
+          ? { fundamentalsHz: result.fundamentalsHz }
+          : {}),
+        ...(result.features !== undefined ? { features: result.features } : {}),
+      });
+    }
+    frameIndex += 1;
     timestampMs += (hop / sampleRate) * 1000;
   }
 
@@ -163,5 +193,6 @@ export async function analyzeSample(
       fundamentalsHz: pickFundamentalsHz(frameResults),
     },
     frameLatenciesMs,
+    ...(options.includeFrameVerdicts ? { frameVerdicts } : {}),
   };
 }

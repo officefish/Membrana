@@ -1,4 +1,5 @@
 import type { SampleDetectionVerdict } from '@membrana/detector-base';
+import type { DroneDetectionReport } from '@membrana/detector-report';
 
 export const SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID = 'sample-library-drone-analysis';
 
@@ -33,6 +34,7 @@ export interface SampleLibraryDroneSnapshot {
   readonly selectedSampleTitle: string | null;
   readonly status: SampleLibraryDroneAnalysisStatus;
   readonly verdicts: readonly SampleDetectionVerdict[];
+  readonly detectionReport: DroneDetectionReport | null;
   readonly analyzedSampleId: string | null;
   readonly errorMessage: string | null;
 }

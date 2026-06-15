@@ -1,87 +1,48 @@
 import type { AudioWindow, DetectionResult, DroneDetector } from '@membrana/detector-base';
-import { classifyTrends } from '@membrana/trends-detector-service';
 
-import { collectMetricSamples } from '../collect-metric-samples.js';
-import {
-  DEFAULT_ACTIVITY_RMS_THRESHOLD,
-  DEFAULT_INTERVAL_MS,
-  DEFAULT_MEASUREMENTS_COUNT,
-  DEFAULT_MIN_CONFIDENCE,
-  DRONE_TEMPLATE_KEY_PREFIX,
-} from '../constants.js';
-import { isDroneTemplateKey } from '../resolve-catalog.js';
+import { runTemplateMatchSampleAnalysis } from '../run-template-match-analysis.js';
 import type { TemplateMatchDetectorConfig } from '../types.js';
 
 export class TemplateMatchDetector implements DroneDetector {
   readonly name = 'template-match';
   readonly family = 'dsp' as const;
 
-  private readonly config: Required<
-    Pick<
-      TemplateMatchDetectorConfig,
-      'templates' | 'minConfidence' | 'activityRmsThreshold' | 'droneKeyPrefix'
-    >
-  > & {
-    metricCollection: NonNullable<TemplateMatchDetectorConfig['metricCollection']>;
-  };
+  private readonly config: TemplateMatchDetectorConfig;
 
   constructor(config: TemplateMatchDetectorConfig) {
-    if (config.templates.length === 0) {
-      throw new Error('TemplateMatchDetector requires at least one template');
-    }
-    this.config = {
-      templates: config.templates,
-      minConfidence: config.minConfidence ?? DEFAULT_MIN_CONFIDENCE,
-      activityRmsThreshold: config.activityRmsThreshold ?? DEFAULT_ACTIVITY_RMS_THRESHOLD,
-      droneKeyPrefix: config.droneKeyPrefix ?? DRONE_TEMPLATE_KEY_PREFIX,
-      metricCollection: {
-        measurementsCount:
-          config.metricCollection?.measurementsCount ?? DEFAULT_MEASUREMENTS_COUNT,
-        intervalMs: config.metricCollection?.intervalMs ?? DEFAULT_INTERVAL_MS,
-        fftSize: config.metricCollection?.fftSize,
-      },
-    };
+    this.config = config;
   }
 
   detect(window: AudioWindow): Promise<DetectionResult> {
     const t0 = performance.now();
-    const metricSamples = collectMetricSamples(
+    const analysis = runTemplateMatchSampleAnalysis(
       window.samples,
       window.sampleRate,
-      this.config.metricCollection,
+      this.config,
+      performance.now() - t0,
     );
 
-    if (metricSamples.length === 0) {
+    if (analysis.trendsResult.samples.length === 0) {
       return Promise.resolve({
         isDrone: false,
         confidence: 0,
         reasoning: 'Недостаточно данных для FFT-трендов',
-        latencyMs: performance.now() - t0,
+        latencyMs: analysis.verdict.latencyMsTotal,
       });
     }
 
-    const result = classifyTrends(metricSamples, this.config.templates, {
-      minConfidence: this.config.minConfidence,
-      activityRmsThreshold: this.config.activityRmsThreshold,
-    });
-
-    const isDrone =
-      result.isDetected &&
-      isDroneTemplateKey(result.detectedState, this.config.droneKeyPrefix) &&
-      result.confidence >= this.config.minConfidence;
-
-    const confidence = result.confidence / 100;
+    const { trendsResult, verdict } = analysis;
 
     return Promise.resolve({
-      isDrone,
-      confidence,
-      reasoning: `${result.detectedStateName} (${Math.round(result.confidence)}%)`,
+      isDrone: verdict.isDrone,
+      confidence: verdict.confidence,
+      reasoning: `${trendsResult.detectedStateName} (${Math.round(trendsResult.confidence)}%)`,
       features: {
-        detectedState: result.detectedState === 'UNKNOWN' ? 0 : 1,
-        metricSampleCount: metricSamples.length,
-        winnerScore: result.confidence,
+        detectedState: trendsResult.detectedState === 'UNKNOWN' ? 0 : 1,
+        metricSampleCount: trendsResult.samples.length,
+        winnerScore: trendsResult.confidence,
       },
-      latencyMs: performance.now() - t0,
+      latencyMs: verdict.latencyMsTotal,
     });
   }
 }

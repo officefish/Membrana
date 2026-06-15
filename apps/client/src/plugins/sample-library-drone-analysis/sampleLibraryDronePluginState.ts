@@ -1,4 +1,5 @@
 import type { SampleDetectionVerdict } from '@membrana/detector-base';
+import type { DroneDetectionReport } from '@membrana/detector-report';
 
 import type { SampleLibraryDroneAnalysisStatus, SampleLibraryDroneSnapshot } from './types';
 
@@ -7,6 +8,7 @@ class SampleLibraryDronePluginStateImpl {
   private selectedSampleTitle: string | null = null;
   private status: SampleLibraryDroneAnalysisStatus = 'idle';
   private verdicts: SampleDetectionVerdict[] = [];
+  private detectionReport: DroneDetectionReport | null = null;
   private analyzedSampleId: string | null = null;
   private errorMessage: string | null = null;
 
@@ -34,6 +36,7 @@ class SampleLibraryDronePluginStateImpl {
 
     if (sampleChanged && this.analyzedSampleId !== params.selectedSampleId) {
       this.verdicts = [];
+      this.detectionReport = null;
       this.analyzedSampleId = null;
       this.errorMessage = null;
       if (this.status !== 'loading') {
@@ -51,10 +54,15 @@ class SampleLibraryDronePluginStateImpl {
     this.rebuild();
   }
 
-  finishAnalysis(sampleId: string, verdicts: readonly SampleDetectionVerdict[]): void {
+  finishAnalysis(
+    sampleId: string,
+    verdicts: readonly SampleDetectionVerdict[],
+    report: DroneDetectionReport,
+  ): void {
     this.status = 'ready';
     this.analyzedSampleId = sampleId;
     this.verdicts = [...verdicts];
+    this.detectionReport = report;
     this.errorMessage = null;
     this.rebuild();
   }
@@ -62,6 +70,7 @@ class SampleLibraryDronePluginStateImpl {
   failAnalysis(message: string): void {
     this.status = 'error';
     this.verdicts = [];
+    this.detectionReport = null;
     this.errorMessage = message;
     this.rebuild();
   }
@@ -71,6 +80,7 @@ class SampleLibraryDronePluginStateImpl {
     this.selectedSampleTitle = null;
     this.status = 'idle';
     this.verdicts = [];
+    this.detectionReport = null;
     this.analyzedSampleId = null;
     this.errorMessage = null;
     this.rebuild();
@@ -82,6 +92,7 @@ class SampleLibraryDronePluginStateImpl {
       selectedSampleTitle: this.selectedSampleTitle,
       status: this.status,
       verdicts: this.verdicts,
+      detectionReport: this.detectionReport,
       analyzedSampleId: this.analyzedSampleId,
       errorMessage: this.errorMessage,
     };

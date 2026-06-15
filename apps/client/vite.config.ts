@@ -54,6 +54,9 @@ export default defineConfig(({ mode }) => {
         '@membrana/audio-data-viz': fileURLToPath(
           new URL('../../packages/libs/audioDataViz/src/index.ts', import.meta.url),
         ),
+        '@membrana/detector-report': fileURLToPath(
+          new URL('../../packages/libs/detector-report/src/index.ts', import.meta.url),
+        ),
         '@membrana/detector-base': fileURLToPath(
           new URL('../../packages/services/detectors/base/src/index.ts', import.meta.url),
         ),

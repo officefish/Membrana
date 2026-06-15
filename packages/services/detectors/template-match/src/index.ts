@@ -2,7 +2,8 @@ export {
   TemplateMatchDetector,
   createTemplateMatchDetector,
 } from './core/template-match-detector.js';
-export { analyzeTemplateMatch } from './analyze-template-match.js';
+export { analyzeTemplateMatch, analyzeTemplateMatchDetailed } from './analyze-template-match.js';
+export type { TemplateMatchSampleAnalysis } from './run-template-match-analysis.js';
 export { collectMetricSamples } from './collect-metric-samples.js';
 export {
   buildTemplateFromMetricSamples,

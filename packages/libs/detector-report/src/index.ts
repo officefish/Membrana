@@ -26,6 +26,16 @@ export { createReportId } from './createReportId.js';
 export { droneDetectionTelemetryReportUniqueId } from './telemetryReportUniqueId.js';
 export { buildDroneDetectionReport } from './buildDroneDetectionReport.js';
 export {
+  buildCepstralVerdictSection,
+  buildHarmonicVerdictSection,
+  buildSpectralFluxVerdictSection,
+  buildTemplateMatchVerdictSection,
+  mapCepstralBreakdown,
+  mapHarmonicBreakdown,
+  mapSpectralFluxBreakdown,
+  mapTemplateMatchBreakdown,
+} from './mapFromFrameVerdicts.js';
+export {
   downloadDroneDetectionReport,
   downloadTextFile,
   exportDroneDetectionReportJson,

@@ -38,6 +38,7 @@ export class CepstralDetector implements DroneDetector {
       fundamentalsHz: spectrum.fundamentalHz ? [spectrum.fundamentalHz] : undefined,
       features: {
         fundamentalHz: spectrum.fundamentalHz ?? 0,
+        cepstrumPeak: peakRatio,
       },
       latencyMs: performance.now() - t0,
     });

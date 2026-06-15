@@ -55,9 +55,13 @@ export function createSampleLibraryDroneAnalysisPlugin(): Plugin<SampleLibraryDr
         sampleLibraryDronePluginState.beginAnalysis(sampleId);
 
         try {
-          const verdicts = await analyzeSampleDetectors(sampleId);
+          const hub = getSamplePlaybackSnapshot();
+          const { verdicts, report } = await analyzeSampleDetectors(
+            sampleId,
+            hub.selectedTitle,
+          );
           if (disposed) return;
-          sampleLibraryDronePluginState.finishAnalysis(sampleId, verdicts);
+          sampleLibraryDronePluginState.finishAnalysis(sampleId, verdicts, report);
         } catch (e) {
           if (disposed) return;
           const message = e instanceof Error ? e.message : String(e);

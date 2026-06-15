@@ -16,6 +16,7 @@ export type {
   AnalyzeSampleResult,
   SampleAggregationMode,
   SampleDetectionVerdict,
+  SampleFrameVerdict,
 } from './analyze-sample.js';
 export { NotImplementedError } from './errors.js';
 export { createMockDroneDetector } from './mock-detector.js';

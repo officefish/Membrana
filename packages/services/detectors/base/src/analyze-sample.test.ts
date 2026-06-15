@@ -45,4 +45,30 @@ describe('analyzeSample', () => {
     expect(verdict.maxFrameConfidence).toBe(0.82);
     expect(verdict.latencyMsTotal).toBeGreaterThan(0);
   });
+
+  it('returns frameVerdicts when includeFrameVerdicts is true', async () => {
+    const detector: import('./types.js').DroneDetector = {
+      name: 'mock-seq',
+      family: 'dsp',
+      detect: async (window) => ({
+        isDrone: window.timestamp > 0,
+        confidence: window.timestamp > 0 ? 0.7 : 0.2,
+        latencyMs: 1,
+        features: { spectralFlux: 0.5 },
+      }),
+    };
+
+    const samples = harmonicDroneWindow().samples;
+    const { frameVerdicts } = await analyzeSample(samples, 48_000, detector, {
+      fftSize: 2048,
+      hopSize: 1024,
+      includeFrameVerdicts: true,
+    });
+
+    expect(frameVerdicts).toBeDefined();
+    expect(frameVerdicts!.length).toBeGreaterThan(1);
+    expect(frameVerdicts![0]?.index).toBe(0);
+    expect(frameVerdicts![0]?.timestampMs).toBe(0);
+    expect(frameVerdicts![1]?.features?.spectralFlux).toBe(0.5);
+  });
 });

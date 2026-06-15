@@ -1119,6 +1119,7 @@ __metadata:
     "@membrana/cepstral-detector-service": "npm:*"
     "@membrana/core": "npm:*"
     "@membrana/detector-base": "npm:*"
+    "@membrana/detector-report": "npm:*"
     "@membrana/device-board": "npm:*"
     "@membrana/fft-analyzer-service": "npm:*"
     "@membrana/harmonic-detector-service": "npm:*"
@@ -1171,10 +1172,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/detector-report@workspace:packages/libs/detector-report":
+"@membrana/detector-report@npm:*, @membrana/detector-report@workspace:packages/libs/detector-report":
   version: 0.0.0-use.local
   resolution: "@membrana/detector-report@workspace:packages/libs/detector-report"
   dependencies:
+    "@membrana/detector-base": "npm:*"
     eslint: "npm:^8.57.0"
     rimraf: "npm:^5.0.0"
     typescript: "npm:^5.4.0"

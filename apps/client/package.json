@@ -22,6 +22,7 @@
     "@membrana/cepstral-detector-service": "*",
     "@membrana/core": "*",
     "@membrana/detector-base": "*",
+    "@membrana/detector-report": "*",
     "@membrana/device-board": "*",
     "@membrana/fft-analyzer-service": "*",
     "@membrana/harmonic-detector-service": "*",
