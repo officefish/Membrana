@@ -15,9 +15,10 @@ COPY tsconfig.base.json ./
 COPY packages/core packages/core
 COPY packages/services/media-library packages/services/media-library
 COPY packages/services/audio-engine packages/services/audio-engine
+COPY packages/services/sample-playback packages/services/sample-playback
 COPY apps/cabinet apps/cabinet
 
-RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/media-library-service @membrana/audio-engine-service --all \
+RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service --all \
   && yarn workspace @membrana/cabinet exec vite build
 
 FROM nginx:1.27-alpine AS runtime

@@ -27,6 +27,8 @@ packages/services
 !packages/services/media-library/**
 !packages/services/audio-engine
 !packages/services/audio-engine/**
+!packages/services/sample-playback
+!packages/services/sample-playback/**
 packages/background-office
 docs
 scripts
