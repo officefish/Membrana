@@ -12,6 +12,7 @@ import type {
   SpectralFluxFrameRow,
   TemplateMatchBreakdown,
   TemplateMatchFieldRow,
+  TemplateMatchMetricSampleRow,
   TemplateScoreRow,
 } from './types.js';
 
@@ -137,6 +138,7 @@ export function mapTemplateMatchBreakdown(input: {
   readonly temporalScore: number;
   readonly fields: readonly TemplateMatchFieldRow[];
   readonly topTemplates: readonly TemplateScoreRow[];
+  readonly metricSamples?: readonly TemplateMatchMetricSampleRow[];
 }): TemplateMatchBreakdown {
   return {
     kind: 'template-match',
@@ -148,6 +150,7 @@ export function mapTemplateMatchBreakdown(input: {
       spectralScore: input.spectralScore / 100,
       temporalScore: input.temporalScore / 100,
     },
+    metricSamples: input.metricSamples ?? [],
     fields: input.fields,
     topTemplates: input.topTemplates.map((row) => ({
       ...row,

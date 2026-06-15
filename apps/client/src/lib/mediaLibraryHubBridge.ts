@@ -1,6 +1,8 @@
 import {
   BUFFER_COLLECTION_ID,
   configureDefaultMediaLibraryService,
+  createBrowserLimitedStorageBackend,
+  DEFAULT_LOCAL_QUOTA_BYTES,
   getDefaultMediaLibraryService,
   isBufferRecordingBlocked,
   resolveBufferQuota,
@@ -21,6 +23,9 @@ import {
 let bridgeInstalled = false;
 let serviceUnsub: (() => void) | null = null;
 let configureGeneration = 0;
+let pairedUpgradeTimer: ReturnType<typeof setInterval> | null = null;
+
+const PAIRED_MEDIA_UPGRADE_INTERVAL_MS = 30_000;
 
 function pushQuotaSnapshot(): void {
   const svc = getDefaultMediaLibraryService();
@@ -40,13 +45,19 @@ function pushQuotaSnapshot(): void {
   });
 }
 
-async function attachService(svc: MediaLibraryService): Promise<void> {
+async function attachService(svc: MediaLibraryService): Promise<boolean> {
   serviceUnsub?.();
-  await svc.init();
+  try {
+    await svc.init();
+  } catch (err) {
+    console.error('[mediaLibraryHubBridge] media library init failed', err);
+    return false;
+  }
   serviceUnsub = svc.subscribe(() => {
     pushQuotaSnapshot();
   });
   pushQuotaSnapshot();
+  return true;
 }
 
 async function handleCaptureStop(payload: MediaLibraryCaptureStopPayload): Promise<void> {
@@ -74,7 +85,60 @@ export async function reconfigureMediaLibraryFromConnection(
   if (generation !== configureGeneration) return;
   const svc = configureDefaultMediaLibraryService(backend);
   if (generation !== configureGeneration) return;
-  await attachService(svc);
+  const attached = await attachService(svc);
+  if (generation !== configureGeneration) return;
+  if (!attached && mode === 'paired' && pairing) {
+    const fallback = createBrowserLimitedStorageBackend(DEFAULT_LOCAL_QUOTA_BYTES);
+    const fallbackSvc = configureDefaultMediaLibraryService(fallback);
+    if (generation !== configureGeneration) return;
+    await attachService(fallbackSvc);
+  }
+}
+
+/** Re-attach server backend when paired but library still uses browser fallback. */
+export async function tryUpgradeMediaLibraryToRemote(
+  mode: NodeConnectionMode | null,
+  pairing: PairedNodeCredentials | null,
+): Promise<void> {
+  if (mode !== 'paired' || !pairing) return;
+  const snap = getDefaultMediaLibraryService().getSnapshot();
+  if (snap.quota.backend === 'server') {
+    if (!snap.quota.serverReachable) {
+      try {
+        await getDefaultMediaLibraryService().refresh();
+      } catch (err) {
+        console.error('[mediaLibraryHubBridge] media library refresh failed', err);
+      }
+    }
+    return;
+  }
+  try {
+    await reconfigureMediaLibraryFromConnection(mode, pairing);
+  } catch (err) {
+    console.error('[mediaLibraryHubBridge] media library upgrade failed', err);
+  }
+}
+
+export function stopPairedMediaLibraryUpgrade(): void {
+  if (pairedUpgradeTimer) {
+    window.clearInterval(pairedUpgradeTimer);
+    pairedUpgradeTimer = null;
+  }
+}
+
+/** Periodically retry server backend while node stays paired. */
+export function schedulePairedMediaLibraryUpgrade(
+  mode: NodeConnectionMode | null,
+  pairing: PairedNodeCredentials | null,
+): void {
+  stopPairedMediaLibraryUpgrade();
+  if (mode !== 'paired' || !pairing) return;
+
+  const tick = (): void => {
+    void tryUpgradeMediaLibraryToRemote(mode, pairing);
+  };
+  void tick();
+  pairedUpgradeTimer = window.setInterval(tick, PAIRED_MEDIA_UPGRADE_INTERVAL_MS);
 }
 
 /** Wire hub → media-library-service (call once at app startup). */
@@ -90,7 +154,9 @@ export function initMediaLibraryHubBridge(): () => void {
     });
   });
 
-  void reconfigureMediaLibraryFromConnection();
+  void reconfigureMediaLibraryFromConnection().catch((err) => {
+    console.error('[mediaLibraryHubBridge] startup configure failed', err);
+  });
 
   return () => {
     bridgeInstalled = false;
@@ -104,6 +170,7 @@ export function resetMediaLibraryHubBridgeForTests(): void {
   bridgeInstalled = false;
   serviceUnsub = null;
   configureGeneration = 0;
+  stopPairedMediaLibraryUpgrade();
 }
 
 export async function requestClearMediaLibraryBuffer(): Promise<void> {

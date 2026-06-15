@@ -6,6 +6,7 @@ import {
 } from '@membrana/sample-playback-service';
 
 import { analyzeSampleDetectors } from './analyzeSampleDetectors';
+import { logDroneDetectionReport } from './droneAnalysisTelemetry';
 import {
   registerSampleLibraryDroneController,
   sampleLibraryDronePluginState,
@@ -62,6 +63,7 @@ export function createSampleLibraryDroneAnalysisPlugin(): Plugin<SampleLibraryDr
           );
           if (disposed) return;
           sampleLibraryDronePluginState.finishAnalysis(sampleId, verdicts, report);
+          logDroneDetectionReport(moduleId, report);
         } catch (e) {
           if (disposed) return;
           const message = e instanceof Error ? e.message : String(e);

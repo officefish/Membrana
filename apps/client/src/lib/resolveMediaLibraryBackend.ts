@@ -38,14 +38,30 @@ function readPersistedConnection(): PersistedNodeConnection {
   }
 }
 
-async function createPairedBackend(pairing: PairedNodeCredentials): Promise<IStorageBackend | null> {
-  const mediaOk = await pingMediaApi(pairing.mediaApiUrl, pairing.mediaToken, pairing.deviceId);
-  if (!mediaOk) return null;
-  return createServerStorageBackend({
-    baseUrl: resolveMediaApiBase(pairing.mediaApiUrl),
-    deviceId: pairing.deviceId,
-    mediaToken: pairing.mediaToken,
+const PAIRED_MEDIA_PING_ATTEMPTS = 3;
+const PAIRED_MEDIA_PING_DELAY_MS = 400;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
   });
+}
+
+async function createPairedBackend(pairing: PairedNodeCredentials): Promise<IStorageBackend | null> {
+  for (let attempt = 0; attempt < PAIRED_MEDIA_PING_ATTEMPTS; attempt += 1) {
+    const mediaOk = await pingMediaApi(pairing.mediaApiUrl, pairing.mediaToken, pairing.deviceId);
+    if (mediaOk) {
+      return createServerStorageBackend({
+        baseUrl: resolveMediaApiBase(pairing.mediaApiUrl),
+        deviceId: pairing.deviceId,
+        mediaToken: pairing.mediaToken,
+      });
+    }
+    if (attempt < PAIRED_MEDIA_PING_ATTEMPTS - 1) {
+      await delay(PAIRED_MEDIA_PING_DELAY_MS * (attempt + 1));
+    }
+  }
+  return null;
 }
 
 function createElectronBackend(): IStorageBackend | null {

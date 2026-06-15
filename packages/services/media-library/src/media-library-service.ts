@@ -26,6 +26,10 @@ export class MediaLibraryService {
 
   private version = 0;
 
+  private initialized = false;
+
+  private initPromise: Promise<void> | null = null;
+
   private snapshot: MediaLibrarySnapshot = {
     collections: [],
     samplesByCollection: {},
@@ -87,6 +91,20 @@ export class MediaLibraryService {
   }
 
   async init(): Promise<void> {
+    if (this.initialized) return;
+    if (!this.initPromise) {
+      this.initPromise = this.runInit()
+        .then(() => {
+          this.initialized = true;
+        })
+        .finally(() => {
+          this.initPromise = null;
+        });
+    }
+    await this.initPromise;
+  }
+
+  private async runInit(): Promise<void> {
     await this.backend.ensureReservedCollections();
     await seedBundledCatalogIfEmpty(this.backend, {
       assetBaseUrl: '/catalog/free-v1',

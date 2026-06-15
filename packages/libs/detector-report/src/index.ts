@@ -3,6 +3,7 @@ export {
   type BuildDroneDetectionReportInput,
   type BuildDroneDetectionReportSample,
   type CepstralBreakdown,
+  type DroneDetectionReport,
   type DroneDetectionReportMeta,
   type DroneDetectionReportSchemaVersion,
   type DroneDetectorBreakdown,
@@ -19,6 +20,7 @@ export {
   type TemplateMatchBreakdown,
   type TemplateMatchFieldCategory,
   type TemplateMatchFieldRow,
+  type TemplateMatchMetricSampleRow,
   type TemplateScoreRow,
 } from './types.js';
 

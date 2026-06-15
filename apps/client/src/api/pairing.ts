@@ -100,7 +100,7 @@ export async function pingCabinetApi(): Promise<boolean> {
 export async function pingMediaApi(mediaApiUrl: string, mediaToken: string, deviceId: string): Promise<boolean> {
   const base = resolveMediaApiBase(mediaApiUrl);
   try {
-    const res = await fetch(`${base}/v1/devices/${deviceId}`, {
+    const res = await fetch(`${base}/v1/devices/${encodeURIComponent(deviceId)}/quota`, {
       headers: {
         'X-Membrana-Token': mediaToken,
         'X-Membrana-Device-Id': deviceId,

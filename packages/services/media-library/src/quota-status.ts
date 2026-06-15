@@ -12,7 +12,7 @@ export type MediaLibraryStorageMode =
 
 export function resolveMediaLibraryStorageMode(quota: StorageQuota): MediaLibraryStorageMode {
   if (quota.backend === 'electron-fs') return 'electron-fs';
-  if (quota.backend === 'server' && quota.serverReachable) return 'remote-server';
+  if (quota.backend === 'server') return 'remote-server';
   return 'browser-limited-fallback';
 }
 

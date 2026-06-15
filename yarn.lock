@@ -1176,7 +1176,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/detector-report@workspace:packages/libs/detector-report"
   dependencies:
-    "@membrana/detector-base": "npm:*"
     eslint: "npm:^8.57.0"
     rimraf: "npm:^5.0.0"
     typescript: "npm:^5.4.0"

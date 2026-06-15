@@ -78,5 +78,6 @@ export function classifyCepstrum(
       ? `Кепстральный пик на ${fundamentalHz?.toFixed(0) ?? '?'} Гц (quefrency ${peakQ}).`
       : 'Нет выраженной кепстральной периодики в полосе 80–250 Гц.',
     fundamentalHz,
+    peakRatio,
   };
 }

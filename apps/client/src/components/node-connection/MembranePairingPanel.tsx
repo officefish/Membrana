@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { pairWithAccessKey } from '../../api/pairing';
+import { reconfigureMediaLibraryFromConnection } from '../../lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
 
 export const MembranePairingPanel: React.FC = () => {
@@ -24,6 +25,17 @@ export const MembranePairingPanel: React.FC = () => {
     try {
       const result = await pairWithAccessKey(accessKey, clientLabel || undefined);
       applyPairing({
+        token: result.token,
+        expiresAt: result.expiresAt,
+        deviceId: result.deviceId,
+        mediaToken: result.mediaToken,
+        mediaApiUrl: result.mediaApiUrl,
+        membraneId: result.membrane.id,
+        nodeId: result.node.id,
+        nodeLabel: result.node.label,
+        pairedKeyId: result.pairedKeyId,
+      });
+      void reconfigureMediaLibraryFromConnection('paired', {
         token: result.token,
         expiresAt: result.expiresAt,
         deviceId: result.deviceId,

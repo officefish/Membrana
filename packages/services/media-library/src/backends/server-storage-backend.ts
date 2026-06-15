@@ -174,10 +174,16 @@ export class ServerStorageBackend implements IStorageBackend {
   }
 
   private async requestJson<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetch(this.deviceUrl(path), {
-      ...init,
-      headers: this.authHeaders(init?.headers),
-    });
+    let res: Response;
+    try {
+      res = await fetch(this.deviceUrl(path), {
+        ...init,
+        headers: this.authHeaders(init?.headers),
+      });
+    } catch {
+      this.serverReachable = false;
+      throw new DomainError('Media-server network error', 'REQUEST_FAILED');
+    }
     if (!res.ok) {
       this.serverReachable = res.status !== 401 && res.status !== 403;
       throwForStatus(res, await parseApiError(res));

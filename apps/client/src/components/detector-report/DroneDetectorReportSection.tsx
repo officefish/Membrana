@@ -4,6 +4,8 @@ import type { DroneDetectorVerdictSection } from '@membrana/detector-report';
 import {
   DRONE_DETECTOR_LABELS,
   formatConfidencePercent,
+  formatSectionDetailHint,
+  formatTimestampSec,
 } from './detectorReportUi';
 import { TemplateMatchFieldsTable } from './TemplateMatchFieldsTable';
 
@@ -22,7 +24,7 @@ export interface DroneDetectorReportSectionProps {
 
 export const DroneDetectorReportSection: React.FC<DroneDetectorReportSectionProps> = ({
   section,
-  defaultOpen = false,
+  defaultOpen = true,
 }) => {
   const { breakdown } = section;
 
@@ -31,12 +33,18 @@ export const DroneDetectorReportSection: React.FC<DroneDetectorReportSectionProp
       className="rounded-lg border border-base-300 bg-base-200/30"
       open={defaultOpen}
     >
-      <summary className="cursor-pointer px-4 py-3 text-sm font-medium marker:content-none">
+      <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium [&::-webkit-details-marker]:hidden">
         <div className="flex flex-wrap items-center gap-2">
+          <span className="text-base-content/50" aria-hidden>
+            ▸
+          </span>
           <span>{DRONE_DETECTOR_LABELS[section.detectorName]}</span>
           {tickBadge(section.isDrone)}
           <span className="text-xs tabular-nums text-base-content/60">
             {formatConfidencePercent(section.confidence)}
+          </span>
+          <span className="text-xs text-base-content/50">
+            · {formatSectionDetailHint(section)}
           </span>
         </div>
       </summary>
@@ -53,95 +61,12 @@ export const DroneDetectorReportSection: React.FC<DroneDetectorReportSectionProp
           </p>
         ) : null}
 
-        {breakdown.kind === 'harmonic' ? (
-          <div className="overflow-x-auto rounded-lg border border-base-300">
-            <table className="table table-sm">
-              <thead>
-                <tr className="text-base-content/60">
-                  <th>№</th>
-                  <th>t (мс)</th>
-                  <th>harmonic score</th>
-                  <th>f0 (Гц)</th>
-                  <th>Уверенность</th>
-                  <th>Дрон</th>
-                </tr>
-              </thead>
-              <tbody>
-                {breakdown.frames.map((row) => (
-                  <tr key={row.index}>
-                    <td className="tabular-nums">{row.index + 1}</td>
-                    <td className="tabular-nums">{row.timestampMs.toFixed(0)}</td>
-                    <td className="tabular-nums">{row.maxHarmonicScore.toFixed(3)}</td>
-                    <td className="tabular-nums">
-                      {row.fundamentalHz !== null ? row.fundamentalHz.toFixed(1) : '—'}
-                    </td>
-                    <td className="tabular-nums">{formatConfidencePercent(row.confidence)}</td>
-                    <td>{tickBadge(row.isDrone)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : null}
-
-        {breakdown.kind === 'cepstral' ? (
-          <div className="overflow-x-auto rounded-lg border border-base-300">
-            <table className="table table-sm">
-              <thead>
-                <tr className="text-base-content/60">
-                  <th>№</th>
-                  <th>t (мс)</th>
-                  <th>cepstrum peak</th>
-                  <th>f0 (Гц)</th>
-                  <th>Уверенность</th>
-                  <th>Дрон</th>
-                </tr>
-              </thead>
-              <tbody>
-                {breakdown.frames.map((row) => (
-                  <tr key={row.index}>
-                    <td className="tabular-nums">{row.index + 1}</td>
-                    <td className="tabular-nums">{row.timestampMs.toFixed(0)}</td>
-                    <td className="tabular-nums">{row.cepstrumPeak.toFixed(3)}</td>
-                    <td className="tabular-nums">
-                      {row.fundamentalHz !== null ? row.fundamentalHz.toFixed(1) : '—'}
-                    </td>
-                    <td className="tabular-nums">{formatConfidencePercent(row.confidence)}</td>
-                    <td>{tickBadge(row.isDrone)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : null}
-
-        {breakdown.kind === 'spectral-flux' ? (
-          <div className="overflow-x-auto rounded-lg border border-base-300">
-            <table className="table table-sm">
-              <thead>
-                <tr className="text-base-content/60">
-                  <th>№</th>
-                  <th>t (мс)</th>
-                  <th>flux</th>
-                  <th>low energy %</th>
-                  <th>Уверенность</th>
-                  <th>Дрон</th>
-                </tr>
-              </thead>
-              <tbody>
-                {breakdown.frames.map((row) => (
-                  <tr key={row.index}>
-                    <td className="tabular-nums">{row.index + 1}</td>
-                    <td className="tabular-nums">{row.timestampMs.toFixed(0)}</td>
-                    <td className="tabular-nums">{row.flux.toFixed(3)}</td>
-                    <td className="tabular-nums">{row.lowEnergyPercent.toFixed(1)}</td>
-                    <td className="tabular-nums">{formatConfidencePercent(row.confidence)}</td>
-                    <td>{tickBadge(row.isDrone)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {breakdown.kind === 'harmonic' ||
+        breakdown.kind === 'cepstral' ||
+        breakdown.kind === 'spectral-flux' ? (
+          <p className="text-xs text-base-content/60">
+            Покадровые метрики — в общей таблице FFT-кадров выше.
+          </p>
         ) : null}
 
         {breakdown.kind === 'template-match' ? (
@@ -161,9 +86,35 @@ export const DroneDetectorReportSection: React.FC<DroneDetectorReportSectionProp
               <div>Порог: {formatConfidencePercent(breakdown.minConfidence)}</div>
             </div>
             <TemplateMatchFieldsTable fields={breakdown.fields} />
+            {breakdown.metricSamples.length > 0 ? (
+              <div className="overflow-x-auto rounded-lg border border-base-300">
+                <table className="table table-xs w-full">
+                  <thead>
+                    <tr className="text-base-content/60">
+                      <th>№</th>
+                      <th>t (с)</th>
+                      <th>centroid (Гц)</th>
+                      <th>flux</th>
+                      <th>rms</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {breakdown.metricSamples.map((row) => (
+                      <tr key={row.index}>
+                        <td className="tabular-nums">{row.index + 1}</td>
+                        <td className="tabular-nums">{formatTimestampSec(row.timestampMs)}</td>
+                        <td className="tabular-nums">{row.centroidHz.toFixed(0)}</td>
+                        <td className="tabular-nums">{row.flux.toFixed(3)}</td>
+                        <td className="tabular-nums">{row.rms.toFixed(4)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
             {breakdown.topTemplates.length > 0 ? (
               <div className="overflow-x-auto rounded-lg border border-base-300">
-                <table className="table table-sm">
+                <table className="table table-xs w-full">
                   <thead>
                     <tr className="text-base-content/60">
                       <th>Шаблон</th>

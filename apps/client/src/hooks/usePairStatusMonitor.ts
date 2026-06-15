@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { fetchPairStatus, pingMediaApi } from '@/api/pairing';
+import { tryUpgradeMediaLibraryToRemote } from '@/lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 
 const PAIR_STATUS_INTERVAL_MS = 60_000;
@@ -40,6 +41,8 @@ export function usePairStatusMonitor(): void {
         if (cancelled) return;
         if (!mediaOk) {
           reportConnectionError('media-server unreachable');
+        } else {
+          await tryUpgradeMediaLibraryToRemote(mode, pairing);
         }
       } catch {
         if (!cancelled) {

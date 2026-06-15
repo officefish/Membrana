@@ -3,6 +3,7 @@ import {
   mapTemplateMatchBreakdown,
   type TemplateMatchBreakdown,
   type TemplateMatchFieldRow,
+  type TemplateMatchMetricSampleRow,
   type TemplateScoreRow,
 } from '@membrana/detector-report';
 
@@ -12,6 +13,12 @@ export function mapTrendsTemplateMatchBreakdown(params: {
   readonly winnerTemplate: PatternTemplate;
   readonly topScores: readonly { readonly key: string; readonly score: number }[];
   readonly templateNameByKey: ReadonlyMap<string, string>;
+  readonly metricSamples: readonly {
+    readonly timestamp: number;
+    readonly centroid: number;
+    readonly flux: number;
+    readonly rms: number;
+  }[];
 }): TemplateMatchBreakdown {
   const fields: TemplateMatchFieldRow[] = params.trendsBreakdown.fields.map((field) => ({
     field: field.field,
@@ -31,6 +38,16 @@ export function mapTrendsTemplateMatchBreakdown(params: {
       score: row.score / 100,
     }));
 
+  const metricSamples: TemplateMatchMetricSampleRow[] = params.metricSamples.map(
+    (sample, index) => ({
+      index,
+      timestampMs: sample.timestamp,
+      centroidHz: sample.centroid,
+      flux: sample.flux,
+      rms: sample.rms,
+    }),
+  );
+
   return mapTemplateMatchBreakdown({
     minConfidence: params.minConfidence,
     templateKey: params.trendsBreakdown.templateKey,
@@ -40,5 +57,6 @@ export function mapTrendsTemplateMatchBreakdown(params: {
     temporalScore: params.trendsBreakdown.temporalScore,
     fields,
     topTemplates,
+    metricSamples,
   });
 }

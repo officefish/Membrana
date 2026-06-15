@@ -122,4 +122,23 @@ describe('ServerStorageBackend', () => {
     expect(sample.id).toBe('sample-1');
     expect(sample.source).toBe('mic-recording');
   });
+
+  it('marks server unreachable on network errors', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => {
+      throw new TypeError('Failed to fetch');
+    }));
+
+    const backend = createServerStorageBackend({
+      baseUrl: BASE,
+      deviceId: DEVICE,
+      mediaToken: TOKEN,
+    });
+
+    await expect(backend.ensureReservedCollections()).rejects.toThrow('Media-server network error');
+    const quota = await backend.getQuota();
+    expect(quota).toMatchObject({
+      backend: 'server',
+      serverReachable: false,
+    });
+  });
 });

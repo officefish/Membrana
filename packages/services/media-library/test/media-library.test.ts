@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   BUFFER_COLLECTION_ID,
@@ -36,6 +36,14 @@ describe('quota-status', () => {
         serverReachable: true,
       }),
     ).toBe('remote-server');
+    expect(
+      resolveMediaLibraryStorageMode({
+        usedBytes: 0,
+        limitBytes: 100,
+        backend: 'server',
+        serverReachable: false,
+      }),
+    ).toBe('remote-server');
   });
 
   it('uses buffer quota fields for recorder gating', () => {
@@ -60,6 +68,25 @@ describe('MediaLibraryService', () => {
     const ids = svc.getSnapshot().collections.map((c) => c.id);
     expect(ids).toContain(BUFFER_COLLECTION_ID);
     expect(ids).toContain(TARIFF_DATASET_COLLECTION_ID);
+  });
+
+  it('deduplicates concurrent init calls', async () => {
+    const ensureReservedCollections = vi.fn(async () => {});
+    const backend = {
+      ensureReservedCollections,
+      listCollections: vi.fn(async () => []),
+      listSamples: vi.fn(async () => []),
+      getQuota: vi.fn(async () => ({
+        usedBytes: 0,
+        limitBytes: 1_000_000,
+        backend: 'browser-limited' as const,
+        serverReachable: false,
+      })),
+    } as unknown as import('../src/ports/storage-backend.js').IStorageBackend;
+
+    const svc = createMediaLibraryService(backend);
+    await Promise.all([svc.init(), svc.init(), svc.init()]);
+    expect(ensureReservedCollections).toHaveBeenCalledTimes(2);
   });
 
   it('forbids deleting reserved collections', async () => {

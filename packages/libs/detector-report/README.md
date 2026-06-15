@@ -51,7 +51,18 @@ downloadDroneDetectionReport(report, 'json');
 | `exportDroneDetectionReportJson` / `Txt` | Сериализация |
 | `downloadDroneDetectionReport` | Blob download (browser) |
 
-Этапы эпика: **DDR1** (этот пакет) → DDR2 (данные детекторов) → **DDR3** (`apps/client/src/components/detector-report/`) → DDR4 (telemetry).
+Этапы эпика: **DDR1** (этот пакет) → DDR2 (данные детекторов) → **DDR3** (`apps/client/src/components/detector-report/`) → **DDR4** (`droneAnalysisTelemetry.ts` в плагине).
+
+## Телеметрия (DDR4)
+
+После анализа сэмпла плагин `sample-library-drone-analysis` пишет запись:
+
+- `schema`: `drone-detection-report/v1`
+- `data.reportUniqueId`: `drone-report-{reportId}` (`droneDetectionTelemetryReportUniqueId`)
+- полный `meta` + `verdicts` в `data`
+- теги: `analysis`, `drone`, `sample-library`, `detection` | `clear`
+
+Журнал пока показывает generic JSON card; `DroneDetectionReportView` подключится при рефакторинге журнала.
 
 ## UI (DDR3)
 

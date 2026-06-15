@@ -94,8 +94,17 @@ export interface TemplateMatchBreakdown {
     readonly spectralScore: number;
     readonly temporalScore: number;
   };
+  readonly metricSamples: readonly TemplateMatchMetricSampleRow[];
   readonly fields: readonly TemplateMatchFieldRow[];
   readonly topTemplates: readonly TemplateScoreRow[];
+}
+
+export interface TemplateMatchMetricSampleRow {
+  readonly index: number;
+  readonly timestampMs: number;
+  readonly centroidHz: number;
+  readonly flux: number;
+  readonly rms: number;
 }
 
 export type DroneDetectorBreakdown =

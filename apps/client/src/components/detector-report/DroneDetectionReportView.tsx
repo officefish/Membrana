@@ -6,6 +6,8 @@ import {
 } from '@membrana/detector-report';
 
 import { DroneDetectorReportSection } from './DroneDetectorReportSection';
+import { buildDspCombinedFrameRows } from './buildDspCombinedFrameRows';
+import { DspFramesCombinedTable } from './DspFramesCombinedTable';
 import { shortenReportId } from './detectorReportUi';
 
 export interface DroneDetectionReportViewProps {
@@ -27,6 +29,7 @@ export const DroneDetectionReportView: React.FC<DroneDetectionReportViewProps> =
   }, [report.meta.reportId]);
 
   const consensusDrone = report.verdicts.some((section) => section.isDrone);
+  const dspCombinedFrames = buildDspCombinedFrameRows(report.verdicts);
 
   return (
     <article
@@ -93,12 +96,16 @@ export const DroneDetectionReportView: React.FC<DroneDetectionReportViewProps> =
         <p className="text-xs text-base-content/60">
           Схема {report.meta.schemaVersion} · {report.verdicts.length} детектор(а)
         </p>
-        {report.verdicts.map((section, index) => (
-          <DroneDetectorReportSection
-            key={section.detectorName}
-            section={section}
-            defaultOpen={index === 0}
-          />
+        {dspCombinedFrames.length > 0 ? (
+          <section className="space-y-2">
+            <h4 className="text-xs font-semibold text-base-content/70">
+              FFT-кадры (гармонический · кепстральный · спектральный поток)
+            </h4>
+            <DspFramesCombinedTable rows={dspCombinedFrames} />
+          </section>
+        ) : null}
+        {report.verdicts.map((section) => (
+          <DroneDetectorReportSection key={section.detectorName} section={section} />
         ))}
       </div>
     </article>

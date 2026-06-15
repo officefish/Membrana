@@ -116,6 +116,7 @@ export async function analyzeSampleDetectors(
     winnerTemplate: templateAnalysis.winnerTemplate,
     topScores: templateAnalysis.trendsResult.scores,
     templateNameByKey,
+    metricSamples: templateAnalysis.trendsResult.samples,
   });
 
   reportSections.push(

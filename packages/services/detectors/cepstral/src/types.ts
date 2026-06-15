@@ -11,4 +11,5 @@ export interface CepstralSpectrumResult {
   readonly confidence: number;
   readonly reasoning: string;
   readonly fundamentalHz?: number;
+  readonly peakRatio: number;
 }

@@ -25,7 +25,15 @@ export function useMediaLibrary(
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   useEffect(() => {
-    void service.init();
+    let active = true;
+    service.init().catch((err: unknown) => {
+      if (active) {
+        console.error('[useMediaLibrary] init failed', err);
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, [service]);
 
   const refresh = useCallback(() => service.refresh(), [service]);

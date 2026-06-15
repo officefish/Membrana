@@ -81,6 +81,7 @@ export const SAMPLE_DDR1_FIXTURE_INPUT: BuildDroneDetectionReportInput = {
             score: 0.42,
           },
         ],
+        metricSamples: [],
       },
     },
   ],
