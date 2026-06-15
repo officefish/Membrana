@@ -36,6 +36,8 @@
       "@membrana/cepstral-detector-service/*": ["../../packages/services/detectors/cepstral/src/*"],
       "@membrana/spectral-flux-detector-service": ["../../packages/services/detectors/spectral-flux/src/index.ts"],
       "@membrana/spectral-flux-detector-service/*": ["../../packages/services/detectors/spectral-flux/src/*"],
+      "@membrana/template-match-detector-service": ["../../packages/services/detectors/template-match/src/index.ts"],
+      "@membrana/template-match-detector-service/*": ["../../packages/services/detectors/template-match/src/*"],
       "@membrana/trends-detector-service": ["../../packages/services/trends-detector/src/index.ts"],
       "@membrana/trends-detector-service/*": ["../../packages/services/trends-detector/src/*"],
       "@/*": ["./src/*"]
@@ -56,6 +58,7 @@
     { "path": "../../packages/services/detectors/harmonic" },
     { "path": "../../packages/services/detectors/cepstral" },
     { "path": "../../packages/services/detectors/spectral-flux" },
+    { "path": "../../packages/services/detectors/template-match" },
     { "path": "../../packages/services/trends-detector" }
   ]
 }

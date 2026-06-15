@@ -19,11 +19,16 @@ import {
   DEFAULT_CONFIDENCE_THRESHOLD as FLUX_THRESHOLD,
   DEFAULT_FFT_SIZE as FLUX_FFT_SIZE,
 } from '@membrana/spectral-flux-detector-service';
+import {
+  analyzeTemplateMatch,
+  createDefaultTemplateMatchCatalog,
+  createTemplateMatchDetector,
+} from '@membrana/template-match-detector-service';
 import { loadSampleBufferById } from '@membrana/sample-playback-service';
 
 import { CALIBRATED_SAMPLE_OPTIONS } from './detectorCalibrationPreset';
 
-function createActiveDetectors(): DroneDetector[] {
+function createFrameDetectors(): DroneDetector[] {
   return [
     createHarmonicDetector({
       confidenceThreshold: HARMONIC_THRESHOLD,
@@ -40,20 +45,30 @@ function createActiveDetectors(): DroneDetector[] {
   ];
 }
 
-/** Decode sample by id and run all active detectors via canonical `analyzeSample`. */
+/** Decode sample by id and run all active detectors (DSP frames + template-match on full buffer). */
 export async function analyzeSampleDetectors(
   sampleId: string,
 ): Promise<readonly SampleDetectionVerdict[]> {
   const buffer = await loadSampleBufferById(sampleId);
   const samples = getMonoChannel(buffer);
-  const detectors = createActiveDetectors();
+  const frameDetectors = createFrameDetectors();
   const verdicts: SampleDetectionVerdict[] = [];
 
-  for (const detector of detectors) {
+  for (const detector of frameDetectors) {
     const analyzeOptions = CALIBRATED_SAMPLE_OPTIONS[detector.name] ?? {};
     const { verdict } = await analyzeSample(samples, buffer.sampleRate, detector, analyzeOptions);
     verdicts.push(verdict);
   }
+
+  const templateDetector = createTemplateMatchDetector({
+    templates: createDefaultTemplateMatchCatalog(),
+  });
+  const templateVerdict = await analyzeTemplateMatch(
+    samples,
+    buffer.sampleRate,
+    templateDetector,
+  );
+  verdicts.push(templateVerdict);
 
   return verdicts;
 }

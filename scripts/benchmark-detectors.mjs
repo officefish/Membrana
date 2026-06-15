@@ -23,6 +23,16 @@ const DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
 const MANIFEST_PATH = join(DATASET_DIR, 'manifest.json');
 const REPORT_JSON = join(DATASET_DIR, 'reports', 'latest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
+const TEMPLATE_MATCH_DIST = join(
+  ROOT,
+  'packages',
+  'services',
+  'detectors',
+  'template-match',
+  'dist',
+  'index.js',
+);
+const CURATED_TEMPLATES_JSON = join(DATASET_DIR, 'curated-drone-templates.json');
 const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
 
 const DSP_DETECTORS = [
@@ -54,7 +64,7 @@ async function ensureBuilt(distPath, label) {
     await access(distPath);
   } catch {
     throw new Error(
-      `${label} not built. Run: yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service`,
+      `${label} not built. Run: yarn benchmark:detectors (builds detector packages via turbo)`,
     );
   }
 }
@@ -114,6 +124,66 @@ async function runDetector(manifestSamples, spec) {
   };
 }
 
+async function runTemplateMatch(manifestSamples) {
+  await ensureBuilt(TEMPLATE_MATCH_DIST, 'template-match-detector');
+  const mod = await import(pathToFileURL(TEMPLATE_MATCH_DIST).href);
+
+  let curatedDrone = mod.DEFAULT_CURATED_DRONE_TEMPLATES;
+  try {
+    curatedDrone = JSON.parse(await readFile(CURATED_TEMPLATES_JSON, 'utf8'));
+  } catch {
+    // use package default
+  }
+
+  const detector = mod.createTemplateMatchDetector({
+    templates: mod.resolveTemplateMatchCatalog(curatedDrone),
+  });
+
+  /** @type {{ id: string; truthDrone: boolean; predDrone: boolean; maxConfidence: number }[]} */
+  const perSample = [];
+  const allLatencies = [];
+
+  for (const entry of manifestSamples) {
+    const wavPath = join(DATASET_DIR, entry.path);
+    const { samples, sampleRate } = await readWavMono(wavPath);
+    const verdict = await mod.analyzeTemplateMatch(samples, sampleRate, detector);
+    perSample.push({
+      id: entry.id,
+      truthDrone: entry.label === 'drone',
+      predDrone: verdict.isDrone,
+      maxConfidence: verdict.confidence,
+    });
+    allLatencies.push(verdict.latencyMsTotal);
+  }
+
+  const pairs = perSample.map((s) => ({
+    truthDrone: s.truthDrone,
+    predDrone: s.predDrone,
+  }));
+  const { tp, fp, fn, tn } = confusionFromPairs(pairs);
+  const prec = precision(tp, fp);
+  const rec = recall(tp, fn);
+  const sortedLat = sortNumbers(allLatencies);
+
+  return {
+    name: 'template-match',
+    family: 'dsp',
+    status: 'benchmarked',
+    metrics: {
+      tp,
+      fp,
+      fn,
+      tn,
+      precision: prec,
+      recall: rec,
+      f1: f1Score(prec, rec),
+      latencyP50Ms: percentile(sortedLat, 50),
+      latencyP95Ms: percentile(sortedLat, 95),
+    },
+    perSample,
+  };
+}
+
 const SCAFFOLD_DETECTORS = [
   { name: 'yamnet', family: 'neural', status: 'scaffold' },
   { name: 'clap', family: 'neural', status: 'scaffold' },
@@ -144,6 +214,15 @@ async function main() {
     const m = result.metrics;
     console.log(
       `${spec.name}: precision=${m.precision?.toFixed(3) ?? '—'} recall=${m.recall?.toFixed(3) ?? '—'} F1=${m.f1?.toFixed(3) ?? '—'}`,
+    );
+  }
+
+  const templateResult = await runTemplateMatch(testSamples);
+  benchmarked.push(templateResult);
+  {
+    const m = templateResult.metrics;
+    console.log(
+      `template-match: precision=${m.precision?.toFixed(3) ?? '—'} recall=${m.recall?.toFixed(3) ?? '—'} F1=${m.f1?.toFixed(3) ?? '—'}`,
     );
   }
 

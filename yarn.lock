@@ -1318,6 +1318,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@membrana/template-match-detector-service@workspace:packages/services/detectors/template-match":
+  version: 0.0.0-use.local
+  resolution: "@membrana/template-match-detector-service@workspace:packages/services/detectors/template-match"
+  dependencies:
+    "@membrana/core": "npm:*"
+    "@membrana/detector-base": "npm:*"
+    "@membrana/fft-analyzer-service": "npm:*"
+    "@membrana/trends-detector-service": "npm:*"
+    eslint: "npm:^8.57.0"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vite: "npm:^5.3.0"
+    vite-plugin-dts: "npm:^3.9.1"
+    vitest: "npm:^1.4.0"
+  languageName: unknown
+  linkType: soft
+
 "@membrana/trends-detector-service@npm:*, @membrana/trends-detector-service@workspace:packages/services/trends-detector":
   version: 0.0.0-use.local
   resolution: "@membrana/trends-detector-service@workspace:packages/services/trends-detector"

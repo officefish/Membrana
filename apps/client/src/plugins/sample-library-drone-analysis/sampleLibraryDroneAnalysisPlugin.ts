@@ -31,7 +31,7 @@ export function createSampleLibraryDroneAnalysisPlugin(): Plugin<SampleLibraryDr
     id: SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID,
     name: 'Анализ дрона (сэмпл)',
     description:
-      'Вердикт DSP-детекторов по целому 5-с сэмплу после воспроизведения или по кнопке',
+      'Вердикт DSP-детекторов и template-match по целому 5-с сэмплу после воспроизведения или по кнопке',
     version: '0.1.0',
     active: false,
     config: { ...defaultSampleLibraryDroneAnalysisConfig },

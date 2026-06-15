@@ -40,7 +40,7 @@
 1. **Cepstral / spectral-flux** на train дают TN=0 — предсказывают «дрон» почти на всём; grid search не находит порог, поднимающий accuracy на val.
 2. **Harmonic** — единственный с TN>0 на val, но accuracy **40%** (gap **−40 п.п.** до цели).
 3. Curated operator labels **не улучшили** метрики vs folder-labels SLD4 — DSP-признаки слабо коррелируют с субъективным «слышу дрон».
-4. **Следующий шаг:** VDR5 template-match на validated drone-шаблонах; при провале — neural zero-shot (эпик 1.B).
+4. **Следующий шаг (VDR5, FFT-only):** template-match на curated `DRONE_CURATED` + системные non-drone шаблоны; `yarn templates:build-from-dataset`. Следующий **тариф** (вне этой недели): MFCC, спектрограммы, 600 сэмплов.
 
 ---
 
