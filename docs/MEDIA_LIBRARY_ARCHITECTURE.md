@@ -1,8 +1,9 @@
 # Архитектура: медиа-библиотека (Sample Library)
 
 > Решение консилиума: [`seanses/media-library-dataset-2026-06-09.md`](./seanses/media-library-dataset-2026-06-09.md)  
+> Web data-plane: [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md), эпик [#58](https://github.com/officefish/Membrana/issues/58)  
 > Связь с датасетом: [`DATASET.md`](./DATASET.md), [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md)  
-> Ограничения engine/hub: [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1b–1c
+> Ограничения engine/hub: [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1b–1c, §1d
 
 Документ задаёт **целевую архитектуру** модуля библиотеки звуков: буфер записи, коллекции пользователя, системная коллекция, web vs Electron vs сервер.
 
@@ -38,7 +39,7 @@ interface Collection {
   createdAt: string;
   updatedAt: string;
   /** Только для kind === 'system'. */
-  systemKey?: 'benchmark' | string;
+  systemKey?: 'tariff-dataset';
 }
 
 /** Метаданные + ссылка на бинарник в storage-backend. */
@@ -56,23 +57,39 @@ interface MediaSample {
   /** Путь/blob-key в backend; не для UI. */
   storageRef: string;
   notes?: string;
+  /** Контейнер аудио (v1 server + import). */
+  audioFormat?: 'wav' | 'mp3' | 'flac' | 'ogg';
+  /** MIME для stream download (`Content-Type`). */
+  contentType?: string;
+  sizeBytes: number;
 }
 ```
 
-### 2.2. Три типа коллекций
+Сервер `background-media` хранит blob **в исходном формате**; метаданные `durationSec`, `sampleRate`, `channels` извлекаются при upload (`music-metadata`; для WAV дополнительно `wavefile` при валидации PCM). Подробности стека — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md) § «Стек background-media».
+
+### 2.2. Типы коллекций
 
 | kind | ID | Удаление | Назначение |
 |------|-----|----------|------------|
-| **buffer** | фикс. `__buffer__` | нет (очищается) | **Временная** запись с микрофона; один активный буфер на профиль/устройство |
-| **user** | uuid | ✅ пользователем | Произвольные наборы («полевые июнь», «ветер балкон») |
-| **system** | фикс. `__system_benchmark__` | ❌ коллекцию | **Benchmark / датасет**; может быть **пустой**; сэмплы добавляются/удаляются |
+| **buffer** | фикс. `__buffer__` | нет (очищается) | **Временная** запись с микрофона / live; один активный буфер на профиль/устройство; квота `bufferQuotaBytes` |
+| **user** | uuid | ✅ пользователем | Произвольные наборы («полевые июнь», «ветер балкон»); суммарный объём → `userStorageQuotaBytes` |
+| **system** | см. ниже | ❌ коллекцию | Системные библиотеки; не входят в user-квоту, если read-only dataset |
+
+**System-коллекция (тарифный датасет):**
+
+| systemKey | ID | Редактирование | Назначение |
+|-----------|-----|----------------|------------|
+| `tariff-dataset` | `__tariff_dataset__` | **read-only** | Каталог по тарифу; free = `free-v1-catalog` (120 × 5 с); stage-gate benchmark и детекторы |
+
+**Автономный client:** при первом `init()` — **bundled catalog** из `apps/client/public/catalog/free-v1/` (тот же состав, что `data/detectors-benchmark/v0.2/`). После pairing сервер provisioning подменяет/дополняет каталог по тарифу.
 
 **Правила:**
 
-- Пользователь **не удаляет** системную коллекцию; может удалить все сэмплы внутри.
+- Пользователь **не удаляет** системные коллекции; в `tariff-dataset` — только чтение (нет upload/delete/move).
+- Загрузка в `tariff-dataset` с клиента **запрещена** (provisioning — платформа / bundled seed).
 - Из **буфера** сэмплы **переносятся** (move), не копируются по умолчанию — буфер освобождается.
 - Copy в другую коллекцию — явное действие «дублировать».
-- Системная коллекция — единственный источник для **Export manifest** (кнопка в UI / CLI).
+- **Benchmark детекторов** — `yarn benchmark:detectors` на `data/detectors-benchmark/v0.2/manifest.json` (синхронизация: `yarn dataset:sync-free-v1`).
 
 ### 2.3. Буфер записи
 
@@ -106,8 +123,10 @@ packages/services/media-library/       # @membrana/media-library-service
   ├── ports/storage-backend.ts         # интерфейс IStorageBackend
   └── hooks/                           # useSampleLibrary, useCollections
 
-packages/background-media/             # опционально, web-сервер файлов (NestJS)
-  └── REST: collections, samples, blobs
+packages/background-media/             # NestJS + Fastify, Prisma, PostgreSQL
+  ├── prisma/schema.prisma             # devices, collections, samples, templates
+  ├── blob/                          # volume: wav, mp3, flac, ogg (как загружено)
+  └── REST: collections, samples, blobs (multipart)
 
 apps/electron/                         # preload: electronAPI.mediaLibrary.*
 ```
@@ -173,20 +192,27 @@ function resolveStorageMode(): MediaLibraryStorageMode {
 
 ### 4.2. Web-сервер (`background-media`)
 
-Отдельный пакет (по аналогии с `background-office`):
+**Статус:** в разработке (фаза **A5**, промпты `BACKGROUND_MEDIA_A5*`, реестр `background-media-v1`). Канон границ и стека — [`BACKGROUND_SERVERS.md`](./BACKGROUND_SERVERS.md).
+
+Отдельный пакет `@membrana/background-media` (dev **:3010**): **NestJS + Fastify**, **Prisma + PostgreSQL**, blob volume. Не расширять `background-office`: office — только интеграции (Claude/Linear/GitHub).
+
+**Мульти-узел:** все ресурсы под префиксом `/v1/devices/:deviceId/…`. Клиент регистрирует узел (`POST /v1/devices`) и передаёт `deviceId` в path и заголовке `X-Membrana-Device-Id`. Узел A не видит коллекции узла B.
 
 | Endpoint | Назначение |
 |----------|------------|
 | `GET /health` | ping для `resolveStorageMode` |
-| `GET /v1/quota` | used/limit |
-| `CRUD /v1/collections` | user + system (system read-only delete) |
-| `POST /v1/collections/:id/samples` | multipart upload |
-| `DELETE /v1/samples/:id` | удаление blob |
-| `POST /v1/samples/:id/move` | смена коллекции |
+| `POST /v1/devices` | регистрация узла → `deviceId` |
+| `GET /v1/devices/:deviceId/quota` | `userStorage`, `buffer`, `dataset.catalogId` |
+| `CRUD …/collections` | user + system (system read-only delete) |
+| `POST …/collections/:id/samples` | multipart upload (wav, mp3, flac, ogg) |
+| `GET …/samples/:id/blob` | stream с `Content-Type` из `contentType` |
+| `DELETE …/samples/:id` | удаление blob |
+| `POST …/samples/:id/move` | смена коллекции |
+| `GET/PUT …/trends-templates` | JSON шаблоны trends (`user:*` keys) для `userTemplatesPersistence` |
 
-Auth: тот же паттерн `X-Membrana-Token` / internal gate, что в [`background-office`](../packages/background-office/README.md). **Не** смешивать с Claude/Linear модулями office.
+Auth: `X-Membrana-Token` на `/v1/*` (как в [`background-office`](../packages/background-office/README.md)).
 
-**Fallback:** если `GET /health` fail → `BrowserLimitedStorageBackend` + **persistent banner** в UI (см. §5).
+**Fallback:** если `GET /health` fail → `BrowserLimitedStorageBackend` + trends в localStorage + **persistent banner** в UI (см. §5).
 
 ### 4.3. Browser-limited fallback
 
@@ -233,11 +259,10 @@ Auth: тот же паттерн `X-Membrana-Token` / internal gate, что в [
 
 ## 6. Связь с benchmark
 
-- **Export manifest** только из системной коллекции `__system_benchmark__`:
-  - `yarn media:export-manifest --out data/detectors-benchmark/v0.2/manifest.json`
-  - или кнопка UI «Export for benchmark»
+- **Канонический корпус:** `data/detectors-benchmark/v0.2/` — 120 реальных WAV (free-v1), manifest с `split: 'test'`.
+- **Синхронизация:** `yarn dataset:sync-free-v1` из `docs/datasets/samples/real-collection/` → v0.2 + `apps/client/public/catalog/free-v1/`.
+- **Прогон детекторов:** `yarn benchmark:detectors` (читает v0.2; v0.1 синтетика — только CI-smoke legacy).
 - Формат строк manifest совместим с [`data/detectors-benchmark/v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json).
-- WAV на export: symlink/copy в `data/…` для CI **только синтетика**; полевые остаются на backend path + manifest с `storageRef` или relative path при Electron.
 
 ---
 
@@ -262,7 +287,7 @@ Auth: тот же паттерн `X-Membrana-Token` / internal gate, что в [
 | **A2** | Client module: коллекции user/system/buffer, quota banner · task `media-library-a2-ui` |
 | **A3** | Mic hub → buffer record · task `media-library-a3-mic-recorder` |
 | **A4** | `ElectronFsStorageBackend` + preload API *(следующие дни)* |
-| **A5** | `packages/background-media` + `ServerStorageBackend` *(следующие дни)* |
+| **A5** | **`packages/background-media`** + `ServerStorageBackend` + device-scoped trends API · [#58](https://github.com/officefish/Membrana/issues/58) · **в работе** |
 | **A6** | Export manifest → `yarn benchmark:detectors` *(следующие дни)* |
 
 Приоритет: **A1–A3** не блокируют #47; **A5** параллельно infra; **A6** для stage-gate.

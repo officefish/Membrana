@@ -1,0 +1,85 @@
+# Cabinet stack: PostgreSQL + API + static SPA (MP1 deploy).
+# From repo root:
+#   cp packages/background-cabinet/.env.docker.example packages/background-cabinet/.env.docker
+#   yarn cabinet:docker:up
+
+name: membrana-cabinet
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-membrana}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-membrana}
+      POSTGRES_DB: ${POSTGRES_DB:-membrana_cabinet}
+    volumes:
+      - cabinet-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-membrana} -d ${POSTGRES_DB:-membrana_cabinet}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  cabinet-api:
+    build:
+      context: ../..
+      dockerfile: packages/background-cabinet/Dockerfile
+    image: membrana/background-cabinet:local
+    restart: unless-stopped
+    ports:
+      - '${CABINET_API_PORT:-3020}:3020'
+    env_file:
+      - .env.docker
+    environment:
+      NODE_ENV: production
+      PORT: 3020
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      API_INTERNAL_TOKEN: ${API_INTERNAL_TOKEN:-dev-token-change-me}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-membrana}:${POSTGRES_PASSWORD:-membrana}@postgres:5432/${POSTGRES_DB:-membrana_cabinet}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-168}
+      CABINET_CORS_ORIGINS: ${CABINET_CORS_ORIGINS:-http://localhost:8080}
+      CLIENT_CORS_ORIGINS: ${CLIENT_CORS_ORIGINS:-http://localhost:5173}
+      MEDIA_API_URL: ${MEDIA_API_URL:-http://host.docker.internal:3010}
+      MEDIA_API_TOKEN: ${MEDIA_API_TOKEN:-}
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
+      CABINET_RUN_SEED: ${CABINET_RUN_SEED:-true}
+      CABINET_BOOTSTRAP_LOGIN: ${CABINET_BOOTSTRAP_LOGIN:-demo}
+      CABINET_BOOTSTRAP_PASSWORD: ${CABINET_BOOTSTRAP_PASSWORD:-demo12345}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3020/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  cabinet-web:
+    build:
+      context: ../..
+      dockerfile: apps/cabinet/Dockerfile
+      args:
+        VITE_CABINET_API_URL: ${VITE_CABINET_API_URL:-http://localhost:3020}
+    image: membrana/cabinet-web:local
+    restart: unless-stopped
+    ports:
+      - '${CABINET_WEB_PORT:-8080}:80'
+    depends_on:
+      cabinet-api:
+        condition: service_healthy
+
+volumes:
+  cabinet-pg-data:

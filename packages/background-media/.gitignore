@@ -1,0 +1,8 @@
+.env
+.env.docker
+data/
+dist/
+.turbo/
+.tsbuildinfo
+node_modules/
+generated/

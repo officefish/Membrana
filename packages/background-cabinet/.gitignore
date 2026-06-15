@@ -1,0 +1,7 @@
+dist/
+.turbo/
+.tsbuildinfo
+node_modules/
+.env
+data/
+generated/

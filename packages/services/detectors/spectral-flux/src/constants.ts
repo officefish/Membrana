@@ -1,0 +1,4 @@
+export const DEFAULT_FFT_SIZE = 2048;
+export const DEFAULT_SAMPLE_RATE = 48_000;
+export const DEFAULT_CONFIDENCE_THRESHOLD = 0.45;
+export const LOW_BAND_TARGET_PERCENT = 35;

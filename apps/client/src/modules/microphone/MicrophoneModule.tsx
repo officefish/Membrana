@@ -27,9 +27,17 @@ import {
   MicBufferRecorderPanel,
 } from '../../plugins/mic-buffer-recorder';
 import {
+  MIC_LIVE_DRONE_ANALYSIS_PLUGIN_ID,
+  MicLiveDroneAnalysisPanel,
+} from '../../plugins/mic-live-drone-analysis';
+import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
+import {
+  TRENDS_FFT_ANALYZER_PLUGIN_ID,
+  TrendsFftAnalyzerPanel,
+} from '../../plugins/trends-fft-analyzer';
 import {
   notifyMicrophoneCaptureChanged,
   registerMicrophoneCaptureOwner,
@@ -272,8 +280,16 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
           <HarmonicDetectorVizPanel moduleId={module.id} />
         )}
 
+        {activeIds.includes(TRENDS_FFT_ANALYZER_PLUGIN_ID) && (
+          <TrendsFftAnalyzerPanel moduleId={module.id} />
+        )}
+
         {activeIds.includes(MIC_BUFFER_RECORDER_PLUGIN_ID) && (
           <MicBufferRecorderPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(MIC_LIVE_DRONE_ANALYSIS_PLUGIN_ID) && (
+          <MicLiveDroneAnalysisPanel moduleId={module.id} />
         )}
       </div>
     </div>

@@ -21,6 +21,16 @@ export interface DetectionResult {
   readonly latencyMs: number;
 }
 
+/** Агрегированные метрики прогона бенчмарка (stage-gate 1→2). */
+export interface DetectionMetrics {
+  readonly precision: number;
+  readonly recall: number;
+  readonly f1: number;
+  readonly latencyP50Ms: number;
+  readonly latencyP95Ms: number;
+  readonly sampleCount: number;
+}
+
 export interface DroneDetector {
   readonly name: string;
   readonly family: DetectorFamily;

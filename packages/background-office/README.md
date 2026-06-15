@@ -2,6 +2,8 @@
 
 Централизованный **HTTP-сервер** (единый процесс, один порт) для внешних интеграций Membrana: Anthropic Claude, Linear (GraphQL + webhooks), чтение GitHub Issues через Octokit. Пакет **автономен в v0.1**: не зависит от `@membrana/core`, `apps/client` и других внутренних библиотек — только публичные npm-пакеты.
 
+> **Соседний сервер:** пользовательские WAV, коллекции сэмплов и trends-шаблоны — **`@membrana/background-media`** (`docs/BACKGROUND_SERVERS.md`). В office **не** добавлять blob storage, PostgreSQL под медиа и CRUD шаблонов trends.
+
 ## Почему NestJS
 
 Выбран **NestJS**: модульная структура (`ClaudeModule`, `LinearModule`, `WebhooksModule`, `GithubModule`), встроенный DI, предсказуемое разрастание маршрутов и guard’ов, поддержка **raw body** для проверки HMAC Linear без обходных путей. Альтернатива Fastify была бы легче по рантайму, но для «офисного» шлюза с несколькими интеграциями и единым конфигом Nest даёт меньше связующего кода при тех же принципах (контроллер → сервис → HTTP-клиент).

@@ -1,364 +1,333 @@
-<!-- Сгенерировано: 2026-06-10T04:31:02.563Z (yarn plan:day) -->
+<!-- Сгенерировано: 2026-06-15T06:19:08.763Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->
 
-# План на следующий день
-
-**Дата:** 2026-06-10
-**Горизонт:** 24 часа
-**Ветка:** techies68
-**Статус:** готов к исполнению
-
----
+# План на следующий день — Membrana (2026-06-15)
 
 ## 1. Что сделано за период (последние сутки)
 
-### Media Library (новая подсистема)
+### Инфраструктура и платформа
 
-- **Commit 531e446, ac7e8c9**: создана архитектура и реализация `@membrana/media-library-service` — новый foundation-сервис для хранения и управления аудио/видео образцами в памяти и на диске.
-  - Добавлен модуль `SampleLibraryModule` в клиент с UI для просмотра квот.
-  - Реализованы контракты `StorageBackend` (memory-реализация в комплекте).
-  - Добавлены 8 unit-тестов для ядра сервиса.
-- **Статус фаз**: A1 (storage) и A2 (UI) завершены и архивированы; фазы A3–A6 отложены до необходимости.
+1. **Night Build завершён (NB0–NB3 checkpoints)**  
+   Docs: `NIGHT_BUILD_ACTIVE.md`, `NIGHT_BUILD_LOG.md`, `NIGHT_SPRINT_REGULATION.md` зафиксировали чек-пойнты для ночного цикла сборки. Regulation уточняет фазы NB0 (prep), NB1 (core), NB2 (hardening), NB3 (handoff). Практический результат — снизили риск регрессии при нестабильной сети.
 
-### MCP (Model Context Protocol) интеграция
+2. **Cabinet MP4 / MP5 / MP6 — полный цикл платформы (MP4, MP5, MP6)**  
+   - MP4: кво́та за мембрану из тарифа (`device-limits.ts`, миграция `mp4_device_membrane`)
+   - MP5: облачный журнал телеметрии (`journal.controller`, `journal.service`, UI `JournalPage`)
+   - MP6: итоговый дым-тест всей платформы после merge
+   - Граничная проблема: `bcrypt` timeout на CI, решена увеличением timeout в `vitest.config.ts`
 
-- **Commit e4cf038, e456b82, c71b399**: реализована стратегия многоуровневого бутстрапа MCP-серверов.
-  - Tier 0 (Workstation: local filesystem, git, exec).
-  - Tier 1–3 (Perplexity, Playwright, Glyph) — конфиги готовы, ключи опциональны.
-  - Phase A (воркстанция) завершена, Phase B отложена до наличия Perplexity-ключа.
-  - Добавлены скрипты проверки (`verify-mcp-bootstrap.mjs`) и задачи в реестр.
+3. **Sample Playback Service — новый foundation-сервис**  
+   `packages/services/sample-playback/` → вынесен из `apps/client` в отдельный пакет с LRU-кешем (N=20), lifecycle hooks, тестами. Переиспользуется в `cabinet` и `client`. Это **правильный шаг** в сторону composition.
 
-### Операционная практика
+4. **Tariff Dataset v1 — DS1–DS5 завершены**  
+   - DS1: корпус `free-v1` (120 × 5s WAV, real audio)
+   - DS2: доменная модель (`bundled-catalog.ts`, `collection-ids.ts`)
+   - DS3: бандл в `apps/client/public/catalog/`
+   - DS4: benchmark runner v0.2 (`benchmark-detectors.mjs`)
+   - DS5: серверная каталогизация (`catalog-provision.service.ts`, idempotent seed)
+   - Результат: в `background-media` live продакшен-каталог, доступный и client-у, и cabinet-у.
 
-- **Commit bf95994**: обновлены дневные отчёты (DAILY_STANDUP, STRATEGIC_PLAN_DAY).
-- **Commit a1b74e3**: добавлена переменная окружения для обхода прокси при больших API-запросах (ANTHROPIC_NO_PROXY).
-- **Commit 849a4f7**: выполнен вечерний архив дневных отчётов и code-review (утренний ритуал).
+5. **Prisma и CI — изоляция клиентов между пакетами**  
+   `background-cabinet` и `background-media` теперь имеют **собственные** Prisma-клиенты (`src/prisma/client.ts`) для избежания conflicts на CI. Миграции разделены по пакетам.
 
-### Сводка по пакетам
+### Клиент и сервисы
 
-| Пакет                             | Статус         | Изменения                                            |
-| --------------------------------- | -------------- | ---------------------------------------------------- |
-| `@membrana/core`                  | стабильно      | без изменений                                        |
-| `@membrana/audio-engine-service`  | стабильно      | без изменений                                        |
-| `@membrana/fft-analyzer-service`  | стабильно      | без изменений                                        |
-| `@membrana/media-library-service` | **новый**      | full-stack: service + hooks + UI module              |
-| `@membrana/agenda`                | stab./use-only | без изменений                                        |
-| `@membrana/device-board`          | стабильно      | без изменений                                        |
-| `apps/client`                     | minor-update   | регистрация media-library module; новая квота-полоса |
-| инфра/CI                          | minor-update   | MCP tier configs, env-vars для Anthropic             |
+6. **Cabinet SampleLibrary UI — single-column layout + playback**  
+   Вертикальная компоновка: сборка → player-panel → таблица с inline-строкой для выбранного семпла и waveform-визуализацией в ячейке. Компонент `CabinetSampleTable` переиспользует `sample-playback-service`. **Позитив:** чистое разделение ответственности (service ↔ UI).
+
+7. **Node Connection & Pairing — prod API URLs и unlink**  
+   `apps/client/.env.development` + `apps/client/vite.config.ts` для prod API; новый endpoint `PATCH /pair/{id}/unlink`, UI-компонент `MembraneLinkedPanel`, мониторинг статуса через `usePairStatusMonitor`. Smoke-тест `_ssh-cabinet-pair-unlink-prod.mjs` валидирует 401 после revoke.
 
 ---
 
 ## 2. Привязка к стратегической цели
 
-### Текущий этап дорожной карты (WHITE_PAPER §8)
+### Текущая позиция в дорожной карте
 
-**Находимся между Этапом 0 (Фундамент) и Этапом 1.A (DSP-детекция).**
+**Стадия:** Параллельно работают **Этап 0–1.A** (фундамент + DSP-детекторы) и **Этап 0 инфраструктуры платформы** (Cabinet, Journal, Quotas).
 
-- **Этап 0** (audio-engine + fft-analyzer) — **завершён**.
-- **Этап 1.A** (DSP-детекторы: harmonic, cepstral, spectral-flux) — **должен начаться**.
-- **Критический шлюз Stage-gate 1→2** (precision ≥85%, recall ≥90%) — **ещё впереди**.
+**Карта статус:**
+- ✅ Этап 0: `audio-engine`, `fft-analyzer` стабильны; foundation-слой целостен.
+- ⏳ Этап 1.A: DSP-детекторы (`harmonic-`, `cepstral-`, `spectral-flux-`) в scaffolds; benchmark v0.2 готов, но **детекторы ещё не интегрированы в единый ensemble**.
+- ❌ Stage-gate 1→2: **`DETECTOR_BENCHMARK.md` не содержит актуальных метрик** (Precision ≥ 85%, Recall ≥ 90%); шлюз заморожен, TDOA в консервации.
+- ⏸️ Этапы 2–7: TDOA, мультилатерация, трекинг, классификация — **на паузе до stage-gate**.
 
-### Анализ деяний за период
+### Что приближает к цели
 
-| Дело               | Направление     | Рецепция                                                                                                                  |
-| ------------------ | --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Media Library      | вспомогательная | **нейтральна к цели** — это инфра для хранения тестовых датасетов, нужна для Этапа 1.A, но сама не движет детекцию        |
-| MCP интеграция     | процессная      | **ускоряет feedback loop** — LLM-агенты смогут быстрее обращаться к code, git, тестам; полезна для работы над детекторами |
-| Ритуалы и env-vars | операционная    | **поддерживающа** — снижает трение в быту, готовит площадку                                                               |
+1. **Tariff Dataset v1** → включает реальный corpus (120 семплов дронов и не-дронов) — критически важно для **валидации детекторов на stage-gate 1→2**.
+2. **Sample Playback Service** → переиспользуемая foundation для анализа семплов в UI; облегчает добавление плагинов-анализаторов.
+3. **Cabinet Sample Library** → демонстрирует путь от сырых WAV → tagged catalog → UI-плеер; это инфраструктура, на которой будет ехать **детектор-интеграция** (плагины показывают результаты анализа).
 
-### Недостающие сервисы для следующих этапов
+### Что нейтрально или отвлекает
 
-**Критически нужны начиная с завтра:**
+- **Membrane Platform (MP4–MP6):** квоты, журналы, pairing — важны для **production-ready**, но не приближают к **детекции дронов**. На горизонте этапов 1–3 это инфра-долг, необходимый но параллельный основной задаче.
+- **Cabinet UI сложность:** single-column layout, waveform scrubber — полезны для demo, но затягивают ресурсы от реализации детекторов.
 
-1. **`@membrana/detector-base`** (foundation для контрактов)
-   - Типы: `DroneDetector`, `DetectionResult`, `AudioWindow`
-   - Статус: scaffold нужен в ARCHITECTURE §1e, но пакета ещё нет.
+### Критически недостающие сервисы
 
-2. **`@membrana/harmonic-detector-service`** (analyzer, DSP-семейство)
-   - Гармонический анализ винтов дрона (80–250 Гц с обертонами).
-   - Статус: scaffold.
+По коммитам видно, что **scaffold'и существуют**, но не реализованы:
 
-3. **`@membrana/cepstral-detector-service`** (analyzer, DSP-семейство)
-   - Кепстральный анализ (для выявления периодических структур).
-   - Статус: scaffold.
+| Сервис | Статус | Блокирует |
+|--------|--------|-----------|
+| `@membrana/harmonic-detector-service` | Scaffold | Stage-gate 1→2 |
+| `@membrana/cepstral-detector-service` | Scaffold | Stage-gate 1→2 |
+| `@membrana/spectral-flux-detector-service` | Scaffold | Stage-gate 1→2 |
+| `@membrana/detection-ensemble-service` | Plan | Stage-gate 1→2 |
+| `@membrana/yamnet-detector-service` | Plan (1.B) | Этап 1.B |
+| `@membrana/tdoa-service` | Frozen (Stage 2) | Этап 2 |
+| `@membrana/localizer-service` | Plan | Этап 3 |
+| `@membrana/tracker-service` | Plan | Этап 4 |
 
-4. **`@membrana/spectral-flux-detector-service`** (analyzer, DSP-семейство)
-   - Спектральный поток (для выявления динамики звука).
-   - Статус: scaffold.
-
-5. **`@membrana/detection-ensemble-service`** (analyzer, после gate 1→2)
-   - Агрегация результатов трёх детекторов (голосование, взвешивание).
-   - Статус: plan.
-
-После stage-gate 1→2: 6. `@membrana/tdoa-service` (analyzer) — TDOA, мультилатерация. 7. `@membrana/localizer-service` (analyzer) — локализация по TDOA. 8. `@membrana/tracker-service` (analyzer) — трекинг (Калман). 9. `@membrana/transport-service` (foundation) — протокол узел–сервер, шина событий.
+**Вывод:** Первый приоритет — **завершить реализацию DSP-детекторов и запустить stage-gate 1→2**.
 
 ---
 
 ## 3. Риски и долг
 
-### Технические риски
+### Технический долг
 
-| Риск                                                                          | Уровень | Действие                                                                                                                                     |
-| ----------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Нет benchmark-фреймворка** для детекторов на едином датасете.               | HIGH    | Нужно создать `docs/DETECTOR_BENCHMARK.md` и набор тестов в `yarn benchmark:detectors` ещё до реализации детекторов.                         |
-| **Отсутствует контрактный слой** между детекторами и fusion-слоем.            | HIGH    | `@membrana/detector-base` + типы в `@membrana/core` должны быть установлены перед началом реализации детекторов.                             |
-| **Нет синтетического / реального датасета** дронов и фоновых шумов.           | MEDIUM  | Media Library готова принять данные, но сами данные нужно собрать или скачать; см. `docs/DATASET.md` (план).                                 |
-| **Single-Node Detection First** не задокументирован в регламенте PR.          | MEDIUM  | Риск, что кто-то начнёт писать многоузловую мультилатерацию до stage-gate — нужна жёсткая фиксация в `ARCHITECTURE.md` §1e + консилиум memo. |
-| **MCP Phase B зависит от Perplexity-ключа** — может заблокировать дельту LLM. | LOW     | Фиксируется наличием Tier 0 (локальная git/exec) для автономной работы; перплексити — бонус.                                                 |
+1. **Детекторы в scaffold'е**  
+   Три пакета (`harmonic-`, `cepstral-`, `spectral-flux-`) объявлены, но код незавершён. Отсутствует:
+   - Реализация математических ядер (FFT-обработка, гармонический анализ, cepstrum).
+   - Unit-тесты с мок-аудио.
+   - Интеграция в `detection-ensemble-service`.
+   - Бенчмарк на `free-v1` корпусе (v0.2).
 
-### Накопленный долг
+2. **Stage-gate 1→2 не открыт**  
+   `DETECTOR_BENCHMARK.md` не обновлен после DS4. Критерии (P ≥ 85%, R ≥ 90%) неясны для текущего состояния. Формальный шлюз для перехода к TDOA / мультиузлу не может быть закрыт.
 
-- **Нет UI для прямого просмотра спектрограмм в реальном времени** — Media Library готова, но Microphone Module выдаёт только raw stream и AnalyserNode. Нужен плагин-визуализатор.
-- **Нет документа DATASET.md** — требуется in WHITE_PAPER §8 (stage-gate), а создан только дневной сеанс-заметка.
-- **Нет документа DETECTOR_BENCHMARK.md** — упомянут в WHITE_PAPER, должен быть до первого детектора.
-- **Нет регламента stage-gate в виде PR-чек-листа** — слова есть, но автоматизации нет.
+3. **Prisma миграции** — теперь разделены по пакетам, но CI-тесты требуют изоляции. Риск race-condition при параллельных миграциях `background-cabinet` и `background-media` на одной БД (решено, но требует постоянного внимания).
 
-### Нарушения границ пакетов
+### Архитектурные нарушения (не обнаружены)
 
-По последним коммитам **нарушений не обнаружено**:
+Граф зависимостей соблюдается:
+- `sample-playback-service` → `@membrana/core` + `audio-engine` ✅ (foundation-правило)
+- Cabinet → `sample-playback-service` ✅ (client может зависеть от сервисов)
+- Детекторы → `detector-base` + `audio-engine` ✅ (специальное правило для семейства)
 
-- Media Library соблюдает правила foundation-сервиса (зависит только от `@membrana/core` + npm).
-- Клиент подключает модуль через `MembranaRegistry` (правильно).
-- MCP-инфра — корневая, не нарушает монорепо.
+### Известные ограничения WHITE_PAPER
 
-### Ограничения из WHITE_PAPER, актуальные сейчас
+1. **Синхронизация времени между узлами** (§5.2) — для TDOA нужен джиттер < 1 мс. Сейчас нет `TimeSyncProvider`; это тип, зарезервированный как `@experimental @stage 2`.
 
-- **Скорость звука (§5.3)**: задержка 340 м/с будет актуальна при многоузловых тестах (Этап 2+), сейчас не мешает.
-- **Этика и хранение (§10)**: Policy для буфера ещё не написана; перед Этапом 5 нужна.
+2. **Многолучёвость и отражения** (§9, таблица рисков) — решение через GCC-PHAT и geometry redundancy отложено до stage-gate.
+
+3. **Скорость звука зависит от погоды** (§5.3) — адаптивная модель на узле требует `weather-sensor` или простой приближающей функции; это не критично для Этапа 1.A (одиночная детекция).
 
 ---
 
 ## 4. План на следующий день
 
-### Задача 1: Создать пакет `@membrana/detector-base` с контрактами
+### Задача 4.1 — Реализовать `harmonic-detector-service` на чистом TypeScript
 
-**Цель:**
-Установить обязательный контрактный слой для всех детекторов (DSP и neural): типы, интерфейсы, ошибки.
+**Цель:** Детектор, выделяющий гармонические пики в спектре (основной признак дрона: кратные частоты вращения винтов).
 
-**Пакет / слой:**
-`packages/services/detector-base/` — **foundation** (вспомогательный контракт).
+**Пакет / слой:** `packages/services/detectors/harmonic-detector-service` → analyzer.
 
-**Связь с WHITE_PAPER:**
-§8 (Этап 1.A), Single-Node Detection First; stage-gate 1→2 требует `DroneDetector` и `DetectionResult`.
+**Связь с WHITE_PAPER:**  
+- §1e (Этап 1.A — DSP-эшелон, один узел)
+- §5.1 (Акустический портрет: 80–250 Гц + гармоники до 2–5 кГц)
+- White Paper §8, stage-gate 1→2
 
 **Definition of Done:**
+1. Класс `HarmonicDetectorService` в `src/service.ts`:
+   - Метод `detect(spectrum: Float32Array, sampleRate: number): DetectionResult`
+   - На входе спектр (из `fft-analyzer`), на выходе `{ isDetected: boolean, confidence: 0–1, fundamentals: number[] }`
+   - Логика: поиск пиков выше SNR-threshold, группировка в гармонические ряды
+2. Unit-тесты в `src/service.test.ts`:
+   - Synthetic drone spectrum (4 гармоники 100 Гц) → обнаруживает
+   - White noise → не обнаруживает
+   - Птица (непериодический шум) → не обнаруживает или confidence < 0.5
+3. React hook `useHarmonicDetector(config)` в `src/hooks.ts`
+4. Экспорт в `src/index.ts` контрактов `DroneDetector`, `DetectionResult`, `HarmonicConfig`
 
-- [ ] Пакет `@membrana/detector-base` создан с `package.json`, `tsconfig.json`, `vite.config.ts`.
-- [ ] Экспортированы типы: `DroneDetector` (интерфейс сервиса), `DetectionResult` (результат одного окна), `AudioWindow` (формат входных аудиокадров), `DetectionMetrics` (precision, recall, latency).
-- [ ] Типы опубликованы в `@membrana/core` как переэкспорт для удобства.
-- [ ] Написаны unit-тесты (mock-реализация детектора) — test file в пакете.
-- [ ] Обновлена `docs/ARCHITECTURE.md` §1e с ссылкой на новый пакет.
+**Роль:** Математик (реализация ядра), Структурщик (scaffold + тесты).
 
-**Роль:**
-**Структурщик** — проектирует контракт; **Mathematik** — согласует, что такое `DetectionMetrics`.
-
-**Размер:**
-**S** (типы + их документация, no logic).
+**Размер:** M (чистая математика без сложных зависимостей, ~300 LOC).
 
 ---
 
-### Задача 2: Создать `docs/DETECTOR_BENCHMARK.md` и каркас `yarn benchmark:detectors`
+### Задача 4.2 — Реализовать `cepstral-detector-service` на чистом TypeScript
 
-**Цель:**
-Установить метрику для stage-gate 1→2 и готовую инфраструктуру для сравнения детекторов на одном датасете.
+**Цель:** Детектор на основе cepstrum-анализа — более робастный к окружающему шуму, чем гармонический.
 
-**Пакет / слой:**
-Инфра (docs + scripts).
+**Пакет / слой:** `packages/services/detectors/cepstral-detector-service` → analyzer.
 
-**Связь с WHITE_PAPER:**
-§8, stage-gate 1→2, Single-Node Detection First.
+**Связь с WHITE_PAPER:**  
+- §1e (Этап 1.A, независимая реализация)
+- §8 (DSP-эшелон, объяснимые признаки)
 
 **Definition of Done:**
+1. Класс `CepstralDetectorService`:
+   - Метод `detect(spectrum: Float32Array, ...): DetectionResult`
+   - Преобразование: спектр → log-спектр → IFFT (cepstrum) → поиск пиков в cepstral domain
+   - Выход: гармонический период (в семплах), confidence
+2. Unit-тесты:
+   - Синтетический дрон → период обнаружен верно
+   - Птица → период не найден или шум
+3. Hook `useCepstralDetector(config)`
+4. Экспорт в `index.ts`
 
-- [ ] Файл `docs/DETECTOR_BENCHMARK.md` с описанием: как запускается бенчмарк, какие метрики (precision, recall, F1, p95-latency), какой датасет, как добавить новый детектор.
-- [ ] Скрипт `scripts/benchmark-detectors.mjs` (или `benchmark:detectors` в Turbo) — читает датасет из Media Library, прогоняет через каждый зарегистрированный детектор, выдаёт таблицу + JSON.
-- [ ] Подключено в `yarn` как `benchmark:detectors`.
-- [ ] Дефолтный датасет (synthetic или mini-sample) в `datasets/` для локального запуска.
-- [ ] Обновлена `docs/ARCHITECTURE.md` §8 (новый раздел или расширение существующего).
+**Роль:** Математик.
 
-**Роль:**
-**Структурщик** (инфра + регламент); **Музыкант** (скрипт + интеграция Turbo).
-
-**Размер:**
-**M** (нужна интеграция с Media Library, script, docs).
+**Размер:** M (cepstrum классический алгоритм, но реализация требует аккуратности с IFFT).
 
 ---
 
-### Задача 3: Создать `docs/DATASET.md` с описанием требуемых данных
+### Задача 4.3 — Запустить benchmark детекторов на `free-v1` корпусе (v0.2)
 
-**Цель:**
-Обозначить, какие данные нужны для обучения и тестирования детекторов (Этап 1.A).
+**Цель:** Получить метрики Precision, Recall, F1 для каждого детектора на реальном корпусе из DS1, заполнить `DETECTOR_BENCHMARK.md`.
 
-**Пакет / слой:**
-Документация (docs/).
+**Пакет / слой:** `scripts/benchmark-detectors.mjs` + `docs/DETECTOR_BENCHMARK.md`.
 
-**Связь с WHITE_PAPER:**
-§8 (stage-gate 1→2); практический план сбора/скачивания эталонных звуков.
+**Связь с WHITE_PAPER:**  
+- §8 (Stage-gate 1→2: precision ≥ 85%, recall ≥ 90%)
+- §11 (метрики успеха: доля ложных тревог < 5%)
 
 **Definition of Done:**
+1. Обновить `benchmark-detectors.mjs`:
+   - Загрузить корпус из `data/detectors-benchmark/v0.2/` (уже есть после DS4)
+   - Для каждого детектора (`harmonic-`, `cepstral-`, `spectral-flux-`, позже `yamnet-`) запустить на всех семплах
+   - Собрать TP, FP, FN, TN → вычислить P, R, F1
+2. Заполнить таблицу в `DETECTOR_BENCHMARK.md`:
+   ```
+   | Детектор | Precision | Recall | F1 | Latency p95 (ms) |
+   |----------|-----------|--------|-----|------------------|
+   | harmonic | 0.87 | 0.91 | 0.89 | 45 |
+   | ...      | ...  | ...  | ...  | .. |
+   ```
+3. Вывод: **Stage-gate открыт?** (Y/N) — если лучший детектор или ensemble ≥ P85, R90 → Y, иначе N.
+4. Фиксирование результатов в коммите (датой бенчмарка).
 
-- [ ] Файл `docs/DATASET.md` с перечислением: класс дрона (мультиротор типов DJI, Parrot и т.п.), с какой высоты и расстояния записывали, наличие ветра, город/поле.
-- [ ] Схема папок в `datasets/` (структура, где лежат .wav files и metadata).
-- [ ] Минимальная квота для бенчмарка (хотя бы 10 файлов дронов + 10 фона на класс).
-- [ ] План получения данных (куда скачивать, лицензия, как нормализовать).
-- [ ] Скрипт или инструкция `datasets/README.md` для первого запуска бенчмарка.
+**Роль:** Структурщик (CI/инструменты), Математик (анализ метрик).
 
-**Роль:**
-**Структурщик** + **Verstalyshik** (presentation).
-
-**Размер:**
-**M** (нужно продумать схему, план источников).
+**Размер:** M (скрипт готов, нужна только интеграция новых детекторов).
 
 ---
 
-### Задача 4: Создать scaffold `@membrana/harmonic-detector-service`
+### Задача 4.4 — Интегрировать детекторы в `detection-ensemble-service`
 
-**Цель:**
-Реализовать первый DSP-детектор (гармонический анализ) с полным lifecycle: конфиг, сервис, хуки, тесты.
+**Цель:** Один пакет, который вызывает все готовые детекторы и агрегирует результаты (среднее confidence, consensus).
 
-**Пакет / слой:**
-`packages/services/detectors/harmonic-detector/` — **analyzer** (зависит от `audio-engine-service`, `detector-base`).
+**Пакет / слой:** `packages/services/detection-ensemble-service` → analyzer (plan, требует реализации).
 
-**Связь с WHITE_PAPER:**
-§4.2 (FFT-аналайзер), §8 Этап 1.A; WHITE_PAPER §5.1 описывает акустический портрет дрона (80–250 Гц, гармоники до 2–5 кГц).
+**Связь с WHITE_PAPER:**  
+- §8 (Этап 1.B перед Neural — DSP ensemble)
+- §4.4 (Слияние модальностей — одна шина для всех аналайзеров)
 
 **Definition of Done:**
+1. Класс `DetectionEnsembleService`:
+   - Поле `detectors: DroneDetector[]` (гармонический, cepstral, spectral-flux)
+   - Метод `detect(spectrum, ...): DetectionResult` — вызывает все, агрегирует
+   - Стратегия: `confidence = mean(det.confidence)` или взвешенная
+2. Unit-тесты:
+   - Все детекторы согласны → confidence ≈ 1.0
+   - Один детектор False Positive → ensemble снижает confidence
+3. Hook `useDetectionEnsemble(...)`
+4. **Не добавлять** нейросетевые детекторы на этом этапе (они в 1.B).
 
-- [ ] Пакет создан: `src/{math,core,hooks,types,index.ts}` по образцу `@membrana/fft-analyzer`.
-- [ ] Логика: поиск фундаментальной частоты (80–250 Гц), проверка наличия гармоник (2x, 3x, 4x), расчёт SNR, выдача `DetectionResult` с флагом "drone" / "not-drone" и confidence.
-- [ ] Unit-тесты (mock-буферы с синтетическими дронами и шумом) — ≥ 70% покрытие.
-- [ ] Интеграция с `@membrana/detector-base` (имплементирует `DroneDetector`).
-- [ ] Документация в `packages/services/detectors/harmonic-detector/README.md` с примерами использования.
-- [ ] Регистрация детектора в реестре детекторов (если такой есть).
+**Роль:** Структурщик.
 
-**Роль:**
-**Математик** (алгоритм); **Музыкант** (имплементация, тесты).
-
-**Размер:**
-**L** (полный сервис + тесты + docs).
+**Размер:** S (это просто агрегатор, логика простая).
 
 ---
 
-### Задача 5: Обновить `docs/ARCHITECTURE.md` §1e для жёсткой фиксации Single-Node Detection First
+### Задача 4.5 — Создать UI-плагин для просмотра результатов детекции в Cabinet SampleLibrary
 
-**Цель:**
-Добавить в правила явный запрет на многоузловую функциональность (TDOA, localizer, tracker) до stage-gate 1→2 и разъяснить, почему.
+**Цель:** При выборе семпла в таблице показывать боковую панель с результатами всех детекторов (гармонический: confidence 0.92, cepstral: 0.88, etc.).
 
-**Пакет / слой:**
-Документация (docs/).
+**Пакет / слой:** `apps/cabinet/src/components/sample-library/` + новый плагин в `apps/cabinet/src/plugins/detection-results/`.
 
-**Связь с WHITE_PAPER:**
-§8 (Single-Node Detection First), консилиум memo.
+**Связь с WHITE_PAPER:**  
+- §8, §1c (Плагины регистрируются через MembranaRegistry)
+- Stage-gate 1→2 требует **визуализации** результатов для валидации
 
 **Definition of Done:**
+1. Компонент `DetectionResultsPanel.tsx`:
+   - Таблица: детектор | confidence | fundamentals | latency (ms)
+   - Color-код: зелёный (>0.85), жёлтый (0.5–0.85), красный (<0.5)
+2. Плагин `detectionResultsPlugin.ts`:
+   - Регистрация через `MembranaRegistry.registerPlugin()`
+   - Lifecycle: `install()` → подписка на выбранный семпл, загрузка спектра, запуск ensemble
+3. Integration in `CabinetSampleTable.tsx` (добавить колонку "Анализ" с кнопкой)
+4. Smoke-тест: выбрать drone-семпл → panel открывается → confidence > 0.8 для большинства детекторов
 
-- [ ] Раздел в §1e обновлен: перечислены пакеты, которые НЕ трогаем до gate 1→2 (`tdoa-service`, `localizer-service`, `tracker-service`, `transport-service`).
-- [ ] Добавлена ссылка на `DETECTOR_BENCHMARK.md` как на объективный критерий gate.
-- [ ] Добавлено предупреждение в PR-темплейт (если есть) или создан отдельный `.github/PULL_REQUEST_TEMPLATE.md` с чек-листом.
-- [ ] Консилиум-memo в `docs/seanses/single-node-detection-first-{DATE}.md` обновлен или создан заново.
+**Роль:** Верстальщик (UI), Структурщик (плагин registration).
 
-**Роль:**
-**Структурщик** + **Teamlead** (финальная валидация).
-
-**Размер:**
-**S** (редакционная работа).
+**Размер:** M (UI простой, но требует понимания plugin lifecycle).
 
 ---
 
-### Задача 6: Подготовить первый синтетический датасет для бенчмарка
+### Задача 4.6 — Заполнить `DATASET.md` v0.2 финальными статистиками
 
-**Цель:**
-Создать минимальный набор .wav файлов (synthetic + real samples) для локального тестирования детекторов без ручных файлов.
+**Цель:** Документировать корпус `free-v1` (количество, классы, продолжительность, source, license, metadata).
 
-**Пакет / слой:**
-`datasets/` — инфра.
+**Пакет / слой:** `docs/DATASET.md`.
 
-**Связь с WHITE_PAPER:**
-§8 (stage-gate 1→2 требует тестового датасета).
+**Связь с WHITE_PAPER:**  
+- §8 (Принцип Single-Node Detection First опирается на датасет)
+- §11 (Воспроизводимость метрик)
 
 **Definition of Done:**
+1. Таблица: Класс | Кол-во | Мин/макс длительность | Источник | Лицензия
+   ```
+   | drone (multi-rotor) | 45 | 4.8s–5.2s | DJI / Autel / ... | CC0 / proprietary |
+   | drone (fixed-wing) | 8 | ... | ... | ... |
+   | not-drone (bird) | 20 | ... | ... | ... |
+   | not-drone (traffic) | 35 | ... | ... | ... |
+   | not-drone (wind) | 12 | ... | ... | ... |
+   ```
+2. Итого: 120 семплов, 600 секунд аудио
+3. Split рекомендуемый: train 60%, val 20%, test 20% (для будущих фаз)
+4. Файлы: `data/detectors-benchmark/v0.2/manifest.json` (уже есть после DS1) + README в папке
 
-- [ ] Синтетические файлы: 5×3 = 15 samples (5 дронов × 3 вариации расстояния/шума) в 48 kHz.
-- [ ] Фоновые файлы: 10 samples (ветер, город, тишина) в том же формате.
-- [ ] CSV или JSON-metadata для каждого файла (класс, дрон/фон, расстояние, SNR).
-- [ ] Размер < 100 MB, чтоб быстро клонировалось.
-- [ ] Скрипт `datasets/generate-synthetic.mjs` для переген при необходимости.
+**Роль:** Документалист (Teamlead).
 
-**Роль:**
-**Музыкант** (synthesis); **Структурщик** (организация, документация).
-
-**Размер:**
-**M** (нужны вспомогательные скрипты, но данных мало).
+**Размер:** S (сбор статистики, написание таблиц).
 
 ---
 
 ## 5. Что НЕ делаем на этом горизонте
 
-1. **TDOA и многоузловая синхронизация (Этап 2)**
-   Причина: stage-gate 1→2 ещё не пройден. До того как одиночный детектор не покажет precision ≥85% и recall ≥90%, многоузловое расширение лишено смысла.
+1. **TDOA и многоузловая синхронизация**  
+   Stage-gate 1→2 заморожен до достижения Precision ≥ 85%, Recall ≥ 90% на одиночном узле. Детекция дрона должна быть **надёжной**, прежде чем масштабировать сеть. (WHITE_PAPER §8, принцип Single-Node Detection First.)
 
-2. **Нейросетевые детекторы (YAMNet, CLAP, Etape 1.B)**
-   Причина: DSP-эшелон (Этап 1.A) должен быть завершён и задокументирован; нейросети — второй слой.
+2. **Нейросетевые детекторы (YAMNet, CLAP)**  
+   Этап 1.B начинается только после завершения DSP-эшелона (4.1–4.3). Не добавляем deep learning на этапе 1.A.
 
-3. **RF-модальность и ADS-B (Этап 6)**
-   Причина: отложена до stage-gate 1→2 и разработки трекинга.
+3. **Локализацию и мультилатерацию**  
+   TDOA-сервис, локализер, трекер остаются в консервации (`@experimental @stage 2` в core). Их ревью / реализация отложена.
 
-4. **Расширение Media Library (фазы A3–A6)**
-   Причина: A1 и A2 завершены; A3+ (распределённое хранилище, S3-бэкенд) — отложено, пока детекторы не будут готовы и не потребуют большие объёмы.
+4. **Расширение Cabinet на RF или видео**  
+   Сейчас Cabinet ориентирован на образцы (`sample-library`) и телеметрию. Другие модальности (RF-приёмник, видео-верификация) — Этап 6, после успешного Этапа 4.
 
-5. **UI-визуализация спектрограмм в Microphone Module**
-   Причина: это вспомогательная фича; приоритет — детекторы. Плагин можно добавить после Этапа 1.A.
+5. **Масштабирование UI до десятков узлов**  
+   Ситуационная карта (раздел 4.6 WHITE_PAPER) остаётся skeleton'ом; real-time отрисовка треков и счётчик дронов — Этап 4+. Пока демонстрируем на одиночных данных.
 
 ---
 
 ## 6. Проверки в конце периода
 
-### Артефакты
+1. **Три DSP-детектора реализованы и протестированы**  
+   Коммиты в `packages/services/detectors/{harmonic,cepstral,spectral-flux}-detector-service/src/service.ts` содержат работающий код + unit-тесты. Каждый пакет имеет README с примерами использования. ✅ Артефакты: PRs #[N], код, тесты.
 
-- [ ] Пакет `@membrana/detector-base` с типами опубликован и экспортируется из `@membrana/core`.
-- [ ] Файлы `docs/DETECTOR_BENCHMARK.md` и `docs/DATASET.md` созданы и актуальны.
-- [ ] Каркас `yarn benchmark:detectors` запускается без ошибок на дефолтном датасете.
-- [ ] Пакет `@membrana/harmonic-detector-service` создан, прошёл unit-тесты (≥70%).
-- [ ] Синтетический датасет в `datasets/` с ≥20 файлами, метаданными и скриптом генерации.
+2. **Benchmark запущен на `free-v1`, метрики в `DETECTOR_BENCHMARK.md`**  
+   Таблица с P/R/F1 для каждого детектора и ensemble. Вывод: "Stage-gate 1→2 готов к открытию (Y)" или "Требуется доработка (N, причина)". ✅ Артефакт: обновленный `DETECTOR_BENCHMARK.md`, коммит с датой бенчмарка.
 
-### Тесты
+3. **Cabinet Sample Library UI показывает результаты анализа**  
+   При открытии SampleLibraryPage, выборе семпла и нажатии "Анализ" → боковая панель с таблицей детекторов и их confidence. Визуализация работает на реальных семплах из `free-v1`. ✅ Артефакт: скриншоты / видео, компоненты в `apps/cabinet/`.
 
-- [ ] `yarn test` в `packages/services/detector-base/` — все тесты зелёные.
-- [ ] `yarn test` в `packages/services/detectors/harmonic-detector/` — ≥70% покрытие, p95-latency < 100 ms на ноутбуке.
-- [ ] `yarn benchmark:detectors` выдаёт таблицу с метриками (даже если harmonic-детектор сам по себе ещё сырой).
+4. **Detection Ensemble Service интегрирован**  
+   Пакет `detection-ensemble-service` экспортирует `DroneDetector` и используется в UI-плагине. Вызовов к отдельным детекторам больше нет в клиенте; все идут через ensemble. ✅ Артефакт: импорты в `apps/cabinet/src/plugins/`, тесты в пакете.
 
-### Демонстрация
+5. **Граф зависимостей соблюдается (noncompliance ≈ 0)**  
+   `yarn build` + `yarn test` выполняются без ошибок. Нет циклических зависимостей между детекторами. Prisma-клиенты изолированы. ✅ Артефакт: зелёный CI/CD.
 
-- [ ] Созвать 15-минутный сеанс обзора: показать структуру пакетов, запустить бенчмарк, прокомментировать результаты.
-- [ ] Обновить `docs/DAILY_STANDUP.md` с выполненными задачами.
-- [ ] Архивировать итоговый отчёт в `docs/archive/daily-day/{DATE}/`.
-
-### Валидация архитектуры
-
-- [ ] `yarn lint` и `yarn type-check` проходят без ошибок во всех затронутых пакетах.
-- [ ] Нет новых зависимостей между analyzer-сервисами.
-- [ ] Граф зависимостей: `core` → `detector-base` → `harmonic-detector`; `harmonic-detector` → `audio-engine`; циклов нет.
+6. **Документация актуальна**  
+   `DATASET.md` v0.2 заполнен статистикой. `DETECTOR_BENCHMARK.md` содержит финальные метрики. `README.md` в каждом новом пакете объясняет, как его использовать. ✅ Артефакт: документация в `docs/`, в каждом пакете `README.md`.
 
 ---
 
-## Итоговая сводка
+## Заключение
 
-Завтрашний день — **критический переход от инфраструктуры к первым детекторам**. Задачи упорядочены так, чтобы к концу периода была готова полная система для тестирования harmonic-детектора на реальных звуках.
-
-**Ключевые зависимости:**
-
-```
-detector-base (Задача 1)
-    ↓
-benchmark.md + dataset.md (Задачи 2, 3)
-    ↓
-synthetic-dataset (Задача 6)
-    ↓
-harmonic-detector-service (Задача 4) ← может идти параллельно
-    ↓
-benchmark:detectors запускается и даёт первые числа
-```
-
-**Успех:** завтра вечером имеем демонстрируемый result для stage-gate 1→2 (даже если не идеальный), заложенную архитектуру для Этапа 1.B (neural-детекторы) и ясность, что Single-Node Detection First соблюдается.
+**Период направлен на закрытие Этапа 1.A** (DSP-детекторы на одном узле) и **подготовку к stage-gate 1→2**. Инфра-работа (MP4–MP6, Cabinet) идёт параллельно, обеспечивая демо-возможности и production-readiness. Ключевой артефакт периода — **валидированный набор детекторов дрона на реальном корпусе**, который откроет путь к многоузловой архитектуре (Этапы 2–4).

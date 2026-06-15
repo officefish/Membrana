@@ -1,0 +1,52 @@
+{
+  "name": "@membrana/background-media",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Web data-plane: sample library blobs, trends templates, device-scoped storage.",
+  "main": "./dist/main.js",
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "build": "prisma generate && tsc -b",
+    "dev": "node --watch -r ts-node/register ./src/main.ts",
+    "start": "node ./dist/main.js",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "prisma generate && vitest run",
+    "verify:swagger": "yarn build && node scripts/verify-swagger.mjs"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@fastify/multipart": "^8.3.0",
+    "@fastify/static": "^7.0.0",
+    "@nestjs/common": "^10.4.15",
+    "@nestjs/core": "^10.4.15",
+    "@nestjs/platform-fastify": "^10.4.15",
+    "@nestjs/swagger": "^7.1.17",
+    "@prisma/client": "^6.1.0",
+    "dotenv": "^16.4.5",
+    "music-metadata": "^10.6.4",
+    "nestjs-pino": "^4.1.0",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "prisma": "^6.1.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "wavefile": "^11.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^10.4.15",
+    "@types/node": "^20.11.0",
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

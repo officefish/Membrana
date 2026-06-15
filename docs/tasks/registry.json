@@ -70,6 +70,116 @@
       "archiveNotes": null
     },
     {
+      "id": "real-dataset-live-calibration",
+      "title": "Real dataset v0.2: библиотеки → анализ → live matching → journal parity (неделя)",
+      "promptPath": "docs/prompts/REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "media-library-a2-ui",
+        "membrane-platform-mp5-telemetry-journal",
+        "tariff-dataset-v1"
+      ]
+    },
+    {
+      "id": "tariff-dataset-v1",
+      "title": "Tariff Dataset v1: убрать benchmark, free-v1 корпус (эпик DS1–DS5)",
+      "promptPath": "docs/prompts/TARIFF_DATASET_V1_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-14",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "Epic complete PR #70-#75. Prod smoke OK 2026-06-14.",
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "tariff-dataset-ds1-corpus",
+      "title": "Tariff Dataset DS1: корпус free-v1 и скрипты sync",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS1_CORPUS_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-14",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #70 merged 2026-06-14.",
+      "dependsOn": [
+        "tariff-dataset-v1"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "tariff-dataset-ds2-domain",
+      "title": "Tariff Dataset DS2: domain model без benchmark",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS2_DOMAIN_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-14",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #71 merged 2026-06-14.",
+      "dependsOn": [
+        "tariff-dataset-ds1-corpus"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "tariff-dataset-ds3-client-bundled",
+      "title": "Tariff Dataset DS3: client bundled catalog и UI",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS3_CLIENT_BUNDLED_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-14",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #72 merged 2026-06-14.",
+      "dependsOn": [
+        "tariff-dataset-ds2-domain"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "tariff-dataset-ds4-benchmark-v02",
+      "title": "Tariff Dataset DS4: benchmark runner на v0.2",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS4_BENCHMARK_V02_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-14",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #73 merged 2026-06-14.",
+      "dependsOn": [
+        "tariff-dataset-ds1-corpus"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "tariff-dataset-ds5-server-provision",
+      "title": "Tariff Dataset DS5: provisioning каталога на media-server при pair",
+      "promptPath": "docs/prompts/TARIFF_DATASET_DS5_SERVER_PROVISION_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-14",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "PR #75 merged 2026-06-14. Prod smoke OK 2026-06-14 media.membrana.space",
+      "dependsOn": [
+        "tariff-dataset-ds2-domain"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
       "id": "mcp-repo-bootstrap",
       "title": "MCP repo bootstrap: example configs, gitignore, verify script",
       "promptPath": "docs/prompts/MCP_REPO_BOOTSTRAP_PROMPT.md",
@@ -94,6 +204,32 @@
       "archivedAt": "2026-06-09",
       "archiveNotes": "Issue #51; tier0 in ~/.cursor/mcp.json; gitnexus list OK; analyze skip (upstream); fallback MCP_USAGE.",
       "githubIssueClosedAt": "2026-06-09"
+    },
+    {
+      "id": "mcp-workstation-phase-b",
+      "title": "MCP phase B: Perplexity + Playwright on workstation",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_B_PROMPT.md",
+      "githubIssue": 52,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-12",
+      "archivedAt": "2026-06-12",
+      "archiveNotes": "all 5 MCP servers green: gitnexus git filesystem perplexity playwright; git fixed uvx mcp-server-git",
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "mcp-workstation-phase-c",
+      "title": "MCP phase C: Glyph on workstation",
+      "promptPath": "docs/prompts/MCP_WORKSTATION_PHASE_C_PROMPT.md",
+      "githubIssue": 53,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-12",
+      "archivedAt": "2026-06-12",
+      "archiveNotes": "glyph go install OK; WinLibs gcc; mcp.json 6 servers; glyph C:/Users/user190825/go/bin/glyph.exe mcp",
+      "githubIssueClosedAt": "2026-06-14"
     },
     {
       "id": "media-library-a1-storage",
@@ -128,6 +264,705 @@
       "size": "M",
       "status": "active",
       "createdAt": "2026-06-10",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "media-library-a4-sample-player",
+      "title": "Media library A4: sample playback, export, and waveform player plugin",
+      "promptPath": "docs/prompts/MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-10",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "detection-base-contract",
+      "title": "Detection: detector-base contract and metrics types",
+      "promptPath": "docs/prompts/DETECTION_BASE_CONTRACT_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "DetectionMetrics mock detector",
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "detection-dataset-v01",
+      "title": "Detection: DATASET.md and synthetic v0.1 manifest",
+      "promptPath": "docs/prompts/DETECTION_DATASET_V01_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "DATASET.md v0.1 synthetic verified",
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "detection-benchmark-runner",
+      "title": "Detection: yarn benchmark:detectors runner and DETECTOR_BENCHMARK.md",
+      "promptPath": "docs/prompts/DETECTION_BENCHMARK_RUNNER_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "benchmark:detectors green",
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "detection-harmonic-gate",
+      "title": "Detection: harmonic-detector v0.1 on benchmark",
+      "promptPath": "docs/prompts/DETECTION_HARMONIC_GATE_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "harmonic on benchmark",
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "detection-architecture-freeze",
+      "title": "Detection: Single-Node freeze in ARCHITECTURE and PR checklist",
+      "promptPath": "docs/prompts/DETECTION_ARCHITECTURE_FREEZE_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-10",
+      "archivedAt": "2026-06-10",
+      "archiveNotes": "ARCHITECTURE freeze PR template",
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "analyzer-frame-feed-refactor",
+      "title": "Анализаторы: AudioFrameFeed и миграция fft-threshold-test + harmonic-detector-viz",
+      "promptPath": "docs/prompts/ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md",
+      "githubIssue": 55,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-11",
+      "archivedAt": "2026-06-11",
+      "archiveNotes": "techies68 ff5c8b5; AudioFrameFeed + fft-threshold-test + harmonic-detector-viz sample-library mode",
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "trends-fft-microphone-plugin",
+      "title": "Плагин микрофона: анализатор тенденций FFT (trends-fft-analyzer)",
+      "promptPath": "docs/prompts/TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md",
+      "githubIssue": 56,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-11",
+      "archivedAt": "2026-06-11",
+      "archiveNotes": "techies68 9b40fa4 + 655acf1",
+      "dependsOn": [
+        "analyzer-frame-feed-refactor"
+      ],
+      "githubIssueClosedAt": "2026-06-11"
+    },
+    {
+      "id": "trends-fft-template-editor",
+      "title": "Редактор пользовательских шаблонов trends-fft",
+      "promptPath": "docs/prompts/TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md",
+      "githubIssue": 57,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "trends-fft-microphone-plugin"
+      ]
+    },
+    {
+      "id": "background-media-v1",
+      "title": "background-media v1: web data-plane (эпик)",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_V1_EPIC_PROMPT.md",
+      "githubIssue": 58,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "media-library-a2-ui"
+      ]
+    },
+    {
+      "id": "background-media-a5a-server",
+      "title": "background-media A5a: NestJS API, PostgreSQL, client ServerStorageBackend",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md",
+      "githubIssue": 58,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-v1"
+      ]
+    },
+    {
+      "id": "background-media-a5b-docker",
+      "title": "background-media A5b: Docker Compose (API + PostgreSQL + volumes)",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md",
+      "githubIssue": 58,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5a-server"
+      ]
+    },
+    {
+      "id": "background-media-a5c-deploy",
+      "title": "background-media A5c: продовый деплой (TLS, DNS, docs)",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md",
+      "githubIssue": 59,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5b-docker"
+      ]
+    },
+    {
+      "id": "background-media-a5d-swagger",
+      "title": "background-media A5d: полная Swagger/OpenAPI документация",
+      "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md",
+      "githubIssue": 64,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5a-server"
+      ]
+    },
+    {
+      "id": "membrane-platform-v1",
+      "title": "Membrane Platform v1: cabinet, pairing, tariff, cloud journal (эпик)",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-13",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "background-media-a5a-server"
+      ]
+    },
+    {
+      "id": "membrane-platform-mp0-domain",
+      "title": "Membrane Platform MP0: домен, глоссарий, MEMBRANE_PLATFORM.md",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "docs: consilium, MEMBRANE_PLATFORM.md, epic #67",
+      "dependsOn": [
+        "membrane-platform-v1"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "membrane-platform-mp1-auth-cabinet",
+      "title": "Membrane Platform MP1: background-cabinet auth + apps/cabinet shell",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Prod smoke OK 2026-06-13. Deploy @ 23afa52. https://cabinet.membrana.space API on same host. CABINET_RUN_SEED=false.",
+      "dependsOn": [
+        "membrane-platform-mp0-domain"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "membrane-platform-mp2-membrane-node-keys",
+      "title": "Membrane Platform MP2: Membrane, Tariff, Node, ключи TTL enum",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Prod smoke OK 2026-06-13. MP2 API + cabinet UI deployed @ af9abca.",
+      "dependsOn": [
+        "membrane-platform-mp1-auth-cabinet"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "membrane-platform-mp3-client-pairing",
+      "title": "Membrane Platform MP3: pairing + автономный режим узла в apps/client",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "API prod smoke OK 2026-06-13 @ cbbc435. Pair + Device + media bridge. Client UI: autonomous/paired modes. Browser pairing: VITE_CABINET_API_URL=https://cabinet.membrana.space",
+      "dependsOn": [
+        "membrane-platform-mp2-membrane-node-keys"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "membrane-platform-mp4-media-membrane",
+      "title": "Membrane Platform MP4: media scope по мембране, квоты userStorage/buffer, tariff dataset",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "Prod smoke OK 2026-06-12 @ 50584bf",
+      "dependsOn": [
+        "membrane-platform-mp3-client-pairing"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "membrane-platform-mp5-telemetry-journal",
+      "title": "Membrane Platform MP5: TelemetryReport + LiveRecord, journal UI",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "Prod smoke OK 2026-06-14 @ dc94a7c. Journal API + client sync + cabinet UI on cabinet.membrana.space",
+      "dependsOn": [
+        "membrane-platform-mp1-auth-cabinet"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "membrane-platform-mp6-prod-deploy",
+      "title": "Membrane Platform MP6: prod deploy cabinet.membrana.space",
+      "promptPath": "docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-14",
+      "archiveNotes": "Prod regression OK 2026-06-14 @ 0bd3cd8. MP1-MP5 single-session smoke via yarn cabinet:mp6:prod",
+      "dependsOn": [
+        "membrane-platform-mp4-media-membrane",
+        "membrane-platform-mp5-telemetry-journal"
+      ],
+      "githubIssueClosedAt": "2026-06-14"
+    },
+    {
+      "id": "cabinet-sample-library-v1",
+      "title": "Cabinet Sample Library v1: библиотека сэмплов в кабинете (эпик CSL1–CSL3)",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp4-media-membrane",
+        "tariff-dataset-v1"
+      ]
+    },
+    {
+      "id": "cabinet-sample-library-csl1-api",
+      "title": "Cabinet Sample Library CSL1: membrane-scoped API + cabinet auth to media",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-sample-library-v1"
+      ]
+    },
+    {
+      "id": "cabinet-sample-library-csl2-ui",
+      "title": "Cabinet Sample Library CSL2: SampleLibraryPage + N-ready node picker",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-sample-library-csl1-api"
+      ]
+    },
+    {
+      "id": "cabinet-sample-library-csl3-remote-ops",
+      "title": "Cabinet Sample Library CSL3: remote delete/move/import + offline empty states",
+      "promptPath": "docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-sample-library-csl2-ui"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-hardening-night-build",
+      "title": "Night Build: Cabinet MP4 hardening — DRY playback, facade, quality gate",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp4-media-membrane"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb0-merge-gate",
+      "title": "NB0: merge gate — lint, tests, dependency graph audit",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-hardening-night-build"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb1-sample-playback-dry",
+      "title": "NB1: extract @membrana/sample-playback-service, migrate client + cabinet",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-nb0-merge-gate"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb2-cabinet-facade",
+      "title": "NB2: cabinet hooks, split SampleLibraryPage, reset media session",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-nb1-sample-playback-dry"
+      ]
+    },
+    {
+      "id": "cabinet-mp4-nb3-quality-contracts",
+      "title": "NB3: LRU cache, a11y Escape, OpenAPI sketch media bridge",
+      "promptPath": "docs/prompts/CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "cabinet-mp4-hardening-night-build",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-mp4-nb2-cabinet-facade"
+      ]
+    },
+    {
+      "id": "sample-library-drone-detection",
+      "title": "Epic: Sample Library drone detection — 5s sample verdicts + plugin",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-15",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "single-node-detection-first",
+        "media-library-a4-sample-player"
+      ]
+    },
+    {
+      "id": "sld1-sample-detection-contract",
+      "title": "SLD1: SampleDetectionVerdict + analyzeSample; v0.2-only benchmark policy",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": "2026-06-15",
+      "archiveNotes": "PR #77; analyzeSample + benchmark v0.2",
+      "githubIssueClosedAt": null,
+      "dependsOn": [
+        "sample-library-drone-detection"
+      ]
+    },
+    {
+      "id": "sld2-sample-library-drone-plugin",
+      "title": "SLD2: sample-library-drone-analysis plugin + post-playback report UI",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": "2026-06-15",
+      "archiveNotes": "PR #77; sample-library-drone-analysis plugin",
+      "githubIssueClosedAt": null,
+      "dependsOn": [
+        "sld1-sample-detection-contract"
+      ]
+    },
+    {
+      "id": "sld3-dsp-detectors-free-v1",
+      "title": "SLD3: harmonic + cepstral + spectral-flux on free-v1 (120) in plugin + benchmark",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "sld2-sample-library-drone-plugin"
+      ]
+    },
+    {
+      "id": "sld4-stage-gate-calibration",
+      "title": "SLD4: threshold calibration on free-v1 + stage-gate report",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "sample-library-drone-detection",
+      "createdAt": "2026-06-15",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "sld3-dsp-detectors-free-v1"
+      ]
+    },
+    {
+      "id": "validated-drone-recognition",
+      "title": "Epic: Validated drone recognition — ground truth, ≥80% accuracy, templates",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "sld4-stage-gate-calibration"
+      ]
+    },
+    {
+      "id": "vdr1-sample-label-patch-api",
+      "title": "VDR1: PATCH sample label + notes API (background-media)",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "validated-drone-recognition"
+      ]
+    },
+    {
+      "id": "vdr2-label-notes-ui",
+      "title": "VDR2: label/notes UI — client user + cabinet admin",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr1-sample-label-patch-api"
+      ]
+    },
+    {
+      "id": "vdr3-ground-truth-export",
+      "title": "VDR3: export curated manifest + DATASET_CURATION protocol",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr2-label-notes-ui"
+      ]
+    },
+    {
+      "id": "vdr4-dsp-calibration-validated",
+      "title": "VDR4: DSP calibration on validated labels — target ≥80% val accuracy",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr3-ground-truth-export"
+      ]
+    },
+    {
+      "id": "vdr5-template-match-detector",
+      "title": "VDR5: template-match detector from validated drone templates",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr3-ground-truth-export"
+      ]
+    },
+    {
+      "id": "vdr6-recognition-report-gate",
+      "title": "VDR6: recognition report — best detector, gap to 80% and stage-gate",
+      "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "validated-drone-recognition",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr4-dsp-calibration-validated",
+        "vdr5-template-match-detector"
+      ]
+    },
+    {
+      "id": "drone-detector-detail-report",
+      "title": "Подробный отчёт детекторов дрона (DDR1–4)",
+      "promptPath": "docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md",
+      "githubIssue": 78,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "telemetry-journal-live-refactor",
+      "title": "Live-журнал телеметрии (TJ1–TJ6)",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md",
+      "githubIssue": 79,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "telemetry-journal-ux-hardening",
+      "title": "Live-журнал UX: buffer gate, mic drone plugin, refresh, waveform, pagination (BL1, TJ7–TJ10)",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
       "archivedAt": null,
       "archiveNotes": null
     }

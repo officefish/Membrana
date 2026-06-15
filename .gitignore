@@ -26,6 +26,10 @@ pnpm-debug.log*
 .env
 .env.local
 .env.*.local
+**/.env.docker
+
+# Локальные TLS-ключи (не коммитить)
+ssl/
 
 # MCP (локальные индексы и конфиги с ключами)
 .gitnexus/
@@ -41,6 +45,19 @@ Thumbs.db
 # Временные файлы
 *.tmp
 *.temp
+
+# Случайный emit tsc в src (outDir должен быть dist/)
+packages/services/detectors/**/src/*.js
+packages/services/detectors/**/src/*.js.map
+packages/services/detectors/**/src/*.d.ts
+packages/services/detectors/**/src/*.d.ts.map
+
+# Локальные SSH/debug-скрипты и вывод (не коммитить)
+scripts/_ssh-*.mjs
+scripts/_*-out.txt
+
+# Кэш загрузки внешних датасетов (WAV остаются в real-collection/)
+docs/datasets/samples/.cache/
 
 # Lockfile-ы других пакетных менеджеров (используем yarn.lock)
 package-lock.json

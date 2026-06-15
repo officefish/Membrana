@@ -3,13 +3,16 @@ import { DomainError } from '@membrana/core';
 import {
   BUFFER_COLLECTION_ID,
   DEFAULT_LOCAL_QUOTA_BYTES,
-  SYSTEM_BENCHMARK_COLLECTION_ID,
+  DEFAULT_SAMPLES_PAGE_SIZE,
+  TARIFF_DATASET_COLLECTION_ID,
+  TARIFF_DATASET_SYSTEM_KEY,
 } from '../constants.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   Collection,
   MediaSample,
   NewSampleMeta,
+  PaginatedSamples,
   StorageQuota,
 } from '../types.js';
 
@@ -22,7 +25,11 @@ function newId(): string {
 }
 
 function isReservedCollection(id: string): boolean {
-  return id === BUFFER_COLLECTION_ID || id === SYSTEM_BENCHMARK_COLLECTION_ID;
+  return id === BUFFER_COLLECTION_ID || id === TARIFF_DATASET_COLLECTION_ID;
+}
+
+function isTariffDatasetCollection(col: Collection | undefined): boolean {
+  return col?.kind === 'system' && col.systemKey === TARIFF_DATASET_SYSTEM_KEY;
 }
 
 export interface MemoryStorageBackendOptions {
@@ -53,12 +60,34 @@ export class MemoryStorageBackend implements IStorageBackend {
     this.serverReachable = options.serverReachable ?? false;
   }
 
+  private userUsedBytes(): number {
+    let used = 0;
+    for (const sample of this.samples.values()) {
+      const col = this.collections.get(sample.collectionId);
+      if (isTariffDatasetCollection(col)) continue;
+      used += sample.sizeBytes;
+    }
+    return used;
+  }
+
+  private bufferUsedBytes(): number {
+    let used = 0;
+    for (const sample of this.samples.values()) {
+      if (sample.collectionId !== BUFFER_COLLECTION_ID) continue;
+      used += sample.sizeBytes;
+    }
+    return used;
+  }
+
   async getQuota(): Promise<StorageQuota> {
+    const usedBytes = this.userUsedBytes();
     return {
-      usedBytes: this.usedBytes,
+      usedBytes,
       limitBytes: this.limitBytes,
       backend: this.backendKind,
       serverReachable: this.serverReachable,
+      bufferUsedBytes: this.bufferUsedBytes(),
+      bufferLimitBytes: this.limitBytes,
     };
   }
 
@@ -73,12 +102,12 @@ export class MemoryStorageBackend implements IStorageBackend {
         updatedAt: t,
       });
     }
-    if (!this.collections.has(SYSTEM_BENCHMARK_COLLECTION_ID)) {
-      this.collections.set(SYSTEM_BENCHMARK_COLLECTION_ID, {
-        id: SYSTEM_BENCHMARK_COLLECTION_ID,
-        name: 'Benchmark (системная)',
+    if (!this.collections.has(TARIFF_DATASET_COLLECTION_ID)) {
+      this.collections.set(TARIFF_DATASET_COLLECTION_ID, {
+        id: TARIFF_DATASET_COLLECTION_ID,
+        name: 'Базовый набор (free-v1)',
         kind: 'system',
-        systemKey: 'benchmark',
+        systemKey: TARIFF_DATASET_SYSTEM_KEY,
         createdAt: t,
         updatedAt: t,
       });
@@ -87,13 +116,19 @@ export class MemoryStorageBackend implements IStorageBackend {
 
   async listCollections(): Promise<Collection[]> {
     await this.ensureReservedCollections();
-    return [...this.collections.values()].sort((a, b) => {
-      const order = (c: Collection) =>
-        c.kind === 'buffer' ? 0 : c.kind === 'system' ? 1 : 2;
-      const d = order(a) - order(b);
-      if (d !== 0) return d;
-      return a.name.localeCompare(b.name);
-    });
+    const counts = new Map<string, number>();
+    for (const sample of this.samples.values()) {
+      counts.set(sample.collectionId, (counts.get(sample.collectionId) ?? 0) + 1);
+    }
+    return [...this.collections.values()]
+      .sort((a, b) => {
+        const order = (c: Collection) =>
+          c.kind === 'buffer' ? 0 : c.kind === 'system' ? 1 : 2;
+        const d = order(a) - order(b);
+        if (d !== 0) return d;
+        return a.name.localeCompare(b.name);
+      })
+      .map((col) => ({ ...col, sampleCount: counts.get(col.id) ?? 0 }));
   }
 
   async createCollection(name: string): Promise<Collection> {
@@ -130,17 +165,41 @@ export class MemoryStorageBackend implements IStorageBackend {
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
+  async listSamplesPage(
+    collectionId: string,
+    page = 1,
+    limit = DEFAULT_SAMPLES_PAGE_SIZE,
+  ): Promise<PaginatedSamples> {
+    const all = await this.listSamples(collectionId);
+    const total = all.length;
+    const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
+    const safePage =
+      totalPages === 0 ? 1 : Math.min(Math.max(1, page), totalPages);
+    const skip = (safePage - 1) * limit;
+    return {
+      items: all.slice(skip, skip + limit),
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+    };
+  }
+
   async putSample(
     collectionId: string,
     blob: Blob,
     meta: NewSampleMeta,
   ): Promise<MediaSample> {
     await this.ensureReservedCollections();
-    if (!this.collections.has(collectionId)) {
+    const col = this.collections.get(collectionId);
+    if (!col) {
       throw new DomainError('Collection not found', 'NOT_FOUND');
     }
+    if (isTariffDatasetCollection(col)) {
+      throw new DomainError('Cannot upload to tariff dataset collection', 'FORBIDDEN');
+    }
     const size = blob.size;
-    if (this.usedBytes + size > this.limitBytes) {
+    if (this.userUsedBytes() + size > this.limitBytes) {
       throw new DomainError('Storage quota exceeded', 'QUOTA_EXCEEDED');
     }
     const id = newId();
@@ -162,7 +221,44 @@ export class MemoryStorageBackend implements IStorageBackend {
     this.samples.set(id, sample);
     this.blobs.set(id, blob);
     this.usedBytes += size;
-    const col = this.collections.get(collectionId)!;
+    this.collections.set(collectionId, { ...col, updatedAt: nowIso() });
+    return sample;
+  }
+
+  /** Import read-only catalog sample (no user quota). */
+  async importCatalogSample(
+    collectionId: string,
+    blob: Blob,
+    meta: NewSampleMeta,
+    fixedId: string,
+  ): Promise<MediaSample> {
+    await this.ensureReservedCollections();
+    const col = this.collections.get(collectionId);
+    if (!col || !isTariffDatasetCollection(col)) {
+      throw new DomainError('Catalog import only allowed for tariff dataset', 'FORBIDDEN');
+    }
+    if (this.samples.has(fixedId)) {
+      return this.samples.get(fixedId)!;
+    }
+    const size = blob.size;
+    const sample: MediaSample = {
+      id: fixedId,
+      collectionId,
+      title: meta.title,
+      class: meta.class,
+      label: meta.label,
+      source: meta.source,
+      durationSec: meta.durationSec,
+      sampleRate: meta.sampleRate,
+      channels: meta.channels ?? 1,
+      createdAt: nowIso(),
+      storageRef: fixedId,
+      notes: meta.notes,
+      sizeBytes: size,
+    };
+    this.samples.set(fixedId, sample);
+    this.blobs.set(fixedId, blob);
+    this.usedBytes += size;
     this.collections.set(collectionId, { ...col, updatedAt: nowIso() });
     return sample;
   }
@@ -170,6 +266,10 @@ export class MemoryStorageBackend implements IStorageBackend {
   async removeSample(sampleId: string): Promise<void> {
     const sample = this.samples.get(sampleId);
     if (!sample) return;
+    const col = this.collections.get(sample.collectionId);
+    if (isTariffDatasetCollection(col)) {
+      throw new DomainError('Cannot delete catalog samples', 'FORBIDDEN');
+    }
     this.samples.delete(sampleId);
     this.blobs.delete(sampleId);
     this.usedBytes = Math.max(0, this.usedBytes - sample.sizeBytes);
@@ -180,13 +280,41 @@ export class MemoryStorageBackend implements IStorageBackend {
     if (!sample) {
       throw new DomainError('Sample not found', 'NOT_FOUND');
     }
-    if (!this.collections.has(toCollectionId)) {
+    const fromCol = this.collections.get(sample.collectionId);
+    const toCol = this.collections.get(toCollectionId);
+    if (isTariffDatasetCollection(fromCol) || isTariffDatasetCollection(toCol)) {
+      throw new DomainError('Cannot move catalog samples', 'FORBIDDEN');
+    }
+    if (!toCol) {
       throw new DomainError('Target collection not found', 'NOT_FOUND');
     }
     const updated: MediaSample = {
       ...sample,
       collectionId: toCollectionId,
       source: 'move',
+    };
+    this.samples.set(sampleId, updated);
+    return updated;
+  }
+
+  async updateSampleLabelNotes(
+    sampleId: string,
+    patch: import('../types.js').UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    const sample = this.samples.get(sampleId);
+    if (!sample) {
+      throw new DomainError('Sample not found', 'NOT_FOUND');
+    }
+    const col = this.collections.get(sample.collectionId);
+    if (isTariffDatasetCollection(col)) {
+      throw new DomainError('Tariff dataset labels require cabinet admin', 'FORBIDDEN');
+    }
+    const updated: MediaSample = {
+      ...sample,
+      ...(patch.label !== undefined ? { label: patch.label } : {}),
+      ...(patch.notes !== undefined
+        ? { notes: patch.notes === null ? undefined : patch.notes }
+        : {}),
     };
     this.samples.set(sampleId, updated);
     return updated;

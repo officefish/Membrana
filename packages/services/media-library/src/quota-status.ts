@@ -12,7 +12,7 @@ export type MediaLibraryStorageMode =
 
 export function resolveMediaLibraryStorageMode(quota: StorageQuota): MediaLibraryStorageMode {
   if (quota.backend === 'electron-fs') return 'electron-fs';
-  if (quota.backend === 'server' && quota.serverReachable) return 'remote-server';
+  if (quota.backend === 'server') return 'remote-server';
   return 'browser-limited-fallback';
 }
 
@@ -30,4 +30,39 @@ export function isQuotaFull(quota: StorageQuota): boolean {
 export function isQuotaWarning(quota: StorageQuota): boolean {
   const level = getQuotaLevel(quota);
   return level === 'warning' || level === 'full';
+}
+
+/** Bytes/limit for `__buffer__` UI and recorder gating. */
+export function resolveBufferQuota(quota: StorageQuota): { usedBytes: number; limitBytes: number } {
+  return {
+    usedBytes: quota.bufferUsedBytes ?? quota.usedBytes,
+    limitBytes: quota.bufferLimitBytes ?? quota.limitBytes,
+  };
+}
+
+export function getBufferQuotaLevel(quota: StorageQuota): QuotaLevel {
+  const { usedBytes, limitBytes } = resolveBufferQuota(quota);
+  if (limitBytes <= 0) return 'ok';
+  if (usedBytes >= limitBytes) return 'full';
+  if (usedBytes >= limitBytes * QUOTA_WARNING_RATIO) return 'warning';
+  return 'ok';
+}
+
+export function isBufferQuotaFull(quota: StorageQuota): boolean {
+  return getBufferQuotaLevel(quota) === 'full';
+}
+
+/** Whether `__buffer__` applies a max sample count (browser-limited fallback only). */
+export function isBufferSampleCountCapActive(quota: StorageQuota): boolean {
+  return resolveMediaLibraryStorageMode(quota) === 'browser-limited-fallback';
+}
+
+export function isBufferRecordingBlocked(
+  quota: StorageQuota,
+  sampleCount: number,
+  maxBufferSamples: number,
+): boolean {
+  if (isBufferQuotaFull(quota)) return true;
+  if (!isBufferSampleCountCapActive(quota)) return false;
+  return sampleCount >= maxBufferSamples;
 }

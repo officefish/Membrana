@@ -16,6 +16,10 @@ import {
   MicBufferRecorderSidebarSettings,
 } from './plugins/mic-buffer-recorder';
 import { MIC_STREAM_VIZ_PLUGIN_ID, StreamVizPluginWidgetRadios } from './plugins/microphone-stream-viz';
+import {
+  TRENDS_FFT_ANALYZER_PLUGIN_ID,
+  TrendsFftSidebarSettings,
+} from './plugins/trends-fft-analyzer';
 
 export function renderPluginSidebarDetails(args: PluginSidebarDetailsArgs) {
   if (args.pluginId === MIC_STREAM_VIZ_PLUGIN_ID) {
@@ -32,6 +36,9 @@ export function renderPluginSidebarDetails(args: PluginSidebarDetailsArgs) {
   }
   if (args.pluginId === MIC_BUFFER_RECORDER_PLUGIN_ID) {
     return <MicBufferRecorderSidebarSettings moduleId={args.moduleId} />;
+  }
+  if (args.pluginId === TRENDS_FFT_ANALYZER_PLUGIN_ID) {
+    return <TrendsFftSidebarSettings moduleId={args.moduleId} />;
   }
   return null;
 }

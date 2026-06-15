@@ -18,8 +18,11 @@ export { BufferPlayer } from './core/buffer-player.js';
 export type {
   BufferPlayerEvent,
   BufferPlayerEventMap,
+  BufferPlayerPlayOptions,
+  BufferPlayerProgress,
   BufferPlayerState,
 } from './core/buffer-player.js';
+export { clampPlaybackOffset } from './core/playback-offset.js';
 
 // Web Audio helpers
 export {

@@ -1,0 +1,50 @@
+export interface LiveJournalPagerProps {
+  readonly page: number;
+  readonly totalPages: number;
+  readonly pageSize: number;
+  readonly shownCount: number;
+  readonly onPrev: () => void;
+  readonly onNext: () => void;
+}
+
+export function LiveJournalPager({
+  page,
+  totalPages,
+  pageSize,
+  shownCount,
+  onPrev,
+  onNext,
+}: LiveJournalPagerProps) {
+  const hasPrev = page > 1;
+  const hasNext = page < totalPages;
+
+  return (
+    <nav
+      className="flex flex-wrap items-center justify-between gap-2 pt-2"
+      aria-label="Пагинация live-журнала"
+    >
+      <p className="text-xs text-base-content/60 tabular-nums">
+        Стр. {page} из {totalPages} · {shownCount} / {pageSize} на странице
+      </p>
+      <div className="join">
+        <button
+          type="button"
+          className="btn btn-xs join-item min-h-9"
+          disabled={!hasPrev}
+          onClick={onPrev}
+        >
+          Назад
+        </button>
+        <button
+          type="button"
+          className="btn btn-xs join-item min-h-9"
+          disabled={!hasNext}
+          aria-current={hasNext ? undefined : 'page'}
+          onClick={onNext}
+        >
+          Вперёд
+        </button>
+      </div>
+    </nav>
+  );
+}

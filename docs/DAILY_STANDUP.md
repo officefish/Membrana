@@ -1,47 +1,42 @@
-<!-- Сгенерировано: 2026-06-10T04:32:03.440Z (yarn standup) -->
+<!-- Сгенерировано: 2026-06-15T06:20:20.778Z (yarn standup) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
 <!-- Входы: VIRTUAL_TEAM_PROMPT, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (25), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
 
-# Ежедневный стендап виртуальной команды — 2026-06-10
+# DAILY_STANDUP — 2026-06-15
+
+<!-- Сгенерировано: 2026-06-15T06:30:00.000Z (yarn standup) -->
+<!-- Период: вчерашний вечер (DAILY_CODE_REVIEW) + стратегический план (STRATEGIC_PLAN_DAY) -->
+<!-- Горизонт: сегодня (2026-06-15) -->
 
 ## Резюме дня
 
-Переходной день между инфраструктурой (Media Library + MCP) и первыми детекторами. **Главный фокус:** установить контрактный слой для детекторов (`@membrana/detector-base`), заморозить многоузловую функциональность до stage-gate 1→2 и подготовить полную систему для тестирования harmonic-детектора. **Главный риск:** если ограничение Single-Node Detection First не будет явно зафиксировано в `ARCHITECTURE.md` с PR-чек-листом, кто-то начнёт писать TDOA до прохождения gate. **Критерий успеха:** к вечеру имеем `detector-base` + `benchmark.md` + `dataset.md` + каркас `yarn benchmark:detectors` + синтетический датасет, гармоник-детектор проходит свои unit-тесты (≥70%).
+**Переломный день: от инфраструктуры к детекторам дрона.** Вчера завершили ночную сборку MP4–MP6 (платформа стабильна); сегодня закладываем фундамент Этапа 1.A — контрактный слой детекторов, синтетический датасет v0.1, гармоник-детектор и инфраструктура бенчмарка. **Главный риск:** разрушить слабую связанность при интеграции детекторов в реестр; детекторы должны быть чистыми функциями, без React и Web Audio. **Критерий успеха к вечеру:** `@membrana/detector-base` экспортирует типы, `harmonic-detector-service` реализована с unit-тестами ≥70%, `DETECTOR_BENCHMARK.md` готова, синтетический датасет v0.1 собран, `yarn benchmark:detectors` запускается без ошибок.
 
 ---
 
 ## Входные артефакты
 
-| Источник | Статус | Что берём |
-|----------|--------|-----------|
-| **STRATEGIC_PLAN_DAY.md** | 🟢 актуален | 6 задач на день: detector-base, benchmark.md, dataset.md, harmonic-service, ARCHITECTURE §1e, synthetic-dataset |
-| **DAILY_CODE_REVIEW.md** | 🟢 вчерашнее | Media Library: архив OK; MCP фаза A archived; риск: нет ADR на MCP rollout, нет явного grace-degradation без ключей Perplexity |
-| **GitHub Issues** | 🟡 25 open | Активные: #54 (MCP acceptance), #53 (MCP phase C), #52 (MCP phase B), #49 (Mic UI), #47 (**main-day-issue**: Single-Node gate), #36–#28 (code-review issues); в скоупе дня: #47 (архитектурная граница), #27–#35 (в очереди, не блокируют) |
-| **packages/temp** | ⚫ отсутствует | Нет черновиков; не требуется |
+| Источник | Актуальность | Что берём |
+|----------|--------------|----------|
+| **STRATEGIC_PLAN_DAY.md** | ✅ Свежо (генерировано вчера утром) | Задачи 4.1–4.6: детекторы, бенчмарк, UI результатов, датасет. Stage-gate 1→2 критерии (P ≥ 85%, R ≥ 90%). |
+| **DAILY_CODE_REVIEW.md** (вчерашний вечер) | ✅ Актуален | Граф зависимостей чист; MembraneRegistry готов; Docker image растёт — проверить. Линтер `client` падает (срочно). Математик: `audio-engine` и `fft-analyzer` требуют проверки. |
+| **GitHub Issues** (25 открытых) | ⚠️ Большая часть не в скоупе дня | Активные: #47 (single-node-detection-first, центральный), #58–#64 (background-media v1). Отложены: #49 (UI микрофона), #25–#36 (code-review issues). |
+| **MAIN_DAY_ISSUE.md** (2026-06-10, предыдущий) | 📦 Архив | Для контекста: статус stage-gate 1→2, что был сделано на 2026-06-10. |
+| **packages/temp** | ❌ Пусто (0 файлов) | Нечего подмешивать. |
 
 ---
 
 ## Порядок работы
 
-```
-Утро:
-  Teamlead (Vesnin) → уточнение скоупа, приоритизация
-  ↓
-  Структурщик (Ozhegov) → scaffold пакетов, контракты
-  ↓
-  Математик (Dynin) + Музыкант (параллельно)
-    → harmonic-detector алгоритм + тесты
-    → benchmark-скрипт, dataset-манифест
-  ↓
-  Структурщик (обвязка, интеграция)
-  ↓
-  Teamlead → LGTM на контракты, ARCHITECTURE §1e
+**Цепочка ролей:**
 
-Вечер:
-  Верстальщик (Rodchenko) → опционально (если будет UI для бенчмарка)
-  Teamlead → итоговый review, архив
-```
+1. **Teamlead** (09:00–10:00) — форма, контракт, LGTM на границы.
+2. **Структурщик + Математик** (10:00–11:30) — `detector-base`, типы, mock-реализация.
+3. **Математик** (11:30–14:00) — ядро гармоник, unit-тесты.
+4. **Структурщик + Музыкант** (14:00–16:00) — benchmark-скрипт, регистрация детектора, синтетический датасет v0.1.
+5. **Структурщик + Верстальщик** (16:00–17:30) — UI-плагин в Cabinet (detection-results), интеграция ensemble.
+6. **Teamlead** (17:30–19:00) — документация, LGTM, архив дня.
 
 ---
 
@@ -49,335 +44,366 @@
 
 ### Стратегический фокус
 
-**Находимся между Этапом 0 (завершён) и Этапом 1.A (начинаем сегодня).** WHITE_PAPER §8 требует **stage-gate 1→2** перед многоузловой архитектурой (TDOA, localizer, tracker, transport-service). Сегодня закладываем фундамент: контрактный слой, benchmark-инфраструктура, первый детектор (harmonic).
+**Главное:** Сегодня переходим от инфраструктурных задач (MP4–MP6, Cabinet, Media Library) к **первому конкретному алгоритму детекции дрона**. Это критический момент для WHITE_PAPER: нужно **явно заморозить** многоузловую архитектуру (TDOA, localizer, tracker) до stage-gate, установить ясный контракт на детекторы и создать демонстрируемую систему для валидации.
 
-### LGTM-границы на сегодня
+**LGTM-границы на сегодня:**
 
-- ✅ **Обязательно принимаем:** `@membrana/detector-base` (типы, контракты), `docs/DETECTOR_BENCHMARK.md`, `docs/DATASET.md`, scaffold harmonic-detector, synthetic-датасет.
-- ✅ **Жёсткое требование:** обновление `ARCHITECTURE.md` §1e с явным запретом на пакеты `tdoa-service`, `localizer-service`, `tracker-service`, `transport-service` до stage-gate 1→2.
-- ❌ **НЕ делаем сегодня:** реализацию spectral-flux/cepstral детекторов (Этап 1.A, но отдельные task-промпты), нейросети (Этап 1.B), многоузловую функциональность, полевую валидацию.
+- ✅ `@membrana/detector-base` — новый пакет в `packages/services/detectors/` с типами `DroneDetector`, `DetectionResult`, `AudioWindow`, `DetectionMetrics`. Типы должны быть экспортированы из `@membrana/core/index.ts` для удобства.
+- ✅ `harmonic-detector-service` — первая реализация, чистые функции только (вход: Float32Array спектра, выход: `DetectionResult`), ноль React/Web Audio/побочных эффектов.
+- ✅ `DETECTOR_BENCHMARK.md` + `DATASET.md` — документы готовы, содержат регламент, примеры, требования к данным.
+- ✅ Синтетический датасет v0.1 — 9 WAV-файлов (3 дрона, 3 дрона+фон, 3 фона) в `data/detectors-benchmark/v0.1/`.
+- ✅ `yarn benchmark:detectors` — скрипт запускается, выдаёт JSON + markdown-таблицу.
+- ✅ `ARCHITECTURE.md` §1e — явный запрет на `tdoa-service`, `localizer-service`, `tracker-service` до stage-gate 1→2; ссылка на `DETECTOR_BENCHMARK.md`.
+
+**Что НЕ делаем сегодня:**
+
+- ❌ Второй и третий детекторы (`spectral-flux-`, `cepstral-`) — отдельные task-промпты на завтра/послезавтра.
+- ❌ YAMNet/CLAP нейросетевые детекторы — Этап 1.B, после stage-gate.
+- ❌ Полевая валидация — на следующей неделе (dataset v0.2+).
+- ❌ Многоузловая архитектура и синхронизация между узлами.
+- ❌ Расширение Cabinet UI сверх просмотра результатов анализа семплов.
 
 ### Приоритизация GitHub Issues
 
-| Issue | Статус | Решение |
-|-------|--------|---------|
-| **#47** (Single-Node gate) | 🟢 **в скоупе** | Архитектурное решение + консилиум-memo → `docs/seanses/single-node-detection-first-architecture-{DATE}.md` |
-| **#54** (MCP acceptance) | 🟡 **вне скоупа** | Фаза B требует Perplexity-ключа; ждём. Phase A archived → запомнить для PR. |
-| **#53** (MCP phase C) | 🟡 **вне скоупа** | Параллельна фазе B; отложена. |
-| **#52** (MCP phase B) | 🟡 **вне скоупа** | Зависит от ключа; сегодня grace-degradation в Tier 0 достаточно. |
-| **#49** (Mic UI) | 🟡 **в беклоге** | После stage-gate 1→2; сегодня только архитектурное одобрение (если обсуждение требуется). |
-| **#27–#35** (code-review issues) | 🟡 **в очереди** | Параллельно гармоник-детектору, не блокируют. |
+| Issue | Метка | Статус сегодня | Action |
+|-------|-------|----------------|--------|
+| **#47** | single-node-detection | 🟢 **В СКОУПЕ** | Центральный фокус: контрактный слой + гармоник-детектор + бенчмарк-инфра. |
+| **#58** | background-media-v1 | 🟡 Отложена | Следует за stage-gate; не препятствует сегодня, но A5c (Deploy) не запускаем. |
+| **#64** | background-media: Swagger docs | 🟡 Отложена | После A5c; сегодня не активируем. |
+| **#59** | background-media Deploy (A5c) | 🟡 Отложена | Требует завершения A5a/A5b; сегодня не работаем. |
+| **#57** | trends-fft-template-editor | 🟡 Отложена | UI — после детекторов; не в скоупе. |
+| **#54** | MCP rollout acceptance | 🟡 Отложена | После фаз A–C; сегодня не трогаем. |
+| **#49** | MicrophoneCapturePanel (консилиум) | 🟡 Отложена | После stage-gate 1→2; UI микрофона не критична для детекции. |
+| **#28–#36** | code-review issues | 🟡 Backlog | Тесты, a11y, grafs — после стабилизации детекторов. |
+| **#37** | code-review index | 📦 Архив | Только справка. |
+| **#9–#12** | imperfection tests | 🟡 Backlog | Unit-тесты в очереди; сегодня низкий приоритет. |
+
+**Срочно перед началом дня:**
+
+- [ ] Проверить линтер: `yarn lint --filter=@membrana/client` (падает по DAILY_CODE_REVIEW). Если блокирует — исправить до 09:30.
+- [ ] `yarn test` глобально — убедиться, что зелень на `main`.
 
 ---
 
 ## [Структурщик]
 
-### Пакеты и интеграция
+### Граф зависимостей и интеграция
 
-**Создавать сегодня:**
+**Статус:** Вчерашний code review выявил потенциальный риск в граве (cabinet → background-media → background-office). Сегодня начинаем новую линию зависимостей: детекторы → `@membrana/core` (типы) + `audio-engine` (чистые функции обработки).
 
-1. **`packages/services/detector-base/`** (foundation)
-   - Типы: `DroneDetector`, `DetectionResult`, `AudioWindow`, `DetectionMetrics`.
-   - Экспорт из `@membrana/core` для удобства.
-   - Unit-тесты с mock-реализацией.
-   - **Слабая связанность**: detector-base зависит ТОЛЬКО от `@membrana/core` + типы; без web audio, без React.
+**Правила слабой связанности на сегодня:**
 
-2. **`packages/services/detectors/harmonic-detector/`** (analyzer)
-   - Зависит от: `detector-base`, `audio-engine-service`, `fft-analyzer-service` (через чистые функции).
-   - Экспортирует: функцию анализа + хук `useHarmonicDetector` (если требуется UI).
-   - **Нарушение слабой связанности = немедленный return с указанием конкретного импорта.**
+1. ✅ `@membrana/detector-base` создаётся как *отдельный* пакет, экспортирует типы только (нет реализации).
+2. ✅ `harmonic-detector-service` — зависит от `@membrana/core` + `@membrana/audio-engine` (чистые функции FFT, spektrum), **не зависит** от React/плагинов.
+3. ✅ Детекторы регистрируются в `detection-ensemble-service` через контракт `DroneDetector`, а не через прямые импорты.
+4. ✅ Cabinet UI получает результаты через HTTP/RPC, не импортирует детекторы напрямую.
 
-3. **`scripts/benchmark-detectors.mjs`** (интеграция)
-   - Читает датасет из `datasets/`.
-   - Перебирает детекторы из реестра.
-   - Выдаёт JSON + таблицу в `docs/DETECTOR_BENCHMARK_RESULTS.json`.
-
-### Граф зависимостей (должен быть ациклическим)
+**Артефакты, которые создаём:**
 
 ```
-@membrana/core
-    ↑
-    ├── detector-base (типы)
-    │
-    ├── harmonic-detector-service
-    │   ├── detector-base (контракт)
-    │   ├── fft-analyzer-service (вызов чистых функций)
-    │   └── audio-engine-service (сигнал)
-    │
-    └── benchmark-detectors (скрипт, читает detector-base)
+packages/services/detectors/
+├── detector-base/                    # Новый пакет
+│   ├── src/
+│   │   ├── index.ts                  # Экспорт типов DroneDetector, DetectionResult, ...
+│   │   ├── types.ts                  # Контрактные интерфейсы
+│   │   └── mock.ts                   # Mock-реализация для тестирования
+│   ├── package.json
+│   └── README.md
+├── harmonic-detector-service/        # Реализация
+│   ├── src/
+│   │   ├── index.ts
+│   │   ├── service.ts                # Класс HarmonicDetectorService
+│   │   ├── math/
+│   │   │   ├── index.ts
+│   │   │   └── harmonicAnalyzer.ts   # Чистые функции
+│   │   ├── hooks.ts                  # React hook useHarmonicDetector (опционально)
+│   │   └── *.test.ts                 # Unit-тесты ≥70%
+│   ├── package.json (зависимость: detector-base)
+│   └── README.md
+└── detection-ensemble-service/       # Агрегатор (следует за гармоник-детектором)
+    └── ...
 ```
 
-### Контроль (grep-проверки)
+**Проверка перед слиянием:**
 
 ```bash
-# Убедиться, что harmonic-detector не имеет циклических зависимостей
-yarn workspace @membrana/harmonic-detector-service test
+# Граф зависимостей
+yarn workspaces info | grep -E "(detector-base|harmonic-detector|ensemble)"
 
-# Проверить отсутствие Web Audio в detector-base
-rg "AudioContext|AudioBuffer|MediaStream" packages/services/detector-base/src/
+# Нет циклических зависимостей
+yarn workspaces info | grep -i "cycle"  # Должна быть пустая строка
 
-# Проверить, что benchmark-детекторы регистрируются через единый реестр (не hardcode)
-rg "harmonic|spectral|cepstral" scripts/benchmark-detectors.mjs
+# Импорты в порядке
+rg "import.*harmonic" packages/services --type ts | grep -v node_modules
 ```
 
 ---
 
 ## [Математик]
 
-### Чистые функции в harmonic-detector
+### Контракт и ядро
 
-**Ожидается паттерн:**
+**Главное:** Сегодня создаём первый **чистый детектор** — функцию без побочных эффектов, которая на входе получает Float32Array спектра, на выходе возвращает `DetectionResult` с уверенностью и признаками.
+
+**Контракт `DroneDetector`:**
 
 ```typescript
-// packages/services/detectors/harmonic-detector/src/math/harmonic-analysis.ts
-
-export interface HarmonicAnalysisResult {
-  fundamentalFreq: number; // Hz
-  harmonicStrength: number; // 0–1
-  snr: number; // dB
-  isDrone: boolean; // confidence > threshold
+interface DroneDetector {
+  name: string;
+  version: string;
+  
+  detect(spectrum: Float32Array, sampleRate: number): DetectionResult;
 }
 
-export function analyzeHarmonic(
-  spectrum: Float32Array,  // FFT magnitude (from fft-analyzer)
-  sampleRate: number,
-  minFreq: number = 80,    // дрон 80–250 Hz
-  maxFreq: number = 250
-): HarmonicAnalysisResult {
-  // Поиск пика в диапазоне minFreq–maxFreq
-  // Проверка гармоник (2x, 3x, 4x)
-  // Расчёт SNR и confidence
-  // Без побочных эффектов, без console.log
+interface DetectionResult {
+  isDetected: boolean;
+  confidence: number;  // 0–1
+  fundamentals: number[];  // Frequencies в Гц
+  latency_ms?: number;
+  metadata?: Record<string, unknown>;
 }
 ```
 
-### Тесты
+**Ядро HarmonicDetectorService:**
 
-- **Edge cases:** пустой спектр → `undefined` или явная ошибка?
-- **Синтетические данные:** sine 120 Hz + гармоники + белый шум → confidence > 0.8?
-- **Граничные случаи:** фундаментальная частота ровно на краю диапазона (79 Hz, 251 Hz)?
-- **Детерминизм:** одинаковые входные данные → одинаковые результаты (без random)?
+Алгоритм:
+1. На входе спектр (из `fft-analyzer-service`, уже вычисленный FFT).
+2. Поиск пиков выше SNR-threshold (например, 10 dB выше floor).
+3. Группировка пиков в гармонические ряды (основная частота + кратные).
+4. Проверка: если найдено ≥ 3 гармоник с ratio близким к целым числам → дрон (confidence высокая).
+5. Выход: `{ isDetected, confidence, fundamentals }`.
 
-### Контакт с FFT-analyzer
+**Тесты (≥70% покрытие):**
 
-```typescript
-// Ожидается, что harmonic-detector вызывает:
-import { computeFFT } from '@membrana/fft-analyzer-service';
+- [ ] Синтетический дрон (4 гармоники 100 Гц) → обнаруживает, confidence > 0.8.
+- [ ] White noise → не обнаруживает, confidence < 0.3.
+- [ ] Птица (непериодический шум) → confidence < 0.5.
+- [ ] Edge case: пустой спектр → не падает, confidence = 0.
+- [ ] Edge case: спектр с NaN/Infinity → валидирует, не падает.
 
-const fftResult = computeFFT(audioBuffer, { windowSize: 2048 });
-const harmonicResult = analyzeHarmonic(fftResult.magnitude, sampleRate);
-```
+**Важные граничные условия:**
 
-**НЕ должно быть:**
-```typescript
-// ❌ Неправильно: вызов конструктора с состоянием
-const analyzer = new FFTAnalyzer({ ... });
-analyzer.update(buffer);
-const spectrum = analyzer.getSpectrum();
-```
+- Детектор **не знает** о Web Audio, React, плагинах.
+- Детектор **не сохраняет** state (stateless функция или класс с методом, но без instance-переменных между вызовами).
+- Тесты запускаются чистым `vitest`, без браузерного контекста.
 
 ---
 
 ## [Музыкант]
 
-### Поток audio-engine и синтетический датасет
+### Аудиопоток и синтез датасета
 
-**Требования для harmonic-detector на входе:**
+**Статус:** Сегодня синтезируем v0.1 датасета (9 WAV-файлов) для локального бенчмарка. Это **синтетические** данные, реальные дроны будут позже (v0.2+).
 
-- Sample rate: **48 kHz** (целевой стандарт из DESIGN.md).
-- Формат: **Float32Array** (как выдаёт Web Audio).
-- Норм: **16-bit PCM → float, -1.0..+1.0** (пик на уровне -3 dB для headroom).
-- Отсутствие клиппинга (проверка на этапе загрузки в Media Library).
+**Синтетический датасет v0.1:**
 
-**Синтетический датасет v0.1 (6 блоков):**
-
-1. **Чистые дроны** (3 сэмпла):
-   - DJI Phantom 4: 110 Hz (основная мода винтов) + гармоники.
-   - Parrot Bebop: 95 Hz.
-   - Собственный синтез: 150 Hz + гармоники до 5 кГц.
-   - Каждый: 48 kHz, mono, длина 2–5 сек.
-
-2. **Дроны + фон** (3 сэмпла):
-   - Дроны выше + ветер, шум города, птицы.
-   - SNR варьируется: 15 dB, 10 dB, 5 dB (трудные случаи).
-
-3. **Фоновые звуки** (3 сэмпла):
-   - Только город, природа, молчание — no drones.
-
-4. **Скрипт генерации**:
-   ```bash
-   node datasets/generate-synthetic.mjs --output datasets/v0.1 --dry-run
-   ```
-
-**Качество проверяем:**
-
-```bash
-# Убедиться, что wav-файлы имеют правильный sample rate
-ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of default=noprint_wrappers=1:nokey=1:noprint_section=0 datasets/v0.1/*.wav
-
-# Проверить отсутствие клиппинга
-ffmpeg -i datasets/v0.1/drone-dji.wav -af "volumedetect" -f null - 2>&1 | grep "max_volume"
 ```
+data/detectors-benchmark/v0.1/
+├── manifest.json              # Metadata: label, length, source, license
+├── drone_01.wav              # Синтетический дрон (4 гармоники 100 Гц, 5s, 48 kHz)
+├── drone_02.wav              # Другой дрон (3 гармоники 120 Гц)
+├── drone_03.wav              # Третий дрон (5 гармоник 85 Гц)
+├── drone_with_bg_01.wav      # Дрон + фоновый шум 40 dB
+├── drone_with_bg_02.wav
+├── drone_with_bg_03.wav
+├── background_01.wav         # Чистый фон (улица, ветер, птицы)
+├── background_02.wav         # Фон (помещение, кондиционер)
+└── background_03.wav         # Фон (парк, шум листвы)
+```
+
+**Производство WAV:**
+
+- Инструмент: `scripts/synth-drone-dataset.mjs` (новый скрипт, использует `tone.js` или Web Audio API в Node.js).
+- Спецификация: 48 kHz, mono, 16 bit, 5s длина, метаданные в JSON.
+- Лицензия: CC0 (синтетические данные).
+
+**Что проверить:**
+
+- [ ] Все 9 файлов генерируются за < 30 сек.
+- [ ] `manifest.json` содержит label (drone / not-drone), продолжительность, sampleRate.
+- [ ] Файлы воспроизводятся в аудиоплеере (Cabinet Sample Library, если успеваем).
 
 ---
 
 ## [Верстальщик]
 
-### UI и DESIGN.md
+### UI и интеграция в Cabinet
 
-**Сегодня ничего нового в UI:**
+**Статус:** После реализации детекторов (Математик + Структурщик) создаём UI-плагин для визуализации результатов анализа в Cabinet Sample Library.
 
-- Benchmark-результаты → JSON/markdown, не требуется срочно визуализировать.
-- Media Library UI уже интегрирована (вчера), соответствует DESIGN.md.
+**Компонент DetectionResultsPanel:**
 
-**Если потребуется UI для бенчмарка (опционально):**
+```tsx
+// apps/cabinet/src/components/sample-library/DetectionResultsPanel.tsx
+// Таблица: детектор | confidence | fundamentals | latency
+// Color-код: зелёный (>0.85), жёлтый (0.5–0.85), красный (<0.5)
 
-- Таблица с метриками (precision, recall, F1, p95-latency).
-- Синяя кнопка "Запустить бенчмарк", зелёный badge "✓ Пройден" при gate успехе.
-- ARIA: `role="table"`, `aria-live="polite"` на результатах.
+interface DetectionResultsPanelProps {
+  sampleId: string;
+  spectrum: Float32Array;
+  sampleRate: number;
+}
+```
 
-**packages/temp: принцип non-interference**
+**Плагин integration:**
 
-- Если есть черновики в temp — не трогаем до явного запроса.
-- Сегодня packages/temp пусто → не применимо.
+```typescript
+// apps/cabinet/src/plugins/detection-results/plugin.ts
+export const detectionResultsPlugin = {
+  name: 'detection-results',
+  install(registry: MembranaRegistry) {
+    registry.registerPlugin({
+      type: 'sample-analysis',
+      component: DetectionResultsPanel,
+      label: 'Анализ детекции',
+    });
+  },
+};
+```
+
+**Что НЕ переносим из packages/temp:**
+
+(packages/temp пусто, но правило: не переносим прототипы UI без DESIGN.md контракта и unit-тестов.)
+
+**Проверка DESIGN.md соответствия:**
+
+- [ ] Цвета confidence: зелёный/жёлтый/красный согласованы с DESIGN.md palette.
+- [ ] Шрифты моноширинные для чисел (frequency in Hz).
+- [ ] A11y: таблица имеет `role="table"`, заголовки — `role="columnheader"`, данные — `role="cell"`.
+- [ ] Адаптив: на мобиле таблица остаётся читаемой (scroll horizontal или stack вертикально).
 
 ---
 
 ## План на сегодня
 
-| Блок | Размер | Задача | DoD | GitHub Issues |
-|------|--------|--------|-----|---------------|
-| **1. Создать @membrana/detector-base** | S | Типы, контракты, mock-тесты | `yarn test` зелёный; типы экспортируются из core | #47 |
-| **2. DETECTOR_BENCHMARK.md + yarn benchmark:detectors** | M | Регламент, скрипт, интеграция turbo | Скрипт запускается, выдаёт JSON; описание в README | #47 |
-| **3. DATASET.md + синтетический датасет** | M | Манифест, 9 wav-файлов, metadata.json, генератор | 9 сэмплов в datasets/v0.1; metadata для каждого; ffprobe OK | #47 |
-| **4. Scaffold @membrana/harmonic-detector-service** | L | Полный сервис (math, core, hooks, тесты) | Unit-тесты ≥70%; TP/FP на synthetic; гармоник-детектор регистрируется в реестре | #47 |
-| **5. Обновить ARCHITECTURE.md §1e — Single-Node freeze** | S | Явный запрет на TDOA/localizer/tracker до gate; PR-чек-лист | Раздел обновлён; ссылка на DETECTOR_BENCHMARK.md; консилиум-memo | #47 |
-| **6. Консилиум + архив дня** | S | Обсуждение результатов гармоник-детектора, gate-решение (опционально) | Консилиум-отчёт в docs/seanses/; MAIN_DAY_ISSUE переиндексирован | #47 |
+| Блок | Размер | Задача | Definition of Done | GitHub Issue |
+|------|--------|--------|-------------------|--------------|
+| **A. Контракт + scaffold** | M | `@membrana/detector-base` + типы + mock | Пакет создан, типы экспортируются из core, mock-тесты pass | #47 |
+| **B. Ядро гармоник** | M | `harmonic-detector-service` реализация + unit-тесты ≥70% | Класс работает, 4 теста pass (drone, noise, bird, edge cases) | #47 |
+| **C. Бенчмарк-инфра** | M | `DETECTOR_BENCHMARK.md` + скрипт `yarn benchmark:detectors` | Документ готов, скрипт выдаёт JSON + markdown-таблицу | #47 |
+| **D. Синтетический датасет** | S | `data/detectors-benchmark/v0.1/` + `DATASET.md` | 9 WAV-файлов, manifest.json, документ заполнен | #47 |
+| **E. Интеграция ensemble** | S | `detection-ensemble-service` scaffold (агрегатор детекторов) | Пакет создан, вызывает harmonic-детектор, тесты есть | #47 |
+| **F. UI в Cabinet + плагин** | M | `DetectionResultsPanel` + регистрация в MembranaRegistry | Компонент рендерится, таблица результатов видна, плагин загружается | #47 |
 
 ---
 
 ## Матрица Issues ↔ задачи дня
 
-| Задача дня | GitHub Issues |
-|------------|---------------|
-| detector-base (1) | #47 (Single-Node gate) |
-| benchmark.md + скрипт (2) | #47 |
-| dataset.md + synthetic (3) | #47 |
-| harmonic-detector (4) | #47; вспомогательно: #10 (unit-тесты чистых функций), #32 (FFT edge cases) |
-| ARCHITECTURE §1e (5) | #47; вспомогательно: #36 (code-review accuracy) |
+| Задача дня | GitHub Issues | Связь |
+|------------|---------------|-------|
+| **A. Контракт** | #47 | Основной фокус: single-node-detection-first |
+| **B. Гармоник-детектор** | #47, #10 (unit-тесты на math) | Проверяем чистоту функций |
+| **C. Бенчмарк-инфра** | #47 | Stage-gate 1→2 требует репортинга метрик |
+| **D. Датасет v0.1** | #47 | Тестирование синтетикой перед полевыми данными |
+| **E. Ensemble** | #47 | Подготовка к добавлению 2-го и 3-го детекторов |
+| **F. UI + плагин** | #47, #49 (микрофон UI) | Демонстрация результатов в Cabinet, не блокирует #49 |
 
 ---
 
 ## Итоговый артефакт
 
-**Новые/обновлённые файлы:**
+**Новые файлы и изменения:**
 
 ```
-packages/services/detector-base/
-  ├── package.json
-  ├── tsconfig.json
-  ├── src/
-  │   ├── types.ts (DroneDetector, DetectionResult, AudioWindow, DetectionMetrics)
-  │   ├── mock-detector.ts (тестовая реализация)
-  │   └── index.ts (экспорт)
-  └── test/
-      └── detector-base.test.ts
+packages/services/detectors/
+├── detector-base/
+│   ├── src/{index,types,mock}.ts
+│   ├── package.json
+│   ├── README.md
+│   └── tsconfig.json
+├── harmonic-detector-service/
+│   ├── src/{index,service}.ts
+│   ├── src/math/{index,harmonicAnalyzer}.ts
+│   ├── src/*.test.ts
+│   ├── package.json
+│   ├── README.md
+│   └── tsconfig.json
+└── detection-ensemble-service/
+    ├── src/{index,service}.ts
+    ├── src/*.test.ts
+    ├── package.json
+    └── README.md
 
-packages/services/detectors/harmonic-detector/
-  ├── package.json
-  ├── tsconfig.json
-  ├── src/
-  │   ├── math/
-  │   │   └── harmonic-analysis.ts
-  │   ├── core/
-  │   │   └── harmonic-detector.ts
-  │   ├── types.ts
-  │   ├── hooks/
-  │   │   └── use-harmonic-detector.ts (если требуется React)
-  │   └── index.ts
-  ├── test/
-  │   └── harmonic-detector.test.ts
-  └── README.md
+data/detectors-benchmark/v0.1/
+├── {drone,background}_*.wav (9 файлов)
+├── manifest.json
+└── README.md
 
-docs/
-  ├── DETECTOR_BENCHMARK.md (регламент, примеры)
-  ├── DATASET.md (схема, требования, источники)
-  ├── ARCHITECTURE.md (обновлено §1e: Single-Node freeze)
-  └── seanses/
-      └── single-node-detection-first-architecture-2026-06-10.md
-
-datasets/
-  ├── v0.1/
-  │   ├── drone-dji-110hz.wav
-  │   ├── drone-parrot-95hz.wav
-  │   ├── drone-synthetic-150hz.wav
-  │   ├── drone+wind-snr15db.wav
-  │   ├── drone+city-snr10db.wav
-  │   ├── drone+bird-snr5db.wav
-  │   ├── background-wind.wav
-  │   ├── background-city.wav
-  │   ├── background-silence.wav
-  │   └── metadata.json
-  └── generate-synthetic.mjs
+apps/cabinet/src/
+├── components/sample-library/DetectionResultsPanel.tsx
+└── plugins/detection-results/plugin.ts
 
 scripts/
-  └── benchmark-detectors.mjs (интеграция с turbo)
+├── synth-drone-dataset.mjs (новый)
+└── benchmark-detectors.mjs (обновлён)
 
-packages/core/
-  └── src/types.ts (переэкспорт из detector-base)
+docs/
+├── DETECTOR_BENCHMARK.md (новая)
+├── DATASET.md (новая)
+└── ARCHITECTURE.md (§1e обновлена)
+
+packages/core/src/
+└── index.ts (экспорт DroneDetector, DetectionResult, ...)
 ```
+
+**Обновления:**
+
+- `ARCHITECTURE.md` §1e: явный запрет на TDOA/localizer/tracker до stage-gate.
+- `turbo.json`: добавить три новых пакета в build/test pipeline.
+- `.github/workflows/ci.yml`: убедиться, что `yarn test` покрывает новые пакеты.
 
 ---
 
 ## Definition of Done (день)
 
-- [ ] `@membrana/detector-base` создан, типы экспортируются, unit-тесты ≥50% покрытия, `yarn test` зелёный.
-- [ ] `docs/DETECTOR_BENCHMARK.md` написана (регламент, примеры, как добавить детектор).
-- [ ] `docs/DATASET.md` написана (требования, схема папок, источники, минимальная квота).
-- [ ] `yarn benchmark:detectors` запускается без ошибок на дефолтном датасете, выдаёт JSON + markdown-таблицу.
-- [ ] Синтетический датасет v0.1 собран (≥9 wav-файлов + metadata.json), `ffprobe` подтверждает 48 kHz.
-- [ ] `@membrana/harmonic-detector-service` полностью реализован (math + core + тесты ≥70%), регистрируется в benchmark-реестре.
-- [ ] `ARCHITECTURE.md` §1e обновлена: явный запрет на TDOA/localizer/tracker до stage-gate; ссылка на DETECTOR_BENCHMARK.md; PR-чек-лист (if applicable).
-- [ ] `yarn lint` и `yarn type-check` проходят без ошибок во всех затронутых пакетах; нет циклических зависимостей.
+- [ ] `@membrana/detector-base` создана, типы экспортируются из `@membrana/core`, mock-реализация работает.
+- [ ] `@membrana/harmonic-detector-service` реализована, unit-тесты ≥70% pass, не имеет побочных эффектов.
+- [ ] `DETECTOR_BENCHMARK.md` и `DATASET.md` написаны, содержат регламент и примеры.
+- [ ] Синтетический датасет v0.1 собран (9 WAV-файлов в `data/detectors-benchmark/v0.1/`).
+- [ ] `yarn benchmark:detectors` запускается, выдаёт JSON-отчёт и markdown-таблицу без ошибок.
+- [ ] `DetectionResultsPanel` рендерится в Cabinet, плагин загружается через MembranaRegistry.
+- [ ] `ARCHITECTURE.md` §1e обновлена: запрет на многоузловую архитектуру до stage-gate, ссылки на DETECTOR_BENCHMARK.md.
+- [ ] `yarn lint` и `yarn test` проходят во всех затронутых пакетах; нет циклических зависимостей.
 
 ---
 
 ## Риски
 
-1. **⚠️ Harmonic-детектор может показать низкие метрики на synthetic-датасете**  
-   *Действие:* если precision < 85% или recall < 90%, 1-часовая дельта на отладку алгоритма (пороги, оконная функция FFT, диапазоны частот); если не помогает → консилиум-решение (может быть, датасет нужно уточнить или детектор нужен другой порядок). Не затягивать > 2 часов, gate может быть отложен.
+1. **Граф зависимостей:** Если детекторы случайно импортируют плагины или UI, разрушится слабая связанность. **Что срезать первым:** UI-плагин (блок F); детекторы должны быть готовы сначала.
 
-2. **⚠️ Синтез синтетического датасета может быть сложнее, чем ожидается**  
-   *Действие:* если генератор берёт слишком много времени, использовать готовые сэмплы (скачать 3–5 реальных дронов с публичных источников) + добавить синтез позже. Минимум: 9 файлов разных классов к концу дня.
+2. **Линтер падает:** По DAILY_CODE_REVIEW линтер `@membrana/client` выходит с ошибкой. **Action:** Исправить ДО 09:30 или отложить все UI работы.
 
-3. **⚠️ Структурщик и Математик могут конфликтовать на граница между чистой функцией и контрактом**  
-   *Действие:* явно обсудить (5 мин) до начала реализации: что передаётся в `analyzeHarmonic()` и что возвращается. Контракт фиксируется в типах `detector-base`.
+3. **Unit-тесты ≥70% для гармоник-детектора:** Если напишем только 2–3 теста, coverage упадёт. **Action:** Mathematic должен написать ≥ 4 основных случая (drone, noise, bird, edge case) + edge cases.
 
-4. **⚠️ ARCHITECTURE.md §1e требует явного консилиума на гаранты Single-Node freeze**  
-   *Действие:* если есть разногласия по формулировке запрета на TDOA, вызвать мини-консилиум (15 мин, все роли), заключение в мемо. Не перфекционист — главное, чтобы граница была понятна и соблюдалась в PR.
+4. **Производство синтетического датасета:** Скрипт `synth-drone-dataset.mjs` требует работающей библиотеки для синтеза (tone.js или Web Audio Node.js обёртка). **Fallback:** использовать готовые открытые синтезированные семплы (e.g., из примеров web-audio-api).
+
+5. **Перегруженность плана:** Если тесты гармоник-детектора не pass к 14:00, не стараться спешить benchmark. **Срезаем:** UI-плагин (блок F), поднимаем на завтра. Детекторы важнее UI.
 
 ---
 
-## Примечания
-
-### О коммитах сегодня
-
-Рабочая ветка: **techies68** (по TASKS_MANAGEMENT.md). Все коммиты идут в этой ветке; PR в `main` — в конце дня перед `yarn archive:daily-day`.
-
-### О вечерних ритуалах
+## Команды для быстрого старта
 
 ```bash
-yarn archive:daily-day      # Снимок STRATEGIC_PLAN_DAY, DAILY_STANDUP, MAIN_DAY_ISSUE
-yarn code-review            # Ревью текущих коммитов
-yarn save-code-review       # Сохранение в git
+# Убедиться, что зелень на main перед началом
+git switch main && git pull origin main
+yarn install
+yarn lint
+yarn test
+
+# Начать работу на ветке
+git switch -b feat/detector-stage-1a
+
+# Создать пакеты (scaffold)
+mkdir -p packages/services/detectors/{detector-base,harmonic-detector-service,detection-ensemble-service}
+
+# К концу дня: merge проверка
+yarn build
+yarn test
+git diff --name-only main
 ```
-
-### О периодичности
-
-Это DAILY_STANDUP. Полный **недельный план** — в `STRATEGIC_PLAN_WEEK.md` (обновляется в пятницу после `yarn plan:week`).
 
 ---
 
 **Хранитель дня:** Teamlead (Vesnin).  
-**Консилиум:** по необходимости → [`docs/seanses/single-node-detection-first-*.md`](docs/seanses/).  
-**Архив:** [`docs/archive/daily-day/{DATE}/`](docs/archive/daily-day/).
+**Ветка:** `feat/detector-stage-1a`.  
+**Архив:** `docs/archive/daily-day/2026-06-15/` (вечер, после `yarn archive:daily-day`).

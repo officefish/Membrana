@@ -1,6 +1,6 @@
 # DETECTOR_BENCHMARK — бенчмарк детекторов (stage-gate 1→2)
 
-> **Статус:** runner v0.1 (`yarn benchmark:detectors`). Метрики harmonic — автоген ниже.
+> **Статус:** runner v0.2 (`yarn benchmark:detectors` на `data/detectors-benchmark/v0.2/`). Метрики harmonic — автоген ниже.
 >
 > **Дисклеймер:** после появления скрипта бенчмарка ручные правки в таблице
 > результатов **не сохраняются** — источник истины автогенерация.
@@ -30,21 +30,28 @@
 
 <!-- BENCHMARK:auto:start -->
 
-> **Автогенерация:** `yarn benchmark:detectors` · 2026-05-17T09:42:20.257Z
-> **Датасет:** v1 · test-split: 9 файлов
+> **Автогенерация:** `yarn benchmark:detectors` · 2026-06-15T12:45:01.394Z
+> **Датасет:** v2 · test-split: 120 файлов
 
 ### Результаты последнего прогона
 
 | name | family | TP | FP | FN | TN | precision | recall | F1 | latency p50 (ms) | latency p95 (ms) | статус |
 |------|--------|----|----|----|----|-----------|--------|-----|------------------|------------------|--------|
-| harmonic | dsp | 3 | 3 | 0 | 3 | 50.0% | 100.0% | 66.7% | 0.1 | 0.3 | benchmarked |
-| cepstral | dsp | — | — | — | — | — | — | — | — | — | scaffold |
-| spectral-flux | dsp | — | — | — | — | — | — | — | — | — | scaffold |
+| harmonic | dsp | 41 | 53 | 19 | 7 | 43.6% | 68.3% | 53.2% | 0.1 | 0.2 | benchmarked |
+| cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.3 | 0.5 | benchmarked |
+| spectral-flux | dsp | 52 | 60 | 8 | 0 | 46.4% | 86.7% | 60.5% | 0.1 | 0.2 | benchmarked |
+| template-match | dsp | 60 | 48 | 0 | 12 | 55.6% | 100.0% | 71.4% | 1.5 | 2.5 | benchmarked |
 | yamnet | neural | — | — | — | — | — | — | — | — | — | scaffold |
 | clap | neural | — | — | — | — | — | — | — | — | — | scaffold |
 | agentic-claude | agentic | — | — | — | — | — | — | — | — | — | scaffold |
 
 <!-- BENCHMARK:auto:end -->
+
+
+
+
+
+
 
 
 
@@ -55,10 +62,10 @@
 yarn benchmark:detectors
 ```
 
-1. Загрузить test-split из [`DATASET.md`](./DATASET.md) (`data/detectors-benchmark/v0.1/manifest.json`).
+1. Загрузить test-split из [`DATASET.md`](./DATASET.md) (`data/detectors-benchmark/v0.2/manifest.json`, 120 файлов free-v1).
 2. Для каждого реализованного `@membrana/*-detector-service` — скользящие окна FFT + `detect(AudioWindow)`.
 3. Собрать confusion matrix, precision/recall/F1, latency p50/p95.
-4. JSON: [`data/detectors-benchmark/v0.1/reports/latest.json`](../data/detectors-benchmark/v0.1/reports/latest.json).
+4. JSON: [`data/detectors-benchmark/v0.2/reports/latest.json`](../data/detectors-benchmark/v0.2/reports/latest.json).
 5. Перезаписать авто-блок таблицы в этом файле.
 
 ## Связанные документы

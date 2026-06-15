@@ -18,8 +18,12 @@
 | Сервис | Слой | Назначение | Роль |
 |--------|------|-----------|------|
 | [`audio-engine`](./audio-engine) | foundation | Web Audio, файлы, микрофон, `LiveSampler` — поток `AudioSampleFrame`. Не делает анализа. | Структурщик + Музыкант |
+| [`sample-playback`](./sample-playback) | foundation | Shared hub воспроизведения сэмплов (BufferPlayer + waveform) для client/cabinet. | Структурщик |
 | [`fft-analyzer`](./fft-analyzer) | analyzer | Спектральный анализ через FFT: центроид, flux, RMS, детекция, пресеты. | Математик |
 | [`detectors/`](./detetectors/) | analyzer | Семейства детекторов дрона (Single-Node Detection First): `detector-base` + 6 реализаций. | Математик + Структурщик |
+| [`telemetry`](./telemetry) | foundation | RAM-буфер телеметрии (legacy writers, MP5 upload) | Структурщик |
+| [`telemetry-journal`](./telemetry-journal) | foundation | Live journal: track + report items, storage backends (TJ1–TJ6) | Структурщик |
+| [`media-library`](./media-library) | foundation | Sample library storage port + quota | Структурщик |
 | [`tdoa`](./tdoa) | analyzer | TDOA — **frozen** до stage-gate 1→2. | — |
 
 ### Детекторы (`detectors/`)
@@ -30,6 +34,7 @@
 | [`harmonic`](./detectors/harmonic) | dsp | scaffold |
 | [`cepstral`](./detectors/cepstral) | dsp | scaffold |
 | [`spectral-flux`](./detectors/spectral-flux) | dsp | scaffold |
+| [`template-match`](./detectors/template-match) | dsp | benchmark (VDR5) |
 | [`yamnet`](./detectors/yamnet) | neural | scaffold |
 | [`clap`](./detectors/clap) | neural | scaffold |
 | [`agentic-claude`](./detectors/agentic-claude) | agentic | scaffold |

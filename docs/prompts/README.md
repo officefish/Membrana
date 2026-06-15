@@ -11,8 +11,11 @@
 | **[`TASK_PROMPT_TEMPLATE.md`](./TASK_PROMPT_TEMPLATE.md)** | Шаблон нового `*_PROMPT.md` |
 | **[`docs/tasks/README.md`](../tasks/README.md)** | Активные и архивные задачи |
 | **[`CONSILIUM_PROMPT.md`](./CONSILIUM_PROMPT.md)** | Консилиум всех ролей → `docs/seanses/` |
+| **[`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md)** | Night Build между evening и morning ritual |
+| **[`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md)** | Night build — MP4 hardening NB0–NB3 (закрыт) |
+| **[`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)** | **Активный эпик** — детекция на 5-с сэмплах, плагин `sample-library`, free-v1 120 |
 
-Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn consilium "<вопрос>"`.
+Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
 
 ---
 
@@ -51,7 +54,17 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`MEDIA_LIBRARY_A1_STORAGE_PROMPT.md`](./MEDIA_LIBRARY_A1_STORAGE_PROMPT.md) | **Архив** `media-library-a1-storage` — storage backend, domain (фаза A1) |
 | [`MEDIA_LIBRARY_A2_UI_PROMPT.md`](./MEDIA_LIBRARY_A2_UI_PROMPT.md) | **Архив** `media-library-a2-ui` — UI «Библиотека сэмплов», quota banner (фаза A2) |
 | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](./MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | **Активная** `media-library-a3-mic-recorder` — плагин записи в буфер (фаза A3) |
+| [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](./MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | **Активная** `media-library-a4-sample-player` — play/export, крупный плеер с осциллограммой (фаза A4) |
+| [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](./ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | **Архив** `analyzer-frame-feed-refactor` — AudioFrameFeed; миграция fft-threshold-test + harmonic-detector-viz (#55) |
+| [`TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md`](./TRENDS_FFT_MICROPHONE_PLUGIN_PROMPT.md) | **Архив** `trends-fft-microphone-plugin` — trends-detector-service + плагин trends-fft-analyzer (#56) |
+| [`TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md`](./TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md) | **Активная** `trends-fft-template-editor` — редактор пользовательских шаблонов (#57) |
+| [`BACKGROUND_MEDIA_V1_EPIC_PROMPT.md`](./BACKGROUND_MEDIA_V1_EPIC_PROMPT.md) | **Активная** `background-media-v1` — эпик web data-plane (3 PR) |
+| [`BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](./BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md) | **Активная** `background-media-a5a-server` — NestJS + PG + API |
+| [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](./BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | **Активная** `background-media-a5b-docker` — Docker Compose |
+| [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](./BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | **Активная** `background-media-a5c-deploy` — прод-деплой |
+| [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](./BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | **Активная** `background-media-a5d-swagger` — Swagger/OpenAPI (#64) |
+| [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](./MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | **Активная** `membrane-platform-v1` — эпик cabinet, pairing, tariff, journal (#67) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 
-Сквозной журнал `background-office` — [`../discussions/background-office-v0.1.md`](../discussions/background-office-v0.1.md).
+Сквозные журналы: [`background-office-v0.1.md`](../discussions/background-office-v0.1.md); консилиум media — [`../seanses/background-media-v1-consilium-2026-06-11.md`](../seanses/background-media-v1-consilium-2026-06-11.md); консилиум Membrane Platform — [`../discussions/membrane-platform-consilium-2026-06-13.md`](../discussions/membrane-platform-consilium-2026-06-13.md). Канон границ серверов — [`../BACKGROUND_SERVERS.md`](../BACKGROUND_SERVERS.md); кабинет — [`../MEMBRANE_PLATFORM.md`](../MEMBRANE_PLATFORM.md).

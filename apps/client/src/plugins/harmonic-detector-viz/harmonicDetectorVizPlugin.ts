@@ -1,6 +1,7 @@
 import type { ModuleContext, Plugin, PluginTeardown } from '@membrana/agenda';
+import { useMembranaStore } from '@membrana/agenda';
 import { audioWindowFromFrame } from '@membrana/detector-base';
-import { LiveSampler, type AudioSampleFrame } from '@membrana/audio-engine-service';
+import type { AudioSampleFrame } from '@membrana/audio-engine-service';
 import {
   createHarmonicDetector,
   DEFAULT_FFT_SIZE,
@@ -8,15 +9,19 @@ import {
 } from '@membrana/harmonic-detector-service';
 
 import { publishDroneDetected } from '../../lib/droneDetectionHub';
-import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
+import {
+  createAnalysisFrameFeed,
+  type AudioFrameFeed,
+} from '../../lib/audioAnalysis';
+
 import { DetectionSmoother } from './detection-smooth';
 import { harmonicDetectorPluginState } from './harmonicDetectorPluginState';
 import { shouldThrottle } from './throttle';
 import {
-  HARMONIC_DETECTOR_SOURCE_ID,
   HARMONIC_DETECTOR_SOURCE_LABEL,
   HARMONIC_DETECTOR_VIZ_PLUGIN_ID,
   defaultHarmonicDetectorVizConfig,
+  harmonicDroneSourceId,
   resolveHarmonicDetectorVizConfig,
   type HarmonicDetectorVizPluginConfig,
 } from './types';
@@ -35,7 +40,9 @@ export function createHarmonicDetectorVizPlugin(): Plugin<HarmonicDetectorVizPlu
     config: { ...defaultHarmonicDetectorVizConfig },
     install(context: ModuleContext<HarmonicDetectorVizPluginConfig>): PluginTeardown {
       let disposed = false;
-      let currentSampler: LiveSampler | null = null;
+      let feed: AudioFrameFeed | null = null;
+      let unsubFeed: (() => void) | null = null;
+      let feedActive = false;
       let detector: HarmonicDetector = createHarmonicDetector({
         confidenceThreshold: resolveHarmonicDetectorVizConfig(context.config).confidenceThreshold,
         fftSize: FFT_SIZE,
@@ -46,17 +53,20 @@ export function createHarmonicDetectorVizPlugin(): Plugin<HarmonicDetectorVizPlu
       let lastUiUpdateMs = 0;
       let inFlight = false;
       let threshold = resolveHarmonicDetectorVizConfig(context.config).confidenceThreshold;
+      let analysisSource = resolveHarmonicDetectorVizConfig(context.config).analysisSource;
+      let mountedAnalysisSource = analysisSource;
 
       harmonicDetectorPluginState.applyConfig(resolveHarmonicDetectorVizConfig(context.config));
 
-      const stopSampler = (): Promise<void> => {
-        const sampler = currentSampler;
-        currentSampler = null;
+      const stopFeed = async (): Promise<void> => {
+        feedActive = false;
+        if (feed) {
+          await feed.stop();
+        }
         harmonicDetectorPluginState.setLive(false);
         harmonicDetectorPluginState.setDetection(null);
         smoother.reset();
         stableIsDronePrev = false;
-        return sampler ? sampler.stop() : Promise.resolve();
       };
 
       const syncDetector = (): void => {
@@ -67,7 +77,7 @@ export function createHarmonicDetectorVizPlugin(): Plugin<HarmonicDetectorVizPlu
       };
 
       const handleFrame = (frame: AudioSampleFrame): void => {
-        if (disposed || !currentSampler) return;
+        if (disposed || !feedActive) return;
         if (shouldThrottle(lastUiUpdateMs, UI_THROTTLE_MS)) return;
         if (inFlight) return;
 
@@ -91,7 +101,7 @@ export function createHarmonicDetectorVizPlugin(): Plugin<HarmonicDetectorVizPlu
 
             if (smoothed.stableIsDrone && !stableIsDronePrev) {
               publishDroneDetected({
-                sourceId: HARMONIC_DETECTOR_SOURCE_ID,
+                sourceId: harmonicDroneSourceId(analysisSource),
                 sourceLabel: HARMONIC_DETECTOR_SOURCE_LABEL,
                 timestamp: Date.now(),
                 confidence: smoothed.displayConfidence,
@@ -120,48 +130,69 @@ export function createHarmonicDetectorVizPlugin(): Plugin<HarmonicDetectorVizPlu
           });
       };
 
-      const unlisten = subscribeMicrophoneStream(context.moduleId, (stream) => {
-        void stopSampler().then(() => {
+      const mountFeed = (): void => {
+        unsubFeed?.();
+        void stopFeed().then(() => {
           if (disposed) return;
-          if (!stream || stream.getAudioTracks().length === 0) {
-            harmonicDetectorPluginState.setLive(false);
-            return;
-          }
-
+          const raw = useMembranaStore
+            .getState()
+            .getPlugin(context.moduleId, HARMONIC_DETECTOR_VIZ_PLUGIN_ID)?.config;
+          const config = resolveHarmonicDetectorVizConfig(raw);
+          analysisSource = config.analysisSource;
           streamOriginMs = Date.now();
-          const sampler = new LiveSampler({
+
+          feed = createAnalysisFrameFeed({
+            analysisSource: config.analysisSource,
+            moduleId: context.moduleId,
             bufferSize: FFT_SIZE,
             smoothingTimeConstant: SMOOTHING,
+            onStart: () => {
+              if (disposed) return;
+              feedActive = true;
+              streamOriginMs = Date.now();
+              harmonicDetectorPluginState.setLive(true);
+              smoother.reset();
+              stableIsDronePrev = false;
+            },
+            onStop: () => {
+              feedActive = false;
+              harmonicDetectorPluginState.setLive(false);
+              harmonicDetectorPluginState.setDetection(null);
+              smoother.reset();
+              stableIsDronePrev = false;
+            },
+            onError: () => {
+              feedActive = false;
+              harmonicDetectorPluginState.setLive(false);
+              harmonicDetectorPluginState.setDetection(null);
+              harmonicDetectorPluginState.setAnalysisError('Ошибка захвата аудио');
+            },
           });
-          currentSampler = sampler;
 
-          sampler.on('frame', handleFrame);
-          sampler.on('start', () => {
-            if (disposed) return;
-            harmonicDetectorPluginState.setLive(true);
-            smoother.reset();
-            stableIsDronePrev = false;
-          });
-          sampler.on('stop', () => {
-            harmonicDetectorPluginState.setLive(false);
-            harmonicDetectorPluginState.setDetection(null);
-            smoother.reset();
-            stableIsDronePrev = false;
-          });
-          sampler.on('error', () => {
-            harmonicDetectorPluginState.setLive(false);
-            harmonicDetectorPluginState.setDetection(null);
-            harmonicDetectorPluginState.setAnalysisError('Ошибка захвата аудио');
-          });
-
-          void sampler.start(stream).catch(() => undefined);
+          unsubFeed = feed.subscribe(handleFrame);
+          void feed.start();
         });
+      };
+
+      mountFeed();
+
+      const unsubStore = useMembranaStore.subscribe(() => {
+        const raw = useMembranaStore
+          .getState()
+          .getPlugin(context.moduleId, HARMONIC_DETECTOR_VIZ_PLUGIN_ID)?.config;
+        const nextSource = resolveHarmonicDetectorVizConfig(raw).analysisSource;
+        if (nextSource === mountedAnalysisSource) return;
+        mountedAnalysisSource = nextSource;
+        mountFeed();
       });
 
       return (): Promise<void> => {
         disposed = true;
-        unlisten();
-        return stopSampler().then(() => {
+        unsubStore();
+        unsubFeed?.();
+        unsubFeed = null;
+        return stopFeed().then(() => {
+          feed = null;
           harmonicDetectorPluginState.reset();
         });
       };

@@ -33,7 +33,7 @@ import {
 /**
  * Плагин модуля «Микрофон»: визуализация входящего потока.
  *
- * АРХИТЕКТУРА (по новому контракту lifecycle из ветки `vesnin`):
+ * АРХИТЕКТУРА (контракт lifecycle из ветки `vesnin`):
  *  - Подписка на `microphoneStreamHub` и поднятие `LiveSampler` живут здесь,
  *    в `install()`. Это вызывается store при первой активации плагина и
  *    при rehydrate, если плагин уже активен.
@@ -44,10 +44,6 @@ import {
  *    не имеет своего AudioContext, никакого Web Audio.
  *
  * См. `docs/MODULE_AND_PLUGIN_UI.md` §0 и `docs/ARCHITECTURE.md` §1c / §1b.
- *
- * ВАЖНО: эта реализация требует, чтобы store вызывал `plugin.install()` при
- * активации (см. коммит c8eeaa4 в ветке vesnin). Без lifecycle install
- * подписка не будет поднята.
  */
 
 const FFT_SIZE = 2048;

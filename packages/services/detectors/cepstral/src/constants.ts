@@ -1,0 +1,5 @@
+export const DEFAULT_FFT_SIZE = 2048;
+export const DEFAULT_SAMPLE_RATE = 48_000;
+export const FUNDAMENTAL_MIN_HZ = 80;
+export const FUNDAMENTAL_MAX_HZ = 250;
+export const DEFAULT_CONFIDENCE_THRESHOLD = 0.2;

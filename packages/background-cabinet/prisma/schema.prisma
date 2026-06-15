@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NodeAccessKeyDuration {
+  hours_4
+  days_3
+  weeks_2
+  month_1
+  months_3
+}
+
+enum UserRole {
+  admin
+  user
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  login        String     @unique
+  passwordHash String
+  role         UserRole   @default(user)
+  createdAt    DateTime   @default(now())
+  sessions     Session[]
+  membrane     Membrane?
+}
+
+model Session {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Tariff {
+  id                     String     @id
+  name                   String
+  /** Total bytes user may store across their collections on the server (paired mode). */
+  userStorageQuotaBytes  BigInt
+  /** Live recording buffer capacity; larger buffer supports more concurrent devices. */
+  bufferQuotaBytes       BigInt
+  /** Read-only system dataset catalog id provisioned for this tariff (not a byte quota). */
+  datasetCatalogId       String
+  maxActiveKeysPerNode   Int        @default(1)
+  createdAt              DateTime   @default(now())
+  membranes              Membrane[]
+}
+
+model Membrane {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tariffId  String
+  tariff    Tariff   @relation(fields: [tariffId], references: [id])
+  nodes     Node[]
+  reports   TelemetryReport[]
+  liveRecords TelemetryLiveRecord[]
+  createdAt DateTime @default(now())
+
+  @@index([tariffId])
+}
+
+model Node {
+  id         String          @id @default(uuid()) @db.Uuid
+  membraneId String          @unique @db.Uuid
+  membrane   Membrane        @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  label      String
+  accessKeys NodeAccessKey[]
+  device     Device?
+  createdAt  DateTime        @default(now())
+}
+
+model Device {
+  id                   String   @id @default(uuid()) @db.Uuid
+  nodeId               String   @unique @db.Uuid
+  node                 Node     @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  mediaDeviceId        String   @unique @db.Uuid
+  label                String?
+  pairedKeyId          String?  @db.Uuid
+  /** Last pairing session token — invalidated when access key is revoked. */
+  lastPairSessionToken String?  @unique
+  pairedAt             DateTime @default(now())
+  lastSeenAt           DateTime @default(now())
+
+  @@index([mediaDeviceId])
+  @@index([pairedKeyId])
+}
+
+model NodeAccessKey {
+  id         String                @id @default(uuid()) @db.Uuid
+  nodeId     String                @db.Uuid
+  node       Node                  @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  secretHash String
+  duration   NodeAccessKeyDuration
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime              @default(now())
+
+  @@index([nodeId])
+  @@index([expiresAt])
+}
+
+enum TelemetryLiveStatus {
+  active
+  ended
+}
+
+/** Completed analysis snapshot uploaded from paired client (shared render payload). */
+model TelemetryReport {
+  id            String   @id @default(uuid()) @db.Uuid
+  membraneId    String   @db.Uuid
+  membrane      Membrane @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  nodeId        String?  @db.Uuid
+  mediaDeviceId String?  @db.Uuid
+  reportKind    String
+  moduleId      String?
+  moduleName    String?
+  clientEntryId String?
+  finishedAt    DateTime
+  payload       Json
+  tags          String[] @default([])
+  createdAt     DateTime @default(now())
+
+  @@index([membraneId, finishedAt(sort: Desc)])
+  @@unique([membraneId, clientEntryId])
+}
+
+/** Active or recent live telemetry session from paired client. */
+model TelemetryLiveRecord {
+  id             String              @id @default(uuid()) @db.Uuid
+  membraneId     String              @db.Uuid
+  membrane       Membrane            @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  nodeId         String?             @db.Uuid
+  mediaDeviceId  String?             @db.Uuid
+  recordKind     String
+  moduleId       String?
+  clientRecordId String?
+  status         TelemetryLiveStatus @default(active)
+  startedAt      DateTime
+  endedAt        DateTime?
+  payload        Json
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([membraneId, status, startedAt(sort: Desc)])
+  @@unique([membraneId, clientRecordId])
+}

@@ -2,15 +2,6 @@
  * BufferPlayer — воспроизводит AudioBuffer и одновременно публикует поток
  * AudioSampleFrame, аналогично LiveSampler, но источник — не MediaStream,
  * а декодированный буфер.
- *
- * Это позволяет клиенту работать с файлами через единый паттерн engine'а:
- *   1. loadAudioBuffer(file) → AudioBuffer
- *   2. BufferPlayer.play(buffer) — engine сам поднимает AudioContext +
- *      BufferSourceNode + AnalyserNode + RAF, шлёт frames потребителю.
- *
- * События: start | stop | frame | ended | error.
- * Геттеры: getAnalyserNode / getAudioContext — для виджетов
- * `@membrana/audio-data-viz`, которые рендерятся напрямую от Web Audio.
  */
 
 import { logger } from '@membrana/core';
@@ -23,16 +14,23 @@ import {
 } from '../types.js';
 
 import { closeAudioContext, createAudioContext } from './audio-context.js';
+import { clampPlaybackOffset } from './playback-offset.js';
 
 export type BufferPlayerState =
   | 'idle'
   | 'starting'
   | 'playing'
+  | 'paused'
   | 'ended'
   | 'stopped'
   | 'error';
 
-export type BufferPlayerEvent = 'start' | 'stop' | 'ended' | 'frame' | 'error';
+export type BufferPlayerEvent = 'start' | 'stop' | 'ended' | 'frame' | 'error' | 'progress';
+
+export interface BufferPlayerProgress {
+  readonly currentSec: number;
+  readonly durationSec: number;
+}
 
 export interface BufferPlayerEventMap {
   start: void;
@@ -40,6 +38,11 @@ export interface BufferPlayerEventMap {
   ended: void;
   frame: AudioSampleFrame;
   error: Error;
+  progress: BufferPlayerProgress;
+}
+
+export interface BufferPlayerPlayOptions {
+  readonly startOffsetSec?: number;
 }
 
 type Listener<E extends BufferPlayerEvent> = (
@@ -53,6 +56,10 @@ export class BufferPlayer {
   private sourceNode: AudioBufferSourceNode | null = null;
   private rafId: number | null = null;
   private state: BufferPlayerState = 'idle';
+  private currentBuffer: AudioBuffer | null = null;
+  private startOffsetSec = 0;
+  private playheadAnchor = 0;
+  private pausedAtSec = 0;
 
   private readonly listeners: {
     [K in BufferPlayerEvent]: Set<Listener<K>>;
@@ -62,13 +69,12 @@ export class BufferPlayer {
     ended: new Set(),
     frame: new Set(),
     error: new Set(),
+    progress: new Set(),
   };
 
   constructor(config: Partial<LiveCaptureConfig> = {}) {
     this.config = { ...DEFAULT_LIVE_CAPTURE_CONFIG, ...config };
   }
-
-  // ============= Подписки =============
 
   on<E extends BufferPlayerEvent>(event: E, listener: Listener<E>): void {
     this.listeners[event].add(listener as Listener<E>);
@@ -95,8 +101,6 @@ export class BufferPlayer {
       }
     }
   }
-
-  // ============= Состояние / конфиг =============
 
   getState(): BufferPlayerState {
     return this.state;
@@ -126,14 +130,28 @@ export class BufferPlayer {
     return this.audioContext;
   }
 
-  // ============= Воспроизведение =============
+  getDurationSec(): number {
+    return this.currentBuffer?.duration ?? 0;
+  }
 
-  /**
-   * Запускает воспроизведение AudioBuffer.
-   * Если плеер уже играет — сначала останавливает старое.
-   */
-  async play(buffer: AudioBuffer): Promise<void> {
-    await this.stop();
+  getCurrentTimeSec(): number {
+    if (this.state === 'playing' && this.audioContext) {
+      const elapsed = this.audioContext.currentTime - this.playheadAnchor;
+      return clampPlaybackOffset(this.startOffsetSec + elapsed, this.getDurationSec());
+    }
+    if (this.state === 'paused') {
+      return this.pausedAtSec;
+    }
+    return 0;
+  }
+
+  async play(buffer: AudioBuffer, options: BufferPlayerPlayOptions = {}): Promise<void> {
+    await this.teardownPlayback();
+    this.currentBuffer = buffer;
+    this.startOffsetSec = clampPlaybackOffset(
+      options.startOffsetSec ?? 0,
+      buffer.duration,
+    );
     this.state = 'starting';
 
     try {
@@ -154,7 +172,8 @@ export class BufferPlayer {
       };
 
       await this.audioContext.resume();
-      this.sourceNode.start(0);
+      this.playheadAnchor = this.audioContext.currentTime;
+      this.sourceNode.start(0, this.startOffsetSec);
       this.state = 'playing';
       this.emit('start', undefined);
       this.startLoop();
@@ -167,8 +186,47 @@ export class BufferPlayer {
     }
   }
 
-  /** Останавливает воспроизведение и освобождает ресурсы. */
+  async pause(): Promise<void> {
+    if (this.state !== 'playing') return;
+    this.pausedAtSec = this.getCurrentTimeSec();
+    await this.teardownPlayback();
+    this.state = 'paused';
+    this.emit('stop', undefined);
+    this.emitProgress();
+  }
+
+  async resume(): Promise<void> {
+    if (!this.currentBuffer || this.state !== 'paused') return;
+    await this.play(this.currentBuffer, { startOffsetSec: this.pausedAtSec });
+  }
+
+  async seek(offsetSec: number): Promise<void> {
+    if (!this.currentBuffer) return;
+    const next = clampPlaybackOffset(offsetSec, this.currentBuffer.duration);
+    const wasPlaying = this.state === 'playing';
+    this.pausedAtSec = next;
+    if (wasPlaying) {
+      await this.play(this.currentBuffer, { startOffsetSec: next });
+    } else if (this.state === 'paused' || this.state === 'stopped' || this.state === 'ended') {
+      this.state = 'paused';
+      this.emitProgress();
+    }
+  }
+
   async stop(): Promise<void> {
+    const wasActive =
+      this.state === 'playing' ||
+      this.state === 'starting' ||
+      this.state === 'paused';
+    await this.teardownPlayback();
+    this.currentBuffer = null;
+    this.startOffsetSec = 0;
+    this.pausedAtSec = 0;
+    this.state = 'stopped';
+    if (wasActive) this.emit('stop', undefined);
+  }
+
+  private async teardownPlayback(): Promise<void> {
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
@@ -195,12 +253,14 @@ export class BufferPlayer {
       await closeAudioContext(this.audioContext);
       this.audioContext = null;
     }
-    const wasPlaying = this.state === 'playing' || this.state === 'starting';
-    this.state = 'stopped';
-    if (wasPlaying) this.emit('stop', undefined);
   }
 
-  // ============= Внутренний цикл =============
+  private emitProgress(): void {
+    this.emit('progress', {
+      currentSec: this.getCurrentTimeSec(),
+      durationSec: this.getDurationSec(),
+    });
+  }
 
   private startLoop(): void {
     if (!this.analyserNode || !this.audioContext) return;
@@ -219,6 +279,7 @@ export class BufferPlayer {
         timestamp: Date.now(),
       };
       this.emit('frame', frame);
+      this.emitProgress();
 
       this.rafId = requestAnimationFrame(loop);
     };

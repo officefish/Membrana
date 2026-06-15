@@ -1,0 +1,14 @@
+# Example Caddy v2 site block for background-media (A5c).
+# Place on VPS, e.g. /etc/caddy/Caddyfile.d/media.caddy
+# Replace media.example.com with your subdomain.
+
+media.example.com {
+	encode gzip
+	reverse_proxy 127.0.0.1:3010
+}
+
+# Optional: restrict /docs in production (Swagger)
+# @swagger path /docs*
+# handle @swagger {
+# 	respond "Not found" 404
+# }

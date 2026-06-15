@@ -1,10 +1,25 @@
 # DATASET — датасет для бенчмарка детекторов
 
-> **Статус:** **v0.1 bootstrap** (2026-05-16) — 9 синтетических сэмплов, test-split.  
-> Промпт: [`prompts/DATASET_BOOTSTRAP_PROMPT.md`](./prompts/DATASET_BOOTSTRAP_PROMPT.md).  
-> Манифест: [`data/detectors-benchmark/v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json).
+> **Статус (канонический):** **v0.2 free-v1** (2026-06-14) — 120 реальных WAV × 5 с (60 drone / 60 not-drone); агрегация через `@membrana/detector-base` **`analyzeSample()`**.  
+> Манифест: [`data/detectors-benchmark/v0.2/manifest.json`](../data/detectors-benchmark/v0.2/manifest.json) · sync: `yarn dataset:sync-free-v1`  
+> **Legacy v0.1** — 9 синтетических сэмплов: только CI-smoke, **не** для stage-gate и калибровки ([`v0.1/manifest.json`](../data/detectors-benchmark/v0.1/manifest.json)).
 
-## v0.1 — каталог
+## v0.2 — free-v1 (120 × 5 с)
+
+| Параметр | Значение |
+|----------|----------|
+| `catalogId` | `free-v1-catalog` |
+| Сэмплов | 120 (80 `train` / 40 `val`, stratified) |
+| Длительность | 5 с, 48 kHz mono |
+| Классы | `drone/` (60), `not-drone/` (60) |
+| UI / автономный узел | `apps/client/public/catalog/free-v1/` → коллекция `__tariff_dataset__` |
+| Источники | mackenzie-jane (32 × native 5 s) + DroneAudioDataset (28 × seamless-loop); not-drone — **ESC-50 native 5 s** (не 1 s + padding) |
+
+Пути относительно `data/detectors-benchmark/v0.2/`. Поле `label`: `drone` | `not-drone`.
+
+---
+
+## v0.1 — каталог (legacy synthetic)
 
 | id | class | label | длит. (с) | sr (Гц) | SNR | источник | файл |
 |----|-------|-------|-----------|---------|-----|----------|------|

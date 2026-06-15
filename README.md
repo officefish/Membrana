@@ -8,14 +8,19 @@
 
 ```
 membrana/
-├── packages/         # Переиспользуемые библиотеки
-│   ├── core/         # Базовые сущности, контракты, утилиты
-│   ├── agenda/       # Модуль расписания (зависит от core)
-│   └── device-board/ # Модуль устройств (зависит от core)
+├── packages/
+│   ├── core/              # Базовые сущности, контракты, утилиты
+│   ├── agenda/            # Модули, плагины, store (зависит от core)
+│   ├── device-board/      # Устройства (зависит от core)
+│   ├── services/          # Автономные TS-сервисы (audio-engine, детекторы, …)
+│   ├── background-office/ # NestJS: Claude, Linear, GitHub (интеграции, :3000)
+│   └── background-media/  # NestJS: сэмплы + trends-шаблоны по deviceId (:3010, #58)
 │
 └── apps/
-    └── client/       # Клиентское приложение
+    └── client/            # Vite + React (основное приложение)
 ```
+
+Фоновые серверы `background-*` **не** входят в граф `packages/services/*`. Роли и границы — [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md).
 
 ## Принципы
 

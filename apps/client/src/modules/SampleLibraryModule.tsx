@@ -1,15 +1,39 @@
-import React, { useCallback, useState } from 'react';
-import { ModuleProps } from '@membrana/agenda';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import { ModuleProps, useMembranaStore } from '@membrana/agenda';
+import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
-  SYSTEM_BENCHMARK_COLLECTION_ID,
+  TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
   useMediaLibrary,
   type Collection,
   type MediaSample,
+  type UpdateSampleLabelNotes,
 } from '@membrana/media-library-service';
 
+import { SampleLabelEditor, SampleNotesEditor } from '../components/sample-library/SampleLabelNotesEditor';
 import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
+import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
+import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
+import {
+  bindSamplePlaybackBlobReader,
+  disposeSamplePlayback,
+  selectSample,
+  togglePlayPause,
+  useSamplePlayback,
+} from '@membrana/sample-playback-service';
+import {
+  SAMPLE_LIBRARY_PLAYER_PLUGIN_ID,
+  SampleLibraryPlayerPanel,
+} from '../plugins/sample-library-player';
+import {
+  SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID,
+  SampleLibraryDroneAnalysisPanel,
+} from '../plugins/sample-library-drone-analysis';
+import {
+  TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
+  TrendsFftSampleAnalyzerPanel,
+} from '../plugins/trends-fft-sample-analyzer';
 
 const CLASS_OPTIONS = [
   'drone-multirotor',
@@ -30,17 +54,46 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 }) => {
   const config = module.config as SampleLibraryConfig;
   const { snapshot, service } = useMediaLibrary();
+  const playback = useSamplePlayback();
+  const activePluginIds = useMembranaStore(
+    useShallow((state) => state.getModule(module.id)?.activePlugins ?? []),
+  );
   const [selectedId, setSelectedId] = useState<string>(BUFFER_COLLECTION_ID);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
+    return () => {
+      void disposeSamplePlayback();
+    };
+  }, [service]);
 
   const samples = snapshot.samplesByCollection[selectedId] ?? [];
   const selected = snapshot.collections.find((c) => c.id === selectedId);
   const quotaBlocked = isQuotaFull(snapshot.quota);
+  const isTariffDataset =
+    selected?.kind === 'system' && selected.systemKey === TARIFF_DATASET_SYSTEM_KEY;
+  const canLabelAnnotate = !isTariffDataset;
 
-  const userCollections = snapshot.collections.filter((c) => c.kind === 'user');
+  const handleUpdateLabelNotes = useCallback(
+    async (sampleId: string, patch: UpdateSampleLabelNotes) => {
+      setError(null);
+      setLabelSavingId(sampleId);
+      try {
+        await service.updateSampleLabelNotes(sampleId, patch);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      } finally {
+        setLabelSavingId(null);
+      }
+    },
+    [service],
+  );
+
   const moveTargets = snapshot.collections.filter(
-    (c) => c.id !== selectedId && c.kind !== 'buffer',
+    (c) => c.id !== selectedId && c.kind !== 'buffer' && c.kind !== 'system',
   );
 
   const handleCreateCollection = useCallback(async () => {
@@ -119,8 +172,43 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     }
   }, [service]);
 
+  const handleSelectSample = useCallback(async (sample: MediaSample) => {
+    setError(null);
+    try {
+      await selectSample(sample);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }, []);
+
+  const handleExportSample = useCallback(
+    async (sample: MediaSample) => {
+      setError(null);
+      try {
+        const blob = await service.getSampleBlob(sample.id);
+        const ext = extensionFromMime(blob.type);
+        downloadBlob(blob, `${sample.title}.${ext}`);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      }
+    },
+    [service],
+  );
+
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
+      {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
+        <SampleLibraryPlayerPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
+        <SampleLibraryDroneAnalysisPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
+        <TrendsFftSampleAnalyzerPanel moduleId={module.id} />
+      ) : null}
+
       <MediaLibraryQuotaBanner quota={snapshot.quota} />
 
       {error ? (
@@ -195,8 +283,9 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-semibold">{selected?.name ?? '—'}</h2>
             {selected?.kind === 'system' ? (
-              <span className="badge badge-neutral badge-sm">системная</span>
+              <span className="badge badge-neutral badge-sm">системный датасет</span>
             ) : null}
+            {!isTariffDataset ? (
             <label
               className={`btn btn-sm btn-primary ml-auto cursor-pointer ${
                 quotaBlocked ? 'btn-disabled pointer-events-none opacity-50' : ''
@@ -220,7 +309,12 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 }}
               />
             </label>
+            ) : (
+              <span className="ml-auto text-sm text-base-content/60">Только чтение</span>
+            )}
           </div>
+
+          <SamplePlaybackBar playback={playback} compact />
 
           <div className="overflow-x-auto rounded-lg border border-base-300">
             <table className="table table-sm">
@@ -238,22 +332,72 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 {samples.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center text-base-content/50">
-                      {selectedId === SYSTEM_BENCHMARK_COLLECTION_ID
-                        ? 'Системная коллекция может быть пустой.'
+                      {isTariffDataset
+                        ? 'Загрузка базового набора… (запустите yarn dataset:sync-free-v1 при dev)'
                         : 'Нет сэмплов.'}
                     </td>
                   </tr>
                 ) : (
-                  samples.map((s: MediaSample) => (
-                    <tr key={s.id}>
-                      <td className="max-w-[12rem] truncate">{s.title}</td>
+                  samples.map((s: MediaSample) => {
+                    const isSelected = playback.selectedSampleId === s.id;
+                    const saving = labelSavingId === s.id;
+                    return (
+                    <Fragment key={s.id}>
+                    <tr
+                      className={isSelected ? 'bg-primary/10' : undefined}
+                      onClick={() => void handleSelectSample(s)}
+                    >
+                      <td className="max-w-[12rem] align-top">
+                        <p className="truncate cursor-pointer font-medium">{s.title}</p>
+                      </td>
                       <td>{s.class}</td>
-                      <td>{s.label}</td>
+                      <td className="align-top">
+                        <SampleLabelEditor
+                          sampleId={s.id}
+                          label={s.label}
+                          editable={canLabelAnnotate}
+                          saving={saving}
+                          onSave={handleUpdateLabelNotes}
+                        />
+                      </td>
                       <td>{s.source}</td>
                       <td className="text-right tabular-nums">
                         {(s.sizeBytes / 1024).toFixed(0)} KB
                       </td>
                       <td className="flex flex-wrap justify-end gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-ghost"
+                          aria-label={
+                            playback.selectedSampleId === s.id && playback.status === 'playing'
+                              ? 'Пауза'
+                              : 'Воспроизвести'
+                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void (async () => {
+                              if (playback.selectedSampleId !== s.id) {
+                                await handleSelectSample(s);
+                              }
+                              await togglePlayPause();
+                            })();
+                          }}
+                        >
+                          {playback.selectedSampleId === s.id && playback.status === 'playing'
+                            ? '⏸'
+                            : '▶'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-ghost"
+                          aria-label="Экспорт"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void handleExportSample(s);
+                          }}
+                        >
+                          ↓
+                        </button>
                         {selectedId === BUFFER_COLLECTION_ID && moveTargets.length > 0 ? (
                           <select
                             className="select select-bordered select-xs max-w-[8rem]"
@@ -273,6 +417,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                             ))}
                           </select>
                         ) : null}
+                        {!isTariffDataset ? (
                         <button
                           type="button"
                           className="btn btn-xs btn-ghost text-error"
@@ -280,20 +425,35 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         >
                           Удалить
                         </button>
+                        ) : null}
                       </td>
                     </tr>
-                  ))
+                    {isSelected && canLabelAnnotate ? (
+                      <tr className="bg-primary/10">
+                        <td colSpan={6} className="pt-0">
+                          <div
+                            className="py-2"
+                            onClick={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                          >
+                            <SampleNotesEditor
+                              sampleId={s.id}
+                              notes={s.notes}
+                              editable
+                              saving={saving}
+                              onSave={handleUpdateLabelNotes}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null}
+                    </Fragment>
+                    );
+                  })
                 )}
               </tbody>
             </table>
           </div>
-
-          {selectedId === BUFFER_COLLECTION_ID && userCollections.length > 0 ? (
-            <p className="text-xs text-base-content/55">
-              Запись с микрофона (фаза A3) появится позже. Сейчас: импорт с диска → буфер →
-              перенос в коллекцию.
-            </p>
-          ) : null}
         </section>
       </div>
     </div>
