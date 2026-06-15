@@ -30,21 +30,22 @@
 
 <!-- BENCHMARK:auto:start -->
 
-> **Автогенерация:** `yarn benchmark:detectors` · 2026-06-15T07:24:09.909Z
+> **Автогенерация:** `yarn benchmark:detectors` · 2026-06-15T12:30:40.606Z
 > **Датасет:** v2 · test-split: 120 файлов
 
 ### Результаты последнего прогона
 
 | name | family | TP | FP | FN | TN | precision | recall | F1 | latency p50 (ms) | latency p95 (ms) | статус |
 |------|--------|----|----|----|----|-----------|--------|-----|------------------|------------------|--------|
-| harmonic | dsp | 41 | 53 | 19 | 7 | 43.6% | 68.3% | 53.2% | 0.2 | 0.4 | benchmarked |
-| cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.3 | 0.6 | benchmarked |
+| harmonic | dsp | 41 | 53 | 19 | 7 | 43.6% | 68.3% | 53.2% | 0.1 | 0.2 | benchmarked |
+| cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.2 | 0.4 | benchmarked |
 | spectral-flux | dsp | 52 | 60 | 8 | 0 | 46.4% | 86.7% | 60.5% | 0.1 | 0.2 | benchmarked |
 | yamnet | neural | — | — | — | — | — | — | — | — | — | scaffold |
 | clap | neural | — | — | — | — | — | — | — | — | — | scaffold |
 | agentic-claude | agentic | — | — | — | — | — | — | — | — | — | scaffold |
 
 <!-- BENCHMARK:auto:end -->
+
 
 
 

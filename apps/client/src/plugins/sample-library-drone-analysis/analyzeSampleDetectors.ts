@@ -21,6 +21,8 @@ import {
 } from '@membrana/spectral-flux-detector-service';
 import { loadSampleBufferById } from '@membrana/sample-playback-service';
 
+import { CALIBRATED_SAMPLE_OPTIONS } from './detectorCalibrationPreset';
+
 function createActiveDetectors(): DroneDetector[] {
   return [
     createHarmonicDetector({
@@ -48,7 +50,8 @@ export async function analyzeSampleDetectors(
   const verdicts: SampleDetectionVerdict[] = [];
 
   for (const detector of detectors) {
-    const { verdict } = await analyzeSample(samples, buffer.sampleRate, detector);
+    const analyzeOptions = CALIBRATED_SAMPLE_OPTIONS[detector.name] ?? {};
+    const { verdict } = await analyzeSample(samples, buffer.sampleRate, detector, analyzeOptions);
     verdicts.push(verdict);
   }
 

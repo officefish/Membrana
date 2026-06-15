@@ -15,6 +15,7 @@ import {
   percentile,
 } from './lib/benchmark-metrics.mjs';
 import { patchDetectorBenchmarkMd } from './lib/benchmark-report-md.mjs';
+import { filterCuratedSamples } from './lib/manifest-labels.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -123,8 +124,13 @@ async function main() {
   await ensureBuilt(DETECTOR_BASE_DIST, 'detector-base');
 
   const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
-  const withSplit = manifest.samples.filter((s) => s.split === 'test');
-  const testSamples = withSplit.length > 0 ? withSplit : manifest.samples;
+  const curated = filterCuratedSamples(manifest.samples);
+  const withSplit = curated.filter((s) => s.split === 'test');
+  const testSamples = withSplit.length > 0 ? withSplit : curated;
+  const skippedUnlabeled = manifest.samples.length - curated.length;
+  if (skippedUnlabeled > 0) {
+    console.log(`Skipping ${skippedUnlabeled} unlabeled samples`);
+  }
   if (testSamples.length === 0) {
     throw new Error('No samples in manifest — run yarn dataset:sync-free-v1');
   }
@@ -149,6 +155,9 @@ async function main() {
   const report = {
     generatedAt: new Date().toISOString(),
     datasetVersion: `v${manifest.version}`,
+    curatedOnly: true,
+    skippedUnlabeled,
+    groundTruth: manifest.groundTruth ?? null,
     sampleCount: testSamples.length,
     manifestPath: 'data/detectors-benchmark/v0.2/manifest.json',
     detectors,

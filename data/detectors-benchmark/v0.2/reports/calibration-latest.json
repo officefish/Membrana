@@ -1,13 +1,26 @@
 {
-  "generatedAt": "2026-06-15T07:52:58.262Z",
+  "generatedAt": "2026-06-15T12:30:00.126Z",
   "dataset": "v0.2",
+  "groundTruth": {
+    "exportedAt": "2026-06-15T12:17:45.914Z",
+    "exportedBy": "scripts/export-ground-truth-manifest.mjs",
+    "source": "snapshot:data/detectors-benchmark/v0.2/catalog-ground-truth-snapshot.json",
+    "membraneId": "c144a9ef-05f9-48ac-b73c-516c52149e20",
+    "catalogId": "free-v1-catalog",
+    "labeledCount": 120,
+    "unlabeledCount": 0
+  },
+  "curatedOnly": true,
+  "skippedUnlabeled": 0,
   "trainCount": 80,
   "valCount": 40,
   "stageGate": {
     "precision": 0.85,
     "recall": 0.9
   },
+  "accuracyGoal": 0.8,
   "stageGatePassed": false,
+  "accuracyGoalPassed": false,
   "bestOverall": {
     "name": "cepstral",
     "val": {
@@ -23,7 +36,8 @@
     "config": {
       "aggregation": "any-frame",
       "sampleConfidenceThreshold": 0
-    }
+    },
+    "accuracyGoalPassed": false
   },
   "detectors": [
     {
@@ -62,7 +76,8 @@
         "f1": 0.5555555555555556,
         "accuracy": 0.4
       },
-      "stageGatePassed": false
+      "stageGatePassed": false,
+      "accuracyGoalPassed": false
     },
     {
       "name": "cepstral",
@@ -100,7 +115,8 @@
         "f1": 0.6666666666666666,
         "accuracy": 0.5
       },
-      "stageGatePassed": false
+      "stageGatePassed": false,
+      "accuracyGoalPassed": false
     },
     {
       "name": "spectral-flux",
@@ -138,7 +154,8 @@
         "f1": 0.3043478260869565,
         "accuracy": 0.2
       },
-      "stageGatePassed": false
+      "stageGatePassed": false,
+      "accuracyGoalPassed": false
     }
   ]
 }

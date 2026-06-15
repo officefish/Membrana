@@ -15,12 +15,14 @@ import {
   precision,
   recall,
 } from './lib/benchmark-metrics.mjs';
+import { filterCuratedSamples } from './lib/manifest-labels.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
 const MANIFEST_PATH = join(DATASET_DIR, 'manifest.json');
 const REPORT_JSON = join(DATASET_DIR, 'reports', 'calibration-latest.json');
+const PRESET_JSON = join(DATASET_DIR, 'calibration-preset.json');
 const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
 
 const DSP_DETECTORS = [
@@ -60,6 +62,7 @@ for (let t = 0; t <= 0.95; t += 0.05) {
 }
 
 const STAGE_GATE = { precision: 0.85, recall: 0.9 };
+const ACCURACY_GOAL = 0.8;
 
 async function ensureBuilt(distPath, label) {
   try {
@@ -186,13 +189,23 @@ function evaluateConfig(rows, config) {
   return metricsFromPairs(pairs);
 }
 
+function passesAccuracyGoal(m) {
+  return m.accuracy != null && m.accuracy >= ACCURACY_GOAL;
+}
+
 async function main() {
   await ensureBuilt(DETECTOR_BASE_DIST, 'detector-base');
   const { analyzeSample } = await import(pathToFileURL(DETECTOR_BASE_DIST).href);
 
   const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
-  const trainSamples = manifest.samples.filter((s) => s.split === 'train');
-  const valSamples = manifest.samples.filter((s) => s.split === 'val');
+  const curated = filterCuratedSamples(manifest.samples);
+  const trainSamples = curated.filter((s) => s.split === 'train');
+  const valSamples = curated.filter((s) => s.split === 'val');
+  const skippedUnlabeled = manifest.samples.length - curated.length;
+
+  if (skippedUnlabeled > 0) {
+    console.log(`Skipping ${skippedUnlabeled} unlabeled samples (curated only)`);
+  }
 
   if (trainSamples.length === 0 || valSamples.length === 0) {
     throw new Error(
@@ -222,10 +235,11 @@ async function main() {
       train: best?.train ?? null,
       val: valMetrics,
       stageGatePassed: valMetrics ? passesStageGate(valMetrics) : false,
+      accuracyGoalPassed: valMetrics ? passesAccuracyGoal(valMetrics) : false,
     });
 
     console.log(
-      `${spec.name}: default train F1=${formatPct(defaultTrain.f1)} → tuned val F1=${formatPct(valMetrics?.f1)} P=${formatPct(valMetrics?.precision)} R=${formatPct(valMetrics?.recall)}`,
+      `${spec.name}: default train F1=${formatPct(defaultTrain.f1)} acc=${formatPct(defaultTrain.accuracy)} → tuned val F1=${formatPct(valMetrics?.f1)} acc=${formatPct(valMetrics?.accuracy)} P=${formatPct(valMetrics?.precision)} R=${formatPct(valMetrics?.recall)}`,
     );
     if (best?.config) {
       console.log(`  best: agg=${best.config.aggregation} thr=${best.config.sampleConfidenceThreshold}`);
@@ -233,29 +247,53 @@ async function main() {
   }
 
   const bestOverall = results.reduce((a, b) =>
-    (b.val?.f1 ?? 0) > (a.val?.f1 ?? 0) ? b : a,
+    (b.val?.accuracy ?? 0) > (a.val?.accuracy ?? 0) ? b : a,
   );
 
   const report = {
     generatedAt: new Date().toISOString(),
     dataset: 'v0.2',
+    groundTruth: manifest.groundTruth ?? null,
+    curatedOnly: true,
+    skippedUnlabeled,
     trainCount: trainSamples.length,
     valCount: valSamples.length,
     stageGate: STAGE_GATE,
+    accuracyGoal: ACCURACY_GOAL,
     stageGatePassed: results.some((r) => r.stageGatePassed),
+    accuracyGoalPassed: results.some((r) => r.accuracyGoalPassed),
     bestOverall: {
       name: bestOverall.name,
       val: bestOverall.val,
       config: bestOverall.bestConfig,
+      accuracyGoalPassed: bestOverall.accuracyGoalPassed,
     },
     detectors: results,
   };
 
   await mkdir(dirname(REPORT_JSON), { recursive: true });
   await writeFile(REPORT_JSON, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+
+  const preset = {
+    generatedAt: report.generatedAt,
+    source: 'scripts/calibrate-detectors.mjs',
+    groundTruth: report.groundTruth,
+    detectors: Object.fromEntries(
+      results
+        .filter((r) => r.bestConfig)
+        .map((r) => [r.name, r.bestConfig]),
+    ),
+    bestOverall: report.bestOverall.name,
+  };
+  await writeFile(PRESET_JSON, `${JSON.stringify(preset, null, 2)}\n`, 'utf8');
+
   console.log(`\nWrote ${REPORT_JSON}`);
+  console.log(`Wrote ${PRESET_JSON}`);
   console.log(
     `Stage-gate (P≥85%, R≥90%): ${report.stageGatePassed ? 'PASSED' : 'NOT PASSED'}`,
+  );
+  console.log(
+    `Accuracy goal (val ≥${ACCURACY_GOAL * 100}%): ${report.accuracyGoalPassed ? 'PASSED' : 'NOT PASSED'} (best: ${bestOverall.name} ${formatPct(bestOverall.val?.accuracy)})`,
   );
 }
 

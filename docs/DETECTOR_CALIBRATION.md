@@ -1,63 +1,64 @@
 # DETECTOR_CALIBRATION — калибровка DSP-детекторов
 
-> **Статус:** SLD4 (2026-06-14) · stage-gate **не пройден**  
-> **Датасет:** free-v1 v0.2 · 80 train / 40 val ([`manifest.json`](../data/detectors-benchmark/v0.2/manifest.json))  
-> **Консилиум:** [`discussions/sample-library-drone-detection-consilium-2026-06-14-next-epics.md`](./discussions/sample-library-drone-detection-consilium-2026-06-14-next-epics.md)
+> **Статус:** VDR4 (2026-06-15) · **80% val accuracy — не достигнуто**  
+> **Датасет:** free-v1 v0.2 · curated manifest · 80 train / 40 val  
+> **Ground truth:** [`DATASET_CURATION.md`](./DATASET_CURATION.md) · [`manifest.json`](../data/detectors-benchmark/v0.2/manifest.json)
 
 ---
 
-## Цель stage-gate
-
-Перед переходом к этапу 2 (TDOA, ensemble, neural) — см. [`WHITE_PAPER.md`](./WHITE_PAPER.md) §8:
+## Цель VDR4
 
 | Метрика | Порог |
 |---------|--------|
-| Precision | ≥ 85% |
-| Recall | ≥ 90% |
+| Val **accuracy** | ≥ **80%** |
 
-Оценка на **val-split** (40 сэмплов), после подбора порогов на **train-split** (80).
+Подбор `aggregation` + `sampleConfidenceThreshold` на train (80 curated), оценка на val (40 curated). Unlabeled пропускаются.
 
 ---
 
-## Результат SLD4 (автопрогон)
+## Результат VDR4 (curated labels, 2026-06-15)
 
 Команда: `yarn calibrate:detectors`  
-Отчёт: [`calibration-latest.json`](../data/detectors-benchmark/v0.2/reports/calibration-latest.json)
+Отчёт: [`calibration-latest.json`](../data/detectors-benchmark/v0.2/reports/calibration-latest.json)  
+Пресет: [`calibration-preset.json`](../data/detectors-benchmark/v0.2/calibration-preset.json)
 
-| Детектор | Val F1 | Val P | Val R | Лучшая конфигурация (train) |
-|----------|--------|-------|-------|------------------------------|
-| harmonic | **55.6%** | 44.1% | 75.0% | `any-frame`, confidence ≥ 0 |
-| cepstral | 66.7% | 50.0% | 100% | `any-frame`, confidence ≥ 0 |
-| spectral-flux | 30.4% | 26.9% | 35.0% | `majority`, confidence ≥ 0 |
+| Детектор | Val accuracy | Val F1 | Val P | Val R | Лучшая конфигурация (train) |
+|----------|--------------|--------|-------|-------|------------------------------|
+| **cepstral** | **50.0%** | 66.7% | 50.0% | 100% | `any-frame`, confidence ≥ 0 |
+| harmonic | 40.0% | 55.6% | 44.1% | 75.0% | `any-frame`, confidence ≥ 0 |
+| spectral-flux | 20.0% | 30.4% | 26.9% | 35.0% | `majority`, confidence ≥ 0 |
 
-**Stage-gate:** **NOT PASSED** (ни один детектор не достиг P≥85% и R≥90% на val).
+**Accuracy goal (≥80%):** **NOT PASSED** (лучший: cepstral **50%**).  
+**Stage-gate (P≥85%, R≥90%):** **NOT PASSED**.
 
-**Лучший val F1:** cepstral **66.7%** (но TN=0 — предсказывает «дрон» на всём val).  
-**Наиболее сбалансированный:** harmonic — F1 **55.6%**, единственный с TN>0 на val.
+Пресеты применены в плагине `sample-library-drone-analysis` (`detectorCalibrationPreset.ts`).
 
 ---
 
-## Ручная валидация (оператор)
+## Gap analysis
 
-Субъективное прослушивание в плагине `sample-library-drone-analysis`:
+1. **Cepstral / spectral-flux** на train дают TN=0 — предсказывают «дрон» почти на всём; grid search не находит порог, поднимающий accuracy на val.
+2. **Harmonic** — единственный с TN>0 на val, но accuracy **40%** (gap **−40 п.п.** до цели).
+3. Curated operator labels **не улучшили** метрики vs folder-labels SLD4 — DSP-признаки слабо коррелируют с субъективным «слышу дрон».
+4. **Следующий шаг:** VDR5 template-match на validated drone-шаблонах; при провале — neural zero-shot (эпик 1.B).
 
-- harmonic — ~50–65% confidence на большинстве треков;
-- cepstral / spectral-flux — ~100% на большинстве треков.
+---
 
-**Вывод:** folder-labels в free-v1 и текущие DSP-пороги **не дают** доверия к «узнаванию дрона на слух». Калибровка только на manifest без валидации меток ограничена.
+## Исторический результат SLD4 (folder-labels, до VDR3)
+
+| Детектор | Val F1 | Val P | Val R |
+|----------|--------|-------|-------|
+| harmonic | 55.6% | 44.1% | 75.0% |
+| cepstral | 66.7% | 50.0% | 100% |
+| spectral-flux | 30.4% | 26.9% | 35.0% |
+
+Метрики совпадают с VDR4 — проблема в детекторах, не в метках.
 
 ---
 
 ## Ground truth (продуктовый канон)
 
-Каждый сэмпл в `background-media`:
-
-| Поле | Значения | Кто редактирует |
-|------|----------|-----------------|
-| `label` | `drone` \| `not_drone` \| `unlabeled` | admin (system catalog) / user (свои коллекции) |
-| `notes` | текст (будущий промпт обучения) | то же |
-
-Следующий эпик: **`dataset-ground-truth-curation`** — UI + PATCH API + export manifest ↔ benchmark.
+См. [`DATASET_CURATION.md`](./DATASET_CURATION.md). Экспорт: `yarn dataset:export-ground-truth`.
 
 ---
 
