@@ -94,6 +94,7 @@ model Sample {
   notes        String?
   createdAt    DateTime     @default(now())
 
+  @@unique([deviceId, collectionId, title])
   @@index([deviceId])
   @@index([deviceId, collectionId])
 }
