@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { sampleLabelBadgeClass, sampleLabelTitle, useMediaLibrary } from '@membrana/media-library-service';
+
 import { requestSampleLibraryDroneAnalysis } from './sampleLibraryDronePluginState';
 import { useSampleLibraryDroneAnalysis } from './useSampleLibraryDroneAnalysis';
 
@@ -15,11 +17,19 @@ export const SampleLibraryDroneAnalysisPanel: React.FC<SampleLibraryDroneAnalysi
   moduleId: _moduleId,
 }) => {
   const snapshot = useSampleLibraryDroneAnalysis();
+  const { snapshot: librarySnapshot } = useMediaLibrary();
   const hasSample = Boolean(snapshot.selectedSampleId);
   const showResults =
     snapshot.status === 'ready' &&
     snapshot.verdicts.length > 0 &&
     snapshot.analyzedSampleId === snapshot.selectedSampleId;
+
+  const groundTruthSample =
+    snapshot.selectedSampleId != null
+      ? Object.values(librarySnapshot.samplesByCollection)
+          .flat()
+          .find((s) => s.id === snapshot.selectedSampleId) ?? null
+      : null;
 
   return (
     <section
@@ -44,9 +54,19 @@ export const SampleLibraryDroneAnalysisPanel: React.FC<SampleLibraryDroneAnalysi
         </div>
 
         {snapshot.selectedSampleTitle ? (
-          <p className="text-sm text-base-content/70">
-            Сэмпл: <span className="font-medium">{snapshot.selectedSampleTitle}</span>
-          </p>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-base-content/70">
+            <p>
+              Сэмпл: <span className="font-medium">{snapshot.selectedSampleTitle}</span>
+            </p>
+            {groundTruthSample ? (
+              <p className="flex items-center gap-1">
+                <span className="text-base-content/50">ground truth:</span>
+                <span className={sampleLabelBadgeClass(groundTruthSample.label)}>
+                  {sampleLabelTitle(groundTruthSample.label)}
+                </span>
+              </p>
+            ) : null}
+          </div>
         ) : null}
 
         {!hasSample ? (

@@ -32,6 +32,12 @@ export type SampleLibraryMainPanelProps = Pick<
   | 'handleRemove'
   | 'handleMove'
   | 'handleExport'
+  | 'canLabelCatalog'
+  | 'labelSavingId'
+  | 'labelAnnotateError'
+  | 'handlePatchCatalogLabelNotes'
+  | 'handlePatchNodeLabelNotes'
+  | 'isTariffDataset'
 >;
 
 export function SampleLibraryMainPanel({
@@ -61,6 +67,12 @@ export function SampleLibraryMainPanel({
   handleRemove,
   handleMove,
   handleExport,
+  canLabelCatalog,
+  labelSavingId,
+  labelAnnotateError,
+  handlePatchCatalogLabelNotes,
+  handlePatchNodeLabelNotes,
+  isTariffDataset,
 }: SampleLibraryMainPanelProps) {
   if (isOfflineView && selection.kind === 'node-offline') {
     return (
@@ -90,7 +102,11 @@ export function SampleLibraryMainPanel({
             ) : null}
           </h2>
           <span className="badge badge-neutral badge-sm shrink-0">системный датасет</span>
-          <span className="ml-auto shrink-0 text-sm text-base-content/60">Только чтение</span>
+          {canLabelCatalog ? (
+            <span className="ml-auto shrink-0 text-sm text-success">Разметка ground truth (admin)</span>
+          ) : (
+            <span className="ml-auto shrink-0 text-sm text-base-content/60">Только чтение</span>
+          )}
         </div>
         {catalogPlaybackBlocked ? (
           <div className="alert alert-warning text-sm">
@@ -109,6 +125,10 @@ export function SampleLibraryMainPanel({
           onExportSelected={
             selectedPlaybackSample && active ? () => void handleExportSelected() : undefined
           }
+          canLabelAnnotate={canLabelCatalog}
+          labelSavingId={labelSavingId}
+          labelAnnotateError={labelAnnotateError}
+          onSaveLabelNotes={(id, patch) => void handlePatchCatalogLabelNotes(id, patch)}
         />
       </section>
     );
@@ -173,6 +193,10 @@ export function SampleLibraryMainPanel({
         onRemove={(id) => void handleRemove(id)}
         onMove={(id, toId) => void handleMove(id, toId)}
         onExport={(sample) => void handleExport(sample)}
+        canLabelAnnotate={!isTariffDataset && active}
+        labelSavingId={labelSavingId}
+        labelAnnotateError={labelAnnotateError}
+        onSaveLabelNotes={(id, patch) => void handlePatchNodeLabelNotes(id, patch)}
       />
     </section>
   );

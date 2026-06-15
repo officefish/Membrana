@@ -2,7 +2,7 @@ import type { MembraneCatalogSample } from '@/api/sampleLibrary';
 import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
 import { CabinetSampleTable } from '@/components/sample-library/CabinetSampleTable';
 import type { SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
-import type { Collection, MediaSample } from '@membrana/media-library-service';
+import type { Collection, MediaSample, UpdateSampleLabelNotes } from '@membrana/media-library-service';
 
 export interface CabinetSampleCollectionBodyProps {
   readonly libLoading: boolean;
@@ -21,6 +21,10 @@ export interface CabinetSampleCollectionBodyProps {
   readonly onRemove?: (id: string) => void;
   readonly onMove?: (id: string, toId: string) => void;
   readonly onExport?: (sample: MediaSample) => void;
+  readonly canLabelAnnotate?: boolean;
+  readonly labelSavingId?: string | null;
+  readonly labelAnnotateError?: string | null;
+  readonly onSaveLabelNotes?: (sampleId: string, patch: UpdateSampleLabelNotes) => void;
 }
 
 /** Одна колонка: плеер под шапкой коллекции, затем таблица сэмплов. */
@@ -41,6 +45,10 @@ export function CabinetSampleCollectionBody({
   onRemove,
   onMove,
   onExport,
+  canLabelAnnotate,
+  labelSavingId,
+  labelAnnotateError,
+  onSaveLabelNotes,
 }: CabinetSampleCollectionBodyProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
@@ -66,6 +74,10 @@ export function CabinetSampleCollectionBody({
         onRemove={onRemove}
         onMove={onMove}
         onExport={onExport}
+        canLabelAnnotate={canLabelAnnotate}
+        labelSavingId={labelSavingId}
+        labelAnnotateError={labelAnnotateError}
+        onSaveLabelNotes={onSaveLabelNotes}
       />
     </div>
   );

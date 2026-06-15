@@ -72,4 +72,18 @@
 
 **a11y:** `aria-live="polite"` на смену **стабильного** статуса (`stableIsDrone` после сглаживания); не только цвет для «дрон / не дрон» (иконка + текст «Обнаружен» / «Нет»).
 
+## Sample ground-truth labels (VDR2)
+
+Метки `label` в библиотеке сэмплов (разметка оператором, не предсказание детектора).
+
+| `label` | Badge (DaisyUI) | Текст в UI |
+|---------|-----------------|------------|
+| `drone` | `badge badge-warning badge-sm` | «Дрон» |
+| `not-drone` | `badge badge-ghost badge-sm` | «Не дрон» |
+| `unlabeled` | `badge badge-neutral badge-sm` | «Не установлено» |
+
+**Ошибка сохранения:** `text-error text-xs` под контролом + toast/alert на уровне страницы; повтор через кнопку «Повторить» в toast (cabinet).
+
+**Хелперы:** `@membrana/media-library-service` — `SAMPLE_LABEL_OPTIONS`, `sampleLabelBadgeClass`, `sampleLabelTitle`.
+
 **Регламент:** [`LIVE_DETECTION_UI.md`](./LIVE_DETECTION_UI.md) — сглаживание, demo layout, эталон harmonic demo.

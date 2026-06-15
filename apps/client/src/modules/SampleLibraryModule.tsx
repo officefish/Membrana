@@ -8,8 +8,10 @@ import {
   useMediaLibrary,
   type Collection,
   type MediaSample,
+  type UpdateSampleLabelNotes,
 } from '@membrana/media-library-service';
 
+import { SampleLabelNotesEditor } from '../components/sample-library/SampleLabelNotesEditor';
 import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
 import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
 import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
@@ -59,6 +61,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const [selectedId, setSelectedId] = useState<string>(BUFFER_COLLECTION_ID);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
 
   useEffect(() => {
     bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
@@ -72,6 +75,22 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const quotaBlocked = isQuotaFull(snapshot.quota);
   const isTariffDataset =
     selected?.kind === 'system' && selected.systemKey === TARIFF_DATASET_SYSTEM_KEY;
+  const canLabelAnnotate = !isTariffDataset;
+
+  const handleUpdateLabelNotes = useCallback(
+    async (sampleId: string, patch: UpdateSampleLabelNotes) => {
+      setError(null);
+      setLabelSavingId(sampleId);
+      try {
+        await service.updateSampleLabelNotes(sampleId, patch);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      } finally {
+        setLabelSavingId(null);
+      }
+    },
+    [service],
+  );
 
   const moveTargets = snapshot.collections.filter(
     (c) => c.id !== selectedId && c.kind !== 'buffer' && c.kind !== 'system',
@@ -319,17 +338,42 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                     </td>
                   </tr>
                 ) : (
-                  samples.map((s: MediaSample) => (
+                  samples.map((s: MediaSample) => {
+                    const isSelected = playback.selectedSampleId === s.id;
+                    return (
                     <tr
                       key={s.id}
-                      className={
-                        playback.selectedSampleId === s.id ? 'bg-primary/10' : undefined
-                      }
+                      className={isSelected ? 'bg-primary/10' : undefined}
                       onClick={() => void handleSelectSample(s)}
                     >
-                      <td className="max-w-[12rem] truncate cursor-pointer">{s.title}</td>
+                      <td className="max-w-[12rem] align-top">
+                        <p className="truncate cursor-pointer font-medium">{s.title}</p>
+                        {isSelected && canLabelAnnotate ? (
+                          <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                            <SampleLabelNotesEditor
+                              sampleId={s.id}
+                              label={s.label}
+                              notes={s.notes}
+                              editable
+                              saving={labelSavingId === s.id}
+                              showNotes
+                              onSave={handleUpdateLabelNotes}
+                            />
+                          </div>
+                        ) : null}
+                      </td>
                       <td>{s.class}</td>
-                      <td>{s.label}</td>
+                      <td className="align-top">
+                        <SampleLabelNotesEditor
+                          sampleId={s.id}
+                          label={s.label}
+                          notes={s.notes}
+                          editable={canLabelAnnotate}
+                          saving={labelSavingId === s.id}
+                          compact
+                          onSave={handleUpdateLabelNotes}
+                        />
+                      </td>
                       <td>{s.source}</td>
                       <td className="text-right tabular-nums">
                         {(s.sizeBytes / 1024).toFixed(0)} KB
@@ -398,7 +442,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         ) : null}
                       </td>
                     </tr>
-                  ))
+                    );
+                  })
                 )}
               </tbody>
             </table>

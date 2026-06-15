@@ -1,11 +1,12 @@
 import { SampleWaveformScrubber } from '@/components/sample-playback/SampleWaveformScrubber';
+import { SampleLabelNotesEditor } from '@/components/sample-library/SampleLabelNotesEditor';
 import { formatBytes } from '@/lib/formatBytes';
 import {
   seekSamplePlayback,
   type SamplePlaybackSnapshot,
 } from '@membrana/sample-playback-service';
 import type { MembraneCatalogSample } from '@/api/sampleLibrary';
-import type { Collection, MediaSample } from '@membrana/media-library-service';
+import type { Collection, MediaSample, SampleLabel, UpdateSampleLabelNotes } from '@membrana/media-library-service';
 
 export interface CabinetSampleTableProps {
   readonly rows: MembraneCatalogSample[] | MediaSample[];
@@ -21,6 +22,10 @@ export interface CabinetSampleTableProps {
   readonly onRemove?: (id: string) => void;
   readonly onMove?: (id: string, toId: string) => void;
   readonly onExport?: (sample: MediaSample) => void;
+  readonly canLabelAnnotate?: boolean;
+  readonly labelSavingId?: string | null;
+  readonly labelAnnotateError?: string | null;
+  readonly onSaveLabelNotes?: (sampleId: string, patch: UpdateSampleLabelNotes) => void;
 }
 
 export function CabinetSampleTable({
@@ -37,6 +42,10 @@ export function CabinetSampleTable({
   onRemove,
   onMove,
   onExport,
+  canLabelAnnotate = false,
+  labelSavingId = null,
+  labelAnnotateError = null,
+  onSaveLabelNotes,
 }: CabinetSampleTableProps) {
   const colSpan = mode === 'node' ? 6 : 5;
   const playingId = playback.selectedSampleId;
@@ -101,11 +110,36 @@ export function CabinetSampleTable({
                             {playback.errorMessage ?? 'Загрузка осциллограммы…'}
                           </p>
                         )}
+                        {canLabelAnnotate && onSaveLabelNotes ? (
+                          <div className="mt-2">
+                            <SampleLabelNotesEditor
+                              sampleId={id}
+                              label={row.label as SampleLabel}
+                              notes={'notes' in row ? row.notes : undefined}
+                              editable
+                              saving={labelSavingId === id}
+                              error={labelSavingId === id ? labelAnnotateError : null}
+                              showNotes
+                              onSave={onSaveLabelNotes}
+                            />
+                          </div>
+                        ) : null}
                       </div>
                     ) : null}
                   </td>
                   <td>{row.class}</td>
-                  <td>{row.label}</td>
+                  <td className="align-top">
+                    <SampleLabelNotesEditor
+                      sampleId={id}
+                      label={row.label as SampleLabel}
+                      notes={'notes' in row ? row.notes : undefined}
+                      editable={canLabelAnnotate}
+                      saving={labelSavingId === id}
+                      error={labelSavingId === id ? labelAnnotateError : null}
+                      compact
+                      onSave={onSaveLabelNotes ?? (() => undefined)}
+                    />
+                  </td>
                   {mode === 'node' ? <td>{source}</td> : null}
                   <td className="text-right tabular-nums">{formatBytes(row.sizeBytes)}</td>
                   <td>

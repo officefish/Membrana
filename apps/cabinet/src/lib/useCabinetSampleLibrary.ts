@@ -18,11 +18,13 @@ import {
 import {
   fetchMembraneCatalog,
   fetchMembraneNodes,
+  patchCatalogSample,
   type MembraneCatalog,
   type MembraneCatalogSample,
   type MembraneNodeLibrary,
 } from '@/api/sampleLibrary';
 import { fetchMembraneMe } from '@/api/membrane';
+import { useAuth } from '@/context/AuthContext';
 import { catalogSampleToMedia } from '@/lib/catalogSampleAdapter';
 import {
   DEFAULT_IMPORT_CLASS,
@@ -32,11 +34,15 @@ import { invalidateCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
 import { downloadBlob, extensionFromMime } from '@/lib/downloadBlob';
 import { useCabinetMediaLibrary } from '@/lib/useCabinetMediaLibrary';
 import { useCabinetToast } from '@/lib/useCabinetToast';
+import type { SampleLabel, UpdateSampleLabelNotes } from '@membrana/media-library-service';
 
 export type { LibrarySelection };
 
 export function useCabinetSampleLibrary() {
   useSamplePlaybackEscapeKey();
+
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   const [membraneId, setMembraneId] = useState<string | null>(null);
   const [catalog, setCatalog] = useState<MembraneCatalog | null>(null);
@@ -47,6 +53,8 @@ export function useCabinetSampleLibrary() {
   const [mediaReloadNonce, setMediaReloadNonce] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
+  const [labelAnnotateError, setLabelAnnotateError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast, dismiss, showError, showSuccess } = useCabinetToast();
 
@@ -176,6 +184,55 @@ export function useCabinetSampleLibrary() {
   const readOnlyCollection = isTariffDataset || selectedCollection?.kind === 'system';
   const quotaBlocked = active ? isQuotaFull(snapshot.quota) : false;
   const canMutate = isNodeView && active && !readOnlyCollection && !busy;
+  const canLabelCatalog = isCatalogView && isAdmin && Boolean(membraneId);
+
+  const handlePatchCatalogLabelNotes = useCallback(
+    async (sampleId: string, patch: UpdateSampleLabelNotes) => {
+      if (!membraneId || !canLabelCatalog) return;
+      setLabelSavingId(sampleId);
+      setLabelAnnotateError(null);
+      try {
+        const updated = await patchCatalogSample(membraneId, sampleId, patch);
+        setCatalog((prev) =>
+          prev
+            ? {
+                ...prev,
+                samples: prev.samples.map((s) => (s.id === sampleId ? updated : s)),
+              }
+            : prev,
+        );
+        showSuccess('Разметка сохранена');
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setLabelAnnotateError(msg);
+        showError(`Разметка: ${msg}`, () =>
+          void handlePatchCatalogLabelNotes(sampleId, patch),
+        );
+      } finally {
+        setLabelSavingId(null);
+      }
+    },
+    [canLabelCatalog, membraneId, showError, showSuccess],
+  );
+
+  const handlePatchNodeLabelNotes = useCallback(
+    async (sampleId: string, patch: UpdateSampleLabelNotes) => {
+      if (!service || !active || isTariffDataset) return;
+      setLabelSavingId(sampleId);
+      setLabelAnnotateError(null);
+      try {
+        await service.updateSampleLabelNotes(sampleId, patch);
+        showSuccess('Разметка сохранена');
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setLabelAnnotateError(msg);
+        showError(`Разметка: ${msg}`, () => void handlePatchNodeLabelNotes(sampleId, patch));
+      } finally {
+        setLabelSavingId(null);
+      }
+    },
+    [active, isTariffDataset, service, showError, showSuccess],
+  );
 
   const moveTargets = useMemo(
     () =>
@@ -347,6 +404,7 @@ export function useCabinetSampleLibrary() {
     isCatalogView,
     isOfflineView,
     isNodeView,
+    isTariffDataset,
     catalogPlaybackBlocked,
     readOnlyCollection,
     quotaBlocked,
@@ -365,6 +423,12 @@ export function useCabinetSampleLibrary() {
     handleMove,
     handleClearBuffer,
     handleExport,
+    isAdmin,
+    canLabelCatalog,
+    labelSavingId,
+    labelAnnotateError,
+    handlePatchCatalogLabelNotes,
+    handlePatchNodeLabelNotes,
   };
 }
 

@@ -110,6 +110,12 @@ export function SampleLibraryPage() {
           handleRemove={lib.handleRemove}
           handleMove={lib.handleMove}
           handleExport={lib.handleExport}
+          canLabelCatalog={lib.canLabelCatalog}
+          labelSavingId={lib.labelSavingId}
+          labelAnnotateError={lib.labelAnnotateError}
+          handlePatchCatalogLabelNotes={lib.handlePatchCatalogLabelNotes}
+          handlePatchNodeLabelNotes={lib.handlePatchNodeLabelNotes}
+          isTariffDataset={lib.isTariffDataset}
         />
       </div>
 

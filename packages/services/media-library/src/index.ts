@@ -83,6 +83,12 @@ export {
 } from './bundled-catalog.js';
 
 export {
+  SAMPLE_LABEL_OPTIONS,
+  sampleLabelBadgeClass,
+  sampleLabelTitle,
+} from './sample-label-display.js';
+
+export {
   MEDIA_LIBRARY_HUB,
   type MediaLibraryCaptureCancelPayload,
   type MediaLibraryCaptureFormat,

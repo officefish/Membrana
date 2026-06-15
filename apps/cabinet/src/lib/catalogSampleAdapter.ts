@@ -20,5 +20,6 @@ export function catalogSampleToMedia(row: MembraneCatalogSample): MediaSample {
     createdAt: row.createdAt,
     storageRef: row.id,
     sizeBytes: row.sizeBytes,
+    notes: row.notes,
   };
 }

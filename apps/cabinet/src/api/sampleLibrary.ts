@@ -25,6 +25,7 @@ export interface MembraneCatalogSample {
   sampleRate: number;
   sizeBytes: number;
   createdAt: string;
+  notes?: string;
 }
 
 export interface MembraneCatalog {
@@ -87,4 +88,20 @@ export async function fetchMediaSession(): Promise<MediaSession> {
   const res = await authFetch('/v1/media/session');
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as MediaSession;
+}
+
+export async function patchCatalogSample(
+  membraneId: string,
+  sampleId: string,
+  patch: { label?: string; notes?: string | null },
+): Promise<MembraneCatalogSample> {
+  const res = await authFetch(
+    `/v1/membranes/${encodeURIComponent(membraneId)}/catalog/samples/${encodeURIComponent(sampleId)}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(patch),
+    },
+  );
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as MembraneCatalogSample;
 }
