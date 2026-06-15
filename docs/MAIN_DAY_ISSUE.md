@@ -1,48 +1,47 @@
-<!-- Обновлено: 2026-06-14 (VDR1 — validated-drone-recognition epic) -->
+<!-- Обновлено: 2026-06-15 (VDR6 — epic closure) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) -->
 <!-- Эпик: docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md -->
-<!-- Реестр: vdr1-sample-label-patch-api -->
+<!-- Отчёт: docs/discussions/vdr-epic-closure-2026-06-15.md -->
 
-# MAIN_DAY_ISSUE — 2026-06-14
+# MAIN_DAY_ISSUE — 2026-06-15
 
-**Дата:** 2026-06-14 · **Хранитель:** Teamlead (Vesnin)
-
----
-
-## Один обязательный фокус дня
-
-### **VDR1: PATCH label + notes + роль admin**
-
-**GitHub Issue:** [#47](https://github.com/officefish/Membrana/issues/47)  
-**Эпик:** `validated-drone-recognition`  
-**Фаза:** `vdr1-sample-label-patch-api`  
-**Промпт:** [`docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](./prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md)
+**Дата:** 2026-06-15 · **Хранитель:** Teamlead (Vesnin)
 
 ---
 
-## Цель
+## Статус эпика `validated-drone-recognition`
 
-API и права для ground truth: `label` + `notes` в media; `User.role` в cabinet; admin размечает tariff dataset.
+**Закрыт по FFT-ветке free-v1** (VDR1–VDR6). Цель ≥80% val accuracy **не достигнута** — ожидаемо; см. closure report.
+
+| Фаза | Статус |
+|------|--------|
+| VDR1–VDR2 | label + notes API/UI (cabinet + client) |
+| VDR3 | `yarn dataset:export-ground-truth` · 120/120 curated |
+| VDR4 | `yarn calibrate:detectors` · DSP presets |
+| VDR5 | template-match · `DRONE_CURATED` из 60 drone |
+| VDR6 | [`vdr-epic-closure-2026-06-15.md`](./discussions/vdr-epic-closure-2026-06-15.md) |
 
 ---
 
-## Definition of Done (VDR1)
+## Лучшие метрики (val, 40 сэмплов)
 
-- [x] `PATCH /v1/devices/:deviceId/samples/:sampleId` (media)
-- [x] `PATCH /v1/membranes/:membraneId/catalog/samples/:sampleId` (cabinet, admin)
-- [x] `User.role` + миграция; seed `admin` → role admin
-- [x] `@membrana/media-library-service` `updateSampleLabelNotes()`
-- [x] Unit-тесты media + cabinet
-- [ ] Merge PR → `yarn task:archive vdr1-sample-label-patch-api`
+См. [`vdr6-closure.json`](./data/detectors-benchmark/v0.2/reports/vdr6-closure.json) — `yarn report:vdr6`
 
-**Следующее:** VDR2 — UI разметки в client + cabinet.
+**Лучший FFT-детектор:** template-match (val F1 выше DSP; accuracy ~56% на полном корпусе).
+
+---
+
+## Следующий фокус (вне этого эпика)
+
+1. **Рефакторинг журнала** (agenda / telemetry) — следующий эпик после merge PR #77.
+2. **Следующий тариф** (не эта неделя): MFCC, спектрограммы, ~600 сэмплов.
 
 ---
 
 ## Команды
 
 ```bash
-yarn workspace @membrana/background-media test
-yarn workspace @membrana/background-cabinet test
-yarn workspace @membrana/media-library-service test
+yarn report:vdr6
+yarn benchmark:detectors
+yarn templates:build-from-dataset
 ```
