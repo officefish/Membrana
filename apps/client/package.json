@@ -29,6 +29,7 @@
     "@membrana/media-library-service": "*",
     "@membrana/sample-playback-service": "*",
     "@membrana/spectral-flux-detector-service": "*",
+    "@membrana/telemetry-journal-service": "*",
     "@membrana/telemetry-service": "*",
     "@membrana/trends-detector-service": "*",
     "@uiw/react-json-view": "2.0.0-alpha.42",

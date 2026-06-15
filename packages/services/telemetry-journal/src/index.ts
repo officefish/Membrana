@@ -51,3 +51,32 @@ export {
   resetDefaultLiveJournalServiceForTests,
   setDefaultLiveJournalServiceForTests,
 } from './live-journal-service.js';
+
+export type {
+  CabinetTelemetryLiveRecordDto,
+  CabinetTelemetryReportDto,
+  CreateCabinetTelemetryLiveRecordInput,
+  CreateCabinetTelemetryReportInput,
+  ICabinetJournalPort,
+} from './ports/cabinet-journal-port.js';
+
+export {
+  cabinetRowsToJournalItems,
+  isLiveJournalReportRow,
+  isTelemetryTrackLiveRecord,
+  liveRecordToJournalItem,
+  reportInputToCabinetReport,
+  reportToJournalItem,
+  trackInputToCabinetLiveRecord,
+} from './mappers/cabinet-journal-mapper.js';
+
+export {
+  SyncJournalStorageBackend,
+  createSyncJournalStorageBackend,
+  type SyncJournalStorageBackendOptions,
+} from './backends/sync-journal-storage-backend.js';
+
+export {
+  ElectronJournalStorageBackend,
+  createElectronJournalStorageBackend,
+} from './backends/electron-journal-storage-backend.js';

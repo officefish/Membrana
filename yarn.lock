@@ -1126,6 +1126,7 @@ __metadata:
     "@membrana/media-library-service": "npm:*"
     "@membrana/sample-playback-service": "npm:*"
     "@membrana/spectral-flux-detector-service": "npm:*"
+    "@membrana/telemetry-journal-service": "npm:*"
     "@membrana/telemetry-service": "npm:*"
     "@membrana/trends-detector-service": "npm:*"
     "@types/react": "npm:^18.3.3"
@@ -1309,7 +1310,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/telemetry-journal-service@workspace:packages/services/telemetry-journal":
+"@membrana/telemetry-journal-service@npm:*, @membrana/telemetry-journal-service@workspace:packages/services/telemetry-journal":
   version: 0.0.0-use.local
   resolution: "@membrana/telemetry-journal-service@workspace:packages/services/telemetry-journal"
   dependencies:

@@ -18,6 +18,27 @@ export interface UploadTelemetryLiveRecordBody {
   payload: Record<string, unknown>;
 }
 
+export interface TelemetryReportRow {
+  id: string;
+  reportKind: string;
+  clientEntryId: string | null;
+  moduleId: string | null;
+  moduleName: string | null;
+  finishedAt: string;
+  payload: Record<string, unknown>;
+  tags: string[];
+}
+
+export interface TelemetryLiveRecordRow {
+  id: string;
+  recordKind: string;
+  clientRecordId: string | null;
+  moduleId: string | null;
+  status: 'active' | 'ended';
+  startedAt: string;
+  payload: Record<string, unknown>;
+}
+
 async function parseError(res: Response): Promise<string> {
   try {
     const body = (await res.json()) as { message?: string | string[] };
@@ -78,4 +99,26 @@ export async function endTelemetryLiveRecord(
     }),
   });
   if (!res.ok) throw new Error(await parseError(res));
+}
+
+export async function listTelemetryReports(
+  token: string,
+  limit = 200,
+): Promise<{ reports: TelemetryReportRow[] }> {
+  const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/reports?limit=${limit}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { reports: TelemetryReportRow[] };
+}
+
+export async function listTelemetryLiveRecords(
+  token: string,
+  limit = 200,
+): Promise<{ liveRecords: TelemetryLiveRecordRow[] }> {
+  const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/live-records?limit=${limit}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { liveRecords: TelemetryLiveRecordRow[] };
 }

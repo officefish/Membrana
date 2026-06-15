@@ -115,6 +115,22 @@ export class MemoryJournalStorageBackend implements IJournalStorageBackend {
       }
     }
   }
+
+  /** Merge remote rows without overwriting existing clientEntryId (TJ2 pull sync). */
+  mergeRemoteItems(items: readonly LiveJournalItem[]): void {
+    for (const item of items) {
+      if (this.clientEntryIds.has(item.clientEntryId)) continue;
+      this.clientEntryIds.add(item.clientEntryId);
+      this.items.push(item);
+    }
+    this.items.sort((a, b) => b.timestamp - a.timestamp);
+    if (this.items.length > this.config.maxItems) {
+      const removed = this.items.splice(this.config.maxItems);
+      for (const stale of removed) {
+        this.clientEntryIds.delete(stale.clientEntryId);
+      }
+    }
+  }
 }
 
 export function createMemoryJournalStorageBackend(
