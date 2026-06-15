@@ -764,7 +764,7 @@
       "createdAt": "2026-06-15",
       "archivedAt": "2026-06-15",
       "archiveNotes": "PR #77; analyzeSample + benchmark v0.2",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-15",
       "dependsOn": [
         "sample-library-drone-detection"
       ]
@@ -781,7 +781,7 @@
       "createdAt": "2026-06-15",
       "archivedAt": "2026-06-15",
       "archiveNotes": "PR #77; sample-library-drone-analysis plugin",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-15",
       "dependsOn": [
         "sld1-sample-detection-contract"
       ]
@@ -961,10 +961,11 @@
       "githubIssue": 81,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-15",
+      "archiveNotes": "GitHub #81; PR #82 merged 2026-06-15 @ 27ed842. BL1 buffer gate, TJ10 mic-live-drone-analysis, TJ7 refresh, TJ8 waveform, TJ9 pagination. Prod smoke OK 2026-06-15 on cabinet.membrana.space",
+      "githubIssueClosedAt": "2026-06-15"
     }
   ]
 }
