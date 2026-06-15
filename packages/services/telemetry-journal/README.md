@@ -7,7 +7,7 @@ Foundation-сервис **live-журнала телеметрии** (эпик T
 - Канонические DTO: `LiveJournalItem` (`kind: track | report`)
 - Schema трека: `telemetry-track/v1`
 - Port `IJournalStorageBackend` + memory backend (browser-limited fallback)
-- `SyncJournalStorageBackend` — local cache + cabinet push/pull (TJ2)
+- `SyncJournalStorageBackend` — local cache + cabinet push/pull (TJ2); localStorage rehydrate (TJ6)
 - `ICabinetJournalPort` + mappers for MP5 `TelemetryReport` / `TelemetryLiveRecord`
 - Electron FS stub backend (TJ2)
 - `LiveJournalService` — append track/report, snapshot, filters

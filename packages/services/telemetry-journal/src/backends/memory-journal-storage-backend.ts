@@ -116,6 +116,29 @@ export class MemoryJournalStorageBackend implements IJournalStorageBackend {
     }
   }
 
+  /** Replace in-memory snapshot (TJ6 rehydrate from localStorage). */
+  restoreItems(items: readonly LiveJournalItem[]): void {
+    this.items = [];
+    this.clientEntryIds.clear();
+    for (const item of items) {
+      if (this.clientEntryIds.has(item.clientEntryId)) continue;
+      this.clientEntryIds.add(item.clientEntryId);
+      this.items.push(item);
+    }
+    this.items.sort((a, b) => b.timestamp - a.timestamp);
+    if (this.items.length > this.config.maxItems) {
+      const removed = this.items.splice(this.config.maxItems);
+      for (const stale of removed) {
+        this.clientEntryIds.delete(stale.clientEntryId);
+      }
+    }
+  }
+
+  /** Export current snapshot for persistence (TJ6). */
+  takeSnapshot(): readonly LiveJournalItem[] {
+    return [...this.items];
+  }
+
   /** Merge remote rows without overwriting existing clientEntryId (TJ2 pull sync). */
   mergeRemoteItems(items: readonly LiveJournalItem[]): void {
     for (const item of items) {

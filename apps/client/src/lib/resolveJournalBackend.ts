@@ -2,6 +2,7 @@ import {
   createElectronJournalStorageBackend,
   createMemoryJournalStorageBackend,
   createSyncJournalStorageBackend,
+  journalLocalCacheKey,
   type IJournalStorageBackend,
 } from '@membrana/telemetry-journal-service';
 
@@ -50,7 +51,9 @@ async function createPairedBackend(pairing: PairedNodeCredentials): Promise<IJou
   for (let attempt = 0; attempt < PAIRED_CABINET_PING_ATTEMPTS; attempt += 1) {
     const cabinetOk = await pingCabinetApi();
     if (cabinetOk) {
-      return createSyncJournalStorageBackend(createCabinetJournalPort(pairing.token));
+      return createSyncJournalStorageBackend(createCabinetJournalPort(pairing.token), {
+        localCacheKey: journalLocalCacheKey(pairing.deviceId),
+      });
     }
     if (attempt < PAIRED_CABINET_PING_ATTEMPTS - 1) {
       await delay(PAIRED_CABINET_PING_DELAY_MS * (attempt + 1));

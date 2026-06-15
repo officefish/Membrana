@@ -2,10 +2,12 @@ import type {
   CreateCabinetTelemetryLiveRecordInput,
   CreateCabinetTelemetryReportInput,
   ICabinetJournalPort,
+  ListCabinetJournalItemsQuery,
 } from '@membrana/telemetry-journal-service';
 
 import {
   createTelemetryLiveRecord,
+  listTelemetryJournalItems,
   listTelemetryLiveRecords,
   listTelemetryReports,
   uploadTelemetryReport,
@@ -21,6 +23,10 @@ export function createCabinetJournalPort(token: string): ICabinetJournalPort {
     async listLiveRecords(limit) {
       const res = await listTelemetryLiveRecords(token, limit);
       return res.liveRecords;
+    },
+    async listJournalItems(query?: ListCabinetJournalItemsQuery) {
+      const res = await listTelemetryJournalItems(token, query?.limit);
+      return res.items;
     },
     async createReport(input: CreateCabinetTelemetryReportInput) {
       const res = await uploadTelemetryReport(token, {

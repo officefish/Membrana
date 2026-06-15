@@ -28,26 +28,28 @@ function sampleTrackInput(trackId: string) {
 describe('SyncJournalStorageBackend', () => {
   it('pulls remote rows and pushes local appends', async () => {
     const createLiveRecord = vi.fn().mockResolvedValue({ deduplicated: false });
-    const port: ICabinetJournalPort = {
-      listReports: vi.fn().mockResolvedValue([
-        {
-          id: 'rep-server',
-          reportKind: 'drone-detection-report/v1',
-          clientEntryId: 'live-report-rep-1',
-          moduleId: 'mic-mod',
-          moduleName: 'microphone',
-          finishedAt: '2026-06-15T12:00:05.000Z',
-          payload: {
-            schema: 'drone-detection-report/v1',
-            reportId: 'rep-1',
-            trackId: 'remote-track',
-            isDetected: true,
-            payload: {},
-          },
-          tags: ['live', 'report', 'detection'],
+    const listJournalItems = vi.fn().mockResolvedValue([
+      {
+        id: 'rep-server',
+        kind: 'report' as const,
+        timestamp: Date.parse('2026-06-15T12:00:05.000Z'),
+        clientEntryId: 'live-report-rep-1',
+        moduleId: 'mic-mod',
+        moduleName: 'microphone',
+        tags: ['live', 'report', 'detection'],
+        report: {
+          schema: 'drone-detection-report/v1',
+          reportId: 'rep-1',
+          trackId: 'remote-track',
+          isDetected: true,
+          payload: {},
         },
-      ]),
+      },
+    ]);
+    const port: ICabinetJournalPort = {
+      listReports: vi.fn().mockResolvedValue([]),
       listLiveRecords: vi.fn().mockResolvedValue([]),
+      listJournalItems,
       createReport: vi.fn(),
       createLiveRecord,
     };
@@ -56,6 +58,7 @@ describe('SyncJournalStorageBackend', () => {
     const items = await backend.listItems();
     expect(items).toHaveLength(1);
     expect(items[0]?.kind).toBe('report');
+    expect(listJournalItems).toHaveBeenCalledTimes(1);
 
     await backend.appendTrack(sampleTrackInput('local-track'));
     expect(createLiveRecord).toHaveBeenCalledTimes(1);

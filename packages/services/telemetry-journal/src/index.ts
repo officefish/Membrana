@@ -58,6 +58,7 @@ export type {
   CreateCabinetTelemetryLiveRecordInput,
   CreateCabinetTelemetryReportInput,
   ICabinetJournalPort,
+  ListCabinetJournalItemsQuery,
 } from './ports/cabinet-journal-port.js';
 
 export {
@@ -82,3 +83,11 @@ export {
 } from './backends/electron-journal-storage-backend.js';
 
 export { useLiveJournal, type UseLiveJournalResult } from './hooks.js';
+
+export {
+  JOURNAL_LOCAL_CACHE_PREFIX,
+  clearJournalLocalCache,
+  journalLocalCacheKey,
+  readJournalLocalCache,
+  writeJournalLocalCache,
+} from './journal-local-cache.js';

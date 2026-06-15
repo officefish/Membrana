@@ -1,3 +1,4 @@
+import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
 import { getApiBase } from './auth';
 
 export interface TelemetryReportView {
@@ -57,9 +58,26 @@ export async function fetchTelemetryReports(limit = 50): Promise<TelemetryReport
   return body.reports;
 }
 
-export async function fetchTelemetryLiveRecords(limit = 50): Promise<TelemetryLiveRecordView[]> {
-  const res = await authFetch(`/v1/telemetry/live-records?limit=${limit}`);
+export async function fetchTelemetryLiveRecords(
+  limit = 50,
+  mediaDeviceId?: string,
+): Promise<TelemetryLiveRecordView[]> {
+  const query = new URLSearchParams({ limit: String(limit) });
+  if (mediaDeviceId) query.set('mediaDeviceId', mediaDeviceId);
+  const res = await authFetch(`/v1/telemetry/live-records?${query.toString()}`);
   if (!res.ok) throw new Error(await parseError(res));
   const body = (await res.json()) as { liveRecords: TelemetryLiveRecordView[] };
   return body.liveRecords;
+}
+
+export async function fetchTelemetryJournalItems(
+  limit = 200,
+  mediaDeviceId?: string,
+): Promise<LiveJournalItem[]> {
+  const query = new URLSearchParams({ limit: String(limit) });
+  if (mediaDeviceId) query.set('mediaDeviceId', mediaDeviceId);
+  const res = await authFetch(`/v1/telemetry/journal-items?${query.toString()}`);
+  if (!res.ok) throw new Error(await parseError(res));
+  const body = (await res.json()) as { items: LiveJournalItem[] };
+  return body.items;
 }

@@ -1,3 +1,4 @@
+import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
 import { getCabinetApiBase } from './pairing';
 
 export interface UploadTelemetryReportBody {
@@ -121,4 +122,17 @@ export async function listTelemetryLiveRecords(
   });
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as { liveRecords: TelemetryLiveRecordRow[] };
+}
+
+import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
+
+export async function listTelemetryJournalItems(
+  token: string,
+  limit = 200,
+): Promise<{ items: LiveJournalItem[] }> {
+  const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/journal-items?limit=${limit}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { items: LiveJournalItem[] };
 }

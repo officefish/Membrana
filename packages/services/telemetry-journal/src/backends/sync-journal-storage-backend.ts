@@ -1,4 +1,8 @@
 import {
+  readJournalLocalCache,
+  writeJournalLocalCache,
+} from '../journal-local-cache.js';
+import {
   cabinetRowsToJournalItems,
   reportInputToCabinetReport,
   trackInputToCabinetLiveRecord,
@@ -19,6 +23,8 @@ import {
 export interface SyncJournalStorageBackendOptions {
   readonly storageMode?: LiveJournalStorageMode;
   readonly pullLimit?: number;
+  /** Browser localStorage key for session rehydrate (TJ6). */
+  readonly localCacheKey?: string;
 }
 
 /** Local cache + cabinet push/pull sync (TJ2). */
@@ -31,6 +37,8 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
   private readonly pullLimit: number;
 
+  private readonly localCacheKey: string | undefined;
+
   constructor(
     port: ICabinetJournalPort,
     options: SyncJournalStorageBackendOptions = {},
@@ -40,6 +48,14 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     this.local = local ?? createMemoryJournalStorageBackend();
     this.storageMode = options.storageMode ?? 'remote-server';
     this.pullLimit = options.pullLimit ?? 200;
+    this.localCacheKey = options.localCacheKey;
+
+    if (this.localCacheKey) {
+      const cached = readJournalLocalCache(this.localCacheKey);
+      if (cached) {
+        this.local.restoreItems(cached);
+      }
+    }
   }
 
   getStorageMode(): LiveJournalStorageMode {
@@ -66,6 +82,7 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
       /* best-effort push; local cache remains source for offline UX */
     }
 
+    this.persistLocalCache();
     return item;
   }
 
@@ -79,20 +96,34 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
       /* best-effort push */
     }
 
+    this.persistLocalCache();
     return item;
+  }
+
+  private persistLocalCache(): void {
+    if (!this.localCacheKey) return;
+    writeJournalLocalCache(this.localCacheKey, this.local.takeSnapshot());
   }
 
   private async pullRemote(): Promise<void> {
     try {
-      const [reports, liveRecords] = await Promise.all([
-        this.port.listReports(this.pullLimit),
-        this.port.listLiveRecords(this.pullLimit),
-      ]);
-      const remoteItems = cabinetRowsToJournalItems(reports, liveRecords);
+      const remoteItems = await this.fetchRemoteItems();
       this.local.mergeRemoteItems(remoteItems);
+      this.persistLocalCache();
     } catch {
       /* keep local cache when cabinet is unreachable */
     }
+  }
+
+  private async fetchRemoteItems(): Promise<LiveJournalItem[]> {
+    if (this.port.listJournalItems) {
+      return [...(await this.port.listJournalItems({ limit: this.pullLimit }))];
+    }
+    const [reports, liveRecords] = await Promise.all([
+      this.port.listReports(this.pullLimit),
+      this.port.listLiveRecords(this.pullLimit),
+    ]);
+    return cabinetRowsToJournalItems(reports, liveRecords);
   }
 }
 

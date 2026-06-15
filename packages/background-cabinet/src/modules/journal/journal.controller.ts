@@ -30,7 +30,7 @@ export class JournalController {
 
   @Get('reports')
   listReports(@Req() req: AuthenticatedRequest, @Query() query: ListJournalQueryDto) {
-    return this.journalService.listReports(req.authUser!.id, query.limit);
+    return this.journalService.listReports(req.authUser!.id, query.limit, query.mediaDeviceId);
   }
 
   @Post('live-records')
@@ -52,6 +52,19 @@ export class JournalController {
 
   @Get('live-records')
   listLiveRecords(@Req() req: AuthenticatedRequest, @Query() query: ListJournalQueryDto) {
-    return this.journalService.listLiveRecords(req.authUser!.id, query.limit);
+    return this.journalService.listLiveRecords(
+      req.authUser!.id,
+      query.limit,
+      query.mediaDeviceId,
+    );
+  }
+
+  @Get('journal-items')
+  listJournalItems(@Req() req: AuthenticatedRequest, @Query() query: ListJournalQueryDto) {
+    return this.journalService.listJournalItems(
+      req.authUser!.id,
+      query.limit,
+      query.mediaDeviceId,
+    );
   }
 }

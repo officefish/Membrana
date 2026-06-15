@@ -24,4 +24,6 @@ export interface UpdateTelemetryLiveRecordDto {
 
 export interface ListJournalQueryDto {
   limit?: string;
+  /** Filter journal rows by paired device (TJ6). */
+  mediaDeviceId?: string;
 }

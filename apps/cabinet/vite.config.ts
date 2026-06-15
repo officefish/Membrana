@@ -25,6 +25,12 @@ export default defineConfig(({ mode }) => {
       '@membrana/audio-engine-service': fileURLToPath(
         new URL('../../packages/services/audio-engine/src/index.ts', import.meta.url),
       ),
+      '@membrana/detector-report': fileURLToPath(
+        new URL('../../packages/libs/detector-report/src/index.ts', import.meta.url),
+      ),
+      '@membrana/telemetry-journal-service': fileURLToPath(
+        new URL('../../packages/services/telemetry-journal/src/index.ts', import.meta.url),
+      ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },

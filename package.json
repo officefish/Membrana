@@ -109,6 +109,7 @@
     "cabinet:pair-unlink:prod": "node scripts/_ssh-cabinet-pair-unlink-prod.mjs",
     "cabinet:mp5:prod": "node scripts/_ssh-cabinet-mp5-prod.mjs",
     "cabinet:mp6:prod": "node scripts/_ssh-cabinet-mp6-prod.mjs",
+    "cabinet:tj6:prod": "node scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs",
     "cabinet:pairing:e2e:deploy": "node scripts/_ssh-cabinet-pairing-e2e-deploy.mjs"
   },
   "devDependencies": {

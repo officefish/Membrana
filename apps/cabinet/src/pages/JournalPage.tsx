@@ -1,41 +1,19 @@
-import { useCallback, useEffect, useState } from 'react';
-import {
-  fetchTelemetryLiveRecords,
-  fetchTelemetryReports,
-  type TelemetryLiveRecordView,
-  type TelemetryReportView,
-} from '@/api/journal';
-import { CloudLiveRecordRow } from '@/components/journal/CloudLiveRecordRow';
-import { CloudReportCard } from '@/components/journal/CloudReportCard';
+import type { LiveJournalFilter } from '@membrana/telemetry-journal-service';
+
+import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJournalItemRow';
+import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
+
+const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
+  { value: 'all', label: 'Все' },
+  { value: 'tracks', label: 'Треки' },
+  { value: 'reports', label: 'Отчёты' },
+  { value: 'detections', label: 'Обнаружения' },
+];
 
 export function JournalPage() {
-  const [reports, setReports] = useState<TelemetryReportView[]>([]);
-  const [liveRecords, setLiveRecords] = useState<TelemetryLiveRecordView[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const journal = useCabinetLiveJournal();
 
-  const reload = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [nextReports, nextLive] = await Promise.all([
-        fetchTelemetryReports(),
-        fetchTelemetryLiveRecords(),
-      ]);
-      setReports(nextReports);
-      setLiveRecords(nextLive);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось загрузить журнал');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void reload();
-  }, [reload]);
-
-  if (loading) {
+  if (journal.loading && journal.items.length === 0) {
     return (
       <div className="flex items-center gap-3">
         <span className="loading loading-spinner loading-md text-primary" aria-hidden />
@@ -44,77 +22,143 @@ export function JournalPage() {
     );
   }
 
-  if (error) {
+  if (journal.error && journal.items.length === 0) {
     return (
       <div className="alert alert-error">
-        <span>{error}</span>
-        <button type="button" className="btn btn-sm" onClick={() => void reload()}>
+        <span>{journal.error}</span>
+        <button type="button" className="btn btn-sm" onClick={() => void journal.reload()}>
           Повторить
         </button>
       </div>
     );
   }
 
-  const activeLive = liveRecords.filter((r) => r.status === 'active');
+  const exportJson = () => {
+    const blob = new Blob([JSON.stringify(journal.displayed, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `cabinet_live_journal_${Date.now()}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8">
+    <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Журнал телеметрии</h1>
+          <h1 className="text-2xl font-semibold">Live-журнал телеметрии</h1>
           <p className="text-sm text-base-content/60">
-            Отчёты и live-сессии с paired-клиентов вашей мембраны.
+            5‑с клипы и отчёты детекторов с paired-клиентов — по каждому узлу отдельно.
           </p>
         </div>
-        <button type="button" className="btn btn-ghost btn-sm" onClick={() => void reload()}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => void journal.reload()}>
           Обновить
         </button>
       </div>
 
-      {activeLive.length > 0 ? (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-base-content/60">
-            Активные сессии
-          </h2>
-          <div className="space-y-2">
-            {activeLive.map((record) => (
-              <CloudLiveRecordRow key={record.id} record={record} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <label className="form-control max-w-md">
+        <span className="label py-0">
+          <span className="label-text text-xs">Узел / deviceId</span>
+        </span>
+        <select
+          className="select select-bordered select-sm"
+          value={journal.selectedDeviceId ?? ''}
+          onChange={(event) =>
+            journal.setSelectedDeviceId(event.target.value.length > 0 ? event.target.value : null)
+          }
+        >
+          <option value="">Выберите paired-узел</option>
+          {journal.nodes.map((node) => (
+            <option key={node.id} value={node.deviceId ?? ''} disabled={!node.deviceId || !node.paired}>
+              {node.label}
+              {!node.paired ? ' (offline)' : ''}
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-base-content/60">
-          Отчёты ({reports.length})
-        </h2>
-        {reports.length === 0 ? (
-          <p className="text-base-content/60 text-sm">
-            Пока нет отчётов. Запустите анализ в paired-клиенте — записи появятся здесь.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {reports.map((report) => (
-              <CloudReportCard key={report.id} report={report} />
-            ))}
-          </div>
-        )}
-      </section>
+      {!journal.selectedDeviceId ? (
+        <p className="text-sm text-base-content/50 border border-dashed border-base-300 rounded-box p-6 text-center">
+          Выберите paired-узел — журнал привязан к media deviceId узла.
+        </p>
+      ) : (
+        <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box">
+          <div className="card-body p-4 md:p-6 gap-4">
+            {!journal.mediaReady ? (
+              <p className="text-xs text-warning">Медиатека узла недоступна — play/export blob отключены.</p>
+            ) : null}
 
-      {liveRecords.filter((r) => r.status === 'ended').length > 0 ? (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-base-content/60">
-            Завершённые live-сессии
-          </h2>
-          <div className="space-y-2">
-            {liveRecords
-              .filter((r) => r.status === 'ended')
-              .map((record) => (
-                <CloudLiveRecordRow key={record.id} record={record} />
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-label="Фильтр live-журнала"
+            >
+              {FILTER_OPTIONS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`btn btn-xs min-h-10 ${journal.filter === value ? 'btn-primary' : 'btn-ghost'}`}
+                  aria-pressed={journal.filter === value}
+                  onClick={() => journal.setFilter(value)}
+                >
+                  {label} ({journal.filterCounts[value]})
+                </button>
               ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
+              <label className="form-control flex-1 min-w-[12rem]">
+                <span className="label py-0">
+                  <span className="label-text text-xs">Поиск</span>
+                  <span className="label-text-alt text-xs text-base-content/50">
+                    показано: {journal.displayed.length}
+                  </span>
+                </span>
+                <input
+                  type="search"
+                  className="input input-bordered input-sm w-full"
+                  placeholder="трек, sampleId, отчёт…"
+                  value={journal.search}
+                  onChange={(event) => journal.setSearch(event.target.value)}
+                />
+              </label>
+              <button type="button" className="btn btn-sm btn-outline" onClick={exportJson}>
+                Экспорт JSON
+              </button>
+            </div>
+
+            {journal.displayed.length === 0 ? (
+              <p className="text-sm text-center text-base-content/50 py-8 border border-dashed border-base-300 rounded-box">
+                Нет записей для выбранного узла. Запустите live-микрофон с авто-записью 5 с на paired-клиенте.
+              </p>
+            ) : (
+              <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
+                {journal.displayed.map((item) => {
+                  const track = item.track;
+                  const isActive = track != null && journal.playback.selectedSampleId === track.sampleId;
+                  const isPlaying = isActive && journal.playback.status === 'playing';
+                  return (
+                    <li key={item.id}>
+                      <CabinetLiveJournalItemRow
+                        item={item}
+                        linkedReportCount={journal.linkedReportCount(item)}
+                        trackTitle={journal.trackTitleForReport(item)}
+                        isActive={isActive}
+                        isPlaying={isPlaying}
+                        onPlay={() => journal.playTrack(item)}
+                        onExportBlob={() => journal.exportTrackBlob(item)}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
-        </section>
-      ) : null}
+        </div>
+      )}
     </div>
   );
 }

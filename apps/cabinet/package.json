@@ -16,8 +16,10 @@
   "dependencies": {
     "@membrana/audio-engine-service": "*",
     "@membrana/core": "*",
+    "@membrana/detector-report": "*",
     "@membrana/media-library-service": "*",
     "@membrana/sample-playback-service": "*",
+    "@membrana/telemetry-journal-service": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

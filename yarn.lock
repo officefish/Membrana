@@ -963,6 +963,7 @@ __metadata:
   resolution: "@membrana/background-cabinet@workspace:packages/background-cabinet"
   dependencies:
     "@fastify/cors": "npm:^9.0.1"
+    "@membrana/telemetry-journal-service": "npm:*"
     "@nestjs/common": "npm:^10.4.15"
     "@nestjs/core": "npm:^10.4.15"
     "@nestjs/platform-fastify": "npm:^10.4.15"
@@ -1058,8 +1059,10 @@ __metadata:
   dependencies:
     "@membrana/audio-engine-service": "npm:*"
     "@membrana/core": "npm:*"
+    "@membrana/detector-report": "npm:*"
     "@membrana/media-library-service": "npm:*"
     "@membrana/sample-playback-service": "npm:*"
+    "@membrana/telemetry-journal-service": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"

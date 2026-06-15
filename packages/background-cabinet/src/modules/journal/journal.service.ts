@@ -10,6 +10,7 @@ import type {
   CreateTelemetryReportDto,
   UpdateTelemetryLiveRecordDto,
 } from './journal.dto';
+import { cabinetRowsToLiveJournalItems } from './live-journal-items.mapper';
 
 const DEFAULT_LIST_LIMIT = 50;
 const MAX_LIST_LIMIT = 200;
@@ -29,6 +30,7 @@ interface MembraneContext {
   membraneId: string;
   nodeId: string | null;
   mediaDeviceId: string | null;
+  deviceIds: readonly string[];
 }
 
 function serializeReport(row: {
@@ -131,10 +133,14 @@ export class JournalService {
     return { report: serializeReport(created), deduplicated: false as const };
   }
 
-  async listReports(userId: string, limitRaw?: string) {
+  async listReports(userId: string, limitRaw?: string, mediaDeviceId?: string) {
     const ctx = await this.requireMembraneContext(userId);
+    const deviceFilter = this.resolveMediaDeviceFilter(ctx, mediaDeviceId);
     const rows = await this.prisma.telemetryReport.findMany({
-      where: { membraneId: ctx.membraneId },
+      where: {
+        membraneId: ctx.membraneId,
+        ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+      },
       orderBy: { finishedAt: 'desc' },
       take: parseLimit(limitRaw),
     });
@@ -216,29 +222,61 @@ export class JournalService {
     return { liveRecord: serializeLiveRecord(updated) };
   }
 
-  async listLiveRecords(userId: string, limitRaw?: string) {
+  async listLiveRecords(userId: string, limitRaw?: string, mediaDeviceId?: string) {
     const ctx = await this.requireMembraneContext(userId);
+    const deviceFilter = this.resolveMediaDeviceFilter(ctx, mediaDeviceId);
     const rows = await this.prisma.telemetryLiveRecord.findMany({
-      where: { membraneId: ctx.membraneId },
+      where: {
+        membraneId: ctx.membraneId,
+        ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+      },
       orderBy: [{ status: 'asc' }, { startedAt: 'desc' }],
       take: parseLimit(limitRaw),
     });
     return { liveRecords: rows.map(serializeLiveRecord) };
   }
 
+  /** Unified live journal items: TelemetryTrack rows + drone reports (TJ6). */
+  async listJournalItems(userId: string, limitRaw?: string, mediaDeviceId?: string) {
+    const limit = parseLimit(limitRaw);
+    const [reportsResult, liveResult] = await Promise.all([
+      this.listReports(userId, String(limit), mediaDeviceId),
+      this.listLiveRecords(userId, String(limit), mediaDeviceId),
+    ]);
+
+    const items = cabinetRowsToLiveJournalItems(reportsResult.reports, liveResult.liveRecords);
+    return { items: items.slice(0, limit) };
+  }
+
+  private resolveMediaDeviceFilter(
+    ctx: MembraneContext,
+    mediaDeviceId?: string,
+  ): string | undefined {
+    const trimmed = mediaDeviceId?.trim();
+    if (!trimmed) return undefined;
+    if (!ctx.deviceIds.includes(trimmed)) {
+      throw new ForbiddenException('Unknown mediaDeviceId for this membrane');
+    }
+    return trimmed;
+  }
+
   private async requireMembraneContext(userId: string): Promise<MembraneContext> {
     const membrane = await this.prisma.membrane.findUnique({
       where: { userId },
-      include: { nodes: { include: { device: true }, take: 1 } },
+      include: { nodes: { include: { device: true } } },
     });
     if (!membrane) {
       throw new NotFoundException('Membrane not found');
     }
     const node = membrane.nodes[0];
+    const deviceIds = membrane.nodes
+      .map((entry) => entry.device?.mediaDeviceId)
+      .filter((id): id is string => typeof id === 'string' && id.length > 0);
     return {
       membraneId: membrane.id,
       nodeId: node?.id ?? null,
       mediaDeviceId: node?.device?.mediaDeviceId ?? null,
+      deviceIds,
     };
   }
 }

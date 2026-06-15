@@ -19,6 +19,10 @@
       "@membrana/sample-playback-service/*": ["../../packages/services/sample-playback/src/*"],
       "@membrana/audio-engine-service": ["../../packages/services/audio-engine/src/index.ts"],
       "@membrana/audio-engine-service/*": ["../../packages/services/audio-engine/src/*"],
+      "@membrana/detector-report": ["../../packages/libs/detector-report/src/index.ts"],
+      "@membrana/detector-report/*": ["../../packages/libs/detector-report/src/*"],
+      "@membrana/telemetry-journal-service": ["../../packages/services/telemetry-journal/src/index.ts"],
+      "@membrana/telemetry-journal-service/*": ["../../packages/services/telemetry-journal/src/*"],
       "@/*": ["./src/*"]
     }
   },
