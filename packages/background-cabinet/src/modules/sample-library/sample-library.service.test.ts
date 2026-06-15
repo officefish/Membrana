@@ -40,6 +40,7 @@ function makeService(overrides?: {
   const mediaBridge = {
     getQuota: vi.fn(),
     listSamples: vi.fn(),
+    patchSampleLabel: vi.fn(),
     ...overrides?.mediaBridge,
   } as unknown as MediaBridgeService;
 
@@ -190,5 +191,46 @@ describe('SampleLibraryService', () => {
     vi.mocked(prisma.membrane.findUnique).mockResolvedValue(null);
 
     await expect(service.getMediaSession('user-1')).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('patchCatalogSample delegates to media bridge on representative device', async () => {
+    const { service, prisma, mediaBridge } = makeService();
+    vi.mocked(prisma.membrane.findUnique).mockResolvedValue({
+      id: 'mem-1',
+      userId: 'user-1',
+      tariffId: 't1',
+      createdAt: new Date(),
+      tariff: { datasetCatalogId: 'free-v1-catalog' },
+    } as never);
+    vi.mocked(prisma.node.findFirst).mockResolvedValue({
+      device: { mediaDeviceId: 'dev-a' },
+    } as never);
+    vi.mocked(mediaBridge.patchSampleLabel).mockResolvedValue({
+      id: 's1',
+      collectionId: TARIFF_DATASET_COLLECTION_ID,
+      title: 'drone-mj-test',
+      class: 'drone-multirotor',
+      label: 'drone',
+      source: 'catalog',
+      durationSec: 5,
+      sampleRate: 48_000,
+      channels: 1,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      storageRef: 'ref',
+      notes: 'note',
+      sizeBytes: 1,
+    });
+
+    const row = await service.patchCatalogSample('user-1', 'mem-1', 's1', {
+      label: 'drone',
+      notes: 'note',
+    });
+
+    expect(mediaBridge.patchSampleLabel).toHaveBeenCalledWith('dev-a', 's1', {
+      label: 'drone',
+      notes: 'note',
+    });
+    expect(row.label).toBe('drone');
+    expect(row.notes).toBe('note');
   });
 });

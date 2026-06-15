@@ -9,7 +9,7 @@
 | Параметр | Значение |
 |----------|----------|
 | `catalogId` | `free-v1-catalog` |
-| Сэмплов | 120 (все `split: test`) |
+| Сэмплов | 120 (80 `train` / 40 `val`, stratified) |
 | Длительность | 5 с, 48 kHz mono |
 | Классы | `drone/` (60), `not-drone/` (60) |
 | UI / автономный узел | `apps/client/public/catalog/free-v1/` → коллекция `__tariff_dataset__` |

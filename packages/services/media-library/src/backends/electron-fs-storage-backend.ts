@@ -54,6 +54,13 @@ export class ElectronFsStorageBackend implements IStorageBackend {
     return this.port.moveSample(sampleId, toCollectionId);
   }
 
+  updateSampleLabelNotes(
+    sampleId: string,
+    patch: import('../types.js').UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    return this.port.updateSampleLabelNotes(sampleId, patch);
+  }
+
   readBlob(sampleId: string): Promise<Blob> {
     return this.port.readBlob(sampleId);
   }

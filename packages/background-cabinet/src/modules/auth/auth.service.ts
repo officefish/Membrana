@@ -28,10 +28,10 @@ export class AuthService {
 
     const passwordHash = await hashPassword(password);
     const user = await this.prisma.user.create({
-      data: { login: normalizedLogin, passwordHash },
+      data: { login: normalizedLogin, passwordHash, role: 'user' },
     });
 
-    return this.createSessionForUser(user.id, user.login);
+    return this.createSessionForUser(user.id, user.login, user.role);
   }
 
   async login(login: string, password: string): Promise<LoginResult> {
@@ -50,7 +50,7 @@ export class AuthService {
       where: { expiresAt: { lt: new Date() } },
     });
 
-    return this.createSessionForUser(user.id, user.login);
+    return this.createSessionForUser(user.id, user.login, user.role);
   }
 
   async logout(token: string): Promise<void> {
@@ -68,13 +68,14 @@ export class AuthService {
       }
       return null;
     }
-    return { id: session.user.id, login: session.user.login };
+    return { id: session.user.id, login: session.user.login, role: session.user.role };
   }
 
   /** Pairing (MP3): session capped by key expiry. */
   async createSessionForUserWithExpiry(
     userId: string,
     login: string,
+    role: AuthUser['role'],
     expiresAt: Date,
   ): Promise<LoginResult> {
     const token = createSessionToken();
@@ -84,11 +85,15 @@ export class AuthService {
     return {
       token,
       expiresAt: expiresAt.toISOString(),
-      user: { id: userId, login },
+      user: { id: userId, login, role },
     };
   }
 
-  private async createSessionForUser(userId: string, login: string): Promise<LoginResult> {
+  private async createSessionForUser(
+    userId: string,
+    login: string,
+    role: AuthUser['role'],
+  ): Promise<LoginResult> {
     const token = createSessionToken();
     const expiresAt = sessionExpiresAt(this.config.SESSION_TTL_HOURS);
     await this.prisma.session.create({
@@ -97,7 +102,7 @@ export class AuthService {
     return {
       token,
       expiresAt: expiresAt.toISOString(),
-      user: { id: userId, login },
+      user: { id: userId, login, role },
     };
   }
 }

@@ -84,6 +84,14 @@ export class MoveSampleDto {
   toCollectionId!: string;
 }
 
+export class PatchSampleLabelDto {
+  @ApiPropertyOptional({ enum: SAMPLE_LABELS, description: 'drone | not_drone | unlabeled (not-drone accepted)' })
+  label?: string;
+
+  @ApiPropertyOptional({ nullable: true, description: 'Training / curation notes; null clears' })
+  notes?: string | null;
+}
+
 /** Multipart upload: `file` (binary) + optional `meta` (JSON string). */
 export class UploadSampleMultipartDto {
   @ApiProperty({ type: 'string', format: 'binary', description: MEDIA_MIME_EXAMPLES })

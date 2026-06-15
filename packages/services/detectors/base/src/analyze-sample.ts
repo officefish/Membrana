@@ -6,6 +6,9 @@ export const DEFAULT_ANALYZE_FFT_SIZE = 2048;
 /** Default hop = 50% overlap. */
 export const DEFAULT_ANALYZE_HOP_RATIO = 0.5;
 
+/** How per-frame detector results combine into one sample verdict. */
+export type SampleAggregationMode = 'any-frame' | 'majority' | 'min-ratio';
+
 export interface AnalyzeSampleOptions {
   /** Frame length in samples (default 2048). */
   readonly fftSize?: number;
@@ -13,6 +16,15 @@ export interface AnalyzeSampleOptions {
   readonly hopSize?: number;
   /** Used when `hopSize` omitted (default 0.5). */
   readonly hopRatio?: number;
+  /**
+   * Sample-level aggregation (default `any-frame`).
+   * `majority` / `min-ratio` reduce false positives from single lucky frames.
+   */
+  readonly aggregation?: SampleAggregationMode;
+  /** For `min-ratio`: minimum fraction of frames with `isDrone` (default 0.5). */
+  readonly minDroneFrameRatio?: number;
+  /** Post-aggregation confidence gate; when set, `isDrone` also requires `confidence >=` this. */
+  readonly sampleConfidenceThreshold?: number;
 }
 
 /** Aggregated drone verdict for one 5 s sample and one detector. */
@@ -107,13 +119,34 @@ export async function analyzeSample(
   }
 
   let maxFrameConfidence = 0;
-  let isDrone = false;
+  let droneFrameCount = 0;
   let latencyMsTotal = 0;
 
   for (const r of frameResults) {
-    if (r.isDrone) isDrone = true;
+    if (r.isDrone) droneFrameCount += 1;
     if (r.confidence > maxFrameConfidence) maxFrameConfidence = r.confidence;
     latencyMsTotal += r.latencyMs;
+  }
+
+  const aggregation = options.aggregation ?? 'any-frame';
+  const minRatio = options.minDroneFrameRatio ?? 0.5;
+  const droneFrameRatio = droneFrameCount / frameCount;
+
+  let isDrone: boolean;
+  switch (aggregation) {
+    case 'majority':
+      isDrone = droneFrameRatio > 0.5;
+      break;
+    case 'min-ratio':
+      isDrone = droneFrameRatio >= minRatio;
+      break;
+    default:
+      isDrone = droneFrameCount > 0;
+      break;
+  }
+
+  if (options.sampleConfidenceThreshold !== undefined) {
+    isDrone = isDrone && maxFrameConfidence >= options.sampleConfidenceThreshold;
   }
 
   return {

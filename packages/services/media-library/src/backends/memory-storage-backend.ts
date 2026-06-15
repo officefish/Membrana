@@ -269,6 +269,29 @@ export class MemoryStorageBackend implements IStorageBackend {
     return updated;
   }
 
+  async updateSampleLabelNotes(
+    sampleId: string,
+    patch: import('../types.js').UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    const sample = this.samples.get(sampleId);
+    if (!sample) {
+      throw new DomainError('Sample not found', 'NOT_FOUND');
+    }
+    const col = this.collections.get(sample.collectionId);
+    if (isTariffDatasetCollection(col)) {
+      throw new DomainError('Tariff dataset labels require cabinet admin', 'FORBIDDEN');
+    }
+    const updated: MediaSample = {
+      ...sample,
+      ...(patch.label !== undefined ? { label: patch.label } : {}),
+      ...(patch.notes !== undefined
+        ? { notes: patch.notes === null ? undefined : patch.notes }
+        : {}),
+    };
+    this.samples.set(sampleId, updated);
+    return updated;
+  }
+
   async readBlob(sampleId: string): Promise<Blob> {
     const blob = this.blobs.get(sampleId);
     if (!blob) {

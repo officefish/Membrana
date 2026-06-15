@@ -60,10 +60,11 @@ export class MediaBridgeService {
 
   constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {}
 
-  private mediaHeaders(): Record<string, string> {
+  private mediaHeaders(catalogAdmin = false): Record<string, string> {
     return {
       'Content-Type': 'application/json',
       'X-Membrana-Token': this.config.MEDIA_API_TOKEN,
+      ...(catalogAdmin ? { 'X-Membrana-Catalog-Admin': '1' } : {}),
     };
   }
 
@@ -164,5 +165,24 @@ export class MediaBridgeService {
       );
     }
     return (await res.json()) as MediaSampleSummary[];
+  }
+
+  async patchSampleLabel(
+    deviceId: string,
+    sampleId: string,
+    body: { label?: string; notes?: string | null },
+  ): Promise<MediaSampleSummary> {
+    const res = await this.mediaFetch(`/v1/devices/${deviceId}/samples/${sampleId}`, {
+      method: 'PATCH',
+      headers: this.mediaHeaders(true),
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => res.statusText);
+      throw new ServiceUnavailableException(
+        `Media sample patch failed (${res.status}): ${detail}`,
+      );
+    }
+    return (await res.json()) as MediaSampleSummary;
   }
 }

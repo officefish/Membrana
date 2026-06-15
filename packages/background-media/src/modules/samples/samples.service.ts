@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import type { Collection, SampleLabel } from '../../prisma/client';
 import { randomUUID } from 'node:crypto';
 import { AudioIngestService } from '../../audio/audio-ingest.service';
@@ -9,6 +9,7 @@ import {
   sampleToDto,
   type SampleDto,
 } from '../../lib/sample-dto';
+import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CollectionsService } from '../collections/collections.service';
 import { DevicesService } from '../devices/devices.service';
@@ -22,6 +23,16 @@ export interface UploadMetaOverride {
   sampleRate?: number;
   channels?: 1 | 2;
   notes?: string;
+}
+
+export interface PatchSampleLabelInput {
+  label?: string;
+  notes?: string | null;
+}
+
+export interface UpdateLabelNotesOptions {
+  /** Set by cabinet media-bridge when curator has admin role. */
+  readonly catalogAdmin?: boolean;
 }
 
 @Injectable()
@@ -147,6 +158,54 @@ export class SamplesService {
         collectionId: toCollectionId,
         source: 'move',
       },
+    });
+    return sampleToDto(updated);
+  }
+
+  async updateLabelNotes(
+    deviceId: string,
+    sampleId: string,
+    patch: PatchSampleLabelInput,
+    options: UpdateLabelNotesOptions = {},
+  ): Promise<SampleDto> {
+    const row = await this.getOwnedSample(deviceId, sampleId);
+    const isTariff = row.collection.systemKey === TARIFF_DATASET_SYSTEM_KEY;
+
+    if (isTariff && !options.catalogAdmin) {
+      throw new ForbiddenException(
+        'Tariff dataset label/notes require catalog admin (cabinet)',
+      );
+    }
+
+    const data: { label?: SampleLabel; notes?: string | null } = {};
+    if (patch.label !== undefined) {
+      data.label = normalizeSampleLabel(patch.label);
+    }
+    if (patch.notes !== undefined) {
+      data.notes = patch.notes;
+    }
+
+    if (isTariff && options.catalogAdmin) {
+      await this.prisma.sample.updateMany({
+        where: {
+          collectionId: row.collectionId,
+          title: row.title,
+          collection: { systemKey: TARIFF_DATASET_SYSTEM_KEY },
+        },
+        data,
+      });
+      const refreshed = await this.prisma.sample.findFirst({
+        where: { id: sampleId, deviceId },
+      });
+      if (!refreshed) {
+        throw new NotFoundException(`Sample ${sampleId} not found for device`);
+      }
+      return sampleToDto(refreshed);
+    }
+
+    const updated = await this.prisma.sample.update({
+      where: { id: sampleId },
+      data,
     });
     return sampleToDto(updated);
   }

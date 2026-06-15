@@ -14,6 +14,7 @@ export {
 export type {
   AnalyzeSampleOptions,
   AnalyzeSampleResult,
+  SampleAggregationMode,
   SampleDetectionVerdict,
 } from './analyze-sample.js';
 export { NotImplementedError } from './errors.js';

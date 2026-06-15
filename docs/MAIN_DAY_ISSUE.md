@@ -1,50 +1,48 @@
-<!-- Обновлено: 2026-06-15 (SLD3 — sample-library-drone-detection epic) -->
+<!-- Обновлено: 2026-06-14 (VDR1 — validated-drone-recognition epic) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) -->
-<!-- Эпик: docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md -->
-<!-- Реестр: sld3-dsp-detectors-free-v1 -->
+<!-- Эпик: docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md -->
+<!-- Реестр: vdr1-sample-label-patch-api -->
 
-# MAIN_DAY_ISSUE — 2026-06-15
+# MAIN_DAY_ISSUE — 2026-06-14
 
-**Дата:** 2026-06-15 · **Хранитель:** Teamlead (Vesnin)
+**Дата:** 2026-06-14 · **Хранитель:** Teamlead (Vesnin)
 
 ---
 
 ## Один обязательный фокус дня
 
-### **SLD3: cepstral + spectral-flux на free-v1 (120)**
+### **VDR1: PATCH label + notes + роль admin**
 
 **GitHub Issue:** [#47](https://github.com/officefish/Membrana/issues/47)  
-**Эпик:** `sample-library-drone-detection`  
-**Фаза:** `sld3-dsp-detectors-free-v1`  
-**Промпт:** [`docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)
-
-**Закрыто сегодня:** SLD1 (`analyzeSample`), SLD2 (плагин) — PR [#77](https://github.com/officefish/Membrana/pull/77).
+**Эпик:** `validated-drone-recognition`  
+**Фаза:** `vdr1-sample-label-patch-api`  
+**Промпт:** [`docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](./prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md)
 
 ---
 
 ## Цель
 
-Три DSP-детектора (harmonic, cepstral, spectral-flux) в **benchmark** и **плагине библиотеки**; метрики на 120 free-v1.
+API и права для ground truth: `label` + `notes` в media; `User.role` в cabinet; admin размечает tariff dataset.
 
 ---
 
-## Definition of Done (SLD3)
+## Definition of Done (VDR1)
 
-- [x] `@membrana/cepstral-detector-service` — working `detect()`
-- [x] `@membrana/spectral-flux-detector-service` — working `detect()`
-- [x] Плагин показывает 3 строки вердикта
-- [x] `yarn benchmark:detectors` — три строки в `DETECTOR_BENCHMARK.md`
+- [x] `PATCH /v1/devices/:deviceId/samples/:sampleId` (media)
+- [x] `PATCH /v1/membranes/:membraneId/catalog/samples/:sampleId` (cabinet, admin)
+- [x] `User.role` + миграция; seed `admin` → role admin
+- [x] `@membrana/media-library-service` `updateSampleLabelNotes()`
+- [x] Unit-тесты media + cabinet
+- [ ] Merge PR → `yarn task:archive vdr1-sample-label-patch-api`
 
-**Baseline v0.2 (120):** harmonic F1≈0.53 · cepstral F1≈0.67 · spectral-flux F1≈0.61
-
-**Следующее:** SLD4 калибровка порогов + stage-gate отчёт.
+**Следующее:** VDR2 — UI разметки в client + cabinet.
 
 ---
 
 ## Команды
 
 ```bash
-yarn turbo run lint typecheck test build --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service
-yarn turbo run lint typecheck --filter=@membrana/client
-yarn benchmark:detectors
+yarn workspace @membrana/background-media test
+yarn workspace @membrana/background-cabinet test
+yarn workspace @membrana/media-library-service test
 ```

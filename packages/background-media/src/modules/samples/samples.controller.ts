@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -29,6 +30,7 @@ import { ApiTokenGuard } from '../../common/guards/api-token.guard';
 import { DeviceGuard } from '../../common/guards/device.guard';
 import {
   MoveSampleDto,
+  PatchSampleLabelDto,
   SampleResponseDto,
   UploadSampleMultipartDto,
 } from './samples.dto';
@@ -132,5 +134,25 @@ export class SamplesController {
       throw new BadRequestException('toCollectionId required');
     }
     return this.samples.move(deviceId, sampleId, body.toCollectionId);
+  }
+
+  @Patch('samples/:sampleId')
+  @ApiOperation({ summary: 'Update sample label and/or notes (VDR1 ground truth)' })
+  @ApiParam({ name: 'sampleId', format: 'uuid' })
+  @ApiResponse({ status: 200, type: SampleResponseDto })
+  @ApiStandardErrors()
+  @ApiBadRequest()
+  @ApiResponse({ status: 403, description: 'Tariff dataset requires X-Membrana-Catalog-Admin' })
+  patchLabel(
+    @Param('deviceId') deviceId: string,
+    @Param('sampleId') sampleId: string,
+    @Body() body: PatchSampleLabelDto,
+    @Req() req: FastifyRequest,
+  ) {
+    if (body.label === undefined && body.notes === undefined) {
+      throw new BadRequestException('At least one of label or notes required');
+    }
+    const catalogAdmin = req.headers['x-membrana-catalog-admin'] === '1';
+    return this.samples.updateLabelNotes(deviceId, sampleId, body, { catalogAdmin });
   }
 }

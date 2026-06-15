@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -19,6 +20,7 @@ import type {
   MembraneNodeLibraryDto,
   MediaSessionDto,
   NodeQuotaSummaryDto,
+  PatchCatalogSampleDto,
 } from './sample-library.dto';
 
 function mapQuota(quota: MediaQuotaResponse): NodeQuotaSummaryDto {
@@ -48,6 +50,7 @@ function mapCatalogSample(row: MediaSampleSummary): MembraneCatalogSampleDto {
     sampleRate: row.sampleRate,
     sizeBytes: row.sizeBytes,
     createdAt: row.createdAt,
+    notes: row.notes,
   };
 }
 
@@ -135,6 +138,24 @@ export class SampleLibraryService {
       catalogId: membrane.tariff.datasetCatalogId,
       devices,
     };
+  }
+
+  async patchCatalogSample(
+    userId: string,
+    membraneId: string,
+    sampleId: string,
+    patch: PatchCatalogSampleDto,
+  ): Promise<MembraneCatalogSampleDto> {
+    await this.requireOwnedMembrane(userId, membraneId, true);
+    const sourceDeviceId = await this.findRepresentativeDeviceId(membraneId);
+    if (!sourceDeviceId) {
+      throw new NotFoundException('No paired device for catalog updates');
+    }
+    if (patch.label === undefined && patch.notes === undefined) {
+      throw new BadRequestException('At least one of label or notes required');
+    }
+    const updated = await this.mediaBridge.patchSampleLabel(sourceDeviceId, sampleId, patch);
+    return mapCatalogSample(updated);
   }
 
   /** Picks first paired device for membrane-level catalog reads (blobs identical per DS5). */

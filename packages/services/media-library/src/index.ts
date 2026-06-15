@@ -24,6 +24,7 @@ export type {
   SampleSource,
   StorageBackendKind,
   StorageQuota,
+  UpdateSampleLabelNotes,
 } from './types.js';
 
 export type { IStorageBackend } from './ports/storage-backend.js';

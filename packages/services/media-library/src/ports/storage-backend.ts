@@ -3,6 +3,7 @@ import type {
   MediaSample,
   NewSampleMeta,
   StorageQuota,
+  UpdateSampleLabelNotes,
 } from '../types.js';
 
 /** Persistence port — web / Electron / server implementations. */
@@ -19,6 +20,10 @@ export interface IStorageBackend {
   ): Promise<MediaSample>;
   removeSample(sampleId: string): Promise<void>;
   moveSample(sampleId: string, toCollectionId: string): Promise<MediaSample>;
+  updateSampleLabelNotes(
+    sampleId: string,
+    patch: UpdateSampleLabelNotes,
+  ): Promise<MediaSample>;
   readBlob(sampleId: string): Promise<Blob>;
   ensureReservedCollections(): Promise<void>;
   /** Optional: seed read-only tariff catalog (MemoryStorageBackend). */

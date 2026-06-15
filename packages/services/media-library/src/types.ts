@@ -59,6 +59,12 @@ export interface NewSampleMeta {
   notes?: string;
 }
 
+/** Partial update for ground-truth curation (VDR1). */
+export interface UpdateSampleLabelNotes {
+  label?: SampleLabel;
+  notes?: string | null;
+}
+
 export interface MediaLibrarySnapshot {
   collections: Collection[];
   samplesByCollection: Record<string, MediaSample[]>;

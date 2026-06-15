@@ -1,5 +1,7 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Body, Req, UseGuards } from '@nestjs/common';
+import { AdminGuard } from '../../common/guards/admin.guard';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
+import type { PatchCatalogSampleDto } from './sample-library.dto';
 import { SampleLibraryService } from './sample-library.service';
 
 @Controller('v1')
@@ -26,5 +28,21 @@ export class SampleLibraryController {
   @Get('media/session')
   getMediaSession(@Req() req: AuthenticatedRequest) {
     return this.sampleLibrary.getMediaSession(req.authUser!.id);
+  }
+
+  @Patch('membranes/:membraneId/catalog/samples/:sampleId')
+  @UseGuards(SessionGuard, AdminGuard)
+  patchCatalogSample(
+    @Req() req: AuthenticatedRequest,
+    @Param('membraneId') membraneId: string,
+    @Param('sampleId') sampleId: string,
+    @Body() body: PatchCatalogSampleDto,
+  ) {
+    return this.sampleLibrary.patchCatalogSample(
+      req.authUser!.id,
+      membraneId,
+      sampleId,
+      body,
+    );
   }
 }

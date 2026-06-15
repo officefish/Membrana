@@ -122,6 +122,15 @@ export class MediaLibraryService {
     return moved;
   }
 
+  async updateSampleLabelNotes(
+    sampleId: string,
+    patch: import('./types.js').UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    const updated = await this.backend.updateSampleLabelNotes(sampleId, patch);
+    await this.refresh();
+    return updated;
+  }
+
   async clearBuffer(): Promise<void> {
     const samples = await this.backend.listSamples(BUFFER_COLLECTION_ID);
     for (const s of samples) {

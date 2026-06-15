@@ -10,6 +10,7 @@ import type {
   SampleLabel,
   SampleSource,
   StorageQuota,
+  UpdateSampleLabelNotes,
 } from '../types.js';
 
 export interface ServerStorageBackendConfig {
@@ -83,13 +84,19 @@ function mapSampleSource(source: string): SampleSource {
   return allowed.includes(source as SampleSource) ? (source as SampleSource) : 'disk-import';
 }
 
+function mapSampleLabel(label: string): SampleLabel {
+  if (label === 'not_drone' || label === 'not-drone') return 'not-drone';
+  if (label === 'drone') return 'drone';
+  return 'unlabeled';
+}
+
 function mapSample(dto: ApiSample): MediaSample {
   return {
     id: dto.id,
     collectionId: dto.collectionId,
     title: dto.title,
     class: dto.class,
-    label: dto.label,
+    label: mapSampleLabel(dto.label),
     source: mapSampleSource(dto.source),
     durationSec: dto.durationSec,
     sampleRate: dto.sampleRate,
@@ -274,6 +281,24 @@ export class ServerStorageBackend implements IStorageBackend {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ toCollectionId }),
+      },
+    );
+    return mapSample(row);
+  }
+
+  async updateSampleLabelNotes(
+    sampleId: string,
+    patch: UpdateSampleLabelNotes,
+  ): Promise<MediaSample> {
+    const body: { label?: string; notes?: string | null } = {};
+    if (patch.label !== undefined) body.label = patch.label;
+    if (patch.notes !== undefined) body.notes = patch.notes;
+    const row = await this.requestJson<ApiSample>(
+      `/samples/${encodeURIComponent(sampleId)}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
       },
     );
     return mapSample(row);

@@ -23,6 +23,12 @@ export interface MembraneCatalogSampleDto {
   sampleRate: number;
   sizeBytes: number;
   createdAt: string;
+  notes?: string;
+}
+
+export interface PatchCatalogSampleDto {
+  label?: string;
+  notes?: string | null;
 }
 
 export interface MembraneCatalogDto {

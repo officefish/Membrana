@@ -120,10 +120,16 @@ AudioBuffer (5 s, 48 kHz)
 
 ### Задачи
 
-1. Документировать протокол калибровки порогов на free-v1 (grid search / ручной порог — v1).
-2. Опционально: `split: train|val` в manifest (80/40) без смены файлов — только метаданные.
-3. Итоговый отчёт: лучший детектор, gap до gate 85/90.
-4. Обновить `MAIN_DAY_ISSUE` / WHITE_PAPER ссылкой на эпик.
+1. Документировать протокол калибровки — [`DETECTOR_CALIBRATION.md`](../DETECTOR_CALIBRATION.md).
+2. `split: train|val` в manifest (80/40) — `yarn dataset:assign-splits`.
+3. `yarn calibrate:detectors` — grid search агрегации + порога на train, отчёт на val.
+4. Итоговый отчёт: **stage-gate 85/90 не пройден**; консилиум следующих эпиков.
+
+### DoD
+
+- [ ] `calibration-latest.json` + gap report в docs
+- [ ] `analyzeSample` aggregation modes
+- [ ] Консилиум: ground-truth curation → calibration-80
 
 ---
 
