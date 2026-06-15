@@ -22,6 +22,8 @@ packages/core
 !packages/core/**
 packages/device-board
 packages/libs
+!packages/libs/detector-report
+!packages/libs/detector-report/**
 packages/services
 !packages/services/media-library
 !packages/services/media-library/**
@@ -29,6 +31,8 @@ packages/services
 !packages/services/audio-engine/**
 !packages/services/sample-playback
 !packages/services/sample-playback/**
+!packages/services/telemetry-journal
+!packages/services/telemetry-journal/**
 packages/background-office
 docs
 scripts
