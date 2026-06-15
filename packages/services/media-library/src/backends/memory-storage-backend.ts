@@ -114,13 +114,19 @@ export class MemoryStorageBackend implements IStorageBackend {
 
   async listCollections(): Promise<Collection[]> {
     await this.ensureReservedCollections();
-    return [...this.collections.values()].sort((a, b) => {
-      const order = (c: Collection) =>
-        c.kind === 'buffer' ? 0 : c.kind === 'system' ? 1 : 2;
-      const d = order(a) - order(b);
-      if (d !== 0) return d;
-      return a.name.localeCompare(b.name);
-    });
+    const counts = new Map<string, number>();
+    for (const sample of this.samples.values()) {
+      counts.set(sample.collectionId, (counts.get(sample.collectionId) ?? 0) + 1);
+    }
+    return [...this.collections.values()]
+      .sort((a, b) => {
+        const order = (c: Collection) =>
+          c.kind === 'buffer' ? 0 : c.kind === 'system' ? 1 : 2;
+        const d = order(a) - order(b);
+        if (d !== 0) return d;
+        return a.name.localeCompare(b.name);
+      })
+      .map((col) => ({ ...col, sampleCount: counts.get(col.id) ?? 0 }));
   }
 
   async createCollection(name: string): Promise<Collection> {

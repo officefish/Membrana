@@ -17,8 +17,9 @@ export class CollectionsService {
     const rows = await this.prisma.collection.findMany({
       where: { deviceId },
       orderBy: { createdAt: 'asc' },
+      include: { _count: { select: { samples: true } } },
     });
-    return rows.map(collectionToDto);
+    return rows.map((row) => collectionToDto(row, row._count.samples));
   }
 
   async createUser(deviceId: string, name: string): Promise<CollectionDto> {
@@ -30,7 +31,7 @@ export class CollectionsService {
         kind: 'user',
       },
     });
-    return collectionToDto(row);
+    return collectionToDto(row, 0);
   }
 
   async delete(deviceId: string, collectionId: string): Promise<void> {

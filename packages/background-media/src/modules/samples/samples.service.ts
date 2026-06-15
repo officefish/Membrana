@@ -9,6 +9,7 @@ import {
   sampleToDto,
   type SampleDto,
 } from '../../lib/sample-dto';
+import { buildPageMeta, type PageMeta } from '../../lib/pagination';
 import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CollectionsService } from '../collections/collections.service';
@@ -35,6 +36,10 @@ export interface UpdateLabelNotesOptions {
   readonly catalogAdmin?: boolean;
 }
 
+export interface PaginatedSamplesDto extends PageMeta {
+  items: SampleDto[];
+}
+
 @Injectable()
 export class SamplesService {
   constructor(
@@ -45,13 +50,28 @@ export class SamplesService {
     private readonly audio: AudioIngestService,
   ) {}
 
-  async list(deviceId: string, collectionId: string): Promise<SampleDto[]> {
+  async list(
+    deviceId: string,
+    collectionId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedSamplesDto> {
     await this.collections.getOwned(deviceId, collectionId);
-    const rows = await this.prisma.sample.findMany({
-      where: { deviceId, collectionId },
-      orderBy: { createdAt: 'desc' },
-    });
-    return rows.map(sampleToDto);
+    const where = { deviceId, collectionId };
+    const skip = (page - 1) * limit;
+    const [total, rows] = await Promise.all([
+      this.prisma.sample.count({ where }),
+      this.prisma.sample.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+    ]);
+    return {
+      items: rows.map(sampleToDto),
+      ...buildPageMeta(total, page, limit),
+    };
   }
 
   async upload(

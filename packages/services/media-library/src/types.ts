@@ -17,6 +17,8 @@ export interface Collection {
   createdAt: string;
   updatedAt: string;
   systemKey?: 'tariff-dataset';
+  /** Server-reported count; may be set before samples are loaded into snapshot. */
+  sampleCount?: number;
 }
 
 export interface MediaSample {

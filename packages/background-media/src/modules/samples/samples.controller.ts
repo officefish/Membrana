@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -28,8 +29,10 @@ import { OkResponseDto } from '../../common/swagger/common.dto';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
 import { DeviceGuard } from '../../common/guards/device.guard';
+import { parseSamplesPageQuery } from '../../lib/pagination';
 import {
   MoveSampleDto,
+  PaginatedSamplesResponseDto,
   PatchSampleLabelDto,
   SampleResponseDto,
   UploadSampleMultipartDto,
@@ -48,15 +51,18 @@ export class SamplesController {
   constructor(private readonly samples: SamplesService) {}
 
   @Get('collections/:collectionId/samples')
-  @ApiOperation({ summary: 'List samples in collection' })
+  @ApiOperation({ summary: 'List samples in collection (paginated, 40 per page by default)' })
   @ApiParam({ name: 'collectionId' })
-  @ApiResponse({ status: 200, type: [SampleResponseDto] })
+  @ApiResponse({ status: 200, type: PaginatedSamplesResponseDto })
   @ApiStandardErrors()
   list(
     @Param('deviceId') deviceId: string,
     @Param('collectionId') collectionId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    return this.samples.list(deviceId, collectionId);
+    const parsed = parseSamplesPageQuery(page, limit);
+    return this.samples.list(deviceId, collectionId, parsed.page, parsed.limit);
   }
 
   @Post('collections/:collectionId/samples')

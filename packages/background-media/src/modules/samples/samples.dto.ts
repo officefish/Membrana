@@ -103,3 +103,20 @@ export class UploadSampleMultipartDto {
   })
   meta?: string;
 }
+
+export class PaginatedSamplesResponseDto {
+  @ApiProperty({ type: [SampleResponseDto] })
+  items!: SampleResponseDto[];
+
+  @ApiProperty({ example: 1, description: '1-based page index' })
+  page!: number;
+
+  @ApiProperty({ example: 40 })
+  limit!: number;
+
+  @ApiProperty({ example: 120 })
+  total!: number;
+
+  @ApiProperty({ example: 3 })
+  totalPages!: number;
+}

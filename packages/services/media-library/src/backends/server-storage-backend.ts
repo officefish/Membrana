@@ -26,6 +26,15 @@ interface ApiCollection {
   createdAt: string;
   updatedAt: string;
   systemKey?: string;
+  sampleCount?: number;
+}
+
+interface ApiPaginatedSamples {
+  items: ApiSample[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 interface ApiSample {
@@ -69,6 +78,7 @@ function mapCollection(dto: ApiCollection): Collection {
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
     systemKey: dto.systemKey === TARIFF_DATASET_SYSTEM_KEY ? TARIFF_DATASET_SYSTEM_KEY : undefined,
+    sampleCount: dto.sampleCount,
   };
 }
 
@@ -227,9 +237,16 @@ export class ServerStorageBackend implements IStorageBackend {
   }
 
   async listSamples(collectionId: string): Promise<MediaSample[]> {
-    const rows = await this.requestJson<ApiSample[]>(
-      `/collections/${encodeURIComponent(collectionId)}/samples`,
+    const first = await this.requestJson<ApiPaginatedSamples>(
+      `/collections/${encodeURIComponent(collectionId)}/samples?page=1&limit=40`,
     );
+    const rows = [...first.items];
+    for (let page = 2; page <= first.totalPages; page += 1) {
+      const next = await this.requestJson<ApiPaginatedSamples>(
+        `/collections/${encodeURIComponent(collectionId)}/samples?page=${page}&limit=${first.limit}`,
+      );
+      rows.push(...next.items);
+    }
     return rows.map(mapSample);
   }
 

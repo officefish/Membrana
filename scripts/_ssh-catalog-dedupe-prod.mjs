@@ -53,11 +53,18 @@ python3 -c "
 import json, subprocess, os
 dev = os.environ['DEV']
 tok = '''$MEDIA_TOKEN'''
-samples = json.loads(subprocess.check_output([
-  'curl', '-fsS', f'http://127.0.0.1:3010/v1/devices/{dev}/collections/__tariff_dataset__/samples',
-  '-H', f'X-Membrana-Token: {tok}',
-]))
+def fetch_page(page):
+    return json.loads(subprocess.check_output([
+        'curl', '-fsS',
+        f'http://127.0.0.1:3010/v1/devices/{dev}/collections/__tariff_dataset__/samples?page={page}&limit=40',
+        '-H', f'X-Membrana-Token: {tok}',
+    ]))
+first = fetch_page(1)
+samples = list(first['items'])
+for page in range(2, first['totalPages'] + 1):
+    samples.extend(fetch_page(page)['items'])
 titles = [s['title'] for s in samples]
+assert first['total'] == 120, first['total']
 assert len(samples) == 120, f'expected 120 api rows, got {len(samples)}'
 assert len(set(titles)) == 120, f'expected 120 unique titles, got {len(set(titles))}'
 print('catalog dedupe prod OK:', len(samples), 'samples,', len(set(titles)), 'unique titles')

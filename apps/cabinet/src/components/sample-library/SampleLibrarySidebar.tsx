@@ -237,7 +237,7 @@ function NodeTreeItem({
               >
                 <span className="min-w-0 truncate text-left">{col.name}</span>
                 <span className="badge badge-ghost badge-xs shrink-0 tabular-nums">
-                  {(snapshot.samplesByCollection[col.id] ?? []).length}
+                  {col.sampleCount ?? (snapshot.samplesByCollection[col.id] ?? []).length}
                 </span>
               </button>
             </li>

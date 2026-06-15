@@ -101,6 +101,11 @@ export function SampleLibraryMainPanel({
               </span>
             ) : null}
           </h2>
+          {catalog ? (
+            <span className="badge badge-ghost badge-sm shrink-0 tabular-nums">
+              {catalog.sampleCount} сэмплов
+            </span>
+          ) : null}
           <span className="badge badge-neutral badge-sm shrink-0">системный датасет</span>
           {canLabelCatalog ? (
             <span className="ml-auto shrink-0 text-sm text-success">Разметка ground truth (admin)</span>
@@ -141,6 +146,11 @@ export function SampleLibraryMainPanel({
       ) : null}
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-lg font-semibold">{selectedCollection?.name ?? '—'}</h2>
+        {selectedCollection ? (
+          <span className="badge badge-ghost badge-sm tabular-nums">
+            {selectedCollection.sampleCount ?? nodeSamples.length} сэмплов
+          </span>
+        ) : null}
         {selectedCollection?.kind === 'system' ? (
           <span className="badge badge-neutral badge-sm">системный датасет</span>
         ) : null}

@@ -80,9 +80,10 @@ export interface CollectionDto {
   createdAt: string;
   updatedAt: string;
   systemKey?: string;
+  sampleCount: number;
 }
 
-export function collectionToDto(row: Collection): CollectionDto {
+export function collectionToDto(row: Collection, sampleCount = 0): CollectionDto {
   return {
     id: row.id,
     name: row.name,
@@ -90,5 +91,6 @@ export function collectionToDto(row: Collection): CollectionDto {
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     systemKey: row.systemKey ?? undefined,
+    sampleCount,
   };
 }

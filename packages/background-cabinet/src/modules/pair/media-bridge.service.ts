@@ -36,6 +36,7 @@ export interface MediaCollectionSummary {
   createdAt: string;
   updatedAt: string;
   systemKey?: string;
+  sampleCount: number;
 }
 
 export interface MediaSampleSummary {
@@ -52,6 +53,14 @@ export interface MediaSampleSummary {
   storageRef: string;
   notes?: string;
   sizeBytes: number;
+}
+
+export interface MediaPaginatedSamples {
+  items: MediaSampleSummary[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 @Injectable()
@@ -152,19 +161,42 @@ export class MediaBridgeService {
     return (await res.json()) as MediaCollectionSummary[];
   }
 
-  async listSamples(deviceId: string, collectionId: string): Promise<MediaSampleSummary[]> {
+  async listSamplesPage(
+    deviceId: string,
+    collectionId: string,
+    page = 1,
+    limit = 40,
+  ): Promise<MediaPaginatedSamples> {
     const encoded = encodeURIComponent(collectionId);
-    const res = await this.mediaFetch(`/v1/devices/${deviceId}/collections/${encoded}/samples`, {
-      method: 'GET',
-      headers: this.mediaHeaders(),
+    const query = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
     });
+    const res = await this.mediaFetch(
+      `/v1/devices/${deviceId}/collections/${encoded}/samples?${query}`,
+      {
+        method: 'GET',
+        headers: this.mediaHeaders(),
+      },
+    );
     if (!res.ok) {
       const detail = await res.text().catch(() => res.statusText);
       throw new ServiceUnavailableException(
         `Media samples list failed (${res.status}): ${detail}`,
       );
     }
-    return (await res.json()) as MediaSampleSummary[];
+    return (await res.json()) as MediaPaginatedSamples;
+  }
+
+  /** Fetches all pages (for catalog curation until cabinet UI paginates). */
+  async listSamples(deviceId: string, collectionId: string): Promise<MediaSampleSummary[]> {
+    const first = await this.listSamplesPage(deviceId, collectionId, 1, 40);
+    const all = [...first.items];
+    for (let page = 2; page <= first.totalPages; page += 1) {
+      const next = await this.listSamplesPage(deviceId, collectionId, page, first.limit);
+      all.push(...next.items);
+    }
+    return all;
   }
 
   async patchSampleLabel(

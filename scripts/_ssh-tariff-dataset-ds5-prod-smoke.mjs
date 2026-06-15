@@ -56,14 +56,15 @@ quota = json.loads(subprocess.check_output([
   '-H', f'X-Membrana-Token: {tok}',
 ]))
 samples = json.loads(subprocess.check_output([
-  'curl', '-fsS', f'http://127.0.0.1:3010/v1/devices/{dev}/collections/__tariff_dataset__/samples',
+  'curl', '-fsS', f'http://127.0.0.1:3010/v1/devices/{dev}/collections/__tariff_dataset__/samples?page=1&limit=40',
   '-H', f'X-Membrana-Token: {tok}',
 ]))
-count = len(samples)
-assert quota['dataset']['catalogId'] == 'free-v1-catalog', quota
+count = samples['total']
 assert count == 120, f'expected 120 samples, got {count}'
+assert len(samples['items']) == 40, len(samples['items'])
+assert quota['dataset']['catalogId'] == 'free-v1-catalog', quota
 assert quota['dataset']['sampleCount'] == 120, quota
-print('DS5 prod smoke OK: 120 tariff-dataset samples')
+print('DS5 prod smoke OK: 120 tariff-dataset samples (paginated API)')
 "
 
 echo "=== DS5: idempotent re-provision ==="
