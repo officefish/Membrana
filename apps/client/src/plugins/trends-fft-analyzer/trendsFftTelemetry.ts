@@ -1,14 +1,17 @@
+import { appendTrendsFftJournalReport } from './appendTrendsFftJournalReport';
 import type { TrendsFftReport } from './buildTrendsFftReport';
 
-/** Legacy RAM journal writes disabled — live journal epic TJ3. */
-export function logTrendsFftResult(_moduleId: string, _report: TrendsFftReport): void {
-  /* no-op */
+/** Write trends-fft/v0.1 report to the live journal (LP2). */
+export function logTrendsFftResult(moduleId: string, report: TrendsFftReport): void {
+  void appendTrendsFftJournalReport({ moduleId, report }).catch(() => {
+    /* journal append is best-effort; ignore failures */
+  });
 }
 
 export function logTrendsFftStreamStart(_moduleId: string): void {
-  /* no-op */
+  /* no-op: stream lifecycle markers are not journaled */
 }
 
 export function logTrendsFftStreamStop(_moduleId: string): void {
-  /* no-op */
+  /* no-op: stream lifecycle markers are not journaled */
 }
