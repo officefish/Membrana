@@ -52,7 +52,7 @@
 
 **LP1 (сделано):** краткий отчёт в журнал; кнопка «Запросить подробный» — stub `requestDetailedDroneReport`.
 
-**LP1b (сервер):** `POST …/journal/reports/{briefReportId}/detail` с `sampleId` → background-media/cabinet запускает `analyzeSampleDetectors` → возвращает/привязывает DDR; обновление строки журнала `detailedReportStatus: ready`.
+**LP1b (сервер — сделано):** общий пакет `@membrana/drone-detection-orchestrator-service` (ядро DDR над `Float32Array`, без Web Audio) переиспользуется клиентом (декод blob в браузере) и сервером. `background-media`: `POST /v1/devices/:deviceId/samples/:sampleId/drone-detection-report` — декод WAV PCM16 в Node + динамический `import()` оркестратора (ESM из CJS) → возвращает `drone-detection-report/v1` (WAV-only; иначе 422). Клиент `requestDetailedDroneReport` → media → `appendLiveJournalReportFromDroneDetection` (синк в cabinet) + `setDetailedReportReady`. Решения: WAV-only v1; журнал пишет клиент; ветка `vesnin`.
 
 **FFT-плагины** (`fft-threshold-test`, `trends-fft-analyzer`) — снова **пишут в live-журнал** (сейчас `log*Telemetry` — no-op после TJ3). Работают **на потоке**, как и раньше; только sink меняется с RAM telemetry на `LiveJournalService.appendReport`. **Включение — opt-in** (не менять `active: false` по умолчанию).
 

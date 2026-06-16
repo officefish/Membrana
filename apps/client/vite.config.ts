@@ -78,6 +78,12 @@ export default defineConfig(({ mode }) => {
         '@membrana/trends-detector-service': fileURLToPath(
           new URL('../../packages/services/trends-detector/src/index.ts', import.meta.url),
         ),
+        '@membrana/drone-detection-orchestrator-service': fileURLToPath(
+          new URL(
+            '../../packages/services/drone-detection-orchestrator/src/index.ts',
+            import.meta.url,
+          ),
+        ),
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },

@@ -1182,8 +1182,8 @@
       "createdAt": "2026-06-16",
       "dependsOn": [
         "lp1-mic-drone-stream-modes"
-      ]
-    },
+      ],
+      "notes": "Done: new @membrana/drone-detection-orchestrator-service (shared DDR core), client analyzeSampleDetectors refactored to use it; background-media POST /v1/devices/:deviceId/samples/:sampleId/drone-detection-report (Node WAV PCM16 decode + dynamic import orchestrator, WAV-only 422); client requestDetailedDroneReport → media → appendLiveJournalReportFromDroneDetection + setDetailedReportReady. Branch vesnin. Tests: orchestrator + wav-decode green; client/media typecheck+build green."
     {
       "id": "lp2-fft-plugins-journal-sink",
       "title": "LP2: fft-threshold + trends-fft → LiveJournalService",

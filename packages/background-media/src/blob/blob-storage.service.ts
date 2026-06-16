@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { createReadStream } from 'node:fs';
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import type { AppConfig } from '../config/env.schema';
 import { APP_CONFIG } from '../config/config.tokens';
@@ -33,6 +33,10 @@ export class BlobStorageService {
 
   createReadStream(storageRef: string): ReturnType<typeof createReadStream> {
     return createReadStream(this.resolvePath(storageRef));
+  }
+
+  async readBuffer(storageRef: string): Promise<Buffer> {
+    return readFile(this.resolvePath(storageRef));
   }
 
   async delete(storageRef: string): Promise<void> {

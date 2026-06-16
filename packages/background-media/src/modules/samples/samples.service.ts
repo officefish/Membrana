@@ -1,7 +1,15 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  PayloadTooLargeException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import type { Collection, SampleLabel } from '../../prisma/client';
 import { randomUUID } from 'node:crypto';
 import { AudioIngestService } from '../../audio/audio-ingest.service';
+import { decodeWavMono } from '../../audio/decode-wav-mono';
 import { BlobStorageService } from '../../blob/blob-storage.service';
 import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';
 import {
@@ -147,6 +155,31 @@ export class SamplesService {
       stream: this.blobs.createReadStream(row.storageRef),
       contentType: row.contentType,
     };
+  }
+
+  /**
+   * Run the full drone-detection-report/v1 (DDR2) for an owned sample (LP1b).
+   * WAV-only: the Node decoder handles 16-bit PCM WAV (mic-buffer clips); other
+   * formats are rejected with 422 until a Node PCM decoder is added.
+   */
+  async analyzeDroneDetection(deviceId: string, sampleId: string) {
+    const row = await this.getOwnedSample(deviceId, sampleId);
+    if (row.audioFormat !== 'wav') {
+      throw new UnprocessableEntityException(
+        `Server detailed report supports WAV only (got ${row.audioFormat})`,
+      );
+    }
+    const bytes = await this.blobs.readBuffer(row.storageRef);
+    const { samples, sampleRate } = decodeWavMono(bytes);
+    // ESM-only orchestrator consumed from CJS NestJS via dynamic import.
+    const { analyzeDroneDetectionDetailed } = await import(
+      '@membrana/drone-detection-orchestrator-service'
+    );
+    const { report } = await analyzeDroneDetectionDetailed(samples, sampleRate, {
+      sampleId: row.id,
+      sampleTitle: row.title,
+    });
+    return report;
   }
 
   async delete(deviceId: string, sampleId: string): Promise<void> {

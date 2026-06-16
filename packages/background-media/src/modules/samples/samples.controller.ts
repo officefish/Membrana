@@ -112,6 +112,21 @@ export class SamplesController {
     return reply.send(stream);
   }
 
+  @Post('samples/:sampleId/drone-detection-report')
+  @ApiOperation({
+    summary: 'Run full drone-detection-report/v1 (DDR2) on the sample (WAV-only, LP1b)',
+  })
+  @ApiParam({ name: 'sampleId', format: 'uuid' })
+  @ApiResponse({ status: 201, description: 'drone-detection-report/v1 payload' })
+  @ApiStandardErrors()
+  @ApiResponse({ status: 422, description: 'Unsupported audio format (WAV-only)' })
+  droneDetectionReport(
+    @Param('deviceId') deviceId: string,
+    @Param('sampleId') sampleId: string,
+  ) {
+    return this.samples.analyzeDroneDetection(deviceId, sampleId);
+  }
+
   @Delete('samples/:sampleId')
   @ApiOperation({ summary: 'Delete sample and blob' })
   @ApiParam({ name: 'sampleId', format: 'uuid' })

@@ -994,6 +994,7 @@ __metadata:
     "@fastify/cors": "npm:^9.0.1"
     "@fastify/multipart": "npm:^8.3.0"
     "@fastify/static": "npm:^7.0.0"
+    "@membrana/drone-detection-orchestrator-service": "npm:*"
     "@nestjs/common": "npm:^10.4.15"
     "@nestjs/core": "npm:^10.4.15"
     "@nestjs/platform-fastify": "npm:^10.4.15"
@@ -1198,6 +1199,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@membrana/drone-detection-orchestrator-service@npm:*, @membrana/drone-detection-orchestrator-service@workspace:packages/services/drone-detection-orchestrator":
+  version: 0.0.0-use.local
+  resolution: "@membrana/drone-detection-orchestrator-service@workspace:packages/services/drone-detection-orchestrator"
+  dependencies:
+    "@membrana/cepstral-detector-service": "npm:*"
+    "@membrana/detector-base": "npm:*"
+    "@membrana/detector-report": "npm:*"
+    "@membrana/harmonic-detector-service": "npm:*"
+    "@membrana/spectral-flux-detector-service": "npm:*"
+    "@membrana/template-match-detector-service": "npm:*"
+    "@membrana/trends-detector-service": "npm:*"
+    eslint: "npm:^8.57.0"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vitest: "npm:^1.4.0"
+  languageName: unknown
+  linkType: soft
+
 "@membrana/fft-analyzer-service@npm:*, @membrana/fft-analyzer-service@workspace:packages/services/fft-analyzer":
   version: 0.0.0-use.local
   resolution: "@membrana/fft-analyzer-service@workspace:packages/services/fft-analyzer"
@@ -1351,7 +1370,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/template-match-detector-service@workspace:packages/services/detectors/template-match":
+"@membrana/template-match-detector-service@npm:*, @membrana/template-match-detector-service@workspace:packages/services/detectors/template-match":
   version: 0.0.0-use.local
   resolution: "@membrana/template-match-detector-service@workspace:packages/services/detectors/template-match"
   dependencies:

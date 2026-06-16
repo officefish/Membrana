@@ -38,6 +38,12 @@ function readPersistedConnection(): PersistedNodeConnection {
   }
 }
 
+/** Paired media credentials from persisted connection, or null when autonomous/unset. */
+export function readPersistedPairedCredentials(): PairedNodeCredentials | null {
+  const state = readPersistedConnection();
+  return state.mode === 'paired' ? state.pairing : null;
+}
+
 const PAIRED_MEDIA_PING_ATTEMPTS = 3;
 const PAIRED_MEDIA_PING_DELAY_MS = 400;
 

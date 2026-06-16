@@ -1,0 +1,44 @@
+{
+  "name": "@membrana/drone-detection-orchestrator-service",
+  "version": "0.1.0",
+  "description": "Оркестрация полного отчёта детекции дрона (4 DSP-детектора + template-match) над Float32-сэмплами; общий код для клиента (декод браузера) и сервера (декод WAV в Node).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@membrana/cepstral-detector-service": "*",
+    "@membrana/detector-base": "*",
+    "@membrana/detector-report": "*",
+    "@membrana/harmonic-detector-service": "*",
+    "@membrana/spectral-flux-detector-service": "*",
+    "@membrana/template-match-detector-service": "*",
+    "@membrana/trends-detector-service": "*"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
