@@ -32,7 +32,7 @@
 
 - Полноценный кастомный `TelemetryReportRenderer` для новой schema в модуле журнала.
 - Запись PCM / waveform в отчёт.
-- MFCC / спектрограммы (следующий тариф).
+- MFCC / спектрограммы (тариф **`indie-v1`+** — см. [`TARIFF_MATRIX.md`](./TARIFF_MATRIX.md) §«Спектральный анализ сэмплов»).
 
 ---
 

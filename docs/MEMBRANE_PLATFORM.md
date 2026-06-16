@@ -117,14 +117,15 @@ Media-server читает лимиты из tariff мембраны при uploa
 | Buffer | Сервер, `bufferQuotaBytes` | Локальный буфер |
 | System dataset | Каталог `datasetCatalogId` в media | **Bundled library** в сборке client — фиксированный мини-набор, не зависит от тарифа |
 
-Seed v1:
+Seed v1 (полная матрица на 3 тарифа — [`TARIFF_MATRIX.md`](./TARIFF_MATRIX.md)):
 
 | id | userStorage | buffer | datasetCatalogId | samples в каталоге |
 |----|-------------|--------|------------------|-------------------|
 | `free-v1` | 1 GiB | 1 GiB | `free-v1-catalog` | **120** |
-| `indie-v1` | TBD | TBD | `indie-v1-catalog` | **600** (план) |
-| `business-v1` | TBD | TBD | `business-v1-catalog` | **3000** (план) |
-| `state-v1` | TBD | TBD | `state-v1-catalog` | **12000** (план) |
+| `indie-v1` | 10 GiB (черновик) | 5 GiB (черновик) | `indie-v1-catalog` | **600** (план) |
+| `business-v1` | 50 GiB (черновик) | 20 GiB (черновик) | `business-v1-catalog` | **3000** (план) |
+
+> Тариф `state-v1` (12 000 сэмплов) — вне scope v1 матрицы; отдельный контракт после stage-gate.
 
 В cabinet тарифный каталог показывается **один раз на мембрану**; буфер и user-коллекции — **per-node** (`deviceId`). См. [`discussions/cabinet-sample-library-consilium-2026-06-14.md`](./discussions/cabinet-sample-library-consilium-2026-06-14.md).
 
@@ -207,6 +208,8 @@ sequenceDiagram
 | `TelemetryLiveRecord` | Активная/недавняя live-сессия | Те же компоненты, другой lifecycle badge |
 
 Клиентский `@membrana/telemetry-service` остаётся источником на узле; sync в cabinet — MP5 (базовый upload + список).
+
+**Retention и export по тарифу** — [`TARIFF_MATRIX.md`](./TARIFF_MATRIX.md) §«Облачный журнал»: export на всех тарифах; hot 3 / 10 / 30 дней; архив 40 GiB только на `business-v1`.
 
 **Отложено (post-v1):** калибровка журнала и **единый рендеринг** client ↔ cabinet (parity карточек, live-badge, фильтры) — отдельная дорожная карта после консилиума; не блокирует MP6.
 
