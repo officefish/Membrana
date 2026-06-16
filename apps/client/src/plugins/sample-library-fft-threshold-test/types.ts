@@ -4,6 +4,8 @@ import type {
   ThresholdTestThresholds,
 } from '@membrana/fft-analyzer-service';
 
+import { DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS } from '../../lib/droneTightCalibration';
+
 export const SAMPLE_LIBRARY_FFT_THRESHOLD_TEST_PLUGIN_ID =
   'sample-library-fft-threshold-test';
 
@@ -25,14 +27,10 @@ export interface SampleLibraryFftThresholdTestPluginConfig {
 export const defaultSampleLibraryFftThresholdTestConfig: SampleLibraryFftThresholdTestPluginConfig =
   {
     autoAnalyzeOnEnd: true,
-    intervalMs: 500,
-    frameCount: 5,
-    strictness: 'normal',
-    thresholds: {
-      centroid: { min: 2900, max: 4300 },
-      flux: { min: 0.03, max: 0.16 },
-      rms: { min: 0.07, max: 0.28 },
-    },
+    intervalMs: DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.intervalMs,
+    frameCount: DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.frameCount,
+    strictness: DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.strictness,
+    thresholds: { ...DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.thresholds },
   };
 
 export function resolveSampleLibraryFftThresholdTestConfig(

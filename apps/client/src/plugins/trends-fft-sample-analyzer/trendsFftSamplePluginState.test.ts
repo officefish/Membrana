@@ -3,6 +3,16 @@ import { describe, expect, it } from 'vitest';
 import { trendsFftSamplePluginState } from './trendsFftSamplePluginState';
 
 describe('trendsFftSamplePluginState', () => {
+  it('offline analysis lifecycle updates snapshot', () => {
+    trendsFftSamplePluginState.beginOfflineAnalysis('sample-1', 10);
+    expect(trendsFftSamplePluginState.getSnapshot().analysisStatus).toBe('loading');
+    expect(trendsFftSamplePluginState.getSnapshot().phase).toBe('collecting');
+
+    trendsFftSamplePluginState.failOfflineAnalysis('decode failed');
+    expect(trendsFftSamplePluginState.getSnapshot().analysisStatus).toBe('error');
+    expect(trendsFftSamplePluginState.getSnapshot().errorMessage).toBe('decode failed');
+  });
+
   it('restarts when analysis window params change after result', () => {
     trendsFftSamplePluginState.beginCollection(10);
     trendsFftSamplePluginState.finishCollection(

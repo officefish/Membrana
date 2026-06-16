@@ -10,11 +10,11 @@ import {
 } from '@membrana/fft-analyzer-service';
 import {
   classifyTrends,
-  resolveTemplates,
   type MetricSample,
 } from '@membrana/trends-detector-service';
 
 import { createAnalysisFrameFeed, type AudioFrameFeed } from '../../lib/audioAnalysis';
+import { mergeDroneTightTrendsTemplates } from '../../lib/droneTightCalibration';
 import { buildTrendsFftReport } from './buildTrendsFftReport';
 import {
   registerTrendsFftController,
@@ -149,10 +149,7 @@ export function createTrendsFftAnalyzerPlugin(): Plugin<TrendsFftAnalyzerPluginC
         stopSampleInterval();
         collectionActive = false;
         const finishedAt = Date.now();
-        const templates = resolveTemplates(
-          config.enabledTemplateKeys,
-          userTemplatesStore.getTemplates(),
-        );
+        const templates = mergeDroneTightTrendsTemplates(userTemplatesStore.getTemplates());
         const result = classifyTrends(collectedSamples, templates, {
           minConfidence: config.minConfidence,
           activityRmsThreshold: config.minRms,

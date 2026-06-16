@@ -5,8 +5,7 @@ import type {
 } from '@membrana/fft-analyzer-service';
 
 import type { AnalysisSourceKind } from '../../lib/audioAnalysis';
-
-import { thresholdsFromNormalized, DEFAULT_NORMALIZED_THRESHOLDS } from './normalizeMetrics';
+import { DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS } from '../../lib/droneTightCalibration';
 
 export const FFT_THRESHOLD_TEST_PLUGIN_ID = 'fft-threshold-test';
 
@@ -26,10 +25,10 @@ export interface FftThresholdTestPluginConfig {
 
 export const defaultFftThresholdTestConfig: FftThresholdTestPluginConfig = {
   mode: 'auto',
-  intervalMs: 500,
-  frameCount: 3,
-  strictness: 'normal',
-  thresholds: thresholdsFromNormalized(DEFAULT_NORMALIZED_THRESHOLDS),
+  intervalMs: DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.intervalMs,
+  frameCount: DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.frameCount,
+  strictness: DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.strictness,
+  thresholds: { ...DRONE_TIGHT_FFT_THRESHOLD_DEFAULTS.thresholds },
   autoRestartDelayMs: 500,
   analysisSource: 'microphone',
 };
