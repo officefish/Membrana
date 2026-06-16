@@ -1252,9 +1252,12 @@
       "githubIssue": 84,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-16",
-      "notes": "Цель: recall дронов >=80% при FPR на не-дронах <=40% (train/val дисциплина). Ветка feat/fft-last-chance."
+      "notes": "Цель: recall дронов >=80% при FPR на не-дронах <=40% (train/val дисциплина). Ветка feat/fft-last-chance.",
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "#84 epic done: threshold no-go, trends go; follow-up trends-drone-tight-curated-promotion",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fl1-sample-library-fft-threshold-plugin",
@@ -1263,10 +1266,13 @@
       "githubIssue": 84,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "fft-last-chance-calibration",
       "createdAt": "2026-06-16",
-      "notes": "Done: sample-library-fft-threshold-test (offline post-playback, opt-in), отчёт fft-threshold-test/v0.2 в журнал; 5/5 тестов, typecheck зелёный."
+      "notes": "Done: sample-library-fft-threshold-test (offline post-playback, opt-in), отчёт fft-threshold-test/v0.2 в журнал; 5/5 тестов, typecheck зелёный.",
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "#84 done: plugin 5/5 tests, typecheck clean",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fl2-benchmark-fft-trends-harness",
@@ -1275,11 +1281,16 @@
       "githubIssue": 84,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "fft-last-chance-calibration",
       "createdAt": "2026-06-16",
-      "dependsOn": ["fft-last-chance-calibration"],
-      "notes": "Done: scripts/benchmark-fft-trends.mjs + yarn benchmark:fft-trends; распределения по классам, recall/FPR train/val, JSON-отчёт."
+      "dependsOn": [
+        "fft-last-chance-calibration"
+      ],
+      "notes": "Done: scripts/benchmark-fft-trends.mjs + yarn benchmark:fft-trends; распределения по классам, recall/FPR train/val, JSON-отчёт.",
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "#84 done: yarn benchmark:fft-trends",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fl3-threshold-calibration",
@@ -1288,11 +1299,16 @@
       "githubIssue": 84,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "fft-last-chance-calibration",
       "createdAt": "2026-06-16",
-      "dependsOn": ["fl2-benchmark-fft-trends-harness"],
-      "notes": "Результат: цель НЕ достигнута. Фронтир val: A 95%/85%, B 85%/70%, C 75%/40% (recall/FPR). Box-голосование не разделяет высокочастотный фон."
+      "dependsOn": [
+        "fl2-benchmark-fft-trends-harness"
+      ],
+      "notes": "Результат: цель НЕ достигнута. Фронтир val: A 95%/85%, B 85%/70%, C 75%/40% (recall/FPR). Box-голосование не разделяет высокочастотный фон.",
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "#84 no-go: best val 75/40 or 85/70",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fl4-trends-template-calibration",
@@ -1301,11 +1317,16 @@
       "githubIssue": 84,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "fft-last-chance-calibration",
       "createdAt": "2026-06-16",
-      "dependsOn": ["fl2-benchmark-fft-trends-harness"],
-      "notes": "Результат: ЦЕЛЬ ДОСТИГНУТА. DRONE_TIGHT + системные конкуренты → val recall 95% / FPR 30% / F1 0.844. Шаблон экспортирован."
+      "dependsOn": [
+        "fl2-benchmark-fft-trends-harness"
+      ],
+      "notes": "Результат: ЦЕЛЬ ДОСТИГНУТА. DRONE_TIGHT + системные конкуренты → val recall 95% / FPR 30% / F1 0.844. Шаблон экспортирован.",
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "#84 go: DRONE_TIGHT val 95/30/F1 0.844",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fl5-fft-last-chance-report",
@@ -1314,11 +1335,17 @@
       "githubIssue": 84,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "fft-last-chance-calibration",
       "createdAt": "2026-06-16",
-      "dependsOn": ["fl3-threshold-calibration", "fl4-trends-template-calibration"],
-      "notes": "docs/datasets/week-2026-06-14/fft-last-chance-report.md: порог → no-go, trends (tight+competitors) → go."
+      "dependsOn": [
+        "fl3-threshold-calibration",
+        "fl4-trends-template-calibration"
+      ],
+      "notes": "docs/datasets/week-2026-06-14/fft-last-chance-report.md: порог → no-go, trends (tight+competitors) → go.",
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "#84 report committed",
+      "githubIssueClosedAt": null
     },
     {
       "id": "trends-drone-tight-curated-promotion",
@@ -1329,7 +1356,9 @@
       "size": "M",
       "status": "active",
       "createdAt": "2026-06-16",
-      "dependsOn": ["fl4-trends-template-calibration"],
+      "dependsOn": [
+        "fl4-trends-template-calibration"
+      ],
       "notes": "Follow-up по вердикту go эпика fft-last-chance. Заменить DRONE_CURATED (FPR 95%) на DRONE_TIGHT (val 95%/30%) и переснять benchmark:detectors."
     }
   ]
