@@ -140,4 +140,20 @@ describe('mic-live-drone-analysis plugin', () => {
 
     teardown();
   });
+
+  it('skips analysis when autoAnalyzeOnImport is disabled', async () => {
+    const plugin = createMicLiveDroneAnalysisPlugin();
+    const teardown = plugin.install({
+      moduleId,
+      config: { autoAnalyzeOnImport: false },
+    } as never);
+
+    publishMediaLibrarySampleImported(samplePayload);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(analyzeSampleDetectors).not.toHaveBeenCalled();
+    expect(getDefaultLiveJournalService().getSnapshot().items).toHaveLength(0);
+
+    teardown();
+  });
 });

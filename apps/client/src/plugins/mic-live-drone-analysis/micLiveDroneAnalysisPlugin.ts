@@ -35,6 +35,9 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
       const { moduleId } = context;
       let disposed = false;
       let inFlight = false;
+      const initialConfig = resolveMicLiveDroneAnalysisConfig(
+        context.config ?? defaultMicLiveDroneAnalysisConfig,
+      );
 
       const runAnalysis = async (
         payload: MediaLibrarySampleImportedPayload,
@@ -42,7 +45,7 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
         if (disposed || inFlight) return;
         if (!payload.journalTrackId) return;
 
-        const config = readPluginConfig(moduleId);
+        const config = context.config ? initialConfig : readPluginConfig(moduleId);
         if (!config.autoAnalyzeOnImport) return;
 
         inFlight = true;
