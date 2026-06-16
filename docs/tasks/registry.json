@@ -1257,7 +1257,7 @@
       "notes": "Цель: recall дронов >=80% при FPR на не-дронах <=40% (train/val дисциплина). Ветка feat/fft-last-chance.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 epic done: threshold no-go, trends go; follow-up trends-drone-tight-curated-promotion",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-16"
     },
     {
       "id": "fl1-sample-library-fft-threshold-plugin",
@@ -1272,7 +1272,7 @@
       "notes": "Done: sample-library-fft-threshold-test (offline post-playback, opt-in), отчёт fft-threshold-test/v0.2 в журнал; 5/5 тестов, typecheck зелёный.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 done: plugin 5/5 tests, typecheck clean",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-16"
     },
     {
       "id": "fl2-benchmark-fft-trends-harness",
@@ -1290,7 +1290,7 @@
       "notes": "Done: scripts/benchmark-fft-trends.mjs + yarn benchmark:fft-trends; распределения по классам, recall/FPR train/val, JSON-отчёт.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 done: yarn benchmark:fft-trends",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-16"
     },
     {
       "id": "fl3-threshold-calibration",
@@ -1308,7 +1308,7 @@
       "notes": "Результат: цель НЕ достигнута. Фронтир val: A 95%/85%, B 85%/70%, C 75%/40% (recall/FPR). Box-голосование не разделяет высокочастотный фон.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 no-go: best val 75/40 or 85/70",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-16"
     },
     {
       "id": "fl4-trends-template-calibration",
@@ -1326,7 +1326,7 @@
       "notes": "Результат: ЦЕЛЬ ДОСТИГНУТА. DRONE_TIGHT + системные конкуренты → val recall 95% / FPR 30% / F1 0.844. Шаблон экспортирован.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 go: DRONE_TIGHT val 95/30/F1 0.844",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-16"
     },
     {
       "id": "fl5-fft-last-chance-report",
@@ -1345,7 +1345,7 @@
       "notes": "docs/datasets/week-2026-06-14/fft-last-chance-report.md: порог → no-go, trends (tight+competitors) → go.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 report committed",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-16"
     },
     {
       "id": "trends-drone-tight-curated-promotion",
