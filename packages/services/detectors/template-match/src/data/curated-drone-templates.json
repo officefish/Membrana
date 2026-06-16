@@ -1,79 +1,47 @@
 [
   {
-    "key": "DRONE_CURATED",
-    "name": "Дрон (curated free-v1)",
+    "key": "DRONE_TIGHT",
+    "name": "Дрон (tight p10-p90)",
     "icon": "🛸",
     "color": "#ff6b6b",
-    "description": "Объединённый шаблон из 60 validated drone-сэмплов",
+    "description": "Узкий шаблон из перцентилей train-дронов free-v1 (стабильный высокочастотный гул). Калибровка эпика fft-last-chance (#84): val recall 95% / FPR 30%.",
     "thresholds": {
       "centroid": {
-        "min": 1009.2142812034012,
-        "max": 8298.679714444046
+        "min": 2900,
+        "max": 4300
       },
       "flux": {
-        "min": 0,
-        "max": 0.2548965638809762
+        "min": 0.03,
+        "max": 0.16
       },
       "rms": {
-        "min": 0,
-        "max": 0.33724758841687913
+        "min": 0.07,
+        "max": 0.28
       },
       "frameHitRatio": {
-        "min": 0.95,
+        "min": 0.6,
         "max": 1
       }
     },
     "temporalPatterns": {
-      "centroidStd": {
-        "min": 657.083094414463,
-        "max": 1533.19388696708
-      },
-      "fluxStd": {
-        "min": 0.03289356190481725,
-        "max": 0.0767516444445736
-      },
-      "rmsStd": {
-        "min": 0.04141436911395247,
-        "max": 0.09663352793255578
-      },
       "activityRatio": {
-        "min": 0.75,
-        "max": 1.25
+        "min": 0.8,
+        "max": 1
       },
-      "avgSilenceDuration": {
+      "centroidStd": {
         "min": 0,
-        "max": 0.001
+        "max": 400
       },
-      "avgBurstDuration": {
-        "min": 2.25,
-        "max": 6.75
-      },
+      "longTermStability": [
+        "high",
+        "veryHigh"
+      ],
       "volumeTrend": [
         "stable"
       ],
       "frequencyTrend": [
-        "oscillating"
-      ],
-      "longTermStability": [
-        "veryLow"
-      ],
-      "periodicity": [
-        "none"
-      ],
-      "envelopeShape": [
-        "complex"
-      ],
-      "peakToAverageRatio": {
-        "min": 1.1230986820395377,
-        "max": 2.3325895703898087
-      },
-      "frequencyJumps": {
-        "enabled": true,
-        "minJumpsRequired": 9,
-        "densityPerSecond": {
-          "max": 3
-        }
-      }
+        "stable"
+      ]
     }
   }
 ]

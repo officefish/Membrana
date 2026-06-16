@@ -1354,12 +1354,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-16",
       "dependsOn": [
         "fl4-trends-template-calibration"
       ],
-      "notes": "Follow-up по вердикту go эпика fft-last-chance. Заменить DRONE_CURATED (FPR 95%) на DRONE_TIGHT (val 95%/30%) и переснять benchmark:detectors."
+      "notes": "Done: DRONE_TIGHT внедрён в curated-каталог (пакет + dataset-dir). benchmark:detectors template-match: P 85.5% / R 88.3% / F1 0.869 / FPR 15% (было P55.6/R100/FPR80). Проходит цель 80/40 с запасом, почти strict stage-gate.",
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "DRONE_TIGHT in curated catalog; template-match P85.5/R88.3/FPR15 (benchmark:detectors)"
     },
     {
       "id": "trends-fft-sample-library-drone-tight",
