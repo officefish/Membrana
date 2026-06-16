@@ -974,10 +974,11 @@
       "githubIssue": 83,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "Epic #83 JE1-JE5 merged to main",
+      "githubIssueClosedAt": null
     },
     {
       "id": "je1-buffer-clear-event-chain",
@@ -986,11 +987,12 @@
       "githubIssue": 83,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "telemetry-journal-event-driven",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "4ff346e",
+      "githubIssueClosedAt": null
     },
     {
       "id": "je2-stop-triggers-analysis",
@@ -999,14 +1001,15 @@
       "githubIssue": 83,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "telemetry-journal-event-driven",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "5e47798",
       "dependsOn": [
         "je1-buffer-clear-event-chain"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "je3-client-journal-hub-refresh",
@@ -1015,14 +1018,15 @@
       "githubIssue": 83,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "telemetry-journal-event-driven",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "cf61374",
       "dependsOn": [
         "je2-stop-triggers-analysis"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "je4-cabinet-journal-fast-refresh",
@@ -1031,14 +1035,15 @@
       "githubIssue": 83,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "telemetry-journal-event-driven",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "cf65b4a",
       "dependsOn": [
         "je3-client-journal-hub-refresh"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "je5-journal-contextual-clear",
@@ -1047,15 +1052,16 @@
       "githubIssue": 83,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "telemetry-journal-event-driven",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "e836b8e",
       "dependsOn": [
         "je1-buffer-clear-event-chain",
         "je4-cabinet-journal-fast-refresh"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mic-buffer-sample-count-loading",
@@ -1064,10 +1070,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "e5f7277"
     },
     {
       "id": "live-journal-sync-pagination",
@@ -1076,10 +1082,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "JS1-JS4 commit 21b7648; cabinet prod deploy OK"
     },
     {
       "id": "js1-server-journal-full-fetch",
@@ -1088,11 +1094,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-journal-sync-pagination",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "21b7648"
     },
     {
       "id": "js2-client-journal-reconcile",
@@ -1101,11 +1107,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-journal-sync-pagination",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "21b7648",
       "dependsOn": [
         "js1-server-journal-full-fetch"
       ]
@@ -1117,11 +1123,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-journal-sync-pagination",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "21b7648",
       "dependsOn": [
         "js2-client-journal-reconcile"
       ]
@@ -1133,11 +1139,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-journal-sync-pagination",
       "createdAt": "2026-06-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-16",
+      "archiveNotes": "21b7648",
       "dependsOn": [
         "js2-client-journal-reconcile"
       ]
