@@ -1360,6 +1360,20 @@
         "fl4-trends-template-calibration"
       ],
       "notes": "Follow-up по вердикту go эпика fft-last-chance. Заменить DRONE_CURATED (FPR 95%) на DRONE_TIGHT (val 95%/30%) и переснять benchmark:detectors."
+    },
+    {
+      "id": "trends-fft-sample-library-drone-tight",
+      "title": "Анализатор тенденций FFT в библиотеке сэмплов (калибровка под DRONE_TIGHT)",
+      "promptPath": "docs/prompts/TRENDS_FFT_SAMPLE_LIBRARY_DRONE_TIGHT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-16",
+      "dependsOn": [
+        "fl4-trends-template-calibration"
+      ],
+      "notes": "Opt-in плагин библиотеки сэмплов: trends-fft с пресетом DRONE_TIGHT + конкуренты, отчёт в журнал. Ручной прогон экспериментов на free-v1. Идёт в одном спринте с trends-drone-tight-curated-promotion (общий источник пресета)."
     }
   ]
 }
