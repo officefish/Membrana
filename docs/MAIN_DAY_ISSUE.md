@@ -75,7 +75,13 @@
 
 ---
 
-### 5. Smoke на prod (S, если есть время)
+### 5. JE5 — contextual journal clear (M, после JE3–JE4)
+
+Кнопка **«Очистить»** справа в строке фильтров (client + cabinet). Удаление по активному фильтру: все / треки / отчёты / обнаружения. `useRemoteMutation`: timeout 30 s, unmount unlock, banner при недоступности server.
+
+---
+
+### 6. Smoke на prod (S, если есть время)
 
 - `cabinet.membrana.space`: журнал, play, pagination.
 - Client paired: запись → анализ → запись в журнал → cabinet.

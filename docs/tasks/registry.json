@@ -969,7 +969,7 @@
     },
     {
       "id": "telemetry-journal-event-driven",
-      "title": "Event-driven UX: buffer clear, stop→analyze, journal refresh (JE1–JE4)",
+      "title": "Event-driven UX: buffer clear, stop→analyze, journal refresh, contextual clear (JE1–JE5)",
       "promptPath": "docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md",
       "githubIssue": 83,
       "linearId": null,
@@ -1038,6 +1038,23 @@
       "archiveNotes": null,
       "dependsOn": [
         "je3-client-journal-hub-refresh"
+      ]
+    },
+    {
+      "id": "je5-journal-contextual-clear",
+      "title": "JE5: contextual journal clear by filter + remote resilience",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md",
+      "githubIssue": 83,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "telemetry-journal-event-driven",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "je1-buffer-clear-event-chain",
+        "je4-cabinet-journal-fast-refresh"
       ]
     }
   ]

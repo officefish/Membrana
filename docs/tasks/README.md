@@ -50,11 +50,12 @@
 | `vdr6-recognition-report-gate` | VDR6: recognition report — best detector, gap to 80% and stage-gate | M | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `drone-detector-detail-report` | Подробный отчёт детекторов дрона (DDR1–4) | L | [`DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md`](../docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md) | [#78](https://github.com/officefish/Membrana/issues/78) |
 | `telemetry-journal-live-refactor` | Live-журнал телеметрии (TJ1–TJ6) | L | [`TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md) | [#79](https://github.com/officefish/Membrana/issues/79) |
-| `telemetry-journal-event-driven` | Event-driven UX: buffer clear, stop→analyze, journal refresh (JE1–JE4) | L | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
+| `telemetry-journal-event-driven` | Event-driven UX: buffer clear, stop→analyze, journal refresh, contextual clear (JE1–JE5) | L | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
 | `je1-buffer-clear-event-chain` | JE1: buffer clear event chain (client + cabinet) | M | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
 | `je2-stop-triggers-analysis` | JE2: stop recording → import → analyze → report | M | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
 | `je3-client-journal-hub-refresh` | JE3: client journal hub/snapshot refresh | M | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
 | `je4-cabinet-journal-fast-refresh` | JE4: cabinet journal 1s visible poll | S | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
+| `je5-journal-contextual-clear` | JE5: contextual journal clear by filter + remote resilience | M | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
 
 ---
 
