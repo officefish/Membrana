@@ -50,6 +50,11 @@
 | `vdr6-recognition-report-gate` | VDR6: recognition report — best detector, gap to 80% and stage-gate | M | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `drone-detector-detail-report` | Подробный отчёт детекторов дрона (DDR1–4) | L | [`DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md`](../docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md) | [#78](https://github.com/officefish/Membrana/issues/78) |
 | `telemetry-journal-live-refactor` | Live-журнал телеметрии (TJ1–TJ6) | L | [`TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md) | [#79](https://github.com/officefish/Membrana/issues/79) |
+| `telemetry-journal-event-driven` | Event-driven UX: buffer clear, stop→analyze, journal refresh (JE1–JE4) | L | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
+| `je1-buffer-clear-event-chain` | JE1: buffer clear event chain (client + cabinet) | M | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
+| `je2-stop-triggers-analysis` | JE2: stop recording → import → analyze → report | M | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
+| `je3-client-journal-hub-refresh` | JE3: client journal hub/snapshot refresh | M | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
+| `je4-cabinet-journal-fast-refresh` | JE4: cabinet journal 1s visible poll | S | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | [#83](https://github.com/officefish/Membrana/issues/83) |
 
 ---
 
@@ -57,9 +62,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `sld1-sample-detection-contract` | SLD1: SampleDetectionVerdict + analyzeSample; v0.2-only benchmark policy | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/sld1-sample-detection-contract.md) |
-| `sld2-sample-library-drone-plugin` | SLD2: sample-library-drone-analysis plugin + post-playback report UI | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 (Issue открыт) | [карточка](./archive/sld2-sample-library-drone-plugin.md) |
-| `telemetry-journal-ux-hardening` | Live-журнал UX: buffer gate, mic drone plugin, refresh, waveform, pagination (BL1, TJ7–TJ10) | 2026-06-15 | [`TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md) | #81 (Issue открыт) | [карточка](./archive/telemetry-journal-ux-hardening.md) |
+| `sld1-sample-detection-contract` | SLD1: SampleDetectionVerdict + analyzeSample; v0.2-only benchmark policy | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 | [карточка](./archive/sld1-sample-detection-contract.md) |
+| `sld2-sample-library-drone-plugin` | SLD2: sample-library-drone-analysis plugin + post-playback report UI | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 | [карточка](./archive/sld2-sample-library-drone-plugin.md) |
+| `telemetry-journal-ux-hardening` | Live-журнал UX: buffer gate, mic drone plugin, refresh, waveform, pagination (BL1, TJ7–TJ10) | 2026-06-15 | [`TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md) | #81 | [карточка](./archive/telemetry-journal-ux-hardening.md) |
 | `tariff-dataset-v1` | Tariff Dataset v1: убрать benchmark, free-v1 корпус (эпик DS1–DS5) | 2026-06-14 | [`TARIFF_DATASET_V1_EPIC_PROMPT.md`](../docs/prompts/TARIFF_DATASET_V1_EPIC_PROMPT.md) | #47 | [карточка](./archive/tariff-dataset-v1.md) |
 | `tariff-dataset-ds1-corpus` | Tariff Dataset DS1: корпус free-v1 и скрипты sync | 2026-06-14 | [`TARIFF_DATASET_DS1_CORPUS_PROMPT.md`](../docs/prompts/TARIFF_DATASET_DS1_CORPUS_PROMPT.md) | #47 | [карточка](./archive/tariff-dataset-ds1-corpus.md) |
 | `tariff-dataset-ds2-domain` | Tariff Dataset DS2: domain model без benchmark | 2026-06-14 | [`TARIFF_DATASET_DS2_DOMAIN_PROMPT.md`](../docs/prompts/TARIFF_DATASET_DS2_DOMAIN_PROMPT.md) | #47 | [карточка](./archive/tariff-dataset-ds2-domain.md) |
@@ -100,4 +105,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-15.*
+*Файл обновлён автоматически: 2026-06-16.*

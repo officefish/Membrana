@@ -966,6 +966,79 @@
       "archivedAt": "2026-06-15",
       "archiveNotes": "GitHub #81; PR #82 merged 2026-06-15 @ 27ed842. BL1 buffer gate, TJ10 mic-live-drone-analysis, TJ7 refresh, TJ8 waveform, TJ9 pagination. Prod smoke OK 2026-06-15 on cabinet.membrana.space",
       "githubIssueClosedAt": "2026-06-15"
+    },
+    {
+      "id": "telemetry-journal-event-driven",
+      "title": "Event-driven UX: buffer clear, stop→analyze, journal refresh (JE1–JE4)",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md",
+      "githubIssue": 83,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "je1-buffer-clear-event-chain",
+      "title": "JE1: buffer clear event chain (client + cabinet)",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md",
+      "githubIssue": 83,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "telemetry-journal-event-driven",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "je2-stop-triggers-analysis",
+      "title": "JE2: stop recording → import → analyze → report",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md",
+      "githubIssue": 83,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "telemetry-journal-event-driven",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "je1-buffer-clear-event-chain"
+      ]
+    },
+    {
+      "id": "je3-client-journal-hub-refresh",
+      "title": "JE3: client journal hub/snapshot refresh",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md",
+      "githubIssue": 83,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "telemetry-journal-event-driven",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "je2-stop-triggers-analysis"
+      ]
+    },
+    {
+      "id": "je4-cabinet-journal-fast-refresh",
+      "title": "JE4: cabinet journal 1s visible poll",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md",
+      "githubIssue": 83,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "telemetry-journal-event-driven",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "je3-client-journal-hub-refresh"
+      ]
     }
   ]
 }
