@@ -36,6 +36,7 @@ import { invalidateCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
 import { downloadBlob, extensionFromMime } from '@/lib/downloadBlob';
 import { useCabinetMediaLibrary } from '@/lib/useCabinetMediaLibrary';
 import { useCabinetToast } from '@/lib/useCabinetToast';
+import { runRemoteMutation } from '@/lib/remoteMutation';
 import type { UpdateSampleLabelNotes } from '@membrana/media-library-service';
 
 export type { LibrarySelection };
@@ -198,7 +199,9 @@ export function useCabinetSampleLibrary() {
       }
       setBusy(true);
       try {
-        await op();
+        await runRemoteMutation(label, async () => {
+          await op();
+        });
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         showError(`${label}: ${msg}`, retry ?? (() => void runMediaOp(label, op, retry)));

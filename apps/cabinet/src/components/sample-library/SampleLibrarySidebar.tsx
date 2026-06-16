@@ -145,15 +145,16 @@ export function SampleLibrarySidebar({
             {selection.kind === 'node' && selection.collectionId === BUFFER_COLLECTION_ID ? (
               <button
                 type="button"
-                className="btn btn-xs btn-ghost"
+                className="btn btn-xs btn-error btn-outline"
                 disabled={
                   busy ||
+                  !active ||
                   (selectedCollection?.sampleCount ??
                     (snapshot.samplesByCollection[BUFFER_COLLECTION_ID] ?? []).length) === 0
                 }
                 onClick={() => void handleClearBuffer()}
               >
-                Очистить буфер
+                {busy ? 'Очистка…' : 'Очистить буфер'}
               </button>
             ) : null}
           </div>

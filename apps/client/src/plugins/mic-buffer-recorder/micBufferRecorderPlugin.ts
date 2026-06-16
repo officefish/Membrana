@@ -12,6 +12,7 @@ import {
   subscribeMediaLibraryBufferCleared,
   subscribeMediaLibraryQuotaUpdated,
 } from '../../lib/mediaLibraryHub';
+import { publishMediaLibraryQuotaFromService } from '../../lib/mediaLibraryHubBridge';
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
 
 import { startClipRecorder, type ActiveClipRecorder } from './clipRecorder';
@@ -74,6 +75,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
       let runtimeMode: MediaLibraryRecordingMode = readPluginConfig(context.moduleId).defaultMode;
 
       syncStateFromConfig(context.moduleId, runtimeMode);
+      publishMediaLibraryQuotaFromService();
 
       const clearProgressTimer = (): void => {
         if (progressTimerId != null) {

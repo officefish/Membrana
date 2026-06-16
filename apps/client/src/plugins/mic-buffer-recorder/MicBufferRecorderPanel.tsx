@@ -3,6 +3,7 @@ import { useMembranaStore } from '@membrana/agenda';
 import type { MediaLibraryCaptureFormat, MediaLibraryRecordingMode, MediaLibraryStorageMode } from '@membrana/media-library-service';
 
 import { requestClearMediaLibraryBuffer } from '../../lib/mediaLibraryHubBridge';
+import { useRemoteMutation } from '../../lib/useRemoteMutation';
 
 import { RecordingProgress } from './components/RecordingProgress';
 import {
@@ -43,6 +44,7 @@ const BUFFER_STORAGE_HINT: Record<MediaLibraryStorageMode, string> = {
 
 export function MicBufferRecorderPanel({ moduleId }: Props) {
   const snapshot = useMicBufferRecorder();
+  const { busy: clearingBuffer, run: runRemoteMutation } = useRemoteMutation();
   const rawConfig = useMembranaStore((s) =>
     s.getPlugin(moduleId, MIC_BUFFER_RECORDER_PLUGIN_ID)?.config,
   );
@@ -85,15 +87,25 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
   };
 
   const onClearBuffer = (): void => {
+    if (snapshot.storageMode === 'remote-server' && !snapshot.serverReachable) {
+      micBufferRecorderPluginState.setError('Media-server недоступен — очистка буфера невозможна.');
+      return;
+    }
     if (!window.confirm('Очистить буфер __buffer__? Сэмплы будут удалены без восстановления.')) {
       return;
     }
-    void requestClearMediaLibraryBuffer().catch((err: unknown) => {
+    void runRemoteMutation('Очистка буфера', async () => {
+      await requestClearMediaLibraryBuffer();
+      micBufferRecorderPluginState.setError(null);
+    }).catch((err: unknown) => {
       micBufferRecorderPluginState.setError(
         err instanceof Error ? err.message : 'Не удалось очистить буфер',
       );
     });
   };
+
+  const serverUnavailable =
+    snapshot.storageMode === 'remote-server' && !snapshot.serverReachable;
 
   const recordingDisabled =
     !snapshot.streamLive || snapshot.recordingBlocked || snapshot.isRecording;
@@ -261,6 +273,12 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
         ) : null}
       </div>
 
+      {serverUnavailable ? (
+        <div className="alert alert-warning text-sm py-2" role="status">
+          Media-server недоступен. Запись и очистка буфера на сервере временно недоступны.
+        </div>
+      ) : null}
+
       <div className="rounded-box border border-base-300 bg-base-100/40 p-3 flex flex-col gap-2">
         <p
           className={`text-xs ${
@@ -298,10 +316,17 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
         <button
           type="button"
           className="btn btn-outline btn-error btn-sm"
-          disabled={snapshot.sampleCount === 0}
+          disabled={snapshot.sampleCount === 0 || clearingBuffer || serverUnavailable}
           onClick={onClearBuffer}
         >
-          Очистить буфер
+          {clearingBuffer ? (
+            <>
+              <span className="loading loading-spinner loading-xs" aria-hidden />
+              Очистка…
+            </>
+          ) : (
+            'Очистить буфер'
+          )}
         </button>
       </div>
     </div>

@@ -22,6 +22,7 @@ export interface MicBufferRecorderSnapshot {
   readonly maxBufferSamples: number;
   readonly recordingBlocked: boolean;
   readonly storageMode: MediaLibraryStorageMode;
+  readonly serverReachable: boolean;
   readonly error: string | null;
   readonly effectiveFormat: MediaLibraryCaptureFormat;
 }
@@ -42,6 +43,7 @@ class MicBufferRecorderPluginStateImpl {
   private maxBufferSamples = 10;
   private recordingBlocked = false;
   private storageMode: MediaLibraryStorageMode = 'browser-limited-fallback';
+  private serverReachable = true;
   private error: string | null = null;
   private effectiveFormat: MediaLibraryCaptureFormat = 'wav';
 
@@ -111,6 +113,7 @@ class MicBufferRecorderPluginStateImpl {
     maxBufferSamples: number;
     recordingBlocked: boolean;
     storageMode: MediaLibraryStorageMode;
+    serverReachable: boolean;
   }): void {
     this.usedBytes = params.usedBytes;
     this.limitBytes = params.limitBytes;
@@ -118,6 +121,7 @@ class MicBufferRecorderPluginStateImpl {
     this.maxBufferSamples = params.maxBufferSamples;
     this.recordingBlocked = params.recordingBlocked;
     this.storageMode = params.storageMode;
+    this.serverReachable = params.serverReachable;
     this.rebuild();
   }
 
@@ -156,6 +160,7 @@ class MicBufferRecorderPluginStateImpl {
       maxBufferSamples: this.maxBufferSamples,
       recordingBlocked: this.recordingBlocked,
       storageMode: this.storageMode,
+      serverReachable: this.serverReachable,
       error: this.error,
       effectiveFormat: this.effectiveFormat,
     };

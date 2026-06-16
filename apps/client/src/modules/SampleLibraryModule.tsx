@@ -15,6 +15,8 @@ import { SampleLabelEditor, SampleNotesEditor } from '../components/sample-libra
 import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
 import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
 import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
+import { requestClearMediaLibraryBuffer } from '../lib/mediaLibraryHubBridge';
+import { useRemoteMutation } from '../lib/useRemoteMutation';
 import {
   bindSamplePlaybackBlobReader,
   disposeSamplePlayback,
@@ -62,6 +64,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
+  const { busy: clearingBuffer, run: runRemoteMutation } = useRemoteMutation();
 
   useEffect(() => {
     bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
@@ -164,13 +167,22 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   );
 
   const handleClearBuffer = useCallback(async () => {
+    if (snapshot.quota.backend === 'server' && !snapshot.quota.serverReachable) {
+      setError('Media-server недоступен — очистка буфера невозможна.');
+      return;
+    }
+    if (!window.confirm('Очистить буфер __buffer__? Сэмплы будут удалены без восстановления.')) {
+      return;
+    }
     setError(null);
     try {
-      await service.clearBuffer();
+      await runRemoteMutation('Очистка буфера', async () => {
+        await requestClearMediaLibraryBuffer();
+      });
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  }, [service]);
+  }, [runRemoteMutation, snapshot.quota.backend, snapshot.quota.serverReachable]);
 
   const handleSelectSample = useCallback(async (sample: MediaSample) => {
     setError(null);
@@ -271,10 +283,14 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           {selectedId === BUFFER_COLLECTION_ID ? (
             <button
               type="button"
-              className="btn btn-sm btn-ghost"
+              className="btn btn-sm btn-error btn-outline"
+              disabled={
+                clearingBuffer ||
+                (snapshot.quota.backend === 'server' && !snapshot.quota.serverReachable)
+              }
               onClick={() => void handleClearBuffer()}
             >
-              Очистить буфер
+              {clearingBuffer ? 'Очистка…' : 'Очистить буфер'}
             </button>
           ) : null}
         </aside>

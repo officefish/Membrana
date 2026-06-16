@@ -57,6 +57,8 @@ export interface MediaLibraryQuotaUpdatedPayload {
   maxBufferSamples: number;
   recordingBlocked: boolean;
   storageMode: MediaLibraryStorageMode;
+  /** False when remote-server backend cannot reach media API (JE1). */
+  serverReachable: boolean;
 }
 
 export const MEDIA_LIBRARY_HUB = {

@@ -46,6 +46,7 @@ describe('mediaLibraryHub', () => {
       maxBufferSamples: 10,
       recordingBlocked: false,
       storageMode: 'remote-server',
+      serverReachable: true,
     });
 
     expect(listener).toHaveBeenCalledWith(

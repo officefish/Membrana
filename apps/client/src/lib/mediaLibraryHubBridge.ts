@@ -45,7 +45,13 @@ function pushQuotaSnapshot(): void {
     maxBufferSamples,
     recordingBlocked: isBufferRecordingBlocked(snap.quota, sampleCount, maxBufferSamples),
     storageMode,
+    serverReachable: snap.quota.serverReachable,
   });
+}
+
+/** Publishes current buffer quota to hub subscribers (e.g. mic plugin on install). */
+export function publishMediaLibraryQuotaFromService(): void {
+  pushQuotaSnapshot();
 }
 
 async function attachService(svc: MediaLibraryService): Promise<boolean> {
