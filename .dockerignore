@@ -24,6 +24,8 @@ packages/device-board
 packages/libs
 !packages/libs/detector-report
 !packages/libs/detector-report/**
+!packages/libs/journal-report-views
+!packages/libs/journal-report-views/**
 packages/services
 !packages/services/media-library
 !packages/services/media-library/**
@@ -33,6 +35,10 @@ packages/services
 !packages/services/sample-playback/**
 !packages/services/telemetry-journal
 !packages/services/telemetry-journal/**
+!packages/services/trends-detector
+!packages/services/trends-detector/**
+!packages/services/fft-analyzer
+!packages/services/fft-analyzer/**
 packages/background-office
 docs
 scripts
