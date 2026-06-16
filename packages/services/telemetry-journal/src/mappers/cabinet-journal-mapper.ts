@@ -118,6 +118,7 @@ export function isTelemetryTrackLiveRecord(record: CabinetTelemetryLiveRecordDto
 /** Whether cabinet report belongs to live journal report stream. */
 export function isLiveJournalReportRow(report: CabinetTelemetryReportDto): boolean {
   if (report.reportKind === 'drone-detection-report/v1') return true;
+  if (report.reportKind === 'drone-detection-brief/v1') return true;
   return isRecord(report.payload) && typeof report.payload.trackId === 'string';
 }
 

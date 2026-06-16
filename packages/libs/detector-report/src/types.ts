@@ -144,6 +144,50 @@ export interface BuildDroneDetectionReportInput {
   readonly verdicts: readonly DroneDetectorVerdictSection[];
 }
 
+/** Schema for fast live-journal rows (verdict summary only, no frame tables). */
+export const DRONE_DETECTION_BRIEF_SCHEMA_VERSION = 'drone-detection-brief/v1' as const;
+
+export type DroneDetectionBriefSchemaVersion = typeof DRONE_DETECTION_BRIEF_SCHEMA_VERSION;
+
+export type DetailedReportStatus = 'none' | 'pending' | 'ready' | 'error';
+
+export interface DroneDetectionBriefVerdict {
+  readonly detectorName: DroneDetectorName;
+  readonly detectorFamily: 'dsp';
+  readonly isDrone: boolean;
+  readonly confidence: number;
+}
+
+export interface DroneDetectionBriefReportMeta {
+  readonly reportId: string;
+  readonly createdAtIso: string;
+  readonly createdAtMoscow: string;
+  readonly schemaVersion: DroneDetectionBriefSchemaVersion;
+  readonly sampleId: string;
+  readonly sampleTitle: string | null;
+  readonly sampleRate: number;
+  readonly sampleDurationSec: number;
+  readonly analysisMode?: 'stream-manual' | 'stream-auto' | 'track-import';
+  readonly detailedReportStatus: DetailedReportStatus;
+  readonly detailedReportId?: string;
+  readonly detailedReportError?: string;
+}
+
+export interface DroneDetectionBriefReport {
+  readonly meta: DroneDetectionBriefReportMeta;
+  readonly verdicts: readonly DroneDetectionBriefVerdict[];
+}
+
+export interface BuildDroneDetectionBriefReportInput {
+  readonly reportId?: string;
+  readonly createdAt?: Date;
+  readonly sample: BuildDroneDetectionReportSample;
+  readonly verdicts: readonly DroneDetectionBriefVerdict[];
+  readonly analysisMode?: DroneDetectionBriefReportMeta['analysisMode'];
+  readonly detailedReportStatus?: DetailedReportStatus;
+  readonly detailedReportId?: string;
+}
+
 /** Frame-level input for mapping DSP breakdown tables (DDR2). */
 export interface DspFrameVerdictInput {
   readonly index: number;

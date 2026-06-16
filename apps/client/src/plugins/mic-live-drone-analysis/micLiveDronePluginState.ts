@@ -1,16 +1,45 @@
 import type { SampleDetectionVerdict } from '@membrana/detector-base';
-import type { DroneDetectionReport } from '@membrana/detector-report';
+import type { DroneDetectionBriefReport, DroneDetectionReport } from '@membrana/detector-report';
 
-import type { MicLiveDroneAnalysisStatus, MicLiveDroneSnapshot } from './types';
+import {
+  defaultMicLiveDroneAnalysisConfig,
+  type MicLiveDroneAnalysisMode,
+  type MicLiveDroneAnalysisStatus,
+  type MicLiveDroneSnapshot,
+  type MicLiveDroneStreamPhase,
+} from './types';
+
+export interface MicLiveDroneController {
+  readonly startManualWindow: () => void;
+}
+
+let controller: MicLiveDroneController | null = null;
+
+export function registerMicLiveDroneController(ctrl: MicLiveDroneController | null): void {
+  controller = ctrl;
+}
+
+export function requestStartManualStreamWindow(): void {
+  controller?.startManualWindow();
+}
 
 class MicLiveDronePluginStateImpl {
+  private analysisMode: MicLiveDroneAnalysisMode =
+    defaultMicLiveDroneAnalysisConfig.analysisMode;
+  private streamPhase: MicLiveDroneStreamPhase = 'idle';
+  private streamWindowSec = defaultMicLiveDroneAnalysisConfig.streamWindowSec;
+  private streamPauseSec = defaultMicLiveDroneAnalysisConfig.streamPauseSec;
+  private streamElapsedMs = 0;
+  private streamLive = false;
   private lastSampleId: string | null = null;
   private lastSampleTitle: string | null = null;
   private lastJournalTrackId: string | null = null;
   private status: MicLiveDroneAnalysisStatus = 'idle';
   private verdicts: SampleDetectionVerdict[] = [];
-  private detectionReport: DroneDetectionReport | null = null;
+  private briefReport: DroneDetectionBriefReport | null = null;
+  private detailedReport: DroneDetectionReport | null = null;
   private analyzedSampleId: string | null = null;
+  private lastStreamReportId: string | null = null;
   private errorMessage: string | null = null;
 
   private listeners = new Set<() => void>();
@@ -26,6 +55,50 @@ class MicLiveDronePluginStateImpl {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
   };
+
+  syncConfig(params: {
+    analysisMode: MicLiveDroneAnalysisMode;
+    streamWindowSec: number;
+    streamPauseSec: number;
+  }): void {
+    this.analysisMode = params.analysisMode;
+    this.streamWindowSec = params.streamWindowSec;
+    this.streamPauseSec = params.streamPauseSec;
+    this.rebuild();
+  }
+
+  setStreamLive(live: boolean): void {
+    this.streamLive = live;
+    if (!live) {
+      this.streamPhase = 'idle';
+      this.streamElapsedMs = 0;
+    }
+    this.rebuild();
+  }
+
+  beginStreamCollection(): void {
+    this.streamPhase = 'collecting';
+    this.streamElapsedMs = 0;
+    this.status = 'loading';
+    this.errorMessage = null;
+    this.rebuild();
+  }
+
+  updateStreamElapsed(elapsedMs: number): void {
+    this.streamElapsedMs = elapsedMs;
+    this.rebuild();
+  }
+
+  beginStreamFinalize(): void {
+    this.streamPhase = 'finalizing';
+    this.rebuild();
+  }
+
+  beginStreamPause(): void {
+    this.streamPhase = 'pause';
+    this.streamElapsedMs = 0;
+    this.rebuild();
+  }
 
   setImportContext(params: {
     sampleId: string;
@@ -48,45 +121,129 @@ class MicLiveDronePluginStateImpl {
   finishAnalysis(
     sampleId: string,
     verdicts: readonly SampleDetectionVerdict[],
-    report: DroneDetectionReport,
+    report: DroneDetectionBriefReport,
   ): void {
     this.status = 'ready';
     this.analyzedSampleId = sampleId;
     this.verdicts = [...verdicts];
-    this.detectionReport = report;
+    this.briefReport = report;
+    this.detailedReport = null;
     this.errorMessage = null;
+    this.rebuild();
+  }
+
+  finishStreamCycle(
+    verdicts: readonly SampleDetectionVerdict[],
+    report: DroneDetectionBriefReport,
+  ): void {
+    this.status = 'ready';
+    this.analyzedSampleId = report.meta.sampleId;
+    this.verdicts = [...verdicts];
+    this.briefReport = report;
+    this.detailedReport = null;
+    this.lastStreamReportId = report.meta.reportId;
+    this.errorMessage = null;
+    this.streamPhase = 'pause';
+    this.streamElapsedMs = 0;
+    this.rebuild();
+  }
+
+  setDetailedReportPending(reportId: string): void {
+    if (!this.briefReport || this.briefReport.meta.reportId !== reportId) return;
+    this.briefReport = {
+      ...this.briefReport,
+      meta: {
+        ...this.briefReport.meta,
+        detailedReportStatus: 'pending',
+      },
+    };
+    this.rebuild();
+  }
+
+  setDetailedReportReady(report: DroneDetectionReport): void {
+    this.detailedReport = report;
+    if (this.briefReport) {
+      this.briefReport = {
+        ...this.briefReport,
+        meta: {
+          ...this.briefReport.meta,
+          detailedReportStatus: 'ready',
+          detailedReportId: report.meta.reportId,
+        },
+      };
+    }
+    this.rebuild();
+  }
+
+  setDetailedReportError(reportId: string, message: string): void {
+    if (!this.briefReport || this.briefReport.meta.reportId !== reportId) return;
+    this.briefReport = {
+      ...this.briefReport,
+      meta: {
+        ...this.briefReport.meta,
+        detailedReportStatus: 'error',
+        detailedReportError: message,
+      },
+    };
     this.rebuild();
   }
 
   failAnalysis(message: string): void {
     this.status = 'error';
     this.verdicts = [];
-    this.detectionReport = null;
+    this.briefReport = null;
+    this.detailedReport = null;
     this.errorMessage = message;
+    this.streamPhase = 'idle';
+    this.rebuild();
+  }
+
+  resetToIdleAfterStream(): void {
+    this.streamPhase = 'idle';
+    this.streamElapsedMs = 0;
+    if (this.analysisMode !== 'track-import') {
+      this.status = 'idle';
+    }
     this.rebuild();
   }
 
   reset(): void {
+    this.analysisMode = defaultMicLiveDroneAnalysisConfig.analysisMode;
+    this.streamPhase = 'idle';
+    this.streamWindowSec = defaultMicLiveDroneAnalysisConfig.streamWindowSec;
+    this.streamPauseSec = defaultMicLiveDroneAnalysisConfig.streamPauseSec;
+    this.streamElapsedMs = 0;
+    this.streamLive = false;
     this.lastSampleId = null;
     this.lastSampleTitle = null;
     this.lastJournalTrackId = null;
     this.status = 'idle';
     this.verdicts = [];
-    this.detectionReport = null;
+    this.briefReport = null;
+    this.detailedReport = null;
     this.analyzedSampleId = null;
+    this.lastStreamReportId = null;
     this.errorMessage = null;
     this.rebuild();
   }
 
   private buildSnapshot(): MicLiveDroneSnapshot {
     return {
+      analysisMode: this.analysisMode,
+      streamPhase: this.streamPhase,
+      streamWindowSec: this.streamWindowSec,
+      streamPauseSec: this.streamPauseSec,
+      streamElapsedMs: this.streamElapsedMs,
+      streamLive: this.streamLive,
       lastSampleId: this.lastSampleId,
       lastSampleTitle: this.lastSampleTitle,
       lastJournalTrackId: this.lastJournalTrackId,
       status: this.status,
       verdicts: this.verdicts,
-      detectionReport: this.detectionReport,
+      briefReport: this.briefReport,
+      detailedReport: this.detailedReport,
       analyzedSampleId: this.analyzedSampleId,
+      lastStreamReportId: this.lastStreamReportId,
       errorMessage: this.errorMessage,
     };
   }

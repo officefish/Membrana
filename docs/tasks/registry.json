@@ -1147,6 +1147,86 @@
       "dependsOn": [
         "js2-client-journal-reconcile"
       ]
+    },
+    {
+      "id": "live-parallel-detection-sprint",
+      "title": "Параллельный live-анализ: stream modes drone + FFT → журнал (LP1–LP4)",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-16",
+      "notes": "Teamlead: LP1 first; stream 3s+2s; brief default; detailed=LP1b server"
+    },
+    {
+      "id": "lp1-mic-drone-stream-modes",
+      "title": "LP1: stream modes + краткий brief report (client)",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "live-parallel-detection-sprint",
+      "createdAt": "2026-06-16"
+    },
+    {
+      "id": "lp1b-drone-detailed-report-server",
+      "title": "LP1b: подробный DDR по запросу на сервер (brief → detail API)",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "live-parallel-detection-sprint",
+      "createdAt": "2026-06-16",
+      "dependsOn": [
+        "lp1-mic-drone-stream-modes"
+      ]
+    },
+    {
+      "id": "lp2-fft-plugins-journal-sink",
+      "title": "LP2: fft-threshold + trends-fft → LiveJournalService",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "live-parallel-detection-sprint",
+      "createdAt": "2026-06-16",
+      "dependsOn": [
+        "lp1-mic-drone-stream-modes"
+      ],
+      "notes": "FFT plugins remain opt-in (active: false)"
+    },
+    {
+      "id": "lp3-track-import-backpressure",
+      "title": "LP3: track-import режим, очередь и regression DDR",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "live-parallel-detection-sprint",
+      "createdAt": "2026-06-16",
+      "dependsOn": [
+        "lp1-mic-drone-stream-modes"
+      ]
+    },
+    {
+      "id": "lp4-parallel-detection-smoke",
+      "title": "LP4: SLO-тесты, docs, paired smoke",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "live-parallel-detection-sprint",
+      "createdAt": "2026-06-16",
+      "dependsOn": [
+        "lp2-fft-plugins-journal-sink",
+        "lp3-track-import-backpressure"
+      ]
     }
   ]
 }
