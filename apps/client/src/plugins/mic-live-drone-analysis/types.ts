@@ -101,6 +101,8 @@ export interface MicLiveDroneSnapshot {
   readonly analyzedSampleId: string | null;
   readonly lastStreamReportId: string | null;
   readonly errorMessage: string | null;
+  readonly trackQueuedTitle: string | null;
+  readonly trackSkippedCount: number;
 }
 
 export const MIC_LIVE_DRONE_ANALYSIS_MODE_LABELS: Record<MicLiveDroneAnalysisMode, string> = {

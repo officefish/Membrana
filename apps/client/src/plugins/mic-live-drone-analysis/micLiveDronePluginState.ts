@@ -41,6 +41,8 @@ class MicLiveDronePluginStateImpl {
   private analyzedSampleId: string | null = null;
   private lastStreamReportId: string | null = null;
   private errorMessage: string | null = null;
+  private trackQueuedTitle: string | null = null;
+  private trackSkippedCount = 0;
 
   private listeners = new Set<() => void>();
   private snapshotCache: MicLiveDroneSnapshot;
@@ -115,6 +117,16 @@ class MicLiveDronePluginStateImpl {
     this.status = 'loading';
     this.errorMessage = null;
     this.analyzedSampleId = sampleId;
+    this.rebuild();
+  }
+
+  setTrackQueued(title: string | null): void {
+    this.trackQueuedTitle = title;
+    this.rebuild();
+  }
+
+  incrementTrackSkipped(): void {
+    this.trackSkippedCount += 1;
     this.rebuild();
   }
 
@@ -224,6 +236,8 @@ class MicLiveDronePluginStateImpl {
     this.analyzedSampleId = null;
     this.lastStreamReportId = null;
     this.errorMessage = null;
+    this.trackQueuedTitle = null;
+    this.trackSkippedCount = 0;
     this.rebuild();
   }
 
@@ -245,6 +259,8 @@ class MicLiveDronePluginStateImpl {
       analyzedSampleId: this.analyzedSampleId,
       lastStreamReportId: this.lastStreamReportId,
       errorMessage: this.errorMessage,
+      trackQueuedTitle: this.trackQueuedTitle,
+      trackSkippedCount: this.trackSkippedCount,
     };
   }
 

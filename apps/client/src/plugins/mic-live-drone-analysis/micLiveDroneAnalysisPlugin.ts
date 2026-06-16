@@ -70,6 +70,7 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
       );
       let disposed = false;
       let trackImportInFlight = false;
+      let pendingImport: MediaLibrarySampleImportedPayload | null = null;
       let feed: AudioFrameFeed | null = null;
       let unsubFeed: (() => void) | null = null;
       let feedActive = false;
@@ -244,11 +245,7 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
       const runTrackImportAnalysis = async (
         payload: MediaLibrarySampleImportedPayload,
       ): Promise<void> => {
-        if (disposed || trackImportInFlight) return;
-        if (!payload.journalTrackId) return;
-
-        const config = getConfig();
-        if (!isTrackImportAnalysisEnabled(config)) return;
+        if (disposed) return;
 
         trackImportInFlight = true;
         micLiveDronePluginState.setImportContext({
@@ -267,7 +264,7 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
 
           await appendLiveJournalReportFromDroneBrief({
             moduleId: payload.moduleId,
-            trackId: payload.journalTrackId,
+            trackId: payload.journalTrackId ?? '',
             report,
           });
           if (disposed) return;
@@ -279,14 +276,43 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
           micLiveDronePluginState.failAnalysis(message);
         } finally {
           trackImportInFlight = false;
+          drainPendingImport();
         }
+      };
+
+      // Backpressure: keep at most one analysis in flight plus one queued (latest wins).
+      const drainPendingImport = (): void => {
+        if (disposed || trackImportInFlight) return;
+        const next = pendingImport;
+        if (!next) return;
+        pendingImport = null;
+        micLiveDronePluginState.setTrackQueued(null);
+        if (!isTrackImportAnalysisEnabled(getConfig())) return;
+        void runTrackImportAnalysis(next);
+      };
+
+      const enqueueTrackImport = (payload: MediaLibrarySampleImportedPayload): void => {
+        if (!payload.journalTrackId) return;
+        const config = getConfig();
+        if (!isTrackImportAnalysisEnabled(config)) return;
+
+        if (trackImportInFlight) {
+          // A newer clip arrived while busy: drop the previously queued one (if any) and keep latest.
+          if (pendingImport) {
+            micLiveDronePluginState.incrementTrackSkipped();
+          }
+          pendingImport = payload;
+          micLiveDronePluginState.setTrackQueued(payload.title);
+          return;
+        }
+        void runTrackImportAnalysis(payload);
       };
 
       const unsubImported = subscribeMediaLibrarySampleImported((payload) => {
         if (disposed) return;
         if (payload.sourcePluginId !== MIC_BUFFER_RECORDER_PLUGIN_ID) return;
         if (payload.moduleId !== moduleId) return;
-        void runTrackImportAnalysis(payload);
+        enqueueTrackImport(payload);
       });
 
       registerMicLiveDroneController({
@@ -320,6 +346,7 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
 
       return () => {
         disposed = true;
+        pendingImport = null;
         unsubStore();
         unsubImported();
         registerMicLiveDroneController(null);

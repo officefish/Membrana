@@ -214,6 +214,18 @@ export const MicLiveDroneAnalysisPanel: React.FC<MicLiveDroneAnalysisPanelProps>
           </p>
         ) : null}
 
+        {isTrackImport && snapshot.trackQueuedTitle ? (
+          <p className="text-xs text-base-content/60" aria-live="polite">
+            В очереди: <span className="font-medium">{snapshot.trackQueuedTitle}</span>
+          </p>
+        ) : null}
+
+        {isTrackImport && snapshot.trackSkippedCount > 0 ? (
+          <p className="text-xs text-warning" role="status">
+            Пропущено клипов (анализ не успевает): {snapshot.trackSkippedCount}
+          </p>
+        ) : null}
+
         {snapshot.status === 'error' && snapshot.errorMessage ? (
           <div className="alert alert-error text-sm" role="alert">
             {snapshot.errorMessage}

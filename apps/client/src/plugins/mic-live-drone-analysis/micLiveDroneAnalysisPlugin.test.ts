@@ -262,4 +262,51 @@ describe('mic-live-drone-analysis plugin', () => {
 
     teardown();
   });
+
+  it('queues the latest import while one is in flight (LP3 backpressure)', async () => {
+    const deferreds: Array<(value: { verdicts: never[]; report: ReturnType<typeof briefReport> }) => void> = [];
+    vi.mocked(analyzeSampleDetectorsBrief).mockImplementation(
+      (sampleId: string) =>
+        new Promise((resolve) => {
+          deferreds.push(() =>
+            resolve({ verdicts: [], report: briefReport(`report-${sampleId}`) }),
+          );
+        }),
+    );
+
+    const plugin = createMicLiveDroneAnalysisPlugin();
+    const teardown = plugin.install({
+      moduleId,
+      config: { analysisMode: 'track-import' },
+    } as never);
+
+    publishMediaLibrarySampleImported({ ...samplePayload, sampleId: 'clip-a', journalTrackId: 'track-a' });
+    await vi.waitFor(() => {
+      expect(analyzeSampleDetectorsBrief).toHaveBeenCalledTimes(1);
+    });
+
+    // Two more clips arrive while clip-a is still being analyzed.
+    publishMediaLibrarySampleImported({ ...samplePayload, sampleId: 'clip-b', journalTrackId: 'track-b' });
+    publishMediaLibrarySampleImported({ ...samplePayload, sampleId: 'clip-c', journalTrackId: 'track-c' });
+
+    // Only clip-c stays queued; clip-b is dropped (skipped).
+    expect(micLiveDronePluginState.getSnapshot().trackQueuedTitle).toBe('mic-auto-5s');
+    expect(micLiveDronePluginState.getSnapshot().trackSkippedCount).toBe(1);
+    expect(analyzeSampleDetectorsBrief).toHaveBeenCalledTimes(1);
+
+    // Finish clip-a → queued clip-c starts.
+    deferreds[0]?.();
+    await vi.waitFor(() => {
+      expect(analyzeSampleDetectorsBrief).toHaveBeenCalledTimes(2);
+    });
+    expect(analyzeSampleDetectorsBrief).toHaveBeenLastCalledWith('clip-c', 'mic-auto-5s');
+
+    deferreds[1]?.();
+    await vi.waitFor(() => {
+      expect(getDefaultLiveJournalService().getSnapshot().items).toHaveLength(2);
+    });
+    expect(micLiveDronePluginState.getSnapshot().trackQueuedTitle).toBeNull();
+
+    teardown();
+  });
 });
