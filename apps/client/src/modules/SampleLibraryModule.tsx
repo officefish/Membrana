@@ -33,6 +33,10 @@ import {
   SampleLibraryDroneAnalysisPanel,
 } from '../plugins/sample-library-drone-analysis';
 import {
+  SAMPLE_LIBRARY_FFT_THRESHOLD_TEST_PLUGIN_ID,
+  SampleLibraryFftThresholdTestPanel,
+} from '../plugins/sample-library-fft-threshold-test';
+import {
   TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
   TrendsFftSampleAnalyzerPanel,
 } from '../plugins/trends-fft-sample-analyzer';
@@ -215,6 +219,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
       {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
         <SampleLibraryDroneAnalysisPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_FFT_THRESHOLD_TEST_PLUGIN_ID) ? (
+        <SampleLibraryFftThresholdTestPanel moduleId={module.id} />
       ) : null}
 
       {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (

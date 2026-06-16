@@ -1,0 +1,586 @@
+{
+  "generatedAt": "2026-06-16T16:07:11.628Z",
+  "datasetVersion": "v2",
+  "counts": {
+    "train": 80,
+    "val": 40,
+    "total": 120
+  },
+  "target": {
+    "droneRecall": 0.8,
+    "notDroneFpr": 0.4
+  },
+  "distributions": {
+    "drone": {
+      "centroid": {
+        "p10": 2963.9357591653397,
+        "p25": 3588.0066222649625,
+        "p50": 3853.619432741563,
+        "p75": 4020.6862646358322,
+        "p90": 4185.305368851461,
+        "min": 1346.3389505684154,
+        "max": 6304.462730311072
+      },
+      "flux": {
+        "p10": 0,
+        "p25": 0.04693291772467864,
+        "p50": 0.07537439335449445,
+        "p75": 0.09486019158331253,
+        "p90": 0.12344501752766834,
+        "min": 0,
+        "max": 0.22758621775087162
+      },
+      "rms": {
+        "p10": 0.06719049146916405,
+        "p25": 0.11157782658265519,
+        "p50": 0.14992904784712593,
+        "p75": 0.19150541590569004,
+        "p90": 0.2223148039468391,
+        "min": 0.011240866809484003,
+        "max": 0.3211881794446468
+      }
+    },
+    "not-drone": {
+      "centroid": {
+        "p10": 0,
+        "p25": 1116.5646815238363,
+        "p50": 1846.0999048215376,
+        "p75": 3355.957311212562,
+        "p90": 4558.518119627809,
+        "min": 0,
+        "max": 6833.4281922563705
+      },
+      "flux": {
+        "p10": 0,
+        "p25": 0.00009012621415095249,
+        "p50": 0.0359956534537932,
+        "p75": 0.0783673003610233,
+        "p90": 0.13664451652917012,
+        "min": 0,
+        "max": 0.36125554229568807
+      },
+      "rms": {
+        "p10": 0,
+        "p25": 0.005148442970388044,
+        "p50": 0.07924152198445109,
+        "p75": 0.16274667147327215,
+        "p90": 0.2579203953741295,
+        "min": 0,
+        "max": 0.5226850881895387
+      }
+    }
+  },
+  "thresholdAttempts": [
+    {
+      "config": {
+        "id": "A-recall-first",
+        "description": "Широкий drone-бокс (высокий centroid), normal — максимум recall",
+        "frameCount": 5,
+        "intervalMs": 500,
+        "strictness": "normal",
+        "thresholds": {
+          "centroid": {
+            "min": 2600,
+            "max": 4600
+          },
+          "flux": {
+            "min": 0.02,
+            "max": 0.25
+          },
+          "rms": {
+            "min": 0.05,
+            "max": 0.35
+          }
+        }
+      },
+      "train": {
+        "tp": 39,
+        "fp": 25,
+        "fn": 1,
+        "tn": 15,
+        "precision": 0.609375,
+        "recall": 0.975,
+        "fpr": 0.625,
+        "f1": 0.7499999999999999
+      },
+      "val": {
+        "tp": 19,
+        "fp": 17,
+        "fn": 1,
+        "tn": 3,
+        "precision": 0.5277777777777778,
+        "recall": 0.95,
+        "fpr": 0.85,
+        "f1": 0.6785714285714285
+      }
+    },
+    {
+      "config": {
+        "id": "B-balanced",
+        "description": "Бокс p10-p90 дрона, normal (2 из 3 метрик)",
+        "frameCount": 5,
+        "intervalMs": 500,
+        "strictness": "normal",
+        "thresholds": {
+          "centroid": {
+            "min": 2900,
+            "max": 4300
+          },
+          "flux": {
+            "min": 0.03,
+            "max": 0.16
+          },
+          "rms": {
+            "min": 0.07,
+            "max": 0.28
+          }
+        }
+      },
+      "train": {
+        "tp": 39,
+        "fp": 18,
+        "fn": 1,
+        "tn": 22,
+        "precision": 0.6842105263157895,
+        "recall": 0.975,
+        "fpr": 0.45,
+        "f1": 0.8041237113402062
+      },
+      "val": {
+        "tp": 17,
+        "fp": 14,
+        "fn": 3,
+        "tn": 6,
+        "precision": 0.5483870967741935,
+        "recall": 0.85,
+        "fpr": 0.7,
+        "f1": 0.6666666666666665
+      }
+    },
+    {
+      "config": {
+        "id": "C-precision-first",
+        "description": "Узкий бокс (интерквартиль), normal — снижаем ложные ценой recall",
+        "frameCount": 5,
+        "intervalMs": 500,
+        "strictness": "normal",
+        "thresholds": {
+          "centroid": {
+            "min": 3300,
+            "max": 4150
+          },
+          "flux": {
+            "min": 0.05,
+            "max": 0.13
+          },
+          "rms": {
+            "min": 0.1,
+            "max": 0.22
+          }
+        }
+      },
+      "train": {
+        "tp": 32,
+        "fp": 4,
+        "fn": 8,
+        "tn": 36,
+        "precision": 0.8888888888888888,
+        "recall": 0.8,
+        "fpr": 0.1,
+        "f1": 0.8421052631578948
+      },
+      "val": {
+        "tp": 15,
+        "fp": 8,
+        "fn": 5,
+        "tn": 12,
+        "precision": 0.6521739130434783,
+        "recall": 0.75,
+        "fpr": 0.4,
+        "f1": 0.6976744186046512
+      }
+    }
+  ],
+  "trendsAttempts": [
+    {
+      "combo": "1-tight+competitors",
+      "minConfidence": 30,
+      "train": {
+        "tp": 34,
+        "fp": 3,
+        "fn": 6,
+        "tn": 37,
+        "precision": 0.918918918918919,
+        "recall": 0.85,
+        "fpr": 0.075,
+        "f1": 0.8831168831168831
+      },
+      "val": {
+        "tp": 19,
+        "fp": 6,
+        "fn": 1,
+        "tn": 14,
+        "precision": 0.76,
+        "recall": 0.95,
+        "fpr": 0.3,
+        "f1": 0.8444444444444444
+      }
+    },
+    {
+      "combo": "1-tight+competitors",
+      "minConfidence": 35,
+      "train": {
+        "tp": 34,
+        "fp": 3,
+        "fn": 6,
+        "tn": 37,
+        "precision": 0.918918918918919,
+        "recall": 0.85,
+        "fpr": 0.075,
+        "f1": 0.8831168831168831
+      },
+      "val": {
+        "tp": 19,
+        "fp": 6,
+        "fn": 1,
+        "tn": 14,
+        "precision": 0.76,
+        "recall": 0.95,
+        "fpr": 0.3,
+        "f1": 0.8444444444444444
+      }
+    },
+    {
+      "combo": "1-tight+competitors",
+      "minConfidence": 40,
+      "train": {
+        "tp": 34,
+        "fp": 3,
+        "fn": 6,
+        "tn": 37,
+        "precision": 0.918918918918919,
+        "recall": 0.85,
+        "fpr": 0.075,
+        "f1": 0.8831168831168831
+      },
+      "val": {
+        "tp": 19,
+        "fp": 6,
+        "fn": 1,
+        "tn": 14,
+        "precision": 0.76,
+        "recall": 0.95,
+        "fpr": 0.3,
+        "f1": 0.8444444444444444
+      }
+    },
+    {
+      "combo": "1-tight+competitors",
+      "minConfidence": 45,
+      "train": {
+        "tp": 34,
+        "fp": 3,
+        "fn": 6,
+        "tn": 37,
+        "precision": 0.918918918918919,
+        "recall": 0.85,
+        "fpr": 0.075,
+        "f1": 0.8831168831168831
+      },
+      "val": {
+        "tp": 19,
+        "fp": 6,
+        "fn": 1,
+        "tn": 14,
+        "precision": 0.76,
+        "recall": 0.95,
+        "fpr": 0.3,
+        "f1": 0.8444444444444444
+      }
+    },
+    {
+      "combo": "1-tight+competitors",
+      "minConfidence": 50,
+      "train": {
+        "tp": 34,
+        "fp": 3,
+        "fn": 6,
+        "tn": 37,
+        "precision": 0.918918918918919,
+        "recall": 0.85,
+        "fpr": 0.075,
+        "f1": 0.8831168831168831
+      },
+      "val": {
+        "tp": 19,
+        "fp": 6,
+        "fn": 1,
+        "tn": 14,
+        "precision": 0.76,
+        "recall": 0.95,
+        "fpr": 0.3,
+        "f1": 0.8444444444444444
+      }
+    },
+    {
+      "combo": "2-merged+competitors",
+      "minConfidence": 30,
+      "train": {
+        "tp": 40,
+        "fp": 29,
+        "fn": 0,
+        "tn": 11,
+        "precision": 0.5797101449275363,
+        "recall": 1,
+        "fpr": 0.725,
+        "f1": 0.7339449541284404
+      },
+      "val": {
+        "tp": 20,
+        "fp": 19,
+        "fn": 0,
+        "tn": 1,
+        "precision": 0.5128205128205128,
+        "recall": 1,
+        "fpr": 0.95,
+        "f1": 0.6779661016949152
+      }
+    },
+    {
+      "combo": "2-merged+competitors",
+      "minConfidence": 35,
+      "train": {
+        "tp": 40,
+        "fp": 29,
+        "fn": 0,
+        "tn": 11,
+        "precision": 0.5797101449275363,
+        "recall": 1,
+        "fpr": 0.725,
+        "f1": 0.7339449541284404
+      },
+      "val": {
+        "tp": 20,
+        "fp": 19,
+        "fn": 0,
+        "tn": 1,
+        "precision": 0.5128205128205128,
+        "recall": 1,
+        "fpr": 0.95,
+        "f1": 0.6779661016949152
+      }
+    },
+    {
+      "combo": "2-merged+competitors",
+      "minConfidence": 40,
+      "train": {
+        "tp": 40,
+        "fp": 29,
+        "fn": 0,
+        "tn": 11,
+        "precision": 0.5797101449275363,
+        "recall": 1,
+        "fpr": 0.725,
+        "f1": 0.7339449541284404
+      },
+      "val": {
+        "tp": 20,
+        "fp": 19,
+        "fn": 0,
+        "tn": 1,
+        "precision": 0.5128205128205128,
+        "recall": 1,
+        "fpr": 0.95,
+        "f1": 0.6779661016949152
+      }
+    },
+    {
+      "combo": "2-merged+competitors",
+      "minConfidence": 45,
+      "train": {
+        "tp": 40,
+        "fp": 29,
+        "fn": 0,
+        "tn": 11,
+        "precision": 0.5797101449275363,
+        "recall": 1,
+        "fpr": 0.725,
+        "f1": 0.7339449541284404
+      },
+      "val": {
+        "tp": 20,
+        "fp": 19,
+        "fn": 0,
+        "tn": 1,
+        "precision": 0.5128205128205128,
+        "recall": 1,
+        "fpr": 0.95,
+        "f1": 0.6779661016949152
+      }
+    },
+    {
+      "combo": "2-merged+competitors",
+      "minConfidence": 50,
+      "train": {
+        "tp": 40,
+        "fp": 29,
+        "fn": 0,
+        "tn": 11,
+        "precision": 0.5797101449275363,
+        "recall": 1,
+        "fpr": 0.725,
+        "f1": 0.7339449541284404
+      },
+      "val": {
+        "tp": 20,
+        "fp": 19,
+        "fn": 0,
+        "tn": 1,
+        "precision": 0.5128205128205128,
+        "recall": 1,
+        "fpr": 0.95,
+        "f1": 0.6779661016949152
+      }
+    },
+    {
+      "combo": "3-tight+subtypes+competitors",
+      "minConfidence": 30,
+      "train": {
+        "tp": 40,
+        "fp": 25,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.6153846153846154,
+        "recall": 1,
+        "fpr": 0.625,
+        "f1": 0.761904761904762
+      },
+      "val": {
+        "tp": 19,
+        "fp": 20,
+        "fn": 1,
+        "tn": 0,
+        "precision": 0.48717948717948717,
+        "recall": 0.95,
+        "fpr": 1,
+        "f1": 0.6440677966101694
+      }
+    },
+    {
+      "combo": "3-tight+subtypes+competitors",
+      "minConfidence": 35,
+      "train": {
+        "tp": 40,
+        "fp": 25,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.6153846153846154,
+        "recall": 1,
+        "fpr": 0.625,
+        "f1": 0.761904761904762
+      },
+      "val": {
+        "tp": 19,
+        "fp": 20,
+        "fn": 1,
+        "tn": 0,
+        "precision": 0.48717948717948717,
+        "recall": 0.95,
+        "fpr": 1,
+        "f1": 0.6440677966101694
+      }
+    },
+    {
+      "combo": "3-tight+subtypes+competitors",
+      "minConfidence": 40,
+      "train": {
+        "tp": 40,
+        "fp": 25,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.6153846153846154,
+        "recall": 1,
+        "fpr": 0.625,
+        "f1": 0.761904761904762
+      },
+      "val": {
+        "tp": 19,
+        "fp": 20,
+        "fn": 1,
+        "tn": 0,
+        "precision": 0.48717948717948717,
+        "recall": 0.95,
+        "fpr": 1,
+        "f1": 0.6440677966101694
+      }
+    },
+    {
+      "combo": "3-tight+subtypes+competitors",
+      "minConfidence": 45,
+      "train": {
+        "tp": 40,
+        "fp": 25,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.6153846153846154,
+        "recall": 1,
+        "fpr": 0.625,
+        "f1": 0.761904761904762
+      },
+      "val": {
+        "tp": 19,
+        "fp": 20,
+        "fn": 1,
+        "tn": 0,
+        "precision": 0.48717948717948717,
+        "recall": 0.95,
+        "fpr": 1,
+        "f1": 0.6440677966101694
+      }
+    },
+    {
+      "combo": "3-tight+subtypes+competitors",
+      "minConfidence": 50,
+      "train": {
+        "tp": 40,
+        "fp": 25,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.6153846153846154,
+        "recall": 1,
+        "fpr": 0.625,
+        "f1": 0.761904761904762
+      },
+      "val": {
+        "tp": 19,
+        "fp": 20,
+        "fn": 1,
+        "tn": 0,
+        "precision": 0.48717948717948717,
+        "recall": 0.95,
+        "fpr": 1,
+        "f1": 0.6440677966101694
+      }
+    }
+  ],
+  "verdict": {
+    "thresholdMeetsTarget": false,
+    "trendsMeetsTarget": true,
+    "bestThreshold": {
+      "score": 0.35,
+      "recall": 0.75,
+      "fpr": 0.4,
+      "precision": 0.6521739130434783,
+      "f1": 0.6976744186046512,
+      "ref": "C-precision-first"
+    },
+    "bestTrends": {
+      "score": 0.6499999999999999,
+      "recall": 0.95,
+      "fpr": 0.3,
+      "precision": 0.76,
+      "f1": 0.8444444444444444,
+      "ref": "1-tight+competitors@minC30"
+    }
+  }
+}

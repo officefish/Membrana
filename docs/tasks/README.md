@@ -50,6 +50,20 @@
 | `vdr6-recognition-report-gate` | VDR6: recognition report — best detector, gap to 80% and stage-gate | M | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `drone-detector-detail-report` | Подробный отчёт детекторов дрона (DDR1–4) | L | [`DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md`](../docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md) | [#78](https://github.com/officefish/Membrana/issues/78) |
 | `telemetry-journal-live-refactor` | Live-журнал телеметрии (TJ1–TJ6) | L | [`TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md) | [#79](https://github.com/officefish/Membrana/issues/79) |
+| `live-parallel-detection-sprint` | Параллельный live-анализ: stream modes drone + FFT → журнал (LP1–LP4) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp1-mic-drone-stream-modes` | LP1: stream modes + краткий brief report (client) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp1b-drone-detailed-report-server` | LP1b: подробный DDR по запросу на сервер (brief → detail API) | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp2-fft-plugins-journal-sink` | LP2: fft-threshold + trends-fft → LiveJournalService | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp3-track-import-backpressure` | LP3: track-import режим, очередь и regression DDR | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp4-parallel-detection-smoke` | LP4: SLO-тесты, docs, paired smoke | S | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp5-journal-report-renderers` | LP5: журнальные рендеры FFT-порог/тенденции (client+cabinet) + фикс live-дрона | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `fft-last-chance-calibration` | FFT — последний шанс: калибровка порога и trends на free-v1 (FL1–FL5) | L | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | — |
+| `fl1-sample-library-fft-threshold-plugin` | FL1: плагин FFT пороговый тест в библиотеке сэмплов | M | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | — |
+| `fl2-benchmark-fft-trends-harness` | FL2: Node-харнесс benchmark:fft-trends (threshold + trends) | M | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | — |
+| `fl3-threshold-calibration` | FL3: 3 конфигурации порогового теста на free-v1 | M | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | — |
+| `fl4-trends-template-calibration` | FL4: 3 комбинации trends-шаблонов + sweep minConfidence | M | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | — |
+| `fl5-fft-last-chance-report` | FL5: отчёт go/no-go и архивация | S | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | — |
+| `trends-drone-tight-curated-promotion` | Trends-fft go: DRONE_TIGHT → curated-каталог + benchmark:detectors | M | [`TRENDS_DRONE_TIGHT_CURATED_PROMOTION_PROMPT.md`](../docs/prompts/TRENDS_DRONE_TIGHT_CURATED_PROMOTION_PROMPT.md) | — |
 
 ---
 
