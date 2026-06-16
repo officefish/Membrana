@@ -6,6 +6,7 @@ import {
 } from '@membrana/telemetry-journal-service';
 
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
+import { publishJournalSnapshotUpdated } from '@/lib/liveJournalHub';
 import { subscribeMediaLibrarySampleImported } from '@/lib/mediaLibraryHub';
 import { resolveJournalBackend } from '@/lib/resolveJournalBackend';
 
@@ -25,7 +26,11 @@ async function attachService(svc: LiveJournalService): Promise<boolean> {
     return false;
   }
   serviceUnsub = svc.subscribe(() => {
-    /* TJ5: publish journal snapshot events for UI modules */
+    const snap = svc.getSnapshot();
+    publishJournalSnapshotUpdated({
+      version: snap.version,
+      itemCount: snap.items.length,
+    });
   });
   return true;
 }
