@@ -187,6 +187,8 @@ temporal:   activityRatio 0.8–1.0, centroidStd 0–400,
   1. `trends-drone-tight-curated-promotion` — внедрить `DRONE_TIGHT` в curated-каталог template-match и переснять `benchmark:detectors`.
   2. калибровка trends-fft в библиотеке сэмплов под `DRONE_TIGHT` — дать пользователю ручной прогон экспериментов на текущем датасете.
 
+> **Утренний ритуал:** `yarn plan:day`, `yarn standup`, `yarn main-day-issue` читают этот документ и **не** предлагают «Этап 1.A / unified benchmark harmonic+cepstral+flux» как магистраль дня (см. `scripts/lib/detection-planning-priorities.mjs`, `DEVELOPER_RHYTHM.md`).
+
 ---
 
 ## 7. Карта файлов (для будущих агентов)

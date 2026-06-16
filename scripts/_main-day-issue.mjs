@@ -24,6 +24,10 @@ import {
   validateFocusId,
 } from './lib/main-day-issue-paths.mjs';
 import {
+  buildDetectionPlanningConstraintsBullets,
+  FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
+} from './lib/detection-planning-priorities.mjs';
+import {
   listActive,
   listPendingGithubClose,
   loadRegistry,
@@ -36,6 +40,11 @@ const MAX_PROMPT_EXCERPT = 10_000;
 
 const INPUT_DOCS = [
   { rel: 'docs/DAILY_STANDUP.md', required: true, label: 'Стендап дня (главный вход)' },
+  {
+    rel: FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
+    required: false,
+    label: 'FFT/trends: потолок эшелона 0 и приоритеты (эпик #84)',
+  },
   { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'План на день' },
   {
     rel: 'docs/DAILY_CODE_REVIEW.md',
@@ -144,6 +153,8 @@ function buildGenerationPrompt({ outputRel, focusOverride, activeCount, issueCou
     '- Не выдумывай закрытые задачи и пакеты.',
     '- Если активных задач несколько — выбери одну по приоритету WHITE_PAPER / стендапа / L-before-S; остальные только в «не делаем» или «вторично».',
     '- Не дублируй стендап целиком — только решение «что делаем сейчас».',
+    '- **Не** выбирай primary focus «benchmark harmonic/cepstral/flux / Этап 1.A» — см. FFT_METRICS_POTENTIAL_AND_LIMITS.md §6; приоритет — trends DRONE_TIGHT, validated data, эшелон 2.',
+    ...buildDetectionPlanningConstraintsBullets(),
     `- Файл: \`${outputRel}\` (канонический фокус дня).`,
   ].join('\n');
 }

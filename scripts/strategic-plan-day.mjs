@@ -31,4 +31,5 @@ await runStrategicPlan({
   outputPath: resolve(process.cwd(), 'docs/STRATEGIC_PLAN_DAY.md'),
   commandName: `yarn plan:day${full ? ' --full' : ''}`,
   full,
+  includeDetectionPriorities: true,
 });
