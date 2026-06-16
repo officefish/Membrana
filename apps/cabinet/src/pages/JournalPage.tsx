@@ -14,6 +14,22 @@ const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
 export function JournalPage() {
   const journal = useCabinetLiveJournal();
 
+  const activeFilterLabel =
+    FILTER_OPTIONS.find((option) => option.value === journal.filter)?.label ?? journal.filter;
+
+  const handleClearByFilter = () => {
+    const count = journal.filterCounts[journal.filter];
+    if (count === 0 || journal.clearingJournal) return;
+    if (
+      !window.confirm(
+        `Удалить ${count} записей (фильтр: ${activeFilterLabel})? Действие необратимо.`,
+      )
+    ) {
+      return;
+    }
+    void journal.clearByFilter(journal.filter);
+  };
+
   if (journal.loading && journal.items.length === 0) {
     return (
       <div className="flex items-center gap-3">
@@ -96,23 +112,39 @@ export function JournalPage() {
               <p className="text-xs text-warning">Медиатека узла недоступна — play/export blob отключены.</p>
             ) : null}
 
-            <div
-              className="flex flex-wrap gap-2"
-              role="group"
-              aria-label="Фильтр live-журнала"
-            >
-              {FILTER_OPTIONS.map(({ value, label }) => (
-                <button
-                  key={value}
-                  type="button"
-                  className={`btn btn-xs min-h-10 ${journal.filter === value ? 'btn-primary' : 'btn-ghost'}`}
-                  aria-pressed={journal.filter === value}
-                  onClick={() => journal.setFilter(value)}
-                >
-                  {label} ({journal.filterCounts[value]})
-                </button>
-              ))}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label="Фильтр live-журнала"
+              >
+                {FILTER_OPTIONS.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`btn btn-xs min-h-10 ${journal.filter === value ? 'btn-primary' : 'btn-ghost'}`}
+                    aria-pressed={journal.filter === value}
+                    onClick={() => journal.setFilter(value)}
+                  >
+                    {label} ({journal.filterCounts[value]})
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline btn-error"
+                disabled={journal.clearingJournal || journal.filterCounts[journal.filter] === 0}
+                onClick={handleClearByFilter}
+              >
+                {journal.clearingJournal ? 'Очистка…' : 'Очистить'}
+              </button>
             </div>
+
+            {journal.clearError ? (
+              <p className="text-sm text-error" role="alert">
+                {journal.clearError}
+              </p>
+            ) : null}
 
             <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
               <label className="form-control flex-1 min-w-[12rem]">

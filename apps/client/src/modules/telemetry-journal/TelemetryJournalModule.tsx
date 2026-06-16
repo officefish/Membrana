@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ModuleProps } from '@membrana/agenda';
 import { getDefaultMediaLibraryService } from '@membrana/media-library-service';
 import { bindSamplePlaybackBlobReader } from '@membrana/sample-playback-service';
@@ -12,6 +12,8 @@ import {
   sliceLiveJournalPage,
   useLiveJournal,
 } from '@membrana/telemetry-journal-service';
+
+import { useRemoteMutation } from '../../lib/useRemoteMutation';
 
 import { LiveJournalItemRow } from './components/LiveJournalItemRow';
 import { LiveJournalPager } from './components/LiveJournalPager';
@@ -38,6 +40,8 @@ export const TelemetryJournalModule: React.FC<
   const [filter, setFilter] = useState<LiveJournalFilter>('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [clearError, setClearError] = useState<string | null>(null);
+  const { busy: clearingJournal, run: runRemoteMutation } = useRemoteMutation();
 
   useLiveJournalAutoRefresh(service);
 
@@ -82,6 +86,34 @@ export const TelemetryJournalModule: React.FC<
     URL.revokeObjectURL(url);
   };
 
+  const activeFilterLabel =
+    FILTER_OPTIONS.find((option) => option.value === filter)?.label ?? filter;
+
+  const handleClearByFilter = useCallback(() => {
+    const count = filterCounts[filter];
+    if (count === 0 || clearingJournal) return;
+    if (
+      !window.confirm(
+        `Удалить ${count} записей (фильтр: ${activeFilterLabel})? Действие необратимо.`,
+      )
+    ) {
+      return;
+    }
+    setClearError(null);
+    void runRemoteMutation('Очистка журнала', async () => {
+      await service.clearByFilter(filter);
+    }).catch((err: unknown) => {
+      setClearError(err instanceof Error ? err.message : 'Не удалось очистить журнал');
+    });
+  }, [
+    activeFilterLabel,
+    clearingJournal,
+    filter,
+    filterCounts,
+    runRemoteMutation,
+    service,
+  ]);
+
   const storageLabel =
     STORAGE_MODE_LABELS[snapshot.storageMode] ?? snapshot.storageMode;
 
@@ -103,23 +135,39 @@ export const TelemetryJournalModule: React.FC<
         </div>
 
         <div className="flex flex-col gap-3">
-          <div
-            className="flex flex-wrap gap-2"
-            role="group"
-            aria-label="Фильтр live-журнала"
-          >
-            {FILTER_OPTIONS.map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                className={`btn btn-xs min-h-10 ${filter === value ? 'btn-primary' : 'btn-ghost'}`}
-                aria-pressed={filter === value}
-                onClick={() => setFilter(value)}
-              >
-                {label} ({filterCounts[value]})
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-label="Фильтр live-журнала"
+            >
+              {FILTER_OPTIONS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`btn btn-xs min-h-10 ${filter === value ? 'btn-primary' : 'btn-ghost'}`}
+                  aria-pressed={filter === value}
+                  onClick={() => setFilter(value)}
+                >
+                  {label} ({filterCounts[value]})
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline btn-error"
+              disabled={clearingJournal || filterCounts[filter] === 0}
+              onClick={handleClearByFilter}
+            >
+              {clearingJournal ? 'Очистка…' : 'Очистить'}
+            </button>
           </div>
+
+          {clearError ? (
+            <p className="text-sm text-error" role="alert">
+              {clearError}
+            </p>
+          ) : null}
 
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
             <label className="form-control flex-1 min-w-[12rem]">

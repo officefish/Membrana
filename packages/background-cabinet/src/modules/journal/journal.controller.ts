@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -67,6 +68,15 @@ export class JournalController {
       query.mediaDeviceId,
       query.cursor,
       query.filter,
+    );
+  }
+
+  @Delete('journal-items')
+  deleteJournalItems(@Req() req: AuthenticatedRequest, @Query() query: ListJournalQueryDto) {
+    return this.journalService.deleteJournalItems(
+      req.authUser!.id,
+      query.filter,
+      query.mediaDeviceId,
     );
   }
 }

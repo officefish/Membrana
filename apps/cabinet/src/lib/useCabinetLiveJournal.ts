@@ -24,8 +24,10 @@ import {
 
 import { fetchMembraneNodes } from '@/api/sampleLibrary';
 import { fetchMembraneMe } from '@/api/membrane';
+import { deleteTelemetryJournalItems } from '@/api/journal';
 import { fetchAllJournalItems } from '@/lib/fetchAllJournalItems';
 import { getCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
+import { useRemoteMutation } from '@/lib/useRemoteMutation';
 import { useVisibleInterval } from '@/lib/useVisibleInterval';
 
 export const CABINET_LIVE_JOURNAL_REFRESH_MS = 1_000;
@@ -46,8 +48,10 @@ export function useCabinetLiveJournal() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [clearError, setClearError] = useState<string | null>(null);
   const [mediaService, setMediaService] = useState<MediaLibraryService | null>(null);
   const playback = useSamplePlayback();
+  const { busy: clearingJournal, run: runRemoteMutation } = useRemoteMutation();
 
   const loadNodes = useCallback(async () => {
     const me = await fetchMembraneMe();
@@ -114,6 +118,25 @@ export function useCabinetLiveJournal() {
   }, [reloadItems, selectedDeviceId]);
 
   useVisibleInterval(pollJournal, CABINET_LIVE_JOURNAL_REFRESH_MS, Boolean(selectedDeviceId));
+
+  const clearByFilter = useCallback(
+    async (activeFilter: LiveJournalFilter) => {
+      if (!selectedDeviceId || clearingJournal) return;
+      setClearError(null);
+      try {
+        await runRemoteMutation('Очистка журнала', async () => {
+          await deleteTelemetryJournalItems({
+            filter: activeFilter,
+            mediaDeviceId: selectedDeviceId,
+          });
+          await reloadItems({ silent: true });
+        });
+      } catch (err) {
+        setClearError(err instanceof Error ? err.message : 'Не удалось очистить журнал');
+      }
+    },
+    [clearingJournal, reloadItems, runRemoteMutation, selectedDeviceId],
+  );
 
   const filterCounts = useMemo(() => countLiveJournalFilters(items), [items]);
 
@@ -195,6 +218,9 @@ export function useCabinetLiveJournal() {
     setPage,
     loading,
     error,
+    clearError,
+    clearingJournal,
+    clearByFilter,
     reload: reloadItems,
     playTrack,
     exportTrackBlob,

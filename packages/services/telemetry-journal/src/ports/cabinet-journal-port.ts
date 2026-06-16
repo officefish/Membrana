@@ -54,6 +54,11 @@ export interface PaginatedCabinetJournalItems {
   readonly nextCursor: string | null;
 }
 
+export interface DeleteCabinetJournalItemsQuery {
+  readonly filter: LiveJournalFilter;
+  readonly mediaDeviceId?: string;
+}
+
 /** Remote journal persistence via cabinet API (TJ2). */
 export interface ICabinetJournalPort {
   listReports(limit?: number): Promise<readonly CabinetTelemetryReportDto[]>;
@@ -62,6 +67,10 @@ export interface ICabinetJournalPort {
   listJournalItems?(
     query?: ListCabinetJournalItemsQuery,
   ): Promise<readonly LiveJournalItem[] | PaginatedCabinetJournalItems>;
+  /** Contextual bulk delete by filter (JE5). */
+  deleteJournalItems?(
+    query: DeleteCabinetJournalItemsQuery,
+  ): Promise<{ readonly deleted: number }>;
   createReport(
     input: CreateCabinetTelemetryReportInput,
   ): Promise<{ readonly deduplicated: boolean }>;

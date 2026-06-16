@@ -13,6 +13,7 @@ import type {
 import { cabinetRowsToLiveJournalItems } from './live-journal-items.mapper';
 import {
   LIVE_JOURNAL_PAGE_SIZE,
+  matchesLiveJournalItemRowFilter,
   paginateLiveJournalItemRows,
   parseLiveJournalFilter,
 } from './live-journal-pagination';
@@ -267,6 +268,55 @@ export class JournalService {
       filter,
     });
     return { items: page.items, nextCursor: page.nextCursor };
+  }
+
+  /** Contextual bulk delete by live journal filter (JE5). */
+  async deleteJournalItems(
+    userId: string,
+    filterRaw?: string,
+    mediaDeviceId?: string,
+  ): Promise<{ deleted: number }> {
+    const filter = parseLiveJournalFilter(filterRaw);
+    const ctx = await this.requireMembraneContext(userId);
+    const deviceFilter = this.resolveMediaDeviceFilter(ctx, mediaDeviceId);
+
+    const reportWhere = {
+      membraneId: ctx.membraneId,
+      ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+    };
+    const recordWhere = {
+      membraneId: ctx.membraneId,
+      ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+    };
+
+    const [reportRows, liveRows] = await Promise.all([
+      this.prisma.telemetryReport.findMany({ where: reportWhere }),
+      this.prisma.telemetryLiveRecord.findMany({ where: recordWhere }),
+    ]);
+
+    const merged = cabinetRowsToLiveJournalItems(
+      reportRows.map(serializeReport),
+      liveRows.map(serializeLiveRecord),
+    );
+    const targets = merged.filter((item) => matchesLiveJournalItemRowFilter(item, filter));
+    const reportIds = targets.filter((item) => item.kind === 'report').map((item) => item.id);
+    const recordIds = targets.filter((item) => item.kind === 'track').map((item) => item.id);
+
+    let deleted = 0;
+    if (reportIds.length > 0) {
+      const result = await this.prisma.telemetryReport.deleteMany({
+        where: { id: { in: reportIds }, membraneId: ctx.membraneId },
+      });
+      deleted += result.count;
+    }
+    if (recordIds.length > 0) {
+      const result = await this.prisma.telemetryLiveRecord.deleteMany({
+        where: { id: { in: recordIds }, membraneId: ctx.membraneId },
+      });
+      deleted += result.count;
+    }
+
+    return { deleted };
   }
 
   private resolveMediaDeviceFilter(

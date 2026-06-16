@@ -96,3 +96,22 @@ export async function fetchTelemetryJournalItems(
   const body = (await res.json()) as PaginatedTelemetryJournalItemsResponse;
   return body;
 }
+
+export interface DeleteTelemetryJournalItemsQuery {
+  readonly filter: LiveJournalFilter;
+  readonly mediaDeviceId?: string;
+}
+
+export async function deleteTelemetryJournalItems(
+  query: DeleteTelemetryJournalItemsQuery,
+): Promise<{ deleted: number }> {
+  const params = new URLSearchParams();
+  params.set('filter', query.filter);
+  if (query.mediaDeviceId) params.set('mediaDeviceId', query.mediaDeviceId);
+
+  const res = await authFetch(`/v1/telemetry/journal-items?${params.toString()}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { deleted: number };
+}

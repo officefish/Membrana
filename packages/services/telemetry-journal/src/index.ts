@@ -71,6 +71,7 @@ export type {
   CabinetTelemetryReportDto,
   CreateCabinetTelemetryLiveRecordInput,
   CreateCabinetTelemetryReportInput,
+  DeleteCabinetJournalItemsQuery,
   ICabinetJournalPort,
   ListCabinetJournalItemsQuery,
   PaginatedCabinetJournalItems,

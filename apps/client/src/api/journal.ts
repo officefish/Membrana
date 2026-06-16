@@ -1,4 +1,4 @@
-import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
+import type { LiveJournalFilter, LiveJournalItem } from '@membrana/telemetry-journal-service';
 import { getCabinetApiBase } from './pairing';
 
 export interface UploadTelemetryReportBody {
@@ -153,4 +153,25 @@ export async function listTelemetryJournalItems(
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as PaginatedTelemetryJournalItems;
+}
+
+export interface DeleteTelemetryJournalItemsQuery {
+  readonly filter: LiveJournalFilter;
+  readonly mediaDeviceId?: string;
+}
+
+export async function deleteTelemetryJournalItems(
+  token: string,
+  query: DeleteTelemetryJournalItemsQuery,
+): Promise<{ deleted: number }> {
+  const params = new URLSearchParams();
+  params.set('filter', query.filter);
+  if (query.mediaDeviceId) params.set('mediaDeviceId', query.mediaDeviceId);
+
+  const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/journal-items?${params.toString()}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { deleted: number };
 }

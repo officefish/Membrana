@@ -8,6 +8,7 @@ import {
 
 import {
   createTelemetryLiveRecord,
+  deleteTelemetryJournalItems,
   listTelemetryJournalItems,
   listTelemetryLiveRecords,
   listTelemetryReports,
@@ -61,6 +62,9 @@ export function createCabinetJournalPort(token: string): ICabinetJournalPort {
         payload: { ...input.payload },
       });
       return { deduplicated: res.deduplicated };
+    },
+    async deleteJournalItems(query) {
+      return deleteTelemetryJournalItems(token, query);
     },
   };
 }

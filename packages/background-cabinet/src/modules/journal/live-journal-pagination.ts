@@ -74,6 +74,13 @@ export function paginateLiveJournalItemRows(
   return { items: page, nextCursor };
 }
 
+export function matchesLiveJournalItemRowFilter(
+  item: LiveJournalItemRow,
+  filter: LiveJournalFilter,
+): boolean {
+  return matchesFilter(item, filter);
+}
+
 export function parseLiveJournalFilter(raw?: string): LiveJournalFilter {
   if (raw === 'tracks' || raw === 'reports' || raw === 'detections') return raw;
   return 'all';

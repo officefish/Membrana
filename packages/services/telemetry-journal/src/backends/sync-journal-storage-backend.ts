@@ -15,6 +15,7 @@ import type { IJournalStorageBackend } from '../ports/storage-backend.js';
 import type {
   AppendLiveJournalReportInput,
   AppendLiveJournalTrackInput,
+  LiveJournalFilter,
   LiveJournalItem,
   LiveJournalStorageMode,
 } from '../types.js';
@@ -28,6 +29,8 @@ export interface SyncJournalStorageBackendOptions {
   readonly pullLimit?: number;
   /** Browser localStorage key for session rehydrate (TJ6). */
   readonly localCacheKey?: string;
+  /** Paired media device id for scoped remote deletes (JE5). */
+  readonly mediaDeviceId?: string;
 }
 
 /** Local cache + cabinet push/pull sync (TJ2). */
@@ -42,6 +45,8 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
   private readonly localCacheKey: string | undefined;
 
+  private readonly mediaDeviceId: string | undefined;
+
   constructor(
     port: ICabinetJournalPort,
     options: SyncJournalStorageBackendOptions = {},
@@ -52,6 +57,7 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     this.storageMode = options.storageMode ?? 'remote-server';
     this.pullLimit = options.pullLimit ?? 200;
     this.localCacheKey = options.localCacheKey;
+    this.mediaDeviceId = options.mediaDeviceId;
 
     if (this.localCacheKey) {
       const cached = readJournalLocalCache(this.localCacheKey);
@@ -101,6 +107,23 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
     this.persistLocalCache();
     return item;
+  }
+
+  async clearByFilter(filter: LiveJournalFilter): Promise<number> {
+    if (this.port.deleteJournalItems) {
+      try {
+        await this.port.deleteJournalItems({
+          filter,
+          mediaDeviceId: this.mediaDeviceId,
+        });
+      } catch {
+        /* local clear still runs when cabinet is unreachable */
+      }
+    }
+
+    const deleted = await this.local.clearByFilter(filter);
+    this.persistLocalCache();
+    return deleted;
   }
 
   private persistLocalCache(): void {

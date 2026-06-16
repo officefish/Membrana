@@ -102,4 +102,52 @@ describe('LiveJournalService', () => {
     expect(service.getSnapshot().items).toHaveLength(2);
     expect(service.listFiltered('detections')).toHaveLength(1);
   });
+
+  it('clearByFilter removes the active subset without cascade (JE5)', async () => {
+    const service = createLiveJournalService(createMemoryJournalStorageBackend());
+    await service.init();
+
+    await service.appendTrack(sampleTrackInput('track-1'));
+    await service.appendTrack(sampleTrackInput('track-2'));
+    await service.appendReport({
+      clientEntryId: liveJournalReportClientEntryId('rep-1'),
+      moduleId: 'mic-mod',
+      moduleName: 'microphone',
+      report: {
+        schema: 'drone-detection-report/v1',
+        reportId: 'rep-1',
+        trackId: 'track-1',
+        isDetected: true,
+        summaryText: 'дрон',
+        payload: { meta: { reportId: 'rep-1' } },
+      },
+    });
+    await service.appendReport({
+      clientEntryId: liveJournalReportClientEntryId('rep-2'),
+      moduleId: 'mic-mod',
+      moduleName: 'microphone',
+      report: {
+        schema: 'drone-detection-report/v1',
+        reportId: 'rep-2',
+        trackId: 'track-2',
+        isDetected: false,
+        summaryText: 'чисто',
+        payload: { meta: { reportId: 'rep-2' } },
+      },
+    });
+
+    const tracksOnly = await service.clearByFilter('tracks');
+    expect(tracksOnly.deleted).toBe(2);
+    expect(service.getSnapshot().items).toHaveLength(2);
+    expect(service.listFiltered('reports')).toHaveLength(2);
+
+    const detectionsOnly = await service.clearByFilter('detections');
+    expect(detectionsOnly.deleted).toBe(1);
+    expect(service.getSnapshot().items).toHaveLength(1);
+    expect(service.getSnapshot().items[0]?.report?.isDetected).toBe(false);
+
+    const reportsOnly = await service.clearByFilter('reports');
+    expect(reportsOnly.deleted).toBe(1);
+    expect(service.getSnapshot().items).toHaveLength(0);
+  });
 });

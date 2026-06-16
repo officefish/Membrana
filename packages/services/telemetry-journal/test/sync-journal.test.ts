@@ -68,4 +68,27 @@ describe('SyncJournalStorageBackend', () => {
     expect(merged.some((item) => item.kind === 'track')).toBe(true);
     expect(merged.some((item) => item.kind === 'report')).toBe(true);
   });
+
+  it('clears local cache and calls remote delete when available (JE5)', async () => {
+    const deleteJournalItems = vi.fn().mockResolvedValue({ deleted: 1 });
+    const port: ICabinetJournalPort = {
+      listReports: vi.fn().mockResolvedValue([]),
+      listLiveRecords: vi.fn().mockResolvedValue([]),
+      createReport: vi.fn(),
+      createLiveRecord: vi.fn(),
+      deleteJournalItems,
+    };
+
+    const backend = createSyncJournalStorageBackend(port, { mediaDeviceId: 'device-1' });
+    await backend.appendTrack(sampleTrackInput('local-track'));
+    expect((await backend.listItems()).some((item) => item.kind === 'track')).toBe(true);
+
+    const deleted = await backend.clearByFilter('tracks');
+    expect(deleted).toBe(1);
+    expect(deleteJournalItems).toHaveBeenCalledWith({
+      filter: 'tracks',
+      mediaDeviceId: 'device-1',
+    });
+    expect((await backend.listItems()).some((item) => item.kind === 'track')).toBe(false);
+  });
 });

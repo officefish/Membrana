@@ -9,9 +9,11 @@ import {
   type LiveJournalConfig,
 } from '../constants.js';
 import type { IJournalStorageBackend } from '../ports/storage-backend.js';
+import { matchesLiveJournalFilter } from '../filters.js';
 import type {
   AppendLiveJournalReportInput,
   AppendLiveJournalTrackInput,
+  LiveJournalFilter,
   LiveJournalItem,
   LiveJournalStorageMode,
 } from '../types.js';
@@ -83,6 +85,21 @@ export class MemoryJournalStorageBackend implements IJournalStorageBackend {
 
     this.pushItem(item);
     return item;
+  }
+
+  async clearByFilter(filter: LiveJournalFilter): Promise<number> {
+    const remaining: LiveJournalItem[] = [];
+    let deleted = 0;
+    for (const item of this.items) {
+      if (matchesLiveJournalFilter(item, filter)) {
+        this.clientEntryIds.delete(item.clientEntryId);
+        deleted += 1;
+      } else {
+        remaining.push(item);
+      }
+    }
+    this.items = remaining;
+    return deleted;
   }
 
   async appendReport(input: AppendLiveJournalReportInput): Promise<LiveJournalItem | null> {

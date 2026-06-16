@@ -86,6 +86,15 @@ export class LiveJournalService {
     return item;
   }
 
+  /** Contextual clear by active UI filter (JE5). */
+  async clearByFilter(filter: LiveJournalFilter): Promise<{ deleted: number }> {
+    const deleted = await this.backend.clearByFilter(filter);
+    if (deleted > 0) {
+      await this.refresh();
+    }
+    return { deleted };
+  }
+
   private emit(): void {
     this.version += 1;
     this.listeners.forEach((listener) => listener());

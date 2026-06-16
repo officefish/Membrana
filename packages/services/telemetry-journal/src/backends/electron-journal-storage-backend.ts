@@ -1,6 +1,7 @@
 import type {
   AppendLiveJournalReportInput,
   AppendLiveJournalTrackInput,
+  LiveJournalFilter,
   LiveJournalItem,
 } from '../types.js';
 import type { IJournalStorageBackend } from '../ports/storage-backend.js';
@@ -36,6 +37,10 @@ export class ElectronJournalStorageBackend implements IJournalStorageBackend {
 
   appendReport(input: AppendLiveJournalReportInput): Promise<LiveJournalItem | null> {
     return this.delegate.appendReport(input);
+  }
+
+  clearByFilter(filter: LiveJournalFilter): Promise<number> {
+    return this.delegate.clearByFilter(filter);
   }
 }
 

@@ -53,6 +53,7 @@ async function createPairedBackend(pairing: PairedNodeCredentials): Promise<IJou
     if (cabinetOk) {
       return createSyncJournalStorageBackend(createCabinetJournalPort(pairing.token), {
         localCacheKey: journalLocalCacheKey(pairing.deviceId),
+        mediaDeviceId: pairing.deviceId,
       });
     }
     if (attempt < PAIRED_CABINET_PING_ATTEMPTS - 1) {
