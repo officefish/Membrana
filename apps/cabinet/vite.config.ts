@@ -28,6 +28,12 @@ export default defineConfig(({ mode }) => {
       '@membrana/detector-report': fileURLToPath(
         new URL('../../packages/libs/detector-report/src/index.ts', import.meta.url),
       ),
+      '@membrana/journal-report-views': fileURLToPath(
+        new URL('../../packages/libs/journal-report-views/src/index.ts', import.meta.url),
+      ),
+      '@membrana/trends-detector-service': fileURLToPath(
+        new URL('../../packages/services/trends-detector/src/index.ts', import.meta.url),
+      ),
       '@membrana/telemetry-journal-service': fileURLToPath(
         new URL('../../packages/services/telemetry-journal/src/index.ts', import.meta.url),
       ),

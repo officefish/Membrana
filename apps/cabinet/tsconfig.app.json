@@ -21,6 +21,10 @@
       "@membrana/audio-engine-service/*": ["../../packages/services/audio-engine/src/*"],
       "@membrana/detector-report": ["../../packages/libs/detector-report/src/index.ts"],
       "@membrana/detector-report/*": ["../../packages/libs/detector-report/src/*"],
+      "@membrana/journal-report-views": ["../../packages/libs/journal-report-views/src/index.ts"],
+      "@membrana/journal-report-views/*": ["../../packages/libs/journal-report-views/src/*"],
+      "@membrana/trends-detector-service": ["../../packages/services/trends-detector/src/index.ts"],
+      "@membrana/trends-detector-service/*": ["../../packages/services/trends-detector/src/*"],
       "@membrana/telemetry-journal-service": ["../../packages/services/telemetry-journal/src/index.ts"],
       "@membrana/telemetry-journal-service/*": ["../../packages/services/telemetry-journal/src/*"],
       "@/*": ["./src/*"]

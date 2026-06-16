@@ -17,6 +17,7 @@
     "@membrana/audio-engine-service": "*",
     "@membrana/core": "*",
     "@membrana/detector-report": "*",
+    "@membrana/journal-report-views": "*",
     "@membrana/media-library-service": "*",
     "@membrana/sample-playback-service": "*",
     "@membrana/telemetry-journal-service": "*",

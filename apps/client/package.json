@@ -26,6 +26,7 @@
     "@membrana/device-board": "*",
     "@membrana/fft-analyzer-service": "*",
     "@membrana/harmonic-detector-service": "*",
+    "@membrana/journal-report-views": "*",
     "@membrana/media-library-service": "*",
     "@membrana/sample-playback-service": "*",
     "@membrana/spectral-flux-detector-service": "*",

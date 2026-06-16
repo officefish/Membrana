@@ -60,6 +60,9 @@ export default defineConfig(({ mode }) => {
         '@membrana/detector-report': fileURLToPath(
           new URL('../../packages/libs/detector-report/src/index.ts', import.meta.url),
         ),
+        '@membrana/journal-report-views': fileURLToPath(
+          new URL('../../packages/libs/journal-report-views/src/index.ts', import.meta.url),
+        ),
         '@membrana/detector-base': fileURLToPath(
           new URL('../../packages/services/detectors/base/src/index.ts', import.meta.url),
         ),

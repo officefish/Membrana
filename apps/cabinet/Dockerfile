@@ -14,13 +14,18 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY tsconfig.base.json ./
 COPY packages/core packages/core
 COPY packages/libs/detector-report packages/libs/detector-report
+COPY packages/libs/journal-report-views packages/libs/journal-report-views
 COPY packages/services/media-library packages/services/media-library
 COPY packages/services/audio-engine packages/services/audio-engine
 COPY packages/services/sample-playback packages/services/sample-playback
 COPY packages/services/telemetry-journal packages/services/telemetry-journal
+COPY packages/services/trends-detector packages/services/trends-detector
+COPY packages/services/fft-analyzer packages/services/fft-analyzer
 COPY apps/cabinet apps/cabinet
 
-RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/detector-report @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service @membrana/telemetry-journal-service --all \
+# journal-report-views, trends-detector and fft-analyzer are bundled from src via
+# the cabinet vite aliases, so they only need to be present (no build step).
+RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/detector-report @membrana/journal-report-views @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service @membrana/telemetry-journal-service @membrana/trends-detector-service @membrana/fft-analyzer-service --all \
   && yarn workspace @membrana/detector-report build \
   && yarn workspace @membrana/telemetry-journal-service build \
   && yarn workspace @membrana/cabinet exec vite build

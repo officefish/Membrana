@@ -13,6 +13,7 @@ export default {
     '../../packages/core/src/**/*.{ts,tsx}',
     '../../packages/device-board/src/**/*.{ts,tsx}',
     '../../packages/libs/audioDataViz/src/**/*.{ts,tsx}',
+    '../../packages/libs/journal-report-views/src/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {},

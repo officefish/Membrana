@@ -11,6 +11,7 @@
     { "path": "./packages/services/drone-detection-orchestrator" },
     { "path": "./packages/libs/audioDataViz" },
     { "path": "./packages/libs/detector-report" },
+    { "path": "./packages/libs/journal-report-views" },
     { "path": "./apps/client/tsconfig.app.json" },
     { "path": "./apps/client/tsconfig.node.json" }
   ]

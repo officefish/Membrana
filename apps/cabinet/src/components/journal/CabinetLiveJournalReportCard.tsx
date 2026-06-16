@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
 import { downloadDroneDetectionReport } from '@membrana/detector-report';
+import {
+  FftThresholdReportView,
+  TrendsFftReportView,
+  fftThresholdReportFromItem,
+  trendsFftReportFromItem,
+} from '@membrana/journal-report-views';
 
 import { DroneDetectionReportView } from '@/components/detector-report';
 import { droneDetectionReportFromItem } from '@/lib/droneDetectionReportFromItem';
@@ -22,17 +28,23 @@ function formatTimestamp(timestamp: number): string {
 
 export function CabinetLiveJournalReportCard({ item, trackTitle }: CabinetLiveJournalReportCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const report = droneDetectionReportFromItem(item);
+  const detailedReport = droneDetectionReportFromItem(item);
+  const fftThresholdReport = fftThresholdReportFromItem(item);
+  const trendsFftReport = trendsFftReportFromItem(item);
   const isDetected = item.report?.isDetected === true;
   const summary = item.report?.summaryText;
 
-  if (!report) {
+  if (!detailedReport && !fftThresholdReport && !trendsFftReport) {
     return (
       <article className="rounded-lg border border-base-300 bg-base-300/20 p-2 text-xs text-base-content/60">
         Отчёт {item.report?.schema ?? 'unknown'} — нет совместимого рендера
       </article>
     );
   }
+
+  let badgeLabel = 'Отчёт';
+  if (fftThresholdReport) badgeLabel = 'FFT пороговый тест';
+  else if (trendsFftReport) badgeLabel = 'Анализатор тенденций FFT';
 
   return (
     <article
@@ -50,7 +62,7 @@ export function CabinetLiveJournalReportCard({ item, trackTitle }: CabinetLiveJo
           <span className="text-[10px] text-base-content/50 shrink-0" aria-hidden>
             {expanded ? '▼' : '▶'}
           </span>
-          <span className="badge badge-secondary badge-sm">Отчёт</span>
+          <span className="badge badge-secondary badge-sm">{badgeLabel}</span>
           <span className="text-xs text-base-content/70 tabular-nums">{formatTimestamp(item.timestamp)}</span>
           <span
             className={`text-xs font-semibold shrink-0 ${
@@ -66,34 +78,38 @@ export function CabinetLiveJournalReportCard({ item, trackTitle }: CabinetLiveJo
             <span className="text-[10px] text-base-content/50 truncate">· {trackTitle}</span>
           ) : null}
         </button>
-        <div className="flex gap-1 shrink-0">
-          <button
-            type="button"
-            className="btn btn-ghost btn-xs min-h-10"
-            aria-label="Экспорт отчёта JSON"
-            onClick={(event) => {
-              event.stopPropagation();
-              downloadDroneDetectionReport(report, 'json');
-            }}
-          >
-            JSON
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-xs min-h-10"
-            aria-label="Экспорт отчёта TXT"
-            onClick={(event) => {
-              event.stopPropagation();
-              downloadDroneDetectionReport(report, 'txt');
-            }}
-          >
-            TXT
-          </button>
-        </div>
+        {detailedReport ? (
+          <div className="flex gap-1 shrink-0">
+            <button
+              type="button"
+              className="btn btn-ghost btn-xs min-h-10"
+              aria-label="Экспорт отчёта JSON"
+              onClick={(event) => {
+                event.stopPropagation();
+                downloadDroneDetectionReport(detailedReport, 'json');
+              }}
+            >
+              JSON
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost btn-xs min-h-10"
+              aria-label="Экспорт отчёта TXT"
+              onClick={(event) => {
+                event.stopPropagation();
+                downloadDroneDetectionReport(detailedReport, 'txt');
+              }}
+            >
+              TXT
+            </button>
+          </div>
+        ) : null}
       </header>
       {expanded ? (
-        <div className="border-t border-base-300/50 p-2">
-          <DroneDetectionReportView report={report} />
+        <div className="border-t border-base-300/50 p-2 space-y-2">
+          {detailedReport ? <DroneDetectionReportView report={detailedReport} /> : null}
+          {fftThresholdReport ? <FftThresholdReportView report={fftThresholdReport} /> : null}
+          {trendsFftReport ? <TrendsFftReportView report={trendsFftReport} /> : null}
         </div>
       ) : null}
     </article>
