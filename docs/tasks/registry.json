@@ -1184,6 +1184,7 @@
         "lp1-mic-drone-stream-modes"
       ],
       "notes": "Done: new @membrana/drone-detection-orchestrator-service (shared DDR core), client analyzeSampleDetectors refactored to use it; background-media POST /v1/devices/:deviceId/samples/:sampleId/drone-detection-report (Node WAV PCM16 decode + dynamic import orchestrator, WAV-only 422); client requestDetailedDroneReport → media → appendLiveJournalReportFromDroneDetection + setDetailedReportReady. Branch vesnin. Tests: orchestrator + wav-decode green; client/media typecheck+build green."
+    },
     {
       "id": "lp2-fft-plugins-journal-sink",
       "title": "LP2: fft-threshold + trends-fft → LiveJournalService",
@@ -1228,6 +1229,21 @@
         "lp3-track-import-backpressure"
       ],
       "notes": "docs/LIVE_PARALLEL_DETECTION.md; streamWindowCollector SLO test; paired smoke checklist"
+    },
+    {
+      "id": "lp5-journal-report-renderers",
+      "title": "LP5: журнальные рендеры FFT-порог/тенденции (client+cabinet) + фикс live-дрона",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "live-parallel-detection-sprint",
+      "createdAt": "2026-06-16",
+      "dependsOn": [
+        "lp2-fft-plugins-journal-sink"
+      ],
+      "notes": "Client done (ветка vesnin): FftThresholdReportView (FrameTickStrip+ReportMatrix), TrendsFftReportView (winner+TrendsScoreRanking+TrendsMatchDetailTable), полные ярлыки. Фикс mic-live-drone: resetToIdleAfterStream больше не гасит status → результат держится в панели; manual-mode journal append подтверждён регресс-тестом (8/8). TODO: паритет рендеров в apps/cabinet (CabinetLiveJournalReportCard) + деплой cabinet.membrana.space."
     }
   ]
 }

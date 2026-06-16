@@ -211,11 +211,12 @@ class MicLiveDronePluginStateImpl {
   }
 
   resetToIdleAfterStream(): void {
+    // Keep `status`/`briefReport`/`verdicts` so the last stream result stays
+    // visible in the panel until the next window finalizes (manual mode would
+    // otherwise flash the report and immediately hide it). Only the live phase
+    // returns to idle.
     this.streamPhase = 'idle';
     this.streamElapsedMs = 0;
-    if (this.analysisMode !== 'track-import') {
-      this.status = 'idle';
-    }
     this.rebuild();
   }
 

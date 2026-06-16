@@ -7,6 +7,8 @@ import { droneDetectionBriefFromItem } from '../adapters/droneDetectionBriefFrom
 import { droneDetectionReportFromItem } from '../adapters/droneDetectionReportFromItem';
 import { fftThresholdReportFromItem } from '../adapters/fftThresholdReportFromItem';
 import { trendsFftReportFromItem } from '../adapters/trendsFftReportFromItem';
+import { FftThresholdReportView } from './FftThresholdReportView';
+import { TrendsFftReportView } from './TrendsFftReportView';
 
 export interface LiveJournalReportCardProps {
   readonly item: LiveJournalItem;
@@ -50,67 +52,6 @@ function BriefVerdictTable({
   );
 }
 
-function FftThresholdView({
-  report,
-}: {
-  readonly report: NonNullable<ReturnType<typeof fftThresholdReportFromItem>>;
-}): React.ReactElement {
-  return (
-    <div className="space-y-1 text-xs">
-      <p className="text-base-content/70">
-        Режим: {report.mode === 'manual' ? 'ручной' : 'авто'} · строгость: {report.strictness} ·
-        интервал {report.intervalMs} мс
-      </p>
-      <p className="text-base-content/70 tabular-nums">
-        Прошли порог: {report.passedCount}/{report.frameCount} ({Math.round(report.passRate * 100)}%)
-      </p>
-      {report.frames.length > 0 ? (
-        <table className="table table-xs w-full">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th className="text-right">Центроид, Гц</th>
-              <th className="text-right">Поток</th>
-              <th className="text-right">RMS</th>
-              <th>Кадр</th>
-            </tr>
-          </thead>
-          <tbody>
-            {report.frames.map((frame) => (
-              <tr key={frame.index}>
-                <td>{frame.index + 1}</td>
-                <td className="text-right tabular-nums">{Math.round(frame.centroidHz)}</td>
-                <td className="text-right tabular-nums">{frame.fluxRaw.toFixed(3)}</td>
-                <td className="text-right tabular-nums">{frame.rmsRaw.toFixed(3)}</td>
-                <td>{frame.framePassed ? '✓' : '✗'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : null}
-    </div>
-  );
-}
-
-function TrendsFftView({
-  report,
-}: {
-  readonly report: NonNullable<ReturnType<typeof trendsFftReportFromItem>>;
-}): React.ReactElement {
-  return (
-    <div className="space-y-1 text-xs">
-      <p className="text-base-content/70">
-        {report.detectedStateIcon} {report.detectedStateName} · уверенность{' '}
-        {Math.round(report.confidence)}% ({report.confidenceLevel})
-      </p>
-      <p className="text-base-content/70">
-        Режим: {report.mode === 'manual' ? 'ручной' : 'авто'} · замеров:{' '}
-        {report.measurementsCount} · интервал {report.intervalMs} мс
-      </p>
-    </div>
-  );
-}
-
 export const LiveJournalReportCard: React.FC<LiveJournalReportCardProps> = ({
   item,
   trackTitle,
@@ -126,8 +67,8 @@ export const LiveJournalReportCard: React.FC<LiveJournalReportCardProps> = ({
 
   let badgeLabel = 'Отчёт';
   if (isBrief) badgeLabel = 'Краткий отчёт';
-  else if (fftThresholdReport) badgeLabel = 'FFT порог';
-  else if (trendsFftReport) badgeLabel = 'Тенденции FFT';
+  else if (fftThresholdReport) badgeLabel = 'FFT пороговый тест';
+  else if (trendsFftReport) badgeLabel = 'Анализатор тенденций FFT';
 
   if (!detailedReport && !briefReport && !fftThresholdReport && !trendsFftReport) {
     return (
@@ -182,8 +123,8 @@ export const LiveJournalReportCard: React.FC<LiveJournalReportCardProps> = ({
               Подробный DDR (template-match, таблицы кадров) — по запросу на сервер (LP1b).
             </p>
           ) : null}
-          {fftThresholdReport ? <FftThresholdView report={fftThresholdReport} /> : null}
-          {trendsFftReport ? <TrendsFftView report={trendsFftReport} /> : null}
+          {fftThresholdReport ? <FftThresholdReportView report={fftThresholdReport} /> : null}
+          {trendsFftReport ? <TrendsFftReportView report={trendsFftReport} /> : null}
         </div>
       ) : null}
     </article>

@@ -11,7 +11,10 @@ import {
 
 import { publishMediaLibrarySampleImported, resetMediaLibraryHubForTests } from '@/lib/mediaLibraryHub';
 import { createMicLiveDroneAnalysisPlugin } from '@/plugins/mic-live-drone-analysis/micLiveDroneAnalysisPlugin';
-import { micLiveDronePluginState } from '@/plugins/mic-live-drone-analysis/micLiveDronePluginState';
+import {
+  micLiveDronePluginState,
+  requestStartManualStreamWindow,
+} from '@/plugins/mic-live-drone-analysis/micLiveDronePluginState';
 import { MIC_BUFFER_RECORDER_PLUGIN_ID } from '@/plugins/mic-buffer-recorder/types';
 
 vi.mock('@/plugins/mic-live-drone-analysis/analyzeSampleDetectorsBrief', () => ({
@@ -259,6 +262,81 @@ describe('mic-live-drone-analysis plugin', () => {
     const report = getDefaultLiveJournalService().getSnapshot().items[0]?.report;
     expect(report?.schema).toBe('drone-detection-brief/v1');
     expect(report?.trackId).toBe(`stream:${moduleId}:report-stream-1`);
+
+    teardown();
+  });
+
+  it('appends brief stream report after a manual window (stream-manual mode)', async () => {
+    const plugin = createMicLiveDroneAnalysisPlugin();
+    const teardown = plugin.install({
+      moduleId,
+      config: {
+        analysisMode: 'stream-manual',
+        streamWindowSec: 3,
+        streamPauseSec: 2,
+      },
+    } as never);
+
+    await vi.waitFor(() => {
+      expect(mockFeed.start).toHaveBeenCalled();
+    });
+
+    // No auto-collection in manual mode: nothing happens until the user starts a window.
+    emitFrame(0);
+    await vi.advanceTimersByTimeAsync(3000);
+    emitFrame(1);
+    expect(analyzeStreamDetectorsBrief).not.toHaveBeenCalled();
+
+    requestStartManualStreamWindow();
+    emitFrame(2);
+    await vi.advanceTimersByTimeAsync(3000);
+    emitFrame(3);
+
+    await vi.waitFor(() => {
+      expect(analyzeStreamDetectorsBrief).toHaveBeenCalled();
+    });
+
+    await vi.waitFor(() => {
+      expect(getDefaultLiveJournalService().getSnapshot().items).toHaveLength(1);
+    });
+
+    const report = getDefaultLiveJournalService().getSnapshot().items[0]?.report;
+    expect(report?.schema).toBe('drone-detection-brief/v1');
+    expect(report?.trackId).toBe(`stream:${moduleId}:report-stream-1`);
+
+    teardown();
+  });
+
+  it('keeps the last stream result visible after the pause window', async () => {
+    const plugin = createMicLiveDroneAnalysisPlugin();
+    const teardown = plugin.install({
+      moduleId,
+      config: {
+        analysisMode: 'stream-manual',
+        streamWindowSec: 3,
+        streamPauseSec: 2,
+      },
+    } as never);
+
+    await vi.waitFor(() => {
+      expect(mockFeed.start).toHaveBeenCalled();
+    });
+
+    requestStartManualStreamWindow();
+    emitFrame(0);
+    await vi.advanceTimersByTimeAsync(3000);
+    emitFrame(1);
+
+    await vi.waitFor(() => {
+      expect(micLiveDronePluginState.getSnapshot().status).toBe('ready');
+    });
+
+    // After the pause elapses the live phase returns to idle, but the result stays.
+    await vi.advanceTimersByTimeAsync(2000);
+    const snapshot = micLiveDronePluginState.getSnapshot();
+    expect(snapshot.streamPhase).toBe('idle');
+    expect(snapshot.status).toBe('ready');
+    expect(snapshot.briefReport).not.toBeNull();
 
     teardown();
   });
