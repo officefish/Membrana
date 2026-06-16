@@ -11,6 +11,7 @@ import {
   publishMediaLibraryCaptureStop,
   subscribeMediaLibraryBufferCleared,
   subscribeMediaLibraryQuotaUpdated,
+  subscribeMediaLibrarySampleImported,
 } from '../../lib/mediaLibraryHub';
 import { publishMediaLibraryQuotaFromService } from '../../lib/mediaLibraryHubBridge';
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
@@ -143,6 +144,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
               notes: `mode=${runtimeMode};reason=${reason}`,
             },
           });
+          micBufferRecorderPluginState.setBufferSampleCountPending(true);
           micBufferRecorderPluginState.setError(null);
         } catch (err) {
           micBufferRecorderPluginState.setError(
@@ -327,6 +329,12 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
 
       const unsubBufferCleared = subscribeMediaLibraryBufferCleared(() => {
         micBufferRecorderPluginState.setError(null);
+        micBufferRecorderPluginState.setBufferSampleCountPending(false);
+      });
+
+      const unsubSampleImported = subscribeMediaLibrarySampleImported((payload) => {
+        if (payload.sourcePluginId !== MIC_BUFFER_RECORDER_PLUGIN_ID) return;
+        micBufferRecorderPluginState.setBufferSampleCountPending(false);
       });
 
       if (runtimeMode === 'auto') {
@@ -339,6 +347,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         unsubStream();
         unsubQuota();
         unsubBufferCleared();
+        unsubSampleImported();
         clearRecordingTimers();
         clearAutoTimers();
         cancelActiveRecorder('plugin-teardown');

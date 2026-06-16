@@ -25,7 +25,10 @@ export interface MicBufferRecorderSnapshot {
   readonly serverReachable: boolean;
   readonly error: string | null;
   readonly effectiveFormat: MediaLibraryCaptureFormat;
+  readonly bufferSampleCountPending: boolean;
 }
+
+const BUFFER_SAMPLE_COUNT_PENDING_TIMEOUT_MS = 30_000;
 
 class MicBufferRecorderPluginStateImpl {
   private streamLive = false;
@@ -46,6 +49,8 @@ class MicBufferRecorderPluginStateImpl {
   private serverReachable = true;
   private error: string | null = null;
   private effectiveFormat: MediaLibraryCaptureFormat = 'wav';
+  private bufferSampleCountPending = false;
+  private bufferSampleCountPendingTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private listeners = new Set<() => void>();
   private snapshotCache: MicBufferRecorderSnapshot;
@@ -130,12 +135,36 @@ class MicBufferRecorderPluginStateImpl {
     this.rebuild();
   }
 
+  setBufferSampleCountPending(pending: boolean): void {
+    if (this.bufferSampleCountPending === pending) return;
+    this.bufferSampleCountPending = pending;
+    if (pending) {
+      this.clearBufferSampleCountPendingTimeout();
+      this.bufferSampleCountPendingTimeout = setTimeout(() => {
+        this.bufferSampleCountPending = false;
+        this.bufferSampleCountPendingTimeout = null;
+        this.rebuild();
+      }, BUFFER_SAMPLE_COUNT_PENDING_TIMEOUT_MS);
+    } else {
+      this.clearBufferSampleCountPendingTimeout();
+    }
+    this.rebuild();
+  }
+
   reset(): void {
     this.streamLive = false;
     this.isRecording = false;
     this.elapsedSec = 0;
     this.error = null;
+    this.setBufferSampleCountPending(false);
     this.rebuild();
+  }
+
+  private clearBufferSampleCountPendingTimeout(): void {
+    if (this.bufferSampleCountPendingTimeout != null) {
+      clearTimeout(this.bufferSampleCountPendingTimeout);
+      this.bufferSampleCountPendingTimeout = null;
+    }
   }
 
   private rebuild(): void {
@@ -163,6 +192,7 @@ class MicBufferRecorderPluginStateImpl {
       serverReachable: this.serverReachable,
       error: this.error,
       effectiveFormat: this.effectiveFormat,
+      bufferSampleCountPending: this.bufferSampleCountPending,
     };
   }
 }

@@ -22,7 +22,7 @@ import {
   resolveMicBufferRecorderConfig,
   type MicBufferRecorderPluginConfig,
 } from './types';
-import { formatCaptureLabel, isCaptureFormatSupported, pickFallbackCaptureFormat } from './recordingUtils';
+import { formatCaptureLabel, formatStoredSampleCount, isCaptureFormatSupported, pickFallbackCaptureFormat } from './recordingUtils';
 import { useMicBufferRecorder } from './useMicBufferRecorder';
 
 interface Props {
@@ -302,9 +302,14 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
           aria-label="Заполнение квоты буфера"
         />
         <p className="text-xs text-base-content/60">
-          {snapshot.storageMode === 'browser-limited-fallback'
-            ? `${snapshot.sampleCount} / ${snapshot.maxBufferSamples} сэмплов в __buffer__`
-            : `${snapshot.sampleCount} сэмплов в __buffer__`}
+          {snapshot.bufferSampleCountPending ? (
+            <span className="inline-flex items-center gap-2" role="status" aria-live="polite">
+              <span className="loading loading-spinner loading-xs" aria-hidden />
+              Обновляем буфер…
+            </span>
+          ) : (
+            formatStoredSampleCount(snapshot.sampleCount)
+          )}
         </p>
         {snapshot.recordingBlocked ? (
           <p className="text-xs text-error">

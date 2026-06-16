@@ -1056,6 +1056,18 @@
         "je1-buffer-clear-event-chain",
         "je4-cabinet-journal-fast-refresh"
       ]
+    },
+    {
+      "id": "mic-buffer-sample-count-loading",
+      "title": "mic-buffer: прелоадер счётчика сэмплов после записи",
+      "promptPath": "docs/prompts/MIC_BUFFER_SAMPLE_COUNT_LOADING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

@@ -33,6 +33,20 @@ export function pickFallbackCaptureFormat(
   return 'wav';
 }
 
+/** Russian plural for «семпл» (1 / 2–4 / 5+). */
+export function pluralizeSampleWord(count: number): string {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'семпл';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'семпла';
+  return 'семплов';
+}
+
+/** User-facing buffer sample count (no internal collection names). */
+export function formatStoredSampleCount(count: number): string {
+  return `В памяти хранится: ${count} ${pluralizeSampleWord(count)}`;
+}
+
 export function formatCaptureLabel(format: MediaLibraryCaptureFormat): string {
   switch (format) {
     case 'wav':
