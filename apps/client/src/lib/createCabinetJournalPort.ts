@@ -33,7 +33,7 @@ export function createCabinetJournalPort(token: string): ICabinetJournalPort {
         cursor: query?.cursor ?? undefined,
         filter: query?.filter,
       });
-      if (unified) return unified.items;
+      if (unified) return unified;
 
       const [reports, liveRecords] = await Promise.all([
         listTelemetryReports(token, query?.limit),

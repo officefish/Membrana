@@ -8,6 +8,7 @@ import {
   paginateLiveJournalItems,
   sliceLiveJournalPage,
 } from '../src/pagination.js';
+import { countLiveJournalFilters } from '../src/filters.js';
 import type { LiveJournalItem } from '../src/types.js';
 
 function item(
@@ -100,5 +101,38 @@ describe('live journal pagination', () => {
     expect(sliceLiveJournalPage(rows, 0)).toHaveLength(LIVE_JOURNAL_PAGE_SIZE);
     expect(sliceLiveJournalPage(rows, 1)).toHaveLength(5);
     expect(countLiveJournalPages(rows.length)).toBe(2);
+  });
+
+  it('paginates per active filter only (JS3: 60 tracks + 15 detections)', () => {
+    const tracks = Array.from({ length: 60 }, (_, index) =>
+      item(`track-${index}`, 'track', 10_000 - index, `ce-track-${index}`),
+    );
+    const detections = Array.from({ length: 15 }, (_, index) => ({
+      ...item(`det-${index}`, 'report', 5_000 - index, `ce-det-${index}`),
+      report: {
+        schema: 'drone-detection-report/v1' as const,
+        reportId: `det-${index}`,
+        trackId: 't1',
+        isDetected: true,
+        payload: {},
+      },
+    }));
+    const rows = [...tracks, ...detections];
+    const counts = countLiveJournalFilters(rows);
+    expect(counts.tracks).toBe(60);
+    expect(counts.detections).toBe(15);
+    expect(countLiveJournalPages(counts.tracks)).toBe(2);
+    expect(countLiveJournalPages(counts.detections)).toBe(1);
+
+    const trackPage = paginateLiveJournalItems(rows, { filter: 'tracks', limit: LIVE_JOURNAL_PAGE_SIZE });
+    expect(trackPage.items).toHaveLength(50);
+    expect(trackPage.nextCursor).not.toBeNull();
+
+    const detectionPage = paginateLiveJournalItems(rows, {
+      filter: 'detections',
+      limit: LIVE_JOURNAL_PAGE_SIZE,
+    });
+    expect(detectionPage.items).toHaveLength(15);
+    expect(detectionPage.nextCursor).toBeNull();
   });
 });

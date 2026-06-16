@@ -14,6 +14,7 @@ import {
 } from '@membrana/telemetry-journal-service';
 
 import { useRemoteMutation } from '../../lib/useRemoteMutation';
+import { publishJournalCleared } from '../../lib/liveJournalHub';
 
 import { LiveJournalItemRow } from './components/LiveJournalItemRow';
 import { LiveJournalPager } from './components/LiveJournalPager';
@@ -66,7 +67,9 @@ export const TelemetryJournalModule: React.FC<
     return [...list].sort((a, b) => b.timestamp - a.timestamp);
   }, [snapshot.items, snapshot.version, filter, search]);
 
-  const totalPages = countLiveJournalPages(filtered.length);
+  const totalPages = countLiveJournalPages(
+    search.trim() ? filtered.length : filterCounts[filter],
+  );
   const safePage = Math.min(page, totalPages);
 
   const displayed = useMemo(
@@ -101,7 +104,11 @@ export const TelemetryJournalModule: React.FC<
     }
     setClearError(null);
     void runRemoteMutation('Очистка журнала', async () => {
-      await service.clearByFilter(filter);
+      const result = await service.clearByFilter(filter);
+      publishJournalCleared({
+        filter,
+        deletedCount: result.deleted,
+      });
     }).catch((err: unknown) => {
       setClearError(err instanceof Error ? err.message : 'Не удалось очистить журнал');
     });

@@ -1068,6 +1068,79 @@
       "createdAt": "2026-06-16",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "live-journal-sync-pagination",
+      "title": "Live-журнал: синхронизация счётчиков, пагинация по фильтру, clear client↔cabinet",
+      "promptPath": "docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "js1-server-journal-full-fetch",
+      "title": "JS1: server full journal fetch + API counts",
+      "promptPath": "docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "live-journal-sync-pagination",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "js2-client-journal-reconcile",
+      "title": "JS2: client journal cursor pull + reconcile",
+      "promptPath": "docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "live-journal-sync-pagination",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "js1-server-journal-full-fetch"
+      ]
+    },
+    {
+      "id": "js3-per-filter-pagination-contract",
+      "title": "JS3: per-filter pagination contract + UI counts",
+      "promptPath": "docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "live-journal-sync-pagination",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "js2-client-journal-reconcile"
+      ]
+    },
+    {
+      "id": "js4-journal-clear-bidirectional-sync",
+      "title": "JS4: bidirectional journal clear sync (hub + reconcile)",
+      "promptPath": "docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "live-journal-sync-pagination",
+      "createdAt": "2026-06-16",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "js2-client-journal-reconcile"
+      ]
     }
   ]
 }

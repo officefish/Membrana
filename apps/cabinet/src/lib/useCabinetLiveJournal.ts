@@ -43,6 +43,10 @@ export function useCabinetLiveJournal() {
   const [nodes, setNodes] = useState<CabinetJournalNode[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
   const [items, setItems] = useState<LiveJournalItem[]>([]);
+  const [serverFilterCounts, setServerFilterCounts] = useState<Record<
+    LiveJournalFilter,
+    number
+  > | null>(null);
   const [filter, setFilter] = useState<LiveJournalFilter>('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -78,14 +82,16 @@ export function useCabinetLiveJournal() {
     try {
       if (!selectedDeviceId) {
         setItems([]);
+        setServerFilterCounts(null);
         setMediaService(null);
         return;
       }
-      const [nextItems, service] = await Promise.all([
+      const [{ items: nextItems, counts }, service] = await Promise.all([
         fetchAllJournalItems(selectedDeviceId),
         getCabinetMediaLibrary(selectedDeviceId),
       ]);
       setItems(nextItems);
+      setServerFilterCounts(counts);
       setMediaService(service);
       bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
     } catch (err) {
@@ -138,7 +144,10 @@ export function useCabinetLiveJournal() {
     [clearingJournal, reloadItems, runRemoteMutation, selectedDeviceId],
   );
 
-  const filterCounts = useMemo(() => countLiveJournalFilters(items), [items]);
+  const filterCounts = useMemo(
+    () => serverFilterCounts ?? countLiveJournalFilters(items),
+    [items, serverFilterCounts],
+  );
 
   const filtered = useMemo(() => {
     let list = items.filter((item) => matchesLiveJournalFilter(item, filter));
@@ -148,7 +157,8 @@ export function useCabinetLiveJournal() {
     return [...list].sort((a, b) => b.timestamp - a.timestamp);
   }, [items, filter, search]);
 
-  const totalPages = countLiveJournalPages(filtered.length);
+  const activeFilterTotal = search.trim() ? filtered.length : filterCounts[filter];
+  const totalPages = countLiveJournalPages(activeFilterTotal);
   const safePage = Math.min(page, totalPages);
 
   const displayed = useMemo(

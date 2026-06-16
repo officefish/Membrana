@@ -171,6 +171,31 @@ export class MemoryJournalStorageBackend implements IJournalStorageBackend {
       }
     }
   }
+
+  /**
+   * Replace server-known rows; keep local-only rows pending push (JS2).
+   * Rows in `keepLocalOnly` that are absent from remote stay until pushed or cleared.
+   */
+  reconcileRemoteItems(
+    remoteItems: readonly LiveJournalItem[],
+    keepLocalOnly: ReadonlySet<string>,
+  ): void {
+    const remoteIds = new Set(remoteItems.map((item) => item.clientEntryId));
+    const localPending = this.items.filter(
+      (item) => !remoteIds.has(item.clientEntryId) && keepLocalOnly.has(item.clientEntryId),
+    );
+    this.items = [...remoteItems, ...localPending].sort((a, b) => b.timestamp - a.timestamp);
+    this.clientEntryIds.clear();
+    for (const item of this.items) {
+      this.clientEntryIds.add(item.clientEntryId);
+    }
+    if (this.items.length > this.config.maxItems) {
+      const removed = this.items.splice(this.config.maxItems);
+      for (const stale of removed) {
+        this.clientEntryIds.delete(stale.clientEntryId);
+      }
+    }
+  }
 }
 
 export function createMemoryJournalStorageBackend(

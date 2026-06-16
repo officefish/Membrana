@@ -135,6 +135,7 @@ export interface ListTelemetryJournalItemsQuery {
 export interface PaginatedTelemetryJournalItems {
   readonly items: LiveJournalItem[];
   readonly nextCursor: string | null;
+  readonly counts: Record<LiveJournalFilter, number>;
 }
 
 export async function listTelemetryJournalItems(

@@ -52,6 +52,7 @@ export interface ListCabinetJournalItemsQuery {
 export interface PaginatedCabinetJournalItems {
   readonly items: readonly LiveJournalItem[];
   readonly nextCursor: string | null;
+  readonly counts?: Readonly<Record<LiveJournalFilter, number>>;
 }
 
 export interface DeleteCabinetJournalItemsQuery {

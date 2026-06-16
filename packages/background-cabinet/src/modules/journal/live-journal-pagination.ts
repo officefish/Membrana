@@ -85,3 +85,25 @@ export function parseLiveJournalFilter(raw?: string): LiveJournalFilter {
   if (raw === 'tracks' || raw === 'reports' || raw === 'detections') return raw;
   return 'all';
 }
+
+export type LiveJournalFilterCounts = Record<LiveJournalFilter, number>;
+
+/** Authoritative filter badge counts for merged journal rows (JS1). */
+export function countLiveJournalItemRowFilters(
+  items: readonly LiveJournalItemRow[],
+): LiveJournalFilterCounts {
+  const counts: LiveJournalFilterCounts = {
+    all: items.length,
+    tracks: 0,
+    reports: 0,
+    detections: 0,
+  };
+
+  for (const item of items) {
+    if (item.kind === 'track') counts.tracks += 1;
+    if (item.kind === 'report') counts.reports += 1;
+    if (item.kind === 'report' && item.report?.isDetected === true) counts.detections += 1;
+  }
+
+  return counts;
+}

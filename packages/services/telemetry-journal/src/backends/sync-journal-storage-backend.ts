@@ -7,6 +7,7 @@ import {
   reportInputToCabinetReport,
   trackInputToCabinetLiveRecord,
 } from '../mappers/cabinet-journal-mapper.js';
+import { LIVE_JOURNAL_PAGE_SIZE } from '../pagination.js';
 import type {
   ICabinetJournalPort,
   PaginatedCabinetJournalItems,
@@ -47,6 +48,8 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
   private readonly mediaDeviceId: string | undefined;
 
+  private readonly pendingPushEntryIds = new Set<string>();
+
   constructor(
     port: ICabinetJournalPort,
     options: SyncJournalStorageBackendOptions = {},
@@ -85,8 +88,10 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     const item = await this.local.appendTrack(input);
     if (!item) return null;
 
+    this.pendingPushEntryIds.add(input.clientEntryId);
     try {
       await this.port.createLiveRecord(trackInputToCabinetLiveRecord(input));
+      this.pendingPushEntryIds.delete(input.clientEntryId);
     } catch {
       /* best-effort push; local cache remains source for offline UX */
     }
@@ -99,8 +104,10 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     const item = await this.local.appendReport(input);
     if (!item) return null;
 
+    this.pendingPushEntryIds.add(input.clientEntryId);
     try {
       await this.port.createReport(reportInputToCabinetReport(input));
+      this.pendingPushEntryIds.delete(input.clientEntryId);
     } catch {
       /* best-effort push */
     }
@@ -133,20 +140,39 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
   private async pullRemote(): Promise<void> {
     try {
-      const remoteItems = await this.fetchRemoteItems();
-      this.local.mergeRemoteItems(remoteItems);
+      if (this.port.listJournalItems) {
+        const remoteItems = await this.fetchRemoteItemsFromUnifiedApi();
+        this.local.reconcileRemoteItems(remoteItems, this.pendingPushEntryIds);
+      } else {
+        const remoteItems = await this.fetchRemoteItemsFromLegacyLists();
+        this.local.mergeRemoteItems(remoteItems);
+      }
       this.persistLocalCache();
     } catch {
       /* keep local cache when cabinet is unreachable */
     }
   }
 
-  private async fetchRemoteItems(): Promise<LiveJournalItem[]> {
-    if (this.port.listJournalItems) {
-      const result = await this.port.listJournalItems({ limit: this.pullLimit });
-      const items = isPaginatedCabinetJournalItems(result) ? result.items : result;
-      return [...items];
-    }
+  private async fetchRemoteItemsFromUnifiedApi(): Promise<LiveJournalItem[]> {
+    const all: LiveJournalItem[] = [];
+    let cursor: string | null = null;
+    do {
+      const result = await this.port.listJournalItems!({
+        limit: LIVE_JOURNAL_PAGE_SIZE,
+        mediaDeviceId: this.mediaDeviceId,
+        cursor,
+        filter: 'all',
+      });
+      const page = isPaginatedCabinetJournalItems(result)
+        ? result
+        : { items: result, nextCursor: null, counts: undefined };
+      all.push(...page.items);
+      cursor = page.nextCursor;
+    } while (cursor);
+    return all;
+  }
+
+  private async fetchRemoteItemsFromLegacyLists(): Promise<LiveJournalItem[]> {
     const [reports, liveRecords] = await Promise.all([
       this.port.listReports(this.pullLimit),
       this.port.listLiveRecords(this.pullLimit),

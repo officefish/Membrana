@@ -13,14 +13,17 @@ import type {
 import { cabinetRowsToLiveJournalItems } from './live-journal-items.mapper';
 import {
   LIVE_JOURNAL_PAGE_SIZE,
+  countLiveJournalItemRowFilters,
   matchesLiveJournalItemRowFilter,
   paginateLiveJournalItemRows,
   parseLiveJournalFilter,
+  type LiveJournalFilterCounts,
 } from './live-journal-pagination';
 
 const DEFAULT_LIST_LIMIT = LIVE_JOURNAL_PAGE_SIZE;
 const MAX_LIST_LIMIT = LIVE_JOURNAL_PAGE_SIZE;
-const MERGED_FETCH_CAP = 1000;
+/** Max DB rows loaded when building merged journal (JS1). Not the UI page size. */
+export const JOURNAL_INTERNAL_FETCH_CAP = 5000;
 
 /** Parses list query limit for journal endpoints. */
 export function parseJournalListLimit(raw: string | undefined): number {
@@ -250,24 +253,57 @@ export class JournalService {
     mediaDeviceId?: string,
     cursor?: string,
     filterRaw?: string,
-  ) {
+  ): Promise<{
+    items: ReturnType<typeof paginateLiveJournalItemRows>['items'];
+    nextCursor: string | null;
+    counts: LiveJournalFilterCounts;
+  }> {
     const pageSize = parseLimit(limitRaw);
     const filter = parseLiveJournalFilter(filterRaw);
     const [reportsResult, liveResult] = await Promise.all([
-      this.listReports(userId, String(MERGED_FETCH_CAP), mediaDeviceId),
-      this.listLiveRecords(userId, String(MERGED_FETCH_CAP), mediaDeviceId),
+      this.fetchReportsForMerge(userId, mediaDeviceId),
+      this.fetchLiveRecordsForMerge(userId, mediaDeviceId),
     ]);
 
     const merged = cabinetRowsToLiveJournalItems(
       reportsResult.reports,
       liveResult.liveRecords,
     );
+    const counts = countLiveJournalItemRowFilters(merged);
     const page = paginateLiveJournalItemRows(merged, {
       limit: pageSize,
       cursor,
       filter,
     });
-    return { items: page.items, nextCursor: page.nextCursor };
+    return { items: page.items, nextCursor: page.nextCursor, counts };
+  }
+
+  private async fetchReportsForMerge(userId: string, mediaDeviceId?: string) {
+    const ctx = await this.requireMembraneContext(userId);
+    const deviceFilter = this.resolveMediaDeviceFilter(ctx, mediaDeviceId);
+    const rows = await this.prisma.telemetryReport.findMany({
+      where: {
+        membraneId: ctx.membraneId,
+        ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+      },
+      orderBy: { finishedAt: 'desc' },
+      take: JOURNAL_INTERNAL_FETCH_CAP,
+    });
+    return { reports: rows.map(serializeReport) };
+  }
+
+  private async fetchLiveRecordsForMerge(userId: string, mediaDeviceId?: string) {
+    const ctx = await this.requireMembraneContext(userId);
+    const deviceFilter = this.resolveMediaDeviceFilter(ctx, mediaDeviceId);
+    const rows = await this.prisma.telemetryLiveRecord.findMany({
+      where: {
+        membraneId: ctx.membraneId,
+        ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+      },
+      orderBy: [{ status: 'asc' }, { startedAt: 'desc' }],
+      take: JOURNAL_INTERNAL_FETCH_CAP,
+    });
+    return { liveRecords: rows.map(serializeLiveRecord) };
   }
 
   /** Contextual bulk delete by live journal filter (JE5). */

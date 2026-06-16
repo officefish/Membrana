@@ -1,6 +1,6 @@
 import type { LiveJournalFilter, LiveJournalItem } from '@membrana/telemetry-journal-service';
+import { LIVE_JOURNAL_PAGE_SIZE } from '@membrana/telemetry-journal-service';
 import { getApiBase } from './auth';
-
 export interface TelemetryReportView {
   id: string;
   reportKind: string;
@@ -80,21 +80,21 @@ export interface FetchTelemetryJournalItemsQuery {
 export interface PaginatedTelemetryJournalItemsResponse {
   readonly items: LiveJournalItem[];
   readonly nextCursor: string | null;
+  readonly counts: Record<LiveJournalFilter, number>;
 }
 
 export async function fetchTelemetryJournalItems(
   query: FetchTelemetryJournalItemsQuery = {},
 ): Promise<PaginatedTelemetryJournalItemsResponse> {
   const params = new URLSearchParams();
-  params.set('limit', String(query.limit ?? 50));
+  params.set('limit', String(query.limit ?? LIVE_JOURNAL_PAGE_SIZE));
   if (query.mediaDeviceId) params.set('mediaDeviceId', query.mediaDeviceId);
   if (query.cursor) params.set('cursor', query.cursor);
   if (query.filter && query.filter !== 'all') params.set('filter', query.filter);
 
   const res = await authFetch(`/v1/telemetry/journal-items?${params.toString()}`);
   if (!res.ok) throw new Error(await parseError(res));
-  const body = (await res.json()) as PaginatedTelemetryJournalItemsResponse;
-  return body;
+  return (await res.json()) as PaginatedTelemetryJournalItemsResponse;
 }
 
 export interface DeleteTelemetryJournalItemsQuery {
