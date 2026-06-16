@@ -55,7 +55,11 @@ export function JournalPage() {
             5‑с клипы и отчёты детекторов с paired-клиентов — по каждому узлу отдельно.
           </p>
         </div>
-        <button type="button" className="btn btn-ghost btn-sm" onClick={() => void journal.reload()}>
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm"
+          onClick={() => void journal.reload({ silent: true })}
+        >
           Обновить
         </button>
       </div>
