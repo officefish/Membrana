@@ -1226,7 +1226,8 @@
       "dependsOn": [
         "lp2-fft-plugins-journal-sink",
         "lp3-track-import-backpressure"
-      ]
+      ],
+      "notes": "docs/LIVE_PARALLEL_DETECTION.md; streamWindowCollector SLO test; paired smoke checklist"
     }
   ]
 }
