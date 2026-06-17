@@ -21,6 +21,8 @@ packages/core
 !packages/core
 !packages/core/**
 packages/device-board
+!packages/device-board
+!packages/device-board/**
 packages/libs
 !packages/libs/detector-report
 !packages/libs/detector-report/**
