@@ -1386,12 +1386,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "trends-drone-tight-curated-promotion"
       ],
-      "notes": "Ветка feat/trends-go-drone-tight. Не новая детекция — ARCHITECTURE контракт, CI (background-office), lint/a11y, PR → techies68. Вход: DAILY_CODE_REVIEW 2026-06-16."
+      "notes": "Ветка feat/trends-go-drone-tight. Не новая детекция — ARCHITECTURE контракт, CI (background-office), lint/a11y, PR → techies68. Вход: DAILY_CODE_REVIEW 2026-06-16.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "squashed into PR #87 (main)"
     },
     {
       "id": "tgdt-r1-architecture-contract",
@@ -1478,11 +1480,14 @@
       "githubIssue": 86,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": null,
       "createdAt": "2026-06-17",
       "dependsOn": [],
-      "notes": "Epic: честный typecheck apps, cabinet references, ~35 TS client fixes, CI techies68, prod build strategy. Follow-up после merge-hardening R2 gap."
+      "notes": "Epic: честный typecheck apps, cabinet references, ~35 TS client fixes, CI techies68, prod build strategy. Follow-up после merge-hardening R2 gap.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "https://github.com/officefish/Membrana/pull/87 Closes #86",
+      "githubIssueClosedAt": "2026-06-17"
     },
     {
       "id": "tbga-f0-typecheck-honesty",
@@ -1491,11 +1496,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "turbo-build-green-apps",
       "createdAt": "2026-06-17",
       "dependsOn": [],
-      "notes": "Lead: Ozhegov. Support: Vesnin (CI policy). apps typecheck scripts; ci.yml branches; CONTRIBUTING."
+      "notes": "Lead: Ozhegov. Support: Vesnin (CI policy). apps typecheck scripts; ci.yml branches; CONTRIBUTING.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR #87 merged to main"
     },
     {
       "id": "tbga-f1-cabinet-project-refs",
@@ -1504,13 +1511,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "turbo-build-green-apps",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "tbga-f0-typecheck-honesty"
       ],
-      "notes": "Lead: Ozhegov. Mirror client references in apps/cabinet/tsconfig.app.json."
+      "notes": "Lead: Ozhegov. Mirror client references in apps/cabinet/tsconfig.app.json.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR #87"
     },
     {
       "id": "tbga-f2-lib-export-quick-wins",
@@ -1519,13 +1528,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "turbo-build-green-apps",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "tbga-f1-cabinet-project-refs"
       ],
-      "notes": "Lead: Ozhegov. CepstralFrameRow export; hub bridges setTimeout; NodeConnectionShell returns."
+      "notes": "Lead: Ozhegov. CepstralFrameRow export; hub bridges setTimeout; NodeConnectionShell returns.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR #87"
     },
     {
       "id": "tbga-f3-plugin-live-config-types",
@@ -1534,13 +1545,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "turbo-build-green-apps",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "tbga-f2-lib-export-quick-wins"
       ],
-      "notes": "Lead: Ozhegov. Support: Dynin (LiveModeConfig semantics). 3 FFT plugins, harmonic viz, mic-live-drone."
+      "notes": "Lead: Ozhegov. Support: Dynin (LiveModeConfig semantics). 3 FFT plugins, harmonic viz, mic-live-drone.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR #87"
     },
     {
       "id": "tbga-f4-journal-trends-typing",
@@ -1549,13 +1562,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "turbo-build-green-apps",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "tbga-f2-lib-export-quick-wins"
       ],
-      "notes": "Lead: Ozhegov. Support: Dynin (TemporalFeatures guards). journal adapters, buildTemplateFromAnalysis, electronAPI."
+      "notes": "Lead: Ozhegov. Support: Dynin (TemporalFeatures guards). journal adapters, buildTemplateFromAnalysis, electronAPI.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR #87"
     },
     {
       "id": "tbga-f5-build-prod-alignment",
@@ -1564,14 +1579,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "turbo-build-green-apps",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "tbga-f3-plugin-live-config-types",
         "tbga-f4-journal-trends-typing"
       ],
-      "notes": "Lead: Vesnin. Support: Ozhegov. Dockerfile vs tsc -b; tdoa-service turbo outputs."
+      "notes": "Lead: Vesnin. Support: Ozhegov. Dockerfile vs tsc -b; tdoa-service turbo outputs.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR #87"
     },
     {
       "id": "tbga-f6-ci-green-merge",
@@ -1580,13 +1597,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "turbo-build-green-apps",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "tbga-f5-build-prod-alignment"
       ],
-      "notes": "Lead: Vesnin. Smoke: Музыкант. PR → techies68; task:archive epic; Issue report."
+      "notes": "Lead: Vesnin. Smoke: Музыкант. PR → techies68; task:archive epic; Issue report.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR #87 merged to main"
     }
   ]
 }
