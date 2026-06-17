@@ -58,7 +58,6 @@
 | `lp4-parallel-detection-smoke` | LP4: SLO-тесты, docs, paired smoke | S | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `lp5-journal-report-renderers` | LP5: журнальные рендеры FFT-порог/тенденции (client+cabinet) + фикс live-дрона | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `trends-go-drone-tight-merge-hardening` | Merge hardening: feat/trends-go-drone-tight по code-review 2026-06-16 (R1–R5) | L | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — |
-| `tgdt-r3-pr-merge-techies68` | R3: PR feat/trends-go-drone-tight → techies68 + task archives | S | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — |
 
 ---
 
@@ -71,6 +70,7 @@
 | `tgdt-r2-ci-merge-gate` | R2: CI merge gate — background-office test + full turbo pipeline | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r2-ci-merge-gate.md) |
 | `tgdt-r5-trends-ui-lint-a11y` | R5: TrendsTemplateList useMemo + a11y (client lint clean) | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r5-trends-ui-lint-a11y.md) |
 | `tgdt-r4-audio-constraints-doc` | R4: Document mic audio constraints (sampleRate / limits) | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r4-audio-constraints-doc.md) |
+| `tgdt-r3-pr-merge-techies68` | R3: PR feat/trends-go-drone-tight → techies68 + task archives | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r3-pr-merge-techies68.md) |
 | `telemetry-journal-event-driven` | Event-driven UX: buffer clear, stop→analyze, journal refresh, contextual clear (JE1–JE5) | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/telemetry-journal-event-driven.md) |
 | `je1-buffer-clear-event-chain` | JE1: buffer clear event chain (client + cabinet) | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/je1-buffer-clear-event-chain.md) |
 | `je2-stop-triggers-analysis` | JE2: stop recording → import → analyze → report | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/je2-stop-triggers-analysis.md) |

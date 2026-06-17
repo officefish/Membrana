@@ -1459,7 +1459,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "trends-go-drone-tight-merge-hardening",
       "createdAt": "2026-06-17",
       "dependsOn": [
@@ -1467,7 +1467,9 @@
         "tgdt-r2-ci-merge-gate",
         "tgdt-r5-trends-ui-lint-a11y"
       ],
-      "notes": "Archive trends-fft-sample-library-drone-tight; Vesnin LGTM; merge PR."
+      "notes": "Archive trends-fft-sample-library-drone-tight; Vesnin LGTM; merge PR.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "https://github.com/officefish/Membrana/pull/85"
     }
   ]
 }
