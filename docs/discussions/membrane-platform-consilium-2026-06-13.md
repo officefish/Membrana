@@ -135,7 +135,7 @@ erDiagram
 
 ## Открытые вопросы (не блокируют MP0)
 
-- Точный алгоритм sync журнала client → cabinet (batch vs realtime).
+- ~~Точный алгоритм sync журнала client → cabinet (batch vs realtime).~~ → **закрыто 2026-06-17:** гибрид WS live + REST history — [`membrane-realtime-transport-consilium-2026-06-17.md`](./membrane-realtime-transport-consilium-2026-06-17.md).
 - Миграция существующих анонимных `deviceId` на paired Device.
 
 ---

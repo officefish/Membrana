@@ -963,13 +963,17 @@ __metadata:
   resolution: "@membrana/background-cabinet@workspace:packages/background-cabinet"
   dependencies:
     "@fastify/cors": "npm:^9.0.1"
+    "@membrana/core": "npm:*"
     "@nestjs/common": "npm:^10.4.15"
     "@nestjs/core": "npm:^10.4.15"
     "@nestjs/platform-fastify": "npm:^10.4.15"
+    "@nestjs/platform-ws": "npm:^10.4.15"
     "@nestjs/testing": "npm:^10.4.15"
+    "@nestjs/websockets": "npm:^10.4.15"
     "@prisma/client": "npm:^6.1.0"
     "@types/bcryptjs": "npm:^2.4.6"
     "@types/node": "npm:^20.11.0"
+    "@types/ws": "npm:^8.5.13"
     bcryptjs: "npm:^2.4.3"
     dotenv: "npm:^16.4.5"
     eslint: "npm:^8.57.0"
@@ -983,6 +987,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.0"
     vitest: "npm:^1.4.0"
+    ws: "npm:^8.18.0"
     zod: "npm:^3.23.8"
   languageName: unknown
   linkType: soft
@@ -1061,6 +1066,7 @@ __metadata:
     "@membrana/audio-engine-service": "npm:*"
     "@membrana/core": "npm:*"
     "@membrana/detector-report": "npm:*"
+    "@membrana/device-board": "npm:*"
     "@membrana/journal-report-views": "npm:*"
     "@membrana/media-library-service": "npm:*"
     "@membrana/sample-playback-service": "npm:*"
@@ -1617,6 +1623,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/platform-ws@npm:^10.4.15":
+  version: 10.4.22
+  resolution: "@nestjs/platform-ws@npm:10.4.22"
+  dependencies:
+    tslib: "npm:2.8.1"
+    ws: "npm:8.18.0"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0
+    "@nestjs/websockets": ^10.0.0
+    rxjs: ^7.1.0
+  checksum: 10c0/7adb24e9a9fbbd333c6f668751204b00c72cb5c3a491b6da6038acf3659a85a7f2dd119df1ac61bc154e3a06e8c8b34b8870469d3ee434c9a3b98947f2fbf978
+  languageName: node
+  linkType: hard
+
 "@nestjs/swagger@npm:^7.1.17":
   version: 7.4.2
   resolution: "@nestjs/swagger@npm:7.4.2"
@@ -1661,6 +1681,26 @@ __metadata:
     "@nestjs/platform-express":
       optional: true
   checksum: 10c0/cb3d0f3997b1c08ef7263f25beff0f0ba8af9f718361cede5c2b0a72ec0c3baadba8fcc92ec18c735171550b9e950c9e66b43e81ea62273c1ca6c82aa54e9715
+  languageName: node
+  linkType: hard
+
+"@nestjs/websockets@npm:^10.4.15":
+  version: 10.4.22
+  resolution: "@nestjs/websockets@npm:10.4.22"
+  dependencies:
+    iterare: "npm:1.2.1"
+    object-hash: "npm:3.0.0"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0
+    "@nestjs/core": ^10.0.0
+    "@nestjs/platform-socket.io": ^10.0.0
+    reflect-metadata: ^0.1.12 || ^0.2.0
+    rxjs: ^7.1.0
+  peerDependenciesMeta:
+    "@nestjs/platform-socket.io":
+      optional: true
+  checksum: 10c0/6a6424b4e225948aeb9d02e2b2548d8d3d762b1ee7ac1b2fee81a27f2ba7e6a7c668b0f2c92d0ec0a17a6c61006f9ee45b20587f2d3306fc4acc4751c8354a95
   languageName: node
   linkType: hard
 
@@ -2615,6 +2655,15 @@ __metadata:
     "@types/methods": "npm:^1.1.4"
     "@types/superagent": "npm:^8.1.0"
   checksum: 10c0/a2080f870154b09db123864a484fb633bc9e2a0f7294a194388df4c7effe5af9de36d5a5ebf819f72b404fa47b5e813c47d5a3a51354251fd2fa8589bfb64f2c
+  languageName: node
+  linkType: hard
+
+"@types/ws@npm:^8.5.13":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/61aff1129143fcc4312f083bc9e9e168aa3026b7dd6e70796276dcfb2c8211c4292603f9c4864fae702f2ed86e4abd4d38aa421831c2fd7f856c931a481afbab
   languageName: node
   linkType: hard
 
@@ -6743,7 +6792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-hash@npm:^3.0.0":
+"object-hash@npm:3.0.0, object-hash@npm:^3.0.0":
   version: 3.0.0
   resolution: "object-hash@npm:3.0.0"
   checksum: 10c0/a06844537107b960c1c8b96cd2ac8592a265186bfa0f6ccafe0d34eabdb526f6fa81da1f37c43df7ed13b12a4ae3457a16071603bcd39d8beddb5f08c37b0f47
@@ -9333,6 +9382,36 @@ __metadata:
   version: 1.0.2
   resolution: "wrappy@npm:1.0.2"
   checksum: 10c0/56fece1a4018c6a6c8e28fbc88c87e0fbf4ea8fd64fc6c63b18f4acc4bd13e0ad2515189786dd2c30d3eec9663d70f4ecf699330002f8ccb547e4a18231fc9f0
+  languageName: node
+  linkType: hard
+
+"ws@npm:8.18.0":
+  version: 8.18.0
+  resolution: "ws@npm:8.18.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/25eb33aff17edcb90721ed6b0eb250976328533ad3cd1a28a274bd263682e7296a6591ff1436d6cbc50fa67463158b062f9d1122013b361cec99a05f84680e06
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.18.0":
+  version: 8.21.0
+  resolution: "ws@npm:8.21.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/ef4a243476283fc49bc7550966c4af4aa0eef56273837211e700de3b664e08604a760cdddcb5ba43c049140e74ccfec5b0ee0bb439e08c2adf9138902fdde5f9
   languageName: node
   linkType: hard
 

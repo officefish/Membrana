@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { pingMediaApi } from '../../api/pairing';
+import { getNodeRealtimeClient, type NodeRealtimeClientState } from '@/lib/nodeRealtimeClient';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
 
 export interface NodeConnectionFooterIndicatorProps {
@@ -15,6 +16,17 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
   const openConnectionSettings = useNodeConnectionStore((s) => s.openConnectionSettings);
   const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
   const [linkOk, setLinkOk] = useState<boolean | null>(null);
+  const [wsState, setWsState] = useState<NodeRealtimeClientState>('disconnected');
+
+  useEffect(() => {
+    if (mode !== 'paired') {
+      setWsState('disconnected');
+      return;
+    }
+    const client = getNodeRealtimeClient();
+    setWsState(client.getState());
+    return client.subscribeState(setWsState);
+  }, [mode, pairing?.deviceId]);
 
   useEffect(() => {
     if (mode !== 'paired' || !pairing) {
@@ -72,6 +84,8 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
 
   const label = pairing?.nodeLabel ?? 'связан';
   const status = linkOk === null ? '…' : linkOk ? 'online' : 'offline';
+  const wsLabel =
+    wsState === 'connected' ? 'ws' : wsState === 'reconnecting' ? 'ws…' : 'rest';
 
   if (compact) {
     return (
@@ -80,7 +94,7 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
         className={`shrink-0 text-[9px] tabular-nums underline-offset-2 hover:underline ${
           linkOk === false ? 'text-warning' : 'text-base-content/45'
         }`}
-        title={`Связан с мембраной · ${label} · ${status}`}
+        title={`Связан с мембраной · ${label} · ${status} · ${wsLabel}`}
         onClick={() => openConnectionSettings()}
       >
         {linkOk === false ? 'связь?' : 'связан'}
@@ -91,7 +105,7 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
   return (
     <div className="flex items-center gap-2 text-[10px] text-base-content/55" role="status">
       <span>
-        Связан: {label} · {status}
+        Связан: {label} · {status} · {wsLabel}
       </span>
       <button type="button" className="btn btn-ghost btn-xs" onClick={() => openConnectionSettings()}>
         связь

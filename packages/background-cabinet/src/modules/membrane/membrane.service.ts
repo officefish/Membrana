@@ -16,6 +16,7 @@ import {
   createAccessKeySecret,
   hashAccessKeySecret,
 } from './access-key.util';
+import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 
 const FREE_TARIFF_ID = 'free-v1';
 const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
@@ -52,7 +53,10 @@ function serializeAccessKey(key: {
 
 @Injectable()
 export class MembraneService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly nodeRealtime: NodeRealtimeService,
+  ) {}
 
   async getOrCreateMembraneForUser(userId: string) {
     const existing = await this.prisma.membrane.findUnique({
@@ -178,7 +182,7 @@ export class MembraneService {
 
     const pairedDevice = await this.prisma.device.findFirst({
       where: { pairedKeyId: keyId },
-      select: { lastPairSessionToken: true },
+      select: { lastPairSessionToken: true, mediaDeviceId: true },
     });
     if (pairedDevice?.lastPairSessionToken) {
       await this.prisma.session.deleteMany({
@@ -188,6 +192,14 @@ export class MembraneService {
         where: { pairedKeyId: keyId },
         data: { lastPairSessionToken: null },
       });
+    }
+
+    if (pairedDevice?.mediaDeviceId) {
+      this.nodeRealtime.notifySessionInvalidated(
+        pairedDevice.mediaDeviceId,
+        key.node.membraneId,
+        'revoked',
+      );
     }
 
     return { accessKey: serializeAccessKey(revoked) };

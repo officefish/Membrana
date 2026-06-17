@@ -62,6 +62,7 @@
     "task:sync-readme": "node scripts/task-list.mjs --sync-readme",
     "catalog:verify-client": "node scripts/verify-client-catalog.mjs",
     "task:archive": "node scripts/archive-task.mjs",
+    "hackathon:close": "node scripts/hackathon-close.mjs",
     "task:close-github": "node scripts/task-close-github-issues.mjs",
     "task:close-github:dry": "node scripts/task-close-github-issues.mjs --dry-run",
     "test:detectors": "turbo run test --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service --filter=@membrana/yamnet-detector-service --filter=@membrana/clap-detector-service --filter=@membrana/agentic-detector-service",

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import cors from '@fastify/cors';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { WsAdapter } from '@nestjs/platform-ws';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
@@ -33,6 +34,7 @@ async function bootstrap(): Promise<void> {
   app.useLogger(logger);
   app.useGlobalInterceptors(new RequestIdInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter());
+  app.useWebSocketAdapter(new WsAdapter(app));
 
   const port = config.PORT;
   await app.listen(port, '0.0.0.0');

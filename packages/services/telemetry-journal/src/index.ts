@@ -87,9 +87,12 @@ export {
   trackInputToCabinetLiveRecord,
 } from './mappers/cabinet-journal-mapper.js';
 
+export { liveJournalItemFromJournalAppendPayload } from './mappers/realtime-journal-mapper.js';
+
 export {
   SyncJournalStorageBackend,
   createSyncJournalStorageBackend,
+  type IRealtimeJournalPushPort,
   type SyncJournalStorageBackendOptions,
 } from './backends/sync-journal-storage-backend.js';
 

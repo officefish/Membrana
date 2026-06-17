@@ -1,0 +1,167 @@
+import {
+  NODE_REALTIME_EVENT_TYPES,
+  parseNodeRealtimeEnvelope,
+  type AnalysisBriefPayload,
+  type JournalAppendPayload,
+  type NodeRealtimeEnvelope,
+} from '@membrana/core';
+
+import { getStoredToken } from '@/api/auth';
+import { getCabinetRealtimeWsUrl } from '@/lib/nodeRealtimeUrl';
+
+export type CabinetRealtimeClientState =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'reconnecting';
+
+type StateHandler = (state: CabinetRealtimeClientState) => void;
+type JournalAppendHandler = (envelope: NodeRealtimeEnvelope<JournalAppendPayload>) => void;
+type MicBriefHandler = (payload: AnalysisBriefPayload) => void;
+
+const MAX_BACKOFF_MS = 30_000;
+
+class CabinetNodeRealtimeClientImpl {
+  private socket: WebSocket | null = null;
+
+  private membraneId: string | null = null;
+
+  private state: CabinetRealtimeClientState = 'disconnected';
+
+  private reconnectAttempt = 0;
+
+  private reconnectTimer: number | null = null;
+
+  private readonly stateHandlers = new Set<StateHandler>();
+
+  private readonly journalHandlers = new Set<JournalAppendHandler>();
+
+  private readonly micBriefHandlers = new Set<MicBriefHandler>();
+
+  getState(): CabinetRealtimeClientState {
+    return this.state;
+  }
+
+  subscribeState(handler: StateHandler): () => void {
+    this.stateHandlers.add(handler);
+    return () => this.stateHandlers.delete(handler);
+  }
+
+  subscribeJournalAppend(handler: JournalAppendHandler): () => void {
+    this.journalHandlers.add(handler);
+    return () => this.journalHandlers.delete(handler);
+  }
+
+  subscribeMicBrief(handler: MicBriefHandler): () => void {
+    this.micBriefHandlers.add(handler);
+    return () => this.micBriefHandlers.delete(handler);
+  }
+
+  connect(membraneId: string): void {
+    this.membraneId = membraneId;
+    this.openSocket();
+  }
+
+  disconnect(): void {
+    this.membraneId = null;
+    this.clearReconnectTimer();
+    this.socket?.close();
+    this.socket = null;
+    this.setState('disconnected');
+  }
+
+  private setState(next: CabinetRealtimeClientState): void {
+    if (this.state === next) return;
+    this.state = next;
+    for (const handler of this.stateHandlers) {
+      handler(next);
+    }
+  }
+
+  private clearReconnectTimer(): void {
+    if (this.reconnectTimer !== null) {
+      window.clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+  }
+
+  private scheduleReconnect(): void {
+    if (!this.membraneId) return;
+    this.clearReconnectTimer();
+    const delay = Math.min(1000 * 2 ** this.reconnectAttempt, MAX_BACKOFF_MS);
+    this.reconnectAttempt += 1;
+    this.setState('reconnecting');
+    this.reconnectTimer = window.setTimeout(() => this.openSocket(), delay);
+  }
+
+  private openSocket(): void {
+    const token = getStoredToken();
+    if (!this.membraneId || !token || typeof WebSocket === 'undefined') return;
+
+    this.clearReconnectTimer();
+    this.socket?.close();
+
+    const url = new URL(getCabinetRealtimeWsUrl());
+    url.searchParams.set('role', 'cabinet');
+    url.searchParams.set('token', token);
+    url.searchParams.set('membraneId', this.membraneId);
+
+    this.setState(this.reconnectAttempt > 0 ? 'reconnecting' : 'connecting');
+    const ws = new WebSocket(url.toString());
+    this.socket = ws;
+
+    ws.addEventListener('open', () => {
+      this.reconnectAttempt = 0;
+      this.setState('connected');
+    });
+
+    ws.addEventListener('message', (event) => {
+      try {
+        const parsed = parseNodeRealtimeEnvelope(JSON.parse(String(event.data)));
+        if (!parsed.ok) return;
+        const envelope = parsed.value;
+        if (
+          envelope.channel === 'journal' &&
+          envelope.type === NODE_REALTIME_EVENT_TYPES.journal.append
+        ) {
+          for (const handler of this.journalHandlers) {
+            handler(envelope as NodeRealtimeEnvelope<JournalAppendPayload>);
+          }
+        }
+        if (
+          envelope.channel === 'mic-live' &&
+          envelope.type === NODE_REALTIME_EVENT_TYPES.micLive.analysisBrief
+        ) {
+          const payload = envelope.payload as AnalysisBriefPayload;
+          for (const handler of this.micBriefHandlers) {
+            handler(payload);
+          }
+        }
+      } catch {
+        /* ignore malformed frames */
+      }
+    });
+
+    ws.addEventListener('close', () => {
+      if (this.membraneId) {
+        this.scheduleReconnect();
+      } else {
+        this.setState('disconnected');
+      }
+    });
+
+    ws.addEventListener('error', () => {
+      ws.close();
+    });
+  }
+}
+
+const client = new CabinetNodeRealtimeClientImpl();
+
+export function getCabinetNodeRealtimeClient(): CabinetNodeRealtimeClientImpl {
+  return client;
+}
+
+export function resetCabinetNodeRealtimeClientForTests(): void {
+  client.disconnect();
+}

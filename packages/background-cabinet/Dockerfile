@@ -9,9 +9,10 @@ RUN corepack enable
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY tsconfig.base.json ./
+COPY packages/core packages/core
 COPY packages/background-cabinet packages/background-cabinet
 
-RUN yarn workspaces focus @membrana/background-cabinet --all \
+RUN yarn workspaces focus @membrana/background-cabinet @membrana/core --all \
   && yarn workspace @membrana/background-cabinet build
 
 FROM node:20-alpine AS runtime

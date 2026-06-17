@@ -33,6 +33,14 @@ export interface SyncJournalStorageBackendOptions {
   readonly localCacheKey?: string;
   /** Paired media device id for scoped remote deletes (JE5). */
   readonly mediaDeviceId?: string;
+  /** MP7: parallel WebSocket push (REST remains fallback). */
+  readonly realtimePush?: IRealtimeJournalPushPort;
+}
+
+/** MP7 Node Realtime Gateway — fire-and-forget journal append over WS. */
+export interface IRealtimeJournalPushPort {
+  pushReport(input: AppendLiveJournalReportInput): Promise<void>;
+  pushTrack(input: AppendLiveJournalTrackInput): Promise<void>;
 }
 
 /** Local cache + cabinet push/pull sync (TJ2). */
@@ -49,6 +57,8 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
   private readonly mediaDeviceId: string | undefined;
 
+  private readonly realtimePush: IRealtimeJournalPushPort | undefined;
+
   private readonly pendingPushEntryIds = new Set<string>();
 
   constructor(
@@ -62,6 +72,7 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     this.pullLimit = options.pullLimit ?? 200;
     this.localCacheKey = options.localCacheKey;
     this.mediaDeviceId = options.mediaDeviceId;
+    this.realtimePush = options.realtimePush;
 
     if (this.localCacheKey) {
       const cached = readJournalLocalCache(this.localCacheKey);
@@ -90,6 +101,12 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     if (!item) return null;
 
     this.pendingPushEntryIds.add(input.clientEntryId);
+    void this.realtimePush?.pushTrack(input).catch((err) => {
+      logger.warn('journal sync: realtime track push failed', {
+        clientEntryId: input.clientEntryId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    });
     try {
       await this.port.createLiveRecord(trackInputToCabinetLiveRecord(input));
       this.pendingPushEntryIds.delete(input.clientEntryId);
@@ -109,6 +126,13 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     if (!item) return null;
 
     this.pendingPushEntryIds.add(input.clientEntryId);
+    void this.realtimePush?.pushReport(input).catch((err) => {
+      logger.warn('journal sync: realtime report push failed', {
+        clientEntryId: input.clientEntryId,
+        schema: input.report.schema,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    });
     try {
       await this.port.createReport(reportInputToCabinetReport(input));
       this.pendingPushEntryIds.delete(input.clientEntryId);

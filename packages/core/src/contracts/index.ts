@@ -41,3 +41,4 @@ export type {
 } from './acoustic-network.js';
 
 export * from './device-board/index.js';
+export * from './node-realtime/index.js';

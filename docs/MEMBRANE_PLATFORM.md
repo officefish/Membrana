@@ -213,6 +213,68 @@ sequenceDiagram
 
 **Отложено (post-v1):** калибровка журнала и **единый рендеринг** client ↔ cabinet (parity карточек, live-badge, фильтры) — отдельная дорожная карта после консилиума; не блокирует MP6.
 
+**Транспорт live-sync (2026-06-17):** push журнала и live-сигналов микрофона — **WebSocket** (см. §«Транспорт узла»); финальные отчёты и история — REST. Device-board и sample library — вне первого эпика (MP7).
+
+---
+
+## Транспорт узла (REST vs WebSocket)
+
+> Источник: [`discussions/membrane-realtime-transport-consilium-2026-06-17.md`](./discussions/membrane-realtime-transport-consilium-2026-06-17.md) (полевые испытания + консилиум команды).
+
+### Что такое MP7
+
+**MP7** — рабочее имя **следующей фазы** roadmap Membrane Platform после MP6 (MP0…MP6 — эпик [#67](https://github.com/officefish/Membrana/issues/67)). Это не отдельный продукт: предполагаемый реестр `membrane-node-realtime-gateway`. Эпик в `docs/tasks/registry.json` **ещё не заведён**.
+
+**Scope MP7 (уточнение product):** WebSocket только для **модуля микрофона** (live brief/level) и **журнала** (live append, presence). **Device-board** и **sample library** в MP7 не входят.
+
+Связь **paired**-узла (`apps/client`) с платформой — **два канала**, не один протокол на всё:
+
+| Плоскость | Транспорт | Сервер | Назначение |
+|-----------|-----------|--------|------------|
+| **Документы и blobs** | REST | `background-media`, `background-cabinet` | Pairing, квоты, сэмплы, `device-scenario`, upload отчётов, пагинация журнала |
+| **События live (MP7)** | **WebSocket (WSS)** | `background-cabinet` (`NodeRealtimeGateway`) | Push журнала, mic-live brief/level, presence |
+| **Сигнал и DSP** | — (локально) | узел | Web Audio, live-окна микрофона; **сырой PCM по сети не передаём** |
+
+**Автономный режим** (`nodeConnectionMode: autonomous`) WebSocket **не использует**.
+
+### REST — без изменения границ
+
+Идемпотентные и крупные операции остаются на HTTP: `POST /v1/pair`, CRUD ключей и узла, **sample library** (blobs, templates), `GET/PUT .../device-scenario`, `POST` финального `TelemetryReport`, `GET` истории журнала с cursor.
+
+### WebSocket — scope MP7
+
+| Категория | Примеры | Зачем |
+|-----------|---------|-------|
+| Journal live | `journal.append`, live-session badge | Кабинет без poll |
+| Mic live | `analysis.brief`, `analysis.level`, `mic.session` | Оперативная связь после окон 3 с |
+| Presence / security | `node.online`, `session.invalidated` | Отзыв ключа без только poll 60 с |
+
+Envelope: `{ v, channel, type, ts, payload }`; каналы MP7: `journal | mic-live | presence`. При обрыве — reconnect + cursor; fallback **REST poll**.
+
+### Вне MP7 (отдельно)
+
+| Тема | Когда |
+|------|-------|
+| Device-board runtime по WS | **MP7b** — после существенных правок device-board |
+| Sample library и WS | **Отдельный консилиум**; до решения — только REST |
+
+### Что не делаем в MP7
+
+- PCM/opus stream с микрофона в облако
+- WebSocket в `background-media` или `background-office`
+- Device-board и sample library на сокетах
+
+### Roadmap (транспорт)
+
+| Фаза | id | Содержание |
+|------|-----|------------|
+| MP7 | `membrane-node-realtime-gateway` | Gateway; **журнал + микрофон** |
+| MP7b | `membrane-node-runtime-remote` | Device-board ↔ WS |
+| TBD | `media-library-realtime` | Консилиум: нужен ли WS для библиотеки |
+| MP8 | `membrane-realtime-hardening` | Reconnect, backpressure, нагрузка |
+
+Контракты событий MP7 — ветка **`vesnin`**, типы в `@membrana/core`.
+
 ---
 
 ## Roadmap (эпик)
@@ -226,6 +288,7 @@ sequenceDiagram
 | MP4 | `membrane-platform-mp4-media-membrane` | Media per membrane |
 | MP5 | `membrane-platform-mp5-telemetry-journal` | Cloud journal |
 | MP6 | `membrane-platform-mp6-prod-deploy` | Финальная prod-регрессия + runbook |
+| MP7 | `membrane-node-realtime-gateway` | WebSocket: **журнал + микрофон** (NR0–NR6, [#92](https://github.com/officefish/Membrana/issues/92)) |
 
 **Приёмка фаз:** деплой на прод → prod-smoke → архив в реестре. Подробно: [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
 
@@ -239,4 +302,4 @@ sequenceDiagram
 
 ---
 
-*Версия: 2026-06-12 · Источник решений: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md); квоты userStorage/buffer + dataset catalog — уточнение 2026-06-12.*
+*Версия: 2026-06-17 · Источники: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md); транспорт узла — [`discussions/membrane-realtime-transport-consilium-2026-06-17.md`](./discussions/membrane-realtime-transport-consilium-2026-06-17.md).*
