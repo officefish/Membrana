@@ -1,5 +1,8 @@
 import type { DroneDetectionBriefReport } from '@membrana/detector-report';
-import { DRONE_DETECTION_BRIEF_SCHEMA_VERSION } from '@membrana/detector-report';
+import {
+  DRONE_DETECTION_BRIEF_SCHEMA_VERSION,
+  parseDroneDetectionBriefReport,
+} from '@membrana/detector-report';
 import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -15,10 +18,8 @@ export function droneDetectionBriefFromItem(
 
   const nested = item.report.payload['report'];
   if (!isRecord(nested)) return null;
-  if (!isRecord(nested.meta)) return null;
-  if (!Array.isArray(nested.verdicts)) return null;
 
-  return nested as unknown as DroneDetectionBriefReport;
+  return parseDroneDetectionBriefReport(nested);
 }
 
 export { DRONE_DETECTION_BRIEF_SCHEMA_VERSION as DRONE_DETECTION_BRIEF_JOURNAL_SCHEMA };

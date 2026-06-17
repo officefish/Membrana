@@ -42,6 +42,7 @@ export {
   isDroneBriefConsensus,
   mapVerdictsToBrief,
 } from './buildBriefDroneDetectionReport.js';
+export { parseDroneDetectionBriefReport } from './parseDroneDetectionBriefReport.js';
 export {
   buildCepstralVerdictSection,
   buildHarmonicVerdictSection,
