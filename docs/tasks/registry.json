@@ -1370,12 +1370,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-16",
       "dependsOn": [
         "fl4-trends-template-calibration"
       ],
-      "notes": "Opt-in плагин библиотеки сэмплов: trends-fft с пресетом DRONE_TIGHT + конкуренты, отчёт в журнал. Код в feat/trends-go-drone-tight (f7bbf03). Архив — фаза R3 эпика trends-go-drone-tight-merge-hardening."
+      "notes": "Opt-in плагин библиотеки сэмплов: trends-fft с пресетом DRONE_TIGHT + конкуренты, отчёт в журнал. Код в feat/trends-go-drone-tight (f7bbf03). Архив — фаза R3 эпика trends-go-drone-tight-merge-hardening.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "PR feat/trends-go-drone-tight to techies68; commits f7bbf03-d784231"
     },
     {
       "id": "trends-go-drone-tight-merge-hardening",
