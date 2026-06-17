@@ -21,6 +21,9 @@ jobs:
     name: Lint, typecheck, test, build
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Stub for prisma generate in background-* packages (no live DB in CI).
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
 
     steps:
       - name: Checkout
