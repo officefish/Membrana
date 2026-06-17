@@ -1272,6 +1272,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/journal-report-views@workspace:packages/libs/journal-report-views"
   dependencies:
+    "@membrana/detector-report": "npm:*"
     "@membrana/fft-analyzer-service": "npm:*"
     "@membrana/telemetry-journal-service": "npm:*"
     "@membrana/trends-detector-service": "npm:*"

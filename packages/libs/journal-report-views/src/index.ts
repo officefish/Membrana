@@ -30,3 +30,11 @@ export type {
 } from './trends/TrendsMatchDetailTable';
 export { trendsFftReportFromItem, TRENDS_FFT_JOURNAL_SCHEMA } from './trends/fromItem';
 export type { TrendsFftReport } from './trends/types';
+
+// Drone detection brief (mic-live)
+export { BriefDroneDetectionReportView } from './brief/BriefDroneDetectionReportView';
+export type { BriefDroneDetectionReportViewProps } from './brief/BriefDroneDetectionReportView';
+export {
+  droneDetectionBriefFromItem,
+  DRONE_DETECTION_BRIEF_JOURNAL_SCHEMA,
+} from './brief/fromItem';

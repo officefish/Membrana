@@ -128,13 +128,40 @@ function guessUploadFilename(blob: Blob, title: string): string {
   return `${base}.wav`;
 }
 
-async function parseApiError(res: Response): Promise<string> {
+async function readResponseText(res: Response): Promise<string> {
+  return res.text();
+}
+
+function isHtmlPayload(text: string): boolean {
+  const trimmed = text.trimStart().toLowerCase();
+  return trimmed.startsWith('<!doctype') || trimmed.startsWith('<html');
+}
+
+function parseJsonText<T>(text: string, baseUrl: string): T {
+  if (isHtmlPayload(text)) {
+    throw new DomainError(
+      `Media API returned HTML instead of JSON (check baseUrl: ${baseUrl})`,
+      'REQUEST_FAILED',
+    );
+  }
   try {
-    const body = (await res.json()) as { message?: string | string[] };
+    return JSON.parse(text) as T;
+  } catch {
+    throw new DomainError(
+      `Media API returned invalid JSON (check baseUrl: ${baseUrl})`,
+      'REQUEST_FAILED',
+    );
+  }
+}
+
+async function parseApiError(res: Response, baseUrl: string): Promise<string> {
+  try {
+    const text = await readResponseText(res);
+    const body = parseJsonText<{ message?: string | string[] }>(text, baseUrl);
     if (Array.isArray(body.message)) return body.message.join(', ');
     if (typeof body.message === 'string') return body.message;
-  } catch {
-    /* ignore */
+  } catch (err) {
+    if (err instanceof DomainError) return err.message;
   }
   return res.statusText || 'Request failed';
 }
@@ -186,10 +213,11 @@ export class ServerStorageBackend implements IStorageBackend {
     }
     if (!res.ok) {
       this.serverReachable = res.status !== 401 && res.status !== 403;
-      throwForStatus(res, await parseApiError(res));
+      throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
     this.serverReachable = true;
-    return (await res.json()) as T;
+    const text = await readResponseText(res);
+    return parseJsonText<T>(text, this.baseUrl);
   }
 
   async getQuota(): Promise<StorageQuota> {
@@ -239,7 +267,7 @@ export class ServerStorageBackend implements IStorageBackend {
       headers: this.authHeaders(),
     });
     if (!res.ok) {
-      throwForStatus(res, await parseApiError(res));
+      throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
   }
 
@@ -295,9 +323,10 @@ export class ServerStorageBackend implements IStorageBackend {
       },
     );
     if (!res.ok) {
-      throwForStatus(res, await parseApiError(res));
+      throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
-    const row = (await res.json()) as ApiSample;
+    const text = await readResponseText(res);
+    const row = parseJsonText<ApiSample>(text, this.baseUrl);
     return mapSample(row);
   }
 
@@ -307,7 +336,7 @@ export class ServerStorageBackend implements IStorageBackend {
       headers: this.authHeaders(),
     });
     if (!res.ok) {
-      throwForStatus(res, await parseApiError(res));
+      throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
   }
 
@@ -346,7 +375,7 @@ export class ServerStorageBackend implements IStorageBackend {
       headers: this.authHeaders(),
     });
     if (!res.ok) {
-      throwForStatus(res, await parseApiError(res));
+      throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
     return await res.blob();
   }

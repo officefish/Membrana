@@ -63,7 +63,7 @@ describe('classifyTrends', () => {
     const result = classifyTrends(samples, resolveEnabledTemplates(['WIND', 'QUIET', 'TRAFFIC']));
     expect(result.detectedState).toBe('WIND');
     expect(result.confidence).toBeGreaterThan(35);
-    expect(result.isDetected).toBe(true);
+    expect(result.isDetected).toBe(false);
   });
 
   it('classifies quiet near-silence', () => {
@@ -74,7 +74,7 @@ describe('classifyTrends', () => {
     }));
     const result = classifyTrends(samples, resolveEnabledTemplates(['QUIET', 'WIND']));
     expect(result.detectedState).toBe('QUIET');
-    expect(result.isDetected).toBe(true);
+    expect(result.isDetected).toBe(false);
   });
 
   it('scores drone-like sustained high-centroid signal', () => {

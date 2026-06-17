@@ -1,0 +1,20 @@
+# Архив: F5: prod build strategy + turbo cosmetic
+
+| Поле | Значение |
+|------|----------|
+| **ID** | `tbga-f5-build-prod-alignment` |
+| **Статус** | archived |
+| **Размер** | S |
+| **Создана** | 2026-06-17 |
+| **Архивирована** | 2026-06-17 |
+| **GitHub Issue** | — |
+| **Linear** | — |
+| **Промпт** | [`docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) |
+
+## Заметки при закрытии
+
+PR #87
+
+---
+
+*Карточка сгенерирована `yarn task:archive`. Спецификация остаётся в `docs/prompts/`.*

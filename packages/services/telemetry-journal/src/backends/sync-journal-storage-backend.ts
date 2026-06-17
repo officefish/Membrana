@@ -2,6 +2,7 @@ import {
   readJournalLocalCache,
   writeJournalLocalCache,
 } from '../journal-local-cache.js';
+import { logger } from '@membrana/core';
 import {
   cabinetRowsToJournalItems,
   reportInputToCabinetReport,
@@ -92,8 +93,11 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     try {
       await this.port.createLiveRecord(trackInputToCabinetLiveRecord(input));
       this.pendingPushEntryIds.delete(input.clientEntryId);
-    } catch {
-      /* best-effort push; local cache remains source for offline UX */
+    } catch (err) {
+      logger.warn('journal sync: live record push failed', {
+        clientEntryId: input.clientEntryId,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
 
     this.persistLocalCache();
@@ -108,8 +112,12 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     try {
       await this.port.createReport(reportInputToCabinetReport(input));
       this.pendingPushEntryIds.delete(input.clientEntryId);
-    } catch {
-      /* best-effort push */
+    } catch (err) {
+      logger.warn('journal sync: report push failed', {
+        clientEntryId: input.clientEntryId,
+        schema: input.report.schema,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
 
     this.persistLocalCache();

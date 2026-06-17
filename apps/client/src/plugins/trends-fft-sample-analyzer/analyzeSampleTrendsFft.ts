@@ -1,7 +1,6 @@
 import { getMonoChannel } from '@membrana/audio-engine-service';
 import {
   collectMetricSamples,
-  createDefaultTemplateMatchCatalog,
   DEFAULT_FFT_SIZE,
 } from '@membrana/template-match-detector-service';
 import { classifyTrends, type TrendsDetectionResult } from '@membrana/trends-detector-service';
@@ -11,8 +10,10 @@ import {
   DRONE_TIGHT_MIN_CONFIDENCE,
   DRONE_TIGHT_TRENDS_INTERVAL_MS,
   DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
+  resolveTrendsTemplatesForAnalysis,
 } from '../../lib/droneTightCalibration';
 import { buildTrendsFftReport, type TrendsFftReport } from '../trends-fft-analyzer/buildTrendsFftReport';
+import { userTemplatesStore } from '../trends-fft-analyzer/userTemplatesStore';
 
 import type { TrendsFftSampleAnalyzerPluginConfig } from './types';
 
@@ -50,7 +51,10 @@ export async function analyzeSampleTrendsFft(
     measurementsCount,
   });
 
-  const templates = createDefaultTemplateMatchCatalog();
+  const templates = resolveTrendsTemplatesForAnalysis(
+    userTemplatesStore.getTemplates(),
+    config.enabledTemplateKeys,
+  );
   const result = classifyTrends(metricSamples, templates, {
     minConfidence: config.minConfidence,
     activityRmsThreshold: config.minRms,

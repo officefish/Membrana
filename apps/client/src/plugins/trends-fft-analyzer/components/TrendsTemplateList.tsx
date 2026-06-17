@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-  SYSTEM_TEMPLATES,
   type PatternTemplate,
 } from '@membrana/trends-detector-service';
+
+import { getDroneTightTrendsCatalog } from '../../../lib/droneTightCalibration';
 
 import {
   buildTemplateFromAnalysis,
@@ -46,9 +47,11 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
   const [editing, setEditing] = useState<PatternTemplate | null>(null);
   const [isNew, setIsNew] = useState(false);
 
+  const systemTemplates = useMemo(() => getDroneTightTrendsCatalog(), []);
+
   const allKeys = useMemo(
-    () => [...SYSTEM_TEMPLATES.map((t) => t.key), ...userTemplates.map((t) => t.key)],
-    [userTemplates],
+    () => [...systemTemplates.map((t) => t.key), ...userTemplates.map((t) => t.key)],
+    [systemTemplates, userTemplates],
   );
 
   const startCreate = useCallback(() => {
@@ -142,7 +145,7 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
         <div className="text-[11px] font-medium text-base-content/50 uppercase tracking-wide">
           Системные
         </div>
-        {SYSTEM_TEMPLATES.map((template) => {
+        {systemTemplates.map((template) => {
           const checked = enabledSet.has(template.key);
           return (
             <div

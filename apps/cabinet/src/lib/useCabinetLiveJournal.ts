@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   BUFFER_COLLECTION_ID,
   type MediaLibraryService,
@@ -22,11 +22,16 @@ import {
   type LiveJournalItem,
 } from '@membrana/telemetry-journal-service';
 
+import { fetchTelemetryJournalItems } from '@/api/journal';
 import { fetchMembraneNodes } from '@/api/sampleLibrary';
 import { fetchMembraneMe } from '@/api/membrane';
 import { deleteTelemetryJournalItems } from '@/api/journal';
 import { fetchAllJournalItems } from '@/lib/fetchAllJournalItems';
-import { getCabinetMediaLibrary } from '@/lib/cabinetMediaLibrary';
+import {
+  getCabinetMediaLibrary,
+  invalidateCabinetMediaLibrary,
+} from '@/lib/cabinetMediaLibrary';
+import { mergeJournalItemsByClientEntryId } from '@/lib/mergeJournalItems';
 import { useRemoteMutation } from '@/lib/useRemoteMutation';
 import { useVisibleInterval } from '@/lib/useVisibleInterval';
 
@@ -50,10 +55,13 @@ export function useCabinetLiveJournal() {
   const [filter, setFilter] = useState<LiveJournalFilter>('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [journalLoading, setJournalLoading] = useState(true);
+  const [mediaLoading, setMediaLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mediaError, setMediaError] = useState<string | null>(null);
   const [clearError, setClearError] = useState<string | null>(null);
   const [mediaService, setMediaService] = useState<MediaLibraryService | null>(null);
+  const fullCrawlGeneration = useRef(0);
   const playback = useSamplePlayback();
   const { busy: clearingJournal, run: runRemoteMutation } = useRemoteMutation();
 
@@ -74,45 +82,109 @@ export function useCabinetLiveJournal() {
     });
   }, []);
 
-  const reloadItems = useCallback(async (options?: { readonly silent?: boolean }) => {
-    if (!options?.silent) {
-      setLoading(true);
-    }
-    setError(null);
-    try {
+  const fetchJournalPage = useCallback(async (mediaDeviceId: string) => {
+    return fetchTelemetryJournalItems({
+      limit: LIVE_JOURNAL_PAGE_SIZE,
+      mediaDeviceId,
+      filter: 'all',
+    });
+  }, []);
+
+  const reloadJournalItems = useCallback(
+    async (options?: { readonly silent?: boolean; readonly full?: boolean }) => {
       if (!selectedDeviceId) {
         setItems([]);
         setServerFilterCounts(null);
-        setMediaService(null);
         return;
       }
-      const [{ items: nextItems, counts }, service] = await Promise.all([
-        fetchAllJournalItems(selectedDeviceId),
-        getCabinetMediaLibrary(selectedDeviceId),
-      ]);
-      setItems(nextItems);
-      setServerFilterCounts(counts);
-      setMediaService(service);
-      bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось загрузить журнал');
-    } finally {
       if (!options?.silent) {
-        setLoading(false);
+        setJournalLoading(true);
       }
-    }
+      setError(null);
+      try {
+        if (options?.full) {
+          const { items: nextItems, counts } = await fetchAllJournalItems(selectedDeviceId);
+          setItems(nextItems);
+          setServerFilterCounts(counts);
+          return;
+        }
+
+        const batch = await fetchJournalPage(selectedDeviceId);
+        setItems((prev) =>
+          options?.silent
+            ? mergeJournalItemsByClientEntryId(prev, batch.items)
+            : batch.items,
+        );
+        setServerFilterCounts(batch.counts);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Не удалось загрузить журнал');
+      } finally {
+        if (!options?.silent) {
+          setJournalLoading(false);
+        }
+      }
+    },
+    [fetchJournalPage, selectedDeviceId],
+  );
+
+  const crawlFullJournalInBackground = useCallback(() => {
+    if (!selectedDeviceId) return;
+    const generation = ++fullCrawlGeneration.current;
+    void fetchAllJournalItems(selectedDeviceId)
+      .then(({ items: nextItems, counts }) => {
+        if (generation !== fullCrawlGeneration.current) return;
+        setItems(nextItems);
+        setServerFilterCounts(counts);
+      })
+      .catch(() => {
+        /* background crawl is best-effort */
+      });
   }, [selectedDeviceId]);
 
   useEffect(() => {
     void loadNodes().catch((err) => {
       setError(err instanceof Error ? err.message : 'Не удалось загрузить узлы');
-      setLoading(false);
+      setJournalLoading(false);
     });
   }, [loadNodes]);
 
   useEffect(() => {
-    void reloadItems();
-  }, [reloadItems]);
+    void reloadJournalItems().then(() => {
+      crawlFullJournalInBackground();
+    });
+  }, [crawlFullJournalInBackground, reloadJournalItems]);
+
+  useEffect(() => {
+    if (!selectedDeviceId) {
+      setMediaService(null);
+      setMediaError(null);
+      return;
+    }
+
+    let cancelled = false;
+    setMediaLoading(true);
+    setMediaError(null);
+
+    void getCabinetMediaLibrary(selectedDeviceId)
+      .then((service) => {
+        if (cancelled) return;
+        setMediaService(service);
+        bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        invalidateCabinetMediaLibrary();
+        setMediaService(null);
+        setMediaError(err instanceof Error ? err.message : 'Медиатека узла недоступна');
+      })
+      .finally(() => {
+        if (!cancelled) setMediaLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDeviceId]);
 
   useEffect(() => {
     setPage(1);
@@ -120,8 +192,8 @@ export function useCabinetLiveJournal() {
 
   const pollJournal = useCallback(() => {
     if (!selectedDeviceId) return;
-    void reloadItems({ silent: true });
-  }, [reloadItems, selectedDeviceId]);
+    void reloadJournalItems({ silent: true });
+  }, [reloadJournalItems, selectedDeviceId]);
 
   useVisibleInterval(pollJournal, CABINET_LIVE_JOURNAL_REFRESH_MS, Boolean(selectedDeviceId));
 
@@ -135,13 +207,13 @@ export function useCabinetLiveJournal() {
             filter: activeFilter,
             mediaDeviceId: selectedDeviceId,
           });
-          await reloadItems({ silent: true });
+          await reloadJournalItems({ silent: true, full: true });
         });
       } catch (err) {
         setClearError(err instanceof Error ? err.message : 'Не удалось очистить журнал');
       }
     },
-    [clearingJournal, reloadItems, runRemoteMutation, selectedDeviceId],
+    [clearingJournal, reloadJournalItems, runRemoteMutation, selectedDeviceId],
   );
 
   const filterCounts = useMemo(
@@ -210,6 +282,11 @@ export function useCabinetLiveJournal() {
     [items],
   );
 
+  const reload = useCallback(async () => {
+    await reloadJournalItems({ full: true });
+    crawlFullJournalInBackground();
+  }, [crawlFullJournalInBackground, reloadJournalItems]);
+
   return {
     nodes,
     selectedDeviceId,
@@ -226,12 +303,15 @@ export function useCabinetLiveJournal() {
     totalPages,
     pageSize: LIVE_JOURNAL_PAGE_SIZE,
     setPage,
-    loading,
+    loading: journalLoading,
+    journalLoading,
+    mediaLoading,
     error,
+    mediaError,
     clearError,
     clearingJournal,
     clearByFilter,
-    reload: reloadItems,
+    reload,
     playTrack,
     exportTrackBlob,
     linkedReportCount,
