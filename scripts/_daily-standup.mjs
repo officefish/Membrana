@@ -25,8 +25,18 @@ const MAX_TEMP_FILE_CHARS = 12_000;
 const MAX_TEMP_TOTAL_CHARS = 36_000;
 const MAX_ISSUE_BODY_CHARS = 1_200;
 
+import {
+  buildDetectionPlanningConstraintsBullets,
+  FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
+} from './lib/detection-planning-priorities.mjs';
+
 const DOC_INPUTS = [
   { rel: 'docs/VIRTUAL_TEAM_PROMPT.md', required: true, label: 'Промпт виртуальной команды' },
+  {
+    rel: FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
+    required: false,
+    label: 'FFT/trends: потолок эшелона 0 и приоритеты планирования (эпик #84)',
+  },
   { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'Стратегический план на день' },
   {
     rel: 'docs/DAILY_CODE_REVIEW.md',
@@ -310,6 +320,7 @@ function buildTaskPrompt({ outputRel, issueCount, tempFileCount }) {
     '## [Teamlead]',
     '- Стратегический фокус, LGTM-границы, что сознательно **не** делаем сегодня.',
     '- Приоритизация GitHub Issues (номера #N) — что в скоупе дня, что отложить.',
+    '- **Детекция:** не магистраль «Этап 1.A / benchmark 3 DSP» — см. FFT_METRICS_POTENTIAL_AND_LIMITS.md; магистраль — trends DRONE_TIGHT, validated data или эшелон 2.',
     '',
     '## [Структурщик]',
     '- Пакеты, интеграция, слабая связанность, agenda/telemetry.',
@@ -345,6 +356,7 @@ function buildTaskPrompt({ outputRel, issueCount, tempFileCount }) {
     '- Не выдумывай закрытые issues и несуществующие пакеты.',
     '- Если набросок в packages/temp противоречит ARCHITECTURE/SERVICES — предпочти архитектуру, temp пометь как reference-only.',
     '- Не предлагай сроки в часах/днях — только размер S/M/L и зависимости.',
+    ...buildDetectionPlanningConstraintsBullets(),
     `- Документ предназначен для файла \`${outputRel}\` и должен быть самодостаточен.`,
   ].join('\n');
 }
@@ -490,7 +502,7 @@ function writeStandupFile({ outputPath, commandName, body, meta }) {
   const header =
     `<!-- Сгенерировано: ${stamp} (${commandName}) -->\n` +
     `<!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->\n` +
-    `<!-- Входы: VIRTUAL_TEAM_PROMPT, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
+    `<!-- Входы: VIRTUAL_TEAM_PROMPT, ${FFT_METRICS_POTENTIAL_AND_LIMITS_REL}, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
     `<!-- Issues: ${meta.issueSource ?? 'n/a'} -->\n\n`;
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, header + body, 'utf8');

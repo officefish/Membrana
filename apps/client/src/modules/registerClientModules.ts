@@ -7,6 +7,7 @@ import { createMicBufferRecorderPlugin } from '../plugins/mic-buffer-recorder';
 import { createMicLiveDroneAnalysisPlugin } from '../plugins/mic-live-drone-analysis';
 import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-player';
 import { createSampleLibraryDroneAnalysisPlugin } from '../plugins/sample-library-drone-analysis';
+import { createSampleLibraryFftThresholdTestPlugin } from '../plugins/sample-library-fft-threshold-test';
 import { createTrendsFftSampleAnalyzerPlugin } from '../plugins/trends-fft-sample-analyzer';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 import { createTrendsFftAnalyzerPlugin } from '../plugins/trends-fft-analyzer';
@@ -156,6 +157,7 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createMicLiveDroneAnalysisPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryDroneAnalysisPlugin());
+  MembranaRegistry.registerPlugin('sample-library', createSampleLibraryFftThresholdTestPlugin());
   MembranaRegistry.registerPlugin('sample-library', createTrendsFftSampleAnalyzerPlugin());
 
   // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs

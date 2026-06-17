@@ -68,39 +68,37 @@ function buildFrameHitRatio(
 }
 
 function buildTemporalPatterns(features: TemporalFeatures): PatternTemplate['temporalPatterns'] {
-  const patterns: PatternTemplate['temporalPatterns'] = {};
-
   const volumeTrend = pickOption(features.volumeTrend, TREND_OPTIONS);
   const frequencyTrend = pickOption(features.frequencyTrend, TREND_OPTIONS);
   const longTermStability = pickOption(features.longTermStability, STABILITY_OPTIONS);
   const periodicity = pickOption(features.periodicity, PERIODICITY_OPTIONS);
   const envelopeShape = pickOption(features.envelopeShape, ENVELOPE_OPTIONS);
-
-  if (volumeTrend) patterns.volumeTrend = volumeTrend;
-  if (frequencyTrend) patterns.frequencyTrend = frequencyTrend;
-  if (longTermStability) patterns.longTermStability = longTermStability;
-  if (periodicity) patterns.periodicity = periodicity;
-  if (envelopeShape) patterns.envelopeShape = envelopeShape;
-
-  patterns.centroidStd = boundsAround(features.centroidStd, 0.4, 0);
-  patterns.fluxStd = boundsAround(features.fluxStd, 0.4, 0);
-  patterns.rmsStd = boundsAround(features.rmsStd, 0.4, 0);
-  patterns.activityRatio = boundsAround(features.activityRatio, 0.25, 0);
-  patterns.avgSilenceDuration = boundsAround(features.avgSilenceDuration, 0.5, 0);
-  patterns.avgBurstDuration = boundsAround(features.avgBurstDuration, 0.5, 0);
-
   const jumps = features.frequencyJumps;
-  if (jumps.enabled || jumps.actualJumps > 0) {
-    patterns.frequencyJumps = {
-      enabled: true,
-      minJumpsRequired: Math.max(0, jumps.actualJumps),
-      densityPerSecond: {
-        max: Math.max(jumps.densityPerSecond * 1.5, jumps.densityPerSecond + 0.5, 0.5),
-      },
-    };
-  }
 
-  return patterns;
+  return {
+    ...(volumeTrend ? { volumeTrend } : {}),
+    ...(frequencyTrend ? { frequencyTrend } : {}),
+    ...(longTermStability ? { longTermStability } : {}),
+    ...(periodicity ? { periodicity } : {}),
+    ...(envelopeShape ? { envelopeShape } : {}),
+    centroidStd: boundsAround(features.centroidStd, 0.4, 0),
+    fluxStd: boundsAround(features.fluxStd, 0.4, 0),
+    rmsStd: boundsAround(features.rmsStd, 0.4, 0),
+    activityRatio: boundsAround(features.activityRatio, 0.25, 0),
+    avgSilenceDuration: boundsAround(features.avgSilenceDuration, 0.5, 0),
+    avgBurstDuration: boundsAround(features.avgBurstDuration, 0.5, 0),
+    ...(jumps.enabled || jumps.actualJumps > 0
+      ? {
+          frequencyJumps: {
+            enabled: true,
+            minJumpsRequired: Math.max(0, jumps.actualJumps),
+            densityPerSecond: {
+              max: Math.max(jumps.densityPerSecond * 1.5, jumps.densityPerSecond + 0.5, 0.5),
+            },
+          },
+        }
+      : {}),
+  };
 }
 
 export function canBuildTemplateFromAnalysis(
@@ -121,7 +119,11 @@ export function buildTemplateFromAnalysis(
     throw new Error('Недостаточно данных последнего анализа для создания шаблона');
   }
 
-  const { samples, temporalFeatures } = result;
+  const { samples } = result;
+  const temporalFeatures = result.temporalFeatures;
+  if (temporalFeatures == null) {
+    throw new Error('Недостаточно данных последнего анализа для создания шаблона');
+  }
   const centroid = boundsFromValues(samples.map((s) => s.centroid));
   const flux = boundsFromValues(samples.map((s) => s.flux));
   const rms = boundsFromValues(samples.map((s) => s.rms));

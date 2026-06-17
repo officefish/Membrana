@@ -5,6 +5,7 @@ import {
   FftAnalyzer,
   SpectralFluxTracker,
   applyPreset,
+  DEFAULT_CONFIG,
   PRESETS,
   frameLoudness,
 } from '@membrana/fft-analyzer-service';
@@ -50,6 +51,7 @@ export function createFftIndicesVizPlugin(): Plugin<FftIndicesVizPluginConfig> {
           smoothingTimeConstant: SMOOTHING,
           liveMode: {
             intervalMs: 100,
+            minRMS: DEFAULT_CONFIG.liveMode.minRMS,
             frequencyRange: { min: 50, max: 4_000 },
           },
         }),

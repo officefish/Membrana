@@ -50,6 +50,22 @@
 | `vdr6-recognition-report-gate` | VDR6: recognition report — best detector, gap to 80% and stage-gate | M | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `drone-detector-detail-report` | Подробный отчёт детекторов дрона (DDR1–4) | L | [`DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md`](../docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md) | [#78](https://github.com/officefish/Membrana/issues/78) |
 | `telemetry-journal-live-refactor` | Live-журнал телеметрии (TJ1–TJ6) | L | [`TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md) | [#79](https://github.com/officefish/Membrana/issues/79) |
+| `live-parallel-detection-sprint` | Параллельный live-анализ: stream modes drone + FFT → журнал (LP1–LP4) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp1-mic-drone-stream-modes` | LP1: stream modes + краткий brief report (client) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp1b-drone-detailed-report-server` | LP1b: подробный DDR по запросу на сервер (brief → detail API) | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp2-fft-plugins-journal-sink` | LP2: fft-threshold + trends-fft → LiveJournalService | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp3-track-import-backpressure` | LP3: track-import режим, очередь и regression DDR | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp4-parallel-detection-smoke` | LP4: SLO-тесты, docs, paired smoke | S | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `lp5-journal-report-renderers` | LP5: журнальные рендеры FFT-порог/тенденции (client+cabinet) + фикс live-дрона | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `trends-go-drone-tight-merge-hardening` | Merge hardening: feat/trends-go-drone-tight по code-review 2026-06-16 (R1–R5) | L | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — |
+| `turbo-build-green-apps` | Turbo build green: client + cabinet typecheck/build parity | L | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | [#86](https://github.com/officefish/Membrana/issues/86) |
+| `tbga-f0-typecheck-honesty` | F0: typecheck tsc -b + CI techies68 | M | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — |
+| `tbga-f1-cabinet-project-refs` | F1: cabinet tsconfig project references | M | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — |
+| `tbga-f2-lib-export-quick-wins` | F2: detector-report exports + infra quick wins | S | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — |
+| `tbga-f3-plugin-live-config-types` | F3: LiveModeConfig + harmonic/mic plugin types | M | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — |
+| `tbga-f4-journal-trends-typing` | F4: journal adapters + trends builder typing | M | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — |
+| `tbga-f5-build-prod-alignment` | F5: prod build strategy + turbo cosmetic | S | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — |
+| `tbga-f6-ci-green-merge` | F6: full turbo green + PR + archive | S | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — |
 
 ---
 
@@ -57,6 +73,12 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `trends-fft-sample-library-drone-tight` | Анализатор тенденций FFT в библиотеке сэмплов (калибровка под DRONE_TIGHT) | 2026-06-17 | [`TRENDS_FFT_SAMPLE_LIBRARY_DRONE_TIGHT_PROMPT.md`](../docs/prompts/TRENDS_FFT_SAMPLE_LIBRARY_DRONE_TIGHT_PROMPT.md) | — | [карточка](./archive/trends-fft-sample-library-drone-tight.md) |
+| `tgdt-r1-architecture-contract` | R1: DRONE_TIGHT architecture contract + import audit | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r1-architecture-contract.md) |
+| `tgdt-r2-ci-merge-gate` | R2: CI merge gate — background-office test + full turbo pipeline | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r2-ci-merge-gate.md) |
+| `tgdt-r5-trends-ui-lint-a11y` | R5: TrendsTemplateList useMemo + a11y (client lint clean) | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r5-trends-ui-lint-a11y.md) |
+| `tgdt-r4-audio-constraints-doc` | R4: Document mic audio constraints (sampleRate / limits) | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r4-audio-constraints-doc.md) |
+| `tgdt-r3-pr-merge-techies68` | R3: PR feat/trends-go-drone-tight → techies68 + task archives | 2026-06-17 | [`TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md`](../docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tgdt-r3-pr-merge-techies68.md) |
 | `telemetry-journal-event-driven` | Event-driven UX: buffer clear, stop→analyze, journal refresh, contextual clear (JE1–JE5) | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/telemetry-journal-event-driven.md) |
 | `je1-buffer-clear-event-chain` | JE1: buffer clear event chain (client + cabinet) | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/je1-buffer-clear-event-chain.md) |
 | `je2-stop-triggers-analysis` | JE2: stop recording → import → analyze → report | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/je2-stop-triggers-analysis.md) |
@@ -69,6 +91,13 @@
 | `js2-client-journal-reconcile` | JS2: client journal cursor pull + reconcile | 2026-06-16 | [`LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md`](../docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md) | — | [карточка](./archive/js2-client-journal-reconcile.md) |
 | `js3-per-filter-pagination-contract` | JS3: per-filter pagination contract + UI counts | 2026-06-16 | [`LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md`](../docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md) | — | [карточка](./archive/js3-per-filter-pagination-contract.md) |
 | `js4-journal-clear-bidirectional-sync` | JS4: bidirectional journal clear sync (hub + reconcile) | 2026-06-16 | [`LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md`](../docs/prompts/LIVE_JOURNAL_SYNC_PAGINATION_EPIC_PROMPT.md) | — | [карточка](./archive/js4-journal-clear-bidirectional-sync.md) |
+| `fft-last-chance-calibration` | FFT — последний шанс: калибровка порога и trends на free-v1 (FL1–FL5) | 2026-06-16 | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | #84 | [карточка](./archive/fft-last-chance-calibration.md) |
+| `fl1-sample-library-fft-threshold-plugin` | FL1: плагин FFT пороговый тест в библиотеке сэмплов | 2026-06-16 | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | #84 | [карточка](./archive/fl1-sample-library-fft-threshold-plugin.md) |
+| `fl2-benchmark-fft-trends-harness` | FL2: Node-харнесс benchmark:fft-trends (threshold + trends) | 2026-06-16 | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | #84 | [карточка](./archive/fl2-benchmark-fft-trends-harness.md) |
+| `fl3-threshold-calibration` | FL3: 3 конфигурации порогового теста на free-v1 | 2026-06-16 | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | #84 | [карточка](./archive/fl3-threshold-calibration.md) |
+| `fl4-trends-template-calibration` | FL4: 3 комбинации trends-шаблонов + sweep minConfidence | 2026-06-16 | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | #84 | [карточка](./archive/fl4-trends-template-calibration.md) |
+| `fl5-fft-last-chance-report` | FL5: отчёт go/no-go и архивация | 2026-06-16 | [`FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md`](../docs/prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) | #84 | [карточка](./archive/fl5-fft-last-chance-report.md) |
+| `trends-drone-tight-curated-promotion` | Trends-fft go: DRONE_TIGHT → curated-каталог + benchmark:detectors | 2026-06-16 | [`TRENDS_DRONE_TIGHT_CURATED_PROMOTION_PROMPT.md`](../docs/prompts/TRENDS_DRONE_TIGHT_CURATED_PROMOTION_PROMPT.md) | — | [карточка](./archive/trends-drone-tight-curated-promotion.md) |
 | `sld1-sample-detection-contract` | SLD1: SampleDetectionVerdict + analyzeSample; v0.2-only benchmark policy | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 | [карточка](./archive/sld1-sample-detection-contract.md) |
 | `sld2-sample-library-drone-plugin` | SLD2: sample-library-drone-analysis plugin + post-playback report UI | 2026-06-15 | [`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](../docs/prompts/SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md) | #47 | [карточка](./archive/sld2-sample-library-drone-plugin.md) |
 | `telemetry-journal-ux-hardening` | Live-журнал UX: buffer gate, mic drone plugin, refresh, waveform, pagination (BL1, TJ7–TJ10) | 2026-06-15 | [`TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_UX_EPIC_PROMPT.md) | #81 | [карточка](./archive/telemetry-journal-ux-hardening.md) |
@@ -112,4 +141,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-16.*
+*Файл обновлён автоматически: 2026-06-17.*

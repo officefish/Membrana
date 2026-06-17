@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   SYSTEM_TEMPLATES,
   type PatternTemplate,
@@ -42,14 +42,14 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
   const storageBackend = useUserTemplatesZustandStore((s) => s.storageBackend);
   const lastResult = lastAnalysisResult ?? null;
   const canPrefillFromAnalysis = canBuildTemplateFromAnalysis(lastResult);
-  const enabledSet = new Set(enabledKeys);
+  const enabledSet = useMemo(() => new Set(enabledKeys), [enabledKeys]);
   const [editing, setEditing] = useState<PatternTemplate | null>(null);
   const [isNew, setIsNew] = useState(false);
 
-  const allKeys = [
-    ...SYSTEM_TEMPLATES.map((t) => t.key),
-    ...userTemplates.map((t) => t.key),
-  ];
+  const allKeys = useMemo(
+    () => [...SYSTEM_TEMPLATES.map((t) => t.key), ...userTemplates.map((t) => t.key)],
+    [userTemplates],
+  );
 
   const startCreate = useCallback(() => {
     setEditing(createEmptyUserTemplate(allKeys));
@@ -115,13 +115,14 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
   return (
     <div className="flex flex-col gap-3 min-h-0">
       <div className="flex flex-wrap gap-2 shrink-0">
-        <button type="button" className="btn btn-primary btn-xs" onClick={startCreate}>
+        <button type="button" className="btn btn-primary btn-xs" onClick={startCreate} aria-label="Создать пользовательский шаблон">
           Создать
         </button>
         <button
           type="button"
           className="btn btn-outline btn-primary btn-xs"
           disabled={!canPrefillFromAnalysis}
+          aria-label="Создать шаблон на основе последнего анализа"
           title={
             canPrefillFromAnalysis
               ? 'Заполнить поля шаблона данными последнего завершённого анализа'
@@ -157,6 +158,7 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
                   type="checkbox"
                   className="checkbox checkbox-sm mt-0.5 shrink-0"
                   checked={checked}
+                  aria-label={`${checked ? 'Отключить' : 'Включить'} шаблон ${template.name}`}
                   onChange={(e) => onToggle(template.key, e.target.checked)}
                 />
                 <span className="min-w-0">
@@ -206,6 +208,7 @@ export const TrendsTemplateList: React.FC<TrendsTemplateListProps> = ({
                       type="checkbox"
                       className="checkbox checkbox-sm mt-0.5 shrink-0"
                       checked={checked}
+                      aria-label={`${checked ? 'Отключить' : 'Включить'} шаблон ${template.name}`}
                       onChange={(e) => onToggle(template.key, e.target.checked)}
                     />
                     <span className="min-w-0">

@@ -28,7 +28,7 @@ COPY apps/cabinet apps/cabinet
 RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/detector-report @membrana/journal-report-views @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service @membrana/telemetry-journal-service @membrana/trends-detector-service @membrana/fft-analyzer-service --all \
   && yarn workspace @membrana/detector-report build \
   && yarn workspace @membrana/telemetry-journal-service build \
-  && yarn workspace @membrana/cabinet exec vite build
+  && yarn workspace @membrana/cabinet build
 
 FROM nginx:1.27-alpine AS runtime
 COPY apps/cabinet/docker/nginx.conf /etc/nginx/conf.d/default.conf

@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.app .tsbuildinfo.node",
     "lint": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -b",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {

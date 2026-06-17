@@ -251,7 +251,7 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
         micLiveDronePluginState.setImportContext({
           sampleId: payload.sampleId,
           sampleTitle: payload.title,
-          journalTrackId: payload.journalTrackId,
+          journalTrackId: payload.journalTrackId ?? null,
         });
         micLiveDronePluginState.beginAnalysis(payload.sampleId);
 

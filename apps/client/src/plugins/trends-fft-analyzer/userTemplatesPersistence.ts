@@ -17,13 +17,7 @@ export interface TrendsTemplatesElectronAPI {
   write: (json: string) => Promise<void>;
 }
 
-declare global {
-  interface Window {
-    electronAPI?: {
-      trendsTemplates?: TrendsTemplatesElectronAPI;
-    };
-  }
-}
+// Window.electronAPI — см. electronMediaLibraryPort.ts (единый declare global).
 
 let activeBackend: UserTemplatesStorageBackend = 'local-storage';
 

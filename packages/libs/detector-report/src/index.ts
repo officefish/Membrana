@@ -5,6 +5,7 @@ export {
   type BuildDroneDetectionBriefReportInput,
   type BuildDroneDetectionReportSample,
   type CepstralBreakdown,
+  type CepstralFrameRow,
   type DetailedReportStatus,
   type DroneDetectionBriefReport,
   type DroneDetectionBriefReportMeta,

@@ -94,12 +94,12 @@ export const MicLiveDroneAnalysisPanel: React.FC<MicLiveDroneAnalysisPanelProps>
   const showResults = showTrackResults || showStreamResults;
   const hasDetailedReport = snapshot.detailedReport !== null;
   const briefReport = snapshot.briefReport;
-  const canRequestDetailed =
+  const canRequestDetailedBase =
     isTrackImport &&
     briefReport !== null &&
     snapshot.lastSampleId !== null &&
-    snapshot.lastJournalTrackId !== null &&
-    briefReport.meta.detailedReportStatus !== 'pending';
+    snapshot.lastJournalTrackId !== null;
+  const detailedReportStatus = briefReport?.meta.detailedReportStatus;
 
   const handleRequestDetailed = useCallback(async () => {
     if (!briefReport || !snapshot.lastSampleId) return;
@@ -272,14 +272,14 @@ export const MicLiveDroneAnalysisPanel: React.FC<MicLiveDroneAnalysisPanelProps>
           </>
         ) : null}
 
-        {showResults && canRequestDetailed ? (
+        {showResults && canRequestDetailedBase ? (
           <button
             type="button"
             className="btn btn-sm btn-outline w-full sm:w-auto"
-            disabled={briefReport?.meta.detailedReportStatus === 'pending'}
+            disabled={detailedReportStatus === 'pending'}
             onClick={() => void handleRequestDetailed()}
           >
-            {briefReport?.meta.detailedReportStatus === 'pending'
+            {detailedReportStatus === 'pending'
               ? 'Подробный отчёт готовится…'
               : 'Запросить подробный отчёт (сервер)'}
           </button>

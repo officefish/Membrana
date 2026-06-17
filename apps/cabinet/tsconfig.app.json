@@ -31,5 +31,15 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/services/audio-engine" },
+    { "path": "../../packages/services/sample-playback" },
+    { "path": "../../packages/services/media-library" },
+    { "path": "../../packages/services/telemetry-journal" },
+    { "path": "../../packages/services/trends-detector" },
+    { "path": "../../packages/libs/detector-report" },
+    { "path": "../../packages/libs/journal-report-views" }
+  ]
 }

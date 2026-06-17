@@ -5,6 +5,7 @@
 | [DEVELOPER_RHYTHM.md](./DEVELOPER_RHYTHM.md) | **Ритм разработки:** утро / вечер / неделя / периодические `yarn`-команды |
 | [WHITE_PAPER.md](./WHITE_PAPER.md) | Стратегический концепт: цель — распределённая разведка нижнего неба |
 | [DETECTOR_BENCHMARK.md](./DETECTOR_BENCHMARK.md) | Бенчмарк детекторов и критерии stage-gate 1→2 |
+| [prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) | Потолок FFT/DSP на free-v1, вердикты go/no-go; **вход для `plan:day` / `standup` / `main-day-issue`** |
 | [DATASET.md](./DATASET.md) | Структура датасета для сравнения детекторов на одном узле |
 | [TASKS_MANAGEMENT.md](./TASKS_MANAGEMENT.md) | Методология задач: GitHub Issues (вход) + Linear (работа) + отчёт перед закрытием |
 | [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md) | Системный промпт координатора и формат ответа |

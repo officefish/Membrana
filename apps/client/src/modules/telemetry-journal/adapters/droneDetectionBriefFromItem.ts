@@ -18,5 +18,5 @@ export function droneDetectionBriefFromItem(
   if (!isRecord(nested.meta)) return null;
   if (!Array.isArray(nested.verdicts)) return null;
 
-  return nested as DroneDetectionBriefReport;
+  return nested as unknown as DroneDetectionBriefReport;
 }

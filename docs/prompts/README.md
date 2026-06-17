@@ -14,6 +14,7 @@
 | **[`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md)** | Night Build между evening и morning ritual |
 | **[`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md)** | Night build — MP4 hardening NB0–NB3 (закрыт) |
 | **[`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)** | **Активный эпик** — детекция на 5-с сэмплах, плагин `sample-library`, free-v1 120 |
+| **[`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md)** | **Активный эпик** — зелёный turbo build client+cabinet (F0–F6) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
 
@@ -64,6 +65,7 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](./BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | **Активная** `background-media-a5c-deploy` — прод-деплой |
 | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](./BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | **Активная** `background-media-a5d-swagger` — Swagger/OpenAPI (#64) |
 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](./MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | **Активная** `membrane-platform-v1` — эпик cabinet, pairing, tariff, journal (#67) |
+| [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | **Активная** `turbo-build-green-apps` — typecheck honesty, cabinet refs, TS fixes, CI techies68 |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

@@ -18,9 +18,7 @@ export function HarmonicDetectorSidebarSettings({ moduleId }: Props) {
     s.getPlugin(moduleId, HARMONIC_DETECTOR_VIZ_PLUGIN_ID)?.config,
   );
   const updatePluginConfig = useMembranaStore((s) => s.updatePluginConfig);
-  const config = resolveHarmonicDetectorVizConfig(
-    rawConfig as Partial<{ confidenceThreshold: number; analysisSource: string }> | undefined,
-  );
+  const config = resolveHarmonicDetectorVizConfig(rawConfig);
   const threshold =
     harmonicDetectorPluginState.getSnapshot().confidenceThreshold ?? config.confidenceThreshold;
   const { setConfidenceThreshold } = useHarmonicThreshold(moduleId);

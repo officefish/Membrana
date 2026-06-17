@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import { Test } from '@nestjs/testing';
 import type { INestApplication } from '@nestjs/common';
-import type { NestExpressApplication } from '@nestjs/platform-express';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter, type NestExpressApplication } from '@nestjs/platform-express';
 import request from 'supertest';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AppModule } from '../src/app.module';
@@ -15,11 +15,11 @@ function getUrl(input: RequestInfo | URL): string {
 }
 
 async function createApp(): Promise<INestApplication> {
-  const mod = await Test.createTestingModule({ imports: [AppModule] }).compile();
-  const app = mod.createNestApplication<NestExpressApplication>({
-    bufferLogs: true,
-    rawBody: true,
-  });
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    new ExpressAdapter(),
+    { bufferLogs: true, rawBody: true },
+  );
   app.useLogger({
     log: () => undefined,
     error: () => undefined,
