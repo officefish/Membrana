@@ -1,0 +1,283 @@
+{
+  "version": 1,
+  "app": "client",
+  "entries": [
+    {
+      "id": "microphone",
+      "kind": "module",
+      "name": "Микрофон",
+      "status": "stable",
+      "promptPath": "docs/catalog/client/prompts/modules/microphone.md",
+      "code": {
+        "registerId": "microphone",
+        "moduleFile": "apps/client/src/modules/microphone/MicrophoneModule.tsx"
+      },
+      "plugins": [
+        "microphone-stream-viz",
+        "fft-threshold-test",
+        "fft-indices-viz",
+        "sound-quality-viz",
+        "harmonic-detector-viz",
+        "trends-fft-analyzer",
+        "mic-buffer-recorder",
+        "mic-live-drone-analysis"
+      ],
+      "services": ["@membrana/audio-engine-service"],
+      "relatedTasks": ["dsp-drone-detector", "trends-fft-microphone-plugin", "media-library-a3-mic-recorder"]
+    },
+    {
+      "id": "telemetry-journal",
+      "kind": "module",
+      "name": "Журнал телеметрии",
+      "status": "stable",
+      "promptPath": "docs/catalog/client/prompts/modules/telemetry-journal.md",
+      "code": {
+        "registerId": "telemetry-journal",
+        "moduleFile": "apps/client/src/modules/telemetry-journal/TelemetryJournalModule.tsx"
+      },
+      "plugins": [],
+      "services": [
+        "@membrana/telemetry-journal-service",
+        "@membrana/media-library-service",
+        "@membrana/sample-playback-service",
+        "@membrana/journal-report-views"
+      ],
+      "relatedTasks": ["telemetry-journal-report-viz", "telemetry-journal-live-refactor", "lp5-journal-report-renderers"]
+    },
+    {
+      "id": "sample-library",
+      "kind": "module",
+      "name": "Библиотека сэмплов",
+      "status": "draft",
+      "promptPath": "docs/catalog/client/prompts/modules/sample-library.md",
+      "code": {
+        "registerId": "sample-library",
+        "moduleFile": "apps/client/src/modules/SampleLibraryModule.tsx"
+      },
+      "plugins": [
+        "sample-library-player",
+        "sample-library-drone-analysis",
+        "sample-library-fft-threshold-test",
+        "trends-fft-sample-analyzer"
+      ],
+      "services": ["@membrana/media-library-service", "@membrana/audio-engine-service"],
+      "relatedTasks": ["media-library-a2-ui", "sample-library-drone-detection"]
+    },
+    {
+      "id": "fft-analyzer",
+      "kind": "module",
+      "name": "FFT Анализатор",
+      "status": "draft",
+      "promptPath": "docs/catalog/client/prompts/modules/fft-analyzer.md",
+      "code": {
+        "registerId": "fft-analyzer",
+        "moduleFile": "apps/client/src/modules/FFTModule.tsx"
+      },
+      "plugins": [],
+      "services": ["@membrana/fft-analyzer-service", "@membrana/audio-engine-service"],
+      "relatedTasks": []
+    },
+    {
+      "id": "spectrum-3d",
+      "kind": "module",
+      "name": "3D Спектрограмма",
+      "status": "draft",
+      "promptPath": "docs/catalog/client/prompts/modules/spectrum-3d.md",
+      "code": {
+        "registerId": "spectrum-3d",
+        "moduleFile": "apps/client/src/modules/SpectrumModule.tsx"
+      },
+      "plugins": [],
+      "services": ["@membrana/fft-analyzer-service"],
+      "relatedTasks": []
+    },
+    {
+      "id": "audio-file-upload",
+      "kind": "module",
+      "name": "Загрузка аудио",
+      "status": "draft",
+      "promptPath": "docs/catalog/client/prompts/modules/audio-file-upload.md",
+      "code": {
+        "registerId": "audio-file-upload",
+        "moduleFile": "apps/client/src/modules/AudioFileUploadModule.tsx"
+      },
+      "plugins": [],
+      "services": ["@membrana/audio-engine-service", "@membrana/fft-analyzer-service"],
+      "relatedTasks": []
+    },
+    {
+      "id": "oscilloscope",
+      "kind": "module",
+      "name": "Осциллограф",
+      "status": "draft",
+      "promptPath": "docs/catalog/client/prompts/modules/oscilloscope.md",
+      "code": {
+        "registerId": "oscilloscope",
+        "moduleFile": "apps/client/src/modules/OscilloscopeModule.tsx"
+      },
+      "plugins": [],
+      "services": ["@membrana/audio-engine-service"],
+      "relatedTasks": []
+    },
+    {
+      "id": "microphone-stream-viz",
+      "kind": "plugin",
+      "name": "Визуализация потока микрофона",
+      "status": "stable",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/microphone-stream-viz.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts"
+      },
+      "services": ["@membrana/audio-engine-service"],
+      "relatedTasks": []
+    },
+    {
+      "id": "trends-fft-analyzer",
+      "kind": "plugin",
+      "name": "Анализатор тенденций FFT",
+      "status": "stable",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/trends-fft-analyzer.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/trends-fft-analyzer/trendsFftAnalyzerPlugin.ts"
+      },
+      "services": [
+        "@membrana/fft-analyzer-service",
+        "@membrana/trends-detector-service",
+        "@membrana/telemetry-journal-service"
+      ],
+      "relatedTasks": ["trends-fft-microphone-plugin", "cj-4-trends-counts-as-detection"]
+    },
+    {
+      "id": "fft-threshold-test",
+      "kind": "plugin",
+      "name": "FFT пороговый тест",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/fft-threshold-test.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/fft-threshold-test/fftThresholdTestPlugin.ts"
+      },
+      "services": ["@membrana/fft-analyzer-service"],
+      "relatedTasks": ["fft-last-chance-calibration"]
+    },
+    {
+      "id": "fft-indices-viz",
+      "kind": "plugin",
+      "name": "FFT индексы (live)",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/fft-indices-viz.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/fft-indices-viz/fftIndicesVizPlugin.ts"
+      },
+      "services": ["@membrana/fft-analyzer-service"],
+      "relatedTasks": ["fft-indices-viz"]
+    },
+    {
+      "id": "sound-quality-viz",
+      "kind": "plugin",
+      "name": "Качество звука",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/sound-quality-viz.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/sound-quality-viz/soundQualityVizPlugin.ts"
+      },
+      "services": ["@membrana/fft-analyzer-service"],
+      "relatedTasks": ["sound-quality-viz"]
+    },
+    {
+      "id": "harmonic-detector-viz",
+      "kind": "plugin",
+      "name": "Гармонический детектор",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/harmonic-detector-viz.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/harmonic-detector-viz/harmonicDetectorVizPlugin.ts"
+      },
+      "services": ["@membrana/harmonic-detector-service", "@membrana/fft-analyzer-service"],
+      "relatedTasks": ["dsp-drone-detector"]
+    },
+    {
+      "id": "mic-buffer-recorder",
+      "kind": "plugin",
+      "name": "Буферная запись микрофона",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/mic-buffer-recorder.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/mic-buffer-recorder/micBufferRecorderPlugin.ts"
+      },
+      "services": ["@membrana/audio-engine-service", "@membrana/media-library-service"],
+      "relatedTasks": ["media-library-a3-mic-recorder"]
+    },
+    {
+      "id": "mic-live-drone-analysis",
+      "kind": "plugin",
+      "name": "Live-анализ дрона (mic)",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/mic-live-drone-analysis.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/mic-live-drone-analysis/micLiveDroneAnalysisPlugin.ts"
+      },
+      "services": ["@membrana/drone-detection-orchestrator-service"],
+      "relatedTasks": ["lp1-mic-drone-stream-modes"]
+    },
+    {
+      "id": "sample-library-player",
+      "kind": "plugin",
+      "name": "Проигрыватель сэмплов",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/sample-library-player.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/sample-library-player/sampleLibraryPlayerPlugin.ts"
+      },
+      "services": ["@membrana/sample-playback-service", "@membrana/media-library-service"],
+      "relatedTasks": ["media-library-a4-sample-player"]
+    },
+    {
+      "id": "sample-library-drone-analysis",
+      "kind": "plugin",
+      "name": "Детекция дрона на сэмпле",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/sample-library-drone-analysis.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/sample-library-drone-analysis/sampleLibraryDroneAnalysisPlugin.ts"
+      },
+      "services": ["@membrana/drone-detection-orchestrator-service"],
+      "relatedTasks": ["sld2-sample-library-drone-plugin"]
+    },
+    {
+      "id": "sample-library-fft-threshold-test",
+      "kind": "plugin",
+      "name": "FFT пороговый тест (сэмплы)",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/sample-library-fft-threshold-test.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/sample-library-fft-threshold-test/sampleLibraryFftThresholdTestPlugin.ts"
+      },
+      "services": ["@membrana/fft-analyzer-service"],
+      "relatedTasks": ["fl1-sample-library-fft-threshold-plugin"]
+    },
+    {
+      "id": "trends-fft-sample-analyzer",
+      "kind": "plugin",
+      "name": "Trends FFT на сэмпле",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/trends-fft-sample-analyzer.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/trends-fft-sample-analyzer/trendsFftSampleAnalyzerPlugin.ts"
+      },
+      "services": ["@membrana/trends-detector-service", "@membrana/fft-analyzer-service"],
+      "relatedTasks": ["trends-fft-sample-library-drone-tight"]
+    }
+  ]
+}

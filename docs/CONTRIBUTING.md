@@ -1,6 +1,10 @@
 # CONTRIBUTING — процесс для людей и CI-агентов
 
-Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
+Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md), [каталог модулей/плагинов](./catalog/README.md).
+
+## Каталог модулей и плагинов
+
+Перед правками `apps/client/src/modules/*` или `plugins/*` читайте живую спецификацию из [`docs/catalog/`](./catalog/README.md) (`client/registry.json` → `promptPath`). После существенного PR обновляйте catalog-промпт в том же или follow-up PR.
 
 ## Жизненный цикл задачи
 

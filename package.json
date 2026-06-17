@@ -60,6 +60,7 @@
     "test:scripts": "node --test scripts/context-collector-paths.test.mjs scripts/consilium-paths.test.mjs scripts/main-day-issue-paths.test.mjs scripts/daily-standup-paths.test.mjs scripts/detection-planning-priorities.test.mjs scripts/task-registry.test.mjs scripts/archive-doc-snapshot.test.mjs scripts/benchmark-metrics.test.mjs scripts/ground-truth-export.test.mjs scripts/verify-mcp-bootstrap.test.mjs",
     "task:list": "node scripts/task-list.mjs",
     "task:sync-readme": "node scripts/task-list.mjs --sync-readme",
+    "catalog:verify-client": "node scripts/verify-client-catalog.mjs",
     "task:archive": "node scripts/archive-task.mjs",
     "task:close-github": "node scripts/task-close-github-issues.mjs",
     "task:close-github:dry": "node scripts/task-close-github-issues.mjs --dry-run",
