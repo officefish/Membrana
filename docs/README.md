@@ -4,6 +4,7 @@
 |------|------------|
 | [DEVELOPER_RHYTHM.md](./DEVELOPER_RHYTHM.md) | **Ритм разработки:** утро / вечер / неделя / периодические `yarn`-команды |
 | [WHITE_PAPER.md](./WHITE_PAPER.md) | Стратегический концепт: цель — распределённая разведка нижнего неба |
+| [HORIZON_MOBILE_MULTIMODAL.md](./HORIZON_MOBILE_MULTIMODAL.md) | **Горизонт-замысел:** мобильные узлы (наши дроны), активное/отражательное зондирование (радар, LiDAR, PCL), контур актуации. Активируется, когда триангуляция статическими узлами исчерпана |
 | [DETECTOR_BENCHMARK.md](./DETECTOR_BENCHMARK.md) | Бенчмарк детекторов и критерии stage-gate 1→2 |
 | [prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) | Потолок FFT/DSP на free-v1, вердикты go/no-go; **вход для `plan:day` / `standup` / `main-day-issue`** |
 | [DATASET.md](./DATASET.md) | Структура датасета для сравнения детекторов на одном узле |

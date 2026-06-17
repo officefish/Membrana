@@ -426,5 +426,7 @@ audio-engine ──► <provider>-analyzer-service ──► HTTPS к нашем
 - Регистрация модулей/плагинов — [`MODULE_AND_PLUGIN_UI.md`](./MODULE_AND_PLUGIN_UI.md).
 - Стратегическая цель — [`WHITE_PAPER.md`](./WHITE_PAPER.md).
 - Дизайн UI — [`DESIGN.md`](./DESIGN.md).
+- Горизонт-замысел (мобильные узлы, видео/RF/радар/LiDAR, отражения, контур актуации) —
+  [`HORIZON_MOBILE_MULTIMODAL.md`](./HORIZON_MOBILE_MULTIMODAL.md) (дальняя перспектива).
 
 **Следующий шаг (рекомендуется Teamlead-у):** утвердить вехи 0 и 1, открыть отдельные задачи `/service dsp-drone-detector`, `/service yamnet-analyzer`, `/service clap-analyzer` и плагин `drone-analyzer-board` — это минимально-достаточный набор, чтобы получить первое сравнение детекторов **локально, без обучения и без кредитов**, и честно понять, насколько дорогие эшелоны вообще нужны.
