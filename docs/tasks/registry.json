@@ -1375,7 +1375,89 @@
       "dependsOn": [
         "fl4-trends-template-calibration"
       ],
-      "notes": "Opt-in плагин библиотеки сэмплов: trends-fft с пресетом DRONE_TIGHT + конкуренты, отчёт в журнал. Ручной прогон экспериментов на free-v1. Идёт в одном спринте с trends-drone-tight-curated-promotion (общий источник пресета)."
+      "notes": "Opt-in плагин библиотеки сэмплов: trends-fft с пресетом DRONE_TIGHT + конкуренты, отчёт в журнал. Код в feat/trends-go-drone-tight (f7bbf03). Архив — фаза R3 эпика trends-go-drone-tight-merge-hardening."
+    },
+    {
+      "id": "trends-go-drone-tight-merge-hardening",
+      "title": "Merge hardening: feat/trends-go-drone-tight по code-review 2026-06-16 (R1–R5)",
+      "promptPath": "docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-17",
+      "dependsOn": [
+        "trends-drone-tight-curated-promotion"
+      ],
+      "notes": "Ветка feat/trends-go-drone-tight. Не новая детекция — ARCHITECTURE контракт, CI (background-office), lint/a11y, PR → techies68. Вход: DAILY_CODE_REVIEW 2026-06-16."
+    },
+    {
+      "id": "tgdt-r1-architecture-contract",
+      "title": "R1: DRONE_TIGHT architecture contract + import audit",
+      "promptPath": "docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "trends-go-drone-tight-merge-hardening",
+      "createdAt": "2026-06-17",
+      "notes": "ARCHITECTURE.md § detection calibration; client imports только через template-match-service."
+    },
+    {
+      "id": "tgdt-r2-ci-merge-gate",
+      "title": "R2: CI merge gate — background-office test + full turbo pipeline",
+      "promptPath": "docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "trends-go-drone-tight-merge-hardening",
+      "createdAt": "2026-06-17",
+      "dependsOn": [
+        "tgdt-r1-architecture-contract"
+      ],
+      "notes": "yarn turbo run lint typecheck test build --continue зелёный; fix background-office#test."
+    },
+    {
+      "id": "tgdt-r5-trends-ui-lint-a11y",
+      "title": "R5: TrendsTemplateList useMemo + a11y (client lint clean)",
+      "promptPath": "docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "trends-go-drone-tight-merge-hardening",
+      "createdAt": "2026-06-17",
+      "notes": "TrendsTemplateList.tsx enabledSet/allKeys; exhaustive-deps warnings."
+    },
+    {
+      "id": "tgdt-r4-audio-constraints-doc",
+      "title": "R4: Document mic audio constraints (sampleRate / limits)",
+      "promptPath": "docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "trends-go-drone-tight-merge-hardening",
+      "createdAt": "2026-06-17",
+      "notes": "Параллельно R1–R2; параграф в FFT_METRICS или mic-live-drone README."
+    },
+    {
+      "id": "tgdt-r3-pr-merge-techies68",
+      "title": "R3: PR feat/trends-go-drone-tight → techies68 + task archives",
+      "promptPath": "docs/prompts/TRENDS_GO_DRONE_TIGHT_MERGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "trends-go-drone-tight-merge-hardening",
+      "createdAt": "2026-06-17",
+      "dependsOn": [
+        "tgdt-r1-architecture-contract",
+        "tgdt-r2-ci-merge-gate",
+        "tgdt-r5-trends-ui-lint-a11y"
+      ],
+      "notes": "Archive trends-fft-sample-library-drone-tight; Vesnin LGTM; merge PR."
     }
   ]
 }
