@@ -14,6 +14,7 @@
 | **[`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md)** | Night Build между evening и morning ritual |
 | **[`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md)** | Night build — MP4 hardening NB0–NB3 (закрыт) |
 | **[`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)** | **Активный эпик** — детекция на 5-с сэмплах, плагин `sample-library`, free-v1 120 |
+| **[`MODULE_CATALOG_V1_EPIC_PROMPT.md`](./MODULE_CATALOG_V1_EPIC_PROMPT.md)** | **Активный эпик** — catalog v1: реестр модулей/плагинов client + живые промпты (MC-0…MC-9, #90) |
 | **[`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md)** | **Активный эпик** — зелёный turbo build client+cabinet (F0–F6) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.

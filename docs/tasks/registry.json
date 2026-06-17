@@ -1724,6 +1724,192 @@
         "cj-2-journal-media-decouple"
       ],
       "notes": "Lead: Ozhegov. sync-journal-storage-backend logger.warn on push fail."
+    },
+    {
+      "id": "module-catalog-v1",
+      "title": "Module & plugin catalog v1: client registry + living spec prompts",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Консилиум 2026-06-17: docs/catalog/ отдельно от task registry; 7 modules + 12 plugins client."
+    },
+    {
+      "id": "mc-0-catalog-regulation",
+      "title": "MC-0: catalog regulation README + CONTRIBUTING link",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "module-catalog-v1"
+      ],
+      "notes": "Lead: Vesnin. docs/catalog/README.md lifecycle draft→stable→deprecated."
+    },
+    {
+      "id": "mc-1-prompt-templates",
+      "title": "MC-1: MODULE and PLUGIN prompt templates",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-0-catalog-regulation"
+      ],
+      "notes": "Lead: Ozhegov. docs/catalog/_templates/*.template.md"
+    },
+    {
+      "id": "mc-2-registry-microphone-pilot",
+      "title": "MC-2: client registry.json v1 + stable microphone module prompt",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-1-prompt-templates"
+      ],
+      "notes": "Lead: Ozhegov + Музыкант. hub, coordinator, 8 child plugins."
+    },
+    {
+      "id": "mc-3-pilot-plugins",
+      "title": "MC-3: stable prompts microphone-stream-viz + trends-fft-analyzer",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-2-registry-microphone-pilot"
+      ],
+      "notes": "Lead: Ozhegov + Dynin. install/teardown, engine, journal."
+    },
+    {
+      "id": "mc-4-telemetry-journal-stable",
+      "title": "MC-4: stable telemetry-journal module prompt + cabinet parity note",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-1-prompt-templates"
+      ],
+      "notes": "Lead: Rodchenko. journal-report-views, live refresh UX."
+    },
+    {
+      "id": "mc-5-remaining-modules-draft",
+      "title": "MC-5: draft prompts for 5 remaining client modules",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-2-registry-microphone-pilot",
+        "mc-4-telemetry-journal-stable"
+      ],
+      "notes": "Lead: Vesnin. fft-analyzer, spectrum-3d, audio-file-upload, oscilloscope, sample-library."
+    },
+    {
+      "id": "mc-6-remaining-plugins-draft",
+      "title": "MC-6: draft prompts for 10 remaining client plugins",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-3-pilot-plugins",
+        "mc-5-remaining-modules-draft"
+      ],
+      "notes": "Lead: Ozhegov. distill from archived task prompts where available."
+    },
+    {
+      "id": "mc-7-verify-script-ci",
+      "title": "MC-7: verify-client-catalog script + CI gate",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-6-remaining-plugins-draft"
+      ],
+      "notes": "Lead: Ozhegov. scripts/verify-client-catalog.mjs vs registerClientModules.ts"
+    },
+    {
+      "id": "mc-8-agent-rules-integration",
+      "title": "MC-8: .cursorrules + AGENTS.md catalog prompt rule",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-0-catalog-regulation"
+      ],
+      "notes": "Lead: Vesnin. read catalog prompt before module/plugin edits."
+    },
+    {
+      "id": "mc-9-stable-review",
+      "title": "MC-9: stable review + epic LGTM",
+      "promptPath": "docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md",
+      "githubIssue": 90,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "module-catalog-v1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mc-7-verify-script-ci",
+        "mc-8-agent-rules-integration"
+      ],
+      "notes": "Lead: Vesnin. microphone + telemetry-journal stable; agent smoke test."
     }
   ]
 }

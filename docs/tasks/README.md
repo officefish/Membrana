@@ -64,6 +64,17 @@
 | `cj-3-brief-render-parity` | CJ-3: drone-detection-brief/v1 render in cabinet | S | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
 | `cj-4-trends-counts-as-detection` | CJ-4: countsAsDetection in PatternTemplate + journal tags | M | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
 | `cj-5-sync-push-observability` | CJ-5: Sync journal push warn + incremental cabinet poll | S | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `module-catalog-v1` | Module & plugin catalog v1: client registry + living spec prompts | L | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-0-catalog-regulation` | MC-0: catalog regulation README + CONTRIBUTING link | S | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-1-prompt-templates` | MC-1: MODULE and PLUGIN prompt templates | S | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-2-registry-microphone-pilot` | MC-2: client registry.json v1 + stable microphone module prompt | M | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-3-pilot-plugins` | MC-3: stable prompts microphone-stream-viz + trends-fft-analyzer | M | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-4-telemetry-journal-stable` | MC-4: stable telemetry-journal module prompt + cabinet parity note | M | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-5-remaining-modules-draft` | MC-5: draft prompts for 5 remaining client modules | M | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-6-remaining-plugins-draft` | MC-6: draft prompts for 10 remaining client plugins | M | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-7-verify-script-ci` | MC-7: verify-client-catalog script + CI gate | M | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-8-agent-rules-integration` | MC-8: .cursorrules + AGENTS.md catalog prompt rule | S | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `mc-9-stable-review` | MC-9: stable review + epic LGTM | S | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
 
 ---
 
