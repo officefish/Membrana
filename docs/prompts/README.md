@@ -12,6 +12,10 @@
 | **[`docs/tasks/README.md`](../tasks/README.md)** | Активные и архивные задачи |
 | **[`CONSILIUM_PROMPT.md`](./CONSILIUM_PROMPT.md)** | Консилиум всех ролей → `docs/seanses/` |
 | **[`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md)** | Night Build между evening и morning ritual |
+| **[`HACKATHON_REGULATION.md`](../HACKATHON_REGULATION.md)** | Много-дневный хакатон (замена ritual:day/evening) |
+| **[`DEVICE_BOARD_HACKATHON_BRIEF.md`](./DEVICE_BOARD_HACKATHON_BRIEF.md)** | **Подготовка** — бриф хакатона device-board v0.2 |
+| **[`DEVICE_BOARD_HACKATHON_BRIEF_INTERVIEW.md`](./DEVICE_BOARD_HACKATHON_BRIEF_INTERVIEW.md)** | Анкета бриф-интервью (≥20 вопросов) |
+| **[`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](./DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md)** | **Активный эпик** — device-board хакатон 1 (DB-H0…H4) |
 | **[`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md)** | Night build — MP4 hardening NB0–NB3 (закрыт) |
 | **[`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)** | **Активный эпик** — детекция на 5-с сэмплах, плагин `sample-library`, free-v1 120 |
 | **[`MODULE_CATALOG_V1_EPIC_PROMPT.md`](./MODULE_CATALOG_V1_EPIC_PROMPT.md)** | **Активный эпик** — catalog v1: реестр модулей/плагинов client + живые промпты (MC-0…MC-9, #90) |

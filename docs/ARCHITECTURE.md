@@ -182,18 +182,20 @@ interface AudioWindow {
 
 ### 1f. Визуальный граф прибора (`@membrana/device-board`)
 
-Пакет `@membrana/device-board` — **view-only** представление цепочки обработки
-сигнала: ноды = зарегистрированные плагины, рёбра = подписки на shared-хабы.
-**Не** второй runtime: данные текут через engine-сервисы и хабы; доска только
-декларирует топологию и триггерит тот же `plugin.install` / teardown, что и
-сайдбар.
+Пакет `@membrana/device-board` — редактор **signal graph** (топология захват →
+анализ → observation) и **scenario graph** (visual scripting: initial, loops,
+триггеры). Ноды signal-слоя = зарегистрированные плагины, рёбра = подписки
+на shared-хабы. Scenario-слой исполняется **scenario runtime** (чистое ядро
+пакета), вызывающим существующие engine/плагины/journal — **не** второй
+AudioContext и **не** Rete/DataflowEngine для сигнала.
 
 | Правило | Смысл |
 | ------- | ----- |
-| UI-стек графа | `@xyflow/react` (см. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §4) |
-| Источник истины | `MembranaRegistry` + persisted JSON графа; не дублировать метаданные плагинов |
-| Исполнение | `audio-engine-service`, shared-хабы, lifecycle плагинов — **не** Rete/DataflowEngine |
-| Настройки нод | сайдбар плагинов (`MODULE_AND_PLUGIN_UI.md` §3), не полные панели на ноде |
+| UI-стек | `@xyflow/react`; вкладки Signal / Scenario (см. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) v0.3) |
+| Источник истины | `MembranaRegistry` + persisted JSON (`device-scenario` v1) |
+| Signal исполнение | `audio-engine-service`, shared-хабы, `plugin.install` / teardown |
+| Scenario исполнение | `ScenarioRuntime` в `device-board`; оркестрация без обхода engine |
+| Настройки нод | сайдбар плагинов (`MODULE_AND_PLUGIN_UI.md` §3) |
 
 Полный концепт: [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md).
 

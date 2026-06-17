@@ -4,22 +4,30 @@ import { MembranePage } from '@/pages/MembranePage';
 import { NodesPage } from '@/pages/NodesPage';
 import { JournalPage } from '@/pages/JournalPage';
 import { SampleLibraryPage } from '@/pages/SampleLibraryPage';
+import { DeviceBoardPage } from '@/pages/DeviceBoardPage';
 
 interface CabinetShellProps {
   user: AuthUser;
   onLogout: () => void;
 }
 
-type SectionId = 'membrane' | 'nodes' | 'library' | 'journal';
+type SectionId = 'membrane' | 'nodes' | 'library' | 'journal' | 'device-board';
 
 const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string }[] = [
   { id: 'membrane', label: 'Мембрана', enabled: true },
   { id: 'nodes', label: 'Узлы и ключи', enabled: true },
   { id: 'library', label: 'Библиотека сэмплов', enabled: true },
   { id: 'journal', label: 'Журнал', enabled: true },
+  { id: 'device-board', label: 'Device board', enabled: true },
 ];
 
-function SectionContent({ section }: { section: SectionId }) {
+function SectionContent({
+  section,
+  onOpenDeviceBoard,
+}: {
+  section: SectionId;
+  onOpenDeviceBoard: () => void;
+}) {
   switch (section) {
     case 'membrane':
       return <MembranePage />;
@@ -29,6 +37,19 @@ function SectionContent({ section }: { section: SectionId }) {
       return <SampleLibraryPage />;
     case 'journal':
       return <JournalPage />;
+    case 'device-board':
+      return (
+        <div className="space-y-4">
+          <h1 className="text-2xl font-semibold">Device board</h1>
+          <p className="max-w-2xl text-sm text-base-content/70">
+            Редактирование сценария устройства в облаке. Изменения синхронизируются с полевым клиентом по deviceId
+            (last-write-wins).
+          </p>
+          <button type="button" className="btn btn-primary w-fit" onClick={onOpenDeviceBoard}>
+            Открыть редактор
+          </button>
+        </div>
+      );
     default:
       return null;
   }
@@ -36,6 +57,11 @@ function SectionContent({ section }: { section: SectionId }) {
 
 export function CabinetShell({ user, onLogout }: CabinetShellProps) {
   const [section, setSection] = useState<SectionId>('membrane');
+  const [deviceBoardOpen, setDeviceBoardOpen] = useState(false);
+
+  if (deviceBoardOpen) {
+    return <DeviceBoardPage onBack={() => setDeviceBoardOpen(false)} />;
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -67,7 +93,7 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
       </aside>
 
       <main className="flex min-h-0 flex-1 flex-col p-8">
-        <SectionContent section={section} />
+        <SectionContent section={section} onOpenDeviceBoard={() => setDeviceBoardOpen(true)} />
       </main>
     </div>
   );

@@ -75,6 +75,17 @@
 | `mc-7-verify-script-ci` | MC-7: verify-client-catalog script + CI gate | M | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
 | `mc-8-agent-rules-integration` | MC-8: .cursorrules + AGENTS.md catalog prompt rule | S | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
 | `mc-9-stable-review` | MC-9: stable review + epic LGTM | S | [`MODULE_CATALOG_V1_EPIC_PROMPT.md`](../docs/prompts/MODULE_CATALOG_V1_EPIC_PROMPT.md) | [#90](https://github.com/officefish/Membrana/issues/90) |
+| `device-board-hackathon-1` | Device-board хакатон 1: visual scripting, alarm loop, journal | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h1b-board-shell` | DB-H1b: device-board XYFlow shell + board mode UI | M | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h1c-graph-serialize` | DB-H1c: isValidConnection, export JSON, pre-run validation | M | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h2a-json-import` | DB-H2a: JSON import + round-trip (stretch) | S | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h2b-scenario-runtime` | DB-H2b: scenario runtime v1 — initial + main loop | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h2c-mic-journal` | DB-H2c: mic stream → chunks → trends FFT → LiveJournal | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h2d-cabinet-sync` | DB-H2d: cabinet board edit + bidirectional scenario sync | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h3a-trigger-stop` | DB-H3a: trigger onStop — UI button + system event | S | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h3b-trigger-disconnect` | DB-H3b: trigger onDisconnect — stop; reconnect via initial | S | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h3c-subgraph` | DB-H3c: subgraph/functions v1 (depth ≤ 1) | M | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `db-h4-alarm-close` | DB-H4: alarm loop (mandatory) + hackathon close + smoke | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
 
 ---
 
@@ -97,6 +108,8 @@
 | `tbga-f4-journal-trends-typing` | F4: journal adapters + trends builder typing | 2026-06-17 | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — | [карточка](./archive/tbga-f4-journal-trends-typing.md) |
 | `tbga-f5-build-prod-alignment` | F5: prod build strategy + turbo cosmetic | 2026-06-17 | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — | [карточка](./archive/tbga-f5-build-prod-alignment.md) |
 | `tbga-f6-ci-green-merge` | F6: full turbo green + PR + archive | 2026-06-17 | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](../docs/prompts/TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | — | [карточка](./archive/tbga-f6-ci-green-merge.md) |
+| `db-h0-concept-interview` | DB-H0: DEVICE_BOARD_CONCEPT v0.3 + interview closure | 2026-06-17 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h0-concept-interview.md) |
+| `db-h1a-core-contracts` | DB-H1a: SocketType + ScenarioGraph v1 in @membrana/core | 2026-06-17 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h1a-core-contracts.md) |
 | `telemetry-journal-event-driven` | Event-driven UX: buffer clear, stop→analyze, journal refresh, contextual clear (JE1–JE5) | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/telemetry-journal-event-driven.md) |
 | `je1-buffer-clear-event-chain` | JE1: buffer clear event chain (client + cabinet) | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/je1-buffer-clear-event-chain.md) |
 | `je2-stop-triggers-analysis` | JE2: stop recording → import → analyze → report | 2026-06-16 | [`TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md`](../docs/prompts/TELEMETRY_JOURNAL_EVENT_DRIVEN_EPIC_PROMPT.md) | #83 (Issue открыт) | [карточка](./archive/je2-stop-triggers-analysis.md) |

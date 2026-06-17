@@ -1910,6 +1910,250 @@
         "mc-8-agent-rules-integration"
       ],
       "notes": "Lead: Vesnin. microphone + telemetry-journal stable; agent smoke test."
+    },
+    {
+      "id": "device-board-hackathon-1",
+      "title": "Device-board хакатон 1: visual scripting, alarm loop, journal",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Brief v0.5; interview 35/35 closed. Branch vesnin / hackathon/device-board-1-2026-06-17."
+    },
+    {
+      "id": "db-h0-concept-interview",
+      "title": "DB-H0: DEVICE_BOARD_CONCEPT v0.3 + interview closure",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "DEVICE_BOARD_CONCEPT v0.3, ARCHITECTURE §1f, README; interview closed",
+      "dependsOn": [
+        "device-board-hackathon-1"
+      ],
+      "notes": "Lead: Vesnin. Day H0."
+    },
+    {
+      "id": "db-h1a-core-contracts",
+      "title": "DB-H1a: SocketType + ScenarioGraph v1 in @membrana/core",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "core: device-board contracts SocketType ScenarioGraph device-scenario v1 + tests",
+      "dependsOn": [
+        "db-h0-concept-interview"
+      ],
+      "notes": "Lead: Vesnin. Branch vesnin. Day H1."
+    },
+    {
+      "id": "db-h1b-board-shell",
+      "title": "DB-H1b: device-board XYFlow shell + board mode UI",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h1a-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov / Rodchenko. Split layout priority. Day H1."
+    },
+    {
+      "id": "db-h1c-graph-serialize",
+      "title": "DB-H1c: isValidConnection, export JSON, pre-run validation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h1b-board-shell"
+      ],
+      "notes": "Lead: Ozhegov. Day H1."
+    },
+    {
+      "id": "db-h2a-json-import",
+      "title": "DB-H2a: JSON import + round-trip (stretch)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h1c-graph-serialize"
+      ],
+      "notes": "Lead: Ozhegov. Stretch per D2. Day H2."
+    },
+    {
+      "id": "db-h2b-scenario-runtime",
+      "title": "DB-H2b: scenario runtime v1 — initial + main loop",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h1c-graph-serialize"
+      ],
+      "notes": "Lead: Ozhegov. Day H2."
+    },
+    {
+      "id": "db-h2c-mic-journal",
+      "title": "DB-H2c: mic stream → chunks → trends FFT → LiveJournal",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h2b-scenario-runtime"
+      ],
+      "notes": "Lead: Музыкант. Real mic smoke. Day H2."
+    },
+    {
+      "id": "db-h2d-cabinet-sync",
+      "title": "DB-H2d: cabinet board edit + bidirectional scenario sync",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h1c-graph-serialize"
+      ],
+      "notes": "Lead: Ozhegov. Stretch per D2. Day H2."
+    },
+    {
+      "id": "db-h3a-trigger-stop",
+      "title": "DB-H3a: trigger onStop — UI button + system event",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h2c-mic-journal"
+      ],
+      "notes": "Lead: Ozhegov. Day H3."
+    },
+    {
+      "id": "db-h3b-trigger-disconnect",
+      "title": "DB-H3b: trigger onDisconnect — stop; reconnect via initial",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h3a-trigger-stop"
+      ],
+      "notes": "Lead: Ozhegov. Day H3."
+    },
+    {
+      "id": "db-h3c-subgraph",
+      "title": "DB-H3c: subgraph/functions v1 (depth ≤ 1)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h2b-scenario-runtime"
+      ],
+      "notes": "Lead: Ozhegov. Day H3."
+    },
+    {
+      "id": "db-h4-alarm-close",
+      "title": "DB-H4: alarm loop (mandatory) + hackathon close + smoke",
+      "promptPath": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "hackathon",
+      "parentEpic": "device-board-hackathon-1",
+      "parentHackathonId": "device-board-hackathon-1",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-h3a-trigger-stop",
+        "db-h3b-trigger-disconnect",
+        "db-h2c-mic-journal"
+      ],
+      "notes": "Lead: Vesnin / Музыкант. Alarm mandatory D1. Day H4."
     }
   ]
 }

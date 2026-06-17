@@ -16,6 +16,7 @@
   "dependencies": {
     "@membrana/audio-engine-service": "*",
     "@membrana/core": "*",
+    "@membrana/device-board": "*",
     "@membrana/detector-report": "*",
     "@membrana/journal-report-views": "*",
     "@membrana/media-library-service": "*",

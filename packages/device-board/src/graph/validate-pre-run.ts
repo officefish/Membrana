@@ -1,0 +1,205 @@
+import {
+  parseDeviceScenarioDocument,
+  type DeviceScenarioDocument,
+  type ValidationError,
+} from '@membrana/core';
+import type { Edge, Node } from '@xyflow/react';
+
+import {
+  SCENARIO_ALARM_ENTRY,
+  SCENARIO_INITIAL_ENTRY,
+  SCENARIO_MAIN_ENTRY,
+  SCENARIO_ON_DISCONNECT_ENTRY,
+  SCENARIO_ON_STOP_ENTRY,
+} from './initial-board-state.js';
+import type { BoardLayerTab } from '../types/board-ui.js';
+import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
+import { isValidBoardEdge } from './connection-validation.js';
+import { buildDeviceScenarioDocument } from './build-device-scenario.js';
+import { validateFunctionDepth } from './validate-function-depth.js';
+
+export interface PreRunValidationIssue {
+  readonly code: string;
+  readonly message: string;
+  readonly path?: string;
+}
+
+export interface PreRunValidationInput {
+  readonly deviceKind: DeviceScenarioDocument['deviceKind'];
+  readonly signalNodes: readonly Node[];
+  readonly signalEdges: readonly Edge[];
+  readonly scenarioInitialNodes: readonly Node[];
+  readonly scenarioInitialEdges: readonly Edge[];
+  readonly scenarioMainNodes: readonly Node[];
+  readonly scenarioMainEdges: readonly Edge[];
+  readonly scenarioAlarmNodes: readonly Node[];
+  readonly scenarioAlarmEdges: readonly Edge[];
+  readonly scenarioOnStopNodes: readonly Node[];
+  readonly scenarioOnStopEdges: readonly Edge[];
+  readonly scenarioOnDisconnectNodes: readonly Node[];
+  readonly scenarioOnDisconnectEdges: readonly Edge[];
+  readonly scenarioFunctions: readonly SerializeScenarioFunctionInput[];
+}
+
+function pushEdgeIssues(
+  issues: PreRunValidationIssue[],
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  layer: BoardLayerTab,
+  pathPrefix: string,
+): void {
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  for (const edge of edges) {
+    if (!nodeIds.has(edge.source)) {
+      issues.push({
+        code: 'edge-missing-source',
+        message: `Ребро ссылается на отсутствующий source «${edge.source}»`,
+        path: `${pathPrefix}/${edge.id}`,
+      });
+    }
+    if (!nodeIds.has(edge.target)) {
+      issues.push({
+        code: 'edge-missing-target',
+        message: `Ребро ссылается на отсутствующий target «${edge.target}»`,
+        path: `${pathPrefix}/${edge.id}`,
+      });
+    }
+    if (!isValidBoardEdge(edge, nodes, layer)) {
+      issues.push({
+        code: 'edge-invalid-socket',
+        message: `Несовместимое соединение ${edge.sourceHandle ?? '?'} → ${edge.targetHandle ?? '?'}`,
+
+        path: `${pathPrefix}/${edge.id}`,
+      });
+    }
+  }
+}
+
+function pushEntryIssue(
+  issues: PreRunValidationIssue[],
+  nodes: readonly Node[],
+  entryId: string,
+  path: string,
+): void {
+  if (nodes.length === 0) {
+    return;
+  }
+  if (!nodes.some((node) => node.id === entryId)) {
+    issues.push({
+      code: 'scenario-entry-missing',
+      message: `Точка входа «${entryId}» не найдена среди нод`,
+      path,
+    });
+  }
+}
+
+function pushSchemaIssue(issues: PreRunValidationIssue[], error: ValidationError): void {
+  issues.push({
+    code: 'schema-invalid',
+    message: error.message,
+    path: error.field,
+  });
+}
+
+/** Pre-run validation перед исполнением сценария. */
+export function validatePreRun(input: PreRunValidationInput): readonly PreRunValidationIssue[] {
+  const issues: PreRunValidationIssue[] = [];
+
+  if (input.signalNodes.length === 0) {
+    issues.push({
+      code: 'signal-empty',
+      message: 'Signal graph пуст — добавьте хотя бы одну ноду',
+      path: 'signalGraph.nodes',
+    });
+  }
+
+  pushEdgeIssues(issues, input.signalNodes, input.signalEdges, 'signal', 'signalGraph.edges');
+
+  pushEntryIssue(issues, input.scenarioInitialNodes, SCENARIO_INITIAL_ENTRY, 'scenario.initial.entry');
+  pushEdgeIssues(
+    issues,
+    input.scenarioInitialNodes,
+    input.scenarioInitialEdges,
+    'scenario',
+    'scenario.initial.edges',
+  );
+
+  pushEntryIssue(issues, input.scenarioMainNodes, SCENARIO_MAIN_ENTRY, 'scenario.loops.main.entry');
+  pushEdgeIssues(
+    issues,
+    input.scenarioMainNodes,
+    input.scenarioMainEdges,
+    'scenario',
+    'scenario.loops.main.edges',
+  );
+
+  pushEntryIssue(issues, input.scenarioAlarmNodes, SCENARIO_ALARM_ENTRY, 'scenario.loops.alarm.entry');
+  pushEdgeIssues(
+    issues,
+    input.scenarioAlarmNodes,
+    input.scenarioAlarmEdges,
+    'scenario',
+    'scenario.loops.alarm.edges',
+  );
+
+  pushEntryIssue(issues, input.scenarioOnStopNodes, SCENARIO_ON_STOP_ENTRY, 'scenario.triggers.onStop.entry');
+  pushEdgeIssues(
+    issues,
+    input.scenarioOnStopNodes,
+    input.scenarioOnStopEdges,
+    'scenario',
+    'scenario.triggers.onStop.edges',
+  );
+
+  pushEntryIssue(
+    issues,
+    input.scenarioOnDisconnectNodes,
+    SCENARIO_ON_DISCONNECT_ENTRY,
+    'scenario.triggers.onDisconnect.entry',
+  );
+  pushEdgeIssues(
+    issues,
+    input.scenarioOnDisconnectNodes,
+    input.scenarioOnDisconnectEdges,
+    'scenario',
+    'scenario.triggers.onDisconnect.edges',
+  );
+
+  const document = buildDeviceScenarioDocument({
+    deviceKind: input.deviceKind,
+    signalNodes: input.signalNodes,
+    signalEdges: input.signalEdges,
+    scenarioInitialNodes: input.scenarioInitialNodes,
+    scenarioInitialEdges: input.scenarioInitialEdges,
+    scenarioMainNodes: input.scenarioMainNodes,
+    scenarioMainEdges: input.scenarioMainEdges,
+    scenarioAlarmNodes: input.scenarioAlarmNodes,
+    scenarioAlarmEdges: input.scenarioAlarmEdges,
+    scenarioOnStopNodes: input.scenarioOnStopNodes,
+    scenarioOnStopEdges: input.scenarioOnStopEdges,
+    scenarioOnDisconnectNodes: input.scenarioOnDisconnectNodes,
+    scenarioOnDisconnectEdges: input.scenarioOnDisconnectEdges,
+    scenarioFunctions: input.scenarioFunctions,
+  });
+
+  issues.push(
+    ...validateFunctionDepth(document.scenario.functions, [
+      { path: 'scenario.initial', nodes: document.scenario.initial.nodes },
+      { path: 'scenario.loops.main', nodes: document.scenario.loops.main.nodes },
+      { path: 'scenario.loops.alarm', nodes: document.scenario.loops.alarm.nodes },
+      { path: 'scenario.triggers.onStop', nodes: document.scenario.triggers.onStop.nodes },
+      { path: 'scenario.triggers.onDisconnect', nodes: document.scenario.triggers.onDisconnect.nodes },
+    ]),
+  );
+
+  const parsed = parseDeviceScenarioDocument(document);
+  if (!parsed.ok) {
+    pushSchemaIssue(issues, parsed.error);
+  }
+
+  return issues;
+}
+
+export function isPreRunValid(issues: readonly PreRunValidationIssue[]): boolean {
+  return issues.length === 0;
+}

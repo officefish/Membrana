@@ -39,3 +39,5 @@ export type {
   TimeSyncProvider,
   TdoaResult,
 } from './acoustic-network.js';
+
+export * from './device-board/index.js';

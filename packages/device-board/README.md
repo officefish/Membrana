@@ -5,7 +5,7 @@
 представление того же конвейера, что сейчас настраивается через сайдбар
 плагинов.
 
-**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.2).
+**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.3 — signal + scenario).
 
 См. также: [`ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) §1f,
 [`MODULE_AND_PLUGIN_UI.md`](../../docs/MODULE_AND_PLUGIN_UI.md) §3.1.
@@ -33,7 +33,7 @@
 
 | Слой | Статус |
 | ---- | ------ |
-| Концепт, выбор `@xyflow/react`, дорожная карта D0–D4 | зафиксировано в `DEVICE_BOARD_CONCEPT.md` |
+| Концепт, signal + scenario, `@xyflow/react`, хакатон H0–H4 | v0.3 в `DEVICE_BOARD_CONCEPT.md` |
 | UI доски, XYFlow, `applyGraph` | **не реализовано** (этап D0) |
 | Публичный API в `src/` | **временный каркас** — `DeviceBoardService` / `Device` из раннего скелета; будет заменён или вынесен при D0 |
 
