@@ -189,6 +189,18 @@ temporal:   activityRatio 0.8–1.0, centroidStd 0–400,
 
 > **Утренний ритуал:** `yarn plan:day`, `yarn standup`, `yarn main-day-issue` читают этот документ и **не** предлагают «Этап 1.A / unified benchmark harmonic+cepstral+flux» как магистраль дня (см. `scripts/lib/detection-planning-priorities.mjs`, `DEVELOPER_RHYTHM.md`).
 
+### Mic pipeline: фактический `sampleRate`
+
+Live-плагины (`mic-live-drone-analysis`, `trends-fft-analyzer`, `fft-threshold-test`) получают кадры из `@membrana/audio-engine-service` (`LiveSampler` → `AnalyserNode`). **Membrana не задаёт `sampleRate` в `getUserMedia`** — только дефолтные constraints браузера (`useMicrophone` / `acquireMicrophone`).
+
+Частота дискретизации в каждом `AudioSampleFrame` — это **`AudioContext.sampleRate`** (обычно **48 kHz** на desktop Chrome/Windows, **44.1 kHz** на части macOS/гарнитур; зависит от ОС и устройства, не фиксируется в коде).
+
+**Следствия для калибровки:**
+
+- Ось частот FFT и cepstral quefrency-полосы масштабируются по **фактическому** `frame.sampleRate`, не по «целевым» 48 kHz.
+- Curated `DRONE_TIGHT` и offline benchmark (`data/detectors-benchmark`, WAV 48 kHz) калиброваны на **48 kHz**; на mic при 44.1 kHz centroid/flux сдвигаются — это ожидаемое ограничение эшелона 0, не баг client facade.
+- Sample-library / offline trends используют `sampleRate` декодированного буфера (часто 48 kHz из датасета).
+
 ---
 
 ## 7. Карта файлов (для будущих агентов)
