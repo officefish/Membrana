@@ -1398,10 +1398,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "trends-go-drone-tight-merge-hardening",
       "createdAt": "2026-06-17",
-      "notes": "ARCHITECTURE.md § detection calibration; client imports только через template-match-service."
+      "notes": "ARCHITECTURE.md § detection calibration; client imports только через template-match-service.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "d784231"
     },
     {
       "id": "tgdt-r2-ci-merge-gate",
@@ -1410,13 +1412,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "trends-go-drone-tight-merge-hardening",
       "createdAt": "2026-06-17",
       "dependsOn": [
         "tgdt-r1-architecture-contract"
       ],
-      "notes": "yarn turbo run lint typecheck test build --continue зелёный; fix background-office#test."
+      "notes": "yarn turbo run lint typecheck test build --continue зелёный; fix background-office#test.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "d784231 office e2e green"
     },
     {
       "id": "tgdt-r5-trends-ui-lint-a11y",
@@ -1425,10 +1429,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "trends-go-drone-tight-merge-hardening",
       "createdAt": "2026-06-17",
-      "notes": "TrendsTemplateList.tsx enabledSet/allKeys; exhaustive-deps warnings."
+      "notes": "TrendsTemplateList.tsx enabledSet/allKeys; exhaustive-deps warnings.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "d784231 useMemo a11y"
     },
     {
       "id": "tgdt-r4-audio-constraints-doc",
@@ -1437,10 +1443,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "trends-go-drone-tight-merge-hardening",
       "createdAt": "2026-06-17",
-      "notes": "Параллельно R1–R2; параграф в FFT_METRICS или mic-live-drone README."
+      "notes": "Параллельно R1–R2; параграф в FFT_METRICS или mic-live-drone README.",
+      "archivedAt": "2026-06-17",
+      "archiveNotes": "d784231 FFT_METRICS sampleRate"
     },
     {
       "id": "tgdt-r3-pr-merge-techies68",
