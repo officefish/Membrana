@@ -1,7 +1,7 @@
 {
   "name": "@membrana/device-board",
   "version": "0.1.0",
-  "description": "Модуль управления устройствами: учёт, состояние, телеметрия.",
+  "description": "Визуальный граф обработки сигнала (нод-доска): view-only UI на @xyflow/react поверх MembranaRegistry и shared-хабов.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -180,6 +180,23 @@ interface AudioWindow {
 
 Клиент при недоступности media-server: `browser-limited-fallback` (IndexedDB) — см. `MEDIA_LIBRARY_ARCHITECTURE.md` §4.3.
 
+### 1f. Визуальный граф прибора (`@membrana/device-board`)
+
+Пакет `@membrana/device-board` — **view-only** представление цепочки обработки
+сигнала: ноды = зарегистрированные плагины, рёбра = подписки на shared-хабы.
+**Не** второй runtime: данные текут через engine-сервисы и хабы; доска только
+декларирует топологию и триггерит тот же `plugin.install` / teardown, что и
+сайдбар.
+
+| Правило | Смысл |
+| ------- | ----- |
+| UI-стек графа | `@xyflow/react` (см. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §4) |
+| Источник истины | `MembranaRegistry` + persisted JSON графа; не дублировать метаданные плагинов |
+| Исполнение | `audio-engine-service`, shared-хабы, lifecycle плагинов — **не** Rete/DataflowEngine |
+| Настройки нод | сайдбар плагинов (`MODULE_AND_PLUGIN_UI.md` §3), не полные панели на ноде |
+
+Полный концепт: [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md).
+
 ## 2. Плагины и слабая связанность (домен аудио)
 
 - **Запрещены прямые импорты между плагинами** друг друга.
