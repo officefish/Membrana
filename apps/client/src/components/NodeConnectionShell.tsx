@@ -46,6 +46,7 @@ export const NodeConnectionShell: React.FC = () => {
     }
     stopPairedMediaLibraryUpgrade();
     stopPairedJournalUpgrade();
+    return undefined;
   }, [hydrated, mode, pairing]);
 
   usePairStatusMonitor();

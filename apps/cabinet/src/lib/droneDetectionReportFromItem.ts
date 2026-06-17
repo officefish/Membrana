@@ -16,5 +16,5 @@ export function droneDetectionReportFromItem(item: LiveJournalItem): DroneDetect
   if (!isRecord(nested.meta)) return null;
   if (!Array.isArray(nested.verdicts)) return null;
 
-  return nested as DroneDetectionReport;
+  return nested as unknown as DroneDetectionReport;
 }

@@ -29,4 +29,6 @@ yarn workspace @membrana/cabinet dev   # UI :5174
 VITE_CABINET_API_URL=https://cabinet.membrana.space
 ```
 
+Docker-образ собирается через `yarn workspace @membrana/cabinet build` (`tsc -b` + `vite build`) — тот же gate, что в CI. Локально перед PR: `yarn workspace @membrana/cabinet typecheck` (= `tsc -b`).
+
 См. [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](../../docs/deploy/BACKGROUND_CABINET_DEPLOY.md).

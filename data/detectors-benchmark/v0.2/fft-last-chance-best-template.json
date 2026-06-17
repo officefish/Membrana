@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "note": "Лучший DRONE-шаблон из FFT-last-chance калибровки. Импорт в trends-fft как user-шаблон.",
+  "drone": {
+    "key": "DRONE_TIGHT",
+    "name": "Дрон (tight p10-p90)",
+    "icon": "🛸",
+    "color": "#ff6b6b",
+    "description": "Узкий шаблон из перцентилей train-дронов (стабильный высокочастотный гул)",
+    "thresholds": {
+      "centroid": {
+        "min": 2900,
+        "max": 4300
+      },
+      "flux": {
+        "min": 0.03,
+        "max": 0.16
+      },
+      "rms": {
+        "min": 0.07,
+        "max": 0.28
+      },
+      "frameHitRatio": {
+        "min": 0.6,
+        "max": 1
+      }
+    },
+    "temporalPatterns": {
+      "activityRatio": {
+        "min": 0.8,
+        "max": 1
+      },
+      "centroidStd": {
+        "min": 0,
+        "max": 400
+      },
+      "longTermStability": [
+        "high",
+        "veryHigh"
+      ],
+      "volumeTrend": [
+        "stable"
+      ],
+      "frequencyTrend": [
+        "stable"
+      ]
+    }
+  },
+  "droneMerged": {
+    "key": "DRONE_CURATED",
+    "name": "Дрон (curated free-v1)",
+    "icon": "🛸",
+    "color": "#ff6b6b",
+    "description": "Объединённый шаблон из 40 validated drone-сэмплов",
+    "thresholds": {
+      "centroid": {
+        "min": 1028.3213072285976,
+        "max": 6619.685866826626
+      },
+      "flux": {
+        "min": 0,
+        "max": 0.2548965638809762
+      },
+      "rms": {
+        "min": 0.002134989099743313,
+        "max": 0.33724758841687913
+      },
+      "frameHitRatio": {
+        "min": 0.95,
+        "max": 1
+      }
+    },
+    "temporalPatterns": {
+      "centroidStd": {
+        "min": 657.083094414463,
+        "max": 1533.19388696708
+      },
+      "fluxStd": {
+        "min": 0.03289356190481725,
+        "max": 0.0767516444445736
+      },
+      "rmsStd": {
+        "min": 0.04141436911395247,
+        "max": 0.09663352793255578
+      },
+      "activityRatio": {
+        "min": 0.75,
+        "max": 1.25
+      },
+      "avgSilenceDuration": {
+        "min": 0,
+        "max": 0.001
+      },
+      "avgBurstDuration": {
+        "min": 2.25,
+        "max": 6.75
+      },
+      "volumeTrend": [
+        "stable"
+      ],
+      "frequencyTrend": [
+        "oscillating"
+      ],
+      "longTermStability": [
+        "veryLow"
+      ],
+      "periodicity": [
+        "none"
+      ],
+      "envelopeShape": [
+        "complex"
+      ],
+      "peakToAverageRatio": {
+        "min": 1.1230986820395377,
+        "max": 2.3325895703898087
+      },
+      "frequencyJumps": {
+        "enabled": true,
+        "minJumpsRequired": 9,
+        "densityPerSecond": {
+          "max": 3
+        }
+      }
+    }
+  },
+  "bestConfig": {
+    "combo": "1-tight+competitors",
+    "minConfidence": 30
+  }
+}

@@ -12,6 +12,7 @@
 
 - Установка и скрипты — см. корневой `README.md` (если отсутствует — `package.json`).
 - Перед PR: те же проверки, что в CI — `yarn install --immutable` (при необходимости) и `yarn turbo run lint typecheck test build` для затронутых пакетов или всего монорепо.
+- `yarn dev` / Vite HMR **не** заменяют typecheck: в apps `typecheck` = `tsc -b` (тот же solution build, что первый шаг `build`, без `vite build`).
 
 ## Архитектурная ветка `vesnin`
 
@@ -89,7 +90,7 @@ git push -u origin vesnin
 
 ## CI (ежедневный цикл)
 
-- **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop` выполняется `yarn install --immutable` и `yarn turbo run lint typecheck test build`. Локально перед коммитом имеет смысл запускать то же самое.
+- **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop`, **`techies68`** выполняется `yarn install --immutable` и `yarn turbo run lint typecheck test build`. Локально перед коммитом имеет смысл запускать то же самое.
 - **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск.
 - **Релиз**: `.github/workflows/release.yml` — при push тега вида `v*` собирается монорепо и создаётся GitHub Release с автогенерацией текста.
 - **Опционально**: `.github/workflows/optional-claude-pr-review.yml` — дополнительный обзор PR через Claude. Job выполняется, если в настройках репозитория задана переменная **`ENABLE_CLAUDE_PR_REVIEW`** = `true` (GitHub не позволяет включать job по наличию секрета в `if:`). Для шага с `anthropics/claude-code-action` по-прежнему нужен секрет **`ANTHROPIC_API_KEY`**; при ошибке шаг не блокирует merge (`continue-on-error`). Не заменяет обязательный CI и ревью людей.

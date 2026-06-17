@@ -69,18 +69,18 @@ function parseFrameRow(raw: unknown): FftThresholdFrameReportRow | null {
     if (typeof raw[key] !== 'boolean') return null;
   }
   return {
-    index: raw.index,
-    timestamp: raw.timestamp,
-    centroidHz: raw.centroidHz,
-    centroidNorm: raw.centroidNorm,
-    fluxRaw: raw.fluxRaw,
-    fluxNorm: raw.fluxNorm,
-    rmsRaw: raw.rmsRaw,
-    rmsNorm: raw.rmsNorm,
-    centroidInRange: raw.centroidInRange,
-    fluxInRange: raw.fluxInRange,
-    rmsInRange: raw.rmsInRange,
-    framePassed: raw.framePassed,
+    index: raw.index as number,
+    timestamp: raw.timestamp as number,
+    centroidHz: raw.centroidHz as number,
+    centroidNorm: raw.centroidNorm as number,
+    fluxRaw: raw.fluxRaw as number,
+    fluxNorm: raw.fluxNorm as number,
+    rmsRaw: raw.rmsRaw as number,
+    rmsNorm: raw.rmsNorm as number,
+    centroidInRange: raw.centroidInRange as boolean,
+    fluxInRange: raw.fluxInRange as boolean,
+    rmsInRange: raw.rmsInRange as boolean,
+    framePassed: raw.framePassed as boolean,
   };
 }
 

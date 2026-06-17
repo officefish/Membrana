@@ -23,6 +23,11 @@ import {
   loadDotEnv,
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
+import {
+  buildDetectionPlanningConstraintsBullets,
+  buildDetectionPlanningContextSection,
+  readFftMetricsPotentialAndLimits,
+} from './lib/detection-planning-priorities.mjs';
 
 const MAX_BUFFER = 12 * 1024 * 1024;
 
@@ -125,7 +130,7 @@ function buildSystemHeader({ horizonLabel, rangeLabel }) {
   );
 }
 
-function buildTaskBody({ horizonLabel, rangeLabel, outputFileName }) {
+function buildTaskBody({ horizonLabel, rangeLabel, outputFileName, includeDetectionPriorities }) {
   return [
     `# Задание`,
     ``,
@@ -141,6 +146,11 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName }) {
     `- На каком этапе дорожной карты из WHITE_PAPER (см. раздел «Дорожная карта») мы сейчас.`,
     `- Что из сделанного приближает к этапу, что — нейтрально, что — отвлекает.`,
     `- Назови недостающие сервисы (например \`drone-detector-service\`, \`tdoa-service\`, \`localizer-service\`, \`tracker-service\`, \`transport-service\`), если по коммитам видно, что их пора начинать.`,
+    ...(includeDetectionPriorities
+      ? [
+          `- **Детекция (эпик #84):** опирайся на docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md — эшелон 0 DSP/FFT на free-v1 исчерпан; не планируй «Этап 1.A benchmark harmonic/cepstral/flux» как магистраль.`,
+        ]
+      : []),
     ``,
     `## 3. Риски и долг`,
     `- Технические риски, накопленный долг, нарушения границ пакетов (если видны по diff-у).`,
@@ -157,6 +167,11 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName }) {
     ``,
     `## 5. Что НЕ делаем на этом горизонте`,
     `- 2–5 пунктов, что осознанно откладываем, и почему (опираясь на этапы WHITE_PAPER).`,
+    ...(includeDetectionPriorities
+      ? [
+          `- Явно включи: **не** повторный unified benchmark harmonic/cepstral/spectral-flux на free-v1 без нового датасета (см. FFT_METRICS §6).`,
+        ]
+      : []),
     ``,
     `## 6. Проверки в конце периода`,
     `- 3–6 пунктов, как мы поймём, что план выполнен (артефакты, метрики, тесты, демонстрация).`,
@@ -167,6 +182,7 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName }) {
     `- Не предлагай ломать архитектурные правила из ARCHITECTURE.md / SERVICES.md.`,
     `- Не цитируй WHITE_PAPER длинными блоками — ссылайся на разделы.`,
     `- Документ пишется в файл \`${outputFileName}\` и должен быть самодостаточен.`,
+    ...(includeDetectionPriorities ? buildDetectionPlanningConstraintsBullets() : []),
   ].join('\n');
 }
 
@@ -181,6 +197,8 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName }) {
  * @property {boolean} [full]         Расширенный режим (добавляет --shortstat в git log).
  * @property {boolean} [includeAnalyzersResearch]  Подключать ли `docs/WEEKLY_ANALYZERS_RESEARCH.md`
  *                                    в контекст промпта. Включается ТОЛЬКО для недельного плана.
+ * @property {boolean} [includeDetectionPriorities] Подключать ли FFT_METRICS_POTENTIAL_AND_LIMITS
+ *                                    и правила планирования детекции (дневной + недельный план).
  */
 
 /**
@@ -249,6 +267,7 @@ export async function runStrategicPlan(options) {
     horizonLabel: options.horizonLabel,
     rangeLabel: options.rangeLabel,
     outputFileName: outputFileRel,
+    includeDetectionPriorities: Boolean(options.includeDetectionPriorities),
   });
 
   const whitePaperRel = whitePaperPathUsed.replace(process.cwd() + '/', '');
@@ -285,6 +304,10 @@ export async function runStrategicPlan(options) {
       analyzersResearch,
       '',
     );
+  }
+  if (options.includeDetectionPriorities) {
+    const fftMetricsDoc = readFftMetricsPotentialAndLimits();
+    sections.push(buildDetectionPlanningContextSection({ fftMetricsDoc }), '');
   }
   sections.push(
     '---',

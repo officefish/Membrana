@@ -74,6 +74,7 @@
 | `@membrana/harmonic-detector-service` | implemented v0.1 | dsp |
 | `@membrana/cepstral-detector-service` | scaffold | dsp |
 | `@membrana/spectral-flux-detector-service` | scaffold | dsp |
+| `@membrana/template-match-detector-service` | implemented v0.1 | trends (FFT template-match) |
 | `@membrana/yamnet-detector-service` | scaffold | neural |
 | `@membrana/clap-detector-service` | scaffold | neural |
 | `@membrana/agentic-detector-service` | scaffold | agentic |
@@ -136,6 +137,27 @@ interface AudioWindow {
 
 **Ensemble:** `@membrana/detection-ensemble-service` — отдельный пакет после ranking
 одиночных детекторов; не блокирует gate.
+
+#### Калибровка DRONE_TIGHT (shipped curated + client facade)
+
+После эпика fft-last-chance (#84) **production-кандидат эшелона 0** — trends/template-match
+с шаблоном `DRONE_TIGHT` (см. [`FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md)).
+Источник чисел и temporal-паттернов — **не** client и **не** `background-media` для shipped-каталога.
+
+| Слой | Где живёт истина | Роль |
+|------|------------------|------|
+| **Shipped curated `DRONE_*`** | `packages/services/detectors/template-match/src/data/curated-drone-templates.json` | единственный канон порогов и temporal для `DRONE_TIGHT` |
+| **Benchmark sync** | `data/detectors-benchmark/v0.2/curated-drone-templates.json` | тот же JSON для `yarn benchmark:detectors` (держать в sync с пакетом) |
+| **Client defaults** | `apps/client/src/lib/droneTightCalibration.ts` | thin facade: дефолты плагинов mic/sample-library, `mergeDroneTightTrendsTemplates()`; **без** дублирования чисел |
+| **User trends-шаблоны (remote)** | `@membrana/background-media` per `deviceId` | только пользовательские шаблоны при `ServerStorageBackend`; не подменяют shipped `DRONE_TIGHT` |
+| **Journal UI** | `@membrana/journal-report-views` | рендер отчётов FFT/trends; client — композиция |
+
+**Правила для `apps/client`:**
+
+- Импорт curated-каталога — **только** через публичный API `@membrana/template-match-detector-service` (`createDefaultTemplateMatchCatalog`, `DEFAULT_CURATED_DRONE_TEMPLATES`, `collectMetricSamples`, …).
+- **Запрещено:** импорт `curated-drone-templates.json` / `fft-last-chance-best-template.json` из client; локальные копии порогов в plugin `types.ts`.
+- Trends scoring — `@membrana/trends-detector-service` (`classifyTrends`); mic FFT metrics — `@membrana/fft-analyzer-service`.
+- Проверка границы: `apps/client/src/lib/droneTightImportBoundary.test.ts` (CI).
 
 ### 1d. Семейство `packages/background-*` — фоновые Node-серверы
 

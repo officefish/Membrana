@@ -34,4 +34,5 @@ await runStrategicPlan({
   // Недельный план учитывает свежий радар аналайзеров из docs/WEEKLY_ANALYZERS_RESEARCH.md.
   // Дневной план — нет (см. strategic-plan-day.mjs).
   includeAnalyzersResearch: true,
+  includeDetectionPriorities: true,
 });

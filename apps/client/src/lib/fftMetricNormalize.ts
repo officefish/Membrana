@@ -4,17 +4,16 @@
  */
 import type { ThresholdTestThresholds } from '@membrana/fft-analyzer-service';
 
+import { getDroneTightSpectralThresholds } from './droneTightCalibration';
+
 export const METRIC_NORM = {
   centroidHzMax: 5_000,
   fluxRefMax: 1,
   loudnessRefMax: 0.35,
 } as const;
 
-export const DEMO_DRONE_THRESHOLDS = {
-  centroid: { min: 500, max: 1_250 },
-  flux: { min: 0.2, max: 1.5 },
-  rms: { min: 0.03, max: 0.35 },
-} as const;
+/** Калиброванная «зона дрона» free-v1 (DRONE_TIGHT p10–p90). */
+export const DEMO_DRONE_THRESHOLDS = getDroneTightSpectralThresholds();
 
 export function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 0;

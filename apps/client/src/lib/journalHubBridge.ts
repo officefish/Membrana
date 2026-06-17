@@ -13,7 +13,7 @@ import { resolveJournalBackend } from '@/lib/resolveJournalBackend';
 let bridgeInstalled = false;
 let serviceUnsub: (() => void) | null = null;
 let configureGeneration = 0;
-let pairedUpgradeTimer: ReturnType<typeof setInterval> | null = null;
+let pairedUpgradeTimer: number | null = null;
 
 const PAIRED_JOURNAL_UPGRADE_INTERVAL_MS = 30_000;
 

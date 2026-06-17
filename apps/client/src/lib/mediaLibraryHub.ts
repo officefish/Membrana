@@ -6,6 +6,8 @@ import type {
   MediaLibrarySampleImportedPayload,
 } from '@membrana/media-library-service';
 
+export type { MediaLibraryCaptureStopPayload };
+
 type HubListener<T> = (payload: T) => void;
 
 const captureStartListeners = new Set<HubListener<MediaLibraryCaptureStartPayload>>();

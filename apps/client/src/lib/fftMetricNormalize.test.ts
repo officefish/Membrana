@@ -26,9 +26,9 @@ describe('fftMetricNormalize', () => {
     expect(normalizeLoudness(0.35)).toBe(1);
   });
 
-  it('isInDroneZone uses demo thresholds', () => {
-    expect(isInDroneZone(800, 'centroid')).toBe(true);
-    expect(isInDroneZone(100, 'centroid')).toBe(false);
+  it('isInDroneZone uses calibrated DRONE_TIGHT thresholds', () => {
+    expect(isInDroneZone(3500, 'centroid')).toBe(true);
+    expect(isInDroneZone(800, 'centroid')).toBe(false);
     expect(isInDroneZone(DEMO_DRONE_THRESHOLDS.flux.min, 'flux')).toBe(true);
   });
 });

@@ -1,10 +1,15 @@
 import {
-  SYSTEM_TEMPLATE_KEYS,
   isUserTemplateKey,
   type PatternTemplate,
 } from '@membrana/trends-detector-service';
 
 import type { AnalysisSourceKind } from '../../lib/audioAnalysis';
+import {
+  DRONE_TIGHT_MIN_CONFIDENCE,
+  DRONE_TIGHT_TRENDS_INTERVAL_MS,
+  DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
+  getDroneTightEnabledTemplateKeys,
+} from '../../lib/droneTightCalibration';
 
 import {
   INTERVAL_MS_MAX,
@@ -42,15 +47,16 @@ export interface TrendsFftAnalyzerPluginConfig {
   readonly enabledTemplateKeys: readonly string[];
 }
 
-export const DEFAULT_ENABLED_TEMPLATE_KEYS: readonly string[] = [...SYSTEM_TEMPLATE_KEYS];
+export const DEFAULT_ENABLED_TEMPLATE_KEYS: readonly string[] =
+  getDroneTightEnabledTemplateKeys();
 
 export const defaultTrendsFftAnalyzerConfig: TrendsFftAnalyzerPluginConfig = {
-  intervalMs: 100,
-  measurementsCount: 100,
+  intervalMs: DRONE_TIGHT_TRENDS_INTERVAL_MS,
+  measurementsCount: DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
   minRms: 0.02,
   detectionMode: 'auto',
   autoRestartDelayMs: 300,
-  minConfidence: 35,
+  minConfidence: DRONE_TIGHT_MIN_CONFIDENCE,
   analysisSource: 'microphone',
   enabledTemplateKeys: DEFAULT_ENABLED_TEMPLATE_KEYS,
 };
@@ -73,7 +79,7 @@ export function resolveTrendsFftAnalyzerConfig(
   const enabledTemplateKeys = Array.isArray(raw?.enabledTemplateKeys)
     ? raw.enabledTemplateKeys.filter(
         (k) =>
-          (SYSTEM_TEMPLATE_KEYS as readonly string[]).includes(k) ||
+          getDroneTightEnabledTemplateKeys().includes(k) ||
           isUserTemplateKey(k),
       )
     : DEFAULT_ENABLED_TEMPLATE_KEYS;

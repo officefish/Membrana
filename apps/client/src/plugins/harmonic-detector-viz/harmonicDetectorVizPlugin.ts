@@ -1,11 +1,11 @@
 import type { ModuleContext, Plugin, PluginTeardown } from '@membrana/agenda';
 import { useMembranaStore } from '@membrana/agenda';
 import { audioWindowFromFrame } from '@membrana/detector-base';
+import type { DroneDetector } from '@membrana/detector-base';
 import type { AudioSampleFrame } from '@membrana/audio-engine-service';
 import {
   createHarmonicDetector,
   DEFAULT_FFT_SIZE,
-  type HarmonicDetector,
 } from '@membrana/harmonic-detector-service';
 
 import { publishDroneDetected } from '../../lib/droneDetectionHub';
@@ -43,7 +43,7 @@ export function createHarmonicDetectorVizPlugin(): Plugin<HarmonicDetectorVizPlu
       let feed: AudioFrameFeed | null = null;
       let unsubFeed: (() => void) | null = null;
       let feedActive = false;
-      let detector: HarmonicDetector = createHarmonicDetector({
+      let detector: DroneDetector = createHarmonicDetector({
         confidenceThreshold: resolveHarmonicDetectorVizConfig(context.config).confidenceThreshold,
         fftSize: FFT_SIZE,
       });

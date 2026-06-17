@@ -5,6 +5,7 @@ import {
   FftAnalyzer,
   SpectralFluxTracker,
   applyPreset,
+  DEFAULT_CONFIG,
   evaluateFrameVerdict,
   evaluateThresholdTest,
   PRESETS,
@@ -109,7 +110,11 @@ export function createFftThresholdTestPlugin(): Plugin<FftThresholdTestPluginCon
           ...PRESETS.drone,
           fftSize: FFT_SIZE,
           smoothingTimeConstant: SMOOTHING,
-          liveMode: { intervalMs: 500 },
+          liveMode: {
+            intervalMs: 500,
+            minRMS: DEFAULT_CONFIG.liveMode.minRMS,
+            frequencyRange: DEFAULT_CONFIG.liveMode.frequencyRange,
+          },
         }),
       );
 

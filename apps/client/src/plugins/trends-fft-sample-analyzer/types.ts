@@ -1,5 +1,7 @@
+import type { TrendsDetectionResult } from '@membrana/trends-detector-service';
+
+import type { TrendsFftReport } from '../trends-fft-analyzer/buildTrendsFftReport';
 import {
-  DEFAULT_ENABLED_TEMPLATE_KEYS,
   type TrendsFftAnalyzerPluginConfig,
 } from '../trends-fft-analyzer/types';
 import {
@@ -9,15 +11,21 @@ import {
   MEASUREMENTS_MIN,
 } from '../trends-fft-analyzer/measurementPresets';
 import {
-  isUserTemplateKey,
-  SYSTEM_TEMPLATE_KEYS,
-} from '@membrana/trends-detector-service';
+  DRONE_TIGHT_MIN_CONFIDENCE,
+  DRONE_TIGHT_TRENDS_INTERVAL_MS,
+  DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
+  getDroneTightEnabledTemplateKeys,
+} from '../../lib/droneTightCalibration';
+import { isUserTemplateKey } from '@membrana/trends-detector-service';
 
 import type { SampleDurationPlan } from './sampleDurationPolicy';
 
 export const TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID = 'trends-fft-sample-analyzer';
 
+export type TrendsFftSampleAnalysisStatus = 'idle' | 'loading' | 'ready' | 'error';
+
 export interface TrendsFftSampleAnalyzerPluginConfig {
+  readonly autoAnalyzeOnEnd: boolean;
   readonly intervalMs: number;
   readonly measurementsCount: number;
   readonly minRms: number;
@@ -26,11 +34,12 @@ export interface TrendsFftSampleAnalyzerPluginConfig {
 }
 
 export const defaultTrendsFftSampleAnalyzerConfig: TrendsFftSampleAnalyzerPluginConfig = {
-  intervalMs: 100,
-  measurementsCount: 100,
+  autoAnalyzeOnEnd: true,
+  intervalMs: DRONE_TIGHT_TRENDS_INTERVAL_MS,
+  measurementsCount: DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
   minRms: 0.02,
-  minConfidence: 35,
-  enabledTemplateKeys: DEFAULT_ENABLED_TEMPLATE_KEYS,
+  minConfidence: DRONE_TIGHT_MIN_CONFIDENCE,
+  enabledTemplateKeys: getDroneTightEnabledTemplateKeys(),
 };
 
 export function resolveTrendsFftSampleAnalyzerConfig(
@@ -48,12 +57,16 @@ export function resolveTrendsFftSampleAnalyzerConfig(
   const enabledTemplateKeys = Array.isArray(raw?.enabledTemplateKeys)
     ? raw.enabledTemplateKeys.filter(
         (k) =>
-          (SYSTEM_TEMPLATE_KEYS as readonly string[]).includes(k) ||
+          getDroneTightEnabledTemplateKeys().includes(k) ||
           isUserTemplateKey(k),
       )
-    : DEFAULT_ENABLED_TEMPLATE_KEYS;
+    : getDroneTightEnabledTemplateKeys();
 
   return {
+    autoAnalyzeOnEnd:
+      typeof raw?.autoAnalyzeOnEnd === 'boolean'
+        ? raw.autoAnalyzeOnEnd
+        : defaultTrendsFftSampleAnalyzerConfig.autoAnalyzeOnEnd,
     intervalMs: Number.isFinite(intervalMs)
       ? Math.min(INTERVAL_MS_MAX, Math.max(INTERVAL_MS_MIN, Math.round(intervalMs)))
       : defaultTrendsFftSampleAnalyzerConfig.intervalMs,
@@ -67,7 +80,9 @@ export function resolveTrendsFftSampleAnalyzerConfig(
       ? Math.min(100, Math.max(0, Math.round(minConfidence)))
       : defaultTrendsFftSampleAnalyzerConfig.minConfidence,
     enabledTemplateKeys:
-      enabledTemplateKeys.length > 0 ? enabledTemplateKeys : DEFAULT_ENABLED_TEMPLATE_KEYS,
+      enabledTemplateKeys.length > 0
+        ? enabledTemplateKeys
+        : defaultTrendsFftSampleAnalyzerConfig.enabledTemplateKeys,
   };
 }
 
@@ -86,11 +101,15 @@ export function toSharedTrendsConfig(
 export interface TrendsFftSampleSnapshot {
   readonly ready: boolean;
   readonly phase: 'idle' | 'collecting' | 'result';
+  readonly analysisStatus: TrendsFftSampleAnalysisStatus;
   readonly measurementsCount: number;
   readonly collectedCount: number;
   readonly tickStates: readonly ('pending' | 'collected')[];
   readonly currentSample: { readonly centroid: number; readonly flux: number; readonly rms: number } | null;
-  readonly lastResult: import('@membrana/trends-detector-service').TrendsDetectionResult | null;
+  readonly lastResult: TrendsDetectionResult | null;
+  readonly lastReport: TrendsFftReport | null;
+  readonly analyzedSampleId: string | null;
+  readonly errorMessage: string | null;
   readonly intervalMs: number;
   readonly minRms: number;
   readonly selectedSampleId: string | null;

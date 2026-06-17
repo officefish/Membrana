@@ -1,7 +1,9 @@
 import type { TrendsDetectionResult } from '@membrana/trends-detector-service';
 
+import type { TrendsFftReport } from '../trends-fft-analyzer/buildTrendsFftReport';
+
 import type { SampleDurationPlan } from './sampleDurationPolicy';
-import type { TrendsFftSampleSnapshot } from './types';
+import type { TrendsFftSampleAnalysisStatus, TrendsFftSampleSnapshot } from './types';
 
 type TickState = 'pending' | 'collected';
 
@@ -11,12 +13,16 @@ const emptyTicks = (n: number): TickState[] =>
 class TrendsFftSamplePluginStateImpl {
   private ready = false;
   private phase: TrendsFftSampleSnapshot['phase'] = 'idle';
-  private measurementsCount = 100;
+  private analysisStatus: TrendsFftSampleAnalysisStatus = 'idle';
+  private measurementsCount = 10;
   private collectedCount = 0;
-  private tickStates: TickState[] = emptyTicks(100);
+  private tickStates: TickState[] = emptyTicks(10);
   private currentSample: TrendsFftSampleSnapshot['currentSample'] = null;
   private lastResult: TrendsDetectionResult | null = null;
-  private intervalMs = 100;
+  private lastReport: TrendsFftReport | null = null;
+  private analyzedSampleId: string | null = null;
+  private errorMessage: string | null = null;
+  private intervalMs = 500;
   private minRms = 0.02;
   private selectedSampleId: string | null = null;
   private selectedSampleTitle: string | null = null;
@@ -67,6 +73,45 @@ class TrendsFftSamplePluginStateImpl {
       this.tickStates = emptyTicks(config.measurementsCount);
       this.collectedCount = 0;
     }
+    this.rebuild();
+  }
+
+  beginOfflineAnalysis(sampleId: string, measurementsCount: number): void {
+    this.analysisStatus = 'loading';
+    this.analyzedSampleId = sampleId;
+    this.errorMessage = null;
+    this.phase = 'collecting';
+    this.collectedCount = 0;
+    this.tickStates = emptyTicks(measurementsCount);
+    this.measurementsCount = measurementsCount;
+    this.currentSample = null;
+    this.lastResult = null;
+    this.lastReport = null;
+    this.rebuild();
+  }
+
+  finishOfflineAnalysis(
+    sampleId: string,
+    report: TrendsFftReport,
+    result: TrendsDetectionResult,
+    analysisParams: { measurementsCount: number; intervalMs: number },
+  ): void {
+    this.analysisStatus = 'ready';
+    this.analyzedSampleId = sampleId;
+    this.errorMessage = null;
+    this.phase = 'result';
+    this.lastReport = report;
+    this.lastResult = result;
+    this.resultAnalysisParams = { ...analysisParams };
+    this.collectedCount = analysisParams.measurementsCount;
+    this.tickStates = Array.from({ length: analysisParams.measurementsCount }, () => 'collected' as const);
+    this.rebuild();
+  }
+
+  failOfflineAnalysis(message: string): void {
+    this.analysisStatus = 'error';
+    this.errorMessage = message;
+    this.phase = 'idle';
     this.rebuild();
   }
 
@@ -132,13 +177,17 @@ class TrendsFftSamplePluginStateImpl {
   reset(): void {
     this.ready = false;
     this.phase = 'idle';
-    this.measurementsCount = 100;
+    this.analysisStatus = 'idle';
+    this.measurementsCount = 10;
     this.collectedCount = 0;
-    this.tickStates = emptyTicks(100);
+    this.tickStates = emptyTicks(10);
     this.currentSample = null;
     this.lastResult = null;
+    this.lastReport = null;
+    this.analyzedSampleId = null;
+    this.errorMessage = null;
     this.resultAnalysisParams = null;
-    this.intervalMs = 100;
+    this.intervalMs = 500;
     this.minRms = 0.02;
     this.selectedSampleId = null;
     this.selectedSampleTitle = null;
@@ -151,11 +200,15 @@ class TrendsFftSamplePluginStateImpl {
     return {
       ready: this.ready,
       phase: this.phase,
+      analysisStatus: this.analysisStatus,
       measurementsCount: this.measurementsCount,
       collectedCount: this.collectedCount,
       tickStates: this.tickStates,
       currentSample: this.currentSample,
       lastResult: this.lastResult,
+      lastReport: this.lastReport,
+      analyzedSampleId: this.analyzedSampleId,
+      errorMessage: this.errorMessage,
       intervalMs: this.intervalMs,
       minRms: this.minRms,
       selectedSampleId: this.selectedSampleId,
@@ -174,7 +227,7 @@ class TrendsFftSamplePluginStateImpl {
 export const trendsFftSamplePluginState = new TrendsFftSamplePluginStateImpl();
 
 type SampleController = {
-  startAnalysis: () => void;
+  analyzeSelectedSample: () => void;
 };
 
 let controller: SampleController | null = null;
@@ -184,5 +237,5 @@ export function registerTrendsFftSampleController(next: SampleController | null)
 }
 
 export function requestTrendsSampleAnalysis(): void {
-  controller?.startAnalysis();
+  controller?.analyzeSelectedSample();
 }

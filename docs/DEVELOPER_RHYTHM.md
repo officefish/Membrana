@@ -22,7 +22,7 @@
 
 ## Утро (10–20 минут)
 
-Цель: спланировать день, **учитывая вчерашнее вечернее code-review** (`docs/DAILY_CODE_REVIEW.md`), и зафиксировать один фокус.
+Цель: спланировать день, **учитывая вчерашнее вечернее code-review** (`docs/DAILY_CODE_REVIEW.md`) и **приоритеты детекции** после эпика #84 ([`FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) §6), и зафиксировать один фокус.
 
 > **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход).
 
@@ -71,6 +71,8 @@ yarn ritual:day:no-api
 ```
 
 **Что читать после:** [`docs/MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) — **обязательный фокус**; стендап и планы — контекст. [`docs/CURRENT_TASK.md`](./CURRENT_TASK.md) — только вспомогательный буфер (может содержать шум; см. [`TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md)).
+
+> **Планирование детекции:** `yarn plan:day`, `yarn standup` и `yarn main-day-issue` подмешивают [`prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md). Не ставить магистралью «Этап 1.A / benchmark 3 DSP» — эшелон 0 на free-v1 исчерпан; магистраль — trends `DRONE_TIGHT`, validated data или эшелон 2 (нейро/zero-shot).
 
 **Минимальный утренний набор** (нет API / экономия токенов):
 
