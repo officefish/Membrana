@@ -14,7 +14,8 @@ import {
 } from '@membrana/trends-detector-service';
 
 import { createAnalysisFrameFeed, type AudioFrameFeed } from '../../lib/audioAnalysis';
-import { mergeDroneTightTrendsTemplates } from '../../lib/droneTightCalibration';
+import { publishDroneDetected } from '../../lib/droneDetectionHub';
+import { resolveTrendsTemplatesForAnalysis } from '../../lib/droneTightCalibration';
 import { buildTrendsFftReport } from './buildTrendsFftReport';
 import {
   registerTrendsFftController,
@@ -149,7 +150,10 @@ export function createTrendsFftAnalyzerPlugin(): Plugin<TrendsFftAnalyzerPluginC
         stopSampleInterval();
         collectionActive = false;
         const finishedAt = Date.now();
-        const templates = mergeDroneTightTrendsTemplates(userTemplatesStore.getTemplates());
+        const templates = resolveTrendsTemplatesForAnalysis(
+          userTemplatesStore.getTemplates(),
+          config.enabledTemplateKeys,
+        );
         const result = classifyTrends(collectedSamples, templates, {
           minConfidence: config.minConfidence,
           activityRmsThreshold: config.minRms,
@@ -178,6 +182,13 @@ export function createTrendsFftAnalyzerPlugin(): Plugin<TrendsFftAnalyzerPluginC
             result,
           });
           logTrendsFftResult(moduleId, report);
+          if (result.isDetected) {
+            publishDroneDetected({
+              sourceId: 'trends-fft-analyzer',
+              sourceLabel: 'Анализатор тенденций FFT',
+              timestamp: finishedAt,
+            });
+          }
         }
 
         collectionFluxTracker = null;

@@ -7,6 +7,7 @@ import type {
 } from './types.js';
 import { computeTemporalFeatures } from './math/temporalFeatures.js';
 import { scoreTemplate } from './math/scoring.js';
+import { templateCountsAsDetection } from './templateCountsAsDetection.js';
 
 const CONFIDENCE_THRESHOLDS = {
   high: 75,
@@ -70,6 +71,7 @@ export function classifyTrends(
 
   const roundedConfidence = Math.round(best.score);
   const level = confidenceLevel(best.score, second?.score ?? 0);
+  const countsAsDetection = winnerTemplate ? templateCountsAsDetection(winnerTemplate) : false;
 
   return {
     detectedState: best.key,
@@ -79,7 +81,7 @@ export function classifyTrends(
     confidence: roundedConfidence,
     confidenceLevel: level,
     samples,
-    isDetected: roundedConfidence >= minConfidence,
+    isDetected: roundedConfidence >= minConfidence && countsAsDetection,
     scores,
     temporalFeatures: features,
   };

@@ -80,6 +80,11 @@ export interface PatternTemplate {
   readonly description: string;
   readonly thresholds: SpectralThresholds;
   readonly temporalPatterns: TemporalPatternSpec;
+  /**
+   * When true, winning this template with sufficient confidence counts as a
+   * drone detection event in journals and the header sensor.
+   */
+  readonly countsAsDetection?: boolean;
 }
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low' | 'veryLow';

@@ -19,6 +19,7 @@ export type {
 export { DEFAULT_FRAME_HIT_RATIO } from './types.js';
 
 export { classifyTrends } from './classifyTrends.js';
+export { templateCountsAsDetection } from './templateCountsAsDetection.js';
 export { computeTemporalFeatures } from './math/temporalFeatures.js';
 export { buildTemplateMatchBreakdown } from './math/matchBreakdown.js';
 export {

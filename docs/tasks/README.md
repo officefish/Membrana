@@ -57,6 +57,13 @@
 | `lp3-track-import-backpressure` | LP3: track-import режим, очередь и regression DDR | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `lp4-parallel-detection-smoke` | LP4: SLO-тесты, docs, paired smoke | S | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `lp5-journal-report-renderers` | LP5: журнальные рендеры FFT-порог/тенденции (client+cabinet) + фикс live-дрона | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `cabinet-journal-hotfix` | Cabinet journal hotfix: media API, preload, brief render, trends detection | M | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `cj-0-trends-enabled-keys` | CJ-0: trends enabledTemplateKeys filter + DRONE_TIGHT UI | S | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `cj-1-media-api-safe-json` | CJ-1: Media API safe JSON + cabinet invalidate | S | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `cj-2-journal-media-decouple` | CJ-2: Decouple journal load from media init + fast poll | M | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `cj-3-brief-render-parity` | CJ-3: drone-detection-brief/v1 render in cabinet | S | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `cj-4-trends-counts-as-detection` | CJ-4: countsAsDetection in PatternTemplate + journal tags | M | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
+| `cj-5-sync-push-observability` | CJ-5: Sync journal push warn + incremental cabinet poll | S | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | [#67](https://github.com/officefish/Membrana/issues/67) |
 
 ---
 

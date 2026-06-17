@@ -27,7 +27,7 @@ export const TrendsCreateTemplateFromAnalysis: React.FC<
   const [editing, setEditing] = useState<PatternTemplate | null>(null);
 
   const allKeys = useMemo(
-    () => [...SYSTEM_TEMPLATES.map((t) => t.key), ...userTemplates.map((t) => t.key)],
+    () => [...SYSTEM_TEMPLATES.map((t: PatternTemplate) => t.key), ...userTemplates.map((t) => t.key)],
     [userTemplates],
   );
 

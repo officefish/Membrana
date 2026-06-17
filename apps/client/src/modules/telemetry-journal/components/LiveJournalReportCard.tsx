@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
 
+import {
+  BriefDroneDetectionReportView,
+  FftThresholdReportView,
+  TrendsFftReportView,
+  droneDetectionBriefFromItem,
+  fftThresholdReportFromItem,
+  trendsFftReportFromItem,
+} from '@membrana/journal-report-views';
+
 import { DroneDetectionReportView } from '@/components/detector-report';
 
-import { droneDetectionBriefFromItem } from '../adapters/droneDetectionBriefFromItem';
 import { droneDetectionReportFromItem } from '../adapters/droneDetectionReportFromItem';
-import { fftThresholdReportFromItem } from '../adapters/fftThresholdReportFromItem';
-import { trendsFftReportFromItem } from '../adapters/trendsFftReportFromItem';
-import { FftThresholdReportView } from './FftThresholdReportView';
-import { TrendsFftReportView } from './TrendsFftReportView';
 
 export interface LiveJournalReportCardProps {
   readonly item: LiveJournalItem;
@@ -30,26 +34,7 @@ function BriefVerdictTable({
 }: {
   readonly item: NonNullable<ReturnType<typeof droneDetectionBriefFromItem>>;
 }): React.ReactElement {
-  return (
-    <table className="table table-xs w-full">
-      <thead>
-        <tr>
-          <th>Детектор</th>
-          <th>Дрон</th>
-          <th className="text-right">Уверенность</th>
-        </tr>
-      </thead>
-      <tbody>
-        {item.verdicts.map((verdict) => (
-          <tr key={verdict.detectorName}>
-            <td>{verdict.detectorName}</td>
-            <td>{verdict.isDrone ? 'да' : 'нет'}</td>
-            <td className="text-right tabular-nums">{(verdict.confidence * 100).toFixed(1)}%</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+  return <BriefDroneDetectionReportView report={item} />;
 }
 
 export const LiveJournalReportCard: React.FC<LiveJournalReportCardProps> = ({

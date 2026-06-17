@@ -1606,6 +1606,124 @@
       "notes": "Lead: Vesnin. Smoke: Музыкант. PR → techies68; task:archive epic; Issue report.",
       "archivedAt": "2026-06-17",
       "archiveNotes": "PR #87 merged to main"
+    },
+    {
+      "id": "cabinet-journal-hotfix",
+      "title": "Cabinet journal hotfix: media API, preload, brief render, trends detection",
+      "promptPath": "docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-platform-mp5-telemetry-journal"
+      ],
+      "notes": "QA 2026-06-17: 5 замечаний ручного теста cabinet.membrana.space"
+    },
+    {
+      "id": "cj-0-trends-enabled-keys",
+      "title": "CJ-0: trends enabledTemplateKeys filter + DRONE_TIGHT UI",
+      "promptPath": "docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "cabinet-journal-hotfix",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-journal-hotfix"
+      ],
+      "notes": "Lead: Dynin. filterTrendsTemplatesByEnabledKeys, TrendsTemplateList catalog."
+    },
+    {
+      "id": "cj-1-media-api-safe-json",
+      "title": "CJ-1: Media API safe JSON + cabinet invalidate",
+      "promptPath": "docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "cabinet-journal-hotfix",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-journal-hotfix"
+      ],
+      "notes": "Lead: Ozhegov. server-storage-backend Content-Type check."
+    },
+    {
+      "id": "cj-2-journal-media-decouple",
+      "title": "CJ-2: Decouple journal load from media init + fast poll",
+      "promptPath": "docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "cabinet-journal-hotfix",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cj-1-media-api-safe-json"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. useCabinetLiveJournal split."
+    },
+    {
+      "id": "cj-3-brief-render-parity",
+      "title": "CJ-3: drone-detection-brief/v1 render in cabinet",
+      "promptPath": "docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "cabinet-journal-hotfix",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cabinet-journal-hotfix"
+      ],
+      "notes": "Lead: Rodchenko. journal-report-views + CabinetLiveJournalReportCard."
+    },
+    {
+      "id": "cj-4-trends-counts-as-detection",
+      "title": "CJ-4: countsAsDetection in PatternTemplate + journal tags",
+      "promptPath": "docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "cabinet-journal-hotfix",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cj-0-trends-enabled-keys"
+      ],
+      "notes": "Lead: Dynin. classifyTrends isDetected semantics."
+    },
+    {
+      "id": "cj-5-sync-push-observability",
+      "title": "CJ-5: Sync journal push warn + incremental cabinet poll",
+      "promptPath": "docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 67,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "cabinet-journal-hotfix",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "cj-2-journal-media-decouple"
+      ],
+      "notes": "Lead: Ozhegov. sync-journal-storage-backend logger.warn on push fail."
     }
   ]
 }

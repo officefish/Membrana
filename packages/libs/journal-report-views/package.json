@@ -25,6 +25,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@membrana/detector-report": "*",
     "@membrana/fft-analyzer-service": "*",
     "@membrana/telemetry-journal-service": "*",
     "@membrana/trends-detector-service": "*"

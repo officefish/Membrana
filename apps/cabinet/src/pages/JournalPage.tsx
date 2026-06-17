@@ -74,7 +74,7 @@ export function JournalPage() {
         <button
           type="button"
           className="btn btn-ghost btn-sm"
-          onClick={() => void journal.reload({ silent: true })}
+          onClick={() => void journal.reload()}
         >
           Обновить
         </button>
@@ -109,7 +109,9 @@ export function JournalPage() {
         <div className="card bg-base-100 border border-base-200 shadow-sm rounded-box">
           <div className="card-body p-4 md:p-6 gap-4">
             {!journal.mediaReady ? (
-              <p className="text-xs text-warning">Медиатека узла недоступна — play/export blob отключены.</p>
+              <p className="text-xs text-warning" role="status">
+                {journal.mediaError ?? 'Медиатека узла недоступна — play/export blob отключены.'}
+              </p>
             ) : null}
 
             <div className="flex flex-wrap items-center justify-between gap-2">

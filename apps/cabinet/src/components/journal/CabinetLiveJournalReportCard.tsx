@@ -2,8 +2,10 @@ import { useState } from 'react';
 import type { LiveJournalItem } from '@membrana/telemetry-journal-service';
 import { downloadDroneDetectionReport } from '@membrana/detector-report';
 import {
+  BriefDroneDetectionReportView,
   FftThresholdReportView,
   TrendsFftReportView,
+  droneDetectionBriefFromItem,
   fftThresholdReportFromItem,
   trendsFftReportFromItem,
 } from '@membrana/journal-report-views';
@@ -29,12 +31,14 @@ function formatTimestamp(timestamp: number): string {
 export function CabinetLiveJournalReportCard({ item, trackTitle }: CabinetLiveJournalReportCardProps) {
   const [expanded, setExpanded] = useState(false);
   const detailedReport = droneDetectionReportFromItem(item);
+  const briefReport = droneDetectionBriefFromItem(item);
   const fftThresholdReport = fftThresholdReportFromItem(item);
   const trendsFftReport = trendsFftReportFromItem(item);
   const isDetected = item.report?.isDetected === true;
   const summary = item.report?.summaryText;
+  const isBrief = briefReport !== null;
 
-  if (!detailedReport && !fftThresholdReport && !trendsFftReport) {
+  if (!detailedReport && !briefReport && !fftThresholdReport && !trendsFftReport) {
     return (
       <article className="rounded-lg border border-base-300 bg-base-300/20 p-2 text-xs text-base-content/60">
         Отчёт {item.report?.schema ?? 'unknown'} — нет совместимого рендера
@@ -43,7 +47,8 @@ export function CabinetLiveJournalReportCard({ item, trackTitle }: CabinetLiveJo
   }
 
   let badgeLabel = 'Отчёт';
-  if (fftThresholdReport) badgeLabel = 'FFT пороговый тест';
+  if (isBrief) badgeLabel = 'Краткий отчёт';
+  else if (fftThresholdReport) badgeLabel = 'FFT пороговый тест';
   else if (trendsFftReport) badgeLabel = 'Анализатор тенденций FFT';
 
   return (
@@ -107,7 +112,16 @@ export function CabinetLiveJournalReportCard({ item, trackTitle }: CabinetLiveJo
       </header>
       {expanded ? (
         <div className="border-t border-base-300/50 p-2 space-y-2">
+          {briefReport ? <BriefDroneDetectionReportView report={briefReport} /> : null}
+          {briefReport && briefReport.meta.detailedReportStatus === 'pending' ? (
+            <p className="text-xs text-base-content/60">Подробный отчёт готовится на сервере…</p>
+          ) : null}
           {detailedReport ? <DroneDetectionReportView report={detailedReport} /> : null}
+          {briefReport && !detailedReport ? (
+            <p className="text-xs text-base-content/50">
+              Подробный DDR (template-match, таблицы кадров) — по запросу на сервер (LP1b).
+            </p>
+          ) : null}
           {fftThresholdReport ? <FftThresholdReportView report={fftThresholdReport} /> : null}
           {trendsFftReport ? <TrendsFftReportView report={trendsFftReport} /> : null}
         </div>

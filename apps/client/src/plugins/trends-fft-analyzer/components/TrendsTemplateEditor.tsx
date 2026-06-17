@@ -372,6 +372,20 @@ export const TrendsTemplateEditor: React.FC<TrendsTemplateEditorProps> = ({
 
       {tab === 'advanced' ? (
         <div className="space-y-2 max-h-72 overflow-y-auto pr-1" role="tabpanel">
+          <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-base-300 p-2">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-xs"
+              checked={draft.countsAsDetection === true}
+              onChange={(e) =>
+                setDraft((prev) => ({
+                  ...prev,
+                  countsAsDetection: e.target.checked,
+                }))
+              }
+            />
+            <span className="text-xs font-medium">Считать победу шаблона обнаружением дрона</span>
+          </label>
           {optionalBoundsField(
             'Отклонение центра (σ)',
             'Hz',

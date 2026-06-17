@@ -8,7 +8,9 @@ import { DRONE_TEMPLATE_KEY_PREFIX } from './constants.js';
 export function resolveTemplateMatchCatalog(
   curatedDroneTemplates: readonly PatternTemplate[],
 ): PatternTemplate[] {
-  const nonDroneSystem = SYSTEM_TEMPLATES.filter((t) => !t.key.startsWith(DRONE_TEMPLATE_KEY_PREFIX));
+  const nonDroneSystem = SYSTEM_TEMPLATES.filter(
+    (t: PatternTemplate) => !t.key.startsWith(DRONE_TEMPLATE_KEY_PREFIX),
+  );
   return [...curatedDroneTemplates, ...nonDroneSystem];
 }
 

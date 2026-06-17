@@ -75,6 +75,26 @@ export function mergeDroneTightTrendsTemplates(
   return [...catalog, ...extra];
 }
 
+/** Оставляет только шаблоны, включённые галочками в настройках плагина. */
+export function filterTrendsTemplatesByEnabledKeys(
+  templates: readonly PatternTemplate[],
+  enabledKeys: readonly string[],
+): PatternTemplate[] {
+  const enabled = new Set(enabledKeys);
+  return templates.filter((t) => enabled.has(t.key));
+}
+
+/** Каталог DRONE_TIGHT + пользовательские, отфильтрованные по enabledTemplateKeys. */
+export function resolveTrendsTemplatesForAnalysis(
+  userTemplates: readonly PatternTemplate[],
+  enabledKeys: readonly string[],
+): PatternTemplate[] {
+  return filterTrendsTemplatesByEnabledKeys(
+    mergeDroneTightTrendsTemplates(userTemplates),
+    enabledKeys,
+  );
+}
+
 /** isDrone по вердикту trends: обнаружено и победитель — DRONE_*. */
 export function isDroneTightTrendsDetection(
   detectedState: string,

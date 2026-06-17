@@ -5,6 +5,7 @@
     "icon": "🛸",
     "color": "#ff6b6b",
     "description": "Узкий шаблон из перцентилей train-дронов free-v1 (стабильный высокочастотный гул). Калибровка эпика fft-last-chance (#84): val recall 95% / FPR 30%.",
+    "countsAsDetection": true,
     "thresholds": {
       "centroid": {
         "min": 2900,
