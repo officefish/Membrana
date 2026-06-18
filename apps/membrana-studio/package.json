@@ -1,0 +1,51 @@
+{
+  "name": "@membrana/membrana-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Membrana Studio — Electron shell for the full field client (apps/client).",
+  "author": "Membrana",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/electron-run.mjs",
+    "dev": "node scripts/electron-run.mjs",
+    "clean": "rimraf dist release client-dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run",
+    "package": "electron-builder --win nsis --publish never"
+  },
+  "build": {
+    "appId": "space.membrana.studio",
+    "productName": "Membrana Studio",
+    "electronVersion": "33.2.1",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "client-dist/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "publish": null,
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  }
+}

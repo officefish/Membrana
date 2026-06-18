@@ -23,6 +23,7 @@
 | **[`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](./DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md)** | **Активный эпик** — MP7b: device-board по WS, run/stop, режим, live-мониторинг (RT0–RT7) |
 | **[`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md)** | **Активный эпик** — Membrana Studio: настольная расширенная версия (MS0–MS5); Membrana Device — отдельно |
 | **[`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md)** | **Активный эпик** — зелёный turbo build client+cabinet (F0–F6) |
+| **[`DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md`](./DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md)** | **Активный эпик** — рефакторинг деплоя: CI-гейт, образ в registry, rollback, smoke (DR0–DR7) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
 

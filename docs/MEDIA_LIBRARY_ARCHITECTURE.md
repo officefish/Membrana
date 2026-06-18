@@ -128,7 +128,8 @@ packages/background-media/             # NestJS + Fastify, Prisma, PostgreSQL
   ├── blob/                          # volume: wav, mp3, flac, ogg (как загружено)
   └── REST: collections, samples, blobs (multipart)
 
-apps/electron/                         # preload: electronAPI.mediaLibrary.*
+apps/membrana-studio/                  # Membrana Studio — preload: electronAPI.mediaLibrary.*
+apps/membrana-device/                  # Membrana Device (v2) — тот же контракт preload, узкий renderer
 ```
 
 **Граф зависимостей** (как §1a ARCHITECTURE):

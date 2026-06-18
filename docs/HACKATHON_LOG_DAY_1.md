@@ -141,6 +141,6 @@ UI: кнопки **Export JSON**, **Run** (pre-run check; runtime — H2b).
 | `deviceScenarioPersistence.ts` | client: localStorage + media (LWW по `updatedAt`) |
 | `apps/cabinet` | раздел **Device board**, fullscreen editor, sync save |
 
-## Следующий шаг
+## Закрытие
 
-Деплой на сервер → smoke cabinet + client paired → `yarn hackathon:close`.
+Хакатон закрыт 2026-06-17. См. [`docs/archive/hackathon/2026-06-17/CLOSURE.md`](../archive/hackathon/2026-06-17/CLOSURE.md). Дальше — эпики в обычном ритме.
