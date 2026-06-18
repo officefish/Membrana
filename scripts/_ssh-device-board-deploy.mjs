@@ -8,6 +8,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'ssh2';
+import { deployPreflight } from './_deploy-preflight.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const envPath = resolve(root, '.env');
@@ -24,6 +25,9 @@ const branch =
   get('GIT_BRANCH') ||
   get('CABINET_GIT_BRANCH') ||
   'main';
+
+// DR0 gate: локальное состояние должно совпадать с origin/<branch> (прод собирается из origin).
+deployPreflight({ branch, cwd: root });
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail
