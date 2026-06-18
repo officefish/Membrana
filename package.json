@@ -104,6 +104,7 @@
     "mcp:phase-c": "node scripts/mcp-workstation-phase-c.mjs",
     "mcp:phase-c:install": "node scripts/mcp-workstation-phase-c.mjs --write",
     "cabinet:deploy:prod": "node scripts/_ssh-cabinet-deploy.mjs",
+    "cabinet:deploy:image:prod": "node scripts/_ssh-cabinet-deploy-image.mjs",
     "device-board:deploy:prod": "node scripts/_ssh-device-board-deploy.mjs",
     "cabinet:mp3:post-deploy": "node scripts/_ssh-cabinet-mp3-post-deploy.mjs",
     "cabinet:mp3:smoke": "node scripts/_ssh-cabinet-mp3-smoke.mjs",
@@ -113,6 +114,10 @@
     "cabinet:pair-unlink:prod": "node scripts/_ssh-cabinet-pair-unlink-prod.mjs",
     "cabinet:mp5:prod": "node scripts/_ssh-cabinet-mp5-prod.mjs",
     "cabinet:mp6:prod": "node scripts/_ssh-cabinet-mp6-prod.mjs",
+    "cabinet:mp7:prod": "node scripts/_ssh-cabinet-mp7-prod.mjs",
+    "studio:dev": "node scripts/studio-dev.mjs",
+    "studio:build": "node scripts/studio-build.mjs",
+    "studio:package": "node scripts/studio-package.mjs",
     "cabinet:tj6:prod": "node scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs",
     "cabinet:pairing:e2e:deploy": "node scripts/_ssh-cabinet-pairing-e2e-deploy.mjs"
   },

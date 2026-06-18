@@ -57,6 +57,65 @@ yarn cabinet:deploy:prod -- --allow-dirty --allow-red-ci
 
 ---
 
+## Деплой из образа registry (DR2) — рекомендуемый путь
+
+Вместо сборки на VPS (`build`) прод тянет **готовый иммутабельный образ** из GHCR по тегу.
+Образ нельзя «недокоммитить»: он собран в CI из чистого checkout — это устраняет первопричину
+постмортема MP7B (`docs/deploy/POSTMORTEM-MP7B-2026-06-18.md`).
+
+### Registry и теги
+
+CI-workflow `.github/workflows/cabinet-images.yml` публикует два образа:
+
+| Образ | Что внутри |
+|-------|------------|
+| `ghcr.io/officefish/membrana-cabinet-api` | NestJS API (`packages/background-cabinet/Dockerfile`) |
+| `ghcr.io/officefish/membrana-cabinet-web` | SPA nginx (`apps/cabinet/Dockerfile`) |
+
+Теги образа:
+
+| Триггер | Теги |
+|---------|------|
+| push тега `cabinet-v*` | `cabinet-vX.Y.Z`, `sha-<short>`, `latest` |
+| push в `main` | `main`, `sha-<short>` |
+
+Релиз делается тегом: `git tag cabinet-v1.2.3 && git push origin cabinet-v1.2.3`.
+
+### Разделение build-time / runtime env
+
+- **build-time** (запекается в образ `cabinet-web` на этапе CI, поменять можно только пересборкой):
+  `VITE_CABINET_API_URL=https://cabinet.membrana.space`, `VITE_MEDIA_API_URL=https://media.membrana.space`.
+- **runtime** (приходит в `cabinet-api` при старте контейнера из `/etc/membrana/cabinet.env`,
+  меняется без пересборки): `DATABASE_URL`, `API_INTERNAL_TOKEN`, `*_CORS_ORIGINS`, `MEDIA_API_*`,
+  `CABINET_BOOTSTRAP_*` и т.д.
+
+### Деплой по тегу
+
+```bash
+# релизный образ
+CABINET_IMAGE_TAG=cabinet-v1.2.3 yarn cabinet:deploy:image:prod
+
+# любой коммит main по sha
+CABINET_IMAGE_TAG=sha-1a2b3c4 yarn cabinet:deploy:image:prod
+```
+
+Скрипт `scripts/_ssh-cabinet-deploy-image.mjs` проходит те же гейты (preflight + ci-gate),
+синкает на VPS только compose/Caddy (`git reset` без build), затем:
+`pull` образа **до** `down`/`up` — если образ недоступен, прод остаётся на старом образе
+(свойство «провал до переключения не роняет прод»).
+
+Приватные образы GHCR: положите `GHCR_USER` и `GHCR_TOKEN` в `/etc/membrana/cabinet.env` —
+скрипт сделает `docker login` перед pull. Для публичных пакетов логин не нужен.
+
+На VPS вручную image-режим включается так:
+
+```bash
+CABINET_DEPLOY_MODE=image CABINET_IMAGE_TAG=cabinet-v1.2.3 ./deploy/cabinet-stack.sh pull
+CABINET_DEPLOY_MODE=image CABINET_IMAGE_TAG=cabinet-v1.2.3 ./deploy/cabinet-stack.sh up
+```
+
+---
+
 ## 1. Подготовка сервера (один раз)
 
 ```bash
