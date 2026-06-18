@@ -66,14 +66,18 @@ export type RuntimeMode = 'normal' | 'alarm';
 /**
  * Команда кабинета узлу по каналу `runtime` (cabinet → server → node).
  * `setMode` — приоритетный override: `alarm` форсит alarm-loop, `normal` форсит main.
+ * `deviceId` — целевой узел (multi-node, MP7b RT5); если не задан, gateway использует
+ * привязанный к подключению кабинета `mediaDeviceId`.
  */
 export type RuntimeCommandPayload =
-  | { readonly action: 'run' }
-  | { readonly action: 'stop' }
-  | { readonly action: 'setMode'; readonly mode: RuntimeMode };
+  | { readonly action: 'run'; readonly deviceId?: string }
+  | { readonly action: 'stop'; readonly deviceId?: string }
+  | { readonly action: 'setMode'; readonly mode: RuntimeMode; readonly deviceId?: string };
 
 /** Снимок состояния runtime (node → server → cabinet). Только скаляры, без кадров. */
 export interface RuntimeStatePayload {
+  /** Узел-источник состояния (multi-node, MP7b RT5) — для маппинга на карточку в кабинете. */
+  readonly deviceId?: string;
   readonly phase:
     | 'idle'
     | 'initial'

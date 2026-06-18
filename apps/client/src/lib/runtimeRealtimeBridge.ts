@@ -22,8 +22,10 @@ export interface RuntimeBridgeController {
 export function runtimeStateToPayload(
   state: ScenarioRuntimeState,
   mode: RuntimeMode,
+  deviceId?: string | null,
 ): RuntimeStatePayload {
   return {
+    ...(deviceId ? { deviceId } : {}),
     phase: state.phase,
     isRunning: state.isRunning,
     mode,
@@ -90,7 +92,7 @@ export function startRuntimeRealtimeBridge(): void {
       createNodeRealtimeEnvelope(
         'runtime',
         NODE_REALTIME_EVENT_TYPES.runtime.state,
-        runtimeStateToPayload(state, controller.getMode()),
+        runtimeStateToPayload(state, controller.getMode(), client.getDeviceId()),
       ),
     );
   });

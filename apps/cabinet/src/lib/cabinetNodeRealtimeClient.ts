@@ -4,6 +4,7 @@ import {
   type AnalysisBriefPayload,
   type JournalAppendPayload,
   type NodeRealtimeEnvelope,
+  type RuntimeStatePayload,
 } from '@membrana/core';
 
 import { getStoredToken } from '@/api/auth';
@@ -18,6 +19,7 @@ export type CabinetRealtimeClientState =
 type StateHandler = (state: CabinetRealtimeClientState) => void;
 type JournalAppendHandler = (envelope: NodeRealtimeEnvelope<JournalAppendPayload>) => void;
 type MicBriefHandler = (payload: AnalysisBriefPayload) => void;
+type RuntimeStateHandler = (payload: RuntimeStatePayload) => void;
 
 const MAX_BACKOFF_MS = 30_000;
 
@@ -38,8 +40,21 @@ class CabinetNodeRealtimeClientImpl {
 
   private readonly micBriefHandlers = new Set<MicBriefHandler>();
 
+  private readonly runtimeStateHandlers = new Set<RuntimeStateHandler>();
+
   getState(): CabinetRealtimeClientState {
     return this.state;
+  }
+
+  /** Отправить envelope узлу (cabinet → server → node). MP7b RT5. */
+  send(envelope: NodeRealtimeEnvelope): void {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return;
+    this.socket.send(JSON.stringify(envelope));
+  }
+
+  subscribeRuntimeState(handler: RuntimeStateHandler): () => void {
+    this.runtimeStateHandlers.add(handler);
+    return () => this.runtimeStateHandlers.delete(handler);
   }
 
   subscribeState(handler: StateHandler): () => void {
@@ -134,6 +149,15 @@ class CabinetNodeRealtimeClientImpl {
         ) {
           const payload = envelope.payload as AnalysisBriefPayload;
           for (const handler of this.micBriefHandlers) {
+            handler(payload);
+          }
+        }
+        if (
+          envelope.channel === 'runtime' &&
+          envelope.type === NODE_REALTIME_EVENT_TYPES.runtime.state
+        ) {
+          const payload = envelope.payload as RuntimeStatePayload;
+          for (const handler of this.runtimeStateHandlers) {
             handler(payload);
           }
         }

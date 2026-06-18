@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { AuthUser } from '@/api/auth';
 import { MembranePage } from '@/pages/MembranePage';
 import { NodesPage } from '@/pages/NodesPage';
+import { KeysPage } from '@/pages/KeysPage';
 import { JournalPage } from '@/pages/JournalPage';
 import { SampleLibraryPage } from '@/pages/SampleLibraryPage';
 import { DeviceBoardPage } from '@/pages/DeviceBoardPage';
@@ -11,11 +12,12 @@ interface CabinetShellProps {
   onLogout: () => void;
 }
 
-type SectionId = 'membrane' | 'nodes' | 'library' | 'journal' | 'device-board';
+type SectionId = 'membrane' | 'nodes' | 'keys' | 'library' | 'journal' | 'device-board';
 
 const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string }[] = [
   { id: 'membrane', label: 'Мембрана', enabled: true },
-  { id: 'nodes', label: 'Узлы и ключи', enabled: true },
+  { id: 'nodes', label: 'Узлы', enabled: true },
+  { id: 'keys', label: 'Ключи', enabled: true },
   { id: 'library', label: 'Библиотека сэмплов', enabled: true },
   { id: 'journal', label: 'Журнал', enabled: true },
   { id: 'device-board', label: 'Device board', enabled: true },
@@ -23,16 +25,25 @@ const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string
 
 function SectionContent({
   section,
+  onNavigate,
   onOpenDeviceBoard,
 }: {
   section: SectionId;
+  onNavigate: (section: SectionId) => void;
   onOpenDeviceBoard: () => void;
 }) {
   switch (section) {
     case 'membrane':
       return <MembranePage />;
     case 'nodes':
-      return <NodesPage />;
+      return (
+        <NodesPage
+          onOpenJournal={() => onNavigate('journal')}
+          onOpenDeviceBoard={onOpenDeviceBoard}
+        />
+      );
+    case 'keys':
+      return <KeysPage />;
     case 'library':
       return <SampleLibraryPage />;
     case 'journal':
@@ -93,7 +104,11 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
       </aside>
 
       <main className="flex min-h-0 flex-1 flex-col p-8">
-        <SectionContent section={section} onOpenDeviceBoard={() => setDeviceBoardOpen(true)} />
+        <SectionContent
+          section={section}
+          onNavigate={setSection}
+          onOpenDeviceBoard={() => setDeviceBoardOpen(true)}
+        />
       </main>
     </div>
   );

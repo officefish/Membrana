@@ -138,7 +138,16 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       meta.role === 'cabinet' &&
       (envelope.channel === 'mic-live' || envelope.channel === 'runtime')
     ) {
-      const deviceId = meta.mediaDeviceId;
+      // RT5 multi-node: команда может адресовать конкретный узел через payload.deviceId;
+      // иначе берём узел, привязанный к подключению кабинета.
+      const targetDeviceId =
+        (envelope.channel === 'runtime'
+          ? (envelope.payload as { deviceId?: unknown } | null)?.deviceId
+          : undefined);
+      const deviceId =
+        typeof targetDeviceId === 'string' && targetDeviceId.length > 0
+          ? targetDeviceId
+          : meta.mediaDeviceId;
       if (deviceId) {
         this.realtimeService.sendToNode(deviceId, envelope);
       }

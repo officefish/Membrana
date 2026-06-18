@@ -73,6 +73,22 @@ describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
     expect(realtimeService.sendToNode).toHaveBeenCalledWith('d1', envelope);
   });
 
+  it('routes runtime.command to the target deviceId from payload (multi-node)', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    const envelope: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+      ts: '2026-06-18T09:00:00.000Z',
+      payload: { action: 'run', deviceId: 'd2' },
+    };
+
+    await gateway.dispatchEnvelope(cabinetMeta, envelope);
+
+    // payload.deviceId перебивает привязанный к подключению meta.mediaDeviceId ('d1')
+    expect(realtimeService.sendToNode).toHaveBeenCalledWith('d2', envelope);
+  });
+
   it('still delegates journal envelopes from node to the journal handler', async () => {
     const { gateway, journalHandler } = buildGateway();
     const envelope: NodeRealtimeEnvelope = {

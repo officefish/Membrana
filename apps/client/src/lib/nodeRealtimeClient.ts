@@ -39,6 +39,10 @@ class NodeRealtimeClientImpl {
     return this.state;
   }
 
+  getDeviceId(): string | null {
+    return this.pairing?.deviceId ?? null;
+  }
+
   subscribeMessages(handler: MessageHandler): () => void {
     this.messageHandlers.add(handler);
     return () => this.messageHandlers.delete(handler);

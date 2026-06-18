@@ -22,6 +22,13 @@ export interface TariffView {
   bufferQuotaBytes: string;
   datasetCatalogId: string;
   maxActiveKeysPerNode: number;
+  maxNodesPerMembrane: number;
+}
+
+export interface NodeDeviceView {
+  mediaDeviceId: string;
+  label: string | null;
+  lastSeenAt: string;
 }
 
 export interface AccessKeyView {
@@ -38,6 +45,7 @@ export interface NodeView {
   label: string;
   createdAt: string;
   accessKeys: AccessKeyView[];
+  device: NodeDeviceView | null;
 }
 
 export interface MembraneView {
@@ -46,6 +54,9 @@ export interface MembraneView {
     tariff: TariffView;
     createdAt: string;
   };
+  /** Все узлы мембраны (MP7b multi-node). */
+  nodes: NodeView[];
+  /** Первый узел — для обратной совместимости. */
   node: NodeView | null;
 }
 

@@ -40,12 +40,20 @@ function serializeNode(node: {
   label: string;
   createdAt: Date;
   accessKeys: Parameters<typeof serializeAccessKey>[0][];
+  device?: { mediaDeviceId: string; label: string | null; lastSeenAt: Date } | null;
 }) {
   return {
     id: node.id,
     label: node.label,
     createdAt: node.createdAt.toISOString(),
     accessKeys: node.accessKeys.map(serializeAccessKey),
+    device: node.device
+      ? {
+          mediaDeviceId: node.device.mediaDeviceId,
+          label: node.device.label,
+          lastSeenAt: node.device.lastSeenAt.toISOString(),
+        }
+      : null,
   };
 }
 
@@ -77,7 +85,7 @@ export class MembraneService {
   async getOrCreateMembraneForUser(userId: string) {
     const existing = await this.prisma.membrane.findUnique({
       where: { userId },
-      include: { tariff: true, nodes: { include: { accessKeys: true } } },
+      include: { tariff: true, nodes: { include: { accessKeys: true, device: true } } },
     });
     if (existing) return existing;
 
@@ -88,7 +96,7 @@ export class MembraneService {
 
     return this.prisma.membrane.create({
       data: { userId, tariffId: tariff.id },
-      include: { tariff: true, nodes: { include: { accessKeys: true } } },
+      include: { tariff: true, nodes: { include: { accessKeys: true, device: true } } },
     });
   }
 
