@@ -3,6 +3,7 @@ import {
   createEmptyScenarioGraph,
   type DeviceKind,
   type DeviceScenarioDocument,
+  type ScenarioVariable,
 } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
@@ -33,6 +34,8 @@ export interface BuildDeviceScenarioInput {
   readonly scenarioOnDisconnectNodes: readonly Node[];
   readonly scenarioOnDisconnectEdges: readonly Edge[];
   readonly scenarioFunctions: readonly SerializeScenarioFunctionInput[];
+  /** v0.4: переменные сценария (document-scope). */
+  readonly variables?: readonly ScenarioVariable[];
   readonly scenarioInitialEntry?: string;
   readonly scenarioMainEntry?: string;
   readonly scenarioAlarmEntry?: string;
@@ -79,6 +82,7 @@ export function buildDeviceScenarioDocument(input: BuildDeviceScenarioInput): De
         ),
       },
       functions: input.scenarioFunctions.map((fn) => serializeScenarioFunction(fn)),
+      variables: input.variables ?? scenario.variables,
     },
   };
 }
