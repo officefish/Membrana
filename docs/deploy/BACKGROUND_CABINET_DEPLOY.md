@@ -31,6 +31,32 @@
 
 ---
 
+## Гейты деплоя по SSH (DR0 + DR1)
+
+Команда `yarn cabinet:deploy:prod` (а также `yarn device-board:deploy:prod`) перед коннектом
+к VPS выполняет два локальных гейта. Прод собирается на VPS из `origin/<branch>`, поэтому
+важно, чтобы локальное состояние и CI совпадали с тем, что задеплоится.
+
+| Гейт | Что проверяет | Блокирует, если | Обход |
+|------|----------------|-----------------|-------|
+| **preflight** (`scripts/_deploy-preflight.mjs`) | рабочее дерево + расхождение HEAD с `origin/<branch>` | есть незакоммиченное/untracked или local≠origin | `--allow-dirty` / `DEPLOY_ALLOW_DIRTY=1` |
+| **ci-gate** (`scripts/_deploy-ci-gate.mjs`) | статус GitHub Actions для SHA `origin/<branch>` через `gh` | workflow «CI» не завершён успехом | `--allow-red-ci` / `DEPLOY_ALLOW_RED_CI=1` |
+
+```bash
+# нормальный путь: всё закоммичено, запушено, CI зелёный
+yarn cabinet:deploy:prod
+
+# осознанный обход обоих гейтов (например, hotfix вне CI)
+DEPLOY_ALLOW_DIRTY=1 DEPLOY_ALLOW_RED_CI=1 yarn cabinet:deploy:prod
+# или флагами:
+yarn cabinet:deploy:prod -- --allow-dirty --allow-red-ci
+```
+
+Список обязательных workflow для ci-gate можно переопределить: `DEPLOY_CI_WORKFLOWS="CI,Unit tests"`.
+`gh` должен быть установлен и авторизован (`gh auth status`).
+
+---
+
 ## 1. Подготовка сервера (один раз)
 
 ```bash

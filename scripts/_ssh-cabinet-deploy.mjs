@@ -9,6 +9,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'ssh2';
 import { deployPreflight } from './_deploy-preflight.mjs';
+import { assertCiGreen } from './_deploy-ci-gate.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const envPath = resolve(root, '.env');
@@ -26,7 +27,9 @@ const branch =
   'main';
 
 // DR0 gate: локальное состояние должно совпадать с origin/<branch> (прод собирается из origin).
-deployPreflight({ branch, cwd: root });
+const preflight = deployPreflight({ branch, cwd: root });
+// DR1 gate: на прод едет только зелёный в CI коммит.
+assertCiGreen({ branch, sha: preflight.originHead });
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail

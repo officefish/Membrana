@@ -51,15 +51,16 @@ export function isAllowDirty(argv = process.argv.slice(2)) {
  * @param {string} opts.branch        Ветка, которую деплоим (origin/<branch>).
  * @param {string} [opts.cwd]         Корень репозитория.
  * @param {boolean} [opts.allowDirty] Разрешить обход (по умолчанию из argv/env).
- * @returns {{ clean: boolean, problems: string[] }}
+ * @returns {{ clean: boolean, problems: string[], originHead: string | null }}
  */
 export function deployPreflight({ branch, cwd, allowDirty = isAllowDirty() }) {
   const problems = [];
+  let originHead = null;
 
   const inside = tryGit('rev-parse --is-inside-work-tree', { cwd });
   if (!inside.ok || inside.out !== 'true') {
     console.warn('[preflight] не git-репозиторий — пропускаю проверку чистоты дерева');
-    return { clean: true, problems };
+    return { clean: true, problems, originHead };
   }
 
   // 1. Грязное рабочее дерево (модифицированные/staged/untracked).
@@ -76,7 +77,6 @@ export function deployPreflight({ branch, cwd, allowDirty = isAllowDirty() }) {
   const headRes = tryGit('rev-parse HEAD', { cwd });
   const localHead = headRes.ok ? headRes.out : null;
   const fetched = tryGit(`fetch origin ${branch} --quiet`, { cwd });
-  let originHead = null;
   if (fetched.ok) {
     const originRes = tryGit('rev-parse FETCH_HEAD', { cwd });
     originHead = originRes.ok ? originRes.out : null;
@@ -97,7 +97,7 @@ export function deployPreflight({ branch, cwd, allowDirty = isAllowDirty() }) {
 
   if (problems.length === 0) {
     console.log(`[preflight] OK: рабочее дерево чистое и совпадает с origin/${branch}`);
-    return { clean: true, problems };
+    return { clean: true, problems, originHead };
   }
 
   console.error('\n[preflight] ВНИМАНИЕ — локальное состояние ≠ то, что задеплоится из origin:');
@@ -115,7 +115,7 @@ export function deployPreflight({ branch, cwd, allowDirty = isAllowDirty() }) {
 
   if (allowDirty) {
     console.error('[preflight] обход включён (--allow-dirty / DEPLOY_ALLOW_DIRTY=1) — продолжаю.\n');
-    return { clean: false, problems };
+    return { clean: false, problems, originHead };
   }
 
   process.exit(1);
