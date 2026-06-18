@@ -1,6 +1,7 @@
-import type { ScenarioBlockKind } from '@membrana/core';
+import type { ScenarioBlockKind, ScenarioReferenceValue } from '@membrana/core';
 
 import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
+import type { ScenarioVariableStore } from './variable-store.js';
 
 /** Колбэки потери/восстановления соединения (H3b). */
 export interface ScenarioConnectionHandlers {
@@ -10,6 +11,12 @@ export interface ScenarioConnectionHandlers {
 
 /** Порты исполнения блоков — реализует `apps/client` (audio, journal, detectors). */
 export interface ScenarioRuntimeHost {
+  /** Handle подключённого устройства для Event/dataflow (v0.4 DBR4). */
+  readonly getDeviceHandle?: () => string | null;
+  /** Хранилище переменных сценария; stub создаёт in-memory store. */
+  readonly variableStore?: ScenarioVariableStore;
+  readonly getScenarioVariable?: (id: string) => ScenarioReferenceValue | null;
+  readonly setScenarioVariable?: (id: string, value: ScenarioReferenceValue | null) => void;
   readonly selectMicrophone: () => Promise<void>;
   readonly startStream: () => Promise<void>;
   readonly stopStream: () => Promise<void>;
@@ -26,7 +33,16 @@ export function createStubScenarioRuntimeHost(
   overrides: Partial<ScenarioRuntimeHost> = {},
 ): ScenarioRuntimeHost {
   const log = overrides.log ?? (() => undefined);
+  const variableStore = overrides.variableStore;
   return {
+    getDeviceHandle: overrides.getDeviceHandle ?? (() => 'stub-device'),
+    variableStore,
+    getScenarioVariable:
+      overrides.getScenarioVariable ??
+      (variableStore !== undefined ? (id) => variableStore.getValue(id) : undefined),
+    setScenarioVariable:
+      overrides.setScenarioVariable ??
+      (variableStore !== undefined ? (id, value) => variableStore.setValue(id, value) : undefined),
     selectMicrophone: overrides.selectMicrophone ?? (async () => log('selectMicrophone')),
     startStream: overrides.startStream ?? (async () => log('startStream')),
     stopStream: overrides.stopStream ?? (async () => log('stopStream')),

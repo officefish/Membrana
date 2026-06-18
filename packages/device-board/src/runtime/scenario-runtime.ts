@@ -1,17 +1,20 @@
-import type { DeviceScenarioDocument, ScenarioGraphNode, ScenarioSubgraph } from '@membrana/core';
+import type { DeviceScenarioDocument, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
 
 import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
 import { isDetectionFrontEdge } from './detection-front.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import type { ResolveInputContext } from './resolve-input.js';
 import {
   createIdleScenarioRuntimeState,
+  runtimeBranchToHandlerBranch,
   type ScenarioDetectionResult,
   type ScenarioRuntimeBranch,
   type ScenarioRuntimeState,
   type ScenarioStopReason,
 } from './types.js';
 import type { RuntimeMode } from '@membrana/core';
+import { ScenarioVariableStore } from './variable-store.js';
 
 export type ScenarioRuntimeListener = (state: ScenarioRuntimeState) => void;
 
@@ -40,6 +43,8 @@ export class ScenarioRuntime {
 
   private readonly listeners = new Set<ScenarioRuntimeListener>();
 
+  private readonly variableStore = new ScenarioVariableStore();
+
   private runPromise: Promise<void> | null = null;
 
   private stopRequested = false;
@@ -64,6 +69,11 @@ export class ScenarioRuntime {
 
   getMode(): RuntimeMode {
     return this.mode;
+  }
+
+  /** Снимок переменных сценария после exec (v0.4 DBR4). */
+  getVariables(): readonly ScenarioVariable[] {
+    return this.variableStore.snapshot();
   }
 
   subscribe(listener: ScenarioRuntimeListener): () => void {
@@ -94,6 +104,7 @@ export class ScenarioRuntime {
       throw new Error('Cannot load scenario while runtime is running');
     }
     this.document = document;
+    this.variableStore.reset(document.scenario.variables);
     this.stopRequested = false;
     this.disconnectRequested = false;
     this.stopReason = null;
@@ -158,15 +169,64 @@ export class ScenarioRuntime {
     await this.start();
   }
 
+  /**
+   * Запуск обработчика onConnect (v0.4 DBR4): Event → variable-set и т.д.
+   * Вызывается приложением при подключении устройства.
+   */
+  async runOnConnect(): Promise<void> {
+    if (this.document === null) {
+      throw new Error('ScenarioRuntime: no document loaded');
+    }
+    const onConnect = this.document.scenario.onConnect;
+    if (onConnect.nodes.length === 0) {
+      return;
+    }
+
+    const signal = new AbortController().signal;
+    await runSubgraphOnce(
+      onConnect,
+      this.host,
+      signal,
+      this.execOptions('initial', this.document.scenario.functions, undefined, {
+        handlerBranch: 'onConnect',
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+      }),
+    );
+  }
+
+  private buildResolveContext(branch: ScenarioRuntimeBranch): ResolveInputContext | undefined {
+    const handlerBranch = runtimeBranchToHandlerBranch(branch);
+    if (handlerBranch === null) {
+      return undefined;
+    }
+    return {
+      handlerBranch,
+      deviceHandle: this.host.getDeviceHandle?.() ?? null,
+    };
+  }
+
+  private execOptions(
+    branch: ScenarioRuntimeBranch,
+    functions: DeviceScenarioDocument['scenario']['functions'],
+    defaultChunkDurationMs?: number,
+    resolveContextOverride?: ResolveInputContext,
+  ) {
+    const resolveContext = resolveContextOverride ?? this.buildResolveContext(branch);
+    return {
+      branch,
+      functions,
+      defaultChunkDurationMs,
+      variableStore: this.variableStore,
+      resolveContext,
+    };
+  }
+
   private async runLoadedDocument(
     document: DeviceScenarioDocument,
     signal: AbortSignal,
   ): Promise<void> {
     try {
-      await runSubgraphOnce(document.scenario.initial, this.host, signal, {
-        branch: 'initial',
-        functions: document.scenario.functions,
-      }, {
+      await runSubgraphOnce(document.scenario.initial, this.host, signal, this.execOptions('initial', document.scenario.functions), {
         onNodeEnter: (node) => this.onNodeEnter('initial', node),
       });
 
@@ -205,11 +265,7 @@ export class ScenarioRuntime {
           document.scenario.loops.main,
           this.host,
           signal,
-          {
-            branch: 'main',
-            defaultChunkDurationMs: this.options.mainLoopChunkDurationMs,
-            functions: document.scenario.functions,
-          },
+          this.execOptions('main', document.scenario.functions, this.options.mainLoopChunkDurationMs),
           {
             onNodeEnter: (node) => this.onNodeEnter('main', node),
           },
@@ -278,10 +334,7 @@ export class ScenarioRuntime {
         alarmLoopIteration: alarmIteration,
       });
 
-      await runSubgraphOnce(alarmSubgraph, this.host, signal, {
-        branch: 'alarm',
-        functions,
-      }, {
+      await runSubgraphOnce(alarmSubgraph, this.host, signal, this.execOptions('alarm', functions), {
         onNodeEnter: (node) => this.onNodeEnter('alarm', node),
       });
 
@@ -349,10 +402,7 @@ export class ScenarioRuntime {
     });
 
     const teardownSignal = new AbortController().signal;
-    await runSubgraphOnce(subgraph, this.host, teardownSignal, {
-      branch,
-      functions,
-    }, {
+    await runSubgraphOnce(subgraph, this.host, teardownSignal, this.execOptions(branch, functions), {
       onNodeEnter: (node) => this.onNodeEnter(branch, node),
     });
   }

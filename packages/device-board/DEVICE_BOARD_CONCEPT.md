@@ -712,7 +712,7 @@ Event-узлом» (`event-entry-required`). Рантайм исполняет E
 ссылочному `SocketType`; сериализация `scenario.variables` и узлов
 (round-trip build → parse → hydrate; узлы с отсутствующей переменной
 отбрасываются при гидратации). Запись значения в host и протяжка данных —
-DBR4.
+**DBR4** (см. §15.4).
 
 ### 15.4 Dataflow и валидность
 
@@ -722,6 +722,15 @@ Data-рёбра несут ссылочные `SocketType` (`DeviceRef`/`Microph
 отражает доступность ресурса; `invalidateReference` помечает её висячей,
 не теряя `handle` для диагностики. Совместимость соединения — по точному
 совпадению типа (`isValidSocketConnection`).
+
+**Реализовано (DBR4):** чистая `resolveInput(subgraph, variables, nodeId, port,
+context)` — pull-резолюция от Event/variable-get; `resolveEventReference` по
+ветви (`onConnect`/`initial`/`onStop` → valid `DeviceRef`; `onDisconnect` →
+`null`); `isReferenceValid` — предикат для `is-valid` (DBR5); `applyVariableSetValue`
+(onConnect → `valid=true`, onDisconnect null → `invalidateReference`, идемпотентность
+set). `ScenarioVariableStore` + `variable-set` в `block-executor`; `ScenarioRuntime`
+сбрасывает store при load, `runOnConnect()` для обработчика onConnect. Unit-тесты:
+valid/invalid/null, idempotent set, type mismatch, cycle, runtime integration.
 
 ### 15.5 Палитра v0.4 (правый сайдбар)
 

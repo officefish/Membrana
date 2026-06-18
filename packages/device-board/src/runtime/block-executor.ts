@@ -1,19 +1,25 @@
-import type { ScenarioFunctionSubgraph, ScenarioGraphNode } from '@membrana/core';
+import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioSubgraph } from '@membrana/core';
 
+import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
 import type { ScenarioRuntimeBranch } from './types.js';
+import type { ScenarioVariableStore } from './variable-store.js';
 
 export interface BlockExecutionInput {
   readonly host: ScenarioRuntimeHost;
   readonly signal: AbortSignal;
   readonly branch: ScenarioRuntimeBranch;
+  readonly subgraph: ScenarioSubgraph;
   readonly node: ScenarioGraphNode;
   readonly lastDetection: ScenarioDetectionResult | null;
   readonly defaultChunkDurationMs: number;
   readonly functions: readonly ScenarioFunctionSubgraph[];
+  readonly variableStore?: ScenarioVariableStore;
+  readonly resolveContext?: ResolveInputContext;
 }
 
 export interface BlockExecutionResult {
@@ -54,14 +60,50 @@ function journalPayload(
 
 /** Исполняет один блок scenario graph через host-порты. */
 export async function executeScenarioBlock(input: BlockExecutionInput): Promise<BlockExecutionResult> {
-  const { host, signal, branch, node, lastDetection, defaultChunkDurationMs, functions } = input;
+  const {
+    host,
+    signal,
+    branch,
+    subgraph,
+    node,
+    lastDetection,
+    defaultChunkDurationMs,
+    functions,
+    variableStore,
+    resolveContext,
+  } = input;
 
   assertNotAborted(signal);
 
-  // v0.4: системный Event-узел и узлы переменных не вызывают host напрямую.
-  // Event — pass-through entry обработчика; реальная dataflow-резолюция — DBR4.
-  if (node.nodeKind === 'event' || node.nodeKind === 'variable-get' || node.nodeKind === 'variable-set') {
-    host.log(node.nodeKind, { nodeId: node.id, branch });
+  if (node.nodeKind === 'event') {
+    host.log('event', { nodeId: node.id, branch });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'variable-get') {
+    host.log('variable-get', { nodeId: node.id, branch, variableId: node.variableId });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'variable-set') {
+    const variableId = node.variableId;
+    if (variableId === undefined) {
+      throw new Error(`variable-set node "${node.id}" missing variableId`);
+    }
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('variable-set requires variableStore and resolveContext');
+    }
+
+    const incoming = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      VARIABLE_VALUE_HANDLE,
+      resolveContext,
+    );
+    variableStore.setValue(variableId, incoming);
+    host.setScenarioVariable?.(variableId, variableStore.getValue(variableId));
+    host.log('variable-set', { nodeId: node.id, branch, variableId, incoming });
     return { lastDetection, stopRequested: false };
   }
 
@@ -147,6 +189,8 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
         branch,
         defaultChunkDurationMs,
         functions: [],
+        variableStore,
+        resolveContext,
       });
       host.log('subgraph', { nodeId: node.id, functionId: fn.id, branch });
       return { lastDetection: detection, stopRequested: false };

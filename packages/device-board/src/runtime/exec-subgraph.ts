@@ -2,14 +2,20 @@ import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioSubgraph } fr
 
 import { executeScenarioBlock } from './block-executor.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import type { ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
 
 import type { ScenarioRuntimeBranch } from './types.js';
+import type { ScenarioVariableStore } from './variable-store.js';
 
 export interface ExecSubgraphOptions {
   readonly branch: ScenarioRuntimeBranch;
   readonly defaultChunkDurationMs?: number;
   readonly functions?: readonly ScenarioFunctionSubgraph[];
+  /** v0.4 (DBR4): хранилище переменных для variable-set/get. */
+  readonly variableStore?: ScenarioVariableStore;
+  /** v0.4 (DBR4): контекст pull-резолюции Event/dataflow. */
+  readonly resolveContext?: ResolveInputContext;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -62,10 +68,13 @@ export async function runSubgraphOnce(
       host,
       signal,
       branch: options.branch,
+      subgraph,
       node,
       lastDetection,
       defaultChunkDurationMs: options.defaultChunkDurationMs ?? 5_000,
       functions: options.functions ?? [],
+      variableStore: options.variableStore,
+      resolveContext: options.resolveContext,
     });
 
     if (result.stopRequested) {

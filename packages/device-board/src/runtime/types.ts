@@ -15,6 +15,22 @@ export type ScenarioRuntimePhase =
 /** Ветка scenario graph при исполнении блока. */
 export type ScenarioRuntimeBranch = 'initial' | 'main' | 'alarm' | 'onStop' | 'onDisconnect';
 
+/** Маппинг exec-ветки → ветви-обработчик для Event/dataflow (v0.4 DBR4). */
+export function runtimeBranchToHandlerBranch(
+  branch: ScenarioRuntimeBranch,
+): 'initial' | 'onStop' | 'onDisconnect' | null {
+  switch (branch) {
+    case 'initial':
+      return 'initial';
+    case 'onStop':
+      return 'onStop';
+    case 'onDisconnect':
+      return 'onDisconnect';
+    default:
+      return null;
+  }
+}
+
 /** Причина остановки сценария (T1). */
 export type ScenarioStopReason = 'user' | 'system';
 
