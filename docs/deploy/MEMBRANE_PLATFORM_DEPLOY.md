@@ -40,6 +40,65 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 
 ---
 
+## Деплой по образу и откат (DR2/DR3 deploy-pipeline-refactor)
+
+Прод cabinet деплоится из иммутабельного образа GHCR по тегу (а не сборкой на VPS).
+Подробности и гейты — [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
+
+### Деплой релиза
+
+```bash
+# 1) пометить релиз тегом → CI собирает и пушит образ cabinet-api/-web в GHCR
+git tag cabinet-v1.2.3 && git push origin cabinet-v1.2.3
+# 2) выкатить образ по тегу (гейты preflight + ci-gate; pull до down/up)
+CABINET_IMAGE_TAG=cabinet-v1.2.3 yarn cabinet:deploy:image:prod
+```
+
+Каждый деплой/откат пишет **машиночитаемую JSON-сводку** в `deploy-artifacts/`
+(`cabinet-deploy-*.json` / `cabinet-rollback-*.json`) и печатает её в конце прогона:
+
+```json
+{
+  "service": "cabinet",
+  "mode": "image",
+  "imageTag": "cabinet-v1.2.3",
+  "images": { "api": "ghcr.io/officefish/membrana-cabinet-api:cabinet-v1.2.3", "web": "…:cabinet-v1.2.3" },
+  "branch": "main",
+  "composeSha": "<sha origin/main>",
+  "startedAt": "…", "finishedAt": "…", "durationMs": 123456,
+  "exitCode": 0, "smokeOk": true, "ok": true
+}
+```
+
+`ok: true` ⇔ remote-скрипт завершился `exit 0` **и** прошёл маркер `CABINET IMAGE DEPLOY OK`.
+
+### Откат (rollback)
+
+Откат — это деплой **предыдущего известно-хорошего тега**. Образ уже собран и иммутабелен,
+поэтому ci-gate обходится автоматически; preflight (чистое дерево) сохраняется.
+
+```bash
+# показать доступные релизные теги (свежие сверху) и выйти
+yarn cabinet:rollback:prod
+
+# откатиться на конкретный тег
+CABINET_ROLLBACK_TAG=cabinet-v1.2.2 yarn cabinet:rollback:prod
+```
+
+Процедура при сбойном релизе:
+
+1. Зафиксировать симптом (упавший prod-smoke / 5xx) и текущий тег из JSON-сводки последнего деплоя.
+2. `CABINET_ROLLBACK_TAG=<предыдущий cabinet-v*> yarn cabinet:rollback:prod`.
+3. Дождаться `ok: true` в rollback-сводке и зелёного prod-smoke.
+4. Завести issue на причину; чинить в обычном цикле (PR → CI → новый тег), не хотфиксом на VPS.
+
+> **Миграции БД.** Откат образа возвращает код, но **не откатывает применённые миграции**
+> (`prisma migrate deploy` идемпотентен только вперёд). Поэтому миграции должны быть
+> обратносовместимыми (expand/contract — регламент DR5): старый код обязан работать с уже
+> применённой схемой. Несовместимое изменение схемы делает откат по образу небезопасным.
+
+---
+
 ## Prod-smoke по фазам
 
 ### MP1 — Auth + shell (`membrane-platform-mp1-auth-cabinet`)
