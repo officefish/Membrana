@@ -1,6 +1,23 @@
 import type { Edge, Node } from '@xyflow/react';
 
 import { D0_SCENARIO_NODE_CATALOG, D0_SIGNAL_NODE_CATALOG } from './d0-node-catalog.js';
+import { createEventBoardNode } from './event-node.js';
+
+/** Системный Event-узел (entry ветви-обработчика). */
+function eventNode(id: string, x: number, y: number, label?: string): Node {
+  return createEventBoardNode({ id, label, position: { x, y } });
+}
+
+function execEdge(id: string, source: string, target: string): Edge {
+  return {
+    id,
+    source,
+    sourceHandle: 'exec-out',
+    target,
+    targetHandle: 'exec-in',
+    animated: true,
+  };
+}
 
 function signalNode(
   id: string,
@@ -66,31 +83,26 @@ export const INITIAL_SIGNAL_EDGES: Edge[] = [
   },
 ];
 
-/** Initial branch: mic → stream → journal */
+/** onStart branch (сериализуется как `initial`): Event → mic → stream → journal */
 export const INITIAL_SCENARIO_INITIAL_NODES: Node[] = [
-  scenarioNode('initial-entry', 'select-microphone', 80, 140),
-  scenarioNode('initial-stream', 'start-stream', 300, 140),
-  scenarioNode('initial-journal', 'write-journal', 520, 140),
+  eventNode('initial-event', 40, 140, 'On start'),
+  scenarioNode('initial-select', 'select-microphone', 280, 140),
+  scenarioNode('initial-stream', 'start-stream', 500, 140),
+  scenarioNode('initial-journal', 'write-journal', 720, 140),
 ];
 
 export const INITIAL_SCENARIO_INITIAL_EDGES: Edge[] = [
-  {
-    id: 'initial-e1',
-    source: 'initial-entry',
-    sourceHandle: 'exec-out',
-    target: 'initial-stream',
-    targetHandle: 'exec-in',
-    animated: true,
-  },
-  {
-    id: 'initial-e2',
-    source: 'initial-stream',
-    sourceHandle: 'exec-out',
-    target: 'initial-journal',
-    targetHandle: 'exec-in',
-    animated: true,
-  },
+  execEdge('initial-e0', 'initial-event', 'initial-select'),
+  execEdge('initial-e1', 'initial-select', 'initial-stream'),
+  execEdge('initial-e2', 'initial-stream', 'initial-journal'),
 ];
+
+/** onConnect branch: системный Event (даёт постоянную DeviceRef после set Device). */
+export const INITIAL_SCENARIO_ON_CONNECT_NODES: Node[] = [
+  eventNode('on-connect-event', 40, 140, 'On connect'),
+];
+
+export const INITIAL_SCENARIO_ON_CONNECT_EDGES: Edge[] = [];
 
 /** Function: record → detect (reused in main loop via subgraph block). */
 export const DEMO_FUNCTION_CAPTURE_DETECT_ID = 'fn-capture-detect' as const;
@@ -152,44 +164,39 @@ export const INITIAL_SCENARIO_MAIN_EDGES: Edge[] = [
   },
 ];
 
-export const SCENARIO_INITIAL_ENTRY = 'initial-entry' as const;
+/**
+ * v0.4: entry-точки обработчиков событий — системные Event-узлы.
+ * `SCENARIO_INITIAL_ENTRY` соответствует обработчику `onStart` (ветка `initial`).
+ */
+export const SCENARIO_INITIAL_ENTRY = 'initial-event' as const;
+export const SCENARIO_ON_CONNECT_ENTRY = 'on-connect-event' as const;
 export const SCENARIO_MAIN_ENTRY = 'main-fn' as const;
 export const SCENARIO_ALARM_ENTRY = 'alarm-eval' as const;
-export const SCENARIO_ON_STOP_ENTRY = 'on-stop-journal' as const;
-export const SCENARIO_ON_DISCONNECT_ENTRY = 'on-disc-journal' as const;
+export const SCENARIO_ON_STOP_ENTRY = 'on-stop-event' as const;
+export const SCENARIO_ON_DISCONNECT_ENTRY = 'on-disconnect-event' as const;
 
-/** On disconnect trigger: journal → teardown (T3) */
+/** On disconnect trigger: Event → journal → teardown (T3) */
 export const INITIAL_SCENARIO_ON_DISCONNECT_NODES: Node[] = [
-  scenarioNode('on-disc-journal', 'write-journal', 80, 160, 'Disconnect journal'),
-  scenarioNode('on-disc-teardown', 'handle-disconnect', 320, 160),
+  eventNode('on-disconnect-event', 40, 160, 'On disconnect'),
+  scenarioNode('on-disc-journal', 'write-journal', 280, 160, 'Disconnect journal'),
+  scenarioNode('on-disc-teardown', 'handle-disconnect', 500, 160),
 ];
 
 export const INITIAL_SCENARIO_ON_DISCONNECT_EDGES: Edge[] = [
-  {
-    id: 'on-disc-e1',
-    source: 'on-disc-journal',
-    sourceHandle: 'exec-out',
-    target: 'on-disc-teardown',
-    targetHandle: 'exec-in',
-    animated: true,
-  },
+  execEdge('on-disc-e0', 'on-disconnect-event', 'on-disc-journal'),
+  execEdge('on-disc-e1', 'on-disc-journal', 'on-disc-teardown'),
 ];
 
-/** On stop trigger: final journal → teardown stream (T1/T2) */
+/** On stop trigger: Event → final journal → teardown stream (T1/T2) */
 export const INITIAL_SCENARIO_ON_STOP_NODES: Node[] = [
-  scenarioNode('on-stop-journal', 'write-journal', 80, 160, 'Stop journal'),
-  scenarioNode('on-stop-teardown', 'handle-disconnect', 320, 160),
+  eventNode('on-stop-event', 40, 160, 'On stop'),
+  scenarioNode('on-stop-journal', 'write-journal', 280, 160, 'Stop journal'),
+  scenarioNode('on-stop-teardown', 'handle-disconnect', 500, 160),
 ];
 
 export const INITIAL_SCENARIO_ON_STOP_EDGES: Edge[] = [
-  {
-    id: 'on-stop-e1',
-    source: 'on-stop-journal',
-    sourceHandle: 'exec-out',
-    target: 'on-stop-teardown',
-    targetHandle: 'exec-in',
-    animated: true,
-  },
+  execEdge('on-stop-e0', 'on-stop-event', 'on-stop-journal'),
+  execEdge('on-stop-e1', 'on-stop-journal', 'on-stop-teardown'),
 ];
 
 /** Alarm loop: sound level → journal → loop until quiet */

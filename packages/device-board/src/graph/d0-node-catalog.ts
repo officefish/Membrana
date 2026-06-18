@@ -44,8 +44,9 @@ export const D0_SIGNAL_NODE_CATALOG: Readonly<Record<string, D0SignalNodeTemplat
 export const D0_SCENARIO_NODE_CATALOG: Readonly<Record<ScenarioBlockKind, D0ScenarioNodeTemplate>> = {
   'select-microphone': {
     blockKind: 'select-microphone',
+    // v0.4: больше не entry — exec-in для соединения от системного Event-узла.
     label: 'Initial',
-    inputs: [],
+    inputs: [EXEC_IN],
     outputs: [EXEC_OUT],
   },
   'start-stream': {

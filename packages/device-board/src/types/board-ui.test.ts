@@ -12,16 +12,23 @@ import {
 describe('board-ui sidebar sections (MP7b RT6)', () => {
   it('covers every branch exactly once across sections', () => {
     const tabs = BRANCH_SIDEBAR_SECTIONS.flatMap((section) => section.tabs);
-    const expected: ScenarioBranchTab[] = ['initial', 'main', 'alarm', 'onStop', 'onDisconnect', 'function'];
+    const expected: ScenarioBranchTab[] = [
+      'initial',
+      'onConnect',
+      'main',
+      'alarm',
+      'onStop',
+      'onDisconnect',
+      'function',
+    ];
     expect([...tabs].sort()).toEqual([...expected].sort());
     expect(tabs.length).toBe(expected.length);
   });
 
-  it('groups sections in the required order', () => {
+  it('groups sections in the required order (v0.4 DBR3)', () => {
     expect(BRANCH_SIDEBAR_SECTIONS.map((s) => s.title)).toEqual([
-      'Системные триггеры',
+      'Обработчики событий',
       'Лупы',
-      'Триггер узла',
       'Конструктор функций',
     ]);
   });

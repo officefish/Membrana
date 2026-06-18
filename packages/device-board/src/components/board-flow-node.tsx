@@ -76,18 +76,30 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ data, selected }) => {
   const status = data.status ?? 'active';
   const inputs = data.inputs ?? [];
   const outputs = data.outputs ?? [];
+  const isSystem = data.system === true;
 
   return (
     <div
       className={[
         'min-w-[148px] rounded-lg border bg-base-100 px-3 py-2 shadow-sm',
-        LAYER_BORDER[data.layer],
+        isSystem ? 'border-accent/60 ring-1 ring-accent/20' : LAYER_BORDER[data.layer],
         selected ? 'ring-2 ring-primary/50' : '',
       ].join(' ')}
+      data-system={isSystem ? 'true' : undefined}
+      aria-label={isSystem ? `Системный узел: ${data.label}` : undefined}
     >
       <div className="mb-2 flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold text-base-content">{data.label}</span>
-        <span className={`badge badge-xs ${STATUS_BADGE[status]}`}>{status}</span>
+        <span className="flex items-center gap-1 text-xs font-semibold text-base-content">
+          {isSystem ? (
+            <span className="text-accent" title="Системный узел (нельзя удалить)" aria-hidden="true">
+              🔒
+            </span>
+          ) : null}
+          {data.label}
+        </span>
+        <span className={`badge badge-xs ${isSystem ? 'badge-accent' : STATUS_BADGE[status]}`}>
+          {isSystem ? 'system' : status}
+        </span>
       </div>
       {renderHandles(inputs, 'target', Position.Left)}
       {renderHandles(outputs, 'source', Position.Right)}

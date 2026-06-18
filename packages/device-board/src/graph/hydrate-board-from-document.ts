@@ -19,13 +19,20 @@ import {
   INITIAL_SCENARIO_INITIAL_NODES,
   INITIAL_SCENARIO_MAIN_EDGES,
   INITIAL_SCENARIO_MAIN_NODES,
+  INITIAL_SCENARIO_ON_CONNECT_EDGES,
+  INITIAL_SCENARIO_ON_CONNECT_NODES,
   INITIAL_SCENARIO_ON_DISCONNECT_EDGES,
   INITIAL_SCENARIO_ON_DISCONNECT_NODES,
   INITIAL_SCENARIO_ON_STOP_EDGES,
   INITIAL_SCENARIO_ON_STOP_NODES,
   INITIAL_SIGNAL_EDGES,
   INITIAL_SIGNAL_NODES,
+  SCENARIO_INITIAL_ENTRY,
+  SCENARIO_ON_CONNECT_ENTRY,
+  SCENARIO_ON_DISCONNECT_ENTRY,
+  SCENARIO_ON_STOP_ENTRY,
 } from './initial-board-state.js';
+import { ensureEventEntry } from './event-node.js';
 import { deserializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 import { deserializeSignalGraph } from './serialize-signal-graph.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
@@ -42,6 +49,8 @@ export interface HydratedBoardState {
   readonly signalEdges: Edge[];
   readonly scenarioInitialNodes: Node[];
   readonly scenarioInitialEdges: Edge[];
+  readonly scenarioOnConnectNodes: Node[];
+  readonly scenarioOnConnectEdges: Edge[];
   readonly scenarioMainNodes: Node[];
   readonly scenarioMainEdges: Edge[];
   readonly scenarioAlarmNodes: Node[];
@@ -115,6 +124,12 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   const variables = document.scenario.variables;
   const signal = deserializeSignalGraph(document.signalGraph);
   const initial = fallbackSubgraph(document.scenario.initial, INITIAL_SCENARIO_INITIAL_NODES, INITIAL_SCENARIO_INITIAL_EDGES, variables);
+  const onConnect = fallbackSubgraph(
+    document.scenario.onConnect,
+    INITIAL_SCENARIO_ON_CONNECT_NODES,
+    INITIAL_SCENARIO_ON_CONNECT_EDGES,
+    variables,
+  );
   const main = fallbackSubgraph(document.scenario.loops.main, INITIAL_SCENARIO_MAIN_NODES, INITIAL_SCENARIO_MAIN_EDGES, variables);
   const alarm = fallbackSubgraph(document.scenario.loops.alarm, INITIAL_SCENARIO_ALARM_NODES, INITIAL_SCENARIO_ALARM_EDGES, variables);
   const onStop = fallbackSubgraph(
@@ -131,6 +146,13 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   );
   const fn = resolveFunctionCanvas(document.scenario.functions, variables);
 
+  // v0.4 (DBR3): системный Event-узел — обязательный entry каждого обработчика.
+  // Авто-инжект для legacy/мигрированных документов без Event-узла.
+  initial.nodes = ensureEventEntry(SCENARIO_INITIAL_ENTRY, initial.nodes, 'On start');
+  onConnect.nodes = ensureEventEntry(SCENARIO_ON_CONNECT_ENTRY, onConnect.nodes, 'On connect');
+  onStop.nodes = ensureEventEntry(SCENARIO_ON_STOP_ENTRY, onStop.nodes, 'On stop');
+  onDisconnect.nodes = ensureEventEntry(SCENARIO_ON_DISCONNECT_ENTRY, onDisconnect.nodes, 'On disconnect');
+
   if (signal.nodes.length === 0) {
     signal.nodes.push(...INITIAL_SIGNAL_NODES);
     signal.edges.push(...INITIAL_SIGNAL_EDGES);
@@ -142,6 +164,8 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
     signalEdges: signal.edges,
     scenarioInitialNodes: initial.nodes,
     scenarioInitialEdges: initial.edges,
+    scenarioOnConnectNodes: onConnect.nodes,
+    scenarioOnConnectEdges: onConnect.edges,
     scenarioMainNodes: main.nodes,
     scenarioMainEdges: main.edges,
     scenarioAlarmNodes: alarm.nodes,
@@ -177,6 +201,8 @@ export function createDefaultHydratedBoardState(deviceKind: DeviceKind = 'microp
     signalEdges: [...INITIAL_SIGNAL_EDGES],
     scenarioInitialNodes: [...INITIAL_SCENARIO_INITIAL_NODES],
     scenarioInitialEdges: [...INITIAL_SCENARIO_INITIAL_EDGES],
+    scenarioOnConnectNodes: [...INITIAL_SCENARIO_ON_CONNECT_NODES],
+    scenarioOnConnectEdges: [...INITIAL_SCENARIO_ON_CONNECT_EDGES],
     scenarioMainNodes: [...INITIAL_SCENARIO_MAIN_NODES],
     scenarioMainEdges: [...INITIAL_SCENARIO_MAIN_EDGES],
     scenarioAlarmNodes: [...INITIAL_SCENARIO_ALARM_NODES],

@@ -15,6 +15,17 @@ export {
   VARIABLE_VALUE_HANDLE,
 } from './variable-node.js';
 export type { CreateVariableBoardNodeOptions, VariableNodeKind } from './variable-node.js';
+export {
+  createEventBoardNode,
+  ensureEventEntry,
+  eventNodePins,
+  isEventNode,
+  rejectSystemNodeRemovals,
+  EVENT_DEVICE_HANDLE,
+  EVENT_EXEC_HANDLE,
+  EVENT_NODE_KIND,
+} from './event-node.js';
+export type { CreateEventBoardNodeOptions } from './event-node.js';
 export { resolveHandle } from './handle-catalog.js';
 export type { ResolvedHandle } from './handle-catalog.js';
 export { isValidBoardConnection, isValidBoardEdge } from './connection-validation.js';
@@ -59,6 +70,8 @@ export {
   INITIAL_SCENARIO_INITIAL_NODES,
   INITIAL_SCENARIO_MAIN_EDGES,
   INITIAL_SCENARIO_MAIN_NODES,
+  INITIAL_SCENARIO_ON_CONNECT_EDGES,
+  INITIAL_SCENARIO_ON_CONNECT_NODES,
   INITIAL_SCENARIO_ON_DISCONNECT_EDGES,
   INITIAL_SCENARIO_ON_DISCONNECT_NODES,
   INITIAL_SCENARIO_ON_STOP_EDGES,
@@ -66,6 +79,7 @@ export {
   SCENARIO_ALARM_ENTRY,
   SCENARIO_INITIAL_ENTRY,
   SCENARIO_MAIN_ENTRY,
+  SCENARIO_ON_CONNECT_ENTRY,
   SCENARIO_ON_DISCONNECT_ENTRY,
   SCENARIO_ON_STOP_ENTRY,
 } from './initial-board-state.js';

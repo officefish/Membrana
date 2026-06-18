@@ -30,6 +30,7 @@ import {
   importDeviceScenarioFromJson,
   isPreRunValid,
   isValidBoardConnection,
+  rejectSystemNodeRemovals,
   validatePreRun,
   type VariableNodeKind,
 } from '../graph/index.js';
@@ -50,6 +51,8 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioBranch: ScenarioBranchTab;
   readonly scenarioInitialNodes: Node[];
   readonly scenarioInitialEdges: Edge[];
+  readonly scenarioOnConnectNodes: Node[];
+  readonly scenarioOnConnectEdges: Edge[];
   readonly scenarioMainNodes: Node[];
   readonly scenarioMainEdges: Edge[];
   readonly scenarioAlarmNodes: Node[];
@@ -67,6 +70,8 @@ export interface DeviceBoardGraphContextValue {
   readonly onSignalEdgesChange: (changes: EdgeChange[]) => void;
   readonly onScenarioInitialNodesChange: (changes: NodeChange[]) => void;
   readonly onScenarioInitialEdgesChange: (changes: EdgeChange[]) => void;
+  readonly onScenarioOnConnectNodesChange: (changes: NodeChange[]) => void;
+  readonly onScenarioOnConnectEdgesChange: (changes: EdgeChange[]) => void;
   readonly onScenarioMainNodesChange: (changes: NodeChange[]) => void;
   readonly onScenarioMainEdgesChange: (changes: EdgeChange[]) => void;
   readonly onScenarioAlarmNodesChange: (changes: NodeChange[]) => void;
@@ -79,6 +84,7 @@ export interface DeviceBoardGraphContextValue {
   readonly onScenarioFunctionEdgesChange: (changes: EdgeChange[]) => void;
   readonly onSignalConnect: (connection: Connection) => void;
   readonly onScenarioInitialConnect: (connection: Connection) => void;
+  readonly onScenarioOnConnectConnect: (connection: Connection) => void;
   readonly onScenarioMainConnect: (connection: Connection) => void;
   readonly onScenarioAlarmConnect: (connection: Connection) => void;
   readonly onScenarioOnStopConnect: (connection: Connection) => void;
@@ -140,6 +146,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [scenarioBranch, setScenarioBranch] = useState<ScenarioBranchTab>('initial');
   const [scenarioInitialNodes, setScenarioInitialNodes] = useState<Node[]>(defaultState.scenarioInitialNodes);
   const [scenarioInitialEdges, setScenarioInitialEdges] = useState<Edge[]>(defaultState.scenarioInitialEdges);
+  const [scenarioOnConnectNodes, setScenarioOnConnectNodes] = useState<Node[]>(
+    defaultState.scenarioOnConnectNodes,
+  );
+  const [scenarioOnConnectEdges, setScenarioOnConnectEdges] = useState<Edge[]>(
+    defaultState.scenarioOnConnectEdges,
+  );
   const [scenarioMainNodes, setScenarioMainNodes] = useState<Node[]>(defaultState.scenarioMainNodes);
   const [scenarioMainEdges, setScenarioMainEdges] = useState<Edge[]>(defaultState.scenarioMainEdges);
   const [scenarioAlarmNodes, setScenarioAlarmNodes] = useState<Node[]>(defaultState.scenarioAlarmNodes);
@@ -211,6 +223,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setSignalEdges(state.signalEdges);
     setScenarioInitialNodes(state.scenarioInitialNodes);
     setScenarioInitialEdges(state.scenarioInitialEdges);
+    setScenarioOnConnectNodes(state.scenarioOnConnectNodes);
+    setScenarioOnConnectEdges(state.scenarioOnConnectEdges);
     setScenarioMainNodes(state.scenarioMainNodes);
     setScenarioMainEdges(state.scenarioMainEdges);
     setScenarioAlarmNodes(state.scenarioAlarmNodes);
@@ -262,6 +276,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       signalEdges,
       scenarioInitialNodes,
       scenarioInitialEdges,
+      scenarioOnConnectNodes,
+      scenarioOnConnectEdges,
       scenarioMainNodes,
       scenarioMainEdges,
       scenarioAlarmNodes,
@@ -276,6 +292,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         signalEdges,
         scenarioInitialNodes,
         scenarioInitialEdges,
+        scenarioOnConnectNodes,
+        scenarioOnConnectEdges,
         scenarioMainNodes,
         scenarioMainEdges,
         scenarioAlarmNodes,
@@ -300,6 +318,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioFunctionNodes,
     scenarioInitialEdges,
     scenarioInitialNodes,
+    scenarioOnConnectEdges,
+    scenarioOnConnectNodes,
     scenarioMainEdges,
     scenarioMainNodes,
     scenarioOnDisconnectEdges,
@@ -318,6 +338,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       signalEdges,
       scenarioInitialNodes,
       scenarioInitialEdges,
+      scenarioOnConnectNodes,
+      scenarioOnConnectEdges,
       scenarioMainNodes,
       scenarioMainEdges,
       scenarioAlarmNodes,
@@ -332,6 +354,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         signalEdges,
         scenarioInitialNodes,
         scenarioInitialEdges,
+        scenarioOnConnectNodes,
+        scenarioOnConnectEdges,
         scenarioMainNodes,
         scenarioMainEdges,
         scenarioAlarmNodes,
@@ -357,6 +381,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioFunctionNodes,
     scenarioInitialEdges,
     scenarioInitialNodes,
+    scenarioOnConnectEdges,
+    scenarioOnConnectNodes,
     scenarioMainEdges,
     scenarioMainNodes,
     scenarioOnDisconnectEdges,
@@ -381,11 +407,19 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioInitialNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioInitialNodes((nodes) => applyNodeChanges(changes, nodes));
+    setScenarioInitialNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
   }, []);
 
   const onScenarioInitialEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioInitialEdges((edges) => applyEdgeChanges(changes, edges));
+  }, []);
+
+  const onScenarioOnConnectNodesChange = useCallback((changes: NodeChange[]) => {
+    setScenarioOnConnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+  }, []);
+
+  const onScenarioOnConnectEdgesChange = useCallback((changes: EdgeChange[]) => {
+    setScenarioOnConnectEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
   const onScenarioMainNodesChange = useCallback((changes: NodeChange[]) => {
@@ -405,7 +439,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioOnStopNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioOnStopNodes((nodes) => applyNodeChanges(changes, nodes));
+    setScenarioOnStopNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
   }, []);
 
   const onScenarioOnStopEdgesChange = useCallback((changes: EdgeChange[]) => {
@@ -413,7 +447,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioOnDisconnectNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioOnDisconnectNodes((nodes) => applyNodeChanges(changes, nodes));
+    setScenarioOnDisconnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
   }, []);
 
   const onScenarioOnDisconnectEdgesChange = useCallback((changes: EdgeChange[]) => {
@@ -434,6 +468,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const onScenarioInitialConnect = useCallback((connection: Connection) => {
     setScenarioInitialEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+  }, []);
+
+  const onScenarioOnConnectConnect = useCallback((connection: Connection) => {
+    setScenarioOnConnectEdges((edges) => addEdge({ ...connection, animated: true }, edges));
   }, []);
 
   const onScenarioMainConnect = useCallback((connection: Connection) => {
@@ -464,21 +502,24 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       const nodes =
         scenarioBranch === 'initial'
           ? scenarioInitialNodes
-          : scenarioBranch === 'main'
-            ? scenarioMainNodes
-            : scenarioBranch === 'alarm'
-              ? scenarioAlarmNodes
-              : scenarioBranch === 'onStop'
-                ? scenarioOnStopNodes
-                : scenarioBranch === 'onDisconnect'
-                  ? scenarioOnDisconnectNodes
-                  : scenarioFunctionNodes;
+          : scenarioBranch === 'onConnect'
+            ? scenarioOnConnectNodes
+            : scenarioBranch === 'main'
+              ? scenarioMainNodes
+              : scenarioBranch === 'alarm'
+                ? scenarioAlarmNodes
+                : scenarioBranch === 'onStop'
+                  ? scenarioOnStopNodes
+                  : scenarioBranch === 'onDisconnect'
+                    ? scenarioOnDisconnectNodes
+                    : scenarioFunctionNodes;
       return isValidBoardConnection(connection, nodes, layer);
     },
     [
       scenarioAlarmNodes,
       scenarioBranch,
       scenarioInitialNodes,
+      scenarioOnConnectNodes,
       scenarioMainNodes,
       scenarioOnStopNodes,
       scenarioOnDisconnectNodes,
@@ -571,6 +612,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioFunctionNodes,
     scenarioInitialEdges,
     scenarioInitialNodes,
+    scenarioOnConnectEdges,
+    scenarioOnConnectNodes,
     scenarioMainEdges,
     scenarioMainNodes,
     scenarioOnDisconnectEdges,
@@ -608,6 +651,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setSignalEdges([]);
     setScenarioInitialNodes([]);
     setScenarioInitialEdges([]);
+    setScenarioOnConnectNodes([]);
+    setScenarioOnConnectEdges([]);
     setScenarioMainNodes([]);
     setScenarioMainEdges([]);
     setScenarioAlarmNodes([]);
@@ -626,6 +671,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       switch (branch) {
         case 'initial':
           setScenarioInitialNodes((nodes) => [...nodes, node]);
+          break;
+        case 'onConnect':
+          setScenarioOnConnectNodes((nodes) => [...nodes, node]);
           break;
         case 'main':
           setScenarioMainNodes((nodes) => [...nodes, node]);
@@ -676,6 +724,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     (id: string) => {
       setVariables((current) => current.filter((variable) => variable.id !== id));
       dropVariableNodes(setScenarioInitialNodes, id);
+      dropVariableNodes(setScenarioOnConnectNodes, id);
       dropVariableNodes(setScenarioMainNodes, id);
       dropVariableNodes(setScenarioAlarmNodes, id);
       dropVariableNodes(setScenarioOnStopNodes, id);
@@ -702,6 +751,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       switch (scenarioBranch) {
         case 'initial':
           setScenarioInitialNodes((nodes) => [...nodes, node]);
+          break;
+        case 'onConnect':
+          setScenarioOnConnectNodes((nodes) => [...nodes, node]);
           break;
         case 'main':
           setScenarioMainNodes((nodes) => [...nodes, node]);
@@ -738,6 +790,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioBranch,
       scenarioInitialNodes,
       scenarioInitialEdges,
+      scenarioOnConnectNodes,
+      scenarioOnConnectEdges,
       scenarioMainNodes,
       scenarioMainEdges,
       scenarioAlarmNodes,
@@ -755,6 +809,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onSignalEdgesChange,
       onScenarioInitialNodesChange,
       onScenarioInitialEdgesChange,
+      onScenarioOnConnectNodesChange,
+      onScenarioOnConnectEdgesChange,
       onScenarioMainNodesChange,
       onScenarioMainEdgesChange,
       onScenarioAlarmNodesChange,
@@ -767,6 +823,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onScenarioFunctionEdgesChange,
       onSignalConnect,
       onScenarioInitialConnect,
+      onScenarioOnConnectConnect,
       onScenarioMainConnect,
       onScenarioAlarmConnect,
       onScenarioOnStopConnect,
@@ -807,6 +864,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onScenarioInitialConnect,
       onScenarioInitialEdgesChange,
       onScenarioInitialNodesChange,
+      onScenarioOnConnectConnect,
+      onScenarioOnConnectEdgesChange,
+      onScenarioOnConnectNodesChange,
       onScenarioMainConnect,
       onScenarioMainEdgesChange,
       onScenarioMainNodesChange,
@@ -831,6 +891,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioBranch,
       scenarioInitialEdges,
       scenarioInitialNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
       scenarioMainEdges,
       scenarioMainNodes,
       scenarioOnStopEdges,

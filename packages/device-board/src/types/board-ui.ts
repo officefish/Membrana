@@ -4,7 +4,14 @@ import type { ScenarioBlockKind } from '@membrana/core';
 export type BoardLayerTab = 'signal' | 'scenario';
 
 /** Ветка scenario graph на вкладке Scenario. */
-export type ScenarioBranchTab = 'initial' | 'main' | 'alarm' | 'onStop' | 'onDisconnect' | 'function';
+export type ScenarioBranchTab =
+  | 'initial'
+  | 'onConnect'
+  | 'main'
+  | 'alarm'
+  | 'onStop'
+  | 'onDisconnect'
+  | 'function';
 
 /**
  * Презентационные лейблы веток (MP7b RT6). Сериализованный ключ `initial`
@@ -12,6 +19,7 @@ export type ScenarioBranchTab = 'initial' | 'main' | 'alarm' | 'onStop' | 'onDis
  */
 export const BRANCH_TAB_LABEL: Record<ScenarioBranchTab, string> = {
   initial: 'On start',
+  onConnect: 'On connect',
   onStop: 'On stop',
   main: 'Main loop',
   alarm: 'Alarm loop',
@@ -26,13 +34,12 @@ export interface BranchSidebarSection {
 }
 
 /**
- * Порядок и группировка вкладок левого сайдбара (MP7b RT6):
- * системные триггеры → лупы → триггер узла → конструктор функций.
+ * Порядок и группировка вкладок левого сайдбара (v0.4 DBR3):
+ * 4 обработчика событий → лупы → конструктор функций.
  */
 export const BRANCH_SIDEBAR_SECTIONS: readonly BranchSidebarSection[] = [
-  { title: 'Системные триггеры', tabs: ['initial', 'onStop'] },
+  { title: 'Обработчики событий', tabs: ['onConnect', 'initial', 'onStop', 'onDisconnect'] },
   { title: 'Лупы', tabs: ['main', 'alarm'] },
-  { title: 'Триггер узла', tabs: ['onDisconnect'] },
   { title: 'Конструктор функций', tabs: ['function'] },
 ];
 

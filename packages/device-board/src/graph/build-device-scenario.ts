@@ -11,6 +11,7 @@ import {
   SCENARIO_ALARM_ENTRY,
   SCENARIO_INITIAL_ENTRY,
   SCENARIO_MAIN_ENTRY,
+  SCENARIO_ON_CONNECT_ENTRY,
   SCENARIO_ON_DISCONNECT_ENTRY,
   SCENARIO_ON_STOP_ENTRY,
 } from './initial-board-state.js';
@@ -25,6 +26,9 @@ export interface BuildDeviceScenarioInput {
   readonly signalEdges: readonly Edge[];
   readonly scenarioInitialNodes: readonly Node[];
   readonly scenarioInitialEdges: readonly Edge[];
+  /** v0.4: обработчик onConnect (необязателен — по умолчанию пустой подграф). */
+  readonly scenarioOnConnectNodes?: readonly Node[];
+  readonly scenarioOnConnectEdges?: readonly Edge[];
   readonly scenarioMainNodes: readonly Node[];
   readonly scenarioMainEdges: readonly Edge[];
   readonly scenarioAlarmNodes: readonly Node[];
@@ -37,6 +41,7 @@ export interface BuildDeviceScenarioInput {
   /** v0.4: переменные сценария (document-scope). */
   readonly variables?: readonly ScenarioVariable[];
   readonly scenarioInitialEntry?: string;
+  readonly scenarioOnConnectEntry?: string;
   readonly scenarioMainEntry?: string;
   readonly scenarioAlarmEntry?: string;
   readonly scenarioOnStopEntry?: string;
@@ -48,6 +53,7 @@ export function buildDeviceScenarioDocument(input: BuildDeviceScenarioInput): De
   const base = createEmptyDeviceScenarioDocument(input.deviceKind);
   const scenario = createEmptyScenarioGraph();
   const initialEntry = input.scenarioInitialEntry ?? SCENARIO_INITIAL_ENTRY;
+  const onConnectEntry = input.scenarioOnConnectEntry ?? SCENARIO_ON_CONNECT_ENTRY;
   const mainEntry = input.scenarioMainEntry ?? SCENARIO_MAIN_ENTRY;
   const alarmEntry = input.scenarioAlarmEntry ?? SCENARIO_ALARM_ENTRY;
   const onStopEntry = input.scenarioOnStopEntry ?? SCENARIO_ON_STOP_ENTRY;
@@ -63,6 +69,11 @@ export function buildDeviceScenarioDocument(input: BuildDeviceScenarioInput): De
         initialEntry,
         input.scenarioInitialNodes,
         input.scenarioInitialEdges,
+      ),
+      onConnect: serializeScenarioSubgraph(
+        onConnectEntry,
+        input.scenarioOnConnectNodes ?? [],
+        input.scenarioOnConnectEdges ?? [],
       ),
       loops: {
         main: serializeScenarioSubgraph(mainEntry, input.scenarioMainNodes, input.scenarioMainEdges),

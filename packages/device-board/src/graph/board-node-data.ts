@@ -25,6 +25,12 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
    * по `blockKind`. @see DEVICE_BOARD_CONCEPT.md §15
    */
   readonly nodeKind?: ScenarioNodeKind;
+  /**
+   * v0.4: системный узел (например `event`) — нельзя удалить с борда.
+   * Рендер показывает признак системности, `applyNodeChanges` отбрасывает
+   * `type:'remove'` для таких узлов. @see DEVICE_BOARD_CONCEPT.md §15
+   */
+  readonly system?: boolean;
   /** v0.4: для `variable-get`/`variable-set` — id связанной переменной сценария. */
   readonly variableId?: string;
   /** Subgraph-блок: id функции из `scenario.functions`. */

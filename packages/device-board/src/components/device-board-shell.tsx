@@ -138,6 +138,14 @@ const DeviceBoardShellInner: React.FC<{
           onEdgesChange: graph.onScenarioInitialEdgesChange,
           onConnect: graph.onScenarioInitialConnect,
         }
+      : scenarioBranch === 'onConnect'
+      ? {
+          nodes: graph.scenarioOnConnectNodes,
+          edges: graph.scenarioOnConnectEdges,
+          onNodesChange: graph.onScenarioOnConnectNodesChange,
+          onEdgesChange: graph.onScenarioOnConnectEdgesChange,
+          onConnect: graph.onScenarioOnConnectConnect,
+        }
       : scenarioBranch === 'main'
         ? {
             nodes: graph.scenarioMainNodes,
