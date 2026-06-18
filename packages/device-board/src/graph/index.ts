@@ -6,6 +6,8 @@ export {
   socketTypeForPin,
 } from './d0-node-catalog.js';
 export type { D0ScenarioNodeTemplate, D0SignalNodeTemplate } from './d0-node-catalog.js';
+export { createScenarioBoardNode } from './board-node-factory.js';
+export type { CreateScenarioBoardNodeOptions } from './board-node-factory.js';
 export { resolveHandle } from './handle-catalog.js';
 export type { ResolvedHandle } from './handle-catalog.js';
 export { isValidBoardConnection, isValidBoardEdge } from './connection-validation.js';

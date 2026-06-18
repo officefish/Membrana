@@ -9,12 +9,13 @@ import {
   type Node,
   type NodeChange,
 } from '@xyflow/react';
-import type { DeviceKind } from '@membrana/core';
+import type { DeviceKind, RuntimeMode, ScenarioBlockKind } from '@membrana/core';
 
 import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
 import {
   buildDeviceScenarioDocument,
   createDefaultHydratedBoardState,
+  createScenarioBoardNode,
   exportDeviceScenarioDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
@@ -83,6 +84,13 @@ export interface DeviceBoardGraphContextValue {
   readonly syncError: string | null;
   readonly startScenario: () => Promise<void>;
   readonly stopScenario: (reason?: ScenarioStopReason) => void;
+  /** Ручной режim normal/alarm (MP7b RT3/RT6). Делегируется в ScenarioRuntime. */
+  readonly mode: RuntimeMode;
+  readonly setMode: (mode: RuntimeMode) => void;
+  /** Полная очистка борда: все ветки сценария и сигнал (MP7b RT6). */
+  readonly clearBoard: () => void;
+  /** Добавить ноду из палитры в активную ветку сценария (MP7b RT6). */
+  readonly addScenarioNodeToCurrentBranch: (blockKind: ScenarioBlockKind) => void;
 }
 
 const DeviceBoardGraphContext = createContext<DeviceBoardGraphContextValue | null>(null);
@@ -564,6 +572,56 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     runtimeRef.current?.stop(reason);
   }, []);
 
+  const setMode = useCallback((mode: RuntimeMode) => {
+    runtimeRef.current?.setMode(mode);
+  }, []);
+
+  const clearBoard = useCallback(() => {
+    setSignalNodes([]);
+    setSignalEdges([]);
+    setScenarioInitialNodes([]);
+    setScenarioInitialEdges([]);
+    setScenarioMainNodes([]);
+    setScenarioMainEdges([]);
+    setScenarioAlarmNodes([]);
+    setScenarioAlarmEdges([]);
+    setScenarioOnStopNodes([]);
+    setScenarioOnStopEdges([]);
+    setScenarioOnDisconnectNodes([]);
+    setScenarioOnDisconnectEdges([]);
+    setScenarioFunctionNodes([]);
+    setScenarioFunctionEdges([]);
+  }, []);
+
+  const addScenarioNodeToCurrentBranch = useCallback(
+    (blockKind: ScenarioBlockKind) => {
+      const node = createScenarioBoardNode(blockKind);
+      switch (scenarioBranch) {
+        case 'initial':
+          setScenarioInitialNodes((nodes) => [...nodes, node]);
+          break;
+        case 'main':
+          setScenarioMainNodes((nodes) => [...nodes, node]);
+          break;
+        case 'alarm':
+          setScenarioAlarmNodes((nodes) => [...nodes, node]);
+          break;
+        case 'onStop':
+          setScenarioOnStopNodes((nodes) => [...nodes, node]);
+          break;
+        case 'onDisconnect':
+          setScenarioOnDisconnectNodes((nodes) => [...nodes, node]);
+          break;
+        case 'function':
+          setScenarioFunctionNodes((nodes) => [...nodes, node]);
+          break;
+        default:
+          break;
+      }
+    },
+    [scenarioBranch],
+  );
+
   const canRun = useMemo(
     () => isPreRunValid(validationIssues) && runtimeHost !== undefined && !runtimeState.isRunning,
     [runtimeHost, runtimeState.isRunning, validationIssues],
@@ -620,9 +678,15 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       syncError,
       startScenario,
       stopScenario,
+      mode: runtimeState.mode,
+      setMode,
+      clearBoard,
+      addScenarioNodeToCurrentBranch,
     }),
     [
+      addScenarioNodeToCurrentBranch,
       canRun,
+      clearBoard,
       deviceKind,
       exportJson,
       importJsonFile,
@@ -663,6 +727,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnDisconnectNodes,
       scenarioFunctionEdges,
       scenarioFunctionNodes,
+      setMode,
       signalEdges,
       signalNodes,
       startScenario,

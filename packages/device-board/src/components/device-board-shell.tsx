@@ -6,25 +6,16 @@ import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device
 import type { ScenarioRuntimeHost } from '../runtime/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
-import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
+import {
+  BRANCH_TAB_LABEL,
+  isSignalAdvancedEnabled,
+  type ScenarioBranchTab,
+} from '../types/board-ui.js';
 import { BoardFlowCanvas } from './board-flow-canvas.js';
-import { BoardInspector } from './board-inspector.js';
+import { BoardLeftSidebar } from './board-left-sidebar.js';
+import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
-
-const TAB_LABEL: Record<BoardLayerTab, string> = {
-  signal: 'Signal',
-  scenario: 'Scenario',
-};
-
-const BRANCH_LABEL: Record<ScenarioBranchTab, string> = {
-  initial: 'Initial',
-  main: 'Main loop',
-  alarm: 'Alarm loop',
-  onStop: 'On stop',
-  onDisconnect: 'On disconnect',
-  function: 'Function',
-};
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -42,7 +33,8 @@ const DeviceBoardShellInner: React.FC<{
 }> = ({ onRequestExit, exitLabel, showRunControls }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
-  const [activeTab, setActiveTab] = useState<BoardLayerTab>('scenario');
+  const signalAdvanced = isSignalAdvancedEnabled();
+  const [activeLayer, setActiveLayer] = useState<'signal' | 'scenario'>('scenario');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeLabel, setSelectedNodeLabel] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
@@ -51,6 +43,11 @@ const DeviceBoardShellInner: React.FC<{
   useEffect(() => {
     graph.refreshValidation();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- initial validation once on mount
+  }, []);
+
+  const clearSelection = useCallback(() => {
+    setSelectedNodeId(null);
+    setSelectedNodeLabel(null);
   }, []);
 
   const handleSelectionChange = useCallback((selection: OnSelectionChangeParams) => {
@@ -65,22 +62,21 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeLabel(label);
   }, []);
 
-  const handleTabChange = useCallback((tab: BoardLayerTab) => {
-    setActiveTab(tab);
-    setSelectedNodeId(null);
-    setSelectedNodeLabel(null);
-  }, []);
-
-  const handleBranchChange = useCallback(
+  const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
       graph.setScenarioBranch(branch);
-      setSelectedNodeId(null);
-      setSelectedNodeLabel(null);
+      setActiveLayer('scenario');
+      clearSelection();
     },
-    [graph],
+    [clearSelection, graph],
   );
 
-  const isSignal = activeTab === 'signal';
+  const handleSelectSignal = useCallback(() => {
+    setActiveLayer('signal');
+    clearSelection();
+  }, [clearSelection]);
+
+  const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
 
   const handleExitBoardMode = useCallback(() => {
@@ -93,6 +89,14 @@ const DeviceBoardShellInner: React.FC<{
     }
     exitBoardMode();
   }, [exitBoardMode, graph, onRequestExit]);
+
+  const handleClearBoard = useCallback(() => {
+    if (typeof window !== 'undefined' && !window.confirm('Очистить весь борд? Все ветки будут пустыми.')) {
+      return;
+    }
+    graph.clearBoard();
+    clearSelection();
+  }, [clearSelection, graph]);
 
   const handleImportClick = useCallback(() => {
     fileInputRef.current?.click();
@@ -122,6 +126,8 @@ const DeviceBoardShellInner: React.FC<{
           : graph.syncStatus === 'error'
             ? 'Ошибка sync'
             : null;
+
+  const mode = graph.mode;
 
   const scenarioCanvas =
     scenarioBranch === 'initial'
@@ -172,6 +178,8 @@ const DeviceBoardShellInner: React.FC<{
                   onConnect: graph.onScenarioFunctionConnect,
                 };
 
+  const canvasLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
+
   return (
     <div className="flex h-screen flex-col bg-base-100">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-base-200 px-4 py-2 shadow-sm">
@@ -182,35 +190,51 @@ const DeviceBoardShellInner: React.FC<{
           <h1 className="text-sm font-semibold text-base-content">Редактор устройства</h1>
         </div>
 
-        <div role="tablist" className="tabs tabs-boxed bg-base-200" aria-label="Слой графа">
-          {(['signal', 'scenario'] as const).map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab}
-              className={`tab tab-sm ${activeTab === tab ? 'tab-active' : ''}`}
-              onClick={() => handleTabChange(tab)}
-            >
-              {TAB_LABEL[tab]}
-            </button>
-          ))}
-        </div>
-
-        {!isSignal ? (
-          <div role="tablist" className="tabs tabs-boxed bg-base-100" aria-label="Ветка сценария">
-            {(['initial', 'main', 'alarm', 'function', 'onStop', 'onDisconnect'] as const).map((branch) => (
+        {showRunControls ? (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
               <button
-                key={branch}
                 type="button"
-                role="tab"
-                aria-selected={graph.scenarioBranch === branch}
-                className={`tab tab-xs ${graph.scenarioBranch === branch ? 'tab-active' : ''}`}
-                onClick={() => handleBranchChange(branch)}
+                className="btn btn-sm btn-primary"
+                onClick={() => void graph.startScenario()}
+                disabled={!graph.canRun}
+                title={graph.canRun ? 'Запуск сценария' : 'Исправьте ошибки или дождитесь остановки'}
               >
-                {BRANCH_LABEL[branch]}
+                Run
               </button>
-            ))}
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                onClick={() => graph.stopScenario('user')}
+                disabled={!graph.runtimeState.isRunning}
+              >
+                Stop
+              </button>
+            </div>
+
+            <div role="group" aria-label="Режим" className="join">
+              <button
+                type="button"
+                aria-pressed={mode === 'normal'}
+                className={`btn btn-sm join-item ${mode === 'normal' ? 'btn-info' : 'btn-ghost'}`}
+                onClick={() => graph.setMode('normal')}
+                disabled={!graph.runtimeState.isRunning}
+              >
+                Обычный
+              </button>
+              <button
+                type="button"
+                aria-pressed={mode === 'alarm'}
+                className={`btn btn-sm join-item ${mode === 'alarm' ? 'btn-warning' : 'btn-ghost'}`}
+                onClick={() => graph.setMode('alarm')}
+                disabled={!graph.runtimeState.isRunning}
+              >
+                Тревога
+              </button>
+            </div>
+            <span className="sr-only" role="status" aria-live="polite">
+              Режим: {mode === 'alarm' ? 'тревога' : 'обычный'}
+            </span>
           </div>
         ) : null}
 
@@ -236,27 +260,6 @@ const DeviceBoardShellInner: React.FC<{
           <button type="button" className="btn btn-sm btn-outline" onClick={() => void graph.exportJson()}>
             Export JSON
           </button>
-          {showRunControls ? (
-            <>
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={() => void graph.startScenario()}
-                disabled={!graph.canRun}
-                title={graph.canRun ? 'Запуск initial → main → alarm' : 'Исправьте ошибки или дождитесь остановки'}
-              >
-                Run
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm btn-ghost"
-                onClick={() => graph.stopScenario('user')}
-                disabled={!graph.runtimeState.isRunning}
-              >
-                Stop
-              </button>
-            </>
-          ) : null}
           <button type="button" className="btn btn-sm btn-outline" onClick={handleExitBoardMode}>
             {exitLabel}
           </button>
@@ -270,7 +273,16 @@ const DeviceBoardShellInner: React.FC<{
       <BoardRuntimeStatus state={graph.runtimeState} />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <main className="min-w-0 flex-1" aria-label={`Канвас: ${TAB_LABEL[activeTab]}`}>
+        <BoardLeftSidebar
+          activeBranch={scenarioBranch}
+          isScenarioLayer={!isSignal}
+          onSelectBranch={handleSelectBranch}
+          signalAdvanced={signalAdvanced}
+          isSignalLayer={isSignal}
+          onSelectSignal={handleSelectSignal}
+        />
+
+        <main className="min-w-0 flex-1" aria-label={`Канвас: ${canvasLabel}`}>
           {isSignal ? (
             <BoardFlowCanvas
               layer="signal"
@@ -295,17 +307,20 @@ const DeviceBoardShellInner: React.FC<{
             />
           )}
         </main>
-        <BoardInspector
-          layer={activeTab}
+
+        <BoardRightSidebar
           selectedNodeId={selectedNodeId}
           selectedNodeLabel={selectedNodeLabel}
+          canEditScenario={!isSignal}
+          onAddNode={graph.addScenarioNodeToCurrentBranch}
+          onClearBoard={handleClearBoard}
         />
       </div>
     </div>
   );
 };
 
-/** Полноэкранный shell доски: Signal/Scenario, initial + main + alarm loop, ScenarioRuntime. */
+/** Полноэкранный shell доски (MP7b RT6): шапка run/stop + normal/alarm, сайдбары вкладок и палитры. */
 export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   runtimeHost,
   persistAdapter,
