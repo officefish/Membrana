@@ -454,9 +454,13 @@ Subgraph / функции: pins на границе, глубина вложен
 
 Согласовано с `docs/MODULE_AND_PLUGIN_UI.md` и бриф-интервью (U1–U4):
 
-1. **Board mode** — отдельный layout; приоритет **split** (канвас + inspector);
-   fullscreen опционально. Вкладки **Signal** / **Scenario**; цвета слоёв —
-   токены **DaisyUI** (`docs/DESIGN.md`).
+1. **Board mode** — отдельный **fullscreen**-layout (канон v0.4): shell владеет
+   высотой (`h-screen` → ряд `flex-1 min-h-0` → `<main>` `flex-col` → канвас
+   `flex-1`), канвас всегда дотягивается до **нижнего края страницы**; сайдбары
+   (вкладки/палитра/инспектор) — боковые панели с внутренним скроллом, высоту
+   ряда не распирают. Единый host-контракт: cabinet (`fixed inset-0`) и client
+   (replace `Dashboard`). Вкладки **Signal** / **Scenario**; цвета слоёв —
+   токены **DaisyUI** (`docs/DESIGN.md`). См. §15.
 2. **Доска — модуль** `id: 'device-board'`, `@xyflow/react`, без лишней `card`.
 3. **Настройки нод — в сайдбаре** (U2). §3 MODULE_AND_PLUGIN_UI не нарушается.
 4. **На ноде** — имя, цветные сокеты, статус (`active` / `inactive` / `missing` / `invalid`).

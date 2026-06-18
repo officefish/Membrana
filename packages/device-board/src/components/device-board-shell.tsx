@@ -282,7 +282,7 @@ const DeviceBoardShellInner: React.FC<{
           onSelectSignal={handleSelectSignal}
         />
 
-        <main className="min-w-0 flex-1" aria-label={`Канвас: ${canvasLabel}`}>
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label={`Канвас: ${canvasLabel}`}>
           {isSignal ? (
             <BoardFlowCanvas
               layer="signal"
