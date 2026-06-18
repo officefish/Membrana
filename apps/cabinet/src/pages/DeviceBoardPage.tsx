@@ -5,7 +5,9 @@ import {
 } from '@membrana/device-board';
 
 import { fetchMediaSession, type MediaSessionDevice } from '@/api/sampleLibrary';
+import { fetchMembraneMe } from '@/api/membrane';
 import { createCabinetDeviceBoardPersistAdapter } from '@/lib/cabinetDeviceScenario';
+import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 
 interface DeviceBoardPageProps {
   onBack: () => void;
@@ -14,16 +16,20 @@ interface DeviceBoardPageProps {
 export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
   const [devices, setDevices] = useState<MediaSessionDevice[]>([]);
   const [deviceId, setDeviceId] = useState<string | null>(null);
+  const [membraneId, setMembraneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const runtime = useCabinetNodeRuntime(membraneId);
+  const deviceLive = runtime.isDeviceLive(deviceId);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    void fetchMediaSession()
-      .then((session) => {
+    void Promise.all([fetchMediaSession(), fetchMembraneMe()])
+      .then(([session, me]) => {
         if (cancelled) return;
         setDevices(session.devices);
+        setMembraneId(me.membrane.id);
         const first = session.devices[0]?.deviceId ?? null;
         setDeviceId(first);
       })
@@ -100,6 +106,7 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
           onRequestExit={onBack}
           exitLabel="Назад в кабинет"
           showRunControls={false}
+          deviceLive={deviceLive}
         />
       </DeviceBoardModeProvider>
     </div>

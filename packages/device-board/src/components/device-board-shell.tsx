@@ -25,6 +25,8 @@ export interface DeviceBoardShellProps {
   readonly onRequestExit?: () => void;
   readonly exitLabel?: string;
   readonly showRunControls?: boolean;
+  /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
+  readonly deviceLive?: boolean;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -233,7 +235,8 @@ const DeviceBoardShellInner: React.FC<{
                 className="btn btn-sm btn-primary"
                 onClick={() => void graph.startScenario()}
                 disabled={!graph.canRun}
-                title={graph.canRun ? 'Запуск сценария' : 'Исправьте ошибки или дождитесь остановки'}
+                title={graph.canRun ? 'Запуск сценария' : (graph.runDisabledReason ?? 'Запуск недоступен')}
+                aria-label={graph.canRun ? 'Запуск сценария' : graph.runDisabledReason ?? 'Запуск недоступен'}
               >
                 Run
               </button>
@@ -373,11 +376,13 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   onRequestExit,
   exitLabel = 'Выйти из доски',
   showRunControls = true,
+  deviceLive,
 }) => (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
     persistAdapter={persistAdapter}
     initialHydratedState={initialHydratedState}
+    deviceLive={deviceLive}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}

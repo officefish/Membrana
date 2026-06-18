@@ -32,6 +32,7 @@ import {
   isPreRunValid,
   isValidBoardConnection,
   rejectSystemNodeRemovals,
+  resolveRunDisabledReason,
   validatePreRun,
   type VariableNodeKind,
   type V04PaletteNodeKind,
@@ -67,6 +68,7 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioFunctionEdges: Edge[];
   readonly validationIssues: readonly PreRunValidationIssue[];
   readonly canRun: boolean;
+  readonly runDisabledReason: string | null;
   readonly runtimeState: ScenarioRuntimeState;
   readonly onSignalNodesChange: (changes: NodeChange[]) => void;
   readonly onSignalEdgesChange: (changes: EdgeChange[]) => void;
@@ -132,6 +134,8 @@ export interface DeviceBoardGraphProviderProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
   readonly persistAdapter?: DeviceBoardPersistAdapter;
   readonly initialHydratedState?: HydratedBoardState;
+  /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
+  readonly deviceLive?: boolean;
 }
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
@@ -140,6 +144,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   runtimeHost,
   persistAdapter,
   initialHydratedState,
+  deviceLive,
 }) => {
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
@@ -786,10 +791,18 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [patchNodeData],
   );
 
-  const canRun = useMemo(
-    () => isPreRunValid(validationIssues) && runtimeHost !== undefined && !runtimeState.isRunning,
-    [runtimeHost, runtimeState.isRunning, validationIssues],
+  const runDisabledReason = useMemo(
+    () =>
+      resolveRunDisabledReason({
+        validationIssues,
+        hasRuntimeHost: runtimeHost !== undefined,
+        isRunning: runtimeState.isRunning,
+        deviceLive,
+      }),
+    [deviceLive, runtimeHost, runtimeState.isRunning, validationIssues],
   );
+
+  const canRun = runDisabledReason === null;
 
   const value = useMemo<DeviceBoardGraphContextValue>(
     () => ({
@@ -813,6 +826,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionEdges,
       validationIssues,
       canRun,
+      runDisabledReason,
       runtimeState,
       onSignalNodesChange,
       onSignalEdgesChange,
@@ -898,6 +912,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       refreshValidation,
       removeVariable,
       renameVariable,
+      runDisabledReason,
       runtimeState,
       scenarioAlarmEdges,
       scenarioAlarmNodes,

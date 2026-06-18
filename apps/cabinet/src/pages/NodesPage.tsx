@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
+import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 
 interface NodesPageProps {
@@ -139,6 +140,8 @@ function NodeCard({
 }) {
   const deviceId = node.device?.mediaDeviceId ?? null;
   const state = deviceId ? runtime.states[deviceId] : undefined;
+  const deviceLive = runtime.isDeviceLive(deviceId);
+  const canStart = deviceId !== null && deviceLive;
   const isRunning = state?.isRunning ?? false;
   const mode = state?.mode ?? 'normal';
 
@@ -156,7 +159,11 @@ function NodeCard({
             <h2 className="card-title text-lg">{node.label}</h2>
             <p className="font-mono text-xs text-base-content/50">{node.id}</p>
             {node.device ? (
-              <span className="badge badge-success badge-sm mt-1">сопряжён</span>
+              deviceLive ? (
+                <span className="badge badge-success badge-sm mt-1">online</span>
+              ) : (
+                <span className="badge badge-warning badge-sm mt-1">сопряжён · offline</span>
+              )
             ) : (
               <span className="badge badge-ghost badge-sm mt-1">не сопряжён</span>
             )}
@@ -184,8 +191,17 @@ function NodeCard({
             <button
               type="button"
               className="btn btn-sm btn-primary"
-              disabled={!deviceId}
-              title={!deviceId ? 'Узел не сопряжён с устройством' : undefined}
+              disabled={!canStart}
+              title={
+                !deviceId
+                  ? 'Узел не сопряжён с устройством'
+                  : !deviceLive
+                    ? DEVICE_OFFLINE_RUN_HINT
+                    : undefined
+              }
+              aria-label={
+                !canStart && deviceId && !deviceLive ? DEVICE_OFFLINE_RUN_HINT : undefined
+              }
               onClick={() => deviceId && runtime.run(deviceId)}
             >
               Пуск
