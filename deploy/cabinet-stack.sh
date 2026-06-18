@@ -45,6 +45,7 @@ case "$cmd" in
       echo "CABINET_DEPLOY_MODE=image: образы собираются в CI, локальный build пропущен." >&2
       exit 0
     fi
+    export GIT_SHA="${GIT_SHA:-$(git -C "$ROOT" rev-parse HEAD 2>/dev/null || echo unknown)}"
     "${COMPOSE[@]}" build "$@"
     ;;
   pull) "${COMPOSE[@]}" pull cabinet-api cabinet-web "$@" ;;
