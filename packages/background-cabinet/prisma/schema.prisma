@@ -53,6 +53,8 @@ model Tariff {
   /** Read-only system dataset catalog id provisioned for this tariff (not a byte quota). */
   datasetCatalogId       String
   maxActiveKeysPerNode   Int        @default(1)
+  /** Max paired nodes a membrane on this tariff may hold (MP7b multi-node). */
+  maxNodesPerMembrane    Int        @default(1)
   createdAt              DateTime   @default(now())
   membranes              Membrane[]
 }
@@ -73,12 +75,14 @@ model Membrane {
 
 model Node {
   id         String          @id @default(uuid()) @db.Uuid
-  membraneId String          @unique @db.Uuid
+  membraneId String          @db.Uuid
   membrane   Membrane        @relation(fields: [membraneId], references: [id], onDelete: Cascade)
   label      String
   accessKeys NodeAccessKey[]
   device     Device?
   createdAt  DateTime        @default(now())
+
+  @@index([membraneId])
 }
 
 model Device {

@@ -17,9 +17,11 @@ async function seedTariff() {
       bufferQuotaBytes: GIB,
       datasetCatalogId: FREE_DATASET_CATALOG_ID,
       maxActiveKeysPerNode: 1,
+      maxNodesPerMembrane: 2,
     },
     update: {
       datasetCatalogId: FREE_DATASET_CATALOG_ID,
+      maxNodesPerMembrane: 2,
     },
   });
   console.log(`Seed ok: tariff "${FREE_TARIFF_ID}"`);

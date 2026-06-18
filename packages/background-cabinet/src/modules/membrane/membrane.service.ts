@@ -16,6 +16,7 @@ import {
   createAccessKeySecret,
   hashAccessKeySecret,
 } from './access-key.util';
+import { isNodeLimitReached, nextNodeLabel } from '../../domain/node-limit';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 
 const FREE_TARIFF_ID = 'free-v1';
@@ -30,6 +31,21 @@ function serializeTariff(tariff: Tariff) {
     bufferQuotaBytes: tariff.bufferQuotaBytes.toString(),
     datasetCatalogId: tariff.datasetCatalogId,
     maxActiveKeysPerNode: tariff.maxActiveKeysPerNode,
+    maxNodesPerMembrane: tariff.maxNodesPerMembrane,
+  };
+}
+
+function serializeNode(node: {
+  id: string;
+  label: string;
+  createdAt: Date;
+  accessKeys: Parameters<typeof serializeAccessKey>[0][];
+}) {
+  return {
+    id: node.id,
+    label: node.label,
+    createdAt: node.createdAt.toISOString(),
+    accessKeys: node.accessKeys.map(serializeAccessKey),
   };
 }
 
@@ -78,47 +94,39 @@ export class MembraneService {
 
   async getMembraneView(userId: string) {
     const membrane = await this.getOrCreateMembraneForUser(userId);
-    const node = membrane.nodes[0] ?? null;
+    const nodes = [...membrane.nodes]
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+      .map(serializeNode);
     return {
       membrane: {
         id: membrane.id,
         tariff: serializeTariff(membrane.tariff),
         createdAt: membrane.createdAt.toISOString(),
       },
-      node: node
-        ? {
-            id: node.id,
-            label: node.label,
-            createdAt: node.createdAt.toISOString(),
-            accessKeys: node.accessKeys.map(serializeAccessKey),
-          }
-        : null,
+      // MP7b: список всех узлов мембраны. `node` (первый) — для обратной совместимости.
+      nodes,
+      node: nodes[0] ?? null,
     };
   }
 
   async createNode(userId: string, label?: string) {
     const membrane = await this.getOrCreateMembraneForUser(userId);
-    const existingNode = await this.prisma.node.findUnique({ where: { membraneId: membrane.id } });
-    if (existingNode) {
-      throw new ConflictException('Membrane already has a node (v1 limit: 1)');
+    const nodeCount = await this.prisma.node.count({ where: { membraneId: membrane.id } });
+    if (isNodeLimitReached(nodeCount, membrane.tariff.maxNodesPerMembrane)) {
+      throw new ConflictException(
+        `Node limit reached for tariff (max ${membrane.tariff.maxNodesPerMembrane})`,
+      );
     }
 
     const node = await this.prisma.node.create({
       data: {
         membraneId: membrane.id,
-        label: label?.trim() || 'Узел 1',
+        label: label?.trim() || nextNodeLabel(nodeCount),
       },
       include: { accessKeys: true },
     });
 
-    return {
-      node: {
-        id: node.id,
-        label: node.label,
-        createdAt: node.createdAt.toISOString(),
-        accessKeys: node.accessKeys.map(serializeAccessKey),
-      },
-    };
+    return { node: serializeNode(node) };
   }
 
   async createAccessKey(userId: string, nodeId: string, durationRaw: string) {
@@ -231,9 +239,11 @@ export class MembraneService {
         bufferQuotaBytes: GIB,
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
         maxActiveKeysPerNode: 1,
+        maxNodesPerMembrane: 2,
       },
       update: {
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
+        maxNodesPerMembrane: 2,
       },
     });
   }
