@@ -58,6 +58,13 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
 
   assertNotAborted(signal);
 
+  // v0.4: системный Event-узел и узлы переменных не вызывают host напрямую.
+  // Event — pass-through entry обработчика; реальная dataflow-резолюция — DBR4.
+  if (node.nodeKind === 'event' || node.nodeKind === 'variable-get' || node.nodeKind === 'variable-set') {
+    host.log(node.nodeKind, { nodeId: node.id, branch });
+    return { lastDetection, stopRequested: false };
+  }
+
   switch (node.blockKind) {
     case 'select-microphone':
       await host.selectMicrophone();

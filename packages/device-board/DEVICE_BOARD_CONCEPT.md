@@ -681,6 +681,16 @@ Subgraph / функции: pins на границе, глубина вложен
 (`nodeKind: 'event'`, `system: true`): он неудаляем и является точкой входа
 exec-потока и источником data-ссылки. Удаление/отсутствие — ошибка валидации.
 
+**Реализовано (DBR3):** добавлена ветка-обработчик `onConnect` (4 обработчика
+событий в левом сайдбаре: `onConnect`/`onStart`/`onStop`/`onDisconnect`).
+Системный Event-узел (`createEventBoardNode`): `deletable:false` + guard
+`rejectSystemNodeRemovals` отбрасывает UI-`remove` для системных узлов;
+авто-инжект как entry каждого обработчика при гидратации (`ensureEventEntry`,
+фикс-id `*-event`); data-выход `DeviceRef` (значение `null` в `onDisconnect`
+различается рантаймом — DBR4); pre-run-правило «entry обработчика обязан быть
+Event-узлом» (`event-entry-required`). Рантайм исполняет Event как pass-through;
+сериализация Event round-trip (build → parse → hydrate).
+
 ### 15.3 Переменные сценария
 
 Переменная — типизированная ссылка document-scope (конструктор переменных в

@@ -4,6 +4,7 @@ import type { Edge, Node } from '@xyflow/react';
 import { isBoardFlowNodeData } from './board-node-data.js';
 import { D0_SCENARIO_NODE_CATALOG } from './d0-node-catalog.js';
 import { resolveHandle } from './handle-catalog.js';
+import { createEventBoardNode } from './event-node.js';
 import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 import { createVariableBoardNode } from './variable-node.js';
 
@@ -16,8 +17,20 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
     return null;
   }
 
-  // v0.4: узлы переменных несут смысл в nodeKind + variableId, blockKind — носитель.
+  // v0.4: системный Event-узел — entry ветви-обработчика.
   const nodeKind = node.data.nodeKind;
+  if (nodeKind === 'event') {
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      system: true,
+    };
+  }
+
+  // v0.4: узлы переменных несут смысл в nodeKind + variableId, blockKind — носитель.
   if (nodeKind === 'variable-get' || nodeKind === 'variable-set') {
     return {
       id: node.id,
@@ -105,6 +118,18 @@ export function deserializeScenarioSubgraph(
 ): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   for (const item of subgraph.nodes) {
+    // v0.4: системный Event-узел восстанавливается фабрикой (фикс-id, DeviceRef out).
+    if (item.nodeKind === 'event') {
+      nodes.push(
+        createEventBoardNode({
+          id: item.id,
+          label: typeof item.label === 'string' ? item.label : undefined,
+          position: { x: item.position.x, y: item.position.y },
+        }),
+      );
+      continue;
+    }
+
     // v0.4: узлы переменных восстанавливаются из variableId + типа переменной.
     if (item.nodeKind === 'variable-get' || item.nodeKind === 'variable-set') {
       const variable = variables.find((candidate) => candidate.id === item.variableId);
