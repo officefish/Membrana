@@ -139,9 +139,50 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 
 ```bash
 yarn cabinet:mp6:prod   # MP6: full MP1–MP5 regression (one session)
+yarn cabinet:mp7:prod   # MP7: MP1–MP5 + WebSocket journal/mic-live smoke
 ```
 
 Локально: `yarn cabinet:docker:up` или dev: `yarn cabinet:db:up` → `yarn cabinet:migrate` → `yarn cabinet:seed` → `yarn cabinet:dev` + `yarn cabinet:app:dev`.
+
+---
+
+### MP7 — Node Realtime Gateway (`membrane-node-realtime-nr6-prod-hardening`, Issue [#92](https://github.com/officefish/Membrana/issues/92))
+
+| # | Проверка | Ожидание |
+|---|----------|----------|
+| 1 | MP1–MP5 smoke (REST) | без регрессии |
+| 2 | `wss://cabinet.membrana.space/v1/nodes/realtime` | node + cabinet WS `101` |
+| 3 | `journal.append` по WS | cabinet subscriber получает fan-out ≤20 с |
+| 4 | `analysis.brief` по WS | cabinet subscriber получает mic-live brief |
+| 5 | `NODE_REALTIME_ENABLED` на cabinet-api | default `true`; `false` → WS close `4503` |
+| 6 | Client `VITE_NODE_REALTIME_ENABLED` | default on; `false` → REST-only push |
+| 7 | WS down | client REST journal + cabinet poll 1 с (fallback) |
+
+**Команда:** `yarn cabinet:mp7:prod` (без rebuild; `MEMBRANA_DEPLOY_REBUILD=1` при необходимости).
+
+**Runbook:** reconnect с exponential backoff в `nodeRealtimeClient` / `cabinetNodeRealtimeClient`; paired journal — dual path (WS + REST) в `SyncJournalStorageBackend`.
+
+---
+
+### MP7b — Node Runtime Remote (`membrane-node-runtime-remote`, RT0–RT7)
+
+Канал `runtime` поверх MP7-gateway: кабинет управляет live-мониторингом узла (run/stop/mode) по WS, узел шлёт `runtime.state`/`runtime.log`.
+
+| # | Проверка | Ожидание |
+|---|----------|----------|
+| 1 | MP7 smoke (journal + mic-live) | без регрессии |
+| 2 | Кабинет «Узлы»: ≥2 узла, у каждого run/stop + режим (в running) | список из RT4/RT5 multi-node |
+| 3 | Run из кабинета → узел | `runtime.command{run, deviceId}` → headless `ScenarioRuntime` стартует; реальный звук с микрофона |
+| 4 | `runtime.state` → кабинет | карточка узла: info-пульс (normal), warning-рамка (alarm) |
+| 5 | `setMode('alarm')` из кабинета | узел форсит alarm-loop (detection-front игнорируется); `normal` возвращает в main |
+| 6 | Reconnect узла (обрыв WS) | после `connected` узел повторно публикует снимок `runtime.state`; кабинет видит актуальный статус |
+| 7 | Персист режима | `setMode` сохраняется в localStorage; после рестарта узла режим восстановлен и применяется при старте |
+| 8 | Device-board UX | нет верхних табов; шапка run/stop + normal/alarm; левый сайдбар вкладок; правый — инспектор/палитра; clear + rebuild |
+| 9 | Signal advanced-флаг | без `VITE_DEVICE_BOARD_SIGNAL_ADVANCED` UI сигнала скрыт; сериализация документа не меняется |
+
+**Targeting multi-node:** `runtime.command` несёт `payload.deviceId`; gateway роутит на конкретный узел (fallback — привязанный к подключению `mediaDeviceId`).
+
+**Runbook:** обрыв WS — exponential backoff (≤30 с) в `nodeRealtimeClient`; при восстановлении мост `runtimeRealtimeBridge` повторно публикует состояние. Режим хранится в `membrana.deviceBoard.runtimeMode`. Multi-node migration `20260618120000_mp7b_multinode` снимает `@unique` с `Node.membraneId`; лимит — `Tariff.maxNodesPerMembrane`.
 
 ---
 
@@ -156,6 +197,8 @@ yarn cabinet:mp6:prod   # MP6: full MP1–MP5 regression (one session)
 | **MP4** | media per membrane | **prod** 2026-06-12 | **archived** |
 | **MP5** | telemetry journal | **prod** 2026-06-14 | **archived** |
 | **MP6** | final regression | **prod** 2026-06-14 | **archived** |
+| **MP7** | node realtime gateway | **prod** | **archived** |
+| **MP7b** | node runtime remote (RT0–RT7) | code complete | pending prod-smoke |
 
 Подробный чеклист: [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
 

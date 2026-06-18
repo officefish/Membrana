@@ -11,6 +11,10 @@ import {
 
 import { createScenarioRuntimeHost } from '@/modules/device-board/createScenarioRuntimeHost';
 import { createClientDeviceBoardPersistAdapter } from '@/modules/device-board/deviceScenarioPersistence';
+import {
+  loadPersistedRuntimeMode,
+  savePersistedRuntimeMode,
+} from '@/lib/runtimeModePersistence';
 
 type StateListener = (state: ScenarioRuntimeState) => void;
 
@@ -27,7 +31,8 @@ class DeviceBoardRuntimeController {
 
   private unsubscribeRuntime: (() => void) | null = null;
 
-  private mode: RuntimeMode = 'normal';
+  // RT7: режим восстанавливается из localStorage при инициализации узла.
+  private mode: RuntimeMode = loadPersistedRuntimeMode();
 
   private state: ScenarioRuntimeState = createIdleScenarioRuntimeState();
 
@@ -72,6 +77,7 @@ class DeviceBoardRuntimeController {
       return;
     }
     this.mode = mode;
+    savePersistedRuntimeMode(mode); // RT7: переживает перезапуск узла
     if (this.runtime !== null) {
       this.runtime.setMode(mode);
     } else {

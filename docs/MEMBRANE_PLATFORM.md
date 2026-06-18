@@ -14,7 +14,30 @@
 | `membrana.space` | Маркетинг + вход (login) |
 | `cabinet.membrana.space` | Личный кабинет (`apps/cabinet`) |
 | `media.membrana.space` | Data-plane (`background-media`) |
-| `apps/client` (десктоп/браузер) | Полевой анализ; **автономный узел** или pairing |
+| `apps/client` (браузер) | Полевой анализ в вебе; **автономный узел** или pairing |
+| **Membrana Studio** (`apps/membrana-studio`) | Настольная **расширенная** версия: тот же `apps/client`, Electron + FS |
+| **Membrana Device** (`apps/membrana-device`, план) | Настольный **узкий** конфигуратор: pairing + device-board только |
+
+---
+
+## Линейка полевых приложений
+
+**Решение Teamlead (2026-06-17):** три SKU в одной платформе — веб-кабинет + полевой клиент + два настольных приложения разной глубины. Один renderer (`apps/client`) для web и Studio; Device — отдельный узкий shell.
+
+| Продукт | Пакет | Аудитория | Состав UI | Хранение |
+|---------|-------|-----------|-----------|----------|
+| **Web client** | `apps/client` в браузере | Обычный полевой сценарий в браузере | Полный каталог модулей и плагинов | localStorage / IndexedDB / server (paired) |
+| **Cabinet** | `apps/cabinet` | Управление мембраной, ключами, журналом в облаке | Веб-кабинет на `cabinet.membrana.space` | Сервер |
+| **Membrana Studio** | `apps/membrana-studio` | **Продвинутые пользователи**, раннее тестирование новых возможностей через модульно-плагинную архитектуру; работа с контентом через **sample library** (в перспективе — **медиа-студия**) | Полный каталог (как web) | `electron-system-files` + server при paired |
+| **Membrana Device** | `apps/membrana-device` (план) | Оператор прибора на объекте | **Только** pairing + **device-board** (текущий сценарий устройства, редактируемый) | `electron-system-files` при автономии; **без sample library** (осознанное ограничение v1) |
+
+**Studio** — настольная «расширенная» рабочая станция: микрофон, журнал, библиотека, device-board, MP7 WebSocket; канал для beta/feature preview.
+
+**Device** — лёгкое настольное приложение: линковка с сервером по ключу + device-board. Автономный режим через ФС допустим (сценарий, настройки), но **медиа-библиотека в Device не планируется** — нет продуктового смысла для узкого SKU.
+
+**Архитектура shell (Studio MS1–MS3):** Electron main хранит journal / media-library / trends на диске и отдаёт в renderer через `electronAPI`; бизнес-логика анализа остаётся в `apps/client` + `packages/services/*`. Дублирование FS в shell — граница ОС, не второй доменный слой.
+
+Эпики: Studio — [`prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) (`membrana-studio-desktop`, Issue [#93](https://github.com/officefish/Membrana/issues/93)); Device — отдельный эпик после MS4 (общий опыт упаковки).
 
 ---
 
@@ -26,7 +49,9 @@
 | **Узел (Node)** | Логический шлюз между мембраной и одним экземпляром `apps/client`. v1: **один на мембрану**. |
 | **Ключ доступа (Node Access Key)** | Секрет для pairing клиента с узлом. **Формат** в UI = выбор **срока действия** (TTL), не тип QR/файл. |
 | **Устройство (Device)** | Запись paired-клиента; маппится на `deviceId` в `background-media`. |
-| **Режим узла (Node connection mode)** | Состояние `apps/client`: **связанный** (pairing с кабинетом) или **автономный** (локальная ФС, без облака). Пользователь **всегда** может выбрать автономный режим. |
+| **Режим узла (Node connection mode)** | Состояние полевого клиента (`apps/client` / Studio / Device): **связанный** (pairing с кабинетом) или **автономный** (локальная ФС, без облака). Пользователь **всегда** может выбрать автономный режим. |
+| **Membrana Studio** | Настольное приложение — полный полевой клиент в Electron (`apps/membrana-studio` → renderer `apps/client`). |
+| **Membrana Device** | Настольное приложение — только pairing + device-board (`apps/membrana-device`, отдельный эпик). |
 | **Тариф (Tariff)** | Лимиты пользовательского хранилища (`userStorageQuotaBytes`), буфера live (`bufferQuotaBytes`) и **состав** системного dataset (`datasetCatalogId`). v1 seed: `free-v1`. |
 | **TelemetryReport** | Серверная сущность: отчёт/снимок анализа (аналог записи client journal). |
 | **TelemetryLiveRecord** | Серверная сущность: live-сессия / потоковая запись. |
@@ -269,7 +294,7 @@ Envelope: `{ v, channel, type, ts, payload }`; каналы MP7: `journal | mic-
 | Фаза | id | Содержание |
 |------|-----|------------|
 | MP7 | `membrane-node-realtime-gateway` | Gateway; **журнал + микрофон** |
-| MP7b | `membrane-node-runtime-remote` | Device-board ↔ WS |
+| MP7b | `membrane-node-runtime-remote` | Device-board ↔ WS (RT0–RT7): канал `runtime` (run/stop/mode), headless `ScenarioRuntime`, multi-node, UX доски, reconnect + персист режима |
 | TBD | `media-library-realtime` | Консилиум: нужен ли WS для библиотеки |
 | MP8 | `membrane-realtime-hardening` | Reconnect, backpressure, нагрузка |
 

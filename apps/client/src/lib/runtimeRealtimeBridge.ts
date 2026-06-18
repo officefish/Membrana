@@ -67,11 +67,39 @@ export function isRuntimeCommandEnvelope(envelope: NodeRealtimeEnvelope): boolea
 
 let messageUnsub: (() => void) | null = null;
 let stateUnsub: (() => void) | null = null;
+let connectionUnsub: (() => void) | null = null;
+
+interface RuntimeStateSink {
+  send: (envelope: NodeRealtimeEnvelope) => void;
+  getDeviceId: () => string | null;
+}
+
+interface RuntimeStateSource {
+  getState: () => ScenarioRuntimeState;
+  getMode: () => RuntimeMode;
+}
+
+/** Отправляет текущий снимок состояния контроллера в runtime.state (общий путь для подписки и reconnect). */
+function emitRuntimeState(
+  client: RuntimeStateSink,
+  source: RuntimeStateSource,
+  state: ScenarioRuntimeState,
+): void {
+  client.send(
+    createNodeRealtimeEnvelope(
+      'runtime',
+      NODE_REALTIME_EVENT_TYPES.runtime.state,
+      runtimeStateToPayload(state, source.getMode(), client.getDeviceId()),
+    ),
+  );
+}
 
 /**
- * MP7b RT2: связывает Node Realtime client с headless scenario runtime.
+ * MP7b RT2/RT7: связывает Node Realtime client с headless scenario runtime.
  *  - runtime.command (кабинет → узел) → start/stop/setMode контроллера;
- *  - изменения состояния runtime → runtime.state (узел → кабинет).
+ *  - изменения состояния runtime → runtime.state (узел → кабинет);
+ *  - RT7: при (пере)подключении повторно публикуем текущий снимок состояния,
+ *    чтобы кабинет получил актуальный статус после reconnect.
  */
 export function startRuntimeRealtimeBridge(): void {
   if (messageUnsub !== null) {
@@ -88,13 +116,13 @@ export function startRuntimeRealtimeBridge(): void {
   });
 
   stateUnsub = controller.subscribe((state) => {
-    client.send(
-      createNodeRealtimeEnvelope(
-        'runtime',
-        NODE_REALTIME_EVENT_TYPES.runtime.state,
-        runtimeStateToPayload(state, controller.getMode(), client.getDeviceId()),
-      ),
-    );
+    emitRuntimeState(client, controller, state);
+  });
+
+  connectionUnsub = client.subscribeState((connectionState) => {
+    if (connectionState === 'connected') {
+      emitRuntimeState(client, controller, controller.getState());
+    }
   });
 }
 
@@ -103,4 +131,6 @@ export function stopRuntimeRealtimeBridge(): void {
   messageUnsub = null;
   stateUnsub?.();
   stateUnsub = null;
+  connectionUnsub?.();
+  connectionUnsub = null;
 }
