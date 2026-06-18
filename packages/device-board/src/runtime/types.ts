@@ -1,4 +1,4 @@
-import type { ScenarioBlockKind, ScenarioSystemBranch } from '@membrana/core';
+import type { RuntimeMode, ScenarioBlockKind, ScenarioSystemBranch } from '@membrana/core';
 
 /** Фаза исполнения scenario runtime. */
 export type ScenarioRuntimePhase =
@@ -22,6 +22,8 @@ export type ScenarioStopReason = 'user' | 'system';
 export interface ScenarioRuntimeState {
   readonly phase: ScenarioRuntimePhase;
   readonly isRunning: boolean;
+  /** Ручной режим (MP7b RT3): `alarm` форсит alarm-loop, `normal` — main + авто detection-front. */
+  readonly mode: RuntimeMode;
   readonly activeBranch: ScenarioSystemBranch | null;
   readonly activeNodeId: string | null;
   readonly activeBlockKind: ScenarioBlockKind | null;
@@ -58,6 +60,7 @@ export function createIdleScenarioRuntimeState(): ScenarioRuntimeState {
   return {
     phase: 'idle',
     isRunning: false,
+    mode: 'normal',
     activeBranch: null,
     activeNodeId: null,
     activeBlockKind: null,

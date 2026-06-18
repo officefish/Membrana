@@ -315,6 +315,68 @@ describe('ScenarioRuntime H4 alarm', () => {
 
 
 
+describe('ScenarioRuntime RT3 mode override', () => {
+  it('setMode(alarm) forces alarm loop without detection front', async () => {
+    const calls: string[] = [];
+    let runtime!: ScenarioRuntime;
+    let alarmJournals = 0;
+
+    const host = createStubScenarioRuntimeHost({
+      writeJournal: async (event) => {
+        calls.push(`journal:${event.branch}`);
+        if (event.branch === 'alarm') {
+          alarmJournals += 1;
+          if (alarmJournals === 1) {
+            runtime.stop();
+          }
+        }
+      },
+      // detection всегда false: авто-alarm не сработал бы
+      trendsFftDetect: async () => ({ detected: false, confidence: 0, templateId: 'CLEAR' }),
+    });
+
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5 });
+    runtime.load(buildHackathonDocument());
+    runtime.setMode('alarm');
+    await runtime.start();
+
+    expect(calls).toContain('journal:alarm');
+    expect(calls).not.toContain('journal:main');
+    expect(runtime.getState().mode).toBe('alarm');
+  });
+
+  it('setMode(normal) returns from manual alarm to main loop', async () => {
+    const calls: string[] = [];
+    let runtime!: ScenarioRuntime;
+
+    const host = createStubScenarioRuntimeHost({
+      writeJournal: async (event) => {
+        calls.push(`journal:${event.branch}`);
+        if (event.branch === 'alarm') {
+          // снимаем override после первой alarm-итерации
+          runtime.setMode('normal');
+        }
+      },
+      recordChunk: async () => {
+        // выполнится только после возврата в main
+        calls.push('main-record-chunk');
+        runtime.stop();
+        return { clipId: 'c1' };
+      },
+      trendsFftDetect: async () => ({ detected: false, confidence: 0, templateId: 'CLEAR' }),
+    });
+
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5 });
+    runtime.load(buildHackathonDocument());
+    runtime.setMode('alarm');
+    await runtime.start();
+
+    expect(calls).toContain('journal:alarm');
+    expect(calls).toContain('main-record-chunk');
+    expect(runtime.getState().mode).toBe('normal');
+  });
+});
+
 describe('ScenarioRuntime H3a onStop', () => {
   it('records system stop reason', async () => {
     let runtime!: ScenarioRuntime;

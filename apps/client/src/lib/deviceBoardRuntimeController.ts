@@ -64,15 +64,19 @@ class DeviceBoardRuntimeController {
   }
 
   /**
-   * RT2: сохраняем режим и оповещаем подписчиков (для runtime.state).
-   * Применение нормального/тревожного override к runtime — RT3.
+   * RT3: ручной режим normal/alarm. Делегируется в ScenarioRuntime (источник истины
+   * поведения); если runtime ещё не создан — режим запоминается и применяется при start.
    */
   setMode(mode: RuntimeMode): void {
     if (this.mode === mode) {
       return;
     }
     this.mode = mode;
-    this.notify(this.state);
+    if (this.runtime !== null) {
+      this.runtime.setMode(mode);
+    } else {
+      this.notify(this.state);
+    }
   }
 
   /** Сброс синглтона между тестами. */
@@ -95,6 +99,9 @@ class DeviceBoardRuntimeController {
       this.state = state;
       this.notify(state);
     });
+    if (this.mode !== 'normal') {
+      runtime.setMode(this.mode);
+    }
     this.runtime = runtime;
     return runtime;
   }

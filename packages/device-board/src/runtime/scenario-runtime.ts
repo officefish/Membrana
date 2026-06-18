@@ -11,6 +11,7 @@ import {
   type ScenarioRuntimeState,
   type ScenarioStopReason,
 } from './types.js';
+import type { RuntimeMode } from '@membrana/core';
 
 export type ScenarioRuntimeListener = (state: ScenarioRuntimeState) => void;
 
@@ -49,6 +50,9 @@ export class ScenarioRuntime {
 
   private wasRunningBeforeDisconnect = false;
 
+  /** Источник истины ручного режима (MP7b RT3). Переживает load/start. */
+  private mode: RuntimeMode = 'normal';
+
   constructor(host: ScenarioRuntimeHost, options: ScenarioRuntimeOptions = {}) {
     this.host = host;
     this.options = options;
@@ -58,9 +62,31 @@ export class ScenarioRuntime {
     return this.state;
   }
 
+  getMode(): RuntimeMode {
+    return this.mode;
+  }
+
   subscribe(listener: ScenarioRuntimeListener): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
+  }
+
+  /**
+   * Ручной режим (MP7b RT3): `alarm` — приоритетный override (форсит alarm-loop,
+   * авто detection-front игнорируется); `normal` — возврат к main + авто-детект.
+   */
+  setMode(mode: RuntimeMode): void {
+    if (this.mode === mode) {
+      return;
+    }
+    this.mode = mode;
+    this.host.log(`setMode ${mode}`, {});
+    this.patchState({ ...this.state, mode });
+  }
+
+  /** Idle-снимок c сохранением текущего ручного режима. */
+  private idleState(): ScenarioRuntimeState {
+    return { ...createIdleScenarioRuntimeState(), mode: this.mode };
   }
 
   load(document: DeviceScenarioDocument): void {
@@ -72,7 +98,7 @@ export class ScenarioRuntime {
     this.disconnectRequested = false;
     this.stopReason = null;
     this.wasRunningBeforeDisconnect = false;
-    this.patchState(createIdleScenarioRuntimeState());
+    this.patchState(this.idleState());
   }
 
   start(): Promise<void> {
@@ -88,7 +114,7 @@ export class ScenarioRuntime {
     this.stopReason = null;
     this.abortController = new AbortController();
     this.patchState({
-      ...createIdleScenarioRuntimeState(),
+      ...this.idleState(),
       isRunning: true,
       phase: 'initial',
     });
@@ -153,6 +179,20 @@ export class ScenarioRuntime {
       let previousMainDetection: ScenarioDetectionResult | null = null;
 
       while (!signal.aborted) {
+        // MP7b RT3: ручной режим alarm — приоритетный override, форсит alarm-loop.
+        if (this.mode === 'alarm') {
+          this.host.log('main → alarm (manual override)', {});
+          await this.runAlarmLoop(
+            document.scenario.loops.alarm,
+            document.scenario.functions,
+            signal,
+            'manual',
+          );
+          // После выхода из override пересобираем базовую детекцию.
+          previousMainDetection = null;
+          continue;
+        }
+
         mainIteration += 1;
         this.patchState({
           ...this.state,
@@ -179,11 +219,17 @@ export class ScenarioRuntime {
           break;
         }
 
-        if (isDetectionFrontEdge(previousMainDetection, lastDetection)) {
+        // Авто detection-front работает только в normal-режиме.
+        if (this.mode === 'normal' && isDetectionFrontEdge(previousMainDetection, lastDetection)) {
           this.host.log('main → alarm (detection front)', {
             templateId: lastDetection?.templateId,
           });
-          await this.runAlarmLoop(document.scenario.loops.alarm, document.scenario.functions, signal);
+          await this.runAlarmLoop(
+            document.scenario.loops.alarm,
+            document.scenario.functions,
+            signal,
+            'auto',
+          );
         }
 
         previousMainDetection = lastDetection;
@@ -208,10 +254,18 @@ export class ScenarioRuntime {
     }
   }
 
+  /**
+   * Alarm-loop. `trigger`:
+   *  - `auto` — вход по detection-front в normal-режиме; выход по тишине.
+   *  - `manual` — ручной override (`setMode('alarm')`); держится, пока режим `alarm`,
+   *    выход немедленно при `setMode('normal')` (без проверки уровня).
+   * В любом триггере: пока `mode === 'alarm'`, alarm удерживается независимо от уровня.
+   */
   private async runAlarmLoop(
     alarmSubgraph: ScenarioSubgraph,
     functions: DeviceScenarioDocument['scenario']['functions'],
     signal: AbortSignal,
+    trigger: 'auto' | 'manual',
   ): Promise<void> {
     let alarmIteration = 0;
 
@@ -235,6 +289,19 @@ export class ScenarioRuntime {
         return;
       }
 
+      // Ручной override активен — удерживаем alarm независимо от уровня.
+      if (this.mode === 'alarm') {
+        await waitMs(ALARM_LOOP_PAUSE_MS);
+        continue;
+      }
+
+      // mode === 'normal': снятый override возвращает в main немедленно.
+      if (trigger === 'manual') {
+        this.host.log('alarm → main (mode normal)', {});
+        return;
+      }
+
+      // Авто-alarm выходит по тишине (detection-front погашен).
       const level = await this.host.evaluateSoundLevel();
       if (level.isQuietEnough) {
         this.host.log('alarm → main (quiet enough)', { rawLevel: level.rawLevel });
@@ -314,7 +381,7 @@ export class ScenarioRuntime {
   private async finishStopped(): Promise<void> {
     await this.host.stopStream().catch(() => undefined);
     this.patchState({
-      ...createIdleScenarioRuntimeState(),
+      ...this.idleState(),
       phase: 'stopped',
       lastStopReason: this.stopReason,
     });
