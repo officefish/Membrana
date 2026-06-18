@@ -85,10 +85,15 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   );
 };
 
-/** XYFlow-канвас для слоя Signal или Scenario. */
+/**
+ * XYFlow-канвас для слоя Signal или Scenario.
+ * Обёртка `flex-1 min-h-0 h-full` гарантирует реальную высоту до нижнего края
+ * страницы (родитель `<main>` — flex-col, см. device-board-shell), даже когда
+ * percentage-height ненадёжен внутри flex-контейнера (DBR1, fullscreen канон).
+ */
 export const BoardFlowCanvas: React.FC<BoardFlowCanvasProps> = (props) => (
   <ReactFlowProvider>
-    <div className="h-full w-full" data-board-layer={props.layer}>
+    <div className="h-full min-h-0 w-full flex-1" data-board-layer={props.layer}>
       <BoardFlowCanvasInner {...props} />
     </div>
   </ReactFlowProvider>
