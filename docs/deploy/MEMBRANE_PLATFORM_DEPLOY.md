@@ -40,6 +40,26 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 
 ---
 
+## Десктоп-продукты (DR6 deploy-pipeline-refactor)
+
+`apps/client` — **dev-песочница/renderer**, не поставляемый продукт; веб-клиента в линейке нет.
+Конечные продукты — **Electron-приложения**: `membrana-studio` (полная работа с контентом) и будущее
+лёгкое `device` (периферия: быстрая доставка данных на сервер). Доставка — Electron-пакеты, не веб-бандл.
+
+Сборка десктопа **декаплирована** от деплоя сервера и **условная** — workflow
+[`.github/workflows/desktop-studio.yml`](../../.github/workflows/desktop-studio.yml) собирает installer
+только когда `@membrana/client`/`@membrana/membrana-studio` затронуты (turbo affected), не на каждый
+серверный деплой. Релиз — тегом:
+
+```bash
+git tag studio-v0.1.0 && git push origin studio-v0.1.0   # CI: NSIS → GitHub Release
+```
+
+Детали и prod-smoke студии: [`apps/membrana-studio/README.md`](../../apps/membrana-studio/README.md).
+Индикатор версии/«доступно обновление» и тест совместимости контракта `runtime` — следующий шаг DR6.
+
+---
+
 ## Деплой по образу и откат (DR2/DR3 deploy-pipeline-refactor)
 
 Прод cabinet деплоится из иммутабельного образа GHCR по тегу (а не сборкой на VPS).

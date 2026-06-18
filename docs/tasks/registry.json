@@ -2448,6 +2448,155 @@
       "notes": "Lead: Vesnin. Prod-smoke обязателен до archive эпика."
     },
     {
+      "id": "deploy-pipeline-refactor",
+      "title": "Рефакторинг деплоя: детерминированный, гейтированный, откатываемый пайплайн (DR0–DR7)",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Первопричина: POSTMORTEM-MP7B-2026-06-18 (прод-сборка упала из-за незакоммиченных зависимостей). Консенсус: seanses/deploy-process-mp7b-postmortem-2026-06-18. Источник истины при проверке ≠ при деплое — устраняется образом в registry (DR2). DR7 zero-downtime отложен с условием (после DR5)."
+    },
+    {
+      "id": "dpr-dr0-git-hygiene-gate",
+      "title": "DR0: .gitattributes (eol=lf) + gate чистого рабочего дерева в деплой-скриптах",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "deploy-pipeline-refactor"
+      ],
+      "notes": "Lead: Ozhegov. Нормализация EOL исходников; предупреждение/блок при незакоммиченном в собираемых пакетах."
+    },
+    {
+      "id": "dpr-dr1-ci-gate",
+      "title": "DR1: обязательный CI-гейт на main (build из чистого checkout) + блок деплоя на красном CI",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr0-git-hygiene-gate"
+      ],
+      "notes": "Lead: Vesnin + Ozhegov. turbo lint/typecheck/test/build из чистого checkout; деплой читает статус CI через gh."
+    },
+    {
+      "id": "dpr-dr2-image-registry",
+      "title": "DR2: сборка образов cabinet в CI → registry, теги релизов, прод-деплой = pull по тегу",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr1-ci-gate"
+      ],
+      "notes": "Lead: Ozhegov. Устраняет класс ошибки физически (нельзя недокоммитить артефакт). Разделить build-time/runtime env. Сохранить свойство «провал до переключения не роняет прод»."
+    },
+    {
+      "id": "dpr-dr3-rollback-runbook",
+      "title": "DR3: rollback по тегу + машиночитаемая JSON-сводка деплоя + раннбук",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry"
+      ],
+      "notes": "Lead: Vesnin. Откат = деплой предыдущего тега; JSON-сводка (тег/SHA/образы/smoke/длительность); MEMBRANE_PLATFORM_DEPLOY.md."
+    },
+    {
+      "id": "dpr-dr4-smoke-suite",
+      "title": "DR4: расширенный пост-деплой smoke (login, узлы, migrate status, рантайм-канал)",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry"
+      ],
+      "notes": "Lead: Музыкант + Ozhegov. Единый smoke-скрипт; код ≠ 0 при провале; headless без устройства — не блокер."
+    },
+    {
+      "id": "dpr-dr5-branch-migration-policy",
+      "title": "DR5: регламент веток (main деплоируемое) + expand/contract миграции в CONTRIBUTING",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Vesnin. Параллельно DR0–DR4. Предпосылка к DR7 (expand/contract совместимые миграции)."
+    },
+    {
+      "id": "dpr-dr6-client-delivery",
+      "title": "DR6: условная сборка десктоп-продуктов (Electron studio/device) + индикатор версии + тест совместимости контракта",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry"
+      ],
+      "notes": "ПЕРЕОПРЕДЕЛЕНО (2026-06-18): apps/client — dev-песочница, НЕ конечный продукт. Конечные продукты — Electron-приложения: membrana-studio (полная работа с контентом) и device (лёгкое, быстрая доставка данных на сервер; пока нет как app — renderer device-board). Доставка = Electron-пакеты (electron-builder), а не веб-бандл за Caddy. Сборка десктопа ДЕКАПЛИРОВАНА от деплоя сервера и УСЛОВНАЯ — только когда изменения коснулись приложения/его зависимостей (turbo affected / path-filter). Lead: Ozhegov + Rodchenko. Остаётся: индикатор версии/обновления в десктоп-клиенте + тест совместимости runtime сервер↔клиент. device — паттерн на будущее (follow-up)."
+    },
+    {
+      "id": "dpr-dr7-zero-downtime",
+      "title": "DR7: zero-downtime rolling update (отложено с условием)",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry",
+        "dpr-dr5-branch-migration-policy"
+      ],
+      "notes": "Lead: Ozhegov. ОТЛОЖЕНО: стартует только после DR5 (регламент expand/contract) и при появлении SLA/внешних потребителей API. Rolling вместо down→up."
+    },
+    {
       "id": "membrana-studio-desktop",
       "title": "Membrana Studio — настольная расширенная версия (MS0–MS5)",
       "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
