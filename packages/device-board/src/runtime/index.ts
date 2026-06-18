@@ -14,3 +14,16 @@ export { createStubScenarioRuntimeHost, SUPPORTED_H2B_BLOCK_KINDS } from './host
 export { ScenarioRuntime, type ScenarioRuntimeListener, type ScenarioRuntimeOptions } from './scenario-runtime.js';
 export { runSubgraphOnce } from './exec-subgraph.js';
 export { executeScenarioBlock } from './block-executor.js';
+export {
+  resolveInput,
+  ResolveInputError,
+  type ResolveInputContext,
+  type ScenarioHandlerBranch,
+} from './resolve-input.js';
+export {
+  applyVariableSetValue,
+  isReferenceValid,
+  resolveEventReference,
+} from './reference-validity.js';
+export { ScenarioVariableStore } from './variable-store.js';
+export { runtimeBranchToHandlerBranch } from './types.js';
