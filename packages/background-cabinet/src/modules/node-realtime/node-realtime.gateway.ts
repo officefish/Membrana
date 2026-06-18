@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   Logger,
   OnModuleDestroy,
@@ -11,7 +12,9 @@ import {
 } from '@nestjs/websockets';
 import type { IncomingMessage } from 'node:http';
 import type { Server, WebSocket } from 'ws';
-import { parseNodeRealtimeEnvelope } from '../../domain/node-realtime-wire';
+import { parseNodeRealtimeEnvelope, type NodeRealtimeEnvelope } from '../../domain/node-realtime-wire';
+import { APP_CONFIG } from '../../config/config.tokens';
+import type { AppConfig } from '../../config/env.schema';
 import { NodeRealtimeAuthService } from './node-realtime-auth.service';
 import { NodeRealtimeJournalHandler } from './node-realtime-journal.handler';
 import { NodeRealtimeService } from './node-realtime.service';
@@ -39,6 +42,7 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
   server!: Server;
 
   constructor(
+    @Inject(APP_CONFIG) private readonly config: AppConfig,
     private readonly authService: NodeRealtimeAuthService,
     private readonly realtimeService: NodeRealtimeService,
     private readonly journalHandler: NodeRealtimeJournalHandler,
@@ -54,6 +58,11 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   async handleConnection(client: TrackedClient, request: IncomingMessage): Promise<void> {
+    if (!this.config.NODE_REALTIME_ENABLED) {
+      client.close(4503, 'Realtime gateway disabled');
+      return;
+    }
+
     try {
       const url = parseHandshakeUrl(request);
       const role = url.searchParams.get('role');
@@ -103,19 +112,36 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
         return;
       }
 
-      if (meta.role === 'node') {
-        await this.journalHandler.handleIncoming(meta, parsed.value);
-        return;
-      }
-
-      if (meta.role === 'cabinet' && parsed.value.channel === 'mic-live') {
-        const deviceId = meta.mediaDeviceId;
-        if (deviceId) {
-          this.realtimeService.sendToNode(deviceId, parsed.value);
-        }
-      }
+      await this.dispatchEnvelope(meta, parsed.value);
     } catch (err) {
       this.logger.warn({ err }, 'websocket message handling failed');
+    }
+  }
+
+  /** Маршрутизация распарсенного envelope по роли и каналу. Публичный для unit-тестов. */
+  async dispatchEnvelope(
+    meta: NodeRealtimeSocketMeta,
+    envelope: NodeRealtimeEnvelope,
+  ): Promise<void> {
+    if (meta.role === 'node') {
+      // MP7b: runtime state/log из узла транслируем подписчикам кабинета напрямую.
+      if (envelope.channel === 'runtime') {
+        this.realtimeService.fanOutToCabinet(meta.membraneId, envelope);
+        return;
+      }
+      await this.journalHandler.handleIncoming(meta, envelope);
+      return;
+    }
+
+    // MP7b: команды runtime (run/stop/setMode) и mic-live идут из кабинета на узел.
+    if (
+      meta.role === 'cabinet' &&
+      (envelope.channel === 'mic-live' || envelope.channel === 'runtime')
+    ) {
+      const deviceId = meta.mediaDeviceId;
+      if (deviceId) {
+        this.realtimeService.sendToNode(deviceId, envelope);
+      }
     }
   }
 

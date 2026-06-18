@@ -36,6 +36,11 @@ export const NODE_REALTIME_EVENT_TYPES = {
     analysisBrief: 'analysis.brief',
     analysisLevel: 'analysis.level',
   },
+  runtime: {
+    command: 'runtime.command',
+    state: 'runtime.state',
+    log: 'runtime.log',
+  },
 } as const;
 
 const MP7_CHANNELS: ReadonlySet<NodeRealtimeChannel> = new Set([
