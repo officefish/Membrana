@@ -211,6 +211,16 @@ async function main() {
   }
 
   const summary = await deployCabinetImage({ imageTag, branch, apiImage, webImage, host, password });
+
+  // DR4: опционально прогнать расширенный smoke и вложить его в сводку.
+  if (summary.ok && process.env.CABINET_SMOKE_AFTER_DEPLOY === '1') {
+    const { runCabinetSmoke } = await import('./_ssh-cabinet-smoke.mjs');
+    console.log('\n=== extended smoke (CABINET_SMOKE_AFTER_DEPLOY=1) ===');
+    const smoke = await runCabinetSmoke({ host, password });
+    summary.smoke = smoke;
+    summary.ok = summary.ok && smoke.ok;
+  }
+
   const file = writeDeploySummary(summary);
   console.log(`\n=== deploy summary (${file}) ===`);
   console.log(JSON.stringify(summary, null, 2));

@@ -72,6 +72,32 @@ CABINET_IMAGE_TAG=cabinet-v1.2.3 yarn cabinet:deploy:image:prod
 
 `ok: true` ⇔ remote-скрипт завершился `exit 0` **и** прошёл маркер `CABINET IMAGE DEPLOY OK`.
 
+### Расширенный smoke (DR4)
+
+Узкий smoke (health + 200 на SPA) ложно-зелёный при мёртвом login / непримененной миграции /
+упавшем рантайм-канале. Единый скрипт `scripts/_ssh-cabinet-smoke.mjs` проверяет функциональность
+и падает (`exit ≠ 0`) при любом провале:
+
+| # | Проверка | Что подтверждает |
+|---|----------|------------------|
+| 1 | `GET /health` | API живой |
+| 2 | `POST /v1/auth/login` (bootstrap admin) | аутентификация работает, есть `token` |
+| 3 | `GET /v1/auth/me` | сессия валидна |
+| 4 | `GET /v1/membranes/me` | мембрана/узлы доступны |
+| 5 | `prisma migrate status` в контейнере cabinet-api | нет непримененных миграций |
+| 6 | WS `/v1/nodes/realtime?role=cabinet` открыт и не закрыт auth | рантайм-канал жив + cabinet-auth ок |
+
+```bash
+# вручную после деплоя
+yarn cabinet:smoke:prod
+
+# автоматически в конце деплоя
+CABINET_SMOKE_AFTER_DEPLOY=1 CABINET_IMAGE_TAG=cabinet-v1.2.3 yarn cabinet:deploy:image:prod
+```
+
+Smoke печатает JSON-сводку (`checks[]`, `failed[]`, `ok`); при `CABINET_SMOKE_AFTER_DEPLOY=1`
+она вкладывается в сводку деплоя как поле `smoke`, и общий `ok` учитывает её результат.
+
 ### Откат (rollback)
 
 Откат — это деплой **предыдущего известно-хорошего тега**. Образ уже собран и иммутабелен,
