@@ -86,6 +86,30 @@
 | `db-h3b-trigger-disconnect` | DB-H3b: trigger onDisconnect — stop; reconnect via initial | S | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
 | `db-h3c-subgraph` | DB-H3c: subgraph/functions v1 (depth ≤ 1) | M | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
 | `db-h4-alarm-close` | DB-H4: alarm loop (mandatory) + hackathon close + smoke | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
+| `membrane-node-realtime-gateway` | MP7: Node Realtime Gateway — WebSocket журнал + микрофон (NR0–NR6) | L | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-realtime-nr0-contract` | NR0: node-realtime envelope + event types в @membrana/core | S | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-realtime-nr1-gateway` | NR1: NodeRealtimeGateway WSS + auth + presence | M | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-realtime-nr2-journal-ws` | NR2: journal.append ingest + fan-out + journal.acked | M | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-realtime-nr3-client-journal` | NR3: nodeRealtimeClient + journal bridge (paired) | M | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-realtime-nr4-mic-live` | NR4: mic-live WS events (brief, level, session) | M | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-realtime-nr5-cabinet-live` | NR5: cabinet WS subscriber + live journal + mic badge | M | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-realtime-nr6-prod-hardening` | NR6: reconnect, REST fallback, prod-smoke MP7 | M | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | [#92](https://github.com/officefish/Membrana/issues/92) |
+| `membrane-node-runtime-remote` | MP7b: Device Board Realtime Runtime — WS run/stop, режим, live-мониторинг (RT0–RT7) | L | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt0-contract` | RT0: runtime.* envelope + ремодель веток onStart/onStop/onDisconnect | S | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt1-gateway` | RT1: канал runtime в NodeRealtimeGateway (fan-out по nodeId) | M | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt2-client-runtime` | RT2: nodeRealtimeClient runtime → ScenarioRuntime + реальный audio-host | M | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt3-mode` | RT3: режим normal/alarm (override) в ScenarioRuntime | S | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt4-multinode-schema` | RT4: Prisma multi-node (снять @unique с Node.membraneId, лимит тарифа) + API | M | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt5-cabinet-nodes` | RT5: кабинет — разделить Узлы/Ключи, список узлов с run/stop, режимом, ссылками | M | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt6-board-ux` | RT6: device-board UX — сайдбар-вкладки, инспектор/палитра, clear+rebuild, Signal за флагом | M | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `mp7b-rt7-prod-hardening` | RT7: reconnect, персист режима, prod-smoke MP7b, runbook | M | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
+| `membrana-studio-desktop` | Membrana Studio — настольная расширенная версия (MS0–MS5) | L | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | [#93](https://github.com/officefish/Membrana/issues/93) |
+| `membrana-studio-ms0-canon` | MS0: канон Studio vs Device + пути документации | S | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | [#93](https://github.com/officefish/Membrana/issues/93) |
+| `membrana-studio-ms1-shell` | MS1: Electron shell apps/membrana-studio + yarn studio:dev | M | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | [#93](https://github.com/officefish/Membrana/issues/93) |
+| `membrana-studio-ms2-media-fs` | MS2: electronAPI.mediaLibrary FS port | M | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | [#93](https://github.com/officefish/Membrana/issues/93) |
+| `membrana-studio-ms3-journal-fs` | MS3: journal FS + trendsTemplates на диске | M | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | [#93](https://github.com/officefish/Membrana/issues/93) |
+| `membrana-studio-ms4-installer` | MS4: electron-builder NSIS Windows (Membrana Studio) | M | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | [#93](https://github.com/officefish/Membrana/issues/93) |
+| `membrana-studio-ms5-prod-smoke` | MS5: prod paired smoke MP7 + runbook Studio | M | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | [#93](https://github.com/officefish/Membrana/issues/93) |
 
 ---
 
@@ -172,4 +196,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-17.*
+*Файл обновлён автоматически: 2026-06-18.*

@@ -60,6 +60,46 @@ export interface SessionInvalidatedPayload {
   readonly reason: 'revoked' | 'expired' | 'session_expired';
 }
 
+/** Режим исполнения device-board runtime (MP7b). */
+export type RuntimeMode = 'normal' | 'alarm';
+
+/**
+ * Команда кабинета узлу по каналу `runtime` (cabinet → server → node).
+ * `setMode` — приоритетный override: `alarm` форсит alarm-loop, `normal` форсит main.
+ */
+export type RuntimeCommandPayload =
+  | { readonly action: 'run' }
+  | { readonly action: 'stop' }
+  | { readonly action: 'setMode'; readonly mode: RuntimeMode };
+
+/** Снимок состояния runtime (node → server → cabinet). Только скаляры, без кадров. */
+export interface RuntimeStatePayload {
+  readonly phase:
+    | 'idle'
+    | 'initial'
+    | 'main'
+    | 'alarm'
+    | 'onStop'
+    | 'onDisconnect'
+    | 'stopping'
+    | 'stopped'
+    | 'error';
+  readonly isRunning: boolean;
+  readonly mode: RuntimeMode;
+  readonly activeBranch: string | null;
+  readonly activeNodeId: string | null;
+  readonly mainLoopIteration: number;
+  readonly alarmLoopIteration: number;
+  readonly lastError: string | null;
+}
+
+/** Строка лога runtime (node → server → cabinet). */
+export interface RuntimeLogPayload {
+  readonly branch: string;
+  readonly message: string;
+  readonly ts: string;
+}
+
 export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
     nodeOnline: 'node.online',
@@ -75,6 +115,11 @@ export const NODE_REALTIME_EVENT_TYPES = {
     session: 'mic.session',
     analysisBrief: 'analysis.brief',
     analysisLevel: 'analysis.level',
+  },
+  runtime: {
+    command: 'runtime.command',
+    state: 'runtime.state',
+    log: 'runtime.log',
   },
 } as const;
 

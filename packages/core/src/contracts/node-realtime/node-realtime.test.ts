@@ -50,4 +50,25 @@ describe('node-realtime contracts', () => {
     });
     expect(parsed.ok).toBe(false);
   });
+
+  it('createNodeRealtimeEnvelope builds runtime.command envelope (MP7b)', () => {
+    const env = createNodeRealtimeEnvelope('runtime', NODE_REALTIME_EVENT_TYPES.runtime.command, {
+      action: 'setMode',
+      mode: 'alarm',
+    });
+    expect(env.channel).toBe('runtime');
+    expect(env.type).toBe('runtime.command');
+    expect(env.payload).toEqual({ action: 'setMode', mode: 'alarm' });
+  });
+
+  it('parseNodeRealtimeEnvelope accepts runtime.state envelope', () => {
+    const parsed = parseNodeRealtimeEnvelope({
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.state,
+      ts: '2026-06-18T09:00:00.000Z',
+      payload: { phase: 'main', isRunning: true, mode: 'normal' },
+    });
+    expect(parsed.ok).toBe(true);
+  });
 });

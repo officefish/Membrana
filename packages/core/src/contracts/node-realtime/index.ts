@@ -16,6 +16,10 @@ export {
   type MicSessionPayload,
   type NodeOnlinePayload,
   type NodeRealtimeEnvelopeInput,
+  type RuntimeCommandPayload,
+  type RuntimeLogPayload,
+  type RuntimeMode,
+  type RuntimeStatePayload,
   type SessionInvalidatedPayload,
 } from './events.js';
 

@@ -20,6 +20,8 @@
 | **[`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)** | **Активный эпик** — детекция на 5-с сэмплах, плагин `sample-library`, free-v1 120 |
 | **[`MODULE_CATALOG_V1_EPIC_PROMPT.md`](./MODULE_CATALOG_V1_EPIC_PROMPT.md)** | **Активный эпик** — catalog v1: реестр модулей/плагинов client + живые промпты (MC-0…MC-9, #90) |
 | **[`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](./MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md)** | **Активный эпик** — MP7: WebSocket журнал + микрофон (NR0–NR6) |
+| **[`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](./DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md)** | **Активный эпик** — MP7b: device-board по WS, run/stop, режим, live-мониторинг (RT0–RT7) |
+| **[`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md)** | **Активный эпик** — Membrana Studio: настольная расширенная версия (MS0–MS5); Membrana Device — отдельно |
 | **[`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md)** | **Активный эпик** — зелёный turbo build client+cabinet (F0–F6) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.

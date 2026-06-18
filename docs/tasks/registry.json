@@ -2292,6 +2292,275 @@
         "membrane-node-realtime-nr5-cabinet-live"
       ],
       "notes": "Lead: Vesnin. Prod smoke обязателен до archive эпика."
+    },
+    {
+      "id": "membrane-node-runtime-remote",
+      "title": "MP7b: Device Board Realtime Runtime — WS run/stop, режим, live-мониторинг (RT0–RT7)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-node-realtime-gateway"
+      ],
+      "notes": "Канал runtime (MP7 reserved). Решения: Signal за advanced-флагом; normal/alarm override; multi-node миграция. Конкретный сценарий — следующий эпик."
+    },
+    {
+      "id": "mp7b-rt0-contract",
+      "title": "RT0: runtime.* wire-контракт в @membrana/core",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-node-runtime-remote"
+      ],
+      "notes": "Lead: Vesnin. Ветка vesnin. @membrana/core: RuntimeCommand/State/Log + namespace runtime. Ремодель веток onStart (презентационный label initial↔On start) перенесён в RT6 — без слома сериализации device-scenario."
+    },
+    {
+      "id": "mp7b-rt1-gateway",
+      "title": "RT1: канал runtime в NodeRealtimeGateway (fan-out по nodeId)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mp7b-rt0-contract"
+      ],
+      "notes": "Lead: Ozhegov. background-cabinet."
+    },
+    {
+      "id": "mp7b-rt2-client-runtime",
+      "title": "RT2: nodeRealtimeClient runtime → ScenarioRuntime + реальный audio-host",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mp7b-rt1-gateway"
+      ],
+      "notes": "Lead: Ozhegov + Музыкант. apps/client, audio-engine host."
+    },
+    {
+      "id": "mp7b-rt3-mode",
+      "title": "RT3: режим normal/alarm (override) в ScenarioRuntime",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mp7b-rt2-client-runtime"
+      ],
+      "notes": "Lead: Dynin/Ozhegov. alarm форсит alarm-loop; detection-front только в normal."
+    },
+    {
+      "id": "mp7b-rt4-multinode-schema",
+      "title": "RT4: Prisma multi-node (снять @unique с Node.membraneId, лимит тарифа) + API",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mp7b-rt1-gateway"
+      ],
+      "notes": "Lead: Ozhegov. background-cabinet prisma + membrane API. Device.nodeId @unique остаётся."
+    },
+    {
+      "id": "mp7b-rt5-cabinet-nodes",
+      "title": "RT5: кабинет — разделить Узлы/Ключи, список узлов с run/stop, режимом, ссылками",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mp7b-rt3-mode",
+        "mp7b-rt4-multinode-schema"
+      ],
+      "notes": "Lead: Rodchenko. apps/cabinet. info-пульс/warning-рамка, ссылки журнал/доска."
+    },
+    {
+      "id": "mp7b-rt6-board-ux",
+      "title": "RT6: device-board UX — сайдбар-вкладки, инспектор/палитра, clear+rebuild, Signal за флагом",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mp7b-rt0-contract"
+      ],
+      "notes": "Lead: Rodchenko + Ozhegov. packages/device-board. Параллельно серверной ветке."
+    },
+    {
+      "id": "mp7b-rt7-prod-hardening",
+      "title": "RT7: reconnect, персист режима, prod-smoke MP7b, runbook",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrane-node-runtime-remote",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mp7b-rt5-cabinet-nodes",
+        "mp7b-rt6-board-ux"
+      ],
+      "notes": "Lead: Vesnin. Prod-smoke обязателен до archive эпика."
+    },
+    {
+      "id": "membrana-studio-desktop",
+      "title": "Membrana Studio — настольная расширенная версия (MS0–MS5)",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Lead: Vesnin. Studio = apps/membrana-studio + apps/client renderer. Membrana Device — отдельный эпик [#93]."
+    },
+    {
+      "id": "membrana-studio-ms0-canon",
+      "title": "MS0: канон Studio vs Device + пути документации",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "membrana-studio-desktop",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrana-studio-desktop"
+      ],
+      "notes": "Lead: Vesnin. MEMBRANE_PLATFORM §линейка, apps/membrana-studio/README."
+    },
+    {
+      "id": "membrana-studio-ms1-shell",
+      "title": "MS1: Electron shell apps/membrana-studio + yarn studio:dev",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrana-studio-desktop",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrana-studio-ms0-canon"
+      ],
+      "notes": "Lead: Ozhegov. main + preload, load apps/client."
+    },
+    {
+      "id": "membrana-studio-ms2-media-fs",
+      "title": "MS2: electronAPI.mediaLibrary FS port",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrana-studio-desktop",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrana-studio-ms1-shell"
+      ],
+      "notes": "Lead: Ozhegov. %APPDATA%/Membrana/media-library/."
+    },
+    {
+      "id": "membrana-studio-ms3-journal-fs",
+      "title": "MS3: journal FS + trendsTemplates на диске",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrana-studio-desktop",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrana-studio-ms2-media-fs"
+      ],
+      "notes": "Lead: Ozhegov. Замена electron-journal stub."
+    },
+    {
+      "id": "membrana-studio-ms4-installer",
+      "title": "MS4: electron-builder NSIS Windows (Membrana Studio)",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrana-studio-desktop",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrana-studio-ms3-journal-fs"
+      ],
+      "notes": "Lead: Rodchenko. yarn studio:package."
+    },
+    {
+      "id": "membrana-studio-ms5-prod-smoke",
+      "title": "MS5: prod paired smoke MP7 + runbook Studio",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "membrana-studio-desktop",
+      "createdAt": "2026-06-17",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrana-studio-ms4-installer"
+      ],
+      "notes": "Lead: Vesnin. mic + journal WS на cabinet.membrana.space."
     }
   ]
 }
