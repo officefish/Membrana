@@ -27,6 +27,8 @@ const SOCKET_COLOR: Record<SocketType, string> = {
   ThermalFrame: '!bg-neutral',
   BlobMask: '!bg-success',
   Observation: '!bg-base-content',
+  DeviceRef: '!bg-accent',
+  MicrophoneRef: '!bg-info',
 };
 
 function handleOffset(index: number, total: number): string {

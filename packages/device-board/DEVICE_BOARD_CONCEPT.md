@@ -9,8 +9,12 @@
 > релиза — это «север» для пакета `device-board`, к которому будут сверяться
 > PR агентов AI-команды.
 >
-> Статус: **v0.3 — концепт** (signal + scenario, visual scripting, хакатон 1).
-> Предыдущая версия: v0.2 (2026-06, выбор `@xyflow/react`). Хранитель: Teamlead.
+> Статус: **v0.4 — концепт** (signal + scenario + переменные + dataflow-ссылки,
+> обработчики событий). Раздел изменений v0.4 — см. §15 (контракты `@membrana/core`
+> уже расширены: `DeviceRef`/`MicrophoneRef`, `scenario.onConnect`,
+> `scenario.variables`, таксономия `ScenarioNodeKind`; schema-версия документа → 2).
+> Предыдущие версии: v0.3 (signal + scenario, visual scripting, хакатон 1),
+> v0.2 (2026-06, выбор `@xyflow/react`). Хранитель: Teamlead.
 > Бриф и интервью: [`docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md`](../../docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md),
 > [`docs/seanses/hackathon-brief-interview-2026-06-17.md`](../../docs/seanses/hackathon-brief-interview-2026-06-17.md).
 > При конфликте с `WHITE_PAPER.md` / `ARCHITECTURE.md` выигрывают они.
@@ -623,7 +627,14 @@ Subgraph / функции: pins на границе, глубина вложен
 
 ## 14. Статус и порядок изменения
 
-- **Статус:** v0.3 — концепт (signal + scenario).
+- **Статус:** v0.4 — концепт (signal + scenario + переменные + dataflow).
+- **Changelog v0.4 (2026-06-18):** обработчики событий
+  `onConnect/onStart/onStop/onDisconnect` (§15); переменные сценария
+  (document-scope, ссылочные `DeviceRef`/`MicrophoneRef`); системный Event-узел;
+  dataflow-ссылки с флагом `valid`; таксономия `ScenarioNodeKind`
+  (`event`/`variable-get`/`variable-set`/`print`/`is-valid`/`get-microphone`);
+  schema `device-scenario` → v2 (expand: миграция v1 `initial→onStart`, `+onConnect`,
+  `+variables`). Эпик `device-board-refactor-v04` (issue #95), фаза DBR0.
 - **Changelog v0.3 (2026-06-17):** продуктовая цель visual scripting; два слоя
   Signal/Scenario; scenario runtime; board mode; device-scenario JSON v1;
   системные ветки; ссылка на хакатон 1; закрытие exec-пинов через scenario layer.
@@ -635,3 +646,78 @@ Subgraph / функции: pins на границе, глубина вложен
   в `WHITE_PAPER.md`.
 - При конфликте этого документа с `WHITE_PAPER.md` / `ARCHITECTURE.md` —
   выигрывают они.
+
+---
+
+## 15. Рефакторинг v0.4: обработчики событий, переменные, dataflow
+
+> Раздел фиксирует модель v0.4. Контракты `@membrana/core` уже расширены в фазе
+> DBR0 (эпик `device-board-refactor-v04`, issue #95); UI/runtime — фазы DBR1–DBR6.
+> Полный план: [`docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md).
+> Решения консилиума: [`docs/seanses/device-board-refactor-v04-2026-06-18.md`](../../docs/seanses/device-board-refactor-v04-2026-06-18.md).
+
+### 15.1 Обработчики событий
+
+Сценарий устройства имеет 4 системных обработчика событий и 2 лупа:
+
+| Обработчик | Поле схемы | Данные Event-узла | Назначение |
+|------------|-----------|-------------------|------------|
+| `onConnect` | `scenario.onConnect` (новое в v2) | `DeviceRef` (valid) | устройство подключилось |
+| `onStart` | `scenario.initial` (лейбл «On start») | `DeviceRef` (valid) | запуск сценария |
+| `onStop` | `scenario.triggers.onStop` | `DeviceRef` | остановка |
+| `onDisconnect` | `scenario.triggers.onDisconnect` | `null` → invalid | потеря связи |
+| `main` / `alarm` | `scenario.loops.*` | — | рабочие лупы |
+
+`onStart` — презентационный лейбл подграфа `initial`; сериализация ветки в JSON
+сохраняется как `initial` (совместимость без слома round-trip).
+
+### 15.2 Системный Event-узел
+
+В каждом обработчике события первым узлом жёстко зашит **Event-узел**
+(`nodeKind: 'event'`, `system: true`): он неудаляем и является точкой входа
+exec-потока и источником data-ссылки. Удаление/отсутствие — ошибка валидации.
+
+### 15.3 Переменные сценария
+
+Переменная — типизированная ссылка document-scope (конструктор переменных в
+левом сайдбаре). Модель: `ScenarioVariable = { id, name, type, value }`, где
+`type ∈ {DeviceRef, MicrophoneRef}`, а `value` — `ScenarioReferenceValue
+{ kind, handle, valid }` либо `null` (не задана). Узлы `variable-get` /
+`variable-set` читают/пишут переменную по `variableId`.
+
+- **onConnect:** Event(`DeviceRef` valid) → `variable-set` в пользовательскую
+  переменную Device → ссылка становится постоянной и валидной.
+- **onDisconnect:** Event(`null`) → `variable-set` → ссылка `valid:false`.
+- **onStart:** Event(`DeviceRef`) → `is-valid` → (true) `get-microphone`
+  (выбор из списка) → `variable-set` в переменную Microphone (для loop-сценариев).
+
+### 15.4 Dataflow и валидность
+
+Data-рёбра несут ссылочные `SocketType` (`DeviceRef`/`MicrophoneRef`).
+Резолюция значений — pull-based (lazy input resolution, фаза DBR4):
+терминальный/потребляющий узел тянет вход по data-ребру. Флаг `valid` ссылки
+отражает доступность ресурса; `invalidateReference` помечает её висячей,
+не теряя `handle` для диагностики. Совместимость соединения — по точному
+совпадению типа (`isValidSocketConnection`).
+
+### 15.5 Палитра v0.4 (правый сайдбар)
+
+Пока только: `print` (терминальный лог; принимает `DeviceRef`/`MicrophoneRef`),
+`is-valid` (условный по валидности ссылки), `get-microphone` (извлекает
+`MicrophoneRef` из `DeviceRef`, выбор микрофона из списка устройства).
+Кнопка «Пуск» неактивна, если связь с устройством разорвана (online-presence,
+фаза DBR6) — и в списке устройств, и на борде.
+
+### 15.6 Контракты (DBR0, уже в `@membrana/core`)
+
+- `SocketType += 'DeviceRef' | 'MicrophoneRef'`; `REFERENCE_SOCKET_TYPES`,
+  `isReferenceSocketType`.
+- `scenario-variables.ts`: `ScenarioVariable`, `ScenarioReferenceValue`,
+  `createReferenceValue` / `invalidateReference` / `createScenarioVariable`.
+- `scenario-node-kind.ts`: `SCENARIO_NODE_KINDS`, `ScenarioNodeKind`,
+  `SYSTEM_SCENARIO_NODE_KINDS` (`data.kind`-таксономия, отдельная от legacy
+  D0 `SCENARIO_BLOCK_KINDS`).
+- `ScenarioGraphNode += nodeKind? / system? / variableId?` (аддитивно).
+- `ScenarioGraph += onConnect / variables`.
+- `DEVICE_SCENARIO_DOCUMENT_VERSION = 2`, `DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1`;
+  `parseDeviceScenarioDocument` мигрирует v1→v2 и отклоняет version > 2.
