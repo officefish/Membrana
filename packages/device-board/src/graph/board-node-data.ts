@@ -33,6 +33,8 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
   readonly system?: boolean;
   /** v0.4: для `variable-get`/`variable-set` — id связанной переменной сценария. */
   readonly variableId?: string;
+  /** v0.4: для `get-microphone` — выбранный deviceId микрофона (enumerate). */
+  readonly microphoneId?: string;
   /** Subgraph-блок: id функции из `scenario.functions`. */
   readonly functionId?: string;
   readonly inputs?: readonly BoardSocketPin[];

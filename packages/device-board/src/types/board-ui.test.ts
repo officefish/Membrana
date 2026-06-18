@@ -5,7 +5,9 @@ import { D0_SCENARIO_NODE_CATALOG } from '../graph/d0-node-catalog.js';
 import {
   BRANCH_SIDEBAR_SECTIONS,
   BRANCH_TAB_LABEL,
-  SCENARIO_NODE_PALETTE,
+  isLegacyPaletteEnabled,
+  LEGACY_SCENARIO_NODE_PALETTE,
+  SCENARIO_V04_PALETTE,
   type ScenarioBranchTab,
 } from './board-ui.js';
 
@@ -38,9 +40,21 @@ describe('board-ui sidebar sections (MP7b RT6)', () => {
   });
 });
 
-describe('scenario node palette (MP7b RT6)', () => {
-  it('exposes every catalog block kind across categories', () => {
-    const paletteKinds = new Set(SCENARIO_NODE_PALETTE.flatMap((c) => c.blockKinds));
+describe('scenario node palette (v0.4 DBR5)', () => {
+  it('default v0.4 palette has Print, isValid, GetMicrophone only', () => {
+    expect(SCENARIO_V04_PALETTE.map((item) => item.nodeKind)).toEqual([
+      'print',
+      'is-valid',
+      'get-microphone',
+    ]);
+  });
+
+  it('legacy palette is off by default in tests', () => {
+    expect(isLegacyPaletteEnabled()).toBe(false);
+  });
+
+  it('legacy palette covers every D0 catalog block kind', () => {
+    const paletteKinds = new Set(LEGACY_SCENARIO_NODE_PALETTE.flatMap((c) => c.blockKinds));
     const catalogKinds = Object.keys(D0_SCENARIO_NODE_CATALOG) as ScenarioBlockKind[];
     for (const kind of catalogKinds) {
       expect(paletteKinds.has(kind)).toBe(true);

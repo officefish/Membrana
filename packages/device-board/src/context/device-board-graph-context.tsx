@@ -22,6 +22,7 @@ import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
 import {
   buildDeviceScenarioDocument,
   createDefaultHydratedBoardState,
+  createPaletteBoardNode,
   createScenarioBoardNode,
   createVariableBoardNode,
   exportDeviceScenarioDocument,
@@ -33,6 +34,7 @@ import {
   rejectSystemNodeRemovals,
   validatePreRun,
   type VariableNodeKind,
+  type V04PaletteNodeKind,
 } from '../graph/index.js';
 import type { HydratedBoardState, PreRunValidationIssue } from '../graph/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
@@ -104,8 +106,12 @@ export interface DeviceBoardGraphContextValue {
   readonly setMode: (mode: RuntimeMode) => void;
   /** Полная очистка борда: все ветки сценария и сигнал (MP7b RT6). */
   readonly clearBoard: () => void;
-  /** Добавить ноду из палитры в активную ветку сценария (MP7b RT6). */
+  /** Добавить legacy D0-ноду из палитры в активную ветку (только при legacy-флаге). */
   readonly addScenarioNodeToCurrentBranch: (blockKind: ScenarioBlockKind) => void;
+  /** v0.4 DBR5: добавить узел палитры Print/isValid/GetMicrophone в активную ветку. */
+  readonly addPaletteNodeToCurrentBranch: (nodeKind: V04PaletteNodeKind) => void;
+  /** v0.4 DBR5: обновить выбранный микрофон на узле get-microphone. */
+  readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
   /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
   readonly variables: readonly ScenarioVariable[];
   /** v0.4: объявить новую переменную ссылочного типа. */
@@ -747,34 +753,37 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const addScenarioNodeToCurrentBranch = useCallback(
     (blockKind: ScenarioBlockKind) => {
-      const node = createScenarioBoardNode(blockKind);
-      switch (scenarioBranch) {
-        case 'initial':
-          setScenarioInitialNodes((nodes) => [...nodes, node]);
-          break;
-        case 'onConnect':
-          setScenarioOnConnectNodes((nodes) => [...nodes, node]);
-          break;
-        case 'main':
-          setScenarioMainNodes((nodes) => [...nodes, node]);
-          break;
-        case 'alarm':
-          setScenarioAlarmNodes((nodes) => [...nodes, node]);
-          break;
-        case 'onStop':
-          setScenarioOnStopNodes((nodes) => [...nodes, node]);
-          break;
-        case 'onDisconnect':
-          setScenarioOnDisconnectNodes((nodes) => [...nodes, node]);
-          break;
-        case 'function':
-          setScenarioFunctionNodes((nodes) => [...nodes, node]);
-          break;
-        default:
-          break;
-      }
+      appendNodeToBranch(scenarioBranch, createScenarioBoardNode(blockKind));
     },
-    [scenarioBranch],
+    [appendNodeToBranch, scenarioBranch],
+  );
+
+  const addPaletteNodeToCurrentBranch = useCallback(
+    (nodeKind: V04PaletteNodeKind) => {
+      appendNodeToBranch(scenarioBranch, createPaletteBoardNode(nodeKind));
+    },
+    [appendNodeToBranch, scenarioBranch],
+  );
+
+  const patchNodeData = useCallback((nodeId: string, patch: Record<string, unknown>) => {
+    const mapNodes = (nodes: Node[]) =>
+      nodes.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, ...patch } } : node,
+      );
+    setScenarioInitialNodes(mapNodes);
+    setScenarioOnConnectNodes(mapNodes);
+    setScenarioMainNodes(mapNodes);
+    setScenarioAlarmNodes(mapNodes);
+    setScenarioOnStopNodes(mapNodes);
+    setScenarioOnDisconnectNodes(mapNodes);
+    setScenarioFunctionNodes(mapNodes);
+  }, []);
+
+  const updatePaletteNodeMicrophoneId = useCallback(
+    (nodeId: string, microphoneId: string) => {
+      patchNodeData(nodeId, { microphoneId });
+    },
+    [patchNodeData],
   );
 
   const canRun = useMemo(
@@ -842,6 +851,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       setMode,
       clearBoard,
       addScenarioNodeToCurrentBranch,
+      addPaletteNodeToCurrentBranch,
+      updatePaletteNodeMicrophoneId,
       variables,
       addVariable,
       renameVariable,
@@ -850,6 +861,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }),
     [
       addScenarioNodeToCurrentBranch,
+      addPaletteNodeToCurrentBranch,
+      updatePaletteNodeMicrophoneId,
       addVariable,
       addVariableNodeToCurrentBranch,
       canRun,

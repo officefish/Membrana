@@ -5,6 +5,7 @@ import { isBoardFlowNodeData } from './board-node-data.js';
 import { D0_SCENARIO_NODE_CATALOG } from './d0-node-catalog.js';
 import { resolveHandle } from './handle-catalog.js';
 import { createEventBoardNode } from './event-node.js';
+import { createPaletteBoardNode, isPaletteNodeKind } from './palette-node.js';
 import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 import { createVariableBoardNode } from './variable-node.js';
 
@@ -40,6 +41,18 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       nodeKind,
       ...(typeof node.data.variableId === 'string' ? { variableId: node.data.variableId } : {}),
     };
+  }
+
+  // v0.4: узлы палитры (print / is-valid / get-microphone).
+  if (nodeKind === 'print' || nodeKind === 'is-valid' || nodeKind === 'get-microphone') {
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      ...(typeof node.data.microphoneId === 'string' ? { microphoneId: node.data.microphoneId } : {}),
+    } as ScenarioGraphNode;
   }
 
   return {
@@ -144,6 +157,24 @@ export function deserializeScenarioSubgraph(
         node.data = { ...node.data, label: item.label };
       }
       nodes.push(node);
+      continue;
+    }
+
+    if (item.nodeKind !== undefined && isPaletteNodeKind(item.nodeKind)) {
+      const micId = (item as { microphoneId?: string }).microphoneId;
+      nodes.push(
+        createPaletteBoardNode(item.nodeKind, {
+          id: item.id,
+          position: { x: item.position.x, y: item.position.y },
+          ...(typeof micId === 'string' ? { microphoneId: micId } : {}),
+        }),
+      );
+      if (typeof item.label === 'string') {
+        const last = nodes.at(-1);
+        if (last !== undefined) {
+          last.data = { ...last.data, label: item.label };
+        }
+      }
       continue;
     }
 

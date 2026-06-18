@@ -1,13 +1,18 @@
-import type {
-  ScenarioGraphNode,
-  ScenarioReferenceValue,
-  ScenarioSubgraph,
-  ScenarioVariable,
+import {
+  createReferenceValue,
+  type ScenarioGraphNode,
+  type ScenarioReferenceValue,
+  type ScenarioSubgraph,
+  type ScenarioVariable,
 } from '@membrana/core';
 
 import { EVENT_DEVICE_HANDLE } from '../graph/event-node.js';
+import {
+  GET_MICROPHONE_DEVICE_HANDLE,
+  GET_MICROPHONE_OUT_HANDLE,
+} from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
-import { resolveEventReference } from './reference-validity.js';
+import { isReferenceValid, resolveEventReference } from './reference-validity.js';
 
 /** Ветви-обработчики событий, где Event-узел является источником data. */
 export type ScenarioHandlerBranch = 'onConnect' | 'initial' | 'onStop' | 'onDisconnect';
@@ -67,11 +72,42 @@ function assertTypeCompatible(
   }
 }
 
+function readMicrophoneId(node: ScenarioGraphNode): string | undefined {
+  return (node as ScenarioGraphNode & { microphoneId?: string }).microphoneId;
+}
+
+function resolveGetMicrophoneOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue | null {
+  const deviceRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_MICROPHONE_DEVICE_HANDLE,
+    context,
+    visiting,
+  );
+  if (!isReferenceValid(deviceRef)) {
+    return { kind: 'MicrophoneRef', handle: null, valid: false };
+  }
+  const microphoneId = readMicrophoneId(node);
+  if (microphoneId === undefined || microphoneId.length === 0) {
+    return null;
+  }
+  return createReferenceValue('MicrophoneRef', microphoneId);
+}
+
 function resolveNodeOutput(
+  subgraph: ScenarioSubgraph,
   variables: readonly ScenarioVariable[],
   node: ScenarioGraphNode,
   outputPort: string,
   context: ResolveInputContext,
+  visiting: Set<string>,
 ): ScenarioReferenceValue | null {
   if (node.nodeKind === 'event') {
     if (outputPort !== EVENT_DEVICE_HANDLE) {
@@ -93,6 +129,16 @@ function resolveNodeOutput(
       throw new ResolveInputError('missing-variable', `Variable "${variableId}" not found`);
     }
     return variable.value;
+  }
+
+  if (node.nodeKind === 'get-microphone') {
+    if (outputPort !== GET_MICROPHONE_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown get-microphone output: ${outputPort}`,
+      );
+    }
+    return resolveGetMicrophoneOutput(subgraph, variables, node, context, visiting);
   }
 
   throw new ResolveInputError(
@@ -129,7 +175,7 @@ export function resolveInput(
     throw new ResolveInputError('missing-source-node', `Source node "${edge.source}" not found`);
   }
 
-  const value = resolveNodeOutput(variables, sourceNode, edge.sourceHandle, context);
+  const value = resolveNodeOutput(subgraph, variables, sourceNode, edge.sourceHandle, context, visiting);
   assertTypeCompatible(edge, value);
   return value;
 }

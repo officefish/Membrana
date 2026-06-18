@@ -26,6 +26,19 @@ export {
   EVENT_NODE_KIND,
 } from './event-node.js';
 export type { CreateEventBoardNodeOptions } from './event-node.js';
+export {
+  createPaletteBoardNode,
+  isPaletteNodeKind,
+  paletteNodeLabel,
+  paletteNodePins,
+  PALETTE_VALUE_HANDLE,
+  GET_MICROPHONE_DEVICE_HANDLE,
+  GET_MICROPHONE_OUT_HANDLE,
+  IS_VALID_FALSE_HANDLE,
+  IS_VALID_TRUE_HANDLE,
+  V04_PALETTE_NODE_KINDS,
+} from './palette-node.js';
+export type { CreatePaletteBoardNodeOptions, V04PaletteNodeKind } from './palette-node.js';
 export { resolveHandle } from './handle-catalog.js';
 export type { ResolvedHandle } from './handle-catalog.js';
 export { isValidBoardConnection, isValidBoardEdge } from './connection-validation.js';

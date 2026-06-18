@@ -9,6 +9,10 @@ import {
 } from '@membrana/core';
 
 import { EVENT_DEVICE_HANDLE } from '../graph/event-node.js';
+import {
+  GET_MICROPHONE_DEVICE_HANDLE,
+  GET_MICROPHONE_OUT_HANDLE,
+} from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import {
   applyVariableSetValue,
@@ -226,6 +230,31 @@ describe('resolveInput (DBR4)', () => {
     expect(() =>
       resolveInput(sg, [deviceVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext),
     ).toThrow(ResolveInputError);
+  });
+
+  it('resolves get-microphone output as MicrophoneRef when device valid and mic selected', () => {
+    const micVar = createScenarioVariable('var-mic', 'mic1', 'MicrophoneRef');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gm',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-microphone',
+          microphoneId: 'mic-selected',
+        },
+        variableSetNode('set', micVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gm', GET_MICROPHONE_DEVICE_HANDLE),
+        dataEdge('gm', GET_MICROPHONE_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'MicrophoneRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [micVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
+    expect(value).toEqual(createReferenceValue('MicrophoneRef', 'mic-selected'));
   });
 });
 
