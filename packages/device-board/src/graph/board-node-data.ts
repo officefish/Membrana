@@ -1,4 +1,4 @@
-import type { ScenarioBlockKind, SocketType } from '@membrana/core';
+import type { ScenarioBlockKind, ScenarioNodeKind, SocketType } from '@membrana/core';
 
 /** Семантика pin на ноде доски. */
 export type BoardPinKind = 'exec' | 'data';
@@ -19,6 +19,14 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
   readonly pluginId?: string;
   /** Scenario graph: тип блока runtime. */
   readonly blockKind?: ScenarioBlockKind;
+  /**
+   * Scenario graph v0.4: вид узла новой таксономии (`variable-get`/`variable-set`
+   * /`event`/…). Legacy D0-узлы поле не задают — рендер и сериализация идут
+   * по `blockKind`. @see DEVICE_BOARD_CONCEPT.md §15
+   */
+  readonly nodeKind?: ScenarioNodeKind;
+  /** v0.4: для `variable-get`/`variable-set` — id связанной переменной сценария. */
+  readonly variableId?: string;
   /** Subgraph-блок: id функции из `scenario.functions`. */
   readonly functionId?: string;
   readonly inputs?: readonly BoardSocketPin[];

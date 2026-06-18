@@ -9,13 +9,21 @@ import {
   type Node,
   type NodeChange,
 } from '@xyflow/react';
-import type { DeviceKind, RuntimeMode, ScenarioBlockKind } from '@membrana/core';
+import {
+  createScenarioVariable,
+  type DeviceKind,
+  type RuntimeMode,
+  type ScenarioBlockKind,
+  type ScenarioVariable,
+  type ScenarioVariableType,
+} from '@membrana/core';
 
 import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
 import {
   buildDeviceScenarioDocument,
   createDefaultHydratedBoardState,
   createScenarioBoardNode,
+  createVariableBoardNode,
   exportDeviceScenarioDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
@@ -23,6 +31,7 @@ import {
   isPreRunValid,
   isValidBoardConnection,
   validatePreRun,
+  type VariableNodeKind,
 } from '../graph/index.js';
 import type { HydratedBoardState, PreRunValidationIssue } from '../graph/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
@@ -91,6 +100,16 @@ export interface DeviceBoardGraphContextValue {
   readonly clearBoard: () => void;
   /** Добавить ноду из палитры в активную ветку сценария (MP7b RT6). */
   readonly addScenarioNodeToCurrentBranch: (blockKind: ScenarioBlockKind) => void;
+  /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
+  readonly variables: readonly ScenarioVariable[];
+  /** v0.4: объявить новую переменную ссылочного типа. */
+  readonly addVariable: (type: ScenarioVariableType) => void;
+  /** v0.4: переименовать переменную. */
+  readonly renameVariable: (id: string, name: string) => void;
+  /** v0.4: удалить переменную и её узлы get/set со всех веток. */
+  readonly removeVariable: (id: string) => void;
+  /** v0.4: добавить узел get/set переменной в активную ветку. */
+  readonly addVariableNodeToCurrentBranch: (kind: VariableNodeKind, variableId: string) => void;
 }
 
 const DeviceBoardGraphContext = createContext<DeviceBoardGraphContextValue | null>(null);
@@ -136,6 +155,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [scenarioFunctionNodes, setScenarioFunctionNodes] = useState<Node[]>(defaultState.scenarioFunctionNodes);
   const [scenarioFunctionEdges, setScenarioFunctionEdges] = useState<Edge[]>(defaultState.scenarioFunctionEdges);
   const [scenarioFunctionMeta, setScenarioFunctionMeta] = useState(defaultState.scenarioFunctionMeta);
+  const [variables, setVariables] = useState<readonly ScenarioVariable[]>(defaultState.variables);
   const [validationIssues, setValidationIssues] = useState<readonly PreRunValidationIssue[]>([]);
   const [runtimeState, setRuntimeState] = useState<ScenarioRuntimeState>(createIdleScenarioRuntimeState());
   const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'saved' | 'error'>('idle');
@@ -202,6 +222,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioFunctionNodes(state.scenarioFunctionNodes);
     setScenarioFunctionEdges(state.scenarioFunctionEdges);
     setScenarioFunctionMeta(state.scenarioFunctionMeta);
+    setVariables(state.variables);
     window.setTimeout(() => {
       skipPersistRef.current = false;
     }, 0);
@@ -266,7 +287,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         scenarioFunctionNodes,
         scenarioFunctionEdges,
         scenarioFunctionMeta,
+        variables,
       })],
+      variables,
     });
   }, [
     deviceKind,
@@ -285,6 +308,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioOnStopNodes,
     signalEdges,
     signalNodes,
+    variables,
   ]);
 
   const runValidation = useCallback(() => {
@@ -319,6 +343,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         scenarioFunctionNodes,
         scenarioFunctionEdges,
         scenarioFunctionMeta,
+        variables,
       })],
     });
     setValidationIssues(issues);
@@ -340,6 +365,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioOnStopNodes,
     signalEdges,
     signalNodes,
+    variables,
   ]);
 
   const refreshValidation = useCallback((): readonly PreRunValidationIssue[] => {
@@ -553,6 +579,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioOnStopNodes,
     signalEdges,
     signalNodes,
+    variables,
   ]);
 
   const startScenario = useCallback(async () => {
@@ -591,7 +618,83 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioOnDisconnectEdges([]);
     setScenarioFunctionNodes([]);
     setScenarioFunctionEdges([]);
+    setVariables([]);
   }, []);
+
+  const appendNodeToBranch = useCallback(
+    (branch: ScenarioBranchTab, node: Node) => {
+      switch (branch) {
+        case 'initial':
+          setScenarioInitialNodes((nodes) => [...nodes, node]);
+          break;
+        case 'main':
+          setScenarioMainNodes((nodes) => [...nodes, node]);
+          break;
+        case 'alarm':
+          setScenarioAlarmNodes((nodes) => [...nodes, node]);
+          break;
+        case 'onStop':
+          setScenarioOnStopNodes((nodes) => [...nodes, node]);
+          break;
+        case 'onDisconnect':
+          setScenarioOnDisconnectNodes((nodes) => [...nodes, node]);
+          break;
+        case 'function':
+          setScenarioFunctionNodes((nodes) => [...nodes, node]);
+          break;
+        default:
+          break;
+      }
+    },
+    [],
+  );
+
+  const addVariable = useCallback((type: ScenarioVariableType) => {
+    setVariables((current) => {
+      const sameType = current.filter((variable) => variable.type === type).length;
+      const prefix = type === 'DeviceRef' ? 'device' : 'microphone';
+      const name = `${prefix}${sameType + 1}`;
+      const id = `var-${type}-${Date.now().toString(36)}-${current.length + 1}`;
+      return [...current, createScenarioVariable(id, name, type)];
+    });
+  }, []);
+
+  const renameVariable = useCallback((id: string, name: string) => {
+    setVariables((current) =>
+      current.map((variable) => (variable.id === id ? { ...variable, name } : variable)),
+    );
+  }, []);
+
+  const dropVariableNodes = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<Node[]>>, variableId: string) => {
+      setter((nodes) => nodes.filter((node) => node.data?.variableId !== variableId));
+    },
+    [],
+  );
+
+  const removeVariable = useCallback(
+    (id: string) => {
+      setVariables((current) => current.filter((variable) => variable.id !== id));
+      dropVariableNodes(setScenarioInitialNodes, id);
+      dropVariableNodes(setScenarioMainNodes, id);
+      dropVariableNodes(setScenarioAlarmNodes, id);
+      dropVariableNodes(setScenarioOnStopNodes, id);
+      dropVariableNodes(setScenarioOnDisconnectNodes, id);
+      dropVariableNodes(setScenarioFunctionNodes, id);
+    },
+    [dropVariableNodes],
+  );
+
+  const addVariableNodeToCurrentBranch = useCallback(
+    (kind: VariableNodeKind, variableId: string) => {
+      const variable = variables.find((candidate) => candidate.id === variableId);
+      if (variable === undefined) {
+        return;
+      }
+      appendNodeToBranch(scenarioBranch, createVariableBoardNode(kind, variable));
+    },
+    [appendNodeToBranch, scenarioBranch, variables],
+  );
 
   const addScenarioNodeToCurrentBranch = useCallback(
     (blockKind: ScenarioBlockKind) => {
@@ -682,9 +785,16 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       setMode,
       clearBoard,
       addScenarioNodeToCurrentBranch,
+      variables,
+      addVariable,
+      renameVariable,
+      removeVariable,
+      addVariableNodeToCurrentBranch,
     }),
     [
       addScenarioNodeToCurrentBranch,
+      addVariable,
+      addVariableNodeToCurrentBranch,
       canRun,
       clearBoard,
       deviceKind,
@@ -713,6 +823,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onSignalEdgesChange,
       onSignalNodesChange,
       refreshValidation,
+      removeVariable,
+      renameVariable,
       runtimeState,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
@@ -735,6 +847,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       syncError,
       syncStatus,
       validationIssues,
+      variables,
     ],
   );
 

@@ -280,6 +280,11 @@ const DeviceBoardShellInner: React.FC<{
           signalAdvanced={signalAdvanced}
           isSignalLayer={isSignal}
           onSelectSignal={handleSelectSignal}
+          variables={graph.variables}
+          onAddVariable={graph.addVariable}
+          onRenameVariable={graph.renameVariable}
+          onRemoveVariable={graph.removeVariable}
+          onAddVariableNode={graph.addVariableNodeToCurrentBranch}
         />
 
         <main className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label={`Канвас: ${canvasLabel}`}>

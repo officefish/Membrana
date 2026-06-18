@@ -695,6 +695,15 @@ exec-потока и источником data-ссылки. Удаление/о
 - **onStart:** Event(`DeviceRef`) → `is-valid` → (true) `get-microphone`
   (выбор из списка) → `variable-set` в переменную Microphone (для loop-сценариев).
 
+**Реализовано (DBR2):** конструктор переменных в левом сайдбаре под «Конструктор
+функций» (создание `+ Device`/`+ Microphone`, переименование, удаление,
+индикатор `не задана`/`valid`/`invalid`); узлы `variable-get`/`variable-set`
+(кнопки get/set добавляют узел в активную ветку), типизированные пины по
+ссылочному `SocketType`; сериализация `scenario.variables` и узлов
+(round-trip build → parse → hydrate; узлы с отсутствующей переменной
+отбрасываются при гидратации). Запись значения в host и протяжка данных —
+DBR4.
+
 ### 15.4 Dataflow и валидность
 
 Data-рёбра несут ссылочные `SocketType` (`DeviceRef`/`MicrophoneRef`).

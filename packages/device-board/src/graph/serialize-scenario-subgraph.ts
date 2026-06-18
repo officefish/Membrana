@@ -1,10 +1,11 @@
-import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph } from '@membrana/core';
+import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
 import { isBoardFlowNodeData } from './board-node-data.js';
 import { D0_SCENARIO_NODE_CATALOG } from './d0-node-catalog.js';
 import { resolveHandle } from './handle-catalog.js';
 import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
+import { createVariableBoardNode } from './variable-node.js';
 
 function toScenarioNode(node: Node): ScenarioGraphNode | null {
   if (!isBoardFlowNodeData(node.data) || node.data.layer !== 'scenario') {
@@ -14,6 +15,20 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
   if (typeof blockKind !== 'string') {
     return null;
   }
+
+  // v0.4: узлы переменных несут смысл в nodeKind + variableId, blockKind — носитель.
+  const nodeKind = node.data.nodeKind;
+  if (nodeKind === 'variable-get' || nodeKind === 'variable-set') {
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      ...(typeof node.data.variableId === 'string' ? { variableId: node.data.variableId } : {}),
+    };
+  }
+
   return {
     id: node.id,
     blockKind,
@@ -83,10 +98,30 @@ function buildScenarioNodeData(blockKind: string): Node['data'] | null {
   };
 }
 
-/** `ScenarioSubgraph` → XYFlow nodes/edges. */
-export function deserializeScenarioSubgraph(subgraph: ScenarioSubgraph): { nodes: Node[]; edges: Edge[] } {
+/** `ScenarioSubgraph` → XYFlow nodes/edges. Переменные нужны для гидратации узлов get/set. */
+export function deserializeScenarioSubgraph(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[] = [],
+): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   for (const item of subgraph.nodes) {
+    // v0.4: узлы переменных восстанавливаются из variableId + типа переменной.
+    if (item.nodeKind === 'variable-get' || item.nodeKind === 'variable-set') {
+      const variable = variables.find((candidate) => candidate.id === item.variableId);
+      if (variable === undefined) {
+        continue;
+      }
+      const node = createVariableBoardNode(item.nodeKind, variable, {
+        id: item.id,
+        position: { x: item.position.x, y: item.position.y },
+      });
+      if (typeof item.label === 'string') {
+        node.data = { ...node.data, label: item.label };
+      }
+      nodes.push(node);
+      continue;
+    }
+
     const data = buildScenarioNodeData(item.blockKind);
     if (data === null) {
       continue;
