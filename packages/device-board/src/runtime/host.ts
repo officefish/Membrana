@@ -3,6 +3,12 @@ import type { ScenarioBlockKind, ScenarioReferenceValue } from '@membrana/core';
 import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
 
+/** Описание микрофона из enumerate (host → UI dropdown GetMicrophone). */
+export interface ScenarioMicrophoneOption {
+  readonly deviceId: string;
+  readonly label: string;
+}
+
 /** Колбэки потери/восстановления соединения (H3b). */
 export interface ScenarioConnectionHandlers {
   readonly onDisconnect: () => void;
@@ -17,6 +23,8 @@ export interface ScenarioRuntimeHost {
   readonly variableStore?: ScenarioVariableStore;
   readonly getScenarioVariable?: (id: string) => ScenarioReferenceValue | null;
   readonly setScenarioVariable?: (id: string, value: ScenarioReferenceValue | null) => void;
+  /** Список микрофонов устройства (audio-engine enumerate, DBR5). */
+  readonly enumerateMicrophones?: () => Promise<readonly ScenarioMicrophoneOption[]>;
   readonly selectMicrophone: () => Promise<void>;
   readonly startStream: () => Promise<void>;
   readonly stopStream: () => Promise<void>;
@@ -43,6 +51,9 @@ export function createStubScenarioRuntimeHost(
     setScenarioVariable:
       overrides.setScenarioVariable ??
       (variableStore !== undefined ? (id, value) => variableStore.setValue(id, value) : undefined),
+    enumerateMicrophones:
+      overrides.enumerateMicrophones ??
+      (async () => [{ deviceId: 'default', label: 'Default microphone' }]),
     selectMicrophone: overrides.selectMicrophone ?? (async () => log('selectMicrophone')),
     startStream: overrides.startStream ?? (async () => log('startStream')),
     stopStream: overrides.stopStream ?? (async () => log('stopStream')),

@@ -1,4 +1,6 @@
-import type { ScenarioBlockKind } from '@membrana/core';
+import type { ScenarioBlockKind, ScenarioNodeKind } from '@membrana/core';
+
+import { V04_PALETTE_NODE_KINDS, paletteNodeLabel, type V04PaletteNodeKind } from '../graph/palette-node.js';
 
 /** Вкладка слоя доски: топология сигнала или сценарий исполнения. */
 export type BoardLayerTab = 'signal' | 'scenario';
@@ -49,14 +51,29 @@ export interface NodePaletteCategory {
   readonly blockKinds: readonly ScenarioBlockKind[];
 }
 
-/** Палитра scenario-нод по категориям (MP7b RT6): добавление в активную ветку. */
-export const SCENARIO_NODE_PALETTE: readonly NodePaletteCategory[] = [
+/** Legacy-палитра D0 (хакатон) — только под флагом `VITE_DEVICE_BOARD_LEGACY_PALETTE`. */
+export const LEGACY_SCENARIO_NODE_PALETTE: readonly NodePaletteCategory[] = [
   { title: 'Триггеры', blockKinds: ['select-microphone', 'stop-scenario', 'handle-disconnect'] },
   { title: 'Поток', blockKinds: ['start-stream', 'record-chunk'] },
   { title: 'Анализ', blockKinds: ['trends-fft-detect', 'evaluate-sound-level', 'branch-on-detection'] },
   { title: 'Журнал', blockKinds: ['write-journal'] },
   { title: 'Функции', blockKinds: ['subgraph', 'custom'] },
 ];
+
+/** @deprecated Используйте `LEGACY_SCENARIO_NODE_PALETTE` или v0.4 палитру. */
+export const SCENARIO_NODE_PALETTE = LEGACY_SCENARIO_NODE_PALETTE;
+
+/** Элемент палитры v0.4 (DBR5): Print / isValid / GetMicrophone. */
+export interface V04PaletteItem {
+  readonly nodeKind: V04PaletteNodeKind;
+  readonly label: string;
+}
+
+/** Палитра v0.4 по умолчанию (3 узла). */
+export const SCENARIO_V04_PALETTE: readonly V04PaletteItem[] = V04_PALETTE_NODE_KINDS.map((nodeKind) => ({
+  nodeKind,
+  label: paletteNodeLabel(nodeKind),
+}));
 
 /**
  * Слой Signal спрятан за advanced-флагом (MP7b RT6): сериализация сигнала
@@ -69,4 +86,19 @@ export function isSignalAdvancedEnabled(): boolean {
   } catch {
     return false;
   }
+}
+
+/** Legacy D0-палитра (хакатон) — только при `VITE_DEVICE_BOARD_LEGACY_PALETTE=true`. */
+export function isLegacyPaletteEnabled(): boolean {
+  try {
+    const env = (import.meta as unknown as { env?: Record<string, unknown> }).env;
+    return env?.VITE_DEVICE_BOARD_LEGACY_PALETTE === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/** Активные nodeKind палитры v0.4 (пусто, если включена legacy-палитра). */
+export function activeV04PaletteNodeKinds(): readonly ScenarioNodeKind[] {
+  return isLegacyPaletteEnabled() ? [] : SCENARIO_V04_PALETTE.map((item) => item.nodeKind);
 }

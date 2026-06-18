@@ -1,7 +1,9 @@
-import { isValidSocketConnection } from '@membrana/core';
+import { isReferenceSocketType, isValidSocketConnection } from '@membrana/core';
 import type { Connection, Edge, Node } from '@xyflow/react';
 
 import type { BoardLayerTab } from '../types/board-ui.js';
+import { isBoardFlowNodeData } from './board-node-data.js';
+import { PALETTE_VALUE_HANDLE } from './palette-node.js';
 import { resolveHandle } from './handle-catalog.js';
 
 /** XYFlow `isValidConnection`: exec/exec или data с совпадающим SocketType. */
@@ -32,6 +34,17 @@ export function isValidBoardConnection(
       return true;
     }
     if (sourceResolved.pinKind === 'data' && targetResolved.pinKind === 'data') {
+      const targetNode = nodes.find((item) => item.id === target);
+      if (
+        targetNode !== undefined &&
+        isBoardFlowNodeData(targetNode.data) &&
+        (targetNode.data.nodeKind === 'print' || targetNode.data.nodeKind === 'is-valid') &&
+        targetHandle === PALETTE_VALUE_HANDLE &&
+        sourceResolved.socketType !== undefined &&
+        isReferenceSocketType(sourceResolved.socketType)
+      ) {
+        return true;
+      }
       if (sourceResolved.socketType === undefined || targetResolved.socketType === undefined) {
         return false;
       }

@@ -740,6 +740,14 @@ valid/invalid/null, idempotent set, type mismatch, cycle, runtime integration.
 Кнопка «Пуск» неактивна, если связь с устройством разорвана (online-presence,
 фаза DBR6) — и в списке устройств, и на борде.
 
+**Реализовано (DBR5):** правый сайдбар по умолчанию — 3 узла (`Print`/`isValid`/
+`GetMicrophone`); legacy D0-палитра только при `VITE_DEVICE_BOARD_LEGACY_PALETTE=true`.
+Фабрики `createPaletteBoardNode`, pins и round-trip сериализация; `Print` логирует
+`formatReferenceForPrint` (handle + valid); `is-valid` ветвит exec (`exec-true-out` /
+`exec-false-out` по `isReferenceValid`); `get-microphone` — dropdown микрофона в
+инспекторе из `host.enumerateMicrophones` (audio-engine enumerate), data-выход
+`MicrophoneRef` через `resolveInput` для set переменной Microphone.
+
 ### 15.6 Контракты (DBR0, уже в `@membrana/core`)
 
 - `SocketType += 'DeviceRef' | 'MicrophoneRef'`; `REFERENCE_SOCKET_TYPES`,

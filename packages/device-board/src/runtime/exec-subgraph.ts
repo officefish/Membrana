@@ -26,12 +26,16 @@ function findNode(subgraph: ScenarioSubgraph, nodeId: string): ScenarioGraphNode
   return subgraph.nodes.find((node) => node.id === nodeId);
 }
 
-function findExecSuccessor(subgraph: ScenarioSubgraph, nodeId: string): string | null {
+function findExecSuccessor(
+  subgraph: ScenarioSubgraph,
+  nodeId: string,
+  sourceHandle = 'exec-out',
+): string | null {
   const edge = subgraph.edges.find(
     (item) =>
       item.source === nodeId &&
       item.kind === 'exec' &&
-      item.sourceHandle === 'exec-out' &&
+      item.sourceHandle === sourceHandle &&
       item.targetHandle === 'exec-in',
   );
   return edge?.target ?? null;
@@ -83,7 +87,7 @@ export async function runSubgraphOnce(
 
     lastDetection = result.lastDetection;
 
-    const nextId = findExecSuccessor(subgraph, currentId);
+    const nextId = findExecSuccessor(subgraph, currentId, result.execOutHandle ?? 'exec-out');
     if (nextId === null) {
       return lastDetection;
     }

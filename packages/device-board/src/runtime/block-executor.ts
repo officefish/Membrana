@@ -1,10 +1,13 @@
 import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioSubgraph } from '@membrana/core';
 
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
+import { PALETTE_VALUE_HANDLE, IS_VALID_FALSE_HANDLE, IS_VALID_TRUE_HANDLE } from '../graph/palette-node.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
+import { formatReferenceForPrint } from './format-reference.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
+import { isReferenceValid } from './reference-validity.js';
 import type { ScenarioDetectionResult } from './types.js';
 import type { ScenarioRuntimeBranch } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
@@ -25,6 +28,8 @@ export interface BlockExecutionInput {
 export interface BlockExecutionResult {
   readonly lastDetection: ScenarioDetectionResult | null;
   readonly stopRequested: boolean;
+  /** v0.4 DBR5: exec-выход для условных узлов (`is-valid`). */
+  readonly execOutHandle?: string;
 }
 
 function assertNotAborted(signal: AbortSignal): void {
@@ -104,6 +109,51 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     variableStore.setValue(variableId, incoming);
     host.setScenarioVariable?.(variableId, variableStore.getValue(variableId));
     host.log('variable-set', { nodeId: node.id, branch, variableId, incoming });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'print') {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('print requires variableStore and resolveContext');
+    }
+    const ref = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      PALETTE_VALUE_HANDLE,
+      resolveContext,
+    );
+    const message = formatReferenceForPrint(ref);
+    host.log(`print: ${message}`, { nodeId: node.id, branch, ref });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'is-valid') {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('is-valid requires variableStore and resolveContext');
+    }
+    const ref = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      PALETTE_VALUE_HANDLE,
+      resolveContext,
+    );
+    const valid = isReferenceValid(ref);
+    host.log('is-valid', { nodeId: node.id, branch, valid, ref });
+    return {
+      lastDetection,
+      stopRequested: false,
+      execOutHandle: valid ? IS_VALID_TRUE_HANDLE : IS_VALID_FALSE_HANDLE,
+    };
+  }
+
+  if (node.nodeKind === 'get-microphone') {
+    host.log('get-microphone', {
+      nodeId: node.id,
+      branch,
+      microphoneId: (node as { microphoneId?: string }).microphoneId,
+    });
     return { lastDetection, stopRequested: false };
   }
 

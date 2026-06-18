@@ -33,7 +33,11 @@ export class ScenarioVariableStore {
     if (index === -1) {
       throw new Error(`Unknown scenario variable: ${id}`);
     }
-    this.variables[index] = applyVariableSetValue(this.variables[index], incoming);
+    const current = this.variables[index];
+    if (current === undefined) {
+      throw new Error(`Unknown scenario variable: ${id}`);
+    }
+    this.variables[index] = applyVariableSetValue(current, incoming);
   }
 
   /** Сброс к document-scope значениям (при load). */

@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { OnSelectionChangeParams } from '@xyflow/react';
+import type { ScenarioNodeKind } from '@membrana/core';
 
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
-import type { ScenarioRuntimeHost } from '../runtime/index.js';
+import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
 import {
@@ -30,13 +31,17 @@ const DeviceBoardShellInner: React.FC<{
   onRequestExit?: () => void;
   exitLabel: string;
   showRunControls: boolean;
-}> = ({ onRequestExit, exitLabel, showRunControls }) => {
+  runtimeHost?: ScenarioRuntimeHost;
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
   const [activeLayer, setActiveLayer] = useState<'signal' | 'scenario'>('scenario');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeLabel, setSelectedNodeLabel] = useState<string | null>(null);
+  const [selectedNodeKind, setSelectedNodeKind] = useState<ScenarioNodeKind | null>(null);
+  const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
+  const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -45,9 +50,25 @@ const DeviceBoardShellInner: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps -- initial validation once on mount
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const list = await runtimeHost?.enumerateMicrophones?.();
+      if (!cancelled && list !== undefined) {
+        setMicrophoneOptions(list);
+      }
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [runtimeHost]);
+
   const clearSelection = useCallback(() => {
     setSelectedNodeId(null);
     setSelectedNodeLabel(null);
+    setSelectedNodeKind(null);
+    setSelectedMicrophoneId(null);
   }, []);
 
   const handleSelectionChange = useCallback((selection: OnSelectionChangeParams) => {
@@ -55,11 +76,17 @@ const DeviceBoardShellInner: React.FC<{
     if (node === undefined) {
       setSelectedNodeId(null);
       setSelectedNodeLabel(null);
+      setSelectedNodeKind(null);
+      setSelectedMicrophoneId(null);
       return;
     }
     setSelectedNodeId(node.id);
     const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
     setSelectedNodeLabel(label);
+    const kind = typeof node.data?.nodeKind === 'string' ? (node.data.nodeKind as ScenarioNodeKind) : null;
+    setSelectedNodeKind(kind);
+    const micId = typeof node.data?.microphoneId === 'string' ? node.data.microphoneId : null;
+    setSelectedMicrophoneId(micId);
   }, []);
 
   const handleSelectBranch = useCallback(
@@ -324,8 +351,13 @@ const DeviceBoardShellInner: React.FC<{
         <BoardRightSidebar
           selectedNodeId={selectedNodeId}
           selectedNodeLabel={selectedNodeLabel}
+          selectedNodeKind={selectedNodeKind}
+          selectedMicrophoneId={selectedMicrophoneId}
+          microphoneOptions={microphoneOptions}
           canEditScenario={!isSignal}
-          onAddNode={graph.addScenarioNodeToCurrentBranch}
+          onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
+          onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
+          onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
           onClearBoard={handleClearBoard}
         />
       </div>
@@ -351,6 +383,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
       onRequestExit={onRequestExit}
       exitLabel={exitLabel}
       showRunControls={showRunControls}
+      runtimeHost={runtimeHost}
     />
   </DeviceBoardGraphProvider>
 );
