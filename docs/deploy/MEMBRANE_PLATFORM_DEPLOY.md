@@ -56,7 +56,24 @@ git tag studio-v0.1.0 && git push origin studio-v0.1.0   # CI: NSIS → GitHub R
 ```
 
 Детали и prod-smoke студии: [`apps/membrana-studio/README.md`](../../apps/membrana-studio/README.md).
-Индикатор версии/«доступно обновление» и тест совместимости контракта `runtime` — следующий шаг DR6.
+
+### Совместимость контракта `runtime` и индикатор версии (DR6, часть 2)
+
+Единый источник истины версии рантайм-протокола node-realtime — `RUNTIME_PROTOCOL_VERSION` в
+`@membrana/core` (`packages/core/src/contracts/runtime-version.ts`). Бампается при **несовместимом**
+изменении wire-формата (envelope/каналы/события).
+
+- **Сервер** отдаёт `protocolVersion` в `GET /health` (рядом с `version`/`uptime`).
+- **Клиент** собран со своей `CLIENT_RUNTIME_PROTOCOL_VERSION` и сверяет её с серверной через
+  `evaluateRuntimeCompatibility()` (`apps/client/src/lib/runtimeVersion.ts`).
+- **Индикатор** `RuntimeVersionIndicator` показывает версию приложения и состояние:
+  `ok` / `Доступно обновление` (сервер новее) / `Сервер устарел` (клиент новее) / `unknown`
+  (сервер недоступен); при «требует внимания» — `aria-live="polite"`.
+- **Тест совместимости** (CI): `packages/core/src/contracts/runtime-version.test.ts` фиксирует правило
+  сверки, `apps/client/src/lib/runtimeVersion.test.ts` — парсинг `/health` и состояние индикатора.
+  Дрейф «сервер↔клиент» ловится единым источником версии в core + красным тестом.
+
+Бизнес-логика (compute/parse/fetch) отделена от презентации — индикатор чисто отображает результат.
 
 ---
 
