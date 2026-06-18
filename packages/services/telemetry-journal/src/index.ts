@@ -100,6 +100,7 @@ export {
   ElectronJournalStorageBackend,
   createElectronJournalStorageBackend,
 } from './backends/electron-journal-storage-backend.js';
+export type { IElectronJournalStoragePort } from './ports/electron-journal-port.js';
 
 export { useLiveJournal, type UseLiveJournalResult } from './hooks.js';
 

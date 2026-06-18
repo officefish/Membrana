@@ -32,6 +32,8 @@ export const envSchema = z.object({
   /** Token for cabinet → media service calls (usually same as media API_INTERNAL_TOKEN). */
   MEDIA_API_TOKEN: z.string().min(1).optional(),
   ALLOW_REGISTRATION: boolFromEnv.optional(),
+  /** MP7: WebSocket gateway at /v1/nodes/realtime (default enabled). */
+  NODE_REALTIME_ENABLED: boolFromEnv.optional(),
 });
 
 const envSchemaWithDefaults = envSchema.transform((data) => ({
@@ -39,6 +41,7 @@ const envSchemaWithDefaults = envSchema.transform((data) => ({
   MEDIA_API_TOKEN: data.MEDIA_API_TOKEN ?? data.API_INTERNAL_TOKEN,
   MEDIA_PUBLIC_API_URL: (data.MEDIA_PUBLIC_API_URL ?? data.MEDIA_API_URL).replace(/\/$/, ''),
   ALLOW_REGISTRATION: data.ALLOW_REGISTRATION ?? data.NODE_ENV === 'development',
+  NODE_REALTIME_ENABLED: data.NODE_REALTIME_ENABLED ?? true,
 }));
 
 export type AppConfig = z.infer<typeof envSchemaWithDefaults>;
