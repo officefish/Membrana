@@ -73,6 +73,7 @@ services:
       dockerfile: apps/cabinet/Dockerfile
       args:
         VITE_CABINET_API_URL: ${VITE_CABINET_API_URL:-http://localhost:3020}
+        GIT_SHA: ${GIT_SHA:-unknown}
     image: membrana/cabinet-web:local
     restart: unless-stopped
     ports:

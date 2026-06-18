@@ -51,8 +51,9 @@ chmod +x deploy/cabinet-stack.sh deploy/media-stack.sh
 echo "=== docker build media (prisma migrate on up) ==="
 ./deploy/media-stack.sh build
 
-echo "=== docker build cabinet ==="
-./deploy/cabinet-stack.sh build
+echo "=== docker build cabinet (no stale SPA/API cache) ==="
+./deploy/cabinet-stack.sh build --no-cache cabinet-web
+./deploy/cabinet-stack.sh build --no-cache cabinet-api
 
 echo "=== docker up media ==="
 ./deploy/media-stack.sh up
@@ -64,8 +65,14 @@ docker compose -f packages/background-media/docker-compose.yml -f deploy/backgro
 echo "=== docker up cabinet ==="
 ./deploy/cabinet-stack.sh down || true
 sleep 2
-./deploy/cabinet-stack.sh up
+./deploy/cabinet-stack.sh up --force-recreate
 sleep 28
+
+echo "=== cabinet SPA bundle check ==="
+CABINET_JS=$(curl -fsS http://127.0.0.1:8080/ | grep -oE 'assets/index-[^"]+\\.js' | head -1)
+curl -fsS "http://127.0.0.1:8080/\${CABINET_JS}" -o /tmp/cabinet-spa-check.js
+BYTES=$(wc -c < /tmp/cabinet-spa-check.js | tr -d ' ')
+test "\${BYTES}" -gt 100000 && echo "cabinet-web bundle OK (\${CABINET_JS}, \${BYTES} bytes)" || { echo "FATAL: cabinet-web bundle too small (\${CABINET_JS}, \${BYTES} bytes)"; exit 1; }
 
 echo "=== health ==="
 curl -fsS http://127.0.0.1:3010/health; echo
