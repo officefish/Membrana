@@ -62,6 +62,11 @@ export type {
 } from './import-device-scenario.js';
 export { validatePreRun, isPreRunValid } from './validate-pre-run.js';
 export type { PreRunValidationIssue, PreRunValidationInput } from './validate-pre-run.js';
+export {
+  DEVICE_OFFLINE_RUN_HINT,
+  resolveRunDisabledReason,
+} from './run-gating.js';
+export type { ResolveRunDisabledReasonInput } from './run-gating.js';
 export { canonicalizeJson, sha256Hex } from './document-hash.js';
 export { serializeScenarioFunction } from './serialize-scenario-function.js';
 export type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';

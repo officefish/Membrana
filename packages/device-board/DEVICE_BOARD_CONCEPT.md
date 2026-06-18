@@ -740,6 +740,12 @@ valid/invalid/null, idempotent set, type mismatch, cycle, runtime integration.
 Кнопка «Пуск» неактивна, если связь с устройством разорвана (online-presence,
 фаза DBR6) — и в списке устройств, и на борде.
 
+**Реализовано (DBR6):** единый селектор `isDeviceLive(deviceId)` на сторону —
+cabinet: presence map из WS `node.online`/`node.offline` (`useCabinetNodeRuntime`);
+client paired: WS `connected` (`useDeviceLive`); автономный клиент — без gating.
+`resolveRunDisabledReason` + `deviceLive` prop в `DeviceBoardGraphProvider`;
+disabled + `title`/`aria-label` «нет связи с устройством» в `NodesPage` и Run на борде.
+
 **Реализовано (DBR5):** правый сайдбар по умолчанию — 3 узла (`Print`/`isValid`/
 `GetMicrophone`); legacy D0-палитра только при `VITE_DEVICE_BOARD_LEGACY_PALETTE=true`.
 Фабрики `createPaletteBoardNode`, pins и round-trip сериализация; `Print` логирует

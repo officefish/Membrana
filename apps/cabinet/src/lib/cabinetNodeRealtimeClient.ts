@@ -3,6 +3,7 @@ import {
   parseNodeRealtimeEnvelope,
   type AnalysisBriefPayload,
   type JournalAppendPayload,
+  type NodeOnlinePayload,
   type NodeRealtimeEnvelope,
   type RuntimeStatePayload,
 } from '@membrana/core';
@@ -20,6 +21,8 @@ type StateHandler = (state: CabinetRealtimeClientState) => void;
 type JournalAppendHandler = (envelope: NodeRealtimeEnvelope<JournalAppendPayload>) => void;
 type MicBriefHandler = (payload: AnalysisBriefPayload) => void;
 type RuntimeStateHandler = (payload: RuntimeStatePayload) => void;
+type PresenceOnlineHandler = (payload: NodeOnlinePayload) => void;
+type PresenceOfflineHandler = (payload: NodeOnlinePayload) => void;
 
 const MAX_BACKOFF_MS = 30_000;
 
@@ -41,6 +44,10 @@ class CabinetNodeRealtimeClientImpl {
   private readonly micBriefHandlers = new Set<MicBriefHandler>();
 
   private readonly runtimeStateHandlers = new Set<RuntimeStateHandler>();
+
+  private readonly presenceOnlineHandlers = new Set<PresenceOnlineHandler>();
+
+  private readonly presenceOfflineHandlers = new Set<PresenceOfflineHandler>();
 
   getState(): CabinetRealtimeClientState {
     return this.state;
@@ -70,6 +77,16 @@ class CabinetNodeRealtimeClientImpl {
   subscribeMicBrief(handler: MicBriefHandler): () => void {
     this.micBriefHandlers.add(handler);
     return () => this.micBriefHandlers.delete(handler);
+  }
+
+  subscribePresenceOnline(handler: PresenceOnlineHandler): () => void {
+    this.presenceOnlineHandlers.add(handler);
+    return () => this.presenceOnlineHandlers.delete(handler);
+  }
+
+  subscribePresenceOffline(handler: PresenceOfflineHandler): () => void {
+    this.presenceOfflineHandlers.add(handler);
+    return () => this.presenceOfflineHandlers.delete(handler);
   }
 
   connect(membraneId: string): void {
@@ -158,6 +175,24 @@ class CabinetNodeRealtimeClientImpl {
         ) {
           const payload = envelope.payload as RuntimeStatePayload;
           for (const handler of this.runtimeStateHandlers) {
+            handler(payload);
+          }
+        }
+        if (
+          envelope.channel === 'presence' &&
+          envelope.type === NODE_REALTIME_EVENT_TYPES.presence.nodeOnline
+        ) {
+          const payload = envelope.payload as NodeOnlinePayload;
+          for (const handler of this.presenceOnlineHandlers) {
+            handler(payload);
+          }
+        }
+        if (
+          envelope.channel === 'presence' &&
+          envelope.type === NODE_REALTIME_EVENT_TYPES.presence.nodeOffline
+        ) {
+          const payload = envelope.payload as NodeOnlinePayload;
+          for (const handler of this.presenceOfflineHandlers) {
             handler(payload);
           }
         }
