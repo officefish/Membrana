@@ -12,16 +12,29 @@ interface CabinetShellProps {
   onLogout: () => void;
 }
 
-type SectionId = 'membrane' | 'nodes' | 'keys' | 'library' | 'journal' | 'device-board';
+type SectionId = 'membrane' | 'nodes-keys' | 'nodes' | 'keys' | 'library' | 'journal' | 'device-board';
+
+/**
+ * Когда флаг выключен (по умолчанию / прод), «Узлы» и «Ключи» показываются
+ * единым разделом «Узлы и ключи». Включение флага возвращает RT5-поведение
+ * с двумя отдельными пунктами навигации.
+ */
+const NODES_KEYS_SPLIT_ENABLED = import.meta.env.VITE_CABINET_NODES_KEYS_SPLIT === 'true';
 
 const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string }[] = [
   { id: 'membrane', label: 'Мембрана', enabled: true },
-  { id: 'nodes', label: 'Узлы', enabled: true },
-  { id: 'keys', label: 'Ключи', enabled: true },
+  ...(NODES_KEYS_SPLIT_ENABLED
+    ? ([
+        { id: 'nodes', label: 'Узлы', enabled: true },
+        { id: 'keys', label: 'Ключи', enabled: true },
+      ] as const)
+    : ([{ id: 'nodes-keys', label: 'Узлы и ключи', enabled: true }] as const)),
   { id: 'library', label: 'Библиотека сэмплов', enabled: true },
   { id: 'journal', label: 'Журнал', enabled: true },
   { id: 'device-board', label: 'Device board', enabled: true },
 ];
+
+const DEFAULT_SECTION: SectionId = 'membrane';
 
 function SectionContent({
   section,
@@ -35,6 +48,17 @@ function SectionContent({
   switch (section) {
     case 'membrane':
       return <MembranePage />;
+    case 'nodes-keys':
+      return (
+        <div className="space-y-8">
+          <NodesPage
+            onOpenJournal={() => onNavigate('journal')}
+            onOpenDeviceBoard={onOpenDeviceBoard}
+          />
+          <div className="divider" />
+          <KeysPage />
+        </div>
+      );
     case 'nodes':
       return (
         <NodesPage
@@ -67,7 +91,7 @@ function SectionContent({
 }
 
 export function CabinetShell({ user, onLogout }: CabinetShellProps) {
-  const [section, setSection] = useState<SectionId>('membrane');
+  const [section, setSection] = useState<SectionId>(DEFAULT_SECTION);
   const [deviceBoardOpen, setDeviceBoardOpen] = useState(false);
 
   if (deviceBoardOpen) {
