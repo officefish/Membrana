@@ -14,6 +14,9 @@ export const SOCKET_TYPES = [
   'ThermalFrame',
   'BlobMask',
   'Observation',
+  // v0.4 (device-board refactor): ссылочные типы данных для dataflow сценария.
+  'DeviceRef',
+  'MicrophoneRef',
 ] as const;
 
 /** Имя типа сокета signal graph. */
@@ -21,6 +24,24 @@ export type SocketType = (typeof SOCKET_TYPES)[number];
 
 /** Минимальный набор для хакатона 1 / D0. */
 export const D0_SOCKET_TYPES = ['AudioFrame', 'Spectrum'] as const satisfies readonly SocketType[];
+
+/**
+ * Ссылочные типы данных scenario dataflow (v0.4): несут handle на ресурс
+ * устройства и флаг `valid`. Источник — Event-узел, переменные, get-методы.
+ * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §15 (v0.4)
+ */
+export const REFERENCE_SOCKET_TYPES = [
+  'DeviceRef',
+  'MicrophoneRef',
+] as const satisfies readonly SocketType[];
+
+/** Имя ссылочного типа данных (подмножество `SocketType`). */
+export type ReferenceSocketType = (typeof REFERENCE_SOCKET_TYPES)[number];
+
+/** Type guard для `ReferenceSocketType`. */
+export function isReferenceSocketType(value: string): value is ReferenceSocketType {
+  return (REFERENCE_SOCKET_TYPES as readonly string[]).includes(value);
+}
 
 /** Описание pin на ноде signal graph. */
 export interface SocketSpec {

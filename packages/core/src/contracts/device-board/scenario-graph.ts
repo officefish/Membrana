@@ -5,10 +5,20 @@
 
 import type { GraphNodeId, GraphPosition } from './graph-primitives.js';
 import type { SocketType } from './socket-type.js';
+import type { ScenarioNodeKind } from './scenario-node-kind.js';
+import type { ScenarioVariable } from './scenario-variables.js';
 
-/** Системные ветки сценария (фиксированы на устройстве). */
+/**
+ * Системные ветки сценария (фиксированы на устройстве).
+ *
+ * v0.4: 4 обработчика событий `onConnect/onStart/onStop/onDisconnect` + лупы
+ * `main/alarm`. `onStart` — канонический лейбл подграфа `initial`
+ * (сериализация ветки сохраняется как `initial` ради совместимости; см. §15).
+ */
 export const SCENARIO_SYSTEM_BRANCHES = [
   'initial',
+  'onConnect',
+  'onStart',
   'main',
   'alarm',
   'onStop',
@@ -48,6 +58,15 @@ export interface ScenarioGraphNode {
   readonly blockKind: ScenarioBlockKind;
   readonly position: GraphPosition;
   readonly label?: string;
+  /**
+   * v0.4: вид узла новой таксономии (`event`/`variable-get`/…), по которому
+   * идёт рендер и dataflow-резолюция. Legacy D0-узлы поле не задают.
+   */
+  readonly nodeKind?: ScenarioNodeKind;
+  /** v0.4: системный узел (например `event`) — нельзя удалить с борда. */
+  readonly system?: boolean;
+  /** v0.4: для `variable-get`/`variable-set` — id связанной переменной. */
+  readonly variableId?: string;
 }
 
 /** Ребро scenario graph. */
@@ -96,13 +115,24 @@ export interface ScenarioTriggers {
   readonly custom: readonly ScenarioSubgraph[];
 }
 
-/** Корневая структура scenario graph внутри device-scenario JSON. */
+/**
+ * Корневая структура scenario graph внутри device-scenario JSON.
+ *
+ * Раскладка обработчиков событий v0.4 на поля схемы:
+ * - `onStart`  ≡ `initial` (сохраняется как `initial`);
+ * - `onConnect` — отдельное поле (добавлено в v0.4);
+ * - `onStop` / `onDisconnect` ≡ `triggers.onStop` / `triggers.onDisconnect`.
+ */
 export interface ScenarioGraph {
   readonly initial: ScenarioSubgraph;
+  /** v0.4: обработчик подключения устройства (даёт постоянную DeviceRef). */
+  readonly onConnect: ScenarioSubgraph;
   readonly loops: ScenarioLoops;
   readonly triggers: ScenarioTriggers;
   readonly functions: readonly ScenarioFunctionSubgraph[];
   readonly scheduled: readonly ScheduledJobStub[];
+  /** v0.4: переменные сценария (document-scope, ссылочные). */
+  readonly variables: readonly ScenarioVariable[];
 }
 
 /** Пустой подграф (placeholder). */
@@ -114,6 +144,7 @@ export function createEmptyScenarioSubgraph(entry: GraphNodeId = 'entry'): Scena
 export function createEmptyScenarioGraph(): ScenarioGraph {
   return {
     initial: createEmptyScenarioSubgraph('initial-entry'),
+    onConnect: createEmptyScenarioSubgraph('on-connect-entry'),
     loops: {
       main: createEmptyScenarioSubgraph('main-entry'),
       alarm: createEmptyScenarioSubgraph('alarm-entry'),
@@ -125,6 +156,7 @@ export function createEmptyScenarioGraph(): ScenarioGraph {
     },
     functions: [],
     scheduled: [],
+    variables: [],
   };
 }
 

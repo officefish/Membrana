@@ -11,15 +11,25 @@ import { isDeviceKind } from './device-kind.js';
 import { createEmptySignalGraph, type SignalGraph } from './signal-graph.js';
 import {
   createEmptyScenarioGraph,
+  createEmptyScenarioSubgraph,
   type ScenarioGraph,
   type ScenarioSubgraph,
 } from './scenario-graph.js';
+import { isScenarioVariable, type ScenarioVariable } from './scenario-variables.js';
 
 /** Discriminator JSON-документа сценария устройства. */
 export const DEVICE_SCENARIO_DOCUMENT_KIND = 'device-scenario' as const;
 
-/** Текущая версия schema `device-scenario`. */
-export const DEVICE_SCENARIO_DOCUMENT_VERSION = 1 as const;
+/**
+ * Текущая версия schema `device-scenario`.
+ * v2 (device-board refactor v0.4): добавлены `scenario.onConnect` и
+ * `scenario.variables`. Документы v1 мигрируют при импорте (expand):
+ * `onConnect` → пустой подграф, `variables` → `[]`.
+ */
+export const DEVICE_SCENARIO_DOCUMENT_VERSION = 2 as const;
+
+/** Минимальная поддерживаемая (мигрируемая при импорте) версия документа. */
+export const DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1 as const;
 
 /** Метаданные export/import (hash обязателен при export — бриф V5). */
 export interface DeviceScenarioMeta {
@@ -96,10 +106,10 @@ export function parseDeviceScenarioDocument(
       ),
     );
   }
-  if (version !== DEVICE_SCENARIO_DOCUMENT_VERSION) {
+  if (version < DEVICE_SCENARIO_MIN_DOCUMENT_VERSION) {
     return err(
       new ValidationError(
-        `unsupported device-scenario version ${version} (expected ${DEVICE_SCENARIO_DOCUMENT_VERSION})`,
+        `unsupported device-scenario version ${version} (min ${DEVICE_SCENARIO_MIN_DOCUMENT_VERSION})`,
         'version',
       ),
     );
@@ -171,6 +181,38 @@ export function parseDeviceScenarioDocument(
     return err(new ValidationError('scenario.triggers.custom must be an array', 'scenario.triggers.custom'));
   }
 
+  // v0.4: onConnect отсутствует в документах v1 → мигрируем в пустой подграф.
+  const onConnectRaw = scenarioRaw['onConnect'];
+  let onConnect: ScenarioSubgraph;
+  if (onConnectRaw === undefined) {
+    onConnect = createEmptyScenarioSubgraph('on-connect-entry');
+  } else {
+    const onConnectResult = parseSubgraph(onConnectRaw, 'scenario.onConnect');
+    if (!onConnectResult.ok) {
+      return onConnectResult;
+    }
+    onConnect = onConnectResult.value;
+  }
+
+  // v0.4: variables отсутствуют в документах v1 → мигрируем в [].
+  const variablesRaw = scenarioRaw['variables'];
+  if (variablesRaw !== undefined && !Array.isArray(variablesRaw)) {
+    return err(new ValidationError('scenario.variables must be an array', 'scenario.variables'));
+  }
+  if (Array.isArray(variablesRaw)) {
+    for (let i = 0; i < variablesRaw.length; i += 1) {
+      if (!isScenarioVariable(variablesRaw[i])) {
+        return err(
+          new ValidationError(
+            `scenario.variables[${i}] is not a valid scenario variable`,
+            `scenario.variables.${i}`,
+          ),
+        );
+      }
+    }
+  }
+  const variables = (variablesRaw ?? []) as readonly ScenarioVariable[];
+
   const functionsRaw = scenarioRaw['functions'];
   if (functionsRaw !== undefined && !Array.isArray(functionsRaw)) {
     return err(new ValidationError('scenario.functions must be an array', 'scenario.functions'));
@@ -197,6 +239,7 @@ export function parseDeviceScenarioDocument(
     },
     scenario: {
       initial: initialResult.value,
+      onConnect,
       loops: {
         main: mainResult.value,
         alarm: alarmResult.value,
@@ -208,6 +251,7 @@ export function parseDeviceScenarioDocument(
       },
       functions: (functionsRaw ?? []) as ScenarioGraph['functions'],
       scheduled: (scheduledRaw ?? []) as ScenarioGraph['scheduled'],
+      variables,
     },
   });
 }

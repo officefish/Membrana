@@ -115,6 +115,7 @@ describe('ScenarioRuntime H2b', () => {
 
     const calls: string[] = [];
 
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
 
     const host = createStubScenarioRuntimeHost({
@@ -231,6 +232,7 @@ describe('ScenarioRuntime H4 alarm', () => {
 
     const calls: string[] = [];
 
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
 
     let mainIterations = 0;
@@ -318,6 +320,7 @@ describe('ScenarioRuntime H4 alarm', () => {
 describe('ScenarioRuntime RT3 mode override', () => {
   it('setMode(alarm) forces alarm loop without detection front', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     let alarmJournals = 0;
 
@@ -347,6 +350,7 @@ describe('ScenarioRuntime RT3 mode override', () => {
 
   it('setMode(normal) returns from manual alarm to main loop', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
 
     const host = createStubScenarioRuntimeHost({
@@ -379,6 +383,7 @@ describe('ScenarioRuntime RT3 mode override', () => {
 
 describe('ScenarioRuntime H3a onStop', () => {
   it('records system stop reason', async () => {
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       recordChunk: async () => {
@@ -398,6 +403,7 @@ describe('ScenarioRuntime H3a onStop', () => {
 describe('ScenarioRuntime H3c subgraph', () => {
   it('invokes function body from subgraph block', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       recordChunk: async () => {
@@ -422,6 +428,7 @@ describe('ScenarioRuntime H3c subgraph', () => {
 describe('ScenarioRuntime H3b onDisconnect', () => {
   it('runs onDisconnect instead of onStop on connection loss', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       writeJournal: async (event) => calls.push(`journal:${event.branch}`),
@@ -441,6 +448,7 @@ describe('ScenarioRuntime H3b onDisconnect', () => {
 
   it('restarts from initial after reconnect', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       selectMicrophone: async () => calls.push('select-microphone'),

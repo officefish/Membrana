@@ -46,7 +46,7 @@ export async function runSubgraphOnce(
   const entryId = subgraph.entry;
   let lastDetection: ScenarioDetectionResult | null = null;
 
-  while (true) {
+  for (;;) {
     if (signal.aborted) {
       return lastDetection;
     }
