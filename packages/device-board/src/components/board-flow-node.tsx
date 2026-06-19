@@ -1,8 +1,12 @@
-import React from 'react';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import React, { useCallback } from 'react';
+import { Handle, Position, useStore, type NodeProps } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from '../graph/board-node-data.js';
 import { isBoardFlowNodeData } from '../graph/board-node-data.js';
+import {
+  resolveContextValuePin,
+  resolveContextValuePortLabel,
+} from '../graph/resolve-context-port-label.js';
 import { formatSocketPortLabel } from '../graph/socket-port-label.js';
 import { socketHandleClass } from '../graph/socket-type-palette.js';
 
@@ -27,14 +31,46 @@ function handleOffset(index: number, total: number): string {
   return `${((index + 1) / (total + 1)) * 100}%`;
 }
 
+function variableDisplayName(data: BoardFlowNodeData): string {
+  const label = data.label;
+  if (data.nodeKind === 'variable-get' && label.toLowerCase().startsWith('get ')) {
+    return label.slice(4);
+  }
+  if (data.nodeKind === 'variable-set' && label.toLowerCase().startsWith('set ')) {
+    return label.slice(4);
+  }
+  return label;
+}
+
+function renderNodeTitle(data: BoardFlowNodeData): React.ReactNode {
+  if (data.nodeKind === 'variable-get') {
+    return (
+      <>
+        Get <em className="font-normal italic">{variableDisplayName(data)}</em>
+      </>
+    );
+  }
+  if (data.nodeKind === 'variable-set') {
+    return (
+      <>
+        Set <em className="font-normal italic">{variableDisplayName(data)}</em>
+      </>
+    );
+  }
+  return data.label;
+}
+
 function renderHandles(
   pins: readonly BoardSocketPin[],
   type: 'source' | 'target',
   position: Position,
+  resolvePin: (pin: BoardSocketPin) => BoardSocketPin,
+  resolveLabel: (pin: BoardSocketPin) => string,
 ): React.ReactNode {
   const isLeft = position === Position.Left;
   return pins.map((pin, index) => {
-    const label = formatSocketPortLabel(pin);
+    const resolvedPin = resolvePin(pin);
+    const label = resolveLabel(resolvedPin);
     const top = handleOffset(index, pins.length);
     return (
       <React.Fragment key={pin.name}>
@@ -43,7 +79,7 @@ function renderHandles(
           type={type}
           position={position}
           style={{ top }}
-          className={socketHandleClass(pin)}
+          className={socketHandleClass(resolvedPin)}
           title={label}
         />
         <span
@@ -61,7 +97,36 @@ function renderHandles(
 }
 
 /** Нода доски с типизированными handles (signal + scenario). */
-export const BoardFlowNode: React.FC<NodeProps> = ({ data, selected }) => {
+export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
+  const edges = useStore((state) => state.edges);
+  const nodes = useStore((state) => state.nodes);
+
+  const resolvePin = useCallback(
+    (pin: BoardSocketPin) => {
+      if (!isBoardFlowNodeData(data)) {
+        return pin;
+      }
+      if (data.nodeKind === 'is-valid' || data.nodeKind === 'print') {
+        return resolveContextValuePin(id, pin, edges, nodes);
+      }
+      return pin;
+    },
+    [data, edges, id, nodes],
+  );
+
+  const resolveLabel = useCallback(
+    (pin: BoardSocketPin) => {
+      if (!isBoardFlowNodeData(data)) {
+        return formatSocketPortLabel(pin);
+      }
+      if (data.nodeKind === 'is-valid' || data.nodeKind === 'print') {
+        return resolveContextValuePortLabel(id, pin, edges, nodes);
+      }
+      return formatSocketPortLabel(pin);
+    },
+    [data, edges, id, nodes],
+  );
+
   if (!isBoardFlowNodeData(data)) {
     return null;
   }
@@ -96,7 +161,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ data, selected }) => {
               🔒
             </span>
           ) : null}
-          <span className="truncate">{data.label}</span>
+          <span className="truncate">{renderNodeTitle(data)}</span>
         </span>
         {isSystem ? (
           <span className="badge badge-xs shrink-0 badge-accent">system</span>
@@ -105,8 +170,8 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ data, selected }) => {
         ) : null}
       </div>
       <div className="relative" style={{ minHeight: bodyHeightPx }}>
-        {renderHandles(inputs, 'target', Position.Left)}
-        {renderHandles(outputs, 'source', Position.Right)}
+        {renderHandles(inputs, 'target', Position.Left, resolvePin, resolveLabel)}
+        {renderHandles(outputs, 'source', Position.Right, resolvePin, resolveLabel)}
       </div>
     </div>
   );

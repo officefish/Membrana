@@ -395,6 +395,7 @@ const DeviceBoardShellInner: React.FC<{
               graph.isValidConnection(isSignal ? 'signal' : 'scenario', connection)
             }
             onSelectionChange={handleSelectionChange}
+            pulseEdges={graph.runtimeState.isRunning}
             ariaLabel={`Канвас: ${canvasLabel}`}
           />
         </div>

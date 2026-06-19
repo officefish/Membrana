@@ -21,7 +21,6 @@ function execEdge(id: string, source: string, target: string): Edge {
     sourceHandle: 'exec-out',
     target,
     targetHandle: 'exec-in',
-    animated: true,
   };
 }
 
@@ -85,7 +84,6 @@ export const INITIAL_SIGNAL_EDGES: Edge[] = [
     sourceHandle: 'audio-out',
     target: 'signal-analyzer',
     targetHandle: 'audio-in',
-    animated: true,
   },
 ];
 
@@ -127,7 +125,6 @@ export const DEMO_FUNCTION_CAPTURE_DETECT_EDGES: Edge[] = [
     sourceHandle: 'exec-out',
     target: 'fn-detect',
     targetHandle: 'exec-in',
-    animated: true,
   },
 ];
 
@@ -158,7 +155,6 @@ export const INITIAL_SCENARIO_MAIN_EDGES: Edge[] = [
     sourceHandle: 'exec-out',
     target: 'main-journal',
     targetHandle: 'exec-in',
-    animated: true,
   },
   {
     id: 'main-e2',
@@ -166,7 +162,6 @@ export const INITIAL_SCENARIO_MAIN_EDGES: Edge[] = [
     sourceHandle: 'exec-out',
     target: 'main-fn',
     targetHandle: 'exec-in',
-    animated: true,
   },
 ];
 
@@ -218,7 +213,6 @@ export const INITIAL_SCENARIO_ALARM_EDGES: Edge[] = [
     sourceHandle: 'exec-out',
     target: 'alarm-journal',
     targetHandle: 'exec-in',
-    animated: true,
   },
   {
     id: 'alarm-e2',
@@ -226,6 +220,5 @@ export const INITIAL_SCENARIO_ALARM_EDGES: Edge[] = [
     sourceHandle: 'exec-out',
     target: 'alarm-eval',
     targetHandle: 'exec-in',
-    animated: true,
   },
 ];

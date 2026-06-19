@@ -54,9 +54,8 @@ export function createVariableBoardNode(
   const id = options.id ?? `node-${kind}-${variable.id}-${Date.now().toString(36)}-${variableNodeSeq}`;
   const offset = (variableNodeSeq % 5) * 40;
   const { inputs, outputs } = variableNodePins(kind, variable.type);
-  const prefix = kind === 'variable-get' ? 'get' : 'set';
   const data: BoardFlowNodeData = {
-    label: `${prefix} ${variable.name}`,
+    label: variable.name,
     layer: 'scenario',
     status: 'active',
     blockKind: 'custom',
