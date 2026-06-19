@@ -21,11 +21,15 @@ function AppContentInner() {
     <>
       <NodeConnectionShell />
       {isBoardMode ? (
-        <DeviceBoardShell
-          runtimeHost={runtimeHost}
-          persistAdapter={persistAdapter}
-          deviceLive={connectionMode === 'paired' ? deviceLive : undefined}
-        />
+        <div className="fixed inset-0 z-50 flex flex-col bg-base-100">
+          <div className="min-h-0 flex-1">
+            <DeviceBoardShell
+              runtimeHost={runtimeHost}
+              persistAdapter={persistAdapter}
+              deviceLive={connectionMode === 'paired' ? deviceLive : undefined}
+            />
+          </div>
+        </div>
       ) : (
         <Dashboard
           header={<AppHeader />}

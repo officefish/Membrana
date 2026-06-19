@@ -110,6 +110,14 @@ const DeviceBoardShellInner: React.FC<{
   const scenarioBranch = graph.scenarioBranch;
 
   const handleExitBoardMode = useCallback(() => {
+    if (graph.isDirty) {
+      const confirmed =
+        typeof window === 'undefined' ||
+        window.confirm('Есть несохранённые изменения. Выйти без сохранения?');
+      if (!confirmed) {
+        return;
+      }
+    }
     if (graph.runtimeState.isRunning) {
       graph.stopScenario('system');
     }
@@ -154,17 +162,11 @@ const DeviceBoardShellInner: React.FC<{
   );
 
   const syncLabel =
-    graph.syncStatus === 'loading'
-      ? 'Загрузка…'
-      : graph.syncStatus === 'saving'
-        ? 'Сохранение…'
-        : graph.syncStatus === 'saved'
-          ? 'Синхронизировано'
-          : graph.syncStatus === 'error'
-            ? 'Ошибка sync'
-            : null;
+    graph.syncStatus === 'error' ? graph.syncError ?? 'Ошибка сохранения' : null;
 
+  const canSave = graph.isDirty && graph.syncStatus !== 'saving' && graph.syncStatus !== 'loading';
   const mode = graph.mode;
+  const isSaving = graph.syncStatus === 'saving';
 
   const scenarioCanvas =
     scenarioBranch === 'initial'
@@ -227,72 +229,89 @@ const DeviceBoardShellInner: React.FC<{
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-base-100">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-base-200 px-4 py-2 shadow-sm">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
-            Device board
-          </p>
-          <h1 className="text-sm font-semibold text-base-content">Редактор устройства</h1>
-        </div>
-
-        {showRunControls ? (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={() => void graph.startScenario()}
-                disabled={!graph.canRun}
-                title={graph.canRun ? 'Запуск сценария' : (graph.runDisabledReason ?? 'Запуск недоступен')}
-                aria-label={graph.canRun ? 'Запуск сценария' : graph.runDisabledReason ?? 'Запуск недоступен'}
-              >
-                Run
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm btn-ghost"
-                onClick={() => graph.stopScenario('user')}
-                disabled={!graph.runtimeState.isRunning}
-              >
-                Stop
-              </button>
-            </div>
-
-            <div role="group" aria-label="Режим" className="join">
-              <button
-                type="button"
-                aria-pressed={mode === 'normal'}
-                className={`btn btn-sm join-item ${mode === 'normal' ? 'btn-info' : 'btn-ghost'}`}
-                onClick={() => graph.setMode('normal')}
-                disabled={!graph.runtimeState.isRunning}
-              >
-                Обычный
-              </button>
-              <button
-                type="button"
-                aria-pressed={mode === 'alarm'}
-                className={`btn btn-sm join-item ${mode === 'alarm' ? 'btn-warning' : 'btn-ghost'}`}
-                onClick={() => graph.setMode('alarm')}
-                disabled={!graph.runtimeState.isRunning}
-              >
-                Тревога
-              </button>
-            </div>
-            <span className="sr-only" role="status" aria-live="polite">
-              Режим: {mode === 'alarm' ? 'тревога' : 'обычный'}
-            </span>
-          </div>
-        ) : null}
-
-        <div className="flex items-center gap-2">
-          {syncLabel !== null ? (
+      <header className="flex items-center justify-between gap-3 border-b border-base-200 px-4 py-2 shadow-sm">
+        <div className="flex min-w-0 items-center gap-3">
+          {isSaving ? (
             <span
-              className={`text-xs ${graph.syncStatus === 'error' ? 'text-error' : 'text-base-content/60'}`}
-              title={graph.syncError ?? undefined}
-            >
+              className="loading loading-spinner loading-sm text-primary"
+              aria-label="Сохранение сценария"
+            />
+          ) : null}
+          <button
+            type="button"
+            className="btn btn-sm btn-primary"
+            disabled={!canSave}
+            onClick={() => void graph.saveScenario()}
+          >
+            Сохранить
+          </button>
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+              Device board
+            </p>
+            <h1 className="truncate text-sm font-semibold text-base-content">Редактор устройства</h1>
+          </div>
+          {syncLabel !== null ? (
+            <span className="text-xs text-error" title={graph.syncError ?? undefined}>
               {syncLabel}
             </span>
           ) : null}
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          {showRunControls ? (
+            <>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  onClick={() => void graph.startScenario()}
+                  disabled={!graph.canRun}
+                  title={graph.canRun ? 'Запуск сценария' : (graph.runDisabledReason ?? 'Запуск недоступен')}
+                  aria-label={graph.canRun ? 'Запуск сценария' : graph.runDisabledReason ?? 'Запуск недоступен'}
+                >
+                  Run
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost"
+                  onClick={() => graph.stopScenario('user')}
+                  disabled={!graph.runtimeState.isRunning}
+                >
+                  Stop
+                </button>
+              </div>
+
+              <div role="group" aria-label="Режим" className="join">
+                <button
+                  type="button"
+                  aria-pressed={mode === 'normal'}
+                  className={`btn btn-sm join-item ${mode === 'normal' ? 'btn-info' : 'btn-ghost'}`}
+                  onClick={() => graph.setMode('normal')}
+                  disabled={!graph.runtimeState.isRunning}
+                >
+                  Обычный
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={mode === 'alarm'}
+                  className={`btn btn-sm join-item ${mode === 'alarm' ? 'btn-warning' : 'btn-ghost'}`}
+                  onClick={() => graph.setMode('alarm')}
+                  disabled={!graph.runtimeState.isRunning}
+                >
+                  Тревога
+                </button>
+              </div>
+              <span className="sr-only" role="status" aria-live="polite">
+                Режим: {mode === 'alarm' ? 'тревога' : 'обычный'}
+              </span>
+            </>
+          ) : null}
+
+          <button type="button" className="btn btn-sm btn-outline" onClick={handleExitBoardMode}>
+            {exitLabel}
+          </button>
+
           <input
             ref={fileInputRef}
             type="file"
@@ -300,15 +319,31 @@ const DeviceBoardShellInner: React.FC<{
             className="hidden"
             onChange={(event) => void handleImportFile(event)}
           />
-          <button type="button" className="btn btn-sm btn-outline" onClick={handleImportClick}>
-            Import JSON
-          </button>
-          <button type="button" className="btn btn-sm btn-outline" onClick={() => void graph.exportJson()}>
-            Export JSON
-          </button>
-          <button type="button" className="btn btn-sm btn-outline" onClick={handleExitBoardMode}>
-            {exitLabel}
-          </button>
+          <div className="dropdown dropdown-end">
+            <button
+              type="button"
+              tabIndex={0}
+              className="btn btn-sm btn-ghost btn-square"
+              aria-label="Настройки сценария"
+            >
+              ⚙
+            </button>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu z-[70] w-44 rounded-box border border-base-300 bg-base-100 p-2 shadow"
+            >
+              <li>
+                <button type="button" onClick={handleImportClick}>
+                  Import JSON
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={() => void graph.exportJson()}>
+                  Export JSON
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </header>
 

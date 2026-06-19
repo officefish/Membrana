@@ -12,6 +12,7 @@ import {
 import {
   createScenarioVariable,
   type DeviceKind,
+  type DeviceScenarioDocument,
   type RuntimeMode,
   type ScenarioBlockKind,
   type ScenarioVariable,
@@ -35,6 +36,7 @@ import {
   clearBranchState,
   shouldPreserveLockedNodes,
   resolveRunDisabledReason,
+  scenarioDocumentFingerprint,
   validatePreRun,
   type VariableNodeKind,
   type V04PaletteNodeKind,
@@ -101,8 +103,12 @@ export interface DeviceBoardGraphContextValue {
   readonly refreshValidation: () => readonly PreRunValidationIssue[];
   readonly exportJson: () => Promise<void>;
   readonly importJsonFile: (file: File) => Promise<string | null>;
-  readonly syncStatus: 'idle' | 'loading' | 'saving' | 'saved' | 'error';
+  readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
+  /** Черновик отличается от последнего сохранённого снимка. */
+  readonly isDirty: boolean;
+  /** Сохранить сценарий на сервер / в persist-адаптер (только по явному клику). */
+  readonly saveScenario: () => Promise<boolean>;
   readonly startScenario: () => Promise<void>;
   readonly stopScenario: (reason?: ScenarioStopReason) => void;
   /** Ручной режim normal/alarm (MP7b RT3/RT6). Делегируется в ScenarioRuntime. */
@@ -183,12 +189,18 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [variables, setVariables] = useState<readonly ScenarioVariable[]>(defaultState.variables);
   const [validationIssues, setValidationIssues] = useState<readonly PreRunValidationIssue[]>([]);
   const [runtimeState, setRuntimeState] = useState<ScenarioRuntimeState>(createIdleScenarioRuntimeState());
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'saved' | 'error'>('idle');
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
-  const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const skipPersistRef = useRef(false);
+  const savedSnapshotRef = useRef<string | null>(null);
+  const skipDirtyRef = useRef(false);
+
+  const markSavedSnapshot = useCallback((document: DeviceScenarioDocument) => {
+    savedSnapshotRef.current = scenarioDocumentFingerprint(document);
+    setIsDirty(false);
+  }, []);
 
   useEffect(() => {
     if (runtimeHost === undefined) {
@@ -230,7 +242,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const applyHydratedState = useCallback((state: HydratedBoardState) => {
-    skipPersistRef.current = true;
+    skipDirtyRef.current = true;
     setDeviceKind(state.deviceKind);
     setSignalNodes(state.signalNodes);
     setSignalEdges(state.signalEdges);
@@ -251,7 +263,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioFunctionMeta(state.scenarioFunctionMeta);
     setVariables(state.variables);
     window.setTimeout(() => {
-      skipPersistRef.current = false;
+      skipDirtyRef.current = false;
     }, 0);
   }, []);
 
@@ -268,6 +280,28 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         if (cancelled) return;
         if (record !== null) {
           applyHydratedState(hydrateBoardFromDocument(record.document));
+          markSavedSnapshot(record.document);
+        } else {
+          markSavedSnapshot(buildDeviceScenarioDocument({
+            deviceKind: deviceKindProp,
+            title: 'Device board export',
+            signalNodes: defaultState.signalNodes,
+            signalEdges: defaultState.signalEdges,
+            scenarioInitialNodes: defaultState.scenarioInitialNodes,
+            scenarioInitialEdges: defaultState.scenarioInitialEdges,
+            scenarioOnConnectNodes: defaultState.scenarioOnConnectNodes,
+            scenarioOnConnectEdges: defaultState.scenarioOnConnectEdges,
+            scenarioMainNodes: defaultState.scenarioMainNodes,
+            scenarioMainEdges: defaultState.scenarioMainEdges,
+            scenarioAlarmNodes: defaultState.scenarioAlarmNodes,
+            scenarioAlarmEdges: defaultState.scenarioAlarmEdges,
+            scenarioOnStopNodes: defaultState.scenarioOnStopNodes,
+            scenarioOnStopEdges: defaultState.scenarioOnStopEdges,
+            scenarioOnDisconnectNodes: defaultState.scenarioOnDisconnectNodes,
+            scenarioOnDisconnectEdges: defaultState.scenarioOnDisconnectEdges,
+            scenarioFunctions: [hydratedFunctionInput(defaultState)],
+            variables: defaultState.variables,
+          }));
         }
         setSyncStatus('idle');
       })
@@ -279,7 +313,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     return () => {
       cancelled = true;
     };
-  }, [applyHydratedState, persistAdapter]);
+  }, [applyHydratedState, defaultState, deviceKindProp, markSavedSnapshot, persistAdapter]);
 
   const buildDocument = useCallback(() => {
     return buildDeviceScenarioDocument({
@@ -551,18 +585,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     anchor.click();
     URL.revokeObjectURL(url);
     runValidation();
-    if (persistAdapter !== undefined) {
-      setSyncStatus('saving');
-      setSyncError(null);
-      try {
-        await persistAdapter.save(exported.document);
-        setSyncStatus('saved');
-      } catch (error: unknown) {
-        setSyncStatus('error');
-        setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
-      }
-    }
-  }, [buildDocument, deviceKind, persistAdapter, runValidation]);
+  }, [buildDocument, deviceKind, runValidation]);
 
   const importJsonFile = useCallback(
     async (file: File): Promise<string | null> => {
@@ -573,54 +596,50 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       }
       applyHydratedState(result.state);
       runValidation();
-      if (persistAdapter !== undefined) {
-        setSyncStatus('saving');
-        setSyncError(null);
-        try {
-          await persistAdapter.save(result.document);
-          setSyncStatus('saved');
-        } catch (error: unknown) {
-          setSyncStatus('error');
-          setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
-        }
-      }
       return null;
     },
-    [applyHydratedState, persistAdapter, runValidation],
+    [applyHydratedState, runValidation],
   );
 
-  useEffect(() => {
-    if (persistAdapter === undefined || skipPersistRef.current) {
-      return;
+  const saveScenario = useCallback(async (): Promise<boolean> => {
+    if (persistAdapter === undefined) {
+      return false;
     }
-    if (syncStatus === 'loading') {
-      return;
+    setSyncStatus('saving');
+    setSyncError(null);
+    const document = buildDocument();
+    try {
+      await persistAdapter.save(document);
+      markSavedSnapshot(document);
+      setSyncStatus('idle');
+      return true;
+    } catch (error: unknown) {
+      setSyncStatus('error');
+      setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
+      return false;
     }
-    if (persistTimerRef.current !== null) {
-      clearTimeout(persistTimerRef.current);
-    }
-    persistTimerRef.current = setTimeout(() => {
-      setSyncStatus('saving');
-      setSyncError(null);
-      void persistAdapter
-        .save(buildDocument())
-        .then(() => {
-          setSyncStatus('saved');
-        })
-        .catch((error: unknown) => {
-          setSyncStatus('error');
-          setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
-        });
-    }, 1500);
+  }, [buildDocument, markSavedSnapshot, persistAdapter]);
 
-    return () => {
-      if (persistTimerRef.current !== null) {
-        clearTimeout(persistTimerRef.current);
-      }
-    };
+  useEffect(() => {
+    if (persistAdapter !== undefined) {
+      return;
+    }
+    if (savedSnapshotRef.current === null) {
+      markSavedSnapshot(buildDocument());
+    }
+  }, [buildDocument, markSavedSnapshot, persistAdapter]);
+
+  useEffect(() => {
+    if (skipDirtyRef.current || syncStatus === 'loading') {
+      return;
+    }
+    if (savedSnapshotRef.current === null) {
+      return;
+    }
+    const dirty = scenarioDocumentFingerprint(buildDocument()) !== savedSnapshotRef.current;
+    setIsDirty(dirty);
   }, [
     buildDocument,
-    persistAdapter,
     syncStatus,
     scenarioAlarmEdges,
     scenarioAlarmNodes,
@@ -922,6 +941,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       importJsonFile,
       syncStatus,
       syncError,
+      isDirty,
+      saveScenario,
       startScenario,
       stopScenario,
       mode: runtimeState.mode,
@@ -947,6 +968,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       deviceKind,
       exportJson,
       importJsonFile,
+      isDirty,
       isValidConnectionForLayer,
       onScenarioAlarmConnect,
       onScenarioAlarmEdgesChange,
@@ -992,6 +1014,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnDisconnectNodes,
       scenarioFunctionEdges,
       scenarioFunctionNodes,
+      saveScenario,
       setMode,
       signalEdges,
       signalNodes,

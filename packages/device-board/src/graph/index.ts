@@ -35,6 +35,7 @@ export {
   nodesAfterBranchClear,
   shouldPreserveLockedNodes,
 } from './clear-branch.js';
+export { scenarioDocumentFingerprint } from './scenario-snapshot.js';
 export {
   createPaletteBoardNode,
   isPaletteNodeKind,
