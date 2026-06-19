@@ -96,6 +96,14 @@ export async function createNode(label?: string): Promise<{ node: NodeView }> {
   return (await res.json()) as { node: NodeView };
 }
 
+export async function deleteNode(
+  nodeId: string,
+): Promise<{ deletedNodeId: string; revokedKeyIds: string[] }> {
+  const res = await authFetch(`/v1/nodes/${nodeId}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { deletedNodeId: string; revokedKeyIds: string[] };
+}
+
 export async function createAccessKey(
   nodeId: string,
   duration: NodeAccessKeyDuration,
@@ -117,9 +125,15 @@ export async function revokeAccessKey(keyId: string): Promise<{ accessKey: Acces
 export async function purgeRevokedAccessKeys(
   nodeId: string,
 ): Promise<{ deletedCount: number }> {
-  const res = await authFetch(`/v1/nodes/${nodeId}/access-keys/purge-revoked`, {
+  const res = await authFetch(`/v1/nodes/${nodeId}/access-keys/purge-inactive`, {
     method: 'POST',
   });
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as { deletedCount: number };
+}
+
+export async function deleteAccessKey(keyId: string): Promise<{ deletedKeyId: string }> {
+  const res = await authFetch(`/v1/access-keys/${keyId}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { deletedKeyId: string };
 }

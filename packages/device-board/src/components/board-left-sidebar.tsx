@@ -103,7 +103,7 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   onAddVariableNode,
 }) => (
   <nav
-    className="flex h-full w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-base-300 bg-base-200 p-3"
+    className="flex h-full w-[clamp(11rem,13vw,14rem)] flex-col gap-4 overflow-y-auto border-r border-base-300 bg-base-200/95 p-3 shadow-lg backdrop-blur-sm"
     aria-label="Вкладки доски"
   >
     {BRANCH_SIDEBAR_SECTIONS.map((section) => (

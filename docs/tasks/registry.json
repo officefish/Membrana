@@ -2847,6 +2847,107 @@
         "device-board-refactor-v04"
       ],
       "notes": "Lead: Ozhegov + Rodchenko. Параллельно DBR0–DBR5. Критерий «связь жива» = online-presence (node.online/offline); единый isDeviceLive(deviceId); гасить Пуск в NodesPage и в борде; «сопряжён, но офлайн» → disabled + title/aria."
+    },
+    {
+      "id": "device-board-cabinet-hotfix",
+      "title": "Device-board + cabinet hotfix: layout overlay, nodes/keys split, delete node, purge expired",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-refactor-v04"
+      ],
+      "notes": "QA prod 2026-06-18: 5 замечаний. Консилиум docs/seanses/device-board-cabinet-hotfix-2026-06-18.md. Deploy после merge."
+    },
+    {
+      "id": "dbh-0-canvas-overlay",
+      "title": "DBH0: fullscreen canvas + overlay sidebars",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Rodchenko + Ozhegov. device-board-shell absolute canvas layer."
+    },
+    {
+      "id": "dbh-1-sidebar-clamp",
+      "title": "DBH1: clamp sidebar width (vw + rem)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "XS",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Rodchenko. Same PR as DBH0."
+    },
+    {
+      "id": "dbh-2-nav-split",
+      "title": "DBH2: split cabinet nav Узлы / Ключи by default",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "XS",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Rodchenko. CabinetShell default split; combined opt-in flag."
+    },
+    {
+      "id": "dbh-3-delete-node",
+      "title": "DBH3: DELETE node + revoke keys + free-v1 maxNodes=1",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Ozhegov. background-cabinet API + NodesPage + migration/seed."
+    },
+    {
+      "id": "dbh-4-purge-expired-keys",
+      "title": "DBH4: purge inactive keys (expired + revoked)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dbh-3-delete-node"
+      ],
+      "notes": "Lead: Ozhegov. Extend purge API + KeysPage UI."
     }
   ]
 }

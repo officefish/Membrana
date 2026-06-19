@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   createAccessKey,
   DURATION_OPTIONS,
+  deleteAccessKey,
   fetchMembraneMe,
   purgeRevokedAccessKeys,
   revokeAccessKey,
@@ -10,7 +11,12 @@ import {
   type NodeView,
 } from '@/api/membrane';
 
-export function KeysPage() {
+interface KeysPageProps {
+  /** Предвыбор узла при переходе из раздела «Узлы». */
+  readonly initialNodeId?: string | null;
+}
+
+export function KeysPage({ initialNodeId = null }: KeysPageProps) {
   const [data, setData] = useState<MembraneView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,15 +32,18 @@ export function KeysPage() {
     try {
       const view = await fetchMembraneMe();
       setData(view);
-      setSelectedNodeId((prev) =>
-        prev && view.nodes.some((n) => n.id === prev) ? prev : (view.nodes[0]?.id ?? null),
-      );
+      setSelectedNodeId((prev) => {
+        if (initialNodeId && view.nodes.some((n) => n.id === initialNodeId)) {
+          return initialNodeId;
+        }
+        return prev && view.nodes.some((n) => n.id === prev) ? prev : (view.nodes[0]?.id ?? null);
+      });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ошибка загрузки');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [initialNodeId]);
 
   useEffect(() => {
     void load();
@@ -84,13 +93,13 @@ export function KeysPage() {
     }
   };
 
-  const handlePurgeRevoked = async () => {
+  const handlePurgeInactive = async () => {
     if (!node) return;
-    const revokedCount = node.accessKeys.filter((key) => key.revokedAt).length;
-    if (revokedCount === 0) return;
+    const inactiveCount = node.accessKeys.filter((key) => !key.active).length;
+    if (inactiveCount === 0) return;
     if (
       !window.confirm(
-        `Удалить ${revokedCount} отозванн${revokedCount === 1 ? 'ый ключ' : revokedCount < 5 ? 'ых ключа' : 'ых ключей'}? Это действие необратимо.`,
+        `Удалить ${inactiveCount} неактивн${inactiveCount === 1 ? 'ый ключ' : inactiveCount < 5 ? 'ых ключа' : 'ых ключей'} (истёкшие и отозванные)? Это действие необратимо.`,
       )
     ) {
       return;
@@ -101,7 +110,21 @@ export function KeysPage() {
       await purgeRevokedAccessKeys(node.id);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не удалось удалить отозванные ключи');
+      setError(e instanceof Error ? e.message : 'Не удалось удалить неактивные ключи');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDeleteKey = async (keyId: string) => {
+    if (!window.confirm('Удалить ключ из списка?')) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await deleteAccessKey(keyId);
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось удалить ключ');
     } finally {
       setBusy(false);
     }
@@ -111,7 +134,7 @@ export function KeysPage() {
     return <span className="loading loading-spinner loading-md" aria-label="Загрузка" />;
   }
 
-  const revokedKeyCount = node?.accessKeys.filter((key) => key.revokedAt).length ?? 0;
+  const inactiveKeyCount = node?.accessKeys.filter((key) => !key.active).length ?? 0;
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -203,14 +226,14 @@ export function KeysPage() {
             <div className="card-body">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="card-title text-lg">Ключи узла</h2>
-                {revokedKeyCount > 0 ? (
+                {inactiveKeyCount > 0 ? (
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
                     disabled={busy}
-                    onClick={() => void handlePurgeRevoked()}
+                    onClick={() => void handlePurgeInactive()}
                   >
-                    Удалить отозванные ({revokedKeyCount})
+                    Очистить неактивные ({inactiveKeyCount})
                   </button>
                 ) : null}
               </div>
@@ -246,7 +269,16 @@ export function KeysPage() {
                           >
                             Отозвать
                           </button>
-                        ) : null}
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-sm"
+                            disabled={busy}
+                            onClick={() => void handleDeleteKey(key.id)}
+                          >
+                            Удалить
+                          </button>
+                        )}
                       </li>
                     );
                   })}
