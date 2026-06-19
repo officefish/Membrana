@@ -75,14 +75,33 @@ function resolveFunctionCanvas(
   edges: Edge[];
   meta: ScenarioFunctionCanvasMeta;
 } {
+  const demoFallback = (): {
+    nodes: Node[];
+    edges: Edge[];
+    meta: ScenarioFunctionCanvasMeta;
+  } => ({
+    nodes: [...DEMO_FUNCTION_CAPTURE_DETECT_NODES],
+    edges: [...DEMO_FUNCTION_CAPTURE_DETECT_EDGES],
+    meta: {
+      id: DEMO_FUNCTION_CAPTURE_DETECT_ID,
+      name: DEMO_FUNCTION_CAPTURE_DETECT_NAME,
+      entry: DEMO_FUNCTION_CAPTURE_DETECT_ENTRY,
+    },
+  });
+
   const first = functions[0];
   if (first === undefined) {
+    return demoFallback();
+  }
+
+  const entryMissing =
+    first.nodes.length === 0 || !first.nodes.some((node) => node.id === first.entry);
+  if (entryMissing) {
     return {
-      nodes: [...DEMO_FUNCTION_CAPTURE_DETECT_NODES],
-      edges: [...DEMO_FUNCTION_CAPTURE_DETECT_EDGES],
+      ...demoFallback(),
       meta: {
-        id: DEMO_FUNCTION_CAPTURE_DETECT_ID,
-        name: DEMO_FUNCTION_CAPTURE_DETECT_NAME,
+        id: first.id || DEMO_FUNCTION_CAPTURE_DETECT_ID,
+        name: first.name || DEMO_FUNCTION_CAPTURE_DETECT_NAME,
         entry: DEMO_FUNCTION_CAPTURE_DETECT_ENTRY,
       },
     };
@@ -204,6 +223,21 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
 
 /** Собирает вход для `buildDeviceScenarioDocument.scenarioFunctions` из гидратации. */
 export function hydratedFunctionInput(state: HydratedBoardState): SerializeScenarioFunctionInput {
+  const entryMissing =
+    state.scenarioFunctionNodes.length === 0 ||
+    !state.scenarioFunctionNodes.some((node) => node.id === state.scenarioFunctionMeta.entry);
+
+  if (entryMissing) {
+    const demo = buildDemoFunctionInput();
+    return {
+      id: state.scenarioFunctionMeta.id || demo.id,
+      name: state.scenarioFunctionMeta.name || demo.name,
+      entry: DEMO_FUNCTION_CAPTURE_DETECT_ENTRY,
+      nodes: [...DEMO_FUNCTION_CAPTURE_DETECT_NODES],
+      edges: [...DEMO_FUNCTION_CAPTURE_DETECT_EDGES],
+    };
+  }
+
   return {
     id: state.scenarioFunctionMeta.id,
     name: state.scenarioFunctionMeta.name,

@@ -1,4 +1,4 @@
-import { isReferenceSocketType, isValidSocketConnection } from '@membrana/core';
+import { isReferenceSocketType, isValueSocketType, isValidSocketConnection } from '@membrana/core';
 import type { Connection, Edge, Node } from '@xyflow/react';
 
 import type { BoardLayerTab } from '../types/board-ui.js';
@@ -41,7 +41,8 @@ export function isValidBoardConnection(
         (targetNode.data.nodeKind === 'print' || targetNode.data.nodeKind === 'is-valid') &&
         targetHandle === PALETTE_VALUE_HANDLE &&
         sourceResolved.socketType !== undefined &&
-        isReferenceSocketType(sourceResolved.socketType)
+        (isReferenceSocketType(sourceResolved.socketType) ||
+          isValueSocketType(sourceResolved.socketType))
       ) {
         return true;
       }
