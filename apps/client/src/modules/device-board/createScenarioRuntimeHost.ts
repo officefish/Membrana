@@ -1,6 +1,8 @@
-import { logger } from '@membrana/core';
 import type { ScenarioReferenceValue } from '@membrana/core';
 import type { ScenarioRuntimeHost } from '@membrana/device-board';
+import { waitMs } from '@membrana/device-board';
+
+import { scenarioRuntimeInfo, setScenarioRuntimeInfoLogging } from './scenarioRuntimeInfoGate';
 
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { isDeviceLive } from '@/lib/isDeviceLive';
@@ -87,9 +89,11 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     recordChunk: (options) => bridge.recordChunk(options),
     trendsFftDetect: () => bridge.trendsFftDetect(),
     evaluateSoundLevel: () => bridge.evaluateSoundLevel(),
+    waitUntilNextLoopTick: ({ pauseMs, signal }) => waitMs(pauseMs, signal),
     watchConnection: (handlers) => bridge.watchConnection(handlers),
+    setInfoLoggingEnabled: setScenarioRuntimeInfoLogging,
     log: (message, context) => {
-      logger.info(`[device-board] ${message}`, context);
+      scenarioRuntimeInfo(`[device-board] ${message}`, context);
     },
   };
 }

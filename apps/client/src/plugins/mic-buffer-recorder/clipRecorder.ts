@@ -16,17 +16,49 @@ export interface ActiveClipRecorder {
   cancel(): void;
 }
 
+const WAV_CAPTURE_PROCESSOR = 'wav-capture-processor';
+
+/** Inline AudioWorklet — без ScriptProcessorNode (deprecated). */
+const WAV_CAPTURE_WORKLET_SOURCE = `
+class WavCaptureProcessor extends AudioWorkletProcessor {
+  process(inputs) {
+    const channel = inputs[0] && inputs[0][0];
+    if (channel && channel.length > 0) {
+      this.port.postMessage(channel);
+    }
+    return true;
+  }
+}
+registerProcessor('${WAV_CAPTURE_PROCESSOR}', WavCaptureProcessor);
+`;
+
+async function loadWavCaptureWorklet(ctx: AudioContext): Promise<void> {
+  const blob = new Blob([WAV_CAPTURE_WORKLET_SOURCE], { type: 'application/javascript' });
+  const url = URL.createObjectURL(blob);
+  try {
+    await ctx.audioWorklet.addModule(url);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 function startWavRecorder(stream: MediaStream): ActiveClipRecorder {
   const ctx = new AudioContext({ sampleRate: WAV_SAMPLE_RATE });
   const source = ctx.createMediaStreamSource(stream);
-  const processor = ctx.createScriptProcessor(4096, 1, 1);
   const pcmChunks: Float32Array[] = [];
-
-  processor.onaudioprocess = (event) => {
-    pcmChunks.push(new Float32Array(event.inputBuffer.getChannelData(0)));
-  };
-  source.connect(processor);
-  processor.connect(ctx.destination);
+  let worklet: AudioWorkletNode | null = null;
+  let ready = loadWavCaptureWorklet(ctx).then(() => {
+    worklet = new AudioWorkletNode(ctx, WAV_CAPTURE_PROCESSOR, {
+      numberOfInputs: 1,
+      numberOfOutputs: 1,
+      channelCount: 1,
+    });
+    worklet.port.onmessage = (event: MessageEvent<Float32Array>) => {
+      pcmChunks.push(new Float32Array(event.data));
+    };
+    source.connect(worklet);
+    worklet.connect(ctx.destination);
+  });
 
   const mergeSamples = (): Float32Array => {
     const total = pcmChunks.reduce((sum, chunk) => sum + chunk.length, 0);
@@ -40,13 +72,17 @@ function startWavRecorder(stream: MediaStream): ActiveClipRecorder {
   };
 
   const teardownGraph = (): void => {
-    processor.onaudioprocess = null;
-    processor.disconnect();
+    if (worklet !== null) {
+      worklet.port.onmessage = null;
+      worklet.disconnect();
+      worklet = null;
+    }
     source.disconnect();
   };
 
   return {
     async stop(): Promise<ClipResult> {
+      await ready;
       teardownGraph();
       const samples = mergeSamples();
       const sampleRate = ctx.sampleRate;
@@ -56,8 +92,10 @@ function startWavRecorder(stream: MediaStream): ActiveClipRecorder {
       return { blob, durationSec, sampleRate, channels: 1 };
     },
     cancel(): void {
-      teardownGraph();
-      void ctx.close();
+      void ready.finally(() => {
+        teardownGraph();
+        void ctx.close();
+      });
     },
   };
 }

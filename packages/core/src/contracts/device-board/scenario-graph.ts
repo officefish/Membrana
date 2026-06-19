@@ -67,6 +67,8 @@ export interface ScenarioGraphNode {
   readonly system?: boolean;
   /** v0.4: для `variable-get`/`variable-set` — id связанной переменной. */
   readonly variableId?: string;
+  /** v0.4+: `event` в лупах — `loopTick` (onTick); обработчики — `handler` или не задано. */
+  readonly eventVariant?: 'handler' | 'loopTick';
 }
 
 /** Ребро scenario graph. */

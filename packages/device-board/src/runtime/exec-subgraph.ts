@@ -7,6 +7,7 @@ import type { ScenarioDetectionResult } from './types.js';
 
 import type { ScenarioRuntimeBranch } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
+import { MAX_SUBGRAPH_EXEC_STEPS, yieldToEventLoop } from './runtime-timing.js';
 
 export interface ExecSubgraphOptions {
   readonly branch: ScenarioRuntimeBranch;
@@ -55,10 +56,19 @@ export async function runSubgraphOnce(
   let currentId = subgraph.entry;
   const entryId = subgraph.entry;
   let lastDetection: ScenarioDetectionResult | null = null;
+  let execSteps = 0;
+  const isLoopBranch = options.branch === 'main' || options.branch === 'alarm';
 
   for (;;) {
     if (signal.aborted) {
       return lastDetection;
+    }
+
+    execSteps += 1;
+    if (execSteps > MAX_SUBGRAPH_EXEC_STEPS) {
+      throw new Error(
+        `Scenario subgraph "${options.branch}" exceeded ${MAX_SUBGRAPH_EXEC_STEPS} exec steps — проверьте цикл (нужен узел ∞)`,
+      );
     }
 
     const node = findNode(subgraph, currentId);
@@ -85,6 +95,10 @@ export async function runSubgraphOnce(
       return result.lastDetection;
     }
 
+    if (result.loopRepeatRequested === true) {
+      return result.lastDetection;
+    }
+
     lastDetection = result.lastDetection;
 
     const nextId = findExecSuccessor(subgraph, currentId, result.execOutHandle ?? 'exec-out');
@@ -93,6 +107,10 @@ export async function runSubgraphOnce(
     }
     if (nextId === entryId) {
       return lastDetection;
+    }
+
+    if (isLoopBranch) {
+      await yieldToEventLoop(signal);
     }
 
     currentId = nextId;

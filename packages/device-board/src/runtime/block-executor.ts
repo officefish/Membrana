@@ -30,6 +30,8 @@ export interface BlockExecutionResult {
   readonly stopRequested: boolean;
   /** v0.4 DBR5: exec-выход для условных узлов (`is-valid`). */
   readonly execOutHandle?: string;
+  /** Достигнут системный loop-repeat (∞) — завершить итерацию лупа. */
+  readonly loopRepeatRequested?: boolean;
 }
 
 function assertNotAborted(signal: AbortSignal): void {
@@ -83,6 +85,11 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
   if (node.nodeKind === 'event') {
     host.log('event', { nodeId: node.id, branch });
     return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'loop-repeat') {
+    host.log('loop-repeat', { nodeId: node.id, branch });
+    return { lastDetection, stopRequested: false, loopRepeatRequested: true };
   }
 
   if (node.nodeKind === 'variable-get') {

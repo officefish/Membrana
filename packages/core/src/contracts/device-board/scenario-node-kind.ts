@@ -20,13 +20,15 @@ export const SCENARIO_NODE_KINDS = [
   'print',
   'is-valid',
   'get-microphone',
+  /** Системный терминал лупа (∞): exec-ребро сюда → новая итерация. */
+  'loop-repeat',
 ] as const;
 
 /** Вид узла scenario graph v0.4. */
 export type ScenarioNodeKind = (typeof SCENARIO_NODE_KINDS)[number];
 
 /** Системные виды узлов, которые нельзя удалять с борда. */
-export const SYSTEM_SCENARIO_NODE_KINDS = ['event'] as const satisfies readonly ScenarioNodeKind[];
+export const SYSTEM_SCENARIO_NODE_KINDS = ['event', 'loop-repeat'] as const satisfies readonly ScenarioNodeKind[];
 
 /** Type guard для `ScenarioNodeKind`. */
 export function isScenarioNodeKind(value: string): value is ScenarioNodeKind {

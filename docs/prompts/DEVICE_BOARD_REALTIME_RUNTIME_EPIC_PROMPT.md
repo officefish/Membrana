@@ -19,7 +19,7 @@ MP7 принёс WebSocket-gateway (`background-cabinet`) с каналами `j
 
 **Что уже есть:**
 
-- `ScenarioRuntime` (чистое ядро, `packages/device-board/src/runtime/`): `initial → main → alarm → onStop → onDisconnect`; alarm входит по **detection-front** автоматически; `ScenarioRuntimeHost` — порты I/O.
+- `ScenarioRuntime` (чистое ядро, `packages/device-board/src/runtime/`): `initial → main → alarm → onStop → onDisconnect`; alarm входит по **detection-front** автоматически; `ScenarioRuntimeHost` — порты I/O (в т.ч. `waitUntilNextLoopTick`). См. [`SCENARIO_RUNTIME.md`](../SCENARIO_RUNTIME.md).
 - `DeviceBoardShell` (`packages/device-board/src/components/device-board-shell.tsx`): верхние табы Signal/Scenario + под-табы веток, `BoardInspector`.
 - Cabinet: `NodesPage` (узел + ключи совмещены), `DeviceBoardPage` (`showRunControls={false}`), `cabinetNodeRealtimeClient`, `useCabinetLiveJournal`.
 - Prisma: `Membrane.nodes Node[]` (отношение уже plural), но `Node.membraneId @unique` (фактически 1:1).
@@ -37,6 +37,7 @@ MP7 принёс WebSocket-gateway (`background-cabinet`) с каналами `j
 | [`MEMBRANE_PLATFORM.md`](../MEMBRANE_PLATFORM.md) | Граница REST vs WS, MP7b |
 | [`BACKGROUND_SERVERS.md`](../BACKGROUND_SERVERS.md) | WS только в cabinet, не в media |
 | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Границы пакетов, device-board ↔ client |
+| [`SCENARIO_RUNTIME.md`](../SCENARIO_RUNTIME.md) | onTick, лупы, планировщик, `ScenarioRuntimeHost` |
 | [`DESIGN.md`](../DESIGN.md) | Токены, info/warning тона, состояния |
 | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](./MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | Контракт envelope, gateway, auth |
 | [`TASK_CLOSURE_REGULATION.md`](./TASK_CLOSURE_REGULATION.md) | Закрытие фаз + prod-smoke |

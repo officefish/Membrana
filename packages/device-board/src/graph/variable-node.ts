@@ -24,6 +24,9 @@ export function referenceTypeLabel(type: ScenarioVariableType): string {
   if (type === 'ServerRef') {
     return 'Server';
   }
+  if (type === 'Integer') {
+    return 'Integer';
+  }
   return 'DateTime';
 }
 

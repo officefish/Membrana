@@ -1,7 +1,8 @@
 import type { Edge, Node } from '@xyflow/react';
 
 import { D0_SCENARIO_NODE_CATALOG, D0_SIGNAL_NODE_CATALOG } from './d0-node-catalog.js';
-import { createEventBoardNode } from './event-node.js';
+import { createEventBoardNode, createLoopTickEventBoardNode } from './event-node.js';
+import { createLoopRepeatBoardNode } from './loop-repeat-node.js';
 
 /** Системный Event-узел (entry ветви-обработчика). */
 function eventNode(
@@ -148,13 +149,16 @@ export function buildDemoFunctionInput(
   };
 }
 
-/** Main loop: subgraph(fn) → journal → loop */
+/** Main loop: onTick → subgraph(fn) → journal → ∞ */
 export const INITIAL_SCENARIO_MAIN_NODES: Node[] = [
-  scenarioNode('main-fn', 'subgraph', 80, 160, DEMO_FUNCTION_CAPTURE_DETECT_NAME, DEMO_FUNCTION_CAPTURE_DETECT_ID),
-  scenarioNode('main-journal', 'write-journal', 360, 160),
+  createLoopTickEventBoardNode({ id: 'main-on-tick', label: 'onTick', position: { x: 40, y: 160 } }),
+  scenarioNode('main-fn', 'subgraph', 240, 160, DEMO_FUNCTION_CAPTURE_DETECT_NAME, DEMO_FUNCTION_CAPTURE_DETECT_ID),
+  scenarioNode('main-journal', 'write-journal', 520, 160),
+  createLoopRepeatBoardNode({ id: 'main-infinity', position: { x: 760, y: 160 } }),
 ];
 
 export const INITIAL_SCENARIO_MAIN_EDGES: Edge[] = [
+  execEdge('main-e0', 'main-on-tick', 'main-fn'),
   {
     id: 'main-e1',
     source: 'main-fn',
@@ -162,13 +166,7 @@ export const INITIAL_SCENARIO_MAIN_EDGES: Edge[] = [
     target: 'main-journal',
     targetHandle: 'exec-in',
   },
-  {
-    id: 'main-e2',
-    source: 'main-journal',
-    sourceHandle: 'exec-out',
-    target: 'main-fn',
-    targetHandle: 'exec-in',
-  },
+  execEdge('main-e2', 'main-journal', 'main-infinity'),
 ];
 
 /**
@@ -177,8 +175,12 @@ export const INITIAL_SCENARIO_MAIN_EDGES: Edge[] = [
  */
 export const SCENARIO_INITIAL_ENTRY = 'initial-event' as const;
 export const SCENARIO_ON_CONNECT_ENTRY = 'on-connect-event' as const;
-export const SCENARIO_MAIN_ENTRY = 'main-fn' as const;
-export const SCENARIO_ALARM_ENTRY = 'alarm-eval' as const;
+export const SCENARIO_MAIN_ENTRY = 'main-on-tick' as const;
+export const SCENARIO_MAIN_BODY_ENTRY = 'main-fn' as const;
+export const SCENARIO_ALARM_ENTRY = 'alarm-on-tick' as const;
+export const SCENARIO_ALARM_BODY_ENTRY = 'alarm-eval' as const;
+export const SCENARIO_MAIN_INFINITY = 'main-infinity' as const;
+export const SCENARIO_ALARM_INFINITY = 'alarm-infinity' as const;
 export const SCENARIO_ON_STOP_ENTRY = 'on-stop-event' as const;
 export const SCENARIO_ON_DISCONNECT_ENTRY = 'on-disconnect-event' as const;
 
@@ -206,13 +208,16 @@ export const INITIAL_SCENARIO_ON_STOP_EDGES: Edge[] = [
   execEdge('on-stop-e1', 'on-stop-journal', 'on-stop-teardown'),
 ];
 
-/** Alarm loop: sound level → journal → loop until quiet */
+/** Alarm loop: onTick → sound level → journal → ∞ */
 export const INITIAL_SCENARIO_ALARM_NODES: Node[] = [
-  scenarioNode('alarm-eval', 'evaluate-sound-level', 80, 180),
-  scenarioNode('alarm-journal', 'write-journal', 320, 180, 'Alarm journal'),
+  createLoopTickEventBoardNode({ id: 'alarm-on-tick', label: 'onTick', position: { x: 40, y: 180 } }),
+  scenarioNode('alarm-eval', 'evaluate-sound-level', 240, 180),
+  scenarioNode('alarm-journal', 'write-journal', 480, 180, 'Alarm journal'),
+  createLoopRepeatBoardNode({ id: 'alarm-infinity', position: { x: 720, y: 180 } }),
 ];
 
 export const INITIAL_SCENARIO_ALARM_EDGES: Edge[] = [
+  execEdge('alarm-e0', 'alarm-on-tick', 'alarm-eval'),
   {
     id: 'alarm-e1',
     source: 'alarm-eval',
@@ -220,11 +225,5 @@ export const INITIAL_SCENARIO_ALARM_EDGES: Edge[] = [
     target: 'alarm-journal',
     targetHandle: 'exec-in',
   },
-  {
-    id: 'alarm-e2',
-    source: 'alarm-journal',
-    sourceHandle: 'exec-out',
-    target: 'alarm-eval',
-    targetHandle: 'exec-in',
-  },
+  execEdge('alarm-e2', 'alarm-journal', 'alarm-infinity'),
 ];

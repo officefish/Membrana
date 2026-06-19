@@ -94,6 +94,9 @@ function formatContextSourceLabel(sourceType: SocketType | 'nullable' | undefine
   if (sourceType === 'DateTime') {
     return 'datetime';
   }
+  if (sourceType === 'Integer') {
+    return 'integer';
+  }
   if (sourceType !== undefined && isReferenceSocketType(sourceType)) {
     return `& ${referenceNoun(sourceType)}`;
   }
@@ -112,6 +115,9 @@ function pinFromContextSource(
     };
   }
   if (sourceType === 'DateTime') {
+    return { ...pin, socketType: sourceType, nullable: undefined };
+  }
+  if (sourceType === 'Integer') {
     return { ...pin, socketType: sourceType, nullable: undefined };
   }
   if (sourceType !== undefined && isReferenceSocketType(sourceType)) {

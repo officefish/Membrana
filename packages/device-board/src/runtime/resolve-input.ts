@@ -7,26 +7,31 @@ import {
   type ScenarioVariableValue,
 } from '@membrana/core';
 
-import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_SERVER_HANDLE } from '../graph/event-node.js';
+import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
 import {
   GET_MICROPHONE_DEVICE_HANDLE,
   GET_MICROPHONE_OUT_HANDLE,
 } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
-import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference } from './reference-validity.js';
+import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
 
 /** Ветви-обработчики событий, где Event-узел является источником data. */
 export type ScenarioHandlerBranch = 'onConnect' | 'initial' | 'onStop' | 'onDisconnect';
 
 /** Контекст pull-резолюции data-входа (ветвь + handle подключённого устройства). */
 export interface ResolveInputContext {
-  readonly handlerBranch: ScenarioHandlerBranch;
+  /** Ветвь-обработчик (onConnect/initial/…); не задана в main/alarm loop. */
+  readonly handlerBranch?: ScenarioHandlerBranch;
   /** Handle подключённого устройства; `null` если offline или onDisconnect. */
-  readonly deviceHandle: string | null;
+  readonly deviceHandle?: string | null;
   /** ISO-время срабатывания Event-триггера (для `DateTime` value). */
   readonly triggeredAt?: string;
   /** Handle связанного сервера (cabinet/media); только onConnect. */
   readonly serverHandle?: string | null;
+  /** onTick: миллисекунды с начала сценария (для `deltatime`). */
+  readonly loopElapsedMs?: number;
+  /** onTick: миллисекунды с предыдущего тика лупа (для `tickMs`). */
+  readonly loopTickMs?: number;
 }
 
 export type ResolveInputErrorCode =
@@ -115,10 +120,28 @@ function resolveNodeOutput(
   visiting: Set<string>,
 ): ScenarioVariableValue | null {
   if (node.nodeKind === 'event') {
+    if (outputPort === EVENT_DELTATIME_HANDLE) {
+      if (context.loopElapsedMs === undefined) {
+        throw new ResolveInputError('unsupported-source', 'deltatime requires loop tick context');
+      }
+      return resolveLoopTickDeltaTime(context.loopElapsedMs);
+    }
+    if (outputPort === EVENT_TICK_MS_HANDLE) {
+      if (context.loopTickMs === undefined) {
+        throw new ResolveInputError('unsupported-source', 'tickMs requires loop tick context');
+      }
+      return resolveLoopTickMs(context.loopTickMs);
+    }
     if (outputPort === EVENT_DEVICE_HANDLE) {
-      return resolveEventReference(context.handlerBranch, context.deviceHandle);
+      if (context.handlerBranch === undefined) {
+        throw new ResolveInputError('unsupported-source', 'device output requires handler branch');
+      }
+      return resolveEventReference(context.handlerBranch, context.deviceHandle ?? null);
     }
     if (outputPort === EVENT_SERVER_HANDLE) {
+      if (context.handlerBranch === undefined) {
+        throw new ResolveInputError('unsupported-source', 'server output requires handler branch');
+      }
       return resolveEventServerReference(context.handlerBranch, context.serverHandle);
     }
     if (outputPort === EVENT_DATETIME_HANDLE) {

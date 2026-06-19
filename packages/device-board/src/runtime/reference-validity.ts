@@ -1,9 +1,11 @@
 import {
   createDateTimeValue,
+  createIntegerValue,
   createReferenceValue,
   invalidateReference,
   isScenarioReferenceValue,
   type ScenarioDateTimeValue,
+  type ScenarioIntegerValue,
   type ScenarioReferenceValue,
   type ScenarioVariable,
   type ScenarioVariableValue,
@@ -34,6 +36,10 @@ function dateTimesEqual(left: ScenarioDateTimeValue, right: ScenarioDateTimeValu
   return left.iso === right.iso;
 }
 
+function integersEqual(left: ScenarioIntegerValue, right: ScenarioIntegerValue): boolean {
+  return left.value === right.value;
+}
+
 /**
  * Семантика записи переменной из dataflow:
  * - ссылочные: `null` (onDisconnect) → invalidate; value-типы: `null` → сброс;
@@ -46,6 +52,12 @@ export function applyVariableSetValue(
 ): ScenarioVariable {
   if (incoming === null) {
     if (variable.type === 'DateTime') {
+      if (variable.value === null) {
+        return variable;
+      }
+      return { ...variable, value: null };
+    }
+    if (variable.type === 'Integer') {
       if (variable.value === null) {
         return variable;
       }
@@ -78,6 +90,14 @@ export function applyVariableSetValue(
     return { ...variable, value: incoming };
   }
 
+  if (incoming.kind === 'Integer') {
+    const current = variable.value;
+    if (current !== null && current.kind === 'Integer' && integersEqual(current, incoming)) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
   const incomingRef = incoming;
   const currentRef = isScenarioReferenceValue(variable.value) ? variable.value : null;
   if (referencesEqual(currentRef, incomingRef)) {
@@ -93,6 +113,20 @@ export function applyVariableSetValue(
 export function resolveEventDateTime(triggeredAt: string | undefined): ScenarioDateTimeValue {
   const iso = triggeredAt ?? new Date().toISOString();
   return createDateTimeValue(iso);
+}
+
+/**
+ * onTick `deltatime`: elapsed с начала сценария, выраженный как DateTime (offset от Unix epoch).
+ */
+export function resolveLoopTickDeltaTime(elapsedMs: number): ScenarioDateTimeValue {
+  return createDateTimeValue(new Date(Math.max(0, elapsedMs)).toISOString());
+}
+
+/**
+ * onTick `tickMs`: миллисекунды с предыдущего тика цикла.
+ */
+export function resolveLoopTickMs(tickMs: number): ScenarioIntegerValue {
+  return createIntegerValue(Math.max(0, Math.round(tickMs)));
 }
 
 /**

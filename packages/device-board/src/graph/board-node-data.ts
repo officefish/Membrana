@@ -37,6 +37,8 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
   readonly variableId?: string;
   /** v0.4: для `get-microphone` — выбранный deviceId микрофона (enumerate). */
   readonly microphoneId?: string;
+  /** v0.4+: `event` — `handler` (обработчик) или `loopTick` (onTick в лупе). */
+  readonly eventVariant?: 'handler' | 'loopTick';
   /** Subgraph-блок: id функции из `scenario.functions`. */
   readonly functionId?: string;
   readonly inputs?: readonly BoardSocketPin[];

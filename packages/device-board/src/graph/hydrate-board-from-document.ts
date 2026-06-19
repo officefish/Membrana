@@ -31,8 +31,13 @@ import {
   SCENARIO_ON_CONNECT_ENTRY,
   SCENARIO_ON_DISCONNECT_ENTRY,
   SCENARIO_ON_STOP_ENTRY,
+  SCENARIO_MAIN_BODY_ENTRY,
+  SCENARIO_ALARM_BODY_ENTRY,
+  SCENARIO_MAIN_INFINITY,
+  SCENARIO_ALARM_INFINITY,
 } from './initial-board-state.js';
-import { ensureEventEntry, syncEventNodePins } from './event-node.js';
+import { ensureEventEntry, ensureLoopTickEntry, syncEventNodePins } from './event-node.js';
+import { ensureLoopInfinity, syncLoopRepeatNodePins } from './loop-repeat-node.js';
 import { deserializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 import { syncVariableNodePins } from './variable-node.js';
 import { deserializeSignalGraph } from './serialize-signal-graph.js';
@@ -184,6 +189,16 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   onConnect.nodes = syncEventNodePins(onConnect.nodes, 'onConnect');
   onStop.nodes = syncEventNodePins(onStop.nodes, 'onStop');
   onDisconnect.nodes = syncEventNodePins(onDisconnect.nodes, 'onDisconnect');
+
+  const mainTick = ensureLoopTickEntry('main-on-tick', SCENARIO_MAIN_BODY_ENTRY, main.nodes, main.edges);
+  const mainInfinity = ensureLoopInfinity(SCENARIO_MAIN_INFINITY, 'main-on-tick', mainTick.nodes, mainTick.edges);
+  main.nodes = syncLoopRepeatNodePins(mainInfinity.nodes);
+  main.edges = mainInfinity.edges;
+
+  const alarmTick = ensureLoopTickEntry('alarm-on-tick', SCENARIO_ALARM_BODY_ENTRY, alarm.nodes, alarm.edges);
+  const alarmInfinity = ensureLoopInfinity(SCENARIO_ALARM_INFINITY, 'alarm-on-tick', alarmTick.nodes, alarmTick.edges);
+  alarm.nodes = syncLoopRepeatNodePins(alarmInfinity.nodes);
+  alarm.edges = alarmInfinity.edges;
 
   initial.nodes = syncVariableNodePins(initial.nodes, variables);
   onConnect.nodes = syncVariableNodePins(onConnect.nodes, variables);

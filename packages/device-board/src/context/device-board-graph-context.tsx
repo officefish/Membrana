@@ -115,6 +115,9 @@ export interface DeviceBoardGraphContextValue {
   /** Ручной режim normal/alarm (MP7b RT3/RT6). Делегируется в ScenarioRuntime. */
   readonly mode: RuntimeMode;
   readonly setMode: (mode: RuntimeMode) => void;
+  /** Показывать служебные логи библиотеки (host.log); Print всегда в консоль. */
+  readonly showInfoLogs: boolean;
+  readonly setShowInfoLogs: (enabled: boolean) => void;
   /** Очистка узлов текущей ветки (Signal или активная Scenario-ветка); Event-entry сохраняется. */
   readonly clearCurrentBranch: (layer: BoardLayerTab) => void;
   /** Добавить legacy D0-ноду из палитры в активную ветку (только при legacy-флаге). */
@@ -195,6 +198,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
+  const [showInfoLogs, setShowInfoLogs] = useState(true);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
   const savedSnapshotRef = useRef<string | null>(null);
@@ -206,6 +210,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     savedSnapshotRef.current = scenarioDocumentFingerprint(document);
     setIsDirty(false);
   }, []);
+
+  useEffect(() => {
+    runtimeHost?.setInfoLoggingEnabled?.(showInfoLogs);
+  }, [runtimeHost, showInfoLogs]);
 
   useEffect(() => {
     if (runtimeHost === undefined) {
@@ -1049,6 +1057,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       stopScenario,
       mode: runtimeState.mode,
       setMode,
+      showInfoLogs,
+      setShowInfoLogs,
       clearCurrentBranch,
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
@@ -1120,6 +1130,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionNodes,
       saveScenario,
       setMode,
+      setShowInfoLogs,
+      showInfoLogs,
       signalEdges,
       signalNodes,
       startScenario,

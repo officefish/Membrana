@@ -5,12 +5,14 @@ import {
   INITIAL_SCENARIO_INITIAL_NODES,
   INITIAL_SCENARIO_MAIN_NODES,
   SCENARIO_INITIAL_ENTRY,
+  SCENARIO_MAIN_ENTRY,
+  SCENARIO_MAIN_INFINITY,
 } from './initial-board-state.js';
 import {
   clearBranchState,
   shouldPreserveLockedNodes,
 } from './clear-branch.js';
-import { createEventBoardNode, isEventNode } from './event-node.js';
+import { createEventBoardNode, isEventNode, isLoopTickEventNode } from './event-node.js';
 
 describe('clear-branch (device-board)', () => {
   it('preserves Event entry when clearing an event-handler branch', () => {
@@ -25,7 +27,16 @@ describe('clear-branch (device-board)', () => {
     expect(edges).toHaveLength(0);
   });
 
-  it('clears all nodes in a loop branch (main)', () => {
+  it('preserves onTick and ∞ entries when clearing a loop branch (main)', () => {
+    const { nodes, edges } = clearBranchState(INITIAL_SCENARIO_MAIN_NODES, [], true);
+    expect(nodes).toHaveLength(2);
+    expect(isLoopTickEventNode(nodes[0]!) || isLoopTickEventNode(nodes[1]!)).toBe(true);
+    expect(nodes.some((node) => node.id === SCENARIO_MAIN_ENTRY)).toBe(true);
+    expect(nodes.some((node) => node.id === SCENARIO_MAIN_INFINITY)).toBe(true);
+    expect(edges).toHaveLength(0);
+  });
+
+  it('clears all nodes in a loop branch when preserveLocked is false', () => {
     const { nodes, edges } = clearBranchState(INITIAL_SCENARIO_MAIN_NODES, [], false);
     expect(nodes).toHaveLength(0);
     expect(edges).toHaveLength(0);
@@ -41,10 +52,11 @@ describe('clear-branch (device-board)', () => {
     expect(edges).toHaveLength(0);
   });
 
-  it('shouldPreserveLockedNodes is true only for event handlers on scenario layer', () => {
+  it('shouldPreserveLockedNodes is true for event handlers and loop branches on scenario layer', () => {
     expect(shouldPreserveLockedNodes('scenario', 'initial')).toBe(true);
     expect(shouldPreserveLockedNodes('scenario', 'onConnect')).toBe(true);
-    expect(shouldPreserveLockedNodes('scenario', 'main')).toBe(false);
+    expect(shouldPreserveLockedNodes('scenario', 'main')).toBe(true);
+    expect(shouldPreserveLockedNodes('scenario', 'alarm')).toBe(true);
     expect(shouldPreserveLockedNodes('signal', 'initial')).toBe(false);
   });
 });

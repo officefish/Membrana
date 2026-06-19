@@ -16,22 +16,38 @@ export {
   VARIABLE_VALUE_HANDLE,
 } from './variable-node.js';
 export type { CreateVariableBoardNodeOptions, VariableNodeKind } from './variable-node.js';
+export { variableTypeIndicatorClass } from './variable-type-indicator.js';
 export {
   createEventBoardNode,
+  createLoopTickEventBoardNode,
   ensureEventEntry,
+  ensureLoopTickEntry,
   eventNodePins,
   isEventNode,
+  isLoopTickEventNode,
   isLockedBoardNode,
   isSystemNode,
+  loopTickEventNodePins,
   rejectSystemNodeRemovals,
   syncEventNodePins,
   EVENT_DATETIME_HANDLE,
+  EVENT_DELTATIME_HANDLE,
   EVENT_DEVICE_HANDLE,
   EVENT_EXEC_HANDLE,
   EVENT_NODE_KIND,
   EVENT_SERVER_HANDLE,
+  EVENT_TICK_MS_HANDLE,
 } from './event-node.js';
-export type { CreateEventBoardNodeOptions, EventHandlerBranch } from './event-node.js';
+export type { CreateEventBoardNodeOptions, CreateLoopTickEventBoardNodeOptions, EventHandlerBranch, EventVariant } from './event-node.js';
+export {
+  createLoopRepeatBoardNode,
+  ensureLoopInfinity,
+  isLoopRepeatNode,
+  syncLoopRepeatNodePins,
+  LOOP_REPEAT_EXEC_IN,
+  LOOP_REPEAT_NODE_KIND,
+} from './loop-repeat-node.js';
+export type { CreateLoopRepeatBoardNodeOptions } from './loop-repeat-node.js';
 export {
   clearBranchState,
   edgesAfterBranchClear,
@@ -114,6 +130,8 @@ export {
   SCENARIO_ALARM_ENTRY,
   SCENARIO_INITIAL_ENTRY,
   SCENARIO_MAIN_ENTRY,
+  SCENARIO_MAIN_INFINITY,
+  SCENARIO_ALARM_INFINITY,
   SCENARIO_ON_CONNECT_ENTRY,
   SCENARIO_ON_DISCONNECT_ENTRY,
   SCENARIO_ON_STOP_ENTRY,

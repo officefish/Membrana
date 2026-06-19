@@ -269,6 +269,9 @@ Scenario runtime:
   audio-engine, trends templates);
 - не дублирует Web Audio и не обходит `MembranaRegistry`.
 
+Канонический документ по фазам, onTick, планировщику и host-портам:
+[`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).
+
 Пересмотр Rete — только если scenario runtime не покрывает кейс **и** это
 зафиксировано stage-gate в `docs/seanses/`.
 
@@ -424,8 +427,8 @@ Onboarding v1: тултипы + wizard на 3 шага + ссылка на manua
 | Ветка | Назначение | Ключевые правила |
 | ----- | ---------- | ---------------- |
 | `initial` | Старт: выбор mic, stream on, запись в журнал | Список устройств из `audio-engine` enumerate |
-| `main` (base loop) | Чанки (параметр, max 30 с, подряд) → trends FFT → журнал | Шаблон из библиотеки устройства; системный минимум неудаляем |
-| `alarm` | По фронту детекции; raw level через sound-quality plugin | Отдельный **тег** в журнале (J2); выход при «достаточно тихо» |
+| `main` (base loop) | onTick → чанки → trends FFT → журнал → ∞ | Entry: `onMainTick`; итерация завершается узлом `loop-repeat`; см. [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md) |
+| `alarm` | По фронту детекции; raw level через sound-quality plugin | Entry: `onAlarmTick`; пауза 400 ms между итерациями; отдельный **тег** в журнале (J2) |
 | `onStop` | Teardown; сценарий на канвасе остаётся editable (T2) | UI-кнопка + системное событие |
 | `onDisconnect` | Stop (единая ветка mic/server пока, T3) | Позже: restart по таймеру |
 | `custom[]` | Пользовательские триггеры | Расширяемый список |

@@ -293,6 +293,16 @@ const DeviceBoardShellInner: React.FC<{
         <div className="flex shrink-0 items-center gap-2">
           {showRunControls ? (
             <>
+              <label className="label cursor-pointer shrink-0 gap-1.5 py-0">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs checkbox-primary"
+                  checked={graph.showInfoLogs}
+                  onChange={(event) => graph.setShowInfoLogs(event.target.checked)}
+                  aria-label="Показывать служебные логи INFO"
+                />
+                <span className="label-text text-xs font-medium">INFO</span>
+              </label>
               <div className="flex items-center gap-1">
                 <button
                   type="button"

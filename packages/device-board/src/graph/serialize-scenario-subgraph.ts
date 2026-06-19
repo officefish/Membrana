@@ -4,7 +4,8 @@ import type { Edge, Node } from '@xyflow/react';
 import { isBoardFlowNodeData } from './board-node-data.js';
 import { D0_SCENARIO_NODE_CATALOG } from './d0-node-catalog.js';
 import { resolveHandle } from './handle-catalog.js';
-import { createEventBoardNode } from './event-node.js';
+import { createEventBoardNode, createLoopTickEventBoardNode } from './event-node.js';
+import { createLoopRepeatBoardNode } from './loop-repeat-node.js';
 import { createPaletteBoardNode, isPaletteNodeKind } from './palette-node.js';
 import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 import { createVariableBoardNode } from './variable-node.js';
@@ -20,7 +21,7 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
 
   // v0.4: системный Event-узел — entry ветви-обработчика.
   const nodeKind = node.data.nodeKind;
-  if (nodeKind === 'event') {
+  if (nodeKind === 'loop-repeat') {
     return {
       id: node.id,
       blockKind,
@@ -28,6 +29,20 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       label: node.data.label,
       nodeKind,
       system: true,
+    };
+  }
+
+  if (nodeKind === 'event') {
+    const eventVariant =
+      node.data.eventVariant === 'loopTick' ? ('loopTick' as const) : ('handler' as const);
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      system: true,
+      eventVariant,
     };
   }
 
@@ -132,14 +147,37 @@ export function deserializeScenarioSubgraph(
   const nodes: Node[] = [];
   for (const item of subgraph.nodes) {
     // v0.4: системный Event-узел восстанавливается фабрикой (фикс-id, DeviceRef out).
-    if (item.nodeKind === 'event') {
+    if (item.nodeKind === 'loop-repeat') {
       nodes.push(
-        createEventBoardNode({
+        createLoopRepeatBoardNode({
           id: item.id,
           label: typeof item.label === 'string' ? item.label : undefined,
           position: { x: item.position.x, y: item.position.y },
         }),
       );
+      continue;
+    }
+
+    if (item.nodeKind === 'event') {
+      const label = typeof item.label === 'string' ? item.label : undefined;
+      const position = { x: item.position.x, y: item.position.y };
+      if (item.eventVariant === 'loopTick') {
+        nodes.push(
+          createLoopTickEventBoardNode({
+            id: item.id,
+            label,
+            position,
+          }),
+        );
+      } else {
+        nodes.push(
+          createEventBoardNode({
+            id: item.id,
+            label,
+            position,
+          }),
+        );
+      }
       continue;
     }
 

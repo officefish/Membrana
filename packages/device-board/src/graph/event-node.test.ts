@@ -5,16 +5,21 @@ import {
   buildDemoFunctionInput,
   buildDeviceScenarioDocument,
   createEventBoardNode,
+  createLoopTickEventBoardNode,
   deserializeScenarioSubgraph,
   ensureEventEntry,
   hydrateBoardFromDocument,
   isEventNode,
+  isLoopTickEventNode,
+  isLoopRepeatNode,
   rejectSystemNodeRemovals,
   serializeScenarioSubgraph,
   validatePreRun,
+  EVENT_DELTATIME_HANDLE,
   EVENT_DEVICE_HANDLE,
   EVENT_DATETIME_HANDLE,
   EVENT_SERVER_HANDLE,
+  EVENT_TICK_MS_HANDLE,
   INITIAL_SCENARIO_INITIAL_EDGES,
   INITIAL_SCENARIO_INITIAL_NODES,
   INITIAL_SCENARIO_ON_DISCONNECT_EDGES,
@@ -71,6 +76,18 @@ describe('device-board Event node (DBR3)', () => {
     const node = createEventBoardNode({ id: 'evt-oc', includeServerOutput: true });
     const data = node.data as { outputs?: { name: string; socketType?: string }[] };
     expect(data.outputs?.some((pin) => pin.name === EVENT_SERVER_HANDLE)).toBe(true);
+  });
+
+  it('loop tick event has deltatime + tickMs outputs (no loop-back exec-in)', () => {
+    const node = createLoopTickEventBoardNode({ id: 'tick-1' });
+    expect(isLoopTickEventNode(node)).toBe(true);
+    const data = node.data as {
+      inputs?: { name: string }[];
+      outputs?: { name: string; socketType?: string }[];
+    };
+    expect(data.inputs ?? []).toHaveLength(0);
+    expect(data.outputs?.find((pin) => pin.name === EVENT_DELTATIME_HANDLE)?.socketType).toBe('DateTime');
+    expect(data.outputs?.find((pin) => pin.name === EVENT_TICK_MS_HANDLE)?.socketType).toBe('Integer');
   });
 
   it('rejects UI remove changes for system nodes but keeps others', () => {
@@ -144,9 +161,11 @@ describe('device-board Event node (DBR3)', () => {
     expect(entryIsEvent(state.scenarioOnStopNodes, SCENARIO_ON_STOP_ENTRY)).toBe(true);
     expect(entryIsEvent(state.scenarioOnDisconnectNodes, SCENARIO_ON_DISCONNECT_ENTRY)).toBe(true);
 
-    // Лупы не обработчики — Event туда не инжектится.
-    expect(state.scenarioMainNodes.some(isEventNode)).toBe(false);
-    expect(state.scenarioAlarmNodes.some(isEventNode)).toBe(false);
+    // Лупы получают onTick Event при hydrate (INITIAL fallback или миграция legacy entry).
+    expect(state.scenarioMainNodes.some(isLoopTickEventNode)).toBe(true);
+    expect(state.scenarioAlarmNodes.some(isLoopTickEventNode)).toBe(true);
+    expect(state.scenarioMainNodes.some(isLoopRepeatNode)).toBe(true);
+    expect(state.scenarioAlarmNodes.some(isLoopRepeatNode)).toBe(true);
   });
 
   it('pre-run fails when a handler entry is not a system Event node', () => {

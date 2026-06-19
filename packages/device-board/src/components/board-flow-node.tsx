@@ -43,6 +43,13 @@ function variableDisplayName(data: BoardFlowNodeData): string {
 }
 
 function renderNodeTitle(data: BoardFlowNodeData): React.ReactNode {
+  if (data.nodeKind === 'loop-repeat') {
+    return (
+      <span className="text-lg leading-none" aria-label="Новый цикл лупа">
+        ∞
+      </span>
+    );
+  }
   if (data.nodeKind === 'variable-get') {
     return (
       <>
@@ -136,8 +143,8 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
   const outputs = data.outputs ?? [];
   const isSystem = data.system === true;
   const statusBadgeClass = status !== 'active' ? STATUS_BADGE[status] : undefined;
-  const pinRows = Math.max(inputs.length, outputs.length, 1);
-  const bodyHeightPx = pinRows * PIN_ROW_PX + 8;
+  const pinRows = Math.max(inputs.length, outputs.length, data.nodeKind === 'loop-repeat' ? 1 : 0, 1);
+  const bodyHeightPx = data.nodeKind === 'loop-repeat' ? 48 : pinRows * PIN_ROW_PX + 8;
 
   return (
     <div
@@ -170,6 +177,11 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
         ) : null}
       </div>
       <div className="relative" style={{ minHeight: bodyHeightPx }}>
+        {data.nodeKind === 'loop-repeat' ? (
+          <div className="flex h-full items-center justify-center py-2 text-3xl text-accent/80" aria-hidden="true">
+            ∞
+          </div>
+        ) : null}
         {renderHandles(inputs, 'target', Position.Left, resolvePin, resolveLabel)}
         {renderHandles(outputs, 'source', Position.Right, resolvePin, resolveLabel)}
       </div>

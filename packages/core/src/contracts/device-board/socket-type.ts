@@ -20,6 +20,7 @@ export const SOCKET_TYPES = [
   'ServerRef',
   // v0.4+: value-типы scenario dataflow (не ссылки на внешний ресурс).
   'DateTime',
+  'Integer',
 ] as const;
 
 /** Имя типа сокета signal graph. */
@@ -43,7 +44,7 @@ export const REFERENCE_SOCKET_TYPES = [
  * Value-типы scenario dataflow: передаются по dataflow как значения
  * (без `valid` / nullable-ссылочной семантики).
  */
-export const VALUE_SOCKET_TYPES = ['DateTime'] as const satisfies readonly SocketType[];
+export const VALUE_SOCKET_TYPES = ['DateTime', 'Integer'] as const satisfies readonly SocketType[];
 
 /** Имя ссылочного типа данных (подмножество `SocketType`). */
 export type ReferenceSocketType = (typeof REFERENCE_SOCKET_TYPES)[number];

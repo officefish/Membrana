@@ -1,4 +1,4 @@
-import type { Node, NodeChange } from '@xyflow/react';
+import type { Edge, Node, NodeChange } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
@@ -21,12 +21,33 @@ export const EVENT_SERVER_HANDLE = 'server' as const;
 /** Имя data-выхода узла Event — момент срабатывания триггера (`DateTime` value). */
 export const EVENT_DATETIME_HANDLE = 'datetime' as const;
 
+/** Имя data-выхода onTick в лупе — elapsed с начала сценария (`DateTime` value). */
+export const EVENT_DELTATIME_HANDLE = 'deltatime' as const;
+
+/** Имя data-выхода onTick в лупе — миллисекунды с предыдущего тика (`Integer` value). */
+export const EVENT_TICK_MS_HANDLE = 'tickMs' as const;
+
+/** Вариант системного Event-узла. */
+export type EventVariant = 'handler' | 'loopTick';
+
 const EXEC_OUT: BoardSocketPin = { name: EVENT_EXEC_HANDLE, kind: 'exec' };
 
 const DATETIME_OUT: BoardSocketPin = {
   name: EVENT_DATETIME_HANDLE,
   kind: 'data',
   socketType: 'DateTime',
+};
+
+const DELTATIME_OUT: BoardSocketPin = {
+  name: EVENT_DELTATIME_HANDLE,
+  kind: 'data',
+  socketType: 'DateTime',
+};
+
+const TICK_MS_OUT: BoardSocketPin = {
+  name: EVENT_TICK_MS_HANDLE,
+  kind: 'data',
+  socketType: 'Integer',
 };
 
 const SERVER_OUT: BoardSocketPin = {
@@ -65,6 +86,19 @@ export function eventNodePins(options: EventNodePinOptions = {}): {
   };
 }
 
+/**
+ * Пины onTick Event в main/alarm loop: exec + deltatime + tickMs.
+ */
+export function loopTickEventNodePins(): {
+  inputs: readonly BoardSocketPin[];
+  outputs: readonly BoardSocketPin[];
+} {
+  return {
+    inputs: [],
+    outputs: [EXEC_OUT, DELTATIME_OUT, TICK_MS_OUT],
+  };
+}
+
 export interface CreateEventBoardNodeOptions {
   readonly id: string;
   readonly label?: string;
@@ -89,6 +123,7 @@ export function createEventBoardNode(options: CreateEventBoardNodeOptions): Node
     status: 'active',
     blockKind: 'custom',
     nodeKind: EVENT_NODE_KIND,
+    eventVariant: 'handler',
     system: true,
     inputs,
     outputs,
@@ -100,6 +135,45 @@ export function createEventBoardNode(options: CreateEventBoardNodeOptions): Node
     deletable: false,
     data,
   };
+}
+
+export interface CreateLoopTickEventBoardNodeOptions {
+  readonly id: string;
+  readonly label?: string;
+  readonly position?: { readonly x: number; readonly y: number };
+}
+
+/**
+ * Фабрика onTick Event — entry main/alarm loop.
+ */
+export function createLoopTickEventBoardNode(options: CreateLoopTickEventBoardNodeOptions): Node {
+  const { inputs, outputs } = loopTickEventNodePins();
+  const data: BoardFlowNodeData = {
+    label: options.label ?? 'onTick',
+    layer: 'scenario',
+    status: 'active',
+    blockKind: 'custom',
+    nodeKind: EVENT_NODE_KIND,
+    eventVariant: 'loopTick',
+    system: true,
+    inputs,
+    outputs,
+  };
+  return {
+    id: options.id,
+    type: 'board',
+    position: options.position ?? { x: 40, y: 80 },
+    deletable: false,
+    data,
+  };
+}
+
+/** True, если нода — onTick Event в лупе. */
+export function isLoopTickEventNode(node: Node): boolean {
+  if (!isEventNode(node)) {
+    return false;
+  }
+  return (node.data as BoardFlowNodeData).eventVariant === 'loopTick';
 }
 
 /** True, если нода — системный узел Event. */
@@ -137,7 +211,7 @@ export function syncEventNodePins(
 ): Node[] {
   const { inputs, outputs } = eventNodePins(pinOptionsForBranch(handlerBranch));
   return nodes.map((node) => {
-    if (!isEventNode(node)) {
+    if (!isEventNode(node) || isLoopTickEventNode(node)) {
       return node;
     }
     return {
@@ -174,7 +248,7 @@ export function ensureEventEntry(
   label?: string,
   options: EventNodePinOptions = {},
 ): Node[] {
-  if (nodes.some((node) => isEventNode(node))) {
+  if (nodes.some((node) => isEventNode(node) && !isLoopTickEventNode(node))) {
     return [...nodes];
   }
   return [
@@ -186,4 +260,65 @@ export function ensureEventEntry(
     }),
     ...nodes,
   ];
+}
+
+/**
+ * Гарантирует onTick Event как entry main/alarm loop (миграция legacy entry).
+ */
+export function ensureLoopTickEntry(
+  tickEntryId: string,
+  bodyEntryId: string,
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  label = 'onTick',
+): { readonly nodes: Node[]; readonly edges: Edge[]; readonly entry: string } {
+  const existingTick = nodes.find(isLoopTickEventNode);
+  if (existingTick !== undefined) {
+    const { inputs, outputs } = loopTickEventNodePins();
+    const syncedNodes = nodes.map((node) => {
+      if (!isLoopTickEventNode(node)) {
+        return node;
+      }
+      return {
+        ...node,
+        data: { ...(node.data as BoardFlowNodeData), inputs, outputs },
+      };
+    });
+    return { nodes: syncedNodes, edges: [...edges], entry: existingTick.id };
+  }
+
+  const tickNode = createLoopTickEventBoardNode({
+    id: tickEntryId,
+    label,
+    position: { x: 40, y: 160 },
+  });
+
+  const redirectedEdges = edges.map((edge) => {
+    if (edge.target === bodyEntryId && edge.targetHandle === 'exec-in') {
+      return { ...edge, target: tickEntryId };
+    }
+    return edge;
+  });
+
+  const hasTickToBody = redirectedEdges.some(
+    (edge) => edge.source === tickEntryId && edge.target === bodyEntryId,
+  );
+  const nextEdges = hasTickToBody
+    ? redirectedEdges
+    : [
+        ...redirectedEdges,
+        {
+          id: `${tickEntryId}-to-${bodyEntryId}`,
+          source: tickEntryId,
+          sourceHandle: EVENT_EXEC_HANDLE,
+          target: bodyEntryId,
+          targetHandle: 'exec-in',
+        },
+      ];
+
+  return {
+    nodes: [tickNode, ...nodes],
+    edges: nextEdges,
+    entry: tickEntryId,
+  };
 }

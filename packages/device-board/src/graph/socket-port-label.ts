@@ -26,6 +26,12 @@ export function formatSocketPortLabel(pin: BoardSocketPin): string {
     }
     return 'exec';
   }
+  if (pin.name === 'deltatime') {
+    return 'deltatime';
+  }
+  if (pin.name === 'tickMs') {
+    return 'tick ms';
+  }
   if (pin.nullable === true) {
     return '& null';
   }

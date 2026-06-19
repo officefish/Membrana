@@ -20,6 +20,12 @@ export interface ScenarioResourceMetadata {
   readonly fields: Readonly<Record<string, string>>;
 }
 
+/** Параметры ожидания между итерациями main/alarm loop. См. `docs/SCENARIO_RUNTIME.md` §5. */
+export interface ScenarioLoopTickWaitOptions {
+  readonly pauseMs: number;
+  readonly signal: AbortSignal;
+}
+
 /** Порты исполнения блоков — реализует `apps/client` (audio, journal, detectors). */
 export interface ScenarioRuntimeHost {
   /** Handle подключённого устройства для Event/dataflow (v0.4 DBR4). */
@@ -53,7 +59,14 @@ export interface ScenarioRuntimeHost {
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   readonly trendsFftDetect: () => Promise<ScenarioDetectionResult>;
   readonly evaluateSoundLevel: () => Promise<ScenarioSoundLevelResult>;
+  /**
+   * Пауза до следующего тика main/alarm. Client может подставить rAF или audio-frame;
+   * stub и тесты — wall-clock (`waitMs`). Ядро не вызывает DOM-таймеры напрямую.
+   */
+  readonly waitUntilNextLoopTick?: (options: ScenarioLoopTickWaitOptions) => Promise<void>;
   readonly log: (message: string, context?: Readonly<Record<string, unknown>>) => void;
+  /** Клиент: вкл/выкл служебные INFO-логи (Print не затрагивается). */
+  readonly setInfoLoggingEnabled?: (enabled: boolean) => void;
   readonly watchConnection?: (handlers: ScenarioConnectionHandlers) => () => void;
 }
 
@@ -109,6 +122,7 @@ export function createStubScenarioRuntimeHost(
         rawLevel: 0.5,
         isQuietEnough: false,
       })),
+    waitUntilNextLoopTick: overrides.waitUntilNextLoopTick,
     watchConnection: overrides.watchConnection,
     log,
   };

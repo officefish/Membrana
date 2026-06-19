@@ -34,8 +34,19 @@ export interface ScenarioDateTimeValue {
   readonly iso: string;
 }
 
+/**
+ * Value integer в dataflow: целое число (миллисекунды, счётчики и т.д.).
+ */
+export interface ScenarioIntegerValue {
+  readonly kind: 'Integer';
+  readonly value: number;
+}
+
 /** Значение переменной сценария (ссылка или value). */
-export type ScenarioVariableValue = ScenarioReferenceValue | ScenarioDateTimeValue;
+export type ScenarioVariableValue =
+  | ScenarioReferenceValue
+  | ScenarioDateTimeValue
+  | ScenarioIntegerValue;
 
 /** Переменная сценария (document-scope, объявляется в конструкторе переменных). */
 export interface ScenarioVariable {
@@ -57,6 +68,11 @@ export function createReferenceValue(
 /** Создаёт value datetime. */
 export function createDateTimeValue(iso: string): ScenarioDateTimeValue {
   return { kind: 'DateTime', iso };
+}
+
+/** Создаёт value integer (округляет до целого). */
+export function createIntegerValue(value: number): ScenarioIntegerValue {
+  return { kind: 'Integer', value: Math.trunc(value) };
 }
 
 /** Помечает ссылку невалидной (handle сохраняется для диагностики). */
@@ -101,9 +117,22 @@ export function isScenarioDateTimeValue(value: unknown): value is ScenarioDateTi
   return candidate['kind'] === 'DateTime' && typeof candidate['iso'] === 'string';
 }
 
+/** Type guard для `ScenarioIntegerValue`. */
+export function isScenarioIntegerValue(value: unknown): value is ScenarioIntegerValue {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return candidate['kind'] === 'Integer' && typeof candidate['value'] === 'number';
+}
+
 /** Type guard для `ScenarioVariableValue`. */
 export function isScenarioVariableValue(value: unknown): value is ScenarioVariableValue {
-  return isScenarioReferenceValue(value) || isScenarioDateTimeValue(value);
+  return (
+    isScenarioReferenceValue(value) ||
+    isScenarioDateTimeValue(value) ||
+    isScenarioIntegerValue(value)
+  );
 }
 
 /** Runtime-проверка формы `ScenarioVariable`. */

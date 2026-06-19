@@ -29,6 +29,9 @@ export function formatVariableValueForPrint(value: ScenarioVariableValue | null)
   if (value.kind === 'DateTime') {
     return value.iso;
   }
+  if (value.kind === 'Integer') {
+    return String(value.value);
+  }
   if (isScenarioReferenceValue(value)) {
     const handle = value.handle ?? 'null';
     const status = value.valid ? 'valid' : 'invalid';
@@ -54,6 +57,9 @@ export async function formatVariableValueForPrintRuntime(
   }
   if (value.kind === 'DateTime') {
     return value.iso;
+  }
+  if (value.kind === 'Integer') {
+    return String(value.value);
   }
   if (isScenarioReferenceValue(value)) {
     if (!value.valid) {

@@ -16,10 +16,10 @@ export type ScenarioBranchTab =
   | 'function';
 
 /** Ширина левого сайдбара (совпадает с `BoardLeftSidebar`). */
-export const BOARD_LEFT_SIDEBAR_WIDTH_CLASS = 'w-[clamp(11rem,13vw,14rem)]' as const;
+export const BOARD_LEFT_SIDEBAR_WIDTH_CLASS = 'w-[clamp(14rem,18vw,20rem)]' as const;
 
 /** Отступ шапки от левого края до зоны контента (после сайдбара). */
-export const BOARD_HEADER_CONTENT_OFFSET_CLASS = 'pl-[clamp(11rem,13vw,14rem)]' as const;
+export const BOARD_HEADER_CONTENT_OFFSET_CLASS = 'pl-[clamp(14rem,18vw,20rem)]' as const;
 
 /**
  * Презентационные лейблы веток (MP7b RT6). Сериализованный ключ `initial`
@@ -29,8 +29,8 @@ export const BRANCH_TAB_LABEL: Record<ScenarioBranchTab, string> = {
   initial: 'On start',
   onConnect: 'On connect',
   onStop: 'On stop',
-  main: 'Main loop',
-  alarm: 'Alarm loop',
+  main: 'onMainTick',
+  alarm: 'onAlarmTick',
   onDisconnect: 'On disconnect',
   function: 'customFunc',
 };
@@ -41,8 +41,8 @@ export const BRANCH_SCENARIO_TITLE: Record<ScenarioBranchTab, string> = {
   onConnect: 'Сценарий соединения с устройством',
   onStop: 'Сценарий остановки устройства',
   onDisconnect: 'Сценарий при потере соединения с устройством',
-  main: 'Основной цикл устройства',
-  alarm: 'Цикл тревоги',
+  main: 'Обработчик события кадра в обычном режиме',
+  alarm: 'Обработчик события кадра в режиме тревоги',
   function: 'Пользовательская функция',
 };
 

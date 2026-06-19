@@ -45,6 +45,7 @@ Linear-ID (например `TEC-42`) — самый удобный способ
 - Обсуждения с не-virtual членами команды — в Linear (Шаг 2) или в чате.
 - Task-промпты (постановки больших задач) — в [`../prompts/`](../prompts/).
   Журнал может ссылаться на task-промпт, но не дублирует его.
+- Канон scenario runtime (onTick, планировщик, host) — [`../SCENARIO_RUNTIME.md`](../SCENARIO_RUNTIME.md).
 
 См. также:
 

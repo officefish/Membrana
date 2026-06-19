@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createEmptyDeviceScenarioDocument,
   createDateTimeValue,
+  createIntegerValue,
   createReferenceValue,
   createScenarioVariable,
   D0_SOCKET_TYPES,
@@ -10,6 +11,7 @@ import {
   isReferenceSocketType,
   isScenarioNodeKind,
   isScenarioDateTimeValue,
+  isScenarioIntegerValue,
   isSystemScenarioNodeKind,
   isValidSocketConnection,
   isValueSocketType,
@@ -107,10 +109,12 @@ describe('device-board reference types & node kinds (v0.4)', () => {
     expect(isReferenceSocketType('ServerRef')).toBe(true);
     expect(isReferenceSocketType('DateTime')).toBe(false);
     expect(isValueSocketType('DateTime')).toBe(true);
+    expect(isValueSocketType('Integer')).toBe(true);
     expect(isValueSocketType('DeviceRef')).toBe(false);
     expect(isValidSocketConnection('DeviceRef', 'DeviceRef')).toBe(true);
     expect(isValidSocketConnection('DeviceRef', 'MicrophoneRef')).toBe(false);
     expect(isValidSocketConnection('DateTime', 'DateTime')).toBe(true);
+    expect(isValidSocketConnection('Integer', 'Integer')).toBe(true);
     expect(isValidSocketConnection('DateTime', 'DeviceRef')).toBe(false);
   });
 
@@ -119,6 +123,7 @@ describe('device-board reference types & node kinds (v0.4)', () => {
     expect(isScenarioNodeKind('print')).toBe(true);
     expect(isScenarioNodeKind('unknown')).toBe(false);
     expect(isSystemScenarioNodeKind('event')).toBe(true);
+    expect(isSystemScenarioNodeKind('loop-repeat')).toBe(true);
     expect(isSystemScenarioNodeKind('print')).toBe(false);
   });
 
@@ -143,6 +148,14 @@ describe('device-board reference types & node kinds (v0.4)', () => {
     const value = createDateTimeValue('2026-06-18T12:00:00.000Z');
     expect(isScenarioDateTimeValue(value)).toBe(true);
     expect(value.iso).toBe('2026-06-18T12:00:00.000Z');
+  });
+
+  it('Integer variable uses value shape', () => {
+    const variable = createScenarioVariable('var-int', 'tickMs', 'Integer');
+    expect(variable.type).toBe('Integer');
+    const value = createIntegerValue(42.9);
+    expect(isScenarioIntegerValue(value)).toBe(true);
+    expect(value.value).toBe(42);
   });
 
   it('migrateScenarioVariableLegacy converts DateTimeRef to DateTime', () => {

@@ -11,11 +11,14 @@ export const EVENT_HANDLER_BRANCHES: ReadonlySet<ScenarioBranchTab> = new Set([
   'onDisconnect',
 ]);
 
+/** Ветки с onTick Event-entry: при очистке сохраняем системный узел. */
+export const LOOP_TICK_BRANCHES: ReadonlySet<ScenarioBranchTab> = new Set(['main', 'alarm']);
+
 export function shouldPreserveLockedNodes(
   layer: BoardLayerTab,
   branch: ScenarioBranchTab,
 ): boolean {
-  return layer === 'scenario' && EVENT_HANDLER_BRANCHES.has(branch);
+  return layer === 'scenario' && (EVENT_HANDLER_BRANCHES.has(branch) || LOOP_TICK_BRANCHES.has(branch));
 }
 
 /** Удаляет пользовательские узлы ветки; при `preserveLocked` оставляет Event/system. */

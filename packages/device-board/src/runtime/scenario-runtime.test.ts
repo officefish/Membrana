@@ -166,7 +166,7 @@ describe('ScenarioRuntime H2b', () => {
 
 
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
 
     runtime.load(buildHackathonDocument());
 
@@ -212,7 +212,7 @@ describe('ScenarioRuntime H2b', () => {
 
     });
 
-    const runtime = new ScenarioRuntime(host);
+    const runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
 
     const doc = createEmptyDeviceScenarioDocument('microphone');
 
@@ -299,7 +299,7 @@ describe('ScenarioRuntime H4 alarm', () => {
 
 
 
-    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 10 });
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 10, loopTickPauseMs: 0 });
 
     runtime.load(buildHackathonDocument());
 
@@ -342,7 +342,7 @@ describe('ScenarioRuntime RT3 mode override', () => {
       trendsFftDetect: async () => ({ detected: false, confidence: 0, templateId: 'CLEAR' }),
     });
 
-    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5 });
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5, loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     runtime.setMode('alarm');
     await runtime.start();
@@ -374,7 +374,7 @@ describe('ScenarioRuntime RT3 mode override', () => {
       trendsFftDetect: async () => ({ detected: false, confidence: 0, templateId: 'CLEAR' }),
     });
 
-    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5 });
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5, loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     runtime.setMode('alarm');
     await runtime.start();
@@ -398,7 +398,7 @@ describe('ScenarioRuntime H3a onStop', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 
@@ -416,7 +416,7 @@ describe('ScenarioRuntime H3a onStop', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 
@@ -441,7 +441,7 @@ describe('ScenarioRuntime H3c subgraph', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 
@@ -462,7 +462,7 @@ describe('ScenarioRuntime H3b onDisconnect', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 
@@ -482,7 +482,7 @@ describe('ScenarioRuntime H3b onDisconnect', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 

@@ -4,6 +4,7 @@ import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
 import { isDetectionFrontEdge } from './detection-front.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import {
   createIdleScenarioRuntimeState,
@@ -20,10 +21,8 @@ export type ScenarioRuntimeListener = (state: ScenarioRuntimeState) => void;
 
 export interface ScenarioRuntimeOptions {
   readonly mainLoopChunkDurationMs?: number;
-}
-
-function waitMs(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  /** Пауза между тиками main/alarm; `0` — без паузы (тесты). */
+  readonly loopTickPauseMs?: number;
 }
 
 /**
@@ -34,6 +33,8 @@ export class ScenarioRuntime {
   private readonly host: ScenarioRuntimeHost;
 
   private readonly options: ScenarioRuntimeOptions;
+
+  private readonly loopTickPauseMs: number;
 
   private document: DeviceScenarioDocument | null = null;
 
@@ -58,9 +59,16 @@ export class ScenarioRuntime {
   /** Источник истины ручного режима (MP7b RT3). Переживает load/start. */
   private mode: RuntimeMode = 'normal';
 
+  private scenarioStartedAtMs: number | null = null;
+
+  private lastMainTickAtMs: number | null = null;
+
+  private lastAlarmTickAtMs: number | null = null;
+
   constructor(host: ScenarioRuntimeHost, options: ScenarioRuntimeOptions = {}) {
     this.host = host;
     this.options = options;
+    this.loopTickPauseMs = options.loopTickPauseMs ?? LOOP_TICK_PAUSE_MS;
   }
 
   getState(): ScenarioRuntimeState {
@@ -231,14 +239,33 @@ export class ScenarioRuntime {
 
   private buildResolveContext(branch: ScenarioRuntimeBranch): ResolveInputContext | undefined {
     const handlerBranch = runtimeBranchToHandlerBranch(branch);
-    if (handlerBranch === null) {
-      return undefined;
+    if (handlerBranch !== null) {
+      return {
+        handlerBranch,
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+        serverHandle: this.host.getServerHandle?.() ?? null,
+        triggeredAt: new Date().toISOString(),
+      };
+    }
+    if (branch === 'main' || branch === 'alarm') {
+      return this.buildLoopTickResolveContext(branch);
+    }
+    return undefined;
+  }
+
+  private buildLoopTickResolveContext(branch: 'main' | 'alarm'): ResolveInputContext {
+    const nowMs = Date.now();
+    const startedAt = this.scenarioStartedAtMs ?? nowMs;
+    const lastTickAt = branch === 'main' ? this.lastMainTickAtMs : this.lastAlarmTickAtMs;
+    const tickMs = lastTickAt === null ? 0 : nowMs - lastTickAt;
+    if (branch === 'main') {
+      this.lastMainTickAtMs = nowMs;
+    } else {
+      this.lastAlarmTickAtMs = nowMs;
     }
     return {
-      handlerBranch,
-      deviceHandle: this.host.getDeviceHandle?.() ?? null,
-      serverHandle: this.host.getServerHandle?.() ?? null,
-      triggeredAt: new Date().toISOString(),
+      loopElapsedMs: nowMs - startedAt,
+      loopTickMs: tickMs,
     };
   }
 
@@ -278,6 +305,10 @@ export class ScenarioRuntime {
         return;
       }
 
+      this.scenarioStartedAtMs = Date.now();
+      this.lastMainTickAtMs = null;
+      this.lastAlarmTickAtMs = null;
+
       let mainIteration = 0;
       let previousMainDetection: ScenarioDetectionResult | null = null;
 
@@ -304,11 +335,12 @@ export class ScenarioRuntime {
           mainLoopIteration: mainIteration,
         });
 
+        const mainResolveContext = this.buildLoopTickResolveContext('main');
         const lastDetection = await runSubgraphOnce(
           document.scenario.loops.main,
           this.host,
           signal,
-          this.execOptions('main', document.scenario.functions, this.options.mainLoopChunkDurationMs),
+          this.execOptions('main', document.scenario.functions, this.options.mainLoopChunkDurationMs, mainResolveContext),
           {
             onNodeEnter: (node) => this.onNodeEnter('main', node),
           },
@@ -332,6 +364,14 @@ export class ScenarioRuntime {
         }
 
         previousMainDetection = lastDetection;
+
+        if (this.loopTickPauseMs > 0) {
+          try {
+            await waitUntilNextLoopTick(this.host, this.loopTickPauseMs, signal);
+          } catch {
+            break;
+          }
+        }
       }
 
       await this.finalizeRun(document);
@@ -366,6 +406,7 @@ export class ScenarioRuntime {
     signal: AbortSignal,
     trigger: 'auto' | 'manual',
   ): Promise<void> {
+    this.lastAlarmTickAtMs = null;
     let alarmIteration = 0;
 
     while (!signal.aborted) {
@@ -377,7 +418,8 @@ export class ScenarioRuntime {
         alarmLoopIteration: alarmIteration,
       });
 
-      await runSubgraphOnce(alarmSubgraph, this.host, signal, this.execOptions('alarm', functions), {
+      const alarmResolveContext = this.buildLoopTickResolveContext('alarm');
+      await runSubgraphOnce(alarmSubgraph, this.host, signal, this.execOptions('alarm', functions, undefined, alarmResolveContext), {
         onNodeEnter: (node) => this.onNodeEnter('alarm', node),
       });
 
@@ -387,7 +429,7 @@ export class ScenarioRuntime {
 
       // Ручной override активен — удерживаем alarm независимо от уровня.
       if (this.mode === 'alarm') {
-        await waitMs(ALARM_LOOP_PAUSE_MS);
+        await waitUntilNextLoopTick(this.host, ALARM_LOOP_PAUSE_MS, signal);
         continue;
       }
 
@@ -404,7 +446,7 @@ export class ScenarioRuntime {
         return;
       }
 
-      await waitMs(ALARM_LOOP_PAUSE_MS);
+      await waitUntilNextLoopTick(this.host, ALARM_LOOP_PAUSE_MS, signal);
     }
   }
 
