@@ -978,7 +978,7 @@
       "createdAt": "2026-06-16",
       "archivedAt": "2026-06-16",
       "archiveNotes": "Epic #83 JE1-JE5 merged to main",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19"
     },
     {
       "id": "je1-buffer-clear-event-chain",
@@ -992,7 +992,7 @@
       "createdAt": "2026-06-16",
       "archivedAt": "2026-06-16",
       "archiveNotes": "4ff346e",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19"
     },
     {
       "id": "je2-stop-triggers-analysis",
@@ -1009,7 +1009,7 @@
       "dependsOn": [
         "je1-buffer-clear-event-chain"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19"
     },
     {
       "id": "je3-client-journal-hub-refresh",
@@ -1026,7 +1026,7 @@
       "dependsOn": [
         "je2-stop-triggers-analysis"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19"
     },
     {
       "id": "je4-cabinet-journal-fast-refresh",
@@ -1043,7 +1043,7 @@
       "dependsOn": [
         "je3-client-journal-hub-refresh"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19"
     },
     {
       "id": "je5-journal-contextual-clear",
@@ -1061,7 +1061,7 @@
         "je1-buffer-clear-event-chain",
         "je4-cabinet-journal-fast-refresh"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19"
     },
     {
       "id": "mic-buffer-sample-count-loading",

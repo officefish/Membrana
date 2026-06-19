@@ -18,7 +18,11 @@ yarn install
 
 ## Локальный preview
 
+Требуется **Node 20–24** (см. `.nvmrc` → 22). На Node 25+ Mintlify падает на native-модуле `sharp` (Windows: `ERR_DLOPEN_FAILED`).
+
 ```bash
+fnm use    # или nvm use
+yarn install
 yarn docs:dev
 ```
 

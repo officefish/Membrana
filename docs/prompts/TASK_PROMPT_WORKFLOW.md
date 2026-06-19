@@ -148,6 +148,7 @@ docs/prompts/<SLUG>_PROMPT.md (блок «Промпт целиком»).
 - Ветка: по [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) (персонаж / `cursor/*` / `feature/*`).
 - PR: `Closes #N`, Linear-ID в описании.
 - Агент не расширяет scope без нового Issue / промпта.
+- **Логи deploy/recover** не пишем в корень репо (`cabinet-recover*.txt`, `deploy-*.txt`, …) — только `%TEMP%` / `$TMPDIR` или `docs/archive/`; см. [`CONTRIBUTING.md`](../CONTRIBUTING.md) → VPS deploy.
 
 ### Шаг 6. Приёмка
 

@@ -49,3 +49,4 @@ All standard dev commands are documented in the root `README.md` and `package.js
 - **Audio features require a browser**: Microphone/audio modules need Web Audio API in a real browser. In headless Cloud Agent testing, expect "no device selected" or similar errors — this is normal.
 - **Turbo output warnings are benign**: Warnings like `no output files found for task ... #test` are cosmetic; tests still run and report correctly.
 - **Client module/plugin catalog**: Before editing `apps/client/src/modules/*` or `plugins/*`, read the catalog prompt from `docs/catalog/client/registry.json` → `promptPath` (see `docs/catalog/README.md`). CI runs `yarn catalog:verify-client`.
+- **Deploy debug logs**: Do not save SSH/deploy script output to the repo root (`cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt` via `Tee-Object` or shell redirect). Use `%TEMP%` / `$TMPDIR` instead; see `docs/CONTRIBUTING.md` → VPS deploy.
