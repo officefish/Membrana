@@ -73,6 +73,7 @@ CABINET_JS=$(curl -fsS http://127.0.0.1:8080/ | grep -oE 'assets/index-[^"]+\\.j
 curl -fsS "http://127.0.0.1:8080/\${CABINET_JS}" -o /tmp/cabinet-spa-check.js
 BYTES=$(wc -c < /tmp/cabinet-spa-check.js | tr -d ' ')
 test "\${BYTES}" -gt 100000 && echo "cabinet-web bundle OK (\${CABINET_JS}, \${BYTES} bytes)" || { echo "FATAL: cabinet-web bundle too small (\${CABINET_JS}, \${BYTES} bytes)"; exit 1; }
+grep -q 'purge-inactive' /tmp/cabinet-spa-check.js && echo "cabinet-web hotfix markers OK" || { echo "FATAL: SPA bundle missing hotfix markers (stale cabinet-web? run cabinet-stack up --force-recreate)"; exit 1; }
 
 echo "=== health ==="
 curl -fsS http://127.0.0.1:3010/health; echo

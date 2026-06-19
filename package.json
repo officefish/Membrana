@@ -113,6 +113,7 @@
     "cabinet:rollback:prod": "node scripts/_ssh-cabinet-rollback.mjs",
     "cabinet:smoke:prod": "node scripts/_ssh-cabinet-smoke.mjs",
     "device-board:deploy:prod": "node scripts/_ssh-device-board-deploy.mjs",
+    "device-board:deploy:cabinet": "node scripts/_ssh-cabinet-redeploy.mjs",
     "cabinet:mp3:post-deploy": "node scripts/_ssh-cabinet-mp3-post-deploy.mjs",
     "cabinet:mp3:smoke": "node scripts/_ssh-cabinet-mp3-smoke.mjs",
     "cabinet:mp3:prod": "node scripts/_ssh-cabinet-mp3-prod.mjs",

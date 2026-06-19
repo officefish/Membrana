@@ -591,6 +591,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     if (persistAdapter === undefined || skipPersistRef.current) {
       return;
     }
+    if (syncStatus === 'loading') {
+      return;
+    }
     if (persistTimerRef.current !== null) {
       clearTimeout(persistTimerRef.current);
     }
@@ -616,6 +619,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, [
     buildDocument,
     persistAdapter,
+    syncStatus,
     scenarioAlarmEdges,
     scenarioAlarmNodes,
     scenarioFunctionEdges,

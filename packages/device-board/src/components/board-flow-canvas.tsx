@@ -29,6 +29,7 @@ export interface BoardFlowCanvasProps {
   readonly onConnect: (connection: Connection) => void;
   readonly isValidConnection: (connection: Connection) => boolean;
   readonly onSelectionChange?: (selection: OnSelectionChangeParams) => void;
+  readonly ariaLabel?: string;
 }
 
 const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
@@ -39,6 +40,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   onConnect,
   isValidConnection,
   onSelectionChange,
+  ariaLabel,
 }) => {
   const handleSelectionChange = useCallback(
     (selection: OnSelectionChangeParams) => {
@@ -73,6 +75,8 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       proOptions={{ hideAttribution: true }}
       onSelectionChange={handleSelectionChange}
       className="bg-base-200"
+      style={{ width: '100%', height: '100%' }}
+      aria-label={ariaLabel}
     >
       <Background gap={16} size={1} color="oklch(var(--bc) / 0.08)" />
       <Controls className="!border-base-300 !bg-base-100 !shadow-sm [&_button]:!border-base-300 [&_button]:!bg-base-100" />
@@ -87,13 +91,12 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
 
 /**
  * XYFlow-канвас для слоя Signal или Scenario.
- * Обёртка `flex-1 min-h-0 h-full` гарантирует реальную высоту до нижнего края
- * страницы (родитель `<main>` — flex-col, см. device-board-shell), даже когда
- * percentage-height ненадёжен внутри flex-контейнера (DBR1, fullscreen канон).
+ * Родитель overlay-слоя задаёт `absolute inset-0`; обёртка `h-full w-full` + inline height
+ * на ReactFlow — обязательное условие измеримого viewport (DBH0 hotfix).
  */
 export const BoardFlowCanvas: React.FC<BoardFlowCanvasProps> = (props) => (
   <ReactFlowProvider>
-    <div className="h-full min-h-0 w-full flex-1" data-board-layer={props.layer}>
+    <div className="h-full w-full min-h-0" data-board-layer={props.layer}>
       <BoardFlowCanvasInner {...props} />
     </div>
   </ReactFlowProvider>

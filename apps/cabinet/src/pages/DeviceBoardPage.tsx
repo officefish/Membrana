@@ -81,7 +81,7 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-base-100">
+    <div className="fixed inset-0 z-50 flex flex-col bg-base-100">
       <div className="absolute left-4 top-4 z-[60] flex items-center gap-2 rounded-lg border border-base-300 bg-base-100/95 px-3 py-2 shadow">
         <label className="text-xs text-base-content/60" htmlFor="cabinet-device-select">
           Устройство
@@ -100,14 +100,16 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
         </select>
       </div>
       <DeviceBoardModeProvider>
-        <DeviceBoardShell
-          key={deviceId}
-          persistAdapter={persistAdapter}
-          onRequestExit={onBack}
-          exitLabel="Назад в кабинет"
-          showRunControls={false}
-          deviceLive={deviceLive}
-        />
+        <div className="min-h-0 flex-1">
+          <DeviceBoardShell
+            key={deviceId}
+            persistAdapter={persistAdapter}
+            onRequestExit={onBack}
+            exitLabel="Назад в кабинет"
+            showRunControls={false}
+            deviceLive={deviceLive}
+          />
+        </div>
       </DeviceBoardModeProvider>
     </div>
   );

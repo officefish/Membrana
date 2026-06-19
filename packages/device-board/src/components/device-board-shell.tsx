@@ -218,7 +218,7 @@ const DeviceBoardShellInner: React.FC<{
   const canvasLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
 
   return (
-    <div className="flex h-screen flex-col bg-base-100">
+    <div className="flex h-full min-h-0 flex-col bg-base-100">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-base-200 px-4 py-2 shadow-sm">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
@@ -310,67 +310,56 @@ const DeviceBoardShellInner: React.FC<{
       ) : null}
       <BoardRuntimeStatus state={graph.runtimeState} />
 
-      <div className="relative min-h-0 flex-1 overflow-hidden">
-        <main
-          className="absolute inset-0 z-0 flex min-h-0 min-w-0 flex-col"
-          aria-label={`Канвас: ${canvasLabel}`}
-        >
-          {isSignal ? (
-            <BoardFlowCanvas
-              layer="signal"
-              nodes={graph.signalNodes}
-              edges={graph.signalEdges}
-              onNodesChange={graph.onSignalNodesChange}
-              onEdgesChange={graph.onSignalEdgesChange}
-              onConnect={graph.onSignalConnect}
-              isValidConnection={(connection) => graph.isValidConnection('signal', connection)}
-              onSelectionChange={handleSelectionChange}
-            />
-          ) : (
-            <BoardFlowCanvas
-              layer="scenario"
-              nodes={scenarioCanvas.nodes}
-              edges={scenarioCanvas.edges}
-              onNodesChange={scenarioCanvas.onNodesChange}
-              onEdgesChange={scenarioCanvas.onEdgesChange}
-              onConnect={scenarioCanvas.onConnect}
-              isValidConnection={(connection) => graph.isValidConnection('scenario', connection)}
-              onSelectionChange={handleSelectionChange}
-            />
-          )}
-        </main>
-
-        <div className="pointer-events-none absolute inset-0 z-20">
-          <div className="pointer-events-auto absolute bottom-0 left-0 top-0">
-            <BoardLeftSidebar
-              activeBranch={scenarioBranch}
-              isScenarioLayer={!isSignal}
-              onSelectBranch={handleSelectBranch}
-              signalAdvanced={signalAdvanced}
-              isSignalLayer={isSignal}
-              onSelectSignal={handleSelectSignal}
-              variables={graph.variables}
-              onAddVariable={graph.addVariable}
-              onRenameVariable={graph.renameVariable}
-              onRemoveVariable={graph.removeVariable}
-              onAddVariableNode={graph.addVariableNodeToCurrentBranch}
-            />
-          </div>
-          <div className="pointer-events-auto absolute bottom-0 right-0 top-0">
-            <BoardRightSidebar
-              selectedNodeId={selectedNodeId}
-              selectedNodeLabel={selectedNodeLabel}
-              selectedNodeKind={selectedNodeKind}
-              selectedMicrophoneId={selectedMicrophoneId}
-              microphoneOptions={microphoneOptions}
-              canEditScenario={!isSignal}
-              onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
-              onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
-              onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
-              onClearBoard={handleClearBoard}
-            />
-          </div>
+      <div className="relative min-h-0 flex-1 basis-0 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <BoardFlowCanvas
+            layer={isSignal ? 'signal' : 'scenario'}
+            nodes={isSignal ? graph.signalNodes : scenarioCanvas.nodes}
+            edges={isSignal ? graph.signalEdges : scenarioCanvas.edges}
+            onNodesChange={
+              isSignal ? graph.onSignalNodesChange : scenarioCanvas.onNodesChange
+            }
+            onEdgesChange={
+              isSignal ? graph.onSignalEdgesChange : scenarioCanvas.onEdgesChange
+            }
+            onConnect={isSignal ? graph.onSignalConnect : scenarioCanvas.onConnect}
+            isValidConnection={(connection) =>
+              graph.isValidConnection(isSignal ? 'signal' : 'scenario', connection)
+            }
+            onSelectionChange={handleSelectionChange}
+            ariaLabel={`Канвас: ${canvasLabel}`}
+          />
         </div>
+
+        <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
+          <BoardLeftSidebar
+            activeBranch={scenarioBranch}
+            isScenarioLayer={!isSignal}
+            onSelectBranch={handleSelectBranch}
+            signalAdvanced={signalAdvanced}
+            isSignalLayer={isSignal}
+            onSelectSignal={handleSelectSignal}
+            variables={graph.variables}
+            onAddVariable={graph.addVariable}
+            onRenameVariable={graph.renameVariable}
+            onRemoveVariable={graph.removeVariable}
+            onAddVariableNode={graph.addVariableNodeToCurrentBranch}
+          />
+        </aside>
+        <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
+          <BoardRightSidebar
+            selectedNodeId={selectedNodeId}
+            selectedNodeLabel={selectedNodeLabel}
+            selectedNodeKind={selectedNodeKind}
+            selectedMicrophoneId={selectedMicrophoneId}
+            microphoneOptions={microphoneOptions}
+            canEditScenario={!isSignal}
+            onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
+            onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
+            onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
+            onClearBoard={handleClearBoard}
+          />
+        </aside>
       </div>
     </div>
   );
