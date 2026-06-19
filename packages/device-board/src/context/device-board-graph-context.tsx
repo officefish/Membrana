@@ -26,6 +26,7 @@ import {
   createPaletteBoardNode,
   createScenarioBoardNode,
   createVariableBoardNode,
+  variableNodePins,
   exportDeviceScenarioDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
@@ -132,6 +133,8 @@ export interface DeviceBoardGraphContextValue {
   readonly removeVariable: (id: string) => void;
   /** v0.4: добавить узел get/set переменной в активную ветку. */
   readonly addVariableNodeToCurrentBranch: (kind: VariableNodeKind, variableId: string) => void;
+  /** v0.4: привязать variable-get/set к переменной по имени (создаёт при отсутствии). */
+  readonly assignNodeVariableName: (nodeId: string, variableName: string) => void;
 }
 
 const DeviceBoardGraphContext = createContext<DeviceBoardGraphContextValue | null>(null);
@@ -838,6 +841,111 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [appendNodeToBranch, scenarioBranch, variables],
   );
 
+  const assignNodeVariableName = useCallback(
+    (nodeId: string, rawName: string) => {
+      const variableName = rawName.trim();
+      if (variableName === '') {
+        return;
+      }
+
+      const branchNodes =
+        scenarioBranch === 'initial'
+          ? scenarioInitialNodes
+          : scenarioBranch === 'onConnect'
+            ? scenarioOnConnectNodes
+            : scenarioBranch === 'main'
+              ? scenarioMainNodes
+              : scenarioBranch === 'alarm'
+                ? scenarioAlarmNodes
+                : scenarioBranch === 'onStop'
+                  ? scenarioOnStopNodes
+                  : scenarioBranch === 'onDisconnect'
+                    ? scenarioOnDisconnectNodes
+                    : scenarioFunctionNodes;
+
+      const target = branchNodes.find((node) => node.id === nodeId);
+      if (target === undefined) {
+        return;
+      }
+      const kind = target.data?.nodeKind;
+      if (kind !== 'variable-get' && kind !== 'variable-set') {
+        return;
+      }
+      const currentVariableId =
+        typeof target.data?.variableId === 'string' ? target.data.variableId : undefined;
+      const currentVariable = variables.find((item) => item.id === currentVariableId);
+      const variableType: ScenarioVariableType = currentVariable?.type ?? 'DeviceRef';
+      const existing = variables.find(
+        (item) => item.name === variableName && item.type === variableType,
+      );
+      const variableId =
+        existing?.id ??
+        `var-${variableType}-${Date.now().toString(36)}-${variables.length + 1}`;
+
+      if (existing === undefined) {
+        setVariables((current) => [
+          ...current,
+          createScenarioVariable(variableId, variableName, variableType),
+        ]);
+      }
+
+      const prefix = kind === 'variable-get' ? 'get' : 'set';
+      const { inputs, outputs } = variableNodePins(kind, variableType);
+      const patchNodes = (nodes: Node[]): Node[] =>
+        nodes.map((node) =>
+          node.id !== nodeId
+            ? node
+            : {
+                ...node,
+                data: {
+                  ...node.data,
+                  variableId,
+                  label: `${prefix} ${variableName}`,
+                  inputs,
+                  outputs,
+                },
+              },
+        );
+
+      switch (scenarioBranch) {
+        case 'initial':
+          setScenarioInitialNodes(patchNodes);
+          break;
+        case 'onConnect':
+          setScenarioOnConnectNodes(patchNodes);
+          break;
+        case 'main':
+          setScenarioMainNodes(patchNodes);
+          break;
+        case 'alarm':
+          setScenarioAlarmNodes(patchNodes);
+          break;
+        case 'onStop':
+          setScenarioOnStopNodes(patchNodes);
+          break;
+        case 'onDisconnect':
+          setScenarioOnDisconnectNodes(patchNodes);
+          break;
+        case 'function':
+          setScenarioFunctionNodes(patchNodes);
+          break;
+        default:
+          break;
+      }
+    },
+    [
+      scenarioAlarmNodes,
+      scenarioBranch,
+      scenarioFunctionNodes,
+      scenarioInitialNodes,
+      scenarioOnConnectNodes,
+      scenarioMainNodes,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopNodes,
+      variables,
+    ],
+  );
+
   const addScenarioNodeToCurrentBranch = useCallback(
     (blockKind: ScenarioBlockKind) => {
       appendNodeToBranch(scenarioBranch, createScenarioBoardNode(blockKind));
@@ -956,6 +1064,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       renameVariable,
       removeVariable,
       addVariableNodeToCurrentBranch,
+      assignNodeVariableName,
     }),
     [
       addScenarioNodeToCurrentBranch,
@@ -963,6 +1072,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updatePaletteNodeMicrophoneId,
       addVariable,
       addVariableNodeToCurrentBranch,
+      assignNodeVariableName,
       canRun,
       clearCurrentBranch,
       deviceKind,

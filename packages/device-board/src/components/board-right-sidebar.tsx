@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { ScenarioBlockKind, ScenarioNodeKind } from '@membrana/core';
 
-import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
+import { D0_SCENARIO_NODE_CATALOG, referenceTypeLabel } from '../graph/index.js';
 import type { ScenarioMicrophoneOption } from '../runtime/index.js';
 import {
   isLegacyPaletteEnabled,
@@ -14,11 +14,14 @@ export interface BoardRightSidebarProps {
   readonly selectedNodeLabel: string | null;
   readonly selectedNodeKind: ScenarioNodeKind | null;
   readonly selectedMicrophoneId: string | null;
+  readonly selectedVariableName: string;
+  readonly selectedVariableTypeLabel: string | null;
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
   readonly canEditScenario: boolean;
   readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
   readonly onAddPaletteNode: (nodeKind: 'print' | 'is-valid' | 'get-microphone') => void;
   readonly onMicrophoneIdChange: (nodeId: string, microphoneId: string) => void;
+  readonly onAssignVariableName: (nodeId: string, variableName: string) => void;
   readonly onClearBoard: () => void;
 }
 
@@ -31,14 +34,35 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedNodeLabel,
   selectedNodeKind,
   selectedMicrophoneId,
+  selectedVariableName,
+  selectedVariableTypeLabel,
   microphoneOptions,
   canEditScenario,
   onAddLegacyNode,
   onAddPaletteNode,
   onMicrophoneIdChange,
+  onAssignVariableName,
   onClearBoard,
 }) => {
   const legacyPalette = isLegacyPaletteEnabled();
+  const isVariableNode =
+    selectedNodeKind === 'variable-get' || selectedNodeKind === 'variable-set';
+  const [variableNameDraft, setVariableNameDraft] = useState(selectedVariableName);
+
+  useEffect(() => {
+    setVariableNameDraft(selectedVariableName);
+  }, [selectedNodeId, selectedVariableName]);
+
+  const commitVariableName = () => {
+    if (selectedNodeId === null) {
+      return;
+    }
+    const trimmed = variableNameDraft.trim();
+    if (trimmed === '' || trimmed === selectedVariableName) {
+      return;
+    }
+    onAssignVariableName(selectedNodeId, trimmed);
+  };
 
   return (
     <aside
@@ -74,6 +98,29 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
               </select>
               <span className="text-base-content/50">
                 Список из audio-engine enumerate (host.enumerateMicrophones).
+              </span>
+            </label>
+          ) : isVariableNode ? (
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="font-medium text-base-content/70">
+                Имя переменной ({selectedVariableTypeLabel ?? 'Device'})
+              </span>
+              <input
+                type="text"
+                className="input input-bordered input-sm w-full font-mono"
+                value={variableNameDraft}
+                placeholder={selectedNodeKind === 'variable-set' ? 'device1' : 'device1'}
+                onChange={(event) => setVariableNameDraft(event.target.value)}
+                onBlur={() => commitVariableName()}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.currentTarget.blur();
+                  }
+                }}
+              />
+              <span className="text-base-content/50">
+                Ссылка типа {selectedVariableTypeLabel ?? referenceTypeLabel('DeviceRef')}; при
+                отсутствии переменная будет создана в конструкторе слева.
               </span>
             </label>
           ) : (

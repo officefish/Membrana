@@ -4,8 +4,14 @@ import { D0_SCENARIO_NODE_CATALOG, D0_SIGNAL_NODE_CATALOG } from './d0-node-cata
 import { createEventBoardNode } from './event-node.js';
 
 /** Системный Event-узел (entry ветви-обработчика). */
-function eventNode(id: string, x: number, y: number, label?: string): Node {
-  return createEventBoardNode({ id, label, position: { x, y } });
+function eventNode(
+  id: string,
+  x: number,
+  y: number,
+  label?: string,
+  nullableDeviceOutput = false,
+): Node {
+  return createEventBoardNode({ id, label, position: { x, y }, nullableDeviceOutput });
 }
 
 function execEdge(id: string, source: string, target: string): Edge {
@@ -177,7 +183,7 @@ export const SCENARIO_ON_DISCONNECT_ENTRY = 'on-disconnect-event' as const;
 
 /** On disconnect trigger: Event → journal → teardown (T3) */
 export const INITIAL_SCENARIO_ON_DISCONNECT_NODES: Node[] = [
-  eventNode('on-disconnect-event', 40, 160, 'On disconnect'),
+  eventNode('on-disconnect-event', 40, 160, 'On disconnect', true),
   scenarioNode('on-disc-journal', 'write-journal', 280, 160, 'Disconnect journal'),
   scenarioNode('on-disc-teardown', 'handle-disconnect', 500, 160),
 ];

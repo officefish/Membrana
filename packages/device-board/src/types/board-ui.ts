@@ -15,6 +15,12 @@ export type ScenarioBranchTab =
   | 'onDisconnect'
   | 'function';
 
+/** Ширина левого сайдбара (совпадает с `BoardLeftSidebar`). */
+export const BOARD_LEFT_SIDEBAR_WIDTH_CLASS = 'w-[clamp(11rem,13vw,14rem)]' as const;
+
+/** Отступ шапки от левого края до зоны контента (после сайдбара). */
+export const BOARD_HEADER_CONTENT_OFFSET_CLASS = 'pl-[clamp(11rem,13vw,14rem)]' as const;
+
 /**
  * Презентационные лейблы веток (MP7b RT6). Сериализованный ключ `initial`
  * не переименовывается в схеме документа — здесь только UI-лейбл «On start».
@@ -28,6 +34,20 @@ export const BRANCH_TAB_LABEL: Record<ScenarioBranchTab, string> = {
   onDisconnect: 'On disconnect',
   function: 'customFunc',
 };
+
+/** Заголовок активного сценария в шапке доски (человекочитаемый). */
+export const BRANCH_SCENARIO_TITLE: Record<ScenarioBranchTab, string> = {
+  initial: 'Сценарий запуска устройства',
+  onConnect: 'Сценарий соединения с устройством',
+  onStop: 'Сценарий остановки устройства',
+  onDisconnect: 'Сценарий при потере соединения с устройством',
+  main: 'Основной цикл устройства',
+  alarm: 'Цикл тревоги',
+  function: 'Пользовательская функция',
+};
+
+/** Заголовок слоя Signal в шапке. */
+export const SIGNAL_LAYER_TITLE = 'Топология сигнала' as const;
 
 /** Секция левого сайдбара доски: заголовок + входящие вкладки веток. */
 export interface BranchSidebarSection {

@@ -21,13 +21,21 @@ const EXEC_OUT: BoardSocketPin = { name: EVENT_EXEC_HANDLE, kind: 'exec' };
  * для соединения с `set Device`). Значение `null` в `onDisconnect` различается на
  * уровне рантайма (DBR4), а не типом порта.
  */
-export function eventNodePins(): {
+export function eventNodePins(nullableDeviceOutput = false): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
   return {
     inputs: [],
-    outputs: [EXEC_OUT, { name: EVENT_DEVICE_HANDLE, kind: 'data', socketType: 'DeviceRef' }],
+    outputs: [
+      EXEC_OUT,
+      {
+        name: EVENT_DEVICE_HANDLE,
+        kind: 'data',
+        socketType: 'DeviceRef',
+        ...(nullableDeviceOutput ? { nullable: true } : {}),
+      },
+    ],
   };
 }
 
@@ -35,6 +43,7 @@ export interface CreateEventBoardNodeOptions {
   readonly id: string;
   readonly label?: string;
   readonly position?: { readonly x: number; readonly y: number };
+  readonly nullableDeviceOutput?: boolean;
 }
 
 /**
@@ -43,7 +52,7 @@ export interface CreateEventBoardNodeOptions {
  * `blockKind:'custom'` — legacy-носитель формы; смысл несёт `nodeKind:'event'`.
  */
 export function createEventBoardNode(options: CreateEventBoardNodeOptions): Node {
-  const { inputs, outputs } = eventNodePins();
+  const { inputs, outputs } = eventNodePins(options.nullableDeviceOutput === true);
   const data: BoardFlowNodeData = {
     label: options.label ?? 'Event',
     layer: 'scenario',
@@ -106,9 +115,10 @@ export function ensureEventEntry(
   entryId: string,
   nodes: readonly Node[],
   label?: string,
+  nullableDeviceOutput = false,
 ): Node[] {
   if (nodes.some((node) => isEventNode(node))) {
     return [...nodes];
   }
-  return [createEventBoardNode({ id: entryId, label }), ...nodes];
+  return [createEventBoardNode({ id: entryId, label, nullableDeviceOutput }), ...nodes];
 }

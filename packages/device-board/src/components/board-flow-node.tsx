@@ -1,9 +1,10 @@
 import React from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import type { SocketType } from '@membrana/core';
 
 import type { BoardFlowNodeData, BoardSocketPin } from '../graph/board-node-data.js';
 import { isBoardFlowNodeData } from '../graph/board-node-data.js';
+import { formatSocketPortLabel } from '../graph/socket-port-label.js';
+import { socketHandleClass } from '../graph/socket-type-palette.js';
 
 const LAYER_BORDER: Record<BoardFlowNodeData['layer'], string> = {
   signal: 'border-primary/40',
@@ -17,20 +18,6 @@ const STATUS_BADGE: Record<NonNullable<BoardFlowNodeData['status']>, string> = {
   invalid: 'badge-error',
 };
 
-const SOCKET_COLOR: Record<SocketType, string> = {
-  AudioFrame: '!bg-primary',
-  Spectrum: '!bg-secondary',
-  Detection: '!bg-accent',
-  TDOAPair: '!bg-info',
-  IQSamples: '!bg-warning',
-  RFSignature: '!bg-error',
-  ThermalFrame: '!bg-neutral',
-  BlobMask: '!bg-success',
-  Observation: '!bg-base-content',
-  DeviceRef: '!bg-accent',
-  MicrophoneRef: '!bg-info',
-};
-
 function handleOffset(index: number, total: number): string {
   if (total <= 1) {
     return '50%';
@@ -38,33 +25,37 @@ function handleOffset(index: number, total: number): string {
   return `${((index + 1) / (total + 1)) * 100}%`;
 }
 
-function handleClass(pin: BoardSocketPin): string {
-  const base = '!h-2.5 !w-2.5 !border-2 !border-base-100';
-  if (pin.kind === 'exec') {
-    return `${base} !bg-base-content`;
-  }
-  if (pin.socketType !== undefined) {
-    return `${base} ${SOCKET_COLOR[pin.socketType]}`;
-  }
-  return `${base} !bg-neutral`;
-}
-
 function renderHandles(
   pins: readonly BoardSocketPin[],
   type: 'source' | 'target',
   position: Position,
 ): React.ReactNode {
-  return pins.map((pin, index) => (
-    <Handle
-      key={pin.name}
-      id={pin.name}
-      type={type}
-      position={position}
-      style={{ top: handleOffset(index, pins.length) }}
-      className={handleClass(pin)}
-      title={pin.kind === 'exec' ? 'exec' : pin.socketType}
-    />
-  ));
+  const isLeft = position === Position.Left;
+  return pins.map((pin, index) => {
+    const label = formatSocketPortLabel(pin);
+    const top = handleOffset(index, pins.length);
+    return (
+      <React.Fragment key={pin.name}>
+        <Handle
+          id={pin.name}
+          type={type}
+          position={position}
+          style={{ top }}
+          className={socketHandleClass(pin)}
+          title={label}
+        />
+        <span
+          className={[
+            'pointer-events-none absolute -translate-y-1/2 whitespace-nowrap font-mono text-[9px] leading-none text-base-content/70',
+            isLeft ? 'left-2 text-left' : 'right-2 text-right',
+          ].join(' ')}
+          style={{ top }}
+        >
+          {label}
+        </span>
+      </React.Fragment>
+    );
+  });
 }
 
 /** Нода доски с типизированными handles (signal + scenario). */
@@ -81,7 +72,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ data, selected }) => {
   return (
     <div
       className={[
-        'min-w-[148px] rounded-lg border bg-base-100 px-3 py-2 shadow-sm',
+        'relative min-w-[148px] rounded-lg border bg-base-100 px-3 py-2 shadow-sm',
         isSystem ? 'border-accent/60 ring-1 ring-accent/20' : LAYER_BORDER[data.layer],
         selected ? 'ring-2 ring-primary/50' : '',
       ].join(' ')}

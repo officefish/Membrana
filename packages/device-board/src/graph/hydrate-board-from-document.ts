@@ -151,7 +151,12 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   initial.nodes = ensureEventEntry(SCENARIO_INITIAL_ENTRY, initial.nodes, 'On start');
   onConnect.nodes = ensureEventEntry(SCENARIO_ON_CONNECT_ENTRY, onConnect.nodes, 'On connect');
   onStop.nodes = ensureEventEntry(SCENARIO_ON_STOP_ENTRY, onStop.nodes, 'On stop');
-  onDisconnect.nodes = ensureEventEntry(SCENARIO_ON_DISCONNECT_ENTRY, onDisconnect.nodes, 'On disconnect');
+  onDisconnect.nodes = ensureEventEntry(
+    SCENARIO_ON_DISCONNECT_ENTRY,
+    onDisconnect.nodes,
+    'On disconnect',
+    true,
+  );
 
   if (signal.nodes.length === 0) {
     signal.nodes.push(...INITIAL_SIGNAL_NODES);
