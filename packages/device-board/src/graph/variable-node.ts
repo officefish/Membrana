@@ -20,7 +20,7 @@ export function referenceTypeLabel(type: ScenarioVariableType): string {
 /**
  * Пины узла переменной по её типу:
  * - `variable-get` — чистый источник данных: один data-выход `value`;
- * - `variable-set` — exec-проход + data-вход `value` (значение пишется в host, DBR4).
+ * - `variable-set` — exec-проход + data-вход `value` + data-выход `value` (passthrough, DBR4).
  */
 export function variableNodePins(
   kind: VariableNodeKind,
@@ -30,7 +30,7 @@ export function variableNodePins(
   if (kind === 'variable-get') {
     return { inputs: [], outputs: [valuePin] };
   }
-  return { inputs: [EXEC_IN, valuePin], outputs: [EXEC_OUT] };
+  return { inputs: [EXEC_IN, valuePin], outputs: [EXEC_OUT, valuePin] };
 }
 
 export interface CreateVariableBoardNodeOptions {

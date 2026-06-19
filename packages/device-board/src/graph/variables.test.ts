@@ -105,6 +105,9 @@ describe('device-board variables (DBR2)', () => {
     const setPins = variableNodePins('variable-set', 'MicrophoneRef');
     expect(setPins.inputs.some((pin) => pin.kind === 'exec')).toBe(true);
     expect(setPins.inputs.some((pin) => pin.socketType === 'MicrophoneRef')).toBe(true);
+    expect(setPins.outputs.some((pin) => pin.name === VARIABLE_VALUE_HANDLE && pin.socketType === 'MicrophoneRef')).toBe(
+      true,
+    );
   });
 });
 

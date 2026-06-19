@@ -201,6 +201,20 @@ describe('resolveInput (DBR4)', () => {
     expect(value).toEqual(ref);
   });
 
+  it('forwards variable-set value output from its data input', () => {
+    const sg = subgraph(
+      'evt',
+      [eventNode('evt'), variableSetNode('set', deviceVar.id), variableSetNode('downstream', deviceVar.id)],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'set', VARIABLE_VALUE_HANDLE),
+        dataEdge('set', VARIABLE_VALUE_HANDLE, 'downstream', VARIABLE_VALUE_HANDLE),
+      ],
+    );
+
+    const value = resolveInput(sg, [deviceVar], 'downstream', VARIABLE_VALUE_HANDLE, onConnectContext);
+    expect(value).toEqual(createReferenceValue('DeviceRef', DEVICE_HANDLE));
+  });
+
   it('returns null when port has no data edge', () => {
     const sg = subgraph('set', [variableSetNode('set', deviceVar.id)], []);
     expect(resolveInput(sg, [deviceVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext)).toBeNull();

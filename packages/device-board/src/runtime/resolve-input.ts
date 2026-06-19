@@ -131,6 +131,13 @@ function resolveNodeOutput(
     return variable.value;
   }
 
+  if (node.nodeKind === 'variable-set') {
+    if (outputPort !== VARIABLE_VALUE_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown variable-set output: ${outputPort}`);
+    }
+    return resolveInput(subgraph, variables, node.id, VARIABLE_VALUE_HANDLE, context, visiting);
+  }
+
   if (node.nodeKind === 'get-microphone') {
     if (outputPort !== GET_MICROPHONE_OUT_HANDLE) {
       throw new ResolveInputError(
