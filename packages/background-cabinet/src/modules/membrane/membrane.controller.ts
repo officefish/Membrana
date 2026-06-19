@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import type { CreateAccessKeyDto, CreateNodeDto } from './membrane.dto';
 import { MembraneService } from './membrane.service';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
@@ -16,6 +16,11 @@ export class MembraneController {
   @Post('membranes/me/nodes')
   createNode(@Req() req: AuthenticatedRequest, @Body() body: CreateNodeDto) {
     return this.membraneService.createNode(req.authUser!.id, body.label);
+  }
+
+  @Delete('nodes/:nodeId')
+  deleteNode(@Req() req: AuthenticatedRequest, @Param('nodeId') nodeId: string) {
+    return this.membraneService.deleteNode(req.authUser!.id, nodeId);
   }
 
   @Post('nodes/:nodeId/access-keys')
@@ -37,6 +42,19 @@ export class MembraneController {
     @Req() req: AuthenticatedRequest,
     @Param('nodeId') nodeId: string,
   ) {
-    return this.membraneService.purgeRevokedAccessKeys(req.authUser!.id, nodeId);
+    return this.membraneService.purgeInactiveAccessKeys(req.authUser!.id, nodeId);
+  }
+
+  @Post('nodes/:nodeId/access-keys/purge-inactive')
+  purgeInactiveAccessKeys(
+    @Req() req: AuthenticatedRequest,
+    @Param('nodeId') nodeId: string,
+  ) {
+    return this.membraneService.purgeInactiveAccessKeys(req.authUser!.id, nodeId);
+  }
+
+  @Delete('access-keys/:keyId')
+  deleteAccessKey(@Req() req: AuthenticatedRequest, @Param('keyId') keyId: string) {
+    return this.membraneService.deleteAccessKey(req.authUser!.id, keyId);
   }
 }

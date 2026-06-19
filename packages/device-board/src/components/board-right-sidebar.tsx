@@ -42,7 +42,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
 
   return (
     <aside
-      className="flex h-full w-72 shrink-0 flex-col overflow-y-auto border-l border-base-300 bg-base-100"
+      className="flex h-full w-[clamp(12rem,15vw,16rem)] flex-col overflow-y-auto border-l border-base-300 bg-base-100/95 shadow-lg backdrop-blur-sm"
       aria-label="Инспектор и палитра нод"
     >
       {selectedNodeId ? (

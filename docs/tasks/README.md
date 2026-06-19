@@ -127,6 +127,12 @@
 | `dbr-4-dataflow-resolve` | DBR4: dataflow-резолюция в рантайме (resolveInput) + семантика validity ссылок | M | [`DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md) | [#95](https://github.com/officefish/Membrana/issues/95) |
 | `dbr-5-palette-nodes` | DBR5: узлы палитры Print/isValid/GetMicrophone + getMicrophone через audio-engine + set Microphone | L | [`DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md) | [#95](https://github.com/officefish/Membrana/issues/95) |
 | `dbr-6-run-gating` | DBR6: gating Пуска по online-presence (список устройств + борд, единый isDeviceLive) | S | [`DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md) | [#95](https://github.com/officefish/Membrana/issues/95) |
+| `device-board-cabinet-hotfix` | Device-board + cabinet hotfix: layout overlay, nodes/keys split, delete node, purge expired | M | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
+| `dbh-0-canvas-overlay` | DBH0: fullscreen canvas + overlay sidebars | S | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
+| `dbh-1-sidebar-clamp` | DBH1: clamp sidebar width (vw + rem) | XS | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
+| `dbh-2-nav-split` | DBH2: split cabinet nav Узлы / Ключи by default | XS | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
+| `dbh-3-delete-node` | DBH3: DELETE node + revoke keys + free-v1 maxNodes=1 | S | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
+| `dbh-4-purge-expired-keys` | DBH4: purge inactive keys (expired + revoked) | S | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
 
 ---
 
@@ -213,4 +219,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-18.*
+*Файл обновлён автоматически: 2026-06-19.*

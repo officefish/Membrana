@@ -310,22 +310,11 @@ const DeviceBoardShellInner: React.FC<{
       ) : null}
       <BoardRuntimeStatus state={graph.runtimeState} />
 
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <BoardLeftSidebar
-          activeBranch={scenarioBranch}
-          isScenarioLayer={!isSignal}
-          onSelectBranch={handleSelectBranch}
-          signalAdvanced={signalAdvanced}
-          isSignalLayer={isSignal}
-          onSelectSignal={handleSelectSignal}
-          variables={graph.variables}
-          onAddVariable={graph.addVariable}
-          onRenameVariable={graph.renameVariable}
-          onRemoveVariable={graph.removeVariable}
-          onAddVariableNode={graph.addVariableNodeToCurrentBranch}
-        />
-
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label={`Канвас: ${canvasLabel}`}>
+      <div className="relative min-h-0 flex-1 overflow-hidden">
+        <main
+          className="absolute inset-0 z-0 flex min-h-0 min-w-0 flex-col"
+          aria-label={`Канвас: ${canvasLabel}`}
+        >
           {isSignal ? (
             <BoardFlowCanvas
               layer="signal"
@@ -351,18 +340,37 @@ const DeviceBoardShellInner: React.FC<{
           )}
         </main>
 
-        <BoardRightSidebar
-          selectedNodeId={selectedNodeId}
-          selectedNodeLabel={selectedNodeLabel}
-          selectedNodeKind={selectedNodeKind}
-          selectedMicrophoneId={selectedMicrophoneId}
-          microphoneOptions={microphoneOptions}
-          canEditScenario={!isSignal}
-          onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
-          onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
-          onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
-          onClearBoard={handleClearBoard}
-        />
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div className="pointer-events-auto absolute bottom-0 left-0 top-0">
+            <BoardLeftSidebar
+              activeBranch={scenarioBranch}
+              isScenarioLayer={!isSignal}
+              onSelectBranch={handleSelectBranch}
+              signalAdvanced={signalAdvanced}
+              isSignalLayer={isSignal}
+              onSelectSignal={handleSelectSignal}
+              variables={graph.variables}
+              onAddVariable={graph.addVariable}
+              onRenameVariable={graph.renameVariable}
+              onRemoveVariable={graph.removeVariable}
+              onAddVariableNode={graph.addVariableNodeToCurrentBranch}
+            />
+          </div>
+          <div className="pointer-events-auto absolute bottom-0 right-0 top-0">
+            <BoardRightSidebar
+              selectedNodeId={selectedNodeId}
+              selectedNodeLabel={selectedNodeLabel}
+              selectedNodeKind={selectedNodeKind}
+              selectedMicrophoneId={selectedMicrophoneId}
+              microphoneOptions={microphoneOptions}
+              canEditScenario={!isSignal}
+              onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
+              onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
+              onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
+              onClearBoard={handleClearBoard}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
