@@ -3,6 +3,9 @@ import type { Node, NodeChange } from '@xyflow/react';
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 
+/** Ветви-обработчики с системным Event-узлом. */
+export type EventHandlerBranch = 'onConnect' | 'initial' | 'onStop' | 'onDisconnect';
+
 /** Вид системного узла-обработчика события. */
 export const EVENT_NODE_KIND = 'event' as const;
 
@@ -12,19 +15,40 @@ export const EVENT_EXEC_HANDLE = 'exec-out' as const;
 /** Имя data-выхода узла Event — ссылка на устройство (или `null` в onDisconnect). */
 export const EVENT_DEVICE_HANDLE = 'device' as const;
 
+/** Имя data-выхода узла Event onConnect — ссылка на сервер (cabinet/media). */
+export const EVENT_SERVER_HANDLE = 'server' as const;
+
+/** Имя data-выхода узла Event — момент срабатывания триггера (`DateTime` value). */
+export const EVENT_DATETIME_HANDLE = 'datetime' as const;
+
 const EXEC_OUT: BoardSocketPin = { name: EVENT_EXEC_HANDLE, kind: 'exec' };
 
+const DATETIME_OUT: BoardSocketPin = {
+  name: EVENT_DATETIME_HANDLE,
+  kind: 'data',
+  socketType: 'DateTime',
+};
+
+const SERVER_OUT: BoardSocketPin = {
+  name: EVENT_SERVER_HANDLE,
+  kind: 'data',
+  socketType: 'ServerRef',
+};
+
+export interface EventNodePinOptions {
+  readonly nullableDeviceOutput?: boolean;
+  readonly includeServerOutput?: boolean;
+}
+
 /**
- * Пины узла Event: exec-выход (ведёт поток исполнения) + data-выход `DeviceRef`.
- *
- * Тип data-выхода — `DeviceRef` во всех четырёх обработчиках (единая типизация
- * для соединения с `set Device`). Значение `null` в `onDisconnect` различается на
- * уровне рантайма (DBR4), а не типом порта.
+ * Пины узла Event: exec + device (+ nullable) + optional server (onConnect) + datetime.
  */
-export function eventNodePins(nullableDeviceOutput = false): {
+export function eventNodePins(options: EventNodePinOptions = {}): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
+  const nullableDevice = options.nullableDeviceOutput === true;
+  const includeServer = options.includeServerOutput === true;
   return {
     inputs: [],
     outputs: [
@@ -33,8 +57,10 @@ export function eventNodePins(nullableDeviceOutput = false): {
         name: EVENT_DEVICE_HANDLE,
         kind: 'data',
         socketType: 'DeviceRef',
-        ...(nullableDeviceOutput ? { nullable: true } : {}),
+        ...(nullableDevice ? { nullable: true } : {}),
       },
+      ...(includeServer ? [SERVER_OUT] : []),
+      DATETIME_OUT,
     ],
   };
 }
@@ -44,6 +70,7 @@ export interface CreateEventBoardNodeOptions {
   readonly label?: string;
   readonly position?: { readonly x: number; readonly y: number };
   readonly nullableDeviceOutput?: boolean;
+  readonly includeServerOutput?: boolean;
 }
 
 /**
@@ -52,7 +79,10 @@ export interface CreateEventBoardNodeOptions {
  * `blockKind:'custom'` — legacy-носитель формы; смысл несёт `nodeKind:'event'`.
  */
 export function createEventBoardNode(options: CreateEventBoardNodeOptions): Node {
-  const { inputs, outputs } = eventNodePins(options.nullableDeviceOutput === true);
+  const { inputs, outputs } = eventNodePins({
+    nullableDeviceOutput: options.nullableDeviceOutput === true,
+    includeServerOutput: options.includeServerOutput === true,
+  });
   const data: BoardFlowNodeData = {
     label: options.label ?? 'Event',
     layer: 'scenario',
@@ -90,10 +120,39 @@ export function isLockedBoardNode(node: Node): boolean {
   return isSystemNode(node);
 }
 
+function pinOptionsForBranch(handlerBranch: EventHandlerBranch): EventNodePinOptions {
+  return {
+    nullableDeviceOutput: handlerBranch === 'onDisconnect',
+    includeServerOutput: handlerBranch === 'onConnect',
+  };
+}
+
+/**
+ * Синхронизирует пины Event-узлов с актуальной схемой ветви.
+ * Идемпотентно для legacy-документов после десериализации.
+ */
+export function syncEventNodePins(
+  nodes: readonly Node[],
+  handlerBranch: EventHandlerBranch,
+): Node[] {
+  const { inputs, outputs } = eventNodePins(pinOptionsForBranch(handlerBranch));
+  return nodes.map((node) => {
+    if (!isEventNode(node)) {
+      return node;
+    }
+    return {
+      ...node,
+      data: {
+        ...(node.data as BoardFlowNodeData),
+        inputs,
+        outputs,
+      },
+    };
+  });
+}
+
 /**
  * v0.4 (DBR3): отбрасывает `type:'remove'` для системных узлов (Event).
- * Применяется в обработчиках `onNodesChange` обработчиков событий, чтобы entry
- * нельзя было удалить через UI-изменения XYFlow.
  */
 export function rejectSystemNodeRemovals(
   changes: NodeChange[],
@@ -107,18 +166,24 @@ export function rejectSystemNodeRemovals(
 }
 
 /**
- * Гарантирует наличие узла Event как entry ветви-обработчика: если событийного
- * узла нет (legacy/мигрированный документ), добавляет его в начало с фикс-id `entryId`.
- * Идемпотентно: при наличии Event-узла список не меняется.
+ * Гарантирует наличие узла Event как entry ветви-обработчика.
  */
 export function ensureEventEntry(
   entryId: string,
   nodes: readonly Node[],
   label?: string,
-  nullableDeviceOutput = false,
+  options: EventNodePinOptions = {},
 ): Node[] {
   if (nodes.some((node) => isEventNode(node))) {
     return [...nodes];
   }
-  return [createEventBoardNode({ id: entryId, label, nullableDeviceOutput }), ...nodes];
+  return [
+    createEventBoardNode({
+      id: entryId,
+      label,
+      nullableDeviceOutput: options.nullableDeviceOutput === true,
+      includeServerOutput: options.includeServerOutput === true,
+    }),
+    ...nodes,
+  ];
 }

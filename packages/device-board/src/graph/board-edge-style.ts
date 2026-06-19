@@ -1,10 +1,15 @@
 import type { Edge, Node } from '@xyflow/react';
 
+import type { BoardSocketPin } from './board-node-data.js';
+import { isBoardFlowNodeData } from './board-node-data.js';
 import { resolveHandle } from './handle-catalog.js';
+import { resolveVariableSetValuePin } from './resolve-context-port-label.js';
+import { VARIABLE_VALUE_HANDLE } from './variable-node.js';
 import {
   DATA_EDGE_STROKE_WIDTH,
   EXEC_EDGE_STROKE,
   EXEC_EDGE_STROKE_WIDTH,
+  NULL_SOCKET_STROKE,
   dataSocketStrokeColor,
 } from './socket-type-palette.js';
 
@@ -21,7 +26,36 @@ function isExecEdge(edge: Edge, nodes: readonly Node[]): boolean {
   return resolved?.pinKind === 'exec';
 }
 
-function dataEdgeStroke(edge: Edge, nodes: readonly Node[]): string {
+function resolveSourceDataPin(
+  edge: Edge,
+  edges: readonly Edge[],
+  nodes: readonly Node[],
+): BoardSocketPin | null {
+  if (edge.sourceHandle === undefined || edge.sourceHandle === null) {
+    return null;
+  }
+  const sourceNode = nodes.find((node) => node.id === edge.source);
+  if (sourceNode === undefined || !isBoardFlowNodeData(sourceNode.data)) {
+    return null;
+  }
+  const sourcePin = sourceNode.data.outputs?.find((pin) => pin.name === edge.sourceHandle);
+  if (sourcePin === undefined) {
+    return null;
+  }
+  if (sourceNode.data.nodeKind === 'variable-set' && edge.sourceHandle === VARIABLE_VALUE_HANDLE) {
+    return resolveVariableSetValuePin(edge.source, sourcePin, edges, nodes);
+  }
+  return sourcePin;
+}
+
+function dataEdgeStroke(edge: Edge, edges: readonly Edge[], nodes: readonly Node[]): string {
+  const pin = resolveSourceDataPin(edge, edges, nodes);
+  if (pin?.nullable === true) {
+    return NULL_SOCKET_STROKE;
+  }
+  if (pin?.socketType !== undefined) {
+    return dataSocketStrokeColor(pin.socketType);
+  }
   if (edge.sourceHandle === undefined || edge.sourceHandle === null) {
     return dataSocketStrokeColor();
   }
@@ -37,7 +71,7 @@ export function decorateBoardEdges(
 ): Edge[] {
   return edges.map((edge) => {
     const exec = isExecEdge(edge, nodes);
-    const stroke = exec ? EXEC_EDGE_STROKE : dataEdgeStroke(edge, nodes);
+    const stroke = exec ? EXEC_EDGE_STROKE : dataEdgeStroke(edge, edges, nodes);
     const strokeWidth = exec ? EXEC_EDGE_STROKE_WIDTH : DATA_EDGE_STROKE_WIDTH;
     return {
       ...edge,

@@ -32,8 +32,9 @@ import {
   SCENARIO_ON_DISCONNECT_ENTRY,
   SCENARIO_ON_STOP_ENTRY,
 } from './initial-board-state.js';
-import { ensureEventEntry } from './event-node.js';
+import { ensureEventEntry, syncEventNodePins } from './event-node.js';
 import { deserializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
+import { syncVariableNodePins } from './variable-node.js';
 import { deserializeSignalGraph } from './serialize-signal-graph.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 
@@ -149,14 +150,29 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   // v0.4 (DBR3): системный Event-узел — обязательный entry каждого обработчика.
   // Авто-инжект для legacy/мигрированных документов без Event-узла.
   initial.nodes = ensureEventEntry(SCENARIO_INITIAL_ENTRY, initial.nodes, 'On start');
-  onConnect.nodes = ensureEventEntry(SCENARIO_ON_CONNECT_ENTRY, onConnect.nodes, 'On connect');
+  onConnect.nodes = ensureEventEntry(SCENARIO_ON_CONNECT_ENTRY, onConnect.nodes, 'On connect', {
+    includeServerOutput: true,
+  });
   onStop.nodes = ensureEventEntry(SCENARIO_ON_STOP_ENTRY, onStop.nodes, 'On stop');
   onDisconnect.nodes = ensureEventEntry(
     SCENARIO_ON_DISCONNECT_ENTRY,
     onDisconnect.nodes,
     'On disconnect',
-    true,
+    { nullableDeviceOutput: true },
   );
+
+  initial.nodes = syncEventNodePins(initial.nodes, 'initial');
+  onConnect.nodes = syncEventNodePins(onConnect.nodes, 'onConnect');
+  onStop.nodes = syncEventNodePins(onStop.nodes, 'onStop');
+  onDisconnect.nodes = syncEventNodePins(onDisconnect.nodes, 'onDisconnect');
+
+  initial.nodes = syncVariableNodePins(initial.nodes, variables);
+  onConnect.nodes = syncVariableNodePins(onConnect.nodes, variables);
+  main.nodes = syncVariableNodePins(main.nodes, variables);
+  alarm.nodes = syncVariableNodePins(alarm.nodes, variables);
+  onStop.nodes = syncVariableNodePins(onStop.nodes, variables);
+  onDisconnect.nodes = syncVariableNodePins(onDisconnect.nodes, variables);
+  fn.nodes = syncVariableNodePins(fn.nodes, variables);
 
   if (signal.nodes.length === 0) {
     signal.nodes.push(...INITIAL_SIGNAL_NODES);

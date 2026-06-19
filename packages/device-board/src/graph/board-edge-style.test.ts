@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { decorateBoardEdges } from './board-edge-style.js';
-import { DATA_EDGE_STROKE_WIDTH, EXEC_EDGE_STROKE_WIDTH, REFERENCE_SOCKET_STROKE } from './socket-type-palette.js';
+import { DATA_EDGE_STROKE_WIDTH, EXEC_EDGE_STROKE_WIDTH, NULL_SOCKET_STROKE, REFERENCE_SOCKET_STROKE } from './socket-type-palette.js';
 import { EVENT_DEVICE_HANDLE } from './event-node.js';
 import { createEventBoardNode } from './event-node.js';
 import { createPaletteBoardNode, PALETTE_VALUE_HANDLE } from './palette-node.js';
@@ -53,5 +53,21 @@ describe('decorateBoardEdges', () => {
     const decorated = decorateBoardEdges(edges, [evt, print], { pulseWhenRunning: false });
     expect(decorated[0]?.style?.stroke).toBe(REFERENCE_SOCKET_STROKE);
     expect(decorated[0]?.style?.strokeWidth).toBe(DATA_EDGE_STROKE_WIDTH);
+  });
+
+  it('colors nullable data edges indigo', () => {
+    const evt = createEventBoardNode({ id: 'evt', nullableDeviceOutput: true });
+    const print = createPaletteBoardNode('print', { id: 'p' });
+    const edges = [
+      {
+        id: 'd1',
+        source: 'evt',
+        sourceHandle: EVENT_DEVICE_HANDLE,
+        target: 'p',
+        targetHandle: PALETTE_VALUE_HANDLE,
+      },
+    ];
+    const decorated = decorateBoardEdges(edges, [evt, print], { pulseWhenRunning: false });
+    expect(decorated[0]?.style?.stroke).toBe(NULL_SOCKET_STROKE);
   });
 });

@@ -786,7 +786,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const addVariable = useCallback((type: ScenarioVariableType) => {
     setVariables((current) => {
       const sameType = current.filter((variable) => variable.type === type).length;
-      const prefix = type === 'DeviceRef' ? 'device' : 'microphone';
+      const prefix =
+        type === 'DeviceRef'
+          ? 'device'
+          : type === 'MicrophoneRef'
+            ? 'microphone'
+            : type === 'ServerRef'
+              ? 'server'
+              : 'datetime';
       const name = `${prefix}${sameType + 1}`;
       const id = `var-${type}-${Date.now().toString(36)}-${current.length + 1}`;
       return [...current, createScenarioVariable(id, name, type)];

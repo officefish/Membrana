@@ -106,7 +106,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
       if (!isBoardFlowNodeData(data)) {
         return pin;
       }
-      if (data.nodeKind === 'is-valid' || data.nodeKind === 'print') {
+      if (data.nodeKind === 'is-valid' || data.nodeKind === 'print' || data.nodeKind === 'variable-set') {
         return resolveContextValuePin(id, pin, edges, nodes);
       }
       return pin;
@@ -119,7 +119,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
       if (!isBoardFlowNodeData(data)) {
         return formatSocketPortLabel(pin);
       }
-      if (data.nodeKind === 'is-valid' || data.nodeKind === 'print') {
+      if (data.nodeKind === 'is-valid' || data.nodeKind === 'print' || data.nodeKind === 'variable-set') {
         return resolveContextValuePortLabel(id, pin, edges, nodes);
       }
       return formatSocketPortLabel(pin);

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { createReferenceValue } from '@membrana/core';
+import { createReferenceValue, createDateTimeValue } from '@membrana/core';
 
-import { formatReferenceForPrint } from './format-reference.js';
+import { formatReferenceForPrint, formatVariableValueForPrint } from './format-reference.js';
 
 describe('format-reference (DBR5)', () => {
   it('formats valid and invalid references for Print', () => {
@@ -13,5 +13,11 @@ describe('format-reference (DBR5)', () => {
     expect(
       formatReferenceForPrint({ kind: 'DeviceRef', handle: 'dev-1', valid: false }),
     ).toBe('DeviceRef(dev-1, invalid)');
+  });
+
+  it('formats DateTime value for Print', () => {
+    expect(formatVariableValueForPrint(createDateTimeValue('2026-06-18T12:00:00.000Z'))).toBe(
+      'DateTime(2026-06-18T12:00:00.000Z)',
+    );
   });
 });

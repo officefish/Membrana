@@ -1,4 +1,4 @@
-import type { ScenarioBlockKind, ScenarioReferenceValue } from '@membrana/core';
+import type { ScenarioBlockKind, ScenarioVariableValue } from '@membrana/core';
 
 import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
@@ -19,10 +19,17 @@ export interface ScenarioConnectionHandlers {
 export interface ScenarioRuntimeHost {
   /** Handle подключённого устройства для Event/dataflow (v0.4 DBR4). */
   readonly getDeviceHandle?: () => string | null;
+  /** Handle связанного сервера (paired cabinet/media). */
+  readonly getServerHandle?: () => string | null;
+  /**
+   * Узел связан с сервером (device↔server в архитектуре Membrana).
+   * onConnect/onDisconnect выполняются только при `true`.
+   */
+  readonly isDeviceLinked?: () => boolean;
   /** Хранилище переменных сценария; stub создаёт in-memory store. */
   readonly variableStore?: ScenarioVariableStore;
-  readonly getScenarioVariable?: (id: string) => ScenarioReferenceValue | null;
-  readonly setScenarioVariable?: (id: string, value: ScenarioReferenceValue | null) => void;
+  readonly getScenarioVariable?: (id: string) => ScenarioVariableValue | null;
+  readonly setScenarioVariable?: (id: string, value: ScenarioVariableValue | null) => void;
   /** Список микрофонов устройства (audio-engine enumerate, DBR5). */
   readonly enumerateMicrophones?: () => Promise<readonly ScenarioMicrophoneOption[]>;
   readonly selectMicrophone: () => Promise<void>;
@@ -44,6 +51,8 @@ export function createStubScenarioRuntimeHost(
   const variableStore = overrides.variableStore;
   return {
     getDeviceHandle: overrides.getDeviceHandle ?? (() => 'stub-device'),
+    getServerHandle: overrides.getServerHandle ?? (() => 'stub-server'),
+    isDeviceLinked: overrides.isDeviceLinked ?? (() => true),
     variableStore,
     getScenarioVariable:
       overrides.getScenarioVariable ??

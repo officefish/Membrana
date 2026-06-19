@@ -14,12 +14,21 @@ describe('formatSocketPortLabel', () => {
     expect(
       formatSocketPortLabel({ name: 'value', kind: 'data', socketType: 'MicrophoneRef' }),
     ).toBe('& microphone');
+    expect(
+      formatSocketPortLabel({ name: 'server', kind: 'data', socketType: 'ServerRef' }),
+    ).toBe('& server');
   });
 
   it('formats nullable port as & null', () => {
     expect(
       formatSocketPortLabel({ name: 'device', kind: 'data', socketType: 'DeviceRef', nullable: true }),
     ).toBe('& null');
+  });
+
+  it('formats DateTime port as datetime (value, no ampersand)', () => {
+    expect(
+      formatSocketPortLabel({ name: 'datetime', kind: 'data', socketType: 'DateTime' }),
+    ).toBe('datetime');
   });
 
   it('formats exec ports', () => {

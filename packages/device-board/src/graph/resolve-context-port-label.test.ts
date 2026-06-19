@@ -63,4 +63,36 @@ describe('resolveContextValuePortLabel', () => {
     const isValid = createPaletteBoardNode('is-valid', { id: 'iv' });
     expect(resolveContextValuePortLabel('iv', valuePin, [], [getNode, isValid])).toBe('value');
   });
+
+  it('variable-set value input shows & null without data edge', () => {
+    const setNode = createVariableBoardNode('variable-set', deviceVar, { id: 'set' });
+    const valuePinSet = { name: 'value' as const, kind: 'data' as const, socketType: 'DeviceRef' as const };
+    expect(resolveContextValuePortLabel('set', valuePinSet, [], [setNode])).toBe('& null');
+  });
+
+  it('variable-set value mirrors connected source type', () => {
+    const event = {
+      id: 'evt',
+      type: 'board',
+      position: { x: 0, y: 0 },
+      data: {
+        label: 'Event',
+        layer: 'scenario',
+        nodeKind: 'event',
+        outputs: [{ name: EVENT_DEVICE_HANDLE, kind: 'data', socketType: 'DeviceRef' }],
+      },
+    } as Node;
+    const setNode = createVariableBoardNode('variable-set', deviceVar, { id: 'set' });
+    const edges = [
+      {
+        id: 'e1',
+        source: 'evt',
+        sourceHandle: EVENT_DEVICE_HANDLE,
+        target: 'set',
+        targetHandle: 'value',
+      },
+    ];
+    const valuePinSet = { name: 'value' as const, kind: 'data' as const, socketType: 'DeviceRef' as const };
+    expect(resolveContextValuePortLabel('set', valuePinSet, edges, [event, setNode])).toBe('& device');
+  });
 });

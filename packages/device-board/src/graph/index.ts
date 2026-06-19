@@ -11,6 +11,7 @@ export type { CreateScenarioBoardNodeOptions } from './board-node-factory.js';
 export {
   createVariableBoardNode,
   referenceTypeLabel,
+  syncVariableNodePins,
   variableNodePins,
   VARIABLE_VALUE_HANDLE,
 } from './variable-node.js';
@@ -23,11 +24,14 @@ export {
   isLockedBoardNode,
   isSystemNode,
   rejectSystemNodeRemovals,
+  syncEventNodePins,
+  EVENT_DATETIME_HANDLE,
   EVENT_DEVICE_HANDLE,
   EVENT_EXEC_HANDLE,
   EVENT_NODE_KIND,
+  EVENT_SERVER_HANDLE,
 } from './event-node.js';
-export type { CreateEventBoardNodeOptions } from './event-node.js';
+export type { CreateEventBoardNodeOptions, EventHandlerBranch } from './event-node.js';
 export {
   clearBranchState,
   edgesAfterBranchClear,
@@ -38,7 +42,7 @@ export {
 export { scenarioDocumentFingerprint } from './scenario-snapshot.js';
 export { syncVariableNodeLabels } from './sync-variable-node-labels.js';
 export { formatSocketPortLabel } from './socket-port-label.js';
-export { socketHandleClass, REFERENCE_SOCKET_HANDLE_CLASS, NULL_SOCKET_HANDLE_CLASS } from './socket-type-palette.js';
+export { socketHandleClass, REFERENCE_SOCKET_HANDLE_CLASS, NULL_SOCKET_HANDLE_CLASS, VALUE_SOCKET_HANDLE_CLASS } from './socket-type-palette.js';
 export {
   createPaletteBoardNode,
   isPaletteNodeKind,

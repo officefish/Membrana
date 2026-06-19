@@ -1,13 +1,20 @@
 import {
+  createDateTimeValue,
   createReferenceValue,
   invalidateReference,
+  isScenarioReferenceValue,
+  type ScenarioDateTimeValue,
   type ScenarioReferenceValue,
   type ScenarioVariable,
+  type ScenarioVariableValue,
 } from '@membrana/core';
 
 /** Чистый предикат валидности ссылки (используется `is-valid` и UI). */
-export function isReferenceValid(value: ScenarioReferenceValue | null): boolean {
-  return value !== null && value.valid;
+export function isReferenceValid(value: ScenarioVariableValue | null): boolean {
+  if (value === null || !isScenarioReferenceValue(value)) {
+    return false;
+  }
+  return value.valid;
 }
 
 function referencesEqual(
@@ -23,18 +30,31 @@ function referencesEqual(
   return left.kind === right.kind && left.handle === right.handle && left.valid === right.valid;
 }
 
+function dateTimesEqual(left: ScenarioDateTimeValue, right: ScenarioDateTimeValue): boolean {
+  return left.iso === right.iso;
+}
+
 /**
  * Семантика записи переменной из dataflow:
- * - `null` (onDisconnect) → invalidate существующую ссылку или оставить `null`;
- * - валидное значение → заменить (onConnect: слабая → постоянная `valid=true`);
- * - идемпотентность: та же ссылка не создаёт новый объект.
+ * - ссылочные: `null` (onDisconnect) → invalidate; value-типы: `null` → сброс;
+ * - валидное значение → заменить;
+ * - идемпотентность: то же значение не создаёт новый объект.
  */
 export function applyVariableSetValue(
   variable: ScenarioVariable,
-  incoming: ScenarioReferenceValue | null,
+  incoming: ScenarioVariableValue | null,
 ): ScenarioVariable {
   if (incoming === null) {
+    if (variable.type === 'DateTime') {
+      if (variable.value === null) {
+        return variable;
+      }
+      return { ...variable, value: null };
+    }
     if (variable.value === null) {
+      return variable;
+    }
+    if (!isScenarioReferenceValue(variable.value)) {
       return variable;
     }
     const invalidated = invalidateReference(variable.value);
@@ -50,11 +70,45 @@ export function applyVariableSetValue(
     );
   }
 
-  if (referencesEqual(variable.value, incoming)) {
+  if (incoming.kind === 'DateTime') {
+    const current = variable.value;
+    if (current !== null && current.kind === 'DateTime' && dateTimesEqual(current, incoming)) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
+  const incomingRef = incoming;
+  const currentRef = isScenarioReferenceValue(variable.value) ? variable.value : null;
+  if (referencesEqual(currentRef, incomingRef)) {
     return variable;
   }
 
   return { ...variable, value: incoming };
+}
+
+/**
+ * Значение data-выхода `datetime` системного Event-узла.
+ */
+export function resolveEventDateTime(triggeredAt: string | undefined): ScenarioDateTimeValue {
+  const iso = triggeredAt ?? new Date().toISOString();
+  return createDateTimeValue(iso);
+}
+
+/**
+ * Значение data-выхода `server` системного Event-узла (onConnect).
+ */
+export function resolveEventServerReference(
+  handlerBranch: 'onConnect' | 'initial' | 'onStop' | 'onDisconnect',
+  serverHandle: string | null | undefined,
+): ScenarioReferenceValue | null {
+  if (handlerBranch !== 'onConnect') {
+    return null;
+  }
+  if (serverHandle === null || serverHandle === undefined || serverHandle.length === 0) {
+    return { kind: 'ServerRef', handle: null, valid: false };
+  }
+  return createReferenceValue('ServerRef', serverHandle);
 }
 
 /**

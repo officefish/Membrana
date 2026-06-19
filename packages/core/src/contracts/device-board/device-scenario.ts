@@ -15,7 +15,7 @@ import {
   type ScenarioGraph,
   type ScenarioSubgraph,
 } from './scenario-graph.js';
-import { isScenarioVariable, type ScenarioVariable } from './scenario-variables.js';
+import { isScenarioVariable, migrateScenarioVariableLegacy, type ScenarioVariable } from './scenario-variables.js';
 
 /** Discriminator JSON-документа сценария устройства. */
 export const DEVICE_SCENARIO_DOCUMENT_KIND = 'device-scenario' as const;
@@ -201,7 +201,9 @@ export function parseDeviceScenarioDocument(
   }
   if (Array.isArray(variablesRaw)) {
     for (let i = 0; i < variablesRaw.length; i += 1) {
-      if (!isScenarioVariable(variablesRaw[i])) {
+      const migrated = migrateScenarioVariableLegacy(variablesRaw[i]);
+      const variable = migrated ?? variablesRaw[i];
+      if (!isScenarioVariable(variable)) {
         return err(
           new ValidationError(
             `scenario.variables[${i}] is not a valid scenario variable`,
@@ -209,6 +211,7 @@ export function parseDeviceScenarioDocument(
           ),
         );
       }
+      variablesRaw[i] = variable;
     }
   }
   const variables = (variablesRaw ?? []) as readonly ScenarioVariable[];

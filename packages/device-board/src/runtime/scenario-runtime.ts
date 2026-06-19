@@ -177,6 +177,9 @@ export class ScenarioRuntime {
     if (this.document === null) {
       throw new Error('ScenarioRuntime: no document loaded');
     }
+    if (!this.isDeviceLinked()) {
+      return;
+    }
     const onConnect = this.document.scenario.onConnect;
     if (onConnect.nodes.length === 0) {
       return;
@@ -190,8 +193,40 @@ export class ScenarioRuntime {
       this.execOptions('initial', this.document.scenario.functions, undefined, {
         handlerBranch: 'onConnect',
         deviceHandle: this.host.getDeviceHandle?.() ?? null,
+        serverHandle: this.host.getServerHandle?.() ?? null,
+        triggeredAt: new Date().toISOString(),
       }),
     );
+  }
+
+  private async runOnConnectIfLinked(
+    document: DeviceScenarioDocument,
+    signal: AbortSignal,
+  ): Promise<void> {
+    if (!this.isDeviceLinked()) {
+      return;
+    }
+    const onConnect = document.scenario.onConnect;
+    if (onConnect.nodes.length === 0) {
+      return;
+    }
+    this.host.log('onConnect → onStart chain', {});
+    await runSubgraphOnce(
+      onConnect,
+      this.host,
+      signal,
+      this.execOptions('initial', document.scenario.functions, undefined, {
+        handlerBranch: 'onConnect',
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+        serverHandle: this.host.getServerHandle?.() ?? null,
+        triggeredAt: new Date().toISOString(),
+      }),
+      { onNodeEnter: (node) => this.onNodeEnter('initial', node) },
+    );
+  }
+
+  private isDeviceLinked(): boolean {
+    return this.host.isDeviceLinked?.() ?? false;
   }
 
   private buildResolveContext(branch: ScenarioRuntimeBranch): ResolveInputContext | undefined {
@@ -202,6 +237,8 @@ export class ScenarioRuntime {
     return {
       handlerBranch,
       deviceHandle: this.host.getDeviceHandle?.() ?? null,
+      serverHandle: this.host.getServerHandle?.() ?? null,
+      triggeredAt: new Date().toISOString(),
     };
   }
 
@@ -226,6 +263,12 @@ export class ScenarioRuntime {
     signal: AbortSignal,
   ): Promise<void> {
     try {
+      await this.runOnConnectIfLinked(document, signal);
+      if (signal.aborted) {
+        await this.finalizeRun(document);
+        return;
+      }
+
       await runSubgraphOnce(document.scenario.initial, this.host, signal, this.execOptions('initial', document.scenario.functions), {
         onNodeEnter: (node) => this.onNodeEnter('initial', node),
       });
@@ -381,6 +424,9 @@ export class ScenarioRuntime {
     onDisconnect: ScenarioSubgraph,
     functions: DeviceScenarioDocument['scenario']['functions'],
   ): Promise<void> {
+    if (!this.isDeviceLinked()) {
+      return;
+    }
     if (onDisconnect.nodes.length === 0) {
       return;
     }
@@ -408,10 +454,19 @@ export class ScenarioRuntime {
   }
 
   private async finalizeRun(document: DeviceScenarioDocument): Promise<void> {
-    if (this.disconnectRequested) {
-      await this.runOnDisconnectTrigger(document.scenario.triggers.onDisconnect, document.scenario.functions);
-    } else if (this.stopRequested) {
+    if (this.stopRequested) {
+      if (this.isDeviceLinked()) {
+        await this.runOnDisconnectTrigger(
+          document.scenario.triggers.onDisconnect,
+          document.scenario.functions,
+        );
+      }
       await this.runOnStopTrigger(document.scenario.triggers.onStop, document.scenario.functions);
+    } else if (this.disconnectRequested) {
+      await this.runOnDisconnectTrigger(
+        document.scenario.triggers.onDisconnect,
+        document.scenario.functions,
+      );
     }
     await this.finishStopped();
   }

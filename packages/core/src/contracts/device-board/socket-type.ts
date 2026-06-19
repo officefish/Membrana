@@ -17,6 +17,9 @@ export const SOCKET_TYPES = [
   // v0.4 (device-board refactor): ссылочные типы данных для dataflow сценария.
   'DeviceRef',
   'MicrophoneRef',
+  'ServerRef',
+  // v0.4+: value-типы scenario dataflow (не ссылки на внешний ресурс).
+  'DateTime',
 ] as const;
 
 /** Имя типа сокета signal graph. */
@@ -33,14 +36,29 @@ export const D0_SOCKET_TYPES = ['AudioFrame', 'Spectrum'] as const satisfies rea
 export const REFERENCE_SOCKET_TYPES = [
   'DeviceRef',
   'MicrophoneRef',
+  'ServerRef',
 ] as const satisfies readonly SocketType[];
+
+/**
+ * Value-типы scenario dataflow: передаются по dataflow как значения
+ * (без `valid` / nullable-ссылочной семантики).
+ */
+export const VALUE_SOCKET_TYPES = ['DateTime'] as const satisfies readonly SocketType[];
 
 /** Имя ссылочного типа данных (подмножество `SocketType`). */
 export type ReferenceSocketType = (typeof REFERENCE_SOCKET_TYPES)[number];
 
+/** Имя value-типа данных (подмножество `SocketType`). */
+export type ValueSocketType = (typeof VALUE_SOCKET_TYPES)[number];
+
 /** Type guard для `ReferenceSocketType`. */
 export function isReferenceSocketType(value: string): value is ReferenceSocketType {
   return (REFERENCE_SOCKET_TYPES as readonly string[]).includes(value);
+}
+
+/** Type guard для `ValueSocketType`. */
+export function isValueSocketType(value: string): value is ValueSocketType {
+  return (VALUE_SOCKET_TYPES as readonly string[]).includes(value);
 }
 
 /** Описание pin на ноде signal graph. */

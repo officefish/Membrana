@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   createReferenceValue,
+  createDateTimeValue,
   createScenarioVariable,
   invalidateReference,
   type ScenarioGraphEdge,
@@ -8,7 +9,7 @@ import {
   type ScenarioSubgraph,
 } from '@membrana/core';
 
-import { EVENT_DEVICE_HANDLE } from '../graph/event-node.js';
+import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE } from '../graph/event-node.js';
 import {
   GET_MICROPHONE_DEVICE_HANDLE,
   GET_MICROPHONE_OUT_HANDLE,
@@ -17,6 +18,7 @@ import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import {
   applyVariableSetValue,
   isReferenceValid,
+  resolveEventDateTime,
   resolveEventReference,
 } from './reference-validity.js';
 import { ResolveInputError, resolveInput, type ResolveInputContext } from './resolve-input.js';
@@ -61,7 +63,7 @@ function dataEdge(
   sourceHandle: string,
   target: string,
   targetHandle: string,
-  dataType: 'DeviceRef' | 'MicrophoneRef' = 'DeviceRef',
+  dataType: 'DeviceRef' | 'MicrophoneRef' | 'DateTime' = 'DeviceRef',
 ): ScenarioGraphEdge {
   return {
     source,
@@ -158,6 +160,11 @@ describe('reference-validity (DBR4)', () => {
       valid: false,
     });
   });
+
+  it('resolveEventDateTime returns DateTime value with ISO', () => {
+    const iso = '2026-06-18T12:00:00.000Z';
+    expect(resolveEventDateTime(iso)).toEqual(createDateTimeValue(iso));
+  });
 });
 
 describe('resolveInput (DBR4)', () => {
@@ -213,6 +220,42 @@ describe('resolveInput (DBR4)', () => {
 
     const value = resolveInput(sg, [deviceVar], 'downstream', VARIABLE_VALUE_HANDLE, onConnectContext);
     expect(value).toEqual(createReferenceValue('DeviceRef', DEVICE_HANDLE));
+  });
+
+  it('forwards null through variable-set chain on onDisconnect', () => {
+    const sg = subgraph(
+      'evt',
+      [eventNode('evt'), variableSetNode('set', deviceVar.id), variableSetNode('downstream', deviceVar.id)],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'set', VARIABLE_VALUE_HANDLE),
+        dataEdge('set', VARIABLE_VALUE_HANDLE, 'downstream', VARIABLE_VALUE_HANDLE),
+      ],
+    );
+
+    const value = resolveInput(
+      sg,
+      [deviceVar],
+      'downstream',
+      VARIABLE_VALUE_HANDLE,
+      onDisconnectContext,
+    );
+    expect(value).toBeNull();
+  });
+
+  it('resolves Event datetime output as DateTime value', () => {
+    const triggeredAt = '2026-06-18T12:00:00.000Z';
+    const dtVar = createScenarioVariable('var-dt', 'firedAt', 'DateTime');
+    const sg = subgraph(
+      'evt',
+      [eventNode('evt'), variableSetNode('set', dtVar.id)],
+      [dataEdge('evt', EVENT_DATETIME_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'DateTime')],
+    );
+
+    const value = resolveInput(sg, [dtVar], 'set', VARIABLE_VALUE_HANDLE, {
+      ...onConnectContext,
+      triggeredAt,
+    });
+    expect(value).toEqual(createDateTimeValue(triggeredAt));
   });
 
   it('returns null when port has no data edge', () => {

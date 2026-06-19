@@ -9,6 +9,7 @@ import {
 const REFERENCE_NOUN: Record<string, string> = {
   DeviceRef: 'device',
   MicrophoneRef: 'microphone',
+  ServerRef: 'server',
 };
 
 /**

@@ -1,9 +1,12 @@
-import { isReferenceSocketType } from '@membrana/core';
+import { isReferenceSocketType, isValueSocketType } from '@membrana/core';
 
 import type { BoardSocketPin } from './board-node-data.js';
 
 /** Голубой — ссылочные типы (`& device`, `& microphone`). */
 export const REFERENCE_SOCKET_HANDLE_CLASS = '!bg-sky-400';
+
+/** Янтарный — value-типы (`datetime`). */
+export const VALUE_SOCKET_HANDLE_CLASS = '!bg-amber-400';
 
 /** Тёмный indigo — nullable / `& null`. */
 export const NULL_SOCKET_HANDLE_CLASS = '!bg-indigo-800';
@@ -16,6 +19,9 @@ export const EXEC_EDGE_STROKE = 'oklch(var(--bc) / 0.5)';
 
 /** SVG stroke для ссылочных data-рёбер (sky-400). */
 export const REFERENCE_SOCKET_STROKE = '#38bdf8';
+
+/** SVG stroke для value data-рёбер (amber-400). */
+export const VALUE_SOCKET_STROKE = '#fbbf24';
 
 /** SVG stroke для nullable data-рёбер (indigo-800). */
 export const NULL_SOCKET_STROKE = '#3730a3';
@@ -30,6 +36,9 @@ export function dataSocketStrokeColor(socketType?: BoardSocketPin['socketType'])
   if (socketType === 'DeviceRef' || socketType === 'MicrophoneRef') {
     return REFERENCE_SOCKET_STROKE;
   }
+  if (socketType === 'DateTime') {
+    return VALUE_SOCKET_STROKE;
+  }
   return 'oklch(var(--bc) / 0.35)';
 }
 
@@ -43,6 +52,9 @@ export function socketHandleClass(pin: BoardSocketPin): string {
   }
   if (pin.socketType !== undefined && isReferenceSocketType(pin.socketType)) {
     return `${HANDLE_BASE} ${REFERENCE_SOCKET_HANDLE_CLASS}`;
+  }
+  if (pin.socketType !== undefined && isValueSocketType(pin.socketType)) {
+    return `${HANDLE_BASE} ${VALUE_SOCKET_HANDLE_CLASS}`;
   }
   return `${HANDLE_BASE} !bg-neutral`;
 }
