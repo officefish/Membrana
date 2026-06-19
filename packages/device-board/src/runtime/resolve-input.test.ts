@@ -324,7 +324,6 @@ describe('resolveInput (DBR4)', () => {
     const streamVar = createScenarioVariable('var-stream', 'stream1', 'AudioStreamRef');
     const micVar = createScenarioVariable('var-mic', 'mic1', 'MicrophoneRef');
     const activeStream = createReferenceValue('AudioStreamRef', 'stream:mic-1');
-    const micRef = createReferenceValue('MicrophoneRef', 'mic-1');
     const sg = subgraph(
       'evt',
       [

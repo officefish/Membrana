@@ -132,17 +132,9 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
     [data, edges, id, nodes],
   );
 
-  if (!isBoardFlowNodeData(data)) {
-    return null;
-  }
-
-  const status = data.status ?? 'active';
-  const inputs = data.inputs ?? [];
-  const outputs = data.outputs ?? [];
-  const isSystem = data.system === true;
-  const statusBadgeClass = status !== 'active' ? STATUS_BADGE[status] : undefined;
-  const pinRows = Math.max(inputs.length, outputs.length, data.nodeKind === 'loop-repeat' ? 1 : 0, 1);
-  const bodyHeightPx = data.nodeKind === 'loop-repeat' ? 48 : pinRows * PIN_ROW_PX + 8;
+  const flowData = isBoardFlowNodeData(data) ? data : null;
+  const inputs = flowData?.inputs ?? [];
+  const outputs = flowData?.outputs ?? [];
 
   const passthroughLanes = useMemo(
     () => findPassthroughPortLanes(inputs, outputs, resolveLabel),
@@ -157,15 +149,25 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
     return handles;
   }, [passthroughLanes]);
 
+  if (!flowData) {
+    return null;
+  }
+
+  const status = flowData.status ?? 'active';
+  const isSystem = flowData.system === true;
+  const statusBadgeClass = status !== 'active' ? STATUS_BADGE[status] : undefined;
+  const pinRows = Math.max(inputs.length, outputs.length, flowData.nodeKind === 'loop-repeat' ? 1 : 0, 1);
+  const bodyHeightPx = flowData.nodeKind === 'loop-repeat' ? 48 : pinRows * PIN_ROW_PX + 8;
+
   return (
     <div
       className={[
         'relative min-w-[220px] overflow-hidden rounded-lg border bg-base-100 shadow-sm',
-        isSystem ? 'border-accent/60 ring-1 ring-accent/20' : LAYER_BORDER[data.layer],
+        isSystem ? 'border-accent/60 ring-1 ring-accent/20' : LAYER_BORDER[flowData.layer],
         selected ? 'ring-2 ring-primary/50' : '',
       ].join(' ')}
       data-system={isSystem ? 'true' : undefined}
-      aria-label={isSystem ? `Системный узел: ${data.label}` : undefined}
+      aria-label={isSystem ? `Системный узел: ${flowData.label}` : undefined}
     >
       <div
         className={[
@@ -179,7 +181,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
               🔒
             </span>
           ) : null}
-          <span className="truncate">{renderNodeTitle(data)}</span>
+          <span className="truncate">{renderNodeTitle(flowData)}</span>
         </span>
         {isSystem ? (
           <span className="badge badge-xs shrink-0 badge-accent">system</span>
@@ -188,7 +190,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
         ) : null}
       </div>
       <div className="relative" style={{ minHeight: bodyHeightPx }}>
-        {data.nodeKind === 'loop-repeat' ? (
+        {flowData.nodeKind === 'loop-repeat' ? (
           <div className="flex h-full items-center justify-center py-2 text-3xl text-accent/80" aria-hidden="true">
             ∞
           </div>
