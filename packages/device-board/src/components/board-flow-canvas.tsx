@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import {
   Background,
+  BackgroundVariant,
   Controls,
   MiniMap,
   ReactFlow,
@@ -14,6 +15,7 @@ import {
   type OnSelectionChangeParams,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import './board-flow-canvas.css';
 
 import type { BoardLayerTab } from '../types/board-ui.js';
 import { decorateBoardEdges } from '../graph/board-edge-style.js';
@@ -83,11 +85,16 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       fitView
       proOptions={{ hideAttribution: true }}
       onSelectionChange={handleSelectionChange}
-      className="bg-base-200"
+      className="board-flow-blueprint"
       style={{ width: '100%', height: '100%' }}
       aria-label={ariaLabel}
     >
-      <Background gap={16} size={1} color="oklch(var(--bc) / 0.08)" />
+      <Background
+        variant={BackgroundVariant.Lines}
+        gap={20}
+        size={1}
+        color="var(--board-blueprint-grid)"
+      />
       <Controls className="!border-base-300 !bg-base-100 !shadow-sm [&_button]:!border-base-300 [&_button]:!bg-base-100" />
       <MiniMap
         className="!border-base-300 !bg-base-100"

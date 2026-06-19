@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Node } from '@xyflow/react';
 
-import { EVENT_DEVICE_HANDLE } from './event-node.js';
+import { EVENT_DATETIME_HANDLE, EVENT_DEVICE_HANDLE } from './event-node.js';
 import { createPaletteBoardNode, PALETTE_VALUE_HANDLE } from './palette-node.js';
 import { createVariableBoardNode } from './variable-node.js';
 import { resolveContextValuePortLabel } from './resolve-context-port-label.js';
@@ -56,6 +56,31 @@ describe('resolveContextValuePortLabel', () => {
       },
     ];
     expect(resolveContextValuePortLabel('iv', valuePin, edges, [getMic, isValid])).toBe('& microphone');
+  });
+
+  it('returns datetime when source is DateTime', () => {
+    const event = {
+      id: 'evt',
+      type: 'board',
+      position: { x: 0, y: 0 },
+      data: {
+        label: 'Event',
+        layer: 'scenario',
+        nodeKind: 'event',
+        outputs: [{ name: EVENT_DATETIME_HANDLE, kind: 'data', socketType: 'DateTime' }],
+      },
+    } as Node;
+    const print = createPaletteBoardNode('print', { id: 'pr' });
+    const edges = [
+      {
+        id: 'e1',
+        source: 'evt',
+        sourceHandle: EVENT_DATETIME_HANDLE,
+        target: 'pr',
+        targetHandle: PALETTE_VALUE_HANDLE,
+      },
+    ];
+    expect(resolveContextValuePortLabel('pr', valuePin, edges, [event, print])).toBe('datetime');
   });
 
   it('returns value after disconnecting source', () => {
