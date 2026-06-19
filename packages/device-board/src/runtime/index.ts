@@ -23,8 +23,10 @@ export {
 export {
   applyVariableSetValue,
   isReferenceValid,
+  resolveEventDateTime,
   resolveEventReference,
+  resolveEventServerReference,
 } from './reference-validity.js';
 export { ScenarioVariableStore } from './variable-store.js';
 export { runtimeBranchToHandlerBranch } from './types.js';
-export { formatReferenceForPrint } from './format-reference.js';
+export { formatVariableValueForPrint, formatReferenceForPrint } from './format-reference.js';

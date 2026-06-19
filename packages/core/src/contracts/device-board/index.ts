@@ -13,11 +13,14 @@ export {
   SOCKET_TYPES,
   D0_SOCKET_TYPES,
   REFERENCE_SOCKET_TYPES,
+  VALUE_SOCKET_TYPES,
   type SocketType,
   type ReferenceSocketType,
+  type ValueSocketType,
   type SocketSpec,
   isSocketType,
   isReferenceSocketType,
+  isValueSocketType,
   isValidSocketConnection,
 } from './socket-type.js';
 
@@ -30,15 +33,23 @@ export {
 } from './scenario-node-kind.js';
 
 export {
+  type ScenarioReferenceVariableType,
+  type ScenarioValueVariableType,
   type ScenarioVariableType,
   type ScenarioReferenceValue,
+  type ScenarioDateTimeValue,
+  type ScenarioVariableValue,
   type ScenarioVariable,
   createReferenceValue,
+  createDateTimeValue,
   invalidateReference,
   createScenarioVariable,
   isScenarioVariableType,
   isScenarioReferenceValue,
+  isScenarioDateTimeValue,
+  isScenarioVariableValue,
   isScenarioVariable,
+  migrateScenarioVariableLegacy,
 } from './scenario-variables.js';
 
 export {

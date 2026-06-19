@@ -184,6 +184,10 @@ describe('ScenarioRuntime H2b', () => {
 
       'record-chunk',
 
+      'journal:onDisconnect',
+
+      'stop-stream',
+
       'journal:onStop',
 
       'stop-stream',
@@ -382,6 +386,26 @@ describe('ScenarioRuntime RT3 mode override', () => {
 });
 
 describe('ScenarioRuntime H3a onStop', () => {
+  it('runs onDisconnect then onStop on user stop when device is linked', async () => {
+    const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
+    let runtime!: ScenarioRuntime;
+    const host = createStubScenarioRuntimeHost({
+      writeJournal: async (event) => calls.push(`journal:${event.branch}`),
+      recordChunk: async () => {
+        runtime.stop('user');
+        return { clipId: 'clip-1' };
+      },
+    });
+
+    runtime = new ScenarioRuntime(host);
+    runtime.load(buildHackathonDocument());
+    await runtime.start();
+
+    expect(calls).toContain('journal:onDisconnect');
+    expect(calls).toContain('journal:onStop');
+  });
+
   it('records system stop reason', async () => {
     // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;

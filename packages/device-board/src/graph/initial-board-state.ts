@@ -9,9 +9,15 @@ function eventNode(
   x: number,
   y: number,
   label?: string,
-  nullableDeviceOutput = false,
+  pinOptions: { nullableDeviceOutput?: boolean; includeServerOutput?: boolean } = {},
 ): Node {
-  return createEventBoardNode({ id, label, position: { x, y }, nullableDeviceOutput });
+  return createEventBoardNode({
+    id,
+    label,
+    position: { x, y },
+    nullableDeviceOutput: pinOptions.nullableDeviceOutput === true,
+    includeServerOutput: pinOptions.includeServerOutput === true,
+  });
 }
 
 function execEdge(id: string, source: string, target: string): Edge {
@@ -103,7 +109,7 @@ export const INITIAL_SCENARIO_INITIAL_EDGES: Edge[] = [
 
 /** onConnect branch: системный Event (даёт постоянную DeviceRef после set Device). */
 export const INITIAL_SCENARIO_ON_CONNECT_NODES: Node[] = [
-  eventNode('on-connect-event', 40, 140, 'On connect'),
+  eventNode('on-connect-event', 40, 140, 'On connect', { includeServerOutput: true }),
 ];
 
 export const INITIAL_SCENARIO_ON_CONNECT_EDGES: Edge[] = [];
@@ -178,7 +184,7 @@ export const SCENARIO_ON_DISCONNECT_ENTRY = 'on-disconnect-event' as const;
 
 /** On disconnect trigger: Event → journal → teardown (T3) */
 export const INITIAL_SCENARIO_ON_DISCONNECT_NODES: Node[] = [
-  eventNode('on-disconnect-event', 40, 160, 'On disconnect', true),
+  eventNode('on-disconnect-event', 40, 160, 'On disconnect', { nullableDeviceOutput: true }),
   scenarioNode('on-disc-journal', 'write-journal', 280, 160, 'Disconnect journal'),
   scenarioNode('on-disc-teardown', 'handle-disconnect', 500, 160),
 ];

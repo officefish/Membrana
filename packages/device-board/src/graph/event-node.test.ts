@@ -13,6 +13,8 @@ import {
   serializeScenarioSubgraph,
   validatePreRun,
   EVENT_DEVICE_HANDLE,
+  EVENT_DATETIME_HANDLE,
+  EVENT_SERVER_HANDLE,
   INITIAL_SCENARIO_INITIAL_EDGES,
   INITIAL_SCENARIO_INITIAL_NODES,
   INITIAL_SCENARIO_ON_DISCONNECT_EDGES,
@@ -44,15 +46,31 @@ function plainScenarioNode(id: string): Node {
 }
 
 describe('device-board Event node (DBR3)', () => {
-  it('creates a non-deletable system node with exec + DeviceRef outputs', () => {
+  it('creates a non-deletable system node with exec + DeviceRef + DateTime outputs', () => {
     const node = createEventBoardNode({ id: 'evt-1' });
     expect(node.deletable).toBe(false);
     expect(isEventNode(node)).toBe(true);
-    const data = node.data as { system?: boolean; outputs?: { name: string; socketType?: string }[] };
+    const data = node.data as { system?: boolean; outputs?: { name: string; socketType?: string; nullable?: boolean }[] };
     expect(data.system).toBe(true);
     expect(data.outputs?.some((pin) => pin.name === 'exec-out')).toBe(true);
     const deviceOut = data.outputs?.find((pin) => pin.name === EVENT_DEVICE_HANDLE);
     expect(deviceOut?.socketType).toBe('DeviceRef');
+    expect(deviceOut?.nullable).toBeUndefined();
+    const datetimeOut = data.outputs?.find((pin) => pin.name === EVENT_DATETIME_HANDLE);
+    expect(datetimeOut?.socketType).toBe('DateTime');
+  });
+
+  it('onDisconnect event device port is nullable (& null)', () => {
+    const node = createEventBoardNode({ id: 'evt-disc', nullableDeviceOutput: true });
+    const data = node.data as { outputs?: { name: string; nullable?: boolean }[] };
+    const deviceOut = data.outputs?.find((pin) => pin.name === EVENT_DEVICE_HANDLE);
+    expect(deviceOut?.nullable).toBe(true);
+  });
+
+  it('onConnect event includes server output', () => {
+    const node = createEventBoardNode({ id: 'evt-oc', includeServerOutput: true });
+    const data = node.data as { outputs?: { name: string; socketType?: string }[] };
+    expect(data.outputs?.some((pin) => pin.name === EVENT_SERVER_HANDLE)).toBe(true);
   });
 
   it('rejects UI remove changes for system nodes but keeps others', () => {

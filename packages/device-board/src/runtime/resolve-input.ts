@@ -4,15 +4,16 @@ import {
   type ScenarioReferenceValue,
   type ScenarioSubgraph,
   type ScenarioVariable,
+  type ScenarioVariableValue,
 } from '@membrana/core';
 
-import { EVENT_DEVICE_HANDLE } from '../graph/event-node.js';
+import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_SERVER_HANDLE } from '../graph/event-node.js';
 import {
   GET_MICROPHONE_DEVICE_HANDLE,
   GET_MICROPHONE_OUT_HANDLE,
 } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
-import { isReferenceValid, resolveEventReference } from './reference-validity.js';
+import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference } from './reference-validity.js';
 
 /** Ветви-обработчики событий, где Event-узел является источником data. */
 export type ScenarioHandlerBranch = 'onConnect' | 'initial' | 'onStop' | 'onDisconnect';
@@ -22,6 +23,10 @@ export interface ResolveInputContext {
   readonly handlerBranch: ScenarioHandlerBranch;
   /** Handle подключённого устройства; `null` если offline или onDisconnect. */
   readonly deviceHandle: string | null;
+  /** ISO-время срабатывания Event-триггера (для `DateTime` value). */
+  readonly triggeredAt?: string;
+  /** Handle связанного сервера (cabinet/media); только onConnect. */
+  readonly serverHandle?: string | null;
 }
 
 export type ResolveInputErrorCode =
@@ -59,7 +64,7 @@ function findDataEdge(
 
 function assertTypeCompatible(
   edge: ScenarioSubgraph['edges'][number],
-  value: ScenarioReferenceValue | null,
+  value: ScenarioVariableValue | null,
 ): void {
   if (value === null || edge.dataType === undefined) {
     return;
@@ -108,12 +113,18 @@ function resolveNodeOutput(
   outputPort: string,
   context: ResolveInputContext,
   visiting: Set<string>,
-): ScenarioReferenceValue | null {
+): ScenarioVariableValue | null {
   if (node.nodeKind === 'event') {
-    if (outputPort !== EVENT_DEVICE_HANDLE) {
-      throw new ResolveInputError('unsupported-source', `Unknown Event output: ${outputPort}`);
+    if (outputPort === EVENT_DEVICE_HANDLE) {
+      return resolveEventReference(context.handlerBranch, context.deviceHandle);
     }
-    return resolveEventReference(context.handlerBranch, context.deviceHandle);
+    if (outputPort === EVENT_SERVER_HANDLE) {
+      return resolveEventServerReference(context.handlerBranch, context.serverHandle);
+    }
+    if (outputPort === EVENT_DATETIME_HANDLE) {
+      return resolveEventDateTime(context.triggeredAt);
+    }
+    throw new ResolveInputError('unsupported-source', `Unknown Event output: ${outputPort}`);
   }
 
   if (node.nodeKind === 'variable-get') {
@@ -165,7 +176,7 @@ export function resolveInput(
   port: string,
   context: ResolveInputContext,
   visiting: Set<string> = new Set(),
-): ScenarioReferenceValue | null {
+): ScenarioVariableValue | null {
   const edge = findDataEdge(subgraph, nodeId, port);
   if (edge === undefined) {
     return null;

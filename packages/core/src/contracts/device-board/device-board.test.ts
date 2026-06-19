@@ -2,14 +2,18 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createEmptyDeviceScenarioDocument,
+  createDateTimeValue,
   createReferenceValue,
   createScenarioVariable,
   D0_SOCKET_TYPES,
   invalidateReference,
   isReferenceSocketType,
   isScenarioNodeKind,
+  isScenarioDateTimeValue,
   isSystemScenarioNodeKind,
   isValidSocketConnection,
+  isValueSocketType,
+  migrateScenarioVariableLegacy,
   parseDeviceScenarioDocument,
   DEVICE_SCENARIO_DOCUMENT_VERSION,
   DEVICE_SCENARIO_MIN_DOCUMENT_VERSION,
@@ -100,9 +104,14 @@ describe('device-board reference types & node kinds (v0.4)', () => {
   it('reference socket types connect by identical type', () => {
     expect(isReferenceSocketType('DeviceRef')).toBe(true);
     expect(isReferenceSocketType('MicrophoneRef')).toBe(true);
-    expect(isReferenceSocketType('AudioFrame')).toBe(false);
+    expect(isReferenceSocketType('ServerRef')).toBe(true);
+    expect(isReferenceSocketType('DateTime')).toBe(false);
+    expect(isValueSocketType('DateTime')).toBe(true);
+    expect(isValueSocketType('DeviceRef')).toBe(false);
     expect(isValidSocketConnection('DeviceRef', 'DeviceRef')).toBe(true);
     expect(isValidSocketConnection('DeviceRef', 'MicrophoneRef')).toBe(false);
+    expect(isValidSocketConnection('DateTime', 'DateTime')).toBe(true);
+    expect(isValidSocketConnection('DateTime', 'DeviceRef')).toBe(false);
   });
 
   it('scenario node kinds: event is system, print is not', () => {
@@ -126,5 +135,29 @@ describe('device-board reference types & node kinds (v0.4)', () => {
     const variable = createScenarioVariable('var-mic', 'Microphone', 'MicrophoneRef');
     expect(variable.value).toBeNull();
     expect(variable.type).toBe('MicrophoneRef');
+  });
+
+  it('DateTime variable uses value shape (not reference)', () => {
+    const variable = createScenarioVariable('var-dt', 'firedAt', 'DateTime');
+    expect(variable.type).toBe('DateTime');
+    const value = createDateTimeValue('2026-06-18T12:00:00.000Z');
+    expect(isScenarioDateTimeValue(value)).toBe(true);
+    expect(value.iso).toBe('2026-06-18T12:00:00.000Z');
+  });
+
+  it('migrateScenarioVariableLegacy converts DateTimeRef to DateTime', () => {
+    const legacy = {
+      id: 'v1',
+      name: 't',
+      type: 'DateTimeRef',
+      value: { kind: 'DateTimeRef', handle: '2026-01-01T00:00:00.000Z', valid: true },
+    };
+    const migrated = migrateScenarioVariableLegacy(legacy);
+    expect(migrated).toEqual({
+      id: 'v1',
+      name: 't',
+      type: 'DateTime',
+      value: { kind: 'DateTime', iso: '2026-01-01T00:00:00.000Z' },
+    });
   });
 });

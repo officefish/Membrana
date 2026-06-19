@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ScenarioVariable, ScenarioVariableType } from '@membrana/core';
+import { isScenarioReferenceValue } from '@membrana/core';
 
 import { referenceTypeLabel, type VariableNodeKind } from '../graph/index.js';
 import {
@@ -26,6 +27,12 @@ export interface BoardLeftSidebarProps {
 /** Бейдж состояния значения переменной: задана/валидна/висячая. */
 function variableStateBadge(variable: ScenarioVariable): { label: string; className: string } {
   if (variable.value === null) {
+    return { label: 'не задана', className: 'badge-ghost' };
+  }
+  if (variable.value.kind === 'DateTime') {
+    return { label: 'задана', className: 'badge-success' };
+  }
+  if (!isScenarioReferenceValue(variable.value)) {
     return { label: 'не задана', className: 'badge-ghost' };
   }
   return variable.value.valid
@@ -135,10 +142,10 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
           Конструктор переменных
         </p>
       </div>
-      <div className="flex gap-1">
+      <div className="flex flex-wrap gap-1">
         <button
           type="button"
-          className="btn btn-xs btn-outline flex-1"
+          className="btn btn-xs btn-outline flex-1 min-w-[4.5rem]"
           title="Объявить переменную типа Device"
           onClick={() => onAddVariable('DeviceRef')}
         >
@@ -146,17 +153,33 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
         </button>
         <button
           type="button"
-          className="btn btn-xs btn-outline flex-1"
+          className="btn btn-xs btn-outline flex-1 min-w-[4.5rem]"
           title="Объявить переменную типа Microphone"
           onClick={() => onAddVariable('MicrophoneRef')}
         >
           + Microphone
         </button>
+        <button
+          type="button"
+          className="btn btn-xs btn-outline flex-1 min-w-[4.5rem]"
+          title="Объявить переменную типа Server"
+          onClick={() => onAddVariable('ServerRef')}
+        >
+          + Server
+        </button>
+        <button
+          type="button"
+          className="btn btn-xs btn-outline flex-1 min-w-[4.5rem]"
+          title="Объявить переменную типа DateTime"
+          onClick={() => onAddVariable('DateTime')}
+        >
+          + DateTime
+        </button>
       </div>
       {variables.length === 0 ? (
         <p className="px-2 text-[10px] leading-relaxed text-base-content/40">
-          Переменные хранят ссылки на Device/Microphone. Создайте переменную и перетащите узлы
-          get/set в активную ветку.
+          Переменные: ссылки (Device/Microphone/Server) и значения (DateTime). Создайте переменную и перетащите
+          узлы get/set в активную ветку.
         </p>
       ) : (
         <div className="flex flex-col gap-2">
