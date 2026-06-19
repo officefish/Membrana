@@ -1,4 +1,4 @@
-import type { ScenarioBlockKind, ScenarioVariableValue } from '@membrana/core';
+import type { ScenarioBlockKind, ScenarioReferenceValue, ScenarioVariableValue } from '@membrana/core';
 
 import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
@@ -15,6 +15,11 @@ export interface ScenarioConnectionHandlers {
   readonly onReconnect: () => void;
 }
 
+/** Минимальные read-only метаданные ссылочного объекта (server / device / microphone). */
+export interface ScenarioResourceMetadata {
+  readonly fields: Readonly<Record<string, string>>;
+}
+
 /** Порты исполнения блоков — реализует `apps/client` (audio, journal, detectors). */
 export interface ScenarioRuntimeHost {
   /** Handle подключённого устройства для Event/dataflow (v0.4 DBR4). */
@@ -26,6 +31,15 @@ export interface ScenarioRuntimeHost {
    * onConnect/onDisconnect выполняются только при `true`.
    */
   readonly isDeviceLinked?: () => boolean;
+  /**
+   * Read-only метаданные ссылочного объекта для Print (адрес сервера, платформа device, label mic).
+   * Не редактируются на доске — только резолвятся в рантайме.
+   */
+  readonly getResourceMetadata?: (
+    ref: ScenarioReferenceValue,
+  ) => ScenarioResourceMetadata | null | Promise<ScenarioResourceMetadata | null>;
+  /** Вывод строки Print в консоль браузера (client); stub — в log. */
+  readonly printLine?: (line: string) => void;
   /** Хранилище переменных сценария; stub создаёт in-memory store. */
   readonly variableStore?: ScenarioVariableStore;
   readonly getScenarioVariable?: (id: string) => ScenarioVariableValue | null;
@@ -53,6 +67,15 @@ export function createStubScenarioRuntimeHost(
     getDeviceHandle: overrides.getDeviceHandle ?? (() => 'stub-device'),
     getServerHandle: overrides.getServerHandle ?? (() => 'stub-server'),
     isDeviceLinked: overrides.isDeviceLinked ?? (() => true),
+    getResourceMetadata:
+      overrides.getResourceMetadata ??
+      ((ref) => ({
+        fields: {
+          kind: ref.kind,
+          handle: ref.handle ?? 'null',
+        },
+      })),
+    printLine: overrides.printLine ?? ((line) => log(`print: ${line}`)),
     variableStore,
     getScenarioVariable:
       overrides.getScenarioVariable ??

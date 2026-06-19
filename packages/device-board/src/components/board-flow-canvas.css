@@ -1,0 +1,13 @@
+/**
+ * Инженерная «чертёжная» подложка канваса device-board.
+ * Чуть светлее базового --color-bg (#0A0F1A), с сеткой.
+ */
+.board-flow-blueprint {
+  --board-blueprint-bg: #132a4f;
+  --board-blueprint-grid: rgba(96, 165, 250, 0.14);
+  background-color: var(--board-blueprint-bg);
+}
+
+.board-flow-blueprint .react-flow__pane {
+  background-color: var(--board-blueprint-bg);
+}

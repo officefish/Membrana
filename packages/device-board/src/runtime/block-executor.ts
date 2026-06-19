@@ -4,7 +4,7 @@ import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { PALETTE_VALUE_HANDLE, IS_VALID_FALSE_HANDLE, IS_VALID_TRUE_HANDLE } from '../graph/palette-node.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
-import { formatReferenceForPrint } from './format-reference.js';
+import { formatVariableValueForPrintRuntime } from './format-reference.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { isReferenceValid } from './reference-validity.js';
@@ -123,8 +123,12 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       PALETTE_VALUE_HANDLE,
       resolveContext,
     );
-    const message = formatReferenceForPrint(ref);
-    host.log(`print: ${message}`, { nodeId: node.id, branch, ref });
+    const message = await formatVariableValueForPrintRuntime(ref, host);
+    if (host.printLine !== undefined) {
+      host.printLine(message);
+    } else {
+      host.log(`print: ${message}`, { nodeId: node.id, branch, ref });
+    }
     return { lastDetection, stopRequested: false };
   }
 

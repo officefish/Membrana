@@ -33,7 +33,7 @@ const HANDLE_BASE = '!h-2.5 !w-2.5 !border-2 !border-base-100';
 
 /** Цвет stroke data-ребра по SocketType источника. */
 export function dataSocketStrokeColor(socketType?: BoardSocketPin['socketType']): string {
-  if (socketType === 'DeviceRef' || socketType === 'MicrophoneRef') {
+  if (socketType === 'DeviceRef' || socketType === 'MicrophoneRef' || socketType === 'ServerRef') {
     return REFERENCE_SOCKET_STROKE;
   }
   if (socketType === 'DateTime') {
