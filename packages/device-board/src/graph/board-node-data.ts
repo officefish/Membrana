@@ -8,6 +8,8 @@ export interface BoardSocketPin {
   readonly name: string;
   readonly kind: BoardPinKind;
   readonly socketType?: SocketType;
+  /** Data-порт допускает `null` (например onDisconnect Event). */
+  readonly nullable?: boolean;
 }
 
 /** Data payload ноды XYFlow на доске. */

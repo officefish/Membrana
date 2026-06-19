@@ -9,6 +9,9 @@ import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
 import {
   BRANCH_TAB_LABEL,
+  BRANCH_SCENARIO_TITLE,
+  BOARD_HEADER_CONTENT_OFFSET_CLASS,
+  SIGNAL_LAYER_TITLE,
   isSignalAdvancedEnabled,
   type ScenarioBranchTab,
 } from '../types/board-ui.js';
@@ -18,6 +21,7 @@ import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
+import { referenceTypeLabel } from '../graph/index.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -44,6 +48,7 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedNodeLabel, setSelectedNodeLabel] = useState<string | null>(null);
   const [selectedNodeKind, setSelectedNodeKind] = useState<ScenarioNodeKind | null>(null);
   const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
+  const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -72,6 +77,7 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeLabel(null);
     setSelectedNodeKind(null);
     setSelectedMicrophoneId(null);
+    setSelectedVariableId(null);
   }, []);
 
   const handleSelectionChange = useCallback((selection: OnSelectionChangeParams) => {
@@ -81,6 +87,7 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedNodeLabel(null);
       setSelectedNodeKind(null);
       setSelectedMicrophoneId(null);
+      setSelectedVariableId(null);
       return;
     }
     setSelectedNodeId(node.id);
@@ -90,6 +97,8 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeKind(kind);
     const micId = typeof node.data?.microphoneId === 'string' ? node.data.microphoneId : null;
     setSelectedMicrophoneId(micId);
+    const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
+    setSelectedVariableId(varId);
   }, []);
 
   const handleSelectBranch = useCallback(
@@ -227,32 +236,48 @@ const DeviceBoardShellInner: React.FC<{
 
   const canvasLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
 
+  const scenarioTitle = isSignal ? SIGNAL_LAYER_TITLE : BRANCH_SCENARIO_TITLE[scenarioBranch];
+
+  const selectedVariable = graph.variables.find((item) => item.id === selectedVariableId);
+  const selectedVariableName = selectedVariable?.name ?? '';
+  const selectedVariableTypeLabel =
+    selectedVariable !== undefined ? referenceTypeLabel(selectedVariable.type) : null;
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-base-100">
-      <header className="flex items-center justify-between gap-3 border-b border-base-200 px-4 py-2 shadow-sm">
-        <div className="flex min-w-0 items-center gap-3">
-          {isSaving ? (
-            <span
-              className="loading loading-spinner loading-sm text-primary"
-              aria-label="Сохранение сценария"
-            />
-          ) : null}
+      <header className="relative flex items-center justify-between gap-3 border-b border-base-200 py-2 pr-4 shadow-sm">
+        <div
+          className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center justify-center"
+          aria-label="Membrana"
+          title="Membrana"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-content">
+            M
+          </span>
+        </div>
+
+        <div className={`flex min-w-0 flex-1 items-center gap-3 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}>
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+            {isSaving ? (
+              <span
+                className="loading loading-spinner loading-sm text-primary"
+                aria-label="Сохранение сценария"
+              />
+            ) : null}
+          </div>
           <button
             type="button"
-            className="btn btn-sm btn-primary"
+            className="btn btn-sm btn-primary shrink-0"
             disabled={!canSave}
             onClick={() => void graph.saveScenario()}
           >
             Сохранить
           </button>
-          <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
-              Device board
-            </p>
-            <h1 className="truncate text-sm font-semibold text-base-content">Редактор устройства</h1>
-          </div>
+          <p className="min-w-0 truncate text-[11px] leading-tight text-base-content/60">
+            {scenarioTitle}
+          </p>
           {syncLabel !== null ? (
-            <span className="text-xs text-error" title={graph.syncError ?? undefined}>
+            <span className="shrink-0 text-xs text-error" title={graph.syncError ?? undefined}>
               {syncLabel}
             </span>
           ) : null}
@@ -395,11 +420,14 @@ const DeviceBoardShellInner: React.FC<{
             selectedNodeLabel={selectedNodeLabel}
             selectedNodeKind={selectedNodeKind}
             selectedMicrophoneId={selectedMicrophoneId}
+            selectedVariableName={selectedVariableName}
+            selectedVariableTypeLabel={selectedVariableTypeLabel}
             microphoneOptions={microphoneOptions}
             canEditScenario={!isSignal}
             onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
             onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
             onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
+            onAssignVariableName={graph.assignNodeVariableName}
             onClearBoard={handleClearBoard}
           />
         </aside>

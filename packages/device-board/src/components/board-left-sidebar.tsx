@@ -3,6 +3,7 @@ import type { ScenarioVariable, ScenarioVariableType } from '@membrana/core';
 
 import { referenceTypeLabel, type VariableNodeKind } from '../graph/index.js';
 import {
+  BOARD_LEFT_SIDEBAR_WIDTH_CLASS,
   BRANCH_SIDEBAR_SECTIONS,
   BRANCH_TAB_LABEL,
   type ScenarioBranchTab,
@@ -103,7 +104,7 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   onAddVariableNode,
 }) => (
   <nav
-    className="flex h-full w-[clamp(11rem,13vw,14rem)] flex-col gap-4 overflow-y-auto border-r border-base-300 bg-base-200/95 p-3 shadow-lg backdrop-blur-sm"
+    className={`flex h-full ${BOARD_LEFT_SIDEBAR_WIDTH_CLASS} flex-col gap-4 overflow-y-auto border-r border-base-300 bg-base-200/95 p-3 shadow-lg backdrop-blur-sm`}
     aria-label="Вкладки доски"
   >
     {BRANCH_SIDEBAR_SECTIONS.map((section) => (

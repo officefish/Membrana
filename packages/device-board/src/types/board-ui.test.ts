@@ -4,6 +4,7 @@ import type { ScenarioBlockKind } from '@membrana/core';
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/d0-node-catalog.js';
 import {
   BRANCH_SIDEBAR_SECTIONS,
+  BRANCH_SCENARIO_TITLE,
   BRANCH_TAB_LABEL,
   isLegacyPaletteEnabled,
   LEGACY_SCENARIO_NODE_PALETTE,
@@ -37,6 +38,15 @@ describe('board-ui sidebar sections (MP7b RT6)', () => {
 
   it('labels initial branch as On start (presentational, schema key unchanged)', () => {
     expect(BRANCH_TAB_LABEL.initial).toBe('On start');
+  });
+
+  it('provides Russian scenario titles for header', () => {
+    expect(BRANCH_SCENARIO_TITLE.onConnect).toBe('Сценарий соединения с устройством');
+    expect(BRANCH_SCENARIO_TITLE.onDisconnect).toBe(
+      'Сценарий при потере соединения с устройством',
+    );
+    expect(BRANCH_SCENARIO_TITLE.initial).toBe('Сценарий запуска устройства');
+    expect(BRANCH_SCENARIO_TITLE.onStop).toBe('Сценарий остановки устройства');
   });
 });
 

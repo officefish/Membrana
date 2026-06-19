@@ -2974,6 +2974,19 @@
       "archivedAt": null,
       "archiveNotes": null,
       "notes": "Remove autosave; isDirty draft vs saved snapshot."
+    },
+    {
+      "id": "device-board-ux-ports-header",
+      "title": "device-board: header layout, port labels, variable inspector",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md",
+      "githubIssue": 110,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Also closes #111 #112."
     }
   ]
 }
