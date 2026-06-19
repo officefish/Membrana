@@ -164,6 +164,7 @@
 - Не создавать циклические зависимости между пакетами.
 - Не использовать `console.log` в production-коде (только через логгер из `@membrana/core`).
 - Не коммитить `node_modules`, `dist`, `.turbo`, `.env`.
+- **Не сохранять логи SSH/deploy в корень репозитория** (`cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt` и т.п. через `Tee-Object` / `> file.txt`). Для отладки — `%TEMP%` / `$TMPDIR` или осознанно `docs/archive/`; см. `docs/CONTRIBUTING.md` → VPS deploy.
 - Не нарушать границы пакетов: внутренние модули — приватны.
 - **Не работать с Web Audio API напрямую** из модулей / плагинов / других сервисов. Только через `@membrana/audio-engine-service` (см. `docs/ARCHITECTURE.md`, раздел «1b. Центральный узел первичной обработки аудио»). Запрещены: `new AudioContext()`, `navigator.mediaDevices.getUserMedia(...)`, `createAnalyser()`, `decodeAudioData()`, `enumerateDevices()` — всё это уже обёрнуто в engine. Эталон интеграции — `apps/client/src/modules/microphone/`.
 - **Не регистрировать модули/плагины напрямую через store**. Канонический путь — `MembranaRegistry` из `@membrana/agenda`: `MembranaRegistry.registerLazyModule({...})`, `MembranaRegistry.registerPlugin(moduleId, factory())`, в конце `MembranaRegistry.finalizeRegistration()`. Прямые вызовы `useMembranaStore.getState().registerModule(...)` или `setState({ pendingModulePrefs: null })` запрещены. См. `docs/MODULE_AND_PLUGIN_UI.md` §0 и `docs/ARCHITECTURE.md` §1c.

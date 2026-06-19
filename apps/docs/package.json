@@ -7,7 +7,7 @@
     "hoistingLimits": "workspaces"
   },
   "scripts": {
-    "dev": "mintlify dev --port 3333",
+    "dev": "node ../../scripts/docs-dev.mjs",
     "build": "node ../../scripts/verify-mintlify-docs.mjs",
     "lint": "node ../../scripts/verify-mintlify-docs.mjs --links",
     "clean": "rimraf .mintlify",

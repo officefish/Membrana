@@ -203,6 +203,7 @@ DR6 (client) зависит от DR2 (модель артефактов), вед
 - Удалять свойство «провал сборки/pull до переключения не роняет прод».
 - Смешивать build-context разных сервисов в один образ.
 - Хранить секреты в образе или в git (только runtime env / `/etc/membrana/*.env`).
+- Сохранять вывод SSH/deploy в корень репозитория (`cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt` через `Tee-Object` / redirect) — только `%TEMP%` / `$TMPDIR` или `docs/archive/` по необходимости; см. [`CONTRIBUTING.md`](../CONTRIBUTING.md).
 - Вводить rolling (DR7) до регламента expand/contract миграций (DR5).
 - Переезд на новый облачный провайдер / оркестратор без отдельного решения консилиума.
 

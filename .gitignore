@@ -58,6 +58,11 @@ packages/services/detectors/**/src/*.d.ts.map
 scripts/_ssh-*.mjs
 scripts/_*-out.txt
 
+# Локальные логи deploy/recover в корне (Tee-Object при отладке VPS)
+/cabinet-recover*.txt
+/deploy-*.txt
+/prod-check.txt
+
 # Кэш загрузки внешних датасетов (WAV остаются в real-collection/)
 docs/datasets/samples/.cache/
 

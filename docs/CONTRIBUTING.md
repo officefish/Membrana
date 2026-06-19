@@ -179,6 +179,14 @@ git push -u origin vesnin
 
 **Не коммитить:** `**/.env.docker` (синк из `.env`), `ssl/` (TLS-ключи), корневой `.env`.
 
+**Логи отладки deploy/recover (агенты и люди):** не сохранять вывод `yarn cabinet:*:prod`, `yarn device-board:deploy:*` и прочих SSH-скриптов в **корень репозитория** (`Tee-Object -FilePath cabinet-recover.txt`, `> deploy-*.txt` и т.п.). Это одноразовые артефакты, они загрязняют `git status` и preflight deploy-gate. Если лог нужен:
+
+- Windows: `%TEMP%\membrana-deploy-<дата>.log`
+- Unix: `$TMPDIR/membrana-deploy-<дата>.log`
+- Для обмена с командой: `docs/archive/` (коммит только по решению постановщика)
+
+Паттерны в `.gitignore`: `/cabinet-recover*.txt`, `/deploy-*.txt`, `/prod-check.txt`; вывод скриптов — `scripts/_*-out.txt`.
+
 ## Коммиты
 
 - Сообщения в повелительном наклонении, на английском или русском — как принято в команде; главное — единообразие в PR.

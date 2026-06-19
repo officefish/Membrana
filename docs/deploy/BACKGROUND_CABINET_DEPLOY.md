@@ -4,6 +4,8 @@
 
 Связанные документы: [`MEMBRANE_PLATFORM_DEPLOY.md`](./MEMBRANE_PLATFORM_DEPLOY.md), [`packages/background-cabinet/README.md`](../../packages/background-cabinet/README.md), эпик [#67](https://github.com/officefish/Membrana/issues/67).
 
+> **Логи отладки:** вывод `yarn cabinet:*:prod` и других SSH-скриптов **не сохранять в корень репозитория** (`cabinet-recover*.txt`, `deploy-*.txt`, …). Используйте `%TEMP%` / `$TMPDIR` или `docs/archive/`. См. [`CONTRIBUTING.md`](../CONTRIBUTING.md) → VPS deploy.
+
 ---
 
 ## DNS (перед деплоем)
