@@ -32,6 +32,8 @@ import {
   isPreRunValid,
   isValidBoardConnection,
   rejectSystemNodeRemovals,
+  clearBranchState,
+  shouldPreserveLockedNodes,
   resolveRunDisabledReason,
   validatePreRun,
   type VariableNodeKind,
@@ -106,8 +108,8 @@ export interface DeviceBoardGraphContextValue {
   /** Ручной режim normal/alarm (MP7b RT3/RT6). Делегируется в ScenarioRuntime. */
   readonly mode: RuntimeMode;
   readonly setMode: (mode: RuntimeMode) => void;
-  /** Полная очистка борда: все ветки сценария и сигнал (MP7b RT6). */
-  readonly clearBoard: () => void;
+  /** Очистка узлов текущей ветки (Signal или активная Scenario-ветка); Event-entry сохраняется. */
+  readonly clearCurrentBranch: (layer: BoardLayerTab) => void;
   /** Добавить legacy D0-ноду из палитры в активную ветку (только при legacy-флаге). */
   readonly addScenarioNodeToCurrentBranch: (blockKind: ScenarioBlockKind) => void;
   /** v0.4 DBR5: добавить узел палитры Print/isValid/GetMicrophone в активную ветку. */
@@ -661,25 +663,82 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     runtimeRef.current?.setMode(mode);
   }, []);
 
-  const clearBoard = useCallback(() => {
-    setSignalNodes([]);
-    setSignalEdges([]);
-    setScenarioInitialNodes([]);
-    setScenarioInitialEdges([]);
-    setScenarioOnConnectNodes([]);
-    setScenarioOnConnectEdges([]);
-    setScenarioMainNodes([]);
-    setScenarioMainEdges([]);
-    setScenarioAlarmNodes([]);
-    setScenarioAlarmEdges([]);
-    setScenarioOnStopNodes([]);
-    setScenarioOnStopEdges([]);
-    setScenarioOnDisconnectNodes([]);
-    setScenarioOnDisconnectEdges([]);
-    setScenarioFunctionNodes([]);
-    setScenarioFunctionEdges([]);
-    setVariables([]);
-  }, []);
+  const clearCurrentBranch = useCallback(
+    (layer: BoardLayerTab) => {
+      if (layer === 'signal') {
+        setSignalNodes([]);
+        setSignalEdges([]);
+        return;
+      }
+
+      const preserveLocked = shouldPreserveLockedNodes(layer, scenarioBranch);
+      const apply = (nodes: Node[], edges: Edge[]) => clearBranchState(nodes, edges, preserveLocked);
+
+      switch (scenarioBranch) {
+        case 'initial': {
+          const next = apply(scenarioInitialNodes, scenarioInitialEdges);
+          setScenarioInitialNodes(next.nodes);
+          setScenarioInitialEdges(next.edges);
+          break;
+        }
+        case 'onConnect': {
+          const next = apply(scenarioOnConnectNodes, scenarioOnConnectEdges);
+          setScenarioOnConnectNodes(next.nodes);
+          setScenarioOnConnectEdges(next.edges);
+          break;
+        }
+        case 'main': {
+          const next = apply(scenarioMainNodes, scenarioMainEdges);
+          setScenarioMainNodes(next.nodes);
+          setScenarioMainEdges(next.edges);
+          break;
+        }
+        case 'alarm': {
+          const next = apply(scenarioAlarmNodes, scenarioAlarmEdges);
+          setScenarioAlarmNodes(next.nodes);
+          setScenarioAlarmEdges(next.edges);
+          break;
+        }
+        case 'onStop': {
+          const next = apply(scenarioOnStopNodes, scenarioOnStopEdges);
+          setScenarioOnStopNodes(next.nodes);
+          setScenarioOnStopEdges(next.edges);
+          break;
+        }
+        case 'onDisconnect': {
+          const next = apply(scenarioOnDisconnectNodes, scenarioOnDisconnectEdges);
+          setScenarioOnDisconnectNodes(next.nodes);
+          setScenarioOnDisconnectEdges(next.edges);
+          break;
+        }
+        case 'function': {
+          const next = apply(scenarioFunctionNodes, scenarioFunctionEdges);
+          setScenarioFunctionNodes(next.nodes);
+          setScenarioFunctionEdges(next.edges);
+          break;
+        }
+        default:
+          break;
+      }
+    },
+    [
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioBranch,
+      scenarioFunctionEdges,
+      scenarioFunctionNodes,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+    ],
+  );
 
   const appendNodeToBranch = useCallback(
     (branch: ScenarioBranchTab, node: Node) => {
@@ -867,7 +926,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       stopScenario,
       mode: runtimeState.mode,
       setMode,
-      clearBoard,
+      clearCurrentBranch,
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
       updatePaletteNodeMicrophoneId,
@@ -884,7 +943,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       addVariable,
       addVariableNodeToCurrentBranch,
       canRun,
-      clearBoard,
+      clearCurrentBranch,
       deviceKind,
       exportJson,
       importJsonFile,

@@ -69,8 +69,16 @@ export function isEventNode(node: Node): boolean {
 }
 
 /** True, если узел системный (нельзя удалить с борда). */
-function isSystemNode(node: Node): boolean {
+export function isSystemNode(node: Node): boolean {
   return (node.data as { system?: boolean } | undefined)?.system === true;
+}
+
+/** True, если узел заблокирован от удаления (Event и прочие system / deletable:false). */
+export function isLockedBoardNode(node: Node): boolean {
+  if (node.deletable === false) {
+    return true;
+  }
+  return isSystemNode(node);
 }
 
 /**
@@ -82,11 +90,11 @@ export function rejectSystemNodeRemovals(
   changes: NodeChange[],
   nodes: readonly Node[],
 ): NodeChange[] {
-  const systemIds = new Set(nodes.filter(isSystemNode).map((node) => node.id));
-  if (systemIds.size === 0) {
+  const lockedIds = new Set(nodes.filter(isLockedBoardNode).map((node) => node.id));
+  if (lockedIds.size === 0) {
     return changes;
   }
-  return changes.filter((change) => !(change.type === 'remove' && systemIds.has(change.id)));
+  return changes.filter((change) => !(change.type === 'remove' && lockedIds.has(change.id)));
 }
 
 /**
