@@ -26,6 +26,20 @@
       "relatedTasks": ["dsp-drone-detector", "trends-fft-microphone-plugin", "media-library-a3-mic-recorder"]
     },
     {
+      "id": "device-board",
+      "kind": "module",
+      "name": "Доска устройства",
+      "status": "draft",
+      "promptPath": "docs/catalog/client/prompts/modules/device-board.md",
+      "code": {
+        "registerId": "device-board",
+        "moduleFile": "apps/client/src/modules/device-board/DeviceBoardModule.tsx"
+      },
+      "plugins": [],
+      "services": ["@membrana/audio-engine-service"],
+      "relatedTasks": ["module-catalog-v1", "device-board-realtime-runtime"]
+    },
+    {
       "id": "telemetry-journal",
       "kind": "module",
       "name": "Журнал телеметрии",

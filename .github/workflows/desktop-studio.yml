@@ -1,0 +1,146 @@
+# DR6 (deploy-pipeline-refactor): условная сборка десктоп-продукта Membrana Studio (Electron).
+#
+# apps/client — dev-песочница/renderer, НЕ поставляемый продукт. Конечный продукт —
+# Electron-приложение membrana-studio (оболочка вокруг apps/client). Сборка десктопа
+# ДЕКАПЛИРОВАНА от деплоя сервера и УСЛОВНАЯ: тяжёлый Electron-пакет собирается только
+# когда изменения коснулись приложения или его зависимостей (turbo affected).
+#
+# Триггеры:
+#   - push в main         → собрать пакет (артефакт-проверка) ТОЛЬКО если studio/client затронуты
+#   - push тега studio-v* → собрать всегда + приложить .exe к GitHub Release
+#   - workflow_dispatch   → собрать вручную (force)
+#
+# device-приложение — паттерн на будущее (follow-up); здесь эталон — membrana-studio.
+
+name: Desktop Studio
+
+on:
+  push:
+    branches: [main]
+    tags: ['studio-v*']
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/membrana-studio/**'
+      - 'apps/client/**'
+  workflow_dispatch:
+
+concurrency:
+  group: desktop-studio-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  decide:
+    name: Decide if studio affected
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      build: ${{ steps.aff.outputs.build }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Decide affected
+        id: aff
+        run: |
+          set -e
+          # Тег/ручной запуск — собираем безусловно.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [[ "${{ github.ref }}" == refs/tags/studio-v* ]]; then
+            echo "forced build (event=${{ github.event_name }}, ref=${{ github.ref }})"
+            echo "build=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          BASE="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          fi
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "no usable base ($BASE) → build=true"
+            echo "build=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          # Closure затронутых пакетов (изменённые + их зависимые).
+          PKGS=$(yarn turbo run build --filter="...[$BASE]" --dry=json | jq -r '.packages[]?')
+          echo "affected packages since $BASE:"; echo "$PKGS"
+          # Студия не зависит по графу от client (клиент копируется скриптом), поэтому
+          # триггером считаем изменение либо renderer (client), либо оболочки (studio).
+          if echo "$PKGS" | grep -qE '^@membrana/(client|membrana-studio)$'; then
+            echo "→ studio/client affected: build=true"
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "→ studio/client not affected: build=false (skip Electron)"
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  package:
+    name: Package Membrana Studio (Windows nsis)
+    needs: decide
+    if: needs.decide.outputs.build == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build client + upstream deps (turbo)
+        run: yarn turbo run build --filter=@membrana/client
+
+      - name: Package studio (electron-builder nsis)
+        run: yarn studio:package
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: membrana-studio-windows
+          path: apps/membrana-studio/release/*.exe
+          if-no-files-found: error
+
+      - name: Attach installer to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/studio-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: apps/membrana-studio/release/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Membrana Studio (desktop)"
+            echo ""
+            echo "- event: ${{ github.event_name }} · ref: ${{ github.ref }}"
+            echo "- installer: apps/membrana-studio/release/*.exe"
+            echo ""
+            echo "Релиз: \`git tag studio-vX.Y.Z && git push origin studio-vX.Y.Z\` → .exe приложится к GitHub Release."
+          } >> "$GITHUB_STEP_SUMMARY"

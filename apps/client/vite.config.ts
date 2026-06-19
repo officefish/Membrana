@@ -17,12 +17,14 @@ const clientRoot = fileURLToPath(new URL('.', import.meta.url));
  */
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, clientRoot, '');
+  const isStudioBuild = env.MEMBRANA_STUDIO === '1' || env.MEMBRANA_STUDIO === 'true';
   const cabinetProxyTarget =
     env.VITE_CABINET_API_URL?.replace(/\/$/, '') || 'http://localhost:3020';
   const mediaProxyTarget =
     env.VITE_MEDIA_API_URL?.replace(/\/$/, '') || 'http://localhost:3010';
 
   return {
+    base: isStudioBuild ? './' : '/',
     plugins: [react()],
 
     resolve: {
@@ -93,7 +95,7 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: 5173,
-      open: true,
+      open: env.STUDIO_DEV !== '1',
       proxy: {
         '/api-cabinet': {
           target: cabinetProxyTarget,

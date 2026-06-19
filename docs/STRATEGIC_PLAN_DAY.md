@@ -1,333 +1,258 @@
-<!-- Сгенерировано: 2026-06-15T06:19:08.763Z (yarn plan:day) -->
+<!-- Сгенерировано: 2026-06-18T08:57:59.542Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->
 
-# План на следующий день — Membrana (2026-06-15)
+# План на следующий день (2026-06-18)
 
 ## 1. Что сделано за период (последние сутки)
 
-### Инфраструктура и платформа
+1. **docs: HORIZON_MOBILE_MULTIMODAL** — добавлена архитектура дальней перспективы (мобильные узлы, активное/отражательное зондирование, контур актуации). Документ завязан на WHITE_PAPER §7 как горизонт-замысел за границами наземной триангуляции. Это стратегический артефакт, реализация отложена на post-Stage 7.
 
-1. **Night Build завершён (NB0–NB3 checkpoints)**  
-   Docs: `NIGHT_BUILD_ACTIVE.md`, `NIGHT_BUILD_LOG.md`, `NIGHT_SPRINT_REGULATION.md` зафиксировали чек-пойнты для ночного цикла сборки. Regulation уточняет фазы NB0 (prep), NB1 (core), NB2 (hardening), NB3 (handoff). Практический результат — снизили риск регрессии при нестабильной сети.
+2. **feat(platform): MP7 Node Realtime Gateway** — реализована WebSocket-транспортная слой (`background-cabinet` модуль `node-realtime-*`, контракты в `@membrana/core/contracts/node-realtime`). Включены:
+   - WSS журнал для синхронной двойной записи (REST fallback).
+   - Мост между клиентом и cabinet для связи узла в реальном времени.
+   - Бридж реалтайм-датасета микрофонного потока.
+   Это foundation-слой для **Stage 2 (многоузловая синхронизация)**, хотя сама многоузловость заморожена до stage-gate 1→2.
 
-2. **Cabinet MP4 / MP5 / MP6 — полный цикл платформы (MP4, MP5, MP6)**  
-   - MP4: кво́та за мембрану из тарифа (`device-limits.ts`, миграция `mp4_device_membrane`)
-   - MP5: облачный журнал телеметрии (`journal.controller`, `journal.service`, UI `JournalPage`)
-   - MP6: итоговый дым-тест всей платформы после merge
-   - Граничная проблема: `bcrypt` timeout на CI, решена увеличением timeout в `vitest.config.ts`
+3. **feat(device-board): H2a/H2d — full scenario cycle** — завершен полный цикл Device Board (hackathon):
+   - Импорт/экспорт JSON сценариев (`device-scenarios.service` в background-media, Prisma).
+   - Симуляция сценария на клиенте (`DeviceBoardModule`, `scenarioRuntimeHost`, `analyzeChunkTrendsFft`).
+   - Cabinet sync и SSH-deploy (production).
+   - Это новый конструктор для экспериментирования с трендами FFT без запуска реального оборудования.
 
-3. **Sample Playback Service — новый foundation-сервис**  
-   `packages/services/sample-playback/` → вынесен из `apps/client` в отдельный пакет с LRU-кешем (N=20), lifecycle hooks, тестами. Переиспользуется в `cabinet` и `client`. Это **правильный шаг** в сторону composition.
+4. **chore: Docker & deploy scripts** — подготовлены контексты сборки для media/cabinet и SSH-скрипты. Инфраструктура готова к развертыванию эшелона 1.A/1.B.
 
-4. **Tariff Dataset v1 — DS1–DS5 завершены**  
-   - DS1: корпус `free-v1` (120 × 5s WAV, real audio)
-   - DS2: доменная модель (`bundled-catalog.ts`, `collection-ids.ts`)
-   - DS3: бандл в `apps/client/public/catalog/`
-   - DS4: benchmark runner v0.2 (`benchmark-detectors.mjs`)
-   - DS5: серверная каталогизация (`catalog-provision.service.ts`, idempotent seed)
-   - Результат: в `background-media` live продакшен-каталог, доступный и client-у, и cabinet-у.
+5. **fix(detector-report): validate & parseDroneDetectionBriefReport** — добавлена валидация журнальных пейлодов детектора, безопасный парсинг. Улучшена семантика `analysisMode` в конфигурации плагина live-анализа.
 
-5. **Prisma и CI — изоляция клиентов между пакетами**  
-   `background-cabinet` и `background-media` теперь имеют **собственные** Prisma-клиенты (`src/prisma/client.ts`) для избежания conflicts на CI. Миграции разделены по пакетам.
-
-### Клиент и сервисы
-
-6. **Cabinet SampleLibrary UI — single-column layout + playback**  
-   Вертикальная компоновка: сборка → player-panel → таблица с inline-строкой для выбранного семпла и waveform-визуализацией в ячейке. Компонент `CabinetSampleTable` переиспользует `sample-playback-service`. **Позитив:** чистое разделение ответственности (service ↔ UI).
-
-7. **Node Connection & Pairing — prod API URLs и unlink**  
-   `apps/client/.env.development` + `apps/client/vite.config.ts` для prod API; новый endpoint `PATCH /pair/{id}/unlink`, UI-компонент `MembraneLinkedPanel`, мониторинг статуса через `usePairStatusMonitor`. Smoke-тест `_ssh-cabinet-pair-unlink-prod.mjs` валидирует 401 после revoke.
+**Итого:** 5 крупных изменений; преимущественно инфраструктура (транспорт, процесс dev/prod, конструкторы для экспериментов) и горизонт-стратегия. Детекторные алгоритмы не трогались.
 
 ---
 
 ## 2. Привязка к стратегической цели
 
-### Текущая позиция в дорожной карте
+### Текущая позиция на дорожной карте
 
-**Стадия:** Параллельно работают **Этап 0–1.A** (фундамент + DSP-детекторы) и **Этап 0 инфраструктуры платформы** (Cabinet, Journal, Quotas).
+Мы находимся в **Этапе 0** (фундамент) и частично в **начале Этапа 1.A** (DSP-эшелон на одном узле):
 
-**Карта статус:**
-- ✅ Этап 0: `audio-engine`, `fft-analyzer` стабильны; foundation-слой целостен.
-- ⏳ Этап 1.A: DSP-детекторы (`harmonic-`, `cepstral-`, `spectral-flux-`) в scaffolds; benchmark v0.2 готов, но **детекторы ещё не интегрированы в единый ensemble**.
-- ❌ Stage-gate 1→2: **`DETECTOR_BENCHMARK.md` не содержит актуальных метрик** (Precision ≥ 85%, Recall ≥ 90%); шлюз заморожен, TDOA в консервации.
-- ⏸️ Этапы 2–7: TDOA, мультилатерация, трекинг, классификация — **на паузе до stage-gate**.
+- ✅ **Этап 0** полностью (audio-engine поставляет кадры, fft-analyzer считает спектр, клиент показывает спектр).
+- ⚠️ **Этап 1.A — DSP-детекторы**: три независимых детектора (`harmonic`, `cepstral`, `spectral-flux`) — в коде, но качество не достигает stage-gate 1→2 (см. FFT_METRICS §4: recall 68–100%, FPR 88–100%).
+- 🔒 **Этап 2 и выше (TDOA, локализация, трекинг)** — заморожены до прохождения stage-gate 1→2.
 
-### Что приближает к цели
+### Что из сделанного приближает к стратегии
 
-1. **Tariff Dataset v1** → включает реальный corpus (120 семплов дронов и не-дронов) — критически важно для **валидации детекторов на stage-gate 1→2**.
-2. **Sample Playback Service** → переиспользуемая foundation для анализа семплов в UI; облегчает добавление плагинов-анализаторов.
-3. **Cabinet Sample Library** → демонстрирует путь от сырых WAV → tagged catalog → UI-плеер; это инфраструктура, на которой будет ехать **детектор-интеграция** (плагины показывают результаты анализа).
+1. **Device Board** — критически важен для Этапа 1.A. Позволяет быстро итерировать **тренды FFT** на куратируемых сценариях без боевых данных. Это инструмент валидации гипотез.
+2. **MP7 Realtime Gateway** — закладка под Stage 2 (многоузловая синхронизация, TDOA). Хотя Stage 2 заморозен, инфраструктура готова.
+3. **Валидация брифов детектора** — снижает риск скрытых ошибок в журналах, необходимо для доверия к метрикам.
 
-### Что нейтрально или отвлекает
+### Что отвлекает или нейтрально
 
-- **Membrane Platform (MP4–MP6):** квоты, журналы, pairing — важны для **production-ready**, но не приближают к **детекции дронов**. На горизонте этапов 1–3 это инфра-долг, необходимый но параллельный основной задаче.
-- **Cabinet UI сложность:** single-column layout, waveform scrubber — полезны для demo, но затягивают ресурсы от реализации детекторов.
+- **HORIZON_MOBILE_MULTIMODAL** — стратегический документ, но реализация far-future (после Stage 7). Сейчас это только планирование, не код.
+- **Docker & SSH-деплой** — operатор, нужны, но не влияют на качество детекции. Могут использоваться параллельно.
 
-### Критически недостающие сервисы
+### Недостающие критические сервисы
 
-По коммитам видно, что **scaffold'и существуют**, но не реализованы:
+По WHITE_PAPER дорожной карте нам нужны (но пока не начаты на уровне реализации):
 
-| Сервис | Статус | Блокирует |
-|--------|--------|-----------|
-| `@membrana/harmonic-detector-service` | Scaffold | Stage-gate 1→2 |
-| `@membrana/cepstral-detector-service` | Scaffold | Stage-gate 1→2 |
-| `@membrana/spectral-flux-detector-service` | Scaffold | Stage-gate 1→2 |
-| `@membrana/detection-ensemble-service` | Plan | Stage-gate 1→2 |
-| `@membrana/yamnet-detector-service` | Plan (1.B) | Этап 1.B |
-| `@membrana/tdoa-service` | Frozen (Stage 2) | Этап 2 |
-| `@membrana/localizer-service` | Plan | Этап 3 |
-| `@membrana/tracker-service` | Plan | Этап 4 |
+| Сервис | Статус | Этап | Почему нужен |
+|--------|--------|------|-------------|
+| `@membrana/detection-ensemble-service` | scaffold | 1.B | агрегация трёх DSP (после stage-gate 1→2) |
+| `@membrana/template-match-detector-service` | scaffold | 1.A | **prod-путь trends** (уже используется в Device Board) |
+| `@membrana/tdoa-service` | scaffold | Stage 2 | разница времён между узлами (заморозиться) |
+| `@membrana/localizer-service` | не начат | Stage 3 | мультилатерация на плоскости (заморозиться) |
+| `@membrana/tracker-service` | не начат | Stage 4 | фильтр Калмана, ассоциация целей (заморозиться) |
+| `@membrana/transport-service` | scaffold | foundation | обёртка над MP7 WSS для сервисов (уже идёт) |
 
-**Вывод:** Первый приоритет — **завершить реализацию DSP-детекторов и запустить stage-gate 1→2**.
+### Критерий stage-gate 1→2
+
+Из WHITE_PAPER §8 и DETECTOR_BENCHMARK.md:
+- **Лучший одиночный детектор ИЛИ согласованный ensemble: precision ≥ 85%, recall ≥ 90%.**
+- По FFT_METRICS §4: **trends DRONE_TIGHT достигает recall 95% / FPR 30% (precision 0.76)** на held-out val — **не проходит планку по precision** (нужна ≥0.85).
+
+**Это означает:** gate будет пройден либо через (а) новый датасет с лучшей размеченностью (validated-data эпик), либо через (б) эшелон 2 (нейро zero-shot, CLAP/YAMNet, agentic).
 
 ---
 
 ## 3. Риски и долг
 
-### Технический долг
+### Технические риски
 
-1. **Детекторы в scaffold'е**  
-   Три пакета (`harmonic-`, `cepstral-`, `spectral-flux-`) объявлены, но код незавершён. Отсутствует:
-   - Реализация математических ядер (FFT-обработка, гармонический анализ, cepstrum).
-   - Unit-тесты с мок-аудио.
-   - Интеграция в `detection-ensemble-service`.
-   - Бенчмарк на `free-v1` корпусе (v0.2).
+1. **Потолок качества эшелона 0 зафиксирован** (FFT_METRICS §0).
+   - DSP-детекторы по отдельности: recall 68–100%, FPR 88–100% — не проходят stage-gate.
+   - Trends DRONE_TIGHT: recall 95%, FPR 30% (F1 0.844) — проходит мягкий предел (80%/40%), но не финальный (85%/90%).
+   - **Риск:** если не перейти на эшелон 2 (нейро/zero-shot), застрянем на 95% recall / 76% precision навсегда.
 
-2. **Stage-gate 1→2 не открыт**  
-   `DETECTOR_BENCHMARK.md` не обновлен после DS4. Критерии (P ≥ 85%, R ≥ 90%) неясны для текущего состояния. Формальный шлюз для перехода к TDOA / мультиузлу не может быть закрыт.
+2. **Синхронизация времени между узлами** (Stage 2) — пока не имплементирована, только архитектура.
+   - GPS-PPS доступен не везде; NTP/PTP может дать только миллисекунды (нужны микросекунды для TDOA на расстояниях в км).
+   - **Риск:** при переходе на Stage 2 может оказаться, что precision TDOA хуже, чем требует для 2D-локализации.
 
-3. **Prisma миграции** — теперь разделены по пакетам, но CI-тесты требуют изоляции. Риск race-condition при параллельных миграциях `background-cabinet` и `background-media` на одной БД (решено, но требует постоянного внимания).
+3. **Multi-path & рефлексии звука** (WHITE_PAPER §9).
+   - Trends FFT работает на стационарных сигналах; рефлексия от зданий может исказить TDOA.
+   - **Риск:** stage-gate 1→2 нужна калибровка на реальных коридорах/открытых полях.
 
-### Архитектурные нарушения (не обнаружены)
+### Накопленный долг
 
-Граф зависимостей соблюдается:
-- `sample-playback-service` → `@membrana/core` + `audio-engine` ✅ (foundation-правило)
-- Cabinet → `sample-playback-service` ✅ (client может зависеть от сервисов)
-- Детекторы → `detector-base` + `audio-engine` ✅ (специальное правило для семейства)
+1. **Validated Dataset (VDR)** — текущие метрики на `free-v1` (музыкальные записи + ESC-50). Реальные боевые данные (микрофоны на улице, города, разные дроны) — отсутствуют. Это ограничивает доверие к финальным цифрам.
 
-### Известные ограничения WHITE_PAPER
+2. **Integration Tests** — device-board может симулировать сценарий, но нет сквозного теста «аудиопоток → детектор → трек → UI». Рискуем обнаружить ошибки поздно.
 
-1. **Синхронизация времени между узлами** (§5.2) — для TDOA нужен джиттер < 1 мс. Сейчас нет `TimeSyncProvider`; это тип, зарезервированный как `@experimental @stage 2`.
+3. **Документ DETECTOR_BENCHMARK.md** — требует автомированной регенерации (задача `yarn benchmark:detectors`), но скрипт может быть неполный. Нужна проверка.
 
-2. **Многолучёвость и отражения** (§9, таблица рисков) — решение через GCC-PHAT и geometry redundancy отложено до stage-gate.
+### Нарушения архитектурных границ (по diff-у)
 
-3. **Скорость звука зависит от погоды** (§5.3) — адаптивная модель на узле требует `weather-sensor` или простой приближающей функции; это не критично для Этапа 1.A (одиночная детекция).
+- ✅ Нарушений не обнаружено. Все новые пакеты (`node-realtime`, `device-scenarios`) лежат по месту и не импортируют друг друга циклически.
 
 ---
 
 ## 4. План на следующий день
 
-### Задача 4.1 — Реализовать `harmonic-detector-service` на чистом TypeScript
+### Задача 4.1: Внедрить `DRONE_TIGHT` в prod-каталог template-match
 
-**Цель:** Детектор, выделяющий гармонические пики в спектре (основной признак дрона: кратные частоты вращения винтов).
+**Цель:** Переговить `trends-fft` с параметрами шаблона `DRONE_TIGHT` (из FFT_METRICS §2.3) в `@membrana/template-match-detector-service` и добавить его как лучшего конкурента в `background-media` (library-service для template-catalog).
 
-**Пакет / слой:** `packages/services/detectors/harmonic-detector-service` → analyzer.
+**Пакет / слой:** `@membrana/template-match-detector-service` (analyzer) + `@membrana/media-library-service` (backend).
 
-**Связь с WHITE_PAPER:**  
-- §1e (Этап 1.A — DSP-эшелон, один узел)
-- §5.1 (Акустический портрет: 80–250 Гц + гармоники до 2–5 кГц)
-- White Paper §8, stage-gate 1→2
+**Связь с WHITE_PAPER:** Этап 1.A, Single-Node Detection First, prod-путь качества (по FFT_METRICS §5: только DRONE_TIGHT пробил планку).
 
 **Definition of Done:**
-1. Класс `HarmonicDetectorService` в `src/service.ts`:
-   - Метод `detect(spectrum: Float32Array, sampleRate: number): DetectionResult`
-   - На входе спектр (из `fft-analyzer`), на выходе `{ isDetected: boolean, confidence: 0–1, fundamentals: number[] }`
-   - Логика: поиск пиков выше SNR-threshold, группировка в гармонические ряды
-2. Unit-тесты в `src/service.test.ts`:
-   - Synthetic drone spectrum (4 гармоники 100 Гц) → обнаруживает
-   - White noise → не обнаруживает
-   - Птица (непериодический шум) → не обнаруживает или confidence < 0.5
-3. React hook `useHarmonicDetector(config)` в `src/hooks.ts`
-4. Экспорт в `src/index.ts` контрактов `DroneDetector`, `DetectionResult`, `HarmonicConfig`
+- [ ] Шаблон `DRONE_TIGHT` экспортирован из `fft-analyzer/src/math/trends/*` в `template-match-detector-service`.
+- [ ] Детектор `@membrana/template-match-detector-service` регистрируется в `detector-base` контракте и включен в бенчмарк.
+- [ ] `background-media` содержит default-каталог с `DRONE_TIGHT` (JSON с параметрами).
+- [ ] `yarn benchmark:detectors` показывает recall 95% / precision 76% на val (не хуже текущего).
 
-**Роль:** Математик (реализация ядра), Структурщик (scaffold + тесты).
+**Роль:** Структурщик (архитектура каталога) + Математик (валидация параметров).
 
-**Размер:** M (чистая математика без сложных зависимостей, ~300 LOC).
+**Размер:** M (перемещение кода + контракты).
 
 ---
 
-### Задача 4.2 — Реализовать `cepstral-detector-service` на чистом TypeScript
+### Задача 4.2: Запустить Validated Dataset (VDR) эпик — подготовка
 
-**Цель:** Детектор на основе cepstrum-анализа — более робастный к окружающему шуму, чем гармонический.
+**Цель:** Подготовить план и инфраструктуру для сбора/разметки реального датасета (боевые записи микрофонов на улице, подтвержденные дроны). Это предусловие для stage-gate 1→2 и перехода на эшелон 2.
 
-**Пакет / слой:** `packages/services/detectors/cepstral-detector-service` → analyzer.
+**Пакет / слой:** Документация + `datasets/` каталог + `background-media` (хранилище VDR).
 
-**Связь с WHITE_PAPER:**  
-- §1e (Этап 1.A, независимая реализация)
-- §8 (DSP-эшелон, объяснимые признаки)
+**Связь с WHITE_PAPER:** Этап 1.A → 1.B (stage-gate 1→2), риск §3 потолка качества.
 
 **Definition of Done:**
-1. Класс `CepstralDetectorService`:
-   - Метод `detect(spectrum: Float32Array, ...): DetectionResult`
-   - Преобразование: спектр → log-спектр → IFFT (cepstrum) → поиск пиков в cepstral domain
-   - Выход: гармонический период (в семплах), confidence
-2. Unit-тесты:
-   - Синтетический дрон → период обнаружен верно
-   - Птица → период не найден или шум
-3. Hook `useCepstralDetector(config)`
-4. Экспорт в `index.ts`
+- [ ] Написан промпт `VALIDATED_DATASET_COLLECTION_PROMPT.md` с процессом сбора, разметки, версионирования.
+- [ ] Подготовлена Prisma-миграция и API в `background-media` для хранения VDR-метаданных (источник, дата, GPS, класс, оценка quality).
+- [ ] Создан набросок скрипта `scripts/vdr-import.mjs` для массового импорта размеченных WAV.
+- [ ] Документ добавлен в `docs/tasks/registry.json` с маркером `type: "investigation"`.
 
-**Роль:** Математик.
+**Роль:** Teamlead (согласование процесса) + Структурщик (инфраструктура хранения).
 
-**Размер:** M (cepstrum классический алгоритм, но реализация требует аккуратности с IFFT).
+**Размер:** M (планирование + инфраструктура, без самого сбора).
 
 ---
 
-### Задача 4.3 — Запустить benchmark детекторов на `free-v1` корпусе (v0.2)
+### Задача 4.3: Реализовать Stage 2 заморозку (документ + контракты)
 
-**Цель:** Получить метрики Precision, Recall, F1 для каждого детектора на реальном корпусе из DS1, заполнить `DETECTOR_BENCHMARK.md`.
+**Цель:** Официально обозначить, что Stage 2 (TDOA, многоузловая синхронизация) и выше — в режиме **frozen до прохождения stage-gate 1→2**. Обновить документацию и типы.
 
-**Пакет / слой:** `scripts/benchmark-detectors.mjs` + `docs/DETECTOR_BENCHMARK.md`.
+**Пакет / слой:** Документация (`DETECTOR_BENCHMARK.md`, `ARCHITECTURE.md`) + аннотации типов `@membrana/core`.
 
-**Связь с WHITE_PAPER:**  
-- §8 (Stage-gate 1→2: precision ≥ 85%, recall ≥ 90%)
-- §11 (метрики успеха: доля ложных тревог < 5%)
+**Связь с WHITE_PAPER:** §8 (дорожная карта), принцип Single-Node Detection First.
 
 **Definition of Done:**
-1. Обновить `benchmark-detectors.mjs`:
-   - Загрузить корпус из `data/detectors-benchmark/v0.2/` (уже есть после DS4)
-   - Для каждого детектора (`harmonic-`, `cepstral-`, `spectral-flux-`, позже `yamnet-`) запустить на всех семплах
-   - Собрать TP, FP, FN, TN → вычислить P, R, F1
-2. Заполнить таблицу в `DETECTOR_BENCHMARK.md`:
-   ```
-   | Детектор | Precision | Recall | F1 | Latency p95 (ms) |
-   |----------|-----------|--------|-----|------------------|
-   | harmonic | 0.87 | 0.91 | 0.89 | 45 |
-   | ...      | ...  | ...  | ...  | .. |
-   ```
-3. Вывод: **Stage-gate открыт?** (Y/N) — если лучший детектор или ensemble ≥ P85, R90 → Y, иначе N.
-4. Фиксирование результатов в коммите (датой бенчмарка).
+- [ ] В `DETECTOR_BENCHMARK.md` добавлена секция «Stage-gate 1→2» с критериями (P≥85%, R≥90%) и текущим статусом (trends DRONE_TIGHT: R 95%, P 76%).
+- [ ] Все контракты Stage 2 в `@membrana/core/contracts/` помечены `@experimental @stage2 @frozen`.
+- [ ] `packages/services/tdoa/`, `packages/services/localizer/` — если они есть — переименованы на `_archived_` или помечены `@deprecated`.
+- [ ] Добавлена секция в `ARCHITECTURE.md` §1e с текущим состоянием Этапов.
 
-**Роль:** Структурщик (CI/инструменты), Математик (анализ метрик).
+**Роль:** Teamlead (решение) + Структурщик (внедрение в коде).
 
-**Размер:** M (скрипт готов, нужна только интеграция новых детекторов).
+**Размер:** S (разметка + документация).
 
 ---
 
-### Задача 4.4 — Интегрировать детекторы в `detection-ensemble-service`
+### Задача 4.4: Интеграция с нейро zero-shot (план + прототип)
 
-**Цель:** Один пакет, который вызывает все готовые детекторы и агрегирует результаты (среднее confidence, consensus).
+**Цель:** Подготовить технический план интеграции YAMNet или CLAP как second-stage детектора в Этап 1.B, не дожидаясь финального перехода на эшелон 2. Это path to gate-pass.
 
-**Пакет / слой:** `packages/services/detection-ensemble-service` → analyzer (plan, требует реализации).
+**Пакет / слой:** Документация (`prompts/INTEGRATIONS_STRATEGY.md` update) + scaffold `@membrana/yamnet-detector-service`.
 
-**Связь с WHITE_PAPER:**  
-- §8 (Этап 1.B перед Neural — DSP ensemble)
-- §4.4 (Слияние модальностей — одна шина для всех аналайзеров)
+**Связь с WHITE_PAPER:** Этап 1.B, Принцип §1 (дешёвый узел + умная сеть).
 
 **Definition of Done:**
-1. Класс `DetectionEnsembleService`:
-   - Поле `detectors: DroneDetector[]` (гармонический, cepstral, spectral-flux)
-   - Метод `detect(spectrum, ...): DetectionResult` — вызывает все, агрегирует
-   - Стратегия: `confidence = mean(det.confidence)` или взвешенная
-2. Unit-тесты:
-   - Все детекторы согласны → confidence ≈ 1.0
-   - Один детектор False Positive → ensemble снижает confidence
-3. Hook `useDetectionEnsemble(...)`
-4. **Не добавлять** нейросетевые детекторы на этом этапе (они в 1.B).
+- [ ] Обновлен `INTEGRATIONS_STRATEGY.md` с описанием YAMNet/CLAP (лицензия, размер модели, latency на Raspberry Pi).
+- [ ] Создан scaffold `packages/services/yamnet-detector-service` с базовой структурой (модель не загружена).
+- [ ] Написан промпт `YAMNET_DETECTOR_IMPLEMENTATION_PROMPT.md` с шагами интеграции + expected recall/precision.
+- [ ] Добавлено в `docs/tasks/registry.json` как `type: "implementation"`, assigned для Этапа 1.B.
 
-**Роль:** Структурщик.
+**Роль:** Музыкант (выбор модели, аудиообработка) + Математик (метрики).
 
-**Размер:** S (это просто агрегатор, логика простая).
+**Размер:** M (scaffold + документация).
 
 ---
 
-### Задача 4.5 — Создать UI-плагин для просмотра результатов детекции в Cabinet SampleLibrary
+### Задача 4.5: Проверка sentry & журнальной целостности в клиенте
 
-**Цель:** При выборе семпла в таблице показывать боковую панель с результатами всех детекторов (гармонический: confidence 0.92, cepstral: 0.88, etc.).
+**Цель:** Убедиться, что валидация `parseDroneDetectionBriefReport` (из коммита 255374a) полностью покрывает все пути загрузки журнала в UI, включая Electron-порт.
 
-**Пакет / слой:** `apps/cabinet/src/components/sample-library/` + новый плагин в `apps/cabinet/src/plugins/detection-results/`.
+**Пакет / слой:** `apps/client` (telemetry-journal модуль) + `packages/background-cabinet` (REST API).
 
-**Связь с WHITE_PAPER:**  
-- §8, §1c (Плагины регистрируются через MembranaRegistry)
-- Stage-gate 1→2 требует **визуализации** результатов для валидации
+**Связь с WHITE_PAPER:** Принцип §5 (открытый формат событий), надёжность логирования.
 
 **Definition of Done:**
-1. Компонент `DetectionResultsPanel.tsx`:
-   - Таблица: детектор | confidence | fundamentals | latency (ms)
-   - Color-код: зелёный (>0.85), жёлтый (0.5–0.85), красный (<0.5)
-2. Плагин `detectionResultsPlugin.ts`:
-   - Регистрация через `MembranaRegistry.registerPlugin()`
-   - Lifecycle: `install()` → подписка на выбранный семпл, загрузка спектра, запуск ensemble
-3. Integration in `CabinetSampleTable.tsx` (добавить колонку "Анализ" с кнопкой)
-4. Smoke-тест: выбрать drone-семпл → panel открывается → confidence > 0.8 для большинства детекторов
+- [ ] Написаны интеграционные тесты (`apps/client/src/modules/telemetry-journal/*.test.ts`) для загрузки некорректного JSON из cabinet/Electron.
+- [ ] Ошибки парсинга логируются в консоль (dev) и в sentry (prod).
+- [ ] UI gracefully показывает «Журнал повреждён» вместо краша.
+- [ ] Electron-порт обновлен с валидацией (`packages/services/telemetry-journal/src/ports/electron-journal-port.ts`).
 
-**Роль:** Верстальщик (UI), Структурщик (плагин registration).
+**Роль:** Верстальщик (UI) + Музыкант (тестирование).
 
-**Размер:** M (UI простой, но требует понимания plugin lifecycle).
+**Размер:** S (покрытие, валидация).
 
 ---
 
-### Задача 4.6 — Заполнить `DATASET.md` v0.2 финальными статистиками
+### Задача 4.6: Документировать Device Board для end-user (quick-start)
 
-**Цель:** Документировать корпус `free-v1` (количество, классы, продолжительность, source, license, metadata).
+**Цель:** Написать пользовательскую документацию Device Board: как создать сценарий, загрузить тренд-шаблоны, экспортировать результаты. Это инструмент для экспериментаторов.
 
-**Пакет / слой:** `docs/DATASET.md`.
+**Пакет / слой:** `packages/device-board/README.md` + `docs/DEVICE_BOARD_USER_GUIDE.md`.
 
-**Связь с WHITE_PAPER:**  
-- §8 (Принцип Single-Node Detection First опирается на датасет)
-- §11 (Воспроизводимость метрик)
+**Связь с WHITE_PAPER:** Инструмент для валидации гипотез (Этап 1.A).
 
 **Definition of Done:**
-1. Таблица: Класс | Кол-во | Мин/макс длительность | Источник | Лицензия
-   ```
-   | drone (multi-rotor) | 45 | 4.8s–5.2s | DJI / Autel / ... | CC0 / proprietary |
-   | drone (fixed-wing) | 8 | ... | ... | ... |
-   | not-drone (bird) | 20 | ... | ... | ... |
-   | not-drone (traffic) | 35 | ... | ... | ... |
-   | not-drone (wind) | 12 | ... | ... | ... |
-   ```
-2. Итого: 120 семплов, 600 секунд аудио
-3. Split рекомендуемый: train 60%, val 20%, test 20% (для будущих фаз)
-4. Файлы: `data/detectors-benchmark/v0.2/manifest.json` (уже есть после DS1) + README в папке
+- [ ] Новый документ `docs/DEVICE_BOARD_USER_GUIDE.md` содержит: что такое board, как создать сценарий, как загрузить trends-template, как читать результаты.
+- [ ] Скриншоты или GIF-демо (если возможно).
+- [ ] Примеры JSON сценариев добавлены в `datasets/device-board-examples/`.
+- [ ] Ссылка добавлена в главный `docs/README.md`.
 
-**Роль:** Документалист (Teamlead).
+**Роль:** Верстальщик (документация + примеры).
 
-**Размер:** S (сбор статистики, написание таблиц).
+**Размер:** S (документирование).
 
 ---
 
 ## 5. Что НЕ делаем на этом горизонте
 
-1. **TDOA и многоузловая синхронизация**  
-   Stage-gate 1→2 заморожен до достижения Precision ≥ 85%, Recall ≥ 90% на одиночном узле. Детекция дрона должна быть **надёжной**, прежде чем масштабировать сеть. (WHITE_PAPER §8, принцип Single-Node Detection First.)
+1. **Не повторяем бенчмарк harmonic / cepstral / spectral-flux на free-v1** — см. FFT_METRICS §6. Их потолок (recall 68–100%, FPR 88–100%) зафиксирован. Прирост качества возможен только через новый датасет, алгоритм (trends) или модальность (нейро). Unified benchmark уже проведён; повтор — пустая трата вычисилий.
 
-2. **Нейросетевые детекторы (YAMNet, CLAP)**  
-   Этап 1.B начинается только после завершения DSP-эшелона (4.1–4.3). Не добавляем deep learning на этапе 1.A.
+2. **Не начинаем Stage 2 (TDOA, многоузловая синхронизация) без gate-pass** — это явное требование WHITE_PAPER §8. Инфраструктура (MP7 WSS) готова, но реализация алгоритмов ждёт, пока лучший одиночный детектор не достигнет P≥85% / R≥90%.
 
-3. **Локализацию и мультилатерацию**  
-   TDOA-сервис, локализер, трекер остаются в консервации (`@experimental @stage 2` в core). Их ревью / реализация отложена.
+3. **Не расширяем Device Board на мобильные узлы** — это HORIZON_MOBILE_MULTIMODAL (дальняя перспектива, после Stage 7). Сейчас Device Board — только статические сценарии для лабораторной валидации.
 
-4. **Расширение Cabinet на RF или видео**  
-   Сейчас Cabinet ориентирован на образцы (`sample-library`) и телеметрию. Другие модальности (RF-приёмник, видео-верификация) — Этап 6, после успешного Этапа 4.
+4. **Не тронем архитектуру пакетов без обсуждения** — никаких нарушений SERVICES.md / ARCHITECTURE.md правил. Любой новый сервис должен ложиться в foundation/analyzer по правилам.
 
-5. **Масштабирование UI до десятков узлов**  
-   Ситуационная карта (раздел 4.6 WHITE_PAPER) остаётся skeleton'ом; real-time отрисовка треков и счётчик дронов — Этап 4+. Пока демонстрируем на одиночных данных.
+5. **Не будем давать календарные сроки** — только размеры (S/M/L) и зависимости между задачами. Teamlead определяет приоритет и распределение параллельности.
 
 ---
 
 ## 6. Проверки в конце периода
 
-1. **Три DSP-детектора реализованы и протестированы**  
-   Коммиты в `packages/services/detectors/{harmonic,cepstral,spectral-flux}-detector-service/src/service.ts` содержат работающий код + unit-тесты. Каждый пакет имеет README с примерами использования. ✅ Артефакты: PRs #[N], код, тесты.
+1. **Trends DRONE_TIGHT внедрён и виден в бенчмарке** — `yarn benchmark:detectors` показывает `template-match-detector-service` с recall 95% / precision 76%.
 
-2. **Benchmark запущен на `free-v1`, метрики в `DETECTOR_BENCHMARK.md`**  
-   Таблица с P/R/F1 для каждого детектора и ensemble. Вывод: "Stage-gate 1→2 готов к открытию (Y)" или "Требуется доработка (N, причина)". ✅ Артефакт: обновленный `DETECTOR_BENCHMARK.md`, коммит с датой бенчмарка.
+2. **Задача 4.2 (VDR эпик) вышла на обсуждение** — промпт, инфраструктура и план согласованы; добавлено в backlog как `type: investigation`.
 
-3. **Cabinet Sample Library UI показывает результаты анализа**  
-   При открытии SampleLibraryPage, выборе семпла и нажатии "Анализ" → боковая панель с таблицей детекторов и их confidence. Визуализация работает на реальных семплах из `free-v1`. ✅ Артефакт: скриншоты / видео, компоненты в `apps/cabinet/`.
+3. **Stage 2 статус обновлён в документации** — в `DETECTOR_BENCHMARK.md` видна секция «Frozen until gate-pass» с критериями и текущей позицией trends.
 
-4. **Detection Ensemble Service интегрирован**  
-   Пакет `detection-ensemble-service` экспортирует `DroneDetector` и используется в UI-плагине. Вызовов к отдельным детекторам больше нет в клиенте; все идут через ensemble. ✅ Артефакт: импорты в `apps/cabinet/src/plugins/`, тесты в пакете.
+4. **Yamnet scaffold готов** — структура пакета, промпт, контракты; не обязательно реализация модели, но инфраструктура на месте.
 
-5. **Граф зависимостей соблюдается (noncompliance ≈ 0)**  
-   `yarn build` + `yarn test` выполняются без ошибок. Нет циклических зависимостей между детекторами. Prisma-клиенты изолированы. ✅ Артефакт: зелёный CI/CD.
+5. **Журнальные тесты добавлены** — `apps/client` содержит интеграционные тесты для некорректных JSON-загрузок; они проходят.
 
-6. **Документация актуальна**  
-   `DATASET.md` v0.2 заполнен статистикой. `DETECTOR_BENCHMARK.md` содержит финальные метрики. `README.md` в каждом новом пакете объясняет, как его использовать. ✅ Артефакт: документация в `docs/`, в каждом пакете `README.md`.
+6. **Device Board документирован** — end-user могут прочитать quick-start и запустить сценарий без обращения в chat.
 
 ---
 
-## Заключение
-
-**Период направлен на закрытие Этапа 1.A** (DSP-детекторы на одном узле) и **подготовку к stage-gate 1→2**. Инфра-работа (MP4–MP6, Cabinet) идёт параллельно, обеспечивая демо-возможности и production-readiness. Ключевой артефакт периода — **валидированный набор детекторов дрона на реальном корпусе**, который откроет путь к многоузловой архитектуре (Этапы 2–4).
+**Документ актуален на:** 2026-06-18 (дата составления по последним коммитам).

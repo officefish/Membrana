@@ -2,29 +2,23 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` |
+| **status** | `closed` |
 | **hackathonId** | `device-board-hackathon-1` |
 | **openedAt** | 2026-06-17 |
-| **branch** | `hackathon/device-board-1-2026-06-17` (от `vesnin`) |
-| **brief** | [`docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md`](./prompts/DEVICE_BOARD_HACKATHON_BRIEF.md) v0.5 |
-| **epic prompt** | [`docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) |
-| **interview** | [`docs/seanses/hackathon-brief-interview-2026-06-17.md`](./seanses/hackathon-brief-interview-2026-06-17.md) |
+| **closedAt** | 2026-06-17 |
+| **closure** | [`docs/archive/hackathon/2026-06-17/CLOSURE.md`](./archive/hackathon/2026-06-17/CLOSURE.md) |
 
-## Дни и эпики
+## Итог
 
-| День | Эпики |
-|------|--------|
-| H0 | ~~`db-h0-concept-interview`~~ ✅ |
-| H1 | ~~`db-h1a-core-contracts`~~ ✅, ~~`db-h1b-board-shell`~~ ✅, ~~`db-h1c-graph-serialize`~~ ✅ |
-| H2 | ~~`db-h2b-scenario-runtime`~~ ✅, ~~`db-h2c-mic-journal`~~ ✅, ~~`db-h2a-json-import`~~ ✅, ~~`db-h2d-cabinet-sync`~~ ✅ |
-| H3 | ~~`db-h3a-trigger-stop`~~ ✅, ~~`db-h3b-trigger-disconnect`~~ ✅, ~~`db-h3c-subgraph`~~ ✅ |
-| H4 | ~~`db-h4-alarm-close`~~ ✅ |
+Хакатон device-board 1 завершён. Все эпики DB-H0…H4 + H2a/H2d архивированы в `docs/tasks/archive/`.
 
-## Приостановлено
+**Дальше:** обычный ритм — эпики в [`docs/tasks/registry.json`](./tasks/registry.json), `yarn ritual:day`, `yarn task:archive` по закрытию задач.
 
-- `yarn ritual:day`, `yarn ritual:evening`
-- `yarn plan:day`, `yarn standup`, `yarn main-day-issue`
+## Бывшие эпики (все ✅)
 
-## Приоритет (из интервью)
+H0, H1a–c, H2a–d, H3a–c, H4 — см. CLOSURE.md.
 
-**Alarm loop обязателен.** Round-trip JSON — stretch.
+## Ритуалы
+
+- `yarn ritual:day`, `yarn ritual:evening` — **снова разрешены**
+- `yarn plan:day`, `yarn standup`, `yarn main-day-issue` — **снова разрешены**

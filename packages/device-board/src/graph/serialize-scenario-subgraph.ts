@@ -1,10 +1,14 @@
-import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph } from '@membrana/core';
+import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
 import { isBoardFlowNodeData } from './board-node-data.js';
 import { D0_SCENARIO_NODE_CATALOG } from './d0-node-catalog.js';
 import { resolveHandle } from './handle-catalog.js';
+import { createEventBoardNode, createLoopTickEventBoardNode } from './event-node.js';
+import { createLoopRepeatBoardNode } from './loop-repeat-node.js';
+import { createPaletteBoardNode, isPaletteNodeKind } from './palette-node.js';
 import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
+import { createVariableBoardNode } from './variable-node.js';
 
 function toScenarioNode(node: Node): ScenarioGraphNode | null {
   if (!isBoardFlowNodeData(node.data) || node.data.layer !== 'scenario') {
@@ -14,6 +18,58 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
   if (typeof blockKind !== 'string') {
     return null;
   }
+
+  // v0.4: системный Event-узел — entry ветви-обработчика.
+  const nodeKind = node.data.nodeKind;
+  if (nodeKind === 'loop-repeat') {
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      system: true,
+    };
+  }
+
+  if (nodeKind === 'event') {
+    const eventVariant =
+      node.data.eventVariant === 'loopTick' ? ('loopTick' as const) : ('handler' as const);
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      system: true,
+      eventVariant,
+    };
+  }
+
+  // v0.4: узлы переменных несут смысл в nodeKind + variableId, blockKind — носитель.
+  if (nodeKind === 'variable-get' || nodeKind === 'variable-set') {
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      ...(typeof node.data.variableId === 'string' ? { variableId: node.data.variableId } : {}),
+    };
+  }
+
+  // v0.4: узлы палитры (print / is-valid / get-microphone).
+  if (nodeKind === 'print' || nodeKind === 'is-valid' || nodeKind === 'get-microphone') {
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      ...(typeof node.data.microphoneId === 'string' ? { microphoneId: node.data.microphoneId } : {}),
+    } as ScenarioGraphNode;
+  }
+
   return {
     id: node.id,
     blockKind,
@@ -83,10 +139,83 @@ function buildScenarioNodeData(blockKind: string): Node['data'] | null {
   };
 }
 
-/** `ScenarioSubgraph` → XYFlow nodes/edges. */
-export function deserializeScenarioSubgraph(subgraph: ScenarioSubgraph): { nodes: Node[]; edges: Edge[] } {
+/** `ScenarioSubgraph` → XYFlow nodes/edges. Переменные нужны для гидратации узлов get/set. */
+export function deserializeScenarioSubgraph(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[] = [],
+): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   for (const item of subgraph.nodes) {
+    // v0.4: системный Event-узел восстанавливается фабрикой (фикс-id, DeviceRef out).
+    if (item.nodeKind === 'loop-repeat') {
+      nodes.push(
+        createLoopRepeatBoardNode({
+          id: item.id,
+          label: typeof item.label === 'string' ? item.label : undefined,
+          position: { x: item.position.x, y: item.position.y },
+        }),
+      );
+      continue;
+    }
+
+    if (item.nodeKind === 'event') {
+      const label = typeof item.label === 'string' ? item.label : undefined;
+      const position = { x: item.position.x, y: item.position.y };
+      if (item.eventVariant === 'loopTick') {
+        nodes.push(
+          createLoopTickEventBoardNode({
+            id: item.id,
+            label,
+            position,
+          }),
+        );
+      } else {
+        nodes.push(
+          createEventBoardNode({
+            id: item.id,
+            label,
+            position,
+          }),
+        );
+      }
+      continue;
+    }
+
+    // v0.4: узлы переменных восстанавливаются из variableId + типа переменной.
+    if (item.nodeKind === 'variable-get' || item.nodeKind === 'variable-set') {
+      const variable = variables.find((candidate) => candidate.id === item.variableId);
+      if (variable === undefined) {
+        continue;
+      }
+      const node = createVariableBoardNode(item.nodeKind, variable, {
+        id: item.id,
+        position: { x: item.position.x, y: item.position.y },
+      });
+      if (typeof item.label === 'string') {
+        node.data = { ...node.data, label: item.label };
+      }
+      nodes.push(node);
+      continue;
+    }
+
+    if (item.nodeKind !== undefined && isPaletteNodeKind(item.nodeKind)) {
+      const micId = (item as { microphoneId?: string }).microphoneId;
+      nodes.push(
+        createPaletteBoardNode(item.nodeKind, {
+          id: item.id,
+          position: { x: item.position.x, y: item.position.y },
+          ...(typeof micId === 'string' ? { microphoneId: micId } : {}),
+        }),
+      );
+      if (typeof item.label === 'string') {
+        const last = nodes.at(-1);
+        if (last !== undefined) {
+          last.data = { ...last.data, label: item.label };
+        }
+      }
+      continue;
+    }
+
     const data = buildScenarioNodeData(item.blockKind);
     if (data === null) {
       continue;
@@ -111,7 +240,6 @@ export function deserializeScenarioSubgraph(subgraph: ScenarioSubgraph): { nodes
     sourceHandle: item.sourceHandle,
     target: item.target,
     targetHandle: item.targetHandle,
-    animated: item.kind === 'exec',
   }));
 
   return { nodes, edges };

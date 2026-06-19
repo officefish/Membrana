@@ -4,24 +4,34 @@ import type { ScenarioBlockKind } from '@membrana/core';
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/d0-node-catalog.js';
 import {
   BRANCH_SIDEBAR_SECTIONS,
+  BRANCH_SCENARIO_TITLE,
   BRANCH_TAB_LABEL,
-  SCENARIO_NODE_PALETTE,
+  isLegacyPaletteEnabled,
+  LEGACY_SCENARIO_NODE_PALETTE,
+  SCENARIO_V04_PALETTE,
   type ScenarioBranchTab,
 } from './board-ui.js';
 
 describe('board-ui sidebar sections (MP7b RT6)', () => {
   it('covers every branch exactly once across sections', () => {
     const tabs = BRANCH_SIDEBAR_SECTIONS.flatMap((section) => section.tabs);
-    const expected: ScenarioBranchTab[] = ['initial', 'main', 'alarm', 'onStop', 'onDisconnect', 'function'];
+    const expected: ScenarioBranchTab[] = [
+      'initial',
+      'onConnect',
+      'main',
+      'alarm',
+      'onStop',
+      'onDisconnect',
+      'function',
+    ];
     expect([...tabs].sort()).toEqual([...expected].sort());
     expect(tabs.length).toBe(expected.length);
   });
 
-  it('groups sections in the required order', () => {
+  it('groups sections in the required order (v0.4 DBR3)', () => {
     expect(BRANCH_SIDEBAR_SECTIONS.map((s) => s.title)).toEqual([
-      'Системные триггеры',
+      'Обработчики событий',
       'Лупы',
-      'Триггер узла',
       'Конструктор функций',
     ]);
   });
@@ -29,11 +39,32 @@ describe('board-ui sidebar sections (MP7b RT6)', () => {
   it('labels initial branch as On start (presentational, schema key unchanged)', () => {
     expect(BRANCH_TAB_LABEL.initial).toBe('On start');
   });
+
+  it('provides Russian scenario titles for header', () => {
+    expect(BRANCH_SCENARIO_TITLE.onConnect).toBe('Сценарий соединения с устройством');
+    expect(BRANCH_SCENARIO_TITLE.onDisconnect).toBe(
+      'Сценарий при потере соединения с устройством',
+    );
+    expect(BRANCH_SCENARIO_TITLE.initial).toBe('Сценарий запуска устройства');
+    expect(BRANCH_SCENARIO_TITLE.onStop).toBe('Сценарий остановки устройства');
+  });
 });
 
-describe('scenario node palette (MP7b RT6)', () => {
-  it('exposes every catalog block kind across categories', () => {
-    const paletteKinds = new Set(SCENARIO_NODE_PALETTE.flatMap((c) => c.blockKinds));
+describe('scenario node palette (v0.4 DBR5)', () => {
+  it('default v0.4 palette has Print, isValid, GetMicrophone only', () => {
+    expect(SCENARIO_V04_PALETTE.map((item) => item.nodeKind)).toEqual([
+      'print',
+      'is-valid',
+      'get-microphone',
+    ]);
+  });
+
+  it('legacy palette is off by default in tests', () => {
+    expect(isLegacyPaletteEnabled()).toBe(false);
+  });
+
+  it('legacy palette covers every D0 catalog block kind', () => {
+    const paletteKinds = new Set(LEGACY_SCENARIO_NODE_PALETTE.flatMap((c) => c.blockKinds));
     const catalogKinds = Object.keys(D0_SCENARIO_NODE_CATALOG) as ScenarioBlockKind[];
     for (const kind of catalogKinds) {
       expect(paletteKinds.has(kind)).toBe(true);

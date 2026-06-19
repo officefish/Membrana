@@ -2448,6 +2448,155 @@
       "notes": "Lead: Vesnin. Prod-smoke обязателен до archive эпика."
     },
     {
+      "id": "deploy-pipeline-refactor",
+      "title": "Рефакторинг деплоя: детерминированный, гейтированный, откатываемый пайплайн (DR0–DR7)",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Первопричина: POSTMORTEM-MP7B-2026-06-18 (прод-сборка упала из-за незакоммиченных зависимостей). Консенсус: seanses/deploy-process-mp7b-postmortem-2026-06-18. Источник истины при проверке ≠ при деплое — устраняется образом в registry (DR2). DR7 zero-downtime отложен с условием (после DR5)."
+    },
+    {
+      "id": "dpr-dr0-git-hygiene-gate",
+      "title": "DR0: .gitattributes (eol=lf) + gate чистого рабочего дерева в деплой-скриптах",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "deploy-pipeline-refactor"
+      ],
+      "notes": "Lead: Ozhegov. Нормализация EOL исходников; предупреждение/блок при незакоммиченном в собираемых пакетах."
+    },
+    {
+      "id": "dpr-dr1-ci-gate",
+      "title": "DR1: обязательный CI-гейт на main (build из чистого checkout) + блок деплоя на красном CI",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr0-git-hygiene-gate"
+      ],
+      "notes": "Lead: Vesnin + Ozhegov. turbo lint/typecheck/test/build из чистого checkout; деплой читает статус CI через gh."
+    },
+    {
+      "id": "dpr-dr2-image-registry",
+      "title": "DR2: сборка образов cabinet в CI → registry, теги релизов, прод-деплой = pull по тегу",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr1-ci-gate"
+      ],
+      "notes": "Lead: Ozhegov. Устраняет класс ошибки физически (нельзя недокоммитить артефакт). Разделить build-time/runtime env. Сохранить свойство «провал до переключения не роняет прод»."
+    },
+    {
+      "id": "dpr-dr3-rollback-runbook",
+      "title": "DR3: rollback по тегу + машиночитаемая JSON-сводка деплоя + раннбук",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry"
+      ],
+      "notes": "Lead: Vesnin. Откат = деплой предыдущего тега; JSON-сводка (тег/SHA/образы/smoke/длительность); MEMBRANE_PLATFORM_DEPLOY.md."
+    },
+    {
+      "id": "dpr-dr4-smoke-suite",
+      "title": "DR4: расширенный пост-деплой smoke (login, узлы, migrate status, рантайм-канал)",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry"
+      ],
+      "notes": "Lead: Музыкант + Ozhegov. Единый smoke-скрипт; код ≠ 0 при провале; headless без устройства — не блокер."
+    },
+    {
+      "id": "dpr-dr5-branch-migration-policy",
+      "title": "DR5: регламент веток (main деплоируемое) + expand/contract миграции в CONTRIBUTING",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Vesnin. Параллельно DR0–DR4. Предпосылка к DR7 (expand/contract совместимые миграции)."
+    },
+    {
+      "id": "dpr-dr6-client-delivery",
+      "title": "DR6: условная сборка десктоп-продуктов (Electron studio/device) + индикатор версии + тест совместимости контракта",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry"
+      ],
+      "notes": "ПЕРЕОПРЕДЕЛЕНО (2026-06-18): apps/client — dev-песочница, НЕ конечный продукт. Конечные продукты — Electron-приложения: membrana-studio (полная работа с контентом) и device (лёгкое, быстрая доставка данных на сервер; пока нет как app — renderer device-board). Доставка = Electron-пакеты (electron-builder), а не веб-бандл за Caddy. Сборка десктопа ДЕКАПЛИРОВАНА от деплоя сервера и УСЛОВНАЯ — только когда изменения коснулись приложения/его зависимостей (turbo affected / path-filter). Lead: Ozhegov + Rodchenko. ЧАСТЬ 1 (done): .github/workflows/desktop-studio.yml — условная сборка studio (turbo affected) + release по тегу studio-v*. ЧАСТЬ 2 (done): версия рантайм-протокола RUNTIME_PROTOCOL_VERSION в @membrana/core (runtime-version.ts) как единый источник; /health отдаёт protocolVersion; клиент runtimeVersion.ts + RuntimeVersionIndicator + тесты совместимости (core + client). Остаётся (follow-up след. спринтов): врезка индикатора в live-shell, auto-update/code signing, device как отдельное app."
+    },
+    {
+      "id": "dpr-dr7-zero-downtime",
+      "title": "DR7: zero-downtime rolling update (отложено с условием)",
+      "promptPath": "docs/prompts/DEPLOY_PIPELINE_REFACTOR_EPIC_PROMPT.md",
+      "githubIssue": 94,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "deploy-pipeline-refactor",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dpr-dr2-image-registry",
+        "dpr-dr5-branch-migration-policy"
+      ],
+      "notes": "Lead: Ozhegov. ОТЛОЖЕНО: стартует только после DR5 (регламент expand/contract) и при появлении SLA/внешних потребителей API. Rolling вместо down→up."
+    },
+    {
       "id": "membrana-studio-desktop",
       "title": "Membrana Studio — настольная расширенная версия (MS0–MS5)",
       "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
@@ -2561,6 +2710,283 @@
         "membrana-studio-ms4-installer"
       ],
       "notes": "Lead: Vesnin. mic + journal WS на cabinet.membrana.space."
+    },
+    {
+      "id": "device-board-refactor-v04",
+      "title": "Device-Board Refactor v0.4: переменные, Event-узел, dataflow-резолюция, fullscreen (DBR0–DBR6)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-hackathon-1"
+      ],
+      "notes": "Консилиум 2026-06-18: seanses/device-board-refactor-v04-2026-06-18.md (9 решений). 7 фаз DBR0–DBR6. Затрагивает контракты @membrana/core → DBR0 на ветке vesnin (LGTM Vesnin). Dataflow только как ленивая resolveInput ссылок (не push-движок, §4.6). OOS: реальные loop-узлы, remote-enumerate UI кабинета, multi-function manager, multi-level subgraph, UI custom/scheduled."
+    },
+    {
+      "id": "dbr-0-concept-core",
+      "title": "DBR0: концепт v0.4 + контракты @membrana/core (ветви-обработчики, variables, ссылочные SocketType, миграция initial→onStart)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "device-board-refactor-v04",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-refactor-v04"
+      ],
+      "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SCENARIO_SYSTEM_BRANCHES → onConnect/onStart/onStop/onDisconnect + лупы main/alarm; ScenarioGraph.variables (Variable, DeviceRef/MicrophoneRef в SocketType); data.kind узлов; expand/contract initial→onStart; импорт новее → отказ; round-trip тесты. DEVICE_BOARD_CONCEPT.md → v0.4."
+    },
+    {
+      "id": "dbr-1-fullscreen",
+      "title": "DBR1: fullscreen каноном — канвас до нижнего края, единый host-контракт cabinet/client",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-refactor-v04",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-refactor-v04"
+      ],
+      "notes": "Lead: Rodchenko + Ozhegov. Параллельно DBR0. Фикс высоты device-board-shell.tsx (<main> → flex min-h-0 flex-col, канвас flex-1); shell владеет h-screen/h-full; палитра/инспектор — сворачиваемые панели."
+    },
+    {
+      "id": "dbr-2-variables",
+      "title": "DBR2: переменные — модель document-scope + конструктор переменных в левом сайдбаре + get/set узлы",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-refactor-v04",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dbr-0-concept-core"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. Variable={id,name,type,value:Ref|null}; конструктор под «Конструктор функций»; индикатор valid/invalid; узлы get/set (drag); isValidConnection по ссылочным типам."
+    },
+    {
+      "id": "dbr-3-event-node",
+      "title": "DBR3: системный Event-узел — неудаляемость + авто-инжект как entry в 4 обработчиках",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-refactor-v04",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dbr-0-concept-core"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. Единый XYFlow-тип по data.kind; deletable:false + guard в applyNodeChanges; авто-инжект entry; data-выход DeviceRef (null в onDisconnect); pre-run Event-as-entry."
+    },
+    {
+      "id": "dbr-4-dataflow-resolve",
+      "title": "DBR4: dataflow-резолюция в рантайме (resolveInput) + семантика validity ссылок",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-refactor-v04",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dbr-2-variables",
+        "dbr-3-event-node"
+      ],
+      "notes": "Lead: Ozhegov + Dynin. Чистая resolveInput(subgraph,vars,node,port); onConnect set Device valid=true (слабая→постоянная), onDisconnect null→valid=false; isValid предикат; get/set переменных в host; unit-тесты."
+    },
+    {
+      "id": "dbr-5-palette-nodes",
+      "title": "DBR5: узлы палитры Print/isValid/GetMicrophone + getMicrophone через audio-engine + set Microphone",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "device-board-refactor-v04",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dbr-2-variables",
+        "dbr-4-dataflow-resolve"
+      ],
+      "notes": "Lead: Ozhegov + Музыкант + Rodchenko. Свести палитру к Print/isValid/GetMicrophone (старое под VITE_DEVICE_BOARD_LEGACY_PALETTE); Print принимает DeviceRef/MicrophoneRef; GetMicrophone dropdown из audio-engine enumerate (без второго AudioContext); set в переменную Microphone."
+    },
+    {
+      "id": "dbr-6-run-gating",
+      "title": "DBR6: gating Пуска по online-presence (список устройств + борд, единый isDeviceLive)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md",
+      "githubIssue": 95,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-refactor-v04",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-refactor-v04"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. Параллельно DBR0–DBR5. Критерий «связь жива» = online-presence (node.online/offline); единый isDeviceLive(deviceId); гасить Пуск в NodesPage и в борде; «сопряжён, но офлайн» → disabled + title/aria."
+    },
+    {
+      "id": "device-board-cabinet-hotfix",
+      "title": "Device-board + cabinet hotfix: layout overlay, nodes/keys split, delete node, purge expired",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-refactor-v04"
+      ],
+      "notes": "QA prod 2026-06-18: 5 замечаний. Консилиум docs/seanses/device-board-cabinet-hotfix-2026-06-18.md. Deploy после merge."
+    },
+    {
+      "id": "dbh-0-canvas-overlay",
+      "title": "DBH0: fullscreen canvas + overlay sidebars",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Rodchenko + Ozhegov. device-board-shell absolute canvas layer."
+    },
+    {
+      "id": "dbh-1-sidebar-clamp",
+      "title": "DBH1: clamp sidebar width (vw + rem)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "XS",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Rodchenko. Same PR as DBH0."
+    },
+    {
+      "id": "dbh-2-nav-split",
+      "title": "DBH2: split cabinet nav Узлы / Ключи by default",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "XS",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Rodchenko. CabinetShell default split; combined opt-in flag."
+    },
+    {
+      "id": "dbh-3-delete-node",
+      "title": "DBH3: DELETE node + revoke keys + free-v1 maxNodes=1",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-cabinet-hotfix"
+      ],
+      "notes": "Lead: Ozhegov. background-cabinet API + NodesPage + migration/seed."
+    },
+    {
+      "id": "dbh-4-purge-expired-keys",
+      "title": "DBH4: purge inactive keys (expired + revoked)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 104,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-cabinet-hotfix",
+      "createdAt": "2026-06-18",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "dbh-3-delete-node"
+      ],
+      "notes": "Lead: Ozhegov. Extend purge API + KeysPage UI."
+    },
+    {
+      "id": "device-board-clear-branch",
+      "title": "device-board: очистка текущей ветки + защита Event-узлов",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CLEAR_BRANCH_PROMPT.md",
+      "githubIssue": 106,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Sandbox apps/client; cabinet unchanged."
+    },
+    {
+      "id": "device-board-manual-save",
+      "title": "device-board: manual save, draft state, header layout",
+      "promptPath": "docs/prompts/DEVICE_BOARD_MANUAL_SAVE_PROMPT.md",
+      "githubIssue": 108,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Remove autosave; isDirty draft vs saved snapshot."
+    },
+    {
+      "id": "device-board-ux-ports-header",
+      "title": "device-board: header layout, port labels, variable inspector",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md",
+      "githubIssue": 110,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Also closes #111 #112."
     }
   ]
 }

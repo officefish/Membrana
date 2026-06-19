@@ -197,7 +197,8 @@ AudioContext и **не** Rete/DataflowEngine для сигнала.
 | Scenario исполнение | `ScenarioRuntime` в `device-board`; оркестрация без обхода engine |
 | Настройки нод | сайдбар плагинов (`MODULE_AND_PLUGIN_UI.md` §3) |
 
-Полный концепт: [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md).
+Полный концепт доски: [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md).  
+**Исполнение сценария (runtime, onTick, планировщик):** [`SCENARIO_RUNTIME.md`](./SCENARIO_RUNTIME.md).
 
 ## 2. Плагины и слабая связанность (домен аудио)
 

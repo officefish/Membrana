@@ -6,6 +6,7 @@ RUN corepack enable
 
 ARG VITE_CABINET_API_URL=https://cabinet.membrana.space
 ARG VITE_MEDIA_API_URL=https://media.membrana.space
+ARG GIT_SHA=unknown
 ENV VITE_CABINET_API_URL=$VITE_CABINET_API_URL
 ENV VITE_MEDIA_API_URL=$VITE_MEDIA_API_URL
 
@@ -26,7 +27,8 @@ COPY apps/cabinet apps/cabinet
 
 # journal-report-views, trends-detector and fft-analyzer are bundled from src via
 # the cabinet vite aliases, so they only need to be present (no build step).
-RUN yarn workspaces focus @membrana/cabinet @membrana/core @membrana/device-board @membrana/detector-report @membrana/journal-report-views @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service @membrana/telemetry-journal-service @membrana/trends-detector-service @membrana/fft-analyzer-service --all \
+RUN echo "cabinet build GIT_SHA=${GIT_SHA}" \
+  && yarn workspaces focus @membrana/cabinet @membrana/core @membrana/device-board @membrana/detector-report @membrana/journal-report-views @membrana/media-library-service @membrana/audio-engine-service @membrana/sample-playback-service @membrana/telemetry-journal-service @membrana/trends-detector-service @membrana/fft-analyzer-service --all \
   && yarn workspace @membrana/device-board build \
   && yarn workspace @membrana/detector-report build \
   && yarn workspace @membrana/telemetry-journal-service build \

@@ -5,7 +5,9 @@ import {
 } from '@membrana/device-board';
 
 import { fetchMediaSession, type MediaSessionDevice } from '@/api/sampleLibrary';
+import { fetchMembraneMe } from '@/api/membrane';
 import { createCabinetDeviceBoardPersistAdapter } from '@/lib/cabinetDeviceScenario';
+import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 
 interface DeviceBoardPageProps {
   onBack: () => void;
@@ -14,16 +16,20 @@ interface DeviceBoardPageProps {
 export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
   const [devices, setDevices] = useState<MediaSessionDevice[]>([]);
   const [deviceId, setDeviceId] = useState<string | null>(null);
+  const [membraneId, setMembraneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const runtime = useCabinetNodeRuntime(membraneId);
+  const deviceLive = runtime.isDeviceLive(deviceId);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    void fetchMediaSession()
-      .then((session) => {
+    void Promise.all([fetchMediaSession(), fetchMembraneMe()])
+      .then(([session, me]) => {
         if (cancelled) return;
         setDevices(session.devices);
+        setMembraneId(me.membrane.id);
         const first = session.devices[0]?.deviceId ?? null;
         setDeviceId(first);
       })
@@ -75,7 +81,7 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-base-100">
+    <div className="fixed inset-0 z-50 flex flex-col bg-base-100">
       <div className="absolute left-4 top-4 z-[60] flex items-center gap-2 rounded-lg border border-base-300 bg-base-100/95 px-3 py-2 shadow">
         <label className="text-xs text-base-content/60" htmlFor="cabinet-device-select">
           Устройство
@@ -94,13 +100,16 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
         </select>
       </div>
       <DeviceBoardModeProvider>
-        <DeviceBoardShell
-          key={deviceId}
-          persistAdapter={persistAdapter}
-          onRequestExit={onBack}
-          exitLabel="Назад в кабинет"
-          showRunControls={false}
-        />
+        <div className="min-h-0 flex-1">
+          <DeviceBoardShell
+            key={deviceId}
+            persistAdapter={persistAdapter}
+            onRequestExit={onBack}
+            exitLabel="Назад в кабинет"
+            showRunControls={false}
+            deviceLive={deviceLive}
+          />
+        </div>
       </DeviceBoardModeProvider>
     </div>
   );

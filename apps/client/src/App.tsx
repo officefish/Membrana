@@ -7,17 +7,29 @@ import { NodeConnectionShell } from './components/NodeConnectionShell';
 import { renderPluginSidebarDetails } from './pluginSidebarDetails';
 import { createScenarioRuntimeHost } from './modules/device-board/createScenarioRuntimeHost';
 import { useDeviceBoardPersistAdapter } from './modules/device-board/useDeviceBoardPersistAdapter';
+import { useDeviceLive } from './modules/device-board/useDeviceLive';
+import { useNodeConnectionStore } from './stores/nodeConnectionStore';
 
 function AppContentInner() {
   const { isBoardMode } = useDeviceBoardMode();
   const runtimeHost = useMemo(() => createScenarioRuntimeHost(), []);
   const persistAdapter = useDeviceBoardPersistAdapter();
+  const connectionMode = useNodeConnectionStore((s) => s.mode);
+  const deviceLive = useDeviceLive();
 
   return (
     <>
       <NodeConnectionShell />
       {isBoardMode ? (
-        <DeviceBoardShell runtimeHost={runtimeHost} persistAdapter={persistAdapter} />
+        <div className="fixed inset-0 z-50 flex flex-col bg-base-100">
+          <div className="min-h-0 flex-1">
+            <DeviceBoardShell
+              runtimeHost={runtimeHost}
+              persistAdapter={persistAdapter}
+              deviceLive={connectionMode === 'paired' ? deviceLive : undefined}
+            />
+          </div>
+        </div>
       ) : (
         <Dashboard
           header={<AppHeader />}

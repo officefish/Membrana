@@ -15,20 +15,19 @@ interface CabinetShellProps {
 type SectionId = 'membrane' | 'nodes-keys' | 'nodes' | 'keys' | 'library' | 'journal' | 'device-board';
 
 /**
- * Когда флаг выключен (по умолчанию / прод), «Узлы» и «Ключи» показываются
- * единым разделом «Узлы и ключи». Включение флага возвращает RT5-поведение
- * с двумя отдельными пунктами навигации.
+ * По умолчанию — два раздела «Узлы» и «Ключи».
+ * Объединённый раздел только при `VITE_CABINET_NODES_KEYS_COMBINED=true` (legacy QA).
  */
-const NODES_KEYS_SPLIT_ENABLED = import.meta.env.VITE_CABINET_NODES_KEYS_SPLIT === 'true';
+const NODES_KEYS_COMBINED = import.meta.env.VITE_CABINET_NODES_KEYS_COMBINED === 'true';
 
 const NAV_ITEMS: { id: SectionId; label: string; enabled: boolean; hint?: string }[] = [
   { id: 'membrane', label: 'Мембрана', enabled: true },
-  ...(NODES_KEYS_SPLIT_ENABLED
-    ? ([
+  ...(NODES_KEYS_COMBINED
+    ? ([{ id: 'nodes-keys', label: 'Узлы и ключи', enabled: true }] as const)
+    : ([
         { id: 'nodes', label: 'Узлы', enabled: true },
         { id: 'keys', label: 'Ключи', enabled: true },
-      ] as const)
-    : ([{ id: 'nodes-keys', label: 'Узлы и ключи', enabled: true }] as const)),
+      ] as const)),
   { id: 'library', label: 'Библиотека сэмплов', enabled: true },
   { id: 'journal', label: 'Журнал', enabled: true },
   { id: 'device-board', label: 'Device board', enabled: true },
@@ -40,10 +39,12 @@ function SectionContent({
   section,
   onNavigate,
   onOpenDeviceBoard,
+  keysInitialNodeId,
 }: {
   section: SectionId;
-  onNavigate: (section: SectionId) => void;
+  onNavigate: (section: SectionId, options?: { keysNodeId?: string }) => void;
   onOpenDeviceBoard: () => void;
+  keysInitialNodeId: string | null;
 }) {
   switch (section) {
     case 'membrane':
@@ -54,9 +55,10 @@ function SectionContent({
           <NodesPage
             onOpenJournal={() => onNavigate('journal')}
             onOpenDeviceBoard={onOpenDeviceBoard}
+            onOpenKeys={(nodeId) => onNavigate('keys', { keysNodeId: nodeId })}
           />
           <div className="divider" />
-          <KeysPage />
+          <KeysPage initialNodeId={keysInitialNodeId} />
         </div>
       );
     case 'nodes':
@@ -64,10 +66,11 @@ function SectionContent({
         <NodesPage
           onOpenJournal={() => onNavigate('journal')}
           onOpenDeviceBoard={onOpenDeviceBoard}
+          onOpenKeys={(nodeId) => onNavigate('keys', { keysNodeId: nodeId })}
         />
       );
     case 'keys':
-      return <KeysPage />;
+      return <KeysPage initialNodeId={keysInitialNodeId} />;
     case 'library':
       return <SampleLibraryPage />;
     case 'journal':
@@ -93,6 +96,14 @@ function SectionContent({
 export function CabinetShell({ user, onLogout }: CabinetShellProps) {
   const [section, setSection] = useState<SectionId>(DEFAULT_SECTION);
   const [deviceBoardOpen, setDeviceBoardOpen] = useState(false);
+  const [keysInitialNodeId, setKeysInitialNodeId] = useState<string | null>(null);
+
+  const handleNavigate = (next: SectionId, options?: { keysNodeId?: string }) => {
+    if (options?.keysNodeId) {
+      setKeysInitialNodeId(options.keysNodeId);
+    }
+    setSection(next);
+  };
 
   if (deviceBoardOpen) {
     return <DeviceBoardPage onBack={() => setDeviceBoardOpen(false)} />;
@@ -113,7 +124,7 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
               className={`btn btn-ghost justify-start ${section === item.id ? 'btn-active' : ''} ${!item.enabled ? 'opacity-60' : ''}`}
               disabled={!item.enabled}
               title={item.hint ? `Скоро (${item.hint})` : undefined}
-              onClick={() => item.enabled && setSection(item.id)}
+              onClick={() => item.enabled && handleNavigate(item.id)}
             >
               {item.label}
             </button>
@@ -130,8 +141,9 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
       <main className="flex min-h-0 flex-1 flex-col p-8">
         <SectionContent
           section={section}
-          onNavigate={setSection}
+          onNavigate={handleNavigate}
           onOpenDeviceBoard={() => setDeviceBoardOpen(true)}
+          keysInitialNodeId={keysInitialNodeId}
         />
       </main>
     </div>

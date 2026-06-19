@@ -5,7 +5,8 @@
 представление того же конвейера, что сейчас настраивается через сайдбар
 плагинов.
 
-**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.3 — signal + scenario).
+**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.4 — signal + scenario).  
+**Scenario runtime (onTick, лупы, host):** [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).
 
 См. также: [`ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) §1f,
 [`MODULE_AND_PLUGIN_UI.md`](../../docs/MODULE_AND_PLUGIN_UI.md) §3.1.

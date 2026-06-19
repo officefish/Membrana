@@ -1,6 +1,13 @@
-import type { ScenarioBlockKind } from '@membrana/core';
+import type { ScenarioBlockKind, ScenarioReferenceValue, ScenarioVariableValue } from '@membrana/core';
 
 import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
+import type { ScenarioVariableStore } from './variable-store.js';
+
+/** Описание микрофона из enumerate (host → UI dropdown GetMicrophone). */
+export interface ScenarioMicrophoneOption {
+  readonly deviceId: string;
+  readonly label: string;
+}
 
 /** Колбэки потери/восстановления соединения (H3b). */
 export interface ScenarioConnectionHandlers {
@@ -8,8 +15,43 @@ export interface ScenarioConnectionHandlers {
   readonly onReconnect: () => void;
 }
 
+/** Минимальные read-only метаданные ссылочного объекта (server / device / microphone). */
+export interface ScenarioResourceMetadata {
+  readonly fields: Readonly<Record<string, string>>;
+}
+
+/** Параметры ожидания между итерациями main/alarm loop. См. `docs/SCENARIO_RUNTIME.md` §5. */
+export interface ScenarioLoopTickWaitOptions {
+  readonly pauseMs: number;
+  readonly signal: AbortSignal;
+}
+
 /** Порты исполнения блоков — реализует `apps/client` (audio, journal, detectors). */
 export interface ScenarioRuntimeHost {
+  /** Handle подключённого устройства для Event/dataflow (v0.4 DBR4). */
+  readonly getDeviceHandle?: () => string | null;
+  /** Handle связанного сервера (paired cabinet/media). */
+  readonly getServerHandle?: () => string | null;
+  /**
+   * Узел связан с сервером (device↔server в архитектуре Membrana).
+   * onConnect/onDisconnect выполняются только при `true`.
+   */
+  readonly isDeviceLinked?: () => boolean;
+  /**
+   * Read-only метаданные ссылочного объекта для Print (адрес сервера, платформа device, label mic).
+   * Не редактируются на доске — только резолвятся в рантайме.
+   */
+  readonly getResourceMetadata?: (
+    ref: ScenarioReferenceValue,
+  ) => ScenarioResourceMetadata | null | Promise<ScenarioResourceMetadata | null>;
+  /** Вывод строки Print в консоль браузера (client); stub — в log. */
+  readonly printLine?: (line: string) => void;
+  /** Хранилище переменных сценария; stub создаёт in-memory store. */
+  readonly variableStore?: ScenarioVariableStore;
+  readonly getScenarioVariable?: (id: string) => ScenarioVariableValue | null;
+  readonly setScenarioVariable?: (id: string, value: ScenarioVariableValue | null) => void;
+  /** Список микрофонов устройства (audio-engine enumerate, DBR5). */
+  readonly enumerateMicrophones?: () => Promise<readonly ScenarioMicrophoneOption[]>;
   readonly selectMicrophone: () => Promise<void>;
   readonly startStream: () => Promise<void>;
   readonly stopStream: () => Promise<void>;
@@ -17,7 +59,14 @@ export interface ScenarioRuntimeHost {
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   readonly trendsFftDetect: () => Promise<ScenarioDetectionResult>;
   readonly evaluateSoundLevel: () => Promise<ScenarioSoundLevelResult>;
+  /**
+   * Пауза до следующего тика main/alarm. Client может подставить rAF или audio-frame;
+   * stub и тесты — wall-clock (`waitMs`). Ядро не вызывает DOM-таймеры напрямую.
+   */
+  readonly waitUntilNextLoopTick?: (options: ScenarioLoopTickWaitOptions) => Promise<void>;
   readonly log: (message: string, context?: Readonly<Record<string, unknown>>) => void;
+  /** Клиент: вкл/выкл служебные INFO-логи (Print не затрагивается). */
+  readonly setInfoLoggingEnabled?: (enabled: boolean) => void;
   readonly watchConnection?: (handlers: ScenarioConnectionHandlers) => () => void;
 }
 
@@ -26,7 +75,30 @@ export function createStubScenarioRuntimeHost(
   overrides: Partial<ScenarioRuntimeHost> = {},
 ): ScenarioRuntimeHost {
   const log = overrides.log ?? (() => undefined);
+  const variableStore = overrides.variableStore;
   return {
+    getDeviceHandle: overrides.getDeviceHandle ?? (() => 'stub-device'),
+    getServerHandle: overrides.getServerHandle ?? (() => 'stub-server'),
+    isDeviceLinked: overrides.isDeviceLinked ?? (() => true),
+    getResourceMetadata:
+      overrides.getResourceMetadata ??
+      ((ref) => ({
+        fields: {
+          kind: ref.kind,
+          handle: ref.handle ?? 'null',
+        },
+      })),
+    printLine: overrides.printLine ?? ((line) => log(`print: ${line}`)),
+    variableStore,
+    getScenarioVariable:
+      overrides.getScenarioVariable ??
+      (variableStore !== undefined ? (id) => variableStore.getValue(id) : undefined),
+    setScenarioVariable:
+      overrides.setScenarioVariable ??
+      (variableStore !== undefined ? (id, value) => variableStore.setValue(id, value) : undefined),
+    enumerateMicrophones:
+      overrides.enumerateMicrophones ??
+      (async () => [{ deviceId: 'default', label: 'Default microphone' }]),
     selectMicrophone: overrides.selectMicrophone ?? (async () => log('selectMicrophone')),
     startStream: overrides.startStream ?? (async () => log('startStream')),
     stopStream: overrides.stopStream ?? (async () => log('stopStream')),
@@ -50,6 +122,7 @@ export function createStubScenarioRuntimeHost(
         rawLevel: 0.5,
         isQuietEnough: false,
       })),
+    waitUntilNextLoopTick: overrides.waitUntilNextLoopTick,
     watchConnection: overrides.watchConnection,
     log,
   };

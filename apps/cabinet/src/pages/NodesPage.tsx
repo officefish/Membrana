@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import { createNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
+import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
+import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 
 interface NodesPageProps {
   onOpenJournal: () => void;
   onOpenDeviceBoard: () => void;
+  onOpenKeys?: (nodeId: string) => void;
 }
 
-export function NodesPage({ onOpenJournal, onOpenDeviceBoard }: NodesPageProps) {
+export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: NodesPageProps) {
   const [data, setData] = useState<MembraneView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,6 +43,26 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard }: NodesPageProps) 
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не удалось создать узел');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDeleteNode = async (node: NodeView) => {
+    const activeKeys = node.accessKeys.filter((key) => key.active).length;
+    const message =
+      activeKeys > 0
+        ? `Удалить узел «${node.label}»? Будет отозвано активных ключей: ${activeKeys}. Сопряжение с устройством разорвётся.`
+        : `Удалить узел «${node.label}»? Сопряжение и ключи узла будут удалены.`;
+    if (!window.confirm(message)) return;
+
+    setBusy(true);
+    setError(null);
+    try {
+      await deleteNode(node.id);
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось удалить узел');
     } finally {
       setBusy(false);
     }
@@ -93,8 +115,11 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard }: NodesPageProps) 
               key={node.id}
               node={node}
               runtime={runtime}
+              busy={busy}
               onOpenJournal={onOpenJournal}
               onOpenDeviceBoard={onOpenDeviceBoard}
+              onOpenKeys={onOpenKeys}
+              onDelete={() => void handleDeleteNode(node)}
             />
           ))}
 
@@ -129,16 +154,24 @@ function runtimeConnectionLabel(state: ReturnType<typeof useCabinetNodeRuntime>[
 function NodeCard({
   node,
   runtime,
+  busy,
   onOpenJournal,
   onOpenDeviceBoard,
+  onOpenKeys,
+  onDelete,
 }: {
   node: NodeView;
   runtime: ReturnType<typeof useCabinetNodeRuntime>;
+  busy: boolean;
   onOpenJournal: () => void;
   onOpenDeviceBoard: () => void;
+  onOpenKeys?: (nodeId: string) => void;
+  onDelete: () => void;
 }) {
   const deviceId = node.device?.mediaDeviceId ?? null;
   const state = deviceId ? runtime.states[deviceId] : undefined;
+  const deviceLive = runtime.isDeviceLive(deviceId);
+  const canStart = deviceId !== null && deviceLive;
   const isRunning = state?.isRunning ?? false;
   const mode = state?.mode ?? 'normal';
 
@@ -156,7 +189,11 @@ function NodeCard({
             <h2 className="card-title text-lg">{node.label}</h2>
             <p className="font-mono text-xs text-base-content/50">{node.id}</p>
             {node.device ? (
-              <span className="badge badge-success badge-sm mt-1">сопряжён</span>
+              deviceLive ? (
+                <span className="badge badge-success badge-sm mt-1">online</span>
+              ) : (
+                <span className="badge badge-warning badge-sm mt-1">сопряжён · offline</span>
+              )
             ) : (
               <span className="badge badge-ghost badge-sm mt-1">не сопряжён</span>
             )}
@@ -184,8 +221,17 @@ function NodeCard({
             <button
               type="button"
               className="btn btn-sm btn-primary"
-              disabled={!deviceId}
-              title={!deviceId ? 'Узел не сопряжён с устройством' : undefined}
+              disabled={!canStart}
+              title={
+                !deviceId
+                  ? 'Узел не сопряжён с устройством'
+                  : !deviceLive
+                    ? DEVICE_OFFLINE_RUN_HINT
+                    : undefined
+              }
+              aria-label={
+                !canStart && deviceId && !deviceLive ? DEVICE_OFFLINE_RUN_HINT : undefined
+              }
               onClick={() => deviceId && runtime.run(deviceId)}
             >
               Пуск
@@ -212,11 +258,29 @@ function NodeCard({
           ) : null}
 
           <div className="ml-auto flex gap-2">
+            {onOpenKeys ? (
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                disabled={busy}
+                onClick={() => onOpenKeys(node.id)}
+              >
+                Ключи
+              </button>
+            ) : null}
             <button type="button" className="btn btn-sm btn-ghost" onClick={onOpenJournal}>
               Журнал
             </button>
             <button type="button" className="btn btn-sm btn-ghost" onClick={onOpenDeviceBoard}>
               Доска
+            </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline btn-error"
+              disabled={busy}
+              onClick={onDelete}
+            >
+              Удалить
             </button>
           </div>
         </div>

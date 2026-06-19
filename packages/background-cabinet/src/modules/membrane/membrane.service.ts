@@ -137,6 +137,28 @@ export class MembraneService {
     return { node: serializeNode(node) };
   }
 
+  async deleteNode(userId: string, nodeId: string) {
+    const node = await this.prisma.node.findUnique({
+      where: { id: nodeId },
+      include: { membrane: true, accessKeys: true },
+    });
+    if (!node) throw new NotFoundException('Node not found');
+    if (node.membrane.userId !== userId) throw new ForbiddenException('Node access denied');
+
+    const now = new Date();
+    const revokedKeyIds: string[] = [];
+    for (const key of node.accessKeys) {
+      if (isAccessKeyActive(key.expiresAt, key.revokedAt, now)) {
+        await this.revokeAccessKey(userId, key.id);
+        revokedKeyIds.push(key.id);
+      }
+    }
+
+    await this.prisma.node.delete({ where: { id: nodeId } });
+
+    return { deletedNodeId: nodeId, revokedKeyIds };
+  }
+
   async createAccessKey(userId: string, nodeId: string, durationRaw: string) {
     if (!isNodeAccessKeyDuration(durationRaw)) {
       throw new BadRequestException('Invalid duration');
@@ -222,6 +244,11 @@ export class MembraneService {
   }
 
   async purgeRevokedAccessKeys(userId: string, nodeId: string) {
+    return this.purgeInactiveAccessKeys(userId, nodeId);
+  }
+
+  /** Removes revoked and expired keys; active keys are kept. */
+  async purgeInactiveAccessKeys(userId: string, nodeId: string) {
     const node = await this.prisma.node.findUnique({
       where: { id: nodeId },
       include: { membrane: true },
@@ -229,11 +256,33 @@ export class MembraneService {
     if (!node) throw new NotFoundException('Node not found');
     if (node.membrane.userId !== userId) throw new ForbiddenException('Node access denied');
 
+    const now = new Date();
     const result = await this.prisma.nodeAccessKey.deleteMany({
-      where: { nodeId: node.id, revokedAt: { not: null } },
+      where: {
+        nodeId: node.id,
+        OR: [{ revokedAt: { not: null } }, { expiresAt: { lt: now } }],
+      },
     });
 
     return { deletedCount: result.count };
+  }
+
+  async deleteAccessKey(userId: string, keyId: string) {
+    const key = await this.prisma.nodeAccessKey.findUnique({
+      where: { id: keyId },
+      include: { node: { include: { membrane: true } } },
+    });
+    if (!key) throw new NotFoundException('Access key not found');
+    if (key.node.membrane.userId !== userId) {
+      throw new ForbiddenException('Access key access denied');
+    }
+    if (isAccessKeyActive(key.expiresAt, key.revokedAt)) {
+      throw new ConflictException('Cannot delete active access key');
+    }
+
+    await this.prisma.nodeAccessKey.delete({ where: { id: keyId } });
+
+    return { deletedKeyId: keyId };
   }
 
   /** Ensures free-v1 tariff exists (idempotent, used by seed). */
@@ -247,11 +296,11 @@ export class MembraneService {
         bufferQuotaBytes: GIB,
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
         maxActiveKeysPerNode: 1,
-        maxNodesPerMembrane: 2,
+        maxNodesPerMembrane: 1,
       },
       update: {
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
-        maxNodesPerMembrane: 2,
+        maxNodesPerMembrane: 1,
       },
     });
   }

@@ -8,6 +8,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'ssh2';
+import { deployPreflight } from './_deploy-preflight.mjs';
+import { assertCiGreen } from './_deploy-ci-gate.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const envPath = resolve(root, '.env');
@@ -24,6 +26,11 @@ const branch =
   get('GIT_BRANCH') ||
   get('CABINET_GIT_BRANCH') ||
   'main';
+
+// DR0 gate: локальное состояние должно совпадать с origin/<branch> (прод собирается из origin).
+const preflight = deployPreflight({ branch, cwd: root });
+// DR1 gate: на прод едет только зелёный в CI коммит.
+assertCiGreen({ branch, sha: preflight.originHead });
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail
@@ -44,8 +51,9 @@ chmod +x deploy/cabinet-stack.sh deploy/media-stack.sh
 echo "=== docker build media (prisma migrate on up) ==="
 ./deploy/media-stack.sh build
 
-echo "=== docker build cabinet ==="
-./deploy/cabinet-stack.sh build
+echo "=== docker build cabinet (no stale SPA/API cache) ==="
+./deploy/cabinet-stack.sh build --no-cache cabinet-web
+./deploy/cabinet-stack.sh build --no-cache cabinet-api
 
 echo "=== docker up media ==="
 ./deploy/media-stack.sh up
@@ -57,8 +65,15 @@ docker compose -f packages/background-media/docker-compose.yml -f deploy/backgro
 echo "=== docker up cabinet ==="
 ./deploy/cabinet-stack.sh down || true
 sleep 2
-./deploy/cabinet-stack.sh up
+./deploy/cabinet-stack.sh up --force-recreate
 sleep 28
+
+echo "=== cabinet SPA bundle check ==="
+CABINET_JS=$(curl -fsS http://127.0.0.1:8080/ | grep -oE 'assets/index-[^"]+\\.js' | head -1)
+curl -fsS "http://127.0.0.1:8080/\${CABINET_JS}" -o /tmp/cabinet-spa-check.js
+BYTES=$(wc -c < /tmp/cabinet-spa-check.js | tr -d ' ')
+test "\${BYTES}" -gt 100000 && echo "cabinet-web bundle OK (\${CABINET_JS}, \${BYTES} bytes)" || { echo "FATAL: cabinet-web bundle too small (\${CABINET_JS}, \${BYTES} bytes)"; exit 1; }
+grep -q 'purge-inactive' /tmp/cabinet-spa-check.js && echo "cabinet-web hotfix markers OK" || { echo "FATAL: SPA bundle missing hotfix markers (stale cabinet-web? run cabinet-stack up --force-recreate)"; exit 1; }
 
 echo "=== health ==="
 curl -fsS http://127.0.0.1:3010/health; echo

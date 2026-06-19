@@ -40,6 +40,128 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 
 ---
 
+## Десктоп-продукты (DR6 deploy-pipeline-refactor)
+
+`apps/client` — **dev-песочница/renderer**, не поставляемый продукт; веб-клиента в линейке нет.
+Конечные продукты — **Electron-приложения**: `membrana-studio` (полная работа с контентом) и будущее
+лёгкое `device` (периферия: быстрая доставка данных на сервер). Доставка — Electron-пакеты, не веб-бандл.
+
+Сборка десктопа **декаплирована** от деплоя сервера и **условная** — workflow
+[`.github/workflows/desktop-studio.yml`](../../.github/workflows/desktop-studio.yml) собирает installer
+только когда `@membrana/client`/`@membrana/membrana-studio` затронуты (turbo affected), не на каждый
+серверный деплой. Релиз — тегом:
+
+```bash
+git tag studio-v0.1.0 && git push origin studio-v0.1.0   # CI: NSIS → GitHub Release
+```
+
+Детали и prod-smoke студии: [`apps/membrana-studio/README.md`](../../apps/membrana-studio/README.md).
+
+### Совместимость контракта `runtime` и индикатор версии (DR6, часть 2)
+
+Единый источник истины версии рантайм-протокола node-realtime — `RUNTIME_PROTOCOL_VERSION` в
+`@membrana/core` (`packages/core/src/contracts/runtime-version.ts`). Бампается при **несовместимом**
+изменении wire-формата (envelope/каналы/события).
+
+- **Сервер** отдаёт `protocolVersion` в `GET /health` (рядом с `version`/`uptime`).
+- **Клиент** собран со своей `CLIENT_RUNTIME_PROTOCOL_VERSION` и сверяет её с серверной через
+  `evaluateRuntimeCompatibility()` (`apps/client/src/lib/runtimeVersion.ts`).
+- **Индикатор** `RuntimeVersionIndicator` показывает версию приложения и состояние:
+  `ok` / `Доступно обновление` (сервер новее) / `Сервер устарел` (клиент новее) / `unknown`
+  (сервер недоступен); при «требует внимания» — `aria-live="polite"`.
+- **Тест совместимости** (CI): `packages/core/src/contracts/runtime-version.test.ts` фиксирует правило
+  сверки, `apps/client/src/lib/runtimeVersion.test.ts` — парсинг `/health` и состояние индикатора.
+  Дрейф «сервер↔клиент» ловится единым источником версии в core + красным тестом.
+
+Бизнес-логика (compute/parse/fetch) отделена от презентации — индикатор чисто отображает результат.
+
+---
+
+## Деплой по образу и откат (DR2/DR3 deploy-pipeline-refactor)
+
+Прод cabinet деплоится из иммутабельного образа GHCR по тегу (а не сборкой на VPS).
+Подробности и гейты — [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
+
+### Деплой релиза
+
+```bash
+# 1) пометить релиз тегом → CI собирает и пушит образ cabinet-api/-web в GHCR
+git tag cabinet-v1.2.3 && git push origin cabinet-v1.2.3
+# 2) выкатить образ по тегу (гейты preflight + ci-gate; pull до down/up)
+CABINET_IMAGE_TAG=cabinet-v1.2.3 yarn cabinet:deploy:image:prod
+```
+
+Каждый деплой/откат пишет **машиночитаемую JSON-сводку** в `deploy-artifacts/`
+(`cabinet-deploy-*.json` / `cabinet-rollback-*.json`) и печатает её в конце прогона:
+
+```json
+{
+  "service": "cabinet",
+  "mode": "image",
+  "imageTag": "cabinet-v1.2.3",
+  "images": { "api": "ghcr.io/officefish/membrana-cabinet-api:cabinet-v1.2.3", "web": "…:cabinet-v1.2.3" },
+  "branch": "main",
+  "composeSha": "<sha origin/main>",
+  "startedAt": "…", "finishedAt": "…", "durationMs": 123456,
+  "exitCode": 0, "smokeOk": true, "ok": true
+}
+```
+
+`ok: true` ⇔ remote-скрипт завершился `exit 0` **и** прошёл маркер `CABINET IMAGE DEPLOY OK`.
+
+### Расширенный smoke (DR4)
+
+Узкий smoke (health + 200 на SPA) ложно-зелёный при мёртвом login / непримененной миграции /
+упавшем рантайм-канале. Единый скрипт `scripts/_ssh-cabinet-smoke.mjs` проверяет функциональность
+и падает (`exit ≠ 0`) при любом провале:
+
+| # | Проверка | Что подтверждает |
+|---|----------|------------------|
+| 1 | `GET /health` | API живой |
+| 2 | `POST /v1/auth/login` (bootstrap admin) | аутентификация работает, есть `token` |
+| 3 | `GET /v1/auth/me` | сессия валидна |
+| 4 | `GET /v1/membranes/me` | мембрана/узлы доступны |
+| 5 | `prisma migrate status` в контейнере cabinet-api | нет непримененных миграций |
+| 6 | WS `/v1/nodes/realtime?role=cabinet` открыт и не закрыт auth | рантайм-канал жив + cabinet-auth ок |
+
+```bash
+# вручную после деплоя
+yarn cabinet:smoke:prod
+
+# автоматически в конце деплоя
+CABINET_SMOKE_AFTER_DEPLOY=1 CABINET_IMAGE_TAG=cabinet-v1.2.3 yarn cabinet:deploy:image:prod
+```
+
+Smoke печатает JSON-сводку (`checks[]`, `failed[]`, `ok`); при `CABINET_SMOKE_AFTER_DEPLOY=1`
+она вкладывается в сводку деплоя как поле `smoke`, и общий `ok` учитывает её результат.
+
+### Откат (rollback)
+
+Откат — это деплой **предыдущего известно-хорошего тега**. Образ уже собран и иммутабелен,
+поэтому ci-gate обходится автоматически; preflight (чистое дерево) сохраняется.
+
+```bash
+# показать доступные релизные теги (свежие сверху) и выйти
+yarn cabinet:rollback:prod
+
+# откатиться на конкретный тег
+CABINET_ROLLBACK_TAG=cabinet-v1.2.2 yarn cabinet:rollback:prod
+```
+
+Процедура при сбойном релизе:
+
+1. Зафиксировать симптом (упавший prod-smoke / 5xx) и текущий тег из JSON-сводки последнего деплоя.
+2. `CABINET_ROLLBACK_TAG=<предыдущий cabinet-v*> yarn cabinet:rollback:prod`.
+3. Дождаться `ok: true` в rollback-сводке и зелёного prod-smoke.
+4. Завести issue на причину; чинить в обычном цикле (PR → CI → новый тег), не хотфиксом на VPS.
+
+> **Миграции БД.** Откат образа возвращает код, но **не откатывает применённые миграции**
+> (`prisma migrate deploy` идемпотентен только вперёд). Поэтому миграции должны быть
+> обратносовместимыми (expand/contract — регламент DR5): старый код обязан работать с уже
+> применённой схемой. Несовместимое изменение схемы делает откат по образу небезопасным.
+
+---
+
 ## Prod-smoke по фазам
 
 ### MP1 — Auth + shell (`membrane-platform-mp1-auth-cabinet`)

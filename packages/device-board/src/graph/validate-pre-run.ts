@@ -9,9 +9,11 @@ import {
   SCENARIO_ALARM_ENTRY,
   SCENARIO_INITIAL_ENTRY,
   SCENARIO_MAIN_ENTRY,
+  SCENARIO_ON_CONNECT_ENTRY,
   SCENARIO_ON_DISCONNECT_ENTRY,
   SCENARIO_ON_STOP_ENTRY,
 } from './initial-board-state.js';
+import { isEventNode } from './event-node.js';
 import type { BoardLayerTab } from '../types/board-ui.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { isValidBoardEdge } from './connection-validation.js';
@@ -30,6 +32,9 @@ export interface PreRunValidationInput {
   readonly signalEdges: readonly Edge[];
   readonly scenarioInitialNodes: readonly Node[];
   readonly scenarioInitialEdges: readonly Edge[];
+  /** v0.4: обработчик onConnect (необязателен для legacy-вызовов). */
+  readonly scenarioOnConnectNodes?: readonly Node[];
+  readonly scenarioOnConnectEdges?: readonly Edge[];
   readonly scenarioMainNodes: readonly Node[];
   readonly scenarioMainEdges: readonly Edge[];
   readonly scenarioAlarmNodes: readonly Node[];
@@ -93,6 +98,29 @@ function pushEntryIssue(
   }
 }
 
+/** v0.4 (DBR3): entry обработчика события обязан быть системным Event-узлом. */
+function pushEventEntryIssue(
+  issues: PreRunValidationIssue[],
+  nodes: readonly Node[],
+  entryId: string,
+  path: string,
+): void {
+  if (nodes.length === 0) {
+    return;
+  }
+  const entryNode = nodes.find((node) => node.id === entryId);
+  if (entryNode === undefined) {
+    return;
+  }
+  if (!isEventNode(entryNode)) {
+    issues.push({
+      code: 'event-entry-required',
+      message: `Точка входа обработчика «${entryId}» должна быть системным Event-узлом`,
+      path,
+    });
+  }
+}
+
 function pushSchemaIssue(issues: PreRunValidationIssue[], error: ValidationError): void {
   issues.push({
     code: 'schema-invalid',
@@ -115,7 +143,11 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
 
   pushEdgeIssues(issues, input.signalNodes, input.signalEdges, 'signal', 'signalGraph.edges');
 
+  const onConnectNodes = input.scenarioOnConnectNodes ?? [];
+  const onConnectEdges = input.scenarioOnConnectEdges ?? [];
+
   pushEntryIssue(issues, input.scenarioInitialNodes, SCENARIO_INITIAL_ENTRY, 'scenario.initial.entry');
+  pushEventEntryIssue(issues, input.scenarioInitialNodes, SCENARIO_INITIAL_ENTRY, 'scenario.initial.entry');
   pushEdgeIssues(
     issues,
     input.scenarioInitialNodes,
@@ -123,6 +155,10 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     'scenario',
     'scenario.initial.edges',
   );
+
+  pushEntryIssue(issues, onConnectNodes, SCENARIO_ON_CONNECT_ENTRY, 'scenario.onConnect.entry');
+  pushEventEntryIssue(issues, onConnectNodes, SCENARIO_ON_CONNECT_ENTRY, 'scenario.onConnect.entry');
+  pushEdgeIssues(issues, onConnectNodes, onConnectEdges, 'scenario', 'scenario.onConnect.edges');
 
   pushEntryIssue(issues, input.scenarioMainNodes, SCENARIO_MAIN_ENTRY, 'scenario.loops.main.entry');
   pushEdgeIssues(
@@ -143,6 +179,12 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
   );
 
   pushEntryIssue(issues, input.scenarioOnStopNodes, SCENARIO_ON_STOP_ENTRY, 'scenario.triggers.onStop.entry');
+  pushEventEntryIssue(
+    issues,
+    input.scenarioOnStopNodes,
+    SCENARIO_ON_STOP_ENTRY,
+    'scenario.triggers.onStop.entry',
+  );
   pushEdgeIssues(
     issues,
     input.scenarioOnStopNodes,
@@ -152,6 +194,12 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
   );
 
   pushEntryIssue(
+    issues,
+    input.scenarioOnDisconnectNodes,
+    SCENARIO_ON_DISCONNECT_ENTRY,
+    'scenario.triggers.onDisconnect.entry',
+  );
+  pushEventEntryIssue(
     issues,
     input.scenarioOnDisconnectNodes,
     SCENARIO_ON_DISCONNECT_ENTRY,
@@ -171,6 +219,8 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     signalEdges: input.signalEdges,
     scenarioInitialNodes: input.scenarioInitialNodes,
     scenarioInitialEdges: input.scenarioInitialEdges,
+    scenarioOnConnectNodes: onConnectNodes,
+    scenarioOnConnectEdges: onConnectEdges,
     scenarioMainNodes: input.scenarioMainNodes,
     scenarioMainEdges: input.scenarioMainEdges,
     scenarioAlarmNodes: input.scenarioAlarmNodes,
@@ -185,6 +235,7 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
   issues.push(
     ...validateFunctionDepth(document.scenario.functions, [
       { path: 'scenario.initial', nodes: document.scenario.initial.nodes },
+      { path: 'scenario.onConnect', nodes: document.scenario.onConnect.nodes },
       { path: 'scenario.loops.main', nodes: document.scenario.loops.main.nodes },
       { path: 'scenario.loops.alarm', nodes: document.scenario.loops.alarm.nodes },
       { path: 'scenario.triggers.onStop', nodes: document.scenario.triggers.onStop.nodes },

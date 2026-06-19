@@ -115,6 +115,7 @@ describe('ScenarioRuntime H2b', () => {
 
     const calls: string[] = [];
 
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
 
     const host = createStubScenarioRuntimeHost({
@@ -165,7 +166,7 @@ describe('ScenarioRuntime H2b', () => {
 
 
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
 
     runtime.load(buildHackathonDocument());
 
@@ -182,6 +183,10 @@ describe('ScenarioRuntime H2b', () => {
       'journal:initial',
 
       'record-chunk',
+
+      'journal:onDisconnect',
+
+      'stop-stream',
 
       'journal:onStop',
 
@@ -207,7 +212,7 @@ describe('ScenarioRuntime H2b', () => {
 
     });
 
-    const runtime = new ScenarioRuntime(host);
+    const runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
 
     const doc = createEmptyDeviceScenarioDocument('microphone');
 
@@ -231,6 +236,7 @@ describe('ScenarioRuntime H4 alarm', () => {
 
     const calls: string[] = [];
 
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
 
     let mainIterations = 0;
@@ -293,7 +299,7 @@ describe('ScenarioRuntime H4 alarm', () => {
 
 
 
-    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 10 });
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 10, loopTickPauseMs: 0 });
 
     runtime.load(buildHackathonDocument());
 
@@ -318,6 +324,7 @@ describe('ScenarioRuntime H4 alarm', () => {
 describe('ScenarioRuntime RT3 mode override', () => {
   it('setMode(alarm) forces alarm loop without detection front', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     let alarmJournals = 0;
 
@@ -335,7 +342,7 @@ describe('ScenarioRuntime RT3 mode override', () => {
       trendsFftDetect: async () => ({ detected: false, confidence: 0, templateId: 'CLEAR' }),
     });
 
-    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5 });
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5, loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     runtime.setMode('alarm');
     await runtime.start();
@@ -347,6 +354,7 @@ describe('ScenarioRuntime RT3 mode override', () => {
 
   it('setMode(normal) returns from manual alarm to main loop', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
 
     const host = createStubScenarioRuntimeHost({
@@ -366,7 +374,7 @@ describe('ScenarioRuntime RT3 mode override', () => {
       trendsFftDetect: async () => ({ detected: false, confidence: 0, templateId: 'CLEAR' }),
     });
 
-    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5 });
+    runtime = new ScenarioRuntime(host, { mainLoopChunkDurationMs: 5, loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     runtime.setMode('alarm');
     await runtime.start();
@@ -378,7 +386,28 @@ describe('ScenarioRuntime RT3 mode override', () => {
 });
 
 describe('ScenarioRuntime H3a onStop', () => {
+  it('runs onDisconnect then onStop on user stop when device is linked', async () => {
+    const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
+    let runtime!: ScenarioRuntime;
+    const host = createStubScenarioRuntimeHost({
+      writeJournal: async (event) => calls.push(`journal:${event.branch}`),
+      recordChunk: async () => {
+        runtime.stop('user');
+        return { clipId: 'clip-1' };
+      },
+    });
+
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
+    runtime.load(buildHackathonDocument());
+    await runtime.start();
+
+    expect(calls).toContain('journal:onDisconnect');
+    expect(calls).toContain('journal:onStop');
+  });
+
   it('records system stop reason', async () => {
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       recordChunk: async () => {
@@ -387,7 +416,7 @@ describe('ScenarioRuntime H3a onStop', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 
@@ -398,6 +427,7 @@ describe('ScenarioRuntime H3a onStop', () => {
 describe('ScenarioRuntime H3c subgraph', () => {
   it('invokes function body from subgraph block', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       recordChunk: async () => {
@@ -411,7 +441,7 @@ describe('ScenarioRuntime H3c subgraph', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 
@@ -422,6 +452,7 @@ describe('ScenarioRuntime H3c subgraph', () => {
 describe('ScenarioRuntime H3b onDisconnect', () => {
   it('runs onDisconnect instead of onStop on connection loss', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       writeJournal: async (event) => calls.push(`journal:${event.branch}`),
@@ -431,7 +462,7 @@ describe('ScenarioRuntime H3b onDisconnect', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 
@@ -441,6 +472,7 @@ describe('ScenarioRuntime H3b onDisconnect', () => {
 
   it('restarts from initial after reconnect', async () => {
     const calls: string[] = [];
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       selectMicrophone: async () => calls.push('select-microphone'),
@@ -450,7 +482,7 @@ describe('ScenarioRuntime H3b onDisconnect', () => {
       },
     });
 
-    runtime = new ScenarioRuntime(host);
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
     runtime.load(buildHackathonDocument());
     await runtime.start();
 

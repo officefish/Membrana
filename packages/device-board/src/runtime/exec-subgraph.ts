@@ -2,14 +2,22 @@ import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioSubgraph } fr
 
 import { executeScenarioBlock } from './block-executor.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import type { ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
 
 import type { ScenarioRuntimeBranch } from './types.js';
+import type { ScenarioVariableStore } from './variable-store.js';
+import { MAX_SUBGRAPH_EXEC_STEPS, yieldToEventLoop } from './runtime-timing.js';
 
 export interface ExecSubgraphOptions {
   readonly branch: ScenarioRuntimeBranch;
   readonly defaultChunkDurationMs?: number;
   readonly functions?: readonly ScenarioFunctionSubgraph[];
+  /** v0.4 (DBR4): хранилище переменных для variable-set/get. */
+  readonly variableStore?: ScenarioVariableStore;
+  /** v0.4 (DBR4): контекст pull-резолюции Event/dataflow. */
+  readonly resolveContext?: ResolveInputContext;
+  readonly onPrintOutput?: (nodeId: string, message: string) => void;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -20,12 +28,16 @@ function findNode(subgraph: ScenarioSubgraph, nodeId: string): ScenarioGraphNode
   return subgraph.nodes.find((node) => node.id === nodeId);
 }
 
-function findExecSuccessor(subgraph: ScenarioSubgraph, nodeId: string): string | null {
+function findExecSuccessor(
+  subgraph: ScenarioSubgraph,
+  nodeId: string,
+  sourceHandle = 'exec-out',
+): string | null {
   const edge = subgraph.edges.find(
     (item) =>
       item.source === nodeId &&
       item.kind === 'exec' &&
-      item.sourceHandle === 'exec-out' &&
+      item.sourceHandle === sourceHandle &&
       item.targetHandle === 'exec-in',
   );
   return edge?.target ?? null;
@@ -45,10 +57,19 @@ export async function runSubgraphOnce(
   let currentId = subgraph.entry;
   const entryId = subgraph.entry;
   let lastDetection: ScenarioDetectionResult | null = null;
+  let execSteps = 0;
+  const isLoopBranch = options.branch === 'main' || options.branch === 'alarm';
 
-  while (true) {
+  for (;;) {
     if (signal.aborted) {
       return lastDetection;
+    }
+
+    execSteps += 1;
+    if (execSteps > MAX_SUBGRAPH_EXEC_STEPS) {
+      throw new Error(
+        `Scenario subgraph "${options.branch}" exceeded ${MAX_SUBGRAPH_EXEC_STEPS} exec steps — проверьте цикл (нужен узел ∞)`,
+      );
     }
 
     const node = findNode(subgraph, currentId);
@@ -62,24 +83,36 @@ export async function runSubgraphOnce(
       host,
       signal,
       branch: options.branch,
+      subgraph,
       node,
       lastDetection,
       defaultChunkDurationMs: options.defaultChunkDurationMs ?? 5_000,
       functions: options.functions ?? [],
+      variableStore: options.variableStore,
+      resolveContext: options.resolveContext,
+      onPrintOutput: options.onPrintOutput,
     });
 
     if (result.stopRequested) {
       return result.lastDetection;
     }
 
+    if (result.loopRepeatRequested === true) {
+      return result.lastDetection;
+    }
+
     lastDetection = result.lastDetection;
 
-    const nextId = findExecSuccessor(subgraph, currentId);
+    const nextId = findExecSuccessor(subgraph, currentId, result.execOutHandle ?? 'exec-out');
     if (nextId === null) {
       return lastDetection;
     }
     if (nextId === entryId) {
       return lastDetection;
+    }
+
+    if (isLoopBranch) {
+      await yieldToEventLoop(signal);
     }
 
     currentId = nextId;

@@ -1,4 +1,4 @@
-import { logger } from '@membrana/core';
+import { scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
 import {
   LiveSampler,
   acquireMicrophone,
@@ -11,6 +11,7 @@ import type {
   ScenarioConnectionHandlers,
   ScenarioDetectionResult,
   ScenarioJournalEvent,
+  ScenarioMicrophoneOption,
   ScenarioSoundLevelResult,
 } from '@membrana/device-board';
 import { ALARM_QUIET_RMS_THRESHOLD } from '@membrana/device-board';
@@ -120,24 +121,45 @@ export class ScenarioMicJournalBridge {
     return this.lastDetection;
   }
 
+  /** Список audio-input для UI GetMicrophone (запрашивает разрешение, если label пустые). */
+  async enumerateMicrophones(): Promise<readonly ScenarioMicrophoneOption[]> {
+    let devices = await getAudioInputDevices();
+    if (devices.length > 0 && devices.every((device) => device.label.trim() === '')) {
+      try {
+        const stream = await acquireMicrophone();
+        releaseMediaStream(stream);
+        devices = await getAudioInputDevices();
+      } catch {
+        // Без разрешения остаются deviceId без label.
+      }
+    }
+    return devices.map((device) => ({
+      deviceId: device.deviceId,
+      label:
+        device.label.trim() !== ''
+          ? device.label
+          : `Микрофон ${device.deviceId.slice(0, 8) || 'default'}`,
+    }));
+  }
+
   async selectMicrophone(): Promise<void> {
     const devices = await getAudioInputDevices();
     this.selectedDeviceId = devices[0]?.deviceId ?? '';
-    logger.info('[device-board] selectMicrophone', { deviceId: this.selectedDeviceId || 'default' });
+    scenarioRuntimeInfo('[device-board] selectMicrophone', { deviceId: this.selectedDeviceId || 'default' });
   }
 
   async startStream(): Promise<void> {
     const snapshot = getMicrophoneCaptureSnapshot();
     if (snapshot.isLive) {
       this.usesCoordinator = true;
-      logger.info('[device-board] startStream via microphone module');
+      scenarioRuntimeInfo('[device-board] startStream via microphone module');
       return;
     }
 
     try {
       await requestMicrophoneStart();
       this.usesCoordinator = true;
-      logger.info('[device-board] startStream via coordinator');
+      scenarioRuntimeInfo('[device-board] startStream via coordinator');
       return;
     } catch {
       // Модуль микрофона не смонтирован — свой поток.
@@ -149,20 +171,20 @@ export class ScenarioMicJournalBridge {
     this.ownedStream = await acquireMicrophone(audio);
     publishMicrophoneStream(MICROPHONE_MODULE_ID, this.ownedStream);
     this.usesCoordinator = false;
-    logger.info('[device-board] startStream via owned MediaStream');
+    scenarioRuntimeInfo('[device-board] startStream via owned MediaStream');
   }
 
   async stopStream(): Promise<void> {
     if (this.usesCoordinator) {
       requestMicrophoneStop();
-      logger.info('[device-board] stopStream via coordinator');
+      scenarioRuntimeInfo('[device-board] stopStream via coordinator');
       return;
     }
     if (this.ownedStream !== null) {
       publishMicrophoneStream(MICROPHONE_MODULE_ID, null);
       releaseMediaStream(this.ownedStream);
       this.ownedStream = null;
-      logger.info('[device-board] stopStream released owned stream');
+      scenarioRuntimeInfo('[device-board] stopStream released owned stream');
     }
   }
 
@@ -181,7 +203,7 @@ export class ScenarioMicJournalBridge {
         sampleRate: clip.sampleRate,
         blob: clip.blob,
       };
-      logger.info('[device-board] recordChunk', {
+      scenarioRuntimeInfo('[device-board] recordChunk', {
         clipId,
         durationSec: clip.durationSec,
         durationMs,
@@ -209,7 +231,7 @@ export class ScenarioMicJournalBridge {
       rawLevel: analysis.rawLevel,
     };
 
-    logger.info('[device-board] trendsFftDetect', {
+    scenarioRuntimeInfo('[device-board] trendsFftDetect', {
       detected: this.lastDetection.detected,
       templateId: this.lastDetection.templateId,
       confidence: this.lastDetection.confidence,
@@ -250,7 +272,7 @@ export class ScenarioMicJournalBridge {
         : 0;
     const isQuietEnough = rawLevel <= ALARM_QUIET_RMS_THRESHOLD;
 
-    logger.info('[device-board] evaluateSoundLevel', { rawLevel, isQuietEnough });
+    scenarioRuntimeInfo('[device-board] evaluateSoundLevel', { rawLevel, isQuietEnough });
 
     return { rawLevel, isQuietEnough };
   }
@@ -348,7 +370,7 @@ export class ScenarioMicJournalBridge {
           if (!disconnected) {
             disconnected = true;
             wasConnected = false;
-            logger.info('[device-board] mic track ended');
+            scenarioRuntimeInfo('[device-board] mic track ended');
             handlers.onDisconnect();
           }
         };
@@ -364,7 +386,7 @@ export class ScenarioMicJournalBridge {
           attachTrackListeners(stream);
           if (disconnected) {
             disconnected = false;
-            logger.info('[device-board] mic stream reconnected');
+            scenarioRuntimeInfo('[device-board] mic stream reconnected');
             handlers.onReconnect();
           }
           wasConnected = true;
@@ -376,7 +398,7 @@ export class ScenarioMicJournalBridge {
       if (wasConnected && !disconnected) {
         disconnected = true;
         wasConnected = false;
-        logger.info('[device-board] mic stream lost');
+        scenarioRuntimeInfo('[device-board] mic stream lost');
         handlers.onDisconnect();
       }
     };

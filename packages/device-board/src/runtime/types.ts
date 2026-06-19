@@ -15,6 +15,22 @@ export type ScenarioRuntimePhase =
 /** Ветка scenario graph при исполнении блока. */
 export type ScenarioRuntimeBranch = 'initial' | 'main' | 'alarm' | 'onStop' | 'onDisconnect';
 
+/** Маппинг exec-ветки → ветви-обработчик для Event/dataflow (v0.4 DBR4). */
+export function runtimeBranchToHandlerBranch(
+  branch: ScenarioRuntimeBranch,
+): 'initial' | 'onStop' | 'onDisconnect' | null {
+  switch (branch) {
+    case 'initial':
+      return 'initial';
+    case 'onStop':
+      return 'onStop';
+    case 'onDisconnect':
+      return 'onDisconnect';
+    default:
+      return null;
+  }
+}
+
 /** Причина остановки сценария (T1). */
 export type ScenarioStopReason = 'user' | 'system';
 
@@ -31,6 +47,8 @@ export interface ScenarioRuntimeState {
   readonly alarmLoopIteration: number;
   readonly lastStopReason: ScenarioStopReason | null;
   readonly lastError: string | null;
+  /** Последний текст Print по nodeId (накапливается за прогон). */
+  readonly printOutputs: Readonly<Record<string, string>>;
 }
 
 /** Событие журнала от блока write-journal. */
@@ -68,5 +86,6 @@ export function createIdleScenarioRuntimeState(): ScenarioRuntimeState {
     alarmLoopIteration: 0,
     lastStopReason: null,
     lastError: null,
+    printOutputs: {},
   };
 }

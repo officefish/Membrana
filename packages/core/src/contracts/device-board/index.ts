@@ -12,11 +12,48 @@ export {
 export {
   SOCKET_TYPES,
   D0_SOCKET_TYPES,
+  REFERENCE_SOCKET_TYPES,
+  VALUE_SOCKET_TYPES,
   type SocketType,
+  type ReferenceSocketType,
+  type ValueSocketType,
   type SocketSpec,
   isSocketType,
+  isReferenceSocketType,
+  isValueSocketType,
   isValidSocketConnection,
 } from './socket-type.js';
+
+export {
+  SCENARIO_NODE_KINDS,
+  SYSTEM_SCENARIO_NODE_KINDS,
+  type ScenarioNodeKind,
+  isScenarioNodeKind,
+  isSystemScenarioNodeKind,
+} from './scenario-node-kind.js';
+
+export {
+  type ScenarioReferenceVariableType,
+  type ScenarioValueVariableType,
+  type ScenarioVariableType,
+  type ScenarioReferenceValue,
+  type ScenarioDateTimeValue,
+  type ScenarioIntegerValue,
+  type ScenarioVariableValue,
+  type ScenarioVariable,
+  createReferenceValue,
+  createDateTimeValue,
+  createIntegerValue,
+  invalidateReference,
+  createScenarioVariable,
+  isScenarioVariableType,
+  isScenarioReferenceValue,
+  isScenarioDateTimeValue,
+  isScenarioIntegerValue,
+  isScenarioVariableValue,
+  isScenarioVariable,
+  migrateScenarioVariableLegacy,
+} from './scenario-variables.js';
 
 export {
   type NodeKindCategory,
@@ -58,6 +95,7 @@ export {
 export {
   DEVICE_SCENARIO_DOCUMENT_KIND,
   DEVICE_SCENARIO_DOCUMENT_VERSION,
+  DEVICE_SCENARIO_MIN_DOCUMENT_VERSION,
   type DeviceScenarioMeta,
   type DeviceScenarioDocument,
   createEmptyDeviceScenarioDocument,

@@ -5,6 +5,8 @@ node_modules/
 dist/
 dist-demo/
 build/
+apps/membrana-studio/client-dist/
+apps/membrana-studio/release/
 *.tsbuildinfo
 # Инкрементальные кэши TS с суффиксами (клиент: tsconfig.app / tsconfig.node)
 **/.tsbuildinfo.*
@@ -72,3 +74,8 @@ pnpm-lock.yaml
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# claude / cursor / continue mcp servers settings
+.claude/claude_code_config.json
+.cursor/mcp.json
+.continue/config.json

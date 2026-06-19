@@ -9,26 +9,46 @@ import {
   type Node,
   type NodeChange,
 } from '@xyflow/react';
-import type { DeviceKind, RuntimeMode, ScenarioBlockKind } from '@membrana/core';
+import {
+  createScenarioVariable,
+  type DeviceKind,
+  type DeviceScenarioDocument,
+  type RuntimeMode,
+  type ScenarioBlockKind,
+  type ScenarioVariable,
+  type ScenarioVariableType,
+} from '@membrana/core';
 
 import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
 import {
   buildDeviceScenarioDocument,
   createDefaultHydratedBoardState,
+  createPaletteBoardNode,
   createScenarioBoardNode,
+  createVariableBoardNode,
   exportDeviceScenarioDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
   importDeviceScenarioFromJson,
   isPreRunValid,
   isValidBoardConnection,
+  rejectSystemNodeRemovals,
+  clearBranchState,
+  shouldPreserveLockedNodes,
+  resolveRunDisabledReason,
+  scenarioDocumentFingerprint,
+  syncVariableNodeLabels,
   validatePreRun,
+  type VariableNodeKind,
+  type V04PaletteNodeKind,
 } from '../graph/index.js';
 import type { HydratedBoardState, PreRunValidationIssue } from '../graph/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
+  inspectNodePorts,
+  type NodePortInspectionResult,
   type ScenarioRuntimeHost,
   type ScenarioRuntimeState,
   type ScenarioStopReason,
@@ -41,6 +61,8 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioBranch: ScenarioBranchTab;
   readonly scenarioInitialNodes: Node[];
   readonly scenarioInitialEdges: Edge[];
+  readonly scenarioOnConnectNodes: Node[];
+  readonly scenarioOnConnectEdges: Edge[];
   readonly scenarioMainNodes: Node[];
   readonly scenarioMainEdges: Edge[];
   readonly scenarioAlarmNodes: Node[];
@@ -53,11 +75,14 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioFunctionEdges: Edge[];
   readonly validationIssues: readonly PreRunValidationIssue[];
   readonly canRun: boolean;
+  readonly runDisabledReason: string | null;
   readonly runtimeState: ScenarioRuntimeState;
   readonly onSignalNodesChange: (changes: NodeChange[]) => void;
   readonly onSignalEdgesChange: (changes: EdgeChange[]) => void;
   readonly onScenarioInitialNodesChange: (changes: NodeChange[]) => void;
   readonly onScenarioInitialEdgesChange: (changes: EdgeChange[]) => void;
+  readonly onScenarioOnConnectNodesChange: (changes: NodeChange[]) => void;
+  readonly onScenarioOnConnectEdgesChange: (changes: EdgeChange[]) => void;
   readonly onScenarioMainNodesChange: (changes: NodeChange[]) => void;
   readonly onScenarioMainEdgesChange: (changes: EdgeChange[]) => void;
   readonly onScenarioAlarmNodesChange: (changes: NodeChange[]) => void;
@@ -70,6 +95,7 @@ export interface DeviceBoardGraphContextValue {
   readonly onScenarioFunctionEdgesChange: (changes: EdgeChange[]) => void;
   readonly onSignalConnect: (connection: Connection) => void;
   readonly onScenarioInitialConnect: (connection: Connection) => void;
+  readonly onScenarioOnConnectConnect: (connection: Connection) => void;
   readonly onScenarioMainConnect: (connection: Connection) => void;
   readonly onScenarioAlarmConnect: (connection: Connection) => void;
   readonly onScenarioOnStopConnect: (connection: Connection) => void;
@@ -80,17 +106,47 @@ export interface DeviceBoardGraphContextValue {
   readonly refreshValidation: () => readonly PreRunValidationIssue[];
   readonly exportJson: () => Promise<void>;
   readonly importJsonFile: (file: File) => Promise<string | null>;
-  readonly syncStatus: 'idle' | 'loading' | 'saving' | 'saved' | 'error';
+  readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
+  /** Черновик отличается от последнего сохранённого снимка. */
+  readonly isDirty: boolean;
+  /** Сохранить сценарий на сервер / в persist-адаптер (только по явному клику). */
+  readonly saveScenario: () => Promise<boolean>;
   readonly startScenario: () => Promise<void>;
   readonly stopScenario: (reason?: ScenarioStopReason) => void;
   /** Ручной режim normal/alarm (MP7b RT3/RT6). Делегируется в ScenarioRuntime. */
   readonly mode: RuntimeMode;
   readonly setMode: (mode: RuntimeMode) => void;
-  /** Полная очистка борда: все ветки сценария и сигнал (MP7b RT6). */
-  readonly clearBoard: () => void;
-  /** Добавить ноду из палитры в активную ветку сценария (MP7b RT6). */
+  /** Показывать служебные логи библиотеки (host.log); Print всегда в консоль. */
+  readonly showInfoLogs: boolean;
+  readonly setShowInfoLogs: (enabled: boolean) => void;
+  /** Очистка узлов текущей ветки (Signal или активная Scenario-ветка); Event-entry сохраняется. */
+  readonly clearCurrentBranch: (layer: BoardLayerTab) => void;
+  /** Добавить legacy D0-ноду из палитры в активную ветку (только при legacy-флаге). */
   readonly addScenarioNodeToCurrentBranch: (blockKind: ScenarioBlockKind) => void;
+  /** v0.4 DBR5: добавить узел палитры Print/isValid/GetMicrophone в активную ветку. */
+  readonly addPaletteNodeToCurrentBranch: (nodeKind: V04PaletteNodeKind) => void;
+  /** v0.4 DBR5: обновить выбранный микрофон на узле get-microphone. */
+  readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
+  /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
+  readonly variables: readonly ScenarioVariable[];
+  /** v0.4: объявить новую переменную ссылочного типа. */
+  readonly addVariable: (type: ScenarioVariableType) => void;
+  /** v0.4: переименовать переменную. */
+  readonly renameVariable: (id: string, name: string) => void;
+  /** v0.4: удалить переменную и её узлы get/set со всех веток. */
+  readonly removeVariable: (id: string) => void;
+  /** v0.4: добавить узел get/set переменной в активную ветку. */
+  readonly addVariableNodeToCurrentBranch: (kind: VariableNodeKind, variableId: string) => void;
+  /** v0.4: привязать variable-get/set к переменной по имени (создаёт при отсутствии). */
+  readonly assignNodeVariableName: (nodeId: string, variableName: string) => void;
+  /** Runtime: снимок входов/выходов выбранного узла (только при isRunning). */
+  readonly inspectRuntimeNode: (
+    nodeId: string,
+    branch: ScenarioBranchTab,
+    nodes: readonly Node[],
+    edges: readonly Edge[],
+  ) => NodePortInspectionResult | null;
 }
 
 const DeviceBoardGraphContext = createContext<DeviceBoardGraphContextValue | null>(null);
@@ -101,6 +157,8 @@ export interface DeviceBoardGraphProviderProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
   readonly persistAdapter?: DeviceBoardPersistAdapter;
   readonly initialHydratedState?: HydratedBoardState;
+  /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
+  readonly deviceLive?: boolean;
 }
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
@@ -109,6 +167,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   runtimeHost,
   persistAdapter,
   initialHydratedState,
+  deviceLive,
 }) => {
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
@@ -121,6 +180,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [scenarioBranch, setScenarioBranch] = useState<ScenarioBranchTab>('initial');
   const [scenarioInitialNodes, setScenarioInitialNodes] = useState<Node[]>(defaultState.scenarioInitialNodes);
   const [scenarioInitialEdges, setScenarioInitialEdges] = useState<Edge[]>(defaultState.scenarioInitialEdges);
+  const [scenarioOnConnectNodes, setScenarioOnConnectNodes] = useState<Node[]>(
+    defaultState.scenarioOnConnectNodes,
+  );
+  const [scenarioOnConnectEdges, setScenarioOnConnectEdges] = useState<Edge[]>(
+    defaultState.scenarioOnConnectEdges,
+  );
   const [scenarioMainNodes, setScenarioMainNodes] = useState<Node[]>(defaultState.scenarioMainNodes);
   const [scenarioMainEdges, setScenarioMainEdges] = useState<Edge[]>(defaultState.scenarioMainEdges);
   const [scenarioAlarmNodes, setScenarioAlarmNodes] = useState<Node[]>(defaultState.scenarioAlarmNodes);
@@ -136,14 +201,28 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [scenarioFunctionNodes, setScenarioFunctionNodes] = useState<Node[]>(defaultState.scenarioFunctionNodes);
   const [scenarioFunctionEdges, setScenarioFunctionEdges] = useState<Edge[]>(defaultState.scenarioFunctionEdges);
   const [scenarioFunctionMeta, setScenarioFunctionMeta] = useState(defaultState.scenarioFunctionMeta);
+  const [variables, setVariables] = useState<readonly ScenarioVariable[]>(defaultState.variables);
   const [validationIssues, setValidationIssues] = useState<readonly PreRunValidationIssue[]>([]);
   const [runtimeState, setRuntimeState] = useState<ScenarioRuntimeState>(createIdleScenarioRuntimeState());
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'saved' | 'error'>('idle');
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const [showInfoLogs, setShowInfoLogs] = useState(true);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
-  const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const skipPersistRef = useRef(false);
+  const savedSnapshotRef = useRef<string | null>(null);
+  const skipDirtyRef = useRef(false);
+  /** После hydrate/load: baseline снимается из buildDocument() на следующем commit state. */
+  const pendingBaselineRef = useRef(false);
+
+  const markSavedSnapshot = useCallback((document: DeviceScenarioDocument) => {
+    savedSnapshotRef.current = scenarioDocumentFingerprint(document);
+    setIsDirty(false);
+  }, []);
+
+  useEffect(() => {
+    runtimeHost?.setInfoLoggingEnabled?.(showInfoLogs);
+  }, [runtimeHost, showInfoLogs]);
 
   useEffect(() => {
     if (runtimeHost === undefined) {
@@ -185,12 +264,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const applyHydratedState = useCallback((state: HydratedBoardState) => {
-    skipPersistRef.current = true;
+    skipDirtyRef.current = true;
     setDeviceKind(state.deviceKind);
     setSignalNodes(state.signalNodes);
     setSignalEdges(state.signalEdges);
     setScenarioInitialNodes(state.scenarioInitialNodes);
     setScenarioInitialEdges(state.scenarioInitialEdges);
+    setScenarioOnConnectNodes(state.scenarioOnConnectNodes);
+    setScenarioOnConnectEdges(state.scenarioOnConnectEdges);
     setScenarioMainNodes(state.scenarioMainNodes);
     setScenarioMainEdges(state.scenarioMainEdges);
     setScenarioAlarmNodes(state.scenarioAlarmNodes);
@@ -202,8 +283,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioFunctionNodes(state.scenarioFunctionNodes);
     setScenarioFunctionEdges(state.scenarioFunctionEdges);
     setScenarioFunctionMeta(state.scenarioFunctionMeta);
+    setVariables(state.variables);
     window.setTimeout(() => {
-      skipPersistRef.current = false;
+      skipDirtyRef.current = false;
     }, 0);
   }, []);
 
@@ -220,6 +302,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         if (cancelled) return;
         if (record !== null) {
           applyHydratedState(hydrateBoardFromDocument(record.document));
+          pendingBaselineRef.current = true;
+        } else {
+          pendingBaselineRef.current = true;
         }
         setSyncStatus('idle');
       })
@@ -231,7 +316,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     return () => {
       cancelled = true;
     };
-  }, [applyHydratedState, persistAdapter]);
+  }, [applyHydratedState, defaultState, deviceKindProp, markSavedSnapshot, persistAdapter]);
 
   const buildDocument = useCallback(() => {
     return buildDeviceScenarioDocument({
@@ -241,6 +326,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       signalEdges,
       scenarioInitialNodes,
       scenarioInitialEdges,
+      scenarioOnConnectNodes,
+      scenarioOnConnectEdges,
       scenarioMainNodes,
       scenarioMainEdges,
       scenarioAlarmNodes,
@@ -255,6 +342,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         signalEdges,
         scenarioInitialNodes,
         scenarioInitialEdges,
+        scenarioOnConnectNodes,
+        scenarioOnConnectEdges,
         scenarioMainNodes,
         scenarioMainEdges,
         scenarioAlarmNodes,
@@ -266,7 +355,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         scenarioFunctionNodes,
         scenarioFunctionEdges,
         scenarioFunctionMeta,
+        variables,
       })],
+      variables,
     });
   }, [
     deviceKind,
@@ -277,6 +368,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioFunctionNodes,
     scenarioInitialEdges,
     scenarioInitialNodes,
+    scenarioOnConnectEdges,
+    scenarioOnConnectNodes,
     scenarioMainEdges,
     scenarioMainNodes,
     scenarioOnDisconnectEdges,
@@ -285,6 +378,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioOnStopNodes,
     signalEdges,
     signalNodes,
+    variables,
   ]);
 
   const runValidation = useCallback(() => {
@@ -294,6 +388,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       signalEdges,
       scenarioInitialNodes,
       scenarioInitialEdges,
+      scenarioOnConnectNodes,
+      scenarioOnConnectEdges,
       scenarioMainNodes,
       scenarioMainEdges,
       scenarioAlarmNodes,
@@ -308,6 +404,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         signalEdges,
         scenarioInitialNodes,
         scenarioInitialEdges,
+        scenarioOnConnectNodes,
+        scenarioOnConnectEdges,
         scenarioMainNodes,
         scenarioMainEdges,
         scenarioAlarmNodes,
@@ -319,6 +417,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         scenarioFunctionNodes,
         scenarioFunctionEdges,
         scenarioFunctionMeta,
+        variables,
       })],
     });
     setValidationIssues(issues);
@@ -332,6 +431,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioFunctionNodes,
     scenarioInitialEdges,
     scenarioInitialNodes,
+    scenarioOnConnectEdges,
+    scenarioOnConnectNodes,
     scenarioMainEdges,
     scenarioMainNodes,
     scenarioOnDisconnectEdges,
@@ -340,6 +441,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioOnStopNodes,
     signalEdges,
     signalNodes,
+    variables,
   ]);
 
   const refreshValidation = useCallback((): readonly PreRunValidationIssue[] => {
@@ -355,11 +457,19 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioInitialNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioInitialNodes((nodes) => applyNodeChanges(changes, nodes));
+    setScenarioInitialNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
   }, []);
 
   const onScenarioInitialEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioInitialEdges((edges) => applyEdgeChanges(changes, edges));
+  }, []);
+
+  const onScenarioOnConnectNodesChange = useCallback((changes: NodeChange[]) => {
+    setScenarioOnConnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+  }, []);
+
+  const onScenarioOnConnectEdgesChange = useCallback((changes: EdgeChange[]) => {
+    setScenarioOnConnectEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
   const onScenarioMainNodesChange = useCallback((changes: NodeChange[]) => {
@@ -379,7 +489,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioOnStopNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioOnStopNodes((nodes) => applyNodeChanges(changes, nodes));
+    setScenarioOnStopNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
   }, []);
 
   const onScenarioOnStopEdgesChange = useCallback((changes: EdgeChange[]) => {
@@ -387,7 +497,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioOnDisconnectNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioOnDisconnectNodes((nodes) => applyNodeChanges(changes, nodes));
+    setScenarioOnDisconnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
   }, []);
 
   const onScenarioOnDisconnectEdgesChange = useCallback((changes: EdgeChange[]) => {
@@ -407,27 +517,31 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioInitialConnect = useCallback((connection: Connection) => {
-    setScenarioInitialEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioInitialEdges((edges) => addEdge(connection, edges));
+  }, []);
+
+  const onScenarioOnConnectConnect = useCallback((connection: Connection) => {
+    setScenarioOnConnectEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioMainConnect = useCallback((connection: Connection) => {
-    setScenarioMainEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioMainEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioAlarmConnect = useCallback((connection: Connection) => {
-    setScenarioAlarmEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioAlarmEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioOnStopConnect = useCallback((connection: Connection) => {
-    setScenarioOnStopEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioOnStopEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioOnDisconnectConnect = useCallback((connection: Connection) => {
-    setScenarioOnDisconnectEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioOnDisconnectEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioFunctionConnect = useCallback((connection: Connection) => {
-    setScenarioFunctionEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioFunctionEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const isValidConnectionForLayer = useCallback(
@@ -438,21 +552,24 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       const nodes =
         scenarioBranch === 'initial'
           ? scenarioInitialNodes
-          : scenarioBranch === 'main'
-            ? scenarioMainNodes
-            : scenarioBranch === 'alarm'
-              ? scenarioAlarmNodes
-              : scenarioBranch === 'onStop'
-                ? scenarioOnStopNodes
-                : scenarioBranch === 'onDisconnect'
-                  ? scenarioOnDisconnectNodes
-                  : scenarioFunctionNodes;
+          : scenarioBranch === 'onConnect'
+            ? scenarioOnConnectNodes
+            : scenarioBranch === 'main'
+              ? scenarioMainNodes
+              : scenarioBranch === 'alarm'
+                ? scenarioAlarmNodes
+                : scenarioBranch === 'onStop'
+                  ? scenarioOnStopNodes
+                  : scenarioBranch === 'onDisconnect'
+                    ? scenarioOnDisconnectNodes
+                    : scenarioFunctionNodes;
       return isValidBoardConnection(connection, nodes, layer);
     },
     [
       scenarioAlarmNodes,
       scenarioBranch,
       scenarioInitialNodes,
+      scenarioOnConnectNodes,
       scenarioMainNodes,
       scenarioOnStopNodes,
       scenarioOnDisconnectNodes,
@@ -471,18 +588,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     anchor.click();
     URL.revokeObjectURL(url);
     runValidation();
-    if (persistAdapter !== undefined) {
-      setSyncStatus('saving');
-      setSyncError(null);
-      try {
-        await persistAdapter.save(exported.document);
-        setSyncStatus('saved');
-      } catch (error: unknown) {
-        setSyncStatus('error');
-        setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
-      }
-    }
-  }, [buildDocument, deviceKind, persistAdapter, runValidation]);
+  }, [buildDocument, deviceKind, runValidation]);
 
   const importJsonFile = useCallback(
     async (file: File): Promise<string | null> => {
@@ -492,52 +598,59 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         return result.message;
       }
       applyHydratedState(result.state);
+      pendingBaselineRef.current = true;
       runValidation();
-      if (persistAdapter !== undefined) {
-        setSyncStatus('saving');
-        setSyncError(null);
-        try {
-          await persistAdapter.save(result.document);
-          setSyncStatus('saved');
-        } catch (error: unknown) {
-          setSyncStatus('error');
-          setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
-        }
-      }
       return null;
     },
-    [applyHydratedState, persistAdapter, runValidation],
+    [applyHydratedState, runValidation],
   );
 
+  const saveScenario = useCallback(async (): Promise<boolean> => {
+    if (persistAdapter === undefined) {
+      return false;
+    }
+    setSyncStatus('saving');
+    setSyncError(null);
+    const document = buildDocument();
+    try {
+      await persistAdapter.save(document);
+      markSavedSnapshot(document);
+      setSyncStatus('idle');
+      return true;
+    } catch (error: unknown) {
+      setSyncStatus('error');
+      setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
+      return false;
+    }
+  }, [buildDocument, markSavedSnapshot, persistAdapter]);
+
   useEffect(() => {
-    if (persistAdapter === undefined || skipPersistRef.current) {
+    if (persistAdapter !== undefined) {
       return;
     }
-    if (persistTimerRef.current !== null) {
-      clearTimeout(persistTimerRef.current);
+    if (savedSnapshotRef.current === null) {
+      markSavedSnapshot(buildDocument());
     }
-    persistTimerRef.current = setTimeout(() => {
-      setSyncStatus('saving');
-      setSyncError(null);
-      void persistAdapter
-        .save(buildDocument())
-        .then(() => {
-          setSyncStatus('saved');
-        })
-        .catch((error: unknown) => {
-          setSyncStatus('error');
-          setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
-        });
-    }, 1500);
+  }, [buildDocument, markSavedSnapshot, persistAdapter]);
 
-    return () => {
-      if (persistTimerRef.current !== null) {
-        clearTimeout(persistTimerRef.current);
-      }
-    };
+  useEffect(() => {
+    if (skipDirtyRef.current || syncStatus === 'loading') {
+      return;
+    }
+    if (pendingBaselineRef.current) {
+      pendingBaselineRef.current = false;
+      markSavedSnapshot(buildDocument());
+      return;
+    }
+    if (savedSnapshotRef.current === null) {
+      return;
+    }
+    const dirty = scenarioDocumentFingerprint(buildDocument()) !== savedSnapshotRef.current;
+    setIsDirty(dirty);
   }, [
     buildDocument,
-    persistAdapter,
+    markSavedSnapshot,
+    syncStatus,
     scenarioAlarmEdges,
     scenarioAlarmNodes,
     scenarioFunctionEdges,
@@ -545,6 +658,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioFunctionNodes,
     scenarioInitialEdges,
     scenarioInitialNodes,
+    scenarioOnConnectEdges,
+    scenarioOnConnectNodes,
     scenarioMainEdges,
     scenarioMainNodes,
     scenarioOnDisconnectEdges,
@@ -553,6 +668,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     scenarioOnStopNodes,
     signalEdges,
     signalNodes,
+    variables,
   ]);
 
   const startScenario = useCallback(async () => {
@@ -576,29 +692,91 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     runtimeRef.current?.setMode(mode);
   }, []);
 
-  const clearBoard = useCallback(() => {
-    setSignalNodes([]);
-    setSignalEdges([]);
-    setScenarioInitialNodes([]);
-    setScenarioInitialEdges([]);
-    setScenarioMainNodes([]);
-    setScenarioMainEdges([]);
-    setScenarioAlarmNodes([]);
-    setScenarioAlarmEdges([]);
-    setScenarioOnStopNodes([]);
-    setScenarioOnStopEdges([]);
-    setScenarioOnDisconnectNodes([]);
-    setScenarioOnDisconnectEdges([]);
-    setScenarioFunctionNodes([]);
-    setScenarioFunctionEdges([]);
-  }, []);
+  const clearCurrentBranch = useCallback(
+    (layer: BoardLayerTab) => {
+      if (layer === 'signal') {
+        setSignalNodes([]);
+        setSignalEdges([]);
+        return;
+      }
 
-  const addScenarioNodeToCurrentBranch = useCallback(
-    (blockKind: ScenarioBlockKind) => {
-      const node = createScenarioBoardNode(blockKind);
+      const preserveLocked = shouldPreserveLockedNodes(layer, scenarioBranch);
+      const apply = (nodes: Node[], edges: Edge[]) => clearBranchState(nodes, edges, preserveLocked);
+
       switch (scenarioBranch) {
+        case 'initial': {
+          const next = apply(scenarioInitialNodes, scenarioInitialEdges);
+          setScenarioInitialNodes(next.nodes);
+          setScenarioInitialEdges(next.edges);
+          break;
+        }
+        case 'onConnect': {
+          const next = apply(scenarioOnConnectNodes, scenarioOnConnectEdges);
+          setScenarioOnConnectNodes(next.nodes);
+          setScenarioOnConnectEdges(next.edges);
+          break;
+        }
+        case 'main': {
+          const next = apply(scenarioMainNodes, scenarioMainEdges);
+          setScenarioMainNodes(next.nodes);
+          setScenarioMainEdges(next.edges);
+          break;
+        }
+        case 'alarm': {
+          const next = apply(scenarioAlarmNodes, scenarioAlarmEdges);
+          setScenarioAlarmNodes(next.nodes);
+          setScenarioAlarmEdges(next.edges);
+          break;
+        }
+        case 'onStop': {
+          const next = apply(scenarioOnStopNodes, scenarioOnStopEdges);
+          setScenarioOnStopNodes(next.nodes);
+          setScenarioOnStopEdges(next.edges);
+          break;
+        }
+        case 'onDisconnect': {
+          const next = apply(scenarioOnDisconnectNodes, scenarioOnDisconnectEdges);
+          setScenarioOnDisconnectNodes(next.nodes);
+          setScenarioOnDisconnectEdges(next.edges);
+          break;
+        }
+        case 'function': {
+          const next = apply(scenarioFunctionNodes, scenarioFunctionEdges);
+          setScenarioFunctionNodes(next.nodes);
+          setScenarioFunctionEdges(next.edges);
+          break;
+        }
+        default:
+          break;
+      }
+    },
+    [
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioBranch,
+      scenarioFunctionEdges,
+      scenarioFunctionNodes,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+    ],
+  );
+
+  const appendNodeToBranch = useCallback(
+    (branch: ScenarioBranchTab, node: Node) => {
+      switch (branch) {
         case 'initial':
           setScenarioInitialNodes((nodes) => [...nodes, node]);
+          break;
+        case 'onConnect':
+          setScenarioOnConnectNodes((nodes) => [...nodes, node]);
           break;
         case 'main':
           setScenarioMainNodes((nodes) => [...nodes, node]);
@@ -619,12 +797,230 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
           break;
       }
     },
-    [scenarioBranch],
+    [],
   );
 
-  const canRun = useMemo(
-    () => isPreRunValid(validationIssues) && runtimeHost !== undefined && !runtimeState.isRunning,
-    [runtimeHost, runtimeState.isRunning, validationIssues],
+  const addVariable = useCallback((type: ScenarioVariableType) => {
+    setVariables((current) => {
+      const sameType = current.filter((variable) => variable.type === type).length;
+      const prefix =
+        type === 'DeviceRef'
+          ? 'device'
+          : type === 'MicrophoneRef'
+            ? 'microphone'
+            : type === 'ServerRef'
+              ? 'server'
+              : 'datetime';
+      const name = `${prefix}${sameType + 1}`;
+      const id = `var-${type}-${Date.now().toString(36)}-${current.length + 1}`;
+      return [...current, createScenarioVariable(id, name, type)];
+    });
+  }, []);
+
+  const renameVariable = useCallback((id: string, name: string) => {
+    const trimmed = name.trim();
+    if (trimmed === '') {
+      return;
+    }
+    setVariables((current) => {
+      const target = current.find((variable) => variable.id === id);
+      if (target === undefined || target.name === trimmed) {
+        return current;
+      }
+      const nameTaken = current.some(
+        (variable) =>
+          variable.id !== id && variable.name === trimmed && variable.type === target.type,
+      );
+      if (nameTaken) {
+        return current;
+      }
+      return current.map((variable) =>
+        variable.id === id ? { ...variable, name: trimmed } : variable,
+      );
+    });
+    const syncLabels = (nodes: Node[]) => syncVariableNodeLabels(nodes, id, trimmed);
+    setScenarioInitialNodes(syncLabels);
+    setScenarioOnConnectNodes(syncLabels);
+    setScenarioMainNodes(syncLabels);
+    setScenarioAlarmNodes(syncLabels);
+    setScenarioOnStopNodes(syncLabels);
+    setScenarioOnDisconnectNodes(syncLabels);
+    setScenarioFunctionNodes(syncLabels);
+  }, []);
+
+  const dropVariableNodes = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<Node[]>>, variableId: string) => {
+      setter((nodes) => nodes.filter((node) => node.data?.variableId !== variableId));
+    },
+    [],
+  );
+
+  const removeVariable = useCallback(
+    (id: string) => {
+      setVariables((current) => current.filter((variable) => variable.id !== id));
+      dropVariableNodes(setScenarioInitialNodes, id);
+      dropVariableNodes(setScenarioOnConnectNodes, id);
+      dropVariableNodes(setScenarioMainNodes, id);
+      dropVariableNodes(setScenarioAlarmNodes, id);
+      dropVariableNodes(setScenarioOnStopNodes, id);
+      dropVariableNodes(setScenarioOnDisconnectNodes, id);
+      dropVariableNodes(setScenarioFunctionNodes, id);
+    },
+    [dropVariableNodes],
+  );
+
+  const addVariableNodeToCurrentBranch = useCallback(
+    (kind: VariableNodeKind, variableId: string) => {
+      const variable = variables.find((candidate) => candidate.id === variableId);
+      if (variable === undefined) {
+        return;
+      }
+      appendNodeToBranch(scenarioBranch, createVariableBoardNode(kind, variable));
+    },
+    [appendNodeToBranch, scenarioBranch, variables],
+  );
+
+  const assignNodeVariableName = useCallback(
+    (nodeId: string, rawName: string) => {
+      const variableName = rawName.trim();
+      if (variableName === '') {
+        return;
+      }
+
+      const branchNodes =
+        scenarioBranch === 'initial'
+          ? scenarioInitialNodes
+          : scenarioBranch === 'onConnect'
+            ? scenarioOnConnectNodes
+            : scenarioBranch === 'main'
+              ? scenarioMainNodes
+              : scenarioBranch === 'alarm'
+                ? scenarioAlarmNodes
+                : scenarioBranch === 'onStop'
+                  ? scenarioOnStopNodes
+                  : scenarioBranch === 'onDisconnect'
+                    ? scenarioOnDisconnectNodes
+                    : scenarioFunctionNodes;
+
+      const target = branchNodes.find((node) => node.id === nodeId);
+      if (target === undefined) {
+        return;
+      }
+      if (target.data?.nodeKind !== 'variable-set') {
+        return;
+      }
+      const currentVariableId =
+        typeof target.data?.variableId === 'string' ? target.data.variableId : undefined;
+      if (currentVariableId === undefined) {
+        return;
+      }
+      const currentVariable = variables.find((item) => item.id === currentVariableId);
+      if (currentVariable === undefined || currentVariable.name === variableName) {
+        return;
+      }
+      const nameTaken = variables.some(
+        (item) =>
+          item.id !== currentVariableId &&
+          item.name === variableName &&
+          item.type === currentVariable.type,
+      );
+      if (nameTaken) {
+        return;
+      }
+
+      setVariables((current) =>
+        current.map((variable) =>
+          variable.id === currentVariableId ? { ...variable, name: variableName } : variable,
+        ),
+      );
+
+      const syncLabels = (nodes: Node[]) =>
+        syncVariableNodeLabels(nodes, currentVariableId, variableName);
+      setScenarioInitialNodes(syncLabels);
+      setScenarioOnConnectNodes(syncLabels);
+      setScenarioMainNodes(syncLabels);
+      setScenarioAlarmNodes(syncLabels);
+      setScenarioOnStopNodes(syncLabels);
+      setScenarioOnDisconnectNodes(syncLabels);
+      setScenarioFunctionNodes(syncLabels);
+    },
+    [
+      scenarioAlarmNodes,
+      scenarioBranch,
+      scenarioFunctionNodes,
+      scenarioInitialNodes,
+      scenarioOnConnectNodes,
+      scenarioMainNodes,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopNodes,
+      variables,
+    ],
+  );
+
+  const addScenarioNodeToCurrentBranch = useCallback(
+    (blockKind: ScenarioBlockKind) => {
+      appendNodeToBranch(scenarioBranch, createScenarioBoardNode(blockKind));
+    },
+    [appendNodeToBranch, scenarioBranch],
+  );
+
+  const addPaletteNodeToCurrentBranch = useCallback(
+    (nodeKind: V04PaletteNodeKind) => {
+      appendNodeToBranch(scenarioBranch, createPaletteBoardNode(nodeKind));
+    },
+    [appendNodeToBranch, scenarioBranch],
+  );
+
+  const patchNodeData = useCallback((nodeId: string, patch: Record<string, unknown>) => {
+    const mapNodes = (nodes: Node[]) =>
+      nodes.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, ...patch } } : node,
+      );
+    setScenarioInitialNodes(mapNodes);
+    setScenarioOnConnectNodes(mapNodes);
+    setScenarioMainNodes(mapNodes);
+    setScenarioAlarmNodes(mapNodes);
+    setScenarioOnStopNodes(mapNodes);
+    setScenarioOnDisconnectNodes(mapNodes);
+    setScenarioFunctionNodes(mapNodes);
+  }, []);
+
+  const updatePaletteNodeMicrophoneId = useCallback(
+    (nodeId: string, microphoneId: string) => {
+      patchNodeData(nodeId, { microphoneId });
+    },
+    [patchNodeData],
+  );
+
+  const runDisabledReason = useMemo(
+    () =>
+      resolveRunDisabledReason({
+        validationIssues,
+        hasRuntimeHost: runtimeHost !== undefined,
+        isRunning: runtimeState.isRunning,
+        deviceLive,
+      }),
+    [deviceLive, runtimeHost, runtimeState.isRunning, validationIssues],
+  );
+
+  const canRun = runDisabledReason === null;
+
+  const inspectRuntimeNode = useCallback(
+    (
+      nodeId: string,
+      branch: ScenarioBranchTab,
+      nodes: readonly Node[],
+      edges: readonly Edge[],
+    ): NodePortInspectionResult | null => {
+      const runtime = runtimeRef.current;
+      if (runtime === null || !runtime.getState().isRunning) {
+        return null;
+      }
+      const context = runtime.getInspectionResolveContext(branch);
+      const variables = runtime.getVariables();
+      return inspectNodePorts(nodeId, nodes, edges, variables, context);
+    },
+    [],
   );
 
   const value = useMemo<DeviceBoardGraphContextValue>(
@@ -635,6 +1031,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioBranch,
       scenarioInitialNodes,
       scenarioInitialEdges,
+      scenarioOnConnectNodes,
+      scenarioOnConnectEdges,
       scenarioMainNodes,
       scenarioMainEdges,
       scenarioAlarmNodes,
@@ -647,11 +1045,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionEdges,
       validationIssues,
       canRun,
+      runDisabledReason,
       runtimeState,
       onSignalNodesChange,
       onSignalEdgesChange,
       onScenarioInitialNodesChange,
       onScenarioInitialEdgesChange,
+      onScenarioOnConnectNodesChange,
+      onScenarioOnConnectEdgesChange,
       onScenarioMainNodesChange,
       onScenarioMainEdgesChange,
       onScenarioAlarmNodesChange,
@@ -664,6 +1065,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onScenarioFunctionEdgesChange,
       onSignalConnect,
       onScenarioInitialConnect,
+      onScenarioOnConnectConnect,
       onScenarioMainConnect,
       onScenarioAlarmConnect,
       onScenarioOnStopConnect,
@@ -676,20 +1078,40 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       importJsonFile,
       syncStatus,
       syncError,
+      isDirty,
+      saveScenario,
       startScenario,
       stopScenario,
       mode: runtimeState.mode,
       setMode,
-      clearBoard,
+      showInfoLogs,
+      setShowInfoLogs,
+      clearCurrentBranch,
       addScenarioNodeToCurrentBranch,
+      addPaletteNodeToCurrentBranch,
+      updatePaletteNodeMicrophoneId,
+      variables,
+      addVariable,
+      renameVariable,
+      removeVariable,
+      addVariableNodeToCurrentBranch,
+      assignNodeVariableName,
+      inspectRuntimeNode,
     }),
     [
       addScenarioNodeToCurrentBranch,
+      addPaletteNodeToCurrentBranch,
+      updatePaletteNodeMicrophoneId,
+      addVariable,
+      addVariableNodeToCurrentBranch,
+      assignNodeVariableName,
       canRun,
-      clearBoard,
+      clearCurrentBranch,
       deviceKind,
       exportJson,
       importJsonFile,
+      inspectRuntimeNode,
+      isDirty,
       isValidConnectionForLayer,
       onScenarioAlarmConnect,
       onScenarioAlarmEdgesChange,
@@ -697,6 +1119,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onScenarioInitialConnect,
       onScenarioInitialEdgesChange,
       onScenarioInitialNodesChange,
+      onScenarioOnConnectConnect,
+      onScenarioOnConnectEdgesChange,
+      onScenarioOnConnectNodesChange,
       onScenarioMainConnect,
       onScenarioMainEdgesChange,
       onScenarioMainNodesChange,
@@ -713,12 +1138,17 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onSignalEdgesChange,
       onSignalNodesChange,
       refreshValidation,
+      removeVariable,
+      renameVariable,
+      runDisabledReason,
       runtimeState,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
       scenarioBranch,
       scenarioInitialEdges,
       scenarioInitialNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
       scenarioMainEdges,
       scenarioMainNodes,
       scenarioOnStopEdges,
@@ -727,7 +1157,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnDisconnectNodes,
       scenarioFunctionEdges,
       scenarioFunctionNodes,
+      saveScenario,
       setMode,
+      setShowInfoLogs,
+      showInfoLogs,
       signalEdges,
       signalNodes,
       startScenario,
@@ -735,6 +1168,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       syncError,
       syncStatus,
       validationIssues,
+      variables,
     ],
   );
 

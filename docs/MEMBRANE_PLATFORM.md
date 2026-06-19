@@ -280,7 +280,7 @@ Envelope: `{ v, channel, type, ts, payload }`; каналы MP7: `journal | mic-
 
 | Тема | Когда |
 |------|-------|
-| Device-board runtime по WS | **MP7b** — после существенных правок device-board |
+| Device-board runtime по WS | **MP7b** — после существенных правок device-board; канон ядра: [`SCENARIO_RUNTIME.md`](./SCENARIO_RUNTIME.md) |
 | Sample library и WS | **Отдельный консилиум**; до решения — только REST |
 
 ### Что не делаем в MP7

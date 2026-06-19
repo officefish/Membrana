@@ -9,8 +9,12 @@
 > релиза — это «север» для пакета `device-board`, к которому будут сверяться
 > PR агентов AI-команды.
 >
-> Статус: **v0.3 — концепт** (signal + scenario, visual scripting, хакатон 1).
-> Предыдущая версия: v0.2 (2026-06, выбор `@xyflow/react`). Хранитель: Teamlead.
+> Статус: **v0.4 — концепт** (signal + scenario + переменные + dataflow-ссылки,
+> обработчики событий). Раздел изменений v0.4 — см. §15 (контракты `@membrana/core`
+> уже расширены: `DeviceRef`/`MicrophoneRef`, `scenario.onConnect`,
+> `scenario.variables`, таксономия `ScenarioNodeKind`; schema-версия документа → 2).
+> Предыдущие версии: v0.3 (signal + scenario, visual scripting, хакатон 1),
+> v0.2 (2026-06, выбор `@xyflow/react`). Хранитель: Teamlead.
 > Бриф и интервью: [`docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md`](../../docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md),
 > [`docs/seanses/hackathon-brief-interview-2026-06-17.md`](../../docs/seanses/hackathon-brief-interview-2026-06-17.md).
 > При конфликте с `WHITE_PAPER.md` / `ARCHITECTURE.md` выигрывают они.
@@ -265,6 +269,9 @@ Scenario runtime:
   audio-engine, trends templates);
 - не дублирует Web Audio и не обходит `MembranaRegistry`.
 
+Канонический документ по фазам, onTick, планировщику и host-портам:
+[`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).
+
 Пересмотр Rete — только если scenario runtime не покрывает кейс **и** это
 зафиксировано stage-gate в `docs/seanses/`.
 
@@ -420,8 +427,8 @@ Onboarding v1: тултипы + wizard на 3 шага + ссылка на manua
 | Ветка | Назначение | Ключевые правила |
 | ----- | ---------- | ---------------- |
 | `initial` | Старт: выбор mic, stream on, запись в журнал | Список устройств из `audio-engine` enumerate |
-| `main` (base loop) | Чанки (параметр, max 30 с, подряд) → trends FFT → журнал | Шаблон из библиотеки устройства; системный минимум неудаляем |
-| `alarm` | По фронту детекции; raw level через sound-quality plugin | Отдельный **тег** в журнале (J2); выход при «достаточно тихо» |
+| `main` (base loop) | onTick → чанки → trends FFT → журнал → ∞ | Entry: `onMainTick`; итерация завершается узлом `loop-repeat`; см. [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md) |
+| `alarm` | По фронту детекции; raw level через sound-quality plugin | Entry: `onAlarmTick`; пауза 400 ms между итерациями; отдельный **тег** в журнале (J2) |
 | `onStop` | Teardown; сценарий на канвасе остаётся editable (T2) | UI-кнопка + системное событие |
 | `onDisconnect` | Stop (единая ветка mic/server пока, T3) | Позже: restart по таймеру |
 | `custom[]` | Пользовательские триггеры | Расширяемый список |
@@ -450,9 +457,13 @@ Subgraph / функции: pins на границе, глубина вложен
 
 Согласовано с `docs/MODULE_AND_PLUGIN_UI.md` и бриф-интервью (U1–U4):
 
-1. **Board mode** — отдельный layout; приоритет **split** (канвас + inspector);
-   fullscreen опционально. Вкладки **Signal** / **Scenario**; цвета слоёв —
-   токены **DaisyUI** (`docs/DESIGN.md`).
+1. **Board mode** — отдельный **fullscreen**-layout (канон v0.4): shell владеет
+   высотой (`h-screen` → ряд `flex-1 min-h-0` → `<main>` `flex-col` → канвас
+   `flex-1`), канвас всегда дотягивается до **нижнего края страницы**; сайдбары
+   (вкладки/палитра/инспектор) — боковые панели с внутренним скроллом, высоту
+   ряда не распирают. Единый host-контракт: cabinet (`fixed inset-0`) и client
+   (replace `Dashboard`). Вкладки **Signal** / **Scenario**; цвета слоёв —
+   токены **DaisyUI** (`docs/DESIGN.md`). См. §15.
 2. **Доска — модуль** `id: 'device-board'`, `@xyflow/react`, без лишней `card`.
 3. **Настройки нод — в сайдбаре** (U2). §3 MODULE_AND_PLUGIN_UI не нарушается.
 4. **На ноде** — имя, цветные сокеты, статус (`active` / `inactive` / `missing` / `invalid`).
@@ -623,7 +634,14 @@ Subgraph / функции: pins на границе, глубина вложен
 
 ## 14. Статус и порядок изменения
 
-- **Статус:** v0.3 — концепт (signal + scenario).
+- **Статус:** v0.4 — концепт (signal + scenario + переменные + dataflow).
+- **Changelog v0.4 (2026-06-18):** обработчики событий
+  `onConnect/onStart/onStop/onDisconnect` (§15); переменные сценария
+  (document-scope, ссылочные `DeviceRef`/`MicrophoneRef`); системный Event-узел;
+  dataflow-ссылки с флагом `valid`; таксономия `ScenarioNodeKind`
+  (`event`/`variable-get`/`variable-set`/`print`/`is-valid`/`get-microphone`);
+  schema `device-scenario` → v2 (expand: миграция v1 `initial→onStart`, `+onConnect`,
+  `+variables`). Эпик `device-board-refactor-v04` (issue #95), фаза DBR0.
 - **Changelog v0.3 (2026-06-17):** продуктовая цель visual scripting; два слоя
   Signal/Scenario; scenario runtime; board mode; device-scenario JSON v1;
   системные ветки; ссылка на хакатон 1; закрытие exec-пинов через scenario layer.
@@ -635,3 +653,120 @@ Subgraph / функции: pins на границе, глубина вложен
   в `WHITE_PAPER.md`.
 - При конфликте этого документа с `WHITE_PAPER.md` / `ARCHITECTURE.md` —
   выигрывают они.
+
+---
+
+## 15. Рефакторинг v0.4: обработчики событий, переменные, dataflow
+
+> Раздел фиксирует модель v0.4. Контракты `@membrana/core` уже расширены в фазе
+> DBR0 (эпик `device-board-refactor-v04`, issue #95); UI/runtime — фазы DBR1–DBR6.
+> Полный план: [`docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_REFACTOR_V04_EPIC_PROMPT.md).
+> Решения консилиума: [`docs/seanses/device-board-refactor-v04-2026-06-18.md`](../../docs/seanses/device-board-refactor-v04-2026-06-18.md).
+
+### 15.1 Обработчики событий
+
+Сценарий устройства имеет 4 системных обработчика событий и 2 лупа:
+
+| Обработчик | Поле схемы | Данные Event-узла | Назначение |
+|------------|-----------|-------------------|------------|
+| `onConnect` | `scenario.onConnect` (новое в v2) | `DeviceRef` (valid) | устройство подключилось |
+| `onStart` | `scenario.initial` (лейбл «On start») | `DeviceRef` (valid) | запуск сценария |
+| `onStop` | `scenario.triggers.onStop` | `DeviceRef` | остановка |
+| `onDisconnect` | `scenario.triggers.onDisconnect` | `null` → invalid | потеря связи |
+| `main` / `alarm` | `scenario.loops.*` | — | рабочие лупы |
+
+`onStart` — презентационный лейбл подграфа `initial`; сериализация ветки в JSON
+сохраняется как `initial` (совместимость без слома round-trip).
+
+### 15.2 Системный Event-узел
+
+В каждом обработчике события первым узлом жёстко зашит **Event-узел**
+(`nodeKind: 'event'`, `system: true`): он неудаляем и является точкой входа
+exec-потока и источником data-ссылки. Удаление/отсутствие — ошибка валидации.
+
+**Реализовано (DBR3):** добавлена ветка-обработчик `onConnect` (4 обработчика
+событий в левом сайдбаре: `onConnect`/`onStart`/`onStop`/`onDisconnect`).
+Системный Event-узел (`createEventBoardNode`): `deletable:false` + guard
+`rejectSystemNodeRemovals` отбрасывает UI-`remove` для системных узлов;
+авто-инжект как entry каждого обработчика при гидратации (`ensureEventEntry`,
+фикс-id `*-event`); data-выход `DeviceRef` (значение `null` в `onDisconnect`
+различается рантаймом — DBR4); pre-run-правило «entry обработчика обязан быть
+Event-узлом» (`event-entry-required`). Рантайм исполняет Event как pass-through;
+сериализация Event round-trip (build → parse → hydrate).
+
+### 15.3 Переменные сценария
+
+Переменная — типизированная ссылка document-scope (конструктор переменных в
+левом сайдбаре). Модель: `ScenarioVariable = { id, name, type, value }`, где
+`type ∈ {DeviceRef, MicrophoneRef}`, а `value` — `ScenarioReferenceValue
+{ kind, handle, valid }` либо `null` (не задана). Узлы `variable-get` /
+`variable-set` читают/пишут переменную по `variableId`.
+
+- **onConnect:** Event(`DeviceRef` valid) → `variable-set` в пользовательскую
+  переменную Device → ссылка становится постоянной и валидной.
+- **onDisconnect:** Event(`null`) → `variable-set` → ссылка `valid:false`.
+- **onStart:** Event(`DeviceRef`) → `is-valid` → (true) `get-microphone`
+  (выбор из списка) → `variable-set` в переменную Microphone (для loop-сценариев).
+
+**Реализовано (DBR2):** конструктор переменных в левом сайдбаре под «Конструктор
+функций» (создание `+ Device`/`+ Microphone`, переименование, удаление,
+индикатор `не задана`/`valid`/`invalid`); узлы `variable-get`/`variable-set`
+(кнопки get/set добавляют узел в активную ветку), типизированные пины по
+ссылочному `SocketType`; сериализация `scenario.variables` и узлов
+(round-trip build → parse → hydrate; узлы с отсутствующей переменной
+отбрасываются при гидратации). Запись значения в host и протяжка данных —
+**DBR4** (см. §15.4).
+
+### 15.4 Dataflow и валидность
+
+Data-рёбра несут ссылочные `SocketType` (`DeviceRef`/`MicrophoneRef`).
+Резолюция значений — pull-based (lazy input resolution, фаза DBR4):
+терминальный/потребляющий узел тянет вход по data-ребру. Флаг `valid` ссылки
+отражает доступность ресурса; `invalidateReference` помечает её висячей,
+не теряя `handle` для диагностики. Совместимость соединения — по точному
+совпадению типа (`isValidSocketConnection`).
+
+**Реализовано (DBR4):** чистая `resolveInput(subgraph, variables, nodeId, port,
+context)` — pull-резолюция от Event/variable-get; `resolveEventReference` по
+ветви (`onConnect`/`initial`/`onStop` → valid `DeviceRef`; `onDisconnect` →
+`null`); `isReferenceValid` — предикат для `is-valid` (DBR5); `applyVariableSetValue`
+(onConnect → `valid=true`, onDisconnect null → `invalidateReference`, идемпотентность
+set). `ScenarioVariableStore` + `variable-set` в `block-executor`; `ScenarioRuntime`
+сбрасывает store при load, `runOnConnect()` для обработчика onConnect. Unit-тесты:
+valid/invalid/null, idempotent set, type mismatch, cycle, runtime integration.
+
+### 15.5 Палитра v0.4 (правый сайдбар)
+
+Пока только: `print` (терминальный лог; принимает `DeviceRef`/`MicrophoneRef`),
+`is-valid` (условный по валидности ссылки), `get-microphone` (извлекает
+`MicrophoneRef` из `DeviceRef`, выбор микрофона из списка устройства).
+Кнопка «Пуск» неактивна, если связь с устройством разорвана (online-presence,
+фаза DBR6) — и в списке устройств, и на борде.
+
+**Реализовано (DBR6):** единый селектор `isDeviceLive(deviceId)` на сторону —
+cabinet: presence map из WS `node.online`/`node.offline` (`useCabinetNodeRuntime`);
+client paired: WS `connected` (`useDeviceLive`); автономный клиент — без gating.
+`resolveRunDisabledReason` + `deviceLive` prop в `DeviceBoardGraphProvider`;
+disabled + `title`/`aria-label` «нет связи с устройством» в `NodesPage` и Run на борде.
+
+**Реализовано (DBR5):** правый сайдбар по умолчанию — 3 узла (`Print`/`isValid`/
+`GetMicrophone`); legacy D0-палитра только при `VITE_DEVICE_BOARD_LEGACY_PALETTE=true`.
+Фабрики `createPaletteBoardNode`, pins и round-trip сериализация; `Print` логирует
+`formatReferenceForPrint` (handle + valid); `is-valid` ветвит exec (`exec-true-out` /
+`exec-false-out` по `isReferenceValid`); `get-microphone` — dropdown микрофона в
+инспекторе из `host.enumerateMicrophones` (audio-engine enumerate), data-выход
+`MicrophoneRef` через `resolveInput` для set переменной Microphone.
+
+### 15.6 Контракты (DBR0, уже в `@membrana/core`)
+
+- `SocketType += 'DeviceRef' | 'MicrophoneRef'`; `REFERENCE_SOCKET_TYPES`,
+  `isReferenceSocketType`.
+- `scenario-variables.ts`: `ScenarioVariable`, `ScenarioReferenceValue`,
+  `createReferenceValue` / `invalidateReference` / `createScenarioVariable`.
+- `scenario-node-kind.ts`: `SCENARIO_NODE_KINDS`, `ScenarioNodeKind`,
+  `SYSTEM_SCENARIO_NODE_KINDS` (`data.kind`-таксономия, отдельная от legacy
+  D0 `SCENARIO_BLOCK_KINDS`).
+- `ScenarioGraphNode += nodeKind? / system? / variableId?` (аддитивно).
+- `ScenarioGraph += onConnect / variables`.
+- `DEVICE_SCENARIO_DOCUMENT_VERSION = 2`, `DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1`;
+  `parseDeviceScenarioDocument` мигрирует v1→v2 и отклоняет version > 2.
