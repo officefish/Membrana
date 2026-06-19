@@ -26,6 +26,8 @@ import {
   createPaletteBoardNode,
   createScenarioBoardNode,
   createVariableBoardNode,
+  branchScenarioExportFilename,
+  buildBranchScenarioExport,
   exportDeviceScenarioDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
@@ -104,7 +106,8 @@ export interface DeviceBoardGraphContextValue {
   readonly isValidConnection: (layer: BoardLayerTab, connection: Connection) => boolean;
   readonly setScenarioBranch: (branch: ScenarioBranchTab) => void;
   readonly refreshValidation: () => readonly PreRunValidationIssue[];
-  readonly exportJson: () => Promise<void>;
+  /** Signal — полный документ; scenario — только активная ветка-обработчик. */
+  readonly exportJson: (layer?: BoardLayerTab) => Promise<void>;
   readonly importJsonFile: (file: File) => Promise<string | null>;
   readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
@@ -578,17 +581,91 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     ],
   );
 
-  const exportJson = useCallback(async () => {
-    const exported = await exportDeviceScenarioDocument(buildDocument());
-    const blob = new Blob([exported.json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = window.document.createElement('a');
-    anchor.href = url;
-    anchor.download = `device-scenario-${deviceKind}.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    runValidation();
-  }, [buildDocument, deviceKind, runValidation]);
+  const exportJson = useCallback(
+    async (layer: BoardLayerTab = 'scenario') => {
+      let json: string;
+      let downloadName: string;
+
+      if (layer === 'signal') {
+        const exported = await exportDeviceScenarioDocument(buildDocument());
+        json = exported.json;
+        downloadName = `device-scenario-${deviceKind}.json`;
+      } else {
+        const branchNodes =
+          scenarioBranch === 'initial'
+            ? scenarioInitialNodes
+            : scenarioBranch === 'onConnect'
+              ? scenarioOnConnectNodes
+              : scenarioBranch === 'main'
+                ? scenarioMainNodes
+                : scenarioBranch === 'alarm'
+                  ? scenarioAlarmNodes
+                  : scenarioBranch === 'onStop'
+                    ? scenarioOnStopNodes
+                    : scenarioBranch === 'onDisconnect'
+                      ? scenarioOnDisconnectNodes
+                      : scenarioFunctionNodes;
+        const branchEdges =
+          scenarioBranch === 'initial'
+            ? scenarioInitialEdges
+            : scenarioBranch === 'onConnect'
+              ? scenarioOnConnectEdges
+              : scenarioBranch === 'main'
+                ? scenarioMainEdges
+                : scenarioBranch === 'alarm'
+                  ? scenarioAlarmEdges
+                  : scenarioBranch === 'onStop'
+                    ? scenarioOnStopEdges
+                    : scenarioBranch === 'onDisconnect'
+                      ? scenarioOnDisconnectEdges
+                      : scenarioFunctionEdges;
+
+        const branchExport = buildBranchScenarioExport({
+          deviceKind,
+          branch: scenarioBranch,
+          nodes: branchNodes,
+          edges: branchEdges,
+          variables,
+          ...(scenarioBranch === 'function'
+            ? { functionMeta: scenarioFunctionMeta }
+            : {}),
+        });
+        json = JSON.stringify(branchExport, null, 2);
+        downloadName = branchScenarioExportFilename(deviceKind, scenarioBranch);
+      }
+
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = window.document.createElement('a');
+      anchor.href = url;
+      anchor.download = downloadName;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      runValidation();
+    },
+    [
+      buildDocument,
+      deviceKind,
+      runValidation,
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioBranch,
+      scenarioFunctionEdges,
+      scenarioFunctionMeta,
+      scenarioFunctionNodes,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+      variables,
+    ],
+  );
 
   const importJsonFile = useCallback(
     async (file: File): Promise<string | null> => {
@@ -810,7 +887,17 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
             ? 'microphone'
             : type === 'ServerRef'
               ? 'server'
-              : 'datetime';
+              : type === 'AudioStreamRef'
+                ? 'audiostream'
+                : type === 'AudioSampleRef'
+                  ? 'audiosample'
+                  : type === 'FftFrameRef'
+                  ? 'fftframe'
+                  : type === 'Integer'
+                    ? 'integer'
+                    : type === 'String'
+                      ? 'string'
+                      : 'datetime';
       const name = `${prefix}${sameType + 1}`;
       const id = `var-${type}-${Date.now().toString(36)}-${current.length + 1}`;
       return [...current, createScenarioVariable(id, name, type)];

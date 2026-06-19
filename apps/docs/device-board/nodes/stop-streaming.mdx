@@ -1,0 +1,22 @@
+---
+title: StopStreaming
+description: Остановка stream и очистка capture
+---
+
+# StopStreaming
+
+## Pins
+
+| Direction | Name | Type |
+|-----------|------|------|
+| in | exec-in | exec |
+| in | microphone | MicrophoneRef (optional) |
+| out | exec-out | exec |
+
+## Runtime
+
+`host.stopAudioStreaming(mic)` — останавливает engine stream, clears sample/fft maps in bridge.
+
+## Typical use
+
+onStop / onDisconnect teardown chains.

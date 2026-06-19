@@ -1,7 +1,16 @@
-import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioSubgraph } from '@membrana/core';
+import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioReferenceValue, ScenarioSubgraph } from '@membrana/core';
 
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
-import { PALETTE_VALUE_HANDLE, IS_VALID_FALSE_HANDLE, IS_VALID_TRUE_HANDLE } from '../graph/palette-node.js';
+import {
+  GET_AUDIO_STREAM_MIC_HANDLE,
+  GET_FFT_FRAME_SAMPLE_HANDLE,
+  GET_SAMPLE_STREAM_HANDLE,
+  PALETTE_VALUE_HANDLE,
+  IS_VALID_FALSE_HANDLE,
+  IS_VALID_TRUE_HANDLE,
+  STOP_STREAMING_MIC_HANDLE,
+  STREAMING_MIC_HANDLE,
+} from '../graph/palette-node.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { formatVariableValueForPrintRuntime } from './format-reference.js';
@@ -168,6 +177,123 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       nodeId: node.id,
       branch,
       microphoneId: (node as { microphoneId?: string }).microphoneId,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'start-streaming') {
+    let microphone: ScenarioReferenceValue | null = null;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const resolved = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        STREAMING_MIC_HANDLE,
+        resolveContext,
+      );
+      microphone =
+        resolved !== null && resolved.kind === 'MicrophoneRef' ? resolved : null;
+    }
+    if (host.startAudioStreaming !== undefined) {
+      await host.startAudioStreaming(microphone);
+    } else {
+      await host.startStream();
+    }
+    host.log('start-streaming', { nodeId: node.id, branch, microphone: microphone?.handle });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'stop-streaming') {
+    let microphone: ScenarioReferenceValue | null = null;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const resolved = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        STOP_STREAMING_MIC_HANDLE,
+        resolveContext,
+      );
+      microphone =
+        resolved !== null && resolved.kind === 'MicrophoneRef' ? resolved : null;
+    }
+    if (host.stopAudioStreaming !== undefined) {
+      await host.stopAudioStreaming(microphone);
+    } else {
+      await host.stopStream();
+    }
+    host.log('stop-streaming', { nodeId: node.id, branch, microphone: microphone?.handle });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'get-audio-stream') {
+    let microphone: ScenarioReferenceValue | null = null;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const resolved = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        GET_AUDIO_STREAM_MIC_HANDLE,
+        resolveContext,
+      );
+      microphone =
+        resolved !== null && resolved.kind === 'MicrophoneRef' ? resolved : null;
+    }
+    host.log('get-audio-stream', {
+      nodeId: node.id,
+      branch,
+      microphone: microphone?.handle,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'get-sample') {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('get-sample requires variableStore and resolveContext');
+    }
+    const streamRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      GET_SAMPLE_STREAM_HANDLE,
+      resolveContext,
+    );
+    if (
+      host.captureAudioSample !== undefined &&
+      streamRef !== null &&
+      streamRef.kind === 'AudioStreamRef'
+    ) {
+      await host.captureAudioSample(node.id, streamRef);
+    }
+    host.log('get-sample', {
+      nodeId: node.id,
+      branch,
+      streamHandle: streamRef?.kind === 'AudioStreamRef' ? streamRef.handle : null,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'get-fft-frame') {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('get-fft-frame requires variableStore and resolveContext');
+    }
+    const sampleRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      GET_FFT_FRAME_SAMPLE_HANDLE,
+      resolveContext,
+    );
+    if (
+      host.computeFftFrame !== undefined &&
+      sampleRef !== null &&
+      sampleRef.kind === 'AudioSampleRef'
+    ) {
+      await host.computeFftFrame(node.id, sampleRef);
+    }
+    host.log('get-fft-frame', {
+      nodeId: node.id,
+      branch,
+      sampleHandle: sampleRef?.kind === 'AudioSampleRef' ? sampleRef.handle : null,
     });
     return { lastDetection, stopRequested: false };
   }

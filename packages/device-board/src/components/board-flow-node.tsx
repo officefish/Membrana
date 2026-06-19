@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Handle, Position, useStore, type NodeProps } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from '../graph/board-node-data.js';
 import { isBoardFlowNodeData } from '../graph/board-node-data.js';
+import { findPassthroughPortLanes, handleOffsetPercent } from '../graph/node-passthrough-port.js';
 import {
   resolveContextValuePin,
   resolveContextValuePortLabel,
@@ -23,13 +24,6 @@ const STATUS_BADGE: Partial<Record<NonNullable<BoardFlowNodeData['status']>, str
 };
 
 const PIN_ROW_PX = 22;
-
-function handleOffset(index: number, total: number): string {
-  if (total <= 1) {
-    return '50%';
-  }
-  return `${((index + 1) / (total + 1)) * 100}%`;
-}
 
 function variableDisplayName(data: BoardFlowNodeData): string {
   const label = data.label;
@@ -73,12 +67,14 @@ function renderHandles(
   position: Position,
   resolvePin: (pin: BoardSocketPin) => BoardSocketPin,
   resolveLabel: (pin: BoardSocketPin) => string,
+  passthroughHandles: ReadonlySet<string>,
 ): React.ReactNode {
   const isLeft = position === Position.Left;
   return pins.map((pin, index) => {
     const resolvedPin = resolvePin(pin);
     const label = resolveLabel(resolvedPin);
-    const top = handleOffset(index, pins.length);
+    const top = `${handleOffsetPercent(index, pins.length)}%`;
+    const showCornerLabel = !passthroughHandles.has(pin.name);
     return (
       <React.Fragment key={pin.name}>
         <Handle
@@ -89,15 +85,17 @@ function renderHandles(
           className={socketHandleClass(resolvedPin)}
           title={label}
         />
-        <span
-          className={[
-            'pointer-events-none absolute -translate-y-1/2 whitespace-nowrap font-mono text-[9px] leading-none text-base-content/70',
-            isLeft ? 'left-3 text-left' : 'right-3 text-right',
-          ].join(' ')}
-          style={{ top }}
-        >
-          {label}
-        </span>
+        {showCornerLabel ? (
+          <span
+            className={[
+              'pointer-events-none absolute -translate-y-1/2 whitespace-nowrap font-mono text-[9px] leading-none text-base-content/70',
+              isLeft ? 'left-4 text-left' : 'right-4 text-right',
+            ].join(' ')}
+            style={{ top }}
+          >
+            {label}
+          </span>
+        ) : null}
       </React.Fragment>
     );
   });
@@ -134,27 +132,42 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
     [data, edges, id, nodes],
   );
 
-  if (!isBoardFlowNodeData(data)) {
+  const flowData = isBoardFlowNodeData(data) ? data : null;
+  const inputs = flowData?.inputs ?? [];
+  const outputs = flowData?.outputs ?? [];
+
+  const passthroughLanes = useMemo(
+    () => findPassthroughPortLanes(inputs, outputs, resolveLabel),
+    [inputs, outputs, resolveLabel],
+  );
+  const passthroughHandles = useMemo(() => {
+    const handles = new Set<string>();
+    for (const lane of passthroughLanes) {
+      handles.add(lane.inputHandle);
+      handles.add(lane.outputHandle);
+    }
+    return handles;
+  }, [passthroughLanes]);
+
+  if (!flowData) {
     return null;
   }
 
-  const status = data.status ?? 'active';
-  const inputs = data.inputs ?? [];
-  const outputs = data.outputs ?? [];
-  const isSystem = data.system === true;
+  const status = flowData.status ?? 'active';
+  const isSystem = flowData.system === true;
   const statusBadgeClass = status !== 'active' ? STATUS_BADGE[status] : undefined;
-  const pinRows = Math.max(inputs.length, outputs.length, data.nodeKind === 'loop-repeat' ? 1 : 0, 1);
-  const bodyHeightPx = data.nodeKind === 'loop-repeat' ? 48 : pinRows * PIN_ROW_PX + 8;
+  const pinRows = Math.max(inputs.length, outputs.length, flowData.nodeKind === 'loop-repeat' ? 1 : 0, 1);
+  const bodyHeightPx = flowData.nodeKind === 'loop-repeat' ? 48 : pinRows * PIN_ROW_PX + 8;
 
   return (
     <div
       className={[
-        'relative min-w-[156px] overflow-hidden rounded-lg border bg-base-100 shadow-sm',
-        isSystem ? 'border-accent/60 ring-1 ring-accent/20' : LAYER_BORDER[data.layer],
+        'relative min-w-[220px] overflow-hidden rounded-lg border bg-base-100 shadow-sm',
+        isSystem ? 'border-accent/60 ring-1 ring-accent/20' : LAYER_BORDER[flowData.layer],
         selected ? 'ring-2 ring-primary/50' : '',
       ].join(' ')}
       data-system={isSystem ? 'true' : undefined}
-      aria-label={isSystem ? `Системный узел: ${data.label}` : undefined}
+      aria-label={isSystem ? `Системный узел: ${flowData.label}` : undefined}
     >
       <div
         className={[
@@ -168,7 +181,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
               🔒
             </span>
           ) : null}
-          <span className="truncate">{renderNodeTitle(data)}</span>
+          <span className="truncate">{renderNodeTitle(flowData)}</span>
         </span>
         {isSystem ? (
           <span className="badge badge-xs shrink-0 badge-accent">system</span>
@@ -177,13 +190,22 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
         ) : null}
       </div>
       <div className="relative" style={{ minHeight: bodyHeightPx }}>
-        {data.nodeKind === 'loop-repeat' ? (
+        {flowData.nodeKind === 'loop-repeat' ? (
           <div className="flex h-full items-center justify-center py-2 text-3xl text-accent/80" aria-hidden="true">
             ∞
           </div>
         ) : null}
-        {renderHandles(inputs, 'target', Position.Left, resolvePin, resolveLabel)}
-        {renderHandles(outputs, 'source', Position.Right, resolvePin, resolveLabel)}
+        {passthroughLanes.map((lane) => (
+          <span
+            key={`${lane.inputHandle}:${lane.outputHandle}`}
+            className="pointer-events-none absolute left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[9px] leading-none text-base-content/80"
+            style={{ top: `${lane.centerTopPercent}%` }}
+          >
+            {lane.centerText}
+          </span>
+        ))}
+        {renderHandles(inputs, 'target', Position.Left, resolvePin, resolveLabel, passthroughHandles)}
+        {renderHandles(outputs, 'source', Position.Right, resolvePin, resolveLabel, passthroughHandles)}
       </div>
     </div>
   );

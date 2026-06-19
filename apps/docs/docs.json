@@ -1,0 +1,47 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Membrana",
+  "theme": "mint",
+  "colors": {
+    "primary": "#0d9488",
+    "light": "#14b8a6",
+    "dark": "#0f766e"
+  },
+  "navigation": [
+    {
+      "group": "Device Board",
+      "pages": [
+        "device-board/mvp-overview",
+        "device-board/architecture",
+        "device-board/editor/overview"
+      ]
+    },
+    {
+      "group": "Concepts",
+      "pages": [
+        "concepts/reference-model",
+        "concepts/variable-store",
+        "concepts/streaming-lifecycle"
+      ]
+    },
+    {
+      "group": "Cookbooks",
+      "pages": ["device-board/cookbooks/on-start-to-main"]
+    },
+    {
+      "group": "Nodes",
+      "pages": [
+        "device-board/nodes/index",
+        "device-board/nodes/is-valid",
+        "device-board/nodes/start-streaming",
+        "device-board/nodes/get-audio-stream",
+        "device-board/nodes/get-sample"
+      ]
+    }
+  ],
+  "footer": {
+    "socials": {
+      "github": "https://github.com/officefish/Membrana"
+    }
+  }
+}

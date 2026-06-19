@@ -9,8 +9,13 @@ import {
 
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
 import {
+  GET_AUDIO_STREAM_MIC_HANDLE,
+  GET_AUDIO_STREAM_OUT_HANDLE,
+  GET_FFT_FRAME_OUT_HANDLE,
   GET_MICROPHONE_DEVICE_HANDLE,
   GET_MICROPHONE_OUT_HANDLE,
+  GET_SAMPLE_OUT_HANDLE,
+  PRINT_OUT_HANDLE,
 } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
@@ -32,6 +37,14 @@ export interface ResolveInputContext {
   readonly loopElapsedMs?: number;
   /** onTick: миллисекунды с предыдущего тика лупа (для `tickMs`). */
   readonly loopTickMs?: number;
+  /** Активный AudioStream (host); для get-audio-stream. */
+  readonly getActiveAudioStreamRef?: () => ScenarioReferenceValue;
+  /** Последний AudioSample по nodeId (host); для get-sample. */
+  readonly getCapturedAudioSampleRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** Последний FftFrame по nodeId (host); для get-fft-frame. */
+  readonly getCapturedFftFrameRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** Текст последнего Print по nodeId (host/runtime state). */
+  readonly getPrintOutputValue?: (nodeId: string) => ScenarioVariableValue | null;
 }
 
 export type ResolveInputErrorCode =
@@ -111,6 +124,77 @@ function resolveGetMicrophoneOutput(
   return createReferenceValue('MicrophoneRef', microphoneId);
 }
 
+function invalidAudioStreamRef(): ScenarioReferenceValue {
+  return { kind: 'AudioStreamRef', handle: null, valid: false };
+}
+
+function invalidAudioSampleRef(): ScenarioReferenceValue {
+  return { kind: 'AudioSampleRef', handle: null, valid: false };
+}
+
+function invalidFftFrameRef(): ScenarioReferenceValue {
+  return { kind: 'FftFrameRef', handle: null, valid: false };
+}
+
+function resolveGetAudioStreamOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const resolver = context.getActiveAudioStreamRef;
+  if (resolver === undefined) {
+    return invalidAudioStreamRef();
+  }
+  const active = resolver();
+  if (!active.valid || active.handle === null) {
+    return invalidAudioStreamRef();
+  }
+
+  const micRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_AUDIO_STREAM_MIC_HANDLE,
+    context,
+    visiting,
+  );
+  if (micRef !== null && micRef.kind === 'MicrophoneRef') {
+    if (!isReferenceValid(micRef) || micRef.handle === null) {
+      return invalidAudioStreamRef();
+    }
+    const expectedHandle = `stream:${micRef.handle}`;
+    if (active.handle !== expectedHandle) {
+      return invalidAudioStreamRef();
+    }
+  }
+
+  return active;
+}
+
+function resolveGetSampleOutput(
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+): ScenarioReferenceValue {
+  const resolver = context.getCapturedAudioSampleRef;
+  if (resolver === undefined) {
+    return invalidAudioSampleRef();
+  }
+  return resolver(node.id) ?? invalidAudioSampleRef();
+}
+
+function resolveGetFftFrameOutput(
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+): ScenarioReferenceValue {
+  const resolver = context.getCapturedFftFrameRef;
+  if (resolver === undefined) {
+    return invalidFftFrameRef();
+  }
+  return resolver(node.id) ?? invalidFftFrameRef();
+}
+
 /** Резолв data-выхода узла (для runtime-инспекции и pull-цепочки). */
 export function resolveNodeOutput(
   subgraph: ScenarioSubgraph,
@@ -181,6 +265,41 @@ export function resolveNodeOutput(
       );
     }
     return resolveGetMicrophoneOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-audio-stream') {
+    if (outputPort !== GET_AUDIO_STREAM_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown get-audio-stream output: ${outputPort}`,
+      );
+    }
+    return resolveGetAudioStreamOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-sample') {
+    if (outputPort !== GET_SAMPLE_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-sample output: ${outputPort}`);
+    }
+    return resolveGetSampleOutput(node, context);
+  }
+
+  if (node.nodeKind === 'get-fft-frame') {
+    if (outputPort !== GET_FFT_FRAME_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-fft-frame output: ${outputPort}`);
+    }
+    return resolveGetFftFrameOutput(node, context);
+  }
+
+  if (node.nodeKind === 'print') {
+    if (outputPort !== PRINT_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown print output: ${outputPort}`);
+    }
+    const resolver = context.getPrintOutputValue;
+    if (resolver === undefined) {
+      return null;
+    }
+    return resolver(node.id);
   }
 
   throw new ResolveInputError(

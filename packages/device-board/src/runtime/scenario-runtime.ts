@@ -1,4 +1,5 @@
 import type { DeviceScenarioDocument, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
+import { createStringValue } from '@membrana/core';
 
 import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
 import { isDetectionFrontEdge } from './detection-front.js';
@@ -16,6 +17,29 @@ import {
 } from './types.js';
 import type { RuntimeMode } from '@membrana/core';
 import { ScenarioVariableStore } from './variable-store.js';
+
+function hostAudioResolveContext(
+  host: ScenarioRuntimeHost,
+): Pick<
+  ResolveInputContext,
+  'getActiveAudioStreamRef' | 'getCapturedAudioSampleRef' | 'getCapturedFftFrameRef'
+> {
+  const result: {
+    getActiveAudioStreamRef?: ResolveInputContext['getActiveAudioStreamRef'];
+    getCapturedAudioSampleRef?: ResolveInputContext['getCapturedAudioSampleRef'];
+    getCapturedFftFrameRef?: ResolveInputContext['getCapturedFftFrameRef'];
+  } = {};
+  if (host.getActiveAudioStreamRef !== undefined) {
+    result.getActiveAudioStreamRef = () => host.getActiveAudioStreamRef!();
+  }
+  if (host.getCapturedAudioSampleRef !== undefined) {
+    result.getCapturedAudioSampleRef = (nodeId: string) => host.getCapturedAudioSampleRef!(nodeId);
+  }
+  if (host.getCapturedFftFrameRef !== undefined) {
+    result.getCapturedFftFrameRef = (nodeId: string) => host.getCapturedFftFrameRef!(nodeId);
+  }
+  return result;
+}
 
 export type ScenarioRuntimeListener = (state: ScenarioRuntimeState) => void;
 
@@ -237,6 +261,27 @@ export class ScenarioRuntime {
     return this.host.isDeviceLinked?.() ?? false;
   }
 
+  private augmentResolveContext(context: ResolveInputContext | undefined): ResolveInputContext | undefined {
+    const audio = hostAudioResolveContext(this.host);
+    const print: Pick<ResolveInputContext, 'getPrintOutputValue'> = {
+      getPrintOutputValue: (nodeId) => {
+        const message = this.state.printOutputs[nodeId];
+        if (message === undefined) {
+          return null;
+        }
+        return createStringValue(message);
+      },
+    };
+    const merged = { ...audio, ...print };
+    if (Object.keys(merged).length === 0) {
+      return context;
+    }
+    if (context === undefined) {
+      return merged;
+    }
+    return { ...context, ...merged };
+  }
+
   private buildResolveContext(branch: ScenarioRuntimeBranch): ResolveInputContext | undefined {
     const handlerBranch = runtimeBranchToHandlerBranch(branch);
     if (handlerBranch !== null) {
@@ -286,37 +331,37 @@ export class ScenarioRuntime {
       | 'function',
   ): ResolveInputContext | undefined {
     if (branchTab === 'onConnect') {
-      return {
+      return this.augmentResolveContext({
         handlerBranch: 'onConnect',
         deviceHandle: this.host.getDeviceHandle?.() ?? null,
         serverHandle: this.host.getServerHandle?.() ?? null,
         triggeredAt: new Date().toISOString(),
-      };
+      });
     }
     if (branchTab === 'initial') {
-      return {
+      return this.augmentResolveContext({
         handlerBranch: 'initial',
         deviceHandle: this.host.getDeviceHandle?.() ?? null,
         serverHandle: this.host.getServerHandle?.() ?? null,
         triggeredAt: new Date().toISOString(),
-      };
+      });
     }
     if (branchTab === 'onStop') {
-      return {
+      return this.augmentResolveContext({
         handlerBranch: 'onStop',
         deviceHandle: this.host.getDeviceHandle?.() ?? null,
         triggeredAt: new Date().toISOString(),
-      };
+      });
     }
     if (branchTab === 'onDisconnect') {
-      return {
+      return this.augmentResolveContext({
         handlerBranch: 'onDisconnect',
         deviceHandle: null,
         triggeredAt: new Date().toISOString(),
-      };
+      });
     }
     if (branchTab === 'main' || branchTab === 'alarm') {
-      return this.buildLoopTickResolveContext(branchTab, false);
+      return this.augmentResolveContext(this.buildLoopTickResolveContext(branchTab, false));
     }
     return undefined;
   }
@@ -327,7 +372,9 @@ export class ScenarioRuntime {
     defaultChunkDurationMs?: number,
     resolveContextOverride?: ResolveInputContext,
   ) {
-    const resolveContext = resolveContextOverride ?? this.buildResolveContext(branch);
+    const resolveContext = this.augmentResolveContext(
+      resolveContextOverride ?? this.buildResolveContext(branch),
+    );
     return {
       branch,
       functions,

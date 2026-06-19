@@ -1,0 +1,40 @@
+{
+  "mcpServers": {
+    "gitnexus": {
+      "command": "npx",
+      "args": ["-y", "gitnexus@latest", "mcp"]
+    },
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git",
+        "--repository",
+        "__MEMBRANA_ROOT__"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "__MEMBRANA_ROOT__"
+      ]
+    },
+    "mintlify-reference": {
+      "url": "https://mintlify.com/docs/mcp"
+    },
+    "mintlify-admin": {
+      "url": "https://mcp.mintlify.com"
+    },
+    "chatprd": {
+      "url": "https://app.chatprd.ai/mcp"
+    },
+    "atlan-docs": {
+      "url": "https://docs.atlan.com/mcp"
+    },
+    "atlan": {
+      "url": "https://mcp.atlan.com/mcp"
+    }
+  }
+}

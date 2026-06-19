@@ -17,6 +17,15 @@ describe('formatSocketPortLabel', () => {
     expect(
       formatSocketPortLabel({ name: 'server', kind: 'data', socketType: 'ServerRef' }),
     ).toBe('& server');
+    expect(
+      formatSocketPortLabel({ name: 'stream', kind: 'data', socketType: 'AudioStreamRef' }),
+    ).toBe('& audio stream');
+    expect(
+      formatSocketPortLabel({ name: 'sample', kind: 'data', socketType: 'AudioSampleRef' }),
+    ).toBe('& audio sample');
+    expect(
+      formatSocketPortLabel({ name: 'frame', kind: 'data', socketType: 'FftFrameRef' }),
+    ).toBe('& fft frame');
   });
 
   it('formats nullable port as & null', () => {

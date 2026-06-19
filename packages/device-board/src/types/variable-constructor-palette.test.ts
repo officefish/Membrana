@@ -8,15 +8,26 @@ describe('variable-constructor-palette', () => {
     expect(VARIABLE_CONSTRUCTOR_CATEGORIES.map((c) => c.title)).toEqual(['Объекты', 'Значения']);
     const types = VARIABLE_CONSTRUCTOR_CATEGORIES.flatMap((c) => c.types);
     expect([...types].sort()).toEqual(
-      ['DateTime', 'DeviceRef', 'Integer', 'MicrophoneRef', 'ServerRef'].sort(),
+      [
+        'AudioSampleRef',
+        'AudioStreamRef',
+        'DateTime',
+        'DeviceRef',
+        'FftFrameRef',
+        'Integer',
+        'String',
+        'MicrophoneRef',
+        'ServerRef',
+      ].sort(),
     );
   });
 });
 
 describe('variableTypeIndicatorClass', () => {
-  it('maps refs to sky, DateTime to error, Integer to success', () => {
+  it('maps value types: Integer blue-900, String orange, DateTime error', () => {
     expect(variableTypeIndicatorClass('DeviceRef')).toContain('sky');
     expect(variableTypeIndicatorClass('DateTime')).toContain('error');
-    expect(variableTypeIndicatorClass('Integer')).toContain('success');
+    expect(variableTypeIndicatorClass('Integer')).toContain('blue-900');
+    expect(variableTypeIndicatorClass('String')).toContain('orange');
   });
 });

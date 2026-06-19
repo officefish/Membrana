@@ -1,8 +1,9 @@
 # Модуль: `device-board` — Доска устройства
 
-> **Catalog-спецификация** · статус: **draft**  
-> Реестр: `docs/catalog/client/registry.json`  
+> **Catalog-спецификация** · статус: **draft** → цель эпика `db-doc-v04-mvp`: **stable**
+> Реестр: `docs/catalog/client/registry.json`
 > Концепт: [`DEVICE_BOARD_CONCEPT.md`](../../../../packages/device-board/DEVICE_BOARD_CONCEPT.md) · runtime: [`SCENARIO_RUNTIME.md`](../../../SCENARIO_RUNTIME.md)
+> **Mintlify (MVP docs):** [`apps/docs`](../../../../apps/docs/README.md) · workflow: [`DOCUMENTATION_WORKFLOW.md`](../../../DOCUMENTATION_WORKFLOW.md)
 
 ---
 
@@ -62,7 +63,7 @@
 
 ## 6. Плагины
 
-На этапе v0.4 отдельных client-плагинов у модуля нет; ноды палитры (Print, isValid, GetMicrophone) — часть scenario graph в пакете device-board.
+На этапе v0.4 отдельных client-плагинов у модуля нет; ноды палитры (Print, isValid, GetMicrophone, StartStreaming, GetAudioStream, GetSample, GetFFTFrame, …) — часть scenario graph в пакете device-board. **Node reference:** `apps/docs` (Mintlify).
 
 ---
 

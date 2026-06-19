@@ -1,0 +1,42 @@
+---
+title: isValid
+description: Условный узел по Ref.valid.
+---
+
+# isValid
+
+## Pins
+
+| Направление | Handle | Тип |
+|-------------|--------|-----|
+| in exec | `exec-in` | exec |
+| in data | `value` | polymorphic (ссылка) |
+| out exec | `exec-true-out` | exec — `valid === true` |
+| out exec | `exec-false-out` | exec — иначе |
+
+## Runtime
+
+Читает data-вход через `resolveInput`, вызывает `isReferenceValid(ref)`, маршрутизирует exec на true/false ветку.
+
+## Preconditions
+
+- На вход `value` должна приходить **ссылка** (`DeviceRef`, `MicrophoneRef`, `AudioStreamRef`, …).
+- Value-типы (`DateTime`, `Integer`, `String`) → всегда **false**.
+
+## Anti-patterns
+
+<Warning>
+  Не используйте `isValid(MicrophoneRef)` как guard перед GetSample. Проверяйте **AudioStreamRef** после GetAudioStream.
+</Warning>
+
+## Minimal example
+
+```text
+variable-get mic → isValid.value
+onTick.exec → isValid.exec-in
+isValid.exec-true-out → GetAudioStream.exec-in
+```
+
+## Code
+
+`packages/device-board/src/runtime/reference-validity.ts` — `isReferenceValid`.

@@ -24,8 +24,20 @@ export function referenceTypeLabel(type: ScenarioVariableType): string {
   if (type === 'ServerRef') {
     return 'Server';
   }
+  if (type === 'AudioStreamRef') {
+    return 'AudioStream';
+  }
+  if (type === 'AudioSampleRef') {
+    return 'AudioSample';
+  }
+  if (type === 'FftFrameRef') {
+    return 'FftFrame';
+  }
   if (type === 'Integer') {
     return 'Integer';
+  }
+  if (type === 'String') {
+    return 'String';
   }
   return 'DateTime';
 }

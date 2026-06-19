@@ -3,6 +3,7 @@ import {
   createReferenceValue,
   createDateTimeValue,
   createScenarioVariable,
+  createStringValue,
   invalidateReference,
   type ScenarioGraphEdge,
   type ScenarioGraphNode,
@@ -11,8 +12,13 @@ import {
 
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE } from '../graph/event-node.js';
 import {
+  GET_AUDIO_STREAM_MIC_HANDLE,
+  GET_AUDIO_STREAM_OUT_HANDLE,
+  GET_FFT_FRAME_OUT_HANDLE,
   GET_MICROPHONE_DEVICE_HANDLE,
   GET_MICROPHONE_OUT_HANDLE,
+  GET_SAMPLE_OUT_HANDLE,
+  PRINT_OUT_HANDLE,
 } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import {
@@ -312,6 +318,143 @@ describe('resolveInput (DBR4)', () => {
 
     const value = resolveInput(sg, [micVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
     expect(value).toEqual(createReferenceValue('MicrophoneRef', 'mic-selected'));
+  });
+
+  it('resolves get-audio-stream output when microphone matches active stream', () => {
+    const streamVar = createScenarioVariable('var-stream', 'stream1', 'AudioStreamRef');
+    const micVar = createScenarioVariable('var-mic', 'mic1', 'MicrophoneRef');
+    const activeStream = createReferenceValue('AudioStreamRef', 'stream:mic-1');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        variableGetNode('get-mic', micVar.id),
+        {
+          id: 'gas',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-audio-stream',
+        },
+        variableSetNode('set', streamVar.id),
+      ],
+      [
+        dataEdge('get-mic', VARIABLE_VALUE_HANDLE, 'gas', GET_AUDIO_STREAM_MIC_HANDLE, 'MicrophoneRef'),
+        dataEdge('gas', GET_AUDIO_STREAM_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'AudioStreamRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [streamVar, micVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getActiveAudioStreamRef: () => activeStream,
+    });
+    expect(value).toEqual(activeStream);
+  });
+
+  it('returns invalid AudioStreamRef when microphone does not match active stream', () => {
+    const streamVar = createScenarioVariable('var-stream', 'stream1', 'AudioStreamRef');
+    const micVar = {
+      ...createScenarioVariable('var-mic', 'mic1', 'MicrophoneRef'),
+      value: createReferenceValue('MicrophoneRef', 'mic-1'),
+    };
+    const activeStream = createReferenceValue('AudioStreamRef', 'stream:other-mic');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        variableGetNode('get-mic', micVar.id),
+        {
+          id: 'gas',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-audio-stream',
+        },
+        variableSetNode('set', streamVar.id),
+      ],
+      [
+        dataEdge('get-mic', VARIABLE_VALUE_HANDLE, 'gas', GET_AUDIO_STREAM_MIC_HANDLE, 'MicrophoneRef'),
+        dataEdge('gas', GET_AUDIO_STREAM_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'AudioStreamRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [streamVar, micVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getActiveAudioStreamRef: () => activeStream,
+    });
+    expect(value).toEqual({ kind: 'AudioStreamRef', handle: null, valid: false });
+  });
+
+  it('resolves print text output from runtime context', () => {
+    const textVar = createScenarioVariable('var-text', 'log1', 'String');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'pr',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'print',
+        },
+        variableSetNode('set', textVar.id),
+      ],
+      [dataEdge('pr', PRINT_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'String')],
+    );
+
+    const value = resolveInput(sg, [textVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getPrintOutputValue: (nodeId) =>
+        nodeId === 'pr' ? createStringValue('device(dev-1): ok') : null,
+    });
+    expect(value).toEqual(createStringValue('device(dev-1): ok'));
+  });
+
+  it('resolves get-sample output from host context', () => {
+    const sampleVar = createScenarioVariable('var-sample', 'sample1', 'AudioSampleRef');
+    const sampleRef = createReferenceValue('AudioSampleRef', 'sample-1');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gs',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-sample',
+        },
+        variableSetNode('set', sampleVar.id),
+      ],
+      [
+        dataEdge('gs', GET_SAMPLE_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'AudioSampleRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [sampleVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getCapturedAudioSampleRef: (nodeId) => (nodeId === 'gs' ? sampleRef : null),
+    });
+    expect(value).toEqual(sampleRef);
+  });
+
+  it('resolves get-fft-frame output from host context', () => {
+    const frameVar = createScenarioVariable('var-frame', 'frame1', 'FftFrameRef');
+    const frameRef = createReferenceValue('FftFrameRef', 'fft-1');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'fft',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-fft-frame',
+        },
+        variableSetNode('set', frameVar.id),
+      ],
+      [
+        dataEdge('fft', GET_FFT_FRAME_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'FftFrameRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [frameVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getCapturedFftFrameRef: (nodeId) => (nodeId === 'fft' ? frameRef : null),
+    });
+    expect(value).toEqual(frameRef);
   });
 });
 

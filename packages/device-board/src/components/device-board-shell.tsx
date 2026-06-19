@@ -411,8 +411,11 @@ const DeviceBoardShellInner: React.FC<{
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => void graph.exportJson()}>
-                  Export JSON
+                <button
+                  type="button"
+                  onClick={() => void graph.exportJson(isSignal ? 'signal' : 'scenario')}
+                >
+                  {isSignal ? 'Export JSON' : `Export ${BRANCH_TAB_LABEL[scenarioBranch]}`}
                 </button>
               </li>
             </ul>

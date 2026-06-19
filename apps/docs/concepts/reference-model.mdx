@@ -1,0 +1,40 @@
+---
+title: Reference model
+description: Ref.valid, isValid и инвалидация ссылок.
+---
+
+# Reference model
+
+## Структура ссылки
+
+Ссылочные типы (`DeviceRef`, `MicrophoneRef`, `AudioStreamRef`, …) в runtime — объекты с полем **`valid: boolean`** и `handle`.
+
+## isValid — чистый предикат
+
+Узел **`isValid`** проверяет **только** `Ref.valid` на подключённом значении. Без обращения к host, без проверки stream/sample.
+
+```text
+isReferenceValid(ref) => ref !== null && ref.kind is reference && ref.valid === true
+```
+
+<Warning>
+  `isValid(MicrophoneRef)` **не** означает «идёт захват аудио». Для stream используйте `isValid(AudioStreamRef)` после GetAudioStream или set stream.
+</Warning>
+
+## Инвалидация
+
+| Событие | Эффект |
+|---------|--------|
+| `onDisconnect` → set Device `null` | `DeviceRef.valid = false` |
+| variable-set с `null` на ссылочный тип | `invalidateReference` |
+| Несовпадение stream/mic в GetAudioStream | выход `AudioStreamRef` invalid |
+
+## Value-типы
+
+`DateTime`, `Integer`, `String` — не проходят через `isValid` (ветка false).
+
+## См. также
+
+- [Variable store](/concepts/variable-store)
+- [Streaming lifecycle](/concepts/streaming-lifecycle)
+- [isValid node](/device-board/nodes/is-valid)

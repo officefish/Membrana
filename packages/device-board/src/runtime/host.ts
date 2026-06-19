@@ -53,8 +53,39 @@ export interface ScenarioRuntimeHost {
   /** Список микрофонов устройства (audio-engine enumerate, DBR5). */
   readonly enumerateMicrophones?: () => Promise<readonly ScenarioMicrophoneOption[]>;
   readonly selectMicrophone: () => Promise<void>;
+  /** Запускает аудиопоток (legacy D0 `start-stream` и v0.4 `start-streaming`). */
   readonly startStream: () => Promise<void>;
+  /** Останавливает аудиопоток (legacy D0 и v0.4 `stop-streaming`). */
   readonly stopStream: () => Promise<void>;
+  /**
+   * v0.4 `start-streaming`: явный старт потока; опционально — микрофон из dataflow.
+   * Без вызова микрофон не отдаёт аудио.
+   */
+  readonly startAudioStreaming?: (microphone: ScenarioReferenceValue | null) => Promise<void>;
+  /** v0.4 `stop-streaming`: останавливает AudioStream; опционально — микрофон из dataflow. */
+  readonly stopAudioStreaming?: (microphone: ScenarioReferenceValue | null) => Promise<void>;
+  /** Текущая ссылка на активный AudioStream (для get-audio-stream). */
+  readonly getActiveAudioStreamRef?: () => ScenarioReferenceValue;
+  /**
+   * Захват звукового отрезка из AudioStream (v0.4 `get-sample`, на exec).
+   * Результат читается через `getCapturedAudioSampleRef`.
+   */
+  readonly captureAudioSample?: (
+    nodeId: string,
+    streamRef: ScenarioReferenceValue,
+  ) => Promise<void>;
+  /** Последний захваченный AudioSampleRef для узла get-sample. */
+  readonly getCapturedAudioSampleRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /**
+   * БПФ по AudioSample (v0.4 `get-fft-frame`, на exec).
+   * Результат читается через `getCapturedFftFrameRef`.
+   */
+  readonly computeFftFrame?: (
+    nodeId: string,
+    sampleRef: ScenarioReferenceValue,
+  ) => Promise<void>;
+  /** Последний FftFrameRef для узла get-fft-frame. */
+  readonly getCapturedFftFrameRef?: (nodeId: string) => ScenarioReferenceValue | null;
   readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   readonly trendsFftDetect: () => Promise<ScenarioDetectionResult>;
@@ -102,6 +133,31 @@ export function createStubScenarioRuntimeHost(
     selectMicrophone: overrides.selectMicrophone ?? (async () => log('selectMicrophone')),
     startStream: overrides.startStream ?? (async () => log('startStream')),
     stopStream: overrides.stopStream ?? (async () => log('stopStream')),
+    startAudioStreaming:
+      overrides.startAudioStreaming ??
+      (async (microphone) => log('startAudioStreaming', { microphone: microphone?.handle })),
+    stopAudioStreaming:
+      overrides.stopAudioStreaming ??
+      (async (microphone) => log('stopAudioStreaming', { microphone: microphone?.handle })),
+    getActiveAudioStreamRef:
+      overrides.getActiveAudioStreamRef ??
+      (() => ({ kind: 'AudioStreamRef', handle: 'stub-stream', valid: true })),
+    captureAudioSample:
+      overrides.captureAudioSample ??
+      (async (nodeId) => {
+        log('captureAudioSample', { nodeId });
+      }),
+    getCapturedAudioSampleRef:
+      overrides.getCapturedAudioSampleRef ??
+      ((nodeId) => ({ kind: 'AudioSampleRef', handle: `stub-sample-${nodeId}`, valid: true })),
+    computeFftFrame:
+      overrides.computeFftFrame ??
+      (async (nodeId) => {
+        log('computeFftFrame', { nodeId });
+      }),
+    getCapturedFftFrameRef:
+      overrides.getCapturedFftFrameRef ??
+      ((nodeId) => ({ kind: 'FftFrameRef', handle: `stub-frame-${nodeId}`, valid: true })),
     writeJournal: overrides.writeJournal ?? (async (event) => log('writeJournal', { blockKind: event.blockKind })),
     recordChunk:
       overrides.recordChunk ??

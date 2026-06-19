@@ -1,3 +1,4 @@
+import { createReferenceValue, type ScenarioReferenceValue } from '@membrana/core';
 import { scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
 import {
   LiveSampler,
@@ -23,7 +24,7 @@ import {
   liveJournalReportClientEntryId,
   liveJournalTrackClientEntryId,
 } from '@membrana/telemetry-journal-service';
-import { frameLoudness } from '@membrana/fft-analyzer-service';
+import { FftAnalyzer, frameLoudness } from '@membrana/fft-analyzer-service';
 
 import {
   getMicrophoneCaptureSnapshot,
@@ -41,6 +42,34 @@ const MIN_CHUNK_MS = 5_000;
 const MAX_CHUNK_MS = 30_000;
 const SOUND_LEVEL_SAMPLE_MS = 200;
 const SOUND_LEVEL_FFT_SIZE = 2048;
+const SAMPLE_CAPTURE_MS = 100;
+
+/** Метаданные захваченного отрезка (без сырых сэмплов). */
+export interface AudioSamplePayloadMeta {
+  readonly streamHandle: string;
+  readonly microphoneId: string;
+  readonly sampleRate: number;
+  readonly sampleCount: number;
+  readonly durationMs: number;
+  readonly capturedAtIso: string;
+  readonly rms: number;
+}
+
+interface AudioSamplePayload extends AudioSamplePayloadMeta {
+  readonly samples: Float32Array;
+}
+
+/** Метаданные FFT-кадра для Print. */
+export interface FftFramePayloadMeta {
+  readonly sampleHandle: string;
+  readonly sampleRate: number;
+  readonly fftSize: number;
+  readonly binCount: number;
+  readonly dominantHz: number;
+  readonly spectralCentroidHz: number;
+  readonly rms: number;
+  readonly computedAtIso: string;
+}
 
 export interface RecordedChunkMeta {
   readonly clipId: string;
@@ -113,6 +142,22 @@ export class ScenarioMicJournalBridge {
 
   private lastDetection: ScenarioDetectionResult | null = null;
 
+  private audioStreamHandle: string | null = null;
+
+  private audioStreamValid = false;
+
+  private audioStreamMicrophoneId = '';
+
+  private audioStreamStartedAtIso: string | null = null;
+
+  private audioSampleByNode = new Map<string, ScenarioReferenceValue>();
+
+  private audioSamplePayloads = new Map<string, AudioSamplePayload>();
+
+  private fftFrameByNode = new Map<string, ScenarioReferenceValue>();
+
+  private fftFramePayloads = new Map<string, FftFramePayloadMeta>();
+
   getLastChunk(): RecordedChunkMeta | null {
     return this.lastChunk;
   }
@@ -148,7 +193,192 @@ export class ScenarioMicJournalBridge {
     scenarioRuntimeInfo('[device-board] selectMicrophone', { deviceId: this.selectedDeviceId || 'default' });
   }
 
+  getActiveAudioStreamRef(): ScenarioReferenceValue {
+    if (!this.audioStreamValid || this.audioStreamHandle === null) {
+      return { kind: 'AudioStreamRef', handle: null, valid: false };
+    }
+    return createReferenceValue('AudioStreamRef', this.audioStreamHandle);
+  }
+
+  getAudioStreamMeta(handle: string): {
+    readonly microphoneId: string;
+    readonly startedAtIso: string | null;
+    readonly active: boolean;
+  } | null {
+    if (this.audioStreamHandle !== handle) {
+      return null;
+    }
+    return {
+      microphoneId: this.audioStreamMicrophoneId,
+      startedAtIso: this.audioStreamStartedAtIso,
+      active: this.audioStreamValid,
+    };
+  }
+
+  getCapturedAudioSampleRef(nodeId: string): ScenarioReferenceValue | null {
+    return this.audioSampleByNode.get(nodeId) ?? { kind: 'AudioSampleRef', handle: null, valid: false };
+  }
+
+  getAudioSamplePayloadMeta(sampleHandle: string): AudioSamplePayloadMeta | null {
+    const payload = this.audioSamplePayloads.get(sampleHandle);
+    if (payload === undefined) {
+      return null;
+    }
+    const { samples: _samples, ...meta } = payload;
+    return meta;
+  }
+
+  getCapturedFftFrameRef(nodeId: string): ScenarioReferenceValue | null {
+    return this.fftFrameByNode.get(nodeId) ?? { kind: 'FftFrameRef', handle: null, valid: false };
+  }
+
+  getFftFramePayload(frameHandle: string): FftFramePayloadMeta | null {
+    return this.fftFramePayloads.get(frameHandle) ?? null;
+  }
+
+  async startAudioStreaming(microphone: ScenarioReferenceValue | null): Promise<void> {
+    if (microphone !== null && microphone.valid && microphone.handle !== null && microphone.handle.length > 0) {
+      this.selectedDeviceId = microphone.handle;
+    }
+    await this.startStreamInternal();
+    const devicePart = this.selectedDeviceId || 'default';
+    this.audioStreamHandle = `stream:${devicePart}`;
+    this.audioStreamMicrophoneId = devicePart;
+    this.audioStreamStartedAtIso = new Date().toISOString();
+    this.audioStreamValid = true;
+    scenarioRuntimeInfo('[device-board] startAudioStreaming', { handle: this.audioStreamHandle });
+  }
+
+  async stopAudioStreaming(microphone: ScenarioReferenceValue | null): Promise<void> {
+    if (microphone !== null && microphone.valid && microphone.handle !== null && microphone.handle.length > 0) {
+      const expectedHandle = `stream:${microphone.handle}`;
+      if (!this.audioStreamValid || this.audioStreamHandle !== expectedHandle) {
+        scenarioRuntimeInfo('[device-board] stopAudioStreaming skipped — microphone mismatch', {
+          expected: expectedHandle,
+          active: this.audioStreamHandle,
+        });
+        return;
+      }
+    }
+    await this.stopStreamInternal();
+    this.audioStreamValid = false;
+    this.audioStreamStartedAtIso = null;
+    this.audioSampleByNode.clear();
+    this.audioSamplePayloads.clear();
+    this.fftFrameByNode.clear();
+    this.fftFramePayloads.clear();
+    scenarioRuntimeInfo('[device-board] stopAudioStreaming');
+  }
+
   async startStream(): Promise<void> {
+    await this.startAudioStreaming(null);
+  }
+
+  async stopStream(): Promise<void> {
+    await this.stopAudioStreaming(null);
+  }
+
+  async captureAudioSample(nodeId: string, streamRef: ScenarioReferenceValue): Promise<void> {
+    const active = this.getActiveAudioStreamRef();
+    if (
+      !streamRef.valid ||
+      streamRef.handle === null ||
+      !active.valid ||
+      streamRef.handle !== active.handle
+    ) {
+      this.audioSampleByNode.set(nodeId, { kind: 'AudioSampleRef', handle: null, valid: false });
+      return;
+    }
+
+    const stream = await this.resolveActiveStream();
+    const sampler = new LiveSampler({
+      bufferSize: SOUND_LEVEL_FFT_SIZE,
+      smoothingTimeConstant: 0.5,
+    });
+
+    let captured: AudioSamplePayload | null = null;
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => resolve(), SAMPLE_CAPTURE_MS);
+        sampler.on('frame', (frame) => {
+          if (captured === null) {
+            const sampleCount = frame.samples.length;
+            const durationMs = sampleCount > 0 ? (sampleCount / frame.sampleRate) * 1000 : 0;
+            captured = {
+              streamHandle: active.handle ?? '',
+              microphoneId: this.audioStreamMicrophoneId,
+              sampleRate: frame.sampleRate,
+              sampleCount,
+              durationMs,
+              capturedAtIso: new Date().toISOString(),
+              rms: frameLoudness(frame.samples),
+              samples: new Float32Array(frame.samples),
+            };
+            clearTimeout(timeout);
+            resolve();
+          }
+        });
+        sampler.on('error', (error) => {
+          clearTimeout(timeout);
+          reject(error);
+        });
+        void sampler.start(stream).catch(reject);
+      });
+    } finally {
+      await sampler.stop();
+    }
+
+    if (captured === null) {
+      this.audioSampleByNode.set(nodeId, { kind: 'AudioSampleRef', handle: null, valid: false });
+      return;
+    }
+
+    const sampleId = createEntryId('sample');
+    this.audioSamplePayloads.set(sampleId, captured);
+    const sampleRef = createReferenceValue('AudioSampleRef', sampleId);
+    this.audioSampleByNode.set(nodeId, sampleRef);
+    scenarioRuntimeInfo('[device-board] captureAudioSample', { nodeId, sampleId });
+  }
+
+  async computeFftFrame(nodeId: string, sampleRef: ScenarioReferenceValue): Promise<void> {
+    if (!sampleRef.valid || sampleRef.handle === null) {
+      this.fftFrameByNode.set(nodeId, { kind: 'FftFrameRef', handle: null, valid: false });
+      return;
+    }
+
+    const sample = this.audioSamplePayloads.get(sampleRef.handle);
+    if (sample === undefined) {
+      this.fftFrameByNode.set(nodeId, { kind: 'FftFrameRef', handle: null, valid: false });
+      return;
+    }
+
+    const fftSize = Math.min(SOUND_LEVEL_FFT_SIZE, sample.samples.length);
+    if (fftSize < 64) {
+      this.fftFrameByNode.set(nodeId, { kind: 'FftFrameRef', handle: null, valid: false });
+      return;
+    }
+
+    const window = sample.samples.subarray(0, fftSize);
+    const analyzer = new FftAnalyzer({ fftSize });
+    const result = analyzer.analyze(window, sample.sampleRate);
+    const frameId = createEntryId('fft');
+    this.fftFramePayloads.set(frameId, {
+      sampleHandle: sampleRef.handle,
+      sampleRate: sample.sampleRate,
+      fftSize,
+      binCount: Math.floor(fftSize / 2),
+      dominantHz: result.centroid,
+      spectralCentroidHz: result.centroid,
+      rms: result.rms,
+      computedAtIso: new Date().toISOString(),
+    });
+    const frameRef = createReferenceValue('FftFrameRef', frameId);
+    this.fftFrameByNode.set(nodeId, frameRef);
+    scenarioRuntimeInfo('[device-board] computeFftFrame', { nodeId, frameId, sampleId: sampleRef.handle });
+  }
+
+  private async startStreamInternal(): Promise<void> {
     const snapshot = getMicrophoneCaptureSnapshot();
     if (snapshot.isLive) {
       this.usesCoordinator = true;
@@ -174,7 +404,7 @@ export class ScenarioMicJournalBridge {
     scenarioRuntimeInfo('[device-board] startStream via owned MediaStream');
   }
 
-  async stopStream(): Promise<void> {
+  private async stopStreamInternal(): Promise<void> {
     if (this.usesCoordinator) {
       requestMicrophoneStop();
       scenarioRuntimeInfo('[device-board] stopStream via coordinator');
@@ -417,6 +647,10 @@ export class ScenarioMicJournalBridge {
   }
 
   private async resolveActiveStream(): Promise<MediaStream> {
+    if (!this.audioStreamValid) {
+      throw new Error('Аудиопоток не запущен — выполните StartStreaming');
+    }
+
     if (this.ownedStream !== null && this.ownedStream.active) {
       return this.ownedStream;
     }
@@ -426,11 +660,7 @@ export class ScenarioMicJournalBridge {
       return waitForMicrophoneStream();
     }
 
-    await this.startStream();
-    if (this.ownedStream !== null && this.ownedStream.active) {
-      return this.ownedStream;
-    }
-    return waitForMicrophoneStream();
+    throw new Error('Активный MediaStream недоступен после StartStreaming');
   }
 }
 

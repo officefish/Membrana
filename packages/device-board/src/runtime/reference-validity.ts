@@ -7,6 +7,7 @@ import {
   type ScenarioDateTimeValue,
   type ScenarioIntegerValue,
   type ScenarioReferenceValue,
+  type ScenarioStringValue,
   type ScenarioVariable,
   type ScenarioVariableValue,
 } from '@membrana/core';
@@ -40,6 +41,10 @@ function integersEqual(left: ScenarioIntegerValue, right: ScenarioIntegerValue):
   return left.value === right.value;
 }
 
+function stringsEqual(left: ScenarioStringValue, right: ScenarioStringValue): boolean {
+  return left.value === right.value;
+}
+
 /**
  * Семантика записи переменной из dataflow:
  * - ссылочные: `null` (onDisconnect) → invalidate; value-типы: `null` → сброс;
@@ -58,6 +63,12 @@ export function applyVariableSetValue(
       return { ...variable, value: null };
     }
     if (variable.type === 'Integer') {
+      if (variable.value === null) {
+        return variable;
+      }
+      return { ...variable, value: null };
+    }
+    if (variable.type === 'String') {
       if (variable.value === null) {
         return variable;
       }
@@ -93,6 +104,14 @@ export function applyVariableSetValue(
   if (incoming.kind === 'Integer') {
     const current = variable.value;
     if (current !== null && current.kind === 'Integer' && integersEqual(current, incoming)) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
+  if (incoming.kind === 'String') {
+    const current = variable.value;
+    if (current !== null && current.kind === 'String' && stringsEqual(current, incoming)) {
       return variable;
     }
     return { ...variable, value: incoming };

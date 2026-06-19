@@ -6,12 +6,14 @@ import {
   createIntegerValue,
   createReferenceValue,
   createScenarioVariable,
+  createStringValue,
   D0_SOCKET_TYPES,
   invalidateReference,
   isReferenceSocketType,
   isScenarioNodeKind,
   isScenarioDateTimeValue,
   isScenarioIntegerValue,
+  isScenarioStringValue,
   isSystemScenarioNodeKind,
   isValidSocketConnection,
   isValueSocketType,
@@ -156,6 +158,15 @@ describe('device-board reference types & node kinds (v0.4)', () => {
     const value = createIntegerValue(42.9);
     expect(isScenarioIntegerValue(value)).toBe(true);
     expect(value.value).toBe(42);
+  });
+
+  it('String variable uses value shape', () => {
+    const variable = createScenarioVariable('var-str', 'logLine', 'String');
+    expect(variable.type).toBe('String');
+    expect(isValueSocketType('String')).toBe(true);
+    const value = createStringValue('hello');
+    expect(isScenarioStringValue(value)).toBe(true);
+    expect(value.value).toBe('hello');
   });
 
   it('migrateScenarioVariableLegacy converts DateTimeRef to DateTime', () => {

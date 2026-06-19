@@ -3,6 +3,21 @@
     "gitnexus": {
       "command": "npx",
       "args": ["-y", "gitnexus@latest", "mcp"]
+    },
+    "mintlify-reference": {
+      "url": "https://mintlify.com/docs/mcp"
+    },
+    "mintlify-admin": {
+      "url": "https://mcp.mintlify.com"
+    },
+    "chatprd": {
+      "url": "https://app.chatprd.ai/mcp"
+    },
+    "atlan-docs": {
+      "url": "https://docs.atlan.com/mcp"
+    },
+    "atlan": {
+      "url": "https://mcp.atlan.com/mcp"
     }
   }
 }

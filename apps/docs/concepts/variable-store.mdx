@@ -1,0 +1,30 @@
+---
+title: Variable store
+description: Document-scope переменные и persistence между ветками.
+---
+
+# Variable store
+
+## Document-scope
+
+Переменные объявляются в `scenario.variables` документа. Узлы **variable-get** / **variable-set** ссылаются на них по `variableId`.
+
+В JSON экспорта `value: null` — **дефолт документа**. В runtime после `variable-set` store содержит актуальные значения.
+
+## Persistence между ветками
+
+Один `ScenarioVariableStore` на весь прогон:
+
+- `reset(variables)` — только при `ScenarioRuntime.load()`
+- **On start** → `variable-set microphone1` доступен в **onMainTick** через `variable-get`
+
+Это штатное поведение, не баг.
+
+## variable-set семантика
+
+- Вход `value` резолвится в момент exec через data-ребро.
+- Выход `value` — passthrough для downstream (resolve тянет назад по графу).
+
+## Anti-pattern
+
+Писать mic в On start, а в main читать через **GetMicrophone** (новый resolve по `microphoneId` на узле) вместо **variable-get** — разные пути; для cross-branch используйте variable-get.
