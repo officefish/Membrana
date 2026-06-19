@@ -50,6 +50,7 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
+  const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -58,19 +59,22 @@ const DeviceBoardShellInner: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps -- initial validation once on mount
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      const list = await runtimeHost?.enumerateMicrophones?.();
-      if (!cancelled && list !== undefined) {
-        setMicrophoneOptions(list);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
+  const refreshMicrophoneOptions = useCallback(async () => {
+    if (runtimeHost?.enumerateMicrophones === undefined) {
+      return;
+    }
+    setMicrophoneOptionsLoading(true);
+    try {
+      const list = await runtimeHost.enumerateMicrophones();
+      setMicrophoneOptions(list);
+    } finally {
+      setMicrophoneOptionsLoading(false);
+    }
   }, [runtimeHost]);
+
+  useEffect(() => {
+    void refreshMicrophoneOptions();
+  }, [refreshMicrophoneOptions]);
 
   const clearSelection = useCallback(() => {
     setSelectedNodeId(null);
@@ -99,7 +103,10 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedMicrophoneId(micId);
     const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
     setSelectedVariableId(varId);
-  }, []);
+    if (kind === 'get-microphone') {
+      void refreshMicrophoneOptions();
+    }
+  }, [refreshMicrophoneOptions]);
 
   const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
@@ -424,6 +431,7 @@ const DeviceBoardShellInner: React.FC<{
             selectedVariableName={selectedVariableName}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             microphoneOptions={microphoneOptions}
+            microphoneOptionsLoading={microphoneOptionsLoading}
             canEditScenario={!isSignal}
             onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
             onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}

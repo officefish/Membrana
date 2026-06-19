@@ -11,6 +11,7 @@ import type {
   ScenarioConnectionHandlers,
   ScenarioDetectionResult,
   ScenarioJournalEvent,
+  ScenarioMicrophoneOption,
   ScenarioSoundLevelResult,
 } from '@membrana/device-board';
 import { ALARM_QUIET_RMS_THRESHOLD } from '@membrana/device-board';
@@ -118,6 +119,27 @@ export class ScenarioMicJournalBridge {
 
   getLastDetection(): ScenarioDetectionResult | null {
     return this.lastDetection;
+  }
+
+  /** Список audio-input для UI GetMicrophone (запрашивает разрешение, если label пустые). */
+  async enumerateMicrophones(): Promise<readonly ScenarioMicrophoneOption[]> {
+    let devices = await getAudioInputDevices();
+    if (devices.length > 0 && devices.every((device) => device.label.trim() === '')) {
+      try {
+        const stream = await acquireMicrophone();
+        releaseMediaStream(stream);
+        devices = await getAudioInputDevices();
+      } catch {
+        // Без разрешения остаются deviceId без label.
+      }
+    }
+    return devices.map((device) => ({
+      deviceId: device.deviceId,
+      label:
+        device.label.trim() !== ''
+          ? device.label
+          : `Микрофон ${device.deviceId.slice(0, 8) || 'default'}`,
+    }));
   }
 
   async selectMicrophone(): Promise<void> {

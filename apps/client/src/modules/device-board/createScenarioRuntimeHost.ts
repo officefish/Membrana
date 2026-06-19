@@ -8,6 +8,7 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
   const bridge = createScenarioMicJournalBridge();
 
   return {
+    enumerateMicrophones: () => bridge.enumerateMicrophones(),
     selectMicrophone: () => bridge.selectMicrophone(),
     startStream: () => bridge.startStream(),
     stopStream: () => bridge.stopStream(),

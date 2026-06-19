@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { ScenarioBlockKind, ScenarioNodeKind } from '@membrana/core';
 
-import { D0_SCENARIO_NODE_CATALOG, referenceTypeLabel } from '../graph/index.js';
+import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
 import type { ScenarioMicrophoneOption } from '../runtime/index.js';
 import {
   isLegacyPaletteEnabled,
@@ -17,6 +17,7 @@ export interface BoardRightSidebarProps {
   readonly selectedVariableName: string;
   readonly selectedVariableTypeLabel: string | null;
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
+  readonly microphoneOptionsLoading?: boolean;
   readonly canEditScenario: boolean;
   readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
   readonly onAddPaletteNode: (nodeKind: 'print' | 'is-valid' | 'get-microphone') => void;
@@ -37,6 +38,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedVariableName,
   selectedVariableTypeLabel,
   microphoneOptions,
+  microphoneOptionsLoading = false,
   canEditScenario,
   onAddLegacyNode,
   onAddPaletteNode,
@@ -45,8 +47,6 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onClearBoard,
 }) => {
   const legacyPalette = isLegacyPaletteEnabled();
-  const isVariableNode =
-    selectedNodeKind === 'variable-get' || selectedNodeKind === 'variable-set';
   const [variableNameDraft, setVariableNameDraft] = useState(selectedVariableName);
 
   useEffect(() => {
@@ -85,11 +85,14 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
               <select
                 className="select select-bordered select-sm w-full"
                 value={selectedMicrophoneId ?? ''}
+                disabled={microphoneOptionsLoading}
                 onChange={(event) =>
                   onMicrophoneIdChange(selectedNodeId, event.target.value)
                 }
               >
-                <option value="">— выберите микрофон —</option>
+                <option value="">
+                  {microphoneOptionsLoading ? 'Загрузка устройств…' : '— выберите микрофон —'}
+                </option>
                 {microphoneOptions.map((option) => (
                   <option key={option.deviceId} value={option.deviceId}>
                     {option.label}
@@ -97,10 +100,22 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                 ))}
               </select>
               <span className="text-base-content/50">
-                Список из audio-engine enumerate (host.enumerateMicrophones).
+                Список обновляется при выборе узла (audio-engine enumerate).
               </span>
             </label>
-          ) : isVariableNode ? (
+          ) : selectedNodeKind === 'variable-get' ? (
+            <div className="flex flex-col gap-1 text-xs">
+              <span className="font-medium text-base-content/70">
+                Имя переменной ({selectedVariableTypeLabel ?? 'Device'})
+              </span>
+              <p className="rounded-md border border-base-300 bg-base-200/40 px-2 py-1.5 font-mono italic text-base-content">
+                {selectedVariableName || '—'}
+              </p>
+              <span className="text-base-content/50">
+                Переименование — в конструкторе слева или через узел Set.
+              </span>
+            </div>
+          ) : selectedNodeKind === 'variable-set' ? (
             <label className="flex flex-col gap-1 text-xs">
               <span className="font-medium text-base-content/70">
                 Имя переменной ({selectedVariableTypeLabel ?? 'Device'})
@@ -109,7 +124,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                 type="text"
                 className="input input-bordered input-sm w-full font-mono"
                 value={variableNameDraft}
-                placeholder={selectedNodeKind === 'variable-set' ? 'device1' : 'device1'}
+                placeholder="device1"
                 onChange={(event) => setVariableNameDraft(event.target.value)}
                 onBlur={() => commitVariableName()}
                 onKeyDown={(event) => {
@@ -119,8 +134,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                 }}
               />
               <span className="text-base-content/50">
-                Ссылка типа {selectedVariableTypeLabel ?? referenceTypeLabel('DeviceRef')}; при
-                отсутствии переменная будет создана в конструкторе слева.
+                Переименовывает существующую переменную на всех узлах get/set.
               </span>
             </label>
           ) : (

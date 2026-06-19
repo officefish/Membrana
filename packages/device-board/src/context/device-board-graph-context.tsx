@@ -26,7 +26,6 @@ import {
   createPaletteBoardNode,
   createScenarioBoardNode,
   createVariableBoardNode,
-  variableNodePins,
   exportDeviceScenarioDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
@@ -38,6 +37,7 @@ import {
   shouldPreserveLockedNodes,
   resolveRunDisabledReason,
   scenarioDocumentFingerprint,
+  syncVariableNodeLabels,
   validatePreRun,
   type VariableNodeKind,
   type V04PaletteNodeKind,
@@ -794,9 +794,34 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const renameVariable = useCallback((id: string, name: string) => {
-    setVariables((current) =>
-      current.map((variable) => (variable.id === id ? { ...variable, name } : variable)),
-    );
+    const trimmed = name.trim();
+    if (trimmed === '') {
+      return;
+    }
+    setVariables((current) => {
+      const target = current.find((variable) => variable.id === id);
+      if (target === undefined || target.name === trimmed) {
+        return current;
+      }
+      const nameTaken = current.some(
+        (variable) =>
+          variable.id !== id && variable.name === trimmed && variable.type === target.type,
+      );
+      if (nameTaken) {
+        return current;
+      }
+      return current.map((variable) =>
+        variable.id === id ? { ...variable, name: trimmed } : variable,
+      );
+    });
+    const syncLabels = (nodes: Node[]) => syncVariableNodeLabels(nodes, id, trimmed);
+    setScenarioInitialNodes(syncLabels);
+    setScenarioOnConnectNodes(syncLabels);
+    setScenarioMainNodes(syncLabels);
+    setScenarioAlarmNodes(syncLabels);
+    setScenarioOnStopNodes(syncLabels);
+    setScenarioOnDisconnectNodes(syncLabels);
+    setScenarioFunctionNodes(syncLabels);
   }, []);
 
   const dropVariableNodes = useCallback(
@@ -857,70 +882,43 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (target === undefined) {
         return;
       }
-      const kind = target.data?.nodeKind;
-      if (kind !== 'variable-get' && kind !== 'variable-set') {
+      if (target.data?.nodeKind !== 'variable-set') {
         return;
       }
       const currentVariableId =
         typeof target.data?.variableId === 'string' ? target.data.variableId : undefined;
+      if (currentVariableId === undefined) {
+        return;
+      }
       const currentVariable = variables.find((item) => item.id === currentVariableId);
-      const variableType: ScenarioVariableType = currentVariable?.type ?? 'DeviceRef';
-      const existing = variables.find(
-        (item) => item.name === variableName && item.type === variableType,
+      if (currentVariable === undefined || currentVariable.name === variableName) {
+        return;
+      }
+      const nameTaken = variables.some(
+        (item) =>
+          item.id !== currentVariableId &&
+          item.name === variableName &&
+          item.type === currentVariable.type,
       );
-      const variableId =
-        existing?.id ??
-        `var-${variableType}-${Date.now().toString(36)}-${variables.length + 1}`;
-
-      if (existing === undefined) {
-        setVariables((current) => [
-          ...current,
-          createScenarioVariable(variableId, variableName, variableType),
-        ]);
+      if (nameTaken) {
+        return;
       }
 
-      const { inputs, outputs } = variableNodePins(kind, variableType);
-      const patchNodes = (nodes: Node[]): Node[] =>
-        nodes.map((node) =>
-          node.id !== nodeId
-            ? node
-            : {
-                ...node,
-                data: {
-                  ...node.data,
-                  variableId,
-                  label: variableName,
-                  inputs,
-                  outputs,
-                },
-              },
-        );
+      setVariables((current) =>
+        current.map((variable) =>
+          variable.id === currentVariableId ? { ...variable, name: variableName } : variable,
+        ),
+      );
 
-      switch (scenarioBranch) {
-        case 'initial':
-          setScenarioInitialNodes(patchNodes);
-          break;
-        case 'onConnect':
-          setScenarioOnConnectNodes(patchNodes);
-          break;
-        case 'main':
-          setScenarioMainNodes(patchNodes);
-          break;
-        case 'alarm':
-          setScenarioAlarmNodes(patchNodes);
-          break;
-        case 'onStop':
-          setScenarioOnStopNodes(patchNodes);
-          break;
-        case 'onDisconnect':
-          setScenarioOnDisconnectNodes(patchNodes);
-          break;
-        case 'function':
-          setScenarioFunctionNodes(patchNodes);
-          break;
-        default:
-          break;
-      }
+      const syncLabels = (nodes: Node[]) =>
+        syncVariableNodeLabels(nodes, currentVariableId, variableName);
+      setScenarioInitialNodes(syncLabels);
+      setScenarioOnConnectNodes(syncLabels);
+      setScenarioMainNodes(syncLabels);
+      setScenarioAlarmNodes(syncLabels);
+      setScenarioOnStopNodes(syncLabels);
+      setScenarioOnDisconnectNodes(syncLabels);
+      setScenarioFunctionNodes(syncLabels);
     },
     [
       scenarioAlarmNodes,
