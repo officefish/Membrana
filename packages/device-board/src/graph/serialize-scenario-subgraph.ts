@@ -202,7 +202,6 @@ export function deserializeScenarioSubgraph(
     sourceHandle: item.sourceHandle,
     target: item.target,
     targetHandle: item.targetHandle,
-    animated: item.kind === 'exec',
   }));
 
   return { nodes, edges };

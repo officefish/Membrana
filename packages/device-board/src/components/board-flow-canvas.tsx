@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   Background,
   Controls,
@@ -16,6 +16,7 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import type { BoardLayerTab } from '../types/board-ui.js';
+import { decorateBoardEdges } from '../graph/board-edge-style.js';
 import { BoardFlowNode } from './board-flow-node.js';
 
 const NODE_TYPES: NodeTypes = { board: BoardFlowNode };
@@ -30,6 +31,8 @@ export interface BoardFlowCanvasProps {
   readonly isValidConnection: (connection: Connection) => boolean;
   readonly onSelectionChange?: (selection: OnSelectionChangeParams) => void;
   readonly ariaLabel?: string;
+  /** Пульсация exec-рёбер только при запущенном сценарии. */
+  readonly pulseEdges?: boolean;
 }
 
 const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
@@ -41,7 +44,13 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   isValidConnection,
   onSelectionChange,
   ariaLabel,
+  pulseEdges = false,
 }) => {
+  const decoratedEdges = useMemo(
+    () => decorateBoardEdges(edges, nodes, { pulseWhenRunning: pulseEdges }),
+    [edges, nodes, pulseEdges],
+  );
+
   const handleSelectionChange = useCallback(
     (selection: OnSelectionChangeParams) => {
       onSelectionChange?.(selection);
@@ -65,7 +74,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   return (
     <ReactFlow
       nodes={nodes}
-      edges={edges}
+      edges={decoratedEdges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}

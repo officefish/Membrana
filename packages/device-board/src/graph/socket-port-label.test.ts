@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import {
+  IS_VALID_FALSE_HANDLE,
+  IS_VALID_TRUE_HANDLE,
+} from './palette-node.js';
 import { formatSocketPortLabel } from './socket-port-label.js';
 
 describe('formatSocketPortLabel', () => {
@@ -20,5 +24,10 @@ describe('formatSocketPortLabel', () => {
 
   it('formats exec ports', () => {
     expect(formatSocketPortLabel({ name: 'exec-in', kind: 'exec' })).toBe('exec');
+  });
+
+  it('formats is-valid branch outputs as true/false', () => {
+    expect(formatSocketPortLabel({ name: IS_VALID_TRUE_HANDLE, kind: 'exec' })).toBe('true');
+    expect(formatSocketPortLabel({ name: IS_VALID_FALSE_HANDLE, kind: 'exec' })).toBe('false');
   });
 });

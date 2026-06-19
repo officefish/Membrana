@@ -500,31 +500,31 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onScenarioInitialConnect = useCallback((connection: Connection) => {
-    setScenarioInitialEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioInitialEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioOnConnectConnect = useCallback((connection: Connection) => {
-    setScenarioOnConnectEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioOnConnectEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioMainConnect = useCallback((connection: Connection) => {
-    setScenarioMainEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioMainEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioAlarmConnect = useCallback((connection: Connection) => {
-    setScenarioAlarmEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioAlarmEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioOnStopConnect = useCallback((connection: Connection) => {
-    setScenarioOnStopEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioOnStopEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioOnDisconnectConnect = useCallback((connection: Connection) => {
-    setScenarioOnDisconnectEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioOnDisconnectEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const onScenarioFunctionConnect = useCallback((connection: Connection) => {
-    setScenarioFunctionEdges((edges) => addEdge({ ...connection, animated: true }, edges));
+    setScenarioFunctionEdges((edges) => addEdge(connection, edges));
   }, []);
 
   const isValidConnectionForLayer = useCallback(
@@ -879,7 +879,6 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         ]);
       }
 
-      const prefix = kind === 'variable-get' ? 'get' : 'set';
       const { inputs, outputs } = variableNodePins(kind, variableType);
       const patchNodes = (nodes: Node[]): Node[] =>
         nodes.map((node) =>
@@ -890,7 +889,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
                 data: {
                   ...node.data,
                   variableId,
-                  label: `${prefix} ${variableName}`,
+                  label: variableName,
                   inputs,
                   outputs,
                 },

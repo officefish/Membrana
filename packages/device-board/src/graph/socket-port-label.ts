@@ -1,6 +1,10 @@
 import { isReferenceSocketType } from '@membrana/core';
 
 import type { BoardSocketPin } from './board-node-data.js';
+import {
+  IS_VALID_FALSE_HANDLE,
+  IS_VALID_TRUE_HANDLE,
+} from './palette-node.js';
 
 const REFERENCE_NOUN: Record<string, string> = {
   DeviceRef: 'device',
@@ -13,6 +17,12 @@ const REFERENCE_NOUN: Record<string, string> = {
  */
 export function formatSocketPortLabel(pin: BoardSocketPin): string {
   if (pin.kind === 'exec') {
+    if (pin.name === IS_VALID_TRUE_HANDLE) {
+      return 'true';
+    }
+    if (pin.name === IS_VALID_FALSE_HANDLE) {
+      return 'false';
+    }
     return 'exec';
   }
   if (pin.nullable === true) {
