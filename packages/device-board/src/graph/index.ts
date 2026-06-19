@@ -20,12 +20,21 @@ export {
   ensureEventEntry,
   eventNodePins,
   isEventNode,
+  isLockedBoardNode,
+  isSystemNode,
   rejectSystemNodeRemovals,
   EVENT_DEVICE_HANDLE,
   EVENT_EXEC_HANDLE,
   EVENT_NODE_KIND,
 } from './event-node.js';
 export type { CreateEventBoardNodeOptions } from './event-node.js';
+export {
+  clearBranchState,
+  edgesAfterBranchClear,
+  EVENT_HANDLER_BRANCHES,
+  nodesAfterBranchClear,
+  shouldPreserveLockedNodes,
+} from './clear-branch.js';
 export {
   createPaletteBoardNode,
   isPaletteNodeKind,

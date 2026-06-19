@@ -17,6 +17,7 @@ import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
+import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -120,12 +121,19 @@ const DeviceBoardShellInner: React.FC<{
   }, [exitBoardMode, graph, onRequestExit]);
 
   const handleClearBoard = useCallback(() => {
-    if (typeof window !== 'undefined' && !window.confirm('Очистить весь борд? Все ветки будут пустыми.')) {
+    const layerLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
+    const preserveNote = shouldPreserveLockedNodes(isSignal ? 'signal' : 'scenario', scenarioBranch)
+      ? ' Системный Event-узел останется.'
+      : '';
+    if (
+      typeof window !== 'undefined' &&
+      !window.confirm(`Очистить узлы ветки «${layerLabel}»? Другие ветки не затрагиваются.${preserveNote}`)
+    ) {
       return;
     }
-    graph.clearBoard();
+    graph.clearCurrentBranch(isSignal ? 'signal' : 'scenario');
     clearSelection();
-  }, [clearSelection, graph]);
+  }, [clearSelection, graph, isSignal, scenarioBranch]);
 
   const handleImportClick = useCallback(() => {
     fileInputRef.current?.click();

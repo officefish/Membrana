@@ -146,7 +146,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
               className="btn btn-sm btn-outline btn-error w-full"
               onClick={onClearBoard}
             >
-              Очистить борд
+              Очистить ветку
             </button>
           </div>
         </div>
