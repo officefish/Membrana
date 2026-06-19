@@ -199,6 +199,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
   const savedSnapshotRef = useRef<string | null>(null);
   const skipDirtyRef = useRef(false);
+  /** После hydrate/load: baseline снимается из buildDocument() на следующем commit state. */
+  const pendingBaselineRef = useRef(false);
 
   const markSavedSnapshot = useCallback((document: DeviceScenarioDocument) => {
     savedSnapshotRef.current = scenarioDocumentFingerprint(document);
@@ -283,28 +285,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         if (cancelled) return;
         if (record !== null) {
           applyHydratedState(hydrateBoardFromDocument(record.document));
-          markSavedSnapshot(record.document);
+          pendingBaselineRef.current = true;
         } else {
-          markSavedSnapshot(buildDeviceScenarioDocument({
-            deviceKind: deviceKindProp,
-            title: 'Device board export',
-            signalNodes: defaultState.signalNodes,
-            signalEdges: defaultState.signalEdges,
-            scenarioInitialNodes: defaultState.scenarioInitialNodes,
-            scenarioInitialEdges: defaultState.scenarioInitialEdges,
-            scenarioOnConnectNodes: defaultState.scenarioOnConnectNodes,
-            scenarioOnConnectEdges: defaultState.scenarioOnConnectEdges,
-            scenarioMainNodes: defaultState.scenarioMainNodes,
-            scenarioMainEdges: defaultState.scenarioMainEdges,
-            scenarioAlarmNodes: defaultState.scenarioAlarmNodes,
-            scenarioAlarmEdges: defaultState.scenarioAlarmEdges,
-            scenarioOnStopNodes: defaultState.scenarioOnStopNodes,
-            scenarioOnStopEdges: defaultState.scenarioOnStopEdges,
-            scenarioOnDisconnectNodes: defaultState.scenarioOnDisconnectNodes,
-            scenarioOnDisconnectEdges: defaultState.scenarioOnDisconnectEdges,
-            scenarioFunctions: [hydratedFunctionInput(defaultState)],
-            variables: defaultState.variables,
-          }));
+          pendingBaselineRef.current = true;
         }
         setSyncStatus('idle');
       })
@@ -598,6 +581,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         return result.message;
       }
       applyHydratedState(result.state);
+      pendingBaselineRef.current = true;
       runValidation();
       return null;
     },
@@ -636,6 +620,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     if (skipDirtyRef.current || syncStatus === 'loading') {
       return;
     }
+    if (pendingBaselineRef.current) {
+      pendingBaselineRef.current = false;
+      markSavedSnapshot(buildDocument());
+      return;
+    }
     if (savedSnapshotRef.current === null) {
       return;
     }
@@ -643,6 +632,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setIsDirty(dirty);
   }, [
     buildDocument,
+    markSavedSnapshot,
     syncStatus,
     scenarioAlarmEdges,
     scenarioAlarmNodes,
