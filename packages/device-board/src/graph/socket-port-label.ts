@@ -10,6 +10,9 @@ const REFERENCE_NOUN: Record<string, string> = {
   DeviceRef: 'device',
   MicrophoneRef: 'microphone',
   ServerRef: 'server',
+  AudioStreamRef: 'audio stream',
+  AudioSampleRef: 'audio sample',
+  FftFrameRef: 'fft frame',
 };
 
 /**

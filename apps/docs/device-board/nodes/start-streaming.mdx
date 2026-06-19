@@ -1,0 +1,32 @@
+---
+title: StartStreaming
+description: Запуск активного AudioStream через host.
+---
+
+# StartStreaming
+
+## Pins
+
+| Направление | Handle | Тип |
+|-------------|--------|-----|
+| in exec | `exec-in` | exec |
+| in data | `microphone` | MicrophoneRef (опционально) |
+| out exec | `exec-out` | exec |
+
+## Runtime
+
+Резолвит `microphone`, вызывает `host.startAudioStreaming(microphone)`. Host выставляет активный `stream:{deviceId}`.
+
+## Preconditions
+
+- Для предсказуемого deviceId — подключите валидный `MicrophoneRef`.
+- Без mic host может стартовать с default/selected device (зависит от bridge).
+
+## Postconditions
+
+`getActiveAudioStreamRef()` → `{ valid: true, handle: 'stream:…' }` до StopStreaming.
+
+## См. также
+
+- [GetAudioStream](/device-board/nodes/get-audio-stream) — только читает stream, **не стартует**
+- [Streaming lifecycle](/concepts/streaming-lifecycle)

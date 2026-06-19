@@ -12,11 +12,11 @@ export const VARIABLE_CONSTRUCTOR_CATEGORIES: readonly VariableConstructorCatego
   {
     id: 'objects',
     title: 'Объекты',
-    types: ['DeviceRef', 'MicrophoneRef', 'ServerRef'],
+    types: ['DeviceRef', 'MicrophoneRef', 'ServerRef', 'AudioStreamRef', 'AudioSampleRef', 'FftFrameRef'],
   },
   {
     id: 'values',
     title: 'Значения',
-    types: ['DateTime', 'Integer'],
+    types: ['DateTime', 'Integer', 'String'],
   },
 ] as const;

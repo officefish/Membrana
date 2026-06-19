@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { ScenarioBlockKind, ScenarioNodeKind } from '@membrana/core';
 
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
+import type { V04PaletteNodeKind } from '../graph/palette-node.js';
 import type { NodePortInspectionResult } from '../runtime/index.js';
 import type { ScenarioMicrophoneOption } from '../runtime/index.js';
 import {
@@ -25,7 +26,7 @@ export interface BoardRightSidebarProps {
   readonly runtimeInspection: NodePortInspectionResult | null;
   readonly printLastOutput: string | null;
   readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
-  readonly onAddPaletteNode: (nodeKind: 'print' | 'is-valid' | 'get-microphone') => void;
+  readonly onAddPaletteNode: (nodeKind: V04PaletteNodeKind) => void;
   readonly onMicrophoneIdChange: (nodeId: string, microphoneId: string) => void;
   readonly onAssignVariableName: (nodeId: string, variableName: string) => void;
   readonly onClearBoard: () => void;

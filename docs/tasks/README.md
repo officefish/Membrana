@@ -133,6 +133,10 @@
 | `dbh-2-nav-split` | DBH2: split cabinet nav Узлы / Ключи by default | XS | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
 | `dbh-3-delete-node` | DBH3: DELETE node + revoke keys + free-v1 maxNodes=1 | S | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
 | `dbh-4-purge-expired-keys` | DBH4: purge inactive keys (expired + revoked) | S | [`DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md) | [#104](https://github.com/officefish/Membrana/issues/104) |
+| `device-board-clear-branch` | device-board: очистка текущей ветки + защита Event-узлов | S | [`DEVICE_BOARD_CLEAR_BRANCH_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CLEAR_BRANCH_PROMPT.md) | [#106](https://github.com/officefish/Membrana/issues/106) |
+| `device-board-manual-save` | device-board: manual save, draft state, header layout | S | [`DEVICE_BOARD_MANUAL_SAVE_PROMPT.md`](../docs/prompts/DEVICE_BOARD_MANUAL_SAVE_PROMPT.md) | [#108](https://github.com/officefish/Membrana/issues/108) |
+| `device-board-ux-ports-header` | device-board: header layout, port labels, variable inspector | S | [`DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md) | [#110](https://github.com/officefish/Membrana/issues/110) |
+| `db-doc-v04-mvp` | Device Board MVP v0.4 — Mintlify docs, MCP tier4, node reference | L | [`DEVICE_BOARD_DOC_V04_PROMPT.md`](../docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md) | — |
 
 ---
 

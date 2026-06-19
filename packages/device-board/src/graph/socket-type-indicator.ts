@@ -22,7 +22,10 @@ export function socketTypeIndicatorClass(
     return 'bg-error';
   }
   if (socketType === 'Integer') {
-    return 'bg-success';
+    return 'bg-blue-900';
+  }
+  if (socketType === 'String') {
+    return 'bg-orange-500';
   }
   return 'bg-neutral';
 }

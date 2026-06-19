@@ -1,0 +1,18 @@
+{
+  "name": "@membrana/docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Membrana product documentation (Mintlify). Autonomous from apps/client.",
+  "scripts": {
+    "dev": "mintlify dev --port 3333",
+    "build": "mintlify build",
+    "lint": "mintlify broken-links",
+    "clean": "rimraf .mintlify",
+    "typecheck": "echo \"@membrana/docs: no TypeScript\"",
+    "test": "echo \"@membrana/docs: no unit tests\""
+  },
+  "devDependencies": {
+    "mintlify": "^4.2.123",
+    "rimraf": "^5.0.0"
+  }
+}

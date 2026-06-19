@@ -1,0 +1,35 @@
+---
+title: GetSample
+description: Захват AudioSample из активного stream.
+---
+
+# GetSample
+
+## Pins
+
+| Направление | Handle | Тип |
+|-------------|--------|-----|
+| in exec | `exec-in` | exec |
+| in data | `stream` | AudioStreamRef |
+| out data | `sample` | AudioSampleRef |
+| out exec | `exec-out` | exec |
+
+## Runtime
+
+На exec: `resolveInput` для `stream`, затем `host.captureAudioSample(nodeId, streamRef)`.
+
+Выход `sample` читается из host state по `nodeId` (invalid если stream не совпал с активным или timeout capture).
+
+## Preconditions
+
+- `streamRef.valid === true`
+- `streamRef.handle === activeStream.handle`
+- Микрофон реально пишет кадры (~100ms window в bridge)
+
+## Metadata в Print
+
+Client bridge печатает `sampleRate`, `sampleCount`, `rms`, `microphoneLabel` при Print downstream.
+
+## Code
+
+`apps/client/src/modules/device-board/scenarioMicJournalBridge.ts` — `captureAudioSample`.

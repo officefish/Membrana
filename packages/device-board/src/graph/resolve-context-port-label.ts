@@ -16,6 +16,15 @@ function referenceNoun(socketType: ReferenceSocketType): string {
   if (socketType === 'ServerRef') {
     return 'server';
   }
+  if (socketType === 'AudioStreamRef') {
+    return 'audio stream';
+  }
+  if (socketType === 'AudioSampleRef') {
+    return 'audio sample';
+  }
+  if (socketType === 'FftFrameRef') {
+    return 'fft frame';
+  }
   return 'device';
 }
 
@@ -97,6 +106,9 @@ function formatContextSourceLabel(sourceType: SocketType | 'nullable' | undefine
   if (sourceType === 'Integer') {
     return 'integer';
   }
+  if (sourceType === 'String') {
+    return 'string';
+  }
   if (sourceType !== undefined && isReferenceSocketType(sourceType)) {
     return `& ${referenceNoun(sourceType)}`;
   }
@@ -118,6 +130,9 @@ function pinFromContextSource(
     return { ...pin, socketType: sourceType, nullable: undefined };
   }
   if (sourceType === 'Integer') {
+    return { ...pin, socketType: sourceType, nullable: undefined };
+  }
+  if (sourceType === 'String') {
     return { ...pin, socketType: sourceType, nullable: undefined };
   }
   if (sourceType !== undefined && isReferenceSocketType(sourceType)) {

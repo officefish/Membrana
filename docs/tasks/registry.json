@@ -2987,6 +2987,19 @@
       "archivedAt": null,
       "archiveNotes": null,
       "notes": "Also closes #111 #112."
+    },
+    {
+      "id": "db-doc-v04-mvp",
+      "title": "Device Board MVP v0.4 — Mintlify docs, MCP tier4, node reference",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Phase 0: apps/docs skeleton, tier4 MCP, prd/. Phase 1–3: full node reference, catalog stable, Canvas."
     }
   ]
 }

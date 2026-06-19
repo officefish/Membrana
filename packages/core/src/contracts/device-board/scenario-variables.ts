@@ -42,11 +42,20 @@ export interface ScenarioIntegerValue {
   readonly value: number;
 }
 
+/**
+ * Value string в dataflow: текст (вывод Print, литералы и т.д.).
+ */
+export interface ScenarioStringValue {
+  readonly kind: 'String';
+  readonly value: string;
+}
+
 /** Значение переменной сценария (ссылка или value). */
 export type ScenarioVariableValue =
   | ScenarioReferenceValue
   | ScenarioDateTimeValue
-  | ScenarioIntegerValue;
+  | ScenarioIntegerValue
+  | ScenarioStringValue;
 
 /** Переменная сценария (document-scope, объявляется в конструкторе переменных). */
 export interface ScenarioVariable {
@@ -73,6 +82,11 @@ export function createDateTimeValue(iso: string): ScenarioDateTimeValue {
 /** Создаёт value integer (округляет до целого). */
 export function createIntegerValue(value: number): ScenarioIntegerValue {
   return { kind: 'Integer', value: Math.trunc(value) };
+}
+
+/** Создаёт value string. */
+export function createStringValue(value: string): ScenarioStringValue {
+  return { kind: 'String', value };
 }
 
 /** Помечает ссылку невалидной (handle сохраняется для диагностики). */
@@ -126,12 +140,22 @@ export function isScenarioIntegerValue(value: unknown): value is ScenarioInteger
   return candidate['kind'] === 'Integer' && typeof candidate['value'] === 'number';
 }
 
+/** Type guard для `ScenarioStringValue`. */
+export function isScenarioStringValue(value: unknown): value is ScenarioStringValue {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return candidate['kind'] === 'String' && typeof candidate['value'] === 'string';
+}
+
 /** Type guard для `ScenarioVariableValue`. */
 export function isScenarioVariableValue(value: unknown): value is ScenarioVariableValue {
   return (
     isScenarioReferenceValue(value) ||
     isScenarioDateTimeValue(value) ||
-    isScenarioIntegerValue(value)
+    isScenarioIntegerValue(value) ||
+    isScenarioStringValue(value)
   );
 }
 

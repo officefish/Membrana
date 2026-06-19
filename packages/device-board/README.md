@@ -6,7 +6,8 @@
 плагинов.
 
 **Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.4 — signal + scenario).  
-**Scenario runtime (onTick, лупы, host):** [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).
+**Scenario runtime (onTick, лупы, host):** [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).  
+**Операторская документация (Mintlify):** [`apps/docs`](../../apps/docs/README.md) — `yarn docs:dev`.
 
 См. также: [`ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) §1f,
 [`MODULE_AND_PLUGIN_UI.md`](../../docs/MODULE_AND_PLUGIN_UI.md) §3.1.

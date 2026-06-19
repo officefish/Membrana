@@ -1,0 +1,52 @@
+---
+title: Streaming lifecycle
+description: MicrophoneRef → AudioStreamRef → AudioSampleRef → FftFrameRef.
+---
+
+# Streaming lifecycle
+
+## Цепочка ссылок
+
+```mermaid
+flowchart LR
+  MIC[MicrophoneRef]
+  SS[StartStreaming]
+  GAS[GetAudioStream]
+  STR[AudioStreamRef]
+  GS[GetSample]
+  SMP[AudioSampleRef]
+  FFT[GetFFTFrame]
+  FR[FftFrameRef]
+
+  MIC --> SS
+  SS --> GAS
+  GAS --> STR
+  STR --> GS
+  GS --> SMP
+  SMP --> FFT
+  FFT --> FR
+```
+
+| Звено | Кто создаёт активный ресурс |
+|-------|----------------------------|
+| MicrophoneRef | GetMicrophone или Event/host |
+| **AudioStreamRef** | **StartStreaming** (host); GetAudioStream только **читает** активный stream |
+| AudioSampleRef | GetSample + host.captureAudioSample |
+| FftFrameRef | GetFFTFrame + host.computeFftFrame |
+
+## Guards (рекомендуемый паттерн)
+
+```text
+On start:  … → set mic → StartStreaming(mic)
+Main:      isValid(mic) → GetAudioStream(mic) → set stream → isValid(stream) → GetSample → …
+```
+
+## Частые ошибки
+
+1. **Нет StartStreaming** — GetAudioStream возвращает invalid stream.
+2. **isValid только на mic** — sample всё равно invalid без stream.
+3. **Нет ребра mic → GetAudioStream** — при активном stream без mic-входа сверка mic не выполняется (см. `resolveGetAudioStreamOutput`).
+
+## Host
+
+Реализация: `apps/client/src/modules/device-board/scenarioMicJournalBridge.ts`.

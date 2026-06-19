@@ -59,7 +59,14 @@ export {
 export { scenarioDocumentFingerprint } from './scenario-snapshot.js';
 export { syncVariableNodeLabels } from './sync-variable-node-labels.js';
 export { formatSocketPortLabel } from './socket-port-label.js';
-export { socketHandleClass, REFERENCE_SOCKET_HANDLE_CLASS, NULL_SOCKET_HANDLE_CLASS, VALUE_SOCKET_HANDLE_CLASS } from './socket-type-palette.js';
+export {
+  socketHandleClass,
+  REFERENCE_SOCKET_HANDLE_CLASS,
+  NULL_SOCKET_HANDLE_CLASS,
+  DATETIME_SOCKET_HANDLE_CLASS,
+  INTEGER_SOCKET_HANDLE_CLASS,
+  STRING_SOCKET_HANDLE_CLASS,
+} from './socket-type-palette.js';
 export {
   createPaletteBoardNode,
   isPaletteNodeKind,
@@ -82,6 +89,11 @@ export { buildDeviceScenarioDocument } from './build-device-scenario.js';
 export type { BuildDeviceScenarioInput } from './build-device-scenario.js';
 export { exportDeviceScenarioDocument } from './export-device-scenario.js';
 export type { ExportedDeviceScenario } from './export-device-scenario.js';
+export {
+  branchScenarioExportFilename,
+  buildBranchScenarioExport,
+} from './export-branch-scenario.js';
+export type { BranchScenarioExport, BuildBranchScenarioExportInput } from './export-branch-scenario.js';
 export {
   hydrateBoardFromDocument,
   hydratedFunctionInput,

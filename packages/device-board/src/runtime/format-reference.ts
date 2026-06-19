@@ -10,6 +10,15 @@ function referenceNoun(kind: ScenarioReferenceValue['kind']): string {
   if (kind === 'MicrophoneRef') {
     return 'microphone';
   }
+  if (kind === 'AudioStreamRef') {
+    return 'audio stream';
+  }
+  if (kind === 'AudioSampleRef') {
+    return 'audio sample';
+  }
+  if (kind === 'FftFrameRef') {
+    return 'fft frame';
+  }
   return 'device';
 }
 
@@ -31,6 +40,9 @@ export function formatVariableValueForPrint(value: ScenarioVariableValue | null)
   }
   if (value.kind === 'Integer') {
     return String(value.value);
+  }
+  if (value.kind === 'String') {
+    return value.value;
   }
   if (isScenarioReferenceValue(value)) {
     const handle = value.handle ?? 'null';
@@ -60,6 +72,9 @@ export async function formatVariableValueForPrintRuntime(
   }
   if (value.kind === 'Integer') {
     return String(value.value);
+  }
+  if (value.kind === 'String') {
+    return value.value;
   }
   if (isScenarioReferenceValue(value)) {
     if (!value.valid) {

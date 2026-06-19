@@ -58,8 +58,8 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
     };
   }
 
-  // v0.4: узлы палитры (print / is-valid / get-microphone).
-  if (nodeKind === 'print' || nodeKind === 'is-valid' || nodeKind === 'get-microphone') {
+  // v0.4: узлы палитры (print / is-valid / get-microphone / streaming / fft).
+  if (nodeKind !== undefined && isPaletteNodeKind(nodeKind)) {
     return {
       id: node.id,
       blockKind,

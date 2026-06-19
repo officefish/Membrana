@@ -11,7 +11,11 @@
  * - `variable-get` / `variable-set` — чтение/запись переменной;
  * - `print` — терминальный лог (принимает DeviceRef/MicrophoneRef);
  * - `is-valid` — условный узел проверки валидности ссылки;
- * - `get-microphone` — извлекает MicrophoneRef из DeviceRef (выбор из списка).
+ * - `get-microphone` — извлекает MicrophoneRef из DeviceRef (выбор из списка);
+ * - `start-streaming` / `stop-streaming` — управление аудиопотоком;
+ * - `get-audio-stream` — ссылка на активный AudioStream;
+ * - `get-sample` — звуковой отрезок (один тик) из AudioStream;
+ * - `get-fft-frame` — FftFrame из AudioSample.
  */
 export const SCENARIO_NODE_KINDS = [
   'event',
@@ -20,6 +24,11 @@ export const SCENARIO_NODE_KINDS = [
   'print',
   'is-valid',
   'get-microphone',
+  'start-streaming',
+  'stop-streaming',
+  'get-audio-stream',
+  'get-sample',
+  'get-fft-frame',
   /** Системный терминал лупа (∞): exec-ребро сюда → новая итерация. */
   'loop-repeat',
 ] as const;

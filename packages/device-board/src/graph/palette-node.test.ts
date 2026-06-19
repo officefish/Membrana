@@ -13,8 +13,17 @@ import {
 import { deserializeScenarioSubgraph, serializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 
 describe('palette-node (DBR5)', () => {
-  it('defines v0.4 palette with Print, isValid, GetMicrophone', () => {
-    expect([...V04_PALETTE_NODE_KINDS]).toEqual(['print', 'is-valid', 'get-microphone']);
+  it('defines v0.4 palette with streaming and fft nodes', () => {
+    expect([...V04_PALETTE_NODE_KINDS]).toEqual([
+      'print',
+      'is-valid',
+      'get-microphone',
+      'start-streaming',
+      'stop-streaming',
+      'get-audio-stream',
+      'get-sample',
+      'get-fft-frame',
+    ]);
   });
 
   it('creates print node with exec + reference value input', () => {
@@ -22,6 +31,11 @@ describe('palette-node (DBR5)', () => {
     expect(node.data.nodeKind).toBe('print');
     expect(node.data.inputs?.some((pin) => pin.name === PALETTE_VALUE_HANDLE)).toBe(true);
     expect(node.data.outputs?.some((pin) => pin.name === 'exec-out')).toBe(true);
+  });
+
+  it('creates print node with exec in, value in, exec out and string out', () => {
+    const node = createPaletteBoardNode('print');
+    expect(node.data.outputs?.find((pin) => pin.name === 'text')?.socketType).toBe('String');
   });
 
   it('creates is-valid node with true/false exec outputs', () => {
@@ -40,6 +54,24 @@ describe('palette-node (DBR5)', () => {
     expect(pins.outputs.find((pin) => pin.name === GET_MICROPHONE_OUT_HANDLE)?.socketType).toBe(
       'MicrophoneRef',
     );
+  });
+
+  it('creates get-audio-stream with MicrophoneRef in and AudioStreamRef out', () => {
+    const pins = paletteNodePins('get-audio-stream');
+    expect(pins.inputs.find((pin) => pin.name === 'microphone')?.socketType).toBe('MicrophoneRef');
+    expect(pins.outputs.find((pin) => pin.name === 'stream')?.socketType).toBe('AudioStreamRef');
+  });
+
+  it('creates get-sample with stream in and sample out', () => {
+    const pins = paletteNodePins('get-sample');
+    expect(pins.inputs.find((pin) => pin.name === 'stream')?.socketType).toBe('AudioStreamRef');
+    expect(pins.outputs.find((pin) => pin.name === 'sample')?.socketType).toBe('AudioSampleRef');
+  });
+
+  it('creates get-fft-frame with sample in and frame out', () => {
+    const pins = paletteNodePins('get-fft-frame');
+    expect(pins.inputs.find((pin) => pin.name === 'sample')?.socketType).toBe('AudioSampleRef');
+    expect(pins.outputs.find((pin) => pin.name === 'frame')?.socketType).toBe('FftFrameRef');
   });
 
   it('round-trips get-microphone with microphoneId', () => {

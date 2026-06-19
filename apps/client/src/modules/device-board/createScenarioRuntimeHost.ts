@@ -76,6 +76,75 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
           },
         };
       }
+      if (ref.kind === 'AudioStreamRef') {
+        const handle = ref.handle ?? '';
+        const meta = handle.length > 0 ? bridge.getAudioStreamMeta(handle) : null;
+        const options = await bridge.enumerateMicrophones();
+        const micId = meta?.microphoneId ?? '';
+        const micMatch = options.find((item) => item.deviceId === micId);
+        const active = bridge.getActiveAudioStreamRef();
+        return {
+          fields: {
+            streamId: handle || 'null',
+            status: meta?.active === true && active.handle === handle ? 'streaming' : 'stopped',
+            microphoneId: micId || 'unknown',
+            microphoneLabel: micMatch?.label ?? 'unknown',
+            startedAt: meta?.startedAtIso ?? '—',
+          },
+        };
+      }
+      if (ref.kind === 'AudioSampleRef') {
+        const handle = ref.handle ?? '';
+        const payload = handle.length > 0 ? bridge.getAudioSamplePayloadMeta(handle) : null;
+        if (payload === null) {
+          return {
+            fields: {
+              sampleId: handle || 'null',
+              status: ref.valid ? 'missing' : 'invalid',
+            },
+          };
+        }
+        const options = await bridge.enumerateMicrophones();
+        const micMatch = options.find((item) => item.deviceId === payload.microphoneId);
+        return {
+          fields: {
+            sampleId: handle,
+            streamId: payload.streamHandle,
+            microphoneId: payload.microphoneId,
+            microphoneLabel: micMatch?.label ?? 'unknown',
+            sampleRate: String(payload.sampleRate),
+            sampleCount: String(payload.sampleCount),
+            durationMs: payload.durationMs.toFixed(1),
+            rms: payload.rms.toFixed(4),
+            capturedAt: payload.capturedAtIso,
+          },
+        };
+      }
+      if (ref.kind === 'FftFrameRef') {
+        const handle = ref.handle ?? '';
+        const payload = handle.length > 0 ? bridge.getFftFramePayload(handle) : null;
+        if (payload === null) {
+          return {
+            fields: {
+              frameId: handle || 'null',
+              status: ref.valid ? 'missing' : 'invalid',
+            },
+          };
+        }
+        return {
+          fields: {
+            frameId: handle,
+            sampleId: payload.sampleHandle,
+            fftSize: String(payload.fftSize),
+            binCount: String(payload.binCount),
+            sampleRate: String(payload.sampleRate),
+            dominantHz: payload.dominantHz.toFixed(1),
+            spectralCentroidHz: payload.spectralCentroidHz.toFixed(1),
+            rms: payload.rms.toFixed(4),
+            computedAt: payload.computedAtIso,
+          },
+        };
+      }
       return null;
     },
     printLine: (line) => {
@@ -85,6 +154,13 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     selectMicrophone: () => bridge.selectMicrophone(),
     startStream: () => bridge.startStream(),
     stopStream: () => bridge.stopStream(),
+    startAudioStreaming: (microphone) => bridge.startAudioStreaming(microphone),
+    stopAudioStreaming: (microphone) => bridge.stopAudioStreaming(microphone),
+    getActiveAudioStreamRef: () => bridge.getActiveAudioStreamRef(),
+    captureAudioSample: (nodeId, streamRef) => bridge.captureAudioSample(nodeId, streamRef),
+    getCapturedAudioSampleRef: (nodeId) => bridge.getCapturedAudioSampleRef(nodeId),
+    computeFftFrame: (nodeId, sampleRef) => bridge.computeFftFrame(nodeId, sampleRef),
+    getCapturedFftFrameRef: (nodeId) => bridge.getCapturedFftFrameRef(nodeId),
     writeJournal: (event) => bridge.writeJournal(event),
     recordChunk: (options) => bridge.recordChunk(options),
     trendsFftDetect: () => bridge.trendsFftDetect(),

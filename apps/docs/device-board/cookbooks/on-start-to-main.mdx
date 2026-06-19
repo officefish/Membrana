@@ -1,0 +1,51 @@
+---
+title: On start → Main loop
+description: Эталонный mic-journal сценарий с StartStreaming и guards.
+---
+
+# Cookbook: On start → Main loop
+
+Сценарий после отладки end-to-end audio pipeline (июнь 2026).
+
+## On start
+
+```text
+Event → set datetime → Print
+     → set device → Print → GetMicrophone(device) → set microphone → Print
+     → StartStreaming(microphone)
+```
+
+**Обязательно:** `StartStreaming` с входом `microphone` из variable-get или passthrough set.
+
+## onMainTick
+
+```text
+onTick → variable-get microphone → isValid → [true]
+      → GetAudioStream(microphone)
+      → set audiostream
+      → isValid(stream) → [true]
+      → GetSample(stream) → Print
+      → GetFFTFrame(sample) → Print
+      → ∞
+```
+
+## Checklist
+
+<Steps>
+  <Step title="StartStreaming в On start или main">
+    Без активного stream GetAudioStream вернёт invalid ref.
+  </Step>
+  <Step title="Провод mic → GetAudioStream">
+    Явная сверка `stream:{microphoneId}`.
+  </Step>
+  <Step title="isValid на AudioStreamRef">
+    После set stream, перед GetSample.
+  </Step>
+  <Step title="Exec-порядок">
+    GetSample после set stream в той же exec-цепочке.
+  </Step>
+</Steps>
+
+## Export для отладки
+
+На вкладке **onMainTick** → меню → **Export onMainTick** → JSON ветки с `referencedVariableIds`.

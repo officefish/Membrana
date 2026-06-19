@@ -89,7 +89,7 @@ export interface V04PaletteItem {
   readonly label: string;
 }
 
-/** Палитра v0.4 по умолчанию (3 узла). */
+/** Палитра v0.4 по умолчанию (Print / isValid / mic / streaming / fft). */
 export const SCENARIO_V04_PALETTE: readonly V04PaletteItem[] = V04_PALETTE_NODE_KINDS.map((nodeKind) => ({
   nodeKind,
   label: paletteNodeLabel(nodeKind),

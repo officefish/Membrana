@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { decorateBoardEdges } from './board-edge-style.js';
-import { DATA_EDGE_STROKE_WIDTH, EXEC_EDGE_STROKE_WIDTH, NULL_SOCKET_STROKE, REFERENCE_SOCKET_STROKE } from './socket-type-palette.js';
+import { DATA_EDGE_STROKE_WIDTH, EXEC_EDGE_STROKE_WIDTH, INTEGER_SOCKET_STROKE, NULL_SOCKET_STROKE, REFERENCE_SOCKET_STROKE, STRING_SOCKET_STROKE } from './socket-type-palette.js';
 import { EVENT_DEVICE_HANDLE } from './event-node.js';
 import { createEventBoardNode } from './event-node.js';
 import { createPaletteBoardNode, PALETTE_VALUE_HANDLE } from './palette-node.js';
@@ -53,6 +53,39 @@ describe('decorateBoardEdges', () => {
     const decorated = decorateBoardEdges(edges, [evt, print], { pulseWhenRunning: false });
     expect(decorated[0]?.style?.stroke).toBe(REFERENCE_SOCKET_STROKE);
     expect(decorated[0]?.style?.strokeWidth).toBe(DATA_EDGE_STROKE_WIDTH);
+  });
+
+  it('colors reference data edges sky (including audio types)', () => {
+    const gas = createPaletteBoardNode('get-audio-stream', { id: 'gas' });
+    const gs = createPaletteBoardNode('get-sample', { id: 'gs' });
+    const edges = [
+      {
+        id: 'stream',
+        source: 'gas',
+        sourceHandle: 'stream',
+        target: 'gs',
+        targetHandle: 'stream',
+      },
+    ];
+    const decorated = decorateBoardEdges(edges, [gas, gs], { pulseWhenRunning: false });
+    expect(decorated[0]?.style?.stroke).toBe(REFERENCE_SOCKET_STROKE);
+  });
+
+  it('colors String and Integer value edges distinctly', () => {
+    const printNode = createPaletteBoardNode('print', { id: 'pr' });
+    const setInteger = createPaletteBoardNode('print', { id: 'set-int' });
+    const edges = [
+      {
+        id: 'str',
+        source: 'pr',
+        sourceHandle: 'text',
+        target: 'set-int',
+        targetHandle: 'value',
+      },
+    ];
+    const decorated = decorateBoardEdges(edges, [printNode, setInteger], { pulseWhenRunning: false });
+    expect(decorated[0]?.style?.stroke).toBe(STRING_SOCKET_STROKE);
+    expect(INTEGER_SOCKET_STROKE).toBe('#1e3a8a');
   });
 
   it('colors nullable data edges indigo', () => {
