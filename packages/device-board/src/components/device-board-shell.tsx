@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { OnSelectionChangeParams } from '@xyflow/react';
 import type { ScenarioNodeKind } from '@membrana/core';
 
@@ -250,8 +250,39 @@ const DeviceBoardShellInner: React.FC<{
   const selectedVariableTypeLabel =
     selectedVariable !== undefined ? referenceTypeLabel(selectedVariable.type) : null;
 
+  const isRuntime = graph.runtimeState.isRunning;
+
+  const runtimeInspection = useMemo(() => {
+    if (!isRuntime || selectedNodeId === null || isSignal) {
+      return null;
+    }
+    return graph.inspectRuntimeNode(
+      selectedNodeId,
+      scenarioBranch,
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+    );
+  }, [
+    graph,
+    isRuntime,
+    isSignal,
+    scenarioBranch,
+    scenarioCanvas.edges,
+    scenarioCanvas.nodes,
+    selectedNodeId,
+    graph.runtimeState.activeNodeId,
+    graph.runtimeState.mainLoopIteration,
+    graph.runtimeState.alarmLoopIteration,
+    graph.runtimeState.printOutputs,
+  ]);
+
+  const printLastOutput =
+    selectedNodeId !== null && selectedNodeKind === 'print'
+      ? graph.runtimeState.printOutputs[selectedNodeId] ?? null
+      : null;
+
   return (
-    <div className="flex h-full min-h-0 flex-col bg-base-100">
+    <div className="flex h-full min-h-0 flex-col bg-base-100 [scrollbar-gutter:stable]">
       <header className="relative flex items-center justify-between gap-3 border-b border-base-200 py-2 pr-4 shadow-sm">
         <div
           className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center justify-center"
@@ -412,7 +443,8 @@ const DeviceBoardShellInner: React.FC<{
               graph.isValidConnection(isSignal ? 'signal' : 'scenario', connection)
             }
             onSelectionChange={handleSelectionChange}
-            pulseEdges={graph.runtimeState.isRunning}
+            pulseEdges={isRuntime}
+            readOnly={isRuntime}
             ariaLabel={`Канвас: ${canvasLabel}`}
           />
         </div>
@@ -421,6 +453,8 @@ const DeviceBoardShellInner: React.FC<{
           <BoardLeftSidebar
             activeBranch={scenarioBranch}
             isScenarioLayer={!isSignal}
+            isRuntime={isRuntime}
+            runtimeInspection={runtimeInspection}
             onSelectBranch={handleSelectBranch}
             signalAdvanced={signalAdvanced}
             isSignalLayer={isSignal}
@@ -443,6 +477,9 @@ const DeviceBoardShellInner: React.FC<{
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
             canEditScenario={!isSignal}
+            isRuntime={isRuntime}
+            runtimeInspection={runtimeInspection}
+            printLastOutput={printLastOutput}
             onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
             onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
             onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}

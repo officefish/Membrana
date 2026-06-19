@@ -39,3 +39,9 @@ export {
 export { ScenarioVariableStore } from './variable-store.js';
 export { runtimeBranchToHandlerBranch } from './types.js';
 export { formatVariableValueForPrint, formatReferenceForPrint, formatVariableValueForPrintRuntime } from './format-reference.js';
+export {
+  inspectNodePorts,
+  type NodePortInspectionResult,
+  type RuntimePortInspection,
+} from './inspect-node-ports.js';
+export { resolveNodeOutput } from './resolve-input.js';

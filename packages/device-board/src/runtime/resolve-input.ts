@@ -111,7 +111,8 @@ function resolveGetMicrophoneOutput(
   return createReferenceValue('MicrophoneRef', microphoneId);
 }
 
-function resolveNodeOutput(
+/** Резолв data-выхода узла (для runtime-инспекции и pull-цепочки). */
+export function resolveNodeOutput(
   subgraph: ScenarioSubgraph,
   variables: readonly ScenarioVariable[],
   node: ScenarioGraphNode,

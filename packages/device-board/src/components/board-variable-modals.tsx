@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { ScenarioVariable, ScenarioVariableType } from '@membrana/core';
 
 import { referenceTypeLabel, type VariableNodeKind } from '../graph/index.js';
@@ -21,17 +22,39 @@ const TrashIcon: React.FC = () => (
   </svg>
 );
 
-interface ModalBackdropProps {
+interface BoardModalProps {
+  readonly open: boolean;
+  readonly titleId: string;
   readonly onClose: () => void;
+  readonly children: React.ReactNode;
 }
 
-const ModalBackdrop: React.FC<ModalBackdropProps> = ({ onClose }) => (
-  <form method="dialog" className="modal-backdrop">
-    <button type="button" aria-label="Закрыть" onClick={onClose}>
-      закрыть
-    </button>
-  </form>
-);
+/** Портал-модалка без DaisyUI `modal-open` — не сдвигает layout при появлении скроллбара. */
+const BoardModal: React.FC<BoardModalProps> = ({ open, titleId, onClose, children }) => {
+  if (!open || typeof document === 'undefined') {
+    return null;
+  }
+
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4" role="presentation">
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/50"
+        aria-label="Закрыть"
+        onClick={onClose}
+      />
+      <div
+        className="relative z-10 w-full max-w-sm rounded-box border border-base-300 bg-base-100 p-6 shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
+        {children}
+      </div>
+    </div>,
+    document.body,
+  );
+};
 
 export interface AddVariableModalProps {
   readonly open: boolean;
@@ -42,53 +65,47 @@ export interface AddVariableModalProps {
 /** Модалка выбора типа новой переменной по категориям. */
 export const AddVariableModal: React.FC<AddVariableModalProps> = ({ open, onClose, onPickType }) => {
   const titleId = useId();
-  if (!open) {
-    return null;
-  }
   return (
-    <dialog className="modal modal-open" open aria-labelledby={titleId}>
-      <div className="modal-box max-w-sm">
-        <h3 id={titleId} className="text-lg font-bold">
-          Новая переменная
-        </h3>
-        <p className="mt-1 text-sm text-base-content/60">Выберите тип переменной</p>
-        <div className="mt-4 flex flex-col gap-4">
-          {VARIABLE_CONSTRUCTOR_CATEGORIES.map((category) => (
-            <div key={category.id}>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-base-content/50">
-                {category.title}
-              </p>
-              <ul className="menu menu-sm rounded-lg border border-base-300 bg-base-100 p-1">
-                {category.types.map((type) => (
-                  <li key={type}>
-                    <button
-                      type="button"
-                      className="flex items-center gap-2"
-                      onClick={() => {
-                        onPickType(type);
-                        onClose();
-                      }}
-                    >
-                      <span
-                        className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${variableTypeIndicatorClass(type)}`}
-                        aria-hidden
-                      />
-                      <span>{referenceTypeLabel(type)}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="modal-action">
-          <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
-            Отмена
-          </button>
-        </div>
+    <BoardModal open={open} titleId={titleId} onClose={onClose}>
+      <h3 id={titleId} className="text-lg font-bold">
+        Новая переменная
+      </h3>
+      <p className="mt-1 text-sm text-base-content/60">Выберите тип переменной</p>
+      <div className="mt-4 flex flex-col gap-4">
+        {VARIABLE_CONSTRUCTOR_CATEGORIES.map((category) => (
+          <div key={category.id}>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-base-content/50">
+              {category.title}
+            </p>
+            <ul className="menu menu-sm rounded-lg border border-base-300 bg-base-100 p-1">
+              {category.types.map((type) => (
+                <li key={type}>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2"
+                    onClick={() => {
+                      onPickType(type);
+                      onClose();
+                    }}
+                  >
+                    <span
+                      className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${variableTypeIndicatorClass(type)}`}
+                      aria-hidden
+                    />
+                    <span>{referenceTypeLabel(type)}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-      <ModalBackdrop onClose={onClose} />
-    </dialog>
+      <div className="mt-4 flex justify-end">
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
+          Отмена
+        </button>
+      </div>
+    </BoardModal>
   );
 };
 
@@ -111,46 +128,43 @@ export const VariableNodeKindModal: React.FC<VariableNodeKindModalProps> = ({
     return null;
   }
   return (
-    <dialog className="modal modal-open" open aria-labelledby={titleId}>
-      <div className="modal-box max-w-sm">
-        <h3 id={titleId} className="text-lg font-bold">
-          {variable.name}
-        </h3>
-        <p className="mt-1 text-sm text-base-content/60">
-          Тип: {referenceTypeLabel(variable.type)} — добавить узел на канвас
-        </p>
-        <div className="mt-4 flex flex-col gap-2">
-          <button
-            type="button"
-            className="btn btn-outline justify-start"
-            disabled={disabled}
-            onClick={() => {
-              onPickKind('variable-get', variable.id);
-              onClose();
-            }}
-          >
-            Getter — чтение переменной
-          </button>
-          <button
-            type="button"
-            className="btn btn-outline justify-start"
-            disabled={disabled}
-            onClick={() => {
-              onPickKind('variable-set', variable.id);
-              onClose();
-            }}
-          >
-            Setter — запись в переменную
-          </button>
-        </div>
-        <div className="modal-action">
-          <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
-            Отмена
-          </button>
-        </div>
+    <BoardModal open titleId={titleId} onClose={onClose}>
+      <h3 id={titleId} className="text-lg font-bold">
+        {variable.name}
+      </h3>
+      <p className="mt-1 text-sm text-base-content/60">
+        Тип: {referenceTypeLabel(variable.type)} — добавить узел на канвас
+      </p>
+      <div className="mt-4 flex flex-col gap-2">
+        <button
+          type="button"
+          className="btn btn-outline justify-start"
+          disabled={disabled}
+          onClick={() => {
+            onPickKind('variable-get', variable.id);
+            onClose();
+          }}
+        >
+          Getter — чтение переменной
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline justify-start"
+          disabled={disabled}
+          onClick={() => {
+            onPickKind('variable-set', variable.id);
+            onClose();
+          }}
+        >
+          Setter — запись в переменную
+        </button>
       </div>
-      <ModalBackdrop onClose={onClose} />
-    </dialog>
+      <div className="mt-4 flex justify-end">
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
+          Отмена
+        </button>
+      </div>
+    </BoardModal>
   );
 };
 
@@ -185,39 +199,81 @@ export const RenameVariableModal: React.FC<RenameVariableModalProps> = ({ variab
   };
 
   return (
-    <dialog className="modal modal-open" open aria-labelledby={titleId}>
-      <div className="modal-box max-w-sm">
-        <h3 id={titleId} className="text-lg font-bold">
-          Переименовать переменную
-        </h3>
-        <label className="form-control mt-4 w-full" htmlFor={inputId}>
-          <span className="label-text text-xs text-base-content/60">Имя</span>
-          <input
-            id={inputId}
-            type="text"
-            className="input input-bordered input-sm w-full font-mono"
-            value={draft}
-            autoFocus
-            onChange={(event) => setDraft(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                commit();
-              }
-            }}
-          />
-        </label>
-        <div className="modal-action">
-          <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
-            Отмена
-          </button>
-          <button type="button" className="btn btn-primary btn-sm" onClick={commit}>
-            Сохранить
-          </button>
-        </div>
+    <BoardModal open titleId={titleId} onClose={onClose}>
+      <h3 id={titleId} className="text-lg font-bold">
+        Переименовать переменную
+      </h3>
+      <label className="form-control mt-4 w-full" htmlFor={inputId}>
+        <span className="label-text text-xs text-base-content/60">Имя</span>
+        <input
+          id={inputId}
+          type="text"
+          className="input input-bordered input-sm w-full font-mono"
+          value={draft}
+          autoFocus
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              commit();
+            }
+          }}
+        />
+      </label>
+      <div className="mt-4 flex justify-end gap-2">
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
+          Отмена
+        </button>
+        <button type="button" className="btn btn-primary btn-sm" onClick={commit}>
+          Сохранить
+        </button>
       </div>
-      <ModalBackdrop onClose={onClose} />
-    </dialog>
+    </BoardModal>
+  );
+};
+
+export interface DeleteVariableModalProps {
+  readonly variable: ScenarioVariable | null;
+  readonly onClose: () => void;
+  readonly onConfirm: (id: string) => void;
+}
+
+/** Модалка подтверждения удаления переменной. */
+export const DeleteVariableModal: React.FC<DeleteVariableModalProps> = ({
+  variable,
+  onClose,
+  onConfirm,
+}) => {
+  const titleId = useId();
+  if (variable === null) {
+    return null;
+  }
+
+  return (
+    <BoardModal open titleId={titleId} onClose={onClose}>
+      <h3 id={titleId} className="text-lg font-bold">
+        Удалить переменную?
+      </h3>
+      <p className="mt-2 text-sm text-base-content/70">
+        Переменная <span className="font-mono font-semibold">{variable.name}</span> и все связанные узлы
+        get/set на всех ветках будут удалены. Это действие нельзя отменить.
+      </p>
+      <div className="mt-4 flex justify-end gap-2">
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
+          Отмена
+        </button>
+        <button
+          type="button"
+          className="btn btn-error btn-sm"
+          onClick={() => {
+            onConfirm(variable.id);
+            onClose();
+          }}
+        >
+          Удалить
+        </button>
+      </div>
+    </BoardModal>
   );
 };
 

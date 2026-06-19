@@ -17,6 +17,7 @@ export interface ExecSubgraphOptions {
   readonly variableStore?: ScenarioVariableStore;
   /** v0.4 (DBR4): контекст pull-резолюции Event/dataflow. */
   readonly resolveContext?: ResolveInputContext;
+  readonly onPrintOutput?: (nodeId: string, message: string) => void;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -89,6 +90,7 @@ export async function runSubgraphOnce(
       functions: options.functions ?? [],
       variableStore: options.variableStore,
       resolveContext: options.resolveContext,
+      onPrintOutput: options.onPrintOutput,
     });
 
     if (result.stopRequested) {

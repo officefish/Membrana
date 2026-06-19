@@ -17,6 +17,7 @@ export {
 } from './variable-node.js';
 export type { CreateVariableBoardNodeOptions, VariableNodeKind } from './variable-node.js';
 export { variableTypeIndicatorClass } from './variable-type-indicator.js';
+export { socketTypeIndicatorClass } from './socket-type-indicator.js';
 export {
   createEventBoardNode,
   createLoopTickEventBoardNode,

@@ -47,6 +47,8 @@ import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
+  inspectNodePorts,
+  type NodePortInspectionResult,
   type ScenarioRuntimeHost,
   type ScenarioRuntimeState,
   type ScenarioStopReason,
@@ -138,6 +140,13 @@ export interface DeviceBoardGraphContextValue {
   readonly addVariableNodeToCurrentBranch: (kind: VariableNodeKind, variableId: string) => void;
   /** v0.4: привязать variable-get/set к переменной по имени (создаёт при отсутствии). */
   readonly assignNodeVariableName: (nodeId: string, variableName: string) => void;
+  /** Runtime: снимок входов/выходов выбранного узла (только при isRunning). */
+  readonly inspectRuntimeNode: (
+    nodeId: string,
+    branch: ScenarioBranchTab,
+    nodes: readonly Node[],
+    edges: readonly Edge[],
+  ) => NodePortInspectionResult | null;
 }
 
 const DeviceBoardGraphContext = createContext<DeviceBoardGraphContextValue | null>(null);
@@ -996,6 +1005,24 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const canRun = runDisabledReason === null;
 
+  const inspectRuntimeNode = useCallback(
+    (
+      nodeId: string,
+      branch: ScenarioBranchTab,
+      nodes: readonly Node[],
+      edges: readonly Edge[],
+    ): NodePortInspectionResult | null => {
+      const runtime = runtimeRef.current;
+      if (runtime === null || !runtime.getState().isRunning) {
+        return null;
+      }
+      const context = runtime.getInspectionResolveContext(branch);
+      const variables = runtime.getVariables();
+      return inspectNodePorts(nodeId, nodes, edges, variables, context);
+    },
+    [],
+  );
+
   const value = useMemo<DeviceBoardGraphContextValue>(
     () => ({
       deviceKind,
@@ -1069,6 +1096,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       removeVariable,
       addVariableNodeToCurrentBranch,
       assignNodeVariableName,
+      inspectRuntimeNode,
     }),
     [
       addScenarioNodeToCurrentBranch,
@@ -1082,6 +1110,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       deviceKind,
       exportJson,
       importJsonFile,
+      inspectRuntimeNode,
       isDirty,
       isValidConnectionForLayer,
       onScenarioAlarmConnect,

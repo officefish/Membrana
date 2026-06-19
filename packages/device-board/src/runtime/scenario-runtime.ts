@@ -253,20 +253,72 @@ export class ScenarioRuntime {
     return undefined;
   }
 
-  private buildLoopTickResolveContext(branch: 'main' | 'alarm'): ResolveInputContext {
+  private buildLoopTickResolveContext(branch: 'main' | 'alarm', mutateTick = true): ResolveInputContext {
     const nowMs = Date.now();
     const startedAt = this.scenarioStartedAtMs ?? nowMs;
     const lastTickAt = branch === 'main' ? this.lastMainTickAtMs : this.lastAlarmTickAtMs;
     const tickMs = lastTickAt === null ? 0 : nowMs - lastTickAt;
-    if (branch === 'main') {
-      this.lastMainTickAtMs = nowMs;
-    } else {
-      this.lastAlarmTickAtMs = nowMs;
+    if (mutateTick) {
+      if (branch === 'main') {
+        this.lastMainTickAtMs = nowMs;
+      } else {
+        this.lastAlarmTickAtMs = nowMs;
+      }
     }
     return {
       loopElapsedMs: nowMs - startedAt,
       loopTickMs: tickMs,
     };
+  }
+
+  /**
+   * Контекст pull-резолюции для UI-инспекции узла (без сдвига счётчиков тика).
+   * @param branchTab — вкладка scenario graph на доске.
+   */
+  getInspectionResolveContext(
+    branchTab:
+      | 'initial'
+      | 'onConnect'
+      | 'main'
+      | 'alarm'
+      | 'onStop'
+      | 'onDisconnect'
+      | 'function',
+  ): ResolveInputContext | undefined {
+    if (branchTab === 'onConnect') {
+      return {
+        handlerBranch: 'onConnect',
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+        serverHandle: this.host.getServerHandle?.() ?? null,
+        triggeredAt: new Date().toISOString(),
+      };
+    }
+    if (branchTab === 'initial') {
+      return {
+        handlerBranch: 'initial',
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+        serverHandle: this.host.getServerHandle?.() ?? null,
+        triggeredAt: new Date().toISOString(),
+      };
+    }
+    if (branchTab === 'onStop') {
+      return {
+        handlerBranch: 'onStop',
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+        triggeredAt: new Date().toISOString(),
+      };
+    }
+    if (branchTab === 'onDisconnect') {
+      return {
+        handlerBranch: 'onDisconnect',
+        deviceHandle: null,
+        triggeredAt: new Date().toISOString(),
+      };
+    }
+    if (branchTab === 'main' || branchTab === 'alarm') {
+      return this.buildLoopTickResolveContext(branchTab, false);
+    }
+    return undefined;
   }
 
   private execOptions(
@@ -282,7 +334,15 @@ export class ScenarioRuntime {
       defaultChunkDurationMs,
       variableStore: this.variableStore,
       resolveContext,
+      onPrintOutput: (nodeId: string, message: string) => this.recordPrintOutput(nodeId, message),
     };
+  }
+
+  private recordPrintOutput(nodeId: string, message: string): void {
+    this.patchState({
+      ...this.state,
+      printOutputs: { ...this.state.printOutputs, [nodeId]: message },
+    });
   }
 
   private async runLoadedDocument(

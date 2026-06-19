@@ -62,6 +62,47 @@ describe('executeScenarioBlock print', () => {
     expect(printLine).toHaveBeenCalledWith('2026-06-18T12:00:00.000Z');
   });
 
+  it('invokes onPrintOutput with formatted message', async () => {
+    const onPrintOutput = vi.fn();
+    const host = createStubScenarioRuntimeHost({ variableStore });
+    const subgraphWithEdge: ScenarioSubgraph = {
+      nodes: [
+        { id: 'evt', nodeKind: 'event', blockKind: 'custom', label: 'On connect' },
+        subgraph.nodes[0]!,
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data',
+          source: 'evt',
+          sourceHandle: 'datetime',
+          target: 'print-1',
+          targetHandle: PALETTE_VALUE_HANDLE,
+          dataType: 'DateTime',
+        },
+      ],
+    };
+
+    await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'onConnect',
+      subgraph: subgraphWithEdge,
+      node: subgraphWithEdge.nodes[1]!,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore,
+      resolveContext: {
+        handlerBranch: 'onConnect',
+        triggeredAt: '2026-06-18T12:00:00.000Z',
+      },
+      onPrintOutput,
+    });
+
+    expect(onPrintOutput).toHaveBeenCalledWith('print-1', '2026-06-18T12:00:00.000Z');
+  });
+
   it('prints server metadata on onConnect', async () => {
     const printLine = vi.fn();
     const host = createStubScenarioRuntimeHost({

@@ -23,6 +23,8 @@ export interface BlockExecutionInput {
   readonly functions: readonly ScenarioFunctionSubgraph[];
   readonly variableStore?: ScenarioVariableStore;
   readonly resolveContext?: ResolveInputContext;
+  /** Колбэк после успешного Print (для UI-инспектора). */
+  readonly onPrintOutput?: (nodeId: string, message: string) => void;
 }
 
 export interface BlockExecutionResult {
@@ -78,6 +80,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     functions,
     variableStore,
     resolveContext,
+    onPrintOutput,
   } = input;
 
   assertNotAborted(signal);
@@ -131,6 +134,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       resolveContext,
     );
     const message = await formatVariableValueForPrintRuntime(ref, host);
+    onPrintOutput?.(node.id, message);
     if (host.printLine !== undefined) {
       host.printLine(message);
     } else {

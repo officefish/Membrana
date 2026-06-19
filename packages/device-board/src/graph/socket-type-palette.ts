@@ -39,6 +39,9 @@ export function dataSocketStrokeColor(socketType?: BoardSocketPin['socketType'])
   if (socketType === 'DateTime') {
     return VALUE_SOCKET_STROKE;
   }
+  if (socketType === 'Integer') {
+    return '#22c55e';
+  }
   return 'oklch(var(--bc) / 0.35)';
 }
 
@@ -54,6 +57,9 @@ export function socketHandleClass(pin: BoardSocketPin): string {
     return `${HANDLE_BASE} ${REFERENCE_SOCKET_HANDLE_CLASS}`;
   }
   if (pin.socketType !== undefined && isValueSocketType(pin.socketType)) {
+    if (pin.socketType === 'Integer') {
+      return `${HANDLE_BASE} !bg-success`;
+    }
     return `${HANDLE_BASE} ${VALUE_SOCKET_HANDLE_CLASS}`;
   }
   return `${HANDLE_BASE} !bg-neutral`;

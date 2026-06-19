@@ -1,7 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import {
-  Background,
-  BackgroundVariant,
   Controls,
   MiniMap,
   ReactFlow,
@@ -35,6 +33,8 @@ export interface BoardFlowCanvasProps {
   readonly ariaLabel?: string;
   /** Пульсация exec-рёбер только при запущенном сценарии. */
   readonly pulseEdges?: boolean;
+  /** Запрет редактирования графа (drag, connect, delete) при runtime. */
+  readonly readOnly?: boolean;
 }
 
 const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
@@ -47,6 +47,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   onSelectionChange,
   ariaLabel,
   pulseEdges = false,
+  readOnly = false,
 }) => {
   const decoratedEdges = useMemo(
     () => decorateBoardEdges(edges, nodes, { pulseWhenRunning: pulseEdges }),
@@ -58,6 +59,39 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       onSelectionChange?.(selection);
     },
     [onSelectionChange],
+  );
+
+  const handleNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      if (readOnly) {
+        const selectionOnly = changes.every((change) => change.type === 'select');
+        if (!selectionOnly) {
+          return;
+        }
+      }
+      onNodesChange(changes);
+    },
+    [onNodesChange, readOnly],
+  );
+
+  const handleEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      if (readOnly) {
+        return;
+      }
+      onEdgesChange(changes);
+    },
+    [onEdgesChange, readOnly],
+  );
+
+  const handleConnect = useCallback(
+    (connection: Connection) => {
+      if (readOnly) {
+        return;
+      }
+      onConnect(connection);
+    },
+    [onConnect, readOnly],
   );
 
   const handleValidConnection = useCallback(
@@ -77,25 +111,23 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     <ReactFlow
       nodes={nodes}
       edges={decoratedEdges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
+      onNodesChange={handleNodesChange}
+      onEdgesChange={handleEdgesChange}
+      onConnect={handleConnect}
       isValidConnection={handleValidConnection}
       nodeTypes={NODE_TYPES}
+      nodesDraggable={!readOnly}
+      nodesConnectable={!readOnly}
+      elementsSelectable
+      edgesReconnectable={!readOnly}
+      deleteKeyCode={readOnly ? null : 'Backspace'}
       fitView
       proOptions={{ hideAttribution: true }}
       onSelectionChange={handleSelectionChange}
-      className="board-flow-blueprint"
+      className="board-flow-canvas"
       style={{ width: '100%', height: '100%' }}
       aria-label={ariaLabel}
     >
-      <Background
-        variant={BackgroundVariant.Lines}
-        gap={20}
-        size={1}
-        color="rgba(100, 149, 237, 0.25)"
-        lineWidth={1}
-      />
       <Controls className="!border-base-300 !bg-base-100 !shadow-sm [&_button]:!border-base-300 [&_button]:!bg-base-100" />
       <MiniMap
         className="!border-base-300 !bg-base-100"

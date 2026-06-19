@@ -47,6 +47,8 @@ export interface ScenarioRuntimeState {
   readonly alarmLoopIteration: number;
   readonly lastStopReason: ScenarioStopReason | null;
   readonly lastError: string | null;
+  /** Последний текст Print по nodeId (накапливается за прогон). */
+  readonly printOutputs: Readonly<Record<string, string>>;
 }
 
 /** Событие журнала от блока write-journal. */
@@ -84,5 +86,6 @@ export function createIdleScenarioRuntimeState(): ScenarioRuntimeState {
     alarmLoopIteration: 0,
     lastStopReason: null,
     lastError: null,
+    printOutputs: {},
   };
 }
