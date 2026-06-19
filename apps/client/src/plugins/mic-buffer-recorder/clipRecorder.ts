@@ -47,7 +47,7 @@ function startWavRecorder(stream: MediaStream): ActiveClipRecorder {
   const source = ctx.createMediaStreamSource(stream);
   const pcmChunks: Float32Array[] = [];
   let worklet: AudioWorkletNode | null = null;
-  let ready = loadWavCaptureWorklet(ctx).then(() => {
+  const ready = loadWavCaptureWorklet(ctx).then(() => {
     worklet = new AudioWorkletNode(ctx, WAV_CAPTURE_PROCESSOR, {
       numberOfInputs: 1,
       numberOfOutputs: 1,

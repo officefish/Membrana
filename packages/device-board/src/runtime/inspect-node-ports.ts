@@ -70,7 +70,7 @@ function inspectDataPort(
     const value =
       role === 'input'
         ? resolveInput(subgraph, variables, nodeId, pin.name, effectiveContext)
-        : resolveNodeOutput(subgraph, variables, scenarioNode, pin.name, effectiveContext);
+        : resolveNodeOutput(subgraph, variables, scenarioNode, pin.name, effectiveContext, new Set());
     return { ...base, valueText: formatVariableValueForPrint(value) };
   } catch (error: unknown) {
     const message =
