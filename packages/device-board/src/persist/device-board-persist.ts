@@ -14,7 +14,7 @@ export interface DeviceBoardPersistAdapter {
 }
 
 export interface DeviceBoardPersistController {
-  readonly syncStatus: 'idle' | 'loading' | 'saving' | 'saved' | 'error';
+  readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
   readonly applyHydratedState: (state: HydratedBoardState) => void;
 }

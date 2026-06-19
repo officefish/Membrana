@@ -2961,6 +2961,19 @@
       "archivedAt": null,
       "archiveNotes": null,
       "notes": "Sandbox apps/client; cabinet unchanged."
+    },
+    {
+      "id": "device-board-manual-save",
+      "title": "device-board: manual save, draft state, header layout",
+      "promptPath": "docs/prompts/DEVICE_BOARD_MANUAL_SAVE_PROMPT.md",
+      "githubIssue": 108,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Remove autosave; isDirty draft vs saved snapshot."
     }
   ]
 }
