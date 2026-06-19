@@ -1,13 +1,21 @@
 /**
  * Инженерная «чертёжная» подложка канваса device-board.
- * Чуть светлее базового --color-bg (#0A0F1A), с сеткой.
+ * Тёмно-синий фон + CSS-сетка (надёжнее, чем только XYFlow Background).
  */
 .board-flow-blueprint {
-  --board-blueprint-bg: #132a4f;
-  --board-blueprint-grid: rgba(96, 165, 250, 0.14);
+  --board-blueprint-bg: #0e203a;
+  --board-blueprint-grid: rgba(100, 149, 237, 0.2);
   background-color: var(--board-blueprint-bg);
 }
 
 .board-flow-blueprint .react-flow__pane {
   background-color: var(--board-blueprint-bg);
+  background-image:
+    linear-gradient(var(--board-blueprint-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--board-blueprint-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.board-flow-blueprint .react-flow__background {
+  opacity: 0.45;
 }

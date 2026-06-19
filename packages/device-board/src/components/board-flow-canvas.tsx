@@ -93,7 +93,8 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         variant={BackgroundVariant.Lines}
         gap={20}
         size={1}
-        color="var(--board-blueprint-grid)"
+        color="rgba(100, 149, 237, 0.25)"
+        lineWidth={1}
       />
       <Controls className="!border-base-300 !bg-base-100 !shadow-sm [&_button]:!border-base-300 [&_button]:!bg-base-100" />
       <MiniMap
