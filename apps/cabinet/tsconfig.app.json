@@ -13,6 +13,8 @@
     "paths": {
       "@membrana/core": ["../../packages/core/src/index.ts"],
       "@membrana/core/*": ["../../packages/core/src/*"],
+      "@membrana/device-board": ["../../packages/device-board/src/index.ts"],
+      "@membrana/device-board/*": ["../../packages/device-board/src/*"],
       "@membrana/media-library-service": ["../../packages/services/media-library/src/index.ts"],
       "@membrana/media-library-service/*": ["../../packages/services/media-library/src/*"],
       "@membrana/sample-playback-service": ["../../packages/services/sample-playback/src/index.ts"],
@@ -34,6 +36,7 @@
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
     { "path": "../../packages/core" },
+    { "path": "../../packages/device-board" },
     { "path": "../../packages/services/audio-engine" },
     { "path": "../../packages/services/sample-playback" },
     { "path": "../../packages/services/media-library" },

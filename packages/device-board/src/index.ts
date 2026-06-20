@@ -1,6 +1,36 @@
 /**
- * @membrana/device-board — публичное API модуля устройств.
+ * @membrana/device-board — визуальный граф обработки сигнала (нод-доска).
+ * См. DEVICE_BOARD_CONCEPT.md. Публичный API в стадии D0; ниже — временный каркас.
  */
 
 export * from './types.js';
 export * from './device-board-service.js';
+
+export { DeviceBoardModeProvider, useDeviceBoardMode } from './context/device-board-mode-context.js';
+export type { DeviceBoardModeContextValue, DeviceBoardModeProviderProps } from './context/device-board-mode-context.js';
+export { DeviceBoardGraphProvider, useDeviceBoardGraph } from './context/device-board-graph-context.js';
+export type { DeviceBoardGraphContextValue, DeviceBoardGraphProviderProps } from './context/device-board-graph-context.js';
+export { DeviceBoardShell } from './components/device-board-shell.js';
+export type { DeviceBoardShellProps } from './components/device-board-shell.js';
+export { BoardFlowCanvas } from './components/board-flow-canvas.js';
+export { BoardInspector } from './components/board-inspector.js';
+export { BoardLeftSidebar } from './components/board-left-sidebar.js';
+export { BoardRightSidebar } from './components/board-right-sidebar.js';
+export type { BoardLayerTab, ScenarioBranchTab, BranchSidebarSection, NodePaletteCategory, V04PaletteItem } from './types/board-ui.js';
+export {
+  BRANCH_TAB_LABEL,
+  BRANCH_SIDEBAR_SECTIONS,
+  SCENARIO_NODE_PALETTE,
+  LEGACY_SCENARIO_NODE_PALETTE,
+  SCENARIO_V04_PALETTE,
+  isLegacyPaletteEnabled,
+  isSignalAdvancedEnabled,
+  activeV04PaletteNodeKinds,
+} from './types/board-ui.js';
+export * from './graph/index.js';
+export * from './runtime/index.js';
+export type {
+  DeviceBoardPersistAdapter,
+  DeviceBoardPersistController,
+  DeviceScenarioRemoteRecord,
+} from './persist/device-board-persist.js';

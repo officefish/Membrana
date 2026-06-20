@@ -1,0 +1,27 @@
+---
+title: Print
+description: Вывод значения в консоль и String out
+---
+
+# Print
+
+## Pins
+
+| Direction | Name | Type |
+|-----------|------|------|
+| in | exec-in | exec |
+| in | value | polymorphic (Ref, DateTime, …) |
+| out | exec-out | exec |
+| out | text | String |
+
+## Runtime
+
+Форматирует `value` через `formatVariableValueForPrintRuntime` + host metadata для audio refs. Пишет в `host.printLine` / console.
+
+## Preconditions
+
+Data-edge на `value` желателен до exec (иначе пустой вывод).
+
+## Code
+
+`block-executor.ts` → `node.nodeKind === 'print'`

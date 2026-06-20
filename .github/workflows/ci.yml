@@ -5,9 +5,9 @@ name: CI
 
 on:
   push:
-    branches: [main, master, develop, techies68]
+    branches: [main, master, develop, vesnin, techies68]
   pull_request:
-    branches: [main, master, develop, techies68]
+    branches: [main, master, develop, vesnin, techies68]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -21,6 +21,9 @@ jobs:
     name: Lint, typecheck, test, build
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Stub for prisma generate in background-* packages (no live DB in CI).
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
 
     steps:
       - name: Checkout
@@ -48,6 +51,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --immutable
+
+      - name: Catalog — verify client module/plugin prompts
+        run: yarn catalog:verify-client
 
       - name: Turbo — lint, typecheck, test, build
         run: yarn turbo run lint typecheck test build --continue

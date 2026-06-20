@@ -147,6 +147,21 @@ export function registerClientModules(): void {
       })),
   });
 
+  MembranaRegistry.registerLazyModule({
+    id: 'device-board',
+    name: 'Доска устройства',
+    description: 'Визуальный редактор сигнала и сценария (XYFlow)',
+    version: '0.1.0',
+    category: 'Устройства',
+    enabled: true,
+    activePlugins: [],
+    defaultConfig: {},
+    loader: () =>
+      import('./device-board/DeviceBoardModule').then((m) => ({
+        default: m.DeviceBoardModule,
+      })),
+  });
+
   MembranaRegistry.registerPlugin('microphone', createMicStreamVizPlugin());
   MembranaRegistry.registerPlugin('microphone', createFftThresholdTestPlugin());
   MembranaRegistry.registerPlugin('microphone', createFftIndicesVizPlugin());

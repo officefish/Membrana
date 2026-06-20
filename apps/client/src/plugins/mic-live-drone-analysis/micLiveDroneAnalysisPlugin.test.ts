@@ -161,7 +161,11 @@ describe('mic-live-drone-analysis plugin', () => {
     publishMediaLibrarySampleImported(samplePayload);
 
     await vi.waitFor(() => {
-      expect(analyzeSampleDetectorsBrief).toHaveBeenCalledWith('sample-live-1', 'mic-auto-5s');
+      expect(analyzeSampleDetectorsBrief).toHaveBeenCalledWith(
+        'sample-live-1',
+        'mic-auto-5s',
+        'track-import',
+      );
     });
 
     await vi.waitFor(() => {
@@ -377,7 +381,11 @@ describe('mic-live-drone-analysis plugin', () => {
     await vi.waitFor(() => {
       expect(analyzeSampleDetectorsBrief).toHaveBeenCalledTimes(2);
     });
-    expect(analyzeSampleDetectorsBrief).toHaveBeenLastCalledWith('clip-c', 'mic-auto-5s');
+    expect(analyzeSampleDetectorsBrief).toHaveBeenLastCalledWith(
+      'clip-c',
+      'mic-auto-5s',
+      'track-import',
+    );
 
     deferreds[1]?.();
     await vi.waitFor(() => {

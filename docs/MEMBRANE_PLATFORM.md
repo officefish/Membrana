@@ -14,7 +14,30 @@
 | `membrana.space` | Маркетинг + вход (login) |
 | `cabinet.membrana.space` | Личный кабинет (`apps/cabinet`) |
 | `media.membrana.space` | Data-plane (`background-media`) |
-| `apps/client` (десктоп/браузер) | Полевой анализ; **автономный узел** или pairing |
+| `apps/client` (браузер) | Полевой анализ в вебе; **автономный узел** или pairing |
+| **Membrana Studio** (`apps/membrana-studio`) | Настольная **расширенная** версия: тот же `apps/client`, Electron + FS |
+| **Membrana Device** (`apps/membrana-device`, план) | Настольный **узкий** конфигуратор: pairing + device-board только |
+
+---
+
+## Линейка полевых приложений
+
+**Решение Teamlead (2026-06-17):** три SKU в одной платформе — веб-кабинет + полевой клиент + два настольных приложения разной глубины. Один renderer (`apps/client`) для web и Studio; Device — отдельный узкий shell.
+
+| Продукт | Пакет | Аудитория | Состав UI | Хранение |
+|---------|-------|-----------|-----------|----------|
+| **Web client** | `apps/client` в браузере | Обычный полевой сценарий в браузере | Полный каталог модулей и плагинов | localStorage / IndexedDB / server (paired) |
+| **Cabinet** | `apps/cabinet` | Управление мембраной, ключами, журналом в облаке | Веб-кабинет на `cabinet.membrana.space` | Сервер |
+| **Membrana Studio** | `apps/membrana-studio` | **Продвинутые пользователи**, раннее тестирование новых возможностей через модульно-плагинную архитектуру; работа с контентом через **sample library** (в перспективе — **медиа-студия**) | Полный каталог (как web) | `electron-system-files` + server при paired |
+| **Membrana Device** | `apps/membrana-device` (план) | Оператор прибора на объекте | **Только** pairing + **device-board** (текущий сценарий устройства, редактируемый) | `electron-system-files` при автономии; **без sample library** (осознанное ограничение v1) |
+
+**Studio** — настольная «расширенная» рабочая станция: микрофон, журнал, библиотека, device-board, MP7 WebSocket; канал для beta/feature preview.
+
+**Device** — лёгкое настольное приложение: линковка с сервером по ключу + device-board. Автономный режим через ФС допустим (сценарий, настройки), но **медиа-библиотека в Device не планируется** — нет продуктового смысла для узкого SKU.
+
+**Архитектура shell (Studio MS1–MS3):** Electron main хранит journal / media-library / trends на диске и отдаёт в renderer через `electronAPI`; бизнес-логика анализа остаётся в `apps/client` + `packages/services/*`. Дублирование FS в shell — граница ОС, не второй доменный слой.
+
+Эпики: Studio — [`prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) (`membrana-studio-desktop`, Issue [#93](https://github.com/officefish/Membrana/issues/93)); Device — отдельный эпик после MS4 (общий опыт упаковки).
 
 ---
 
@@ -26,7 +49,9 @@
 | **Узел (Node)** | Логический шлюз между мембраной и одним экземпляром `apps/client`. v1: **один на мембрану**. |
 | **Ключ доступа (Node Access Key)** | Секрет для pairing клиента с узлом. **Формат** в UI = выбор **срока действия** (TTL), не тип QR/файл. |
 | **Устройство (Device)** | Запись paired-клиента; маппится на `deviceId` в `background-media`. |
-| **Режим узла (Node connection mode)** | Состояние `apps/client`: **связанный** (pairing с кабинетом) или **автономный** (локальная ФС, без облака). Пользователь **всегда** может выбрать автономный режим. |
+| **Режим узла (Node connection mode)** | Состояние полевого клиента (`apps/client` / Studio / Device): **связанный** (pairing с кабинетом) или **автономный** (локальная ФС, без облака). Пользователь **всегда** может выбрать автономный режим. |
+| **Membrana Studio** | Настольное приложение — полный полевой клиент в Electron (`apps/membrana-studio` → renderer `apps/client`). |
+| **Membrana Device** | Настольное приложение — только pairing + device-board (`apps/membrana-device`, отдельный эпик). |
 | **Тариф (Tariff)** | Лимиты пользовательского хранилища (`userStorageQuotaBytes`), буфера live (`bufferQuotaBytes`) и **состав** системного dataset (`datasetCatalogId`). v1 seed: `free-v1`. |
 | **TelemetryReport** | Серверная сущность: отчёт/снимок анализа (аналог записи client journal). |
 | **TelemetryLiveRecord** | Серверная сущность: live-сессия / потоковая запись. |
@@ -213,6 +238,68 @@ sequenceDiagram
 
 **Отложено (post-v1):** калибровка журнала и **единый рендеринг** client ↔ cabinet (parity карточек, live-badge, фильтры) — отдельная дорожная карта после консилиума; не блокирует MP6.
 
+**Транспорт live-sync (2026-06-17):** push журнала и live-сигналов микрофона — **WebSocket** (см. §«Транспорт узла»); финальные отчёты и история — REST. Device-board и sample library — вне первого эпика (MP7).
+
+---
+
+## Транспорт узла (REST vs WebSocket)
+
+> Источник: [`discussions/membrane-realtime-transport-consilium-2026-06-17.md`](./discussions/membrane-realtime-transport-consilium-2026-06-17.md) (полевые испытания + консилиум команды).
+
+### Что такое MP7
+
+**MP7** — рабочее имя **следующей фазы** roadmap Membrane Platform после MP6 (MP0…MP6 — эпик [#67](https://github.com/officefish/Membrana/issues/67)). Это не отдельный продукт: предполагаемый реестр `membrane-node-realtime-gateway`. Эпик в `docs/tasks/registry.json` **ещё не заведён**.
+
+**Scope MP7 (уточнение product):** WebSocket только для **модуля микрофона** (live brief/level) и **журнала** (live append, presence). **Device-board** и **sample library** в MP7 не входят.
+
+Связь **paired**-узла (`apps/client`) с платформой — **два канала**, не один протокол на всё:
+
+| Плоскость | Транспорт | Сервер | Назначение |
+|-----------|-----------|--------|------------|
+| **Документы и blobs** | REST | `background-media`, `background-cabinet` | Pairing, квоты, сэмплы, `device-scenario`, upload отчётов, пагинация журнала |
+| **События live (MP7)** | **WebSocket (WSS)** | `background-cabinet` (`NodeRealtimeGateway`) | Push журнала, mic-live brief/level, presence |
+| **Сигнал и DSP** | — (локально) | узел | Web Audio, live-окна микрофона; **сырой PCM по сети не передаём** |
+
+**Автономный режим** (`nodeConnectionMode: autonomous`) WebSocket **не использует**.
+
+### REST — без изменения границ
+
+Идемпотентные и крупные операции остаются на HTTP: `POST /v1/pair`, CRUD ключей и узла, **sample library** (blobs, templates), `GET/PUT .../device-scenario`, `POST` финального `TelemetryReport`, `GET` истории журнала с cursor.
+
+### WebSocket — scope MP7
+
+| Категория | Примеры | Зачем |
+|-----------|---------|-------|
+| Journal live | `journal.append`, live-session badge | Кабинет без poll |
+| Mic live | `analysis.brief`, `analysis.level`, `mic.session` | Оперативная связь после окон 3 с |
+| Presence / security | `node.online`, `session.invalidated` | Отзыв ключа без только poll 60 с |
+
+Envelope: `{ v, channel, type, ts, payload }`; каналы MP7: `journal | mic-live | presence`. При обрыве — reconnect + cursor; fallback **REST poll**.
+
+### Вне MP7 (отдельно)
+
+| Тема | Когда |
+|------|-------|
+| Device-board runtime по WS | **MP7b** — после существенных правок device-board; канон ядра: [`SCENARIO_RUNTIME.md`](./SCENARIO_RUNTIME.md) |
+| Sample library и WS | **Отдельный консилиум**; до решения — только REST |
+
+### Что не делаем в MP7
+
+- PCM/opus stream с микрофона в облако
+- WebSocket в `background-media` или `background-office`
+- Device-board и sample library на сокетах
+
+### Roadmap (транспорт)
+
+| Фаза | id | Содержание |
+|------|-----|------------|
+| MP7 | `membrane-node-realtime-gateway` | Gateway; **журнал + микрофон** |
+| MP7b | `membrane-node-runtime-remote` | Device-board ↔ WS (RT0–RT7): канал `runtime` (run/stop/mode), headless `ScenarioRuntime`, multi-node, UX доски, reconnect + персист режима |
+| TBD | `media-library-realtime` | Консилиум: нужен ли WS для библиотеки |
+| MP8 | `membrane-realtime-hardening` | Reconnect, backpressure, нагрузка |
+
+Контракты событий MP7 — ветка **`vesnin`**, типы в `@membrana/core`.
+
 ---
 
 ## Roadmap (эпик)
@@ -226,6 +313,7 @@ sequenceDiagram
 | MP4 | `membrane-platform-mp4-media-membrane` | Media per membrane |
 | MP5 | `membrane-platform-mp5-telemetry-journal` | Cloud journal |
 | MP6 | `membrane-platform-mp6-prod-deploy` | Финальная prod-регрессия + runbook |
+| MP7 | `membrane-node-realtime-gateway` | WebSocket: **журнал + микрофон** (NR0–NR6, [#92](https://github.com/officefish/Membrana/issues/92)) |
 
 **Приёмка фаз:** деплой на прод → prod-smoke → архив в реестре. Подробно: [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
 
@@ -239,4 +327,4 @@ sequenceDiagram
 
 ---
 
-*Версия: 2026-06-12 · Источник решений: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md); квоты userStorage/buffer + dataset catalog — уточнение 2026-06-12.*
+*Версия: 2026-06-17 · Источники: [`discussions/membrane-platform-consilium-2026-06-13.md`](./discussions/membrane-platform-consilium-2026-06-13.md); транспорт узла — [`discussions/membrane-realtime-transport-consilium-2026-06-17.md`](./discussions/membrane-realtime-transport-consilium-2026-06-17.md).*

@@ -70,6 +70,17 @@ export function JournalPage() {
           <p className="text-sm text-base-content/60">
             5‑с клипы и отчёты детекторов с paired-клиентов — по каждому узлу отдельно.
           </p>
+          <p className="text-xs text-base-content/45 mt-1" role="status">
+            Канал:{' '}
+            {journal.realtimeState === 'connected'
+              ? 'WebSocket'
+              : journal.realtimeState === 'reconnecting'
+                ? 'WebSocket (переподключение)'
+                : 'REST poll'}
+            {journal.lastMicBrief
+              ? ` · brief ${journal.lastMicBrief.isDetected ? 'дрон' : 'чисто'}`
+              : ''}
+          </p>
         </div>
         <button
           type="button"

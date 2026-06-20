@@ -1,0 +1,11 @@
+{
+  "hackathonId": "device-board-hackathon-1",
+  "closedAt": "2026-06-17",
+  "closurePath": "docs/archive/hackathon/2026-06-17/CLOSURE.md",
+  "logPaths": [
+    "docs/HACKATHON_LOG_DAY_0.md",
+    "docs/HACKATHON_LOG_DAY_1.md"
+  ],
+  "briefPath": "docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md",
+  "interviewPath": "docs/seanses/hackathon-brief-interview-2026-06-17.md"
+}

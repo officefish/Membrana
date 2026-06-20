@@ -1,0 +1,59 @@
+---
+title: Documentation tooling
+description: Mintlify, ChatPRD, Atlan, Docs Canvas
+---
+
+# Documentation workflow
+
+## Слои
+
+| Слой | Tool | Роль |
+|------|------|------|
+| Publish | **Mintlify** (`apps/docs`) | Node reference, concepts, cookbooks |
+| Spec | **ChatPRD** MCP | PRD, DoD, alignment |
+| Corporate | **Atlan** MCP | Glossary, корп. термины, metadata search |
+| Agent truth | `docs/catalog/` | Обязательно перед правками кода |
+| Visual | **Cursor Docs Canvas** | Architecture / streaming diagrams |
+
+## Локальная разработка docs
+
+```bash
+yarn docs:dev
+# http://localhost:3333
+```
+
+## MCP Phase D
+
+```bash
+yarn mcp:phase-d              # отчёт + generated JSON
+yarn mcp:phase-d:install      # merge tier4 в ~/.cursor/mcp.json
+```
+
+Tier4 servers (OAuth при первом use):
+
+| Server | URL |
+|--------|-----|
+| mintlify-reference | `https://mintlify.com/docs/mcp` |
+| mintlify-admin | `https://mcp.mintlify.com` |
+| chatprd | `https://app.chatprd.ai/mcp` |
+| atlan-docs | `https://docs.atlan.com/mcp` |
+| atlan | `https://mcp.atlan.com/mcp` |
+
+## ChatPRD sync
+
+Локальная копия PRD: `prd/device-board-mvp-docs.md` (рядом с кодом). ChatPRD — source of truth; sync через MCP `update_document`.
+
+## Atlan при написании страниц
+
+1. `semantic_search` / glossary — каноничное имя термина  
+2. Runtime semantics — только из кода + Mintlify  
+3. Не смешивать корп. определения с поведением exec/data
+
+## Cursor plugins
+
+- Mintlify Cursor plugin (marketplace)  
+- ChatPRD plugin (`write-prd`, `check-prd-alignment`)
+
+## Task prompt
+
+Эпик: `db-doc-v04-mvp` → `docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md`

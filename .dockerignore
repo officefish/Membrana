@@ -21,6 +21,8 @@ packages/core
 !packages/core
 !packages/core/**
 packages/device-board
+!packages/device-board
+!packages/device-board/**
 packages/libs
 !packages/libs/detector-report
 !packages/libs/detector-report/**
@@ -39,6 +41,10 @@ packages/services
 !packages/services/trends-detector/**
 !packages/services/fft-analyzer
 !packages/services/fft-analyzer/**
+!packages/services/drone-detection-orchestrator
+!packages/services/drone-detection-orchestrator/**
+!packages/services/detectors
+!packages/services/detectors/**
 packages/background-office
 docs
 scripts

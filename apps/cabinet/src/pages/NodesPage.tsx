@@ -1,23 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  createAccessKey,
-  createNode,
-  DURATION_OPTIONS,
-  fetchMembraneMe,
-  purgeRevokedAccessKeys,
-  revokeAccessKey,
-  type MembraneView,
-  type NodeAccessKeyDuration,
-} from '@/api/membrane';
+import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
+import { isNodeLimitReachedView } from '@/lib/nodeListView';
+import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
+import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 
-export function NodesPage() {
+interface NodesPageProps {
+  onOpenJournal: () => void;
+  onOpenDeviceBoard: () => void;
+  onOpenKeys?: (nodeId: string) => void;
+}
+
+export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: NodesPageProps) {
   const [data, setData] = useState<MembraneView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [duration, setDuration] = useState<NodeAccessKeyDuration>('days_3');
-  const [revealedKey, setRevealedKey] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+
+  const membraneId = data?.membrane.id ?? null;
+  const runtime = useCabinetNodeRuntime(membraneId);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -39,7 +39,7 @@ export function NodesPage() {
     setBusy(true);
     setError(null);
     try {
-      await createNode('Узел 1');
+      await createNode();
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не удалось создать узел');
@@ -48,65 +48,21 @@ export function NodesPage() {
     }
   };
 
-  const handleCreateKey = async () => {
-    if (!data?.node) return;
-    setBusy(true);
-    setError(null);
-    setRevealedKey(null);
-    setCopied(false);
-    try {
-      const result = await createAccessKey(data.node.id, duration);
-      setRevealedKey(result.key);
-      await load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не удалось создать ключ');
-    } finally {
-      setBusy(false);
-    }
-  };
+  const handleDeleteNode = async (node: NodeView) => {
+    const activeKeys = node.accessKeys.filter((key) => key.active).length;
+    const message =
+      activeKeys > 0
+        ? `Удалить узел «${node.label}»? Будет отозвано активных ключей: ${activeKeys}. Сопряжение с устройством разорвётся.`
+        : `Удалить узел «${node.label}»? Сопряжение и ключи узла будут удалены.`;
+    if (!window.confirm(message)) return;
 
-  const handleCopyKey = async () => {
-    if (!revealedKey) return;
-    try {
-      await navigator.clipboard.writeText(revealedKey);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setError('Не удалось скопировать ключ');
-    }
-  };
-
-  const handlePurgeRevoked = async () => {
-    if (!data?.node) return;
-    const revokedCount = data.node.accessKeys.filter((key) => key.revokedAt).length;
-    if (revokedCount === 0) return;
-    if (
-      !window.confirm(
-        `Удалить ${revokedCount} отозванн${revokedCount === 1 ? 'ый ключ' : revokedCount < 5 ? 'ых ключа' : 'ых ключей'}? Это действие необратимо.`,
-      )
-    ) {
-      return;
-    }
     setBusy(true);
     setError(null);
     try {
-      await purgeRevokedAccessKeys(data.node.id);
+      await deleteNode(node.id);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не удалось удалить отозванные ключи');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const handleRevoke = async (keyId: string) => {
-    setBusy(true);
-    setError(null);
-    try {
-      await revokeAccessKey(keyId);
-      await load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не удалось отозвать ключ');
+      setError(e instanceof Error ? e.message : 'Не удалось удалить узел');
     } finally {
       setBusy(false);
     }
@@ -116,15 +72,19 @@ export function NodesPage() {
     return <span className="loading loading-spinner loading-md" aria-label="Загрузка" />;
   }
 
-  const node = data?.node ?? null;
-  const revokedKeyCount = node?.accessKeys.filter((key) => key.revokedAt).length ?? 0;
+  const nodes = data?.nodes ?? [];
+  const limitReached = data ? isNodeLimitReachedView(nodes.length, data.membrane.tariff.maxNodesPerMembrane) : true;
 
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Узлы и ключи</h1>
+        <h1 className="text-2xl font-semibold">Узлы</h1>
         <p className="mt-2 text-base-content/70">
-          Узел связывает мембрану с полевым клиентом. Ключ показывается один раз при создании.
+          Узел связывает мембрану с полевым клиентом. Запускайте мониторинг и переключайте режим
+          тревоги по сети. Ключи доступа — в разделе «Ключи».
+        </p>
+        <p className="mt-1 text-xs text-base-content/50">
+          Связь с узлами: {runtimeConnectionLabel(runtime.connection)}
         </p>
       </div>
 
@@ -134,10 +94,10 @@ export function NodesPage() {
         </div>
       ) : null}
 
-      {!node ? (
+      {nodes.length === 0 ? (
         <div className="card bg-base-200">
           <div className="card-body">
-            <p>Узел ещё не создан (v1: один на мембрану).</p>
+            <p>Пока нет узлов.</p>
             <button
               type="button"
               className="btn btn-primary w-fit"
@@ -149,118 +109,182 @@ export function NodesPage() {
           </div>
         </div>
       ) : (
-        <>
-          <div className="card bg-base-200">
-            <div className="card-body">
-              <h2 className="card-title text-lg">{node.label}</h2>
-              <p className="font-mono text-xs text-base-content/50">{node.id}</p>
-            </div>
-          </div>
+        <div className="space-y-4">
+          {nodes.map((node) => (
+            <NodeCard
+              key={node.id}
+              node={node}
+              runtime={runtime}
+              busy={busy}
+              onOpenJournal={onOpenJournal}
+              onOpenDeviceBoard={onOpenDeviceBoard}
+              onOpenKeys={onOpenKeys}
+              onDelete={() => void handleDeleteNode(node)}
+            />
+          ))}
 
-          <div className="card bg-base-200">
-            <div className="card-body gap-4">
-              <h2 className="card-title text-lg">Новый ключ доступа</h2>
-              <label className="form-control w-full max-w-xs">
-                <span className="label-text">Срок действия</span>
-                <select
-                  className="select select-bordered"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value as NodeAccessKeyDuration)}
-                  disabled={busy}
-                >
-                  {DURATION_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+          <button
+            type="button"
+            className="btn btn-outline w-fit"
+            disabled={busy || limitReached}
+            title={limitReached ? `Достигнут лимит тарифа (${data?.membrane.tariff.maxNodesPerMembrane})` : undefined}
+            onClick={() => void handleCreateNode()}
+          >
+            Добавить узел
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function runtimeConnectionLabel(state: ReturnType<typeof useCabinetNodeRuntime>['connection']): string {
+  switch (state) {
+    case 'connected':
+      return 'установлена';
+    case 'connecting':
+      return 'подключение…';
+    case 'reconnecting':
+      return 'переподключение…';
+    default:
+      return 'нет';
+  }
+}
+
+function NodeCard({
+  node,
+  runtime,
+  busy,
+  onOpenJournal,
+  onOpenDeviceBoard,
+  onOpenKeys,
+  onDelete,
+}: {
+  node: NodeView;
+  runtime: ReturnType<typeof useCabinetNodeRuntime>;
+  busy: boolean;
+  onOpenJournal: () => void;
+  onOpenDeviceBoard: () => void;
+  onOpenKeys?: (nodeId: string) => void;
+  onDelete: () => void;
+}) {
+  const deviceId = node.device?.mediaDeviceId ?? null;
+  const state = deviceId ? runtime.states[deviceId] : undefined;
+  const deviceLive = runtime.isDeviceLive(deviceId);
+  const canStart = deviceId !== null && deviceLive;
+  const isRunning = state?.isRunning ?? false;
+  const mode = state?.mode ?? 'normal';
+
+  const borderClass = isRunning
+    ? mode === 'alarm'
+      ? 'border-warning'
+      : 'border-info animate-pulse'
+    : 'border-transparent';
+
+  return (
+    <div className={`card border-2 bg-base-200 ${borderClass}`}>
+      <div className="card-body gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h2 className="card-title text-lg">{node.label}</h2>
+            <p className="font-mono text-xs text-base-content/50">{node.id}</p>
+            {node.device ? (
+              deviceLive ? (
+                <span className="badge badge-success badge-sm mt-1">online</span>
+              ) : (
+                <span className="badge badge-warning badge-sm mt-1">сопряжён · offline</span>
+              )
+            ) : (
+              <span className="badge badge-ghost badge-sm mt-1">не сопряжён</span>
+            )}
+          </div>
+          {isRunning ? (
+            <span className={`badge ${mode === 'alarm' ? 'badge-warning' : 'badge-info'}`}>
+              {mode === 'alarm' ? 'Тревога' : 'Работает'}
+            </span>
+          ) : (
+            <span className="badge badge-ghost">Остановлен</span>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {isRunning ? (
+            <button
+              type="button"
+              className="btn btn-sm btn-error"
+              disabled={!deviceId}
+              onClick={() => deviceId && runtime.stop(deviceId)}
+            >
+              Стоп
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-sm btn-primary"
+              disabled={!canStart}
+              title={
+                !deviceId
+                  ? 'Узел не сопряжён с устройством'
+                  : !deviceLive
+                    ? DEVICE_OFFLINE_RUN_HINT
+                    : undefined
+              }
+              aria-label={
+                !canStart && deviceId && !deviceLive ? DEVICE_OFFLINE_RUN_HINT : undefined
+              }
+              onClick={() => deviceId && runtime.run(deviceId)}
+            >
+              Пуск
+            </button>
+          )}
+
+          {isRunning && deviceId ? (
+            <div className="join">
               <button
                 type="button"
-                className="btn btn-primary w-fit"
-                disabled={busy}
-                onClick={() => void handleCreateKey()}
+                className={`btn btn-sm join-item ${mode === 'normal' ? 'btn-info' : 'btn-ghost'}`}
+                onClick={() => runtime.setMode(deviceId, 'normal')}
               >
-                Создать ключ
+                Обычный
               </button>
-              {revealedKey ? (
-                <div className="alert alert-warning">
-                  <div className="w-full space-y-2">
-                    <p className="font-semibold">Скопируйте ключ сейчас — он больше не покажется:</p>
-                    <div className="flex flex-wrap items-start gap-2">
-                      <code className="min-w-0 flex-1 break-all text-sm">{revealedKey}</code>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline shrink-0"
-                        disabled={busy}
-                        onClick={() => void handleCopyKey()}
-                      >
-                        {copied ? 'Скопировано' : 'Копировать'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
+              <button
+                type="button"
+                className={`btn btn-sm join-item ${mode === 'alarm' ? 'btn-warning' : 'btn-ghost'}`}
+                onClick={() => runtime.setMode(deviceId, 'alarm')}
+              >
+                Тревога
+              </button>
             </div>
-          </div>
+          ) : null}
 
-          <div className="card bg-base-200">
-            <div className="card-body">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 className="card-title text-lg">Ключи</h2>
-                {revokedKeyCount > 0 ? (
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-sm"
-                    disabled={busy}
-                    onClick={() => void handlePurgeRevoked()}
-                  >
-                    Удалить отозванные ({revokedKeyCount})
-                  </button>
-                ) : null}
-              </div>
-              {node.accessKeys.length === 0 ? (
-                <p className="text-base-content/60">Пока нет ключей.</p>
-              ) : (
-                <ul className="space-y-3">
-                  {node.accessKeys.map((key) => {
-                    const label =
-                      DURATION_OPTIONS.find((o) => o.value === key.duration)?.label ?? key.duration;
-                    return (
-                      <li
-                        key={key.id}
-                        className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-base-100 p-3"
-                      >
-                        <div>
-                          <p className="font-medium">{label}</p>
-                          <p className="text-xs text-base-content/60">
-                            до {new Date(key.expiresAt).toLocaleString('ru-RU')}
-                          </p>
-                          <span
-                            className={`badge badge-sm mt-1 ${key.active ? 'badge-success' : 'badge-ghost'}`}
-                          >
-                            {key.revokedAt ? 'отозван' : key.active ? 'активен' : 'истёк'}
-                          </span>
-                        </div>
-                        {key.active ? (
-                          <button
-                            type="button"
-                            className="btn btn-outline btn-sm"
-                            disabled={busy}
-                            onClick={() => void handleRevoke(key.id)}
-                          >
-                            Отозвать
-                          </button>
-                        ) : null}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
+          <div className="ml-auto flex gap-2">
+            {onOpenKeys ? (
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                disabled={busy}
+                onClick={() => onOpenKeys(node.id)}
+              >
+                Ключи
+              </button>
+            ) : null}
+            <button type="button" className="btn btn-sm btn-ghost" onClick={onOpenJournal}>
+              Журнал
+            </button>
+            <button type="button" className="btn btn-sm btn-ghost" onClick={onOpenDeviceBoard}>
+              Доска
+            </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline btn-error"
+              disabled={busy}
+              onClick={onDelete}
+            >
+              Удалить
+            </button>
           </div>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }

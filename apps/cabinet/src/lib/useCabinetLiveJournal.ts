@@ -15,18 +15,24 @@ import {
   countLiveJournalPages,
   findReportsForTrack,
   findTrackForReport,
+  liveJournalItemFromJournalAppendPayload,
   matchesLiveJournalFilter,
   matchesLiveJournalSearch,
   sliceLiveJournalPage,
   type LiveJournalFilter,
   type LiveJournalItem,
 } from '@membrana/telemetry-journal-service';
+import type { AnalysisBriefPayload, JournalAppendPayload } from '@membrana/core';
 
 import { fetchTelemetryJournalItems } from '@/api/journal';
 import { fetchMembraneNodes } from '@/api/sampleLibrary';
 import { fetchMembraneMe } from '@/api/membrane';
 import { deleteTelemetryJournalItems } from '@/api/journal';
 import { fetchAllJournalItems } from '@/lib/fetchAllJournalItems';
+import {
+  getCabinetNodeRealtimeClient,
+  type CabinetRealtimeClientState,
+} from '@/lib/cabinetNodeRealtimeClient';
 import {
   getCabinetMediaLibrary,
   invalidateCabinetMediaLibrary,
@@ -45,6 +51,9 @@ export interface CabinetJournalNode {
 }
 
 export function useCabinetLiveJournal() {
+  const [membraneId, setMembraneId] = useState<string | null>(null);
+  const [realtimeState, setRealtimeState] = useState<CabinetRealtimeClientState>('disconnected');
+  const [lastMicBrief, setLastMicBrief] = useState<AnalysisBriefPayload | null>(null);
   const [nodes, setNodes] = useState<CabinetJournalNode[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
   const [items, setItems] = useState<LiveJournalItem[]>([]);
@@ -67,6 +76,7 @@ export function useCabinetLiveJournal() {
 
   const loadNodes = useCallback(async () => {
     const me = await fetchMembraneMe();
+    setMembraneId(me.membrane.id);
     const nodesData = await fetchMembraneNodes(me.membrane.id);
     const nextNodes: CabinetJournalNode[] = nodesData.nodes.map((node) => ({
       id: node.id,
@@ -197,6 +207,28 @@ export function useCabinetLiveJournal() {
 
   useVisibleInterval(pollJournal, CABINET_LIVE_JOURNAL_REFRESH_MS, Boolean(selectedDeviceId));
 
+  useEffect(() => {
+    if (!membraneId) return undefined;
+    const client = getCabinetNodeRealtimeClient();
+    client.connect(membraneId);
+    const unsubState = client.subscribeState(setRealtimeState);
+    const unsubJournal = client.subscribeJournalAppend((envelope) => {
+      const body = envelope.payload as JournalAppendPayload & { serverId?: string };
+      const item = liveJournalItemFromJournalAppendPayload(body, envelope.ts);
+      if (!item) return;
+      setItems((prev) => mergeJournalItemsByClientEntryId(prev, [item]));
+    });
+    const unsubMic = client.subscribeMicBrief((payload) => {
+      setLastMicBrief(payload);
+    });
+    return () => {
+      unsubState();
+      unsubJournal();
+      unsubMic();
+      client.disconnect();
+    };
+  }, [membraneId]);
+
   const clearByFilter = useCallback(
     async (activeFilter: LiveJournalFilter) => {
       if (!selectedDeviceId || clearingJournal) return;
@@ -318,5 +350,7 @@ export function useCabinetLiveJournal() {
     trackTitleForReport,
     playback,
     mediaReady: mediaService != null,
+    realtimeState,
+    lastMicBrief,
   };
 }

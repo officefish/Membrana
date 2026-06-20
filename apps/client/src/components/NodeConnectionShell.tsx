@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { usePairStatusMonitor } from '@/hooks/usePairStatusMonitor';
 import { reconfigureMediaLibraryFromConnection, schedulePairedMediaLibraryUpgrade, stopPairedMediaLibraryUpgrade } from '@/lib/mediaLibraryHubBridge';
 import { reconfigureJournalFromConnection, schedulePairedJournalUpgrade, stopPairedJournalUpgrade } from '@/lib/journalHubBridge';
+import { reconfigureNodeRealtimeFromConnection } from '@/lib/nodeRealtimeHubBridge';
 import { ConnectionFallbackDialog } from './node-connection/ConnectionFallbackDialog';
 import { MembraneLinkedPanel } from './node-connection/MembraneLinkedPanel';
 import { MembranePairingPanel } from './node-connection/MembranePairingPanel';
@@ -32,6 +33,7 @@ export const NodeConnectionShell: React.FC = () => {
     lastConnectionKeyRef.current = key;
     void reconfigureMediaLibraryFromConnection(mode, pairing);
     void reconfigureJournalFromConnection(mode, pairing);
+    reconfigureNodeRealtimeFromConnection(mode, pairing);
   }, [hydrated, mode, pairing]);
 
   useEffect(() => {

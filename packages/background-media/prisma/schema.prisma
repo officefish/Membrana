@@ -55,8 +55,16 @@ model Device {
   collections             Collection[]
   samples                 Sample[]
   trendTemplates          TrendTemplate[]
+  deviceScenario          DeviceScenario?
 
   @@index([membraneId])
+}
+
+model DeviceScenario {
+  deviceId  String   @id @db.Uuid
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  payload   Json
+  updatedAt DateTime @updatedAt
 }
 
 model Collection {

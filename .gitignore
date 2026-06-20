@@ -5,6 +5,8 @@ node_modules/
 dist/
 dist-demo/
 build/
+apps/membrana-studio/client-dist/
+apps/membrana-studio/release/
 *.tsbuildinfo
 # Инкрементальные кэши TS с суффиксами (клиент: tsconfig.app / tsconfig.node)
 **/.tsbuildinfo.*
@@ -56,6 +58,11 @@ packages/services/detectors/**/src/*.d.ts.map
 scripts/_ssh-*.mjs
 scripts/_*-out.txt
 
+# Локальные логи deploy/recover в корне (Tee-Object при отладке VPS)
+/cabinet-recover*.txt
+/deploy-*.txt
+/prod-check.txt
+
 # Кэш загрузки внешних датасетов (WAV остаются в real-collection/)
 docs/datasets/samples/.cache/
 
@@ -72,3 +79,8 @@ pnpm-lock.yaml
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# claude / cursor / continue mcp servers settings
+.claude/claude_code_config.json
+.cursor/mcp.json
+.continue/config.json

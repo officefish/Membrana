@@ -16,6 +16,8 @@ import {
   createAccessKeySecret,
   hashAccessKeySecret,
 } from './access-key.util';
+import { isNodeLimitReached, nextNodeLabel } from '../../domain/node-limit';
+import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 
 const FREE_TARIFF_ID = 'free-v1';
 const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
@@ -29,6 +31,29 @@ function serializeTariff(tariff: Tariff) {
     bufferQuotaBytes: tariff.bufferQuotaBytes.toString(),
     datasetCatalogId: tariff.datasetCatalogId,
     maxActiveKeysPerNode: tariff.maxActiveKeysPerNode,
+    maxNodesPerMembrane: tariff.maxNodesPerMembrane,
+  };
+}
+
+function serializeNode(node: {
+  id: string;
+  label: string;
+  createdAt: Date;
+  accessKeys: Parameters<typeof serializeAccessKey>[0][];
+  device?: { mediaDeviceId: string; label: string | null; lastSeenAt: Date } | null;
+}) {
+  return {
+    id: node.id,
+    label: node.label,
+    createdAt: node.createdAt.toISOString(),
+    accessKeys: node.accessKeys.map(serializeAccessKey),
+    device: node.device
+      ? {
+          mediaDeviceId: node.device.mediaDeviceId,
+          label: node.device.label,
+          lastSeenAt: node.device.lastSeenAt.toISOString(),
+        }
+      : null,
   };
 }
 
@@ -52,12 +77,15 @@ function serializeAccessKey(key: {
 
 @Injectable()
 export class MembraneService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly nodeRealtime: NodeRealtimeService,
+  ) {}
 
   async getOrCreateMembraneForUser(userId: string) {
     const existing = await this.prisma.membrane.findUnique({
       where: { userId },
-      include: { tariff: true, nodes: { include: { accessKeys: true } } },
+      include: { tariff: true, nodes: { include: { accessKeys: true, device: true } } },
     });
     if (existing) return existing;
 
@@ -68,53 +96,67 @@ export class MembraneService {
 
     return this.prisma.membrane.create({
       data: { userId, tariffId: tariff.id },
-      include: { tariff: true, nodes: { include: { accessKeys: true } } },
+      include: { tariff: true, nodes: { include: { accessKeys: true, device: true } } },
     });
   }
 
   async getMembraneView(userId: string) {
     const membrane = await this.getOrCreateMembraneForUser(userId);
-    const node = membrane.nodes[0] ?? null;
+    const nodes = [...membrane.nodes]
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+      .map(serializeNode);
     return {
       membrane: {
         id: membrane.id,
         tariff: serializeTariff(membrane.tariff),
         createdAt: membrane.createdAt.toISOString(),
       },
-      node: node
-        ? {
-            id: node.id,
-            label: node.label,
-            createdAt: node.createdAt.toISOString(),
-            accessKeys: node.accessKeys.map(serializeAccessKey),
-          }
-        : null,
+      // MP7b: список всех узлов мембраны. `node` (первый) — для обратной совместимости.
+      nodes,
+      node: nodes[0] ?? null,
     };
   }
 
   async createNode(userId: string, label?: string) {
     const membrane = await this.getOrCreateMembraneForUser(userId);
-    const existingNode = await this.prisma.node.findUnique({ where: { membraneId: membrane.id } });
-    if (existingNode) {
-      throw new ConflictException('Membrane already has a node (v1 limit: 1)');
+    const nodeCount = await this.prisma.node.count({ where: { membraneId: membrane.id } });
+    if (isNodeLimitReached(nodeCount, membrane.tariff.maxNodesPerMembrane)) {
+      throw new ConflictException(
+        `Node limit reached for tariff (max ${membrane.tariff.maxNodesPerMembrane})`,
+      );
     }
 
     const node = await this.prisma.node.create({
       data: {
         membraneId: membrane.id,
-        label: label?.trim() || 'Узел 1',
+        label: label?.trim() || nextNodeLabel(nodeCount),
       },
       include: { accessKeys: true },
     });
 
-    return {
-      node: {
-        id: node.id,
-        label: node.label,
-        createdAt: node.createdAt.toISOString(),
-        accessKeys: node.accessKeys.map(serializeAccessKey),
-      },
-    };
+    return { node: serializeNode(node) };
+  }
+
+  async deleteNode(userId: string, nodeId: string) {
+    const node = await this.prisma.node.findUnique({
+      where: { id: nodeId },
+      include: { membrane: true, accessKeys: true },
+    });
+    if (!node) throw new NotFoundException('Node not found');
+    if (node.membrane.userId !== userId) throw new ForbiddenException('Node access denied');
+
+    const now = new Date();
+    const revokedKeyIds: string[] = [];
+    for (const key of node.accessKeys) {
+      if (isAccessKeyActive(key.expiresAt, key.revokedAt, now)) {
+        await this.revokeAccessKey(userId, key.id);
+        revokedKeyIds.push(key.id);
+      }
+    }
+
+    await this.prisma.node.delete({ where: { id: nodeId } });
+
+    return { deletedNodeId: nodeId, revokedKeyIds };
   }
 
   async createAccessKey(userId: string, nodeId: string, durationRaw: string) {
@@ -178,7 +220,7 @@ export class MembraneService {
 
     const pairedDevice = await this.prisma.device.findFirst({
       where: { pairedKeyId: keyId },
-      select: { lastPairSessionToken: true },
+      select: { lastPairSessionToken: true, mediaDeviceId: true },
     });
     if (pairedDevice?.lastPairSessionToken) {
       await this.prisma.session.deleteMany({
@@ -190,10 +232,23 @@ export class MembraneService {
       });
     }
 
+    if (pairedDevice?.mediaDeviceId) {
+      this.nodeRealtime.notifySessionInvalidated(
+        pairedDevice.mediaDeviceId,
+        key.node.membraneId,
+        'revoked',
+      );
+    }
+
     return { accessKey: serializeAccessKey(revoked) };
   }
 
   async purgeRevokedAccessKeys(userId: string, nodeId: string) {
+    return this.purgeInactiveAccessKeys(userId, nodeId);
+  }
+
+  /** Removes revoked and expired keys; active keys are kept. */
+  async purgeInactiveAccessKeys(userId: string, nodeId: string) {
     const node = await this.prisma.node.findUnique({
       where: { id: nodeId },
       include: { membrane: true },
@@ -201,11 +256,33 @@ export class MembraneService {
     if (!node) throw new NotFoundException('Node not found');
     if (node.membrane.userId !== userId) throw new ForbiddenException('Node access denied');
 
+    const now = new Date();
     const result = await this.prisma.nodeAccessKey.deleteMany({
-      where: { nodeId: node.id, revokedAt: { not: null } },
+      where: {
+        nodeId: node.id,
+        OR: [{ revokedAt: { not: null } }, { expiresAt: { lt: now } }],
+      },
     });
 
     return { deletedCount: result.count };
+  }
+
+  async deleteAccessKey(userId: string, keyId: string) {
+    const key = await this.prisma.nodeAccessKey.findUnique({
+      where: { id: keyId },
+      include: { node: { include: { membrane: true } } },
+    });
+    if (!key) throw new NotFoundException('Access key not found');
+    if (key.node.membrane.userId !== userId) {
+      throw new ForbiddenException('Access key access denied');
+    }
+    if (isAccessKeyActive(key.expiresAt, key.revokedAt)) {
+      throw new ConflictException('Cannot delete active access key');
+    }
+
+    await this.prisma.nodeAccessKey.delete({ where: { id: keyId } });
+
+    return { deletedKeyId: keyId };
   }
 
   /** Ensures free-v1 tariff exists (idempotent, used by seed). */
@@ -219,9 +296,11 @@ export class MembraneService {
         bufferQuotaBytes: GIB,
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
         maxActiveKeysPerNode: 1,
+        maxNodesPerMembrane: 1,
       },
       update: {
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
+        maxNodesPerMembrane: 1,
       },
     });
   }

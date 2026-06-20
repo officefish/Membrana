@@ -1,0 +1,24 @@
+# DR2 (deploy-pipeline-refactor): прод-деплой из готового образа registry (pull по тегу),
+# вместо сборки на VPS. Подключается ПОСЛЕДНИМ оверлеем поверх base + prod compose:
+#
+#   docker compose \
+#     -f packages/background-cabinet/docker-compose.yml \
+#     -f deploy/background-cabinet.prod.compose.yml \
+#     -f deploy/background-cabinet.image.compose.yml \
+#     --env-file /etc/membrana/cabinet.env \
+#     pull cabinet-api cabinet-web
+#   ... up -d --no-build
+#
+# CABINET_IMAGE_TAG: cabinet-vX.Y.Z (релиз) или sha-<short> (любой коммит main).
+# Образы публикует .github/workflows/cabinet-images.yml в GHCR.
+
+name: membrana-cabinet
+
+services:
+  cabinet-api:
+    image: ${CABINET_API_IMAGE:-ghcr.io/officefish/membrana-cabinet-api}:${CABINET_IMAGE_TAG:-latest}
+    pull_policy: always
+
+  cabinet-web:
+    image: ${CABINET_WEB_IMAGE:-ghcr.io/officefish/membrana-cabinet-web}:${CABINET_IMAGE_TAG:-latest}
+    pull_policy: always

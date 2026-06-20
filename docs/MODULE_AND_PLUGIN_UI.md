@@ -167,6 +167,20 @@ export function createMyPlugin(): Plugin<MyConfig> {
 - [ ] Дублирование в теле модуля допустимо только при **явном обосновании** (например, дублирование критичного статуса для режима без сайдбара на узком экране — и то по согласованию).
 - [ ] Новый плагин с кастомными настройками: добавить ветку в `pluginSidebarDetails.tsx` и при необходимости вынести виджет в `apps/client/src/plugins/...`.
 
+### 3.1 Нод-доска (`device-board`) и сайдбар
+
+Когда у клиента прибора включён модуль `device-board`, правила §3 **сохраняются**:
+
+- **Полные настройки плагина** — только в сайдбаре «Плагины» (`renderPluginSidebarDetails`).
+- **Клик по ноде на доске** переключает сайдбар на вкладку «Плагины» и раскрывает
+  `<details>` соответствующего плагина (не дублировать панель на теле ноды).
+- На самой ноде допустимы: имя, цветные сокеты, индикатор состояния
+  (`active` / `inactive` / `missing` / `invalid`), опционально мини-превью.
+
+Визуальный редактор графа — `@xyflow/react`; исполнение — через shared-хабы и
+`plugin.install`, не через движок библиотеки. Выбор библиотеки и UX-паттерны
+(Blueprint / n8n как образцы архитектуры) — [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §4, §8.
+
 ---
 
 ## 4. Шина микрофона и поздняя подписка (replay)
@@ -215,6 +229,7 @@ export function createMyPlugin(): Plugin<MyConfig> {
 | Сайдбар и вкладки «Модули» / «Плагины» | `packages/agenda/src/ui/panels/Sidebar.tsx` |
 | Сборка layout | `packages/agenda/src/ui/layout/Dashboard.tsx` |
 | Клиент: мост настроек плагинов | `apps/client/src/pluginSidebarDetails.tsx`, `apps/client/src/App.tsx` |
+| Концепт нод-доски (граф прибора) | `packages/device-board/DEVICE_BOARD_CONCEPT.md` |
 | Типы пропов и сайдбара плагина | `packages/agenda/src/core/types.ts` |
 | Tailwind content | `apps/client/tailwind.config.js` |
 | Пример `card` в модуле | `apps/client/src/modules/microphone/MicrophoneModule.tsx` |

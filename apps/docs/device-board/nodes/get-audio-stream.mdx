@@ -1,0 +1,36 @@
+---
+title: GetAudioStream
+description: Получить ссылку на активный AudioStream.
+---
+
+# GetAudioStream
+
+## Pins
+
+| Направление | Handle | Тип |
+|-------------|--------|-----|
+| in exec | `exec-in` | exec |
+| in data | `microphone` | MicrophoneRef |
+| out data | `stream` | AudioStreamRef |
+| out exec | `exec-out` | exec |
+
+## Runtime
+
+Side-effect на exec: лог. Data-выход `stream` резолвится через `resolveGetAudioStreamOutput`:
+
+1. Активный stream из host (`getActiveAudioStreamRef`).
+2. Если подключён `microphone` — handle должен совпадать с `stream:{mic.handle}`.
+3. Иначе invalid `AudioStreamRef`.
+
+## Preconditions
+
+- **StartStreaming** уже выполнен (On start или ранее в main).
+- Рекомендуется ребро **microphone → GetAudioStream.microphone**.
+
+## Anti-patterns
+
+Ожидать valid stream без StartStreaming — частая причина `audio sample: invalid` downstream.
+
+## Code
+
+`packages/device-board/src/runtime/resolve-input.ts` — `resolveGetAudioStreamOutput`.

@@ -259,6 +259,7 @@ export function createMicLiveDroneAnalysisPlugin(): Plugin<MicLiveDroneAnalysisP
           const { verdicts, report } = await analyzeSampleDetectorsBrief(
             payload.sampleId,
             payload.title,
+            getConfig().analysisMode,
           );
           if (disposed) return;
 

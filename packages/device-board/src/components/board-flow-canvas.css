@@ -1,0 +1,15 @@
+/**
+ * Подложка канваса device-board: однородный тёмный фон (темнее карточек узлов `bg-base-100`).
+ */
+.board-flow-canvas {
+  --board-canvas-bg: #0c0e14;
+  background-color: var(--board-canvas-bg);
+}
+
+.board-flow-canvas .react-flow__pane {
+  background-color: var(--board-canvas-bg);
+}
+
+.board-flow-canvas .react-flow__background {
+  display: none;
+}

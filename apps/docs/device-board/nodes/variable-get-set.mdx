@@ -1,0 +1,29 @@
+---
+title: Variable get / set
+description: Чтение и запись document-scope variables
+---
+
+# Variable get / set
+
+## variable-get
+
+| out | value | тип переменной |
+
+Reads `ScenarioVariableStore` by `variableId` on node.
+
+## variable-set
+
+| in | exec-in | exec |
+| in | value | тип переменной |
+| out | exec-out | exec |
+| out | value | passthrough |
+
+On exec: resolve value input → `variableStore.setValue(id, incoming)`.
+
+## Constructor
+
+Переменные создаются в левом сайдбаре; drag get/set на канвас.
+
+## Cross-branch
+
+Values set in On start visible in main via get — same store for whole run.

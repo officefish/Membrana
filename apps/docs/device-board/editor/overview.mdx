@@ -1,0 +1,39 @@
+---
+title: Editor UX
+description: Save/draft, export, inspector, edges — обзор редактора MVP.
+---
+
+# Editor UX (MVP)
+
+Краткий обзор возможностей редактора, появившихся в спринте v0.4.
+
+## Save и draft
+
+- **Manual save** — сценарий не уходит на сервер автоматически; `isDirty` сравнивает fingerprint с последним сохранённым снимком.
+- Persist-адаптер (cabinet / local) — только по явному Save.
+
+## Export JSON
+
+| Контекст | Файл |
+|----------|------|
+| Вкладка **Signal** | полный `DeviceScenarioDocument` |
+| Вкладка **Scenario** (активная ветка) | `branch-scenario` JSON только этой ветки |
+
+Имя файла ветки: `device-scenario-{deviceKind}-{branch}.json`.
+
+## Clear branch
+
+Очищает узлы **текущей** ветки; системные Event-entry и loop-repeat (∞) сохраняются.
+
+## Typed ports и edges
+
+- Data-рёбра окрашены по `SocketType` (DeviceRef, MicrophoneRef, AudioStreamRef, …).
+- Passthrough labels на exec/data для variable-set и streaming-узлов.
+
+## Variable inspector
+
+При **Run** — снимок входов/выходов выбранного узла (`inspectRuntimeNode`).
+
+## Phase 2 docs
+
+Детальные страницы по каждому UI-элементу — в рамках эпика `db-doc-v04-mvp`.

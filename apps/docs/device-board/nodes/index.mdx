@@ -1,0 +1,33 @@
+---
+title: Node index
+description: Палитра v0.4 и системные узлы scenario graph.
+---
+
+# Node index
+
+## Palette (v0.4)
+
+| nodeKind | Label | Статус docs |
+|----------|-------|-------------|
+| `print` | Print | Phase 2 |
+| `is-valid` | isValid | [страница](/device-board/nodes/is-valid) |
+| `get-microphone` | GetMicrophone | Phase 2 |
+| `start-streaming` | StartStreaming | [страница](/device-board/nodes/start-streaming) |
+| `stop-streaming` | StopStreaming | Phase 2 |
+| `get-audio-stream` | GetAudioStream | [страница](/device-board/nodes/get-audio-stream) |
+| `get-sample` | GetSample | [страница](/device-board/nodes/get-sample) |
+| `get-fft-frame` | GetFFTFrame | Phase 2 |
+
+## System
+
+| nodeKind | Назначение |
+|----------|------------|
+| `event` | Entry обработчика (handler / loopTick) |
+| `loop-repeat` | ∞ в main/alarm |
+| `variable-get` / `variable-set` | Чтение/запись document-scope переменных |
+
+## Шаблон страницы узла (Phase 2)
+
+Каждая страница: Summary → Pins → Runtime → Preconditions → Anti-patterns → Minimal graph → Tests.
+
+Источник: `packages/device-board/src/graph/palette-node.ts`, `runtime/block-executor.ts`.

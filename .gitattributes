@@ -1,1 +1,49 @@
-*.sh text eol=lf
+# Нормализация переводов строк (DR0 deploy-pipeline-refactor).
+# Цель: убрать CRLF-шум, который маскировал недокоммиченные файлы при деплое.
+# Текст по умолчанию нормализуется к LF в репозитории.
+* text=auto eol=lf
+
+# Явно текстовые исходники — всегда LF.
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.js    text eol=lf
+*.jsx   text eol=lf
+*.mjs   text eol=lf
+*.cjs   text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.sh    text eol=lf
+*.env   text eol=lf
+*.prisma text eol=lf
+Dockerfile text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Windows-скрипты — CRLF (иначе ломаются).
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Бинарные ассеты — без нормализации.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.svg   text eol=lf
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
+*.pdf   binary
+*.wav   binary
+*.mp3   binary
+*.ogg   binary
+*.flac  binary
+*.zip   binary
+*.gz    binary

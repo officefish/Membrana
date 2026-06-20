@@ -180,6 +180,26 @@ interface AudioWindow {
 
 Клиент при недоступности media-server: `browser-limited-fallback` (IndexedDB) — см. `MEDIA_LIBRARY_ARCHITECTURE.md` §4.3.
 
+### 1f. Визуальный граф прибора (`@membrana/device-board`)
+
+Пакет `@membrana/device-board` — редактор **signal graph** (топология захват →
+анализ → observation) и **scenario graph** (visual scripting: initial, loops,
+триггеры). Ноды signal-слоя = зарегистрированные плагины, рёбра = подписки
+на shared-хабы. Scenario-слой исполняется **scenario runtime** (чистое ядро
+пакета), вызывающим существующие engine/плагины/journal — **не** второй
+AudioContext и **не** Rete/DataflowEngine для сигнала.
+
+| Правило | Смысл |
+| ------- | ----- |
+| UI-стек | `@xyflow/react`; вкладки Signal / Scenario (см. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) v0.3) |
+| Источник истины | `MembranaRegistry` + persisted JSON (`device-scenario` v1) |
+| Signal исполнение | `audio-engine-service`, shared-хабы, `plugin.install` / teardown |
+| Scenario исполнение | `ScenarioRuntime` в `device-board`; оркестрация без обхода engine |
+| Настройки нод | сайдбар плагинов (`MODULE_AND_PLUGIN_UI.md` §3) |
+
+Полный концепт доски: [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md).  
+**Исполнение сценария (runtime, onTick, планировщик):** [`SCENARIO_RUNTIME.md`](./SCENARIO_RUNTIME.md).
+
 ## 2. Плагины и слабая связанность (домен аудио)
 
 - **Запрещены прямые импорты между плагинами** друг друга.

@@ -1,0 +1,195 @@
+import type { ScenarioBlockKind, ScenarioReferenceValue, ScenarioVariableValue } from '@membrana/core';
+
+import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
+import type { ScenarioVariableStore } from './variable-store.js';
+
+/** Описание микрофона из enumerate (host → UI dropdown GetMicrophone). */
+export interface ScenarioMicrophoneOption {
+  readonly deviceId: string;
+  readonly label: string;
+}
+
+/** Колбэки потери/восстановления соединения (H3b). */
+export interface ScenarioConnectionHandlers {
+  readonly onDisconnect: () => void;
+  readonly onReconnect: () => void;
+}
+
+/** Минимальные read-only метаданные ссылочного объекта (server / device / microphone). */
+export interface ScenarioResourceMetadata {
+  readonly fields: Readonly<Record<string, string>>;
+}
+
+/** Параметры ожидания между итерациями main/alarm loop. См. `docs/SCENARIO_RUNTIME.md` §5. */
+export interface ScenarioLoopTickWaitOptions {
+  readonly pauseMs: number;
+  readonly signal: AbortSignal;
+}
+
+/** Порты исполнения блоков — реализует `apps/client` (audio, journal, detectors). */
+export interface ScenarioRuntimeHost {
+  /** Handle подключённого устройства для Event/dataflow (v0.4 DBR4). */
+  readonly getDeviceHandle?: () => string | null;
+  /** Handle связанного сервера (paired cabinet/media). */
+  readonly getServerHandle?: () => string | null;
+  /**
+   * Узел связан с сервером (device↔server в архитектуре Membrana).
+   * onConnect/onDisconnect выполняются только при `true`.
+   */
+  readonly isDeviceLinked?: () => boolean;
+  /**
+   * Read-only метаданные ссылочного объекта для Print (адрес сервера, платформа device, label mic).
+   * Не редактируются на доске — только резолвятся в рантайме.
+   */
+  readonly getResourceMetadata?: (
+    ref: ScenarioReferenceValue,
+  ) => ScenarioResourceMetadata | null | Promise<ScenarioResourceMetadata | null>;
+  /** Вывод строки Print в консоль браузера (client); stub — в log. */
+  readonly printLine?: (line: string) => void;
+  /** Хранилище переменных сценария; stub создаёт in-memory store. */
+  readonly variableStore?: ScenarioVariableStore;
+  readonly getScenarioVariable?: (id: string) => ScenarioVariableValue | null;
+  readonly setScenarioVariable?: (id: string, value: ScenarioVariableValue | null) => void;
+  /** Список микрофонов устройства (audio-engine enumerate, DBR5). */
+  readonly enumerateMicrophones?: () => Promise<readonly ScenarioMicrophoneOption[]>;
+  readonly selectMicrophone: () => Promise<void>;
+  /** Запускает аудиопоток (legacy D0 `start-stream` и v0.4 `start-streaming`). */
+  readonly startStream: () => Promise<void>;
+  /** Останавливает аудиопоток (legacy D0 и v0.4 `stop-streaming`). */
+  readonly stopStream: () => Promise<void>;
+  /**
+   * v0.4 `start-streaming`: явный старт потока; опционально — микрофон из dataflow.
+   * Без вызова микрофон не отдаёт аудио.
+   */
+  readonly startAudioStreaming?: (microphone: ScenarioReferenceValue | null) => Promise<void>;
+  /** v0.4 `stop-streaming`: останавливает AudioStream; опционально — микрофон из dataflow. */
+  readonly stopAudioStreaming?: (microphone: ScenarioReferenceValue | null) => Promise<void>;
+  /** Текущая ссылка на активный AudioStream (для get-audio-stream). */
+  readonly getActiveAudioStreamRef?: () => ScenarioReferenceValue;
+  /**
+   * Захват звукового отрезка из AudioStream (v0.4 `get-sample`, на exec).
+   * Результат читается через `getCapturedAudioSampleRef`.
+   */
+  readonly captureAudioSample?: (
+    nodeId: string,
+    streamRef: ScenarioReferenceValue,
+  ) => Promise<void>;
+  /** Последний захваченный AudioSampleRef для узла get-sample. */
+  readonly getCapturedAudioSampleRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /**
+   * БПФ по AudioSample (v0.4 `get-fft-frame`, на exec).
+   * Результат читается через `getCapturedFftFrameRef`.
+   */
+  readonly computeFftFrame?: (
+    nodeId: string,
+    sampleRef: ScenarioReferenceValue,
+  ) => Promise<void>;
+  /** Последний FftFrameRef для узла get-fft-frame. */
+  readonly getCapturedFftFrameRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
+  readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
+  readonly trendsFftDetect: () => Promise<ScenarioDetectionResult>;
+  readonly evaluateSoundLevel: () => Promise<ScenarioSoundLevelResult>;
+  /**
+   * Пауза до следующего тика main/alarm. Client может подставить rAF или audio-frame;
+   * stub и тесты — wall-clock (`waitMs`). Ядро не вызывает DOM-таймеры напрямую.
+   */
+  readonly waitUntilNextLoopTick?: (options: ScenarioLoopTickWaitOptions) => Promise<void>;
+  readonly log: (message: string, context?: Readonly<Record<string, unknown>>) => void;
+  /** Клиент: вкл/выкл служебные INFO-логи (Print не затрагивается). */
+  readonly setInfoLoggingEnabled?: (enabled: boolean) => void;
+  readonly watchConnection?: (handlers: ScenarioConnectionHandlers) => () => void;
+}
+
+/** Заглушка host для тестов и playground. */
+export function createStubScenarioRuntimeHost(
+  overrides: Partial<ScenarioRuntimeHost> = {},
+): ScenarioRuntimeHost {
+  const log = overrides.log ?? (() => undefined);
+  const variableStore = overrides.variableStore;
+  return {
+    getDeviceHandle: overrides.getDeviceHandle ?? (() => 'stub-device'),
+    getServerHandle: overrides.getServerHandle ?? (() => 'stub-server'),
+    isDeviceLinked: overrides.isDeviceLinked ?? (() => true),
+    getResourceMetadata:
+      overrides.getResourceMetadata ??
+      ((ref) => ({
+        fields: {
+          kind: ref.kind,
+          handle: ref.handle ?? 'null',
+        },
+      })),
+    printLine: overrides.printLine ?? ((line) => log(`print: ${line}`)),
+    variableStore,
+    getScenarioVariable:
+      overrides.getScenarioVariable ??
+      (variableStore !== undefined ? (id) => variableStore.getValue(id) : undefined),
+    setScenarioVariable:
+      overrides.setScenarioVariable ??
+      (variableStore !== undefined ? (id, value) => variableStore.setValue(id, value) : undefined),
+    enumerateMicrophones:
+      overrides.enumerateMicrophones ??
+      (async () => [{ deviceId: 'default', label: 'Default microphone' }]),
+    selectMicrophone: overrides.selectMicrophone ?? (async () => log('selectMicrophone')),
+    startStream: overrides.startStream ?? (async () => log('startStream')),
+    stopStream: overrides.stopStream ?? (async () => log('stopStream')),
+    startAudioStreaming:
+      overrides.startAudioStreaming ??
+      (async (microphone) => log('startAudioStreaming', { microphone: microphone?.handle })),
+    stopAudioStreaming:
+      overrides.stopAudioStreaming ??
+      (async (microphone) => log('stopAudioStreaming', { microphone: microphone?.handle })),
+    getActiveAudioStreamRef:
+      overrides.getActiveAudioStreamRef ??
+      (() => ({ kind: 'AudioStreamRef', handle: 'stub-stream', valid: true })),
+    captureAudioSample:
+      overrides.captureAudioSample ??
+      (async (nodeId) => {
+        log('captureAudioSample', { nodeId });
+      }),
+    getCapturedAudioSampleRef:
+      overrides.getCapturedAudioSampleRef ??
+      ((nodeId) => ({ kind: 'AudioSampleRef', handle: `stub-sample-${nodeId}`, valid: true })),
+    computeFftFrame:
+      overrides.computeFftFrame ??
+      (async (nodeId) => {
+        log('computeFftFrame', { nodeId });
+      }),
+    getCapturedFftFrameRef:
+      overrides.getCapturedFftFrameRef ??
+      ((nodeId) => ({ kind: 'FftFrameRef', handle: `stub-frame-${nodeId}`, valid: true })),
+    writeJournal: overrides.writeJournal ?? (async (event) => log('writeJournal', { blockKind: event.blockKind })),
+    recordChunk:
+      overrides.recordChunk ??
+      (async () => {
+        log('recordChunk');
+        return { clipId: 'stub-clip' };
+      }),
+    trendsFftDetect:
+      overrides.trendsFftDetect ??
+      (async () => ({
+        detected: false,
+        confidence: 0,
+        templateId: 'stub',
+      })),
+    evaluateSoundLevel:
+      overrides.evaluateSoundLevel ??
+      (async () => ({
+        rawLevel: 0.5,
+        isQuietEnough: false,
+      })),
+    waitUntilNextLoopTick: overrides.waitUntilNextLoopTick,
+    watchConnection: overrides.watchConnection,
+    log,
+  };
+}
+
+export const SUPPORTED_H2B_BLOCK_KINDS = [
+  'select-microphone',
+  'start-stream',
+  'write-journal',
+  'record-chunk',
+  'trends-fft-detect',
+  'evaluate-sound-level',
+  'stop-scenario',
+] as const satisfies readonly ScenarioBlockKind[];

@@ -9,9 +9,14 @@ RUN corepack enable
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY tsconfig.base.json ./
+COPY packages/core packages/core
+COPY packages/libs packages/libs
+COPY packages/services packages/services
 COPY packages/background-media packages/background-media
 
 RUN yarn workspaces focus @membrana/background-media --all \
+  && yarn workspace @membrana/core build \
+  && yarn workspace @membrana/drone-detection-orchestrator-service build \
   && yarn workspace @membrana/background-media build
 
 FROM node:20-alpine AS runtime

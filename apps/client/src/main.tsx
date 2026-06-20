@@ -6,11 +6,13 @@ import App from './App'
 import { registerClientModules } from './modules/registerClientModules'
 import { initMediaLibraryHubBridge } from './lib/mediaLibraryHubBridge'
 import { initJournalHubBridge } from './lib/journalHubBridge'
+import { initMicLiveRealtimeBridge } from './lib/micLiveRealtimeBridge'
 import { initUserTemplatesStore } from './plugins/trends-fft-analyzer/userTemplatesStore'
 
 registerClientModules()
 initMediaLibraryHubBridge()
 initJournalHubBridge()
+initMicLiveRealtimeBridge()
 void initUserTemplatesStore()
 useMembranaStore.persist.onFinishHydration(() => {
   registerClientModules()

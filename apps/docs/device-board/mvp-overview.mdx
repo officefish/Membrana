@@ -1,0 +1,53 @@
+---
+title: Device Board MVP
+description: Что входит в MVP v0.4 device-board после спринта 18–19 июня 2026.
+---
+
+# Device Board MVP (v0.4)
+
+**Device board** — visual scripting редактор сценария поведения прибора: два слоя (**Signal** и **Scenario**), scenario runtime, переменные document-scope, palette-узлы и host-bridge к Web Audio через client.
+
+## Статус
+
+После PR [#96–#123](https://github.com/officefish/Membrana/pulls?q=is%3Apr+device-board) пакет `@membrana/device-board` **приближается к MVP**:
+
+| Возможность | Статус |
+|-------------|--------|
+| Fullscreen shell, ветки обработчиков (On start, onMainTick, …) | ✅ |
+| Переменные + variable-get/set | ✅ |
+| Системный Event-узел, exec + data рёбра | ✅ |
+| `resolveInput`, `Ref.valid`, isValid | ✅ |
+| Palette: Print, GetMicrophone, streaming chain | ✅ |
+| Scenario runtime (initial → main/alarm loops) | ✅ |
+| Manual save / draft, branch export JSON | ✅ |
+| End-to-end mic → stream → sample → FFT (через host) | ✅ smoke |
+| Mintlify docs (этот сайт) | 🚧 Phase 0+ |
+| Scheduled jobs, cloud-only persist | ❌ out of MVP |
+
+## Операторский сценарий MVP
+
+1. Открыть device-board в client или cabinet.
+2. На **On start**: Event → set переменных → GetMicrophone → StartStreaming.
+3. На **onMainTick**: isValid(stream) → GetSample → GetFFTFrame → Print.
+4. **Run** — Print с metadata в консоли.
+5. **Export** ветки или полного JSON; **Save** по кнопке.
+
+## Что не входит в MVP
+
+- Полный alarm-cookbook «из коробки»
+- `scheduled` ветка сценария
+- Membrana Device как отдельный desktop SKU
+- Pre-run warning «GetSample без StartStreaming» (планируется)
+
+## Следующие шаги документации
+
+Эпик `db-doc-v04-mvp` — [`DEVICE_BOARD_DOC_V04_PROMPT.md`](https://github.com/officefish/Membrana/blob/main/docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md).
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="diagram-project" href="/device-board/architecture">
+    Signal vs Scenario, runtime, host bridge
+  </Card>
+  <Card title="Streaming lifecycle" icon="waveform" href="/concepts/streaming-lifecycle">
+    MicrophoneRef → AudioStreamRef → Sample → FFT
+  </Card>
+</CardGroup>

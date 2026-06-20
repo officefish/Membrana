@@ -1,6 +1,10 @@
 # CONTRIBUTING — процесс для людей и CI-агентов
 
-Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md).
+Репозиторий использует **виртуальную команду** из пяти ролей. Нормативные промпты и дизайн: [VIRTUAL_TEAM_PROMPT.md](./VIRTUAL_TEAM_PROMPT.md), [ARCHITECTURE.md](./ARCHITECTURE.md), [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md), [DESIGN.md](./DESIGN.md), [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md), [SERVICES.md](./SERVICES.md), [каталог модулей/плагинов](./catalog/README.md).
+
+## Каталог модулей и плагинов
+
+Перед правками `apps/client/src/modules/*` или `plugins/*` читайте живую спецификацию из [`docs/catalog/`](./catalog/README.md) (`client/registry.json` → `promptPath`). После существенного PR обновляйте catalog-промпт в том же или follow-up PR.
 
 ## Жизненный цикл задачи
 
@@ -43,6 +47,50 @@ git push -u origin vesnin
 ```
 
 После merge `vesnin → main` ветка локально удаляется (`git branch -d vesnin`) и заводится заново при следующей архитектурной задаче. Решение, нужна ли ветка `vesnin`, принимает **Teamlead** при формулировке задачи.
+
+## Регламент веток деплоя (DR5 deploy-pipeline-refactor)
+
+Первопричина постмортема MP7B — выкат из длинной мульти-эпиковой ветки с незакоммиченными
+зависимостями (`docs/deploy/POSTMORTEM-MP7B-2026-06-18.md`). Чтобы это не повторялось:
+
+1. **`main` всегда деплоируемое.** Каждый коммит в `main` обязан проходить обязательный CI
+   (`turbo run lint typecheck test build` из чистого checkout). Красный `main` чинится в приоритете.
+2. **Выкат только из `main`.** Прод-образы (`cabinet-vX.Y.Z`) собираются из коммитов `main`;
+   деплой-скрипты гейтятся на `origin/<branch>` + зелёный CI (DR0/DR1). Деплой из произвольной
+   feature-ветки — только осознанный обход гейтов для hotfix, с последующим возвратом в `main`.
+3. **Один эпик — одна ветка/серия PR.** Ветка живёт от своего эпика; PR небольшие и атомарные.
+4. **Длинные мульти-эпиковые ветки запрещены** как источник прод-выката: в них копятся
+   незакоммиченные/несинхронизированные изменения, которые «works on my machine», но падают в CI/прод.
+5. **Контракты `@membrana/core`/`agenda`** — через `vesnin` (см. выше), оттуда в `main` до релиза.
+
+Деплой и откат — через image-модель: `docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`,
+`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`.
+
+## Регламент миграций БД: expand/contract (DR5)
+
+Прод применяет миграции автоматически (`prisma migrate deploy` в entrypoint) и **только вперёд**.
+Откат образа (DR3) кода не откатывает схему. Поэтому каждая миграция обязана быть
+**обратносовместимой**: задеплоенный сейчас код и предыдущий релиз должны работать с новой схемой.
+Это предпосылка безопасного отката и (в будущем) zero-downtime (DR7).
+
+Несовместимое изменение делится на фазы по схеме **expand → migrate → contract**, каждая — отдельный релиз:
+
+| Фаза | Что делает | Совместимость |
+|------|------------|---------------|
+| **expand** | Добавить новое (nullable-колонка/таблица/индекс), не трогая старое | старый и новый код работают |
+| **migrate** | Бэкофилл данных + переключение кода на новое поле (старое ещё на месте) | новый код пишет в новое; старый ещё жив |
+| **contract** | Удалить старое (колонку/таблицу) после того, как старый код выведен | только после стабилизации нового |
+
+**Можно в одной миграции:** добавить nullable-колонку; добавить таблицу/индекс; расширить enum;
+ослабить ограничение (NOT NULL → NULL).
+
+**Нельзя в одной миграции (делить на expand/contract):** `DROP`/переименование колонки или таблицы,
+которые ещё читает работающий код; добавление `NOT NULL` без default к существующей таблице;
+сужение типа; изменение, ломающее предыдущий релиз (нужен для отката).
+
+**Правило отката:** если миграция выполнила `contract` (удаление), откат образа на релиз до неё —
+**небезопасен** (старая схема уже не существует). Перед таким релизом фиксируется «точка невозврата»
+в отчёте; откат за неё делается только вместе с восстановлением БД из бэкапа.
 
 ## Pull requests
 
@@ -115,16 +163,29 @@ git push -u origin vesnin
 
 | Команда | Назначение |
 |---------|------------|
-| `yarn cabinet:deploy:prod` | Cabinet stack: pull, build, up, Caddy, smoke |
+| `yarn cabinet:deploy:prod` | Cabinet stack: pull, **build на VPS**, up, Caddy, smoke (легаси-путь) |
+| `yarn cabinet:deploy:image:prod` | **DR2/рекоменд.**: деплой образа GHCR по тегу (`CABINET_IMAGE_TAG`), без build на VPS; JSON-сводка |
+| `yarn cabinet:rollback:prod` | **DR3**: откат на предыдущий релиз (`CABINET_ROLLBACK_TAG`); без тега — список тегов |
+| `yarn cabinet:smoke:prod` | **DR4**: функциональный smoke (health/login/узлы/migrate/runtime-канал) |
 | `yarn cabinet:pairing:e2e:deploy` | Hotfix pairing: `MEDIA_PUBLIC_API_URL`, media CORS, rebuild cabinet+media |
 | `yarn cabinet:mp3:smoke` | Prod smoke MP1–MP3 (pair + media device) |
 | `yarn cabinet:mp3:prod` | MP3 post-deploy + smoke (media docker net + pairing) |
 | `yarn cabinet:quota-refactor:prod` | Deploy tariff quota refactor (cabinet migrate + split media quota smoke) |
 | `yarn cabinet:mp3:post-deploy` | Patch `cabinet.env` (CLIENT_CORS, MEDIA_API_*) |
+| `yarn cabinet:mp6:prod` | Prod regression MP1–MP5 (one session) |
+| `yarn cabinet:mp7:prod` | MP7: MP1–MP5 + WebSocket journal/mic-live smoke |
 
 Подробно: [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md), [`docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
 
 **Не коммитить:** `**/.env.docker` (синк из `.env`), `ssl/` (TLS-ключи), корневой `.env`.
+
+**Логи отладки deploy/recover (агенты и люди):** не сохранять вывод `yarn cabinet:*:prod`, `yarn device-board:deploy:*` и прочих SSH-скриптов в **корень репозитория** (`Tee-Object -FilePath cabinet-recover.txt`, `> deploy-*.txt` и т.п.). Это одноразовые артефакты, они загрязняют `git status` и preflight deploy-gate. Если лог нужен:
+
+- Windows: `%TEMP%\membrana-deploy-<дата>.log`
+- Unix: `$TMPDIR/membrana-deploy-<дата>.log`
+- Для обмена с командой: `docs/archive/` (коммит только по решению постановщика)
+
+Паттерны в `.gitignore`: `/cabinet-recover*.txt`, `/deploy-*.txt`, `/prod-check.txt`; вывод скриптов — `scripts/_*-out.txt`.
 
 ## Коммиты
 

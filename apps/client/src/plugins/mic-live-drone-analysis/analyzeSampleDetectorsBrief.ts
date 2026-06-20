@@ -9,6 +9,7 @@ import {
   buildBriefDroneDetectionReport,
   mapVerdictsToBrief,
   type DroneDetectionBriefReport,
+  type DroneDetectionBriefReportMeta,
 } from '@membrana/detector-report';
 import {
   createCepstralDetector,
@@ -55,6 +56,7 @@ function createFrameDetectors(): DroneDetector[] {
 export async function analyzeSampleDetectorsBrief(
   sampleId: string,
   sampleTitle: string | null = null,
+  analysisMode: NonNullable<DroneDetectionBriefReportMeta['analysisMode']> = 'track-import',
 ): Promise<AnalyzeSampleDetectorsBriefResult> {
   const buffer = await loadSampleBufferById(sampleId);
   const samples = getMonoChannel(buffer);
@@ -90,7 +92,7 @@ export async function analyzeSampleDetectorsBrief(
         confidence: verdict.confidence,
       })),
     ),
-    analysisMode: 'track-import',
+    analysisMode,
     detailedReportStatus: 'none',
   });
 

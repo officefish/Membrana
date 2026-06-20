@@ -129,6 +129,13 @@ yarn save-code-review
 
 `yarn standup` подмешивает открытые GitHub Issues и наброски из `packages/temp/`. Без API: `yarn standup:dry`. Цепочки: `yarn ritual:day`, `yarn ritual:evening`. Подробнее: [`DEVELOPER_RHYTHM.md`](./DEVELOPER_RHYTHM.md).
 
+## Гигиена рабочего дерева (агенты)
+
+При отладке VPS/deploy **не создавать `.txt`-логи в корне репозитория** (типично после `Tee-Object` или перенаправления stdout): `cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt`. Они не часть продукта и ломают preflight «чистое дерево» у deploy-скриптов.
+
+- **Куда писать лог:** `%TEMP%` / `$TMPDIR`, либо `docs/archive/` если нужен осознанный снимок для команды.
+- **Подробнее:** [`CONTRIBUTING.md`](./CONTRIBUTING.md) → «VPS deploy», `.gitignore` в корне.
+
 ## Спросить совета у персонажа
 
 Для адресного обсуждения задачи с конкретным «виртуальным программистом» есть CLI:

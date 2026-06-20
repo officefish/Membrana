@@ -2,12 +2,14 @@
 /**
  * Deploy cabinet stack on VPS (MP1): pull branch, build, up, Caddy, smoke.
  * Reads BACKGROUND_MEDIA_IPV4 + BACKGROUND_MEDIA_PASSWORD from .env (same VPS as media).
- * Optional: CABINET_GIT_BRANCH=vesnin
+ * Optional override: CABINET_GIT_BRANCH=vesnin (default: main)
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'ssh2';
+import { deployPreflight } from './_deploy-preflight.mjs';
+import { assertCiGreen } from './_deploy-ci-gate.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const envPath = resolve(root, '.env');
@@ -22,7 +24,12 @@ const branch =
   process.env.CABINET_GIT_BRANCH ||
   get('CABINET_GIT_BRANCH') ||
   get('GIT_BRANCH') ||
-  'feat/membrane-platform-mp4';
+  'main';
+
+// DR0 gate: локальное состояние должно совпадать с origin/<branch> (прод собирается из origin).
+const preflight = deployPreflight({ branch, cwd: root });
+// DR1 gate: на прод едет только зелёный в CI коммит.
+assertCiGreen({ branch, sha: preflight.originHead });
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail

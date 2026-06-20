@@ -8,6 +8,8 @@ import {
 
 import { pingCabinetApi } from '@/api/pairing';
 import { createCabinetJournalPort } from '@/lib/createCabinetJournalPort';
+import { createRealtimeJournalPushPort } from '@/lib/nodeRealtimeJournalPush';
+import { getElectronJournalPort } from '@/lib/electronJournalPort';
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 import { getRuntimeStorageMode } from '@/lib/runtimeStorageMode';
 
@@ -54,6 +56,7 @@ async function createPairedBackend(pairing: PairedNodeCredentials): Promise<IJou
       return createSyncJournalStorageBackend(createCabinetJournalPort(pairing.token), {
         localCacheKey: journalLocalCacheKey(pairing.deviceId),
         mediaDeviceId: pairing.deviceId,
+        realtimePush: createRealtimeJournalPushPort(),
       });
     }
     if (attempt < PAIRED_CABINET_PING_ATTEMPTS - 1) {
@@ -65,7 +68,8 @@ async function createPairedBackend(pairing: PairedNodeCredentials): Promise<IJou
 
 function createElectronBackend(): IJournalStorageBackend | null {
   if (getRuntimeStorageMode() !== 'electron-system-files') return null;
-  return createElectronJournalStorageBackend();
+  const port = getElectronJournalPort();
+  return createElectronJournalStorageBackend(port ?? undefined);
 }
 
 /**
