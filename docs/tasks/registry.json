@@ -3114,7 +3114,7 @@
       "dependsOn": [
         "crdc-d1-boundaries-registry"
       ],
-      "notes": "Lead: Ozhegov. R10 R11 R12: .claude/.continue gitignore; verify #125; docker inspect note."
+      "notes": "Lead: Ozhegov. ✅ D5 2026-06-20: .gitignore .claude/.continue; docker size doc; docs verify OK. R10 R11 R12 closed."
     },
     {
       "id": "crdc-d6-ci-green-archive",

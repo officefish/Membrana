@@ -30,9 +30,9 @@
 | **R7** | WaveformPlayer a11y (aria, Escape, row ≤48px) | 🟡 | ✅ **PASS** — player section region; table без inline waveform; Escape→stop; a11y tests (D4) | — |
 | **R8** | Services → device-board reverse imports | 🔴 | ✅ **PASS** — `check:boundaries` | — |
 | **R9** | Web Audio в UI device-board | 🔴 | ✅ **PASS** — `check:boundaries` | — |
-| **R10** | Deploy logs / local AI dirs в repo | 🟡 | 🟡 **PARTIAL** — `/cabinet-recover*.txt`, `/deploy-*.txt` в `.gitignore` (#125); только `.claude/claude_code_config.json`, `.continue/config.json` — не целые каталоги | **D5** |
-| **R11** | Docker image cabinet >50 МБ | 🟢 | ⏸ **DEFER** — не замеряли на D0 | **D5** |
-| **R12** | Mintlify UI vs DESIGN.md | 🟢 | ⏸ **DEFER** — turbo `@membrana/docs` build OK; ручной visual parity не проверяли | **D5** |
+| **R10** | Deploy logs / local AI dirs в repo | 🟡 | ✅ **PASS** — `.gitignore`: deploy logs + `.claude/` `.continue/` (D5) | — |
+| **R11** | Docker image cabinet >50 МБ | 🟢 | ✅ **DOC** — мониторинг в `BACKGROUND_CABINET_DEPLOY.md` (D5) | — |
+| **R12** | Mintlify UI vs DESIGN.md | 🟢 | ✅ **VERIFY** — `yarn workspace @membrana/docs build` OK; visual parity deferred | — |
 
 ---
 
@@ -67,4 +67,4 @@
 
 ~~Старт **D1**~~ ✅ **D1 complete** (2026-06-20): `yarn check:boundaries`, `bootstrap-order.test.ts`, комментарии в `main.tsx` / `registerClientModules.ts`.
 
-Старт **D5** (`crdc-d5-hygiene-guardrails`): Ozhegov — `.claude/` / `.continue/` gitignore, docker size note.
+Старт **D6** (`crdc-d6-ci-green-archive`): Vesnin — full turbo green, PR, archive эпика #126.

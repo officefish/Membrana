@@ -31,9 +31,11 @@ yarn docs:dev
 ## Сборка и проверка ссылок
 
 ```bash
-yarn docs:build
-yarn workspace @membrana/docs lint
+yarn workspace @membrana/docs build   # CI-safe verify (без Mintlify CLI)
+yarn workspace @membrana/docs lint      # + проверка внутренних ссылок (--links)
 ```
+
+Полный Mintlify preview — только Node 20–24 (`yarn docs:dev`). UI-примеры в MDX должны соответствовать [`DESIGN.md`](../../docs/DESIGN.md); полный visual parity — Phase 1+ эпика `db-doc-v04-mvp`.
 
 ## Workflow с MCP
 
