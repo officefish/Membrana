@@ -3080,7 +3080,7 @@
       "dependsOn": [
         "crdc-d0-baseline-audit"
       ],
-      "notes": "Lead: Dynin. R4 R5 R6: trends-detector error 134; audio-engine/fft tests; device-board graph tests."
+      "notes": "Lead: Dynin. ✅ D3 2026-06-20: audio-engine vitest без passWithNoTests; trends vitest forks; validate-pre-run.test.ts. R4 R5 R6 closed."
     },
     {
       "id": "crdc-d4-waveform-a11y",

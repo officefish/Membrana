@@ -24,9 +24,9 @@
 | **R1** | `cabinet → background-media` только HTTP | 🔴 | ✅ **PASS** — `yarn check:boundaries` + grep | — |
 | **R2** | `MembraneRegistry` до первой квоты | 🔴 | ✅ **PASS** — порядок в `main.tsx` + `bootstrap-order.test.ts` | — |
 | **R3** | `@membrana/client#lint` exit 1 | 🔴 | ✅ **PASS** — exit 0, 0 warnings (D2) | — |
-| **R4** | `trends-detector` exit 134 OOM | 🔴 | ✅ **PASS** — 13 tests, 1.38s | — |
-| **R5** | `audio-engine` / `fft-analyzer` WARNING / passWithNoTests | 🟡 | 🟡 **PARTIAL** — fft: 15 tests; audio-engine: 2 tests но script `--passWithNoTests` | **D3** |
-| **R6** | `device-board` coverage | 🟡 | 🟡 **PARTIAL** — ~26 unique `*.test.ts`; lint 3 warnings (`board-flow-node`, `device-board-shell`) | D2 + D3 |
+| **R4** | `trends-detector` exit 134 OOM | 🔴 | ✅ **PASS** — 13 tests; `vitest.config.ts` pool forks (D3) | — |
+| **R5** | `audio-engine` / `fft-analyzer` WARNING / passWithNoTests | 🟡 | ✅ **PASS** — audio-engine без `--passWithNoTests`; fft 15 tests (D3) | — |
+| **R6** | `device-board` coverage | 🟡 | ✅ **PASS** — 139 tests incl. `validate-pre-run.test.ts` (D3) | — |
 | **R7** | WaveformPlayer a11y (aria, Escape, row ≤48px) | 🟡 | 🟡 **PARTIAL** — `CabinetSamplePlayerSection`: `role="region"`, `aria-label`; `useSamplePlaybackEscapeKey()`; inline table player из старого review заменён секцией над таблицей — нужен axe + row height check | **D4** |
 | **R8** | Services → device-board reverse imports | 🔴 | ✅ **PASS** — `check:boundaries` | — |
 | **R9** | Web Audio в UI device-board | 🔴 | ✅ **PASS** — `check:boundaries` | — |
@@ -67,4 +67,4 @@
 
 ~~Старт **D1**~~ ✅ **D1 complete** (2026-06-20): `yarn check:boundaries`, `bootstrap-order.test.ts`, комментарии в `main.tsx` / `registerClientModules.ts`.
 
-Старт **D3** (`crdc-d3-test-health`): Dynin — audio-engine passWithNoTests policy.
+Старт **D4** (`crdc-d4-waveform-a11y`): Rodchenko — axe + row height sample-library player.
