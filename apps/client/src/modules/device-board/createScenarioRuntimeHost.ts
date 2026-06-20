@@ -1,5 +1,5 @@
 import type { ScenarioReferenceValue } from '@membrana/core';
-import { createReferenceValue, formatJournalRefHandle, parseJournalRefHandle } from '@membrana/core';
+import { createReferenceValue, formatJournalRefHandle, formatReporterRefHandle, parseJournalRefHandle, parseReporterRefJournalHandle } from '@membrana/core';
 import type { ScenarioRuntimeHost } from '@membrana/device-board';
 import { waitMs } from '@membrana/device-board';
 
@@ -190,6 +190,22 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
           },
         };
       }
+      if (ref.kind === 'ReporterRef') {
+        const handle = ref.handle ?? '';
+        const journalHandle =
+          handle.length > 0 ? parseReporterRefJournalHandle(handle) : null;
+        const parsed =
+          journalHandle !== null ? parseJournalRefHandle(journalHandle) : null;
+        return {
+          fields: {
+            reporterId: handle || 'null',
+            journalId: journalHandle ?? 'unknown',
+            scope: parsed?.scope ?? 'unknown',
+            deviceId: parsed?.deviceId ?? 'unknown',
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
       return null;
     },
     printLine: (line) => {
@@ -225,6 +241,8 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
       createReferenceValue('JournalRef', formatJournalRefHandle('device', deviceHandle)),
     getServerJournalRef: (deviceHandle) =>
       createReferenceValue('JournalRef', formatJournalRefHandle('server', deviceHandle)),
+    getReporterRef: (journalHandle) =>
+      createReferenceValue('ReporterRef', formatReporterRefHandle(journalHandle)),
     createTrackFromSampleRefs: (nodeId, refs) =>
       bridge.createTrackFromSampleRefs(nodeId, refs),
     analyzeFftTrendsFromFrameRefs: (nodeId, refs) =>

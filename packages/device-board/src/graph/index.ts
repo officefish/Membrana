@@ -77,6 +77,15 @@ export {
 } from './get-journal-node.js';
 export type { CreateGetJournalBoardNodeOptions } from './get-journal-node.js';
 export {
+  createGetReporterBoardNode,
+  getReporterNodePins,
+  GET_REPORTER_NODE_KIND,
+  GET_REPORTER_JOURNAL_HANDLE,
+  GET_REPORTER_OUT_HANDLE,
+  isGetReporterNode,
+} from './get-reporter-node.js';
+export type { CreateGetReporterBoardNodeOptions } from './get-reporter-node.js';
+export {
   createGetSpectralAnalyserBoardNode,
   getSpectralAnalyserNodePins,
   GET_SPECTRAL_ANALYSER_NODE_KIND,

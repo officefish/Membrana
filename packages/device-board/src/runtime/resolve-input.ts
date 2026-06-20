@@ -15,6 +15,10 @@ import {
   GET_JOURNAL_SERVER_HANDLE,
 } from '../graph/get-journal-node.js';
 import {
+  GET_REPORTER_JOURNAL_HANDLE,
+  GET_REPORTER_OUT_HANDLE,
+} from '../graph/get-reporter-node.js';
+import {
   GET_RECORDER_DEVICE_HANDLE,
   GET_RECORDER_OUT_HANDLE,
 } from '../graph/get-recorder-node.js';
@@ -67,6 +71,8 @@ export interface ResolveInputContext {
   readonly getDeviceJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   /** JournalRef server scope per deviceId (host, DBJ1). */
   readonly getServerJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** ReporterRef scoped к journal handle (runtime store / host, DBJ2). */
+  readonly getReporterRef?: (journalHandle: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
@@ -180,6 +186,10 @@ function invalidFftFrameRefList(): ScenarioReferenceValue {
 
 function invalidJournalRef(): ScenarioReferenceValue {
   return { kind: 'JournalRef', handle: null, valid: false };
+}
+
+function invalidReporterRef(): ScenarioReferenceValue {
+  return { kind: 'ReporterRef', handle: null, valid: false };
 }
 
 function resolveGetAudioStreamOutput(
@@ -361,6 +371,36 @@ function resolveGetJournalOutput(
   return invalidJournalRef();
 }
 
+function resolveGetReporterOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const journalRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_REPORTER_JOURNAL_HANDLE,
+    context,
+    visiting,
+  );
+  if (
+    !isReferenceValid(journalRef) ||
+    journalRef === null ||
+    journalRef.kind !== 'JournalRef' ||
+    journalRef.handle === null
+  ) {
+    return invalidReporterRef();
+  }
+  const resolver = context.getReporterRef;
+  if (resolver === undefined) {
+    return invalidReporterRef();
+  }
+  return resolver(journalRef.handle) ?? invalidReporterRef();
+}
+
 /** Резолв data-выхода узла (для runtime-инспекции и pull-цепочки). */
 export function resolveNodeOutput(
   subgraph: ScenarioSubgraph,
@@ -506,6 +546,13 @@ export function resolveNodeOutput(
       throw new ResolveInputError('unsupported-source', `Unknown get-journal output: ${outputPort}`);
     }
     return resolveGetJournalOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-reporter') {
+    if (outputPort !== GET_REPORTER_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-reporter output: ${outputPort}`);
+    }
+    return resolveGetReporterOutput(subgraph, variables, node, context, visiting);
   }
 
   if (node.nodeKind === 'collect-samples') {

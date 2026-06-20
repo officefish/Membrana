@@ -70,6 +70,7 @@ describe('scenario node palette (v0.4 DBR5)', () => {
       'new-track',
       'new-fft-trends-analysis',
       'get-journal',
+      'get-reporter',
     ]);
   });
 

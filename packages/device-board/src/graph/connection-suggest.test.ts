@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from './device-global-node.js';
 import {
   DEVICE_REF_METHOD_TARGETS,
+  JOURNAL_REF_METHOD_TARGETS,
   suggestPaletteNodesForOutgoingConnection,
 } from './connection-suggest.js';
 import { createPaletteBoardNode } from './palette-node.js';
@@ -84,5 +85,9 @@ describe('connection-suggest', () => {
       'stop-runtime',
       'get-journal',
     ]);
+  });
+
+  it('maps JournalRef to get-reporter target', () => {
+    expect(JOURNAL_REF_METHOD_TARGETS.map((item) => item.nodeKind)).toEqual(['get-reporter']);
   });
 });

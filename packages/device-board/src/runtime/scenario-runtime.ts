@@ -5,6 +5,7 @@ import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
 import { isDetectionFrontEdge } from './detection-front.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { CollectRuntimeStore } from './collect-runtime-store.js';
+import { ReporterRuntimeStore } from './reporter-runtime-store.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
@@ -30,6 +31,7 @@ function hostAudioResolveContext(
   | 'getSpectralAnalyserSessionRef'
   | 'getDeviceJournalRef'
   | 'getServerJournalRef'
+  | 'getReporterRef'
 > {
   const result: {
     getActiveAudioStreamRef?: ResolveInputContext['getActiveAudioStreamRef'];
@@ -39,6 +41,7 @@ function hostAudioResolveContext(
     getSpectralAnalyserSessionRef?: ResolveInputContext['getSpectralAnalyserSessionRef'];
     getDeviceJournalRef?: ResolveInputContext['getDeviceJournalRef'];
     getServerJournalRef?: ResolveInputContext['getServerJournalRef'];
+    getReporterRef?: ResolveInputContext['getReporterRef'];
   } = {};
   if (host.getActiveAudioStreamRef !== undefined) {
     result.getActiveAudioStreamRef = () => host.getActiveAudioStreamRef!();
@@ -96,6 +99,8 @@ export class ScenarioRuntime {
   private readonly variableStore = new ScenarioVariableStore();
 
   private readonly collectStore = new CollectRuntimeStore();
+
+  private readonly reporterStore = new ReporterRuntimeStore();
 
   private runPromise: Promise<void> | null = null;
 
@@ -165,6 +170,7 @@ export class ScenarioRuntime {
     this.document = document;
     this.variableStore.reset(document.scenario.variables);
     this.collectStore.resetAll();
+    this.reporterStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.stopRequested = false;
     this.disconnectRequested = false;
@@ -185,6 +191,7 @@ export class ScenarioRuntime {
     this.disconnectRequested = false;
     this.stopReason = null;
     this.collectStore.resetAll();
+    this.reporterStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.abortController = new AbortController();
     this.patchState({
@@ -306,7 +313,16 @@ export class ScenarioRuntime {
     const collect: Pick<ResolveInputContext, 'getCollectBatchRef'> = {
       getCollectBatchRef: (nodeId) => this.collectStore.getLastBatchRef(nodeId),
     };
-    const merged = { ...audio, ...print, ...collect };
+    const reporter: Pick<ResolveInputContext, 'getReporterRef'> = {
+      getReporterRef: (journalHandle) => {
+        const fromHost = this.host.getReporterRef?.(journalHandle);
+        if (fromHost !== undefined && fromHost !== null) {
+          return fromHost;
+        }
+        return this.reporterStore.getReporterRef(journalHandle);
+      },
+    };
+    const merged = { ...audio, ...print, ...collect, ...reporter };
     if (Object.keys(merged).length === 0) {
       return context;
     }

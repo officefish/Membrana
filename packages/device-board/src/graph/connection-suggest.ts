@@ -10,6 +10,7 @@ import type { BoardSocketPin } from './board-node-data.js';
 import { DEVICE_GLOBAL_NODE_KIND } from './device-global-node.js';
 import { GET_RECORDER_DEVICE_HANDLE } from './get-recorder-node.js';
 import { GET_JOURNAL_DEVICE_HANDLE, GET_JOURNAL_SERVER_HANDLE } from './get-journal-node.js';
+import { GET_REPORTER_JOURNAL_HANDLE } from './get-reporter-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from './get-spectral-analyser-node.js';
 import {
   GET_MICROPHONE_DEVICE_HANDLE,
@@ -55,6 +56,11 @@ export const DEVICE_REF_METHOD_TARGETS = [
 /** Методы для ServerRef (DBJ1). */
 export const SERVER_REF_METHOD_TARGETS = [
   { nodeKind: 'get-journal' as const, targetHandle: GET_JOURNAL_SERVER_HANDLE },
+] as const;
+
+/** Методы для JournalRef (DBJ2). */
+export const JOURNAL_REF_METHOD_TARGETS = [
+  { nodeKind: 'get-reporter' as const, targetHandle: GET_REPORTER_JOURNAL_HANDLE },
 ] as const;
 
 function pinAcceptsSource(

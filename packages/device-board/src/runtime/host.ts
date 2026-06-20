@@ -125,6 +125,8 @@ export interface ScenarioRuntimeHost {
   readonly getDeviceJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   /** v0.6 DBJ1: JournalRef server scope per deviceId (cabinet backend when paired). */
   readonly getServerJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** v0.6 DBJ2: ReporterRef scoped к journal handle (optional host override). */
+  readonly getReporterRef?: (journalHandle: string) => ScenarioReferenceValue | null;
   readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   /** v0.5 DBC4: concat AudioSampleRef[] → journal track. */
@@ -235,6 +237,13 @@ export function createStubScenarioRuntimeHost(
       ((deviceHandle) => ({
         kind: 'JournalRef',
         handle: `journal:server:${deviceHandle}`,
+        valid: true,
+      })),
+    getReporterRef:
+      overrides.getReporterRef ??
+      ((journalHandle) => ({
+        kind: 'ReporterRef',
+        handle: `reporter:${journalHandle}`,
         valid: true,
       })),
     writeJournal: overrides.writeJournal ?? (async (event) => log('writeJournal', { blockKind: event.blockKind })),

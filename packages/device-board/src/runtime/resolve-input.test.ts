@@ -22,6 +22,10 @@ import {
   GET_JOURNAL_SERVER_HANDLE,
 } from '../graph/get-journal-node.js';
 import {
+  GET_REPORTER_JOURNAL_HANDLE,
+  GET_REPORTER_OUT_HANDLE,
+} from '../graph/get-reporter-node.js';
+import {
   GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
   GET_SPECTRAL_ANALYSER_OUT_HANDLE,
 } from '../graph/get-spectral-analyser-node.js';
@@ -84,7 +88,7 @@ function dataEdge(
   sourceHandle: string,
   target: string,
   targetHandle: string,
-  dataType: 'DeviceRef' | 'MicrophoneRef' | 'ServerRef' | 'JournalRef' | 'DateTime' = 'DeviceRef',
+  dataType: 'DeviceRef' | 'MicrophoneRef' | 'ServerRef' | 'JournalRef' | 'ReporterRef' | 'DateTime' = 'DeviceRef',
 ): ScenarioGraphEdge {
   return {
     source,
@@ -445,6 +449,44 @@ describe('resolveInput (DBR4)', () => {
       getServerJournalRef: (handle) => (handle === DEVICE_HANDLE ? journalRef : null),
     });
     expect(value).toEqual(journalRef);
+  });
+
+  it('resolves get-reporter output from journal ref (DBJ2)', () => {
+    const reporterVar = createScenarioVariable('var-reporter', 'reporter1', 'ReporterRef');
+    const journalRef = createReferenceValue('JournalRef', `journal:device:${DEVICE_HANDLE}`);
+    const reporterRef = createReferenceValue('ReporterRef', `reporter:journal:device:${DEVICE_HANDLE}`);
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gj',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-journal',
+        },
+        {
+          id: 'gr',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-reporter',
+        },
+        variableSetNode('set', reporterVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gj', GET_JOURNAL_DEVICE_HANDLE),
+        dataEdge('gj', GET_JOURNAL_OUT_HANDLE, 'gr', GET_REPORTER_JOURNAL_HANDLE, 'JournalRef'),
+        dataEdge('gr', GET_REPORTER_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'ReporterRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [reporterVar], 'set', VARIABLE_VALUE_HANDLE, {
+      ...onConnectContext,
+      getDeviceJournalRef: (handle) => (handle === DEVICE_HANDLE ? journalRef : null),
+      getReporterRef: (handle) =>
+        handle === journalRef.handle ? reporterRef : null,
+    });
+    expect(value).toEqual(reporterRef);
   });
 
   it('resolves get-spectral-analyser output as invalid ref until host session (DBC2)', () => {

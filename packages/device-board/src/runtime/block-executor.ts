@@ -14,6 +14,7 @@ import {
 import { STOP_RUNTIME_DEVICE_HANDLE } from '../graph/stop-runtime-node.js';
 import { GET_RECORDER_DEVICE_HANDLE } from '../graph/get-recorder-node.js';
 import { GET_JOURNAL_DEVICE_HANDLE } from '../graph/get-journal-node.js';
+import { GET_REPORTER_JOURNAL_HANDLE } from '../graph/get-reporter-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from '../graph/get-spectral-analyser-node.js';
 import { NEW_TRACK_SAMPLES_HANDLE } from '../graph/new-track-node.js';
 import { NEW_FFT_TRENDS_FRAMES_HANDLE } from '../graph/new-fft-trends-analysis-node.js';
@@ -274,6 +275,28 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       }
     }
     host.log('get-journal', { nodeId: node.id, branch, scope, device: deviceHandle });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'get-reporter') {
+    let journalHandle: string | null = null;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const journalRef = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        GET_REPORTER_JOURNAL_HANDLE,
+        resolveContext,
+      );
+      if (
+        journalRef !== null &&
+        journalRef.kind === 'JournalRef' &&
+        isReferenceValid(journalRef)
+      ) {
+        journalHandle = journalRef.handle;
+      }
+    }
+    host.log('get-reporter', { nodeId: node.id, branch, journal: journalHandle });
     return { lastDetection, stopRequested: false };
   }
 
