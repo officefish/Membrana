@@ -3316,13 +3316,33 @@
       "githubIssue": 131,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-journal-reporter-v06",
       "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; core 33 tests green",
       "dependsOn": [
         "device-board-journal-reporter-v06"
       ],
       "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += journal/reporter/track/report/analysis refs; node kinds get-journal, get-reporter, make-report-*, publish-report; ScenarioReportPayload; DEVICE_BOARD_CONCEPT §17.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-1-get-journal",
+      "title": "DBJ1: GetJournal — DeviceRef|ServerRef in, JournalRef out, host resolve",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; device-board 191 tests green",
+      "dependsOn": [
+        "dbj-0-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. get-journal node, palette, suggest modal, host getDeviceJournalRef/getServerJournalRef.",
       "githubIssueClosedAt": null
     }
   ]
