@@ -26,6 +26,12 @@ export const SOCKET_TYPES = [
   'SpectralAnalyserRef',
   'AudioSampleRefList',
   'FftFrameRefList',
+  // v0.6 (journal + reporter): journal scope, reporter, track/report/analysis refs.
+  'JournalRef',
+  'ReporterRef',
+  'TrackRef',
+  'ReportRef',
+  'FftTrendAnalysisRef',
   // v0.4+: value-типы scenario dataflow (не ссылки на внешний ресурс).
   'DateTime',
   'Integer',
@@ -54,6 +60,11 @@ export const REFERENCE_SOCKET_TYPES = [
   'SpectralAnalyserRef',
   'AudioSampleRefList',
   'FftFrameRefList',
+  'JournalRef',
+  'ReporterRef',
+  'TrackRef',
+  'ReportRef',
+  'FftTrendAnalysisRef',
 ] as const satisfies readonly SocketType[];
 
 /**

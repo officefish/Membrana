@@ -26,6 +26,15 @@ import {
   isScenarioPinKind,
   isTerminalScenarioNodeKind,
   resolveScenarioCollectorConfig,
+  formatJournalRefHandle,
+  formatReporterRefHandle,
+  parseJournalRefHandle,
+  parseReporterRefJournalHandle,
+  createScenarioReportPayload,
+  isScenarioReportPayload,
+  isKnownScenarioReportSchema,
+  isJournalScenarioNodeKind,
+  isReporterMethodScenarioNodeKind,
 } from './index.js';
 
 describe('device-board contracts', () => {
@@ -217,5 +226,64 @@ describe('device-board collectors v0.5 contracts (DBC0)', () => {
     expect(
       resolveScenarioCollectorConfig({ bufferSize: 4096, queueCapacity: 5 }),
     ).toMatchObject({ bufferSize: 4096, queueCapacity: 5, windowSec: 3 });
+  });
+});
+
+describe('device-board journal + reporter v0.6 contracts (DBJ0)', () => {
+  it('v0.6 reference socket types include journal, reporter, track, report, analysis', () => {
+    for (const type of [
+      'JournalRef',
+      'ReporterRef',
+      'TrackRef',
+      'ReportRef',
+      'FftTrendAnalysisRef',
+    ] as const) {
+      expect(isReferenceSocketType(type)).toBe(true);
+      expect(isValidSocketConnection(type, type)).toBe(true);
+    }
+    expect(isValidSocketConnection('JournalRef', 'ReporterRef')).toBe(false);
+  });
+
+  it('registers v0.6 node kinds', () => {
+    expect(isScenarioNodeKind('get-journal')).toBe(true);
+    expect(isScenarioNodeKind('get-reporter')).toBe(true);
+    expect(isScenarioNodeKind('make-report-from-track')).toBe(true);
+    expect(isScenarioNodeKind('make-report-from-analysis')).toBe(true);
+    expect(isScenarioNodeKind('publish-report')).toBe(true);
+    expect(isJournalScenarioNodeKind('get-journal')).toBe(true);
+    expect(isReporterMethodScenarioNodeKind('make-report-from-analysis')).toBe(true);
+    expect(isTerminalScenarioNodeKind('publish-report')).toBe(true);
+    expect(isSystemScenarioNodeKind('get-journal')).toBe(false);
+  });
+
+  it('journal and reporter handles are canonical per deviceId', () => {
+    const deviceJournal = formatJournalRefHandle('device', 'dev-abc');
+    expect(deviceJournal).toBe('journal:device:dev-abc');
+    expect(parseJournalRefHandle(deviceJournal)).toEqual({
+      scope: 'device',
+      deviceId: 'dev-abc',
+    });
+
+    const serverJournal = formatJournalRefHandle('server', 'dev-abc');
+    expect(serverJournal).toBe('journal:server:dev-abc');
+    expect(parseJournalRefHandle(serverJournal)?.scope).toBe('server');
+
+    const reporter = formatReporterRefHandle(deviceJournal);
+    expect(reporter).toBe('reporter:journal:device:dev-abc');
+    expect(parseReporterRefJournalHandle(reporter)).toBe(deviceJournal);
+  });
+
+  it('ScenarioReportPayload guard accepts known shapes', () => {
+    const report = createScenarioReportPayload({
+      schema: 'trends-fft-report/v1',
+      reportId: 'r-1',
+      trackId: 't-1',
+      isDetected: true,
+      summaryText: 'detected',
+      payload: { confidence: 0.9 },
+    });
+    expect(isScenarioReportPayload(report)).toBe(true);
+    expect(isKnownScenarioReportSchema('trends-fft-report/v1')).toBe(true);
+    expect(isKnownScenarioReportSchema('unknown/v1')).toBe(false);
   });
 });

@@ -28,14 +28,48 @@ export {
   SCENARIO_NODE_KINDS,
   COLLECTOR_SCENARIO_NODE_KINDS,
   TERMINAL_SCENARIO_NODE_KINDS,
+  JOURNAL_SCENARIO_NODE_KINDS,
+  REPORTER_METHOD_SCENARIO_NODE_KINDS,
   SYSTEM_SCENARIO_NODE_KINDS,
   type ScenarioNodeKind,
   type CollectorScenarioNodeKind,
+  type TerminalScenarioNodeKind,
+  type JournalScenarioNodeKind,
+  type ReporterMethodScenarioNodeKind,
   isScenarioNodeKind,
   isSystemScenarioNodeKind,
   isCollectorScenarioNodeKind,
   isTerminalScenarioNodeKind,
+  isJournalScenarioNodeKind,
+  isReporterMethodScenarioNodeKind,
 } from './scenario-node-kind.js';
+
+export {
+  JOURNAL_SCOPE_KINDS,
+  JOURNAL_REF_HANDLE_PREFIX,
+  REPORTER_REF_HANDLE_PREFIX,
+  type JournalScopeKind,
+  isJournalScopeKind,
+  formatJournalRefHandle,
+  formatReporterRefHandle,
+  parseJournalRefHandle,
+  parseReporterRefJournalHandle,
+} from './journal-scope.js';
+
+export {
+  SCENARIO_REPORT_SCHEMAS,
+  REPORT_REF_HANDLE_PREFIX,
+  TRACK_REF_HANDLE_PREFIX,
+  FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX,
+  type ScenarioReportSchema,
+  type ScenarioReportPayload,
+  isKnownScenarioReportSchema,
+  formatReportRefHandle,
+  formatTrackRefHandle,
+  formatFftTrendAnalysisRefHandle,
+  createScenarioReportPayload,
+  isScenarioReportPayload,
+} from './scenario-report.js';
 
 export {
   SCENARIO_PIN_KINDS,

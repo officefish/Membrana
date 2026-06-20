@@ -9,7 +9,8 @@
 > релиза — это «север» для пакета `device-board`, к которому будут сверяться
 > PR агентов AI-команды.
 >
-> Статус: **v0.5 — collectors** (Recorder/SpectralAnalyser singletons, Collect event-ports).
+> Статус: **v0.6 — journal + reporter** (GetJournal, GetReporter, MakeReport*, PublishReport).
+> v0.5 — collectors (Recorder/SpectralAnalyser singletons, Collect event-ports).
 > v0.4 — signal + scenario + переменные + dataflow-ссылки, обработчики событий (§15).
 > Контракты `@membrana/core`: v0.4 + v0.5 collectors (§16); schema-версия документа → 2.
 > Предыдущие версии: v0.3 (хакатон 1), v0.2 (2026-06, `@xyflow/react`). Хранитель: Teamlead.
@@ -817,3 +818,38 @@ Parallel: CollectSamples → [event] → NewTrack
 - `ScenarioPinKind += 'event'`; `ScenarioEdgeKind += 'event'`
 - `ScenarioCollectorConfig`, `DEFAULT_SCENARIO_COLLECTOR_CONFIG`, `resolveScenarioCollectorConfig`
 - `ScenarioGraphNode += collectorConfig?`
+
+---
+
+## 17. Journal + Reporter v0.6
+
+> Эпик `device-board-journal-reporter-v06` (DBJ0–DBJ6). Issue #131.
+
+### 17.1 Модель
+
+| Сущность | Ref / тип | Роль |
+|----------|-----------|------|
+| **GetJournal(device \| server)** | `JournalRef` | Per-device journal; handle `journal:{scope}:{deviceId}` |
+| **GetReporter(journal)** | `ReporterRef` | Scoped reporter; handle `reporter:{journalHandle}` |
+| **MakeReportFromTrack** | `TrackRef` → `ReportRef` | Drone / track report (`drone-detection-report/v1`) |
+| **MakeReportFromAnalysis** | `FftTrendAnalysisRef` → `ReportRef` | Trends FFT report (`trends-fft-report/v1`) |
+| **PublishReport** | `JournalRef` + `ReportRef` | Append report в породивший journal |
+
+**Scope frozen:** server journal = **per-device** (`deviceId`), не per-membrane.
+
+Backend routing — **host** (`resolveJournalBackend`): device scope → electron-fs / local; server scope → cabinet sync when paired.
+
+### 17.2 Node kinds (отдельные make-report для палитры и suggest modal)
+
+- `get-journal`, `get-reporter`
+- `make-report-from-track`, `make-report-from-analysis` (два node kind, не один переключатель)
+- `publish-report`
+
+### 17.3 Канонический граф
+
+```text
+GetDevice → GetJournal(device) → GetReporter → MakeReportFromTrack → PublishReport
+GetServer → GetJournal(server) → GetReporter → MakeReportFromAnalysis → PublishReport
+```
+
+Legacy v0.5 `NewTrack` / `NewFftTrendsAnalysis` — deprecated path до DBJ5.

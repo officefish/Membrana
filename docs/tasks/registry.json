@@ -3293,6 +3293,37 @@
       ],
       "notes": "Lead: Vesnin. Формальный review всех PR эпика; smoke с микрофоном; отчёт в #130; yarn task:archive device-board-collectors-v05 + фазы.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "device-board-journal-reporter-v06",
+      "title": "Device-Board Journal + Reporter v0.6: GetJournal, GetReporter, MakeReport*, PublishReport (DBJ0–DBJ6)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "device-board-collectors-v05"
+      ],
+      "notes": "Консенсус 2026-06-20: per-device journal (device + server scope); ReporterRef с двумя node kinds make-report; DBJ0 vesnin gate.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-0-core-contracts",
+      "title": "DBJ0: core contracts — JournalRef, ReporterRef, TrackRef, ReportRef, FftTrendAnalysisRef, report payload (vesnin)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "device-board-journal-reporter-v06"
+      ],
+      "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += journal/reporter/track/report/analysis refs; node kinds get-journal, get-reporter, make-report-*, publish-report; ScenarioReportPayload; DEVICE_BOARD_CONCEPT §17.",
+      "githubIssueClosedAt": null
     }
   ]
 }
