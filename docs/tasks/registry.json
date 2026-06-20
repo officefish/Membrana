@@ -3029,7 +3029,7 @@
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [],
-      "notes": "Lead: Vesnin. merge main; full turbo log; Issue baseline table."
+      "notes": "Lead: Vesnin. ✅ Baseline 2026-06-20: merge main, turbo 118/118, matrix in docs/archive/crdc-baseline-2026-06-20.md + Issue comment."
     },
     {
       "id": "crdc-d1-boundaries-registry",
