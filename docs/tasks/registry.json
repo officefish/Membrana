@@ -3008,13 +3008,14 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": null,
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "techies68 D0-D6; R1-R12 closed; Closes #126",
       "dependsOn": [],
-      "notes": "Вход: DAILY_CODE_REVIEW (MP4), archive 2026-06-19 (device-board), DAILY_STANDUP 2026-06-20. Out of scope: JE1-JE5, trends/zero-shot, deploy-pipeline #94, device-board v0.4 #95. Частично закрыто PR #87/#124/#125."
+      "notes": "Вход: DAILY_CODE_REVIEW (MP4), archive 2026-06-19 (device-board), DAILY_STANDUP 2026-06-20. Out of scope: JE1-JE5, trends/zero-shot, deploy-pipeline #94, device-board v0.4 #95. Частично закрыто PR #87/#124/#125.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d0-baseline-audit",
@@ -3023,13 +3024,14 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "code-review-debt-closeout-jun2026",
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "D0 complete",
       "dependsOn": [],
-      "notes": "Lead: Vesnin. ✅ Baseline 2026-06-20: merge main, turbo 118/118, matrix in docs/archive/crdc-baseline-2026-06-20.md + Issue comment."
+      "notes": "Lead: Vesnin. ✅ Baseline 2026-06-20: merge main, turbo 118/118, matrix in docs/archive/crdc-baseline-2026-06-20.md + Issue comment.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d1-boundaries-registry",
@@ -3038,15 +3040,16 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "code-review-debt-closeout-jun2026",
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "D1 complete",
       "dependsOn": [
         "crdc-d0-baseline-audit"
       ],
-      "notes": "Lead: Ozhegov. ✅ D1 2026-06-20: yarn check:boundaries; bootstrap-order.test.ts; main.tsx contract comments. R1 R2 R8 R9 closed."
+      "notes": "Lead: Ozhegov. ✅ D1 2026-06-20: yarn check:boundaries; bootstrap-order.test.ts; main.tsx contract comments. R1 R2 R8 R9 closed.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d2-lint-hooks-green",
@@ -3055,15 +3058,16 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "code-review-debt-closeout-jun2026",
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "D2 complete",
       "dependsOn": [
         "crdc-d0-baseline-audit"
       ],
-      "notes": "Lead: Rodchenko. ✅ D2 2026-06-20: client + device-board lint 0 warnings (TelemetryJournalModule, board-flow-node, device-board-shell)."
+      "notes": "Lead: Rodchenko. ✅ D2 2026-06-20: client + device-board lint 0 warnings (TelemetryJournalModule, board-flow-node, device-board-shell).",
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d3-test-health",
@@ -3072,15 +3076,16 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "code-review-debt-closeout-jun2026",
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "D3 complete",
       "dependsOn": [
         "crdc-d0-baseline-audit"
       ],
-      "notes": "Lead: Dynin. ✅ D3 2026-06-20: audio-engine vitest без passWithNoTests; trends vitest forks; validate-pre-run.test.ts. R4 R5 R6 closed."
+      "notes": "Lead: Dynin. ✅ D3 2026-06-20: audio-engine vitest без passWithNoTests; trends vitest forks; validate-pre-run.test.ts. R4 R5 R6 closed.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d4-waveform-a11y",
@@ -3089,15 +3094,16 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "code-review-debt-closeout-jun2026",
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "D4 complete",
       "dependsOn": [
         "crdc-d2-lint-hooks-green"
       ],
-      "notes": "Lead: Rodchenko. ✅ D4 2026-06-20: removed table inline waveform; Escape stops playback; region/group a11y; sample-library-a11y.test.ts. R7 closed."
+      "notes": "Lead: Rodchenko. ✅ D4 2026-06-20: removed table inline waveform; Escape stops playback; region/group a11y; sample-library-a11y.test.ts. R7 closed.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d5-hygiene-guardrails",
@@ -3106,15 +3112,16 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "code-review-debt-closeout-jun2026",
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "D5 complete",
       "dependsOn": [
         "crdc-d1-boundaries-registry"
       ],
-      "notes": "Lead: Ozhegov. ✅ D5 2026-06-20: .gitignore .claude/.continue; docker size doc; docs verify OK. R10 R11 R12 closed."
+      "notes": "Lead: Ozhegov. ✅ D5 2026-06-20: .gitignore .claude/.continue; docker size doc; docs verify OK. R10 R11 R12 closed.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d6-ci-green-archive",
@@ -3123,11 +3130,11 @@
       "githubIssue": 126,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "code-review-debt-closeout-jun2026",
       "createdAt": "2026-06-20",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "turbo 118/118 exit 0; TS7006 sampleId fix; log crdc-d6-final-turbo-2026-06-20.log",
       "dependsOn": [
         "crdc-d1-boundaries-registry",
         "crdc-d2-lint-hooks-green",
@@ -3135,7 +3142,8 @@
         "crdc-d4-waveform-a11y",
         "crdc-d5-hygiene-guardrails"
       ],
-      "notes": "Lead: Vesnin. yarn turbo green; task:archive; Closes Issue."
+      "notes": "Lead: Vesnin. yarn turbo green; task:archive; Closes Issue.",
+      "githubIssueClosedAt": null
     }
   ]
 }

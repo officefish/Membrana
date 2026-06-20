@@ -179,7 +179,7 @@ export function useCabinetLiveJournal() {
       .then((service) => {
         if (cancelled) return;
         setMediaService(service);
-        bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
+        bindSamplePlaybackBlobReader((sampleId: string) => service.getSampleBlob(sampleId));
       })
       .catch((err) => {
         if (cancelled) return;

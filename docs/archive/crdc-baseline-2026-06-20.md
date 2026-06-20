@@ -67,4 +67,16 @@
 
 ~~Старт **D1**~~ ✅ **D1 complete** (2026-06-20): `yarn check:boundaries`, `bootstrap-order.test.ts`, комментарии в `main.tsx` / `registerClientModules.ts`.
 
-Старт **D6** (`crdc-d6-ci-green-archive`): Vesnin — full turbo green, PR, archive эпика #126.
+~~**D6**~~ ✅ **D6 complete** (2026-06-20): `yarn turbo run lint typecheck test build --continue` → **118/118 OK**, exit **0** (~51s cached). Лог: [`crdc-d6-final-turbo-2026-06-20.log`](./crdc-d6-final-turbo-2026-06-20.log). TS7006 (`sampleId: string`) в client/cabinet blob-reader callbacks. Эпик + фазы `crdc-d0`…`crdc-d6` архивированы; Issue **#126** закрывается.
+
+---
+
+## D6 — Final CI (2026-06-20)
+
+| Команда | Результат |
+|---------|-----------|
+| `yarn check:boundaries` | exit **0** |
+| `yarn turbo run lint typecheck test build --continue` | **118/118**, exit **0** |
+| `yarn task:archive code-review-debt-closeout-jun2026` | archived |
+
+**Итог эпика:** R1–R12 закрыты; out of scope (JE1–JE5, trends/zero-shot, #94, #95) без изменений.

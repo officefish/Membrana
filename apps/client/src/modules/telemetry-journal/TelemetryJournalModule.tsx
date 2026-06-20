@@ -51,7 +51,9 @@ export const TelemetryJournalModule: React.FC<
   }, [filter, search]);
 
   useEffect(() => {
-    bindSamplePlaybackBlobReader((sampleId) => getDefaultMediaLibraryService().getSampleBlob(sampleId));
+    bindSamplePlaybackBlobReader((sampleId: string) =>
+      getDefaultMediaLibraryService().getSampleBlob(sampleId),
+    );
   }, []);
 
   const filterCounts = useMemo(
