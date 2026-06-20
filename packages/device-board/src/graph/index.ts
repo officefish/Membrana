@@ -106,6 +106,15 @@ export {
 } from './make-report-from-track-node.js';
 export type { CreateMakeReportFromTrackBoardNodeOptions } from './make-report-from-track-node.js';
 export {
+  createPublishReportBoardNode,
+  publishReportNodePins,
+  PUBLISH_REPORT_NODE_KIND,
+  PUBLISH_REPORT_JOURNAL_HANDLE,
+  PUBLISH_REPORT_REPORT_HANDLE,
+  isPublishReportNode,
+} from './publish-report-node.js';
+export type { CreatePublishReportBoardNodeOptions } from './publish-report-node.js';
+export {
   createGetSpectralAnalyserBoardNode,
   getSpectralAnalyserNodePins,
   GET_SPECTRAL_ANALYSER_NODE_KIND,

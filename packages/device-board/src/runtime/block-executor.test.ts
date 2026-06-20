@@ -480,4 +480,93 @@ describe('executeScenarioBlock terminal nodes (DBC4)', () => {
     expect(reportRef.valid).toBe(true);
     expect(reportRef.handle).toBe('report:rep-track-1');
   });
+
+  it('PublishReport calls publishReport with payload from ReportRuntimeStore (DBJ4)', async () => {
+    const publishReport = vi.fn(async () => true);
+    const host = createStubScenarioRuntimeHost({ publishReport });
+    const reportStore = new ReportRuntimeStore();
+    reportStore.setNodeReport('mrt-src', {
+      schema: 'trends-fft-report/v1',
+      reportId: 'rep-pub-1',
+      trackId: 'track-x',
+      isDetected: false,
+      payload: { ok: true },
+    });
+    const journalVar: ScenarioVariable = {
+      ...createScenarioVariable('var-journal', 'journal1', 'JournalRef'),
+      value: createReferenceValue('JournalRef', 'journal:device:dev-1'),
+    };
+    const reportVar: ScenarioVariable = {
+      ...createScenarioVariable('var-report', 'report1', 'ReportRef'),
+      value: reportStore.getReportRef('mrt-src'),
+    };
+    const variableStore = new ScenarioVariableStore([journalVar, reportVar]);
+    const node = {
+      id: 'pr-1',
+      nodeKind: 'publish-report' as const,
+      blockKind: 'custom' as const,
+      label: 'PublishReport',
+    };
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        {
+          id: 'vg-journal',
+          nodeKind: 'variable-get',
+          blockKind: 'custom',
+          label: 'Journal',
+          variableId: journalVar.id,
+        },
+        {
+          id: 'vg-report',
+          nodeKind: 'variable-get',
+          blockKind: 'custom',
+          label: 'Report',
+          variableId: reportVar.id,
+        },
+        node,
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data',
+          source: 'vg-journal',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'pr-1',
+          targetHandle: 'journal',
+          dataType: 'JournalRef',
+        },
+        {
+          id: 'd2',
+          kind: 'data',
+          source: 'vg-report',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'pr-1',
+          targetHandle: 'report',
+          dataType: 'ReportRef',
+        },
+      ],
+    };
+
+    await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore,
+      reportStore,
+      resolveContext: {},
+    });
+
+    expect(publishReport).toHaveBeenCalledWith(journalVar.value, {
+      schema: 'trends-fft-report/v1',
+      reportId: 'rep-pub-1',
+      trackId: 'track-x',
+      isDetected: false,
+      payload: { ok: true },
+    });
+  });
 });

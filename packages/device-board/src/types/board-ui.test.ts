@@ -73,6 +73,7 @@ describe('scenario node palette (v0.4 DBR5)', () => {
       'get-reporter',
       'make-report-from-track',
       'make-report-from-analysis',
+      'publish-report',
     ]);
   });
 

@@ -1,4 +1,4 @@
-import { createReferenceValue, type ScenarioReferenceValue, type ScenarioReportPayload, createScenarioReportPayload, FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX, TRACK_REF_HANDLE_PREFIX } from '@membrana/core';
+import { createReferenceValue, type ScenarioReferenceValue, type ScenarioReportPayload, createScenarioReportPayload, FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX, parseJournalRefHandle, TRACK_REF_HANDLE_PREFIX } from '@membrana/core';
 import { scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
 import {
   createDeviceCollectorRegistry,
@@ -42,6 +42,8 @@ import {
   requestMicrophoneStop,
 } from '@/modules/microphone/microphoneCaptureCoordinator';
 import { publishMicrophoneStream, subscribeMicrophoneStream } from '@/modules/microphone/microphoneStreamHub';
+import { reconfigureJournalFromConnection } from '@/lib/journalHubBridge';
+import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 import { encodeWavPcm16 } from '@/plugins/mic-buffer-recorder/encodeWav';
 import { startClipRecorder } from '@/plugins/mic-buffer-recorder/clipRecorder';
 
@@ -548,6 +550,58 @@ export class ScenarioMicJournalBridge {
       isDetected: payload.isDetected,
     });
     return payload;
+  }
+
+  /** v0.6 DBJ4: append ScenarioReportPayload в LiveJournal по JournalRef scope. */
+  async publishReport(
+    journalRef: ScenarioReferenceValue,
+    payload: ScenarioReportPayload,
+  ): Promise<boolean> {
+    if (!journalRef.valid || journalRef.handle === null || journalRef.kind !== 'JournalRef') {
+      return false;
+    }
+    const parsed = parseJournalRefHandle(journalRef.handle);
+    if (parsed === null) {
+      return false;
+    }
+
+    const { mode, pairing } = useNodeConnectionStore.getState();
+    if (parsed.scope === 'server' && mode === 'paired' && pairing !== null) {
+      await reconfigureJournalFromConnection(mode, pairing);
+    }
+
+    const tags = [
+      'device-board:publish-report',
+      `journal-scope:${parsed.scope}`,
+      `device-id:${parsed.deviceId}`,
+    ];
+    if (payload.isDetected) {
+      tags.push(LIVE_JOURNAL_DETECTION_TAG);
+    }
+
+    await getDefaultLiveJournalService().appendReport({
+      clientEntryId: liveJournalReportClientEntryId(payload.reportId),
+      moduleId: DEVICE_BOARD_MODULE_ID,
+      moduleName: LIVE_JOURNAL_MODULE_NAME,
+      tags,
+      report: {
+        schema: payload.schema,
+        reportId: payload.reportId,
+        trackId: payload.trackId,
+        isDetected: payload.isDetected,
+        summaryText: payload.summaryText,
+        payload: payload.payload,
+      },
+    });
+
+    scenarioRuntimeInfo('[device-board] publishReport', {
+      journal: journalRef.handle,
+      scope: parsed.scope,
+      deviceId: parsed.deviceId,
+      reportId: payload.reportId,
+      schema: payload.schema,
+    });
+    return true;
   }
 
   getCollectorQueueDepth(

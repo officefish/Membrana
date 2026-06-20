@@ -9,6 +9,7 @@ import { getJournalNodePins } from './get-journal-node.js';
 import { getReporterNodePins } from './get-reporter-node.js';
 import { makeReportFromAnalysisNodePins } from './make-report-from-analysis-node.js';
 import { makeReportFromTrackNodePins } from './make-report-from-track-node.js';
+import { publishReportNodePins } from './publish-report-node.js';
 import { getSpectralAnalyserNodePins } from './get-spectral-analyser-node.js';
 import { collectSamplesNodePins } from './collect-samples-node.js';
 import { collectFftFramesNodePins } from './collect-fft-frames-node.js';
@@ -104,6 +105,7 @@ export const V04_PALETTE_NODE_KINDS = [
   'get-reporter',
   'make-report-from-track',
   'make-report-from-analysis',
+  'publish-report',
 ] as const satisfies readonly ScenarioNodeKind[];
 
 export type V04PaletteNodeKind = (typeof V04_PALETTE_NODE_KINDS)[number];
@@ -129,6 +131,7 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'get-reporter': 'GetReporter',
   'make-report-from-track': 'MakeReportFromTrack',
   'make-report-from-analysis': 'MakeReportFromAnalysis',
+  'publish-report': 'PublishReport',
 };
 
 /** Человекочитаемый лейбл палитры v0.4. */
@@ -245,6 +248,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return makeReportFromTrackNodePins();
     case 'make-report-from-analysis':
       return makeReportFromAnalysisNodePins();
+    case 'publish-report':
+      return publishReportNodePins();
   }
 }
 

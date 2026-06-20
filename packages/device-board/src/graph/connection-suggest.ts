@@ -17,6 +17,10 @@ import {
 import {
   MAKE_REPORT_FROM_TRACK_REPORTER_HANDLE,
 } from './make-report-from-track-node.js';
+import {
+  PUBLISH_REPORT_JOURNAL_HANDLE,
+  PUBLISH_REPORT_REPORT_HANDLE,
+} from './publish-report-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from './get-spectral-analyser-node.js';
 import {
   GET_MICROPHONE_DEVICE_HANDLE,
@@ -67,6 +71,7 @@ export const SERVER_REF_METHOD_TARGETS = [
 /** Методы для JournalRef (DBJ2). */
 export const JOURNAL_REF_METHOD_TARGETS = [
   { nodeKind: 'get-reporter' as const, targetHandle: GET_REPORTER_JOURNAL_HANDLE },
+  { nodeKind: 'publish-report' as const, targetHandle: PUBLISH_REPORT_JOURNAL_HANDLE },
 ] as const;
 
 /** Методы для ReporterRef (DBJ3). */
@@ -79,6 +84,11 @@ export const REPORTER_REF_METHOD_TARGETS = [
     nodeKind: 'make-report-from-analysis' as const,
     targetHandle: MAKE_REPORT_FROM_ANALYSIS_REPORTER_HANDLE,
   },
+] as const;
+
+/** Методы для ReportRef (DBJ4). */
+export const REPORT_REF_METHOD_TARGETS = [
+  { nodeKind: 'publish-report' as const, targetHandle: PUBLISH_REPORT_REPORT_HANDLE },
 ] as const;
 
 function pinAcceptsSource(

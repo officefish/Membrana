@@ -5,6 +5,7 @@ import {
   DEVICE_REF_METHOD_TARGETS,
   JOURNAL_REF_METHOD_TARGETS,
   REPORTER_REF_METHOD_TARGETS,
+  REPORT_REF_METHOD_TARGETS,
   suggestPaletteNodesForOutgoingConnection,
 } from './connection-suggest.js';
 import { createPaletteBoardNode } from './palette-node.js';
@@ -89,7 +90,10 @@ describe('connection-suggest', () => {
   });
 
   it('maps JournalRef to get-reporter target', () => {
-    expect(JOURNAL_REF_METHOD_TARGETS.map((item) => item.nodeKind)).toEqual(['get-reporter']);
+    expect(JOURNAL_REF_METHOD_TARGETS.map((item) => item.nodeKind)).toEqual([
+      'get-reporter',
+      'publish-report',
+    ]);
   });
 
   it('maps ReporterRef to make-report node targets (DBJ3)', () => {
@@ -97,5 +101,9 @@ describe('connection-suggest', () => {
       'make-report-from-track',
       'make-report-from-analysis',
     ]);
+  });
+
+  it('maps ReportRef to publish-report target (DBJ4)', () => {
+    expect(REPORT_REF_METHOD_TARGETS.map((item) => item.nodeKind)).toEqual(['publish-report']);
   });
 });

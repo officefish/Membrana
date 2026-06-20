@@ -23,6 +23,10 @@ import {
   MAKE_REPORT_FROM_TRACK_REPORTER_HANDLE,
   MAKE_REPORT_FROM_TRACK_TRACK_HANDLE,
 } from '../graph/make-report-from-track-node.js';
+import {
+  PUBLISH_REPORT_JOURNAL_HANDLE,
+  PUBLISH_REPORT_REPORT_HANDLE,
+} from '../graph/publish-report-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from '../graph/get-spectral-analyser-node.js';
 import { NEW_TRACK_SAMPLES_HANDLE } from '../graph/new-track-node.js';
 import { NEW_FFT_TRENDS_FRAMES_HANDLE } from '../graph/new-fft-trends-analysis-node.js';
@@ -404,6 +408,56 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
           ? analysisRef.handle
           : null,
       reportId,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'publish-report') {
+    if (variableStore === undefined || resolveContext === undefined || reportStore === undefined) {
+      throw new Error('publish-report requires variableStore, resolveContext and reportStore');
+    }
+    const journalRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      PUBLISH_REPORT_JOURNAL_HANDLE,
+      resolveContext,
+    );
+    const reportRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      PUBLISH_REPORT_REPORT_HANDLE,
+      resolveContext,
+    );
+    let published = false;
+    if (
+      journalRef !== null &&
+      journalRef.kind === 'JournalRef' &&
+      isReferenceValid(journalRef) &&
+      reportRef !== null &&
+      reportRef.kind === 'ReportRef' &&
+      isReferenceValid(reportRef) &&
+      reportRef.handle !== null &&
+      host.publishReport !== undefined
+    ) {
+      const payload = reportStore.getPayload(reportRef.handle);
+      if (payload !== null) {
+        published = await host.publishReport(journalRef, payload);
+      }
+    }
+    host.log('publish-report', {
+      nodeId: node.id,
+      branch,
+      journal:
+        journalRef !== null && journalRef.kind === 'JournalRef' && isReferenceValid(journalRef)
+          ? journalRef.handle
+          : null,
+      report:
+        reportRef !== null && reportRef.kind === 'ReportRef' && isReferenceValid(reportRef)
+          ? reportRef.handle
+          : null,
+      published,
     });
     return { lastDetection, stopRequested: false };
   }

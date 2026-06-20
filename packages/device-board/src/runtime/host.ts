@@ -137,6 +137,11 @@ export interface ScenarioRuntimeHost {
     reporterRef: ScenarioReferenceValue,
     analysisRef: ScenarioReferenceValue,
   ) => Promise<ScenarioReportPayload | null>;
+  /** v0.6 DBJ4: append ScenarioReportPayload в journal по JournalRef scope. */
+  readonly publishReport?: (
+    journalRef: ScenarioReferenceValue,
+    payload: ScenarioReportPayload,
+  ) => Promise<boolean>;
   readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   /** v0.5 DBC4: concat AudioSampleRef[] → journal track. */
@@ -285,6 +290,16 @@ export function createStubScenarioRuntimeHost(
           isDetected: false,
           payload: {},
         };
+      }),
+    publishReport:
+      overrides.publishReport ??
+      (async (journalRef, payload) => {
+        log('publishReport', {
+          journal: journalRef.handle,
+          reportId: payload.reportId,
+          schema: payload.schema,
+        });
+        return true;
       }),
     writeJournal: overrides.writeJournal ?? (async (event) => log('writeJournal', { blockKind: event.blockKind })),
     recordChunk:

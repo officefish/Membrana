@@ -3380,6 +3380,24 @@
       ],
       "notes": "Lead: Ozhegov + Dynin. make-report-from-track/analysis nodes, ReportRuntimeStore, host makeReportFromTrack/Analysis, REPORTER_REF_METHOD_TARGETS.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-4-publish-report",
+      "title": "DBJ4: PublishReport — JournalRef + ReportRef → appendReport; E2E; cookbook",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; device-board E2E + cookbook journal-reporter-v06.mdx",
+      "dependsOn": [
+        "dbj-3-make-reports"
+      ],
+      "notes": "Lead: Ozhegov. publish-report terminal node, host publishReport, REPORT_REF_METHOD_TARGETS, journal-reporter E2E.",
+      "githubIssueClosedAt": null
     }
   ]
 }

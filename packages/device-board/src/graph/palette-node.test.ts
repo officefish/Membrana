@@ -35,6 +35,7 @@ describe('palette-node (DBR5)', () => {
       'get-reporter',
       'make-report-from-track',
       'make-report-from-analysis',
+      'publish-report',
     ]);
   });
 
