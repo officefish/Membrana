@@ -27,7 +27,7 @@
 | **R4** | `trends-detector` exit 134 OOM | 🔴 | ✅ **PASS** — 13 tests; `vitest.config.ts` pool forks (D3) | — |
 | **R5** | `audio-engine` / `fft-analyzer` WARNING / passWithNoTests | 🟡 | ✅ **PASS** — audio-engine без `--passWithNoTests`; fft 15 tests (D3) | — |
 | **R6** | `device-board` coverage | 🟡 | ✅ **PASS** — 139 tests incl. `validate-pre-run.test.ts` (D3) | — |
-| **R7** | WaveformPlayer a11y (aria, Escape, row ≤48px) | 🟡 | 🟡 **PARTIAL** — `CabinetSamplePlayerSection`: `role="region"`, `aria-label`; `useSamplePlaybackEscapeKey()`; inline table player из старого review заменён секцией над таблицей — нужен axe + row height check | **D4** |
+| **R7** | WaveformPlayer a11y (aria, Escape, row ≤48px) | 🟡 | ✅ **PASS** — player section region; table без inline waveform; Escape→stop; a11y tests (D4) | — |
 | **R8** | Services → device-board reverse imports | 🔴 | ✅ **PASS** — `check:boundaries` | — |
 | **R9** | Web Audio в UI device-board | 🔴 | ✅ **PASS** — `check:boundaries` | — |
 | **R10** | Deploy logs / local AI dirs в repo | 🟡 | 🟡 **PARTIAL** — `/cabinet-recover*.txt`, `/deploy-*.txt` в `.gitignore` (#125); только `.claude/claude_code_config.json`, `.continue/config.json` — не целые каталоги | **D5** |
@@ -67,4 +67,4 @@
 
 ~~Старт **D1**~~ ✅ **D1 complete** (2026-06-20): `yarn check:boundaries`, `bootstrap-order.test.ts`, комментарии в `main.tsx` / `registerClientModules.ts`.
 
-Старт **D4** (`crdc-d4-waveform-a11y`): Rodchenko — axe + row height sample-library player.
+Старт **D5** (`crdc-d5-hygiene-guardrails`): Ozhegov — `.claude/` / `.continue/` gitignore, docker size note.

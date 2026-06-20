@@ -1,14 +1,10 @@
 import { Fragment } from 'react';
-import { SampleWaveformScrubber } from '@/components/sample-playback/SampleWaveformScrubber';
 import {
   SampleLabelEditor,
   SampleNotesEditor,
 } from '@/components/sample-library/SampleLabelNotesEditor';
 import { formatBytes } from '@/lib/formatBytes';
-import {
-  seekSamplePlayback,
-  type SamplePlaybackSnapshot,
-} from '@membrana/sample-playback-service';
+import type { SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
 import type { MembraneCatalogSample } from '@/api/sampleLibrary';
 import type { Collection, MediaSample, UpdateSampleLabelNotes } from '@membrana/media-library-service';
 
@@ -83,8 +79,6 @@ export function CabinetSampleTable({
               const isLoading = isSelected && playbackStatus === 'loading';
               const source = mode === 'node' ? (row as MediaSample).source : undefined;
               const sample = mode === 'node' ? (row as MediaSample) : null;
-              const showRowWaveform =
-                isSelected && playback.waveform.length > 0 && playback.durationSec > 0;
               const rowNotes = 'notes' in row ? row.notes : undefined;
               const saving = labelSavingId === id;
               const saveError = saving ? labelAnnotateError : null;
@@ -176,27 +170,16 @@ export function CabinetSampleTable({
                       </div>
                     </td>
                   </tr>
-                  {isSelected ? (
+                  {isSelected && (canLabelAnnotate || rowNotes) ? (
                     <tr className="bg-primary/10">
                       <td colSpan={colSpan} className="pt-0">
                         <div
                           className="flex flex-col gap-3 py-2"
+                          role="region"
+                          aria-label="Заметки к выбранному сэмплу"
                           onClick={(e) => e.stopPropagation()}
                           onPointerDown={(e) => e.stopPropagation()}
                         >
-                          {showRowWaveform ? (
-                            <SampleWaveformScrubber
-                              waveform={playback.waveform}
-                              currentTimeSec={playback.currentTimeSec}
-                              durationSec={playback.durationSec}
-                              height={56}
-                              onSeek={(ratio) => void seekSamplePlayback(ratio)}
-                            />
-                          ) : (
-                            <p className="text-xs text-base-content/50">
-                              {playback.errorMessage ?? 'Загрузка осциллограммы…'}
-                            </p>
-                          )}
                           {canLabelAnnotate && onSaveLabelNotes ? (
                             <SampleNotesEditor
                               sampleId={id}

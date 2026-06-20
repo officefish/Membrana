@@ -3097,7 +3097,7 @@
       "dependsOn": [
         "crdc-d2-lint-hooks-green"
       ],
-      "notes": "Lead: Rodchenko. R7: aria-label, role, Escape, row height ≤48px, axe."
+      "notes": "Lead: Rodchenko. ✅ D4 2026-06-20: removed table inline waveform; Escape stops playback; region/group a11y; sample-library-a11y.test.ts. R7 closed."
     },
     {
       "id": "crdc-d5-hygiene-guardrails",

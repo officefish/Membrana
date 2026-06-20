@@ -87,6 +87,7 @@ export function SampleWaveformScrubber({
     <div
       ref={containerRef}
       role="slider"
+      aria-orientation="horizontal"
       tabIndex={0}
       aria-label="Позиция воспроизведения"
       aria-valuemin={0}

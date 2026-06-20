@@ -1,11 +1,21 @@
 import { useEffect, useSyncExternalStore } from 'react';
 
 import {
-  disposeSamplePlayback,
   getSamplePlaybackSnapshot,
+  stopSamplePlayback,
   subscribeSamplePlayback,
   type SamplePlaybackSnapshot,
 } from './service';
+
+/** @internal Exported for unit tests (CRDC D4). */
+export function handleSamplePlaybackEscapeKey(event: Pick<KeyboardEvent, 'key' | 'defaultPrevented'>): void {
+  if (event.key !== 'Escape' || event.defaultPrevented) return;
+  const { status, selectedSampleId } = getSamplePlaybackSnapshot();
+  if (selectedSampleId === null) return;
+  if (status === 'playing' || status === 'loading') {
+    void stopSamplePlayback();
+  }
+}
 
 /** React-подписка на shared sample playback hub. */
 export function useSamplePlayback(): SamplePlaybackSnapshot {
@@ -22,8 +32,7 @@ export function useSamplePlaybackEscapeKey(enabled = true): void {
     if (!enabled) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || event.defaultPrevented) return;
-      void disposeSamplePlayback();
+      handleSamplePlaybackEscapeKey(event);
     };
 
     window.addEventListener('keydown', onKeyDown);

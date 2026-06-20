@@ -29,7 +29,8 @@ export function SamplePlaybackBar({
       className={`flex flex-col gap-2 rounded-lg border border-base-300 bg-base-200/40 ${
         compact ? 'p-2' : 'p-4'
       }`}
-      role="status"
+      role="group"
+      aria-label="Управление воспроизведением сэмпла"
       aria-busy={isLoading}
     >
       <div className="flex flex-wrap items-center gap-2">
