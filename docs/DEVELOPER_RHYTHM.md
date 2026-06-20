@@ -127,6 +127,11 @@ yarn save-code-review
 yarn task:close-github:dry
 yarn task:close-github
 
+# Периодический аудит backlog (после крупного эпика или раз в 2–4 недели):
+# manifest → docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json
+# yarn issues:audit:apply --manifest docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json
+# См. docs/prompts/GITHUB_ISSUES_AUDIT_PROMPT.md
+
 # архив дня + ревью + снимок ревью одной командой:
 yarn ritual:evening
 ```
