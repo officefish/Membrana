@@ -19,6 +19,12 @@ import {
   GET_REPORTER_OUT_HANDLE,
 } from '../graph/get-reporter-node.js';
 import {
+  MAKE_REPORT_FROM_ANALYSIS_OUT_HANDLE,
+} from '../graph/make-report-from-analysis-node.js';
+import {
+  MAKE_REPORT_FROM_TRACK_OUT_HANDLE,
+} from '../graph/make-report-from-track-node.js';
+import {
   GET_RECORDER_DEVICE_HANDLE,
   GET_RECORDER_OUT_HANDLE,
 } from '../graph/get-recorder-node.js';
@@ -73,6 +79,8 @@ export interface ResolveInputContext {
   readonly getServerJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   /** ReporterRef scoped к journal handle (runtime store / host, DBJ2). */
   readonly getReporterRef?: (journalHandle: string) => ScenarioReferenceValue | null;
+  /** ReportRef последнего make-report узла (DBJ3). */
+  readonly getReportRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
@@ -190,6 +198,10 @@ function invalidJournalRef(): ScenarioReferenceValue {
 
 function invalidReporterRef(): ScenarioReferenceValue {
   return { kind: 'ReporterRef', handle: null, valid: false };
+}
+
+function invalidReportRef(): ScenarioReferenceValue {
+  return { kind: 'ReportRef', handle: null, valid: false };
 }
 
 function resolveGetAudioStreamOutput(
@@ -553,6 +565,34 @@ export function resolveNodeOutput(
       throw new ResolveInputError('unsupported-source', `Unknown get-reporter output: ${outputPort}`);
     }
     return resolveGetReporterOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'make-report-from-track') {
+    if (outputPort !== MAKE_REPORT_FROM_TRACK_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-report-from-track output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getReportRef;
+    if (resolver === undefined) {
+      return invalidReportRef();
+    }
+    return resolver(node.id) ?? invalidReportRef();
+  }
+
+  if (node.nodeKind === 'make-report-from-analysis') {
+    if (outputPort !== MAKE_REPORT_FROM_ANALYSIS_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-report-from-analysis output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getReportRef;
+    if (resolver === undefined) {
+      return invalidReportRef();
+    }
+    return resolver(node.id) ?? invalidReportRef();
   }
 
   if (node.nodeKind === 'collect-samples') {

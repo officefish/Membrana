@@ -15,6 +15,14 @@ import { STOP_RUNTIME_DEVICE_HANDLE } from '../graph/stop-runtime-node.js';
 import { GET_RECORDER_DEVICE_HANDLE } from '../graph/get-recorder-node.js';
 import { GET_JOURNAL_DEVICE_HANDLE } from '../graph/get-journal-node.js';
 import { GET_REPORTER_JOURNAL_HANDLE } from '../graph/get-reporter-node.js';
+import {
+  MAKE_REPORT_FROM_ANALYSIS_ANALYSIS_HANDLE,
+  MAKE_REPORT_FROM_ANALYSIS_REPORTER_HANDLE,
+} from '../graph/make-report-from-analysis-node.js';
+import {
+  MAKE_REPORT_FROM_TRACK_REPORTER_HANDLE,
+  MAKE_REPORT_FROM_TRACK_TRACK_HANDLE,
+} from '../graph/make-report-from-track-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from '../graph/get-spectral-analyser-node.js';
 import { NEW_TRACK_SAMPLES_HANDLE } from '../graph/new-track-node.js';
 import { NEW_FFT_TRENDS_FRAMES_HANDLE } from '../graph/new-fft-trends-analysis-node.js';
@@ -24,6 +32,7 @@ import { formatVariableValueForPrintRuntime } from './format-reference.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { executeCollectNode } from './collect-node-executor.js';
 import type { CollectRuntimeStore } from './collect-runtime-store.js';
+import type { ReportRuntimeStore } from './report-runtime-store.js';
 import { resolveRefListMembers } from './resolve-ref-list.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { isReferenceValid } from './reference-validity.js';
@@ -48,6 +57,8 @@ export interface BlockExecutionInput {
   readonly onStopRuntime?: () => void;
   /** v0.5 DBC3: in-memory flush/batch state Collect-узлов. */
   readonly collectStore?: CollectRuntimeStore;
+  /** v0.6 DBJ3: in-memory ReportRef payloads от make-report узлов. */
+  readonly reportStore?: ReportRuntimeStore;
 }
 
 export interface BlockExecutionResult {
@@ -108,6 +119,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     onPrintOutput,
     onStopRuntime,
     collectStore,
+    reportStore,
   } = input;
 
   assertNotAborted(signal);
@@ -297,6 +309,102 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       }
     }
     host.log('get-reporter', { nodeId: node.id, branch, journal: journalHandle });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'make-report-from-track') {
+    if (variableStore === undefined || resolveContext === undefined || reportStore === undefined) {
+      throw new Error('make-report-from-track requires variableStore, resolveContext and reportStore');
+    }
+    const reporterRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_REPORT_FROM_TRACK_REPORTER_HANDLE,
+      resolveContext,
+    );
+    const trackRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_REPORT_FROM_TRACK_TRACK_HANDLE,
+      resolveContext,
+    );
+    let reportId: string | null = null;
+    if (
+      reporterRef !== null &&
+      reporterRef.kind === 'ReporterRef' &&
+      isReferenceValid(reporterRef) &&
+      trackRef !== null &&
+      trackRef.kind === 'TrackRef' &&
+      isReferenceValid(trackRef) &&
+      host.makeReportFromTrack !== undefined
+    ) {
+      const payload = await host.makeReportFromTrack(reporterRef, trackRef);
+      if (payload !== null) {
+        reportStore.setNodeReport(node.id, payload);
+        reportId = payload.reportId;
+      }
+    }
+    host.log('make-report-from-track', {
+      nodeId: node.id,
+      branch,
+      track:
+        trackRef !== null && trackRef.kind === 'TrackRef' && isReferenceValid(trackRef)
+          ? trackRef.handle
+          : null,
+      reportId,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'make-report-from-analysis') {
+    if (variableStore === undefined || resolveContext === undefined || reportStore === undefined) {
+      throw new Error(
+        'make-report-from-analysis requires variableStore, resolveContext and reportStore',
+      );
+    }
+    const reporterRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_REPORT_FROM_ANALYSIS_REPORTER_HANDLE,
+      resolveContext,
+    );
+    const analysisRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_REPORT_FROM_ANALYSIS_ANALYSIS_HANDLE,
+      resolveContext,
+    );
+    let reportId: string | null = null;
+    if (
+      reporterRef !== null &&
+      reporterRef.kind === 'ReporterRef' &&
+      isReferenceValid(reporterRef) &&
+      analysisRef !== null &&
+      analysisRef.kind === 'FftTrendAnalysisRef' &&
+      isReferenceValid(analysisRef) &&
+      host.makeReportFromAnalysis !== undefined
+    ) {
+      const payload = await host.makeReportFromAnalysis(reporterRef, analysisRef);
+      if (payload !== null) {
+        reportStore.setNodeReport(node.id, payload);
+        reportId = payload.reportId;
+      }
+    }
+    host.log('make-report-from-analysis', {
+      nodeId: node.id,
+      branch,
+      analysis:
+        analysisRef !== null &&
+        analysisRef.kind === 'FftTrendAnalysisRef' &&
+        isReferenceValid(analysisRef)
+          ? analysisRef.handle
+          : null,
+      reportId,
+    });
     return { lastDetection, stopRequested: false };
   }
 

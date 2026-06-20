@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
+import { createReferenceValue, createScenarioVariable, type ScenarioSubgraph, type ScenarioVariable } from '@membrana/core';
 
 import { PALETTE_VALUE_HANDLE } from '../graph/palette-node.js';
+import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { executeScenarioBlock } from './block-executor.js';
 import { createStubScenarioRuntimeHost } from './host.js';
 import { CollectRuntimeStore } from './collect-runtime-store.js';
+import { ReportRuntimeStore } from './report-runtime-store.js';
 import { ScenarioVariableStore } from './variable-store.js';
-import type { ScenarioSubgraph } from '@membrana/core';
 
 describe('executeScenarioBlock print', () => {
   const variableStore = new ScenarioVariableStore();
@@ -399,5 +401,83 @@ describe('executeScenarioBlock terminal nodes (DBC4)', () => {
 
     expect(analyzeFftTrendsFromFrameRefs).toHaveBeenCalledWith('nft-1', [frameA]);
     expect(result.lastDetection?.detected).toBe(true);
+  });
+
+  it('MakeReportFromTrack calls makeReportFromTrack and stores ReportRef (DBJ3)', async () => {
+    const makeReportFromTrack = vi.fn(async () => ({
+      schema: 'drone-detection-report/v1',
+      reportId: 'rep-track-1',
+      trackId: 'track-abc',
+      isDetected: true,
+      payload: { ok: true },
+    }));
+    const host = createStubScenarioRuntimeHost({ makeReportFromTrack });
+    const reporterVar: ScenarioVariable = {
+      ...createScenarioVariable('var-reporter', 'reporter1', 'ReporterRef'),
+      value: createReferenceValue('ReporterRef', 'reporter:journal:device:dev-1'),
+    };
+    const trackVar: ScenarioVariable = {
+      ...createScenarioVariable('var-track', 'track1', 'TrackRef'),
+      value: createReferenceValue('TrackRef', 'track:track-abc'),
+    };
+    const variableStore = new ScenarioVariableStore([reporterVar, trackVar]);
+    const reportStore = new ReportRuntimeStore();
+    const node = {
+      id: 'mrt-1',
+      nodeKind: 'make-report-from-track' as const,
+      blockKind: 'custom' as const,
+      label: 'MakeReportFromTrack',
+    };
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        { id: 'vg-reporter', nodeKind: 'variable-get', blockKind: 'custom', label: 'Get reporter', variableId: reporterVar.id },
+        { id: 'vg-track', nodeKind: 'variable-get', blockKind: 'custom', label: 'Get track', variableId: trackVar.id },
+        node,
+      ],
+      edges: [
+        {
+          id: 'd-reporter',
+          kind: 'data',
+          source: 'vg-reporter',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'mrt-1',
+          targetHandle: 'reporter',
+          dataType: 'ReporterRef',
+        },
+        {
+          id: 'd-track',
+          kind: 'data',
+          source: 'vg-track',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'mrt-1',
+          targetHandle: 'track',
+          dataType: 'TrackRef',
+        },
+      ],
+    };
+
+    await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore,
+      reportStore,
+      resolveContext: {
+        getReportRef: (nodeId) => reportStore.getReportRef(nodeId),
+      },
+    });
+
+    expect(makeReportFromTrack).toHaveBeenCalledWith(
+      reporterVar.value,
+      trackVar.value,
+    );
+    const reportRef = reportStore.getReportRef('mrt-1');
+    expect(reportRef.valid).toBe(true);
+    expect(reportRef.handle).toBe('report:rep-track-1');
   });
 });

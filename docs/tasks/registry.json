@@ -3362,6 +3362,24 @@
       ],
       "notes": "Lead: Ozhegov. get-reporter node, ReporterRuntimeStore, resolve-input, connection-suggest JOURNAL_REF_METHOD_TARGETS.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-3-make-reports",
+      "title": "DBJ3: MakeReportFromTrack / MakeReportFromAnalysis — host builders, ReportRuntimeStore",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; device-board 206 tests green; client typecheck green",
+      "dependsOn": [
+        "dbj-2-get-reporter"
+      ],
+      "notes": "Lead: Ozhegov + Dynin. make-report-from-track/analysis nodes, ReportRuntimeStore, host makeReportFromTrack/Analysis, REPORTER_REF_METHOD_TARGETS.",
+      "githubIssueClosedAt": null
     }
   ]
 }

@@ -20,6 +20,7 @@ export {
 export type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
 export { CollectRuntimeStore } from './collect-runtime-store.js';
 export { ReporterRuntimeStore } from './reporter-runtime-store.js';
+export { ReportRuntimeStore } from './report-runtime-store.js';
 export { executeCollectNode } from './collect-node-executor.js';
 export {
   dispatchCollectEventBranches,

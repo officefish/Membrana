@@ -6,6 +6,7 @@ import { isDetectionFrontEdge } from './detection-front.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { ReporterRuntimeStore } from './reporter-runtime-store.js';
+import { ReportRuntimeStore } from './report-runtime-store.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
@@ -102,6 +103,8 @@ export class ScenarioRuntime {
 
   private readonly reporterStore = new ReporterRuntimeStore();
 
+  private readonly reportStore = new ReportRuntimeStore();
+
   private runPromise: Promise<void> | null = null;
 
   private stopRequested = false;
@@ -171,6 +174,7 @@ export class ScenarioRuntime {
     this.variableStore.reset(document.scenario.variables);
     this.collectStore.resetAll();
     this.reporterStore.resetAll();
+    this.reportStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.stopRequested = false;
     this.disconnectRequested = false;
@@ -192,6 +196,7 @@ export class ScenarioRuntime {
     this.stopReason = null;
     this.collectStore.resetAll();
     this.reporterStore.resetAll();
+    this.reportStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.abortController = new AbortController();
     this.patchState({
@@ -322,7 +327,10 @@ export class ScenarioRuntime {
         return this.reporterStore.getReporterRef(journalHandle);
       },
     };
-    const merged = { ...audio, ...print, ...collect, ...reporter };
+    const report: Pick<ResolveInputContext, 'getReportRef'> = {
+      getReportRef: (nodeId) => this.reportStore.getReportRef(nodeId),
+    };
+    const merged = { ...audio, ...print, ...collect, ...reporter, ...report };
     if (Object.keys(merged).length === 0) {
       return context;
     }
@@ -438,6 +446,7 @@ export class ScenarioRuntime {
       onPrintOutput: (nodeId: string, message: string) => this.recordPrintOutput(nodeId, message),
       onStopRuntime: () => this.stop('user'),
       collectStore: this.collectStore,
+      reportStore: this.reportStore,
     };
   }
 

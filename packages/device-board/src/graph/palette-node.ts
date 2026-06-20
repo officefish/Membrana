@@ -7,6 +7,8 @@ import { deviceGlobalNodePins, DEVICE_GLOBAL_NODE_KIND } from './device-global-n
 import { getRecorderNodePins } from './get-recorder-node.js';
 import { getJournalNodePins } from './get-journal-node.js';
 import { getReporterNodePins } from './get-reporter-node.js';
+import { makeReportFromAnalysisNodePins } from './make-report-from-analysis-node.js';
+import { makeReportFromTrackNodePins } from './make-report-from-track-node.js';
 import { getSpectralAnalyserNodePins } from './get-spectral-analyser-node.js';
 import { collectSamplesNodePins } from './collect-samples-node.js';
 import { collectFftFramesNodePins } from './collect-fft-frames-node.js';
@@ -100,6 +102,8 @@ export const V04_PALETTE_NODE_KINDS = [
   'new-fft-trends-analysis',
   'get-journal',
   'get-reporter',
+  'make-report-from-track',
+  'make-report-from-analysis',
 ] as const satisfies readonly ScenarioNodeKind[];
 
 export type V04PaletteNodeKind = (typeof V04_PALETTE_NODE_KINDS)[number];
@@ -123,6 +127,8 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'new-fft-trends-analysis': 'NewFftTrendsAnalysis',
   'get-journal': 'GetJournal',
   'get-reporter': 'GetReporter',
+  'make-report-from-track': 'MakeReportFromTrack',
+  'make-report-from-analysis': 'MakeReportFromAnalysis',
 };
 
 /** Человекочитаемый лейбл палитры v0.4. */
@@ -235,6 +241,10 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return getJournalNodePins();
     case 'get-reporter':
       return getReporterNodePins();
+    case 'make-report-from-track':
+      return makeReportFromTrackNodePins();
+    case 'make-report-from-analysis':
+      return makeReportFromAnalysisNodePins();
   }
 }
 

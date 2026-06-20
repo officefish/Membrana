@@ -33,6 +33,8 @@ describe('palette-node (DBR5)', () => {
       'new-fft-trends-analysis',
       'get-journal',
       'get-reporter',
+      'make-report-from-track',
+      'make-report-from-analysis',
     ]);
   });
 

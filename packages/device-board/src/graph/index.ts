@@ -86,6 +86,26 @@ export {
 } from './get-reporter-node.js';
 export type { CreateGetReporterBoardNodeOptions } from './get-reporter-node.js';
 export {
+  createMakeReportFromAnalysisBoardNode,
+  makeReportFromAnalysisNodePins,
+  MAKE_REPORT_FROM_ANALYSIS_NODE_KIND,
+  MAKE_REPORT_FROM_ANALYSIS_REPORTER_HANDLE,
+  MAKE_REPORT_FROM_ANALYSIS_ANALYSIS_HANDLE,
+  MAKE_REPORT_FROM_ANALYSIS_OUT_HANDLE,
+  isMakeReportFromAnalysisNode,
+} from './make-report-from-analysis-node.js';
+export type { CreateMakeReportFromAnalysisBoardNodeOptions } from './make-report-from-analysis-node.js';
+export {
+  createMakeReportFromTrackBoardNode,
+  makeReportFromTrackNodePins,
+  MAKE_REPORT_FROM_TRACK_NODE_KIND,
+  MAKE_REPORT_FROM_TRACK_REPORTER_HANDLE,
+  MAKE_REPORT_FROM_TRACK_TRACK_HANDLE,
+  MAKE_REPORT_FROM_TRACK_OUT_HANDLE,
+  isMakeReportFromTrackNode,
+} from './make-report-from-track-node.js';
+export type { CreateMakeReportFromTrackBoardNodeOptions } from './make-report-from-track-node.js';
+export {
   createGetSpectralAnalyserBoardNode,
   getSpectralAnalyserNodePins,
   GET_SPECTRAL_ANALYSER_NODE_KIND,

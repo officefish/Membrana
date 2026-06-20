@@ -26,6 +26,9 @@ import {
   GET_REPORTER_OUT_HANDLE,
 } from '../graph/get-reporter-node.js';
 import {
+  MAKE_REPORT_FROM_TRACK_OUT_HANDLE,
+} from '../graph/make-report-from-track-node.js';
+import {
   GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
   GET_SPECTRAL_ANALYSER_OUT_HANDLE,
 } from '../graph/get-spectral-analyser-node.js';
@@ -487,6 +490,31 @@ describe('resolveInput (DBR4)', () => {
         handle === journalRef.handle ? reporterRef : null,
     });
     expect(value).toEqual(reporterRef);
+  });
+
+  it('resolves make-report-from-track output from report store (DBJ3)', () => {
+    const reportRef = createReferenceValue('ReportRef', 'report:rep-1');
+    const sg = subgraph(
+      'main',
+      [
+        {
+          id: 'mrt',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'make-report-from-track',
+        },
+        variableSetNode('set', 'var-report'),
+      ],
+      [
+        dataEdge('mrt', MAKE_REPORT_FROM_TRACK_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'ReportRef'),
+      ],
+    );
+    const reportVar = createScenarioVariable('var-report', 'report1', 'ReportRef');
+
+    const value = resolveInput(sg, [reportVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getReportRef: (nodeId) => (nodeId === 'mrt' ? reportRef : null),
+    });
+    expect(value).toEqual(reportRef);
   });
 
   it('resolves get-spectral-analyser output as invalid ref until host session (DBC2)', () => {

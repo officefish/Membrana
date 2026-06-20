@@ -1,4 +1,4 @@
-import { createReferenceValue, type ScenarioReferenceValue } from '@membrana/core';
+import { createReferenceValue, type ScenarioReferenceValue, type ScenarioReportPayload, createScenarioReportPayload, FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX, TRACK_REF_HANDLE_PREFIX } from '@membrana/core';
 import { scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
 import {
   createDeviceCollectorRegistry,
@@ -25,6 +25,7 @@ import {
   LIVE_JOURNAL_DETECTION_TAG,
   LIVE_JOURNAL_MODULE_NAME,
   TELEMETRY_TRACK_SCHEMA_VERSION,
+  findTrackForReport,
   getDefaultLiveJournalService,
   liveJournalReportClientEntryId,
   liveJournalTrackClientEntryId,
@@ -45,8 +46,19 @@ import { encodeWavPcm16 } from '@/plugins/mic-buffer-recorder/encodeWav';
 import { startClipRecorder } from '@/plugins/mic-buffer-recorder/clipRecorder';
 
 import { analyzeChunkTrendsFft } from './analyzeChunkTrendsFft';
-import { buildTrendsFftReport } from '@/plugins/trends-fft-analyzer/buildTrendsFftReport';
-import { appendTrendsFftJournalReport } from '@/plugins/trends-fft-analyzer/appendTrendsFftJournalReport';
+import { buildTrendsFftReport, type TrendsFftReport } from '@/plugins/trends-fft-analyzer/buildTrendsFftReport';
+import {
+  appendTrendsFftJournalReport,
+  buildTrendsFftSummaryText,
+  TRENDS_FFT_JOURNAL_SCHEMA,
+  trendsFftSyntheticTrackId,
+} from '@/plugins/trends-fft-analyzer/appendTrendsFftJournalReport';
+import { analyzeSampleDetectors } from '@/plugins/sample-library-drone-analysis/analyzeSampleDetectors';
+import {
+  buildDroneDetectionSummaryText,
+  isDroneDetectionConsensus,
+} from '@/plugins/sample-library-drone-analysis/droneAnalysisTelemetry';
+import { DRONE_DETECTION_REPORT_SCHEMA_VERSION } from '@membrana/detector-report';
 import {
   DRONE_TIGHT_TRENDS_INTERVAL_MS,
   DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
@@ -126,6 +138,24 @@ function concatAudioSamplePayloads(
   };
 }
 
+function parseTrackIdFromHandle(handle: string): string | null {
+  const prefix = `${TRACK_REF_HANDLE_PREFIX}:`;
+  if (!handle.startsWith(prefix)) {
+    return null;
+  }
+  const trackId = handle.slice(prefix.length);
+  return trackId.length > 0 ? trackId : null;
+}
+
+function parseAnalysisIdFromHandle(handle: string): string | null {
+  const prefix = `${FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX}:`;
+  if (!handle.startsWith(prefix)) {
+    return null;
+  }
+  const analysisId = handle.slice(prefix.length);
+  return analysisId.length > 0 ? analysisId : null;
+}
+
 function waitMs(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -194,6 +224,8 @@ export class ScenarioMicJournalBridge {
   private fftFrameByNode = new Map<string, ScenarioReferenceValue>();
 
   private fftFramePayloads = new Map<string, FftFramePayloadMeta>();
+
+  private readonly fftTrendAnalyses = new Map<string, TrendsFftReport>();
 
   private readonly collectorRegistry: DeviceCollectorRegistry = createDeviceCollectorRegistry();
 
@@ -431,6 +463,8 @@ export class ScenarioMicJournalBridge {
     });
     await appendTrendsFftJournalReport({ moduleId: DEVICE_BOARD_MODULE_ID, report });
 
+    this.fftTrendAnalyses.set(reportId, report);
+
     this.lastDetection = {
       detected: analysis.result.isDetected,
       confidence: analysis.result.confidence,
@@ -447,6 +481,73 @@ export class ScenarioMicJournalBridge {
     });
 
     return this.lastDetection;
+  }
+
+  /** v0.6 DBJ3: TrackRef → drone-detection ScenarioReportPayload (без append в journal). */
+  async makeReportFromTrack(
+    _reporterRef: ScenarioReferenceValue,
+    trackRef: ScenarioReferenceValue,
+  ): Promise<ScenarioReportPayload | null> {
+    if (!trackRef.valid || trackRef.handle === null || trackRef.kind !== 'TrackRef') {
+      return null;
+    }
+    const trackId = parseTrackIdFromHandle(trackRef.handle);
+    if (trackId === null) {
+      return null;
+    }
+    const trackItem = findTrackForReport(getDefaultLiveJournalService().getSnapshot().items, trackId);
+    if (trackItem?.kind !== 'track' || trackItem.track === undefined) {
+      return null;
+    }
+    const { sampleId, title } = trackItem.track;
+    const { report } = await analyzeSampleDetectors(sampleId, title ?? null);
+    const isDetected = isDroneDetectionConsensus(report);
+    const payload = createScenarioReportPayload({
+      schema: DRONE_DETECTION_REPORT_SCHEMA_VERSION,
+      reportId: report.meta.reportId,
+      trackId,
+      isDetected,
+      summaryText: buildDroneDetectionSummaryText(report, isDetected),
+      payload: { report },
+    });
+    scenarioRuntimeInfo('[device-board] makeReportFromTrack', {
+      trackId,
+      reportId: payload.reportId,
+      isDetected,
+    });
+    return payload;
+  }
+
+  /** v0.6 DBJ3: FftTrendAnalysisRef → trends FFT ScenarioReportPayload (без append). */
+  async makeReportFromAnalysis(
+    _reporterRef: ScenarioReferenceValue,
+    analysisRef: ScenarioReferenceValue,
+  ): Promise<ScenarioReportPayload | null> {
+    if (!analysisRef.valid || analysisRef.handle === null || analysisRef.kind !== 'FftTrendAnalysisRef') {
+      return null;
+    }
+    const analysisId = parseAnalysisIdFromHandle(analysisRef.handle);
+    if (analysisId === null) {
+      return null;
+    }
+    const fftReport = this.fftTrendAnalyses.get(analysisId);
+    if (fftReport === undefined) {
+      return null;
+    }
+    const payload = createScenarioReportPayload({
+      schema: TRENDS_FFT_JOURNAL_SCHEMA,
+      reportId: fftReport.reportId,
+      trackId: trendsFftSyntheticTrackId(DEVICE_BOARD_MODULE_ID, fftReport.reportId),
+      isDetected: fftReport.isDetected,
+      summaryText: buildTrendsFftSummaryText(fftReport),
+      payload: { report: fftReport },
+    });
+    scenarioRuntimeInfo('[device-board] makeReportFromAnalysis', {
+      analysisId,
+      reportId: payload.reportId,
+      isDetected: payload.isDetected,
+    });
+    return payload;
   }
 
   getCollectorQueueDepth(

@@ -1,4 +1,4 @@
-import { createReferenceValue, type ScenarioBlockKind, type ScenarioReferenceValue, type ScenarioVariableValue } from '@membrana/core';
+import { createReferenceValue, type ScenarioBlockKind, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioVariableValue } from '@membrana/core';
 
 import type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
 import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
@@ -127,6 +127,16 @@ export interface ScenarioRuntimeHost {
   readonly getServerJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   /** v0.6 DBJ2: ReporterRef scoped к journal handle (optional host override). */
   readonly getReporterRef?: (journalHandle: string) => ScenarioReferenceValue | null;
+  /** v0.6 DBJ3: TrackRef → in-memory ScenarioReportPayload (без append в journal). */
+  readonly makeReportFromTrack?: (
+    reporterRef: ScenarioReferenceValue,
+    trackRef: ScenarioReferenceValue,
+  ) => Promise<ScenarioReportPayload | null>;
+  /** v0.6 DBJ3: FftTrendAnalysisRef → in-memory ScenarioReportPayload. */
+  readonly makeReportFromAnalysis?: (
+    reporterRef: ScenarioReferenceValue,
+    analysisRef: ScenarioReferenceValue,
+  ) => Promise<ScenarioReportPayload | null>;
   readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   /** v0.5 DBC4: concat AudioSampleRef[] → journal track. */
@@ -246,6 +256,36 @@ export function createStubScenarioRuntimeHost(
         handle: `reporter:${journalHandle}`,
         valid: true,
       })),
+    makeReportFromTrack:
+      overrides.makeReportFromTrack ??
+      (async (reporterRef, trackRef) => {
+        log('makeReportFromTrack', {
+          reporter: reporterRef.handle,
+          track: trackRef.handle,
+        });
+        return {
+          schema: 'drone-detection-report/v1',
+          reportId: 'stub-report-track',
+          trackId: trackRef.handle?.replace('track:', '') ?? 'stub-track',
+          isDetected: false,
+          payload: {},
+        };
+      }),
+    makeReportFromAnalysis:
+      overrides.makeReportFromAnalysis ??
+      (async (reporterRef, analysisRef) => {
+        log('makeReportFromAnalysis', {
+          reporter: reporterRef.handle,
+          analysis: analysisRef.handle,
+        });
+        return {
+          schema: 'trends-fft-report/v1',
+          reportId: 'stub-report-analysis',
+          trackId: 'stub-track',
+          isDetected: false,
+          payload: {},
+        };
+      }),
     writeJournal: overrides.writeJournal ?? (async (event) => log('writeJournal', { blockKind: event.blockKind })),
     recordChunk:
       overrides.recordChunk ??
