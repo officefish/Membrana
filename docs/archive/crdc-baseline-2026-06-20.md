@@ -23,7 +23,7 @@
 |----|------|-----------|---------------------|------|
 | **R1** | `cabinet → background-media` только HTTP | 🔴 | ✅ **PASS** — `yarn check:boundaries` + grep | — |
 | **R2** | `MembraneRegistry` до первой квоты | 🔴 | ✅ **PASS** — порядок в `main.tsx` + `bootstrap-order.test.ts` | — |
-| **R3** | `@membrana/client#lint` exit 1 | 🔴 | ✅ **PASS** — exit 0, 2 warnings (`TelemetryJournalModule` exhaustive-deps) | D2 warnings |
+| **R3** | `@membrana/client#lint` exit 1 | 🔴 | ✅ **PASS** — exit 0, 0 warnings (D2) | — |
 | **R4** | `trends-detector` exit 134 OOM | 🔴 | ✅ **PASS** — 13 tests, 1.38s | — |
 | **R5** | `audio-engine` / `fft-analyzer` WARNING / passWithNoTests | 🟡 | 🟡 **PARTIAL** — fft: 15 tests; audio-engine: 2 tests но script `--passWithNoTests` | **D3** |
 | **R6** | `device-board` coverage | 🟡 | 🟡 **PARTIAL** — ~26 unique `*.test.ts`; lint 3 warnings (`board-flow-node`, `device-board-shell`) | D2 + D3 |
@@ -67,4 +67,4 @@
 
 ~~Старт **D1**~~ ✅ **D1 complete** (2026-06-20): `yarn check:boundaries`, `bootstrap-order.test.ts`, комментарии в `main.tsx` / `registerClientModules.ts`.
 
-Старт **D2** (`crdc-d2-lint-hooks-green`): Rodchenko — 5 exhaustive-deps warnings.
+Старт **D3** (`crdc-d3-test-health`): Dynin — audio-engine passWithNoTests policy.

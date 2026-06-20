@@ -270,10 +270,6 @@ const DeviceBoardShellInner: React.FC<{
     scenarioCanvas.edges,
     scenarioCanvas.nodes,
     selectedNodeId,
-    graph.runtimeState.activeNodeId,
-    graph.runtimeState.mainLoopIteration,
-    graph.runtimeState.alarmLoopIteration,
-    graph.runtimeState.printOutputs,
   ]);
 
   const printLastOutput =

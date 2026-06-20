@@ -3063,7 +3063,7 @@
       "dependsOn": [
         "crdc-d0-baseline-audit"
       ],
-      "notes": "Lead: Rodchenko. R3: @membrana/client lint exit 0; device-board exhaustive-deps."
+      "notes": "Lead: Rodchenko. ✅ D2 2026-06-20: client + device-board lint 0 warnings (TelemetryJournalModule, board-flow-node, device-board-shell)."
     },
     {
       "id": "crdc-d3-test-health",
