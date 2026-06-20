@@ -3301,8 +3301,10 @@
       "githubIssue": 131,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch DBJ0–DBJ6; device-board 215 tests, core 33, client 145; journal-reporter v0.6 complete",
       "dependsOn": [
         "device-board-collectors-v05"
       ],
@@ -3415,6 +3417,24 @@
         "dbj-4-publish-report"
       ],
       "notes": "Lead: Ozhegov. Palette (legacy) labels; block-executor deprecation log; NewFftTrends → in-memory only; cookbooks updated.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-6-teamlead-review",
+      "title": "DBJ6: teamlead review — CI green, epic archive (#131)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "turbo lint/typecheck/test green on core, device-board, client; browser smoke manual",
+      "dependsOn": [
+        "dbj-5-legacy-terminals"
+      ],
+      "notes": "Lead: Vesnin. Epic device-board-journal-reporter-v06 archived; v0.6 journal reporter chain complete on vesnin.",
       "githubIssueClosedAt": null
     }
   ]
