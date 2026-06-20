@@ -185,7 +185,7 @@ git push -u origin vesnin
 - Unix: `$TMPDIR/membrana-deploy-<дата>.log`
 - Для обмена с командой: `docs/archive/` (коммит только по решению постановщика)
 
-Паттерны в `.gitignore`: `/cabinet-recover*.txt`, `/deploy-*.txt`, `/prod-check.txt`; вывод скриптов — `scripts/_*-out.txt`.
+Паттерны в `.gitignore`: `/cabinet-recover*.txt`, `/deploy-*.txt`, `/prod-check.txt`; вывод скриптов — `scripts/_*-out.txt`. Локальные каталоги AI IDE — `.claude/`, `.continue/` (целиком).
 
 ## Коммиты
 

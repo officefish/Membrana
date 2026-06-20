@@ -31,4 +31,4 @@ export {
 
 export { LruCache } from './lru-cache';
 
-export { useSamplePlayback, useSamplePlaybackEscapeKey } from './hooks';
+export { useSamplePlayback, useSamplePlaybackEscapeKey, handleSamplePlaybackEscapeKey } from './hooks';

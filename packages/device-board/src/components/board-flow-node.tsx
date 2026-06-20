@@ -133,8 +133,8 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
   );
 
   const flowData = isBoardFlowNodeData(data) ? data : null;
-  const inputs = flowData?.inputs ?? [];
-  const outputs = flowData?.outputs ?? [];
+  const inputs = useMemo(() => flowData?.inputs ?? [], [flowData?.inputs]);
+  const outputs = useMemo(() => flowData?.outputs ?? [], [flowData?.outputs]);
 
   const passthroughLanes = useMemo(
     () => findPassthroughPortLanes(inputs, outputs, resolveLabel),

@@ -180,7 +180,7 @@ export function useCabinetSampleLibrary() {
 
   useEffect(() => {
     if (!active || !service) return;
-    bindSamplePlaybackBlobReader((sampleId) => service.getSampleBlob(sampleId));
+    bindSamplePlaybackBlobReader((sampleId: string) => service.getSampleBlob(sampleId));
     return () => {
       void disposeSamplePlayback();
     };

@@ -1,0 +1,250 @@
+{
+  "version": 1,
+  "auditDate": "2026-06-20",
+  "branch": "techies68",
+  "headSha": "e8f6078",
+  "turbo": { "result": "118/118", "exitCode": 0 },
+  "coordinator": "Vesnin",
+  "notes": "Первый формализованный аудит после CRDC (#126, PR #127). Закрыто 13 issues; остаётся 19 open.",
+  "closed": [
+    {
+      "number": 46,
+      "reason": "completed",
+      "persona": "Vesnin",
+      "summary": "Smoke-тест Linear-синхронизации выполнен; тикет не продуктовый.",
+      "comment": "## Триаж 2026-06-20\n\n**[Vesnin / Teamlead]:** Issue создан для smoke-теста Linear-синхронизации. Цель достигнута, тикет больше не несёт продуктовой ценности.\n\n**Definition of Done:** закрываем как `completed` — automation verified.",
+      "registryId": null
+    },
+    {
+      "number": 35,
+      "reason": "completed",
+      "persona": "Rodchenko",
+      "summary": "Аватары Музыканта и Rodchenko добавлены в VIRTUAL_TEAM_PROMPT.md.",
+      "comment": "## Триаж 2026-06-20\n\n**[Rodchenko / Верстальщик]:** В `docs/VIRTUAL_TEAM_PROMPT.md` таблица «Участники» содержит аватары для всех пяти ролей, включая Музыканта (`membrana-musician`) и Rodchenko (`membrana-rodchenko`).\n\n**[Vesnin]:** LGTM — NICE TO HAVE из review 2026-05-13 закрыт.",
+      "registryId": null
+    },
+    {
+      "number": 28,
+      "reason": "completed",
+      "persona": "Dynin",
+      "summary": "core#test exit 1 не воспроизводится; в core есть contract-тесты.",
+      "comment": "## Триаж 2026-06-20\n\n**[Dynin / Математик]:** Утверждение review «`@membrana/core#test` exit 1» **не воспроизводится**. В `packages/core/src/**` есть unit-тесты (contracts).\n\n**[Ozhegov]:** Turbo 118/118 (CRDC D6). Предупреждения `no output files` — scope #29.\n\n**[Vesnin]:** Ложная тревога review; расширение покрытия — #7.",
+      "registryId": null
+    },
+    {
+      "number": 36,
+      "reason": "completed",
+      "persona": "Vesnin",
+      "summary": "Meta про расхождения code-review superseded CRDC + turbo green.",
+      "comment": "## Триаж 2026-06-20\n\n**[Vesnin / Teamlead]:** Meta-issue 2026-05-13. CRDC (#126, PR #127): evidence-based проверки, `yarn check:boundaries`, turbo 118/118.\n\n**[Ozhegov]:** Новые расхождения — точечные issues, не meta-2025.",
+      "registryId": null
+    },
+    {
+      "number": 37,
+      "reason": "completed",
+      "persona": "Vesnin",
+      "summary": "Индекс issues #28–#36 закрыт после пакетного триажа 2026-06-20.",
+      "comment": "## Триаж 2026-06-20\n\n**[Vesnin / Teamlead]:** Индекс DAILY_CODE_REVIEW 2026-05-13. Подмножество закрыто с комментариями. Backlog: #7–#12, #27, #29, #33, #34.\n\nАктуальный backlog: `docs/tasks/README.md` + open issues + `docs/archive/github-issues-audit-2026-06-20.md`.",
+      "registryId": null
+    },
+    {
+      "number": 24,
+      "reason": "completed",
+      "persona": "Ozhegov",
+      "summary": "yarn check:boundaries — 4 правила графа пакетов (CRDC D1, PR #127).",
+      "comment": "## Триаж 2026-06-20\n\n**[Ozhegov / Структурщик]:** `scripts/check-package-boundaries.mjs` + `yarn check:boundaries` — cabinet↔background, services↔device-board, Web Audio, agenda/client.\n\n**[Vesnin]:** ESLint boundaries — optional follow-up. LGTM на закрытие.",
+      "registryId": null
+    },
+    {
+      "number": 32,
+      "reason": "completed",
+      "persona": "Dynin",
+      "summary": "fft-analyzer math/ импорты чистые; 15 тестов; README фиксирует границу.",
+      "comment": "## Триаж 2026-06-20\n\n**[Dynin / Математик]:** `math/` — только `@membrana/core` + локальные типы. 15 tests green. README документирует границу.\n\n**[Vesnin]:** Доп. edge cases — #10.",
+      "registryId": null
+    },
+    {
+      "number": 26,
+      "reason": "completed",
+      "persona": "Ozhegov",
+      "summary": "README fft-analyzer документирует math/ vs hooks; split npm не нужен.",
+      "comment": "## Триаж 2026-06-20\n\n**[Ozhegov / Структурщик]:** README §«Структура» — `math/` vs `hooks/`.\n\n**[Dynin]:** Split пакета — только при втором потребителе math без React.",
+      "registryId": null
+    },
+    {
+      "number": 25,
+      "reason": "completed",
+      "persona": "Vesnin",
+      "summary": "MembranaRegistry + finalizeRegistration до quota; bootstrap-order.test.ts.",
+      "comment": "## Триаж 2026-06-20\n\n**[Vesnin / Teamlead]:** Канон: `MembranaRegistry` → `finalizeRegistration()` до media bridge. CRDC D1: `bootstrap-order.test.ts`.\n\n**[Ozhegov]:** Lazy registry — принятое решение.",
+      "registryId": null
+    },
+    {
+      "number": 30,
+      "reason": "completed",
+      "persona": "Ozhegov",
+      "summary": "Architecture decision: публичный API telemetry-service допустим из plugin.",
+      "comment": "## Триаж 2026-06-20\n\n**[Ozhegov / Структурщик]:** `micStreamTelemetry.ts` → `getDefaultTelemetryJournal` из `@membrana/telemetry-service`.\n\n**[Vesnin]:** Публичный API foundation-сервиса **допустим** из plugin. Bus refactor — out of scope v1.",
+      "registryId": null
+    },
+    {
+      "number": 31,
+      "reason": "not planned",
+      "persona": "Vesnin",
+      "summary": "Вынос filter/search в сервис deferred после TJ live refactor.",
+      "comment": "## Триаж 2026-06-20\n\n**[Rodchenko]:** Live-журнал на snapshots + локальные фильтры; a11y в live components.\n\n**[Vesnin]:** `journal.query()` API — reopen при необходимости. Won't fix в формулировке 2025-05.",
+      "registryId": null
+    },
+    {
+      "number": 78,
+      "reason": "completed",
+      "persona": "Vesnin",
+      "summary": "DDR1–4 shipped: detector-report, DroneDetectionReportView, telemetry v1 payload.",
+      "comment": "## Триаж 2026-06-20\n\n**[Vesnin / Teamlead]:** Epic DDR1–4 на techies68: `@membrana/detector-report`, UI client+cabinet, `drone-detection-report/v1`.\n\n**Follow-up:** `yarn task:archive drone-detector-detail-report`.",
+      "registryId": "drone-detector-detail-report"
+    },
+    {
+      "number": 79,
+      "reason": "completed",
+      "persona": "Vesnin",
+      "summary": "TJ1–6 shipped: live journal, tracks/reports, cabinet parity, filters.",
+      "comment": "## Триаж 2026-06-20\n\n**[Vesnin / Teamlead]:** TJ1–6: telemetry-journal-service, TrackCard/ReportCard, cabinet parity, play/export.\n\n**Follow-up:** `yarn task:archive telemetry-journal-live-refactor`.",
+      "registryId": "telemetry-journal-live-refactor"
+    }
+  ],
+  "open": [
+    {
+      "number": 95,
+      "priority": "important",
+      "persona": "Vesnin",
+      "summary": "Device-board v0.4 (DBR0–DBR6): variables, Event node, dataflow — архитектурная ветка vesnin.",
+      "registryId": "device-board-refactor-v04"
+    },
+    {
+      "number": 94,
+      "priority": "important",
+      "persona": "Ozhegov",
+      "summary": "Deploy pipeline: CI gate, registry pull, rollback — postmortem MP7b class.",
+      "registryId": "deploy-pipeline-refactor"
+    },
+    {
+      "number": 92,
+      "priority": "important",
+      "persona": "Vesnin",
+      "summary": "MP7 Node Realtime Gateway: WSS journal + mic-live; NR0–NR6.",
+      "registryId": "membrane-node-realtime-gateway"
+    },
+    {
+      "number": 58,
+      "priority": "recommended",
+      "persona": "Ozhegov",
+      "summary": "background-media v1: A5a/A5b в repo; client remote-server — follow-up.",
+      "registryId": "background-media-v1"
+    },
+    {
+      "number": 59,
+      "priority": "recommended",
+      "persona": "Ozhegov",
+      "summary": "A5c: prod deploy background-media на VPS + TLS smoke.",
+      "registryId": "background-media-a5c-deploy"
+    },
+    {
+      "number": 57,
+      "priority": "recommended",
+      "persona": "Dynin",
+      "summary": "Редактор пользовательских trends-fft шаблонов + frameHitRatio scoring.",
+      "registryId": "trends-fft-template-editor"
+    },
+    {
+      "number": 12,
+      "priority": "recommended",
+      "persona": "Ozhegov",
+      "summary": "Добавить yarn test:scripts в ci.yml — тесты уже есть, один шаг.",
+      "registryId": null
+    },
+    {
+      "number": 93,
+      "priority": "not-urgent",
+      "persona": "Vesnin",
+      "summary": "Membrana Studio desktop (MS0–MS5) — после MP7/NR6 hardening.",
+      "registryId": "membrana-studio-desktop"
+    },
+    {
+      "number": 54,
+      "priority": "not-urgent",
+      "persona": "Ozhegov",
+      "summary": "MCP rollout acceptance 7.7 — verify-mcp-bootstrap есть; composite gate не закрыт.",
+      "registryId": "mcp-rollout-acceptance"
+    },
+    {
+      "number": 49,
+      "priority": "not-urgent",
+      "persona": "Rodchenko",
+      "summary": "MicrophoneCapturePanel — консилиум готов; отложен до stage-gate detection.",
+      "registryId": null
+    },
+    {
+      "number": 7,
+      "priority": "not-urgent",
+      "persona": "Ozhegov",
+      "summary": "Unit-тесты agenda store/registry — центральный пакет без coverage.",
+      "registryId": null
+    },
+    {
+      "number": 10,
+      "priority": "not-urgent",
+      "persona": "Dynin",
+      "summary": "Расширить fft math unit-тесты (edge cases) — база есть (#32 закрыт).",
+      "registryId": null
+    },
+    {
+      "number": 29,
+      "priority": "not-urgent",
+      "persona": "Ozhegov",
+      "summary": "Turbo test visibility: outputs warnings, passWithNoTests policy частично в CRDC D3.",
+      "registryId": null
+    },
+    {
+      "number": 8,
+      "priority": "optional",
+      "persona": "Ozhegov",
+      "summary": "Smoke регистрации всех модулей — частично bootstrap-order.test.ts (CRDC D1).",
+      "registryId": null
+    },
+    {
+      "number": 9,
+      "priority": "optional",
+      "persona": "Ozhegov",
+      "summary": "Тесты microphoneStreamHub late subscriber — малый ROI файл.",
+      "registryId": null
+    },
+    {
+      "number": 11,
+      "priority": "optional",
+      "persona": "Ozhegov",
+      "summary": "Тесты resolveMicStreamVizConfig — persist normalization.",
+      "registryId": null
+    },
+    {
+      "number": 27,
+      "priority": "optional",
+      "persona": "Rodchenko",
+      "summary": "Storybook + a11y FFT/Oscilloscope modules.",
+      "registryId": null
+    },
+    {
+      "number": 33,
+      "priority": "optional",
+      "persona": "Rodchenko",
+      "summary": "Telemetry-journal a11y/Storybook — live UI улучшен, полный scope не закрыт.",
+      "registryId": null
+    },
+    {
+      "number": 34,
+      "priority": "optional",
+      "persona": "Dynin",
+      "summary": "JSDoc FFT edge cases / windowing — README частично покрывает.",
+      "registryId": null
+    }
+  ]
+}

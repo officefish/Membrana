@@ -177,5 +177,6 @@ export function registerClientModules(): void {
 
   // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs
   // уже применены в registerModule, дальше держать pendingModulePrefs смысла нет.
+  // Должно выполняться до initMediaLibraryHubBridge() (quota fetch) — см. main.tsx.
   MembranaRegistry.finalizeRegistration();
 }

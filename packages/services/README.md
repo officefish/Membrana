@@ -49,6 +49,15 @@
 
 Все analyzer-сервисы используют один и тот же `audio-engine` для получения данных.
 
+## Политика тестов (CRDC / CI)
+
+| Правило | Детали |
+|---------|--------|
+| Скрипт `test` | `vitest run` — **без** `--passWithNoTests`, если в `src/` есть `*.test.ts` |
+| Foundation | Минимум unit-тесты на pure TS; Web Audio — smoke в браузере |
+| Analyzer | Unit-тесты на математику/классификацию; тяжёлые suite — `pool: 'forks'` в `vitest.config.ts` |
+| Turbo | `yarn turbo run test` должен падать при регрессии, а не молча пропускать пакет |
+
 ## Как добавить новый сервис
 
 1. Создай папку `packages/services/<имя>/` по образцу `audio-engine/` (foundation) или `fft-analyzer/` (analyzer).

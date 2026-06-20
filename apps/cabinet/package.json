@@ -11,7 +11,7 @@
     "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.app .tsbuildinfo.node",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc -b",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
     "@membrana/audio-engine-service": "*",

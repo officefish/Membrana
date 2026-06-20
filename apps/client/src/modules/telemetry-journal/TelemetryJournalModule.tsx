@@ -51,12 +51,14 @@ export const TelemetryJournalModule: React.FC<
   }, [filter, search]);
 
   useEffect(() => {
-    bindSamplePlaybackBlobReader((sampleId) => getDefaultMediaLibraryService().getSampleBlob(sampleId));
+    bindSamplePlaybackBlobReader((sampleId: string) =>
+      getDefaultMediaLibraryService().getSampleBlob(sampleId),
+    );
   }, []);
 
   const filterCounts = useMemo(
     () => countLiveJournalFilters(snapshot.items),
-    [snapshot.items, snapshot.version],
+    [snapshot.items],
   );
 
   const filtered = useMemo(() => {
@@ -65,7 +67,7 @@ export const TelemetryJournalModule: React.FC<
       list = list.filter((item) => matchesLiveJournalSearch(item, search));
     }
     return [...list].sort((a, b) => b.timestamp - a.timestamp);
-  }, [snapshot.items, snapshot.version, filter, search]);
+  }, [snapshot.items, filter, search]);
 
   const totalPages = countLiveJournalPages(
     search.trim() ? filtered.length : filterCounts[filter],

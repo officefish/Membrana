@@ -9,6 +9,15 @@ import { initJournalHubBridge } from './lib/journalHubBridge'
 import { initMicLiveRealtimeBridge } from './lib/micLiveRealtimeBridge'
 import { initUserTemplatesStore } from './plugins/trends-fft-analyzer/userTemplatesStore'
 
+/**
+ * Cold-boot order (CRDC R2 / MP4):
+ * 1. registerClientModules() — MembranaRegistry + finalizeRegistration()
+ * 2. initMediaLibraryHubBridge() — media-library svc.init() / quota fetch
+ * 3. other hub bridges (journal, mic-live, templates)
+ *
+ * Do not call initMediaLibraryHubBridge() before finalizeRegistration().
+ * @see apps/client/src/bootstrap-order.test.ts
+ */
 registerClientModules()
 initMediaLibraryHubBridge()
 initJournalHubBridge()

@@ -80,7 +80,7 @@ pnpm-lock.yaml
 !.yarn/versions
 .pnp.*
 
-# claude / cursor / continue mcp servers settings
-.claude/claude_code_config.json
+# claude / cursor / continue — локальные каталоги AI IDE (не коммитить)
+.claude/
+.continue/
 .cursor/mcp.json
-.continue/config.json

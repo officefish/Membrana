@@ -31,6 +31,27 @@
 
 Корневые команды: `yarn cabinet:docker:build`, `yarn cabinet:docker:up`.
 
+### Размер Docker-образов (мониторинг техдолга)
+
+После локальной сборки (`yarn cabinet:docker:build`) или pull из GHCR периодически проверяйте рост образов — расширение build context (core, device-board, fft-analyzer, …) увеличивает **build stage**, но runtime SPA должен оставаться компактным.
+
+```bash
+# локальные имена — см. packages/background-cabinet/docker-compose.yml
+docker image inspect background-cabinet-cabinet-web --format='cabinet-web bytes={{.Size}}'
+docker image inspect background-cabinet-cabinet-api --format='cabinet-api bytes={{.Size}}'
+
+# GHCR после pull (deploy/background-cabinet.image.compose.yml)
+docker image inspect ghcr.io/officefish/membrana-cabinet-web:latest --format='{{.Size}}'
+docker image inspect ghcr.io/officefish/membrana-cabinet-api:latest --format='{{.Size}}'
+```
+
+| Образ | Ориентир (2026-06) | Действие при превышении |
+|-------|-------------------|-------------------------|
+| **cabinet-web** (nginx + `dist/`) | ≲ 50 MiB runtime | Проверить, что в финальный stage не попадает `node_modules` / build context |
+| **cabinet-api** (NestJS) | следить за трендом | Prisma + deps; отдельный эпик при > 2× baseline |
+
+Порог **50 MiB** для SPA — **warning**, не блокер CI. Зафиксируйте фактический размер в Issue/PR при существенном росте build context.
+
 ---
 
 ## Гейты деплоя по SSH (DR0 + DR1)

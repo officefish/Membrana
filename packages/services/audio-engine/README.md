@@ -55,6 +55,12 @@
 
 Это рекомендованный путь, когда модуль/плагин уже **владеет** `MediaStream` (например, модуль «Микрофон») и хочет рендерить визуализации без дублирования Web Audio.
 
+## Тестирование
+
+- `yarn workspace @membrana/audio-engine-service test` — unit-тесты pure TS (`playback-offset` и др.).
+- Скрипт **`vitest run`** без `--passWithNoTests`: пустой прогон = ошибка CI (CRDC D3).
+- Web Audio / микрофон — ручная проверка в браузере; headless CI без устройства не блокер.
+
 ## Использование анализатором (FFT, нейросеть, LLM)
 
 ```tsx
