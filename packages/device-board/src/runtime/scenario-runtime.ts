@@ -313,6 +313,7 @@ export class ScenarioRuntime {
     return {
       loopElapsedMs: nowMs - startedAt,
       loopTickMs: tickMs,
+      deviceHandle: this.host.getDeviceHandle?.() ?? null,
     };
   }
 
@@ -361,7 +362,10 @@ export class ScenarioRuntime {
       });
     }
     if (branchTab === 'main' || branchTab === 'alarm') {
-      return this.augmentResolveContext(this.buildLoopTickResolveContext(branchTab, false));
+      return this.augmentResolveContext({
+        ...this.buildLoopTickResolveContext(branchTab, false),
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+      });
     }
     return undefined;
   }
@@ -382,6 +386,7 @@ export class ScenarioRuntime {
       variableStore: this.variableStore,
       resolveContext,
       onPrintOutput: (nodeId: string, message: string) => this.recordPrintOutput(nodeId, message),
+      onStopRuntime: () => this.stop('user'),
     };
   }
 

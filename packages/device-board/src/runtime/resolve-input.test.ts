@@ -10,6 +10,7 @@ import {
   type ScenarioSubgraph,
 } from '@membrana/core';
 
+import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE } from '../graph/event-node.js';
 import {
   GET_AUDIO_STREAM_MIC_HANDLE,
@@ -19,6 +20,7 @@ import {
   GET_MICROPHONE_OUT_HANDLE,
   GET_SAMPLE_OUT_HANDLE,
   PRINT_OUT_HANDLE,
+  STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import {
@@ -455,6 +457,59 @@ describe('resolveInput (DBR4)', () => {
       getCapturedFftFrameRef: (nodeId) => (nodeId === 'fft' ? frameRef : null),
     });
     expect(value).toEqual(frameRef);
+  });
+
+  it('resolves device-global GetDevice from loop context without Event', () => {
+    const deviceVar = createScenarioVariable('var-dev', 'device1', 'DeviceRef');
+    const sg = subgraph(
+      'dg',
+      [
+        {
+          id: 'dg',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'device-global',
+        },
+        variableSetNode('set', deviceVar.id),
+      ],
+      [dataEdge('dg', DEVICE_GLOBAL_DEVICE_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'DeviceRef')],
+    );
+
+    const value = resolveInput(sg, [deviceVar], 'set', VARIABLE_VALUE_HANDLE, {
+      deviceHandle: DEVICE_HANDLE,
+    });
+    expect(value).toEqual(createReferenceValue('DeviceRef', DEVICE_HANDLE));
+  });
+
+  it('resolves start-streaming AudioStreamRef output after stream start', () => {
+    const streamVar = createScenarioVariable('var-stream', 'stream1', 'AudioStreamRef');
+    const micVar = {
+      ...createScenarioVariable('var-mic', 'mic1', 'MicrophoneRef'),
+      value: createReferenceValue('MicrophoneRef', 'mic-1'),
+    };
+    const activeStream = createReferenceValue('AudioStreamRef', 'stream:mic-1');
+    const sg = subgraph(
+      'evt',
+      [
+        variableGetNode('get-mic', micVar.id),
+        {
+          id: 'ss',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'start-streaming',
+        },
+        variableSetNode('set', streamVar.id),
+      ],
+      [
+        dataEdge('get-mic', VARIABLE_VALUE_HANDLE, 'ss', STREAMING_MIC_HANDLE, 'MicrophoneRef'),
+        dataEdge('ss', GET_AUDIO_STREAM_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'AudioStreamRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [streamVar, micVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getActiveAudioStreamRef: () => activeStream,
+    });
+    expect(value).toEqual(activeStream);
   });
 });
 

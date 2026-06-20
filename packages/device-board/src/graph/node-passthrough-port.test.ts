@@ -5,13 +5,11 @@ import { paletteNodePins } from './palette-node.js';
 import { formatSocketPortLabel } from './socket-port-label.js';
 
 describe('findPassthroughPortLanes', () => {
-  it('centers exec passthrough for start-streaming', () => {
+  it('centers exec passthrough for start-streaming with stream data out', () => {
     const { inputs, outputs } = paletteNodePins('start-streaming');
     const lanes = findPassthroughPortLanes(inputs, outputs, formatSocketPortLabel);
-    expect(lanes).toHaveLength(1);
-    expect(lanes[0]?.centerText).toBe('-> exec ->');
-    expect(lanes[0]?.inputHandle).toBe('exec-in');
-    expect(lanes[0]?.outputHandle).toBe('exec-out');
+    expect(lanes.map((lane) => lane.centerText)).toEqual(['-> exec ->']);
+    expect(outputs.find((pin) => pin.name === 'stream')?.socketType).toBe('AudioStreamRef');
   });
 
   it('centers exec passthrough for get-audio-stream with corner labels for mic and stream', () => {

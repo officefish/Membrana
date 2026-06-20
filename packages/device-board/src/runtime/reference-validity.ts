@@ -165,6 +165,19 @@ export function resolveEventServerReference(
 }
 
 /**
+ * Значение data-выхода `device` глобального узла Device и loop/main контекста.
+ * Аналог Event device, но без привязки к handler branch.
+ */
+export function resolveGlobalDeviceReference(
+  deviceHandle: string | null | undefined,
+): ScenarioReferenceValue {
+  if (deviceHandle === null || deviceHandle === undefined || deviceHandle.length === 0) {
+    return { kind: 'DeviceRef', handle: null, valid: false };
+  }
+  return createReferenceValue('DeviceRef', deviceHandle);
+}
+
+/**
  * Значение data-выхода системного Event-узла по ветви-обработчику.
  * `onDisconnect` отдаёт `null`; остальные — `DeviceRef` (valid при наличии handle).
  */

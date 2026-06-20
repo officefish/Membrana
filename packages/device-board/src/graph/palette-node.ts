@@ -2,6 +2,7 @@ import type { ScenarioNodeKind } from '@membrana/core';
 import type { Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
+import { deviceGlobalNodePins } from './device-global-node.js';
 
 /** Data-вход произвольного значения для print / is-valid. */
 export const PALETTE_VALUE_HANDLE = 'value' as const;
@@ -27,7 +28,7 @@ export const STOP_STREAMING_MIC_HANDLE = STREAMING_MIC_HANDLE;
 /** Data-вход MicrophoneRef для get-audio-stream. */
 export const GET_AUDIO_STREAM_MIC_HANDLE = STREAMING_MIC_HANDLE;
 
-/** Data-выход AudioStreamRef для get-audio-stream. */
+/** Data-выход AudioStreamRef для get-audio-stream и start-streaming. */
 export const GET_AUDIO_STREAM_OUT_HANDLE = 'stream' as const;
 
 /** Data-вход AudioStreamRef для get-sample. */
@@ -53,6 +54,7 @@ const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 
 /** v0.4 палитра: только эти nodeKind в правом сайдбаре по умолчанию. */
 export const V04_PALETTE_NODE_KINDS = [
+  'device-global',
   'print',
   'is-valid',
   'get-microphone',
@@ -66,6 +68,7 @@ export const V04_PALETTE_NODE_KINDS = [
 export type V04PaletteNodeKind = (typeof V04_PALETTE_NODE_KINDS)[number];
 
 const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
+  'device-global': 'Device',
   print: 'Print',
   'is-valid': 'isValid',
   'get-microphone': 'GetMicrophone',
@@ -87,6 +90,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
   outputs: readonly BoardSocketPin[];
 } {
   switch (nodeKind) {
+    case 'device-global':
+      return deviceGlobalNodePins();
     case 'print':
       return {
         inputs: [EXEC_IN, { name: PALETTE_VALUE_HANDLE, kind: 'data' }],
@@ -120,7 +125,10 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
           EXEC_IN,
           { name: STREAMING_MIC_HANDLE, kind: 'data', socketType: 'MicrophoneRef' },
         ],
-        outputs: [EXEC_OUT],
+        outputs: [
+          EXEC_OUT,
+          { name: GET_AUDIO_STREAM_OUT_HANDLE, kind: 'data', socketType: 'AudioStreamRef' },
+        ],
       };
     case 'stop-streaming':
       return {

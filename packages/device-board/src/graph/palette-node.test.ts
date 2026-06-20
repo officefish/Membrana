@@ -15,6 +15,7 @@ import { deserializeScenarioSubgraph, serializeScenarioSubgraph } from './serial
 describe('palette-node (DBR5)', () => {
   it('defines v0.4 palette with streaming and fft nodes', () => {
     expect([...V04_PALETTE_NODE_KINDS]).toEqual([
+      'device-global',
       'print',
       'is-valid',
       'get-microphone',
@@ -54,6 +55,13 @@ describe('palette-node (DBR5)', () => {
     expect(pins.outputs.find((pin) => pin.name === GET_MICROPHONE_OUT_HANDLE)?.socketType).toBe(
       'MicrophoneRef',
     );
+  });
+
+  it('creates start-streaming with microphone in and AudioStreamRef out', () => {
+    const pins = paletteNodePins('start-streaming');
+    expect(pins.inputs.find((pin) => pin.name === 'microphone')?.socketType).toBe('MicrophoneRef');
+    expect(pins.outputs.find((pin) => pin.name === 'stream')?.socketType).toBe('AudioStreamRef');
+    expect(pins.outputs.some((pin) => pin.name === 'exec-out')).toBe(true);
   });
 
   it('creates get-audio-stream with MicrophoneRef in and AudioStreamRef out', () => {

@@ -41,6 +41,14 @@ export {
 } from './event-node.js';
 export type { CreateEventBoardNodeOptions, CreateLoopTickEventBoardNodeOptions, EventHandlerBranch, EventVariant } from './event-node.js';
 export {
+  createDeviceGlobalBoardNode,
+  deviceGlobalNodePins,
+  DEVICE_GLOBAL_DEVICE_HANDLE,
+  DEVICE_GLOBAL_NODE_KIND,
+  isDeviceGlobalNode,
+} from './device-global-node.js';
+export type { CreateDeviceGlobalBoardNodeOptions } from './device-global-node.js';
+export {
   createLoopRepeatBoardNode,
   ensureLoopInfinity,
   isLoopRepeatNode,

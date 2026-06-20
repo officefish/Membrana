@@ -199,3 +199,32 @@ describe('executeScenarioBlock print', () => {
     expect(printLine).toHaveBeenCalledWith(expect.stringContaining('field-node-7'));
   });
 });
+
+describe('executeScenarioBlock device-global', () => {
+  it('StopRuntime invokes onStopRuntime and requests stop', async () => {
+    const onStopRuntime = vi.fn();
+    const host = createStubScenarioRuntimeHost();
+    const node = {
+      id: 'dg-1',
+      nodeKind: 'device-global' as const,
+      blockKind: 'custom' as const,
+      label: 'Device',
+    };
+    const subgraph: ScenarioSubgraph = { nodes: [node], edges: [] };
+
+    const result = await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      onStopRuntime,
+    });
+
+    expect(onStopRuntime).toHaveBeenCalledOnce();
+    expect(result.stopRequested).toBe(true);
+  });
+});

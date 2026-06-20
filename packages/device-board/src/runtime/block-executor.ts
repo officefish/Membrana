@@ -34,6 +34,8 @@ export interface BlockExecutionInput {
   readonly resolveContext?: ResolveInputContext;
   /** Колбэк после успешного Print (для UI-инспектора). */
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
+  /** v0.4 device-global StopRuntime: выход из runtime в режим редактирования. */
+  readonly onStopRuntime?: () => void;
 }
 
 export interface BlockExecutionResult {
@@ -90,6 +92,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     variableStore,
     resolveContext,
     onPrintOutput,
+    onStopRuntime,
   } = input;
 
   assertNotAborted(signal);
@@ -179,6 +182,12 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       microphoneId: (node as { microphoneId?: string }).microphoneId,
     });
     return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'device-global') {
+    onStopRuntime?.();
+    host.log('device-global StopRuntime', { nodeId: node.id, branch });
+    return { lastDetection, stopRequested: true };
   }
 
   if (node.nodeKind === 'start-streaming') {

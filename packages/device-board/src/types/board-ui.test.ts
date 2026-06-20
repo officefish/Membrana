@@ -53,6 +53,7 @@ describe('board-ui sidebar sections (MP7b RT6)', () => {
 describe('scenario node palette (v0.4 DBR5)', () => {
   it('default v0.4 palette includes streaming and fft nodes', () => {
     expect(SCENARIO_V04_PALETTE.map((item) => item.nodeKind)).toEqual([
+      'device-global',
       'print',
       'is-valid',
       'get-microphone',

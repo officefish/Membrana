@@ -8,6 +8,7 @@ import {
 } from '@membrana/core';
 
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
+import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
 import {
   GET_AUDIO_STREAM_MIC_HANDLE,
   GET_AUDIO_STREAM_OUT_HANDLE,
@@ -16,9 +17,10 @@ import {
   GET_MICROPHONE_OUT_HANDLE,
   GET_SAMPLE_OUT_HANDLE,
   PRINT_OUT_HANDLE,
+  STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
-import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
+import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveGlobalDeviceReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
 
 /** Ветви-обработчики событий, где Event-узел является источником data. */
 export type ScenarioHandlerBranch = 'onConnect' | 'initial' | 'onStop' | 'onDisconnect';
@@ -142,6 +144,7 @@ function resolveGetAudioStreamOutput(
   node: ScenarioGraphNode,
   context: ResolveInputContext,
   visiting: Set<string>,
+  microphonePort: string = GET_AUDIO_STREAM_MIC_HANDLE,
 ): ScenarioReferenceValue {
   const resolver = context.getActiveAudioStreamRef;
   if (resolver === undefined) {
@@ -156,7 +159,7 @@ function resolveGetAudioStreamOutput(
     subgraph,
     variables,
     node.id,
-    GET_AUDIO_STREAM_MIC_HANDLE,
+    microphonePort,
     context,
     visiting,
   );
@@ -267,6 +270,16 @@ export function resolveNodeOutput(
     return resolveGetMicrophoneOutput(subgraph, variables, node, context, visiting);
   }
 
+  if (node.nodeKind === 'device-global') {
+    if (outputPort !== DEVICE_GLOBAL_DEVICE_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown device-global output: ${outputPort}`,
+      );
+    }
+    return resolveGlobalDeviceReference(context.deviceHandle ?? null);
+  }
+
   if (node.nodeKind === 'get-audio-stream') {
     if (outputPort !== GET_AUDIO_STREAM_OUT_HANDLE) {
       throw new ResolveInputError(
@@ -275,6 +288,23 @@ export function resolveNodeOutput(
       );
     }
     return resolveGetAudioStreamOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'start-streaming') {
+    if (outputPort !== GET_AUDIO_STREAM_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown start-streaming output: ${outputPort}`,
+      );
+    }
+    return resolveGetAudioStreamOutput(
+      subgraph,
+      variables,
+      node,
+      context,
+      visiting,
+      STREAMING_MIC_HANDLE,
+    );
   }
 
   if (node.nodeKind === 'get-sample') {

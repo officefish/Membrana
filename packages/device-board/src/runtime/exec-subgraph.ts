@@ -18,6 +18,8 @@ export interface ExecSubgraphOptions {
   /** v0.4 (DBR4): контекст pull-резолюции Event/dataflow. */
   readonly resolveContext?: ResolveInputContext;
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
+  /** v0.4 device-global StopRuntime. */
+  readonly onStopRuntime?: () => void;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -91,6 +93,7 @@ export async function runSubgraphOnce(
       variableStore: options.variableStore,
       resolveContext: options.resolveContext,
       onPrintOutput: options.onPrintOutput,
+      onStopRuntime: options.onStopRuntime,
     });
 
     if (result.stopRequested) {
