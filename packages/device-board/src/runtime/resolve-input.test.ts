@@ -13,6 +13,14 @@ import {
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE } from '../graph/event-node.js';
 import {
+  GET_RECORDER_DEVICE_HANDLE,
+  GET_RECORDER_OUT_HANDLE,
+} from '../graph/get-recorder-node.js';
+import {
+  GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+  GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+} from '../graph/get-spectral-analyser-node.js';
+import {
   GET_AUDIO_STREAM_MIC_HANDLE,
   GET_AUDIO_STREAM_OUT_HANDLE,
   GET_FFT_FRAME_OUT_HANDLE,
@@ -320,6 +328,89 @@ describe('resolveInput (DBR4)', () => {
 
     const value = resolveInput(sg, [micVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
     expect(value).toEqual(createReferenceValue('MicrophoneRef', 'mic-selected'));
+  });
+
+  it('resolves get-recorder output as invalid RecorderRef until host session (DBC2)', () => {
+    const recorderVar = createScenarioVariable('var-rec', 'rec1', 'RecorderRef');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gr',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-recorder',
+        },
+        variableSetNode('set', recorderVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gr', GET_RECORDER_DEVICE_HANDLE),
+        dataEdge('gr', GET_RECORDER_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'RecorderRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [recorderVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
+    expect(value).toEqual({ kind: 'RecorderRef', handle: null, valid: false });
+  });
+
+  it('resolves get-recorder output from host session ref (DBC2 hook)', () => {
+    const recorderVar = createScenarioVariable('var-rec', 'rec1', 'RecorderRef');
+    const recorderRef = createReferenceValue('RecorderRef', 'recorder:device-abc');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gr',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-recorder',
+        },
+        variableSetNode('set', recorderVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gr', GET_RECORDER_DEVICE_HANDLE),
+        dataEdge('gr', GET_RECORDER_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'RecorderRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [recorderVar], 'set', VARIABLE_VALUE_HANDLE, {
+      ...onConnectContext,
+      getRecorderSessionRef: (handle) =>
+        handle === DEVICE_HANDLE ? recorderRef : null,
+    });
+    expect(value).toEqual(recorderRef);
+  });
+
+  it('resolves get-spectral-analyser output as invalid ref until host session (DBC2)', () => {
+    const analyserVar = createScenarioVariable('var-fft', 'fft1', 'SpectralAnalyserRef');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gsa',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-spectral-analyser',
+        },
+        variableSetNode('set', analyserVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gsa', GET_SPECTRAL_ANALYSER_DEVICE_HANDLE),
+        dataEdge(
+          'gsa',
+          GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+          'set',
+          VARIABLE_VALUE_HANDLE,
+          'SpectralAnalyserRef',
+        ),
+      ],
+    );
+
+    const value = resolveInput(sg, [analyserVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
+    expect(value).toEqual({ kind: 'SpectralAnalyserRef', handle: null, valid: false });
   });
 
   it('resolves get-audio-stream output when microphone matches active stream', () => {

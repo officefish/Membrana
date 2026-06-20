@@ -1,0 +1,69 @@
+---
+title: Collect → Terminal (event-out)
+description: Канонический граф v0.5 collectors — flush по event-out, terminal NewTrack / NewFftTrendsAnalysis.
+---
+
+# Cookbook: Collect → Terminal
+
+Эталон **device-board collectors v0.5** (DBC5): exec tick накапливает ref'ы,
+flush запускает **event-ветку** (не exec tick).
+
+## Singletons (один раз на device)
+
+```text
+GetDevice → GetRecorder(device)
+GetDevice → GetSpectralAnalyser(device)
+```
+
+## Main exec tick (onMainTick)
+
+```text
+onTick → … → GetAudioStream → GetSample(stream) → sample
+      → GetFFTFrame(sample) → frame
+      → CollectFftFrames(analyser, frame) ──event-out──┐
+      → CollectSamples(recorder, sample) ──event-out──┼──→ (см. event branches)
+      → ∞
+```
+
+Параллельно на том же tick: **CollectSamples** получает `recorder` + `sample`.
+
+## Event branches (при flush)
+
+Flush trigger: `queueCapacity` **OR** `windowSec` (настройки Collect в правом сайдбаре).
+
+```text
+CollectSamples [event-out] → NewTrack(samples[])
+CollectFftFrames [event-out] → NewFftTrendsAnalysis(frames[])
+```
+
+Data-ребро `batches → samples/frames` обязательно — terminal читает batch ref list.
+
+## Checklist
+
+<Steps>
+  <Step title="StartStreaming в On start">
+    Без потока GetSample / Collect не получают валидные ref'ы.
+  </Step>
+  <Step title="GetFFTFrame отдельно от GetSample">
+    Sample ≠ Frame; bypass FFT-узла запрещён в MVP.
+  </Step>
+  <Step title="Event-out → exec-in">
+    Квадратный порт Collect; exec tick Collect идёт по exec-out (∞), flush — по event.
+  </Step>
+  <Step title="Один Collect на singleton (MVP QA)">
+    Multicast архитектурно поддержан; тестируем один Collect на device.
+  </Step>
+  <Step title="Sidebar Collect">
+    Defaults: bufferSize 2048, smoothing 0.75, windowSec 3, queueCapacity 10.
+  </Step>
+</Steps>
+
+## Runtime
+
+При flush Collect runtime:
+
+1. Сохраняет batch в `CollectRuntimeStore`
+2. Вызывает `dispatchCollectEventBranches` — downstream только по `kind: event`
+3. Продолжает main exec по `exec-out` Collect
+
+Источник: `packages/device-board/src/runtime/event-dispatch.ts`.

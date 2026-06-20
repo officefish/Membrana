@@ -3,18 +3,31 @@ import type { Node } from '@xyflow/react';
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 
-/** Узел StopRuntime — останавливает scenario runtime (возврат в edit). */
+/**
+ * StopRuntime — метод устройства: останавливает scenario runtime только при
+ * валидной входной ссылке DeviceRef (не системный глобальный метод).
+ */
 export const STOP_RUNTIME_NODE_KIND = 'stop-runtime' as const;
+
+/** Data-вход DeviceRef (обязателен для исполнения). */
+export const STOP_RUNTIME_DEVICE_HANDLE = 'device' as const;
 
 const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
 
-/** Пины узла StopRuntime (exec-терминал). */
+/** Пины StopRuntime: exec + device in, без выходов. */
 export function stopRuntimeNodePins(): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
   return {
-    inputs: [EXEC_IN],
+    inputs: [
+      EXEC_IN,
+      {
+        name: STOP_RUNTIME_DEVICE_HANDLE,
+        kind: 'data',
+        socketType: 'DeviceRef',
+      },
+    ],
     outputs: [],
   };
 }

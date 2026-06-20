@@ -7,18 +7,18 @@ import {
 } from './device-global-node.js';
 
 describe('device-global-node', () => {
-  it('exposes GetDevice data out and exec passthrough', () => {
+  it('exposes GetDevice data out only (system, no inputs)', () => {
     const pins = deviceGlobalNodePins();
-    expect(pins.inputs.map((pin) => pin.name)).toEqual(['exec-in']);
-    expect(pins.outputs.map((pin) => pin.name).sort()).toEqual(['device', 'exec-out'].sort());
-    expect(pins.outputs.find((pin) => pin.name === DEVICE_GLOBAL_DEVICE_HANDLE)?.socketType).toBe(
-      'DeviceRef',
-    );
+    expect(pins.inputs).toEqual([]);
+    expect(pins.outputs.map((pin) => pin.name)).toEqual([DEVICE_GLOBAL_DEVICE_HANDLE]);
+    expect(pins.outputs[0]?.socketType).toBe('DeviceRef');
   });
 
-  it('creates palette node with nodeKind device-global', () => {
+  it('creates system node GetDevice', () => {
     const node = createDeviceGlobalBoardNode();
     expect(node.data.nodeKind).toBe('device-global');
-    expect(node.data.label).toBe('Device');
+    expect(node.data.label).toBe('GetDevice');
+    expect(node.data.system).toBe(true);
+    expect(node.deletable).toBe(false);
   });
 });

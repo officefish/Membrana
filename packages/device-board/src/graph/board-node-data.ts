@@ -1,7 +1,10 @@
 import type { ScenarioBlockKind, ScenarioNodeKind, SocketType } from '@membrana/core';
 
-/** Семантика pin на ноде доски. */
-export type BoardPinKind = 'exec' | 'data';
+import type { ScenarioCollectorConfig } from '@membrana/core';
+import type { ScenarioPinKind } from '@membrana/core';
+
+/** Семантика pin на ноде доски (канон — `ScenarioPinKind` в core). */
+export type BoardPinKind = ScenarioPinKind;
 
 /** Описание входа/выхода ноды на канвасе. */
 export interface BoardSocketPin {
@@ -37,6 +40,8 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
   readonly variableId?: string;
   /** v0.4: для `get-microphone` — выбранный deviceId микрофона (enumerate). */
   readonly microphoneId?: string;
+  /** v0.5: для Collect-узлов — настройки flush (правый сайдбар). */
+  readonly collectorConfig?: ScenarioCollectorConfig;
   /** v0.4+: `event` — `handler` (обработчик) или `loopTick` (onTick в лупе). */
   readonly eventVariant?: 'handler' | 'loopTick';
   /** Subgraph-блок: id функции из `scenario.functions`. */

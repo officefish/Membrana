@@ -11,10 +11,12 @@ import {
 } from '@xyflow/react';
 import {
   createScenarioVariable,
+  resolveScenarioCollectorConfig,
   type DeviceKind,
   type DeviceScenarioDocument,
   type RuntimeMode,
   type ScenarioBlockKind,
+  type ScenarioCollectorConfig,
   type ScenarioVariable,
   type ScenarioVariableType,
 } from '@membrana/core';
@@ -145,6 +147,8 @@ export interface DeviceBoardGraphContextValue {
   ) => void;
   /** v0.4 DBR5: обновить выбранный микрофон на узле get-microphone. */
   readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
+  /** v0.5 DBC3: обновить collectorConfig на Collect-узле. */
+  readonly updateCollectorConfig: (nodeId: string, config: ScenarioCollectorConfig) => void;
   /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
   readonly variables: readonly ScenarioVariable[];
   /** v0.4: объявить новую переменную ссылочного типа. */
@@ -154,7 +158,11 @@ export interface DeviceBoardGraphContextValue {
   /** v0.4: удалить переменную и её узлы get/set со всех веток. */
   readonly removeVariable: (id: string) => void;
   /** v0.4: добавить узел get/set переменной в активную ветку. */
-  readonly addVariableNodeToCurrentBranch: (kind: VariableNodeKind, variableId: string) => void;
+  readonly addVariableNodeToCurrentBranch: (
+    kind: VariableNodeKind,
+    variableId: string,
+    flowCenter?: { readonly x: number; readonly y: number },
+  ) => void;
   /** v0.4: привязать variable-get/set к переменной по имени (создаёт при отсутствии). */
   readonly assignNodeVariableName: (nodeId: string, variableName: string) => void;
   /** Runtime: снимок входов/выходов выбранного узла (только при isRunning). */
@@ -971,12 +979,21 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   );
 
   const addVariableNodeToCurrentBranch = useCallback(
-    (kind: VariableNodeKind, variableId: string) => {
+    (
+      kind: VariableNodeKind,
+      variableId: string,
+      flowCenter?: { readonly x: number; readonly y: number },
+    ) => {
       const variable = variables.find((candidate) => candidate.id === variableId);
       if (variable === undefined) {
         return;
       }
-      appendNodeToBranch(scenarioBranch, createVariableBoardNode(kind, variable));
+      const position =
+        flowCenter !== undefined ? centerNodePositionAtFlowPoint(flowCenter) : undefined;
+      appendNodeToBranch(
+        scenarioBranch,
+        createVariableBoardNode(kind, variable, position !== undefined ? { position } : {}),
+      );
     },
     [appendNodeToBranch, scenarioBranch, variables],
   );
@@ -1152,6 +1169,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [patchNodeData],
   );
 
+  const updateCollectorConfig = useCallback(
+    (nodeId: string, config: ScenarioCollectorConfig) => {
+      patchNodeData(nodeId, { collectorConfig: resolveScenarioCollectorConfig(config) });
+    },
+    [patchNodeData],
+  );
+
   const runDisabledReason = useMemo(
     () =>
       resolveRunDisabledReason({
@@ -1251,6 +1275,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       addPaletteNodeToCurrentBranch,
       addPaletteNodeWithConnection,
       updatePaletteNodeMicrophoneId,
+      updateCollectorConfig,
       variables,
       addVariable,
       renameVariable,
@@ -1264,6 +1289,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       addPaletteNodeToCurrentBranch,
       addPaletteNodeWithConnection,
       updatePaletteNodeMicrophoneId,
+      updateCollectorConfig,
       addVariable,
       addVariableNodeToCurrentBranch,
       assignNodeVariableName,

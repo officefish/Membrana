@@ -21,6 +21,11 @@ import {
   parseDeviceScenarioDocument,
   DEVICE_SCENARIO_DOCUMENT_VERSION,
   DEVICE_SCENARIO_MIN_DOCUMENT_VERSION,
+  DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+  isCollectorScenarioNodeKind,
+  isScenarioPinKind,
+  isTerminalScenarioNodeKind,
+  resolveScenarioCollectorConfig,
 } from './index.js';
 
 describe('device-board contracts', () => {
@@ -183,5 +188,34 @@ describe('device-board reference types & node kinds (v0.4)', () => {
       type: 'DateTime',
       value: { kind: 'DateTime', iso: '2026-01-01T00:00:00.000Z' },
     });
+  });
+});
+
+describe('device-board collectors v0.5 contracts (DBC0)', () => {
+  it('v0.5 reference socket types include singletons and batch lists', () => {
+    expect(isReferenceSocketType('RecorderRef')).toBe(true);
+    expect(isReferenceSocketType('SpectralAnalyserRef')).toBe(true);
+    expect(isReferenceSocketType('AudioSampleRefList')).toBe(true);
+    expect(isReferenceSocketType('FftFrameRefList')).toBe(true);
+    expect(isValidSocketConnection('AudioSampleRefList', 'AudioSampleRefList')).toBe(true);
+    expect(isValidSocketConnection('AudioSampleRef', 'AudioSampleRefList')).toBe(false);
+  });
+
+  it('registers v0.5 node kinds and pin kind event', () => {
+    expect(isScenarioNodeKind('get-recorder')).toBe(true);
+    expect(isScenarioNodeKind('get-spectral-analyser')).toBe(true);
+    expect(isScenarioNodeKind('collect-samples')).toBe(true);
+    expect(isScenarioNodeKind('new-track')).toBe(true);
+    expect(isCollectorScenarioNodeKind('collect-fft-frames')).toBe(true);
+    expect(isTerminalScenarioNodeKind('new-fft-trends-analysis')).toBe(true);
+    expect(isSystemScenarioNodeKind('get-recorder')).toBe(false);
+    expect(isScenarioPinKind('event')).toBe(true);
+  });
+
+  it('resolveScenarioCollectorConfig applies mic plugin defaults', () => {
+    expect(resolveScenarioCollectorConfig(undefined)).toEqual(DEFAULT_SCENARIO_COLLECTOR_CONFIG);
+    expect(
+      resolveScenarioCollectorConfig({ bufferSize: 4096, queueCapacity: 5 }),
+    ).toMatchObject({ bufferSize: 4096, queueCapacity: 5, windowSec: 3 });
   });
 });

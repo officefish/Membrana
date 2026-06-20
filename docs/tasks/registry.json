@@ -3144,6 +3144,155 @@
       ],
       "notes": "Lead: Vesnin. yarn turbo green; task:archive; Closes Issue.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "device-board-collectors-v05",
+      "title": "Device-Board Collectors v0.5: Recorder/SpectralAnalyser singletons, Collect event-ports, NewTrack/NewFftTrends (DBC0–DBC6)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "DBC0-DBC6 LGTM; Issue 130 close after PR merge",
+      "dependsOn": [
+        "device-board-refactor-v04"
+      ],
+      "notes": "Консилиум 2026-06-20: seanses/device-board-collectors-v05-2026-06-20.md. GetFFTFrame отдельный узел. Policy на singleton OOS. Collect config — правый сайдбар (mic defaults). Terminal inputs — массив ref. DBC6 = Vesnin code review + LGTM.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-0-core-contracts",
+      "title": "DBC0: core contracts — RecorderRef, SpectralAnalyserRef, event pin, CollectorConfig, node kinds (vesnin)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "device-board-collectors-v05"
+      ],
+      "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += RecorderRef/SpectralAnalyserRef; scenario node kinds get-recorder, get-spectral-analyser, collect-*, new-track, new-fft-trends-analysis; CollectorConfig; pin kind event; DEVICE_BOARD_CONCEPT v0.5 §collectors.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-1-getter-nodes",
+      "title": "DBC1: GetRecorder, GetSpectralAnalyser, GetFFTFrame — graph nodes + palette + validation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-0-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. Device-method pattern (device in). GetFFTFrame = Sample→Frame transform, отдельный узел.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-2-host-singletons",
+      "title": "DBC2: host RecorderSession / SpectralAnalyserSession + multicast registry",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-0-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov + Музыкант. Per deviceHandle singleton; append/flush; без policy UI на singleton. Unit-тесты mock host.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-3-collect-nodes",
+      "title": "DBC3: CollectSamples / CollectFftFrames — event-out square port + sidebar config",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-1-getter-nodes",
+        "dbc-2-host-singletons"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko + Музыкант. collectorConfig: bufferSize 2048, smoothing 0.75, windowSec 3, queueCapacity; flush OR trigger; data-out ref arrays.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-4-terminal-nodes",
+      "title": "DBC4: NewTrack + NewFftTrendsAnalysis — terminal nodes, array ref inputs",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-3-collect-nodes"
+      ],
+      "notes": "Lead: Ozhegov + Dynin + Музыкант. NewTrack(AudioSampleRef[]), NewFftTrendsAnalysis(FftFrameRef[]); journal + trends integration.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-5-runtime-event-dispatch",
+      "title": "DBC5: runtime event dispatch on Collect flush + cookbooks + E2E one collector",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-4-terminal-nodes"
+      ],
+      "notes": "Lead: Ozhegov + Dynin. Event branch ≠ exec tick; канон GetSample→GetFFTFrame→CollectFft; apps/docs cookbook; MVP один Collect.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-6-teamlead-review",
+      "title": "DBC6: Teamlead code review, CI green, LGTM, epic closure",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "LGTM Vesnin; docs/seanses/device-board-collectors-v05-dbc6-review-2026-06-20.md",
+      "dependsOn": [
+        "dbc-0-core-contracts",
+        "dbc-1-getter-nodes",
+        "dbc-2-host-singletons",
+        "dbc-3-collect-nodes",
+        "dbc-4-terminal-nodes",
+        "dbc-5-runtime-event-dispatch"
+      ],
+      "notes": "Lead: Vesnin. Формальный review всех PR эпика; smoke с микрофоном; отчёт в #130; yarn task:archive device-board-collectors-v05 + фазы.",
+      "githubIssueClosedAt": null
     }
   ]
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import type { ScenarioBlockKind, ScenarioNodeKind } from '@membrana/core';
+import type { ScenarioBlockKind, ScenarioCollectorConfig, ScenarioNodeKind } from '@membrana/core';
+import { DEFAULT_SCENARIO_COLLECTOR_CONFIG, resolveScenarioCollectorConfig } from '@membrana/core';
 
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
 import type { V04PaletteNodeKind } from '../graph/palette-node.js';
@@ -17,6 +18,7 @@ export interface BoardRightSidebarProps {
   readonly selectedNodeLabel: string | null;
   readonly selectedNodeKind: ScenarioNodeKind | null;
   readonly selectedMicrophoneId: string | null;
+  readonly selectedCollectorConfig: ScenarioCollectorConfig | null;
   readonly selectedVariableName: string;
   readonly selectedVariableTypeLabel: string | null;
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
@@ -28,6 +30,7 @@ export interface BoardRightSidebarProps {
   readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
   readonly onAddPaletteNode: (nodeKind: V04PaletteNodeKind) => void;
   readonly onMicrophoneIdChange: (nodeId: string, microphoneId: string) => void;
+  readonly onCollectorConfigChange: (nodeId: string, config: ScenarioCollectorConfig) => void;
   readonly onAssignVariableName: (nodeId: string, variableName: string) => void;
   readonly onClearBoard: () => void;
 }
@@ -41,6 +44,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedNodeLabel,
   selectedNodeKind,
   selectedMicrophoneId,
+  selectedCollectorConfig,
   selectedVariableName,
   selectedVariableTypeLabel,
   microphoneOptions,
@@ -52,17 +56,25 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onAddLegacyNode,
   onAddPaletteNode,
   onMicrophoneIdChange,
+  onCollectorConfigChange,
   onAssignVariableName,
   onClearBoard,
 }) => {
   const legacyPalette = isLegacyPaletteEnabled();
   const [variableNameDraft, setVariableNameDraft] = useState(selectedVariableName);
+  const [collectorDraft, setCollectorDraft] = useState<ScenarioCollectorConfig>(
+    selectedCollectorConfig ?? DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+  );
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
 
   useEffect(() => {
     setVariableNameDraft(selectedVariableName);
   }, [selectedNodeId, selectedVariableName]);
+
+  useEffect(() => {
+    setCollectorDraft(selectedCollectorConfig ?? DEFAULT_SCENARIO_COLLECTOR_CONFIG);
+  }, [selectedNodeId, selectedCollectorConfig]);
 
   const commitVariableName = () => {
     if (selectedNodeId === null || editDisabled) {
@@ -73,6 +85,15 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
       return;
     }
     onAssignVariableName(selectedNodeId, trimmed);
+  };
+
+  const commitCollectorField = (patch: Partial<ScenarioCollectorConfig>) => {
+    if (selectedNodeId === null || editDisabled) {
+      return;
+    }
+    const next = resolveScenarioCollectorConfig({ ...collectorDraft, ...patch });
+    setCollectorDraft(next);
+    onCollectorConfigChange(selectedNodeId, next);
   };
 
   return (
@@ -144,6 +165,73 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                 Список обновляется при выборе узла (audio-engine enumerate).
               </span>
             </label>
+          ) : selectedNodeKind === 'collect-samples' || selectedNodeKind === 'collect-fft-frames' ? (
+            <div className="flex flex-col gap-3 text-xs">
+              <p className="text-base-content/55 leading-relaxed">
+                Flush при <code className="font-mono">count ≥ queueCapacity</code> или истечении{' '}
+                <code className="font-mono">windowSec</code>. Policy на singleton — out of scope MVP.
+              </p>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">bufferSize</span>
+                <input
+                  type="number"
+                  className="input input-bordered input-sm w-full font-mono"
+                  min={64}
+                  max={32768}
+                  step={64}
+                  disabled={editDisabled}
+                  value={collectorDraft.bufferSize}
+                  onChange={(event) =>
+                    commitCollectorField({ bufferSize: Number(event.target.value) })
+                  }
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">smoothingTimeConstant</span>
+                <input
+                  type="number"
+                  className="input input-bordered input-sm w-full font-mono"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  disabled={editDisabled}
+                  value={collectorDraft.smoothingTimeConstant}
+                  onChange={(event) =>
+                    commitCollectorField({ smoothingTimeConstant: Number(event.target.value) })
+                  }
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">windowSec</span>
+                <input
+                  type="number"
+                  className="input input-bordered input-sm w-full font-mono"
+                  min={0.1}
+                  max={120}
+                  step={0.5}
+                  disabled={editDisabled}
+                  value={collectorDraft.windowSec}
+                  onChange={(event) =>
+                    commitCollectorField({ windowSec: Number(event.target.value) })
+                  }
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">queueCapacity</span>
+                <input
+                  type="number"
+                  className="input input-bordered input-sm w-full font-mono"
+                  min={1}
+                  max={10000}
+                  step={1}
+                  disabled={editDisabled}
+                  value={collectorDraft.queueCapacity}
+                  onChange={(event) =>
+                    commitCollectorField({ queueCapacity: Number(event.target.value) })
+                  }
+                />
+              </label>
+            </div>
           ) : selectedNodeKind === 'variable-get' ? (
             <div className="flex flex-col gap-1 text-xs">
               <span className="font-medium text-base-content/70">

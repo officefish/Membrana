@@ -37,6 +37,7 @@ import {
   SCENARIO_ALARM_INFINITY,
 } from './initial-board-state.js';
 import { ensureEventEntry, ensureLoopTickEntry, syncEventNodePins } from './event-node.js';
+import { syncDeviceGlobalNodePins } from './device-global-node.js';
 import { ensureLoopInfinity, syncLoopRepeatNodePins } from './loop-repeat-node.js';
 import { deserializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 import { syncVariableNodePins } from './variable-node.js';
@@ -207,6 +208,14 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   onStop.nodes = syncVariableNodePins(onStop.nodes, variables);
   onDisconnect.nodes = syncVariableNodePins(onDisconnect.nodes, variables);
   fn.nodes = syncVariableNodePins(fn.nodes, variables);
+
+  initial.nodes = syncDeviceGlobalNodePins(initial.nodes);
+  onConnect.nodes = syncDeviceGlobalNodePins(onConnect.nodes);
+  main.nodes = syncDeviceGlobalNodePins(main.nodes);
+  alarm.nodes = syncDeviceGlobalNodePins(alarm.nodes);
+  onStop.nodes = syncDeviceGlobalNodePins(onStop.nodes);
+  onDisconnect.nodes = syncDeviceGlobalNodePins(onDisconnect.nodes);
+  fn.nodes = syncDeviceGlobalNodePins(fn.nodes);
 
   if (signal.nodes.length === 0) {
     signal.nodes.push(...INITIAL_SIGNAL_NODES);

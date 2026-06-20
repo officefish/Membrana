@@ -145,6 +145,38 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
           },
         };
       }
+      if (ref.kind === 'RecorderRef') {
+        const handle = ref.handle ?? '';
+        const deviceHandle =
+          handle.startsWith('recorder:') ? handle.slice('recorder:'.length) : handle;
+        const depth =
+          deviceHandle.length > 0 ? bridge.getCollectorQueueDepth('recorder', deviceHandle) : 0;
+        return {
+          fields: {
+            sessionId: handle || 'null',
+            deviceHandle: deviceHandle || 'unknown',
+            queueDepth: String(depth),
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
+      if (ref.kind === 'SpectralAnalyserRef') {
+        const handle = ref.handle ?? '';
+        const deviceHandle =
+          handle.startsWith('analyser:') ? handle.slice('analyser:'.length) : handle;
+        const depth =
+          deviceHandle.length > 0
+            ? bridge.getCollectorQueueDepth('spectral-analyser', deviceHandle)
+            : 0;
+        return {
+          fields: {
+            sessionId: handle || 'null',
+            deviceHandle: deviceHandle || 'unknown',
+            queueDepth: String(depth),
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
       return null;
     },
     printLine: (line) => {
@@ -161,6 +193,25 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     getCapturedAudioSampleRef: (nodeId) => bridge.getCapturedAudioSampleRef(nodeId),
     computeFftFrame: (nodeId, sampleRef) => bridge.computeFftFrame(nodeId, sampleRef),
     getCapturedFftFrameRef: (nodeId) => bridge.getCapturedFftFrameRef(nodeId),
+    getRecorderSessionRef: (deviceHandle) => bridge.getRecorderSessionRef(deviceHandle),
+    getSpectralAnalyserSessionRef: (deviceHandle) =>
+      bridge.getSpectralAnalyserSessionRef(deviceHandle),
+    appendRecorderSample: (deviceHandle, sampleRef) =>
+      bridge.appendRecorderSample(deviceHandle, sampleRef),
+    appendSpectralAnalyserFrame: (deviceHandle, frameRef) =>
+      bridge.appendSpectralAnalyserFrame(deviceHandle, frameRef),
+    flushRecorderSession: (deviceHandle) => bridge.flushRecorderSession(deviceHandle),
+    flushSpectralAnalyserSession: (deviceHandle) =>
+      bridge.flushSpectralAnalyserSession(deviceHandle),
+    subscribeRecorderCollect: (deviceHandle, collectNodeId) =>
+      bridge.subscribeRecorderCollect(deviceHandle, collectNodeId),
+    subscribeSpectralAnalyserCollect: (deviceHandle, collectNodeId) =>
+      bridge.subscribeSpectralAnalyserCollect(deviceHandle, collectNodeId),
+    resetCollectorSessions: () => bridge.resetCollectorSessions(),
+    createTrackFromSampleRefs: (nodeId, refs) =>
+      bridge.createTrackFromSampleRefs(nodeId, refs),
+    analyzeFftTrendsFromFrameRefs: (nodeId, refs) =>
+      bridge.analyzeFftTrendsFromFrameRefs(nodeId, refs),
     writeJournal: (event) => bridge.writeJournal(event),
     recordChunk: (options) => bridge.recordChunk(options),
     trendsFftDetect: () => bridge.trendsFftDetect(),

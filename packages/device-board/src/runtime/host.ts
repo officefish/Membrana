@@ -1,5 +1,6 @@
-import type { ScenarioBlockKind, ScenarioReferenceValue, ScenarioVariableValue } from '@membrana/core';
+import { createReferenceValue, type ScenarioBlockKind, type ScenarioReferenceValue, type ScenarioVariableValue } from '@membrana/core';
 
+import type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
 import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
 
@@ -86,8 +87,52 @@ export interface ScenarioRuntimeHost {
   ) => Promise<void>;
   /** Последний FftFrameRef для узла get-fft-frame. */
   readonly getCapturedFftFrameRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** v0.5 DBC2: singleton RecorderRef по deviceHandle. */
+  readonly getRecorderSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** v0.5 DBC2: singleton SpectralAnalyserRef по deviceHandle. */
+  readonly getSpectralAnalyserSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** v0.5 DBC2: append AudioSampleRef в очередь Recorder singleton. */
+  readonly appendRecorderSample?: (
+    deviceHandle: string,
+    sampleRef: ScenarioReferenceValue,
+  ) => boolean;
+  /** v0.5 DBC2: append FftFrameRef в очередь SpectralAnalyser singleton. */
+  readonly appendSpectralAnalyserFrame?: (
+    deviceHandle: string,
+    frameRef: ScenarioReferenceValue,
+  ) => boolean;
+  /** v0.5 DBC2: flush очереди Recorder (Collect / terminal nodes). */
+  readonly flushRecorderSession?: (
+    deviceHandle: string,
+  ) => CollectorSessionFlushSnapshot | null;
+  /** v0.5 DBC2: flush очереди SpectralAnalyser. */
+  readonly flushSpectralAnalyserSession?: (
+    deviceHandle: string,
+  ) => CollectorSessionFlushSnapshot | null;
+  /** v0.5 DBC2: multicast-подписка CollectSamples на Recorder singleton. */
+  readonly subscribeRecorderCollect?: (
+    deviceHandle: string,
+    collectNodeId: string,
+  ) => () => void;
+  /** v0.5 DBC2: multicast-подписка CollectFftFrames на SpectralAnalyser singleton. */
+  readonly subscribeSpectralAnalyserCollect?: (
+    deviceHandle: string,
+    collectNodeId: string,
+  ) => () => void;
+  /** v0.5 DBC2: сброс singleton-очередей при load/start сценария (синхрон с CollectRuntimeStore). */
+  readonly resetCollectorSessions?: () => void;
   readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
+  /** v0.5 DBC4: concat AudioSampleRef[] → journal track. */
+  readonly createTrackFromSampleRefs?: (
+    nodeId: string,
+    refs: readonly ScenarioReferenceValue[],
+  ) => Promise<{ readonly trackId: string } | null>;
+  /** v0.5 DBC4: FftFrameRef[] → trends analysis + journal report. */
+  readonly analyzeFftTrendsFromFrameRefs?: (
+    nodeId: string,
+    refs: readonly ScenarioReferenceValue[],
+  ) => Promise<ScenarioDetectionResult>;
   readonly trendsFftDetect: () => Promise<ScenarioDetectionResult>;
   readonly evaluateSoundLevel: () => Promise<ScenarioSoundLevelResult>;
   /**
@@ -158,12 +203,43 @@ export function createStubScenarioRuntimeHost(
     getCapturedFftFrameRef:
       overrides.getCapturedFftFrameRef ??
       ((nodeId) => ({ kind: 'FftFrameRef', handle: `stub-frame-${nodeId}`, valid: true })),
+    getRecorderSessionRef:
+      overrides.getRecorderSessionRef ??
+      ((deviceHandle) =>
+        createReferenceValue('RecorderRef', `recorder:${deviceHandle}`)),
+    getSpectralAnalyserSessionRef:
+      overrides.getSpectralAnalyserSessionRef ??
+      ((deviceHandle) =>
+        createReferenceValue('SpectralAnalyserRef', `analyser:${deviceHandle}`)),
+    appendRecorderSample: overrides.appendRecorderSample ?? (() => true),
+    appendSpectralAnalyserFrame: overrides.appendSpectralAnalyserFrame ?? (() => true),
+    flushRecorderSession: overrides.flushRecorderSession ?? (() => null),
+    flushSpectralAnalyserSession: overrides.flushSpectralAnalyserSession ?? (() => null),
+    subscribeRecorderCollect: overrides.subscribeRecorderCollect ?? (() => () => undefined),
+    subscribeSpectralAnalyserCollect:
+      overrides.subscribeSpectralAnalyserCollect ?? (() => () => undefined),
     writeJournal: overrides.writeJournal ?? (async (event) => log('writeJournal', { blockKind: event.blockKind })),
     recordChunk:
       overrides.recordChunk ??
       (async () => {
         log('recordChunk');
         return { clipId: 'stub-clip' };
+      }),
+    createTrackFromSampleRefs:
+      overrides.createTrackFromSampleRefs ??
+      (async (nodeId, refs) => {
+        log('createTrackFromSampleRefs', { nodeId, count: refs.length });
+        return refs.length > 0 ? { trackId: 'stub-track' } : null;
+      }),
+    analyzeFftTrendsFromFrameRefs:
+      overrides.analyzeFftTrendsFromFrameRefs ??
+      (async (nodeId, refs) => {
+        log('analyzeFftTrendsFromFrameRefs', { nodeId, count: refs.length });
+        return {
+          detected: false,
+          confidence: 0,
+          templateId: 'stub',
+        };
       }),
     trendsFftDetect:
       overrides.trendsFftDetect ??

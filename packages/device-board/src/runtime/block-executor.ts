@@ -11,10 +11,18 @@ import {
   STOP_STREAMING_MIC_HANDLE,
   STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
+import { STOP_RUNTIME_DEVICE_HANDLE } from '../graph/stop-runtime-node.js';
+import { GET_RECORDER_DEVICE_HANDLE } from '../graph/get-recorder-node.js';
+import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from '../graph/get-spectral-analyser-node.js';
+import { NEW_TRACK_SAMPLES_HANDLE } from '../graph/new-track-node.js';
+import { NEW_FFT_TRENDS_FRAMES_HANDLE } from '../graph/new-fft-trends-analysis-node.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { formatVariableValueForPrintRuntime } from './format-reference.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import { executeCollectNode } from './collect-node-executor.js';
+import type { CollectRuntimeStore } from './collect-runtime-store.js';
+import { resolveRefListMembers } from './resolve-ref-list.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { isReferenceValid } from './reference-validity.js';
 import type { ScenarioDetectionResult } from './types.js';
@@ -34,8 +42,10 @@ export interface BlockExecutionInput {
   readonly resolveContext?: ResolveInputContext;
   /** Колбэк после успешного Print (для UI-инспектора). */
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
-  /** v0.4 device-global StopRuntime: выход из runtime в режим редактирования. */
+  /** v0.4 StopRuntime: выход из runtime в режим редактирования (требует DeviceRef). */
   readonly onStopRuntime?: () => void;
+  /** v0.5 DBC3: in-memory flush/batch state Collect-узлов. */
+  readonly collectStore?: CollectRuntimeStore;
 }
 
 export interface BlockExecutionResult {
@@ -43,6 +53,8 @@ export interface BlockExecutionResult {
   readonly stopRequested: boolean;
   /** v0.4 DBR5: exec-выход для условных узлов (`is-valid`). */
   readonly execOutHandle?: string;
+  /** v0.5 DBC3/5: event-out при flush Collect; dispatch в exec-subgraph (DBC5). */
+  readonly eventOutHandle?: string;
   /** Достигнут системный loop-repeat (∞) — завершить итерацию лупа. */
   readonly loopRepeatRequested?: boolean;
 }
@@ -93,6 +105,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     resolveContext,
     onPrintOutput,
     onStopRuntime,
+    collectStore,
   } = input;
 
   assertNotAborted(signal);
@@ -184,14 +197,83 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     return { lastDetection, stopRequested: false };
   }
 
+  if (node.nodeKind === 'get-recorder') {
+    let deviceHandle: string | null = null;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const deviceRef = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        GET_RECORDER_DEVICE_HANDLE,
+        resolveContext,
+      );
+      if (
+        deviceRef !== null &&
+        deviceRef.kind === 'DeviceRef' &&
+        isReferenceValid(deviceRef)
+      ) {
+        deviceHandle = deviceRef.handle;
+      }
+    }
+    host.log('get-recorder', { nodeId: node.id, branch, device: deviceHandle });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'get-spectral-analyser') {
+    let deviceHandle: string | null = null;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const deviceRef = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+        resolveContext,
+      );
+      if (
+        deviceRef !== null &&
+        deviceRef.kind === 'DeviceRef' &&
+        isReferenceValid(deviceRef)
+      ) {
+        deviceHandle = deviceRef.handle;
+      }
+    }
+    host.log('get-spectral-analyser', { nodeId: node.id, branch, device: deviceHandle });
+    return { lastDetection, stopRequested: false };
+  }
+
   if (node.nodeKind === 'device-global') {
-    host.log('device-global GetDevice', { nodeId: node.id, branch });
+    host.log('device-global is data-only (GetDevice)', { nodeId: node.id, branch });
     return { lastDetection, stopRequested: false };
   }
 
   if (node.nodeKind === 'stop-runtime') {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('stop-runtime requires variableStore and resolveContext');
+    }
+    const deviceRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      STOP_RUNTIME_DEVICE_HANDLE,
+      resolveContext,
+    );
+    if (
+      deviceRef === null ||
+      deviceRef.kind !== 'DeviceRef' ||
+      !isReferenceValid(deviceRef)
+    ) {
+      host.log('stop-runtime skipped: missing or invalid device ref', {
+        nodeId: node.id,
+        branch,
+      });
+      return { lastDetection, stopRequested: false };
+    }
     onStopRuntime?.();
-    host.log('stop-runtime StopRuntime', { nodeId: node.id, branch });
+    host.log('stop-runtime StopRuntime', {
+      nodeId: node.id,
+      branch,
+      device: deviceRef.handle,
+    });
     return { lastDetection, stopRequested: true };
   }
 
@@ -310,6 +392,84 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       sampleHandle: sampleRef?.kind === 'AudioSampleRef' ? sampleRef.handle : null,
     });
     return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'collect-samples' || node.nodeKind === 'collect-fft-frames') {
+    if (variableStore === undefined || resolveContext === undefined || collectStore === undefined) {
+      throw new Error(`${node.nodeKind} requires variableStore, resolveContext and collectStore`);
+    }
+    const collectResult = executeCollectNode({
+      host,
+      subgraph,
+      node,
+      variableStore,
+      resolveContext,
+      collectStore,
+      mode: node.nodeKind === 'collect-samples' ? 'samples' : 'fft-frames',
+    });
+    host.log(node.nodeKind, {
+      nodeId: node.id,
+      branch,
+      flushed: collectResult.flushed,
+    });
+    return {
+      lastDetection,
+      stopRequested: false,
+      ...(collectResult.eventOutHandle !== undefined
+        ? { eventOutHandle: collectResult.eventOutHandle }
+        : {}),
+    };
+  }
+
+  if (node.nodeKind === 'new-track') {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('new-track requires variableStore and resolveContext');
+    }
+    const listRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      NEW_TRACK_SAMPLES_HANDLE,
+      resolveContext,
+    );
+    const sampleRefs = resolveRefListMembers(listRef, 'AudioSampleRefList', collectStore);
+    let trackId: string | null = null;
+    if (sampleRefs.length > 0 && host.createTrackFromSampleRefs !== undefined) {
+      const result = await host.createTrackFromSampleRefs(node.id, sampleRefs);
+      trackId = result?.trackId ?? null;
+    }
+    host.log('new-track', {
+      nodeId: node.id,
+      branch,
+      sampleCount: sampleRefs.length,
+      trackId,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'new-fft-trends-analysis') {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('new-fft-trends-analysis requires variableStore and resolveContext');
+    }
+    const listRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      NEW_FFT_TRENDS_FRAMES_HANDLE,
+      resolveContext,
+    );
+    const frameRefs = resolveRefListMembers(listRef, 'FftFrameRefList', collectStore);
+    let detection = lastDetection;
+    if (frameRefs.length > 0 && host.analyzeFftTrendsFromFrameRefs !== undefined) {
+      detection = await host.analyzeFftTrendsFromFrameRefs(node.id, frameRefs);
+    }
+    host.log('new-fft-trends-analysis', {
+      nodeId: node.id,
+      branch,
+      frameCount: frameRefs.length,
+      detected: detection?.detected ?? false,
+    });
+    return { lastDetection: detection, stopRequested: false };
   }
 
   switch (node.blockKind) {

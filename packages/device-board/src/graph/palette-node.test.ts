@@ -20,11 +20,17 @@ describe('palette-node (DBR5)', () => {
       'print',
       'is-valid',
       'get-microphone',
+      'get-recorder',
+      'get-spectral-analyser',
       'start-streaming',
       'stop-streaming',
       'get-audio-stream',
       'get-sample',
       'get-fft-frame',
+      'collect-samples',
+      'collect-fft-frames',
+      'new-track',
+      'new-fft-trends-analysis',
     ]);
   });
 
@@ -55,6 +61,20 @@ describe('palette-node (DBR5)', () => {
     );
     expect(pins.outputs.find((pin) => pin.name === GET_MICROPHONE_OUT_HANDLE)?.socketType).toBe(
       'MicrophoneRef',
+    );
+  });
+
+  it('creates get-recorder with DeviceRef in and RecorderRef out', () => {
+    const pins = paletteNodePins('get-recorder');
+    expect(pins.inputs.find((pin) => pin.name === 'device')?.socketType).toBe('DeviceRef');
+    expect(pins.outputs.find((pin) => pin.name === 'recorder')?.socketType).toBe('RecorderRef');
+  });
+
+  it('creates get-spectral-analyser with DeviceRef in and SpectralAnalyserRef out', () => {
+    const pins = paletteNodePins('get-spectral-analyser');
+    expect(pins.inputs.find((pin) => pin.name === 'device')?.socketType).toBe('DeviceRef');
+    expect(pins.outputs.find((pin) => pin.name === 'analyser')?.socketType).toBe(
+      'SpectralAnalyserRef',
     );
   });
 

@@ -1,6 +1,11 @@
 import { createReferenceValue, type ScenarioReferenceValue } from '@membrana/core';
 import { scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
 import {
+  createDeviceCollectorRegistry,
+  type CollectorSessionFlushSnapshot,
+  type DeviceCollectorRegistry,
+} from '@membrana/device-board';
+import {
   LiveSampler,
   acquireMicrophone,
   getAudioInputDevices,
@@ -24,6 +29,10 @@ import {
   liveJournalReportClientEntryId,
   liveJournalTrackClientEntryId,
 } from '@membrana/telemetry-journal-service';
+import {
+  BUFFER_COLLECTION_ID,
+  getDefaultMediaLibraryService,
+} from '@membrana/media-library-service';
 import { FftAnalyzer, frameLoudness } from '@membrana/fft-analyzer-service';
 
 import {
@@ -32,9 +41,16 @@ import {
   requestMicrophoneStop,
 } from '@/modules/microphone/microphoneCaptureCoordinator';
 import { publishMicrophoneStream, subscribeMicrophoneStream } from '@/modules/microphone/microphoneStreamHub';
+import { encodeWavPcm16 } from '@/plugins/mic-buffer-recorder/encodeWav';
 import { startClipRecorder } from '@/plugins/mic-buffer-recorder/clipRecorder';
 
 import { analyzeChunkTrendsFft } from './analyzeChunkTrendsFft';
+import { buildTrendsFftReport } from '@/plugins/trends-fft-analyzer/buildTrendsFftReport';
+import { appendTrendsFftJournalReport } from '@/plugins/trends-fft-analyzer/appendTrendsFftJournalReport';
+import {
+  DRONE_TIGHT_TRENDS_INTERVAL_MS,
+  DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
+} from '@/lib/droneTightCalibration';
 
 const DEVICE_BOARD_MODULE_ID = 'device-board';
 const MICROPHONE_MODULE_ID = 'microphone';
@@ -87,6 +103,27 @@ function createEntryId(prefix: string): string {
 
 function clampChunkDurationMs(durationMs: number): number {
   return Math.min(MAX_CHUNK_MS, Math.max(MIN_CHUNK_MS, durationMs));
+}
+
+function concatAudioSamplePayloads(
+  payloads: readonly AudioSamplePayload[],
+): { readonly samples: Float32Array; readonly sampleRate: number; readonly durationSec: number } | null {
+  if (payloads.length === 0) {
+    return null;
+  }
+  const sampleRate = payloads[0]!.sampleRate;
+  const totalLength = payloads.reduce((sum, payload) => sum + payload.samples.length, 0);
+  const samples = new Float32Array(totalLength);
+  let offset = 0;
+  for (const payload of payloads) {
+    samples.set(payload.samples, offset);
+    offset += payload.samples.length;
+  }
+  return {
+    samples,
+    sampleRate,
+    durationSec: samples.length / sampleRate,
+  };
 }
 
 function waitMs(ms: number, signal?: AbortSignal): Promise<void> {
@@ -157,6 +194,8 @@ export class ScenarioMicJournalBridge {
   private fftFrameByNode = new Map<string, ScenarioReferenceValue>();
 
   private fftFramePayloads = new Map<string, FftFramePayloadMeta>();
+
+  private readonly collectorRegistry: DeviceCollectorRegistry = createDeviceCollectorRegistry();
 
   getLastChunk(): RecordedChunkMeta | null {
     return this.lastChunk;
@@ -236,6 +275,190 @@ export class ScenarioMicJournalBridge {
     return this.fftFramePayloads.get(frameHandle) ?? null;
   }
 
+  /** v0.5 DBC2: singleton RecorderRef для deviceHandle. */
+  getRecorderSessionRef(deviceHandle: string): ScenarioReferenceValue {
+    return this.collectorRegistry.getRecorderSessionRef(deviceHandle);
+  }
+
+  /** v0.5 DBC2: singleton SpectralAnalyserRef для deviceHandle. */
+  getSpectralAnalyserSessionRef(deviceHandle: string): ScenarioReferenceValue {
+    return this.collectorRegistry.getSpectralAnalyserSessionRef(deviceHandle);
+  }
+
+  appendRecorderSample(deviceHandle: string, sampleRef: ScenarioReferenceValue): boolean {
+    const accepted = this.collectorRegistry.appendSample(deviceHandle, sampleRef);
+    if (accepted) {
+      scenarioRuntimeInfo('[device-board] appendRecorderSample', {
+        deviceHandle,
+        sampleId: sampleRef.handle,
+      });
+    }
+    return accepted;
+  }
+
+  appendSpectralAnalyserFrame(deviceHandle: string, frameRef: ScenarioReferenceValue): boolean {
+    const accepted = this.collectorRegistry.appendFrame(deviceHandle, frameRef);
+    if (accepted) {
+      scenarioRuntimeInfo('[device-board] appendSpectralAnalyserFrame', {
+        deviceHandle,
+        frameId: frameRef.handle,
+      });
+    }
+    return accepted;
+  }
+
+  flushRecorderSession(deviceHandle: string): CollectorSessionFlushSnapshot | null {
+    return this.collectorRegistry.flushRecorder(deviceHandle);
+  }
+
+  flushSpectralAnalyserSession(deviceHandle: string): CollectorSessionFlushSnapshot | null {
+    return this.collectorRegistry.flushSpectralAnalyser(deviceHandle);
+  }
+
+  subscribeRecorderCollect(deviceHandle: string, collectNodeId: string): () => void {
+    return this.collectorRegistry.getOrCreateRecorder(deviceHandle).subscribe(collectNodeId);
+  }
+
+  subscribeSpectralAnalyserCollect(deviceHandle: string, collectNodeId: string): () => void {
+    return this.collectorRegistry.getOrCreateSpectralAnalyser(deviceHandle).subscribe(collectNodeId);
+  }
+
+  /** Сброс singleton-очередей при load/start сценария (CollectRuntimeStore сбрасывается отдельно). */
+  resetCollectorSessions(): void {
+    this.collectorRegistry.resetAll();
+  }
+
+  /** v0.5 DBC4: concat AudioSampleRef[] → LiveJournal track. */
+  async createTrackFromSampleRefs(
+    nodeId: string,
+    refs: readonly ScenarioReferenceValue[],
+  ): Promise<{ readonly trackId: string } | null> {
+    const payloads: AudioSamplePayload[] = [];
+    for (const ref of refs) {
+      if (!ref.valid || ref.handle === null || ref.kind !== 'AudioSampleRef') {
+        continue;
+      }
+      const payload = this.audioSamplePayloads.get(ref.handle);
+      if (payload !== undefined) {
+        payloads.push(payload);
+      }
+    }
+
+    const concat = concatAudioSamplePayloads(payloads);
+    if (concat === null) {
+      return null;
+    }
+
+    const trackId = createEntryId('track');
+    const title = `NewTrack ${trackId.slice(0, 8)}`;
+    const createdAtIso = new Date().toISOString();
+    const blob = encodeWavPcm16(concat.samples, concat.sampleRate);
+    const imported = await getDefaultMediaLibraryService().importBlob(BUFFER_COLLECTION_ID, blob, {
+      title,
+      class: 'buffer',
+      label: 'unlabeled',
+      source: 'mic-recording',
+      durationSec: concat.durationSec,
+      sampleRate: concat.sampleRate,
+      channels: 1,
+      notes: `scenario new-track node ${nodeId}`,
+    });
+    const service = getDefaultLiveJournalService();
+    await service.appendTrack({
+      clientEntryId: liveJournalTrackClientEntryId(trackId),
+      moduleId: DEVICE_BOARD_MODULE_ID,
+      moduleName: LIVE_JOURNAL_MODULE_NAME,
+      tags: ['device-board:collect', 'scenario:new-track'],
+      track: {
+        schema: TELEMETRY_TRACK_SCHEMA_VERSION,
+        trackId,
+        sampleId: imported.id,
+        title,
+        durationSec: concat.durationSec,
+        sampleRate: concat.sampleRate,
+        captureMode: 'auto',
+        createdAtIso,
+      },
+    });
+
+    scenarioRuntimeInfo('[device-board] createTrackFromSampleRefs', {
+      nodeId,
+      trackId,
+      sampleCount: payloads.length,
+      durationSec: concat.durationSec,
+    });
+
+    return { trackId };
+  }
+
+  /** v0.5 DBC4: FftFrameRef[] → trends FFT analysis + journal report. */
+  async analyzeFftTrendsFromFrameRefs(
+    nodeId: string,
+    refs: readonly ScenarioReferenceValue[],
+  ): Promise<ScenarioDetectionResult> {
+    const payloads: AudioSamplePayload[] = [];
+    for (const ref of refs) {
+      if (!ref.valid || ref.handle === null || ref.kind !== 'FftFrameRef') {
+        continue;
+      }
+      const frameMeta = this.fftFramePayloads.get(ref.handle);
+      if (frameMeta === undefined) {
+        continue;
+      }
+      const samplePayload = this.audioSamplePayloads.get(frameMeta.sampleHandle);
+      if (samplePayload !== undefined) {
+        payloads.push(samplePayload);
+      }
+    }
+
+    const concat = concatAudioSamplePayloads(payloads);
+    if (concat === null) {
+      return { detected: false, confidence: 0, templateId: 'UNKNOWN' };
+    }
+
+    const startedAt = Date.now();
+    const analysis = analyzeChunkTrendsFft(concat.samples, concat.sampleRate);
+    const finishedAt = Date.now();
+    const reportId = createEntryId('trends');
+    const report = buildTrendsFftReport({
+      reportId,
+      startedAt,
+      finishedAt,
+      intervalMs: DRONE_TIGHT_TRENDS_INTERVAL_MS,
+      measurementsCount: DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
+      mode: 'auto',
+      result: analysis.result,
+    });
+    await appendTrendsFftJournalReport({ moduleId: DEVICE_BOARD_MODULE_ID, report });
+
+    this.lastDetection = {
+      detected: analysis.result.isDetected,
+      confidence: analysis.result.confidence,
+      templateId: analysis.result.detectedState,
+      rawLevel: analysis.rawLevel,
+    };
+
+    scenarioRuntimeInfo('[device-board] analyzeFftTrendsFromFrameRefs', {
+      nodeId,
+      reportId,
+      frameCount: refs.length,
+      detected: this.lastDetection.detected,
+      confidence: this.lastDetection.confidence,
+    });
+
+    return this.lastDetection;
+  }
+
+  getCollectorQueueDepth(
+    kind: 'recorder' | 'spectral-analyser',
+    deviceHandle: string,
+  ): number {
+    if (kind === 'recorder') {
+      return this.collectorRegistry.getOrCreateRecorder(deviceHandle).queueDepth;
+    }
+    return this.collectorRegistry.getOrCreateSpectralAnalyser(deviceHandle).queueDepth;
+  }
+
   async startAudioStreaming(microphone: ScenarioReferenceValue | null): Promise<void> {
     if (microphone !== null && microphone.valid && microphone.handle !== null && microphone.handle.length > 0) {
       this.selectedDeviceId = microphone.handle;
@@ -267,6 +490,7 @@ export class ScenarioMicJournalBridge {
     this.audioSamplePayloads.clear();
     this.fftFrameByNode.clear();
     this.fftFramePayloads.clear();
+    this.collectorRegistry.resetAll();
     scenarioRuntimeInfo('[device-board] stopAudioStreaming');
   }
 

@@ -10,6 +10,14 @@ import {
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
 import {
+  GET_RECORDER_DEVICE_HANDLE,
+  GET_RECORDER_OUT_HANDLE,
+} from '../graph/get-recorder-node.js';
+import {
+  GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+  GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+} from '../graph/get-spectral-analyser-node.js';
+import {
   GET_AUDIO_STREAM_MIC_HANDLE,
   GET_AUDIO_STREAM_OUT_HANDLE,
   GET_FFT_FRAME_OUT_HANDLE,
@@ -19,6 +27,7 @@ import {
   PRINT_OUT_HANDLE,
   STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
+import { COLLECT_BATCH_OUT_HANDLE } from '../graph/collect-node-shared.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveGlobalDeviceReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
 
@@ -45,6 +54,12 @@ export interface ResolveInputContext {
   readonly getCapturedAudioSampleRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний FftFrame по nodeId (host); для get-fft-frame. */
   readonly getCapturedFftFrameRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** Singleton RecorderRef по device handle (host, DBC2). */
+  readonly getRecorderSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** Singleton SpectralAnalyserRef по device handle (host, DBC2). */
+  readonly getSpectralAnalyserSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** Последний batch ref Collect-узла после flush (DBC3). */
+  readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
   readonly getPrintOutputValue?: (nodeId: string) => ScenarioVariableValue | null;
 }
@@ -138,6 +153,22 @@ function invalidFftFrameRef(): ScenarioReferenceValue {
   return { kind: 'FftFrameRef', handle: null, valid: false };
 }
 
+function invalidRecorderRef(): ScenarioReferenceValue {
+  return { kind: 'RecorderRef', handle: null, valid: false };
+}
+
+function invalidSpectralAnalyserRef(): ScenarioReferenceValue {
+  return { kind: 'SpectralAnalyserRef', handle: null, valid: false };
+}
+
+function invalidAudioSampleRefList(): ScenarioReferenceValue {
+  return { kind: 'AudioSampleRefList', handle: null, valid: false };
+}
+
+function invalidFftFrameRefList(): ScenarioReferenceValue {
+  return { kind: 'FftFrameRefList', handle: null, valid: false };
+}
+
 function resolveGetAudioStreamOutput(
   subgraph: ScenarioSubgraph,
   variables: readonly ScenarioVariable[],
@@ -196,6 +227,62 @@ function resolveGetFftFrameOutput(
     return invalidFftFrameRef();
   }
   return resolver(node.id) ?? invalidFftFrameRef();
+}
+
+function resolveGetRecorderOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const deviceRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_RECORDER_DEVICE_HANDLE,
+    context,
+    visiting,
+  );
+  if (!isReferenceValid(deviceRef) || deviceRef === null || deviceRef.kind !== 'DeviceRef') {
+    return invalidRecorderRef();
+  }
+  if (deviceRef.handle === null) {
+    return invalidRecorderRef();
+  }
+  const resolver = context.getRecorderSessionRef;
+  if (resolver === undefined) {
+    return invalidRecorderRef();
+  }
+  return resolver(deviceRef.handle) ?? invalidRecorderRef();
+}
+
+function resolveGetSpectralAnalyserOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const deviceRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+    context,
+    visiting,
+  );
+  if (!isReferenceValid(deviceRef) || deviceRef === null || deviceRef.kind !== 'DeviceRef') {
+    return invalidSpectralAnalyserRef();
+  }
+  if (deviceRef.handle === null) {
+    return invalidSpectralAnalyserRef();
+  }
+  const resolver = context.getSpectralAnalyserSessionRef;
+  if (resolver === undefined) {
+    return invalidSpectralAnalyserRef();
+  }
+  return resolver(deviceRef.handle) ?? invalidSpectralAnalyserRef();
 }
 
 /** Резолв data-выхода узла (для runtime-инспекции и pull-цепочки). */
@@ -319,6 +406,51 @@ export function resolveNodeOutput(
       throw new ResolveInputError('unsupported-source', `Unknown get-fft-frame output: ${outputPort}`);
     }
     return resolveGetFftFrameOutput(node, context);
+  }
+
+  if (node.nodeKind === 'get-recorder') {
+    if (outputPort !== GET_RECORDER_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-recorder output: ${outputPort}`);
+    }
+    return resolveGetRecorderOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-spectral-analyser') {
+    if (outputPort !== GET_SPECTRAL_ANALYSER_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown get-spectral-analyser output: ${outputPort}`,
+      );
+    }
+    return resolveGetSpectralAnalyserOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'collect-samples') {
+    if (outputPort !== COLLECT_BATCH_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown collect-samples output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getCollectBatchRef;
+    if (resolver === undefined) {
+      return invalidAudioSampleRefList();
+    }
+    return resolver(node.id) ?? invalidAudioSampleRefList();
+  }
+
+  if (node.nodeKind === 'collect-fft-frames') {
+    if (outputPort !== COLLECT_BATCH_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown collect-fft-frames output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getCollectBatchRef;
+    if (resolver === undefined) {
+      return invalidFftFrameRefList();
+    }
+    return resolver(node.id) ?? invalidFftFrameRefList();
   }
 
   if (node.nodeKind === 'print') {

@@ -13,6 +13,10 @@ const REFERENCE_NOUN: Record<string, string> = {
   AudioStreamRef: 'audio stream',
   AudioSampleRef: 'audio sample',
   FftFrameRef: 'fft frame',
+  RecorderRef: 'recorder',
+  SpectralAnalyserRef: 'spectral analyser',
+  AudioSampleRefList: 'sample batch',
+  FftFrameRefList: 'frame batch',
 };
 
 /**
@@ -20,6 +24,9 @@ const REFERENCE_NOUN: Record<string, string> = {
  * Ссылочные типы: префикс `&` (DeviceRef → `& device`).
  */
 export function formatSocketPortLabel(pin: BoardSocketPin): string {
+  if (pin.kind === 'event') {
+    return 'event';
+  }
   if (pin.kind === 'exec') {
     if (pin.name === IS_VALID_TRUE_HANDLE) {
       return 'true';

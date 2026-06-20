@@ -36,8 +36,23 @@ export interface BoardFlowViewportApi {
 export interface BoardConnectionDropOnPanePayload {
   readonly sourceNodeId: string;
   readonly sourceHandle: string;
+  readonly sourceNode: Node;
   readonly clientX: number;
   readonly clientY: number;
+}
+
+function normalizeHandleId(handle: unknown): string | null {
+  if (handle === null || handle === undefined) {
+    return null;
+  }
+  if (typeof handle === 'string') {
+    return handle;
+  }
+  if (typeof handle === 'object' && handle !== null && 'id' in handle) {
+    const id = (handle as { id?: unknown }).id;
+    return typeof id === 'string' ? id : null;
+  }
+  return null;
 }
 
 export interface BoardFlowCanvasProps {
@@ -148,7 +163,11 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       if (readOnly || onConnectionDropOnPane === undefined) {
         return;
       }
-      if (connectionState.fromNode === null || connectionState.fromHandle === null) {
+      if (connectionState.fromNode === null) {
+        return;
+      }
+      const sourceHandle = normalizeHandleId(connectionState.fromHandle);
+      if (sourceHandle === null) {
         return;
       }
       if (connectionState.toNode !== null) {
@@ -160,7 +179,8 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       }
       onConnectionDropOnPane({
         sourceNodeId: connectionState.fromNode.id,
-        sourceHandle: connectionState.fromHandle,
+        sourceHandle,
+        sourceNode: connectionState.fromNode,
         clientX: pointer.clientX,
         clientY: pointer.clientY,
       });

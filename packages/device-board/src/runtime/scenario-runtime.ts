@@ -4,6 +4,7 @@ import { createStringValue } from '@membrana/core';
 import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
 import { isDetectionFrontEdge } from './detection-front.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
+import { CollectRuntimeStore } from './collect-runtime-store.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
@@ -22,12 +23,18 @@ function hostAudioResolveContext(
   host: ScenarioRuntimeHost,
 ): Pick<
   ResolveInputContext,
-  'getActiveAudioStreamRef' | 'getCapturedAudioSampleRef' | 'getCapturedFftFrameRef'
+  | 'getActiveAudioStreamRef'
+  | 'getCapturedAudioSampleRef'
+  | 'getCapturedFftFrameRef'
+  | 'getRecorderSessionRef'
+  | 'getSpectralAnalyserSessionRef'
 > {
   const result: {
     getActiveAudioStreamRef?: ResolveInputContext['getActiveAudioStreamRef'];
     getCapturedAudioSampleRef?: ResolveInputContext['getCapturedAudioSampleRef'];
     getCapturedFftFrameRef?: ResolveInputContext['getCapturedFftFrameRef'];
+    getRecorderSessionRef?: ResolveInputContext['getRecorderSessionRef'];
+    getSpectralAnalyserSessionRef?: ResolveInputContext['getSpectralAnalyserSessionRef'];
   } = {};
   if (host.getActiveAudioStreamRef !== undefined) {
     result.getActiveAudioStreamRef = () => host.getActiveAudioStreamRef!();
@@ -37,6 +44,14 @@ function hostAudioResolveContext(
   }
   if (host.getCapturedFftFrameRef !== undefined) {
     result.getCapturedFftFrameRef = (nodeId: string) => host.getCapturedFftFrameRef!(nodeId);
+  }
+  if (host.getRecorderSessionRef !== undefined) {
+    result.getRecorderSessionRef = (deviceHandle: string) =>
+      host.getRecorderSessionRef!(deviceHandle);
+  }
+  if (host.getSpectralAnalyserSessionRef !== undefined) {
+    result.getSpectralAnalyserSessionRef = (deviceHandle: string) =>
+      host.getSpectralAnalyserSessionRef!(deviceHandle);
   }
   return result;
 }
@@ -69,6 +84,8 @@ export class ScenarioRuntime {
   private readonly listeners = new Set<ScenarioRuntimeListener>();
 
   private readonly variableStore = new ScenarioVariableStore();
+
+  private readonly collectStore = new CollectRuntimeStore();
 
   private runPromise: Promise<void> | null = null;
 
@@ -137,6 +154,8 @@ export class ScenarioRuntime {
     }
     this.document = document;
     this.variableStore.reset(document.scenario.variables);
+    this.collectStore.resetAll();
+    this.host.resetCollectorSessions?.();
     this.stopRequested = false;
     this.disconnectRequested = false;
     this.stopReason = null;
@@ -155,6 +174,8 @@ export class ScenarioRuntime {
     this.stopRequested = false;
     this.disconnectRequested = false;
     this.stopReason = null;
+    this.collectStore.resetAll();
+    this.host.resetCollectorSessions?.();
     this.abortController = new AbortController();
     this.patchState({
       ...this.idleState(),
@@ -272,7 +293,10 @@ export class ScenarioRuntime {
         return createStringValue(message);
       },
     };
-    const merged = { ...audio, ...print };
+    const collect: Pick<ResolveInputContext, 'getCollectBatchRef'> = {
+      getCollectBatchRef: (nodeId) => this.collectStore.getLastBatchRef(nodeId),
+    };
+    const merged = { ...audio, ...print, ...collect };
     if (Object.keys(merged).length === 0) {
       return context;
     }
@@ -387,6 +411,7 @@ export class ScenarioRuntime {
       resolveContext,
       onPrintOutput: (nodeId: string, message: string) => this.recordPrintOutput(nodeId, message),
       onStopRuntime: () => this.stop('user'),
+      collectStore: this.collectStore,
     };
   }
 

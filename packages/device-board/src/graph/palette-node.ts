@@ -1,8 +1,15 @@
 import type { ScenarioNodeKind } from '@membrana/core';
+import { DEFAULT_SCENARIO_COLLECTOR_CONFIG } from '@membrana/core';
 import type { Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
-import { deviceGlobalNodePins } from './device-global-node.js';
+import { deviceGlobalNodePins, DEVICE_GLOBAL_NODE_KIND } from './device-global-node.js';
+import { getRecorderNodePins } from './get-recorder-node.js';
+import { getSpectralAnalyserNodePins } from './get-spectral-analyser-node.js';
+import { collectSamplesNodePins } from './collect-samples-node.js';
+import { collectFftFramesNodePins } from './collect-fft-frames-node.js';
+import { newTrackNodePins } from './new-track-node.js';
+import { newFftTrendsAnalysisNodePins } from './new-fft-trends-analysis-node.js';
 import { stopRuntimeNodePins } from './stop-runtime-node.js';
 
 /** Data-вход произвольного значения для print / is-valid. */
@@ -44,6 +51,15 @@ export const GET_FFT_FRAME_SAMPLE_HANDLE = 'sample' as const;
 /** Data-выход FftFrameRef для get-fft-frame. */
 export const GET_FFT_FRAME_OUT_HANDLE = 'frame' as const;
 
+export {
+  GET_RECORDER_DEVICE_HANDLE,
+  GET_RECORDER_OUT_HANDLE,
+} from './get-recorder-node.js';
+export {
+  GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+  GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+} from './get-spectral-analyser-node.js';
+
 /** Exec-выход ветки «valid» для is-valid. */
 export const IS_VALID_TRUE_HANDLE = 'exec-true-out' as const;
 
@@ -60,11 +76,17 @@ export const V04_PALETTE_NODE_KINDS = [
   'print',
   'is-valid',
   'get-microphone',
+  'get-recorder',
+  'get-spectral-analyser',
   'start-streaming',
   'stop-streaming',
   'get-audio-stream',
   'get-sample',
   'get-fft-frame',
+  'collect-samples',
+  'collect-fft-frames',
+  'new-track',
+  'new-fft-trends-analysis',
 ] as const satisfies readonly ScenarioNodeKind[];
 
 export type V04PaletteNodeKind = (typeof V04_PALETTE_NODE_KINDS)[number];
@@ -75,11 +97,17 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   print: 'Print',
   'is-valid': 'isValid',
   'get-microphone': 'GetMicrophone',
+  'get-recorder': 'GetRecorder',
+  'get-spectral-analyser': 'GetSpectralAnalyser',
   'start-streaming': 'StartStreaming',
   'stop-streaming': 'StopStreaming',
   'get-audio-stream': 'GetAudioStream',
   'get-sample': 'GetSample',
   'get-fft-frame': 'GetFFTFrame',
+  'collect-samples': 'CollectSamples',
+  'collect-fft-frames': 'CollectFftFrames',
+  'new-track': 'NewTrack',
+  'new-fft-trends-analysis': 'NewFftTrendsAnalysis',
 };
 
 /** Человекочитаемый лейбл палитры v0.4. */
@@ -124,6 +152,10 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
           { name: GET_MICROPHONE_OUT_HANDLE, kind: 'data', socketType: 'MicrophoneRef' },
         ],
       };
+    case 'get-recorder':
+      return getRecorderNodePins();
+    case 'get-spectral-analyser':
+      return getSpectralAnalyserNodePins();
     case 'start-streaming':
       return {
         inputs: [
@@ -176,6 +208,14 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
           { name: GET_FFT_FRAME_OUT_HANDLE, kind: 'data', socketType: 'FftFrameRef' },
         ],
       };
+    case 'collect-samples':
+      return collectSamplesNodePins();
+    case 'collect-fft-frames':
+      return collectFftFramesNodePins();
+    case 'new-track':
+      return newTrackNodePins();
+    case 'new-fft-trends-analysis':
+      return newFftTrendsAnalysisNodePins();
   }
 }
 
@@ -183,6 +223,7 @@ export interface CreatePaletteBoardNodeOptions {
   readonly id?: string;
   readonly position?: { readonly x: number; readonly y: number };
   readonly microphoneId?: string;
+  readonly collectorConfig?: BoardFlowNodeData['collectorConfig'];
 }
 
 let paletteNodeSeq = 0;
@@ -203,12 +244,24 @@ export function createPaletteBoardNode(
     nodeKind,
     inputs,
     outputs,
+    ...(nodeKind === DEVICE_GLOBAL_NODE_KIND
+      ? { system: true as const }
+      : {}),
     ...(options.microphoneId !== undefined ? { microphoneId: options.microphoneId } : {}),
+    ...(nodeKind === 'collect-samples' || nodeKind === 'collect-fft-frames'
+      ? {
+          collectorConfig: {
+            ...DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+            ...options.collectorConfig,
+          },
+        }
+      : {}),
   };
   return {
     id,
     type: 'board',
     position: options.position ?? { x: 0, y: 0 },
+    deletable: nodeKind === DEVICE_GLOBAL_NODE_KIND ? false : undefined,
     data,
   };
 }

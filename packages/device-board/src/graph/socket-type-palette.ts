@@ -20,6 +20,13 @@ export const NULL_SOCKET_HANDLE_CLASS = '!bg-indigo-800';
 /** Exec-порты — нейтральный контраст темы. */
 export const EXEC_SOCKET_HANDLE_CLASS = '!bg-base-content';
 
+/** Event-порты Collect (квадратный handle, flush). */
+export const EVENT_SOCKET_HANDLE_CLASS = '!bg-amber-400';
+
+/** SVG stroke для event-рёбер. */
+export const EVENT_EDGE_STROKE = '#fbbf24';
+export const EVENT_EDGE_STROKE_WIDTH = 2;
+
 /** SVG stroke для exec-рёбер. */
 export const EXEC_EDGE_STROKE = 'oklch(var(--bc) / 0.5)';
 
@@ -62,6 +69,9 @@ export function dataSocketStrokeColor(socketType?: BoardSocketPin['socketType'])
 
 /** CSS-класс handle по типу порта (палитра device-board, не только DaisyUI theme). */
 export function socketHandleClass(pin: BoardSocketPin): string {
+  if (pin.kind === 'event') {
+    return `${HANDLE_BASE} !rounded-sm !h-3 !w-3 ${EVENT_SOCKET_HANDLE_CLASS}`;
+  }
   if (pin.kind === 'exec') {
     return `${HANDLE_BASE} ${EXEC_SOCKET_HANDLE_CLASS}`;
   }

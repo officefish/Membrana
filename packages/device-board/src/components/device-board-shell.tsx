@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { OnSelectionChangeParams } from '@xyflow/react';
-import type { ScenarioNodeKind } from '@membrana/core';
+import type { ScenarioNodeKind, ScenarioCollectorConfig } from '@membrana/core';
+import { resolveScenarioCollectorConfig } from '@membrana/core';
 
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
@@ -55,6 +56,9 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedNodeLabel, setSelectedNodeLabel] = useState<string | null>(null);
   const [selectedNodeKind, setSelectedNodeKind] = useState<ScenarioNodeKind | null>(null);
   const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
+  const [selectedCollectorConfig, setSelectedCollectorConfig] = useState<ScenarioCollectorConfig | null>(
+    null,
+  );
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
@@ -75,6 +79,14 @@ const DeviceBoardShellInner: React.FC<{
     (nodeKind: Parameters<typeof graph.addPaletteNodeToCurrentBranch>[0]) => {
       const center = viewportApiRef.current?.getCenterFlowPosition();
       graph.addPaletteNodeToCurrentBranch(nodeKind, center);
+    },
+    [graph],
+  );
+
+  const addVariableNodeAtViewportCenter = useCallback(
+    (kind: Parameters<typeof graph.addVariableNodeToCurrentBranch>[0], variableId: string) => {
+      const center = viewportApiRef.current?.getCenterFlowPosition();
+      graph.addVariableNodeToCurrentBranch(kind, variableId, center);
     },
     [graph],
   );
@@ -106,6 +118,7 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeLabel(null);
     setSelectedNodeKind(null);
     setSelectedMicrophoneId(null);
+    setSelectedCollectorConfig(null);
     setSelectedVariableId(null);
   }, []);
 
@@ -116,6 +129,7 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedNodeLabel(null);
       setSelectedNodeKind(null);
       setSelectedMicrophoneId(null);
+      setSelectedCollectorConfig(null);
       setSelectedVariableId(null);
       return;
     }
@@ -126,6 +140,12 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeKind(kind);
     const micId = typeof node.data?.microphoneId === 'string' ? node.data.microphoneId : null;
     setSelectedMicrophoneId(micId);
+    const collectorRaw = node.data?.collectorConfig;
+    setSelectedCollectorConfig(
+      collectorRaw !== undefined && collectorRaw !== null && typeof collectorRaw === 'object'
+        ? resolveScenarioCollectorConfig(collectorRaw as Partial<ScenarioCollectorConfig>)
+        : null,
+    );
     const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
     setSelectedVariableId(varId);
     if (kind === 'get-microphone') {
@@ -174,6 +194,7 @@ const DeviceBoardShellInner: React.FC<{
         nodes,
         payload.sourceNodeId,
         payload.sourceHandle,
+        { sourceNode: payload.sourceNode },
       );
       pendingConnectionDropRef.current = payload;
       setConnectionSuggestItems(suggestions);
@@ -562,7 +583,7 @@ const DeviceBoardShellInner: React.FC<{
             onAddVariable={graph.addVariable}
             onRenameVariable={graph.renameVariable}
             onRemoveVariable={graph.removeVariable}
-            onAddVariableNode={graph.addVariableNodeToCurrentBranch}
+            onAddVariableNode={addVariableNodeAtViewportCenter}
           />
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
@@ -571,6 +592,7 @@ const DeviceBoardShellInner: React.FC<{
             selectedNodeLabel={selectedNodeLabel}
             selectedNodeKind={selectedNodeKind}
             selectedMicrophoneId={selectedMicrophoneId}
+            selectedCollectorConfig={selectedCollectorConfig}
             selectedVariableName={selectedVariableName}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             microphoneOptions={microphoneOptions}
@@ -582,6 +604,7 @@ const DeviceBoardShellInner: React.FC<{
             onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
             onAddPaletteNode={addPaletteNodeAtViewportCenter}
             onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
+            onCollectorConfigChange={graph.updateCollectorConfig}
             onAssignVariableName={graph.assignNodeVariableName}
             onClearBoard={handleClearBoard}
           />

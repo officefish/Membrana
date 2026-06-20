@@ -2,6 +2,8 @@ import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioSubgraph } fr
 
 import { executeScenarioBlock } from './block-executor.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import type { CollectRuntimeStore } from './collect-runtime-store.js';
+import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
 
@@ -20,6 +22,8 @@ export interface ExecSubgraphOptions {
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
   /** v0.4 device-global StopRuntime. */
   readonly onStopRuntime?: () => void;
+  /** v0.5 DBC3: Collect flush/batch store. */
+  readonly collectStore?: CollectRuntimeStore;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -94,6 +98,7 @@ export async function runSubgraphOnce(
       resolveContext: options.resolveContext,
       onPrintOutput: options.onPrintOutput,
       onStopRuntime: options.onStopRuntime,
+      collectStore: options.collectStore,
     });
 
     if (result.stopRequested) {
@@ -105,6 +110,19 @@ export async function runSubgraphOnce(
     }
 
     lastDetection = result.lastDetection;
+
+    if (result.eventOutHandle !== undefined) {
+      lastDetection = await dispatchCollectEventBranches({
+        subgraph,
+        sourceNodeId: currentId,
+        eventOutHandle: result.eventOutHandle,
+        host,
+        signal,
+        options,
+        callbacks,
+        lastDetection,
+      });
+    }
 
     const nextId = findExecSuccessor(subgraph, currentId, result.execOutHandle ?? 'exec-out');
     if (nextId === null) {

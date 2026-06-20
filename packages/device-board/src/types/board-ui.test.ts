@@ -58,11 +58,17 @@ describe('scenario node palette (v0.4 DBR5)', () => {
       'print',
       'is-valid',
       'get-microphone',
+      'get-recorder',
+      'get-spectral-analyser',
       'start-streaming',
       'stop-streaming',
       'get-audio-stream',
       'get-sample',
       'get-fft-frame',
+      'collect-samples',
+      'collect-fft-frames',
+      'new-track',
+      'new-fft-trends-analysis',
     ]);
   });
 

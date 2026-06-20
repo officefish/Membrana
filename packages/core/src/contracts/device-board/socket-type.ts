@@ -21,6 +21,11 @@ export const SOCKET_TYPES = [
   'AudioStreamRef',
   'AudioSampleRef',
   'FftFrameRef',
+  // v0.5 (collectors): singleton refs + batch lists for terminal nodes.
+  'RecorderRef',
+  'SpectralAnalyserRef',
+  'AudioSampleRefList',
+  'FftFrameRefList',
   // v0.4+: value-типы scenario dataflow (не ссылки на внешний ресурс).
   'DateTime',
   'Integer',
@@ -45,6 +50,10 @@ export const REFERENCE_SOCKET_TYPES = [
   'AudioStreamRef',
   'AudioSampleRef',
   'FftFrameRef',
+  'RecorderRef',
+  'SpectralAnalyserRef',
+  'AudioSampleRefList',
+  'FftFrameRefList',
 ] as const satisfies readonly SocketType[];
 
 /**

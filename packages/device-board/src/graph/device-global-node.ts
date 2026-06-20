@@ -3,24 +3,20 @@ import type { Node } from '@xyflow/react';
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 
-/** Глобальный узел Device: GetDevice (DeviceRef data out + exec passthrough). */
+/** Системный глобальный узел GetDevice — только data-выход, без входов. */
 export const DEVICE_GLOBAL_NODE_KIND = 'device-global' as const;
 
-/** Data-выход GetDevice — ссылка на устройство (как у Event). */
+/** Data-выход GetDevice — ссылка на устройство. */
 export const DEVICE_GLOBAL_DEVICE_HANDLE = 'device' as const;
 
-const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
-const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
-
-/** Пины глобального узла Device. */
+/** Пины GetDevice: нет входов, только DeviceRef out. */
 export function deviceGlobalNodePins(): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
   return {
-    inputs: [EXEC_IN],
+    inputs: [],
     outputs: [
-      EXEC_OUT,
       {
         name: DEVICE_GLOBAL_DEVICE_HANDLE,
         kind: 'data',
@@ -37,7 +33,7 @@ export interface CreateDeviceGlobalBoardNodeOptions {
 
 let deviceGlobalSeq = 0;
 
-/** Фабрика глобального узла Device (GetDevice). */
+/** Фабрика системного узла GetDevice. */
 export function createDeviceGlobalBoardNode(
   options: CreateDeviceGlobalBoardNodeOptions = {},
 ): Node {
@@ -45,11 +41,12 @@ export function createDeviceGlobalBoardNode(
   const id = options.id ?? `node-device-global-${Date.now().toString(36)}-${deviceGlobalSeq}`;
   const { inputs, outputs } = deviceGlobalNodePins();
   const data: BoardFlowNodeData = {
-    label: 'Device',
+    label: 'GetDevice',
     layer: 'scenario',
     status: 'active',
     blockKind: 'custom',
     nodeKind: DEVICE_GLOBAL_NODE_KIND,
+    system: true,
     inputs,
     outputs,
   };
@@ -57,11 +54,33 @@ export function createDeviceGlobalBoardNode(
     id,
     type: 'board',
     position: options.position ?? { x: 0, y: 0 },
+    deletable: false,
     data,
   };
 }
 
-/** True, если узел — глобальный Device. */
+/** True, если узел — GetDevice (device-global). */
 export function isDeviceGlobalNode(node: Node): boolean {
   return isBoardFlowNodeData(node.data) && node.data.nodeKind === DEVICE_GLOBAL_NODE_KIND;
+}
+
+/** Идемпотентная синхронизация пинов GetDevice после hydrate. */
+export function syncDeviceGlobalNodePins(nodes: readonly Node[]): Node[] {
+  const { inputs, outputs } = deviceGlobalNodePins();
+  return nodes.map((node) => {
+    if (!isDeviceGlobalNode(node)) {
+      return node;
+    }
+    return {
+      ...node,
+      deletable: false,
+      data: {
+        ...(node.data as BoardFlowNodeData),
+        system: true,
+        label: 'GetDevice',
+        inputs,
+        outputs,
+      },
+    };
+  });
 }

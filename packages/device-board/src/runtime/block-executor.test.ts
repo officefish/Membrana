@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { PALETTE_VALUE_HANDLE } from '../graph/palette-node.js';
 import { executeScenarioBlock } from './block-executor.js';
 import { createStubScenarioRuntimeHost } from './host.js';
+import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { ScenarioVariableStore } from './variable-store.js';
 import type { ScenarioSubgraph } from '@membrana/core';
 
@@ -201,9 +202,10 @@ describe('executeScenarioBlock print', () => {
 });
 
 describe('executeScenarioBlock stop-runtime', () => {
-  it('StopRuntime invokes onStopRuntime and requests stop', async () => {
+  it('StopRuntime skips when device input is missing', async () => {
     const onStopRuntime = vi.fn();
     const host = createStubScenarioRuntimeHost();
+    const variableStore = new ScenarioVariableStore();
     const node = {
       id: 'sr-1',
       nodeKind: 'stop-runtime' as const,
@@ -221,10 +223,181 @@ describe('executeScenarioBlock stop-runtime', () => {
       lastDetection: null,
       defaultChunkDurationMs: 5000,
       functions: [],
+      variableStore,
+      resolveContext: {
+        handlerBranch: 'main',
+        deviceHandle: 'dev-1',
+        triggeredAt: '2026-06-18T12:00:00.000Z',
+      },
+      onStopRuntime,
+    });
+
+    expect(onStopRuntime).not.toHaveBeenCalled();
+    expect(result.stopRequested).toBe(false);
+  });
+
+  it('StopRuntime invokes onStopRuntime when device ref is valid', async () => {
+    const onStopRuntime = vi.fn();
+    const host = createStubScenarioRuntimeHost();
+    const variableStore = new ScenarioVariableStore();
+    const node = {
+      id: 'sr-1',
+      nodeKind: 'stop-runtime' as const,
+      blockKind: 'custom' as const,
+      label: 'StopRuntime',
+    };
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        { id: 'dg', nodeKind: 'device-global', blockKind: 'custom', label: 'GetDevice' },
+        node,
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data',
+          source: 'dg',
+          sourceHandle: 'device',
+          target: 'sr-1',
+          targetHandle: 'device',
+          dataType: 'DeviceRef',
+        },
+      ],
+    };
+
+    const result = await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore,
+      resolveContext: {
+        handlerBranch: 'main',
+        deviceHandle: 'dev-1',
+        triggeredAt: '2026-06-18T12:00:00.000Z',
+      },
       onStopRuntime,
     });
 
     expect(onStopRuntime).toHaveBeenCalledOnce();
     expect(result.stopRequested).toBe(true);
+  });
+});
+
+describe('executeScenarioBlock terminal nodes (DBC4)', () => {
+  it('NewTrack calls createTrackFromSampleRefs with resolved batch refs', async () => {
+    const createTrackFromSampleRefs = vi.fn(async () => ({ trackId: 'track-abc' }));
+    const host = createStubScenarioRuntimeHost({ createTrackFromSampleRefs });
+    const variableStore = new ScenarioVariableStore();
+    const collectStore = new CollectRuntimeStore();
+    const sampleA = { kind: 'AudioSampleRef' as const, handle: 's-1', valid: true };
+    const sampleB = { kind: 'AudioSampleRef' as const, handle: 's-2', valid: true };
+    collectStore.setLastBatch('collect-1', [sampleA, sampleB], 'AudioSampleRefList');
+
+    const node = {
+      id: 'nt-1',
+      nodeKind: 'new-track' as const,
+      blockKind: 'custom' as const,
+      label: 'NewTrack',
+    };
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        { id: 'collect-1', nodeKind: 'collect-samples', blockKind: 'custom', label: 'Collect' },
+        node,
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data',
+          source: 'collect-1',
+          sourceHandle: 'batches',
+          target: 'nt-1',
+          targetHandle: 'samples',
+          dataType: 'AudioSampleRefList',
+        },
+      ],
+    };
+
+    await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore,
+      collectStore,
+      resolveContext: {
+        getCollectBatchRef: (nodeId) => collectStore.getLastBatchRef(nodeId),
+      },
+    });
+
+    expect(createTrackFromSampleRefs).toHaveBeenCalledWith('nt-1', [sampleA, sampleB]);
+  });
+
+  it('NewFftTrendsAnalysis calls analyzeFftTrendsFromFrameRefs', async () => {
+    const analyzeFftTrendsFromFrameRefs = vi.fn(async () => ({
+      detected: true,
+      confidence: 88,
+      templateId: 'DRONE_TIGHT',
+    }));
+    const host = createStubScenarioRuntimeHost({ analyzeFftTrendsFromFrameRefs });
+    const variableStore = new ScenarioVariableStore();
+    const collectStore = new CollectRuntimeStore();
+    const frameA = { kind: 'FftFrameRef' as const, handle: 'f-1', valid: true };
+    collectStore.setLastBatch('collect-fft', [frameA], 'FftFrameRefList');
+
+    const node = {
+      id: 'nft-1',
+      nodeKind: 'new-fft-trends-analysis' as const,
+      blockKind: 'custom' as const,
+      label: 'NewFftTrendsAnalysis',
+    };
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        {
+          id: 'collect-fft',
+          nodeKind: 'collect-fft-frames',
+          blockKind: 'custom',
+          label: 'CollectFft',
+        },
+        node,
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data',
+          source: 'collect-fft',
+          sourceHandle: 'batches',
+          target: 'nft-1',
+          targetHandle: 'frames',
+          dataType: 'FftFrameRefList',
+        },
+      ],
+    };
+
+    const result = await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore,
+      collectStore,
+      resolveContext: {
+        getCollectBatchRef: (nodeId) => collectStore.getLastBatchRef(nodeId),
+      },
+    });
+
+    expect(analyzeFftTrendsFromFrameRefs).toHaveBeenCalledWith('nft-1', [frameA]);
+    expect(result.lastDetection?.detected).toBe(true);
   });
 });

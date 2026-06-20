@@ -29,7 +29,7 @@ export const BoardConnectionSuggestModal: React.FC<BoardConnectionSuggestModalPr
           Добавить узел
         </h3>
         <p className="mt-1 text-xs text-base-content/60">
-          Совместимые методы устройства из палитры:
+          Совместимые узлы по схеме портов источника:
         </p>
         {suggestions.length === 0 ? (
           <p className="mt-3 text-xs text-base-content/50">Нет совместимых узлов для этого порта.</p>

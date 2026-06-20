@@ -1,4 +1,5 @@
 import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
+import { resolveScenarioCollectorConfig } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
 import { isBoardFlowNodeData } from './board-node-data.js';
@@ -58,8 +59,12 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
     };
   }
 
-  // v0.4: узлы палитры (print / is-valid / get-microphone / streaming / fft).
+  // v0.4: узлы палитры (print / is-valid / get-microphone / streaming / fft / collect).
   if (nodeKind !== undefined && isPaletteNodeKind(nodeKind)) {
+    const collectorConfig =
+      node.data.collectorConfig !== undefined
+        ? resolveScenarioCollectorConfig(node.data.collectorConfig)
+        : undefined;
     return {
       id: node.id,
       blockKind,
@@ -67,6 +72,7 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       label: node.data.label,
       nodeKind,
       ...(typeof node.data.microphoneId === 'string' ? { microphoneId: node.data.microphoneId } : {}),
+      ...(collectorConfig !== undefined ? { collectorConfig } : {}),
     } as ScenarioGraphNode;
   }
 
@@ -96,7 +102,12 @@ function toScenarioEdge(edge: Edge, nodes: readonly Node[]): ScenarioGraphEdge |
     return null;
   }
 
-  const kind = sourceResolved.pinKind === 'exec' ? 'exec' : 'data';
+  const kind =
+    sourceResolved.pinKind === 'event'
+      ? 'event'
+      : sourceResolved.pinKind === 'exec'
+        ? 'exec'
+        : 'data';
   return {
     source: edge.source,
     sourceHandle,
@@ -200,11 +211,14 @@ export function deserializeScenarioSubgraph(
 
     if (item.nodeKind !== undefined && isPaletteNodeKind(item.nodeKind)) {
       const micId = (item as { microphoneId?: string }).microphoneId;
+      const collectorConfig = (item as { collectorConfig?: ScenarioGraphNode['collectorConfig'] })
+        .collectorConfig;
       nodes.push(
         createPaletteBoardNode(item.nodeKind, {
           id: item.id,
           position: { x: item.position.x, y: item.position.y },
           ...(typeof micId === 'string' ? { microphoneId: micId } : {}),
+          ...(collectorConfig !== undefined ? { collectorConfig } : {}),
         }),
       );
       if (typeof item.label === 'string') {

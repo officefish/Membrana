@@ -33,6 +33,9 @@ export function isValidBoardConnection(
     if (sourceResolved.pinKind === 'exec' && targetResolved.pinKind === 'exec') {
       return true;
     }
+    if (sourceResolved.pinKind === 'event' && targetResolved.pinKind === 'exec') {
+      return targetHandle === 'exec-in';
+    }
     if (sourceResolved.pinKind === 'data' && targetResolved.pinKind === 'data') {
       const targetNode = nodes.find((item) => item.id === target);
       if (

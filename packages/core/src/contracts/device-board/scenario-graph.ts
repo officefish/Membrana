@@ -7,6 +7,7 @@ import type { GraphNodeId, GraphPosition } from './graph-primitives.js';
 import type { SocketType } from './socket-type.js';
 import type { ScenarioNodeKind } from './scenario-node-kind.js';
 import type { ScenarioVariable } from './scenario-variables.js';
+import type { ScenarioCollectorConfig } from './collector-config.js';
 
 /**
  * Системные ветки сценария (фиксированы на устройстве).
@@ -50,7 +51,7 @@ export const SCENARIO_BLOCK_KINDS = [
 export type ScenarioBlockKind = (typeof SCENARIO_BLOCK_KINDS)[number];
 
 /** Семантика ребра scenario graph. */
-export type ScenarioEdgeKind = 'exec' | 'data';
+export type ScenarioEdgeKind = 'exec' | 'data' | 'event';
 
 /** Нода scenario graph. Параметры блока — в persisted-state плагина, не в JSON. */
 export interface ScenarioGraphNode {
@@ -69,6 +70,8 @@ export interface ScenarioGraphNode {
   readonly variableId?: string;
   /** v0.4+: `event` в лупах — `loopTick` (onTick); обработчики — `handler` или не задано. */
   readonly eventVariant?: 'handler' | 'loopTick';
+  /** v0.5: настройки Collect-узла (sidebar); policy на singleton — future. */
+  readonly collectorConfig?: ScenarioCollectorConfig;
 }
 
 /** Ребро scenario graph. */

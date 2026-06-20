@@ -1,57 +1,40 @@
 import { describe, expect, it } from 'vitest';
-import type { Node } from '@xyflow/react';
 
-import { EVENT_DATETIME_HANDLE } from './event-node.js';
-import { createPaletteBoardNode, PALETTE_VALUE_HANDLE } from './palette-node.js';
+import { createPaletteBoardNode } from './palette-node.js';
 import { isValidBoardConnection } from './connection-validation.js';
+import { COLLECT_EVENT_OUT_HANDLE } from './collect-node-shared.js';
 
-describe('isValidBoardConnection', () => {
-  const eventNode = {
-    id: 'evt',
-    type: 'board',
-    position: { x: 0, y: 0 },
-    data: {
-      label: 'Event',
-      layer: 'scenario',
-      nodeKind: 'event',
-      outputs: [{ name: EVENT_DATETIME_HANDLE, kind: 'data', socketType: 'DateTime' }],
-    },
-  } as Node;
-
-  it('allows DateTime → print value', () => {
-    const print = createPaletteBoardNode('print', { id: 'pr' });
+describe('connection-validation event edges (DBC3)', () => {
+  it('allows event-out from Collect to exec-in on print', () => {
+    const collect = createPaletteBoardNode('collect-samples', { id: 'cs' });
+    const print = createPaletteBoardNode('print', { id: 'p' });
+    const nodes = [collect, print];
     expect(
       isValidBoardConnection(
         {
-          source: 'evt',
-          target: 'pr',
-          sourceHandle: EVENT_DATETIME_HANDLE,
-          targetHandle: PALETTE_VALUE_HANDLE,
+          source: 'cs',
+          target: 'p',
+          sourceHandle: COLLECT_EVENT_OUT_HANDLE,
+          targetHandle: 'exec-in',
         },
-        [eventNode, print],
+        nodes,
         'scenario',
       ),
     ).toBe(true);
   });
 
-  it('allows ServerRef → print value', () => {
-    const print = createPaletteBoardNode('print', { id: 'pr' });
-    const serverEvent = {
-      ...eventNode,
-      data: {
-        ...eventNode.data,
-        outputs: [{ name: 'server', kind: 'data', socketType: 'ServerRef' }],
-      },
-    } as Node;
+  it('allows RecorderRef to collect-samples recorder input', () => {
+    const getter = createPaletteBoardNode('get-recorder', { id: 'gr' });
+    const collect = createPaletteBoardNode('collect-samples', { id: 'cs' });
     expect(
       isValidBoardConnection(
         {
-          source: 'evt',
-          target: 'pr',
-          sourceHandle: 'server',
-          targetHandle: PALETTE_VALUE_HANDLE,
+          source: 'gr',
+          target: 'cs',
+          sourceHandle: 'recorder',
+          targetHandle: 'recorder',
         },
-        [serverEvent, print],
+        [getter, collect],
         'scenario',
       ),
     ).toBe(true);

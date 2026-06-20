@@ -26,11 +26,29 @@ export {
 
 export {
   SCENARIO_NODE_KINDS,
+  COLLECTOR_SCENARIO_NODE_KINDS,
+  TERMINAL_SCENARIO_NODE_KINDS,
   SYSTEM_SCENARIO_NODE_KINDS,
   type ScenarioNodeKind,
+  type CollectorScenarioNodeKind,
   isScenarioNodeKind,
   isSystemScenarioNodeKind,
+  isCollectorScenarioNodeKind,
+  isTerminalScenarioNodeKind,
 } from './scenario-node-kind.js';
+
+export {
+  SCENARIO_PIN_KINDS,
+  type ScenarioPinKind,
+  isScenarioPinKind,
+} from './scenario-pin-kind.js';
+
+export {
+  DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+  type ScenarioCollectorConfig,
+  resolveScenarioCollectorConfig,
+  isScenarioCollectorConfig,
+} from './collector-config.js';
 
 export {
   type ScenarioReferenceVariableType,

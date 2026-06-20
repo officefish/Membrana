@@ -9,12 +9,10 @@
 > релиза — это «север» для пакета `device-board`, к которому будут сверяться
 > PR агентов AI-команды.
 >
-> Статус: **v0.4 — концепт** (signal + scenario + переменные + dataflow-ссылки,
-> обработчики событий). Раздел изменений v0.4 — см. §15 (контракты `@membrana/core`
-> уже расширены: `DeviceRef`/`MicrophoneRef`, `scenario.onConnect`,
-> `scenario.variables`, таксономия `ScenarioNodeKind`; schema-версия документа → 2).
-> Предыдущие версии: v0.3 (signal + scenario, visual scripting, хакатон 1),
-> v0.2 (2026-06, выбор `@xyflow/react`). Хранитель: Teamlead.
+> Статус: **v0.5 — collectors** (Recorder/SpectralAnalyser singletons, Collect event-ports).
+> v0.4 — signal + scenario + переменные + dataflow-ссылки, обработчики событий (§15).
+> Контракты `@membrana/core`: v0.4 + v0.5 collectors (§16); schema-версия документа → 2.
+> Предыдущие версии: v0.3 (хакатон 1), v0.2 (2026-06, `@xyflow/react`). Хранитель: Teamlead.
 > Бриф и интервью: [`docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md`](../../docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md),
 > [`docs/seanses/hackathon-brief-interview-2026-06-17.md`](../../docs/seanses/hackathon-brief-interview-2026-06-17.md).
 > При конфликте с `WHITE_PAPER.md` / `ARCHITECTURE.md` выигрывают они.
@@ -768,5 +766,54 @@ disabled + `title`/`aria-label` «нет связи с устройством» 
   D0 `SCENARIO_BLOCK_KINDS`).
 - `ScenarioGraphNode += nodeKind? / system? / variableId?` (аддитивно).
 - `ScenarioGraph += onConnect / variables`.
-- `DEVICE_SCENARIO_DOCUMENT_VERSION = 2`, `DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1`;
+  - `DEVICE_SCENARIO_DOCUMENT_VERSION = 2`, `DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1`;
   `parseDeviceScenarioDocument` мигрирует v1→v2 и отклоняет version > 2.
+
+---
+
+## 16. Collectors v0.5: Recorder, SpectralAnalyser, event-порты
+
+> Эпик `device-board-collectors-v05` (DBC0–DBC6). Консилиум:
+> `docs/seanses/device-board-collectors-v05-2026-06-20.md`.
+
+### 16.1 Модель
+
+| Сущность | Ref / тип | Роль |
+|----------|-----------|------|
+| **GetRecorder(device)** | `RecorderRef` | Singleton на device runtime — очередь `AudioSampleRef` |
+| **GetSpectralAnalyser(device)** | `SpectralAnalyserRef` | Singleton — очередь `FftFrameRef` |
+| **GetSample** | `AudioSampleRef` | PCM-окно за exec-тик (Sample ≠ Frame) |
+| **GetFFTFrame** | `FftFrameRef` | Спектр из Sample (отдельный узел) |
+| **CollectSamples / CollectFftFrames** | config + event-out | Append + flush → `AudioSampleRefList` / `FftFrameRefList` |
+| **NewTrack / NewFftTrendsAnalysis** | terminal | data-in: массив ref → track / trends report |
+
+Микрофон (`MicrophoneRef`) — только A/D и `StartStreaming`; **не** владелец треков.
+
+**Policy на singleton — frozen (v0.6).** MVP: `collectorConfig` на Collect-узле, правый сайдбар
+(defaults: bufferSize 2048, smoothing 0.75, windowSec 3, queueCapacity 10).
+
+### 16.2 Pin kind `event`
+
+- `exec` — каждый tick лупа;
+- `data` — dataflow;
+- **`event`** — квадратный handle; срабатывает при flush Collect (count **OR** windowSec).
+
+Рёбра `ScenarioEdgeKind: 'event'` соединяют `event-out` Collect с downstream exec-in.
+
+### 16.3 Канонический граф (MVP)
+
+```text
+GetDevice → GetRecorder / GetSpectralAnalyser
+GetMicrophone → StartStreaming → stream
+Main tick: GetSample → GetFFTFrame → CollectFftFrames → [event] → NewFftTrendsAnalysis
+Parallel: CollectSamples → [event] → NewTrack
+```
+
+### 16.4 Контракты (DBC0, `@membrana/core`)
+
+- `SocketType += RecorderRef | SpectralAnalyserRef | AudioSampleRefList | FftFrameRefList`
+- `SCENARIO_NODE_KINDS += get-recorder, get-spectral-analyser, collect-samples,
+  collect-fft-frames, new-track, new-fft-trends-analysis`
+- `ScenarioPinKind += 'event'`; `ScenarioEdgeKind += 'event'`
+- `ScenarioCollectorConfig`, `DEFAULT_SCENARIO_COLLECTOR_CONFIG`, `resolveScenarioCollectorConfig`
+- `ScenarioGraphNode += collectorConfig?`

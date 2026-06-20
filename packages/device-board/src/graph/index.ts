@@ -46,15 +46,73 @@ export {
   DEVICE_GLOBAL_DEVICE_HANDLE,
   DEVICE_GLOBAL_NODE_KIND,
   isDeviceGlobalNode,
+  syncDeviceGlobalNodePins,
 } from './device-global-node.js';
 export type { CreateDeviceGlobalBoardNodeOptions } from './device-global-node.js';
 export {
   createStopRuntimeBoardNode,
   stopRuntimeNodePins,
   STOP_RUNTIME_NODE_KIND,
+  STOP_RUNTIME_DEVICE_HANDLE,
   isStopRuntimeNode,
 } from './stop-runtime-node.js';
 export type { CreateStopRuntimeBoardNodeOptions } from './stop-runtime-node.js';
+export {
+  createGetRecorderBoardNode,
+  getRecorderNodePins,
+  GET_RECORDER_NODE_KIND,
+  GET_RECORDER_DEVICE_HANDLE,
+  GET_RECORDER_OUT_HANDLE,
+  isGetRecorderNode,
+} from './get-recorder-node.js';
+export type { CreateGetRecorderBoardNodeOptions } from './get-recorder-node.js';
+export {
+  createGetSpectralAnalyserBoardNode,
+  getSpectralAnalyserNodePins,
+  GET_SPECTRAL_ANALYSER_NODE_KIND,
+  GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+  GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+  isGetSpectralAnalyserNode,
+} from './get-spectral-analyser-node.js';
+export type { CreateGetSpectralAnalyserBoardNodeOptions } from './get-spectral-analyser-node.js';
+export {
+  COLLECT_BATCH_OUT_HANDLE,
+  COLLECT_EVENT_OUT_HANDLE,
+} from './collect-node-shared.js';
+export {
+  createCollectSamplesBoardNode,
+  collectSamplesNodePins,
+  COLLECT_SAMPLES_NODE_KIND,
+  COLLECT_SAMPLES_RECORDER_HANDLE,
+  COLLECT_SAMPLES_SAMPLE_HANDLE,
+  isCollectSamplesNode,
+} from './collect-samples-node.js';
+export type { CreateCollectSamplesBoardNodeOptions } from './collect-samples-node.js';
+export {
+  createCollectFftFramesBoardNode,
+  collectFftFramesNodePins,
+  COLLECT_FFT_FRAMES_NODE_KIND,
+  COLLECT_FFT_ANALYSER_HANDLE,
+  COLLECT_FFT_FRAME_HANDLE,
+  isCollectFftFramesNode,
+} from './collect-fft-frames-node.js';
+export type { CreateCollectFftFramesBoardNodeOptions } from './collect-fft-frames-node.js';
+export type { CreateNewFftTrendsAnalysisBoardNodeOptions } from './new-fft-trends-analysis-node.js';
+export {
+  createNewTrackBoardNode,
+  newTrackNodePins,
+  NEW_TRACK_NODE_KIND,
+  NEW_TRACK_SAMPLES_HANDLE,
+  isNewTrackNode,
+} from './new-track-node.js';
+export type { CreateNewTrackBoardNodeOptions } from './new-track-node.js';
+export {
+  createNewFftTrendsAnalysisBoardNode,
+  newFftTrendsAnalysisNodePins,
+  NEW_FFT_TRENDS_ANALYSIS_NODE_KIND,
+  NEW_FFT_TRENDS_FRAMES_HANDLE,
+  isNewFftTrendsAnalysisNode,
+} from './new-fft-trends-analysis-node.js';
 export {
   suggestPaletteNodesForOutgoingConnection,
 } from './connection-suggest.js';
@@ -106,6 +164,12 @@ export {
 export type { CreatePaletteBoardNodeOptions, V04PaletteNodeKind } from './palette-node.js';
 export { resolveHandle } from './handle-catalog.js';
 export type { ResolvedHandle } from './handle-catalog.js';
+export {
+  resolveBoardNodeOutputPin,
+  resolveBoardNodePinLayout,
+  scenarioNodePinsForKind,
+} from './scenario-node-pins.js';
+export type { ScenarioNodePinLayout } from './scenario-node-pins.js';
 export { isValidBoardConnection, isValidBoardEdge } from './connection-validation.js';
 export { serializeSignalGraph, deserializeSignalGraph } from './serialize-signal-graph.js';
 export { serializeScenarioSubgraph, deserializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
