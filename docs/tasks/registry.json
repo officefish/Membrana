@@ -3508,6 +3508,95 @@
       ],
       "notes": "Unified PR with P0–P3 chain trace epic closure.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-realtime-observation-pipeline",
+      "title": "DB Realtime Observation Pipeline: continuous capture → bundle report+track (эпик P0–P3)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Epic P0-P3 complete on vesnin branch; smoke with updated main (3) scenario",
+      "dependsOn": [
+        "db-scenario-chain-trace-p3"
+      ],
+      "notes": "Lead: Vesnin. Target ~20 obs/min, async track, trends-fft parity, no device-board-scenario/v1 in journal.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p0-quick-wins",
+      "title": "DB Observation P0: async MakeTrack, crossfade, windowSec=3, drop drone publish",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "async MakeTrack, crossfade, windowSec=3, drop drone publish, alarm writeJournal skip",
+      "dependsOn": [
+        "db-realtime-observation-pipeline"
+      ],
+      "notes": "Quick wins: unblock main loop tick.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p1-continuous-buffer",
+      "title": "DB Observation P1: continuous PCM buffer slice for MakeTrack",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "ScenarioContinuousPcmBuffer slice in createTrackFromSampleRefs",
+      "dependsOn": [
+        "db-observation-p0-quick-wins"
+      ],
+      "notes": "Host ring buffer per deviceHandle; no ref-queue concat for track.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p2-bundle",
+      "title": "DB Observation P2: device-board-observation/v1 bundle + renderer",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "device-board-observation/v1 schema, linked trackId, journal renderers",
+      "dependsOn": [
+        "db-observation-p1-continuous-buffer"
+      ],
+      "notes": "Single journal row: trends + trackId; lazy audio.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p3-frame-trends",
+      "title": "DB Observation P3: trends from FFT frame metrics (no PCM round-trip)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "analyzeTrendsFromFftFrames, stateful flux on scenarioFftAnalyzer",
+      "dependsOn": [
+        "db-observation-p2-bundle"
+      ],
+      "notes": "classifyTrends on MetricSample[] from frame meta.",
+      "githubIssueClosedAt": null
     }
   ]
 }

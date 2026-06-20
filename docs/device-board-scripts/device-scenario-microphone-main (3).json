@@ -155,7 +155,7 @@
         "collectorConfig": {
           "bufferSize": 2048,
           "smoothingTimeConstant": 0.75,
-          "windowSec": 5,
+          "windowSec": 3,
           "queueCapacity": 999
         }
       },
@@ -181,7 +181,7 @@
         "collectorConfig": {
           "bufferSize": 2048,
           "smoothingTimeConstant": 0.75,
-          "windowSec": 5,
+          "windowSec": 3,
           "queueCapacity": 999
         }
       },
@@ -450,12 +450,34 @@
         "dataType": "JournalRef"
       },
       {
+        "source": "node-collect-samples-mqm9tz3e-26",
+        "sourceHandle": "event-out",
+        "target": "node-get-reporter-mqm9yfmy-29",
+        "targetHandle": "exec-in",
+        "kind": "event"
+      },
+      {
         "source": "node-get-reporter-mqm9yfmy-29",
-        "sourceHandle": "reporter",
-        "target": "node-make-report-from-track-mqma2zhv-33",
-        "targetHandle": "reporter",
+        "sourceHandle": "exec-out",
+        "target": "node-make-track-mqmcipn5-28",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-recorder-mqm9sdoi-25",
+        "sourceHandle": "recorder",
+        "target": "node-make-track-mqmcipn5-28",
+        "targetHandle": "recorder",
         "kind": "data",
-        "dataType": "ReporterRef"
+        "dataType": "RecorderRef"
+      },
+      {
+        "source": "node-collect-samples-mqm9tz3e-26",
+        "sourceHandle": "batches",
+        "target": "node-make-track-mqmcipn5-28",
+        "targetHandle": "samples",
+        "kind": "data",
+        "dataType": "AudioSampleRefList"
       },
       {
         "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqma4k3m-17",
@@ -464,21 +486,6 @@
         "targetHandle": "journal",
         "kind": "data",
         "dataType": "JournalRef"
-      },
-      {
-        "source": "node-make-report-from-track-mqma2zhv-33",
-        "sourceHandle": "exec-out",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-make-report-from-track-mqma2zhv-33",
-        "sourceHandle": "report",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "report",
-        "kind": "data",
-        "dataType": "ReportRef"
       },
       {
         "source": "node-make-report-from-analysis-mqma356z-34",
@@ -527,43 +534,6 @@
         "dataType": "FftFrameRef"
       },
       {
-        "source": "node-make-track-mqmcipn5-28",
-        "sourceHandle": "exec-out",
-        "target": "node-make-report-from-track-mqma2zhv-33",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-collect-samples-mqm9tz3e-26",
-        "sourceHandle": "event-out",
-        "target": "node-get-reporter-mqm9yfmy-29",
-        "targetHandle": "exec-in",
-        "kind": "event"
-      },
-      {
-        "source": "node-get-reporter-mqm9yfmy-29",
-        "sourceHandle": "exec-out",
-        "target": "node-make-track-mqmcipn5-28",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-get-recorder-mqm9sdoi-25",
-        "sourceHandle": "recorder",
-        "target": "node-make-track-mqmcipn5-28",
-        "targetHandle": "recorder",
-        "kind": "data",
-        "dataType": "RecorderRef"
-      },
-      {
-        "source": "node-collect-samples-mqm9tz3e-26",
-        "sourceHandle": "batches",
-        "target": "node-make-track-mqmcipn5-28",
-        "targetHandle": "samples",
-        "kind": "data",
-        "dataType": "AudioSampleRefList"
-      },
-      {
         "source": "node-collect-fft-frames-mqm9wezu-28",
         "sourceHandle": "event-out",
         "target": "node-make-fft-trends-analysis-mqmciscp-29",
@@ -600,14 +570,6 @@
         "targetHandle": "analysis",
         "kind": "data",
         "dataType": "FftTrendAnalysisRef"
-      },
-      {
-        "source": "node-make-track-mqmcipn5-28",
-        "sourceHandle": "track",
-        "target": "node-make-report-from-track-mqma2zhv-33",
-        "targetHandle": "track",
-        "kind": "data",
-        "dataType": "TrackRef"
       }
     ]
   },

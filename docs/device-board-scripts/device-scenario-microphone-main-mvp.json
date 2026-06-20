@@ -2,7 +2,7 @@
   "exportKind": "branch-scenario",
   "branch": "main",
   "branchLabel": "onMainTick",
-  "scenarioTitle": "MVP: 5s tracks + FFT trends → server journal",
+  "scenarioTitle": "MVP: 3s observation bundle → server journal",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "main-on-tick",
@@ -155,7 +155,7 @@
         "collectorConfig": {
           "bufferSize": 2048,
           "smoothingTimeConstant": 0.75,
-          "windowSec": 5,
+          "windowSec": 3,
           "queueCapacity": 999
         }
       },
@@ -181,7 +181,7 @@
         "collectorConfig": {
           "bufferSize": 2048,
           "smoothingTimeConstant": 0.75,
-          "windowSec": 5,
+          "windowSec": 3,
           "queueCapacity": 999
         }
       },
@@ -500,21 +500,6 @@
         "dataType": "FftFrameRefList"
       },
       {
-        "source": "node-get-reporter-mqm9yfmy-29",
-        "sourceHandle": "reporter",
-        "target": "node-make-report-from-track-mqma2zhv-33",
-        "targetHandle": "reporter",
-        "kind": "data",
-        "dataType": "ReporterRef"
-      },
-      {
-        "source": "node-get-reporter-mqm9yfmy-29",
-        "sourceHandle": "exec-out",
-        "target": "node-make-report-from-track-mqma2zhv-33",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
         "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqma4k3m-17",
         "sourceHandle": "value",
         "target": "node-publish-report-mqma49xv-35",
@@ -523,21 +508,6 @@
         "dataType": "JournalRef"
       },
       {
-        "source": "node-make-report-from-track-mqma2zhv-33",
-        "sourceHandle": "exec-out",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-make-report-from-track-mqma2zhv-33",
-        "sourceHandle": "report",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "report",
-        "kind": "data",
-        "dataType": "ReportRef"
-      },
-      {
         "source": "node-make-report-from-analysis-mqma356z-34",
         "sourceHandle": "exec-out",
         "target": "node-publish-report-mqma49xv-35",
@@ -553,22 +523,7 @@
         "dataType": "ReportRef"
       },
       {
-        "source": "node-new-track-mqma0jnm-31",
-        "sourceHandle": "exec-out",
-        "target": "node-make-report-from-track-mqma2zhv-33",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-new-track-mqma0jnm-31",
-        "sourceHandle": "track",
-        "target": "node-make-report-from-track-mqma2zhv-33",
-        "targetHandle": "track",
-        "kind": "data",
-        "dataType": "TrackRef"
-      },
-      {
-        "source": "node-new-fft-trends-analysis-mqma2lhf-32",
+        "source": "node-get-fft-frame-mql3g2ys-11",
         "sourceHandle": "exec-out",
         "target": "node-make-report-from-analysis-mqma356z-34",
         "targetHandle": "exec-in",

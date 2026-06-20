@@ -49,12 +49,15 @@ import { reconfigureJournalFromConnection } from '@/lib/journalHubBridge';
 import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 import { encodeWavPcm16 } from '@/plugins/mic-buffer-recorder/encodeWav';
 import { startClipRecorder } from '@/plugins/mic-buffer-recorder/clipRecorder';
+import { analyzeTrendsFromFftFrames } from './analyzeTrendsFromFftFrames';
+import { concatAudioSamplePayloads } from './concat-audio-samples';
+import { ScenarioContinuousPcmBuffer } from './scenario-continuous-pcm-buffer';
 
 import { analyzeChunkTrendsFft } from './analyzeChunkTrendsFft';
 import { buildTrendsFftReport, type TrendsFftReport } from '@/plugins/trends-fft-analyzer/buildTrendsFftReport';
+import { DEVICE_BOARD_OBSERVATION_SCHEMA } from '@membrana/journal-report-views';
 import {
   buildTrendsFftSummaryText,
-  TRENDS_FFT_JOURNAL_SCHEMA,
   trendsFftSyntheticTrackId,
 } from '@/plugins/trends-fft-analyzer/appendTrendsFftJournalReport';
 import { analyzeSampleDetectors } from '@/plugins/sample-library-drone-analysis/analyzeSampleDetectors';
@@ -99,6 +102,7 @@ export interface FftFramePayloadMeta {
   readonly binCount: number;
   readonly dominantHz: number;
   readonly spectralCentroidHz: number;
+  readonly flux: number;
   readonly rms: number;
   readonly computedAtIso: string;
 }
@@ -119,27 +123,6 @@ function createEntryId(prefix: string): string {
 
 function clampChunkDurationMs(durationMs: number): number {
   return Math.min(MAX_CHUNK_MS, Math.max(MIN_CHUNK_MS, durationMs));
-}
-
-function concatAudioSamplePayloads(
-  payloads: readonly AudioSamplePayload[],
-): { readonly samples: Float32Array; readonly sampleRate: number; readonly durationSec: number } | null {
-  if (payloads.length === 0) {
-    return null;
-  }
-  const sampleRate = payloads[0]!.sampleRate;
-  const totalLength = payloads.reduce((sum, payload) => sum + payload.samples.length, 0);
-  const samples = new Float32Array(totalLength);
-  let offset = 0;
-  for (const payload of payloads) {
-    samples.set(payload.samples, offset);
-    offset += payload.samples.length;
-  }
-  return {
-    samples,
-    sampleRate,
-    durationSec: samples.length / sampleRate,
-  };
 }
 
 function parseTrackIdFromHandle(handle: string): string | null {
@@ -254,10 +237,19 @@ export class ScenarioMicJournalBridge {
 
   private readonly collectorRegistry: DeviceCollectorRegistry = createDeviceCollectorRegistry();
 
+  private readonly continuousPcmByDevice = new Map<string, ScenarioContinuousPcmBuffer>();
+
+  private lastRecorderFlushDeviceHandle: string | null = null;
+
+  private lastObservationTrackId: string | null = null;
+
   /** Reused across main ticks — avoids cold AnalyserNode frames (all zeros). */
   private streamCaptureSampler: LiveSampler | null = null;
 
   private streamCaptureStream: MediaStream | null = null;
+
+  /** Stateful flux между FFT-кадрами main loop (P3 trends path). */
+  private readonly scenarioFftAnalyzer = new FftAnalyzer({ fftSize: SOUND_LEVEL_FFT_SIZE });
 
   getLastChunk(): RecordedChunkMeta | null {
     return this.lastChunk;
@@ -352,6 +344,14 @@ export class ScenarioMicJournalBridge {
     const session = this.collectorRegistry.getOrCreateRecorder(deviceHandle);
     const payload =
       sampleRef.handle !== null ? this.audioSamplePayloads.get(sampleRef.handle) : undefined;
+    if (accepted && payload !== undefined) {
+      let buffer = this.continuousPcmByDevice.get(deviceHandle);
+      if (buffer === undefined) {
+        buffer = new ScenarioContinuousPcmBuffer();
+        this.continuousPcmByDevice.set(deviceHandle, buffer);
+      }
+      buffer.append(payload.samples, payload.sampleRate);
+    }
     scenarioChainLog('collect', accepted ? 'recorder-append-ok' : 'recorder-append-rejected', {
       deviceHandle,
       sampleId: sampleRef.handle,
@@ -377,6 +377,7 @@ export class ScenarioMicJournalBridge {
   }
 
   flushRecorderSession(deviceHandle: string): CollectorSessionFlushSnapshot | null {
+    this.lastRecorderFlushDeviceHandle = deviceHandle;
     const snapshot = this.collectorRegistry.flushRecorder(deviceHandle);
     if (snapshot === null) {
       scenarioChainLog('collect', 'recorder-flush-empty', { deviceHandle });
@@ -432,9 +433,13 @@ export class ScenarioMicJournalBridge {
   /** Сброс singleton-очередей при load/start сценария (CollectRuntimeStore сбрасывается отдельно). */
   resetCollectorSessions(): void {
     this.collectorRegistry.resetAll();
+    this.continuousPcmByDevice.clear();
+    this.lastRecorderFlushDeviceHandle = null;
+    this.lastObservationTrackId = null;
+    this.scenarioFftAnalyzer.resetState();
   }
 
-  /** v0.5 DBC4: concat AudioSampleRef[] → LiveJournal track. */
+  /** v0.5 DBC4: PCM slice → LiveJournal track (upload async, не блокирует tick). */
   async createTrackFromSampleRefs(
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
@@ -449,47 +454,49 @@ export class ScenarioMicJournalBridge {
     const payloads: AudioSamplePayload[] = [];
     for (const ref of refs) {
       if (!ref.valid || ref.handle === null || ref.kind !== 'AudioSampleRef') {
-        scenarioChainLog('track', 'skip-ref', {
-          nodeId,
-          reason: 'invalid-ref',
-          kind: ref.kind,
-          valid: ref.valid,
-          handle: ref.handle,
-        });
         continue;
       }
       const payload = this.audioSamplePayloads.get(ref.handle);
-      if (payload === undefined) {
-        scenarioChainLog('track', 'skip-ref', {
-          nodeId,
-          reason: 'missing-payload',
-          sampleId: ref.handle,
-        });
-        continue;
+      if (payload !== undefined) {
+        payloads.push(payload);
       }
-      payloads.push(payload);
     }
 
-    const concat = concatAudioSamplePayloads(payloads);
+    let concat = null as ReturnType<typeof concatAudioSamplePayloads>;
+    const deviceHandle = this.lastRecorderFlushDeviceHandle;
+    if (deviceHandle !== null) {
+      const buffer = this.continuousPcmByDevice.get(deviceHandle);
+      const slice = buffer?.takeSlice() ?? null;
+      if (slice !== null) {
+        concat = {
+          samples: slice.samples,
+          sampleRate: slice.sampleRate,
+          durationSec: slice.samples.length / slice.sampleRate,
+        };
+        scenarioChainLog('track', 'continuous-slice-ok', {
+          nodeId,
+          deviceHandle,
+          durationSec: concat.durationSec.toFixed(3),
+          sampleCount: slice.samples.length,
+        });
+      }
+    }
+    if (concat === null) {
+      concat = concatAudioSamplePayloads(payloads);
+    }
     if (concat === null) {
       scenarioChainLog('track', 'abort', { nodeId, reason: 'empty-concat', payloadCount: payloads.length });
       return null;
     }
 
     const trackId = createEntryId('track');
+    this.lastObservationTrackId = trackId;
     const titleSuffix = trackId.startsWith('track-')
       ? trackId.slice('track-'.length, 'track-'.length + 12)
       : trackId.slice(0, 12);
     const title = `MakeTrack ${titleSuffix}`;
-    const createdAtIso = new Date().toISOString();
     const blob = encodeWavPcm16(concat.samples, concat.sampleRate);
     const peakRms = payloads.reduce((max, payload) => Math.max(max, payload.rms), 0);
-    const avgRms =
-      payloads.length > 0
-        ? payloads.reduce((sum, payload) => sum + payload.rms, 0) / payloads.length
-        : 0;
-    const mediaSnap = getDefaultMediaLibraryService().getSnapshot();
-    const mediaStorageMode = resolveMediaLibraryStorageMode(mediaSnap.quota);
 
     scenarioChainLog('track', 'concat-ok', {
       nodeId,
@@ -498,15 +505,35 @@ export class ScenarioMicJournalBridge {
       durationSec: concat.durationSec.toFixed(3),
       sampleRate: concat.sampleRate,
       peakRms: peakRms.toFixed(6),
-      avgRms: avgRms.toFixed(6),
       peakAbs: peakSampleAbs(concat.samples).toFixed(6),
       wavBytes: blob.size,
-      perSample: payloads.map((payload, index) => ({
-        index,
-        sampleId: refs[index]?.handle ?? null,
-        ...samplePayloadSummary(payload),
-      })),
+      uploadMode: 'async',
     });
+
+    void this.uploadTrackAsync({
+      nodeId,
+      trackId,
+      title,
+      blob,
+      durationSec: concat.durationSec,
+      sampleRate: concat.sampleRate,
+    });
+
+    return { trackId };
+  }
+
+  private async uploadTrackAsync(options: {
+    readonly nodeId: string;
+    readonly trackId: string;
+    readonly title: string;
+    readonly blob: Blob;
+    readonly durationSec: number;
+    readonly sampleRate: number;
+  }): Promise<void> {
+    const { nodeId, trackId, title, blob, durationSec, sampleRate } = options;
+    const createdAtIso = new Date().toISOString();
+    const mediaSnap = getDefaultMediaLibraryService().getSnapshot();
+    const mediaStorageMode = resolveMediaLibraryStorageMode(mediaSnap.quota);
 
     scenarioChainLog('media', 'upload-start', {
       nodeId,
@@ -516,12 +543,11 @@ export class ScenarioMicJournalBridge {
       storageMode: mediaStorageMode,
       serverReachable: mediaSnap.quota.serverReachable ?? null,
       wavBytes: blob.size,
-      durationSec: concat.durationSec.toFixed(3),
+      durationSec: durationSec.toFixed(3),
     });
 
-    let imported;
     try {
-      imported = await getDefaultMediaLibraryService().importBlob(
+      const imported = await getDefaultMediaLibraryService().importBlob(
         BUFFER_COLLECTION_ID,
         blob,
         {
@@ -529,13 +555,46 @@ export class ScenarioMicJournalBridge {
           class: 'buffer',
           label: 'unlabeled',
           source: 'mic-recording',
-          durationSec: concat.durationSec,
-          sampleRate: concat.sampleRate,
+          durationSec,
+          sampleRate,
           channels: 1,
           notes: `scenario make-track node ${nodeId}`,
         },
         { skipRefresh: true },
       );
+
+      scenarioChainLog('media', 'upload-ok', {
+        nodeId,
+        trackId,
+        sampleId: imported.id,
+        storageMode: mediaStorageMode,
+        sizeBytes: imported.sizeBytes,
+      });
+
+      const service = getDefaultLiveJournalService();
+      await service.appendTrack({
+        clientEntryId: liveJournalTrackClientEntryId(trackId),
+        moduleId: DEVICE_BOARD_MODULE_ID,
+        moduleName: LIVE_JOURNAL_MODULE_NAME,
+        tags: ['device-board:collect', 'scenario:make-track'],
+        track: {
+          schema: TELEMETRY_TRACK_SCHEMA_VERSION,
+          trackId,
+          sampleId: imported.id,
+          title,
+          durationSec,
+          sampleRate,
+          captureMode: 'auto',
+          createdAtIso,
+        },
+      });
+
+      scenarioChainLog('track', 'done', {
+        nodeId,
+        trackId,
+        sampleId: imported.id,
+        journalItemCount: service.getSnapshot().items.length,
+      });
     } catch (err) {
       const detail =
         err instanceof DomainError
@@ -548,57 +607,9 @@ export class ScenarioMicJournalBridge {
         trackId,
         storageMode: mediaStorageMode,
         error: detail,
-        durationSec: concat.durationSec.toFixed(3),
-        peakRms: peakRms.toFixed(6),
+        durationSec: durationSec.toFixed(3),
       });
-      throw new Error(
-        `MakeTrack: media upload failed — ${detail}. duration=${concat.durationSec.toFixed(2)}s peakRms=${peakRms.toFixed(6)}`,
-      );
     }
-
-    scenarioChainLog('media', 'upload-ok', {
-      nodeId,
-      trackId,
-      sampleId: imported.id,
-      storageMode: mediaStorageMode,
-      sizeBytes: imported.sizeBytes,
-    });
-
-    const journalSnap = getDefaultLiveJournalService().getSnapshot();
-    scenarioChainLog('journal', 'appendTrack-start', {
-      nodeId,
-      trackId,
-      sampleId: imported.id,
-      storageMode: journalSnap.storageMode,
-      durationSec: concat.durationSec.toFixed(3),
-    });
-
-    const service = getDefaultLiveJournalService();
-    await service.appendTrack({
-      clientEntryId: liveJournalTrackClientEntryId(trackId),
-      moduleId: DEVICE_BOARD_MODULE_ID,
-      moduleName: LIVE_JOURNAL_MODULE_NAME,
-      tags: ['device-board:collect', 'scenario:new-track'],
-      track: {
-        schema: TELEMETRY_TRACK_SCHEMA_VERSION,
-        trackId,
-        sampleId: imported.id,
-        title,
-        durationSec: concat.durationSec,
-        sampleRate: concat.sampleRate,
-        captureMode: 'auto',
-        createdAtIso,
-      },
-    });
-
-    scenarioChainLog('track', 'done', {
-      nodeId,
-      trackId,
-      sampleId: imported.id,
-      journalItemCount: service.getSnapshot().items.length,
-    });
-
-    return { trackId };
   }
 
   /** v0.5/v0.6: FftFrameRef[] → in-memory FftTrendAnalysisRef (journal report через PublishReport). */
@@ -613,7 +624,12 @@ export class ScenarioMicJournalBridge {
     });
 
     const frameSummaries: Array<Record<string, unknown>> = [];
-    const payloads: AudioSamplePayload[] = [];
+    const frameInputs: Array<{
+      computedAtIso: string;
+      spectralCentroidHz: number;
+      flux: number;
+      rms: number;
+    }> = [];
     for (const ref of refs) {
       if (!ref.valid || ref.handle === null || ref.kind !== 'FftFrameRef') {
         continue;
@@ -627,19 +643,23 @@ export class ScenarioMicJournalBridge {
         frameId: ref.handle,
         rms: frameMeta.rms.toFixed(6),
         dominantHz: frameMeta.dominantHz.toFixed(1),
+        flux: frameMeta.flux.toFixed(6),
         sampleId: frameMeta.sampleHandle,
       });
-      const samplePayload = this.audioSamplePayloads.get(frameMeta.sampleHandle);
-      if (samplePayload !== undefined) {
-        payloads.push(samplePayload);
-      }
+      frameInputs.push({
+        computedAtIso: frameMeta.computedAtIso,
+        spectralCentroidHz: frameMeta.spectralCentroidHz,
+        flux: frameMeta.flux,
+        rms: frameMeta.rms,
+      });
     }
 
-    const concat = concatAudioSamplePayloads(payloads);
-    if (concat === null) {
+    const startedAt = Date.now();
+    const analysis = analyzeTrendsFromFftFrames(frameInputs);
+    if (analysis === null) {
       scenarioChainLog('analysis', 'fft-trends-abort', {
         nodeId,
-        reason: 'empty-concat',
+        reason: 'empty-frames',
         frameSummaries,
       });
       return null;
@@ -648,12 +668,11 @@ export class ScenarioMicJournalBridge {
     scenarioChainLog('analysis', 'fft-trends-input', {
       nodeId,
       frameSummaries,
-      durationSec: concat.durationSec.toFixed(3),
-      peakRms: peakSampleAbs(concat.samples).toFixed(6),
+      metricSampleCount: analysis.metricSampleCount,
+      peakRms: analysis.rawLevel.toFixed(6),
+      source: 'fft-frame-metrics',
     });
 
-    const startedAt = Date.now();
-    const analysis = analyzeChunkTrendsFft(concat.samples, concat.sampleRate);
     const finishedAt = Date.now();
     const reportId = createEntryId('trends');
     const report = buildTrendsFftReport({
@@ -758,15 +777,21 @@ export class ScenarioMicJournalBridge {
       scenarioChainLog('report', 'trends-skip', { reason: 'analysis-not-found', analysisId });
       return null;
     }
+    const linkedTrackId =
+      this.lastObservationTrackId ??
+      trendsFftSyntheticTrackId(DEVICE_BOARD_MODULE_ID, fftReport.reportId);
     const payload = createScenarioReportPayload({
-      schema: TRENDS_FFT_JOURNAL_SCHEMA,
+      schema: DEVICE_BOARD_OBSERVATION_SCHEMA,
       reportId: fftReport.reportId,
-      trackId: trendsFftSyntheticTrackId(DEVICE_BOARD_MODULE_ID, fftReport.reportId),
+      trackId: linkedTrackId,
       isDetected: fftReport.isDetected,
       summaryText: buildTrendsFftSummaryText(fftReport),
-      payload: { report: fftReport },
+      payload: {
+        trendsReport: fftReport,
+        audioReady: this.lastObservationTrackId !== null,
+      },
     });
-    scenarioChainLog('report', 'trends-wrap-done', {
+    scenarioChainLog('report', 'observation-wrap-done', {
       analysisId,
       reportId: payload.reportId,
       isDetected: payload.isDetected,
@@ -1020,8 +1045,7 @@ export class ScenarioMicJournalBridge {
     }
 
     const window = sample.samples.subarray(0, fftSize);
-    const analyzer = new FftAnalyzer({ fftSize });
-    const result = analyzer.analyze(window, sample.sampleRate);
+    const result = this.scenarioFftAnalyzer.analyze(window, sample.sampleRate);
     const frameId = createEntryId('fft');
     this.fftFramePayloads.set(frameId, {
       sampleHandle: sampleRef.handle,
@@ -1030,6 +1054,7 @@ export class ScenarioMicJournalBridge {
       binCount: Math.floor(fftSize / 2),
       dominantHz: result.centroid,
       spectralCentroidHz: result.centroid,
+      flux: result.flux,
       rms: result.rms,
       computedAtIso: new Date().toISOString(),
     });
@@ -1242,6 +1267,12 @@ export class ScenarioMicJournalBridge {
   }
 
   async writeJournal(event: ScenarioJournalEvent): Promise<void> {
+    const branchName = event.branch as string;
+    if (branchName === 'alarm') {
+      scenarioRuntimeInfo('[device-board] writeJournal alarm skipped — use observation bundle on main flush');
+      return;
+    }
+
     const service = getDefaultLiveJournalService();
     const reportId = createEntryId('scenario');
     const trackId = this.lastChunk?.clipId ?? reportId;
@@ -1267,9 +1298,6 @@ export class ScenarioMicJournalBridge {
 
     const detected = event.payload?.detected === true;
     const tags = [`scenario:${event.branch}`];
-    if (event.branch === 'alarm') {
-      tags.push('device-board:alarm');
-    }
     if (event.branch === 'onStop') {
       tags.push('device-board:on-stop');
     }
@@ -1299,13 +1327,11 @@ export class ScenarioMicJournalBridge {
           durationSec: this.lastChunk?.durationSec,
           sampleRate: this.lastChunk?.sampleRate,
           detectorId:
-            event.branch === 'alarm'
-              ? 'sound-level'
-              : event.branch === 'onStop'
-                ? 'on-stop'
-                : event.branch === 'onDisconnect'
-                  ? 'on-disconnect'
-                  : 'trends-fft',
+            event.branch === 'onStop'
+              ? 'on-stop'
+              : event.branch === 'onDisconnect'
+                ? 'on-disconnect'
+                : 'trends-fft',
           templateId: event.payload?.templateId ?? this.lastDetection?.templateId,
           confidence: event.payload?.confidence ?? this.lastDetection?.confidence,
           rawLevel: event.payload?.rawLevel ?? this.lastDetection?.rawLevel,
