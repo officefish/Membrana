@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { OnSelectionChangeParams } from '@xyflow/react';
 import type { ScenarioNodeKind } from '@membrana/core';
 
@@ -7,6 +7,8 @@ import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device
 import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
+import type { PaletteConnectionSuggestion } from '../graph/connection-suggest.js';
+import { suggestPaletteNodesForOutgoingConnection } from '../graph/index.js';
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
@@ -15,7 +17,12 @@ import {
   isSignalAdvancedEnabled,
   type ScenarioBranchTab,
 } from '../types/board-ui.js';
-import { BoardFlowCanvas } from './board-flow-canvas.js';
+import {
+  BoardFlowCanvas,
+  type BoardConnectionDropOnPanePayload,
+  type BoardFlowViewportApi,
+} from './board-flow-canvas.js';
+import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
@@ -53,6 +60,24 @@ const DeviceBoardShellInner: React.FC<{
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
+  const [connectionSuggestOpen, setConnectionSuggestOpen] = useState(false);
+  const [connectionSuggestItems, setConnectionSuggestItems] = useState<
+    readonly PaletteConnectionSuggestion[]
+  >([]);
+  const pendingConnectionDropRef = useRef<BoardConnectionDropOnPanePayload | null>(null);
+
+  const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
+    viewportApiRef.current = api;
+  }, []);
+
+  const addPaletteNodeAtViewportCenter = useCallback(
+    (nodeKind: Parameters<typeof graph.addPaletteNodeToCurrentBranch>[0]) => {
+      const center = viewportApiRef.current?.getCenterFlowPosition();
+      graph.addPaletteNodeToCurrentBranch(nodeKind, center);
+    },
+    [graph],
+  );
 
   useEffect(() => {
     graph.refreshValidation();
@@ -124,6 +149,74 @@ const DeviceBoardShellInner: React.FC<{
 
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
+  const isRuntime = graph.runtimeState.isRunning;
+
+  const handleConnectionDropOnPane = useCallback(
+    (payload: BoardConnectionDropOnPanePayload) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      const nodes =
+        scenarioBranch === 'initial'
+          ? graph.scenarioInitialNodes
+          : scenarioBranch === 'onConnect'
+            ? graph.scenarioOnConnectNodes
+            : scenarioBranch === 'main'
+              ? graph.scenarioMainNodes
+              : scenarioBranch === 'alarm'
+                ? graph.scenarioAlarmNodes
+                : scenarioBranch === 'onStop'
+                  ? graph.scenarioOnStopNodes
+                  : scenarioBranch === 'onDisconnect'
+                    ? graph.scenarioOnDisconnectNodes
+                    : graph.scenarioFunctionNodes;
+      const suggestions = suggestPaletteNodesForOutgoingConnection(
+        nodes,
+        payload.sourceNodeId,
+        payload.sourceHandle,
+      );
+      pendingConnectionDropRef.current = payload;
+      setConnectionSuggestItems(suggestions);
+      setConnectionSuggestOpen(true);
+    },
+    [
+      graph.scenarioAlarmNodes,
+      graph.scenarioFunctionNodes,
+      graph.scenarioInitialNodes,
+      graph.scenarioMainNodes,
+      graph.scenarioOnConnectNodes,
+      graph.scenarioOnDisconnectNodes,
+      graph.scenarioOnStopNodes,
+      isRuntime,
+      isSignal,
+      scenarioBranch,
+    ],
+  );
+
+  const dismissConnectionSuggest = useCallback(() => {
+    setConnectionSuggestOpen(false);
+    setConnectionSuggestItems([]);
+    pendingConnectionDropRef.current = null;
+  }, []);
+
+  const handleConnectionSuggestPick = useCallback(
+    (suggestion: PaletteConnectionSuggestion) => {
+      const drop = pendingConnectionDropRef.current;
+      const viewport = viewportApiRef.current;
+      if (drop === null || viewport === null) {
+        dismissConnectionSuggest();
+        return;
+      }
+      const flowCenter = viewport.clientToFlowPosition(drop.clientX, drop.clientY);
+      graph.addPaletteNodeWithConnection(suggestion.nodeKind, flowCenter, {
+        source: drop.sourceNodeId,
+        sourceHandle: drop.sourceHandle,
+        targetHandle: suggestion.targetHandle,
+      });
+      dismissConnectionSuggest();
+    },
+    [dismissConnectionSuggest, graph],
+  );
 
   const handleExitBoardMode = useCallback(() => {
     if (graph.isDirty) {
@@ -249,8 +342,6 @@ const DeviceBoardShellInner: React.FC<{
   const selectedVariableName = selectedVariable?.name ?? '';
   const selectedVariableTypeLabel =
     selectedVariable !== undefined ? referenceTypeLabel(selectedVariable.type) : null;
-
-  const isRuntime = graph.runtimeState.isRunning;
 
   const runtimeInspection = useMemo(() => {
     if (!isRuntime || selectedNodeId === null || isSignal) {
@@ -445,8 +536,17 @@ const DeviceBoardShellInner: React.FC<{
             pulseEdges={isRuntime}
             readOnly={isRuntime}
             ariaLabel={`Канвас: ${canvasLabel}`}
+            onViewportApiReady={handleViewportApiReady}
+            onConnectionDropOnPane={handleConnectionDropOnPane}
           />
         </div>
+
+        <BoardConnectionSuggestModal
+          open={connectionSuggestOpen}
+          suggestions={connectionSuggestItems}
+          onPick={handleConnectionSuggestPick}
+          onDismiss={dismissConnectionSuggest}
+        />
 
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
@@ -480,7 +580,7 @@ const DeviceBoardShellInner: React.FC<{
             runtimeInspection={runtimeInspection}
             printLastOutput={printLastOutput}
             onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
-            onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
+            onAddPaletteNode={addPaletteNodeAtViewportCenter}
             onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
             onAssignVariableName={graph.assignNodeVariableName}
             onClearBoard={handleClearBoard}

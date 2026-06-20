@@ -16,6 +16,7 @@ describe('palette-node (DBR5)', () => {
   it('defines v0.4 palette with streaming and fft nodes', () => {
     expect([...V04_PALETTE_NODE_KINDS]).toEqual([
       'device-global',
+      'stop-runtime',
       'print',
       'is-valid',
       'get-microphone',

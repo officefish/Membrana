@@ -3,13 +3,14 @@ import type { Node } from '@xyflow/react';
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 
-/** Глобальный узел Device: GetDevice (data) + StopRuntime (exec). */
+/** Глобальный узел Device: GetDevice (DeviceRef data out + exec passthrough). */
 export const DEVICE_GLOBAL_NODE_KIND = 'device-global' as const;
 
 /** Data-выход GetDevice — ссылка на устройство (как у Event). */
 export const DEVICE_GLOBAL_DEVICE_HANDLE = 'device' as const;
 
 const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
+const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 
 /** Пины глобального узла Device. */
 export function deviceGlobalNodePins(): {
@@ -19,6 +20,7 @@ export function deviceGlobalNodePins(): {
   return {
     inputs: [EXEC_IN],
     outputs: [
+      EXEC_OUT,
       {
         name: DEVICE_GLOBAL_DEVICE_HANDLE,
         kind: 'data',
@@ -35,13 +37,12 @@ export interface CreateDeviceGlobalBoardNodeOptions {
 
 let deviceGlobalSeq = 0;
 
-/** Фабрика глобального узла Device (GetDevice + StopRuntime). */
+/** Фабрика глобального узла Device (GetDevice). */
 export function createDeviceGlobalBoardNode(
   options: CreateDeviceGlobalBoardNodeOptions = {},
 ): Node {
   deviceGlobalSeq += 1;
   const id = options.id ?? `node-device-global-${Date.now().toString(36)}-${deviceGlobalSeq}`;
-  const offset = (deviceGlobalSeq % 5) * 40;
   const { inputs, outputs } = deviceGlobalNodePins();
   const data: BoardFlowNodeData = {
     label: 'Device',
@@ -55,7 +56,7 @@ export function createDeviceGlobalBoardNode(
   return {
     id,
     type: 'board',
-    position: options.position ?? { x: 120 + offset, y: 80 + offset },
+    position: options.position ?? { x: 0, y: 0 },
     data,
   };
 }

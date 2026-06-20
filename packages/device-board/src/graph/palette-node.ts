@@ -3,6 +3,7 @@ import type { Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { deviceGlobalNodePins } from './device-global-node.js';
+import { stopRuntimeNodePins } from './stop-runtime-node.js';
 
 /** Data-вход произвольного значения для print / is-valid. */
 export const PALETTE_VALUE_HANDLE = 'value' as const;
@@ -55,6 +56,7 @@ const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 /** v0.4 палитра: только эти nodeKind в правом сайдбаре по умолчанию. */
 export const V04_PALETTE_NODE_KINDS = [
   'device-global',
+  'stop-runtime',
   'print',
   'is-valid',
   'get-microphone',
@@ -68,7 +70,8 @@ export const V04_PALETTE_NODE_KINDS = [
 export type V04PaletteNodeKind = (typeof V04_PALETTE_NODE_KINDS)[number];
 
 const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
-  'device-global': 'Device',
+  'device-global': 'GetDevice',
+  'stop-runtime': 'StopRuntime',
   print: 'Print',
   'is-valid': 'isValid',
   'get-microphone': 'GetMicrophone',
@@ -92,6 +95,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
   switch (nodeKind) {
     case 'device-global':
       return deviceGlobalNodePins();
+    case 'stop-runtime':
+      return stopRuntimeNodePins();
     case 'print':
       return {
         inputs: [EXEC_IN, { name: PALETTE_VALUE_HANDLE, kind: 'data' }],
@@ -189,7 +194,6 @@ export function createPaletteBoardNode(
 ): Node {
   paletteNodeSeq += 1;
   const id = options.id ?? `node-${nodeKind}-${Date.now().toString(36)}-${paletteNodeSeq}`;
-  const offset = (paletteNodeSeq % 5) * 40;
   const { inputs, outputs } = paletteNodePins(nodeKind);
   const data: BoardFlowNodeData = {
     label: paletteNodeLabel(nodeKind),
@@ -204,7 +208,7 @@ export function createPaletteBoardNode(
   return {
     id,
     type: 'board',
-    position: options.position ?? { x: 120 + offset, y: 120 + offset },
+    position: options.position ?? { x: 0, y: 0 },
     data,
   };
 }

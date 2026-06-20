@@ -200,15 +200,15 @@ describe('executeScenarioBlock print', () => {
   });
 });
 
-describe('executeScenarioBlock device-global', () => {
+describe('executeScenarioBlock stop-runtime', () => {
   it('StopRuntime invokes onStopRuntime and requests stop', async () => {
     const onStopRuntime = vi.fn();
     const host = createStubScenarioRuntimeHost();
     const node = {
-      id: 'dg-1',
-      nodeKind: 'device-global' as const,
+      id: 'sr-1',
+      nodeKind: 'stop-runtime' as const,
       blockKind: 'custom' as const,
-      label: 'Device',
+      label: 'StopRuntime',
     };
     const subgraph: ScenarioSubgraph = { nodes: [node], edges: [] };
 

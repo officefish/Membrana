@@ -37,6 +37,7 @@ import {
   rejectSystemNodeRemovals,
   clearBranchState,
   shouldPreserveLockedNodes,
+  centerNodePositionAtFlowPoint,
   resolveRunDisabledReason,
   scenarioDocumentFingerprint,
   syncVariableNodeLabels,
@@ -127,8 +128,21 @@ export interface DeviceBoardGraphContextValue {
   readonly clearCurrentBranch: (layer: BoardLayerTab) => void;
   /** Добавить legacy D0-ноду из палитры в активную ветку (только при legacy-флаге). */
   readonly addScenarioNodeToCurrentBranch: (blockKind: ScenarioBlockKind) => void;
-  /** v0.4 DBR5: добавить узел палитры Print/isValid/GetMicrophone в активную ветку. */
-  readonly addPaletteNodeToCurrentBranch: (nodeKind: V04PaletteNodeKind) => void;
+  /** v0.4 DBR5: добавить узел палитры в активную ветку (`flowCenter` — центр viewport в flow coords). */
+  readonly addPaletteNodeToCurrentBranch: (
+    nodeKind: V04PaletteNodeKind,
+    flowCenter?: { readonly x: number; readonly y: number },
+  ) => void;
+  /** v0.4: добавить узел палитры в точку drop и соединить с исходным портом. */
+  readonly addPaletteNodeWithConnection: (
+    nodeKind: V04PaletteNodeKind,
+    flowCenter: { readonly x: number; readonly y: number },
+    connection: {
+      readonly source: string;
+      readonly sourceHandle: string;
+      readonly targetHandle: string;
+    },
+  ) => void;
   /** v0.4 DBR5: обновить выбранный микрофон на узле get-microphone. */
   readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
   /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
@@ -1052,10 +1066,69 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   );
 
   const addPaletteNodeToCurrentBranch = useCallback(
-    (nodeKind: V04PaletteNodeKind) => {
-      appendNodeToBranch(scenarioBranch, createPaletteBoardNode(nodeKind));
+    (nodeKind: V04PaletteNodeKind, flowCenter?: { readonly x: number; readonly y: number }) => {
+      const position =
+        flowCenter !== undefined ? centerNodePositionAtFlowPoint(flowCenter) : undefined;
+      appendNodeToBranch(
+        scenarioBranch,
+        createPaletteBoardNode(nodeKind, position !== undefined ? { position } : {}),
+      );
     },
     [appendNodeToBranch, scenarioBranch],
+  );
+
+  const addPaletteNodeWithConnection = useCallback(
+    (
+      nodeKind: V04PaletteNodeKind,
+      flowCenter: { readonly x: number; readonly y: number },
+      connection: {
+        readonly source: string;
+        readonly sourceHandle: string;
+        readonly targetHandle: string;
+      },
+    ) => {
+      const position = centerNodePositionAtFlowPoint(flowCenter);
+      const node = createPaletteBoardNode(nodeKind, { position });
+      const edgeConnection: Connection = {
+        source: connection.source,
+        sourceHandle: connection.sourceHandle,
+        target: node.id,
+        targetHandle: connection.targetHandle,
+      };
+      switch (scenarioBranch) {
+        case 'initial':
+          setScenarioInitialNodes((nodes) => [...nodes, node]);
+          setScenarioInitialEdges((edges) => addEdge(edgeConnection, edges));
+          break;
+        case 'onConnect':
+          setScenarioOnConnectNodes((nodes) => [...nodes, node]);
+          setScenarioOnConnectEdges((edges) => addEdge(edgeConnection, edges));
+          break;
+        case 'main':
+          setScenarioMainNodes((nodes) => [...nodes, node]);
+          setScenarioMainEdges((edges) => addEdge(edgeConnection, edges));
+          break;
+        case 'alarm':
+          setScenarioAlarmNodes((nodes) => [...nodes, node]);
+          setScenarioAlarmEdges((edges) => addEdge(edgeConnection, edges));
+          break;
+        case 'onStop':
+          setScenarioOnStopNodes((nodes) => [...nodes, node]);
+          setScenarioOnStopEdges((edges) => addEdge(edgeConnection, edges));
+          break;
+        case 'onDisconnect':
+          setScenarioOnDisconnectNodes((nodes) => [...nodes, node]);
+          setScenarioOnDisconnectEdges((edges) => addEdge(edgeConnection, edges));
+          break;
+        case 'function':
+          setScenarioFunctionNodes((nodes) => [...nodes, node]);
+          setScenarioFunctionEdges((edges) => addEdge(edgeConnection, edges));
+          break;
+        default:
+          break;
+      }
+    },
+    [scenarioBranch],
   );
 
   const patchNodeData = useCallback((nodeId: string, patch: Record<string, unknown>) => {
@@ -1176,6 +1249,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       clearCurrentBranch,
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
+      addPaletteNodeWithConnection,
       updatePaletteNodeMicrophoneId,
       variables,
       addVariable,
@@ -1188,6 +1262,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
+      addPaletteNodeWithConnection,
       updatePaletteNodeMicrophoneId,
       addVariable,
       addVariableNodeToCurrentBranch,

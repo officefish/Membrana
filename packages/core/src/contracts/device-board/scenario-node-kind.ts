@@ -12,7 +12,8 @@
  * - `print` — терминальный лог (принимает DeviceRef/MicrophoneRef);
  * - `is-valid` — условный узел проверки валидности ссылки;
  * - `get-microphone` — извлекает MicrophoneRef из DeviceRef (выбор из списка);
- * - `device-global` — GetDevice (DeviceRef) + StopRuntime (exec, выход в edit);
+ * - `device-global` — GetDevice (DeviceRef) в main/alarm без Event;
+ * - `stop-runtime` — StopRuntime (exec): выход из runtime в edit;
  * - `start-streaming` / `stop-streaming` — управление аудиопотоком;
  * - `get-audio-stream` — ссылка на активный AudioStream;
  * - `get-sample` — звуковой отрезок (один тик) из AudioStream;
@@ -26,6 +27,7 @@ export const SCENARIO_NODE_KINDS = [
   'is-valid',
   'get-microphone',
   'device-global',
+  'stop-runtime',
   'start-streaming',
   'stop-streaming',
   'get-audio-stream',

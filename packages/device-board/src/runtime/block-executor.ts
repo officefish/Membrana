@@ -185,8 +185,13 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
   }
 
   if (node.nodeKind === 'device-global') {
+    host.log('device-global GetDevice', { nodeId: node.id, branch });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'stop-runtime') {
     onStopRuntime?.();
-    host.log('device-global StopRuntime', { nodeId: node.id, branch });
+    host.log('stop-runtime StopRuntime', { nodeId: node.id, branch });
     return { lastDetection, stopRequested: true };
   }
 

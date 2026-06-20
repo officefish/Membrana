@@ -7,9 +7,10 @@ import {
 } from './device-global-node.js';
 
 describe('device-global-node', () => {
-  it('exposes GetDevice data out and StopRuntime exec in', () => {
+  it('exposes GetDevice data out and exec passthrough', () => {
     const pins = deviceGlobalNodePins();
     expect(pins.inputs.map((pin) => pin.name)).toEqual(['exec-in']);
+    expect(pins.outputs.map((pin) => pin.name).sort()).toEqual(['device', 'exec-out'].sort());
     expect(pins.outputs.find((pin) => pin.name === DEVICE_GLOBAL_DEVICE_HANDLE)?.socketType).toBe(
       'DeviceRef',
     );

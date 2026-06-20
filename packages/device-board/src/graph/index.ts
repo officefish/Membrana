@@ -49,6 +49,22 @@ export {
 } from './device-global-node.js';
 export type { CreateDeviceGlobalBoardNodeOptions } from './device-global-node.js';
 export {
+  createStopRuntimeBoardNode,
+  stopRuntimeNodePins,
+  STOP_RUNTIME_NODE_KIND,
+  isStopRuntimeNode,
+} from './stop-runtime-node.js';
+export type { CreateStopRuntimeBoardNodeOptions } from './stop-runtime-node.js';
+export {
+  suggestPaletteNodesForOutgoingConnection,
+} from './connection-suggest.js';
+export type { PaletteConnectionSuggestion } from './connection-suggest.js';
+export {
+  BOARD_NODE_LAYOUT_HEIGHT,
+  BOARD_NODE_LAYOUT_WIDTH,
+  centerNodePositionAtFlowPoint,
+} from './flow-node-position.js';
+export {
   createLoopRepeatBoardNode,
   ensureLoopInfinity,
   isLoopRepeatNode,
