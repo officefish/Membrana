@@ -28,6 +28,8 @@ function hostAudioResolveContext(
   | 'getCapturedFftFrameRef'
   | 'getRecorderSessionRef'
   | 'getSpectralAnalyserSessionRef'
+  | 'getDeviceJournalRef'
+  | 'getServerJournalRef'
 > {
   const result: {
     getActiveAudioStreamRef?: ResolveInputContext['getActiveAudioStreamRef'];
@@ -35,6 +37,8 @@ function hostAudioResolveContext(
     getCapturedFftFrameRef?: ResolveInputContext['getCapturedFftFrameRef'];
     getRecorderSessionRef?: ResolveInputContext['getRecorderSessionRef'];
     getSpectralAnalyserSessionRef?: ResolveInputContext['getSpectralAnalyserSessionRef'];
+    getDeviceJournalRef?: ResolveInputContext['getDeviceJournalRef'];
+    getServerJournalRef?: ResolveInputContext['getServerJournalRef'];
   } = {};
   if (host.getActiveAudioStreamRef !== undefined) {
     result.getActiveAudioStreamRef = () => host.getActiveAudioStreamRef!();
@@ -52,6 +56,12 @@ function hostAudioResolveContext(
   if (host.getSpectralAnalyserSessionRef !== undefined) {
     result.getSpectralAnalyserSessionRef = (deviceHandle: string) =>
       host.getSpectralAnalyserSessionRef!(deviceHandle);
+  }
+  if (host.getDeviceJournalRef !== undefined) {
+    result.getDeviceJournalRef = (deviceHandle: string) => host.getDeviceJournalRef!(deviceHandle);
+  }
+  if (host.getServerJournalRef !== undefined) {
+    result.getServerJournalRef = (deviceHandle: string) => host.getServerJournalRef!(deviceHandle);
   }
   return result;
 }

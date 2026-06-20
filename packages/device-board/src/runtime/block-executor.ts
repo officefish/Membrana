@@ -13,6 +13,7 @@ import {
 } from '../graph/palette-node.js';
 import { STOP_RUNTIME_DEVICE_HANDLE } from '../graph/stop-runtime-node.js';
 import { GET_RECORDER_DEVICE_HANDLE } from '../graph/get-recorder-node.js';
+import { GET_JOURNAL_DEVICE_HANDLE } from '../graph/get-journal-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from '../graph/get-spectral-analyser-node.js';
 import { NEW_TRACK_SAMPLES_HANDLE } from '../graph/new-track-node.js';
 import { NEW_FFT_TRENDS_FRAMES_HANDLE } from '../graph/new-fft-trends-analysis-node.js';
@@ -238,6 +239,41 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       }
     }
     host.log('get-spectral-analyser', { nodeId: node.id, branch, device: deviceHandle });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (node.nodeKind === 'get-journal') {
+    let scope: 'device' | 'server' | null = null;
+    let deviceHandle: string | null = null;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const hasDeviceEdge = subgraph.edges.some(
+        (edge) =>
+          edge.kind === 'data' &&
+          edge.target === node.id &&
+          edge.targetHandle === GET_JOURNAL_DEVICE_HANDLE,
+      );
+      if (hasDeviceEdge) {
+        scope = 'device';
+        const deviceRef = resolveInput(
+          subgraph,
+          variableStore.getAll(),
+          node.id,
+          GET_JOURNAL_DEVICE_HANDLE,
+          resolveContext,
+        );
+        if (
+          deviceRef !== null &&
+          deviceRef.kind === 'DeviceRef' &&
+          isReferenceValid(deviceRef)
+        ) {
+          deviceHandle = deviceRef.handle;
+        }
+      } else {
+        scope = 'server';
+        deviceHandle = resolveContext.deviceHandle ?? null;
+      }
+    }
+    host.log('get-journal', { nodeId: node.id, branch, scope, device: deviceHandle });
     return { lastDetection, stopRequested: false };
   }
 

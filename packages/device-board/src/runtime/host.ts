@@ -121,6 +121,10 @@ export interface ScenarioRuntimeHost {
   ) => () => void;
   /** v0.5 DBC2: сброс singleton-очередей при load/start сценария (синхрон с CollectRuntimeStore). */
   readonly resetCollectorSessions?: () => void;
+  /** v0.6 DBJ1: JournalRef device scope per deviceId. */
+  readonly getDeviceJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** v0.6 DBJ1: JournalRef server scope per deviceId (cabinet backend when paired). */
+  readonly getServerJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   /** v0.5 DBC4: concat AudioSampleRef[] → journal track. */
@@ -218,6 +222,21 @@ export function createStubScenarioRuntimeHost(
     subscribeRecorderCollect: overrides.subscribeRecorderCollect ?? (() => () => undefined),
     subscribeSpectralAnalyserCollect:
       overrides.subscribeSpectralAnalyserCollect ?? (() => () => undefined),
+    resetCollectorSessions: overrides.resetCollectorSessions ?? (() => undefined),
+    getDeviceJournalRef:
+      overrides.getDeviceJournalRef ??
+      ((deviceHandle) => ({
+        kind: 'JournalRef',
+        handle: `journal:device:${deviceHandle}`,
+        valid: true,
+      })),
+    getServerJournalRef:
+      overrides.getServerJournalRef ??
+      ((deviceHandle) => ({
+        kind: 'JournalRef',
+        handle: `journal:server:${deviceHandle}`,
+        valid: true,
+      })),
     writeJournal: overrides.writeJournal ?? (async (event) => log('writeJournal', { blockKind: event.blockKind })),
     recordChunk:
       overrides.recordChunk ??

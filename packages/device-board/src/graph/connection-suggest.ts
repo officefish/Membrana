@@ -9,6 +9,7 @@ import type { Node } from '@xyflow/react';
 import type { BoardSocketPin } from './board-node-data.js';
 import { DEVICE_GLOBAL_NODE_KIND } from './device-global-node.js';
 import { GET_RECORDER_DEVICE_HANDLE } from './get-recorder-node.js';
+import { GET_JOURNAL_DEVICE_HANDLE, GET_JOURNAL_SERVER_HANDLE } from './get-journal-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from './get-spectral-analyser-node.js';
 import {
   GET_MICROPHONE_DEVICE_HANDLE,
@@ -48,6 +49,12 @@ export const DEVICE_REF_METHOD_TARGETS = [
     targetHandle: GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
   },
   { nodeKind: 'stop-runtime' as const, targetHandle: STOP_RUNTIME_DEVICE_HANDLE },
+  { nodeKind: 'get-journal' as const, targetHandle: GET_JOURNAL_DEVICE_HANDLE },
+] as const;
+
+/** Методы для ServerRef (DBJ1). */
+export const SERVER_REF_METHOD_TARGETS = [
+  { nodeKind: 'get-journal' as const, targetHandle: GET_JOURNAL_SERVER_HANDLE },
 ] as const;
 
 function pinAcceptsSource(

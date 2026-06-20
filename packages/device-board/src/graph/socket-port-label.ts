@@ -16,7 +16,11 @@ const REFERENCE_NOUN: Record<string, string> = {
   RecorderRef: 'recorder',
   SpectralAnalyserRef: 'spectral analyser',
   AudioSampleRefList: 'sample batch',
-  FftFrameRefList: 'frame batch',
+  JournalRef: 'journal',
+  ReporterRef: 'reporter',
+  TrackRef: 'track',
+  ReportRef: 'report',
+  FftTrendAnalysisRef: 'fft trend analysis',
 };
 
 /**

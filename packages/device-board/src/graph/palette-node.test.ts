@@ -31,7 +31,20 @@ describe('palette-node (DBR5)', () => {
       'collect-fft-frames',
       'new-track',
       'new-fft-trends-analysis',
+      'get-journal',
     ]);
+  });
+
+  it('creates get-journal with device and server inputs', () => {
+    const node = createPaletteBoardNode('get-journal');
+    expect(node.data.nodeKind).toBe('get-journal');
+    expect(node.data.inputs?.some((pin) => pin.name === 'device' && pin.socketType === 'DeviceRef')).toBe(
+      true,
+    );
+    expect(node.data.inputs?.some((pin) => pin.name === 'server' && pin.socketType === 'ServerRef')).toBe(
+      true,
+    );
+    expect(node.data.outputs?.find((pin) => pin.name === 'journal')?.socketType).toBe('JournalRef');
   });
 
   it('creates print node with exec + reference value input', () => {

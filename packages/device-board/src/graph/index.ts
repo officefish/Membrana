@@ -67,6 +67,16 @@ export {
 } from './get-recorder-node.js';
 export type { CreateGetRecorderBoardNodeOptions } from './get-recorder-node.js';
 export {
+  createGetJournalBoardNode,
+  getJournalNodePins,
+  GET_JOURNAL_NODE_KIND,
+  GET_JOURNAL_DEVICE_HANDLE,
+  GET_JOURNAL_SERVER_HANDLE,
+  GET_JOURNAL_OUT_HANDLE,
+  isGetJournalNode,
+} from './get-journal-node.js';
+export type { CreateGetJournalBoardNodeOptions } from './get-journal-node.js';
+export {
   createGetSpectralAnalyserBoardNode,
   getSpectralAnalyserNodePins,
   GET_SPECTRAL_ANALYSER_NODE_KIND,

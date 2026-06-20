@@ -10,6 +10,11 @@ import {
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
 import {
+  GET_JOURNAL_DEVICE_HANDLE,
+  GET_JOURNAL_OUT_HANDLE,
+  GET_JOURNAL_SERVER_HANDLE,
+} from '../graph/get-journal-node.js';
+import {
   GET_RECORDER_DEVICE_HANDLE,
   GET_RECORDER_OUT_HANDLE,
 } from '../graph/get-recorder-node.js';
@@ -58,6 +63,10 @@ export interface ResolveInputContext {
   readonly getRecorderSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   /** Singleton SpectralAnalyserRef по device handle (host, DBC2). */
   readonly getSpectralAnalyserSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** JournalRef device scope per deviceId (host, DBJ1). */
+  readonly getDeviceJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** JournalRef server scope per deviceId (host, DBJ1). */
+  readonly getServerJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
@@ -167,6 +176,10 @@ function invalidAudioSampleRefList(): ScenarioReferenceValue {
 
 function invalidFftFrameRefList(): ScenarioReferenceValue {
   return { kind: 'FftFrameRefList', handle: null, valid: false };
+}
+
+function invalidJournalRef(): ScenarioReferenceValue {
+  return { kind: 'JournalRef', handle: null, valid: false };
 }
 
 function resolveGetAudioStreamOutput(
@@ -283,6 +296,69 @@ function resolveGetSpectralAnalyserOutput(
     return invalidSpectralAnalyserRef();
   }
   return resolver(deviceRef.handle) ?? invalidSpectralAnalyserRef();
+}
+
+function resolveGetJournalOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const deviceEdge = findDataEdge(subgraph, node.id, GET_JOURNAL_DEVICE_HANDLE);
+  if (deviceEdge !== undefined) {
+    const deviceRef = resolveInput(
+      subgraph,
+      variables,
+      node.id,
+      GET_JOURNAL_DEVICE_HANDLE,
+      context,
+      visiting,
+    );
+    if (
+      !isReferenceValid(deviceRef) ||
+      deviceRef === null ||
+      deviceRef.kind !== 'DeviceRef' ||
+      deviceRef.handle === null
+    ) {
+      return invalidJournalRef();
+    }
+    const resolver = context.getDeviceJournalRef;
+    if (resolver === undefined) {
+      return invalidJournalRef();
+    }
+    return resolver(deviceRef.handle) ?? invalidJournalRef();
+  }
+
+  const serverEdge = findDataEdge(subgraph, node.id, GET_JOURNAL_SERVER_HANDLE);
+  if (serverEdge !== undefined) {
+    const serverRef = resolveInput(
+      subgraph,
+      variables,
+      node.id,
+      GET_JOURNAL_SERVER_HANDLE,
+      context,
+      visiting,
+    );
+    if (
+      !isReferenceValid(serverRef) ||
+      serverRef === null ||
+      serverRef.kind !== 'ServerRef'
+    ) {
+      return invalidJournalRef();
+    }
+    const deviceId = context.deviceHandle;
+    if (deviceId === null || deviceId === undefined || deviceId.length === 0) {
+      return invalidJournalRef();
+    }
+    const resolver = context.getServerJournalRef;
+    if (resolver === undefined) {
+      return invalidJournalRef();
+    }
+    return resolver(deviceId) ?? invalidJournalRef();
+  }
+
+  return invalidJournalRef();
 }
 
 /** Резолв data-выхода узла (для runtime-инспекции и pull-цепочки). */
@@ -423,6 +499,13 @@ export function resolveNodeOutput(
       );
     }
     return resolveGetSpectralAnalyserOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-journal') {
+    if (outputPort !== GET_JOURNAL_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-journal output: ${outputPort}`);
+    }
+    return resolveGetJournalOutput(subgraph, variables, node, context, visiting);
   }
 
   if (node.nodeKind === 'collect-samples') {

@@ -1,4 +1,5 @@
 import type { ScenarioReferenceValue } from '@membrana/core';
+import { createReferenceValue, formatJournalRefHandle, parseJournalRefHandle } from '@membrana/core';
 import type { ScenarioRuntimeHost } from '@membrana/device-board';
 import { waitMs } from '@membrana/device-board';
 
@@ -177,6 +178,18 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
           },
         };
       }
+      if (ref.kind === 'JournalRef') {
+        const handle = ref.handle ?? '';
+        const parsed = handle.length > 0 ? parseJournalRefHandle(handle) : null;
+        return {
+          fields: {
+            journalId: handle || 'null',
+            scope: parsed?.scope ?? 'unknown',
+            deviceId: parsed?.deviceId ?? 'unknown',
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
       return null;
     },
     printLine: (line) => {
@@ -208,6 +221,10 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     subscribeSpectralAnalyserCollect: (deviceHandle, collectNodeId) =>
       bridge.subscribeSpectralAnalyserCollect(deviceHandle, collectNodeId),
     resetCollectorSessions: () => bridge.resetCollectorSessions(),
+    getDeviceJournalRef: (deviceHandle) =>
+      createReferenceValue('JournalRef', formatJournalRefHandle('device', deviceHandle)),
+    getServerJournalRef: (deviceHandle) =>
+      createReferenceValue('JournalRef', formatJournalRefHandle('server', deviceHandle)),
     createTrackFromSampleRefs: (nodeId, refs) =>
       bridge.createTrackFromSampleRefs(nodeId, refs),
     analyzeFftTrendsFromFrameRefs: (nodeId, refs) =>

@@ -82,6 +82,7 @@ describe('connection-suggest', () => {
       'get-recorder',
       'get-spectral-analyser',
       'stop-runtime',
+      'get-journal',
     ]);
   });
 });

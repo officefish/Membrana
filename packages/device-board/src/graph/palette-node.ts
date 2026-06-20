@@ -5,6 +5,7 @@ import type { Node } from '@xyflow/react';
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { deviceGlobalNodePins, DEVICE_GLOBAL_NODE_KIND } from './device-global-node.js';
 import { getRecorderNodePins } from './get-recorder-node.js';
+import { getJournalNodePins } from './get-journal-node.js';
 import { getSpectralAnalyserNodePins } from './get-spectral-analyser-node.js';
 import { collectSamplesNodePins } from './collect-samples-node.js';
 import { collectFftFramesNodePins } from './collect-fft-frames-node.js';
@@ -56,6 +57,11 @@ export {
   GET_RECORDER_OUT_HANDLE,
 } from './get-recorder-node.js';
 export {
+  GET_JOURNAL_DEVICE_HANDLE,
+  GET_JOURNAL_SERVER_HANDLE,
+  GET_JOURNAL_OUT_HANDLE,
+} from './get-journal-node.js';
+export {
   GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
   GET_SPECTRAL_ANALYSER_OUT_HANDLE,
 } from './get-spectral-analyser-node.js';
@@ -87,6 +93,7 @@ export const V04_PALETTE_NODE_KINDS = [
   'collect-fft-frames',
   'new-track',
   'new-fft-trends-analysis',
+  'get-journal',
 ] as const satisfies readonly ScenarioNodeKind[];
 
 export type V04PaletteNodeKind = (typeof V04_PALETTE_NODE_KINDS)[number];
@@ -108,6 +115,7 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'collect-fft-frames': 'CollectFftFrames',
   'new-track': 'NewTrack',
   'new-fft-trends-analysis': 'NewFftTrendsAnalysis',
+  'get-journal': 'GetJournal',
 };
 
 /** Человекочитаемый лейбл палитры v0.4. */
@@ -216,6 +224,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return newTrackNodePins();
     case 'new-fft-trends-analysis':
       return newFftTrendsAnalysisNodePins();
+    case 'get-journal':
+      return getJournalNodePins();
   }
 }
 

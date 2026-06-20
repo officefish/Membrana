@@ -11,11 +11,16 @@ import {
 } from '@membrana/core';
 
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
-import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE } from '../graph/event-node.js';
+import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_SERVER_HANDLE } from '../graph/event-node.js';
 import {
   GET_RECORDER_DEVICE_HANDLE,
   GET_RECORDER_OUT_HANDLE,
 } from '../graph/get-recorder-node.js';
+import {
+  GET_JOURNAL_DEVICE_HANDLE,
+  GET_JOURNAL_OUT_HANDLE,
+  GET_JOURNAL_SERVER_HANDLE,
+} from '../graph/get-journal-node.js';
 import {
   GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
   GET_SPECTRAL_ANALYSER_OUT_HANDLE,
@@ -79,7 +84,7 @@ function dataEdge(
   sourceHandle: string,
   target: string,
   targetHandle: string,
-  dataType: 'DeviceRef' | 'MicrophoneRef' | 'DateTime' = 'DeviceRef',
+  dataType: 'DeviceRef' | 'MicrophoneRef' | 'ServerRef' | 'JournalRef' | 'DateTime' = 'DeviceRef',
 ): ScenarioGraphEdge {
   return {
     source,
@@ -381,6 +386,65 @@ describe('resolveInput (DBR4)', () => {
         handle === DEVICE_HANDLE ? recorderRef : null,
     });
     expect(value).toEqual(recorderRef);
+  });
+
+  it('resolves get-journal device scope from host (DBJ1)', () => {
+    const journalVar = createScenarioVariable('var-journal', 'journal1', 'JournalRef');
+    const journalRef = createReferenceValue('JournalRef', `journal:device:${DEVICE_HANDLE}`);
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gj',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-journal',
+        },
+        variableSetNode('set', journalVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gj', GET_JOURNAL_DEVICE_HANDLE),
+        dataEdge('gj', GET_JOURNAL_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'JournalRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [journalVar], 'set', VARIABLE_VALUE_HANDLE, {
+      ...onConnectContext,
+      getDeviceJournalRef: (handle) => (handle === DEVICE_HANDLE ? journalRef : null),
+    });
+    expect(value).toEqual(journalRef);
+  });
+
+  it('resolves get-journal server scope using paired deviceId (DBJ1)', () => {
+    const journalVar = createScenarioVariable('var-journal', 'journal1', 'JournalRef');
+    const journalRef = createReferenceValue('JournalRef', `journal:server:${DEVICE_HANDLE}`);
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gj',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-journal',
+        },
+        variableSetNode('set', journalVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_SERVER_HANDLE, 'gj', GET_JOURNAL_SERVER_HANDLE, 'ServerRef'),
+        dataEdge('gj', GET_JOURNAL_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'JournalRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [journalVar], 'set', VARIABLE_VALUE_HANDLE, {
+      handlerBranch: 'onConnect',
+      deviceHandle: DEVICE_HANDLE,
+      serverHandle: 'membrane-1',
+      triggeredAt: '2026-06-20T12:00:00.000Z',
+      getServerJournalRef: (handle) => (handle === DEVICE_HANDLE ? journalRef : null),
+    });
+    expect(value).toEqual(journalRef);
   });
 
   it('resolves get-spectral-analyser output as invalid ref until host session (DBC2)', () => {

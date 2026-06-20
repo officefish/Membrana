@@ -38,8 +38,8 @@ export function parseJournalRefHandle(
   if (parts.length !== 3 || parts[0] !== JOURNAL_REF_HANDLE_PREFIX) {
     return null;
   }
-  const scope = parts[1];
-  const deviceId = parts[2];
+  const scope = parts[1] ?? '';
+  const deviceId = parts[2] ?? '';
   if (!isJournalScopeKind(scope) || deviceId.length === 0) {
     return null;
   }
