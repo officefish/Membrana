@@ -50,7 +50,6 @@ import { startClipRecorder } from '@/plugins/mic-buffer-recorder/clipRecorder';
 import { analyzeChunkTrendsFft } from './analyzeChunkTrendsFft';
 import { buildTrendsFftReport, type TrendsFftReport } from '@/plugins/trends-fft-analyzer/buildTrendsFftReport';
 import {
-  appendTrendsFftJournalReport,
   buildTrendsFftSummaryText,
   TRENDS_FFT_JOURNAL_SCHEMA,
   trendsFftSyntheticTrackId,
@@ -425,7 +424,7 @@ export class ScenarioMicJournalBridge {
     return { trackId };
   }
 
-  /** v0.5 DBC4: FftFrameRef[] → trends FFT analysis + journal report. */
+  /** v0.5 DBC4 (legacy, DBJ5): FftFrameRef[] → trends analysis in-memory; journal via PublishReport. */
   async analyzeFftTrendsFromFrameRefs(
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
@@ -463,7 +462,6 @@ export class ScenarioMicJournalBridge {
       mode: 'auto',
       result: analysis.result,
     });
-    await appendTrendsFftJournalReport({ moduleId: DEVICE_BOARD_MODULE_ID, report });
 
     this.fftTrendAnalyses.set(reportId, report);
 
@@ -474,7 +472,7 @@ export class ScenarioMicJournalBridge {
       rawLevel: analysis.rawLevel,
     };
 
-    scenarioRuntimeInfo('[device-board] analyzeFftTrendsFromFrameRefs', {
+    scenarioRuntimeInfo('[device-board] analyzeFftTrendsFromFrameRefs (legacy — no journal append; use PublishReport)', {
       nodeId,
       reportId,
       frameCount: refs.length,

@@ -19,6 +19,6 @@ describe('new-track-node (DBC4)', () => {
   it('creates board node with new-track kind', () => {
     const node = createNewTrackBoardNode({ id: 'nt-1' });
     expect(node.data.nodeKind).toBe('new-track');
-    expect(node.data.label).toBe('NewTrack');
+    expect(node.data.label).toBe('NewTrack (legacy)');
   });
 });

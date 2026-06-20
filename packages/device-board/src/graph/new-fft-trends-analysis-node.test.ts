@@ -19,6 +19,6 @@ describe('new-fft-trends-analysis-node (DBC4)', () => {
   it('creates board node with new-fft-trends-analysis kind', () => {
     const node = createNewFftTrendsAnalysisBoardNode({ id: 'nft-1' });
     expect(node.data.nodeKind).toBe('new-fft-trends-analysis');
-    expect(node.data.label).toBe('NewFftTrendsAnalysis');
+    expect(node.data.label).toBe('NewFftTrendsAnalysis (legacy)');
   });
 });

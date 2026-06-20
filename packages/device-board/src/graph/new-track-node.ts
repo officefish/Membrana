@@ -41,7 +41,7 @@ export function createNewTrackBoardNode(options: CreateNewTrackBoardNodeOptions 
   const id = options.id ?? `node-new-track-${Date.now().toString(36)}-${newTrackSeq}`;
   const { inputs, outputs } = newTrackNodePins();
   const data: BoardFlowNodeData = {
-    label: 'NewTrack',
+    label: 'NewTrack (legacy)',
     layer: 'scenario',
     status: 'active',
     blockKind: 'custom',

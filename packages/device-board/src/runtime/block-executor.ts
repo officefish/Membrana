@@ -38,6 +38,7 @@ import { executeCollectNode } from './collect-node-executor.js';
 import type { CollectRuntimeStore } from './collect-runtime-store.js';
 import type { ReportRuntimeStore } from './report-runtime-store.js';
 import { resolveRefListMembers } from './resolve-ref-list.js';
+import { logLegacyTerminalDeprecation } from './legacy-terminal-deprecation.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { isReferenceValid } from './reference-validity.js';
 import type { ScenarioDetectionResult } from './types.js';
@@ -646,6 +647,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     if (variableStore === undefined || resolveContext === undefined) {
       throw new Error('new-track requires variableStore and resolveContext');
     }
+    logLegacyTerminalDeprecation(host.log, 'new-track', node.id);
     const listRef = resolveInput(
       subgraph,
       variableStore.getAll(),
@@ -672,6 +674,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     if (variableStore === undefined || resolveContext === undefined) {
       throw new Error('new-fft-trends-analysis requires variableStore and resolveContext');
     }
+    logLegacyTerminalDeprecation(host.log, 'new-fft-trends-analysis', node.id);
     const listRef = resolveInput(
       subgraph,
       variableStore.getAll(),

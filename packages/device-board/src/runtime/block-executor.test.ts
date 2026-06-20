@@ -403,6 +403,43 @@ describe('executeScenarioBlock terminal nodes (DBC4)', () => {
     expect(result.lastDetection?.detected).toBe(true);
   });
 
+  it('NewFftTrendsAnalysis logs legacy-terminal deprecation (DBJ5)', async () => {
+    const log = vi.fn();
+    const host = createStubScenarioRuntimeHost({
+      log,
+      analyzeFftTrendsFromFrameRefs: vi.fn(async () => ({
+        detected: false,
+        confidence: 0,
+        templateId: 'stub',
+      })),
+    });
+    const variableStore = new ScenarioVariableStore();
+    const collectStore = new CollectRuntimeStore();
+    const node = {
+      id: 'nft-legacy',
+      nodeKind: 'new-fft-trends-analysis' as const,
+      blockKind: 'custom' as const,
+      label: 'NewFftTrendsAnalysis (legacy)',
+    };
+    await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph: { nodes: [node], edges: [] },
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore,
+      collectStore,
+      resolveContext: { getCollectBatchRef: (id) => collectStore.getLastBatchRef(id) },
+    });
+    expect(log).toHaveBeenCalledWith(
+      'legacy-terminal-deprecated',
+      expect.objectContaining({ nodeKind: 'new-fft-trends-analysis', nodeId: 'nft-legacy' }),
+    );
+  });
+
   it('MakeReportFromTrack calls makeReportFromTrack and stores ReportRef (DBJ3)', async () => {
     const makeReportFromTrack = vi.fn(async () => ({
       schema: 'drone-detection-report/v1',

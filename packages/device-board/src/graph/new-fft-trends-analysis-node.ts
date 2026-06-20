@@ -44,7 +44,7 @@ export function createNewFftTrendsAnalysisBoardNode(
     options.id ?? `node-new-fft-trends-${Date.now().toString(36)}-${newFftTrendsSeq}`;
   const { inputs, outputs } = newFftTrendsAnalysisNodePins();
   const data: BoardFlowNodeData = {
-    label: 'NewFftTrendsAnalysis',
+    label: 'NewFftTrendsAnalysis (legacy)',
     layer: 'scenario',
     status: 'active',
     blockKind: 'custom',

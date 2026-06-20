@@ -852,4 +852,16 @@ GetDevice → GetJournal(device) → GetReporter → MakeReportFromTrack → Pub
 GetServer → GetJournal(server) → GetReporter → MakeReportFromAnalysis → PublishReport
 ```
 
-Legacy v0.5 `NewTrack` / `NewFftTrendsAnalysis` — deprecated path до DBJ5.
+Legacy v0.5 `NewTrack` / `NewFftTrendsAnalysis` — **deprecated** (DBJ5): палитра помечена `(legacy)`,
+runtime логирует migration hint; `NewFftTrendsAnalysis` больше не вызывает `appendTrendsFftJournalReport`
+— используйте `MakeReportFromAnalysis` + `PublishReport`. `NewTrack` по-прежнему пишет track row
+(без ReportRef); для отчётов — v0.6 chain.
+
+### 17.4 Legacy terminals (DBJ5)
+
+| Legacy node | v0.5 behaviour | v0.6 migration |
+|-------------|----------------|----------------|
+| **NewTrack** | `AudioSampleRef[]` → journal track (`appendTrack`) | Track остаётся; report → `MakeReportFromTrack` + `PublishReport` |
+| **NewFftTrendsAnalysis** | FFT batch → in-memory analysis (`FftTrendAnalysisRef` cache) | `MakeReportFromAnalysis` + `PublishReport` (journal append только через PublishReport) |
+
+Runtime: `logLegacyTerminalDeprecation` в `block-executor` при exec legacy terminal.

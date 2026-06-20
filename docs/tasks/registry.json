@@ -3398,6 +3398,24 @@
       ],
       "notes": "Lead: Ozhegov. publish-report terminal node, host publishReport, REPORT_REF_METHOD_TARGETS, journal-reporter E2E.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-5-legacy-terminals",
+      "title": "DBJ5: legacy NewTrack / NewFftTrendsAnalysis — deprecation, no direct trends journal append",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; legacy labels, logLegacyTerminalDeprecation, analyzeFftTrends no append",
+      "dependsOn": [
+        "dbj-4-publish-report"
+      ],
+      "notes": "Lead: Ozhegov. Palette (legacy) labels; block-executor deprecation log; NewFftTrends → in-memory only; cookbooks updated.",
+      "githubIssueClosedAt": null
     }
   ]
 }

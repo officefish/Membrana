@@ -5,6 +5,10 @@ description: Канонический граф v0.5 collectors — flush по ev
 
 # Cookbook: Collect → Terminal
 
+> **Deprecated (DBJ5):** terminal `NewTrack` / `NewFftTrendsAnalysis` — legacy v0.5.
+> `NewFftTrendsAnalysis` больше не пишет report в journal напрямую.
+> Канонический путь v0.6: [Journal + Reporter](/device-board/cookbooks/journal-reporter-v06).
+
 Эталон **device-board collectors v0.5** (DBC5): exec tick накапливает ref'ы,
 flush запускает **event-ветку** (не exec tick).
 
