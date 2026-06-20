@@ -21,15 +21,15 @@
 
 | ID | Риск | Приоритет | Baseline 2026-06-20 | Фаза |
 |----|------|-----------|---------------------|------|
-| **R1** | `cabinet → background-media` только HTTP | 🔴 | ✅ **PASS** — `rg background-media apps/cabinet/src` → 0 | D1 verify |
-| **R2** | `MembraneRegistry` до первой квоты | 🔴 | ⚠️ **TBD** — `main.tsx`: `registerClientModules()` → `finalizeRegistration()` до `initMediaLibraryHubBridge()`; нет unit-теста / комментария в коде | **D1** |
+| **R1** | `cabinet → background-media` только HTTP | 🔴 | ✅ **PASS** — `yarn check:boundaries` + grep | — |
+| **R2** | `MembraneRegistry` до первой квоты | 🔴 | ✅ **PASS** — порядок в `main.tsx` + `bootstrap-order.test.ts` | — |
 | **R3** | `@membrana/client#lint` exit 1 | 🔴 | ✅ **PASS** — exit 0, 2 warnings (`TelemetryJournalModule` exhaustive-deps) | D2 warnings |
 | **R4** | `trends-detector` exit 134 OOM | 🔴 | ✅ **PASS** — 13 tests, 1.38s | — |
 | **R5** | `audio-engine` / `fft-analyzer` WARNING / passWithNoTests | 🟡 | 🟡 **PARTIAL** — fft: 15 tests; audio-engine: 2 tests но script `--passWithNoTests` | **D3** |
 | **R6** | `device-board` coverage | 🟡 | 🟡 **PARTIAL** — ~26 unique `*.test.ts`; lint 3 warnings (`board-flow-node`, `device-board-shell`) | D2 + D3 |
 | **R7** | WaveformPlayer a11y (aria, Escape, row ≤48px) | 🟡 | 🟡 **PARTIAL** — `CabinetSamplePlayerSection`: `role="region"`, `aria-label`; `useSamplePlaybackEscapeKey()`; inline table player из старого review заменён секцией над таблицей — нужен axe + row height check | **D4** |
-| **R8** | Services → device-board reverse imports | 🔴 | ✅ **PASS** — `grep from.*device-board packages/services/` → 0 | D1 verify |
-| **R9** | Web Audio в UI device-board | 🔴 | ✅ **PASS** — `rg AudioContext\|getUserMedia packages/device-board` → 0 | D1 verify |
+| **R8** | Services → device-board reverse imports | 🔴 | ✅ **PASS** — `check:boundaries` | — |
+| **R9** | Web Audio в UI device-board | 🔴 | ✅ **PASS** — `check:boundaries` | — |
 | **R10** | Deploy logs / local AI dirs в repo | 🟡 | 🟡 **PARTIAL** — `/cabinet-recover*.txt`, `/deploy-*.txt` в `.gitignore` (#125); только `.claude/claude_code_config.json`, `.continue/config.json` — не целые каталоги | **D5** |
 | **R11** | Docker image cabinet >50 МБ | 🟢 | ⏸ **DEFER** — не замеряли на D0 | **D5** |
 | **R12** | Mintlify UI vs DESIGN.md | 🟢 | ⏸ **DEFER** — turbo `@membrana/docs` build OK; ручной visual parity не проверяли | **D5** |
@@ -65,4 +65,6 @@
 
 ## Следующий шаг
 
-Старт **D1** (`crdc-d1-boundaries-registry`): Ozhegov — grep-скрипт + MembraneRegistry init test.
+~~Старт **D1**~~ ✅ **D1 complete** (2026-06-20): `yarn check:boundaries`, `bootstrap-order.test.ts`, комментарии в `main.tsx` / `registerClientModules.ts`.
+
+Старт **D2** (`crdc-d2-lint-hooks-green`): Rodchenko — 5 exhaustive-deps warnings.

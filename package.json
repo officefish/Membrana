@@ -66,6 +66,7 @@
     "task:list": "node scripts/task-list.mjs",
     "task:sync-readme": "node scripts/task-list.mjs --sync-readme",
     "catalog:verify-client": "node scripts/verify-client-catalog.mjs",
+    "check:boundaries": "node scripts/check-package-boundaries.mjs",
     "task:archive": "node scripts/archive-task.mjs",
     "hackathon:close": "node scripts/hackathon-close.mjs",
     "task:close-github": "node scripts/task-close-github-issues.mjs",

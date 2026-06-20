@@ -3046,7 +3046,7 @@
       "dependsOn": [
         "crdc-d0-baseline-audit"
       ],
-      "notes": "Lead: Ozhegov. R1 R2 R8 R9: cabinet→media HTTP, registry before quota, no reverse service imports."
+      "notes": "Lead: Ozhegov. ✅ D1 2026-06-20: yarn check:boundaries; bootstrap-order.test.ts; main.tsx contract comments. R1 R2 R8 R9 closed."
     },
     {
       "id": "crdc-d2-lint-hooks-green",
