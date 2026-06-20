@@ -66,6 +66,7 @@ export async function runEventBranchFromNode(
   callbacks: ExecSubgraphCallbacks,
   initialDetection: ScenarioDetectionResult | null,
 ): Promise<ScenarioDetectionResult | null> {
+  const branchStartedAt = performance.now();
   let currentId: string | null = startNodeId;
   let lastDetection = initialDetection;
   let steps = 0;
@@ -103,6 +104,9 @@ export async function runEventBranchFromNode(
       onPrintOutput: options.onPrintOutput,
       onStopRuntime: options.onStopRuntime,
       collectStore: options.collectStore,
+      reportStore: options.reportStore,
+      trackStore: options.trackStore,
+      analysisStore: options.analysisStore,
     });
 
     if (result.stopRequested) {
@@ -126,6 +130,12 @@ export async function runEventBranchFromNode(
 
     currentId = findExecSuccessor(subgraph, currentId, result.execOutHandle ?? 'exec-out');
   }
+
+  host.log('event-branch-done', {
+    startNodeId,
+    branch: options.branch,
+    elapsedMs: Math.round(performance.now() - branchStartedAt),
+  });
 
   return lastDetection;
 }
@@ -153,6 +163,7 @@ export async function dispatchCollectEventBranches(
     branch: input.options.branch,
   });
 
+  const dispatchStartedAt = performance.now();
   let lastDetection = input.lastDetection;
   for (const targetId of targets) {
     lastDetection = await runEventBranchFromNode(
@@ -165,5 +176,11 @@ export async function dispatchCollectEventBranches(
       lastDetection,
     );
   }
+  input.host.log('collect-event-dispatch-done', {
+    sourceNodeId: input.sourceNodeId,
+    targets,
+    branch: input.options.branch,
+    elapsedMs: Math.round(performance.now() - dispatchStartedAt),
+  });
   return lastDetection;
 }

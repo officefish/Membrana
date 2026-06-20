@@ -10,6 +10,7 @@ export { createScenarioBoardNode } from './board-node-factory.js';
 export type { CreateScenarioBoardNodeOptions } from './board-node-factory.js';
 export {
   createVariableBoardNode,
+  defaultVariableNamePrefix,
   referenceTypeLabel,
   syncVariableNodePins,
   variableNodePins,
@@ -145,22 +146,29 @@ export {
   isCollectFftFramesNode,
 } from './collect-fft-frames-node.js';
 export type { CreateCollectFftFramesBoardNodeOptions } from './collect-fft-frames-node.js';
-export type { CreateNewFftTrendsAnalysisBoardNodeOptions } from './new-fft-trends-analysis-node.js';
+export type { CreateMakeFftTrendsAnalysisBoardNodeOptions } from './make-fft-trends-analysis-node.js';
 export {
-  createNewTrackBoardNode,
-  newTrackNodePins,
-  NEW_TRACK_NODE_KIND,
-  NEW_TRACK_SAMPLES_HANDLE,
-  isNewTrackNode,
-} from './new-track-node.js';
-export type { CreateNewTrackBoardNodeOptions } from './new-track-node.js';
+  createMakeTrackBoardNode,
+  makeTrackNodePins,
+  MAKE_TRACK_NODE_KIND,
+  MAKE_TRACK_RECORDER_HANDLE,
+  MAKE_TRACK_SAMPLES_HANDLE,
+  MAKE_TRACK_OUT_HANDLE,
+  isMakeTrackNode,
+  isMakeTrackNodeKind,
+  LEGACY_MAKE_TRACK_NODE_KIND,
+} from './make-track-node.js';
+export type { CreateMakeTrackBoardNodeOptions } from './make-track-node.js';
 export {
-  createNewFftTrendsAnalysisBoardNode,
-  newFftTrendsAnalysisNodePins,
-  NEW_FFT_TRENDS_ANALYSIS_NODE_KIND,
-  NEW_FFT_TRENDS_FRAMES_HANDLE,
-  isNewFftTrendsAnalysisNode,
-} from './new-fft-trends-analysis-node.js';
+  createMakeFftTrendsAnalysisBoardNode,
+  makeFftTrendsAnalysisNodePins,
+  MAKE_FFT_TRENDS_ANALYSIS_NODE_KIND,
+  MAKE_FFT_TRENDS_ANALYSER_HANDLE,
+  MAKE_FFT_TRENDS_FRAMES_HANDLE,
+  isMakeFftTrendsAnalysisNode,
+  isMakeFftTrendsAnalysisNodeKind,
+  LEGACY_MAKE_FFT_TRENDS_ANALYSIS_NODE_KIND,
+} from './make-fft-trends-analysis-node.js';
 export {
   suggestPaletteNodesForOutgoingConnection,
 } from './connection-suggest.js';
@@ -229,7 +237,23 @@ export {
   branchScenarioExportFilename,
   buildBranchScenarioExport,
 } from './export-branch-scenario.js';
-export type { BranchScenarioExport, BuildBranchScenarioExportInput } from './export-branch-scenario.js';
+export type { BranchScenarioExport, BuildBranchScenarioExportInput, ReferenceVariableSlot } from './export-branch-scenario.js';
+export {
+  applyBranchScenarioImport,
+  isBranchScenarioExportJson,
+  parseBranchScenarioExportJson,
+} from './import-branch-scenario.js';
+export type {
+  ApplyBranchScenarioImportResult,
+  ParseBranchScenarioExportResult,
+} from './import-branch-scenario.js';
+export {
+  collectReferenceVariableSlots,
+  exportValueVariables,
+  isReferenceMappingComplete,
+  remapSubgraphVariableIds,
+  suggestReferenceVariableMapping,
+} from './reference-variable-slots.js';
 export {
   hydrateBoardFromDocument,
   hydratedFunctionInput,

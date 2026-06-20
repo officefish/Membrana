@@ -4,6 +4,7 @@ export type {
   ScenarioJournalEvent,
   ScenarioDetectionResult,
   ScenarioSoundLevelResult,
+  FftTrendsAnalysisHostResult,
   ScenarioStopReason,
 } from './types.js';
 export { createIdleScenarioRuntimeState } from './types.js';
@@ -21,12 +22,8 @@ export type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
 export { CollectRuntimeStore } from './collect-runtime-store.js';
 export { ReporterRuntimeStore } from './reporter-runtime-store.js';
 export { ReportRuntimeStore } from './report-runtime-store.js';
-export {
-  isLegacyTerminalNodeKind,
-  LEGACY_TERMINAL_MIGRATION_HINT,
-  LEGACY_TERMINAL_NODE_KINDS,
-  logLegacyTerminalDeprecation,
-} from './legacy-terminal-deprecation.js';
+export { TrackRuntimeStore } from './track-runtime-store.js';
+export { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 export { executeCollectNode } from './collect-node-executor.js';
 export {
   dispatchCollectEventBranches,

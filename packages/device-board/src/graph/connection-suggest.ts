@@ -21,7 +21,15 @@ import {
   PUBLISH_REPORT_JOURNAL_HANDLE,
   PUBLISH_REPORT_REPORT_HANDLE,
 } from './publish-report-node.js';
-import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from './get-spectral-analyser-node.js';
+import { COLLECT_FFT_ANALYSER_HANDLE } from './collect-fft-frames-node.js';
+import { COLLECT_SAMPLES_RECORDER_HANDLE } from './collect-samples-node.js';
+import {
+  MAKE_FFT_TRENDS_ANALYSER_HANDLE,
+} from './make-fft-trends-analysis-node.js';
+import { MAKE_TRACK_RECORDER_HANDLE } from './make-track-node.js';
+import {
+  GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+} from './get-spectral-analyser-node.js';
 import {
   GET_MICROPHONE_DEVICE_HANDLE,
   IS_VALID_FALSE_HANDLE,
@@ -89,6 +97,21 @@ export const REPORTER_REF_METHOD_TARGETS = [
 /** Методы для ReportRef (DBJ4). */
 export const REPORT_REF_METHOD_TARGETS = [
   { nodeKind: 'publish-report' as const, targetHandle: PUBLISH_REPORT_REPORT_HANDLE },
+] as const;
+
+/** Методы для RecorderRef (MakeTrack, CollectSamples). */
+export const RECORDER_REF_METHOD_TARGETS = [
+  { nodeKind: 'make-track' as const, targetHandle: MAKE_TRACK_RECORDER_HANDLE },
+  { nodeKind: 'collect-samples' as const, targetHandle: COLLECT_SAMPLES_RECORDER_HANDLE },
+] as const;
+
+/** Методы для SpectralAnalyserRef (MakeFftTrendsAnalysis, CollectFftFrames). */
+export const SPECTRAL_ANALYSER_REF_METHOD_TARGETS = [
+  {
+    nodeKind: 'make-fft-trends-analysis' as const,
+    targetHandle: MAKE_FFT_TRENDS_ANALYSER_HANDLE,
+  },
+  { nodeKind: 'collect-fft-frames' as const, targetHandle: COLLECT_FFT_ANALYSER_HANDLE },
 ] as const;
 
 function pinAcceptsSource(

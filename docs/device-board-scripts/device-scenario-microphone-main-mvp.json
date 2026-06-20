@@ -1,0 +1,655 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "main",
+  "branchLabel": "onMainTick",
+  "scenarioTitle": "MVP: 5s tracks + FFT trends → server journal",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "main-on-tick",
+    "nodes": [
+      {
+        "id": "main-on-tick",
+        "blockKind": "custom",
+        "position": {
+          "x": -700.3126018437592,
+          "y": -281.494470006514
+        },
+        "label": "onTick",
+        "nodeKind": "event",
+        "system": true,
+        "eventVariant": "loopTick"
+      },
+      {
+        "id": "main-infinity",
+        "blockKind": "custom",
+        "position": {
+          "x": 2669.281877016335,
+          "y": 959.1150465096357
+        },
+        "label": "∞",
+        "nodeKind": "loop-repeat",
+        "system": true
+      },
+      {
+        "id": "node-variable-get-var-MicrophoneRef-mqkpx2yg-2-mql3c3qd-5",
+        "blockKind": "custom",
+        "position": {
+          "x": -708.2039861563096,
+          "y": 29.250519710589458
+        },
+        "label": "microphone1",
+        "nodeKind": "variable-get",
+        "variableId": "var-MicrophoneRef-mqkpx2yg-2"
+      },
+      {
+        "id": "node-is-valid-mql3c77w-6",
+        "blockKind": "custom",
+        "position": {
+          "x": -375.3186574399972,
+          "y": -107.01584256505302
+        },
+        "label": "isValid",
+        "nodeKind": "is-valid"
+      },
+      {
+        "id": "node-get-audio-stream-mql3ckno-7",
+        "blockKind": "custom",
+        "position": {
+          "x": -106.52472747074003,
+          "y": -2.1324968378683664
+        },
+        "label": "GetAudioStream",
+        "nodeKind": "get-audio-stream"
+      },
+      {
+        "id": "node-variable-set-var-AudioStreamRef-mql3e818-5-mql3earo-6",
+        "blockKind": "custom",
+        "position": {
+          "x": 706.0189145584915,
+          "y": 112.98583679552314
+        },
+        "label": "audiostream1",
+        "nodeKind": "variable-set",
+        "variableId": "var-AudioStreamRef-mql3e818-5"
+      },
+      {
+        "id": "node-get-sample-mql3f1ro-9",
+        "blockKind": "custom",
+        "position": {
+          "x": 1041.4480185865475,
+          "y": 197.81839440933837
+        },
+        "label": "GetSample",
+        "nodeKind": "get-sample"
+      },
+      {
+        "id": "node-get-fft-frame-mql3g2ys-11",
+        "blockKind": "custom",
+        "position": {
+          "x": 1831.4035143642086,
+          "y": 346.13650333235086
+        },
+        "label": "GetFFTFrame",
+        "nodeKind": "get-fft-frame"
+      },
+      {
+        "id": "node-device-global-mqm0q2fd-14",
+        "blockKind": "custom",
+        "position": {
+          "x": 222.44273871657708,
+          "y": -392.13257827383524
+        },
+        "label": "GetDevice",
+        "nodeKind": "device-global"
+      },
+      {
+        "id": "node-stop-runtime-mqm1mfts-29",
+        "blockKind": "custom",
+        "position": {
+          "x": 511.90025358061894,
+          "y": -322.4211147385492
+        },
+        "label": "StopRuntime",
+        "nodeKind": "stop-runtime"
+      },
+      {
+        "id": "node-is-valid-mqm1nky7-30",
+        "blockKind": "custom",
+        "position": {
+          "x": 183.38127056229985,
+          "y": -135.09097892214334
+        },
+        "label": "isValid",
+        "nodeKind": "is-valid"
+      },
+      {
+        "id": "node-variable-get-var-DeviceRef-mqkpwruv-1-mqm9s2ju-14",
+        "blockKind": "custom",
+        "position": {
+          "x": 1032.6707906684567,
+          "y": 455.2621650247553
+        },
+        "label": "device1",
+        "nodeKind": "variable-get",
+        "variableId": "var-DeviceRef-mqkpwruv-1"
+      },
+      {
+        "id": "node-get-recorder-mqm9sdoi-25",
+        "blockKind": "custom",
+        "position": {
+          "x": 1315.6043085466104,
+          "y": 343.0295814824033
+        },
+        "label": "GetRecorder",
+        "nodeKind": "get-recorder"
+      },
+      {
+        "id": "node-collect-samples-mqm9tz3e-26",
+        "blockKind": "custom",
+        "position": {
+          "x": 1569.5464934061215,
+          "y": 241.84241093365245
+        },
+        "label": "CollectSamples",
+        "nodeKind": "collect-samples",
+        "collectorConfig": {
+          "bufferSize": 2048,
+          "smoothingTimeConstant": 0.75,
+          "windowSec": 5,
+          "queueCapacity": 999
+        }
+      },
+      {
+        "id": "node-get-spectral-analyser-mqm9vz6a-27",
+        "blockKind": "custom",
+        "position": {
+          "x": 1990.724167217369,
+          "y": 463.35298794364223
+        },
+        "label": "GetSpectralAnalyser",
+        "nodeKind": "get-spectral-analyser"
+      },
+      {
+        "id": "node-collect-fft-frames-mqm9wezu-28",
+        "blockKind": "custom",
+        "position": {
+          "x": 2156.722331066656,
+          "y": 608.315963228949
+        },
+        "label": "CollectFftFrames",
+        "nodeKind": "collect-fft-frames",
+        "collectorConfig": {
+          "bufferSize": 2048,
+          "smoothingTimeConstant": 0.75,
+          "windowSec": 5,
+          "queueCapacity": 999
+        }
+      },
+      {
+        "id": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqm9y76y-15",
+        "blockKind": "custom",
+        "position": {
+          "x": 1934.6050014987184,
+          "y": -29.492229847152476
+        },
+        "label": "journal1",
+        "nodeKind": "variable-get",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "node-get-reporter-mqm9yfmy-29",
+        "blockKind": "custom",
+        "position": {
+          "x": 2231.433948513442,
+          "y": 29.51221944419867
+        },
+        "label": "GetReporter",
+        "nodeKind": "get-reporter"
+      },
+      {
+        "id": "node-variable-get-var-DeviceRef-mqkpwruv-1-mqm9zpyq-16",
+        "blockKind": "custom",
+        "position": {
+          "x": 1431.4286166552022,
+          "y": 17.082888530531825
+        },
+        "label": "device1",
+        "nodeKind": "variable-get",
+        "variableId": "var-DeviceRef-mqkpwruv-1"
+      },
+      {
+        "id": "node-new-track-mqma0jnm-31",
+        "blockKind": "custom",
+        "position": {
+          "x": 2564.684520989151,
+          "y": 335.9334860701291
+        },
+        "label": "MakeTrack",
+        "nodeKind": "make-track"
+      },
+      {
+        "id": "node-new-fft-trends-analysis-mqma2lhf-32",
+        "blockKind": "custom",
+        "position": {
+          "x": 2570.388809448468,
+          "y": 461.55034268652594
+        },
+        "label": "MakeFftTrendsAnalysis",
+        "nodeKind": "make-fft-trends-analysis"
+      },
+      {
+        "id": "node-make-report-from-track-mqma2zhv-33",
+        "blockKind": "custom",
+        "position": {
+          "x": 2877.685839862823,
+          "y": 293.14693102099955
+        },
+        "label": "MakeReportFromTrack",
+        "nodeKind": "make-report-from-track"
+      },
+      {
+        "id": "node-make-report-from-analysis-mqma356z-34",
+        "blockKind": "custom",
+        "position": {
+          "x": 2875.0468240412765,
+          "y": 447.52935658142826
+        },
+        "label": "MakeReportFromAnalysis",
+        "nodeKind": "make-report-from-analysis"
+      },
+      {
+        "id": "node-publish-report-mqma49xv-35",
+        "blockKind": "custom",
+        "position": {
+          "x": 3222.0774045745475,
+          "y": 349.85284124614356
+        },
+        "label": "PublishReport",
+        "nodeKind": "publish-report"
+      },
+      {
+        "id": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqma4k3m-17",
+        "blockKind": "custom",
+        "position": {
+          "x": 2875.2426321957955,
+          "y": 166.08747667855414
+        },
+        "label": "journal1",
+        "nodeKind": "variable-get",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      }
+    ],
+    "edges": [
+      {
+        "source": "main-on-tick",
+        "sourceHandle": "exec-out",
+        "target": "node-is-valid-mql3c77w-6",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-get-var-MicrophoneRef-mqkpx2yg-2-mql3c3qd-5",
+        "sourceHandle": "value",
+        "target": "node-is-valid-mql3c77w-6",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "MicrophoneRef"
+      },
+      {
+        "source": "node-is-valid-mql3c77w-6",
+        "sourceHandle": "exec-true-out",
+        "target": "node-get-audio-stream-mql3ckno-7",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-audio-stream-mql3ckno-7",
+        "sourceHandle": "stream",
+        "target": "node-variable-set-var-AudioStreamRef-mql3e818-5-mql3earo-6",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
+      {
+        "source": "node-variable-set-var-AudioStreamRef-mql3e818-5-mql3earo-6",
+        "sourceHandle": "exec-out",
+        "target": "node-get-sample-mql3f1ro-9",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-set-var-AudioStreamRef-mql3e818-5-mql3earo-6",
+        "sourceHandle": "value",
+        "target": "node-get-sample-mql3f1ro-9",
+        "targetHandle": "stream",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
+      {
+        "source": "node-get-sample-mql3f1ro-9",
+        "sourceHandle": "sample",
+        "target": "node-get-fft-frame-mql3g2ys-11",
+        "targetHandle": "sample",
+        "kind": "data",
+        "dataType": "AudioSampleRef"
+      },
+      {
+        "source": "node-variable-get-var-MicrophoneRef-mqkpx2yg-2-mql3c3qd-5",
+        "sourceHandle": "value",
+        "target": "node-get-audio-stream-mql3ckno-7",
+        "targetHandle": "microphone",
+        "kind": "data",
+        "dataType": "MicrophoneRef"
+      },
+      {
+        "source": "node-device-global-mqm0q2fd-14",
+        "sourceHandle": "device",
+        "target": "node-stop-runtime-mqm1mfts-29",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-is-valid-mql3c77w-6",
+        "sourceHandle": "exec-false-out",
+        "target": "node-stop-runtime-mqm1mfts-29",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-audio-stream-mql3ckno-7",
+        "sourceHandle": "exec-out",
+        "target": "node-is-valid-mqm1nky7-30",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-audio-stream-mql3ckno-7",
+        "sourceHandle": "stream",
+        "target": "node-is-valid-mqm1nky7-30",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
+      {
+        "source": "node-is-valid-mqm1nky7-30",
+        "sourceHandle": "exec-false-out",
+        "target": "node-stop-runtime-mqm1mfts-29",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-get-var-DeviceRef-mqkpwruv-1-mqm9s2ju-14",
+        "sourceHandle": "value",
+        "target": "node-get-recorder-mqm9sdoi-25",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-recorder-mqm9sdoi-25",
+        "sourceHandle": "exec-out",
+        "target": "node-collect-samples-mqm9tz3e-26",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-recorder-mqm9sdoi-25",
+        "sourceHandle": "recorder",
+        "target": "node-collect-samples-mqm9tz3e-26",
+        "targetHandle": "recorder",
+        "kind": "data",
+        "dataType": "RecorderRef"
+      },
+      {
+        "source": "node-get-recorder-mqm9sdoi-25",
+        "sourceHandle": "recorder",
+        "target": "node-new-track-mqma0jnm-31",
+        "targetHandle": "recorder",
+        "kind": "data",
+        "dataType": "RecorderRef"
+      },
+      {
+        "source": "node-get-sample-mql3f1ro-9",
+        "sourceHandle": "exec-out",
+        "target": "node-get-recorder-mqm9sdoi-25",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-get-var-DeviceRef-mqkpwruv-1-mqm9s2ju-14",
+        "sourceHandle": "value",
+        "target": "node-get-spectral-analyser-mqm9vz6a-27",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-spectral-analyser-mqm9vz6a-27",
+        "sourceHandle": "analyser",
+        "target": "node-collect-fft-frames-mqm9wezu-28",
+        "targetHandle": "analyser",
+        "kind": "data",
+        "dataType": "SpectralAnalyserRef"
+      },
+      {
+        "source": "node-get-spectral-analyser-mqm9vz6a-27",
+        "sourceHandle": "analyser",
+        "target": "node-new-fft-trends-analysis-mqma2lhf-32",
+        "targetHandle": "analyser",
+        "kind": "data",
+        "dataType": "SpectralAnalyserRef"
+      },
+      {
+        "source": "node-get-spectral-analyser-mqm9vz6a-27",
+        "sourceHandle": "exec-out",
+        "target": "node-collect-fft-frames-mqm9wezu-28",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-collect-samples-mqm9tz3e-26",
+        "sourceHandle": "exec-out",
+        "target": "node-get-fft-frame-mql3g2ys-11",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-fft-frame-mql3g2ys-11",
+        "sourceHandle": "exec-out",
+        "target": "node-get-spectral-analyser-mqm9vz6a-27",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-collect-fft-frames-mqm9wezu-28",
+        "sourceHandle": "exec-out",
+        "target": "main-infinity",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqm9y76y-15",
+        "sourceHandle": "value",
+        "target": "node-get-reporter-mqm9yfmy-29",
+        "targetHandle": "journal",
+        "kind": "data",
+        "dataType": "JournalRef"
+      },
+      {
+        "source": "node-collect-samples-mqm9tz3e-26",
+        "sourceHandle": "batches",
+        "target": "node-new-track-mqma0jnm-31",
+        "targetHandle": "samples",
+        "kind": "data",
+        "dataType": "AudioSampleRefList"
+      },
+      {
+        "source": "node-collect-fft-frames-mqm9wezu-28",
+        "sourceHandle": "event-out",
+        "target": "node-new-fft-trends-analysis-mqma2lhf-32",
+        "targetHandle": "exec-in",
+        "kind": "event"
+      },
+      {
+        "source": "node-collect-fft-frames-mqm9wezu-28",
+        "sourceHandle": "batches",
+        "target": "node-new-fft-trends-analysis-mqma2lhf-32",
+        "targetHandle": "frames",
+        "kind": "data",
+        "dataType": "FftFrameRefList"
+      },
+      {
+        "source": "node-get-reporter-mqm9yfmy-29",
+        "sourceHandle": "reporter",
+        "target": "node-make-report-from-track-mqma2zhv-33",
+        "targetHandle": "reporter",
+        "kind": "data",
+        "dataType": "ReporterRef"
+      },
+      {
+        "source": "node-get-reporter-mqm9yfmy-29",
+        "sourceHandle": "exec-out",
+        "target": "node-make-report-from-track-mqma2zhv-33",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqma4k3m-17",
+        "sourceHandle": "value",
+        "target": "node-publish-report-mqma49xv-35",
+        "targetHandle": "journal",
+        "kind": "data",
+        "dataType": "JournalRef"
+      },
+      {
+        "source": "node-make-report-from-track-mqma2zhv-33",
+        "sourceHandle": "exec-out",
+        "target": "node-publish-report-mqma49xv-35",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-make-report-from-track-mqma2zhv-33",
+        "sourceHandle": "report",
+        "target": "node-publish-report-mqma49xv-35",
+        "targetHandle": "report",
+        "kind": "data",
+        "dataType": "ReportRef"
+      },
+      {
+        "source": "node-make-report-from-analysis-mqma356z-34",
+        "sourceHandle": "exec-out",
+        "target": "node-publish-report-mqma49xv-35",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-make-report-from-analysis-mqma356z-34",
+        "sourceHandle": "report",
+        "target": "node-publish-report-mqma49xv-35",
+        "targetHandle": "report",
+        "kind": "data",
+        "dataType": "ReportRef"
+      },
+      {
+        "source": "node-new-track-mqma0jnm-31",
+        "sourceHandle": "exec-out",
+        "target": "node-make-report-from-track-mqma2zhv-33",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-new-track-mqma0jnm-31",
+        "sourceHandle": "track",
+        "target": "node-make-report-from-track-mqma2zhv-33",
+        "targetHandle": "track",
+        "kind": "data",
+        "dataType": "TrackRef"
+      },
+      {
+        "source": "node-new-fft-trends-analysis-mqma2lhf-32",
+        "sourceHandle": "exec-out",
+        "target": "node-make-report-from-analysis-mqma356z-34",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-reporter-mqm9yfmy-29",
+        "sourceHandle": "reporter",
+        "target": "node-make-report-from-analysis-mqma356z-34",
+        "targetHandle": "reporter",
+        "kind": "data",
+        "dataType": "ReporterRef"
+      },
+      {
+        "source": "node-new-fft-trends-analysis-mqma2lhf-32",
+        "sourceHandle": "analysis",
+        "target": "node-make-report-from-analysis-mqma356z-34",
+        "targetHandle": "analysis",
+        "kind": "data",
+        "dataType": "FftTrendAnalysisRef"
+      },
+      {
+        "source": "node-is-valid-mqm1nky7-30",
+        "sourceHandle": "exec-true-out",
+        "target": "node-variable-set-var-AudioStreamRef-mql3e818-5-mql3earo-6",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-sample-mql3f1ro-9",
+        "sourceHandle": "sample",
+        "target": "node-collect-samples-mqm9tz3e-26",
+        "targetHandle": "sample",
+        "kind": "data",
+        "dataType": "AudioSampleRef"
+      },
+      {
+        "source": "node-get-fft-frame-mql3g2ys-11",
+        "sourceHandle": "frame",
+        "target": "node-collect-fft-frames-mqm9wezu-28",
+        "targetHandle": "frame",
+        "kind": "data",
+        "dataType": "FftFrameRef"
+      }
+    ]
+  },
+  "variables": [
+    {
+      "id": "var-DateTime-mqkpyfxb-3",
+      "name": "datetime1",
+      "type": "DateTime",
+      "value": null
+    }
+  ],
+  "referencedVariableIds": [
+    "var-DeviceRef-mqkpwruv-1",
+    "var-MicrophoneRef-mqkpx2yg-2",
+    "var-AudioStreamRef-mql3e818-5",
+    "var-JournalRef-mqm9dl4a-6"
+  ],
+  "exportedAt": "2026-06-20T12:11:26.529Z",
+  "referenceVariableSlots": [
+    {
+      "exportVariableId": "var-DeviceRef-mqkpwruv-1",
+      "type": "DeviceRef",
+      "nameHint": "device1"
+    },
+    {
+      "exportVariableId": "var-MicrophoneRef-mqkpx2yg-2",
+      "type": "MicrophoneRef",
+      "nameHint": "microphone1"
+    },
+    {
+      "exportVariableId": "var-AudioStreamRef-mql3e818-5",
+      "type": "AudioStreamRef",
+      "nameHint": "audiostream1"
+    },
+    {
+      "exportVariableId": "var-JournalRef-mqm9dl4a-6",
+      "type": "JournalRef",
+      "nameHint": "journal1"
+    }
+  ]
+}

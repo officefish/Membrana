@@ -43,6 +43,11 @@ import {
   STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
 import { COLLECT_BATCH_OUT_HANDLE } from '../graph/collect-node-shared.js';
+import {
+  MAKE_FFT_TRENDS_ANALYSIS_OUT_HANDLE,
+  isMakeFftTrendsAnalysisNodeKind,
+} from '../graph/make-fft-trends-analysis-node.js';
+import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveGlobalDeviceReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
 
@@ -81,6 +86,10 @@ export interface ResolveInputContext {
   readonly getReporterRef?: (journalHandle: string) => ScenarioReferenceValue | null;
   /** ReportRef последнего make-report узла (DBJ3). */
   readonly getReportRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** TrackRef последнего MakeTrack узла. */
+  readonly getTrackRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** FftTrendAnalysisRef последнего MakeFftTrendsAnalysis узла. */
+  readonly getFftTrendAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
@@ -202,6 +211,14 @@ function invalidReporterRef(): ScenarioReferenceValue {
 
 function invalidReportRef(): ScenarioReferenceValue {
   return { kind: 'ReportRef', handle: null, valid: false };
+}
+
+function invalidTrackRef(): ScenarioReferenceValue {
+  return { kind: 'TrackRef', handle: null, valid: false };
+}
+
+function invalidFftTrendAnalysisRef(): ScenarioReferenceValue {
+  return { kind: 'FftTrendAnalysisRef', handle: null, valid: false };
 }
 
 function resolveGetAudioStreamOutput(
@@ -593,6 +610,31 @@ export function resolveNodeOutput(
       return invalidReportRef();
     }
     return resolver(node.id) ?? invalidReportRef();
+  }
+
+  if (isMakeTrackNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_TRACK_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown make-track output: ${outputPort}`);
+    }
+    const resolver = context.getTrackRef;
+    if (resolver === undefined) {
+      return invalidTrackRef();
+    }
+    return resolver(node.id) ?? invalidTrackRef();
+  }
+
+  if (isMakeFftTrendsAnalysisNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_FFT_TRENDS_ANALYSIS_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-fft-trends-analysis output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getFftTrendAnalysisRef;
+    if (resolver === undefined) {
+      return invalidFftTrendAnalysisRef();
+    }
+    return resolver(node.id) ?? invalidFftTrendAnalysisRef();
   }
 
   if (node.nodeKind === 'collect-samples') {

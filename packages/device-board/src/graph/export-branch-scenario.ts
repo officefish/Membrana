@@ -11,6 +11,11 @@ import {
   SCENARIO_ON_DISCONNECT_ENTRY,
   SCENARIO_ON_STOP_ENTRY,
 } from './initial-board-state.js';
+import {
+  collectReferenceVariableSlots,
+  exportValueVariables,
+  type ReferenceVariableSlot,
+} from './reference-variable-slots.js';
 import { serializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 
 /** JSON-артефакт экспорта одной ветки scenario graph (для отладки и обмена). */
@@ -25,12 +30,16 @@ export interface BranchScenarioExport {
     readonly id: string;
     readonly name: string;
   };
-  /** Все переменные документа (document-scope, общие для всех веток). */
+  /** Value-переменные, переносимые вместе с веткой (DateTime / Integer / String). */
   readonly variables: readonly ScenarioVariable[];
-  /** Id переменных, на которые ссылаются variable-get/set в этой ветке. */
-  readonly referencedVariableIds: readonly string[];
+  /** Слоты ссылочных переменных (без runtime-значений) — сопоставляются при импорте. */
+  readonly referenceVariableSlots: readonly ReferenceVariableSlot[];
+  /** @deprecated Используйте referenceVariableSlots. */
+  readonly referencedVariableIds?: readonly string[];
   readonly exportedAt: string;
 }
+
+export type { ReferenceVariableSlot };
 
 export interface BuildBranchScenarioExportInput {
   readonly deviceKind: DeviceKind;
@@ -89,6 +98,9 @@ export function buildBranchScenarioExport(input: BuildBranchScenarioExportInput)
   const entry = branchEntry(input.branch, input.functionMeta?.entry);
   const subgraph = serializeScenarioSubgraph(entry, input.nodes, input.edges);
 
+  const referencedVariableIds = collectReferencedVariableIds(input.nodes);
+  const referenceVariableSlots = collectReferenceVariableSlots(referencedVariableIds, input.variables);
+
   return {
     exportKind: 'branch-scenario',
     branch: input.branch,
@@ -99,8 +111,9 @@ export function buildBranchScenarioExport(input: BuildBranchScenarioExportInput)
     ...(input.branch === 'function' && input.functionMeta !== undefined
       ? { function: { id: input.functionMeta.id, name: input.functionMeta.name } }
       : {}),
-    variables: input.variables,
-    referencedVariableIds: collectReferencedVariableIds(input.nodes),
+    variables: exportValueVariables(input.variables),
+    referenceVariableSlots,
+    referencedVariableIds,
     exportedAt: new Date().toISOString(),
   };
 }

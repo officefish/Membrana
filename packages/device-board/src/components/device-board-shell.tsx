@@ -24,6 +24,7 @@ import {
   type BoardFlowViewportApi,
 } from './board-flow-canvas.js';
 import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
+import { BoardBranchImportModal } from './board-branch-import-modal.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
@@ -63,6 +64,7 @@ const DeviceBoardShellInner: React.FC<{
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
   const [connectionSuggestOpen, setConnectionSuggestOpen] = useState(false);
@@ -90,6 +92,26 @@ const DeviceBoardShellInner: React.FC<{
     },
     [graph],
   );
+
+  const handleCopyScenarioTrace = useCallback(async () => {
+    const copied = await graph.copyScenarioTrace();
+    setTraceCopyStatus(
+      copied
+        ? `Скопировано ${graph.scenarioTraceLineCount} строк`
+        : graph.scenarioTraceLineCount === 0
+          ? 'Буфер trace пуст'
+          : 'Не удалось скопировать',
+    );
+  }, [graph]);
+
+  const handleDownloadScenarioTrace = useCallback(() => {
+    if (graph.scenarioTraceLineCount === 0) {
+      setTraceCopyStatus('Буфер trace пуст');
+      return;
+    }
+    graph.downloadScenarioTrace();
+    setTraceCopyStatus(`Скачано ${graph.scenarioTraceLineCount} строк`);
+  }, [graph]);
 
   useEffect(() => {
     graph.refreshValidation();
@@ -442,6 +464,27 @@ const DeviceBoardShellInner: React.FC<{
                 />
                 <span className="label-text text-xs font-medium">INFO</span>
               </label>
+              <button
+                type="button"
+                className="btn btn-xs btn-ghost"
+                disabled={graph.scenarioTraceLineCount === 0}
+                onClick={() => void handleCopyScenarioTrace()}
+                title="Копировать буфер [device-board] логов в буфер обмена"
+                aria-label="Копировать trace логов сценария"
+              >
+                Copy trace
+                {graph.scenarioTraceLineCount > 0 ? ` (${graph.scenarioTraceLineCount})` : ''}
+              </button>
+              <button
+                type="button"
+                className="btn btn-xs btn-ghost"
+                disabled={graph.scenarioTraceLineCount === 0}
+                onClick={handleDownloadScenarioTrace}
+                title="Скачать trace как .txt"
+                aria-label="Скачать trace логов сценария"
+              >
+                ↓
+              </button>
               <div className="flex items-center gap-1">
                 <button
                   type="button"
@@ -485,6 +528,7 @@ const DeviceBoardShellInner: React.FC<{
               </div>
               <span className="sr-only" role="status" aria-live="polite">
                 Режим: {mode === 'alarm' ? 'тревога' : 'обычный'}
+                {traceCopyStatus !== null ? `. ${traceCopyStatus}` : ''}
               </span>
             </>
           ) : null}
@@ -561,6 +605,18 @@ const DeviceBoardShellInner: React.FC<{
             onConnectionDropOnPane={handleConnectionDropOnPane}
           />
         </div>
+
+        <BoardBranchImportModal
+          pending={graph.pendingBranchImport}
+          variables={graph.variables}
+          onConfirm={(mapping) => {
+            const error = graph.confirmBranchImport(mapping);
+            if (error !== null) {
+              setImportError(error);
+            }
+          }}
+          onDismiss={graph.cancelBranchImport}
+        />
 
         <BoardConnectionSuggestModal
           open={connectionSuggestOpen}

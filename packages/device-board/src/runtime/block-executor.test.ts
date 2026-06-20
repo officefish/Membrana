@@ -7,6 +7,8 @@ import { executeScenarioBlock } from './block-executor.js';
 import { createStubScenarioRuntimeHost } from './host.js';
 import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { ReportRuntimeStore } from './report-runtime-store.js';
+import { TrackRuntimeStore } from './track-runtime-store.js';
+import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import { ScenarioVariableStore } from './variable-store.js';
 
 describe('executeScenarioBlock print', () => {
@@ -289,34 +291,55 @@ describe('executeScenarioBlock stop-runtime', () => {
   });
 });
 
-describe('executeScenarioBlock terminal nodes (DBC4)', () => {
-  it('NewTrack calls createTrackFromSampleRefs with resolved batch refs', async () => {
+describe('executeScenarioBlock recorder/analyser methods (MakeTrack / MakeFftTrendsAnalysis)', () => {
+  it('MakeTrack calls createTrackFromSampleRefs when recorder + samples are wired', async () => {
     const createTrackFromSampleRefs = vi.fn(async () => ({ trackId: 'track-abc' }));
     const host = createStubScenarioRuntimeHost({ createTrackFromSampleRefs });
-    const variableStore = new ScenarioVariableStore();
     const collectStore = new CollectRuntimeStore();
+    const trackStore = new TrackRuntimeStore();
     const sampleA = { kind: 'AudioSampleRef' as const, handle: 's-1', valid: true };
     const sampleB = { kind: 'AudioSampleRef' as const, handle: 's-2', valid: true };
+    const recorderRef = { kind: 'RecorderRef' as const, handle: 'recorder:dev-1', valid: true };
+    const recorderVar: ScenarioVariable = {
+      ...createScenarioVariable('var-rec', 'recorder1', 'RecorderRef'),
+      value: recorderRef,
+    };
     collectStore.setLastBatch('collect-1', [sampleA, sampleB], 'AudioSampleRefList');
 
     const node = {
-      id: 'nt-1',
-      nodeKind: 'new-track' as const,
+      id: 'mt-1',
+      nodeKind: 'make-track' as const,
       blockKind: 'custom' as const,
-      label: 'NewTrack',
+      label: 'MakeTrack',
     };
     const subgraph: ScenarioSubgraph = {
       nodes: [
+        {
+          id: 'vg-rec',
+          nodeKind: 'variable-get',
+          blockKind: 'custom',
+          label: 'recorder1',
+          variableId: recorderVar.id,
+        },
         { id: 'collect-1', nodeKind: 'collect-samples', blockKind: 'custom', label: 'Collect' },
         node,
       ],
       edges: [
         {
+          id: 'd-recorder',
+          kind: 'data',
+          source: 'vg-rec',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'mt-1',
+          targetHandle: 'recorder',
+          dataType: 'RecorderRef',
+        },
+        {
           id: 'd1',
           kind: 'data',
           source: 'collect-1',
           sourceHandle: 'batches',
-          target: 'nt-1',
+          target: 'mt-1',
           targetHandle: 'samples',
           dataType: 'AudioSampleRefList',
         },
@@ -332,36 +355,113 @@ describe('executeScenarioBlock terminal nodes (DBC4)', () => {
       lastDetection: null,
       defaultChunkDurationMs: 5000,
       functions: [],
-      variableStore,
+      variableStore: new ScenarioVariableStore([recorderVar]),
       collectStore,
+      trackStore,
       resolveContext: {
         getCollectBatchRef: (nodeId) => collectStore.getLastBatchRef(nodeId),
+        getTrackRef: (nodeId) => trackStore.getTrackRef(nodeId),
       },
     });
 
-    expect(createTrackFromSampleRefs).toHaveBeenCalledWith('nt-1', [sampleA, sampleB]);
+    expect(createTrackFromSampleRefs).toHaveBeenCalledWith('mt-1', [sampleA, sampleB]);
+    expect(trackStore.getTrackRef('mt-1').handle).toBe('track:track-abc');
   });
 
-  it('NewFftTrendsAnalysis calls analyzeFftTrendsFromFrameRefs', async () => {
-    const analyzeFftTrendsFromFrameRefs = vi.fn(async () => ({
-      detected: true,
-      confidence: 88,
-      templateId: 'DRONE_TIGHT',
-    }));
-    const host = createStubScenarioRuntimeHost({ analyzeFftTrendsFromFrameRefs });
+  it('MakeTrack throws when RecorderRef port is unwired', async () => {
+    const host = createStubScenarioRuntimeHost({});
     const variableStore = new ScenarioVariableStore();
     const collectStore = new CollectRuntimeStore();
-    const frameA = { kind: 'FftFrameRef' as const, handle: 'f-1', valid: true };
-    collectStore.setLastBatch('collect-fft', [frameA], 'FftFrameRefList');
-
+    const trackStore = new TrackRuntimeStore();
+    collectStore.setLastBatch(
+      'collect-1',
+      [{ kind: 'AudioSampleRef', handle: 's-1', valid: true }],
+      'AudioSampleRefList',
+    );
     const node = {
-      id: 'nft-1',
-      nodeKind: 'new-fft-trends-analysis' as const,
+      id: 'mt-1',
+      nodeKind: 'make-track' as const,
       blockKind: 'custom' as const,
-      label: 'NewFftTrendsAnalysis',
+      label: 'MakeTrack',
     };
     const subgraph: ScenarioSubgraph = {
       nodes: [
+        { id: 'collect-1', nodeKind: 'collect-samples', blockKind: 'custom', label: 'Collect' },
+        node,
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data',
+          source: 'collect-1',
+          sourceHandle: 'batches',
+          target: 'mt-1',
+          targetHandle: 'samples',
+          dataType: 'AudioSampleRefList',
+        },
+      ],
+    };
+
+    await expect(
+      executeScenarioBlock({
+        host,
+        signal: new AbortController().signal,
+        branch: 'main',
+        subgraph,
+        node,
+        lastDetection: null,
+        defaultChunkDurationMs: 5000,
+        functions: [],
+        variableStore,
+        collectStore,
+        trackStore,
+        resolveContext: {
+          getCollectBatchRef: (nodeId) => collectStore.getLastBatchRef(nodeId),
+          getTrackRef: (nodeId) => trackStore.getTrackRef(nodeId),
+        },
+      }),
+    ).rejects.toThrow(/RecorderRef/);
+  });
+
+  it('MakeFftTrendsAnalysis stores FftTrendAnalysisRef when analyser + frames are wired', async () => {
+    const analyzeFftTrendsFromFrameRefs = vi.fn(async () => ({
+      analysisId: 'analysis-xyz',
+      detection: {
+        detected: true,
+        confidence: 88,
+        templateId: 'DRONE_TIGHT',
+      },
+    }));
+    const host = createStubScenarioRuntimeHost({ analyzeFftTrendsFromFrameRefs });
+    const collectStore = new CollectRuntimeStore();
+    const analysisStore = new FftTrendAnalysisRuntimeStore();
+    const frameA = { kind: 'FftFrameRef' as const, handle: 'f-1', valid: true };
+    collectStore.setLastBatch('collect-fft', [frameA], 'FftFrameRefList');
+
+    const analyserRef = {
+      kind: 'SpectralAnalyserRef' as const,
+      handle: 'analyser:dev-1',
+      valid: true,
+    };
+    const analyserVar: ScenarioVariable = {
+      ...createScenarioVariable('var-analyser', 'analyser1', 'SpectralAnalyserRef'),
+      value: analyserRef,
+    };
+    const node = {
+      id: 'mft-1',
+      nodeKind: 'make-fft-trends-analysis' as const,
+      blockKind: 'custom' as const,
+      label: 'MakeFftTrendsAnalysis',
+    };
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        {
+          id: 'vg-analyser',
+          nodeKind: 'variable-get',
+          blockKind: 'custom',
+          label: 'analyser1',
+          variableId: analyserVar.id,
+        },
         {
           id: 'collect-fft',
           nodeKind: 'collect-fft-frames',
@@ -372,11 +472,20 @@ describe('executeScenarioBlock terminal nodes (DBC4)', () => {
       ],
       edges: [
         {
+          id: 'd-analyser',
+          kind: 'data',
+          source: 'vg-analyser',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'mft-1',
+          targetHandle: 'analyser',
+          dataType: 'SpectralAnalyserRef',
+        },
+        {
           id: 'd1',
           kind: 'data',
           source: 'collect-fft',
           sourceHandle: 'batches',
-          target: 'nft-1',
+          target: 'mft-1',
           targetHandle: 'frames',
           dataType: 'FftFrameRefList',
         },
@@ -392,52 +501,18 @@ describe('executeScenarioBlock terminal nodes (DBC4)', () => {
       lastDetection: null,
       defaultChunkDurationMs: 5000,
       functions: [],
-      variableStore,
+      variableStore: new ScenarioVariableStore([analyserVar]),
       collectStore,
+      analysisStore,
       resolveContext: {
         getCollectBatchRef: (nodeId) => collectStore.getLastBatchRef(nodeId),
+        getFftTrendAnalysisRef: (nodeId) => analysisStore.getAnalysisRef(nodeId),
       },
     });
 
-    expect(analyzeFftTrendsFromFrameRefs).toHaveBeenCalledWith('nft-1', [frameA]);
+    expect(analyzeFftTrendsFromFrameRefs).toHaveBeenCalledWith('mft-1', [frameA]);
     expect(result.lastDetection?.detected).toBe(true);
-  });
-
-  it('NewFftTrendsAnalysis logs legacy-terminal deprecation (DBJ5)', async () => {
-    const log = vi.fn();
-    const host = createStubScenarioRuntimeHost({
-      log,
-      analyzeFftTrendsFromFrameRefs: vi.fn(async () => ({
-        detected: false,
-        confidence: 0,
-        templateId: 'stub',
-      })),
-    });
-    const variableStore = new ScenarioVariableStore();
-    const collectStore = new CollectRuntimeStore();
-    const node = {
-      id: 'nft-legacy',
-      nodeKind: 'new-fft-trends-analysis' as const,
-      blockKind: 'custom' as const,
-      label: 'NewFftTrendsAnalysis (legacy)',
-    };
-    await executeScenarioBlock({
-      host,
-      signal: new AbortController().signal,
-      branch: 'main',
-      subgraph: { nodes: [node], edges: [] },
-      node,
-      lastDetection: null,
-      defaultChunkDurationMs: 5000,
-      functions: [],
-      variableStore,
-      collectStore,
-      resolveContext: { getCollectBatchRef: (id) => collectStore.getLastBatchRef(id) },
-    });
-    expect(log).toHaveBeenCalledWith(
-      'legacy-terminal-deprecated',
-      expect.objectContaining({ nodeKind: 'new-fft-trends-analysis', nodeId: 'nft-legacy' }),
-    );
+    expect(analysisStore.getAnalysisRef('mft-1').handle).toBe('analysis:analysis-xyz');
   });
 
   it('MakeReportFromTrack calls makeReportFromTrack and stores ReportRef (DBJ3)', async () => {

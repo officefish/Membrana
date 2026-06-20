@@ -1,0 +1,129 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "onStop",
+  "branchLabel": "On stop",
+  "scenarioTitle": "Сценарий остановки устройства",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "on-stop-event",
+    "nodes": [
+      {
+        "id": "on-stop-event",
+        "blockKind": "custom",
+        "position": {
+          "x": 101.3403087605697,
+          "y": 49.02423358410924
+        },
+        "label": "On stop",
+        "nodeKind": "event",
+        "system": true,
+        "eventVariant": "handler"
+      },
+      {
+        "id": "node-is-valid-mqm9nw3u-21",
+        "blockKind": "custom",
+        "position": {
+          "x": 380.7712084304274,
+          "y": 102.59718353023794
+        },
+        "label": "isValid",
+        "nodeKind": "is-valid"
+      },
+      {
+        "id": "node-variable-get-var-MicrophoneRef-mqkpx2yg-2-mqm9o36j-11",
+        "blockKind": "custom",
+        "position": {
+          "x": 54.22848109114318,
+          "y": 249.88951516696858
+        },
+        "label": "microphone1",
+        "nodeKind": "variable-get",
+        "variableId": "var-MicrophoneRef-mqkpx2yg-2"
+      },
+      {
+        "id": "node-stop-streaming-mqm9ofcy-22",
+        "blockKind": "custom",
+        "position": {
+          "x": 669.9804427166014,
+          "y": 164.3341571764124
+        },
+        "label": "StopStreaming",
+        "nodeKind": "stop-streaming"
+      }
+    ],
+    "edges": [
+      {
+        "source": "on-stop-event",
+        "sourceHandle": "exec-out",
+        "target": "node-is-valid-mqm9nw3u-21",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-get-var-MicrophoneRef-mqkpx2yg-2-mqm9o36j-11",
+        "sourceHandle": "value",
+        "target": "node-is-valid-mqm9nw3u-21",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "MicrophoneRef"
+      },
+      {
+        "source": "node-variable-get-var-MicrophoneRef-mqkpx2yg-2-mqm9o36j-11",
+        "sourceHandle": "value",
+        "target": "node-stop-streaming-mqm9ofcy-22",
+        "targetHandle": "microphone",
+        "kind": "data",
+        "dataType": "MicrophoneRef"
+      },
+      {
+        "source": "node-is-valid-mqm9nw3u-21",
+        "sourceHandle": "exec-true-out",
+        "target": "node-stop-streaming-mqm9ofcy-22",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      }
+    ]
+  },
+  "variables": [
+    {
+      "id": "var-DeviceRef-mqkpwruv-1",
+      "name": "device1",
+      "type": "DeviceRef",
+      "value": null
+    },
+    {
+      "id": "var-MicrophoneRef-mqkpx2yg-2",
+      "name": "microphone1",
+      "type": "MicrophoneRef",
+      "value": null
+    },
+    {
+      "id": "var-DateTime-mqkpyfxb-3",
+      "name": "datetime1",
+      "type": "DateTime",
+      "value": null
+    },
+    {
+      "id": "var-ServerRef-mqks85g9-4",
+      "name": "server1",
+      "type": "ServerRef",
+      "value": null
+    },
+    {
+      "id": "var-AudioStreamRef-mql3e818-5",
+      "name": "audiostream1",
+      "type": "AudioStreamRef",
+      "value": null
+    },
+    {
+      "id": "var-JournalRef-mqm9dl4a-6",
+      "name": "journal1",
+      "type": "JournalRef",
+      "value": null
+    }
+  ],
+  "referencedVariableIds": [
+    "var-MicrophoneRef-mqkpx2yg-2"
+  ],
+  "exportedAt": "2026-06-20T11:56:14.153Z"
+}

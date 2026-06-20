@@ -3436,6 +3436,78 @@
       ],
       "notes": "Lead: Vesnin. Epic device-board-journal-reporter-v06 archived; v0.6 journal reporter chain complete on vesnin.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-trace-p0",
+      "title": "DB-Trace P0: scenario chain logging (capture → media → journal → report)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P0_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "runId/tick correlation, media-lib trace hook, event-branch done logs, cookbook",
+      "dependsOn": [
+        "dbj-4-publish-report"
+      ],
+      "notes": "Phase 0 observability. Verified in info.txt with full chain to publish-done.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-unblock-p1",
+      "title": "DB-Trace P1: unblock scenario runtime after media upload (skipRefresh)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P0_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "importBlob skipRefresh + mergeImportedSample; MVP chain unblocked",
+      "dependsOn": [
+        "db-scenario-chain-trace-p0"
+      ],
+      "notes": "E2E: upload-ok → appendTrack → publish-done → main loop continues.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-trace-p2",
+      "title": "DB-Trace P2: X-Membrana-Trace-Id client ↔ media-server correlation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P2_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "X-Membrana-Trace-Id header + pino traceId; server-storage test",
+      "dependsOn": [
+        "db-scenario-chain-unblock-p1"
+      ],
+      "notes": "Deploy background-media required for server-side traceId in prod.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-trace-p3",
+      "title": "DB-Trace P3: Copy/Download scenario trace buffer (device-board UX)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P3_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Ring buffer + Copy trace + Download in device-board shell header",
+      "dependsOn": [
+        "db-scenario-chain-trace-p2"
+      ],
+      "notes": "Unified PR with P0–P3 chain trace epic closure.",
+      "githubIssueClosedAt": null
     }
   ]
 }

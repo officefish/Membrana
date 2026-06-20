@@ -61,6 +61,15 @@ export interface NewSampleMeta {
   notes?: string;
 }
 
+/** Options for {@link MediaLibraryService.importBlob}. */
+export interface ImportBlobOptions {
+  /**
+   * Skip full {@link MediaLibraryService.refresh} after upload.
+   * Merges the new sample into snapshot + refreshes quota only (scenario runtime hot path).
+   */
+  readonly skipRefresh?: boolean;
+}
+
 /** Partial update for ground-truth curation (VDR1). */
 export interface UpdateSampleLabelNotes {
   label?: SampleLabel;

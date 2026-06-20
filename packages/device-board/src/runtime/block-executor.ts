@@ -28,8 +28,16 @@ import {
   PUBLISH_REPORT_REPORT_HANDLE,
 } from '../graph/publish-report-node.js';
 import { GET_SPECTRAL_ANALYSER_DEVICE_HANDLE } from '../graph/get-spectral-analyser-node.js';
-import { NEW_TRACK_SAMPLES_HANDLE } from '../graph/new-track-node.js';
-import { NEW_FFT_TRENDS_FRAMES_HANDLE } from '../graph/new-fft-trends-analysis-node.js';
+import {
+  isMakeFftTrendsAnalysisNodeKind,
+  MAKE_FFT_TRENDS_ANALYSER_HANDLE,
+  MAKE_FFT_TRENDS_FRAMES_HANDLE,
+} from '../graph/make-fft-trends-analysis-node.js';
+import {
+  isMakeTrackNodeKind,
+  MAKE_TRACK_RECORDER_HANDLE,
+  MAKE_TRACK_SAMPLES_HANDLE,
+} from '../graph/make-track-node.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { formatVariableValueForPrintRuntime } from './format-reference.js';
@@ -37,8 +45,9 @@ import type { ScenarioRuntimeHost } from './host.js';
 import { executeCollectNode } from './collect-node-executor.js';
 import type { CollectRuntimeStore } from './collect-runtime-store.js';
 import type { ReportRuntimeStore } from './report-runtime-store.js';
+import type { TrackRuntimeStore } from './track-runtime-store.js';
+import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import { resolveRefListMembers } from './resolve-ref-list.js';
-import { logLegacyTerminalDeprecation } from './legacy-terminal-deprecation.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { isReferenceValid } from './reference-validity.js';
 import type { ScenarioDetectionResult } from './types.js';
@@ -64,6 +73,10 @@ export interface BlockExecutionInput {
   readonly collectStore?: CollectRuntimeStore;
   /** v0.6 DBJ3: in-memory ReportRef payloads от make-report узлов. */
   readonly reportStore?: ReportRuntimeStore;
+  /** v0.6: TrackRef от NewTrack. */
+  readonly trackStore?: TrackRuntimeStore;
+  /** v0.6: FftTrendAnalysisRef от NewFftTrendsAnalysis. */
+  readonly analysisStore?: FftTrendAnalysisRuntimeStore;
 }
 
 export interface BlockExecutionResult {
@@ -125,6 +138,8 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     onStopRuntime,
     collectStore,
     reportStore,
+    trackStore,
+    analysisStore,
   } = input;
 
   assertNotAborted(signal);
@@ -336,6 +351,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       resolveContext,
     );
     let reportId: string | null = null;
+    let skipReason: string | null = null;
     if (
       reporterRef !== null &&
       reporterRef.kind === 'ReporterRef' &&
@@ -349,7 +365,11 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       if (payload !== null) {
         reportStore.setNodeReport(node.id, payload);
         reportId = payload.reportId;
+      } else {
+        skipReason = 'makeReportFromTrack-returned-null';
       }
+    } else {
+      skipReason = 'invalid-inputs';
     }
     host.log('make-report-from-track', {
       nodeId: node.id,
@@ -358,7 +378,10 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
         trackRef !== null && trackRef.kind === 'TrackRef' && isReferenceValid(trackRef)
           ? trackRef.handle
           : null,
+      reporterValid:
+        reporterRef !== null && reporterRef.kind === 'ReporterRef' && isReferenceValid(reporterRef),
       reportId,
+      skipReason,
     });
     return { lastDetection, stopRequested: false };
   }
@@ -432,6 +455,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       resolveContext,
     );
     let published = false;
+    let skipReason: string | null = null;
     if (
       journalRef !== null &&
       journalRef.kind === 'JournalRef' &&
@@ -445,7 +469,14 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       const payload = reportStore.getPayload(reportRef.handle);
       if (payload !== null) {
         published = await host.publishReport(journalRef, payload);
+        if (!published) {
+          skipReason = 'publishReport-returned-false';
+        }
+      } else {
+        skipReason = 'report-payload-missing';
       }
+    } else {
+      skipReason = 'invalid-inputs';
     }
     host.log('publish-report', {
       nodeId: node.id,
@@ -459,6 +490,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
           ? reportRef.handle
           : null,
       published,
+      skipReason,
     });
     return { lastDetection, stopRequested: false };
   }
@@ -582,10 +614,23 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     ) {
       await host.captureAudioSample(node.id, streamRef);
     }
+    const capturedRef = host.getCapturedAudioSampleRef?.(node.id);
+    const capturedMeta =
+      capturedRef !== undefined &&
+      capturedRef !== null &&
+      capturedRef.valid &&
+      capturedRef.handle !== null
+        ? await host.getResourceMetadata?.(capturedRef)
+        : null;
     host.log('get-sample', {
       nodeId: node.id,
       branch,
       streamHandle: streamRef?.kind === 'AudioStreamRef' ? streamRef.handle : null,
+      streamValid: streamRef !== null && isReferenceValid(streamRef),
+      capturedValid: capturedRef?.valid ?? false,
+      capturedHandle: capturedRef?.handle ?? null,
+      capturedRms: capturedMeta?.fields.rms ?? null,
+      capturedDurationMs: capturedMeta?.fields.durationMs ?? null,
     });
     return { lastDetection, stopRequested: false };
   }
@@ -608,10 +653,23 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     ) {
       await host.computeFftFrame(node.id, sampleRef);
     }
+    const frameRef = host.getCapturedFftFrameRef?.(node.id);
+    const frameMeta =
+      frameRef !== undefined &&
+      frameRef !== null &&
+      frameRef.valid &&
+      frameRef.handle !== null
+        ? await host.getResourceMetadata?.(frameRef)
+        : null;
     host.log('get-fft-frame', {
       nodeId: node.id,
       branch,
       sampleHandle: sampleRef?.kind === 'AudioSampleRef' ? sampleRef.handle : null,
+      sampleValid: sampleRef !== null && isReferenceValid(sampleRef),
+      frameValid: frameRef?.valid ?? false,
+      frameHandle: frameRef?.handle ?? null,
+      frameRms: frameMeta?.fields.rms ?? null,
+      dominantHz: frameMeta?.fields.dominantHz ?? null,
     });
     return { lastDetection, stopRequested: false };
   }
@@ -643,54 +701,108 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     };
   }
 
-  if (node.nodeKind === 'new-track') {
-    if (variableStore === undefined || resolveContext === undefined) {
-      throw new Error('new-track requires variableStore and resolveContext');
+  if (isMakeTrackNodeKind(node.nodeKind)) {
+    if (variableStore === undefined || resolveContext === undefined || trackStore === undefined) {
+      throw new Error('make-track requires variableStore, resolveContext and trackStore');
     }
-    logLegacyTerminalDeprecation(host.log, 'new-track', node.id);
+    const recorderRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_TRACK_RECORDER_HANDLE,
+      resolveContext,
+    );
+    if (
+      recorderRef === null ||
+      recorderRef.kind !== 'RecorderRef' ||
+      !isReferenceValid(recorderRef)
+    ) {
+      throw new Error(
+        `MakeTrack "${node.id}": missing or invalid RecorderRef on port "${MAKE_TRACK_RECORDER_HANDLE}"`,
+      );
+    }
     const listRef = resolveInput(
       subgraph,
       variableStore.getAll(),
       node.id,
-      NEW_TRACK_SAMPLES_HANDLE,
+      MAKE_TRACK_SAMPLES_HANDLE,
       resolveContext,
     );
     const sampleRefs = resolveRefListMembers(listRef, 'AudioSampleRefList', collectStore);
-    let trackId: string | null = null;
-    if (sampleRefs.length > 0 && host.createTrackFromSampleRefs !== undefined) {
-      const result = await host.createTrackFromSampleRefs(node.id, sampleRefs);
-      trackId = result?.trackId ?? null;
+    if (sampleRefs.length === 0) {
+      throw new Error(
+        `MakeTrack "${node.id}": empty AudioSampleRefList on port "${MAKE_TRACK_SAMPLES_HANDLE}"`,
+      );
     }
-    host.log('new-track', {
+    let trackHandle: string | null = null;
+    if (host.createTrackFromSampleRefs !== undefined) {
+      const result = await host.createTrackFromSampleRefs(node.id, sampleRefs);
+      if (result !== null) {
+        const trackRef = trackStore.setNodeTrack(node.id, result.trackId);
+        trackHandle = trackRef.handle;
+      }
+    }
+    host.log('make-track', {
       nodeId: node.id,
       branch,
+      recorder: recorderRef.handle,
       sampleCount: sampleRefs.length,
-      trackId,
+      track: trackHandle,
     });
     return { lastDetection, stopRequested: false };
   }
 
-  if (node.nodeKind === 'new-fft-trends-analysis') {
-    if (variableStore === undefined || resolveContext === undefined) {
-      throw new Error('new-fft-trends-analysis requires variableStore and resolveContext');
+  if (isMakeFftTrendsAnalysisNodeKind(node.nodeKind)) {
+    if (variableStore === undefined || resolveContext === undefined || analysisStore === undefined) {
+      throw new Error(
+        'make-fft-trends-analysis requires variableStore, resolveContext and analysisStore',
+      );
     }
-    logLegacyTerminalDeprecation(host.log, 'new-fft-trends-analysis', node.id);
+    const analyserRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_FFT_TRENDS_ANALYSER_HANDLE,
+      resolveContext,
+    );
+    if (
+      analyserRef === null ||
+      analyserRef.kind !== 'SpectralAnalyserRef' ||
+      !isReferenceValid(analyserRef)
+    ) {
+      throw new Error(
+        `MakeFftTrendsAnalysis "${node.id}": missing or invalid SpectralAnalyserRef on port "${MAKE_FFT_TRENDS_ANALYSER_HANDLE}"`,
+      );
+    }
     const listRef = resolveInput(
       subgraph,
       variableStore.getAll(),
       node.id,
-      NEW_FFT_TRENDS_FRAMES_HANDLE,
+      MAKE_FFT_TRENDS_FRAMES_HANDLE,
       resolveContext,
     );
     const frameRefs = resolveRefListMembers(listRef, 'FftFrameRefList', collectStore);
-    let detection = lastDetection;
-    if (frameRefs.length > 0 && host.analyzeFftTrendsFromFrameRefs !== undefined) {
-      detection = await host.analyzeFftTrendsFromFrameRefs(node.id, frameRefs);
+    if (frameRefs.length === 0) {
+      throw new Error(
+        `MakeFftTrendsAnalysis "${node.id}": empty FftFrameRefList on port "${MAKE_FFT_TRENDS_FRAMES_HANDLE}"`,
+      );
     }
-    host.log('new-fft-trends-analysis', {
+    let detection = lastDetection;
+    let analysisHandle: string | null = null;
+    if (host.analyzeFftTrendsFromFrameRefs !== undefined) {
+      const result = await host.analyzeFftTrendsFromFrameRefs(node.id, frameRefs);
+      if (result !== null) {
+        const analysisRef = analysisStore.setNodeAnalysis(node.id, result.analysisId);
+        analysisHandle = analysisRef.handle;
+        detection = result.detection;
+      }
+    }
+    host.log('make-fft-trends-analysis', {
       nodeId: node.id,
       branch,
+      analyser: analyserRef.handle,
       frameCount: frameRefs.length,
+      analysis: analysisHandle,
       detected: detection?.detected ?? false,
     });
     return { lastDetection: detection, stopRequested: false };

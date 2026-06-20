@@ -1,7 +1,12 @@
 import { createReferenceValue, type ScenarioBlockKind, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioVariableValue } from '@membrana/core';
 
 import type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
-import type { ScenarioDetectionResult, ScenarioJournalEvent, ScenarioSoundLevelResult } from './types.js';
+import type {
+  FftTrendsAnalysisHostResult,
+  ScenarioDetectionResult,
+  ScenarioJournalEvent,
+  ScenarioSoundLevelResult,
+} from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
 
 /** Описание микрофона из enumerate (host → UI dropdown GetMicrophone). */
@@ -149,11 +154,11 @@ export interface ScenarioRuntimeHost {
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
   ) => Promise<{ readonly trackId: string } | null>;
-  /** v0.5 DBC4: FftFrameRef[] → trends analysis + journal report. */
+  /** v0.5/v0.6: FftFrameRef[] → in-memory FftTrendAnalysisRef (journal report через PublishReport). */
   readonly analyzeFftTrendsFromFrameRefs?: (
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
-  ) => Promise<ScenarioDetectionResult>;
+  ) => Promise<FftTrendsAnalysisHostResult | null>;
   readonly trendsFftDetect: () => Promise<ScenarioDetectionResult>;
   readonly evaluateSoundLevel: () => Promise<ScenarioSoundLevelResult>;
   /**
@@ -164,6 +169,12 @@ export interface ScenarioRuntimeHost {
   readonly log: (message: string, context?: Readonly<Record<string, unknown>>) => void;
   /** Клиент: вкл/выкл служебные INFO-логи (Print не затрагивается). */
   readonly setInfoLoggingEnabled?: (enabled: boolean) => void;
+  /** Клиент Phase 3: ring buffer scenario trace for copy/download. */
+  readonly getScenarioTraceLineCount?: () => number;
+  readonly copyScenarioTraceToClipboard?: () => Promise<boolean>;
+  readonly downloadScenarioTrace?: (runId?: string | null) => void;
+  readonly clearScenarioTraceBuffer?: () => void;
+  readonly subscribeScenarioTraceBuffer?: (listener: () => void) => () => void;
   readonly watchConnection?: (handlers: ScenarioConnectionHandlers) => () => void;
 }
 
@@ -318,10 +329,16 @@ export function createStubScenarioRuntimeHost(
       overrides.analyzeFftTrendsFromFrameRefs ??
       (async (nodeId, refs) => {
         log('analyzeFftTrendsFromFrameRefs', { nodeId, count: refs.length });
+        if (refs.length === 0) {
+          return null;
+        }
         return {
-          detected: false,
-          confidence: 0,
-          templateId: 'stub',
+          analysisId: 'stub-analysis',
+          detection: {
+            detected: false,
+            confidence: 0,
+            templateId: 'stub',
+          },
         };
       }),
     trendsFftDetect:

@@ -7,6 +7,7 @@ import {
 
 import { COLLECT_EVENT_OUT_HANDLE } from '../graph/collect-node-shared.js';
 import { CollectRuntimeStore } from './collect-runtime-store.js';
+import { TrackRuntimeStore } from './track-runtime-store.js';
 import { createStubScenarioRuntimeHost } from './host.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { findEventBranchTargets } from './event-dispatch.js';
@@ -18,7 +19,7 @@ describe('findEventBranchTargets (DBC5)', () => {
       entry: 'cs',
       nodes: [
         { id: 'cs', nodeKind: 'collect-samples', blockKind: 'custom', label: 'Collect' },
-        { id: 'nt', nodeKind: 'new-track', blockKind: 'custom', label: 'NewTrack' },
+        { id: 'nt', nodeKind: 'make-track', blockKind: 'custom', label: 'MakeTrack' },
         { id: 'p', nodeKind: 'print', blockKind: 'custom', label: 'Print' },
       ],
       edges: [
@@ -47,7 +48,7 @@ describe('findEventBranchTargets (DBC5)', () => {
 });
 
 describe('runSubgraphOnce collect event dispatch (DBC5 E2E)', () => {
-  it('dispatches NewTrack on CollectSamples flush and continues exec-out', async () => {
+  it('dispatches MakeTrack on CollectSamples flush and continues exec-out', async () => {
     const sampleRef = createReferenceValue('AudioSampleRef', 'sample-1');
     const streamRef = createReferenceValue('AudioStreamRef', 'stream:dev-1');
     const createTrackFromSampleRefs = vi.fn(async () => ({ trackId: 'track-1' }));
@@ -87,7 +88,7 @@ describe('runSubgraphOnce collect event dispatch (DBC5 E2E)', () => {
             windowSec: 999,
           },
         },
-        { id: 'nt', nodeKind: 'new-track', blockKind: 'custom', label: 'NewTrack' },
+        { id: 'nt', nodeKind: 'make-track', blockKind: 'custom', label: 'MakeTrack' },
         { id: 'tail', nodeKind: 'print', blockKind: 'custom', label: 'TailPrint' },
       ],
       edges: [
@@ -101,6 +102,7 @@ describe('runSubgraphOnce collect event dispatch (DBC5 E2E)', () => {
         { id: 'd3', kind: 'data', source: 'gas', sourceHandle: 'stream', target: 'gs', targetHandle: 'stream', dataType: 'AudioStreamRef' },
         { id: 'd4', kind: 'data', source: 'gs', sourceHandle: 'sample', target: 'cs', targetHandle: 'sample', dataType: 'AudioSampleRef' },
         { id: 'd5', kind: 'data', source: 'cs', sourceHandle: 'batches', target: 'nt', targetHandle: 'samples', dataType: 'AudioSampleRefList' },
+        { id: 'd6', kind: 'data', source: 'gr', sourceHandle: 'recorder', target: 'nt', targetHandle: 'recorder', dataType: 'RecorderRef' },
         {
           id: 'ev1',
           kind: 'event',
@@ -114,11 +116,13 @@ describe('runSubgraphOnce collect event dispatch (DBC5 E2E)', () => {
 
     const variableStore = new ScenarioVariableStore();
     const collectStore = new CollectRuntimeStore();
+    const trackStore = new TrackRuntimeStore();
 
     await runSubgraphOnce(subgraph, host, new AbortController().signal, {
       branch: 'main',
       variableStore,
       collectStore,
+      trackStore,
       resolveContext: {
         deviceHandle: 'dev-1',
         getActiveAudioStreamRef: () => streamRef,

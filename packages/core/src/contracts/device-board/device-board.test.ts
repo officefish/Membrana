@@ -214,9 +214,10 @@ describe('device-board collectors v0.5 contracts (DBC0)', () => {
     expect(isScenarioNodeKind('get-recorder')).toBe(true);
     expect(isScenarioNodeKind('get-spectral-analyser')).toBe(true);
     expect(isScenarioNodeKind('collect-samples')).toBe(true);
-    expect(isScenarioNodeKind('new-track')).toBe(true);
+    expect(isScenarioNodeKind('make-track')).toBe(true);
     expect(isCollectorScenarioNodeKind('collect-fft-frames')).toBe(true);
-    expect(isTerminalScenarioNodeKind('new-fft-trends-analysis')).toBe(true);
+    expect(isTerminalScenarioNodeKind('make-fft-trends-analysis')).toBe(true);
+    expect(isScenarioNodeKind('new-track')).toBe(true);
     expect(isSystemScenarioNodeKind('get-recorder')).toBe(false);
     expect(isScenarioPinKind('event')).toBe(true);
   });

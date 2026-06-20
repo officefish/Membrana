@@ -852,16 +852,20 @@ GetDevice → GetJournal(device) → GetReporter → MakeReportFromTrack → Pub
 GetServer → GetJournal(server) → GetReporter → MakeReportFromAnalysis → PublishReport
 ```
 
-Legacy v0.5 `NewTrack` / `NewFftTrendsAnalysis` — **deprecated** (DBJ5): палитра помечена `(legacy)`,
-runtime логирует migration hint; `NewFftTrendsAnalysis` больше не вызывает `appendTrendsFftJournalReport`
-— используйте `MakeReportFromAnalysis` + `PublishReport`. `NewTrack` по-прежнему пишет track row
-(без ReportRef); для отчётов — v0.6 chain.
+Legacy v0.5 **прямая запись отчёта в journal** из `NewFftTrendsAnalysis` убрана (DBJ5).
+Сами узлы **NewTrack** / **NewFftTrendsAnalysis** — фабрики Recorder / SpectralAnalyser в v0.6 chain:
 
-### 17.4 Legacy terminals (DBJ5)
+| Node | In | Out |
+|------|-----|-----|
+| **NewTrack** | `AudioSampleRefList` | `TrackRef` |
+| **NewFftTrendsAnalysis** | `FftFrameRefList` | `FftTrendAnalysisRef` |
 
-| Legacy node | v0.5 behaviour | v0.6 migration |
-|-------------|----------------|----------------|
-| **NewTrack** | `AudioSampleRef[]` → journal track (`appendTrack`) | Track остаётся; report → `MakeReportFromTrack` + `PublishReport` |
-| **NewFftTrendsAnalysis** | FFT batch → in-memory analysis (`FftTrendAnalysisRef` cache) | `MakeReportFromAnalysis` + `PublishReport` (journal append только через PublishReport) |
+Канонический граф:
 
-Runtime: `logLegacyTerminalDeprecation` в `block-executor` при exec legacy terminal.
+```text
+CollectSamples → [event] → NewTrack → TrackRef → MakeReportFromTrack → PublishReport
+CollectFftFrames → [event] → NewFftTrendsAnalysis → FftTrendAnalysisRef → MakeReportFromAnalysis → PublishReport
+GetJournal → GetReporter ────────────────────────────────────────────────────────────────────────────────┘
+```
+
+`NewTrack` по-прежнему создаёт track row в journal (host `createTrackFromSampleRefs`); **report append** только через `PublishReport`.

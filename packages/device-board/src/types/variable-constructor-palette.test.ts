@@ -15,6 +15,7 @@ describe('variable-constructor-palette', () => {
         'DeviceRef',
         'FftFrameRef',
         'Integer',
+        'JournalRef',
         'String',
         'MicrophoneRef',
         'ServerRef',

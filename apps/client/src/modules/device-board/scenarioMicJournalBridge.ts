@@ -1,5 +1,6 @@
-import { createReferenceValue, type ScenarioReferenceValue, type ScenarioReportPayload, createScenarioReportPayload, FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX, parseJournalRefHandle, TRACK_REF_HANDLE_PREFIX } from '@membrana/core';
-import { scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
+import { createReferenceValue, DomainError, type ScenarioReferenceValue, type ScenarioReportPayload, createScenarioReportPayload, FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX, parseJournalRefHandle, TRACK_REF_HANDLE_PREFIX } from '@membrana/core';
+import { scenarioChainLog, scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
+import { setScenarioTraceNodeId } from './scenarioTraceContext';
 import {
   createDeviceCollectorRegistry,
   type CollectorSessionFlushSnapshot,
@@ -12,6 +13,7 @@ import {
   getMonoChannel,
   loadAudioBuffer,
   releaseMediaStream,
+  type AudioSampleFrame,
 } from '@membrana/audio-engine-service';
 import type {
   ScenarioConnectionHandlers,
@@ -33,6 +35,7 @@ import {
 import {
   BUFFER_COLLECTION_ID,
   getDefaultMediaLibraryService,
+  resolveMediaLibraryStorageMode,
 } from '@membrana/media-library-service';
 import { FftAnalyzer, frameLoudness } from '@membrana/fft-analyzer-service';
 
@@ -157,6 +160,27 @@ function parseAnalysisIdFromHandle(handle: string): string | null {
   return analysisId.length > 0 ? analysisId : null;
 }
 
+function peakSampleAbs(samples: Float32Array): number {
+  let peak = 0;
+  for (let i = 0; i < samples.length; i += 1) {
+    const value = Math.abs(samples[i]!);
+    if (value > peak) {
+      peak = value;
+    }
+  }
+  return peak;
+}
+
+function samplePayloadSummary(payload: AudioSamplePayload): Record<string, unknown> {
+  return {
+    sampleRate: payload.sampleRate,
+    sampleCount: payload.sampleCount,
+    durationMs: payload.durationMs.toFixed(1),
+    rms: payload.rms.toFixed(6),
+    peakAbs: peakSampleAbs(payload.samples).toFixed(6),
+  };
+}
+
 function waitMs(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -229,6 +253,11 @@ export class ScenarioMicJournalBridge {
   private readonly fftTrendAnalyses = new Map<string, TrendsFftReport>();
 
   private readonly collectorRegistry: DeviceCollectorRegistry = createDeviceCollectorRegistry();
+
+  /** Reused across main ticks — avoids cold AnalyserNode frames (all zeros). */
+  private streamCaptureSampler: LiveSampler | null = null;
+
+  private streamCaptureStream: MediaStream | null = null;
 
   getLastChunk(): RecordedChunkMeta | null {
     return this.lastChunk;
@@ -320,32 +349,76 @@ export class ScenarioMicJournalBridge {
 
   appendRecorderSample(deviceHandle: string, sampleRef: ScenarioReferenceValue): boolean {
     const accepted = this.collectorRegistry.appendSample(deviceHandle, sampleRef);
-    if (accepted) {
-      scenarioRuntimeInfo('[device-board] appendRecorderSample', {
-        deviceHandle,
-        sampleId: sampleRef.handle,
-      });
-    }
+    const session = this.collectorRegistry.getOrCreateRecorder(deviceHandle);
+    const payload =
+      sampleRef.handle !== null ? this.audioSamplePayloads.get(sampleRef.handle) : undefined;
+    scenarioChainLog('collect', accepted ? 'recorder-append-ok' : 'recorder-append-rejected', {
+      deviceHandle,
+      sampleId: sampleRef.handle,
+      queueDepth: session.queueDepth,
+      ...(payload !== undefined ? samplePayloadSummary(payload) : {}),
+    });
     return accepted;
   }
 
   appendSpectralAnalyserFrame(deviceHandle: string, frameRef: ScenarioReferenceValue): boolean {
     const accepted = this.collectorRegistry.appendFrame(deviceHandle, frameRef);
-    if (accepted) {
-      scenarioRuntimeInfo('[device-board] appendSpectralAnalyserFrame', {
-        deviceHandle,
-        frameId: frameRef.handle,
-      });
-    }
+    const session = this.collectorRegistry.getOrCreateSpectralAnalyser(deviceHandle);
+    const frameMeta =
+      frameRef.handle !== null ? this.fftFramePayloads.get(frameRef.handle) : undefined;
+    scenarioChainLog('collect', accepted ? 'analyser-append-ok' : 'analyser-append-rejected', {
+      deviceHandle,
+      frameId: frameRef.handle,
+      queueDepth: session.queueDepth,
+      frameRms: frameMeta?.rms.toFixed(6) ?? null,
+      dominantHz: frameMeta?.dominantHz.toFixed(1) ?? null,
+    });
     return accepted;
   }
 
   flushRecorderSession(deviceHandle: string): CollectorSessionFlushSnapshot | null {
-    return this.collectorRegistry.flushRecorder(deviceHandle);
+    const snapshot = this.collectorRegistry.flushRecorder(deviceHandle);
+    if (snapshot === null) {
+      scenarioChainLog('collect', 'recorder-flush-empty', { deviceHandle });
+      return null;
+    }
+    const samples = snapshot.refs.map((ref) => {
+      const payload = ref.handle !== null ? this.audioSamplePayloads.get(ref.handle) : undefined;
+      return {
+        sampleId: ref.handle,
+        ...(payload !== undefined ? samplePayloadSummary(payload) : { missing: true }),
+      };
+    });
+    scenarioChainLog('collect', 'recorder-flush', {
+      deviceHandle,
+      batchSize: snapshot.refs.length,
+      flushedAt: snapshot.flushedAtIso,
+      samples,
+    });
+    return snapshot;
   }
 
   flushSpectralAnalyserSession(deviceHandle: string): CollectorSessionFlushSnapshot | null {
-    return this.collectorRegistry.flushSpectralAnalyser(deviceHandle);
+    const snapshot = this.collectorRegistry.flushSpectralAnalyser(deviceHandle);
+    if (snapshot === null) {
+      scenarioChainLog('collect', 'analyser-flush-empty', { deviceHandle });
+      return null;
+    }
+    const frames = snapshot.refs.map((ref) => {
+      const meta = ref.handle !== null ? this.fftFramePayloads.get(ref.handle) : undefined;
+      return {
+        frameId: ref.handle,
+        rms: meta?.rms.toFixed(6) ?? null,
+        dominantHz: meta?.dominantHz.toFixed(1) ?? null,
+      };
+    });
+    scenarioChainLog('collect', 'analyser-flush', {
+      deviceHandle,
+      batchSize: snapshot.refs.length,
+      flushedAt: snapshot.flushedAtIso,
+      frames,
+    });
+    return snapshot;
   }
 
   subscribeRecorderCollect(deviceHandle: string, collectNodeId: string): () => void {
@@ -366,36 +439,140 @@ export class ScenarioMicJournalBridge {
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
   ): Promise<{ readonly trackId: string } | null> {
+    setScenarioTraceNodeId(nodeId);
+    scenarioChainLog('track', 'start', {
+      nodeId,
+      incomingRefCount: refs.length,
+      incomingSampleIds: refs.map((ref) => ref.handle),
+    });
+
     const payloads: AudioSamplePayload[] = [];
     for (const ref of refs) {
       if (!ref.valid || ref.handle === null || ref.kind !== 'AudioSampleRef') {
+        scenarioChainLog('track', 'skip-ref', {
+          nodeId,
+          reason: 'invalid-ref',
+          kind: ref.kind,
+          valid: ref.valid,
+          handle: ref.handle,
+        });
         continue;
       }
       const payload = this.audioSamplePayloads.get(ref.handle);
-      if (payload !== undefined) {
-        payloads.push(payload);
+      if (payload === undefined) {
+        scenarioChainLog('track', 'skip-ref', {
+          nodeId,
+          reason: 'missing-payload',
+          sampleId: ref.handle,
+        });
+        continue;
       }
+      payloads.push(payload);
     }
 
     const concat = concatAudioSamplePayloads(payloads);
     if (concat === null) {
+      scenarioChainLog('track', 'abort', { nodeId, reason: 'empty-concat', payloadCount: payloads.length });
       return null;
     }
 
     const trackId = createEntryId('track');
-    const title = `NewTrack ${trackId.slice(0, 8)}`;
+    const titleSuffix = trackId.startsWith('track-')
+      ? trackId.slice('track-'.length, 'track-'.length + 12)
+      : trackId.slice(0, 12);
+    const title = `MakeTrack ${titleSuffix}`;
     const createdAtIso = new Date().toISOString();
     const blob = encodeWavPcm16(concat.samples, concat.sampleRate);
-    const imported = await getDefaultMediaLibraryService().importBlob(BUFFER_COLLECTION_ID, blob, {
-      title,
-      class: 'buffer',
-      label: 'unlabeled',
-      source: 'mic-recording',
-      durationSec: concat.durationSec,
+    const peakRms = payloads.reduce((max, payload) => Math.max(max, payload.rms), 0);
+    const avgRms =
+      payloads.length > 0
+        ? payloads.reduce((sum, payload) => sum + payload.rms, 0) / payloads.length
+        : 0;
+    const mediaSnap = getDefaultMediaLibraryService().getSnapshot();
+    const mediaStorageMode = resolveMediaLibraryStorageMode(mediaSnap.quota);
+
+    scenarioChainLog('track', 'concat-ok', {
+      nodeId,
+      trackId,
+      sampleCount: payloads.length,
+      durationSec: concat.durationSec.toFixed(3),
       sampleRate: concat.sampleRate,
-      channels: 1,
-      notes: `scenario new-track node ${nodeId}`,
+      peakRms: peakRms.toFixed(6),
+      avgRms: avgRms.toFixed(6),
+      peakAbs: peakSampleAbs(concat.samples).toFixed(6),
+      wavBytes: blob.size,
+      perSample: payloads.map((payload, index) => ({
+        index,
+        sampleId: refs[index]?.handle ?? null,
+        ...samplePayloadSummary(payload),
+      })),
     });
+
+    scenarioChainLog('media', 'upload-start', {
+      nodeId,
+      trackId,
+      title,
+      collectionId: BUFFER_COLLECTION_ID,
+      storageMode: mediaStorageMode,
+      serverReachable: mediaSnap.quota.serverReachable ?? null,
+      wavBytes: blob.size,
+      durationSec: concat.durationSec.toFixed(3),
+    });
+
+    let imported;
+    try {
+      imported = await getDefaultMediaLibraryService().importBlob(
+        BUFFER_COLLECTION_ID,
+        blob,
+        {
+          title,
+          class: 'buffer',
+          label: 'unlabeled',
+          source: 'mic-recording',
+          durationSec: concat.durationSec,
+          sampleRate: concat.sampleRate,
+          channels: 1,
+          notes: `scenario make-track node ${nodeId}`,
+        },
+        { skipRefresh: true },
+      );
+    } catch (err) {
+      const detail =
+        err instanceof DomainError
+          ? `${err.message} (${err.code})`
+          : err instanceof Error
+            ? err.message
+            : String(err);
+      scenarioChainLog('media', 'upload-failed', {
+        nodeId,
+        trackId,
+        storageMode: mediaStorageMode,
+        error: detail,
+        durationSec: concat.durationSec.toFixed(3),
+        peakRms: peakRms.toFixed(6),
+      });
+      throw new Error(
+        `MakeTrack: media upload failed — ${detail}. duration=${concat.durationSec.toFixed(2)}s peakRms=${peakRms.toFixed(6)}`,
+      );
+    }
+
+    scenarioChainLog('media', 'upload-ok', {
+      nodeId,
+      trackId,
+      sampleId: imported.id,
+      storageMode: mediaStorageMode,
+      sizeBytes: imported.sizeBytes,
+    });
+
+    const journalSnap = getDefaultLiveJournalService().getSnapshot();
+    scenarioChainLog('journal', 'appendTrack-start', {
+      nodeId,
+      trackId,
+      sampleId: imported.id,
+      storageMode: journalSnap.storageMode,
+      durationSec: concat.durationSec.toFixed(3),
+    });
+
     const service = getDefaultLiveJournalService();
     await service.appendTrack({
       clientEntryId: liveJournalTrackClientEntryId(trackId),
@@ -414,21 +591,28 @@ export class ScenarioMicJournalBridge {
       },
     });
 
-    scenarioRuntimeInfo('[device-board] createTrackFromSampleRefs', {
+    scenarioChainLog('track', 'done', {
       nodeId,
       trackId,
-      sampleCount: payloads.length,
-      durationSec: concat.durationSec,
+      sampleId: imported.id,
+      journalItemCount: service.getSnapshot().items.length,
     });
 
     return { trackId };
   }
 
-  /** v0.5 DBC4 (legacy, DBJ5): FftFrameRef[] → trends analysis in-memory; journal via PublishReport. */
+  /** v0.5/v0.6: FftFrameRef[] → in-memory FftTrendAnalysisRef (journal report через PublishReport). */
   async analyzeFftTrendsFromFrameRefs(
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
-  ): Promise<ScenarioDetectionResult> {
+  ): Promise<{ readonly analysisId: string; readonly detection: ScenarioDetectionResult } | null> {
+    scenarioChainLog('analysis', 'fft-trends-start', {
+      nodeId,
+      frameRefCount: refs.length,
+      frameIds: refs.map((ref) => ref.handle),
+    });
+
+    const frameSummaries: Array<Record<string, unknown>> = [];
     const payloads: AudioSamplePayload[] = [];
     for (const ref of refs) {
       if (!ref.valid || ref.handle === null || ref.kind !== 'FftFrameRef') {
@@ -436,8 +620,15 @@ export class ScenarioMicJournalBridge {
       }
       const frameMeta = this.fftFramePayloads.get(ref.handle);
       if (frameMeta === undefined) {
+        frameSummaries.push({ frameId: ref.handle, missing: true });
         continue;
       }
+      frameSummaries.push({
+        frameId: ref.handle,
+        rms: frameMeta.rms.toFixed(6),
+        dominantHz: frameMeta.dominantHz.toFixed(1),
+        sampleId: frameMeta.sampleHandle,
+      });
       const samplePayload = this.audioSamplePayloads.get(frameMeta.sampleHandle);
       if (samplePayload !== undefined) {
         payloads.push(samplePayload);
@@ -446,8 +637,20 @@ export class ScenarioMicJournalBridge {
 
     const concat = concatAudioSamplePayloads(payloads);
     if (concat === null) {
-      return { detected: false, confidence: 0, templateId: 'UNKNOWN' };
+      scenarioChainLog('analysis', 'fft-trends-abort', {
+        nodeId,
+        reason: 'empty-concat',
+        frameSummaries,
+      });
+      return null;
     }
+
+    scenarioChainLog('analysis', 'fft-trends-input', {
+      nodeId,
+      frameSummaries,
+      durationSec: concat.durationSec.toFixed(3),
+      peakRms: peakSampleAbs(concat.samples).toFixed(6),
+    });
 
     const startedAt = Date.now();
     const analysis = analyzeChunkTrendsFft(concat.samples, concat.sampleRate);
@@ -472,15 +675,21 @@ export class ScenarioMicJournalBridge {
       rawLevel: analysis.rawLevel,
     };
 
-    scenarioRuntimeInfo('[device-board] analyzeFftTrendsFromFrameRefs (legacy — no journal append; use PublishReport)', {
+    scenarioChainLog('analysis', 'fft-trends-done', {
       nodeId,
-      reportId,
+      analysisId: reportId,
       frameCount: refs.length,
       detected: this.lastDetection.detected,
       confidence: this.lastDetection.confidence,
+      templateId: this.lastDetection.templateId,
+      rawLevel: this.lastDetection.rawLevel,
+      elapsedMs: finishedAt - startedAt,
     });
 
-    return this.lastDetection;
+    return {
+      analysisId: reportId,
+      detection: this.lastDetection,
+    };
   }
 
   /** v0.6 DBJ3: TrackRef → drone-detection ScenarioReportPayload (без append в journal). */
@@ -489,17 +698,26 @@ export class ScenarioMicJournalBridge {
     trackRef: ScenarioReferenceValue,
   ): Promise<ScenarioReportPayload | null> {
     if (!trackRef.valid || trackRef.handle === null || trackRef.kind !== 'TrackRef') {
+      scenarioChainLog('report', 'drone-skip', { reason: 'invalid-track-ref', kind: trackRef.kind });
       return null;
     }
     const trackId = parseTrackIdFromHandle(trackRef.handle);
     if (trackId === null) {
+      scenarioChainLog('report', 'drone-skip', { reason: 'bad-track-handle', handle: trackRef.handle });
       return null;
     }
-    const trackItem = findTrackForReport(getDefaultLiveJournalService().getSnapshot().items, trackId);
+    const journalItems = getDefaultLiveJournalService().getSnapshot().items;
+    const trackItem = findTrackForReport(journalItems, trackId);
     if (trackItem?.kind !== 'track' || trackItem.track === undefined) {
+      scenarioChainLog('report', 'drone-skip', {
+        reason: 'track-not-in-journal',
+        trackId,
+        journalItemCount: journalItems.length,
+      });
       return null;
     }
     const { sampleId, title } = trackItem.track;
+    scenarioChainLog('report', 'drone-analysis-start', { trackId, sampleId, title });
     const { report } = await analyzeSampleDetectors(sampleId, title ?? null);
     const isDetected = isDroneDetectionConsensus(report);
     const payload = createScenarioReportPayload({
@@ -510,10 +728,13 @@ export class ScenarioMicJournalBridge {
       summaryText: buildDroneDetectionSummaryText(report, isDetected),
       payload: { report },
     });
-    scenarioRuntimeInfo('[device-board] makeReportFromTrack', {
+    scenarioChainLog('report', 'drone-analysis-done', {
       trackId,
+      sampleId,
       reportId: payload.reportId,
       isDetected,
+      summaryText: payload.summaryText,
+      sampleDurationSec: report.meta.sampleDurationSec,
     });
     return payload;
   }
@@ -524,14 +745,17 @@ export class ScenarioMicJournalBridge {
     analysisRef: ScenarioReferenceValue,
   ): Promise<ScenarioReportPayload | null> {
     if (!analysisRef.valid || analysisRef.handle === null || analysisRef.kind !== 'FftTrendAnalysisRef') {
+      scenarioChainLog('report', 'trends-skip', { reason: 'invalid-analysis-ref', kind: analysisRef.kind });
       return null;
     }
     const analysisId = parseAnalysisIdFromHandle(analysisRef.handle);
     if (analysisId === null) {
+      scenarioChainLog('report', 'trends-skip', { reason: 'bad-analysis-handle', handle: analysisRef.handle });
       return null;
     }
     const fftReport = this.fftTrendAnalyses.get(analysisId);
     if (fftReport === undefined) {
+      scenarioChainLog('report', 'trends-skip', { reason: 'analysis-not-found', analysisId });
       return null;
     }
     const payload = createScenarioReportPayload({
@@ -542,10 +766,11 @@ export class ScenarioMicJournalBridge {
       summaryText: buildTrendsFftSummaryText(fftReport),
       payload: { report: fftReport },
     });
-    scenarioRuntimeInfo('[device-board] makeReportFromAnalysis', {
+    scenarioChainLog('report', 'trends-wrap-done', {
       analysisId,
       reportId: payload.reportId,
       isDetected: payload.isDetected,
+      summaryText: payload.summaryText,
     });
     return payload;
   }
@@ -556,18 +781,37 @@ export class ScenarioMicJournalBridge {
     payload: ScenarioReportPayload,
   ): Promise<boolean> {
     if (!journalRef.valid || journalRef.handle === null || journalRef.kind !== 'JournalRef') {
+      scenarioChainLog('journal', 'publish-skip', { reason: 'invalid-journal-ref', kind: journalRef.kind });
       return false;
     }
     const parsed = parseJournalRefHandle(journalRef.handle);
     if (parsed === null) {
+      scenarioChainLog('journal', 'publish-skip', { reason: 'bad-journal-handle', handle: journalRef.handle });
       return false;
     }
 
     const { mode, pairing } = useNodeConnectionStore.getState();
+    scenarioChainLog('journal', 'publish-start', {
+      journal: journalRef.handle,
+      scope: parsed.scope,
+      deviceId: parsed.deviceId,
+      reportId: payload.reportId,
+      schema: payload.schema,
+      isDetected: payload.isDetected,
+      summaryText: payload.summaryText,
+      connectionMode: mode,
+      paired: pairing !== null,
+    });
+
     if (parsed.scope === 'server' && mode === 'paired' && pairing !== null) {
+      scenarioChainLog('journal', 'reconfigure-for-server', {
+        mediaApiUrl: pairing.mediaApiUrl,
+        deviceId: pairing.deviceId,
+      });
       await reconfigureJournalFromConnection(mode, pairing);
     }
 
+    const journalBefore = getDefaultLiveJournalService().getSnapshot();
     const tags = [
       'device-board:publish-report',
       `journal-scope:${parsed.scope}`,
@@ -592,12 +836,16 @@ export class ScenarioMicJournalBridge {
       },
     });
 
-    scenarioRuntimeInfo('[device-board] publishReport', {
+    const journalAfter = getDefaultLiveJournalService().getSnapshot();
+    scenarioChainLog('journal', 'publish-done', {
       journal: journalRef.handle,
       scope: parsed.scope,
       deviceId: parsed.deviceId,
       reportId: payload.reportId,
       schema: payload.schema,
+      storageMode: journalAfter.storageMode,
+      itemCountBefore: journalBefore.items.length,
+      itemCountAfter: journalAfter.items.length,
     });
     return true;
   }
@@ -622,7 +870,27 @@ export class ScenarioMicJournalBridge {
     this.audioStreamMicrophoneId = devicePart;
     this.audioStreamStartedAtIso = new Date().toISOString();
     this.audioStreamValid = true;
-    scenarioRuntimeInfo('[device-board] startAudioStreaming', { handle: this.audioStreamHandle });
+    try {
+      const stream = await this.resolveActiveStream();
+      await this.ensureStreamCaptureSampler(stream);
+      scenarioChainLog('stream', 'capture-sampler-ready', {
+        handle: this.audioStreamHandle,
+        trackCount: stream.getAudioTracks().length,
+        trackEnabled: stream.getAudioTracks()[0]?.enabled ?? null,
+        trackMuted: stream.getAudioTracks()[0]?.muted ?? null,
+        trackReadyState: stream.getAudioTracks()[0]?.readyState ?? null,
+      });
+    } catch (err) {
+      scenarioChainLog('stream', 'capture-sampler-deferred', {
+        handle: this.audioStreamHandle,
+        reason: err instanceof Error ? err.message : String(err),
+      });
+    }
+    scenarioChainLog('stream', 'startAudioStreaming', {
+      handle: this.audioStreamHandle,
+      microphoneId: this.audioStreamMicrophoneId,
+      usesCoordinator: this.usesCoordinator,
+    });
   }
 
   async stopAudioStreaming(microphone: ScenarioReferenceValue | null): Promise<void> {
@@ -644,7 +912,7 @@ export class ScenarioMicJournalBridge {
     this.fftFrameByNode.clear();
     this.fftFramePayloads.clear();
     this.collectorRegistry.resetAll();
-    scenarioRuntimeInfo('[device-board] stopAudioStreaming');
+    scenarioChainLog('stream', 'stopAudioStreaming', { handle: this.audioStreamHandle });
   }
 
   async startStream(): Promise<void> {
@@ -663,75 +931,90 @@ export class ScenarioMicJournalBridge {
       !active.valid ||
       streamRef.handle !== active.handle
     ) {
-      this.audioSampleByNode.set(nodeId, { kind: 'AudioSampleRef', handle: null, valid: false });
-      return;
-    }
-
-    const stream = await this.resolveActiveStream();
-    const sampler = new LiveSampler({
-      bufferSize: SOUND_LEVEL_FFT_SIZE,
-      smoothingTimeConstant: 0.5,
-    });
-
-    let captured: AudioSamplePayload | null = null;
-
-    try {
-      await new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => resolve(), SAMPLE_CAPTURE_MS);
-        sampler.on('frame', (frame) => {
-          if (captured === null) {
-            const sampleCount = frame.samples.length;
-            const durationMs = sampleCount > 0 ? (sampleCount / frame.sampleRate) * 1000 : 0;
-            captured = {
-              streamHandle: active.handle ?? '',
-              microphoneId: this.audioStreamMicrophoneId,
-              sampleRate: frame.sampleRate,
-              sampleCount,
-              durationMs,
-              capturedAtIso: new Date().toISOString(),
-              rms: frameLoudness(frame.samples),
-              samples: new Float32Array(frame.samples),
-            };
-            clearTimeout(timeout);
-            resolve();
-          }
-        });
-        sampler.on('error', (error) => {
-          clearTimeout(timeout);
-          reject(error);
-        });
-        void sampler.start(stream).catch(reject);
+      scenarioChainLog('capture', 'skip', {
+        nodeId,
+        reason: 'stream-mismatch',
+        streamValid: streamRef.valid,
+        streamHandle: streamRef.handle,
+        activeValid: active.valid,
+        activeHandle: active.handle,
       });
-    } finally {
-      await sampler.stop();
-    }
-
-    if (captured === null) {
       this.audioSampleByNode.set(nodeId, { kind: 'AudioSampleRef', handle: null, valid: false });
       return;
     }
+
+    scenarioChainLog('capture', 'start', { nodeId, streamHandle: active.handle });
+
+    const captureStartedAt = performance.now();
+    const stream = await this.resolveActiveStream();
+    const samplerReused =
+      this.streamCaptureSampler !== null &&
+      this.streamCaptureStream === stream &&
+      this.streamCaptureSampler.isRunning();
+    const sampler = await this.ensureStreamCaptureSampler(stream);
+    const frame = await this.waitForSamplerFrame(sampler, SAMPLE_CAPTURE_MS);
+
+    if (frame === null) {
+      scenarioChainLog('capture', 'timeout', {
+        nodeId,
+        timeoutMs: SAMPLE_CAPTURE_MS,
+        captureWaitMs: Math.round(performance.now() - captureStartedAt),
+        samplerReused,
+        streamActive: this.streamCaptureSampler?.isRunning() ?? false,
+      });
+      this.audioSampleByNode.set(nodeId, { kind: 'AudioSampleRef', handle: null, valid: false });
+      return;
+    }
+
+    const sampleCount = frame.samples.length;
+    const durationMs = sampleCount > 0 ? (sampleCount / frame.sampleRate) * 1000 : 0;
+    const captured: AudioSamplePayload = {
+      streamHandle: active.handle ?? '',
+      microphoneId: this.audioStreamMicrophoneId,
+      sampleRate: frame.sampleRate,
+      sampleCount,
+      durationMs,
+      capturedAtIso: new Date().toISOString(),
+      rms: frameLoudness(frame.samples),
+      samples: new Float32Array(frame.samples),
+    };
 
     const sampleId = createEntryId('sample');
     this.audioSamplePayloads.set(sampleId, captured);
     const sampleRef = createReferenceValue('AudioSampleRef', sampleId);
     this.audioSampleByNode.set(nodeId, sampleRef);
-    scenarioRuntimeInfo('[device-board] captureAudioSample', { nodeId, sampleId });
+    scenarioChainLog('capture', 'ok', {
+      nodeId,
+      sampleId,
+      samplerReused,
+      captureWaitMs: Math.round(performance.now() - captureStartedAt),
+      streamActive: this.streamCaptureSampler?.isRunning() ?? false,
+      ...samplePayloadSummary(captured),
+    });
   }
 
   async computeFftFrame(nodeId: string, sampleRef: ScenarioReferenceValue): Promise<void> {
     if (!sampleRef.valid || sampleRef.handle === null) {
+      scenarioChainLog('fft', 'skip', { nodeId, reason: 'invalid-sample-ref' });
       this.fftFrameByNode.set(nodeId, { kind: 'FftFrameRef', handle: null, valid: false });
       return;
     }
 
     const sample = this.audioSamplePayloads.get(sampleRef.handle);
     if (sample === undefined) {
+      scenarioChainLog('fft', 'skip', { nodeId, reason: 'missing-sample-payload', sampleId: sampleRef.handle });
       this.fftFrameByNode.set(nodeId, { kind: 'FftFrameRef', handle: null, valid: false });
       return;
     }
 
     const fftSize = Math.min(SOUND_LEVEL_FFT_SIZE, sample.samples.length);
     if (fftSize < 64) {
+      scenarioChainLog('fft', 'skip', {
+        nodeId,
+        reason: 'sample-too-short',
+        sampleId: sampleRef.handle,
+        sampleCount: sample.sampleCount,
+      });
       this.fftFrameByNode.set(nodeId, { kind: 'FftFrameRef', handle: null, valid: false });
       return;
     }
@@ -752,7 +1035,15 @@ export class ScenarioMicJournalBridge {
     });
     const frameRef = createReferenceValue('FftFrameRef', frameId);
     this.fftFrameByNode.set(nodeId, frameRef);
-    scenarioRuntimeInfo('[device-board] computeFftFrame', { nodeId, frameId, sampleId: sampleRef.handle });
+    scenarioChainLog('fft', 'ok', {
+      nodeId,
+      frameId,
+      sampleId: sampleRef.handle,
+      fftSize,
+      rms: result.rms.toFixed(6),
+      dominantHz: result.centroid.toFixed(1),
+      inputSampleRms: sample.rms.toFixed(6),
+    });
   }
 
   private async startStreamInternal(): Promise<void> {
@@ -781,7 +1072,73 @@ export class ScenarioMicJournalBridge {
     scenarioRuntimeInfo('[device-board] startStream via owned MediaStream');
   }
 
+  private async stopStreamCaptureSampler(): Promise<void> {
+    if (this.streamCaptureSampler !== null) {
+      await this.streamCaptureSampler.stop();
+      this.streamCaptureSampler = null;
+    }
+    this.streamCaptureStream = null;
+  }
+
+  private async ensureStreamCaptureSampler(stream: MediaStream): Promise<LiveSampler> {
+    if (
+      this.streamCaptureSampler !== null &&
+      this.streamCaptureStream === stream &&
+      this.streamCaptureSampler.isRunning()
+    ) {
+      scenarioChainLog('stream', 'sampler-reuse', {
+        bufferSize: SOUND_LEVEL_FFT_SIZE,
+        streamActive: stream.active,
+      });
+      return this.streamCaptureSampler;
+    }
+
+    await this.stopStreamCaptureSampler();
+    scenarioChainLog('stream', 'sampler-start', {
+      bufferSize: SOUND_LEVEL_FFT_SIZE,
+      streamActive: stream.active,
+      warmupMs: 48,
+    });
+    const sampler = new LiveSampler({
+      bufferSize: SOUND_LEVEL_FFT_SIZE,
+      smoothingTimeConstant: 0.5,
+    });
+    await sampler.start(stream);
+    this.streamCaptureSampler = sampler;
+    this.streamCaptureStream = stream;
+    // AnalyserNode often returns zeros on the first frames after AudioContext start.
+    await waitMs(48);
+    scenarioChainLog('stream', 'sampler-warmed', { sampleRate: sampler.getAudioContext()?.sampleRate ?? null });
+    return sampler;
+  }
+
+  private waitForSamplerFrame(
+    sampler: LiveSampler,
+    timeoutMs: number,
+  ): Promise<AudioSampleFrame | null> {
+    return new Promise((resolve) => {
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          resolve(null);
+        }
+      }, timeoutMs);
+      const onFrame = (frame: AudioSampleFrame) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timer);
+        sampler.off('frame', onFrame);
+        resolve(frame);
+      };
+      sampler.on('frame', onFrame);
+    });
+  }
+
   private async stopStreamInternal(): Promise<void> {
+    await this.stopStreamCaptureSampler();
     if (this.usesCoordinator) {
       requestMicrophoneStop();
       scenarioRuntimeInfo('[device-board] stopStream via coordinator');

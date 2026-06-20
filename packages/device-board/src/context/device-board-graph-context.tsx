@@ -28,12 +28,17 @@ import {
   createPaletteBoardNode,
   createScenarioBoardNode,
   createVariableBoardNode,
+  defaultVariableNamePrefix,
   branchScenarioExportFilename,
   buildBranchScenarioExport,
   exportDeviceScenarioDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
   importDeviceScenarioFromJson,
+  applyBranchScenarioImport,
+  parseBranchScenarioExportJson,
+  suggestReferenceVariableMapping,
+  isReferenceMappingComplete,
   isPreRunValid,
   isValidBoardConnection,
   rejectSystemNodeRemovals,
@@ -46,6 +51,8 @@ import {
   validatePreRun,
   type VariableNodeKind,
   type V04PaletteNodeKind,
+  type BranchScenarioExport,
+  type ReferenceVariableSlot,
 } from '../graph/index.js';
 import type { HydratedBoardState, PreRunValidationIssue } from '../graph/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
@@ -58,6 +65,12 @@ import {
   type ScenarioRuntimeState,
   type ScenarioStopReason,
 } from '../runtime/index.js';
+
+export interface PendingBranchImportState {
+  readonly exportPayload: BranchScenarioExport;
+  readonly slots: readonly ReferenceVariableSlot[];
+  readonly mapping: Record<string, string>;
+}
 
 export interface DeviceBoardGraphContextValue {
   readonly deviceKind: DeviceKind;
@@ -112,6 +125,10 @@ export interface DeviceBoardGraphContextValue {
   /** Signal — полный документ; scenario — только активная ветка-обработчик. */
   readonly exportJson: (layer?: BoardLayerTab) => Promise<void>;
   readonly importJsonFile: (file: File) => Promise<string | null>;
+  /** Ожидает сопоставления ссылочных переменных после импорта branch-scenario. */
+  readonly pendingBranchImport: PendingBranchImportState | null;
+  readonly confirmBranchImport: (mapping: Readonly<Record<string, string>>) => string | null;
+  readonly cancelBranchImport: () => void;
   readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
   /** Черновик отличается от последнего сохранённого снимка. */
@@ -126,6 +143,10 @@ export interface DeviceBoardGraphContextValue {
   /** Показывать служебные логи библиотеки (host.log); Print всегда в консоль. */
   readonly showInfoLogs: boolean;
   readonly setShowInfoLogs: (enabled: boolean) => void;
+  /** Phase 3: буфер INFO-логов сценария (copy / download). */
+  readonly scenarioTraceLineCount: number;
+  readonly copyScenarioTrace: () => Promise<boolean>;
+  readonly downloadScenarioTrace: () => void;
   /** Очистка узлов текущей ветки (Signal или активная Scenario-ветка); Event-entry сохраняется. */
   readonly clearCurrentBranch: (layer: BoardLayerTab) => void;
   /** Добавить legacy D0-ноду из палитры в активную ветку (только при legacy-флаге). */
@@ -227,12 +248,16 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [scenarioFunctionEdges, setScenarioFunctionEdges] = useState<Edge[]>(defaultState.scenarioFunctionEdges);
   const [scenarioFunctionMeta, setScenarioFunctionMeta] = useState(defaultState.scenarioFunctionMeta);
   const [variables, setVariables] = useState<readonly ScenarioVariable[]>(defaultState.variables);
+  const [pendingBranchImport, setPendingBranchImport] = useState<PendingBranchImportState | null>(
+    null,
+  );
   const [validationIssues, setValidationIssues] = useState<readonly PreRunValidationIssue[]>([]);
   const [runtimeState, setRuntimeState] = useState<ScenarioRuntimeState>(createIdleScenarioRuntimeState());
   const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
   const [showInfoLogs, setShowInfoLogs] = useState(true);
+  const [scenarioTraceLineCount, setScenarioTraceLineCount] = useState(0);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
   const savedSnapshotRef = useRef<string | null>(null);
@@ -248,6 +273,22 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   useEffect(() => {
     runtimeHost?.setInfoLoggingEnabled?.(showInfoLogs);
   }, [runtimeHost, showInfoLogs]);
+
+  useEffect(() => {
+    const syncTraceCount = (): void => {
+      setScenarioTraceLineCount(runtimeHost?.getScenarioTraceLineCount?.() ?? 0);
+    };
+    syncTraceCount();
+    return runtimeHost?.subscribeScenarioTraceBuffer?.(syncTraceCount);
+  }, [runtimeHost]);
+
+  const copyScenarioTrace = useCallback(async (): Promise<boolean> => {
+    return (await runtimeHost?.copyScenarioTraceToClipboard?.()) ?? false;
+  }, [runtimeHost]);
+
+  const downloadScenarioTrace = useCallback((): void => {
+    runtimeHost?.downloadScenarioTrace?.(null);
+  }, [runtimeHost]);
 
   useEffect(() => {
     if (runtimeHost === undefined) {
@@ -689,20 +730,118 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     ],
   );
 
+  const applyBranchImportResult = useCallback(
+    (nodes: Node[], edges: Edge[], nextVariables: readonly ScenarioVariable[]) => {
+      setVariables([...nextVariables]);
+      switch (scenarioBranch) {
+        case 'initial':
+          setScenarioInitialNodes(nodes);
+          setScenarioInitialEdges(edges);
+          break;
+        case 'onConnect':
+          setScenarioOnConnectNodes(nodes);
+          setScenarioOnConnectEdges(edges);
+          break;
+        case 'main':
+          setScenarioMainNodes(nodes);
+          setScenarioMainEdges(edges);
+          break;
+        case 'alarm':
+          setScenarioAlarmNodes(nodes);
+          setScenarioAlarmEdges(edges);
+          break;
+        case 'onStop':
+          setScenarioOnStopNodes(nodes);
+          setScenarioOnStopEdges(edges);
+          break;
+        case 'onDisconnect':
+          setScenarioOnDisconnectNodes(nodes);
+          setScenarioOnDisconnectEdges(edges);
+          break;
+        case 'function':
+          setScenarioFunctionNodes(nodes);
+          setScenarioFunctionEdges(edges);
+          break;
+        default:
+          break;
+      }
+      pendingBaselineRef.current = true;
+      runValidation();
+    },
+    [runValidation, scenarioBranch],
+  );
+
   const importJsonFile = useCallback(
     async (file: File): Promise<string | null> => {
       const text = await file.text();
+      const branchParsed = parseBranchScenarioExportJson(text);
+      if (branchParsed.ok) {
+        const autoMapping = suggestReferenceVariableMapping(
+          branchParsed.referenceVariableSlots,
+          variables,
+        );
+        if (isReferenceMappingComplete(branchParsed.referenceVariableSlots, autoMapping)) {
+          const applied = applyBranchScenarioImport({
+            targetBranch: scenarioBranch,
+            deviceKind,
+            export: branchParsed.export,
+            referenceVariableSlots: branchParsed.referenceVariableSlots,
+            localVariables: variables,
+            mapping: autoMapping,
+          });
+          if (!applied.ok) {
+            return applied.message;
+          }
+          applyBranchImportResult(applied.nodes, applied.edges, applied.variables);
+          return null;
+        }
+        setPendingBranchImport({
+          exportPayload: branchParsed.export,
+          slots: branchParsed.referenceVariableSlots,
+          mapping: autoMapping,
+        });
+        return null;
+      }
+
       const result = importDeviceScenarioFromJson(text);
       if (!result.ok) {
         return result.message;
       }
+      setPendingBranchImport(null);
       applyHydratedState(result.state);
       pendingBaselineRef.current = true;
       runValidation();
       return null;
     },
-    [applyHydratedState, runValidation],
+    [applyBranchImportResult, applyHydratedState, deviceKind, runValidation, scenarioBranch, variables],
   );
+
+  const confirmBranchImport = useCallback(
+    (mapping: Readonly<Record<string, string>>): string | null => {
+      if (pendingBranchImport === null) {
+        return 'Нет активного импорта ветки';
+      }
+      const applied = applyBranchScenarioImport({
+        targetBranch: scenarioBranch,
+        deviceKind,
+        export: pendingBranchImport.exportPayload,
+        referenceVariableSlots: pendingBranchImport.slots,
+        localVariables: variables,
+        mapping,
+      });
+      if (!applied.ok) {
+        return applied.message;
+      }
+      setPendingBranchImport(null);
+      applyBranchImportResult(applied.nodes, applied.edges, applied.variables);
+      return null;
+    },
+    [applyBranchImportResult, deviceKind, pendingBranchImport, scenarioBranch, variables],
+  );
+
+  const cancelBranchImport = useCallback(() => {
+    setPendingBranchImport(null);
+  }, []);
 
   const saveScenario = useCallback(async (): Promise<boolean> => {
     if (persistAdapter === undefined) {
@@ -902,25 +1041,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const addVariable = useCallback((type: ScenarioVariableType) => {
     setVariables((current) => {
       const sameType = current.filter((variable) => variable.type === type).length;
-      const prefix =
-        type === 'DeviceRef'
-          ? 'device'
-          : type === 'MicrophoneRef'
-            ? 'microphone'
-            : type === 'ServerRef'
-              ? 'server'
-              : type === 'AudioStreamRef'
-                ? 'audiostream'
-                : type === 'AudioSampleRef'
-                  ? 'audiosample'
-                  : type === 'FftFrameRef'
-                  ? 'fftframe'
-                  : type === 'Integer'
-                    ? 'integer'
-                    : type === 'String'
-                      ? 'string'
-                      : 'datetime';
-      const name = `${prefix}${sameType + 1}`;
+      const name = `${defaultVariableNamePrefix(type)}${sameType + 1}`;
       const id = `var-${type}-${Date.now().toString(36)}-${current.length + 1}`;
       return [...current, createScenarioVariable(id, name, type)];
     });
@@ -1260,6 +1381,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       refreshValidation,
       exportJson,
       importJsonFile,
+      pendingBranchImport,
+      confirmBranchImport,
+      cancelBranchImport,
       syncStatus,
       syncError,
       isDirty,
@@ -1270,6 +1394,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       setMode,
       showInfoLogs,
       setShowInfoLogs,
+      scenarioTraceLineCount,
+      copyScenarioTrace,
+      downloadScenarioTrace,
       clearCurrentBranch,
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
@@ -1298,6 +1425,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       deviceKind,
       exportJson,
       importJsonFile,
+      pendingBranchImport,
+      confirmBranchImport,
+      cancelBranchImport,
       inspectRuntimeNode,
       isDirty,
       isValidConnectionForLayer,
@@ -1347,6 +1477,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionNodes,
       saveScenario,
       setMode,
+      copyScenarioTrace,
+      downloadScenarioTrace,
+      scenarioTraceLineCount,
       setShowInfoLogs,
       showInfoLogs,
       signalEdges,

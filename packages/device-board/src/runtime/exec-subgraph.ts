@@ -4,6 +4,8 @@ import { executeScenarioBlock } from './block-executor.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import type { CollectRuntimeStore } from './collect-runtime-store.js';
 import type { ReportRuntimeStore } from './report-runtime-store.js';
+import type { TrackRuntimeStore } from './track-runtime-store.js';
+import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
@@ -27,6 +29,10 @@ export interface ExecSubgraphOptions {
   readonly collectStore?: CollectRuntimeStore;
   /** v0.6 DBJ3: ReportRef payloads от make-report узлов. */
   readonly reportStore?: ReportRuntimeStore;
+  /** v0.6: TrackRef от NewTrack. */
+  readonly trackStore?: TrackRuntimeStore;
+  /** v0.6: FftTrendAnalysisRef от NewFftTrendsAnalysis. */
+  readonly analysisStore?: FftTrendAnalysisRuntimeStore;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -103,6 +109,8 @@ export async function runSubgraphOnce(
       onStopRuntime: options.onStopRuntime,
       collectStore: options.collectStore,
       reportStore: options.reportStore,
+      trackStore: options.trackStore,
+      analysisStore: options.analysisStore,
     });
 
     if (result.stopRequested) {

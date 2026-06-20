@@ -13,8 +13,8 @@ import { publishReportNodePins } from './publish-report-node.js';
 import { getSpectralAnalyserNodePins } from './get-spectral-analyser-node.js';
 import { collectSamplesNodePins } from './collect-samples-node.js';
 import { collectFftFramesNodePins } from './collect-fft-frames-node.js';
-import { newTrackNodePins } from './new-track-node.js';
-import { newFftTrendsAnalysisNodePins } from './new-fft-trends-analysis-node.js';
+import { makeTrackNodePins } from './make-track-node.js';
+import { makeFftTrendsAnalysisNodePins } from './make-fft-trends-analysis-node.js';
 import { stopRuntimeNodePins } from './stop-runtime-node.js';
 
 /** Data-вход произвольного значения для print / is-valid. */
@@ -99,8 +99,8 @@ export const V04_PALETTE_NODE_KINDS = [
   'get-fft-frame',
   'collect-samples',
   'collect-fft-frames',
-  'new-track',
-  'new-fft-trends-analysis',
+  'make-track',
+  'make-fft-trends-analysis',
   'get-journal',
   'get-reporter',
   'make-report-from-track',
@@ -125,8 +125,8 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'get-fft-frame': 'GetFFTFrame',
   'collect-samples': 'CollectSamples',
   'collect-fft-frames': 'CollectFftFrames',
-  'new-track': 'NewTrack (legacy)',
-  'new-fft-trends-analysis': 'NewFftTrendsAnalysis (legacy)',
+  'make-track': 'MakeTrack',
+  'make-fft-trends-analysis': 'MakeFftTrendsAnalysis',
   'get-journal': 'GetJournal',
   'get-reporter': 'GetReporter',
   'make-report-from-track': 'MakeReportFromTrack',
@@ -236,10 +236,10 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return collectSamplesNodePins();
     case 'collect-fft-frames':
       return collectFftFramesNodePins();
-    case 'new-track':
-      return newTrackNodePins();
-    case 'new-fft-trends-analysis':
-      return newFftTrendsAnalysisNodePins();
+    case 'make-track':
+      return makeTrackNodePins();
+    case 'make-fft-trends-analysis':
+      return makeFftTrendsAnalysisNodePins();
     case 'get-journal':
       return getJournalNodePins();
     case 'get-reporter':

@@ -3,6 +3,10 @@ import type {
   ScenarioGraphNode,
   ScenarioSubgraph,
 } from '@membrana/core';
+import {
+  DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+  resolveScenarioCollectorConfig,
+} from '@membrana/core';
 
 import {
   COLLECT_EVENT_OUT_HANDLE,
@@ -74,34 +78,75 @@ export function executeCollectNode(input: ExecuteCollectNodeInput): ExecuteColle
       recorderRef === null ||
       recorderRef.kind !== 'RecorderRef'
     ) {
+      host.log('collect-samples skip', {
+        nodeId: node.id,
+        reason: 'invalid-recorder',
+        recorderKind: recorderRef?.kind ?? null,
+        recorderValid: recorderRef !== null && isReferenceValid(recorderRef),
+      });
       return { flushed: false };
     }
     if (!isReferenceValid(sampleRef) || sampleRef === null || sampleRef.kind !== 'AudioSampleRef') {
+      host.log('collect-samples skip', {
+        nodeId: node.id,
+        reason: 'invalid-sample',
+        sampleKind: sampleRef?.kind ?? null,
+        sampleValid: sampleRef !== null && isReferenceValid(sampleRef),
+      });
       return { flushed: false };
     }
 
     const deviceHandle = deviceHandleFromRecorderSessionRef(recorderRef.handle);
     if (deviceHandle === null) {
+      host.log('collect-samples skip', { nodeId: node.id, reason: 'bad-recorder-handle' });
       return { flushed: false };
     }
 
     host.subscribeRecorderCollect?.(deviceHandle, node.id);
     if (host.appendRecorderSample?.(deviceHandle, sampleRef) !== true) {
+      host.log('collect-samples skip', {
+        nodeId: node.id,
+        reason: 'append-rejected',
+        deviceHandle,
+        sampleId: sampleRef.handle,
+      });
       return { flushed: false };
     }
 
     const tickState = recordCollectAppend(collectStore.getTickState(node.id), nowMs);
+    const resolvedConfig = resolveScenarioCollectorConfig(config ?? DEFAULT_SCENARIO_COLLECTOR_CONFIG);
     if (!shouldFlushCollect(tickState, config, nowMs)) {
       collectStore.setTickState(node.id, tickState);
+      host.log('collect-samples append', {
+        nodeId: node.id,
+        deviceHandle,
+        sampleId: sampleRef.handle,
+        pendingCount: tickState.pendingCount,
+        queueCapacity: resolvedConfig.queueCapacity,
+        windowSec: resolvedConfig.windowSec,
+        elapsedSec:
+          tickState.windowStartedAtMs !== null
+            ? ((nowMs - tickState.windowStartedAtMs) / 1000).toFixed(2)
+            : null,
+        flushed: false,
+      });
       return { flushed: false };
     }
 
     const snapshot = host.flushRecorderSession?.(deviceHandle);
     collectStore.resetAfterFlush(node.id);
     if (snapshot === null || snapshot === undefined || snapshot.refs.length === 0) {
+      host.log('collect-samples flush-empty', { nodeId: node.id, deviceHandle });
       return { flushed: false };
     }
     collectStore.setLastBatch(node.id, snapshot.refs, 'AudioSampleRefList');
+    host.log('collect-samples flush', {
+      nodeId: node.id,
+      deviceHandle,
+      batchSize: snapshot.refs.length,
+      sampleIds: snapshot.refs.map((ref) => ref.handle),
+      flushedAt: snapshot.flushedAtIso,
+    });
     return { flushed: true, eventOutHandle: COLLECT_EVENT_OUT_HANDLE };
   }
 
@@ -124,33 +169,72 @@ export function executeCollectNode(input: ExecuteCollectNodeInput): ExecuteColle
     analyserRef === null ||
     analyserRef.kind !== 'SpectralAnalyserRef'
   ) {
+    host.log('collect-fft-frames skip', {
+      nodeId: node.id,
+      reason: 'invalid-analyser',
+      analyserKind: analyserRef?.kind ?? null,
+    });
     return { flushed: false };
   }
   if (!isReferenceValid(frameRef) || frameRef === null || frameRef.kind !== 'FftFrameRef') {
+    host.log('collect-fft-frames skip', {
+      nodeId: node.id,
+      reason: 'invalid-frame',
+      frameKind: frameRef?.kind ?? null,
+    });
     return { flushed: false };
   }
 
   const deviceHandle = deviceHandleFromAnalyserSessionRef(analyserRef.handle);
   if (deviceHandle === null) {
+    host.log('collect-fft-frames skip', { nodeId: node.id, reason: 'bad-analyser-handle' });
     return { flushed: false };
   }
 
   host.subscribeSpectralAnalyserCollect?.(deviceHandle, node.id);
   if (host.appendSpectralAnalyserFrame?.(deviceHandle, frameRef) !== true) {
+    host.log('collect-fft-frames skip', {
+      nodeId: node.id,
+      reason: 'append-rejected',
+      deviceHandle,
+      frameId: frameRef.handle,
+    });
     return { flushed: false };
   }
 
   const tickState = recordCollectAppend(collectStore.getTickState(node.id), nowMs);
+  const resolvedConfig = resolveScenarioCollectorConfig(config ?? DEFAULT_SCENARIO_COLLECTOR_CONFIG);
   if (!shouldFlushCollect(tickState, config, nowMs)) {
     collectStore.setTickState(node.id, tickState);
+    host.log('collect-fft-frames append', {
+      nodeId: node.id,
+      deviceHandle,
+      frameId: frameRef.handle,
+      pendingCount: tickState.pendingCount,
+      queueCapacity: resolvedConfig.queueCapacity,
+      windowSec: resolvedConfig.windowSec,
+      elapsedSec:
+        tickState.windowStartedAtMs !== null
+          ? ((nowMs - tickState.windowStartedAtMs) / 1000).toFixed(2)
+          : null,
+      flushed: false,
+    });
     return { flushed: false };
   }
 
   const snapshot = host.flushSpectralAnalyserSession?.(deviceHandle);
   collectStore.resetAfterFlush(node.id);
   if (snapshot === null || snapshot === undefined || snapshot.refs.length === 0) {
+    host.log('collect-fft-frames flush-empty', { nodeId: node.id, deviceHandle });
     return { flushed: false };
   }
   collectStore.setLastBatch(node.id, snapshot.refs, 'FftFrameRefList');
+  host.log('collect-fft-frames flush', {
+    nodeId: node.id,
+    deviceHandle,
+    batchSize: snapshot.refs.length,
+    frameIds: snapshot.refs.map((ref) => ref.handle),
+    flushedAt: snapshot.flushedAtIso,
+  });
   return { flushed: true, eventOutHandle: COLLECT_EVENT_OUT_HANDLE };
 }

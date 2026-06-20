@@ -24,6 +24,9 @@ export function referenceTypeLabel(type: ScenarioVariableType): string {
   if (type === 'ServerRef') {
     return 'Server';
   }
+  if (type === 'JournalRef') {
+    return 'Journal';
+  }
   if (type === 'AudioStreamRef') {
     return 'AudioStream';
   }
@@ -40,6 +43,11 @@ export function referenceTypeLabel(type: ScenarioVariableType): string {
     return 'String';
   }
   return 'DateTime';
+}
+
+/** Префикс автогенерируемого имени переменной (`journal1`, `device2`, …). */
+export function defaultVariableNamePrefix(type: ScenarioVariableType): string {
+  return referenceTypeLabel(type).toLowerCase();
 }
 
 /**

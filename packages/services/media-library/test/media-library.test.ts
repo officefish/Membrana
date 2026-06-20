@@ -141,6 +141,33 @@ describe('MediaLibraryService', () => {
     expect(svc.getSnapshot().samplesByCollection[BUFFER_COLLECTION_ID]).toHaveLength(0);
   });
 
+  it('importBlob with skipRefresh merges sample without full refresh', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 });
+    const listCollectionsSpy = vi.spyOn(backend, 'listCollections');
+    const svc = createMediaLibraryService(backend);
+    await svc.init();
+    listCollectionsSpy.mockClear();
+
+    const blob = new Blob([new Uint8Array(100)], { type: 'audio/wav' });
+    const sample = await svc.importBlob(
+      BUFFER_COLLECTION_ID,
+      blob,
+      {
+        title: 'scenario-track',
+        class: 'buffer',
+        label: 'unlabeled',
+        source: 'mic-recording',
+        durationSec: 1,
+        sampleRate: 48_000,
+      },
+      { skipRefresh: true },
+    );
+
+    expect(sample.title).toBe('scenario-track');
+    expect(svc.getSnapshot().samplesByCollection[BUFFER_COLLECTION_ID]?.[0]?.id).toBe(sample.id);
+    expect(listCollectionsSpy).not.toHaveBeenCalled();
+  });
+
   it('reads sample blob via getSampleBlob', async () => {
     const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 });
     const svc = createMediaLibraryService(backend);

@@ -2,8 +2,29 @@ import type { ScenarioReferenceValue } from '@membrana/core';
 import { createReferenceValue, formatJournalRefHandle, formatReporterRefHandle, parseJournalRefHandle, parseReporterRefJournalHandle } from '@membrana/core';
 import type { ScenarioRuntimeHost } from '@membrana/device-board';
 import { waitMs } from '@membrana/device-board';
+import {
+  getDefaultMediaLibraryService,
+  setMediaLibraryTraceHook,
+  setMediaLibraryTraceIdProvider,
+} from '@membrana/media-library-service';
+import { bindSamplePlaybackBlobReader } from '@membrana/sample-playback-service';
 
-import { scenarioRuntimeInfo, setScenarioRuntimeInfoLogging } from './scenarioRuntimeInfoGate';
+import { scenarioChainLog, scenarioRuntimeInfo, setScenarioRuntimeInfoLogging } from './scenarioRuntimeInfoGate';
+import {
+  clearScenarioTraceBuffer,
+  copyScenarioTraceToClipboard,
+  downloadScenarioTraceFile,
+  getScenarioTraceLineCount,
+  subscribeScenarioTraceBuffer,
+} from './scenarioTraceBuffer';
+import {
+  buildScenarioTraceId,
+  resetScenarioTraceContext,
+  setScenarioTraceBranch,
+  setScenarioTraceNodeId,
+  setScenarioTraceRunId,
+  setScenarioTraceTick,
+} from './scenarioTraceContext';
 
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { isDeviceLive } from '@/lib/isDeviceLive';
@@ -41,6 +62,16 @@ function readDeviceMetadataFields(deviceId: string): Readonly<Record<string, str
 
 /** Host-порты scenario runtime: mic → chunk → trends FFT → LiveJournal (H2c). */
 export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
+  // MakeReportFromTrack / journal playback читают blob через sample-playback hub.
+  bindSamplePlaybackBlobReader((sampleId: string) =>
+    getDefaultMediaLibraryService().getSampleBlob(sampleId),
+  );
+
+  setMediaLibraryTraceHook((event, context) => {
+    scenarioChainLog('media', `lib-${event}`, context);
+  });
+  setMediaLibraryTraceIdProvider(() => buildScenarioTraceId());
+
   const bridge = createScenarioMicJournalBridge();
 
   return {
@@ -259,7 +290,28 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     waitUntilNextLoopTick: ({ pauseMs, signal }) => waitMs(pauseMs, signal),
     watchConnection: (handlers) => bridge.watchConnection(handlers),
     setInfoLoggingEnabled: setScenarioRuntimeInfoLogging,
+    getScenarioTraceLineCount,
+    copyScenarioTraceToClipboard,
+    downloadScenarioTrace: downloadScenarioTraceFile,
+    clearScenarioTraceBuffer,
+    subscribeScenarioTraceBuffer,
     log: (message, context) => {
+      if (message === 'scenario-run-start') {
+        clearScenarioTraceBuffer();
+        resetScenarioTraceContext();
+        const id = typeof context?.runId === 'string' ? context.runId : null;
+        if (id !== null) {
+          setScenarioTraceRunId(id);
+        }
+        setScenarioTraceBranch('main');
+      }
+      if (message === 'main-tick-start') {
+        setScenarioTraceTick(typeof context?.tick === 'number' ? context.tick : null);
+        setScenarioTraceBranch(typeof context?.branch === 'string' ? context.branch : 'main');
+      }
+      if (message === 'main-tick-done' || message === 'scenario-runtime error') {
+        setScenarioTraceNodeId(null);
+      }
       scenarioRuntimeInfo(`[device-board] ${message}`, context);
     },
   };

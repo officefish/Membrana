@@ -34,6 +34,12 @@ export function runtimeBranchToHandlerBranch(
 /** Причина остановки сценария (T1). */
 export type ScenarioStopReason = 'user' | 'system';
 
+/** Результат trends-анализа batch FFT (NewFftTrendsAnalysis → FftTrendAnalysisRef). */
+export interface FftTrendsAnalysisHostResult {
+  readonly analysisId: string;
+  readonly detection: ScenarioDetectionResult;
+}
+
 /** Снимок состояния runtime для UI. */
 export interface ScenarioRuntimeState {
   readonly phase: ScenarioRuntimePhase;

@@ -1,6 +1,7 @@
 import { DomainError } from '@membrana/core';
 
 import { TARIFF_DATASET_SYSTEM_KEY, DEFAULT_SAMPLES_PAGE_SIZE } from '../constants.js';
+import { resolveMediaLibraryTraceId } from '../media-library-trace.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   Collection,
@@ -197,6 +198,10 @@ export class ServerStorageBackend implements IStorageBackend {
     const headers = new Headers(extra);
     headers.set('X-Membrana-Token', this.mediaToken);
     headers.set('X-Membrana-Device-Id', this.deviceId);
+    const traceId = resolveMediaLibraryTraceId();
+    if (traceId !== null && traceId.length > 0) {
+      headers.set('X-Membrana-Trace-Id', traceId);
+    }
     return headers;
   }
 

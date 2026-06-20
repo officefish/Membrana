@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { getJournalNodePins } from './get-journal-node.js';
 import { findPassthroughPortLanes } from './node-passthrough-port.js';
 import { paletteNodePins } from './palette-node.js';
 import { formatSocketPortLabel } from './socket-port-label.js';
@@ -30,5 +31,12 @@ describe('findPassthroughPortLanes', () => {
     ];
     const lanes = findPassthroughPortLanes(inputs, outputs, formatSocketPortLabel);
     expect(lanes.map((lane) => lane.centerText).sort()).toEqual(['-> & audio stream ->', '-> exec ->'].sort());
+  });
+
+  it('skips passthrough center labels when input and output counts differ', () => {
+    const { inputs, outputs } = getJournalNodePins();
+    expect(inputs.length).not.toBe(outputs.length);
+    const lanes = findPassthroughPortLanes(inputs, outputs, formatSocketPortLabel);
+    expect(lanes).toEqual([]);
   });
 });
