@@ -4260,7 +4260,7 @@
       "githubIssue": 136,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-post-usercase-roadmap",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -4268,7 +4268,9 @@
         "db-cgf-a0-align-basic"
       ],
       "notes": "Consilium 2026-06-21 product: bundled + tariff UserCases; supersedes roadmap U1.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "GitHub #136; branch feat/db-usercases-catalog-u9; PR pending merge"
     },
     {
       "id": "db-uc-r0-schema",
@@ -4277,12 +4279,14 @@
       "githubIssue": 136,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-usercases-catalog-u9",
       "createdAt": "2026-06-21",
       "dependsOn": [],
       "notes": "Generalize usercase:build; manifest contract; CI verify-kinds.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "manifest + yarn usercase:build/verify-kinds; ae3878f e9a7459"
     },
     {
       "id": "db-uc-l1-layout-canon",
@@ -4291,14 +4295,16 @@
       "githubIssue": 136,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-usercases-catalog-u9",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-uc-r0-schema"
       ],
       "notes": "yarn usercase:verify-layout; editorial pass MVP main branch.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "layout canon, verify-layout, comment groups; 8c9a770"
     },
     {
       "id": "db-uc-c1-catalog",
@@ -4307,14 +4313,16 @@
       "githubIssue": 136,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-usercases-catalog-u9",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-uc-r0-schema"
       ],
       "notes": "UserCaseCatalogService; index usercase-*/ manifests.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "UserCaseCatalogService bundled index; fa56418"
     },
     {
       "id": "db-uc-g1-settings-gate",
@@ -4323,14 +4331,16 @@
       "githubIssue": 136,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-usercases-catalog-u9",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-uc-c1-catalog"
       ],
       "notes": "Toggle catalog; bundled/tariff/locked badges; tariff stub.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "settings toggle + entitlement badges; fbdf158"
     },
     {
       "id": "db-uc-p1-picker-modal",
@@ -4339,7 +4349,7 @@
       "githubIssue": 136,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-usercases-catalog-u9",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -4348,7 +4358,9 @@
         "db-uc-l1-layout-canon"
       ],
       "notes": "Modal cards; confirm dirty; ref-mapping; post-apply exec-layout.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "modal apply-all + ref-mapping; 7c520db"
     },
     {
       "id": "db-uc-d1-docs",
@@ -4357,14 +4369,16 @@
       "githubIssue": 136,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-usercases-catalog-u9",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-uc-p1-picker-modal"
       ],
       "notes": "DEVICE_BOARD_CONCEPT §20; package README; apps/docs stub.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "CONCEPT section 20, README, Mintlify usercases; 4576abb"
     }
   ]
 }

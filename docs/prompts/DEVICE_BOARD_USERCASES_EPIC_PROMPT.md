@@ -6,7 +6,7 @@
 > **Консилиум:** [`device-board-usercases-consilium-2026-06-21.md`](../discussions/device-board-usercases-consilium-2026-06-21.md)  
 > **Предшественники:** UserCase MVP LGTM · U8 (`db-canvas-groups-functions`, PR #134) · U8a (`db-node-align-advanced`, PR #135)  
 > **GitHub Issue:** [#136](https://github.com/officefish/Membrana/issues/136)  
-> **Статус:** **active** — консилиум 2026-06-21 (product initiator)  
+> **Статус:** **archived** · LGTM Teamlead 2026-06-21 · ветка `feat/db-usercases-catalog-u9`  
 > **Ветка:** `feat/db-usercases-catalog-u9` от `main` / `techies68` (после merge U8/U8a)
 
 ---
@@ -195,14 +195,14 @@ CI: verify on PR touching `docs/device-board-scripts/usercase-*/`.
 
 ## Definition of Done (эпик)
 
-- [ ] R0: manifest contract + build/verify-kinds scripts; MVP manifest validates
-- [ ] L1: MVP document passes `verify-layout`; comment group semantic frames on main
-- [ ] C1: catalog service lists bundled `usercase-mvp-microphone`
-- [ ] G1: settings section + toggle; bundled always entitled
-- [ ] P1: modal apply-all → hydrate → Run main loop без manual JSON import
-- [ ] D1: CONCEPT §20 UserCases; README + apps/docs stub page
-- [ ] Tariff locked card stub (disabled + copy)
-- [ ] `@membrana/device-board` + client tests green; CI verify scripts in pipeline
+- [x] R0: manifest contract + build/verify-kinds scripts; MVP manifest validates
+- [x] L1: MVP document passes `verify-layout`; comment group semantic frames on main
+- [x] C1: catalog service lists bundled `usercase-mvp-microphone`
+- [x] G1: settings section + toggle; bundled always entitled
+- [x] P1: modal apply-all → hydrate → Run main loop без manual JSON import
+- [x] D1: CONCEPT §20 UserCases; README + apps/docs stub page
+- [x] Tariff locked card stub (disabled + copy)
+- [x] `@membrana/device-board` + client tests green; CI verify scripts in pipeline
 
 ---
 
