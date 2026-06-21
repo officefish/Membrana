@@ -651,12 +651,16 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 
 - [`DEVICE_BOARD_HACKATHON_BRIEF.md`](../../docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md) — бриф хакатона 1.
 - [`HACKATHON_REGULATION.md`](../../docs/HACKATHON_REGULATION.md) — ритуалы хакатона.
+- [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) — UserCases catalog (U9, §20).
+- [`apps/docs/device-board/usercases.mdx`](../../apps/docs/device-board/usercases.mdx) — операторская страница UserCases.
 
 ---
 
 ## 14. Статус и порядок изменения
 
-- **Статус:** v0.7 — концепт (+ canvas groups & functions, §18).
+- **Статус:** v0.8 — концепт (+ UserCases catalog U9, §20).
+- **Changelog v0.8 (2026-06-21):** эпик U9 (`db-usercases-catalog-u9`, #136): manifest/build/verify,
+  layout canon, bundled catalog, settings gate, modal apply-all; bundled MVP `usercase-mvp-microphone`.
 - **Changelog v0.7 (2026-06-21):** эпик U8 (`db-canvas-groups-functions`, PR #134):
   marquee multi-select + action modal; comment groups (`ScenarioCommentGroup`,
   frame color, runtime read-only); user functions (multi-function sidebar, collapse,
@@ -1153,3 +1157,103 @@ interface ScenarioCommentGroup {
 | **L3** | `layout-snap-guides.ts` | При drag: snap 8 px + guides к left/center/right соседей (threshold 6 px) |
 
 Snap guides **не** работают в runtime (`readOnly` canvas) и для ghost preview nodes.
+
+---
+
+## 20. UserCases catalog (U9)
+
+> Эпик `db-usercases-catalog-u9` · Issue [#136](https://github.com/officefish/Membrana/issues/136) · промпт [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md)
+
+**UserCase** — продуктовый слой поверх scenario runtime: единый `DeviceScenarioDocument` v2
+(все шесть обработчиков, `functions[]`, `commentGroups[]`), поставляемый оператору как
+готовый шаблон с аккуратным LR-layout. Runtime и типы сценария **не** дублируются — apply
+идёт через существующий `hydrateBoardFromDocument`.
+
+| Принцип | Решение |
+| ------- | ------- |
+| Единица поставки | `manifest.json` + embedded document (не loose branch JSON) |
+| Apply v1 | **apply-all** scenario; **signal layer не меняется** |
+| Доступ | Settings (toggle + entitlement) → **modal picker** на board |
+| Entitlement | `bundled` (free MVP) + `tariff` (stub locked card); `community` — поле schema без UI v1 |
+| Layout | `layoutProfile: exec-lr-v1`; CI `usercase:verify-layout` |
+
+### 20.1 Manifest vs graph
+
+```text
+docs/device-board-scripts/usercase-{id}/
+  manifest.json          — metadata, tier, layoutProfile, embeddedDocument path
+  *.json                 — editorial branch sources (build input)
+packages/device-board/src/graph/
+  default-usercase-*.generated.ts  — embedded TS после yarn usercase:build
+```
+
+Manifest **не** содержит граф — только метаданные и путь к embedded document.
+Контракт: [`DeviceBoardUserCaseManifest`](../../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md#manifest-contract-v1).
+
+Bundled v1: **`usercase-mvp-microphone`** (`deviceKind: microphone`, tier `bundled`).
+
+### 20.2 Layout canon (L1)
+
+Post-build pipeline (`scripts/lib/usercase-post-build.mjs`):
+
+1. `applyUserCaseLayoutCanon` — LR exec-spine, 8 px grid, semantic comment group frames на main.
+2. `verifyUserCaseDocumentLayout` — hard fail на overlap / grid / function depth.
+
+Yarn: `yarn usercase:verify-layout <id>` · реализация: `usercase-layout-canon.ts`.
+
+### 20.3 Catalog service (C1)
+
+| Слой | Путь | Ответственность |
+| ---- | ---- | --------------- |
+| Bundled index | `packages/device-board/src/catalog/` | `UserCaseCatalogService`, embedded loaders |
+| Client entitlement | `apps/client/.../user-case-catalog-service.ts` | tariff SKU stub → `bundled` / `entitled` / `locked` |
+| Settings gate (G1) | `UserCaseSettingsPanel`, `readDeviceBoardUserCaseGate()` | toggle «Показывать каталог на доске» |
+
+Tariff lookup **не** в `@membrana/core` — только client + будущий cabinet SKU hook.
+
+### 20.4 Operator flow (G1 → P1)
+
+```mermaid
+sequenceDiagram
+  participant S as Module settings
+  participant B as Device board
+  participant M as UserCase modal
+  participant H as hydrateBoardFromDocument
+
+  S->>S: userCasesCatalogEnabled = true
+  B->>M: ⚙ → UserCase…
+  M->>M: select card, confirm if dirty
+  M->>M: ref-mapping (JournalRef / DeviceRef)
+  M->>H: apply-all document, signal intact
+  H->>B: board ready, Run enabled
+```
+
+- **Settings:** модуль «Доска устройства» → секция UserCases, badges Bundled / Tariff.
+- **Board:** dropdown ⚙ → **UserCase…** (скрыто при выключенном каталоге).
+- **Confirm:** destructive «Заменить текущий сценарий?» при `isDirty`.
+- **Ref-mapping:** reuse branch-import slots (`collectUserCaseReferenceSlots`, `suggestReferenceVariableMapping`).
+- **Success:** banner «UserCase … применён» (signal layer без изменений).
+
+Реализация apply: `apply-user-case.ts` · UI: `board-usercase-picker-modal.tsx`.
+
+### 20.5 Yarn scripts (R0 / L1)
+
+| Script | Назначение |
+| ------ | ---------- |
+| `yarn usercase:build <id>` | manifest → embedded TS + layout canon + sync branch JSON |
+| `yarn usercase:verify-kinds <id>` | node kinds ⊆ `SCENARIO_NODE_KINDS` |
+| `yarn usercase:verify-layout <id>` | layout metrics (CI gate на bundled UserCases) |
+
+### 20.6 Out of scope v1
+
+- Marketplace / community upload UI
+- apply-single-branch
+- Undo после apply-all
+- Server-side UserCase CRUD в `background-media` (отдельный эпик S*)
+
+### 20.7 Документация для оператора
+
+Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/usercases.mdx) (stub → расширение по мере новых bundled UserCases).
+
+Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) ·
+консилиум [`device-board-usercases-consilium-2026-06-21.md`](../../docs/discussions/device-board-usercases-consilium-2026-06-21.md).

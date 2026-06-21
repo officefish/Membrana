@@ -1,0 +1,66 @@
+---
+title: UserCases
+description: Готовые сценарии device-board — каталог, настройки и apply-all (U9).
+---
+
+# UserCases (catalog U9)
+
+**UserCase** — полный сценарий device-board (`DeviceScenarioDocument` v2): все обработчики,
+пользовательские функции и визуальные группы, собранные редакторами Membrana в один шаблон
+с LR-layout. Оператор применяет шаблон с доски без ручного import JSON.
+
+Канон: [`DEVICE_BOARD_CONCEPT.md`](https://github.com/officefish/Membrana/blob/main/packages/device-board/DEVICE_BOARD_CONCEPT.md) §20.
+
+## Включить каталог
+
+1. Откройте **Настройки** → модуль **«Доска устройства»**.
+2. Секция **UserCases** → включите **«Показывать каталог на доске»**.
+3. Список карточек показывает entitlement: **Bundled** (бесплатно) или **Тариф** (stub до cabinet).
+
+Пока toggle выключен, пункт **UserCase…** на доске не отображается.
+
+## Применить UserCase
+
+1. **Открыть доску** (fullscreen editor).
+2. Меню **⚙** в шапке → **UserCase…**
+3. Выберите карточку (v1 bundled: **MVP microphone**).
+4. **Применить сценарий** — destructive confirm, если есть несохранённые правки.
+5. При необходимости сопоставьте **JournalRef** / **DeviceRef** с локальными переменными.
+6. Banner «UserCase … применён» → **Run** на ветке main.
+
+<Warning>
+Apply-all заменяет **все ветки scenario**. Signal-слой (топология захвата) **не меняется**.
+Сохраните сценарий кнопкой **Сохранить**, если нужен persist на сервере.
+</Warning>
+
+## Bundled v1
+
+| id | deviceKind | Описание |
+|----|------------|----------|
+| `usercase-mvp-microphone` | `microphone` | Realtime observation + recording gate v0.8, trends-fft, journal reporter |
+
+Sign-off: [`USERCASE_MVP_MICROPHONE_LGTM.md`](https://github.com/officefish/Membrana/blob/main/docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md).
+
+## Tariff (stub)
+
+Карточки с tier `tariff` без активного SKU показываются как **locked** («Доступно в тарифе»).
+Интеграция cabinet SKU — отдельная задача; entitlement читается в client, не в `@membrana/core`.
+
+## Для разработчиков
+
+| Script | Назначение |
+|--------|------------|
+| `yarn usercase:build <id>` | Сборка embedded document + layout canon |
+| `yarn usercase:verify-kinds <id>` | Проверка kinds ⊆ palette |
+| `yarn usercase:verify-layout <id>` | CI layout metrics |
+
+Источники: `docs/device-board-scripts/usercase-*/manifest.json`.
+
+<CardGroup cols={2}>
+  <Card title="Editor UX" icon="pen-ruler" href="/device-board/editor/overview">
+    Save/draft, export JSON, clear branch
+  </Card>
+  <Card title="MVP overview" icon="microphone" href="/device-board/mvp-overview">
+    Signal + Scenario, runtime, host bridge
+  </Card>
+</CardGroup>

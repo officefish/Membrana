@@ -5,9 +5,9 @@
 представление того же конвейера, что сейчас настраивается через сайдбар
 плагинов.
 
-**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.4 — signal + scenario).  
+**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.8 — signal + scenario + UserCases §20).  
 **Scenario runtime (onTick, лупы, host):** [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).  
-**Операторская документация (Mintlify):** [`apps/docs`](../../apps/docs/README.md) — `yarn docs:dev`.
+**Операторская документация (Mintlify):** [`apps/docs`](../../apps/docs/README.md) — `yarn docs:dev` · [UserCases](../../apps/docs/device-board/usercases.mdx).
 
 См. также: [`ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) §1f,
 [`MODULE_AND_PLUGIN_UI.md`](../../docs/MODULE_AND_PLUGIN_UI.md) §3.1.
@@ -23,6 +23,27 @@
 - **Пресеты** — `*.graph.json` по `DeviceKind` (например `Mic → FFT → Detector → Emitter`).
 - **Валидация** — типы сокетов из `@membrana/core` (`SocketType`), проверка
   соединений через `isValidConnection`.
+- **UserCases (U9)** — bundled каталог готовых сценариев: `UserCaseCatalogService`,
+  apply-all через `applyUserCaseDocument` (signal layer intact), modal picker на shell.
+
+## UserCases catalog (U9)
+
+| Компонент | Путь |
+| --------- | ---- |
+| Bundled index | `src/catalog/user-case-catalog.ts` |
+| Apply-all | `src/graph/apply-user-case.ts` |
+| Layout canon | `src/graph/usercase-layout-canon.ts` |
+| Board picker | `src/components/board-usercase-picker-modal.tsx` |
+| Client entitlement | `apps/client/src/modules/device-board/user-case-catalog-service.ts` |
+| Settings gate | `apps/client/.../UserCaseSettingsPanel.tsx` |
+
+```bash
+yarn usercase:build usercase-mvp-microphone
+yarn usercase:verify-kinds usercase-mvp-microphone
+yarn usercase:verify-layout usercase-mvp-microphone
+```
+
+Подробно: `DEVICE_BOARD_CONCEPT.md` §20 · оператор — `apps/docs/device-board/usercases.mdx`.
 
 ## Чего пакет не делает
 
