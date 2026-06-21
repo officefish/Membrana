@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-06-21
+
+> Epic: `device-board-post-comp-debt-night-build`
+> Закрыто: `2026-06-21T16:50:48.159Z` (`yarn night:close`)
+> Промпт: `docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/device-board-post-comp-debt-night-build-2026-06-21` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 # Night Build log
 
 ## Open — 2026-06-14T18:06:19.233Z
@@ -46,3 +67,21 @@
 ## Checkpoint NB3 — 2026-06-21T16:50:47.925Z
 - Status: **pass**
 - Note: picker a11y; verify-paths 34 ok; test 401/401
+
+
+---
+
+## Шаблон итога (заполнить вручную или агентом)
+
+| Фаза | Статус | PR / commit |
+|------|--------|-------------|
+| NB0 | pending / done / deferred | |
+| NB1 | pending / done / deferred | |
+| NB2 | pending / done / deferred | |
+| NB3 | pending / done / deferred | |
+
+**Блокеры:**
+
+- …
+
+**LGTM Vesnin:** pending
