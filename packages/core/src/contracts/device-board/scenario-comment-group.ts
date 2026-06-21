@@ -1,6 +1,6 @@
 /**
  * Comment group — визуальная рамка на канвасе (CGF G1), не runtime.
- * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §4.3
+ * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §18
  */
 
 /** Ветка / слой, на котором расположена группа. */

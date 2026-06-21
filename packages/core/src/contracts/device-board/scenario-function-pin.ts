@@ -1,6 +1,6 @@
 /**
  * Граничные pins пользовательской функции (CGF F1, D-PINS-9).
- * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §4.3
+ * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §18
  */
 
 import type { SocketType } from './socket-type.js';
