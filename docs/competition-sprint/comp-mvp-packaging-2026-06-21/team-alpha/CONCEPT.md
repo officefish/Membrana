@@ -60,7 +60,7 @@ Main canvas после collapse: **~8–10 видимых нод** + 4 comment f
 | verify-layout | green |
 | Catalog | `community` tier in `UserCaseCatalogService` |
 
-Commit: *(Phase 2β pending push)*
+Commit: `e507a2e`
 
 ## Phase 2α — DONE (2026-06-21)
 

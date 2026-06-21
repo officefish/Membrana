@@ -72,7 +72,7 @@ Main visible nodes: **Event tick → 3 function call nodes → ∞** (target **�
 | Main scenario nodes | ~15 (orchestrator + data refs) |
 | verify-layout | green |
 
-Commit: *(Phase 2β pending push)*
+Commit: `e507a2e`
 
 ## Phase 2α — DONE (2026-06-21)
 

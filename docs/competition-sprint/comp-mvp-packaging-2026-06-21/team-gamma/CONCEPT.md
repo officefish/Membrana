@@ -76,7 +76,7 @@ initial/onConnect: **1 group each**, muted neutral frame — «Подготов�
 | verify-layout | green |
 | Mega-bundle | deferred (D-PINS-9) |
 
-Commit: *(Phase 2β pending push)*
+Commit: `e507a2e`
 
 ## Phase 2α — DONE (2026-06-21)
 
