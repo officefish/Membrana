@@ -134,6 +134,7 @@ export {
   type ScenarioFftTrendsDetectionMode,
   type ScenarioFftTrendsMeasurementCount,
   type ScenarioFftTrendsIntervalMs,
+  type ScenarioFftTrendsBuiltinTemplateKey,
   type ScenarioFftTrendsPolicy,
   resolveScenarioFftTrendsPolicy,
   isScenarioFftTrendsPolicy,

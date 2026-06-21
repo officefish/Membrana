@@ -4,7 +4,6 @@ import {
   createGetJournalBoardNode,
   GET_JOURNAL_DEVICE_HANDLE,
   GET_JOURNAL_OUT_HANDLE,
-  GET_JOURNAL_SERVER_HANDLE,
   getJournalNodePins,
 } from './get-journal-node.js';
 import { deserializeScenarioSubgraph, serializeScenarioSubgraph } from './serialize-scenario-subgraph.js';

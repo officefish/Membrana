@@ -2,7 +2,9 @@ import {
   isScenarioIntegerValue,
   isScenarioRecordingPolicyValue,
   resolveScenarioRecordingPolicy,
+  nearestRecordingWindowPreset,
   type ScenarioGraphNode,
+  type ScenarioRecordingWindowSec,
   type ScenarioSubgraph,
 } from '@membrana/core';
 
@@ -171,9 +173,9 @@ export async function executeRecordingGateNode(
       IS_RECORDING_WINDOW_FULL_WINDOW_SEC_HANDLE,
       resolveContext,
     );
-    let windowSec = readRecordingPolicy(node).windowSec;
+    let windowSec: ScenarioRecordingWindowSec = readRecordingPolicy(node).windowSec;
     if (isScenarioIntegerValue(windowWire)) {
-      windowSec = resolveScenarioRecordingPolicy({ windowSec: windowWire.value }).windowSec;
+      windowSec = nearestRecordingWindowPreset(windowWire.value);
     }
     const full =
       deviceHandle !== null &&

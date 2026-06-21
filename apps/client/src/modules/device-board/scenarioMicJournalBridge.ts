@@ -247,8 +247,6 @@ export class ScenarioMicJournalBridge {
 
   private lastRecorderFlushDeviceHandle: string | null = null;
 
-  private lastObservationTrackId: string | null = null;
-
   /** Reused across main ticks — avoids cold AnalyserNode frames (all zeros). */
   private streamCaptureSampler: LiveSampler | null = null;
 
@@ -440,7 +438,6 @@ export class ScenarioMicJournalBridge {
     this.recordingSlicePayloads.clear();
     this.recordingSliceSeq = 0;
     this.lastRecorderFlushDeviceHandle = null;
-    this.lastObservationTrackId = null;
     this.scenarioFftAnalyzer.resetState();
   }
 
@@ -621,7 +618,6 @@ export class ScenarioMicJournalBridge {
     }
 
     const trackId = createEntryId('track');
-    this.lastObservationTrackId = trackId;
     const titleSuffix = trackId.startsWith('track-')
       ? trackId.slice('track-'.length, 'track-'.length + 12)
       : trackId.slice(0, 12);
@@ -683,7 +679,6 @@ export class ScenarioMicJournalBridge {
       uploadMode: 'async',
     });
     const trackId = createEntryId('track');
-    this.lastObservationTrackId = trackId;
     const titleSuffix = trackId.startsWith('track-')
       ? trackId.slice('track-'.length, 'track-'.length + 12)
       : trackId.slice(0, 12);

@@ -28,7 +28,7 @@ import {
 } from './make-fft-trends-analysis-node.js';
 import { MAKE_TRACK_RECORDER_HANDLE, MAKE_TRACK_SLICE_HANDLE } from './make-track-node.js';
 import { START_RECORDING_RECORDER_HANDLE, START_RECORDING_STREAM_HANDLE } from './start-recording-node.js';
-import { STOP_RECORDING_RECORDER_HANDLE, STOP_RECORDING_SLICE_HANDLE } from './stop-recording-node.js';
+import { STOP_RECORDING_RECORDER_HANDLE } from './stop-recording-node.js';
 import {
   IS_RECORDING_WINDOW_FULL_RECORDER_HANDLE,
 } from './is-recording-window-full-node.js';

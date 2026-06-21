@@ -15,7 +15,7 @@ import {
 } from '../graph/resolve-context-port-label.js';
 import { formatSocketPortLabel } from '../graph/socket-port-label.js';
 import { formatRecordingPolicyBadge } from '../graph/recording-policy-ui.js';
-import { formatFftTrendsPolicyBadge, fftTrendsPolicyDurationSec } from '../graph/fft-trends-policy-ui.js';
+import { formatFftTrendsPolicyBadge } from '../graph/fft-trends-policy-ui.js';
 import { socketHandleClass } from '../graph/socket-type-palette.js';
 
 const LAYER_BORDER: Record<BoardFlowNodeData['layer'], string> = {

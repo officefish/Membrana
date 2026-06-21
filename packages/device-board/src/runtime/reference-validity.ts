@@ -5,6 +5,7 @@ import {
   invalidateReference,
   isScenarioReferenceValue,
   type ScenarioDateTimeValue,
+  type ScenarioFftTrendsPolicyValue,
   type ScenarioIntegerValue,
   type ScenarioRecordingPolicyValue,
   type ScenarioReferenceValue,
@@ -55,6 +56,21 @@ function recordingPoliciesEqual(
   );
 }
 
+function fftTrendsPoliciesEqual(
+  left: ScenarioFftTrendsPolicyValue,
+  right: ScenarioFftTrendsPolicyValue,
+): boolean {
+  return (
+    left.detectionMode === right.detectionMode &&
+    left.measurementsCount === right.measurementsCount &&
+    left.intervalMs === right.intervalMs &&
+    left.minConfidence === right.minConfidence &&
+    left.minRms === right.minRms &&
+    left.enabledTemplateKeys.length === right.enabledTemplateKeys.length &&
+    left.enabledTemplateKeys.every((key, index) => key === right.enabledTemplateKeys[index])
+  );
+}
+
 /**
  * Семантика записи переменной из dataflow:
  * - ссылочные: `null` (onDisconnect) → invalidate; value-типы: `null` → сброс;
@@ -85,6 +101,12 @@ export function applyVariableSetValue(
       return { ...variable, value: null };
     }
     if (variable.type === 'RecordingPolicy') {
+      if (variable.value === null) {
+        return variable;
+      }
+      return { ...variable, value: null };
+    }
+    if (variable.type === 'FftTrendsPolicy') {
       if (variable.value === null) {
         return variable;
       }
@@ -139,6 +161,18 @@ export function applyVariableSetValue(
       current !== null &&
       current.kind === 'RecordingPolicy' &&
       recordingPoliciesEqual(current, incoming)
+    ) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
+  if (incoming.kind === 'FftTrendsPolicy') {
+    const current = variable.value;
+    if (
+      current !== null &&
+      current.kind === 'FftTrendsPolicy' &&
+      fftTrendsPoliciesEqual(current, incoming)
     ) {
       return variable;
     }

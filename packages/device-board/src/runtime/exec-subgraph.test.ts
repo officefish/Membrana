@@ -6,7 +6,6 @@ import {
 } from '@membrana/core';
 
 import { PALETTE_VALUE_HANDLE } from '../graph/palette-node.js';
-import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { createStubScenarioRuntimeHost } from './host.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { executeScenarioBlock } from './block-executor.js';
@@ -37,7 +36,7 @@ describe('runSubgraphOnce', () => {
     const signal = new AbortController().signal;
 
     await expect(
-      runSubgraphOnce(cyclicSubgraph(), host, signal, { branch: 'main' }),
+      runSubgraphOnce(cyclicSubgraph(), host, signal, { branch: 'onConnect' }),
     ).rejects.toThrow(`${MAX_SUBGRAPH_EXEC_STEPS} exec steps`);
   });
 
