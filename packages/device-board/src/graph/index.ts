@@ -359,6 +359,19 @@ export {
 } from './layout-snap-guides.js';
 export type { FlowGuideLine, FlowGuideOrientation, SnapNodePositionResult } from './layout-snap-guides.js';
 export {
+  applyUserCaseLayoutCanon,
+  buildMvpMainCommentGroups,
+  verifyUserCaseDocumentLayout,
+  MVP_MAIN_COMMENT_GROUP_SPECS,
+  USERCASE_EXEC_LAYOUT_BRANCHES,
+} from './usercase-layout-canon.js';
+export type {
+  UserCaseExecLayoutBranch,
+  UserCaseLayoutIssue,
+  UserCaseLayoutIssueSeverity,
+  UserCaseLayoutVerifyResult,
+} from './usercase-layout-canon.js';
+export {
   findFunctionIoNodeIds,
   proposeNewFunctionPin,
   removeFunctionPinFromList,

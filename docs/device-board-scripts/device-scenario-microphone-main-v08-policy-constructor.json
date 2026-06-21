@@ -11,8 +11,8 @@
         "id": "main-on-tick",
         "blockKind": "custom",
         "position": {
-          "x": -700.3126018437592,
-          "y": -281.494470006514
+          "x": -704,
+          "y": -224
         },
         "label": "onTick",
         "nodeKind": "event",
@@ -23,8 +23,8 @@
         "id": "main-infinity",
         "blockKind": "custom",
         "position": {
-          "x": 5128.052417513904,
-          "y": 1056.2543504228324
+          "x": 8112,
+          "y": -288
         },
         "label": "∞",
         "nodeKind": "loop-repeat",
@@ -34,8 +34,8 @@
         "id": "node-is-valid-mql3c77w-6",
         "blockKind": "custom",
         "position": {
-          "x": -375.3186574399972,
-          "y": -107.01584256505302
+          "x": -240,
+          "y": -224
         },
         "label": "isValid",
         "nodeKind": "is-valid"
@@ -44,8 +44,8 @@
         "id": "node-get-audio-stream-mql3ckno-7",
         "blockKind": "custom",
         "position": {
-          "x": -106.52472747074003,
-          "y": -2.1324968378683664
+          "x": 224,
+          "y": -280
         },
         "label": "GetAudioStream",
         "nodeKind": "get-audio-stream"
@@ -54,8 +54,8 @@
         "id": "node-get-sample-mql3f1ro-9",
         "blockKind": "custom",
         "position": {
-          "x": 1041.4480185865475,
-          "y": 197.81839440933837
+          "x": 1152,
+          "y": -288
         },
         "label": "GetSample",
         "nodeKind": "get-sample"
@@ -64,8 +64,8 @@
         "id": "node-get-fft-frame-mql3g2ys-11",
         "blockKind": "custom",
         "position": {
-          "x": 1758.6491191717096,
-          "y": 421.9223316578707
+          "x": 2080,
+          "y": -288
         },
         "label": "GetFFTFrame",
         "nodeKind": "get-fft-frame"
@@ -74,8 +74,8 @@
         "id": "node-device-global-mqm0q2fd-14",
         "blockKind": "custom",
         "position": {
-          "x": 222.44273871657708,
-          "y": -392.13257827383524
+          "x": 224,
+          "y": -392
         },
         "label": "GetDevice",
         "nodeKind": "device-global"
@@ -84,8 +84,8 @@
         "id": "node-stop-runtime-mqm1mfts-29",
         "blockKind": "custom",
         "position": {
-          "x": 511.90025358061894,
-          "y": -322.4211147385492
+          "x": 1152,
+          "y": -160
         },
         "label": "StopRuntime",
         "nodeKind": "stop-runtime"
@@ -94,8 +94,8 @@
         "id": "node-is-valid-mqm1nky7-30",
         "blockKind": "custom",
         "position": {
-          "x": 183.38127056229985,
-          "y": -135.09097892214334
+          "x": 688,
+          "y": -280
         },
         "label": "isValid",
         "nodeKind": "is-valid"
@@ -104,8 +104,8 @@
         "id": "node-get-recorder-mqm9sdoi-25",
         "blockKind": "custom",
         "position": {
-          "x": 1315.6043085466104,
-          "y": 343.0295814824033
+          "x": 1616,
+          "y": -288
         },
         "label": "GetRecorder",
         "nodeKind": "get-recorder"
@@ -114,8 +114,8 @@
         "id": "node-get-spectral-analyser-mqm9vz6a-27",
         "blockKind": "custom",
         "position": {
-          "x": 2054.3842630108056,
-          "y": 561.874564766818
+          "x": 2544,
+          "y": -288
         },
         "label": "GetSpectralAnalyser",
         "nodeKind": "get-spectral-analyser"
@@ -124,8 +124,8 @@
         "id": "node-collect-fft-frames-mqm9wezu-28",
         "blockKind": "custom",
         "position": {
-          "x": 2287.07395578655,
-          "y": 705.3218234856145
+          "x": 3008,
+          "y": -288
         },
         "label": "CollectFftFrames",
         "nodeKind": "collect-fft-frames",
@@ -140,8 +140,8 @@
         "id": "node-get-reporter-mqm9yfmy-29",
         "blockKind": "custom",
         "position": {
-          "x": 3169.748710684103,
-          "y": 505.8391726709191
+          "x": 3168,
+          "y": 504
         },
         "label": "GetReporter",
         "nodeKind": "get-reporter"
@@ -150,8 +150,8 @@
         "id": "node-make-report-from-analysis-mqma356z-34",
         "blockKind": "custom",
         "position": {
-          "x": 4287.30385238366,
-          "y": 497.9052504486386
+          "x": 7184,
+          "y": -320
         },
         "label": "MakeReportFromAnalysis",
         "nodeKind": "make-report-from-analysis"
@@ -160,8 +160,8 @@
         "id": "node-publish-report-mqma49xv-35",
         "blockKind": "custom",
         "position": {
-          "x": 4651.323099101254,
-          "y": 388.4089045323267
+          "x": 7648,
+          "y": -320
         },
         "label": "PublishReport",
         "nodeKind": "publish-report"
@@ -170,8 +170,8 @@
         "id": "node-make-track-mqmcipn5-28",
         "blockKind": "custom",
         "position": {
-          "x": 3556.6926855916026,
-          "y": 338.85315683106893
+          "x": 5328,
+          "y": -320
         },
         "label": "MakeTrack",
         "nodeKind": "make-track"
@@ -180,8 +180,8 @@
         "id": "node-get-recorder-mqmo3mba-31",
         "blockKind": "custom",
         "position": {
-          "x": 2566.53645968242,
-          "y": 915.3490736945035
+          "x": 3472,
+          "y": -288
         },
         "label": "GetRecorder",
         "nodeKind": "get-recorder"
@@ -190,8 +190,8 @@
         "id": "node-is-recording-window-full-mqmo40ie-32",
         "blockKind": "custom",
         "position": {
-          "x": 2845.518227594041,
-          "y": 792.6161982504036
+          "x": 4400,
+          "y": -288
         },
         "label": "IsRecordingWindowFull",
         "nodeKind": "is-recording-window-full"
@@ -200,8 +200,8 @@
         "id": "node-make-fft-trends-analysis-mqmo96xz-33",
         "blockKind": "custom",
         "position": {
-          "x": 3940.8586932247003,
-          "y": 662.9347369807047
+          "x": 6720,
+          "y": -320
         },
         "label": "MakeFftTrendsAnalysis",
         "nodeKind": "make-fft-trends-analysis"
@@ -210,8 +210,8 @@
         "id": "node-flush-spectral-analyser-mqmoa8o7-34",
         "blockKind": "custom",
         "position": {
-          "x": 3850.9048086588978,
-          "y": 754.0483991582826
+          "x": 6256,
+          "y": -320
         },
         "label": "FlushSpectralAnalyser",
         "nodeKind": "flush-spectral-analyser"
@@ -220,8 +220,8 @@
         "id": "node-stop-recording-mqmod4yf-35",
         "blockKind": "custom",
         "position": {
-          "x": 3177.2615336697704,
-          "y": 933.905285532332
+          "x": 4864,
+          "y": -320
         },
         "label": "StopRecording",
         "nodeKind": "stop-recording"
@@ -230,8 +230,8 @@
         "id": "node-start-recording-mqv07-36",
         "blockKind": "custom",
         "position": {
-          "x": 3720.6926855916026,
-          "y": 420.85315683106893
+          "x": 5792,
+          "y": -320
         },
         "label": "StartRecording (restart)",
         "nodeKind": "start-recording"
@@ -240,8 +240,8 @@
         "id": "node-start-recording-bootstrap-v08-2",
         "blockKind": "custom",
         "position": {
-          "x": 3020.6926855916026,
-          "y": 792.6161982504036
+          "x": 3936,
+          "y": -288
         },
         "label": "StartRecording (bootstrap)",
         "nodeKind": "start-recording",
@@ -254,8 +254,8 @@
         "id": "node-make-recording-policy-v08-1",
         "blockKind": "custom",
         "position": {
-          "x": 3580.6926855916026,
-          "y": 420.85315683106893
+          "x": 3584,
+          "y": 424
         },
         "label": "MakeRecordingPolicy",
         "nodeKind": "make-recording-policy",
@@ -269,8 +269,8 @@
         "id": "node-make-fft-trends-policy-v08-1",
         "blockKind": "custom",
         "position": {
-          "x": 3780.6926855916026,
-          "y": 580.8531568310689
+          "x": 3784,
+          "y": 584
         },
         "label": "MakeFftTrendsPolicy",
         "nodeKind": "make-fft-trends-policy",
@@ -295,8 +295,8 @@
         "id": "node-get-microphone-mvp-main-1",
         "blockKind": "custom",
         "position": {
-          "x": -708,
-          "y": 29
+          "x": -704,
+          "y": 32
         },
         "label": "GetMicrophone",
         "nodeKind": "get-microphone",
@@ -306,7 +306,7 @@
         "id": "node-get-journal-mvp-main-1",
         "blockKind": "custom",
         "position": {
-          "x": 2434,
+          "x": 2432,
           "y": 120
         },
         "label": "GetJournal",
@@ -738,7 +738,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T08:39:26.346Z",
+  "exportedAt": "2026-06-21T12:04:18.016Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "main"
 }

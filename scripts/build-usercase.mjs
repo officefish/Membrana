@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadUserCaseManifest } from './lib/usercase-manifest.mjs';
+import { finalizeUserCaseBuild } from './lib/usercase-post-build.mjs';
 import { normalizeUserCaseFolderId } from './lib/usercase-paths.mjs';
 
 const scriptsDir = dirname(fileURLToPath(import.meta.url));
@@ -59,6 +60,7 @@ if (result.status !== 0) {
 }
 
 try {
+  await finalizeUserCaseBuild(rawId);
   loadUserCaseManifest(rawId);
   console.log(`Manifest validated: usercase-${folderId}`);
 } catch (error) {

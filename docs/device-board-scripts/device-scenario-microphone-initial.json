@@ -11,8 +11,8 @@
         "id": "initial-event",
         "blockKind": "custom",
         "position": {
-          "x": -1890.4473160332445,
-          "y": -603.8030337318398
+          "x": -1888,
+          "y": -600
         },
         "label": "On start",
         "nodeKind": "event",
@@ -23,8 +23,8 @@
         "id": "node-get-microphone-mqkpxb3c-5",
         "blockKind": "custom",
         "position": {
-          "x": 535.1686504497413,
-          "y": -275.8515850500755
+          "x": -32,
+          "y": -600
         },
         "label": "GetMicrophone",
         "nodeKind": "get-microphone",
@@ -34,8 +34,8 @@
         "id": "node-print-mqksbm4o-3",
         "blockKind": "custom",
         "position": {
-          "x": -89.52827350864165,
-          "y": -465.68903526964687
+          "x": -496,
+          "y": -600
         },
         "label": "Print",
         "nodeKind": "print"
@@ -44,8 +44,8 @@
         "id": "node-start-streaming-mql556hh-49",
         "blockKind": "custom",
         "position": {
-          "x": 1291.57719127356,
-          "y": -124.78361738985245
+          "x": 432,
+          "y": -600
         },
         "label": "StartStreaming",
         "nodeKind": "start-streaming"
@@ -54,8 +54,8 @@
         "id": "node-is-valid-mqm9i48b-18",
         "blockKind": "custom",
         "position": {
-          "x": -1491.3976992236421,
-          "y": -417.45040961706457
+          "x": -1424,
+          "y": -600
         },
         "label": "isValid",
         "nodeKind": "is-valid"
@@ -64,8 +64,8 @@
         "id": "node-device-global-mqm9ip17-19",
         "blockKind": "custom",
         "position": {
-          "x": -1758.4560472976493,
-          "y": -77.87529318378682
+          "x": -1760,
+          "y": -80
         },
         "label": "GetDevice",
         "nodeKind": "device-global"
@@ -74,8 +74,8 @@
         "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9it3v-10",
         "blockKind": "custom",
         "position": {
-          "x": -703.4560472976507,
-          "y": -310.87529318378665
+          "x": -960,
+          "y": -568
         },
         "label": "journal1",
         "nodeKind": "variable-set",
@@ -85,8 +85,8 @@
         "id": "node-get-journal-mqm9j4wy-20",
         "blockKind": "custom",
         "position": {
-          "x": -1066.45604729765,
-          "y": -246.0752863173316
+          "x": -1064,
+          "y": -248
         },
         "label": "GetJournal",
         "nodeKind": "get-journal"
@@ -95,8 +95,8 @@
         "id": "node-get-journal-mvp-initial-valid-1",
         "blockKind": "custom",
         "position": {
-          "x": -1750,
-          "y": -242
+          "x": -1752,
+          "y": -240
         },
         "label": "GetJournal",
         "nodeKind": "get-journal"
@@ -214,7 +214,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T08:39:26.344Z",
+  "exportedAt": "2026-06-21T12:04:18.013Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "initial",
   "referenceVariableSlots": []
