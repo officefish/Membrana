@@ -4190,14 +4190,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-post-usercase-roadmap",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-cgf-a0-align-basic"
       ],
       "notes": "Consilium 2026-06-21 Rodchenko: dagre LR exec-chain, snap guides, branch entry preview.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "U8a: L1-L3 smart alignment; CONCEPT §19"
     },
     {
       "id": "db-naa-l1-exec-dagre",
@@ -4206,12 +4208,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-node-align-advanced",
       "createdAt": "2026-06-21",
       "dependsOn": [],
       "notes": "layout-exec-chain.ts, @dagrejs/dagre, modal Tier 2.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "L1: dagre exec layout, modal Tier 2, layout-exec-chain.ts"
     },
     {
       "id": "db-naa-l2-branch-entry",
@@ -4220,14 +4224,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-node-align-advanced",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-naa-l1-exec-dagre"
       ],
       "notes": "main/alarm toolbar; ghost preview before apply.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "L2: branch entry button, ghost preview modal"
     },
     {
       "id": "db-naa-l3-snap-guides",
@@ -4236,14 +4242,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-node-align-advanced",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-naa-l1-exec-dagre"
       ],
       "notes": "Figma-like guides; 8px grid snap on node drag.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "L3: snap guides overlay on drag, layout-snap-guides.ts"
     }
   ]
 }

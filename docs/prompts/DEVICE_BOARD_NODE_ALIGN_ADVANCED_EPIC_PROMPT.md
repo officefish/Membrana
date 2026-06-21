@@ -109,12 +109,12 @@ computeExecChainLayoutPositions(
 
 ## Definition of Done (эпик)
 
-- [ ] L1: `layout-exec-chain.ts` + tests (linear chain monotonic x; MVP main fixture smoke)
-- [ ] L1: modal Tier 2 wired in shell
-- [ ] L2: branch entry + ghost preview
-- [ ] L3: snap guides on drag
-- [ ] CONCEPT §19 auto-layout rules
-- [ ] CI green `@membrana/device-board`
+- [x] L1: `layout-exec-chain.ts` + tests (linear chain monotonic x; MVP main fixture smoke)
+- [x] L1: modal Tier 2 wired in shell
+- [x] L2: branch entry + ghost preview
+- [x] L3: snap guides on drag
+- [x] CONCEPT §19 auto-layout rules
+- [x] CI green `@membrana/device-board`
 
 ---
 
