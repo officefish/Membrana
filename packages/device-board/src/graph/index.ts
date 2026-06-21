@@ -306,6 +306,15 @@ export type {
   ParseBranchScenarioExportResult,
 } from './import-branch-scenario.js';
 export {
+  applyUserCaseDocument,
+  collectUserCaseReferenceSlots,
+  prepareUserCaseApply,
+} from './apply-user-case.js';
+export type {
+  ApplyUserCaseDocumentResult,
+  PrepareUserCaseApplyResult,
+} from './apply-user-case.js';
+export {
   collectReferenceVariableSlots,
   exportValueVariables,
   isReferenceMappingComplete,

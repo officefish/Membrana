@@ -42,6 +42,8 @@ import {
 import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
 import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
+import { BoardUserCasePickerModal } from './board-usercase-picker-modal.js';
+import type { DeviceBoardUserCasePickerConfig } from '../types/user-case-picker.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
@@ -72,6 +74,8 @@ export interface DeviceBoardShellProps {
   readonly showRunControls?: boolean;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
   readonly deviceLive?: boolean;
+  /** UserCase catalog picker (U9 P1); undefined — кнопка скрыта. */
+  readonly userCasePicker?: DeviceBoardUserCasePickerConfig;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -79,7 +83,8 @@ const DeviceBoardShellInner: React.FC<{
   exitLabel: string;
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
+  userCasePicker?: DeviceBoardUserCasePickerConfig;
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, userCasePicker }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -109,6 +114,8 @@ const DeviceBoardShellInner: React.FC<{
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [userCasePickerOpen, setUserCasePickerOpen] = useState(false);
+  const [userCaseAppliedMessage, setUserCaseAppliedMessage] = useState<string | null>(null);
   const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
@@ -960,6 +967,13 @@ const DeviceBoardShellInner: React.FC<{
                   Import JSON
                 </button>
               </li>
+              {userCasePicker !== undefined ? (
+                <li>
+                  <button type="button" onClick={() => setUserCasePickerOpen(true)}>
+                    UserCase…
+                  </button>
+                </li>
+              ) : null}
               <li>
                 <button
                   type="button"
@@ -976,6 +990,19 @@ const DeviceBoardShellInner: React.FC<{
       <BoardValidationBanner issues={graph.validationIssues} successMessage={null} />
       {importError !== null ? (
         <div className="border-b border-error/30 bg-error/10 px-4 py-2 text-xs text-error">{importError}</div>
+      ) : null}
+      {userCaseAppliedMessage !== null ? (
+        <div className="border-b border-success/30 bg-success/10 px-4 py-2 text-xs text-success flex items-center justify-between gap-3">
+          <span>{userCaseAppliedMessage}</span>
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs"
+            onClick={() => setUserCaseAppliedMessage(null)}
+            aria-label="Закрыть"
+          >
+            ✕
+          </button>
+        </div>
       ) : null}
       <BoardRuntimeStatus state={graph.runtimeState} />
 
@@ -1021,6 +1048,20 @@ const DeviceBoardShellInner: React.FC<{
           }}
           onDismiss={graph.cancelBranchImport}
         />
+
+        {userCasePicker !== undefined ? (
+          <BoardUserCasePickerModal
+            open={userCasePickerOpen}
+            cards={userCasePicker.cards}
+            onDismiss={() => setUserCasePickerOpen(false)}
+            onApplied={(userCaseId) => {
+              const card = userCasePicker.cards.find((item) => item.id === userCaseId);
+              setUserCaseAppliedMessage(
+                card !== undefined ? `UserCase «${card.title}» применён` : 'UserCase применён',
+              );
+            }}
+          />
+        ) : null}
 
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
@@ -1164,18 +1205,21 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   exitLabel = 'Выйти из доски',
   showRunControls = true,
   deviceLive,
+  userCasePicker,
 }) => (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
     persistAdapter={persistAdapter}
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
+    loadUserCaseDocument={userCasePicker?.loadDocument}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
+      userCasePicker={userCasePicker}
     />
   </DeviceBoardGraphProvider>
 );

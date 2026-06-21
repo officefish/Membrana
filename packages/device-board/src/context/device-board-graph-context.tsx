@@ -46,7 +46,9 @@ import {
   hydrateBoardFromDocument,
   importDeviceScenarioFromJson,
   applyBranchScenarioImport,
+  applyUserCaseDocument,
   parseBranchScenarioExportJson,
+  prepareUserCaseApply,
   suggestReferenceVariableMapping,
   isReferenceMappingComplete,
   isLegacyHackathonDefaultScenario,
@@ -107,6 +109,17 @@ export interface PendingBranchImportState {
   readonly slots: readonly ReferenceVariableSlot[];
   readonly mapping: Record<string, string>;
 }
+
+/** Результат apply UserCase: success | текст ошибки | нужен ref-mapping modal. */
+export type ApplyUserCaseOutcome =
+  | null
+  | string
+  | {
+      readonly kind: 'needs-mapping';
+      readonly title: string;
+      readonly slots: readonly ReferenceVariableSlot[];
+      readonly mapping: Record<string, string>;
+    };
 
 /** Результат collapse marquee → comment group (CGF G1). */
 export interface CollapseMarqueeToCommentGroupResult {
@@ -175,6 +188,11 @@ export interface DeviceBoardGraphContextValue {
   readonly pendingBranchImport: PendingBranchImportState | null;
   readonly confirmBranchImport: (mapping: Readonly<Record<string, string>>) => string | null;
   readonly cancelBranchImport: () => void;
+  /** Apply-all UserCase (U9 P1): null = ok; string = error; needs-mapping → ref modal. */
+  readonly applyUserCase: (
+    userCaseId: string,
+    mapping?: Readonly<Record<string, string>>,
+  ) => ApplyUserCaseOutcome;
   readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
   /** Черновик отличается от последнего сохранённого снимка. */
@@ -292,6 +310,8 @@ export interface DeviceBoardGraphProviderProps {
   readonly initialHydratedState?: HydratedBoardState;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
   readonly deviceLive?: boolean;
+  /** Загрузка entitled UserCase document (client catalog). */
+  readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
 }
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
@@ -301,6 +321,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   persistAdapter,
   initialHydratedState,
   deviceLive,
+  loadUserCaseDocument,
 }) => {
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
@@ -1470,6 +1491,54 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setPendingBranchImport(null);
   }, []);
 
+  const applyUserCase = useCallback(
+    (userCaseId: string, mapping?: Readonly<Record<string, string>>): ApplyUserCaseOutcome => {
+      if (loadUserCaseDocument === undefined) {
+        return 'Каталог UserCase недоступен';
+      }
+      const userCaseDocument = loadUserCaseDocument(userCaseId);
+      if (userCaseDocument === null) {
+        return 'UserCase недоступен или не найден';
+      }
+
+      const prepared = prepareUserCaseApply({
+        userCaseDocument,
+        localDeviceKind: deviceKind,
+        localVariables: variables,
+      });
+      if (!prepared.ok) {
+        return prepared.message;
+      }
+
+      const effectiveMapping = mapping ?? prepared.suggestedMapping;
+      if (mapping === undefined && !prepared.mappingComplete) {
+        return {
+          kind: 'needs-mapping',
+          title: userCaseDocument.meta?.title ?? userCaseId,
+          slots: prepared.slots,
+          mapping: prepared.suggestedMapping,
+        };
+      }
+
+      const result = applyUserCaseDocument({
+        userCaseDocument,
+        currentDocument: buildDocument(),
+        localVariables: variables,
+        mapping: effectiveMapping,
+      });
+      if (!result.ok) {
+        return result.message;
+      }
+
+      setPendingBranchImport(null);
+      applyHydratedState(result.state);
+      pendingBaselineRef.current = true;
+      runValidation();
+      return null;
+    },
+    [applyHydratedState, buildDocument, deviceKind, loadUserCaseDocument, runValidation, variables],
+  );
+
   const saveScenario = useCallback(async (): Promise<boolean> => {
     if (persistAdapter === undefined) {
       return false;
@@ -2127,6 +2196,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       pendingBranchImport,
       confirmBranchImport,
       cancelBranchImport,
+      applyUserCase,
       syncStatus,
       syncError,
       isDirty,
@@ -2197,6 +2267,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       pendingBranchImport,
       confirmBranchImport,
       cancelBranchImport,
+      applyUserCase,
       inspectRuntimeNode,
       isDirty,
       isValidConnectionForLayer,
