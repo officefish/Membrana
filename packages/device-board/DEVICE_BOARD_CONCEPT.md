@@ -275,6 +275,53 @@ Scenario runtime:
 Пересмотр Rete — только если scenario runtime не покрывает кейс **и** это
 зафиксировано stage-gate в `docs/seanses/`.
 
+### 4.7 Runtime execution pipeline (exec + function calls)
+
+> Аудит слоёв (NB1): [`docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md`](../../docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md)  
+> Competition fixes L9–L12: [`docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md`](../../docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md)
+
+Исполнение сценария — **не** React Flow canvas. Runtime читает сериализованный
+`ScenarioSubgraph` и проходит exec-цепочку через чистые модули в
+`packages/device-board/src/runtime/`:
+
+```mermaid
+flowchart TD
+  SR[ScenarioRuntime] --> RT[runSubgraphOnce / event-dispatch]
+  RT --> BE[block-executor.executeScenarioBlock]
+  BE -->|subgraph block| FCR[function-call-resolve]
+  BE --> RI[resolve-input.resolveNodeOutput]
+  FCR --> RI
+  RT --> ES[exec-successor.findExecSuccessor]
+  ES --> RT
+  BE --> HOST[ScenarioRuntimeHost ports]
+```
+
+| Модуль | Путь | Ответственность |
+| ------ | ---- | ---------------- |
+| Orchestrator | `scenario-runtime.ts` | start/stop, branch ticks, `execOptions` (stores, `scenarioFunctions`) |
+| Subgraph walk | `exec-subgraph.ts`, `event-dispatch.ts` | Exec loop, event branches, step limit |
+| Block dispatch | `block-executor.ts` | Per-`nodeKind` side effects; subgraph call + store pass-through |
+| Exec traversal | `exec-successor.ts` | Next node by `sourceHandle`; `function-output` boundary pins (L11) |
+| Function data bridge | `function-call-resolve.ts` | Parent branch edges → `resolveFunctionInputPin` (L9) |
+| Value resolution | `resolve-input.ts` | Pin values; subgraph block as data source via function body (L12) |
+
+**Editor vs runtime (не смешивать):**
+
+| Concern | Editor / graph | Runtime |
+| ------- | -------------- | ------- |
+| Pin CRUD, collapse, hydrate sync | `graph/function-pin-ops.ts` | — |
+| Parent → function body data | — | `function-call-resolve.ts` |
+| Exec chain inside subgraph | — | `exec-successor.ts` + `exec-subgraph.ts` |
+
+**Lessons cross-ref (competition sprint 2026-06-21):**
+
+| Lesson | Symptom | Runtime fix |
+| ------ | ------- | ----------- |
+| L9 | `function-input` not a data source | `augmentResolveContextForFunctionCall` |
+| L10 | Serialize loses block data edges | hydrate/sync pins (`function-pin-ops` + serialize) |
+| L11 | Gate exits every tick | `findExecSuccessor` + `execOutHandle` propagation |
+| L12 | Pure policy-build block | `resolveNodeOutput` on subgraph + `scenarioFunctions` |
+
 ---
 
 ## 5. Типы сокетов и контракты
@@ -1101,8 +1148,10 @@ interface ScenarioFunctionPin {
 `ScenarioFunctionSubgraph` → `subgraph`-блок на родителе → open function tab.
 Pure: `collapse-to-function.ts`, `function-pin-ops.ts`.
 
-**Runtime bridge:** `function-input` / `function-output` — pass-through в `exec-subgraph`
-(entry exec-in → first inner node; `function-output` → return).
+**Runtime bridge** (§4.7): `function-input` / `function-output` — pass-through в
+`exec-subgraph` (entry exec-in → first inner node; `function-output` → return handle).
+Data from parent branch: `function-call-resolve.ts`; exec successor: `exec-successor.ts`.
+Competition lessons L9–L12 — см. [`USERCASE_COMPETITION_LESSONS.md`](../../docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md).
 
 ### 18.4 Comment groups (G1)
 
@@ -1141,6 +1190,7 @@ interface ScenarioCommentGroup {
 | Слой | Путь |
 | ---- | ---- |
 | Graph ops | `marquee-selection.ts`, `collapse-to-function.ts`, `comment-group.ts`, `align-nodes.ts`, `function-pin-ops.ts` |
+| Runtime | `scenario-runtime.ts`, `block-executor.ts`, `exec-subgraph.ts`, `exec-successor.ts`, `function-call-resolve.ts`, `resolve-input.ts` (§4.7) |
 | UI | `board-marquee-overlay.tsx`, `board-selection-action-modal.tsx`, `board-group-node.tsx`, `board-function-list.tsx`, `board-function-pin-inspector.tsx` |
 | Context | `device-board-graph-context.tsx` — multi-function state, collapse, pin CRUD sync IO nodes |
 | Shell | `device-board-shell.tsx` — marquee handlers, runtime gating, branch exec layout |

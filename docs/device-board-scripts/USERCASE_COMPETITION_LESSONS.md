@@ -5,6 +5,7 @@
 > **Sprint `comp-mvp-packaging-2026-06-21`:** closed — все три fork Run-green; победитель не merged.  
 > **Agent prompt:** [`docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md)  
 > **Regulation:** [`USERCASE_GENERATION_REGULATION.md`](./USERCASE_GENERATION_REGULATION.md)  
+> **Runtime map (CONCEPT §4.7):** [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md#47-runtime-execution-pipeline-exec--function-calls)  
 > **CLI:** `node scripts/usercase.mjs help`  
 > Источник логов: [`logs/info.txt`](./logs/info.txt).
 
