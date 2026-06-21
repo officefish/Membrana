@@ -5,6 +5,11 @@ import {
   isScenarioFunctionPinCountValid,
 } from '@membrana/core';
 
+/**
+ * Editor/graph layer: CRUD and sync for user-function pins on the React Flow canvas.
+ * Runtime data/exec traversal is separate — see `runtime/function-call-resolve.ts` and
+ * `runtime/exec-successor.ts` (audit: `docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md`).
+ */
 import { functionPinsToSubgraphBlockPins } from './function-io-node.js';
 import { encodeSubgraphRef } from './subgraph-ref.js';
 

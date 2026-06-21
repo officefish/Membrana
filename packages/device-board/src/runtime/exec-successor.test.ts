@@ -7,6 +7,27 @@ import { createStubScenarioRuntimeHost } from './host.js';
 import { ScenarioVariableStore } from './variable-store.js';
 
 describe('findExecSuccessor', () => {
+  it('follows standard exec-out to exec-in', () => {
+    const subgraph: ScenarioSubgraph = {
+      entry: 'first',
+      nodes: [
+        { id: 'first', nodeKind: 'is-valid', blockKind: 'custom', label: 'Check' },
+        { id: 'second', nodeKind: 'stop-runtime', blockKind: 'custom', label: 'Stop' },
+      ],
+      edges: [
+        {
+          source: 'first',
+          sourceHandle: 'exec-out',
+          target: 'second',
+          targetHandle: 'exec-in',
+          kind: 'exec',
+        },
+      ],
+    };
+
+    expect(findExecSuccessor(subgraph, 'first', 'exec-out')).toBe('second');
+  });
+
   it('follows exec-false-out into function-output boundary pin', () => {
     const subgraph: ScenarioSubgraph = {
       entry: 'branch',

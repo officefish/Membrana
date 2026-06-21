@@ -30,3 +30,7 @@
 - Epic: `device-board-post-comp-debt-night-build`
 - Continue: no
 
+
+## Checkpoint NB0 — 2026-06-21T16:44:10.044Z
+- Status: **pass**
+- Note: lint 0w, test 399/399, verify-competition OK, commit 8c6138a

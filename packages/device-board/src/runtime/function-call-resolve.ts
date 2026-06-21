@@ -12,6 +12,9 @@ export interface FunctionCallResolveInput {
 /**
  * Augments resolve context for exec inside a user function:
  * `function-input` pins pull values from parent branch edges into the block.
+ *
+ * Editor pin definitions: `graph/function-pin-ops.ts`.
+ * Exec chain traversal: `exec-successor.ts`.
  */
 export function augmentResolveContextForFunctionCall(
   input: FunctionCallResolveInput,

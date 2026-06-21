@@ -20,7 +20,11 @@ function isExecSuccessorEdge(subgraph: ScenarioSubgraph, edge: ScenarioGraphEdge
   );
 }
 
-/** Следующая exec-нода по `sourceHandle`; учитывает function-output с именованными exec-пинами. */
+/** Следующая exec-нода по `sourceHandle`; учитывает function-output с именованными exec-пинами.
+ *
+ * Graph pin editing: `graph/function-pin-ops.ts`.
+ * Parent-branch data into function body: `function-call-resolve.ts`.
+ */
 export function findExecSuccessor(
   subgraph: ScenarioSubgraph,
   nodeId: string,
