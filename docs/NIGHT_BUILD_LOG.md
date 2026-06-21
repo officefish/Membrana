@@ -34,3 +34,7 @@
 ## Checkpoint NB0 — 2026-06-21T16:44:10.044Z
 - Status: **pass**
 - Note: lint 0w, test 399/399, verify-competition OK, commit 8c6138a
+
+## Checkpoint NB1 — 2026-06-21T16:45:16.351Z
+- Status: **pass**
+- Note: DRY audit: no overlap; docs + JSDoc; test 400/400
