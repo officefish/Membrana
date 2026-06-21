@@ -38,7 +38,7 @@
 
 ## Заметки при закрытии
 
-GitHub #136; branch feat/db-usercases-catalog-u9; LGTM Teamlead 2026-06-21.
+GitHub #136 closed; PR #137.
 
 ---
 

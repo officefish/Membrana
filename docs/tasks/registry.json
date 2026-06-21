@@ -4268,9 +4268,9 @@
         "db-cgf-a0-align-basic"
       ],
       "notes": "Consilium 2026-06-21 product: bundled + tariff UserCases; supersedes roadmap U1.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "GitHub #136; branch feat/db-usercases-catalog-u9; PR pending merge"
+      "archiveNotes": "GitHub #136 closed; PR #137"
     },
     {
       "id": "db-uc-r0-schema",
