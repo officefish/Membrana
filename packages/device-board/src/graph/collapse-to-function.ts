@@ -14,6 +14,7 @@ import {
 import { isSystemNode, isEventNode } from './event-node.js';
 import { isFunctionIoNode } from './function-io-node.js';
 import { encodeSubgraphRef } from './subgraph-ref.js';
+import { resolveHandle } from './handle-catalog.js';
 
 export interface ScenarioFunctionDraft {
   readonly id: string;
@@ -73,6 +74,16 @@ function inferSocketTypeFromEdge(edge: Edge, nodes: readonly Node[]): SocketType
       return pin.socketType;
     }
   }
+  const sourceHandle = edge.sourceHandle ?? '';
+  const targetHandle = edge.targetHandle ?? '';
+  const fromSource = resolveHandle(nodes, edge.source, sourceHandle, 'source');
+  if (fromSource?.socketType !== undefined) {
+    return fromSource.socketType;
+  }
+  const fromTarget = resolveHandle(nodes, edge.target, targetHandle, 'target');
+  if (fromTarget?.socketType !== undefined) {
+    return fromTarget.socketType;
+  }
   return 'DeviceRef';
 }
 
@@ -130,6 +141,50 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
   const outputPins: ScenarioFunctionPin[] = [];
   const usedInputIds = new Set<string>();
   const usedOutputIds = new Set<string>();
+  const inputPinByKey = new Map<string, ScenarioFunctionPin>();
+  const outputPinByKey = new Map<string, ScenarioFunctionPin>();
+  const boundaryEdgeToInputPinId = new Map<string, string>();
+  const boundaryEdgeToOutputPinId = new Map<string, string>();
+
+  function pinKeyForBoundaryEdge(
+    sourceInside: boolean,
+    handle: string,
+    socketType: SocketType | undefined,
+  ): string {
+    if (isExecHandle(handle)) {
+      return sourceInside ? `out:exec:${handle}` : 'in:exec';
+    }
+    const side = sourceInside ? 'out' : 'in';
+    return `${side}:data:${handle}:${socketType ?? 'DeviceRef'}`;
+  }
+
+  function ensureInputPin(key: string, handle: string, socketType: SocketType | undefined): ScenarioFunctionPin {
+    const existing = inputPinByKey.get(key);
+    if (existing !== undefined) {
+      return existing;
+    }
+    const id = uniquePinId(isExecHandle(handle) ? 'exec-in' : handle, usedInputIds);
+    const pin: ScenarioFunctionPin = isExecHandle(handle)
+      ? { id, name: id, kind: 'exec' }
+      : { id, name: handle, kind: 'data', socketType };
+    inputPins.push(pin);
+    inputPinByKey.set(key, pin);
+    return pin;
+  }
+
+  function ensureOutputPin(key: string, handle: string, socketType: SocketType | undefined): ScenarioFunctionPin {
+    const existing = outputPinByKey.get(key);
+    if (existing !== undefined) {
+      return existing;
+    }
+    const id = uniquePinId(isExecHandle(handle) ? handle : handle, usedOutputIds);
+    const pin: ScenarioFunctionPin = isExecHandle(handle)
+      ? { id, name: id, kind: 'exec' }
+      : { id, name: handle, kind: 'data', socketType };
+    outputPins.push(pin);
+    outputPinByKey.set(key, pin);
+    return pin;
+  }
 
   for (const edge of boundaryEdges) {
     const sourceInside = selected.has(edge.source);
@@ -137,23 +192,14 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
     if (handle === null || handle === undefined) {
       continue;
     }
-    if (isExecHandle(handle)) {
-      if (sourceInside) {
-        const id = uniquePinId('exec-out', usedOutputIds);
-        outputPins.push({ id, name: id, kind: 'exec' });
-      } else {
-        const id = uniquePinId('exec-in', usedInputIds);
-        inputPins.push({ id, name: id, kind: 'exec' });
-      }
-      continue;
-    }
     const socketType = inferSocketTypeFromEdge(edge, input.branchNodes);
+    const key = pinKeyForBoundaryEdge(sourceInside, handle, socketType);
     if (sourceInside) {
-      const id = uniquePinId(handle, usedOutputIds);
-      outputPins.push({ id, name: handle, kind: 'data', socketType });
+      const pin = ensureOutputPin(key, handle, socketType);
+      boundaryEdgeToOutputPinId.set(edge.id, pin.id);
     } else {
-      const id = uniquePinId(handle, usedInputIds);
-      inputPins.push({ id, name: handle, kind: 'data', socketType });
+      const pin = ensureInputPin(key, handle, socketType);
+      boundaryEdgeToInputPinId.set(edge.id, pin.id);
     }
   }
 
@@ -201,58 +247,57 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
   const functionNodes: Node[] = [inputNode, outputNode, ...movedNodes];
   const functionEdges: Edge[] = [...internalEdges];
 
-  const wireInputExec = inputPins.find((pin) => pin.kind === 'exec');
-  const wireOutputExec = outputPins.find((pin) => pin.kind === 'exec');
-  const firstInternalExecIn = movedNodes.find((node) => {
-    const inputs = (node.data as { inputs?: readonly { name: string; kind: string }[] }).inputs;
-    return inputs?.some((pin) => pin.kind === 'exec') === true;
-  });
-  const lastInternalExecOut = [...movedNodes].reverse().find((node) => {
-    const outputs = (node.data as { outputs?: readonly { name: string; kind: string }[] }).outputs;
-    return outputs?.some((pin) => pin.kind === 'exec') === true;
-  });
-
-  if (wireInputExec !== undefined && firstInternalExecIn !== undefined) {
-    functionEdges.push({
-      id: `${functionId}-e-in`,
-      source: inputNode.id,
-      sourceHandle: wireInputExec.id,
-      target: firstInternalExecIn.id,
-      targetHandle: 'exec-in',
-    });
-  }
-  if (wireOutputExec !== undefined && lastInternalExecOut !== undefined) {
-    functionEdges.push({
-      id: `${functionId}-e-out`,
-      source: lastInternalExecOut.id,
-      sourceHandle: 'exec-out',
-      target: outputNode.id,
-      targetHandle: wireOutputExec.id,
-    });
+  for (const edge of boundaryEdges) {
+    const sourceInside = selected.has(edge.source);
+    if (!sourceInside && selected.has(edge.target) && edge.targetHandle === 'exec-in') {
+      const pin = inputPins.find((item) => item.kind === 'exec');
+      if (pin !== undefined) {
+        functionEdges.push({
+          id: `${functionId}-e-in-${edge.target}`,
+          source: inputNode.id,
+          sourceHandle: pin.id,
+          target: edge.target,
+          targetHandle: 'exec-in',
+        });
+      }
+      continue;
+    }
+    if (sourceInside && !selected.has(edge.target) && isExecHandle(edge.sourceHandle)) {
+      const pinId = boundaryEdgeToOutputPinId.get(edge.id);
+      if (pinId !== undefined) {
+        functionEdges.push({
+          id: `${functionId}-e-out-${edge.source}`,
+          source: edge.source,
+          sourceHandle: edge.sourceHandle,
+          target: outputNode.id,
+          targetHandle: pinId,
+        });
+      }
+    }
   }
 
   for (const edge of boundaryEdges) {
     const sourceInside = selected.has(edge.source);
     if (sourceInside) {
-      const pin = outputPins.find((item) => item.name === edge.sourceHandle || item.id === edge.sourceHandle);
-      if (pin !== undefined) {
+      const pinId = boundaryEdgeToOutputPinId.get(edge.id);
+      if (pinId !== undefined) {
         functionEdges.push({
           ...edge,
           id: `${functionId}-b-${edge.id}`,
           source: edge.source,
           sourceHandle: edge.sourceHandle,
           target: outputNode.id,
-          targetHandle: pin.id,
+          targetHandle: pinId,
         });
       }
     } else {
-      const pin = inputPins.find((item) => item.name === edge.targetHandle || item.id === edge.targetHandle);
-      if (pin !== undefined) {
+      const pinId = boundaryEdgeToInputPinId.get(edge.id);
+      if (pinId !== undefined) {
         functionEdges.push({
           ...edge,
           id: `${functionId}-b-${edge.id}`,
           source: inputNode.id,
-          sourceHandle: pin.id,
+          sourceHandle: pinId,
           target: edge.target,
           targetHandle: edge.targetHandle,
         });
@@ -280,6 +325,7 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
   };
 
   const remappedBranchEdges: Edge[] = [];
+  const seenBranchRemapKeys = new Set<string>();
   for (const edge of input.branchEdges) {
     const sourceInside = selected.has(edge.source);
     const targetInside = selected.has(edge.target);
@@ -287,26 +333,36 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
       continue;
     }
     if (sourceInside && !targetInside) {
-      const pin = outputPins.find((item) => item.id === edge.sourceHandle || item.name === edge.sourceHandle);
-      if (pin === undefined) {
+      const pinId = boundaryEdgeToOutputPinId.get(edge.id);
+      if (pinId === undefined) {
         continue;
       }
+      const remapKey = `${subgraphBlockNodeId}:${pinId}->${edge.target}:${edge.targetHandle ?? ''}`;
+      if (seenBranchRemapKeys.has(remapKey)) {
+        continue;
+      }
+      seenBranchRemapKeys.add(remapKey);
       remappedBranchEdges.push({
         ...edge,
         source: subgraphBlockNodeId,
-        sourceHandle: pin.id,
+        sourceHandle: pinId,
       });
       continue;
     }
     if (!sourceInside && targetInside) {
-      const pin = inputPins.find((item) => item.id === edge.targetHandle || item.name === edge.targetHandle);
-      if (pin === undefined) {
+      const pinId = boundaryEdgeToInputPinId.get(edge.id);
+      if (pinId === undefined) {
         continue;
       }
+      const remapKey = `${edge.source}:${edge.sourceHandle ?? ''}->${subgraphBlockNodeId}:${pinId}`;
+      if (seenBranchRemapKeys.has(remapKey)) {
+        continue;
+      }
+      seenBranchRemapKeys.add(remapKey);
       remappedBranchEdges.push({
         ...edge,
         target: subgraphBlockNodeId,
-        targetHandle: pin.id,
+        targetHandle: pinId,
       });
       continue;
     }

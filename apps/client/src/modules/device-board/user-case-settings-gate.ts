@@ -42,6 +42,8 @@ export function entitlementBadgeLabel(status: UserCaseEntitlementStatus): string
   switch (status) {
     case 'bundled':
       return 'Bundled';
+    case 'community':
+      return 'Sprint';
     case 'entitled':
       return 'Тариф ✓';
     case 'locked':
@@ -55,6 +57,8 @@ export function entitlementBadgeClass(status: UserCaseEntitlementStatus): string
   switch (status) {
     case 'bundled':
       return 'badge badge-primary badge-sm';
+    case 'community':
+      return 'badge badge-secondary badge-sm';
     case 'entitled':
       return 'badge badge-success badge-sm';
     case 'locked':

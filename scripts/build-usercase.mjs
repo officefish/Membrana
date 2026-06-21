@@ -30,6 +30,10 @@ function printHelp() {
   Supported: ${Object.keys(BUILDERS)
     .map((id) => `usercase-${id}`)
     .join(', ')}
+
+  All competition forks: yarn usercase:build-competition-all
+  Agent CLI:             node scripts/usercase.mjs help
+  Generation prompt:     docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md
 `);
 }
 

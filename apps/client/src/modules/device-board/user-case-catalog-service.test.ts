@@ -35,9 +35,24 @@ describe('ClientUserCaseCatalogService', () => {
   it('listCards marks bundled tier', () => {
     const service = new ClientUserCaseCatalogService();
     const cards = service.listCards('microphone');
-    expect(cards).toHaveLength(1);
-    expect(cards[0]?.entitlement).toBe('bundled');
+    expect(cards.length).toBeGreaterThanOrEqual(4);
+    expect(cards.find((c) => c.id === 'usercase-mvp-microphone')?.entitlement).toBe('bundled');
     expect(cards[0]?.canApply).toBe(true);
+  });
+
+  it('community competition entries are applicable', () => {
+    const service = new ClientUserCaseCatalogService();
+    for (const id of [
+      'usercase-mvp-microphone-alpha',
+      'usercase-mvp-microphone-beta',
+      'usercase-mvp-microphone-gamma',
+    ]) {
+      expect(service.canApply(id, 'microphone')).toBe(true);
+      const card = service.listCards('microphone').find((c) => c.id === id);
+      expect(card?.entitlement).toBe('community');
+      expect(card?.canApply).toBe(true);
+    }
+    expect(service.loadDocumentIfEntitled('usercase-mvp-microphone-alpha', 'microphone')).not.toBeNull();
   });
 
   it('tariff entry locked without entitled SKU', () => {

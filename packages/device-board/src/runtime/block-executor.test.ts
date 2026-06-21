@@ -765,7 +765,7 @@ describe('executeScenarioBlock recorder/analyser methods (MakeTrack / MakeFftTre
       ],
     };
 
-    const lastDetection = await runSubgraphOnce(
+    const { lastDetection } = await runSubgraphOnce(
       subgraph,
       host,
       new AbortController().signal,

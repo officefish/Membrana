@@ -338,6 +338,21 @@
       },
       {
         "source": "fn-gamma-recording-gate-block",
+        "sourceHandle": "exec-false-out",
+        "target": "main-infinity",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-spectral-analyser-mqm9vz6a-27",
+        "sourceHandle": "analyser",
+        "target": "fn-gamma-trends-publish-block",
+        "targetHandle": "analyser",
+        "kind": "data",
+        "dataType": "SpectralAnalyserRef"
+      },
+      {
+        "source": "fn-gamma-recording-gate-block",
         "sourceHandle": "exec-out",
         "target": "fn-gamma-trends-publish-block",
         "targetHandle": "exec-in",
@@ -352,19 +367,19 @@
         "dataType": "RecordingPolicy"
       },
       {
+        "source": "node-make-fft-trends-policy-v08-1",
+        "sourceHandle": "policy",
+        "target": "fn-gamma-trends-publish-block",
+        "targetHandle": "policy",
+        "kind": "data",
+        "dataType": "FftTrendsPolicy"
+      },
+      {
         "source": "fn-gamma-trends-publish-block",
         "sourceHandle": "exec-out",
         "target": "main-infinity",
         "targetHandle": "exec-in",
         "kind": "exec"
-      },
-      {
-        "source": "node-make-recording-policy-v08-1",
-        "sourceHandle": "policy",
-        "target": "fn-gamma-recording-gate-block",
-        "targetHandle": "policy",
-        "kind": "data",
-        "dataType": "RecordingPolicy"
       },
       {
         "source": "node-device-global-mqm0q2fd-14",
@@ -397,6 +412,14 @@
         "targetHandle": "device",
         "kind": "data",
         "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-journal-mvp-main-1",
+        "sourceHandle": "journal",
+        "target": "fn-gamma-trends-publish-block",
+        "targetHandle": "journal",
+        "kind": "data",
+        "dataType": "JournalRef"
       },
       {
         "source": "node-device-global-mqm0q2fd-14",
@@ -444,14 +467,6 @@
         "targetHandle": "stream",
         "kind": "data",
         "dataType": "AudioStreamRef"
-      },
-      {
-        "source": "node-get-audio-stream-mql3ckno-7",
-        "sourceHandle": "stream",
-        "target": "fn-gamma-recording-gate-block",
-        "targetHandle": "stream",
-        "kind": "data",
-        "dataType": "AudioStreamRef"
       }
     ]
   },
@@ -467,7 +482,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:23:30.608Z",
+  "exportedAt": "2026-06-21T15:42:29.584Z",
   "userCaseId": "usercase-mvp-microphone-gamma",
   "userCaseBranch": "main"
 }

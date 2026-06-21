@@ -139,7 +139,8 @@ git push -u origin vesnin
 ## CI (ежедневный цикл)
 
 - **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop`, **`techies68`** выполняется `yarn install --immutable` и `yarn turbo run lint typecheck test build`. Локально перед коммитом имеет смысл запускать то же самое.
-- **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск.
+- **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск; включает `node scripts/usercase.mjs verify-competition` (alpha/beta/gamma layout + pre-run).
+- **UserCase pack/collapse (PR)**: `.github/workflows/usercase-competition.yml` — при изменениях pack/collapse или sprint forks; `yarn usercase:verify-competition` локально.
 - **Релиз**: `.github/workflows/release.yml` — при push тега вида `v*` собирается монорепо и создаётся GitHub Release с автогенерацией текста.
 - **Опционально**: `.github/workflows/optional-claude-pr-review.yml` — дополнительный обзор PR через Claude. Job выполняется, если в настройках репозитория задана переменная **`ENABLE_CLAUDE_PR_REVIEW`** = `true` (GitHub не позволяет включать job по наличию секрета в `if:`). Для шага с `anthropics/claude-code-action` по-прежнему нужен секрет **`ANTHROPIC_API_KEY`**; при ошибке шаг не блокирует merge (`continue-on-error`). Не заменяет обязательный CI и ревью людей.
 - **Локальный CLI**: в корне `yarn anthropic:smoke` и `yarn anthropic:task` (ключ только в `.env`, см. `.env.example`). Навык агента: `.cursor/skills/membrana-anthropic-cli/SKILL.md`.

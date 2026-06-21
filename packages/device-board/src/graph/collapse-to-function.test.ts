@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { createEventBoardNode } from '../graph/event-node.js';
 import { collapseSelectionToFunction, createEmptyFunctionDraft } from './collapse-to-function.js';
 import { createScenarioBoardNode } from './board-node-factory.js';
+import { createMakeRecordingPolicyBoardNode } from './make-recording-policy-node.js';
+import { createStartRecordingBoardNode } from './start-recording-node.js';
 import { createFunctionInputBoardNode, createFunctionOutputBoardNode } from './function-io-node.js';
 
 describe('collapse-to-function', () => {
@@ -62,6 +64,44 @@ describe('collapse-to-function', () => {
     const draft = createEmptyFunctionDraft('fn-new', 'New');
     expect(draft.nodes).toHaveLength(2);
     expect(draft.entry).toBe('fn-new-input');
+  });
+
+  it('dedupes fan-in boundary pins (same handle from outside)', () => {
+    const policy = createMakeRecordingPolicyBoardNode({ id: 'policy', position: { x: 0, y: 0 } });
+    const startA = createStartRecordingBoardNode({ id: 'start-a', position: { x: 200, y: 0 } });
+    const startB = createStartRecordingBoardNode({ id: 'start-b', position: { x: 400, y: 0 } });
+    const edges = [
+      {
+        id: 'e-policy-a',
+        source: 'policy',
+        sourceHandle: 'policy',
+        target: 'start-a',
+        targetHandle: 'policy',
+      },
+      {
+        id: 'e-policy-b',
+        source: 'policy',
+        sourceHandle: 'policy',
+        target: 'start-b',
+        targetHandle: 'policy',
+      },
+    ];
+    const result = collapseSelectionToFunction({
+      selectedNodeIds: ['start-a', 'start-b'],
+      branchNodes: [policy, startA, startB],
+      branchEdges: edges,
+      functionId: 'fn-fan-in',
+      functionName: 'FanIn',
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      const policyPins = result.functionDraft.inputPins.filter((pin) => pin.name === 'policy');
+      expect(policyPins).toHaveLength(1);
+      const policyToBlock = result.branchEdges.filter(
+        (edge) => edge.source === 'policy' && edge.target === 'fn-fan-in-block',
+      );
+      expect(policyToBlock).toHaveLength(1);
+    }
   });
 });
 

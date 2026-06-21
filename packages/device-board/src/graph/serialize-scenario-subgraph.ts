@@ -1,5 +1,8 @@
-import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
+import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioFunctionSubgraph, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
 import {
+  createDefaultFunctionExecInputPin,
+  createDefaultFunctionExecOutputPin,
+  normalizeScenarioFunctionPins,
   normalizeScenarioGraphNodePure,
   resolveScenarioCollectorConfig,
   resolveScenarioFftTrendsPolicy,
@@ -20,6 +23,7 @@ import {
   createFunctionOutputBoardNode,
 } from './function-io-node.js';
 import { nodesForScenarioSubgraphSerialize } from './comment-group.js';
+import { syncSubgraphBlocksForFunctionPins } from './function-pin-ops.js';
 
 function finalizeScenarioNode(node: ScenarioGraphNode): ScenarioGraphNode {
   return normalizeScenarioGraphNodePure(node);
@@ -196,6 +200,7 @@ function buildScenarioNodeData(blockKind: string): Node['data'] | null {
 export function deserializeScenarioSubgraph(
   subgraph: ScenarioSubgraph,
   variables: readonly ScenarioVariable[] = [],
+  functions: readonly ScenarioFunctionSubgraph[] = [],
 ): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   for (const item of subgraph.nodes) {
@@ -336,5 +341,30 @@ export function deserializeScenarioSubgraph(
     targetHandle: item.targetHandle,
   }));
 
-  return { nodes, edges };
+  if (functions.length === 0) {
+    return { nodes, edges };
+  }
+
+  const emptyPinIds = new Set<string>();
+  const noRenames: readonly { readonly side: 'input' | 'output'; readonly from: string; readonly to: string }[] =
+    [];
+  let branchNodes = nodes;
+  let branchEdges = edges;
+  for (const fn of functions) {
+    const synced = syncSubgraphBlocksForFunctionPins({
+      functionId: fn.id,
+      functionName: fn.name,
+      inputPins: normalizeScenarioFunctionPins(fn.inputPins, [createDefaultFunctionExecInputPin()]),
+      outputPins: normalizeScenarioFunctionPins(fn.outputPins, [createDefaultFunctionExecOutputPin()]),
+      nodes: branchNodes,
+      edges: branchEdges,
+      removedInputPinIds: emptyPinIds,
+      removedOutputPinIds: emptyPinIds,
+      renames: noRenames,
+    });
+    branchNodes = synced.nodes;
+    branchEdges = synced.edges;
+  }
+
+  return { nodes: branchNodes, edges: branchEdges };
 }

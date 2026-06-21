@@ -50,6 +50,7 @@ import { deserializeSignalGraph } from './serialize-signal-graph.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { createDefaultMvpMicrophoneHydratedState } from './default-usercase-mvp-microphone.js';
 import { syncFunctionIoNodePins } from './function-io-node.js';
+import { syncAllSubgraphBlocksFromFunctionDrafts } from './function-pin-ops.js';
 import { applyCommentGroupsToBranchNodes } from './comment-group.js';
 import type { ScenarioFunctionDraft } from './collapse-to-function.js';
 
@@ -296,6 +297,18 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   onStop.nodes = syncDeviceGlobalNodePins(onStop.nodes);
   onDisconnect.nodes = syncDeviceGlobalNodePins(onDisconnect.nodes);
   fn.nodes = syncDeviceGlobalNodePins(fn.nodes);
+
+  syncAllSubgraphBlocksFromFunctionDrafts(
+    [
+      { nodes: initial.nodes, edges: initial.edges },
+      { nodes: onConnect.nodes, edges: onConnect.edges },
+      { nodes: main.nodes, edges: main.edges },
+      { nodes: alarm.nodes, edges: alarm.edges },
+      { nodes: onStop.nodes, edges: onStop.edges },
+      { nodes: onDisconnect.nodes, edges: onDisconnect.edges },
+    ],
+    fn.drafts,
+  );
 
   const commentGroups = document.scenario.commentGroups ?? [];
   signal.nodes = applyCommentGroupsToBranchNodes(signal.nodes, commentGroups, 'signal');

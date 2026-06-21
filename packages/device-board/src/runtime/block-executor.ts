@@ -58,6 +58,7 @@ import type { TrackRuntimeStore } from './track-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import { resolveRefListMembers } from './resolve-ref-list.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
+import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
 import { isReferenceValid } from './reference-validity.js';
 import type { ScenarioDetectionResult } from './types.js';
 import type { ScenarioRuntimeBranch } from './types.js';
@@ -953,15 +954,37 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       if (fn === undefined) {
         throw new Error(`Unknown scenario function: ${functionId ?? '?'}`);
       }
-      const detection = await runSubgraphOnce(fn, host, signal, {
+      const callContext =
+        resolveContext !== undefined
+          ? augmentResolveContextForFunctionCall({
+              parentSubgraph: subgraph,
+              blockNodeId: node.id,
+              variables: variableStore?.getAll() ?? [],
+              baseContext: resolveContext,
+            })
+          : resolveContext;
+      const subgraphResult = await runSubgraphOnce(fn, host, signal, {
         branch,
         defaultChunkDurationMs,
         functions: [],
         variableStore,
-        resolveContext,
+        resolveContext: callContext,
+        onPrintOutput,
+        onStopRuntime,
+        collectStore,
+        reportStore,
+        trackStore,
+        analysisStore,
+        recordingSliceStore,
       });
       host.log('subgraph', { nodeId: node.id, functionId: fn.id, branch });
-      return { lastDetection: detection, stopRequested: false };
+      return {
+        lastDetection: subgraphResult.lastDetection,
+        stopRequested: false,
+        ...(subgraphResult.execOutHandle !== undefined
+          ? { execOutHandle: subgraphResult.execOutHandle }
+          : {}),
+      };
     }
 
     default:

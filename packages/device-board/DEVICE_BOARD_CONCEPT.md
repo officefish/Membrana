@@ -652,6 +652,7 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 - [`DEVICE_BOARD_HACKATHON_BRIEF.md`](../../docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md) — бриф хакатона 1.
 - [`HACKATHON_REGULATION.md`](../../docs/HACKATHON_REGULATION.md) — ритуалы хакатона.
 - [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) — UserCases catalog (U9, §20).
+- [`USERCASE_GENERATION_REGULATION.md`](../../docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md) — agent pack/collapse (§20.8).
 - [`apps/docs/device-board/usercases.mdx`](../../apps/docs/device-board/usercases.mdx) — операторская страница UserCases.
 
 ---
@@ -1236,13 +1237,18 @@ sequenceDiagram
 
 Реализация apply: `apply-user-case.ts` · UI: `board-usercase-picker-modal.tsx`.
 
-### 20.5 Yarn scripts (R0 / L1)
+### 20.5 Yarn scripts (R0 / L1 / agents)
 
 | Script | Назначение |
 | ------ | ---------- |
 | `yarn usercase:build <id>` | manifest → embedded TS + layout canon + sync branch JSON |
+| `yarn usercase:build-competition-all` | alpha + beta + gamma (sprint forks) |
 | `yarn usercase:verify-kinds <id>` | node kinds ⊆ `SCENARIO_NODE_KINDS` |
 | `yarn usercase:verify-layout <id>` | layout metrics (CI gate на bundled UserCases) |
+| `yarn usercase:verify-prerun <id>` | hydrate + `validatePreRun` |
+| `node scripts/usercase.mjs help` | agent CLI: build, verify-pack, verify-competition |
+
+CI: `.github/workflows/usercase-competition.yml` (PR path filter) · weekly `scheduled-ci.yml` · `yarn usercase:verify-competition`
 
 ### 20.6 Out of scope v1
 
@@ -1257,3 +1263,16 @@ Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/user
 
 Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) ·
 консилиум [`device-board-usercases-consilium-2026-06-21.md`](../../docs/discussions/device-board-usercases-consilium-2026-06-21.md).
+
+### 20.8 Agent generation (pack / collapse)
+
+Если пользователь или CI просит **сгенерировать / упаковать** UserCase (не catalog UI):
+
+| # | Документ |
+|---|----------|
+| 1 | [`USERCASE_GENERATION_REGULATION.md`](../../docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
+| 2 | [`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) |
+| 3 | [`USERCASE_COMPETITION_LESSONS.md`](../../docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md) |
+| 4 | Hub [`docs/device-board-scripts/README.md`](../../docs/device-board-scripts/README.md) |
+
+Discovery также в [`.cursorrules`](../../.cursorrules) (#10), [`docs/prompts/README.md`](../../docs/prompts/README.md), [`VIRTUAL_TEAM_PROMPT.md`](../../docs/VIRTUAL_TEAM_PROMPT.md).

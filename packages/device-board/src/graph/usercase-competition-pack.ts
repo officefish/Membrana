@@ -174,7 +174,7 @@ function applyBranchCollapse(
 ): DeviceScenarioDocument {
   const variables = document.scenario.variables;
   const subgraph = readSubgraph(document, branch);
-  const { nodes, edges } = deserializeScenarioSubgraph(subgraph, variables);
+  const { nodes, edges } = deserializeScenarioSubgraph(subgraph, variables, document.scenario.functions);
 
   const result = collapseSelectionToFunction({
     selectedNodeIds: [...collapse.nodeIds],

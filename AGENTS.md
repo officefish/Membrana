@@ -23,6 +23,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 |------|---------|
 | Install deps | `yarn install` |
 | Dev server (client) | `yarn workspace @membrana/client dev` (port 5173) |
+| **UserCase build / verify (agents)** | `node scripts/usercase.mjs help` — CI: `usercase-competition.yml` + weekly `scheduled-ci` · см. [`USERCASE_GENERATION_REGULATION.md`](docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
 | Lint | `yarn lint` |
 | Typecheck | `yarn typecheck` |
 | Test | `yarn test` |

@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Alpha (Live Observation Pipeline)",
-    "exportedAt": "2026-06-21T13:23:12.958Z",
+    "exportedAt": "2026-06-21T15:42:50.110Z",
     "commentGroupProfile": "alpha"
   },
   "signalGraph": {
@@ -602,6 +602,21 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           },
           {
             "source": "fn-alpha-recording-gate-block",
+            "sourceHandle": "exec-false-out",
+            "target": "main-infinity",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-get-spectral-analyser-mqm9vz6a-27",
+            "sourceHandle": "analyser",
+            "target": "fn-alpha-observation-tick-block",
+            "targetHandle": "analyser",
+            "kind": "data",
+            "dataType": "SpectralAnalyserRef"
+          },
+          {
+            "source": "fn-alpha-recording-gate-block",
             "sourceHandle": "exec-out",
             "target": "fn-alpha-observation-tick-block",
             "targetHandle": "exec-in",
@@ -616,19 +631,19 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "dataType": "RecordingPolicy"
           },
           {
+            "source": "node-make-fft-trends-policy-v08-1",
+            "sourceHandle": "policy",
+            "target": "fn-alpha-observation-tick-block",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "FftTrendsPolicy"
+          },
+          {
             "source": "fn-alpha-observation-tick-block",
             "sourceHandle": "exec-out",
             "target": "main-infinity",
             "targetHandle": "exec-in",
             "kind": "exec"
-          },
-          {
-            "source": "node-make-recording-policy-v08-1",
-            "sourceHandle": "policy",
-            "target": "fn-alpha-recording-gate-block",
-            "targetHandle": "policy",
-            "kind": "data",
-            "dataType": "RecordingPolicy"
           },
           {
             "source": "node-device-global-mqm0q2fd-14",
@@ -661,6 +676,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "targetHandle": "device",
             "kind": "data",
             "dataType": "DeviceRef"
+          },
+          {
+            "source": "node-get-journal-mvp-main-1",
+            "sourceHandle": "journal",
+            "target": "fn-alpha-observation-tick-block",
+            "targetHandle": "journal",
+            "kind": "data",
+            "dataType": "JournalRef"
           },
           {
             "source": "node-device-global-mqm0q2fd-14",
@@ -697,14 +720,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "source": "node-get-audio-stream-mql3ckno-7",
             "sourceHandle": "stream",
             "target": "node-get-sample-mql3f1ro-9",
-            "targetHandle": "stream",
-            "kind": "data",
-            "dataType": "AudioStreamRef"
-          },
-          {
-            "source": "node-get-audio-stream-mql3ckno-7",
-            "sourceHandle": "stream",
-            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "stream",
             "kind": "data",
             "dataType": "AudioStreamRef"
@@ -1051,12 +1066,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           {
             "source": "fn-alpha-observation-tick-input",
             "sourceHandle": "exec-in",
-            "target": "node-make-report-from-analysis-mqma356z-34",
+            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "source": "node-publish-report-mqma49xv-35",
             "sourceHandle": "exec-out",
             "target": "fn-alpha-observation-tick-output",
             "targetHandle": "exec-out",
@@ -1125,12 +1140,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "socketType": "SpectralAnalyserRef"
           },
           {
-            "id": "analyser-1",
-            "name": "analyser",
-            "kind": "data",
-            "socketType": "SpectralAnalyserRef"
-          },
-          {
             "id": "exec-in",
             "name": "exec-in",
             "kind": "exec"
@@ -1143,12 +1152,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           },
           {
             "id": "journal",
-            "name": "journal",
-            "kind": "data",
-            "socketType": "JournalRef"
-          },
-          {
-            "id": "journal-1",
             "name": "journal",
             "kind": "data",
             "socketType": "JournalRef"
@@ -1342,12 +1345,19 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           {
             "source": "fn-alpha-recording-gate-input",
             "sourceHandle": "exec-in",
-            "target": "node-make-track-mqmcipn5-28",
+            "target": "node-get-recorder-mqmo3mba-31",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-start-recording-bootstrap-v08-2",
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-false-out",
+            "target": "fn-alpha-recording-gate-output",
+            "targetHandle": "exec-false-out",
+            "kind": "exec"
+          },
+          {
+            "source": "node-start-recording-mqv07-36",
             "sourceHandle": "exec-out",
             "target": "fn-alpha-recording-gate-output",
             "targetHandle": "exec-out",
@@ -1366,6 +1376,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "sourceHandle": "exec-in",
             "target": "node-get-recorder-mqmo3mba-31",
             "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-false-out",
+            "target": "fn-alpha-recording-gate-output",
+            "targetHandle": "exec-false-out",
             "kind": "exec"
           },
           {
@@ -1435,12 +1452,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "socketType": "RecordingPolicy"
           },
           {
-            "id": "policy-1",
-            "name": "policy",
-            "kind": "data",
-            "socketType": "RecordingPolicy"
-          },
-          {
             "id": "device",
             "name": "device",
             "kind": "data",
@@ -1451,23 +1462,17 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "name": "stream",
             "kind": "data",
             "socketType": "AudioStreamRef"
-          },
-          {
-            "id": "stream-1",
-            "name": "stream",
-            "kind": "data",
-            "socketType": "AudioStreamRef"
           }
         ],
         "outputPins": [
           {
-            "id": "exec-out",
-            "name": "exec-out",
+            "id": "exec-false-out",
+            "name": "exec-false-out",
             "kind": "exec"
           },
           {
-            "id": "exec-out-1",
-            "name": "exec-out-1",
+            "id": "exec-out",
+            "name": "exec-out",
             "kind": "exec"
           }
         ],
@@ -1556,13 +1561,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "kind": "exec"
           },
           {
-            "source": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
-            "sourceHandle": "exec-out",
-            "target": "fn-alpha-bootstrap-output",
-            "targetHandle": "exec-out",
-            "kind": "exec"
-          },
-          {
             "source": "fn-alpha-bootstrap-input",
             "sourceHandle": "exec-in",
             "target": "node-is-valid-mqm97w5v-17",
@@ -1575,7 +1573,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "target": "node-is-valid-mqm97w5v-17",
             "targetHandle": "value",
             "kind": "data",
-            "dataType": "DeviceRef"
+            "dataType": "ServerRef"
           },
           {
             "source": "fn-alpha-bootstrap-input",
@@ -1596,7 +1594,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "id": "value",
             "name": "value",
             "kind": "data",
-            "socketType": "DeviceRef"
+            "socketType": "ServerRef"
           },
           {
             "id": "server",

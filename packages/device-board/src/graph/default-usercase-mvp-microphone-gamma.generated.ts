@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Gamma (Poster UserCase)",
-    "exportedAt": "2026-06-21T13:23:27.509Z",
+    "exportedAt": "2026-06-21T15:42:25.019Z",
     "commentGroupProfile": "gamma"
   },
   "signalGraph": {
@@ -639,6 +639,21 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
           },
           {
             "source": "fn-gamma-recording-gate-block",
+            "sourceHandle": "exec-false-out",
+            "target": "main-infinity",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-get-spectral-analyser-mqm9vz6a-27",
+            "sourceHandle": "analyser",
+            "target": "fn-gamma-trends-publish-block",
+            "targetHandle": "analyser",
+            "kind": "data",
+            "dataType": "SpectralAnalyserRef"
+          },
+          {
+            "source": "fn-gamma-recording-gate-block",
             "sourceHandle": "exec-out",
             "target": "fn-gamma-trends-publish-block",
             "targetHandle": "exec-in",
@@ -653,19 +668,19 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
             "dataType": "RecordingPolicy"
           },
           {
+            "source": "node-make-fft-trends-policy-v08-1",
+            "sourceHandle": "policy",
+            "target": "fn-gamma-trends-publish-block",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "FftTrendsPolicy"
+          },
+          {
             "source": "fn-gamma-trends-publish-block",
             "sourceHandle": "exec-out",
             "target": "main-infinity",
             "targetHandle": "exec-in",
             "kind": "exec"
-          },
-          {
-            "source": "node-make-recording-policy-v08-1",
-            "sourceHandle": "policy",
-            "target": "fn-gamma-recording-gate-block",
-            "targetHandle": "policy",
-            "kind": "data",
-            "dataType": "RecordingPolicy"
           },
           {
             "source": "node-device-global-mqm0q2fd-14",
@@ -698,6 +713,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
             "targetHandle": "device",
             "kind": "data",
             "dataType": "DeviceRef"
+          },
+          {
+            "source": "node-get-journal-mvp-main-1",
+            "sourceHandle": "journal",
+            "target": "fn-gamma-trends-publish-block",
+            "targetHandle": "journal",
+            "kind": "data",
+            "dataType": "JournalRef"
           },
           {
             "source": "node-device-global-mqm0q2fd-14",
@@ -734,14 +757,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
             "source": "node-get-audio-stream-mql3ckno-7",
             "sourceHandle": "stream",
             "target": "node-get-sample-mql3f1ro-9",
-            "targetHandle": "stream",
-            "kind": "data",
-            "dataType": "AudioStreamRef"
-          },
-          {
-            "source": "node-get-audio-stream-mql3ckno-7",
-            "sourceHandle": "stream",
-            "target": "fn-gamma-recording-gate-block",
             "targetHandle": "stream",
             "kind": "data",
             "dataType": "AudioStreamRef"
@@ -1088,12 +1103,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
           {
             "source": "fn-gamma-trends-publish-input",
             "sourceHandle": "exec-in",
-            "target": "node-make-report-from-analysis-mqma356z-34",
+            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "source": "node-publish-report-mqma49xv-35",
             "sourceHandle": "exec-out",
             "target": "fn-gamma-trends-publish-output",
             "targetHandle": "exec-out",
@@ -1162,12 +1177,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
             "socketType": "SpectralAnalyserRef"
           },
           {
-            "id": "analyser-1",
-            "name": "analyser",
-            "kind": "data",
-            "socketType": "SpectralAnalyserRef"
-          },
-          {
             "id": "exec-in",
             "name": "exec-in",
             "kind": "exec"
@@ -1180,12 +1189,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
           },
           {
             "id": "journal",
-            "name": "journal",
-            "kind": "data",
-            "socketType": "JournalRef"
-          },
-          {
-            "id": "journal-1",
             "name": "journal",
             "kind": "data",
             "socketType": "JournalRef"
@@ -1379,12 +1382,19 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
           {
             "source": "fn-gamma-recording-gate-input",
             "sourceHandle": "exec-in",
-            "target": "node-make-track-mqmcipn5-28",
+            "target": "node-get-recorder-mqmo3mba-31",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-start-recording-bootstrap-v08-2",
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-false-out",
+            "target": "fn-gamma-recording-gate-output",
+            "targetHandle": "exec-false-out",
+            "kind": "exec"
+          },
+          {
+            "source": "node-start-recording-mqv07-36",
             "sourceHandle": "exec-out",
             "target": "fn-gamma-recording-gate-output",
             "targetHandle": "exec-out",
@@ -1403,6 +1413,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
             "sourceHandle": "exec-in",
             "target": "node-get-recorder-mqmo3mba-31",
             "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-false-out",
+            "target": "fn-gamma-recording-gate-output",
+            "targetHandle": "exec-false-out",
             "kind": "exec"
           },
           {
@@ -1472,12 +1489,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
             "socketType": "RecordingPolicy"
           },
           {
-            "id": "policy-1",
-            "name": "policy",
-            "kind": "data",
-            "socketType": "RecordingPolicy"
-          },
-          {
             "id": "device",
             "name": "device",
             "kind": "data",
@@ -1488,23 +1499,17 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
             "name": "stream",
             "kind": "data",
             "socketType": "AudioStreamRef"
-          },
-          {
-            "id": "stream-1",
-            "name": "stream",
-            "kind": "data",
-            "socketType": "AudioStreamRef"
           }
         ],
         "outputPins": [
           {
-            "id": "exec-out",
-            "name": "exec-out",
+            "id": "exec-false-out",
+            "name": "exec-false-out",
             "kind": "exec"
           },
           {
-            "id": "exec-out-1",
-            "name": "exec-out-1",
+            "id": "exec-out",
+            "name": "exec-out",
             "kind": "exec"
           }
         ],

@@ -1,0 +1,98 @@
+# CI gate: sprint UserCase forks (alpha, beta, gamma) stay layout + pre-run valid.
+# See docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md §4.
+
+name: UserCase competition verify
+
+on:
+  pull_request:
+    branches: [main, master, develop, vesnin, techies68]
+    paths:
+      - '.github/workflows/usercase-competition.yml'
+      - 'scripts/usercase.mjs'
+      - 'scripts/verify-usercase-*.mjs'
+      - 'scripts/build-usercase*.mjs'
+      - 'scripts/lib/usercase-**'
+      - 'packages/device-board/src/graph/usercase-**'
+      - 'packages/device-board/src/graph/collapse-to-function.ts'
+      - 'packages/device-board/src/graph/hydrate-board-from-document.ts'
+      - 'packages/device-board/src/graph/default-usercase-mvp-microphone*.ts'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-alpha/**'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-beta/**'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-gamma/**'
+  push:
+    branches: [main, master, develop, vesnin, techies68]
+    paths:
+      - '.github/workflows/usercase-competition.yml'
+      - 'scripts/usercase.mjs'
+      - 'scripts/verify-usercase-*.mjs'
+      - 'scripts/build-usercase*.mjs'
+      - 'scripts/lib/usercase-**'
+      - 'packages/device-board/src/graph/usercase-**'
+      - 'packages/device-board/src/graph/collapse-to-function.ts'
+      - 'packages/device-board/src/graph/hydrate-board-from-document.ts'
+      - 'packages/device-board/src/graph/default-usercase-mvp-microphone*.ts'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-alpha/**'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-beta/**'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-gamma/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify-competition:
+    name: verify-competition (alpha, beta, gamma)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack (Yarn 4 из packageManager)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+          echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> "$GITHUB_ENV"
+
+      - name: Yarn Berry cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.YARN_CACHE_FOLDER }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build @membrana/device-board
+        run: yarn workspace @membrana/device-board build
+
+      - name: verify-competition (layout + pre-run)
+        run: node scripts/usercase.mjs verify-competition
+        env:
+          USERCASE_VERIFY_SKIP_BUILD: '1'
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## UserCase competition verify"
+            echo ""
+            echo "- Команда: \`node scripts/usercase.mjs verify-competition\`"
+            echo "- Forks: \`usercase-mvp-microphone-alpha\`, \`-beta\`, \`-gamma\`"
+            echo "- Checks: layout canon + hydrate + \`validatePreRun\`"
+            echo "- Manual Run (mic) **не** входит в CI — см. \`USERCASE_GENERATION_REGULATION.md\` §4"
+            echo ""
+            echo "Локально: \`yarn workspace @membrana/device-board build && yarn usercase:verify-competition\`"
+          } >> "$GITHUB_STEP_SUMMARY"

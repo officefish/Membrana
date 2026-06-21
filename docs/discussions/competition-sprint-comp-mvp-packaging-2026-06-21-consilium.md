@@ -4,77 +4,90 @@
 |------|----------|
 | **sprintId** | `comp-mvp-packaging-2026-06-21` |
 | **brief** | [`COMPETITION_SPRINT_BRIEF.md`](../competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) |
-| **phase** | 3 — structured comparison (no winner yet) |
-| **date** | 2026-06-21 |
+| **phase** | 3 — consilium **closed** 2026-06-21 |
+| **commits** | Phase 2β `e507a2e`, docs `c2e13fe` |
 
 ---
 
 ## Demo recap
 
-Единый demo script (brief): Settings → UserCase → apply → Run ≥45 ticks → track + `trends-fft/v0.1` → Stop.
+| Team | UserCase | Canvas / apply | Run F1–F6 | Pitch (30 s) |
+|------|----------|----------------|-----------|--------------|
+| **Alpha** | `usercase-mvp-microphone-alpha` | ✅ apply, 3 fn, Act I–II groups | ❌ errors at Run *(deferred)* | «Три акта спектакля» |
+| **Beta** | `usercase-mvp-microphone-beta` | ✅ apply, 3 fn orchestrator | ❌ errors at Run *(deferred)* | «Main = оркестратор» |
+| **Gamma** | `usercase-mvp-microphone-gamma` | ✅ apply, poster ①–⑤ | ❌ errors at Run *(deferred)* | «Плакат без mental scroll» |
+| **MVP ref** | `usercase-mvp-microphone` | ✅ bundled | ✅ baseline | инженерный чертёж |
 
-| Team | UserCase | Phase 2β | CI | Operator pitch (30 s) |
-|------|----------|----------|-----|------------------------|
-| **Alpha** | `usercase-mvp-microphone-alpha` | 3 functions, Act I groups onConnect/initial | 393 tests device-board | «Три акта: подключение → live gate+observation → stop» |
-| **Beta** | `usercase-mvp-microphone-beta` | 3 functions orchestrator | verify-layout metrics | «Main = оркестратор из 3 function blocks, exec LR монотонен» |
-| **Gamma** | `usercase-mvp-microphone-gamma` | 2 functions, poster ①–⑤ | verify-layout green | «Плакат: шаги ①–⑤ без mental scroll» |
+**Решение consilium:** голосование по **упаковке canvas** (C2–C5, C4); C1 и demo Run помечены «validation deferred» — общий tech debt collapse→runtime, не различие команд.
 
 ---
 
 ## Team Alpha — summary
 
+**Thesis:** Live Observation Pipeline — operator journey, audio as partiture.
+
 ### Strengths
 
-- RU operator journey (Акт I–II), bootstrap function on onConnect
-- Gate + observation split — audio causality в group descriptions
-- Catalog `community` entry для picker demo
+- RU narrative: Акт I (onConnect/initial) + Акт II (Policy · Gate · Observation · Journal)
+- `fn-alpha-bootstrap` — единственная команда, collapse bootstrap onConnect
+- Audio units в descriptions («5 s WAV», trends-fft) — Musican clarity
+- Баланс onboarding (initial open) vs density (functions on main)
 
 ### Weaknesses
 
-- Main ещё dense vs gamma poster (≈15 scenario nodes)
-- Bootstrap только onConnect (initial остаётся развёрнутым — по ADR A4)
+- Main ~15 nodes — между beta orchestrator и gamma poster
+- ADR A2 (единый observation heartbeat) частично: gate и trends — **две** functions, не одна
+- Run parity не доказан (как у всех sprint forks)
 
-### Open questions
+### Rebuttal (Team Alpha)
 
-- Достаточно ли 3 functions vs beta «чистый оркестратор»?
+«Мы сознательно оставили initial развёрнутым — новичок видит mic/stream до collapse. Run починим одним pin-audit после выбора narrative-победителя.»
 
 ---
 
 ## Team Beta — summary
 
+**Thesis:** Measured modular UserCase — beauty = metrics + reusable blocks.
+
 ### Strengths
 
-- Полная модульность: policy / gate / trends — переиспользуемые blocks
-- Измеримый layout (`computeTeamPackLayoutMetrics`, verify-layout CI gate)
-- 3 subgraph blocks на main — явный orchestrator spine
+- Полная декomposition: policy / gate / trends — **клонируемые** function templates
+- `computeTeamPackLayoutMetrics` + verify-layout CI — объективный C3
+- Чистый orchestrator spine — лучший C2/C5 для следующих авторов UserCase
+- Соответствует Ozhegov: слабая связанность, document-only delivery
 
 ### Weaknesses
 
-- Визуально «сухо» vs gamma poster
-- Main node count ~15 (target ≤6 aspirational не достигнут)
+- Operator UX «инженерная карта» — проигрывает gamma на 30-sec explain
+- Main node count ~15 vs target ≤6
+- Run errors (shared collapse debt)
 
-### Open questions
+### Rebuttal (Team Beta)
 
-- Стоит ли policy function перенести на initial (B3 alternative)?
+«Соревнование в brief — упаковка + maintainability. Мы выигрываем там, где продукт через полгода скажет спасибо: modularity и CI metrics.»
 
 ---
 
 ## Team Gamma — summary
 
+**Thesis:** Poster UserCase — canvas как одностраничный плакат ①–⑤.
+
 ### Strengths
 
-- Numbered poster groups ①–⑤, prep frames onConnect/initial
-- Минимум function count (2) при читаемом main
-- Сильный C4 UX / screenshot potential
+- Лучший **C4**: numbered steps, verb-first RU, DESIGN.md palette
+- Минимум functions (2) — меньше pin surface vs mega-bundle
+- Prep groups onConnect/initial — muted «Подготовка»
+- Лучший кандидат для docs screenshot / onboarding
 
 ### Weaknesses
 
-- Mega-bundle отложен (D-PINS-9) — complexity inside 2 functions
-- Несколько poster groups ссылаются на один function block (overlap frames)
+- Несколько poster frames на один function block (visual overlap)
+- Mega-bundle отложен (D-PINS-9) — vision vs implementation gap
+- Run errors (shared)
 
-### Open questions
+### Rebuttal (Team Gamma)
 
-- Poster vs orchestrator — что важнее для оператора микрофонного поста?
+«Оператор не обязан открывать function — плакат достаточен. Run — инженерная доводка, не отмена poster metaphor.»
 
 ---
 
@@ -82,31 +95,42 @@
 
 | Theme | Alpha | Beta | Gamma |
 |-------|-------|------|-------|
-| User functions | 3 (bootstrap + gate + trends) | 3 (policy + gate + trends) | 2 (gate + trends) |
-| Comment groups main | 4 RU narrative | 4 engineering map | 5 numbered poster |
-| Bootstrap visibility | onConnect collapsed + initial open | all on main path | prep groups only |
-| Catalog tier | community | community | community |
+| Functions | 3 (bootstrap + gate + trends) | 3 (policy + gate + trends) | 2 (gate + trends) |
+| Comment groups | 6 (4 main + 2 Act I) | 4 engineering | 7 (5 poster + 2 prep) |
+| Operator metaphor | Theatre acts | Orchestrator | Poster steps |
+| Author reuse | Medium | **High** | Low |
+| 30-sec explain | Strong | Weak | **Strongest** |
 
 ---
 
-## Журнал реплик
+## Журnal реплик (полный протокол)
 
-*(Phase 3 live / async — append below)*
+[Teamlead — Vesnin]: Sprint закрываем по **упаковке**. Run на всех трёх forks падает — это **общий** collapse/runtime debt, не повод отменять голосование. Phase 5 merge **откладываем** до pin-audit; победитель получает право на merge + polish. MVP bundled остаётся production reference.
 
-[Teamlead — Vesnin]: Phase 2β DoD закрыт на ветке alpha для всех трёх UserCase id. Runtime parity сохранён — только document + scripts. Готовы к demo и голосованию.
+[Структурщик — Ozhegov]: Beta — эталон для **следующих UserCase**: три function с явными границами, без client hacks. Alpha bootstrap function — хорошая идея, cherry-pick в winner branch. Gamma poster groups — UI-слой, не runtime.
 
-[Структурщик — Ozhegov]: Beta выигрывает на C2/C5 modularity; границы пакетов не нарушены.
+[Математик — Dynin]: verify-layout green ×3 — доказательство аккуратности layout. Beta metrics (~15 main nodes, 3 blocks) — единственная команда с **измеримым** orchestrator story. Run validation — отдельный spike: graph equivalence test collapsed vs MVP flat.
 
-[Математик — Dynin]: verify-layout green ×3; beta metrics documentable. C3 — beta/alpha tie.
+[Музыкант]: Alpha выигрывает **audio causality** в copy: gate 5 s, stream, trends publish в одной narrativa. Gamma poster хорош для «что делает продукт», Alpha — для «как течёт звук». Beta — для инженера, не для оператора поста.
 
-[Музыкант]: Alpha RU copy с audio units («5 s WAV») лучше для F2–F4 operator clarity.
-
-[Верстальщик — Rodchenko]: Gamma poster ①–⑤ — лучший C4 для нового оператора за 30 секунд.
+[Верстальщик — Rodchenko]: Gamma ①–⑤ — лучший **first screen** для device-board demo. Рекомендация победителю: взять beta skeleton + gamma titles + alpha RU Act descriptions. DESIGN.md presets соблюдены у всех; gamma — самый «продуктовый» screenshot.
 
 ---
 
-## Pre-vote consensus (non-binding)
+## Pre-vote consensus (binding for Phase 5 prep)
 
-- Победитель merge **только** document/scripts path — без client hacks
-- Сохранить `yarn usercase:verify-layout` gate для bundled/community UserCases
-- Optional cherry-pick: gamma numbered titles + alpha RU Act copy в winner polish PR
+1. **Merge winner** = beta document path; polish PR cherry-picks gamma numbered titles + alpha Act I copy.
+2. **Run fix** = отдельная задача до merge в `main`/`techies68` (не блокирует объявление победителя).
+3. **Community tier** = sprint preview only; не bundled в production без LGTM.
+4. Сохранить `yarn usercase:verify-layout` gate.
+
+---
+
+## Known issue (post-sprint)
+
+| ID | Issue | Owner |
+|----|-------|-------|
+| RUN-01 | Apply alpha/beta/gamma → Run errors (function pin / exec bridge) | device-board runtime |
+| RUN-02 | Collapse programmatic vs editor marquee — parity audit | Vesnin + Ozhegov |
+
+*Не участвует в weighted score Phase 4 — зафиксировано для follow-up.*

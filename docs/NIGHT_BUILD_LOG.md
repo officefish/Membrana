@@ -25,3 +25,8 @@
 - Status: **done**
 - Commit: `51447c6`, PR https://github.com/officefish/Membrana/pull/76
 - Разработка epic завершена; merge/review отложены на утро
+
+## Re-open — 2026-06-21T16:39:47.147Z
+- Epic: `device-board-post-comp-debt-night-build`
+- Continue: no
+

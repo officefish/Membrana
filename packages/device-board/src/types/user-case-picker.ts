@@ -8,7 +8,7 @@ export interface UserCasePickerCard {
   readonly deviceKind: DeviceKind;
   readonly branchCount: number;
   readonly functionCount: number;
-  readonly entitlement: 'bundled' | 'entitled' | 'locked';
+  readonly entitlement: 'bundled' | 'community' | 'entitled' | 'locked';
   readonly canApply: boolean;
 }
 

@@ -21,20 +21,7 @@ function findNode(subgraph: ScenarioSubgraph, nodeId: string): ScenarioGraphNode
   return subgraph.nodes.find((node) => node.id === nodeId);
 }
 
-function findExecSuccessor(
-  subgraph: ScenarioSubgraph,
-  nodeId: string,
-  sourceHandle = 'exec-out',
-): string | null {
-  const edge = subgraph.edges.find(
-    (item) =>
-      item.source === nodeId &&
-      item.kind === 'exec' &&
-      item.sourceHandle === sourceHandle &&
-      item.targetHandle === 'exec-in',
-  );
-  return edge?.target ?? null;
-}
+import { findExecSuccessor } from './exec-successor.js';
 
 /** Цели event-ветки: `event-out` Collect → exec-in downstream. */
 export function findEventBranchTargets(

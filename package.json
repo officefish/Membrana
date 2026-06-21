@@ -140,8 +140,12 @@
     "trends-parity:smoke-matrix": "node scripts/trends-fft-parity-smoke-matrix.mjs",
     "usercase:build": "node scripts/build-usercase.mjs",
     "usercase:build-mvp-microphone": "node scripts/build-usercase-mvp-microphone.mjs",
+    "usercase:build-competition-all": "node scripts/build-usercase-competition-all.mjs",
     "usercase:verify-kinds": "node scripts/verify-usercase-kinds.mjs",
-    "usercase:verify-layout": "node scripts/verify-usercase-layout.mjs"
+    "usercase:verify-layout": "node scripts/verify-usercase-layout.mjs",
+    "usercase:verify-prerun": "node scripts/verify-usercase-prerun.mjs",
+    "usercase:verify-competition": "node scripts/usercase.mjs verify-competition",
+    "usercase": "node scripts/usercase.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

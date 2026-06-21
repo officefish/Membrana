@@ -461,9 +461,13 @@ export class ScenarioRuntime {
     defaultChunkDurationMs?: number,
     resolveContextOverride?: ResolveInputContext,
   ) {
-    const resolveContext = this.augmentResolveContext(
+    const baseContext = this.augmentResolveContext(
       resolveContextOverride ?? this.buildResolveContext(branch),
     );
+    const resolveContext =
+      baseContext !== undefined
+        ? { ...baseContext, scenarioFunctions: functions }
+        : { scenarioFunctions: functions };
     return {
       branch,
       functions,
@@ -548,7 +552,7 @@ export class ScenarioRuntime {
         this.host.log('main-tick-start', { runId: this.runId, tick: mainIteration, branch: 'main' });
 
         const mainResolveContext = this.buildLoopTickResolveContext('main');
-        const lastDetection = await runSubgraphOnce(
+        const { lastDetection } = await runSubgraphOnce(
           document.scenario.loops.main,
           this.host,
           signal,

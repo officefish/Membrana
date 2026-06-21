@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Beta (Measured modular UserCase)",
-    "exportedAt": "2026-06-21T13:23:20.006Z",
+    "exportedAt": "2026-06-21T15:43:01.334Z",
     "commentGroupProfile": "beta"
   },
   "signalGraph": {
@@ -585,6 +585,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           },
           {
             "source": "node-get-recorder-mqm9sdoi-25",
+            "sourceHandle": "recorder",
+            "target": "fn-beta-recording-gate-block",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
+            "source": "node-get-recorder-mqm9sdoi-25",
             "sourceHandle": "exec-out",
             "target": "node-get-fft-frame-mql3g2ys-11",
             "targetHandle": "exec-in",
@@ -599,10 +607,41 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           },
           {
             "source": "fn-beta-recording-gate-block",
+            "sourceHandle": "exec-false-out",
+            "target": "main-infinity",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-get-spectral-analyser-mqm9vz6a-27",
+            "sourceHandle": "analyser",
+            "target": "fn-beta-trends-publish-block",
+            "targetHandle": "analyser",
+            "kind": "data",
+            "dataType": "SpectralAnalyserRef"
+          },
+          {
+            "source": "fn-beta-recording-gate-block",
             "sourceHandle": "exec-out",
             "target": "fn-beta-trends-publish-block",
             "targetHandle": "exec-in",
             "kind": "exec"
+          },
+          {
+            "source": "fn-beta-policy-build-block",
+            "sourceHandle": "policy",
+            "target": "fn-beta-recording-gate-block",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "RecordingPolicy"
+          },
+          {
+            "source": "fn-beta-policy-build-block",
+            "sourceHandle": "policy-1",
+            "target": "fn-beta-trends-publish-block",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "FftTrendsPolicy"
           },
           {
             "source": "fn-beta-trends-publish-block",
@@ -644,6 +683,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "dataType": "DeviceRef"
           },
           {
+            "source": "node-get-journal-mvp-main-1",
+            "sourceHandle": "journal",
+            "target": "fn-beta-trends-publish-block",
+            "targetHandle": "journal",
+            "kind": "data",
+            "dataType": "JournalRef"
+          },
+          {
             "source": "node-device-global-mqm0q2fd-14",
             "sourceHandle": "device",
             "target": "node-get-recorder-mqm9sdoi-25",
@@ -660,6 +707,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "dataType": "DeviceRef"
           },
           {
+            "source": "node-device-global-mqm0q2fd-14",
+            "sourceHandle": "device",
+            "target": "fn-beta-recording-gate-block",
+            "targetHandle": "device",
+            "kind": "data",
+            "dataType": "DeviceRef"
+          },
+          {
             "source": "node-is-valid-mqm1nky7-30",
             "sourceHandle": "exec-true-out",
             "target": "node-get-sample-mql3f1ro-9",
@@ -670,6 +725,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "source": "node-get-audio-stream-mql3ckno-7",
             "sourceHandle": "stream",
             "target": "node-get-sample-mql3f1ro-9",
+            "targetHandle": "stream",
+            "kind": "data",
+            "dataType": "AudioStreamRef"
+          },
+          {
+            "source": "node-get-audio-stream-mql3ckno-7",
+            "sourceHandle": "stream",
+            "target": "fn-beta-recording-gate-block",
             "targetHandle": "stream",
             "kind": "data",
             "dataType": "AudioStreamRef"
@@ -1008,12 +1071,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           {
             "source": "fn-beta-trends-publish-input",
             "sourceHandle": "exec-in",
-            "target": "node-make-report-from-analysis-mqma356z-34",
+            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "source": "node-publish-report-mqma49xv-35",
             "sourceHandle": "exec-out",
             "target": "fn-beta-trends-publish-output",
             "targetHandle": "exec-out",
@@ -1082,12 +1145,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "socketType": "SpectralAnalyserRef"
           },
           {
-            "id": "analyser-1",
-            "name": "analyser",
-            "kind": "data",
-            "socketType": "SpectralAnalyserRef"
-          },
-          {
             "id": "exec-in",
             "name": "exec-in",
             "kind": "exec"
@@ -1100,12 +1157,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           },
           {
             "id": "journal",
-            "name": "journal",
-            "kind": "data",
-            "socketType": "JournalRef"
-          },
-          {
-            "id": "journal-1",
             "name": "journal",
             "kind": "data",
             "socketType": "JournalRef"
@@ -1299,12 +1350,19 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           {
             "source": "fn-beta-recording-gate-input",
             "sourceHandle": "exec-in",
-            "target": "node-make-track-mqmcipn5-28",
+            "target": "node-get-recorder-mqmo3mba-31",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-start-recording-bootstrap-v08-2",
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-false-out",
+            "target": "fn-beta-recording-gate-output",
+            "targetHandle": "exec-false-out",
+            "kind": "exec"
+          },
+          {
+            "source": "node-start-recording-mqv07-36",
             "sourceHandle": "exec-out",
             "target": "fn-beta-recording-gate-output",
             "targetHandle": "exec-out",
@@ -1323,6 +1381,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "sourceHandle": "exec-in",
             "target": "node-get-recorder-mqmo3mba-31",
             "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-false-out",
+            "target": "fn-beta-recording-gate-output",
+            "targetHandle": "exec-false-out",
             "kind": "exec"
           },
           {
@@ -1392,12 +1457,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "socketType": "RecordingPolicy"
           },
           {
-            "id": "policy-1",
-            "name": "policy",
-            "kind": "data",
-            "socketType": "RecordingPolicy"
-          },
-          {
             "id": "device",
             "name": "device",
             "kind": "data",
@@ -1408,23 +1467,17 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "name": "stream",
             "kind": "data",
             "socketType": "AudioStreamRef"
-          },
-          {
-            "id": "stream-1",
-            "name": "stream",
-            "kind": "data",
-            "socketType": "AudioStreamRef"
           }
         ],
         "outputPins": [
           {
-            "id": "exec-out",
-            "name": "exec-out",
+            "id": "exec-false-out",
+            "name": "exec-false-out",
             "kind": "exec"
           },
           {
-            "id": "exec-out-1",
-            "name": "exec-out-1",
+            "id": "exec-out",
+            "name": "exec-out",
             "kind": "exec"
           }
         ],
@@ -1509,12 +1562,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "dataType": "RecordingPolicy"
           },
           {
-            "source": "node-make-recording-policy-v08-1",
+            "source": "node-make-fft-trends-policy-v08-1",
             "sourceHandle": "policy",
             "target": "fn-beta-policy-build-output",
-            "targetHandle": "policy",
+            "targetHandle": "policy-1",
             "kind": "data",
-            "dataType": "RecordingPolicy"
+            "dataType": "FftTrendsPolicy"
           }
         ],
         "inputPins": [
@@ -1535,7 +1588,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "id": "policy-1",
             "name": "policy",
             "kind": "data",
-            "socketType": "RecordingPolicy"
+            "socketType": "FftTrendsPolicy"
           }
         ],
         "description": "MakeRecordingPolicy + MakeFftTrendsPolicy constructors"
