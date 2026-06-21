@@ -4252,6 +4252,119 @@
       "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "L3: snap guides overlay on drag, layout-snap-guides.ts"
+    },
+    {
+      "id": "db-usercases-catalog-u9",
+      "title": "DB UserCases catalog: settings + modal + apply-all (U9)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-naa-l3-snap-guides",
+        "db-cgf-a0-align-basic"
+      ],
+      "notes": "Consilium 2026-06-21 product: bundled + tariff UserCases; supersedes roadmap U1.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-uc-r0-schema",
+      "title": "DB UC R0: UserCase manifest + build/verify-kinds scripts",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Generalize usercase:build; manifest contract; CI verify-kinds.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-uc-l1-layout-canon",
+      "title": "DB UC L1: layout canon + verify-layout + comment group frames",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-r0-schema"
+      ],
+      "notes": "yarn usercase:verify-layout; editorial pass MVP main branch.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-uc-c1-catalog",
+      "title": "DB UC C1: bundled UserCase catalog service",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-r0-schema"
+      ],
+      "notes": "UserCaseCatalogService; index usercase-*/ manifests.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-uc-g1-settings-gate",
+      "title": "DB UC G1: settings UserCases section + entitlement gate",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-c1-catalog"
+      ],
+      "notes": "Toggle catalog; bundled/tariff/locked badges; tariff stub.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-uc-p1-picker-modal",
+      "title": "DB UC P1: UserCase picker modal + apply-all flow",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-c1-catalog",
+        "db-uc-g1-settings-gate",
+        "db-uc-l1-layout-canon"
+      ],
+      "notes": "Modal cards; confirm dirty; ref-mapping; post-apply exec-layout.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-uc-d1-docs",
+      "title": "DB UC D1: CONCEPT §20 + UserCases docs page",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-p1-picker-modal"
+      ],
+      "notes": "DEVICE_BOARD_CONCEPT §20; package README; apps/docs stub.",
+      "githubIssueClosedAt": null
     }
   ]
 }

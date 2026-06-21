@@ -140,6 +140,13 @@
 | `db-recording-gate-v07` | DB Recording Gate v0.7: StartRecording nodes + unified observation window (эпик R0–R4) | L | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | [#133](https://github.com/officefish/Membrana/issues/133) |
 | `db-recording-gate-r4-scenario-smoke` | DB Recording Gate R4: main-v07.json + smoke + LGTM | M | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | [#133](https://github.com/officefish/Membrana/issues/133) |
 | `db-post-usercase-roadmap` | Device-board post-UserCase: UX + docs snapshot + server | L | [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md) | — |
+| `db-usercases-catalog-u9` | DB UserCases catalog: settings + modal + apply-all (U9) | L | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) | [#136](https://github.com/officefish/Membrana/issues/136) |
+| `db-uc-r0-schema` | DB UC R0: UserCase manifest + build/verify-kinds scripts | M | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) | [#136](https://github.com/officefish/Membrana/issues/136) |
+| `db-uc-l1-layout-canon` | DB UC L1: layout canon + verify-layout + comment group frames | M | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) | [#136](https://github.com/officefish/Membrana/issues/136) |
+| `db-uc-c1-catalog` | DB UC C1: bundled UserCase catalog service | M | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) | [#136](https://github.com/officefish/Membrana/issues/136) |
+| `db-uc-g1-settings-gate` | DB UC G1: settings UserCases section + entitlement gate | M | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) | [#136](https://github.com/officefish/Membrana/issues/136) |
+| `db-uc-p1-picker-modal` | DB UC P1: UserCase picker modal + apply-all flow | L | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) | [#136](https://github.com/officefish/Membrana/issues/136) |
+| `db-uc-d1-docs` | DB UC D1: CONCEPT §20 + UserCases docs page | S | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) | [#136](https://github.com/officefish/Membrana/issues/136) |
 
 ---
 

@@ -29,7 +29,7 @@ Device-board впервые выполняет полный **UserCase MVP micro
 
 | Приоритет | Тема | Ориентир / существующий промпт |
 |-----------|------|--------------------------------|
-| U1 | UserCase picker / «Загрузить MVP» в shell | § Future в Recording parity v0.8 |
+| U1 | UserCase picker / «Загрузить MVP» в shell | § Future в Recording parity v0.8 → **консилиум U9:** [`device-board-usercases-consilium-2026-06-21.md`](../discussions/device-board-usercases-consilium-2026-06-21.md) |
 | U2 | Policy inspectors parity с plugin sidebar | MakeRecordingPolicy / MakeFftTrendsPolicy ✓ частично |
 | U3 | Port labels, header, branch titles RU | [`DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md`](./DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md) |
 | U4 | Run controls: pre-run validation UX, trace export discoverability | chain trace P0–P3 |
@@ -38,6 +38,7 @@ Device-board впервые выполняет полный **UserCase MVP micro
 | U7 | ~~Pure Getters (Blueprint parity)~~ **LGTM** | [`PURE_GETTERS_LGTM.md`](../device-board-scripts/PURE_GETTERS_LGTM.md) |
 | U8 | Canvas: marquee, groups, user functions, align MVP | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](./DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) |
 | U8a | Node align advanced (snap, guides, dagre) | `db-node-align-advanced` (отдельный эпик) |
+| **U9** | **UserCases catalog** (settings + modal + apply-all + layout canon) | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) · [`консилиум`](../discussions/device-board-usercases-consilium-2026-06-21.md) |
 
 **DoD направления U:** новый оператор открывает microphone board → видит MVP → Run → journal entry **без** ручного import JSON.
 
@@ -103,6 +104,7 @@ Sprint 3 (server):            S1 S2 → S3 S4
 | `db-pure-getters-p0-spec-lgtm` | P0 pure getters spec |
 | `db-canvas-groups-functions` | U8 parent epic |
 | `db-node-align-advanced` | U8a exec dagre + snap guides | [`DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md`](./DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md) |
+| `db-usercases-catalog-u9` | U9 UserCases catalog | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) |
 
 Родитель: **`db-post-usercase-roadmap`**.
 
