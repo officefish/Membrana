@@ -1,0 +1,30 @@
+import { useMemo } from 'react';
+
+import type { DeviceKind } from '@membrana/core';
+
+import {
+  ClientUserCaseCatalogService,
+  getDefaultClientUserCaseCatalogService,
+  type UserCaseCatalogCard,
+} from './user-case-catalog-service.js';
+
+export interface UseUserCaseCatalogResult {
+  readonly cards: readonly UserCaseCatalogCard[];
+  readonly canApply: (id: string) => boolean;
+}
+
+/** React hook: bundled UserCase catalog cards (U9 C1). */
+export function useUserCaseCatalog(deviceKind?: DeviceKind): UseUserCaseCatalogResult {
+  const service = useMemo(() => getDefaultClientUserCaseCatalogService(), []);
+  const cards = useMemo(() => service.listCards(deviceKind), [service, deviceKind]);
+
+  return useMemo(
+    () => ({
+      cards,
+      canApply: (id: string) => service.canApply(id, deviceKind),
+    }),
+    [cards, service, deviceKind],
+  );
+}
+
+export type { ClientUserCaseCatalogService, UserCaseCatalogCard };

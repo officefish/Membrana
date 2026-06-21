@@ -29,6 +29,7 @@ export {
   activeV04PaletteNodeKinds,
 } from './types/board-ui.js';
 export * from './graph/index.js';
+export * from './catalog/index.js';
 export * from './runtime/index.js';
 export type {
   DeviceBoardPersistAdapter,
