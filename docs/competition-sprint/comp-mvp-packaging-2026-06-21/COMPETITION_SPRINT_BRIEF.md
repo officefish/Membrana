@@ -64,13 +64,13 @@ Runtime-поведение **эквивалентно** MVP v0.8:
 
 ## Definition of Done (Phase 2β — общий)
 
-- [ ] Новый UserCase id: `usercase-mvp-microphone-<team>` (`alpha`|`beta`|`gamma`)
-- [ ] `manifest.json` + `yarn usercase:build` + `verify-kinds` + **`verify-layout` green**
-- [ ] Comment groups с title + description (RU operator copy)
-- [ ] User functions documented в CONCEPT + в graph
-- [ ] Demo script ниже — **PASS** на ветке команды
-- [ ] `packages/device-board` tests green; smoke recording + trends parity не регресс
-- [ ] `CONCEPT.md` §Implementation + commit hash final
+- [x] Новый UserCase id: `usercase-mvp-microphone-<team>` (`alpha`|`beta`|`gamma`)
+- [x] `manifest.json` + `yarn usercase:build` + `verify-kinds` + **`verify-layout` green**
+- [x] Comment groups с title + description (RU operator copy)
+- [x] User functions documented в CONCEPT + в graph
+- [ ] Demo script ниже — **PASS** на ветке команды *(Phase 3 manual)*
+- [x] `packages/device-board` tests green; smoke recording + trends parity не регресс
+- [x] `CONCEPT.md` §Implementation + commit hash final *(hash at commit)*
 
 ---
 

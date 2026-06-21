@@ -1,4 +1,4 @@
-import type { DeviceScenarioDocument } from '@membrana/core';
+import type { DeviceScenarioDocument, ScenarioSubgraph } from '@membrana/core';
 
 import { collapseSelectionToFunction } from './collapse-to-function.js';
 import { serializeScenarioFunction } from './serialize-scenario-function.js';
@@ -17,6 +17,8 @@ interface CollapseSpec {
   readonly nodeIds: readonly string[];
 }
 
+type PackBranch = 'main' | 'onConnect';
+
 const GATE_NODE_IDS = [
   'node-get-recorder-mqmo3mba-31',
   'node-start-recording-bootstrap-v08-2',
@@ -34,38 +36,80 @@ const TRENDS_PUBLISH_NODE_IDS = [
   'node-publish-report-mqma49xv-35',
 ] as const;
 
-const TEAM_COLLAPSES: Readonly<Record<CompetitionTeamId, readonly CollapseSpec[]>> = {
+const POLICY_NODE_IDS = [
+  'node-make-recording-policy-v08-1',
+  'node-make-fft-trends-policy-v08-1',
+] as const;
+
+const ONCONNECT_BOOTSTRAP_NODE_IDS = [
+  'node-is-valid-mqm97w5v-17',
+  'node-get-journal-mqm98hvn-18',
+  'node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8',
+] as const;
+
+/** Порядок: leaf → root (tail collapse first). */
+const TEAM_MAIN_COLLAPSES: Readonly<Record<CompetitionTeamId, readonly CollapseSpec[]>> = {
   alpha: [
     {
       functionId: 'fn-alpha-observation-tick',
       functionName: 'Observation tick',
-      description: 'Trends classify + publish (Phase 2α partial)',
+      description: 'Trends classify + PublishReport (trends-fft/v0.1)',
       nodeIds: TRENDS_PUBLISH_NODE_IDS,
+    },
+    {
+      functionId: 'fn-alpha-recording-gate',
+      functionName: 'Recording gate',
+      description: '5 s WAV window → MakeTrack → restart',
+      nodeIds: GATE_NODE_IDS,
     },
   ],
   beta: [
+    {
+      functionId: 'fn-beta-trends-publish',
+      functionName: 'Trends publish',
+      description: 'Flush FFT → classify → MakeReportFromAnalysis → PublishReport',
+      nodeIds: TRENDS_PUBLISH_NODE_IDS,
+    },
     {
       functionId: 'fn-beta-recording-gate',
       functionName: 'Recording gate',
       description: '5 s window gate + MakeTrack',
       nodeIds: GATE_NODE_IDS,
     },
+    {
+      functionId: 'fn-beta-policy-build',
+      functionName: 'Build policies',
+      description: 'MakeRecordingPolicy + MakeFftTrendsPolicy constructors',
+      nodeIds: POLICY_NODE_IDS,
+    },
   ],
   gamma: [
-    {
-      functionId: 'fn-gamma-recording-gate',
-      functionName: 'Захват · окно записи',
-      description: '5 s WAV gate + MakeTrack',
-      nodeIds: GATE_NODE_IDS,
-    },
     {
       functionId: 'fn-gamma-trends-publish',
       functionName: 'Анализ · публикация',
       description: 'FFT trends classify + PublishReport',
       nodeIds: TRENDS_PUBLISH_NODE_IDS,
     },
+    {
+      functionId: 'fn-gamma-recording-gate',
+      functionName: 'Захват · окно записи',
+      description: '5 s WAV gate + MakeTrack',
+      nodeIds: GATE_NODE_IDS,
+    },
   ],
 };
+
+const TEAM_ONCONNECT_COLLAPSES: Readonly<Partial<Record<CompetitionTeamId, readonly CollapseSpec[]>>> =
+  {
+    alpha: [
+      {
+        functionId: 'fn-alpha-bootstrap',
+        functionName: 'Bootstrap journal',
+        description: 'onConnect: server → journal1 ref',
+        nodeIds: ONCONNECT_BOOTSTRAP_NODE_IDS,
+      },
+    ],
+  };
 
 const TEAM_META: Readonly<
   Record<
@@ -76,28 +120,61 @@ const TEAM_META: Readonly<
   alpha: {
     title: 'MVP microphone · Alpha (Live Observation Pipeline)',
     description:
-      'Team Alpha: operator journey — три акта, observation function, RU comment groups.',
+      'Team Alpha: operator journey — три акта, observation + gate functions, RU comment groups.',
     commentGroupProfile: 'alpha',
   },
   beta: {
     title: 'MVP microphone · Beta (Measured modular UserCase)',
-    description: 'Team Beta: modular recording-gate function, verify-layout metrics.',
+    description: 'Team Beta: 3 modular functions, verify-layout metrics.',
     commentGroupProfile: 'beta',
   },
   gamma: {
     title: 'MVP microphone · Gamma (Poster UserCase)',
-    description: 'Team Gamma: poster layout ①–⑤, live observation mega-function.',
+    description: 'Team Gamma: poster layout ①–⑤, gate + trends functions.',
     commentGroupProfile: 'gamma',
   },
 };
 
-function applyMainBranchCollapse(
+export interface TeamPackLayoutMetrics {
+  readonly mainScenarioNodeCount: number;
+  readonly mainSubgraphBlockCount: number;
+  readonly functionCount: number;
+  readonly commentGroupCount: number;
+  readonly execSpanPx: number;
+}
+
+function readSubgraph(document: DeviceScenarioDocument, branch: PackBranch): ScenarioSubgraph {
+  return branch === 'main' ? document.scenario.loops.main : document.scenario.onConnect;
+}
+
+function writeSubgraph(
   document: DeviceScenarioDocument,
+  branch: PackBranch,
+  subgraph: ScenarioSubgraph,
+): DeviceScenarioDocument {
+  if (branch === 'main') {
+    return {
+      ...document,
+      scenario: {
+        ...document.scenario,
+        loops: { ...document.scenario.loops, main: subgraph },
+      },
+    };
+  }
+  return {
+    ...document,
+    scenario: { ...document.scenario, onConnect: subgraph },
+  };
+}
+
+function applyBranchCollapse(
+  document: DeviceScenarioDocument,
+  branch: PackBranch,
   collapse: CollapseSpec,
 ): DeviceScenarioDocument {
   const variables = document.scenario.variables;
-  const main = document.scenario.loops.main;
-  const { nodes, edges } = deserializeScenarioSubgraph(main, variables);
+  const subgraph = readSubgraph(document, branch);
+  const { nodes, edges } = deserializeScenarioSubgraph(subgraph, variables);
 
   const result = collapseSelectionToFunction({
     selectedNodeIds: [...collapse.nodeIds],
@@ -108,10 +185,10 @@ function applyMainBranchCollapse(
   });
 
   if (!result.ok) {
-    throw new Error(`Collapse ${collapse.functionId} failed: ${result.message}`);
+    throw new Error(`Collapse ${collapse.functionId} on ${branch} failed: ${result.message}`);
   }
 
-  const newMain = serializeScenarioSubgraph(main.entry, result.branchNodes, result.branchEdges);
+  const newSubgraph = serializeScenarioSubgraph(subgraph.entry, result.branchNodes, result.branchEdges);
   const fn = serializeScenarioFunction({
     id: result.functionDraft.id,
     name: result.functionDraft.name,
@@ -123,15 +200,11 @@ function applyMainBranchCollapse(
     edges: result.functionDraft.edges,
   });
 
+  const updated = writeSubgraph(document, branch, newSubgraph);
   return {
-    ...document,
-    meta: document.meta,
+    ...updated,
     scenario: {
-      ...document.scenario,
-      loops: {
-        ...document.scenario.loops,
-        main: newMain,
-      },
+      ...updated.scenario,
       functions: [...document.scenario.functions, fn],
     },
   };
@@ -161,8 +234,12 @@ export function packMvpUserCaseForTeam(
     },
   };
 
-  for (const collapse of TEAM_COLLAPSES[team]) {
-    document = applyMainBranchCollapse(document, collapse);
+  for (const collapse of TEAM_MAIN_COLLAPSES[team]) {
+    document = applyBranchCollapse(document, 'main', collapse);
+  }
+
+  for (const collapse of TEAM_ONCONNECT_COLLAPSES[team] ?? []) {
+    document = applyBranchCollapse(document, 'onConnect', collapse);
   }
 
   return document;
@@ -170,4 +247,23 @@ export function packMvpUserCaseForTeam(
 
 export function competitionUserCaseId(team: CompetitionTeamId): string {
   return `usercase-mvp-microphone-${team}`;
+}
+
+/** Layout metrics для CONCEPT §Implementation (Team Beta). */
+export function computeTeamPackLayoutMetrics(
+  document: DeviceScenarioDocument,
+): TeamPackLayoutMetrics {
+  const main = document.scenario.loops.main;
+  const scenarioNodes = main.nodes.filter(
+    (node) => node.system !== true && node.nodeKind !== 'event' && node.nodeKind !== 'loop-repeat',
+  );
+  const subgraphBlocks = main.nodes.filter((node) => node.blockKind === 'subgraph');
+  const xs = main.nodes.map((node) => node.position.x);
+  return {
+    mainScenarioNodeCount: scenarioNodes.length,
+    mainSubgraphBlockCount: subgraphBlocks.length,
+    functionCount: document.scenario.functions.length,
+    commentGroupCount: document.scenario.commentGroups?.length ?? 0,
+    execSpanPx: xs.length === 0 ? 0 : Math.max(...xs) - Math.min(...xs),
+  };
 }

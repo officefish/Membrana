@@ -3,13 +3,13 @@
  */
 import type { DeviceScenarioDocument } from '@membrana/core';
 
-export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
+export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
   "version": 2,
   "kind": "device-scenario",
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Beta (Measured modular UserCase)",
-    "exportedAt": "2026-06-21T13:09:27.554Z",
+    "exportedAt": "2026-06-21T13:23:20.006Z",
     "commentGroupProfile": "beta"
   },
   "signalGraph": {
@@ -324,7 +324,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "id": "main-infinity",
             "blockKind": "custom",
             "position": {
-              "x": 5792,
+              "x": 4400,
               "y": -320
             },
             "label": "∞",
@@ -438,97 +438,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             }
           },
           {
-            "id": "node-get-reporter-mqm9yfmy-29",
-            "blockKind": "custom",
-            "position": {
-              "x": 3168,
-              "y": 504
-            },
-            "label": "GetReporter",
-            "nodeKind": "get-reporter"
-          },
-          {
-            "id": "node-make-report-from-analysis-mqma356z-34",
-            "blockKind": "custom",
-            "position": {
-              "x": 4864,
-              "y": -320
-            },
-            "label": "MakeReportFromAnalysis",
-            "nodeKind": "make-report-from-analysis"
-          },
-          {
-            "id": "node-publish-report-mqma49xv-35",
-            "blockKind": "custom",
-            "position": {
-              "x": 5328,
-              "y": -320
-            },
-            "label": "PublishReport",
-            "nodeKind": "publish-report"
-          },
-          {
-            "id": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "blockKind": "custom",
-            "position": {
-              "x": 4400,
-              "y": -320
-            },
-            "label": "MakeFftTrendsAnalysis",
-            "nodeKind": "make-fft-trends-analysis"
-          },
-          {
-            "id": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "blockKind": "custom",
-            "position": {
-              "x": 3936,
-              "y": -320
-            },
-            "label": "FlushSpectralAnalyser",
-            "nodeKind": "flush-spectral-analyser"
-          },
-          {
-            "id": "node-make-recording-policy-v08-1",
-            "blockKind": "custom",
-            "position": {
-              "x": 3584,
-              "y": 424
-            },
-            "label": "MakeRecordingPolicy",
-            "nodeKind": "make-recording-policy",
-            "recordingPolicy": {
-              "windowSec": 5,
-              "captureFormat": "wav"
-            },
-            "pure": true
-          },
-          {
-            "id": "node-make-fft-trends-policy-v08-1",
-            "blockKind": "custom",
-            "position": {
-              "x": 3784,
-              "y": 584
-            },
-            "label": "MakeFftTrendsPolicy",
-            "nodeKind": "make-fft-trends-policy",
-            "fftTrendsPolicy": {
-              "detectionMode": "auto",
-              "measurementsCount": 20,
-              "intervalMs": 500,
-              "minConfidence": 0.55,
-              "minRms": 0.02,
-              "enabledTemplateKeys": [
-                "DRONE_TIGHT",
-                "WIND",
-                "QUIET",
-                "TRAFFIC",
-                "BIRDS",
-                "VOICE"
-              ]
-            },
-            "pure": true
-          },
-          {
             "id": "node-get-microphone-mvp-main-1",
             "blockKind": "custom",
             "position": {
@@ -550,6 +459,15 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "nodeKind": "get-journal"
           },
           {
+            "id": "fn-beta-trends-publish-block",
+            "blockKind": "subgraph",
+            "position": {
+              "x": 3936,
+              "y": -320
+            },
+            "label": "Trends publish::fn-beta-trends-publish::fn-beta-trends-publish"
+          },
+          {
             "id": "fn-beta-recording-gate-block",
             "blockKind": "subgraph",
             "position": {
@@ -557,6 +475,15 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
               "y": -320
             },
             "label": "Recording gate::fn-beta-recording-gate::fn-beta-recording-gate"
+          },
+          {
+            "id": "fn-beta-policy-build-block",
+            "blockKind": "subgraph",
+            "position": {
+              "x": 3584,
+              "y": 424
+            },
+            "label": "Build policies::fn-beta-policy-build::fn-beta-policy-build"
           }
         ],
         "edges": [
@@ -649,43 +576,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "kind": "exec"
           },
           {
-            "source": "node-make-report-from-analysis-mqma356z-34",
-            "sourceHandle": "exec-out",
-            "target": "node-publish-report-mqma49xv-35",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-make-report-from-analysis-mqma356z-34",
-            "sourceHandle": "report",
-            "target": "node-publish-report-mqma49xv-35",
-            "targetHandle": "report",
-            "kind": "data",
-            "dataType": "ReportRef"
-          },
-          {
-            "source": "node-get-reporter-mqm9yfmy-29",
-            "sourceHandle": "reporter",
-            "target": "node-make-report-from-analysis-mqma356z-34",
-            "targetHandle": "reporter",
-            "kind": "data",
-            "dataType": "ReporterRef"
-          },
-          {
             "source": "node-get-fft-frame-mql3g2ys-11",
             "sourceHandle": "frame",
             "target": "node-collect-fft-frames-mqm9wezu-28",
             "targetHandle": "frame",
             "kind": "data",
             "dataType": "FftFrameRef"
-          },
-          {
-            "source": "node-get-recorder-mqm9sdoi-25",
-            "sourceHandle": "recorder",
-            "target": "fn-beta-recording-gate-block",
-            "targetHandle": "recorder",
-            "kind": "data",
-            "dataType": "RecorderRef"
           },
           {
             "source": "node-get-recorder-mqm9sdoi-25",
@@ -702,88 +598,18 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "kind": "exec"
           },
           {
-            "source": "node-get-spectral-analyser-mqm9vz6a-27",
-            "sourceHandle": "analyser",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
-            "source": "node-get-spectral-analyser-mqm9vz6a-27",
-            "sourceHandle": "analyser",
-            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
             "source": "fn-beta-recording-gate-block",
             "sourceHandle": "exec-out",
-            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "target": "fn-beta-trends-publish-block",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "sourceHandle": "exec-out",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "sourceHandle": "frames",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "frames",
-            "kind": "data",
-            "dataType": "FftFrameRefList"
-          },
-          {
-            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "sourceHandle": "exec-out",
-            "target": "node-make-report-from-analysis-mqma356z-34",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "sourceHandle": "analysis",
-            "target": "node-make-report-from-analysis-mqma356z-34",
-            "targetHandle": "analysis",
-            "kind": "data",
-            "dataType": "FftTrendAnalysisRef"
-          },
-          {
-            "source": "node-make-recording-policy-v08-1",
-            "sourceHandle": "policy",
-            "target": "fn-beta-recording-gate-block",
-            "targetHandle": "policy",
-            "kind": "data",
-            "dataType": "RecordingPolicy"
-          },
-          {
-            "source": "node-make-fft-trends-policy-v08-1",
-            "sourceHandle": "policy",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "policy",
-            "kind": "data",
-            "dataType": "FftTrendsPolicy"
-          },
-          {
-            "source": "node-publish-report-mqma49xv-35",
+            "source": "fn-beta-trends-publish-block",
             "sourceHandle": "exec-out",
             "target": "main-infinity",
             "targetHandle": "exec-in",
             "kind": "exec"
-          },
-          {
-            "source": "node-make-recording-policy-v08-1",
-            "sourceHandle": "policy",
-            "target": "fn-beta-recording-gate-block",
-            "targetHandle": "policy",
-            "kind": "data",
-            "dataType": "RecordingPolicy"
           },
           {
             "source": "node-device-global-mqm0q2fd-14",
@@ -818,22 +644,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "dataType": "DeviceRef"
           },
           {
-            "source": "node-get-journal-mvp-main-1",
-            "sourceHandle": "journal",
-            "target": "node-get-reporter-mqm9yfmy-29",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          },
-          {
-            "source": "node-get-journal-mvp-main-1",
-            "sourceHandle": "journal",
-            "target": "node-publish-report-mqma49xv-35",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          },
-          {
             "source": "node-device-global-mqm0q2fd-14",
             "sourceHandle": "device",
             "target": "node-get-recorder-mqm9sdoi-25",
@@ -850,14 +660,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "dataType": "DeviceRef"
           },
           {
-            "source": "node-device-global-mqm0q2fd-14",
-            "sourceHandle": "device",
-            "target": "fn-beta-recording-gate-block",
-            "targetHandle": "device",
-            "kind": "data",
-            "dataType": "DeviceRef"
-          },
-          {
             "source": "node-is-valid-mqm1nky7-30",
             "sourceHandle": "exec-true-out",
             "target": "node-get-sample-mql3f1ro-9",
@@ -868,22 +670,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "source": "node-get-audio-stream-mql3ckno-7",
             "sourceHandle": "stream",
             "target": "node-get-sample-mql3f1ro-9",
-            "targetHandle": "stream",
-            "kind": "data",
-            "dataType": "AudioStreamRef"
-          },
-          {
-            "source": "node-get-audio-stream-mql3ckno-7",
-            "sourceHandle": "stream",
-            "target": "fn-beta-recording-gate-block",
-            "targetHandle": "stream",
-            "kind": "data",
-            "dataType": "AudioStreamRef"
-          },
-          {
-            "source": "node-get-audio-stream-mql3ckno-7",
-            "sourceHandle": "stream",
-            "target": "fn-beta-recording-gate-block",
             "targetHandle": "stream",
             "kind": "data",
             "dataType": "AudioStreamRef"
@@ -1087,6 +873,253 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
       "custom": []
     },
     "functions": [
+      {
+        "id": "fn-beta-trends-publish",
+        "name": "Trends publish",
+        "entry": "fn-beta-trends-publish-input",
+        "nodes": [
+          {
+            "id": "fn-beta-trends-publish-input",
+            "blockKind": "custom",
+            "position": {
+              "x": 40,
+              "y": 160
+            },
+            "label": "Input",
+            "nodeKind": "function-input",
+            "system": true
+          },
+          {
+            "id": "fn-beta-trends-publish-output",
+            "blockKind": "custom",
+            "position": {
+              "x": 520,
+              "y": 160
+            },
+            "label": "Output",
+            "nodeKind": "function-output",
+            "system": true
+          },
+          {
+            "id": "node-get-reporter-mqm9yfmy-29",
+            "blockKind": "custom",
+            "position": {
+              "x": 3048,
+              "y": 464
+            },
+            "label": "GetReporter",
+            "nodeKind": "get-reporter"
+          },
+          {
+            "id": "node-make-report-from-analysis-mqma356z-34",
+            "blockKind": "custom",
+            "position": {
+              "x": 7064,
+              "y": -360
+            },
+            "label": "MakeReportFromAnalysis",
+            "nodeKind": "make-report-from-analysis"
+          },
+          {
+            "id": "node-publish-report-mqma49xv-35",
+            "blockKind": "custom",
+            "position": {
+              "x": 7528,
+              "y": -360
+            },
+            "label": "PublishReport",
+            "nodeKind": "publish-report"
+          },
+          {
+            "id": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "blockKind": "custom",
+            "position": {
+              "x": 6600,
+              "y": -360
+            },
+            "label": "MakeFftTrendsAnalysis",
+            "nodeKind": "make-fft-trends-analysis"
+          },
+          {
+            "id": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "blockKind": "custom",
+            "position": {
+              "x": 6136,
+              "y": -360
+            },
+            "label": "FlushSpectralAnalyser",
+            "nodeKind": "flush-spectral-analyser"
+          }
+        ],
+        "edges": [
+          {
+            "source": "node-make-report-from-analysis-mqma356z-34",
+            "sourceHandle": "exec-out",
+            "target": "node-publish-report-mqma49xv-35",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-make-report-from-analysis-mqma356z-34",
+            "sourceHandle": "report",
+            "target": "node-publish-report-mqma49xv-35",
+            "targetHandle": "report",
+            "kind": "data",
+            "dataType": "ReportRef"
+          },
+          {
+            "source": "node-get-reporter-mqm9yfmy-29",
+            "sourceHandle": "reporter",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "reporter",
+            "kind": "data",
+            "dataType": "ReporterRef"
+          },
+          {
+            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "sourceHandle": "exec-out",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "sourceHandle": "frames",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "frames",
+            "kind": "data",
+            "dataType": "FftFrameRefList"
+          },
+          {
+            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "sourceHandle": "exec-out",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "sourceHandle": "analysis",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "analysis",
+            "kind": "data",
+            "dataType": "FftTrendAnalysisRef"
+          },
+          {
+            "source": "fn-beta-trends-publish-input",
+            "sourceHandle": "exec-in",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "sourceHandle": "exec-out",
+            "target": "fn-beta-trends-publish-output",
+            "targetHandle": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-beta-trends-publish-input",
+            "sourceHandle": "analyser",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "analyser",
+            "kind": "data",
+            "dataType": "SpectralAnalyserRef"
+          },
+          {
+            "source": "fn-beta-trends-publish-input",
+            "sourceHandle": "analyser",
+            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "targetHandle": "analyser",
+            "kind": "data",
+            "dataType": "SpectralAnalyserRef"
+          },
+          {
+            "source": "fn-beta-trends-publish-input",
+            "sourceHandle": "exec-in",
+            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-beta-trends-publish-input",
+            "sourceHandle": "policy",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "FftTrendsPolicy"
+          },
+          {
+            "source": "node-publish-report-mqma49xv-35",
+            "sourceHandle": "exec-out",
+            "target": "fn-beta-trends-publish-output",
+            "targetHandle": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-beta-trends-publish-input",
+            "sourceHandle": "journal",
+            "target": "node-get-reporter-mqm9yfmy-29",
+            "targetHandle": "journal",
+            "kind": "data",
+            "dataType": "JournalRef"
+          },
+          {
+            "source": "fn-beta-trends-publish-input",
+            "sourceHandle": "journal",
+            "target": "node-publish-report-mqma49xv-35",
+            "targetHandle": "journal",
+            "kind": "data",
+            "dataType": "JournalRef"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "analyser",
+            "name": "analyser",
+            "kind": "data",
+            "socketType": "SpectralAnalyserRef"
+          },
+          {
+            "id": "analyser-1",
+            "name": "analyser",
+            "kind": "data",
+            "socketType": "SpectralAnalyserRef"
+          },
+          {
+            "id": "exec-in",
+            "name": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "id": "policy",
+            "name": "policy",
+            "kind": "data",
+            "socketType": "FftTrendsPolicy"
+          },
+          {
+            "id": "journal",
+            "name": "journal",
+            "kind": "data",
+            "socketType": "JournalRef"
+          },
+          {
+            "id": "journal-1",
+            "name": "journal",
+            "kind": "data",
+            "socketType": "JournalRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "name": "exec-out",
+            "kind": "exec"
+          }
+        ],
+        "description": "Flush FFT → classify → MakeReportFromAnalysis → PublishReport"
+      },
       {
         "id": "fn-beta-recording-gate",
         "name": "Recording gate",
@@ -1396,6 +1429,116 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           }
         ],
         "description": "5 s window gate + MakeTrack"
+      },
+      {
+        "id": "fn-beta-policy-build",
+        "name": "Build policies",
+        "entry": "fn-beta-policy-build-input",
+        "nodes": [
+          {
+            "id": "fn-beta-policy-build-input",
+            "blockKind": "custom",
+            "position": {
+              "x": 40,
+              "y": 160
+            },
+            "label": "Input",
+            "nodeKind": "function-input",
+            "system": true
+          },
+          {
+            "id": "fn-beta-policy-build-output",
+            "blockKind": "custom",
+            "position": {
+              "x": 520,
+              "y": 160
+            },
+            "label": "Output",
+            "nodeKind": "function-output",
+            "system": true
+          },
+          {
+            "id": "node-make-recording-policy-v08-1",
+            "blockKind": "custom",
+            "position": {
+              "x": 3464,
+              "y": 384
+            },
+            "label": "MakeRecordingPolicy",
+            "nodeKind": "make-recording-policy",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            },
+            "pure": true
+          },
+          {
+            "id": "node-make-fft-trends-policy-v08-1",
+            "blockKind": "custom",
+            "position": {
+              "x": 3664,
+              "y": 544
+            },
+            "label": "MakeFftTrendsPolicy",
+            "nodeKind": "make-fft-trends-policy",
+            "fftTrendsPolicy": {
+              "detectionMode": "auto",
+              "measurementsCount": 20,
+              "intervalMs": 500,
+              "minConfidence": 0.55,
+              "minRms": 0.02,
+              "enabledTemplateKeys": [
+                "DRONE_TIGHT",
+                "WIND",
+                "QUIET",
+                "TRAFFIC",
+                "BIRDS",
+                "VOICE"
+              ]
+            },
+            "pure": true
+          }
+        ],
+        "edges": [
+          {
+            "source": "node-make-recording-policy-v08-1",
+            "sourceHandle": "policy",
+            "target": "fn-beta-policy-build-output",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "RecordingPolicy"
+          },
+          {
+            "source": "node-make-recording-policy-v08-1",
+            "sourceHandle": "policy",
+            "target": "fn-beta-policy-build-output",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "RecordingPolicy"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "name": "exec-in",
+            "kind": "exec"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "policy",
+            "name": "policy",
+            "kind": "data",
+            "socketType": "RecordingPolicy"
+          },
+          {
+            "id": "policy-1",
+            "name": "policy",
+            "kind": "data",
+            "socketType": "RecordingPolicy"
+          }
+        ],
+        "description": "MakeRecordingPolicy + MakeFftTrendsPolicy constructors"
       }
     ],
     "scheduled": [],
@@ -1411,14 +1554,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
         "rect": {
           "x": -728,
           "y": -416,
-          "width": 4760,
-          "height": 1128
+          "width": 1200,
+          "height": 576
         },
         "nodeIds": [
           "node-get-audio-stream-mql3ckno-7",
           "node-device-global-mqm0q2fd-14",
-          "node-make-recording-policy-v08-1",
-          "node-make-fft-trends-policy-v08-1",
           "node-get-microphone-mvp-main-1"
         ]
       },
@@ -1451,7 +1592,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
         "rect": {
           "x": 1128,
           "y": -344,
-          "width": 4448,
+          "width": 3056,
           "height": 152
         },
         "nodeIds": [
@@ -1459,29 +1600,25 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           "node-get-fft-frame-mql3g2ys-11",
           "node-get-spectral-analyser-mqm9vz6a-27",
           "node-collect-fft-frames-mqm9wezu-28",
-          "node-make-report-from-analysis-mqma356z-34",
-          "node-publish-report-mqma49xv-35",
-          "node-make-fft-trends-analysis-mqmo96xz-33",
-          "node-flush-spectral-analyser-mqmoa8o7-34"
+          "fn-beta-trends-publish-block"
         ]
       },
       {
         "id": "ucg-beta-fn-policy",
         "branch": "main",
-        "title": "Journal refs",
-        "description": "GetJournal / GetReporter wiring",
+        "title": "Function: policy build",
+        "description": "MakeRecordingPolicy + MakeFftTrendsPolicy",
         "frameColor": {
           "preset": "neutral"
         },
         "rect": {
-          "x": 2408,
-          "y": 96,
-          "width": 1008,
-          "height": 536
+          "x": 3560,
+          "y": 400,
+          "width": 272,
+          "height": 152
         },
         "nodeIds": [
-          "node-get-reporter-mqm9yfmy-29",
-          "node-get-journal-mvp-main-1"
+          "fn-beta-policy-build-block"
         ]
       }
     ],

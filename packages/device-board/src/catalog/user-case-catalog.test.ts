@@ -13,13 +13,13 @@ describe('UserCaseCatalogService', () => {
     resetDefaultUserCaseCatalogService();
   });
 
-  it('lists bundled MVP microphone entry', () => {
+  it('lists bundled MVP and competition community entries', () => {
     const catalog = new UserCaseCatalogService();
-    expect(catalog.size).toBe(1);
+    expect(catalog.size).toBe(4);
     const summaries = catalog.listSummaries();
     expect(summaries[0]?.id).toBe('usercase-mvp-microphone');
     expect(summaries[0]?.tier).toBe('bundled');
-    expect(summaries[0]?.branchCount).toBe(6);
+    expect(summaries.some((entry) => entry.id === 'usercase-mvp-microphone-beta')).toBe(true);
   });
 
   it('loadDocument returns valid device-scenario v2', () => {
@@ -36,8 +36,15 @@ describe('UserCaseCatalogService', () => {
 
   it('listForDeviceKind filters by deviceKind', () => {
     const catalog = new UserCaseCatalogService();
-    expect(catalog.listForDeviceKind('microphone')).toHaveLength(1);
+    expect(catalog.listForDeviceKind('microphone')).toHaveLength(4);
     expect(catalog.listForDeviceKind('playback')).toHaveLength(0);
+  });
+
+  it('loadDocument loads competition alpha entry', () => {
+    const catalog = new UserCaseCatalogService();
+    const document = catalog.loadDocument('usercase-mvp-microphone-alpha');
+    expect(document).not.toBeNull();
+    expect(document?.scenario.functions.length).toBe(3);
   });
 
   it('getDefaultUserCaseCatalogService returns singleton', () => {

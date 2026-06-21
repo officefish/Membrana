@@ -14,9 +14,15 @@ export function writeEmbeddedDeviceScenarioDocument(
   repoRoot = repoRootFromScripts(),
 ) {
   const abs = join(repoRoot, embeddedRelativePath);
-  const exportName = abs.includes('mvp-microphone')
-    ? 'DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT'
-    : 'DEFAULT_USERCASE_DOCUMENT';
+  const exportName = abs.includes('mvp-microphone-alpha')
+    ? 'DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT'
+    : abs.includes('mvp-microphone-beta')
+      ? 'DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT'
+      : abs.includes('mvp-microphone-gamma')
+        ? 'DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT'
+        : abs.includes('mvp-microphone')
+          ? 'DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT'
+          : 'DEFAULT_USERCASE_DOCUMENT';
   const body = JSON.stringify(document, null, 2);
   writeFileSync(
     abs,

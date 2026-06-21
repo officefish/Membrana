@@ -1,8 +1,9 @@
-import type { ScenarioCommentGroup } from '@membrana/core';
+import type { ScenarioCommentGroup, ScenarioCommentGroupBranch } from '@membrana/core';
 
-/** Spec для semantic comment frame на main (U9 L1 + competition profiles). */
+/** Spec для semantic comment frame (U9 L1 + competition profiles). */
 export interface MainCommentGroupSpec {
   readonly id: string;
+  readonly branch?: ScenarioCommentGroupBranch;
   readonly title: string;
   readonly description?: string;
   readonly frameColor: ScenarioCommentGroup['frameColor'];
@@ -81,13 +82,8 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
       title: 'Акт II · Окно записи',
       description: 'Gate: bootstrap → window full → MakeTrack → upload',
       frameColor: { preset: 'warning' },
-      nodeKinds: [
-        'start-recording',
-        'stop-recording',
-        'is-recording-window-full',
-        'make-track',
-        'get-recorder',
-      ],
+      functionIds: ['fn-alpha-recording-gate'],
+      nodeKinds: ['start-recording', 'stop-recording', 'is-recording-window-full', 'make-track'],
     },
     {
       id: 'ucg-alpha-main-trends',
@@ -95,12 +91,6 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
       description: 'FFT, классификация, отчёт trends-fft/v0.1',
       frameColor: { preset: 'info' },
       functionIds: ['fn-alpha-observation-tick'],
-      nodeKinds: [
-        'get-spectral-analyser',
-        'collect-fft-frames',
-        'get-fft-frame',
-        'get-sample',
-      ],
     },
     {
       id: 'ucg-alpha-main-journal',
@@ -137,23 +127,15 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
       title: 'Function: trends publish',
       description: 'Spectral → FFT → classify → PublishReport',
       frameColor: { preset: 'info' },
-      nodeKinds: [
-        'get-sample',
-        'get-fft-frame',
-        'get-spectral-analyser',
-        'collect-fft-frames',
-        'flush-spectral-analyser',
-        'make-fft-trends-analysis',
-        'make-report-from-analysis',
-        'publish-report',
-      ],
+      functionIds: ['fn-beta-trends-publish'],
+      nodeKinds: ['get-sample', 'get-fft-frame', 'get-spectral-analyser', 'collect-fft-frames'],
     },
     {
       id: 'ucg-beta-fn-policy',
-      title: 'Journal refs',
-      description: 'GetJournal / GetReporter wiring',
+      title: 'Function: policy build',
+      description: 'MakeRecordingPolicy + MakeFftTrendsPolicy',
       frameColor: { preset: 'neutral' },
-      nodeKinds: ['get-journal', 'get-reporter'],
+      functionIds: ['fn-beta-policy-build'],
     },
   ],
   gamma: [
@@ -193,4 +175,60 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
       nodeKinds: ['get-journal'],
     },
   ],
+};
+
+/** Comment frames на initial / onConnect (competition Act I / Подготовка). */
+export interface AuxiliaryCommentGroupProfile {
+  readonly onConnect?: readonly MainCommentGroupSpec[];
+  readonly initial?: readonly MainCommentGroupSpec[];
+}
+
+export const USERCASE_AUXILIARY_COMMENT_GROUP_PROFILES: Readonly<
+  Partial<Record<UserCaseCommentGroupProfileId, AuxiliaryCommentGroupProfile>>
+> = {
+  alpha: {
+    onConnect: [
+      {
+        id: 'ucg-alpha-onconnect',
+        branch: 'onConnect',
+        title: 'Акт I · Подключение',
+        description: 'Server → journal1 ref (48 kHz stream готовится на initial)',
+        frameColor: { preset: 'primary' },
+        nodeKinds: ['get-journal', 'variable-set', 'is-valid'],
+        functionIds: ['fn-alpha-bootstrap'],
+      },
+    ],
+    initial: [
+      {
+        id: 'ucg-alpha-initial',
+        branch: 'initial',
+        title: 'Акт I · Старт',
+        description: 'GetMicrophone → StartStreaming → journal bootstrap',
+        frameColor: { preset: 'primary' },
+        nodeKinds: ['get-microphone', 'start-streaming', 'print', 'get-journal', 'variable-set'],
+      },
+    ],
+  },
+  gamma: {
+    onConnect: [
+      {
+        id: 'ucg-gamma-onconnect',
+        branch: 'onConnect',
+        title: 'Подготовка · onConnect',
+        description: 'Привязка journal1 к устройству',
+        frameColor: { preset: 'neutral' },
+        nodeKinds: ['get-journal', 'variable-set', 'is-valid'],
+      },
+    ],
+    initial: [
+      {
+        id: 'ucg-gamma-initial',
+        branch: 'initial',
+        title: 'Подготовка · onStart',
+        description: 'Микрофон и поток перед main loop',
+        frameColor: { preset: 'neutral' },
+        nodeKinds: ['get-microphone', 'start-streaming', 'print'],
+      },
+    ],
+  },
 };

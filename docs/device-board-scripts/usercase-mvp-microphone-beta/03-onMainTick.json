@@ -23,7 +23,7 @@
         "id": "main-infinity",
         "blockKind": "custom",
         "position": {
-          "x": 5792,
+          "x": 4400,
           "y": -320
         },
         "label": "∞",
@@ -137,97 +137,6 @@
         }
       },
       {
-        "id": "node-get-reporter-mqm9yfmy-29",
-        "blockKind": "custom",
-        "position": {
-          "x": 3168,
-          "y": 504
-        },
-        "label": "GetReporter",
-        "nodeKind": "get-reporter"
-      },
-      {
-        "id": "node-make-report-from-analysis-mqma356z-34",
-        "blockKind": "custom",
-        "position": {
-          "x": 4864,
-          "y": -320
-        },
-        "label": "MakeReportFromAnalysis",
-        "nodeKind": "make-report-from-analysis"
-      },
-      {
-        "id": "node-publish-report-mqma49xv-35",
-        "blockKind": "custom",
-        "position": {
-          "x": 5328,
-          "y": -320
-        },
-        "label": "PublishReport",
-        "nodeKind": "publish-report"
-      },
-      {
-        "id": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "blockKind": "custom",
-        "position": {
-          "x": 4400,
-          "y": -320
-        },
-        "label": "MakeFftTrendsAnalysis",
-        "nodeKind": "make-fft-trends-analysis"
-      },
-      {
-        "id": "node-flush-spectral-analyser-mqmoa8o7-34",
-        "blockKind": "custom",
-        "position": {
-          "x": 3936,
-          "y": -320
-        },
-        "label": "FlushSpectralAnalyser",
-        "nodeKind": "flush-spectral-analyser"
-      },
-      {
-        "id": "node-make-recording-policy-v08-1",
-        "blockKind": "custom",
-        "position": {
-          "x": 3584,
-          "y": 424
-        },
-        "label": "MakeRecordingPolicy",
-        "nodeKind": "make-recording-policy",
-        "recordingPolicy": {
-          "windowSec": 5,
-          "captureFormat": "wav"
-        },
-        "pure": true
-      },
-      {
-        "id": "node-make-fft-trends-policy-v08-1",
-        "blockKind": "custom",
-        "position": {
-          "x": 3784,
-          "y": 584
-        },
-        "label": "MakeFftTrendsPolicy",
-        "nodeKind": "make-fft-trends-policy",
-        "fftTrendsPolicy": {
-          "detectionMode": "auto",
-          "measurementsCount": 20,
-          "intervalMs": 500,
-          "minConfidence": 0.55,
-          "minRms": 0.02,
-          "enabledTemplateKeys": [
-            "DRONE_TIGHT",
-            "WIND",
-            "QUIET",
-            "TRAFFIC",
-            "BIRDS",
-            "VOICE"
-          ]
-        },
-        "pure": true
-      },
-      {
         "id": "node-get-microphone-mvp-main-1",
         "blockKind": "custom",
         "position": {
@@ -249,6 +158,15 @@
         "nodeKind": "get-journal"
       },
       {
+        "id": "fn-beta-trends-publish-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 3936,
+          "y": -320
+        },
+        "label": "Trends publish::fn-beta-trends-publish::fn-beta-trends-publish"
+      },
+      {
         "id": "fn-beta-recording-gate-block",
         "blockKind": "subgraph",
         "position": {
@@ -256,6 +174,15 @@
           "y": -320
         },
         "label": "Recording gate::fn-beta-recording-gate::fn-beta-recording-gate"
+      },
+      {
+        "id": "fn-beta-policy-build-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 3584,
+          "y": 424
+        },
+        "label": "Build policies::fn-beta-policy-build::fn-beta-policy-build"
       }
     ],
     "edges": [
@@ -348,43 +275,12 @@
         "kind": "exec"
       },
       {
-        "source": "node-make-report-from-analysis-mqma356z-34",
-        "sourceHandle": "exec-out",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-make-report-from-analysis-mqma356z-34",
-        "sourceHandle": "report",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "report",
-        "kind": "data",
-        "dataType": "ReportRef"
-      },
-      {
-        "source": "node-get-reporter-mqm9yfmy-29",
-        "sourceHandle": "reporter",
-        "target": "node-make-report-from-analysis-mqma356z-34",
-        "targetHandle": "reporter",
-        "kind": "data",
-        "dataType": "ReporterRef"
-      },
-      {
         "source": "node-get-fft-frame-mql3g2ys-11",
         "sourceHandle": "frame",
         "target": "node-collect-fft-frames-mqm9wezu-28",
         "targetHandle": "frame",
         "kind": "data",
         "dataType": "FftFrameRef"
-      },
-      {
-        "source": "node-get-recorder-mqm9sdoi-25",
-        "sourceHandle": "recorder",
-        "target": "fn-beta-recording-gate-block",
-        "targetHandle": "recorder",
-        "kind": "data",
-        "dataType": "RecorderRef"
       },
       {
         "source": "node-get-recorder-mqm9sdoi-25",
@@ -401,88 +297,18 @@
         "kind": "exec"
       },
       {
-        "source": "node-get-spectral-analyser-mqm9vz6a-27",
-        "sourceHandle": "analyser",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "targetHandle": "analyser",
-        "kind": "data",
-        "dataType": "SpectralAnalyserRef"
-      },
-      {
-        "source": "node-get-spectral-analyser-mqm9vz6a-27",
-        "sourceHandle": "analyser",
-        "target": "node-flush-spectral-analyser-mqmoa8o7-34",
-        "targetHandle": "analyser",
-        "kind": "data",
-        "dataType": "SpectralAnalyserRef"
-      },
-      {
         "source": "fn-beta-recording-gate-block",
         "sourceHandle": "exec-out",
-        "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+        "target": "fn-beta-trends-publish-block",
         "targetHandle": "exec-in",
         "kind": "exec"
       },
       {
-        "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-        "sourceHandle": "exec-out",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-        "sourceHandle": "frames",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "targetHandle": "frames",
-        "kind": "data",
-        "dataType": "FftFrameRefList"
-      },
-      {
-        "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "sourceHandle": "exec-out",
-        "target": "node-make-report-from-analysis-mqma356z-34",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "sourceHandle": "analysis",
-        "target": "node-make-report-from-analysis-mqma356z-34",
-        "targetHandle": "analysis",
-        "kind": "data",
-        "dataType": "FftTrendAnalysisRef"
-      },
-      {
-        "source": "node-make-recording-policy-v08-1",
-        "sourceHandle": "policy",
-        "target": "fn-beta-recording-gate-block",
-        "targetHandle": "policy",
-        "kind": "data",
-        "dataType": "RecordingPolicy"
-      },
-      {
-        "source": "node-make-fft-trends-policy-v08-1",
-        "sourceHandle": "policy",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "targetHandle": "policy",
-        "kind": "data",
-        "dataType": "FftTrendsPolicy"
-      },
-      {
-        "source": "node-publish-report-mqma49xv-35",
+        "source": "fn-beta-trends-publish-block",
         "sourceHandle": "exec-out",
         "target": "main-infinity",
         "targetHandle": "exec-in",
         "kind": "exec"
-      },
-      {
-        "source": "node-make-recording-policy-v08-1",
-        "sourceHandle": "policy",
-        "target": "fn-beta-recording-gate-block",
-        "targetHandle": "policy",
-        "kind": "data",
-        "dataType": "RecordingPolicy"
       },
       {
         "source": "node-device-global-mqm0q2fd-14",
@@ -517,22 +343,6 @@
         "dataType": "DeviceRef"
       },
       {
-        "source": "node-get-journal-mvp-main-1",
-        "sourceHandle": "journal",
-        "target": "node-get-reporter-mqm9yfmy-29",
-        "targetHandle": "journal",
-        "kind": "data",
-        "dataType": "JournalRef"
-      },
-      {
-        "source": "node-get-journal-mvp-main-1",
-        "sourceHandle": "journal",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "journal",
-        "kind": "data",
-        "dataType": "JournalRef"
-      },
-      {
         "source": "node-device-global-mqm0q2fd-14",
         "sourceHandle": "device",
         "target": "node-get-recorder-mqm9sdoi-25",
@@ -544,14 +354,6 @@
         "source": "node-device-global-mqm0q2fd-14",
         "sourceHandle": "device",
         "target": "node-get-spectral-analyser-mqm9vz6a-27",
-        "targetHandle": "device",
-        "kind": "data",
-        "dataType": "DeviceRef"
-      },
-      {
-        "source": "node-device-global-mqm0q2fd-14",
-        "sourceHandle": "device",
-        "target": "fn-beta-recording-gate-block",
         "targetHandle": "device",
         "kind": "data",
         "dataType": "DeviceRef"
@@ -570,22 +372,6 @@
         "targetHandle": "stream",
         "kind": "data",
         "dataType": "AudioStreamRef"
-      },
-      {
-        "source": "node-get-audio-stream-mql3ckno-7",
-        "sourceHandle": "stream",
-        "target": "fn-beta-recording-gate-block",
-        "targetHandle": "stream",
-        "kind": "data",
-        "dataType": "AudioStreamRef"
-      },
-      {
-        "source": "node-get-audio-stream-mql3ckno-7",
-        "sourceHandle": "stream",
-        "target": "fn-beta-recording-gate-block",
-        "targetHandle": "stream",
-        "kind": "data",
-        "dataType": "AudioStreamRef"
       }
     ]
   },
@@ -601,7 +387,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:09:32.701Z",
+  "exportedAt": "2026-06-21T13:23:23.167Z",
   "userCaseId": "usercase-mvp-microphone-beta",
   "userCaseBranch": "main"
 }

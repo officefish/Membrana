@@ -20,6 +20,7 @@ import { validateFunctionDepth } from './validate-function-depth.js';
 import {
   MVP_MAIN_COMMENT_GROUP_SPECS,
   USERCASE_COMMENT_GROUP_PROFILES,
+  USERCASE_AUXILIARY_COMMENT_GROUP_PROFILES,
   type MainCommentGroupSpec,
   type UserCaseCommentGroupProfileId,
 } from './usercase-comment-group-profiles.js';
@@ -27,6 +28,7 @@ import {
 export {
   MVP_MAIN_COMMENT_GROUP_SPECS,
   USERCASE_COMMENT_GROUP_PROFILES,
+  USERCASE_AUXILIARY_COMMENT_GROUP_PROFILES,
   type MainCommentGroupSpec,
   type UserCaseCommentGroupProfileId,
 } from './usercase-comment-group-profiles.js';
@@ -270,16 +272,17 @@ function computeGroupRect(nodes: readonly ScenarioGraphNode[]): ScenarioCommentG
   return { x, y, width, height };
 }
 
-/** Строит comment groups для main branch по semantic specs. */
+/** Строит comment groups для ветки по semantic specs. */
 export function buildMainCommentGroupsFromSpecs(
-  mainSubgraph: ScenarioSubgraph,
+  subgraph: ScenarioSubgraph,
   specs: readonly MainCommentGroupSpec[],
+  branch: ScenarioCommentGroup['branch'] = 'main',
 ): readonly ScenarioCommentGroup[] {
   const groups: ScenarioCommentGroup[] = [];
   for (const spec of specs) {
     const matched: ScenarioGraphNode[] = [];
     const nodeKinds = spec.nodeKinds ?? [];
-    for (const node of mainSubgraph.nodes) {
+    for (const node of subgraph.nodes) {
       if (node.nodeKind !== undefined && nodeKinds.includes(node.nodeKind)) {
         matched.push(node);
       }
@@ -300,7 +303,7 @@ export function buildMainCommentGroupsFromSpecs(
     }
     groups.push({
       id: spec.id,
-      branch: 'main',
+      branch: spec.branch ?? branch,
       title: spec.title,
       ...(spec.description !== undefined ? { description: spec.description } : {}),
       frameColor: spec.frameColor,
@@ -432,10 +435,20 @@ export function applyUserCaseLayoutCanon(document: DeviceScenarioDocument): Devi
   );
 
   const commentGroupProfile = resolveCommentGroupProfile(document);
-  const commentGroups = buildMainCommentGroupsFromSpecs(
-    main,
-    USERCASE_COMMENT_GROUP_PROFILES[commentGroupProfile],
-  );
+  const auxiliary = USERCASE_AUXILIARY_COMMENT_GROUP_PROFILES[commentGroupProfile];
+  const commentGroups = [
+    ...buildMainCommentGroupsFromSpecs(
+      main,
+      USERCASE_COMMENT_GROUP_PROFILES[commentGroupProfile],
+      'main',
+    ),
+    ...(auxiliary?.onConnect !== undefined
+      ? buildMainCommentGroupsFromSpecs(onConnect, auxiliary.onConnect, 'onConnect')
+      : []),
+    ...(auxiliary?.initial !== undefined
+      ? buildMainCommentGroupsFromSpecs(initial, auxiliary.initial, 'initial')
+      : []),
+  ];
 
   return {
     ...document,

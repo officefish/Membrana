@@ -20,49 +20,27 @@
         "eventVariant": "handler"
       },
       {
-        "id": "node-is-valid-mqm97w5v-17",
-        "blockKind": "custom",
+        "id": "fn-alpha-bootstrap-block",
+        "blockKind": "subgraph",
         "position": {
           "x": 320,
           "y": -96
         },
-        "label": "isValid",
-        "nodeKind": "is-valid"
-      },
-      {
-        "id": "node-get-journal-mqm98hvn-18",
-        "blockKind": "custom",
-        "position": {
-          "x": 456,
-          "y": 16
-        },
-        "label": "GetJournal",
-        "nodeKind": "get-journal"
-      },
-      {
-        "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
-        "blockKind": "custom",
-        "position": {
-          "x": 784,
-          "y": -96
-        },
-        "label": "journal1",
-        "nodeKind": "variable-set",
-        "variableId": "var-JournalRef-mqm9dl4a-6"
+        "label": "Bootstrap journal::fn-alpha-bootstrap::fn-alpha-bootstrap"
       }
     ],
     "edges": [
       {
         "source": "on-connect-event",
         "sourceHandle": "exec-out",
-        "target": "node-is-valid-mqm97w5v-17",
+        "target": "fn-alpha-bootstrap-block",
         "targetHandle": "exec-in",
         "kind": "exec"
       },
       {
         "source": "on-connect-event",
         "sourceHandle": "server",
-        "target": "node-is-valid-mqm97w5v-17",
+        "target": "fn-alpha-bootstrap-block",
         "targetHandle": "value",
         "kind": "data",
         "dataType": "ServerRef"
@@ -70,25 +48,10 @@
       {
         "source": "on-connect-event",
         "sourceHandle": "server",
-        "target": "node-get-journal-mqm98hvn-18",
+        "target": "fn-alpha-bootstrap-block",
         "targetHandle": "server",
         "kind": "data",
         "dataType": "ServerRef"
-      },
-      {
-        "source": "node-is-valid-mqm97w5v-17",
-        "sourceHandle": "exec-true-out",
-        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-get-journal-mqm98hvn-18",
-        "sourceHandle": "journal",
-        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
-        "targetHandle": "value",
-        "kind": "data",
-        "dataType": "JournalRef"
       }
     ]
   },
@@ -103,7 +66,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:09:53.955Z",
+  "exportedAt": "2026-06-21T13:23:16.079Z",
   "userCaseId": "usercase-mvp-microphone-alpha",
   "userCaseBranch": "onConnect",
   "referenceVariableSlots": []

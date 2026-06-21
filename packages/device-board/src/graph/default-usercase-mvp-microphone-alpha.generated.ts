@@ -3,13 +3,13 @@
  */
 import type { DeviceScenarioDocument } from '@membrana/core';
 
-export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
+export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
   "version": 2,
   "kind": "device-scenario",
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Alpha (Live Observation Pipeline)",
-    "exportedAt": "2026-06-21T13:09:49.105Z",
+    "exportedAt": "2026-06-21T13:23:12.958Z",
     "commentGroupProfile": "alpha"
   },
   "signalGraph": {
@@ -232,49 +232,27 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           "eventVariant": "handler"
         },
         {
-          "id": "node-is-valid-mqm97w5v-17",
-          "blockKind": "custom",
+          "id": "fn-alpha-bootstrap-block",
+          "blockKind": "subgraph",
           "position": {
             "x": 320,
             "y": -96
           },
-          "label": "isValid",
-          "nodeKind": "is-valid"
-        },
-        {
-          "id": "node-get-journal-mqm98hvn-18",
-          "blockKind": "custom",
-          "position": {
-            "x": 456,
-            "y": 16
-          },
-          "label": "GetJournal",
-          "nodeKind": "get-journal"
-        },
-        {
-          "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
-          "blockKind": "custom",
-          "position": {
-            "x": 784,
-            "y": -96
-          },
-          "label": "journal1",
-          "nodeKind": "variable-set",
-          "variableId": "var-JournalRef-mqm9dl4a-6"
+          "label": "Bootstrap journal::fn-alpha-bootstrap::fn-alpha-bootstrap"
         }
       ],
       "edges": [
         {
           "source": "on-connect-event",
           "sourceHandle": "exec-out",
-          "target": "node-is-valid-mqm97w5v-17",
+          "target": "fn-alpha-bootstrap-block",
           "targetHandle": "exec-in",
           "kind": "exec"
         },
         {
           "source": "on-connect-event",
           "sourceHandle": "server",
-          "target": "node-is-valid-mqm97w5v-17",
+          "target": "fn-alpha-bootstrap-block",
           "targetHandle": "value",
           "kind": "data",
           "dataType": "ServerRef"
@@ -282,25 +260,10 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
         {
           "source": "on-connect-event",
           "sourceHandle": "server",
-          "target": "node-get-journal-mqm98hvn-18",
+          "target": "fn-alpha-bootstrap-block",
           "targetHandle": "server",
           "kind": "data",
           "dataType": "ServerRef"
-        },
-        {
-          "source": "node-is-valid-mqm97w5v-17",
-          "sourceHandle": "exec-true-out",
-          "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
-          "targetHandle": "exec-in",
-          "kind": "exec"
-        },
-        {
-          "source": "node-get-journal-mqm98hvn-18",
-          "sourceHandle": "journal",
-          "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
-          "targetHandle": "value",
-          "kind": "data",
-          "dataType": "JournalRef"
         }
       ]
     },
@@ -313,7 +276,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -704,
-              "y": -224
+              "y": -256
             },
             "label": "onTick",
             "nodeKind": "event",
@@ -324,8 +287,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "id": "main-infinity",
             "blockKind": "custom",
             "position": {
-              "x": 6720,
-              "y": -280
+              "x": 4400,
+              "y": -320
             },
             "label": "∞",
             "nodeKind": "loop-repeat",
@@ -336,7 +299,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -240,
-              "y": -224
+              "y": -256
             },
             "label": "isValid",
             "nodeKind": "is-valid"
@@ -346,7 +309,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 224,
-              "y": -272
+              "y": -264
             },
             "label": "GetAudioStream",
             "nodeKind": "get-audio-stream"
@@ -356,7 +319,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 1152,
-              "y": -280
+              "y": -320
             },
             "label": "GetSample",
             "nodeKind": "get-sample"
@@ -366,7 +329,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 2080,
-              "y": -280
+              "y": -320
             },
             "label": "GetFFTFrame",
             "nodeKind": "get-fft-frame"
@@ -386,7 +349,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 1152,
-              "y": -160
+              "y": -192
             },
             "label": "StopRuntime",
             "nodeKind": "stop-runtime"
@@ -396,7 +359,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 688,
-              "y": -272
+              "y": -312
             },
             "label": "isValid",
             "nodeKind": "is-valid"
@@ -406,7 +369,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 1616,
-              "y": -280
+              "y": -320
             },
             "label": "GetRecorder",
             "nodeKind": "get-recorder"
@@ -416,7 +379,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 2544,
-              "y": -280
+              "y": -320
             },
             "label": "GetSpectralAnalyser",
             "nodeKind": "get-spectral-analyser"
@@ -426,7 +389,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 3008,
-              "y": -280
+              "y": -320
             },
             "label": "CollectFftFrames",
             "nodeKind": "collect-fft-frames",
@@ -435,78 +398,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
               "smoothingTimeConstant": 0.75,
               "windowSec": 15,
               "queueCapacity": 999
-            }
-          },
-          {
-            "id": "node-make-track-mqmcipn5-28",
-            "blockKind": "custom",
-            "position": {
-              "x": 5328,
-              "y": -320
-            },
-            "label": "MakeTrack",
-            "nodeKind": "make-track"
-          },
-          {
-            "id": "node-get-recorder-mqmo3mba-31",
-            "blockKind": "custom",
-            "position": {
-              "x": 3472,
-              "y": -280
-            },
-            "label": "GetRecorder",
-            "nodeKind": "get-recorder"
-          },
-          {
-            "id": "node-is-recording-window-full-mqmo40ie-32",
-            "blockKind": "custom",
-            "position": {
-              "x": 4400,
-              "y": -280
-            },
-            "label": "IsRecordingWindowFull",
-            "nodeKind": "is-recording-window-full",
-            "recordingPolicy": {
-              "windowSec": 5,
-              "captureFormat": "wav"
-            }
-          },
-          {
-            "id": "node-stop-recording-mqmod4yf-35",
-            "blockKind": "custom",
-            "position": {
-              "x": 4864,
-              "y": -320
-            },
-            "label": "StopRecording",
-            "nodeKind": "stop-recording"
-          },
-          {
-            "id": "node-start-recording-mqv07-36",
-            "blockKind": "custom",
-            "position": {
-              "x": 5792,
-              "y": -320
-            },
-            "label": "StartRecording (restart)",
-            "nodeKind": "start-recording",
-            "recordingPolicy": {
-              "windowSec": 5,
-              "captureFormat": "wav"
-            }
-          },
-          {
-            "id": "node-start-recording-bootstrap-v08-2",
-            "blockKind": "custom",
-            "position": {
-              "x": 3936,
-              "y": -280
-            },
-            "label": "StartRecording (bootstrap)",
-            "nodeKind": "start-recording",
-            "recordingPolicy": {
-              "windowSec": 5,
-              "captureFormat": "wav"
             }
           },
           {
@@ -575,10 +466,19 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "id": "fn-alpha-observation-tick-block",
             "blockKind": "subgraph",
             "position": {
-              "x": 6256,
+              "x": 3936,
               "y": -320
             },
             "label": "Observation tick::fn-alpha-observation-tick::fn-alpha-observation-tick"
+          },
+          {
+            "id": "fn-alpha-recording-gate-block",
+            "blockKind": "subgraph",
+            "position": {
+              "x": 3472,
+              "y": -320
+            },
+            "label": "Recording gate::fn-alpha-recording-gate::fn-alpha-recording-gate"
           }
         ],
         "edges": [
@@ -681,7 +581,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           {
             "source": "node-get-recorder-mqm9sdoi-25",
             "sourceHandle": "recorder",
-            "target": "node-make-track-mqmcipn5-28",
+            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "recorder",
             "kind": "data",
             "dataType": "RecorderRef"
@@ -696,123 +596,24 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           {
             "source": "node-collect-fft-frames-mqm9wezu-28",
             "sourceHandle": "exec-out",
-            "target": "node-get-recorder-mqmo3mba-31",
+            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "exec-in",
             "kind": "exec"
           },
           {
-            "source": "node-get-recorder-mqmo3mba-31",
-            "sourceHandle": "recorder",
-            "target": "node-is-recording-window-full-mqmo40ie-32",
-            "targetHandle": "recorder",
-            "kind": "data",
-            "dataType": "RecorderRef"
-          },
-          {
-            "source": "node-is-recording-window-full-mqmo40ie-32",
-            "sourceHandle": "exec-false-out",
-            "target": "main-infinity",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-get-spectral-analyser-mqm9vz6a-27",
-            "sourceHandle": "analyser",
-            "target": "fn-alpha-observation-tick-block",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
-            "source": "node-get-spectral-analyser-mqm9vz6a-27",
-            "sourceHandle": "analyser",
-            "target": "fn-alpha-observation-tick-block",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
-            "source": "node-start-recording-mqv07-36",
+            "source": "fn-alpha-recording-gate-block",
             "sourceHandle": "exec-out",
             "target": "fn-alpha-observation-tick-block",
             "targetHandle": "exec-in",
             "kind": "exec"
-          },
-          {
-            "source": "node-get-recorder-mqmo3mba-31",
-            "sourceHandle": "recorder",
-            "target": "node-start-recording-mqv07-36",
-            "targetHandle": "recorder",
-            "kind": "data",
-            "dataType": "RecorderRef"
-          },
-          {
-            "source": "node-get-recorder-mqmo3mba-31",
-            "sourceHandle": "exec-out",
-            "target": "node-start-recording-bootstrap-v08-2",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-start-recording-bootstrap-v08-2",
-            "sourceHandle": "exec-out",
-            "target": "node-is-recording-window-full-mqmo40ie-32",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-get-recorder-mqmo3mba-31",
-            "sourceHandle": "recorder",
-            "target": "node-start-recording-bootstrap-v08-2",
-            "targetHandle": "recorder",
-            "kind": "data",
-            "dataType": "RecorderRef"
           },
           {
             "source": "node-make-recording-policy-v08-1",
             "sourceHandle": "policy",
-            "target": "node-start-recording-bootstrap-v08-2",
+            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "policy",
             "kind": "data",
             "dataType": "RecordingPolicy"
-          },
-          {
-            "source": "node-make-fft-trends-policy-v08-1",
-            "sourceHandle": "policy",
-            "target": "fn-alpha-observation-tick-block",
-            "targetHandle": "policy",
-            "kind": "data",
-            "dataType": "FftTrendsPolicy"
-          },
-          {
-            "source": "node-get-recorder-mqmo3mba-31",
-            "sourceHandle": "recorder",
-            "target": "node-stop-recording-mqmod4yf-35",
-            "targetHandle": "recorder",
-            "kind": "data",
-            "dataType": "RecorderRef"
-          },
-          {
-            "source": "node-is-recording-window-full-mqmo40ie-32",
-            "sourceHandle": "exec-true-out",
-            "target": "node-stop-recording-mqmod4yf-35",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-stop-recording-mqmod4yf-35",
-            "sourceHandle": "exec-out",
-            "target": "node-make-track-mqmcipn5-28",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-stop-recording-mqmod4yf-35",
-            "sourceHandle": "slice",
-            "target": "node-make-track-mqmcipn5-28",
-            "targetHandle": "slice",
-            "kind": "data",
-            "dataType": "RecordingSliceRef"
           },
           {
             "source": "fn-alpha-observation-tick-block",
@@ -822,16 +623,9 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "kind": "exec"
           },
           {
-            "source": "node-make-track-mqmcipn5-28",
-            "sourceHandle": "exec-out",
-            "target": "node-start-recording-mqv07-36",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
             "source": "node-make-recording-policy-v08-1",
             "sourceHandle": "policy",
-            "target": "node-start-recording-mqv07-36",
+            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "policy",
             "kind": "data",
             "dataType": "RecordingPolicy"
@@ -869,22 +663,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "dataType": "DeviceRef"
           },
           {
-            "source": "node-get-journal-mvp-main-1",
-            "sourceHandle": "journal",
-            "target": "fn-alpha-observation-tick-block",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          },
-          {
-            "source": "node-get-journal-mvp-main-1",
-            "sourceHandle": "journal",
-            "target": "fn-alpha-observation-tick-block",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          },
-          {
             "source": "node-device-global-mqm0q2fd-14",
             "sourceHandle": "device",
             "target": "node-get-recorder-mqm9sdoi-25",
@@ -903,7 +681,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           {
             "source": "node-device-global-mqm0q2fd-14",
             "sourceHandle": "device",
-            "target": "node-get-recorder-mqmo3mba-31",
+            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "device",
             "kind": "data",
             "dataType": "DeviceRef"
@@ -926,7 +704,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           {
             "source": "node-get-audio-stream-mql3ckno-7",
             "sourceHandle": "stream",
-            "target": "node-start-recording-mqv07-36",
+            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "stream",
             "kind": "data",
             "dataType": "AudioStreamRef"
@@ -934,7 +712,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           {
             "source": "node-get-audio-stream-mql3ckno-7",
             "sourceHandle": "stream",
-            "target": "node-start-recording-bootstrap-v08-2",
+            "target": "fn-alpha-recording-gate-block",
             "targetHandle": "stream",
             "kind": "data",
             "dataType": "AudioStreamRef"
@@ -1383,7 +1161,458 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "kind": "exec"
           }
         ],
-        "description": "Trends classify + publish (Phase 2α partial)"
+        "description": "Trends classify + PublishReport (trends-fft/v0.1)"
+      },
+      {
+        "id": "fn-alpha-recording-gate",
+        "name": "Recording gate",
+        "entry": "fn-alpha-recording-gate-input",
+        "nodes": [
+          {
+            "id": "fn-alpha-recording-gate-input",
+            "blockKind": "custom",
+            "position": {
+              "x": 40,
+              "y": 160
+            },
+            "label": "Input",
+            "nodeKind": "function-input",
+            "system": true
+          },
+          {
+            "id": "fn-alpha-recording-gate-output",
+            "blockKind": "custom",
+            "position": {
+              "x": 520,
+              "y": 160
+            },
+            "label": "Output",
+            "nodeKind": "function-output",
+            "system": true
+          },
+          {
+            "id": "node-make-track-mqmcipn5-28",
+            "blockKind": "custom",
+            "position": {
+              "x": 5208,
+              "y": -360
+            },
+            "label": "MakeTrack",
+            "nodeKind": "make-track"
+          },
+          {
+            "id": "node-get-recorder-mqmo3mba-31",
+            "blockKind": "custom",
+            "position": {
+              "x": 3352,
+              "y": -320
+            },
+            "label": "GetRecorder",
+            "nodeKind": "get-recorder"
+          },
+          {
+            "id": "node-is-recording-window-full-mqmo40ie-32",
+            "blockKind": "custom",
+            "position": {
+              "x": 4280,
+              "y": -320
+            },
+            "label": "IsRecordingWindowFull",
+            "nodeKind": "is-recording-window-full",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          },
+          {
+            "id": "node-stop-recording-mqmod4yf-35",
+            "blockKind": "custom",
+            "position": {
+              "x": 4744,
+              "y": -360
+            },
+            "label": "StopRecording",
+            "nodeKind": "stop-recording"
+          },
+          {
+            "id": "node-start-recording-mqv07-36",
+            "blockKind": "custom",
+            "position": {
+              "x": 5672,
+              "y": -360
+            },
+            "label": "StartRecording (restart)",
+            "nodeKind": "start-recording",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          },
+          {
+            "id": "node-start-recording-bootstrap-v08-2",
+            "blockKind": "custom",
+            "position": {
+              "x": 3816,
+              "y": -320
+            },
+            "label": "StartRecording (bootstrap)",
+            "nodeKind": "start-recording",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "source": "node-get-recorder-mqmo3mba-31",
+            "sourceHandle": "recorder",
+            "target": "node-is-recording-window-full-mqmo40ie-32",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
+            "source": "node-get-recorder-mqmo3mba-31",
+            "sourceHandle": "recorder",
+            "target": "node-start-recording-mqv07-36",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
+            "source": "node-get-recorder-mqmo3mba-31",
+            "sourceHandle": "exec-out",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-start-recording-bootstrap-v08-2",
+            "sourceHandle": "exec-out",
+            "target": "node-is-recording-window-full-mqmo40ie-32",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-get-recorder-mqmo3mba-31",
+            "sourceHandle": "recorder",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
+            "source": "node-get-recorder-mqmo3mba-31",
+            "sourceHandle": "recorder",
+            "target": "node-stop-recording-mqmod4yf-35",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-true-out",
+            "target": "node-stop-recording-mqmod4yf-35",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-stop-recording-mqmod4yf-35",
+            "sourceHandle": "exec-out",
+            "target": "node-make-track-mqmcipn5-28",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-stop-recording-mqmod4yf-35",
+            "sourceHandle": "slice",
+            "target": "node-make-track-mqmcipn5-28",
+            "targetHandle": "slice",
+            "kind": "data",
+            "dataType": "RecordingSliceRef"
+          },
+          {
+            "source": "node-make-track-mqmcipn5-28",
+            "sourceHandle": "exec-out",
+            "target": "node-start-recording-mqv07-36",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "exec-in",
+            "target": "node-make-track-mqmcipn5-28",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-start-recording-bootstrap-v08-2",
+            "sourceHandle": "exec-out",
+            "target": "fn-alpha-recording-gate-output",
+            "targetHandle": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "recorder",
+            "target": "node-make-track-mqmcipn5-28",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "exec-in",
+            "target": "node-get-recorder-mqmo3mba-31",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-start-recording-mqv07-36",
+            "sourceHandle": "exec-out",
+            "target": "fn-alpha-recording-gate-output",
+            "targetHandle": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "policy",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "RecordingPolicy"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "policy",
+            "target": "node-start-recording-mqv07-36",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "RecordingPolicy"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "device",
+            "target": "node-get-recorder-mqmo3mba-31",
+            "targetHandle": "device",
+            "kind": "data",
+            "dataType": "DeviceRef"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "stream",
+            "target": "node-start-recording-mqv07-36",
+            "targetHandle": "stream",
+            "kind": "data",
+            "dataType": "AudioStreamRef"
+          },
+          {
+            "source": "fn-alpha-recording-gate-input",
+            "sourceHandle": "stream",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "targetHandle": "stream",
+            "kind": "data",
+            "dataType": "AudioStreamRef"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "recorder",
+            "name": "recorder",
+            "kind": "data",
+            "socketType": "RecorderRef"
+          },
+          {
+            "id": "exec-in",
+            "name": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "id": "policy",
+            "name": "policy",
+            "kind": "data",
+            "socketType": "RecordingPolicy"
+          },
+          {
+            "id": "policy-1",
+            "name": "policy",
+            "kind": "data",
+            "socketType": "RecordingPolicy"
+          },
+          {
+            "id": "device",
+            "name": "device",
+            "kind": "data",
+            "socketType": "DeviceRef"
+          },
+          {
+            "id": "stream",
+            "name": "stream",
+            "kind": "data",
+            "socketType": "AudioStreamRef"
+          },
+          {
+            "id": "stream-1",
+            "name": "stream",
+            "kind": "data",
+            "socketType": "AudioStreamRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "name": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "id": "exec-out-1",
+            "name": "exec-out-1",
+            "kind": "exec"
+          }
+        ],
+        "description": "5 s WAV window → MakeTrack → restart"
+      },
+      {
+        "id": "fn-alpha-bootstrap",
+        "name": "Bootstrap journal",
+        "entry": "fn-alpha-bootstrap-input",
+        "nodes": [
+          {
+            "id": "fn-alpha-bootstrap-input",
+            "blockKind": "custom",
+            "position": {
+              "x": 40,
+              "y": 160
+            },
+            "label": "Input",
+            "nodeKind": "function-input",
+            "system": true
+          },
+          {
+            "id": "fn-alpha-bootstrap-output",
+            "blockKind": "custom",
+            "position": {
+              "x": 520,
+              "y": 160
+            },
+            "label": "Output",
+            "nodeKind": "function-output",
+            "system": true
+          },
+          {
+            "id": "node-is-valid-mqm97w5v-17",
+            "blockKind": "custom",
+            "position": {
+              "x": 200,
+              "y": -136
+            },
+            "label": "isValid",
+            "nodeKind": "is-valid"
+          },
+          {
+            "id": "node-get-journal-mqm98hvn-18",
+            "blockKind": "custom",
+            "position": {
+              "x": 336,
+              "y": -24
+            },
+            "label": "GetJournal",
+            "nodeKind": "get-journal"
+          },
+          {
+            "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+            "blockKind": "custom",
+            "position": {
+              "x": 664,
+              "y": -136
+            },
+            "label": "journal1",
+            "nodeKind": "variable-set",
+            "variableId": "var-JournalRef-mqm9dl4a-6"
+          }
+        ],
+        "edges": [
+          {
+            "source": "node-is-valid-mqm97w5v-17",
+            "sourceHandle": "exec-true-out",
+            "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-get-journal-mqm98hvn-18",
+            "sourceHandle": "journal",
+            "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+            "targetHandle": "value",
+            "kind": "data",
+            "dataType": "JournalRef"
+          },
+          {
+            "source": "fn-alpha-bootstrap-input",
+            "sourceHandle": "exec-in",
+            "target": "node-is-valid-mqm97w5v-17",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+            "sourceHandle": "exec-out",
+            "target": "fn-alpha-bootstrap-output",
+            "targetHandle": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-alpha-bootstrap-input",
+            "sourceHandle": "exec-in",
+            "target": "node-is-valid-mqm97w5v-17",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-alpha-bootstrap-input",
+            "sourceHandle": "value",
+            "target": "node-is-valid-mqm97w5v-17",
+            "targetHandle": "value",
+            "kind": "data",
+            "dataType": "DeviceRef"
+          },
+          {
+            "source": "fn-alpha-bootstrap-input",
+            "sourceHandle": "server",
+            "target": "node-get-journal-mqm98hvn-18",
+            "targetHandle": "server",
+            "kind": "data",
+            "dataType": "ServerRef"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "name": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "id": "value",
+            "name": "value",
+            "kind": "data",
+            "socketType": "DeviceRef"
+          },
+          {
+            "id": "server",
+            "name": "server",
+            "kind": "data",
+            "socketType": "ServerRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "name": "exec-out",
+            "kind": "exec"
+          }
+        ],
+        "description": "onConnect: server → journal1 ref"
       }
     ],
     "scheduled": [],
@@ -1416,19 +1645,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           "preset": "warning"
         },
         "rect": {
-          "x": 1592,
+          "x": 3448,
           "y": -344,
-          "width": 4448,
-          "height": 192
+          "width": 272,
+          "height": 152
         },
         "nodeIds": [
-          "node-get-recorder-mqm9sdoi-25",
-          "node-make-track-mqmcipn5-28",
-          "node-get-recorder-mqmo3mba-31",
-          "node-is-recording-window-full-mqmo40ie-32",
-          "node-stop-recording-mqmod4yf-35",
-          "node-start-recording-mqv07-36",
-          "node-start-recording-bootstrap-v08-2"
+          "fn-alpha-recording-gate-block"
         ]
       },
       {
@@ -1440,16 +1663,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           "preset": "info"
         },
         "rect": {
-          "x": 1128,
+          "x": 3912,
           "y": -344,
-          "width": 5376,
-          "height": 192
+          "width": 272,
+          "height": 152
         },
         "nodeIds": [
-          "node-get-sample-mql3f1ro-9",
-          "node-get-fft-frame-mql3g2ys-11",
-          "node-get-spectral-analyser-mqm9vz6a-27",
-          "node-collect-fft-frames-mqm9wezu-28",
           "fn-alpha-observation-tick-block"
         ]
       },
@@ -1469,6 +1688,47 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
         },
         "nodeIds": [
           "node-get-journal-mvp-main-1"
+        ]
+      },
+      {
+        "id": "ucg-alpha-onconnect",
+        "branch": "onConnect",
+        "title": "Акт I · Подключение",
+        "description": "Server → journal1 ref (48 kHz stream готовится на initial)",
+        "frameColor": {
+          "preset": "primary"
+        },
+        "rect": {
+          "x": 296,
+          "y": -120,
+          "width": 272,
+          "height": 152
+        },
+        "nodeIds": [
+          "fn-alpha-bootstrap-block"
+        ]
+      },
+      {
+        "id": "ucg-alpha-initial",
+        "branch": "initial",
+        "title": "Акт I · Старт",
+        "description": "GetMicrophone → StartStreaming → journal bootstrap",
+        "frameColor": {
+          "preset": "primary"
+        },
+        "rect": {
+          "x": -1776,
+          "y": -624,
+          "width": 2456,
+          "height": 512
+        },
+        "nodeIds": [
+          "node-get-microphone-mqkpxb3c-5",
+          "node-print-mqksbm4o-3",
+          "node-start-streaming-mql556hh-49",
+          "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9it3v-10",
+          "node-get-journal-mqm9j4wy-20",
+          "node-get-journal-mvp-initial-valid-1"
         ]
       }
     ],

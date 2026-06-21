@@ -50,6 +50,18 @@ Main canvas после collapse: **~8–10 видимых нод** + 4 comment f
 | Audio causality явная | 2 functions = pin discipline при правках |
 | Совместимо с verify-layout | Build второго bundled id в catalog (Phase 2) |
 
+## Implementation (Phase 2β)
+
+| Metric | Value |
+|--------|-------|
+| UserCase id | `usercase-mvp-microphone-alpha` |
+| Functions | 3 (`fn-alpha-bootstrap`, `fn-alpha-recording-gate`, `fn-alpha-observation-tick`) |
+| Comment groups | 4 main + onConnect + initial (Act I) |
+| verify-layout | green |
+| Catalog | `community` tier in `UserCaseCatalogService` |
+
+Commit: *(Phase 2β pending push)*
+
 ## Phase 2α — DONE (2026-06-21)
 
 - `usercase-mvp-microphone-alpha` — `fn-alpha-observation-tick` (trends+publish collapsed)

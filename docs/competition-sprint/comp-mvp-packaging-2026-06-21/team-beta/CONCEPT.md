@@ -62,6 +62,18 @@ Main visible nodes: **Event tick → 3 function call nodes → ∞** (target **�
 | Reusable function templates | Больше work collapse/ref-mapping |
 | Strong Ozhegov boundary story | 3 functions → pin CRUD careful |
 
+## Implementation (Phase 2β)
+
+| Metric | Value |
+|--------|-------|
+| UserCase id | `usercase-mvp-microphone-beta` |
+| Functions | 3 (`fn-beta-policy-build`, `fn-beta-recording-gate`, `fn-beta-trends-publish`) |
+| Main subgraph blocks | 3 |
+| Main scenario nodes | ~15 (orchestrator + data refs) |
+| verify-layout | green |
+
+Commit: *(Phase 2β pending push)*
+
 ## Phase 2α — DONE (2026-06-21)
 
 - `usercase-mvp-microphone-beta` — `fn-beta-recording-gate` on main orchestrator

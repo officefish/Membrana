@@ -66,6 +66,18 @@ initial/onConnect: **1 group each**, muted neutral frame — «Подготов�
 | Strong DESIGN.md alignment | verify-layout overlap risk if rects too big |
 | Best screenshot for docs | F2–F4 debug inside collapse |
 
+## Implementation (Phase 2β)
+
+| Metric | Value |
+|--------|-------|
+| UserCase id | `usercase-mvp-microphone-gamma` |
+| Functions | 2 (`fn-gamma-recording-gate`, `fn-gamma-trends-publish`) |
+| Comment groups | 5 poster + onConnect/initial «Подготовка» |
+| verify-layout | green |
+| Mega-bundle | deferred (D-PINS-9) |
+
+Commit: *(Phase 2β pending push)*
+
 ## Phase 2α — DONE (2026-06-21)
 
 - `usercase-mvp-microphone-gamma` — poster groups ①–⑤ + 2 functions (gate + trends publish; mega-bundle deferred — D-PINS-9)

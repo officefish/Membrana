@@ -3,13 +3,13 @@
  */
 import type { DeviceScenarioDocument } from '@membrana/core';
 
-export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
+export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT = {
   "version": 2,
   "kind": "device-scenario",
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Gamma (Poster UserCase)",
-    "exportedAt": "2026-06-21T13:09:58.050Z",
+    "exportedAt": "2026-06-21T13:23:27.509Z",
     "commentGroupProfile": "gamma"
   },
   "signalGraph": {
@@ -500,15 +500,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "nodeKind": "get-journal"
           },
           {
-            "id": "fn-gamma-recording-gate-block",
-            "blockKind": "subgraph",
-            "position": {
-              "x": 3472,
-              "y": -320
-            },
-            "label": "Захват · окно записи::fn-gamma-recording-gate::fn-gamma-recording-gate"
-          },
-          {
             "id": "fn-gamma-trends-publish-block",
             "blockKind": "subgraph",
             "position": {
@@ -516,6 +507,15 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
               "y": -320
             },
             "label": "Анализ · публикация::fn-gamma-trends-publish::fn-gamma-trends-publish"
+          },
+          {
+            "id": "fn-gamma-recording-gate-block",
+            "blockKind": "subgraph",
+            "position": {
+              "x": 3472,
+              "y": -320
+            },
+            "label": "Захват · окно записи::fn-gamma-recording-gate::fn-gamma-recording-gate"
           }
         ],
         "edges": [
@@ -617,6 +617,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           },
           {
             "source": "node-get-recorder-mqm9sdoi-25",
+            "sourceHandle": "recorder",
+            "target": "fn-gamma-recording-gate-block",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
+            "source": "node-get-recorder-mqm9sdoi-25",
             "sourceHandle": "exec-out",
             "target": "node-get-fft-frame-mql3g2ys-11",
             "targetHandle": "exec-in",
@@ -630,22 +638,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "kind": "exec"
           },
           {
-            "source": "node-get-spectral-analyser-mqm9vz6a-27",
-            "sourceHandle": "analyser",
-            "target": "fn-gamma-trends-publish-block",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
-            "source": "node-get-spectral-analyser-mqm9vz6a-27",
-            "sourceHandle": "analyser",
-            "target": "fn-gamma-trends-publish-block",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
             "source": "fn-gamma-recording-gate-block",
             "sourceHandle": "exec-out",
             "target": "fn-gamma-trends-publish-block",
@@ -653,12 +645,12 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "kind": "exec"
           },
           {
-            "source": "node-make-fft-trends-policy-v08-1",
+            "source": "node-make-recording-policy-v08-1",
             "sourceHandle": "policy",
-            "target": "fn-gamma-trends-publish-block",
+            "target": "fn-gamma-recording-gate-block",
             "targetHandle": "policy",
             "kind": "data",
-            "dataType": "FftTrendsPolicy"
+            "dataType": "RecordingPolicy"
           },
           {
             "source": "fn-gamma-trends-publish-block",
@@ -666,6 +658,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "target": "main-infinity",
             "targetHandle": "exec-in",
             "kind": "exec"
+          },
+          {
+            "source": "node-make-recording-policy-v08-1",
+            "sourceHandle": "policy",
+            "target": "fn-gamma-recording-gate-block",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "RecordingPolicy"
           },
           {
             "source": "node-device-global-mqm0q2fd-14",
@@ -700,22 +700,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "dataType": "DeviceRef"
           },
           {
-            "source": "node-get-journal-mvp-main-1",
-            "sourceHandle": "journal",
-            "target": "fn-gamma-trends-publish-block",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          },
-          {
-            "source": "node-get-journal-mvp-main-1",
-            "sourceHandle": "journal",
-            "target": "fn-gamma-trends-publish-block",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          },
-          {
             "source": "node-device-global-mqm0q2fd-14",
             "sourceHandle": "device",
             "target": "node-get-recorder-mqm9sdoi-25",
@@ -732,6 +716,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "dataType": "DeviceRef"
           },
           {
+            "source": "node-device-global-mqm0q2fd-14",
+            "sourceHandle": "device",
+            "target": "fn-gamma-recording-gate-block",
+            "targetHandle": "device",
+            "kind": "data",
+            "dataType": "DeviceRef"
+          },
+          {
             "source": "node-is-valid-mqm1nky7-30",
             "sourceHandle": "exec-true-out",
             "target": "node-get-sample-mql3f1ro-9",
@@ -742,6 +734,22 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "source": "node-get-audio-stream-mql3ckno-7",
             "sourceHandle": "stream",
             "target": "node-get-sample-mql3f1ro-9",
+            "targetHandle": "stream",
+            "kind": "data",
+            "dataType": "AudioStreamRef"
+          },
+          {
+            "source": "node-get-audio-stream-mql3ckno-7",
+            "sourceHandle": "stream",
+            "target": "fn-gamma-recording-gate-block",
+            "targetHandle": "stream",
+            "kind": "data",
+            "dataType": "AudioStreamRef"
+          },
+          {
+            "source": "node-get-audio-stream-mql3ckno-7",
+            "sourceHandle": "stream",
+            "target": "fn-gamma-recording-gate-block",
             "targetHandle": "stream",
             "kind": "data",
             "dataType": "AudioStreamRef"
@@ -945,6 +953,253 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
       "custom": []
     },
     "functions": [
+      {
+        "id": "fn-gamma-trends-publish",
+        "name": "Анализ · публикация",
+        "entry": "fn-gamma-trends-publish-input",
+        "nodes": [
+          {
+            "id": "fn-gamma-trends-publish-input",
+            "blockKind": "custom",
+            "position": {
+              "x": 40,
+              "y": 160
+            },
+            "label": "Input",
+            "nodeKind": "function-input",
+            "system": true
+          },
+          {
+            "id": "fn-gamma-trends-publish-output",
+            "blockKind": "custom",
+            "position": {
+              "x": 520,
+              "y": 160
+            },
+            "label": "Output",
+            "nodeKind": "function-output",
+            "system": true
+          },
+          {
+            "id": "node-get-reporter-mqm9yfmy-29",
+            "blockKind": "custom",
+            "position": {
+              "x": 3048,
+              "y": 464
+            },
+            "label": "GetReporter",
+            "nodeKind": "get-reporter"
+          },
+          {
+            "id": "node-make-report-from-analysis-mqma356z-34",
+            "blockKind": "custom",
+            "position": {
+              "x": 7064,
+              "y": -360
+            },
+            "label": "MakeReportFromAnalysis",
+            "nodeKind": "make-report-from-analysis"
+          },
+          {
+            "id": "node-publish-report-mqma49xv-35",
+            "blockKind": "custom",
+            "position": {
+              "x": 7528,
+              "y": -360
+            },
+            "label": "PublishReport",
+            "nodeKind": "publish-report"
+          },
+          {
+            "id": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "blockKind": "custom",
+            "position": {
+              "x": 6600,
+              "y": -360
+            },
+            "label": "MakeFftTrendsAnalysis",
+            "nodeKind": "make-fft-trends-analysis"
+          },
+          {
+            "id": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "blockKind": "custom",
+            "position": {
+              "x": 6136,
+              "y": -360
+            },
+            "label": "FlushSpectralAnalyser",
+            "nodeKind": "flush-spectral-analyser"
+          }
+        ],
+        "edges": [
+          {
+            "source": "node-make-report-from-analysis-mqma356z-34",
+            "sourceHandle": "exec-out",
+            "target": "node-publish-report-mqma49xv-35",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-make-report-from-analysis-mqma356z-34",
+            "sourceHandle": "report",
+            "target": "node-publish-report-mqma49xv-35",
+            "targetHandle": "report",
+            "kind": "data",
+            "dataType": "ReportRef"
+          },
+          {
+            "source": "node-get-reporter-mqm9yfmy-29",
+            "sourceHandle": "reporter",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "reporter",
+            "kind": "data",
+            "dataType": "ReporterRef"
+          },
+          {
+            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "sourceHandle": "exec-out",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "sourceHandle": "frames",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "frames",
+            "kind": "data",
+            "dataType": "FftFrameRefList"
+          },
+          {
+            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "sourceHandle": "exec-out",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "sourceHandle": "analysis",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "analysis",
+            "kind": "data",
+            "dataType": "FftTrendAnalysisRef"
+          },
+          {
+            "source": "fn-gamma-trends-publish-input",
+            "sourceHandle": "exec-in",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "sourceHandle": "exec-out",
+            "target": "fn-gamma-trends-publish-output",
+            "targetHandle": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-gamma-trends-publish-input",
+            "sourceHandle": "analyser",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "analyser",
+            "kind": "data",
+            "dataType": "SpectralAnalyserRef"
+          },
+          {
+            "source": "fn-gamma-trends-publish-input",
+            "sourceHandle": "analyser",
+            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "targetHandle": "analyser",
+            "kind": "data",
+            "dataType": "SpectralAnalyserRef"
+          },
+          {
+            "source": "fn-gamma-trends-publish-input",
+            "sourceHandle": "exec-in",
+            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-gamma-trends-publish-input",
+            "sourceHandle": "policy",
+            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+            "targetHandle": "policy",
+            "kind": "data",
+            "dataType": "FftTrendsPolicy"
+          },
+          {
+            "source": "node-publish-report-mqma49xv-35",
+            "sourceHandle": "exec-out",
+            "target": "fn-gamma-trends-publish-output",
+            "targetHandle": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-gamma-trends-publish-input",
+            "sourceHandle": "journal",
+            "target": "node-get-reporter-mqm9yfmy-29",
+            "targetHandle": "journal",
+            "kind": "data",
+            "dataType": "JournalRef"
+          },
+          {
+            "source": "fn-gamma-trends-publish-input",
+            "sourceHandle": "journal",
+            "target": "node-publish-report-mqma49xv-35",
+            "targetHandle": "journal",
+            "kind": "data",
+            "dataType": "JournalRef"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "analyser",
+            "name": "analyser",
+            "kind": "data",
+            "socketType": "SpectralAnalyserRef"
+          },
+          {
+            "id": "analyser-1",
+            "name": "analyser",
+            "kind": "data",
+            "socketType": "SpectralAnalyserRef"
+          },
+          {
+            "id": "exec-in",
+            "name": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "id": "policy",
+            "name": "policy",
+            "kind": "data",
+            "socketType": "FftTrendsPolicy"
+          },
+          {
+            "id": "journal",
+            "name": "journal",
+            "kind": "data",
+            "socketType": "JournalRef"
+          },
+          {
+            "id": "journal-1",
+            "name": "journal",
+            "kind": "data",
+            "socketType": "JournalRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "name": "exec-out",
+            "kind": "exec"
+          }
+        ],
+        "description": "FFT trends classify + PublishReport"
+      },
       {
         "id": "fn-gamma-recording-gate",
         "name": "Захват · окно записи",
@@ -1254,253 +1509,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           }
         ],
         "description": "5 s WAV gate + MakeTrack"
-      },
-      {
-        "id": "fn-gamma-trends-publish",
-        "name": "Анализ · публикация",
-        "entry": "fn-gamma-trends-publish-input",
-        "nodes": [
-          {
-            "id": "fn-gamma-trends-publish-input",
-            "blockKind": "custom",
-            "position": {
-              "x": 40,
-              "y": 160
-            },
-            "label": "Input",
-            "nodeKind": "function-input",
-            "system": true
-          },
-          {
-            "id": "fn-gamma-trends-publish-output",
-            "blockKind": "custom",
-            "position": {
-              "x": 520,
-              "y": 160
-            },
-            "label": "Output",
-            "nodeKind": "function-output",
-            "system": true
-          },
-          {
-            "id": "node-get-reporter-mqm9yfmy-29",
-            "blockKind": "custom",
-            "position": {
-              "x": 3048,
-              "y": 464
-            },
-            "label": "GetReporter",
-            "nodeKind": "get-reporter"
-          },
-          {
-            "id": "node-make-report-from-analysis-mqma356z-34",
-            "blockKind": "custom",
-            "position": {
-              "x": 7064,
-              "y": -360
-            },
-            "label": "MakeReportFromAnalysis",
-            "nodeKind": "make-report-from-analysis"
-          },
-          {
-            "id": "node-publish-report-mqma49xv-35",
-            "blockKind": "custom",
-            "position": {
-              "x": 7528,
-              "y": -360
-            },
-            "label": "PublishReport",
-            "nodeKind": "publish-report"
-          },
-          {
-            "id": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "blockKind": "custom",
-            "position": {
-              "x": 6600,
-              "y": -360
-            },
-            "label": "MakeFftTrendsAnalysis",
-            "nodeKind": "make-fft-trends-analysis"
-          },
-          {
-            "id": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "blockKind": "custom",
-            "position": {
-              "x": 6136,
-              "y": -360
-            },
-            "label": "FlushSpectralAnalyser",
-            "nodeKind": "flush-spectral-analyser"
-          }
-        ],
-        "edges": [
-          {
-            "source": "node-make-report-from-analysis-mqma356z-34",
-            "sourceHandle": "exec-out",
-            "target": "node-publish-report-mqma49xv-35",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-make-report-from-analysis-mqma356z-34",
-            "sourceHandle": "report",
-            "target": "node-publish-report-mqma49xv-35",
-            "targetHandle": "report",
-            "kind": "data",
-            "dataType": "ReportRef"
-          },
-          {
-            "source": "node-get-reporter-mqm9yfmy-29",
-            "sourceHandle": "reporter",
-            "target": "node-make-report-from-analysis-mqma356z-34",
-            "targetHandle": "reporter",
-            "kind": "data",
-            "dataType": "ReporterRef"
-          },
-          {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "sourceHandle": "exec-out",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "sourceHandle": "frames",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "frames",
-            "kind": "data",
-            "dataType": "FftFrameRefList"
-          },
-          {
-            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "sourceHandle": "exec-out",
-            "target": "node-make-report-from-analysis-mqma356z-34",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "sourceHandle": "analysis",
-            "target": "node-make-report-from-analysis-mqma356z-34",
-            "targetHandle": "analysis",
-            "kind": "data",
-            "dataType": "FftTrendAnalysisRef"
-          },
-          {
-            "source": "fn-gamma-trends-publish-input",
-            "sourceHandle": "exec-in",
-            "target": "node-make-report-from-analysis-mqma356z-34",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "sourceHandle": "exec-out",
-            "target": "fn-gamma-trends-publish-output",
-            "targetHandle": "exec-out",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-gamma-trends-publish-input",
-            "sourceHandle": "analyser",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
-            "source": "fn-gamma-trends-publish-input",
-            "sourceHandle": "analyser",
-            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "targetHandle": "analyser",
-            "kind": "data",
-            "dataType": "SpectralAnalyserRef"
-          },
-          {
-            "source": "fn-gamma-trends-publish-input",
-            "sourceHandle": "exec-in",
-            "target": "node-flush-spectral-analyser-mqmoa8o7-34",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-gamma-trends-publish-input",
-            "sourceHandle": "policy",
-            "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-            "targetHandle": "policy",
-            "kind": "data",
-            "dataType": "FftTrendsPolicy"
-          },
-          {
-            "source": "node-publish-report-mqma49xv-35",
-            "sourceHandle": "exec-out",
-            "target": "fn-gamma-trends-publish-output",
-            "targetHandle": "exec-out",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-gamma-trends-publish-input",
-            "sourceHandle": "journal",
-            "target": "node-get-reporter-mqm9yfmy-29",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          },
-          {
-            "source": "fn-gamma-trends-publish-input",
-            "sourceHandle": "journal",
-            "target": "node-publish-report-mqma49xv-35",
-            "targetHandle": "journal",
-            "kind": "data",
-            "dataType": "JournalRef"
-          }
-        ],
-        "inputPins": [
-          {
-            "id": "analyser",
-            "name": "analyser",
-            "kind": "data",
-            "socketType": "SpectralAnalyserRef"
-          },
-          {
-            "id": "analyser-1",
-            "name": "analyser",
-            "kind": "data",
-            "socketType": "SpectralAnalyserRef"
-          },
-          {
-            "id": "exec-in",
-            "name": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "id": "policy",
-            "name": "policy",
-            "kind": "data",
-            "socketType": "FftTrendsPolicy"
-          },
-          {
-            "id": "journal",
-            "name": "journal",
-            "kind": "data",
-            "socketType": "JournalRef"
-          },
-          {
-            "id": "journal-1",
-            "name": "journal",
-            "kind": "data",
-            "socketType": "JournalRef"
-          }
-        ],
-        "outputPins": [
-          {
-            "id": "exec-out",
-            "name": "exec-out",
-            "kind": "exec"
-          }
-        ],
-        "description": "FFT trends classify + PublishReport"
       }
     ],
     "scheduled": [],
@@ -1597,6 +1605,46 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
         },
         "nodeIds": [
           "node-get-journal-mvp-main-1"
+        ]
+      },
+      {
+        "id": "ucg-gamma-onconnect",
+        "branch": "onConnect",
+        "title": "Подготовка · onConnect",
+        "description": "Привязка journal1 к устройству",
+        "frameColor": {
+          "preset": "neutral"
+        },
+        "rect": {
+          "x": 296,
+          "y": -120,
+          "width": 736,
+          "height": 264
+        },
+        "nodeIds": [
+          "node-is-valid-mqm97w5v-17",
+          "node-get-journal-mqm98hvn-18",
+          "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8"
+        ]
+      },
+      {
+        "id": "ucg-gamma-initial",
+        "branch": "initial",
+        "title": "Подготовка · onStart",
+        "description": "Микрофон и поток перед main loop",
+        "frameColor": {
+          "preset": "neutral"
+        },
+        "rect": {
+          "x": -520,
+          "y": -624,
+          "width": 1200,
+          "height": 152
+        },
+        "nodeIds": [
+          "node-get-microphone-mqkpxb3c-5",
+          "node-print-mqksbm4o-3",
+          "node-start-streaming-mql556hh-49"
         ]
       }
     ],
