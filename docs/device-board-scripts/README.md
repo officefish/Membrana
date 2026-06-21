@@ -15,6 +15,8 @@
 | 3 | [`USERCASE_COMPETITION_LESSONS.md`](./USERCASE_COMPETITION_LESSONS.md) — RCA L1–L12 |
 | 4 | `node scripts/usercase.mjs help` — build / verify CLI |
 
+**Write allowlist (NB3):** build scripts may write only under `docs/device-board-scripts/usercase-*` and `packages/device-board/src/graph/default-usercase-*.generated.ts`. Check: `node scripts/usercase.mjs verify-paths`.
+
 Также в [.cursorrules](../.cursorrules) (стратегический документ #10) и [`docs/prompts/README.md`](../prompts/README.md) § UserCase generation.
 
 ---
@@ -38,6 +40,7 @@ Sprint closure: [`docs/competition-sprint/comp-mvp-packaging-2026-06-21/CLOSURE.
 yarn usercase:build usercase-mvp-microphone
 yarn usercase:build-competition-all
 node scripts/usercase.mjs verify-competition
+node scripts/usercase.mjs verify-paths
 yarn usercase:verify-competition
 yarn usercase:verify-layout usercase-mvp-microphone-beta
 yarn usercase:verify-prerun usercase-mvp-microphone-beta

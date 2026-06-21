@@ -43,6 +43,7 @@ Commands:
   verify-prerun <usercase-id>      Hydrate + validatePreRun
   verify-pack <usercase-id>        layout + prerun
   verify-competition               verify-pack for alpha, beta, gamma
+  verify-paths                     manifest write paths ⊆ allowlist
 
 Examples:
   node scripts/usercase.mjs build usercase-mvp-microphone
@@ -115,6 +116,10 @@ switch (command) {
       runScript('verify-usercase-layout.mjs', [id]);
       runScript('verify-usercase-prerun.mjs', [id]);
     }
+    break;
+
+  case 'verify-paths':
+    runScript('verify-usercase-write-paths.mjs');
     break;
 
   default:

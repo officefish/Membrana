@@ -21,7 +21,7 @@
 - [x] `db-pcd-nb0-merge-gate` — NB0: merge gate — lint 0 warnings, untracked tracked, usercase verify
 - [x] `db-pcd-nb1-runtime-dry` — NB1: runtime DRY — exec-successor, function-call-resolve vs function-pin-ops
 - [x] `db-pcd-nb2-concept-docs` — NB2: DEVICE_BOARD_CONCEPT runtime diagram + lessons cross-ref
-- [ ] `db-pcd-nb3-a11y-hygiene` — NB3: picker modal a11y, usercase.mjs path hygiene
+- [x] `db-pcd-nb3-a11y-hygiene` — NB3: picker modal a11y, usercase.mjs path hygiene
 
 ## Чекпоинты
 
