@@ -38,3 +38,7 @@
 ## Checkpoint NB1 — 2026-06-21T16:45:16.351Z
 - Status: **pass**
 - Note: DRY audit: no overlap; docs + JSDoc; test 400/400
+
+## Checkpoint NB2 — 2026-06-21T16:46:57.257Z
+- Status: **pass**
+- Note: CONCEPT 4.7 mermaid + L9-L12 table; lessons cross-ref
