@@ -20,6 +20,8 @@ import './board-flow-canvas.css';
 
 import type { BoardLayerTab } from '../types/board-ui.js';
 import { decorateBoardEdges } from '../graph/board-edge-style.js';
+import type { FlowGuideLine } from '../graph/layout-snap-guides.js';
+import { snapBoardNodePositionChange } from '../graph/layout-snap-guides.js';
 import {
   nodesInFlowRect,
   normalizeFlowRect,
@@ -27,6 +29,7 @@ import {
   type FlowRect,
   type ScreenRect,
 } from '../graph/marquee-selection.js';
+import { BoardSnapGuidesOverlay } from './board-snap-guides-overlay.js';
 import { BoardFlowNode } from './board-flow-node.js';
 import { BoardGroupNode } from './board-group-node.js';
 import { BoardLayoutGhostNode } from './board-layout-ghost-node.js';
@@ -124,6 +127,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   const reactFlow = useReactFlow();
   const marqueeDragRef = useRef<MarqueePointerState | null>(null);
   const [marqueeRect, setMarqueeRect] = useState<ScreenRect | null>(null);
+  const [snapGuides, setSnapGuides] = useState<readonly FlowGuideLine[]>([]);
   const marqueeEnabled = !readOnly && onMarqueeSelection !== undefined;
 
   const displayNodes = useMemo(
@@ -179,9 +183,44 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
           return;
         }
       }
-      onNodesChange(filtered);
+
+      let nextGuides: readonly FlowGuideLine[] = [];
+      const mapped = filtered.map((change) => {
+        if (
+          readOnly ||
+          change.type !== 'position' ||
+          change.dragging !== true ||
+          change.position === undefined
+        ) {
+          return change;
+        }
+        const snapped = snapBoardNodePositionChange(nodes, change);
+        if (snapped === null) {
+          return change;
+        }
+        nextGuides = snapped.guides;
+        return {
+          ...change,
+          position: { x: snapped.x, y: snapped.y },
+        };
+      });
+
+      const dragEnded = filtered.some(
+        (change) => change.type === 'position' && change.dragging === false,
+      );
+      if (dragEnded) {
+        setSnapGuides([]);
+      } else if (nextGuides.length > 0) {
+        setSnapGuides(nextGuides);
+      } else if (
+        filtered.some((change) => change.type === 'position' && change.dragging === true)
+      ) {
+        setSnapGuides([]);
+      }
+
+      onNodesChange(mapped);
     },
-    [onNodesChange, readOnly],
+    [nodes, onNodesChange, readOnly],
   );
 
   const handleEdgesChange = useCallback(
@@ -413,6 +452,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
           nodeColor={(node) => (node.data?.layer === 'scenario' ? 'oklch(var(--s))' : 'oklch(var(--p))')}
           maskColor="oklch(var(--b1) / 0.65)"
         />
+        <BoardSnapGuidesOverlay guides={snapGuides} />
       </ReactFlow>
     </div>
   );

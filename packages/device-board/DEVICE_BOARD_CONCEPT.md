@@ -1138,4 +1138,18 @@ interface ScenarioCommentGroup {
 | Graph ops | `marquee-selection.ts`, `collapse-to-function.ts`, `comment-group.ts`, `align-nodes.ts`, `function-pin-ops.ts` |
 | UI | `board-marquee-overlay.tsx`, `board-selection-action-modal.tsx`, `board-group-node.tsx`, `board-function-list.tsx`, `board-function-pin-inspector.tsx` |
 | Context | `device-board-graph-context.tsx` — multi-function state, collapse, pin CRUD sync IO nodes |
-| Shell | `device-board-shell.tsx` — marquee handlers, runtime gating |
+| Shell | `device-board-shell.tsx` — marquee handlers, runtime gating, branch exec layout |
+
+---
+
+## 19. Auto-layout и snap guides (U8a)
+
+> Эпик `db-node-align-advanced` · PR branch `feat/db-node-align-advanced`
+
+| Tier | Модуль | Поведение |
+| ---- | ------ | --------- |
+| **A0** | `align-nodes.ts` | Ручное выравнивание selection (8 режимов + bbox «Авто») |
+| **L1** | `layout-exec-chain.ts` | dagre LR по exec-рёбрам (selection / branch entry) |
+| **L3** | `layout-snap-guides.ts` | При drag: snap 8 px + guides к left/center/right соседей (threshold 6 px) |
+
+Snap guides **не** работают в runtime (`readOnly` canvas) и для ghost preview nodes.

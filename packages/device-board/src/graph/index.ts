@@ -352,6 +352,13 @@ export {
 } from './layout-exec-chain.js';
 export type { ExecChainLayoutConfig, LoopExecLayoutBranch } from './layout-exec-chain.js';
 export {
+  computeSnappedNodePosition,
+  flowNodeSnapRect,
+  snapBoardNodePositionChange,
+  SNAP_GUIDE_THRESHOLD_PX,
+} from './layout-snap-guides.js';
+export type { FlowGuideLine, FlowGuideOrientation, SnapNodePositionResult } from './layout-snap-guides.js';
+export {
   findFunctionIoNodeIds,
   proposeNewFunctionPin,
   removeFunctionPinFromList,
