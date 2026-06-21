@@ -2,6 +2,8 @@ import {
   parseDeviceScenarioDocument,
   type DeviceScenarioDocument,
   type ValidationError,
+  MAX_SCENARIO_FUNCTION_PINS_PER_SIDE,
+  isScenarioFunctionPinCountValid,
 } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
@@ -241,6 +243,18 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     scenarioOnDisconnectEdges: input.scenarioOnDisconnectEdges,
     scenarioFunctions: input.scenarioFunctions,
   });
+
+  for (const fn of input.scenarioFunctions) {
+    const inputCount = fn.inputPins?.length ?? 0;
+    const outputCount = fn.outputPins?.length ?? 0;
+    if (!isScenarioFunctionPinCountValid(inputCount) || !isScenarioFunctionPinCountValid(outputCount)) {
+      issues.push({
+        code: 'function-pin-limit',
+        message: `Функция «${fn.name}»: не более ${MAX_SCENARIO_FUNCTION_PINS_PER_SIDE} pins на Input и Output`,
+        path: `scenario.functions.${fn.id}`,
+      });
+    }
+  }
 
   issues.push(
     ...validateFunctionDepth(document.scenario.functions, [

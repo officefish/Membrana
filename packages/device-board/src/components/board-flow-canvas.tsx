@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Controls,
   MiniMap,
@@ -20,9 +20,18 @@ import './board-flow-canvas.css';
 
 import type { BoardLayerTab } from '../types/board-ui.js';
 import { decorateBoardEdges } from '../graph/board-edge-style.js';
+import {
+  nodesInFlowRect,
+  normalizeFlowRect,
+  normalizeScreenRect,
+  type FlowRect,
+  type ScreenRect,
+} from '../graph/marquee-selection.js';
 import { BoardFlowNode } from './board-flow-node.js';
+import { BoardGroupNode } from './board-group-node.js';
+import { BoardMarqueeOverlay } from './board-marquee-overlay.js';
 
-const NODE_TYPES: NodeTypes = { board: BoardFlowNode };
+const NODE_TYPES: NodeTypes = { board: BoardFlowNode, boardGroup: BoardGroupNode };
 
 /** API координат канваса (viewport → flow space). */
 export interface BoardFlowViewportApi {
@@ -31,6 +40,18 @@ export interface BoardFlowViewportApi {
     clientX: number,
     clientY: number,
   ) => { readonly x: number; readonly y: number };
+}
+
+export interface BoardMarqueeSelectionPayload {
+  readonly nodeIds: readonly string[];
+  readonly flowRect: FlowRect;
+  readonly screenRect: ScreenRect;
+}
+
+interface MarqueePointerState {
+  readonly pointerId: number;
+  readonly originClient: { readonly x: number; readonly y: number };
+  readonly originRelative: { readonly x: number; readonly y: number };
 }
 
 export interface BoardConnectionDropOnPanePayload {
@@ -72,6 +93,8 @@ export interface BoardFlowCanvasProps {
   readonly onViewportApiReady?: (api: BoardFlowViewportApi) => void;
   /** Отпускание ребра над пустым полем (не на handle узла). */
   readonly onConnectionDropOnPane?: (payload: BoardConnectionDropOnPanePayload) => void;
+  /** Marquee multi-select на пустом поле (CGF R0). */
+  readonly onMarqueeSelection?: (payload: BoardMarqueeSelectionPayload) => void;
 }
 
 const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
@@ -87,9 +110,13 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   readOnly = false,
   onViewportApiReady,
   onConnectionDropOnPane,
+  onMarqueeSelection,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
+  const marqueeDragRef = useRef<MarqueePointerState | null>(null);
+  const [marqueeRect, setMarqueeRect] = useState<ScreenRect | null>(null);
+  const marqueeEnabled = !readOnly && onMarqueeSelection !== undefined;
 
   const viewportApi = useMemo<BoardFlowViewportApi>(
     () => ({
@@ -201,8 +228,144 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     [isValidConnection],
   );
 
+  const finishMarquee = useCallback(
+    (clientX: number, clientY: number) => {
+      const drag = marqueeDragRef.current;
+      marqueeDragRef.current = null;
+      setMarqueeRect(null);
+      if (drag === null || onMarqueeSelection === undefined) {
+        return;
+      }
+
+      const flowA = reactFlow.screenToFlowPosition(drag.originClient);
+      const flowB = reactFlow.screenToFlowPosition({ x: clientX, y: clientY });
+      const flowRect = normalizeFlowRect(flowA, flowB);
+
+      const bounds = wrapperRef.current?.getBoundingClientRect();
+      if (bounds === undefined) {
+        return;
+      }
+      const relative = { x: clientX - bounds.left, y: clientY - bounds.top };
+      const screenRect = normalizeScreenRect(drag.originRelative, relative);
+
+      const picked = nodesInFlowRect(nodes, flowRect);
+      if (picked.length === 0) {
+        return;
+      }
+
+      const nodeIds = picked.map((node) => node.id);
+      const idSet = new Set(nodeIds);
+      onNodesChange(
+        nodes.map((node) => ({
+          type: 'select' as const,
+          id: node.id,
+          selected: idSet.has(node.id),
+        })),
+      );
+      onMarqueeSelection({ nodeIds, flowRect, screenRect });
+    },
+    [nodes, onMarqueeSelection, onNodesChange, reactFlow],
+  );
+
+  const isMarqueePointerTarget = useCallback((target: EventTarget | null): boolean => {
+    if (!(target instanceof HTMLElement)) {
+      return false;
+    }
+    if (target.closest('.react-flow__node') !== null) {
+      return false;
+    }
+    if (target.closest('.react-flow__controls') !== null) {
+      return false;
+    }
+    if (target.closest('.react-flow__minimap') !== null) {
+      return false;
+    }
+    if (target.closest('.react-flow__handle') !== null) {
+      return false;
+    }
+    return (
+      target.closest('.react-flow__pane') !== null ||
+      target.classList.contains('react-flow__pane')
+    );
+  }, []);
+
+  const handleWrapperPointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!marqueeEnabled || event.button !== 0) {
+        return;
+      }
+      if (!isMarqueePointerTarget(event.target)) {
+        return;
+      }
+      event.preventDefault();
+      const bounds = wrapperRef.current?.getBoundingClientRect();
+      if (bounds === undefined) {
+        return;
+      }
+      const originRelative = {
+        x: event.clientX - bounds.left,
+        y: event.clientY - bounds.top,
+      };
+      marqueeDragRef.current = {
+        pointerId: event.pointerId,
+        originClient: { x: event.clientX, y: event.clientY },
+        originRelative,
+      };
+      setMarqueeRect({ left: originRelative.x, top: originRelative.y, width: 0, height: 0 });
+      event.currentTarget.setPointerCapture(event.pointerId);
+    },
+    [isMarqueePointerTarget, marqueeEnabled],
+  );
+
+  const handleWrapperPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = marqueeDragRef.current;
+    if (drag === null || drag.pointerId !== event.pointerId) {
+      return;
+    }
+    const bounds = wrapperRef.current?.getBoundingClientRect();
+    if (bounds === undefined) {
+      return;
+    }
+    const relative = { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
+    setMarqueeRect(normalizeScreenRect(drag.originRelative, relative));
+  }, []);
+
+  const handleWrapperPointerUp = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const drag = marqueeDragRef.current;
+      if (drag === null || drag.pointerId !== event.pointerId) {
+        return;
+      }
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      finishMarquee(event.clientX, event.clientY);
+    },
+    [finishMarquee],
+  );
+
+  const handleWrapperPointerCancel = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const drag = marqueeDragRef.current;
+      if (drag === null || drag.pointerId !== event.pointerId) {
+        return;
+      }
+      marqueeDragRef.current = null;
+      setMarqueeRect(null);
+    },
+    [],
+  );
+
   return (
-    <div ref={wrapperRef} className="h-full w-full min-h-0">
+    <div
+      ref={wrapperRef}
+      className="relative h-full w-full min-h-0"
+      onPointerDown={handleWrapperPointerDown}
+      onPointerMove={handleWrapperPointerMove}
+      onPointerUp={handleWrapperPointerUp}
+      onPointerCancel={handleWrapperPointerCancel}
+    >
+      <BoardMarqueeOverlay rect={marqueeRect} />
       <ReactFlow
         nodes={nodes}
         edges={decoratedEdges}
@@ -217,6 +380,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         elementsSelectable
         edgesReconnectable={!readOnly}
         deleteKeyCode={readOnly ? null : 'Backspace'}
+        panOnDrag={marqueeEnabled ? [1, 2] : true}
         fitView
         proOptions={{ hideAttribution: true }}
         onSelectionChange={handleSelectionChange}

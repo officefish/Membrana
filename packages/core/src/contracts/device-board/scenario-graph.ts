@@ -10,6 +10,8 @@ import type { ScenarioVariable } from './scenario-variables.js';
 import type { ScenarioCollectorConfig } from './collector-config.js';
 import type { ScenarioFftTrendsPolicy } from './fft-trends-policy.js';
 import type { ScenarioRecordingPolicy } from './recording-policy.js';
+import type { ScenarioFunctionPin } from './scenario-function-pin.js';
+import type { ScenarioCommentGroup } from './scenario-comment-group.js';
 
 /**
  * Системные ветки сценария (фиксированы на устройстве).
@@ -109,8 +111,9 @@ export interface ScenarioSubgraph {
 export interface ScenarioFunctionSubgraph extends ScenarioSubgraph {
   readonly id: string;
   readonly name: string;
-  readonly inputPins: readonly string[];
-  readonly outputPins: readonly string[];
+  readonly inputPins: readonly ScenarioFunctionPin[];
+  readonly outputPins: readonly ScenarioFunctionPin[];
+  readonly description?: string;
 }
 
 /** Заглушка scheduled job (cron в сценарии). */
@@ -149,6 +152,8 @@ export interface ScenarioGraph {
   readonly triggers: ScenarioTriggers;
   readonly functions: readonly ScenarioFunctionSubgraph[];
   readonly scheduled: readonly ScheduledJobStub[];
+  /** CGF G1: comment groups (canvas-only, не runtime). */
+  readonly commentGroups: readonly ScenarioCommentGroup[];
   /** v0.4: переменные сценария (document-scope, ссылочные). */
   readonly variables: readonly ScenarioVariable[];
 }
@@ -174,6 +179,7 @@ export function createEmptyScenarioGraph(): ScenarioGraph {
     },
     functions: [],
     scheduled: [],
+    commentGroups: [],
     variables: [],
   };
 }

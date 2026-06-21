@@ -59,6 +59,10 @@ export const SCENARIO_NODE_KINDS = [
   'make-recording-policy',
   /** v0.8: MakeFftTrendsPolicy — exec → FftTrendsPolicy value (constructor). */
   'make-fft-trends-policy',
+  /** CGF F1: system Input tunnel (function canvas). */
+  'function-input',
+  /** CGF F1: system Output tunnel (function canvas). */
+  'function-output',
   /** Системный терминал лупа (∞): exec-ребро сюда → новая итерация. */
   'loop-repeat',
 ] as const;
@@ -162,7 +166,13 @@ export function isConstructorScenarioNodeKind(value: string): value is Construct
 }
 
 /** Системные виды узлов, которые нельзя удалять с борда. */
-export const SYSTEM_SCENARIO_NODE_KINDS = ['event', 'loop-repeat', 'device-global'] as const satisfies readonly ScenarioNodeKind[];
+export const SYSTEM_SCENARIO_NODE_KINDS = [
+  'event',
+  'loop-repeat',
+  'device-global',
+  'function-input',
+  'function-output',
+] as const satisfies readonly ScenarioNodeKind[];
 
 /** Type guard для `ScenarioNodeKind`. */
 export function isScenarioNodeKind(value: string): value is ScenarioNodeKind {

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { OnSelectionChangeParams } from '@xyflow/react';
+import type { ScenarioCommentGroupBranch } from '@membrana/core';
 import type {
   ScenarioNodeKind,
   ScenarioCollectorConfig,
@@ -12,8 +12,11 @@ import {
   resolveScenarioFftTrendsPolicy,
   resolveScenarioGraphNodePure,
   resolveScenarioRecordingPolicy,
+  resolveScenarioCommentGroupFrameColor,
+  DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR,
 } from '@membrana/core';
-import type { Edge } from '@xyflow/react';
+import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
+import type { Edge, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
@@ -34,15 +37,21 @@ import {
   BoardFlowCanvas,
   type BoardConnectionDropOnPanePayload,
   type BoardFlowViewportApi,
+  type BoardMarqueeSelectionPayload,
 } from './board-flow-canvas.js';
 import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
+import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
-import { referenceTypeLabel } from '../graph/index.js';
+import { referenceTypeLabel, isBoardGroupNode } from '../graph/index.js';
+import type { BoardGroupNodeData } from '../graph/index.js';
+import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
+import type { BoardAlignMode } from '../graph/align-nodes.js';
+import { isSystemNode } from '../graph/event-node.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -81,6 +90,12 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
   const [selectedGetterPure, setSelectedGetterPure] = useState(true);
   const [selectedGetterPureLocked, setSelectedGetterPureLocked] = useState(false);
+  const [selectedIsCommentGroup, setSelectedIsCommentGroup] = useState(false);
+  const [selectedGroupTitle, setSelectedGroupTitle] = useState('');
+  const [selectedGroupDescription, setSelectedGroupDescription] = useState('');
+  const [selectedGroupFrameColor, setSelectedGroupFrameColor] = useState<ScenarioCommentGroupFrameColor>(
+    DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR,
+  );
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
@@ -92,6 +107,8 @@ const DeviceBoardShellInner: React.FC<{
     readonly PaletteConnectionSuggestion[]
   >([]);
   const pendingConnectionDropRef = useRef<BoardConnectionDropOnPanePayload | null>(null);
+  const [selectionActionOpen, setSelectionActionOpen] = useState(false);
+  const [marqueeSelectedIds, setMarqueeSelectedIds] = useState<readonly string[]>([]);
 
   const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
     viewportApiRef.current = api;
@@ -167,6 +184,10 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedVariableId(null);
     setSelectedGetterPure(true);
     setSelectedGetterPureLocked(false);
+    setSelectedIsCommentGroup(false);
+    setSelectedGroupTitle('');
+    setSelectedGroupDescription('');
+    setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
   }, []);
 
   const resolveBranchEdges = useCallback((): readonly Edge[] => {
@@ -213,9 +234,34 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedVariableId(null);
       setSelectedGetterPure(true);
       setSelectedGetterPureLocked(false);
+      setSelectedIsCommentGroup(false);
+      setSelectedGroupTitle('');
+      setSelectedGroupDescription('');
+      setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
       return;
     }
     setSelectedNodeId(node.id);
+    const isGroup = isBoardGroupNode(node);
+    setSelectedIsCommentGroup(isGroup);
+    if (isGroup) {
+      const groupData = node.data as BoardGroupNodeData;
+      setSelectedGroupTitle(typeof groupData.title === 'string' ? groupData.title : 'Группа');
+      setSelectedGroupDescription(
+        typeof groupData.description === 'string' ? groupData.description : '',
+      );
+      setSelectedGroupFrameColor(resolveScenarioCommentGroupFrameColor(groupData.frameColor));
+      setSelectedNodeLabel(typeof groupData.title === 'string' ? groupData.title : node.id);
+      setSelectedNodeKind(null);
+      setSelectedMicrophoneId(null);
+      setSelectedCollectorConfig(null);
+      setSelectedRecordingPolicy(null);
+      setSelectedRecordingPolicyWired(false);
+      setSelectedFftTrendsPolicy(null);
+      setSelectedVariableId(null);
+      setSelectedGetterPure(false);
+      setSelectedGetterPureLocked(false);
+      return;
+    }
     const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
     setSelectedNodeLabel(label);
     const kind = typeof node.data?.nodeKind === 'string' ? (node.data.nodeKind as ScenarioNodeKind) : null;
@@ -468,6 +514,151 @@ const DeviceBoardShellInner: React.FC<{
                   onConnect: graph.onScenarioFunctionConnect,
                 };
 
+  const clearCanvasNodeSelection = useCallback(() => {
+    if (isSignal) {
+      return;
+    }
+    const changes: NodeChange[] = scenarioCanvas.nodes.map((node) => ({
+      type: 'select',
+      id: node.id,
+      selected: false,
+    }));
+    scenarioCanvas.onNodesChange(changes);
+  }, [isSignal, scenarioCanvas]);
+
+  const dismissSelectionAction = useCallback(() => {
+    setSelectionActionOpen(false);
+    setMarqueeSelectedIds([]);
+    clearCanvasNodeSelection();
+  }, [clearCanvasNodeSelection]);
+
+  const closeSelectionActionModal = useCallback(() => {
+    setSelectionActionOpen(false);
+    setMarqueeSelectedIds([]);
+  }, []);
+
+  const handleMarqueeSelection = useCallback(
+    (payload: BoardMarqueeSelectionPayload) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      setMarqueeSelectedIds(payload.nodeIds);
+      setSelectionActionOpen(true);
+    },
+    [isRuntime, isSignal],
+  );
+
+  const marqueeSelectionMeta = useMemo(() => {
+    const selected = scenarioCanvas.nodes.filter((node) => marqueeSelectedIds.includes(node.id));
+    const hasSystem = selected.some((node) => isSystemNode(node));
+    const count = selected.length;
+    return {
+      count,
+      collapseFunctionDisabled: count < 2 || hasSystem,
+      collapseGroupDisabled: count < 2 || hasSystem,
+    };
+  }, [marqueeSelectedIds, scenarioCanvas.nodes]);
+
+  const applyAlignPositions = useCallback(
+    (positions: Map<string, { readonly x: number; readonly y: number }>) => {
+      if (positions.size === 0) {
+        return;
+      }
+      const changes: NodeChange[] = [...positions.entries()].map(([id, position]) => ({
+        type: 'position',
+        id,
+        position,
+      }));
+      scenarioCanvas.onNodesChange(changes);
+      dismissSelectionAction();
+    },
+    [dismissSelectionAction, scenarioCanvas],
+  );
+
+  const handleAlignMode = useCallback(
+    (mode: BoardAlignMode) => {
+      if (isSignal || isRuntime || marqueeSelectedIds.length < 2) {
+        return;
+      }
+      const idSet = new Set(marqueeSelectedIds);
+      const positions = computeAlignPositions(scenarioCanvas.nodes, idSet, mode);
+      applyAlignPositions(positions);
+    },
+    [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas],
+  );
+
+  const handleSmartAlign = useCallback(() => {
+    if (isSignal || isRuntime || marqueeSelectedIds.length < 2) {
+      return;
+    }
+    const idSet = new Set(marqueeSelectedIds);
+    const positions = computeSmartAlignPositions(scenarioCanvas.nodes, idSet);
+    applyAlignPositions(positions);
+  }, [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas]);
+
+  const handleCollapseToFunction = useCallback(() => {
+    if (isSignal || isRuntime) {
+      return;
+    }
+    const error = graph.collapseMarqueeToFunction(scenarioBranch, marqueeSelectedIds);
+    if (error !== null) {
+      setImportError(error);
+    }
+    dismissSelectionAction();
+  }, [
+    dismissSelectionAction,
+    graph,
+    isRuntime,
+    isSignal,
+    marqueeSelectedIds,
+    scenarioBranch,
+  ]);
+
+  const handleCollapseToGroup = useCallback(() => {
+    if (isRuntime) {
+      return;
+    }
+    const branch: ScenarioCommentGroupBranch = isSignal ? 'signal' : scenarioBranch;
+    const result = graph.collapseMarqueeToCommentGroup(branch, marqueeSelectedIds);
+    if (result.error !== null) {
+      setImportError(result.error);
+      dismissSelectionAction();
+      return;
+    }
+    closeSelectionActionModal();
+    if (result.groupNode !== null) {
+      handleSelectionChange({ nodes: [result.groupNode], edges: [] });
+    }
+  }, [
+    closeSelectionActionModal,
+    dismissSelectionAction,
+    graph,
+    handleSelectionChange,
+    isRuntime,
+    isSignal,
+    marqueeSelectedIds,
+    scenarioBranch,
+  ]);
+
+  useEffect(() => {
+    if (isRuntime && selectionActionOpen) {
+      dismissSelectionAction();
+    }
+  }, [dismissSelectionAction, isRuntime, selectionActionOpen]);
+
+  useEffect(() => {
+    if (!selectionActionOpen) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        dismissSelectionAction();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [dismissSelectionAction, selectionActionOpen]);
+
   const canvasLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
 
   const scenarioTitle = isSignal ? SIGNAL_LAYER_TITLE : BRANCH_SCENARIO_TITLE[scenarioBranch];
@@ -694,6 +885,7 @@ const DeviceBoardShellInner: React.FC<{
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             onConnectionDropOnPane={handleConnectionDropOnPane}
+            onMarqueeSelection={!isSignal && !isRuntime ? handleMarqueeSelection : undefined}
           />
         </div>
 
@@ -707,13 +899,6 @@ const DeviceBoardShellInner: React.FC<{
             }
           }}
           onDismiss={graph.cancelBranchImport}
-        />
-
-        <BoardConnectionSuggestModal
-          open={connectionSuggestOpen}
-          suggestions={connectionSuggestItems}
-          onPick={handleConnectionSuggestPick}
-          onDismiss={dismissConnectionSuggest}
         />
 
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
@@ -731,6 +916,10 @@ const DeviceBoardShellInner: React.FC<{
             onRenameVariable={graph.renameVariable}
             onRemoveVariable={graph.removeVariable}
             onAddVariableNode={addVariableNodeAtViewportCenter}
+            scenarioFunctions={graph.scenarioFunctionDrafts}
+            activeFunctionId={graph.activeFunctionId}
+            onSelectFunction={graph.selectUserFunction}
+            onCreateFunction={graph.createUserFunction}
           />
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
@@ -749,10 +938,16 @@ const DeviceBoardShellInner: React.FC<{
             selectedVariableValue={selectedVariable?.value ?? null}
             selectedGetterPure={selectedGetterPure}
             selectedGetterPureLocked={selectedGetterPureLocked}
+            selectedIsCommentGroup={selectedIsCommentGroup}
+            selectedGroupTitle={selectedGroupTitle}
+            selectedGroupDescription={selectedGroupDescription}
+            selectedGroupFrameColor={selectedGroupFrameColor}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
             canEditScenario={!isSignal}
+            isFunctionBranch={!isSignal && scenarioBranch === 'function'}
+            functionMeta={!isSignal && scenarioBranch === 'function' ? graph.scenarioFunctionMeta : null}
             isRuntime={isRuntime}
             runtimeInspection={runtimeInspection}
             printLastOutput={printLastOutput}
@@ -770,10 +965,61 @@ const DeviceBoardShellInner: React.FC<{
               }
             }}
             onVariableValueChange={graph.updateVariableValue}
+            onCommentGroupMetadataChange={(nodeId, patch) => {
+              graph.updateCommentGroupMetadata(nodeId, patch);
+              if (patch.title !== undefined) {
+                setSelectedGroupTitle(patch.title.trim() || 'Группа');
+                setSelectedNodeLabel(patch.title.trim() || 'Группа');
+              }
+              if (patch.description !== undefined) {
+                setSelectedGroupDescription(patch.description);
+              }
+              if (patch.frameColor !== undefined) {
+                setSelectedGroupFrameColor(resolveScenarioCommentGroupFrameColor(patch.frameColor));
+              }
+            }}
+            onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
+            onAddFunctionPin={(side, kind) => {
+              const error = graph.addActiveFunctionPin(side, kind);
+              if (error !== null) {
+                setImportError(error);
+              }
+            }}
+            onUpdateFunctionPin={(side, pinId, patch) => {
+              const error = graph.updateActiveFunctionPin(side, pinId, patch);
+              if (error !== null) {
+                setImportError(error);
+              }
+            }}
+            onRemoveFunctionPin={(side, pinId) => {
+              const error = graph.removeActiveFunctionPin(side, pinId);
+              if (error !== null) {
+                setImportError(error);
+              }
+            }}
             onClearBoard={handleClearBoard}
           />
         </aside>
       </div>
+
+      <BoardConnectionSuggestModal
+        open={connectionSuggestOpen}
+        suggestions={connectionSuggestItems}
+        onPick={handleConnectionSuggestPick}
+        onDismiss={dismissConnectionSuggest}
+      />
+
+      <BoardSelectionActionModal
+        open={selectionActionOpen && !isRuntime}
+        selectedCount={marqueeSelectionMeta.count}
+        collapseFunctionDisabled={marqueeSelectionMeta.collapseFunctionDisabled}
+        collapseGroupDisabled={marqueeSelectionMeta.collapseGroupDisabled}
+        onCollapseToFunction={handleCollapseToFunction}
+        onCollapseToGroup={handleCollapseToGroup}
+        onAlignMode={handleAlignMode}
+        onSmartAlign={handleSmartAlign}
+        onDismiss={dismissSelectionAction}
+      />
     </div>
   );
 };

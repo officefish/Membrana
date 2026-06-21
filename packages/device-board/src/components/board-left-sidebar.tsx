@@ -4,6 +4,7 @@ import type { ScenarioVariable, ScenarioVariableType } from '@membrana/core';
 import { type VariableNodeKind } from '../graph/index.js';
 import type { NodePortInspectionResult } from '../runtime/index.js';
 import { variableTypeIndicatorClass } from '../graph/variable-type-indicator.js';
+import type { ScenarioFunctionDraft } from '../graph/index.js';
 import {
   BOARD_LEFT_SIDEBAR_WIDTH_CLASS,
   BRANCH_SIDEBAR_SECTIONS,
@@ -11,6 +12,7 @@ import {
   type ScenarioBranchTab,
 } from '../types/board-ui.js';
 import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
+import { BoardFunctionList } from './board-function-list.js';
 import {
   AddVariableModal,
   DeleteVariableModal,
@@ -34,6 +36,10 @@ export interface BoardLeftSidebarProps {
   readonly onRenameVariable: (id: string, name: string) => void;
   readonly onRemoveVariable: (id: string) => void;
   readonly onAddVariableNode: (kind: VariableNodeKind, variableId: string) => void;
+  readonly scenarioFunctions: readonly ScenarioFunctionDraft[];
+  readonly activeFunctionId: string;
+  readonly onSelectFunction: (functionId: string) => void;
+  readonly onCreateFunction: () => void;
 }
 
 const VariableRow: React.FC<{
@@ -116,6 +122,10 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   onRenameVariable,
   onRemoveVariable,
   onAddVariableNode,
+  scenarioFunctions,
+  activeFunctionId,
+  onSelectFunction,
+  onCreateFunction,
 }) => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [nodeKindVariable, setNodeKindVariable] = useState<ScenarioVariable | null>(null);
@@ -140,15 +150,25 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
                 {section.tabs.map((branch) => {
                   const active = isScenarioLayer && activeBranch === branch;
                   return (
-                    <button
-                      key={branch}
-                      type="button"
-                      aria-current={active ? 'page' : undefined}
-                      className={`btn btn-sm justify-start ${active ? 'btn-primary' : 'btn-ghost'}`}
-                      onClick={() => onSelectBranch(branch)}
-                    >
-                      {BRANCH_TAB_LABEL[branch]}
-                    </button>
+                    <React.Fragment key={branch}>
+                      <button
+                        type="button"
+                        aria-current={active ? 'page' : undefined}
+                        className={`btn btn-sm justify-start ${active ? 'btn-primary' : 'btn-ghost'}`}
+                        onClick={() => onSelectBranch(branch)}
+                      >
+                        {BRANCH_TAB_LABEL[branch]}
+                      </button>
+                      {branch === 'function' && isScenarioLayer ? (
+                        <BoardFunctionList
+                          functions={scenarioFunctions}
+                          activeFunctionId={activeFunctionId}
+                          disabled={isRuntime}
+                          onSelect={onSelectFunction}
+                          onCreate={onCreateFunction}
+                        />
+                      ) : null}
+                    </React.Fragment>
                   );
                 })}
               </div>

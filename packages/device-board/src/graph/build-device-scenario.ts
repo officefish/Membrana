@@ -18,6 +18,7 @@ import {
 import { serializeScenarioFunction, type SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { serializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 import { serializeSignalGraph } from './serialize-signal-graph.js';
+import { collectCommentGroupsFromBoard } from './comment-group.js';
 
 export interface BuildDeviceScenarioInput {
   readonly deviceKind: DeviceKind;
@@ -37,6 +38,7 @@ export interface BuildDeviceScenarioInput {
   readonly scenarioOnStopEdges: readonly Edge[];
   readonly scenarioOnDisconnectNodes: readonly Node[];
   readonly scenarioOnDisconnectEdges: readonly Edge[];
+  readonly scenarioFunctionNodes?: readonly Node[];
   readonly scenarioFunctions: readonly SerializeScenarioFunctionInput[];
   /** v0.4: переменные сценария (document-scope). */
   readonly variables?: readonly ScenarioVariable[];
@@ -93,6 +95,16 @@ export function buildDeviceScenarioDocument(input: BuildDeviceScenarioInput): De
         ),
       },
       functions: input.scenarioFunctions.map((fn) => serializeScenarioFunction(fn)),
+      commentGroups: collectCommentGroupsFromBoard({
+        signalNodes: input.signalNodes,
+        scenarioInitialNodes: input.scenarioInitialNodes,
+        scenarioOnConnectNodes: input.scenarioOnConnectNodes ?? [],
+        scenarioMainNodes: input.scenarioMainNodes,
+        scenarioAlarmNodes: input.scenarioAlarmNodes,
+        scenarioOnStopNodes: input.scenarioOnStopNodes,
+        scenarioOnDisconnectNodes: input.scenarioOnDisconnectNodes,
+        scenarioFunctionNodes: input.scenarioFunctionNodes ?? [],
+      }),
       variables: input.variables ?? scenario.variables,
     },
   };

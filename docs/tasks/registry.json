@@ -4094,6 +4094,100 @@
       "notes": "trends-parity:smoke-matrix; v08 MakeFftTrendsPolicy wired; signoff doc.",
       "githubIssueClosedAt": null,
       "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-canvas-groups-functions",
+      "title": "DB Canvas: marquee, comment groups, user functions, align MVP (U8)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g4-lgtm"
+      ],
+      "notes": "UE Blueprint parity: collapse to function, comment groups, marquee modal. D-PINS-9: max 9 input + 9 output pins.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-cgf-r0-marquee-modal",
+      "title": "DB CGF R0: marquee selection + action modal",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Glass rect overlay, multi-select, modal shell.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-cgf-f1-user-functions",
+      "title": "DB CGF F1: user functions + Input/Output + collapse",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-r0-marquee-modal"
+      ],
+      "notes": "Multi-function sidebar +, function-input/output, collapse-to-function, IO CRUD max 9+9, runtime bridge.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-cgf-g1-comment-groups",
+      "title": "DB CGF G1: comment groups (visual frames)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-r0-marquee-modal"
+      ],
+      "notes": "ScenarioCommentGroup document; dashed frame; title/description sidebar.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-cgf-a0-align-basic",
+      "title": "DB CGF A0: basic node alignment",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-r0-marquee-modal"
+      ],
+      "notes": "align-nodes.ts: 6 align + 2 distribute; unit tests.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-node-align-advanced",
+      "title": "DB node align advanced: snap, guides, dagre layout (U8a)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-a0-align-basic"
+      ],
+      "notes": "Deferred: grid snap, Figma guides, exec-chain dagre. Separate epic after U8 A0.",
+      "githubIssueClosedAt": null
     }
   ]
 }

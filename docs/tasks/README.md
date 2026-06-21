@@ -140,6 +140,12 @@
 | `db-recording-gate-v07` | DB Recording Gate v0.7: StartRecording nodes + unified observation window (эпик R0–R4) | L | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | [#133](https://github.com/officefish/Membrana/issues/133) |
 | `db-recording-gate-r4-scenario-smoke` | DB Recording Gate R4: main-v07.json + smoke + LGTM | M | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | [#133](https://github.com/officefish/Membrana/issues/133) |
 | `db-post-usercase-roadmap` | Device-board post-UserCase: UX + docs snapshot + server | L | [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md) | — |
+| `db-canvas-groups-functions` | DB Canvas: marquee, comment groups, user functions, align MVP (U8) | L | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) | — |
+| `db-cgf-r0-marquee-modal` | DB CGF R0: marquee selection + action modal | M | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) | — |
+| `db-cgf-f1-user-functions` | DB CGF F1: user functions + Input/Output + collapse | L | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) | — |
+| `db-cgf-g1-comment-groups` | DB CGF G1: comment groups (visual frames) | M | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) | — |
+| `db-cgf-a0-align-basic` | DB CGF A0: basic node alignment | S | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) | — |
+| `db-node-align-advanced` | DB node align advanced: snap, guides, dagre layout (U8a) | M | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) | — |
 
 ---
 

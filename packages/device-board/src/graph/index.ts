@@ -315,6 +315,7 @@ export {
 export {
   hydrateBoardFromDocument,
   hydratedFunctionInput,
+  hydratedFunctionInputs,
   createDefaultHydratedBoardState,
 } from './hydrate-board-from-document.js';
 export {
@@ -325,6 +326,54 @@ export {
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';
 export type { HydratedBoardState, ScenarioFunctionCanvasMeta } from './hydrate-board-from-document.js';
+export {
+  collapseSelectionToFunction,
+  createEmptyFunctionDraft,
+} from './collapse-to-function.js';
+export type { ScenarioFunctionDraft, CollapseToFunctionOutcome } from './collapse-to-function.js';
+export {
+  createFunctionInputBoardNode,
+  createFunctionOutputBoardNode,
+  syncFunctionIoNodePins,
+  functionPinsToSubgraphBlockPins,
+  isFunctionIoNode,
+} from './function-io-node.js';
+export { computeAlignPositions, computeSmartAlignPositions, BOARD_ALIGN_GAP_PX, BOARD_LAYOUT_GRID_PX, BOARD_ALIGN_MODE_LABELS, BOARD_ALIGN_MODES_BASIC, BOARD_ALIGN_MODES_DISTRIBUTE, isBoardAlignModeEnabled } from './align-nodes.js';
+export type { BoardAlignMode } from './align-nodes.js';
+export {
+  findFunctionIoNodeIds,
+  proposeNewFunctionPin,
+  removeFunctionPinFromList,
+  updateFunctionPinInList,
+  syncSubgraphBlocksForFunctionPins,
+} from './function-pin-ops.js';
+export type { FunctionPinSide } from './function-pin-ops.js';
+export {
+  collapseSelectionToCommentGroup,
+  collectCommentGroupsFromBoard,
+  applyCommentGroupsToBranchNodes,
+  extractCommentGroupsFromNodes,
+  sortBoardNodesParentsBeforeChildren,
+  BOARD_GROUP_NODE_TYPE,
+  COMMENT_GROUP_DESCRIPTION_MAX_LENGTH,
+  isBoardGroupNode,
+} from './comment-group.js';
+export type { BoardGroupNodeData } from './comment-group.js';
+export {
+  COMMENT_GROUP_CUSTOM_FRAME_DEFAULT_HEX,
+  COMMENT_GROUP_FRAME_COLOR_PRESET_LABELS,
+  COMMENT_GROUP_FRAME_SWATCH_CLASS,
+  commentGroupCustomPickerHex,
+  parseCommentGroupRgbInput,
+  resolveCommentGroupFrameVisual,
+} from './comment-group-frame-color.js';
+export type { CommentGroupFrameVisual } from './comment-group-frame-color.js';
+export type { FlowRect, ScreenRect } from './marquee-selection.js';
+export {
+  nodesInFlowRect,
+  normalizeFlowRect,
+  normalizeScreenRect,
+} from './marquee-selection.js';
 export { importDeviceScenarioFromJson } from './import-device-scenario.js';
 export type {
   ImportDeviceScenarioResult,
