@@ -4102,14 +4102,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-post-usercase-roadmap",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-pure-getters-g4-lgtm"
       ],
       "notes": "UE Blueprint parity: collapse to function, comment groups, marquee modal. D-PINS-9: max 9 input + 9 output pins.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134; LGTM Vesnin; CONCEPT v0.7 section 18; CI green"
     },
     {
       "id": "db-cgf-r0-marquee-modal",
@@ -4118,12 +4120,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-canvas-groups-functions",
       "createdAt": "2026-06-21",
       "dependsOn": [],
       "notes": "Glass rect overlay, multi-select, modal shell.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
     },
     {
       "id": "db-cgf-f1-user-functions",
@@ -4132,14 +4136,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-canvas-groups-functions",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-cgf-r0-marquee-modal"
       ],
       "notes": "Multi-function sidebar +, function-input/output, collapse-to-function, IO CRUD max 9+9, runtime bridge.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
     },
     {
       "id": "db-cgf-g1-comment-groups",
@@ -4148,14 +4154,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-canvas-groups-functions",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-cgf-r0-marquee-modal"
       ],
       "notes": "ScenarioCommentGroup document; dashed frame; title/description sidebar.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
     },
     {
       "id": "db-cgf-a0-align-basic",
@@ -4164,19 +4172,21 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-canvas-groups-functions",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-cgf-r0-marquee-modal"
       ],
       "notes": "align-nodes.ts: 6 align + 2 distribute; unit tests.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
     },
     {
       "id": "db-node-align-advanced",
-      "title": "DB node align advanced: snap, guides, dagre layout (U8a)",
-      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "title": "DB node align advanced: exec dagre, snap guides (U8a)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "M",
@@ -4186,7 +4196,53 @@
       "dependsOn": [
         "db-cgf-a0-align-basic"
       ],
-      "notes": "Deferred: grid snap, Figma guides, exec-chain dagre. Separate epic after U8 A0.",
+      "notes": "Consilium 2026-06-21 Rodchenko: dagre LR exec-chain, snap guides, branch entry preview.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-naa-l1-exec-dagre",
+      "title": "DB NAA L1: layout-exec-chain + dagre LR + modal",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-node-align-advanced",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "layout-exec-chain.ts, @dagrejs/dagre, modal Tier 2.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-naa-l2-branch-entry",
+      "title": "DB NAA L2: branch entry layout + preview ghost",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "db-node-align-advanced",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-naa-l1-exec-dagre"
+      ],
+      "notes": "main/alarm toolbar; ghost preview before apply.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-naa-l3-snap-guides",
+      "title": "DB NAA L3: snap alignment guides on drag",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-node-align-advanced",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-naa-l1-exec-dagre"
+      ],
+      "notes": "Figma-like guides; 8px grid snap on node drag.",
       "githubIssueClosedAt": null
     }
   ]

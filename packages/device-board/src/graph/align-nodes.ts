@@ -64,6 +64,11 @@ function snapToLayoutGrid(value: number): number {
   return Math.round(value / BOARD_LAYOUT_GRID_PX) * BOARD_LAYOUT_GRID_PX;
 }
 
+/** Привязка координаты канваса к модульной сетке (DESIGN.md). */
+export function snapBoardLayoutCoordinate(value: number): number {
+  return snapToLayoutGrid(value);
+}
+
 function selectedNodes(nodes: readonly Node[], selectedIds: ReadonlySet<string>): Node[] {
   return nodes.filter((node) => selectedIds.has(node.id));
 }

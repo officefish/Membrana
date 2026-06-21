@@ -13,25 +13,29 @@ export interface BoardSelectionActionModalProps {
   readonly selectedCount: number;
   readonly collapseFunctionDisabled: boolean;
   readonly collapseGroupDisabled: boolean;
+  readonly execChainLayoutDisabled: boolean;
   readonly onCollapseToFunction: () => void;
   readonly onCollapseToGroup: () => void;
   readonly onAlignMode: (mode: BoardAlignMode) => void;
   readonly onSmartAlign: () => void;
+  readonly onExecChainLayout: () => void;
   readonly onDismiss: () => void;
 }
 
 /**
- * Действия над marquee-выделением (CGF R0 / A0): function / group / align submenu / cancel.
+ * Действия над marquee-выделением (CGF R0 / A0 / NAA L1): function / group / align tiers / cancel.
  */
 export const BoardSelectionActionModal: React.FC<BoardSelectionActionModalProps> = ({
   open,
   selectedCount,
   collapseFunctionDisabled,
   collapseGroupDisabled,
+  execChainLayoutDisabled,
   onCollapseToFunction,
   onCollapseToGroup,
   onAlignMode,
   onSmartAlign,
+  onExecChainLayout,
   onDismiss,
 }) => {
   if (!open) {
@@ -47,7 +51,7 @@ export const BoardSelectionActionModal: React.FC<BoardSelectionActionModalProps>
       aria-labelledby="board-selection-action-title"
       aria-modal="true"
     >
-      <div className="modal-box w-[min(100%,20rem)] max-w-none overflow-visible p-4">
+      <div className="modal-box w-[min(100%,22rem)] max-w-none overflow-visible p-4">
         <h3 id="board-selection-action-title" className="text-sm font-semibold text-base-content">
           Выделение на канвасе
         </h3>
@@ -114,15 +118,40 @@ export const BoardSelectionActionModal: React.FC<BoardSelectionActionModalProps>
                 </button>
               ))}
             </div>
-            <button
-              type="button"
-              className="btn btn-outline btn-xs mt-2 h-8 min-h-8 w-full"
-              disabled={alignDisabled}
-              title="Автовыравнивание по композиции selection bbox"
-              onClick={onSmartAlign}
-            >
-              Авто (сетка 8 px)
-            </button>
+
+            <div className="mt-3 space-y-2 border-t border-base-300/80 pt-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+                Быстрое (selection)
+              </p>
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs h-8 min-h-8 w-full justify-start gap-2 px-2 font-normal"
+                disabled={alignDisabled}
+                title="Автовыравнивание по композиции selection bbox · сетка 8 px"
+                onClick={onSmartAlign}
+              >
+                <span className="badge badge-ghost badge-xs shrink-0">bbox</span>
+                Авто · сетка 8 px
+              </button>
+
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+                Exec-цепочка (Blueprint)
+              </p>
+              <button
+                type="button"
+                className="btn btn-outline btn-primary btn-xs h-9 min-h-9 w-full justify-start gap-2 px-2"
+                disabled={execChainLayoutDisabled}
+                title={
+                  execChainLayoutDisabled
+                    ? 'Нужно ≥2 узлов, связанных exec-рёбрами в selection'
+                    : 'Layered layout слева направо по exec-рёбрам (dagre LR)'
+                }
+                onClick={onExecChainLayout}
+              >
+                <span className="badge badge-primary badge-outline badge-xs shrink-0">exec · LR</span>
+                Упорядочить exec-цепочку
+              </button>
+            </div>
           </div>
         </div>
 

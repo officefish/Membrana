@@ -50,6 +50,10 @@ import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
 import { referenceTypeLabel, isBoardGroupNode } from '../graph/index.js';
 import type { BoardGroupNodeData } from '../graph/index.js';
 import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
+import {
+  computeExecChainLayoutPositions,
+  isExecChainLayoutEnabled,
+} from '../graph/layout-exec-chain.js';
 import type { BoardAlignMode } from '../graph/align-nodes.js';
 import { isSystemNode } from '../graph/event-node.js';
 
@@ -552,12 +556,18 @@ const DeviceBoardShellInner: React.FC<{
     const selected = scenarioCanvas.nodes.filter((node) => marqueeSelectedIds.includes(node.id));
     const hasSystem = selected.some((node) => isSystemNode(node));
     const count = selected.length;
+    const idSet = new Set(marqueeSelectedIds);
     return {
       count,
       collapseFunctionDisabled: count < 2 || hasSystem,
       collapseGroupDisabled: count < 2 || hasSystem,
+      execChainLayoutDisabled: !isExecChainLayoutEnabled(
+        scenarioCanvas.nodes,
+        scenarioCanvas.edges,
+        idSet,
+      ),
     };
-  }, [marqueeSelectedIds, scenarioCanvas.nodes]);
+  }, [marqueeSelectedIds, scenarioCanvas.edges, scenarioCanvas.nodes]);
 
   const applyAlignPositions = useCallback(
     (positions: Map<string, { readonly x: number; readonly y: number }>) => {
@@ -593,6 +603,19 @@ const DeviceBoardShellInner: React.FC<{
     }
     const idSet = new Set(marqueeSelectedIds);
     const positions = computeSmartAlignPositions(scenarioCanvas.nodes, idSet);
+    applyAlignPositions(positions);
+  }, [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas]);
+
+  const handleExecChainLayout = useCallback(() => {
+    if (isSignal || isRuntime || marqueeSelectedIds.length < 2) {
+      return;
+    }
+    const idSet = new Set(marqueeSelectedIds);
+    const positions = computeExecChainLayoutPositions(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      idSet,
+    );
     applyAlignPositions(positions);
   }, [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas]);
 
@@ -1014,10 +1037,12 @@ const DeviceBoardShellInner: React.FC<{
         selectedCount={marqueeSelectionMeta.count}
         collapseFunctionDisabled={marqueeSelectionMeta.collapseFunctionDisabled}
         collapseGroupDisabled={marqueeSelectionMeta.collapseGroupDisabled}
+        execChainLayoutDisabled={marqueeSelectionMeta.execChainLayoutDisabled}
         onCollapseToFunction={handleCollapseToFunction}
         onCollapseToGroup={handleCollapseToGroup}
         onAlignMode={handleAlignMode}
         onSmartAlign={handleSmartAlign}
+        onExecChainLayout={handleExecChainLayout}
         onDismiss={dismissSelectionAction}
       />
     </div>

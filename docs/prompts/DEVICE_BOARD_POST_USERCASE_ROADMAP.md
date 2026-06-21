@@ -102,7 +102,7 @@ Sprint 3 (server):            S1 S2 → S3 S4
 | `db-pure-getters-blueprint-parity` | U7 proposal #1 (parent epic) |
 | `db-pure-getters-p0-spec-lgtm` | P0 pure getters spec |
 | `db-canvas-groups-functions` | U8 parent epic |
-| `db-node-align-advanced` | U8a align advanced |
+| `db-node-align-advanced` | U8a exec dagre + snap guides | [`DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md`](./DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md) |
 
 Родитель: **`db-post-usercase-roadmap`**.
 

@@ -338,8 +338,14 @@ export {
   functionPinsToSubgraphBlockPins,
   isFunctionIoNode,
 } from './function-io-node.js';
-export { computeAlignPositions, computeSmartAlignPositions, BOARD_ALIGN_GAP_PX, BOARD_LAYOUT_GRID_PX, BOARD_ALIGN_MODE_LABELS, BOARD_ALIGN_MODES_BASIC, BOARD_ALIGN_MODES_DISTRIBUTE, isBoardAlignModeEnabled } from './align-nodes.js';
+export { computeAlignPositions, computeSmartAlignPositions, snapBoardLayoutCoordinate, BOARD_ALIGN_GAP_PX, BOARD_LAYOUT_GRID_PX, BOARD_ALIGN_MODE_LABELS, BOARD_ALIGN_MODES_BASIC, BOARD_ALIGN_MODES_DISTRIBUTE, isBoardAlignModeEnabled } from './align-nodes.js';
 export type { BoardAlignMode } from './align-nodes.js';
+export {
+  computeExecChainLayoutPositions,
+  isExecChainLayoutEnabled,
+  isExecFlowBoardEdge,
+} from './layout-exec-chain.js';
+export type { ExecChainLayoutConfig } from './layout-exec-chain.js';
 export {
   findFunctionIoNodeIds,
   proposeNewFunctionPin,
