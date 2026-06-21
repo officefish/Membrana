@@ -15,6 +15,11 @@ import { createLoopRepeatBoardNode } from './loop-repeat-node.js';
 import { createPaletteBoardNode, isPaletteNodeKind } from './palette-node.js';
 import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 import { createVariableBoardNode } from './variable-node.js';
+import {
+  createFunctionInputBoardNode,
+  createFunctionOutputBoardNode,
+} from './function-io-node.js';
+import { nodesForScenarioSubgraphSerialize } from './comment-group.js';
 
 function finalizeScenarioNode(node: ScenarioGraphNode): ScenarioGraphNode {
   return normalizeScenarioGraphNodePure(node);
@@ -36,6 +41,17 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
   // v0.4: системный Event-узел — entry ветви-обработчика.
   const nodeKind = node.data.nodeKind;
   if (nodeKind === 'loop-repeat') {
+    return {
+      id: node.id,
+      blockKind,
+      position: { x: node.position.x, y: node.position.y },
+      label: node.data.label,
+      nodeKind,
+      system: true,
+    };
+  }
+
+  if (nodeKind === 'function-input' || nodeKind === 'function-output') {
     return {
       id: node.id,
       blockKind,
@@ -149,13 +165,14 @@ export function serializeScenarioSubgraph(
   nodes: readonly Node[],
   edges: readonly Edge[],
 ): ScenarioSubgraph {
+  const serializableNodes = nodesForScenarioSubgraphSerialize(nodes);
   return {
     entry,
-    nodes: nodes
+    nodes: serializableNodes
       .map(toScenarioNode)
       .filter((node): node is ScenarioGraphNode => node !== null),
     edges: edges
-      .map((edge) => toScenarioEdge(edge, nodes))
+      .map((edge) => toScenarioEdge(edge, serializableNodes))
       .filter((edge): edge is ScenarioGraphEdge => edge !== null),
   };
 }
@@ -234,6 +251,26 @@ export function deserializeScenarioSubgraph(
         node.data = { ...node.data, pure: false };
       }
       nodes.push(node);
+      continue;
+    }
+
+    if (item.nodeKind === 'function-input') {
+      nodes.push(
+        createFunctionInputBoardNode({
+          id: item.id,
+          position: { x: item.position.x, y: item.position.y },
+        }),
+      );
+      continue;
+    }
+
+    if (item.nodeKind === 'function-output') {
+      nodes.push(
+        createFunctionOutputBoardNode({
+          id: item.id,
+          position: { x: item.position.x, y: item.position.y },
+        }),
+      );
       continue;
     }
 

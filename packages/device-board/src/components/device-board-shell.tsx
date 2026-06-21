@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { OnSelectionChangeParams } from '@xyflow/react';
+import type { ScenarioCommentGroupBranch } from '@membrana/core';
 import type {
   ScenarioNodeKind,
   ScenarioCollectorConfig,
@@ -12,8 +12,11 @@ import {
   resolveScenarioFftTrendsPolicy,
   resolveScenarioGraphNodePure,
   resolveScenarioRecordingPolicy,
+  resolveScenarioCommentGroupFrameColor,
+  DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR,
 } from '@membrana/core';
-import type { Edge } from '@xyflow/react';
+import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
+import type { Edge, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
@@ -34,15 +37,33 @@ import {
   BoardFlowCanvas,
   type BoardConnectionDropOnPanePayload,
   type BoardFlowViewportApi,
+  type BoardMarqueeSelectionPayload,
 } from './board-flow-canvas.js';
 import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
+import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
+import { BoardUserCasePickerModal } from './board-usercase-picker-modal.js';
+import type { DeviceBoardUserCasePickerConfig } from '../types/user-case-picker.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
-import { referenceTypeLabel } from '../graph/index.js';
+import { referenceTypeLabel, isBoardGroupNode } from '../graph/index.js';
+import type { BoardGroupNodeData } from '../graph/index.js';
+import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
+import {
+  computeExecChainLayoutPositions,
+  computeExecChainLayoutFromEntry,
+  buildLayoutGhostNodes,
+  isExecChainLayoutEnabled,
+  isLoopBranchExecLayoutEnabled,
+  resolveLoopBranchExecEntryId,
+} from '../graph/layout-exec-chain.js';
+import type { LoopExecLayoutBranch } from '../graph/layout-exec-chain.js';
+import { BoardExecLayoutPreviewModal } from './board-exec-layout-preview-modal.js';
+import type { BoardAlignMode } from '../graph/align-nodes.js';
+import { isSystemNode } from '../graph/event-node.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -53,6 +74,8 @@ export interface DeviceBoardShellProps {
   readonly showRunControls?: boolean;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
   readonly deviceLive?: boolean;
+  /** UserCase catalog picker (U9 P1); undefined — кнопка скрыта. */
+  readonly userCasePicker?: DeviceBoardUserCasePickerConfig;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -60,7 +83,8 @@ const DeviceBoardShellInner: React.FC<{
   exitLabel: string;
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
+  userCasePicker?: DeviceBoardUserCasePickerConfig;
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, userCasePicker }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -81,9 +105,17 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
   const [selectedGetterPure, setSelectedGetterPure] = useState(true);
   const [selectedGetterPureLocked, setSelectedGetterPureLocked] = useState(false);
+  const [selectedIsCommentGroup, setSelectedIsCommentGroup] = useState(false);
+  const [selectedGroupTitle, setSelectedGroupTitle] = useState('');
+  const [selectedGroupDescription, setSelectedGroupDescription] = useState('');
+  const [selectedGroupFrameColor, setSelectedGroupFrameColor] = useState<ScenarioCommentGroupFrameColor>(
+    DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR,
+  );
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [userCasePickerOpen, setUserCasePickerOpen] = useState(false);
+  const [userCaseAppliedMessage, setUserCaseAppliedMessage] = useState<string | null>(null);
   const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
@@ -92,6 +124,11 @@ const DeviceBoardShellInner: React.FC<{
     readonly PaletteConnectionSuggestion[]
   >([]);
   const pendingConnectionDropRef = useRef<BoardConnectionDropOnPanePayload | null>(null);
+  const [selectionActionOpen, setSelectionActionOpen] = useState(false);
+  const [execLayoutPreview, setExecLayoutPreview] = useState<
+    Map<string, { readonly x: number; readonly y: number }> | null
+  >(null);
+  const [marqueeSelectedIds, setMarqueeSelectedIds] = useState<readonly string[]>([]);
 
   const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
     viewportApiRef.current = api;
@@ -167,6 +204,10 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedVariableId(null);
     setSelectedGetterPure(true);
     setSelectedGetterPureLocked(false);
+    setSelectedIsCommentGroup(false);
+    setSelectedGroupTitle('');
+    setSelectedGroupDescription('');
+    setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
   }, []);
 
   const resolveBranchEdges = useCallback((): readonly Edge[] => {
@@ -213,9 +254,34 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedVariableId(null);
       setSelectedGetterPure(true);
       setSelectedGetterPureLocked(false);
+      setSelectedIsCommentGroup(false);
+      setSelectedGroupTitle('');
+      setSelectedGroupDescription('');
+      setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
       return;
     }
     setSelectedNodeId(node.id);
+    const isGroup = isBoardGroupNode(node);
+    setSelectedIsCommentGroup(isGroup);
+    if (isGroup) {
+      const groupData = node.data as BoardGroupNodeData;
+      setSelectedGroupTitle(typeof groupData.title === 'string' ? groupData.title : 'Группа');
+      setSelectedGroupDescription(
+        typeof groupData.description === 'string' ? groupData.description : '',
+      );
+      setSelectedGroupFrameColor(resolveScenarioCommentGroupFrameColor(groupData.frameColor));
+      setSelectedNodeLabel(typeof groupData.title === 'string' ? groupData.title : node.id);
+      setSelectedNodeKind(null);
+      setSelectedMicrophoneId(null);
+      setSelectedCollectorConfig(null);
+      setSelectedRecordingPolicy(null);
+      setSelectedRecordingPolicyWired(false);
+      setSelectedFftTrendsPolicy(null);
+      setSelectedVariableId(null);
+      setSelectedGetterPure(false);
+      setSelectedGetterPureLocked(false);
+      return;
+    }
     const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
     setSelectedNodeLabel(label);
     const kind = typeof node.data?.nodeKind === 'string' ? (node.data.nodeKind as ScenarioNodeKind) : null;
@@ -468,6 +534,242 @@ const DeviceBoardShellInner: React.FC<{
                   onConnect: graph.onScenarioFunctionConnect,
                 };
 
+  const clearCanvasNodeSelection = useCallback(() => {
+    if (isSignal) {
+      return;
+    }
+    const changes: NodeChange[] = scenarioCanvas.nodes.map((node) => ({
+      type: 'select',
+      id: node.id,
+      selected: false,
+    }));
+    scenarioCanvas.onNodesChange(changes);
+  }, [isSignal, scenarioCanvas]);
+
+  const dismissSelectionAction = useCallback(() => {
+    setSelectionActionOpen(false);
+    setMarqueeSelectedIds([]);
+    clearCanvasNodeSelection();
+  }, [clearCanvasNodeSelection]);
+
+  const closeSelectionActionModal = useCallback(() => {
+    setSelectionActionOpen(false);
+    setMarqueeSelectedIds([]);
+  }, []);
+
+  const handleMarqueeSelection = useCallback(
+    (payload: BoardMarqueeSelectionPayload) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      setMarqueeSelectedIds(payload.nodeIds);
+      setSelectionActionOpen(true);
+    },
+    [isRuntime, isSignal],
+  );
+
+  const marqueeSelectionMeta = useMemo(() => {
+    const selected = scenarioCanvas.nodes.filter((node) => marqueeSelectedIds.includes(node.id));
+    const hasSystem = selected.some((node) => isSystemNode(node));
+    const count = selected.length;
+    const idSet = new Set(marqueeSelectedIds);
+    return {
+      count,
+      collapseFunctionDisabled: count < 2 || hasSystem,
+      collapseGroupDisabled: count < 2 || hasSystem,
+      execChainLayoutDisabled: !isExecChainLayoutEnabled(
+        scenarioCanvas.nodes,
+        scenarioCanvas.edges,
+        idSet,
+      ),
+    };
+  }, [marqueeSelectedIds, scenarioCanvas.edges, scenarioCanvas.nodes]);
+
+  const applyAlignPositions = useCallback(
+    (positions: Map<string, { readonly x: number; readonly y: number }>) => {
+      if (positions.size === 0) {
+        return;
+      }
+      const changes: NodeChange[] = [...positions.entries()].map(([id, position]) => ({
+        type: 'position',
+        id,
+        position,
+      }));
+      scenarioCanvas.onNodesChange(changes);
+      dismissSelectionAction();
+    },
+    [dismissSelectionAction, scenarioCanvas],
+  );
+
+  const handleAlignMode = useCallback(
+    (mode: BoardAlignMode) => {
+      if (isSignal || isRuntime || marqueeSelectedIds.length < 2) {
+        return;
+      }
+      const idSet = new Set(marqueeSelectedIds);
+      const positions = computeAlignPositions(scenarioCanvas.nodes, idSet, mode);
+      applyAlignPositions(positions);
+    },
+    [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas],
+  );
+
+  const handleSmartAlign = useCallback(() => {
+    if (isSignal || isRuntime || marqueeSelectedIds.length < 2) {
+      return;
+    }
+    const idSet = new Set(marqueeSelectedIds);
+    const positions = computeSmartAlignPositions(scenarioCanvas.nodes, idSet);
+    applyAlignPositions(positions);
+  }, [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas]);
+
+  const handleExecChainLayout = useCallback(() => {
+    if (isSignal || isRuntime || marqueeSelectedIds.length < 2) {
+      return;
+    }
+    const idSet = new Set(marqueeSelectedIds);
+    const positions = computeExecChainLayoutPositions(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      idSet,
+    );
+    applyAlignPositions(positions);
+  }, [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas]);
+
+  const isLoopExecLayoutBranch =
+    !isSignal && (scenarioBranch === 'main' || scenarioBranch === 'alarm');
+
+  const loopExecLayoutEnabled = useMemo(() => {
+    if (!isLoopExecLayoutBranch) {
+      return false;
+    }
+    return isLoopBranchExecLayoutEnabled(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      scenarioBranch as LoopExecLayoutBranch,
+    );
+  }, [isLoopExecLayoutBranch, scenarioBranch, scenarioCanvas.edges, scenarioCanvas.nodes]);
+
+  const layoutGhostNodes = useMemo(() => {
+    if (execLayoutPreview === null) {
+      return [];
+    }
+    return buildLayoutGhostNodes(scenarioCanvas.nodes, execLayoutPreview);
+  }, [execLayoutPreview, scenarioCanvas.nodes]);
+
+  const execLayoutMovedCount = useMemo(() => {
+    if (execLayoutPreview === null) {
+      return 0;
+    }
+    let count = 0;
+    for (const [nodeId, next] of execLayoutPreview) {
+      const node = scenarioCanvas.nodes.find((item) => item.id === nodeId);
+      if (node === undefined) {
+        continue;
+      }
+      if (node.position.x !== next.x || node.position.y !== next.y) {
+        count += 1;
+      }
+    }
+    return count;
+  }, [execLayoutPreview, scenarioCanvas.nodes]);
+
+  const handleRequestBranchExecLayout = useCallback(() => {
+    if (!isLoopExecLayoutBranch || isRuntime || !loopExecLayoutEnabled) {
+      return;
+    }
+    dismissSelectionAction();
+    const entryId = resolveLoopBranchExecEntryId(scenarioBranch as LoopExecLayoutBranch);
+    const positions = computeExecChainLayoutFromEntry(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      entryId,
+    );
+    setExecLayoutPreview(positions);
+  }, [
+    dismissSelectionAction,
+    isLoopExecLayoutBranch,
+    isRuntime,
+    loopExecLayoutEnabled,
+    scenarioBranch,
+    scenarioCanvas.edges,
+    scenarioCanvas.nodes,
+  ]);
+
+  const handleDismissExecLayoutPreview = useCallback(() => {
+    setExecLayoutPreview(null);
+  }, []);
+
+  const handleApplyExecLayoutPreview = useCallback(() => {
+    if (execLayoutPreview === null) {
+      return;
+    }
+    applyAlignPositions(execLayoutPreview);
+    setExecLayoutPreview(null);
+  }, [applyAlignPositions, execLayoutPreview]);
+
+  const handleCollapseToFunction = useCallback(() => {
+    if (isSignal || isRuntime) {
+      return;
+    }
+    const error = graph.collapseMarqueeToFunction(scenarioBranch, marqueeSelectedIds);
+    if (error !== null) {
+      setImportError(error);
+    }
+    dismissSelectionAction();
+  }, [
+    dismissSelectionAction,
+    graph,
+    isRuntime,
+    isSignal,
+    marqueeSelectedIds,
+    scenarioBranch,
+  ]);
+
+  const handleCollapseToGroup = useCallback(() => {
+    if (isRuntime) {
+      return;
+    }
+    const branch: ScenarioCommentGroupBranch = isSignal ? 'signal' : scenarioBranch;
+    const result = graph.collapseMarqueeToCommentGroup(branch, marqueeSelectedIds);
+    if (result.error !== null) {
+      setImportError(result.error);
+      dismissSelectionAction();
+      return;
+    }
+    closeSelectionActionModal();
+    if (result.groupNode !== null) {
+      handleSelectionChange({ nodes: [result.groupNode], edges: [] });
+    }
+  }, [
+    closeSelectionActionModal,
+    dismissSelectionAction,
+    graph,
+    handleSelectionChange,
+    isRuntime,
+    isSignal,
+    marqueeSelectedIds,
+    scenarioBranch,
+  ]);
+
+  useEffect(() => {
+    if (isRuntime && selectionActionOpen) {
+      dismissSelectionAction();
+    }
+  }, [dismissSelectionAction, isRuntime, selectionActionOpen]);
+
+  useEffect(() => {
+    if (!selectionActionOpen) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        dismissSelectionAction();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [dismissSelectionAction, selectionActionOpen]);
+
   const canvasLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
 
   const scenarioTitle = isSignal ? SIGNAL_LAYER_TITLE : BRANCH_SCENARIO_TITLE[scenarioBranch];
@@ -535,6 +837,18 @@ const DeviceBoardShellInner: React.FC<{
           <p className="min-w-0 truncate text-[11px] leading-tight text-base-content/60">
             {scenarioTitle}
           </p>
+          {isLoopExecLayoutBranch && !isRuntime ? (
+            <button
+              type="button"
+              className="btn btn-outline btn-primary btn-xs h-8 min-h-8 shrink-0 gap-1 px-2"
+              disabled={!loopExecLayoutEnabled || execLayoutPreview !== null}
+              title="Упорядочить exec-цепочку от entry ветки (dagre LR)"
+              onClick={handleRequestBranchExecLayout}
+            >
+              <span className="badge badge-primary badge-outline badge-xs">exec · LR</span>
+              Упорядочить цепочку
+            </button>
+          ) : null}
           {syncLabel !== null ? (
             <span className="shrink-0 text-xs text-error" title={graph.syncError ?? undefined}>
               {syncLabel}
@@ -653,6 +967,13 @@ const DeviceBoardShellInner: React.FC<{
                   Import JSON
                 </button>
               </li>
+              {userCasePicker !== undefined ? (
+                <li>
+                  <button type="button" onClick={() => setUserCasePickerOpen(true)}>
+                    UserCase…
+                  </button>
+                </li>
+              ) : null}
               <li>
                 <button
                   type="button"
@@ -669,6 +990,19 @@ const DeviceBoardShellInner: React.FC<{
       <BoardValidationBanner issues={graph.validationIssues} successMessage={null} />
       {importError !== null ? (
         <div className="border-b border-error/30 bg-error/10 px-4 py-2 text-xs text-error">{importError}</div>
+      ) : null}
+      {userCaseAppliedMessage !== null ? (
+        <div className="border-b border-success/30 bg-success/10 px-4 py-2 text-xs text-success flex items-center justify-between gap-3">
+          <span>{userCaseAppliedMessage}</span>
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs"
+            onClick={() => setUserCaseAppliedMessage(null)}
+            aria-label="Закрыть"
+          >
+            ✕
+          </button>
+        </div>
       ) : null}
       <BoardRuntimeStatus state={graph.runtimeState} />
 
@@ -694,6 +1028,12 @@ const DeviceBoardShellInner: React.FC<{
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             onConnectionDropOnPane={handleConnectionDropOnPane}
+            onMarqueeSelection={
+              !isSignal && !isRuntime && execLayoutPreview === null
+                ? handleMarqueeSelection
+                : undefined
+            }
+            layoutGhostNodes={layoutGhostNodes}
           />
         </div>
 
@@ -709,12 +1049,19 @@ const DeviceBoardShellInner: React.FC<{
           onDismiss={graph.cancelBranchImport}
         />
 
-        <BoardConnectionSuggestModal
-          open={connectionSuggestOpen}
-          suggestions={connectionSuggestItems}
-          onPick={handleConnectionSuggestPick}
-          onDismiss={dismissConnectionSuggest}
-        />
+        {userCasePicker !== undefined ? (
+          <BoardUserCasePickerModal
+            open={userCasePickerOpen}
+            cards={userCasePicker.cards}
+            onDismiss={() => setUserCasePickerOpen(false)}
+            onApplied={(userCaseId) => {
+              const card = userCasePicker.cards.find((item) => item.id === userCaseId);
+              setUserCaseAppliedMessage(
+                card !== undefined ? `UserCase «${card.title}» применён` : 'UserCase применён',
+              );
+            }}
+          />
+        ) : null}
 
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
@@ -731,6 +1078,10 @@ const DeviceBoardShellInner: React.FC<{
             onRenameVariable={graph.renameVariable}
             onRemoveVariable={graph.removeVariable}
             onAddVariableNode={addVariableNodeAtViewportCenter}
+            scenarioFunctions={graph.scenarioFunctionDrafts}
+            activeFunctionId={graph.activeFunctionId}
+            onSelectFunction={graph.selectUserFunction}
+            onCreateFunction={graph.createUserFunction}
           />
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
@@ -749,10 +1100,16 @@ const DeviceBoardShellInner: React.FC<{
             selectedVariableValue={selectedVariable?.value ?? null}
             selectedGetterPure={selectedGetterPure}
             selectedGetterPureLocked={selectedGetterPureLocked}
+            selectedIsCommentGroup={selectedIsCommentGroup}
+            selectedGroupTitle={selectedGroupTitle}
+            selectedGroupDescription={selectedGroupDescription}
+            selectedGroupFrameColor={selectedGroupFrameColor}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
             canEditScenario={!isSignal}
+            isFunctionBranch={!isSignal && scenarioBranch === 'function'}
+            functionMeta={!isSignal && scenarioBranch === 'function' ? graph.scenarioFunctionMeta : null}
             isRuntime={isRuntime}
             runtimeInspection={runtimeInspection}
             printLastOutput={printLastOutput}
@@ -770,10 +1127,71 @@ const DeviceBoardShellInner: React.FC<{
               }
             }}
             onVariableValueChange={graph.updateVariableValue}
+            onCommentGroupMetadataChange={(nodeId, patch) => {
+              graph.updateCommentGroupMetadata(nodeId, patch);
+              if (patch.title !== undefined) {
+                setSelectedGroupTitle(patch.title.trim() || 'Группа');
+                setSelectedNodeLabel(patch.title.trim() || 'Группа');
+              }
+              if (patch.description !== undefined) {
+                setSelectedGroupDescription(patch.description);
+              }
+              if (patch.frameColor !== undefined) {
+                setSelectedGroupFrameColor(resolveScenarioCommentGroupFrameColor(patch.frameColor));
+              }
+            }}
+            onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
+            onAddFunctionPin={(side, kind) => {
+              const error = graph.addActiveFunctionPin(side, kind);
+              if (error !== null) {
+                setImportError(error);
+              }
+            }}
+            onUpdateFunctionPin={(side, pinId, patch) => {
+              const error = graph.updateActiveFunctionPin(side, pinId, patch);
+              if (error !== null) {
+                setImportError(error);
+              }
+            }}
+            onRemoveFunctionPin={(side, pinId) => {
+              const error = graph.removeActiveFunctionPin(side, pinId);
+              if (error !== null) {
+                setImportError(error);
+              }
+            }}
             onClearBoard={handleClearBoard}
           />
         </aside>
       </div>
+
+      <BoardConnectionSuggestModal
+        open={connectionSuggestOpen}
+        suggestions={connectionSuggestItems}
+        onPick={handleConnectionSuggestPick}
+        onDismiss={dismissConnectionSuggest}
+      />
+
+      <BoardExecLayoutPreviewModal
+        open={execLayoutPreview !== null}
+        branchLabel={BRANCH_TAB_LABEL[scenarioBranch]}
+        movedNodeCount={execLayoutMovedCount}
+        onApply={handleApplyExecLayoutPreview}
+        onDismiss={handleDismissExecLayoutPreview}
+      />
+
+      <BoardSelectionActionModal
+        open={selectionActionOpen && !isRuntime}
+        selectedCount={marqueeSelectionMeta.count}
+        collapseFunctionDisabled={marqueeSelectionMeta.collapseFunctionDisabled}
+        collapseGroupDisabled={marqueeSelectionMeta.collapseGroupDisabled}
+        execChainLayoutDisabled={marqueeSelectionMeta.execChainLayoutDisabled}
+        onCollapseToFunction={handleCollapseToFunction}
+        onCollapseToGroup={handleCollapseToGroup}
+        onAlignMode={handleAlignMode}
+        onSmartAlign={handleSmartAlign}
+        onExecChainLayout={handleExecChainLayout}
+        onDismiss={dismissSelectionAction}
+      />
     </div>
   );
 };
@@ -787,18 +1205,21 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   exitLabel = 'Выйти из доски',
   showRunControls = true,
   deviceLive,
+  userCasePicker,
 }) => (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
     persistAdapter={persistAdapter}
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
+    loadUserCaseDocument={userCasePicker?.loadDocument}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
+      userCasePicker={userCasePicker}
     />
   </DeviceBoardGraphProvider>
 );

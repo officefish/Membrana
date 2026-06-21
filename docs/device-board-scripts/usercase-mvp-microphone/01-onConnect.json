@@ -11,8 +11,8 @@
         "id": "on-connect-event",
         "blockKind": "custom",
         "position": {
-          "x": -143.74603485864776,
-          "y": -65.2871627314024
+          "x": -144,
+          "y": -96
         },
         "label": "On connect",
         "nodeKind": "event",
@@ -23,8 +23,8 @@
         "id": "node-is-valid-mqm97w5v-17",
         "blockKind": "custom",
         "position": {
-          "x": 170.3237282526582,
-          "y": -98.88679380587871
+          "x": 320,
+          "y": -96
         },
         "label": "isValid",
         "nodeKind": "is-valid"
@@ -33,8 +33,8 @@
         "id": "node-get-journal-mqm98hvn-18",
         "blockKind": "custom",
         "position": {
-          "x": 459.8034769485792,
-          "y": 13.111038385640448
+          "x": 456,
+          "y": 16
         },
         "label": "GetJournal",
         "nodeKind": "get-journal"
@@ -43,8 +43,8 @@
         "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
         "blockKind": "custom",
         "position": {
-          "x": 739.5364266894157,
-          "y": -81.43640966577944
+          "x": 784,
+          "y": -96
         },
         "label": "journal1",
         "nodeKind": "variable-set",
@@ -103,7 +103,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T08:39:26.338Z",
+  "exportedAt": "2026-06-21T12:04:18.003Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "onConnect",
   "referenceVariableSlots": []

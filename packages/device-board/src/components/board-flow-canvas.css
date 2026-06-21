@@ -8,6 +8,11 @@
 
 .board-flow-canvas .react-flow__pane {
   background-color: var(--board-canvas-bg);
+  cursor: crosshair;
+}
+
+.board-flow-canvas .react-flow__node {
+  cursor: grab;
 }
 
 .board-flow-canvas .react-flow__background {

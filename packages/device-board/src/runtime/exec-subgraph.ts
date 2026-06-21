@@ -96,6 +96,21 @@ export async function runSubgraphOnce(
       throw new Error(`Scenario node "${currentId}" not found in ${options.branch}`);
     }
 
+    if (node.nodeKind === 'function-output') {
+      return lastDetection;
+    }
+
+    if (node.nodeKind === 'function-input') {
+      const execEdge = subgraph.edges.find(
+        (item) => item.source === currentId && item.kind === 'exec',
+      );
+      if (execEdge === undefined) {
+        return lastDetection;
+      }
+      currentId = execEdge.target;
+      continue;
+    }
+
     if (isExecTransparentPureNode(node)) {
       const skipNextId = findExecSuccessor(subgraph, currentId, 'exec-out');
       if (skipNextId === null) {

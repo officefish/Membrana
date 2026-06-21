@@ -155,7 +155,10 @@ export function registerClientModules(): void {
     category: 'Устройства',
     enabled: true,
     activePlugins: [],
-    defaultConfig: {},
+    defaultConfig: {
+      userCasesCatalogEnabled: true,
+      entitledTariffSkus: [],
+    },
     loader: () =>
       import('./device-board/DeviceBoardModule').then((m) => ({
         default: m.DeviceBoardModule,

@@ -4094,6 +4094,291 @@
       "notes": "trends-parity:smoke-matrix; v08 MakeFftTrendsPolicy wired; signoff doc.",
       "githubIssueClosedAt": null,
       "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-canvas-groups-functions",
+      "title": "DB Canvas: marquee, comment groups, user functions, align MVP (U8)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g4-lgtm"
+      ],
+      "notes": "UE Blueprint parity: collapse to function, comment groups, marquee modal. D-PINS-9: max 9 input + 9 output pins.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134; LGTM Vesnin; CONCEPT v0.7 section 18; CI green"
+    },
+    {
+      "id": "db-cgf-r0-marquee-modal",
+      "title": "DB CGF R0: marquee selection + action modal",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Glass rect overlay, multi-select, modal shell.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
+    },
+    {
+      "id": "db-cgf-f1-user-functions",
+      "title": "DB CGF F1: user functions + Input/Output + collapse",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-r0-marquee-modal"
+      ],
+      "notes": "Multi-function sidebar +, function-input/output, collapse-to-function, IO CRUD max 9+9, runtime bridge.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
+    },
+    {
+      "id": "db-cgf-g1-comment-groups",
+      "title": "DB CGF G1: comment groups (visual frames)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-r0-marquee-modal"
+      ],
+      "notes": "ScenarioCommentGroup document; dashed frame; title/description sidebar.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
+    },
+    {
+      "id": "db-cgf-a0-align-basic",
+      "title": "DB CGF A0: basic node alignment",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-canvas-groups-functions",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-r0-marquee-modal"
+      ],
+      "notes": "align-nodes.ts: 6 align + 2 distribute; unit tests.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "PR #134"
+    },
+    {
+      "id": "db-node-align-advanced",
+      "title": "DB node align advanced: exec dagre, snap guides (U8a)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-cgf-a0-align-basic"
+      ],
+      "notes": "Consilium 2026-06-21 Rodchenko: dagre LR exec-chain, snap guides, branch entry preview.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "U8a: L1-L3 smart alignment; CONCEPT §19"
+    },
+    {
+      "id": "db-naa-l1-exec-dagre",
+      "title": "DB NAA L1: layout-exec-chain + dagre LR + modal",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-node-align-advanced",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "layout-exec-chain.ts, @dagrejs/dagre, modal Tier 2.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "L1: dagre exec layout, modal Tier 2, layout-exec-chain.ts"
+    },
+    {
+      "id": "db-naa-l2-branch-entry",
+      "title": "DB NAA L2: branch entry layout + preview ghost",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-node-align-advanced",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-naa-l1-exec-dagre"
+      ],
+      "notes": "main/alarm toolbar; ghost preview before apply.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "L2: branch entry button, ghost preview modal"
+    },
+    {
+      "id": "db-naa-l3-snap-guides",
+      "title": "DB NAA L3: snap alignment guides on drag",
+      "promptPath": "docs/prompts/DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-node-align-advanced",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-naa-l1-exec-dagre"
+      ],
+      "notes": "Figma-like guides; 8px grid snap on node drag.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "L3: snap guides overlay on drag, layout-snap-guides.ts"
+    },
+    {
+      "id": "db-usercases-catalog-u9",
+      "title": "DB UserCases catalog: settings + modal + apply-all (U9)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-naa-l3-snap-guides",
+        "db-cgf-a0-align-basic"
+      ],
+      "notes": "Consilium 2026-06-21 product: bundled + tariff UserCases; supersedes roadmap U1.",
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "GitHub #136 closed; PR #137"
+    },
+    {
+      "id": "db-uc-r0-schema",
+      "title": "DB UC R0: UserCase manifest + build/verify-kinds scripts",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Generalize usercase:build; manifest contract; CI verify-kinds.",
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "manifest + yarn usercase:build/verify-kinds; ae3878f e9a7459"
+    },
+    {
+      "id": "db-uc-l1-layout-canon",
+      "title": "DB UC L1: layout canon + verify-layout + comment group frames",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-r0-schema"
+      ],
+      "notes": "yarn usercase:verify-layout; editorial pass MVP main branch.",
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "layout canon, verify-layout, comment groups; 8c9a770"
+    },
+    {
+      "id": "db-uc-c1-catalog",
+      "title": "DB UC C1: bundled UserCase catalog service",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-r0-schema"
+      ],
+      "notes": "UserCaseCatalogService; index usercase-*/ manifests.",
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "UserCaseCatalogService bundled index; fa56418"
+    },
+    {
+      "id": "db-uc-g1-settings-gate",
+      "title": "DB UC G1: settings UserCases section + entitlement gate",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-c1-catalog"
+      ],
+      "notes": "Toggle catalog; bundled/tariff/locked badges; tariff stub.",
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "settings toggle + entitlement badges; fbdf158"
+    },
+    {
+      "id": "db-uc-p1-picker-modal",
+      "title": "DB UC P1: UserCase picker modal + apply-all flow",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-c1-catalog",
+        "db-uc-g1-settings-gate",
+        "db-uc-l1-layout-canon"
+      ],
+      "notes": "Modal cards; confirm dirty; ref-mapping; post-apply exec-layout.",
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "modal apply-all + ref-mapping; 7c520db"
+    },
+    {
+      "id": "db-uc-d1-docs",
+      "title": "DB UC D1: CONCEPT §20 + UserCases docs page",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md",
+      "githubIssue": 136,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-usercases-catalog-u9",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-uc-p1-picker-modal"
+      ],
+      "notes": "DEVICE_BOARD_CONCEPT §20; package README; apps/docs stub.",
+      "githubIssueClosedAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "CONCEPT section 20, README, Mintlify usercases; 4576abb"
     }
   ]
 }

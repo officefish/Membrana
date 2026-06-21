@@ -29,6 +29,8 @@ import {
   isPureEligibleScenarioNodeKind,
 } from '@membrana/core';
 
+import type { ScenarioCommentGroupBranch, ScenarioCommentGroupFrameColor, SocketType } from '@membrana/core';
+import { resolveScenarioCommentGroupFrameColor } from '@membrana/core';
 import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
 import {
   buildDeviceScenarioDocument,
@@ -42,10 +44,11 @@ import {
   exportDeviceScenarioDocument,
   getDefaultMvpMicrophoneDocument,
   hydrateBoardFromDocument,
-  hydratedFunctionInput,
   importDeviceScenarioFromJson,
   applyBranchScenarioImport,
+  applyUserCaseDocument,
   parseBranchScenarioExportJson,
+  prepareUserCaseApply,
   suggestReferenceVariableMapping,
   isReferenceMappingComplete,
   isLegacyHackathonDefaultScenario,
@@ -63,12 +66,33 @@ import {
   validatePreRun,
   stripExecEdgesForNodes,
   syncPureNodePins,
+  hydratedFunctionInputs,
+  collapseSelectionToFunction,
+  collapseSelectionToCommentGroup,
+  createEmptyFunctionDraft,
+  COMMENT_GROUP_DESCRIPTION_MAX_LENGTH,
   type VariableNodeKind,
   type V04PaletteNodeKind,
   type BranchScenarioExport,
   type ReferenceVariableSlot,
+  type HydratedBoardState,
+  type PreRunValidationIssue,
+  type ScenarioFunctionDraft,
+  type ScenarioFunctionCanvasMeta,
 } from '../graph/index.js';
-import type { HydratedBoardState, PreRunValidationIssue } from '../graph/index.js';
+import {
+  syncFunctionIoNodePins,
+} from '../graph/function-io-node.js';
+import {
+  findFunctionIoNodeIds,
+  proposeNewFunctionPin,
+  removeFunctionPinFromList,
+  remapFunctionCanvasEdgeHandles,
+  stripFunctionCanvasEdgesForPins,
+  syncSubgraphBlocksForFunctionPins,
+  updateFunctionPinInList,
+  type FunctionPinSide,
+} from '../graph/function-pin-ops.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import {
   ScenarioRuntime,
@@ -84,6 +108,24 @@ export interface PendingBranchImportState {
   readonly exportPayload: BranchScenarioExport;
   readonly slots: readonly ReferenceVariableSlot[];
   readonly mapping: Record<string, string>;
+}
+
+/** Результат apply UserCase: success | текст ошибки | нужен ref-mapping modal. */
+export type ApplyUserCaseOutcome =
+  | null
+  | string
+  | {
+      readonly kind: 'needs-mapping';
+      readonly title: string;
+      readonly slots: readonly ReferenceVariableSlot[];
+      readonly mapping: Record<string, string>;
+    };
+
+/** Результат collapse marquee → comment group (CGF G1). */
+export interface CollapseMarqueeToCommentGroupResult {
+  readonly error: string | null;
+  /** Созданная group-нода с selected: true — для фокуса инспектора. */
+  readonly groupNode: Node | null;
 }
 
 export interface DeviceBoardGraphContextValue {
@@ -105,6 +147,9 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioOnDisconnectEdges: Edge[];
   readonly scenarioFunctionNodes: Node[];
   readonly scenarioFunctionEdges: Edge[];
+  readonly scenarioFunctionMeta: ScenarioFunctionCanvasMeta;
+  readonly scenarioFunctionDrafts: readonly ScenarioFunctionDraft[];
+  readonly activeFunctionId: string;
   readonly validationIssues: readonly PreRunValidationIssue[];
   readonly canRun: boolean;
   readonly runDisabledReason: string | null;
@@ -143,6 +188,11 @@ export interface DeviceBoardGraphContextValue {
   readonly pendingBranchImport: PendingBranchImportState | null;
   readonly confirmBranchImport: (mapping: Readonly<Record<string, string>>) => string | null;
   readonly cancelBranchImport: () => void;
+  /** Apply-all UserCase (U9 P1): null = ok; string = error; needs-mapping → ref modal. */
+  readonly applyUserCase: (
+    userCaseId: string,
+    mapping?: Readonly<Record<string, string>>,
+  ) => ApplyUserCaseOutcome;
   readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
   /** Черновик отличается от последнего сохранённого снимка. */
@@ -197,6 +247,39 @@ export interface DeviceBoardGraphContextValue {
   /** v0.4: удалить переменную и её узлы get/set со всех веток. */
   readonly removeVariable: (id: string) => void;
   /** v0.4: добавить узел get/set переменной в активную ветку. */
+  readonly updateActiveFunctionMeta: (
+    patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
+  ) => void;
+  readonly addActiveFunctionPin: (side: FunctionPinSide, kind: 'exec' | 'data') => string | null;
+  readonly removeActiveFunctionPin: (side: FunctionPinSide, pinId: string) => string | null;
+  readonly updateActiveFunctionPin: (
+    side: FunctionPinSide,
+    pinId: string,
+    patch: {
+      readonly name?: string;
+      readonly kind?: 'exec' | 'data';
+      readonly socketType?: SocketType;
+    },
+  ) => string | null;
+  readonly createUserFunction: () => void;
+  readonly selectUserFunction: (functionId: string) => void;
+  readonly collapseMarqueeToFunction: (
+    branch: ScenarioBranchTab,
+    selectedNodeIds: readonly string[],
+  ) => string | null;
+  readonly collapseMarqueeToCommentGroup: (
+    branch: ScenarioCommentGroupBranch,
+    selectedNodeIds: readonly string[],
+  ) => CollapseMarqueeToCommentGroupResult;
+  /** CGF G1: название, описание и цвет рамки comment group (только edit mode). */
+  readonly updateCommentGroupMetadata: (
+    nodeId: string,
+    patch: {
+      readonly title?: string;
+      readonly description?: string;
+      readonly frameColor?: ScenarioCommentGroupFrameColor;
+    },
+  ) => void;
   readonly addVariableNodeToCurrentBranch: (
     kind: VariableNodeKind,
     variableId: string,
@@ -227,6 +310,8 @@ export interface DeviceBoardGraphProviderProps {
   readonly initialHydratedState?: HydratedBoardState;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
   readonly deviceLive?: boolean;
+  /** Загрузка entitled UserCase document (client catalog). */
+  readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
 }
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
@@ -236,6 +321,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   persistAdapter,
   initialHydratedState,
   deviceLive,
+  loadUserCaseDocument,
 }) => {
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
@@ -268,7 +354,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   );
   const [scenarioFunctionNodes, setScenarioFunctionNodes] = useState<Node[]>(defaultState.scenarioFunctionNodes);
   const [scenarioFunctionEdges, setScenarioFunctionEdges] = useState<Edge[]>(defaultState.scenarioFunctionEdges);
-  const [scenarioFunctionMeta, setScenarioFunctionMeta] = useState(defaultState.scenarioFunctionMeta);
+  const [scenarioFunctionMeta, setScenarioFunctionMeta] = useState<ScenarioFunctionCanvasMeta>(
+    defaultState.scenarioFunctionMeta,
+  );
+  const [scenarioFunctionDrafts, setScenarioFunctionDrafts] = useState<readonly ScenarioFunctionDraft[]>(
+    defaultState.scenarioFunctionDrafts,
+  );
+  const [activeFunctionId, setActiveFunctionId] = useState(defaultState.activeFunctionId);
   const [variables, setVariables] = useState<readonly ScenarioVariable[]>(defaultState.variables);
   const [pendingBranchImport, setPendingBranchImport] = useState<PendingBranchImportState | null>(
     null,
@@ -371,6 +463,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioFunctionNodes(state.scenarioFunctionNodes);
     setScenarioFunctionEdges(state.scenarioFunctionEdges);
     setScenarioFunctionMeta(state.scenarioFunctionMeta);
+    setScenarioFunctionDrafts(state.scenarioFunctionDrafts);
+    setActiveFunctionId(state.activeFunctionId);
     setVariables(state.variables);
     window.setTimeout(() => {
       skipDirtyRef.current = false;
@@ -459,6 +553,564 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     };
   }, [applyHydratedState, defaultState, deviceKindProp, markSavedSnapshot, persistAdapter]);
 
+  const loadFunctionDraftToCanvas = useCallback((draft: ScenarioFunctionDraft) => {
+    setScenarioFunctionNodes([...draft.nodes]);
+    setScenarioFunctionEdges([...draft.edges]);
+    setScenarioFunctionMeta({
+      id: draft.id,
+      name: draft.name,
+      entry: draft.entry,
+      description: draft.description,
+      inputPins: draft.inputPins,
+      outputPins: draft.outputPins,
+    });
+    setActiveFunctionId(draft.id);
+  }, []);
+
+  const commitActiveFunctionDraft = useCallback(
+    (drafts: readonly ScenarioFunctionDraft[]): readonly ScenarioFunctionDraft[] =>
+      drafts.map((draft) =>
+        draft.id === activeFunctionId
+          ? {
+              ...draft,
+              name: scenarioFunctionMeta.name,
+              entry: scenarioFunctionMeta.entry,
+              description: scenarioFunctionMeta.description,
+              inputPins: scenarioFunctionMeta.inputPins,
+              outputPins: scenarioFunctionMeta.outputPins,
+              nodes: scenarioFunctionNodes,
+              edges: scenarioFunctionEdges,
+            }
+          : draft,
+      ),
+    [
+      activeFunctionId,
+      scenarioFunctionEdges,
+      scenarioFunctionMeta,
+      scenarioFunctionNodes,
+    ],
+  );
+
+  const selectUserFunction = useCallback(
+    (functionId: string) => {
+      if (functionId === activeFunctionId) {
+        return;
+      }
+      const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
+      const target = committed.find((draft) => draft.id === functionId);
+      if (target === undefined) {
+        return;
+      }
+      setScenarioFunctionDrafts(committed);
+      loadFunctionDraftToCanvas(target);
+      setScenarioBranch('function');
+    },
+    [
+      activeFunctionId,
+      commitActiveFunctionDraft,
+      loadFunctionDraftToCanvas,
+      scenarioFunctionDrafts,
+    ],
+  );
+
+  const createUserFunction = useCallback(() => {
+    const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
+    let seq = committed.length + 1;
+    while (committed.some((draft) => draft.id === `fn-${seq}`)) {
+      seq += 1;
+    }
+    const id = `fn-${seq}`;
+    const draft = createEmptyFunctionDraft(id, `Function ${seq}`);
+    setScenarioFunctionDrafts([...committed, draft]);
+    loadFunctionDraftToCanvas(draft);
+    setScenarioBranch('function');
+  }, [commitActiveFunctionDraft, loadFunctionDraftToCanvas, scenarioFunctionDrafts]);
+
+  const updateActiveFunctionMeta = useCallback(
+    (patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>) => {
+      setScenarioFunctionMeta((meta) => {
+        const next = { ...meta, ...patch };
+        if (patch.name !== undefined) {
+          const payload = {
+            functionId: next.id,
+            functionName: next.name,
+            inputPins: next.inputPins,
+            outputPins: next.outputPins,
+            removedInputPinIds: new Set<string>(),
+            removedOutputPinIds: new Set<string>(),
+            renames: [] as const,
+          };
+          const initial = syncSubgraphBlocksForFunctionPins({
+            ...payload,
+            nodes: scenarioInitialNodes,
+            edges: scenarioInitialEdges,
+          });
+          setScenarioInitialNodes(initial.nodes);
+          setScenarioInitialEdges(initial.edges);
+          const onConnect = syncSubgraphBlocksForFunctionPins({
+            ...payload,
+            nodes: scenarioOnConnectNodes,
+            edges: scenarioOnConnectEdges,
+          });
+          setScenarioOnConnectNodes(onConnect.nodes);
+          setScenarioOnConnectEdges(onConnect.edges);
+          const main = syncSubgraphBlocksForFunctionPins({
+            ...payload,
+            nodes: scenarioMainNodes,
+            edges: scenarioMainEdges,
+          });
+          setScenarioMainNodes(main.nodes);
+          setScenarioMainEdges(main.edges);
+          const alarm = syncSubgraphBlocksForFunctionPins({
+            ...payload,
+            nodes: scenarioAlarmNodes,
+            edges: scenarioAlarmEdges,
+          });
+          setScenarioAlarmNodes(alarm.nodes);
+          setScenarioAlarmEdges(alarm.edges);
+          const onStop = syncSubgraphBlocksForFunctionPins({
+            ...payload,
+            nodes: scenarioOnStopNodes,
+            edges: scenarioOnStopEdges,
+          });
+          setScenarioOnStopNodes(onStop.nodes);
+          setScenarioOnStopEdges(onStop.edges);
+          const onDisconnect = syncSubgraphBlocksForFunctionPins({
+            ...payload,
+            nodes: scenarioOnDisconnectNodes,
+            edges: scenarioOnDisconnectEdges,
+          });
+          setScenarioOnDisconnectNodes(onDisconnect.nodes);
+          setScenarioOnDisconnectEdges(onDisconnect.edges);
+        }
+        return next;
+      });
+    },
+    [
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+    ],
+  );
+
+  const applyActiveFunctionPinState = useCallback(
+    (input: {
+      readonly meta: ScenarioFunctionCanvasMeta;
+      readonly functionEdges: Edge[];
+      readonly removedInputPinIds: readonly string[];
+      readonly removedOutputPinIds: readonly string[];
+      readonly renames: readonly { readonly side: FunctionPinSide; readonly from: string; readonly to: string }[];
+    }) => {
+      const { inputNodeId, outputNodeId } = findFunctionIoNodeIds(scenarioFunctionNodes);
+      if (inputNodeId === null || outputNodeId === null) {
+        return;
+      }
+      const removedIn = new Set(input.removedInputPinIds);
+      const removedOut = new Set(input.removedOutputPinIds);
+
+      const syncedNodes = syncFunctionIoNodePins(
+        scenarioFunctionNodes,
+        input.meta.inputPins,
+        input.meta.outputPins,
+      );
+      let syncedFunctionEdges = stripFunctionCanvasEdgesForPins(
+        input.functionEdges,
+        inputNodeId,
+        outputNodeId,
+        removedIn,
+        removedOut,
+      );
+      for (const rename of input.renames) {
+        syncedFunctionEdges = remapFunctionCanvasEdgeHandles(
+          syncedFunctionEdges,
+          inputNodeId,
+          outputNodeId,
+          rename.side,
+          rename.from,
+          rename.to,
+        );
+      }
+
+      setScenarioFunctionMeta(input.meta);
+      setScenarioFunctionNodes(syncedNodes);
+      setScenarioFunctionEdges(syncedFunctionEdges);
+
+      const branchPayload = {
+        functionId: input.meta.id,
+        functionName: input.meta.name,
+        inputPins: input.meta.inputPins,
+        outputPins: input.meta.outputPins,
+        removedInputPinIds: removedIn,
+        removedOutputPinIds: removedOut,
+        renames: input.renames,
+      };
+
+      const initial = syncSubgraphBlocksForFunctionPins({
+        ...branchPayload,
+        nodes: scenarioInitialNodes,
+        edges: scenarioInitialEdges,
+      });
+      setScenarioInitialNodes(initial.nodes);
+      setScenarioInitialEdges(initial.edges);
+
+      const onConnect = syncSubgraphBlocksForFunctionPins({
+        ...branchPayload,
+        nodes: scenarioOnConnectNodes,
+        edges: scenarioOnConnectEdges,
+      });
+      setScenarioOnConnectNodes(onConnect.nodes);
+      setScenarioOnConnectEdges(onConnect.edges);
+
+      const main = syncSubgraphBlocksForFunctionPins({
+        ...branchPayload,
+        nodes: scenarioMainNodes,
+        edges: scenarioMainEdges,
+      });
+      setScenarioMainNodes(main.nodes);
+      setScenarioMainEdges(main.edges);
+
+      const alarm = syncSubgraphBlocksForFunctionPins({
+        ...branchPayload,
+        nodes: scenarioAlarmNodes,
+        edges: scenarioAlarmEdges,
+      });
+      setScenarioAlarmNodes(alarm.nodes);
+      setScenarioAlarmEdges(alarm.edges);
+
+      const onStop = syncSubgraphBlocksForFunctionPins({
+        ...branchPayload,
+        nodes: scenarioOnStopNodes,
+        edges: scenarioOnStopEdges,
+      });
+      setScenarioOnStopNodes(onStop.nodes);
+      setScenarioOnStopEdges(onStop.edges);
+
+      const onDisconnect = syncSubgraphBlocksForFunctionPins({
+        ...branchPayload,
+        nodes: scenarioOnDisconnectNodes,
+        edges: scenarioOnDisconnectEdges,
+      });
+      setScenarioOnDisconnectNodes(onDisconnect.nodes);
+      setScenarioOnDisconnectEdges(onDisconnect.edges);
+
+      setScenarioFunctionDrafts((drafts) =>
+        drafts.map((draft) =>
+          draft.id === input.meta.id
+            ? {
+                ...draft,
+                name: input.meta.name,
+                description: input.meta.description,
+                inputPins: input.meta.inputPins,
+                outputPins: input.meta.outputPins,
+                nodes: syncedNodes,
+                edges: syncedFunctionEdges,
+              }
+            : draft,
+        ),
+      );
+    },
+    [
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioFunctionNodes,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+    ],
+  );
+
+  const addActiveFunctionPin = useCallback(
+    (side: FunctionPinSide, kind: 'exec' | 'data'): string | null => {
+      const pins = side === 'input' ? scenarioFunctionMeta.inputPins : scenarioFunctionMeta.outputPins;
+      const proposed = proposeNewFunctionPin(side, kind, pins);
+      if ('error' in proposed) {
+        return proposed.error;
+      }
+      const nextMeta: ScenarioFunctionCanvasMeta = {
+        ...scenarioFunctionMeta,
+        ...(side === 'input'
+          ? { inputPins: [...pins, proposed.pin] }
+          : { outputPins: [...pins, proposed.pin] }),
+      };
+      applyActiveFunctionPinState({
+        meta: nextMeta,
+        functionEdges: scenarioFunctionEdges,
+        removedInputPinIds: [],
+        removedOutputPinIds: [],
+        renames: [],
+      });
+      return null;
+    },
+    [applyActiveFunctionPinState, scenarioFunctionEdges, scenarioFunctionMeta],
+  );
+
+  const removeActiveFunctionPin = useCallback(
+    (side: FunctionPinSide, pinId: string): string | null => {
+      const pins = side === 'input' ? scenarioFunctionMeta.inputPins : scenarioFunctionMeta.outputPins;
+      const next = removeFunctionPinFromList(pins, pinId);
+      if ('error' in next) {
+        return next.error;
+      }
+      const nextMeta: ScenarioFunctionCanvasMeta = {
+        ...scenarioFunctionMeta,
+        ...(side === 'input' ? { inputPins: next } : { outputPins: next }),
+      };
+      applyActiveFunctionPinState({
+        meta: nextMeta,
+        functionEdges: scenarioFunctionEdges,
+        removedInputPinIds: side === 'input' ? [pinId] : [],
+        removedOutputPinIds: side === 'output' ? [pinId] : [],
+        renames: [],
+      });
+      return null;
+    },
+    [applyActiveFunctionPinState, scenarioFunctionEdges, scenarioFunctionMeta],
+  );
+
+  const updateActiveFunctionPin = useCallback(
+    (
+      side: FunctionPinSide,
+      pinId: string,
+      patch: {
+        readonly name?: string;
+        readonly kind?: 'exec' | 'data';
+        readonly socketType?: SocketType;
+      },
+    ): string | null => {
+      const pins = side === 'input' ? scenarioFunctionMeta.inputPins : scenarioFunctionMeta.outputPins;
+      const updated = updateFunctionPinInList(pins, pinId, patch);
+      if ('error' in updated) {
+        return updated.error;
+      }
+      const nextMeta: ScenarioFunctionCanvasMeta = {
+        ...scenarioFunctionMeta,
+        ...(side === 'input' ? { inputPins: updated.pins } : { outputPins: updated.pins }),
+      };
+      const renames =
+        updated.renamedFrom !== undefined && updated.renamedTo !== undefined
+          ? [{ side, from: updated.renamedFrom, to: updated.renamedTo }]
+          : [];
+      applyActiveFunctionPinState({
+        meta: nextMeta,
+        functionEdges: scenarioFunctionEdges,
+        removedInputPinIds: [],
+        removedOutputPinIds: [],
+        renames,
+      });
+      return null;
+    },
+    [applyActiveFunctionPinState, scenarioFunctionEdges, scenarioFunctionMeta],
+  );
+
+  const applyScenarioBranchGraph = useCallback(
+    (branch: ScenarioBranchTab, nodes: Node[], edges: Edge[]) => {
+      switch (branch) {
+        case 'initial':
+          setScenarioInitialNodes(nodes);
+          setScenarioInitialEdges(edges);
+          break;
+        case 'onConnect':
+          setScenarioOnConnectNodes(nodes);
+          setScenarioOnConnectEdges(edges);
+          break;
+        case 'main':
+          setScenarioMainNodes(nodes);
+          setScenarioMainEdges(edges);
+          break;
+        case 'alarm':
+          setScenarioAlarmNodes(nodes);
+          setScenarioAlarmEdges(edges);
+          break;
+        case 'onStop':
+          setScenarioOnStopNodes(nodes);
+          setScenarioOnStopEdges(edges);
+          break;
+        case 'onDisconnect':
+          setScenarioOnDisconnectNodes(nodes);
+          setScenarioOnDisconnectEdges(edges);
+          break;
+        case 'function':
+          setScenarioFunctionNodes(nodes);
+          setScenarioFunctionEdges(edges);
+          break;
+        default:
+          break;
+      }
+    },
+    [],
+  );
+
+  const readScenarioBranchGraph = useCallback(
+    (
+      branch: ScenarioBranchTab,
+    ): { readonly nodes: readonly Node[]; readonly edges: readonly Edge[] } => {
+      switch (branch) {
+        case 'initial':
+          return { nodes: scenarioInitialNodes, edges: scenarioInitialEdges };
+        case 'onConnect':
+          return { nodes: scenarioOnConnectNodes, edges: scenarioOnConnectEdges };
+        case 'main':
+          return { nodes: scenarioMainNodes, edges: scenarioMainEdges };
+        case 'alarm':
+          return { nodes: scenarioAlarmNodes, edges: scenarioAlarmEdges };
+        case 'onStop':
+          return { nodes: scenarioOnStopNodes, edges: scenarioOnStopEdges };
+        case 'onDisconnect':
+          return { nodes: scenarioOnDisconnectNodes, edges: scenarioOnDisconnectEdges };
+        case 'function':
+          return { nodes: scenarioFunctionNodes, edges: scenarioFunctionEdges };
+        default:
+          return { nodes: [], edges: [] };
+      }
+    },
+    [
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioFunctionEdges,
+      scenarioFunctionNodes,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+    ],
+  );
+
+  const collapseMarqueeToFunction = useCallback(
+    (branch: ScenarioBranchTab, selectedNodeIds: readonly string[]): string | null => {
+      if (branch === 'function') {
+        return 'Объединение доступно только на ветках сценария';
+      }
+      const { nodes: branchNodes, edges: branchEdges } = readScenarioBranchGraph(branch);
+      const result = collapseSelectionToFunction({
+        selectedNodeIds,
+        branchNodes,
+        branchEdges,
+      });
+      if (!result.ok) {
+        return result.message;
+      }
+      const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
+      setScenarioFunctionDrafts([...committed, result.functionDraft]);
+      applyScenarioBranchGraph(branch, result.branchNodes, result.branchEdges);
+      loadFunctionDraftToCanvas(result.functionDraft);
+      setScenarioBranch('function');
+      return null;
+    },
+    [
+      applyScenarioBranchGraph,
+      commitActiveFunctionDraft,
+      loadFunctionDraftToCanvas,
+      readScenarioBranchGraph,
+      scenarioFunctionDrafts,
+    ],
+  );
+
+  const collapseMarqueeToCommentGroup = useCallback(
+    (branch: ScenarioCommentGroupBranch, selectedNodeIds: readonly string[]): CollapseMarqueeToCommentGroupResult => {
+      const branchNodes = branch === 'signal' ? signalNodes : readScenarioBranchGraph(branch).nodes;
+      const branchEdges =
+        branch === 'signal' ? signalEdges : readScenarioBranchGraph(branch).edges;
+      const result = collapseSelectionToCommentGroup({
+        branch,
+        selectedNodeIds,
+        branchNodes,
+      });
+      if (!result.ok) {
+        return { error: result.message, groupNode: null };
+      }
+      const groupId = result.group.id;
+      const branchNodesSelected = result.branchNodes.map((node) => ({
+        ...node,
+        selected: node.id === groupId,
+      }));
+      const groupNode = branchNodesSelected.find((node) => node.id === groupId) ?? null;
+      if (branch === 'signal') {
+        setSignalNodes(branchNodesSelected);
+      } else {
+        applyScenarioBranchGraph(branch, branchNodesSelected, [...branchEdges]);
+      }
+      return { error: null, groupNode };
+    },
+    [
+      applyScenarioBranchGraph,
+      readScenarioBranchGraph,
+      signalEdges,
+      signalNodes,
+    ],
+  );
+
+  const buildHydratedSnapshot = useCallback(
+    (): HydratedBoardState => ({
+      deviceKind,
+      signalNodes,
+      signalEdges,
+      scenarioInitialNodes,
+      scenarioInitialEdges,
+      scenarioOnConnectNodes,
+      scenarioOnConnectEdges,
+      scenarioMainNodes,
+      scenarioMainEdges,
+      scenarioAlarmNodes,
+      scenarioAlarmEdges,
+      scenarioOnStopNodes,
+      scenarioOnStopEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnDisconnectEdges,
+      scenarioFunctionNodes,
+      scenarioFunctionEdges,
+      scenarioFunctionMeta,
+      scenarioFunctionDrafts: commitActiveFunctionDraft(scenarioFunctionDrafts),
+      activeFunctionId,
+      variables,
+    }),
+    [
+      activeFunctionId,
+      commitActiveFunctionDraft,
+      deviceKind,
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioFunctionDrafts,
+      scenarioFunctionEdges,
+      scenarioFunctionMeta,
+      scenarioFunctionNodes,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+      signalEdges,
+      signalNodes,
+      variables,
+    ],
+  );
+
   const buildDocument = useCallback(() => {
     return buildDeviceScenarioDocument({
       deviceKind,
@@ -477,50 +1129,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnStopEdges,
       scenarioOnDisconnectNodes,
       scenarioOnDisconnectEdges,
-      scenarioFunctions: [hydratedFunctionInput({
-        deviceKind,
-        signalNodes,
-        signalEdges,
-        scenarioInitialNodes,
-        scenarioInitialEdges,
-        scenarioOnConnectNodes,
-        scenarioOnConnectEdges,
-        scenarioMainNodes,
-        scenarioMainEdges,
-        scenarioAlarmNodes,
-        scenarioAlarmEdges,
-        scenarioOnStopNodes,
-        scenarioOnStopEdges,
-        scenarioOnDisconnectNodes,
-        scenarioOnDisconnectEdges,
-        scenarioFunctionNodes,
-        scenarioFunctionEdges,
-        scenarioFunctionMeta,
-        variables,
-      })],
+      scenarioFunctionNodes,
+      scenarioFunctions: hydratedFunctionInputs(buildHydratedSnapshot()),
       variables,
     });
-  }, [
-    deviceKind,
-    scenarioAlarmEdges,
-    scenarioAlarmNodes,
-    scenarioFunctionEdges,
-    scenarioFunctionMeta,
-    scenarioFunctionNodes,
-    scenarioInitialEdges,
-    scenarioInitialNodes,
-    scenarioOnConnectEdges,
-    scenarioOnConnectNodes,
-    scenarioMainEdges,
-    scenarioMainNodes,
-    scenarioOnDisconnectEdges,
-    scenarioOnDisconnectNodes,
-    scenarioOnStopEdges,
-    scenarioOnStopNodes,
-    signalEdges,
-    signalNodes,
-    variables,
-  ]);
+  }, [buildHydratedSnapshot, deviceKind, scenarioAlarmEdges, scenarioAlarmNodes, scenarioFunctionNodes, scenarioInitialEdges, scenarioInitialNodes, scenarioOnConnectEdges, scenarioOnConnectNodes, scenarioMainEdges, scenarioMainNodes, scenarioOnDisconnectEdges, scenarioOnDisconnectNodes, scenarioOnStopEdges, scenarioOnStopNodes, signalEdges, signalNodes, variables]);
 
   const runValidation = useCallback(() => {
     const issues = validatePreRun({
@@ -539,51 +1152,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnStopEdges,
       scenarioOnDisconnectNodes,
       scenarioOnDisconnectEdges,
-      scenarioFunctions: [hydratedFunctionInput({
-        deviceKind,
-        signalNodes,
-        signalEdges,
-        scenarioInitialNodes,
-        scenarioInitialEdges,
-        scenarioOnConnectNodes,
-        scenarioOnConnectEdges,
-        scenarioMainNodes,
-        scenarioMainEdges,
-        scenarioAlarmNodes,
-        scenarioAlarmEdges,
-        scenarioOnStopNodes,
-        scenarioOnStopEdges,
-        scenarioOnDisconnectNodes,
-        scenarioOnDisconnectEdges,
-        scenarioFunctionNodes,
-        scenarioFunctionEdges,
-        scenarioFunctionMeta,
-        variables,
-      })],
+      scenarioFunctions: hydratedFunctionInputs(buildHydratedSnapshot()),
     });
     setValidationIssues(issues);
     return issues;
-  }, [
-    deviceKind,
-    scenarioAlarmEdges,
-    scenarioAlarmNodes,
-    scenarioFunctionEdges,
-    scenarioFunctionMeta,
-    scenarioFunctionNodes,
-    scenarioInitialEdges,
-    scenarioInitialNodes,
-    scenarioOnConnectEdges,
-    scenarioOnConnectNodes,
-    scenarioMainEdges,
-    scenarioMainNodes,
-    scenarioOnDisconnectEdges,
-    scenarioOnDisconnectNodes,
-    scenarioOnStopEdges,
-    scenarioOnStopNodes,
-    signalEdges,
-    signalNodes,
-    variables,
-  ]);
+  }, [buildHydratedSnapshot, deviceKind, scenarioAlarmEdges, scenarioAlarmNodes, scenarioInitialEdges, scenarioInitialNodes, scenarioOnConnectEdges, scenarioOnConnectNodes, scenarioMainEdges, scenarioMainNodes, scenarioOnDisconnectEdges, scenarioOnDisconnectNodes, scenarioOnStopEdges, scenarioOnStopNodes, signalEdges, signalNodes]);
 
   const refreshValidation = useCallback((): readonly PreRunValidationIssue[] => {
     return runValidation();
@@ -917,6 +1490,54 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const cancelBranchImport = useCallback(() => {
     setPendingBranchImport(null);
   }, []);
+
+  const applyUserCase = useCallback(
+    (userCaseId: string, mapping?: Readonly<Record<string, string>>): ApplyUserCaseOutcome => {
+      if (loadUserCaseDocument === undefined) {
+        return 'Каталог UserCase недоступен';
+      }
+      const userCaseDocument = loadUserCaseDocument(userCaseId);
+      if (userCaseDocument === null) {
+        return 'UserCase недоступен или не найден';
+      }
+
+      const prepared = prepareUserCaseApply({
+        userCaseDocument,
+        localDeviceKind: deviceKind,
+        localVariables: variables,
+      });
+      if (!prepared.ok) {
+        return prepared.message;
+      }
+
+      const effectiveMapping = mapping ?? prepared.suggestedMapping;
+      if (mapping === undefined && !prepared.mappingComplete) {
+        return {
+          kind: 'needs-mapping',
+          title: userCaseDocument.meta?.title ?? userCaseId,
+          slots: prepared.slots,
+          mapping: prepared.suggestedMapping,
+        };
+      }
+
+      const result = applyUserCaseDocument({
+        userCaseDocument,
+        currentDocument: buildDocument(),
+        localVariables: variables,
+        mapping: effectiveMapping,
+      });
+      if (!result.ok) {
+        return result.message;
+      }
+
+      setPendingBranchImport(null);
+      applyHydratedState(result.state);
+      pendingBaselineRef.current = true;
+      runValidation();
+      return null;
+    },
+    [applyHydratedState, buildDocument, deviceKind, loadUserCaseDocument, runValidation, variables],
+  );
 
   const saveScenario = useCallback(async (): Promise<boolean> => {
     if (persistAdapter === undefined) {
@@ -1399,6 +2020,43 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [patchNodeData],
   );
 
+  const updateCommentGroupMetadata = useCallback(
+    (
+      nodeId: string,
+      patch: {
+        readonly title?: string;
+        readonly description?: string;
+        readonly frameColor?: ScenarioCommentGroupFrameColor;
+      },
+    ) => {
+      const dataPatch: Record<string, unknown> = {};
+      if (patch.title !== undefined) {
+        const trimmed = patch.title.trim();
+        dataPatch.title = trimmed.length > 0 ? trimmed : 'Группа';
+      }
+      if (patch.description !== undefined) {
+        const trimmed = patch.description.trim().slice(0, COMMENT_GROUP_DESCRIPTION_MAX_LENGTH);
+        dataPatch.description = trimmed;
+      }
+      if (patch.frameColor !== undefined) {
+        dataPatch.frameColor = resolveScenarioCommentGroupFrameColor(patch.frameColor);
+      }
+      const mapNodes = (nodes: Node[]) =>
+        nodes.map((node) =>
+          node.id === nodeId ? { ...node, data: { ...node.data, ...dataPatch } } : node,
+        );
+      setSignalNodes(mapNodes);
+      setScenarioInitialNodes(mapNodes);
+      setScenarioOnConnectNodes(mapNodes);
+      setScenarioMainNodes(mapNodes);
+      setScenarioAlarmNodes(mapNodes);
+      setScenarioOnStopNodes(mapNodes);
+      setScenarioOnDisconnectNodes(mapNodes);
+      setScenarioFunctionNodes(mapNodes);
+    },
+    [],
+  );
+
   const setVariableGetterPure = useCallback(
     (nodeId: string, pure: boolean) => {
       const mapNodes = (nodes: Node[]) =>
@@ -1499,6 +2157,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnDisconnectEdges,
       scenarioFunctionNodes,
       scenarioFunctionEdges,
+      scenarioFunctionMeta,
+      scenarioFunctionDrafts,
+      activeFunctionId,
       validationIssues,
       canRun,
       runDisabledReason,
@@ -1535,6 +2196,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       pendingBranchImport,
       confirmBranchImport,
       cancelBranchImport,
+      applyUserCase,
       syncStatus,
       syncError,
       isDirty,
@@ -1556,6 +2218,15 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateCollectorConfig,
       updateRecordingPolicy,
       updateFftTrendsPolicy,
+      updateActiveFunctionMeta,
+      addActiveFunctionPin,
+      removeActiveFunctionPin,
+      updateActiveFunctionPin,
+      createUserFunction,
+      selectUserFunction,
+      collapseMarqueeToFunction,
+      collapseMarqueeToCommentGroup,
+      updateCommentGroupMetadata,
       setVariableGetterPure,
       updateVariableValue,
       variables,
@@ -1574,6 +2245,15 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateCollectorConfig,
       updateRecordingPolicy,
       updateFftTrendsPolicy,
+      updateActiveFunctionMeta,
+      addActiveFunctionPin,
+      removeActiveFunctionPin,
+      updateActiveFunctionPin,
+      createUserFunction,
+      selectUserFunction,
+      collapseMarqueeToFunction,
+      collapseMarqueeToCommentGroup,
+      updateCommentGroupMetadata,
       setVariableGetterPure,
       updateVariableValue,
       addVariable,
@@ -1587,6 +2267,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       pendingBranchImport,
       confirmBranchImport,
       cancelBranchImport,
+      applyUserCase,
       inspectRuntimeNode,
       isDirty,
       isValidConnectionForLayer,
@@ -1619,9 +2300,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       renameVariable,
       runDisabledReason,
       runtimeState,
+      activeFunctionId,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
       scenarioBranch,
+      scenarioFunctionDrafts,
+      scenarioFunctionMeta,
       scenarioInitialEdges,
       scenarioInitialNodes,
       scenarioOnConnectEdges,

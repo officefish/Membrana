@@ -7,11 +7,15 @@ import type {
   ScenarioRecordingPolicy,
   ScenarioVariableType,
   ScenarioVariableValue,
+  ScenarioCommentGroupFrameColor,
+  ScenarioCommentGroupFrameColorPreset,
+  SocketType,
 } from '@membrana/core';
 import {
   DEFAULT_SCENARIO_COLLECTOR_CONFIG,
   FFT_TRENDS_BUILTIN_TEMPLATE_KEYS,
   FFT_TRENDS_DETECTION_MODES,
+  SCENARIO_COMMENT_GROUP_FRAME_COLOR_PRESETS,
   createDateTimeValue,
   createIntegerValue,
   createStringValue,
@@ -23,12 +27,20 @@ import {
   isScenarioStringValue,
   isValueSocketType,
   resolveScenarioCollectorConfig,
+  resolveScenarioCommentGroupFrameColor,
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
 } from '@membrana/core';
 
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
 import type { V04PaletteNodeKind } from '../graph/palette-node.js';
+import { COMMENT_GROUP_DESCRIPTION_MAX_LENGTH } from '../graph/comment-group.js';
+import {
+  COMMENT_GROUP_FRAME_COLOR_PRESET_LABELS,
+  COMMENT_GROUP_FRAME_SWATCH_CLASS,
+  commentGroupCustomPickerHex,
+  parseCommentGroupRgbInput,
+} from '../graph/comment-group-frame-color.js';
 import {
   SCENARIO_CAPTURE_FORMATS,
   RECORDING_WINDOW_SEC_PRESETS,
@@ -53,6 +65,9 @@ import {
   SCENARIO_V04_PALETTE_SECTIONS,
 } from '../types/board-ui.js';
 import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
+import { BoardFunctionPinInspector } from './board-function-pin-inspector.js';
+import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-document.js';
+import type { FunctionPinSide } from '../graph/function-pin-ops.js';
 
 export interface BoardRightSidebarProps {
   readonly selectedNodeId: string | null;
@@ -70,10 +85,16 @@ export interface BoardRightSidebarProps {
   readonly selectedVariableValue: ScenarioVariableValue | null;
   readonly selectedGetterPure: boolean;
   readonly selectedGetterPureLocked: boolean;
+  readonly selectedIsCommentGroup: boolean;
+  readonly selectedGroupTitle: string;
+  readonly selectedGroupDescription: string;
+  readonly selectedGroupFrameColor: ScenarioCommentGroupFrameColor;
   readonly selectedVariableTypeLabel: string | null;
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
   readonly microphoneOptionsLoading?: boolean;
   readonly canEditScenario: boolean;
+  readonly isFunctionBranch: boolean;
+  readonly functionMeta: ScenarioFunctionCanvasMeta | null;
   readonly isRuntime: boolean;
   readonly runtimeInspection: NodePortInspectionResult | null;
   readonly printLastOutput: string | null;
@@ -86,6 +107,28 @@ export interface BoardRightSidebarProps {
   readonly onAssignVariableName: (nodeId: string, variableName: string) => void;
   readonly onVariableGetterPureChange: (nodeId: string, pure: boolean) => void;
   readonly onVariableValueChange: (variableId: string, value: ScenarioVariableValue | null) => void;
+  readonly onCommentGroupMetadataChange: (
+    nodeId: string,
+    patch: {
+      readonly title?: string;
+      readonly description?: string;
+      readonly frameColor?: ScenarioCommentGroupFrameColor;
+    },
+  ) => void;
+  readonly onUpdateFunctionMeta: (
+    patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
+  ) => void;
+  readonly onAddFunctionPin: (side: FunctionPinSide, kind: 'exec' | 'data') => void;
+  readonly onUpdateFunctionPin: (
+    side: FunctionPinSide,
+    pinId: string,
+    patch: {
+      readonly name?: string;
+      readonly kind?: 'exec' | 'data';
+      readonly socketType?: SocketType;
+    },
+  ) => void;
+  readonly onRemoveFunctionPin: (side: FunctionPinSide, pinId: string) => void;
   readonly onClearBoard: () => void;
 }
 
@@ -108,10 +151,16 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedVariableValue,
   selectedGetterPure,
   selectedGetterPureLocked,
+  selectedIsCommentGroup,
+  selectedGroupTitle,
+  selectedGroupDescription,
+  selectedGroupFrameColor,
   selectedVariableTypeLabel,
   microphoneOptions,
   microphoneOptionsLoading = false,
   canEditScenario,
+  isFunctionBranch,
+  functionMeta,
   isRuntime,
   runtimeInspection,
   printLastOutput,
@@ -124,10 +173,21 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onAssignVariableName,
   onVariableGetterPureChange,
   onVariableValueChange,
+  onCommentGroupMetadataChange,
+  onUpdateFunctionMeta,
+  onAddFunctionPin,
+  onUpdateFunctionPin,
+  onRemoveFunctionPin,
   onClearBoard,
 }) => {
   const legacyPalette = isLegacyPaletteEnabled();
   const [variableNameDraft, setVariableNameDraft] = useState(selectedVariableName);
+  const [groupTitleDraft, setGroupTitleDraft] = useState(selectedGroupTitle);
+  const [groupDescriptionDraft, setGroupDescriptionDraft] = useState(selectedGroupDescription);
+  const [groupFrameColorDraft, setGroupFrameColorDraft] = useState(selectedGroupFrameColor);
+  const [groupCustomRgbDraft, setGroupCustomRgbDraft] = useState(
+    commentGroupCustomPickerHex(selectedGroupFrameColor),
+  );
   const [collectorDraft, setCollectorDraft] = useState<ScenarioCollectorConfig>(
     selectedCollectorConfig ?? DEFAULT_SCENARIO_COLLECTOR_CONFIG,
   );
@@ -143,6 +203,22 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   useEffect(() => {
     setVariableNameDraft(selectedVariableName);
   }, [selectedNodeId, selectedVariableName]);
+
+  useEffect(() => {
+    setGroupTitleDraft(selectedGroupTitle);
+    setGroupDescriptionDraft(selectedGroupDescription);
+    setGroupFrameColorDraft(selectedGroupFrameColor);
+    setGroupCustomRgbDraft(commentGroupCustomPickerHex(selectedGroupFrameColor));
+  }, [
+    selectedGroupDescription,
+    selectedGroupFrameColor,
+    selectedGroupTitle,
+    selectedNodeId,
+  ]);
+
+  const themeFramePresets = SCENARIO_COMMENT_GROUP_FRAME_COLOR_PRESETS.filter(
+    (preset): preset is Exclude<ScenarioCommentGroupFrameColorPreset, 'custom'> => preset !== 'custom',
+  );
 
   useEffect(() => {
     setCollectorDraft(selectedCollectorConfig ?? DEFAULT_SCENARIO_COLLECTOR_CONFIG);
@@ -205,6 +281,50 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
     onAssignVariableName(selectedNodeId, trimmed);
   };
 
+  const commitGroupTitle = (): void => {
+    if (selectedNodeId === null || editDisabled || !selectedIsCommentGroup) {
+      return;
+    }
+    const trimmed = groupTitleDraft.trim();
+    if (trimmed === selectedGroupTitle.trim()) {
+      return;
+    }
+    onCommentGroupMetadataChange(selectedNodeId, { title: trimmed });
+  };
+
+  const commitGroupDescription = (): void => {
+    if (selectedNodeId === null || editDisabled || !selectedIsCommentGroup) {
+      return;
+    }
+    const trimmed = groupDescriptionDraft.trim().slice(0, COMMENT_GROUP_DESCRIPTION_MAX_LENGTH);
+    if (trimmed === selectedGroupDescription.trim()) {
+      return;
+    }
+    onCommentGroupMetadataChange(selectedNodeId, { description: trimmed });
+  };
+
+  const commitGroupFrameColor = (frameColor: ScenarioCommentGroupFrameColor): void => {
+    if (selectedNodeId === null || editDisabled || !selectedIsCommentGroup) {
+      return;
+    }
+    const normalized = resolveScenarioCommentGroupFrameColor(frameColor);
+    setGroupFrameColorDraft(normalized);
+    if (normalized.preset === 'custom') {
+      setGroupCustomRgbDraft(commentGroupCustomPickerHex(normalized));
+    }
+    onCommentGroupMetadataChange(selectedNodeId, { frameColor: normalized });
+  };
+
+  const commitGroupCustomRgbField = (): void => {
+    const parsed = parseCommentGroupRgbInput(groupCustomRgbDraft);
+    if (parsed === null) {
+      setGroupCustomRgbDraft(commentGroupCustomPickerHex(groupFrameColorDraft));
+      return;
+    }
+    setGroupCustomRgbDraft(parsed);
+    commitGroupFrameColor({ preset: 'custom', rgb: parsed });
+  };
+
   const commitCollectorField = (patch: Partial<ScenarioCollectorConfig>) => {
     if (selectedNodeId === null || editDisabled) {
       return;
@@ -248,17 +368,157 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
         <div className="flex flex-col gap-3 p-4 text-sm">
           <div className="border-b border-base-200 pb-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
-              Настройки ноды
+              {selectedIsCommentGroup ? 'Настройки группы' : 'Настройки ноды'}
             </p>
             <h2 className="text-sm font-semibold text-base-content">
-              {selectedNodeLabel ?? selectedNodeId}
+              {selectedIsCommentGroup
+                ? selectedGroupTitle || 'Группа'
+                : (selectedNodeLabel ?? selectedNodeId)}
             </h2>
           </div>
           {isRuntime ? (
             <p className="text-xs leading-relaxed text-base-content/55">
-              Редактирование узлов недоступно во время выполнения. Значения портов — в панелях слева и
-              справа.
+              {selectedIsCommentGroup
+                ? 'Группы нельзя редактировать во время выполнения сценария.'
+                : 'Редактирование узлов недоступно во время выполнения. Значения портов — в панелях слева и справа.'}
             </p>
+          ) : selectedIsCommentGroup ? (
+            <div className="flex flex-col gap-3 text-xs">
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">Название</span>
+                <input
+                  type="text"
+                  className="input input-bordered input-sm w-full"
+                  value={groupTitleDraft}
+                  placeholder="Группа"
+                  disabled={editDisabled}
+                  onChange={(event) => setGroupTitleDraft(event.target.value)}
+                  onBlur={() => commitGroupTitle()}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.currentTarget.blur();
+                    }
+                  }}
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">Описание</span>
+                <textarea
+                  className="textarea textarea-bordered textarea-sm min-h-[5rem] w-full resize-y leading-snug"
+                  value={groupDescriptionDraft}
+                  maxLength={COMMENT_GROUP_DESCRIPTION_MAX_LENGTH}
+                  placeholder="Необязательно"
+                  disabled={editDisabled}
+                  onChange={(event) => setGroupDescriptionDraft(event.target.value)}
+                  onBlur={() => commitGroupDescription()}
+                />
+                <span className="text-base-content/50">
+                  {groupDescriptionDraft.length}/{COMMENT_GROUP_DESCRIPTION_MAX_LENGTH}
+                </span>
+              </label>
+              <div className="flex flex-col gap-2">
+                <span className="font-medium text-base-content/70">Цвет рамки</span>
+                <select
+                  className="select select-bordered select-sm w-full font-mono"
+                  value={groupFrameColorDraft.preset}
+                  disabled={editDisabled}
+                  onChange={(event) => {
+                    const preset = event.target.value as ScenarioCommentGroupFrameColorPreset;
+                    if (preset === 'custom') {
+                      commitGroupFrameColor({
+                        preset: 'custom',
+                        rgb: commentGroupCustomPickerHex(groupFrameColorDraft),
+                      });
+                      return;
+                    }
+                    commitGroupFrameColor({ preset });
+                  }}
+                >
+                  {SCENARIO_COMMENT_GROUP_FRAME_COLOR_PRESETS.map((preset) => (
+                    <option key={preset} value={preset}>
+                      {COMMENT_GROUP_FRAME_COLOR_PRESET_LABELS[preset]}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex flex-wrap gap-1.5" role="list" aria-label="Палитра цветов">
+                  {themeFramePresets.map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      role="listitem"
+                      className={`h-6 w-6 rounded-md border border-base-content/20 ${COMMENT_GROUP_FRAME_SWATCH_CLASS[preset]} ${
+                        groupFrameColorDraft.preset === preset ? 'ring-2 ring-base-content/40' : ''
+                      }`}
+                      disabled={editDisabled}
+                      title={COMMENT_GROUP_FRAME_COLOR_PRESET_LABELS[preset]}
+                      aria-label={COMMENT_GROUP_FRAME_COLOR_PRESET_LABELS[preset]}
+                      onClick={() => commitGroupFrameColor({ preset })}
+                    />
+                  ))}
+                  <button
+                    type="button"
+                    className={`flex h-6 w-6 items-center justify-center rounded-md border border-dashed border-base-content/30 text-[9px] font-semibold uppercase ${
+                      groupFrameColorDraft.preset === 'custom' ? 'ring-2 ring-base-content/40' : ''
+                    }`}
+                    style={{
+                      backgroundColor:
+                        groupFrameColorDraft.preset === 'custom'
+                          ? commentGroupCustomPickerHex(groupFrameColorDraft)
+                          : undefined,
+                    }}
+                    disabled={editDisabled}
+                    title="Custom"
+                    aria-label="Custom"
+                    onClick={() =>
+                      commitGroupFrameColor({
+                        preset: 'custom',
+                        rgb: commentGroupCustomPickerHex(groupFrameColorDraft),
+                      })
+                    }
+                  >
+                    {groupFrameColorDraft.preset === 'custom' ? null : 'C'}
+                  </button>
+                </div>
+                {groupFrameColorDraft.preset === 'custom' ? (
+                  <div className="flex flex-col gap-2">
+                    <label className="flex items-center gap-2">
+                      <span className="shrink-0 text-base-content/60">Picker</span>
+                      <input
+                        type="color"
+                        className="h-9 w-full cursor-pointer rounded-md border border-base-300 bg-base-100 p-1"
+                        value={commentGroupCustomPickerHex(groupFrameColorDraft)}
+                        disabled={editDisabled}
+                        onChange={(event) => {
+                          const rgb = event.target.value.toLowerCase();
+                          setGroupCustomRgbDraft(rgb);
+                          commitGroupFrameColor({ preset: 'custom', rgb });
+                        }}
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-base-content/60">RGB / hex</span>
+                      <input
+                        type="text"
+                        className="input input-bordered input-sm w-full font-mono"
+                        value={groupCustomRgbDraft}
+                        placeholder="#7c3aed или rgb(124, 58, 237)"
+                        disabled={editDisabled}
+                        onChange={(event) => setGroupCustomRgbDraft(event.target.value)}
+                        onBlur={() => commitGroupCustomRgbField()}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            event.currentTarget.blur();
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                ) : null}
+              </div>
+              <p className="text-base-content/55 leading-relaxed">
+                Группа — визуальная рамка; не участвует в выполнении сценария.
+              </p>
+            </div>
           ) : (
             <>
               {selectedNodeKind !== null && isPureEligibleScenarioNodeKind(selectedNodeKind) ? (
@@ -743,6 +1003,15 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             </>
           )}
         </div>
+      ) : isFunctionBranch && functionMeta !== null && !isRuntime ? (
+        <BoardFunctionPinInspector
+          meta={functionMeta}
+          disabled={editDisabled}
+          onUpdateMeta={onUpdateFunctionMeta}
+          onAddPin={onAddFunctionPin}
+          onUpdatePin={onUpdateFunctionPin}
+          onRemovePin={onRemoveFunctionPin}
+        />
       ) : (
         <div className="flex flex-1 flex-col">
           <div className="border-b border-base-200 px-4 py-3">

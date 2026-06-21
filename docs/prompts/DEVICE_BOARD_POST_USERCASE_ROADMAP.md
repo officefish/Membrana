@@ -29,13 +29,16 @@ Device-board впервые выполняет полный **UserCase MVP micro
 
 | Приоритет | Тема | Ориентир / существующий промпт |
 |-----------|------|--------------------------------|
-| U1 | UserCase picker / «Загрузить MVP» в shell | § Future в Recording parity v0.8 |
+| U1 | UserCase picker / «Загрузить MVP» в shell | § Future в Recording parity v0.8 → **консилиум U9:** [`device-board-usercases-consilium-2026-06-21.md`](../discussions/device-board-usercases-consilium-2026-06-21.md) |
 | U2 | Policy inspectors parity с plugin sidebar | MakeRecordingPolicy / MakeFftTrendsPolicy ✓ частично |
 | U3 | Port labels, header, branch titles RU | [`DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md`](./DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md) |
 | U4 | Run controls: pre-run validation UX, trace export discoverability | chain trace P0–P3 |
 | U5 | CollectFftFrames append-only vs flush — подсказка в inspector | post-fix 2026-06-21 |
 | U6 | Manual save / dirty state / branch import modal polish | [`DEVICE_BOARD_MANUAL_SAVE_PROMPT.md`](./DEVICE_BOARD_MANUAL_SAVE_PROMPT.md) |
 | U7 | ~~Pure Getters (Blueprint parity)~~ **LGTM** | [`PURE_GETTERS_LGTM.md`](../device-board-scripts/PURE_GETTERS_LGTM.md) |
+| U8 | Canvas: marquee, groups, user functions, align MVP | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](./DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) |
+| U8a | Node align advanced (snap, guides, dagre) | `db-node-align-advanced` (отдельный эпик) |
+| **U9** | **UserCases catalog** (settings + modal + apply-all + layout canon) | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) · [`консилиум`](../discussions/device-board-usercases-consilium-2026-06-21.md) |
 
 **DoD направления U:** новый оператор открывает microphone board → видит MVP → Run → journal entry **без** ручного import JSON.
 
@@ -80,7 +83,7 @@ Device-board впервые выполняет полный **UserCase MVP micro
 
 ```text
 Sprint 1 (docs + quick UX):  D1 D2 D5  +  U3 U6
-Sprint 2 (usability):         ~~U7 Pure Getters~~ ✓ → U1 U3 U4 U5
+Sprint 2 (usability):         ~~U7 Pure Getters~~ ✓ → **U8** groups/functions → U1 U3 U4 U5
 Sprint 3 (server):            S1 S2 → S3 S4
 ```
 
@@ -99,6 +102,9 @@ Sprint 3 (server):            S1 S2 → S3 S4
 | `db-post-usercase-s1-scenario-api` | S1 |
 | `db-pure-getters-blueprint-parity` | U7 proposal #1 (parent epic) |
 | `db-pure-getters-p0-spec-lgtm` | P0 pure getters spec |
+| `db-canvas-groups-functions` | U8 parent epic |
+| `db-node-align-advanced` | U8a exec dagre + snap guides | [`DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md`](./DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md) |
+| `db-usercases-catalog-u9` | U9 UserCases catalog | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) |
 
 Родитель: **`db-post-usercase-roadmap`**.
 

@@ -234,6 +234,11 @@ export function parseDeviceScenarioDocument(
     return err(new ValidationError('scenario.scheduled must be an array', 'scenario.scheduled'));
   }
 
+  const commentGroupsRaw = scenarioRaw['commentGroups'];
+  if (commentGroupsRaw !== undefined && !Array.isArray(commentGroupsRaw)) {
+    return err(new ValidationError('scenario.commentGroups must be an array', 'scenario.commentGroups'));
+  }
+
   const metaRaw = input['meta'];
   if (metaRaw !== undefined && !isRecord(metaRaw)) {
     return err(new ValidationError('meta must be an object when present', 'meta'));
@@ -262,6 +267,7 @@ export function parseDeviceScenarioDocument(
       },
       functions: (functionsRaw ?? []) as ScenarioGraph['functions'],
       scheduled: (scheduledRaw ?? []) as ScenarioGraph['scheduled'],
+      commentGroups: (commentGroupsRaw ?? []) as ScenarioGraph['commentGroups'],
       variables,
     },
   });

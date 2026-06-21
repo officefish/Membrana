@@ -217,6 +217,29 @@ export {
 } from './scenario-graph.js';
 
 export {
+  MAX_SCENARIO_FUNCTION_PINS_PER_SIDE,
+  type ScenarioFunctionPin,
+  createDefaultFunctionExecInputPin,
+  createDefaultFunctionExecOutputPin,
+  normalizeScenarioFunctionPin,
+  normalizeScenarioFunctionPins,
+  isScenarioFunctionPinCountValid,
+} from './scenario-function-pin.js';
+
+export {
+  type ScenarioCommentGroup,
+  type ScenarioCommentGroupBranch,
+  type ScenarioCommentGroupRect,
+  type ScenarioCommentGroupFrameColor,
+  type ScenarioCommentGroupFrameColorPreset,
+  SCENARIO_COMMENT_GROUP_FRAME_COLOR_PRESETS,
+  DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR,
+  isScenarioCommentGroupBranch,
+  isScenarioCommentGroupFrameColorPreset,
+  resolveScenarioCommentGroupFrameColor,
+} from './scenario-comment-group.js';
+
+export {
   DEVICE_SCENARIO_DOCUMENT_KIND,
   DEVICE_SCENARIO_DOCUMENT_VERSION,
   DEVICE_SCENARIO_MIN_DOCUMENT_VERSION,

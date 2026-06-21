@@ -1,8 +1,14 @@
 import type {
   DeviceKind,
   DeviceScenarioDocument,
+  ScenarioFunctionPin,
   ScenarioFunctionSubgraph,
   ScenarioVariable,
+} from '@membrana/core';
+import {
+  createDefaultFunctionExecInputPin,
+  createDefaultFunctionExecOutputPin,
+  normalizeScenarioFunctionPins,
 } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
@@ -11,7 +17,6 @@ import {
   DEMO_FUNCTION_CAPTURE_DETECT_EDGES,
   DEMO_FUNCTION_CAPTURE_DETECT_ENTRY,
   DEMO_FUNCTION_CAPTURE_DETECT_ID,
-  DEMO_FUNCTION_CAPTURE_DETECT_NAME,
   DEMO_FUNCTION_CAPTURE_DETECT_NODES,
   INITIAL_SCENARIO_ALARM_EDGES,
   INITIAL_SCENARIO_ALARM_NODES,
@@ -44,11 +49,17 @@ import { applyPureGraphHygiene } from './pure-node-graph.js';
 import { deserializeSignalGraph } from './serialize-signal-graph.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { createDefaultMvpMicrophoneHydratedState } from './default-usercase-mvp-microphone.js';
+import { syncFunctionIoNodePins } from './function-io-node.js';
+import { applyCommentGroupsToBranchNodes } from './comment-group.js';
+import type { ScenarioFunctionDraft } from './collapse-to-function.js';
 
 export interface ScenarioFunctionCanvasMeta {
   readonly id: string;
   readonly name: string;
   readonly entry: string;
+  readonly description?: string;
+  readonly inputPins: readonly ScenarioFunctionPin[];
+  readonly outputPins: readonly ScenarioFunctionPin[];
 }
 
 export interface HydratedBoardState {
@@ -70,8 +81,95 @@ export interface HydratedBoardState {
   readonly scenarioFunctionNodes: Node[];
   readonly scenarioFunctionEdges: Edge[];
   readonly scenarioFunctionMeta: ScenarioFunctionCanvasMeta;
+  /** Все пользовательские функции (F1 multi-function). */
+  readonly scenarioFunctionDrafts: readonly ScenarioFunctionDraft[];
+  readonly activeFunctionId: string;
   /** v0.4: переменные сценария (document-scope). */
   readonly variables: readonly ScenarioVariable[];
+}
+
+function functionSubgraphToDraft(
+  fn: ScenarioFunctionSubgraph,
+  variables: readonly ScenarioVariable[],
+): ScenarioFunctionDraft {
+  const defaultInput = [createDefaultFunctionExecInputPin()];
+  const defaultOutput = [createDefaultFunctionExecOutputPin()];
+  const inputPins = normalizeScenarioFunctionPins(fn.inputPins, defaultInput);
+  const outputPins = normalizeScenarioFunctionPins(fn.outputPins, defaultOutput);
+  const hydrated = deserializeScenarioSubgraph(
+    {
+      entry: fn.entry,
+      nodes: fn.nodes,
+      edges: fn.edges,
+    },
+    variables,
+  );
+  const nodes = syncFunctionIoNodePins(hydrated.nodes, inputPins, outputPins);
+  return {
+    id: fn.id,
+    name: fn.name,
+    entry: fn.entry,
+    description: fn.description,
+    inputPins,
+    outputPins,
+    nodes,
+    edges: hydrated.edges,
+  };
+}
+
+function draftToCanvasState(draft: ScenarioFunctionDraft): {
+  nodes: Node[];
+  edges: Edge[];
+  meta: ScenarioFunctionCanvasMeta;
+} {
+  return {
+    nodes: [...draft.nodes],
+    edges: [...draft.edges],
+    meta: {
+      id: draft.id,
+      name: draft.name,
+      entry: draft.entry,
+      description: draft.description,
+      inputPins: draft.inputPins,
+      outputPins: draft.outputPins,
+    },
+  };
+}
+
+function resolveFunctionDrafts(
+  functions: readonly ScenarioFunctionSubgraph[],
+  variables: readonly ScenarioVariable[],
+): {
+  drafts: ScenarioFunctionDraft[];
+  active: ScenarioFunctionDraft;
+} {
+  const demoFallback = (): ScenarioFunctionDraft => {
+    const demo = buildDemoFunctionInput();
+    return {
+      id: demo.id,
+      name: demo.name,
+      entry: demo.entry,
+      inputPins: [createDefaultFunctionExecInputPin()],
+      outputPins: [createDefaultFunctionExecOutputPin()],
+      nodes: [...DEMO_FUNCTION_CAPTURE_DETECT_NODES],
+      edges: [...DEMO_FUNCTION_CAPTURE_DETECT_EDGES],
+    };
+  };
+
+  if (functions.length === 0) {
+    const draft = demoFallback();
+    return { drafts: [draft], active: draft };
+  }
+
+  const drafts = functions.map((fn) => {
+    const entryMissing = fn.nodes.length === 0 || !fn.nodes.some((node) => node.id === fn.entry);
+    if (entryMissing && fn.id === DEMO_FUNCTION_CAPTURE_DETECT_ID) {
+      return demoFallback();
+    }
+    return functionSubgraphToDraft(fn, variables);
+  });
+
+  return { drafts, active: drafts[0]! };
 }
 
 function resolveFunctionCanvas(
@@ -81,56 +179,15 @@ function resolveFunctionCanvas(
   nodes: Node[];
   edges: Edge[];
   meta: ScenarioFunctionCanvasMeta;
+  drafts: ScenarioFunctionDraft[];
+  activeFunctionId: string;
 } {
-  const demoFallback = (): {
-    nodes: Node[];
-    edges: Edge[];
-    meta: ScenarioFunctionCanvasMeta;
-  } => ({
-    nodes: [...DEMO_FUNCTION_CAPTURE_DETECT_NODES],
-    edges: [...DEMO_FUNCTION_CAPTURE_DETECT_EDGES],
-    meta: {
-      id: DEMO_FUNCTION_CAPTURE_DETECT_ID,
-      name: DEMO_FUNCTION_CAPTURE_DETECT_NAME,
-      entry: DEMO_FUNCTION_CAPTURE_DETECT_ENTRY,
-    },
-  });
-
-  const first = functions[0];
-  if (first === undefined) {
-    return demoFallback();
-  }
-
-  const entryMissing =
-    first.nodes.length === 0 || !first.nodes.some((node) => node.id === first.entry);
-  if (entryMissing) {
-    return {
-      ...demoFallback(),
-      meta: {
-        id: first.id || DEMO_FUNCTION_CAPTURE_DETECT_ID,
-        name: first.name || DEMO_FUNCTION_CAPTURE_DETECT_NAME,
-        entry: DEMO_FUNCTION_CAPTURE_DETECT_ENTRY,
-      },
-    };
-  }
-
-  const hydrated = deserializeScenarioSubgraph(
-    {
-      entry: first.entry,
-      nodes: first.nodes,
-      edges: first.edges,
-    },
-    variables,
-  );
-
+  const { drafts, active } = resolveFunctionDrafts(functions, variables);
+  const canvas = draftToCanvasState(active);
   return {
-    nodes: hydrated.nodes,
-    edges: hydrated.edges,
-    meta: {
-      id: first.id,
-      name: first.name,
-      entry: first.entry,
-    },
+    ...canvas,
+    drafts,
+    activeFunctionId: active.id,
   };
 }
 
@@ -240,6 +297,20 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   onDisconnect.nodes = syncDeviceGlobalNodePins(onDisconnect.nodes);
   fn.nodes = syncDeviceGlobalNodePins(fn.nodes);
 
+  const commentGroups = document.scenario.commentGroups ?? [];
+  signal.nodes = applyCommentGroupsToBranchNodes(signal.nodes, commentGroups, 'signal');
+  initial.nodes = applyCommentGroupsToBranchNodes(initial.nodes, commentGroups, 'initial');
+  onConnect.nodes = applyCommentGroupsToBranchNodes(onConnect.nodes, commentGroups, 'onConnect');
+  main.nodes = applyCommentGroupsToBranchNodes(main.nodes, commentGroups, 'main');
+  alarm.nodes = applyCommentGroupsToBranchNodes(alarm.nodes, commentGroups, 'alarm');
+  onStop.nodes = applyCommentGroupsToBranchNodes(onStop.nodes, commentGroups, 'onStop');
+  onDisconnect.nodes = applyCommentGroupsToBranchNodes(
+    onDisconnect.nodes,
+    commentGroups,
+    'onDisconnect',
+  );
+  fn.nodes = applyCommentGroupsToBranchNodes(fn.nodes, commentGroups, 'function');
+
   if (signal.nodes.length === 0) {
     signal.nodes.push(...INITIAL_SIGNAL_NODES);
     signal.edges.push(...INITIAL_SIGNAL_EDGES);
@@ -264,12 +335,34 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
     scenarioFunctionNodes: fn.nodes,
     scenarioFunctionEdges: fn.edges,
     scenarioFunctionMeta: fn.meta,
+    scenarioFunctionDrafts: fn.drafts,
+    activeFunctionId: fn.activeFunctionId,
     variables,
   };
 }
 
-/** Собирает вход для `buildDeviceScenarioDocument.scenarioFunctions` из гидратации. */
+function draftToSerializeInput(draft: ScenarioFunctionDraft): SerializeScenarioFunctionInput {
+  return {
+    id: draft.id,
+    name: draft.name,
+    entry: draft.entry,
+    description: draft.description,
+    inputPins: draft.inputPins,
+    outputPins: draft.outputPins,
+    nodes: draft.nodes,
+    edges: draft.edges,
+  };
+}
+
+/** Активная функция → serialize input (legacy helper). */
 export function hydratedFunctionInput(state: HydratedBoardState): SerializeScenarioFunctionInput {
+  const activeDraft =
+    state.scenarioFunctionDrafts.find((draft) => draft.id === state.activeFunctionId) ??
+    state.scenarioFunctionDrafts[0];
+  if (activeDraft !== undefined) {
+    return draftToSerializeInput(activeDraft);
+  }
+
   const entryMissing =
     state.scenarioFunctionNodes.length === 0 ||
     !state.scenarioFunctionNodes.some((node) => node.id === state.scenarioFunctionMeta.entry);
@@ -280,6 +373,8 @@ export function hydratedFunctionInput(state: HydratedBoardState): SerializeScena
       id: state.scenarioFunctionMeta.id || demo.id,
       name: state.scenarioFunctionMeta.name || demo.name,
       entry: DEMO_FUNCTION_CAPTURE_DETECT_ENTRY,
+      inputPins: state.scenarioFunctionMeta.inputPins,
+      outputPins: state.scenarioFunctionMeta.outputPins,
       nodes: [...DEMO_FUNCTION_CAPTURE_DETECT_NODES],
       edges: [...DEMO_FUNCTION_CAPTURE_DETECT_EDGES],
     };
@@ -289,9 +384,34 @@ export function hydratedFunctionInput(state: HydratedBoardState): SerializeScena
     id: state.scenarioFunctionMeta.id,
     name: state.scenarioFunctionMeta.name,
     entry: state.scenarioFunctionMeta.entry,
+    description: state.scenarioFunctionMeta.description,
+    inputPins: state.scenarioFunctionMeta.inputPins,
+    outputPins: state.scenarioFunctionMeta.outputPins,
     nodes: state.scenarioFunctionNodes,
     edges: state.scenarioFunctionEdges,
   };
+}
+
+/** Все функции для `buildDeviceScenarioDocument.scenarioFunctions`. */
+export function hydratedFunctionInputs(state: HydratedBoardState): readonly SerializeScenarioFunctionInput[] {
+  if (state.scenarioFunctionDrafts.length > 0) {
+    return state.scenarioFunctionDrafts.map((draft) => {
+      if (draft.id === state.activeFunctionId) {
+        return {
+          ...draftToSerializeInput(draft),
+          nodes: state.scenarioFunctionNodes,
+          edges: state.scenarioFunctionEdges,
+          description: state.scenarioFunctionMeta.description,
+          inputPins: state.scenarioFunctionMeta.inputPins,
+          outputPins: state.scenarioFunctionMeta.outputPins,
+          name: state.scenarioFunctionMeta.name,
+          entry: state.scenarioFunctionMeta.entry,
+        };
+      }
+      return draftToSerializeInput(draft);
+    });
+  }
+  return [hydratedFunctionInput(state)];
 }
 
 /** Демо-состояние доски (без JSON). Microphone → bundled UserCase MVP. */
@@ -301,6 +421,15 @@ export function createDefaultHydratedBoardState(deviceKind: DeviceKind = 'microp
   }
 
   const demo = buildDemoFunctionInput();
+  const demoDraft: ScenarioFunctionDraft = {
+    id: demo.id,
+    name: demo.name,
+    entry: demo.entry,
+    inputPins: [createDefaultFunctionExecInputPin()],
+    outputPins: [createDefaultFunctionExecOutputPin()],
+    nodes: [...demo.nodes],
+    edges: [...demo.edges],
+  };
   return {
     deviceKind,
     signalNodes: [...INITIAL_SIGNAL_NODES],
@@ -323,7 +452,11 @@ export function createDefaultHydratedBoardState(deviceKind: DeviceKind = 'microp
       id: demo.id,
       name: demo.name,
       entry: demo.entry,
+      inputPins: demoDraft.inputPins,
+      outputPins: demoDraft.outputPins,
     },
+    scenarioFunctionDrafts: [demoDraft],
+    activeFunctionId: demo.id,
     variables: [],
   };
 }

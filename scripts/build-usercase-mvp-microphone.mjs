@@ -188,7 +188,12 @@ mkdirSync(outDir, { recursive: true });
 const manifest = {
   id: USERCASE_MVP_MICROPHONE_ID,
   title: 'MVP microphone: realtime observation + recording gate v0.8',
+  description:
+    'Bundled reference UserCase: six handlers, recording gate v0.8, MakeRecordingPolicy + MakeFftTrendsPolicy, journal trends-fft.',
   deviceKind: 'microphone',
+  tier: 'bundled',
+  layoutProfile: 'exec-lr-v1',
+  minEditorFeatures: ['align', 'groups', 'functions', 'exec-layout'],
   canon: 'DEVICE_BOARD_CONCEPT.md §16.5',
   embeddedDocument: 'packages/device-board/src/graph/default-usercase-mvp-microphone.generated.ts',
   importOrder: [
