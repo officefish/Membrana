@@ -2,7 +2,7 @@
   "exportKind": "branch-scenario",
   "branch": "main",
   "branchLabel": "onMainTick",
-  "scenarioTitle": "UserCase MVP microphone: onMainTick → MakeRecordingPolicy + MakeFftTrendsPolicy → gate §16.5",
+  "scenarioTitle": "UserCase Alpha: Live Observation Pipeline: onMainTick → MakeRecordingPolicy + MakeFftTrendsPolicy → gate §16.5",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "main-on-tick",
@@ -23,7 +23,7 @@
         "id": "main-infinity",
         "blockKind": "custom",
         "position": {
-          "x": 8112,
+          "x": 6720,
           "y": -280
         },
         "label": "∞",
@@ -137,36 +137,6 @@
         }
       },
       {
-        "id": "node-get-reporter-mqm9yfmy-29",
-        "blockKind": "custom",
-        "position": {
-          "x": 3168,
-          "y": 504
-        },
-        "label": "GetReporter",
-        "nodeKind": "get-reporter"
-      },
-      {
-        "id": "node-make-report-from-analysis-mqma356z-34",
-        "blockKind": "custom",
-        "position": {
-          "x": 7184,
-          "y": -320
-        },
-        "label": "MakeReportFromAnalysis",
-        "nodeKind": "make-report-from-analysis"
-      },
-      {
-        "id": "node-publish-report-mqma49xv-35",
-        "blockKind": "custom",
-        "position": {
-          "x": 7648,
-          "y": -320
-        },
-        "label": "PublishReport",
-        "nodeKind": "publish-report"
-      },
-      {
         "id": "node-make-track-mqmcipn5-28",
         "blockKind": "custom",
         "position": {
@@ -194,27 +164,11 @@
           "y": -280
         },
         "label": "IsRecordingWindowFull",
-        "nodeKind": "is-recording-window-full"
-      },
-      {
-        "id": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "blockKind": "custom",
-        "position": {
-          "x": 6720,
-          "y": -320
-        },
-        "label": "MakeFftTrendsAnalysis",
-        "nodeKind": "make-fft-trends-analysis"
-      },
-      {
-        "id": "node-flush-spectral-analyser-mqmoa8o7-34",
-        "blockKind": "custom",
-        "position": {
-          "x": 6256,
-          "y": -320
-        },
-        "label": "FlushSpectralAnalyser",
-        "nodeKind": "flush-spectral-analyser"
+        "nodeKind": "is-recording-window-full",
+        "recordingPolicy": {
+          "windowSec": 5,
+          "captureFormat": "wav"
+        }
       },
       {
         "id": "node-stop-recording-mqmod4yf-35",
@@ -234,7 +188,11 @@
           "y": -320
         },
         "label": "StartRecording (restart)",
-        "nodeKind": "start-recording"
+        "nodeKind": "start-recording",
+        "recordingPolicy": {
+          "windowSec": 5,
+          "captureFormat": "wav"
+        }
       },
       {
         "id": "node-start-recording-bootstrap-v08-2",
@@ -259,11 +217,11 @@
         },
         "label": "MakeRecordingPolicy",
         "nodeKind": "make-recording-policy",
-        "pure": true,
         "recordingPolicy": {
           "windowSec": 5,
           "captureFormat": "wav"
-        }
+        },
+        "pure": true
       },
       {
         "id": "node-make-fft-trends-policy-v08-1",
@@ -274,7 +232,6 @@
         },
         "label": "MakeFftTrendsPolicy",
         "nodeKind": "make-fft-trends-policy",
-        "pure": true,
         "fftTrendsPolicy": {
           "detectionMode": "auto",
           "measurementsCount": 20,
@@ -289,7 +246,8 @@
             "BIRDS",
             "VOICE"
           ]
-        }
+        },
+        "pure": true
       },
       {
         "id": "node-get-microphone-mvp-main-1",
@@ -311,6 +269,15 @@
         },
         "label": "GetJournal",
         "nodeKind": "get-journal"
+      },
+      {
+        "id": "fn-alpha-observation-tick-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 6256,
+          "y": -320
+        },
+        "label": "Observation tick::fn-alpha-observation-tick::fn-alpha-observation-tick"
       }
     ],
     "edges": [
@@ -403,29 +370,6 @@
         "kind": "exec"
       },
       {
-        "source": "node-make-report-from-analysis-mqma356z-34",
-        "sourceHandle": "exec-out",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-make-report-from-analysis-mqma356z-34",
-        "sourceHandle": "report",
-        "target": "node-publish-report-mqma49xv-35",
-        "targetHandle": "report",
-        "kind": "data",
-        "dataType": "ReportRef"
-      },
-      {
-        "source": "node-get-reporter-mqm9yfmy-29",
-        "sourceHandle": "reporter",
-        "target": "node-make-report-from-analysis-mqma356z-34",
-        "targetHandle": "reporter",
-        "kind": "data",
-        "dataType": "ReporterRef"
-      },
-      {
         "source": "node-get-fft-frame-mql3g2ys-11",
         "sourceHandle": "frame",
         "target": "node-collect-fft-frames-mqm9wezu-28",
@@ -473,7 +417,7 @@
       {
         "source": "node-get-spectral-analyser-mqm9vz6a-27",
         "sourceHandle": "analyser",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+        "target": "fn-alpha-observation-tick-block",
         "targetHandle": "analyser",
         "kind": "data",
         "dataType": "SpectralAnalyserRef"
@@ -481,7 +425,7 @@
       {
         "source": "node-get-spectral-analyser-mqm9vz6a-27",
         "sourceHandle": "analyser",
-        "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+        "target": "fn-alpha-observation-tick-block",
         "targetHandle": "analyser",
         "kind": "data",
         "dataType": "SpectralAnalyserRef"
@@ -489,7 +433,7 @@
       {
         "source": "node-start-recording-mqv07-36",
         "sourceHandle": "exec-out",
-        "target": "node-flush-spectral-analyser-mqmoa8o7-34",
+        "target": "fn-alpha-observation-tick-block",
         "targetHandle": "exec-in",
         "kind": "exec"
       },
@@ -500,36 +444,6 @@
         "targetHandle": "recorder",
         "kind": "data",
         "dataType": "RecorderRef"
-      },
-      {
-        "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-        "sourceHandle": "exec-out",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-flush-spectral-analyser-mqmoa8o7-34",
-        "sourceHandle": "frames",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "targetHandle": "frames",
-        "kind": "data",
-        "dataType": "FftFrameRefList"
-      },
-      {
-        "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "sourceHandle": "exec-out",
-        "target": "node-make-report-from-analysis-mqma356z-34",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-make-fft-trends-analysis-mqmo96xz-33",
-        "sourceHandle": "analysis",
-        "target": "node-make-report-from-analysis-mqma356z-34",
-        "targetHandle": "analysis",
-        "kind": "data",
-        "dataType": "FftTrendAnalysisRef"
       },
       {
         "source": "node-get-recorder-mqmo3mba-31",
@@ -564,7 +478,7 @@
       {
         "source": "node-make-fft-trends-policy-v08-1",
         "sourceHandle": "policy",
-        "target": "node-make-fft-trends-analysis-mqmo96xz-33",
+        "target": "fn-alpha-observation-tick-block",
         "targetHandle": "policy",
         "kind": "data",
         "dataType": "FftTrendsPolicy"
@@ -600,7 +514,7 @@
         "dataType": "RecordingSliceRef"
       },
       {
-        "source": "node-publish-report-mqma49xv-35",
+        "source": "fn-alpha-observation-tick-block",
         "sourceHandle": "exec-out",
         "target": "main-infinity",
         "targetHandle": "exec-in",
@@ -656,7 +570,7 @@
       {
         "source": "node-get-journal-mvp-main-1",
         "sourceHandle": "journal",
-        "target": "node-get-reporter-mqm9yfmy-29",
+        "target": "fn-alpha-observation-tick-block",
         "targetHandle": "journal",
         "kind": "data",
         "dataType": "JournalRef"
@@ -664,7 +578,7 @@
       {
         "source": "node-get-journal-mvp-main-1",
         "sourceHandle": "journal",
-        "target": "node-publish-report-mqma49xv-35",
+        "target": "fn-alpha-observation-tick-block",
         "targetHandle": "journal",
         "kind": "data",
         "dataType": "JournalRef"
@@ -738,7 +652,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:08:50.657Z",
-  "userCaseId": "usercase-mvp-microphone",
+  "exportedAt": "2026-06-21T13:09:53.958Z",
+  "userCaseId": "usercase-mvp-microphone-alpha",
   "userCaseBranch": "main"
 }

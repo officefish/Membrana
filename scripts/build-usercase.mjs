@@ -18,6 +18,9 @@ const scriptsDir = dirname(fileURLToPath(import.meta.url));
 /** @type {Record<string, string>} */
 const BUILDERS = {
   'mvp-microphone': 'build-usercase-mvp-microphone.mjs',
+  'mvp-microphone-alpha': 'build-usercase-competition-team.mjs alpha',
+  'mvp-microphone-beta': 'build-usercase-competition-team.mjs beta',
+  'mvp-microphone-gamma': 'build-usercase-competition-team.mjs gamma',
 };
 
 function printHelp() {
@@ -43,14 +46,23 @@ if (rawId === undefined) {
 }
 
 const folderId = normalizeUserCaseFolderId(rawId);
-const builder = BUILDERS[folderId];
-if (builder === undefined) {
+const builderEntry = BUILDERS[folderId];
+if (builderEntry === undefined) {
   console.error(`No builder registered for usercase-${folderId}`);
   printHelp();
   process.exit(1);
 }
 
-const result = spawnSync(process.execPath, [join(scriptsDir, builder)], {
+const builderParts = builderEntry.split(' ');
+const builderScript = builderParts[0];
+const builderArg = builderParts[1];
+
+const spawnArgs = [join(scriptsDir, builderScript)];
+if (builderArg !== undefined) {
+  spawnArgs.push(builderArg);
+}
+
+const result = spawnSync(process.execPath, spawnArgs, {
   stdio: 'inherit',
   env: process.env,
 });
@@ -60,7 +72,9 @@ if (result.status !== 0) {
 }
 
 try {
-  await finalizeUserCaseBuild(rawId);
+  if (!builderEntry.includes('competition-team')) {
+    await finalizeUserCaseBuild(rawId);
+  }
   loadUserCaseManifest(rawId);
   console.log(`Manifest validated: usercase-${folderId}`);
 } catch (error) {

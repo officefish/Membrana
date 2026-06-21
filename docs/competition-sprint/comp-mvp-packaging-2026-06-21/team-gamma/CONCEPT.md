@@ -66,9 +66,12 @@ initial/onConnect: **1 group each**, muted neutral frame — «Подготов�
 | Strong DESIGN.md alignment | verify-layout overlap risk if rects too big |
 | Best screenshot for docs | F2–F4 debug inside collapse |
 
-## Phase 2 plan
+## Phase 2α — DONE (2026-06-21)
 
-### 2α
+- `usercase-mvp-microphone-gamma` — poster groups ①–⑤ + 2 functions (gate + trends publish; mega-bundle deferred — D-PINS-9)
+- `verify-layout` green
+
+## Phase 2β — next
 
 - Fork MVP; redraw commentGroups rects (editorial pass)
 - Numbered titles; collapse gate+trends to `fn-gamma-live-bundle`

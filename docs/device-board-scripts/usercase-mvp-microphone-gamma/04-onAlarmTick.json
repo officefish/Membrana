@@ -2,8 +2,8 @@
   "exportKind": "branch-scenario",
   "branch": "alarm",
   "branchLabel": "onAlarmTick",
-  "scenarioTitle": "UserCase MVP microphone: onAlarmTick → stub (∞ only; MVP observation в main)",
-  "userCaseId": "usercase-mvp-microphone",
+  "scenarioTitle": "UserCase Gamma: Poster UserCase: onAlarmTick → stub (∞ only; MVP observation в main)",
+  "userCaseId": "usercase-mvp-microphone-gamma",
   "userCaseBranch": "alarm",
   "deviceKind": "microphone",
   "subgraph": {
@@ -46,5 +46,5 @@
   "variables": [],
   "referenceVariableSlots": [],
   "referencedVariableIds": [],
-  "exportedAt": "2026-06-21T13:08:50.663Z"
+  "exportedAt": "2026-06-21T13:10:02.233Z"
 }

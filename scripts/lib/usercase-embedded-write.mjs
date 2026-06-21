@@ -77,7 +77,7 @@ export function syncUserCaseBranchBundles(rawId, document, repoRoot = repoRootFr
     );
 
     const legacyFile = meta['legacyFile'];
-    if (typeof legacyFile === 'string') {
+    if (typeof legacyFile === 'string' && manifest['competitionSprint'] === undefined) {
       const legacyPath = join(repoRoot, 'docs/device-board-scripts', legacyFile);
       writeFileSync(
         legacyPath,

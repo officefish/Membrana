@@ -50,9 +50,13 @@ Main canvas после collapse: **~8–10 видимых нод** + 4 comment f
 | Audio causality явная | 2 functions = pin discipline при правках |
 | Совместимо с verify-layout | Build второго bundled id в catalog (Phase 2) |
 
-## Phase 2 plan
+## Phase 2α — DONE (2026-06-21)
 
-### 2α — vertical slice
+- `usercase-mvp-microphone-alpha` — `fn-alpha-observation-tick` (trends+publish collapsed)
+- 4 RU comment groups (Policy · Gate · Observation · Journal)
+- `yarn usercase:build` + `verify-layout` green
+
+## Phase 2β — next
 
 - Fork MVP JSON → `usercase-mvp-microphone-alpha/`
 - Переразметить **main**: 4 comment groups (Policy · Gate · Trends · Journal) + exec LR

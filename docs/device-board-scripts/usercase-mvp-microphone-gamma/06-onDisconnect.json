@@ -2,7 +2,7 @@
   "exportKind": "branch-scenario",
   "branch": "onDisconnect",
   "branchLabel": "On disconnect",
-  "scenarioTitle": "UserCase MVP microphone: onDisconnect → invalidate journal1",
+  "scenarioTitle": "UserCase Gamma: Poster UserCase: onDisconnect → invalidate journal1",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "on-disconnect-event",
@@ -88,8 +88,8 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:08:50.660Z",
-  "userCaseId": "usercase-mvp-microphone",
+  "exportedAt": "2026-06-21T13:10:02.233Z",
+  "userCaseId": "usercase-mvp-microphone-gamma",
   "userCaseBranch": "onDisconnect",
   "referenceVariableSlots": []
 }

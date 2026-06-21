@@ -2,7 +2,7 @@
   "exportKind": "branch-scenario",
   "branch": "initial",
   "branchLabel": "On start",
-  "scenarioTitle": "UserCase MVP microphone: onStart → GetMicrophone → StartStreaming → journal bootstrap",
+  "scenarioTitle": "UserCase Alpha: Live Observation Pipeline: onStart → GetMicrophone → StartStreaming → journal bootstrap",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "initial-event",
@@ -214,8 +214,8 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:08:50.654Z",
-  "userCaseId": "usercase-mvp-microphone",
+  "exportedAt": "2026-06-21T13:09:53.956Z",
+  "userCaseId": "usercase-mvp-microphone-alpha",
   "userCaseBranch": "initial",
   "referenceVariableSlots": []
 }

@@ -2,7 +2,7 @@
   "exportKind": "branch-scenario",
   "branch": "onConnect",
   "branchLabel": "On connect",
-  "scenarioTitle": "UserCase MVP microphone: onConnect → GetJournal → journal1",
+  "scenarioTitle": "UserCase Gamma: Poster UserCase: onConnect → GetJournal → journal1",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "on-connect-event",
@@ -103,8 +103,8 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:08:50.649Z",
-  "userCaseId": "usercase-mvp-microphone",
+  "exportedAt": "2026-06-21T13:10:02.230Z",
+  "userCaseId": "usercase-mvp-microphone-gamma",
   "userCaseBranch": "onConnect",
   "referenceVariableSlots": []
 }

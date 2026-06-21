@@ -62,9 +62,13 @@ Main visible nodes: **Event tick → 3 function call nodes → ∞** (target **�
 | Reusable function templates | Больше work collapse/ref-mapping |
 | Strong Ozhegov boundary story | 3 functions → pin CRUD careful |
 
-## Phase 2 plan
+## Phase 2α — DONE (2026-06-21)
 
-### 2α
+- `usercase-mvp-microphone-beta` — `fn-beta-recording-gate` on main orchestrator
+- 4 comment groups (orchestrator / gate function / trends spine / journal)
+- `verify-layout` green
+
+## Phase 2β — next
 
 - Copy MVP → beta folder; identify collapse ranges from main v08 JSON
 - Implement `fn-beta-recording-gate` only; thin main calls it

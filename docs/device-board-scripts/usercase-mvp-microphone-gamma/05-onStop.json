@@ -2,7 +2,7 @@
   "exportKind": "branch-scenario",
   "branch": "onStop",
   "branchLabel": "On stop",
-  "scenarioTitle": "UserCase MVP microphone: onStop → StopStreaming",
+  "scenarioTitle": "UserCase Gamma: Poster UserCase: onStop → StopStreaming",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "on-stop-event",
@@ -95,8 +95,8 @@
     }
   ],
   "referencedVariableIds": [],
-  "exportedAt": "2026-06-21T13:08:50.659Z",
-  "userCaseId": "usercase-mvp-microphone",
+  "exportedAt": "2026-06-21T13:10:02.232Z",
+  "userCaseId": "usercase-mvp-microphone-gamma",
   "userCaseBranch": "onStop",
   "referenceVariableSlots": []
 }
