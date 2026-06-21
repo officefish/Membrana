@@ -342,10 +342,15 @@ export { computeAlignPositions, computeSmartAlignPositions, snapBoardLayoutCoord
 export type { BoardAlignMode } from './align-nodes.js';
 export {
   computeExecChainLayoutPositions,
+  computeExecChainLayoutFromEntry,
+  collectExecReachableNodeIds,
+  buildLayoutGhostNodes,
   isExecChainLayoutEnabled,
+  isLoopBranchExecLayoutEnabled,
   isExecFlowBoardEdge,
+  resolveLoopBranchExecEntryId,
 } from './layout-exec-chain.js';
-export type { ExecChainLayoutConfig } from './layout-exec-chain.js';
+export type { ExecChainLayoutConfig, LoopExecLayoutBranch } from './layout-exec-chain.js';
 export {
   findFunctionIoNodeIds,
   proposeNewFunctionPin,

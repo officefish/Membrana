@@ -29,9 +29,14 @@ import {
 } from '../graph/marquee-selection.js';
 import { BoardFlowNode } from './board-flow-node.js';
 import { BoardGroupNode } from './board-group-node.js';
+import { BoardLayoutGhostNode } from './board-layout-ghost-node.js';
 import { BoardMarqueeOverlay } from './board-marquee-overlay.js';
 
-const NODE_TYPES: NodeTypes = { board: BoardFlowNode, boardGroup: BoardGroupNode };
+const NODE_TYPES: NodeTypes = {
+  board: BoardFlowNode,
+  boardGroup: BoardGroupNode,
+  boardLayoutGhost: BoardLayoutGhostNode,
+};
 
 /** API координат канваса (viewport → flow space). */
 export interface BoardFlowViewportApi {
@@ -95,6 +100,8 @@ export interface BoardFlowCanvasProps {
   readonly onConnectionDropOnPane?: (payload: BoardConnectionDropOnPanePayload) => void;
   /** Marquee multi-select на пустом поле (CGF R0). */
   readonly onMarqueeSelection?: (payload: BoardMarqueeSelectionPayload) => void;
+  /** Ghost-ноды preview exec layout (NAA L2) — не persist, только render. */
+  readonly layoutGhostNodes?: readonly Node[];
 }
 
 const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
@@ -111,12 +118,18 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   onViewportApiReady,
   onConnectionDropOnPane,
   onMarqueeSelection,
+  layoutGhostNodes = [],
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
   const marqueeDragRef = useRef<MarqueePointerState | null>(null);
   const [marqueeRect, setMarqueeRect] = useState<ScreenRect | null>(null);
   const marqueeEnabled = !readOnly && onMarqueeSelection !== undefined;
+
+  const displayNodes = useMemo(
+    () => (layoutGhostNodes.length === 0 ? nodes : [...nodes, ...layoutGhostNodes]),
+    [layoutGhostNodes, nodes],
+  );
 
   const viewportApi = useMemo<BoardFlowViewportApi>(
     () => ({
@@ -154,13 +167,19 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
 
   const handleNodesChange = useCallback(
     (changes: NodeChange[]) => {
+      const filtered = changes.filter(
+        (change) => !('id' in change && change.id.startsWith('layout-ghost-')),
+      );
+      if (filtered.length === 0) {
+        return;
+      }
       if (readOnly) {
-        const selectionOnly = changes.every((change) => change.type === 'select');
+        const selectionOnly = filtered.every((change) => change.type === 'select');
         if (!selectionOnly) {
           return;
         }
       }
-      onNodesChange(changes);
+      onNodesChange(filtered);
     },
     [onNodesChange, readOnly],
   );
@@ -367,7 +386,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     >
       <BoardMarqueeOverlay rect={marqueeRect} />
       <ReactFlow
-        nodes={nodes}
+        nodes={displayNodes}
         edges={decoratedEdges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}

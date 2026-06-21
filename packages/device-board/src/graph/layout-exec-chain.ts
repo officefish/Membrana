@@ -10,6 +10,9 @@ import {
   BOARD_NODE_MARQUEE_WIDTH,
   nodeFlowBounds,
 } from './marquee-selection.js';
+import { SCENARIO_ALARM_ENTRY, SCENARIO_MAIN_ENTRY } from './initial-board-state.js';
+
+export type LoopExecLayoutBranch = 'main' | 'alarm';
 
 /** Конфиг layered exec layout (D-LAYOUT-LR). */
 export interface ExecChainLayoutConfig {
@@ -167,4 +170,95 @@ export function computeExecChainLayoutPositions(
   }
 
   return out;
+}
+
+/** Entry id для exec layout на loop-ветках (D-LAYOUT-SCOPE). */
+export function resolveLoopBranchExecEntryId(branch: LoopExecLayoutBranch): string {
+  return branch === 'main' ? SCENARIO_MAIN_ENTRY : SCENARIO_ALARM_ENTRY;
+}
+
+/** Exec-reachable узлы от entry (BFS по exec/event→exec). */
+export function collectExecReachableNodeIds(
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  entryNodeId: string,
+): Set<string> {
+  const reachable = new Set<string>();
+  if (!nodes.some((node) => node.id === entryNodeId)) {
+    return reachable;
+  }
+  const queue: string[] = [entryNodeId];
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (current === undefined || reachable.has(current)) {
+      continue;
+    }
+    reachable.add(current);
+    for (const edge of edges) {
+      if (edge.source === current && isExecFlowBoardEdge(edge, nodes)) {
+        queue.push(edge.target);
+      }
+    }
+  }
+  return reachable;
+}
+
+/** Layout всей exec-цепочки от entry (branch scope). */
+export function computeExecChainLayoutFromEntry(
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  entryNodeId: string,
+  config: ExecChainLayoutConfig = DEFAULT_EXEC_CHAIN_LAYOUT_CONFIG,
+): Map<string, { readonly x: number; readonly y: number }> {
+  const scope = collectExecReachableNodeIds(nodes, edges, entryNodeId);
+  return computeExecChainLayoutPositions(nodes, edges, scope, config);
+}
+
+/** True, если на loop-ветке можно упорядочить exec от entry. */
+export function isLoopBranchExecLayoutEnabled(
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  branch: LoopExecLayoutBranch,
+): boolean {
+  const entryId = resolveLoopBranchExecEntryId(branch);
+  const scope = collectExecReachableNodeIds(nodes, edges, entryId);
+  return isExecChainLayoutEnabled(nodes, edges, scope);
+}
+
+/** Ghost-ноды для preview (NAA L2): полупрозрачные копии на целевых позициях. */
+export function buildLayoutGhostNodes(
+  nodes: readonly Node[],
+  previewPositions: ReadonlyMap<string, { readonly x: number; readonly y: number }>,
+): Node[] {
+  const ghosts: Node[] = [];
+  for (const node of nodes) {
+    const next = previewPositions.get(node.id);
+    if (next === undefined) {
+      continue;
+    }
+    if (next.x === node.position.x && next.y === node.position.y) {
+      continue;
+    }
+    const bounds = nodeFlowBounds(node);
+    ghosts.push({
+      id: `layout-ghost-${node.id}`,
+      type: 'boardLayoutGhost',
+      position: { x: next.x, y: next.y },
+      draggable: false,
+      selectable: false,
+      focusable: false,
+      data: {
+        label:
+          typeof node.data === 'object' &&
+          node.data !== null &&
+          'label' in node.data &&
+          typeof node.data.label === 'string'
+            ? node.data.label
+            : node.id,
+        width: bounds.width,
+        height: bounds.height,
+      },
+    });
+  }
+  return ghosts;
 }

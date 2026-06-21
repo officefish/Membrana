@@ -52,8 +52,14 @@ import type { BoardGroupNodeData } from '../graph/index.js';
 import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
 import {
   computeExecChainLayoutPositions,
+  computeExecChainLayoutFromEntry,
+  buildLayoutGhostNodes,
   isExecChainLayoutEnabled,
+  isLoopBranchExecLayoutEnabled,
+  resolveLoopBranchExecEntryId,
 } from '../graph/layout-exec-chain.js';
+import type { LoopExecLayoutBranch } from '../graph/layout-exec-chain.js';
+import { BoardExecLayoutPreviewModal } from './board-exec-layout-preview-modal.js';
 import type { BoardAlignMode } from '../graph/align-nodes.js';
 import { isSystemNode } from '../graph/event-node.js';
 
@@ -112,6 +118,9 @@ const DeviceBoardShellInner: React.FC<{
   >([]);
   const pendingConnectionDropRef = useRef<BoardConnectionDropOnPanePayload | null>(null);
   const [selectionActionOpen, setSelectionActionOpen] = useState(false);
+  const [execLayoutPreview, setExecLayoutPreview] = useState<
+    Map<string, { readonly x: number; readonly y: number }> | null
+  >(null);
   const [marqueeSelectedIds, setMarqueeSelectedIds] = useState<readonly string[]>([]);
 
   const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
@@ -619,6 +628,78 @@ const DeviceBoardShellInner: React.FC<{
     applyAlignPositions(positions);
   }, [applyAlignPositions, isRuntime, isSignal, marqueeSelectedIds, scenarioCanvas]);
 
+  const isLoopExecLayoutBranch =
+    !isSignal && (scenarioBranch === 'main' || scenarioBranch === 'alarm');
+
+  const loopExecLayoutEnabled = useMemo(() => {
+    if (!isLoopExecLayoutBranch) {
+      return false;
+    }
+    return isLoopBranchExecLayoutEnabled(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      scenarioBranch as LoopExecLayoutBranch,
+    );
+  }, [isLoopExecLayoutBranch, scenarioBranch, scenarioCanvas.edges, scenarioCanvas.nodes]);
+
+  const layoutGhostNodes = useMemo(() => {
+    if (execLayoutPreview === null) {
+      return [];
+    }
+    return buildLayoutGhostNodes(scenarioCanvas.nodes, execLayoutPreview);
+  }, [execLayoutPreview, scenarioCanvas.nodes]);
+
+  const execLayoutMovedCount = useMemo(() => {
+    if (execLayoutPreview === null) {
+      return 0;
+    }
+    let count = 0;
+    for (const [nodeId, next] of execLayoutPreview) {
+      const node = scenarioCanvas.nodes.find((item) => item.id === nodeId);
+      if (node === undefined) {
+        continue;
+      }
+      if (node.position.x !== next.x || node.position.y !== next.y) {
+        count += 1;
+      }
+    }
+    return count;
+  }, [execLayoutPreview, scenarioCanvas.nodes]);
+
+  const handleRequestBranchExecLayout = useCallback(() => {
+    if (!isLoopExecLayoutBranch || isRuntime || !loopExecLayoutEnabled) {
+      return;
+    }
+    dismissSelectionAction();
+    const entryId = resolveLoopBranchExecEntryId(scenarioBranch as LoopExecLayoutBranch);
+    const positions = computeExecChainLayoutFromEntry(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      entryId,
+    );
+    setExecLayoutPreview(positions);
+  }, [
+    dismissSelectionAction,
+    isLoopExecLayoutBranch,
+    isRuntime,
+    loopExecLayoutEnabled,
+    scenarioBranch,
+    scenarioCanvas.edges,
+    scenarioCanvas.nodes,
+  ]);
+
+  const handleDismissExecLayoutPreview = useCallback(() => {
+    setExecLayoutPreview(null);
+  }, []);
+
+  const handleApplyExecLayoutPreview = useCallback(() => {
+    if (execLayoutPreview === null) {
+      return;
+    }
+    applyAlignPositions(execLayoutPreview);
+    setExecLayoutPreview(null);
+  }, [applyAlignPositions, execLayoutPreview]);
+
   const handleCollapseToFunction = useCallback(() => {
     if (isSignal || isRuntime) {
       return;
@@ -749,6 +830,18 @@ const DeviceBoardShellInner: React.FC<{
           <p className="min-w-0 truncate text-[11px] leading-tight text-base-content/60">
             {scenarioTitle}
           </p>
+          {isLoopExecLayoutBranch && !isRuntime ? (
+            <button
+              type="button"
+              className="btn btn-outline btn-primary btn-xs h-8 min-h-8 shrink-0 gap-1 px-2"
+              disabled={!loopExecLayoutEnabled || execLayoutPreview !== null}
+              title="Упорядочить exec-цепочку от entry ветки (dagre LR)"
+              onClick={handleRequestBranchExecLayout}
+            >
+              <span className="badge badge-primary badge-outline badge-xs">exec · LR</span>
+              Упорядочить цепочку
+            </button>
+          ) : null}
           {syncLabel !== null ? (
             <span className="shrink-0 text-xs text-error" title={graph.syncError ?? undefined}>
               {syncLabel}
@@ -908,7 +1001,12 @@ const DeviceBoardShellInner: React.FC<{
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             onConnectionDropOnPane={handleConnectionDropOnPane}
-            onMarqueeSelection={!isSignal && !isRuntime ? handleMarqueeSelection : undefined}
+            onMarqueeSelection={
+              !isSignal && !isRuntime && execLayoutPreview === null
+                ? handleMarqueeSelection
+                : undefined
+            }
+            layoutGhostNodes={layoutGhostNodes}
           />
         </div>
 
@@ -1030,6 +1128,14 @@ const DeviceBoardShellInner: React.FC<{
         suggestions={connectionSuggestItems}
         onPick={handleConnectionSuggestPick}
         onDismiss={dismissConnectionSuggest}
+      />
+
+      <BoardExecLayoutPreviewModal
+        open={execLayoutPreview !== null}
+        branchLabel={BRANCH_TAB_LABEL[scenarioBranch]}
+        movedNodeCount={execLayoutMovedCount}
+        onApply={handleApplyExecLayoutPreview}
+        onDismiss={handleDismissExecLayoutPreview}
       />
 
       <BoardSelectionActionModal

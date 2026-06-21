@@ -3,7 +3,11 @@ import { describe, expect, it } from 'vitest';
 
 import {
   computeExecChainLayoutPositions,
+  computeExecChainLayoutFromEntry,
+  collectExecReachableNodeIds,
+  buildLayoutGhostNodes,
   isExecChainLayoutEnabled,
+  isLoopBranchExecLayoutEnabled,
 } from './layout-exec-chain.js';
 import { createDefaultMvpMicrophoneHydratedState } from './default-usercase-mvp-microphone.js';
 
@@ -102,5 +106,47 @@ describe('layout-exec-chain', () => {
 
     const xs = [...positions.values()].map((pos) => pos.x);
     expect(Math.max(...xs)).toBeGreaterThan(Math.min(...xs));
+  });
+
+  it('collectExecReachableNodeIds walks exec chain from entry', () => {
+    const nodes = [
+      scenarioNode('a', 0, 0, 'print'),
+      scenarioNode('b', 100, 0, 'print'),
+      scenarioNode('c', 200, 0, 'print'),
+      scenarioNode('d', 300, 0, 'print'),
+    ];
+    const edges = [execEdge('a', 'b'), execEdge('b', 'c')];
+    const reachable = collectExecReachableNodeIds(nodes, edges, 'a');
+    expect([...reachable].sort()).toEqual(['a', 'b', 'c']);
+    expect(reachable.has('d')).toBe(false);
+  });
+
+  it('computeExecChainLayoutFromEntry layouts MVP main from main-on-tick', () => {
+    const state = createDefaultMvpMicrophoneHydratedState();
+    const positions = computeExecChainLayoutFromEntry(
+      state.scenarioMainNodes,
+      state.scenarioMainEdges,
+      'main-on-tick',
+    );
+    expect(positions.size).toBeGreaterThanOrEqual(4);
+    expect(isLoopBranchExecLayoutEnabled(
+      state.scenarioMainNodes,
+      state.scenarioMainEdges,
+      'main',
+    )).toBe(true);
+  });
+
+  it('buildLayoutGhostNodes skips unchanged positions', () => {
+    const nodes = [
+      scenarioNode('a', 96, 128, 'print'),
+      scenarioNode('b', 400, 128, 'print'),
+    ];
+    const preview = new Map([
+      ['a', { x: 96, y: 128 }],
+      ['b', { x: 320, y: 128 }],
+    ]);
+    const ghosts = buildLayoutGhostNodes(nodes, preview);
+    expect(ghosts).toHaveLength(1);
+    expect(ghosts[0]?.id).toBe('layout-ghost-b');
   });
 });
