@@ -9,6 +9,8 @@ import {
   DATA_EDGE_STROKE_WIDTH,
   EXEC_EDGE_STROKE,
   EXEC_EDGE_STROKE_WIDTH,
+  EVENT_EDGE_STROKE,
+  EVENT_EDGE_STROKE_WIDTH,
   NULL_SOCKET_STROKE,
   dataSocketStrokeColor,
 } from './socket-type-palette.js';
@@ -24,6 +26,14 @@ function isExecEdge(edge: Edge, nodes: readonly Node[]): boolean {
   }
   const resolved = resolveHandle(nodes, edge.source, edge.sourceHandle, 'source');
   return resolved?.pinKind === 'exec';
+}
+
+function isEventEdge(edge: Edge, nodes: readonly Node[]): boolean {
+  if (edge.sourceHandle === undefined || edge.sourceHandle === null) {
+    return false;
+  }
+  const resolved = resolveHandle(nodes, edge.source, edge.sourceHandle, 'source');
+  return resolved?.pinKind === 'event';
 }
 
 function resolveSourceDataPin(
@@ -71,8 +81,13 @@ export function decorateBoardEdges(
 ): Edge[] {
   return edges.map((edge) => {
     const exec = isExecEdge(edge, nodes);
-    const stroke = exec ? EXEC_EDGE_STROKE : dataEdgeStroke(edge, edges, nodes);
-    const strokeWidth = exec ? EXEC_EDGE_STROKE_WIDTH : DATA_EDGE_STROKE_WIDTH;
+    const event = isEventEdge(edge, nodes);
+    const stroke = event ? EVENT_EDGE_STROKE : exec ? EXEC_EDGE_STROKE : dataEdgeStroke(edge, edges, nodes);
+    const strokeWidth = event
+      ? EVENT_EDGE_STROKE_WIDTH
+      : exec
+        ? EXEC_EDGE_STROKE_WIDTH
+        : DATA_EDGE_STROKE_WIDTH;
     return {
       ...edge,
       animated: options.pulseWhenRunning && exec,

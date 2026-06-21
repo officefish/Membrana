@@ -8,6 +8,7 @@ import {
   droneDetectionBriefFromItem,
   fftThresholdReportFromItem,
   trendsFftReportFromItem,
+  trendsFromObservationItem,
 } from '@membrana/journal-report-views';
 
 import { DroneDetectionReportView } from '@/components/detector-report';
@@ -45,7 +46,8 @@ export const LiveJournalReportCard: React.FC<LiveJournalReportCardProps> = ({
   const detailedReport = droneDetectionReportFromItem(item);
   const briefReport = droneDetectionBriefFromItem(item);
   const fftThresholdReport = fftThresholdReportFromItem(item);
-  const trendsFftReport = trendsFftReportFromItem(item);
+  const trendsFftReport =
+    trendsFftReportFromItem(item) ?? trendsFromObservationItem(item);
   const isDetected = item.report?.isDetected === true;
   const summary = item.report?.summaryText;
   const isBrief = briefReport !== null;

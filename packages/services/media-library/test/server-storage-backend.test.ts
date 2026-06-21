@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { BUFFER_COLLECTION_ID } from '../src/constants.js';
 import { createServerStorageBackend } from '../src/backends/server-storage-backend.js';
+import { setMediaLibraryTraceIdProvider } from '../src/media-library-trace.js';
 
 const BASE = 'https://media.test';
 const DEVICE = 'device-1';
@@ -16,6 +17,7 @@ function jsonResponse(body: unknown, status = 200): Response {
 
 describe('ServerStorageBackend', () => {
   afterEach(() => {
+    setMediaLibraryTraceIdProvider(null);
     vi.unstubAllGlobals();
   });
 
@@ -74,6 +76,33 @@ describe('ServerStorageBackend', () => {
         headers: expect.any(Headers),
       }),
     );
+  });
+
+  it('sends X-Membrana-Trace-Id when trace id provider is set', async () => {
+    setMediaLibraryTraceIdProvider(() => 'b19f0e03-58');
+
+    const fetchMock = vi.fn(async (url: string | URL) => {
+      const path = String(url);
+      if (path.endsWith('/quota')) {
+        return jsonResponse({
+          userStorage: { usedBytes: 0, limitBytes: 1, backend: 'server' },
+          buffer: { usedBytes: 0, limitBytes: 1, backend: 'server' },
+          dataset: { catalogId: 'free-v1-catalog', sampleCount: 0 },
+        });
+      }
+      throw new Error(`Unexpected fetch: ${path}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const backend = createServerStorageBackend({
+      baseUrl: BASE,
+      deviceId: DEVICE,
+      mediaToken: TOKEN,
+    });
+
+    await backend.getQuota();
+    const headers = fetchMock.mock.calls[0]?.[1]?.headers as Headers;
+    expect(headers.get('X-Membrana-Trace-Id')).toBe('b19f0e03-58');
   });
 
   it('uploads sample via multipart POST', async () => {

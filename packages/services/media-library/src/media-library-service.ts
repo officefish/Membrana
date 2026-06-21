@@ -8,10 +8,12 @@ import {
   DEFAULT_SAMPLES_PAGE_SIZE,
   type MediaLibraryConfig,
 } from './constants.js';
+import { mediaLibraryTrace, traceElapsedMs } from './media-library-trace.js';
 import { isBufferSampleCountCapActive } from './quota-status.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
   Collection,
+  ImportBlobOptions,
   MediaLibrarySnapshot,
   MediaSample,
   NewSampleMeta,
@@ -66,14 +68,78 @@ export class MediaLibraryService {
     this.listeners.forEach((l) => l());
   }
 
+  /** Incremental snapshot update after upload (avoids full catalog re-list). */
+  private async mergeImportedSample(sample: MediaSample): Promise<void> {
+    const mergeStartedAt = performance.now();
+    mediaLibraryTrace('snapshot-merge-start', {
+      collectionId: sample.collectionId,
+      sampleId: sample.id,
+    });
+
+    const collectionId = sample.collectionId;
+    const existing = this.snapshot.samplesByCollection[collectionId] ?? [];
+    const withoutDuplicate = existing.filter((row) => row.id !== sample.id);
+
+    this.snapshot = {
+      ...this.snapshot,
+      samplesByCollection: {
+        ...this.snapshot.samplesByCollection,
+        [collectionId]: [sample, ...withoutDuplicate],
+      },
+      collections: this.snapshot.collections.map((col) =>
+        col.id === collectionId
+          ? { ...col, sampleCount: withoutDuplicate.length + 1 }
+          : col,
+      ),
+    };
+
+    try {
+      const quota = await this.backend.getQuota();
+      this.snapshot = { ...this.snapshot, quota };
+      mediaLibraryTrace('snapshot-quota-done', { elapsedMs: traceElapsedMs(mergeStartedAt) });
+    } catch {
+      mediaLibraryTrace('snapshot-quota-skip', { reason: 'getQuota-failed' });
+    }
+
+    this.emit();
+    mediaLibraryTrace('snapshot-merge-done', {
+      collectionId,
+      sampleId: sample.id,
+      elapsedMs: traceElapsedMs(mergeStartedAt),
+    });
+  }
+
   async refresh(): Promise<void> {
+    const refreshStartedAt = performance.now();
+    mediaLibraryTrace('refresh-start');
+
+    const ensureStartedAt = performance.now();
+    mediaLibraryTrace('ensure-reserved-start');
     await this.backend.ensureReservedCollections();
+    mediaLibraryTrace('ensure-reserved-done', { elapsedMs: traceElapsedMs(ensureStartedAt) });
+
+    const listColStartedAt = performance.now();
     const collections = await this.backend.listCollections();
+    mediaLibraryTrace('listCollections-done', {
+      count: collections.length,
+      elapsedMs: traceElapsedMs(listColStartedAt),
+    });
+
     const samplesByCollection: Record<string, MediaSample[]> = {};
     for (const c of collections) {
+      const listSamplesStartedAt = performance.now();
       samplesByCollection[c.id] = await this.backend.listSamples(c.id);
+      mediaLibraryTrace('listSamples-done', {
+        collectionId: c.id,
+        count: samplesByCollection[c.id]?.length ?? 0,
+        elapsedMs: traceElapsedMs(listSamplesStartedAt),
+      });
     }
+
+    const quotaStartedAt = performance.now();
     const quota = await this.backend.getQuota();
+    mediaLibraryTrace('quota-done', { elapsedMs: traceElapsedMs(quotaStartedAt) });
+
     this.snapshot = {
       collections,
       samplesByCollection,
@@ -81,6 +147,7 @@ export class MediaLibraryService {
       version: this.version,
     };
     this.emit();
+    mediaLibraryTrace('refresh-done', { elapsedMs: traceElapsedMs(refreshStartedAt) });
   }
 
   async listSamplesPage(
@@ -128,7 +195,16 @@ export class MediaLibraryService {
     collectionId: string,
     blob: Blob,
     meta: NewSampleMeta,
+    options?: ImportBlobOptions,
   ): Promise<MediaSample> {
+    const importStartedAt = performance.now();
+    mediaLibraryTrace('importBlob-start', {
+      collectionId,
+      title: meta.title,
+      sizeBytes: blob.size,
+      skipRefresh: options?.skipRefresh ?? false,
+    });
+
     if (collectionId === BUFFER_COLLECTION_ID) {
       const quota = this.snapshot.quota;
       if (isBufferSampleCountCapActive(quota)) {
@@ -138,8 +214,28 @@ export class MediaLibraryService {
         }
       }
     }
+
+    const putSampleStartedAt = performance.now();
+    mediaLibraryTrace('putSample-start', { collectionId, title: meta.title, sizeBytes: blob.size });
     const sample = await this.backend.putSample(collectionId, blob, meta);
-    await this.refresh();
+    mediaLibraryTrace('putSample-done', {
+      collectionId,
+      sampleId: sample.id,
+      elapsedMs: traceElapsedMs(putSampleStartedAt),
+    });
+
+    if (options?.skipRefresh === true) {
+      await this.mergeImportedSample(sample);
+    } else {
+      await this.refresh();
+    }
+
+    mediaLibraryTrace('importBlob-done', {
+      collectionId,
+      sampleId: sample.id,
+      skipRefresh: options?.skipRefresh ?? false,
+      elapsedMs: traceElapsedMs(importStartedAt),
+    });
     return sample;
   }
 

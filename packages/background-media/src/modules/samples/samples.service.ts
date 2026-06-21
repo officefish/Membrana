@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -18,6 +19,7 @@ import {
   type SampleDto,
 } from '../../lib/sample-dto';
 import { buildPageMeta, type PageMeta } from '../../lib/pagination';
+import { isPrismaUniqueViolation } from '../../lib/prisma-errors';
 import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CollectionsService } from '../collections/collections.service';
@@ -142,6 +144,11 @@ export class SamplesService {
       return sampleToDto(row);
     } catch (err) {
       await this.blobs.delete(storageRef);
+      if (isPrismaUniqueViolation(err)) {
+        throw new ConflictException(
+          'A sample with this title already exists in the collection',
+        );
+      }
       throw err;
     }
   }

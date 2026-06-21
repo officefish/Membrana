@@ -15,15 +15,46 @@ import { deserializeScenarioSubgraph, serializeScenarioSubgraph } from './serial
 describe('palette-node (DBR5)', () => {
   it('defines v0.4 palette with streaming and fft nodes', () => {
     expect([...V04_PALETTE_NODE_KINDS]).toEqual([
+      'device-global',
+      'stop-runtime',
       'print',
       'is-valid',
       'get-microphone',
+      'get-recorder',
+      'get-spectral-analyser',
       'start-streaming',
       'stop-streaming',
       'get-audio-stream',
       'get-sample',
       'get-fft-frame',
+      'collect-samples',
+      'collect-fft-frames',
+      'start-recording',
+      'stop-recording',
+      'is-recording-window-full',
+      'flush-spectral-analyser',
+      'make-recording-policy',
+      'make-fft-trends-policy',
+      'make-track',
+      'make-fft-trends-analysis',
+      'get-journal',
+      'get-reporter',
+      'make-report-from-track',
+      'make-report-from-analysis',
+      'publish-report',
     ]);
+  });
+
+  it('creates get-journal with device and server inputs', () => {
+    const node = createPaletteBoardNode('get-journal');
+    expect(node.data.nodeKind).toBe('get-journal');
+    expect(node.data.inputs?.some((pin) => pin.name === 'device' && pin.socketType === 'DeviceRef')).toBe(
+      true,
+    );
+    expect(node.data.inputs?.some((pin) => pin.name === 'server' && pin.socketType === 'ServerRef')).toBe(
+      true,
+    );
+    expect(node.data.outputs?.find((pin) => pin.name === 'journal')?.socketType).toBe('JournalRef');
   });
 
   it('creates print node with exec + reference value input', () => {
@@ -54,6 +85,27 @@ describe('palette-node (DBR5)', () => {
     expect(pins.outputs.find((pin) => pin.name === GET_MICROPHONE_OUT_HANDLE)?.socketType).toBe(
       'MicrophoneRef',
     );
+  });
+
+  it('creates get-recorder with DeviceRef in and RecorderRef out', () => {
+    const pins = paletteNodePins('get-recorder');
+    expect(pins.inputs.find((pin) => pin.name === 'device')?.socketType).toBe('DeviceRef');
+    expect(pins.outputs.find((pin) => pin.name === 'recorder')?.socketType).toBe('RecorderRef');
+  });
+
+  it('creates get-spectral-analyser with DeviceRef in and SpectralAnalyserRef out', () => {
+    const pins = paletteNodePins('get-spectral-analyser');
+    expect(pins.inputs.find((pin) => pin.name === 'device')?.socketType).toBe('DeviceRef');
+    expect(pins.outputs.find((pin) => pin.name === 'analyser')?.socketType).toBe(
+      'SpectralAnalyserRef',
+    );
+  });
+
+  it('creates start-streaming with microphone in and AudioStreamRef out', () => {
+    const pins = paletteNodePins('start-streaming');
+    expect(pins.inputs.find((pin) => pin.name === 'microphone')?.socketType).toBe('MicrophoneRef');
+    expect(pins.outputs.find((pin) => pin.name === 'stream')?.socketType).toBe('AudioStreamRef');
+    expect(pins.outputs.some((pin) => pin.name === 'exec-out')).toBe(true);
   });
 
   it('creates get-audio-stream with MicrophoneRef in and AudioStreamRef out', () => {

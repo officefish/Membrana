@@ -4,6 +4,12 @@ import { createStringValue } from '@membrana/core';
 import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
 import { isDetectionFrontEdge } from './detection-front.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
+import { CollectRuntimeStore } from './collect-runtime-store.js';
+import { ReporterRuntimeStore } from './reporter-runtime-store.js';
+import { ReportRuntimeStore } from './report-runtime-store.js';
+import { TrackRuntimeStore } from './track-runtime-store.js';
+import { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
+import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
@@ -22,12 +28,24 @@ function hostAudioResolveContext(
   host: ScenarioRuntimeHost,
 ): Pick<
   ResolveInputContext,
-  'getActiveAudioStreamRef' | 'getCapturedAudioSampleRef' | 'getCapturedFftFrameRef'
+  | 'getActiveAudioStreamRef'
+  | 'getCapturedAudioSampleRef'
+  | 'getCapturedFftFrameRef'
+  | 'getRecorderSessionRef'
+  | 'getSpectralAnalyserSessionRef'
+  | 'getDeviceJournalRef'
+  | 'getServerJournalRef'
+  | 'getReporterRef'
 > {
   const result: {
     getActiveAudioStreamRef?: ResolveInputContext['getActiveAudioStreamRef'];
     getCapturedAudioSampleRef?: ResolveInputContext['getCapturedAudioSampleRef'];
     getCapturedFftFrameRef?: ResolveInputContext['getCapturedFftFrameRef'];
+    getRecorderSessionRef?: ResolveInputContext['getRecorderSessionRef'];
+    getSpectralAnalyserSessionRef?: ResolveInputContext['getSpectralAnalyserSessionRef'];
+    getDeviceJournalRef?: ResolveInputContext['getDeviceJournalRef'];
+    getServerJournalRef?: ResolveInputContext['getServerJournalRef'];
+    getReporterRef?: ResolveInputContext['getReporterRef'];
   } = {};
   if (host.getActiveAudioStreamRef !== undefined) {
     result.getActiveAudioStreamRef = () => host.getActiveAudioStreamRef!();
@@ -37,6 +55,20 @@ function hostAudioResolveContext(
   }
   if (host.getCapturedFftFrameRef !== undefined) {
     result.getCapturedFftFrameRef = (nodeId: string) => host.getCapturedFftFrameRef!(nodeId);
+  }
+  if (host.getRecorderSessionRef !== undefined) {
+    result.getRecorderSessionRef = (deviceHandle: string) =>
+      host.getRecorderSessionRef!(deviceHandle);
+  }
+  if (host.getSpectralAnalyserSessionRef !== undefined) {
+    result.getSpectralAnalyserSessionRef = (deviceHandle: string) =>
+      host.getSpectralAnalyserSessionRef!(deviceHandle);
+  }
+  if (host.getDeviceJournalRef !== undefined) {
+    result.getDeviceJournalRef = (deviceHandle: string) => host.getDeviceJournalRef!(deviceHandle);
+  }
+  if (host.getServerJournalRef !== undefined) {
+    result.getServerJournalRef = (deviceHandle: string) => host.getServerJournalRef!(deviceHandle);
   }
   return result;
 }
@@ -70,6 +102,18 @@ export class ScenarioRuntime {
 
   private readonly variableStore = new ScenarioVariableStore();
 
+  private readonly collectStore = new CollectRuntimeStore();
+
+  private readonly reporterStore = new ReporterRuntimeStore();
+
+  private readonly reportStore = new ReportRuntimeStore();
+
+  private readonly trackStore = new TrackRuntimeStore();
+
+  private readonly recordingSliceStore = new RecordingSliceRuntimeStore();
+
+  private readonly analysisStore = new FftTrendAnalysisRuntimeStore();
+
   private runPromise: Promise<void> | null = null;
 
   private stopRequested = false;
@@ -88,6 +132,9 @@ export class ScenarioRuntime {
   private lastMainTickAtMs: number | null = null;
 
   private lastAlarmTickAtMs: number | null = null;
+
+  /** Correlation id for one scenario run (chain trace logging). */
+  private runId: string | null = null;
 
   constructor(host: ScenarioRuntimeHost, options: ScenarioRuntimeOptions = {}) {
     this.host = host;
@@ -137,6 +184,13 @@ export class ScenarioRuntime {
     }
     this.document = document;
     this.variableStore.reset(document.scenario.variables);
+    this.collectStore.resetAll();
+    this.reporterStore.resetAll();
+    this.reportStore.resetAll();
+    this.trackStore.resetAll();
+    this.recordingSliceStore.resetAll();
+    this.analysisStore.resetAll();
+    this.host.resetCollectorSessions?.();
     this.stopRequested = false;
     this.disconnectRequested = false;
     this.stopReason = null;
@@ -155,6 +209,13 @@ export class ScenarioRuntime {
     this.stopRequested = false;
     this.disconnectRequested = false;
     this.stopReason = null;
+    this.collectStore.resetAll();
+    this.reporterStore.resetAll();
+    this.reportStore.resetAll();
+    this.trackStore.resetAll();
+    this.recordingSliceStore.resetAll();
+    this.analysisStore.resetAll();
+    this.host.resetCollectorSessions?.();
     this.abortController = new AbortController();
     this.patchState({
       ...this.idleState(),
@@ -272,7 +333,31 @@ export class ScenarioRuntime {
         return createStringValue(message);
       },
     };
-    const merged = { ...audio, ...print };
+    const collect: Pick<ResolveInputContext, 'getCollectBatchRef'> = {
+      getCollectBatchRef: (nodeId) => this.collectStore.getLastBatchRef(nodeId),
+    };
+    const reporter: Pick<ResolveInputContext, 'getReporterRef'> = {
+      getReporterRef: (journalHandle) => {
+        const fromHost = this.host.getReporterRef?.(journalHandle);
+        if (fromHost !== undefined && fromHost !== null) {
+          return fromHost;
+        }
+        return this.reporterStore.getReporterRef(journalHandle);
+      },
+    };
+    const report: Pick<ResolveInputContext, 'getReportRef'> = {
+      getReportRef: (nodeId) => this.reportStore.getReportRef(nodeId),
+    };
+    const track: Pick<ResolveInputContext, 'getTrackRef'> = {
+      getTrackRef: (nodeId) => this.trackStore.getTrackRef(nodeId),
+    };
+    const recordingSlice: Pick<ResolveInputContext, 'getRecordingSliceRef'> = {
+      getRecordingSliceRef: (nodeId) => this.recordingSliceStore.getSliceRef(nodeId),
+    };
+    const analysis: Pick<ResolveInputContext, 'getFftTrendAnalysisRef'> = {
+      getFftTrendAnalysisRef: (nodeId) => this.analysisStore.getAnalysisRef(nodeId),
+    };
+    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis };
     if (Object.keys(merged).length === 0) {
       return context;
     }
@@ -313,6 +398,7 @@ export class ScenarioRuntime {
     return {
       loopElapsedMs: nowMs - startedAt,
       loopTickMs: tickMs,
+      deviceHandle: this.host.getDeviceHandle?.() ?? null,
     };
   }
 
@@ -361,7 +447,10 @@ export class ScenarioRuntime {
       });
     }
     if (branchTab === 'main' || branchTab === 'alarm') {
-      return this.augmentResolveContext(this.buildLoopTickResolveContext(branchTab, false));
+      return this.augmentResolveContext({
+        ...this.buildLoopTickResolveContext(branchTab, false),
+        deviceHandle: this.host.getDeviceHandle?.() ?? null,
+      });
     }
     return undefined;
   }
@@ -382,6 +471,12 @@ export class ScenarioRuntime {
       variableStore: this.variableStore,
       resolveContext,
       onPrintOutput: (nodeId: string, message: string) => this.recordPrintOutput(nodeId, message),
+      onStopRuntime: () => this.stop('user'),
+      collectStore: this.collectStore,
+      reportStore: this.reportStore,
+      trackStore: this.trackStore,
+      analysisStore: this.analysisStore,
+      recordingSliceStore: this.recordingSliceStore,
     };
   }
 
@@ -415,9 +510,17 @@ export class ScenarioRuntime {
       this.scenarioStartedAtMs = Date.now();
       this.lastMainTickAtMs = null;
       this.lastAlarmTickAtMs = null;
+      this.runId = globalThis.crypto?.randomUUID?.().slice(0, 8) ?? `run-${Date.now()}`;
 
       let mainIteration = 0;
       let previousMainDetection: ScenarioDetectionResult | null = null;
+
+      this.host.log('scenario-run-start', {
+        runId: this.runId,
+        linked: this.host.isDeviceLinked?.() ?? false,
+        device: this.host.getDeviceHandle?.() ?? null,
+        server: this.host.getServerHandle?.() ?? null,
+      });
 
       while (!signal.aborted) {
         // MP7b RT3: ручной режим alarm — приоритетный override, форсит alarm-loop.
@@ -442,6 +545,8 @@ export class ScenarioRuntime {
           mainLoopIteration: mainIteration,
         });
 
+        this.host.log('main-tick-start', { runId: this.runId, tick: mainIteration, branch: 'main' });
+
         const mainResolveContext = this.buildLoopTickResolveContext('main');
         const lastDetection = await runSubgraphOnce(
           document.scenario.loops.main,
@@ -456,6 +561,15 @@ export class ScenarioRuntime {
         if (signal.aborted) {
           break;
         }
+
+        this.host.log('main-tick-done', {
+          runId: this.runId,
+          tick: mainIteration,
+          branch: 'main',
+          detected: lastDetection?.detected ?? false,
+          confidence: lastDetection?.confidence ?? null,
+          templateId: lastDetection?.templateId ?? null,
+        });
 
         // Авто detection-front работает только в normal-режиме.
         if (this.mode === 'normal' && isDetectionFrontEdge(previousMainDetection, lastDetection)) {
@@ -488,7 +602,18 @@ export class ScenarioRuntime {
         return;
       }
       const message = error instanceof Error ? error.message : String(error);
-      this.host.log('scenario-runtime error', { message });
+      this.host.log('scenario-runtime error', {
+        message,
+        stack: error instanceof Error ? error.stack ?? null : null,
+        branch: this.state.activeBranch,
+        tick:
+          this.state.activeBranch === 'main'
+            ? this.state.mainLoopIteration
+            : this.state.activeBranch === 'alarm'
+              ? this.state.alarmLoopIteration
+              : null,
+        nodeId: this.state.activeNodeId,
+      });
       this.patchState({
         ...this.state,
         isRunning: false,
@@ -623,6 +748,19 @@ export class ScenarioRuntime {
   private onNodeEnter(branch: ScenarioRuntimeBranch, node: ScenarioGraphNode): void {
     const phase =
       branch === 'onStop' || branch === 'onDisconnect' ? branch : branch;
+    const tick =
+      branch === 'main'
+        ? this.state.mainLoopIteration
+        : branch === 'alarm'
+          ? this.state.alarmLoopIteration
+          : null;
+    this.host.log('node-enter', {
+      branch,
+      tick,
+      nodeId: node.id,
+      nodeKind: node.nodeKind ?? node.blockKind,
+      label: node.label ?? null,
+    });
     this.patchState({
       ...this.state,
       activeBranch: branch,

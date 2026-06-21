@@ -29,6 +29,14 @@ export type {
   TrendsMatchDetailSection,
 } from './trends/TrendsMatchDetailTable';
 export { trendsFftReportFromItem, TRENDS_FFT_JOURNAL_SCHEMA } from './trends/fromItem';
+
+// Device-board scenario observation bundle (report + track)
+export {
+  DEVICE_BOARD_OBSERVATION_SCHEMA,
+  deviceBoardObservationFromItem,
+  trendsFromObservationItem,
+} from './observation/fromItem';
+export type { DeviceBoardObservationReport } from './observation/fromItem';
 export type { TrendsFftReport } from './trends/types';
 
 // Drone detection brief (mic-live)

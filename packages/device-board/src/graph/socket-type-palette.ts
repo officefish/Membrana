@@ -14,11 +14,24 @@ export const INTEGER_SOCKET_HANDLE_CLASS = '!bg-blue-900';
 /** Оранжевый — String. */
 export const STRING_SOCKET_HANDLE_CLASS = '!bg-orange-500';
 
+/** Teal — RecordingPolicy. */
+export const RECORDING_POLICY_SOCKET_HANDLE_CLASS = '!bg-teal-600';
+
+/** Emerald — FftTrendsPolicy. */
+export const FFT_TRENDS_POLICY_SOCKET_HANDLE_CLASS = '!bg-emerald-600';
+
 /** Тёмный indigo — nullable / `& null`. */
 export const NULL_SOCKET_HANDLE_CLASS = '!bg-indigo-800';
 
 /** Exec-порты — нейтральный контраст темы. */
 export const EXEC_SOCKET_HANDLE_CLASS = '!bg-base-content';
+
+/** Event-порты Collect (квадратный handle, flush). */
+export const EVENT_SOCKET_HANDLE_CLASS = '!bg-amber-400';
+
+/** SVG stroke для event-рёбер. */
+export const EVENT_EDGE_STROKE = '#fbbf24';
+export const EVENT_EDGE_STROKE_WIDTH = 2;
 
 /** SVG stroke для exec-рёбер. */
 export const EXEC_EDGE_STROKE = 'oklch(var(--bc) / 0.5)';
@@ -34,6 +47,12 @@ export const INTEGER_SOCKET_STROKE = '#1e3a8a';
 
 /** SVG stroke для String data-рёбер (orange-500). */
 export const STRING_SOCKET_STROKE = '#f97316';
+
+/** SVG stroke для RecordingPolicy data-рёбер (teal-600). */
+export const RECORDING_POLICY_SOCKET_STROKE = '#0d9488';
+
+/** SVG stroke для FftTrendsPolicy data-рёбер (emerald-600). */
+export const FFT_TRENDS_POLICY_SOCKET_STROKE = '#059669';
 
 /** SVG stroke для nullable data-рёбер (indigo-800). */
 export const NULL_SOCKET_STROKE = '#3730a3';
@@ -57,11 +76,20 @@ export function dataSocketStrokeColor(socketType?: BoardSocketPin['socketType'])
   if (socketType === 'String') {
     return STRING_SOCKET_STROKE;
   }
+  if (socketType === 'RecordingPolicy') {
+    return RECORDING_POLICY_SOCKET_STROKE;
+  }
+  if (socketType === 'FftTrendsPolicy') {
+    return FFT_TRENDS_POLICY_SOCKET_STROKE;
+  }
   return 'oklch(var(--bc) / 0.35)';
 }
 
 /** CSS-класс handle по типу порта (палитра device-board, не только DaisyUI theme). */
 export function socketHandleClass(pin: BoardSocketPin): string {
+  if (pin.kind === 'event') {
+    return `${HANDLE_BASE} !rounded-sm !h-3 !w-3 ${EVENT_SOCKET_HANDLE_CLASS}`;
+  }
   if (pin.kind === 'exec') {
     return `${HANDLE_BASE} ${EXEC_SOCKET_HANDLE_CLASS}`;
   }
@@ -77,6 +105,12 @@ export function socketHandleClass(pin: BoardSocketPin): string {
     }
     if (pin.socketType === 'String') {
       return `${HANDLE_BASE} ${STRING_SOCKET_HANDLE_CLASS}`;
+    }
+    if (pin.socketType === 'RecordingPolicy') {
+      return `${HANDLE_BASE} ${RECORDING_POLICY_SOCKET_HANDLE_CLASS}`;
+    }
+    if (pin.socketType === 'FftTrendsPolicy') {
+      return `${HANDLE_BASE} ${FFT_TRENDS_POLICY_SOCKET_HANDLE_CLASS}`;
     }
     return `${HANDLE_BASE} ${DATETIME_SOCKET_HANDLE_CLASS}`;
   }

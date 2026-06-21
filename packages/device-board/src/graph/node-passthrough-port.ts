@@ -19,12 +19,17 @@ export function handleOffsetPercent(index: number, total: number): number {
 /**
  * Пары портов с одинаковой подписью (exec/exec, & device/& device, …).
  * Для них в UI одна центральная метка `-> label ->` вместо дубля на краях.
+ * Если число входов и выходов различается — сквозные метки не показываем.
  */
 export function findPassthroughPortLanes(
   inputs: readonly BoardSocketPin[],
   outputs: readonly BoardSocketPin[],
   resolveLabel: (pin: BoardSocketPin) => string,
 ): PassthroughPortLane[] {
+  if (inputs.length !== outputs.length) {
+    return [];
+  }
+
   const lanes: PassthroughPortLane[] = [];
   const usedOutputIndices = new Set<number>();
 

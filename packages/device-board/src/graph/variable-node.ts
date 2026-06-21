@@ -1,4 +1,5 @@
 import type { ScenarioVariable, ScenarioVariableType } from '@membrana/core';
+import { resolveScenarioGraphNodePure } from '@membrana/core';
 import type { Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
@@ -24,6 +25,9 @@ export function referenceTypeLabel(type: ScenarioVariableType): string {
   if (type === 'ServerRef') {
     return 'Server';
   }
+  if (type === 'JournalRef') {
+    return 'Journal';
+  }
   if (type === 'AudioStreamRef') {
     return 'AudioStream';
   }
@@ -39,17 +43,27 @@ export function referenceTypeLabel(type: ScenarioVariableType): string {
   if (type === 'String') {
     return 'String';
   }
+  if (type === 'RecordingPolicy') {
+    return 'RecordingPolicy';
+  }
   return 'DateTime';
+}
+
+/** Префикс автогенерируемого имени переменной (`journal1`, `device2`, …). */
+export function defaultVariableNamePrefix(type: ScenarioVariableType): string {
+  return referenceTypeLabel(type).toLowerCase();
 }
 
 /**
  * Пины узла переменной по её типу:
- * - `variable-get` — чистый источник данных: один data-выход `value`;
- * - `variable-set` — exec-проход + data-вход/выход `value` (контекст `& null` без ребра).
+ * - `variable-get` pure (default) — только data-out `value`;
+ * - `variable-get` impure — exec-in/out + data-out;
+ * - `variable-set` — exec-проход + data-вход/выход `value`.
  */
 export function variableNodePins(
   kind: VariableNodeKind,
   type: ScenarioVariableType,
+  pureGetter = true,
 ): { inputs: readonly BoardSocketPin[]; outputs: readonly BoardSocketPin[] } {
   const valuePin: BoardSocketPin = {
     name: VARIABLE_VALUE_HANDLE,
@@ -57,7 +71,10 @@ export function variableNodePins(
     socketType: type,
   };
   if (kind === 'variable-get') {
-    return { inputs: [], outputs: [valuePin] };
+    if (pureGetter) {
+      return { inputs: [], outputs: [valuePin] };
+    }
+    return { inputs: [EXEC_IN], outputs: [EXEC_OUT, valuePin] };
   }
   return { inputs: [EXEC_IN, valuePin], outputs: [EXEC_OUT, valuePin] };
 }
@@ -85,7 +102,11 @@ export function syncVariableNodePins(
     if (variable === undefined) {
       return node;
     }
-    const { inputs, outputs } = variableNodePins(kind, variable.type);
+    const pureGetter =
+      kind === 'variable-get'
+        ? resolveScenarioGraphNodePure({ nodeKind: kind, pure: node.data.pure })
+        : false;
+    const { inputs, outputs } = variableNodePins(kind, variable.type, pureGetter);
     return {
       ...node,
       data: {

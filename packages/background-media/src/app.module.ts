@@ -25,6 +25,13 @@ const testImports =
                 const h = req.headers['x-request-id'];
                 return (typeof h === 'string' && h) || randomUUID();
               },
+              customProps: (req) => {
+                const traceId = req.headers['x-membrana-trace-id'];
+                if (typeof traceId === 'string' && traceId.length > 0) {
+                  return { traceId };
+                }
+                return {};
+              },
               redact: {
                 paths: [
                   'req.headers["x-membrana-token"]',

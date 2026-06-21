@@ -33,6 +33,7 @@ async function bootstrap(): Promise<void> {
         'X-Request-Id',
         'X-Membrana-Token',
         'X-Membrana-Device-Id',
+        'X-Membrana-Trace-Id',
       ],
     });
   }

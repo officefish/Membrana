@@ -1,0 +1,53 @@
+{
+  "id": "usercase-mvp-microphone",
+  "title": "MVP microphone: realtime observation + recording gate v0.8",
+  "deviceKind": "microphone",
+  "canon": "DEVICE_BOARD_CONCEPT.md §16.5",
+  "embeddedDocument": "packages/device-board/src/graph/default-usercase-mvp-microphone.generated.ts",
+  "importOrder": [
+    "02-onStart.json",
+    "01-onConnect.json",
+    "03-onMainTick.json",
+    "04-onAlarmTick.json",
+    "05-onStop.json",
+    "06-onDisconnect.json"
+  ],
+  "branches": {
+    "onConnect": {
+      "bundleFile": "01-onConnect.json",
+      "legacyFile": "device-scenario-microphone-onConnect.json",
+      "nodeCount": 4,
+      "edgeCount": 5
+    },
+    "initial": {
+      "bundleFile": "02-onStart.json",
+      "legacyFile": "device-scenario-microphone-initial.json",
+      "nodeCount": 9,
+      "edgeCount": 13
+    },
+    "main": {
+      "bundleFile": "03-onMainTick.json",
+      "legacyFile": "device-scenario-microphone-main-v08-policy-constructor.json",
+      "nodeCount": 27,
+      "edgeCount": 54
+    },
+    "onStop": {
+      "bundleFile": "05-onStop.json",
+      "legacyFile": "device-scenario-microphone-onStop.json",
+      "nodeCount": 5,
+      "edgeCount": 3
+    },
+    "onDisconnect": {
+      "bundleFile": "06-onDisconnect.json",
+      "legacyFile": "device-scenario-microphone-onDisconnect.json",
+      "nodeCount": 4,
+      "edgeCount": 3
+    },
+    "alarm": {
+      "bundleFile": "04-onAlarmTick.json",
+      "legacyFile": "device-scenario-microphone-alarm.json",
+      "nodeCount": 2,
+      "edgeCount": 1
+    }
+  }
+}

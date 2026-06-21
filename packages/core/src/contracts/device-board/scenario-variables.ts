@@ -5,6 +5,12 @@
 
 import type { ReferenceSocketType, ValueSocketType } from './socket-type.js';
 import { isReferenceSocketType, isValueSocketType } from './socket-type.js';
+import type { ScenarioCaptureFormat, ScenarioRecordingWindowSec } from './recording-policy.js';
+import type {
+  ScenarioFftTrendsDetectionMode,
+  ScenarioFftTrendsIntervalMs,
+  ScenarioFftTrendsMeasurementCount,
+} from './fft-trends-policy.js';
 
 /** Ссылочный тип переменной (`DeviceRef` | `MicrophoneRef` | `ServerRef`). */
 export type ScenarioReferenceVariableType = ReferenceSocketType;
@@ -50,12 +56,36 @@ export interface ScenarioStringValue {
   readonly value: string;
 }
 
+/**
+ * Value recording policy в dataflow (MakeRecordingPolicy → StartRecording).
+ */
+export interface ScenarioRecordingPolicyValue {
+  readonly kind: 'RecordingPolicy';
+  readonly windowSec: ScenarioRecordingWindowSec;
+  readonly captureFormat: ScenarioCaptureFormat;
+}
+
+/**
+ * Value FFT trends policy в dataflow (MakeFftTrendsPolicy → Collect / MakeFftTrendsAnalysis).
+ */
+export interface ScenarioFftTrendsPolicyValue {
+  readonly kind: 'FftTrendsPolicy';
+  readonly detectionMode: ScenarioFftTrendsDetectionMode;
+  readonly measurementsCount: ScenarioFftTrendsMeasurementCount;
+  readonly intervalMs: ScenarioFftTrendsIntervalMs;
+  readonly minConfidence: number;
+  readonly minRms: number;
+  readonly enabledTemplateKeys: readonly string[];
+}
+
 /** Значение переменной сценария (ссылка или value). */
 export type ScenarioVariableValue =
   | ScenarioReferenceValue
   | ScenarioDateTimeValue
   | ScenarioIntegerValue
-  | ScenarioStringValue;
+  | ScenarioStringValue
+  | ScenarioRecordingPolicyValue
+  | ScenarioFftTrendsPolicyValue;
 
 /** Переменная сценария (document-scope, объявляется в конструкторе переменных). */
 export interface ScenarioVariable {
@@ -87,6 +117,21 @@ export function createIntegerValue(value: number): ScenarioIntegerValue {
 /** Создаёт value string. */
 export function createStringValue(value: string): ScenarioStringValue {
   return { kind: 'String', value };
+}
+
+/** Создаёт value RecordingPolicy. */
+export function createRecordingPolicyValue(
+  windowSec: ScenarioRecordingWindowSec,
+  captureFormat: ScenarioCaptureFormat = 'wav',
+): ScenarioRecordingPolicyValue {
+  return { kind: 'RecordingPolicy', windowSec, captureFormat };
+}
+
+/** Создаёт value FftTrendsPolicy. */
+export function createFftTrendsPolicyValue(
+  params: Omit<ScenarioFftTrendsPolicyValue, 'kind'>,
+): ScenarioFftTrendsPolicyValue {
+  return { kind: 'FftTrendsPolicy', ...params };
 }
 
 /** Помечает ссылку невалидной (handle сохраняется для диагностики). */
@@ -149,13 +194,48 @@ export function isScenarioStringValue(value: unknown): value is ScenarioStringVa
   return candidate['kind'] === 'String' && typeof candidate['value'] === 'string';
 }
 
+/** Type guard для `ScenarioRecordingPolicyValue`. */
+export function isScenarioRecordingPolicyValue(
+  value: unknown,
+): value is ScenarioRecordingPolicyValue {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    candidate['kind'] === 'RecordingPolicy' &&
+    typeof candidate['windowSec'] === 'number' &&
+    typeof candidate['captureFormat'] === 'string'
+  );
+}
+
+/** Type guard для `ScenarioFftTrendsPolicyValue`. */
+export function isScenarioFftTrendsPolicyValue(value: unknown): value is ScenarioFftTrendsPolicyValue {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    candidate['kind'] === 'FftTrendsPolicy' &&
+    typeof candidate['detectionMode'] === 'string' &&
+    typeof candidate['measurementsCount'] === 'number' &&
+    typeof candidate['intervalMs'] === 'number' &&
+    typeof candidate['minConfidence'] === 'number' &&
+    typeof candidate['minRms'] === 'number' &&
+    Array.isArray(candidate['enabledTemplateKeys']) &&
+    (candidate['enabledTemplateKeys'] as unknown[]).every((k) => typeof k === 'string')
+  );
+}
+
 /** Type guard для `ScenarioVariableValue`. */
 export function isScenarioVariableValue(value: unknown): value is ScenarioVariableValue {
   return (
     isScenarioReferenceValue(value) ||
     isScenarioDateTimeValue(value) ||
     isScenarioIntegerValue(value) ||
-    isScenarioStringValue(value)
+    isScenarioStringValue(value) ||
+    isScenarioRecordingPolicyValue(value) ||
+    isScenarioFftTrendsPolicyValue(value)
   );
 }
 

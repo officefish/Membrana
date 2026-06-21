@@ -1,6 +1,10 @@
 import type { ScenarioBlockKind, ScenarioNodeKind } from '@membrana/core';
 
-import { V04_PALETTE_NODE_KINDS, paletteNodeLabel, type V04PaletteNodeKind } from '../graph/palette-node.js';
+import {
+  V04_PALETTE_NODE_KINDS,
+  paletteNodeLabel,
+  type V04PaletteNodeKind,
+} from '../graph/palette-node.js';
 
 /** Вкладка слоя доски: топология сигнала или сценарий исполнения. */
 export type BoardLayerTab = 'signal' | 'scenario';
@@ -94,6 +98,62 @@ export const SCENARIO_V04_PALETTE: readonly V04PaletteItem[] = V04_PALETTE_NODE_
   nodeKind,
   label: paletteNodeLabel(nodeKind),
 }));
+
+/** Секция палитры v0.8 (категория «Конструкторы» — policy + ref constructors). */
+export interface V04PaletteSection {
+  readonly title: string;
+  readonly items: readonly V04PaletteItem[];
+}
+
+function paletteSection(
+  title: string,
+  nodeKinds: readonly V04PaletteNodeKind[],
+): V04PaletteSection {
+  return {
+    title,
+    items: nodeKinds.map((nodeKind) => ({
+      nodeKind,
+      label: paletteNodeLabel(nodeKind),
+    })),
+  };
+}
+
+/** Палитра v0.4/v0.8 по секциям для правого сайдбара (A3). */
+export const SCENARIO_V04_PALETTE_SECTIONS: readonly V04PaletteSection[] = [
+  paletteSection('Устройство и управление', [
+    'device-global',
+    'stop-runtime',
+    'print',
+    'is-valid',
+    'get-microphone',
+    'get-recorder',
+    'get-spectral-analyser',
+  ]),
+  paletteSection('Поток и захват', [
+    'start-streaming',
+    'stop-streaming',
+    'get-audio-stream',
+    'get-sample',
+    'get-fft-frame',
+    'flush-spectral-analyser',
+    'collect-samples',
+    'collect-fft-frames',
+  ]),
+  paletteSection('Запись (gate)', [
+    'start-recording',
+    'stop-recording',
+    'is-recording-window-full',
+  ]),
+  paletteSection('Конструкторы', [
+    'make-recording-policy',
+    'make-fft-trends-policy',
+    'make-track',
+    'make-fft-trends-analysis',
+    'make-report-from-track',
+    'make-report-from-analysis',
+  ]),
+  paletteSection('Журнал', ['get-journal', 'get-reporter', 'publish-report']),
+];
 
 /**
  * Слой Signal спрятан за advanced-флагом (MP7b RT6): сериализация сигнала

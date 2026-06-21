@@ -3,6 +3,7 @@ import type { Node } from '@xyflow/react';
 import type { BoardFlowNodeData, BoardPinKind, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 import { D0_SCENARIO_NODE_CATALOG, D0_SIGNAL_NODE_CATALOG } from './d0-node-catalog.js';
+import { resolveBoardNodePinLayout } from './scenario-node-pins.js';
 
 export interface ResolvedHandle {
   readonly pinKind: BoardPinKind;
@@ -14,6 +15,20 @@ function findPin(
   handleId: string,
 ): BoardSocketPin | undefined {
   return pins?.find((pin) => pin.name === handleId);
+}
+
+function resolveFromNodeKindPins(
+  node: Node,
+  handleId: string,
+  role: 'source' | 'target',
+): ResolvedHandle | null {
+  const layout = resolveBoardNodePinLayout(node);
+  const pins = role === 'source' ? layout.outputs : layout.inputs;
+  const pin = findPin(pins, handleId);
+  if (pin === undefined) {
+    return null;
+  }
+  return { pinKind: pin.kind, socketType: pin.socketType };
 }
 
 function resolveFromCatalog(
@@ -66,6 +81,11 @@ export function resolveHandle(
   const inlinePin = findPin(pins, handleId);
   if (inlinePin !== undefined) {
     return { pinKind: inlinePin.kind, socketType: inlinePin.socketType };
+  }
+
+  const fromNodeKind = resolveFromNodeKindPins(node, handleId, role);
+  if (fromNodeKind !== null) {
+    return fromNodeKind;
   }
 
   return resolveFromCatalog(node.data, handleId, role);

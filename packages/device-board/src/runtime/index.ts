@@ -4,12 +4,37 @@ export type {
   ScenarioJournalEvent,
   ScenarioDetectionResult,
   ScenarioSoundLevelResult,
+  FftTrendsAnalysisHostResult,
   ScenarioStopReason,
 } from './types.js';
 export { createIdleScenarioRuntimeState } from './types.js';
 export { ALARM_QUIET_RMS_THRESHOLD, ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
 export { isDetectionFrontEdge, isDroneDetection } from './detection-front.js';
-export type { ScenarioRuntimeHost, ScenarioConnectionHandlers, ScenarioMicrophoneOption, ScenarioResourceMetadata, ScenarioLoopTickWaitOptions } from './host.js';
+export type { ScenarioRuntimeHost, ScenarioConnectionHandlers, ScenarioMicrophoneOption, ScenarioResourceMetadata, ScenarioLoopTickWaitOptions, RecordingSliceMeta } from './host.js';
+export {
+  createDeviceCollectorRegistry,
+  DeviceCollectorRegistry,
+  RefCollectorSession,
+  recorderSessionHandle,
+  spectralAnalyserSessionHandle,
+} from './collector-sessions.js';
+export type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
+export { CollectRuntimeStore } from './collect-runtime-store.js';
+export { ReporterRuntimeStore } from './reporter-runtime-store.js';
+export { ReportRuntimeStore } from './report-runtime-store.js';
+export { TrackRuntimeStore } from './track-runtime-store.js';
+export { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
+export { RecorderRecordingSession } from './recorder-recording-session.js';
+export { executeRecordingGateNode } from './recording-gate-executor.js';
+export { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+export { executeCollectNode } from './collect-node-executor.js';
+export {
+  dispatchCollectEventBranches,
+  findEventBranchTargets,
+  runEventBranchFromNode,
+} from './event-dispatch.js';
+export { resolveRefListMembers } from './resolve-ref-list.js';
+export type { RefListKind } from './resolve-ref-list.js';
 export { createStubScenarioRuntimeHost, SUPPORTED_H2B_BLOCK_KINDS } from './host.js';
 export { ScenarioRuntime, type ScenarioRuntimeListener, type ScenarioRuntimeOptions } from './scenario-runtime.js';
 export { runSubgraphOnce } from './exec-subgraph.js';

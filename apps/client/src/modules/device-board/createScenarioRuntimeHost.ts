@@ -1,8 +1,30 @@
 import type { ScenarioReferenceValue } from '@membrana/core';
+import { createReferenceValue, formatJournalRefHandle, formatReporterRefHandle, parseJournalRefHandle, parseReporterRefJournalHandle } from '@membrana/core';
 import type { ScenarioRuntimeHost } from '@membrana/device-board';
 import { waitMs } from '@membrana/device-board';
+import {
+  getDefaultMediaLibraryService,
+  setMediaLibraryTraceHook,
+  setMediaLibraryTraceIdProvider,
+} from '@membrana/media-library-service';
+import { bindSamplePlaybackBlobReader } from '@membrana/sample-playback-service';
 
-import { scenarioRuntimeInfo, setScenarioRuntimeInfoLogging } from './scenarioRuntimeInfoGate';
+import { scenarioChainLog, scenarioRuntimeInfo, setScenarioRuntimeInfoLogging } from './scenarioRuntimeInfoGate';
+import {
+  clearScenarioTraceBuffer,
+  copyScenarioTraceToClipboard,
+  downloadScenarioTraceFile,
+  getScenarioTraceLineCount,
+  subscribeScenarioTraceBuffer,
+} from './scenarioTraceBuffer';
+import {
+  buildScenarioTraceId,
+  resetScenarioTraceContext,
+  setScenarioTraceBranch,
+  setScenarioTraceNodeId,
+  setScenarioTraceRunId,
+  setScenarioTraceTick,
+} from './scenarioTraceContext';
 
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { isDeviceLive } from '@/lib/isDeviceLive';
@@ -40,6 +62,16 @@ function readDeviceMetadataFields(deviceId: string): Readonly<Record<string, str
 
 /** Host-порты scenario runtime: mic → chunk → trends FFT → LiveJournal (H2c). */
 export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
+  // MakeReportFromTrack / journal playback читают blob через sample-playback hub.
+  bindSamplePlaybackBlobReader((sampleId: string) =>
+    getDefaultMediaLibraryService().getSampleBlob(sampleId),
+  );
+
+  setMediaLibraryTraceHook((event, context) => {
+    scenarioChainLog('media', `lib-${event}`, context);
+  });
+  setMediaLibraryTraceIdProvider(() => buildScenarioTraceId());
+
   const bridge = createScenarioMicJournalBridge();
 
   return {
@@ -145,6 +177,66 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
           },
         };
       }
+      if (ref.kind === 'RecorderRef') {
+        const handle = ref.handle ?? '';
+        const deviceHandle =
+          handle.startsWith('recorder:') ? handle.slice('recorder:'.length) : handle;
+        const depth =
+          deviceHandle.length > 0 ? bridge.getCollectorQueueDepth('recorder', deviceHandle) : 0;
+        return {
+          fields: {
+            sessionId: handle || 'null',
+            deviceHandle: deviceHandle || 'unknown',
+            queueDepth: String(depth),
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
+      if (ref.kind === 'SpectralAnalyserRef') {
+        const handle = ref.handle ?? '';
+        const deviceHandle =
+          handle.startsWith('analyser:') ? handle.slice('analyser:'.length) : handle;
+        const depth =
+          deviceHandle.length > 0
+            ? bridge.getCollectorQueueDepth('spectral-analyser', deviceHandle)
+            : 0;
+        return {
+          fields: {
+            sessionId: handle || 'null',
+            deviceHandle: deviceHandle || 'unknown',
+            queueDepth: String(depth),
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
+      if (ref.kind === 'JournalRef') {
+        const handle = ref.handle ?? '';
+        const parsed = handle.length > 0 ? parseJournalRefHandle(handle) : null;
+        return {
+          fields: {
+            journalId: handle || 'null',
+            scope: parsed?.scope ?? 'unknown',
+            deviceId: parsed?.deviceId ?? 'unknown',
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
+      if (ref.kind === 'ReporterRef') {
+        const handle = ref.handle ?? '';
+        const journalHandle =
+          handle.length > 0 ? parseReporterRefJournalHandle(handle) : null;
+        const parsed =
+          journalHandle !== null ? parseJournalRefHandle(journalHandle) : null;
+        return {
+          fields: {
+            reporterId: handle || 'null',
+            journalId: journalHandle ?? 'unknown',
+            scope: parsed?.scope ?? 'unknown',
+            deviceId: parsed?.deviceId ?? 'unknown',
+            status: ref.valid ? 'active' : 'invalid',
+          },
+        };
+      }
       return null;
     },
     printLine: (line) => {
@@ -161,6 +253,44 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     getCapturedAudioSampleRef: (nodeId) => bridge.getCapturedAudioSampleRef(nodeId),
     computeFftFrame: (nodeId, sampleRef) => bridge.computeFftFrame(nodeId, sampleRef),
     getCapturedFftFrameRef: (nodeId) => bridge.getCapturedFftFrameRef(nodeId),
+    getRecorderSessionRef: (deviceHandle) => bridge.getRecorderSessionRef(deviceHandle),
+    getSpectralAnalyserSessionRef: (deviceHandle) =>
+      bridge.getSpectralAnalyserSessionRef(deviceHandle),
+    appendRecorderSample: (deviceHandle, sampleRef) =>
+      bridge.appendRecorderSample(deviceHandle, sampleRef),
+    appendSpectralAnalyserFrame: (deviceHandle, frameRef) =>
+      bridge.appendSpectralAnalyserFrame(deviceHandle, frameRef),
+    flushRecorderSession: (deviceHandle) => bridge.flushRecorderSession(deviceHandle),
+    flushSpectralAnalyserSession: (deviceHandle) =>
+      bridge.flushSpectralAnalyserSession(deviceHandle),
+    subscribeRecorderCollect: (deviceHandle, collectNodeId) =>
+      bridge.subscribeRecorderCollect(deviceHandle, collectNodeId),
+    subscribeSpectralAnalyserCollect: (deviceHandle, collectNodeId) =>
+      bridge.subscribeSpectralAnalyserCollect(deviceHandle, collectNodeId),
+    resetCollectorSessions: () => bridge.resetCollectorSessions(),
+    startRecorderRecording: (deviceHandle, streamRef, policy) =>
+      bridge.startRecorderRecording(deviceHandle, streamRef, policy),
+    stopRecorderRecording: (deviceHandle) => bridge.stopRecorderRecording(deviceHandle),
+    getRecorderElapsedSec: (deviceHandle) => bridge.getRecorderElapsedSec(deviceHandle),
+    isRecorderWindowFull: (deviceHandle, windowSec) =>
+      bridge.isRecorderWindowFull(deviceHandle, windowSec),
+    createTrackFromRecordingSliceRef: (nodeId, sliceRef) =>
+      bridge.createTrackFromRecordingSliceRef(nodeId, sliceRef),
+    getDeviceJournalRef: (deviceHandle) =>
+      createReferenceValue('JournalRef', formatJournalRefHandle('device', deviceHandle)),
+    getServerJournalRef: (deviceHandle) =>
+      createReferenceValue('JournalRef', formatJournalRefHandle('server', deviceHandle)),
+    getReporterRef: (journalHandle) =>
+      createReferenceValue('ReporterRef', formatReporterRefHandle(journalHandle)),
+    createTrackFromSampleRefs: (nodeId, refs) =>
+      bridge.createTrackFromSampleRefs(nodeId, refs),
+    analyzeFftTrendsFromFrameRefs: (nodeId, refs, policy) =>
+      bridge.analyzeFftTrendsFromFrameRefs(nodeId, refs, policy),
+    makeReportFromTrack: (reporterRef, trackRef) =>
+      bridge.makeReportFromTrack(reporterRef, trackRef),
+    makeReportFromAnalysis: (reporterRef, analysisRef) =>
+      bridge.makeReportFromAnalysis(reporterRef, analysisRef),
+    publishReport: (journalRef, payload) => bridge.publishReport(journalRef, payload),
     writeJournal: (event) => bridge.writeJournal(event),
     recordChunk: (options) => bridge.recordChunk(options),
     trendsFftDetect: () => bridge.trendsFftDetect(),
@@ -168,7 +298,28 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     waitUntilNextLoopTick: ({ pauseMs, signal }) => waitMs(pauseMs, signal),
     watchConnection: (handlers) => bridge.watchConnection(handlers),
     setInfoLoggingEnabled: setScenarioRuntimeInfoLogging,
+    getScenarioTraceLineCount,
+    copyScenarioTraceToClipboard,
+    downloadScenarioTrace: downloadScenarioTraceFile,
+    clearScenarioTraceBuffer,
+    subscribeScenarioTraceBuffer,
     log: (message, context) => {
+      if (message === 'scenario-run-start') {
+        clearScenarioTraceBuffer();
+        resetScenarioTraceContext();
+        const id = typeof context?.runId === 'string' ? context.runId : null;
+        if (id !== null) {
+          setScenarioTraceRunId(id);
+        }
+        setScenarioTraceBranch('main');
+      }
+      if (message === 'main-tick-start') {
+        setScenarioTraceTick(typeof context?.tick === 'number' ? context.tick : null);
+        setScenarioTraceBranch(typeof context?.branch === 'string' ? context.branch : 'main');
+      }
+      if (message === 'main-tick-done' || message === 'scenario-runtime error') {
+        setScenarioTraceNodeId(null);
+      }
       scenarioRuntimeInfo(`[device-board] ${message}`, context);
     },
   };

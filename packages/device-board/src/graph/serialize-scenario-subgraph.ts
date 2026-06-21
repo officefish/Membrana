@@ -1,4 +1,10 @@
 import type { ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
+import {
+  normalizeScenarioGraphNodePure,
+  resolveScenarioCollectorConfig,
+  resolveScenarioFftTrendsPolicy,
+  resolveScenarioRecordingPolicy,
+} from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
 import { isBoardFlowNodeData } from './board-node-data.js';
@@ -9,6 +15,14 @@ import { createLoopRepeatBoardNode } from './loop-repeat-node.js';
 import { createPaletteBoardNode, isPaletteNodeKind } from './palette-node.js';
 import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 import { createVariableBoardNode } from './variable-node.js';
+
+function finalizeScenarioNode(node: ScenarioGraphNode): ScenarioGraphNode {
+  return normalizeScenarioGraphNodePure(node);
+}
+
+function readPureFromData(data: Record<string, unknown>): boolean | undefined {
+  return typeof data.pure === 'boolean' ? data.pure : undefined;
+}
 
 function toScenarioNode(node: Node): ScenarioGraphNode | null {
   if (!isBoardFlowNodeData(node.data) || node.data.layer !== 'scenario') {
@@ -48,29 +62,46 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
 
   // v0.4: узлы переменных несут смысл в nodeKind + variableId, blockKind — носитель.
   if (nodeKind === 'variable-get' || nodeKind === 'variable-set') {
-    return {
+    return finalizeScenarioNode({
       id: node.id,
       blockKind,
       position: { x: node.position.x, y: node.position.y },
       label: node.data.label,
       nodeKind,
       ...(typeof node.data.variableId === 'string' ? { variableId: node.data.variableId } : {}),
-    };
+      ...(readPureFromData(node.data) !== undefined ? { pure: readPureFromData(node.data) } : {}),
+    });
   }
 
-  // v0.4: узлы палитры (print / is-valid / get-microphone / streaming / fft).
+  // v0.4: узлы палитры (print / is-valid / get-microphone / streaming / fft / collect).
   if (nodeKind !== undefined && isPaletteNodeKind(nodeKind)) {
-    return {
+    const collectorConfig =
+      node.data.collectorConfig !== undefined
+        ? resolveScenarioCollectorConfig(node.data.collectorConfig)
+        : undefined;
+    const recordingPolicy =
+      node.data.recordingPolicy !== undefined
+        ? resolveScenarioRecordingPolicy(node.data.recordingPolicy)
+        : undefined;
+    const fftTrendsPolicy =
+      node.data.fftTrendsPolicy !== undefined
+        ? resolveScenarioFftTrendsPolicy(node.data.fftTrendsPolicy)
+        : undefined;
+    return finalizeScenarioNode({
       id: node.id,
       blockKind,
       position: { x: node.position.x, y: node.position.y },
       label: node.data.label,
       nodeKind,
       ...(typeof node.data.microphoneId === 'string' ? { microphoneId: node.data.microphoneId } : {}),
-    } as ScenarioGraphNode;
+      ...(collectorConfig !== undefined ? { collectorConfig } : {}),
+      ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
+      ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
+      ...(readPureFromData(node.data) !== undefined ? { pure: readPureFromData(node.data) } : {}),
+    } as ScenarioGraphNode);
   }
 
-  return {
+  return finalizeScenarioNode({
     id: node.id,
     blockKind,
     position: { x: node.position.x, y: node.position.y },
@@ -81,7 +112,7 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
             node.data.functionId,
           )
         : node.data.label,
-  };
+  });
 }
 
 function toScenarioEdge(edge: Edge, nodes: readonly Node[]): ScenarioGraphEdge | null {
@@ -96,7 +127,12 @@ function toScenarioEdge(edge: Edge, nodes: readonly Node[]): ScenarioGraphEdge |
     return null;
   }
 
-  const kind = sourceResolved.pinKind === 'exec' ? 'exec' : 'data';
+  const kind =
+    sourceResolved.pinKind === 'event'
+      ? 'event'
+      : sourceResolved.pinKind === 'exec'
+        ? 'exec'
+        : 'data';
   return {
     source: edge.source,
     sourceHandle,
@@ -194,23 +230,44 @@ export function deserializeScenarioSubgraph(
       if (typeof item.label === 'string') {
         node.data = { ...node.data, label: item.label };
       }
+      if (item.pure === false) {
+        node.data = { ...node.data, pure: false };
+      }
       nodes.push(node);
       continue;
     }
 
     if (item.nodeKind !== undefined && isPaletteNodeKind(item.nodeKind)) {
       const micId = (item as { microphoneId?: string }).microphoneId;
+      const collectorConfig = (item as { collectorConfig?: ScenarioGraphNode['collectorConfig'] })
+        .collectorConfig;
+      const recordingPolicy = (item as { recordingPolicy?: ScenarioGraphNode['recordingPolicy'] })
+        .recordingPolicy;
+      const fftTrendsPolicy = (item as { fftTrendsPolicy?: ScenarioGraphNode['fftTrendsPolicy'] })
+        .fftTrendsPolicy;
       nodes.push(
         createPaletteBoardNode(item.nodeKind, {
           id: item.id,
           position: { x: item.position.x, y: item.position.y },
           ...(typeof micId === 'string' ? { microphoneId: micId } : {}),
+          ...(collectorConfig !== undefined ? { collectorConfig } : {}),
+          ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
+          ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
         }),
       );
       if (typeof item.label === 'string') {
         const last = nodes.at(-1);
         if (last !== undefined) {
-          last.data = { ...last.data, label: item.label };
+          last.data = {
+            ...last.data,
+            label: item.label,
+            ...(item.pure === true ? { pure: true } : {}),
+          };
+        }
+      } else if (item.pure === true) {
+        const last = nodes.at(-1);
+        if (last !== undefined) {
+          last.data = { ...last.data, pure: true };
         }
       }
       continue;

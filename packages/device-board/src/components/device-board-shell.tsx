@@ -1,12 +1,27 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { OnSelectionChangeParams } from '@xyflow/react';
-import type { ScenarioNodeKind } from '@membrana/core';
+import type {
+  ScenarioNodeKind,
+  ScenarioCollectorConfig,
+  ScenarioFftTrendsPolicy,
+  ScenarioRecordingPolicy,
+} from '@membrana/core';
+import {
+  isPureEligibleScenarioNodeKind,
+  resolveScenarioCollectorConfig,
+  resolveScenarioFftTrendsPolicy,
+  resolveScenarioGraphNodePure,
+  resolveScenarioRecordingPolicy,
+} from '@membrana/core';
+import type { Edge } from '@xyflow/react';
 
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
+import type { PaletteConnectionSuggestion } from '../graph/connection-suggest.js';
+import { suggestPaletteNodesForOutgoingConnection } from '../graph/index.js';
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
@@ -15,7 +30,13 @@ import {
   isSignalAdvancedEnabled,
   type ScenarioBranchTab,
 } from '../types/board-ui.js';
-import { BoardFlowCanvas } from './board-flow-canvas.js';
+import {
+  BoardFlowCanvas,
+  type BoardConnectionDropOnPanePayload,
+  type BoardFlowViewportApi,
+} from './board-flow-canvas.js';
+import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
+import { BoardBranchImportModal } from './board-branch-import-modal.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
@@ -48,11 +69,69 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedNodeLabel, setSelectedNodeLabel] = useState<string | null>(null);
   const [selectedNodeKind, setSelectedNodeKind] = useState<ScenarioNodeKind | null>(null);
   const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
+  const [selectedCollectorConfig, setSelectedCollectorConfig] = useState<ScenarioCollectorConfig | null>(
+    null,
+  );
+  const [selectedRecordingPolicy, setSelectedRecordingPolicy] = useState<ScenarioRecordingPolicy | null>(
+    null,
+  );
+  const [selectedRecordingPolicyWired, setSelectedRecordingPolicyWired] = useState(false);
+  const [selectedFftTrendsPolicy, setSelectedFftTrendsPolicy] =
+    useState<ScenarioFftTrendsPolicy | null>(null);
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
+  const [selectedGetterPure, setSelectedGetterPure] = useState(true);
+  const [selectedGetterPureLocked, setSelectedGetterPureLocked] = useState(false);
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
+  const [connectionSuggestOpen, setConnectionSuggestOpen] = useState(false);
+  const [connectionSuggestItems, setConnectionSuggestItems] = useState<
+    readonly PaletteConnectionSuggestion[]
+  >([]);
+  const pendingConnectionDropRef = useRef<BoardConnectionDropOnPanePayload | null>(null);
+
+  const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
+    viewportApiRef.current = api;
+  }, []);
+
+  const addPaletteNodeAtViewportCenter = useCallback(
+    (nodeKind: Parameters<typeof graph.addPaletteNodeToCurrentBranch>[0]) => {
+      const center = viewportApiRef.current?.getCenterFlowPosition();
+      graph.addPaletteNodeToCurrentBranch(nodeKind, center);
+    },
+    [graph],
+  );
+
+  const addVariableNodeAtViewportCenter = useCallback(
+    (kind: Parameters<typeof graph.addVariableNodeToCurrentBranch>[0], variableId: string) => {
+      const center = viewportApiRef.current?.getCenterFlowPosition();
+      graph.addVariableNodeToCurrentBranch(kind, variableId, center);
+    },
+    [graph],
+  );
+
+  const handleCopyScenarioTrace = useCallback(async () => {
+    const copied = await graph.copyScenarioTrace();
+    setTraceCopyStatus(
+      copied
+        ? `Скопировано ${graph.scenarioTraceLineCount} строк`
+        : graph.scenarioTraceLineCount === 0
+          ? 'Буфер trace пуст'
+          : 'Не удалось скопировать',
+    );
+  }, [graph]);
+
+  const handleDownloadScenarioTrace = useCallback(() => {
+    if (graph.scenarioTraceLineCount === 0) {
+      setTraceCopyStatus('Буфер trace пуст');
+      return;
+    }
+    graph.downloadScenarioTrace();
+    setTraceCopyStatus(`Скачано ${graph.scenarioTraceLineCount} строк`);
+  }, [graph]);
 
   useEffect(() => {
     graph.refreshValidation();
@@ -81,8 +160,44 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeLabel(null);
     setSelectedNodeKind(null);
     setSelectedMicrophoneId(null);
+    setSelectedCollectorConfig(null);
+    setSelectedRecordingPolicy(null);
+    setSelectedRecordingPolicyWired(false);
+    setSelectedFftTrendsPolicy(null);
     setSelectedVariableId(null);
+    setSelectedGetterPure(true);
+    setSelectedGetterPureLocked(false);
   }, []);
+
+  const resolveBranchEdges = useCallback((): readonly Edge[] => {
+    switch (graph.scenarioBranch) {
+      case 'initial':
+        return graph.scenarioInitialEdges;
+      case 'onConnect':
+        return graph.scenarioOnConnectEdges;
+      case 'main':
+        return graph.scenarioMainEdges;
+      case 'alarm':
+        return graph.scenarioAlarmEdges;
+      case 'onStop':
+        return graph.scenarioOnStopEdges;
+      case 'onDisconnect':
+        return graph.scenarioOnDisconnectEdges;
+      case 'function':
+        return graph.scenarioFunctionEdges;
+      default:
+        return graph.scenarioInitialEdges;
+    }
+  }, [
+    graph.scenarioAlarmEdges,
+    graph.scenarioBranch,
+    graph.scenarioFunctionEdges,
+    graph.scenarioInitialEdges,
+    graph.scenarioMainEdges,
+    graph.scenarioOnConnectEdges,
+    graph.scenarioOnDisconnectEdges,
+    graph.scenarioOnStopEdges,
+  ]);
 
   const handleSelectionChange = useCallback((selection: OnSelectionChangeParams) => {
     const node = selection.nodes[0];
@@ -91,7 +206,13 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedNodeLabel(null);
       setSelectedNodeKind(null);
       setSelectedMicrophoneId(null);
+      setSelectedCollectorConfig(null);
+      setSelectedRecordingPolicy(null);
+      setSelectedRecordingPolicyWired(false);
+      setSelectedFftTrendsPolicy(null);
       setSelectedVariableId(null);
+      setSelectedGetterPure(true);
+      setSelectedGetterPureLocked(false);
       return;
     }
     setSelectedNodeId(node.id);
@@ -101,12 +222,49 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeKind(kind);
     const micId = typeof node.data?.microphoneId === 'string' ? node.data.microphoneId : null;
     setSelectedMicrophoneId(micId);
+    const collectorRaw = node.data?.collectorConfig;
+    setSelectedCollectorConfig(
+      collectorRaw !== undefined && collectorRaw !== null && typeof collectorRaw === 'object'
+        ? resolveScenarioCollectorConfig(collectorRaw as Partial<ScenarioCollectorConfig>)
+        : null,
+    );
+    const policyRaw = node.data?.recordingPolicy;
+    setSelectedRecordingPolicy(
+      policyRaw !== undefined && policyRaw !== null && typeof policyRaw === 'object'
+        ? resolveScenarioRecordingPolicy(policyRaw as Partial<ScenarioRecordingPolicy>)
+        : null,
+    );
+    const edges = resolveBranchEdges();
+    const policyWired =
+      kind === 'start-recording'
+        ? edges.some((edge) => edge.target === node.id && edge.targetHandle === 'policy')
+        : kind === 'is-recording-window-full'
+          ? edges.some((edge) => edge.target === node.id && edge.targetHandle === 'windowSec')
+          : false;
+    setSelectedRecordingPolicyWired(policyWired);
+    const fftTrendsRaw = node.data?.fftTrendsPolicy;
+    setSelectedFftTrendsPolicy(
+      fftTrendsRaw !== undefined && fftTrendsRaw !== null && typeof fftTrendsRaw === 'object'
+        ? resolveScenarioFftTrendsPolicy(fftTrendsRaw as Partial<ScenarioFftTrendsPolicy>)
+        : null,
+    );
     const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
     setSelectedVariableId(varId);
+    const pureFlag = typeof node.data?.pure === 'boolean' ? node.data.pure : undefined;
+    if (kind !== null && isPureEligibleScenarioNodeKind(kind)) {
+      setSelectedGetterPure(resolveScenarioGraphNodePure({ nodeKind: kind, pure: pureFlag }));
+      setSelectedGetterPureLocked(false);
+    } else if (kind === 'make-recording-policy' || kind === 'make-fft-trends-policy') {
+      setSelectedGetterPure(true);
+      setSelectedGetterPureLocked(true);
+    } else {
+      setSelectedGetterPure(false);
+      setSelectedGetterPureLocked(false);
+    }
     if (kind === 'get-microphone') {
       void refreshMicrophoneOptions();
     }
-  }, [refreshMicrophoneOptions]);
+  }, [refreshMicrophoneOptions, resolveBranchEdges]);
 
   const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
@@ -124,6 +282,75 @@ const DeviceBoardShellInner: React.FC<{
 
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
+  const isRuntime = graph.runtimeState.isRunning;
+
+  const handleConnectionDropOnPane = useCallback(
+    (payload: BoardConnectionDropOnPanePayload) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      const nodes =
+        scenarioBranch === 'initial'
+          ? graph.scenarioInitialNodes
+          : scenarioBranch === 'onConnect'
+            ? graph.scenarioOnConnectNodes
+            : scenarioBranch === 'main'
+              ? graph.scenarioMainNodes
+              : scenarioBranch === 'alarm'
+                ? graph.scenarioAlarmNodes
+                : scenarioBranch === 'onStop'
+                  ? graph.scenarioOnStopNodes
+                  : scenarioBranch === 'onDisconnect'
+                    ? graph.scenarioOnDisconnectNodes
+                    : graph.scenarioFunctionNodes;
+      const suggestions = suggestPaletteNodesForOutgoingConnection(
+        nodes,
+        payload.sourceNodeId,
+        payload.sourceHandle,
+        { sourceNode: payload.sourceNode },
+      );
+      pendingConnectionDropRef.current = payload;
+      setConnectionSuggestItems(suggestions);
+      setConnectionSuggestOpen(true);
+    },
+    [
+      graph.scenarioAlarmNodes,
+      graph.scenarioFunctionNodes,
+      graph.scenarioInitialNodes,
+      graph.scenarioMainNodes,
+      graph.scenarioOnConnectNodes,
+      graph.scenarioOnDisconnectNodes,
+      graph.scenarioOnStopNodes,
+      isRuntime,
+      isSignal,
+      scenarioBranch,
+    ],
+  );
+
+  const dismissConnectionSuggest = useCallback(() => {
+    setConnectionSuggestOpen(false);
+    setConnectionSuggestItems([]);
+    pendingConnectionDropRef.current = null;
+  }, []);
+
+  const handleConnectionSuggestPick = useCallback(
+    (suggestion: PaletteConnectionSuggestion) => {
+      const drop = pendingConnectionDropRef.current;
+      const viewport = viewportApiRef.current;
+      if (drop === null || viewport === null) {
+        dismissConnectionSuggest();
+        return;
+      }
+      const flowCenter = viewport.clientToFlowPosition(drop.clientX, drop.clientY);
+      graph.addPaletteNodeWithConnection(suggestion.nodeKind, flowCenter, {
+        source: drop.sourceNodeId,
+        sourceHandle: drop.sourceHandle,
+        targetHandle: suggestion.targetHandle,
+      });
+      dismissConnectionSuggest();
+    },
+    [dismissConnectionSuggest, graph],
+  );
 
   const handleExitBoardMode = useCallback(() => {
     if (graph.isDirty) {
@@ -250,8 +477,6 @@ const DeviceBoardShellInner: React.FC<{
   const selectedVariableTypeLabel =
     selectedVariable !== undefined ? referenceTypeLabel(selectedVariable.type) : null;
 
-  const isRuntime = graph.runtimeState.isRunning;
-
   const runtimeInspection = useMemo(() => {
     if (!isRuntime || selectedNodeId === null || isSignal) {
       return null;
@@ -330,6 +555,27 @@ const DeviceBoardShellInner: React.FC<{
                 />
                 <span className="label-text text-xs font-medium">INFO</span>
               </label>
+              <button
+                type="button"
+                className="btn btn-xs btn-ghost"
+                disabled={graph.scenarioTraceLineCount === 0}
+                onClick={() => void handleCopyScenarioTrace()}
+                title="Копировать буфер [device-board] логов в буфер обмена"
+                aria-label="Копировать trace логов сценария"
+              >
+                Copy trace
+                {graph.scenarioTraceLineCount > 0 ? ` (${graph.scenarioTraceLineCount})` : ''}
+              </button>
+              <button
+                type="button"
+                className="btn btn-xs btn-ghost"
+                disabled={graph.scenarioTraceLineCount === 0}
+                onClick={handleDownloadScenarioTrace}
+                title="Скачать trace как .txt"
+                aria-label="Скачать trace логов сценария"
+              >
+                ↓
+              </button>
               <div className="flex items-center gap-1">
                 <button
                   type="button"
@@ -373,6 +619,7 @@ const DeviceBoardShellInner: React.FC<{
               </div>
               <span className="sr-only" role="status" aria-live="polite">
                 Режим: {mode === 'alarm' ? 'тревога' : 'обычный'}
+                {traceCopyStatus !== null ? `. ${traceCopyStatus}` : ''}
               </span>
             </>
           ) : null}
@@ -445,8 +692,29 @@ const DeviceBoardShellInner: React.FC<{
             pulseEdges={isRuntime}
             readOnly={isRuntime}
             ariaLabel={`Канвас: ${canvasLabel}`}
+            onViewportApiReady={handleViewportApiReady}
+            onConnectionDropOnPane={handleConnectionDropOnPane}
           />
         </div>
+
+        <BoardBranchImportModal
+          pending={graph.pendingBranchImport}
+          variables={graph.variables}
+          onConfirm={(mapping) => {
+            const error = graph.confirmBranchImport(mapping);
+            if (error !== null) {
+              setImportError(error);
+            }
+          }}
+          onDismiss={graph.cancelBranchImport}
+        />
+
+        <BoardConnectionSuggestModal
+          open={connectionSuggestOpen}
+          suggestions={connectionSuggestItems}
+          onPick={handleConnectionSuggestPick}
+          onDismiss={dismissConnectionSuggest}
+        />
 
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
@@ -462,7 +730,7 @@ const DeviceBoardShellInner: React.FC<{
             onAddVariable={graph.addVariable}
             onRenameVariable={graph.renameVariable}
             onRemoveVariable={graph.removeVariable}
-            onAddVariableNode={graph.addVariableNodeToCurrentBranch}
+            onAddVariableNode={addVariableNodeAtViewportCenter}
           />
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
@@ -471,7 +739,16 @@ const DeviceBoardShellInner: React.FC<{
             selectedNodeLabel={selectedNodeLabel}
             selectedNodeKind={selectedNodeKind}
             selectedMicrophoneId={selectedMicrophoneId}
+            selectedCollectorConfig={selectedCollectorConfig}
+            selectedRecordingPolicy={selectedRecordingPolicy}
+            selectedRecordingPolicyWired={selectedRecordingPolicyWired}
+            selectedFftTrendsPolicy={selectedFftTrendsPolicy}
             selectedVariableName={selectedVariableName}
+            selectedVariableId={selectedVariableId}
+            selectedVariableType={selectedVariable?.type ?? null}
+            selectedVariableValue={selectedVariable?.value ?? null}
+            selectedGetterPure={selectedGetterPure}
+            selectedGetterPureLocked={selectedGetterPureLocked}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
@@ -480,9 +757,19 @@ const DeviceBoardShellInner: React.FC<{
             runtimeInspection={runtimeInspection}
             printLastOutput={printLastOutput}
             onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
-            onAddPaletteNode={graph.addPaletteNodeToCurrentBranch}
+            onAddPaletteNode={addPaletteNodeAtViewportCenter}
             onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
+            onCollectorConfigChange={graph.updateCollectorConfig}
+            onRecordingPolicyChange={graph.updateRecordingPolicy}
+            onFftTrendsPolicyChange={graph.updateFftTrendsPolicy}
             onAssignVariableName={graph.assignNodeVariableName}
+            onVariableGetterPureChange={(nodeId, pure) => {
+              graph.setVariableGetterPure(nodeId, pure);
+              if (nodeId === selectedNodeId) {
+                setSelectedGetterPure(pure);
+              }
+            }}
+            onVariableValueChange={graph.updateVariableValue}
             onClearBoard={handleClearBoard}
           />
         </aside>

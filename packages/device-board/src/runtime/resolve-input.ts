@@ -1,4 +1,8 @@
 import {
+  createRecordingPolicyValue,
+  createFftTrendsPolicyValue,
+  resolveScenarioFftTrendsPolicy,
+  resolveScenarioRecordingPolicy,
   createReferenceValue,
   type ScenarioGraphNode,
   type ScenarioReferenceValue,
@@ -8,6 +12,30 @@ import {
 } from '@membrana/core';
 
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
+import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
+import {
+  GET_JOURNAL_DEVICE_HANDLE,
+  GET_JOURNAL_OUT_HANDLE,
+  GET_JOURNAL_SERVER_HANDLE,
+} from '../graph/get-journal-node.js';
+import {
+  GET_REPORTER_JOURNAL_HANDLE,
+  GET_REPORTER_OUT_HANDLE,
+} from '../graph/get-reporter-node.js';
+import {
+  MAKE_REPORT_FROM_ANALYSIS_OUT_HANDLE,
+} from '../graph/make-report-from-analysis-node.js';
+import {
+  MAKE_REPORT_FROM_TRACK_OUT_HANDLE,
+} from '../graph/make-report-from-track-node.js';
+import {
+  GET_RECORDER_DEVICE_HANDLE,
+  GET_RECORDER_OUT_HANDLE,
+} from '../graph/get-recorder-node.js';
+import {
+  GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+  GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+} from '../graph/get-spectral-analyser-node.js';
 import {
   GET_AUDIO_STREAM_MIC_HANDLE,
   GET_AUDIO_STREAM_OUT_HANDLE,
@@ -16,9 +44,32 @@ import {
   GET_MICROPHONE_OUT_HANDLE,
   GET_SAMPLE_OUT_HANDLE,
   PRINT_OUT_HANDLE,
+  STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
+import { COLLECT_BATCH_OUT_HANDLE } from '../graph/collect-node-shared.js';
+import {
+  MAKE_FFT_TRENDS_ANALYSIS_OUT_HANDLE,
+  isMakeFftTrendsAnalysisNodeKind,
+} from '../graph/make-fft-trends-analysis-node.js';
+import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
+import {
+  START_RECORDING_OUT_RECORDER_HANDLE,
+  START_RECORDING_RECORDER_HANDLE,
+} from '../graph/start-recording-node.js';
+import {
+  MAKE_RECORDING_POLICY_OUT_HANDLE,
+  isMakeRecordingPolicyNodeKind,
+  readMakeRecordingPolicyFromNodeData,
+} from '../graph/make-recording-policy-node.js';
+import {
+  MAKE_FFT_TRENDS_POLICY_OUT_HANDLE,
+  isMakeFftTrendsPolicyNodeKind,
+  readMakeFftTrendsPolicyFromNodeData,
+} from '../graph/make-fft-trends-policy-node.js';
+import { STOP_RECORDING_SLICE_HANDLE } from '../graph/stop-recording-node.js';
+import { FLUSH_SPECTRAL_FRAMES_HANDLE } from '../graph/flush-spectral-analyser-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
-import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
+import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveGlobalDeviceReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
 
 /** Ветви-обработчики событий, где Event-узел является источником data. */
 export type ScenarioHandlerBranch = 'onConnect' | 'initial' | 'onStop' | 'onDisconnect';
@@ -43,6 +94,26 @@ export interface ResolveInputContext {
   readonly getCapturedAudioSampleRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний FftFrame по nodeId (host); для get-fft-frame. */
   readonly getCapturedFftFrameRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** Singleton RecorderRef по device handle (host, DBC2). */
+  readonly getRecorderSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** Singleton SpectralAnalyserRef по device handle (host, DBC2). */
+  readonly getSpectralAnalyserSessionRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** JournalRef device scope per deviceId (host, DBJ1). */
+  readonly getDeviceJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** JournalRef server scope per deviceId (host, DBJ1). */
+  readonly getServerJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
+  /** ReporterRef scoped к journal handle (runtime store / host, DBJ2). */
+  readonly getReporterRef?: (journalHandle: string) => ScenarioReferenceValue | null;
+  /** ReportRef последнего make-report узла (DBJ3). */
+  readonly getReportRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** TrackRef последнего MakeTrack узла. */
+  readonly getTrackRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** RecordingSliceRef последнего StopRecording узла (v0.7). */
+  readonly getRecordingSliceRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** FftTrendAnalysisRef последнего MakeFftTrendsAnalysis узла. */
+  readonly getFftTrendAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** Последний batch ref Collect-узла после flush (DBC3). */
+  readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
   readonly getPrintOutputValue?: (nodeId: string) => ScenarioVariableValue | null;
 }
@@ -136,12 +207,53 @@ function invalidFftFrameRef(): ScenarioReferenceValue {
   return { kind: 'FftFrameRef', handle: null, valid: false };
 }
 
+function invalidRecorderRef(): ScenarioReferenceValue {
+  return { kind: 'RecorderRef', handle: null, valid: false };
+}
+
+function invalidSpectralAnalyserRef(): ScenarioReferenceValue {
+  return { kind: 'SpectralAnalyserRef', handle: null, valid: false };
+}
+
+function invalidAudioSampleRefList(): ScenarioReferenceValue {
+  return { kind: 'AudioSampleRefList', handle: null, valid: false };
+}
+
+function invalidFftFrameRefList(): ScenarioReferenceValue {
+  return { kind: 'FftFrameRefList', handle: null, valid: false };
+}
+
+function invalidJournalRef(): ScenarioReferenceValue {
+  return { kind: 'JournalRef', handle: null, valid: false };
+}
+
+function invalidReporterRef(): ScenarioReferenceValue {
+  return { kind: 'ReporterRef', handle: null, valid: false };
+}
+
+function invalidReportRef(): ScenarioReferenceValue {
+  return { kind: 'ReportRef', handle: null, valid: false };
+}
+
+function invalidTrackRef(): ScenarioReferenceValue {
+  return { kind: 'TrackRef', handle: null, valid: false };
+}
+
+function invalidRecordingSliceRef(): ScenarioReferenceValue {
+  return { kind: 'RecordingSliceRef', handle: null, valid: false };
+}
+
+function invalidFftTrendAnalysisRef(): ScenarioReferenceValue {
+  return { kind: 'FftTrendAnalysisRef', handle: null, valid: false };
+}
+
 function resolveGetAudioStreamOutput(
   subgraph: ScenarioSubgraph,
   variables: readonly ScenarioVariable[],
   node: ScenarioGraphNode,
   context: ResolveInputContext,
   visiting: Set<string>,
+  microphonePort: string = GET_AUDIO_STREAM_MIC_HANDLE,
 ): ScenarioReferenceValue {
   const resolver = context.getActiveAudioStreamRef;
   if (resolver === undefined) {
@@ -156,7 +268,7 @@ function resolveGetAudioStreamOutput(
     subgraph,
     variables,
     node.id,
-    GET_AUDIO_STREAM_MIC_HANDLE,
+    microphonePort,
     context,
     visiting,
   );
@@ -193,6 +305,155 @@ function resolveGetFftFrameOutput(
     return invalidFftFrameRef();
   }
   return resolver(node.id) ?? invalidFftFrameRef();
+}
+
+function resolveGetRecorderOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const deviceRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_RECORDER_DEVICE_HANDLE,
+    context,
+    visiting,
+  );
+  if (!isReferenceValid(deviceRef) || deviceRef === null || deviceRef.kind !== 'DeviceRef') {
+    return invalidRecorderRef();
+  }
+  if (deviceRef.handle === null) {
+    return invalidRecorderRef();
+  }
+  const resolver = context.getRecorderSessionRef;
+  if (resolver === undefined) {
+    return invalidRecorderRef();
+  }
+  return resolver(deviceRef.handle) ?? invalidRecorderRef();
+}
+
+function resolveGetSpectralAnalyserOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const deviceRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+    context,
+    visiting,
+  );
+  if (!isReferenceValid(deviceRef) || deviceRef === null || deviceRef.kind !== 'DeviceRef') {
+    return invalidSpectralAnalyserRef();
+  }
+  if (deviceRef.handle === null) {
+    return invalidSpectralAnalyserRef();
+  }
+  const resolver = context.getSpectralAnalyserSessionRef;
+  if (resolver === undefined) {
+    return invalidSpectralAnalyserRef();
+  }
+  return resolver(deviceRef.handle) ?? invalidSpectralAnalyserRef();
+}
+
+function resolveGetJournalOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const deviceEdge = findDataEdge(subgraph, node.id, GET_JOURNAL_DEVICE_HANDLE);
+  if (deviceEdge !== undefined) {
+    const deviceRef = resolveInput(
+      subgraph,
+      variables,
+      node.id,
+      GET_JOURNAL_DEVICE_HANDLE,
+      context,
+      visiting,
+    );
+    if (
+      !isReferenceValid(deviceRef) ||
+      deviceRef === null ||
+      deviceRef.kind !== 'DeviceRef' ||
+      deviceRef.handle === null
+    ) {
+      return invalidJournalRef();
+    }
+    const resolver = context.getDeviceJournalRef;
+    if (resolver === undefined) {
+      return invalidJournalRef();
+    }
+    return resolver(deviceRef.handle) ?? invalidJournalRef();
+  }
+
+  const serverEdge = findDataEdge(subgraph, node.id, GET_JOURNAL_SERVER_HANDLE);
+  if (serverEdge !== undefined) {
+    const serverRef = resolveInput(
+      subgraph,
+      variables,
+      node.id,
+      GET_JOURNAL_SERVER_HANDLE,
+      context,
+      visiting,
+    );
+    if (
+      !isReferenceValid(serverRef) ||
+      serverRef === null ||
+      serverRef.kind !== 'ServerRef'
+    ) {
+      return invalidJournalRef();
+    }
+    const deviceId = context.deviceHandle;
+    if (deviceId === null || deviceId === undefined || deviceId.length === 0) {
+      return invalidJournalRef();
+    }
+    const resolver = context.getServerJournalRef;
+    if (resolver === undefined) {
+      return invalidJournalRef();
+    }
+    return resolver(deviceId) ?? invalidJournalRef();
+  }
+
+  return invalidJournalRef();
+}
+
+function resolveGetReporterOutput(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+  node: ScenarioGraphNode,
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioReferenceValue {
+  const journalRef = resolveInput(
+    subgraph,
+    variables,
+    node.id,
+    GET_REPORTER_JOURNAL_HANDLE,
+    context,
+    visiting,
+  );
+  if (
+    !isReferenceValid(journalRef) ||
+    journalRef === null ||
+    journalRef.kind !== 'JournalRef' ||
+    journalRef.handle === null
+  ) {
+    return invalidReporterRef();
+  }
+  const resolver = context.getReporterRef;
+  if (resolver === undefined) {
+    return invalidReporterRef();
+  }
+  return resolver(journalRef.handle) ?? invalidReporterRef();
 }
 
 /** Резолв data-выхода узла (для runtime-инспекции и pull-цепочки). */
@@ -267,6 +528,16 @@ export function resolveNodeOutput(
     return resolveGetMicrophoneOutput(subgraph, variables, node, context, visiting);
   }
 
+  if (node.nodeKind === 'device-global') {
+    if (outputPort !== DEVICE_GLOBAL_DEVICE_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown device-global output: ${outputPort}`,
+      );
+    }
+    return resolveGlobalDeviceReference(context.deviceHandle ?? null);
+  }
+
   if (node.nodeKind === 'get-audio-stream') {
     if (outputPort !== GET_AUDIO_STREAM_OUT_HANDLE) {
       throw new ResolveInputError(
@@ -275,6 +546,23 @@ export function resolveNodeOutput(
       );
     }
     return resolveGetAudioStreamOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'start-streaming') {
+    if (outputPort !== GET_AUDIO_STREAM_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown start-streaming output: ${outputPort}`,
+      );
+    }
+    return resolveGetAudioStreamOutput(
+      subgraph,
+      variables,
+      node,
+      context,
+      visiting,
+      STREAMING_MIC_HANDLE,
+    );
   }
 
   if (node.nodeKind === 'get-sample') {
@@ -289,6 +577,198 @@ export function resolveNodeOutput(
       throw new ResolveInputError('unsupported-source', `Unknown get-fft-frame output: ${outputPort}`);
     }
     return resolveGetFftFrameOutput(node, context);
+  }
+
+  if (node.nodeKind === 'get-recorder') {
+    if (outputPort !== GET_RECORDER_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-recorder output: ${outputPort}`);
+    }
+    return resolveGetRecorderOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-spectral-analyser') {
+    if (outputPort !== GET_SPECTRAL_ANALYSER_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown get-spectral-analyser output: ${outputPort}`,
+      );
+    }
+    return resolveGetSpectralAnalyserOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-journal') {
+    if (outputPort !== GET_JOURNAL_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-journal output: ${outputPort}`);
+    }
+    return resolveGetJournalOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'get-reporter') {
+    if (outputPort !== GET_REPORTER_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown get-reporter output: ${outputPort}`);
+    }
+    return resolveGetReporterOutput(subgraph, variables, node, context, visiting);
+  }
+
+  if (node.nodeKind === 'make-report-from-track') {
+    if (outputPort !== MAKE_REPORT_FROM_TRACK_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-report-from-track output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getReportRef;
+    if (resolver === undefined) {
+      return invalidReportRef();
+    }
+    return resolver(node.id) ?? invalidReportRef();
+  }
+
+  if (node.nodeKind === 'make-report-from-analysis') {
+    if (outputPort !== MAKE_REPORT_FROM_ANALYSIS_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-report-from-analysis output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getReportRef;
+    if (resolver === undefined) {
+      return invalidReportRef();
+    }
+    return resolver(node.id) ?? invalidReportRef();
+  }
+
+  if (isMakeRecordingPolicyNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_RECORDING_POLICY_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-recording-policy output: ${outputPort}`,
+      );
+    }
+    const raw = readMakeRecordingPolicyFromNodeData(node as unknown as Record<string, unknown>);
+    const resolved = resolveScenarioRecordingPolicy(raw);
+    return createRecordingPolicyValue(resolved.windowSec, resolved.captureFormat);
+  }
+
+  if (isMakeFftTrendsPolicyNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_FFT_TRENDS_POLICY_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-fft-trends-policy output: ${outputPort}`,
+      );
+    }
+    const raw = readMakeFftTrendsPolicyFromNodeData(node as unknown as Record<string, unknown>);
+    const resolved = resolveScenarioFftTrendsPolicy(raw);
+    return createFftTrendsPolicyValue({
+      detectionMode: resolved.detectionMode,
+      measurementsCount: resolved.measurementsCount,
+      intervalMs: resolved.intervalMs,
+      minConfidence: resolved.minConfidence,
+      minRms: resolved.minRms,
+      enabledTemplateKeys: resolved.enabledTemplateKeys,
+    });
+  }
+
+  if (isMakeTrackNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_TRACK_OUT_HANDLE) {
+      throw new ResolveInputError('unsupported-source', `Unknown make-track output: ${outputPort}`);
+    }
+    const resolver = context.getTrackRef;
+    if (resolver === undefined) {
+      return invalidTrackRef();
+    }
+    return resolver(node.id) ?? invalidTrackRef();
+  }
+
+  if (isMakeFftTrendsAnalysisNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_FFT_TRENDS_ANALYSIS_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-fft-trends-analysis output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getFftTrendAnalysisRef;
+    if (resolver === undefined) {
+      return invalidFftTrendAnalysisRef();
+    }
+    return resolver(node.id) ?? invalidFftTrendAnalysisRef();
+  }
+
+  if (node.nodeKind === 'collect-samples') {
+    if (outputPort !== COLLECT_BATCH_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown collect-samples output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getCollectBatchRef;
+    if (resolver === undefined) {
+      return invalidAudioSampleRefList();
+    }
+    return resolver(node.id) ?? invalidAudioSampleRefList();
+  }
+
+  if (node.nodeKind === 'collect-fft-frames') {
+    if (outputPort !== COLLECT_BATCH_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown collect-fft-frames output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getCollectBatchRef;
+    if (resolver === undefined) {
+      return invalidFftFrameRefList();
+    }
+    return resolver(node.id) ?? invalidFftFrameRefList();
+  }
+
+  if (node.nodeKind === 'flush-spectral-analyser') {
+    if (outputPort !== FLUSH_SPECTRAL_FRAMES_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown flush-spectral-analyser output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getCollectBatchRef;
+    if (resolver === undefined) {
+      return invalidFftFrameRefList();
+    }
+    return resolver(node.id) ?? invalidFftFrameRefList();
+  }
+
+  if (node.nodeKind === 'start-recording') {
+    if (outputPort !== START_RECORDING_OUT_RECORDER_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown start-recording output: ${outputPort}`,
+      );
+    }
+    const passthrough = resolveInput(
+      subgraph,
+      variables,
+      node.id,
+      START_RECORDING_RECORDER_HANDLE,
+      context,
+      visiting,
+    );
+    if (passthrough === null || passthrough.kind !== 'RecorderRef') {
+      return invalidRecorderRef();
+    }
+    return passthrough;
+  }
+
+  if (node.nodeKind === 'stop-recording') {
+    if (outputPort !== STOP_RECORDING_SLICE_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown stop-recording output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getRecordingSliceRef;
+    if (resolver === undefined) {
+      return invalidRecordingSliceRef();
+    }
+    return resolver(node.id) ?? invalidRecordingSliceRef();
   }
 
   if (node.nodeKind === 'print') {

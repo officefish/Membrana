@@ -1,6 +1,7 @@
 import { DomainError } from '@membrana/core';
 
 import { TARIFF_DATASET_SYSTEM_KEY, DEFAULT_SAMPLES_PAGE_SIZE } from '../constants.js';
+import { resolveMediaLibraryTraceId } from '../media-library-trace.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   Collection,
@@ -122,6 +123,8 @@ function mapSample(dto: ApiSample): MediaSample {
 function guessUploadFilename(blob: Blob, title: string): string {
   const base = title.trim() || 'sample';
   const type = blob.type || 'audio/wav';
+  if (type.includes('webm')) return `${base}.webm`;
+  if (type.includes('mp4')) return `${base}.mp4`;
   if (type.includes('mpeg') || type.includes('mp3')) return `${base}.mp3`;
   if (type.includes('ogg')) return `${base}.ogg`;
   if (type.includes('flac')) return `${base}.flac`;
@@ -197,6 +200,10 @@ export class ServerStorageBackend implements IStorageBackend {
     const headers = new Headers(extra);
     headers.set('X-Membrana-Token', this.mediaToken);
     headers.set('X-Membrana-Device-Id', this.deviceId);
+    const traceId = resolveMediaLibraryTraceId();
+    if (traceId !== null && traceId.length > 0) {
+      headers.set('X-Membrana-Trace-Id', traceId);
+    }
     return headers;
   }
 

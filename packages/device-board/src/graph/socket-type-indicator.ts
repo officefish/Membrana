@@ -27,5 +27,11 @@ export function socketTypeIndicatorClass(
   if (socketType === 'String') {
     return 'bg-orange-500';
   }
+  if (socketType === 'RecordingPolicy') {
+    return 'bg-teal-600';
+  }
+  if (socketType === 'FftTrendsPolicy') {
+    return 'bg-emerald-600';
+  }
   return 'bg-neutral';
 }

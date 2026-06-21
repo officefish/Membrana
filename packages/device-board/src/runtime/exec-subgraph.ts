@@ -2,11 +2,18 @@ import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioSubgraph } fr
 
 import { executeScenarioBlock } from './block-executor.js';
 import type { ScenarioRuntimeHost } from './host.js';
+import type { CollectRuntimeStore } from './collect-runtime-store.js';
+import type { ReportRuntimeStore } from './report-runtime-store.js';
+import type { TrackRuntimeStore } from './track-runtime-store.js';
+import type { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
+import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
 
 import type { ScenarioRuntimeBranch } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
+import { isExecTransparentPureNode } from './scenario-node-pure-runtime.js';
 import { MAX_SUBGRAPH_EXEC_STEPS, yieldToEventLoop } from './runtime-timing.js';
 
 export interface ExecSubgraphOptions {
@@ -18,6 +25,18 @@ export interface ExecSubgraphOptions {
   /** v0.4 (DBR4): контекст pull-резолюции Event/dataflow. */
   readonly resolveContext?: ResolveInputContext;
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
+  /** v0.4 device-global StopRuntime. */
+  readonly onStopRuntime?: () => void;
+  /** v0.5 DBC3: Collect flush/batch store. */
+  readonly collectStore?: CollectRuntimeStore;
+  /** v0.6 DBJ3: ReportRef payloads от make-report узлов. */
+  readonly reportStore?: ReportRuntimeStore;
+  /** v0.6: TrackRef от NewTrack. */
+  readonly trackStore?: TrackRuntimeStore;
+  /** v0.6: FftTrendAnalysisRef от NewFftTrendsAnalysis. */
+  readonly analysisStore?: FftTrendAnalysisRuntimeStore;
+  /** v0.7: RecordingSliceRef от StopRecording. */
+  readonly recordingSliceStore?: RecordingSliceRuntimeStore;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -77,6 +96,21 @@ export async function runSubgraphOnce(
       throw new Error(`Scenario node "${currentId}" not found in ${options.branch}`);
     }
 
+    if (isExecTransparentPureNode(node)) {
+      const skipNextId = findExecSuccessor(subgraph, currentId, 'exec-out');
+      if (skipNextId === null) {
+        return lastDetection;
+      }
+      if (skipNextId === entryId) {
+        return lastDetection;
+      }
+      if (isLoopBranch) {
+        await yieldToEventLoop(signal);
+      }
+      currentId = skipNextId;
+      continue;
+    }
+
     callbacks.onNodeEnter?.(node);
 
     const result = await executeScenarioBlock({
@@ -91,6 +125,12 @@ export async function runSubgraphOnce(
       variableStore: options.variableStore,
       resolveContext: options.resolveContext,
       onPrintOutput: options.onPrintOutput,
+      onStopRuntime: options.onStopRuntime,
+      collectStore: options.collectStore,
+      reportStore: options.reportStore,
+      trackStore: options.trackStore,
+      analysisStore: options.analysisStore,
+      recordingSliceStore: options.recordingSliceStore,
     });
 
     if (result.stopRequested) {
@@ -102,6 +142,19 @@ export async function runSubgraphOnce(
     }
 
     lastDetection = result.lastDetection;
+
+    if (result.eventOutHandle !== undefined) {
+      lastDetection = await dispatchCollectEventBranches({
+        subgraph,
+        sourceNodeId: currentId,
+        eventOutHandle: result.eventOutHandle,
+        host,
+        signal,
+        options,
+        callbacks,
+        lastDetection,
+      });
+    }
 
     const nextId = findExecSuccessor(subgraph, currentId, result.execOutHandle ?? 'exec-out');
     if (nextId === null) {

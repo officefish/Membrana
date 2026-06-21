@@ -1,5 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 import { Handle, Position, useStore, type NodeProps } from '@xyflow/react';
+import {
+  isConstructorAlwaysPureScenarioNodeKind,
+  isPureEligibleScenarioNodeKind,
+  resolveScenarioGraphNodePure,
+} from '@membrana/core';
 
 import type { BoardFlowNodeData, BoardSocketPin } from '../graph/board-node-data.js';
 import { isBoardFlowNodeData } from '../graph/board-node-data.js';
@@ -9,6 +14,8 @@ import {
   resolveContextValuePortLabel,
 } from '../graph/resolve-context-port-label.js';
 import { formatSocketPortLabel } from '../graph/socket-port-label.js';
+import { formatRecordingPolicyBadge } from '../graph/recording-policy-ui.js';
+import { formatFftTrendsPolicyBadge } from '../graph/fft-trends-policy-ui.js';
 import { socketHandleClass } from '../graph/socket-type-palette.js';
 
 const LAYER_BORDER: Record<BoardFlowNodeData['layer'], string> = {
@@ -59,6 +66,37 @@ function renderNodeTitle(data: BoardFlowNodeData): React.ReactNode {
     );
   }
   return data.label;
+}
+
+function policyBadgeForNode(data: BoardFlowNodeData): string | null {
+  if (data.nodeKind === 'make-fft-trends-policy') {
+    return formatFftTrendsPolicyBadge(data.fftTrendsPolicy);
+  }
+  if (
+    data.nodeKind === 'make-recording-policy' ||
+    data.nodeKind === 'start-recording' ||
+    data.nodeKind === 'is-recording-window-full'
+  ) {
+    return formatRecordingPolicyBadge(data.recordingPolicy);
+  }
+  return null;
+}
+
+function pureBadgeForNode(data: BoardFlowNodeData): string | null {
+  const kind = data.nodeKind;
+  if (kind === undefined) {
+    return null;
+  }
+  if (isConstructorAlwaysPureScenarioNodeKind(kind)) {
+    return 'pure';
+  }
+  if (
+    isPureEligibleScenarioNodeKind(kind) &&
+    resolveScenarioGraphNodePure({ nodeKind: kind, pure: data.pure })
+  ) {
+    return 'pure';
+  }
+  return null;
 }
 
 function renderHandles(
@@ -156,6 +194,8 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
   const status = flowData.status ?? 'active';
   const isSystem = flowData.system === true;
   const statusBadgeClass = status !== 'active' ? STATUS_BADGE[status] : undefined;
+  const policyBadge = policyBadgeForNode(flowData);
+  const pureBadge = pureBadgeForNode(flowData);
   const pinRows = Math.max(inputs.length, outputs.length, flowData.nodeKind === 'loop-repeat' ? 1 : 0, 1);
   const bodyHeightPx = flowData.nodeKind === 'loop-repeat' ? 48 : pinRows * PIN_ROW_PX + 8;
 
@@ -185,9 +225,18 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
         </span>
         {isSystem ? (
           <span className="badge badge-xs shrink-0 badge-accent">system</span>
-        ) : statusBadgeClass !== undefined ? (
-          <span className={`badge badge-xs shrink-0 ${statusBadgeClass}`}>{status}</span>
-        ) : null}
+        ) : (
+          <span className="flex shrink-0 items-center gap-1">
+            {pureBadge !== null ? (
+              <span className="badge badge-xs badge-accent">{pureBadge}</span>
+            ) : null}
+            {policyBadge !== null ? (
+              <span className="badge badge-xs shrink-0 badge-outline font-mono">{policyBadge}</span>
+            ) : statusBadgeClass !== undefined ? (
+              <span className={`badge badge-xs shrink-0 ${statusBadgeClass}`}>{status}</span>
+            ) : null}
+          </span>
+        )}
       </div>
       <div className="relative" style={{ minHeight: bodyHeightPx }}>
         {flowData.nodeKind === 'loop-repeat' ? (

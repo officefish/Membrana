@@ -27,6 +27,7 @@ export type {
   StorageQuota,
   UpdateSampleLabelNotes,
   PaginatedSamples,
+  ImportBlobOptions,
 } from './types.js';
 
 export type { IStorageBackend } from './ports/storage-backend.js';
@@ -48,6 +49,14 @@ export {
   createServerStorageBackend,
   type ServerStorageBackendConfig,
 } from './backends/server-storage-backend.js';
+
+export {
+  setMediaLibraryTraceHook,
+  setMediaLibraryTraceIdProvider,
+  resolveMediaLibraryTraceId,
+  mediaLibraryTrace,
+  type MediaLibraryTraceHook,
+} from './media-library-trace.js';
 
 export {
   MediaLibraryService,

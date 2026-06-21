@@ -1,0 +1,67 @@
+---
+title: Journal + Reporter (v0.6)
+description: Канонический граф DBJ — GetJournal, GetReporter, MakeReport*, PublishReport.
+---
+
+# Cookbook: Journal + Reporter v0.6
+
+Эталон **device-board journal + reporter v0.6** (DBJ4): явный dataflow
+Journal → Reporter → Report → append в journal. Legacy terminal `NewTrack` /
+`NewFftTrendsAnalysis` (v0.5) пишут в journal напрямую — deprecated до DBJ5.
+
+## Device journal (drone track report)
+
+```text
+GetDevice → GetJournal(device) → JournalRef
+                ↓
+         GetReporter(journal) → ReporterRef
+                ↓
+NewTrack / TrackRef ──► MakeReportFromTrack(reporter, track) → ReportRef
+                ↓
+         PublishReport(journal, report) → LiveJournal append
+```
+
+## Server journal (trends FFT report)
+
+```text
+GetServer → GetJournal(server) → JournalRef   (scope per deviceId)
+                ↓
+         GetReporter(journal) → ReporterRef
+                ↓
+NewFftTrendsAnalysis / FftTrendAnalysisRef
+         → MakeReportFromAnalysis(reporter, analysis) → ReportRef
+                ↓
+         PublishReport(journal, report) → LiveJournal append (cabinet when paired)
+```
+
+## Checklist
+
+<Steps>
+  <Step title="Journal scope per deviceId">
+    Handle `journal:device:{deviceId}` или `journal:server:{deviceId}` — не per-membrane.
+  </Step>
+  <Step title="ReporterRef scoped к journal">
+    `GetReporter` принимает тот же `JournalRef`, что будет в `PublishReport`.
+  </Step>
+  <Step title="Make-report — два node kind">
+    `make-report-from-track` и `make-report-from-analysis` — отдельные узлы палитры.
+  </Step>
+  <Step title="ReportRef in-memory до publish">
+    `MakeReport*` создаёт payload в `ReportRuntimeStore`; `PublishReport` читает по handle.
+  </Step>
+  <Step title="Connection-suggest">
+    `JournalRef` → GetReporter / PublishReport; `ReporterRef` → make-report*; `ReportRef` → PublishReport.
+  </Step>
+</Steps>
+
+## Runtime
+
+1. **MakeReport\*** — host `makeReportFromTrack` / `makeReportFromAnalysis` строит `ScenarioReportPayload` (без append).
+2. **ReportRuntimeStore** — сохраняет payload; `ReportRef` доступен на data-out узла.
+3. **PublishReport** — host `publishReport(journalRef, payload)` → `LiveJournalService.appendReport`.
+4. **Backend routing** — client: `resolveJournalBackend`; server scope при paired → cabinet sync.
+
+Источники:
+
+- `packages/device-board/src/runtime/block-executor.ts`
+- `apps/client/src/modules/device-board/scenarioMicJournalBridge.ts`

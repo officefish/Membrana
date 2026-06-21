@@ -26,11 +26,126 @@ export {
 
 export {
   SCENARIO_NODE_KINDS,
+  COLLECTOR_SCENARIO_NODE_KINDS,
+  TERMINAL_SCENARIO_NODE_KINDS,
+  JOURNAL_SCENARIO_NODE_KINDS,
+  REPORTER_METHOD_SCENARIO_NODE_KINDS,
   SYSTEM_SCENARIO_NODE_KINDS,
   type ScenarioNodeKind,
+  type CollectorScenarioNodeKind,
+  type TerminalScenarioNodeKind,
+  type JournalScenarioNodeKind,
+  type ReporterMethodScenarioNodeKind,
   isScenarioNodeKind,
   isSystemScenarioNodeKind,
+  isCollectorScenarioNodeKind,
+  isTerminalScenarioNodeKind,
+  isJournalScenarioNodeKind,
+  isReporterMethodScenarioNodeKind,
+  RECORDING_GATE_SCENARIO_NODE_KINDS,
+  isRecordingGateScenarioNodeKind,
+  type RecordingGateScenarioNodeKind,
+  POLICY_CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  REF_CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  type PolicyConstructorScenarioNodeKind,
+  type RefConstructorScenarioNodeKind,
+  type ConstructorScenarioNodeKind,
+  isPolicyConstructorScenarioNodeKind,
+  isRefConstructorScenarioNodeKind,
+  isConstructorScenarioNodeKind,
 } from './scenario-node-kind.js';
+
+export {
+  CONSTRUCTOR_ALWAYS_PURE_SCENARIO_NODE_KINDS,
+  PURE_ELIGIBLE_SCENARIO_NODE_KINDS,
+  PURE_LOCKED_IMPURE_SCENARIO_NODE_KINDS,
+  DEFAULT_PURE_ELIGIBLE,
+  type ConstructorAlwaysPureScenarioNodeKind,
+  type PureEligibleScenarioNodeKind,
+  type PureLockedImpureScenarioNodeKind,
+  isConstructorAlwaysPureScenarioNodeKind,
+  isPureEligibleScenarioNodeKind,
+  isPureLockedImpureScenarioNodeKind,
+  isScenarioNodePureFieldApplicable,
+  resolveScenarioGraphNodePure,
+  normalizeScenarioGraphNodePure,
+} from './scenario-node-pure.js';
+
+export {
+  JOURNAL_SCOPE_KINDS,
+  JOURNAL_REF_HANDLE_PREFIX,
+  REPORTER_REF_HANDLE_PREFIX,
+  type JournalScopeKind,
+  isJournalScopeKind,
+  formatJournalRefHandle,
+  formatReporterRefHandle,
+  parseJournalRefHandle,
+  parseReporterRefJournalHandle,
+} from './journal-scope.js';
+
+export {
+  SCENARIO_REPORT_SCHEMAS,
+  REPORT_REF_HANDLE_PREFIX,
+  TRACK_REF_HANDLE_PREFIX,
+  FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX,
+  type ScenarioReportSchema,
+  type ScenarioReportPayload,
+  isKnownScenarioReportSchema,
+  formatReportRefHandle,
+  formatTrackRefHandle,
+  formatFftTrendAnalysisRefHandle,
+  createScenarioReportPayload,
+  isScenarioReportPayload,
+} from './scenario-report.js';
+
+export {
+  SCENARIO_PIN_KINDS,
+  type ScenarioPinKind,
+  isScenarioPinKind,
+} from './scenario-pin-kind.js';
+
+export {
+  DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+  type ScenarioCollectorConfig,
+  resolveScenarioCollectorConfig,
+  isScenarioCollectorConfig,
+} from './collector-config.js';
+
+export {
+  RECORDING_WINDOW_SEC_PRESETS,
+  SCENARIO_CAPTURE_FORMATS,
+  DEFAULT_RECORDING_POLICY,
+  LEGACY_COLLECTOR_WINDOW_SEC,
+  type ScenarioRecordingWindowSec,
+  type ScenarioCaptureFormat,
+  type ScenarioRecordingPolicy,
+  nearestRecordingWindowPreset,
+  resolveScenarioRecordingPolicy,
+  isScenarioRecordingPolicy,
+} from './recording-policy.js';
+
+export {
+  FFT_TRENDS_DETECTION_MODES,
+  FFT_TRENDS_MEASUREMENT_COUNT_PRESETS,
+  FFT_TRENDS_INTERVAL_MS_PRESETS,
+  FFT_TRENDS_BUILTIN_TEMPLATE_KEYS,
+  DEFAULT_FFT_TRENDS_POLICY,
+  type ScenarioFftTrendsDetectionMode,
+  type ScenarioFftTrendsMeasurementCount,
+  type ScenarioFftTrendsIntervalMs,
+  type ScenarioFftTrendsBuiltinTemplateKey,
+  type ScenarioFftTrendsPolicy,
+  resolveScenarioFftTrendsPolicy,
+  isScenarioFftTrendsPolicy,
+  fftTrendsAnalysisDurationSec,
+} from './fft-trends-policy.js';
+
+export {
+  RECORDING_SLICE_REF_HANDLE_PREFIX,
+  formatRecordingSliceRefHandle,
+  parseRecordingSliceRefHandle,
+} from './recording-slice-ref.js';
 
 export {
   type ScenarioReferenceVariableType,
@@ -40,12 +155,16 @@ export {
   type ScenarioDateTimeValue,
   type ScenarioIntegerValue,
   type ScenarioStringValue,
+  type ScenarioRecordingPolicyValue,
+  type ScenarioFftTrendsPolicyValue,
   type ScenarioVariableValue,
   type ScenarioVariable,
   createReferenceValue,
   createDateTimeValue,
   createIntegerValue,
   createStringValue,
+  createRecordingPolicyValue,
+  createFftTrendsPolicyValue,
   invalidateReference,
   createScenarioVariable,
   isScenarioVariableType,
@@ -53,6 +172,8 @@ export {
   isScenarioDateTimeValue,
   isScenarioIntegerValue,
   isScenarioStringValue,
+  isScenarioRecordingPolicyValue,
+  isScenarioFftTrendsPolicyValue,
   isScenarioVariableValue,
   isScenarioVariable,
   migrateScenarioVariableLegacy,

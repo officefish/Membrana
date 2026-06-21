@@ -5,7 +5,9 @@ import {
   invalidateReference,
   isScenarioReferenceValue,
   type ScenarioDateTimeValue,
+  type ScenarioFftTrendsPolicyValue,
   type ScenarioIntegerValue,
+  type ScenarioRecordingPolicyValue,
   type ScenarioReferenceValue,
   type ScenarioStringValue,
   type ScenarioVariable,
@@ -45,6 +47,30 @@ function stringsEqual(left: ScenarioStringValue, right: ScenarioStringValue): bo
   return left.value === right.value;
 }
 
+function recordingPoliciesEqual(
+  left: ScenarioRecordingPolicyValue,
+  right: ScenarioRecordingPolicyValue,
+): boolean {
+  return (
+    left.windowSec === right.windowSec && left.captureFormat === right.captureFormat
+  );
+}
+
+function fftTrendsPoliciesEqual(
+  left: ScenarioFftTrendsPolicyValue,
+  right: ScenarioFftTrendsPolicyValue,
+): boolean {
+  return (
+    left.detectionMode === right.detectionMode &&
+    left.measurementsCount === right.measurementsCount &&
+    left.intervalMs === right.intervalMs &&
+    left.minConfidence === right.minConfidence &&
+    left.minRms === right.minRms &&
+    left.enabledTemplateKeys.length === right.enabledTemplateKeys.length &&
+    left.enabledTemplateKeys.every((key, index) => key === right.enabledTemplateKeys[index])
+  );
+}
+
 /**
  * Семантика записи переменной из dataflow:
  * - ссылочные: `null` (onDisconnect) → invalidate; value-типы: `null` → сброс;
@@ -69,6 +95,18 @@ export function applyVariableSetValue(
       return { ...variable, value: null };
     }
     if (variable.type === 'String') {
+      if (variable.value === null) {
+        return variable;
+      }
+      return { ...variable, value: null };
+    }
+    if (variable.type === 'RecordingPolicy') {
+      if (variable.value === null) {
+        return variable;
+      }
+      return { ...variable, value: null };
+    }
+    if (variable.type === 'FftTrendsPolicy') {
       if (variable.value === null) {
         return variable;
       }
@@ -112,6 +150,30 @@ export function applyVariableSetValue(
   if (incoming.kind === 'String') {
     const current = variable.value;
     if (current !== null && current.kind === 'String' && stringsEqual(current, incoming)) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
+  if (incoming.kind === 'RecordingPolicy') {
+    const current = variable.value;
+    if (
+      current !== null &&
+      current.kind === 'RecordingPolicy' &&
+      recordingPoliciesEqual(current, incoming)
+    ) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
+  if (incoming.kind === 'FftTrendsPolicy') {
+    const current = variable.value;
+    if (
+      current !== null &&
+      current.kind === 'FftTrendsPolicy' &&
+      fftTrendsPoliciesEqual(current, incoming)
+    ) {
       return variable;
     }
     return { ...variable, value: incoming };
@@ -162,6 +224,19 @@ export function resolveEventServerReference(
     return { kind: 'ServerRef', handle: null, valid: false };
   }
   return createReferenceValue('ServerRef', serverHandle);
+}
+
+/**
+ * Значение data-выхода `device` глобального узла Device и loop/main контекста.
+ * Аналог Event device, но без привязки к handler branch.
+ */
+export function resolveGlobalDeviceReference(
+  deviceHandle: string | null | undefined,
+): ScenarioReferenceValue {
+  if (deviceHandle === null || deviceHandle === undefined || deviceHandle.length === 0) {
+    return { kind: 'DeviceRef', handle: null, valid: false };
+  }
+  return createReferenceValue('DeviceRef', deviceHandle);
 }
 
 /**

@@ -109,6 +109,12 @@ function formatContextSourceLabel(sourceType: SocketType | 'nullable' | undefine
   if (sourceType === 'String') {
     return 'string';
   }
+  if (sourceType === 'RecordingPolicy') {
+    return 'policy';
+  }
+  if (sourceType === 'FftTrendsPolicy') {
+    return 'trends-policy';
+  }
   if (sourceType !== undefined && isReferenceSocketType(sourceType)) {
     return `& ${referenceNoun(sourceType)}`;
   }
@@ -133,6 +139,12 @@ function pinFromContextSource(
     return { ...pin, socketType: sourceType, nullable: undefined };
   }
   if (sourceType === 'String') {
+    return { ...pin, socketType: sourceType, nullable: undefined };
+  }
+  if (sourceType === 'RecordingPolicy') {
+    return { ...pin, socketType: sourceType, nullable: undefined };
+  }
+  if (sourceType === 'FftTrendsPolicy') {
     return { ...pin, socketType: sourceType, nullable: undefined };
   }
   if (sourceType !== undefined && isReferenceSocketType(sourceType)) {

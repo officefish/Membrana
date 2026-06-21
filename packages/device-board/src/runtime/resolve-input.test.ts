@@ -10,7 +10,29 @@ import {
   type ScenarioSubgraph,
 } from '@membrana/core';
 
-import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE } from '../graph/event-node.js';
+import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
+import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_SERVER_HANDLE } from '../graph/event-node.js';
+import {
+  GET_RECORDER_DEVICE_HANDLE,
+  GET_RECORDER_OUT_HANDLE,
+} from '../graph/get-recorder-node.js';
+import {
+  GET_JOURNAL_DEVICE_HANDLE,
+  GET_JOURNAL_OUT_HANDLE,
+  GET_JOURNAL_SERVER_HANDLE,
+} from '../graph/get-journal-node.js';
+import {
+  GET_REPORTER_JOURNAL_HANDLE,
+  GET_REPORTER_OUT_HANDLE,
+} from '../graph/get-reporter-node.js';
+import {
+  MAKE_REPORT_FROM_TRACK_OUT_HANDLE,
+} from '../graph/make-report-from-track-node.js';
+import {
+  GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+  GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+} from '../graph/get-spectral-analyser-node.js';
+import { MAKE_FFT_TRENDS_POLICY_OUT_HANDLE } from '../graph/make-fft-trends-policy-node.js';
 import {
   GET_AUDIO_STREAM_MIC_HANDLE,
   GET_AUDIO_STREAM_OUT_HANDLE,
@@ -19,6 +41,7 @@ import {
   GET_MICROPHONE_OUT_HANDLE,
   GET_SAMPLE_OUT_HANDLE,
   PRINT_OUT_HANDLE,
+  STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import {
@@ -27,7 +50,7 @@ import {
   resolveEventDateTime,
   resolveEventReference,
 } from './reference-validity.js';
-import { ResolveInputError, resolveInput, type ResolveInputContext } from './resolve-input.js';
+import { ResolveInputError, resolveInput, resolveNodeOutput, type ResolveInputContext } from './resolve-input.js';
 import { ScenarioVariableStore } from './variable-store.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { createStubScenarioRuntimeHost } from './host.js';
@@ -69,7 +92,7 @@ function dataEdge(
   sourceHandle: string,
   target: string,
   targetHandle: string,
-  dataType: 'DeviceRef' | 'MicrophoneRef' | 'DateTime' = 'DeviceRef',
+  dataType: 'DeviceRef' | 'MicrophoneRef' | 'ServerRef' | 'JournalRef' | 'ReporterRef' | 'DateTime' = 'DeviceRef',
 ): ScenarioGraphEdge {
   return {
     source,
@@ -214,6 +237,22 @@ describe('resolveInput (DBR4)', () => {
     expect(value).toEqual(ref);
   });
 
+  it('re-reads variable-get from store on each resolve (no stale cache)', () => {
+    const refA = createReferenceValue('DeviceRef', 'handle-a');
+    const refB = createReferenceValue('DeviceRef', 'handle-b');
+    let variables = [{ ...deviceVar, value: refA }];
+    const sgWired = subgraph(
+      'set',
+      [variableGetNode('get', deviceVar.id), variableSetNode('set', deviceVar.id)],
+      [dataEdge('get', VARIABLE_VALUE_HANDLE, 'set', VARIABLE_VALUE_HANDLE)],
+    );
+    const ctx = onConnectContext;
+
+    expect(resolveInput(sgWired, variables, 'set', VARIABLE_VALUE_HANDLE, ctx)).toEqual(refA);
+    variables = [{ ...deviceVar, value: refB }];
+    expect(resolveInput(sgWired, variables, 'set', VARIABLE_VALUE_HANDLE, ctx)).toEqual(refB);
+  });
+
   it('forwards variable-set value output from its data input', () => {
     const sg = subgraph(
       'evt',
@@ -318,6 +357,211 @@ describe('resolveInput (DBR4)', () => {
 
     const value = resolveInput(sg, [micVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
     expect(value).toEqual(createReferenceValue('MicrophoneRef', 'mic-selected'));
+  });
+
+  it('resolves get-recorder output as invalid RecorderRef until host session (DBC2)', () => {
+    const recorderVar = createScenarioVariable('var-rec', 'rec1', 'RecorderRef');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gr',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-recorder',
+        },
+        variableSetNode('set', recorderVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gr', GET_RECORDER_DEVICE_HANDLE),
+        dataEdge('gr', GET_RECORDER_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'RecorderRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [recorderVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
+    expect(value).toEqual({ kind: 'RecorderRef', handle: null, valid: false });
+  });
+
+  it('resolves get-recorder output from host session ref (DBC2 hook)', () => {
+    const recorderVar = createScenarioVariable('var-rec', 'rec1', 'RecorderRef');
+    const recorderRef = createReferenceValue('RecorderRef', 'recorder:device-abc');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gr',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-recorder',
+        },
+        variableSetNode('set', recorderVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gr', GET_RECORDER_DEVICE_HANDLE),
+        dataEdge('gr', GET_RECORDER_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'RecorderRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [recorderVar], 'set', VARIABLE_VALUE_HANDLE, {
+      ...onConnectContext,
+      getRecorderSessionRef: (handle) =>
+        handle === DEVICE_HANDLE ? recorderRef : null,
+    });
+    expect(value).toEqual(recorderRef);
+  });
+
+  it('resolves get-journal device scope from host (DBJ1)', () => {
+    const journalVar = createScenarioVariable('var-journal', 'journal1', 'JournalRef');
+    const journalRef = createReferenceValue('JournalRef', `journal:device:${DEVICE_HANDLE}`);
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gj',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-journal',
+        },
+        variableSetNode('set', journalVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gj', GET_JOURNAL_DEVICE_HANDLE),
+        dataEdge('gj', GET_JOURNAL_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'JournalRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [journalVar], 'set', VARIABLE_VALUE_HANDLE, {
+      ...onConnectContext,
+      getDeviceJournalRef: (handle) => (handle === DEVICE_HANDLE ? journalRef : null),
+    });
+    expect(value).toEqual(journalRef);
+  });
+
+  it('resolves get-journal server scope using paired deviceId (DBJ1)', () => {
+    const journalVar = createScenarioVariable('var-journal', 'journal1', 'JournalRef');
+    const journalRef = createReferenceValue('JournalRef', `journal:server:${DEVICE_HANDLE}`);
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gj',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-journal',
+        },
+        variableSetNode('set', journalVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_SERVER_HANDLE, 'gj', GET_JOURNAL_SERVER_HANDLE, 'ServerRef'),
+        dataEdge('gj', GET_JOURNAL_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'JournalRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [journalVar], 'set', VARIABLE_VALUE_HANDLE, {
+      handlerBranch: 'onConnect',
+      deviceHandle: DEVICE_HANDLE,
+      serverHandle: 'membrane-1',
+      triggeredAt: '2026-06-20T12:00:00.000Z',
+      getServerJournalRef: (handle) => (handle === DEVICE_HANDLE ? journalRef : null),
+    });
+    expect(value).toEqual(journalRef);
+  });
+
+  it('resolves get-reporter output from journal ref (DBJ2)', () => {
+    const reporterVar = createScenarioVariable('var-reporter', 'reporter1', 'ReporterRef');
+    const journalRef = createReferenceValue('JournalRef', `journal:device:${DEVICE_HANDLE}`);
+    const reporterRef = createReferenceValue('ReporterRef', `reporter:journal:device:${DEVICE_HANDLE}`);
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gj',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-journal',
+        },
+        {
+          id: 'gr',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-reporter',
+        },
+        variableSetNode('set', reporterVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gj', GET_JOURNAL_DEVICE_HANDLE),
+        dataEdge('gj', GET_JOURNAL_OUT_HANDLE, 'gr', GET_REPORTER_JOURNAL_HANDLE, 'JournalRef'),
+        dataEdge('gr', GET_REPORTER_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'ReporterRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [reporterVar], 'set', VARIABLE_VALUE_HANDLE, {
+      ...onConnectContext,
+      getDeviceJournalRef: (handle) => (handle === DEVICE_HANDLE ? journalRef : null),
+      getReporterRef: (handle) =>
+        handle === journalRef.handle ? reporterRef : null,
+    });
+    expect(value).toEqual(reporterRef);
+  });
+
+  it('resolves make-report-from-track output from report store (DBJ3)', () => {
+    const reportRef = createReferenceValue('ReportRef', 'report:rep-1');
+    const sg = subgraph(
+      'main',
+      [
+        {
+          id: 'mrt',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'make-report-from-track',
+        },
+        variableSetNode('set', 'var-report'),
+      ],
+      [
+        dataEdge('mrt', MAKE_REPORT_FROM_TRACK_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'ReportRef'),
+      ],
+    );
+    const reportVar = createScenarioVariable('var-report', 'report1', 'ReportRef');
+
+    const value = resolveInput(sg, [reportVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getReportRef: (nodeId) => (nodeId === 'mrt' ? reportRef : null),
+    });
+    expect(value).toEqual(reportRef);
+  });
+
+  it('resolves get-spectral-analyser output as invalid ref until host session (DBC2)', () => {
+    const analyserVar = createScenarioVariable('var-fft', 'fft1', 'SpectralAnalyserRef');
+    const sg = subgraph(
+      'evt',
+      [
+        eventNode('evt'),
+        {
+          id: 'gsa',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'get-spectral-analyser',
+        },
+        variableSetNode('set', analyserVar.id),
+      ],
+      [
+        dataEdge('evt', EVENT_DEVICE_HANDLE, 'gsa', GET_SPECTRAL_ANALYSER_DEVICE_HANDLE),
+        dataEdge(
+          'gsa',
+          GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+          'set',
+          VARIABLE_VALUE_HANDLE,
+          'SpectralAnalyserRef',
+        ),
+      ],
+    );
+
+    const value = resolveInput(sg, [analyserVar], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
+    expect(value).toEqual({ kind: 'SpectralAnalyserRef', handle: null, valid: false });
   });
 
   it('resolves get-audio-stream output when microphone matches active stream', () => {
@@ -456,6 +700,59 @@ describe('resolveInput (DBR4)', () => {
     });
     expect(value).toEqual(frameRef);
   });
+
+  it('resolves device-global GetDevice from loop context without Event', () => {
+    const deviceVar = createScenarioVariable('var-dev', 'device1', 'DeviceRef');
+    const sg = subgraph(
+      'dg',
+      [
+        {
+          id: 'dg',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'device-global',
+        },
+        variableSetNode('set', deviceVar.id),
+      ],
+      [dataEdge('dg', DEVICE_GLOBAL_DEVICE_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'DeviceRef')],
+    );
+
+    const value = resolveInput(sg, [deviceVar], 'set', VARIABLE_VALUE_HANDLE, {
+      deviceHandle: DEVICE_HANDLE,
+    });
+    expect(value).toEqual(createReferenceValue('DeviceRef', DEVICE_HANDLE));
+  });
+
+  it('resolves start-streaming AudioStreamRef output after stream start', () => {
+    const streamVar = createScenarioVariable('var-stream', 'stream1', 'AudioStreamRef');
+    const micVar = {
+      ...createScenarioVariable('var-mic', 'mic1', 'MicrophoneRef'),
+      value: createReferenceValue('MicrophoneRef', 'mic-1'),
+    };
+    const activeStream = createReferenceValue('AudioStreamRef', 'stream:mic-1');
+    const sg = subgraph(
+      'evt',
+      [
+        variableGetNode('get-mic', micVar.id),
+        {
+          id: 'ss',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'start-streaming',
+        },
+        variableSetNode('set', streamVar.id),
+      ],
+      [
+        dataEdge('get-mic', VARIABLE_VALUE_HANDLE, 'ss', STREAMING_MIC_HANDLE, 'MicrophoneRef'),
+        dataEdge('ss', GET_AUDIO_STREAM_OUT_HANDLE, 'set', VARIABLE_VALUE_HANDLE, 'AudioStreamRef'),
+      ],
+    );
+
+    const value = resolveInput(sg, [streamVar, micVar], 'set', VARIABLE_VALUE_HANDLE, {
+      getActiveAudioStreamRef: () => activeStream,
+    });
+    expect(value).toEqual(activeStream);
+  });
 });
 
 describe('variable-set runtime integration (DBR4)', () => {
@@ -513,5 +810,38 @@ describe('variable-set runtime integration (DBR4)', () => {
     const value = store.getValue(deviceVar.id);
     expect(value?.valid).toBe(false);
     expect(value?.handle).toBe(DEVICE_HANDLE);
+  });
+
+  it('MakeFftTrendsPolicy resolves FftTrendsPolicy value on policy output (B0)', () => {
+    const policyNode: ScenarioGraphNode = {
+      id: 'mftp',
+      blockKind: 'custom',
+      position: { x: 0, y: 0 },
+      nodeKind: 'make-fft-trends-policy',
+      fftTrendsPolicy: {
+        detectionMode: 'manual',
+        measurementsCount: 100,
+        intervalMs: 200,
+        minConfidence: 0.55,
+        minRms: 0.02,
+        enabledTemplateKeys: ['DRONE_TIGHT'],
+      },
+    };
+    const sg = subgraph('mftp', [policyNode], []);
+    const value = resolveNodeOutput(
+      sg,
+      [],
+      policyNode,
+      MAKE_FFT_TRENDS_POLICY_OUT_HANDLE,
+      onConnectContext,
+    );
+    expect(value?.kind).toBe('FftTrendsPolicy');
+    if (value?.kind !== 'FftTrendsPolicy') {
+      return;
+    }
+    expect(value.measurementsCount).toBe(100);
+    expect(value.intervalMs).toBe(200);
+    expect(value.detectionMode).toBe('manual');
+    expect(value.enabledTemplateKeys).toEqual(['DRONE_TIGHT']);
   });
 });

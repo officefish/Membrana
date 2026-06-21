@@ -3144,6 +3144,956 @@
       ],
       "notes": "Lead: Vesnin. yarn turbo green; task:archive; Closes Issue.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "device-board-collectors-v05",
+      "title": "Device-Board Collectors v0.5: Recorder/SpectralAnalyser singletons, Collect event-ports, NewTrack/NewFftTrends (DBC0–DBC6)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "DBC0-DBC6 LGTM; Issue 130 close after PR merge",
+      "dependsOn": [
+        "device-board-refactor-v04"
+      ],
+      "notes": "Консилиум 2026-06-20: seanses/device-board-collectors-v05-2026-06-20.md. GetFFTFrame отдельный узел. Policy на singleton OOS. Collect config — правый сайдбар (mic defaults). Terminal inputs — массив ref. DBC6 = Vesnin code review + LGTM.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-0-core-contracts",
+      "title": "DBC0: core contracts — RecorderRef, SpectralAnalyserRef, event pin, CollectorConfig, node kinds (vesnin)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "device-board-collectors-v05"
+      ],
+      "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += RecorderRef/SpectralAnalyserRef; scenario node kinds get-recorder, get-spectral-analyser, collect-*, new-track, new-fft-trends-analysis; CollectorConfig; pin kind event; DEVICE_BOARD_CONCEPT v0.5 §collectors.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-1-getter-nodes",
+      "title": "DBC1: GetRecorder, GetSpectralAnalyser, GetFFTFrame — graph nodes + palette + validation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-0-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. Device-method pattern (device in). GetFFTFrame = Sample→Frame transform, отдельный узел.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-2-host-singletons",
+      "title": "DBC2: host RecorderSession / SpectralAnalyserSession + multicast registry",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-0-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov + Музыкант. Per deviceHandle singleton; append/flush; без policy UI на singleton. Unit-тесты mock host.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-3-collect-nodes",
+      "title": "DBC3: CollectSamples / CollectFftFrames — event-out square port + sidebar config",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-1-getter-nodes",
+        "dbc-2-host-singletons"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko + Музыкант. collectorConfig: bufferSize 2048, smoothing 0.75, windowSec 3, queueCapacity; flush OR trigger; data-out ref arrays.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-4-terminal-nodes",
+      "title": "DBC4: NewTrack + NewFftTrendsAnalysis — terminal nodes, array ref inputs",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-3-collect-nodes"
+      ],
+      "notes": "Lead: Ozhegov + Dynin + Музыкант. NewTrack(AudioSampleRef[]), NewFftTrendsAnalysis(FftFrameRef[]); journal + trends integration.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-5-runtime-event-dispatch",
+      "title": "DBC5: runtime event dispatch on Collect flush + cookbooks + E2E one collector",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Branch feat/device-board-get-device-stop-runtime; CI green 2026-06-20; PR pending merge",
+      "dependsOn": [
+        "dbc-4-terminal-nodes"
+      ],
+      "notes": "Lead: Ozhegov + Dynin. Event branch ≠ exec tick; канон GetSample→GetFFTFrame→CollectFft; apps/docs cookbook; MVP один Collect.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbc-6-teamlead-review",
+      "title": "DBC6: Teamlead code review, CI green, LGTM, epic closure",
+      "promptPath": "docs/prompts/DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md",
+      "githubIssue": 130,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-collectors-v05",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "LGTM Vesnin; docs/seanses/device-board-collectors-v05-dbc6-review-2026-06-20.md",
+      "dependsOn": [
+        "dbc-0-core-contracts",
+        "dbc-1-getter-nodes",
+        "dbc-2-host-singletons",
+        "dbc-3-collect-nodes",
+        "dbc-4-terminal-nodes",
+        "dbc-5-runtime-event-dispatch"
+      ],
+      "notes": "Lead: Vesnin. Формальный review всех PR эпика; smoke с микрофоном; отчёт в #130; yarn task:archive device-board-collectors-v05 + фазы.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "device-board-journal-reporter-v06",
+      "title": "Device-Board Journal + Reporter v0.6: GetJournal, GetReporter, MakeReport*, PublishReport (DBJ0–DBJ6)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch DBJ0–DBJ6; device-board 215 tests, core 33, client 145; journal-reporter v0.6 complete",
+      "dependsOn": [
+        "device-board-collectors-v05"
+      ],
+      "notes": "Консенсус 2026-06-20: per-device journal (device + server scope); ReporterRef с двумя node kinds make-report; DBJ0 vesnin gate.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-0-core-contracts",
+      "title": "DBJ0: core contracts — JournalRef, ReporterRef, TrackRef, ReportRef, FftTrendAnalysisRef, report payload (vesnin)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; core 33 tests green",
+      "dependsOn": [
+        "device-board-journal-reporter-v06"
+      ],
+      "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += journal/reporter/track/report/analysis refs; node kinds get-journal, get-reporter, make-report-*, publish-report; ScenarioReportPayload; DEVICE_BOARD_CONCEPT §17.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-1-get-journal",
+      "title": "DBJ1: GetJournal — DeviceRef|ServerRef in, JournalRef out, host resolve",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; device-board 191 tests green",
+      "dependsOn": [
+        "dbj-0-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov + Rodchenko. get-journal node, palette, suggest modal, host getDeviceJournalRef/getServerJournalRef.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-2-get-reporter",
+      "title": "DBJ2: GetReporter — JournalRef in, ReporterRef out, ReporterRuntimeStore",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; device-board 197 tests green",
+      "dependsOn": [
+        "dbj-1-get-journal"
+      ],
+      "notes": "Lead: Ozhegov. get-reporter node, ReporterRuntimeStore, resolve-input, connection-suggest JOURNAL_REF_METHOD_TARGETS.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-3-make-reports",
+      "title": "DBJ3: MakeReportFromTrack / MakeReportFromAnalysis — host builders, ReportRuntimeStore",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; device-board 206 tests green; client typecheck green",
+      "dependsOn": [
+        "dbj-2-get-reporter"
+      ],
+      "notes": "Lead: Ozhegov + Dynin. make-report-from-track/analysis nodes, ReportRuntimeStore, host makeReportFromTrack/Analysis, REPORTER_REF_METHOD_TARGETS.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-4-publish-report",
+      "title": "DBJ4: PublishReport — JournalRef + ReportRef → appendReport; E2E; cookbook",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; device-board E2E + cookbook journal-reporter-v06.mdx",
+      "dependsOn": [
+        "dbj-3-make-reports"
+      ],
+      "notes": "Lead: Ozhegov. publish-report terminal node, host publishReport, REPORT_REF_METHOD_TARGETS, journal-reporter E2E.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-5-legacy-terminals",
+      "title": "DBJ5: legacy NewTrack / NewFftTrendsAnalysis — deprecation, no direct trends journal append",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "vesnin branch; legacy labels, logLegacyTerminalDeprecation, analyzeFftTrends no append",
+      "dependsOn": [
+        "dbj-4-publish-report"
+      ],
+      "notes": "Lead: Ozhegov. Palette (legacy) labels; block-executor deprecation log; NewFftTrends → in-memory only; cookbooks updated.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbj-6-teamlead-review",
+      "title": "DBJ6: teamlead review — CI green, epic archive (#131)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md",
+      "githubIssue": 131,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-journal-reporter-v06",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "turbo lint/typecheck/test green on core, device-board, client; browser smoke manual",
+      "dependsOn": [
+        "dbj-5-legacy-terminals"
+      ],
+      "notes": "Lead: Vesnin. Epic device-board-journal-reporter-v06 archived; v0.6 journal reporter chain complete on vesnin.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-trace-p0",
+      "title": "DB-Trace P0: scenario chain logging (capture → media → journal → report)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P0_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "runId/tick correlation, media-lib trace hook, event-branch done logs, cookbook",
+      "dependsOn": [
+        "dbj-4-publish-report"
+      ],
+      "notes": "Phase 0 observability. Verified in info.txt with full chain to publish-done.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-unblock-p1",
+      "title": "DB-Trace P1: unblock scenario runtime after media upload (skipRefresh)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P0_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "importBlob skipRefresh + mergeImportedSample; MVP chain unblocked",
+      "dependsOn": [
+        "db-scenario-chain-trace-p0"
+      ],
+      "notes": "E2E: upload-ok → appendTrack → publish-done → main loop continues.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-trace-p2",
+      "title": "DB-Trace P2: X-Membrana-Trace-Id client ↔ media-server correlation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P2_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "X-Membrana-Trace-Id header + pino traceId; server-storage test",
+      "dependsOn": [
+        "db-scenario-chain-unblock-p1"
+      ],
+      "notes": "Deploy background-media required for server-side traceId in prod.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-scenario-chain-trace-p3",
+      "title": "DB-Trace P3: Copy/Download scenario trace buffer (device-board UX)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SCENARIO_CHAIN_TRACE_P3_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-hackathon-1",
+      "createdAt": "2026-06-20",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Ring buffer + Copy trace + Download in device-board shell header",
+      "dependsOn": [
+        "db-scenario-chain-trace-p2"
+      ],
+      "notes": "Unified PR with P0–P3 chain trace epic closure.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-realtime-observation-pipeline",
+      "title": "DB Realtime Observation Pipeline: continuous capture → bundle report+track (эпик P0–P3)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Epic P0-P3 complete on vesnin branch; smoke with updated main (3) scenario",
+      "dependsOn": [
+        "db-scenario-chain-trace-p3"
+      ],
+      "notes": "Lead: Vesnin. Target ~20 obs/min, async track, trends-fft parity, no device-board-scenario/v1 in journal.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p0-quick-wins",
+      "title": "DB Observation P0: async MakeTrack, crossfade, windowSec=3, drop drone publish",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "async MakeTrack, crossfade, windowSec=3, drop drone publish, alarm writeJournal skip",
+      "dependsOn": [
+        "db-realtime-observation-pipeline"
+      ],
+      "notes": "Quick wins: unblock main loop tick.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p1-continuous-buffer",
+      "title": "DB Observation P1: continuous PCM buffer slice for MakeTrack",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "ScenarioContinuousPcmBuffer slice in createTrackFromSampleRefs",
+      "dependsOn": [
+        "db-observation-p0-quick-wins"
+      ],
+      "notes": "Host ring buffer per deviceHandle; no ref-queue concat for track.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p2-bundle",
+      "title": "DB Observation P2: device-board-observation/v1 bundle + renderer",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "device-board-observation/v1 schema, linked trackId, journal renderers",
+      "dependsOn": [
+        "db-observation-p1-continuous-buffer"
+      ],
+      "notes": "Single journal row: trends + trackId; lazy audio.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-observation-p3-frame-trends",
+      "title": "DB Observation P3: trends from FFT frame metrics (no PCM round-trip)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-realtime-observation-pipeline",
+      "createdAt": "2026-06-18",
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "analyzeTrendsFromFftFrames, stateful flux on scenarioFftAnalyzer",
+      "dependsOn": [
+        "db-observation-p2-bundle"
+      ],
+      "notes": "classifyTrends on MetricSample[] from frame meta.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-recording-gate-v07",
+      "title": "DB Recording Gate v0.7: StartRecording nodes + unified observation window (эпик R0–R4)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-realtime-observation-pipeline"
+      ],
+      "notes": "Lead: Vesnin. Graph nodes for §16.5 MVP; Issue #133.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-recording-gate-r0-contracts",
+      "title": "DB Recording Gate R0: core node kinds + RecordingPolicy",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-v07"
+      ],
+      "notes": "SCENARIO_NODE_KINDS + types in @membrana/core.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Core: node kinds, RecordingPolicy, RecordingSliceRef"
+    },
+    {
+      "id": "db-recording-gate-r1-graph-nodes",
+      "title": "DB Recording Gate R1: palette pins + factories",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r0-contracts"
+      ],
+      "notes": "device-board graph layer.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Palette, pins, factories, tests"
+    },
+    {
+      "id": "db-recording-gate-r2-host-bridge",
+      "title": "DB Recording Gate R2: RecorderRecordingSession + bridge",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r0-contracts"
+      ],
+      "notes": "apps/client scenarioMicJournalBridge + host ports.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "RecorderRecordingSession + bridge host ports"
+    },
+    {
+      "id": "db-recording-gate-r3-executor",
+      "title": "DB Recording Gate R3: block-executor + gate E2E",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r1-graph-nodes",
+        "db-recording-gate-r2-host-bridge"
+      ],
+      "notes": "MakeTrack slice input; runtime tests.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Gate executor, MakeTrack slice, Publish exec-out"
+    },
+    {
+      "id": "db-recording-gate-r4-scenario-smoke",
+      "title": "DB Recording Gate R4: main-v07.json + smoke + LGTM",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r3-executor"
+      ],
+      "notes": "Partial: main-v07.json + Publish exec-out + smoke started; quality blocked on R5 parity.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-recording-parity-mic-r5",
+      "title": "DB Recording Parity R5: mic-buffer-recorder capture → device-board",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_MIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r3-executor"
+      ],
+      "notes": "Superseded by db-rec-parity-a1-capture-path; archive when A1 LGTM. One-day prompt kept for reference.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Superseded by A1"
+    },
+    {
+      "id": "db-recording-parity-mic-v08",
+      "title": "DB Recording Parity v0.8: mic-buffer-recorder quality, enum RecordingPolicy (эпик A0–A5)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-recording-gate-r3-executor"
+      ],
+      "notes": "Lead: Vesnin. Same v07 graph; policy windowSec+captureFormat enums; continuous capture. Blocks trends epic B.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Epic A0-A5 complete"
+    },
+    {
+      "id": "db-rec-parity-a0-policy-contract",
+      "title": "DB Rec Parity A0: enum RecordingPolicy in @membrana/core",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-recording-parity-mic-v08"
+      ],
+      "notes": "Enum policies + constructor node kinds make-recording-policy / make-fft-trends-policy; CONCEPT §15.7.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Enum RecordingPolicy in core; make-recording-policy node"
+    },
+    {
+      "id": "db-rec-parity-a1-capture-path",
+      "title": "DB Rec Parity A1: continuous clipRecorder capture path",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a0-policy-contract"
+      ],
+      "notes": "Replaces R5 tick-chunk; GetSample → FFT only.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "clipRecorder continuous; bootstrap StartRecording"
+    },
+    {
+      "id": "db-rec-parity-a2-encode-upload",
+      "title": "DB Rec Parity A2: format-aware MakeTrack upload",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a1-capture-path"
+      ],
+      "notes": "Journal preview duration/sampleRate parity.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "upload MIME; publish-done chain"
+    },
+    {
+      "id": "db-rec-parity-a3-constructor-ui",
+      "title": "DB Rec Parity A3: MakeRecordingPolicy inspector + palette constructors",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a0-policy-contract"
+      ],
+      "notes": "Constructor palette category; enum inspector; v07 JSON wiring.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "MakeRecordingPolicy inspector"
+    },
+    {
+      "id": "db-rec-parity-a4-smoke-matrix",
+      "title": "DB Rec Parity A4: smoke matrix 6×3 + A/B mic plugin",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a2-encode-upload",
+        "db-rec-parity-a3-constructor-ui"
+      ],
+      "notes": "5s WAV sign-off run 85db5c36; CI green; trace in docs/device-board-scripts/logs/",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Run 85db5c36 5s WAV sign-off"
+    },
+    {
+      "id": "db-rec-parity-a5-lgtm",
+      "title": "DB Rec Parity A5: LGTM #133 + archive epic A",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a4-smoke-matrix"
+      ],
+      "notes": "Archive A0–A5, r5, r4-smoke; unblocks trends epic B.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Epic A LGTM; unblocks trends B"
+    },
+    {
+      "id": "db-trends-fft-parity-mic-v08",
+      "title": "DB Trends FFT Parity v0.8: trends-fft-analyzer on v07 graph (эпик B0–B3)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "completed",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a5-lgtm"
+      ],
+      "notes": "P0–B3 complete; UserCase MVP LGTM 2026-06-21. Archive after commit embedded doc.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-usercase-mvp-microphone-lgtm",
+      "title": "UserCase MVP microphone LGTM — device-board end-to-end",
+      "promptPath": "docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b3-smoke-lgtm"
+      ],
+      "notes": "Operator sign-off: live mic, journal trends-fft/v0.1, 6-template catalog.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-post-usercase-roadmap",
+      "title": "Device-board post-UserCase: UX + docs snapshot + server",
+      "promptPath": "docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-usercase-mvp-microphone-lgtm"
+      ],
+      "notes": "Directions U (usability), D (docs), S (background-media device-scenario).",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-blueprint-parity",
+      "title": "DB Pure Getters: Blueprint parity (exec-free data getters)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-usercase-mvp-microphone-lgtm"
+      ],
+      "notes": "Proposal #1 UX. G4 done; epic archived.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "G0-G4 complete; proposal 1 closed"
+    },
+    {
+      "id": "db-pure-getters-g0-core-contract",
+      "title": "DB Pure Getters G0: core pure contract",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-p0-spec-lgtm"
+      ],
+      "notes": "scenario-node-pure.ts; ScenarioGraphNode.pure; parse hydrate normalize.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g1-runtime-validation",
+      "title": "DB Pure Getters G1: runtime + validation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g0-core-contract"
+      ],
+      "notes": "exec-subgraph transparent pure skip; validate hints; impure getter exec log.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g2-inspector-canvas",
+      "title": "DB Pure Getters G2: inspector + canvas",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g1-runtime-validation"
+      ],
+      "notes": "Pure checkbox; exec strip; ref bound/empty; value edit; canvas badge.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g3-constructor-mvp",
+      "title": "DB Pure Getters G3: MVP JSON data-only policy",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g2-inspector-canvas"
+      ],
+      "notes": "MVP main: data-only policy wires; MakeTrack→restart exec; migration v0.9.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g4-lgtm",
+      "title": "DB Pure Getters G4: CONCEPT + sign-off",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g3-constructor-mvp"
+      ],
+      "notes": "CONCEPT §15.7 v0.9; PURE_GETTERS_LGTM.md; archive epic.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "CONCEPT 15.7 v0.9; PURE_GETTERS_LGTM.md"
+    },
+    {
+      "id": "db-pure-getters-p0-spec-lgtm",
+      "title": "DB Pure Getters P0: spec + product LGTM",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-blueprint-parity"
+      ],
+      "notes": "LGTM D1–D5: pure/impure toggle, ref read-only, CONSTRUCTOR_ALWAYS_PURE, no data cache.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-trends-parity-p0-spec-lgtm",
+      "title": "DB Trends Parity P0: spec + product decisions LGTM",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-fft-parity-mic-v08"
+      ],
+      "notes": "Product owner answers 2026-06-21; epic prompt + CURRENT_TASK updated.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b0-policy-contract",
+      "title": "DB Trends Parity B0: TrendsAnalysisPolicy contract",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-p0-spec-lgtm"
+      ],
+      "notes": "FftTrendsPolicy contract, MakeFftTrendsPolicy node, inspector, resolveInput, tests.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b1-runtime-parity",
+      "title": "DB Trends Parity B1: MakeFftTrendsAnalysis = plugin classify",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b0-policy-contract"
+      ],
+      "notes": "Policy port on MakeFftTrendsAnalysis; subsampleFftFramesForTrendsPolicy; resolveFftTrendsPolicyForNode.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b2-report-schema",
+      "title": "DB Trends Parity B2: journal report schema parity",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b1-runtime-parity"
+      ],
+      "notes": "createTrendsFftScenarioReportPayload; MakeReportFromAnalysis → trends-fft/v0.1.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b3-smoke-lgtm",
+      "title": "DB Trends Parity B3: smoke A/B + archive epic B",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b2-report-schema"
+      ],
+      "notes": "trends-parity:smoke-matrix; v08 MakeFftTrendsPolicy wired; signoff doc.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
     }
   ]
 }
