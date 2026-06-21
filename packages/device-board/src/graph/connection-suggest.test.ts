@@ -9,6 +9,9 @@ import {
   suggestPaletteNodesForOutgoingConnection,
 } from './connection-suggest.js';
 import { createPaletteBoardNode } from './palette-node.js';
+import { createMakeRecordingPolicyBoardNode, MAKE_RECORDING_POLICY_OUT_HANDLE } from './make-recording-policy-node.js';
+import { createMakeFftTrendsPolicyBoardNode, MAKE_FFT_TRENDS_POLICY_OUT_HANDLE } from './make-fft-trends-policy-node.js';
+import { MAKE_FFT_TRENDS_POLICY_HANDLE } from './make-fft-trends-analysis-node.js';
 
 describe('connection-suggest', () => {
   it('suggests exec targets for exec-out source', () => {
@@ -105,5 +108,28 @@ describe('connection-suggest', () => {
 
   it('maps ReportRef to publish-report target (DBJ4)', () => {
     expect(REPORT_REF_METHOD_TARGETS.map((item) => item.nodeKind)).toEqual(['publish-report']);
+  });
+
+  it('suggests start-recording for MakeRecordingPolicy policy output (A3)', () => {
+    const policyNode = createMakeRecordingPolicyBoardNode({ id: 'mrp' });
+    const suggestions = suggestPaletteNodesForOutgoingConnection(
+      [policyNode],
+      'mrp',
+      MAKE_RECORDING_POLICY_OUT_HANDLE,
+      { sourceNode: policyNode },
+    );
+    expect(suggestions.map((item) => item.nodeKind)).toContain('start-recording');
+  });
+
+  it('suggests make-fft-trends-analysis for MakeFftTrendsPolicy policy output (B1)', () => {
+    const policyNode = createMakeFftTrendsPolicyBoardNode({ id: 'mftp' });
+    const suggestions = suggestPaletteNodesForOutgoingConnection(
+      [policyNode],
+      'mftp',
+      MAKE_FFT_TRENDS_POLICY_OUT_HANDLE,
+      { sourceNode: policyNode },
+    );
+    const match = suggestions.find((item) => item.nodeKind === 'make-fft-trends-analysis');
+    expect(match?.targetHandle).toBe(MAKE_FFT_TRENDS_POLICY_HANDLE);
   });
 });

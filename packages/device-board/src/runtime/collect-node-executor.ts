@@ -203,38 +203,21 @@ export function executeCollectNode(input: ExecuteCollectNodeInput): ExecuteColle
   }
 
   const tickState = recordCollectAppend(collectStore.getTickState(node.id), nowMs);
+  collectStore.setTickState(node.id, tickState);
   const resolvedConfig = resolveScenarioCollectorConfig(config ?? DEFAULT_SCENARIO_COLLECTOR_CONFIG);
-  if (!shouldFlushCollect(tickState, config, nowMs)) {
-    collectStore.setTickState(node.id, tickState);
-    host.log('collect-fft-frames append', {
-      nodeId: node.id,
-      deviceHandle,
-      frameId: frameRef.handle,
-      pendingCount: tickState.pendingCount,
-      queueCapacity: resolvedConfig.queueCapacity,
-      windowSec: resolvedConfig.windowSec,
-      elapsedSec:
-        tickState.windowStartedAtMs !== null
-          ? ((nowMs - tickState.windowStartedAtMs) / 1000).toFixed(2)
-          : null,
-      flushed: false,
-    });
-    return { flushed: false };
-  }
-
-  const snapshot = host.flushSpectralAnalyserSession?.(deviceHandle);
-  collectStore.resetAfterFlush(node.id);
-  if (snapshot === null || snapshot === undefined || snapshot.refs.length === 0) {
-    host.log('collect-fft-frames flush-empty', { nodeId: node.id, deviceHandle });
-    return { flushed: false };
-  }
-  collectStore.setLastBatch(node.id, snapshot.refs, 'FftFrameRefList');
-  host.log('collect-fft-frames flush', {
+  host.log('collect-fft-frames append', {
     nodeId: node.id,
     deviceHandle,
-    batchSize: snapshot.refs.length,
-    frameIds: snapshot.refs.map((ref) => ref.handle),
-    flushedAt: snapshot.flushedAtIso,
+    frameId: frameRef.handle,
+    pendingCount: tickState.pendingCount,
+    queueCapacity: resolvedConfig.queueCapacity,
+    windowSec: resolvedConfig.windowSec,
+    elapsedSec:
+      tickState.windowStartedAtMs !== null
+        ? ((nowMs - tickState.windowStartedAtMs) / 1000).toFixed(2)
+        : null,
+    flushed: false,
   });
-  return { flushed: true, eventOutHandle: COLLECT_EVENT_OUT_HANDLE };
+  // Append-only on main tick: flush SpectralAnalyser — только FlushSpectralAnalyser / event-out (DBC5).
+  return { flushed: false };
 }

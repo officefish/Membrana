@@ -3597,6 +3597,503 @@
       ],
       "notes": "classifyTrends on MetricSample[] from frame meta.",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-recording-gate-v07",
+      "title": "DB Recording Gate v0.7: StartRecording nodes + unified observation window (эпик R0–R4)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-realtime-observation-pipeline"
+      ],
+      "notes": "Lead: Vesnin. Graph nodes for §16.5 MVP; Issue #133.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-recording-gate-r0-contracts",
+      "title": "DB Recording Gate R0: core node kinds + RecordingPolicy",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-v07"
+      ],
+      "notes": "SCENARIO_NODE_KINDS + types in @membrana/core.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Core: node kinds, RecordingPolicy, RecordingSliceRef"
+    },
+    {
+      "id": "db-recording-gate-r1-graph-nodes",
+      "title": "DB Recording Gate R1: palette pins + factories",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r0-contracts"
+      ],
+      "notes": "device-board graph layer.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Palette, pins, factories, tests"
+    },
+    {
+      "id": "db-recording-gate-r2-host-bridge",
+      "title": "DB Recording Gate R2: RecorderRecordingSession + bridge",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r0-contracts"
+      ],
+      "notes": "apps/client scenarioMicJournalBridge + host ports.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "RecorderRecordingSession + bridge host ports"
+    },
+    {
+      "id": "db-recording-gate-r3-executor",
+      "title": "DB Recording Gate R3: block-executor + gate E2E",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r1-graph-nodes",
+        "db-recording-gate-r2-host-bridge"
+      ],
+      "notes": "MakeTrack slice input; runtime tests.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-20",
+      "archiveNotes": "Gate executor, MakeTrack slice, Publish exec-out"
+    },
+    {
+      "id": "db-recording-gate-r4-scenario-smoke",
+      "title": "DB Recording Gate R4: main-v07.json + smoke + LGTM",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-recording-gate-v07",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r3-executor"
+      ],
+      "notes": "Partial: main-v07.json + Publish exec-out + smoke started; quality blocked on R5 parity.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-recording-parity-mic-r5",
+      "title": "DB Recording Parity R5: mic-buffer-recorder capture → device-board",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_MIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-20",
+      "dependsOn": [
+        "db-recording-gate-r3-executor"
+      ],
+      "notes": "Superseded by db-rec-parity-a1-capture-path; archive when A1 LGTM. One-day prompt kept for reference.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Superseded by A1"
+    },
+    {
+      "id": "db-recording-parity-mic-v08",
+      "title": "DB Recording Parity v0.8: mic-buffer-recorder quality, enum RecordingPolicy (эпик A0–A5)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-recording-gate-r3-executor"
+      ],
+      "notes": "Lead: Vesnin. Same v07 graph; policy windowSec+captureFormat enums; continuous capture. Blocks trends epic B.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Epic A0-A5 complete"
+    },
+    {
+      "id": "db-rec-parity-a0-policy-contract",
+      "title": "DB Rec Parity A0: enum RecordingPolicy in @membrana/core",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-recording-parity-mic-v08"
+      ],
+      "notes": "Enum policies + constructor node kinds make-recording-policy / make-fft-trends-policy; CONCEPT §15.7.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Enum RecordingPolicy in core; make-recording-policy node"
+    },
+    {
+      "id": "db-rec-parity-a1-capture-path",
+      "title": "DB Rec Parity A1: continuous clipRecorder capture path",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a0-policy-contract"
+      ],
+      "notes": "Replaces R5 tick-chunk; GetSample → FFT only.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "clipRecorder continuous; bootstrap StartRecording"
+    },
+    {
+      "id": "db-rec-parity-a2-encode-upload",
+      "title": "DB Rec Parity A2: format-aware MakeTrack upload",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a1-capture-path"
+      ],
+      "notes": "Journal preview duration/sampleRate parity.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "upload MIME; publish-done chain"
+    },
+    {
+      "id": "db-rec-parity-a3-constructor-ui",
+      "title": "DB Rec Parity A3: MakeRecordingPolicy inspector + palette constructors",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a0-policy-contract"
+      ],
+      "notes": "Constructor palette category; enum inspector; v07 JSON wiring.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "MakeRecordingPolicy inspector"
+    },
+    {
+      "id": "db-rec-parity-a4-smoke-matrix",
+      "title": "DB Rec Parity A4: smoke matrix 6×3 + A/B mic plugin",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a2-encode-upload",
+        "db-rec-parity-a3-constructor-ui"
+      ],
+      "notes": "5s WAV sign-off run 85db5c36; CI green; trace in docs/device-board-scripts/logs/",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Run 85db5c36 5s WAV sign-off"
+    },
+    {
+      "id": "db-rec-parity-a5-lgtm",
+      "title": "DB Rec Parity A5: LGTM #133 + archive epic A",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": 133,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-recording-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a4-smoke-matrix"
+      ],
+      "notes": "Archive A0–A5, r5, r4-smoke; unblocks trends epic B.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Epic A LGTM; unblocks trends B"
+    },
+    {
+      "id": "db-trends-fft-parity-mic-v08",
+      "title": "DB Trends FFT Parity v0.8: trends-fft-analyzer on v07 graph (эпик B0–B3)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "completed",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-rec-parity-a5-lgtm"
+      ],
+      "notes": "P0–B3 complete; UserCase MVP LGTM 2026-06-21. Archive after commit embedded doc.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-usercase-mvp-microphone-lgtm",
+      "title": "UserCase MVP microphone LGTM — device-board end-to-end",
+      "promptPath": "docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b3-smoke-lgtm"
+      ],
+      "notes": "Operator sign-off: live mic, journal trends-fft/v0.1, 6-template catalog.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-post-usercase-roadmap",
+      "title": "Device-board post-UserCase: UX + docs snapshot + server",
+      "promptPath": "docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-usercase-mvp-microphone-lgtm"
+      ],
+      "notes": "Directions U (usability), D (docs), S (background-media device-scenario).",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-blueprint-parity",
+      "title": "DB Pure Getters: Blueprint parity (exec-free data getters)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-usercase-mvp-microphone-lgtm"
+      ],
+      "notes": "Proposal #1 UX. G4 done; epic archived.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "G0-G4 complete; proposal 1 closed"
+    },
+    {
+      "id": "db-pure-getters-g0-core-contract",
+      "title": "DB Pure Getters G0: core pure contract",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-p0-spec-lgtm"
+      ],
+      "notes": "scenario-node-pure.ts; ScenarioGraphNode.pure; parse hydrate normalize.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g1-runtime-validation",
+      "title": "DB Pure Getters G1: runtime + validation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g0-core-contract"
+      ],
+      "notes": "exec-subgraph transparent pure skip; validate hints; impure getter exec log.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g2-inspector-canvas",
+      "title": "DB Pure Getters G2: inspector + canvas",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g1-runtime-validation"
+      ],
+      "notes": "Pure checkbox; exec strip; ref bound/empty; value edit; canvas badge.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g3-constructor-mvp",
+      "title": "DB Pure Getters G3: MVP JSON data-only policy",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g2-inspector-canvas"
+      ],
+      "notes": "MVP main: data-only policy wires; MakeTrack→restart exec; migration v0.9.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-pure-getters-g4-lgtm",
+      "title": "DB Pure Getters G4: CONCEPT + sign-off",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-g3-constructor-mvp"
+      ],
+      "notes": "CONCEPT §15.7 v0.9; PURE_GETTERS_LGTM.md; archive epic.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "CONCEPT 15.7 v0.9; PURE_GETTERS_LGTM.md"
+    },
+    {
+      "id": "db-pure-getters-p0-spec-lgtm",
+      "title": "DB Pure Getters P0: spec + product LGTM",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PURE_GETTERS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-pure-getters-blueprint-parity",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-pure-getters-blueprint-parity"
+      ],
+      "notes": "LGTM D1–D5: pure/impure toggle, ref read-only, CONSTRUCTOR_ALWAYS_PURE, no data cache.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-trends-parity-p0-spec-lgtm",
+      "title": "DB Trends Parity P0: spec + product decisions LGTM",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-fft-parity-mic-v08"
+      ],
+      "notes": "Product owner answers 2026-06-21; epic prompt + CURRENT_TASK updated.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b0-policy-contract",
+      "title": "DB Trends Parity B0: TrendsAnalysisPolicy contract",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-p0-spec-lgtm"
+      ],
+      "notes": "FftTrendsPolicy contract, MakeFftTrendsPolicy node, inspector, resolveInput, tests.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b1-runtime-parity",
+      "title": "DB Trends Parity B1: MakeFftTrendsAnalysis = plugin classify",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b0-policy-contract"
+      ],
+      "notes": "Policy port on MakeFftTrendsAnalysis; subsampleFftFramesForTrendsPolicy; resolveFftTrendsPolicyForNode.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b2-report-schema",
+      "title": "DB Trends Parity B2: journal report schema parity",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b1-runtime-parity"
+      ],
+      "notes": "createTrendsFftScenarioReportPayload; MakeReportFromAnalysis → trends-fft/v0.1.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
+    },
+    {
+      "id": "db-trends-parity-b3-smoke-lgtm",
+      "title": "DB Trends Parity B3: smoke A/B + archive epic B",
+      "promptPath": "docs/prompts/DEVICE_BOARD_TRENDS_FFT_PARITY_V08_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "completed",
+      "parentEpic": "db-trends-fft-parity-mic-v08",
+      "createdAt": "2026-06-21",
+      "dependsOn": [
+        "db-trends-parity-b2-report-schema"
+      ],
+      "notes": "trends-parity:smoke-matrix; v08 MakeFftTrendsPolicy wired; signoff doc.",
+      "githubIssueClosedAt": null,
+      "completedAt": "2026-06-21"
     }
   ]
 }

@@ -113,4 +113,39 @@ docker logs background-media 2>&1 | grep 'b19f0e03-58'
 ```bash
 yarn workspace @membrana/media-library-service test
 yarn workspace @membrana/device-board test
+yarn recording-parity:smoke-matrix
 ```
+
+---
+
+## v0.8 Recording gate (clipRecorder parity)
+
+Сценарии:
+
+- Legacy policy: [`device-scenario-microphone-main-v07.json`](./device-scenario-microphone-main-v07.json) (`variable-get` RecordingPolicy)
+- Constructor: [`device-scenario-microphone-main-v08-policy-constructor.json`](./device-scenario-microphone-main-v08-policy-constructor.json) (`MakeRecordingPolicy → StartRecording`)
+
+Smoke checklist: [`DB_RECORDING_PARITY_SMOKE_MATRIX.md`](./DB_RECORDING_PARITY_SMOKE_MATRIX.md)
+
+### Нормальный цикл gate (один window)
+
+```
+[device-board][recording] start-recording { windowSec, captureFormat, encoder: 'worklet'|'mediarecorder' }
+… main ticks: [capture] ok без feed в recorder …
+[device-board][recording] recording-window-full { windowSec }
+[device-board][recording] stop-recording { handle, durationSec, captureFormat, encoder, blobBytes }
+[device-board][track] slice-start { durationSec, captureFormat, mimeType via upload }
+[device-board][media] upload-start { captureFormat, mimeType, durationSec }
+[device-board][media] upload-ok
+[device-board][track] done
+```
+
+### Типичные сбои (v0.8)
+
+| Последовательность | Причина |
+|--------------------|---------|
+| `start-recording-skip` reason `no-stream` | StartStreaming / mic module не live |
+| `stop-recording-empty` | clipRecorder не успел / stream muted |
+| `durationSec` << windowSec | старый tick-chunk path (реgress) |
+| preview ускорен | неверный `durationSec`/`sampleRate` в journal vs blob |
+| `encoder: worklet` отсутствует на WAV | не задеплоен A1 bridge |

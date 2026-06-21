@@ -102,6 +102,9 @@ describe('device-board variables (DBR2)', () => {
     expect(variableNodePins('variable-get', 'DeviceRef')).toMatchObject({
       outputs: [{ name: 'value', kind: 'data', socketType: 'DeviceRef' }],
     });
+    expect(variableNodePins('variable-get', 'DeviceRef', false).inputs).toEqual([
+      expect.objectContaining({ name: 'exec-in', kind: 'exec' }),
+    ]);
     const setPins = variableNodePins('variable-set', 'MicrophoneRef');
     expect(setPins.inputs.some((pin) => pin.kind === 'exec')).toBe(true);
     expect(setPins.inputs.some((pin) => pin.socketType === 'MicrophoneRef')).toBe(true);

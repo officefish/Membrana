@@ -32,6 +32,7 @@ import {
   GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
   GET_SPECTRAL_ANALYSER_OUT_HANDLE,
 } from '../graph/get-spectral-analyser-node.js';
+import { MAKE_FFT_TRENDS_POLICY_OUT_HANDLE } from '../graph/make-fft-trends-policy-node.js';
 import {
   GET_AUDIO_STREAM_MIC_HANDLE,
   GET_AUDIO_STREAM_OUT_HANDLE,
@@ -49,7 +50,7 @@ import {
   resolveEventDateTime,
   resolveEventReference,
 } from './reference-validity.js';
-import { ResolveInputError, resolveInput, type ResolveInputContext } from './resolve-input.js';
+import { ResolveInputError, resolveInput, resolveNodeOutput, type ResolveInputContext } from './resolve-input.js';
 import { ScenarioVariableStore } from './variable-store.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { createStubScenarioRuntimeHost } from './host.js';
@@ -234,6 +235,22 @@ describe('resolveInput (DBR4)', () => {
 
     const value = resolveInput(sg, [varWithValue], 'set', VARIABLE_VALUE_HANDLE, onConnectContext);
     expect(value).toEqual(ref);
+  });
+
+  it('re-reads variable-get from store on each resolve (no stale cache)', () => {
+    const refA = createReferenceValue('DeviceRef', 'handle-a');
+    const refB = createReferenceValue('DeviceRef', 'handle-b');
+    let variables = [{ ...deviceVar, value: refA }];
+    const sgWired = subgraph(
+      'set',
+      [variableGetNode('get', deviceVar.id), variableSetNode('set', deviceVar.id)],
+      [dataEdge('get', VARIABLE_VALUE_HANDLE, 'set', VARIABLE_VALUE_HANDLE)],
+    );
+    const ctx = onConnectContext;
+
+    expect(resolveInput(sgWired, variables, 'set', VARIABLE_VALUE_HANDLE, ctx)).toEqual(refA);
+    variables = [{ ...deviceVar, value: refB }];
+    expect(resolveInput(sgWired, variables, 'set', VARIABLE_VALUE_HANDLE, ctx)).toEqual(refB);
   });
 
   it('forwards variable-set value output from its data input', () => {
@@ -793,5 +810,38 @@ describe('variable-set runtime integration (DBR4)', () => {
     const value = store.getValue(deviceVar.id);
     expect(value?.valid).toBe(false);
     expect(value?.handle).toBe(DEVICE_HANDLE);
+  });
+
+  it('MakeFftTrendsPolicy resolves FftTrendsPolicy value on policy output (B0)', () => {
+    const policyNode: ScenarioGraphNode = {
+      id: 'mftp',
+      blockKind: 'custom',
+      position: { x: 0, y: 0 },
+      nodeKind: 'make-fft-trends-policy',
+      fftTrendsPolicy: {
+        detectionMode: 'manual',
+        measurementsCount: 100,
+        intervalMs: 200,
+        minConfidence: 0.55,
+        minRms: 0.02,
+        enabledTemplateKeys: ['DRONE_TIGHT'],
+      },
+    };
+    const sg = subgraph('mftp', [policyNode], []);
+    const value = resolveNodeOutput(
+      sg,
+      [],
+      policyNode,
+      MAKE_FFT_TRENDS_POLICY_OUT_HANDLE,
+      onConnectContext,
+    );
+    expect(value?.kind).toBe('FftTrendsPolicy');
+    if (value?.kind !== 'FftTrendsPolicy') {
+      return;
+    }
+    expect(value.measurementsCount).toBe(100);
+    expect(value.intervalMs).toBe(200);
+    expect(value.detectionMode).toBe('manual');
+    expect(value.enabledTemplateKeys).toEqual(['DRONE_TIGHT']);
   });
 });

@@ -1,7 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { OnSelectionChangeParams } from '@xyflow/react';
-import type { ScenarioNodeKind, ScenarioCollectorConfig } from '@membrana/core';
-import { resolveScenarioCollectorConfig } from '@membrana/core';
+import type {
+  ScenarioNodeKind,
+  ScenarioCollectorConfig,
+  ScenarioFftTrendsPolicy,
+  ScenarioRecordingPolicy,
+} from '@membrana/core';
+import {
+  isPureEligibleScenarioNodeKind,
+  resolveScenarioCollectorConfig,
+  resolveScenarioFftTrendsPolicy,
+  resolveScenarioGraphNodePure,
+  resolveScenarioRecordingPolicy,
+} from '@membrana/core';
+import type { Edge } from '@xyflow/react';
 
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
@@ -60,7 +72,15 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedCollectorConfig, setSelectedCollectorConfig] = useState<ScenarioCollectorConfig | null>(
     null,
   );
+  const [selectedRecordingPolicy, setSelectedRecordingPolicy] = useState<ScenarioRecordingPolicy | null>(
+    null,
+  );
+  const [selectedRecordingPolicyWired, setSelectedRecordingPolicyWired] = useState(false);
+  const [selectedFftTrendsPolicy, setSelectedFftTrendsPolicy] =
+    useState<ScenarioFftTrendsPolicy | null>(null);
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
+  const [selectedGetterPure, setSelectedGetterPure] = useState(true);
+  const [selectedGetterPureLocked, setSelectedGetterPureLocked] = useState(false);
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
@@ -141,8 +161,43 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedNodeKind(null);
     setSelectedMicrophoneId(null);
     setSelectedCollectorConfig(null);
+    setSelectedRecordingPolicy(null);
+    setSelectedRecordingPolicyWired(false);
+    setSelectedFftTrendsPolicy(null);
     setSelectedVariableId(null);
+    setSelectedGetterPure(true);
+    setSelectedGetterPureLocked(false);
   }, []);
+
+  const resolveBranchEdges = useCallback((): readonly Edge[] => {
+    switch (graph.scenarioBranch) {
+      case 'initial':
+        return graph.scenarioInitialEdges;
+      case 'onConnect':
+        return graph.scenarioOnConnectEdges;
+      case 'main':
+        return graph.scenarioMainEdges;
+      case 'alarm':
+        return graph.scenarioAlarmEdges;
+      case 'onStop':
+        return graph.scenarioOnStopEdges;
+      case 'onDisconnect':
+        return graph.scenarioOnDisconnectEdges;
+      case 'function':
+        return graph.scenarioFunctionEdges;
+      default:
+        return graph.scenarioInitialEdges;
+    }
+  }, [
+    graph.scenarioAlarmEdges,
+    graph.scenarioBranch,
+    graph.scenarioFunctionEdges,
+    graph.scenarioInitialEdges,
+    graph.scenarioMainEdges,
+    graph.scenarioOnConnectEdges,
+    graph.scenarioOnDisconnectEdges,
+    graph.scenarioOnStopEdges,
+  ]);
 
   const handleSelectionChange = useCallback((selection: OnSelectionChangeParams) => {
     const node = selection.nodes[0];
@@ -152,7 +207,12 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedNodeKind(null);
       setSelectedMicrophoneId(null);
       setSelectedCollectorConfig(null);
+      setSelectedRecordingPolicy(null);
+      setSelectedRecordingPolicyWired(false);
+      setSelectedFftTrendsPolicy(null);
       setSelectedVariableId(null);
+      setSelectedGetterPure(true);
+      setSelectedGetterPureLocked(false);
       return;
     }
     setSelectedNodeId(node.id);
@@ -168,12 +228,43 @@ const DeviceBoardShellInner: React.FC<{
         ? resolveScenarioCollectorConfig(collectorRaw as Partial<ScenarioCollectorConfig>)
         : null,
     );
+    const policyRaw = node.data?.recordingPolicy;
+    setSelectedRecordingPolicy(
+      policyRaw !== undefined && policyRaw !== null && typeof policyRaw === 'object'
+        ? resolveScenarioRecordingPolicy(policyRaw as Partial<ScenarioRecordingPolicy>)
+        : null,
+    );
+    const edges = resolveBranchEdges();
+    const policyWired =
+      kind === 'start-recording'
+        ? edges.some((edge) => edge.target === node.id && edge.targetHandle === 'policy')
+        : kind === 'is-recording-window-full'
+          ? edges.some((edge) => edge.target === node.id && edge.targetHandle === 'windowSec')
+          : false;
+    setSelectedRecordingPolicyWired(policyWired);
+    const fftTrendsRaw = node.data?.fftTrendsPolicy;
+    setSelectedFftTrendsPolicy(
+      fftTrendsRaw !== undefined && fftTrendsRaw !== null && typeof fftTrendsRaw === 'object'
+        ? resolveScenarioFftTrendsPolicy(fftTrendsRaw as Partial<ScenarioFftTrendsPolicy>)
+        : null,
+    );
     const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
     setSelectedVariableId(varId);
+    const pureFlag = typeof node.data?.pure === 'boolean' ? node.data.pure : undefined;
+    if (kind !== null && isPureEligibleScenarioNodeKind(kind)) {
+      setSelectedGetterPure(resolveScenarioGraphNodePure({ nodeKind: kind, pure: pureFlag }));
+      setSelectedGetterPureLocked(false);
+    } else if (kind === 'make-recording-policy' || kind === 'make-fft-trends-policy') {
+      setSelectedGetterPure(true);
+      setSelectedGetterPureLocked(true);
+    } else {
+      setSelectedGetterPure(false);
+      setSelectedGetterPureLocked(false);
+    }
     if (kind === 'get-microphone') {
       void refreshMicrophoneOptions();
     }
-  }, [refreshMicrophoneOptions]);
+  }, [refreshMicrophoneOptions, resolveBranchEdges]);
 
   const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
@@ -649,7 +740,15 @@ const DeviceBoardShellInner: React.FC<{
             selectedNodeKind={selectedNodeKind}
             selectedMicrophoneId={selectedMicrophoneId}
             selectedCollectorConfig={selectedCollectorConfig}
+            selectedRecordingPolicy={selectedRecordingPolicy}
+            selectedRecordingPolicyWired={selectedRecordingPolicyWired}
+            selectedFftTrendsPolicy={selectedFftTrendsPolicy}
             selectedVariableName={selectedVariableName}
+            selectedVariableId={selectedVariableId}
+            selectedVariableType={selectedVariable?.type ?? null}
+            selectedVariableValue={selectedVariable?.value ?? null}
+            selectedGetterPure={selectedGetterPure}
+            selectedGetterPureLocked={selectedGetterPureLocked}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
@@ -661,7 +760,16 @@ const DeviceBoardShellInner: React.FC<{
             onAddPaletteNode={addPaletteNodeAtViewportCenter}
             onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}
             onCollectorConfigChange={graph.updateCollectorConfig}
+            onRecordingPolicyChange={graph.updateRecordingPolicy}
+            onFftTrendsPolicyChange={graph.updateFftTrendsPolicy}
             onAssignVariableName={graph.assignNodeVariableName}
+            onVariableGetterPureChange={(nodeId, pure) => {
+              graph.setVariableGetterPure(nodeId, pure);
+              if (nodeId === selectedNodeId) {
+                setSelectedGetterPure(pure);
+              }
+            }}
+            onVariableValueChange={graph.updateVariableValue}
             onClearBoard={handleClearBoard}
           />
         </aside>

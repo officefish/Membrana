@@ -19,11 +19,14 @@ import type { SerializeScenarioFunctionInput } from './serialize-scenario-functi
 import { isValidBoardEdge } from './connection-validation.js';
 import { buildDeviceScenarioDocument } from './build-device-scenario.js';
 import { validateFunctionDepth } from './validate-function-depth.js';
+import { findPureExecEdgeHints } from './validate-pure-exec.js';
 
 export interface PreRunValidationIssue {
   readonly code: string;
   readonly message: string;
   readonly path?: string;
+  /** `warning` не блокирует Run (подсказки UX). */
+  readonly severity?: 'error' | 'warning';
 }
 
 export interface PreRunValidationInput {
@@ -168,6 +171,13 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     'scenario',
     'scenario.loops.main.edges',
   );
+  issues.push(
+    ...findPureExecEdgeHints(
+      input.scenarioMainNodes,
+      input.scenarioMainEdges,
+      'scenario.loops.main.edges',
+    ),
+  );
 
   pushEntryIssue(issues, input.scenarioAlarmNodes, SCENARIO_ALARM_ENTRY, 'scenario.loops.alarm.entry');
   pushEdgeIssues(
@@ -252,5 +262,5 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
 }
 
 export function isPreRunValid(issues: readonly PreRunValidationIssue[]): boolean {
-  return issues.length === 0;
+  return issues.every((issue) => issue.severity === 'warning');
 }

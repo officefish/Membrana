@@ -8,6 +8,7 @@ import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { ReporterRuntimeStore } from './reporter-runtime-store.js';
 import { ReportRuntimeStore } from './report-runtime-store.js';
 import { TrackRuntimeStore } from './track-runtime-store.js';
+import { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
@@ -109,6 +110,8 @@ export class ScenarioRuntime {
 
   private readonly trackStore = new TrackRuntimeStore();
 
+  private readonly recordingSliceStore = new RecordingSliceRuntimeStore();
+
   private readonly analysisStore = new FftTrendAnalysisRuntimeStore();
 
   private runPromise: Promise<void> | null = null;
@@ -185,6 +188,7 @@ export class ScenarioRuntime {
     this.reporterStore.resetAll();
     this.reportStore.resetAll();
     this.trackStore.resetAll();
+    this.recordingSliceStore.resetAll();
     this.analysisStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.stopRequested = false;
@@ -209,6 +213,7 @@ export class ScenarioRuntime {
     this.reporterStore.resetAll();
     this.reportStore.resetAll();
     this.trackStore.resetAll();
+    this.recordingSliceStore.resetAll();
     this.analysisStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.abortController = new AbortController();
@@ -346,10 +351,13 @@ export class ScenarioRuntime {
     const track: Pick<ResolveInputContext, 'getTrackRef'> = {
       getTrackRef: (nodeId) => this.trackStore.getTrackRef(nodeId),
     };
+    const recordingSlice: Pick<ResolveInputContext, 'getRecordingSliceRef'> = {
+      getRecordingSliceRef: (nodeId) => this.recordingSliceStore.getSliceRef(nodeId),
+    };
     const analysis: Pick<ResolveInputContext, 'getFftTrendAnalysisRef'> = {
       getFftTrendAnalysisRef: (nodeId) => this.analysisStore.getAnalysisRef(nodeId),
     };
-    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...analysis };
+    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis };
     if (Object.keys(merged).length === 0) {
       return context;
     }
@@ -468,6 +476,7 @@ export class ScenarioRuntime {
       reportStore: this.reportStore,
       trackStore: this.trackStore,
       analysisStore: this.analysisStore,
+      recordingSliceStore: this.recordingSliceStore,
     };
   }
 

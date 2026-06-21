@@ -6,6 +6,7 @@ import {
   isScenarioReferenceValue,
   type ScenarioDateTimeValue,
   type ScenarioIntegerValue,
+  type ScenarioRecordingPolicyValue,
   type ScenarioReferenceValue,
   type ScenarioStringValue,
   type ScenarioVariable,
@@ -45,6 +46,15 @@ function stringsEqual(left: ScenarioStringValue, right: ScenarioStringValue): bo
   return left.value === right.value;
 }
 
+function recordingPoliciesEqual(
+  left: ScenarioRecordingPolicyValue,
+  right: ScenarioRecordingPolicyValue,
+): boolean {
+  return (
+    left.windowSec === right.windowSec && left.captureFormat === right.captureFormat
+  );
+}
+
 /**
  * Семантика записи переменной из dataflow:
  * - ссылочные: `null` (onDisconnect) → invalidate; value-типы: `null` → сброс;
@@ -69,6 +79,12 @@ export function applyVariableSetValue(
       return { ...variable, value: null };
     }
     if (variable.type === 'String') {
+      if (variable.value === null) {
+        return variable;
+      }
+      return { ...variable, value: null };
+    }
+    if (variable.type === 'RecordingPolicy') {
       if (variable.value === null) {
         return variable;
       }
@@ -112,6 +128,18 @@ export function applyVariableSetValue(
   if (incoming.kind === 'String') {
     const current = variable.value;
     if (current !== null && current.kind === 'String' && stringsEqual(current, incoming)) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
+  if (incoming.kind === 'RecordingPolicy') {
+    const current = variable.value;
+    if (
+      current !== null &&
+      current.kind === 'RecordingPolicy' &&
+      recordingPoliciesEqual(current, incoming)
+    ) {
       return variable;
     }
     return { ...variable, value: incoming };

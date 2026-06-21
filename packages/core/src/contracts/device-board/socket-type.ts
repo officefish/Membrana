@@ -32,10 +32,16 @@ export const SOCKET_TYPES = [
   'TrackRef',
   'ReportRef',
   'FftTrendAnalysisRef',
+  /** v0.7: PCM slice после StopRecording (host-held до MakeTrack). */
+  'RecordingSliceRef',
   // v0.4+: value-типы scenario dataflow (не ссылки на внешний ресурс).
   'DateTime',
   'Integer',
   'String',
+  /** v0.7: policy окна записи (windowSec + captureFormat). */
+  'RecordingPolicy',
+  /** v0.8: policy FFT trends-анализа (MakeFftTrendsPolicy). */
+  'FftTrendsPolicy',
 ] as const;
 
 /** Имя типа сокета signal graph. */
@@ -65,13 +71,20 @@ export const REFERENCE_SOCKET_TYPES = [
   'TrackRef',
   'ReportRef',
   'FftTrendAnalysisRef',
+  'RecordingSliceRef',
 ] as const satisfies readonly SocketType[];
 
 /**
  * Value-типы scenario dataflow: передаются по dataflow как значения
  * (без `valid` / nullable-ссылочной семантики).
  */
-export const VALUE_SOCKET_TYPES = ['DateTime', 'Integer', 'String'] as const satisfies readonly SocketType[];
+export const VALUE_SOCKET_TYPES = [
+  'DateTime',
+  'Integer',
+  'String',
+  'RecordingPolicy',
+  'FftTrendsPolicy',
+] as const satisfies readonly SocketType[];
 
 /** Имя ссылочного типа данных (подмножество `SocketType`). */
 export type ReferenceSocketType = (typeof REFERENCE_SOCKET_TYPES)[number];

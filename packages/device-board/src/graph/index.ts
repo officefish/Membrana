@@ -146,6 +146,62 @@ export {
   isCollectFftFramesNode,
 } from './collect-fft-frames-node.js';
 export type { CreateCollectFftFramesBoardNodeOptions } from './collect-fft-frames-node.js';
+export {
+  createStartRecordingBoardNode,
+  startRecordingNodePins,
+  START_RECORDING_NODE_KIND,
+  START_RECORDING_RECORDER_HANDLE,
+  START_RECORDING_STREAM_HANDLE,
+  START_RECORDING_POLICY_HANDLE,
+  START_RECORDING_OUT_RECORDER_HANDLE,
+  isStartRecordingNode,
+} from './start-recording-node.js';
+export type { CreateStartRecordingBoardNodeOptions } from './start-recording-node.js';
+export {
+  createStopRecordingBoardNode,
+  stopRecordingNodePins,
+  STOP_RECORDING_NODE_KIND,
+  STOP_RECORDING_RECORDER_HANDLE,
+  STOP_RECORDING_SLICE_HANDLE,
+  isStopRecordingNode,
+} from './stop-recording-node.js';
+export type { CreateStopRecordingBoardNodeOptions } from './stop-recording-node.js';
+export {
+  createIsRecordingWindowFullBoardNode,
+  isRecordingWindowFullNodePins,
+  IS_RECORDING_WINDOW_FULL_NODE_KIND,
+  IS_RECORDING_WINDOW_FULL_RECORDER_HANDLE,
+  IS_RECORDING_WINDOW_FULL_WINDOW_SEC_HANDLE,
+  IS_RECORDING_WINDOW_FULL_TRUE_HANDLE,
+  IS_RECORDING_WINDOW_FULL_FALSE_HANDLE,
+  isIsRecordingWindowFullNode,
+} from './is-recording-window-full-node.js';
+export type { CreateIsRecordingWindowFullBoardNodeOptions } from './is-recording-window-full-node.js';
+export {
+  createFlushSpectralAnalyserBoardNode,
+  flushSpectralAnalyserNodePins,
+  FLUSH_SPECTRAL_ANALYSER_NODE_KIND,
+  FLUSH_SPECTRAL_ANALYSER_HANDLE,
+  FLUSH_SPECTRAL_FRAMES_HANDLE,
+  isFlushSpectralAnalyserNode,
+} from './flush-spectral-analyser-node.js';
+export type { CreateFlushSpectralAnalyserBoardNodeOptions } from './flush-spectral-analyser-node.js';
+export {
+  createMakeFftTrendsPolicyBoardNode,
+  makeFftTrendsPolicyNodePins,
+  MAKE_FFT_TRENDS_POLICY_NODE_KIND,
+  MAKE_FFT_TRENDS_POLICY_OUT_HANDLE,
+  isMakeFftTrendsPolicyNodeKind,
+  readMakeFftTrendsPolicyFromNodeData,
+} from './make-fft-trends-policy-node.js';
+export type { CreateMakeFftTrendsPolicyBoardNodeOptions } from './make-fft-trends-policy-node.js';
+export {
+  formatFftTrendsPolicyBadge,
+  fftTrendsBuiltinTemplateLabel,
+  fftTrendsPolicyDurationSec,
+  fftTrendsDetectionModeLabel,
+  FFT_TRENDS_BUILTIN_TEMPLATE_LABELS,
+} from './fft-trends-policy-ui.js';
 export type { CreateMakeFftTrendsAnalysisBoardNodeOptions } from './make-fft-trends-analysis-node.js';
 export {
   createMakeTrackBoardNode,
@@ -153,6 +209,7 @@ export {
   MAKE_TRACK_NODE_KIND,
   MAKE_TRACK_RECORDER_HANDLE,
   MAKE_TRACK_SAMPLES_HANDLE,
+  MAKE_TRACK_SLICE_HANDLE,
   MAKE_TRACK_OUT_HANDLE,
   isMakeTrackNode,
   isMakeTrackNodeKind,
@@ -165,6 +222,7 @@ export {
   MAKE_FFT_TRENDS_ANALYSIS_NODE_KIND,
   MAKE_FFT_TRENDS_ANALYSER_HANDLE,
   MAKE_FFT_TRENDS_FRAMES_HANDLE,
+  MAKE_FFT_TRENDS_POLICY_HANDLE,
   isMakeFftTrendsAnalysisNode,
   isMakeFftTrendsAnalysisNodeKind,
   LEGACY_MAKE_FFT_TRENDS_ANALYSIS_NODE_KIND,
@@ -259,6 +317,13 @@ export {
   hydratedFunctionInput,
   createDefaultHydratedBoardState,
 } from './hydrate-board-from-document.js';
+export {
+  createDefaultMvpMicrophoneHydratedState,
+  getDefaultMvpMicrophoneDocument,
+  isLegacyHackathonDefaultScenario,
+  needsFftTrendsPolicyConstructorMigration,
+  needsRecordingGateBootstrapMigration,
+} from './default-usercase-mvp-microphone.js';
 export type { HydratedBoardState, ScenarioFunctionCanvasMeta } from './hydrate-board-from-document.js';
 export { importDeviceScenarioFromJson } from './import-device-scenario.js';
 export type {
@@ -266,6 +331,16 @@ export type {
   ImportDeviceScenarioSuccess,
   ImportDeviceScenarioFailure,
 } from './import-device-scenario.js';
+export {
+  applyPureGraphHygiene,
+  isAlwaysPureBoardNode,
+  isPureToggleEligibleBoardNode,
+  isScenarioExecEdge,
+  isScenarioExecFlowEdge,
+  stripExecEdgesForNodes,
+  stripOrphanExecEdges,
+  syncPureNodePins,
+} from './pure-node-graph.js';
 export { validatePreRun, isPreRunValid } from './validate-pre-run.js';
 export type { PreRunValidationIssue, PreRunValidationInput } from './validate-pre-run.js';
 export {

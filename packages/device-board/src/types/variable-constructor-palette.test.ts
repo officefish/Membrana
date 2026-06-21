@@ -25,10 +25,11 @@ describe('variable-constructor-palette', () => {
 });
 
 describe('variableTypeIndicatorClass', () => {
-  it('maps value types: Integer blue-900, String orange, DateTime error', () => {
+  it('maps value types: Integer blue-900, String orange, DateTime error, RecordingPolicy teal', () => {
     expect(variableTypeIndicatorClass('DeviceRef')).toContain('sky');
     expect(variableTypeIndicatorClass('DateTime')).toContain('error');
     expect(variableTypeIndicatorClass('Integer')).toContain('blue-900');
     expect(variableTypeIndicatorClass('String')).toContain('orange');
+    expect(variableTypeIndicatorClass('RecordingPolicy')).toContain('teal');
   });
 });

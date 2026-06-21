@@ -1,4 +1,9 @@
 import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioReferenceValue, ScenarioSubgraph } from '@membrana/core';
+import {
+  isPolicyConstructorScenarioNodeKind,
+  isRecordingGateScenarioNodeKind,
+  resolveScenarioGraphNodePure,
+} from '@membrana/core';
 
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import {
@@ -37,12 +42,16 @@ import {
   isMakeTrackNodeKind,
   MAKE_TRACK_RECORDER_HANDLE,
   MAKE_TRACK_SAMPLES_HANDLE,
+  MAKE_TRACK_SLICE_HANDLE,
 } from '../graph/make-track-node.js';
+import { resolveFftTrendsPolicyForNode } from './resolve-fft-trends-policy.js';
+import type { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { formatVariableValueForPrintRuntime } from './format-reference.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { executeCollectNode } from './collect-node-executor.js';
+import { executeRecordingGateNode } from './recording-gate-executor.js';
 import type { CollectRuntimeStore } from './collect-runtime-store.js';
 import type { ReportRuntimeStore } from './report-runtime-store.js';
 import type { TrackRuntimeStore } from './track-runtime-store.js';
@@ -77,6 +86,8 @@ export interface BlockExecutionInput {
   readonly trackStore?: TrackRuntimeStore;
   /** v0.6: FftTrendAnalysisRef от NewFftTrendsAnalysis. */
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
+  /** v0.7: RecordingSliceRef от StopRecording. */
+  readonly recordingSliceStore?: RecordingSliceRuntimeStore;
 }
 
 export interface BlockExecutionResult {
@@ -140,6 +151,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     reportStore,
     trackStore,
     analysisStore,
+    recordingSliceStore,
   } = input;
 
   assertNotAborted(signal);
@@ -155,7 +167,9 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
   }
 
   if (node.nodeKind === 'variable-get') {
-    host.log('variable-get', { nodeId: node.id, branch, variableId: node.variableId });
+    if (!resolveScenarioGraphNodePure(node)) {
+      host.log('variable-get', { nodeId: node.id, branch, variableId: node.variableId });
+    }
     return { lastDetection, stopRequested: false };
   }
 
@@ -674,6 +688,34 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     return { lastDetection, stopRequested: false };
   }
 
+  if (node.nodeKind !== undefined && isPolicyConstructorScenarioNodeKind(node.nodeKind)) {
+    throw new Error(
+      `${node.nodeKind} "${node.id}" is pure and must not run on exec chain (use data-edge only)`,
+    );
+  }
+
+  if (node.nodeKind !== undefined && isRecordingGateScenarioNodeKind(node.nodeKind)) {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error(`${node.nodeKind} requires variableStore and resolveContext`);
+    }
+    const gateResult = await executeRecordingGateNode({
+      host,
+      subgraph,
+      node,
+      variableStore,
+      resolveContext,
+      collectStore,
+      recordingSliceStore,
+    });
+    return {
+      lastDetection,
+      stopRequested: false,
+      ...(gateResult.execOutHandle !== undefined
+        ? { execOutHandle: gateResult.execOutHandle }
+        : {}),
+    };
+  }
+
   if (node.nodeKind === 'collect-samples' || node.nodeKind === 'collect-fft-frames') {
     if (variableStore === undefined || resolveContext === undefined || collectStore === undefined) {
       throw new Error(`${node.nodeKind} requires variableStore, resolveContext and collectStore`);
@@ -728,25 +770,42 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       MAKE_TRACK_SAMPLES_HANDLE,
       resolveContext,
     );
+    const sliceRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_TRACK_SLICE_HANDLE,
+      resolveContext,
+    );
+    const hasSlice =
+      sliceRef !== null &&
+      sliceRef.kind === 'RecordingSliceRef' &&
+      isReferenceValid(sliceRef);
     const sampleRefs = resolveRefListMembers(listRef, 'AudioSampleRefList', collectStore);
-    if (sampleRefs.length === 0) {
-      throw new Error(
-        `MakeTrack "${node.id}": empty AudioSampleRefList on port "${MAKE_TRACK_SAMPLES_HANDLE}"`,
-      );
-    }
     let trackHandle: string | null = null;
-    if (host.createTrackFromSampleRefs !== undefined) {
+    if (hasSlice && host.createTrackFromRecordingSliceRef !== undefined) {
+      const result = await host.createTrackFromRecordingSliceRef(node.id, sliceRef);
+      if (result !== null) {
+        const trackRef = trackStore.setNodeTrack(node.id, result.trackId);
+        trackHandle = trackRef.handle;
+      }
+    } else if (sampleRefs.length > 0 && host.createTrackFromSampleRefs !== undefined) {
       const result = await host.createTrackFromSampleRefs(node.id, sampleRefs);
       if (result !== null) {
         const trackRef = trackStore.setNodeTrack(node.id, result.trackId);
         trackHandle = trackRef.handle;
       }
+    } else {
+      throw new Error(
+        `MakeTrack "${node.id}": provide RecordingSliceRef or non-empty AudioSampleRefList`,
+      );
     }
     host.log('make-track', {
       nodeId: node.id,
       branch,
       recorder: recorderRef.handle,
       sampleCount: sampleRefs.length,
+      slice: hasSlice ? sliceRef.handle : null,
       track: trackHandle,
     });
     return { lastDetection, stopRequested: false };
@@ -789,8 +848,14 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     }
     let detection = lastDetection;
     let analysisHandle: string | null = null;
+    const fftTrendsPolicy = resolveFftTrendsPolicyForNode(
+      subgraph,
+      variableStore,
+      node,
+      resolveContext,
+    );
     if (host.analyzeFftTrendsFromFrameRefs !== undefined) {
-      const result = await host.analyzeFftTrendsFromFrameRefs(node.id, frameRefs);
+      const result = await host.analyzeFftTrendsFromFrameRefs(node.id, frameRefs, fftTrendsPolicy);
       if (result !== null) {
         const analysisRef = analysisStore.setNodeAnalysis(node.id, result.analysisId);
         analysisHandle = analysisRef.handle;
@@ -804,6 +869,8 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       frameCount: frameRefs.length,
       analysis: analysisHandle,
       detected: detection?.detected ?? false,
+      measurementsCount: fftTrendsPolicy.measurementsCount,
+      intervalMs: fftTrendsPolicy.intervalMs,
     });
     return { lastDetection: detection, stopRequested: false };
   }

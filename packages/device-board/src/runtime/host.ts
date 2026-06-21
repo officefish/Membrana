@@ -1,4 +1,4 @@
-import { createReferenceValue, type ScenarioBlockKind, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioVariableValue } from '@membrana/core';
+import { createReferenceValue, type ScenarioBlockKind, type ScenarioCaptureFormat, type ScenarioFftTrendsPolicy, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioRecordingPolicy, type ScenarioVariableValue } from '@membrana/core';
 
 import type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
 import type {
@@ -30,6 +30,15 @@ export interface ScenarioResourceMetadata {
 export interface ScenarioLoopTickWaitOptions {
   readonly pauseMs: number;
   readonly signal: AbortSignal;
+}
+
+/** Метаданные slice после StopRecording (v0.7 / v0.8 A2). */
+export interface RecordingSliceMeta {
+  readonly handle: string;
+  readonly deviceHandle: string;
+  readonly durationSec: number;
+  readonly sampleRate: number;
+  readonly captureFormat: ScenarioCaptureFormat;
 }
 
 /** Порты исполнения блоков — реализует `apps/client` (audio, journal, detectors). */
@@ -126,6 +135,25 @@ export interface ScenarioRuntimeHost {
   ) => () => void;
   /** v0.5 DBC2: сброс singleton-очередей при load/start сценария (синхрон с CollectRuntimeStore). */
   readonly resetCollectorSessions?: () => void;
+  /** v0.7: StartRecording — continuous clip capture на deviceHandle (A1: clipRecorder). */
+  readonly startRecorderRecording?: (
+    deviceHandle: string,
+    streamRef: ScenarioReferenceValue,
+    policy: ScenarioRecordingPolicy,
+  ) => boolean;
+  /** v0.7: StopRecording — slice из active clip recorder. */
+  readonly stopRecorderRecording?: (
+    deviceHandle: string,
+  ) => RecordingSliceMeta | null | Promise<RecordingSliceMeta | null>;
+  /** v0.7: elapsed сек с StartRecording. */
+  readonly getRecorderElapsedSec?: (deviceHandle: string) => number;
+  /** v0.7: gate host clock. */
+  readonly isRecorderWindowFull?: (deviceHandle: string, windowSec: number) => boolean;
+  /** v0.7: MakeTrack из RecordingSliceRef (StopRecording path). */
+  readonly createTrackFromRecordingSliceRef?: (
+    nodeId: string,
+    sliceRef: ScenarioReferenceValue,
+  ) => Promise<{ readonly trackId: string } | null>;
   /** v0.6 DBJ1: JournalRef device scope per deviceId. */
   readonly getDeviceJournalRef?: (deviceHandle: string) => ScenarioReferenceValue | null;
   /** v0.6 DBJ1: JournalRef server scope per deviceId (cabinet backend when paired). */
@@ -158,6 +186,7 @@ export interface ScenarioRuntimeHost {
   readonly analyzeFftTrendsFromFrameRefs?: (
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
+    policy: ScenarioFftTrendsPolicy,
   ) => Promise<FftTrendsAnalysisHostResult | null>;
   readonly trendsFftDetect: () => Promise<ScenarioDetectionResult>;
   readonly evaluateSoundLevel: () => Promise<ScenarioSoundLevelResult>;
@@ -251,6 +280,32 @@ export function createStubScenarioRuntimeHost(
     subscribeSpectralAnalyserCollect:
       overrides.subscribeSpectralAnalyserCollect ?? (() => () => undefined),
     resetCollectorSessions: overrides.resetCollectorSessions ?? (() => undefined),
+    startRecorderRecording:
+      overrides.startRecorderRecording ??
+      ((deviceHandle, _streamRef, policy) => {
+        log('startRecorderRecording', { deviceHandle, windowSec: policy.windowSec });
+        return true;
+      }),
+    stopRecorderRecording:
+      overrides.stopRecorderRecording ??
+      ((deviceHandle) => {
+        log('stopRecorderRecording', { deviceHandle });
+        return {
+          handle: `recording-slice:${deviceHandle}:1`,
+          deviceHandle,
+          durationSec: 3,
+          sampleRate: 48_000,
+          captureFormat: 'wav',
+        };
+      }),
+    getRecorderElapsedSec: overrides.getRecorderElapsedSec ?? (() => 0),
+    isRecorderWindowFull: overrides.isRecorderWindowFull ?? (() => false),
+    createTrackFromRecordingSliceRef:
+      overrides.createTrackFromRecordingSliceRef ??
+      (async (nodeId, sliceRef) => {
+        log('createTrackFromRecordingSliceRef', { nodeId, slice: sliceRef.handle });
+        return { trackId: 'stub-track-slice' };
+      }),
     getDeviceJournalRef:
       overrides.getDeviceJournalRef ??
       ((deviceHandle) => ({
@@ -295,11 +350,11 @@ export function createStubScenarioRuntimeHost(
           analysis: analysisRef.handle,
         });
         return {
-          schema: 'trends-fft-report/v1',
+          schema: 'trends-fft/v0.1',
           reportId: 'stub-report-analysis',
-          trackId: 'stub-track',
+          trackId: 'trends-fft:stub:stub-report-analysis',
           isDetected: false,
-          payload: {},
+          payload: { report: { schema: 'trends-fft/v0.1', reportId: 'stub-report-analysis' } },
         };
       }),
     publishReport:
@@ -327,8 +382,8 @@ export function createStubScenarioRuntimeHost(
       }),
     analyzeFftTrendsFromFrameRefs:
       overrides.analyzeFftTrendsFromFrameRefs ??
-      (async (nodeId, refs) => {
-        log('analyzeFftTrendsFromFrameRefs', { nodeId, count: refs.length });
+      (async (nodeId, refs, policy) => {
+        log('analyzeFftTrendsFromFrameRefs', { nodeId, count: refs.length, policy });
         if (refs.length === 0) {
           return null;
         }

@@ -268,6 +268,14 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     subscribeSpectralAnalyserCollect: (deviceHandle, collectNodeId) =>
       bridge.subscribeSpectralAnalyserCollect(deviceHandle, collectNodeId),
     resetCollectorSessions: () => bridge.resetCollectorSessions(),
+    startRecorderRecording: (deviceHandle, streamRef, policy) =>
+      bridge.startRecorderRecording(deviceHandle, streamRef, policy),
+    stopRecorderRecording: (deviceHandle) => bridge.stopRecorderRecording(deviceHandle),
+    getRecorderElapsedSec: (deviceHandle) => bridge.getRecorderElapsedSec(deviceHandle),
+    isRecorderWindowFull: (deviceHandle, windowSec) =>
+      bridge.isRecorderWindowFull(deviceHandle, windowSec),
+    createTrackFromRecordingSliceRef: (nodeId, sliceRef) =>
+      bridge.createTrackFromRecordingSliceRef(nodeId, sliceRef),
     getDeviceJournalRef: (deviceHandle) =>
       createReferenceValue('JournalRef', formatJournalRefHandle('device', deviceHandle)),
     getServerJournalRef: (deviceHandle) =>
@@ -276,8 +284,8 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
       createReferenceValue('ReporterRef', formatReporterRefHandle(journalHandle)),
     createTrackFromSampleRefs: (nodeId, refs) =>
       bridge.createTrackFromSampleRefs(nodeId, refs),
-    analyzeFftTrendsFromFrameRefs: (nodeId, refs) =>
-      bridge.analyzeFftTrendsFromFrameRefs(nodeId, refs),
+    analyzeFftTrendsFromFrameRefs: (nodeId, refs, policy) =>
+      bridge.analyzeFftTrendsFromFrameRefs(nodeId, refs, policy),
     makeReportFromTrack: (reporterRef, trackRef) =>
       bridge.makeReportFromTrack(reporterRef, trackRef),
     makeReportFromAnalysis: (reporterRef, analysisRef) =>

@@ -52,6 +52,7 @@ export function scenarioChainLog(
     | 'capture'
     | 'fft'
     | 'collect'
+    | 'recording'
     | 'track'
     | 'media'
     | 'analysis'

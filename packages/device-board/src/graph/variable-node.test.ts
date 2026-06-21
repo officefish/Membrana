@@ -11,5 +11,6 @@ describe('defaultVariableNamePrefix', () => {
     expect(defaultVariableNamePrefix('DateTime')).toBe('datetime');
     expect(defaultVariableNamePrefix('Integer')).toBe('integer');
     expect(defaultVariableNamePrefix('String')).toBe('string');
+    expect(defaultVariableNamePrefix('RecordingPolicy')).toBe('recordingpolicy');
   });
 });

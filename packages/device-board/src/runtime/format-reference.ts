@@ -44,6 +44,12 @@ export function formatVariableValueForPrint(value: ScenarioVariableValue | null)
   if (value.kind === 'String') {
     return value.value;
   }
+  if (value.kind === 'RecordingPolicy') {
+    return `RecordingPolicy(windowSec=${value.windowSec}, captureFormat=${value.captureFormat})`;
+  }
+  if (value.kind === 'FftTrendsPolicy') {
+    return `FftTrendsPolicy(mode=${value.detectionMode}, n=${value.measurementsCount}, intervalMs=${value.intervalMs}, tpl=${value.enabledTemplateKeys.length})`;
+  }
   if (isScenarioReferenceValue(value)) {
     const handle = value.handle ?? 'null';
     const status = value.valid ? 'valid' : 'invalid';
@@ -75,6 +81,12 @@ export async function formatVariableValueForPrintRuntime(
   }
   if (value.kind === 'String') {
     return value.value;
+  }
+  if (value.kind === 'RecordingPolicy') {
+    return `RecordingPolicy(windowSec=${value.windowSec}, captureFormat=${value.captureFormat})`;
+  }
+  if (value.kind === 'FftTrendsPolicy') {
+    return `FftTrendsPolicy(mode=${value.detectionMode}, n=${value.measurementsCount}, intervalMs=${value.intervalMs}, tpl=${value.enabledTemplateKeys.length})`;
   }
   if (isScenarioReferenceValue(value)) {
     if (!value.valid) {

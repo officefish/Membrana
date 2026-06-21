@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { ScenarioBlockKind } from '@membrana/core';
 
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/d0-node-catalog.js';
+import { V04_PALETTE_NODE_KINDS } from '../graph/palette-node.js';
 import {
   BRANCH_SIDEBAR_SECTIONS,
   BRANCH_SCENARIO_TITLE,
@@ -9,6 +10,7 @@ import {
   isLegacyPaletteEnabled,
   LEGACY_SCENARIO_NODE_PALETTE,
   SCENARIO_V04_PALETTE,
+  SCENARIO_V04_PALETTE_SECTIONS,
   type ScenarioBranchTab,
 } from './board-ui.js';
 
@@ -51,6 +53,20 @@ describe('board-ui sidebar sections (MP7b RT6)', () => {
 });
 
 describe('scenario node palette (v0.4 DBR5)', () => {
+  it('palette sections include Конструкторы with policy nodes', () => {
+    const constructors = SCENARIO_V04_PALETTE_SECTIONS.find((s) => s.title === 'Конструкторы');
+    expect(constructors).toBeDefined();
+    expect(constructors?.items.map((item) => item.nodeKind)).toEqual(
+      expect.arrayContaining(['make-recording-policy', 'make-fft-trends-policy', 'make-track']),
+    );
+  });
+
+  it('palette sections cover every v0.4 node kind exactly once', () => {
+    const fromSections = SCENARIO_V04_PALETTE_SECTIONS.flatMap((s) => s.items.map((i) => i.nodeKind));
+    expect([...fromSections].sort()).toEqual([...V04_PALETTE_NODE_KINDS].sort());
+    expect(fromSections.length).toBe(V04_PALETTE_NODE_KINDS.length);
+  });
+
   it('default v0.4 palette includes streaming and fft nodes', () => {
     expect(SCENARIO_V04_PALETTE.map((item) => item.nodeKind)).toEqual([
       'device-global',
@@ -67,6 +83,12 @@ describe('scenario node palette (v0.4 DBR5)', () => {
       'get-fft-frame',
       'collect-samples',
       'collect-fft-frames',
+      'start-recording',
+      'stop-recording',
+      'is-recording-window-full',
+      'flush-spectral-analyser',
+      'make-recording-policy',
+      'make-fft-trends-policy',
       'make-track',
       'make-fft-trends-analysis',
       'get-journal',

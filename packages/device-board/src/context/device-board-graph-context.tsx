@@ -10,15 +10,23 @@ import {
   type NodeChange,
 } from '@xyflow/react';
 import {
+  createRecordingPolicyValue,
   createScenarioVariable,
+  DEFAULT_RECORDING_POLICY,
   resolveScenarioCollectorConfig,
+  resolveScenarioRecordingPolicy,
+  resolveScenarioFftTrendsPolicy,
   type DeviceKind,
   type DeviceScenarioDocument,
   type RuntimeMode,
   type ScenarioBlockKind,
   type ScenarioCollectorConfig,
+  type ScenarioRecordingPolicy,
+  type ScenarioFftTrendsPolicy,
   type ScenarioVariable,
   type ScenarioVariableType,
+  type ScenarioVariableValue,
+  isPureEligibleScenarioNodeKind,
 } from '@membrana/core';
 
 import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
@@ -32,6 +40,7 @@ import {
   branchScenarioExportFilename,
   buildBranchScenarioExport,
   exportDeviceScenarioDocument,
+  getDefaultMvpMicrophoneDocument,
   hydrateBoardFromDocument,
   hydratedFunctionInput,
   importDeviceScenarioFromJson,
@@ -39,6 +48,9 @@ import {
   parseBranchScenarioExportJson,
   suggestReferenceVariableMapping,
   isReferenceMappingComplete,
+  isLegacyHackathonDefaultScenario,
+  needsFftTrendsPolicyConstructorMigration,
+  needsRecordingGateBootstrapMigration,
   isPreRunValid,
   isValidBoardConnection,
   rejectSystemNodeRemovals,
@@ -49,6 +61,8 @@ import {
   scenarioDocumentFingerprint,
   syncVariableNodeLabels,
   validatePreRun,
+  stripExecEdgesForNodes,
+  syncPureNodePins,
   type VariableNodeKind,
   type V04PaletteNodeKind,
   type BranchScenarioExport,
@@ -170,6 +184,10 @@ export interface DeviceBoardGraphContextValue {
   readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
   /** v0.5 DBC3: обновить collectorConfig на Collect-узле. */
   readonly updateCollectorConfig: (nodeId: string, config: ScenarioCollectorConfig) => void;
+  /** v0.8 A3: обновить recordingPolicy на MakeRecordingPolicy / StartRecording / IsRecordingWindowFull. */
+  readonly updateRecordingPolicy: (nodeId: string, policy: ScenarioRecordingPolicy) => void;
+  /** v0.8 B0: обновить fftTrendsPolicy на MakeFftTrendsPolicy. */
+  readonly updateFftTrendsPolicy: (nodeId: string, policy: ScenarioFftTrendsPolicy) => void;
   /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
   readonly variables: readonly ScenarioVariable[];
   /** v0.4: объявить новую переменную ссылочного типа. */
@@ -186,6 +204,10 @@ export interface DeviceBoardGraphContextValue {
   ) => void;
   /** v0.4: привязать variable-get/set к переменной по имени (создаёт при отсутствии). */
   readonly assignNodeVariableName: (nodeId: string, variableName: string) => void;
+  /** v0.9: Pure ↔ Impure для variable-get (+ strip exec edges при pure). */
+  readonly setVariableGetterPure: (nodeId: string, pure: boolean) => void;
+  /** v0.9: задать value переменной (getter value-типов). */
+  readonly updateVariableValue: (variableId: string, value: ScenarioVariableValue | null) => void;
   /** Runtime: снимок входов/выходов выбранного узла (только при isRunning). */
   readonly inspectRuntimeNode: (
     nodeId: string,
@@ -367,10 +389,63 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       .then((record) => {
         if (cancelled) return;
         if (record !== null) {
-          applyHydratedState(hydrateBoardFromDocument(record.document));
+          let document = record.document;
+          if (
+            deviceKindProp === 'microphone' &&
+            (isLegacyHackathonDefaultScenario(document) ||
+              needsRecordingGateBootstrapMigration(document) ||
+              needsFftTrendsPolicyConstructorMigration(document))
+          ) {
+            document = getDefaultMvpMicrophoneDocument();
+            void persistAdapter
+              .save(document)
+              .then((saved) => {
+                if (cancelled || saved === null) {
+                  return;
+                }
+                markSavedSnapshot(saved.document);
+              })
+              .catch(() => {
+                /* migrate best-effort */
+              });
+          }
+          applyHydratedState(hydrateBoardFromDocument(document));
           pendingBaselineRef.current = true;
         } else {
           pendingBaselineRef.current = true;
+          const seedDocument =
+            deviceKindProp === 'microphone'
+              ? getDefaultMvpMicrophoneDocument()
+              : buildDeviceScenarioDocument({
+                  deviceKind: deviceKindProp,
+                  signalNodes: defaultState.signalNodes,
+                  signalEdges: defaultState.signalEdges,
+                  scenarioInitialNodes: defaultState.scenarioInitialNodes,
+                  scenarioInitialEdges: defaultState.scenarioInitialEdges,
+                  scenarioOnConnectNodes: defaultState.scenarioOnConnectNodes,
+                  scenarioOnConnectEdges: defaultState.scenarioOnConnectEdges,
+                  scenarioMainNodes: defaultState.scenarioMainNodes,
+                  scenarioMainEdges: defaultState.scenarioMainEdges,
+                  scenarioAlarmNodes: defaultState.scenarioAlarmNodes,
+                  scenarioAlarmEdges: defaultState.scenarioAlarmEdges,
+                  scenarioOnStopNodes: defaultState.scenarioOnStopNodes,
+                  scenarioOnStopEdges: defaultState.scenarioOnStopEdges,
+                  scenarioOnDisconnectNodes: defaultState.scenarioOnDisconnectNodes,
+                  scenarioOnDisconnectEdges: defaultState.scenarioOnDisconnectEdges,
+                  scenarioFunctions: [],
+                  variables: defaultState.variables,
+                });
+          void persistAdapter
+            .save(seedDocument)
+            .then((saved) => {
+              if (cancelled || saved === null) {
+                return;
+              }
+              markSavedSnapshot(saved.document);
+            })
+            .catch(() => {
+              /* seed best-effort; canvas already shows bundled default */
+            });
         }
         setSyncStatus('idle');
       })
@@ -1043,7 +1118,20 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       const sameType = current.filter((variable) => variable.type === type).length;
       const name = `${defaultVariableNamePrefix(type)}${sameType + 1}`;
       const id = `var-${type}-${Date.now().toString(36)}-${current.length + 1}`;
-      return [...current, createScenarioVariable(id, name, type)];
+      const variable = createScenarioVariable(id, name, type);
+      if (type === 'RecordingPolicy') {
+        return [
+          ...current,
+          {
+            ...variable,
+            value: createRecordingPolicyValue(
+              DEFAULT_RECORDING_POLICY.windowSec,
+              DEFAULT_RECORDING_POLICY.captureFormat,
+            ),
+          },
+        ];
+      }
+      return [...current, variable];
     });
   }, []);
 
@@ -1297,6 +1385,69 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [patchNodeData],
   );
 
+  const updateRecordingPolicy = useCallback(
+    (nodeId: string, policy: ScenarioRecordingPolicy) => {
+      patchNodeData(nodeId, { recordingPolicy: resolveScenarioRecordingPolicy(policy) });
+    },
+    [patchNodeData],
+  );
+
+  const updateFftTrendsPolicy = useCallback(
+    (nodeId: string, policy: ScenarioFftTrendsPolicy) => {
+      patchNodeData(nodeId, { fftTrendsPolicy: resolveScenarioFftTrendsPolicy(policy) });
+    },
+    [patchNodeData],
+  );
+
+  const setVariableGetterPure = useCallback(
+    (nodeId: string, pure: boolean) => {
+      const mapNodes = (nodes: Node[]) =>
+        syncPureNodePins(
+          nodes.map((node) => {
+            if (node.id !== nodeId) {
+              return node;
+            }
+            const kind = node.data?.nodeKind;
+            if (typeof kind !== 'string' || !isPureEligibleScenarioNodeKind(kind)) {
+              return node;
+            }
+            const nextData = { ...node.data };
+            if (pure) {
+              delete nextData.pure;
+            } else {
+              nextData.pure = false;
+            }
+            return { ...node, data: nextData };
+          }),
+          variables,
+        );
+      const mapEdges = (edges: Edge[]) =>
+        pure ? stripExecEdgesForNodes(edges, new Set([nodeId])) : edges;
+
+      setScenarioInitialNodes(mapNodes);
+      setScenarioOnConnectNodes(mapNodes);
+      setScenarioMainNodes(mapNodes);
+      setScenarioAlarmNodes(mapNodes);
+      setScenarioOnStopNodes(mapNodes);
+      setScenarioOnDisconnectNodes(mapNodes);
+      setScenarioFunctionNodes(mapNodes);
+      setScenarioInitialEdges(mapEdges);
+      setScenarioOnConnectEdges(mapEdges);
+      setScenarioMainEdges(mapEdges);
+      setScenarioAlarmEdges(mapEdges);
+      setScenarioOnStopEdges(mapEdges);
+      setScenarioOnDisconnectEdges(mapEdges);
+      setScenarioFunctionEdges(mapEdges);
+    },
+    [variables],
+  );
+
+  const updateVariableValue = useCallback((variableId: string, value: ScenarioVariableValue | null) => {
+    setVariables((current) =>
+      current.map((variable) => (variable.id === variableId ? { ...variable, value } : variable)),
+    );
+  }, []);
+
   const runDisabledReason = useMemo(
     () =>
       resolveRunDisabledReason({
@@ -1403,6 +1554,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       addPaletteNodeWithConnection,
       updatePaletteNodeMicrophoneId,
       updateCollectorConfig,
+      updateRecordingPolicy,
+      updateFftTrendsPolicy,
+      setVariableGetterPure,
+      updateVariableValue,
       variables,
       addVariable,
       renameVariable,
@@ -1417,6 +1572,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       addPaletteNodeWithConnection,
       updatePaletteNodeMicrophoneId,
       updateCollectorConfig,
+      updateRecordingPolicy,
+      updateFftTrendsPolicy,
+      setVariableGetterPure,
+      updateVariableValue,
       addVariable,
       addVariableNodeToCurrentBranch,
       assignNodeVariableName,

@@ -123,6 +123,8 @@ function mapSample(dto: ApiSample): MediaSample {
 function guessUploadFilename(blob: Blob, title: string): string {
   const base = title.trim() || 'sample';
   const type = blob.type || 'audio/wav';
+  if (type.includes('webm')) return `${base}.webm`;
+  if (type.includes('mp4')) return `${base}.mp4`;
   if (type.includes('mpeg') || type.includes('mp3')) return `${base}.mp3`;
   if (type.includes('ogg')) return `${base}.ogg`;
   if (type.includes('flac')) return `${base}.flac`;

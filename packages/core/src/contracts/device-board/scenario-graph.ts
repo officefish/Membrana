@@ -8,6 +8,8 @@ import type { SocketType } from './socket-type.js';
 import type { ScenarioNodeKind } from './scenario-node-kind.js';
 import type { ScenarioVariable } from './scenario-variables.js';
 import type { ScenarioCollectorConfig } from './collector-config.js';
+import type { ScenarioFftTrendsPolicy } from './fft-trends-policy.js';
+import type { ScenarioRecordingPolicy } from './recording-policy.js';
 
 /**
  * Системные ветки сценария (фиксированы на устройстве).
@@ -72,6 +74,17 @@ export interface ScenarioGraphNode {
   readonly eventVariant?: 'handler' | 'loopTick';
   /** v0.5: настройки Collect-узла (sidebar); policy на singleton — future. */
   readonly collectorConfig?: ScenarioCollectorConfig;
+  /** v0.7+: policy окна записи (StartRecording / MakeRecordingPolicy). */
+  readonly recordingPolicy?: ScenarioRecordingPolicy;
+  /** v0.8: policy FFT trends (MakeFftTrendsPolicy). */
+  readonly fftTrendsPolicy?: ScenarioFftTrendsPolicy;
+  /**
+   * v0.9: Blueprint-style pure getter flag.
+   * - policy constructors: always `true` (locked);
+   * - `variable-get`: default `true`, toggleable to impure;
+   * - host I/O / exec nodes: поле не сериализуется.
+   */
+  readonly pure?: boolean;
 }
 
 /** Ребро scenario graph. */

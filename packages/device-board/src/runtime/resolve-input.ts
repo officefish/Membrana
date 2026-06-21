@@ -1,4 +1,8 @@
 import {
+  createRecordingPolicyValue,
+  createFftTrendsPolicyValue,
+  resolveScenarioFftTrendsPolicy,
+  resolveScenarioRecordingPolicy,
   createReferenceValue,
   type ScenarioGraphNode,
   type ScenarioReferenceValue,
@@ -48,6 +52,22 @@ import {
   isMakeFftTrendsAnalysisNodeKind,
 } from '../graph/make-fft-trends-analysis-node.js';
 import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
+import {
+  START_RECORDING_OUT_RECORDER_HANDLE,
+  START_RECORDING_RECORDER_HANDLE,
+} from '../graph/start-recording-node.js';
+import {
+  MAKE_RECORDING_POLICY_OUT_HANDLE,
+  isMakeRecordingPolicyNodeKind,
+  readMakeRecordingPolicyFromNodeData,
+} from '../graph/make-recording-policy-node.js';
+import {
+  MAKE_FFT_TRENDS_POLICY_OUT_HANDLE,
+  isMakeFftTrendsPolicyNodeKind,
+  readMakeFftTrendsPolicyFromNodeData,
+} from '../graph/make-fft-trends-policy-node.js';
+import { STOP_RECORDING_SLICE_HANDLE } from '../graph/stop-recording-node.js';
+import { FLUSH_SPECTRAL_FRAMES_HANDLE } from '../graph/flush-spectral-analyser-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { isReferenceValid, resolveEventDateTime, resolveEventReference, resolveEventServerReference, resolveGlobalDeviceReference, resolveLoopTickDeltaTime, resolveLoopTickMs } from './reference-validity.js';
 
@@ -88,6 +108,8 @@ export interface ResolveInputContext {
   readonly getReportRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** TrackRef последнего MakeTrack узла. */
   readonly getTrackRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** RecordingSliceRef последнего StopRecording узла (v0.7). */
+  readonly getRecordingSliceRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** FftTrendAnalysisRef последнего MakeFftTrendsAnalysis узла. */
   readonly getFftTrendAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
@@ -215,6 +237,10 @@ function invalidReportRef(): ScenarioReferenceValue {
 
 function invalidTrackRef(): ScenarioReferenceValue {
   return { kind: 'TrackRef', handle: null, valid: false };
+}
+
+function invalidRecordingSliceRef(): ScenarioReferenceValue {
+  return { kind: 'RecordingSliceRef', handle: null, valid: false };
 }
 
 function invalidFftTrendAnalysisRef(): ScenarioReferenceValue {
@@ -612,6 +638,37 @@ export function resolveNodeOutput(
     return resolver(node.id) ?? invalidReportRef();
   }
 
+  if (isMakeRecordingPolicyNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_RECORDING_POLICY_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-recording-policy output: ${outputPort}`,
+      );
+    }
+    const raw = readMakeRecordingPolicyFromNodeData(node as unknown as Record<string, unknown>);
+    const resolved = resolveScenarioRecordingPolicy(raw);
+    return createRecordingPolicyValue(resolved.windowSec, resolved.captureFormat);
+  }
+
+  if (isMakeFftTrendsPolicyNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_FFT_TRENDS_POLICY_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-fft-trends-policy output: ${outputPort}`,
+      );
+    }
+    const raw = readMakeFftTrendsPolicyFromNodeData(node as unknown as Record<string, unknown>);
+    const resolved = resolveScenarioFftTrendsPolicy(raw);
+    return createFftTrendsPolicyValue({
+      detectionMode: resolved.detectionMode,
+      measurementsCount: resolved.measurementsCount,
+      intervalMs: resolved.intervalMs,
+      minConfidence: resolved.minConfidence,
+      minRms: resolved.minRms,
+      enabledTemplateKeys: resolved.enabledTemplateKeys,
+    });
+  }
+
   if (isMakeTrackNodeKind(node.nodeKind)) {
     if (outputPort !== MAKE_TRACK_OUT_HANDLE) {
       throw new ResolveInputError('unsupported-source', `Unknown make-track output: ${outputPort}`);
@@ -663,6 +720,55 @@ export function resolveNodeOutput(
       return invalidFftFrameRefList();
     }
     return resolver(node.id) ?? invalidFftFrameRefList();
+  }
+
+  if (node.nodeKind === 'flush-spectral-analyser') {
+    if (outputPort !== FLUSH_SPECTRAL_FRAMES_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown flush-spectral-analyser output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getCollectBatchRef;
+    if (resolver === undefined) {
+      return invalidFftFrameRefList();
+    }
+    return resolver(node.id) ?? invalidFftFrameRefList();
+  }
+
+  if (node.nodeKind === 'start-recording') {
+    if (outputPort !== START_RECORDING_OUT_RECORDER_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown start-recording output: ${outputPort}`,
+      );
+    }
+    const passthrough = resolveInput(
+      subgraph,
+      variables,
+      node.id,
+      START_RECORDING_RECORDER_HANDLE,
+      context,
+      visiting,
+    );
+    if (passthrough === null || passthrough.kind !== 'RecorderRef') {
+      return invalidRecorderRef();
+    }
+    return passthrough;
+  }
+
+  if (node.nodeKind === 'stop-recording') {
+    if (outputPort !== STOP_RECORDING_SLICE_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown stop-recording output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getRecordingSliceRef;
+    if (resolver === undefined) {
+      return invalidRecordingSliceRef();
+    }
+    return resolver(node.id) ?? invalidRecordingSliceRef();
   }
 
   if (node.nodeKind === 'print') {

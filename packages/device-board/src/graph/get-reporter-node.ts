@@ -18,28 +18,31 @@ export const GET_REPORTER_OUT_HANDLE = 'reporter' as const;
 const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
 const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 
-/** Пины GetReporter: exec passthrough + journal in, reporter out. */
-export function getReporterNodePins(): {
+/**
+ * Пины GetReporter:
+ * - pure (default) — journal in, reporter out;
+ * - impure — exec passthrough + data.
+ */
+export function getReporterNodePins(pure = true): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
+  const journalIn: BoardSocketPin = {
+    name: GET_REPORTER_JOURNAL_HANDLE,
+    kind: 'data',
+    socketType: 'JournalRef',
+  };
+  const reporterOut: BoardSocketPin = {
+    name: GET_REPORTER_OUT_HANDLE,
+    kind: 'data',
+    socketType: 'ReporterRef',
+  };
+  if (pure) {
+    return { inputs: [journalIn], outputs: [reporterOut] };
+  }
   return {
-    inputs: [
-      EXEC_IN,
-      {
-        name: GET_REPORTER_JOURNAL_HANDLE,
-        kind: 'data',
-        socketType: 'JournalRef',
-      },
-    ],
-    outputs: [
-      EXEC_OUT,
-      {
-        name: GET_REPORTER_OUT_HANDLE,
-        kind: 'data',
-        socketType: 'ReporterRef',
-      },
-    ],
+    inputs: [EXEC_IN, journalIn],
+    outputs: [EXEC_OUT, reporterOut],
   };
 }
 

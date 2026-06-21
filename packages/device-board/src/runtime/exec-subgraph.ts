@@ -5,6 +5,7 @@ import type { ScenarioRuntimeHost } from './host.js';
 import type { CollectRuntimeStore } from './collect-runtime-store.js';
 import type { ReportRuntimeStore } from './report-runtime-store.js';
 import type { TrackRuntimeStore } from './track-runtime-store.js';
+import type { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ResolveInputContext } from './resolve-input.js';
@@ -12,6 +13,7 @@ import type { ScenarioDetectionResult } from './types.js';
 
 import type { ScenarioRuntimeBranch } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
+import { isExecTransparentPureNode } from './scenario-node-pure-runtime.js';
 import { MAX_SUBGRAPH_EXEC_STEPS, yieldToEventLoop } from './runtime-timing.js';
 
 export interface ExecSubgraphOptions {
@@ -33,6 +35,8 @@ export interface ExecSubgraphOptions {
   readonly trackStore?: TrackRuntimeStore;
   /** v0.6: FftTrendAnalysisRef от NewFftTrendsAnalysis. */
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
+  /** v0.7: RecordingSliceRef от StopRecording. */
+  readonly recordingSliceStore?: RecordingSliceRuntimeStore;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -92,6 +96,21 @@ export async function runSubgraphOnce(
       throw new Error(`Scenario node "${currentId}" not found in ${options.branch}`);
     }
 
+    if (isExecTransparentPureNode(node)) {
+      const skipNextId = findExecSuccessor(subgraph, currentId, 'exec-out');
+      if (skipNextId === null) {
+        return lastDetection;
+      }
+      if (skipNextId === entryId) {
+        return lastDetection;
+      }
+      if (isLoopBranch) {
+        await yieldToEventLoop(signal);
+      }
+      currentId = skipNextId;
+      continue;
+    }
+
     callbacks.onNodeEnter?.(node);
 
     const result = await executeScenarioBlock({
@@ -111,6 +130,7 @@ export async function runSubgraphOnce(
       reportStore: options.reportStore,
       trackStore: options.trackStore,
       analysisStore: options.analysisStore,
+      recordingSliceStore: options.recordingSliceStore,
     });
 
     if (result.stopRequested) {

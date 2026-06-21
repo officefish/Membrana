@@ -4,7 +4,7 @@ import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 
 /**
- * PublishReport — JournalRef + ReportRef → append в journal (terminal).
+ * PublishReport — JournalRef + ReportRef → append в journal; exec passthrough.
  * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §17
  */
 export const PUBLISH_REPORT_NODE_KIND = 'publish-report' as const;
@@ -16,8 +16,9 @@ export const PUBLISH_REPORT_JOURNAL_HANDLE = 'journal' as const;
 export const PUBLISH_REPORT_REPORT_HANDLE = 'report' as const;
 
 const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
+const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 
-/** Пины PublishReport: exec-in + journal + report in; terminal — без выходов. */
+/** Пины PublishReport: exec passthrough + journal + report in. */
 export function publishReportNodePins(): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
@@ -36,7 +37,7 @@ export function publishReportNodePins(): {
         socketType: 'ReportRef',
       },
     ],
-    outputs: [],
+    outputs: [EXEC_OUT],
   };
 }
 
@@ -47,7 +48,7 @@ export interface CreatePublishReportBoardNodeOptions {
 
 let publishReportSeq = 0;
 
-/** Фабрика terminal-узла PublishReport. */
+/** Фабрика узла PublishReport. */
 export function createPublishReportBoardNode(
   options: CreatePublishReportBoardNodeOptions = {},
 ): Node {

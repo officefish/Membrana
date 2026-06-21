@@ -28,4 +28,16 @@ describe('validatePreRun', () => {
   it('isPreRunValid returns true for empty issue list', () => {
     expect(isPreRunValid([])).toBe(true);
   });
+
+  it('isPreRunValid ignores warning-only issues', () => {
+    expect(
+      isPreRunValid([
+        {
+          code: 'pure-exec-edge-hint',
+          message: 'hint',
+          severity: 'warning',
+        },
+      ]),
+    ).toBe(true);
+  });
 });

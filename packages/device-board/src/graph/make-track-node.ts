@@ -14,6 +14,9 @@ export const MAKE_TRACK_RECORDER_HANDLE = 'recorder' as const;
 /** Data-вход batch AudioSampleRef[] от CollectSamples. */
 export const MAKE_TRACK_SAMPLES_HANDLE = 'samples' as const;
 
+/** Data-вход RecordingSliceRef от StopRecording (v0.7). */
+export const MAKE_TRACK_SLICE_HANDLE = 'slice' as const;
+
 /** Data-выход TrackRef. */
 export const MAKE_TRACK_OUT_HANDLE = 'track' as const;
 
@@ -37,6 +40,13 @@ export function makeTrackNodePins(): {
         name: MAKE_TRACK_SAMPLES_HANDLE,
         kind: 'data',
         socketType: 'AudioSampleRefList',
+        nullable: true,
+      },
+      {
+        name: MAKE_TRACK_SLICE_HANDLE,
+        kind: 'data',
+        socketType: 'RecordingSliceRef',
+        nullable: true,
       },
     ],
     outputs: [

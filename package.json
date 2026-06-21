@@ -135,7 +135,10 @@
     "studio:build": "node scripts/studio-build.mjs",
     "studio:package": "node scripts/studio-package.mjs",
     "cabinet:tj6:prod": "node scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs",
-    "cabinet:pairing:e2e:deploy": "node scripts/_ssh-cabinet-pairing-e2e-deploy.mjs"
+    "cabinet:pairing:e2e:deploy": "node scripts/_ssh-cabinet-pairing-e2e-deploy.mjs",
+    "recording-parity:smoke-matrix": "node scripts/recording-parity-smoke-matrix.mjs",
+    "trends-parity:smoke-matrix": "node scripts/trends-fft-parity-smoke-matrix.mjs",
+    "usercase:build-mvp-microphone": "node scripts/build-usercase-mvp-microphone.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

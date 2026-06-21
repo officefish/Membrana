@@ -8,7 +8,7 @@
 export const SCENARIO_REPORT_SCHEMAS = [
   'telemetry-track/v1',
   'drone-detection-report/v1',
-  'trends-fft-report/v1',
+  'trends-fft/v0.1',
 ] as const;
 
 export type ScenarioReportSchema = (typeof SCENARIO_REPORT_SCHEMAS)[number];

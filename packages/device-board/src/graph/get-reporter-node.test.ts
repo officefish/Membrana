@@ -9,16 +9,22 @@ import {
 import { deserializeScenarioSubgraph, serializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 
 describe('get-reporter-node (DBJ2)', () => {
-  it('defines exec + JournalRef in and exec + ReporterRef out', () => {
-    const pins = getReporterNodePins();
-    expect(pins.inputs.find((pin) => pin.name === GET_REPORTER_JOURNAL_HANDLE)?.socketType).toBe(
+  it('defines exec + JournalRef in and exec + ReporterRef out when impure', () => {
+    const impure = getReporterNodePins(false);
+    expect(impure.inputs.find((pin) => pin.name === GET_REPORTER_JOURNAL_HANDLE)?.socketType).toBe(
       'JournalRef',
     );
-    expect(pins.outputs.find((pin) => pin.name === GET_REPORTER_OUT_HANDLE)?.socketType).toBe(
+    expect(impure.outputs.find((pin) => pin.name === GET_REPORTER_OUT_HANDLE)?.socketType).toBe(
       'ReporterRef',
     );
-    expect(pins.inputs.some((pin) => pin.name === 'exec-in')).toBe(true);
-    expect(pins.outputs.some((pin) => pin.name === 'exec-out')).toBe(true);
+    expect(impure.inputs.some((pin) => pin.name === 'exec-in')).toBe(true);
+    expect(impure.outputs.some((pin) => pin.name === 'exec-out')).toBe(true);
+  });
+
+  it('pure default has data pins only', () => {
+    const pure = getReporterNodePins(true);
+    expect(pure.inputs.some((pin) => pin.name === 'exec-in')).toBe(false);
+    expect(pure.outputs.some((pin) => pin.name === 'exec-out')).toBe(false);
   });
 
   it('round-trips through scenario subgraph serialization', () => {

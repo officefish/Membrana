@@ -8,6 +8,8 @@
  * - v0.4: event, variable-*, print, is-valid, get-microphone, streaming, get-sample, get-fft-frame, …
  * - v0.5: get-recorder, get-spectral-analyser, collect-*, make-track, make-fft-trends-analysis
  * - v0.6: get-journal, get-reporter, make-report-*, publish-report
+ * - v0.7: start-recording, stop-recording, is-recording-window-full, flush-spectral-analyser
+ * - v0.8: make-recording-policy, make-fft-trends-policy (policy constructors)
  */
 export const SCENARIO_NODE_KINDS = [
   'event',
@@ -45,6 +47,18 @@ export const SCENARIO_NODE_KINDS = [
   'make-report-from-analysis',
   /** v0.6: PublishReport — JournalRef + ReportRef → append в journal. */
   'publish-report',
+  /** v0.7: StartRecording(recorder, stream, policy?) → rolling PCM window. */
+  'start-recording',
+  /** v0.7: StopRecording(recorder) → RecordingSliceRef. */
+  'stop-recording',
+  /** v0.7: gate — elapsed >= windowSec (host clock). */
+  'is-recording-window-full',
+  /** v0.7: FlushSpectralAnalyser(analyser) → FftFrameRefList (explicit flush). */
+  'flush-spectral-analyser',
+  /** v0.8: MakeRecordingPolicy — exec → RecordingPolicy value (constructor). */
+  'make-recording-policy',
+  /** v0.8: MakeFftTrendsPolicy — exec → FftTrendsPolicy value (constructor). */
+  'make-fft-trends-policy',
   /** Системный терминал лупа (∞): exec-ребро сюда → новая итерация. */
   'loop-repeat',
 ] as const;
@@ -88,6 +102,65 @@ export type JournalScenarioNodeKind = (typeof JOURNAL_SCENARIO_NODE_KINDS)[numbe
 
 export type ReporterMethodScenarioNodeKind = (typeof REPORTER_METHOD_SCENARIO_NODE_KINDS)[number];
 
+/** Recording gate узлы v0.7. */
+export const RECORDING_GATE_SCENARIO_NODE_KINDS = [
+  'start-recording',
+  'stop-recording',
+  'is-recording-window-full',
+  'flush-spectral-analyser',
+] as const satisfies readonly ScenarioNodeKind[];
+
+export type RecordingGateScenarioNodeKind = (typeof RECORDING_GATE_SCENARIO_NODE_KINDS)[number];
+
+/**
+ * Узлы-конструкторы v0.8+: создают value/ref на exec и отдают по data-out.
+ * MakeTrack / make-report-* / make-fft-trends-analysis — ref-конструкторы (side-effect + host store).
+ * make-*-policy — pure value constructors (конфиг на узле → dataflow value; always pure v0.9).
+ * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §15.7
+ */
+export const POLICY_CONSTRUCTOR_SCENARIO_NODE_KINDS = [
+  'make-recording-policy',
+  'make-fft-trends-policy',
+] as const satisfies readonly ScenarioNodeKind[];
+
+export type PolicyConstructorScenarioNodeKind =
+  (typeof POLICY_CONSTRUCTOR_SCENARIO_NODE_KINDS)[number];
+
+/** Ref-конструкторы: host-side materialization (TrackRef, ReportRef, …). */
+export const REF_CONSTRUCTOR_SCENARIO_NODE_KINDS = [
+  'make-track',
+  'make-fft-trends-analysis',
+  'make-report-from-track',
+  'make-report-from-analysis',
+] as const satisfies readonly ScenarioNodeKind[];
+
+export type RefConstructorScenarioNodeKind = (typeof REF_CONSTRUCTOR_SCENARIO_NODE_KINDS)[number];
+
+/** Все узлы-конструкторы (policy + ref). */
+export const CONSTRUCTOR_SCENARIO_NODE_KINDS = [
+  ...POLICY_CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  ...REF_CONSTRUCTOR_SCENARIO_NODE_KINDS,
+] as const satisfies readonly ScenarioNodeKind[];
+
+export type ConstructorScenarioNodeKind = (typeof CONSTRUCTOR_SCENARIO_NODE_KINDS)[number];
+
+/** True, если policy value constructor v0.8. */
+export function isPolicyConstructorScenarioNodeKind(
+  value: string,
+): value is PolicyConstructorScenarioNodeKind {
+  return (POLICY_CONSTRUCTOR_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
+}
+
+/** True, если ref constructor (MakeTrack, MakeReport, …). */
+export function isRefConstructorScenarioNodeKind(value: string): value is RefConstructorScenarioNodeKind {
+  return (REF_CONSTRUCTOR_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
+}
+
+/** True, если любой constructor node kind. */
+export function isConstructorScenarioNodeKind(value: string): value is ConstructorScenarioNodeKind {
+  return (CONSTRUCTOR_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
+}
+
 /** Системные виды узлов, которые нельзя удалять с борда. */
 export const SYSTEM_SCENARIO_NODE_KINDS = ['event', 'loop-repeat', 'device-global'] as const satisfies readonly ScenarioNodeKind[];
 
@@ -126,4 +199,9 @@ export function isJournalScenarioNodeKind(value: string): value is JournalScenar
 /** True, если make-report метод Reporter v0.6. */
 export function isReporterMethodScenarioNodeKind(value: string): value is ReporterMethodScenarioNodeKind {
   return (REPORTER_METHOD_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
+}
+
+/** True, если recording gate v0.7. */
+export function isRecordingGateScenarioNodeKind(value: string): value is RecordingGateScenarioNodeKind {
+  return (RECORDING_GATE_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
 }

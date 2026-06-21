@@ -21,33 +21,38 @@ export const GET_JOURNAL_OUT_HANDLE = 'journal' as const;
 const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
 const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 
-/** Пины GetJournal: exec passthrough + device | server in, journal out. */
-export function getJournalNodePins(): {
+/**
+ * Пины GetJournal:
+ * - pure (default) — device | server in, journal out;
+ * - impure — exec passthrough + data.
+ */
+export function getJournalNodePins(pure = true): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
+  const dataInputs: BoardSocketPin[] = [
+    {
+      name: GET_JOURNAL_DEVICE_HANDLE,
+      kind: 'data',
+      socketType: 'DeviceRef',
+    },
+    {
+      name: GET_JOURNAL_SERVER_HANDLE,
+      kind: 'data',
+      socketType: 'ServerRef',
+    },
+  ];
+  const journalOut: BoardSocketPin = {
+    name: GET_JOURNAL_OUT_HANDLE,
+    kind: 'data',
+    socketType: 'JournalRef',
+  };
+  if (pure) {
+    return { inputs: dataInputs, outputs: [journalOut] };
+  }
   return {
-    inputs: [
-      EXEC_IN,
-      {
-        name: GET_JOURNAL_DEVICE_HANDLE,
-        kind: 'data',
-        socketType: 'DeviceRef',
-      },
-      {
-        name: GET_JOURNAL_SERVER_HANDLE,
-        kind: 'data',
-        socketType: 'ServerRef',
-      },
-    ],
-    outputs: [
-      EXEC_OUT,
-      {
-        name: GET_JOURNAL_OUT_HANDLE,
-        kind: 'data',
-        socketType: 'JournalRef',
-      },
-    ],
+    inputs: [EXEC_IN, ...dataInputs],
+    outputs: [EXEC_OUT, journalOut],
   };
 }
 

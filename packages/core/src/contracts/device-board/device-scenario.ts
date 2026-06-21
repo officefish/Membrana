@@ -13,8 +13,10 @@ import {
   createEmptyScenarioGraph,
   createEmptyScenarioSubgraph,
   type ScenarioGraph,
+  type ScenarioGraphNode,
   type ScenarioSubgraph,
 } from './scenario-graph.js';
+import { normalizeScenarioGraphNodePure } from './scenario-node-pure.js';
 import { isScenarioVariable, migrateScenarioVariableLegacy, type ScenarioVariable } from './scenario-variables.js';
 
 /** Discriminator JSON-документа сценария устройства. */
@@ -76,9 +78,15 @@ function parseSubgraph(value: unknown, path: string): Result<ScenarioSubgraph, V
   if (!Array.isArray(nodes) || !Array.isArray(edges)) {
     return err(new ValidationError(`${path}.nodes and ${path}.edges must be arrays`, path));
   }
+  const normalizedNodes = nodes.map((raw) => {
+    if (!isRecord(raw)) {
+      return raw;
+    }
+    return normalizeScenarioGraphNodePure(raw as unknown as ScenarioGraphNode);
+  });
   return ok({
     entry,
-    nodes: nodes as ScenarioSubgraph['nodes'],
+    nodes: normalizedNodes as ScenarioSubgraph['nodes'],
     edges: edges as ScenarioSubgraph['edges'],
   });
 }

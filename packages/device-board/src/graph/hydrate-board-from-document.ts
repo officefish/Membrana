@@ -40,9 +40,10 @@ import { ensureEventEntry, ensureLoopTickEntry, syncEventNodePins } from './even
 import { syncDeviceGlobalNodePins } from './device-global-node.js';
 import { ensureLoopInfinity, syncLoopRepeatNodePins } from './loop-repeat-node.js';
 import { deserializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
-import { syncVariableNodePins } from './variable-node.js';
+import { applyPureGraphHygiene } from './pure-node-graph.js';
 import { deserializeSignalGraph } from './serialize-signal-graph.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
+import { createDefaultMvpMicrophoneHydratedState } from './default-usercase-mvp-microphone.js';
 
 export interface ScenarioFunctionCanvasMeta {
   readonly id: string;
@@ -145,6 +146,14 @@ function fallbackSubgraph(
   return deserializeScenarioSubgraph(subgraph, variables);
 }
 
+function applyBranchPureHygiene(
+  nodes: Node[],
+  edges: Edge[],
+  variables: readonly ScenarioVariable[],
+): { nodes: Node[]; edges: Edge[] } {
+  return applyPureGraphHygiene(nodes, edges, variables);
+}
+
 /** `DeviceScenarioDocument` → состояние всех канвасов XYFlow. */
 export function hydrateBoardFromDocument(document: DeviceScenarioDocument): HydratedBoardState {
   const variables = document.scenario.variables;
@@ -201,13 +210,27 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
   alarm.nodes = syncLoopRepeatNodePins(alarmInfinity.nodes);
   alarm.edges = alarmInfinity.edges;
 
-  initial.nodes = syncVariableNodePins(initial.nodes, variables);
-  onConnect.nodes = syncVariableNodePins(onConnect.nodes, variables);
-  main.nodes = syncVariableNodePins(main.nodes, variables);
-  alarm.nodes = syncVariableNodePins(alarm.nodes, variables);
-  onStop.nodes = syncVariableNodePins(onStop.nodes, variables);
-  onDisconnect.nodes = syncVariableNodePins(onDisconnect.nodes, variables);
-  fn.nodes = syncVariableNodePins(fn.nodes, variables);
+  const initialHygiene = applyBranchPureHygiene(initial.nodes, initial.edges, variables);
+  initial.nodes = initialHygiene.nodes;
+  initial.edges = initialHygiene.edges;
+  const onConnectHygiene = applyBranchPureHygiene(onConnect.nodes, onConnect.edges, variables);
+  onConnect.nodes = onConnectHygiene.nodes;
+  onConnect.edges = onConnectHygiene.edges;
+  const mainHygiene = applyBranchPureHygiene(main.nodes, main.edges, variables);
+  main.nodes = mainHygiene.nodes;
+  main.edges = mainHygiene.edges;
+  const alarmHygiene = applyBranchPureHygiene(alarm.nodes, alarm.edges, variables);
+  alarm.nodes = alarmHygiene.nodes;
+  alarm.edges = alarmHygiene.edges;
+  const onStopHygiene = applyBranchPureHygiene(onStop.nodes, onStop.edges, variables);
+  onStop.nodes = onStopHygiene.nodes;
+  onStop.edges = onStopHygiene.edges;
+  const onDisconnectHygiene = applyBranchPureHygiene(onDisconnect.nodes, onDisconnect.edges, variables);
+  onDisconnect.nodes = onDisconnectHygiene.nodes;
+  onDisconnect.edges = onDisconnectHygiene.edges;
+  const fnHygiene = applyBranchPureHygiene(fn.nodes, fn.edges, variables);
+  fn.nodes = fnHygiene.nodes;
+  fn.edges = fnHygiene.edges;
 
   initial.nodes = syncDeviceGlobalNodePins(initial.nodes);
   onConnect.nodes = syncDeviceGlobalNodePins(onConnect.nodes);
@@ -271,8 +294,12 @@ export function hydratedFunctionInput(state: HydratedBoardState): SerializeScena
   };
 }
 
-/** Демо-состояние доски (без JSON). */
+/** Демо-состояние доски (без JSON). Microphone → bundled UserCase MVP. */
 export function createDefaultHydratedBoardState(deviceKind: DeviceKind = 'microphone'): HydratedBoardState {
+  if (deviceKind === 'microphone') {
+    return createDefaultMvpMicrophoneHydratedState();
+  }
+
   const demo = buildDemoFunctionInput();
   return {
     deviceKind,

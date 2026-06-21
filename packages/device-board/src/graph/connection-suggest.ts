@@ -26,7 +26,13 @@ import { COLLECT_SAMPLES_RECORDER_HANDLE } from './collect-samples-node.js';
 import {
   MAKE_FFT_TRENDS_ANALYSER_HANDLE,
 } from './make-fft-trends-analysis-node.js';
-import { MAKE_TRACK_RECORDER_HANDLE } from './make-track-node.js';
+import { MAKE_TRACK_RECORDER_HANDLE, MAKE_TRACK_SLICE_HANDLE } from './make-track-node.js';
+import { START_RECORDING_RECORDER_HANDLE, START_RECORDING_STREAM_HANDLE } from './start-recording-node.js';
+import { STOP_RECORDING_RECORDER_HANDLE, STOP_RECORDING_SLICE_HANDLE } from './stop-recording-node.js';
+import {
+  IS_RECORDING_WINDOW_FULL_RECORDER_HANDLE,
+} from './is-recording-window-full-node.js';
+import { FLUSH_SPECTRAL_ANALYSER_HANDLE } from './flush-spectral-analyser-node.js';
 import {
   GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
 } from './get-spectral-analyser-node.js';
@@ -99,10 +105,26 @@ export const REPORT_REF_METHOD_TARGETS = [
   { nodeKind: 'publish-report' as const, targetHandle: PUBLISH_REPORT_REPORT_HANDLE },
 ] as const;
 
-/** Методы для RecorderRef (MakeTrack, CollectSamples). */
+/** Методы для RecorderRef (MakeTrack, CollectSamples, recording gate v0.7). */
 export const RECORDER_REF_METHOD_TARGETS = [
+  { nodeKind: 'start-recording' as const, targetHandle: START_RECORDING_RECORDER_HANDLE },
+  { nodeKind: 'stop-recording' as const, targetHandle: STOP_RECORDING_RECORDER_HANDLE },
+  {
+    nodeKind: 'is-recording-window-full' as const,
+    targetHandle: IS_RECORDING_WINDOW_FULL_RECORDER_HANDLE,
+  },
   { nodeKind: 'make-track' as const, targetHandle: MAKE_TRACK_RECORDER_HANDLE },
   { nodeKind: 'collect-samples' as const, targetHandle: COLLECT_SAMPLES_RECORDER_HANDLE },
+] as const;
+
+/** Методы для AudioStreamRef (StartRecording). */
+export const AUDIO_STREAM_REF_METHOD_TARGETS = [
+  { nodeKind: 'start-recording' as const, targetHandle: START_RECORDING_STREAM_HANDLE },
+] as const;
+
+/** Методы для RecordingSliceRef (MakeTrack v0.7). */
+export const RECORDING_SLICE_REF_METHOD_TARGETS = [
+  { nodeKind: 'make-track' as const, targetHandle: MAKE_TRACK_SLICE_HANDLE },
 ] as const;
 
 /** Методы для SpectralAnalyserRef (MakeFftTrendsAnalysis, CollectFftFrames). */
@@ -112,6 +134,7 @@ export const SPECTRAL_ANALYSER_REF_METHOD_TARGETS = [
     targetHandle: MAKE_FFT_TRENDS_ANALYSER_HANDLE,
   },
   { nodeKind: 'collect-fft-frames' as const, targetHandle: COLLECT_FFT_ANALYSER_HANDLE },
+  { nodeKind: 'flush-spectral-analyser' as const, targetHandle: FLUSH_SPECTRAL_ANALYSER_HANDLE },
 ] as const;
 
 function pinAcceptsSource(

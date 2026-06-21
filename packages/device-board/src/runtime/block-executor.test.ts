@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
+import { DEFAULT_FFT_TRENDS_POLICY } from '@membrana/core';
 import { createReferenceValue, createScenarioVariable, type ScenarioSubgraph, type ScenarioVariable } from '@membrana/core';
 
 import { PALETTE_VALUE_HANDLE } from '../graph/palette-node.js';
 import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 import { executeScenarioBlock } from './block-executor.js';
 import { createStubScenarioRuntimeHost } from './host.js';
+import { runSubgraphOnce } from './exec-subgraph.js';
 import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { ReportRuntimeStore } from './report-runtime-store.js';
 import { TrackRuntimeStore } from './track-runtime-store.js';
@@ -510,7 +512,7 @@ describe('executeScenarioBlock recorder/analyser methods (MakeTrack / MakeFftTre
       },
     });
 
-    expect(analyzeFftTrendsFromFrameRefs).toHaveBeenCalledWith('mft-1', [frameA]);
+    expect(analyzeFftTrendsFromFrameRefs).toHaveBeenCalledWith('mft-1', [frameA], DEFAULT_FFT_TRENDS_POLICY);
     expect(result.lastDetection?.detected).toBe(true);
     expect(analysisStore.getAnalysisRef('mft-1').handle).toBe('analysis:analysis-xyz');
   });
@@ -598,7 +600,7 @@ describe('executeScenarioBlock recorder/analyser methods (MakeTrack / MakeFftTre
     const host = createStubScenarioRuntimeHost({ publishReport });
     const reportStore = new ReportRuntimeStore();
     reportStore.setNodeReport('mrt-src', {
-      schema: 'trends-fft-report/v1',
+      schema: 'trends-fft/v0.1',
       reportId: 'rep-pub-1',
       trackId: 'track-x',
       isDetected: false,
@@ -674,11 +676,110 @@ describe('executeScenarioBlock recorder/analyser methods (MakeTrack / MakeFftTre
     });
 
     expect(publishReport).toHaveBeenCalledWith(journalVar.value, {
-      schema: 'trends-fft-report/v1',
+      schema: 'trends-fft/v0.1',
       reportId: 'rep-pub-1',
       trackId: 'track-x',
       isDetected: false,
       payload: { ok: true },
     });
+  });
+
+  it('PublishReport passthrough exec-out to successor (v0.7 loop)', async () => {
+    const publishReport = vi.fn(async () => true);
+    const host = createStubScenarioRuntimeHost({ publishReport });
+    const reportStore = new ReportRuntimeStore();
+    reportStore.setNodeReport('mra-src', {
+      schema: 'trends-fft/v0.1',
+      reportId: 'rep-loop-1',
+      trackId: 'track-y',
+      isDetected: false,
+      payload: {},
+    });
+    const journalVar: ScenarioVariable = {
+      ...createScenarioVariable('var-journal', 'journal1', 'JournalRef'),
+      value: createReferenceValue('JournalRef', 'journal:device:dev-1'),
+    };
+    const reportVar: ScenarioVariable = {
+      ...createScenarioVariable('var-report', 'report1', 'ReportRef'),
+      value: reportStore.getReportRef('mra-src'),
+    };
+    const variableStore = new ScenarioVariableStore([journalVar, reportVar]);
+    const subgraph: ScenarioSubgraph = {
+      entry: 'pr-1',
+      nodes: [
+        {
+          id: 'vg-journal',
+          nodeKind: 'variable-get',
+          blockKind: 'custom',
+          label: 'Journal',
+          variableId: journalVar.id,
+        },
+        {
+          id: 'vg-report',
+          nodeKind: 'variable-get',
+          blockKind: 'custom',
+          label: 'Report',
+          variableId: reportVar.id,
+        },
+        {
+          id: 'pr-1',
+          nodeKind: 'publish-report',
+          blockKind: 'custom',
+          label: 'PublishReport',
+        },
+        {
+          id: 'loop',
+          nodeKind: 'loop-repeat',
+          blockKind: 'custom',
+          label: '∞',
+          system: true,
+        },
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data',
+          source: 'vg-journal',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'pr-1',
+          targetHandle: 'journal',
+          dataType: 'JournalRef',
+        },
+        {
+          id: 'd2',
+          kind: 'data',
+          source: 'vg-report',
+          sourceHandle: VARIABLE_VALUE_HANDLE,
+          target: 'pr-1',
+          targetHandle: 'report',
+          dataType: 'ReportRef',
+        },
+        {
+          id: 'e1',
+          kind: 'exec',
+          source: 'pr-1',
+          sourceHandle: 'exec-out',
+          target: 'loop',
+          targetHandle: 'exec-in',
+        },
+      ],
+    };
+
+    const lastDetection = await runSubgraphOnce(
+      subgraph,
+      host,
+      new AbortController().signal,
+      {
+        branch: 'main',
+        defaultChunkDurationMs: 5000,
+        functions: [],
+        variableStore,
+        reportStore,
+        resolveContext: {},
+      },
+    );
+
+    expect(publishReport).toHaveBeenCalledTimes(1);
+    expect(lastDetection).toBeNull();
   });
 });

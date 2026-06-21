@@ -26,7 +26,7 @@ describe('ReportRuntimeStore (DBJ3)', () => {
     store.setNodeReport(
       'node-1',
       createScenarioReportPayload({
-        schema: 'trends-fft-report/v1',
+        schema: 'trends-fft/v0.1',
         reportId: 'rep-2',
         trackId: 'track-2',
         isDetected: false,

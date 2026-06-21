@@ -1,3 +1,4 @@
+import { DEFAULT_FFT_TRENDS_POLICY, type ScenarioFftTrendsPolicy } from '@membrana/core';
 import type { Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
@@ -13,6 +14,9 @@ export const MAKE_FFT_TRENDS_ANALYSER_HANDLE = 'analyser' as const;
 
 /** Data-вход batch FftFrameRef[] от CollectFftFrames. */
 export const MAKE_FFT_TRENDS_FRAMES_HANDLE = 'frames' as const;
+
+/** Data-вход FftTrendsPolicy (MakeFftTrendsPolicy или fallback на узле). */
+export const MAKE_FFT_TRENDS_POLICY_HANDLE = 'policy' as const;
 
 /** Data-выход FftTrendAnalysisRef. */
 export const MAKE_FFT_TRENDS_ANALYSIS_OUT_HANDLE = 'analysis' as const;
@@ -38,6 +42,12 @@ export function makeFftTrendsAnalysisNodePins(): {
         kind: 'data',
         socketType: 'FftFrameRefList',
       },
+      {
+        name: MAKE_FFT_TRENDS_POLICY_HANDLE,
+        kind: 'data',
+        socketType: 'FftTrendsPolicy',
+        nullable: true,
+      },
     ],
     outputs: [
       EXEC_OUT,
@@ -53,6 +63,7 @@ export function makeFftTrendsAnalysisNodePins(): {
 export interface CreateMakeFftTrendsAnalysisBoardNodeOptions {
   readonly id?: string;
   readonly position?: { readonly x: number; readonly y: number };
+  readonly fftTrendsPolicy?: Partial<ScenarioFftTrendsPolicy>;
 }
 
 let makeFftTrendsSeq = 0;
@@ -73,6 +84,10 @@ export function createMakeFftTrendsAnalysisBoardNode(
     nodeKind: MAKE_FFT_TRENDS_ANALYSIS_NODE_KIND,
     inputs,
     outputs,
+    fftTrendsPolicy: {
+      ...DEFAULT_FFT_TRENDS_POLICY,
+      ...options.fftTrendsPolicy,
+    },
   };
   return {
     id,

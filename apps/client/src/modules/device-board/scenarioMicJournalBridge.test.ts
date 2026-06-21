@@ -1,7 +1,21 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createReferenceValue } from '@membrana/core';
 
 import { createScenarioMicJournalBridge } from './scenarioMicJournalBridge.js';
+
+const mockStop = vi.fn(async () => ({
+  blob: new Blob([new Uint8Array(100)], { type: 'audio/wav' }),
+  durationSec: 0.5,
+  sampleRate: 48_000,
+  channels: 1 as const,
+}));
+
+vi.mock('@/plugins/mic-buffer-recorder/clipRecorder', () => ({
+  startClipRecorder: vi.fn(() => ({
+    stop: mockStop,
+    cancel: vi.fn(),
+  })),
+}));
 
 describe('scenarioMicJournalBridge collector sessions (DBC2)', () => {
   it('exposes stable recorder and analyser session refs per deviceHandle', () => {
@@ -41,5 +55,35 @@ describe('scenarioMicJournalBridge collector sessions (DBC2)', () => {
     bridge.appendRecorderSample('dev-4', createReferenceValue('AudioSampleRef', 's1'));
     bridge.resetCollectorSessions();
     expect(bridge.getCollectorQueueDepth('recorder', 'dev-4')).toBe(0);
+  });
+
+  it('stopRecorderRecording returns slice from clipRecorder when stream is active', async () => {
+    const bridge = createScenarioMicJournalBridge();
+    const streamRef = createReferenceValue('AudioStreamRef', 'stream:mic-test');
+    const internal = bridge as unknown as {
+      audioStreamValid: boolean;
+      streamCaptureStream: MediaStream;
+    };
+    internal.audioStreamValid = true;
+    internal.streamCaptureStream = { active: true } as MediaStream;
+
+    expect(
+      bridge.startRecorderRecording('dev-5', streamRef, { windowSec: 3, captureFormat: 'wav' }),
+    ).toBe(true);
+
+    const slice = await bridge.stopRecorderRecording('dev-5');
+    expect(slice).not.toBeNull();
+    expect(slice?.durationSec).toBeCloseTo(0.5, 2);
+    expect(slice?.sampleRate).toBe(48_000);
+    expect(slice?.captureFormat).toBe('wav');
+    expect(mockStop).toHaveBeenCalled();
+  });
+
+  it('startRecorderRecording fails without active stream', () => {
+    const bridge = createScenarioMicJournalBridge();
+    const streamRef = createReferenceValue('AudioStreamRef', 'stream:mic-test');
+    expect(
+      bridge.startRecorderRecording('dev-6', streamRef, { windowSec: 5, captureFormat: 'wav' }),
+    ).toBe(false);
   });
 });

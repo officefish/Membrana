@@ -42,7 +42,35 @@ export {
   isTerminalScenarioNodeKind,
   isJournalScenarioNodeKind,
   isReporterMethodScenarioNodeKind,
+  RECORDING_GATE_SCENARIO_NODE_KINDS,
+  isRecordingGateScenarioNodeKind,
+  type RecordingGateScenarioNodeKind,
+  POLICY_CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  REF_CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  type PolicyConstructorScenarioNodeKind,
+  type RefConstructorScenarioNodeKind,
+  type ConstructorScenarioNodeKind,
+  isPolicyConstructorScenarioNodeKind,
+  isRefConstructorScenarioNodeKind,
+  isConstructorScenarioNodeKind,
 } from './scenario-node-kind.js';
+
+export {
+  CONSTRUCTOR_ALWAYS_PURE_SCENARIO_NODE_KINDS,
+  PURE_ELIGIBLE_SCENARIO_NODE_KINDS,
+  PURE_LOCKED_IMPURE_SCENARIO_NODE_KINDS,
+  DEFAULT_PURE_ELIGIBLE,
+  type ConstructorAlwaysPureScenarioNodeKind,
+  type PureEligibleScenarioNodeKind,
+  type PureLockedImpureScenarioNodeKind,
+  isConstructorAlwaysPureScenarioNodeKind,
+  isPureEligibleScenarioNodeKind,
+  isPureLockedImpureScenarioNodeKind,
+  isScenarioNodePureFieldApplicable,
+  resolveScenarioGraphNodePure,
+  normalizeScenarioGraphNodePure,
+} from './scenario-node-pure.js';
 
 export {
   JOURNAL_SCOPE_KINDS,
@@ -85,6 +113,40 @@ export {
 } from './collector-config.js';
 
 export {
+  RECORDING_WINDOW_SEC_PRESETS,
+  SCENARIO_CAPTURE_FORMATS,
+  DEFAULT_RECORDING_POLICY,
+  LEGACY_COLLECTOR_WINDOW_SEC,
+  type ScenarioRecordingWindowSec,
+  type ScenarioCaptureFormat,
+  type ScenarioRecordingPolicy,
+  nearestRecordingWindowPreset,
+  resolveScenarioRecordingPolicy,
+  isScenarioRecordingPolicy,
+} from './recording-policy.js';
+
+export {
+  FFT_TRENDS_DETECTION_MODES,
+  FFT_TRENDS_MEASUREMENT_COUNT_PRESETS,
+  FFT_TRENDS_INTERVAL_MS_PRESETS,
+  FFT_TRENDS_BUILTIN_TEMPLATE_KEYS,
+  DEFAULT_FFT_TRENDS_POLICY,
+  type ScenarioFftTrendsDetectionMode,
+  type ScenarioFftTrendsMeasurementCount,
+  type ScenarioFftTrendsIntervalMs,
+  type ScenarioFftTrendsPolicy,
+  resolveScenarioFftTrendsPolicy,
+  isScenarioFftTrendsPolicy,
+  fftTrendsAnalysisDurationSec,
+} from './fft-trends-policy.js';
+
+export {
+  RECORDING_SLICE_REF_HANDLE_PREFIX,
+  formatRecordingSliceRefHandle,
+  parseRecordingSliceRefHandle,
+} from './recording-slice-ref.js';
+
+export {
   type ScenarioReferenceVariableType,
   type ScenarioValueVariableType,
   type ScenarioVariableType,
@@ -92,12 +154,16 @@ export {
   type ScenarioDateTimeValue,
   type ScenarioIntegerValue,
   type ScenarioStringValue,
+  type ScenarioRecordingPolicyValue,
+  type ScenarioFftTrendsPolicyValue,
   type ScenarioVariableValue,
   type ScenarioVariable,
   createReferenceValue,
   createDateTimeValue,
   createIntegerValue,
   createStringValue,
+  createRecordingPolicyValue,
+  createFftTrendsPolicyValue,
   invalidateReference,
   createScenarioVariable,
   isScenarioVariableType,
@@ -105,6 +171,8 @@ export {
   isScenarioDateTimeValue,
   isScenarioIntegerValue,
   isScenarioStringValue,
+  isScenarioRecordingPolicyValue,
+  isScenarioFftTrendsPolicyValue,
   isScenarioVariableValue,
   isScenarioVariable,
   migrateScenarioVariableLegacy,

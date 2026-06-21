@@ -15,5 +15,8 @@ export function variableTypeIndicatorClass(type: ScenarioVariableType): string {
   if (type === 'String') {
     return 'bg-orange-500';
   }
+  if (type === 'RecordingPolicy') {
+    return 'bg-teal-600';
+  }
   return 'bg-neutral';
 }

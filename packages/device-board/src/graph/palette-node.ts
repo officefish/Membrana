@@ -1,5 +1,5 @@
 import type { ScenarioNodeKind } from '@membrana/core';
-import { DEFAULT_SCENARIO_COLLECTOR_CONFIG } from '@membrana/core';
+import { DEFAULT_FFT_TRENDS_POLICY, DEFAULT_SCENARIO_COLLECTOR_CONFIG, DEFAULT_RECORDING_POLICY } from '@membrana/core';
 import type { Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
@@ -16,6 +16,12 @@ import { collectFftFramesNodePins } from './collect-fft-frames-node.js';
 import { makeTrackNodePins } from './make-track-node.js';
 import { makeFftTrendsAnalysisNodePins } from './make-fft-trends-analysis-node.js';
 import { stopRuntimeNodePins } from './stop-runtime-node.js';
+import { makeRecordingPolicyNodePins } from './make-recording-policy-node.js';
+import { makeFftTrendsPolicyNodePins } from './make-fft-trends-policy-node.js';
+import { startRecordingNodePins } from './start-recording-node.js';
+import { stopRecordingNodePins } from './stop-recording-node.js';
+import { isRecordingWindowFullNodePins } from './is-recording-window-full-node.js';
+import { flushSpectralAnalyserNodePins } from './flush-spectral-analyser-node.js';
 
 /** Data-вход произвольного значения для print / is-valid. */
 export const PALETTE_VALUE_HANDLE = 'value' as const;
@@ -99,6 +105,12 @@ export const V04_PALETTE_NODE_KINDS = [
   'get-fft-frame',
   'collect-samples',
   'collect-fft-frames',
+  'start-recording',
+  'stop-recording',
+  'is-recording-window-full',
+  'flush-spectral-analyser',
+  'make-recording-policy',
+  'make-fft-trends-policy',
   'make-track',
   'make-fft-trends-analysis',
   'get-journal',
@@ -125,6 +137,12 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'get-fft-frame': 'GetFFTFrame',
   'collect-samples': 'CollectSamples',
   'collect-fft-frames': 'CollectFftFrames',
+  'start-recording': 'StartRecording',
+  'stop-recording': 'StopRecording',
+  'is-recording-window-full': 'IsRecordingWindowFull',
+  'flush-spectral-analyser': 'FlushSpectralAnalyser',
+  'make-recording-policy': 'MakeRecordingPolicy',
+  'make-fft-trends-policy': 'MakeFftTrendsPolicy',
   'make-track': 'MakeTrack',
   'make-fft-trends-analysis': 'MakeFftTrendsAnalysis',
   'get-journal': 'GetJournal',
@@ -236,6 +254,18 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return collectSamplesNodePins();
     case 'collect-fft-frames':
       return collectFftFramesNodePins();
+    case 'start-recording':
+      return startRecordingNodePins();
+    case 'stop-recording':
+      return stopRecordingNodePins();
+    case 'is-recording-window-full':
+      return isRecordingWindowFullNodePins();
+    case 'flush-spectral-analyser':
+      return flushSpectralAnalyserNodePins();
+    case 'make-recording-policy':
+      return makeRecordingPolicyNodePins();
+    case 'make-fft-trends-policy':
+      return makeFftTrendsPolicyNodePins();
     case 'make-track':
       return makeTrackNodePins();
     case 'make-fft-trends-analysis':
@@ -258,6 +288,8 @@ export interface CreatePaletteBoardNodeOptions {
   readonly position?: { readonly x: number; readonly y: number };
   readonly microphoneId?: string;
   readonly collectorConfig?: BoardFlowNodeData['collectorConfig'];
+  readonly recordingPolicy?: BoardFlowNodeData['recordingPolicy'];
+  readonly fftTrendsPolicy?: BoardFlowNodeData['fftTrendsPolicy'];
 }
 
 let paletteNodeSeq = 0;
@@ -287,6 +319,24 @@ export function createPaletteBoardNode(
           collectorConfig: {
             ...DEFAULT_SCENARIO_COLLECTOR_CONFIG,
             ...options.collectorConfig,
+          },
+        }
+      : {}),
+    ...(nodeKind === 'start-recording' ||
+    nodeKind === 'is-recording-window-full' ||
+    nodeKind === 'make-recording-policy'
+      ? {
+          recordingPolicy: {
+            ...DEFAULT_RECORDING_POLICY,
+            ...options.recordingPolicy,
+          },
+        }
+      : {}),
+    ...(nodeKind === 'make-fft-trends-policy'
+      ? {
+          fftTrendsPolicy: {
+            ...DEFAULT_FFT_TRENDS_POLICY,
+            ...options.fftTrendsPolicy,
           },
         }
       : {}),

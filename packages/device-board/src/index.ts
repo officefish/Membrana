@@ -16,13 +16,14 @@ export { BoardFlowCanvas } from './components/board-flow-canvas.js';
 export { BoardInspector } from './components/board-inspector.js';
 export { BoardLeftSidebar } from './components/board-left-sidebar.js';
 export { BoardRightSidebar } from './components/board-right-sidebar.js';
-export type { BoardLayerTab, ScenarioBranchTab, BranchSidebarSection, NodePaletteCategory, V04PaletteItem } from './types/board-ui.js';
+export type { BoardLayerTab, ScenarioBranchTab, BranchSidebarSection, NodePaletteCategory, V04PaletteItem, V04PaletteSection } from './types/board-ui.js';
 export {
   BRANCH_TAB_LABEL,
   BRANCH_SIDEBAR_SECTIONS,
   SCENARIO_NODE_PALETTE,
   LEGACY_SCENARIO_NODE_PALETTE,
   SCENARIO_V04_PALETTE,
+  SCENARIO_V04_PALETTE_SECTIONS,
   isLegacyPaletteEnabled,
   isSignalAdvancedEnabled,
   activeV04PaletteNodeKinds,

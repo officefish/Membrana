@@ -6,6 +6,7 @@ import {
   makeFftTrendsAnalysisNodePins,
   MAKE_FFT_TRENDS_ANALYSER_HANDLE,
   MAKE_FFT_TRENDS_FRAMES_HANDLE,
+  MAKE_FFT_TRENDS_POLICY_HANDLE,
 } from './make-fft-trends-analysis-node.js';
 
 describe('make-fft-trends-analysis-node', () => {
@@ -15,6 +16,7 @@ describe('make-fft-trends-analysis-node', () => {
       'exec-in',
       MAKE_FFT_TRENDS_ANALYSER_HANDLE,
       MAKE_FFT_TRENDS_FRAMES_HANDLE,
+      MAKE_FFT_TRENDS_POLICY_HANDLE,
     ]);
     expect(pins.outputs.map((pin) => pin.name)).toEqual(['exec-out', 'analysis']);
   });

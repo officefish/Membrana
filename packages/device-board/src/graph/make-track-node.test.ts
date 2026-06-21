@@ -6,6 +6,7 @@ import {
   makeTrackNodePins,
   MAKE_TRACK_RECORDER_HANDLE,
   MAKE_TRACK_SAMPLES_HANDLE,
+  MAKE_TRACK_SLICE_HANDLE,
 } from './make-track-node.js';
 
 describe('make-track-node', () => {
@@ -15,6 +16,7 @@ describe('make-track-node', () => {
       'exec-in',
       MAKE_TRACK_RECORDER_HANDLE,
       MAKE_TRACK_SAMPLES_HANDLE,
+      MAKE_TRACK_SLICE_HANDLE,
     ]);
     expect(pins.outputs.map((pin) => pin.name)).toEqual(['exec-out', 'track']);
   });

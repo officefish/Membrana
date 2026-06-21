@@ -9,7 +9,7 @@ import {
 import { deserializeScenarioSubgraph, serializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 
 describe('publish-report-node (DBJ4)', () => {
-  it('defines exec-in + JournalRef + ReportRef in and no outputs (terminal)', () => {
+  it('defines exec passthrough + JournalRef + ReportRef in', () => {
     const pins = publishReportNodePins();
     expect(
       pins.inputs.find((pin) => pin.name === PUBLISH_REPORT_JOURNAL_HANDLE)?.socketType,
@@ -18,7 +18,7 @@ describe('publish-report-node (DBJ4)', () => {
       pins.inputs.find((pin) => pin.name === PUBLISH_REPORT_REPORT_HANDLE)?.socketType,
     ).toBe('ReportRef');
     expect(pins.inputs.some((pin) => pin.name === 'exec-in')).toBe(true);
-    expect(pins.outputs).toEqual([]);
+    expect(pins.outputs.some((pin) => pin.name === 'exec-out')).toBe(true);
   });
 
   it('round-trips through scenario subgraph serialization', () => {

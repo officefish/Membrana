@@ -770,6 +770,49 @@ disabled + `title`/`aria-label` «нет связи с устройством» 
   - `DEVICE_SCENARIO_DOCUMENT_VERSION = 2`, `DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1`;
   `parseDeviceScenarioDocument` мигрирует v1→v2 и отклоняет version > 2.
 
+### 15.7 Узлы-конструкторы и Pure getters (v0.9)
+
+**Проблема:** value-типы вроде `Integer`/`String` задаются через **variable-set** или
+инспектор переменной; **policy-объекты** и **ref-материализации** требуют явного
+источника в графе — «создать экземпляр и передать по dataflow».
+
+**Blueprint parity (Pure vs Impure):** семантика как в UE Blueprints — на canvas и в
+runtime (`@membrana/core` `scenario-node-pure.ts`, эпик
+`db-pure-getters-blueprint-parity`):
+
+| Режим | Exec pins | Участие в exec-walk | Resolve |
+|-------|-----------|---------------------|---------|
+| **Pure** (`pure: true`) | **нет** | пропуск (transparent) | pull через `resolveInput` / `resolveNodeOutput` на каждый read (D4: без tick-cache) |
+| **Impure** (`pure: false`) | exec-in → exec-out | выполняется на exec-тике | выход фиксируется на шаге exec |
+
+**Sidebar:** галочка **Pure** для `PURE_ELIGIBLE` (`variable-get`, `get-journal`, `get-reporter`); ref-getter — read-only
+bound/empty badge (D2); value-getter — редактирование выходного value. Переключение
+**impure → pure** удаляет все exec-рёбра узла (D1).
+
+**Два класса конструкторов** (`CONSTRUCTOR_SCENARIO_NODE_KINDS` в core):
+
+| Класс | Примеры | Выход | Pure | Exec pins |
+|-------|---------|-------|------|-----------|
+| **Policy constructor** | `MakeRecordingPolicy`, `MakeFftTrendsPolicy` | `RecordingPolicy`, `FftTrendsPolicy` | **always true** (`CONSTRUCTOR_ALWAYS_PURE`, D3) | **never** |
+| **Ref constructor** | `MakeTrack`, `MakeReportFrom*`, `MakeFftTrendsAnalysis` | `TrackRef`, `ReportRef`, … | **always false** | exec-in → exec-out |
+
+**MakeRecordingPolicy** — **только** data-out `RecordingPolicy` (enum:
+`windowSec` 3|5|7|10|15|30, `captureFormat` wav|webm|mp4). Data-edge к
+`StartRecording.policy` (bootstrap + restart). Exec-hop через policy **deprecated**
+(v0.8 → миграция v0.9).
+
+**MakeFftTrendsPolicy** — **только** data-out `FftTrendsPolicy` (enum
+presets trends-fft-analyzer). Data-edge к `MakeFftTrendsAnalysis.policy`.
+
+**Не путать:** `variable-get`/`variable-set` — document-scope переменные;
+конструкторы — **фабрики значений/ref на канвасе** (как уже было de-facto у MakeTrack).
+
+**Палитра v0.9:** категория «Конструкторы» — policy nodes (badge `constructor · pure`) +
+ref constructors. `RecordingPolicy` **убран** из sidebar «Конструктор переменных» (legacy JSON
+variables мигрируют через `resolveScenarioRecordingPolicy`).
+
+**Sign-off:** [`docs/device-board-scripts/PURE_GETTERS_LGTM.md`](../../docs/device-board-scripts/PURE_GETTERS_LGTM.md).
+
 ---
 
 ## 16. Collectors v0.5: Recorder, SpectralAnalyser, event-порты
@@ -801,7 +844,9 @@ disabled + `title`/`aria-label` «нет связи с устройством» 
 
 Рёбра `ScenarioEdgeKind: 'event'` соединяют `event-out` Collect с downstream exec-in.
 
-### 16.3 Канонический граф (MVP)
+### 16.3 Канонический граф (MVP) — legacy v0.5–v0.6
+
+> **Deprecated для новых сценариев.** Оставлен для миграции JSON. Целевой MVP — §16.5.
 
 ```text
 GetDevice → GetRecorder / GetSpectralAnalyser
@@ -810,7 +855,97 @@ Main tick: GetSample → GetFFTFrame → CollectFftFrames → [event] → NewFft
 Parallel: CollectSamples → [event] → NewTrack
 ```
 
-### 16.4 Контракты (DBC0, `@membrana/core`)
+### 16.4 Interim runtime (P0–P3, `vesnin`)
+
+Пока на борде нет узлов §16.5, host **эмулирует** целевой gate:
+
+- PCM: `ScenarioContinuousPcmBuffer` + `flushRecorderSession` / `takeSlice()`
+- Track: `MakeTrack` → `uploadTrackAsync` (не блокирует tick)
+- Report: `device-board-observation/v1`, `trackId` ← `lastObservationTrackId`
+- Trends: `analyzeTrendsFromFftFrames` (без PCM round-trip)
+
+См. [`DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_REALTIME_OBSERVATION_EPIC_PROMPT.md).
+
+### 16.5 Целевой MVP: AudioStream → track + report (v0.8 LGTM)
+
+> **Достигнуто 2026-06-21:** bundled `usercase-mvp-microphone` на device-board; sign-off [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md).  
+> **Дальше:** usability + docs snapshot + server persist — [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md).
+
+**Центральная продуктовая цель device-board:** observation bundles с микрофона (recording gate + trends report).
+Один bundle = **TrackRef (preview/upload)** + **Trends FFT report** (`trends-fft/v0.1`) в journal.
+
+#### Точка входа
+
+```text
+GetMicrophone → GetAudioStream → AudioStreamRef (audiostream1)
+GetDevice(device1) → GetRecorder → RecorderRef
+GetDevice(device1) → GetSpectralAnalyser → SpectralAnalyserRef
+```
+
+#### Bootstrap (первый valid stream)
+
+```text
+StartRecording(recorder, audioStream, recordingPolicy)
+  recordingPolicy: MakeRecordingPolicy → { windowSec: 5, captureFormat: 'wav' }   // v0.8 MVP
+```
+
+Host пишет PCM **непрерывно** в буфер Recorder. **CollectSamples не используется.**
+
+#### Каждый main tick
+
+```text
+onTick → isValid(mic) → GetAudioStream → isValid(stream)
+  → [if !recording] StartRecording
+  → GetSample(stream) → GetFFTFrame → analyserQueue.append   // только FFT, не для track
+  → if recorder.realDurationSec >= recordingPolicy.windowSec:
+        ┌─ StopRecording → MakeTrack(slice)
+        ├─ MakeTrack(exec) → StartRecording(restart)
+        ├─ MakeRecordingPolicy(data) → StartRecording.policy
+        ├─ MakeFftTrendsPolicy(data) → MakeFftTrendsAnalysis.policy
+        ├─ FlushSpectralAnalyser → FftFrameRefList
+        ├─ MakeFftTrendsAnalysis(frames, policy)
+        ├─ MakeReportFromAnalysis         → trends-fft/v0.1
+        └─ PublishReport(journal)
+  → loop-repeat (∞)
+```
+
+#### Gate — один `if` на tick
+
+Оба конвейера (PCM и analyser) **сходятся** в одной проверке длительности записи.
+На **true**: stop/slice/track/restart **и** flush analyser → trends → observation → journal.
+
+#### Узлы v0.9 (shipped)
+
+| nodeKind | Роль |
+|----------|------|
+| `make-recording-policy` | Pure constructor `RecordingPolicy` (data-only, §15.7) |
+| `make-fft-trends-policy` | Pure constructor `FftTrendsPolicy` (data-only) |
+| `start-recording` | Bootstrap + restart после gate |
+| `stop-recording` | `RecordingSliceRef` из clip recorder |
+| `is-recording-window-full` | Exec gate |
+| `flush-spectral-analyser` | Flush FFT queue (`CollectFftFrames` — append-only) |
+
+Плюс: `make-track`, `make-fft-trends-analysis`, `make-report-from-analysis`, `publish-report`.
+
+#### Узлы v0.7 (reference)
+
+| nodeKind | Входы | Выходы |
+|----------|-------|--------|
+| `start-recording` | exec, `RecorderRef`, `AudioStreamRef`, `RecordingPolicy` | exec, `RecorderRef` |
+| `stop-recording` | exec, `RecorderRef` | exec, `RecordingSliceRef` |
+| `is-recording-window-full` | exec, `RecorderRef`, `windowSec` | exec-false / exec-true |
+
+**Не в целевом MVP:** `collect-samples`, `make-report-from-track`, drone publish.
+
+#### Ожидаемые chain-log маркеры
+
+```text
+start-recording → … → recording-window-full
+stop-recording → track concat-ok uploadMode:async → start-recording
+analyser-flush → fft-trends-input → publish-report (trends-fft/v0.1)
+```
+
+### 16.6 Контракты collectors (DBC0, `@membrana/core`)
 
 - `SocketType += RecorderRef | SpectralAnalyserRef | AudioSampleRefList | FftFrameRefList`
 - `SCENARIO_NODE_KINDS += get-recorder, get-spectral-analyser, collect-samples,
@@ -832,7 +967,7 @@ Parallel: CollectSamples → [event] → NewTrack
 | **GetJournal(device \| server)** | `JournalRef` | Per-device journal; handle `journal:{scope}:{deviceId}` |
 | **GetReporter(journal)** | `ReporterRef` | Scoped reporter; handle `reporter:{journalHandle}` |
 | **MakeReportFromTrack** | `TrackRef` → `ReportRef` | Drone / track report (`drone-detection-report/v1`) |
-| **MakeReportFromAnalysis** | `FftTrendAnalysisRef` → `ReportRef` | Trends FFT report (`trends-fft-report/v1`) |
+| **MakeReportFromAnalysis** | `FftTrendAnalysisRef` → `ReportRef` | Trends FFT report (`trends-fft/v0.1`) |
 | **PublishReport** | `JournalRef` + `ReportRef` | Append report в породивший journal |
 
 **Scope frozen:** server journal = **per-device** (`deviceId`), не per-membrane.
