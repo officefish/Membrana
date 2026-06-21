@@ -4379,6 +4379,58 @@
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
       "archiveNotes": "CONCEPT section 20, README, Mintlify usercases; 4576abb"
+    },
+    {
+      "id": "comp-mvp-packaging-2026-06-21",
+      "title": "Competition Sprint: MVP UserCase product packaging",
+      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "competition-sprint",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Teams alpha (Vesnin+Musician), beta (Ozhegov+Dynin), gamma (Rodchenko). Phase 1 open."
+    },
+    {
+      "id": "comp-mvp-pack-alpha",
+      "title": "Comp MVP pack: Team Alpha concept + implementation",
+      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "comp-mvp-packaging-2026-06-21",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Journey map + audio chain; usercase-mvp-microphone-alpha."
+    },
+    {
+      "id": "comp-mvp-pack-beta",
+      "title": "Comp MVP pack: Team Beta concept + implementation",
+      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "comp-mvp-packaging-2026-06-21",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Modular functions + verify-layout metrics; usercase-mvp-microphone-beta."
+    },
+    {
+      "id": "comp-mvp-pack-gamma",
+      "title": "Comp MVP pack: Team Gamma concept + implementation",
+      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "comp-mvp-packaging-2026-06-21",
+      "createdAt": "2026-06-21",
+      "dependsOn": [],
+      "notes": "Poster UX + minimal ink; usercase-mvp-microphone-gamma."
     }
   ]
 }

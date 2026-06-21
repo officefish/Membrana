@@ -140,6 +140,10 @@
 | `db-recording-gate-v07` | DB Recording Gate v0.7: StartRecording nodes + unified observation window (эпик R0–R4) | L | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | [#133](https://github.com/officefish/Membrana/issues/133) |
 | `db-recording-gate-r4-scenario-smoke` | DB Recording Gate R4: main-v07.json + smoke + LGTM | M | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | [#133](https://github.com/officefish/Membrana/issues/133) |
 | `db-post-usercase-roadmap` | Device-board post-UserCase: UX + docs snapshot + server | L | [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md) | — |
+| `comp-mvp-packaging-2026-06-21` | Competition Sprint: MVP UserCase product packaging | L | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) | — |
+| `comp-mvp-pack-alpha` | Comp MVP pack: Team Alpha concept + implementation | M | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) | — |
+| `comp-mvp-pack-beta` | Comp MVP pack: Team Beta concept + implementation | M | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) | — |
+| `comp-mvp-pack-gamma` | Comp MVP pack: Team Gamma concept + implementation | M | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) | — |
 
 ---
 
