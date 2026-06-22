@@ -54,6 +54,7 @@ import { BoardRightSidebar } from './board-right-sidebar.js';
 import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
 import { DeleteFunctionModal } from './board-variable-modals.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
+import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
 import { referenceTypeLabel, isBoardGroupNode } from '../graph/index.js';
@@ -1129,42 +1130,16 @@ const DeviceBoardShellInner: React.FC<{
               >
                 ↓
               </button>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-primary"
-                  onClick={() => void graph.startScenario()}
-                  disabled={!graph.canRun}
-                  title={graph.canRun ? 'Запуск сценария' : (graph.runDisabledReason ?? 'Запуск недоступен')}
-                  aria-label={graph.canRun ? 'Запуск сценария' : graph.runDisabledReason ?? 'Запуск недоступен'}
-                >
-                  Run
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-ghost"
-                  onClick={() => graph.pauseScenario()}
-                  disabled={!graph.runtimeState.isRunning || graph.runtimeState.isPaused}
-                >
-                  Pause
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-ghost"
-                  onClick={() => graph.resumeScenario()}
-                  disabled={!graph.runtimeState.isPaused}
-                >
-                  Resume
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-ghost"
-                  onClick={() => graph.stopScenario('user')}
-                  disabled={!graph.runtimeState.isRunning}
-                >
-                  Stop
-                </button>
-              </div>
+              <PlaybackClusterControl
+                  isRunning={graph.runtimeState.isRunning}
+                  isPaused={graph.runtimeState.isPaused}
+                  canRun={graph.canRun}
+                  runDisabledReason={graph.runDisabledReason}
+                  onStart={() => graph.startScenario()}
+                  onResume={() => graph.resumeScenario()}
+                  onPause={() => graph.pauseScenario()}
+                  onStop={() => graph.stopScenario('user')}
+                />
 
               <div role="group" aria-label="Режим" className="join">
                 <button
