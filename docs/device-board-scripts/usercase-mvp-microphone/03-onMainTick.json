@@ -24,7 +24,7 @@
         "blockKind": "custom",
         "position": {
           "x": 8112,
-          "y": -288
+          "y": -280
         },
         "label": "∞",
         "nodeKind": "loop-repeat",
@@ -45,7 +45,7 @@
         "blockKind": "custom",
         "position": {
           "x": 224,
-          "y": -280
+          "y": -272
         },
         "label": "GetAudioStream",
         "nodeKind": "get-audio-stream"
@@ -55,7 +55,7 @@
         "blockKind": "custom",
         "position": {
           "x": 1152,
-          "y": -288
+          "y": -280
         },
         "label": "GetSample",
         "nodeKind": "get-sample"
@@ -65,7 +65,7 @@
         "blockKind": "custom",
         "position": {
           "x": 2080,
-          "y": -288
+          "y": -280
         },
         "label": "GetFFTFrame",
         "nodeKind": "get-fft-frame"
@@ -95,7 +95,7 @@
         "blockKind": "custom",
         "position": {
           "x": 688,
-          "y": -280
+          "y": -272
         },
         "label": "isValid",
         "nodeKind": "is-valid"
@@ -105,7 +105,7 @@
         "blockKind": "custom",
         "position": {
           "x": 1616,
-          "y": -288
+          "y": -280
         },
         "label": "GetRecorder",
         "nodeKind": "get-recorder"
@@ -115,7 +115,7 @@
         "blockKind": "custom",
         "position": {
           "x": 2544,
-          "y": -288
+          "y": -280
         },
         "label": "GetSpectralAnalyser",
         "nodeKind": "get-spectral-analyser"
@@ -125,7 +125,7 @@
         "blockKind": "custom",
         "position": {
           "x": 3008,
-          "y": -288
+          "y": -280
         },
         "label": "CollectFftFrames",
         "nodeKind": "collect-fft-frames",
@@ -181,7 +181,7 @@
         "blockKind": "custom",
         "position": {
           "x": 3472,
-          "y": -288
+          "y": -280
         },
         "label": "GetRecorder",
         "nodeKind": "get-recorder"
@@ -191,7 +191,7 @@
         "blockKind": "custom",
         "position": {
           "x": 4400,
-          "y": -288
+          "y": -280
         },
         "label": "IsRecordingWindowFull",
         "nodeKind": "is-recording-window-full"
@@ -241,7 +241,7 @@
         "blockKind": "custom",
         "position": {
           "x": 3936,
-          "y": -288
+          "y": -280
         },
         "label": "StartRecording (bootstrap)",
         "nodeKind": "start-recording",
@@ -738,7 +738,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T12:04:18.015Z",
+  "exportedAt": "2026-06-21T13:08:50.655Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "main"
 }

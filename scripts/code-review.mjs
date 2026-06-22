@@ -11,6 +11,13 @@ import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { collectRepositoryContext } from './context-collector.mjs';
 import {
+  CODE_REVIEW_RAG_QUERY,
+  formatRagContextBlock,
+  logRagStatus,
+  parseRagCliFlags,
+  retrieveRagContext,
+} from './lib/rag-ritual.mjs';
+import {
   anthropicPost,
   defaultModel,
   getAnthropicKey,
@@ -24,6 +31,7 @@ if (process.argv.includes('--help') || process.argv.includes('-h')) {
   console.log(`Usage: node scripts/code-review.mjs [--full] [--help]
 
   --full   Передать в контекст расширенный вывод context-collector.
+  --no-rag Не подмешивать RAG (только git context-collector).
   --help   Эта справка.
 
 Требуется ANTHROPIC_API_KEY в .env. Результат: docs/DAILY_CODE_REVIEW.md (перезапись).
@@ -32,6 +40,7 @@ if (process.argv.includes('--help') || process.argv.includes('-h')) {
 }
 
 const full = process.argv.includes('--full');
+const { noRag } = parseRagCliFlags(process.argv.slice(2));
 const promptPath = resolve(process.cwd(), 'docs/VIRTUAL_TEAM_PROMPT.md');
 const dailyReviewPath = resolve(process.cwd(), 'docs/DAILY_CODE_REVIEW.md');
 
@@ -59,6 +68,13 @@ if (!existsSync(promptPath)) {
 const virtualTeamPrompt = readFileSync(promptPath, 'utf8');
 const context = collectRepositoryContext({ full });
 
+let ragBlock = '';
+if (!noRag) {
+  const rag = await retrieveRagContext(CODE_REVIEW_RAG_QUERY, { topK: 5 });
+  ragBlock = formatRagContextBlock(rag, { title: 'RAG + git hybrid (code-review)' });
+  logRagStatus(rag, 'code-review');
+}
+
 const userQuestion = `Ты координатор виртуальной команды (см. блок «Промпт» ниже). По блоку «Контекст репозитория» дай структурированный code review текущего состояния: что сделано сегодня, риски, возможные нарушения границ пакетов и слоёв, что стоит проверить в тестах и линтере. Соблюдай формат ответа координатора из промпта. Язык: русский.`;
 
 /** Верхняя граница символов контекста перед запросом к API (стриминга нет — один JSON). */
@@ -72,7 +88,9 @@ const contextTrimmed =
 const bodyText =
   '## Промпт (виртуальная команда)\n\n' +
   virtualTeamPrompt +
-  '\n\n---\n\n## Контекст репозитория\n\n' +
+  '\n\n---\n\n' +
+  (ragBlock ? `## RAG context\n\n${ragBlock}\n\n---\n\n` : '') +
+  '## Контекст репозитория\n\n' +
   contextTrimmed +
   '\n\n---\n\n## Задание\n\n' +
   userQuestion;

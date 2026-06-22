@@ -75,7 +75,7 @@
         "blockKind": "custom",
         "position": {
           "x": -960,
-          "y": -568
+          "y": -560
         },
         "label": "journal1",
         "nodeKind": "variable-set",
@@ -214,7 +214,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T12:04:18.012Z",
+  "exportedAt": "2026-06-21T13:08:50.653Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "initial",
   "referenceVariableSlots": []

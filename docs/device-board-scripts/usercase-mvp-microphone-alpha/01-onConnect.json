@@ -1,0 +1,73 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "onConnect",
+  "branchLabel": "On connect",
+  "scenarioTitle": "UserCase Alpha: Live Observation Pipeline: onConnect → GetJournal → journal1",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "on-connect-event",
+    "nodes": [
+      {
+        "id": "on-connect-event",
+        "blockKind": "custom",
+        "position": {
+          "x": -144,
+          "y": -96
+        },
+        "label": "On connect",
+        "nodeKind": "event",
+        "system": true,
+        "eventVariant": "handler"
+      },
+      {
+        "id": "fn-alpha-bootstrap-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 320,
+          "y": -96
+        },
+        "label": "Bootstrap journal::fn-alpha-bootstrap::fn-alpha-bootstrap"
+      }
+    ],
+    "edges": [
+      {
+        "source": "on-connect-event",
+        "sourceHandle": "exec-out",
+        "target": "fn-alpha-bootstrap-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "on-connect-event",
+        "sourceHandle": "server",
+        "target": "fn-alpha-bootstrap-block",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "ServerRef"
+      },
+      {
+        "source": "on-connect-event",
+        "sourceHandle": "server",
+        "target": "fn-alpha-bootstrap-block",
+        "targetHandle": "server",
+        "kind": "data",
+        "dataType": "ServerRef"
+      }
+    ]
+  },
+  "variables": [
+    {
+      "id": "var-JournalRef-mqm9dl4a-6",
+      "name": "journal1",
+      "type": "JournalRef",
+      "value": null
+    }
+  ],
+  "referencedVariableIds": [
+    "var-JournalRef-mqm9dl4a-6"
+  ],
+  "exportedAt": "2026-06-21T15:42:55.413Z",
+  "userCaseId": "usercase-mvp-microphone-alpha",
+  "userCaseBranch": "onConnect",
+  "referenceVariableSlots": []
+}

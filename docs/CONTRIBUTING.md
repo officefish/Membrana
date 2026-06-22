@@ -139,7 +139,9 @@ git push -u origin vesnin
 ## CI (ежедневный цикл)
 
 - **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop`, **`techies68`** выполняется `yarn install --immutable` и `yarn turbo run lint typecheck test build`. Локально перед коммитом имеет смысл запускать то же самое.
-- **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск.
+- **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск; включает `node scripts/usercase.mjs verify-competition` (alpha/beta/gamma layout + pre-run).
+- **UserCase pack/collapse (PR)**: `.github/workflows/usercase-competition.yml` — при изменениях pack/collapse или sprint forks; `yarn usercase:verify-competition` локально.
+- **RAG (`@membrana/rag-service`)**: локально `yarn workspace @membrana/rag-service typecheck test` + `node --test scripts/rag-ritual.test.mjs`. Operative circuit в ритуалах работает без `OPENAI_API_KEY`; archive — после `yarn rag:index --full`. Оператор: [`docs/RAG.md`](./RAG.md), closure: [`docs/rag-dual-circuit-v1/CLOSURE.md`](./rag-dual-circuit-v1/CLOSURE.md).
 - **Релиз**: `.github/workflows/release.yml` — при push тега вида `v*` собирается монорепо и создаётся GitHub Release с автогенерацией текста.
 - **Опционально**: `.github/workflows/optional-claude-pr-review.yml` — дополнительный обзор PR через Claude. Job выполняется, если в настройках репозитория задана переменная **`ENABLE_CLAUDE_PR_REVIEW`** = `true` (GitHub не позволяет включать job по наличию секрета в `if:`). Для шага с `anthropics/claude-code-action` по-прежнему нужен секрет **`ANTHROPIC_API_KEY`**; при ошибке шаг не блокирует merge (`continue-on-error`). Не заменяет обязательный CI и ревью людей.
 - **Локальный CLI**: в корне `yarn anthropic:smoke` и `yarn anthropic:task` (ключ только в `.env`, см. `.env.example`). Навык агента: `.cursor/skills/membrana-anthropic-cli/SKILL.md`.
@@ -149,10 +151,12 @@ git push -u origin vesnin
 |--------|---------|-----------------|---------------------|
 | `scripts/context-collector.mjs` | `node scripts/context-collector.mjs` / `--full` / `--help` | Перед ручным разбором или из `code-review.mjs` | Текст в stdout: git, yarn test/lint (фрагменты), верхний уровень каталога (без `node_modules`, `.git`, `.env*`). |
 | `scripts/code-review.mjs` | `yarn code-review` / `yarn code-review:full` / `--help` | **Вечер**; `ANTHROPIC_API_KEY` | Перезапись `docs/DAILY_CODE_REVIEW.md`. Утром не запускать — только читать файл в `standup` / `main-day-issue`. |
-| `scripts/daily-standup.mjs` | `yarn standup` / `yarn standup:full` / `yarn standup:dry` / `--help` | **Утро**, после `plan:day` | Перезапись `docs/DAILY_STANDUP.md`; вход — вчерашний `DAILY_CODE_REVIEW.md`, Issues, `packages/temp`. |
+| `scripts/daily-standup.mjs` | `yarn standup` / `yarn standup:full` / `yarn standup:dry` / `--help` | **Утро**, после `plan:day` | Перезапись `docs/DAILY_STANDUP.md`; вход — вчерашний `DAILY_CODE_REVIEW.md`, Issues, `packages/temp`, **operative RAG** (`--no-rag` отключает). |
+| `scripts/main-day-issue.mjs` | `yarn main-day-issue` / `:dry` / `:full` | **Утро**, после `standup` | `docs/MAIN_DAY_ISSUE.md`; operative RAG (`--no-rag`). |
+| `scripts/consilium.mjs` | `yarn consilium` | Consilium | Archive RAG по умолчанию (`useLongTerm`); `--no-rag`. |
 | `scripts/generate_report.mjs` | `node scripts/generate_report.mjs` / `--help` | Диагностика без вызова Anthropic | JSON в `%TEMP%/membrana-code-review/code-review-context.json` (Windows) или `$TMPDIR/membrana-code-review/` (Unix). |
 
-Переменные окружения для этих сценариев: `ANTHROPIC_API_KEY` (обязательно для `code-review`), опционально `ANTHROPIC_MODEL`, прокси `HTTPS_PROXY` / `HTTP_PROXY` (см. `.env.example`).
+Переменные окружения для этих сценариев: `ANTHROPIC_API_KEY` (обязательно для `code-review`), опционально `ANTHROPIC_MODEL`, **`OPENAI_API_KEY`** (только archive RAG / `yarn rag:index`), прокси `HTTPS_PROXY` / `HTTP_PROXY` (см. `.env.example`).
 
 - Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`, `scripts/daily-standup-paths.mjs`).
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).

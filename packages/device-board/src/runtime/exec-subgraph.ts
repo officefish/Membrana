@@ -15,6 +15,13 @@ import type { ScenarioRuntimeBranch } from './types.js';
 import type { ScenarioVariableStore } from './variable-store.js';
 import { isExecTransparentPureNode } from './scenario-node-pure-runtime.js';
 import { MAX_SUBGRAPH_EXEC_STEPS, yieldToEventLoop } from './runtime-timing.js';
+import { findExecSuccessor } from './exec-successor.js';
+
+export interface RunSubgraphOnceResult {
+  readonly lastDetection: ScenarioDetectionResult | null;
+  /** Активированный exec-пин function-output при выходе из collapsed function. */
+  readonly execOutHandle?: string;
+}
 
 export interface ExecSubgraphOptions {
   readonly branch: ScenarioRuntimeBranch;
@@ -47,21 +54,6 @@ function findNode(subgraph: ScenarioSubgraph, nodeId: string): ScenarioGraphNode
   return subgraph.nodes.find((node) => node.id === nodeId);
 }
 
-function findExecSuccessor(
-  subgraph: ScenarioSubgraph,
-  nodeId: string,
-  sourceHandle = 'exec-out',
-): string | null {
-  const edge = subgraph.edges.find(
-    (item) =>
-      item.source === nodeId &&
-      item.kind === 'exec' &&
-      item.sourceHandle === sourceHandle &&
-      item.targetHandle === 'exec-in',
-  );
-  return edge?.target ?? null;
-}
-
 /**
  * Один проход exec-цепочки подграфа.
  * Цикл main loop: если следующая нода — entry, завершаем итерацию.
@@ -72,16 +64,22 @@ export async function runSubgraphOnce(
   signal: AbortSignal,
   options: ExecSubgraphOptions,
   callbacks: ExecSubgraphCallbacks = {},
-): Promise<ScenarioDetectionResult | null> {
+): Promise<RunSubgraphOnceResult> {
   let currentId = subgraph.entry;
   const entryId = subgraph.entry;
   let lastDetection: ScenarioDetectionResult | null = null;
+  let pendingFunctionOutputHandle: string | undefined;
   let execSteps = 0;
   const isLoopBranch = options.branch === 'main' || options.branch === 'alarm';
 
+  const finish = (execOutHandle?: string): RunSubgraphOnceResult => ({
+    lastDetection,
+    ...(execOutHandle !== undefined ? { execOutHandle } : {}),
+  });
+
   for (;;) {
     if (signal.aborted) {
-      return lastDetection;
+      return finish();
     }
 
     execSteps += 1;
@@ -97,7 +95,7 @@ export async function runSubgraphOnce(
     }
 
     if (node.nodeKind === 'function-output') {
-      return lastDetection;
+      return finish(pendingFunctionOutputHandle ?? 'exec-out');
     }
 
     if (node.nodeKind === 'function-input') {
@@ -105,7 +103,7 @@ export async function runSubgraphOnce(
         (item) => item.source === currentId && item.kind === 'exec',
       );
       if (execEdge === undefined) {
-        return lastDetection;
+        return finish();
       }
       currentId = execEdge.target;
       continue;
@@ -114,10 +112,10 @@ export async function runSubgraphOnce(
     if (isExecTransparentPureNode(node)) {
       const skipNextId = findExecSuccessor(subgraph, currentId, 'exec-out');
       if (skipNextId === null) {
-        return lastDetection;
+        return finish();
       }
       if (skipNextId === entryId) {
-        return lastDetection;
+        return finish();
       }
       if (isLoopBranch) {
         await yieldToEventLoop(signal);
@@ -149,11 +147,11 @@ export async function runSubgraphOnce(
     });
 
     if (result.stopRequested) {
-      return result.lastDetection;
+      return finish();
     }
 
     if (result.loopRepeatRequested === true) {
-      return result.lastDetection;
+      return finish();
     }
 
     lastDetection = result.lastDetection;
@@ -171,13 +169,18 @@ export async function runSubgraphOnce(
       });
     }
 
-    const nextId = findExecSuccessor(subgraph, currentId, result.execOutHandle ?? 'exec-out');
+    const outgoingHandle = result.execOutHandle ?? 'exec-out';
+    const nextId = findExecSuccessor(subgraph, currentId, outgoingHandle);
     if (nextId === null) {
-      return lastDetection;
+      return finish();
     }
     if (nextId === entryId) {
-      return lastDetection;
+      return finish();
     }
+
+    const nextNode = findNode(subgraph, nextId);
+    pendingFunctionOutputHandle =
+      nextNode?.nodeKind === 'function-output' ? outgoingHandle : undefined;
 
     if (isLoopBranch) {
       await yieldToEventLoop(signal);

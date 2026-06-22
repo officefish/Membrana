@@ -18,10 +18,11 @@ import { repoRootFromScripts } from './usercase-paths.mjs';
  * @param {string} [repoRoot]
  */
 export async function finalizeUserCaseBuild(rawId, repoRoot = repoRootFromScripts()) {
-  const yarnCmd = process.platform === 'win32' ? 'yarn.cmd' : 'yarn';
+  const yarnCmd = 'yarn';
   const build = spawnSync(yarnCmd, ['workspace', '@membrana/device-board', 'build'], {
     cwd: repoRoot,
     stdio: 'inherit',
+    shell: true,
   });
   if (build.status !== 0) {
     throw new Error('device-board build failed before layout canon');
@@ -29,6 +30,17 @@ export async function finalizeUserCaseBuild(rawId, repoRoot = repoRootFromScript
 
   const manifest = loadUserCaseManifest(rawId, repoRoot);
   let document = loadEmbeddedDeviceScenarioDocument(manifest.embeddedDocument, repoRoot);
+
+  const profile = manifest['commentGroupProfile'];
+  if (typeof profile === 'string' && profile.length > 0) {
+    document = {
+      ...document,
+      meta: {
+        ...(typeof document['meta'] === 'object' && document['meta'] !== null ? document['meta'] : {}),
+        commentGroupProfile: profile,
+      },
+    };
+  }
 
   const canonUrl = pathToFileURL(
     join(repoRoot, 'packages/device-board/dist/graph/usercase-layout-canon.js'),

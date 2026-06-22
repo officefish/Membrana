@@ -54,7 +54,7 @@
         "blockKind": "custom",
         "position": {
           "x": 56,
-          "y": 248
+          "y": 312
         },
         "label": "GetMicrophone",
         "nodeKind": "get-microphone",
@@ -95,7 +95,7 @@
     }
   ],
   "referencedVariableIds": [],
-  "exportedAt": "2026-06-21T12:04:18.019Z",
+  "exportedAt": "2026-06-21T13:08:50.659Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "onStop",
   "referenceVariableSlots": []

@@ -19,7 +19,7 @@
 import { resolve } from 'node:path';
 import { parseStandupArgs, runDailyStandup } from './_daily-standup.mjs';
 
-const { full, dryRun, issueLimit } = parseStandupArgs(process.argv.slice(2));
+const { full, dryRun, issueLimit, noRag } = parseStandupArgs(process.argv.slice(2));
 
 const commandName = `yarn standup${full ? ':full' : ''}${dryRun ? ':dry' : ''}`;
 
@@ -27,6 +27,7 @@ await runDailyStandup({
   full,
   dryRun,
   issueLimit,
+  noRag,
   outputPath: resolve(process.cwd(), 'docs/DAILY_STANDUP.md'),
   commandName,
 });

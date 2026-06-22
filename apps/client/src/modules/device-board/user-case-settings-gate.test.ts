@@ -25,6 +25,7 @@ describe('user-case-settings-gate', () => {
 
   it('entitlementBadgeLabel maps statuses', () => {
     expect(entitlementBadgeLabel('bundled')).toBe('Bundled');
+    expect(entitlementBadgeLabel('community')).toBe('Sprint');
     expect(entitlementBadgeLabel('locked')).toBe('Тариф');
   });
 });

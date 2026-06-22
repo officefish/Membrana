@@ -1,0 +1,59 @@
+{
+  "id": "usercase-mvp-microphone-alpha",
+  "title": "Alpha: Live Observation Pipeline",
+  "description": "Competition sprint Team Alpha — operator journey, RU comment groups, observation function.",
+  "deviceKind": "microphone",
+  "tier": "community",
+  "layoutProfile": "exec-lr-v1",
+  "minEditorFeatures": [
+    "align",
+    "groups",
+    "functions",
+    "exec-layout"
+  ],
+  "canon": "DEVICE_BOARD_CONCEPT.md §16.5",
+  "embeddedDocument": "packages/device-board/src/graph/default-usercase-mvp-microphone-alpha.generated.ts",
+  "importOrder": [
+    "02-onStart.json",
+    "01-onConnect.json",
+    "03-onMainTick.json",
+    "04-onAlarmTick.json",
+    "05-onStop.json",
+    "06-onDisconnect.json"
+  ],
+  "branches": {
+    "onConnect": {
+      "bundleFile": "01-onConnect.json",
+      "nodeCount": 4,
+      "edgeCount": 5
+    },
+    "initial": {
+      "bundleFile": "02-onStart.json",
+      "nodeCount": 9,
+      "edgeCount": 13
+    },
+    "main": {
+      "bundleFile": "03-onMainTick.json",
+      "nodeCount": 27,
+      "edgeCount": 54
+    },
+    "onStop": {
+      "bundleFile": "05-onStop.json",
+      "nodeCount": 5,
+      "edgeCount": 3
+    },
+    "onDisconnect": {
+      "bundleFile": "06-onDisconnect.json",
+      "nodeCount": 4,
+      "edgeCount": 3
+    },
+    "alarm": {
+      "bundleFile": "04-onAlarmTick.json",
+      "nodeCount": 2,
+      "edgeCount": 1
+    }
+  },
+  "commentGroupProfile": "alpha",
+  "packProfile": "alpha",
+  "competitionSprint": "comp-mvp-packaging-2026-06-21"
+}

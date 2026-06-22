@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "UserCase MVP microphone (default)",
-    "exportedAt": "2026-06-21T12:04:11.016Z"
+    "exportedAt": "2026-06-21T13:08:46.264Z"
   },
   "signalGraph": {
     "nodes": [],
@@ -87,7 +87,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           "blockKind": "custom",
           "position": {
             "x": -960,
-            "y": -568
+            "y": -560
           },
           "label": "journal1",
           "nodeKind": "variable-set",
@@ -324,7 +324,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 8112,
-              "y": -288
+              "y": -280
             },
             "label": "∞",
             "nodeKind": "loop-repeat",
@@ -345,7 +345,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 224,
-              "y": -280
+              "y": -272
             },
             "label": "GetAudioStream",
             "nodeKind": "get-audio-stream"
@@ -355,7 +355,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 1152,
-              "y": -288
+              "y": -280
             },
             "label": "GetSample",
             "nodeKind": "get-sample"
@@ -365,7 +365,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 2080,
-              "y": -288
+              "y": -280
             },
             "label": "GetFFTFrame",
             "nodeKind": "get-fft-frame"
@@ -395,7 +395,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 688,
-              "y": -280
+              "y": -272
             },
             "label": "isValid",
             "nodeKind": "is-valid"
@@ -405,7 +405,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 1616,
-              "y": -288
+              "y": -280
             },
             "label": "GetRecorder",
             "nodeKind": "get-recorder"
@@ -415,7 +415,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 2544,
-              "y": -288
+              "y": -280
             },
             "label": "GetSpectralAnalyser",
             "nodeKind": "get-spectral-analyser"
@@ -425,7 +425,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 3008,
-              "y": -288
+              "y": -280
             },
             "label": "CollectFftFrames",
             "nodeKind": "collect-fft-frames",
@@ -481,7 +481,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 3472,
-              "y": -288
+              "y": -280
             },
             "label": "GetRecorder",
             "nodeKind": "get-recorder"
@@ -491,7 +491,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 4400,
-              "y": -288
+              "y": -280
             },
             "label": "IsRecordingWindowFull",
             "nodeKind": "is-recording-window-full"
@@ -541,7 +541,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 3936,
-              "y": -288
+              "y": -280
             },
             "label": "StartRecording (bootstrap)",
             "nodeKind": "start-recording",
@@ -1115,7 +1115,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 56,
-              "y": 248
+              "y": 312
             },
             "label": "GetMicrophone",
             "nodeKind": "get-microphone",
@@ -1264,7 +1264,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           "x": 1592,
           "y": -344,
           "width": 4448,
-          "height": 184
+          "height": 192
         },
         "nodeIds": [
           "node-get-recorder-mqm9sdoi-25",
@@ -1288,7 +1288,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
           "x": 1128,
           "y": -344,
           "width": 5840,
-          "height": 184
+          "height": 192
         },
         "nodeIds": [
           "node-get-sample-mql3f1ro-9",

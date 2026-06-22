@@ -50,7 +50,7 @@ flowchart LR
 
 | Пакет | Порт (dev) | Stateful? | Назначение |
 |-------|------------|-----------|------------|
-| **`@membrana/background-office`** | 3000 | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст). Скрипты `yarn ask`, CI, dev-tools. |
+| **`@membrana/background-office`** | 3000 | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4). Скрипты `yarn ask`, CI, dev-tools. |
 | **`@membrana/background-media`** | 3010 | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент); v2 эпика #67 — scope по **`membraneId`**. Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
 | **`@membrana/background-cabinet`** *(план)* | 3020 | **Да** | **Identity + domain:** users (login/password), membranes, nodes, access keys (TTL enum), tariffs, telemetry metadata. SPA: `apps/cabinet` → `cabinet.membrana.space`. |
 
@@ -79,10 +79,33 @@ flowchart LR
 
 **Общее для обоих:**
 
-- NestJS + TypeScript strict + zod env + pino + `X-Membrana-Token` на `/v1/*`;
+- NestJS + TypeScript strict + zod env + pino + `X-Membrana-Token` на `/v1/*` и **`/api/rag/*`** (R4);
 - `GET /health` без авторизации;
 - отдельный деплой и DNS (напр. `api.<domain>` vs `media.<domain>`);
 - автономность от монорепо-клиента (локальные DTO, без `@membrana/trends-detector-service` в runtime).
+
+### Исключение R4: `@membrana/rag-service` в `background-office`
+
+По умолчанию `background-*` **не** импортируют пакеты `packages/services/*`. Для dual-circuit RAG (эпик `rag-dual-circuit-v1`, фаза **R4**) разрешена **единственная** зависимость:
+
+| Пакет | Где | Зачем |
+|-------|-----|-------|
+| `@membrana/rag-service` | `background-office` only | `POST /api/rag/query` — удалённый доступ к `retrieveContext()` для consilium / automation |
+
+**Не переносить RAG в `background-media` Postgres** — LanceDB остаётся embedded (`.membrana/rag/` на диске процесса office или `RAG_REPO_ROOT`).
+
+#### Security (R4)
+
+| Риск | Митигация v1 |
+|------|----------------|
+| Утечка repo-доков | Только `X-Membrana-Token` (тот же секрет, что `/v1/claude/*`); **не** вызывать из browser bundle |
+| Утечка `OPENAI_API_KEY` | Ключ только в env office; embeddings — server-side |
+| Prompt injection через `query` | Max 2000 chars; zod validation; fragments — read-only context, не исполняются |
+| Логирование секретов | pino redact для `X-Membrana-Token`; не логировать полные `fragments[]` на `info` |
+| DoS / cost (embeddings) | Archive circuit = 1 embed/query; rate limit — отложен (R7 / reverse proxy) |
+| Несинхронный index | Оперативный circuit (BM25) работает без LanceDB; archive → 503 с явным сообщением |
+
+**Клиент (`apps/client`)** в v1 **не** ходит на `/api/rag/query` напрямую — только скрипты ритуалов / consilium через office или локальный `yarn rag:query`.
 
 **Различие HTTP-адаптеров (намеренное):**
 

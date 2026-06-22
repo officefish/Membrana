@@ -1,0 +1,95 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "onDisconnect",
+  "branchLabel": "On disconnect",
+  "scenarioTitle": "UserCase Gamma: Poster UserCase: onDisconnect → invalidate journal1",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "on-disconnect-event",
+    "nodes": [
+      {
+        "id": "on-disconnect-event",
+        "blockKind": "custom",
+        "position": {
+          "x": -96,
+          "y": -128
+        },
+        "label": "On disconnect",
+        "nodeKind": "event",
+        "system": true,
+        "eventVariant": "handler"
+      },
+      {
+        "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+        "blockKind": "custom",
+        "position": {
+          "x": 368,
+          "y": -128
+        },
+        "label": "journal1",
+        "nodeKind": "variable-set",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "node-device-global-mqm9pz9v-23",
+        "blockKind": "custom",
+        "position": {
+          "x": -104,
+          "y": 88
+        },
+        "label": "GetDevice",
+        "nodeKind": "device-global"
+      },
+      {
+        "id": "node-get-journal-mqm9q43m-24",
+        "blockKind": "custom",
+        "position": {
+          "x": 184,
+          "y": 8
+        },
+        "label": "GetJournal",
+        "nodeKind": "get-journal"
+      }
+    ],
+    "edges": [
+      {
+        "source": "node-device-global-mqm9pz9v-23",
+        "sourceHandle": "device",
+        "target": "node-get-journal-mqm9q43m-24",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "on-disconnect-event",
+        "sourceHandle": "exec-out",
+        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-journal-mqm9q43m-24",
+        "sourceHandle": "journal",
+        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "JournalRef"
+      }
+    ]
+  },
+  "variables": [
+    {
+      "id": "var-JournalRef-mqm9dl4a-6",
+      "name": "journal1",
+      "type": "JournalRef",
+      "value": null
+    }
+  ],
+  "referencedVariableIds": [
+    "var-JournalRef-mqm9dl4a-6"
+  ],
+  "exportedAt": "2026-06-21T15:42:29.587Z",
+  "userCaseId": "usercase-mvp-microphone-gamma",
+  "userCaseBranch": "onDisconnect",
+  "referenceVariableSlots": []
+}

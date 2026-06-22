@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { assertUserCaseWritePath } from './usercase-write-guard.mjs';
 import { repoRootFromScripts, resolveUserCaseDir } from './usercase-paths.mjs';
 
 /**
@@ -13,10 +14,17 @@ export function writeEmbeddedDeviceScenarioDocument(
   document,
   repoRoot = repoRootFromScripts(),
 ) {
+  assertUserCaseWritePath(embeddedRelativePath, repoRoot);
   const abs = join(repoRoot, embeddedRelativePath);
-  const exportName = abs.includes('mvp-microphone')
-    ? 'DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT'
-    : 'DEFAULT_USERCASE_DOCUMENT';
+  const exportName = abs.includes('mvp-microphone-alpha')
+    ? 'DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT'
+    : abs.includes('mvp-microphone-beta')
+      ? 'DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT'
+      : abs.includes('mvp-microphone-gamma')
+        ? 'DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT'
+        : abs.includes('mvp-microphone')
+          ? 'DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT'
+          : 'DEFAULT_USERCASE_DOCUMENT';
   const body = JSON.stringify(document, null, 2);
   writeFileSync(
     abs,
@@ -61,6 +69,7 @@ export function syncUserCaseBranchBundles(rawId, document, repoRoot = repoRootFr
       continue;
     }
     const bundlePath = join(dir, bundleFile);
+    assertUserCaseWritePath(bundlePath, repoRoot);
     const existing = JSON.parse(readFileSync(bundlePath, 'utf8'));
     writeFileSync(
       bundlePath,
@@ -77,8 +86,9 @@ export function syncUserCaseBranchBundles(rawId, document, repoRoot = repoRootFr
     );
 
     const legacyFile = meta['legacyFile'];
-    if (typeof legacyFile === 'string') {
+    if (typeof legacyFile === 'string' && manifest['competitionSprint'] === undefined) {
       const legacyPath = join(repoRoot, 'docs/device-board-scripts', legacyFile);
+      assertUserCaseWritePath(legacyPath, repoRoot);
       writeFileSync(
         legacyPath,
         `${JSON.stringify(

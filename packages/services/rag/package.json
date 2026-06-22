@@ -1,0 +1,40 @@
+{
+  "name": "@membrana/rag-service",
+  "version": "0.1.0",
+  "description": "Dual-circuit RAG for Membrana rituals: repo operative memory + LanceDB archive (foundation-infra, Node-only).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "index": "node ./dist/cli/index.js",
+    "query": "node ./dist/cli/query.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "@lancedb/lancedb": "^0.30.0",
+    "apache-arrow": "18.1.0",
+    "glob": "^13.0.6",
+    "gray-matter": "^4.0.3"
+  }
+}

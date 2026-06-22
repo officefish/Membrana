@@ -585,62 +585,69 @@ const DeviceBoardShellInner: React.FC<{
   const mode = graph.mode;
   const isSaving = graph.syncStatus === 'saving';
 
-  const scenarioCanvas =
-    scenarioBranch === 'initial'
-      ? {
-          nodes: graph.scenarioInitialNodes,
-          edges: graph.scenarioInitialEdges,
-          onNodesChange: graph.onScenarioInitialNodesChange,
-          onEdgesChange: graph.onScenarioInitialEdgesChange,
-          onConnect: graph.onScenarioInitialConnect,
-        }
-      : scenarioBranch === 'onConnect'
-      ? {
-          nodes: graph.scenarioOnConnectNodes,
-          edges: graph.scenarioOnConnectEdges,
-          onNodesChange: graph.onScenarioOnConnectNodesChange,
-          onEdgesChange: graph.onScenarioOnConnectEdgesChange,
-          onConnect: graph.onScenarioOnConnectConnect,
-        }
-      : scenarioBranch === 'main'
-        ? {
-            nodes: graph.scenarioMainNodes,
-            edges: graph.scenarioMainEdges,
-            onNodesChange: graph.onScenarioMainNodesChange,
-            onEdgesChange: graph.onScenarioMainEdgesChange,
-            onConnect: graph.onScenarioMainConnect,
-          }
-        : scenarioBranch === 'alarm'
-          ? {
-              nodes: graph.scenarioAlarmNodes,
-              edges: graph.scenarioAlarmEdges,
-              onNodesChange: graph.onScenarioAlarmNodesChange,
-              onEdgesChange: graph.onScenarioAlarmEdgesChange,
-              onConnect: graph.onScenarioAlarmConnect,
-            }
-          : scenarioBranch === 'onStop'
-            ? {
-                nodes: graph.scenarioOnStopNodes,
-                edges: graph.scenarioOnStopEdges,
-                onNodesChange: graph.onScenarioOnStopNodesChange,
-                onEdgesChange: graph.onScenarioOnStopEdgesChange,
-                onConnect: graph.onScenarioOnStopConnect,
-              }
-            : scenarioBranch === 'onDisconnect'
-              ? {
-                  nodes: graph.scenarioOnDisconnectNodes,
-                  edges: graph.scenarioOnDisconnectEdges,
-                  onNodesChange: graph.onScenarioOnDisconnectNodesChange,
-                  onEdgesChange: graph.onScenarioOnDisconnectEdgesChange,
-                  onConnect: graph.onScenarioOnDisconnectConnect,
-                }
-              : {
-                  nodes: graph.scenarioFunctionNodes,
-                  edges: graph.scenarioFunctionEdges,
-                  onNodesChange: graph.onScenarioFunctionNodesChange,
-                  onEdgesChange: graph.onScenarioFunctionEdgesChange,
-                  onConnect: graph.onScenarioFunctionConnect,
-                };
+  const scenarioCanvas = useMemo(() => {
+    if (scenarioBranch === 'initial') {
+      return {
+        nodes: graph.scenarioInitialNodes,
+        edges: graph.scenarioInitialEdges,
+        onNodesChange: graph.onScenarioInitialNodesChange,
+        onEdgesChange: graph.onScenarioInitialEdgesChange,
+        onConnect: graph.onScenarioInitialConnect,
+      };
+    }
+    if (scenarioBranch === 'onConnect') {
+      return {
+        nodes: graph.scenarioOnConnectNodes,
+        edges: graph.scenarioOnConnectEdges,
+        onNodesChange: graph.onScenarioOnConnectNodesChange,
+        onEdgesChange: graph.onScenarioOnConnectEdgesChange,
+        onConnect: graph.onScenarioOnConnectConnect,
+      };
+    }
+    if (scenarioBranch === 'main') {
+      return {
+        nodes: graph.scenarioMainNodes,
+        edges: graph.scenarioMainEdges,
+        onNodesChange: graph.onScenarioMainNodesChange,
+        onEdgesChange: graph.onScenarioMainEdgesChange,
+        onConnect: graph.onScenarioMainConnect,
+      };
+    }
+    if (scenarioBranch === 'alarm') {
+      return {
+        nodes: graph.scenarioAlarmNodes,
+        edges: graph.scenarioAlarmEdges,
+        onNodesChange: graph.onScenarioAlarmNodesChange,
+        onEdgesChange: graph.onScenarioAlarmEdgesChange,
+        onConnect: graph.onScenarioAlarmConnect,
+      };
+    }
+    if (scenarioBranch === 'onStop') {
+      return {
+        nodes: graph.scenarioOnStopNodes,
+        edges: graph.scenarioOnStopEdges,
+        onNodesChange: graph.onScenarioOnStopNodesChange,
+        onEdgesChange: graph.onScenarioOnStopEdgesChange,
+        onConnect: graph.onScenarioOnStopConnect,
+      };
+    }
+    if (scenarioBranch === 'onDisconnect') {
+      return {
+        nodes: graph.scenarioOnDisconnectNodes,
+        edges: graph.scenarioOnDisconnectEdges,
+        onNodesChange: graph.onScenarioOnDisconnectNodesChange,
+        onEdgesChange: graph.onScenarioOnDisconnectEdgesChange,
+        onConnect: graph.onScenarioOnDisconnectConnect,
+      };
+    }
+    return {
+      nodes: graph.scenarioFunctionNodes,
+      edges: graph.scenarioFunctionEdges,
+      onNodesChange: graph.onScenarioFunctionNodesChange,
+      onEdgesChange: graph.onScenarioFunctionEdgesChange,
+      onConnect: graph.onScenarioFunctionConnect,
+    };
+  }, [scenarioBranch, graph]);
 
   const clearCanvasNodeSelection = useCallback(() => {
     if (isSignal) {

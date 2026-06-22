@@ -1,0 +1,221 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "initial",
+  "branchLabel": "On start",
+  "scenarioTitle": "UserCase Beta: Measured modular UserCase: onStart → GetMicrophone → StartStreaming → journal bootstrap",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "initial-event",
+    "nodes": [
+      {
+        "id": "initial-event",
+        "blockKind": "custom",
+        "position": {
+          "x": -1888,
+          "y": -600
+        },
+        "label": "On start",
+        "nodeKind": "event",
+        "system": true,
+        "eventVariant": "handler"
+      },
+      {
+        "id": "node-get-microphone-mqkpxb3c-5",
+        "blockKind": "custom",
+        "position": {
+          "x": -32,
+          "y": -600
+        },
+        "label": "GetMicrophone",
+        "nodeKind": "get-microphone",
+        "microphoneId": "0928f245e15f012de6b0d9e32f70efd5e6bc3957af6381c2b28da7536d150c04"
+      },
+      {
+        "id": "node-print-mqksbm4o-3",
+        "blockKind": "custom",
+        "position": {
+          "x": -496,
+          "y": -600
+        },
+        "label": "Print",
+        "nodeKind": "print"
+      },
+      {
+        "id": "node-start-streaming-mql556hh-49",
+        "blockKind": "custom",
+        "position": {
+          "x": 432,
+          "y": -600
+        },
+        "label": "StartStreaming",
+        "nodeKind": "start-streaming"
+      },
+      {
+        "id": "node-is-valid-mqm9i48b-18",
+        "blockKind": "custom",
+        "position": {
+          "x": -1424,
+          "y": -600
+        },
+        "label": "isValid",
+        "nodeKind": "is-valid"
+      },
+      {
+        "id": "node-device-global-mqm9ip17-19",
+        "blockKind": "custom",
+        "position": {
+          "x": -1760,
+          "y": -80
+        },
+        "label": "GetDevice",
+        "nodeKind": "device-global"
+      },
+      {
+        "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9it3v-10",
+        "blockKind": "custom",
+        "position": {
+          "x": -960,
+          "y": -560
+        },
+        "label": "journal1",
+        "nodeKind": "variable-set",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "node-get-journal-mqm9j4wy-20",
+        "blockKind": "custom",
+        "position": {
+          "x": -1064,
+          "y": -248
+        },
+        "label": "GetJournal",
+        "nodeKind": "get-journal"
+      },
+      {
+        "id": "node-get-journal-mvp-initial-valid-1",
+        "blockKind": "custom",
+        "position": {
+          "x": -1752,
+          "y": -240
+        },
+        "label": "GetJournal",
+        "nodeKind": "get-journal"
+      }
+    ],
+    "edges": [
+      {
+        "source": "initial-event",
+        "sourceHandle": "exec-out",
+        "target": "node-is-valid-mqm9i48b-18",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-device-global-mqm9ip17-19",
+        "sourceHandle": "device",
+        "target": "node-get-journal-mqm9j4wy-20",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-is-valid-mqm9i48b-18",
+        "sourceHandle": "exec-false-out",
+        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9it3v-10",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-journal-mqm9j4wy-20",
+        "sourceHandle": "journal",
+        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9it3v-10",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "JournalRef"
+      },
+      {
+        "source": "node-device-global-mqm9ip17-19",
+        "sourceHandle": "device",
+        "target": "node-get-journal-mvp-initial-valid-1",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-journal-mvp-initial-valid-1",
+        "sourceHandle": "journal",
+        "target": "node-is-valid-mqm9i48b-18",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "JournalRef"
+      },
+      {
+        "source": "initial-event",
+        "sourceHandle": "device",
+        "target": "node-get-microphone-mqkpxb3c-5",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-microphone-mqkpxb3c-5",
+        "sourceHandle": "microphone",
+        "target": "node-start-streaming-mql556hh-49",
+        "targetHandle": "microphone",
+        "kind": "data",
+        "dataType": "MicrophoneRef"
+      },
+      {
+        "source": "initial-event",
+        "sourceHandle": "datetime",
+        "target": "node-print-mqksbm4o-3",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "DateTime"
+      },
+      {
+        "source": "node-is-valid-mqm9i48b-18",
+        "sourceHandle": "exec-true-out",
+        "target": "node-print-mqksbm4o-3",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-print-mqksbm4o-3",
+        "sourceHandle": "exec-out",
+        "target": "node-get-microphone-mqkpxb3c-5",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-microphone-mqkpxb3c-5",
+        "sourceHandle": "exec-out",
+        "target": "node-start-streaming-mql556hh-49",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9it3v-10",
+        "sourceHandle": "exec-out",
+        "target": "node-print-mqksbm4o-3",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      }
+    ]
+  },
+  "variables": [
+    {
+      "id": "var-JournalRef-mqm9dl4a-6",
+      "name": "journal1",
+      "type": "JournalRef",
+      "value": null
+    }
+  ],
+  "referencedVariableIds": [
+    "var-JournalRef-mqm9dl4a-6"
+  ],
+  "exportedAt": "2026-06-21T15:43:05.191Z",
+  "userCaseId": "usercase-mvp-microphone-beta",
+  "userCaseBranch": "initial",
+  "referenceVariableSlots": []
+}

@@ -1,5 +1,8 @@
 import type { UserCaseCatalogEntry } from './user-case-catalog-types.js';
 import { getDefaultMvpMicrophoneDocument } from '../graph/default-usercase-mvp-microphone.js';
+import { getDefaultMvpMicrophoneAlphaDocument } from '../graph/default-usercase-mvp-microphone-alpha.js';
+import { getDefaultMvpMicrophoneBetaDocument } from '../graph/default-usercase-mvp-microphone-beta.js';
+import { getDefaultMvpMicrophoneGammaDocument } from '../graph/default-usercase-mvp-microphone-gamma.js';
 
 /**
  * Bundled UserCase entries (runtime index).
@@ -27,5 +30,39 @@ export const BUNDLED_USER_CASE_ENTRIES: readonly UserCaseCatalogEntry[] = [
       },
     },
     loadDocument: getDefaultMvpMicrophoneDocument,
+  },
+  {
+    id: 'usercase-mvp-microphone-alpha',
+    title: 'Alpha: Live Observation Pipeline',
+    description:
+      'Competition sprint Team Alpha — operator journey, RU comment groups, gate + observation functions.',
+    deviceKind: 'microphone',
+    tier: 'community',
+    layoutProfile: 'exec-lr-v1',
+    branchCount: 6,
+    functionCount: 3,
+    loadDocument: getDefaultMvpMicrophoneAlphaDocument,
+  },
+  {
+    id: 'usercase-mvp-microphone-beta',
+    title: 'Beta: Measured modular UserCase',
+    description: 'Competition sprint Team Beta — 3 modular functions, verify-layout metrics.',
+    deviceKind: 'microphone',
+    tier: 'community',
+    layoutProfile: 'exec-lr-v1',
+    branchCount: 6,
+    functionCount: 3,
+    loadDocument: getDefaultMvpMicrophoneBetaDocument,
+  },
+  {
+    id: 'usercase-mvp-microphone-gamma',
+    title: 'Gamma: Poster UserCase',
+    description: 'Competition sprint Team Gamma — poster layout ①–⑤, gate + trends functions.',
+    deviceKind: 'microphone',
+    tier: 'community',
+    layoutProfile: 'exec-lr-v1',
+    branchCount: 6,
+    functionCount: 2,
+    loadDocument: getDefaultMvpMicrophoneGammaDocument,
   },
 ];

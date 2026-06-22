@@ -37,7 +37,7 @@ export { resolveRefListMembers } from './resolve-ref-list.js';
 export type { RefListKind } from './resolve-ref-list.js';
 export { createStubScenarioRuntimeHost, SUPPORTED_H2B_BLOCK_KINDS } from './host.js';
 export { ScenarioRuntime, type ScenarioRuntimeListener, type ScenarioRuntimeOptions } from './scenario-runtime.js';
-export { runSubgraphOnce } from './exec-subgraph.js';
+export { runSubgraphOnce, type RunSubgraphOnceResult } from './exec-subgraph.js';
 export { executeScenarioBlock } from './block-executor.js';
 export {
   LOOP_TICK_PAUSE_MS,
@@ -69,4 +69,5 @@ export {
   type NodePortInspectionResult,
   type RuntimePortInspection,
 } from './inspect-node-ports.js';
+export { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
 export { resolveNodeOutput } from './resolve-input.js';

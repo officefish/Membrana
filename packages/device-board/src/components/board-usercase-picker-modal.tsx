@@ -1,8 +1,77 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReferenceVariableSlot } from '../graph/export-branch-scenario.js';
 import type { UserCasePickerCard } from '../types/user-case-picker.js';
 import { BoardReferenceMappingModal } from './board-reference-mapping-modal.js';
 import { useDeviceBoardGraph } from '../context/device-board-graph-context.js';
+
+/** Stable ids for aria-labelledby / aria-describedby (NB3 a11y). */
+export const BOARD_USERCASE_PICKER_A11Y = {
+  titleId: 'board-usercase-picker-title',
+  descId: 'board-usercase-picker-desc',
+  dirtyTitleId: 'board-usercase-dirty-title',
+  dirtyDescId: 'board-usercase-dirty-desc',
+} as const;
+
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
+
+function useDialogA11y(
+  open: boolean,
+  dialogRef: React.RefObject<HTMLDialogElement>,
+  onEscape: () => void,
+): void {
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const dialog = dialogRef.current;
+    if (dialog === null) {
+      return;
+    }
+
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const getFocusables = (): HTMLElement[] =>
+      [...dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)].filter(
+        (element) => !element.hasAttribute('disabled') && element.tabIndex !== -1,
+      );
+
+    const focusTimer = window.setTimeout(() => {
+      getFocusables()[0]?.focus();
+    }, 0);
+
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onEscape();
+        return;
+      }
+      if (event.key !== 'Tab') {
+        return;
+      }
+      const focusables = getFocusables();
+      if (focusables.length === 0) {
+        return;
+      }
+      const first = focusables[0]!;
+      const last = focusables[focusables.length - 1]!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    dialog.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      dialog.removeEventListener('keydown', onKeyDown);
+      previousFocus?.focus();
+    };
+  }, [open, onEscape, dialogRef]);
+}
 
 export interface BoardUserCasePickerModalProps {
   readonly open: boolean;
@@ -15,6 +84,8 @@ function entitlementBadgeLabel(status: UserCasePickerCard['entitlement']): strin
   switch (status) {
     case 'bundled':
       return 'Bundled';
+    case 'community':
+      return 'Sprint';
     case 'entitled':
       return 'Тариф ✓';
     case 'locked':
@@ -28,6 +99,8 @@ function entitlementBadgeClass(status: UserCasePickerCard['entitlement']): strin
   switch (status) {
     case 'bundled':
       return 'badge badge-primary badge-sm';
+    case 'community':
+      return 'badge badge-secondary badge-sm';
     case 'entitled':
       return 'badge badge-success badge-sm';
     case 'locked':
@@ -45,6 +118,8 @@ export const BoardUserCasePickerModal: React.FC<BoardUserCasePickerModalProps> =
   onApplied,
 }) => {
   const graph = useDeviceBoardGraph();
+  const mainDialogRef = useRef<HTMLDialogElement>(null);
+  const confirmDialogRef = useRef<HTMLDialogElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [confirmDirtyOpen, setConfirmDirtyOpen] = useState(false);
   const [applyError, setApplyError] = useState<string | null>(null);
@@ -54,6 +129,21 @@ export const BoardUserCasePickerModal: React.FC<BoardUserCasePickerModalProps> =
     readonly slots: readonly ReferenceVariableSlot[];
     readonly mapping: Record<string, string>;
   } | null>(null);
+
+  const handleMainEscape = useCallback((): void => {
+    if (confirmDirtyOpen) {
+      setConfirmDirtyOpen(false);
+      return;
+    }
+    onDismiss();
+  }, [confirmDirtyOpen, onDismiss]);
+
+  const handleConfirmEscape = useCallback((): void => {
+    setConfirmDirtyOpen(false);
+  }, []);
+
+  useDialogA11y(open && !confirmDirtyOpen, mainDialogRef, handleMainEscape);
+  useDialogA11y(confirmDirtyOpen, confirmDialogRef, handleConfirmEscape);
 
   useEffect(() => {
     if (!open) {
@@ -111,17 +201,31 @@ export const BoardUserCasePickerModal: React.FC<BoardUserCasePickerModalProps> =
 
   return (
     <>
-      <dialog className="modal modal-open" open aria-labelledby="board-usercase-picker-title">
+      <dialog
+        ref={mainDialogRef}
+        className="modal modal-open"
+        open
+        aria-labelledby={BOARD_USERCASE_PICKER_A11Y.titleId}
+        aria-describedby={BOARD_USERCASE_PICKER_A11Y.descId}
+        aria-modal="true"
+      >
         <div className="modal-box max-w-lg">
-          <h3 id="board-usercase-picker-title" className="text-sm font-semibold text-base-content">
+          <h3
+            id={BOARD_USERCASE_PICKER_A11Y.titleId}
+            className="text-sm font-semibold text-base-content"
+          >
             Загрузить UserCase
           </h3>
-          <p className="mt-1 text-xs text-base-content/60">
+          <p id={BOARD_USERCASE_PICKER_A11Y.descId} className="mt-1 text-xs text-base-content/60">
             Готовый сценарий device-board. Signal-слой не изменится — заменяются только ветки
             сценария.
           </p>
 
-          <ul className="mt-4 max-h-64 space-y-2 overflow-y-auto">
+          <ul
+            className="mt-4 max-h-64 space-y-2 overflow-y-auto"
+            role="radiogroup"
+            aria-label="Доступные UserCase"
+          >
             {cards.map((card) => (
               <li key={card.id}>
                 <label
@@ -183,40 +287,51 @@ export const BoardUserCasePickerModal: React.FC<BoardUserCasePickerModalProps> =
             </button>
           </div>
         </div>
-        <form method="dialog" className="modal-backdrop">
-          <button type="button" aria-label="Закрыть" onClick={onDismiss}>
-            close
-          </button>
-        </form>
+        <button
+          type="button"
+          className="modal-backdrop bg-base-300/50"
+          aria-label="Закрыть выбор UserCase"
+          onClick={onDismiss}
+        />
       </dialog>
 
       {confirmDirtyOpen ? (
-        <dialog className="modal modal-open" open aria-labelledby="board-usercase-dirty-title">
+        <dialog
+          ref={confirmDialogRef}
+          className="modal modal-open"
+          open
+          aria-labelledby={BOARD_USERCASE_PICKER_A11Y.dirtyTitleId}
+          aria-describedby={BOARD_USERCASE_PICKER_A11Y.dirtyDescId}
+          aria-modal="true"
+        >
           <div className="modal-box max-w-md">
-            <h3 id="board-usercase-dirty-title" className="text-sm font-semibold text-base-content">
+            <h3
+              id={BOARD_USERCASE_PICKER_A11Y.dirtyTitleId}
+              className="text-sm font-semibold text-base-content"
+            >
               Заменить текущий сценарий?
             </h3>
-            <p className="mt-2 text-xs text-base-content/65 leading-relaxed">
+            <p
+              id={BOARD_USERCASE_PICKER_A11Y.dirtyDescId}
+              className="mt-2 text-xs text-base-content/65 leading-relaxed"
+            >
               Несохранённые изменения будут потеряны. Signal-слой останется без изменений.
             </p>
             <div className="modal-action">
               <button type="button" className="btn btn-sm" onClick={() => setConfirmDirtyOpen(false)}>
                 Отмена
               </button>
-              <button
-                type="button"
-                className="btn btn-error btn-sm"
-                onClick={() => runApply()}
-              >
+              <button type="button" className="btn btn-error btn-sm" onClick={() => runApply()}>
                 Заменить сценарий
               </button>
             </div>
           </div>
-          <form method="dialog" className="modal-backdrop">
-            <button type="button" aria-label="Закрыть" onClick={() => setConfirmDirtyOpen(false)}>
-              close
-            </button>
-          </form>
+          <button
+            type="button"
+            className="modal-backdrop bg-base-300/50"
+            aria-label="Отменить замену сценария"
+            onClick={() => setConfirmDirtyOpen(false)}
+          />
         </dialog>
       ) : null}
 

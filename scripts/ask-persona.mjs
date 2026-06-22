@@ -35,6 +35,12 @@ import {
   loadDotEnv,
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
+import {
+  formatRagContextBlock,
+  logRagStatus,
+  retrieveRagContext,
+  shouldUsePersonaRag,
+} from './lib/rag-ritual.mjs';
 
 // ---------------------------------------------------------------------------
 // Персонажи. Чтобы добавить нового — пиши сюда + создавай PROMPT_*.md.
@@ -94,6 +100,8 @@ Options:
   --save-as <name>          Имя файла обсуждения в docs/discussions/<name>.md (append).
   --no-save                 Принудительно не сохранять (по умолчанию сохраняется при --gh-issue / --ticket-file / --save-as).
   --no-context              Не подгружать WHITE_PAPER / ARCHITECTURE / SERVICES.
+  --rag                     Подмешать RAG (operative) по вопросу.
+  --no-rag                  Отключить RAG (в т.ч. для vesnin/ozhegov).
   --help, -h                Эта справка.
 
 Среда:
@@ -116,6 +124,8 @@ function parseArgs(argv) {
   let saveAs = '';
   let noSave = false;
   let noContext = false;
+  let noRag = false;
+  let enableRag = false;
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -129,6 +139,8 @@ function parseArgs(argv) {
     if (arg.startsWith('--save-as=')) { saveAs = arg.slice('--save-as='.length); continue; }
     if (arg === '--no-save') { noSave = true; continue; }
     if (arg === '--no-context') { noContext = true; continue; }
+    if (arg === '--no-rag') { noRag = true; continue; }
+    if (arg === '--rag') { enableRag = true; continue; }
     rest.push(arg);
   }
 
@@ -153,7 +165,7 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { persona, question, task, ticketFile, ghIssue, saveAs, noSave, noContext };
+  return { persona, question, task, ticketFile, ghIssue, saveAs, noSave, noContext, noRag, enableRag };
 }
 
 // ---------------------------------------------------------------------------
@@ -241,7 +253,7 @@ function formatGhIssueAsTicket(issue) {
 // ---------------------------------------------------------------------------
 // Сборка промпта
 
-function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueData }) {
+function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueData, ragBlock = '' }) {
   const cwd = process.cwd();
   const personaCfg = PERSONAS[persona];
 
@@ -293,6 +305,10 @@ function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueDa
     if (services) {
       parts.push('---', '## Сервисы (docs/SERVICES.md — выдержка)', '', services, '');
     }
+  }
+
+  if (ragBlock) {
+    parts.push('---', '## RAG context', '', ragBlock, '');
   }
 
   if (ticketBlock || taskInline) {
@@ -386,7 +402,14 @@ async function main() {
     ghIssueData = fetchGhIssue(cli.ghIssue);
   }
 
-  const { text: bodyText, ticketSourceLabel } = buildPrompt({ ...cli, ghIssueData });
+  let ragBlock = '';
+  if (shouldUsePersonaRag(cli)) {
+    const rag = await retrieveRagContext(cli.question, { topK: 5 });
+    ragBlock = formatRagContextBlock(rag, { title: 'RAG (yarn ask)' });
+    logRagStatus(rag, `ask:${cli.persona}`);
+  }
+
+  const { text: bodyText, ticketSourceLabel } = buildPrompt({ ...cli, ghIssueData, ragBlock });
   const model = defaultModel();
 
   if (process.stderr.isTTY) {

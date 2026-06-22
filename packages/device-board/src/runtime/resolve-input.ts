@@ -4,12 +4,15 @@ import {
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
   createReferenceValue,
+  type ScenarioFunctionSubgraph,
   type ScenarioGraphNode,
   type ScenarioReferenceValue,
   type ScenarioSubgraph,
   type ScenarioVariable,
   type ScenarioVariableValue,
 } from '@membrana/core';
+
+import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
@@ -116,6 +119,10 @@ export interface ResolveInputContext {
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
   readonly getPrintOutputValue?: (nodeId: string) => ScenarioVariableValue | null;
+  /** User function call: resolve data pin from parent branch into function-input. */
+  readonly resolveFunctionInputPin?: (pinId: string) => ScenarioVariableValue | null;
+  /** Collapsed function blocks available for pure/data-only output pull. */
+  readonly scenarioFunctions?: readonly ScenarioFunctionSubgraph[];
 }
 
 export type ResolveInputErrorCode =
@@ -168,6 +175,73 @@ function assertTypeCompatible(
 
 function readMicrophoneId(node: ScenarioGraphNode): string | undefined {
   return (node as ScenarioGraphNode & { microphoneId?: string }).microphoneId;
+}
+
+function resolveSubgraphBlockOutput(
+  functions: readonly ScenarioFunctionSubgraph[],
+  blockNode: ScenarioGraphNode,
+  outputPort: string,
+  variables: readonly ScenarioVariable[],
+  context: ResolveInputContext,
+  visiting: Set<string>,
+): ScenarioVariableValue | null {
+  if (visiting.has(blockNode.id)) {
+    throw new ResolveInputError('cycle', `Cycle at subgraph block "${blockNode.id}"`);
+  }
+  visiting.add(blockNode.id);
+
+  const functionId = parseSubgraphFunctionId(blockNode);
+  if (functionId === null) {
+    throw new ResolveInputError(
+      'unsupported-source',
+      `Subgraph block "${blockNode.id}" missing function id`,
+    );
+  }
+  const fn = functions.find((item) => item.id === functionId);
+  if (fn === undefined) {
+    throw new ResolveInputError(
+      'unsupported-source',
+      `Unknown function "${functionId}" for block "${blockNode.id}"`,
+    );
+  }
+
+  const outputNode = fn.nodes.find((node) => node.nodeKind === 'function-output');
+  if (outputNode === undefined) {
+    throw new ResolveInputError(
+      'unsupported-source',
+      `Function "${functionId}" has no function-output`,
+    );
+  }
+
+  const outboundEdge = fn.edges.find(
+    (edge) =>
+      edge.kind === 'data' &&
+      edge.target === outputNode.id &&
+      edge.targetHandle === outputPort,
+  );
+  if (outboundEdge === undefined || outboundEdge.sourceHandle === undefined) {
+    throw new ResolveInputError(
+      'unsupported-source',
+      `Function "${functionId}" has no output pin "${outputPort}"`,
+    );
+  }
+
+  const sourceNode = fn.nodes.find((node) => node.id === outboundEdge.source);
+  if (sourceNode === undefined) {
+    throw new ResolveInputError(
+      'missing-source-node',
+      `Missing source for function "${functionId}" output "${outputPort}"`,
+    );
+  }
+
+  return resolveNodeOutput(
+    fn,
+    variables,
+    sourceNode,
+    outboundEdge.sourceHandle,
+    context,
+    visiting,
+  );
 }
 
 function resolveGetMicrophoneOutput(
@@ -463,7 +537,7 @@ export function resolveNodeOutput(
   node: ScenarioGraphNode,
   outputPort: string,
   context: ResolveInputContext,
-  visiting: Set<string>,
+  visiting: Set<string> = new Set(),
 ): ScenarioVariableValue | null {
   if (node.nodeKind === 'event') {
     if (outputPort === EVENT_DELTATIME_HANDLE) {
@@ -780,6 +854,35 @@ export function resolveNodeOutput(
       return null;
     }
     return resolver(node.id);
+  }
+
+  if (node.nodeKind === 'function-input') {
+    const resolver = context.resolveFunctionInputPin;
+    if (resolver === undefined) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Node "${node.id}" (kind=function-input) is not a data source`,
+      );
+    }
+    return resolver(outputPort);
+  }
+
+  if (node.blockKind === 'subgraph') {
+    const functions = context.scenarioFunctions;
+    if (functions === undefined || functions.length === 0) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Node "${node.id}" (kind=subgraph) is not a data source`,
+      );
+    }
+    return resolveSubgraphBlockOutput(
+      functions,
+      node,
+      outputPort,
+      variables,
+      context,
+      visiting,
+    );
   }
 
   throw new ResolveInputError(

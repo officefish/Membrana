@@ -5,8 +5,8 @@ import {
   getDefaultUserCaseCatalogService,
 } from '@membrana/device-board';
 
-/** Статус entitlement для карточки каталога (G1 stub). */
-export type UserCaseEntitlementStatus = 'bundled' | 'entitled' | 'locked';
+/** Статус entitlement для карточки каталога (G1 stub + competition community). */
+export type UserCaseEntitlementStatus = 'bundled' | 'community' | 'entitled' | 'locked';
 
 /** Карточка UserCase для settings / picker UI. */
 export interface UserCaseCatalogCard extends UserCaseCatalogEntrySummary {
@@ -78,6 +78,9 @@ export class ClientUserCaseCatalogService {
   private resolveEntitlement(summary: UserCaseCatalogEntrySummary): UserCaseEntitlementStatus {
     if (summary.tier === 'bundled') {
       return 'bundled';
+    }
+    if (summary.tier === 'community') {
+      return 'community';
     }
     if (summary.tier === 'tariff') {
       const sku = summary.tariffSku;

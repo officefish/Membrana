@@ -25,6 +25,8 @@ All standard dev commands are documented in the root `README.md` and `package.js
 |------|---------|
 | Install deps | `yarn install` |
 | Dev server (client) | `yarn workspace @membrana/client dev` (port 5173) |
+| **UserCase build / verify (agents)** | `node scripts/usercase.mjs help` — CI: `usercase-competition.yml` + weekly `scheduled-ci` · см. [`USERCASE_GENERATION_REGULATION.md`](docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
+| **RAG (dual-circuit)** | [`docs/RAG.md`](docs/RAG.md) · `yarn rag:query` / `yarn rag:index` · operative works without `OPENAI_API_KEY`; archive needs key + `--full` index |
 | Lint | `yarn lint` |
 | Typecheck | `yarn typecheck` |
 | Test | `yarn test` |
@@ -33,10 +35,10 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Full CI pipeline | `yarn turbo run lint typecheck test build --continue` (34 tasks) |
 | Morning checks (proxy, git, script tests, Anthropic) | `yarn morning-care` (без API: `--no-anthropic`; переключает на ветку **`techies68`**) |
 | Daily standup (план + вчерашнее ревью + issues) | `yarn standup` (после `yarn plan:day`; **не** после `code-review`; dry: `yarn standup:dry`) |
-| Вечер (архив дня + ревью) | `yarn archive:daily-day` → `yarn code-review` → `yarn save-code-review`; цепочка: `yarn ritual:evening` |
+| Вечер (архив дня + ревью) | `yarn archive:daily-day` → incremental RAG index (non-blocking) → `yarn code-review` → `yarn save-code-review`; цепочка: `yarn ritual:evening` |
 | Архив утренних артефактов (вечер, до code-review) | `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/` |
 | Code-review (вечер) | `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`; утром только читается |
-| Вечер одной командой | `yarn ritual:evening` (= archive:daily-day + code-review + save-code-review) |
+| Вечер одной командой | `yarn ritual:evening` (= archive:daily-day + rag:index:incremental hook + code-review + save-code-review) |
 | Night Build (после вечера) | `yarn night:open --id <epic-id>` → агент → `yarn night:close`; регламент: `docs/NIGHT_SPRINT_REGULATION.md` |
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
@@ -47,6 +49,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 - **`--immutable` installs**: The update script uses `yarn install --immutable`. If it fails, `yarn.lock` and `package.json` are out of sync — fix the lockfile (`yarn install` without `--immutable`) and commit the updated `yarn.lock` before pushing.
 - **Turbo cache warmup**: The update script pre-builds library packages (`--filter='!@membrana/client'`) so the first `yarn turbo run lint typecheck test build --continue` is fast. The client is excluded because it depends on all libraries and rebuilds on every relevant change anyway.
 - **No `.env` needed for client dev**: The client app starts without any environment variables. `background-office` needs `ANTHROPIC_API_KEY`, `LINEAR_API_KEY`, etc. — optional for client-only work. `background-media` is optional until web `remote-server` mode; without it the client uses IndexedDB/localStorage fallback.
+- **RAG without OpenAI key**: Operative RAG in `yarn standup:dry`, `yarn code-review`, `yarn ask vesnin` works without `OPENAI_API_KEY`. Archive circuit (`yarn rag:index --full`, consilium archive) needs the key — see [`docs/RAG.md`](docs/RAG.md).
 - **Service builds are prerequisites**: `yarn typecheck` and `yarn test` depend on `^build` (builds of upstream packages). Turbo handles this automatically, so just run the top-level commands.
 - **Audio features require a browser**: Microphone/audio modules need Web Audio API in a real browser. In headless Cloud Agent testing, expect "no device selected" or similar errors — this is normal.
 - **Turbo output warnings are benign**: Warnings like `no output files found for task ... #test` are cosmetic; tests still run and report correctly.

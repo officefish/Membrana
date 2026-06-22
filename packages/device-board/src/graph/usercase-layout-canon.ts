@@ -15,7 +15,23 @@ import { COMMENT_GROUP_MIN_HEIGHT, COMMENT_GROUP_MIN_WIDTH, COMMENT_GROUP_PADDIN
 import { computeExecChainLayoutFromEntry } from './layout-exec-chain.js';
 import { BOARD_NODE_MARQUEE_HEIGHT, BOARD_NODE_MARQUEE_WIDTH } from './marquee-selection.js';
 import { deserializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
+import { parseSubgraphFunctionId } from './subgraph-ref.js';
 import { validateFunctionDepth } from './validate-function-depth.js';
+import {
+  MVP_MAIN_COMMENT_GROUP_SPECS,
+  USERCASE_COMMENT_GROUP_PROFILES,
+  USERCASE_AUXILIARY_COMMENT_GROUP_PROFILES,
+  type MainCommentGroupSpec,
+  type UserCaseCommentGroupProfileId,
+} from './usercase-comment-group-profiles.js';
+
+export {
+  MVP_MAIN_COMMENT_GROUP_SPECS,
+  USERCASE_COMMENT_GROUP_PROFILES,
+  USERCASE_AUXILIARY_COMMENT_GROUP_PROFILES,
+  type MainCommentGroupSpec,
+  type UserCaseCommentGroupProfileId,
+} from './usercase-comment-group-profiles.js';
 
 /** Ветки, для которых verify проверяет monotonic exec-x. */
 export const USERCASE_EXEC_LAYOUT_BRANCHES = ['main', 'alarm'] as const;
@@ -41,64 +57,13 @@ const DEFAULT_NODE_WIDTH = BOARD_NODE_MARQUEE_WIDTH;
 const DEFAULT_NODE_HEIGHT = BOARD_NODE_MARQUEE_HEIGHT;
 const RANK_BUCKET_PX = DEFAULT_NODE_WIDTH + BOARD_ALIGN_GAP_PX;
 
-interface MainCommentGroupSpec {
-  readonly id: string;
-  readonly title: string;
-  readonly description?: string;
-  readonly frameColor: ScenarioCommentGroup['frameColor'];
-  readonly nodeKinds: readonly string[];
+function resolveCommentGroupProfile(document: DeviceScenarioDocument): UserCaseCommentGroupProfileId {
+  const raw = (document.meta as { commentGroupProfile?: string } | undefined)?.commentGroupProfile;
+  if (raw === 'alpha' || raw === 'beta' || raw === 'gamma' || raw === 'mvp') {
+    return raw;
+  }
+  return 'mvp';
 }
-
-/** Semantic frames для MVP main (U9 L1). */
-export const MVP_MAIN_COMMENT_GROUP_SPECS: readonly MainCommentGroupSpec[] = [
-  {
-    id: 'ucg-main-policy',
-    title: 'Policy constructors',
-    description: 'MakeRecordingPolicy и MakeFftTrendsPolicy',
-    frameColor: { preset: 'primary' },
-    nodeKinds: ['make-recording-policy', 'make-fft-trends-policy'],
-  },
-  {
-    id: 'ucg-main-recording-gate',
-    title: 'Recording gate',
-    description: 'Start/stop recording, window gate, MakeTrack',
-    frameColor: { preset: 'warning' },
-    nodeKinds: [
-      'start-recording',
-      'stop-recording',
-      'is-recording-window-full',
-      'make-track',
-      'get-recorder',
-    ],
-  },
-  {
-    id: 'ucg-main-trends-fft',
-    title: 'Trends FFT',
-    description: 'Spectral analyser, FFT frames, analysis',
-    frameColor: { preset: 'info' },
-    nodeKinds: [
-      'get-spectral-analyser',
-      'collect-fft-frames',
-      'flush-spectral-analyser',
-      'get-fft-frame',
-      'get-sample',
-      'make-fft-trends-analysis',
-    ],
-  },
-  {
-    id: 'ucg-main-journal',
-    title: 'Journal',
-    description: 'Reporter, track report, publish',
-    frameColor: { preset: 'accent' },
-    nodeKinds: [
-      'get-journal',
-      'get-reporter',
-      'make-report-from-track',
-      'make-report-from-analysis',
-      'publish-report',
-    ],
-  },
-];
 
 function isGridAligned(value: number): boolean {
   const mod = value % BOARD_LAYOUT_GRID_PX;
@@ -307,33 +272,53 @@ function computeGroupRect(nodes: readonly ScenarioGraphNode[]): ScenarioCommentG
   return { x, y, width, height };
 }
 
-/** Строит comment groups для main branch по semantic nodeKind specs. */
-export function buildMvpMainCommentGroups(
-  mainSubgraph: ScenarioSubgraph,
+/** Строит comment groups для ветки по semantic specs. */
+export function buildMainCommentGroupsFromSpecs(
+  subgraph: ScenarioSubgraph,
+  specs: readonly MainCommentGroupSpec[],
+  branch: ScenarioCommentGroup['branch'] = 'main',
 ): readonly ScenarioCommentGroup[] {
   const groups: ScenarioCommentGroup[] = [];
-  for (const spec of MVP_MAIN_COMMENT_GROUP_SPECS) {
-    const matched = mainSubgraph.nodes.filter(
-      (node) => node.nodeKind !== undefined && spec.nodeKinds.includes(node.nodeKind),
-    );
-    if (matched.length === 0) {
+  for (const spec of specs) {
+    const matched: ScenarioGraphNode[] = [];
+    const nodeKinds = spec.nodeKinds ?? [];
+    for (const node of subgraph.nodes) {
+      if (node.nodeKind !== undefined && nodeKinds.includes(node.nodeKind)) {
+        matched.push(node);
+      }
+      if (node.blockKind === 'subgraph' && spec.functionIds !== undefined) {
+        const fnId = parseSubgraphFunctionId(node);
+        if (fnId !== null && spec.functionIds.includes(fnId)) {
+          matched.push(node);
+        }
+      }
+    }
+    const unique = [...new Map(matched.map((node) => [node.id, node])).values()];
+    if (unique.length === 0) {
       continue;
     }
-    const rect = computeGroupRect(matched);
+    const rect = computeGroupRect(unique);
     if (rect === null) {
       continue;
     }
     groups.push({
       id: spec.id,
-      branch: 'main',
+      branch: spec.branch ?? branch,
       title: spec.title,
       ...(spec.description !== undefined ? { description: spec.description } : {}),
       frameColor: spec.frameColor,
       rect,
-      nodeIds: matched.map((node) => node.id),
+      nodeIds: unique.map((node) => node.id),
     });
   }
   return groups;
+}
+
+/** Строит comment groups для main branch по semantic nodeKind specs (MVP default). */
+export function buildMvpMainCommentGroups(
+  mainSubgraph: ScenarioSubgraph,
+): readonly ScenarioCommentGroup[] {
+  return buildMainCommentGroupsFromSpecs(mainSubgraph, MVP_MAIN_COMMENT_GROUP_SPECS);
 }
 
 function applyExecLayoutToSubgraph(
@@ -373,21 +358,97 @@ function snapSubgraphToGrid(subgraph: ScenarioSubgraph): ScenarioSubgraph {
   };
 }
 
+/** Разводит узлы в одном exec-rank по Y (auxiliary/data рядом с exec spine). */
+function separateSameRankOverlaps(subgraph: ScenarioSubgraph): ScenarioSubgraph {
+  const nodes = subgraph.nodes.map((node) => ({
+    ...node,
+    position: { x: node.position.x, y: node.position.y },
+  }));
+
+  const buckets = new Map<number, number[]>();
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index];
+    if (node === undefined) {
+      continue;
+    }
+    const bucket = Math.round(node.position.x / RANK_BUCKET_PX);
+    const list = buckets.get(bucket) ?? [];
+    list.push(index);
+    buckets.set(bucket, list);
+  }
+
+  for (const indices of buckets.values()) {
+    if (indices.length < 2) {
+      continue;
+    }
+    const sorted = [...indices].sort((a, b) => {
+      const nodeA = nodes[a];
+      const nodeB = nodes[b];
+      return (nodeA?.position.y ?? 0) - (nodeB?.position.y ?? 0);
+    });
+    for (let j = 1; j < sorted.length; j += 1) {
+      const prevIndex = sorted[j - 1];
+      const curIndex = sorted[j];
+      if (prevIndex === undefined || curIndex === undefined) {
+        continue;
+      }
+      const prev = nodes[prevIndex];
+      const cur = nodes[curIndex];
+      if (prev === undefined || cur === undefined) {
+        continue;
+      }
+      if (rectsOverlap(nodeBounds(prev), nodeBounds(cur))) {
+        const prevBox = nodeBounds(prev);
+        nodes[curIndex] = {
+          ...cur,
+          position: {
+            x: cur.position.x,
+            y: snapBoardLayoutCoordinate(prevBox.y + prevBox.height + BOARD_ALIGN_GAP_PX),
+          },
+        };
+      }
+    }
+  }
+
+  return { ...subgraph, nodes };
+}
+
+function applyExecLayoutToSubgraphWithOverlapFix(
+  subgraph: ScenarioSubgraph,
+  variables: readonly ScenarioVariable[],
+): ScenarioSubgraph {
+  return separateSameRankOverlaps(applyExecLayoutToSubgraph(subgraph, variables));
+}
+
 /** Применяет exec-lr-v1 layout canon + MVP main comment groups (U9 L1). */
 export function applyUserCaseLayoutCanon(document: DeviceScenarioDocument): DeviceScenarioDocument {
   const variables = document.scenario.variables;
 
-  const initial = applyExecLayoutToSubgraph(document.scenario.initial, variables);
-  const onConnect = applyExecLayoutToSubgraph(document.scenario.onConnect, variables);
-  const main = applyExecLayoutToSubgraph(document.scenario.loops.main, variables);
-  const alarm = applyExecLayoutToSubgraph(
-    document.scenario.loops.alarm,
+  const initial = applyExecLayoutToSubgraphWithOverlapFix(document.scenario.initial, variables);
+  const onConnect = applyExecLayoutToSubgraphWithOverlapFix(document.scenario.onConnect, variables);
+  const main = applyExecLayoutToSubgraphWithOverlapFix(document.scenario.loops.main, variables);
+  const alarm = applyExecLayoutToSubgraphWithOverlapFix(document.scenario.loops.alarm, variables);
+  const onStop = applyExecLayoutToSubgraphWithOverlapFix(document.scenario.triggers.onStop, variables);
+  const onDisconnect = applyExecLayoutToSubgraphWithOverlapFix(
+    document.scenario.triggers.onDisconnect,
     variables,
   );
-  const onStop = applyExecLayoutToSubgraph(document.scenario.triggers.onStop, variables);
-  const onDisconnect = applyExecLayoutToSubgraph(document.scenario.triggers.onDisconnect, variables);
 
-  const commentGroups = buildMvpMainCommentGroups(main);
+  const commentGroupProfile = resolveCommentGroupProfile(document);
+  const auxiliary = USERCASE_AUXILIARY_COMMENT_GROUP_PROFILES[commentGroupProfile];
+  const commentGroups = [
+    ...buildMainCommentGroupsFromSpecs(
+      main,
+      USERCASE_COMMENT_GROUP_PROFILES[commentGroupProfile],
+      'main',
+    ),
+    ...(auxiliary?.onConnect !== undefined
+      ? buildMainCommentGroupsFromSpecs(onConnect, auxiliary.onConnect, 'onConnect')
+      : []),
+    ...(auxiliary?.initial !== undefined
+      ? buildMainCommentGroupsFromSpecs(initial, auxiliary.initial, 'initial')
+      : []),
+  ];
 
   return {
     ...document,

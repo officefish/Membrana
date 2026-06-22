@@ -5,6 +5,11 @@ import {
   isScenarioFunctionPinCountValid,
 } from '@membrana/core';
 
+/**
+ * Editor/graph layer: CRUD and sync for user-function pins on the React Flow canvas.
+ * Runtime data/exec traversal is separate — see `runtime/function-call-resolve.ts` and
+ * `runtime/exec-successor.ts` (audit: `docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md`).
+ */
 import { functionPinsToSubgraphBlockPins } from './function-io-node.js';
 import { encodeSubgraphRef } from './subgraph-ref.js';
 
@@ -232,6 +237,38 @@ export function syncSubgraphBlocksForFunctionPins(input: {
   }
 
   return { nodes, edges };
+}
+
+/** Синхронизирует subgraph-блоки на всех ветках по drafts функций (после hydrate). */
+export function syncAllSubgraphBlocksFromFunctionDrafts(
+  branches: readonly { nodes: Node[]; edges: Edge[] }[],
+  drafts: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly inputPins: readonly ScenarioFunctionPin[];
+    readonly outputPins: readonly ScenarioFunctionPin[];
+  }[],
+): void {
+  const emptyPinIds = new Set<string>();
+  const noRenames: readonly { readonly side: FunctionPinSide; readonly from: string; readonly to: string }[] =
+    [];
+  for (const draft of drafts) {
+    for (const branch of branches) {
+      const synced = syncSubgraphBlocksForFunctionPins({
+        functionId: draft.id,
+        functionName: draft.name,
+        inputPins: draft.inputPins,
+        outputPins: draft.outputPins,
+        nodes: branch.nodes,
+        edges: branch.edges,
+        removedInputPinIds: emptyPinIds,
+        removedOutputPinIds: emptyPinIds,
+        renames: noRenames,
+      });
+      branch.nodes.splice(0, branch.nodes.length, ...synced.nodes);
+      branch.edges.splice(0, branch.edges.length, ...synced.edges);
+    }
+  }
 }
 
 export function findFunctionIoNodeIds(nodes: readonly Node[]): {

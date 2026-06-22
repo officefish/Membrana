@@ -31,13 +31,16 @@ if (rawId === undefined) {
 
 const repoRoot = repoRootFromScripts();
 
-const yarnCmd = process.platform === 'win32' ? 'yarn.cmd' : 'yarn';
-const build = spawnSync(yarnCmd, ['workspace', '@membrana/device-board', 'build'], {
-  cwd: repoRoot,
-  stdio: 'inherit',
-});
-if (build.status !== 0) {
-  process.exit(build.status ?? 1);
+if (process.env.USERCASE_VERIFY_SKIP_BUILD !== '1') {
+  const yarnCmd = process.platform === 'win32' ? 'yarn.cmd' : 'yarn';
+  const build = spawnSync(yarnCmd, ['workspace', '@membrana/device-board', 'build'], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+    shell: process.platform === 'win32',
+  });
+  if (build.status !== 0) {
+    process.exit(build.status ?? 1);
+  }
 }
 
 try {

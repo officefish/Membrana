@@ -41,6 +41,7 @@ async function bootstrap(): Promise<void> {
     .addTag('Health', 'Server health check')
     .addTag('Claude', 'Anthropic Claude API integration')
     .addTag('Linear', 'Linear issue management integration')
+    .addTag('RAG', 'Dual-circuit repo context retrieval (operative + LanceDB archive)')
     .addTag('Webhooks', 'External webhook receivers')
     .build();
 

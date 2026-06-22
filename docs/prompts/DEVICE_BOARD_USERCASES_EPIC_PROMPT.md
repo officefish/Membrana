@@ -9,6 +9,8 @@
 > **Статус:** **archived** · LGTM Teamlead 2026-06-21 · ветка `feat/db-usercases-catalog-u9`  
 > **Ветка:** `feat/db-usercases-catalog-u9` от `main` / `techies68` (после merge U8/U8a)
 
+> **Sibling (agents):** programmatic pack/collapse — [`USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md) → [`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](./DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) (не путать с U9 catalog UI).
+
 ---
 
 ## Контекст

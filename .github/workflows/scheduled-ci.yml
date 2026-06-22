@@ -46,3 +46,8 @@ jobs:
 
       - name: Full verify
         run: yarn turbo run lint typecheck test build --continue
+
+      - name: UserCase competition verify (alpha, beta, gamma)
+        run: node scripts/usercase.mjs verify-competition
+        env:
+          USERCASE_VERIFY_SKIP_BUILD: '1'

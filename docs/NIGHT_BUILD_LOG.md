@@ -25,3 +25,24 @@
 - Status: **done**
 - Commit: `51447c6`, PR https://github.com/officefish/Membrana/pull/76
 - Разработка epic завершена; merge/review отложены на утро
+
+## Re-open — 2026-06-21T16:39:47.147Z
+- Epic: `device-board-post-comp-debt-night-build`
+- Continue: no
+
+
+## Checkpoint NB0 — 2026-06-21T16:44:10.044Z
+- Status: **pass**
+- Note: lint 0w, test 399/399, verify-competition OK, commit 8c6138a
+
+## Checkpoint NB1 — 2026-06-21T16:45:16.351Z
+- Status: **pass**
+- Note: DRY audit: no overlap; docs + JSDoc; test 400/400
+
+## Checkpoint NB2 — 2026-06-21T16:46:57.257Z
+- Status: **pass**
+- Note: CONCEPT 4.7 mermaid + L9-L12 table; lessons cross-ref
+
+## Checkpoint NB3 — 2026-06-21T16:50:47.925Z
+- Status: **pass**
+- Note: picker a11y; verify-paths 34 ok; test 401/401
