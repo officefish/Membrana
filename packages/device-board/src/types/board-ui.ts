@@ -19,6 +19,20 @@ export type ScenarioBranchTab =
   | 'onDisconnect'
   | 'function';
 
+export function isScenarioBranchForFunctionInsert(branch: ScenarioBranchTab): boolean {
+  return branch !== 'function';
+}
+
+/** Ветки, где клик по функции в сайдбаре открывает модалку (6 обработчиков/лупов). */
+export const SCENARIO_BRANCHES_FOR_FUNCTION_MODAL: readonly ScenarioBranchTab[] = [
+  'onConnect',
+  'initial',
+  'onStop',
+  'onDisconnect',
+  'main',
+  'alarm',
+];
+
 /** Ширина левого сайдбара (совпадает с `BoardLeftSidebar`). */
 export const BOARD_LEFT_SIDEBAR_WIDTH_CLASS = 'w-[clamp(14rem,18vw,20rem)]' as const;
 
@@ -66,7 +80,6 @@ export interface BranchSidebarSection {
 export const BRANCH_SIDEBAR_SECTIONS: readonly BranchSidebarSection[] = [
   { title: 'Обработчики событий', tabs: ['onConnect', 'initial', 'onStop', 'onDisconnect'] },
   { title: 'Лупы', tabs: ['main', 'alarm'] },
-  { title: 'Конструктор функций', tabs: ['function'] },
 ];
 
 /** Категория палитры нод сценария (правый сайдбар в режиме сборки). */

@@ -19,6 +19,12 @@ import '@xyflow/react/dist/style.css';
 import './board-flow-canvas.css';
 
 import type { BoardLayerTab } from '../types/board-ui.js';
+import {
+  BOARD_VIEWPORT_FIT_DURATION_MS,
+  BOARD_VIEWPORT_FIT_MAX_ZOOM,
+  BOARD_VIEWPORT_FIT_PADDING,
+  isBoardLayoutGhostNodeId,
+} from '../graph/board-viewport-fit.js';
 import { decorateBoardEdges } from '../graph/board-edge-style.js';
 import type { FlowGuideLine } from '../graph/layout-snap-guides.js';
 import { snapBoardNodePositionChange } from '../graph/layout-snap-guides.js';
@@ -48,6 +54,8 @@ export interface BoardFlowViewportApi {
     clientX: number,
     clientY: number,
   ) => { readonly x: number; readonly y: number };
+  /** Подгоняет viewport так, чтобы был виден хотя бы один узел графа. */
+  readonly ensureGraphVisible: () => void;
 }
 
 export interface BoardMarqueeSelectionPayload {
@@ -93,6 +101,8 @@ export interface BoardFlowCanvasProps {
   readonly onConnect: (connection: Connection) => void;
   readonly isValidConnection: (connection: Connection) => boolean;
   readonly onSelectionChange?: (selection: OnSelectionChangeParams) => void;
+  /** Клик по пустому полю канваса (снятие выделения). */
+  readonly onPaneClick?: () => void;
   readonly ariaLabel?: string;
   /** Пульсация exec-рёбер только при запущенном сценарии. */
   readonly pulseEdges?: boolean;
@@ -105,6 +115,11 @@ export interface BoardFlowCanvasProps {
   readonly onMarqueeSelection?: (payload: BoardMarqueeSelectionPayload) => void;
   /** Ghost-ноды preview exec layout (NAA L2) — не persist, только render. */
   readonly layoutGhostNodes?: readonly Node[];
+  /**
+   * Меняется при смене ветки / функции / слоя — триггер fit viewport.
+   * Формат задаёт shell (`scenario:main`, `scenario:function:fn-1`, `signal`).
+   */
+  readonly viewportFitKey?: string;
 }
 
 const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
@@ -115,6 +130,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   onConnect,
   isValidConnection,
   onSelectionChange,
+  onPaneClick,
   ariaLabel,
   pulseEdges = false,
   readOnly = false,
@@ -122,6 +138,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   onConnectionDropOnPane,
   onMarqueeSelection,
   layoutGhostNodes = [],
+  viewportFitKey,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
@@ -134,6 +151,21 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     () => (layoutGhostNodes.length === 0 ? nodes : [...nodes, ...layoutGhostNodes]),
     [layoutGhostNodes, nodes],
   );
+
+  const ensureGraphVisible = useCallback(() => {
+    const visibleNodes = reactFlow
+      .getNodes()
+      .filter((node) => !isBoardLayoutGhostNodeId(node.id));
+    if (visibleNodes.length === 0) {
+      return;
+    }
+    void reactFlow.fitView({
+      nodes: visibleNodes.map((node) => ({ id: node.id })),
+      padding: BOARD_VIEWPORT_FIT_PADDING,
+      duration: BOARD_VIEWPORT_FIT_DURATION_MS,
+      maxZoom: BOARD_VIEWPORT_FIT_MAX_ZOOM,
+    });
+  }, [reactFlow]);
 
   const viewportApi = useMemo<BoardFlowViewportApi>(
     () => ({
@@ -149,9 +181,28 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       },
       clientToFlowPosition: (clientX, clientY) =>
         reactFlow.screenToFlowPosition({ x: clientX, y: clientY }),
+      ensureGraphVisible,
     }),
-    [reactFlow],
+    [ensureGraphVisible, reactFlow],
   );
+
+  useEffect(() => {
+    if (viewportFitKey === undefined) {
+      return;
+    }
+    let cancelled = false;
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled) {
+          ensureGraphVisible();
+        }
+      });
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [ensureGraphVisible, viewportFitKey]);
 
   useEffect(() => {
     onViewportApiReady?.(viewportApi);
@@ -286,6 +337,17 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     [isValidConnection],
   );
 
+  const clearCanvasSelection = useCallback(() => {
+    onNodesChange(
+      nodes.map((node) => ({
+        type: 'select' as const,
+        id: node.id,
+        selected: false,
+      })),
+    );
+    onPaneClick?.();
+  }, [nodes, onNodesChange, onPaneClick]);
+
   const finishMarquee = useCallback(
     (clientX: number, clientY: number) => {
       const drag = marqueeDragRef.current;
@@ -308,6 +370,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
 
       const picked = nodesInFlowRect(nodes, flowRect);
       if (picked.length === 0) {
+        clearCanvasSelection();
         return;
       }
 
@@ -322,7 +385,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       );
       onMarqueeSelection({ nodeIds, flowRect, screenRect });
     },
-    [nodes, onMarqueeSelection, onNodesChange, reactFlow],
+    [clearCanvasSelection, nodes, onMarqueeSelection, onNodesChange, reactFlow],
   );
 
   const isMarqueePointerTarget = useCallback((target: EventTarget | null): boolean => {
@@ -439,16 +502,16 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         edgesReconnectable={!readOnly}
         deleteKeyCode={readOnly ? null : 'Backspace'}
         panOnDrag={marqueeEnabled ? [1, 2] : true}
-        fitView
         proOptions={{ hideAttribution: true }}
         onSelectionChange={handleSelectionChange}
+        onPaneClick={clearCanvasSelection}
         className="board-flow-canvas"
         style={{ width: '100%', height: '100%' }}
         aria-label={ariaLabel}
       >
         <Controls className="!border-base-300 !bg-base-100 !shadow-sm [&_button]:!border-base-300 [&_button]:!bg-base-100" />
         <MiniMap
-          className="!border-base-300 !bg-base-100"
+          className="board-flow-minimap !border-base-300 !bg-base-100"
           nodeColor={(node) => (node.data?.layer === 'scenario' ? 'oklch(var(--s))' : 'oklch(var(--p))')}
           maskColor="oklch(var(--b1) / 0.65)"
         />

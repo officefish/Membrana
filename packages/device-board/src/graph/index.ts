@@ -341,6 +341,12 @@ export {
 } from './collapse-to-function.js';
 export type { ScenarioFunctionDraft, CollapseToFunctionOutcome } from './collapse-to-function.js';
 export {
+  insertFunctionSubgraphBlock,
+} from './insert-function-into-branch.js';
+export type {
+  InsertFunctionSubgraphBlockOutcome,
+} from './insert-function-into-branch.js';
+export {
   createFunctionInputBoardNode,
   createFunctionOutputBoardNode,
   syncFunctionIoNodePins,
@@ -388,6 +394,10 @@ export {
   syncSubgraphBlocksForFunctionPins,
 } from './function-pin-ops.js';
 export type { FunctionPinSide } from './function-pin-ops.js';
+export {
+  removeUserFunctionDraft,
+  stripSubgraphBlocksForFunction,
+} from './remove-user-function.js';
 export {
   collapseSelectionToCommentGroup,
   collectCommentGroupsFromBoard,

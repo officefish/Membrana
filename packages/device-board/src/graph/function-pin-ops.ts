@@ -47,12 +47,10 @@ export function proposeNewFunctionPin(
   if (!isScenarioFunctionPinCountValid(existing.length + 1)) {
     return { error: `Не более ${MAX_SCENARIO_FUNCTION_PINS_PER_SIDE} pins на ${side === 'input' ? 'Input' : 'Output'}` };
   }
-  const ids = new Set(existing.map((pin) => pin.id));
   if (kind === 'exec') {
-    const base = side === 'input' ? 'exec-in' : 'exec-out';
-    const id = uniquePinId(base, ids);
-    return { pin: { id, name: id, kind: 'exec' } };
+    return { error: 'Дополнительные exec pins не поддерживаются' };
   }
+  const ids = new Set(existing.map((pin) => pin.id));
   const base = side === 'input' ? 'data-in' : 'data-out';
   const id = uniquePinId(base, ids);
   const defaultSocket: SocketType = 'DeviceRef';
@@ -66,7 +64,11 @@ export function removeFunctionPinFromList(
   if (pins.length <= 1) {
     return { error: 'На каждой стороне должен остаться минимум один pin' };
   }
-  const next = pins.filter((pin) => pin.id !== pinId);
+  const pin = pins.find((candidate) => candidate.id === pinId);
+  if (pin?.kind === 'exec') {
+    return { error: 'Exec pin нельзя удалить' };
+  }
+  const next = pins.filter((candidate) => candidate.id !== pinId);
   if (next.length === pins.length) {
     return { error: 'Pin не найден' };
   }
@@ -94,6 +96,9 @@ export function updateFunctionPinInList(
     return { error: 'Pin не найден' };
   }
   const current = pins[index]!;
+  if (current.kind === 'exec' && patch.kind !== undefined && patch.kind !== 'exec') {
+    return { error: 'Тип exec pin нельзя изменить' };
+  }
   const nextName = patch.name !== undefined ? patch.name.trim() : current.name;
   if (nextName.length === 0) {
     return { error: 'Имя pin не может быть пустым' };
