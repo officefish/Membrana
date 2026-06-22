@@ -20,7 +20,7 @@ function hasMonorepoRoot(dir: string): boolean {
 /** Walk up from `startDir` to locate Membrana monorepo root. */
 export function findMonorepoRoot(startDir: string = process.cwd()): string {
   let current = resolve(startDir);
-  while (true) {
+  for (;;) {
     if (hasMonorepoRoot(current)) {
       return current;
     }
