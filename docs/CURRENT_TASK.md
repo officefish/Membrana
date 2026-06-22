@@ -7,7 +7,7 @@
 
 ## Следующая фаза
 
-**D3** `db-docs-d3-catalog-runtime` — catalog `device-board.md` → stable.
+**D4** `db-docs-d4-rag-index` — RAG incremental index + `DOCUMENTATION_WORKFLOW`.
 
 ## Завершено (спринт)
 
@@ -15,6 +15,7 @@
 |-------|-----|-------------|
 | D1 | `db-docs-d1-canon-sync` | CONCEPT §21 + README |
 | D2 | `db-docs-d2-mintlify-editor` | editor MDX + `docs.json` nav |
+| D3 | `db-docs-d3-catalog-runtime` | catalog **stable** + `SCENARIO_RUNTIME` §11 |
 
 ## Закрыто
 

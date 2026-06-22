@@ -4624,10 +4624,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board catalog stable; SCENARIO_RUNTIME section 11; catalog verify OK",
       "parentEpic": "device-board-docs-post-140-sprint-2026-06-22",
       "notes": "D-DOC-3: device-board.md stable; SCENARIO_RUNTIME links"
     },

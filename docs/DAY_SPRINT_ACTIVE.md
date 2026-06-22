@@ -8,6 +8,6 @@
 | **Status** | **open** |
 | **Prompt** | [`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](./prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md) |
 
-**Текущая фаза:** D3 `db-docs-d3-catalog-runtime` — см. [`CURRENT_TASK.md`](./CURRENT_TASK.md).
+**Текущая фаза:** D4 `db-docs-d4-rag-index` — см. [`CURRENT_TASK.md`](./CURRENT_TASK.md).
 
 **Последний code sprint (archived):** `device-board-edit-model-v2-2026-06-22` · PR #140.
