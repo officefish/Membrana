@@ -15,7 +15,7 @@ import {
 } from './board-ui.js';
 
 describe('board-ui sidebar sections (MP7b RT6)', () => {
-  it('covers every branch exactly once across sections', () => {
+  it('lists scenario branches in sidebar sections (without function editor tab)', () => {
     const tabs = BRANCH_SIDEBAR_SECTIONS.flatMap((section) => section.tabs);
     const expected: ScenarioBranchTab[] = [
       'initial',
@@ -24,7 +24,6 @@ describe('board-ui sidebar sections (MP7b RT6)', () => {
       'alarm',
       'onStop',
       'onDisconnect',
-      'function',
     ];
     expect([...tabs].sort()).toEqual([...expected].sort());
     expect(tabs.length).toBe(expected.length);
@@ -34,7 +33,6 @@ describe('board-ui sidebar sections (MP7b RT6)', () => {
     expect(BRANCH_SIDEBAR_SECTIONS.map((s) => s.title)).toEqual([
       'Обработчики событий',
       'Лупы',
-      'Конструктор функций',
     ]);
   });
 

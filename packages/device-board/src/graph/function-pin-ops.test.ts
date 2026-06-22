@@ -8,6 +8,15 @@ import {
 import { createDefaultFunctionExecInputPin } from '@membrana/core';
 
 describe('function-pin-ops', () => {
+  it('proposeNewFunctionPin rejects additional exec pins', () => {
+    const pins = [createDefaultFunctionExecInputPin()];
+    const result = proposeNewFunctionPin('input', 'exec', pins);
+    expect('error' in result).toBe(true);
+    if ('error' in result) {
+      expect(result.error).toContain('exec');
+    }
+  });
+
   it('proposeNewFunctionPin respects max count', () => {
     const pins = Array.from({ length: 9 }, (_, index) => ({
       id: `p-${index}`,

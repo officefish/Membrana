@@ -278,3 +278,48 @@ export const DeleteVariableModal: React.FC<DeleteVariableModalProps> = ({
 };
 
 export { PencilIcon, TrashIcon };
+
+export interface DeleteFunctionModalProps {
+  readonly functionName: string | null;
+  readonly onClose: () => void;
+  readonly onConfirm: () => void;
+}
+
+/** Модалка подтверждения удаления пользовательской функции. */
+export const DeleteFunctionModal: React.FC<DeleteFunctionModalProps> = ({
+  functionName,
+  onClose,
+  onConfirm,
+}) => {
+  const titleId = useId();
+  if (functionName === null) {
+    return null;
+  }
+
+  return (
+    <BoardModal open titleId={titleId} onClose={onClose}>
+      <h3 id={titleId} className="text-lg font-bold">
+        Удалить функцию?
+      </h3>
+      <p className="mt-2 text-sm text-base-content/70">
+        Функция <span className="font-mono font-semibold">{functionName}</span> и все её блоки на
+        ветках сценария будут удалены. Это действие нельзя отменить.
+      </p>
+      <div className="mt-4 flex justify-end gap-2">
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
+          Отмена
+        </button>
+        <button
+          type="button"
+          className="btn btn-error btn-sm"
+          onClick={() => {
+            onConfirm();
+            onClose();
+          }}
+        >
+          Удалить
+        </button>
+      </div>
+    </BoardModal>
+  );
+};

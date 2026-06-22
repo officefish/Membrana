@@ -79,7 +79,11 @@ import {
   type PreRunValidationIssue,
   type ScenarioFunctionDraft,
   type ScenarioFunctionCanvasMeta,
+  insertFunctionSubgraphBlock,
+  removeUserFunctionDraft,
+  stripSubgraphBlocksForFunction,
 } from '../graph/index.js';
+import { isScenarioBranchForFunctionInsert } from '../types/board-ui.js';
 import {
   syncFunctionIoNodePins,
 } from '../graph/function-io-node.js';
@@ -263,6 +267,10 @@ export interface DeviceBoardGraphContextValue {
   ) => string | null;
   readonly createUserFunction: () => void;
   readonly selectUserFunction: (functionId: string) => void;
+  /** Удаляет пользовательскую функцию и её subgraph-блоки со всех веток. */
+  readonly removeUserFunction: (functionId: string) => string | null;
+  /** Вставляет subgraph-блок функции на указанную ветку (без автосвязки). */
+  readonly insertUserFunctionIntoBranch: (functionId: string, branch: ScenarioBranchTab) => string | null;
   readonly collapseMarqueeToFunction: (
     branch: ScenarioBranchTab,
     selectedNodeIds: readonly string[],
@@ -593,22 +601,22 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const selectUserFunction = useCallback(
     (functionId: string) => {
-      if (functionId === activeFunctionId) {
-        return;
-      }
       const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
       const target = committed.find((draft) => draft.id === functionId);
       if (target === undefined) {
         return;
       }
       setScenarioFunctionDrafts(committed);
-      loadFunctionDraftToCanvas(target);
+      if (functionId !== activeFunctionId || scenarioBranch !== 'function') {
+        loadFunctionDraftToCanvas(target);
+      }
       setScenarioBranch('function');
     },
     [
       activeFunctionId,
       commitActiveFunctionDraft,
       loadFunctionDraftToCanvas,
+      scenarioBranch,
       scenarioFunctionDrafts,
     ],
   );
@@ -625,6 +633,80 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     loadFunctionDraftToCanvas(draft);
     setScenarioBranch('function');
   }, [commitActiveFunctionDraft, loadFunctionDraftToCanvas, scenarioFunctionDrafts]);
+
+  const removeUserFunction = useCallback(
+    (functionId: string): string | null => {
+      const committed =
+        functionId === activeFunctionId
+          ? commitActiveFunctionDraft(scenarioFunctionDrafts)
+          : scenarioFunctionDrafts;
+      const removedIndex = committed.findIndex((draft) => draft.id === functionId);
+      const { drafts, removed } = removeUserFunctionDraft({ functionId, drafts: committed });
+      if (!removed) {
+        return 'Функция не найдена';
+      }
+
+      const strip = (nodes: Node[], edges: Edge[]) =>
+        stripSubgraphBlocksForFunction(nodes, edges, functionId);
+
+      const initial = strip(scenarioInitialNodes, scenarioInitialEdges);
+      setScenarioInitialNodes(initial.nodes);
+      setScenarioInitialEdges(initial.edges);
+      const onConnect = strip(scenarioOnConnectNodes, scenarioOnConnectEdges);
+      setScenarioOnConnectNodes(onConnect.nodes);
+      setScenarioOnConnectEdges(onConnect.edges);
+      const main = strip(scenarioMainNodes, scenarioMainEdges);
+      setScenarioMainNodes(main.nodes);
+      setScenarioMainEdges(main.edges);
+      const alarm = strip(scenarioAlarmNodes, scenarioAlarmEdges);
+      setScenarioAlarmNodes(alarm.nodes);
+      setScenarioAlarmEdges(alarm.edges);
+      const onStop = strip(scenarioOnStopNodes, scenarioOnStopEdges);
+      setScenarioOnStopNodes(onStop.nodes);
+      setScenarioOnStopEdges(onStop.edges);
+      const onDisconnect = strip(scenarioOnDisconnectNodes, scenarioOnDisconnectEdges);
+      setScenarioOnDisconnectNodes(onDisconnect.nodes);
+      setScenarioOnDisconnectEdges(onDisconnect.edges);
+
+      setScenarioFunctionDrafts(drafts);
+
+      if (functionId === activeFunctionId) {
+        if (drafts.length > 0) {
+          const nextIndex = Math.min(
+            removedIndex >= 0 ? removedIndex : 0,
+            drafts.length - 1,
+          );
+          loadFunctionDraftToCanvas(drafts[nextIndex]!);
+          setScenarioBranch('function');
+        } else {
+          setScenarioFunctionNodes([]);
+          setScenarioFunctionEdges([]);
+          setActiveFunctionId('');
+          setScenarioBranch('main');
+        }
+      }
+
+      return null;
+    },
+    [
+      activeFunctionId,
+      commitActiveFunctionDraft,
+      loadFunctionDraftToCanvas,
+      scenarioAlarmEdges,
+      scenarioAlarmNodes,
+      scenarioFunctionDrafts,
+      scenarioInitialEdges,
+      scenarioInitialNodes,
+      scenarioMainEdges,
+      scenarioMainNodes,
+      scenarioOnConnectEdges,
+      scenarioOnConnectNodes,
+      scenarioOnDisconnectEdges,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopEdges,
+      scenarioOnStopNodes,
+    ],
+  );
 
   const updateActiveFunctionMeta = useCallback(
     (patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>) => {
@@ -1734,6 +1816,58 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [],
   );
 
+  const insertUserFunctionIntoBranch = useCallback(
+    (functionId: string, branch: ScenarioBranchTab): string | null => {
+      if (!isScenarioBranchForFunctionInsert(branch)) {
+        return 'Вставка доступна только на ветках сценария (не на вкладке функции)';
+      }
+      const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
+      const draft = committed.find((item) => item.id === functionId);
+      if (draft === undefined) {
+        return 'Функция не найдена';
+      }
+      setScenarioFunctionDrafts(committed);
+
+      const branchNodes =
+        branch === 'initial'
+          ? scenarioInitialNodes
+          : branch === 'onConnect'
+            ? scenarioOnConnectNodes
+            : branch === 'main'
+              ? scenarioMainNodes
+              : branch === 'alarm'
+                ? scenarioAlarmNodes
+                : branch === 'onStop'
+                  ? scenarioOnStopNodes
+                  : branch === 'onDisconnect'
+                    ? scenarioOnDisconnectNodes
+                    : scenarioFunctionNodes;
+
+      const outcome = insertFunctionSubgraphBlock({
+        draft,
+        branchNodes,
+      });
+      if (!outcome.ok) {
+        return outcome.message;
+      }
+
+      appendNodeToBranch(branch, outcome.node);
+      return null;
+    },
+    [
+      appendNodeToBranch,
+      commitActiveFunctionDraft,
+      scenarioAlarmNodes,
+      scenarioFunctionDrafts,
+      scenarioFunctionNodes,
+      scenarioInitialNodes,
+      scenarioMainNodes,
+      scenarioOnConnectNodes,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopNodes,
+    ],
+  );
+
   const addVariable = useCallback((type: ScenarioVariableType) => {
     setVariables((current) => {
       const sameType = current.filter((variable) => variable.type === type).length;
@@ -2224,6 +2358,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateActiveFunctionPin,
       createUserFunction,
       selectUserFunction,
+      removeUserFunction,
+      insertUserFunctionIntoBranch,
       collapseMarqueeToFunction,
       collapseMarqueeToCommentGroup,
       updateCommentGroupMetadata,
@@ -2251,6 +2387,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateActiveFunctionPin,
       createUserFunction,
       selectUserFunction,
+      removeUserFunction,
+      insertUserFunctionIntoBranch,
       collapseMarqueeToFunction,
       collapseMarqueeToCommentGroup,
       updateCommentGroupMetadata,

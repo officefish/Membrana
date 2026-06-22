@@ -4,19 +4,24 @@ import { MAX_SCENARIO_FUNCTION_PINS_PER_SIDE, SOCKET_TYPES } from '@membrana/cor
 
 import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-document.js';
 import type { FunctionPinSide } from '../graph/function-pin-ops.js';
+import { socketTypeIndicatorClass } from '../graph/socket-type-indicator.js';
 import { TrashIcon } from './board-variable-modals.js';
+
+export type FunctionPinEditSide = 'input' | 'output' | null;
 
 export interface BoardFunctionPinInspectorProps {
   readonly meta: ScenarioFunctionCanvasMeta;
+  readonly pinEditSide: FunctionPinEditSide;
   readonly disabled: boolean;
   readonly onUpdateMeta: (patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>) => void;
-  readonly onAddPin: (side: FunctionPinSide, kind: 'exec' | 'data') => void;
+  readonly onAddPin: (side: FunctionPinSide) => void;
   readonly onUpdatePin: (
     side: FunctionPinSide,
     pinId: string,
     patch: { readonly name?: string; readonly kind?: 'exec' | 'data'; readonly socketType?: SocketType },
   ) => void;
   readonly onRemovePin: (side: FunctionPinSide, pinId: string) => void;
+  readonly onDeleteFunction: () => void;
 }
 
 const PinTable: React.FC<{
@@ -24,7 +29,7 @@ const PinTable: React.FC<{
   readonly side: FunctionPinSide;
   readonly pins: readonly ScenarioFunctionPin[];
   readonly disabled: boolean;
-  readonly onAddPin: (side: FunctionPinSide, kind: 'exec' | 'data') => void;
+  readonly onAddPin: (side: FunctionPinSide) => void;
   readonly onUpdatePin: BoardFunctionPinInspectorProps['onUpdatePin'];
   readonly onRemovePin: BoardFunctionPinInspectorProps['onRemovePin'];
 }> = ({ title, side, pins, disabled, onAddPin, onUpdatePin, onRemovePin }) => {
@@ -36,26 +41,15 @@ const PinTable: React.FC<{
         <span className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
           {title} ({pins.length}/{MAX_SCENARIO_FUNCTION_PINS_PER_SIDE})
         </span>
-        <div className="flex gap-1">
-          <button
-            type="button"
-            className="btn btn-ghost btn-xs px-1.5"
-            disabled={disabled || atLimit}
-            title={atLimit ? 'Лимит pins' : 'Добавить exec pin'}
-            onClick={() => onAddPin(side, 'exec')}
-          >
-            + exec
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-xs px-1.5"
-            disabled={disabled || atLimit}
-            title={atLimit ? 'Лимит pins' : 'Добавить data pin'}
-            onClick={() => onAddPin(side, 'data')}
-          >
-            + data
-          </button>
-        </div>
+        <button
+          type="button"
+          className="btn btn-ghost btn-xs px-1.5"
+          disabled={disabled || atLimit}
+          title={atLimit ? 'Лимит pins' : 'Добавить data pin'}
+          onClick={() => onAddPin(side)}
+        >
+          + data
+        </button>
       </div>
       <ul className="flex flex-col gap-1.5">
         {pins.map((pin) => (
@@ -81,6 +75,10 @@ const PinRow: React.FC<{
   readonly onRemovePin: BoardFunctionPinInspectorProps['onRemovePin'];
 }> = ({ pin, side, disabled, onUpdatePin, onRemovePin }) => {
   const [nameDraft, setNameDraft] = useState(pin.name);
+  const isExecPin = pin.kind === 'exec';
+  const socketType = pin.socketType ?? 'DeviceRef';
+  const typeIndicatorClass = socketTypeIndicatorClass(pin.kind, isExecPin ? undefined : socketType);
+  const typeLabel = isExecPin ? 'exec' : socketType;
 
   useEffect(() => {
     setNameDraft(pin.name);
@@ -88,7 +86,12 @@ const PinRow: React.FC<{
 
   return (
     <li className="rounded-md border border-base-300 bg-base-200/30 p-2">
-      <div className="flex items-start gap-1">
+      <div className="flex items-start gap-1.5">
+        <span
+          className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${typeIndicatorClass}`}
+          title={typeLabel}
+          aria-hidden
+        />
         <div className="min-w-0 flex-1 flex flex-col gap-1.5">
           <input
             type="text"
@@ -108,61 +111,53 @@ const PinRow: React.FC<{
               }
             }}
           />
-          <div className="flex gap-1">
+          {isExecPin ? (
+            <span className="badge badge-xs badge-outline w-fit font-mono">exec</span>
+          ) : (
             <select
-              className="select select-bordered select-xs min-h-0 flex-1 font-mono"
-              value={pin.kind}
+              className="select select-bordered select-xs min-h-0 w-full font-mono"
+              value={socketType}
               disabled={disabled}
-              aria-label={`Тип pin ${pin.name}`}
+              aria-label={`SocketType ${pin.name}`}
               onChange={(event) =>
-                onUpdatePin(side, pin.id, { kind: event.target.value as 'exec' | 'data' })
+                onUpdatePin(side, pin.id, { socketType: event.target.value as SocketType })
               }
             >
-              <option value="exec">exec</option>
-              <option value="data">data</option>
+              {SOCKET_TYPES.map((optionSocketType) => (
+                <option key={optionSocketType} value={optionSocketType}>
+                  {optionSocketType}
+                </option>
+              ))}
             </select>
-            {pin.kind === 'data' ? (
-              <select
-                className="select select-bordered select-xs min-h-0 flex-[2] font-mono"
-                value={pin.socketType ?? 'DeviceRef'}
-                disabled={disabled}
-                aria-label={`SocketType ${pin.name}`}
-                onChange={(event) =>
-                  onUpdatePin(side, pin.id, { socketType: event.target.value as SocketType })
-                }
-              >
-                {SOCKET_TYPES.map((socketType) => (
-                  <option key={socketType} value={socketType}>
-                    {socketType}
-                  </option>
-                ))}
-              </select>
-            ) : null}
-          </div>
+          )}
         </div>
-        <button
-          type="button"
-          className="btn btn-ghost btn-xs shrink-0 px-1 text-error"
-          disabled={disabled}
-          aria-label={`Удалить pin ${pin.name}`}
-          title="Удалить pin"
-          onClick={() => onRemovePin(side, pin.id)}
-        >
-          <TrashIcon />
-        </button>
+        {!isExecPin ? (
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs shrink-0 px-1 text-error"
+            disabled={disabled}
+            aria-label={`Удалить pin ${pin.name}`}
+            title="Удалить pin"
+            onClick={() => onRemovePin(side, pin.id)}
+          >
+            <TrashIcon />
+          </button>
+        ) : null}
       </div>
     </li>
   );
 };
 
-/** Инспектор активной функции: имя, описание, CRUD pins (CGF F1). */
+/** Инспектор активной функции: имя, описание, CRUD data pins (CGF F1). */
 export const BoardFunctionPinInspector: React.FC<BoardFunctionPinInspectorProps> = ({
   meta,
+  pinEditSide,
   disabled,
   onUpdateMeta,
   onAddPin,
   onUpdatePin,
   onRemovePin,
+  onDeleteFunction,
 }) => {
   const [nameDraft, setNameDraft] = useState(meta.name);
   const [descriptionDraft, setDescriptionDraft] = useState(meta.description ?? '');
@@ -215,29 +210,52 @@ export const BoardFunctionPinInspector: React.FC<BoardFunctionPinInspectorProps>
         />
       </label>
 
-      <PinTable
-        title="Input pins"
-        side="input"
-        pins={meta.inputPins}
-        disabled={disabled}
-        onAddPin={onAddPin}
-        onUpdatePin={onUpdatePin}
-        onRemovePin={onRemovePin}
-      />
-      <PinTable
-        title="Output pins"
-        side="output"
-        pins={meta.outputPins}
-        disabled={disabled}
-        onAddPin={onAddPin}
-        onUpdatePin={onUpdatePin}
-        onRemovePin={onRemovePin}
-      />
+      {pinEditSide === 'input' ? (
+        <PinTable
+          title="Входные параметры"
+          side="input"
+          pins={meta.inputPins}
+          disabled={disabled}
+          onAddPin={onAddPin}
+          onUpdatePin={onUpdatePin}
+          onRemovePin={onRemovePin}
+        />
+      ) : null}
 
-      <p className="text-xs leading-relaxed text-base-content/55">
-        До {MAX_SCENARIO_FUNCTION_PINS_PER_SIDE} pins на Input и Output (exec + data). Изменения синхронизируются с
-        узлами Input/Output и subgraph-блоками на ветках.
-      </p>
+      {pinEditSide === 'output' ? (
+        <PinTable
+          title="Выходные параметры"
+          side="output"
+          pins={meta.outputPins}
+          disabled={disabled}
+          onAddPin={onAddPin}
+          onUpdatePin={onUpdatePin}
+          onRemovePin={onRemovePin}
+        />
+      ) : null}
+
+      {pinEditSide === null ? (
+        <p className="text-xs leading-relaxed text-base-content/55">
+          Выберите узел Input или Output на канвасе, чтобы редактировать входные и выходные
+          параметры. Exec-in и exec-out задаются по умолчанию; добавлять можно только data pins.
+        </p>
+      ) : (
+        <p className="text-xs leading-relaxed text-base-content/55">
+          До {MAX_SCENARIO_FUNCTION_PINS_PER_SIDE} pins на сторону. Изменения синхронизируются с
+          узлами Input/Output и subgraph-блоками на ветках.
+        </p>
+      )}
+
+      <div className="border-t border-base-200 pt-3">
+        <button
+          type="button"
+          className="btn btn-outline btn-error btn-sm w-full"
+          disabled={disabled}
+          onClick={onDeleteFunction}
+        >
+          Удалить функцию
+        </button>
+      </div>
     </div>
   );
 };
