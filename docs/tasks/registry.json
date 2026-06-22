@@ -2999,7 +2999,7 @@
       "createdAt": "2026-06-19",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Phase 0: apps/docs skeleton, tier4 MCP, prd/. Phase 1–3: full node reference, catalog stable, Canvas."
+      "notes": "Phase 0–3 complete; LGTM pending. Canvas index: docs/canvas/"
     },
     {
       "id": "code-review-debt-closeout-jun2026",
@@ -4883,6 +4883,77 @@
       "archiveNotes": "cookbooks nav, event/loop-repeat, docs:lint 43 pages",
       "parentEpic": "device-board-doc-v04-sprint-2026-06-22",
       "notes": "event, loop-repeat, variable-get-set; docs:lint 43 pages"
+    },
+    {
+      "id": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "title": "Day sprint: db-doc-v04 Phase 3 Canvas + PRD alignment",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "DV7-DV10: 3 Docs Canvas + alignment report + workflow",
+      "sprintKind": "day-sprint",
+      "parentEpic": "db-doc-v04-mvp",
+      "notes": "Phase 3 closure; epic awaits LGTM"
+    },
+    {
+      "id": "db-doc-v04-dv7-canvas-architecture",
+      "title": "DB doc DV7: Canvas architecture",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board-architecture.canvas.tsx",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "packages, branches, runtime phases DAG"
+    },
+    {
+      "id": "db-doc-v04-dv8-canvas-streaming",
+      "title": "DB doc DV8: Canvas streaming pipeline",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board-streaming-pipeline.canvas.tsx",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "ref chain + guard pattern"
+    },
+    {
+      "id": "db-doc-v04-dv9-canvas-branches",
+      "title": "DB doc DV9: Canvas branch/variable map",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board-branch-variable-map.canvas.tsx",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "cross-branch variable-get"
+    },
+    {
+      "id": "db-doc-v04-dv10-prd-alignment",
+      "title": "DB doc DV10: PRD alignment report",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "docs/canvas/PRD_ALIGNMENT_DB_DOC_V04.md",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "check-prd-alignment equivalent"
     }
   ]
 }

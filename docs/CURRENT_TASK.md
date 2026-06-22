@@ -1,18 +1,22 @@
 # CURRENT_TASK — buffer
 
-> **Day-sprint:** closed `device-board-doc-v04-sprint-2026-06-22`  
-> **Closure:** [`day-sprint/device-board-doc-v04-sprint-2026-06-22/CLOSURE.md`](./day-sprint/device-board-doc-v04-sprint-2026-06-22/CLOSURE.md)  
-> **PR:** [#140](https://github.com/officefish/Membrana/pull/140) — Teamlead review
+> **Phase 3:** closed `device-board-doc-v04-phase3-canvas-2026-06-22`  
+> **Closure:** [`day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md`](./day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md)  
+> **PR:** [#140](https://github.com/officefish/Membrana/pull/140) — Teamlead LGTM
 
-## Следующий шаг по `db-doc-v04-mvp`
+## Epic `db-doc-v04-mvp`
 
-- Phase 3: Docs Canvas (architecture, streaming, branch map)
-- ChatPRD alignment
-- RAG index после merge `@membrana/rag-service`
+Phases 0–3 complete. Pending: Teamlead LGTM, optional ChatPRD `update-prd` sync, RAG index after merge `@membrana/rag-service`.
 
-## Verify docs
+## Open canvases (Cursor IDE)
+
+- [architecture](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-architecture.canvas.tsx)
+- [streaming](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-streaming-pipeline.canvas.tsx)
+- [branches](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-branch-variable-map.canvas.tsx)
+
+## Verify
 
 ```bash
-yarn docs:lint    # 43 pages
+yarn docs:lint
 yarn docs:dev
 ```

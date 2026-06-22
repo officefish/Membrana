@@ -1,0 +1,24 @@
+---
+title: Interactive canvases
+description: Cursor Docs Canvas companions for architecture, streaming, and branches.
+---
+
+# Interactive canvases (Cursor IDE)
+
+Mintlify pages are the published reference. For **interactive diagrams** (package boundaries, streaming chain, branch/variable map), open the matching **Docs Canvas** in Cursor beside the chat.
+
+<Note>
+  Canvas files are stored in the IDE workspace under `.cursor/projects/.../canvases/`, not in the git repo. See [`docs/canvas/DEVICE_BOARD_CANVAS_INDEX.md`](https://github.com/officefish/Membrana/blob/main/docs/canvas/DEVICE_BOARD_CANVAS_INDEX.md) for paths.
+</Note>
+
+## Canvas map
+
+| Topic | Canvas file | Related docs |
+|-------|-------------|--------------|
+| Signal vs scenario, packages, runtime phases | `device-board-architecture.canvas.tsx` | [Architecture](/device-board/architecture) |
+| MicrophoneRef → FftFrameRef, guards | `device-board-streaming-pipeline.canvas.tsx` | [Streaming lifecycle](/concepts/streaming-lifecycle) |
+| Branch keys, variable store, cross-branch reads | `device-board-branch-variable-map.canvas.tsx` | [Variable store](/concepts/variable-store) |
+
+## PRD alignment
+
+Coverage report: [`docs/canvas/PRD_ALIGNMENT_DB_DOC_V04.md`](https://github.com/officefish/Membrana/blob/main/docs/canvas/PRD_ALIGNMENT_DB_DOC_V04.md).

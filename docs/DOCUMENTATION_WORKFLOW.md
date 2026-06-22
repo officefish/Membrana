@@ -14,6 +14,16 @@
 | Корп. glossary | Atlan tenant | Atlan MCP |
 | Интерактивные схемы | Cursor Canvas | Docs Canvas Skill |
 
+Пути и имена canvas для device-board: [`docs/canvas/DEVICE_BOARD_CANVAS_INDEX.md`](./canvas/DEVICE_BOARD_CANVAS_INDEX.md). Mintlify hub: `apps/docs/device-board/canvas-overview.mdx`.
+
+## Cursor Docs Canvas (Phase 3)
+
+1. Источник — Mintlify MDX + `DEVICE_BOARD_CONCEPT` / `SCENARIO_RUNTIME`.
+2. Создать или обновить `.canvas.tsx` в `~/.cursor/projects/<workspace>/canvases/` (см. canvas SKILL).
+3. Зарегистрировать путь в `docs/canvas/DEVICE_BOARD_CANVAS_INDEX.md`.
+4. Ссылка из Mintlify `canvas-overview.mdx` при публикации нового canvas.
+5. PRD alignment — `docs/canvas/PRD_ALIGNMENT_DB_DOC_V04.md` или ChatPRD `check-prd-alignment` MCP.
+
 **Atlan** не заменяет Mintlify: Atlan — канон **имён и определений** в корпоративном каталоге; Mintlify — **поведение runtime и узлов**.
 
 ## Локальный preview

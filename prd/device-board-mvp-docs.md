@@ -69,9 +69,9 @@ Device-board достиг MVP (PR #96–#123, 18–19 июня 2026): runtime, v
 | Phase | Deliverable | Status |
 |-------|-------------|--------|
 | 0 | apps/docs skeleton, tier4 MCP, prompt, PRD | ✅ |
-| 1 | Concepts + catalog stable | pending |
-| 2 | All node pages + cookbooks | pending |
-| 3 | Canvas + ChatPRD alignment | pending |
+| 1 | Concepts + catalog stable | ✅ |
+| 2 | All node pages + cookbooks | ✅ |
+| 3 | Canvas + ChatPRD alignment | ✅ |
 
 ## References
 

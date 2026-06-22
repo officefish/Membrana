@@ -13,6 +13,7 @@
       "pages": [
         "device-board/mvp-overview",
         "device-board/architecture",
+        "device-board/canvas-overview",
         "device-board/usercases",
         "device-board/editor/overview",
         "device-board/editor/edit-and-navigation",
