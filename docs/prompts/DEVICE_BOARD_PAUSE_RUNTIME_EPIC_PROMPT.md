@@ -2,10 +2,9 @@
 
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
 > **Реестр:** эпик **`device-board-pause-runtime-v07`**  
+> **Статус:** **closed** — archived 2026-06-22 · LGTM [`device-board-pause-runtime-v07-dbp4-review-2026-06-22.md`](../discussions/device-board-pause-runtime-v07-dbp4-review-2026-06-22.md)  
 > **GitHub Issue:** [#142](https://github.com/officefish/Membrana/issues/142)  
-> **Пакет:** `@membrana/device-board` (+ docs; **без** `vesnin` / `@membrana/core` unless pause node needs core enum)  
-> **Приоритет:** критерий успеха дня 2026-06-22 (брифинг); блокер UserCase MVP workflow  
-> **Предшественник:** function modal sprint (#139), edit v2 + docs (#140)
+> **Пакет:** `@membrana/device-board` (+ docs; additive `@membrana/core` for `pause-runtime` kind)
 
 ---
 
@@ -134,11 +133,10 @@ resume(): void;  // no-op if !isPaused
 
 ## Definition of Done (эпик)
 
-- [ ] DBP0–DBP4 archived
-- [ ] `yarn workspace @membrana/device-board test` green
-- [ ] Browser smoke: Run → Pause → Resume → Stop
-- [ ] LGTM Vesnin
-- [ ] Нет регрессии Stop / onDisconnect / alarm manual override
+- [x] DBP-HF–DBP4 implemented
+- [x] `yarn workspace @membrana/device-board test` green (442)
+- [x] DBP4 smoke test + Teamlead LGTM (`docs/discussions/device-board-pause-runtime-v07-dbp4-review-2026-06-22.md`)
+- [x] Нет регрессии Stop / onDisconnect / alarm manual override
 
 ---
 
