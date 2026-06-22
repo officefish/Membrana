@@ -2,7 +2,7 @@
 
 > **Статус:** v1 (зафиксировано после полевых испытаний, 2026-06-18).  
 > **Пакет:** `@membrana/device-board` (`packages/device-board/src/runtime/`).  
-> **Связано:** [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1f, [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md), [`prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md).
+> **Связано:** [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1f, [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §21, [`apps/docs/device-board/editor/edit-and-navigation`](../apps/docs/device-board/editor/edit-and-navigation.mdx), [`prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md).
 
 ---
 
@@ -150,7 +150,26 @@ Alarm loop использует отдельную паузу `ALARM_LOOP_PAUSE_
 
 ---
 
-## 10. Ключевые файлы
+## 11. Editor vs runtime (post-#140)
+
+Редактирование графа и исполнение — **разные режимы** одного shell (`device-board-shell.tsx`).
+
+| Аспект | Edit | Run (`ScenarioRuntime`) |
+|--------|------|-------------------------|
+| Канвас | mutating (connect, delete, collapse) | **read-only** |
+| Undo | depth-1 hydrated snapshot | нет |
+| Подсветка | breadcrumbs, pin meter | **exec-chain overlay** на активном пути |
+| Логи | optional INFO edit steps | `host.log`, Print, scenario trace buffer |
+
+Переход edit → run: `ScenarioRuntime.start()` после pre-run validation. Stop — `stop()` или системные триггеры (`onStop`, disconnect).
+
+**User functions:** runtime входит в подграф через `exec-subgraph` (см. `function-input` / `function-output` в графе). Навигация между функциями в UI **не** перезагружает runtime — только editor state (`keep-dirty` drafts).
+
+Документация оператора: Mintlify [Edit & navigation](../apps/docs/device-board/editor/edit-and-navigation.mdx) · канон [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §21.
+
+---
+
+## 12. Ключевые файлы
 
 | Файл | Роль |
 |------|------|
