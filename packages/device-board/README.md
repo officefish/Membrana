@@ -5,7 +5,7 @@
 представление того же конвейера, что сейчас настраивается через сайдбар
 плагинов.
 
-**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.8 — signal + scenario + UserCases §20).  
+**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.9 — §21 edit/navigation post-#140).  
 **Scenario runtime (onTick, лупы, host):** [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).  
 **Операторская документация (Mintlify):** [`apps/docs`](../../apps/docs/README.md) — `yarn docs:dev` · [UserCases](../../apps/docs/device-board/usercases.mdx).
 
@@ -45,6 +45,25 @@ yarn usercase:verify-layout usercase-mvp-microphone
 
 Подробно: `DEVICE_BOARD_CONCEPT.md` §20 · оператор — `apps/docs/device-board/usercases.mdx`.
 
+## Edit & navigation (v0.9, PR #139/#140)
+
+Кратко; канон — `DEVICE_BOARD_CONCEPT.md` **§21**.
+
+| Возможность | Поведение |
+| ----------- | --------- |
+| **Save / dirty** | Сценарий сохраняется вручную; `isDirty` до Save |
+| **F7 branch snapshot** | Dirty handler → switch tab → откат к последнему сохранённому document |
+| **Undo depth-1** | Ctrl+Z / кнопка ↶; delete, pins, collapse, align, clear branch — **не** drag |
+| **Function UX** | Inline editor на `function` branch; breadcrumbs; pin meter `n/9` |
+| **Navigation** | `navigateScenarioBranch` + `revert-if-dirty` vs `keep-dirty` (fn switch) |
+| **Runtime** | Exec-chain highlight при Run |
+
+| Модуль | Путь |
+| ------ | ---- |
+| Navigation policy | `src/graph/branch-navigation.ts` |
+| Undo controller | `src/graph/edit-undo-controller.ts` |
+| Integration tests | `src/context/device-board-nav.integration.test.tsx` |
+
 ## Чего пакет не делает
 
 - Не заменяет сайдбар настроек плагинов — полные параметры остаются там
@@ -56,12 +75,13 @@ yarn usercase:verify-layout usercase-mvp-microphone
 
 | Слой | Статус |
 | ---- | ------ |
-| Концепт, signal + scenario, `@xyflow/react`, хакатон H0–H4 | v0.3 в `DEVICE_BOARD_CONCEPT.md` |
-| UI доски, XYFlow, `applyGraph` | **не реализовано** (этап D0) |
-| Публичный API в `src/` | **временный каркас** — `DeviceBoardService` / `Device` из раннего скелета; будет заменён или вынесен при D0 |
+| Signal + scenario graph, runtime, persist | **реализовано** (хакатон H0–H4, v0.4–v0.8) |
+| User functions, groups, align, UserCases (U8–U9) | **реализовано** — CONCEPT §18–§20 |
+| Function editor, undo, branch navigation (post-#140) | **реализовано** — CONCEPT §21 |
+| XYFlow shell, validation, export/import | **реализовано** — `device-board-shell`, `graph/*` |
 
-До этапа D0 не используйте `DeviceBoardService` как модель домена Membrana;
-ориентируйтесь на концепт-документ.
+Публичный API: `DeviceBoardGraphProvider`, `useDeviceBoardGraph`, scenario runtime — `src/index.ts`.
+Legacy `DeviceBoardService` / `Device` — ранняя заглушка; не использовать для новых интеграций.
 
 ## Архитектурное место
 
@@ -79,15 +99,12 @@ yarn usercase:verify-layout usercase-mvp-microphone
 
 ## Дорожная карта (кратко)
 
-| Этап | Содержание |
-| ---- | ---------- |
-| **D0** | Каркас XYFlow, `SocketType` в core, `isValidConnection` |
-| **D1** | Микрофонный пресет, клик по ноде → сайдбар |
-| **D2** | Решётка 2 mic, `array-2mic.graph.json` |
-| **D3** | Локализация, третий источник |
-| **D4** | RF, thermal и др. `DeviceKind` |
+Исторические этапы D0–D4 — `DEVICE_BOARD_CONCEPT.md` §10. Актуальные эпики — `docs/prompts/` и `docs/tasks/README.md`.
 
-Подробно — `DEVICE_BOARD_CONCEPT.md` §10.
+| Направление | Статус |
+| ----------- | ------ |
+| Mintlify operator docs | эпик `db-doc-v04-mvp` + sprint `device-board-docs-post-140-sprint` (D2) |
+| Scoped undo / drag undo | backlog (§21.6) |
 
 ## Установка (внутри монорепо)
 
@@ -101,33 +118,21 @@ yarn usercase:verify-layout usercase-mvp-microphone
 
 В dev клиент подключает alias на `src/index.ts` (как другие пакеты монорепо).
 
-## Использование (планируемое, D0+)
+## Использование
 
-```ts
-// Иллюстрация целевого API — имена и экспорты могут измениться в D0
-import { DeviceBoardModule } from '@membrana/device-board';
+```tsx
+import { DeviceBoardShell, DeviceBoardGraphProvider } from '@membrana/device-board';
 
-// Регистрация в apps/client/src/modules/registerClientModules.ts:
-// MembranaRegistry.registerLazyModule({
-//   id: 'device-board',
-//   loader: () => import('@membrana/device-board').then((m) => ({ default: m.DeviceBoardModule })),
-// });
+// Полный shell (client / cabinet board mode):
+// <DeviceBoardShell runtimeHost={host} persistAdapter={adapter} />
+
+// Или только graph context для встраивания:
+// <DeviceBoardGraphProvider><YourCanvas /></DeviceBoardGraphProvider>
 ```
 
-Пример сериализованного графа — `DEVICE_BOARD_CONCEPT.md` §9.
-
-## Временный API (каркас, до D0)
-
-```ts
-import { DeviceBoardService, type Device } from '@membrana/device-board';
-
-const board = new DeviceBoardService();
-const result = board.register({ name: 'Probe-01', kind: 'sensor' });
-```
-
-> Legacy-заглушка in-memory. Не отражает целевую модель нод-доски.
+Регистрация модуля client: `MembranaRegistry.registerLazyModule({ id: 'device-board', ... })`.
 
 ## Публичное API
 
-Экспортируется из `src/index.ts`. После D0 список экспортов обновится;
-актуальные сигнатуры — JSDoc в исходниках и этот README.
+Экспортируется из `src/index.ts`: graph provider, shell, scenario runtime types, catalog helpers.
+Актуальные сигнатуры — JSDoc в исходниках, этот README и `DEVICE_BOARD_CONCEPT.md`.
