@@ -1,22 +1,31 @@
-# CURRENT_TASK — buffer
+# CURRENT_TASK — device-board pause runtime
 
-> **Phase 3:** closed `device-board-doc-v04-phase3-canvas-2026-06-22`  
-> **Closure:** [`day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md`](./day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md)  
-> **PR:** [#140](https://github.com/officefish/Membrana/pull/140) — Teamlead LGTM
+> **Active epic:** `device-board-pause-runtime-v07`  
+> **Prompt:** [`docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md)  
+> **GitHub Issue:** [#142](https://github.com/officefish/Membrana/issues/142)  
+> **First phase:** `dbp-0-runtime-pause-core` (DBP0)
 
-## Epic `db-doc-v04-mvp`
+## Goal
 
-Phases 0–3 complete. Pending: Teamlead LGTM, optional ChatPRD `update-prd` sync, RAG index after merge `@membrana/rag-service`.
+**Pause/Resume** scenario runtime — freeze exec без `onStop`. Отдельно от `loopTickPauseMs` и от **Stop**.
 
-## Open canvases (Cursor IDE)
+## Phases
 
-- [architecture](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-architecture.canvas.tsx)
-- [streaming](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-streaming-pipeline.canvas.tsx)
-- [branches](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-branch-variable-map.canvas.tsx)
+| Phase | id | Status |
+|-------|-----|--------|
+| DBP0 | `dbp-0-runtime-pause-core` | **next** |
+| DBP1 | `dbp-1-ui-toolbar` | pending |
+| DBP2 | `dbp-2-pause-runtime-node` | pending |
+| DBP3 | `dbp-3-docs-scenario-runtime` | pending |
+| DBP4 | `dbp-4-teamlead-closure` | pending |
 
-## Verify
+## Verify (after DBP0)
 
 ```bash
-yarn docs:lint
-yarn docs:dev
+yarn workspace @membrana/device-board test
 ```
+
+## Closed context
+
+- `db-doc-v04-mvp` — PR #140 merged
+- Code review v0.2 — commit `b04f9fe`
