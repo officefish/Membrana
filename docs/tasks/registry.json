@@ -4519,6 +4519,61 @@
       "archiveNotes": "Runtime exec path highlight",
       "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
       "notes": "Musician: highlight active exec path during run"
+    },
+    {
+      "id": "device-board-edit-model-v2-2026-06-22",
+      "title": "Epic: device-board edit model v2 (navigation + context split)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Tech-debt after PR #140: D1+D4+D5 from team review"
+    },
+    {
+      "id": "db-edit-v2-nav-contract",
+      "title": "DB edit v2 E1: unified branch navigation + RevertPolicy",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "parentEpic": "device-board-edit-model-v2-2026-06-22",
+      "notes": "E-NAV-1/2: navigateScenarioBranch; replace enterFunctionBranch scatter"
+    },
+    {
+      "id": "db-edit-v2-extract-modules",
+      "title": "DB edit v2 E2: extract edit-undo-controller from graph context",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "parentEpic": "device-board-edit-model-v2-2026-06-22",
+      "notes": "E-CTX-1: god-context slim; keep public API stable"
+    },
+    {
+      "id": "db-edit-v2-nav-integration-tests",
+      "title": "DB edit v2 E3: navigation matrix integration tests",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "parentEpic": "device-board-edit-model-v2-2026-06-22",
+      "notes": "E-TEST-1: dirty handler, fn switch, collapse, Signal, undo forget"
     }
   ]
 }

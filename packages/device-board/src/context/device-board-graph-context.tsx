@@ -97,14 +97,17 @@ import {
   updateFunctionPinInList,
   type FunctionPinSide,
 } from '../graph/function-pin-ops.js';
-import { cloneHydratedBoardState } from '../graph/edit-undo-snapshot.js';
 import {
-  boardEditActionLabel,
-  logBoardEditStep,
   planNodeRemovalUndo,
-  resolveBranchNavigationUndoClearReason,
   type BoardEditStepAction,
 } from '../graph/edit-step-log.js';
+import { useEditUndoController } from '../graph/edit-undo-controller.js';
+import {
+  inFunctionLayerRevertPolicy,
+  planBranchNavigation,
+  sidebarHandlerRevertPolicy,
+  type ScenarioRevertPolicy,
+} from '../graph/branch-navigation.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import {
   ScenarioRuntime,
@@ -398,30 +401,49 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
-  const [canUndoLastEdit, setCanUndoLastEdit] = useState(false);
-  const [lastUndoableEditLabel, setLastUndoableEditLabel] = useState<string | null>(null);
   const [showInfoLogs, setShowInfoLogs] = useState(true);
   const [scenarioTraceLineCount, setScenarioTraceLineCount] = useState(0);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
   const savedSnapshotRef = useRef<string | null>(null);
   const savedDocumentRef = useRef<DeviceScenarioDocument | null>(null);
-  const undoSnapshotRef = useRef<HydratedBoardState | null>(null);
-  const lastUndoActionRef = useRef<BoardEditStepAction | null>(null);
   const showInfoLogsRef = useRef(showInfoLogs);
   const buildDocumentRef = useRef<(() => DeviceScenarioDocument) | null>(null);
   const buildHydratedSnapshotRef = useRef<(() => HydratedBoardState) | null>(null);
   const runValidationRef = useRef<() => readonly PreRunValidationIssue[]>(() => []);
   const skipDirtyRef = useRef(false);
+  const applyHydratedStateRef = useRef<(state: HydratedBoardState) => void>(() => {});
   /** После hydrate/load: baseline снимается из buildDocument() на следующем commit state. */
   const pendingBaselineRef = useRef(false);
 
-  const clearEditUndoSnapshot = useCallback(() => {
-    undoSnapshotRef.current = null;
-    lastUndoActionRef.current = null;
-    setCanUndoLastEdit(false);
-    setLastUndoableEditLabel(null);
+  const recalcDirtyAfterSkip = useCallback(() => {
+    window.setTimeout(() => {
+      skipDirtyRef.current = false;
+      const build = buildDocumentRef.current;
+      const saved = savedSnapshotRef.current;
+      if (build === null || saved === null) {
+        return;
+      }
+      setIsDirty(scenarioDocumentFingerprint(build()) !== saved);
+    }, 0);
   }, []);
+
+  const {
+    canUndoLastEdit,
+    lastUndoableEditLabel,
+    clearEditUndoSnapshot,
+    captureEditUndoSnapshot,
+    undoLastEdit,
+    forgetPendingEditUndo,
+  } = useEditUndoController({
+    isRuntimeRunning: runtimeState.isRunning,
+    showInfoLogsRef,
+    buildHydratedSnapshotRef,
+    applyHydratedStateRef,
+    runValidationRef,
+    recalcDirtyAfterSkip,
+    skipDirtyRef,
+  });
 
   const markSavedSnapshot = useCallback((document: DeviceScenarioDocument) => {
     savedSnapshotRef.current = scenarioDocumentFingerprint(document);
@@ -519,6 +541,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }, 0);
   }, [clearEditUndoSnapshot]);
 
+  applyHydratedStateRef.current = applyHydratedState;
+
   const revertToSavedDocumentIfDirty = useCallback(() => {
     const build = buildDocumentRef.current;
     const saved = savedDocumentRef.current;
@@ -542,90 +566,28 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }, 0);
   }, [applyHydratedState, clearEditUndoSnapshot, markSavedSnapshot, syncStatus]);
 
-  const forgetPendingEditUndo = useCallback(
-    (reason: string) => {
-      if (undoSnapshotRef.current === null) {
-        return;
+  const navigateScenarioBranch = useCallback(
+    (branch: ScenarioBranchTab, revertPolicy: ScenarioRevertPolicy) => {
+      const plan = planBranchNavigation(scenarioBranch, branch, revertPolicy);
+      if (plan.shouldRevertIfDirty) {
+        revertToSavedDocumentIfDirty();
       }
-      clearEditUndoSnapshot();
-      logBoardEditStep(showInfoLogsRef.current, 'clear', 'undo', { reason });
-    },
-    [clearEditUndoSnapshot],
-  );
-
-  const enterFunctionBranch = useCallback(
-    (fromBranch: ScenarioBranchTab = scenarioBranch) => {
-      const clearReason = resolveBranchNavigationUndoClearReason(fromBranch, 'function');
-      if (clearReason !== null) {
-        forgetPendingEditUndo(clearReason);
+      if (plan.undoClearReason !== null) {
+        forgetPendingEditUndo(plan.undoClearReason);
       }
-      setScenarioBranchState('function');
-    },
-    [forgetPendingEditUndo, scenarioBranch],
-  );
-
-  const setScenarioBranch = useCallback(
-    (branch: ScenarioBranchTab) => {
-      revertToSavedDocumentIfDirty();
-      const clearReason = resolveBranchNavigationUndoClearReason(scenarioBranch, branch);
-      if (clearReason !== null) {
-        forgetPendingEditUndo(clearReason);
+      if (plan.shouldChangeBranch) {
+        setScenarioBranchState(branch);
       }
-      setScenarioBranchState(branch);
     },
     [forgetPendingEditUndo, revertToSavedDocumentIfDirty, scenarioBranch],
   );
 
-  const recalcDirtyAfterSkip = useCallback(() => {
-    window.setTimeout(() => {
-      skipDirtyRef.current = false;
-      const build = buildDocumentRef.current;
-      const saved = savedSnapshotRef.current;
-      if (build === null || saved === null) {
-        return;
-      }
-      setIsDirty(scenarioDocumentFingerprint(build()) !== saved);
-    }, 0);
-  }, []);
-
-  const captureEditUndoSnapshot = useCallback(
-    (action: BoardEditStepAction, meta?: Record<string, unknown>) => {
-      if (runtimeState.isRunning) {
-        return;
-      }
-      const build = buildHydratedSnapshotRef.current;
-      if (build === null) {
-        return;
-      }
-      undoSnapshotRef.current = cloneHydratedBoardState(build());
-      lastUndoActionRef.current = action;
-      setCanUndoLastEdit(true);
-      setLastUndoableEditLabel(boardEditActionLabel(action));
-      logBoardEditStep(showInfoLogsRef.current, 'capture', action, meta);
+  const setScenarioBranch = useCallback(
+    (branch: ScenarioBranchTab) => {
+      navigateScenarioBranch(branch, sidebarHandlerRevertPolicy());
     },
-    [runtimeState.isRunning],
+    [navigateScenarioBranch],
   );
-
-  const undoLastEdit = useCallback((): boolean => {
-    const snap = undoSnapshotRef.current;
-    const action = lastUndoActionRef.current;
-    if (snap === null) {
-      return false;
-    }
-    undoSnapshotRef.current = null;
-    lastUndoActionRef.current = null;
-    setCanUndoLastEdit(false);
-    setLastUndoableEditLabel(null);
-    skipDirtyRef.current = true;
-    applyHydratedState(cloneHydratedBoardState(snap));
-    runValidationRef.current();
-    logBoardEditStep(showInfoLogsRef.current, 'undo', 'undo', {
-      restoredAction: action,
-      restoredLabel: action !== null ? boardEditActionLabel(action) : null,
-    });
-    recalcDirtyAfterSkip();
-    return true;
-  }, [applyHydratedState, recalcDirtyAfterSkip]);
 
   useEffect(() => {
     if (persistAdapter === undefined) {
@@ -762,20 +724,19 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         loadFunctionDraftToCanvas(target);
       }
       if (scenarioBranch === 'function') {
-        enterFunctionBranch('function');
+        navigateScenarioBranch('function', inFunctionLayerRevertPolicy());
       } else {
-        setScenarioBranch('function');
+        navigateScenarioBranch('function', sidebarHandlerRevertPolicy());
       }
     },
     [
       activeFunctionId,
       commitActiveFunctionDraft,
-      enterFunctionBranch,
       forgetPendingEditUndo,
       loadFunctionDraftToCanvas,
+      navigateScenarioBranch,
       scenarioBranch,
       scenarioFunctionDrafts,
-      setScenarioBranch,
     ],
   );
 
@@ -790,19 +751,17 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     const draft = createEmptyFunctionDraft(id, `Function ${seq}`);
     setScenarioFunctionDrafts([...committed, draft]);
     loadFunctionDraftToCanvas(draft);
-    if (scenarioBranch === 'function') {
-      enterFunctionBranch('function');
-    } else {
-      setScenarioBranch('function');
-    }
+    navigateScenarioBranch(
+      'function',
+      scenarioBranch === 'function' ? inFunctionLayerRevertPolicy() : sidebarHandlerRevertPolicy(),
+    );
   }, [
     commitActiveFunctionDraft,
-    enterFunctionBranch,
     forgetPendingEditUndo,
     loadFunctionDraftToCanvas,
+    navigateScenarioBranch,
     scenarioBranch,
     scenarioFunctionDrafts,
-    setScenarioBranch,
   ]);
 
   const removeUserFunction = useCallback(
@@ -849,7 +808,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
             drafts.length - 1,
           );
           loadFunctionDraftToCanvas(drafts[nextIndex]!);
-          enterFunctionBranch('function');
+          navigateScenarioBranch('function', inFunctionLayerRevertPolicy());
         } else {
           setScenarioFunctionNodes([]);
           setScenarioFunctionEdges([]);
@@ -864,8 +823,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       activeFunctionId,
       captureEditUndoSnapshot,
       commitActiveFunctionDraft,
-      enterFunctionBranch,
       loadFunctionDraftToCanvas,
+      navigateScenarioBranch,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
       scenarioFunctionDrafts,
@@ -1275,15 +1234,15 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       setScenarioFunctionDrafts([...committed, result.functionDraft]);
       applyScenarioBranchGraph(branch, result.branchNodes, result.branchEdges);
       loadFunctionDraftToCanvas(result.functionDraft);
-      enterFunctionBranch(branch);
+      navigateScenarioBranch('function', inFunctionLayerRevertPolicy());
       return null;
     },
     [
       applyScenarioBranchGraph,
       captureEditUndoSnapshot,
       commitActiveFunctionDraft,
-      enterFunctionBranch,
       loadFunctionDraftToCanvas,
+      navigateScenarioBranch,
       readScenarioBranchGraph,
       scenarioFunctionDrafts,
     ],

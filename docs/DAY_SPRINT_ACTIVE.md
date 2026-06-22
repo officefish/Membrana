@@ -8,6 +8,6 @@
 | **Status** | idle |
 | **Prompt** | — |
 
-**Последний закрытый:** `device-board-ui-followup-sprint-2026-06-22` — [`CLOSURE.md`](./day-sprint/device-board-ui-followup-sprint-2026-06-22/CLOSURE.md) · PR pending.
+**Активный L-epic (не day-sprint):** `device-board-edit-model-v2-2026-06-22` — [`CURRENT_TASK.md`](./CURRENT_TASK.md) · фаза **E1**.
 
-**Предыдущий:** `device-board-function-modal-sprint-2026-06-22` — PR #139.
+**Последний day-sprint (closed):** `device-board-ui-followup-sprint-2026-06-22` — PR #140.
