@@ -553,6 +553,17 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [clearEditUndoSnapshot],
   );
 
+  const enterFunctionBranch = useCallback(
+    (fromBranch: ScenarioBranchTab = scenarioBranch) => {
+      const clearReason = resolveBranchNavigationUndoClearReason(fromBranch, 'function');
+      if (clearReason !== null) {
+        forgetPendingEditUndo(clearReason);
+      }
+      setScenarioBranchState('function');
+    },
+    [forgetPendingEditUndo, scenarioBranch],
+  );
+
   const setScenarioBranch = useCallback(
     (branch: ScenarioBranchTab) => {
       revertToSavedDocumentIfDirty();
@@ -750,15 +761,21 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (functionId !== activeFunctionId || scenarioBranch !== 'function') {
         loadFunctionDraftToCanvas(target);
       }
-      setScenarioBranch('function');
+      if (scenarioBranch === 'function') {
+        enterFunctionBranch('function');
+      } else {
+        setScenarioBranch('function');
+      }
     },
     [
       activeFunctionId,
       commitActiveFunctionDraft,
+      enterFunctionBranch,
       forgetPendingEditUndo,
       loadFunctionDraftToCanvas,
       scenarioBranch,
       scenarioFunctionDrafts,
+      setScenarioBranch,
     ],
   );
 
@@ -773,8 +790,20 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     const draft = createEmptyFunctionDraft(id, `Function ${seq}`);
     setScenarioFunctionDrafts([...committed, draft]);
     loadFunctionDraftToCanvas(draft);
-    setScenarioBranch('function');
-  }, [commitActiveFunctionDraft, forgetPendingEditUndo, loadFunctionDraftToCanvas, scenarioFunctionDrafts]);
+    if (scenarioBranch === 'function') {
+      enterFunctionBranch('function');
+    } else {
+      setScenarioBranch('function');
+    }
+  }, [
+    commitActiveFunctionDraft,
+    enterFunctionBranch,
+    forgetPendingEditUndo,
+    loadFunctionDraftToCanvas,
+    scenarioBranch,
+    scenarioFunctionDrafts,
+    setScenarioBranch,
+  ]);
 
   const removeUserFunction = useCallback(
     (functionId: string): string | null => {
@@ -820,7 +849,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
             drafts.length - 1,
           );
           loadFunctionDraftToCanvas(drafts[nextIndex]!);
-          setScenarioBranch('function');
+          enterFunctionBranch('function');
         } else {
           setScenarioFunctionNodes([]);
           setScenarioFunctionEdges([]);
@@ -835,6 +864,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       activeFunctionId,
       captureEditUndoSnapshot,
       commitActiveFunctionDraft,
+      enterFunctionBranch,
       loadFunctionDraftToCanvas,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
@@ -849,6 +879,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnDisconnectNodes,
       scenarioOnStopEdges,
       scenarioOnStopNodes,
+      setScenarioBranch,
     ],
   );
 
@@ -1244,13 +1275,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       setScenarioFunctionDrafts([...committed, result.functionDraft]);
       applyScenarioBranchGraph(branch, result.branchNodes, result.branchEdges);
       loadFunctionDraftToCanvas(result.functionDraft);
-      setScenarioBranch('function');
+      enterFunctionBranch(branch);
       return null;
     },
     [
       applyScenarioBranchGraph,
       captureEditUndoSnapshot,
       commitActiveFunctionDraft,
+      enterFunctionBranch,
       loadFunctionDraftToCanvas,
       readScenarioBranchGraph,
       scenarioFunctionDrafts,
