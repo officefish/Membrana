@@ -4954,6 +4954,131 @@
       "archiveNotes": "docs/canvas/PRD_ALIGNMENT_DB_DOC_V04.md",
       "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
       "notes": "check-prd-alignment equivalent"
+    },
+    {
+      "id": "device-board-pause-runtime-v07",
+      "title": "Device-Board Pause runtime v0.7: freeze without onStop (DBP0–DBP4)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "Epic DBP-HF..DBP4 closed; Issue 142 close-github EOD",
+      "notes": "Lead: Vesnin + Ozhegov. Day briefing 2026-06-22: pause = success criterion; blocks UserCase MVP confidence. Audio continues; scenario graph freezes.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbp-hf-marquee-collapse",
+      "title": "DBP-HF: marquee collapse — ignore system nodes in selection eligibility",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-pause-runtime-v07",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "hotfix",
+      "dependsOn": [
+        "device-board-pause-runtime-v07"
+      ],
+      "notes": "Hotfix: collapse function/group blocked when Event/loop-repeat in marquee.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbp-0-runtime-pause-core",
+      "title": "DBP0: ScenarioRuntime pause/resume core + isPaused state",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-pause-runtime-v07",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "commit fdb8197",
+      "dependsOn": [
+        "device-board-pause-runtime-v07"
+      ],
+      "notes": "Lead: Ozhegov. waitWhilePaused in main/alarm loops and exec yield points.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbp-1-ui-toolbar",
+      "title": "DBP1: Pause/Resume toolbar + graph context + status badge",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "device-board-pause-runtime-v07",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "commit fdb8197",
+      "dependsOn": [
+        "dbp-0-runtime-pause-core"
+      ],
+      "notes": "Lead: Rodchenko. device-board-shell Pause/Resume next to Run/Stop.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbp-2-pause-runtime-node",
+      "title": "DBP2: pause-runtime node kind (exec freeze)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-pause-runtime-v07",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "commit 814f28d",
+      "dependsOn": [
+        "dbp-0-runtime-pause-core"
+      ],
+      "notes": "Lead: Ozhegov. Mirror stop-runtime-node pattern.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbp-3-docs-scenario-runtime",
+      "title": "DBP3: SCENARIO_RUNTIME + CONCEPT pause documentation",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-pause-runtime-v07",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "commit 814f28d",
+      "dependsOn": [
+        "dbp-1-ui-toolbar"
+      ],
+      "notes": "Lead: Vesnin. docs/SCENARIO_RUNTIME.md new section; CONCEPT §7.4.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dbp-4-teamlead-closure",
+      "title": "DBP4: browser smoke, LGTM, archive pause-runtime epic",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "device-board-pause-runtime-v07",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "LGTM dbp4 review 2026-06-22",
+      "dependsOn": [
+        "dbp-0-runtime-pause-core",
+        "dbp-1-ui-toolbar",
+        "dbp-2-pause-runtime-node",
+        "dbp-3-docs-scenario-runtime"
+      ],
+      "notes": "Lead: Vesnin. Run→Pause→Resume→Stop smoke.",
+      "githubIssueClosedAt": null
     }
   ]
 }

@@ -42,7 +42,7 @@ description: >-
 
 **Dry / no API:** `yarn ritual:day:no-api` or `yarn morning-care --no-anthropic` + `yarn standup:dry` + `yarn task:list`.
 
-**Never run `yarn code-review` in the morning** — only **read** existing `docs/DAILY_CODE_REVIEW.md`.
+**Never run `yarn code-review` in the morning** — only **read** existing `docs/DAILY_CODE_REVIEW.md`. Details: `membrana-code-review`.
 
 ## Evening (`yarn ritual:evening`)
 

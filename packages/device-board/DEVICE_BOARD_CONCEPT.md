@@ -419,7 +419,7 @@ Onboarding v1: тултипы + wizard на 3 шага + ссылка на manua
 | Создал ребро              | `subscribeHub(source.handle → target.handle)`                                    |
 | Удалил ребро              | соответствующий teardown                                                         |
 | Кликнул на ноду           | сайдбар плагина (`renderPluginSidebarDetails`, U2)                               |
-| Run / Stop сценария       | `ScenarioRuntime.start()` / `.stop()`; stop также по системному событию (T1)   |
+| Run / Stop / Pause сценария       | `ScenarioRuntime.start()` / `.stop()` → `onStop`; `.pause()` / `.resume()` — freeze без `onStop` (DBP0)   |
 | Disconnect                | `onDisconnect` → stop; reconnect → `initial` (T4)                              |
 
 ### 7.4 Scenario runtime (поведение)
@@ -430,6 +430,7 @@ Onboarding v1: тултипы + wizard на 3 шага + ссылка на manua
 | `main` (base loop) | onTick → чанки → trends FFT → журнал → ∞ | Entry: `onMainTick`; итерация завершается узлом `loop-repeat`; см. [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md) |
 | `alarm` | По фронту детекции; raw level через sound-quality plugin | Entry: `onAlarmTick`; пауза 400 ms между итерациями; отдельный **тег** в журнале (J2) |
 | `onStop` | Teardown; сценарий на канвасе остаётся editable (T2) | UI-кнопка + системное событие |
+| **Pause** | Заморозка exec без `onStop`; микрофон продолжает (DBP0) | Toolbar Pause/Resume; узел `pause-runtime` в графе (DBP2) |
 | `onDisconnect` | Stop (единая ветка mic/server пока, T3) | Позже: restart по таймеру |
 | `custom[]` | Пользовательские триггеры | Расширяемый список |
 | scheduled (stretch) | Cron-like анализ журнала → statistics sink | J3, J4 |

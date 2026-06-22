@@ -69,6 +69,7 @@ describe('scenario node palette (v0.4 DBR5)', () => {
     expect(SCENARIO_V04_PALETTE.map((item) => item.nodeKind)).toEqual([
       'device-global',
       'stop-runtime',
+      'pause-runtime',
       'print',
       'is-valid',
       'get-microphone',

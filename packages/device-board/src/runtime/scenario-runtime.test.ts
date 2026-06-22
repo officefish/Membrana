@@ -492,4 +492,35 @@ describe('ScenarioRuntime H3b onDisconnect', () => {
   });
 });
 
+describe('ScenarioRuntime pause (DBP0)', () => {
+  it('pause/resume toggles isPaused; stop clears pause and runs onStop', async () => {
+    const calls: string[] = [];
+    const runtime = new ScenarioRuntime(
+      createStubScenarioRuntimeHost({
+        writeJournal: async (event) => calls.push(`journal:${event.branch}`),
+      }),
+      { loopTickPauseMs: 0 },
+    );
+    runtime.load(buildHackathonDocument());
+    const runPromise = runtime.start();
+
+    const deadline = Date.now() + 2000;
+    while (!runtime.getState().isRunning && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 5));
+    }
+    expect(runtime.getState().isRunning).toBe(true);
+
+    runtime.pause();
+    expect(runtime.getState().isPaused).toBe(true);
+
+    runtime.resume();
+    expect(runtime.getState().isPaused).toBe(false);
+
+    runtime.stop('user');
+    await runPromise;
+    expect(runtime.getState().isPaused).toBe(false);
+    expect(calls).toContain('journal:onStop');
+  });
+});
+
 

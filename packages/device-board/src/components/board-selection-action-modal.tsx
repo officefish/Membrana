@@ -13,6 +13,8 @@ export interface BoardSelectionActionModalProps {
   readonly selectedCount: number;
   readonly collapseFunctionDisabled: boolean;
   readonly collapseGroupDisabled: boolean;
+  readonly collapseFunctionDisabledReason?: string;
+  readonly collapseGroupDisabledReason?: string;
   readonly execChainLayoutDisabled: boolean;
   readonly onCollapseToFunction: () => void;
   readonly onCollapseToGroup: () => void;
@@ -30,6 +32,8 @@ export const BoardSelectionActionModal: React.FC<BoardSelectionActionModalProps>
   selectedCount,
   collapseFunctionDisabled,
   collapseGroupDisabled,
+  collapseFunctionDisabledReason,
+  collapseGroupDisabledReason,
   execChainLayoutDisabled,
   onCollapseToFunction,
   onCollapseToGroup,
@@ -64,7 +68,7 @@ export const BoardSelectionActionModal: React.FC<BoardSelectionActionModalProps>
             type="button"
             className="btn btn-primary btn-sm h-9 min-h-9 w-full justify-start"
             disabled={collapseFunctionDisabled}
-            title={collapseFunctionDisabled ? 'Нужно ≥2 узлов без системных' : undefined}
+            title={collapseFunctionDisabledReason ?? (collapseFunctionDisabled ? 'Нужно ≥2 узлов без системных' : undefined)}
             onClick={onCollapseToFunction}
           >
             Объединить в функцию
@@ -73,7 +77,7 @@ export const BoardSelectionActionModal: React.FC<BoardSelectionActionModalProps>
             type="button"
             className="btn btn-sm h-9 min-h-9 w-full justify-start"
             disabled={collapseGroupDisabled}
-            title={collapseGroupDisabled ? 'Нужно ≥2 узлов без системных' : undefined}
+            title={collapseGroupDisabledReason ?? (collapseGroupDisabled ? 'Нужно ≥2 узлов без системных' : undefined)}
             onClick={onCollapseToGroup}
           >
             Объединить в группу

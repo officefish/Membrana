@@ -59,6 +59,13 @@ export {
 } from './stop-runtime-node.js';
 export type { CreateStopRuntimeBoardNodeOptions } from './stop-runtime-node.js';
 export {
+  createPauseRuntimeBoardNode,
+  pauseRuntimeNodePins,
+  PAUSE_RUNTIME_NODE_KIND,
+  isPauseRuntimeNode,
+} from './pause-runtime-node.js';
+export type { CreatePauseRuntimeBoardNodeOptions } from './pause-runtime-node.js';
+export {
   createGetRecorderBoardNode,
   getRecorderNodePins,
   GET_RECORDER_NODE_KIND,

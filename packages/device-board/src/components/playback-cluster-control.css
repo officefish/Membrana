@@ -1,0 +1,177 @@
+/**
+ * Transport-кластер Play · Pause · Stop.
+ * lit = подсветка aperture; dim = приглушённые подпись+иконка; depressed = вдавлен + погашен.
+ */
+.playback-cluster-chassis {
+  --pb-accent: var(--color-accent, oklch(var(--p) / 1));
+  --pb-accent-glow: color-mix(in oklch, var(--pb-accent) 65%, transparent);
+  --pb-accent-hot: color-mix(in oklch, var(--pb-accent) 55%, white);
+  --pb-muted: oklch(var(--bc) / 0.45);
+  --pb-dim: oklch(var(--bc) / 0.28);
+  --pb-face: oklch(var(--b1) / 1);
+  --pb-squish-duration: 120ms;
+
+  display: inline-block;
+  transition: transform var(--pb-squish-duration) ease-in;
+}
+
+.playback-cluster-chassis--squeeze {
+  transform: scaleX(0.96);
+}
+
+.playback-cluster.join {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid oklch(var(--b3) / 0.65);
+  background: var(--pb-face);
+  transition: transform var(--pb-squish-duration) ease-in;
+}
+
+.playback-cluster--squeeze {
+  transform: scaleX(0.97);
+}
+
+.playback-cluster__segment {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 3.1rem;
+  min-height: 2.5rem;
+  padding-inline: 0.625rem !important;
+  padding-block: 0.25rem !important;
+  border-width: 0 !important;
+  border-radius: 0 !important;
+  background: var(--pb-face) !important;
+  box-shadow: none !important;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition:
+    transform var(--pb-squish-duration) ease-in,
+    padding var(--pb-squish-duration) ease-in,
+    box-shadow 180ms ease-out,
+    background-color 180ms ease-out,
+    color 180ms ease-out;
+}
+
+/* --- lit: полная подсветка --- */
+
+.playback-cluster__segment--lit {
+  color: oklch(var(--bc) / 0.92) !important;
+  cursor: pointer;
+}
+
+.playback-cluster__segment--lit:not(:disabled):hover {
+  color: oklch(var(--bc) / 1) !important;
+}
+
+/* --- dim / depressed: приглушённые подпись и иконка (без тёмного inset) --- */
+
+.playback-cluster__segment--dim,
+.playback-cluster__segment--depressed {
+  color: var(--pb-dim) !important;
+  background: var(--pb-face) !important;
+  box-shadow: none !important;
+  opacity: 1;
+}
+
+.playback-cluster__segment--dim {
+  cursor: not-allowed;
+}
+
+.playback-cluster__segment--depressed {
+  cursor: default;
+}
+
+.playback-cluster__segment--dim .icon-aperture__glyph,
+.playback-cluster__segment--depressed .icon-aperture__glyph {
+  fill: var(--pb-dim);
+}
+
+.playback-cluster__segment--dim .icon-aperture__beam,
+.playback-cluster__segment--depressed .icon-aperture__beam {
+  opacity: 0;
+}
+
+.playback-cluster__segment--dim:disabled,
+.playback-cluster__segment--depressed:disabled {
+  opacity: 1;
+}
+
+/* --- transient pointer press (squish) --- */
+
+.playback-cluster__segment--pressed:not(:disabled):not(.playback-cluster__segment--dim):not(
+    .playback-cluster__segment--depressed
+  ) {
+  transform: scale(0.86, 0.9);
+  padding-inline: 0.35rem !important;
+  box-shadow:
+    inset 0 4px 11px color-mix(in oklch, black 48%, transparent),
+    inset 0 0 0 1px color-mix(in oklch, black 22%, transparent) !important;
+  z-index: 1;
+}
+
+.playback-cluster__segment--crowded:not(:disabled) {
+  transform: scale(0.94, 0.97);
+  padding-inline: 0.45rem !important;
+}
+
+.playback-cluster__label {
+  pointer-events: none;
+}
+
+/* --- Icon aperture (только --lit) --- */
+
+.icon-aperture {
+  position: relative;
+  display: inline-flex;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.icon-aperture__svg {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  overflow: visible;
+}
+
+.icon-aperture__beam {
+  opacity: 0;
+  filter: blur(2px) saturate(1.35);
+  transform-origin: 8px 8px;
+  transform: scale(0.75);
+  transition:
+    opacity 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+.icon-aperture__glyph {
+  fill: color-mix(in oklch, var(--pb-muted) 55%, var(--pb-face));
+  transition:
+    fill 180ms ease-out,
+    filter 180ms ease-out;
+}
+
+.icon-aperture--lit .icon-aperture__beam {
+  opacity: 0.85;
+  transform: scale(1);
+  filter: blur(1.5px) saturate(1.45);
+}
+
+.icon-aperture--lit .icon-aperture__glyph {
+  fill: color-mix(in oklch, var(--pb-accent-hot) 70%, white);
+  filter:
+    drop-shadow(0 0 1px var(--pb-accent))
+    drop-shadow(0 0 4px var(--pb-accent-glow));
+}
+
+.playback-cluster__segment:focus-visible {
+  outline: 2px solid var(--pb-accent);
+  outline-offset: -2px;
+  z-index: 2;
+}

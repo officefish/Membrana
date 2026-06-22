@@ -1,22 +1,14 @@
-# CURRENT_TASK — buffer
+# CURRENT_TASK — (buffer)
 
-> **Phase 3:** closed `device-board-doc-v04-phase3-canvas-2026-06-22`  
-> **Closure:** [`day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md`](./day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md)  
-> **PR:** [#140](https://github.com/officefish/Membrana/pull/140) — Teamlead LGTM
+> **Последний закрытый эпик:** `device-board-pause-runtime-v07` (2026-06-22)  
+> **Архив:** [`docs/tasks/archive/device-board-pause-runtime-v07.md`](./tasks/archive/device-board-pause-runtime-v07.md)  
+> **LGTM:** [`docs/discussions/device-board-pause-runtime-v07-dbp4-review-2026-06-22.md`](./discussions/device-board-pause-runtime-v07-dbp4-review-2026-06-22.md)  
+> **GitHub:** Issue [#142](https://github.com/officefish/Membrana/issues/142) — закрыть вечером `yarn task:close-github`
 
-## Epic `db-doc-v04-mvp`
+Следующую задачу дня задать через `yarn main-day-issue` / `yarn ritual:day`.
 
-Phases 0–3 complete. Pending: Teamlead LGTM, optional ChatPRD `update-prd` sync, RAG index after merge `@membrana/rag-service`.
+## Closed context
 
-## Open canvases (Cursor IDE)
-
-- [architecture](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-architecture.canvas.tsx)
-- [streaming](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-streaming-pipeline.canvas.tsx)
-- [branches](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-branch-variable-map.canvas.tsx)
-
-## Verify
-
-```bash
-yarn docs:lint
-yarn docs:dev
-```
+- Pause runtime v0.7 — commits `fdb8197`, `814f28d`, DBP4 smoke `scenario-runtime-pause-smoke.test.ts`
+- `db-doc-v04-mvp` — PR #140 merged
+- Code review v0.2 — commit `b04f9fe`
