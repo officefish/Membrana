@@ -15,6 +15,7 @@ import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
 import { BoardFunctionList } from './board-function-list.js';
 import {
   AddVariableModal,
+  DeleteFunctionModal,
   DeleteVariableModal,
   PencilIcon,
   RenameVariableModal,
@@ -40,6 +41,7 @@ export interface BoardLeftSidebarProps {
   readonly activeFunctionId: string;
   readonly onSelectFunction: (functionId: string) => void;
   readonly onCreateFunction: () => void;
+  readonly onRemoveFunction: (functionId: string) => void;
 }
 
 const VariableRow: React.FC<{
@@ -126,14 +128,20 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   activeFunctionId,
   onSelectFunction,
   onCreateFunction,
+  onRemoveFunction,
 }) => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [nodeKindVariable, setNodeKindVariable] = useState<ScenarioVariable | null>(null);
   const [renameVariable, setRenameVariable] = useState<ScenarioVariable | null>(null);
   const [deleteVariable, setDeleteVariable] = useState<ScenarioVariable | null>(null);
+  const [deleteFunctionId, setDeleteFunctionId] = useState<string | null>(null);
 
   const constructorDisabled = !isScenarioLayer || isRuntime;
   const showRuntimeInputs = isRuntime && runtimeInspection !== null;
+  const deleteFunctionName =
+    deleteFunctionId === null
+      ? null
+      : (scenarioFunctions.find((fn) => fn.id === deleteFunctionId)?.name ?? null);
 
   return (
     <>
@@ -150,25 +158,15 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
                 {section.tabs.map((branch) => {
                   const active = isScenarioLayer && activeBranch === branch;
                   return (
-                    <React.Fragment key={branch}>
-                      <button
-                        type="button"
-                        aria-current={active ? 'page' : undefined}
-                        className={`btn btn-sm justify-start ${active ? 'btn-primary' : 'btn-ghost'}`}
-                        onClick={() => onSelectBranch(branch)}
-                      >
-                        {BRANCH_TAB_LABEL[branch]}
-                      </button>
-                      {branch === 'function' && isScenarioLayer ? (
-                        <BoardFunctionList
-                          functions={scenarioFunctions}
-                          activeFunctionId={activeFunctionId}
-                          disabled={isRuntime}
-                          onSelect={onSelectFunction}
-                          onCreate={onCreateFunction}
-                        />
-                      ) : null}
-                    </React.Fragment>
+                    <button
+                      key={branch}
+                      type="button"
+                      aria-current={active ? 'page' : undefined}
+                      className={`btn btn-sm justify-start ${active ? 'btn-primary' : 'btn-ghost'}`}
+                      onClick={() => onSelectBranch(branch)}
+                    >
+                      {BRANCH_TAB_LABEL[branch]}
+                    </button>
                   );
                 })}
               </div>
@@ -232,6 +230,17 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
           </section>
         )}
 
+        {!showRuntimeInputs && isScenarioLayer ? (
+          <BoardFunctionList
+            functions={scenarioFunctions}
+            activeFunctionId={activeFunctionId}
+            disabled={isRuntime}
+            onSelect={onSelectFunction}
+            onCreate={onCreateFunction}
+            onDelete={setDeleteFunctionId}
+          />
+        ) : null}
+
         {signalAdvanced && !showRuntimeInputs ? (
           <div className="flex flex-col gap-1 border-t border-base-300 pt-3">
             <p className="px-2 text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
@@ -254,6 +263,7 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
               title="Интерфейс входов"
               ports={runtimeInspection.inputs}
               mode="interface"
+              showTypeIndicators
               emptyHint="—"
             />
           </footer>
@@ -280,6 +290,15 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
         variable={deleteVariable}
         onClose={() => setDeleteVariable(null)}
         onConfirm={onRemoveVariable}
+      />
+      <DeleteFunctionModal
+        functionName={deleteFunctionName}
+        onClose={() => setDeleteFunctionId(null)}
+        onConfirm={() => {
+          if (deleteFunctionId !== null) {
+            onRemoveFunction(deleteFunctionId);
+          }
+        }}
       />
     </>
   );

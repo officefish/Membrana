@@ -65,7 +65,7 @@ import {
   SCENARIO_V04_PALETTE_SECTIONS,
 } from '../types/board-ui.js';
 import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
-import { BoardFunctionPinInspector } from './board-function-pin-inspector.js';
+import { BoardFunctionPinInspector, type FunctionPinEditSide } from './board-function-pin-inspector.js';
 import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-document.js';
 import type { FunctionPinSide } from '../graph/function-pin-ops.js';
 
@@ -95,6 +95,7 @@ export interface BoardRightSidebarProps {
   readonly canEditScenario: boolean;
   readonly isFunctionBranch: boolean;
   readonly functionMeta: ScenarioFunctionCanvasMeta | null;
+  readonly functionPinEditSide: FunctionPinEditSide;
   readonly isRuntime: boolean;
   readonly runtimeInspection: NodePortInspectionResult | null;
   readonly printLastOutput: string | null;
@@ -118,7 +119,7 @@ export interface BoardRightSidebarProps {
   readonly onUpdateFunctionMeta: (
     patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
   ) => void;
-  readonly onAddFunctionPin: (side: FunctionPinSide, kind: 'exec' | 'data') => void;
+  readonly onAddFunctionPin: (side: FunctionPinSide) => void;
   readonly onUpdateFunctionPin: (
     side: FunctionPinSide,
     pinId: string,
@@ -129,6 +130,7 @@ export interface BoardRightSidebarProps {
     },
   ) => void;
   readonly onRemoveFunctionPin: (side: FunctionPinSide, pinId: string) => void;
+  readonly onDeleteFunction: () => void;
   readonly onClearBoard: () => void;
 }
 
@@ -161,6 +163,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   canEditScenario,
   isFunctionBranch,
   functionMeta,
+  functionPinEditSide,
   isRuntime,
   runtimeInspection,
   printLastOutput,
@@ -178,6 +181,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onAddFunctionPin,
   onUpdateFunctionPin,
   onRemoveFunctionPin,
+  onDeleteFunction,
   onClearBoard,
 }) => {
   const legacyPalette = isLegacyPaletteEnabled();
@@ -199,6 +203,13 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   );
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
+  const showFunctionInspector =
+    isFunctionBranch &&
+    functionMeta !== null &&
+    !isRuntime &&
+    (selectedNodeId === null ||
+      selectedNodeKind === 'function-input' ||
+      selectedNodeKind === 'function-output');
 
   useEffect(() => {
     setVariableNameDraft(selectedVariableName);
@@ -364,6 +375,17 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             </section>
           ) : null}
         </div>
+      ) : showFunctionInspector ? (
+        <BoardFunctionPinInspector
+          meta={functionMeta}
+          pinEditSide={functionPinEditSide}
+          disabled={editDisabled}
+          onUpdateMeta={onUpdateFunctionMeta}
+          onAddPin={onAddFunctionPin}
+          onUpdatePin={onUpdateFunctionPin}
+          onRemovePin={onRemoveFunctionPin}
+          onDeleteFunction={onDeleteFunction}
+        />
       ) : selectedNodeId ? (
         <div className="flex flex-col gap-3 p-4 text-sm">
           <div className="border-b border-base-200 pb-2">
@@ -1003,15 +1025,6 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             </>
           )}
         </div>
-      ) : isFunctionBranch && functionMeta !== null && !isRuntime ? (
-        <BoardFunctionPinInspector
-          meta={functionMeta}
-          disabled={editDisabled}
-          onUpdateMeta={onUpdateFunctionMeta}
-          onAddPin={onAddFunctionPin}
-          onUpdatePin={onUpdateFunctionPin}
-          onRemovePin={onRemoveFunctionPin}
-        />
       ) : (
         <div className="flex flex-1 flex-col">
           <div className="border-b border-base-200 px-4 py-3">

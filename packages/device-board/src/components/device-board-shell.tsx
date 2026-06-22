@@ -31,6 +31,7 @@ import {
   BOARD_HEADER_CONTENT_OFFSET_CLASS,
   SIGNAL_LAYER_TITLE,
   isSignalAdvancedEnabled,
+  isScenarioBranchForFunctionInsert,
   type ScenarioBranchTab,
 } from '../types/board-ui.js';
 import {
@@ -41,11 +42,14 @@ import {
 } from './board-flow-canvas.js';
 import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
 import { BoardSelectionActionModal } from './board-selection-action-modal.js';
+import { BoardFunctionActionModal } from './board-function-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
 import { BoardUserCasePickerModal } from './board-usercase-picker-modal.js';
 import type { DeviceBoardUserCasePickerConfig } from '../types/user-case-picker.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
+import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
+import { DeleteFunctionModal } from './board-variable-modals.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
@@ -129,6 +133,12 @@ const DeviceBoardShellInner: React.FC<{
     Map<string, { readonly x: number; readonly y: number }> | null
   >(null);
   const [marqueeSelectedIds, setMarqueeSelectedIds] = useState<readonly string[]>([]);
+  const [functionActionTarget, setFunctionActionTarget] = useState<{
+    readonly functionId: string;
+    readonly functionName: string;
+  } | null>(null);
+  const [functionActionMessage, setFunctionActionMessage] = useState<string | null>(null);
+  const [deleteFunctionTargetId, setDeleteFunctionTargetId] = useState<string | null>(null);
 
   const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
     viewportApiRef.current = api;
@@ -349,6 +359,96 @@ const DeviceBoardShellInner: React.FC<{
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
   const isRuntime = graph.runtimeState.isRunning;
+
+  const handlePaneClick = useCallback(() => {
+    clearSelection();
+  }, [clearSelection]);
+
+  const handleUserFunctionListClick = useCallback(
+    (functionId: string) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      if (scenarioBranch === 'function') {
+        graph.selectUserFunction(functionId);
+        return;
+      }
+      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
+      if (fn === undefined) {
+        return;
+      }
+      setFunctionActionMessage(null);
+      setFunctionActionTarget({ functionId, functionName: fn.name });
+    },
+    [graph, isRuntime, isSignal, scenarioBranch],
+  );
+
+  const dismissFunctionAction = useCallback(() => {
+    setFunctionActionTarget(null);
+    setFunctionActionMessage(null);
+  }, []);
+
+  const handleEditUserFunction = useCallback(() => {
+    if (functionActionTarget === null) {
+      return;
+    }
+    graph.selectUserFunction(functionActionTarget.functionId);
+    clearSelection();
+    dismissFunctionAction();
+  }, [clearSelection, dismissFunctionAction, functionActionTarget, graph]);
+
+  const handleInsertUserFunction = useCallback(() => {
+    if (functionActionTarget === null) {
+      return;
+    }
+    const error = graph.insertUserFunctionIntoBranch(
+      functionActionTarget.functionId,
+      scenarioBranch,
+    );
+    if (error !== null) {
+      setFunctionActionMessage(error);
+      return;
+    }
+    setFunctionActionMessage(`Функция «${functionActionTarget.functionName}» добавлена на ветку`);
+    setFunctionActionTarget(null);
+  }, [functionActionTarget, graph, scenarioBranch]);
+
+  const functionInsertDisabled = !isScenarioBranchForFunctionInsert(scenarioBranch);
+
+  const functionPinEditSide = useMemo((): FunctionPinEditSide => {
+    if (scenarioBranch !== 'function') {
+      return null;
+    }
+    if (selectedNodeKind === 'function-input') {
+      return 'input';
+    }
+    if (selectedNodeKind === 'function-output') {
+      return 'output';
+    }
+    return null;
+  }, [scenarioBranch, selectedNodeKind]);
+
+  const deleteFunctionTargetName = useMemo(() => {
+    if (deleteFunctionTargetId === null) {
+      return null;
+    }
+    const draft = graph.scenarioFunctionDrafts.find((fn) => fn.id === deleteFunctionTargetId);
+    return draft?.name ?? null;
+  }, [deleteFunctionTargetId, graph.scenarioFunctionDrafts]);
+
+  const handleRemoveUserFunction = useCallback(
+    (functionId: string) => {
+      const error = graph.removeUserFunction(functionId);
+      if (error !== null) {
+        setImportError(error);
+        return;
+      }
+      if (scenarioBranch === 'function') {
+        clearSelection();
+      }
+    },
+    [clearSelection, graph, scenarioBranch],
+  );
 
   const handleConnectionDropOnPane = useCallback(
     (payload: BoardConnectionDropOnPanePayload) => {
@@ -778,6 +878,9 @@ const DeviceBoardShellInner: React.FC<{
   }, [dismissSelectionAction, selectionActionOpen]);
 
   const canvasLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
+  const canvasViewportFitKey = isSignal
+    ? 'signal'
+    : `scenario:${scenarioBranch}:${graph.activeFunctionId}`;
 
   const scenarioTitle = isSignal ? SIGNAL_LAYER_TITLE : BRANCH_SCENARIO_TITLE[scenarioBranch];
 
@@ -1030,10 +1133,12 @@ const DeviceBoardShellInner: React.FC<{
               graph.isValidConnection(isSignal ? 'signal' : 'scenario', connection)
             }
             onSelectionChange={handleSelectionChange}
+            onPaneClick={handlePaneClick}
             pulseEdges={isRuntime}
             readOnly={isRuntime}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
+            viewportFitKey={canvasViewportFitKey}
             onConnectionDropOnPane={handleConnectionDropOnPane}
             onMarqueeSelection={
               !isSignal && !isRuntime && execLayoutPreview === null
@@ -1087,8 +1192,9 @@ const DeviceBoardShellInner: React.FC<{
             onAddVariableNode={addVariableNodeAtViewportCenter}
             scenarioFunctions={graph.scenarioFunctionDrafts}
             activeFunctionId={graph.activeFunctionId}
-            onSelectFunction={graph.selectUserFunction}
+            onSelectFunction={handleUserFunctionListClick}
             onCreateFunction={graph.createUserFunction}
+            onRemoveFunction={handleRemoveUserFunction}
           />
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
@@ -1117,6 +1223,7 @@ const DeviceBoardShellInner: React.FC<{
             canEditScenario={!isSignal}
             isFunctionBranch={!isSignal && scenarioBranch === 'function'}
             functionMeta={!isSignal && scenarioBranch === 'function' ? graph.scenarioFunctionMeta : null}
+            functionPinEditSide={functionPinEditSide}
             isRuntime={isRuntime}
             runtimeInspection={runtimeInspection}
             printLastOutput={printLastOutput}
@@ -1148,8 +1255,8 @@ const DeviceBoardShellInner: React.FC<{
               }
             }}
             onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
-            onAddFunctionPin={(side, kind) => {
-              const error = graph.addActiveFunctionPin(side, kind);
+            onAddFunctionPin={(side) => {
+              const error = graph.addActiveFunctionPin(side, 'data');
               if (error !== null) {
                 setImportError(error);
               }
@@ -1164,6 +1271,11 @@ const DeviceBoardShellInner: React.FC<{
               const error = graph.removeActiveFunctionPin(side, pinId);
               if (error !== null) {
                 setImportError(error);
+              }
+            }}
+            onDeleteFunction={() => {
+              if (graph.activeFunctionId !== '') {
+                setDeleteFunctionTargetId(graph.activeFunctionId);
               }
             }}
             onClearBoard={handleClearBoard}
@@ -1185,6 +1297,35 @@ const DeviceBoardShellInner: React.FC<{
         onApply={handleApplyExecLayoutPreview}
         onDismiss={handleDismissExecLayoutPreview}
       />
+
+      <BoardFunctionActionModal
+        open={functionActionTarget !== null && !isRuntime && !isSignal}
+        functionName={functionActionTarget?.functionName ?? ''}
+        activeBranch={scenarioBranch}
+        insertDisabled={functionInsertDisabled}
+        insertDisabledReason={functionActionMessage ?? undefined}
+        onEditFunction={handleEditUserFunction}
+        onInsertIntoScenario={handleInsertUserFunction}
+        onDismiss={dismissFunctionAction}
+      />
+
+      <DeleteFunctionModal
+        functionName={deleteFunctionTargetName}
+        onClose={() => setDeleteFunctionTargetId(null)}
+        onConfirm={() => {
+          if (deleteFunctionTargetId !== null) {
+            handleRemoveUserFunction(deleteFunctionTargetId);
+          }
+        }}
+      />
+
+      {functionActionMessage !== null && functionActionTarget === null ? (
+        <div className="toast toast-top toast-center z-50">
+          <div className="alert alert-success alert-sm shadow-lg">
+            <span>{functionActionMessage}</span>
+          </div>
+        </div>
+      ) : null}
 
       <BoardSelectionActionModal
         open={selectionActionOpen && !isRuntime}

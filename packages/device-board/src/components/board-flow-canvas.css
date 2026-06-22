@@ -18,3 +18,13 @@
 .board-flow-canvas .react-flow__background {
   display: none;
 }
+
+/* MiniMap: по центру снизу, не под правым сайдбаром */
+.board-flow-canvas .board-flow-minimap.react-flow__minimap {
+  bottom: 0.75rem;
+  left: 50%;
+  right: auto !important;
+  top: auto !important;
+  transform: translateX(-50%);
+  z-index: 5;
+}
