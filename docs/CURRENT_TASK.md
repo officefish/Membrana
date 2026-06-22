@@ -7,13 +7,14 @@
 
 ## Следующая фаза
 
-**D2** `db-docs-d2-mintlify-editor` — `apps/docs/device-board/editor/*`.
+**D3** `db-docs-d3-catalog-runtime` — catalog `device-board.md` → stable.
 
 ## Завершено (спринт)
 
 | Phase | Id | Deliverable |
 |-------|-----|-------------|
 | D1 | `db-docs-d1-canon-sync` | CONCEPT §21 + README |
+| D2 | `db-docs-d2-mintlify-editor` | editor MDX + `docs.json` nav |
 
 ## Закрыто
 

@@ -4610,10 +4610,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "edit-and-navigation + user-functions MDX; docs lint 17 pages",
       "parentEpic": "device-board-docs-post-140-sprint-2026-06-22",
       "notes": "apps/docs/device-board/editor — undo, breadcrumbs, functions"
     },
