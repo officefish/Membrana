@@ -15,6 +15,8 @@ export const envSchema = z.object({
   GITHUB_REPO: z.string().min(1, 'GITHUB_REPO is required'),
   HTTPS_PROXY: z.string().optional(),
   HTTP_PROXY: z.string().optional(),
+  RAG_REPO_ROOT: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

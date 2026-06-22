@@ -38,6 +38,9 @@ ssl/
 claude_desktop_config.json
 docs/discussions/mcp-tier0.generated.json
 
+# RAG (@membrana/rag-service) — LanceDB index + hash manifest (local only)
+.membrana/rag/
+
 # Редакторы
 .idea/
 *.swp

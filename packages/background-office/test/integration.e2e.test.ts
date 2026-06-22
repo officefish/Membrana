@@ -62,6 +62,13 @@ describe('background-office HTTP', () => {
       .expect(401);
   });
 
+  it('POST /api/rag/query without token → 401', async () => {
+    await request(app.getHttpServer())
+      .post('/api/rag/query')
+      .send({ query: 'background-office port' })
+      .expect(401);
+  });
+
   it('POST /v1/claude/ask proxies Anthropic success', async () => {
     vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
       const url = getUrl(input);

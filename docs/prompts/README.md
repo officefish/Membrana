@@ -17,6 +17,20 @@
 
 Catalog / picker (U9): [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md). Hub: [`docs/device-board-scripts/README.md`](../device-board-scripts/README.md).
 
+### RAG dual-circuit (agents · planned epic)
+
+Перед работой над `@membrana/rag-service`, индексацией или ritual hooks:
+
+| # | Документ |
+|---|----------|
+| 1 | [`docs/CRITICAL_RAG_AUDIT.md`](../CRITICAL_RAG_AUDIT.md) — tooling audit (Perplexity 2026-06-21) |
+| 2 | [`RAG_STRATEGY_CONCEPT.md`](../RAG_STRATEGY_CONCEPT.md) — канон TZ |
+| 3 | [`ADDITIONAL_RAG_STRATEGY_BRIEF.md`](../ADDITIONAL_RAG_STRATEGY_BRIEF.md) — расширенное ТЗ |
+| 4 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](./RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) — epic R0–R7 |
+| 5 | [`discussions/rag-strategy-implementation-plan-2026-06-21-consilium.md`](../discussions/rag-strategy-implementation-plan-2026-06-21-consilium.md) — консилиум |
+
+Стек v1: **repo operative + LanceDB + text-embedding-3-small** (не Pinecone/LangChain/ada-002 по умолчанию).
+
 ---
 
 **Любая новая крупная задача (M/L)** — процесс task prompts:
@@ -45,6 +59,7 @@ Catalog / picker (U9): [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_
 | **[`DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md`](./DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md)** | **Активный эпик** — Journal + Reporter v0.6: GetJournal, GetReporter, MakeReport*, PublishReport (DBJ0–DBJ6, #131) |
 | **[`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md)** | **Archived U9** — catalog, settings, modal apply-all |
 | **[`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](./DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md)** | **Agent workflow** — programmatic pack/collapse, Run gate (не epic) |
+| **[`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](./RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md)** | **Planned epic** — dual-circuit RAG R0–R7 (LanceDB + repo operative) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
 
@@ -96,6 +111,7 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](./BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | **Активная** `background-media-a5d-swagger` — Swagger/OpenAPI (#64) |
 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](./MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | **Активная** `membrane-platform-v1` — эпик cabinet, pairing, tariff, journal (#67) |
 | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | **Активная** `turbo-build-green-apps` — typecheck honesty, cabinet refs, TS fixes, CI techies68 |
+| [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](./RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | **Planned** `rag-dual-circuit-v1` — RAG для ритуалов (audit: [`CRITICAL_RAG_AUDIT.md`](../CRITICAL_RAG_AUDIT.md)) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

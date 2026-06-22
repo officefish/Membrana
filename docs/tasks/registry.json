@@ -4520,6 +4520,157 @@
         "db-pcd-nb2-concept-docs"
       ],
       "notes": "Lead: Rodchenko + Ozhegov. DESIGN.md modal checklist"
+    },
+    {
+      "id": "rag-dual-circuit-v1",
+      "title": "Dual-circuit RAG v1 — LanceDB archive + repo operative memory",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "R0–R6 shipped 2026-06-21. Closure: docs/rag-dual-circuit-v1/CLOSURE.md. Pending: yarn rag:index --full when OPENAI_API_KEY available."
+    },
+    {
+      "id": "rag-r0-scaffold",
+      "title": "R0: @membrana/rag-service scaffold, types, stub query",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-dual-circuit-v1"
+      ],
+      "notes": "Lead: Ozhegov. .env.example RAG block; yarn rag:query stub"
+    },
+    {
+      "id": "rag-r1-lancedb-index",
+      "title": "R1: LanceDB store, custom splitter, OpenAI embedder, full/incremental index",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-r0-scaffold"
+      ],
+      "notes": "Lead: Ozhegov + Dynin. .membrana/rag/ gitignored"
+    },
+    {
+      "id": "rag-r2-operative",
+      "title": "R2: repo-native operative circuit (git recency, BM25, path filters)",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-r1-lancedb-index"
+      ],
+      "notes": "Lead: Ozhegov. No Obsidian required; CI-safe"
+    },
+    {
+      "id": "rag-r3-retriever",
+      "title": "R3: dual-circuit retrieveContext + 5 acceptance questions",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-r2-operative"
+      ],
+      "notes": "Lead: Dynin + Ozhegov. P@5 on CRITICAL_RAG_AUDIT §10"
+    },
+    {
+      "id": "rag-r4-office-api",
+      "title": "R4: background-office POST /api/rag/query + BACKGROUND_SERVERS exception",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-r3-retriever"
+      ],
+      "notes": "Lead: Ozhegov + Vesnin. Only allowed @membrana/* dep in office"
+    },
+    {
+      "id": "rag-r5-rituals",
+      "title": "R5: standup, code-review, consilium, evening incremental hook",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-r3-retriever"
+      ],
+      "notes": "Lead: Vesnin. Hybrid with context-collector; fallback without keys"
+    },
+    {
+      "id": "rag-r6-closure",
+      "title": "R6: bootstrap --full, docs/RAG.md, AGENTS.md, epic archive",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-r4-office-api",
+        "rag-r5-rituals"
+      ],
+      "notes": "Lead: Vesnin. CLOSURE.md written; pending task:archive batch + bootstrap --full with OpenAI key."
+    },
+    {
+      "id": "rag-r7-optional",
+      "title": "R7 (optional): Obsidian overlay, Pinecone/pgvector, Voyage A/B, reranker",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "rag-dual-circuit-v1",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "rag-r6-closure"
+      ],
+      "notes": "Optional extensions; CI defaults LanceDB-only"
     }
   ]
 }

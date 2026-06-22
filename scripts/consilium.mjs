@@ -30,6 +30,11 @@ import {
   resolveSeansePath,
   shuffleRoles,
 } from './lib/consilium-paths.mjs';
+import {
+  formatRagContextBlock,
+  logRagStatus,
+  retrieveRagContext,
+} from './lib/rag-ritual.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
 const MAX_VIRTUAL_TEAM_CHARS = 8_000;
@@ -67,6 +72,7 @@ Options:
   --min-replies <N>      Минимум реплик (по умолчанию ${MIN_REPLIES_DEFAULT}).
   --seed <N>             Воспроизводимый порядок ролей.
   --no-context           Не подгружать ARCHITECTURE / DESIGN / SERVICES.
+  --no-rag               Не подмешивать RAG archive (по умолчанию useLongTerm).
   --no-save              Только stdout.
   --dry-run              Собрать промпт, не вызывать API.
   --help, -h             Справка.
@@ -88,6 +94,7 @@ function parseArgs(argv) {
   let seed;
   let minReplies = MIN_REPLIES_DEFAULT;
   let noContext = false;
+  let noRag = false;
   let noSave = false;
   let dryRun = false;
 
@@ -104,6 +111,7 @@ function parseArgs(argv) {
     if (arg === '--min-replies') { minReplies = Number(argv[++i]); continue; }
     if (arg.startsWith('--min-replies=')) { minReplies = Number(arg.slice('--min-replies='.length)); continue; }
     if (arg === '--no-context') { noContext = true; continue; }
+    if (arg === '--no-rag') { noRag = true; continue; }
     if (arg === '--no-save') { noSave = true; continue; }
     if (arg === '--dry-run') { dryRun = true; continue; }
     rest.push(arg);
@@ -123,7 +131,7 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { question, saveAs, ghIssue, topicFile, seed, minReplies, noContext, noSave, dryRun };
+  return { question, saveAs, ghIssue, topicFile, seed, minReplies, noContext, noRag, noSave, dryRun };
 }
 
 function readBounded(absPath, maxChars, optional = false) {
@@ -182,7 +190,7 @@ function formatGhIssue(issue) {
   return text;
 }
 
-function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles, minReplies }) {
+function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles, minReplies, ragBlock }) {
   const cwd = process.cwd();
   const parts = [];
 
@@ -228,6 +236,10 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
       const text = readBounded(resolve(cwd, path), MAX_CONTEXT_CHARS, true);
       if (text) parts.push(`### ${title} (${path})`, '', text, '');
     }
+  }
+
+  if (ragBlock) {
+    parts.push('---', '## RAG archive context (useLongTerm)', '', ragBlock, '');
   }
 
   if (ghIssueData) {
@@ -303,10 +315,21 @@ async function main() {
     ghIssueData = fetchGhIssue(cli.ghIssue);
   }
 
+  let ragBlock = '';
+  if (!cli.noRag) {
+    const rag = await retrieveRagContext(cli.question, { useLongTerm: true, topK: 8 });
+    ragBlock = formatRagContextBlock(rag, {
+      title: 'RAG archive (consilium)',
+      maxChars: 12_000,
+    });
+    logRagStatus(rag, 'consilium');
+  }
+
   const promptText = buildPrompt({
     ...cli,
     ghIssueData,
     orderedRoles,
+    ragBlock,
   });
 
   const relPath = resolveSeansePath({

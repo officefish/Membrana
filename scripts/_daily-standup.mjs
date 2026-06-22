@@ -29,6 +29,12 @@ import {
   buildDetectionPlanningConstraintsBullets,
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
 } from './lib/detection-planning-priorities.mjs';
+import {
+  STANDUP_RAG_QUERY,
+  formatRagContextBlock,
+  logRagStatus,
+  retrieveRagContext,
+} from './lib/rag-ritual.mjs';
 
 const DOC_INPUTS = [
   { rel: 'docs/VIRTUAL_TEAM_PROMPT.md', required: true, label: 'Промпт виртуальной команды' },
@@ -381,6 +387,13 @@ export async function runDailyStandup(options) {
   const status = collectStatusSnapshot();
   const outputRel = relative(process.cwd(), options.outputPath).replace(/\\/g, '/');
 
+  let ragBlock = '';
+  if (!options.noRag) {
+    const rag = await retrieveRagContext(STANDUP_RAG_QUERY, { topK: 5 });
+    ragBlock = formatRagContextBlock(rag, { title: 'RAG operative (standup)' });
+    logRagStatus(rag, 'standup');
+  }
+
   const sections = [
     'Ты — координатор виртуальной команды Membrana (см. промпт ниже).',
     'Проведи «ежедневный стендап»: сведи вчерашнее вечернее code-review, дневной стратегический план,',
@@ -396,6 +409,9 @@ export async function runDailyStandup(options) {
     '',
     docBlocks,
     '',
+    ...(ragBlock
+      ? ['---', '## RAG operative context', '', ragBlock, '']
+      : []),
     '---',
     `## Открытые GitHub Issues (источник: ${issues.source ?? 'нет'})`,
     '',
@@ -516,6 +532,7 @@ export function parseStandupArgs(argv) {
 
   --full        Больше текста из packages/temp (наброски UI/плагинов).
   --dry-run     Собрать контекст и вывести в stdout, без вызова Anthropic API.
+  --no-rag      Не подмешивать operative RAG (git + docs остаются).
   --issues=<N>  Сколько открытых issues подтянуть (по умолчанию 25; в --full: 40).
   --help        Эта справка.
 
@@ -532,6 +549,7 @@ export function parseStandupArgs(argv) {
 
   const full = argv.includes('--full');
   const dryRun = argv.includes('--dry-run');
+  const noRag = argv.includes('--no-rag');
   let issueLimit = full ? 40 : 25;
   for (const a of argv) {
     if (a.startsWith('--issues=')) {
@@ -539,5 +557,5 @@ export function parseStandupArgs(argv) {
       if (Number.isFinite(n) && n > 0) issueLimit = Math.min(100, Math.floor(n));
     }
   }
-  return { full, dryRun, issueLimit };
+  return { full, dryRun, issueLimit, noRag };
 }

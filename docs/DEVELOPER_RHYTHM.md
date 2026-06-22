@@ -24,7 +24,7 @@
 
 Цель: спланировать день, **учитывая вчерашнее вечернее code-review** (`docs/DAILY_CODE_REVIEW.md`) и **приоритеты детекции** после эпика #84 ([`FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) §6), и зафиксировать один фокус.
 
-> **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход).
+> **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход). **RAG operative** подмешивается автоматически (BM25 по недавним `docs/`); archive — только с `OPENAI_API_KEY` + индексом.
 
 ### Рабочая ветка: `techies68`
 
@@ -61,6 +61,8 @@ yarn main-day-issue --focus dsp-drone-detector
 
 # без API (только локальная сборка):
 yarn standup:dry
+# operative RAG в контексте (без OPENAI_API_KEY); отключить: --no-rag
+yarn standup --no-rag
 # больше текста из temp:
 yarn standup:full
 
@@ -108,6 +110,9 @@ yarn task:list
 ```bash
 # 0. Снимок утренних артефактов (до code-review)
 yarn archive:daily-day
+# 0b. Incremental RAG index (non-blocking; нужен OPENAI_API_KEY + prior --full)
+#     входит в yarn ritual:evening автоматически
+yarn rag:index:incremental
 # alias:
 yarn save-daily-day
 # принудительно второй снимок за тот же день:

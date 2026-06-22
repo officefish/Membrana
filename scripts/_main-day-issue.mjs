@@ -32,6 +32,12 @@ import {
   listPendingGithubClose,
   loadRegistry,
 } from './lib/task-registry.mjs';
+import {
+  MAIN_DAY_RAG_QUERY,
+  formatRagContextBlock,
+  logRagStatus,
+  retrieveRagContext,
+} from './lib/rag-ritual.mjs';
 
 const MAX_CONTEXT_CHARS = 95_000;
 const MAX_DOC_CHARS = 22_000;
@@ -199,6 +205,13 @@ export async function runMainDayIssue(options) {
   const promptExcerpts = collectActivePromptExcerpts(active, { full: options.full });
   const outputRel = relative(process.cwd(), options.outputPath).replace(/\\/g, '/');
 
+  let ragBlock = '';
+  if (!options.noRag) {
+    const rag = await retrieveRagContext(MAIN_DAY_RAG_QUERY, { topK: 5 });
+    ragBlock = formatRagContextBlock(rag, { title: 'RAG operative (main-day-issue)' });
+    logRagStatus(rag, 'main-day-issue');
+  }
+
   const sections = [
     'Ты — Teamlead (Vesnin) виртуальной команды Membrana.',
     'На основе стендапа, ревью, плана и реестра задач зафиксируй **один** обязательный фокус дня в MAIN_DAY_ISSUE.',
@@ -213,6 +226,9 @@ export async function runMainDayIssue(options) {
     '',
     docBlocks,
     '',
+    ...(ragBlock
+      ? ['---', '## RAG operative context', '', ragBlock, '']
+      : []),
     '---',
     '## Реестр task-промптов',
     '',
@@ -347,6 +363,7 @@ export function parseMainDayIssueArgs(argv) {
 
   --full          Больше текста из task-промптов.
   --dry-run       Контекст в stdout, без API.
+  --no-rag        Не подмешивать operative RAG.
   --focus=<id>    Зафиксировать primary focus (id из реестра).
   --issues=<N>    Лимит GitHub Issues (по умолчанию 20).
   --allow-missing-standup  Не предупреждать, если нет DAILY_STANDUP.md
@@ -360,6 +377,7 @@ export function parseMainDayIssueArgs(argv) {
 
   const full = argv.includes('--full');
   const dryRun = argv.includes('--dry-run');
+  const noRag = argv.includes('--no-rag');
   const warnMissingStandup = !argv.includes('--allow-missing-standup');
   let issueLimit = full ? 35 : 20;
   let focusOverride = '';
@@ -380,5 +398,5 @@ export function parseMainDayIssueArgs(argv) {
     }
   }
 
-  return { full, dryRun, issueLimit, focusOverride, warnMissingStandup };
+  return { full, dryRun, issueLimit, focusOverride, warnMissingStandup, noRag };
 }
