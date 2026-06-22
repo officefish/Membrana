@@ -27,6 +27,7 @@
 | **[`DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md`](./DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md)** | **Активный эпик** — Journal + Reporter v0.6: GetJournal, GetReporter, MakeReport*, PublishReport (DBJ0–DBJ6, #131) |
 | **[`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](./DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md)** | **Закрыт** — edit model v2 E1–E3 (archived 2026-06-22, PR #140) |
 | **[`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](./DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md)** | **Закрыт** — docs post-#140 + RAG workflow (D1–D4, index deferred) |
+| **[`CODE_REVIEW_REGULATION.md`](./CODE_REVIEW_REGULATION.md)** | **Системный регламент** code review (daily / PR / branch); `yarn code-review` |
 | **[`CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md`](./CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md)** | **Закрыт** — Cursor / Claude agent skills S0–S8 |
 | **[`DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md`](./DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md)** | **Закрыт** — node reference DV1–DV6 (43 pages) |
 

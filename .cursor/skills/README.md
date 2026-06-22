@@ -8,6 +8,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 |-------|-------------------|
 | [`membrana-anthropic-cli`](./membrana-anthropic-cli/SKILL.md) | `yarn anthropic:*`, API smoke, file audit via Anthropic |
 | [`membrana-developer-rhythm`](./membrana-developer-rhythm/SKILL.md) | утро, вечер, `ritual:day`, `ritual:evening`, standup, main-day-issue |
+| [`membrana-code-review`](./membrana-code-review/SKILL.md) | code review, `yarn code-review`, PR LGTM, вечернее ревью |
 | [`membrana-task-lifecycle`](./membrana-task-lifecycle/SKILL.md) | M/L task, `task:archive`, closure, day-sprint phases |
 | [`membrana-virtual-team`](./membrana-virtual-team/SKILL.md) | `/architect`, `/refactor`, `/math`, `/ui`, `/audio`, `/review`, 5 roles |
 | [`membrana-audio-engine-guard`](./membrana-audio-engine-guard/SKILL.md) | mic, Web Audio, plugins, `AudioContext`, detectors |

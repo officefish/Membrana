@@ -1,20 +1,33 @@
 /**
- * Code review через Anthropic: контекст из context-collector + docs/VIRTUAL_TEAM_PROMPT.md
+ * Code review через Anthropic + регламент CODE_REVIEW_REGULATION.md
  *
- * **Вечерняя процедура.** Утром не запускать — standup/main-day-issue читают уже готовый
- * docs/DAILY_CODE_REVIEW.md с прошлого вечера. См. docs/DEVELOPER_RHYTHM.md.
+ * **Вечерняя процедура (daily):** утром не запускать — standup читает DAILY_CODE_REVIEW.md.
+ * См. docs/DEVELOPER_RHYTHM.md и docs/prompts/CODE_REVIEW_REGULATION.md.
  *
- * Запуск: yarn code-review или yarn code-review:full
- * Успешный ответ записывается в docs/DAILY_CODE_REVIEW.md (файл перезаписывается).
+ * Запуск:
+ *   yarn code-review
+ *   yarn code-review:full
+ *   yarn code-review:pr -- 140
+ *   node scripts/code-review.mjs --branch feat/foo
+ *   node scripts/code-review.mjs --uncommitted
  */
-import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { resolve } from 'node:path';
 import { collectRepositoryContext } from './context-collector.mjs';
+import {
+  buildCodeReviewUserMessage,
+  collectReviewContext,
+  defaultOutputPath,
+  parseCodeReviewCli,
+  printCodeReviewHelp,
+  readRequiredFile,
+  REGULATION_PATH,
+  VIRTUAL_TEAM_PATH,
+  writeReviewMarkdown,
+} from './lib/code-review-ritual.mjs';
 import {
   CODE_REVIEW_RAG_QUERY,
   formatRagContextBlock,
   logRagStatus,
-  parseRagCliFlags,
   retrieveRagContext,
 } from './lib/rag-ritual.mjs';
 import {
@@ -27,28 +40,18 @@ import {
 
 loadDotEnv();
 
-if (process.argv.includes('--help') || process.argv.includes('-h')) {
-  console.log(`Usage: node scripts/code-review.mjs [--full] [--help]
-
-  --full   Передать в контекст расширенный вывод context-collector.
-  --no-rag Не подмешивать RAG (только git context-collector).
-  --help   Эта справка.
-
-Требуется ANTHROPIC_API_KEY в .env. Результат: docs/DAILY_CODE_REVIEW.md (перезапись).
-Опционально: ANTHROPIC_MODEL (см. .env.example).`);
-  process.exit(0);
+let cli;
+try {
+  cli = parseCodeReviewCli(process.argv.slice(2));
+} catch (e) {
+  console.error(e.message);
+  printCodeReviewHelp();
+  process.exit(1);
 }
 
-const full = process.argv.includes('--full');
-const { noRag } = parseRagCliFlags(process.argv.slice(2));
-const promptPath = resolve(process.cwd(), 'docs/VIRTUAL_TEAM_PROMPT.md');
-const dailyReviewPath = resolve(process.cwd(), 'docs/DAILY_CODE_REVIEW.md');
-
-function writeDailyReviewFile(body) {
-  const stamp = new Date().toISOString();
-  const header = `<!-- Сгенерировано: ${stamp} (yarn code-review${full ? ':full' : ''}) -->\n\n`;
-  mkdirSync(dirname(dailyReviewPath), { recursive: true });
-  writeFileSync(dailyReviewPath, header + body, 'utf8');
+if (cli.help) {
+  printCodeReviewHelp();
+  process.exit(0);
 }
 
 let key;
@@ -60,51 +63,40 @@ try {
   process.exit(1);
 }
 
-if (!existsSync(promptPath)) {
-  console.error('Файл не найден:', promptPath);
-  process.exit(1);
+const regulation = readRequiredFile(REGULATION_PATH);
+const virtualTeam = readRequiredFile(VIRTUAL_TEAM_PATH);
+
+let contextBlock = '';
+if (cli.mode === 'daily') {
+  contextBlock = collectRepositoryContext({ full: cli.full });
+} else {
+  const ctx = collectReviewContext(cli);
+  contextBlock = ctx.text;
 }
 
-const virtualTeamPrompt = readFileSync(promptPath, 'utf8');
-const context = collectRepositoryContext({ full });
-
 let ragBlock = '';
-if (!noRag) {
+if (!cli.noRag) {
   const rag = await retrieveRagContext(CODE_REVIEW_RAG_QUERY, { topK: 5 });
   ragBlock = formatRagContextBlock(rag, { title: 'RAG + git hybrid (code-review)' });
   logRagStatus(rag, 'code-review');
 }
 
-const userQuestion = `Ты координатор виртуальной команды (см. блок «Промпт» ниже). По блоку «Контекст репозитория» дай структурированный code review текущего состояния: что сделано сегодня, риски, возможные нарушения границ пакетов и слоёв, что стоит проверить в тестах и линтере. Соблюдай формат ответа координатора из промпта. Язык: русский.`;
+const bodyText = buildCodeReviewUserMessage({
+  mode: cli.mode,
+  focusQuestion: cli.focusQuestion,
+  regulation,
+  virtualTeam,
+  contextBlock,
+  ragBlock,
+});
 
-/** Верхняя граница символов контекста перед запросом к API (стриминга нет — один JSON). */
-const MAX_CONTEXT = 80_000;
-const contextTrimmed =
-  context.length > MAX_CONTEXT
-    ? context.slice(0, MAX_CONTEXT) +
-      `\n\n[… контекст обрезан до ${MAX_CONTEXT} символов …]\n`
-    : context;
-
-const bodyText =
-  '## Промпт (виртуальная команда)\n\n' +
-  virtualTeamPrompt +
-  '\n\n---\n\n' +
-  (ragBlock ? `## RAG context\n\n${ragBlock}\n\n---\n\n` : '') +
-  '## Контекст репозитория\n\n' +
-  contextTrimmed +
-  '\n\n---\n\n## Задание\n\n' +
-  userQuestion;
+const outputPath = cli.out ? resolve(process.cwd(), cli.out) : defaultOutputPath(cli);
 
 const model = defaultModel();
 const bodyJson = {
   model,
   max_tokens: 4096,
-  messages: [
-    {
-      role: 'user',
-      content: [{ type: 'text', text: bodyText }],
-    },
-  ],
+  messages: [{ role: 'user', content: [{ type: 'text', text: bodyText }] }],
 };
 
 let exitCode = 0;
@@ -134,9 +126,13 @@ try {
     } catch {
       out = text;
     }
-    writeDailyReviewFile(out);
+    writeReviewMarkdown({
+      path: outputPath,
+      body: out,
+      meta: { mode: cli.mode, full: cli.full, pr: cli.pr },
+    });
     console.log(out);
-    console.error('Записано:', dailyReviewPath);
+    console.error('Записано:', outputPath);
   }
 } catch (e) {
   console.error(e);

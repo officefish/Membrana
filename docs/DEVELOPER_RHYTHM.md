@@ -119,8 +119,10 @@ yarn save-daily-day
 yarn archive:daily-day --force
 
 # 1. Code-review (вечерняя процедура → docs/DAILY_CODE_REVIEW.md)
+#    Регламент: docs/prompts/CODE_REVIEW_REGULATION.md
 yarn code-review
 yarn code-review:full
+# PR перед merge: yarn code-review:pr -- 140
 
 # 2. Архив task-промптов, принятых за день (можно было и днём)
 yarn task:archive <id> --notes "кратко: что сделано, PR, Issue"
