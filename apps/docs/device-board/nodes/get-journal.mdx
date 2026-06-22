@@ -1,0 +1,26 @@
+---
+title: GetJournal
+description: JournalRef для device или server scope.
+---
+
+# GetJournal
+
+## Pins
+
+| in | `device` | DeviceRef → `journal:device:{deviceId}` |
+| in | `server` | ServerRef → `journal:server:{deviceId}` |
+| out | `journal` | JournalRef |
+
+Pure mode (default): data-only. Impure: exec passthrough.
+
+## Runtime
+
+`host.resolveJournal(device|server)` → singleton journal per scope.
+
+## Cookbook
+
+[Journal & reporter v0.6](/device-board/cookbooks/journal-reporter-v06)
+
+## Code
+
+`get-journal-node.ts` · CONCEPT §17

@@ -13,6 +13,8 @@ Do **not** put WAV storage or user templates in office. Do **not** put Claude/Li
 
 For detailed architecture, conventions, and coding rules, see `.cursorrules` and `docs/ARCHITECTURE.md`, `docs/BACKGROUND_SERVERS.md`, `docs/SERVICES.md`, `docs/DESIGN.md`, `docs/CONTRIBUTING.md`.
 
+**Agent skills (project playbooks):** [`.cursor/skills/README.md`](./.cursor/skills/README.md) — rhythm, task lifecycle, virtual team, domain guards. Claude Code mirror: [`.claude/CLAUDE.md`](./.claude/CLAUDE.md).
+
 For **new M/L agent tasks**, follow `docs/prompts/TASK_PROMPT_WORKFLOW.md` and register in `docs/tasks/registry.json`. **Closing a task:** `docs/prompts/TASK_CLOSURE_REGULATION.md` → `yarn task:archive <id>` (day) → `yarn task:close-github` (EOD batch for Issues). Active/archive: `docs/tasks/README.md`.
 
 ### Key commands
@@ -53,3 +55,4 @@ All standard dev commands are documented in the root `README.md` and `package.js
 - **Turbo output warnings are benign**: Warnings like `no output files found for task ... #test` are cosmetic; tests still run and report correctly.
 - **Client module/plugin catalog**: Before editing `apps/client/src/modules/*` or `plugins/*`, read the catalog prompt from `docs/catalog/client/registry.json` → `promptPath` (see `docs/catalog/README.md`). CI runs `yarn catalog:verify-client`.
 - **Deploy debug logs**: Do not save SSH/deploy script output to the repo root (`cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt` via `Tee-Object` or shell redirect). Use `%TEMP%` / `$TMPDIR` instead; see `docs/CONTRIBUTING.md` → VPS deploy.
+- **Client browser console**: Paste DevTools output to `logs/apps/client/console-logs.txt` (gitignored); see `logs/README.md`. Agents: read this path on «читай лог» for client/device-board UI issues.

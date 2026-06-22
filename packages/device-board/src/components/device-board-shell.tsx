@@ -18,6 +18,9 @@ import {
 import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
 import type { Edge, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
+import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
+import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
+import { BoardEditUndoControl } from './board-edit-undo-control.js';
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
@@ -62,12 +65,14 @@ import {
   buildLayoutGhostNodes,
   isExecChainLayoutEnabled,
   isLoopBranchExecLayoutEnabled,
+  isLoopBranchExecLayoutCanonical,
   resolveLoopBranchExecEntryId,
 } from '../graph/layout-exec-chain.js';
 import type { LoopExecLayoutBranch } from '../graph/layout-exec-chain.js';
 import { BoardExecLayoutPreviewModal } from './board-exec-layout-preview-modal.js';
 import type { BoardAlignMode } from '../graph/align-nodes.js';
 import { isSystemNode } from '../graph/event-node.js';
+import { computeRuntimeExecHighlight } from '../graph/runtime-exec-highlight.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -352,9 +357,11 @@ const DeviceBoardShellInner: React.FC<{
   );
 
   const handleSelectSignal = useCallback(() => {
+    graph.revertToSavedDocumentIfDirty();
+    graph.forgetPendingEditUndo('leave-scenario-layer');
     setActiveLayer('signal');
     clearSelection();
-  }, [clearSelection]);
+  }, [clearSelection, graph]);
 
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
@@ -371,6 +378,7 @@ const DeviceBoardShellInner: React.FC<{
       }
       if (scenarioBranch === 'function') {
         graph.selectUserFunction(functionId);
+        clearSelection();
         return;
       }
       const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
@@ -380,7 +388,7 @@ const DeviceBoardShellInner: React.FC<{
       setFunctionActionMessage(null);
       setFunctionActionTarget({ functionId, functionName: fn.name });
     },
-    [graph, isRuntime, isSignal, scenarioBranch],
+    [clearSelection, graph, isRuntime, isSignal, scenarioBranch],
   );
 
   const dismissFunctionAction = useCallback(() => {
@@ -697,6 +705,7 @@ const DeviceBoardShellInner: React.FC<{
       if (positions.size === 0) {
         return;
       }
+      graph.captureEditUndoSnapshot('align-layout', { nodeCount: positions.size });
       const changes: NodeChange[] = [...positions.entries()].map(([id, position]) => ({
         type: 'position',
         id,
@@ -705,7 +714,7 @@ const DeviceBoardShellInner: React.FC<{
       scenarioCanvas.onNodesChange(changes);
       dismissSelectionAction();
     },
-    [dismissSelectionAction, scenarioCanvas],
+    [dismissSelectionAction, graph, scenarioCanvas],
   );
 
   const handleAlignMode = useCallback(
@@ -756,6 +765,24 @@ const DeviceBoardShellInner: React.FC<{
     );
   }, [isLoopExecLayoutBranch, scenarioBranch, scenarioCanvas.edges, scenarioCanvas.nodes]);
 
+  const loopExecLayoutCanonical = useMemo(() => {
+    if (!isLoopExecLayoutBranch) {
+      return false;
+    }
+    return isLoopBranchExecLayoutCanonical(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      scenarioBranch as LoopExecLayoutBranch,
+    );
+  }, [isLoopExecLayoutBranch, scenarioBranch, scenarioCanvas.edges, scenarioCanvas.nodes]);
+
+  const loopExecLayoutButtonDisabled =
+    !loopExecLayoutEnabled || execLayoutPreview !== null || loopExecLayoutCanonical;
+
+  const loopExecLayoutButtonTitle = loopExecLayoutCanonical
+    ? 'Exec-цепочка уже упорядочена. Переместите узлы или добавьте новые, чтобы снова применить layout.'
+    : 'Упорядочить exec-цепочку от entry ветки (dagre LR)';
+
   const layoutGhostNodes = useMemo(() => {
     if (execLayoutPreview === null) {
       return [];
@@ -781,7 +808,7 @@ const DeviceBoardShellInner: React.FC<{
   }, [execLayoutPreview, scenarioCanvas.nodes]);
 
   const handleRequestBranchExecLayout = useCallback(() => {
-    if (!isLoopExecLayoutBranch || isRuntime || !loopExecLayoutEnabled) {
+    if (!isLoopExecLayoutBranch || isRuntime || !loopExecLayoutEnabled || loopExecLayoutCanonical) {
       return;
     }
     dismissSelectionAction();
@@ -797,6 +824,7 @@ const DeviceBoardShellInner: React.FC<{
     isLoopExecLayoutBranch,
     isRuntime,
     loopExecLayoutEnabled,
+    loopExecLayoutCanonical,
     scenarioBranch,
     scenarioCanvas.edges,
     scenarioCanvas.nodes,
@@ -877,12 +905,76 @@ const DeviceBoardShellInner: React.FC<{
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [dismissSelectionAction, selectionActionOpen]);
 
+  const canUndoRef = useRef(graph.canUndoLastEdit);
+  canUndoRef.current = graph.canUndoLastEdit;
+  const undoLastEditRef = useRef(graph.undoLastEdit);
+  undoLastEditRef.current = graph.undoLastEdit;
+
+  const handleUndoLastEdit = useCallback(() => {
+    if (!graph.canUndoLastEdit) {
+      return;
+    }
+    graph.undoLastEdit();
+  }, [graph]);
+
+  useEffect(() => {
+    if (isRuntime) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      const isUndo = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && !event.shiftKey;
+      if (!isUndo || !canUndoRef.current) {
+        return;
+      }
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
+          return;
+        }
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      undoLastEditRef.current();
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [isRuntime]);
+
+  const runtimeExecHighlight = useMemo(() => {
+    if (!isRuntime || isSignal) {
+      return computeRuntimeExecHighlight([], [], null);
+    }
+    return computeRuntimeExecHighlight(
+      scenarioCanvas.nodes,
+      scenarioCanvas.edges,
+      graph.runtimeState.activeNodeId,
+    );
+  }, [
+    graph.runtimeState.activeNodeId,
+    isRuntime,
+    isSignal,
+    scenarioCanvas.edges,
+    scenarioCanvas.nodes,
+  ]);
+
   const canvasLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
   const canvasViewportFitKey = isSignal
     ? 'signal'
     : `scenario:${scenarioBranch}:${graph.activeFunctionId}`;
 
   const scenarioTitle = isSignal ? SIGNAL_LAYER_TITLE : BRANCH_SCENARIO_TITLE[scenarioBranch];
+
+  const canvasBreadcrumbSegments = useMemo(
+    () =>
+      buildBoardCanvasBreadcrumb({
+        layer: isSignal ? 'signal' : 'scenario',
+        scenarioBranch,
+        functionName:
+          !isSignal && scenarioBranch === 'function' ? graph.scenarioFunctionMeta.name : null,
+      }),
+    [graph.scenarioFunctionMeta.name, isSignal, scenarioBranch],
+  );
 
   const selectedVariable = graph.variables.find((item) => item.id === selectedVariableId);
   const selectedVariableName = selectedVariable?.name ?? '';
@@ -944,15 +1036,16 @@ const DeviceBoardShellInner: React.FC<{
           >
             Сохранить
           </button>
-          <p className="min-w-0 truncate text-[11px] leading-tight text-base-content/60">
-            {scenarioTitle}
-          </p>
+          <BoardCanvasBreadcrumb
+            segments={canvasBreadcrumbSegments}
+            detailTitle={scenarioTitle}
+          />
           {isLoopExecLayoutBranch && !isRuntime ? (
             <button
               type="button"
               className="btn btn-outline btn-primary btn-xs h-8 min-h-8 shrink-0 gap-1 px-2"
-              disabled={!loopExecLayoutEnabled || execLayoutPreview !== null}
-              title="Упорядочить exec-цепочку от entry ветки (dagre LR)"
+              disabled={loopExecLayoutButtonDisabled}
+              title={loopExecLayoutButtonTitle}
               onClick={handleRequestBranchExecLayout}
             >
               <span className="badge badge-primary badge-outline badge-xs">exec · LR</span>
@@ -1135,6 +1228,8 @@ const DeviceBoardShellInner: React.FC<{
             onSelectionChange={handleSelectionChange}
             onPaneClick={handlePaneClick}
             pulseEdges={isRuntime}
+            runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
+            highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
             readOnly={isRuntime}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
@@ -1148,6 +1243,20 @@ const DeviceBoardShellInner: React.FC<{
             layoutGhostNodes={layoutGhostNodes}
           />
         </div>
+
+        {!isRuntime ? (
+          <div
+            className={`pointer-events-none absolute bottom-3 z-20 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}
+          >
+            <div className="pointer-events-auto pl-3">
+              <BoardEditUndoControl
+                canUndo={graph.canUndoLastEdit}
+                lastActionLabel={graph.lastUndoableEditLabel}
+                onUndo={handleUndoLastEdit}
+              />
+            </div>
+          </div>
+        ) : null}
 
         <BoardBranchImportModal
           pending={graph.pendingBranchImport}

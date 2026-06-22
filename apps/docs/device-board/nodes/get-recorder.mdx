@@ -1,0 +1,27 @@
+---
+title: GetRecorder
+description: Singleton RecorderRef для устройства.
+---
+
+# GetRecorder
+
+## Pins
+
+| Direction | Handle | Type |
+|-----------|--------|------|
+| in exec | `exec-in` | exec |
+| in data | `device` | DeviceRef |
+| out exec | `exec-out` | exec |
+| out data | `recorder` | RecorderRef |
+
+## Runtime
+
+Регистрирует/возвращает host singleton `RecorderSession` для `deviceId`. Collectors v0.5.
+
+## Preconditions
+
+- Валидный `DeviceRef`
+
+## Code
+
+`get-recorder-node.ts` · CONCEPT §15–§17

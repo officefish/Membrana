@@ -4,37 +4,6 @@
 
 **Любая новая крупная задача (M/L)** — сначала процесс:
 
-### UserCase generation (device-board · agents)
-
-Если пользователь просит **сгенерировать / упаковать / собрать UserCase** — не начинать с task-реестра; читать:
-
-| # | Документ |
-|---|----------|
-| 1 | [`docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
-| 2 | [`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](./DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) |
-| 3 | [`docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) |
-| 4 | `node scripts/usercase.mjs help` |
-
-Catalog / picker (U9): [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md). Hub: [`docs/device-board-scripts/README.md`](../device-board-scripts/README.md).
-
-### RAG dual-circuit (agents · planned epic)
-
-Перед работой над `@membrana/rag-service`, индексацией или ritual hooks:
-
-| # | Документ |
-|---|----------|
-| 1 | [`docs/CRITICAL_RAG_AUDIT.md`](../CRITICAL_RAG_AUDIT.md) — tooling audit (Perplexity 2026-06-21) |
-| 2 | [`RAG_STRATEGY_CONCEPT.md`](../RAG_STRATEGY_CONCEPT.md) — канон TZ |
-| 3 | [`ADDITIONAL_RAG_STRATEGY_BRIEF.md`](../ADDITIONAL_RAG_STRATEGY_BRIEF.md) — расширенное ТЗ |
-| 4 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](./RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) — epic R0–R7 |
-| 5 | [`discussions/rag-strategy-implementation-plan-2026-06-21-consilium.md`](../discussions/rag-strategy-implementation-plan-2026-06-21-consilium.md) — консилиум |
-
-Стек v1: **repo operative + LanceDB + text-embedding-3-small** (не Pinecone/LangChain/ada-002 по умолчанию).
-
----
-
-**Любая новая крупная задача (M/L)** — процесс task prompts:
-
 | Документ | Назначение |
 |----------|------------|
 | **[`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)** | Стандарт постановки: Issue → реестр → промпт → PR → архив |
@@ -48,7 +17,6 @@ Catalog / picker (U9): [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_
 | **[`DEVICE_BOARD_HACKATHON_BRIEF_INTERVIEW.md`](./DEVICE_BOARD_HACKATHON_BRIEF_INTERVIEW.md)** | Анкета бриф-интервью (≥20 вопросов) |
 | **[`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](./DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md)** | **Активный эпик** — device-board хакатон 1 (DB-H0…H4) |
 | **[`CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md`](./CABINET_MP4_HARDENING_NIGHT_BUILD_EPIC_PROMPT.md)** | Night build — MP4 hardening NB0–NB3 (закрыт) |
-| **[`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](./DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md)** | **Активный Night Build** — post-competition debt NB0–NB3 (2026-06-21) |
 | **[`SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md`](./SAMPLE_LIBRARY_DRONE_DETECTION_EPIC_PROMPT.md)** | **Активный эпик** — детекция на 5-с сэмплах, плагин `sample-library`, free-v1 120 |
 | **[`MODULE_CATALOG_V1_EPIC_PROMPT.md`](./MODULE_CATALOG_V1_EPIC_PROMPT.md)** | **Активный эпик** — catalog v1: реестр модулей/плагинов client + живые промпты (MC-0…MC-9, #90) |
 | **[`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](./MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md)** | **Активный эпик** — MP7: WebSocket журнал + микрофон (NR0–NR6) |
@@ -57,9 +25,10 @@ Catalog / picker (U9): [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_
 | **[`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md)** | **Активный эпик** — зелёный turbo build client+cabinet (F0–F6) |
 | **[`DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md`](./DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md)** | Collectors v0.5: Recorder/SpectralAnalyser, Collect event-ports (DBC0–DBC6, #130) |
 | **[`DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md`](./DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md)** | **Активный эпик** — Journal + Reporter v0.6: GetJournal, GetReporter, MakeReport*, PublishReport (DBJ0–DBJ6, #131) |
-| **[`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md)** | **Archived U9** — catalog, settings, modal apply-all |
-| **[`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](./DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md)** | **Agent workflow** — programmatic pack/collapse, Run gate (не epic) |
-| **[`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](./RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md)** | **Planned epic** — dual-circuit RAG R0–R7 (LanceDB + repo operative) |
+| **[`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](./DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md)** | **Закрыт** — edit model v2 E1–E3 (archived 2026-06-22, PR #140) |
+| **[`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](./DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md)** | **Закрыт** — docs post-#140 + RAG workflow (D1–D4, index deferred) |
+| **[`CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md`](./CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md)** | **Закрыт** — Cursor / Claude agent skills S0–S8 |
+| **[`DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md`](./DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md)** | **Закрыт** — node reference DV1–DV6 (43 pages) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
 
@@ -111,7 +80,6 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](./BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | **Активная** `background-media-a5d-swagger` — Swagger/OpenAPI (#64) |
 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](./MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | **Активная** `membrane-platform-v1` — эпик cabinet, pairing, tariff, journal (#67) |
 | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | **Активная** `turbo-build-green-apps` — typecheck honesty, cabinet refs, TS fixes, CI techies68 |
-| [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](./RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | **Planned** `rag-dual-circuit-v1` — RAG для ритуалов (audit: [`CRITICAL_RAG_AUDIT.md`](../CRITICAL_RAG_AUDIT.md)) |
 
 Статус active/archived — в [`docs/tasks/README.md`](../tasks/README.md).
 

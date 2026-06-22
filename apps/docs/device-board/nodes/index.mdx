@@ -1,33 +1,54 @@
 ---
 title: Node index
-description: Палитра v0.4 и системные узлы scenario graph.
+description: Полная палитра v0.4 (V04_PALETTE_NODE_KINDS) и системные узлы.
 ---
 
 # Node index
 
-## Palette (v0.4)
+Источник правды: `packages/device-board/src/graph/palette-node.ts` · runtime: `runtime/block-executor.ts`.
 
-| nodeKind | Label | Статус docs |
-|----------|-------|-------------|
-| `print` | Print | Phase 2 |
+## Palette (v0.4) — 26 kinds
+
+| nodeKind | Label | Docs |
+|----------|-------|------|
+| `device-global` | GetDevice | [страница](/device-board/nodes/device-global) |
+| `stop-runtime` | StopRuntime | [страница](/device-board/nodes/stop-runtime) |
+| `print` | Print | [страница](/device-board/nodes/print) |
 | `is-valid` | isValid | [страница](/device-board/nodes/is-valid) |
-| `get-microphone` | GetMicrophone | Phase 2 |
+| `get-microphone` | GetMicrophone | [страница](/device-board/nodes/get-microphone) |
+| `get-recorder` | GetRecorder | [страница](/device-board/nodes/get-recorder) |
+| `get-spectral-analyser` | GetSpectralAnalyser | [страница](/device-board/nodes/get-spectral-analyser) |
 | `start-streaming` | StartStreaming | [страница](/device-board/nodes/start-streaming) |
-| `stop-streaming` | StopStreaming | Phase 2 |
+| `stop-streaming` | StopStreaming | [страница](/device-board/nodes/stop-streaming) |
 | `get-audio-stream` | GetAudioStream | [страница](/device-board/nodes/get-audio-stream) |
 | `get-sample` | GetSample | [страница](/device-board/nodes/get-sample) |
-| `get-fft-frame` | GetFFTFrame | Phase 2 |
+| `get-fft-frame` | GetFFTFrame | [страница](/device-board/nodes/get-fft-frame) |
+| `collect-samples` | CollectSamples | [страница](/device-board/nodes/collect-samples) |
+| `collect-fft-frames` | CollectFftFrames | [страница](/device-board/nodes/collect-fft-frames) |
+| `start-recording` | StartRecording | [страница](/device-board/nodes/start-recording) |
+| `stop-recording` | StopRecording | [страница](/device-board/nodes/stop-recording) |
+| `is-recording-window-full` | IsRecordingWindowFull | [страница](/device-board/nodes/is-recording-window-full) |
+| `flush-spectral-analyser` | FlushSpectralAnalyser | [страница](/device-board/nodes/flush-spectral-analyser) |
+| `make-recording-policy` | MakeRecordingPolicy | [страница](/device-board/nodes/make-recording-policy) |
+| `make-fft-trends-policy` | MakeFftTrendsPolicy | [страница](/device-board/nodes/make-fft-trends-policy) |
+| `make-track` | MakeTrack | [страница](/device-board/nodes/make-track) |
+| `make-fft-trends-analysis` | MakeFftTrendsAnalysis | [страница](/device-board/nodes/make-fft-trends-analysis) |
+| `get-journal` | GetJournal | [страница](/device-board/nodes/get-journal) |
+| `get-reporter` | GetReporter | [страница](/device-board/nodes/get-reporter) |
+| `make-report-from-track` | MakeReportFromTrack | [страница](/device-board/nodes/make-report-from-track) |
+| `make-report-from-analysis` | MakeReportFromAnalysis | [страница](/device-board/nodes/make-report-from-analysis) |
+| `publish-report` | PublishReport | [страница](/device-board/nodes/publish-report) |
 
-## System
+## System nodes
 
-| nodeKind | Назначение |
-|----------|------------|
-| `event` | Entry обработчика (handler / loopTick) |
-| `loop-repeat` | ∞ в main/alarm |
-| `variable-get` / `variable-set` | Чтение/запись document-scope переменных |
+| nodeKind | Назначение | Docs |
+|----------|------------|------|
+| `event` | Entry обработчика (handler / loopTick) | [страница](/device-board/nodes/event) |
+| `loop-repeat` | Бесконечный цикл в main/alarm | [страница](/device-board/nodes/loop-repeat) |
+| `variable-get` / `variable-set` | Document-scope variables | [страница](/device-board/nodes/variable-get-set) |
 
-## Шаблон страницы узла (Phase 2)
+## Шаблон страницы
 
-Каждая страница: Summary → Pins → Runtime → Preconditions → Anti-patterns → Minimal graph → Tests.
+Summary → Pins → Runtime → Preconditions → Anti-patterns → Minimal graph → Code.
 
-Источник: `packages/device-board/src/graph/palette-node.ts`, `runtime/block-executor.ts`.
+См. также: [Editor & navigation](/device-board/editor/edit-and-navigation) · [Cookbooks](/device-board/cookbooks/on-start-to-main).

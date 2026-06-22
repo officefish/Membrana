@@ -1,0 +1,18 @@
+---
+title: StartRecording
+description: Старт gated recording session на RecorderRef.
+---
+
+# StartRecording
+
+## Pins
+
+Exec + `recorder` (RecorderRef) + `policy` (RecordingPolicyRef). См. `start-recording-node.ts`.
+
+## Runtime
+
+Открывает recording window на host bridge согласно policy. Часть Recording Gate v0.7.
+
+## Code
+
+`block-executor.ts` · recording gate executor

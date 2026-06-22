@@ -1,0 +1,32 @@
+---
+title: GetDevice (device-global)
+description: Системный глобальный узел — data-выход DeviceRef.
+---
+
+# GetDevice (`device-global`)
+
+Системный singleton на scenario branch. **Deletable** (F6); Event остаётся locked.
+
+## Pins
+
+| Direction | Handle | Type |
+|-----------|--------|------|
+| out data | `device` | DeviceRef |
+
+Нет exec-пинов — только data-выход для wiring к GetMicrophone / GetRecorder / …
+
+## Runtime
+
+Не исполняется на exec-цепочке. `DeviceRef` резолвится host'ом по paired `deviceId`.
+
+## Preconditions
+
+- Устройство сопряжено с мембраной (cabinet pairing).
+
+## Anti-patterns
+
+Не удаляйте единственный источник `DeviceRef` на ветке без замены.
+
+## Code
+
+`packages/device-board/src/graph/device-global-node.ts`

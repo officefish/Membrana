@@ -2999,7 +2999,7 @@
       "createdAt": "2026-06-19",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Phase 0: apps/docs skeleton, tier4 MCP, prd/. Phase 1–3: full node reference, catalog stable, Canvas."
+      "notes": "Phase 0–3 complete; LGTM pending. Canvas index: docs/canvas/"
     },
     {
       "id": "code-review-debt-closeout-jun2026",
@@ -3015,7 +3015,7 @@
       "archiveNotes": "techies68 D0-D6; R1-R12 closed; Closes #126",
       "dependsOn": [],
       "notes": "Вход: DAILY_CODE_REVIEW (MP4), archive 2026-06-19 (device-board), DAILY_STANDUP 2026-06-20. Out of scope: JE1-JE5, trends/zero-shot, deploy-pipeline #94, device-board v0.4 #95. Частично закрыто PR #87/#124/#125.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d0-baseline-audit",
@@ -3031,7 +3031,7 @@
       "archiveNotes": "D0 complete",
       "dependsOn": [],
       "notes": "Lead: Vesnin. ✅ Baseline 2026-06-20: merge main, turbo 118/118, matrix in docs/archive/crdc-baseline-2026-06-20.md + Issue comment.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d1-boundaries-registry",
@@ -3049,7 +3049,7 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Ozhegov. ✅ D1 2026-06-20: yarn check:boundaries; bootstrap-order.test.ts; main.tsx contract comments. R1 R2 R8 R9 closed.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d2-lint-hooks-green",
@@ -3067,7 +3067,7 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Rodchenko. ✅ D2 2026-06-20: client + device-board lint 0 warnings (TelemetryJournalModule, board-flow-node, device-board-shell).",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d3-test-health",
@@ -3085,7 +3085,7 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Dynin. ✅ D3 2026-06-20: audio-engine vitest без passWithNoTests; trends vitest forks; validate-pre-run.test.ts. R4 R5 R6 closed.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d4-waveform-a11y",
@@ -3103,7 +3103,7 @@
         "crdc-d2-lint-hooks-green"
       ],
       "notes": "Lead: Rodchenko. ✅ D4 2026-06-20: removed table inline waveform; Escape stops playback; region/group a11y; sample-library-a11y.test.ts. R7 closed.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d5-hygiene-guardrails",
@@ -3121,7 +3121,7 @@
         "crdc-d1-boundaries-registry"
       ],
       "notes": "Lead: Ozhegov. ✅ D5 2026-06-20: .gitignore .claude/.continue; docker size doc; docs verify OK. R10 R11 R12 closed.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "crdc-d6-ci-green-archive",
@@ -3143,7 +3143,7 @@
         "crdc-d5-hygiene-guardrails"
       ],
       "notes": "Lead: Vesnin. yarn turbo green; task:archive; Closes Issue.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-collectors-v05",
@@ -3160,7 +3160,7 @@
         "device-board-refactor-v04"
       ],
       "notes": "Консилиум 2026-06-20: seanses/device-board-collectors-v05-2026-06-20.md. GetFFTFrame отдельный узел. Policy на singleton OOS. Collect config — правый сайдбар (mic defaults). Terminal inputs — массив ref. DBC6 = Vesnin code review + LGTM.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbc-0-core-contracts",
@@ -3178,7 +3178,7 @@
         "device-board-collectors-v05"
       ],
       "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += RecorderRef/SpectralAnalyserRef; scenario node kinds get-recorder, get-spectral-analyser, collect-*, new-track, new-fft-trends-analysis; CollectorConfig; pin kind event; DEVICE_BOARD_CONCEPT v0.5 §collectors.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbc-1-getter-nodes",
@@ -3196,7 +3196,7 @@
         "dbc-0-core-contracts"
       ],
       "notes": "Lead: Ozhegov + Rodchenko. Device-method pattern (device in). GetFFTFrame = Sample→Frame transform, отдельный узел.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbc-2-host-singletons",
@@ -3233,7 +3233,7 @@
         "dbc-2-host-singletons"
       ],
       "notes": "Lead: Ozhegov + Rodchenko + Музыкант. collectorConfig: bufferSize 2048, smoothing 0.75, windowSec 3, queueCapacity; flush OR trigger; data-out ref arrays.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbc-4-terminal-nodes",
@@ -3251,7 +3251,7 @@
         "dbc-3-collect-nodes"
       ],
       "notes": "Lead: Ozhegov + Dynin + Музыкант. NewTrack(AudioSampleRef[]), NewFftTrendsAnalysis(FftFrameRef[]); journal + trends integration.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbc-5-runtime-event-dispatch",
@@ -3269,7 +3269,7 @@
         "dbc-4-terminal-nodes"
       ],
       "notes": "Lead: Ozhegov + Dynin. Event branch ≠ exec tick; канон GetSample→GetFFTFrame→CollectFft; apps/docs cookbook; MVP один Collect.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbc-6-teamlead-review",
@@ -3292,7 +3292,7 @@
         "dbc-5-runtime-event-dispatch"
       ],
       "notes": "Lead: Vesnin. Формальный review всех PR эпика; smoke с микрофоном; отчёт в #130; yarn task:archive device-board-collectors-v05 + фазы.",
-      "githubIssueClosedAt": "2026-06-21"
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-journal-reporter-v06",
@@ -3627,7 +3627,7 @@
         "db-recording-gate-v07"
       ],
       "notes": "SCENARIO_NODE_KINDS + types in @membrana/core.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-20",
       "archiveNotes": "Core: node kinds, RecordingPolicy, RecordingSliceRef"
     },
@@ -3645,7 +3645,7 @@
         "db-recording-gate-r0-contracts"
       ],
       "notes": "device-board graph layer.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-20",
       "archiveNotes": "Palette, pins, factories, tests"
     },
@@ -3663,7 +3663,7 @@
         "db-recording-gate-r0-contracts"
       ],
       "notes": "apps/client scenarioMicJournalBridge + host ports.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-20",
       "archiveNotes": "RecorderRecordingSession + bridge host ports"
     },
@@ -3682,7 +3682,7 @@
         "db-recording-gate-r2-host-bridge"
       ],
       "notes": "MakeTrack slice input; runtime tests.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-20",
       "archiveNotes": "Gate executor, MakeTrack slice, Publish exec-out"
     },
@@ -3716,7 +3716,7 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Superseded by db-rec-parity-a1-capture-path; archive when A1 LGTM. One-day prompt kept for reference.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "Superseded by A1"
     },
@@ -3733,7 +3733,7 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Lead: Vesnin. Same v07 graph; policy windowSec+captureFormat enums; continuous capture. Blocks trends epic B.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "Epic A0-A5 complete"
     },
@@ -3751,7 +3751,7 @@
         "db-recording-parity-mic-v08"
       ],
       "notes": "Enum policies + constructor node kinds make-recording-policy / make-fft-trends-policy; CONCEPT §15.7.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "Enum RecordingPolicy in core; make-recording-policy node"
     },
@@ -3769,7 +3769,7 @@
         "db-rec-parity-a0-policy-contract"
       ],
       "notes": "Replaces R5 tick-chunk; GetSample → FFT only.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "clipRecorder continuous; bootstrap StartRecording"
     },
@@ -3787,7 +3787,7 @@
         "db-rec-parity-a1-capture-path"
       ],
       "notes": "Journal preview duration/sampleRate parity.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "upload MIME; publish-done chain"
     },
@@ -3824,7 +3824,7 @@
         "db-rec-parity-a3-constructor-ui"
       ],
       "notes": "5s WAV sign-off run 85db5c36; CI green; trace in docs/device-board-scripts/logs/",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "Run 85db5c36 5s WAV sign-off"
     },
@@ -3842,7 +3842,7 @@
         "db-rec-parity-a4-smoke-matrix"
       ],
       "notes": "Archive A0–A5, r5, r4-smoke; unblocks trends epic B.",
-      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueClosedAt": null,
       "archivedAt": "2026-06-21",
       "archiveNotes": "Epic A LGTM; unblocks trends B"
     },
@@ -4381,296 +4381,579 @@
       "archiveNotes": "CONCEPT section 20, README, Mintlify usercases; 4576abb"
     },
     {
-      "id": "comp-mvp-packaging-2026-06-21",
-      "title": "Competition Sprint: MVP UserCase product packaging",
-      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "L",
-      "status": "active",
-      "sprintKind": "competition-sprint",
-      "createdAt": "2026-06-21",
-      "dependsOn": [],
-      "notes": "Teams alpha (Vesnin+Musician), beta (Ozhegov+Dynin), gamma (Rodchenko). Phase 1 open."
-    },
-    {
-      "id": "comp-mvp-pack-alpha",
-      "title": "Comp MVP pack: Team Alpha concept + implementation",
-      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "parentEpic": "comp-mvp-packaging-2026-06-21",
-      "createdAt": "2026-06-21",
-      "dependsOn": [],
-      "notes": "Journey map + audio chain; usercase-mvp-microphone-alpha."
-    },
-    {
-      "id": "comp-mvp-pack-beta",
-      "title": "Comp MVP pack: Team Beta concept + implementation",
-      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "parentEpic": "comp-mvp-packaging-2026-06-21",
-      "createdAt": "2026-06-21",
-      "dependsOn": [],
-      "notes": "Modular functions + verify-layout metrics; usercase-mvp-microphone-beta."
-    },
-    {
-      "id": "comp-mvp-pack-gamma",
-      "title": "Comp MVP pack: Team Gamma concept + implementation",
-      "promptPath": "docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "parentEpic": "comp-mvp-packaging-2026-06-21",
-      "createdAt": "2026-06-21",
-      "dependsOn": [],
-      "notes": "Poster UX + minimal ink; usercase-mvp-microphone-gamma."
-    },
-    {
-      "id": "device-board-post-comp-debt-night-build",
-      "title": "Night Build: device-board post-competition debt — runtime DRY, docs, a11y",
-      "promptPath": "docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md",
+      "id": "device-board-function-modal-sprint-2026-06-22",
+      "title": "Day sprint: device-board user functions UX (modal, pins, viewport)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "L",
       "status": "archived",
-      "sprintKind": "night-build",
-      "createdAt": "2026-06-21",
+      "createdAt": "2026-06-22",
       "archivedAt": "2026-06-22",
-      "archiveNotes": "Night build HANDOFF 2026-06-21; techies68 merged 2026-06-22",
-      "dependsOn": [
-        "comp-mvp-packaging-2026-06-21"
-      ],
-      "notes": "Consilium 2026-06-21; вход DAILY_CODE_REVIEW Phase 2b + CR archive 2026-06-19/20. Out: winner merge POL-01."
+      "archiveNotes": "Day sprint closed; PR #139 squash-merged to main.",
+      "sprintKind": "day-sprint",
+      "notes": "Follow-up → device-board-ui-followup-sprint-2026-06-22"
     },
     {
-      "id": "db-pcd-nb0-merge-gate",
-      "title": "NB0: merge gate — lint 0 warnings, untracked tracked, usercase verify",
-      "promptPath": "docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "night-build",
-      "parentEpic": "device-board-post-comp-debt-night-build",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "401 tests lint green; merged techies68",
-      "dependsOn": [
-        "device-board-post-comp-debt-night-build"
-      ],
-      "notes": "Lead: Vesnin + Ozhegov. Baseline matrix docs/archive/db-pcd-baseline-*.md"
-    },
-    {
-      "id": "db-pcd-nb1-runtime-dry",
-      "title": "NB1: runtime DRY — exec-successor, function-call-resolve vs function-pin-ops",
-      "promptPath": "docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "night-build",
-      "parentEpic": "device-board-post-comp-debt-night-build",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "exec-successor + function-call-resolve; audit OK 2026-06-22",
-      "dependsOn": [
-        "db-pcd-nb0-merge-gate"
-      ],
-      "notes": "Lead: Ozhegov. Overlap table in docs/discussions/"
-    },
-    {
-      "id": "db-pcd-nb2-concept-docs",
-      "title": "NB2: DEVICE_BOARD_CONCEPT runtime diagram + lessons cross-ref",
-      "promptPath": "docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "night-build",
-      "parentEpic": "device-board-post-comp-debt-night-build",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "NB2 CONCEPT 4.7; merged techies68 2026-06-22",
-      "dependsOn": [
-        "db-pcd-nb1-runtime-dry"
-      ],
-      "notes": "Lead: Vesnin. Docs-only + typecheck"
-    },
-    {
-      "id": "db-pcd-nb3-a11y-hygiene",
-      "title": "NB3: picker modal a11y, usercase.mjs path hygiene",
-      "promptPath": "docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "night-build",
-      "parentEpic": "device-board-post-comp-debt-night-build",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "NB3 done; merged techies68 2026-06-22",
-      "dependsOn": [
-        "db-pcd-nb2-concept-docs"
-      ],
-      "notes": "Lead: Rodchenko + Ozhegov. DESIGN.md modal checklist"
-    },
-    {
-      "id": "rag-dual-circuit-v1",
-      "title": "Dual-circuit RAG v1 — LanceDB archive + repo operative memory",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "id": "db-fn-modal-s1-ui",
+      "title": "DB FN Modal S1: function editor, pins inspector, viewport fit, minimap",
+      "promptPath": "docs/prompts/DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "L",
       "status": "archived",
-      "createdAt": "2026-06-21",
+      "createdAt": "2026-06-22",
       "archivedAt": "2026-06-22",
-      "archiveNotes": "R0-R6 shipped; commit 87612ee on techies68",
-      "dependsOn": [],
-      "notes": "R0–R6 shipped 2026-06-21. Closure: docs/rag-dual-circuit-v1/CLOSURE.md. Pending: yarn rag:index --full when OPENAI_API_KEY available."
+      "archiveNotes": "PR #139 merged; 21 files packages/device-board/",
+      "parentEpic": "device-board-function-modal-sprint-2026-06-22",
+      "notes": "Phase S1 of day sprint 2026-06-22"
     },
     {
-      "id": "rag-r0-scaffold",
-      "title": "R0: @membrana/rag-service scaffold, types, stub query",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "S",
-      "status": "archived",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "@membrana/rag-service scaffold",
-      "dependsOn": [
-        "rag-dual-circuit-v1"
-      ],
-      "notes": "Lead: Ozhegov. .env.example RAG block; yarn rag:query stub"
-    },
-    {
-      "id": "rag-r1-lancedb-index",
-      "title": "R1: LanceDB store, custom splitter, OpenAI embedder, full/incremental index",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "LanceDB + incremental index",
-      "dependsOn": [
-        "rag-r0-scaffold"
-      ],
-      "notes": "Lead: Ozhegov + Dynin. .membrana/rag/ gitignored"
-    },
-    {
-      "id": "rag-r2-operative",
-      "title": "R2: repo-native operative circuit (git recency, BM25, path filters)",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "BM25 operative circuit",
-      "dependsOn": [
-        "rag-r1-lancedb-index"
-      ],
-      "notes": "Lead: Ozhegov. No Obsidian required; CI-safe"
-    },
-    {
-      "id": "rag-r3-retriever",
-      "title": "R3: dual-circuit retrieveContext + 5 acceptance questions",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "dual retriever + acceptance tests",
-      "dependsOn": [
-        "rag-r2-operative"
-      ],
-      "notes": "Lead: Dynin + Ozhegov. P@5 on CRITICAL_RAG_AUDIT §10"
-    },
-    {
-      "id": "rag-r4-office-api",
-      "title": "R4: background-office POST /api/rag/query + BACKGROUND_SERVERS exception",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
-      "archivedAt": "2026-06-22",
-      "archiveNotes": "POST /api/rag/query",
-      "dependsOn": [
-        "rag-r3-retriever"
-      ],
-      "notes": "Lead: Ozhegov + Vesnin. Only allowed @membrana/* dep in office"
-    },
-    {
-      "id": "rag-r5-rituals",
-      "title": "R5: standup, code-review, consilium, evening incremental hook",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "id": "device-board-ui-followup-sprint-2026-06-22",
+      "title": "Day sprint: device-board UX follow-up (consilium backlog)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "L",
       "status": "archived",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
+      "createdAt": "2026-06-22",
       "archivedAt": "2026-06-22",
-      "archiveNotes": "ritual hooks standup/code-review/consilium",
-      "dependsOn": [
-        "rag-r3-retriever"
-      ],
-      "notes": "Lead: Vesnin. Hybrid with context-collector; fallback without keys"
+      "archiveNotes": "F1-F7 local; 410 tests; PR pending",
+      "sprintKind": "day-sprint",
+      "notes": "Transferred from consilium follow-up after PR #139"
     },
     {
-      "id": "rag-r6-closure",
-      "title": "R6: bootstrap --full, docs/RAG.md, AGENTS.md, epic archive",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "id": "db-ui-f1-context-breadcrumbs",
+      "title": "DB UI F1: context breadcrumbs in canvas header",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
       "status": "archived",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
+      "createdAt": "2026-06-22",
       "archivedAt": "2026-06-22",
-      "archiveNotes": "CLOSURE.md + docs/RAG.md",
-      "dependsOn": [
-        "rag-r4-office-api",
-        "rag-r5-rituals"
-      ],
-      "notes": "Lead: Vesnin. CLOSURE.md written; pending task:archive batch + bootstrap --full with OpenAI key."
+      "archiveNotes": "BoardCanvasBreadcrumb in shell header",
+      "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
+      "notes": "Vesnin: Сценарий › branch / Функция › name"
     },
     {
-      "id": "rag-r7-optional",
-      "title": "R7 (optional): Obsidian overlay, Pinecone/pgvector, Voyage A/B, reranker",
-      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "id": "db-ui-f2-direct-function-edit",
+      "title": "DB UI F2: direct function edit from list (no modal on function branch)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
-      "parentEpic": "rag-dual-circuit-v1",
-      "createdAt": "2026-06-21",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "dependsOn": [
-        "rag-r6-closure"
-      ],
-      "notes": "Optional extensions; CI defaults LanceDB-only"
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "List click editor on function branch",
+      "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
+      "notes": "Rodchenko: list click → editor when already on function branch"
+    },
+    {
+      "id": "db-ui-f6-global-getter-deletable",
+      "title": "DB UI F6: deletable GetDevice/GetServer global getters",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "GetDevice deletable; Event locked",
+      "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
+      "notes": "D-GLOBAL-GETTER: deletable instances; Event stays locked; runtime refs unchanged"
+    },
+    {
+      "id": "db-ui-f7-branch-snapshot-restore",
+      "title": "DB UI F7: restore last saved scenario on branch switch when dirty",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "savedDocumentRef + revert on branch switch",
+      "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
+      "notes": "D-BRANCH-SNAPSHOT: navigation between handlers reverts to savedDocument baseline"
+    },
+    {
+      "id": "db-ui-f3-undo-ctrl-z",
+      "title": "DB UI F3: one-step undo via Ctrl+Z / Cmd+Z",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "Ctrl+Z, undo button, INFO edit logs, forget on nav",
+      "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
+      "notes": "D-UNDO-1: depth-1 stack; replaces toast-only delete undo"
+    },
+    {
+      "id": "db-ui-f4-pin-limit-meter",
+      "title": "DB UI F4: pin limit progress indicator (n/9)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "n/9 progress per pin side",
+      "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
+      "notes": "Dynin: D-PINS-9 visual meter per Input/Output side"
+    },
+    {
+      "id": "db-ui-f5-runtime-exec-highlight",
+      "title": "DB UI F5: runtime exec-chain visual emphasis",
+      "promptPath": "docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "Runtime exec path highlight",
+      "parentEpic": "device-board-ui-followup-sprint-2026-06-22",
+      "notes": "Musician: highlight active exec path during run"
+    },
+    {
+      "id": "device-board-edit-model-v2-2026-06-22",
+      "title": "Epic: device-board edit model v2 (navigation + context split)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "Epic E1-E3 complete PR 140 Teamlead review",
+      "notes": "Tech-debt after PR #140: D1+D4+D5 from team review"
+    },
+    {
+      "id": "db-edit-v2-nav-contract",
+      "title": "DB edit v2 E1: unified branch navigation + RevertPolicy",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "E1 branch-navigation PR 140",
+      "parentEpic": "device-board-edit-model-v2-2026-06-22",
+      "notes": "E-NAV-1/2: navigateScenarioBranch; replace enterFunctionBranch scatter"
+    },
+    {
+      "id": "db-edit-v2-extract-modules",
+      "title": "DB edit v2 E2: extract edit-undo-controller from graph context",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "E2 edit-undo-controller PR 140",
+      "parentEpic": "device-board-edit-model-v2-2026-06-22",
+      "notes": "E-CTX-1: god-context slim; keep public API stable"
+    },
+    {
+      "id": "db-edit-v2-nav-integration-tests",
+      "title": "DB edit v2 E3: navigation matrix integration tests",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "E3 integration tests 422 green PR 140",
+      "parentEpic": "device-board-edit-model-v2-2026-06-22",
+      "notes": "E-TEST-1: dirty handler, fn switch, collapse, Signal, undo forget"
+    },
+    {
+      "id": "device-board-docs-post-140-sprint-2026-06-22",
+      "title": "Day sprint: device-board docs post-#140 + RAG index",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "D1-D4 done; RAG index deferred; PR #140",
+      "sprintKind": "day-sprint",
+      "notes": "Sync CONCEPT/catalog/Mintlify with PR #139/#140; RAG incremental index"
+    },
+    {
+      "id": "db-docs-d1-canon-sync",
+      "title": "DB docs D1: CONCEPT + README canon sync",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "CONCEPT v0.9 section 21 + README edit/navigation table",
+      "parentEpic": "device-board-docs-post-140-sprint-2026-06-22",
+      "notes": "D-DOC-1/2: undo, F7, functions, RevertPolicy in CONCEPT"
+    },
+    {
+      "id": "db-docs-d2-mintlify-editor",
+      "title": "DB docs D2: Mintlify editor UX pages",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "edit-and-navigation + user-functions MDX; docs lint 17 pages",
+      "parentEpic": "device-board-docs-post-140-sprint-2026-06-22",
+      "notes": "apps/docs/device-board/editor — undo, breadcrumbs, functions"
+    },
+    {
+      "id": "db-docs-d3-catalog-runtime",
+      "title": "DB docs D3: catalog stable + runtime cross-links",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board catalog stable; SCENARIO_RUNTIME section 11; catalog verify OK",
+      "parentEpic": "device-board-docs-post-140-sprint-2026-06-22",
+      "notes": "D-DOC-3: device-board.md stable; SCENARIO_RUNTIME links"
+    },
+    {
+      "id": "db-docs-d4-rag-index",
+      "title": "DB docs D4: RAG incremental index + workflow",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "DOCUMENTATION_WORKFLOW RAG section; index deferred until @membrana/rag-service merges to main",
+      "parentEpic": "device-board-docs-post-140-sprint-2026-06-22",
+      "notes": "D-RAG-1/2: yarn rag:index + DOCUMENTATION_WORKFLOW ritual"
+    },
+    {
+      "id": "cursor-agent-skills-sprint-2026-06-22",
+      "title": "Day sprint: Cursor / Claude agent skills for Membrana",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "S0-S8 shipped: 15 project skills + Claude mirror",
+      "sprintKind": "day-sprint",
+      "notes": "S0-S8: project skills in .cursor/skills + .claude mirror"
+    },
+    {
+      "id": "cs-sk-s0-index-bootstrap",
+      "title": "CS SK S0: skills index + conventions bootstrap",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": ".cursor/skills/README.md + AGENTS + .cursorrules section 10",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "D-SK-1/4: README + AGENTS pointer"
+    },
+    {
+      "id": "cs-sk-s1-developer-rhythm",
+      "title": "CS SK S1: membrana-developer-rhythm skill",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "membrana-developer-rhythm skill",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "ritual:day/evening, standup, MAIN_DAY_ISSUE read order"
+    },
+    {
+      "id": "cs-sk-s2-task-lifecycle",
+      "title": "CS SK S2: membrana-task-lifecycle skill",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "membrana-task-lifecycle skill",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "task:archive, closure regulation, day-sprint vs epic"
+    },
+    {
+      "id": "cs-sk-s3-virtual-team-guards",
+      "title": "CS SK S3: virtual-team + audio-engine-guard skills",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "virtual-team + audio-engine-guard skills",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "5-role format; Web Audio only via audio-engine-service"
+    },
+    {
+      "id": "cs-sk-s4-service-scaffold",
+      "title": "CS SK S4: membrana-service-scaffold skill",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "membrana-service-scaffold skill",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "/service workflow per docs/SERVICES.md"
+    },
+    {
+      "id": "cs-sk-s5-domain-docs",
+      "title": "CS SK S5: device-board-edit + docs-sync skills",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board-edit + docs-sync skills",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "device-board CONCEPT/catalog/Mintlify; docs:lint ritual"
+    },
+    {
+      "id": "cs-sk-s6-ops-workflows",
+      "title": "CS SK S6: usercase, servers, consilium, night skills",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "usercase, background-servers, consilium, night skills",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "4 ops skills: usercase, background-servers, consilium, night-sprint"
+    },
+    {
+      "id": "cs-sk-s7-claude-mirror",
+      "title": "CS SK S7: Claude Code .claude mirror",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": ".claude/CLAUDE.md + 5 skill mirrors",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "D-SK-5: thin mirror, CLAUDE.md pointer to AGENTS.md"
+    },
+    {
+      "id": "cs-sk-s8-deferred-stubs",
+      "title": "CS SK S8: deferred skill stubs (RAG, detectors, MCP)",
+      "promptPath": "docs/prompts/CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "rag-operator, detector-benchmark, mcp-workstation stubs",
+      "parentEpic": "cursor-agent-skills-sprint-2026-06-22",
+      "notes": "D-SK-6: stub until dependencies in main"
+    },
+    {
+      "id": "device-board-doc-v04-sprint-2026-06-22",
+      "title": "Day sprint: db-doc-v04 Mintlify node reference",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "DV1-DV6 shipped; db-doc-v04-mvp Phase 2 largely done",
+      "sprintKind": "day-sprint",
+      "parentEpic": "db-doc-v04-mvp",
+      "notes": "DV1-DV6: full V04 palette node MDX + docs.json nav"
+    },
+    {
+      "id": "db-doc-v04-dv1-nav-index",
+      "title": "DB doc DV1: docs.json nav + nodes index",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "docs.json grouped nav + nodes/index 26 kinds",
+      "parentEpic": "device-board-doc-v04-sprint-2026-06-22",
+      "notes": "D-DOCV4-3: full V04_PALETTE_NODE_KINDS table"
+    },
+    {
+      "id": "db-doc-v04-dv2-streaming-globals",
+      "title": "DB doc DV2: streaming + globals node pages",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-global, get-microphone, get-fft-frame, globals",
+      "parentEpic": "device-board-doc-v04-sprint-2026-06-22",
+      "notes": "device-global, get-microphone, get-fft-frame, print, stop-streaming"
+    },
+    {
+      "id": "db-doc-v04-dv3-collectors",
+      "title": "DB doc DV3: collectors node pages",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "get-recorder, collect-*, flush-spectral-analyser",
+      "parentEpic": "device-board-doc-v04-sprint-2026-06-22",
+      "notes": "get-recorder, get-spectral-analyser, collect-*, flush"
+    },
+    {
+      "id": "db-doc-v04-dv4-journal-reporter",
+      "title": "DB doc DV4: journal & reporter node pages",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "get-journal through publish-report",
+      "parentEpic": "device-board-doc-v04-sprint-2026-06-22",
+      "notes": "get-journal through publish-report"
+    },
+    {
+      "id": "db-doc-v04-dv5-recording-policy",
+      "title": "DB doc DV5: recording & policy node pages",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "recording gate + make-track + trends",
+      "parentEpic": "device-board-doc-v04-sprint-2026-06-22",
+      "notes": "make-*-policy, start/stop-recording, make-track, trends"
+    },
+    {
+      "id": "db-doc-v04-dv6-cookbooks-system",
+      "title": "DB doc DV6: cookbooks + system nodes nav",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "cookbooks nav, event/loop-repeat, docs:lint 43 pages",
+      "parentEpic": "device-board-doc-v04-sprint-2026-06-22",
+      "notes": "event, loop-repeat, variable-get-set; docs:lint 43 pages"
+    },
+    {
+      "id": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "title": "Day sprint: db-doc-v04 Phase 3 Canvas + PRD alignment",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "DV7-DV10: 3 Docs Canvas + alignment report + workflow",
+      "sprintKind": "day-sprint",
+      "parentEpic": "db-doc-v04-mvp",
+      "notes": "Phase 3 closure; epic awaits LGTM"
+    },
+    {
+      "id": "db-doc-v04-dv7-canvas-architecture",
+      "title": "DB doc DV7: Canvas architecture",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board-architecture.canvas.tsx",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "packages, branches, runtime phases DAG"
+    },
+    {
+      "id": "db-doc-v04-dv8-canvas-streaming",
+      "title": "DB doc DV8: Canvas streaming pipeline",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board-streaming-pipeline.canvas.tsx",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "ref chain + guard pattern"
+    },
+    {
+      "id": "db-doc-v04-dv9-canvas-branches",
+      "title": "DB doc DV9: Canvas branch/variable map",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "device-board-branch-variable-map.canvas.tsx",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "cross-branch variable-get"
+    },
+    {
+      "id": "db-doc-v04-dv10-prd-alignment",
+      "title": "DB doc DV10: PRD alignment report",
+      "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "docs/canvas/PRD_ALIGNMENT_DB_DOC_V04.md",
+      "parentEpic": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "notes": "check-prd-alignment equivalent"
     }
   ]
 }

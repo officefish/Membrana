@@ -1,0 +1,18 @@
+---
+title: MakeReportFromTrack
+description: ReportRef из TrackRef.
+---
+
+# MakeReportFromTrack
+
+## Pins
+
+Exec + `reporter` + `track` in → `report` (ReportRef) out.
+
+## Runtime
+
+Host строит report payload `device-board-observation/v1` (или track brief) из track.
+
+## Code
+
+`make-report-from-track-node.ts`

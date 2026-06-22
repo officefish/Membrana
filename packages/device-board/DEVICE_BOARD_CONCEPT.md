@@ -275,53 +275,6 @@ Scenario runtime:
 Пересмотр Rete — только если scenario runtime не покрывает кейс **и** это
 зафиксировано stage-gate в `docs/seanses/`.
 
-### 4.7 Runtime execution pipeline (exec + function calls)
-
-> Аудит слоёв (NB1): [`docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md`](../../docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md)  
-> Competition fixes L9–L12: [`docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md`](../../docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md)
-
-Исполнение сценария — **не** React Flow canvas. Runtime читает сериализованный
-`ScenarioSubgraph` и проходит exec-цепочку через чистые модули в
-`packages/device-board/src/runtime/`:
-
-```mermaid
-flowchart TD
-  SR[ScenarioRuntime] --> RT[runSubgraphOnce / event-dispatch]
-  RT --> BE[block-executor.executeScenarioBlock]
-  BE -->|subgraph block| FCR[function-call-resolve]
-  BE --> RI[resolve-input.resolveNodeOutput]
-  FCR --> RI
-  RT --> ES[exec-successor.findExecSuccessor]
-  ES --> RT
-  BE --> HOST[ScenarioRuntimeHost ports]
-```
-
-| Модуль | Путь | Ответственность |
-| ------ | ---- | ---------------- |
-| Orchestrator | `scenario-runtime.ts` | start/stop, branch ticks, `execOptions` (stores, `scenarioFunctions`) |
-| Subgraph walk | `exec-subgraph.ts`, `event-dispatch.ts` | Exec loop, event branches, step limit |
-| Block dispatch | `block-executor.ts` | Per-`nodeKind` side effects; subgraph call + store pass-through |
-| Exec traversal | `exec-successor.ts` | Next node by `sourceHandle`; `function-output` boundary pins (L11) |
-| Function data bridge | `function-call-resolve.ts` | Parent branch edges → `resolveFunctionInputPin` (L9) |
-| Value resolution | `resolve-input.ts` | Pin values; subgraph block as data source via function body (L12) |
-
-**Editor vs runtime (не смешивать):**
-
-| Concern | Editor / graph | Runtime |
-| ------- | -------------- | ------- |
-| Pin CRUD, collapse, hydrate sync | `graph/function-pin-ops.ts` | — |
-| Parent → function body data | — | `function-call-resolve.ts` |
-| Exec chain inside subgraph | — | `exec-successor.ts` + `exec-subgraph.ts` |
-
-**Lessons cross-ref (competition sprint 2026-06-21):**
-
-| Lesson | Symptom | Runtime fix |
-| ------ | ------- | ----------- |
-| L9 | `function-input` not a data source | `augmentResolveContextForFunctionCall` |
-| L10 | Serialize loses block data edges | hydrate/sync pins (`function-pin-ops` + serialize) |
-| L11 | Gate exits every tick | `findExecSuccessor` + `execOutHandle` propagation |
-| L12 | Pure policy-build block | `resolveNodeOutput` on subgraph + `scenarioFunctions` |
-
 ---
 
 ## 5. Типы сокетов и контракты
@@ -677,7 +630,8 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 - **Conflict resolution** при двусторонней sync (S1) — v1 минимальный last-write
   или явные правила merge.
 - **Expand function inline** на parent canvas — v1.1 (не U8).
-- **Undo/redo**, **snap guides / dagre autolayout** — эпики `db-node-align-advanced` и отдельный undo stack.
+- **Undo depth-1** — **закрыто** v0.9 (§21): Ctrl+Z / кнопка ↶; **не** покрывает free drag; полный redo stack — backlog.
+- **Snap guides / dagre exec autolayout** — **закрыто** U8a (§19); отдельный «undo stack» для layout — не нужен.
 - **Параллельные сценарии** на одном устройстве — не планируется в v1.
 
 ---
@@ -699,14 +653,20 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 - [`DEVICE_BOARD_HACKATHON_BRIEF.md`](../../docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md) — бриф хакатона 1.
 - [`HACKATHON_REGULATION.md`](../../docs/HACKATHON_REGULATION.md) — ритуалы хакатона.
 - [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) — UserCases catalog (U9, §20).
-- [`USERCASE_GENERATION_REGULATION.md`](../../docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md) — agent pack/collapse (§20.8).
+- [`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md) — edit model v2 (archived).
+- [`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md) — docs + RAG sync sprint (active).
 - [`apps/docs/device-board/usercases.mdx`](../../apps/docs/device-board/usercases.mdx) — операторская страница UserCases.
 
 ---
 
 ## 14. Статус и порядок изменения
 
-- **Статус:** v0.8 — концепт (+ UserCases catalog U9, §20).
+- **Статус:** v0.9 — концепт (+ edit/navigation model §21, post-#139/#140).
+- **Changelog v0.9 (2026-06-22):** function editor modal sprint (#139); UX follow-up F1–F7 + edit model v2 E1–E3
+  (PR #140): breadcrumbs, direct function edit, undo depth-1, F7 branch snapshot revert, pin meter `n/9`,
+  runtime exec highlight, deletable GetDevice, `navigateScenarioBranch` + `ScenarioRevertPolicy`,
+  `edit-undo-controller`. Промпты: [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md),
+  [`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md).
 - **Changelog v0.8 (2026-06-21):** эпик U9 (`db-usercases-catalog-u9`, #136): manifest/build/verify,
   layout canon, bundled catalog, settings gate, modal apply-all; bundled MVP `usercase-mvp-microphone`.
 - **Changelog v0.7 (2026-06-21):** эпик U8 (`db-canvas-groups-functions`, PR #134):
@@ -1148,10 +1108,13 @@ interface ScenarioFunctionPin {
 `ScenarioFunctionSubgraph` → `subgraph`-блок на родителе → open function tab.
 Pure: `collapse-to-function.ts`, `function-pin-ops.ts`.
 
-**Runtime bridge** (§4.7): `function-input` / `function-output` — pass-through в
-`exec-subgraph` (entry exec-in → first inner node; `function-output` → return handle).
-Data from parent branch: `function-call-resolve.ts`; exec successor: `exec-successor.ts`.
-Competition lessons L9–L12 — см. [`USERCASE_COMPETITION_LESSONS.md`](../../docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md).
+**Function editor UX (post-#139):** на ветке `function` — inline-редактор (имя, описание, pins)
+в сайдбаре; **клик по функции в списке** сразу открывает editor **без modal**, если уже на
+`function` branch (F2). Modal picker остаётся при входе с handler-ветки. Viewport fit + minimap
+на function canvas. Pin meter **`n/9`** per Input/Output (F4).
+
+**Runtime bridge:** `function-input` / `function-output` — pass-through в `exec-subgraph`
+(entry exec-in → first inner node; `function-output` → return).
 
 ### 18.4 Comment groups (G1)
 
@@ -1190,7 +1153,6 @@ interface ScenarioCommentGroup {
 | Слой | Путь |
 | ---- | ---- |
 | Graph ops | `marquee-selection.ts`, `collapse-to-function.ts`, `comment-group.ts`, `align-nodes.ts`, `function-pin-ops.ts` |
-| Runtime | `scenario-runtime.ts`, `block-executor.ts`, `exec-subgraph.ts`, `exec-successor.ts`, `function-call-resolve.ts`, `resolve-input.ts` (§4.7) |
 | UI | `board-marquee-overlay.tsx`, `board-selection-action-modal.tsx`, `board-group-node.tsx`, `board-function-list.tsx`, `board-function-pin-inspector.tsx` |
 | Context | `device-board-graph-context.tsx` — multi-function state, collapse, pin CRUD sync IO nodes |
 | Shell | `device-board-shell.tsx` — marquee handlers, runtime gating, branch exec layout |
@@ -1287,18 +1249,13 @@ sequenceDiagram
 
 Реализация apply: `apply-user-case.ts` · UI: `board-usercase-picker-modal.tsx`.
 
-### 20.5 Yarn scripts (R0 / L1 / agents)
+### 20.5 Yarn scripts (R0 / L1)
 
 | Script | Назначение |
 | ------ | ---------- |
 | `yarn usercase:build <id>` | manifest → embedded TS + layout canon + sync branch JSON |
-| `yarn usercase:build-competition-all` | alpha + beta + gamma (sprint forks) |
 | `yarn usercase:verify-kinds <id>` | node kinds ⊆ `SCENARIO_NODE_KINDS` |
 | `yarn usercase:verify-layout <id>` | layout metrics (CI gate на bundled UserCases) |
-| `yarn usercase:verify-prerun <id>` | hydrate + `validatePreRun` |
-| `node scripts/usercase.mjs help` | agent CLI: build, verify-pack, verify-competition |
-
-CI: `.github/workflows/usercase-competition.yml` (PR path filter) · weekly `scheduled-ci.yml` · `yarn usercase:verify-competition`
 
 ### 20.6 Out of scope v1
 
@@ -1314,15 +1271,76 @@ Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/user
 Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) ·
 консилиум [`device-board-usercases-consilium-2026-06-21.md`](../../docs/discussions/device-board-usercases-consilium-2026-06-21.md).
 
-### 20.8 Agent generation (pack / collapse)
+---
 
-Если пользователь или CI просит **сгенерировать / упаковать** UserCase (не catalog UI):
+## 21. Edit & navigation model v0.9 (post-#139/#140)
 
-| # | Документ |
-|---|----------|
-| 1 | [`USERCASE_GENERATION_REGULATION.md`](../../docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
-| 2 | [`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) |
-| 3 | [`USERCASE_COMPETITION_LESSONS.md`](../../docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md) |
-| 4 | Hub [`docs/device-board-scripts/README.md`](../../docs/device-board-scripts/README.md) |
+> PR [#139](https://github.com/officefish/Membrana/pull/139) (function modal) ·
+> PR [#140](https://github.com/officefish/Membrana/pull/140) (F1–F7 + edit model v2).
+> Промпты: [`DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md),
+> [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md),
+> [`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md).
 
-Discovery также в [`.cursorrules`](../../.cursorrules) (#10), [`docs/prompts/README.md`](../../docs/prompts/README.md), [`VIRTUAL_TEAM_PROMPT.md`](../../docs/VIRTUAL_TEAM_PROMPT.md).
+Модель редактирования сценария **без полного undo/redo стека**: один шаг отката + «мягкий сброс»
+при навигации между обработчиками.
+
+### 21.1 Dirty baseline и Save (F7 — D-BRANCH-SNAPSHOT)
+
+- `isDirty` — fingerprint текущего `DeviceScenarioDocument` ≠ последний **сохранённый** снимок.
+- `savedDocumentRef` хранит полный document baseline (не только hash).
+- **Manual save** — persist по кнопке; автосейва при edit нет.
+- При переключении **sidebar handler tab** (main ↔ alarm ↔ …) или **Signal ↔ Scenario** с
+  `revert-if-dirty` policy: если dirty → `hydrateBoardFromDocument(saved)`; `isDirty=false`.
+- Навигация **внутри function layer** (fn-1 → fn-2, collapse → function, create function) —
+  **`keep-dirty`**: черновики функций коммитятся в `scenarioFunctionDrafts` в памяти, F7-revert **не** затирает их.
+
+### 21.2 Undo depth-1 (F3 — D-UNDO-1)
+
+- Перед mutating op сохраняется **один** hydrated snapshot (`edit-undo-controller.ts`).
+- **Покрывает:** delete nodes, delete function, add/remove pin, collapse to function/group,
+  align/exec layout batch, clear branch.
+- **Не покрывает:** свободный drag позиции узла (v1 by design).
+- **UI:** кнопка ↶ (левый нижний угол канваса); **Ctrl+Z** / **Cmd+Z** (не в input/textarea).
+- **INFO-логи** (галочка в shell): `[INFO] device-board edit: capture|undo|clear` (`edit-step-log.ts`).
+- **Сброс pending undo** (без restore) при:
+  - смене handler tab (`switch-handler-branch`);
+  - смене активной функции (`switch-function`);
+  - выходе из function body / входе с handler (`leave-function-body` / `enter-function-body`);
+  - уходе со слоя Scenario (`leave-scenario-layer` в shell).
+
+### 21.3 Branch navigation API (E1 — RevertPolicy)
+
+Единая точка: `navigateScenarioBranch(target, revertPolicy)` в graph context.
+Планирование: `branch-navigation.ts` → `planBranchNavigation(from, to, policy)`.
+
+| `ScenarioRevertPolicy` | Когда |
+| ---------------------- | ----- |
+| `revert-if-dirty` | Sidebar handler tabs; первый вход handler → function; Signal layer |
+| `keep-dirty` | fn-1 → fn-2; collapse → function; create function на function layer |
+
+`setScenarioBranch(branch)` — обёртка с `revert-if-dirty`.
+
+### 21.4 Canvas chrome и runtime overlay
+
+| ID | Поведение |
+| -- | --------- |
+| **F1** | Breadcrumbs в header канваса: `Сценарий › {branch}` / `Функция › {name}` |
+| **F5** | При Run — accent на активной exec-цепочке (`runtime-exec-highlight.ts`) |
+| **F6** | **GetDevice** (`device-global`) — удаляемый узел; **Event**-узлы locked (`deletable:false`) |
+
+### 21.5 Слой → путь
+
+| Слой | Путь |
+| ---- | ---- |
+| Navigation | `graph/branch-navigation.ts` |
+| Undo | `graph/edit-undo-controller.ts`, `graph/edit-undo-snapshot.ts`, `graph/edit-step-log.ts` |
+| Context | `context/device-board-graph-context.tsx` |
+| Shell | `components/device-board-shell.tsx`, `board-edit-undo-control.tsx`, `board-canvas-breadcrumb.tsx` |
+| Tests | `branch-navigation.test.ts`, `device-board-nav.integration.test.tsx` |
+
+### 21.6 Backlog (out of scope v0.9)
+
+- Scoped undo (только текущая ветка / function) — D2 tech-debt.
+- Undo free node drag — D3.
+- Confirm modal на dirty branch switch — D9.
+- GetServer `server-global` deletable — контракт как F6; возможен `vesnin`.

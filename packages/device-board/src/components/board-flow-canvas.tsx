@@ -106,6 +106,9 @@ export interface BoardFlowCanvasProps {
   readonly ariaLabel?: string;
   /** Пульсация exec-рёбер только при запущенном сценарии. */
   readonly pulseEdges?: boolean;
+  /** Подсветка exec-цепочки к активному runtime-узлу (F5). */
+  readonly runtimeHighlightNodeIds?: ReadonlySet<string>;
+  readonly highlightExecEdgeIds?: ReadonlySet<string>;
   /** Запрет редактирования графа (drag, connect, delete) при runtime. */
   readonly readOnly?: boolean;
   readonly onViewportApiReady?: (api: BoardFlowViewportApi) => void;
@@ -133,6 +136,8 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   onPaneClick,
   ariaLabel,
   pulseEdges = false,
+  runtimeHighlightNodeIds,
+  highlightExecEdgeIds,
   readOnly = false,
   onViewportApiReady,
   onConnectionDropOnPane,
@@ -147,10 +152,36 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   const [snapGuides, setSnapGuides] = useState<readonly FlowGuideLine[]>([]);
   const marqueeEnabled = !readOnly && onMarqueeSelection !== undefined;
 
-  const displayNodes = useMemo(
-    () => (layoutGhostNodes.length === 0 ? nodes : [...nodes, ...layoutGhostNodes]),
-    [layoutGhostNodes, nodes],
-  );
+  const displayNodes = useMemo(() => {
+    const base = layoutGhostNodes.length === 0 ? nodes : [...nodes, ...layoutGhostNodes];
+    if (runtimeHighlightNodeIds === undefined || runtimeHighlightNodeIds.size === 0) {
+      return base;
+    }
+    return base.map((node) => {
+      if (!runtimeHighlightNodeIds.has(node.id)) {
+        return node;
+      }
+      return {
+        ...node,
+        className: [node.className, 'board-node--runtime-exec-active'].filter(Boolean).join(' '),
+      };
+    });
+  }, [layoutGhostNodes, nodes, runtimeHighlightNodeIds]);
+
+  const ensureGraphVisible = useCallback(() => {
+    const visibleNodes = reactFlow
+      .getNodes()
+      .filter((node) => !isBoardLayoutGhostNodeId(node.id));
+    if (visibleNodes.length === 0) {
+      return;
+    }
+    void reactFlow.fitView({
+      nodes: visibleNodes.map((node) => ({ id: node.id })),
+      padding: BOARD_VIEWPORT_FIT_PADDING,
+      duration: BOARD_VIEWPORT_FIT_DURATION_MS,
+      maxZoom: BOARD_VIEWPORT_FIT_MAX_ZOOM,
+    });
+  }, [reactFlow]);
 
   const ensureGraphVisible = useCallback(() => {
     const visibleNodes = reactFlow
@@ -209,8 +240,8 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   }, [onViewportApiReady, viewportApi]);
 
   const decoratedEdges = useMemo(
-    () => decorateBoardEdges(edges, nodes, { pulseWhenRunning: pulseEdges }),
-    [edges, nodes, pulseEdges],
+    () => decorateBoardEdges(edges, nodes, { pulseWhenRunning: pulseEdges, highlightExecEdgeIds }),
+    [edges, highlightExecEdgeIds, nodes, pulseEdges],
   );
 
   const handleSelectionChange = useCallback(
@@ -500,7 +531,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         nodesConnectable={!readOnly}
         elementsSelectable
         edgesReconnectable={!readOnly}
-        deleteKeyCode={readOnly ? null : 'Backspace'}
+        deleteKeyCode={readOnly ? null : ['Backspace', 'Delete']}
         panOnDrag={marqueeEnabled ? [1, 2] : true}
         proOptions={{ hideAttribution: true }}
         onSelectionChange={handleSelectionChange}

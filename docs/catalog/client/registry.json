@@ -29,7 +29,7 @@
       "id": "device-board",
       "kind": "module",
       "name": "Доска устройства",
-      "status": "draft",
+      "status": "stable",
       "promptPath": "docs/catalog/client/prompts/modules/device-board.md",
       "code": {
         "registerId": "device-board",
@@ -37,7 +37,7 @@
       },
       "plugins": [],
       "services": ["@membrana/audio-engine-service"],
-      "relatedTasks": ["module-catalog-v1", "device-board-realtime-runtime"]
+      "relatedTasks": ["module-catalog-v1", "device-board-realtime-runtime", "device-board-docs-post-140-sprint-2026-06-22"]
     },
     {
       "id": "telemetry-journal",

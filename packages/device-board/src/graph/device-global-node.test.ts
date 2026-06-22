@@ -19,6 +19,6 @@ describe('device-global-node', () => {
     expect(node.data.nodeKind).toBe('device-global');
     expect(node.data.label).toBe('GetDevice');
     expect(node.data.system).toBe(true);
-    expect(node.deletable).toBe(false);
+    expect(node.deletable).not.toBe(false);
   });
 });

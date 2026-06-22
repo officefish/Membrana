@@ -2,6 +2,7 @@ import type { Edge, Node, NodeChange } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
+import { isDeviceGlobalNode } from './device-global-node.js';
 
 /** Ветви-обработчики с системным Event-узлом. */
 export type EventHandlerBranch = 'onConnect' | 'initial' | 'onStop' | 'onDisconnect';
@@ -186,9 +187,15 @@ export function isSystemNode(node: Node): boolean {
   return (node.data as { system?: boolean } | undefined)?.system === true;
 }
 
-/** True, если узел заблокирован от удаления (Event и прочие system / deletable:false). */
+/** True, если узел заблокирован от удаления (Event, loop-repeat, function-io и явный deletable:false). */
 export function isLockedBoardNode(node: Node): boolean {
+  if (isDeviceGlobalNode(node)) {
+    return false;
+  }
   if (node.deletable === false) {
+    return true;
+  }
+  if (isEventNode(node)) {
     return true;
   }
   return isSystemNode(node);

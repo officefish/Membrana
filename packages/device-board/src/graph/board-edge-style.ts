@@ -18,7 +18,12 @@ import {
 export interface DecorateBoardEdgesOptions {
   /** Пульсация рёбер только во время run. */
   readonly pulseWhenRunning: boolean;
+  /** Exec-рёбра на активном runtime-пути (F5). */
+  readonly highlightExecEdgeIds?: ReadonlySet<string>;
 }
+
+const RUNTIME_EXEC_EDGE_STROKE = 'oklch(var(--su))';
+const RUNTIME_EXEC_EDGE_STROKE_WIDTH = EXEC_EDGE_STROKE_WIDTH + 1;
 
 function isExecEdge(edge: Edge, nodes: readonly Node[]): boolean {
   if (edge.sourceHandle === undefined || edge.sourceHandle === null) {
@@ -82,12 +87,21 @@ export function decorateBoardEdges(
   return edges.map((edge) => {
     const exec = isExecEdge(edge, nodes);
     const event = isEventEdge(edge, nodes);
-    const stroke = event ? EVENT_EDGE_STROKE : exec ? EXEC_EDGE_STROKE : dataEdgeStroke(edge, edges, nodes);
-    const strokeWidth = event
-      ? EVENT_EDGE_STROKE_WIDTH
-      : exec
-        ? EXEC_EDGE_STROKE_WIDTH
-        : DATA_EDGE_STROKE_WIDTH;
+    const runtimeHighlight = exec && options.highlightExecEdgeIds?.has(edge.id) === true;
+    const stroke = runtimeHighlight
+      ? RUNTIME_EXEC_EDGE_STROKE
+      : event
+        ? EVENT_EDGE_STROKE
+        : exec
+          ? EXEC_EDGE_STROKE
+          : dataEdgeStroke(edge, edges, nodes);
+    const strokeWidth = runtimeHighlight
+      ? RUNTIME_EXEC_EDGE_STROKE_WIDTH
+      : event
+        ? EVENT_EDGE_STROKE_WIDTH
+        : exec
+          ? EXEC_EDGE_STROKE_WIDTH
+          : DATA_EDGE_STROKE_WIDTH;
     return {
       ...edge,
       animated: options.pulseWhenRunning && exec,

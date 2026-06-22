@@ -24,6 +24,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Локальные дампы console client app (см. logs/README.md)
+logs/apps/**/*
+!logs/**/.gitignore
+!logs/**/README.md
+
 # Окружение
 .env
 .env.local
@@ -84,6 +89,9 @@ pnpm-lock.yaml
 .pnp.*
 
 # claude / cursor / continue — локальные каталоги AI IDE (не коммитить)
-.claude/
+.claude/*
+!.claude/CLAUDE.md
+!.claude/skills/
+!.claude/skills/**
 .continue/
 .cursor/mcp.json
