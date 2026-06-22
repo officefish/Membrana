@@ -7,16 +7,13 @@
 
 ## Следующая фаза
 
-**D1** `db-docs-d1-canon-sync` — `DEVICE_BOARD_CONCEPT.md` + `packages/device-board/README.md`.
+**D2** `db-docs-d2-mintlify-editor` — `apps/docs/device-board/editor/*`.
 
-## Backlog фаз
+## Завершено (спринт)
 
-| ID | Фокус |
-|----|--------|
-| `db-docs-d1-canon-sync` | D1: CONCEPT + README |
-| `db-docs-d2-mintlify-editor` | D2: `apps/docs` editor UX |
-| `db-docs-d3-catalog-runtime` | D3: catalog stable |
-| `db-docs-d4-rag-index` | D4: RAG index + workflow |
+| Phase | Id | Deliverable |
+|-------|-----|-------------|
+| D1 | `db-docs-d1-canon-sync` | CONCEPT §21 + README |
 
 ## Закрыто
 

@@ -4596,10 +4596,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-22",
+      "archiveNotes": "CONCEPT v0.9 section 21 + README edit/navigation table",
       "parentEpic": "device-board-docs-post-140-sprint-2026-06-22",
       "notes": "D-DOC-1/2: undo, F7, functions, RevertPolicy in CONCEPT"
     },
