@@ -4,6 +4,7 @@ import type { Node, NodeChange } from '@xyflow/react';
 import {
   buildDemoFunctionInput,
   buildDeviceScenarioDocument,
+  createDeviceGlobalBoardNode,
   createEventBoardNode,
   createLoopTickEventBoardNode,
   deserializeScenarioSubgraph,
@@ -100,6 +101,14 @@ describe('device-board Event node (DBR3)', () => {
     const filtered = rejectSystemNodeRemovals(changes, [event, plain]);
     expect(filtered).toHaveLength(1);
     expect((filtered[0] as { id: string }).id).toBe('plain-1');
+  });
+
+  it('allows removing GetDevice global getter nodes', () => {
+    const getDevice = createDeviceGlobalBoardNode({ id: 'dg-1' });
+    const changes: NodeChange[] = [{ type: 'remove', id: 'dg-1' }];
+    const filtered = rejectSystemNodeRemovals(changes, [getDevice]);
+    expect(filtered).toHaveLength(1);
+    expect((filtered[0] as { id: string }).id).toBe('dg-1');
   });
 
   it('ensureEventEntry injects a missing Event and is idempotent', () => {

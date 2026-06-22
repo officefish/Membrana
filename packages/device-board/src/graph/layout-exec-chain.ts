@@ -225,6 +225,44 @@ export function isLoopBranchExecLayoutEnabled(
   return isExecChainLayoutEnabled(nodes, edges, scope);
 }
 
+/**
+ * True, если узлы exec-цепочки от entry уже стоят на позициях dagre LR layout.
+ * Используется для деактивации «Упорядочить цепочку» до следующего редактирования.
+ */
+export function isExecChainLayoutAtCanonicalPositions(
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  entryNodeId: string,
+): boolean {
+  const canonical = computeExecChainLayoutFromEntry(nodes, edges, entryNodeId);
+  if (canonical.size < 2) {
+    return false;
+  }
+  for (const [nodeId, expected] of canonical) {
+    const node = nodes.find((item) => item.id === nodeId);
+    if (node === undefined) {
+      return false;
+    }
+    if (node.position.x !== expected.x || node.position.y !== expected.y) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/** True, если loop-ветка уже упорядочена (кнопка branch exec layout не нужна). */
+export function isLoopBranchExecLayoutCanonical(
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  branch: LoopExecLayoutBranch,
+): boolean {
+  if (!isLoopBranchExecLayoutEnabled(nodes, edges, branch)) {
+    return false;
+  }
+  const entryId = resolveLoopBranchExecEntryId(branch);
+  return isExecChainLayoutAtCanonicalPositions(nodes, edges, entryId);
+}
+
 /** Ghost-ноды для preview (NAA L2): полупрозрачные копии на целевых позициях. */
 export function buildLayoutGhostNodes(
   nodes: readonly Node[],

@@ -1,17 +1,23 @@
-# CURRENT_TASK — Membrane Platform
+# CURRENT_TASK
 
-> **Эпик:** [#67](https://github.com/officefish/Membrana/issues/67)
+> **Day sprint:** нет активного (закрыт `device-board-ui-followup-sprint-2026-06-22`)  
+> **Closure:** [`day-sprint/device-board-ui-followup-sprint-2026-06-22/CLOSURE.md`](./day-sprint/device-board-ui-followup-sprint-2026-06-22/CLOSURE.md)
 
-## Статус эпика MP0–MP6
+## Следующий шаг
 
-Все фазы платформы **archived**; prod regression OK 2026-06-14 (`yarn cabinet:mp6:prod`).
+1. **PR** — собрать изменения `@membrana/device-board` в `main` (follow-up после #139).
+2. **Буфер** — новый эпик / задача из consilium или `docs/MAIN_DAY_ISSUE.md`.
 
-## Следующее (вне MP6)
+## Закрытый спринт (2026-06-22)
 
-1. **Консилиум** — калибровка журнала и единый рендеринг client ↔ cabinet (отдельная дорожная карта).
-2. Закрытие эпика `membrane-platform-v1` в реестре + отчёт в Issue #67.
-3. Merge `feat/membrane-platform-mp4` → `vesnin` (по LGTM).
+| Phase | Task id |
+|-------|---------|
+| F6 | `db-ui-f6-global-getter-deletable` |
+| F7 | `db-ui-f7-branch-snapshot-restore` |
+| F3 | `db-ui-f3-undo-ctrl-z` |
+| F1 | `db-ui-f1-context-breadcrumbs` |
+| F2 | `db-ui-f2-direct-function-edit` |
+| F4 | `db-ui-f4-pin-limit-meter` |
+| F5 | `db-ui-f5-runtime-exec-highlight` |
 
-## Отложено
-
-Облачный журнал: parity карточек, live-badge, фильтры — post-v1, после консилиума.
+Архив реестра: `yarn task:list` → `docs/tasks/archive/device-board-ui-followup-sprint-2026-06-22.md`.

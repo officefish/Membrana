@@ -147,6 +147,16 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `device-board-function-modal-sprint-2026-06-22` | Day sprint: device-board user functions UX (modal, pins, viewport) | 2026-06-22 | [`DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md) | — | [карточка](./archive/device-board-function-modal-sprint-2026-06-22.md) |
+| `db-fn-modal-s1-ui` | DB FN Modal S1: function editor, pins inspector, viewport fit, minimap | 2026-06-22 | [`DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md) | — | [карточка](./archive/db-fn-modal-s1-ui.md) |
+| `device-board-ui-followup-sprint-2026-06-22` | Day sprint: device-board UX follow-up (consilium backlog) | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/device-board-ui-followup-sprint-2026-06-22.md) |
+| `db-ui-f1-context-breadcrumbs` | DB UI F1: context breadcrumbs in canvas header | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ui-f1-context-breadcrumbs.md) |
+| `db-ui-f2-direct-function-edit` | DB UI F2: direct function edit from list (no modal on function branch) | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ui-f2-direct-function-edit.md) |
+| `db-ui-f6-global-getter-deletable` | DB UI F6: deletable GetDevice/GetServer global getters | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ui-f6-global-getter-deletable.md) |
+| `db-ui-f7-branch-snapshot-restore` | DB UI F7: restore last saved scenario on branch switch when dirty | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ui-f7-branch-snapshot-restore.md) |
+| `db-ui-f3-undo-ctrl-z` | DB UI F3: one-step undo via Ctrl+Z / Cmd+Z | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ui-f3-undo-ctrl-z.md) |
+| `db-ui-f4-pin-limit-meter` | DB UI F4: pin limit progress indicator (n/9) | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ui-f4-pin-limit-meter.md) |
+| `db-ui-f5-runtime-exec-highlight` | DB UI F5: runtime exec-chain visual emphasis | 2026-06-22 | [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ui-f5-runtime-exec-highlight.md) |
 | `db-recording-parity-mic-r5` | DB Recording Parity R5: mic-buffer-recorder capture → device-board | 2026-06-21 | [`DEVICE_BOARD_RECORDING_PARITY_MIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_PARITY_MIC_PROMPT.md) | #133 (Issue открыт) | [карточка](./archive/db-recording-parity-mic-r5.md) |
 | `db-recording-parity-mic-v08` | DB Recording Parity v0.8: mic-buffer-recorder quality, enum RecordingPolicy (эпик A0–A5) | 2026-06-21 | [`DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md) | #133 (Issue открыт) | [карточка](./archive/db-recording-parity-mic-v08.md) |
 | `db-rec-parity-a0-policy-contract` | DB Rec Parity A0: enum RecordingPolicy in @membrana/core | 2026-06-21 | [`DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md) | #133 (Issue открыт) | [карточка](./archive/db-rec-parity-a0-policy-contract.md) |
@@ -289,4 +299,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-21.*
+*Файл обновлён автоматически: 2026-06-22.*

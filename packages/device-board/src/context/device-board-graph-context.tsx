@@ -97,6 +97,14 @@ import {
   updateFunctionPinInList,
   type FunctionPinSide,
 } from '../graph/function-pin-ops.js';
+import { cloneHydratedBoardState } from '../graph/edit-undo-snapshot.js';
+import {
+  boardEditActionLabel,
+  logBoardEditStep,
+  planNodeRemovalUndo,
+  resolveBranchNavigationUndoClearReason,
+  type BoardEditStepAction,
+} from '../graph/edit-step-log.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import {
   ScenarioRuntime,
@@ -184,6 +192,18 @@ export interface DeviceBoardGraphContextValue {
   readonly onScenarioFunctionConnect: (connection: Connection) => void;
   readonly isValidConnection: (layer: BoardLayerTab, connection: Connection) => boolean;
   readonly setScenarioBranch: (branch: ScenarioBranchTab) => void;
+  /** D-BRANCH-SNAPSHOT: откат к последнему сохранённому document, если isDirty. */
+  readonly revertToSavedDocumentIfDirty: () => void;
+  /** D-UNDO-1: снимок перед последней mutating op; depth=1. */
+  readonly captureEditUndoSnapshot: (
+    action: BoardEditStepAction,
+    meta?: Record<string, unknown>,
+  ) => void;
+  readonly undoLastEdit: () => boolean;
+  readonly canUndoLastEdit: boolean;
+  readonly lastUndoableEditLabel: string | null;
+  /** Сброс pending undo без restore (навигация из тела функции). */
+  readonly forgetPendingEditUndo: (reason: string) => void;
   readonly refreshValidation: () => readonly PreRunValidationIssue[];
   /** Signal — полный документ; scenario — только активная ветка-обработчик. */
   readonly exportJson: (layer?: BoardLayerTab) => Promise<void>;
@@ -339,7 +359,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [deviceKind, setDeviceKind] = useState<DeviceKind>(defaultState.deviceKind);
   const [signalNodes, setSignalNodes] = useState<Node[]>(defaultState.signalNodes);
   const [signalEdges, setSignalEdges] = useState<Edge[]>(defaultState.signalEdges);
-  const [scenarioBranch, setScenarioBranch] = useState<ScenarioBranchTab>('initial');
+  const [scenarioBranch, setScenarioBranchState] = useState<ScenarioBranchTab>('initial');
   const [scenarioInitialNodes, setScenarioInitialNodes] = useState<Node[]>(defaultState.scenarioInitialNodes);
   const [scenarioInitialEdges, setScenarioInitialEdges] = useState<Edge[]>(defaultState.scenarioInitialEdges);
   const [scenarioOnConnectNodes, setScenarioOnConnectNodes] = useState<Node[]>(
@@ -378,22 +398,41 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
+  const [canUndoLastEdit, setCanUndoLastEdit] = useState(false);
+  const [lastUndoableEditLabel, setLastUndoableEditLabel] = useState<string | null>(null);
   const [showInfoLogs, setShowInfoLogs] = useState(true);
   const [scenarioTraceLineCount, setScenarioTraceLineCount] = useState(0);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
   const savedSnapshotRef = useRef<string | null>(null);
+  const savedDocumentRef = useRef<DeviceScenarioDocument | null>(null);
+  const undoSnapshotRef = useRef<HydratedBoardState | null>(null);
+  const lastUndoActionRef = useRef<BoardEditStepAction | null>(null);
+  const showInfoLogsRef = useRef(showInfoLogs);
+  const buildDocumentRef = useRef<(() => DeviceScenarioDocument) | null>(null);
+  const buildHydratedSnapshotRef = useRef<(() => HydratedBoardState) | null>(null);
+  const runValidationRef = useRef<() => readonly PreRunValidationIssue[]>(() => []);
   const skipDirtyRef = useRef(false);
   /** После hydrate/load: baseline снимается из buildDocument() на следующем commit state. */
   const pendingBaselineRef = useRef(false);
 
+  const clearEditUndoSnapshot = useCallback(() => {
+    undoSnapshotRef.current = null;
+    lastUndoActionRef.current = null;
+    setCanUndoLastEdit(false);
+    setLastUndoableEditLabel(null);
+  }, []);
+
   const markSavedSnapshot = useCallback((document: DeviceScenarioDocument) => {
     savedSnapshotRef.current = scenarioDocumentFingerprint(document);
+    savedDocumentRef.current = structuredClone(document);
+    clearEditUndoSnapshot();
     setIsDirty(false);
-  }, []);
+  }, [clearEditUndoSnapshot]);
 
   useEffect(() => {
     runtimeHost?.setInfoLoggingEnabled?.(showInfoLogs);
+    showInfoLogsRef.current = showInfoLogs;
   }, [runtimeHost, showInfoLogs]);
 
   useEffect(() => {
@@ -453,6 +492,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const applyHydratedState = useCallback((state: HydratedBoardState) => {
     skipDirtyRef.current = true;
+    clearEditUndoSnapshot();
     setDeviceKind(state.deviceKind);
     setSignalNodes(state.signalNodes);
     setSignalEdges(state.signalEdges);
@@ -477,7 +517,104 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     window.setTimeout(() => {
       skipDirtyRef.current = false;
     }, 0);
+  }, [clearEditUndoSnapshot]);
+
+  const revertToSavedDocumentIfDirty = useCallback(() => {
+    const build = buildDocumentRef.current;
+    const saved = savedDocumentRef.current;
+    if (build === null || saved === null || savedSnapshotRef.current === null) {
+      return;
+    }
+    if (skipDirtyRef.current || syncStatus === 'loading') {
+      return;
+    }
+    const dirty = scenarioDocumentFingerprint(build()) !== savedSnapshotRef.current;
+    if (!dirty) {
+      return;
+    }
+    clearEditUndoSnapshot();
+    skipDirtyRef.current = true;
+    applyHydratedState(hydrateBoardFromDocument(structuredClone(saved)));
+    markSavedSnapshot(saved);
+    runValidationRef.current();
+    window.setTimeout(() => {
+      skipDirtyRef.current = false;
+    }, 0);
+  }, [applyHydratedState, clearEditUndoSnapshot, markSavedSnapshot, syncStatus]);
+
+  const forgetPendingEditUndo = useCallback(
+    (reason: string) => {
+      if (undoSnapshotRef.current === null) {
+        return;
+      }
+      clearEditUndoSnapshot();
+      logBoardEditStep(showInfoLogsRef.current, 'clear', 'undo', { reason });
+    },
+    [clearEditUndoSnapshot],
+  );
+
+  const setScenarioBranch = useCallback(
+    (branch: ScenarioBranchTab) => {
+      revertToSavedDocumentIfDirty();
+      const clearReason = resolveBranchNavigationUndoClearReason(scenarioBranch, branch);
+      if (clearReason !== null) {
+        forgetPendingEditUndo(clearReason);
+      }
+      setScenarioBranchState(branch);
+    },
+    [forgetPendingEditUndo, revertToSavedDocumentIfDirty, scenarioBranch],
+  );
+
+  const recalcDirtyAfterSkip = useCallback(() => {
+    window.setTimeout(() => {
+      skipDirtyRef.current = false;
+      const build = buildDocumentRef.current;
+      const saved = savedSnapshotRef.current;
+      if (build === null || saved === null) {
+        return;
+      }
+      setIsDirty(scenarioDocumentFingerprint(build()) !== saved);
+    }, 0);
   }, []);
+
+  const captureEditUndoSnapshot = useCallback(
+    (action: BoardEditStepAction, meta?: Record<string, unknown>) => {
+      if (runtimeState.isRunning) {
+        return;
+      }
+      const build = buildHydratedSnapshotRef.current;
+      if (build === null) {
+        return;
+      }
+      undoSnapshotRef.current = cloneHydratedBoardState(build());
+      lastUndoActionRef.current = action;
+      setCanUndoLastEdit(true);
+      setLastUndoableEditLabel(boardEditActionLabel(action));
+      logBoardEditStep(showInfoLogsRef.current, 'capture', action, meta);
+    },
+    [runtimeState.isRunning],
+  );
+
+  const undoLastEdit = useCallback((): boolean => {
+    const snap = undoSnapshotRef.current;
+    const action = lastUndoActionRef.current;
+    if (snap === null) {
+      return false;
+    }
+    undoSnapshotRef.current = null;
+    lastUndoActionRef.current = null;
+    setCanUndoLastEdit(false);
+    setLastUndoableEditLabel(null);
+    skipDirtyRef.current = true;
+    applyHydratedState(cloneHydratedBoardState(snap));
+    runValidationRef.current();
+    logBoardEditStep(showInfoLogsRef.current, 'undo', 'undo', {
+      restoredAction: action,
+      restoredLabel: action !== null ? boardEditActionLabel(action) : null,
+    });
+    recalcDirtyAfterSkip();
+    return true;
+  }, [applyHydratedState, recalcDirtyAfterSkip]);
 
   useEffect(() => {
     if (persistAdapter === undefined) {
@@ -607,6 +744,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         return;
       }
       setScenarioFunctionDrafts(committed);
+      if (functionId !== activeFunctionId) {
+        forgetPendingEditUndo('switch-function');
+      }
       if (functionId !== activeFunctionId || scenarioBranch !== 'function') {
         loadFunctionDraftToCanvas(target);
       }
@@ -615,6 +755,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [
       activeFunctionId,
       commitActiveFunctionDraft,
+      forgetPendingEditUndo,
       loadFunctionDraftToCanvas,
       scenarioBranch,
       scenarioFunctionDrafts,
@@ -623,6 +764,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const createUserFunction = useCallback(() => {
     const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
+    forgetPendingEditUndo('create-function');
     let seq = committed.length + 1;
     while (committed.some((draft) => draft.id === `fn-${seq}`)) {
       seq += 1;
@@ -632,7 +774,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioFunctionDrafts([...committed, draft]);
     loadFunctionDraftToCanvas(draft);
     setScenarioBranch('function');
-  }, [commitActiveFunctionDraft, loadFunctionDraftToCanvas, scenarioFunctionDrafts]);
+  }, [commitActiveFunctionDraft, forgetPendingEditUndo, loadFunctionDraftToCanvas, scenarioFunctionDrafts]);
 
   const removeUserFunction = useCallback(
     (functionId: string): string | null => {
@@ -645,6 +787,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (!removed) {
         return 'Функция не найдена';
       }
+      captureEditUndoSnapshot('remove-function', { functionId });
 
       const strip = (nodes: Node[], edges: Edge[]) =>
         stripSubgraphBlocksForFunction(nodes, edges, functionId);
@@ -690,6 +833,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     },
     [
       activeFunctionId,
+      captureEditUndoSnapshot,
       commitActiveFunctionDraft,
       loadFunctionDraftToCanvas,
       scenarioAlarmEdges,
@@ -924,6 +1068,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if ('error' in proposed) {
         return proposed.error;
       }
+      captureEditUndoSnapshot('add-function-pin', { side, kind });
       const nextMeta: ScenarioFunctionCanvasMeta = {
         ...scenarioFunctionMeta,
         ...(side === 'input'
@@ -939,7 +1084,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       });
       return null;
     },
-    [applyActiveFunctionPinState, scenarioFunctionEdges, scenarioFunctionMeta],
+    [applyActiveFunctionPinState, captureEditUndoSnapshot, scenarioFunctionEdges, scenarioFunctionMeta],
   );
 
   const removeActiveFunctionPin = useCallback(
@@ -949,6 +1094,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if ('error' in next) {
         return next.error;
       }
+      captureEditUndoSnapshot('remove-function-pin', { side, pinId });
       const nextMeta: ScenarioFunctionCanvasMeta = {
         ...scenarioFunctionMeta,
         ...(side === 'input' ? { inputPins: next } : { outputPins: next }),
@@ -962,7 +1108,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       });
       return null;
     },
-    [applyActiveFunctionPinState, scenarioFunctionEdges, scenarioFunctionMeta],
+    [applyActiveFunctionPinState, captureEditUndoSnapshot, scenarioFunctionEdges, scenarioFunctionMeta],
   );
 
   const updateActiveFunctionPin = useCallback(
@@ -1093,6 +1239,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (!result.ok) {
         return result.message;
       }
+      captureEditUndoSnapshot('collapse-to-function', { branch, selectedCount: selectedNodeIds.length });
       const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
       setScenarioFunctionDrafts([...committed, result.functionDraft]);
       applyScenarioBranchGraph(branch, result.branchNodes, result.branchEdges);
@@ -1102,6 +1249,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     },
     [
       applyScenarioBranchGraph,
+      captureEditUndoSnapshot,
       commitActiveFunctionDraft,
       loadFunctionDraftToCanvas,
       readScenarioBranchGraph,
@@ -1122,6 +1270,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (!result.ok) {
         return { error: result.message, groupNode: null };
       }
+      captureEditUndoSnapshot('collapse-to-group', { branch, selectedCount: selectedNodeIds.length });
       const groupId = result.group.id;
       const branchNodesSelected = result.branchNodes.map((node) => ({
         ...node,
@@ -1137,6 +1286,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     },
     [
       applyScenarioBranchGraph,
+      captureEditUndoSnapshot,
       readScenarioBranchGraph,
       signalEdges,
       signalNodes,
@@ -1244,65 +1394,129 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     return runValidation();
   }, [runValidation]);
 
-  const onSignalNodesChange = useCallback((changes: NodeChange[]) => {
-    setSignalNodes((nodes) => applyNodeChanges(changes, nodes));
-  }, []);
+  useEffect(() => {
+    buildDocumentRef.current = buildDocument;
+    buildHydratedSnapshotRef.current = buildHydratedSnapshot;
+    runValidationRef.current = runValidation;
+  }, [buildDocument, buildHydratedSnapshot, runValidation]);
+
+  const onSignalNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, signalNodes, false);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { layer: 'signal', nodeIds: plan.nodeIds });
+      }
+      setSignalNodes((nodes) => applyNodeChanges(changes, nodes));
+    },
+    [captureEditUndoSnapshot, signalNodes],
+  );
 
   const onSignalEdgesChange = useCallback((changes: EdgeChange[]) => {
     setSignalEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
-  const onScenarioInitialNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioInitialNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
-  }, []);
+  const onScenarioInitialNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, scenarioInitialNodes, true);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { branch: 'initial', nodeIds: plan.nodeIds });
+      }
+      setScenarioInitialNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+    },
+    [captureEditUndoSnapshot, scenarioInitialNodes],
+  );
 
   const onScenarioInitialEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioInitialEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
-  const onScenarioOnConnectNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioOnConnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
-  }, []);
+  const onScenarioOnConnectNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, scenarioOnConnectNodes, true);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { branch: 'onConnect', nodeIds: plan.nodeIds });
+      }
+      setScenarioOnConnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+    },
+    [captureEditUndoSnapshot, scenarioOnConnectNodes],
+  );
 
   const onScenarioOnConnectEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioOnConnectEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
-  const onScenarioMainNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioMainNodes((nodes) => applyNodeChanges(changes, nodes));
-  }, []);
+  const onScenarioMainNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, scenarioMainNodes, false);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { branch: 'main', nodeIds: plan.nodeIds });
+      }
+      setScenarioMainNodes((nodes) => applyNodeChanges(changes, nodes));
+    },
+    [captureEditUndoSnapshot, scenarioMainNodes],
+  );
 
   const onScenarioMainEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioMainEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
-  const onScenarioAlarmNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioAlarmNodes((nodes) => applyNodeChanges(changes, nodes));
-  }, []);
+  const onScenarioAlarmNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, scenarioAlarmNodes, false);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { branch: 'alarm', nodeIds: plan.nodeIds });
+      }
+      setScenarioAlarmNodes((nodes) => applyNodeChanges(changes, nodes));
+    },
+    [captureEditUndoSnapshot, scenarioAlarmNodes],
+  );
 
   const onScenarioAlarmEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioAlarmEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
-  const onScenarioOnStopNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioOnStopNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
-  }, []);
+  const onScenarioOnStopNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, scenarioOnStopNodes, true);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { branch: 'onStop', nodeIds: plan.nodeIds });
+      }
+      setScenarioOnStopNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+    },
+    [captureEditUndoSnapshot, scenarioOnStopNodes],
+  );
 
   const onScenarioOnStopEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioOnStopEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
-  const onScenarioOnDisconnectNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioOnDisconnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
-  }, []);
+  const onScenarioOnDisconnectNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, scenarioOnDisconnectNodes, true);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { branch: 'onDisconnect', nodeIds: plan.nodeIds });
+      }
+      setScenarioOnDisconnectNodes((nodes) =>
+        applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes),
+      );
+    },
+    [captureEditUndoSnapshot, scenarioOnDisconnectNodes],
+  );
 
   const onScenarioOnDisconnectEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioOnDisconnectEdges((edges) => applyEdgeChanges(changes, edges));
   }, []);
 
-  const onScenarioFunctionNodesChange = useCallback((changes: NodeChange[]) => {
-    setScenarioFunctionNodes((nodes) => applyNodeChanges(changes, nodes));
-  }, []);
+  const onScenarioFunctionNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      const plan = planNodeRemovalUndo(changes, scenarioFunctionNodes, false);
+      if (plan.shouldCapture) {
+        captureEditUndoSnapshot('remove-nodes', { branch: 'function', nodeIds: plan.nodeIds });
+      }
+      setScenarioFunctionNodes((nodes) => applyNodeChanges(changes, nodes));
+    },
+    [captureEditUndoSnapshot, scenarioFunctionNodes],
+  );
 
   const onScenarioFunctionEdgesChange = useCallback((changes: EdgeChange[]) => {
     setScenarioFunctionEdges((edges) => applyEdgeChanges(changes, edges));
@@ -1710,6 +1924,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const clearCurrentBranch = useCallback(
     (layer: BoardLayerTab) => {
+      captureEditUndoSnapshot('clear-branch', { layer, branch: scenarioBranch });
       if (layer === 'signal') {
         setSignalNodes([]);
         setSignalEdges([]);
@@ -1767,6 +1982,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       }
     },
     [
+      captureEditUndoSnapshot,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
       scenarioBranch,
@@ -2324,6 +2540,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       onScenarioFunctionConnect,
       isValidConnection: isValidConnectionForLayer,
       setScenarioBranch,
+      revertToSavedDocumentIfDirty,
+      captureEditUndoSnapshot,
+      undoLastEdit,
+      canUndoLastEdit,
+      lastUndoableEditLabel,
+      forgetPendingEditUndo,
       refreshValidation,
       exportJson,
       importJsonFile,
@@ -2457,6 +2679,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionEdges,
       scenarioFunctionNodes,
       saveScenario,
+      setScenarioBranch,
+      revertToSavedDocumentIfDirty,
+      captureEditUndoSnapshot,
+      undoLastEdit,
+      canUndoLastEdit,
+      lastUndoableEditLabel,
+      forgetPendingEditUndo,
       setMode,
       copyScenarioTrace,
       downloadScenarioTrace,
