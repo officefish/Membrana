@@ -14,7 +14,9 @@
         "device-board/mvp-overview",
         "device-board/architecture",
         "device-board/usercases",
-        "device-board/editor/overview"
+        "device-board/editor/overview",
+        "device-board/editor/edit-and-navigation",
+        "device-board/editor/user-functions"
       ]
     },
     {

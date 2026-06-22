@@ -1,0 +1,64 @@
+---
+title: User functions
+description: Список функций, inline editor, pins, collapse, лимит 9/9.
+---
+
+# User functions
+
+Пользовательские функции — subgraph с граничными pins; на родительской ветке отображаются как
+`subgraph`-блок. Канон: `DEVICE_BOARD_CONCEPT.md` §18.
+
+## Где найти в UI
+
+1. Вкладка **Scenario** → sidebar **Пользовательские функции**.
+2. Кнопка **`+`** — новая пустая функция (exec-in / exec-out по умолчанию).
+3. Клик по функции в списке открывает её граф на вкладке **function**.
+
+### Прямое редактирование (без modal)
+
+Если вы **уже** на вкладке function, клик по другой функции в списке сразу переключает canvas
+и показывает **inline-редактор** (имя, описание, pins) в сайдбаре — без промежуточного modal.
+
+При входе в function **с handler-ветки** по-прежнему возможен modal выбора.
+
+## Редактор функции
+
+| Поле | Назначение |
+| ---- | ---------- |
+| **Имя** | Отображается в breadcrumbs и на subgraph-блоке |
+| **Описание** | Текстовая заметка (не влияет на runtime) |
+| **Input / Output pins** | Exec и data порты границы функции |
+
+### Лимит pins (D-PINS-9)
+
+Рядом с Input и Output — индикатор **`n/9`**. На каждой стороне не более **9** pins
+(exec и data в общем счёте). При `9/9` добавление нового pin недоступно.
+
+## Создание функции из выделения
+
+1. На handler-ветке (main, alarm, …) выделите **минимум 2** пользовательских узла (marquee).
+2. В modal выберите **«Объединить в функцию»**.
+3. Выделенные узлы переносятся в новый subgraph; на ветке остаётся subgraph-блок.
+4. Редактор переключается на вкладку **function**.
+
+Системные Event-узлы и locked-ноды в свёртку **не** попадают.
+
+## Viewport
+
+На вкладке function доступны **fit to graph** и **minimap** — навигация по крупным subgraph.
+
+## Undo и навигация между функциями
+
+- Переименование, pins, collapse — попадают в **undo depth-1** (см. [Edit & navigation](/device-board/editor/edit-and-navigation)).
+- Переключение **fn-1 → fn-2** **не** вызывает F7-revert: черновики функций хранятся в памяти до Save.
+- При уходе с вкладки function на handler pending undo сбрасывается.
+
+## Runtime
+
+Внутри функции те же правила exec/data, что на handler-ветке. Глубина вложенности subgraph —
+**≤ 1** (функция не может содержать другой subgraph-блок).
+
+## См. также
+
+- [Edit & navigation](/device-board/editor/edit-and-navigation)
+- [Architecture](/device-board/architecture) — ветки scenario
