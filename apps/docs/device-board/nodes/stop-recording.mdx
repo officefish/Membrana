@@ -1,0 +1,18 @@
+---
+title: StopRecording
+description: Завершение recording window → RecordingSliceRef.
+---
+
+# StopRecording
+
+## Pins
+
+Exec + `recorder` in → `slice` (RecordingSliceRef) out.
+
+## Runtime
+
+Закрывает окно записи; slice передаётся в `make-track` (v0.7 path).
+
+## Code
+
+`stop-recording-node.ts`

@@ -51,6 +51,12 @@ const PinTable: React.FC<{
           + data
         </button>
       </div>
+      <progress
+        className={`progress h-1.5 w-full ${atLimit ? 'progress-warning' : 'progress-primary'}`}
+        value={pins.length}
+        max={MAX_SCENARIO_FUNCTION_PINS_PER_SIDE}
+        aria-label={`${title}: ${pins.length} из ${MAX_SCENARIO_FUNCTION_PINS_PER_SIDE}`}
+      />
       <ul className="flex flex-col gap-1.5">
         {pins.map((pin) => (
           <PinRow

@@ -14,6 +14,16 @@
 | Корп. glossary | Atlan tenant | Atlan MCP |
 | Интерактивные схемы | Cursor Canvas | Docs Canvas Skill |
 
+Пути и имена canvas для device-board: [`docs/canvas/DEVICE_BOARD_CANVAS_INDEX.md`](./canvas/DEVICE_BOARD_CANVAS_INDEX.md). Mintlify hub: `apps/docs/device-board/canvas-overview.mdx`.
+
+## Cursor Docs Canvas (Phase 3)
+
+1. Источник — Mintlify MDX + `DEVICE_BOARD_CONCEPT` / `SCENARIO_RUNTIME`.
+2. Создать или обновить `.canvas.tsx` в `~/.cursor/projects/<workspace>/canvases/` (см. canvas SKILL).
+3. Зарегистрировать путь в `docs/canvas/DEVICE_BOARD_CANVAS_INDEX.md`.
+4. Ссылка из Mintlify `canvas-overview.mdx` при публикации нового canvas.
+5. PRD alignment — `docs/canvas/PRD_ALIGNMENT_DB_DOC_V04.md` или ChatPRD `check-prd-alignment` MCP.
+
 **Atlan** не заменяет Mintlify: Atlan — канон **имён и определений** в корпоративном каталоге; Mintlify — **поведение runtime и узлов**.
 
 ## Локальный preview
@@ -68,3 +78,56 @@ yarn workspace @membrana/docs lint   # broken-links
 ```
 
 Добавить в turbo pipeline после стабилизации контента.
+
+## RAG index (dual-circuit)
+
+После существенных правок документации — проиндексировать корпус, чтобы `yarn standup`, `yarn code-review`, `yarn consilium` и `yarn rag:query` подтягивали актуальный контекст.
+
+**Сервис:** `@membrana/rag-service` (`packages/services/rag`) — operative circuit без `OPENAI_API_KEY`; archive circuit (LanceDB + embeddings) требует ключ и полный индекс.
+
+**Когда запускать:** после merge doc PR или в конце вечернего ритуала (`yarn ritual:evening` вызывает incremental index, если скрипты есть в `package.json`).
+
+### Целевые пути (device-board docs sprint)
+
+| Glob | Содержимое |
+|------|------------|
+| `docs/**/*.md` | catalog, SCENARIO_RUNTIME, workflow, prompts |
+| `apps/docs/**/*.mdx` | Mintlify (editor, nodes, overview) |
+| `packages/device-board/*.md` | CONCEPT, README |
+| `docs/catalog/client/**/*.md` | agent truth для client modules |
+
+Не коммитить артефакты индекса: `.membrana/rag/` (LanceDB).
+
+### Ритуал «docs change → index → smoke query»
+
+1. **Проверки перед индексом** (обязательны независимо от RAG):
+
+   ```bash
+   yarn docs:lint
+   yarn catalog:verify-client
+   ```
+
+2. **Incremental index** (после появления `yarn rag:index` в корневом `package.json`):
+
+   ```bash
+   yarn rag:index
+   ```
+
+   Полный rebuild archive circuit (редко, после смены embedding model или первого развёртывания):
+
+   ```bash
+   yarn rag:index --full
+   ```
+
+3. **Smoke query** — operative + archive должны находить свежие термины:
+
+   ```bash
+   yarn rag:query "device-board undo branch switch"
+   yarn rag:query "ScenarioRevertPolicy keep-dirty"
+   ```
+
+   Ожидание: в top hits — `DEVICE_BOARD_CONCEPT.md`, `apps/docs/device-board/editor/edit-and-navigation.mdx`, `docs/catalog/client/prompts/modules/device-board.md`.
+
+4. **Если `yarn rag:index` недоступен на ветке** — зафиксировать defer в archive card фазы (см. day-sprint D4); после merge RAG в `main` выполнить шаги 2–3 один раз на обновлённых путях.
+
+**Operator guide** (когда в репозитории): [`docs/RAG.md`](./RAG.md).

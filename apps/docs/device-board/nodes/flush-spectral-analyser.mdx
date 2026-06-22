@@ -1,0 +1,18 @@
+---
+title: FlushSpectralAnalyser
+description: Сброс буфера spectral analyser.
+---
+
+# FlushSpectralAnalyser
+
+## Pins
+
+Exec + `analyser` (SpectralAnalyserRef) in → exec out.
+
+## Runtime
+
+`host.flushSpectralAnalyser(analyserRef)` — очистка накопленных FFT frames.
+
+## Code
+
+`flush-spectral-analyser-node.ts`

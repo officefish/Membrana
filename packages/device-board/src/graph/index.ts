@@ -362,6 +362,8 @@ export {
   buildLayoutGhostNodes,
   isExecChainLayoutEnabled,
   isLoopBranchExecLayoutEnabled,
+  isLoopBranchExecLayoutCanonical,
+  isExecChainLayoutAtCanonicalPositions,
   isExecFlowBoardEdge,
   resolveLoopBranchExecEntryId,
 } from './layout-exec-chain.js';

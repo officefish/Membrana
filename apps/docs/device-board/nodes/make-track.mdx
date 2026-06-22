@@ -1,0 +1,21 @@
+---
+title: MakeTrack
+description: Terminal — создание TrackRef из recorder + samples или slice.
+---
+
+# MakeTrack
+
+## Pins
+
+| in | `recorder` | RecorderRef |
+| in | `samples` | AudioSampleRef[] (batch) |
+| in | `slice` | RecordingSliceRef (v0.7) |
+| out | `track` | TrackRef |
+
+## Runtime
+
+На exec: host upload/encode track → `TrackRef` в runtime store. Terminal node (DBC4).
+
+## Code
+
+`make-track-node.ts` · `block-executor.ts`

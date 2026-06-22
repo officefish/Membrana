@@ -1,0 +1,27 @@
+---
+title: StopRuntime
+description: Остановка scenario runtime по DeviceRef.
+---
+
+# StopRuntime
+
+## Pins
+
+| Direction | Handle | Type |
+|-----------|--------|------|
+| in exec | `exec-in` | exec |
+| in data | `device` | DeviceRef |
+
+Нет выходов.
+
+## Runtime
+
+На exec: `resolveInput(device)` → при `valid` вызывает `host.stopScenarioRuntime(deviceRef)`.
+
+## Preconditions
+
+- `DeviceRef.valid === true`
+
+## Code
+
+`packages/device-board/src/graph/stop-runtime-node.ts` · `block-executor.ts`

@@ -1,0 +1,18 @@
+---
+title: MakeFftTrendsAnalysis
+description: Terminal — FftTrendAnalysisRef из FFT batches.
+---
+
+# MakeFftTrendsAnalysis
+
+## Pins
+
+Exec + analyser/batches inputs → `analysis` (FftTrendAnalysisRef) out.
+
+## Runtime
+
+Запускает trends detector pipeline на накопленных frames. Terminal (legacy path — prefer journal reporter v0.6).
+
+## Code
+
+`make-fft-trends-analysis-node.ts`

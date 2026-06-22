@@ -8,6 +8,8 @@ import {
   buildLayoutGhostNodes,
   isExecChainLayoutEnabled,
   isLoopBranchExecLayoutEnabled,
+  isLoopBranchExecLayoutCanonical,
+  isExecChainLayoutAtCanonicalPositions,
 } from './layout-exec-chain.js';
 import { createDefaultMvpMicrophoneHydratedState } from './default-usercase-mvp-microphone.js';
 
@@ -134,6 +136,57 @@ describe('layout-exec-chain', () => {
       state.scenarioMainEdges,
       'main',
     )).toBe(true);
+  });
+
+  it('isExecChainLayoutAtCanonicalPositions is true after applying layout positions', () => {
+    const nodes = [
+      scenarioNode('a', 100, 200, 'print'),
+      scenarioNode('b', 150, 250, 'print'),
+      scenarioNode('c', 120, 300, 'print'),
+    ];
+    const edges = [execEdge('a', 'b'), execEdge('b', 'c')];
+    const scope = new Set(['a', 'b', 'c']);
+    const positions = computeExecChainLayoutPositions(nodes, edges, scope);
+    const laidOut = nodes.map((node) => {
+      const next = positions.get(node.id);
+      return next === undefined ? node : { ...node, position: { x: next.x, y: next.y } };
+    });
+    expect(isExecChainLayoutAtCanonicalPositions(laidOut, edges, 'a')).toBe(true);
+  });
+
+  it('isExecChainLayoutAtCanonicalPositions is false when a node was moved', () => {
+    const nodes = [
+      scenarioNode('a', 100, 200, 'print'),
+      scenarioNode('b', 150, 250, 'print'),
+      scenarioNode('c', 120, 300, 'print'),
+    ];
+    const edges = [execEdge('a', 'b'), execEdge('b', 'c')];
+    const scope = new Set(['a', 'b', 'c']);
+    const positions = computeExecChainLayoutPositions(nodes, edges, scope);
+    const laidOut = nodes.map((node) => {
+      const next = positions.get(node.id);
+      return next === undefined ? node : { ...node, position: { x: next.x, y: next.y } };
+    });
+    const disturbed = laidOut.map((node) =>
+      node.id === 'b' ? { ...node, position: { x: node.position.x + 16, y: node.position.y } } : node,
+    );
+    expect(isExecChainLayoutAtCanonicalPositions(disturbed, edges, 'a')).toBe(false);
+  });
+
+  it('isLoopBranchExecLayoutCanonical reflects MVP main after layout apply', () => {
+    const state = createDefaultMvpMicrophoneHydratedState();
+    const positions = computeExecChainLayoutFromEntry(
+      state.scenarioMainNodes,
+      state.scenarioMainEdges,
+      'main-on-tick',
+    );
+    const laidOut = state.scenarioMainNodes.map((node) => {
+      const next = positions.get(node.id);
+      return next === undefined ? node : { ...node, position: { x: next.x, y: next.y } };
+    });
+    expect(
+      isLoopBranchExecLayoutCanonical(laidOut, state.scenarioMainEdges, 'main'),
+    ).toBe(true);
   });
 
   it('buildLayoutGhostNodes skips unchanged positions', () => {

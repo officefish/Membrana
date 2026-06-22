@@ -630,7 +630,8 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 - **Conflict resolution** при двусторонней sync (S1) — v1 минимальный last-write
   или явные правила merge.
 - **Expand function inline** на parent canvas — v1.1 (не U8).
-- **Undo/redo**, **snap guides / dagre autolayout** — эпики `db-node-align-advanced` и отдельный undo stack.
+- **Undo depth-1** — **закрыто** v0.9 (§21): Ctrl+Z / кнопка ↶; **не** покрывает free drag; полный redo stack — backlog.
+- **Snap guides / dagre exec autolayout** — **закрыто** U8a (§19); отдельный «undo stack» для layout — не нужен.
 - **Параллельные сценарии** на одном устройстве — не планируется в v1.
 
 ---
@@ -652,13 +653,20 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 - [`DEVICE_BOARD_HACKATHON_BRIEF.md`](../../docs/prompts/DEVICE_BOARD_HACKATHON_BRIEF.md) — бриф хакатона 1.
 - [`HACKATHON_REGULATION.md`](../../docs/HACKATHON_REGULATION.md) — ритуалы хакатона.
 - [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) — UserCases catalog (U9, §20).
+- [`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md) — edit model v2 (archived).
+- [`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md) — docs + RAG sync sprint (active).
 - [`apps/docs/device-board/usercases.mdx`](../../apps/docs/device-board/usercases.mdx) — операторская страница UserCases.
 
 ---
 
 ## 14. Статус и порядок изменения
 
-- **Статус:** v0.8 — концепт (+ UserCases catalog U9, §20).
+- **Статус:** v0.9 — концепт (+ edit/navigation model §21, post-#139/#140).
+- **Changelog v0.9 (2026-06-22):** function editor modal sprint (#139); UX follow-up F1–F7 + edit model v2 E1–E3
+  (PR #140): breadcrumbs, direct function edit, undo depth-1, F7 branch snapshot revert, pin meter `n/9`,
+  runtime exec highlight, deletable GetDevice, `navigateScenarioBranch` + `ScenarioRevertPolicy`,
+  `edit-undo-controller`. Промпты: [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md),
+  [`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md).
 - **Changelog v0.8 (2026-06-21):** эпик U9 (`db-usercases-catalog-u9`, #136): manifest/build/verify,
   layout canon, bundled catalog, settings gate, modal apply-all; bundled MVP `usercase-mvp-microphone`.
 - **Changelog v0.7 (2026-06-21):** эпик U8 (`db-canvas-groups-functions`, PR #134):
@@ -1100,6 +1108,11 @@ interface ScenarioFunctionPin {
 `ScenarioFunctionSubgraph` → `subgraph`-блок на родителе → open function tab.
 Pure: `collapse-to-function.ts`, `function-pin-ops.ts`.
 
+**Function editor UX (post-#139):** на ветке `function` — inline-редактор (имя, описание, pins)
+в сайдбаре; **клик по функции в списке** сразу открывает editor **без modal**, если уже на
+`function` branch (F2). Modal picker остаётся при входе с handler-ветки. Viewport fit + minimap
+на function canvas. Pin meter **`n/9`** per Input/Output (F4).
+
 **Runtime bridge:** `function-input` / `function-output` — pass-through в `exec-subgraph`
 (entry exec-in → first inner node; `function-output` → return).
 
@@ -1257,3 +1270,77 @@ Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/user
 
 Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) ·
 консилиум [`device-board-usercases-consilium-2026-06-21.md`](../../docs/discussions/device-board-usercases-consilium-2026-06-21.md).
+
+---
+
+## 21. Edit & navigation model v0.9 (post-#139/#140)
+
+> PR [#139](https://github.com/officefish/Membrana/pull/139) (function modal) ·
+> PR [#140](https://github.com/officefish/Membrana/pull/140) (F1–F7 + edit model v2).
+> Промпты: [`DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_FUNCTION_MODAL_SPRINT_PROMPT.md),
+> [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md),
+> [`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md).
+
+Модель редактирования сценария **без полного undo/redo стека**: один шаг отката + «мягкий сброс»
+при навигации между обработчиками.
+
+### 21.1 Dirty baseline и Save (F7 — D-BRANCH-SNAPSHOT)
+
+- `isDirty` — fingerprint текущего `DeviceScenarioDocument` ≠ последний **сохранённый** снимок.
+- `savedDocumentRef` хранит полный document baseline (не только hash).
+- **Manual save** — persist по кнопке; автосейва при edit нет.
+- При переключении **sidebar handler tab** (main ↔ alarm ↔ …) или **Signal ↔ Scenario** с
+  `revert-if-dirty` policy: если dirty → `hydrateBoardFromDocument(saved)`; `isDirty=false`.
+- Навигация **внутри function layer** (fn-1 → fn-2, collapse → function, create function) —
+  **`keep-dirty`**: черновики функций коммитятся в `scenarioFunctionDrafts` в памяти, F7-revert **не** затирает их.
+
+### 21.2 Undo depth-1 (F3 — D-UNDO-1)
+
+- Перед mutating op сохраняется **один** hydrated snapshot (`edit-undo-controller.ts`).
+- **Покрывает:** delete nodes, delete function, add/remove pin, collapse to function/group,
+  align/exec layout batch, clear branch.
+- **Не покрывает:** свободный drag позиции узла (v1 by design).
+- **UI:** кнопка ↶ (левый нижний угол канваса); **Ctrl+Z** / **Cmd+Z** (не в input/textarea).
+- **INFO-логи** (галочка в shell): `[INFO] device-board edit: capture|undo|clear` (`edit-step-log.ts`).
+- **Сброс pending undo** (без restore) при:
+  - смене handler tab (`switch-handler-branch`);
+  - смене активной функции (`switch-function`);
+  - выходе из function body / входе с handler (`leave-function-body` / `enter-function-body`);
+  - уходе со слоя Scenario (`leave-scenario-layer` в shell).
+
+### 21.3 Branch navigation API (E1 — RevertPolicy)
+
+Единая точка: `navigateScenarioBranch(target, revertPolicy)` в graph context.
+Планирование: `branch-navigation.ts` → `planBranchNavigation(from, to, policy)`.
+
+| `ScenarioRevertPolicy` | Когда |
+| ---------------------- | ----- |
+| `revert-if-dirty` | Sidebar handler tabs; первый вход handler → function; Signal layer |
+| `keep-dirty` | fn-1 → fn-2; collapse → function; create function на function layer |
+
+`setScenarioBranch(branch)` — обёртка с `revert-if-dirty`.
+
+### 21.4 Canvas chrome и runtime overlay
+
+| ID | Поведение |
+| -- | --------- |
+| **F1** | Breadcrumbs в header канваса: `Сценарий › {branch}` / `Функция › {name}` |
+| **F5** | При Run — accent на активной exec-цепочке (`runtime-exec-highlight.ts`) |
+| **F6** | **GetDevice** (`device-global`) — удаляемый узел; **Event**-узлы locked (`deletable:false`) |
+
+### 21.5 Слой → путь
+
+| Слой | Путь |
+| ---- | ---- |
+| Navigation | `graph/branch-navigation.ts` |
+| Undo | `graph/edit-undo-controller.ts`, `graph/edit-undo-snapshot.ts`, `graph/edit-step-log.ts` |
+| Context | `context/device-board-graph-context.tsx` |
+| Shell | `components/device-board-shell.tsx`, `board-edit-undo-control.tsx`, `board-canvas-breadcrumb.tsx` |
+| Tests | `branch-navigation.test.ts`, `device-board-nav.integration.test.tsx` |
+
+### 21.6 Backlog (out of scope v0.9)
+
+- Scoped undo (только текущая ветка / function) — D2 tech-debt.
+- Undo free node drag — D3.
+- Confirm modal на dirty branch switch — D9.
+- GetServer `server-global` deletable — контракт как F6; возможен `vesnin`.

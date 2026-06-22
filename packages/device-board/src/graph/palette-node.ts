@@ -345,7 +345,6 @@ export function createPaletteBoardNode(
     id,
     type: 'board',
     position: options.position ?? { x: 0, y: 0 },
-    deletable: nodeKind === DEVICE_GLOBAL_NODE_KIND ? false : undefined,
     data,
   };
 }

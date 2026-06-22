@@ -1,0 +1,42 @@
+---
+title: GetMicrophone
+description: Получение MicrophoneRef через audio-engine enumerate.
+---
+
+# GetMicrophone
+
+## Pins
+
+| Direction | Handle | Type |
+|-----------|--------|------|
+| in exec | `exec-in` | exec |
+| in data | `device` | DeviceRef |
+| out exec | `exec-out` | exec |
+| out data | `microphone` | MicrophoneRef |
+
+## Runtime
+
+На exec: резолвит `device`, вызывает `host.getMicrophone(deviceRef)` — enumerate через `@membrana/audio-engine-service` (без второго `AudioContext`).
+
+## Preconditions
+
+- Валидный `DeviceRef`
+- Разрешение микрофона в host (browser)
+
+## Anti-patterns
+
+<Warning>
+  Прямой `getUserMedia` / `AudioContext` в client module — запрещён. Только audio-engine.
+</Warning>
+
+## Minimal example
+
+```text
+device-global.device → get-microphone.device
+onStart.exec → get-microphone.exec-in
+get-microphone.microphone → start-streaming.microphone
+```
+
+## Code
+
+`block-executor.ts` → `get-microphone`

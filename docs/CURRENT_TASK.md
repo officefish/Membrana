@@ -1,17 +1,22 @@
-# CURRENT_TASK — Membrane Platform
+# CURRENT_TASK — buffer
 
-> **Эпик:** [#67](https://github.com/officefish/Membrana/issues/67)
+> **Phase 3:** closed `device-board-doc-v04-phase3-canvas-2026-06-22`  
+> **Closure:** [`day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md`](./day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md)  
+> **PR:** [#140](https://github.com/officefish/Membrana/pull/140) — Teamlead LGTM
 
-## Статус эпика MP0–MP6
+## Epic `db-doc-v04-mvp`
 
-Все фазы платформы **archived**; prod regression OK 2026-06-14 (`yarn cabinet:mp6:prod`).
+Phases 0–3 complete. Pending: Teamlead LGTM, optional ChatPRD `update-prd` sync, RAG index after merge `@membrana/rag-service`.
 
-## Следующее (вне MP6)
+## Open canvases (Cursor IDE)
 
-1. **Консилиум** — калибровка журнала и единый рендеринг client ↔ cabinet (отдельная дорожная карта).
-2. Закрытие эпика `membrane-platform-v1` в реестре + отчёт в Issue #67.
-3. Merge `feat/membrane-platform-mp4` → `vesnin` (по LGTM).
+- [architecture](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-architecture.canvas.tsx)
+- [streaming](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-streaming-pipeline.canvas.tsx)
+- [branches](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-branch-variable-map.canvas.tsx)
 
-## Отложено
+## Verify
 
-Облачный журнал: parity карточек, live-badge, фильтры — post-v1, после консилиума.
+```bash
+yarn docs:lint
+yarn docs:dev
+```

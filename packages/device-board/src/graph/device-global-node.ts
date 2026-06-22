@@ -54,7 +54,6 @@ export function createDeviceGlobalBoardNode(
     id,
     type: 'board',
     position: options.position ?? { x: 0, y: 0 },
-    deletable: false,
     data,
   };
 }
@@ -73,7 +72,6 @@ export function syncDeviceGlobalNodePins(nodes: readonly Node[]): Node[] {
     }
     return {
       ...node,
-      deletable: false,
       data: {
         ...(node.data as BoardFlowNodeData),
         system: true,

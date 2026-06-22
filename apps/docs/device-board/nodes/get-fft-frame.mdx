@@ -1,0 +1,34 @@
+---
+title: GetFFTFrame
+description: FFT-кадр из AudioSampleRef.
+---
+
+# GetFFTFrame
+
+## Pins
+
+| Direction | Handle | Type |
+|-----------|--------|------|
+| in exec | `exec-in` | exec |
+| in data | `sample` | AudioSampleRef |
+| out exec | `exec-out` | exec |
+| out data | `frame` | FftFrameRef |
+
+## Runtime
+
+На exec: `resolveInput(sample)` → `host.captureFftFrame(nodeId, sampleRef)` через spectral analyser bridge.
+
+## Preconditions
+
+- `AudioSampleRef.valid` и совпадение с активным stream/sample window
+
+## Typical chain
+
+```text
+get-sample.sample → get-fft-frame.sample
+get-fft-frame.frame → collect-fft-frames (или trends pipeline)
+```
+
+## Code
+
+`block-executor.ts` → `get-fft-frame`
