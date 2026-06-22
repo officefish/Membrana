@@ -5,7 +5,7 @@
 | **Epic id** | `device-board-edit-model-v2-2026-06-22` |
 | **Kind** | L epic (не day-sprint) |
 | **Opened** | 2026-06-22 |
-| **Status** | **open** |
+| **Status** | **closed** |
 | **Predecessor** | PR #140 · `device-board-ui-followup-sprint-2026-06-22` |
 
 ## Goal

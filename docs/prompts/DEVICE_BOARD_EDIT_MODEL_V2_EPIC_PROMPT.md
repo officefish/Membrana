@@ -3,7 +3,7 @@
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
 > **Реестр:** эпик **`device-board-edit-model-v2-2026-06-22`**  
 > **Предшественник:** PR [#140](https://github.com/officefish/Membrana/pull/140) · [`DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md`](./DEVICE_BOARD_UI_FOLLOWUP_SPRINT_PROMPT.md)  
-> **Статус:** **active** — consilium tech-debt после follow-up sprint  
+> **Статус:** **closed** — archived 2026-06-22 · PR [#140](https://github.com/officefish/Membrana/pull/140)  
 > **Пакет:** `@membrana/device-board` only (без `core` / `vesnin`)
 
 ---

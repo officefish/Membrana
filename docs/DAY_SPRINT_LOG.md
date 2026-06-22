@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-22 — `device-board-docs-post-140-sprint-2026-06-22` — **OPEN**
+
+- **D1–D4:** CONCEPT/README, Mintlify editor, catalog stable, RAG index
+- **Open brief:** [`day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md`](./day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md)
+- **Predecessor:** PR #140 · edit model v2 archived
+
+---
+
+## 2026-06-22 — `device-board-edit-model-v2-2026-06-22` — **CLOSED**
+
+- **E1–E3:** navigation contract, undo controller, integration tests
+- **Closure:** [`epics/device-board-edit-model-v2-2026-06-22/CLOSURE.md`](./epics/device-board-edit-model-v2-2026-06-22/CLOSURE.md)
+- **Merge:** PR [#140](https://github.com/officefish/Membrana/pull/140) (Teamlead review)
+
+---
+
 ## 2026-06-22 — `device-board-function-modal-sprint-2026-06-22` — **CLOSED**
 
 - **S1** `db-fn-modal-s1-ui` — user functions UX (modal, pins, viewport, minimap)

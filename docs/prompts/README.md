@@ -25,7 +25,8 @@
 | **[`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md)** | **Активный эпик** — зелёный turbo build client+cabinet (F0–F6) |
 | **[`DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md`](./DEVICE_BOARD_COLLECTORS_V05_EPIC_PROMPT.md)** | Collectors v0.5: Recorder/SpectralAnalyser, Collect event-ports (DBC0–DBC6, #130) |
 | **[`DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md`](./DEVICE_BOARD_JOURNAL_REPORTER_V06_EPIC_PROMPT.md)** | **Активный эпик** — Journal + Reporter v0.6: GetJournal, GetReporter, MakeReport*, PublishReport (DBJ0–DBJ6, #131) |
-| **[`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](./DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md)** | **Активный эпик** — edit model v2: navigation contract, context split, integration tests (E1–E3) |
+| **[`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](./DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md)** | **Закрыт** — edit model v2 E1–E3 (archived 2026-06-22, PR #140) |
+| **[`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](./DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md)** | **Активный day-sprint** — docs post-#140 + RAG index (D1–D4) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
 

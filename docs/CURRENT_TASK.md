@@ -1,26 +1,28 @@
-# CURRENT_TASK — device-board edit model v2
+# CURRENT_TASK — device-board docs post-#140
 
-> **Epic:** `device-board-edit-model-v2-2026-06-22` (E1–E3 code complete — archive pending)  
-> **Open brief:** [`epics/device-board-edit-model-v2-2026-06-22/OPEN.md`](./epics/device-board-edit-model-v2-2026-06-22/OPEN.md)  
-> **Промпт:** [`DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_EDIT_MODEL_V2_EPIC_PROMPT.md)  
-> **Предшественник:** PR [#140](https://github.com/officefish/Membrana/pull/140) (follow-up F1–F7)
+> **Day-sprint:** `device-board-docs-post-140-sprint-2026-06-22` (active)  
+> **Open brief:** [`day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md`](./day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md)  
+> **Промпт:** [`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](./prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md)  
+> **Код-основа:** PR [#140](https://github.com/officefish/Membrana/pull/140) (Teamlead review)
 
-## Статус
+## Следующая фаза
 
-Все фазы E1–E3 реализованы локально. Следующий шаг: `yarn task:archive` по фазам + PR.
+**D1** `db-docs-d1-canon-sync` — `DEVICE_BOARD_CONCEPT.md` + `packages/device-board/README.md`.
 
-## Завершено
+## Backlog фаз
 
-| Phase | Id | Deliverable |
-|-------|-----|-------------|
-| E1 | `db-edit-v2-nav-contract` | `branch-navigation.ts`, `navigateScenarioBranch` |
-| E2 | `db-edit-v2-extract-modules` | `edit-undo-controller.ts`, `useEditUndoController` |
-| E3 | `db-edit-v2-nav-integration-tests` | `device-board-nav.integration.test.tsx` (5 сценариев) |
+| ID | Фокус |
+|----|--------|
+| `db-docs-d1-canon-sync` | D1: CONCEPT + README |
+| `db-docs-d2-mintlify-editor` | D2: `apps/docs` editor UX |
+| `db-docs-d3-catalog-runtime` | D3: catalog stable |
+| `db-docs-d4-rag-index` | D4: RAG index + workflow |
 
-## Out of scope эпика
+## Закрыто
 
-Scoped undo (D2), drag undo (D3), GetServer (D6), dirty confirm modal (D9).
+- `device-board-edit-model-v2-2026-06-22` (E1–E3) — archived, PR #140
+- `device-board-ui-followup-sprint-2026-06-22` — archived
 
-## Закрытый спринт
+## Связанный эпик (не закрывать)
 
-`device-board-ui-followup-sprint-2026-06-22` — PR #140.
+`db-doc-v04-mvp` — полный Mintlify node reference; этот спринт **дополняет**, не заменяет.
