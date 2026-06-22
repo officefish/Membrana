@@ -1,27 +1,17 @@
-# CURRENT_TASK — device-board docs post-#140
+# CURRENT_TASK — buffer
 
-> **Day-sprint:** `device-board-docs-post-140-sprint-2026-06-22` (active)  
-> **Open brief:** [`day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md`](./day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md)  
-> **Промпт:** [`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](./prompts/DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md)  
-> **Код-основа:** PR [#140](https://github.com/officefish/Membrana/pull/140) (Teamlead review)
+> **Day-sprint:** нет активного (закрыт `cursor-agent-skills-sprint-2026-06-22`)  
+> **Closure:** [`day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md`](./day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md)
 
-## Следующая фаза
-
-**D4** `db-docs-d4-rag-index` — RAG incremental index + `DOCUMENTATION_WORKFLOW`.
-
-## Завершено (спринт)
+## Последний спринт (archived)
 
 | Phase | Id | Deliverable |
 |-------|-----|-------------|
-| D1 | `db-docs-d1-canon-sync` | CONCEPT §21 + README |
-| D2 | `db-docs-d2-mintlify-editor` | editor MDX + `docs.json` nav |
-| D3 | `db-docs-d3-catalog-runtime` | catalog **stable** + `SCENARIO_RUNTIME` §11 |
+| S0–S8 | `cs-sk-s0` … `cs-sk-s8` | 15 project skills + `.claude/` mirror |
 
-## Закрыто
+**Skills index:** [`.cursor/skills/README.md`](../.cursor/skills/README.md)
 
-- `device-board-edit-model-v2-2026-06-22` (E1–E3) — archived, PR #140
-- `device-board-ui-followup-sprint-2026-06-22` — archived
+## Deferred
 
-## Связанный эпик (не закрывать)
-
-`db-doc-v04-mvp` — полный Mintlify node reference; этот спринт **дополняет**, не заменяет.
+- `membrana-rag-operator` — run `yarn rag:index` after RAG merge to `main`
+- Extend `.claude/skills/` mirrors for ops skills (optional)

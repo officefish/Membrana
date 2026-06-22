@@ -4,11 +4,26 @@
 
 ---
 
-## 2026-06-22 — `device-board-docs-post-140-sprint-2026-06-22` — **OPEN**
+## 2026-06-22 — `cursor-agent-skills-sprint-2026-06-22` — **CLOSED**
 
-- **D1–D4:** CONCEPT/README, Mintlify editor, catalog stable, RAG index
-- **Open brief:** [`day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md`](./day-sprint/device-board-docs-post-140-sprint-2026-06-22/OPEN.md)
-- **Predecessor:** PR #140 · edit model v2 archived
+- **S0–S8:** 15 project skills, `.claude/` mirror, AGENTS + .cursorrules pointers
+- **Closure:** [`day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md`](./day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md)
+
+---
+
+## 2026-06-22 — `cursor-agent-skills-sprint-2026-06-22` — ~~OPEN~~
+
+- Agent skills sprint S0–S8
+- **Open brief:** [`day-sprint/cursor-agent-skills-sprint-2026-06-22/OPEN.md`](./day-sprint/cursor-agent-skills-sprint-2026-06-22/OPEN.md)
+
+---
+
+## 2026-06-22 — `device-board-docs-post-140-sprint-2026-06-22` — **CLOSED**
+
+- **D1–D4:** CONCEPT/README, Mintlify editor, catalog stable, RAG workflow (index deferred)
+- **Closure:** [`day-sprint/device-board-docs-post-140-sprint-2026-06-22/CLOSURE.md`](./day-sprint/device-board-docs-post-140-sprint-2026-06-22/CLOSURE.md)
+- **Merge:** PR [#140](https://github.com/officefish/Membrana/pull/140) (Teamlead review)
+- **RAG:** `yarn rag:index` после merge dual-circuit RAG в `main`
 
 ---
 

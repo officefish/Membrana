@@ -13,6 +13,8 @@ Do **not** put WAV storage or user templates in office. Do **not** put Claude/Li
 
 For detailed architecture, conventions, and coding rules, see `.cursorrules` and `docs/ARCHITECTURE.md`, `docs/BACKGROUND_SERVERS.md`, `docs/SERVICES.md`, `docs/DESIGN.md`, `docs/CONTRIBUTING.md`.
 
+**Agent skills (project playbooks):** [`.cursor/skills/README.md`](./.cursor/skills/README.md) — rhythm, task lifecycle, virtual team, domain guards. Claude Code mirror: [`.claude/CLAUDE.md`](./.claude/CLAUDE.md).
+
 For **new M/L agent tasks**, follow `docs/prompts/TASK_PROMPT_WORKFLOW.md` and register in `docs/tasks/registry.json`. **Closing a task:** `docs/prompts/TASK_CLOSURE_REGULATION.md` → `yarn task:archive <id>` (day) → `yarn task:close-github` (EOD batch for Issues). Active/archive: `docs/tasks/README.md`.
 
 ### Key commands

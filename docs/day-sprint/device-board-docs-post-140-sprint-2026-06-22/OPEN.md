@@ -5,7 +5,7 @@
 | **Epic id** | `device-board-docs-post-140-sprint-2026-06-22` |
 | **Kind** | day-sprint |
 | **Opened** | 2026-06-22 |
-| **Status** | **open** |
+| **Status** | **closed** |
 | **Predecessor** | PR #140 · `device-board-edit-model-v2-2026-06-22` (archived) |
 
 ## Goal

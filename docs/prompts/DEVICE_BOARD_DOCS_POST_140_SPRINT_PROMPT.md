@@ -4,7 +4,7 @@
 > **Реестр:** day-sprint **`device-board-docs-post-140-sprint-2026-06-22`**  
 > **Предшественник:** PR [#140](https://github.com/officefish/Membrana/pull/140) · эпики function-modal (#139), follow-up F1–F7, edit model v2  
 > **Связанный эпик:** `db-doc-v04-mvp` (Mintlify baseline — **не закрывать**, дополняем)  
-> **Статус:** **active**  
+> **Статус:** **closed** (2026-06-22)  
 > **Пакет:** `docs/`, `apps/docs`, `packages/device-board` (README/CONCEPT only)
 
 ---
@@ -77,11 +77,11 @@
 
 ## Definition of Done (спринт)
 
-- [ ] D1–D4 archived в реестре
-- [ ] Catalog `device-board.md` status **stable**
-- [ ] `yarn docs:lint` green
-- [ ] `yarn catalog:verify-client` green
-- [ ] RAG index run **или** documented defer в D4 archive card
+- [x] D1–D4 archived в реестре
+- [x] Catalog `device-board.md` status **stable**
+- [x] `yarn docs:lint` green
+- [x] `yarn catalog:verify-client` green
+- [x] RAG index run **или** documented defer в D4 archive card (**defer** — RAG не в ветке)
 - [ ] LGTM Teamlead
 
 ---
