@@ -4,7 +4,14 @@
 
 ---
 
-## 2026-06-22 — `cursor-agent-skills-sprint-2026-06-22` — **CLOSED**
+## 2026-06-22 — `device-board-doc-v04-sprint-2026-06-22` — **CLOSED**
+
+- **DV1–DV6:** 43 Mintlify pages, full V04 palette reference
+- **Closure:** [`day-sprint/device-board-doc-v04-sprint-2026-06-22/CLOSURE.md`](./day-sprint/device-board-doc-v04-sprint-2026-06-22/CLOSURE.md)
+
+---
+
+## 2026-06-22 — `device-board-doc-v04-sprint-2026-06-22` — ~~OPEN~~
 
 - **S0–S8:** 15 project skills, `.claude/` mirror, AGENTS + .cursorrules pointers
 - **Closure:** [`day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md`](./day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md)

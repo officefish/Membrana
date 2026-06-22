@@ -1,0 +1,22 @@
+---
+title: MakeRecordingPolicy
+description: Pure constructor RecordingPolicy (data-only).
+---
+
+# MakeRecordingPolicy
+
+## Pins
+
+Data out: `policy` (RecordingPolicyRef). **Без exec** — pure constructor.
+
+## Runtime
+
+<Warning>
+  Не ставить на exec-цепочку. Только data-edge к `start-recording.policy`.
+</Warning>
+
+Конфиг в инспекторе (RecordingPolicy enum из `@membrana/core`).
+
+## Code
+
+`make-recording-policy-node.ts` · `isPolicyConstructorScenarioNodeKind`

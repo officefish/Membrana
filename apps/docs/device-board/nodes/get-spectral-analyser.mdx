@@ -1,0 +1,23 @@
+---
+title: GetSpectralAnalyser
+description: Singleton SpectralAnalyserRef для FFT pipeline.
+---
+
+# GetSpectralAnalyser
+
+## Pins
+
+| Direction | Handle | Type |
+|-----------|--------|------|
+| in exec | `exec-in` | exec |
+| in data | `device` | DeviceRef |
+| out exec | `exec-out` | exec |
+| out data | `analyser` | SpectralAnalyserRef |
+
+## Runtime
+
+Host singleton spectral session; используется с `get-fft-frame` и `collect-fft-frames`.
+
+## Code
+
+`get-spectral-analyser-node.ts`

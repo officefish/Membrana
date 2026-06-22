@@ -1,0 +1,27 @@
+---
+title: CollectSamples
+description: Накопление AudioSampleRef батчами по событию exec.
+---
+
+# CollectSamples
+
+## Pins
+
+| in | `exec-in` | exec |
+| in | `recorder` | RecorderRef |
+| in | `sample` | AudioSampleRef |
+| out | `exec-out` | exec |
+| out | `event` | event (square port) |
+| out | `batches` | AudioSampleRef[] |
+
+## Runtime
+
+На exec: flush sample в collector store; `event` pin для downstream exec wiring. Конфиг в правом сайдбаре (`ScenarioCollectorConfig`).
+
+## Cookbook
+
+[Collect → terminal](/device-board/cookbooks/collect-to-terminal)
+
+## Code
+
+`collect-samples-node.ts` · `block-executor.ts`

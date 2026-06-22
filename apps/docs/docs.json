@@ -29,16 +29,74 @@
     },
     {
       "group": "Cookbooks",
-      "pages": ["device-board/cookbooks/on-start-to-main"]
+      "pages": [
+        "device-board/cookbooks/on-start-to-main",
+        "device-board/cookbooks/collect-to-terminal",
+        "device-board/cookbooks/journal-reporter-v06"
+      ]
     },
     {
-      "group": "Nodes",
+      "group": "Nodes — index",
+      "pages": ["device-board/nodes/index"]
+    },
+    {
+      "group": "Nodes — globals & control",
       "pages": [
-        "device-board/nodes/index",
-        "device-board/nodes/is-valid",
+        "device-board/nodes/device-global",
+        "device-board/nodes/stop-runtime",
+        "device-board/nodes/print",
+        "device-board/nodes/is-valid"
+      ]
+    },
+    {
+      "group": "Nodes — streaming",
+      "pages": [
+        "device-board/nodes/get-microphone",
         "device-board/nodes/start-streaming",
+        "device-board/nodes/stop-streaming",
         "device-board/nodes/get-audio-stream",
-        "device-board/nodes/get-sample"
+        "device-board/nodes/get-sample",
+        "device-board/nodes/get-fft-frame"
+      ]
+    },
+    {
+      "group": "Nodes — collectors",
+      "pages": [
+        "device-board/nodes/get-recorder",
+        "device-board/nodes/get-spectral-analyser",
+        "device-board/nodes/collect-samples",
+        "device-board/nodes/collect-fft-frames",
+        "device-board/nodes/flush-spectral-analyser"
+      ]
+    },
+    {
+      "group": "Nodes — recording",
+      "pages": [
+        "device-board/nodes/make-recording-policy",
+        "device-board/nodes/start-recording",
+        "device-board/nodes/stop-recording",
+        "device-board/nodes/is-recording-window-full",
+        "device-board/nodes/make-track",
+        "device-board/nodes/make-fft-trends-policy",
+        "device-board/nodes/make-fft-trends-analysis"
+      ]
+    },
+    {
+      "group": "Nodes — journal & reports",
+      "pages": [
+        "device-board/nodes/get-journal",
+        "device-board/nodes/get-reporter",
+        "device-board/nodes/make-report-from-track",
+        "device-board/nodes/make-report-from-analysis",
+        "device-board/nodes/publish-report"
+      ]
+    },
+    {
+      "group": "Nodes — system",
+      "pages": [
+        "device-board/nodes/event",
+        "device-board/nodes/loop-repeat",
+        "device-board/nodes/variable-get-set"
       ]
     }
   ],

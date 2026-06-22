@@ -1,0 +1,24 @@
+---
+title: Event
+description: Системный entry-узел обработчика.
+---
+
+# Event (`event`)
+
+## Назначение
+
+Entry point для exec-цепочки в ветках `onStart`, `onStop`, `onDisconnect`, `onTick` (handler / loopTick).
+
+## Свойства
+
+- `deletable: false` — guard в `applyNodeChanges`
+- Авто-инжект при входе на handler branch (DBR3)
+- Data out: `DeviceRef` (null в onDisconnect semantics)
+
+## Runtime
+
+Первый exec-узел цепочки; не исполняет бизнес-логику — передаёт exec дальше.
+
+## Code
+
+`event-node.ts` · CONCEPT §9

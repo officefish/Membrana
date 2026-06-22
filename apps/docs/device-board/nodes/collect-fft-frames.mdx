@@ -1,0 +1,23 @@
+---
+title: CollectFftFrames
+description: Накопление FftFrameRef батчами.
+---
+
+# CollectFftFrames
+
+## Pins
+
+| in | `exec-in` | exec |
+| in | `analyser` | SpectralAnalyserRef |
+| in | `frame` | FftFrameRef |
+| out | `exec-out` | exec |
+| out | `event` | event |
+| out | `batches` | FftFrameRef[] |
+
+## Runtime
+
+Аналог `collect-samples` для FFT-кадров. Event dispatch на flush — DBC5.
+
+## Code
+
+`collect-fft-frames-node.ts`
