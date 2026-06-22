@@ -144,19 +144,6 @@
 | `comp-mvp-pack-alpha` | Comp MVP pack: Team Alpha concept + implementation | M | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) | — |
 | `comp-mvp-pack-beta` | Comp MVP pack: Team Beta concept + implementation | M | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) | — |
 | `comp-mvp-pack-gamma` | Comp MVP pack: Team Gamma concept + implementation | M | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-packaging-2026-06-21/COMPETITION_SPRINT_BRIEF.md) | — |
-| `device-board-post-comp-debt-night-build` | Night Build: device-board post-competition debt — runtime DRY, docs, a11y | L | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `db-pcd-nb0-merge-gate` | NB0: merge gate — lint 0 warnings, untracked tracked, usercase verify | M | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `db-pcd-nb1-runtime-dry` | NB1: runtime DRY — exec-successor, function-call-resolve vs function-pin-ops | M | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `db-pcd-nb2-concept-docs` | NB2: DEVICE_BOARD_CONCEPT runtime diagram + lessons cross-ref | S | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `db-pcd-nb3-a11y-hygiene` | NB3: picker modal a11y, usercase.mjs path hygiene | M | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `rag-dual-circuit-v1` | Dual-circuit RAG v1 — LanceDB archive + repo operative memory | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | [`CLOSURE.md`](../docs/rag-dual-circuit-v1/CLOSURE.md) (R0–R6) |
-| `rag-r0-scaffold` | R0: @membrana/rag-service scaffold, types, stub query | S | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
-| `rag-r1-lancedb-index` | R1: LanceDB store, custom splitter, OpenAI embedder, full/incremental index | M | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
-| `rag-r2-operative` | R2: repo-native operative circuit (git recency, BM25, path filters) | M | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
-| `rag-r3-retriever` | R3: dual-circuit retrieveContext + 5 acceptance questions | M | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
-| `rag-r4-office-api` | R4: background-office POST /api/rag/query + BACKGROUND_SERVERS exception | M | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
-| `rag-r5-rituals` | R5: standup, code-review, consilium, evening incremental hook | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
-| `rag-r6-closure` | R6: bootstrap --full, docs/RAG.md, AGENTS.md, epic archive | S | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r7-optional` | R7 (optional): Obsidian overlay, Pinecone/pgvector, Voyage A/B, reranker | S | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 
 ---
@@ -165,6 +152,19 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `device-board-post-comp-debt-night-build` | Night Build: device-board post-competition debt — runtime DRY, docs, a11y | 2026-06-22 | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/device-board-post-comp-debt-night-build.md) |
+| `db-pcd-nb0-merge-gate` | NB0: merge gate — lint 0 warnings, untracked tracked, usercase verify | 2026-06-22 | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/db-pcd-nb0-merge-gate.md) |
+| `db-pcd-nb1-runtime-dry` | NB1: runtime DRY — exec-successor, function-call-resolve vs function-pin-ops | 2026-06-22 | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/db-pcd-nb1-runtime-dry.md) |
+| `db-pcd-nb2-concept-docs` | NB2: DEVICE_BOARD_CONCEPT runtime diagram + lessons cross-ref | 2026-06-22 | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/db-pcd-nb2-concept-docs.md) |
+| `db-pcd-nb3-a11y-hygiene` | NB3: picker modal a11y, usercase.mjs path hygiene | 2026-06-22 | [`DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_POST_COMP_DEBT_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/db-pcd-nb3-a11y-hygiene.md) |
+| `rag-dual-circuit-v1` | Dual-circuit RAG v1 — LanceDB archive + repo operative memory | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-dual-circuit-v1.md) |
+| `rag-r0-scaffold` | R0: @membrana/rag-service scaffold, types, stub query | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-r0-scaffold.md) |
+| `rag-r1-lancedb-index` | R1: LanceDB store, custom splitter, OpenAI embedder, full/incremental index | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-r1-lancedb-index.md) |
+| `rag-r2-operative` | R2: repo-native operative circuit (git recency, BM25, path filters) | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-r2-operative.md) |
+| `rag-r3-retriever` | R3: dual-circuit retrieveContext + 5 acceptance questions | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-r3-retriever.md) |
+| `rag-r4-office-api` | R4: background-office POST /api/rag/query + BACKGROUND_SERVERS exception | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-r4-office-api.md) |
+| `rag-r5-rituals` | R5: standup, code-review, consilium, evening incremental hook | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-r5-rituals.md) |
+| `rag-r6-closure` | R6: bootstrap --full, docs/RAG.md, AGENTS.md, epic archive | 2026-06-22 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-r6-closure.md) |
 | `db-recording-parity-mic-r5` | DB Recording Parity R5: mic-buffer-recorder capture → device-board | 2026-06-21 | [`DEVICE_BOARD_RECORDING_PARITY_MIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_PARITY_MIC_PROMPT.md) | #133 | [карточка](./archive/db-recording-parity-mic-r5.md) |
 | `db-recording-parity-mic-v08` | DB Recording Parity v0.8: mic-buffer-recorder quality, enum RecordingPolicy (эпик A0–A5) | 2026-06-21 | [`DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md) | #133 | [карточка](./archive/db-recording-parity-mic-v08.md) |
 | `db-rec-parity-a0-policy-contract` | DB Rec Parity A0: enum RecordingPolicy in @membrana/core | 2026-06-21 | [`DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md) | #133 | [карточка](./archive/db-rec-parity-a0-policy-contract.md) |
@@ -307,4 +307,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-21.*
+*Файл обновлён автоматически: 2026-06-22.*
