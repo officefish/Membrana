@@ -183,21 +183,6 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     });
   }, [reactFlow]);
 
-  const ensureGraphVisible = useCallback(() => {
-    const visibleNodes = reactFlow
-      .getNodes()
-      .filter((node) => !isBoardLayoutGhostNodeId(node.id));
-    if (visibleNodes.length === 0) {
-      return;
-    }
-    void reactFlow.fitView({
-      nodes: visibleNodes.map((node) => ({ id: node.id })),
-      padding: BOARD_VIEWPORT_FIT_PADDING,
-      duration: BOARD_VIEWPORT_FIT_DURATION_MS,
-      maxZoom: BOARD_VIEWPORT_FIT_MAX_ZOOM,
-    });
-  }, [reactFlow]);
-
   const viewportApi = useMemo<BoardFlowViewportApi>(
     () => ({
       getCenterFlowPosition: () => {
