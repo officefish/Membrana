@@ -4969,6 +4969,23 @@
       "notes": "Lead: Vesnin + Ozhegov. Day briefing 2026-06-22: pause = success criterion; blocks UserCase MVP confidence. Audio continues; scenario graph freezes."
     },
     {
+      "id": "dbp-hf-marquee-collapse",
+      "title": "DBP-HF: marquee collapse — ignore system nodes in selection eligibility",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",
+      "githubIssue": 142,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-pause-runtime-v07",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-pause-runtime-v07"
+      ],
+      "notes": "Hotfix: collapse function/group blocked when Event/loop-repeat in marquee."
+    },
+    {
       "id": "dbp-0-runtime-pause-core",
       "title": "DBP0: ScenarioRuntime pause/resume core + isPaused state",
       "promptPath": "docs/prompts/DEVICE_BOARD_PAUSE_RUNTIME_EPIC_PROMPT.md",

@@ -228,6 +228,8 @@ export interface DeviceBoardGraphContextValue {
   readonly saveScenario: () => Promise<boolean>;
   readonly startScenario: () => Promise<void>;
   readonly stopScenario: (reason?: ScenarioStopReason) => void;
+  readonly pauseScenario: () => void;
+  readonly resumeScenario: () => void;
   /** Ручной режim normal/alarm (MP7b RT3/RT6). Делегируется в ScenarioRuntime. */
   readonly mode: RuntimeMode;
   readonly setMode: (mode: RuntimeMode) => void;
@@ -1909,6 +1911,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     runtimeRef.current?.stop(reason);
   }, []);
 
+  const pauseScenario = useCallback(() => {
+    runtimeRef.current?.pause();
+  }, []);
+
+  const resumeScenario = useCallback(() => {
+    runtimeRef.current?.resume();
+  }, []);
+
   const setMode = useCallback((mode: RuntimeMode) => {
     runtimeRef.current?.setMode(mode);
   }, []);
@@ -2550,6 +2560,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       saveScenario,
       startScenario,
       stopScenario,
+      pauseScenario,
+      resumeScenario,
       mode: runtimeState.mode,
       setMode,
       showInfoLogs,
@@ -2687,6 +2699,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       signalNodes,
       startScenario,
       stopScenario,
+      pauseScenario,
+      resumeScenario,
       syncError,
       syncStatus,
       validationIssues,

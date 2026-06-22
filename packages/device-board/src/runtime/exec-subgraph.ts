@@ -44,6 +44,8 @@ export interface ExecSubgraphOptions {
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
   /** v0.7: RecordingSliceRef от StopRecording. */
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
+  /** v0.7: ждать снятия пользовательской паузы. */
+  readonly awaitUnpaused?: () => Promise<void>;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -78,6 +80,12 @@ export async function runSubgraphOnce(
   });
 
   for (;;) {
+    if (signal.aborted) {
+      return finish();
+    }
+    if (options.awaitUnpaused !== undefined) {
+      await options.awaitUnpaused();
+    }
     if (signal.aborted) {
       return finish();
     }
@@ -183,6 +191,9 @@ export async function runSubgraphOnce(
       nextNode?.nodeKind === 'function-output' ? outgoingHandle : undefined;
 
     if (isLoopBranch) {
+      if (options.awaitUnpaused !== undefined) {
+        await options.awaitUnpaused();
+      }
       await yieldToEventLoop(signal);
     }
 

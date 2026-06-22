@@ -63,17 +63,28 @@ Pause disabled когда !isRunning; Resume disabled когда !isPaused. boar
 
 ---
 
-## План (DBP0–DBP4)
+## План (DBP-HF, DBP0–DBP4)
 
 | Фаза | Registry `id` | Size | Содержание |
 |------|---------------|------|------------|
+| **DBP-HF** | `dbp-hf-marquee-collapse` | S | **Hotfix:** marquee modal — collapse function/group не блокируется системными Event/loop-repeat в выделении |
 | **DBP0** | `dbp-0-runtime-pause-core` | M | `pause()`/`resume()`, `isPaused`, `waitWhilePaused`, unit tests runtime |
 | **DBP1** | `dbp-1-ui-toolbar` | M | Shell Pause/Resume, graph context API, runtime status badge |
 | **DBP2** | `dbp-2-pause-runtime-node` | S | Node kind `pause-runtime`, palette, exec handler → `runtime.pause()` |
 | **DBP3** | `dbp-3-docs-scenario-runtime` | S | `SCENARIO_RUNTIME.md`, CONCEPT §7.4, cookbook note |
 | **DBP4** | `dbp-4-teamlead-closure` | S | CI green, browser smoke, LGTM, archive epic |
 
-**Порядок:** DBP0 → DBP1 → DBP2 → DBP3 → DBP4
+**Порядок:** DBP-HF → DBP0 → DBP1 → DBP2 → DBP3 → DBP4
+
+---
+
+## DBP-HF — marquee collapse hotfix
+
+**Проблема:** при marquee на `main`/`alarm` в выделение попадают системные `onTick` и `loop-repeat` → кнопки «Объединить в функцию/группу» disabled.
+
+**Решение:** `collapse-selection-eligibility.ts` — считать только eligible узлы (≥2); системные игнорировать.
+
+**Файлы:** `collapse-selection-eligibility.ts`, `device-board-shell.tsx`, `board-selection-action-modal.tsx`
 
 ---
 

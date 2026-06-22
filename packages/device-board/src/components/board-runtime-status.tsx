@@ -13,6 +13,7 @@ export const BoardRuntimeStatus: React.FC<BoardRuntimeStatusProps> = ({ state })
   }
 
   const parts = [
+    state.isPaused ? 'пауза' : null,
     `phase: ${state.phase}`,
     state.activeBranch ? `branch: ${state.activeBranch}` : null,
     state.activeBlockKind ? `block: ${state.activeBlockKind}` : null,

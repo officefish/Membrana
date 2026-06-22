@@ -71,7 +71,13 @@ import {
 import type { LoopExecLayoutBranch } from '../graph/layout-exec-chain.js';
 import { BoardExecLayoutPreviewModal } from './board-exec-layout-preview-modal.js';
 import type { BoardAlignMode } from '../graph/align-nodes.js';
-import { isSystemNode } from '../graph/event-node.js';
+import {
+  isCollapseToFunctionEnabled,
+  isCollapseToGroupEnabled,
+  pickCollapseEligibleNodeIds,
+  isCollapseToFunctionEligibleNode,
+  isCollapseToGroupEligibleNode,
+} from '../graph/collapse-selection-eligibility.js';
 import { computeRuntimeExecHighlight } from '../graph/runtime-exec-highlight.js';
 
 export interface DeviceBoardShellProps {
@@ -685,20 +691,44 @@ const DeviceBoardShellInner: React.FC<{
 
   const marqueeSelectionMeta = useMemo(() => {
     const selected = scenarioCanvas.nodes.filter((node) => marqueeSelectedIds.includes(node.id));
-    const hasSystem = selected.some((node) => isSystemNode(node));
+    const functionEligibleIds = pickCollapseEligibleNodeIds(
+      scenarioCanvas.nodes,
+      marqueeSelectedIds,
+      isCollapseToFunctionEligibleNode,
+    );
+    const groupEligibleIds = pickCollapseEligibleNodeIds(
+      scenarioCanvas.nodes,
+      marqueeSelectedIds,
+      isCollapseToGroupEligibleNode,
+    );
     const count = selected.length;
     const idSet = new Set(marqueeSelectedIds);
+    const collapseFunctionDisabled =
+      scenarioBranch === 'function' || !isCollapseToFunctionEnabled(scenarioCanvas.nodes, marqueeSelectedIds);
+    const collapseGroupDisabled = !isCollapseToGroupEnabled(scenarioCanvas.nodes, marqueeSelectedIds);
     return {
       count,
-      collapseFunctionDisabled: count < 2 || hasSystem,
-      collapseGroupDisabled: count < 2 || hasSystem,
+      functionEligibleIds,
+      groupEligibleIds,
+      collapseFunctionDisabled,
+      collapseGroupDisabled,
+      collapseFunctionDisabledReason:
+        scenarioBranch === 'function'
+          ? 'Только на ветках сценария (не в теле функции)'
+          : functionEligibleIds.length < 2
+            ? 'Нужно ≥2 обычных узла (системные Event/loop не считаются)'
+            : undefined,
+      collapseGroupDisabledReason:
+        groupEligibleIds.length < 2
+          ? 'Нужно ≥2 обычных узла вне группы (системные Event/loop не считаются)'
+          : undefined,
       execChainLayoutDisabled: !isExecChainLayoutEnabled(
         scenarioCanvas.nodes,
         scenarioCanvas.edges,
         idSet,
       ),
     };
-  }, [marqueeSelectedIds, scenarioCanvas.edges, scenarioCanvas.nodes]);
+  }, [marqueeSelectedIds, scenarioBranch, scenarioCanvas.edges, scenarioCanvas.nodes]);
 
   const applyAlignPositions = useCallback(
     (positions: Map<string, { readonly x: number; readonly y: number }>) => {
@@ -846,7 +876,10 @@ const DeviceBoardShellInner: React.FC<{
     if (isSignal || isRuntime) {
       return;
     }
-    const error = graph.collapseMarqueeToFunction(scenarioBranch, marqueeSelectedIds);
+    const error = graph.collapseMarqueeToFunction(
+      scenarioBranch,
+      marqueeSelectionMeta.functionEligibleIds,
+    );
     if (error !== null) {
       setImportError(error);
     }
@@ -856,7 +889,7 @@ const DeviceBoardShellInner: React.FC<{
     graph,
     isRuntime,
     isSignal,
-    marqueeSelectedIds,
+    marqueeSelectionMeta.functionEligibleIds,
     scenarioBranch,
   ]);
 
@@ -865,7 +898,10 @@ const DeviceBoardShellInner: React.FC<{
       return;
     }
     const branch: ScenarioCommentGroupBranch = isSignal ? 'signal' : scenarioBranch;
-    const result = graph.collapseMarqueeToCommentGroup(branch, marqueeSelectedIds);
+    const result = graph.collapseMarqueeToCommentGroup(
+      branch,
+      marqueeSelectionMeta.groupEligibleIds,
+    );
     if (result.error !== null) {
       setImportError(result.error);
       dismissSelectionAction();
@@ -882,7 +918,7 @@ const DeviceBoardShellInner: React.FC<{
     handleSelectionChange,
     isRuntime,
     isSignal,
-    marqueeSelectedIds,
+    marqueeSelectionMeta.groupEligibleIds,
     scenarioBranch,
   ]);
 
@@ -1103,6 +1139,22 @@ const DeviceBoardShellInner: React.FC<{
                   aria-label={graph.canRun ? 'Запуск сценария' : graph.runDisabledReason ?? 'Запуск недоступен'}
                 >
                   Run
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost"
+                  onClick={() => graph.pauseScenario()}
+                  disabled={!graph.runtimeState.isRunning || graph.runtimeState.isPaused}
+                >
+                  Pause
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost"
+                  onClick={() => graph.resumeScenario()}
+                  disabled={!graph.runtimeState.isPaused}
+                >
+                  Resume
                 </button>
                 <button
                   type="button"
@@ -1441,6 +1493,8 @@ const DeviceBoardShellInner: React.FC<{
         selectedCount={marqueeSelectionMeta.count}
         collapseFunctionDisabled={marqueeSelectionMeta.collapseFunctionDisabled}
         collapseGroupDisabled={marqueeSelectionMeta.collapseGroupDisabled}
+        collapseFunctionDisabledReason={marqueeSelectionMeta.collapseFunctionDisabledReason}
+        collapseGroupDisabledReason={marqueeSelectionMeta.collapseGroupDisabledReason}
         execChainLayoutDisabled={marqueeSelectionMeta.execChainLayoutDisabled}
         onCollapseToFunction={handleCollapseToFunction}
         onCollapseToGroup={handleCollapseToGroup}
