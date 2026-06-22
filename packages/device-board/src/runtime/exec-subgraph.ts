@@ -34,6 +34,8 @@ export interface ExecSubgraphOptions {
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
   /** v0.4 device-global StopRuntime. */
   readonly onStopRuntime?: () => void;
+  /** v0.7 PauseRuntime node / toolbar freeze. */
+  readonly onPauseRuntime?: () => void;
   /** v0.5 DBC3: Collect flush/batch store. */
   readonly collectStore?: CollectRuntimeStore;
   /** v0.6 DBJ3: ReportRef payloads от make-report узлов. */
@@ -147,6 +149,8 @@ export async function runSubgraphOnce(
       resolveContext: options.resolveContext,
       onPrintOutput: options.onPrintOutput,
       onStopRuntime: options.onStopRuntime,
+      onPauseRuntime: options.onPauseRuntime,
+      awaitUnpaused: options.awaitUnpaused,
       collectStore: options.collectStore,
       reportStore: options.reportStore,
       trackStore: options.trackStore,

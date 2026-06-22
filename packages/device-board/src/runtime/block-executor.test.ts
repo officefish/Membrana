@@ -293,6 +293,50 @@ describe('executeScenarioBlock stop-runtime', () => {
   });
 });
 
+describe('executeScenarioBlock pause-runtime', () => {
+  it('PauseRuntime invokes onPauseRuntime and awaits resume', async () => {
+    const onPauseRuntime = vi.fn();
+    let resume!: () => void;
+    const awaitUnpaused = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resume = resolve;
+        }),
+    );
+    const host = createStubScenarioRuntimeHost();
+    const node = {
+      id: 'pause-1',
+      nodeKind: 'pause-runtime' as const,
+      blockKind: 'custom' as const,
+      label: 'PauseRuntime',
+    };
+    const subgraph: ScenarioSubgraph = {
+      entry: 'pause-1',
+      nodes: [node],
+      edges: [],
+    };
+
+    const pending = executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 1000,
+      functions: [],
+      onPauseRuntime,
+      awaitUnpaused,
+    });
+
+    expect(onPauseRuntime).toHaveBeenCalledOnce();
+    expect(awaitUnpaused).toHaveBeenCalledOnce();
+    resume();
+    const result = await pending;
+    expect(result.stopRequested).toBe(false);
+  });
+});
+
 describe('executeScenarioBlock recorder/analyser methods (MakeTrack / MakeFftTrendsAnalysis)', () => {
   it('MakeTrack calls createTrackFromSampleRefs when recorder + samples are wired', async () => {
     const createTrackFromSampleRefs = vi.fn(async () => ({ trackId: 'track-abc' }));

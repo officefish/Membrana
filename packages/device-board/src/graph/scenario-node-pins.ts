@@ -10,6 +10,7 @@ import {
 } from './event-node.js';
 import { isPaletteNodeKind, paletteNodePins } from './palette-node.js';
 import { stopRuntimeNodePins } from './stop-runtime-node.js';
+import { pauseRuntimeNodePins } from './pause-runtime-node.js';
 import { variableNodePins } from './variable-node.js';
 
 export interface ScenarioNodePinLayout {
@@ -33,6 +34,8 @@ export function scenarioNodePinsForKind(
       return deviceGlobalNodePins();
     case 'stop-runtime':
       return stopRuntimeNodePins();
+    case 'pause-runtime':
+      return pauseRuntimeNodePins();
     case 'event':
       if (options.eventVariant === 'loopTick') {
         return loopTickEventNodePins();

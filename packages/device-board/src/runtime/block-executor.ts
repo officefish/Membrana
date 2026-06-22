@@ -79,6 +79,10 @@ export interface BlockExecutionInput {
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
   /** v0.4 StopRuntime: выход из runtime в режим редактирования (требует DeviceRef). */
   readonly onStopRuntime?: () => void;
+  /** v0.7 PauseRuntime: заморозка без onStop. */
+  readonly onPauseRuntime?: () => void;
+  /** v0.7: ждать снятия пользовательской паузы (toolbar Resume). */
+  readonly awaitUnpaused?: () => Promise<void>;
   /** v0.5 DBC3: in-memory flush/batch state Collect-узлов. */
   readonly collectStore?: CollectRuntimeStore;
   /** v0.6 DBJ3: in-memory ReportRef payloads от make-report узлов. */
@@ -148,6 +152,8 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     resolveContext,
     onPrintOutput,
     onStopRuntime,
+    onPauseRuntime,
+    awaitUnpaused,
     collectStore,
     reportStore,
     trackStore,
@@ -544,6 +550,15 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       device: deviceRef.handle,
     });
     return { lastDetection, stopRequested: true };
+  }
+
+  if (node.nodeKind === 'pause-runtime') {
+    onPauseRuntime?.();
+    host.log('pause-runtime PauseRuntime', { nodeId: node.id, branch });
+    if (awaitUnpaused !== undefined) {
+      await awaitUnpaused();
+    }
+    return { lastDetection, stopRequested: false };
   }
 
   if (node.nodeKind === 'start-streaming') {
@@ -971,6 +986,8 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
         resolveContext: callContext,
         onPrintOutput,
         onStopRuntime,
+        onPauseRuntime,
+        awaitUnpaused,
         collectStore,
         reportStore,
         trackStore,

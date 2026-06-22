@@ -540,6 +540,7 @@ export class ScenarioRuntime {
       resolveContext,
       onPrintOutput: (nodeId: string, message: string) => this.recordPrintOutput(nodeId, message),
       onStopRuntime: () => this.stop('user'),
+      onPauseRuntime: () => this.pause(),
       collectStore: this.collectStore,
       reportStore: this.reportStore,
       trackStore: this.trackStore,

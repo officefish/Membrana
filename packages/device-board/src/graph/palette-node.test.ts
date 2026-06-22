@@ -17,6 +17,7 @@ describe('palette-node (DBR5)', () => {
     expect([...V04_PALETTE_NODE_KINDS]).toEqual([
       'device-global',
       'stop-runtime',
+      'pause-runtime',
       'print',
       'is-valid',
       'get-microphone',

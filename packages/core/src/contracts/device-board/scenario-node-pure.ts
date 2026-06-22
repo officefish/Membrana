@@ -56,6 +56,7 @@ export const PURE_LOCKED_IMPURE_SCENARIO_NODE_KINDS = [
   'start-streaming',
   'stop-streaming',
   'stop-runtime',
+  'pause-runtime',
   'device-global',
   'publish-report',
   'event',

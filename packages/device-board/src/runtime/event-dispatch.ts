@@ -90,6 +90,8 @@ export async function runEventBranchFromNode(
       resolveContext: options.resolveContext,
       onPrintOutput: options.onPrintOutput,
       onStopRuntime: options.onStopRuntime,
+      onPauseRuntime: options.onPauseRuntime,
+      awaitUnpaused: options.awaitUnpaused,
       collectStore: options.collectStore,
       reportStore: options.reportStore,
       trackStore: options.trackStore,

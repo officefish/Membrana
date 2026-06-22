@@ -16,9 +16,9 @@
 | DBP-HF | `dbp-hf-marquee-collapse` | **done** (hotfix) |
 | DBP0 | `dbp-0-runtime-pause-core` | **done** (runtime + tests) |
 | DBP1 | `dbp-1-ui-toolbar` | **done** (Pause/Resume UI) |
-| DBP2 | `dbp-2-pause-runtime-node` | pending |
-| DBP3 | `dbp-3-docs-scenario-runtime` | pending |
-| DBP4 | `dbp-4-teamlead-closure` | pending |
+| DBP2 | `dbp-2-pause-runtime-node` | **done** |
+| DBP3 | `dbp-3-docs-scenario-runtime` | **done** |
+| DBP4 | `dbp-4-teamlead-closure` | pending (browser smoke + LGTM) |
 
 ## Verify (after DBP0)
 
