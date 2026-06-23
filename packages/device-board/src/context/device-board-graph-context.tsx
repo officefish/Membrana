@@ -30,7 +30,6 @@ import {
 } from '@membrana/core';
 
 import type { ScenarioCommentGroupBranch, ScenarioCommentGroupFrameColor, SocketType } from '@membrana/core';
-import { resolveScenarioCommentGroupFrameColor } from '@membrana/core';
 import type { BoardLayerTab, ScenarioBranchTab } from '../types/board-ui.js';
 import {
   buildDeviceScenarioDocument,
@@ -51,9 +50,6 @@ import {
   prepareUserCaseApply,
   suggestReferenceVariableMapping,
   isReferenceMappingComplete,
-  isLegacyHackathonDefaultScenario,
-  needsFftTrendsPolicyConstructorMigration,
-  needsRecordingGateBootstrapMigration,
   isPreRunValid,
   isValidBoardConnection,
   rejectSystemNodeRemovals,
@@ -69,8 +65,12 @@ import {
   hydratedFunctionInputs,
   collapseSelectionToFunction,
   collapseSelectionToCommentGroup,
+  buildCommentGroupDataPatch,
+  patchCommentGroupNodeData,
+  collectCommentGroupNodeIdsFromBoard,
+  shouldMigrateMicrophoneScenarioToBundledMvp,
+  stampUserWorkspaceDocument,
   createEmptyFunctionDraft,
-  COMMENT_GROUP_DESCRIPTION_MAX_LENGTH,
   type VariableNodeKind,
   type V04PaletteNodeKind,
   type BranchScenarioExport,
@@ -306,6 +306,7 @@ export interface DeviceBoardGraphContextValue {
   ) => CollapseMarqueeToCommentGroupResult;
   /** CGF G1: название, описание и цвет рамки comment group (только edit mode). */
   readonly updateCommentGroupMetadata: (
+    branch: ScenarioCommentGroupBranch,
     nodeId: string,
     patch: {
       readonly title?: string;
@@ -604,13 +605,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         if (cancelled) return;
         if (record !== null) {
           let document = record.document;
-          if (
-            deviceKindProp === 'microphone' &&
-            (isLegacyHackathonDefaultScenario(document) ||
-              needsRecordingGateBootstrapMigration(document) ||
-              needsFftTrendsPolicyConstructorMigration(document))
-          ) {
+          if (shouldMigrateMicrophoneScenarioToBundledMvp(document)) {
             document = getDefaultMvpMicrophoneDocument();
+            savedDocumentRef.current = null;
             void persistAdapter
               .save(document)
               .then((saved) => {
@@ -622,6 +619,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
               .catch(() => {
                 /* migrate best-effort */
               });
+          } else {
+            savedDocumentRef.current = structuredClone(document);
           }
           applyHydratedState(hydrateBoardFromDocument(document));
           pendingBaselineRef.current = true;
@@ -1255,10 +1254,21 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       const branchNodes = branch === 'signal' ? signalNodes : readScenarioBranchGraph(branch).nodes;
       const branchEdges =
         branch === 'signal' ? signalEdges : readScenarioBranchGraph(branch).edges;
+      const reservedGroupIds = collectCommentGroupNodeIdsFromBoard({
+        signalNodes,
+        scenarioInitialNodes,
+        scenarioOnConnectNodes,
+        scenarioMainNodes,
+        scenarioAlarmNodes,
+        scenarioOnStopNodes,
+        scenarioOnDisconnectNodes,
+        scenarioFunctionNodes,
+      });
       const result = collapseSelectionToCommentGroup({
         branch,
         selectedNodeIds,
         branchNodes,
+        reservedGroupIds,
       });
       if (!result.ok) {
         return { error: result.message, groupNode: null };
@@ -1283,6 +1293,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       readScenarioBranchGraph,
       signalEdges,
       signalNodes,
+      scenarioAlarmNodes,
+      scenarioFunctionNodes,
+      scenarioInitialNodes,
+      scenarioMainNodes,
+      scenarioOnConnectNodes,
+      scenarioOnDisconnectNodes,
+      scenarioOnStopNodes,
     ],
   );
 
@@ -1337,7 +1354,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   );
 
   const buildDocument = useCallback(() => {
-    return buildDeviceScenarioDocument({
+    const built = buildDeviceScenarioDocument({
       deviceKind,
       title: 'Device board export',
       signalNodes,
@@ -1358,6 +1375,17 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctions: hydratedFunctionInputs(buildHydratedSnapshot()),
       variables,
     });
+    const persistedMeta = savedDocumentRef.current?.meta;
+    if (persistedMeta === undefined) {
+      return built;
+    }
+    return {
+      ...built,
+      meta: {
+        ...built.meta,
+        ...persistedMeta,
+      },
+    };
   }, [buildHydratedSnapshot, deviceKind, scenarioAlarmEdges, scenarioAlarmNodes, scenarioFunctionNodes, scenarioInitialEdges, scenarioInitialNodes, scenarioOnConnectEdges, scenarioOnConnectNodes, scenarioMainEdges, scenarioMainNodes, scenarioOnDisconnectEdges, scenarioOnDisconnectNodes, scenarioOnStopEdges, scenarioOnStopNodes, signalEdges, signalNodes, variables]);
 
   const runValidation = useCallback(() => {
@@ -1834,7 +1862,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }
     setSyncStatus('saving');
     setSyncError(null);
-    const document = buildDocument();
+    const document = stampUserWorkspaceDocument(buildDocument());
     try {
       await persistAdapter.save(document);
       markSavedSnapshot(document);
@@ -2373,6 +2401,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const updateCommentGroupMetadata = useCallback(
     (
+      branch: ScenarioCommentGroupBranch,
       nodeId: string,
       patch: {
         readonly title?: string;
@@ -2380,30 +2409,40 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         readonly frameColor?: ScenarioCommentGroupFrameColor;
       },
     ) => {
-      const dataPatch: Record<string, unknown> = {};
-      if (patch.title !== undefined) {
-        const trimmed = patch.title.trim();
-        dataPatch.title = trimmed.length > 0 ? trimmed : 'Группа';
+      const dataPatch = buildCommentGroupDataPatch(patch);
+      const patchBranch = (setter: React.Dispatch<React.SetStateAction<Node[]>>) => {
+        setter((prev) => patchCommentGroupNodeData(prev, nodeId, dataPatch) ?? prev);
+      };
+      switch (branch) {
+        case 'signal':
+          patchBranch(setSignalNodes);
+          break;
+        case 'initial':
+          patchBranch(setScenarioInitialNodes);
+          break;
+        case 'onConnect':
+          patchBranch(setScenarioOnConnectNodes);
+          break;
+        case 'main':
+          patchBranch(setScenarioMainNodes);
+          break;
+        case 'alarm':
+          patchBranch(setScenarioAlarmNodes);
+          break;
+        case 'onStop':
+          patchBranch(setScenarioOnStopNodes);
+          break;
+        case 'onDisconnect':
+          patchBranch(setScenarioOnDisconnectNodes);
+          break;
+        case 'function':
+          patchBranch(setScenarioFunctionNodes);
+          break;
+        default: {
+          const _exhaustive: never = branch;
+          return _exhaustive;
+        }
       }
-      if (patch.description !== undefined) {
-        const trimmed = patch.description.trim().slice(0, COMMENT_GROUP_DESCRIPTION_MAX_LENGTH);
-        dataPatch.description = trimmed;
-      }
-      if (patch.frameColor !== undefined) {
-        dataPatch.frameColor = resolveScenarioCommentGroupFrameColor(patch.frameColor);
-      }
-      const mapNodes = (nodes: Node[]) =>
-        nodes.map((node) =>
-          node.id === nodeId ? { ...node, data: { ...node.data, ...dataPatch } } : node,
-        );
-      setSignalNodes(mapNodes);
-      setScenarioInitialNodes(mapNodes);
-      setScenarioOnConnectNodes(mapNodes);
-      setScenarioMainNodes(mapNodes);
-      setScenarioAlarmNodes(mapNodes);
-      setScenarioOnStopNodes(mapNodes);
-      setScenarioOnDisconnectNodes(mapNodes);
-      setScenarioFunctionNodes(mapNodes);
     },
     [],
   );

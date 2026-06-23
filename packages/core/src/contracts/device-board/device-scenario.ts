@@ -33,11 +33,18 @@ export const DEVICE_SCENARIO_DOCUMENT_VERSION = 2 as const;
 /** Минимальная поддерживаемая (мигрируемая при импорте) версия документа. */
 export const DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1 as const;
 
+/** Происхождение persisted-документа (U10 User Workspace). */
+export type DeviceScenarioWorkspaceKind = 'user' | 'system' | 'seed';
+
 /** Метаданные export/import (hash обязателен при export — бриф V5). */
 export interface DeviceScenarioMeta {
   readonly title?: string;
   readonly exportedAt?: IsoDateTime;
   readonly hash?: string;
+  /** `user` — явное сохранение оператором; migrate-on-load не затирает. */
+  readonly workspaceKind?: DeviceScenarioWorkspaceKind;
+  readonly workspaceId?: string;
+  readonly clonedFromUserCaseId?: string;
 }
 
 /** Полный документ сценария устройства v1. */
