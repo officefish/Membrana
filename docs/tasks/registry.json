@@ -4482,7 +4482,7 @@
       "githubIssue": 147,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-post-usercase-roadmap",
       "createdAt": "2026-06-23",
       "dependsOn": [
@@ -4495,7 +4495,9 @@
         "rodchenko",
         "vesnin"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "PR #148 shipped; U11 #149"
     },
     {
       "id": "db-uw-p0-migrate-guard",
@@ -4718,6 +4720,165 @@
         "rodchenko"
       ],
       "strategicWave": "W0"
+    },
+    {
+      "id": "db-user-workspace-u11",
+      "title": "DB U11: Paired workspace hardening (S2→S3)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-user-workspace-u10"
+      ],
+      "notes": "S2 paired E2E + S3 LWW/conflict UX. Cabinet out of scope (quota only U10).",
+      "githubIssueClosedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin"
+      ],
+      "strategicWave": "S"
+    },
+    {
+      "id": "db-uw11-s2-remote-first",
+      "title": "DB UW11 S2-W1: paired remote-first hybrid host + persist tests",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-user-workspace-u11",
+      "createdAt": "2026-06-23",
+      "dependsOn": [],
+      "notes": "createHybridDeviceBoardWorkspaceHost remote-first; invalidate workspaces API cache on pair change.",
+      "githubIssueClosedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "S"
+    },
+    {
+      "id": "db-uw11-s2-launcher-recovery",
+      "title": "DB UW11 S2-W2: launcher refresh + reinstall recovery from media",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-user-workspace-u11",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw11-s2-remote-first"
+      ],
+      "notes": "visibilitychange refresh; empty IndexedDB pulls list from media.",
+      "githubIssueClosedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "S"
+    },
+    {
+      "id": "db-uw11-s2-paired-smoke",
+      "title": "DB UW11 S2-W3: paired prod-smoke extension",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "db-user-workspace-u11",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw11-s2-launcher-recovery"
+      ],
+      "notes": "Extend scripts/lib/u10-workspace-prod-smoke.mjs or U11 sibling checks.",
+      "githubIssueClosedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "strategicWave": "S"
+    },
+    {
+      "id": "db-uw11-s3-lww-media",
+      "title": "DB UW11 S3-W1: media PUT LWW (expectedUpdatedAt → 409)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-user-workspace-u11",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw11-s2-paired-smoke"
+      ],
+      "notes": "background-media device-workspaces only; no cabinet changes.",
+      "githubIssueClosedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "S"
+    },
+    {
+      "id": "db-uw11-s3-lww-client",
+      "title": "DB UW11 S3-W2: client persist 409 handling + merge metadata",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-user-workspace-u11",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw11-s3-lww-media"
+      ],
+      "notes": "device-workspaces-api.ts + deviceScenarioPersistence.ts",
+      "githubIssueClosedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "S"
+    },
+    {
+      "id": "db-uw11-s3-conflict-ux",
+      "title": "DB UW11 S3-W3: conflict toast + reload from server",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "db-user-workspace-u11",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw11-s3-lww-client"
+      ],
+      "notes": "DeviceBoardLauncher + shell banner; DaisyUI toast.",
+      "githubIssueClosedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "S"
+    },
+    {
+      "id": "db-uw11-d1-docs",
+      "title": "DB UW11 D1: docs paired workspace semantics",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md",
+      "githubIssue": 149,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "db-user-workspace-u11",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw11-s3-conflict-ux"
+      ],
+      "notes": "user-workspace.mdx, U10_WORKSPACE_DEPLOY.md note.",
+      "githubIssueClosedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "S"
     },
     {
       "id": "db-pure-getters-blueprint-parity",

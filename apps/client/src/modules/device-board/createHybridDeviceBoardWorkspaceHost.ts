@@ -4,11 +4,17 @@ import type { PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 
 import { createDeviceBoardWorkspaceHost } from './createDeviceBoardWorkspaceHost.js';
 import { createMediaDeviceBoardWorkspaceHost } from './createMediaDeviceBoardWorkspaceHost.js';
-import { isDeviceWorkspacesApiAvailable } from './device-workspaces-api.js';
+import {
+  fetchRemoteWorkspaceList,
+  isDeviceWorkspacesApiAvailable,
+} from './device-workspaces-api.js';
 
 type HostMode = 'unknown' | 'remote' | 'local';
 
-/** Paired host: media multi-workspace when available, else IndexedDB (legacy media). */
+/**
+ * Paired host: media multi-workspace when available (remote-first), else IndexedDB legacy.
+ * U11 S2-W1: re-probe media after transient failures; local only when workspaces API 404.
+ */
 export function createHybridDeviceBoardWorkspaceHost(
   deviceId: string,
   creds: PairedNodeCredentials,
@@ -24,10 +30,19 @@ export function createHybridDeviceBoardWorkspaceHost(
       return mode;
     }
     if (modePromise === null) {
-      modePromise = isDeviceWorkspacesApiAvailable(creds).then((available) => {
-        mode = available ? 'remote' : 'local';
+      modePromise = (async (): Promise<HostMode> => {
+        if (await isDeviceWorkspacesApiAvailable(creds)) {
+          mode = 'remote';
+          return mode;
+        }
+        const list = await fetchRemoteWorkspaceList(creds);
+        if (list !== null) {
+          mode = 'remote';
+          return mode;
+        }
+        mode = 'local';
         return mode;
-      });
+      })();
     }
     return modePromise;
   }

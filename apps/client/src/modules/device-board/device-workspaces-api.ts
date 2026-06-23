@@ -24,24 +24,37 @@ function mediaHeaders(creds: PairedNodeCredentials): HeadersInit {
   };
 }
 
-/** Clears feature-detect cache (tests). */
+/** Clears feature-detect cache (tests + pair reconnect, U11 S2-W1). */
 export function resetDeviceWorkspacesApiCacheForTests(): void {
   availabilityCache.clear();
+}
+
+/** Drop cached availability for one device (pair reconnect). */
+export function invalidateDeviceWorkspacesApiCache(deviceId?: string): void {
+  if (deviceId === undefined) {
+    availabilityCache.clear();
+    return;
+  }
+  availabilityCache.delete(deviceId);
 }
 
 /** True when media exposes multi-workspace REST (U10 W5). */
 export async function isDeviceWorkspacesApiAvailable(creds: PairedNodeCredentials): Promise<boolean> {
   const cached = availabilityCache.get(creds.deviceId);
-  if (cached !== undefined) {
-    return cached;
+  if (cached === true) {
+    return true;
   }
   try {
     const res = await fetch(workspacesBase(creds), { method: 'GET', headers: mediaHeaders(creds) });
     const available = res.status !== 404 && res.ok;
-    availabilityCache.set(creds.deviceId, available);
+    if (available) {
+      availabilityCache.set(creds.deviceId, true);
+    } else {
+      availabilityCache.delete(creds.deviceId);
+    }
     return available;
   } catch {
-    availabilityCache.set(creds.deviceId, false);
+    availabilityCache.delete(creds.deviceId);
     return false;
   }
 }
