@@ -6,6 +6,7 @@ import type { PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 
 import { WorkspacePersistConflictError } from './workspace-persist-conflict.js';
 import { WorkspacePersistError } from './workspace-persist-error.js';
+import { tryParseWorkspaceQuotaFromResponseBody } from './workspace-quota-error.js';
 
 export interface PutRemoteWorkspaceOptions {
   readonly expectedUpdatedAt?: string;
@@ -14,6 +15,8 @@ export interface PutRemoteWorkspaceOptions {
 export interface DeviceWorkspaceListResponse {
   activeWorkspaceId: string | null;
   workspaces: DeviceBoardWorkspaceListItem[];
+  /** Server-side tariff snapshot (STE v1); optional for older media. */
+  userWorkspacesQuota?: { used: number; limit: number };
 }
 
 const availabilityCache = new Map<string, boolean>();
@@ -133,16 +136,24 @@ export async function putRemoteWorkspaceRecord(
     );
   }
   if (!res.ok) {
-    let detail = res.statusText;
+    let body: unknown = null;
     try {
-      const body = (await res.json()) as { message?: string | string[] };
-      if (typeof body.message === 'string') {
-        detail = body.message;
-      } else if (Array.isArray(body.message)) {
-        detail = body.message.join('; ');
-      }
+      body = await res.json();
     } catch {
       /* ignore parse */
+    }
+    const quotaError = tryParseWorkspaceQuotaFromResponseBody(body);
+    if (quotaError !== null) {
+      throw quotaError;
+    }
+    let detail = res.statusText;
+    if (typeof body === 'object' && body !== null) {
+      const record = body as { message?: string | string[] };
+      if (typeof record.message === 'string') {
+        detail = record.message;
+      } else if (Array.isArray(record.message)) {
+        detail = record.message.join('; ');
+      }
     }
     throw new WorkspacePersistError(
       `Сервер отклонил сохранение workspace (${res.status}): ${detail}`,

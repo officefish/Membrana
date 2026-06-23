@@ -4898,46 +4898,69 @@
     },
     {
       "id": "server-tariff-enforcement-v1",
-      "title": "Server Tariff Enforcement v1: workspace quota on media + cabinet sync",
-      "promptPath": "docs/prompts/SERVER_TARIFF_ENFORCEMENT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
+      "title": "Day sprint: Server Tariff Enforcement v1 (workspace quota)",
+      "promptPath": "docs/prompts/SERVER_TARIFF_DAY_SPRINT_PROMPT.md",
+      "githubIssue": 150,
       "linearId": null,
       "size": "L",
       "status": "active",
+      "sprintKind": "day-sprint",
       "parentEpic": "membrane-platform-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [
         "db-user-workspace-u11"
       ],
-      "notes": "Media enforces maxUserWorkspaces; cabinet syncs tariff snapshot; client 403. Follow-up quota bugfix 8db252a.",
+      "notes": "P0: 2nd workspace blocked — cabinet sync + client 403. W1 done c47f2c4. Epic spec: SERVER_TARIFF_ENFORCEMENT_V1_EPIC_PROMPT.md",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
       ],
-      "strategicWave": "S"
+      "strategicWave": "W5"
     },
     {
       "id": "ste-v1-w1-media-quota",
       "title": "STE W1: media Device.maxUserWorkspaces + PUT 403 quota",
       "promptPath": "docs/prompts/SERVER_TARIFF_ENFORCEMENT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 150,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "server-tariff-enforcement-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [],
       "notes": "Prisma migration, resolveDeviceLimits, device-workspaces service guard, tests.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "strategicWave": "S"
+      "strategicWave": "W5",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "c47f2c4"
+    },
+    {
+      "id": "ste-v1-b0-second-workspace",
+      "title": "STE B0: fix 2nd workspace create (cabinet sync + client 403 + list quota)",
+      "promptPath": "docs/prompts/SERVER_TARIFF_DAY_SPRINT_PROMPT.md",
+      "githubIssue": 150,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "server-tariff-enforcement-v1",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "ste-v1-w1-media-quota"
+      ],
+      "notes": "Bug: 2nd scenario fails paired. Cabinet maxUserWorkspaces sync; WorkspaceQuotaExceededError; media list quota.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W5"
     },
     {
       "id": "ste-v1-w2-cabinet-sync",
       "title": "STE W2: cabinet pair → media membrane sync maxUserWorkspaces",
       "promptPath": "docs/prompts/SERVER_TARIFF_ENFORCEMENT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 150,
       "linearId": null,
       "size": "M",
       "status": "active",
@@ -4946,16 +4969,16 @@
       "dependsOn": [
         "ste-v1-w1-media-quota"
       ],
-      "notes": "PatchDeviceMembraneContextDto + pair.service media sync.",
+      "notes": "Merged into B0 delivery; keep for traceability.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "strategicWave": "S"
+      "strategicWave": "W5"
     },
     {
       "id": "ste-v1-w3-client-403",
       "title": "STE W3: client WORKSPACE_QUOTA_EXCEEDED handling",
       "promptPath": "docs/prompts/SERVER_TARIFF_ENFORCEMENT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 150,
       "linearId": null,
       "size": "M",
       "status": "active",
@@ -4964,31 +4987,50 @@
       "dependsOn": [
         "ste-v1-w1-media-quota"
       ],
-      "notes": "device-workspaces-api 403; launcher quota message; tests.",
+      "notes": "Merged into B0 delivery; keep for traceability.",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "S"
+      "strategicWave": "W5"
     },
     {
-      "id": "ste-v1-d1-docs",
-      "title": "STE D1: TARIFF_MATRIX server enforcement + deploy note",
-      "promptPath": "docs/prompts/SERVER_TARIFF_ENFORCEMENT_V1_EPIC_PROMPT.md",
-      "githubIssue": null,
+      "id": "ste-v1-s1-prod-smoke",
+      "title": "STE S1: prod deploy media+cabinet + 2nd workspace smoke",
+      "promptPath": "docs/prompts/SERVER_TARIFF_DAY_SPRINT_PROMPT.md",
+      "githubIssue": 150,
       "linearId": null,
       "size": "S",
       "status": "active",
       "parentEpic": "server-tariff-enforcement-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [
-        "ste-v1-w2-cabinet-sync",
-        "ste-v1-w3-client-403"
+        "ste-v1-b0-second-workspace"
+      ],
+      "notes": "media:migrate, cabinet image, u10-workspace-prod-smoke 2nd slot.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W5"
+    },
+    {
+      "id": "ste-v1-d1-docs",
+      "title": "STE D1: TARIFF_MATRIX server enforcement + deploy note",
+      "promptPath": "docs/prompts/SERVER_TARIFF_ENFORCEMENT_V1_EPIC_PROMPT.md",
+      "githubIssue": 150,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "server-tariff-enforcement-v1",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "ste-v1-b0-second-workspace"
       ],
       "notes": "TARIFF_MATRIX, media README, U10 deploy doc cross-link.",
       "leadPersona": "rodchenko",
       "supportPersonas": [],
-      "strategicWave": "S"
+      "strategicWave": "W5"
     },
     {
       "id": "db-pure-getters-blueprint-parity",

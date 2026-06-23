@@ -11,12 +11,23 @@ export class DeviceWorkspaceListItemDto {
   updatedAt!: string;
 }
 
+export class UserWorkspacesQuotaListDto {
+  @ApiProperty({ example: 2 })
+  used!: number;
+
+  @ApiProperty({ example: 3 })
+  limit!: number;
+}
+
 export class DeviceWorkspaceListDto {
   @ApiProperty({ type: String, nullable: true })
   activeWorkspaceId!: string | null;
 
   @ApiProperty({ type: [DeviceWorkspaceListItemDto] })
   workspaces!: DeviceWorkspaceListItemDto[];
+
+  @ApiProperty({ type: UserWorkspacesQuotaListDto, required: false })
+  userWorkspacesQuota?: UserWorkspacesQuotaListDto;
 }
 
 export class DeviceWorkspaceRecordDto {

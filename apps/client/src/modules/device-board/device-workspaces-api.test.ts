@@ -12,6 +12,7 @@ import {
 } from './device-workspaces-api.js';
 import { WorkspacePersistConflictError } from './workspace-persist-conflict.js';
 import { WorkspacePersistError } from './workspace-persist-error.js';
+import { WorkspaceQuotaExceededError } from './workspace-quota-error.js';
 
 const CREDS: PairedNodeCredentials = {
   deviceId: 'dev-hybrid-1',
@@ -90,6 +91,29 @@ describe('putRemoteWorkspaceRecord LWW (U11 S3)', () => {
 
     await expect(putRemoteWorkspaceRecord(CREDS, 'ws-new', document)).rejects.toBeInstanceOf(
       WorkspacePersistError,
+    );
+  });
+
+  it('throws WorkspaceQuotaExceededError on 403 quota body', async () => {
+    const document = createEmptyDeviceScenarioDocument('microphone');
+    const fetchMock = vi.fn().mockResolvedValue({
+      status: 403,
+      ok: false,
+      statusText: 'Forbidden',
+      json: async () => ({
+        statusCode: 403,
+        message: {
+          code: 'WORKSPACE_QUOTA_EXCEEDED',
+          maxUserWorkspaces: 3,
+          used: 3,
+        },
+        error: 'Forbidden',
+      }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(putRemoteWorkspaceRecord(CREDS, 'ws-new', document)).rejects.toBeInstanceOf(
+      WorkspaceQuotaExceededError,
     );
   });
 });

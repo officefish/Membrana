@@ -54,6 +54,7 @@ export class PairService {
       userStorageQuotaBytes: node.membrane.tariff.userStorageQuotaBytes.toString(),
       bufferQuotaBytes: node.membrane.tariff.bufferQuotaBytes.toString(),
       datasetCatalogId: node.membrane.tariff.datasetCatalogId,
+      maxUserWorkspaces: node.membrane.tariff.maxUserWorkspaces,
     };
 
     if (!mediaDeviceId) {

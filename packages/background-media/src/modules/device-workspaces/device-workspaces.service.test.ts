@@ -39,9 +39,16 @@ describe('DeviceWorkspacesService', () => {
     service = new DeviceWorkspacesService(prisma as never, mockConfig as never);
   });
 
-  it('lists workspaces with active id', async () => {
+  it('lists workspaces with active id and quota snapshot', async () => {
     prisma.deviceWorkspace.count.mockResolvedValue(1);
-    prisma.device.findUnique.mockResolvedValue({ activeWorkspaceId: 'ws-1' });
+    prisma.device.findUnique.mockResolvedValue({
+      id: 'dev-1',
+      activeWorkspaceId: 'ws-1',
+      maxUserWorkspaces: 3,
+      userStorageQuotaBytes: null,
+      bufferQuotaBytes: null,
+      datasetCatalogId: null,
+    });
     prisma.deviceWorkspace.findMany.mockResolvedValue([
       {
         workspaceId: 'ws-1',
@@ -61,6 +68,7 @@ describe('DeviceWorkspacesService', () => {
           updatedAt: '2026-06-23T10:00:00.000Z',
         },
       ],
+      userWorkspacesQuota: { used: 1, limit: 3 },
     });
   });
 
@@ -78,7 +86,14 @@ describe('DeviceWorkspacesService', () => {
       updatedAt: new Date('2026-06-22T10:00:00.000Z'),
     });
     prisma.$transaction.mockResolvedValue([]);
-    prisma.device.findUnique.mockResolvedValue({ activeWorkspaceId: 'legacy-ws' });
+    prisma.device.findUnique.mockResolvedValue({
+      id: 'dev-1',
+      activeWorkspaceId: 'legacy-ws',
+      maxUserWorkspaces: null,
+      userStorageQuotaBytes: null,
+      bufferQuotaBytes: null,
+      datasetCatalogId: null,
+    });
     prisma.deviceWorkspace.findMany.mockResolvedValue([
       {
         workspaceId: 'legacy-ws',

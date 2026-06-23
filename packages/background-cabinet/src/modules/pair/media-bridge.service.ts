@@ -8,6 +8,7 @@ export interface MediaMembraneContext {
   userStorageQuotaBytes: string | number;
   bufferQuotaBytes: string | number;
   datasetCatalogId: string;
+  maxUserWorkspaces?: number;
 }
 
 export interface MediaDeviceRegistration {
@@ -27,6 +28,7 @@ export interface MediaQuotaResponse {
   userStorage: MediaQuotaBucket;
   buffer: MediaQuotaBucket;
   dataset: { catalogId: string; sampleCount: number };
+  userWorkspaces?: { used: number; limit: number; backend: 'server' };
 }
 
 export interface MediaCollectionSummary {

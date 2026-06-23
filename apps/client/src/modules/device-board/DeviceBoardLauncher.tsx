@@ -10,6 +10,7 @@ import { useDeviceBoardClientBindings } from './useDeviceBoardClientBindings.js'
 import { formatWorkspaceQuotaMessage } from './workspace-tariff.js';
 import { isWorkspacePersistConflictError } from './workspace-persist-conflict.js';
 import { isWorkspacePersistError } from './workspace-persist-error.js';
+import { isWorkspaceQuotaExceededError } from './workspace-quota-error.js';
 import { useDeviceBoardUserCaseSettings } from './useDeviceBoardUserCaseSettings.js';
 import {
   normalizeDeviceBoardModuleConfig,
@@ -136,6 +137,11 @@ export const DeviceBoardLauncher: React.FC<{
       };
       setSelection(next);
     } catch (error: unknown) {
+      if (isWorkspaceQuotaExceededError(error)) {
+        setActionError(error.message);
+        await refreshWorkspaces();
+        return;
+      }
       if (isWorkspacePersistConflictError(error)) {
         setActionError(error.message);
         return;
@@ -249,6 +255,11 @@ export const DeviceBoardLauncher: React.FC<{
         setSelection(next);
         await openBoard(next);
       } catch (error: unknown) {
+        if (isWorkspaceQuotaExceededError(error)) {
+          setActionError(error.message);
+          await refreshWorkspaces();
+          return;
+        }
         if (isWorkspacePersistConflictError(error) || isWorkspacePersistError(error)) {
           setActionError(error.message);
         } else {

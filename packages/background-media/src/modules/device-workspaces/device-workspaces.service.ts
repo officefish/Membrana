@@ -35,10 +35,7 @@ export class DeviceWorkspacesService {
     await this.ensureLegacyMigrated(deviceId);
 
     const [device, rows] = await Promise.all([
-      this.prisma.device.findUnique({
-        where: { id: deviceId },
-        select: { activeWorkspaceId: true },
-      }),
+      this.prisma.device.findUnique({ where: { id: deviceId } }),
       this.prisma.deviceWorkspace.findMany({
         where: { deviceId },
         orderBy: { createdAt: 'asc' },
@@ -49,6 +46,8 @@ export class DeviceWorkspacesService {
       throw new NotFoundException('Device not found');
     }
 
+    const limits = resolveDeviceLimits(device, this.config);
+
     return {
       activeWorkspaceId: device.activeWorkspaceId,
       workspaces: rows.map((row) => ({
@@ -56,6 +55,10 @@ export class DeviceWorkspacesService {
         title: row.title,
         updatedAt: row.updatedAt.toISOString(),
       })),
+      userWorkspacesQuota: {
+        used: rows.length,
+        limit: limits.maxUserWorkspaces,
+      },
     };
   }
 
