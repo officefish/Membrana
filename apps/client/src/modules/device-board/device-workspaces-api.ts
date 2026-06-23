@@ -4,6 +4,12 @@ import type { DeviceBoardWorkspaceListItem, DeviceScenarioRemoteRecord } from '@
 import { resolveMediaApiBase } from '@/api/pairing';
 import type { PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 
+import { WorkspacePersistConflictError } from './workspace-persist-conflict.js';
+
+export interface PutRemoteWorkspaceOptions {
+  readonly expectedUpdatedAt?: string;
+}
+
 export interface DeviceWorkspaceListResponse {
   activeWorkspaceId: string | null;
   workspaces: DeviceBoardWorkspaceListItem[];
@@ -95,19 +101,39 @@ export async function putRemoteWorkspaceRecord(
   creds: PairedNodeCredentials,
   workspaceId: string,
   document: DeviceScenarioDocument,
+  options?: PutRemoteWorkspaceOptions,
 ): Promise<DeviceScenarioRemoteRecord | null> {
   try {
-    const res = await fetch(`${workspacesBase(creds)}/${encodeURIComponent(workspaceId)}`, {
+    const url = new URL(`${workspacesBase(creds)}/${encodeURIComponent(workspaceId)}`);
+    if (options?.expectedUpdatedAt !== undefined && options.expectedUpdatedAt.length > 0) {
+      url.searchParams.set('expectedUpdatedAt', options.expectedUpdatedAt);
+    }
+    const res = await fetch(url.toString(), {
       method: 'PUT',
       headers: mediaHeaders(creds),
       body: JSON.stringify(document),
     });
+    if (res.status === 409) {
+      const body = (await res.json()) as {
+        code?: string;
+        currentUpdatedAt?: string;
+        expectedUpdatedAt?: string;
+      };
+      throw new WorkspacePersistConflictError(
+        'Сценарий на сервере новее — перезагрузите workspace',
+        body.currentUpdatedAt ?? new Date().toISOString(),
+        body.expectedUpdatedAt ?? options?.expectedUpdatedAt,
+      );
+    }
     if (!res.ok) return null;
     const body = (await res.json()) as DeviceScenarioRemoteRecord;
     const parsed = parseDeviceScenarioDocument(body.document);
     if (!parsed.ok) return null;
     return { document: parsed.value, updatedAt: body.updatedAt };
-  } catch {
+  } catch (error) {
+    if (error instanceof WorkspacePersistConflictError) {
+      throw error;
+    }
     return null;
   }
 }
@@ -156,6 +182,7 @@ export async function fetchRemoteActiveWorkspaceRecord(
 export async function putRemoteActiveWorkspaceRecord(
   creds: PairedNodeCredentials,
   document: DeviceScenarioDocument,
+  options?: PutRemoteWorkspaceOptions,
 ): Promise<DeviceScenarioRemoteRecord | null> {
   const list = await fetchRemoteWorkspaceList(creds);
   if (list === null) {
@@ -165,7 +192,7 @@ export async function putRemoteActiveWorkspaceRecord(
   if (workspaceId === null || workspaceId.length === 0) {
     return null;
   }
-  const saved = await putRemoteWorkspaceRecord(creds, workspaceId, document);
+  const saved = await putRemoteWorkspaceRecord(creds, workspaceId, document, options);
   if (saved !== null && list.activeWorkspaceId === null) {
     await setRemoteActiveWorkspaceId(creds, workspaceId);
   }

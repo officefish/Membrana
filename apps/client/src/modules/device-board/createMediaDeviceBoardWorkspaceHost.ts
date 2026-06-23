@@ -110,7 +110,9 @@ export function createMediaDeviceBoardWorkspaceHost(
           title: trimmedTitle,
         },
       });
-      const saved = await putRemoteWorkspaceRecord(creds, workspaceId, document);
+      const saved = await putRemoteWorkspaceRecord(creds, workspaceId, document, {
+        expectedUpdatedAt: existing.updatedAt,
+      });
       return saved !== null;
     },
 

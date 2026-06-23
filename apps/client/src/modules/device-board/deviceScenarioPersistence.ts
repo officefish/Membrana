@@ -20,6 +20,7 @@ import {
   isDeviceWorkspacesApiAvailable,
   putRemoteActiveWorkspaceRecord,
 } from './device-workspaces-api.js';
+import { isWorkspacePersistConflictError } from './workspace-persist-conflict.js';
 import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId.js';
 
 function scenarioUrl(creds: PairedNodeCredentials): string {
@@ -87,6 +88,7 @@ export function createClientDeviceBoardPersistAdapter(
   maxUserWorkspaces = 3,
 ): DeviceBoardPersistAdapter {
   const workspacePersist = createDeviceBoardWorkspacePersistApi(deviceId, maxUserWorkspaces);
+  let lastSyncedRemoteUpdatedAt: string | null = null;
 
   const creds = readPersistedPairedCredentials();
   if (creds === null || creds.deviceId !== deviceId) {
@@ -107,6 +109,9 @@ export function createClientDeviceBoardPersistAdapter(
       const remote = workspacesApi
         ? await fetchRemoteActiveWorkspaceRecord(creds)
         : await fetchRemoteRecord(creds);
+      if (remote !== null) {
+        lastSyncedRemoteUpdatedAt = remote.updatedAt;
+      }
       const winner = pickNewer(local, remote);
       if (winner !== null && winner !== local) {
         await workspacePersist.saveActive(winner.document);
@@ -116,10 +121,22 @@ export function createClientDeviceBoardPersistAdapter(
     async save(document) {
       const local = await workspacePersist.saveActive(document);
       const workspacesApi = await isDeviceWorkspacesApiAvailable(creds);
-      const remote = workspacesApi
-        ? await putRemoteActiveWorkspaceRecord(creds, local.document)
-        : await putRemoteRecord(creds, local.document);
-      return remote ?? local;
+      try {
+        const remote = workspacesApi
+          ? await putRemoteActiveWorkspaceRecord(creds, local.document, {
+              expectedUpdatedAt: lastSyncedRemoteUpdatedAt ?? undefined,
+            })
+          : await putRemoteRecord(creds, local.document);
+        if (remote !== null) {
+          lastSyncedRemoteUpdatedAt = remote.updatedAt;
+        }
+        return remote ?? local;
+      } catch (error) {
+        if (isWorkspacePersistConflictError(error)) {
+          throw error;
+        }
+        return local;
+      }
     },
   };
 }
