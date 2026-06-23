@@ -109,6 +109,10 @@ import {
   type ScenarioRevertPolicy,
 } from '../graph/branch-navigation.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
+import type {
+  DeviceBoardWorkspaceHost,
+  DeviceBoardWorkspaceListItem,
+} from '../persist/device-board-workspace-host.js';
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
@@ -226,6 +230,16 @@ export interface DeviceBoardGraphContextValue {
   readonly isDirty: boolean;
   /** Сохранить сценарий на сервер / в persist-адаптер (только по явному клику). */
   readonly saveScenario: () => Promise<boolean>;
+  /** U10 W2: user workspace slots (undefined host → поля no-op). */
+  readonly workspaceEnabled: boolean;
+  readonly workspaceList: readonly DeviceBoardWorkspaceListItem[];
+  readonly activeWorkspaceId: string | null;
+  readonly maxUserWorkspaces: number;
+  readonly refreshWorkspaces: () => Promise<void>;
+  readonly switchWorkspace: (workspaceId: string) => Promise<string | null>;
+  readonly createEmptyWorkspace: (title?: string) => Promise<string | null>;
+  readonly renameWorkspace: (workspaceId: string, title: string) => Promise<string | null>;
+  readonly deleteWorkspace: (workspaceId: string) => Promise<string | null>;
   readonly startScenario: () => Promise<void>;
   readonly stopScenario: (reason?: ScenarioStopReason) => void;
   readonly pauseScenario: () => void;
@@ -346,6 +360,8 @@ export interface DeviceBoardGraphProviderProps {
   readonly deviceLive?: boolean;
   /** Загрузка entitled UserCase document (client catalog). */
   readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
+  /** CRUD user workspace (client IndexedDB). */
+  readonly workspaceHost?: DeviceBoardWorkspaceHost;
 }
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
@@ -356,6 +372,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   initialHydratedState,
   deviceLive,
   loadUserCaseDocument,
+  workspaceHost,
 }) => {
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
@@ -406,6 +423,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [isDirty, setIsDirty] = useState(false);
   const [showInfoLogs, setShowInfoLogs] = useState(true);
   const [scenarioTraceLineCount, setScenarioTraceLineCount] = useState(0);
+  const [workspaceList, setWorkspaceList] = useState<readonly DeviceBoardWorkspaceListItem[]>([]);
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(null);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
   const savedSnapshotRef = useRef<string | null>(null);
@@ -1875,6 +1894,130 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }
   }, [buildDocument, markSavedSnapshot, persistAdapter]);
 
+  const maxUserWorkspaces = workspaceHost?.maxUserWorkspaces ?? 0;
+  const workspaceEnabled = workspaceHost !== undefined;
+
+  const refreshWorkspaces = useCallback(async (): Promise<void> => {
+    if (workspaceHost === undefined) {
+      setWorkspaceList([]);
+      setActiveWorkspaceId(null);
+      return;
+    }
+    const [list, active] = await Promise.all([
+      workspaceHost.listWorkspaces(),
+      workspaceHost.getActiveWorkspaceId(),
+    ]);
+    setWorkspaceList(list);
+    setActiveWorkspaceId(active);
+  }, [workspaceHost]);
+
+  useEffect(() => {
+    if (workspaceHost !== undefined) {
+      void refreshWorkspaces();
+    }
+  }, [refreshWorkspaces, workspaceHost]);
+
+  const replaceLoadedDocument = useCallback(
+    (document: DeviceScenarioDocument) => {
+      skipDirtyRef.current = true;
+      savedDocumentRef.current = structuredClone(document);
+      setPendingBranchImport(null);
+      applyHydratedState(hydrateBoardFromDocument(document));
+      pendingBaselineRef.current = true;
+      runValidation();
+      window.setTimeout(() => {
+        skipDirtyRef.current = false;
+      }, 0);
+    },
+    [applyHydratedState, runValidation],
+  );
+
+  const switchWorkspace = useCallback(
+    async (workspaceId: string): Promise<string | null> => {
+      if (workspaceHost === undefined) {
+        return 'User workspace недоступен';
+      }
+      if (runtimeState.isRunning) {
+        return 'Остановите сценарий перед переключением';
+      }
+      const document = await workspaceHost.loadWorkspace(workspaceId);
+      if (document === null) {
+        return 'Сценарий не найден';
+      }
+      replaceLoadedDocument(document);
+      await workspaceHost.setActiveWorkspaceId(workspaceId);
+      setActiveWorkspaceId(workspaceId);
+      return null;
+    },
+    [replaceLoadedDocument, runtimeState.isRunning, workspaceHost],
+  );
+
+  const createEmptyWorkspace = useCallback(
+    async (title?: string): Promise<string | null> => {
+      if (workspaceHost === undefined) {
+        return 'User workspace недоступен';
+      }
+      if (runtimeState.isRunning) {
+        return 'Остановите сценарий перед созданием';
+      }
+      const count = await workspaceHost.countWorkspaces();
+      if (count >= workspaceHost.maxUserWorkspaces) {
+        return `Достигнут лимит (${workspaceHost.maxUserWorkspaces} сценария на free)`;
+      }
+      const created = await workspaceHost.createWorkspace(title ?? `Сценарий ${count + 1}`);
+      if (created === null) {
+        return `Достигнут лимит (${workspaceHost.maxUserWorkspaces} сценария на free)`;
+      }
+      replaceLoadedDocument(created.document);
+      await workspaceHost.setActiveWorkspaceId(created.workspaceId);
+      await refreshWorkspaces();
+      return null;
+    },
+    [refreshWorkspaces, replaceLoadedDocument, runtimeState.isRunning, workspaceHost],
+  );
+
+  const renameWorkspace = useCallback(
+    async (workspaceId: string, title: string): Promise<string | null> => {
+      if (workspaceHost === undefined) {
+        return 'User workspace недоступен';
+      }
+      const ok = await workspaceHost.renameWorkspace(workspaceId, title);
+      if (!ok) {
+        return 'Не удалось переименовать';
+      }
+      await refreshWorkspaces();
+      return null;
+    },
+    [refreshWorkspaces, workspaceHost],
+  );
+
+  const deleteWorkspace = useCallback(
+    async (workspaceId: string): Promise<string | null> => {
+      if (workspaceHost === undefined) {
+        return 'User workspace недоступен';
+      }
+      if (runtimeState.isRunning) {
+        return 'Остановите сценарий перед удалением';
+      }
+      const wasActive = activeWorkspaceId === workspaceId;
+      const ok = await workspaceHost.deleteWorkspace(workspaceId);
+      if (!ok) {
+        return 'Сценарий не найден';
+      }
+      await refreshWorkspaces();
+      if (!wasActive) {
+        return null;
+      }
+      const list = await workspaceHost.listWorkspaces();
+      if (list.length === 0) {
+        setActiveWorkspaceId(null);
+        return null;
+      }
+      return switchWorkspace(list[0]!.workspaceId);
+    },
+    [activeWorkspaceId, refreshWorkspaces, runtimeState.isRunning, switchWorkspace, workspaceHost],
+  );
+
   useEffect(() => {
     if (persistAdapter !== undefined) {
       return;
@@ -2597,6 +2740,15 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       syncError,
       isDirty,
       saveScenario,
+      workspaceEnabled,
+      workspaceList,
+      activeWorkspaceId,
+      maxUserWorkspaces,
+      refreshWorkspaces,
+      switchWorkspace,
+      createEmptyWorkspace,
+      renameWorkspace,
+      deleteWorkspace,
       startScenario,
       stopScenario,
       pauseScenario,
@@ -2670,6 +2822,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       confirmBranchImport,
       cancelBranchImport,
       applyUserCase,
+      activeWorkspaceId,
+      createEmptyWorkspace,
+      deleteWorkspace,
       inspectRuntimeNode,
       isDirty,
       isValidConnectionForLayer,
@@ -2722,6 +2877,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionNodes,
       saveScenario,
       setScenarioBranch,
+      activeWorkspaceId,
+      createEmptyWorkspace,
+      deleteWorkspace,
+      maxUserWorkspaces,
+      refreshWorkspaces,
+      renameWorkspace,
       revertToSavedDocumentIfDirty,
       captureEditUndoSnapshot,
       undoLastEdit,
@@ -2740,8 +2901,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       stopScenario,
       pauseScenario,
       resumeScenario,
+      switchWorkspace,
       syncError,
       syncStatus,
+      workspaceEnabled,
+      workspaceList,
       validationIssues,
       variables,
     ],

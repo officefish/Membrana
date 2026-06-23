@@ -38,3 +38,8 @@ export type {
   DeviceBoardPersistController,
   DeviceScenarioRemoteRecord,
 } from './persist/device-board-persist.js';
+export type {
+  DeviceBoardWorkspaceHost,
+  DeviceBoardWorkspaceListItem,
+} from './persist/device-board-workspace-host.js';
+export { BoardWorkspacePickerModal } from './components/board-workspace-picker-modal.js';

@@ -31,7 +31,7 @@ import { suggestPaletteNodesForOutgoingConnection } from '../graph/index.js';
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
-  BOARD_HEADER_CONTENT_OFFSET_CLASS,
+  boardHeaderContentOffsetClass,
   SIGNAL_LAYER_TITLE,
   isSignalAdvancedEnabled,
   isScenarioBranchForFunctionInsert,
@@ -48,7 +48,9 @@ import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardFunctionActionModal } from './board-function-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
 import { BoardUserCasePickerModal } from './board-usercase-picker-modal.js';
+import { BoardWorkspacePickerModal } from './board-workspace-picker-modal.js';
 import type { DeviceBoardUserCasePickerConfig } from '../types/user-case-picker.js';
+import type { DeviceBoardWorkspaceHost } from '../persist/device-board-workspace-host.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
@@ -92,6 +94,8 @@ export interface DeviceBoardShellProps {
   readonly deviceLive?: boolean;
   /** UserCase catalog picker (U9 P1); undefined — кнопка скрыта. */
   readonly userCasePicker?: DeviceBoardUserCasePickerConfig;
+  /** User workspace host (U10 W2); undefined — picker скрыт. */
+  readonly workspaceHost?: DeviceBoardWorkspaceHost;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -131,6 +135,9 @@ const DeviceBoardShellInner: React.FC<{
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [userCasePickerOpen, setUserCasePickerOpen] = useState(false);
+  const [workspacePickerOpen, setWorkspacePickerOpen] = useState(false);
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
   const [userCaseAppliedMessage, setUserCaseAppliedMessage] = useState<string | null>(null);
   const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -1043,8 +1050,10 @@ const DeviceBoardShellInner: React.FC<{
       ? graph.runtimeState.printOutputs[selectedNodeId] ?? null
       : null;
 
+  const headerContentOffsetClass = boardHeaderContentOffsetClass(leftSidebarCollapsed);
+
   return (
-    <div className="flex h-full min-h-0 flex-col bg-base-100 [scrollbar-gutter:stable]">
+    <div className="flex h-full min-h-0 flex-col bg-base-100 [scrollbar-gutter:stable]" data-testid="device-board-shell">
       <header className="relative flex items-center justify-between gap-3 border-b border-base-200 py-2 pr-4 shadow-sm">
         <div
           className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center justify-center"
@@ -1056,7 +1065,7 @@ const DeviceBoardShellInner: React.FC<{
           </span>
         </div>
 
-        <div className={`flex min-w-0 flex-1 items-center gap-3 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}>
+        <div className={`flex min-w-0 flex-1 items-center gap-3 ${headerContentOffsetClass}`}>
           <div className="flex h-5 w-5 shrink-0 items-center justify-center">
             {isSaving ? (
               <span
@@ -1073,6 +1082,19 @@ const DeviceBoardShellInner: React.FC<{
           >
             Сохранить
           </button>
+          {graph.workspaceEnabled ? (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline shrink-0 gap-1.5"
+              onClick={() => setWorkspacePickerOpen(true)}
+              aria-label={`Мои сценарии ${graph.workspaceList.length} из ${graph.maxUserWorkspaces}`}
+            >
+              Мои сценарии
+              <span className="badge badge-primary badge-sm">
+                {graph.workspaceList.length}/{graph.maxUserWorkspaces}
+              </span>
+            </button>
+          ) : null}
           <BoardCanvasBreadcrumb
             segments={canvasBreadcrumbSegments}
             detailTitle={scenarioTitle}
@@ -1273,7 +1295,7 @@ const DeviceBoardShellInner: React.FC<{
 
         {!isRuntime ? (
           <div
-            className={`pointer-events-none absolute bottom-3 z-20 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}
+            className={`pointer-events-none absolute bottom-3 z-20 ${headerContentOffsetClass}`}
           >
             <div className="pointer-events-auto pl-3">
               <BoardEditUndoControl
@@ -1311,8 +1333,17 @@ const DeviceBoardShellInner: React.FC<{
           />
         ) : null}
 
+        {graph.workspaceEnabled ? (
+          <BoardWorkspacePickerModal
+            open={workspacePickerOpen}
+            onDismiss={() => setWorkspacePickerOpen(false)}
+          />
+        ) : null}
+
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
+            collapsed={leftSidebarCollapsed}
+            onToggleCollapse={() => setLeftSidebarCollapsed((v) => !v)}
             activeBranch={scenarioBranch}
             isScenarioLayer={!isSignal}
             isRuntime={isRuntime}
@@ -1335,6 +1366,8 @@ const DeviceBoardShellInner: React.FC<{
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
           <BoardRightSidebar
+            collapsed={rightSidebarCollapsed}
+            onToggleCollapse={() => setRightSidebarCollapsed((v) => !v)}
             selectedNodeId={selectedNodeId}
             selectedNodeLabel={selectedNodeLabel}
             selectedNodeKind={selectedNodeKind}
@@ -1378,7 +1411,11 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onVariableValueChange={graph.updateVariableValue}
             onCommentGroupMetadataChange={(nodeId, patch) => {
-              graph.updateCommentGroupMetadata(nodeId, patch);
+              const branch: ScenarioCommentGroupBranch = isSignal ? 'signal' : scenarioBranch;
+              graph.updateCommentGroupMetadata(branch, nodeId, patch);
+              if (nodeId !== selectedNodeId) {
+                return;
+              }
               if (patch.title !== undefined) {
                 setSelectedGroupTitle(patch.title.trim() || 'Группа');
                 setSelectedNodeLabel(patch.title.trim() || 'Группа');
@@ -1492,6 +1529,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   showRunControls = true,
   deviceLive,
   userCasePicker,
+  workspaceHost,
 }) => (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
@@ -1499,6 +1537,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
     loadUserCaseDocument={userCasePicker?.loadDocument}
+    workspaceHost={workspaceHost}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
