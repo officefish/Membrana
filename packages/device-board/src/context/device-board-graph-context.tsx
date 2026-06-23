@@ -110,6 +110,7 @@ import {
   type ScenarioRevertPolicy,
 } from '../graph/branch-navigation.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
+import { isDeviceBoardPersistConflict } from '../persist/device-board-persist.js';
 import type {
   DeviceBoardWorkspaceHost,
   DeviceBoardWorkspaceListItem,
@@ -229,10 +230,13 @@ export interface DeviceBoardGraphContextValue {
   ) => ApplyUserCaseOutcome;
   readonly syncStatus: 'idle' | 'loading' | 'saving' | 'error';
   readonly syncError: string | null;
+  readonly syncConflict: boolean;
   /** Черновик отличается от последнего сохранённого снимка. */
   readonly isDirty: boolean;
   /** Сохранить сценарий на сервер / в persist-адаптер (только по явному клику). */
   readonly saveScenario: () => Promise<boolean>;
+  /** Перезагрузить активный workspace с сервера (после conflict 409). */
+  readonly reloadScenarioFromServer: () => Promise<boolean>;
   /** U10 W2: user workspace slots (undefined host → поля no-op). */
   readonly workspaceEnabled: boolean;
   readonly isSessionReadOnly: boolean;
@@ -428,6 +432,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [runtimeState, setRuntimeState] = useState<ScenarioRuntimeState>(createIdleScenarioRuntimeState());
   const [syncStatus, setSyncStatus] = useState<'idle' | 'loading' | 'saving' | 'error'>('idle');
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncConflict, setSyncConflict] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [showInfoLogs, setShowInfoLogs] = useState(true);
   const [scenarioTraceLineCount, setScenarioTraceLineCount] = useState(0);
@@ -633,6 +638,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         return;
       }
       setSyncStatus('error');
+      setSyncConflict(false);
       setSyncError(error instanceof Error ? error.message : 'Не удалось загрузить сценарий');
     };
 
@@ -645,6 +651,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       }
       setSyncStatus('loading');
       setSyncError(null);
+      setSyncConflict(false);
       const catalogDocument = loadUserCaseDocument(boardSession.userCaseId);
       if (catalogDocument === null) {
         failLoad(new Error('UserCase недоступен'));
@@ -668,6 +675,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }
     setSyncStatus('loading');
     setSyncError(null);
+    setSyncConflict(false);
     void persistAdapter
       .load()
       .then((record) => {
@@ -1960,6 +1968,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }
     setSyncStatus('saving');
     setSyncError(null);
+    setSyncConflict(false);
     const document = stampUserWorkspaceDocument(buildDocument());
     try {
       await persistAdapter.save(document);
@@ -1971,6 +1980,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       return true;
     } catch (error: unknown) {
       setSyncStatus('error');
+      setSyncConflict(isDeviceBoardPersistConflict(error));
       setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
       return false;
     }
@@ -1990,6 +2000,42 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     },
     [applyHydratedState, runValidation],
   );
+
+  const reloadScenarioFromServer = useCallback(async (): Promise<boolean> => {
+    if (persistAdapter === undefined || isSessionReadOnly) {
+      return false;
+    }
+    setSyncStatus('loading');
+    setSyncError(null);
+    setSyncConflict(false);
+    try {
+      const record = await persistAdapter.load();
+      if (record === null) {
+        setSyncStatus('error');
+        setSyncError('На сервере нет сохранённого сценария');
+        return false;
+      }
+      replaceLoadedDocument(record.document);
+      markSavedSnapshot(record.document);
+      setSyncStatus('idle');
+      if (workspaceHost !== undefined) {
+        void refreshWorkspaces();
+      }
+      return true;
+    } catch (error: unknown) {
+      setSyncStatus('error');
+      setSyncConflict(false);
+      setSyncError(error instanceof Error ? error.message : 'Не удалось загрузить сценарий');
+      return false;
+    }
+  }, [
+    isSessionReadOnly,
+    markSavedSnapshot,
+    persistAdapter,
+    refreshWorkspaces,
+    replaceLoadedDocument,
+    workspaceHost,
+  ]);
 
   const switchWorkspace = useCallback(
     async (workspaceId: string): Promise<string | null> => {
@@ -2797,8 +2843,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       applyUserCase,
       syncStatus,
       syncError,
+      syncConflict,
       isDirty,
       saveScenario,
+      reloadScenarioFromServer,
       workspaceEnabled,
       isSessionReadOnly,
       sessionTitle,
@@ -2940,6 +2988,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionEdges,
       scenarioFunctionNodes,
       saveScenario,
+      reloadScenarioFromServer,
       setScenarioBranch,
       activeWorkspaceId,
       createEmptyWorkspace,
@@ -2967,6 +3016,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       resumeScenario,
       switchWorkspace,
       syncError,
+      syncConflict,
       syncStatus,
       workspaceEnabled,
       isSessionReadOnly,

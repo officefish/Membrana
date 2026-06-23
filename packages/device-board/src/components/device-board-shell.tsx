@@ -1100,7 +1100,24 @@ const DeviceBoardShellInner: React.FC<{
               Упорядочить цепочку
             </button>
           ) : null}
-          {syncLabel !== null ? (
+          {graph.syncConflict ? (
+            <div
+              className="alert alert-warning flex shrink-0 items-center gap-2 py-1 pl-3 pr-1"
+              role="status"
+            >
+              <span className="text-xs">
+                {graph.syncError ?? 'На сервере более новая версия сценария'}
+              </span>
+              <button
+                type="button"
+                className="btn btn-xs btn-outline"
+                disabled={graph.syncStatus === 'loading'}
+                onClick={() => void graph.reloadScenarioFromServer()}
+              >
+                Загрузить с сервера
+              </button>
+            </div>
+          ) : syncLabel !== null ? (
             <span className="shrink-0 text-xs text-error" title={graph.syncError ?? undefined}>
               {syncLabel}
             </span>

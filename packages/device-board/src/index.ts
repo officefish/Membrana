@@ -39,6 +39,10 @@ export type {
   DeviceBoardPersistController,
   DeviceScenarioRemoteRecord,
 } from './persist/device-board-persist.js';
+export {
+  DEVICE_BOARD_PERSIST_CONFLICT_CODE,
+  isDeviceBoardPersistConflict,
+} from './persist/device-board-persist.js';
 export type {
   DeviceBoardWorkspaceHost,
   DeviceBoardWorkspaceListItem,
