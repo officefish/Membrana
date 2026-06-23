@@ -10,7 +10,7 @@ import {
 } from '@membrana/device-board';
 
 import { createScenarioRuntimeHost } from '@/modules/device-board/createScenarioRuntimeHost';
-import { createClientDeviceBoardPersistAdapter } from '@/modules/device-board/deviceScenarioPersistence';
+import { createClientDeviceBoardPersistAdapterFromSession } from '@/modules/device-board/deviceScenarioPersistence';
 import {
   loadPersistedRuntimeMode,
   savePersistedRuntimeMode,
@@ -119,8 +119,8 @@ class DeviceBoardRuntimeController {
   }
 
   private async loadDocument(): Promise<DeviceScenarioDocument> {
-    const adapter = createClientDeviceBoardPersistAdapter();
-    const record = adapter !== undefined ? await adapter.load() : null;
+    const adapter = createClientDeviceBoardPersistAdapterFromSession();
+    const record = await adapter.load();
     return record?.document ?? createEmptyDeviceScenarioDocument('microphone');
   }
 }

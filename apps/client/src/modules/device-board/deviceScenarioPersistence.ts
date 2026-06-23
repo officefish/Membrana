@@ -8,32 +8,14 @@ import { resolveMediaApiBase } from '@/api/pairing';
 import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
 import type { PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 
-const LOCAL_STORAGE_KEY = 'membrana.device-scenario.v1';
-const LOCAL_UPDATED_AT_KEY = 'membrana.device-scenario.updatedAt';
-
-function canUseLocalStorage(): boolean {
-  return typeof localStorage !== 'undefined';
-}
-
-function readLocalRecord(): DeviceScenarioRemoteRecord | null {
-  if (!canUseLocalStorage()) return null;
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    const updatedAt = localStorage.getItem(LOCAL_UPDATED_AT_KEY);
-    if (!raw || !updatedAt) return null;
-    const parsed = parseDeviceScenarioDocument(JSON.parse(raw) as unknown);
-    if (!parsed.ok) return null;
-    return { document: parsed.value, updatedAt };
-  } catch {
-    return null;
-  }
-}
-
-function writeLocalRecord(record: DeviceScenarioRemoteRecord): void {
-  if (!canUseLocalStorage()) return;
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(record.document));
-  localStorage.setItem(LOCAL_UPDATED_AT_KEY, record.updatedAt);
-}
+import { createDeviceBoardWorkspacePersistApi } from './device-board-workspace-persist.js';
+import {
+  clearLegacyDeviceScenarioLocalRecord,
+  LEGACY_DEVICE_SCENARIO_STORAGE_KEY,
+  LEGACY_DEVICE_SCENARIO_UPDATED_AT_KEY,
+  readLegacyDeviceScenarioLocalRecord,
+} from './device-board-workspace-persist.js';
+import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId.js';
 
 function scenarioUrl(creds: PairedNodeCredentials): string {
   const base = resolveMediaApiBase(creds.mediaApiUrl);
@@ -91,49 +73,60 @@ function pickNewer(
   return remote.updatedAt >= local.updatedAt ? remote : local;
 }
 
-/** Persist adapter: localStorage + media-server when paired (last-write-wins по updatedAt). */
-export function createClientDeviceBoardPersistAdapter(): DeviceBoardPersistAdapter | undefined {
+/**
+ * Persist adapter: active user workspace в IndexedDB (U10 W3).
+ * Paired: LWW с media single-scenario endpoint (до W5).
+ */
+export function createClientDeviceBoardPersistAdapter(deviceId: string): DeviceBoardPersistAdapter {
+  const workspacePersist = createDeviceBoardWorkspacePersistApi(deviceId);
+
   const creds = readPersistedPairedCredentials();
-  if (creds === null) {
+  if (creds === null || creds.deviceId !== deviceId) {
     return {
       async load() {
-        return readLocalRecord();
+        return workspacePersist.loadActive();
       },
       async save(document) {
-        const record: DeviceScenarioRemoteRecord = {
-          document,
-          updatedAt: new Date().toISOString(),
-        };
-        writeLocalRecord(record);
-        return record;
+        return workspacePersist.saveActive(document);
       },
     };
   }
 
   return {
     async load() {
-      const [local, remote] = await Promise.all([Promise.resolve(readLocalRecord()), fetchRemoteRecord(creds)]);
+      const [local, remote] = await Promise.all([
+        workspacePersist.loadActive(),
+        fetchRemoteRecord(creds),
+      ]);
       const winner = pickNewer(local, remote);
-      if (winner !== null) {
-        writeLocalRecord(winner);
+      if (winner !== null && winner !== local) {
+        await workspacePersist.saveActive(winner.document);
       }
-      return winner;
+      return winner ?? local;
     },
     async save(document) {
-      const remote = await putRemoteRecord(creds, document);
-      const record: DeviceScenarioRemoteRecord = remote ?? {
-        document,
-        updatedAt: new Date().toISOString(),
-      };
-      writeLocalRecord(record);
-      return record;
+      const local = await workspacePersist.saveActive(document);
+      const remote = await putRemoteRecord(creds, local.document);
+      return remote ?? local;
     },
   };
 }
 
-/** Сброс local cache (тесты). */
+/** Адаптер с deviceId из persisted connection (runtime controller, тесты). */
+export function createClientDeviceBoardPersistAdapterFromSession(): DeviceBoardPersistAdapter {
+  const creds = readPersistedPairedCredentials();
+  const deviceId = resolveDeviceBoardPersistDeviceId(creds);
+  return createClientDeviceBoardPersistAdapter(deviceId);
+}
+
+export {
+  clearLegacyDeviceScenarioLocalRecord,
+  LEGACY_DEVICE_SCENARIO_STORAGE_KEY,
+  LEGACY_DEVICE_SCENARIO_UPDATED_AT_KEY,
+  readLegacyDeviceScenarioLocalRecord,
+};
+
+/** Сброс legacy local cache (тесты). */
 export function resetDeviceScenarioPersistenceForTests(): void {
-  if (!canUseLocalStorage()) return;
-  localStorage.removeItem(LOCAL_STORAGE_KEY);
-  localStorage.removeItem(LOCAL_UPDATED_AT_KEY);
+  clearLegacyDeviceScenarioLocalRecord();
 }

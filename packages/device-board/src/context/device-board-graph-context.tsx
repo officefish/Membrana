@@ -1875,25 +1875,6 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [applyHydratedState, buildDocument, deviceKind, loadUserCaseDocument, runValidation, variables],
   );
 
-  const saveScenario = useCallback(async (): Promise<boolean> => {
-    if (persistAdapter === undefined) {
-      return false;
-    }
-    setSyncStatus('saving');
-    setSyncError(null);
-    const document = stampUserWorkspaceDocument(buildDocument());
-    try {
-      await persistAdapter.save(document);
-      markSavedSnapshot(document);
-      setSyncStatus('idle');
-      return true;
-    } catch (error: unknown) {
-      setSyncStatus('error');
-      setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
-      return false;
-    }
-  }, [buildDocument, markSavedSnapshot, persistAdapter]);
-
   const maxUserWorkspaces = workspaceHost?.maxUserWorkspaces ?? 0;
   const workspaceEnabled = workspaceHost !== undefined;
 
@@ -1916,6 +1897,28 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       void refreshWorkspaces();
     }
   }, [refreshWorkspaces, workspaceHost]);
+
+  const saveScenario = useCallback(async (): Promise<boolean> => {
+    if (persistAdapter === undefined) {
+      return false;
+    }
+    setSyncStatus('saving');
+    setSyncError(null);
+    const document = stampUserWorkspaceDocument(buildDocument());
+    try {
+      await persistAdapter.save(document);
+      markSavedSnapshot(document);
+      setSyncStatus('idle');
+      if (workspaceHost !== undefined) {
+        void refreshWorkspaces();
+      }
+      return true;
+    } catch (error: unknown) {
+      setSyncStatus('error');
+      setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
+      return false;
+    }
+  }, [buildDocument, markSavedSnapshot, persistAdapter, refreshWorkspaces, workspaceHost]);
 
   const replaceLoadedDocument = useCallback(
     (document: DeviceScenarioDocument) => {
