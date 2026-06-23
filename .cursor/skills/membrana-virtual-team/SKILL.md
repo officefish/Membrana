@@ -1,7 +1,7 @@
 ---
 name: membrana-virtual-team
 description: >-
-  Coordinates Membrana's five virtual team roles (Vesnin, Ozhegov, Dynin, Musician,
+  Coordinates Membrana's five virtual team roles (Vesnin, Ozhegov, Dynin, Kuryokhin,
   Rodchenko) with standard response blocks. Use when user invokes /architect, /refactor,
   /math, /audio, /ui, /service, /review, or asks for virtual team format or LGTM.
   Do NOT use for full consilium protocol (membrana-consilium) or yarn ask single persona.
@@ -18,7 +18,7 @@ description: >-
 | `/architect`, `/review` | Teamlead | Vesnin | `docs/virtual-team/PROMPT_TEAMLEAD.md` |
 | `/refactor`, `/service` | Структурщик | Ozhegov | `PROMPT_STRUCTURER.md` |
 | `/math` | Математик | Dynin | `PROMPT_MATHEMATICIAN.md` |
-| `/audio` | Музыкант | — | `PROMPT_MUSICIAN.md` |
+| `/audio` | Музыкант | Kuryokhin | `PROMPT_MUSICIAN.md` |
 | `/ui` | Верстальщик | Rodchenko | `PROMPT_LAYOUT_DEVELOPER.md` |
 
 ## Response format (required)
