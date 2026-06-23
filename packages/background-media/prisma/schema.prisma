@@ -51,6 +51,8 @@ model Device {
   userStorageQuotaBytes   BigInt?
   bufferQuotaBytes        BigInt?
   datasetCatalogId        String?
+  /** Max editable device-board workspaces (U10 tariff axis; STE v1). */
+  maxUserWorkspaces       Int?
   createdAt               DateTime        @default(now())
   collections             Collection[]
   samples                 Sample[]

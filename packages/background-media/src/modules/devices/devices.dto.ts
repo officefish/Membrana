@@ -13,6 +13,9 @@ export class DeviceMembraneContextDto {
 
   @ApiProperty({ example: 'free-v1-catalog' })
   datasetCatalogId!: string;
+
+  @ApiPropertyOptional({ example: 3, description: 'Max editable device-board workspaces (tariff axis)' })
+  maxUserWorkspaces?: number;
 }
 
 export class RegisterDeviceDto {
@@ -64,6 +67,17 @@ export class DatasetQuotaInfoResponseDto {
   sampleCount!: number;
 }
 
+export class UserWorkspacesQuotaResponseDto {
+  @ApiProperty({ example: 2 })
+  used!: number;
+
+  @ApiProperty({ example: 3 })
+  limit!: number;
+
+  @ApiProperty({ enum: ['server'], example: 'server' })
+  backend!: 'server';
+}
+
 export class QuotaResponseDto {
   @ApiProperty({ type: QuotaBucketResponseDto })
   userStorage!: QuotaBucketResponseDto;
@@ -73,4 +87,7 @@ export class QuotaResponseDto {
 
   @ApiProperty({ type: DatasetQuotaInfoResponseDto })
   dataset!: DatasetQuotaInfoResponseDto;
+
+  @ApiProperty({ type: UserWorkspacesQuotaResponseDto })
+  userWorkspaces!: UserWorkspacesQuotaResponseDto;
 }

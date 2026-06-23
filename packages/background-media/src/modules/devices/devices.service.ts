@@ -21,6 +21,11 @@ export interface DeviceQuotaDto {
   userStorage: QuotaBucketDto;
   buffer: QuotaBucketDto;
   dataset: DatasetQuotaInfoDto;
+  userWorkspaces: {
+    used: number;
+    limit: number;
+    backend: 'server';
+  };
 }
 
 export interface DeviceMembraneContext {
@@ -28,6 +33,7 @@ export interface DeviceMembraneContext {
   userStorageQuotaBytes: bigint | number | string;
   bufferQuotaBytes: bigint | number | string;
   datasetCatalogId: string;
+  maxUserWorkspaces?: number;
 }
 
 @Injectable()
@@ -52,6 +58,9 @@ export class DevicesService {
               userStorageQuotaBytes: BigInt(membraneContext.userStorageQuotaBytes),
               bufferQuotaBytes: BigInt(membraneContext.bufferQuotaBytes),
               datasetCatalogId: membraneContext.datasetCatalogId,
+              ...(membraneContext.maxUserWorkspaces !== undefined
+                ? { maxUserWorkspaces: membraneContext.maxUserWorkspaces }
+                : {}),
             }
           : {}),
       },
@@ -71,6 +80,9 @@ export class DevicesService {
         userStorageQuotaBytes: BigInt(membraneContext.userStorageQuotaBytes),
         bufferQuotaBytes: BigInt(membraneContext.bufferQuotaBytes),
         datasetCatalogId: membraneContext.datasetCatalogId,
+        ...(membraneContext.maxUserWorkspaces !== undefined
+          ? { maxUserWorkspaces: membraneContext.maxUserWorkspaces }
+          : {}),
       },
     });
   }
@@ -87,13 +99,16 @@ export class DevicesService {
 
     const limits = resolveDeviceLimits(device, this.config);
 
-    const rows = await this.prisma.sample.findMany({
-      where: { deviceId },
-      select: {
-        sizeBytes: true,
-        collection: { select: { kind: true, systemKey: true } },
-      },
-    });
+    const [rows, workspaceCount] = await Promise.all([
+      this.prisma.sample.findMany({
+        where: { deviceId },
+        select: {
+          sizeBytes: true,
+          collection: { select: { kind: true, systemKey: true } },
+        },
+      }),
+      this.prisma.deviceWorkspace.count({ where: { deviceId } }),
+    ]);
 
     let userStorageUsed = 0;
     let bufferUsed = 0;
@@ -124,6 +139,11 @@ export class DevicesService {
       dataset: {
         catalogId: limits.datasetCatalogId,
         sampleCount: datasetSampleCount,
+      },
+      userWorkspaces: {
+        used: workspaceCount,
+        limit: limits.maxUserWorkspaces,
+        backend: 'server',
       },
     };
   }

@@ -1,7 +1,14 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DeviceWorkspacesService } from './device-workspaces.service';
+
+const mockConfig = {
+  MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE: 1_073_741_824,
+  MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE: 1_073_741_824,
+  MEDIA_DEFAULT_DATASET_CATALOG_ID: 'free-v1-catalog',
+  MEDIA_DEFAULT_MAX_USER_WORKSPACES: 3,
+} as const;
 
 describe('DeviceWorkspacesService', () => {
   const prisma = {
@@ -29,7 +36,7 @@ describe('DeviceWorkspacesService', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    service = new DeviceWorkspacesService(prisma as never);
+    service = new DeviceWorkspacesService(prisma as never, mockConfig as never);
   });
 
   it('lists workspaces with active id', async () => {
@@ -117,6 +124,14 @@ describe('DeviceWorkspacesService', () => {
       meta: { title: 'New' },
     };
     prisma.deviceWorkspace.findUnique.mockResolvedValue(null);
+    prisma.device.findUnique.mockResolvedValue({
+      id: 'dev-1',
+      maxUserWorkspaces: 3,
+      userStorageQuotaBytes: null,
+      bufferQuotaBytes: null,
+      datasetCatalogId: null,
+    });
+    prisma.deviceWorkspace.count.mockResolvedValue(0);
     prisma.deviceWorkspace.upsert.mockResolvedValue({
       payload: document,
       updatedAt: new Date('2026-06-23T12:00:00.000Z'),
@@ -130,6 +145,31 @@ describe('DeviceWorkspacesService', () => {
     ).resolves.toMatchObject({ updatedAt: '2026-06-23T12:00:00.000Z' });
   });
 
+  it('putWorkspace throws ForbiddenException when workspace quota exceeded', async () => {
+    const document = {
+      kind: 'device-scenario',
+      version: 1,
+      deviceKind: 'microphone',
+      signalGraph: { nodes: [], edges: [] },
+      scenario: { nodes: [], edges: [] },
+      meta: { title: 'Fourth' },
+    };
+    prisma.deviceWorkspace.findUnique.mockResolvedValue(null);
+    prisma.device.findUnique.mockResolvedValue({
+      id: 'dev-1',
+      maxUserWorkspaces: 3,
+      userStorageQuotaBytes: null,
+      bufferQuotaBytes: null,
+      datasetCatalogId: null,
+    });
+    prisma.deviceWorkspace.count.mockResolvedValue(3);
+
+    await expect(service.putWorkspace('dev-1', 'ws-new', document)).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
+    expect(prisma.deviceWorkspace.upsert).not.toHaveBeenCalled();
+  });
+
   it('putWorkspace syncs legacy device-scenario when workspace is active', async () => {
     const document = {
       kind: 'device-scenario',
@@ -140,6 +180,10 @@ describe('DeviceWorkspacesService', () => {
       meta: { title: 'Saved' },
     };
     prisma.deviceWorkspace.upsert.mockResolvedValue({
+      payload: document,
+      updatedAt: new Date('2026-06-23T12:00:00.000Z'),
+    });
+    prisma.deviceWorkspace.findUnique.mockResolvedValue({
       payload: document,
       updatedAt: new Date('2026-06-23T12:00:00.000Z'),
     });

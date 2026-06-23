@@ -1,7 +1,10 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
+import type { AppConfig } from '../../config/env.schema';
+import { APP_CONFIG } from '../../config/config.tokens';
 import { Prisma } from '../../prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { resolveDeviceLimits } from '../devices/device-limits';
 import { assertDeviceScenarioDocument } from '../device-scenarios/device-scenario-assert';
 import type {
   DeleteWorkspaceResultDto,
@@ -23,7 +26,10 @@ function workspaceTitleFromDocument(document: Record<string, unknown>, fallback:
 
 @Injectable()
 export class DeviceWorkspacesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(APP_CONFIG) private readonly config: AppConfig,
+  ) {}
 
   async listWorkspaces(deviceId: string): Promise<DeviceWorkspaceListDto> {
     await this.ensureLegacyMigrated(deviceId);
@@ -90,6 +96,22 @@ export class DeviceWorkspacesService {
           code: 'WORKSPACE_CONFLICT',
           currentUpdatedAt,
           expectedUpdatedAt: options.expectedUpdatedAt,
+        });
+      }
+    }
+
+    if (existing === null) {
+      const device = await this.prisma.device.findUnique({ where: { id: deviceId } });
+      if (device === null) {
+        throw new NotFoundException('Device not found');
+      }
+      const limits = resolveDeviceLimits(device, this.config);
+      const used = await this.prisma.deviceWorkspace.count({ where: { deviceId } });
+      if (used >= limits.maxUserWorkspaces) {
+        throw new ForbiddenException({
+          code: 'WORKSPACE_QUOTA_EXCEEDED',
+          maxUserWorkspaces: limits.maxUserWorkspaces,
+          used,
         });
       }
     }
