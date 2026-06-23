@@ -83,10 +83,16 @@ GET_RESP=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/$WS_ID" \\
   -H "X-Membrana-Device-Id: $DEVICE_ID" 2>/dev/null || true)
 echo "$GET_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('meta',{}).get('title')=='U10 smoke'" >/dev/null 2>&1; mark device-workspaces-get $?
 
+curl -fsS -X PATCH "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/active" \\
+  -H "X-Membrana-Token: $MEDIA_TOKEN" \\
+  -H "X-Membrana-Device-Id: $DEVICE_ID" \\
+  -H 'Content-Type: application/json' \\
+  -d "{\\"activeWorkspaceId\\":\\"$WS_ID\\"}" >/dev/null 2>&1 || true
+
 LEGACY=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-scenario" \\
   -H "X-Membrana-Token: $MEDIA_TOKEN" \\
   -H "X-Membrana-Device-Id: $DEVICE_ID" 2>/dev/null || true)
-echo "$LEGACY" | python3 -c "import sys,json; json.load(sys.stdin)" >/dev/null 2>&1; mark legacy-device-scenario $?
+echo "$LEGACY" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('meta',{}).get('title')=='U10 smoke'" >/dev/null 2>&1; mark legacy-device-scenario $?
 
 CID_CAB=$(docker ps --filter name=cabinet-api --format '{{.ID}}' | head -n1)
 CID_MEDIA=$(docker ps --filter name=media-api --format '{{.ID}}' | head -n1)
