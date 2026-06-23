@@ -134,14 +134,21 @@ yarn save-code-review
 yarn task:close-github:dry
 yarn task:close-github
 
+# 5. Team Evening Feedback — ретроспектива виртуальной команды
+#    Регламент: docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md
+yarn team-evening-feedback
+yarn team-evening-feedback:dry   # без API — только сбор контекста
+
 # Периодический аудит backlog (после крупного эпика или раз в 2–4 недели):
 # manifest → docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json
 # yarn issues:audit:apply --manifest docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json
 # См. docs/prompts/GITHUB_ISSUES_AUDIT_PROMPT.md
 
-# архив дня + ревью + снимок ревью одной командой:
+# архив дня + ревью + снимок ревью + закрытие Issues + team feedback одной командой:
 yarn ritual:evening
 ```
+
+**Выход team feedback:** `docs/seanses/team-evening-feedback-<YYYY-MM-DD>.md` — пять ролей, голосование за полезность дня (1–10), сводка на завтра, резюме Teamlead по стратегии.
 
 ### Архивация утренних артефактов (`archive:daily-day`)
 
