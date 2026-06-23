@@ -1,6 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  addEdge,
   applyEdgeChanges,
   applyNodeChanges,
   type Connection,
@@ -53,6 +52,7 @@ import {
   isPreRunValid,
   isValidBoardConnection,
   rejectSystemNodeRemovals,
+  isLockedBoardNode,
   clearBranchState,
   shouldPreserveLockedNodes,
   centerNodePositionAtFlowPoint,
@@ -69,7 +69,9 @@ import {
   patchCommentGroupNodeData,
   collectCommentGroupNodeIdsFromBoard,
   cloneBoardSelectionForPaste,
+  collectBoardSelectionNodeIds,
   extractBoardSelectionClipboard,
+  isBoardSelectionCopyEligibleNode,
   type BoardSelectionClipboard,
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,
@@ -101,7 +103,9 @@ import {
   updateFunctionPinInList,
   type FunctionPinSide,
 } from '../graph/function-pin-ops.js';
+import { addBoardEdge, dedupeBoardEdges } from '../graph/dedupe-board-edges.js';
 import {
+  logBoardClipboardStep,
   planNodeRemovalUndo,
   type BoardEditStepAction,
 } from '../graph/edit-step-log.js';
@@ -286,13 +290,22 @@ export interface DeviceBoardGraphContextValue {
     },
   ) => void;
   /** W0-H2: copy selected scenario nodes to in-memory clipboard. */
-  readonly copyBoardSelection: () => boolean;
+  readonly copyBoardSelection: (options?: {
+    readonly forcedSelectedIds?: readonly string[];
+    readonly branchNodes?: readonly Node[];
+    readonly branchEdges?: readonly Edge[];
+  }) => number | null;
   /** W0-H2: paste clipboard into active scenario branch (anchor = flow coords under cursor). */
   readonly pasteBoardSelection: (anchorFlowPosition?: {
     readonly x: number;
     readonly y: number;
-  }) => boolean;
+  }) => readonly string[] | null;
   readonly hasBoardSelectionClipboard: boolean;
+  readonly boardClipboardNodeCount: number;
+  /** Очищает in-memory буфер copy/paste узлов доски. */
+  readonly clearBoardClipboard: () => void;
+  /** Удаляет узлы с текущей ветки (не locked/system). Возвращает число удалённых. */
+  readonly removeNodesFromCurrentBranch: (nodeIds: readonly string[]) => number;
   /** v0.4 DBR5: обновить выбранный микрофон на узле get-microphone. */
   readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
   /** v0.5 DBC3: обновить collectorConfig на Collect-узле. */
@@ -453,6 +466,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
   const boardClipboardRef = useRef<BoardSelectionClipboard | null>(null);
   const [hasBoardSelectionClipboard, setHasBoardSelectionClipboard] = useState(false);
+  const [boardClipboardNodeCount, setBoardClipboardNodeCount] = useState(0);
   const savedSnapshotRef = useRef<string | null>(null);
   const savedDocumentRef = useRef<DeviceScenarioDocument | null>(null);
   const showInfoLogsRef = useRef(showInfoLogs);
@@ -768,7 +782,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const loadFunctionDraftToCanvas = useCallback((draft: ScenarioFunctionDraft) => {
     setScenarioFunctionNodes([...draft.nodes]);
-    setScenarioFunctionEdges([...draft.edges]);
+    setScenarioFunctionEdges(dedupeBoardEdges(draft.edges));
     setScenarioFunctionMeta({
       id: draft.id,
       name: draft.name,
@@ -792,7 +806,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
               inputPins: scenarioFunctionMeta.inputPins,
               outputPins: scenarioFunctionMeta.outputPins,
               nodes: scenarioFunctionNodes,
-              edges: scenarioFunctionEdges,
+              edges: dedupeBoardEdges(scenarioFunctionEdges),
             }
           : draft,
       ),
@@ -1053,7 +1067,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
       setScenarioFunctionMeta(input.meta);
       setScenarioFunctionNodes(syncedNodes);
-      setScenarioFunctionEdges(syncedFunctionEdges);
+      setScenarioFunctionEdges(dedupeBoardEdges(syncedFunctionEdges));
 
       const branchPayload = {
         functionId: input.meta.id,
@@ -1233,34 +1247,35 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const applyScenarioBranchGraph = useCallback(
     (branch: ScenarioBranchTab, nodes: Node[], edges: Edge[]) => {
+      const nextEdges = dedupeBoardEdges(edges);
       switch (branch) {
         case 'initial':
           setScenarioInitialNodes(nodes);
-          setScenarioInitialEdges(edges);
+          setScenarioInitialEdges(nextEdges);
           break;
         case 'onConnect':
           setScenarioOnConnectNodes(nodes);
-          setScenarioOnConnectEdges(edges);
+          setScenarioOnConnectEdges(nextEdges);
           break;
         case 'main':
           setScenarioMainNodes(nodes);
-          setScenarioMainEdges(edges);
+          setScenarioMainEdges(nextEdges);
           break;
         case 'alarm':
           setScenarioAlarmNodes(nodes);
-          setScenarioAlarmEdges(edges);
+          setScenarioAlarmEdges(nextEdges);
           break;
         case 'onStop':
           setScenarioOnStopNodes(nodes);
-          setScenarioOnStopEdges(edges);
+          setScenarioOnStopEdges(nextEdges);
           break;
         case 'onDisconnect':
           setScenarioOnDisconnectNodes(nodes);
-          setScenarioOnDisconnectEdges(edges);
+          setScenarioOnDisconnectEdges(nextEdges);
           break;
         case 'function':
           setScenarioFunctionNodes(nodes);
-          setScenarioFunctionEdges(edges);
+          setScenarioFunctionEdges(nextEdges);
           break;
         default:
           break;
@@ -1638,35 +1653,35 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, []);
 
   const onSignalConnect = useCallback((connection: Connection) => {
-    setSignalEdges((edges) => addEdge(connection, edges));
+    setSignalEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const onScenarioInitialConnect = useCallback((connection: Connection) => {
-    setScenarioInitialEdges((edges) => addEdge(connection, edges));
+    setScenarioInitialEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const onScenarioOnConnectConnect = useCallback((connection: Connection) => {
-    setScenarioOnConnectEdges((edges) => addEdge(connection, edges));
+    setScenarioOnConnectEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const onScenarioMainConnect = useCallback((connection: Connection) => {
-    setScenarioMainEdges((edges) => addEdge(connection, edges));
+    setScenarioMainEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const onScenarioAlarmConnect = useCallback((connection: Connection) => {
-    setScenarioAlarmEdges((edges) => addEdge(connection, edges));
+    setScenarioAlarmEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const onScenarioOnStopConnect = useCallback((connection: Connection) => {
-    setScenarioOnStopEdges((edges) => addEdge(connection, edges));
+    setScenarioOnStopEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const onScenarioOnDisconnectConnect = useCallback((connection: Connection) => {
-    setScenarioOnDisconnectEdges((edges) => addEdge(connection, edges));
+    setScenarioOnDisconnectEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const onScenarioFunctionConnect = useCallback((connection: Connection) => {
-    setScenarioFunctionEdges((edges) => addEdge(connection, edges));
+    setScenarioFunctionEdges((edges) => addBoardEdge(connection, edges));
   }, []);
 
   const isValidConnectionForLayer = useCallback(
@@ -2586,31 +2601,31 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       switch (scenarioBranch) {
         case 'initial':
           setScenarioInitialNodes((nodes) => [...nodes, node]);
-          setScenarioInitialEdges((edges) => addEdge(edgeConnection, edges));
+          setScenarioInitialEdges((edges) => addBoardEdge(edgeConnection, edges));
           break;
         case 'onConnect':
           setScenarioOnConnectNodes((nodes) => [...nodes, node]);
-          setScenarioOnConnectEdges((edges) => addEdge(edgeConnection, edges));
+          setScenarioOnConnectEdges((edges) => addBoardEdge(edgeConnection, edges));
           break;
         case 'main':
           setScenarioMainNodes((nodes) => [...nodes, node]);
-          setScenarioMainEdges((edges) => addEdge(edgeConnection, edges));
+          setScenarioMainEdges((edges) => addBoardEdge(edgeConnection, edges));
           break;
         case 'alarm':
           setScenarioAlarmNodes((nodes) => [...nodes, node]);
-          setScenarioAlarmEdges((edges) => addEdge(edgeConnection, edges));
+          setScenarioAlarmEdges((edges) => addBoardEdge(edgeConnection, edges));
           break;
         case 'onStop':
           setScenarioOnStopNodes((nodes) => [...nodes, node]);
-          setScenarioOnStopEdges((edges) => addEdge(edgeConnection, edges));
+          setScenarioOnStopEdges((edges) => addBoardEdge(edgeConnection, edges));
           break;
         case 'onDisconnect':
           setScenarioOnDisconnectNodes((nodes) => [...nodes, node]);
-          setScenarioOnDisconnectEdges((edges) => addEdge(edgeConnection, edges));
+          setScenarioOnDisconnectEdges((edges) => addBoardEdge(edgeConnection, edges));
           break;
         case 'function':
           setScenarioFunctionNodes((nodes) => [...nodes, node]);
-          setScenarioFunctionEdges((edges) => addEdge(edgeConnection, edges));
+          setScenarioFunctionEdges((edges) => addBoardEdge(edgeConnection, edges));
           break;
         default:
           break;
@@ -2619,28 +2634,87 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [scenarioBranch],
   );
 
-  const copyBoardSelection = useCallback((): boolean => {
-    if (isSessionReadOnly) {
-      return false;
-    }
-    const { nodes, edges } = readScenarioBranchGraph(scenarioBranch);
-    const clipboard = extractBoardSelectionClipboard(nodes, edges);
-    if (clipboard === null) {
-      return false;
-    }
-    boardClipboardRef.current = clipboard;
-    setHasBoardSelectionClipboard(true);
-    return true;
-  }, [isSessionReadOnly, readScenarioBranchGraph, scenarioBranch]);
+  const copyBoardSelection = useCallback(
+    (options?: {
+      readonly forcedSelectedIds?: readonly string[];
+      readonly branchNodes?: readonly Node[];
+      readonly branchEdges?: readonly Edge[];
+    }): number | null => {
+      const snapshot =
+        options?.branchNodes !== undefined
+          ? { nodes: options.branchNodes, edges: options?.branchEdges ?? [] }
+          : readScenarioBranchGraph(scenarioBranch);
+      const selectedIds = collectBoardSelectionNodeIds(
+        snapshot.nodes,
+        options?.forcedSelectedIds,
+      );
+      logBoardClipboardStep(showInfoLogsRef.current, 'copy-attempt', {
+        branch: scenarioBranch,
+        forcedSelectedIds: options?.forcedSelectedIds,
+        resolvedSelectedIds: [...selectedIds],
+      });
+      const clipboard = extractBoardSelectionClipboard(
+        snapshot.nodes,
+        snapshot.edges,
+        options?.forcedSelectedIds,
+      );
+      if (clipboard === null) {
+        const eligibleCount = snapshot.nodes.filter(
+          (node) => selectedIds.has(node.id) && isBoardSelectionCopyEligibleNode(node),
+        ).length;
+        logBoardClipboardStep(showInfoLogsRef.current, 'copy-failed', {
+          branch: scenarioBranch,
+          reason: selectedIds.size === 0 ? 'no-selection' : 'no-eligible-nodes',
+          selectedCount: selectedIds.size,
+          eligibleCount,
+        });
+        return null;
+      }
+      boardClipboardRef.current = clipboard;
+      setHasBoardSelectionClipboard(true);
+      setBoardClipboardNodeCount(clipboard.nodes.length);
+      logBoardClipboardStep(showInfoLogsRef.current, 'copy-ok', {
+        branch: scenarioBranch,
+        nodeCount: clipboard.nodes.length,
+        edgeCount: clipboard.edges.length,
+        nodeIds: clipboard.nodes.map((node) => node.id),
+      });
+      return clipboard.nodes.length;
+    },
+    [readScenarioBranchGraph, scenarioBranch],
+  );
+
+  const clearBoardClipboard = useCallback(() => {
+    boardClipboardRef.current = null;
+    setHasBoardSelectionClipboard(false);
+    setBoardClipboardNodeCount(0);
+    logBoardClipboardStep(showInfoLogsRef.current, 'clear-ok', {
+      branch: scenarioBranch,
+    });
+  }, [scenarioBranch]);
 
   const pasteBoardSelection = useCallback(
-    (anchorFlowPosition?: { readonly x: number; readonly y: number }): boolean => {
+    (anchorFlowPosition?: { readonly x: number; readonly y: number }): readonly string[] | null => {
+    logBoardClipboardStep(showInfoLogsRef.current, 'paste-attempt', {
+      branch: scenarioBranch,
+      clipboardCount: boardClipboardRef.current?.nodes.length ?? 0,
+      anchor: anchorFlowPosition ?? null,
+      readOnly: isSessionReadOnly,
+    });
     if (isSessionReadOnly) {
-      return false;
+      logBoardClipboardStep(showInfoLogsRef.current, 'paste-failed', {
+        branch: scenarioBranch,
+        reason: 'read-only-session',
+      });
+      return null;
     }
     const clipboard = boardClipboardRef.current;
     if (clipboard === null || clipboard.nodes.length === 0) {
-      return false;
+      logBoardClipboardStep(showInfoLogsRef.current, 'paste-failed', {
+        branch: scenarioBranch,
+        reason: 'empty-clipboard',
+      });
+      return null;
     }
     const pasted = cloneBoardSelectionForPaste(clipboard, anchorFlowPosition);
     const { nodes: branchNodes, edges: branchEdges } = readScenarioBranchGraph(scenarioBranch);
@@ -2650,7 +2724,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       ...branchEdges,
       ...pasted.edges,
     ]);
-    return true;
+    logBoardClipboardStep(showInfoLogsRef.current, 'paste-ok', {
+      branch: scenarioBranch,
+      pastedCount: pasted.nodes.length,
+      pastedIds: pasted.nodes.map((node) => node.id),
+    });
+    return pasted.nodes.map((node) => node.id);
   },
     [
     applyScenarioBranchGraph,
@@ -2659,6 +2738,58 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     readScenarioBranchGraph,
     scenarioBranch,
   ],
+  );
+
+  const removeNodesFromCurrentBranch = useCallback(
+    (nodeIds: readonly string[]): number => {
+      logBoardClipboardStep(showInfoLogsRef.current, 'delete-attempt', {
+        branch: scenarioBranch,
+        nodeIds,
+        readOnly: isSessionReadOnly,
+      });
+      if (isSessionReadOnly) {
+        logBoardClipboardStep(showInfoLogsRef.current, 'delete-failed', {
+          branch: scenarioBranch,
+          reason: 'read-only-session',
+        });
+        return 0;
+      }
+      const { nodes: branchNodes, edges: branchEdges } = readScenarioBranchGraph(scenarioBranch);
+      const removableIds = nodeIds.filter((id) => {
+        const node = branchNodes.find((item) => item.id === id);
+        return node !== undefined && !isLockedBoardNode(node);
+      });
+      if (removableIds.length === 0) {
+        logBoardClipboardStep(showInfoLogsRef.current, 'delete-failed', {
+          branch: scenarioBranch,
+          reason: 'no-removable-nodes',
+        });
+        return 0;
+      }
+      const idSet = new Set(removableIds);
+      captureEditUndoSnapshot('remove-nodes', {
+        branch: scenarioBranch,
+        nodeIds: removableIds,
+      });
+      const nextNodes = branchNodes.filter((node) => !idSet.has(node.id));
+      const nextEdges = branchEdges.filter(
+        (edge) => !idSet.has(edge.source) && !idSet.has(edge.target),
+      );
+      applyScenarioBranchGraph(scenarioBranch, nextNodes, nextEdges);
+      logBoardClipboardStep(showInfoLogsRef.current, 'delete-ok', {
+        branch: scenarioBranch,
+        removedCount: removableIds.length,
+        nodeIds: removableIds,
+      });
+      return removableIds.length;
+    },
+    [
+      applyScenarioBranchGraph,
+      captureEditUndoSnapshot,
+      isSessionReadOnly,
+      readScenarioBranchGraph,
+      scenarioBranch,
+    ],
   );
 
   const patchNodeData = useCallback((nodeId: string, patch: Record<string, unknown>) => {
@@ -2932,6 +3063,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       copyBoardSelection,
       pasteBoardSelection,
       hasBoardSelectionClipboard,
+      boardClipboardNodeCount,
+      clearBoardClipboard,
+      removeNodesFromCurrentBranch,
       updatePaletteNodeMicrophoneId,
       updateCollectorConfig,
       updateRecordingPolicy,
@@ -2964,6 +3098,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       copyBoardSelection,
       pasteBoardSelection,
       hasBoardSelectionClipboard,
+      boardClipboardNodeCount,
+      clearBoardClipboard,
+      removeNodesFromCurrentBranch,
       updatePaletteNodeMicrophoneId,
       updateCollectorConfig,
       updateRecordingPolicy,

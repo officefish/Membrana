@@ -30,6 +30,44 @@ describe('copy-paste-board-selection', () => {
     expect(clip?.edges[0]?.id).toBe('e-ab');
   });
 
+  it('uses forcedSelectedIds when node.selected is false', () => {
+    const a = createPaletteBoardNode('print', { id: 'a', position: { x: 0, y: 0 } });
+    const b = createPaletteBoardNode('print', { id: 'b', position: { x: 100, y: 0 } });
+    const nodes: Node[] = [
+      { ...a, selected: false },
+      { ...b, selected: false },
+    ];
+    const clip = extractBoardSelectionClipboard(nodes, [], ['a', 'b']);
+    expect(clip?.nodes).toHaveLength(2);
+  });
+
+  it('copies make-recording-policy nodes from marquee ids', () => {
+    const policyA = createPaletteBoardNode('make-recording-policy', { id: 'pol-a', position: { x: 0, y: 0 } });
+    const policyB = createPaletteBoardNode('make-recording-policy', { id: 'pol-b', position: { x: 120, y: 0 } });
+    const nodes: Node[] = [
+      { ...policyA, selected: false },
+      { ...policyB, selected: false },
+    ];
+    const clip = extractBoardSelectionClipboard(nodes, [], ['pol-a', 'pol-b']);
+    expect(clip?.nodes).toHaveLength(2);
+    expect(clip?.nodes.every((node) => node.data?.nodeKind === 'make-recording-policy')).toBe(true);
+  });
+
+  it('paste strips parentId so nodes stay visible on root canvas', () => {
+    const node = createPaletteBoardNode('print', {
+      id: 'a',
+      position: { x: 10, y: 20 },
+      parentId: 'group-1',
+    });
+    const clip = {
+      nodes: [{ ...node, selected: true }],
+      edges: [] as Edge[],
+    };
+    const pasted = cloneBoardSelectionForPaste(clip, { x: 100, y: 100 });
+    expect(pasted.nodes[0]?.parentId).toBeUndefined();
+    expect(pasted.nodes[0]?.extent).toBeUndefined();
+  });
+
   it('paste remaps ids and offsets positions', () => {
     const node = createPaletteBoardNode('print', { id: 'a', position: { x: 10, y: 20 } });
     const clip = {

@@ -360,6 +360,7 @@ export {
 export type { ScenarioFunctionDraft, CollapseToFunctionOutcome } from './collapse-to-function.js';
 export {
   cloneBoardSelectionForPaste,
+  collectBoardSelectionNodeIds,
   extractBoardSelectionClipboard,
   isBoardSelectionCopyEligibleNode,
   selectionFlowBBoxCenter,

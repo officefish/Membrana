@@ -26,6 +26,7 @@ import {
   isBoardLayoutGhostNodeId,
 } from '../graph/board-viewport-fit.js';
 import { decorateBoardEdges } from '../graph/board-edge-style.js';
+import { dedupeBoardEdges } from '../graph/dedupe-board-edges.js';
 import type { FlowGuideLine } from '../graph/layout-snap-guides.js';
 import { snapBoardNodePositionChange } from '../graph/layout-snap-guides.js';
 import {
@@ -56,6 +57,8 @@ export interface BoardFlowViewportApi {
   ) => { readonly x: number; readonly y: number };
   /** Подгоняет viewport так, чтобы был виден хотя бы один узел графа. */
   readonly ensureGraphVisible: () => void;
+  /** Подгоняет viewport к указанным узлам (после paste). */
+  readonly focusNodeIds: (nodeIds: readonly string[]) => void;
 }
 
 export interface BoardMarqueeSelectionPayload {
@@ -69,6 +72,9 @@ interface MarqueePointerState {
   readonly originClient: { readonly x: number; readonly y: number };
   readonly originRelative: { readonly x: number; readonly y: number };
 }
+
+/** Порог (px): ПКМ + pan не открывает контекстное меню clipboard. */
+const PANE_CONTEXT_MENU_DRAG_THRESHOLD_PX = 5;
 
 export interface BoardConnectionDropOnPanePayload {
   readonly sourceNodeId: string;
@@ -101,8 +107,12 @@ export interface BoardFlowCanvasProps {
   readonly onConnect: (connection: Connection) => void;
   readonly isValidConnection: (connection: Connection) => boolean;
   readonly onSelectionChange?: (selection: OnSelectionChangeParams) => void;
-  /** Клик по пустому полю канваса (снятие выделения). */
-  readonly onPaneClick?: () => void;
+  /** Клик по пустому полю канваса. Верните `true`, чтобы сохранить selection на канвасе. */
+  readonly onPaneClick?: () => boolean;
+  /** ПКМ по пустому полю канваса (не по узлу). */
+  readonly onPaneContextMenu?: (event: React.MouseEvent) => void;
+  /** Не снимать canvas selection при клике по pane (модалка marquee). */
+  readonly preserveCanvasSelectionOnPaneClick?: boolean;
   readonly ariaLabel?: string;
   /** Пульсация exec-рёбер только при запущенном сценарии. */
   readonly pulseEdges?: boolean;
@@ -134,6 +144,8 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   isValidConnection,
   onSelectionChange,
   onPaneClick,
+  onPaneContextMenu,
+  preserveCanvasSelectionOnPaneClick = false,
   ariaLabel,
   pulseEdges = false,
   runtimeHighlightNodeIds,
@@ -148,6 +160,12 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const reactFlow = useReactFlow();
   const marqueeDragRef = useRef<MarqueePointerState | null>(null);
+  const rightPaneContextGestureRef = useRef<{
+    readonly pointerId: number;
+    readonly originClientX: number;
+    readonly originClientY: number;
+    moved: boolean;
+  } | null>(null);
   const [marqueeRect, setMarqueeRect] = useState<ScreenRect | null>(null);
   const [snapGuides, setSnapGuides] = useState<readonly FlowGuideLine[]>([]);
   const marqueeEnabled = !readOnly && onMarqueeSelection !== undefined;
@@ -198,6 +216,17 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       clientToFlowPosition: (clientX, clientY) =>
         reactFlow.screenToFlowPosition({ x: clientX, y: clientY }),
       ensureGraphVisible,
+      focusNodeIds: (nodeIds) => {
+        if (nodeIds.length === 0) {
+          return;
+        }
+        void reactFlow.fitView({
+          nodes: nodeIds.map((id) => ({ id })),
+          padding: BOARD_VIEWPORT_FIT_PADDING,
+          duration: BOARD_VIEWPORT_FIT_DURATION_MS,
+          maxZoom: BOARD_VIEWPORT_FIT_MAX_ZOOM,
+        });
+      },
     }),
     [ensureGraphVisible, reactFlow],
   );
@@ -225,7 +254,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   }, [onViewportApiReady, viewportApi]);
 
   const decoratedEdges = useMemo(
-    () => decorateBoardEdges(edges, nodes, { pulseWhenRunning: pulseEdges, highlightExecEdgeIds }),
+    () => decorateBoardEdges(dedupeBoardEdges(edges), nodes, { pulseWhenRunning: pulseEdges, highlightExecEdgeIds }),
     [edges, highlightExecEdgeIds, nodes, pulseEdges],
   );
 
@@ -354,15 +383,17 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   );
 
   const clearCanvasSelection = useCallback(() => {
-    onNodesChange(
-      nodes.map((node) => ({
-        type: 'select' as const,
-        id: node.id,
-        selected: false,
-      })),
-    );
-    onPaneClick?.();
-  }, [nodes, onNodesChange, onPaneClick]);
+    const keepSelection = onPaneClick?.() === true;
+    if (!preserveCanvasSelectionOnPaneClick && !keepSelection) {
+      onNodesChange(
+        nodes.map((node) => ({
+          type: 'select' as const,
+          id: node.id,
+          selected: false,
+        })),
+      );
+    }
+  }, [nodes, onNodesChange, onPaneClick, preserveCanvasSelectionOnPaneClick]);
 
   const finishMarquee = useCallback(
     (clientX: number, clientY: number) => {
@@ -428,6 +459,18 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
 
   const handleWrapperPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
+      if (
+        event.button === 2 &&
+        onPaneContextMenu !== undefined &&
+        isMarqueePointerTarget(event.target)
+      ) {
+        rightPaneContextGestureRef.current = {
+          pointerId: event.pointerId,
+          originClientX: event.clientX,
+          originClientY: event.clientY,
+          moved: false,
+        };
+      }
       if (!marqueeEnabled || event.button !== 0) {
         return;
       }
@@ -451,10 +494,21 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       setMarqueeRect({ left: originRelative.x, top: originRelative.y, width: 0, height: 0 });
       event.currentTarget.setPointerCapture(event.pointerId);
     },
-    [isMarqueePointerTarget, marqueeEnabled],
+    [isMarqueePointerTarget, marqueeEnabled, onPaneContextMenu],
   );
 
   const handleWrapperPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const rightGesture = rightPaneContextGestureRef.current;
+    if (rightGesture !== null && rightGesture.pointerId === event.pointerId) {
+      const dx = event.clientX - rightGesture.originClientX;
+      const dy = event.clientY - rightGesture.originClientY;
+      if (
+        dx * dx + dy * dy >
+        PANE_CONTEXT_MENU_DRAG_THRESHOLD_PX * PANE_CONTEXT_MENU_DRAG_THRESHOLD_PX
+      ) {
+        rightGesture.moved = true;
+      }
+    }
     const drag = marqueeDragRef.current;
     if (drag === null || drag.pointerId !== event.pointerId) {
       return;
@@ -469,6 +523,15 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
 
   const handleWrapperPointerUp = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
+      if (event.button === 2) {
+        const pointerId = event.pointerId;
+        window.setTimeout(() => {
+          if (rightPaneContextGestureRef.current?.pointerId === pointerId) {
+            rightPaneContextGestureRef.current = null;
+          }
+        }, 0);
+        return;
+      }
       const drag = marqueeDragRef.current;
       if (drag === null || drag.pointerId !== event.pointerId) {
         return;
@@ -483,6 +546,9 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
 
   const handleWrapperPointerCancel = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
+      if (rightPaneContextGestureRef.current?.pointerId === event.pointerId) {
+        rightPaneContextGestureRef.current = null;
+      }
       const drag = marqueeDragRef.current;
       if (drag === null || drag.pointerId !== event.pointerId) {
         return;
@@ -493,6 +559,33 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     [],
   );
 
+  const handleWrapperContextMenu = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (onPaneContextMenu === undefined) {
+        return;
+      }
+      const rightGesture = rightPaneContextGestureRef.current;
+      rightPaneContextGestureRef.current = null;
+      if (rightGesture?.moved === true) {
+        event.preventDefault();
+        return;
+      }
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+      if (target.closest('.react-flow__node')) {
+        return;
+      }
+      if (!target.closest('.react-flow__pane')) {
+        return;
+      }
+      event.preventDefault();
+      onPaneContextMenu(event);
+    },
+    [onPaneContextMenu],
+  );
+
   return (
     <div
       ref={wrapperRef}
@@ -501,6 +594,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       onPointerMove={handleWrapperPointerMove}
       onPointerUp={handleWrapperPointerUp}
       onPointerCancel={handleWrapperPointerCancel}
+      onContextMenu={handleWrapperContextMenu}
     >
       <BoardMarqueeOverlay rect={marqueeRect} />
       <ReactFlow
