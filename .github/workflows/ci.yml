@@ -5,9 +5,9 @@ name: CI
 
 on:
   push:
-    branches: [main, master, develop, vesnin, techies68]
+    branches: [main, master, develop, vesnin, techies68, u10-workspace-prod]
   pull_request:
-    branches: [main, master, develop, vesnin, techies68]
+    branches: [main, master, develop, vesnin, techies68, u10-workspace-prod]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

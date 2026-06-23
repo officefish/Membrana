@@ -1,5 +1,5 @@
 # U10 User Workspace — prod deploy verify (W4/W5)
-# Ручной запуск после merge в main или релизного тега cabinet-v*.
+# Ручной запуск: Actions → U10 workspace prod → deploy или smoke-only.
 
 name: U10 workspace prod
 
@@ -27,9 +27,17 @@ jobs:
     name: U10 prod ${{ inputs.mode }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    if: ${{ secrets.BACKGROUND_MEDIA_IPV4 != '' && secrets.BACKGROUND_MEDIA_PASSWORD != '' }}
 
     steps:
+      - name: Require VPS secrets
+        run: |
+          if [ -z "${{ secrets.BACKGROUND_MEDIA_IPV4 }}" ] || [ -z "${{ secrets.BACKGROUND_MEDIA_PASSWORD }}" ]; then
+            echo "Configure repository secrets BACKGROUND_MEDIA_IPV4 and BACKGROUND_MEDIA_PASSWORD,"
+            echo "or run locally: yarn cabinet:u10-workspace:prod"
+            echo "See docs/deploy/U10_WORKSPACE_DEPLOY.md"
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -55,11 +63,12 @@ jobs:
 
       - name: Prod deploy + smoke
         if: inputs.mode == 'deploy'
-        run: |
-          CABINET_IMAGE_TAG="${{ inputs.cabinet_image_tag }}" \
-          DEPLOY_ALLOW_DIRTY=1 \
-          DEPLOY_ALLOW_RED_CI=1 \
-          yarn cabinet:u10-workspace:prod
+        env:
+          CABINET_GIT_BRANCH: u10-workspace-prod
+          CABINET_IMAGE_TAG: ${{ inputs.cabinet_image_tag }}
+          DEPLOY_ALLOW_DIRTY: '1'
+          DEPLOY_ALLOW_RED_CI: '1'
+        run: yarn cabinet:u10-workspace:prod
 
       - name: Prod smoke only
         if: inputs.mode == 'smoke-only'
@@ -72,15 +81,3 @@ jobs:
           name: u10-workspace-prod-artifacts
           path: deploy-artifacts/u10-workspace-prod-*.json
           if-no-files-found: ignore
-
-  secrets-missing:
-    name: Secrets not configured
-    runs-on: ubuntu-latest
-    if: ${{ secrets.BACKGROUND_MEDIA_IPV4 == '' || secrets.BACKGROUND_MEDIA_PASSWORD == '' }}
-    steps:
-      - name: Hint
-        run: |
-          echo "Configure repository secrets BACKGROUND_MEDIA_IPV4 and BACKGROUND_MEDIA_PASSWORD,"
-          echo "or run locally: yarn cabinet:u10-workspace:prod"
-          echo "See docs/deploy/U10_WORKSPACE_DEPLOY.md"
-          exit 1
