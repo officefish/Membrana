@@ -41,3 +41,19 @@ export function stampUserWorkspaceDocument(document: DeviceScenarioDocument): De
     },
   };
 }
+
+/** Помечает документ как системный preview (read-only на доске). */
+export function stampSystemPreviewDocument(
+  document: DeviceScenarioDocument,
+  title?: string,
+): DeviceScenarioDocument {
+  const trimmedTitle = title?.trim();
+  return {
+    ...document,
+    meta: {
+      ...document.meta,
+      workspaceKind: 'system',
+      ...(trimmedTitle !== undefined && trimmedTitle.length > 0 ? { title: trimmedTitle } : {}),
+    },
+  };
+}

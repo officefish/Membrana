@@ -1,5 +1,6 @@
 import { createEmptyDeviceScenarioDocument } from '@membrana/core';
 import {
+  cloneUserCaseToWorkspaceDocument,
   stampUserWorkspaceDocument,
   type DeviceBoardWorkspaceHost,
 } from '@membrana/device-board';
@@ -54,6 +55,32 @@ export function createDeviceBoardWorkspaceHost(
           title: trimmedTitle,
         },
       });
+      await store.put({
+        workspaceId,
+        title: trimmedTitle,
+        document,
+        updatedAt,
+      });
+      return { workspaceId, document };
+    },
+
+    async cloneWorkspaceFromUserCase(input) {
+      const count = await store.count();
+      if (count >= maxUserWorkspaces) {
+        return null;
+      }
+      const workspaceId = createDeviceBoardWorkspaceId();
+      const trimmedTitle =
+        input.title?.trim() ||
+        input.sourceDocument.meta?.title?.trim() ||
+        `Клон ${input.userCaseId}`;
+      const document = cloneUserCaseToWorkspaceDocument({
+        sourceDocument: input.sourceDocument,
+        userCaseId: input.userCaseId,
+        workspaceId,
+        title: trimmedTitle,
+      });
+      const updatedAt = new Date().toISOString();
       await store.put({
         workspaceId,
         title: trimmedTitle,

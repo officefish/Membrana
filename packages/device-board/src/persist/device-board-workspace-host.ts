@@ -18,6 +18,14 @@ export interface DeviceBoardWorkspaceHost {
     readonly workspaceId: string;
     readonly document: DeviceScenarioDocument;
   } | null>;
+  cloneWorkspaceFromUserCase(input: {
+    readonly sourceDocument: DeviceScenarioDocument;
+    readonly userCaseId: string;
+    readonly title?: string;
+  }): Promise<{
+    readonly workspaceId: string;
+    readonly document: DeviceScenarioDocument;
+  } | null>;
   renameWorkspace(workspaceId: string, title: string): Promise<boolean>;
   deleteWorkspace(workspaceId: string): Promise<boolean>;
   setActiveWorkspaceId(workspaceId: string): Promise<void>;

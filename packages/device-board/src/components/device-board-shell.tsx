@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ScenarioCommentGroupBranch } from '@membrana/core';
 import type {
+  DeviceScenarioDocument,
   ScenarioNodeKind,
   ScenarioCollectorConfig,
   ScenarioFftTrendsPolicy,
@@ -94,6 +95,8 @@ export interface DeviceBoardShellProps {
   readonly deviceLive?: boolean;
   /** UserCase catalog picker (U9 P1); undefined — кнопка скрыта. */
   readonly userCasePicker?: DeviceBoardUserCasePickerConfig;
+  /** Загрузка документа каталога (U10 W2-module: без shell picker). */
+  readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
   /** User workspace host (U10 W2); undefined — picker скрыт. */
   readonly workspaceHost?: DeviceBoardWorkspaceHost;
 }
@@ -595,9 +598,14 @@ const DeviceBoardShellInner: React.FC<{
   const syncLabel =
     graph.syncStatus === 'error' ? graph.syncError ?? 'Ошибка сохранения' : null;
 
-  const canSave = graph.isDirty && graph.syncStatus !== 'saving' && graph.syncStatus !== 'loading';
+  const canSave =
+    !graph.isSessionReadOnly &&
+    graph.isDirty &&
+    graph.syncStatus !== 'saving' &&
+    graph.syncStatus !== 'loading';
   const mode = graph.mode;
   const isSaving = graph.syncStatus === 'saving';
+  const isCanvasReadOnly = isRuntime || graph.isSessionReadOnly;
 
   const scenarioCanvas = useMemo(() => {
     if (scenarioBranch === 'initial') {
@@ -1078,10 +1086,16 @@ const DeviceBoardShellInner: React.FC<{
             type="button"
             className="btn btn-sm btn-primary shrink-0"
             disabled={!canSave}
+            title={graph.isSessionReadOnly ? 'Сохранение недоступно в режиме просмотра системного UserCase' : undefined}
             onClick={() => void graph.saveScenario()}
           >
             Сохранить
           </button>
+          {graph.isSessionReadOnly ? (
+            <span className="badge badge-ghost badge-sm shrink-0" title={graph.sessionTitle ?? undefined}>
+              Только просмотр
+            </span>
+          ) : null}
           {graph.workspaceEnabled ? (
             <button
               type="button"
@@ -1219,7 +1233,7 @@ const DeviceBoardShellInner: React.FC<{
                   Import JSON
                 </button>
               </li>
-              {userCasePicker !== undefined ? (
+              {userCasePicker !== undefined && userCasePicker.cards.length > 0 ? (
                 <li>
                   <button type="button" onClick={() => setUserCasePickerOpen(true)}>
                     UserCase…
@@ -1279,7 +1293,7 @@ const DeviceBoardShellInner: React.FC<{
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
-            readOnly={isRuntime}
+            readOnly={isCanvasReadOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             viewportFitKey={canvasViewportFitKey}
@@ -1319,7 +1333,7 @@ const DeviceBoardShellInner: React.FC<{
           onDismiss={graph.cancelBranchImport}
         />
 
-        {userCasePicker !== undefined ? (
+        {userCasePicker !== undefined && userCasePicker.cards.length > 0 ? (
           <BoardUserCasePickerModal
             open={userCasePickerOpen}
             cards={userCasePicker.cards}
@@ -1530,14 +1544,21 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   deviceLive,
   userCasePicker,
   workspaceHost,
-}) => (
+  loadUserCaseDocument: loadUserCaseDocumentProp,
+}) => {
+  const { session } = useDeviceBoardMode();
+  const loadUserCaseDocument =
+    loadUserCaseDocumentProp ?? userCasePicker?.loadDocument;
+
+  return (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
     persistAdapter={persistAdapter}
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
-    loadUserCaseDocument={userCasePicker?.loadDocument}
+    loadUserCaseDocument={loadUserCaseDocument}
     workspaceHost={workspaceHost}
+    boardSession={session}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
@@ -1547,4 +1568,5 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
       userCasePicker={userCasePicker}
     />
   </DeviceBoardGraphProvider>
-);
+  );
+};

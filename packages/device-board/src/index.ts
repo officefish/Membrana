@@ -7,7 +7,8 @@ export * from './types.js';
 export * from './device-board-service.js';
 
 export { DeviceBoardModeProvider, useDeviceBoardMode } from './context/device-board-mode-context.js';
-export type { DeviceBoardModeContextValue, DeviceBoardModeProviderProps } from './context/device-board-mode-context.js';
+export type { DeviceBoardModeContextValue, DeviceBoardModeProviderProps, DeviceBoardSession } from './context/device-board-mode-context.js';
+export { isDeviceBoardSessionReadOnly } from './types/device-board-session.js';
 export { DeviceBoardGraphProvider, useDeviceBoardGraph } from './context/device-board-graph-context.js';
 export type { DeviceBoardGraphContextValue, DeviceBoardGraphProviderProps, ApplyUserCaseOutcome } from './context/device-board-graph-context.js';
 export { DeviceBoardShell } from './components/device-board-shell.js';

@@ -5,6 +5,7 @@ import {
   isUserOwnedDeviceScenarioDocument,
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,
+  stampSystemPreviewDocument,
 } from './device-scenario-workspace.js';
 
 describe('device-scenario-workspace', () => {
@@ -43,5 +44,12 @@ describe('device-scenario-workspace', () => {
     const stamped = stampUserWorkspaceDocument(doc);
     expect(stamped.meta?.workspaceKind).toBe('user');
     expect(stamped.scenario).toEqual(doc.scenario);
+  });
+
+  it('stampSystemPreviewDocument sets workspaceKind system', () => {
+    const doc = getDefaultMvpMicrophoneDocument();
+    const stamped = stampSystemPreviewDocument(doc, 'MVP Mic');
+    expect(stamped.meta?.workspaceKind).toBe('system');
+    expect(stamped.meta?.title).toBe('MVP Mic');
   });
 });

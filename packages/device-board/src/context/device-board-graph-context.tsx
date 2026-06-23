@@ -70,6 +70,7 @@ import {
   collectCommentGroupNodeIdsFromBoard,
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,
+  stampSystemPreviewDocument,
   createEmptyFunctionDraft,
   type VariableNodeKind,
   type V04PaletteNodeKind,
@@ -113,6 +114,8 @@ import type {
   DeviceBoardWorkspaceHost,
   DeviceBoardWorkspaceListItem,
 } from '../persist/device-board-workspace-host.js';
+import type { DeviceBoardSession } from '../types/device-board-session.js';
+import { isDeviceBoardSessionReadOnly } from '../types/device-board-session.js';
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
@@ -232,6 +235,8 @@ export interface DeviceBoardGraphContextValue {
   readonly saveScenario: () => Promise<boolean>;
   /** U10 W2: user workspace slots (undefined host → поля no-op). */
   readonly workspaceEnabled: boolean;
+  readonly isSessionReadOnly: boolean;
+  readonly sessionTitle: string | null;
   readonly workspaceList: readonly DeviceBoardWorkspaceListItem[];
   readonly activeWorkspaceId: string | null;
   readonly maxUserWorkspaces: number;
@@ -362,6 +367,8 @@ export interface DeviceBoardGraphProviderProps {
   readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
   /** CRUD user workspace (client IndexedDB). */
   readonly workspaceHost?: DeviceBoardWorkspaceHost;
+  /** Сессия из DeviceBoardModule launcher (U10 W2-module). */
+  readonly boardSession?: DeviceBoardSession | null;
 }
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
@@ -373,6 +380,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   deviceLive,
   loadUserCaseDocument,
   workspaceHost,
+  boardSession = null,
 }) => {
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
@@ -612,10 +620,52 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   );
 
   useEffect(() => {
+    let cancelled = false;
+
+    const finishIdle = (): void => {
+      if (!cancelled) {
+        setSyncStatus('idle');
+      }
+    };
+
+    const failLoad = (error: unknown): void => {
+      if (cancelled) {
+        return;
+      }
+      setSyncStatus('error');
+      setSyncError(error instanceof Error ? error.message : 'Не удалось загрузить сценарий');
+    };
+
+    if (boardSession?.kind === 'system-preview') {
+      if (loadUserCaseDocument === undefined) {
+        failLoad(new Error('Каталог UserCase недоступен'));
+        return () => {
+          cancelled = true;
+        };
+      }
+      setSyncStatus('loading');
+      setSyncError(null);
+      const catalogDocument = loadUserCaseDocument(boardSession.userCaseId);
+      if (catalogDocument === null) {
+        failLoad(new Error('UserCase недоступен'));
+        return () => {
+          cancelled = true;
+        };
+      }
+      const document = stampSystemPreviewDocument(catalogDocument, boardSession.title);
+      savedDocumentRef.current = structuredClone(document);
+      applyHydratedState(hydrateBoardFromDocument(document));
+      pendingBaselineRef.current = true;
+      markSavedSnapshot(document);
+      finishIdle();
+      return () => {
+        cancelled = true;
+      };
+    }
+
     if (persistAdapter === undefined) {
       return;
     }
-    let cancelled = false;
     setSyncStatus('loading');
     setSyncError(null);
     void persistAdapter
@@ -679,17 +729,21 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
               /* seed best-effort; canvas already shows bundled default */
             });
         }
-        setSyncStatus('idle');
+        finishIdle();
       })
-      .catch((error: unknown) => {
-        if (cancelled) return;
-        setSyncStatus('error');
-        setSyncError(error instanceof Error ? error.message : 'Не удалось загрузить сценарий');
-      });
+      .catch(failLoad);
     return () => {
       cancelled = true;
     };
-  }, [applyHydratedState, defaultState, deviceKindProp, markSavedSnapshot, persistAdapter]);
+  }, [
+    applyHydratedState,
+    boardSession,
+    defaultState,
+    deviceKindProp,
+    loadUserCaseDocument,
+    markSavedSnapshot,
+    persistAdapter,
+  ]);
 
   const loadFunctionDraftToCanvas = useCallback((draft: ScenarioFunctionDraft) => {
     setScenarioFunctionNodes([...draft.nodes]);
@@ -1877,6 +1931,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const maxUserWorkspaces = workspaceHost?.maxUserWorkspaces ?? 0;
   const workspaceEnabled = workspaceHost !== undefined;
+  const isSessionReadOnly = isDeviceBoardSessionReadOnly(boardSession);
+  const sessionTitle = boardSession?.title ?? null;
 
   const refreshWorkspaces = useCallback(async (): Promise<void> => {
     if (workspaceHost === undefined) {
@@ -1899,7 +1955,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, [refreshWorkspaces, workspaceHost]);
 
   const saveScenario = useCallback(async (): Promise<boolean> => {
-    if (persistAdapter === undefined) {
+    if (persistAdapter === undefined || isSessionReadOnly) {
       return false;
     }
     setSyncStatus('saving');
@@ -1918,7 +1974,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       setSyncError(error instanceof Error ? error.message : 'Не удалось сохранить сценарий');
       return false;
     }
-  }, [buildDocument, markSavedSnapshot, persistAdapter, refreshWorkspaces, workspaceHost]);
+  }, [buildDocument, isSessionReadOnly, markSavedSnapshot, persistAdapter, refreshWorkspaces, workspaceHost]);
 
   const replaceLoadedDocument = useCallback(
     (document: DeviceScenarioDocument) => {
@@ -2744,6 +2800,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       isDirty,
       saveScenario,
       workspaceEnabled,
+      isSessionReadOnly,
+      sessionTitle,
       workspaceList,
       activeWorkspaceId,
       maxUserWorkspaces,
@@ -2826,10 +2884,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       cancelBranchImport,
       applyUserCase,
       activeWorkspaceId,
+      boardSession,
       createEmptyWorkspace,
       deleteWorkspace,
       inspectRuntimeNode,
       isDirty,
+      isSessionReadOnly,
+      sessionTitle,
       isValidConnectionForLayer,
       onScenarioAlarmConnect,
       onScenarioAlarmEdgesChange,
@@ -2908,6 +2969,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       syncError,
       syncStatus,
       workspaceEnabled,
+      isSessionReadOnly,
+      sessionTitle,
       workspaceList,
       validationIssues,
       variables,
