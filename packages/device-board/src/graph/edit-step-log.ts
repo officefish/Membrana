@@ -13,7 +13,8 @@ export type BoardEditStepAction =
   | 'collapse-to-function'
   | 'collapse-to-group'
   | 'clear-branch'
-  | 'align-layout';
+  | 'align-layout'
+  | 'paste-nodes';
 
 const EDIT_ACTION_LABELS: Record<BoardEditStepAction, string> = {
   'remove-nodes': 'Удаление узлов',
@@ -24,6 +25,7 @@ const EDIT_ACTION_LABELS: Record<BoardEditStepAction, string> = {
   'collapse-to-group': 'Свёртка в группу',
   'clear-branch': 'Очистка ветки',
   'align-layout': 'Выравнивание / layout',
+  'paste-nodes': 'Вставка узлов',
 };
 
 /** Человекочитаемая подпись для tooltip кнопки undo. */

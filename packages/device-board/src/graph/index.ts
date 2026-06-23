@@ -359,6 +359,13 @@ export {
 } from './collapse-to-function.js';
 export type { ScenarioFunctionDraft, CollapseToFunctionOutcome } from './collapse-to-function.js';
 export {
+  cloneBoardSelectionForPaste,
+  extractBoardSelectionClipboard,
+  isBoardSelectionCopyEligibleNode,
+  BOARD_PASTE_OFFSET,
+} from './copy-paste-board-selection.js';
+export type { BoardSelectionClipboard } from './copy-paste-board-selection.js';
+export {
   insertFunctionSubgraphBlock,
 } from './insert-function-into-branch.js';
 export type {

@@ -211,9 +211,8 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
     isFunctionBranch &&
     functionMeta !== null &&
     !isRuntime &&
-    (selectedNodeId === null ||
-      selectedNodeKind === 'function-input' ||
-      selectedNodeKind === 'function-output');
+    selectedNodeId !== null &&
+    (selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output');
 
   useEffect(() => {
     setVariableNameDraft(selectedVariableName);

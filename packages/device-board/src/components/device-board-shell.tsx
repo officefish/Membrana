@@ -679,7 +679,6 @@ const DeviceBoardShellInner: React.FC<{
 
   const closeSelectionActionModal = useCallback(() => {
     setSelectionActionOpen(false);
-    setMarqueeSelectedIds([]);
   }, []);
 
   const handleMarqueeSelection = useCallback(
@@ -938,17 +937,21 @@ const DeviceBoardShellInner: React.FC<{
     }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        dismissSelectionAction();
+        closeSelectionActionModal();
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [dismissSelectionAction, selectionActionOpen]);
+  }, [closeSelectionActionModal, selectionActionOpen]);
 
   const canUndoRef = useRef(graph.canUndoLastEdit);
   canUndoRef.current = graph.canUndoLastEdit;
   const undoLastEditRef = useRef(graph.undoLastEdit);
   undoLastEditRef.current = graph.undoLastEdit;
+  const copyBoardSelectionRef = useRef(graph.copyBoardSelection);
+  copyBoardSelectionRef.current = graph.copyBoardSelection;
+  const pasteBoardSelectionRef = useRef(graph.pasteBoardSelection);
+  pasteBoardSelectionRef.current = graph.pasteBoardSelection;
 
   const handleUndoLastEdit = useCallback(() => {
     if (!graph.canUndoLastEdit) {
@@ -980,6 +983,38 @@ const DeviceBoardShellInner: React.FC<{
     window.addEventListener('keydown', onKeyDown, true);
     return () => window.removeEventListener('keydown', onKeyDown, true);
   }, [isRuntime]);
+
+  useEffect(() => {
+    if (isRuntime || isSignal || graph.isSessionReadOnly) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase();
+      if (!(event.ctrlKey || event.metaKey) || (key !== 'c' && key !== 'v')) {
+        return;
+      }
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
+          return;
+        }
+      }
+      if (key === 'c') {
+        if (copyBoardSelectionRef.current()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        return;
+      }
+      if (pasteBoardSelectionRef.current()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [graph.isSessionReadOnly, isRuntime, isSignal]);
 
   const runtimeExecHighlight = useMemo(() => {
     if (!isRuntime || isSignal) {
@@ -1478,7 +1513,7 @@ const DeviceBoardShellInner: React.FC<{
         onAlignMode={handleAlignMode}
         onSmartAlign={handleSmartAlign}
         onExecChainLayout={handleExecChainLayout}
-        onDismiss={dismissSelectionAction}
+        onDismiss={closeSelectionActionModal}
       />
     </div>
   );

@@ -68,6 +68,9 @@ import {
   buildCommentGroupDataPatch,
   patchCommentGroupNodeData,
   collectCommentGroupNodeIdsFromBoard,
+  cloneBoardSelectionForPaste,
+  extractBoardSelectionClipboard,
+  type BoardSelectionClipboard,
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,
   stampSystemPreviewDocument,
@@ -282,6 +285,11 @@ export interface DeviceBoardGraphContextValue {
       readonly targetHandle: string;
     },
   ) => void;
+  /** W0-H2: copy selected scenario nodes to in-memory clipboard. */
+  readonly copyBoardSelection: () => boolean;
+  /** W0-H2: paste clipboard into active scenario branch. */
+  readonly pasteBoardSelection: () => boolean;
+  readonly hasBoardSelectionClipboard: boolean;
   /** v0.4 DBR5: обновить выбранный микрофон на узле get-microphone. */
   readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
   /** v0.5 DBC3: обновить collectorConfig на Collect-узле. */
@@ -440,6 +448,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(null);
 
   const runtimeRef = useRef<ScenarioRuntime | null>(null);
+  const boardClipboardRef = useRef<BoardSelectionClipboard | null>(null);
+  const [hasBoardSelectionClipboard, setHasBoardSelectionClipboard] = useState(false);
   const savedSnapshotRef = useRef<string | null>(null);
   const savedDocumentRef = useRef<DeviceScenarioDocument | null>(null);
   const showInfoLogsRef = useRef(showInfoLogs);
@@ -2606,6 +2616,45 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [scenarioBranch],
   );
 
+  const copyBoardSelection = useCallback((): boolean => {
+    if (isSessionReadOnly) {
+      return false;
+    }
+    const { nodes, edges } = readScenarioBranchGraph(scenarioBranch);
+    const clipboard = extractBoardSelectionClipboard(nodes, edges);
+    if (clipboard === null) {
+      return false;
+    }
+    boardClipboardRef.current = clipboard;
+    setHasBoardSelectionClipboard(true);
+    return true;
+  }, [isSessionReadOnly, readScenarioBranchGraph, scenarioBranch]);
+
+  const pasteBoardSelection = useCallback((): boolean => {
+    if (isSessionReadOnly) {
+      return false;
+    }
+    const clipboard = boardClipboardRef.current;
+    if (clipboard === null || clipboard.nodes.length === 0) {
+      return false;
+    }
+    const pasted = cloneBoardSelectionForPaste(clipboard);
+    const { nodes: branchNodes, edges: branchEdges } = readScenarioBranchGraph(scenarioBranch);
+    captureEditUndoSnapshot('paste-nodes', { count: pasted.nodes.length, branch: scenarioBranch });
+    const cleared = branchNodes.map((node) => ({ ...node, selected: false }));
+    applyScenarioBranchGraph(scenarioBranch, [...cleared, ...pasted.nodes], [
+      ...branchEdges,
+      ...pasted.edges,
+    ]);
+    return true;
+  }, [
+    applyScenarioBranchGraph,
+    captureEditUndoSnapshot,
+    isSessionReadOnly,
+    readScenarioBranchGraph,
+    scenarioBranch,
+  ]);
+
   const patchNodeData = useCallback((nodeId: string, patch: Record<string, unknown>) => {
     const mapNodes = (nodes: Node[]) =>
       nodes.map((node) =>
@@ -2874,6 +2923,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
       addPaletteNodeWithConnection,
+      copyBoardSelection,
+      pasteBoardSelection,
+      hasBoardSelectionClipboard,
       updatePaletteNodeMicrophoneId,
       updateCollectorConfig,
       updateRecordingPolicy,
@@ -2903,6 +2955,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
       addPaletteNodeWithConnection,
+      copyBoardSelection,
+      pasteBoardSelection,
+      hasBoardSelectionClipboard,
       updatePaletteNodeMicrophoneId,
       updateCollectorConfig,
       updateRecordingPolicy,
