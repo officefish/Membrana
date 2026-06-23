@@ -48,10 +48,6 @@ import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js
 import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardFunctionActionModal } from './board-function-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
-import { BoardUserCasePickerModal } from './board-usercase-picker-modal.js';
-import { BoardWorkspacePickerModal } from './board-workspace-picker-modal.js';
-import type { DeviceBoardUserCasePickerConfig } from '../types/user-case-picker.js';
-import type { DeviceBoardWorkspaceHost } from '../persist/device-board-workspace-host.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
@@ -93,12 +89,8 @@ export interface DeviceBoardShellProps {
   readonly showRunControls?: boolean;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
   readonly deviceLive?: boolean;
-  /** UserCase catalog picker (U9 P1); undefined — кнопка скрыта. */
-  readonly userCasePicker?: DeviceBoardUserCasePickerConfig;
-  /** Загрузка документа каталога (U10 W2-module: без shell picker). */
+  /** Загрузка документа каталога (U10 W2-module: выбор в launcher модуля). */
   readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
-  /** User workspace host (U10 W2); undefined — picker скрыт. */
-  readonly workspaceHost?: DeviceBoardWorkspaceHost;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -106,8 +98,7 @@ const DeviceBoardShellInner: React.FC<{
   exitLabel: string;
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
-  userCasePicker?: DeviceBoardUserCasePickerConfig;
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, userCasePicker }) => {
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -137,11 +128,8 @@ const DeviceBoardShellInner: React.FC<{
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
-  const [userCasePickerOpen, setUserCasePickerOpen] = useState(false);
-  const [workspacePickerOpen, setWorkspacePickerOpen] = useState(false);
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
   const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
-  const [userCaseAppliedMessage, setUserCaseAppliedMessage] = useState<string | null>(null);
   const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
@@ -1096,19 +1084,6 @@ const DeviceBoardShellInner: React.FC<{
               Только просмотр
             </span>
           ) : null}
-          {graph.workspaceEnabled ? (
-            <button
-              type="button"
-              className="btn btn-sm btn-outline shrink-0 gap-1.5"
-              onClick={() => setWorkspacePickerOpen(true)}
-              aria-label={`Мои сценарии ${graph.workspaceList.length} из ${graph.maxUserWorkspaces}`}
-            >
-              Мои сценарии
-              <span className="badge badge-primary badge-sm">
-                {graph.workspaceList.length}/{graph.maxUserWorkspaces}
-              </span>
-            </button>
-          ) : null}
           <BoardCanvasBreadcrumb
             segments={canvasBreadcrumbSegments}
             detailTitle={scenarioTitle}
@@ -1233,13 +1208,6 @@ const DeviceBoardShellInner: React.FC<{
                   Import JSON
                 </button>
               </li>
-              {userCasePicker !== undefined && userCasePicker.cards.length > 0 ? (
-                <li>
-                  <button type="button" onClick={() => setUserCasePickerOpen(true)}>
-                    UserCase…
-                  </button>
-                </li>
-              ) : null}
               <li>
                 <button
                   type="button"
@@ -1256,19 +1224,6 @@ const DeviceBoardShellInner: React.FC<{
       <BoardValidationBanner issues={graph.validationIssues} successMessage={null} />
       {importError !== null ? (
         <div className="border-b border-error/30 bg-error/10 px-4 py-2 text-xs text-error">{importError}</div>
-      ) : null}
-      {userCaseAppliedMessage !== null ? (
-        <div className="border-b border-success/30 bg-success/10 px-4 py-2 text-xs text-success flex items-center justify-between gap-3">
-          <span>{userCaseAppliedMessage}</span>
-          <button
-            type="button"
-            className="btn btn-ghost btn-xs"
-            onClick={() => setUserCaseAppliedMessage(null)}
-            aria-label="Закрыть"
-          >
-            ✕
-          </button>
-        </div>
       ) : null}
       <BoardRuntimeStatus state={graph.runtimeState} />
 
@@ -1332,27 +1287,6 @@ const DeviceBoardShellInner: React.FC<{
           }}
           onDismiss={graph.cancelBranchImport}
         />
-
-        {userCasePicker !== undefined && userCasePicker.cards.length > 0 ? (
-          <BoardUserCasePickerModal
-            open={userCasePickerOpen}
-            cards={userCasePicker.cards}
-            onDismiss={() => setUserCasePickerOpen(false)}
-            onApplied={(userCaseId) => {
-              const card = userCasePicker.cards.find((item) => item.id === userCaseId);
-              setUserCaseAppliedMessage(
-                card !== undefined ? `UserCase «${card.title}» применён` : 'UserCase применён',
-              );
-            }}
-          />
-        ) : null}
-
-        {graph.workspaceEnabled ? (
-          <BoardWorkspacePickerModal
-            open={workspacePickerOpen}
-            onDismiss={() => setWorkspacePickerOpen(false)}
-          />
-        ) : null}
 
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
@@ -1542,13 +1476,9 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   exitLabel = 'Выйти из доски',
   showRunControls = true,
   deviceLive,
-  userCasePicker,
-  workspaceHost,
-  loadUserCaseDocument: loadUserCaseDocumentProp,
+  loadUserCaseDocument,
 }) => {
   const { session } = useDeviceBoardMode();
-  const loadUserCaseDocument =
-    loadUserCaseDocumentProp ?? userCasePicker?.loadDocument;
 
   return (
   <DeviceBoardGraphProvider
@@ -1557,7 +1487,6 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
     loadUserCaseDocument={loadUserCaseDocument}
-    workspaceHost={workspaceHost}
     boardSession={session}
   >
     <DeviceBoardShellInner
@@ -1565,7 +1494,6 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
-      userCasePicker={userCasePicker}
     />
   </DeviceBoardGraphProvider>
   );

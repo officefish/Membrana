@@ -43,4 +43,3 @@ export type {
   DeviceBoardWorkspaceHost,
   DeviceBoardWorkspaceListItem,
 } from './persist/device-board-workspace-host.js';
-export { BoardWorkspacePickerModal } from './components/board-workspace-picker-modal.js';
