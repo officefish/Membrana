@@ -84,6 +84,41 @@ CABINET_IMAGE_TAG=cabinet-v0.2.0 yarn cabinet:u10-workspace:prod
 2. Client B (или curl): `PUT` тот же `workspaceId` с телом и `?expectedUpdatedAt=<старый>` → ожидать **409**.
 3. На client A: снова **Сохранить** с устаревшим локальным состоянием → banner **«Загрузить с сервера»**.
 
+## STE v1 — server tariff enforcement (#150)
+
+Эпик **`server-tariff-enforcement-v1`**: квота user workspace enforced на **media**; cabinet синхронизирует `maxUserWorkspaces` при pair.
+
+### Что входит в релиз (код в `main`, деплой одним заходом)
+
+| Компонент | Изменения |
+|-----------|-----------|
+| **background-media** | `Device.maxUserWorkspaces`; PUT 403 `WORKSPACE_QUOTA_EXCEEDED`; `GET device-workspaces` → `userWorkspacesQuota`; assert **v1–v2**; миграция `20260623120000_device_max_user_workspaces` |
+| **background-cabinet** | `pair` → media sync включает `maxUserWorkspaces` |
+| **apps/client** | `WorkspaceQuotaExceededError`, `resolveWorkspaceTariff`, quota UX в launcher |
+
+### Деплой (после завершения спринта — один раз)
+
+```bash
+# После merge STE в main + тег cabinet при необходимости
+CABINET_IMAGE_TAG=cabinet-v0.2.0 yarn cabinet:u10-workspace:prod
+```
+
+Скрипт применяет **media migrate** (в т.ч. `maxUserWorkspaces`) и пересобирает/поднимает media + cabinet.
+
+### Smoke (STE)
+
+```bash
+yarn cabinet:u10-workspace:smoke
+```
+
+Дополнительно к U10/U11:
+
+- `PUT` workspace с **device-scenario v2** (как client `createEmptyDeviceScenarioDocument`)
+- **Второй** workspace на том же `deviceId`
+- `userWorkspacesQuota` в list и `GET .../quota`
+
+Client по-прежнему — **локальная** сборка (`yarn workspace @membrana/client dev`).
+
 ## CI
 
 | Workflow | Когда |

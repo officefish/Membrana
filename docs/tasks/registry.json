@@ -5007,7 +5007,7 @@
       "dependsOn": [
         "ste-v1-b0-second-workspace"
       ],
-      "notes": "media:migrate, cabinet image, u10-workspace-prod-smoke 2nd slot.",
+      "notes": "Smoke: v2 PUT + 2nd slot + userWorkspacesQuota. Deploy deferred until sprint close.",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
@@ -5027,7 +5027,7 @@
       "dependsOn": [
         "ste-v1-b0-second-workspace"
       ],
-      "notes": "TARIFF_MATRIX, media README, U10 deploy doc cross-link.",
+      "notes": "STE D1: TARIFF_MATRIX v0.5, user-workspace.mdx, U10 deploy STE section.",
       "leadPersona": "rodchenko",
       "supportPersonas": [],
       "strategicWave": "W5"

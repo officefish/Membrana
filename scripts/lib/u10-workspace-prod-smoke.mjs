@@ -1,9 +1,9 @@
 /**
- * U10 W4/W5 + U11 S2-W3 prod-smoke (paired): tariff quota + media device-workspaces API.
+ * U10 W4/W5 + U11 S2-W3 + STE v1 prod-smoke (paired): tariff quota + media device-workspaces API.
  * Вызывается с VPS через SSH (`yarn cabinet:u10-workspace:smoke`).
  */
 
-/** Bash-скрипт: MP3 pair + W4 tariff + W5 workspaces list/put/get. */
+/** Bash-скрипт: MP3 pair + W4 tariff + W5 workspaces + STE v2 second slot. */
 export const U10_WORKSPACE_REMOTE_SMOKE = `#!/bin/bash
 set -uo pipefail
 ENV=/etc/membrana/cabinet.env
@@ -14,6 +14,34 @@ API=https://cabinet.membrana.space
 MEDIA=http://127.0.0.1:3010
 FAILED=0
 mark(){ if [ "$2" = "0" ]; then echo "[u10-smoke] $1: OK"; else echo "[u10-smoke] $1: FAIL"; FAILED=1; fi; }
+
+ste_v2_doc() {
+  python3 - "$1" "$2" <<'PY'
+import json, sys
+ws_id, title = sys.argv[1], sys.argv[2]
+doc = {
+  "kind": "device-scenario",
+  "version": 2,
+  "deviceKind": "microphone",
+  "signalGraph": {"nodes": [], "edges": []},
+  "scenario": {
+    "initial": {"entry": "initial-entry", "nodes": [], "edges": []},
+    "loops": {
+      "main": {"entry": "main-entry", "nodes": [], "edges": []},
+      "alarm": {"entry": "alarm-entry", "nodes": [], "edges": []},
+    },
+    "triggers": {
+      "onStop": {"entry": "on-stop-entry", "nodes": [], "edges": []},
+      "onDisconnect": {"entry": "on-disconnect-entry", "nodes": [], "edges": []},
+    },
+    "onConnect": {"entry": "on-connect-entry", "nodes": [], "edges": []},
+    "variables": [],
+  },
+  "meta": {"workspaceKind": "user", "workspaceId": ws_id, "title": title},
+}
+print(json.dumps(doc))
+PY
+}
 
 echo "=== cabinet health ==="
 curl -fsS "$API/health" >/dev/null 2>&1; mark cabinet-health $?
@@ -70,18 +98,27 @@ print('workspaces', len(d['workspaces']))
 " >/dev/null 2>&1; mark device-workspaces-list $?
 
 WS_ID="u10-smoke-$(date +%s)"
-DOC='{"kind":"device-scenario","version":1,"deviceKind":"microphone","signalGraph":{"nodes":[],"edges":[]},"scenario":{"nodes":[],"edges":[]},"meta":{"workspaceKind":"user","workspaceId":"'"$WS_ID"'","title":"U10 smoke"}}'
+DOC=$(ste_v2_doc "$WS_ID" "U10 smoke v2")
 PUT_RESP=$(curl -fsS -X PUT "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/$WS_ID" \\
   -H "X-Membrana-Token: $MEDIA_TOKEN" \\
   -H "X-Membrana-Device-Id: $DEVICE_ID" \\
   -H 'Content-Type: application/json' \\
   -d "$DOC" 2>/dev/null || true)
-echo "$PUT_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document')" >/dev/null 2>&1; mark device-workspaces-put $?
+echo "$PUT_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('version')==2" >/dev/null 2>&1; mark device-workspaces-put-v2 $?
+
+WS_ID2="u10-smoke-2-$(date +%s)"
+DOC2=$(ste_v2_doc "$WS_ID2" "U10 smoke v2 second")
+PUT2=$(curl -fsS -X PUT "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/$WS_ID2" \\
+  -H "X-Membrana-Token: $MEDIA_TOKEN" \\
+  -H "X-Membrana-Device-Id: $DEVICE_ID" \\
+  -H 'Content-Type: application/json' \\
+  -d "$DOC2" 2>/dev/null || true)
+echo "$PUT2" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document')" >/dev/null 2>&1; mark device-workspaces-put-v2-second $?
 
 GET_RESP=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/$WS_ID" \\
   -H "X-Membrana-Token: $MEDIA_TOKEN" \\
   -H "X-Membrana-Device-Id: $DEVICE_ID" 2>/dev/null || true)
-echo "$GET_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('meta',{}).get('title')=='U10 smoke'" >/dev/null 2>&1; mark device-workspaces-get $?
+echo "$GET_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('meta',{}).get('title')=='U10 smoke v2'" >/dev/null 2>&1; mark device-workspaces-get $?
 
 curl -fsS -X PATCH "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/active" \\
   -H "X-Membrana-Token: $MEDIA_TOKEN" \\
@@ -98,7 +135,22 @@ d=json.load(sys.stdin)
 assert d.get('activeWorkspaceId')=='$WS_ID', d.get('activeWorkspaceId')
 ids=[w.get('workspaceId') for w in d.get('workspaces') or []]
 assert '$WS_ID' in ids, ids
+assert '$WS_ID2' in ids, ids
+q=d.get('userWorkspacesQuota') or {}
+assert q.get('used',0)>=2, q
+assert q.get('limit')==3, q
 " >/dev/null 2>&1; mark paired-active-workspace $?
+
+QUOTA=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/quota" \\
+  -H "X-Membrana-Token: $MEDIA_TOKEN" \\
+  -H "X-Membrana-Device-Id: $DEVICE_ID" 2>/dev/null || true)
+echo "$QUOTA" | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+uw=d.get('userWorkspaces') or {}
+assert uw.get('limit')==3, uw
+assert uw.get('used',0)>=2, uw
+" >/dev/null 2>&1; mark ste-quota-user-workspaces $?
 
 GET_RELOAD=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/$WS_ID" \\
   -H "X-Membrana-Token: $MEDIA_TOKEN" \\
@@ -108,7 +160,7 @@ echo "$GET_RELOAD" | python3 -c "import sys,json; d=json.load(sys.stdin); assert
 LEGACY=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-scenario" \\
   -H "X-Membrana-Token: $MEDIA_TOKEN" \\
   -H "X-Membrana-Device-Id: $DEVICE_ID" 2>/dev/null || true)
-echo "$LEGACY" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('meta',{}).get('title')=='U10 smoke'" >/dev/null 2>&1; mark legacy-device-scenario $?
+echo "$LEGACY" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('meta',{}).get('title')=='U10 smoke v2'" >/dev/null 2>&1; mark legacy-device-scenario $?
 
 CID_CAB=$(docker ps --filter name=cabinet-api --format '{{.ID}}' | head -n1)
 CID_MEDIA=$(docker ps --filter name=media-api --format '{{.ID}}' | head -n1)

@@ -42,11 +42,11 @@
 | Phase | Task id | Статус | Deliverable |
 |-------|---------|--------|-------------|
 | **W1** | `ste-v1-w1-media-quota` | **done** `c47f2c4` | Media PUT 403, Device.maxUserWorkspaces |
-| **B0** | `ste-v1-b0-second-workspace` | **active** | Cabinet sync maxUserWorkspaces; client 403; list quota; launcher refresh |
-| **W2** | `ste-v1-w2-cabinet-sync` | (в B0) | pair → media membrane PATCH с полным tariff snapshot |
-| **W3** | `ste-v1-w3-client-403` | (в B0) | WorkspaceQuotaExceededError, тесты |
-| **D1** | `ste-v1-d1-docs` | pending | TARIFF_MATRIX § enforcement, deploy note |
-| **S1** | `ste-v1-s1-prod-smoke` | pending | prod-smoke: create 2nd workspace; pair re-sync |
+| **B0** | `ste-v1-b0-second-workspace` | **done** `e67a427` | Cabinet sync, client 403, list quota, media v2 assert |
+| **W2** | `ste-v1-w2-cabinet-sync` | **done** (B0) | pair → media membrane PATCH |
+| **W3** | `ste-v1-w3-client-403` | **done** (B0) | WorkspaceQuotaExceededError |
+| **D1** | `ste-v1-d1-docs` | **done** | TARIFF_MATRIX, user-workspace.mdx, deploy note |
+| **S1** | `ste-v1-s1-prod-smoke` | **ready** | smoke script extended; **deploy отложен** |
 
 ---
 
@@ -65,13 +65,12 @@
 
 ### Definition of Done (sprint)
 
-- [ ] Оператор создаёт 2-й сценарий на free-v1 paired (ручная проверка)
-- [ ] 403 quota → текст `used/max`, не «Forbidden»
-- [ ] Cabinet re-pair синхронизирует maxUserWorkspaces на media
-- [ ] Unit tests client + media green
-- [ ] `yarn turbo run lint typecheck test --continue` для touched packages
-- [ ] D1 docs + deploy note
-- [ ] Отчёт в Issue #150 · `yarn task:archive` для B0/S1 при закрытии
+- [x] Код: media v1–v2 assert, cabinet sync, client 403, list quota (коммиты `034950f`…`e67a427`)
+- [x] D1 docs + smoke script (STE checks)
+- [ ] **Deploy** media+cabinet одним заходом (`yarn cabinet:u10-workspace:prod`)
+- [ ] `yarn cabinet:u10-workspace:smoke` на prod после deploy
+- [ ] Ручная проверка: 2-й сценарий в launcher (local client)
+- [ ] Отчёт в Issue #150 · `yarn task:archive` для эпика
 
 ### Out of scope
 

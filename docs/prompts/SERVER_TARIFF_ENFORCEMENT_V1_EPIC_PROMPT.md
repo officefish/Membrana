@@ -4,8 +4,9 @@
 > **Реестр:** `id` = **`server-tariff-enforcement-v1`**  
 > **Родитель:** [`membrane-platform-v1`](./MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) · продолжение user workspace (U10/U11)  
 > **Предшественник:** U10 W4 tariff read (#147), U11 paired hardening (#149), client bugfix `8db252a`  
-> **GitHub Issue:** _TBD_ (создать при triage)  
-> **Статус:** **active** · intake 2026-06-23  
+> **GitHub Issue:** [#150](https://github.com/officefish/Membrana/issues/150)  
+> **Day-sprint:** [`SERVER_TARIFF_DAY_SPRINT_PROMPT.md`](./SERVER_TARIFF_DAY_SPRINT_PROMPT.md)  
+> **Статус:** **active** · код готов; **deploy отложен** до закрытия спринта  
 > **Размер:** **L** (3–4 PR)
 
 ---
@@ -14,11 +15,11 @@
 
 Сейчас квота **редактируемых user workspace** (`maxUserWorkspaces`) работает так:
 
-| Слой | Факт |
-|------|------|
-| **Cabinet** | `Tariff.maxUserWorkspaces` в Prisma; отдаётся в `/v1/pair` и `/v1/pair/status` |
-| **Media** | Хранит `userStorageQuotaBytes`, `bufferQuotaBytes`, `datasetCatalogId` на `Device`; **нет** `maxUserWorkspaces`; PUT workspace **без** проверки слотов |
-| **Client** | `resolveWorkspaceTariff()` — paired: из pair; autonomous: local mirror `free-v1` (3); проверка `used >= max` **только на клиенте** |
+| Слой | Факт (после STE v1) |
+|------|---------------------|
+| **Cabinet** | `Tariff.maxUserWorkspaces`; pair/sync передаёт snapshot на media |
+| **Media** | `Device.maxUserWorkspaces`; PUT 403; assert **v1–v2**; `userWorkspacesQuota` в list/quota |
+| **Client** | `resolveWorkspaceTariff()`; `WorkspaceQuotaExceededError`; autonomous = free-v1 mirror |
 
 Проблемы:
 
@@ -64,12 +65,14 @@
 
 ## Scope — волны
 
-| Wave | Task id | Deliverable |
-|------|---------|-------------|
-| **W1** | `ste-v1-w1-media-quota` | Media: migration `maxUserWorkspaces` on Device; `resolveDeviceLimits`; PUT new workspace → 403; unit tests |
-| **W2** | `ste-v1-w2-cabinet-sync` | Cabinet: membrane context + pair flow → media sync includes `maxUserWorkspaces`; integration test |
-| **W3** | `ste-v1-w3-client-403` | Client: map 403 → quota message; `GET quota` workspace fields if added; hybrid host tests |
-| **D1** | `ste-v1-d1-docs` | `TARIFF_MATRIX.md` server enforcement; `background-media` README; deploy note |
+| Wave | Task id | Статус | Deliverable |
+|------|---------|--------|-------------|
+| **W1** | `ste-v1-w1-media-quota` | done | Media PUT 403, `Device.maxUserWorkspaces` |
+| **B0** | `ste-v1-b0-second-workspace` | done | v2 assert, cabinet sync, client 403 |
+| **W2** | `ste-v1-w2-cabinet-sync` | done | pair → media `maxUserWorkspaces` |
+| **W3** | `ste-v1-w3-client-403` | done | `WorkspaceQuotaExceededError` |
+| **D1** | `ste-v1-d1-docs` | done | TARIFF_MATRIX, Mintlify, deploy |
+| **S1** | `ste-v1-s1-prod-smoke` | ready | smoke extended; deploy pending |
 
 ### Out of scope v1
 

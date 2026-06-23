@@ -1,6 +1,6 @@
 # TARIFF_MATRIX — матрица тарифов Membrane Platform
 
-> **Статус:** черновик v0.4 (2026-06-23). Продуктовая матрица на **3 тарифа**; технические id совпадают с seed в [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md).
+> **Статус:** черновик v0.5 (2026-06-23). Продуктовая матрица на **3 тарифа**; технические id совпадают с seed в [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md).
 >
 > **Связанные документы:** [`INTEGRATIONS_STRATEGY.md`](./INTEGRATIONS_STRATEGY.md) §4 (каталог детекторов), [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md) (stage-gate), [`DATASET.md`](./DATASET.md) (корпуса каталогов).
 
@@ -35,6 +35,18 @@
 В **автономном режиме** (`nodeConnectionMode: autonomous`) облачные квоты не enforced; bundled-каталог в client — минимум `free-v1-catalog` независимо от тарифа мембраны (см. [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md) §«Автономный режим»).
 
 **User workspace (U10):** в **paired** режиме квота `maxUserWorkspaces` приходит из cabinet tariff (`/v1/pair`, `/v1/pair/status`); при отсутствии поля или в **autonomous** — fallback **3**. См. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §22.
+
+### Server enforcement (STE v1 · paired)
+
+| Слой | Поведение |
+|------|-----------|
+| **Cabinet `Tariff`** | Канон: `maxUserWorkspaces`, storage/buffer, `datasetCatalogId` |
+| **Pair / re-pair** | Cabinet → `PATCH /v1/devices/:id/membrane` на media: snapshot лимитов на `Device` |
+| **Media** | `PUT` **нового** `workspaceId` → **403** `WORKSPACE_QUOTA_EXCEEDED` при `count >= max`; `GET device-workspaces` → `userWorkspacesQuota` |
+| **Client** | `resolveWorkspaceTariff()` — paired из pair; autonomous — local mirror **free-v1** (3); 403 → `used/max` |
+| **Документ** | Client шлёт `device-scenario` **v2**; media принимает **v1–v2** |
+
+Автономный режим: сервер **не** enforced; локальный тариф всегда минимальный **free-v1**.
 
 ---
 
@@ -197,5 +209,6 @@
 | 2026-06-16 | v0.2 | Журнал: export всем; hot 3 / 10 / 30 дней; архив 40 GiB только business |
 | 2026-06-16 | v0.3 | Спектральный пакет (MFCC + спектрограмма сэмпла) с `indie-v1` |
 | 2026-06-23 | v0.4 | User workspace slots (`maxUserWorkspaces`): free **3** ✓; indie/business — план (U10 D1) |
+| 2026-06-23 | v0.5 | STE v1: server enforcement workspace quota + v2 document on media PUT |
 
 *Вопросы по квотам и детекции — Teamlead; правки — через PR с обновлением seed только после согласования.*
