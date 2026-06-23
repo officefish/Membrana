@@ -1,6 +1,6 @@
-# U10 User Workspace — prod deploy + smoke
+# U10 / U11 User Workspace — prod deploy + smoke
 
-Эпик [#147](https://github.com/officefish/Membrana/issues/147) · волны **W4** (cabinet tariff) + **W5** (media workspaces).
+Эпики [#147](https://github.com/officefish/Membrana/issues/147) (U10) · [#149](https://github.com/officefish/Membrana/issues/149) (U11 paired LWW).
 
 ## Предусловия
 
@@ -47,7 +47,42 @@ CABINET_IMAGE_TAG=cabinet-v0.2.0 yarn cabinet:u10-workspace:prod
 yarn cabinet:u10-workspace:smoke
 ```
 
-Проверки: `pair.tariff.maxUserWorkspaces`, `GET/PUT/GET device-workspaces`, legacy `/device-scenario`, `prisma migrate status` (cabinet + media).
+Проверки: `pair.tariff.maxUserWorkspaces`, `GET/PUT/GET device-workspaces`, legacy `/device-scenario`, `prisma migrate status` (cabinet + media), paired active workspace + reload roundtrip.
+
+## U11 — paired LWW (409)
+
+U11 S3 добавляет на **media** опциональный query-параметр `expectedUpdatedAt` на
+`PUT /v1/devices/:deviceId/device-workspaces/:workspaceId`. При несовпадении с серверным `updatedAt` → **409**:
+
+```json
+{
+  "code": "WORKSPACE_CONFLICT",
+  "currentUpdatedAt": "2026-06-23T12:00:00.000Z",
+  "expectedUpdatedAt": "2026-06-23T11:00:00.000Z"
+}
+```
+
+### Что деплоить
+
+| Компонент | U11 изменения | Prod deploy |
+|-----------|---------------|-------------|
+| **background-media** | 409 LWW на PUT | **Обязательно** — тот же `yarn cabinet:u10-workspace:prod` (media `build` + `up`) |
+| **background-cabinet** | нет | Образ `cabinet-v0.2.0` (или актуальный тег) — pull, без пересборки |
+| **apps/client** | persist + conflict UX | **Локально** — `yarn workspace @membrana/client dev`; prod-хостинга client нет |
+
+После push U11 в `main` достаточно:
+
+```bash
+CABINET_IMAGE_TAG=cabinet-v0.2.0 yarn cabinet:u10-workspace:prod
+```
+
+На VPS подтянется `9d87fe7+`, media пересоберётся с LWW. Smoke **не** проверяет stale PUT → 409 (ручная проверка: два Save с разными `expectedUpdatedAt`).
+
+### Ручная проверка conflict (опционально)
+
+1. Paired client A: открыть workspace, **Сохранить** (зафиксировать `updatedAt` на media).
+2. Client B (или curl): `PUT` тот же `workspaceId` с телом и `?expectedUpdatedAt=<старый>` → ожидать **409**.
+3. На client A: снова **Сохранить** с устаревшим локальным состоянием → banner **«Загрузить с сервера»**.
 
 ## CI
 

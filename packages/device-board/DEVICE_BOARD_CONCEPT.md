@@ -1371,7 +1371,7 @@ Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/user
 | Сессия доски | `system-preview` (RO) или `user-edit` (Save + mutating ops) |
 | Квота free | **3** user workspace (`maxUserWorkspaces`; paired — из cabinet tariff, fallback 3) |
 | Autonomous persist | IndexedDB `membrana-device-board-workspaces` |
-| Paired persist | active slot + LWW; multi-workspace API на media (W5), fallback legacy `/device-scenario` |
+| Paired persist | media multi-workspace API + LWW; IndexedDB — cache (U11 remote-first); fallback legacy `/device-scenario` |
 | Маркер persist | `meta.workspaceKind: 'user' \| 'system'`; `meta.workspaceId`; optional `meta.clonedFromUserCaseId` |
 | Migrate guard (P0) | `shouldMigrateMicrophoneScenarioToBundledMvp` **не** трогает `workspaceKind: 'user'` |
 
@@ -1417,11 +1417,41 @@ sequenceDiagram
 
 ### 22.3 Out of scope (U10 v1)
 
-- Tariff-driven `maxUserWorkspaces` из cabinet (`db-uw-w4-tariff` ✓)
-- Multi-workspace API на `background-media` (`db-uw-w5-media-api`)
+- ~~Tariff-driven `maxUserWorkspaces` из cabinet~~ — U10 W4 ✓
+- ~~Multi-workspace API на `background-media`~~ — U10 W5 ✓
 - Undo после clone; server-side UserCase CRUD
 
-### 22.4 Документация для оператора
+### 22.4 Paired hardening (U11)
+
+> Эпик `db-user-workspace-u11` · Issue [#149](https://github.com/officefish/Membrana/issues/149) ·
+> промпт [`DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md`](../../docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md)
+
+| Тема | Решение |
+| ---- | ------- |
+| List/CRUD paired | **Remote-first** (`createHybridDeviceBoardWorkspaceHost`); IndexedDB — cache, не SoT |
+| Launcher | `visibilitychange` / `focus` → `refreshWorkspaces()`; сброс API cache при смене `pairSessionKey` |
+| Reinstall | Пустой IndexedDB → hydrate списка с media |
+| Save conflict | Client: `expectedUpdatedAt` на PUT; media: **409** `WORKSPACE_CONFLICT` если stale |
+| Load merge | `pickNewer(local, remote)` по `updatedAt` |
+| UX | Shell: warning + **«Загрузить с сервера»** (`reloadScenarioFromServer`) |
+| Cabinet | **Out of scope** — только quota из U10 |
+
+```mermaid
+sequenceDiagram
+  participant C as Client
+  participant M as background-media
+  C->>M: PUT workspace?expectedUpdatedAt=…
+  alt stale
+    M-->>C: 409 WORKSPACE_CONFLICT
+    C->>C: banner + reload from server
+  else ok
+    M-->>C: 200 + updatedAt
+  end
+```
+
+Ключевые файлы: `device-workspaces-api.ts`, `deviceScenarioPersistence.ts`, `device-workspaces.service.ts`, `device-board-graph-context.tsx`, `device-board-shell.tsx`.
+
+### 22.5 Документация для оператора
 
 Mintlify: [`apps/docs/device-board/user-workspace`](../../apps/docs/device-board/user-workspace.mdx) ·
 UserCases (каталог): [`usercases.mdx`](../../apps/docs/device-board/usercases.mdx).

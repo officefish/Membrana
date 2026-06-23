@@ -116,6 +116,7 @@ sequenceDiagram
 - [ ] Prod smoke U11 checks green
 - [ ] **Ноль** обязательных PR в `background-cabinet`
 - [ ] Registry archive `db-user-workspace-u11`
+- [x] D1 docs: `user-workspace.mdx`, CONCEPT §22.4, deploy note (`U10_WORKSPACE_DEPLOY.md` § U11)
 
 ---
 
