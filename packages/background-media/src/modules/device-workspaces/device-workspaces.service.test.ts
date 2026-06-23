@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DeviceWorkspacesService } from './device-workspaces.service';
@@ -83,6 +83,51 @@ describe('DeviceWorkspacesService', () => {
     await service.listWorkspaces('dev-1');
 
     expect(prisma.$transaction).toHaveBeenCalledOnce();
+  });
+
+  it('putWorkspace throws ConflictException when expectedUpdatedAt is stale', async () => {
+    const document = {
+      kind: 'device-scenario',
+      version: 1,
+      deviceKind: 'microphone',
+      signalGraph: { nodes: [], edges: [] },
+      scenario: { nodes: [], edges: [] },
+      meta: { title: 'Saved' },
+    };
+    prisma.deviceWorkspace.findUnique.mockResolvedValue({
+      payload: document,
+      updatedAt: new Date('2026-06-23T12:00:00.000Z'),
+    });
+
+    await expect(
+      service.putWorkspace('dev-1', 'ws-1', document, {
+        expectedUpdatedAt: '2026-06-23T11:00:00.000Z',
+      }),
+    ).rejects.toBeInstanceOf(ConflictException);
+    expect(prisma.deviceWorkspace.upsert).not.toHaveBeenCalled();
+  });
+
+  it('putWorkspace allows create when workspace row is missing', async () => {
+    const document = {
+      kind: 'device-scenario',
+      version: 1,
+      deviceKind: 'microphone',
+      signalGraph: { nodes: [], edges: [] },
+      scenario: { nodes: [], edges: [] },
+      meta: { title: 'New' },
+    };
+    prisma.deviceWorkspace.findUnique.mockResolvedValue(null);
+    prisma.deviceWorkspace.upsert.mockResolvedValue({
+      payload: document,
+      updatedAt: new Date('2026-06-23T12:00:00.000Z'),
+    });
+    prisma.device.findUnique.mockResolvedValue({ activeWorkspaceId: null });
+
+    await expect(
+      service.putWorkspace('dev-1', 'ws-new', document, {
+        expectedUpdatedAt: '2026-06-23T11:00:00.000Z',
+      }),
+    ).resolves.toMatchObject({ updatedAt: '2026-06-23T12:00:00.000Z' });
   });
 
   it('putWorkspace syncs legacy device-scenario when workspace is active', async () => {

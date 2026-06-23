@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { Prisma } from '../../prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -7,6 +7,7 @@ import type {
   DeleteWorkspaceResultDto,
   DeviceWorkspaceListDto,
   DeviceWorkspaceRecordDto,
+  PutWorkspaceOptions,
 } from './device-workspaces.dto';
 
 function workspaceTitleFromDocument(document: Record<string, unknown>, fallback: string): string {
@@ -70,8 +71,28 @@ export class DeviceWorkspacesService {
     deviceId: string,
     workspaceId: string,
     document: Record<string, unknown>,
+    options?: PutWorkspaceOptions,
   ): Promise<DeviceWorkspaceRecordDto> {
     assertDeviceScenarioDocument(document);
+
+    const existing = await this.prisma.deviceWorkspace.findUnique({
+      where: { deviceId_workspaceId: { deviceId, workspaceId } },
+    });
+
+    if (
+      existing !== null &&
+      options?.expectedUpdatedAt !== undefined &&
+      options.expectedUpdatedAt.length > 0
+    ) {
+      const currentUpdatedAt = existing.updatedAt.toISOString();
+      if (currentUpdatedAt !== options.expectedUpdatedAt) {
+        throw new ConflictException({
+          code: 'WORKSPACE_CONFLICT',
+          currentUpdatedAt,
+          expectedUpdatedAt: options.expectedUpdatedAt,
+        });
+      }
+    }
 
     const title = workspaceTitleFromDocument(document, 'Сценарий');
     const row = await this.prisma.deviceWorkspace.upsert({

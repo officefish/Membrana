@@ -40,3 +40,18 @@ export class DeleteWorkspaceResultDto {
   @ApiProperty({ example: 'ws-uuid' })
   deletedWorkspaceId!: string;
 }
+
+export class WorkspaceConflictDto {
+  @ApiProperty({ example: 'WORKSPACE_CONFLICT' })
+  code!: string;
+
+  @ApiProperty({ example: '2026-06-23T12:00:00.000Z' })
+  currentUpdatedAt!: string;
+
+  @ApiProperty({ example: '2026-06-23T11:00:00.000Z', required: false })
+  expectedUpdatedAt?: string;
+}
+
+export interface PutWorkspaceOptions {
+  readonly expectedUpdatedAt?: string;
+}

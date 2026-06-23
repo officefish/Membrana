@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -26,6 +27,7 @@ import {
   DeviceWorkspaceListDto,
   DeviceWorkspaceRecordDto,
   SetActiveWorkspaceDto,
+  WorkspaceConflictDto,
 } from './device-workspaces.dto';
 import { DeviceWorkspacesService } from './device-workspaces.service';
 
@@ -78,14 +80,16 @@ export class DeviceWorkspacesController {
   @ApiOperation({ summary: 'Replace workspace document' })
   @ApiParam({ name: 'workspaceId' })
   @ApiResponse({ status: 200, type: DeviceWorkspaceRecordDto })
+  @ApiResponse({ status: 409, type: WorkspaceConflictDto })
   @ApiStandardErrors()
   @ApiBadRequest()
   putWorkspace(
     @Param('deviceId') deviceId: string,
     @Param('workspaceId') workspaceId: string,
     @Body() body: Record<string, unknown>,
+    @Query('expectedUpdatedAt') expectedUpdatedAt?: string,
   ) {
-    return this.workspaces.putWorkspace(deviceId, workspaceId, body);
+    return this.workspaces.putWorkspace(deviceId, workspaceId, body, { expectedUpdatedAt });
   }
 
   @Delete(':workspaceId')
