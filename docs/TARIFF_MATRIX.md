@@ -34,7 +34,7 @@
 
 В **автономном режиме** (`nodeConnectionMode: autonomous`) облачные квоты не enforced; bundled-каталог в client — минимум `free-v1-catalog` независимо от тарифа мембраны (см. [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md) §«Автономный режим»).
 
-**User workspace (U10):** на `free-v1` в client зашит лимит **3** слота (`DEFAULT_MAX_USER_WORKSPACES`); чтение квоты из cabinet tariff — эпик `db-uw-w4-tariff` (план). См. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §22.
+**User workspace (U10):** в **paired** режиме квота `maxUserWorkspaces` приходит из cabinet tariff (`/v1/pair`, `/v1/pair/status`); при отсутствии поля или в **autonomous** — fallback **3**. См. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §22.
 
 ---
 

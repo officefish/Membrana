@@ -4651,6 +4651,29 @@
       "strategicWave": "W0"
     },
     {
+      "id": "db-uw-w4-tariff",
+      "title": "DB UW W4: maxUserWorkspaces в cabinet Tariff + client read",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-d1-docs"
+      ],
+      "notes": "Prisma Tariff.maxUserWorkspaces; pair + pair/status; client resolveMaxUserWorkspaces fallback 3.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "W4 tariff quota wired cabinet→client",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W0"
+    },
+    {
       "id": "db-uw-d1-docs",
       "title": "DB UW D1: документация user workspace (CONCEPT §22, Mintlify, TARIFF)",
       "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",

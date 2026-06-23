@@ -32,6 +32,7 @@ function serializeTariff(tariff: Tariff) {
     datasetCatalogId: tariff.datasetCatalogId,
     maxActiveKeysPerNode: tariff.maxActiveKeysPerNode,
     maxNodesPerMembrane: tariff.maxNodesPerMembrane,
+    maxUserWorkspaces: tariff.maxUserWorkspaces,
   };
 }
 
@@ -297,10 +298,12 @@ export class MembraneService {
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
         maxActiveKeysPerNode: 1,
         maxNodesPerMembrane: 1,
+        maxUserWorkspaces: 3,
       },
       update: {
         datasetCatalogId: FREE_DATASET_CATALOG_ID,
         maxNodesPerMembrane: 1,
+        maxUserWorkspaces: 3,
       },
     });
   }

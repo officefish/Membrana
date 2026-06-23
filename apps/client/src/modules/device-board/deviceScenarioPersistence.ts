@@ -77,8 +77,11 @@ function pickNewer(
  * Persist adapter: active user workspace в IndexedDB (U10 W3).
  * Paired: LWW с media single-scenario endpoint (до W5).
  */
-export function createClientDeviceBoardPersistAdapter(deviceId: string): DeviceBoardPersistAdapter {
-  const workspacePersist = createDeviceBoardWorkspacePersistApi(deviceId);
+export function createClientDeviceBoardPersistAdapter(
+  deviceId: string,
+  maxUserWorkspaces = 3,
+): DeviceBoardPersistAdapter {
+  const workspacePersist = createDeviceBoardWorkspacePersistApi(deviceId, maxUserWorkspaces);
 
   const creds = readPersistedPairedCredentials();
   if (creds === null || creds.deviceId !== deviceId) {

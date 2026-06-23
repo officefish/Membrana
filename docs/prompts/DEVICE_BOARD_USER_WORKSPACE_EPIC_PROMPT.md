@@ -92,7 +92,7 @@ U9 **явно исключил** user-authored UI (`DEVICE_BOARD_USERCASES_EPIC_
 | **W2-module** | `db-uw-w2-module-launcher` | **done** | Launcher в `DeviceBoardModule`: системные RO + мои слоты + quota `N/max` |
 | **W2b** | `db-uw-w2-clone-catalog` | **done** | Клон системного UserCase → user slot (**из модуля**) |
 | **W2-deprecate** | `db-uw-w2-deprecate-shell` | **done** | Убрать «Мои сценарии» / UserCase… из шапки shell |
-| **W4** | `db-uw-w4-tariff` | pending | `maxUserWorkspaces` в Tariff + client entitlement |
+| **W4** | `db-uw-w4-tariff` | **done** | `maxUserWorkspaces` в Tariff + client entitlement |
 | **W5** | `db-uw-w5-media-api` | pending | Paired: media API workspaces |
 | **D1** | `db-uw-d1-docs` | **done** | CONCEPT §22, apps/docs, TARIFF_MATRIX |
 
@@ -185,7 +185,7 @@ sequenceDiagram
 
 ### Кто ты
 
-Координатор Membrana (Vesnin). Эпик **L** — W2-module → W2b → W2-deprecate → **D1 docs done**; осталось **W4** (tariff) и **W5** (media API).
+Координатор Membrana (Vesnin). Эпик **L** — W2-module → W2b → W2-deprecate → D1 → **W4 done**; осталось **W5** (media API).
 
 ### DoD эпика
 

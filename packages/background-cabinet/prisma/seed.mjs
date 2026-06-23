@@ -18,10 +18,12 @@ async function seedTariff() {
       datasetCatalogId: FREE_DATASET_CATALOG_ID,
       maxActiveKeysPerNode: 1,
       maxNodesPerMembrane: 1,
+      maxUserWorkspaces: 3,
     },
     update: {
       datasetCatalogId: FREE_DATASET_CATALOG_ID,
       maxNodesPerMembrane: 1,
+      maxUserWorkspaces: 3,
     },
   });
   console.log(`Seed ok: tariff "${FREE_TARIFF_ID}"`);

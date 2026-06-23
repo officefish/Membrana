@@ -9,8 +9,7 @@ import {
   createDeviceBoardWorkspaceId,
   createDeviceBoardWorkspaceStore,
 } from './device-board-workspace-store.js';
-
-const DEFAULT_MAX_USER_WORKSPACES = 3;
+import { DEFAULT_MAX_USER_WORKSPACES } from './resolveMaxUserWorkspaces.js';
 
 /** IndexedDB-реализация {@link DeviceBoardWorkspaceHost} (U10 W1–W2). */
 export function createDeviceBoardWorkspaceHost(

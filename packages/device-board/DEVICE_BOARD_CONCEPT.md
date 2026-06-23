@@ -1369,7 +1369,7 @@ Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/user
 | ------- | ------- |
 | Точка входа | **Модуль** «Доска устройства» (`DeviceBoardLauncher`) — **не** шапка board shell |
 | Сессия доски | `system-preview` (RO) или `user-edit` (Save + mutating ops) |
-| Квота free | **3** user workspace (`maxUserWorkspaces`; tariff hook — W4) |
+| Квота free | **3** user workspace (`maxUserWorkspaces`; paired — из cabinet tariff, fallback 3) |
 | Autonomous persist | IndexedDB `membrana-device-board-workspaces` |
 | Paired persist | active slot + LWW с media single-scenario (до W5 multi-workspace API) |
 | Маркер persist | `meta.workspaceKind: 'user' \| 'system'`; `meta.workspaceId`; optional `meta.clonedFromUserCaseId` |
@@ -1417,7 +1417,7 @@ sequenceDiagram
 
 ### 22.3 Out of scope (U10 v1)
 
-- Tariff-driven `maxUserWorkspaces` из cabinet (`db-uw-w4-tariff`)
+- Tariff-driven `maxUserWorkspaces` из cabinet (`db-uw-w4-tariff` ✓)
 - Multi-workspace API на `background-media` (`db-uw-w5-media-api`)
 - Undo после clone; server-side UserCase CRUD
 

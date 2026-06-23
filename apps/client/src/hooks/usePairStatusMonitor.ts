@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { mergePairStatusTariff } from '@/api/pairingCredentials';
 import { fetchPairStatus, pingMediaApi } from '@/api/pairing';
 import { tryUpgradeMediaLibraryToRemote } from '@/lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
@@ -10,6 +11,7 @@ const PAIR_STATUS_INTERVAL_MS = 60_000;
 export function usePairStatusMonitor(): void {
   const mode = useNodeConnectionStore((s) => s.mode);
   const pairing = useNodeConnectionStore((s) => s.pairing);
+  const applyPairing = useNodeConnectionStore((s) => s.applyPairing);
   const handlePairingInvalid = useNodeConnectionStore((s) => s.handlePairingInvalid);
   const reportConnectionError = useNodeConnectionStore((s) => s.reportConnectionError);
 
@@ -37,6 +39,11 @@ export function usePairStatusMonitor(): void {
           return;
         }
 
+        const nextPairing = mergePairStatusTariff(pairing, status);
+        if (nextPairing !== pairing) {
+          applyPairing(nextPairing);
+        }
+
         const mediaOk = await pingMediaApi(pairing.mediaApiUrl, pairing.mediaToken, pairing.deviceId);
         if (cancelled) return;
         if (!mediaOk) {
@@ -57,5 +64,5 @@ export function usePairStatusMonitor(): void {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [mode, pairing, handlePairingInvalid, reportConnectionError]);
+  }, [mode, pairing, applyPairing, handlePairingInvalid, reportConnectionError]);
 }

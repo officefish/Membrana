@@ -32,6 +32,10 @@ export interface PairResponse {
   membrane: { id: string };
   node: { id: string; label: string };
   pairedKeyId?: string;
+  tariff?: {
+    id: string;
+    maxUserWorkspaces?: number;
+  };
 }
 
 export interface PairStatusLinked {
@@ -43,6 +47,10 @@ export interface PairStatusLinked {
   deviceId: string;
   pairedKeyId: string | null;
   sessionExpiresAt: string | null;
+  tariff?: {
+    id: string;
+    maxUserWorkspaces?: number;
+  };
 }
 
 export interface PairStatusUnlinked {
