@@ -24,6 +24,8 @@ import {
 } from './board-variable-modals.js';
 
 export interface BoardLeftSidebarProps {
+  readonly collapsed?: boolean;
+  readonly onToggleCollapse?: () => void;
   readonly activeBranch: ScenarioBranchTab;
   readonly isScenarioLayer: boolean;
   readonly isRuntime: boolean;
@@ -111,6 +113,8 @@ const VariableRow: React.FC<{
 
 /** Левый сайдбар доски (MP7b RT6 + DBR2): вкладки веток + конструктор переменных. */
 export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
+  collapsed = false,
+  onToggleCollapse,
   activeBranch,
   isScenarioLayer,
   isRuntime,
@@ -146,9 +150,24 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   return (
     <>
       <nav
-        className={`flex h-full ${BOARD_LEFT_SIDEBAR_WIDTH_CLASS} flex-col gap-4 overflow-y-auto overflow-x-hidden border-r border-base-300 bg-base-200/95 p-3 shadow-lg backdrop-blur-sm`}
+        className={`flex h-full ${
+          collapsed ? 'w-10' : BOARD_LEFT_SIDEBAR_WIDTH_CLASS
+        } flex-col gap-4 overflow-y-auto overflow-x-hidden border-r border-base-300 bg-base-200/95 p-3 shadow-lg backdrop-blur-sm`}
         aria-label="Вкладки доски"
       >
+        {onToggleCollapse ? (
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs self-end shrink-0"
+            aria-label={collapsed ? 'Развернуть левую панель' : 'Свернуть левую панель'}
+            title={collapsed ? 'Развернуть' : 'Свернуть'}
+            onClick={onToggleCollapse}
+          >
+            {collapsed ? '»' : '«'}
+          </button>
+        ) : null}
+        {collapsed ? null : (
+          <>
         {!showRuntimeInputs
           ? BRANCH_SIDEBAR_SECTIONS.map((section) => (
               <div key={section.title} className="flex flex-col gap-1">
@@ -268,6 +287,8 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
             />
           </footer>
         ) : null}
+          </>
+        )}
       </nav>
 
       <AddVariableModal
