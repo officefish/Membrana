@@ -67,7 +67,15 @@
       "status": "active",
       "createdAt": "2026-05-16",
       "archivedAt": null,
-      "archiveNotes": null
+      "archiveNotes": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "real-dataset-live-calibration",
@@ -84,7 +92,16 @@
         "media-library-a2-ui",
         "membrane-platform-mp5-telemetry-journal",
         "tariff-dataset-v1"
-      ]
+      ],
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "musician",
+        "ozhegov"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "tariff-dataset-v1",
@@ -265,7 +282,11 @@
       "status": "active",
       "createdAt": "2026-06-10",
       "archivedAt": null,
-      "archiveNotes": null
+      "archiveNotes": null,
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "media-library-a4-sample-player",
@@ -277,7 +298,12 @@
       "status": "active",
       "createdAt": "2026-06-10",
       "archivedAt": null,
-      "archiveNotes": null
+      "archiveNotes": null,
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
     },
     {
       "id": "detection-base-contract",
@@ -386,6 +412,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "trends-fft-microphone-plugin"
+      ],
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin"
       ]
     },
     {
@@ -401,7 +431,12 @@
       "archiveNotes": null,
       "dependsOn": [
         "media-library-a2-ui"
-      ]
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "background-media-a5a-server",
@@ -416,6 +451,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "background-media-v1"
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
       ]
     },
     {
@@ -431,6 +470,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "background-media-a5a-server"
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
       ]
     },
     {
@@ -446,6 +489,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "background-media-a5b-docker"
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
       ]
     },
     {
@@ -461,6 +508,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "background-media-a5a-server"
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
       ]
     },
     {
@@ -476,7 +527,12 @@
       "archiveNotes": null,
       "dependsOn": [
         "background-media-a5a-server"
-      ]
+      ],
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "membrane-platform-mp0-domain",
@@ -605,7 +661,12 @@
       "dependsOn": [
         "membrane-platform-mp4-media-membrane",
         "tariff-dataset-v1"
-      ]
+      ],
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cabinet-sample-library-csl1-api",
@@ -620,6 +681,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-sample-library-v1"
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
       ]
     },
     {
@@ -635,6 +700,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-sample-library-csl1-api"
+      ],
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
       ]
     },
     {
@@ -650,6 +719,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-sample-library-csl2-ui"
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
       ]
     },
     {
@@ -666,7 +739,12 @@
       "archiveNotes": null,
       "dependsOn": [
         "membrane-platform-mp4-media-membrane"
-      ]
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cabinet-mp4-nb0-merge-gate",
@@ -683,6 +761,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-mp4-hardening-night-build"
+      ],
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
       ]
     },
     {
@@ -700,7 +782,9 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-mp4-nb0-merge-gate"
-      ]
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "cabinet-mp4-nb2-cabinet-facade",
@@ -717,6 +801,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-mp4-nb1-sample-playback-dry"
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
       ]
     },
     {
@@ -734,6 +822,10 @@
       "archiveNotes": null,
       "dependsOn": [
         "cabinet-mp4-nb2-cabinet-facade"
+      ],
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
       ]
     },
     {
@@ -750,7 +842,15 @@
       "dependsOn": [
         "single-node-detection-first",
         "media-library-a4-sample-player"
-      ]
+      ],
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "sld1-sample-detection-contract",
@@ -800,7 +900,13 @@
       "archiveNotes": null,
       "dependsOn": [
         "sld2-sample-library-drone-plugin"
-      ]
+      ],
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "sld4-stage-gate-calibration",
@@ -816,7 +922,15 @@
       "archiveNotes": null,
       "dependsOn": [
         "sld3-dsp-detectors-free-v1"
-      ]
+      ],
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "validated-drone-recognition",
@@ -831,7 +945,15 @@
       "archiveNotes": null,
       "dependsOn": [
         "sld4-stage-gate-calibration"
-      ]
+      ],
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "vdr1-sample-label-patch-api",
@@ -847,7 +969,13 @@
       "archiveNotes": null,
       "dependsOn": [
         "validated-drone-recognition"
-      ]
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "vdr2-label-notes-ui",
@@ -863,7 +991,15 @@
       "archiveNotes": null,
       "dependsOn": [
         "vdr1-sample-label-patch-api"
-      ]
+      ],
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "vdr3-ground-truth-export",
@@ -879,7 +1015,13 @@
       "archiveNotes": null,
       "dependsOn": [
         "vdr2-label-notes-ui"
-      ]
+      ],
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "vdr4-dsp-calibration-validated",
@@ -895,7 +1037,15 @@
       "archiveNotes": null,
       "dependsOn": [
         "vdr3-ground-truth-export"
-      ]
+      ],
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "vdr5-template-match-detector",
@@ -911,7 +1061,13 @@
       "archiveNotes": null,
       "dependsOn": [
         "vdr3-ground-truth-export"
-      ]
+      ],
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "vdr6-recognition-report-gate",
@@ -928,7 +1084,15 @@
       "dependsOn": [
         "vdr4-dsp-calibration-validated",
         "vdr5-template-match-detector"
-      ]
+      ],
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "drone-detector-detail-report",
@@ -940,7 +1104,15 @@
       "status": "active",
       "createdAt": "2026-06-14",
       "archivedAt": null,
-      "archiveNotes": null
+      "archiveNotes": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "telemetry-journal-live-refactor",
@@ -952,7 +1124,11 @@
       "status": "active",
       "createdAt": "2026-06-14",
       "archivedAt": null,
-      "archiveNotes": null
+      "archiveNotes": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "telemetry-journal-ux-hardening",
@@ -1157,7 +1333,16 @@
       "size": "L",
       "status": "active",
       "createdAt": "2026-06-16",
-      "notes": "Teamlead: LP1 first; stream 3s+2s; brief default; detailed=LP1b server"
+      "notes": "Teamlead: LP1 first; stream 3s+2s; brief default; detailed=LP1b server",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "lp1-mic-drone-stream-modes",
@@ -1168,7 +1353,15 @@
       "size": "L",
       "status": "active",
       "parentEpic": "live-parallel-detection-sprint",
-      "createdAt": "2026-06-16"
+      "createdAt": "2026-06-16",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "lp1b-drone-detailed-report-server",
@@ -1183,7 +1376,15 @@
       "dependsOn": [
         "lp1-mic-drone-stream-modes"
       ],
-      "notes": "Done: new @membrana/drone-detection-orchestrator-service (shared DDR core), client analyzeSampleDetectors refactored to use it; background-media POST /v1/devices/:deviceId/samples/:sampleId/drone-detection-report (Node WAV PCM16 decode + dynamic import orchestrator, WAV-only 422); client requestDetailedDroneReport → media → appendLiveJournalReportFromDroneDetection + setDetailedReportReady. Branch vesnin. Tests: orchestrator + wav-decode green; client/media typecheck+build green."
+      "notes": "Done: new @membrana/drone-detection-orchestrator-service (shared DDR core), client analyzeSampleDetectors refactored to use it; background-media POST /v1/devices/:deviceId/samples/:sampleId/drone-detection-report (Node WAV PCM16 decode + dynamic import orchestrator, WAV-only 422); client requestDetailedDroneReport → media → appendLiveJournalReportFromDroneDetection + setDetailedReportReady. Branch vesnin. Tests: orchestrator + wav-decode green; client/media typecheck+build green.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "lp2-fft-plugins-journal-sink",
@@ -1198,7 +1399,15 @@
       "dependsOn": [
         "lp1-mic-drone-stream-modes"
       ],
-      "notes": "FFT plugins remain opt-in (active: false)"
+      "notes": "FFT plugins remain opt-in (active: false)",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "musician"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "lp3-track-import-backpressure",
@@ -1212,7 +1421,15 @@
       "createdAt": "2026-06-16",
       "dependsOn": [
         "lp1-mic-drone-stream-modes"
-      ]
+      ],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "lp4-parallel-detection-smoke",
@@ -1228,7 +1445,16 @@
         "lp2-fft-plugins-journal-sink",
         "lp3-track-import-backpressure"
       ],
-      "notes": "docs/LIVE_PARALLEL_DETECTION.md; streamWindowCollector SLO test; paired smoke checklist"
+      "notes": "docs/LIVE_PARALLEL_DETECTION.md; streamWindowCollector SLO test; paired smoke checklist",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "musician",
+        "ozhegov"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
+      "freezeAt": "2026-06-23",
+      "strategicWave": "W5"
     },
     {
       "id": "lp5-journal-report-renderers",
@@ -1243,7 +1469,12 @@
       "dependsOn": [
         "lp2-fft-plugins-journal-sink"
       ],
-      "notes": "Client done (ветка vesnin): FftThresholdReportView (FrameTickStrip+ReportMatrix), TrendsFftReportView (winner+TrendsScoreRanking+TrendsMatchDetailTable), полные ярлыки. Фикс mic-live-drone: resetToIdleAfterStream больше не гасит status → результат держится в панели; manual-mode journal append подтверждён регресс-тестом (8/8). TODO: паритет рендеров в apps/cabinet (CabinetLiveJournalReportCard) + деплой cabinet.membrana.space."
+      "notes": "Client done (ветка vesnin): FftThresholdReportView (FrameTickStrip+ReportMatrix), TrendsFftReportView (winner+TrendsScoreRanking+TrendsMatchDetailTable), полные ярлыки. Фикс mic-live-drone: resetToIdleAfterStream больше не гасит status → результат держится в панели; manual-mode journal append подтверждён регресс-тестом (8/8). TODO: паритет рендеров в apps/cabinet (CabinetLiveJournalReportCard) + деплой cabinet.membrana.space.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "fft-last-chance-calibration",
@@ -1621,7 +1852,12 @@
       "dependsOn": [
         "membrane-platform-mp5-telemetry-journal"
       ],
-      "notes": "QA 2026-06-17: 5 замечаний ручного теста cabinet.membrana.space"
+      "notes": "QA 2026-06-17: 5 замечаний ручного теста cabinet.membrana.space",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cj-0-trends-enabled-keys",
@@ -1638,7 +1874,12 @@
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
-      "notes": "Lead: Dynin. filterTrendsTemplatesByEnabledKeys, TrendsTemplateList catalog."
+      "notes": "Lead: Dynin. filterTrendsTemplatesByEnabledKeys, TrendsTemplateList catalog.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cj-1-media-api-safe-json",
@@ -1655,7 +1896,12 @@
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
-      "notes": "Lead: Ozhegov. server-storage-backend Content-Type check."
+      "notes": "Lead: Ozhegov. server-storage-backend Content-Type check.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cj-2-journal-media-decouple",
@@ -1672,7 +1918,12 @@
       "dependsOn": [
         "cj-1-media-api-safe-json"
       ],
-      "notes": "Lead: Ozhegov + Rodchenko. useCabinetLiveJournal split."
+      "notes": "Lead: Ozhegov + Rodchenko. useCabinetLiveJournal split.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cj-3-brief-render-parity",
@@ -1689,7 +1940,12 @@
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
-      "notes": "Lead: Rodchenko. journal-report-views + CabinetLiveJournalReportCard."
+      "notes": "Lead: Rodchenko. journal-report-views + CabinetLiveJournalReportCard.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cj-4-trends-counts-as-detection",
@@ -1706,7 +1962,12 @@
       "dependsOn": [
         "cj-0-trends-enabled-keys"
       ],
-      "notes": "Lead: Dynin. classifyTrends isDetected semantics."
+      "notes": "Lead: Dynin. classifyTrends isDetected semantics.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "cj-5-sync-push-observability",
@@ -1723,7 +1984,12 @@
       "dependsOn": [
         "cj-2-journal-media-decouple"
       ],
-      "notes": "Lead: Ozhegov. sync-journal-storage-backend logger.warn on push fail."
+      "notes": "Lead: Ozhegov. sync-journal-storage-backend logger.warn on push fail.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W2"
     },
     {
       "id": "module-catalog-v1",
@@ -1736,7 +2002,12 @@
       "createdAt": "2026-06-17",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Консилиум 2026-06-17: docs/catalog/ отдельно от task registry; 7 modules + 12 plugins client."
+      "notes": "Консилиум 2026-06-17: docs/catalog/ отдельно от task registry; 7 modules + 12 plugins client.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "meta"
     },
     {
       "id": "mc-0-catalog-regulation",
@@ -1753,7 +2024,9 @@
       "dependsOn": [
         "module-catalog-v1"
       ],
-      "notes": "Lead: Vesnin. docs/catalog/README.md lifecycle draft→stable→deprecated."
+      "notes": "Lead: Vesnin. docs/catalog/README.md lifecycle draft→stable→deprecated.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "mc-1-prompt-templates",
@@ -1770,7 +2043,11 @@
       "dependsOn": [
         "mc-0-catalog-regulation"
       ],
-      "notes": "Lead: Ozhegov. docs/catalog/_templates/*.template.md"
+      "notes": "Lead: Ozhegov. docs/catalog/_templates/*.template.md",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "mc-2-registry-microphone-pilot",
@@ -1787,7 +2064,9 @@
       "dependsOn": [
         "mc-1-prompt-templates"
       ],
-      "notes": "Lead: Ozhegov + Музыкант. hub, coordinator, 8 child plugins."
+      "notes": "Lead: Ozhegov + Музыкант. hub, coordinator, 8 child plugins.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "mc-3-pilot-plugins",
@@ -1804,7 +2083,11 @@
       "dependsOn": [
         "mc-2-registry-microphone-pilot"
       ],
-      "notes": "Lead: Ozhegov + Dynin. install/teardown, engine, journal."
+      "notes": "Lead: Ozhegov + Dynin. install/teardown, engine, journal.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "mc-4-telemetry-journal-stable",
@@ -1821,7 +2104,9 @@
       "dependsOn": [
         "mc-1-prompt-templates"
       ],
-      "notes": "Lead: Rodchenko. journal-report-views, live refresh UX."
+      "notes": "Lead: Rodchenko. journal-report-views, live refresh UX.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "mc-5-remaining-modules-draft",
@@ -1839,7 +2124,11 @@
         "mc-2-registry-microphone-pilot",
         "mc-4-telemetry-journal-stable"
       ],
-      "notes": "Lead: Vesnin. fft-analyzer, spectrum-3d, audio-file-upload, oscilloscope, sample-library."
+      "notes": "Lead: Vesnin. fft-analyzer, spectrum-3d, audio-file-upload, oscilloscope, sample-library.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "mc-6-remaining-plugins-draft",
@@ -1857,7 +2146,9 @@
         "mc-3-pilot-plugins",
         "mc-5-remaining-modules-draft"
       ],
-      "notes": "Lead: Ozhegov. distill from archived task prompts where available."
+      "notes": "Lead: Ozhegov. distill from archived task prompts where available.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "mc-7-verify-script-ci",
@@ -1874,7 +2165,11 @@
       "dependsOn": [
         "mc-6-remaining-plugins-draft"
       ],
-      "notes": "Lead: Ozhegov. scripts/verify-client-catalog.mjs vs registerClientModules.ts"
+      "notes": "Lead: Ozhegov. scripts/verify-client-catalog.mjs vs registerClientModules.ts",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "mc-8-agent-rules-integration",
@@ -1891,7 +2186,9 @@
       "dependsOn": [
         "mc-0-catalog-regulation"
       ],
-      "notes": "Lead: Vesnin. read catalog prompt before module/plugin edits."
+      "notes": "Lead: Vesnin. read catalog prompt before module/plugin edits.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "mc-9-stable-review",
@@ -1909,7 +2206,9 @@
         "mc-7-verify-script-ci",
         "mc-8-agent-rules-integration"
       ],
-      "notes": "Lead: Vesnin. microphone + telemetry-journal stable; agent smoke test."
+      "notes": "Lead: Vesnin. microphone + telemetry-journal stable; agent smoke test.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "device-board-hackathon-1",
@@ -1923,7 +2222,12 @@
       "createdAt": "2026-06-17",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Brief v0.5; interview 35/35 closed. Branch vesnin / hackathon/device-board-1-2026-06-17."
+      "notes": "Brief v0.5; interview 35/35 closed. Branch vesnin / hackathon/device-board-1-2026-06-17.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "musician",
+        "ozhegov"
+      ]
     },
     {
       "id": "db-h0-concept-interview",
@@ -1980,7 +2284,11 @@
       "dependsOn": [
         "db-h1a-core-contracts"
       ],
-      "notes": "Lead: Ozhegov / Rodchenko. Split layout priority. Day H1."
+      "notes": "Lead: Ozhegov / Rodchenko. Split layout priority. Day H1.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "db-h1c-graph-serialize",
@@ -1999,7 +2307,11 @@
       "dependsOn": [
         "db-h1b-board-shell"
       ],
-      "notes": "Lead: Ozhegov. Day H1."
+      "notes": "Lead: Ozhegov. Day H1.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "db-h2a-json-import",
@@ -2018,7 +2330,11 @@
       "dependsOn": [
         "db-h1c-graph-serialize"
       ],
-      "notes": "Lead: Ozhegov. Stretch per D2. Day H2."
+      "notes": "Lead: Ozhegov. Stretch per D2. Day H2.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "db-h2b-scenario-runtime",
@@ -2037,7 +2353,11 @@
       "dependsOn": [
         "db-h1c-graph-serialize"
       ],
-      "notes": "Lead: Ozhegov. Day H2."
+      "notes": "Lead: Ozhegov. Day H2.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "musician"
+      ]
     },
     {
       "id": "db-h2c-mic-journal",
@@ -2056,7 +2376,12 @@
       "dependsOn": [
         "db-h2b-scenario-runtime"
       ],
-      "notes": "Lead: Музыкант. Real mic smoke. Day H2."
+      "notes": "Lead: Музыкант. Real mic smoke. Day H2.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ]
     },
     {
       "id": "db-h2d-cabinet-sync",
@@ -2075,7 +2400,11 @@
       "dependsOn": [
         "db-h1c-graph-serialize"
       ],
-      "notes": "Lead: Ozhegov. Stretch per D2. Day H2."
+      "notes": "Lead: Ozhegov. Stretch per D2. Day H2.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "db-h3a-trigger-stop",
@@ -2094,7 +2423,11 @@
       "dependsOn": [
         "db-h2c-mic-journal"
       ],
-      "notes": "Lead: Ozhegov. Day H3."
+      "notes": "Lead: Ozhegov. Day H3.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "musician"
+      ]
     },
     {
       "id": "db-h3b-trigger-disconnect",
@@ -2113,7 +2446,11 @@
       "dependsOn": [
         "db-h3a-trigger-stop"
       ],
-      "notes": "Lead: Ozhegov. Day H3."
+      "notes": "Lead: Ozhegov. Day H3.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "musician"
+      ]
     },
     {
       "id": "db-h3c-subgraph",
@@ -2132,7 +2469,11 @@
       "dependsOn": [
         "db-h2b-scenario-runtime"
       ],
-      "notes": "Lead: Ozhegov. Day H3."
+      "notes": "Lead: Ozhegov. Day H3.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "musician"
+      ]
     },
     {
       "id": "db-h4-alarm-close",
@@ -2153,7 +2494,11 @@
         "db-h3b-trigger-disconnect",
         "db-h2c-mic-journal"
       ],
-      "notes": "Lead: Vesnin / Музыкант. Alarm mandatory D1. Day H4."
+      "notes": "Lead: Vesnin / Музыкант. Alarm mandatory D1. Day H4.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "vesnin"
+      ]
     },
     {
       "id": "membrane-node-realtime-gateway",
@@ -2170,7 +2515,11 @@
         "membrane-platform-mp3-client-pairing",
         "membrane-platform-mp5-telemetry-journal"
       ],
-      "notes": "Консилиум 2026-06-17. Scope: mic module + journal only. Device-board MP7b; sample library — отдельный консилиум."
+      "notes": "Консилиум 2026-06-17. Scope: mic module + journal only. Device-board MP7b; sample library — отдельный консилиум.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "membrane-node-realtime-nr0-contract",
@@ -2187,7 +2536,11 @@
       "dependsOn": [
         "membrane-node-realtime-gateway"
       ],
-      "notes": "Lead: Vesnin. Ветка vesnin."
+      "notes": "Lead: Vesnin. Ветка vesnin.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "membrane-node-realtime-nr1-gateway",
@@ -2204,7 +2557,11 @@
       "dependsOn": [
         "membrane-node-realtime-nr0-contract"
       ],
-      "notes": "Lead: Ozhegov. background-cabinet."
+      "notes": "Lead: Ozhegov. background-cabinet.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
     },
     {
       "id": "membrane-node-realtime-nr2-journal-ws",
@@ -2221,7 +2578,9 @@
       "dependsOn": [
         "membrane-node-realtime-nr1-gateway"
       ],
-      "notes": "Lead: Ozhegov."
+      "notes": "Lead: Ozhegov.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
     },
     {
       "id": "membrane-node-realtime-nr3-client-journal",
@@ -2238,7 +2597,11 @@
       "dependsOn": [
         "membrane-node-realtime-nr2-journal-ws"
       ],
-      "notes": "Lead: Ozhegov. apps/client."
+      "notes": "Lead: Ozhegov. apps/client.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "membrane-node-realtime-nr4-mic-live",
@@ -2255,7 +2618,11 @@
       "dependsOn": [
         "membrane-node-realtime-nr3-client-journal"
       ],
-      "notes": "Lead: Музыкант. modules/microphone."
+      "notes": "Lead: Музыкант. modules/microphone.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "membrane-node-realtime-nr5-cabinet-live",
@@ -2273,7 +2640,11 @@
         "membrane-node-realtime-nr2-journal-ws",
         "membrane-node-realtime-nr3-client-journal"
       ],
-      "notes": "Lead: Rodchenko. apps/cabinet."
+      "notes": "Lead: Rodchenko. apps/cabinet.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "membrane-node-realtime-nr6-prod-hardening",
@@ -2291,7 +2662,12 @@
         "membrane-node-realtime-nr4-mic-live",
         "membrane-node-realtime-nr5-cabinet-live"
       ],
-      "notes": "Lead: Vesnin. Prod smoke обязателен до archive эпика."
+      "notes": "Lead: Vesnin. Prod smoke обязателен до archive эпика.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ]
     },
     {
       "id": "membrane-node-runtime-remote",
@@ -2307,7 +2683,11 @@
       "dependsOn": [
         "membrane-node-realtime-gateway"
       ],
-      "notes": "Канал runtime (MP7 reserved). Решения: Signal за advanced-флагом; normal/alarm override; multi-node миграция. Конкретный сценарий — следующий эпик."
+      "notes": "Канал runtime (MP7 reserved). Решения: Signal за advanced-флагом; normal/alarm override; multi-node миграция. Конкретный сценарий — следующий эпик.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "mp7b-rt0-contract",
@@ -2324,7 +2704,11 @@
       "dependsOn": [
         "membrane-node-runtime-remote"
       ],
-      "notes": "Lead: Vesnin. Ветка vesnin. @membrana/core: RuntimeCommand/State/Log + namespace runtime. Ремодель веток onStart (презентационный label initial↔On start) перенесён в RT6 — без слома сериализации device-scenario."
+      "notes": "Lead: Vesnin. Ветка vesnin. @membrana/core: RuntimeCommand/State/Log + namespace runtime. Ремодель веток onStart (презентационный label initial↔On start) перенесён в RT6 — без слома сериализации device-scenario.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "mp7b-rt1-gateway",
@@ -2341,7 +2725,11 @@
       "dependsOn": [
         "mp7b-rt0-contract"
       ],
-      "notes": "Lead: Ozhegov. background-cabinet."
+      "notes": "Lead: Ozhegov. background-cabinet.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
     },
     {
       "id": "mp7b-rt2-client-runtime",
@@ -2358,7 +2746,11 @@
       "dependsOn": [
         "mp7b-rt1-gateway"
       ],
-      "notes": "Lead: Ozhegov + Музыкант. apps/client, audio-engine host."
+      "notes": "Lead: Ozhegov + Музыкант. apps/client, audio-engine host.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "mp7b-rt3-mode",
@@ -2375,7 +2767,11 @@
       "dependsOn": [
         "mp7b-rt2-client-runtime"
       ],
-      "notes": "Lead: Dynin/Ozhegov. alarm форсит alarm-loop; detection-front только в normal."
+      "notes": "Lead: Dynin/Ozhegov. alarm форсит alarm-loop; detection-front только в normal.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "mp7b-rt4-multinode-schema",
@@ -2392,7 +2788,11 @@
       "dependsOn": [
         "mp7b-rt1-gateway"
       ],
-      "notes": "Lead: Ozhegov. background-cabinet prisma + membrane API. Device.nodeId @unique остаётся."
+      "notes": "Lead: Ozhegov. background-cabinet prisma + membrane API. Device.nodeId @unique остаётся.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
     },
     {
       "id": "mp7b-rt5-cabinet-nodes",
@@ -2410,7 +2810,11 @@
         "mp7b-rt3-mode",
         "mp7b-rt4-multinode-schema"
       ],
-      "notes": "Lead: Rodchenko. apps/cabinet. info-пульс/warning-рамка, ссылки журнал/доска."
+      "notes": "Lead: Rodchenko. apps/cabinet. info-пульс/warning-рамка, ссылки журнал/доска.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "mp7b-rt6-board-ux",
@@ -2427,7 +2831,11 @@
       "dependsOn": [
         "mp7b-rt0-contract"
       ],
-      "notes": "Lead: Rodchenko + Ozhegov. packages/device-board. Параллельно серверной ветке."
+      "notes": "Lead: Rodchenko + Ozhegov. packages/device-board. Параллельно серверной ветке.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "mp7b-rt7-prod-hardening",
@@ -2445,7 +2853,11 @@
         "mp7b-rt5-cabinet-nodes",
         "mp7b-rt6-board-ux"
       ],
-      "notes": "Lead: Vesnin. Prod-smoke обязателен до archive эпика."
+      "notes": "Lead: Vesnin. Prod-smoke обязателен до archive эпика.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ]
     },
     {
       "id": "deploy-pipeline-refactor",
@@ -2459,7 +2871,11 @@
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [],
-      "notes": "Первопричина: POSTMORTEM-MP7B-2026-06-18 (прод-сборка упала из-за незакоммиченных зависимостей). Консенсус: seanses/deploy-process-mp7b-postmortem-2026-06-18. Источник истины при проверке ≠ при деплое — устраняется образом в registry (DR2). DR7 zero-downtime отложен с условием (после DR5)."
+      "notes": "Первопричина: POSTMORTEM-MP7B-2026-06-18 (прод-сборка упала из-за незакоммиченных зависимостей). Консенсус: seanses/deploy-process-mp7b-postmortem-2026-06-18. Источник истины при проверке ≠ при деплое — устраняется образом в registry (DR2). DR7 zero-downtime отложен с условием (после DR5).",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dpr-dr0-git-hygiene-gate",
@@ -2476,7 +2892,11 @@
       "dependsOn": [
         "deploy-pipeline-refactor"
       ],
-      "notes": "Lead: Ozhegov. Нормализация EOL исходников; предупреждение/блок при незакоммиченном в собираемых пакетах."
+      "notes": "Lead: Ozhegov. Нормализация EOL исходников; предупреждение/блок при незакоммиченном в собираемых пакетах.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dpr-dr1-ci-gate",
@@ -2493,7 +2913,11 @@
       "dependsOn": [
         "dpr-dr0-git-hygiene-gate"
       ],
-      "notes": "Lead: Vesnin + Ozhegov. turbo lint/typecheck/test/build из чистого checkout; деплой читает статус CI через gh."
+      "notes": "Lead: Vesnin + Ozhegov. turbo lint/typecheck/test/build из чистого checkout; деплой читает статус CI через gh.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dpr-dr2-image-registry",
@@ -2510,7 +2934,11 @@
       "dependsOn": [
         "dpr-dr1-ci-gate"
       ],
-      "notes": "Lead: Ozhegov. Устраняет класс ошибки физически (нельзя недокоммитить артефакт). Разделить build-time/runtime env. Сохранить свойство «провал до переключения не роняет прод»."
+      "notes": "Lead: Ozhegov. Устраняет класс ошибки физически (нельзя недокоммитить артефакт). Разделить build-time/runtime env. Сохранить свойство «провал до переключения не роняет прод».",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
     },
     {
       "id": "dpr-dr3-rollback-runbook",
@@ -2527,7 +2955,11 @@
       "dependsOn": [
         "dpr-dr2-image-registry"
       ],
-      "notes": "Lead: Vesnin. Откат = деплой предыдущего тега; JSON-сводка (тег/SHA/образы/smoke/длительность); MEMBRANE_PLATFORM_DEPLOY.md."
+      "notes": "Lead: Vesnin. Откат = деплой предыдущего тега; JSON-сводка (тег/SHA/образы/smoke/длительность); MEMBRANE_PLATFORM_DEPLOY.md.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dpr-dr4-smoke-suite",
@@ -2544,7 +2976,11 @@
       "dependsOn": [
         "dpr-dr2-image-registry"
       ],
-      "notes": "Lead: Музыкант + Ozhegov. Единый smoke-скрипт; код ≠ 0 при провале; headless без устройства — не блокер."
+      "notes": "Lead: Музыкант + Ozhegov. Единый smoke-скрипт; код ≠ 0 при провале; headless без устройства — не блокер.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dpr-dr5-branch-migration-policy",
@@ -2559,7 +2995,11 @@
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [],
-      "notes": "Lead: Vesnin. Параллельно DR0–DR4. Предпосылка к DR7 (expand/contract совместимые миграции)."
+      "notes": "Lead: Vesnin. Параллельно DR0–DR4. Предпосылка к DR7 (expand/contract совместимые миграции).",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ]
     },
     {
       "id": "dpr-dr6-client-delivery",
@@ -2576,7 +3016,11 @@
       "dependsOn": [
         "dpr-dr2-image-registry"
       ],
-      "notes": "ПЕРЕОПРЕДЕЛЕНО (2026-06-18): apps/client — dev-песочница, НЕ конечный продукт. Конечные продукты — Electron-приложения: membrana-studio (полная работа с контентом) и device (лёгкое, быстрая доставка данных на сервер; пока нет как app — renderer device-board). Доставка = Electron-пакеты (electron-builder), а не веб-бандл за Caddy. Сборка десктопа ДЕКАПЛИРОВАНА от деплоя сервера и УСЛОВНАЯ — только когда изменения коснулись приложения/его зависимостей (turbo affected / path-filter). Lead: Ozhegov + Rodchenko. ЧАСТЬ 1 (done): .github/workflows/desktop-studio.yml — условная сборка studio (turbo affected) + release по тегу studio-v*. ЧАСТЬ 2 (done): версия рантайм-протокола RUNTIME_PROTOCOL_VERSION в @membrana/core (runtime-version.ts) как единый источник; /health отдаёт protocolVersion; клиент runtimeVersion.ts + RuntimeVersionIndicator + тесты совместимости (core + client). Остаётся (follow-up след. спринтов): врезка индикатора в live-shell, auto-update/code signing, device как отдельное app."
+      "notes": "ПЕРЕОПРЕДЕЛЕНО (2026-06-18): apps/client — dev-песочница, НЕ конечный продукт. Конечные продукты — Electron-приложения: membrana-studio (полная работа с контентом) и device (лёгкое, быстрая доставка данных на сервер; пока нет как app — renderer device-board). Доставка = Electron-пакеты (electron-builder), а не веб-бандл за Caddy. Сборка десктопа ДЕКАПЛИРОВАНА от деплоя сервера и УСЛОВНАЯ — только когда изменения коснулись приложения/его зависимостей (turbo affected / path-filter). Lead: Ozhegov + Rodchenko. ЧАСТЬ 1 (done): .github/workflows/desktop-studio.yml — условная сборка studio (turbo affected) + release по тегу studio-v*. ЧАСТЬ 2 (done): версия рантайм-протокола RUNTIME_PROTOCOL_VERSION в @membrana/core (runtime-version.ts) как единый источник; /health отдаёт protocolVersion; клиент runtimeVersion.ts + RuntimeVersionIndicator + тесты совместимости (core + client). Остаётся (follow-up след. спринтов): врезка индикатора в live-shell, auto-update/code signing, device как отдельное app.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "dpr-dr7-zero-downtime",
@@ -2594,7 +3038,9 @@
         "dpr-dr2-image-registry",
         "dpr-dr5-branch-migration-policy"
       ],
-      "notes": "Lead: Ozhegov. ОТЛОЖЕНО: стартует только после DR5 (регламент expand/contract) и при появлении SLA/внешних потребителей API. Rolling вместо down→up."
+      "notes": "Lead: Ozhegov. ОТЛОЖЕНО: стартует только после DR5 (регламент expand/contract) и при появлении SLA/внешних потребителей API. Rolling вместо down→up.",
+      "leadPersona": "dynin",
+      "supportPersonas": []
     },
     {
       "id": "membrana-studio-desktop",
@@ -2607,7 +3053,12 @@
       "createdAt": "2026-06-17",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Lead: Vesnin. Studio = apps/membrana-studio + apps/client renderer. Membrana Device — отдельный эпик [#93]."
+      "notes": "Lead: Vesnin. Studio = apps/membrana-studio + apps/client renderer. Membrana Device — отдельный эпик [#93].",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W3"
     },
     {
       "id": "membrana-studio-ms0-canon",
@@ -2624,7 +3075,12 @@
       "dependsOn": [
         "membrana-studio-desktop"
       ],
-      "notes": "Lead: Vesnin. MEMBRANE_PLATFORM §линейка, apps/membrana-studio/README."
+      "notes": "Lead: Vesnin. MEMBRANE_PLATFORM §линейка, apps/membrana-studio/README.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W3"
     },
     {
       "id": "membrana-studio-ms1-shell",
@@ -2641,7 +3097,10 @@
       "dependsOn": [
         "membrana-studio-ms0-canon"
       ],
-      "notes": "Lead: Ozhegov. main + preload, load apps/client."
+      "notes": "Lead: Ozhegov. main + preload, load apps/client.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "W3"
     },
     {
       "id": "membrana-studio-ms2-media-fs",
@@ -2658,7 +3117,10 @@
       "dependsOn": [
         "membrana-studio-ms1-shell"
       ],
-      "notes": "Lead: Ozhegov. %APPDATA%/Membrana/media-library/."
+      "notes": "Lead: Ozhegov. %APPDATA%/Membrana/media-library/.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "W3"
     },
     {
       "id": "membrana-studio-ms3-journal-fs",
@@ -2675,7 +3137,12 @@
       "dependsOn": [
         "membrana-studio-ms2-media-fs"
       ],
-      "notes": "Lead: Ozhegov. Замена electron-journal stub."
+      "notes": "Lead: Ozhegov. Замена electron-journal stub.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W3"
     },
     {
       "id": "membrana-studio-ms4-installer",
@@ -2692,7 +3159,12 @@
       "dependsOn": [
         "membrana-studio-ms3-journal-fs"
       ],
-      "notes": "Lead: Rodchenko. yarn studio:package."
+      "notes": "Lead: Rodchenko. yarn studio:package.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W3"
     },
     {
       "id": "membrana-studio-ms5-prod-smoke",
@@ -2709,7 +3181,12 @@
       "dependsOn": [
         "membrana-studio-ms4-installer"
       ],
-      "notes": "Lead: Vesnin. mic + journal WS на cabinet.membrana.space."
+      "notes": "Lead: Vesnin. mic + journal WS на cabinet.membrana.space.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W3"
     },
     {
       "id": "device-board-refactor-v04",
@@ -2725,7 +3202,12 @@
       "dependsOn": [
         "device-board-hackathon-1"
       ],
-      "notes": "Консилиум 2026-06-18: seanses/device-board-refactor-v04-2026-06-18.md (9 решений). 7 фаз DBR0–DBR6. Затрагивает контракты @membrana/core → DBR0 на ветке vesnin (LGTM Vesnin). Dataflow только как ленивая resolveInput ссылок (не push-движок, §4.6). OOS: реальные loop-узлы, remote-enumerate UI кабинета, multi-function manager, multi-level subgraph, UI custom/scheduled."
+      "notes": "Консилиум 2026-06-18: seanses/device-board-refactor-v04-2026-06-18.md (9 решений). 7 фаз DBR0–DBR6. Затрагивает контракты @membrana/core → DBR0 на ветке vesnin (LGTM Vesnin). Dataflow только как ленивая resolveInput ссылок (не push-движок, §4.6). OOS: реальные loop-узлы, remote-enumerate UI кабинета, multi-function manager, multi-level subgraph, UI custom/scheduled.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "dbr-0-concept-core",
@@ -2742,7 +3224,12 @@
       "dependsOn": [
         "device-board-refactor-v04"
       ],
-      "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SCENARIO_SYSTEM_BRANCHES → onConnect/onStart/onStop/onDisconnect + лупы main/alarm; ScenarioGraph.variables (Variable, DeviceRef/MicrophoneRef в SocketType); data.kind узлов; expand/contract initial→onStart; импорт новее → отказ; round-trip тесты. DEVICE_BOARD_CONCEPT.md → v0.4."
+      "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SCENARIO_SYSTEM_BRANCHES → onConnect/onStart/onStop/onDisconnect + лупы main/alarm; ScenarioGraph.variables (Variable, DeviceRef/MicrophoneRef в SocketType); data.kind узлов; expand/contract initial→onStart; импорт новее → отказ; round-trip тесты. DEVICE_BOARD_CONCEPT.md → v0.4.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "dbr-1-fullscreen",
@@ -2759,7 +3246,13 @@
       "dependsOn": [
         "device-board-refactor-v04"
       ],
-      "notes": "Lead: Rodchenko + Ozhegov. Параллельно DBR0. Фикс высоты device-board-shell.tsx (<main> → flex min-h-0 flex-col, канвас flex-1); shell владеет h-screen/h-full; палитра/инспектор — сворачиваемые панели."
+      "notes": "Lead: Rodchenko + Ozhegov. Параллельно DBR0. Фикс высоты device-board-shell.tsx (<main> → flex min-h-0 flex-col, канвас flex-1); shell владеет h-screen/h-full; палитра/инспектор — сворачиваемые панели.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "musician"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "dbr-2-variables",
@@ -2776,7 +3269,12 @@
       "dependsOn": [
         "dbr-0-concept-core"
       ],
-      "notes": "Lead: Ozhegov + Rodchenko. Variable={id,name,type,value:Ref|null}; конструктор под «Конструктор функций»; индикатор valid/invalid; узлы get/set (drag); isValidConnection по ссылочным типам."
+      "notes": "Lead: Ozhegov + Rodchenko. Variable={id,name,type,value:Ref|null}; конструктор под «Конструктор функций»; индикатор valid/invalid; узлы get/set (drag); isValidConnection по ссылочным типам.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "dbr-3-event-node",
@@ -2793,7 +3291,13 @@
       "dependsOn": [
         "dbr-0-concept-core"
       ],
-      "notes": "Lead: Ozhegov + Rodchenko. Единый XYFlow-тип по data.kind; deletable:false + guard в applyNodeChanges; авто-инжект entry; data-выход DeviceRef (null в onDisconnect); pre-run Event-as-entry."
+      "notes": "Lead: Ozhegov + Rodchenko. Единый XYFlow-тип по data.kind; deletable:false + guard в applyNodeChanges; авто-инжект entry; data-выход DeviceRef (null в onDisconnect); pre-run Event-as-entry.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "musician"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "dbr-4-dataflow-resolve",
@@ -2811,7 +3315,13 @@
         "dbr-2-variables",
         "dbr-3-event-node"
       ],
-      "notes": "Lead: Ozhegov + Dynin. Чистая resolveInput(subgraph,vars,node,port); onConnect set Device valid=true (слабая→постоянная), onDisconnect null→valid=false; isValid предикат; get/set переменных в host; unit-тесты."
+      "notes": "Lead: Ozhegov + Dynin. Чистая resolveInput(subgraph,vars,node,port); onConnect set Device valid=true (слабая→постоянная), onDisconnect null→valid=false; isValid предикат; get/set переменных в host; unit-тесты.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "musician"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "dbr-5-palette-nodes",
@@ -2829,7 +3339,13 @@
         "dbr-2-variables",
         "dbr-4-dataflow-resolve"
       ],
-      "notes": "Lead: Ozhegov + Музыкант + Rodchenko. Свести палитру к Print/isValid/GetMicrophone (старое под VITE_DEVICE_BOARD_LEGACY_PALETTE); Print принимает DeviceRef/MicrophoneRef; GetMicrophone dropdown из audio-engine enumerate (без второго AudioContext); set в переменную Microphone."
+      "notes": "Lead: Ozhegov + Музыкант + Rodchenko. Свести палитру к Print/isValid/GetMicrophone (старое под VITE_DEVICE_BOARD_LEGACY_PALETTE); Print принимает DeviceRef/MicrophoneRef; GetMicrophone dropdown из audio-engine enumerate (без второго AudioContext); set в переменную Microphone.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "musician"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "dbr-6-run-gating",
@@ -2846,7 +3362,12 @@
       "dependsOn": [
         "device-board-refactor-v04"
       ],
-      "notes": "Lead: Ozhegov + Rodchenko. Параллельно DBR0–DBR5. Критерий «связь жива» = online-presence (node.online/offline); единый isDeviceLive(deviceId); гасить Пуск в NodesPage и в борде; «сопряжён, но офлайн» → disabled + title/aria."
+      "notes": "Lead: Ozhegov + Rodchenko. Параллельно DBR0–DBR5. Критерий «связь жива» = online-presence (node.online/offline); единый isDeviceLive(deviceId); гасить Пуск в NodesPage и в борде; «сопряжён, но офлайн» → disabled + title/aria.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "device-board-cabinet-hotfix",
@@ -2862,7 +3383,11 @@
       "dependsOn": [
         "device-board-refactor-v04"
       ],
-      "notes": "QA prod 2026-06-18: 5 замечаний. Консилиум docs/seanses/device-board-cabinet-hotfix-2026-06-18.md. Deploy после merge."
+      "notes": "QA prod 2026-06-18: 5 замечаний. Консилиум docs/seanses/device-board-cabinet-hotfix-2026-06-18.md. Deploy после merge.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dbh-0-canvas-overlay",
@@ -2879,7 +3404,11 @@
       "dependsOn": [
         "device-board-cabinet-hotfix"
       ],
-      "notes": "Lead: Rodchenko + Ozhegov. device-board-shell absolute canvas layer."
+      "notes": "Lead: Rodchenko + Ozhegov. device-board-shell absolute canvas layer.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dbh-1-sidebar-clamp",
@@ -2896,7 +3425,11 @@
       "dependsOn": [
         "device-board-cabinet-hotfix"
       ],
-      "notes": "Lead: Rodchenko. Same PR as DBH0."
+      "notes": "Lead: Rodchenko. Same PR as DBH0.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "dbh-2-nav-split",
@@ -2913,7 +3446,11 @@
       "dependsOn": [
         "device-board-cabinet-hotfix"
       ],
-      "notes": "Lead: Rodchenko. CabinetShell default split; combined opt-in flag."
+      "notes": "Lead: Rodchenko. CabinetShell default split; combined opt-in flag.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "dbh-3-delete-node",
@@ -2930,7 +3467,11 @@
       "dependsOn": [
         "device-board-cabinet-hotfix"
       ],
-      "notes": "Lead: Ozhegov. background-cabinet API + NodesPage + migration/seed."
+      "notes": "Lead: Ozhegov. background-cabinet API + NodesPage + migration/seed.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "dbh-4-purge-expired-keys",
@@ -2947,7 +3488,11 @@
       "dependsOn": [
         "dbh-3-delete-node"
       ],
-      "notes": "Lead: Ozhegov. Extend purge API + KeysPage UI."
+      "notes": "Lead: Ozhegov. Extend purge API + KeysPage UI.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "device-board-clear-branch",
@@ -2956,11 +3501,17 @@
       "githubIssue": 106,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-19",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "notes": "Sandbox apps/client; cabinet unchanged."
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "W0 clear-branch unit tests green",
+      "notes": "Sandbox apps/client; cabinet unchanged.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-manual-save",
@@ -2969,11 +3520,17 @@
       "githubIssue": 108,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-19",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "notes": "Remove autosave; isDirty draft vs saved snapshot."
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "W0 manual save isDirty green tests",
+      "notes": "Remove autosave; isDirty draft vs saved snapshot.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-ux-ports-header",
@@ -2982,11 +3539,17 @@
       "githubIssue": 110,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-19",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "notes": "Also closes #111 #112."
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "W0 DoD complete ports header inspector",
+      "notes": "Also closes #111 #112.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-doc-v04-mvp",
@@ -2999,7 +3562,11 @@
       "createdAt": "2026-06-19",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Phase 0–3 complete; LGTM pending. Canvas index: docs/canvas/"
+      "notes": "Phase 0–3 complete; LGTM pending. Canvas index: docs/canvas/",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "code-review-debt-closeout-jun2026",
@@ -3015,7 +3582,7 @@
       "archiveNotes": "techies68 D0-D6; R1-R12 closed; Closes #126",
       "dependsOn": [],
       "notes": "Вход: DAILY_CODE_REVIEW (MP4), archive 2026-06-19 (device-board), DAILY_STANDUP 2026-06-20. Out of scope: JE1-JE5, trends/zero-shot, deploy-pipeline #94, device-board v0.4 #95. Частично закрыто PR #87/#124/#125.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "crdc-d0-baseline-audit",
@@ -3031,7 +3598,7 @@
       "archiveNotes": "D0 complete",
       "dependsOn": [],
       "notes": "Lead: Vesnin. ✅ Baseline 2026-06-20: merge main, turbo 118/118, matrix in docs/archive/crdc-baseline-2026-06-20.md + Issue comment.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "crdc-d1-boundaries-registry",
@@ -3049,7 +3616,7 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Ozhegov. ✅ D1 2026-06-20: yarn check:boundaries; bootstrap-order.test.ts; main.tsx contract comments. R1 R2 R8 R9 closed.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "crdc-d2-lint-hooks-green",
@@ -3067,7 +3634,7 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Rodchenko. ✅ D2 2026-06-20: client + device-board lint 0 warnings (TelemetryJournalModule, board-flow-node, device-board-shell).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "crdc-d3-test-health",
@@ -3085,7 +3652,7 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Dynin. ✅ D3 2026-06-20: audio-engine vitest без passWithNoTests; trends vitest forks; validate-pre-run.test.ts. R4 R5 R6 closed.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "crdc-d4-waveform-a11y",
@@ -3103,7 +3670,7 @@
         "crdc-d2-lint-hooks-green"
       ],
       "notes": "Lead: Rodchenko. ✅ D4 2026-06-20: removed table inline waveform; Escape stops playback; region/group a11y; sample-library-a11y.test.ts. R7 closed.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "crdc-d5-hygiene-guardrails",
@@ -3121,7 +3688,7 @@
         "crdc-d1-boundaries-registry"
       ],
       "notes": "Lead: Ozhegov. ✅ D5 2026-06-20: .gitignore .claude/.continue; docker size doc; docs verify OK. R10 R11 R12 closed.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "crdc-d6-ci-green-archive",
@@ -3143,7 +3710,7 @@
         "crdc-d5-hygiene-guardrails"
       ],
       "notes": "Lead: Vesnin. yarn turbo green; task:archive; Closes Issue.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "device-board-collectors-v05",
@@ -3160,7 +3727,7 @@
         "device-board-refactor-v04"
       ],
       "notes": "Консилиум 2026-06-20: seanses/device-board-collectors-v05-2026-06-20.md. GetFFTFrame отдельный узел. Policy на singleton OOS. Collect config — правый сайдбар (mic defaults). Terminal inputs — массив ref. DBC6 = Vesnin code review + LGTM.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbc-0-core-contracts",
@@ -3178,7 +3745,7 @@
         "device-board-collectors-v05"
       ],
       "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += RecorderRef/SpectralAnalyserRef; scenario node kinds get-recorder, get-spectral-analyser, collect-*, new-track, new-fft-trends-analysis; CollectorConfig; pin kind event; DEVICE_BOARD_CONCEPT v0.5 §collectors.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbc-1-getter-nodes",
@@ -3196,7 +3763,7 @@
         "dbc-0-core-contracts"
       ],
       "notes": "Lead: Ozhegov + Rodchenko. Device-method pattern (device in). GetFFTFrame = Sample→Frame transform, отдельный узел.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbc-2-host-singletons",
@@ -3214,7 +3781,7 @@
         "dbc-0-core-contracts"
       ],
       "notes": "Lead: Ozhegov + Музыкант. Per deviceHandle singleton; append/flush; без policy UI на singleton. Unit-тесты mock host.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbc-3-collect-nodes",
@@ -3233,7 +3800,7 @@
         "dbc-2-host-singletons"
       ],
       "notes": "Lead: Ozhegov + Rodchenko + Музыкант. collectorConfig: bufferSize 2048, smoothing 0.75, windowSec 3, queueCapacity; flush OR trigger; data-out ref arrays.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbc-4-terminal-nodes",
@@ -3251,7 +3818,7 @@
         "dbc-3-collect-nodes"
       ],
       "notes": "Lead: Ozhegov + Dynin + Музыкант. NewTrack(AudioSampleRef[]), NewFftTrendsAnalysis(FftFrameRef[]); journal + trends integration.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbc-5-runtime-event-dispatch",
@@ -3269,7 +3836,7 @@
         "dbc-4-terminal-nodes"
       ],
       "notes": "Lead: Ozhegov + Dynin. Event branch ≠ exec tick; канон GetSample→GetFFTFrame→CollectFft; apps/docs cookbook; MVP один Collect.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbc-6-teamlead-review",
@@ -3292,7 +3859,7 @@
         "dbc-5-runtime-event-dispatch"
       ],
       "notes": "Lead: Vesnin. Формальный review всех PR эпика; smoke с микрофоном; отчёт в #130; yarn task:archive device-board-collectors-v05 + фазы.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "device-board-journal-reporter-v06",
@@ -3611,7 +4178,11 @@
         "db-realtime-observation-pipeline"
       ],
       "notes": "Lead: Vesnin. Graph nodes for §16.5 MVP; Issue #133.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "db-recording-gate-r0-contracts",
@@ -3627,7 +4198,7 @@
         "db-recording-gate-v07"
       ],
       "notes": "SCENARIO_NODE_KINDS + types in @membrana/core.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-20",
       "archiveNotes": "Core: node kinds, RecordingPolicy, RecordingSliceRef"
     },
@@ -3645,7 +4216,7 @@
         "db-recording-gate-r0-contracts"
       ],
       "notes": "device-board graph layer.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-20",
       "archiveNotes": "Palette, pins, factories, tests"
     },
@@ -3663,7 +4234,7 @@
         "db-recording-gate-r0-contracts"
       ],
       "notes": "apps/client scenarioMicJournalBridge + host ports.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-20",
       "archiveNotes": "RecorderRecordingSession + bridge host ports"
     },
@@ -3682,7 +4253,7 @@
         "db-recording-gate-r2-host-bridge"
       ],
       "notes": "MakeTrack slice input; runtime tests.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-20",
       "archiveNotes": "Gate executor, MakeTrack slice, Publish exec-out"
     },
@@ -3700,7 +4271,12 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Partial: main-v07.json + Publish exec-out + smoke started; quality blocked on R5 parity.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "db-recording-parity-mic-r5",
@@ -3716,7 +4292,7 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Superseded by db-rec-parity-a1-capture-path; archive when A1 LGTM. One-day prompt kept for reference.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "Superseded by A1"
     },
@@ -3733,7 +4309,7 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Lead: Vesnin. Same v07 graph; policy windowSec+captureFormat enums; continuous capture. Blocks trends epic B.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "Epic A0-A5 complete"
     },
@@ -3751,7 +4327,7 @@
         "db-recording-parity-mic-v08"
       ],
       "notes": "Enum policies + constructor node kinds make-recording-policy / make-fft-trends-policy; CONCEPT §15.7.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "Enum RecordingPolicy in core; make-recording-policy node"
     },
@@ -3769,7 +4345,7 @@
         "db-rec-parity-a0-policy-contract"
       ],
       "notes": "Replaces R5 tick-chunk; GetSample → FFT only.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "clipRecorder continuous; bootstrap StartRecording"
     },
@@ -3787,7 +4363,7 @@
         "db-rec-parity-a1-capture-path"
       ],
       "notes": "Journal preview duration/sampleRate parity.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "upload MIME; publish-done chain"
     },
@@ -3805,7 +4381,7 @@
         "db-rec-parity-a0-policy-contract"
       ],
       "notes": "Constructor palette category; enum inspector; v07 JSON wiring.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "MakeRecordingPolicy inspector"
     },
@@ -3824,7 +4400,7 @@
         "db-rec-parity-a3-constructor-ui"
       ],
       "notes": "5s WAV sign-off run 85db5c36; CI green; trace in docs/device-board-scripts/logs/",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "Run 85db5c36 5s WAV sign-off"
     },
@@ -3842,7 +4418,7 @@
         "db-rec-parity-a4-smoke-matrix"
       ],
       "notes": "Archive A0–A5, r5, r4-smoke; unblocks trends epic B.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-22",
       "archivedAt": "2026-06-21",
       "archiveNotes": "Epic A LGTM; unblocks trends B"
     },
@@ -3892,7 +4468,210 @@
         "db-usercase-mvp-microphone-lgtm"
       ],
       "notes": "Directions U (usability), D (docs), S (background-media device-scenario).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-user-workspace-u10",
+      "title": "DB U10: User Workspace — persist пользовательских сценариев (quota free=3)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "db-post-usercase-roadmap",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-usercases-catalog-u9"
+      ],
+      "notes": "Product intake: launcher на уровне DeviceBoardModule; W2/D1 done; осталось W4 tariff + W5 media API.",
+      "githubIssueClosedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-p0-migrate-guard",
+      "title": "DB UW P0: не затирать user-saved scenario при migrate-on-load",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [],
+      "notes": "meta.workspaceKind guard в graph-context load + stamp on Save.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "Implemented in main (feat device-board P0 migrate guard)",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-w1-indexeddb",
+      "title": "DB UW W1: IndexedDB DeviceBoardWorkspaceStore",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-p0-migrate-guard"
+      ],
+      "notes": "CRUD, list, active workspace id per deviceId.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "device-board-workspace-store.ts + tests",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-w3-persist-adapter",
+      "title": "DB UW W3: persist adapter → active user workspace",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-w1-indexeddb"
+      ],
+      "notes": "Save/load IndexedDB; legacy localStorage migrate; useDeviceBoardClientBindings.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "device-board-workspace-persist.ts",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-w2-shell-interim",
+      "title": "DB UW W2-interim: workspace picker в шапке shell (прототип)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-w1-indexeddb"
+      ],
+      "notes": "BoardWorkspacePickerModal в shell — UX superseded; снять в db-uw-w2-deprecate-shell.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "Interim prototype; D-UW-ENTRY: launcher moves to module",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-w2-module-launcher",
+      "title": "DB UW W2-module: launcher сценариев в DeviceBoardModule",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-w3-persist-adapter"
+      ],
+      "notes": "Над доской: системные RO + мои слоты N/max; create/rename/delete; enter board только после выбора контекста.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "DeviceBoardLauncher.tsx; commits 3d350f8",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-w2-clone-catalog",
+      "title": "DB UW W2b: клон системного UserCase в user workspace (из модуля)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-w2-module-launcher"
+      ],
+      "notes": "Карточка системного кейса в модуле: клон в слот; preview read-only на доске; не shell dropdown.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "clone-user-case-to-workspace.ts + launcher button; commit 3d350f8",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-w2-deprecate-shell",
+      "title": "DB UW W2-deprecate: убрать workspace picker из шапки доски",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-w2-module-launcher"
+      ],
+      "notes": "Удалить Мои сценарии/badge из device-board-shell; UserCase picker из dropdown → модуль.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "Removed BoardWorkspacePickerModal; commit 409436b",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-uw-d1-docs",
+      "title": "DB UW D1: документация user workspace (CONCEPT §22, Mintlify, TARIFF)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-w2-deprecate-shell"
+      ],
+      "notes": "CONCEPT §22, user-workspace.mdx, usercases.mdx refresh, TARIFF_MATRIX maxUserWorkspaces, catalog prompt.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "D1 docs sync 2026-06-23",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W0"
     },
     {
       "id": "db-pure-getters-blueprint-parity",
@@ -4967,7 +5746,7 @@
       "archivedAt": "2026-06-22",
       "archiveNotes": "Epic DBP-HF..DBP4 closed; Issue 142 close-github EOD",
       "notes": "Lead: Vesnin + Ozhegov. Day briefing 2026-06-22: pause = success criterion; blocks UserCase MVP confidence. Audio continues; scenario graph freezes.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbp-hf-marquee-collapse",
@@ -4985,7 +5764,7 @@
         "device-board-pause-runtime-v07"
       ],
       "notes": "Hotfix: collapse function/group blocked when Event/loop-repeat in marquee.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbp-0-runtime-pause-core",
@@ -5003,7 +5782,7 @@
         "device-board-pause-runtime-v07"
       ],
       "notes": "Lead: Ozhegov. waitWhilePaused in main/alarm loops and exec yield points.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbp-1-ui-toolbar",
@@ -5021,7 +5800,7 @@
         "dbp-0-runtime-pause-core"
       ],
       "notes": "Lead: Rodchenko. device-board-shell Pause/Resume next to Run/Stop.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbp-2-pause-runtime-node",
@@ -5039,7 +5818,7 @@
         "dbp-0-runtime-pause-core"
       ],
       "notes": "Lead: Ozhegov. Mirror stop-runtime-node pattern.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbp-3-docs-scenario-runtime",
@@ -5057,7 +5836,7 @@
         "dbp-1-ui-toolbar"
       ],
       "notes": "Lead: Vesnin. docs/SCENARIO_RUNTIME.md new section; CONCEPT §7.4.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-22"
     },
     {
       "id": "dbp-4-teamlead-closure",
@@ -5078,7 +5857,490 @@
         "dbp-3-docs-scenario-runtime"
       ],
       "notes": "Lead: Vesnin. Run→Pause→Resume→Stop smoke.",
+      "githubIssueClosedAt": "2026-06-22"
+    },
+    {
+      "id": "smoke-testing-s1-night-build",
+      "title": "Night Build: Smoke S1 — Playwright optional CI, LGTM",
+      "promptPath": "docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Vesnin. Non-blocking e2e-smoke.yml; consilium 2026-06-22.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "smoke-s1-nb0-gate-docs",
+      "title": "NB0: LGTM_SMOKE_TESTING.md + registry + baseline",
+      "promptPath": "docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "smoke-testing-s1-night-build",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "smoke-testing-s1-night-build"
+      ],
+      "nightPhase": "NB0",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "smoke-s1-nb1-playwright-scaffold",
+      "title": "NB1: Playwright config + yarn smoke:test",
+      "promptPath": "docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "smoke-testing-s1-night-build",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "smoke-s1-nb0-gate-docs"
+      ],
+      "nightPhase": "NB1",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "smoke-s1-nb2-smoke-tests-testids",
+      "title": "NB2: data-testid + 5 Playwright @smoke specs",
+      "promptPath": "docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "smoke-testing-s1-night-build",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "smoke-s1-nb1-playwright-scaffold"
+      ],
+      "nightPhase": "NB2",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "smoke-s1-nb3-optional-ci-workflow",
+      "title": "NB3: e2e-smoke.yml (continue-on-error, non-blocking)",
+      "promptPath": "docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "smoke-testing-s1-night-build",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "smoke-s1-nb2-smoke-tests-testids"
+      ],
+      "nightPhase": "NB3",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "smoke-s1-nb4-docs-handoff",
+      "title": "NB4: e2e README, CONTRIBUTING, night:close handoff",
+      "promptPath": "docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": 81,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "night-build",
+      "parentEpic": "smoke-testing-s1-night-build",
+      "createdAt": "2026-06-22",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "smoke-s1-nb3-optional-ci-workflow"
+      ],
+      "nightPhase": "NB4",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "tasks-audit-v1",
+      "title": "Tasks Audit v1: bookkeeping, reviewing, scripts и Cursor skills",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "Epic LGTM: yarn tasks:audit docs/tasks/audit Issue 144",
+      "notes": "Зонтик: TASKS_AUDIT.md. Прототипы ACTIVE_TASKS_BOARD/PLAIN. Консилиум sprint-workload-balance 2026-06-22.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "meta",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-0-process-regulations",
+      "title": "TA-0: регламенты TASKS_AUDIT / BOOKKEEPING / REVIEWING",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "test",
+      "dependsOn": [
+        "tasks-audit-v1"
+      ],
+      "notes": "Lead: Vesnin. Три промпта процессов + эпик-промпт.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-1-audit-paths-lib",
+      "title": "TA-1: tasks-audit-paths.mjs + lib/tasks-board.mjs",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "lib tasks-audit-paths tasks-board",
+      "dependsOn": [
+        "ta-0-process-regulations"
+      ],
+      "notes": "Lead: Ozhegov. Рефактор generate-active-tasks-board; P0 без хардкода даты.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-2-bookkeeping-script",
+      "title": "TA-2: scripts/tasks-bookkeeping.mjs + yarn tasks:bookkeeping",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "yarn tasks:bookkeeping",
+      "dependsOn": [
+        "ta-1-audit-paths-lib"
+      ],
+      "notes": "Lead: Ozhegov. apply:lead-persona + BOARD → docs/tasks/audit/.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-3-reviewing-script",
+      "title": "TA-3: epic-summaries.json + tasks-reviewing.mjs",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "yarn tasks:reviewing PLAIN",
+      "dependsOn": [
+        "ta-2-bookkeeping-script"
+      ],
+      "notes": "Lead: Ozhegov. PLAIN.md + Findings эвристики.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-4-audit-orchestrator",
+      "title": "TA-4: tasks-audit.mjs + MANIFEST + package.json",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "yarn tasks:audit orchestrator",
+      "dependsOn": [
+        "ta-2-bookkeeping-script",
+        "ta-3-reviewing-script"
+      ],
+      "notes": "Lead: Ozhegov. yarn tasks:audit orchestrator.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-5-script-tests",
+      "title": "TA-5: tasks-audit.test.mjs в test:scripts",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "tasks-audit.test.mjs",
+      "dependsOn": [
+        "ta-4-audit-orchestrator"
+      ],
+      "notes": "Lead: Ozhegov. paths, row count, manifest smoke.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-6-cursor-skills",
+      "title": "TA-6: Cursor skills membrana-tasks-audit/bookkeeping/reviewing",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "membrana-tasks-audit skills",
+      "dependsOn": [
+        "ta-4-audit-orchestrator"
+      ],
+      "notes": "Lead: Vesnin. .cursor/skills + .claude mirror.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-7-docs-ritual-integration",
+      "title": "TA-7: AGENTS, TASKS_MANAGEMENT, DEVELOPER_RHYTHM, legacy migrate",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "AGENTS DEVELOPER_RHYTHM TASKS_MANAGEMENT legacy redirect",
+      "dependsOn": [
+        "ta-4-audit-orchestrator"
+      ],
+      "notes": "Lead: Vesnin. docs/tasks/audit canonical paths.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ta-8-epic-lgtm",
+      "title": "TA-8: полный tasks:audit + optional CI + archive epic",
+      "promptPath": "docs/prompts/TASKS_AUDIT_V1_EPIC_PROMPT.md",
+      "githubIssue": 144,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "tasks-audit-v1",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "verify-tasks-audit scheduled-ci",
+      "dependsOn": [
+        "ta-5-script-tests",
+        "ta-6-cursor-skills",
+        "ta-7-docs-ritual-integration"
+      ],
+      "notes": "Lead: Vesnin. yarn task:archive tasks-audit-v1.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "usercase-mvp-v2-groups-async",
+      "title": "UserCase MVP v2: groups, functions, async tracks on freeze",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-usercase-mvp-microphone-lgtm"
+      ],
+      "notes": "Product wave W1. Base mic MVP + comment groups + user functions + async track/report on pause. STRATEGIC_WAVE.md.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "ucv2-0-spec-lgtm",
+      "title": "UCV2-0: spec graph + groups/functions map + LGTM",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "usercase-mvp-v2-groups-async",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "usercase-mvp-v2-groups-async"
+      ],
+      "notes": "Lead: Vesnin. Target Wed 2026-06-25.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "ucv2-1-graph-collapse",
+      "title": "UCV2-1: mic graph → groups + collapse to function",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "usercase-mvp-v2-groups-async",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "ucv2-0-spec-lgtm",
+        "device-board-ux-ports-header"
+      ],
+      "notes": "Lead: Ozhegov. usercase-mvp-v2-groups-async document.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "ucv2-2-freeze-async-tracks",
+      "title": "UCV2-2: async MakeTrack + reports while runtime paused",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "usercase-mvp-v2-groups-async",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "ucv2-1-graph-collapse"
+      ],
+      "notes": "Lead: Ozhegov. DBP pause v0.7; chain-log async markers.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "ucv2-3-pack-verify",
+      "title": "UCV2-3: usercase:build + verify-pack + smoke",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "usercase-mvp-v2-groups-async",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "ucv2-2-freeze-async-tracks"
+      ],
+      "notes": "Lead: Ozhegov.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "ucv2-4-operator-signoff",
+      "title": "UCV2-4: operator LGTM doc + epic close",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "usercase-mvp-v2-groups-async",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "ucv2-3-pack-verify"
+      ],
+      "notes": "Lead: Vesnin. USERCASE_MVP_V2_GROUPS_ASYNC_LGTM.md",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
     }
   ]
 }

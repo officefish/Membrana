@@ -1,6 +1,6 @@
 # TARIFF_MATRIX — матрица тарифов Membrane Platform
 
-> **Статус:** черновик v0.3 (2026-06-16). Продуктовая матрица на **3 тарифа**; технические id совпадают с seed в [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md).
+> **Статус:** черновик v0.4 (2026-06-23). Продуктовая матрица на **3 тарифа**; технические id совпадают с seed в [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md).
 >
 > **Связанные документы:** [`INTEGRATIONS_STRATEGY.md`](./INTEGRATIONS_STRATEGY.md) §4 (каталог детекторов), [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md) (stage-gate), [`DATASET.md`](./DATASET.md) (корпуса каталогов).
 
@@ -30,8 +30,11 @@
 | **Детекция** | feature flags / plugin pack | Какие детекторы и режимы доступны в client |
 | **Спектральный анализ** | feature flags | MFCC и спектрограммы по сэмплам (sample library / cabinet) |
 | **Платформа** | лимиты узлов, ключей, журнала | Облачный cabinet, hot retention, архив журнала, export |
+| **User workspace** | `maxUserWorkspaces` | Число **редактируемых** сценариев device-board на `deviceId` (слоты оператора; системный каталог **не** входит) |
 
 В **автономном режиме** (`nodeConnectionMode: autonomous`) облачные квоты не enforced; bundled-каталог в client — минимум `free-v1-catalog` независимо от тарифа мембраны (см. [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md) §«Автономный режим»).
+
+**User workspace (U10):** на `free-v1` в client зашит лимит **3** слота (`DEFAULT_MAX_USER_WORKSPACES`); чтение квоты из cabinet tariff — эпик `db-uw-w4-tariff` (план). См. [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §22.
 
 ---
 
@@ -53,6 +56,7 @@
 | **Export журнала** | ✓ | ✓ | ✓ |
 | **Hot retention** (записи в активном журнале) | **3 дня** | **10 дней** | **30 дней** |
 | **Архив журнала** (после hot) | — | — | перенос после 30 дней, квота **40 GiB** |
+| **Device-board user workspaces** (редактируемые слоты на узел) | **3** ✓ | **10** (план) | **25** (план) |
 | **Цена (ориентир)** | 0 ₽ | подписка | контракт |
 
 ✓ — реализовано или зафиксировано в коде/seed. «Черновик» / «план» — продуктовый ориентир до MP billing.
@@ -192,5 +196,6 @@
 | 2026-06-16 | v0.1 | Первая матрица на 3 тарифа; `state-v1` вынесен за scope v1 |
 | 2026-06-16 | v0.2 | Журнал: export всем; hot 3 / 10 / 30 дней; архив 40 GiB только business |
 | 2026-06-16 | v0.3 | Спектральный пакет (MFCC + спектрограмма сэмпла) с `indie-v1` |
+| 2026-06-23 | v0.4 | User workspace slots (`maxUserWorkspaces`): free **3** ✓; indie/business — план (U10 D1) |
 
 *Вопросы по квотам и детекции — Teamlead; правки — через PR с обновлением seed только после согласования.*
