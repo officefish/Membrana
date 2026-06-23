@@ -132,10 +132,22 @@ describe('DeviceWorkspacesService', () => {
   it('putWorkspace allows create when workspace row is missing', async () => {
     const document = {
       kind: 'device-scenario',
-      version: 1,
+      version: 2,
       deviceKind: 'microphone',
       signalGraph: { nodes: [], edges: [] },
-      scenario: { nodes: [], edges: [] },
+      scenario: {
+        initial: { entry: 'initial-entry', nodes: [], edges: [] },
+        loops: {
+          main: { entry: 'main-entry', nodes: [], edges: [] },
+          alarm: { entry: 'alarm-entry', nodes: [], edges: [] },
+        },
+        triggers: {
+          onStop: { entry: 'on-stop-entry', nodes: [], edges: [] },
+          onDisconnect: { entry: 'on-disconnect-entry', nodes: [], edges: [] },
+        },
+        onConnect: { entry: 'on-connect-entry', nodes: [], edges: [] },
+        variables: [],
+      },
       meta: { title: 'New' },
     };
     prisma.deviceWorkspace.findUnique.mockResolvedValue(null);

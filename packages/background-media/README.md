@@ -153,6 +153,7 @@ yarn media:verify-swagger
 | Device scenario | `/v1/devices/:deviceId/device-scenario` |
 | Device workspaces (U10) | `/v1/devices/:deviceId/device-workspaces` |
 | Device workspaces LWW (U11) | `PUT .../device-workspaces/:id?expectedUpdatedAt=<iso>` → **409** `WORKSPACE_CONFLICT` if stale |
+| Device-scenario schema | PUT accepts **v1–v2** (`device-scenario`); client `createEmptyDeviceScenarioDocument` is v2 |
 
 Поддерживаемые audio MIME: `audio/wav`, `audio/mpeg`, `audio/flac`, `audio/ogg` (см. `MEDIA_ALLOWED_MIME`).
 

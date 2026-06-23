@@ -21,6 +21,7 @@
 | 2 | Client **не парсил** NestJS 403 body `{ message: { code: WORKSPACE_QUOTA_EXCEEDED, used, max } }` | `apps/client` |
 | 3 | На media могли остаться **сироты** от smoke / старых client (used на сервере > видимых в launcher) | media + reconcile |
 | 4 | Квота enforced на media (W1), но **без** cabinet sync и client UX — оператор видит неясную ошибку | STE v1 gap |
+| 5 | **Media `assertDeviceScenarioDocument` принимал только v1**, client создаёт **v2** (`createEmptyDeviceScenarioDocument`) → **400** на 2-й сценарий | `device-scenario-assert.ts` |
 
 **Связанные коммиты:** `8db252a` (client quota UX), `c47f2c4` (media W1).
 

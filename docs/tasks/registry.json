@@ -4949,7 +4949,7 @@
       "dependsOn": [
         "ste-v1-w1-media-quota"
       ],
-      "notes": "Bug: 2nd scenario fails paired. Cabinet maxUserWorkspaces sync; WorkspaceQuotaExceededError; media list quota.",
+      "notes": "Bug: 2nd scenario fails 400 v2 assert (root cause) + cabinet sync + client 403.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
