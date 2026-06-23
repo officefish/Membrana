@@ -11,6 +11,7 @@ import { DevicesModule } from './modules/devices/devices.module';
 import { SamplesModule } from './modules/samples/samples.module';
 import { TrendsTemplatesModule } from './modules/trends-templates/trends-templates.module';
 import { DeviceScenariosModule } from './modules/device-scenarios/device-scenarios.module';
+import { DeviceWorkspacesModule } from './modules/device-workspaces/device-workspaces.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -54,6 +55,7 @@ const testImports =
     SamplesModule,
     TrendsTemplatesModule,
     DeviceScenariosModule,
+    DeviceWorkspacesModule,
   ],
   controllers: [HealthController],
 })

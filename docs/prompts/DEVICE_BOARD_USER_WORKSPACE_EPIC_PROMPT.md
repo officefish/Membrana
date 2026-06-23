@@ -93,7 +93,7 @@ U9 **явно исключил** user-authored UI (`DEVICE_BOARD_USERCASES_EPIC_
 | **W2b** | `db-uw-w2-clone-catalog` | **done** | Клон системного UserCase → user slot (**из модуля**) |
 | **W2-deprecate** | `db-uw-w2-deprecate-shell` | **done** | Убрать «Мои сценарии» / UserCase… из шапки shell |
 | **W4** | `db-uw-w4-tariff` | **done** | `maxUserWorkspaces` в Tariff + client entitlement |
-| **W5** | `db-uw-w5-media-api` | pending | Paired: media API workspaces |
+| **W5** | `db-uw-w5-media-api` | **done** | Paired: media API workspaces |
 | **D1** | `db-uw-d1-docs` | **done** | CONCEPT §22, apps/docs, TARIFF_MATRIX |
 
 ### In scope (волны · описание)
@@ -185,7 +185,7 @@ sequenceDiagram
 
 ### Кто ты
 
-Координатор Membrana (Vesnin). Эпик **L** — W2-module → W2b → W2-deprecate → D1 → **W4 done**; осталось **W5** (media API).
+Координатор Membrana (Vesnin). Эпик **L** — U10 **закрыт** (W5 media API + client hybrid host).
 
 ### DoD эпика
 
@@ -194,7 +194,7 @@ sequenceDiagram
 - [x] **Клонировать** системный кейс в пустой user-слот из модуля; при 3/3 — понятный блокер
 - [x] Free: ≤3 user workspace; save → rebuild client → reload — клон на месте; системный шаблон не изменён
 - [x] В шапке board **нет** переключателя «Мои сценарии»
-- [ ] Paired (W5): второй браузер видит тот же user workspace после Save
+- [x] Paired (W5): второй браузер видит тот же user workspace после Save
 - [x] CI green: device-board + client tests
 
 ---

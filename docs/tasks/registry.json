@@ -4651,6 +4651,29 @@
       "strategicWave": "W0"
     },
     {
+      "id": "db-uw-w5-media-api",
+      "title": "DB UW W5: media multi-workspace API + client hybrid",
+      "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",
+      "githubIssue": 147,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "parentEpic": "db-user-workspace-u10",
+      "createdAt": "2026-06-23",
+      "dependsOn": [
+        "db-uw-w4-tariff"
+      ],
+      "notes": "background-media device-workspaces REST; client hybrid host + persist feature-detect; legacy device-scenario compat.",
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "W5 media workspaces API wired",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "strategicWave": "W0"
+    },
+    {
       "id": "db-uw-w4-tariff",
       "title": "DB UW W4: maxUserWorkspaces в cabinet Tariff + client read",
       "promptPath": "docs/prompts/DEVICE_BOARD_USER_WORKSPACE_EPIC_PROMPT.md",

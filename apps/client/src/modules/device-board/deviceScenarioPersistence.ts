@@ -15,6 +15,11 @@ import {
   LEGACY_DEVICE_SCENARIO_UPDATED_AT_KEY,
   readLegacyDeviceScenarioLocalRecord,
 } from './device-board-workspace-persist.js';
+import {
+  fetchRemoteActiveWorkspaceRecord,
+  isDeviceWorkspacesApiAvailable,
+  putRemoteActiveWorkspaceRecord,
+} from './device-workspaces-api.js';
 import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId.js';
 
 function scenarioUrl(creds: PairedNodeCredentials): string {
@@ -75,7 +80,7 @@ function pickNewer(
 
 /**
  * Persist adapter: active user workspace в IndexedDB (U10 W3).
- * Paired: LWW с media single-scenario endpoint (до W5).
+ * Paired: LWW с media — multi-workspace API (W5) или legacy single-scenario.
  */
 export function createClientDeviceBoardPersistAdapter(
   deviceId: string,
@@ -97,10 +102,11 @@ export function createClientDeviceBoardPersistAdapter(
 
   return {
     async load() {
-      const [local, remote] = await Promise.all([
-        workspacePersist.loadActive(),
-        fetchRemoteRecord(creds),
-      ]);
+      const local = await workspacePersist.loadActive();
+      const workspacesApi = await isDeviceWorkspacesApiAvailable(creds);
+      const remote = workspacesApi
+        ? await fetchRemoteActiveWorkspaceRecord(creds)
+        : await fetchRemoteRecord(creds);
       const winner = pickNewer(local, remote);
       if (winner !== null && winner !== local) {
         await workspacePersist.saveActive(winner.document);
@@ -109,7 +115,10 @@ export function createClientDeviceBoardPersistAdapter(
     },
     async save(document) {
       const local = await workspacePersist.saveActive(document);
-      const remote = await putRemoteRecord(creds, local.document);
+      const workspacesApi = await isDeviceWorkspacesApiAvailable(creds);
+      const remote = workspacesApi
+        ? await putRemoteActiveWorkspaceRecord(creds, local.document)
+        : await putRemoteRecord(creds, local.document);
       return remote ?? local;
     },
   };

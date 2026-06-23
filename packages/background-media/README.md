@@ -151,6 +151,7 @@ yarn media:verify-swagger
 | Samples | `.../collections/:id/samples`, `.../samples/:id/blob` |
 | Trends | `/v1/devices/:deviceId/trends-templates` |
 | Device scenario | `/v1/devices/:deviceId/device-scenario` |
+| Device workspaces (U10) | `/v1/devices/:deviceId/device-workspaces` |
 
 Поддерживаемые audio MIME: `audio/wav`, `audio/mpeg`, `audio/flac`, `audio/ogg` (см. `MEDIA_ALLOWED_MIME`).
 

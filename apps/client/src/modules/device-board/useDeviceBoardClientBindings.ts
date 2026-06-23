@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 import { createClientDeviceBoardPersistAdapter } from './deviceScenarioPersistence.js';
 import { createDeviceBoardWorkspaceHost } from './createDeviceBoardWorkspaceHost.js';
+import { createHybridDeviceBoardWorkspaceHost } from './createHybridDeviceBoardWorkspaceHost.js';
 import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId.js';
 import { resolveMaxUserWorkspaces } from './resolveMaxUserWorkspaces.js';
 
@@ -14,10 +15,14 @@ export function useDeviceBoardClientBindings() {
   return useMemo(() => {
     const deviceId = resolveDeviceBoardPersistDeviceId(mode === 'paired' ? pairing : null);
     const maxUserWorkspaces = resolveMaxUserWorkspaces(mode, pairing);
+    const workspaceHost =
+      mode === 'paired' && pairing !== null
+        ? createHybridDeviceBoardWorkspaceHost(deviceId, pairing, maxUserWorkspaces)
+        : createDeviceBoardWorkspaceHost(deviceId, maxUserWorkspaces);
     return {
       deviceId,
       maxUserWorkspaces,
-      workspaceHost: createDeviceBoardWorkspaceHost(deviceId, maxUserWorkspaces),
+      workspaceHost,
       persistAdapter: createClientDeviceBoardPersistAdapter(deviceId, maxUserWorkspaces),
     };
   }, [mode, pairing]);

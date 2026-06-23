@@ -56,8 +56,24 @@ model Device {
   samples                 Sample[]
   trendTemplates          TrendTemplate[]
   deviceScenario          DeviceScenario?
+  deviceWorkspaces        DeviceWorkspace[]
+  /** Active user workspace id for device-board multi-slot persist (U10 W5). */
+  activeWorkspaceId       String?
 
   @@index([membraneId])
+}
+
+model DeviceWorkspace {
+  deviceId    String   @db.Uuid
+  device      Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  workspaceId String
+  title       String
+  payload     Json
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@id([deviceId, workspaceId])
+  @@index([deviceId])
 }
 
 model DeviceScenario {

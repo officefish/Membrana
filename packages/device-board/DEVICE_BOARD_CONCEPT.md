@@ -1371,7 +1371,7 @@ Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/user
 | Сессия доски | `system-preview` (RO) или `user-edit` (Save + mutating ops) |
 | Квота free | **3** user workspace (`maxUserWorkspaces`; paired — из cabinet tariff, fallback 3) |
 | Autonomous persist | IndexedDB `membrana-device-board-workspaces` |
-| Paired persist | active slot + LWW с media single-scenario (до W5 multi-workspace API) |
+| Paired persist | active slot + LWW; multi-workspace API на media (W5), fallback legacy `/device-scenario` |
 | Маркер persist | `meta.workspaceKind: 'user' \| 'system'`; `meta.workspaceId`; optional `meta.clonedFromUserCaseId` |
 | Migrate guard (P0) | `shouldMigrateMicrophoneScenarioToBundledMvp` **не** трогает `workspaceKind: 'user'` |
 
