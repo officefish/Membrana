@@ -8,6 +8,7 @@ import {
   fetchRemoteWorkspaceList,
   isDeviceWorkspacesApiAvailable,
 } from './device-workspaces-api.js';
+import { hydratePairedWorkspaceLocalCacheIfEmpty } from './hydrate-paired-workspace-local-cache.js';
 
 type HostMode = 'unknown' | 'remote' | 'local';
 
@@ -51,11 +52,18 @@ export function createHybridDeviceBoardWorkspaceHost(
     return (await resolveMode()) === 'remote' ? remote : local;
   }
 
+  async function listWorkspacesWithRecovery(): Promise<ReturnType<DeviceBoardWorkspaceHost['listWorkspaces']>> {
+    if ((await resolveMode()) === 'remote') {
+      await hydratePairedWorkspaceLocalCacheIfEmpty(deviceId, creds);
+    }
+    return (await pickHost()).listWorkspaces();
+  }
+
   return {
     maxUserWorkspaces,
 
     async listWorkspaces() {
-      return (await pickHost()).listWorkspaces();
+      return listWorkspacesWithRecovery();
     },
 
     async countWorkspaces() {

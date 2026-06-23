@@ -4,7 +4,9 @@
 > **Промпт:** [`docs/prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_USER_WORKSPACE_U11_EPIC_PROMPT.md)  
 > **Предшественник:** U10 archived · PR #148 · Issue #147
 
-**Первая волна:** `db-uw11-s2-remote-first` — paired remote-first hybrid host + cache invalidation on pair change.
+**Первая волна:** `db-uw11-s2-remote-first` — done (`7e3dabf`).
+
+**Текущая волна:** `db-uw11-s2-launcher-recovery` — launcher visibility refresh + hydrate local cache from media.
 
 **Cabinet:** out of scope (quota только U10).
 

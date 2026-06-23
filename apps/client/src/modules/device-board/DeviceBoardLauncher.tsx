@@ -28,7 +28,7 @@ export const DeviceBoardLauncher: React.FC<{
   readonly onUpdateConfig: ModuleProps<DeviceBoardModuleConfig>['onUpdateConfig'];
 }> = ({ config, onUpdateConfig }) => {
   const { enterBoardMode, isBoardMode } = useDeviceBoardMode();
-  const { workspaceHost } = useDeviceBoardClientBindings();
+  const { workspaceHost, pairSessionKey } = useDeviceBoardClientBindings();
   const { catalogEnabled, catalogService } = useDeviceBoardUserCaseSettings();
   const normalized = normalizeDeviceBoardModuleConfig(config);
 
@@ -53,6 +53,26 @@ export const DeviceBoardLauncher: React.FC<{
 
   useEffect(() => {
     void refreshWorkspaces();
+  }, [refreshWorkspaces, pairSessionKey]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return undefined;
+    }
+    const onVisible = (): void => {
+      if (document.visibilityState === 'visible') {
+        void refreshWorkspaces();
+      }
+    };
+    const onFocus = (): void => {
+      void refreshWorkspaces();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onFocus);
+    };
   }, [refreshWorkspaces]);
 
   const maxSlots = workspaceHost.maxUserWorkspaces;

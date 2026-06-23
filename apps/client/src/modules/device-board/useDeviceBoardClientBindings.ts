@@ -39,6 +39,7 @@ export function useDeviceBoardClientBindings() {
     return {
       deviceId,
       maxUserWorkspaces,
+      pairSessionKey,
       workspaceHost,
       persistAdapter: createClientDeviceBoardPersistAdapter(deviceId, maxUserWorkspaces),
     };
