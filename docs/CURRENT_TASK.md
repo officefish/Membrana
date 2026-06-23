@@ -6,7 +6,9 @@
 
 **Первая волна:** `db-uw11-s2-remote-first` — done (`7e3dabf`).
 
-**Текущая волна:** `db-uw11-s2-launcher-recovery` — launcher visibility refresh + hydrate local cache from media.
+**Текущая волна:** `db-uw11-s2-paired-smoke` — prod-smoke paired-active + reload roundtrip.
+
+**Следующая:** `db-uw11-s3-lww-media` (409 на stale PUT).
 
 **Cabinet:** out of scope (quota только U10).
 

@@ -1,5 +1,5 @@
 /**
- * U10 W4/W5 prod-smoke (paired): tariff quota + media device-workspaces API.
+ * U10 W4/W5 + U11 S2-W3 prod-smoke (paired): tariff quota + media device-workspaces API.
  * Вызывается с VPS через SSH (`yarn cabinet:u10-workspace:smoke`).
  */
 
@@ -88,6 +88,22 @@ curl -fsS -X PATCH "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/active" \\
   -H "X-Membrana-Device-Id: $DEVICE_ID" \\
   -H 'Content-Type: application/json' \\
   -d "{\\"activeWorkspaceId\\":\\"$WS_ID\\"}" >/dev/null 2>&1 || true
+
+WS_LIST2=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces" \\
+  -H "X-Membrana-Token: $MEDIA_TOKEN" \\
+  -H "X-Membrana-Device-Id: $DEVICE_ID" 2>/dev/null || true)
+echo "$WS_LIST2" | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+assert d.get('activeWorkspaceId')=='$WS_ID', d.get('activeWorkspaceId')
+ids=[w.get('workspaceId') for w in d.get('workspaces') or []]
+assert '$WS_ID' in ids, ids
+" >/dev/null 2>&1; mark paired-active-workspace $?
+
+GET_RELOAD=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-workspaces/$WS_ID" \\
+  -H "X-Membrana-Token: $MEDIA_TOKEN" \\
+  -H "X-Membrana-Device-Id: $DEVICE_ID" 2>/dev/null || true)
+echo "$GET_RELOAD" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('document',{}).get('meta',{}).get('workspaceId')=='$WS_ID'" >/dev/null 2>&1; mark paired-reload-roundtrip $?
 
 LEGACY=$(curl -fsS "$MEDIA/v1/devices/$DEVICE_ID/device-scenario" \\
   -H "X-Membrana-Token: $MEDIA_TOKEN" \\
