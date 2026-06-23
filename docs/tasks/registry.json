@@ -4903,7 +4903,7 @@
       "githubIssue": 150,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "parentEpic": "membrane-platform-v1",
       "createdAt": "2026-06-23",
@@ -4916,7 +4916,10 @@
         "ozhegov",
         "rodchenko"
       ],
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "Day-sprint shipped W1+B0+D1+S1 prod; composeSha 020d749",
+      "githubIssueClosedAt": "2026-06-23"
     },
     {
       "id": "ste-v1-w1-media-quota",
@@ -4934,7 +4937,8 @@
       "supportPersonas": [],
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "c47f2c4"
+      "archiveNotes": "c47f2c4",
+      "githubIssueClosedAt": "2026-06-23"
     },
     {
       "id": "ste-v1-b0-second-workspace",
@@ -4943,7 +4947,7 @@
       "githubIssue": 150,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "server-tariff-enforcement-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [
@@ -4954,7 +4958,10 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "034950f cabinet sync + client 403; e67a427 media v2 assert; 8db252a quota UX",
+      "githubIssueClosedAt": "2026-06-23"
     },
     {
       "id": "ste-v1-w2-cabinet-sync",
@@ -4963,7 +4970,7 @@
       "githubIssue": 150,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "server-tariff-enforcement-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [
@@ -4972,7 +4979,10 @@
       "notes": "Merged into B0 delivery; keep for traceability.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "merged B0 034950f pair to media maxUserWorkspaces",
+      "githubIssueClosedAt": "2026-06-23"
     },
     {
       "id": "ste-v1-w3-client-403",
@@ -4981,7 +4991,7 @@
       "githubIssue": 150,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "server-tariff-enforcement-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [
@@ -4992,7 +5002,10 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "merged B0 WorkspaceQuotaExceededError + launcher refresh",
+      "githubIssueClosedAt": "2026-06-23"
     },
     {
       "id": "ste-v1-s1-prod-smoke",
@@ -5001,7 +5014,7 @@
       "githubIssue": 150,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "server-tariff-enforcement-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [
@@ -5012,7 +5025,10 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "Prod deploy 020d749 cabinet-v0.2.0; smoke 17/17 OK 2026-06-23",
+      "githubIssueClosedAt": "2026-06-23"
     },
     {
       "id": "ste-v1-d1-docs",
@@ -5021,7 +5037,7 @@
       "githubIssue": 150,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "server-tariff-enforcement-v1",
       "createdAt": "2026-06-23",
       "dependsOn": [
@@ -5030,7 +5046,10 @@
       "notes": "STE D1: TARIFF_MATRIX v0.5, user-workspace.mdx, U10 deploy STE section.",
       "leadPersona": "rodchenko",
       "supportPersonas": [],
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "020d749 TARIFF_MATRIX v0.5, user-workspace.mdx, U10 STE section",
+      "githubIssueClosedAt": "2026-06-23"
     },
     {
       "id": "db-pure-getters-blueprint-parity",

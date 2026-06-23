@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ModuleProps } from '@membrana/agenda';
 import {
   useDeviceBoardMode,
@@ -26,6 +26,30 @@ type LauncherSelection =
   | { readonly kind: 'user-edit'; readonly workspaceId: string; readonly title: string }
   | { readonly kind: 'system-preview'; readonly userCaseId: string; readonly title: string };
 
+function useLauncherAsyncLock(): {
+  readonly busyLabel: string | null;
+  readonly isBusy: boolean;
+  readonly run: <T>(message: string, action: () => Promise<T>) => Promise<T>;
+} {
+  const depthRef = useRef(0);
+  const [busyLabel, setBusyLabel] = useState<string | null>(null);
+
+  const run = useCallback(async <T,>(message: string, action: () => Promise<T>): Promise<T> => {
+    depthRef.current += 1;
+    setBusyLabel(message);
+    try {
+      return await action();
+    } finally {
+      depthRef.current -= 1;
+      if (depthRef.current === 0) {
+        setBusyLabel(null);
+      }
+    }
+  }, []);
+
+  return { busyLabel, isBusy: busyLabel !== null, run };
+}
+
 /** Launcher сценариев над доской: системные RO + мои слоты (U10 W2-module). */
 export const DeviceBoardLauncher: React.FC<{
   readonly config: DeviceBoardModuleConfig;
@@ -42,8 +66,7 @@ export const DeviceBoardLauncher: React.FC<{
   const [newWorkspaceTitle, setNewWorkspaceTitle] = useState('');
   const [renameId, setRenameId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState('');
-  const [opening, setOpening] = useState(false);
-  const [cloningId, setCloningId] = useState<string | null>(null);
+  const { busyLabel, isBusy, run } = useLauncherAsyncLock();
 
   const catalogCards = useMemo(
     () => (catalogEnabled ? catalogService.listCards('microphone') : []),
@@ -55,9 +78,17 @@ export const DeviceBoardLauncher: React.FC<{
     setWorkspaces(list);
   }, [workspaceHost]);
 
+  const refreshWorkspacesSilent = useCallback(async (): Promise<void> => {
+    try {
+      await refreshWorkspaces();
+    } catch {
+      // Фоновое обновление при возврате на вкладку — без блокировки UI.
+    }
+  }, [refreshWorkspaces]);
+
   useEffect(() => {
-    void refreshWorkspaces();
-  }, [refreshWorkspaces, pairSessionKey]);
+    void run('Загружаем сценарии…', refreshWorkspaces);
+  }, [pairSessionKey, refreshWorkspaces, run]);
 
   useEffect(() => {
     if (typeof document === 'undefined') {
@@ -65,11 +96,11 @@ export const DeviceBoardLauncher: React.FC<{
     }
     const onVisible = (): void => {
       if (document.visibilityState === 'visible') {
-        void refreshWorkspaces();
+        void refreshWorkspacesSilent();
       }
     };
     const onFocus = (): void => {
-      void refreshWorkspaces();
+      void refreshWorkspacesSilent();
     };
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('focus', onFocus);
@@ -77,115 +108,120 @@ export const DeviceBoardLauncher: React.FC<{
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('focus', onFocus);
     };
-  }, [refreshWorkspaces]);
+  }, [refreshWorkspacesSilent]);
 
   const maxSlots = workspaceHost.maxUserWorkspaces;
   const atQuota = workspaces.length >= maxSlots;
 
   const openBoard = useCallback(
     async (target: LauncherSelection): Promise<void> => {
-      setActionError(null);
-      setOpening(true);
-      try {
-        if (target.kind === 'user-edit') {
-          await workspaceHost.setActiveWorkspaceId(target.workspaceId);
+      await run('Открываем доску…', async () => {
+        setActionError(null);
+        try {
+          if (target.kind === 'user-edit') {
+            await workspaceHost.setActiveWorkspaceId(target.workspaceId);
+            const session: DeviceBoardSession = {
+              kind: 'user-edit',
+              workspaceId: target.workspaceId,
+              title: target.title,
+            };
+            enterBoardMode(session);
+            return;
+          }
           const session: DeviceBoardSession = {
-            kind: 'user-edit',
-            workspaceId: target.workspaceId,
+            kind: 'system-preview',
+            userCaseId: target.userCaseId,
             title: target.title,
           };
           enterBoardMode(session);
-          return;
+        } catch (error: unknown) {
+          setActionError(error instanceof Error ? error.message : 'Не удалось открыть доску');
         }
-        const session: DeviceBoardSession = {
-          kind: 'system-preview',
-          userCaseId: target.userCaseId,
-          title: target.title,
-        };
-        enterBoardMode(session);
-      } catch (error: unknown) {
-        setActionError(error instanceof Error ? error.message : 'Не удалось открыть доску');
-      } finally {
-        setOpening(false);
-      }
+      });
     },
-    [enterBoardMode, workspaceHost],
+    [enterBoardMode, run, workspaceHost],
   );
 
   const handleCreateWorkspace = useCallback(async (): Promise<void> => {
-    setActionError(null);
-    try {
-      const used = await workspaceHost.countWorkspaces();
-      if (used >= maxSlots) {
-        setActionError(formatWorkspaceQuotaMessage(used, maxSlots));
-        return;
-      }
-      const created = await workspaceHost.createWorkspace(
-        newWorkspaceTitle.trim() || `Сценарий ${used + 1}`,
-      );
-      if (created === null) {
-        setActionError('Не удалось создать сценарий. Обновите список и проверьте связь с media.');
-        return;
-      }
-      await workspaceHost.setActiveWorkspaceId(created.workspaceId);
-      await refreshWorkspaces();
-      setNewWorkspaceTitle('');
-      const next: LauncherSelection = {
-        kind: 'user-edit',
-        workspaceId: created.workspaceId,
-        title: created.document.meta?.title ?? `Сценарий ${used + 1}`,
-      };
-      setSelection(next);
-    } catch (error: unknown) {
-      if (isWorkspaceQuotaExceededError(error)) {
-        setActionError(error.message);
+    await run('Создаём сценарий…', async () => {
+      setActionError(null);
+      try {
+        const used = await workspaceHost.countWorkspaces();
+        if (used >= maxSlots) {
+          setActionError(formatWorkspaceQuotaMessage(used, maxSlots));
+          return;
+        }
+        const created = await workspaceHost.createWorkspace(
+          newWorkspaceTitle.trim() || `Сценарий ${used + 1}`,
+        );
+        if (created === null) {
+          setActionError('Не удалось создать сценарий. Обновите список и проверьте связь с media.');
+          return;
+        }
+        await workspaceHost.setActiveWorkspaceId(created.workspaceId);
         await refreshWorkspaces();
-        return;
+        setNewWorkspaceTitle('');
+        const next: LauncherSelection = {
+          kind: 'user-edit',
+          workspaceId: created.workspaceId,
+          title: created.document.meta?.title ?? `Сценарий ${used + 1}`,
+        };
+        setSelection(next);
+      } catch (error: unknown) {
+        if (isWorkspaceQuotaExceededError(error)) {
+          setActionError(error.message);
+          await refreshWorkspaces();
+          return;
+        }
+        if (isWorkspacePersistConflictError(error)) {
+          setActionError(error.message);
+          return;
+        }
+        if (isWorkspacePersistError(error)) {
+          setActionError(error.message);
+          return;
+        }
+        setActionError(error instanceof Error ? error.message : 'Не удалось создать сценарий');
       }
-      if (isWorkspacePersistConflictError(error)) {
-        setActionError(error.message);
-        return;
-      }
-      if (isWorkspacePersistError(error)) {
-        setActionError(error.message);
-        return;
-      }
-      setActionError(error instanceof Error ? error.message : 'Не удалось создать сценарий');
-    }
-  }, [maxSlots, newWorkspaceTitle, refreshWorkspaces, workspaceHost]);
+    });
+  }, [maxSlots, newWorkspaceTitle, refreshWorkspaces, run, workspaceHost]);
 
   const handleRename = useCallback(async (): Promise<void> => {
     if (renameId === null) {
       return;
     }
-    setActionError(null);
-    const ok = await workspaceHost.renameWorkspace(renameId, renameDraft);
-    if (!ok) {
-      setActionError('Не удалось переименовать');
-      return;
-    }
-    await refreshWorkspaces();
-    if (selection?.kind === 'user-edit' && selection.workspaceId === renameId) {
-      setSelection({ ...selection, title: renameDraft.trim() });
-    }
-    setRenameId(null);
-    setRenameDraft('');
-  }, [renameDraft, renameId, refreshWorkspaces, selection, workspaceHost]);
-
-  const handleDelete = useCallback(
-    async (workspaceId: string): Promise<void> => {
+    await run('Сохраняем название…', async () => {
       setActionError(null);
-      const ok = await workspaceHost.deleteWorkspace(workspaceId);
+      const ok = await workspaceHost.renameWorkspace(renameId, renameDraft);
       if (!ok) {
-        setActionError('Сценарий не найден');
+        setActionError('Не удалось переименовать');
         return;
       }
       await refreshWorkspaces();
-      if (selection?.kind === 'user-edit' && selection.workspaceId === workspaceId) {
-        setSelection(null);
+      if (selection?.kind === 'user-edit' && selection.workspaceId === renameId) {
+        setSelection({ ...selection, title: renameDraft.trim() });
       }
+      setRenameId(null);
+      setRenameDraft('');
+    });
+  }, [renameDraft, renameId, refreshWorkspaces, run, selection, workspaceHost]);
+
+  const handleDelete = useCallback(
+    async (workspaceId: string): Promise<void> => {
+      await run('Удаляем сценарий…', async () => {
+        setActionError(null);
+        const ok = await workspaceHost.deleteWorkspace(workspaceId);
+        if (!ok) {
+          setActionError('Сценарий не найден');
+          return;
+        }
+        await refreshWorkspaces();
+        if (selection?.kind === 'user-edit' && selection.workspaceId === workspaceId) {
+          setSelection(null);
+        }
+      });
     },
-    [refreshWorkspaces, selection, workspaceHost],
+    [refreshWorkspaces, run, selection, workspaceHost],
   );
 
   const handleOpenBoardClick = useCallback((): void => {
@@ -223,53 +259,52 @@ export const DeviceBoardLauncher: React.FC<{
         setActionError(formatWorkspaceQuotaMessage(workspaces.length, maxSlots));
         return;
       }
-      setActionError(null);
-      setCloningId(card.id);
-      try {
-        const source = catalogService.loadDocumentIfEntitled(card.id, 'microphone');
-        if (source === null) {
-          setActionError('Нет доступа к шаблону');
-          return;
-        }
-        const used = await workspaceHost.countWorkspaces();
-        if (used >= maxSlots) {
-          setActionError(formatWorkspaceQuotaMessage(used, maxSlots));
-          return;
-        }
-        const created = await workspaceHost.cloneWorkspaceFromUserCase({
-          sourceDocument: source,
-          userCaseId: card.id,
-          title: `${card.title} (копия)`,
-        });
-        if (created === null) {
-          setActionError('Не удалось клонировать сценарий. Проверьте связь с media.');
-          return;
-        }
-        await workspaceHost.setActiveWorkspaceId(created.workspaceId);
-        await refreshWorkspaces();
-        const next: LauncherSelection = {
-          kind: 'user-edit',
-          workspaceId: created.workspaceId,
-          title: created.document.meta?.title ?? `${card.title} (копия)`,
-        };
-        setSelection(next);
-        await openBoard(next);
-      } catch (error: unknown) {
-        if (isWorkspaceQuotaExceededError(error)) {
-          setActionError(error.message);
+      await run('Клонируем сценарий…', async () => {
+        setActionError(null);
+        try {
+          const source = catalogService.loadDocumentIfEntitled(card.id, 'microphone');
+          if (source === null) {
+            setActionError('Нет доступа к шаблону');
+            return;
+          }
+          const used = await workspaceHost.countWorkspaces();
+          if (used >= maxSlots) {
+            setActionError(formatWorkspaceQuotaMessage(used, maxSlots));
+            return;
+          }
+          const created = await workspaceHost.cloneWorkspaceFromUserCase({
+            sourceDocument: source,
+            userCaseId: card.id,
+            title: `${card.title} (копия)`,
+          });
+          if (created === null) {
+            setActionError('Не удалось клонировать сценарий. Проверьте связь с media.');
+            return;
+          }
+          await workspaceHost.setActiveWorkspaceId(created.workspaceId);
           await refreshWorkspaces();
-          return;
+          const next: LauncherSelection = {
+            kind: 'user-edit',
+            workspaceId: created.workspaceId,
+            title: created.document.meta?.title ?? `${card.title} (копия)`,
+          };
+          setSelection(next);
+          await openBoard(next);
+        } catch (error: unknown) {
+          if (isWorkspaceQuotaExceededError(error)) {
+            setActionError(error.message);
+            await refreshWorkspaces();
+            return;
+          }
+          if (isWorkspacePersistConflictError(error) || isWorkspacePersistError(error)) {
+            setActionError(error.message);
+          } else {
+            setActionError(error instanceof Error ? error.message : 'Не удалось клонировать');
+          }
         }
-        if (isWorkspacePersistConflictError(error) || isWorkspacePersistError(error)) {
-          setActionError(error.message);
-        } else {
-          setActionError(error instanceof Error ? error.message : 'Не удалось клонировать');
-        }
-      } finally {
-        setCloningId(null);
-      }
+      });
     },
-    [atQuota, catalogService, maxSlots, openBoard, refreshWorkspaces, workspaceHost],
+    [atQuota, catalogService, maxSlots, openBoard, refreshWorkspaces, run, workspaceHost, workspaces.length],
   );
 
   if (isBoardMode) {
@@ -281,7 +316,24 @@ export const DeviceBoardLauncher: React.FC<{
   }
 
   return (
-    <div className="flex max-w-2xl flex-col gap-5">
+    <div
+      className="relative flex max-w-2xl flex-col gap-5"
+      aria-busy={isBusy}
+      data-testid="device-board-launcher"
+    >
+      {isBusy ? (
+        <div
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 rounded-box bg-base-100/85 backdrop-blur-[2px]"
+          role="status"
+          aria-live="polite"
+          data-testid="device-board-launcher-busy"
+        >
+          <span className="loading loading-spinner loading-md text-primary" aria-hidden />
+          <p className="text-sm text-base-content/70">{busyLabel}</p>
+        </div>
+      ) : null}
+
+      <div className={isBusy ? 'pointer-events-none select-none opacity-60' : undefined}>
       <p className="text-sm leading-relaxed text-base-content/70">
         Выберите системный шаблон (просмотр и прогон) или свой редактируемый сценарий, затем откройте
         доску. Переключение между сценариями — здесь, не на доске.
@@ -301,6 +353,7 @@ export const DeviceBoardLauncher: React.FC<{
               type="checkbox"
               className="toggle toggle-primary toggle-xs"
               checked={normalized.userCasesCatalogEnabled}
+              disabled={isBusy}
               onChange={(event) =>
                 onUpdateConfig({ userCasesCatalogEnabled: event.target.checked })
               }
@@ -326,7 +379,7 @@ export const DeviceBoardLauncher: React.FC<{
                   <button
                     type="button"
                     className="min-w-0 flex-1 text-left"
-                    disabled={!card.canApply}
+                    disabled={!card.canApply || isBusy}
                     data-testid={`device-board-launcher-system-${card.id}`}
                     onClick={() => selectSystemCard(card)}
                   >
@@ -340,10 +393,10 @@ export const DeviceBoardLauncher: React.FC<{
                       type="button"
                       className="btn btn-outline btn-primary btn-xs"
                       data-testid={`device-board-launcher-clone-${card.id}`}
-                      disabled={!card.canApply || atQuota || cloningId === card.id}
+                      disabled={!card.canApply || atQuota || isBusy}
                       onClick={() => void handleCloneFromUserCase(card)}
                     >
-                      {cloningId === card.id ? 'Клонируем…' : 'Клонировать в мой сценарий'}
+                      Клонировать в мой сценарий
                     </button>
                     <span className={entitlementBadgeClass(card.entitlement)}>
                       {entitlementBadgeLabel(card.entitlement)}
@@ -387,16 +440,23 @@ export const DeviceBoardLauncher: React.FC<{
                         type="text"
                         className="input input-bordered input-xs w-full"
                         value={renameDraft}
+                        disabled={isBusy}
                         onChange={(event) => setRenameDraft(event.target.value)}
                         aria-label="Новое название"
                       />
                       <div className="flex gap-2">
-                        <button type="button" className="btn btn-primary btn-xs" onClick={() => void handleRename()}>
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-xs"
+                          disabled={isBusy}
+                          onClick={() => void handleRename()}
+                        >
                           Сохранить
                         </button>
                         <button
                           type="button"
                           className="btn btn-ghost btn-xs"
+                          disabled={isBusy}
                           onClick={() => {
                             setRenameId(null);
                             setRenameDraft('');
@@ -411,6 +471,7 @@ export const DeviceBoardLauncher: React.FC<{
                       <button
                         type="button"
                         className="min-w-0 flex-1 text-left"
+                        disabled={isBusy}
                         data-testid={`device-board-launcher-workspace-${item.workspaceId}`}
                         onClick={() => selectUserWorkspace(item)}
                       >
@@ -423,6 +484,7 @@ export const DeviceBoardLauncher: React.FC<{
                         <button
                           type="button"
                           className="btn btn-ghost btn-xs"
+                          disabled={isBusy}
                           aria-label={`Переименовать «${item.title}»`}
                           onClick={() => {
                             setRenameId(item.workspaceId);
@@ -434,6 +496,7 @@ export const DeviceBoardLauncher: React.FC<{
                         <button
                           type="button"
                           className="btn btn-ghost btn-xs text-error"
+                          disabled={isBusy}
                           aria-label={`Удалить «${item.title}»`}
                           onClick={() => void handleDelete(item.workspaceId)}
                         >
@@ -454,7 +517,7 @@ export const DeviceBoardLauncher: React.FC<{
             className="input input-bordered input-sm min-w-0 flex-1"
             placeholder={`Сценарий ${workspaces.length + 1}`}
             value={newWorkspaceTitle}
-            disabled={atQuota}
+            disabled={atQuota || isBusy}
             onChange={(event) => setNewWorkspaceTitle(event.target.value)}
             aria-label="Название нового сценария"
           />
@@ -462,7 +525,7 @@ export const DeviceBoardLauncher: React.FC<{
             type="button"
             className="btn btn-outline btn-primary btn-sm shrink-0"
             data-testid="device-board-launcher-create-workspace"
-            disabled={atQuota}
+            disabled={atQuota || isBusy}
             onClick={() => void handleCreateWorkspace()}
           >
             Создать пустой
@@ -479,10 +542,10 @@ export const DeviceBoardLauncher: React.FC<{
         type="button"
         className="btn btn-primary w-fit"
         data-testid="device-board-open-board"
-        disabled={selection === null || opening}
+        disabled={selection === null || isBusy}
         onClick={handleOpenBoardClick}
       >
-        {opening ? 'Открываем…' : 'Открыть доску'}
+        Открыть доску
       </button>
       {selection !== null ? (
         <p className="text-xs text-base-content/55">
@@ -492,6 +555,7 @@ export const DeviceBoardLauncher: React.FC<{
       ) : (
         <p className="text-xs text-base-content/45">Сначала выберите сценарий выше.</p>
       )}
+      </div>
     </div>
   );
 };
