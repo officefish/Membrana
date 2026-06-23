@@ -3050,13 +3050,34 @@
       "linearId": null,
       "size": "L",
       "status": "active",
+      "sprintKind": "day-sprint",
       "createdAt": "2026-06-17",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Lead: Vesnin. Studio = apps/membrana-studio + apps/client renderer. Membrana Device — отдельный эпик [#93].",
+      "notes": "Day-sprint MS0–MS4 active 2026-06-23 (no apps/client). MS5 deferred. Prompt: MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
+      ],
+      "strategicWave": "W3"
+    },
+    {
+      "id": "membrana-studio-ms0-ms4-day-sprint",
+      "title": "Day sprint: Membrana Studio MS0–MS4 (canon → installer)",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md",
+      "githubIssue": 93,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "parentEpic": "membrana-studio-desktop",
+      "createdAt": "2026-06-23",
+      "dependsOn": [],
+      "notes": "No apps/client changes. MS5 deferred. Verify+archive MS0–MS4.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
       ],
       "strategicWave": "W3"
     },
@@ -3075,10 +3096,11 @@
       "dependsOn": [
         "membrana-studio-desktop"
       ],
-      "notes": "Lead: Vesnin. MEMBRANE_PLATFORM §линейка, apps/membrana-studio/README.",
+      "notes": "Lead: Vesnin. MS0 canon verify. No apps/client in sprint.",
       "leadPersona": "vesnin",
       "supportPersonas": [
-        "ozhegov"
+        "ozhegov",
+        "rodchenko"
       ],
       "strategicWave": "W3"
     },
@@ -3097,9 +3119,11 @@
       "dependsOn": [
         "membrana-studio-ms0-canon"
       ],
-      "notes": "Lead: Ozhegov. main + preload, load apps/client.",
+      "notes": "Lead: Ozhegov. main + preload, yarn studio:dev. Rodchenko: window chrome.",
       "leadPersona": "ozhegov",
-      "supportPersonas": [],
+      "supportPersonas": [
+        "rodchenko"
+      ],
       "strategicWave": "W3"
     },
     {
@@ -3117,9 +3141,12 @@
       "dependsOn": [
         "membrana-studio-ms1-shell"
       ],
-      "notes": "Lead: Ozhegov. %APPDATA%/Membrana/media-library/.",
+      "notes": "Lead: Ozhegov. media-library FS. Dynin: disk quota. Rodchenko: indicator verify.",
       "leadPersona": "ozhegov",
-      "supportPersonas": [],
+      "supportPersonas": [
+        "dynin",
+        "rodchenko"
+      ],
       "strategicWave": "W3"
     },
     {
@@ -3137,10 +3164,10 @@
       "dependsOn": [
         "membrana-studio-ms2-media-fs"
       ],
-      "notes": "Lead: Ozhegov. Замена electron-journal stub.",
-      "leadPersona": "rodchenko",
+      "notes": "Lead: Ozhegov. journal+trends FS. Musician: paired parity checklist.",
+      "leadPersona": "ozhegov",
       "supportPersonas": [
-        "ozhegov"
+        "rodchenko"
       ],
       "strategicWave": "W3"
     },
@@ -3159,7 +3186,7 @@
       "dependsOn": [
         "membrana-studio-ms3-journal-fs"
       ],
-      "notes": "Lead: Rodchenko. yarn studio:package.",
+      "notes": "Lead: Rodchenko. yarn studio:package, NSIS. Ozhegov: build pipeline.",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
@@ -3181,10 +3208,11 @@
       "dependsOn": [
         "membrana-studio-ms4-installer"
       ],
-      "notes": "Lead: Vesnin. mic + journal WS на cabinet.membrana.space.",
-      "leadPersona": "rodchenko",
+      "notes": "Deferred after MS0–MS4 day-sprint. Lead: Vesnin. mic + journal WS prod smoke.",
+      "leadPersona": "vesnin",
       "supportPersonas": [
-        "ozhegov"
+        "ozhegov",
+        "rodchenko"
       ],
       "strategicWave": "W3"
     },
