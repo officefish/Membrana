@@ -5,6 +5,7 @@ import { resolveMediaApiBase } from '@/api/pairing';
 import type { PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 
 import { WorkspacePersistConflictError } from './workspace-persist-conflict.js';
+import { WorkspacePersistError } from './workspace-persist-error.js';
 
 export interface PutRemoteWorkspaceOptions {
   readonly expectedUpdatedAt?: string;
@@ -102,40 +103,58 @@ export async function putRemoteWorkspaceRecord(
   workspaceId: string,
   document: DeviceScenarioDocument,
   options?: PutRemoteWorkspaceOptions,
-): Promise<DeviceScenarioRemoteRecord | null> {
+): Promise<DeviceScenarioRemoteRecord> {
+  const url = new URL(`${workspacesBase(creds)}/${encodeURIComponent(workspaceId)}`);
+  if (options?.expectedUpdatedAt !== undefined && options.expectedUpdatedAt.length > 0) {
+    url.searchParams.set('expectedUpdatedAt', options.expectedUpdatedAt);
+  }
+  let res: Response;
   try {
-    const url = new URL(`${workspacesBase(creds)}/${encodeURIComponent(workspaceId)}`);
-    if (options?.expectedUpdatedAt !== undefined && options.expectedUpdatedAt.length > 0) {
-      url.searchParams.set('expectedUpdatedAt', options.expectedUpdatedAt);
-    }
-    const res = await fetch(url.toString(), {
+    res = await fetch(url.toString(), {
       method: 'PUT',
       headers: mediaHeaders(creds),
       body: JSON.stringify(document),
     });
-    if (res.status === 409) {
-      const body = (await res.json()) as {
-        code?: string;
-        currentUpdatedAt?: string;
-        expectedUpdatedAt?: string;
-      };
-      throw new WorkspacePersistConflictError(
-        'Сценарий на сервере новее — перезагрузите workspace',
-        body.currentUpdatedAt ?? new Date().toISOString(),
-        body.expectedUpdatedAt ?? options?.expectedUpdatedAt,
-      );
-    }
-    if (!res.ok) return null;
-    const body = (await res.json()) as DeviceScenarioRemoteRecord;
-    const parsed = parseDeviceScenarioDocument(body.document);
-    if (!parsed.ok) return null;
-    return { document: parsed.value, updatedAt: body.updatedAt };
   } catch (error) {
-    if (error instanceof WorkspacePersistConflictError) {
-      throw error;
-    }
-    return null;
+    throw new WorkspacePersistError(
+      'Не удалось связаться с media-сервером при сохранении workspace',
+    );
   }
+  if (res.status === 409) {
+    const body = (await res.json()) as {
+      code?: string;
+      currentUpdatedAt?: string;
+      expectedUpdatedAt?: string;
+    };
+    throw new WorkspacePersistConflictError(
+      'Сценарий на сервере новее — перезагрузите workspace',
+      body.currentUpdatedAt ?? new Date().toISOString(),
+      body.expectedUpdatedAt ?? options?.expectedUpdatedAt,
+    );
+  }
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      const body = (await res.json()) as { message?: string | string[] };
+      if (typeof body.message === 'string') {
+        detail = body.message;
+      } else if (Array.isArray(body.message)) {
+        detail = body.message.join('; ');
+      }
+    } catch {
+      /* ignore parse */
+    }
+    throw new WorkspacePersistError(
+      `Сервер отклонил сохранение workspace (${res.status}): ${detail}`,
+      res.status,
+    );
+  }
+  const body = (await res.json()) as DeviceScenarioRemoteRecord;
+  const parsed = parseDeviceScenarioDocument(body.document);
+  if (!parsed.ok) {
+    throw new WorkspacePersistError('Сервер вернул невалидный документ сценария');
+  }
+  return { document: parsed.value, updatedAt: body.updatedAt };
 }
 
 export async function deleteRemoteWorkspace(

@@ -2066,12 +2066,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         return 'Остановите сценарий перед созданием';
       }
       const count = await workspaceHost.countWorkspaces();
-      if (count >= workspaceHost.maxUserWorkspaces) {
-        return `Достигнут лимит (${workspaceHost.maxUserWorkspaces} сценария на free)`;
+      const max = workspaceHost.maxUserWorkspaces;
+      if (count >= max) {
+        return `Достигнут лимит тарифа: ${count}/${max} user workspace`;
       }
       const created = await workspaceHost.createWorkspace(title ?? `Сценарий ${count + 1}`);
       if (created === null) {
-        return `Достигнут лимит (${workspaceHost.maxUserWorkspaces} сценария на free)`;
+        return 'Не удалось создать сценарий. Проверьте связь с media и обновите список.';
       }
       replaceLoadedDocument(created.document);
       await workspaceHost.setActiveWorkspaceId(created.workspaceId);

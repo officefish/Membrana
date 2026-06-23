@@ -7,6 +7,9 @@ import {
 } from '@membrana/device-board';
 
 import { useDeviceBoardClientBindings } from './useDeviceBoardClientBindings.js';
+import { formatWorkspaceQuotaMessage } from './workspace-tariff.js';
+import { isWorkspacePersistConflictError } from './workspace-persist-conflict.js';
+import { isWorkspacePersistError } from './workspace-persist-error.js';
 import { useDeviceBoardUserCaseSettings } from './useDeviceBoardUserCaseSettings.js';
 import {
   normalizeDeviceBoardModuleConfig,
@@ -110,23 +113,40 @@ export const DeviceBoardLauncher: React.FC<{
 
   const handleCreateWorkspace = useCallback(async (): Promise<void> => {
     setActionError(null);
-    const created = await workspaceHost.createWorkspace(
-      newWorkspaceTitle.trim() || `Сценарий ${workspaces.length + 1}`,
-    );
-    if (created === null) {
-      setActionError(`Достигнут лимит (${maxSlots} сценария на free)`);
-      return;
+    try {
+      const used = await workspaceHost.countWorkspaces();
+      if (used >= maxSlots) {
+        setActionError(formatWorkspaceQuotaMessage(used, maxSlots));
+        return;
+      }
+      const created = await workspaceHost.createWorkspace(
+        newWorkspaceTitle.trim() || `Сценарий ${used + 1}`,
+      );
+      if (created === null) {
+        setActionError('Не удалось создать сценарий. Обновите список и проверьте связь с media.');
+        return;
+      }
+      await workspaceHost.setActiveWorkspaceId(created.workspaceId);
+      await refreshWorkspaces();
+      setNewWorkspaceTitle('');
+      const next: LauncherSelection = {
+        kind: 'user-edit',
+        workspaceId: created.workspaceId,
+        title: created.document.meta?.title ?? `Сценарий ${used + 1}`,
+      };
+      setSelection(next);
+    } catch (error: unknown) {
+      if (isWorkspacePersistConflictError(error)) {
+        setActionError(error.message);
+        return;
+      }
+      if (isWorkspacePersistError(error)) {
+        setActionError(error.message);
+        return;
+      }
+      setActionError(error instanceof Error ? error.message : 'Не удалось создать сценарий');
     }
-    await workspaceHost.setActiveWorkspaceId(created.workspaceId);
-    await refreshWorkspaces();
-    setNewWorkspaceTitle('');
-    const next: LauncherSelection = {
-      kind: 'user-edit',
-      workspaceId: created.workspaceId,
-      title: created.document.meta?.title ?? `Сценарий ${workspaces.length + 1}`,
-    };
-    setSelection(next);
-  }, [maxSlots, newWorkspaceTitle, refreshWorkspaces, workspaceHost, workspaces.length]);
+  }, [maxSlots, newWorkspaceTitle, refreshWorkspaces, workspaceHost]);
 
   const handleRename = useCallback(async (): Promise<void> => {
     if (renameId === null) {
@@ -194,7 +214,7 @@ export const DeviceBoardLauncher: React.FC<{
         return;
       }
       if (atQuota) {
-        setActionError(`Достигнут лимит (${maxSlots} сценария на free)`);
+        setActionError(formatWorkspaceQuotaMessage(workspaces.length, maxSlots));
         return;
       }
       setActionError(null);
@@ -205,13 +225,18 @@ export const DeviceBoardLauncher: React.FC<{
           setActionError('Нет доступа к шаблону');
           return;
         }
+        const used = await workspaceHost.countWorkspaces();
+        if (used >= maxSlots) {
+          setActionError(formatWorkspaceQuotaMessage(used, maxSlots));
+          return;
+        }
         const created = await workspaceHost.cloneWorkspaceFromUserCase({
           sourceDocument: source,
           userCaseId: card.id,
           title: `${card.title} (копия)`,
         });
         if (created === null) {
-          setActionError(`Достигнут лимит (${maxSlots} сценария на free)`);
+          setActionError('Не удалось клонировать сценарий. Проверьте связь с media.');
           return;
         }
         await workspaceHost.setActiveWorkspaceId(created.workspaceId);
@@ -224,7 +249,11 @@ export const DeviceBoardLauncher: React.FC<{
         setSelection(next);
         await openBoard(next);
       } catch (error: unknown) {
-        setActionError(error instanceof Error ? error.message : 'Не удалось клонировать');
+        if (isWorkspacePersistConflictError(error) || isWorkspacePersistError(error)) {
+          setActionError(error.message);
+        } else {
+          setActionError(error instanceof Error ? error.message : 'Не удалось клонировать');
+        }
       } finally {
         setCloningId(null);
       }

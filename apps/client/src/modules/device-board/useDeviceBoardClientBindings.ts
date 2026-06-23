@@ -6,7 +6,7 @@ import { createDeviceBoardWorkspaceHost } from './createDeviceBoardWorkspaceHost
 import { createHybridDeviceBoardWorkspaceHost } from './createHybridDeviceBoardWorkspaceHost.js';
 import { invalidateDeviceWorkspacesApiCache } from './device-workspaces-api.js';
 import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId.js';
-import { resolveMaxUserWorkspaces } from './resolveMaxUserWorkspaces.js';
+import { resolveWorkspaceTariff } from './workspace-tariff.js';
 
 /** Shared deviceId bindings для workspace host + persist adapter (U10 W3). */
 export function useDeviceBoardClientBindings() {
@@ -31,7 +31,8 @@ export function useDeviceBoardClientBindings() {
 
   return useMemo(() => {
     const deviceId = resolveDeviceBoardPersistDeviceId(mode === 'paired' ? pairing : null);
-    const maxUserWorkspaces = resolveMaxUserWorkspaces(mode, pairing);
+    const workspaceTariff = resolveWorkspaceTariff(mode, pairing);
+    const maxUserWorkspaces = workspaceTariff.maxUserWorkspaces;
     const workspaceHost =
       mode === 'paired' && pairing !== null
         ? createHybridDeviceBoardWorkspaceHost(deviceId, pairing, maxUserWorkspaces)
@@ -39,6 +40,7 @@ export function useDeviceBoardClientBindings() {
     return {
       deviceId,
       maxUserWorkspaces,
+      workspaceTariff,
       pairSessionKey,
       workspaceHost,
       persistAdapter: createClientDeviceBoardPersistAdapter(deviceId, maxUserWorkspaces),

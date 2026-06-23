@@ -8,7 +8,10 @@ import {
   fetchRemoteWorkspaceList,
   isDeviceWorkspacesApiAvailable,
 } from './device-workspaces-api.js';
-import { hydratePairedWorkspaceLocalCacheIfEmpty } from './hydrate-paired-workspace-local-cache.js';
+import {
+  hydratePairedWorkspaceLocalCacheIfEmpty,
+  reconcilePairedWorkspaceLocalCache,
+} from './hydrate-paired-workspace-local-cache.js';
 
 type HostMode = 'unknown' | 'remote' | 'local';
 
@@ -55,8 +58,15 @@ export function createHybridDeviceBoardWorkspaceHost(
   async function listWorkspacesWithRecovery(): Promise<ReturnType<DeviceBoardWorkspaceHost['listWorkspaces']>> {
     if ((await resolveMode()) === 'remote') {
       await hydratePairedWorkspaceLocalCacheIfEmpty(deviceId, creds);
+      const list = await remote.listWorkspaces();
+      await reconcilePairedWorkspaceLocalCache(deviceId, creds);
+      return list;
     }
-    return (await pickHost()).listWorkspaces();
+    return local.listWorkspaces();
+  }
+
+  async function afterRemoteMutation(): Promise<void> {
+    await reconcilePairedWorkspaceLocalCache(deviceId, creds);
   }
 
   return {
@@ -67,7 +77,11 @@ export function createHybridDeviceBoardWorkspaceHost(
     },
 
     async countWorkspaces() {
-      return (await pickHost()).countWorkspaces();
+      if ((await resolveMode()) === 'remote') {
+        const list = await listWorkspacesWithRecovery();
+        return list.length;
+      }
+      return local.countWorkspaces();
     },
 
     async getActiveWorkspaceId() {
@@ -79,11 +93,25 @@ export function createHybridDeviceBoardWorkspaceHost(
     },
 
     async createWorkspace(title) {
-      return (await pickHost()).createWorkspace(title);
+      if ((await resolveMode()) === 'remote') {
+        const created = await remote.createWorkspace(title);
+        if (created !== null) {
+          await afterRemoteMutation();
+        }
+        return created;
+      }
+      return local.createWorkspace(title);
     },
 
     async cloneWorkspaceFromUserCase(input) {
-      return (await pickHost()).cloneWorkspaceFromUserCase(input);
+      if ((await resolveMode()) === 'remote') {
+        const created = await remote.cloneWorkspaceFromUserCase(input);
+        if (created !== null) {
+          await afterRemoteMutation();
+        }
+        return created;
+      }
+      return local.cloneWorkspaceFromUserCase(input);
     },
 
     async renameWorkspace(workspaceId, title) {
@@ -91,11 +119,22 @@ export function createHybridDeviceBoardWorkspaceHost(
     },
 
     async deleteWorkspace(workspaceId) {
-      return (await pickHost()).deleteWorkspace(workspaceId);
+      if ((await resolveMode()) === 'remote') {
+        const remoteOk = await remote.deleteWorkspace(workspaceId);
+        await local.deleteWorkspace(workspaceId);
+        await afterRemoteMutation();
+        return remoteOk;
+      }
+      return local.deleteWorkspace(workspaceId);
     },
 
     async setActiveWorkspaceId(workspaceId) {
-      return (await pickHost()).setActiveWorkspaceId(workspaceId);
+      if ((await resolveMode()) === 'remote') {
+        await remote.setActiveWorkspaceId(workspaceId);
+        await local.setActiveWorkspaceId(workspaceId);
+        return;
+      }
+      await local.setActiveWorkspaceId(workspaceId);
     },
   };
 }

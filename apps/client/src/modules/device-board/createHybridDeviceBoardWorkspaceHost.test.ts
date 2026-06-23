@@ -24,6 +24,7 @@ describe('createHybridDeviceBoardWorkspaceHost (U11 S2-W1)', () => {
 
   it('uses remote host when workspaces API is available', async () => {
     vi.spyOn(hydrateModule, 'hydratePairedWorkspaceLocalCacheIfEmpty').mockResolvedValue(false);
+    vi.spyOn(hydrateModule, 'reconcilePairedWorkspaceLocalCache').mockResolvedValue(undefined);
     const remoteList = [{ workspaceId: 'ws-1', title: 'Remote', updatedAt: '2026-06-23T00:00:00.000Z' }];
     vi.spyOn(deviceWorkspacesApi, 'isDeviceWorkspacesApiAvailable').mockResolvedValue(true);
     vi.spyOn(localHostModule, 'createDeviceBoardWorkspaceHost').mockReturnValue({
@@ -59,6 +60,7 @@ describe('createHybridDeviceBoardWorkspaceHost (U11 S2-W1)', () => {
 
   it('falls back to local when API probe and list both fail', async () => {
     vi.spyOn(hydrateModule, 'hydratePairedWorkspaceLocalCacheIfEmpty').mockResolvedValue(false);
+    vi.spyOn(hydrateModule, 'reconcilePairedWorkspaceLocalCache').mockResolvedValue(undefined);
     vi.spyOn(deviceWorkspacesApi, 'isDeviceWorkspacesApiAvailable').mockResolvedValue(false);
     vi.spyOn(deviceWorkspacesApi, 'fetchRemoteWorkspaceList').mockResolvedValue(null);
     const localList = [{ workspaceId: 'local-1', title: 'Local', updatedAt: '2026-06-23T00:00:00.000Z' }];

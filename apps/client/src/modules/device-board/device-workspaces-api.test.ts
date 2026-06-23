@@ -11,6 +11,7 @@ import {
   resetDeviceWorkspacesApiCacheForTests,
 } from './device-workspaces-api.js';
 import { WorkspacePersistConflictError } from './workspace-persist-conflict.js';
+import { WorkspacePersistError } from './workspace-persist-error.js';
 
 const CREDS: PairedNodeCredentials = {
   deviceId: 'dev-hybrid-1',
@@ -75,5 +76,20 @@ describe('putRemoteWorkspaceRecord LWW (U11 S3)', () => {
 
     const calledUrl = fetchMock.mock.calls[0]![0] as string;
     expect(calledUrl).toContain('expectedUpdatedAt=2026-06-23T11%3A00%3A00.000Z');
+  });
+
+  it('throws WorkspacePersistError on non-409 HTTP failure', async () => {
+    const document = createEmptyDeviceScenarioDocument('microphone');
+    const fetchMock = vi.fn().mockResolvedValue({
+      status: 400,
+      ok: false,
+      statusText: 'Bad Request',
+      json: async () => ({ message: 'signalGraph is required' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(putRemoteWorkspaceRecord(CREDS, 'ws-new', document)).rejects.toBeInstanceOf(
+      WorkspacePersistError,
+    );
   });
 });

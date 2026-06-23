@@ -80,3 +80,46 @@ describe('hydratePairedWorkspaceLocalCacheIfEmpty (U11 S2-W2)', () => {
     expect(listSpy).not.toHaveBeenCalled();
   });
 });
+
+describe('reconcilePairedWorkspaceLocalCache', () => {
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await deleteTestDatabase();
+  });
+
+  it('removes local-only orphans when media has fewer workspaces', async () => {
+    const store = createDeviceBoardWorkspaceStore(DEVICE_ID);
+    const document = getDefaultMvpMicrophoneDocument();
+    for (const id of ['ws-orphan-1', 'ws-orphan-2', 'ws-keep']) {
+      await store.put({
+        workspaceId: id,
+        title: id,
+        document,
+        updatedAt: '2026-06-23T09:00:00.000Z',
+      });
+    }
+
+    vi.spyOn(deviceWorkspacesApi, 'fetchRemoteWorkspaceList').mockResolvedValue({
+      activeWorkspaceId: 'ws-keep',
+      workspaces: [
+        {
+          workspaceId: 'ws-keep',
+          title: 'Kept',
+          updatedAt: '2026-06-23T10:00:00.000Z',
+        },
+      ],
+    });
+    vi.spyOn(deviceWorkspacesApi, 'fetchRemoteWorkspaceRecord').mockResolvedValue({
+      document,
+      updatedAt: '2026-06-23T10:00:00.000Z',
+    });
+
+    const { reconcilePairedWorkspaceLocalCache } = await import(
+      './hydrate-paired-workspace-local-cache.js'
+    );
+    await reconcilePairedWorkspaceLocalCache(DEVICE_ID, CREDS);
+
+    await expect(store.count()).resolves.toBe(1);
+    await expect(store.get('ws-orphan-1')).resolves.toBeNull();
+  });
+});

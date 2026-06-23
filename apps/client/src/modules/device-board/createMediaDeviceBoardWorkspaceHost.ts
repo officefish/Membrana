@@ -61,9 +61,6 @@ export function createMediaDeviceBoardWorkspaceHost(
         },
       });
       const saved = await putRemoteWorkspaceRecord(creds, workspaceId, document);
-      if (saved === null) {
-        return null;
-      }
       if (list?.activeWorkspaceId === null) {
         await setRemoteActiveWorkspaceId(creds, workspaceId);
       }
@@ -88,9 +85,6 @@ export function createMediaDeviceBoardWorkspaceHost(
         title: trimmedTitle,
       });
       const saved = await putRemoteWorkspaceRecord(creds, workspaceId, document);
-      if (saved === null) {
-        return null;
-      }
       return { workspaceId, document: saved.document };
     },
 
