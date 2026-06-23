@@ -3589,6 +3589,87 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "device-board-w0-hotfix",
+      "title": "Device-board W0 hotfixes — palette, copy/paste, selection modal",
+      "promptPath": "docs/prompts/DEVICE_BOARD_W0_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 151,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "W0 polish перед W1 UserCase. Child: #146 #152 #153.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-w0-h3-selection-modal-keep",
+      "title": "W0-H3: выделение сохраняется при закрытии модалки группирования",
+      "promptPath": "docs/prompts/DEVICE_BOARD_W0_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 153,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-w0-hotfix",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "dismissSelectionAction → closeSelectionActionModal для backdrop/Отмена/Escape.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-w0-h1-function-palette",
+      "title": "W0-H1: палитра узлов в редакторе пользовательских функций",
+      "promptPath": "docs/prompts/DEVICE_BOARD_W0_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 146,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-w0-hotfix",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "board-right-sidebar: palette when no selection on function branch.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
+      "id": "db-w0-h2-copy-paste-hotkeys",
+      "title": "W0-H2: Ctrl+C / Ctrl+V copy-paste узлов на канвасе",
+      "promptPath": "docs/prompts/DEVICE_BOARD_W0_HOTFIX_EPIC_PROMPT.md",
+      "githubIssue": 152,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-w0-hotfix",
+      "createdAt": "2026-06-23",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-w0-h3-selection-modal-keep"
+      ],
+      "notes": "graph copy-paste + shell keydown; after H3 selection workflow.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "strategicWave": "W0"
+    },
+    {
       "id": "db-doc-v04-mvp",
       "title": "Device Board MVP v0.4 — Mintlify docs, MCP tier4, node reference",
       "promptPath": "docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md",
