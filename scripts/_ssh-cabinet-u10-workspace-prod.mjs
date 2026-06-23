@@ -6,7 +6,7 @@
  *
  * Env:
  *   BACKGROUND_MEDIA_IPV4, BACKGROUND_MEDIA_PASSWORD — VPS (как у других cabinet:*:prod).
- *   CABINET_IMAGE_TAG — тег GHCR (default: latest; релиз: cabinet-vX.Y.Z).
+ *   CABINET_IMAGE_TAG — тег GHCR (default: latest; релиз: cabinet-vX.Y.Z; build — сборка на VPS).
  *   CABINET_GIT_BRANCH — ветка для compose на VPS (default: main).
  *   DEPLOY_ALLOW_DIRTY / DEPLOY_ALLOW_RED_CI — обход гейтов.
  *
@@ -38,6 +38,7 @@ function readEnvFile() {
  * @param {string} opts.password
  */
 export async function deployU10WorkspaceProd({ branch, imageTag, host, password, allowDirty, allowRedCi }) {
+  const useVpsBuild = imageTag === 'build';
   const preflight = deployPreflight({
     branch,
     cwd: root,
@@ -72,13 +73,20 @@ if [ ! -f /etc/membrana/cabinet.env ]; then
 fi
 ln -sf /etc/membrana/cabinet.env packages/background-cabinet/.env.docker
 
-echo "=== cabinet image deploy (tag: ${imageTag}) ==="
-export CABINET_DEPLOY_MODE=image
+echo "=== cabinet deploy (tag: ${imageTag}) ==="
+${
+  useVpsBuild
+    ? `./deploy/cabinet-stack.sh build
+./deploy/cabinet-stack.sh down || true
+sleep 2
+./deploy/cabinet-stack.sh up`
+    : `export CABINET_DEPLOY_MODE=image
 export CABINET_IMAGE_TAG="${imageTag}"
 ./deploy/cabinet-stack.sh pull
 ./deploy/cabinet-stack.sh down || true
 sleep 2
-./deploy/cabinet-stack.sh up
+./deploy/cabinet-stack.sh up`
+}
 sleep 25
 
 curl -fsS http://127.0.0.1:3020/health; echo

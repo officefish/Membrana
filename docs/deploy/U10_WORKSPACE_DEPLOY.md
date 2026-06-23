@@ -17,7 +17,17 @@ git push origin cabinet-v0.2.0
 
 4. Локальный `.env`: `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`.
 
-## Деплой (media migrate + cabinet image)
+## Деплой (media migrate + cabinet)
+
+**Feature-ветка без релизного тега** — сборка cabinet на VPS:
+
+```bash
+CABINET_GIT_BRANCH=u10-workspace-prod CABINET_IMAGE_TAG=build \
+DEPLOY_ALLOW_DIRTY=1 DEPLOY_ALLOW_RED_CI=1 \
+yarn cabinet:u10-workspace:prod
+```
+
+**После merge + тега `cabinet-v*`** — образ из GHCR:
 
 ```bash
 CABINET_IMAGE_TAG=cabinet-v0.2.0 yarn cabinet:u10-workspace:prod
@@ -26,7 +36,7 @@ CABINET_IMAGE_TAG=cabinet-v0.2.0 yarn cabinet:u10-workspace:prod
 Скрипт `scripts/_ssh-cabinet-u10-workspace-prod.mjs`:
 
 - `media-stack.sh build` + `up` — применяет миграцию `DeviceWorkspace`
-- `cabinet-stack.sh pull` + `up` (image) — применяет `maxUserWorkspaces` в Tariff
+- `cabinet-stack.sh build` + `up` (tag `build`) **или** `pull` + `up` (image tag) — применяет `maxUserWorkspaces` в Tariff
 - `yarn cabinet:u10-workspace:smoke` — prod-smoke U10
 
 Сводка: `deploy-artifacts/u10-workspace-prod-*.json`.

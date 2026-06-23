@@ -15,9 +15,9 @@ on:
           - smoke-only
           - deploy
       cabinet_image_tag:
-        description: CABINET_IMAGE_TAG for deploy mode
+        description: CABINET_IMAGE_TAG for deploy mode (build = VPS docker build)
         required: false
-        default: latest
+        default: build
 
 permissions:
   contents: read
