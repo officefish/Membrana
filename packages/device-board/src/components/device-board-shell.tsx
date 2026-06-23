@@ -133,6 +133,9 @@ const DeviceBoardShellInner: React.FC<{
   const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
+  const lastCanvasPointerRef = useRef<{ readonly clientX: number; readonly clientY: number } | null>(
+    null,
+  );
   const [connectionSuggestOpen, setConnectionSuggestOpen] = useState(false);
   const [connectionSuggestItems, setConnectionSuggestItems] = useState<
     readonly PaletteConnectionSuggestion[]
@@ -1007,7 +1010,12 @@ const DeviceBoardShellInner: React.FC<{
         }
         return;
       }
-      if (pasteBoardSelectionRef.current()) {
+      const pointer = lastCanvasPointerRef.current;
+      const anchor =
+        pointer !== null
+          ? viewportApiRef.current?.clientToFlowPosition(pointer.clientX, pointer.clientY)
+          : viewportApiRef.current?.getCenterFlowPosition();
+      if (anchor !== undefined && pasteBoardSelectionRef.current(anchor)) {
         event.preventDefault();
         event.stopPropagation();
       }
@@ -1280,7 +1288,12 @@ const DeviceBoardShellInner: React.FC<{
       <BoardRuntimeStatus state={graph.runtimeState} />
 
       <div className="relative min-h-0 flex-1 basis-0 overflow-hidden">
-        <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 z-0"
+          onPointerMove={(event) => {
+            lastCanvasPointerRef.current = { clientX: event.clientX, clientY: event.clientY };
+          }}
+        >
           <BoardFlowCanvas
             layer={isSignal ? 'signal' : 'scenario'}
             nodes={isSignal ? graph.signalNodes : scenarioCanvas.nodes}

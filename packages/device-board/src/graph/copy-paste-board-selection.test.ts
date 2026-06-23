@@ -5,6 +5,7 @@ import { createPaletteBoardNode } from './palette-node.js';
 import {
   cloneBoardSelectionForPaste,
   extractBoardSelectionClipboard,
+  selectionFlowBBoxCenter,
 } from './copy-paste-board-selection.js';
 
 function edge(id: string, source: string, target: string): Edge {
@@ -39,5 +40,23 @@ describe('copy-paste-board-selection', () => {
     expect(pasted.nodes[0]?.id).not.toBe('a');
     expect(pasted.nodes[0]?.position).toEqual({ x: 42, y: 52 });
     expect(pasted.nodes[0]?.selected).toBe(true);
+  });
+
+  it('paste anchors selection bbox center at flow point', () => {
+    const a = createPaletteBoardNode('print', { id: 'a', position: { x: 0, y: 0 } });
+    const b = createPaletteBoardNode('print', { id: 'b', position: { x: 100, y: 0 } });
+    const clip = {
+      nodes: [
+        { ...a, selected: true },
+        { ...b, selected: true },
+      ],
+      edges: [] as Edge[],
+    };
+    const center = selectionFlowBBoxCenter(clip.nodes);
+    const pasted = cloneBoardSelectionForPaste(clip, { x: 500, y: 300 });
+    const pastedCenter = selectionFlowBBoxCenter(pasted.nodes);
+    expect(pastedCenter.x).toBeCloseTo(500, 5);
+    expect(pastedCenter.y).toBeCloseTo(300, 5);
+    expect(pasted.nodes[0]?.position.x).toBeCloseTo(500 - center.x, 5);
   });
 });

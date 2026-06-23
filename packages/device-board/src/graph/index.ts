@@ -362,6 +362,7 @@ export {
   cloneBoardSelectionForPaste,
   extractBoardSelectionClipboard,
   isBoardSelectionCopyEligibleNode,
+  selectionFlowBBoxCenter,
   BOARD_PASTE_OFFSET,
 } from './copy-paste-board-selection.js';
 export type { BoardSelectionClipboard } from './copy-paste-board-selection.js';

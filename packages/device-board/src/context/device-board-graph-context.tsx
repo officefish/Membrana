@@ -287,8 +287,11 @@ export interface DeviceBoardGraphContextValue {
   ) => void;
   /** W0-H2: copy selected scenario nodes to in-memory clipboard. */
   readonly copyBoardSelection: () => boolean;
-  /** W0-H2: paste clipboard into active scenario branch. */
-  readonly pasteBoardSelection: () => boolean;
+  /** W0-H2: paste clipboard into active scenario branch (anchor = flow coords under cursor). */
+  readonly pasteBoardSelection: (anchorFlowPosition?: {
+    readonly x: number;
+    readonly y: number;
+  }) => boolean;
   readonly hasBoardSelectionClipboard: boolean;
   /** v0.4 DBR5: обновить выбранный микрофон на узле get-microphone. */
   readonly updatePaletteNodeMicrophoneId: (nodeId: string, microphoneId: string) => void;
@@ -2630,7 +2633,8 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     return true;
   }, [isSessionReadOnly, readScenarioBranchGraph, scenarioBranch]);
 
-  const pasteBoardSelection = useCallback((): boolean => {
+  const pasteBoardSelection = useCallback(
+    (anchorFlowPosition?: { readonly x: number; readonly y: number }): boolean => {
     if (isSessionReadOnly) {
       return false;
     }
@@ -2638,7 +2642,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     if (clipboard === null || clipboard.nodes.length === 0) {
       return false;
     }
-    const pasted = cloneBoardSelectionForPaste(clipboard);
+    const pasted = cloneBoardSelectionForPaste(clipboard, anchorFlowPosition);
     const { nodes: branchNodes, edges: branchEdges } = readScenarioBranchGraph(scenarioBranch);
     captureEditUndoSnapshot('paste-nodes', { count: pasted.nodes.length, branch: scenarioBranch });
     const cleared = branchNodes.map((node) => ({ ...node, selected: false }));
@@ -2647,13 +2651,15 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       ...pasted.edges,
     ]);
     return true;
-  }, [
+  },
+    [
     applyScenarioBranchGraph,
     captureEditUndoSnapshot,
     isSessionReadOnly,
     readScenarioBranchGraph,
     scenarioBranch,
-  ]);
+  ],
+  );
 
   const patchNodeData = useCallback((nodeId: string, patch: Record<string, unknown>) => {
     const mapNodes = (nodes: Node[]) =>
