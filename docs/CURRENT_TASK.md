@@ -1,30 +1,14 @@
 # CURRENT_TASK
 
-> **Day-sprint:** `membrana-studio-ms0-ms4-day-sprint` · Issue [#93](https://github.com/officefish/Membrana/issues/93)
+> **Day-sprint MS0–MS4** закрыт 2026-06-23 · [`CLOSURE.md`](./day-sprint/membrana-studio-ms0-ms4-2026-06-23/CLOSURE.md)
 
-## Фокус
+## Следующий шаг
 
-**Membrana Studio MS0–MS4:** canon → Electron shell → media/journal FS → Windows installer.
-
-**Ограничение:** `apps/client` **не трогаем** — только `apps/membrana-studio`, scripts, docs, CI.
-
-## Промпт
-
-[`docs/prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](./prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md)
-
-## Порядок фаз
-
-MS0 (Vesnin) → MS1 (Ozhegov) → MS2 (Ozhegov + Dynin) → MS3 (Ozhegov) → MS4 (Rodchenko)
-
-## MS5
-
-Prod paired smoke — **вне** этого спринта (`membrana-studio-ms5-prod-smoke`).
-
-## Команды
+**MS5** prod paired smoke: `membrana-studio-ms5-prod-smoke` · Issue [#93](https://github.com/officefish/Membrana/issues/93)
 
 ```bash
-yarn studio:dev
-yarn workspace @membrana/membrana-studio test
-yarn studio:build
-yarn studio:package   # MS4 verify
+yarn studio:package   # prod VITE_CABINET_API_URL baked
+# manual: install .exe → pairing → mic → yarn cabinet:mp7:prod
 ```
+
+Буфер: [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md)

@@ -17,11 +17,11 @@
 
 | # | id | Lead | First action |
 |---|-----|------|--------------|
-| 0 | `membrana-studio-ms0-canon` | Vesnin | Audit `MEMBRANE_PLATFORM` + README |
-| 1 | `membrana-studio-ms1-shell` | Ozhegov | `yarn studio:dev` smoke |
-| 2 | `membrana-studio-ms2-media-fs` | Ozhegov | FS + tests; Dynin quota review |
-| 3 | `membrana-studio-ms3-journal-fs` | Ozhegov | Journal/trends FS verify |
-| 4 | `membrana-studio-ms4-installer` | Rodchenko | `yarn studio:package` + CI |
+| 0 | `membrana-studio-ms0-canon` | Vesnin | Audit `MEMBRANE_PLATFORM` + README | **done** 2026-06-23 |
+| 1 | `membrana-studio-ms1-shell` | Ozhegov | `yarn studio:dev` smoke | **verify** build OK |
+| 2 | `membrana-studio-ms2-media-fs` | Ozhegov | FS + tests | **verify** 3 tests |
+| 3 | `membrana-studio-ms3-journal-fs` | Ozhegov | Journal/trends FS | **verify** 4 tests |
+| 4 | `membrana-studio-ms4-installer` | Rodchenko | `yarn studio:package` | **in progress** |
 
 ## Intake (code already present)
 

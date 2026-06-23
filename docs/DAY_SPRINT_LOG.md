@@ -4,7 +4,14 @@
 
 ---
 
-## 2026-06-23 — `membrana-studio-ms0-ms4-day-sprint` — **OPEN**
+## 2026-06-23 — `membrana-studio-ms0-ms4-day-sprint` — **CLOSED**
+
+- **MS0–MS4:** verify+archive; `studio:build` + `studio:package` OK; no `apps/client` changes
+- **Closure:** [`day-sprint/membrana-studio-ms0-ms4-2026-06-23/CLOSURE.md`](./day-sprint/membrana-studio-ms0-ms4-2026-06-23/CLOSURE.md)
+
+---
+
+## 2026-06-23 — `membrana-studio-ms0-ms4-day-sprint` — ~~OPEN~~
 
 - **Scope:** MS0–MS4 verify/archive; **MS5 deferred**; **no `apps/client`**
 - **Open brief:** [`day-sprint/membrana-studio-ms0-ms4-2026-06-23/OPEN.md`](./day-sprint/membrana-studio-ms0-ms4-2026-06-23/OPEN.md)

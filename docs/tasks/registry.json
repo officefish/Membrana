@@ -3068,7 +3068,7 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "parentEpic": "membrana-studio-desktop",
       "createdAt": "2026-06-23",
@@ -3079,7 +3079,10 @@
         "ozhegov",
         "rodchenko"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "MS0-MS4 verify shipped; studio:package 0.1.0; MS5 deferred",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms0-canon",
@@ -3088,11 +3091,11 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrana-studio-desktop",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "MS0: MEMBRANE_PLATFORM day-sprint link, MEDIA_LIBRARY on-disk table",
       "dependsOn": [
         "membrana-studio-desktop"
       ],
@@ -3102,7 +3105,8 @@
         "ozhegov",
         "rodchenko"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms1-shell",
@@ -3111,11 +3115,11 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrana-studio-desktop",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "MS1: shell verified yarn studio:build; main.ts import fix",
       "dependsOn": [
         "membrana-studio-ms0-canon"
       ],
@@ -3124,7 +3128,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms2-media-fs",
@@ -3133,11 +3138,11 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrana-studio-desktop",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "MS2: 3 unit tests green, FS paths documented",
       "dependsOn": [
         "membrana-studio-ms1-shell"
       ],
@@ -3147,7 +3152,8 @@
         "dynin",
         "rodchenko"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms3-journal-fs",
@@ -3156,11 +3162,11 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrana-studio-desktop",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "MS3: journal+trends FS 4 tests green",
       "dependsOn": [
         "membrana-studio-ms2-media-fs"
       ],
@@ -3169,7 +3175,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms4-installer",
@@ -3178,11 +3185,11 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrana-studio-desktop",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "MS4: yarn studio:package NSIS 0.1.0.exe OK",
       "dependsOn": [
         "membrana-studio-ms3-journal-fs"
       ],
@@ -3191,7 +3198,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms5-prod-smoke",

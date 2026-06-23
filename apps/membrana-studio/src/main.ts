@@ -1,7 +1,8 @@
 import { app, BrowserWindow, session, shell } from 'electron';
 import path from 'node:path';
 
-import { createMediaLibraryFsStore } from './media-library/media-library-fs';import { registerMediaLibraryIpc } from './media-library/register-ipc';
+import { createMediaLibraryFsStore } from './media-library/media-library-fs';
+import { registerMediaLibraryIpc } from './media-library/register-ipc';
 import { createJournalFsStore } from './journal/journal-fs';
 import { registerJournalIpc } from './journal/register-ipc';
 import { createTrendsTemplatesFsStore } from './trends/trends-templates-fs';
