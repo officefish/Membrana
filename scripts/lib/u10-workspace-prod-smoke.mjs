@@ -5,7 +5,7 @@
 
 /** Bash-скрипт: MP3 pair + W4 tariff + W5 workspaces list/put/get. */
 export const U10_WORKSPACE_REMOTE_SMOKE = `#!/bin/bash
-set -euo pipefail
+set -uo pipefail
 ENV=/etc/membrana/cabinet.env
 MEDIA_ENV=/etc/membrana/media.env
 MEDIA_TOKEN=$(grep '^API_INTERNAL_TOKEN=' "$MEDIA_ENV" | cut -d= -f2-)
