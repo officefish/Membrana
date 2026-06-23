@@ -123,6 +123,8 @@ export interface CollapseToCommentGroupInput {
   readonly branchNodes: readonly Node[];
   readonly groupId?: string;
   readonly title?: string;
+  /** ID групп на других ветках — резервируются при генерации group-N. */
+  readonly reservedGroupIds?: readonly string[];
 }
 
 export interface CollapseToCommentGroupResult {
@@ -184,6 +186,9 @@ export function collapseSelectionToCommentGroup(
   const existingIds = new Set(
     input.branchNodes.filter((node) => isBoardGroupNode(node)).map((node) => node.id),
   );
+  for (const id of input.reservedGroupIds ?? []) {
+    existingIds.add(id);
+  }
   const groupId = input.groupId ?? nextGroupId(existingIds);
   const title = input.title ?? 'Группа';
 
@@ -351,4 +356,84 @@ export function collectCommentGroupsFromBoard(input: {
     ...extractCommentGroupsFromNodes('onDisconnect', input.scenarioOnDisconnectNodes),
     ...extractCommentGroupsFromNodes('function', input.scenarioFunctionNodes),
   ];
+}
+
+/** ID boardGroup-нод со всех веток (для уникальности group-N при collapse). */
+export function collectCommentGroupNodeIdsFromBoard(input: {
+  readonly signalNodes: readonly Node[];
+  readonly scenarioInitialNodes: readonly Node[];
+  readonly scenarioOnConnectNodes: readonly Node[];
+  readonly scenarioMainNodes: readonly Node[];
+  readonly scenarioAlarmNodes: readonly Node[];
+  readonly scenarioOnStopNodes: readonly Node[];
+  readonly scenarioOnDisconnectNodes: readonly Node[];
+  readonly scenarioFunctionNodes: readonly Node[];
+}): readonly string[] {
+  const ids: string[] = [];
+  const collect = (nodes: readonly Node[]) => {
+    for (const node of nodes) {
+      if (isBoardGroupNode(node)) {
+        ids.push(node.id);
+      }
+    }
+  };
+  collect(input.signalNodes);
+  collect(input.scenarioInitialNodes);
+  collect(input.scenarioOnConnectNodes);
+  collect(input.scenarioMainNodes);
+  collect(input.scenarioAlarmNodes);
+  collect(input.scenarioOnStopNodes);
+  collect(input.scenarioOnDisconnectNodes);
+  collect(input.scenarioFunctionNodes);
+  return ids;
+}
+
+/** Убирает дубликаты comment groups по id (первый выигрывает). */
+export function dedupeCommentGroupIds(
+  groups: readonly ScenarioCommentGroup[],
+): ScenarioCommentGroup[] {
+  const seen = new Set<string>();
+  const out: ScenarioCommentGroup[] = [];
+  for (const group of groups) {
+    if (seen.has(group.id)) {
+      continue;
+    }
+    seen.add(group.id);
+    out.push(group);
+  }
+  return out;
+}
+
+/** Патч data boardGroup-ноды из инспектора метаданных. */
+export function buildCommentGroupDataPatch(patch: {
+  readonly title?: string;
+  readonly description?: string;
+  readonly frameColor?: ScenarioCommentGroupFrameColor;
+}): Partial<BoardGroupNodeData> {
+  return {
+    ...(patch.title !== undefined ? { title: patch.title } : {}),
+    ...(patch.description !== undefined ? { description: patch.description } : {}),
+    ...(patch.frameColor !== undefined
+      ? { frameColor: resolveScenarioCommentGroupFrameColor(patch.frameColor) }
+      : {}),
+  };
+}
+
+/** Обновляет data boardGroup-ноды на ветке; null если узел не найден. */
+export function patchCommentGroupNodeData(
+  nodes: readonly Node[],
+  nodeId: string,
+  dataPatch: Partial<BoardGroupNodeData>,
+): Node[] | null {
+  const index = nodes.findIndex((node) => node.id === nodeId && isBoardGroupNode(node));
+  if (index < 0) {
+    return null;
+  }
+  const node = nodes[index]!;
+  const next = [...nodes];
+  next[index] = {
+    ...node,
+    data: { ...(node.data as BoardGroupNodeData), ...dataPatch } as BoardGroupNodeData,
+  };
+  return next;
 }

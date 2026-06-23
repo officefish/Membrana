@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { pairResponseToCredentials } from '../../api/pairingCredentials';
 import { pairWithAccessKey } from '../../api/pairing';
 import { reconfigureMediaLibraryFromConnection } from '../../lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
@@ -24,28 +25,9 @@ export const MembranePairingPanel: React.FC = () => {
     setBusy(true);
     try {
       const result = await pairWithAccessKey(accessKey, clientLabel || undefined);
-      applyPairing({
-        token: result.token,
-        expiresAt: result.expiresAt,
-        deviceId: result.deviceId,
-        mediaToken: result.mediaToken,
-        mediaApiUrl: result.mediaApiUrl,
-        membraneId: result.membrane.id,
-        nodeId: result.node.id,
-        nodeLabel: result.node.label,
-        pairedKeyId: result.pairedKeyId,
-      });
-      void reconfigureMediaLibraryFromConnection('paired', {
-        token: result.token,
-        expiresAt: result.expiresAt,
-        deviceId: result.deviceId,
-        mediaToken: result.mediaToken,
-        mediaApiUrl: result.mediaApiUrl,
-        membraneId: result.membrane.id,
-        nodeId: result.node.id,
-        nodeLabel: result.node.label,
-        pairedKeyId: result.pairedKeyId,
-      });
+      const credentials = pairResponseToCredentials(result);
+      applyPairing(credentials);
+      void reconfigureMediaLibraryFromConnection('paired', credentials);
       setAccessKey('');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Pairing failed';

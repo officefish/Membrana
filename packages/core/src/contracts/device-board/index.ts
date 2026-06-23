@@ -244,6 +244,7 @@ export {
   DEVICE_SCENARIO_DOCUMENT_VERSION,
   DEVICE_SCENARIO_MIN_DOCUMENT_VERSION,
   type DeviceScenarioMeta,
+  type DeviceScenarioWorkspaceKind,
   type DeviceScenarioDocument,
   createEmptyDeviceScenarioDocument,
   parseDeviceScenarioDocument,

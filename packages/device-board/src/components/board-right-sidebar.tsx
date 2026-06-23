@@ -70,6 +70,8 @@ import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-doc
 import type { FunctionPinSide } from '../graph/function-pin-ops.js';
 
 export interface BoardRightSidebarProps {
+  readonly collapsed?: boolean;
+  readonly onToggleCollapse?: () => void;
   readonly selectedNodeId: string | null;
   readonly selectedNodeLabel: string | null;
   readonly selectedNodeKind: ScenarioNodeKind | null;
@@ -139,6 +141,8 @@ export interface BoardRightSidebarProps {
  * или палитра v0.4 (Print / isValid / GetMicrophone); legacy D0 — под флагом.
  */
 export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
+  collapsed = false,
+  onToggleCollapse,
   selectedNodeId,
   selectedNodeLabel,
   selectedNodeKind,
@@ -347,9 +351,24 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
 
   return (
     <aside
-      className="flex h-full w-[clamp(12rem,15vw,16rem)] flex-col overflow-y-auto overflow-x-hidden border-l border-base-300 bg-base-100/95 shadow-lg backdrop-blur-sm"
+      className={`flex h-full ${
+        collapsed ? 'w-10' : 'w-[clamp(12rem,15vw,16rem)]'
+      } flex-col overflow-y-auto overflow-x-hidden border-l border-base-300 bg-base-100/95 shadow-lg backdrop-blur-sm`}
       aria-label="Инспектор и палитра нод"
     >
+      {onToggleCollapse ? (
+        <button
+          type="button"
+          className="btn btn-ghost btn-xs m-2 self-start shrink-0"
+          aria-label={collapsed ? 'Развернуть правую панель' : 'Свернуть правую панель'}
+          title={collapsed ? 'Развернуть' : 'Свернуть'}
+          onClick={onToggleCollapse}
+        >
+          {collapsed ? '«' : '»'}
+        </button>
+      ) : null}
+      {collapsed ? null : (
+        <>
       {showRuntimeOutputs ? (
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 text-sm">
           <div className="border-b border-base-200 pb-2">
@@ -1121,6 +1140,8 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
           />
         </footer>
       ) : null}
+        </>
+      )}
     </aside>
   );
 };

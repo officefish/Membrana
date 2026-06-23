@@ -341,6 +341,17 @@ export {
   needsFftTrendsPolicyConstructorMigration,
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';
+export {
+  isUserOwnedDeviceScenarioDocument,
+  shouldMigrateMicrophoneScenarioToBundledMvp,
+  stampUserWorkspaceDocument,
+  stampSystemPreviewDocument,
+} from './device-scenario-workspace.js';
+export {
+  cloneUserCaseToWorkspaceDocument,
+  deepCopyDeviceScenarioDocument,
+} from './clone-user-case-to-workspace.js';
+export type { CloneUserCaseToWorkspaceInput } from './clone-user-case-to-workspace.js';
 export type { HydratedBoardState, ScenarioFunctionCanvasMeta } from './hydrate-board-from-document.js';
 export {
   collapseSelectionToFunction,
@@ -410,8 +421,12 @@ export {
 export {
   collapseSelectionToCommentGroup,
   collectCommentGroupsFromBoard,
+  collectCommentGroupNodeIdsFromBoard,
+  dedupeCommentGroupIds,
   applyCommentGroupsToBranchNodes,
   extractCommentGroupsFromNodes,
+  buildCommentGroupDataPatch,
+  patchCommentGroupNodeData,
   sortBoardNodesParentsBeforeChildren,
   BOARD_GROUP_NODE_TYPE,
   COMMENT_GROUP_DESCRIPTION_MAX_LENGTH,

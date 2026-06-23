@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ScenarioCommentGroupBranch } from '@membrana/core';
 import type {
+  DeviceScenarioDocument,
   ScenarioNodeKind,
   ScenarioCollectorConfig,
   ScenarioFftTrendsPolicy,
@@ -31,7 +32,7 @@ import { suggestPaletteNodesForOutgoingConnection } from '../graph/index.js';
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
-  BOARD_HEADER_CONTENT_OFFSET_CLASS,
+  boardHeaderContentOffsetClass,
   SIGNAL_LAYER_TITLE,
   isSignalAdvancedEnabled,
   isScenarioBranchForFunctionInsert,
@@ -47,8 +48,6 @@ import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js
 import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardFunctionActionModal } from './board-function-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
-import { BoardUserCasePickerModal } from './board-usercase-picker-modal.js';
-import type { DeviceBoardUserCasePickerConfig } from '../types/user-case-picker.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
@@ -90,8 +89,8 @@ export interface DeviceBoardShellProps {
   readonly showRunControls?: boolean;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
   readonly deviceLive?: boolean;
-  /** UserCase catalog picker (U9 P1); undefined — кнопка скрыта. */
-  readonly userCasePicker?: DeviceBoardUserCasePickerConfig;
+  /** Загрузка документа каталога (U10 W2-module: выбор в launcher модуля). */
+  readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -99,8 +98,7 @@ const DeviceBoardShellInner: React.FC<{
   exitLabel: string;
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
-  userCasePicker?: DeviceBoardUserCasePickerConfig;
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, userCasePicker }) => {
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -130,8 +128,8 @@ const DeviceBoardShellInner: React.FC<{
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
-  const [userCasePickerOpen, setUserCasePickerOpen] = useState(false);
-  const [userCaseAppliedMessage, setUserCaseAppliedMessage] = useState<string | null>(null);
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
   const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
@@ -588,9 +586,14 @@ const DeviceBoardShellInner: React.FC<{
   const syncLabel =
     graph.syncStatus === 'error' ? graph.syncError ?? 'Ошибка сохранения' : null;
 
-  const canSave = graph.isDirty && graph.syncStatus !== 'saving' && graph.syncStatus !== 'loading';
+  const canSave =
+    !graph.isSessionReadOnly &&
+    graph.isDirty &&
+    graph.syncStatus !== 'saving' &&
+    graph.syncStatus !== 'loading';
   const mode = graph.mode;
   const isSaving = graph.syncStatus === 'saving';
+  const isCanvasReadOnly = isRuntime || graph.isSessionReadOnly;
 
   const scenarioCanvas = useMemo(() => {
     if (scenarioBranch === 'initial') {
@@ -1043,8 +1046,10 @@ const DeviceBoardShellInner: React.FC<{
       ? graph.runtimeState.printOutputs[selectedNodeId] ?? null
       : null;
 
+  const headerContentOffsetClass = boardHeaderContentOffsetClass(leftSidebarCollapsed);
+
   return (
-    <div className="flex h-full min-h-0 flex-col bg-base-100 [scrollbar-gutter:stable]">
+    <div className="flex h-full min-h-0 flex-col bg-base-100 [scrollbar-gutter:stable]" data-testid="device-board-shell">
       <header className="relative flex items-center justify-between gap-3 border-b border-base-200 py-2 pr-4 shadow-sm">
         <div
           className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center justify-center"
@@ -1056,7 +1061,7 @@ const DeviceBoardShellInner: React.FC<{
           </span>
         </div>
 
-        <div className={`flex min-w-0 flex-1 items-center gap-3 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}>
+        <div className={`flex min-w-0 flex-1 items-center gap-3 ${headerContentOffsetClass}`}>
           <div className="flex h-5 w-5 shrink-0 items-center justify-center">
             {isSaving ? (
               <span
@@ -1069,10 +1074,16 @@ const DeviceBoardShellInner: React.FC<{
             type="button"
             className="btn btn-sm btn-primary shrink-0"
             disabled={!canSave}
+            title={graph.isSessionReadOnly ? 'Сохранение недоступно в режиме просмотра системного UserCase' : undefined}
             onClick={() => void graph.saveScenario()}
           >
             Сохранить
           </button>
+          {graph.isSessionReadOnly ? (
+            <span className="badge badge-ghost badge-sm shrink-0" title={graph.sessionTitle ?? undefined}>
+              Только просмотр
+            </span>
+          ) : null}
           <BoardCanvasBreadcrumb
             segments={canvasBreadcrumbSegments}
             detailTitle={scenarioTitle}
@@ -1197,13 +1208,6 @@ const DeviceBoardShellInner: React.FC<{
                   Import JSON
                 </button>
               </li>
-              {userCasePicker !== undefined ? (
-                <li>
-                  <button type="button" onClick={() => setUserCasePickerOpen(true)}>
-                    UserCase…
-                  </button>
-                </li>
-              ) : null}
               <li>
                 <button
                   type="button"
@@ -1220,19 +1224,6 @@ const DeviceBoardShellInner: React.FC<{
       <BoardValidationBanner issues={graph.validationIssues} successMessage={null} />
       {importError !== null ? (
         <div className="border-b border-error/30 bg-error/10 px-4 py-2 text-xs text-error">{importError}</div>
-      ) : null}
-      {userCaseAppliedMessage !== null ? (
-        <div className="border-b border-success/30 bg-success/10 px-4 py-2 text-xs text-success flex items-center justify-between gap-3">
-          <span>{userCaseAppliedMessage}</span>
-          <button
-            type="button"
-            className="btn btn-ghost btn-xs"
-            onClick={() => setUserCaseAppliedMessage(null)}
-            aria-label="Закрыть"
-          >
-            ✕
-          </button>
-        </div>
       ) : null}
       <BoardRuntimeStatus state={graph.runtimeState} />
 
@@ -1257,7 +1248,7 @@ const DeviceBoardShellInner: React.FC<{
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
-            readOnly={isRuntime}
+            readOnly={isCanvasReadOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             viewportFitKey={canvasViewportFitKey}
@@ -1273,7 +1264,7 @@ const DeviceBoardShellInner: React.FC<{
 
         {!isRuntime ? (
           <div
-            className={`pointer-events-none absolute bottom-3 z-20 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}
+            className={`pointer-events-none absolute bottom-3 z-20 ${headerContentOffsetClass}`}
           >
             <div className="pointer-events-auto pl-3">
               <BoardEditUndoControl
@@ -1297,22 +1288,10 @@ const DeviceBoardShellInner: React.FC<{
           onDismiss={graph.cancelBranchImport}
         />
 
-        {userCasePicker !== undefined ? (
-          <BoardUserCasePickerModal
-            open={userCasePickerOpen}
-            cards={userCasePicker.cards}
-            onDismiss={() => setUserCasePickerOpen(false)}
-            onApplied={(userCaseId) => {
-              const card = userCasePicker.cards.find((item) => item.id === userCaseId);
-              setUserCaseAppliedMessage(
-                card !== undefined ? `UserCase «${card.title}» применён` : 'UserCase применён',
-              );
-            }}
-          />
-        ) : null}
-
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
+            collapsed={leftSidebarCollapsed}
+            onToggleCollapse={() => setLeftSidebarCollapsed((v) => !v)}
             activeBranch={scenarioBranch}
             isScenarioLayer={!isSignal}
             isRuntime={isRuntime}
@@ -1335,6 +1314,8 @@ const DeviceBoardShellInner: React.FC<{
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
           <BoardRightSidebar
+            collapsed={rightSidebarCollapsed}
+            onToggleCollapse={() => setRightSidebarCollapsed((v) => !v)}
             selectedNodeId={selectedNodeId}
             selectedNodeLabel={selectedNodeLabel}
             selectedNodeKind={selectedNodeKind}
@@ -1378,7 +1359,11 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onVariableValueChange={graph.updateVariableValue}
             onCommentGroupMetadataChange={(nodeId, patch) => {
-              graph.updateCommentGroupMetadata(nodeId, patch);
+              const branch: ScenarioCommentGroupBranch = isSignal ? 'signal' : scenarioBranch;
+              graph.updateCommentGroupMetadata(branch, nodeId, patch);
+              if (nodeId !== selectedNodeId) {
+                return;
+              }
               if (patch.title !== undefined) {
                 setSelectedGroupTitle(patch.title.trim() || 'Группа');
                 setSelectedNodeLabel(patch.title.trim() || 'Группа');
@@ -1491,21 +1476,25 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   exitLabel = 'Выйти из доски',
   showRunControls = true,
   deviceLive,
-  userCasePicker,
-}) => (
+  loadUserCaseDocument,
+}) => {
+  const { session } = useDeviceBoardMode();
+
+  return (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
     persistAdapter={persistAdapter}
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
-    loadUserCaseDocument={userCasePicker?.loadDocument}
+    loadUserCaseDocument={loadUserCaseDocument}
+    boardSession={session}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
-      userCasePicker={userCasePicker}
     />
   </DeviceBoardGraphProvider>
-);
+  );
+};

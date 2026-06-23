@@ -2,7 +2,7 @@
 
 > **Catalog-спецификация** · статус: **stable** (2026-06-22, sprint `device-board-docs-post-140`)  
 > Реестр: `docs/catalog/client/registry.json`  
-> Концепт: [`DEVICE_BOARD_CONCEPT.md`](../../../../packages/device-board/DEVICE_BOARD_CONCEPT.md) (v0.9 §21)  
+> Концепт: [`DEVICE_BOARD_CONCEPT.md`](../../../../packages/device-board/DEVICE_BOARD_CONCEPT.md) (v0.10 §22)  
 > Runtime: [`SCENARIO_RUNTIME.md`](../../../SCENARIO_RUNTIME.md)  
 > **Mintlify:** [`apps/docs/device-board`](../../../../apps/docs/device-board/mvp-overview) · workflow: [`DOCUMENTATION_WORKFLOW.md`](../../../DOCUMENTATION_WORKFLOW.md)
 
@@ -13,7 +13,7 @@
 | Поле | Значение |
 |------|----------|
 | **id** | `device-board` |
-| **Версия** | `0.9.x` |
+| **Версия** | `0.10.x` |
 | **Категория** | Устройства |
 | **Lead** | Ozhegov (структура) + Vesnin (runtime / edit model) |
 
@@ -23,7 +23,7 @@
 
 1. Визуально собрать **signal**-топологию и **scenario**-граф (ветки onConnect / onStart / loops / onStop).
 2. Запустить сценарий (Run/Stop), переключать normal/alarm, смотреть runtime-инспектор портов и **подсветку exec-цепочки**.
-3. Объявлять переменные, **пользовательские функции** (pins, collapse), UserCases из каталога.
+3. Объявлять переменные, **пользовательские функции** (pins, collapse), UserCases из каталога; **сохранять до N user workspace** (U10).
 4. Сохранять сценарий вручную; откат одного шага редактирования (undo).
 
 Пакет `@membrana/device-board` — UI + scenario runtime; **Web Audio** только через client host (`audio-engine-service`).
@@ -40,8 +40,11 @@
 | **function branch** | inline editor в сайдбаре; pin meter `n/9`; список функций |
 | **runtime** (`isRunning`) | канвас read-only; exec highlight; инспектор портов по клику |
 | **validation errors** | баннер pre-run |
+| **launcher** (U10) | выбор system-preview / user-edit до входа в board mode; quota N/max |
+| **system-preview** | Save disabled; клон из модуля |
+| **user-edit** | Save → active IndexedDB workspace |
 
-Операторская документация: [`edit-and-navigation.mdx`](../../../../apps/docs/device-board/editor/edit-and-navigation.mdx) · [`user-functions.mdx`](../../../../apps/docs/device-board/editor/user-functions.mdx).
+Операторская документация: [`user-workspace.mdx`](../../../../apps/docs/device-board/user-workspace.mdx) · [`edit-and-navigation.mdx`](../../../../apps/docs/device-board/editor/edit-and-navigation.mdx) · [`user-functions.mdx`](../../../../apps/docs/device-board/editor/user-functions.mdx).
 
 ---
 
@@ -53,7 +56,7 @@
 | Graph context | `context/device-board-graph-context.tsx` | state, `navigateScenarioBranch`, undo wiring |
 | Navigation | `graph/branch-navigation.ts` | `ScenarioRevertPolicy`, F7 vs keep-dirty |
 | Undo | `graph/edit-undo-controller.ts` | depth-1 snapshot |
-| Client module | `apps/client/src/modules/device-board/` | host bridge, board mode entry |
+| Client module | `apps/client/src/modules/device-board/` | `DeviceBoardLauncher`, workspace store, board mode entry |
 | Runtime host | `createScenarioRuntimeHost.ts` | audio, journal, INFO gate, loop tick |
 | Регистрация | `registerClientModules.ts` | `MembranaRegistry.registerLazyModule` |
 
@@ -118,7 +121,7 @@ yarn workspace @membrana/device-board test
 
 ## 10. Чеклист перед правками
 
-1. Прочитать `DEVICE_BOARD_CONCEPT.md` §18–§21 и `SCENARIO_RUNTIME.md`.
+1. Прочитать `DEVICE_BOARD_CONCEPT.md` §18–§22 и `SCENARIO_RUNTIME.md`.
 2. При UX/edit — Mintlify editor pages и этот catalog-промпт.
 3. Не нарушать границу пакетов (`device-board` ↛ `agenda`).
 4. `yarn catalog:verify-client` после изменения `registry.json`.
@@ -129,5 +132,6 @@ yarn workspace @membrana/device-board test
 
 | Дата | Изменение |
 |------|-----------|
+| 2026-06-23 | **stable** (U10 D1): user workspace §22, `DeviceBoardLauncher`, Mintlify `user-workspace.mdx` |
 | 2026-06-22 | **stable** (D3 docs sprint): edit model §21, Mintlify editor links, UX table |
 | 2026-06-17 | draft catalog (MC-2); ссылка на `db-doc-v04-mvp` |

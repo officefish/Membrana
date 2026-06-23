@@ -11,6 +11,8 @@ export interface PairedNodeCredentials {
   nodeId: string;
   nodeLabel: string;
   pairedKeyId?: string;
+  /** Tariff-driven user workspace slot quota (U10 W4); fallback 3 when absent. */
+  maxUserWorkspaces?: number;
 }
 
 export type PairingInvalidReason = 'revoked' | 'expired' | 'session_expired';
