@@ -3208,11 +3208,11 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrana-studio-desktop",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-23",
+      "archiveNotes": "yarn studio:ms5-smoke OK; MP7 WS msg timeout x2; epic blocked",
       "dependsOn": [
         "membrana-studio-ms4-installer"
       ],
@@ -3222,7 +3222,8 @@
         "ozhegov",
         "rodchenko"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-refactor-v04",

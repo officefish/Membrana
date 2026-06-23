@@ -80,13 +80,35 @@ Studio использует `VITE_CABINET_API_URL` (baked при `MEMBRANA_STUDI
 
 ## Prod smoke (MS5 runbook)
 
-1. **Сборка:** `yarn studio:package` (client с prod cabinet URL + NSIS installer).
-2. **Установка:** `apps/membrana-studio/release/Membrana Studio Setup 0.1.0.exe`.
-3. **Запуск Studio** → `StorageRuntimeIndicator` показывает **Electron FS**.
-4. **Pairing:** модуль Connector → создать/ввести pairing key → статус «связан».
-5. **Mic live:** модуль Microphone → разрешить микрофон → auto-capture / live.
-6. **Проверка cabinet (с машины разработки):** `yarn cabinet:mp7:prod` — ожидаем `journal.append` и `analysis.brief` по WS.
-7. **Локальное хранение:** после записи трека — `%APPDATA%/Membrana/journal/items.json` и media-library на диске.
+### Automated (`yarn studio:ms5-smoke`)
+
+После `yarn studio:package` (prod `VITE_CABINET_API_URL`):
+
+| Check | Что проверяет |
+|-------|----------------|
+| `studio-main-js` | `apps/membrana-studio/dist/main.js` |
+| `client-dist-index` | renderer собран |
+| `prod-cabinet-url-baked` | `https://cabinet.membrana.space` в client-dist |
+| `nsis-installer` | `.exe` в `release/` |
+| `cabinet-health` | `GET /health` prod |
+| `mp7-ws-smoke` | `yarn cabinet:mp7:prod` (нужен `.env` VPS; или `--no-mp7`) |
+
+### Manual (оператор, Windows)
+
+1. **Установка:** `apps/membrana-studio/release/Membrana Studio Setup 0.1.0.exe`.
+2. **Запуск Studio** → `StorageRuntimeIndicator` показывает **Electron FS**.
+3. **Pairing:** Connector → ключ из cabinet → «связан».
+4. **Mic live:** Microphone → разрешить микрофон ОС → auto-capture / live.
+5. **Cabinet:** journal + brief по WS (подтверждается MP7 smoke).
+6. **Локально:** `%APPDATA%/Membrana/journal/items.json` и `media-library/` после записи.
+
+### Commands
+
+```bash
+yarn studio:package      # prod build + NSIS
+yarn studio:ms5-smoke    # automated MS5
+yarn cabinet:mp7:prod    # MP7 WS only
+```
 
 Dev без installer: `yarn studio:dev` — shell **сам компилирует** `dist/main.js` при первом запуске (нужен бинарник `electron`).
 

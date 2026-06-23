@@ -1,14 +1,18 @@
 # CURRENT_TASK
 
-> **Day-sprint MS0–MS4** закрыт 2026-06-23 · [`CLOSURE.md`](./day-sprint/membrana-studio-ms0-ms4-2026-06-23/CLOSURE.md)
+> **MS5** partial 2026-06-23 · [`CLOSURE.md`](./day-sprint/membrana-studio-ms5-2026-06-23/CLOSURE.md)
 
-## Следующий шаг
+## Блокер эпика #93
 
-**MS5** prod paired smoke: `membrana-studio-ms5-prod-smoke` · Issue [#93](https://github.com/officefish/Membrana/issues/93)
+**MP7 WS smoke** падает на `msg timeout` (MP1–MP5 OK). Эпик `membrana-studio-desktop` остаётся active.
 
 ```bash
-yarn studio:package   # prod VITE_CABINET_API_URL baked
-# manual: install .exe → pairing → mic → yarn cabinet:mp7:prod
+yarn cabinet:mp7:prod          # reproduce
+yarn studio:ms5-smoke --no-mp7 # local artifacts + cabinet health
 ```
+
+## Manual (оператор)
+
+Install Studio `.exe` → pairing → mic live → journal on disk.
 
 Буфер: [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md)
