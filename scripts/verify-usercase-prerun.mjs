@@ -56,6 +56,17 @@ try {
   const graph = await import(graphUrl);
 
   const hydrated = graph.hydrateBoardFromDocument(document);
+  const runtimeUrl = pathToFileURL(
+    join(repoRoot, 'packages/device-board/dist/runtime/index.js'),
+  ).href;
+  const runtime = await import(runtimeUrl);
+  const documentValidation = runtime.validateUserCaseDocument(document);
+  if (!runtime.isUserCaseValidationValid(documentValidation.errors)) {
+    console.error(`usercase:verify-prerun FAILED (document validators) for ${manifest.id}`);
+    console.error(JSON.stringify(documentValidation.errors, null, 2));
+    process.exit(1);
+  }
+
   const issues = graph.validatePreRun({
     deviceKind: hydrated.deviceKind,
     signalNodes: hydrated.signalNodes,
@@ -73,6 +84,7 @@ try {
     scenarioOnDisconnectNodes: hydrated.scenarioOnDisconnectNodes,
     scenarioOnDisconnectEdges: hydrated.scenarioOnDisconnectEdges,
     scenarioFunctions: graph.hydratedFunctionInputs(hydrated),
+    variables: hydrated.variables,
   });
 
   if (!graph.isPreRunValid(issues)) {

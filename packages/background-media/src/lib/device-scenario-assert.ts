@@ -6,10 +6,10 @@ const DEVICE_SCENARIO_KIND = 'device-scenario';
 const DEVICE_SCENARIO_MIN_VERSION = 1;
 const DEVICE_SCENARIO_MAX_VERSION = 2;
 
-/** Validates device-scenario document shape before persistence (v1–v2). */
-export function assertDeviceScenarioDocument(body: Record<string, unknown>): void {
+/** Returns a validation error message, or null when the document shape is acceptable (v1–v2). */
+export function validateDeviceScenarioDocument(body: Record<string, unknown>): string | null {
   if (body.kind !== DEVICE_SCENARIO_KIND) {
-    throw new BadRequestException(`Expected kind ${DEVICE_SCENARIO_KIND}`);
+    return `Expected kind ${DEVICE_SCENARIO_KIND}`;
   }
   const version = body.version;
   if (
@@ -18,15 +18,24 @@ export function assertDeviceScenarioDocument(body: Record<string, unknown>): voi
     version < DEVICE_SCENARIO_MIN_VERSION ||
     version > DEVICE_SCENARIO_MAX_VERSION
   ) {
-    throw new BadRequestException(`Unsupported device-scenario version ${String(version)}`);
+    return `Unsupported device-scenario version ${String(version)}`;
   }
   if (typeof body.deviceKind !== 'string') {
-    throw new BadRequestException('deviceKind is required');
+    return 'deviceKind is required';
   }
   if (body.signalGraph === undefined || typeof body.signalGraph !== 'object' || body.signalGraph === null) {
-    throw new BadRequestException('signalGraph is required');
+    return 'signalGraph is required';
   }
   if (body.scenario === undefined || typeof body.scenario !== 'object' || body.scenario === null) {
-    throw new BadRequestException('scenario is required');
+    return 'scenario is required';
+  }
+  return null;
+}
+
+/** Validates device-scenario document shape before persistence (v1–v2). */
+export function assertDeviceScenarioDocument(body: Record<string, unknown>): void {
+  const validationError = validateDeviceScenarioDocument(body);
+  if (validationError !== null) {
+    throw new BadRequestException(validationError);
   }
 }

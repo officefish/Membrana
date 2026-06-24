@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "sprint": "comp-mvp-packaging-2026-06-21",
+  "teams": [
+    {
+      "id": "alpha",
+      "userCaseId": "usercase-mvp-microphone-alpha",
+      "documentPath": "alpha/device-scenario.json",
+      "executionPolicy": "competition",
+      "isCompetitionTemplate": true,
+      "competitionTimeoutSec": 600
+    },
+    {
+      "id": "beta",
+      "userCaseId": "usercase-mvp-microphone-beta",
+      "documentPath": "beta/device-scenario.json",
+      "executionPolicy": "competition",
+      "isCompetitionTemplate": true,
+      "competitionTimeoutSec": 600
+    },
+    {
+      "id": "gamma",
+      "userCaseId": "usercase-mvp-microphone-gamma",
+      "documentPath": "gamma/device-scenario.json",
+      "executionPolicy": "competition",
+      "isCompetitionTemplate": true,
+      "competitionTimeoutSec": 600
+    }
+  ]
+}

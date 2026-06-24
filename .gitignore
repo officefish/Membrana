@@ -95,3 +95,6 @@ pnpm-lock.yaml
 !.claude/skills/**
 .continue/
 .cursor/mcp.json
+
+# SSL сертификаты для https соединений
+ssl/

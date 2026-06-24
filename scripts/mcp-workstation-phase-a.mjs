@@ -11,16 +11,24 @@ import { homedir, platform } from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { buildTier0Config } from './mcp-tier0.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
-const TIER0 = resolve(root, 'docs/mcp/tier0-workstation.example.json');
 const OUT_DIR = resolve(root, 'docs/discussions');
 const REPORT = resolve(OUT_DIR, 'mcp-phase-a-report.md');
 
+function quoteShellArg(part) {
+  return /[\s"&|<>^]/.test(part) ? `"${part.replace(/"/g, '\\"')}"` : part;
+}
+
+/** Windows: одна строка + shell (без DEP0190). Unix: cmd + args, shell: false. */
 function run(cmd, args, opts = {}) {
-  const shell = platform() === 'win32';
-  return spawnSync(cmd, args, { encoding: 'utf8', cwd: root, shell, ...opts });
+  if (platform() === 'win32') {
+    const line = [cmd, ...args].map(quoteShellArg).join(' ');
+    return spawnSync(line, { encoding: 'utf8', cwd: root, shell: true, ...opts });
+  }
+  return spawnSync(cmd, args, { encoding: 'utf8', cwd: root, shell: false, ...opts });
 }
 
 function runNpx(args, opts = {}) {
@@ -31,13 +39,6 @@ function versionOf(cmd, args) {
   const r = run(cmd, args);
   const line = (r.stdout || r.stderr || '').split('\n').find((l) => l.trim());
   return { ok: r.status === 0, line: line?.trim() ?? '', status: r.status };
-}
-
-function buildTier0Config(repoRoot) {
-  const raw = readFileSync(TIER0, 'utf8');
-  const normalized = repoRoot.replace(/\\/g, '/');
-  const json = JSON.parse(raw.replaceAll('__MEMBRANA_ROOT__', normalized));
-  return JSON.stringify(json, null, 2) + '\n';
 }
 
 function cursorMcpPath() {

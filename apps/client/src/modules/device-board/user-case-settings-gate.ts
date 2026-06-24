@@ -3,7 +3,7 @@ import { MembranaRegistry } from '@membrana/agenda';
 import {
   ClientUserCaseCatalogService,
   type UserCaseEntitlementStatus,
-} from './user-case-catalog-service.js';
+} from '@membrana/usercase-catalog-service';
 import {
   DEFAULT_DEVICE_BOARD_MODULE_CONFIG,
   DEVICE_BOARD_MODULE_ID,

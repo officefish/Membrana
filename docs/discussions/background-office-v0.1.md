@@ -169,11 +169,9 @@ curl -X POST -H "X-Linear-Signature: deadbeef" \
 
 ## 7. Что дальше — следующий ticket (этап 5)
 
-**Заголовок:** `Регистрация домена и продовый деплой background-office (v0.1)`.
+**Статус: выполнено (2026-06).** Деплой вынесен в эпик O1–O4; итог — §9 ниже. Промпт [`SERVER_DEPLOYMENT_PROMPT.md`](../prompts/SERVER_DEPLOYMENT_PROMPT.md) частично заменён чеклистом [`BACKGROUND_OFFICE_DEPLOY.md`](../deploy/BACKGROUND_OFFICE_DEPLOY.md).
 
-**Промпт-спецификация:** [`docs/prompts/SERVER_DEPLOYMENT_PROMPT.md`](../prompts/SERVER_DEPLOYMENT_PROMPT.md) (создаётся в одном PR с этим журналом).
-
-Кратко, что охватывает следующий этап:
+Кратко, что **было** запланировано (для истории ticket'а):
 
 - Регистрация домена под Membrana (выбор зоны + регистратор).
 - DNS-записи (A/AAAA, CAA).
@@ -184,7 +182,61 @@ curl -X POST -H "X-Linear-Signature: deadbeef" \
 - Боевой Linear webhook, направленный на `https://<domain>/webhooks/linear`.
 - README с воспроизводимой процедурой деплоя.
 
-Этап 5 — **не v0.2 функционально** (новых эндпоинтов нет), а **операционная зрелость v0.1**: тот же сервер, но доступен наружу и устойчив.
+---
+
+## 9. Этап 5 — деплой (O1–O4)
+
+**Дата:** 2026-06. **Эпик:** `background-office-v1` (GitHub #60–#61).
+
+### Платформа и домен
+
+| Параметр | Решение |
+|----------|---------|
+| Хостинг | VPS `72.56.27.58` (тот же узел, что `background-media`) |
+| Домен | `membrana.space` |
+| Office URL | `https://office.membrana.space` |
+| Media URL | `https://media.membrana.space` |
+| TLS | Caddy v2 + Let's Encrypt (site blocks в `/etc/caddy/Caddyfile.d/`) |
+| Office bind | `127.0.0.1:3000` → Caddy reverse proxy |
+| Stateful storage | не нужен (office stateless) |
+
+### Стоимость (оценка)
+
+| Статья | Порядок величины |
+|--------|------------------|
+| VPS | уже оплачен под media + office (два compose на одном хосте) |
+| Домен `membrana.space` | регистратор (годовая плата за зону) |
+| Anthropic API | pay-per-use по `ANTHROPIC_API_KEY` |
+| Linear / GitHub | бесплатные tier'ы для webhook + read API |
+
+Отдельный VPS для office **не** понадобился — stateless API делит машину с media.
+
+### Артефакты в репозитории
+
+- O1: Docker (`packages/background-office/Dockerfile`, compose)
+- O2: `deploy/office-stack.sh`, `deploy/generate-office-env.sh`, SSH prod-up
+- O3: `deploy/Caddyfile.office.membrana.space`, `_ssh-office-tls-setup.mjs`
+- O4: `_ssh-office-smoke.mjs`, README Production deployment, §9–§10 deploy doc
+
+### Smoke (проверено)
+
+```bash
+curl -s https://office.membrana.space/health
+# → {"status":"ok",...}
+
+curl -s -o /dev/null -w "%{http_code}" -X POST https://office.membrana.space/webhooks/linear -d '{}'
+# → 403 (без подписи — ожидаемо)
+
+node scripts/_ssh-office-smoke.mjs
+```
+
+### Осталось вручную (O4)
+
+1. ~~Заменить `REPLACE_BEFORE_PROD`~~ — выполнено (`_sync-office-env-from-root.mjs`).
+2. ~~Linear webhook~~ — создан, smoke signed → 200.
+3. ~~Чеклист §10~~ — выполнен (2026-06-12).
+4. **Linear R1/R3:** привязать tickets к #60 / #61 — [`LINEAR_GITHUB_SYNC_REGULATION.md`](../prompts/LINEAR_GITHUB_SYNC_REGULATION.md) (неблокирующий).
+5. **PR + merge** в `main` — по готовности; затем `yarn task:close-github`.
 
 ---
 

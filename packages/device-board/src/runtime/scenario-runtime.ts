@@ -13,6 +13,8 @@ import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
+import { resolveCompetitionRunLimits } from '../graph/execution-policy.js';
+import type { CompetitionRunLogPayload } from './competition-run-log.js';
 import {
   createIdleScenarioRuntimeState,
   runtimeBranchToHandlerBranch,
@@ -563,6 +565,13 @@ export class ScenarioRuntime {
     signal: AbortSignal,
   ): Promise<void> {
     try {
+      this.scenarioStartedAtMs = Date.now();
+      this.runId = globalThis.crypto?.randomUUID?.().slice(0, 8) ?? `run-${Date.now()}`;
+      this.patchState({
+        ...this.state,
+        runStartedAtMs: this.scenarioStartedAtMs,
+      });
+
       await this.runOnConnectIfLinked(document, signal);
       if (signal.aborted) {
         await this.finalizeRun(document);
@@ -578,10 +587,12 @@ export class ScenarioRuntime {
         return;
       }
 
-      this.scenarioStartedAtMs = Date.now();
       this.lastMainTickAtMs = null;
       this.lastAlarmTickAtMs = null;
-      this.runId = globalThis.crypto?.randomUUID?.().slice(0, 8) ?? `run-${Date.now()}`;
+      this.patchState({
+        ...this.state,
+        runStartedAtMs: this.scenarioStartedAtMs,
+      });
 
       let mainIteration = 0;
       let previousMainDetection: ScenarioDetectionResult | null = null;
@@ -596,6 +607,21 @@ export class ScenarioRuntime {
       while (!signal.aborted) {
         await this.waitWhileUnpaused(signal);
         if (signal.aborted) {
+          break;
+        }
+
+        const competitionLimits = resolveCompetitionRunLimits(document);
+        if (
+          competitionLimits !== null &&
+          this.scenarioStartedAtMs !== null &&
+          Date.now() - this.scenarioStartedAtMs >= competitionLimits.timeoutMs
+        ) {
+          this.host.log('competition-timeout', {
+            runId: this.runId,
+            limitMs: competitionLimits.timeoutMs,
+            elapsedMs: Date.now() - this.scenarioStartedAtMs,
+          });
+          this.stop('timeout');
           break;
         }
 
@@ -855,11 +881,31 @@ export class ScenarioRuntime {
   }
 
   private async finishStopped(): Promise<void> {
+    const document = this.document;
+    if (document !== null && this.scenarioStartedAtMs !== null) {
+      const competitionLimits = resolveCompetitionRunLimits(document);
+      if (competitionLimits !== null) {
+        const payload: CompetitionRunLogPayload = {
+          runId: this.runId,
+          documentTitle: document.meta?.title,
+          startedAtMs: this.scenarioStartedAtMs,
+          endedAtMs: Date.now(),
+          stopReason: this.stopReason ?? 'system',
+          mainLoopIterations: this.state.mainLoopIteration,
+        };
+        try {
+          await this.host.postCompetitionRunLog?.(payload);
+        } catch {
+          this.host.log('competition-run-log-failed', { runId: this.runId });
+        }
+      }
+    }
     await this.host.stopStream().catch(() => undefined);
     this.patchState({
       ...this.idleState(),
       phase: 'stopped',
       lastStopReason: this.stopReason,
+      runStartedAtMs: null,
     });
     this.stopRequested = false;
     this.disconnectRequested = false;

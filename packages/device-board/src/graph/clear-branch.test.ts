@@ -13,6 +13,8 @@ import {
   shouldPreserveLockedNodes,
 } from './clear-branch.js';
 import { createEventBoardNode, isEventNode, isLoopTickEventNode } from './event-node.js';
+import { createEmptyFunctionDraft } from './collapse-to-function.js';
+import { createScenarioBoardNode } from './board-node-factory.js';
 
 describe('clear-branch (device-board)', () => {
   it('preserves Event entry when clearing an event-handler branch', () => {
@@ -57,6 +59,21 @@ describe('clear-branch (device-board)', () => {
     expect(shouldPreserveLockedNodes('scenario', 'onConnect')).toBe(true);
     expect(shouldPreserveLockedNodes('scenario', 'main')).toBe(true);
     expect(shouldPreserveLockedNodes('scenario', 'alarm')).toBe(true);
+    expect(shouldPreserveLockedNodes('scenario', 'function')).toBe(true);
     expect(shouldPreserveLockedNodes('signal', 'initial')).toBe(false);
+  });
+
+  it('preserves function-io nodes when clearing function branch', () => {
+    const draft = createEmptyFunctionDraft('fn-test', 'Test');
+    const user = createScenarioBoardNode('write-journal', {
+      id: 'user-1',
+      position: { x: 300, y: 100 },
+    });
+    const nodes = [...draft.nodes, user];
+    const { nodes: kept, edges } = clearBranchState(nodes, [], true);
+    expect(kept).toHaveLength(2);
+    expect(kept.some((node) => node.data?.nodeKind === 'function-input')).toBe(true);
+    expect(kept.some((node) => node.data?.nodeKind === 'function-output')).toBe(true);
+    expect(edges).toHaveLength(0);
   });
 });

@@ -18,6 +18,7 @@ import {
   DeleteFunctionModal,
   DeleteVariableModal,
   PencilIcon,
+  RenameFunctionModal,
   RenameVariableModal,
   TrashIcon,
   VariableNodeKindModal,
@@ -43,6 +44,7 @@ export interface BoardLeftSidebarProps {
   readonly activeFunctionId: string;
   readonly onSelectFunction: (functionId: string) => void;
   readonly onCreateFunction: () => void;
+  readonly onRenameFunction: (functionId: string, name: string) => void;
   readonly onRemoveFunction: (functionId: string) => void;
 }
 
@@ -132,11 +134,16 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   activeFunctionId,
   onSelectFunction,
   onCreateFunction,
+  onRenameFunction,
   onRemoveFunction,
 }) => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [nodeKindVariable, setNodeKindVariable] = useState<ScenarioVariable | null>(null);
   const [renameVariable, setRenameVariable] = useState<ScenarioVariable | null>(null);
+  const [renameFunction, setRenameFunction] = useState<{
+    readonly id: string;
+    readonly name: string;
+  } | null>(null);
   const [deleteVariable, setDeleteVariable] = useState<ScenarioVariable | null>(null);
   const [deleteFunctionId, setDeleteFunctionId] = useState<string | null>(null);
 
@@ -256,6 +263,12 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
             disabled={isRuntime}
             onSelect={onSelectFunction}
             onCreate={onCreateFunction}
+            onRename={(functionId) => {
+              const fn = scenarioFunctions.find((item) => item.id === functionId);
+              if (fn !== undefined) {
+                setRenameFunction({ id: fn.id, name: fn.name });
+              }
+            }}
             onDelete={setDeleteFunctionId}
           />
         ) : null}
@@ -306,6 +319,12 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
         variable={renameVariable}
         onClose={() => setRenameVariable(null)}
         onRename={onRenameVariable}
+      />
+      <RenameFunctionModal
+        functionId={renameFunction?.id ?? null}
+        functionName={renameFunction?.name ?? ''}
+        onClose={() => setRenameFunction(null)}
+        onConfirm={onRenameFunction}
       />
       <DeleteVariableModal
         variable={deleteVariable}

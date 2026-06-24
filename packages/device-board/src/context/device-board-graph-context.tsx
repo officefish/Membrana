@@ -12,6 +12,7 @@ import {
   createRecordingPolicyValue,
   createScenarioVariable,
   DEFAULT_RECORDING_POLICY,
+  DEFAULT_COMPETITION_TIMEOUT_SEC,
   resolveScenarioCollectorConfig,
   resolveScenarioRecordingPolicy,
   resolveScenarioFftTrendsPolicy,
@@ -76,6 +77,8 @@ import {
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,
   stampSystemPreviewDocument,
+  resolveCompetitionExecutionPolicy,
+  isCompetitionStructureLocked,
   createEmptyFunctionDraft,
   type VariableNodeKind,
   type V04PaletteNodeKind,
@@ -247,6 +250,10 @@ export interface DeviceBoardGraphContextValue {
   /** U10 W2: user workspace slots (undefined host → поля no-op). */
   readonly workspaceEnabled: boolean;
   readonly isSessionReadOnly: boolean;
+  /** Competition mode: block structure edits (delete, paste, collapse). */
+  readonly isStructureLocked: boolean;
+  readonly isCompetitionMode: boolean;
+  readonly competitionTimeoutSec: number;
   readonly sessionTitle: string | null;
   readonly workspaceList: readonly DeviceBoardWorkspaceListItem[];
   readonly activeWorkspaceId: string | null;
@@ -324,6 +331,11 @@ export interface DeviceBoardGraphContextValue {
   readonly removeVariable: (id: string) => void;
   /** v0.4: добавить узел get/set переменной в активную ветку. */
   readonly updateActiveFunctionMeta: (
+    patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
+  ) => void;
+  /** Переименование / описание пользовательской функции (активной или по id с handler-веток). */
+  readonly updateUserFunctionMeta: (
+    functionId: string,
     patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
   ) => void;
   readonly addActiveFunctionPin: (side: FunctionPinSide, kind: 'exec' | 'data') => string | null;
@@ -410,6 +422,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   workspaceHost,
   boardSession = null,
 }) => {
+  const isSessionReadOnly = isDeviceBoardSessionReadOnly(boardSession);
+  const structureLockRef = useRef({
+    locked: isSessionReadOnly,
+    competition: false,
+    timeoutSec: DEFAULT_COMPETITION_TIMEOUT_SEC,
+  });
+
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
     [deviceKindProp, initialHydratedState],
@@ -644,13 +663,6 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [forgetPendingEditUndo, revertToSavedDocumentIfDirty, scenarioBranch],
   );
 
-  const setScenarioBranch = useCallback(
-    (branch: ScenarioBranchTab) => {
-      navigateScenarioBranch(branch, sidebarHandlerRevertPolicy());
-    },
-    [navigateScenarioBranch],
-  );
-
   useEffect(() => {
     let cancelled = false;
 
@@ -818,6 +830,18 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     ],
   );
 
+  const setScenarioBranch = useCallback(
+    (branch: ScenarioBranchTab) => {
+      if (scenarioBranch === 'function' && branch !== 'function') {
+        setScenarioFunctionDrafts((drafts) => commitActiveFunctionDraft(drafts));
+        navigateScenarioBranch(branch, inFunctionLayerRevertPolicy());
+        return;
+      }
+      navigateScenarioBranch(branch, sidebarHandlerRevertPolicy());
+    },
+    [commitActiveFunctionDraft, navigateScenarioBranch, scenarioBranch],
+  );
+
   const selectUserFunction = useCallback(
     (functionId: string) => {
       const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
@@ -951,65 +975,64 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     ],
   );
 
-  const updateActiveFunctionMeta = useCallback(
-    (patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>) => {
-      setScenarioFunctionMeta((meta) => {
-        const next = { ...meta, ...patch };
-        if (patch.name !== undefined) {
-          const payload = {
-            functionId: next.id,
-            functionName: next.name,
-            inputPins: next.inputPins,
-            outputPins: next.outputPins,
-            removedInputPinIds: new Set<string>(),
-            removedOutputPinIds: new Set<string>(),
-            renames: [] as const,
-          };
-          const initial = syncSubgraphBlocksForFunctionPins({
-            ...payload,
-            nodes: scenarioInitialNodes,
-            edges: scenarioInitialEdges,
-          });
-          setScenarioInitialNodes(initial.nodes);
-          setScenarioInitialEdges(initial.edges);
-          const onConnect = syncSubgraphBlocksForFunctionPins({
-            ...payload,
-            nodes: scenarioOnConnectNodes,
-            edges: scenarioOnConnectEdges,
-          });
-          setScenarioOnConnectNodes(onConnect.nodes);
-          setScenarioOnConnectEdges(onConnect.edges);
-          const main = syncSubgraphBlocksForFunctionPins({
-            ...payload,
-            nodes: scenarioMainNodes,
-            edges: scenarioMainEdges,
-          });
-          setScenarioMainNodes(main.nodes);
-          setScenarioMainEdges(main.edges);
-          const alarm = syncSubgraphBlocksForFunctionPins({
-            ...payload,
-            nodes: scenarioAlarmNodes,
-            edges: scenarioAlarmEdges,
-          });
-          setScenarioAlarmNodes(alarm.nodes);
-          setScenarioAlarmEdges(alarm.edges);
-          const onStop = syncSubgraphBlocksForFunctionPins({
-            ...payload,
-            nodes: scenarioOnStopNodes,
-            edges: scenarioOnStopEdges,
-          });
-          setScenarioOnStopNodes(onStop.nodes);
-          setScenarioOnStopEdges(onStop.edges);
-          const onDisconnect = syncSubgraphBlocksForFunctionPins({
-            ...payload,
-            nodes: scenarioOnDisconnectNodes,
-            edges: scenarioOnDisconnectEdges,
-          });
-          setScenarioOnDisconnectNodes(onDisconnect.nodes);
-          setScenarioOnDisconnectEdges(onDisconnect.edges);
-        }
-        return next;
+  const syncSubgraphBlocksForFunctionMeta = useCallback(
+    (input: {
+      readonly functionId: string;
+      readonly functionName: string;
+      readonly inputPins: ScenarioFunctionCanvasMeta['inputPins'];
+      readonly outputPins: ScenarioFunctionCanvasMeta['outputPins'];
+    }) => {
+      const payload = {
+        functionId: input.functionId,
+        functionName: input.functionName,
+        inputPins: input.inputPins,
+        outputPins: input.outputPins,
+        removedInputPinIds: new Set<string>(),
+        removedOutputPinIds: new Set<string>(),
+        renames: [] as const,
+      };
+      const initial = syncSubgraphBlocksForFunctionPins({
+        ...payload,
+        nodes: scenarioInitialNodes,
+        edges: scenarioInitialEdges,
       });
+      setScenarioInitialNodes(initial.nodes);
+      setScenarioInitialEdges(initial.edges);
+      const onConnect = syncSubgraphBlocksForFunctionPins({
+        ...payload,
+        nodes: scenarioOnConnectNodes,
+        edges: scenarioOnConnectEdges,
+      });
+      setScenarioOnConnectNodes(onConnect.nodes);
+      setScenarioOnConnectEdges(onConnect.edges);
+      const main = syncSubgraphBlocksForFunctionPins({
+        ...payload,
+        nodes: scenarioMainNodes,
+        edges: scenarioMainEdges,
+      });
+      setScenarioMainNodes(main.nodes);
+      setScenarioMainEdges(main.edges);
+      const alarm = syncSubgraphBlocksForFunctionPins({
+        ...payload,
+        nodes: scenarioAlarmNodes,
+        edges: scenarioAlarmEdges,
+      });
+      setScenarioAlarmNodes(alarm.nodes);
+      setScenarioAlarmEdges(alarm.edges);
+      const onStop = syncSubgraphBlocksForFunctionPins({
+        ...payload,
+        nodes: scenarioOnStopNodes,
+        edges: scenarioOnStopEdges,
+      });
+      setScenarioOnStopNodes(onStop.nodes);
+      setScenarioOnStopEdges(onStop.edges);
+      const onDisconnect = syncSubgraphBlocksForFunctionPins({
+        ...payload,
+        nodes: scenarioOnDisconnectNodes,
+        edges: scenarioOnDisconnectEdges,
+      });
+      setScenarioOnDisconnectNodes(onDisconnect.nodes);
+      setScenarioOnDisconnectEdges(onDisconnect.edges);
     },
     [
       scenarioAlarmEdges,
@@ -1025,6 +1048,81 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnStopEdges,
       scenarioOnStopNodes,
     ],
+  );
+
+  const updateUserFunctionMeta = useCallback(
+    (functionId: string, patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>) => {
+      const draft = scenarioFunctionDrafts.find((item) => item.id === functionId);
+      if (draft === undefined) {
+        return;
+      }
+
+      const baseMeta: ScenarioFunctionCanvasMeta =
+        functionId === activeFunctionId
+          ? scenarioFunctionMeta
+          : {
+              id: draft.id,
+              name: draft.name,
+              description: draft.description,
+              inputPins: draft.inputPins,
+              outputPins: draft.outputPins,
+              entry: draft.entry,
+            };
+
+      const nextName =
+        patch.name !== undefined
+          ? patch.name.trim().length > 0
+            ? patch.name.trim()
+            : baseMeta.name
+          : baseMeta.name;
+      const nextDescription =
+        patch.description !== undefined ? patch.description : baseMeta.description;
+      const nextMeta: ScenarioFunctionCanvasMeta = {
+        ...baseMeta,
+        ...patch,
+        name: nextName,
+        description: nextDescription,
+      };
+
+      if (patch.name !== undefined && nextName !== baseMeta.name) {
+        syncSubgraphBlocksForFunctionMeta({
+          functionId,
+          functionName: nextName,
+          inputPins: nextMeta.inputPins,
+          outputPins: nextMeta.outputPins,
+        });
+      }
+
+      setScenarioFunctionDrafts((drafts) =>
+        drafts.map((item) =>
+          item.id === functionId
+            ? { ...item, name: nextMeta.name, description: nextMeta.description }
+            : item,
+        ),
+      );
+
+      if (functionId === activeFunctionId) {
+        setScenarioFunctionMeta((meta) => ({
+          ...meta,
+          ...patch,
+          name: nextMeta.name,
+          description: nextMeta.description,
+        }));
+      }
+    },
+    [
+      activeFunctionId,
+      scenarioFunctionDrafts,
+      scenarioFunctionMeta,
+      syncSubgraphBlocksForFunctionMeta,
+    ],
+  );
+
+  const updateActiveFunctionMeta = useCallback(
+    (patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>) => {
+      updateUserFunctionMeta(activeFunctionId, patch);
+    },
+    [activeFunctionId, updateUserFunctionMeta],
   );
 
   const applyActiveFunctionPinState = useCallback(
@@ -1327,6 +1425,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const collapseMarqueeToFunction = useCallback(
     (branch: ScenarioBranchTab, selectedNodeIds: readonly string[]): string | null => {
+      if (structureLockRef.current.locked) {
+        return structureLockRef.current.competition
+          ? 'Конкурсный сценарий: структура заблокирована'
+          : 'Режим только просмотра';
+      }
       if (branch === 'function') {
         return 'Объединение доступно только на ветках сценария';
       }
@@ -1360,6 +1463,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const collapseMarqueeToCommentGroup = useCallback(
     (branch: ScenarioCommentGroupBranch, selectedNodeIds: readonly string[]): CollapseMarqueeToCommentGroupResult => {
+      if (structureLockRef.current.locked) {
+        return {
+          error: structureLockRef.current.competition
+            ? 'Конкурсный сценарий: структура заблокирована'
+            : 'Режим только просмотра',
+          groupNode: null,
+        };
+      }
       const branchNodes = branch === 'signal' ? signalNodes : readScenarioBranchGraph(branch).nodes;
       const branchEdges =
         branch === 'signal' ? signalEdges : readScenarioBranchGraph(branch).edges;
@@ -1515,10 +1626,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnDisconnectNodes,
       scenarioOnDisconnectEdges,
       scenarioFunctions: hydratedFunctionInputs(buildHydratedSnapshot()),
+      variables,
     });
     setValidationIssues(issues);
     return issues;
-  }, [buildHydratedSnapshot, deviceKind, scenarioAlarmEdges, scenarioAlarmNodes, scenarioInitialEdges, scenarioInitialNodes, scenarioOnConnectEdges, scenarioOnConnectNodes, scenarioMainEdges, scenarioMainNodes, scenarioOnDisconnectEdges, scenarioOnDisconnectNodes, scenarioOnStopEdges, scenarioOnStopNodes, signalEdges, signalNodes]);
+  }, [buildHydratedSnapshot, deviceKind, scenarioAlarmEdges, scenarioAlarmNodes, scenarioInitialEdges, scenarioInitialNodes, scenarioOnConnectEdges, scenarioOnConnectNodes, scenarioMainEdges, scenarioMainNodes, scenarioOnDisconnectEdges, scenarioOnDisconnectNodes, scenarioOnStopEdges, scenarioOnStopNodes, signalEdges, signalNodes, variables]);
 
   const refreshValidation = useCallback((): readonly PreRunValidationIssue[] => {
     return runValidation();
@@ -1529,6 +1641,24 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     buildHydratedSnapshotRef.current = buildHydratedSnapshot;
     runValidationRef.current = runValidation;
   }, [buildDocument, buildHydratedSnapshot, runValidation]);
+
+  const scenarioPolicy = useMemo(() => {
+    const meta = buildDocument().meta;
+    const competition = resolveCompetitionExecutionPolicy(meta);
+    return {
+      isCompetitionMode: competition !== null,
+      competitionTimeoutSec: competition?.timeoutSec ?? DEFAULT_COMPETITION_TIMEOUT_SEC,
+      isStructureLocked: isSessionReadOnly || isCompetitionStructureLocked(meta),
+    };
+  }, [buildDocument, isSessionReadOnly]);
+
+  useEffect(() => {
+    structureLockRef.current = {
+      locked: scenarioPolicy.isStructureLocked,
+      competition: scenarioPolicy.isCompetitionMode,
+      timeoutSec: scenarioPolicy.competitionTimeoutSec,
+    };
+  }, [scenarioPolicy]);
 
   const onSignalNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -1643,7 +1773,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'function', nodeIds: plan.nodeIds });
       }
-      setScenarioFunctionNodes((nodes) => applyNodeChanges(changes, nodes));
+      setScenarioFunctionNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
     },
     [captureEditUndoSnapshot, scenarioFunctionNodes],
   );
@@ -1967,7 +2097,6 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const maxUserWorkspaces = workspaceHost?.maxUserWorkspaces ?? 0;
   const workspaceEnabled = workspaceHost !== undefined;
-  const isSessionReadOnly = isDeviceBoardSessionReadOnly(boardSession);
   const sessionTitle = boardSession?.title ?? null;
 
   const refreshWorkspaces = useCallback(async (): Promise<void> => {
@@ -2181,6 +2310,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     syncStatus,
     scenarioAlarmEdges,
     scenarioAlarmNodes,
+    scenarioFunctionDrafts,
     scenarioFunctionEdges,
     scenarioFunctionMeta,
     scenarioFunctionNodes,
@@ -2699,9 +2829,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       branch: scenarioBranch,
       clipboardCount: boardClipboardRef.current?.nodes.length ?? 0,
       anchor: anchorFlowPosition ?? null,
-      readOnly: isSessionReadOnly,
+      readOnly: structureLockRef.current.locked,
     });
-    if (isSessionReadOnly) {
+    if (structureLockRef.current.locked) {
       logBoardClipboardStep(showInfoLogsRef.current, 'paste-failed', {
         branch: scenarioBranch,
         reason: 'read-only-session',
@@ -2745,9 +2875,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       logBoardClipboardStep(showInfoLogsRef.current, 'delete-attempt', {
         branch: scenarioBranch,
         nodeIds,
-        readOnly: isSessionReadOnly,
+        readOnly: structureLockRef.current.locked,
       });
-      if (isSessionReadOnly) {
+      if (structureLockRef.current.locked) {
         logBoardClipboardStep(showInfoLogsRef.current, 'delete-failed', {
           branch: scenarioBranch,
           reason: 'read-only-session',
@@ -3036,6 +3166,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       reloadScenarioFromServer,
       workspaceEnabled,
       isSessionReadOnly,
+      isStructureLocked: scenarioPolicy.isStructureLocked,
+      isCompetitionMode: scenarioPolicy.isCompetitionMode,
+      competitionTimeoutSec: scenarioPolicy.competitionTimeoutSec,
       sessionTitle,
       workspaceList,
       activeWorkspaceId,
@@ -3071,6 +3204,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateRecordingPolicy,
       updateFftTrendsPolicy,
       updateActiveFunctionMeta,
+      updateUserFunctionMeta,
       addActiveFunctionPin,
       removeActiveFunctionPin,
       updateActiveFunctionPin,
@@ -3106,6 +3240,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateRecordingPolicy,
       updateFftTrendsPolicy,
       updateActiveFunctionMeta,
+      updateUserFunctionMeta,
       addActiveFunctionPin,
       removeActiveFunctionPin,
       updateActiveFunctionPin,
@@ -3137,6 +3272,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       inspectRuntimeNode,
       isDirty,
       isSessionReadOnly,
+      scenarioPolicy,
       sessionTitle,
       isValidConnectionForLayer,
       onScenarioAlarmConnect,
@@ -3219,6 +3355,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       syncStatus,
       workspaceEnabled,
       isSessionReadOnly,
+      scenarioPolicy,
       sessionTitle,
       workspaceList,
       validationIssues,

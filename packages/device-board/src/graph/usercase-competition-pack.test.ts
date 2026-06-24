@@ -45,8 +45,11 @@ describe('usercase-competition-pack', () => {
         scenarioOnDisconnectNodes: hydrated.scenarioOnDisconnectNodes,
         scenarioOnDisconnectEdges: hydrated.scenarioOnDisconnectEdges,
         scenarioFunctions: hydratedFunctionInputs(hydrated),
+        variables: hydrated.variables,
       });
       expect(isPreRunValid(preRunIssues), JSON.stringify(preRunIssues)).toBe(true);
+      expect(canon.meta?.executionPolicy).toBe('competition');
+      expect(canon.meta?.isCompetitionTemplate).toBe(true);
     });
   }
 

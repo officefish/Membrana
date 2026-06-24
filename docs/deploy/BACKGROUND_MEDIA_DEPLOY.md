@@ -26,13 +26,27 @@
 ## 1. Данные для вечернего сеанса (заполнить)
 
 ```
-VPS_HOST=
-SSH_USER=
-DOMAIN=media.<domain>
+VPS_HOST=72.56.27.58
+SSH_USER=root
+DOMAIN=media.membrana.space
 GIT_BRANCH=techies68
 ```
 
 Секреты (`API_INTERNAL_TOKEN`, `POSTGRES_PASSWORD`) **генерируются на сервере** — не передавать в чат.
+
+Локальные SSH-хелперы (читают `.env`, не коммитить пароль):
+
+```bash
+node scripts/_ssh-media-check.mjs          # health + compose ps
+node scripts/_ssh-media-tls-setup.mjs --check-dns
+node scripts/_ssh-media-tls-setup.mjs      # Caddy + Let's Encrypt
+```
+
+| `.env` ключ | Назначение |
+|-------------|------------|
+| `BACKGROUND_MEDIA_IPV4` | IP VPS (`72.56.27.58`) |
+| `BACKGROUND_MEDIA_PASSWORD` | root SSH (только локально) |
+| `MEDIA_DOMAIN` | опционально, default `media.membrana.space` |
 
 ---
 
@@ -42,7 +56,7 @@ GIT_BRANCH=techies68
 |----------|----------|
 | Хост / IP | см. §1 |
 | SSH user | см. §1 |
-| DNS | `media.<domain>` → A-record на VPS |
+| DNS | `media.membrana.space` → A-record `72.56.27.58` |
 | OS | Ubuntu 22.04+ / Debian 12+ |
 | Docker | Engine 24+ + Compose v2 |
 | Диск | ≥ 20 GB (blobs + PG) |
@@ -122,11 +136,60 @@ docker compose \
 
 ## 5. TLS (Caddy)
 
+**Текущий статус (2026-06-13):** Caddy 2.11 установлен на VPS, reverse proxy `media.membrana.space` → `127.0.0.1:3010`, порты 80/443 открыты. Let's Encrypt ждёт DNS — A-record `media.membrana.space` пока не резолвится.
+
+### 5a. Автоматический TLS (рекомендуется)
+
+Caddy сам выпустит сертификат, когда DNS укажет на VPS:
+
+1. В панели регистратора / DNS хостинга: **A** `media` → `72.56.27.58` (или `media.membrana.space` → `72.56.27.58`).
+2. Дождаться пропагации (до 24 ч). Проверка:
+
 ```bash
-sudo cp deploy/Caddyfile.media.example /etc/caddy/Caddyfile.d/media.caddy
-# заменить media.example.com на ваш поддомен
+node scripts/_ssh-media-tls-setup.mjs --check-dns
+# или: dig +short A media.membrana.space
+```
+
+3. После появления A-record:
+
+```bash
+# на VPS
 sudo systemctl reload caddy
-curl -s https://media.<domain>/health
+curl -s https://media.membrana.space/health
+```
+
+Конфиг в репозитории: [`deploy/Caddyfile.media.membrana.space`](../../deploy/Caddyfile.media.membrana.space).
+
+### 5b. Ручной сертификат (альтернатива)
+
+Если используете свой SSL (папка `ssl/membrana/space/` локально, в git не коммитится):
+
+| Файл в `ssl/membrana/space/` | Статус |
+|------------------------------|--------|
+| `membrana.space.key` | приватный ключ есть |
+| `membrana.space.csr` | CSR для **`www.membrana.space`**, не для `media.` |
+| `*.crt` / `fullchain.pem` | **нужен выданный сертификат** с SAN `media.membrana.space` или wildcard `*.membrana.space` |
+
+CSR ≠ готовый сертификат. Для поддомена `media.` нужен отдельный выпуск или wildcard.
+
+Загрузка на VPS (после получения `.crt` от CA):
+
+```bash
+# с локальной машины (пути подставить)
+scp ssl/membrana/space/fullchain.pem root@72.56.27.58:/etc/membrana/ssl/fullchain.pem
+scp ssl/membrana/space/membrana.space.key root@72.56.27.58:/etc/membrana/ssl/privkey.pem
+chmod 600 /etc/membrana/ssl/*
+
+# на VPS
+node scripts/_ssh-media-tls-setup.mjs --manual-cert
+```
+
+### 5c. Legacy (ручная установка Caddyfile)
+
+```bash
+sudo cp deploy/Caddyfile.media.membrana.space /etc/caddy/Caddyfile.d/media.caddy
+sudo systemctl reload caddy
+curl -s https://media.membrana.space/health
 ```
 
 ---
@@ -135,8 +198,8 @@ curl -s https://media.<domain>/health
 
 | Env (Vite build) | Пример |
 |------------------|--------|
-| `VITE_MEDIA_SERVER_URL` | `https://media.<domain>` |
-| `VITE_MEDIA_API_TOKEN` | `API_INTERNAL_TOKEN` из `/etc/membrana/media.env` |
+| `VITE_MEDIA_SERVER_URL` | `https://media.membrana.space` |
+| `VITE_MEDIA_API_TOKEN` | `API_INTERNAL_TOKEN` из `/etc/membrana/media.env` (локально: `node scripts/_ssh-media-show-token.mjs`) |
 
 Режим storage: `remote-server` в sample library.
 
@@ -200,7 +263,7 @@ curl http://localhost:3010/health
 ## Prod URL (заполнить после деплоя)
 
 ```
-HEALTH_URL=
-DEPLOYED_AT=
-NOTES=
+HEALTH_URL=https://media.membrana.space/health
+DEPLOYED_AT=2026-06-13 (Caddy installed; HTTPS pending DNS)
+NOTES=API healthy on 127.0.0.1:3010; LE cert auto after A-record propagates
 ```

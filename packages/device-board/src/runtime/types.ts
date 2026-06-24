@@ -32,7 +32,7 @@ export function runtimeBranchToHandlerBranch(
 }
 
 /** Причина остановки сценария (T1). */
-export type ScenarioStopReason = 'user' | 'system';
+export type ScenarioStopReason = 'user' | 'system' | 'timeout';
 
 /** Результат trends-анализа batch FFT (NewFftTrendsAnalysis → FftTrendAnalysisRef). */
 export interface FftTrendsAnalysisHostResult {
@@ -55,6 +55,8 @@ export interface ScenarioRuntimeState {
   readonly alarmLoopIteration: number;
   readonly lastStopReason: ScenarioStopReason | null;
   readonly lastError: string | null;
+  /** Wall-clock start of main loop (competition timer UI). */
+  readonly runStartedAtMs: number | null;
   /** Последний текст Print по nodeId (накапливается за прогон). */
   readonly printOutputs: Readonly<Record<string, string>>;
 }
@@ -95,6 +97,7 @@ export function createIdleScenarioRuntimeState(): ScenarioRuntimeState {
     alarmLoopIteration: 0,
     lastStopReason: null,
     lastError: null,
+    runStartedAtMs: null,
     printOutputs: {},
   };
 }

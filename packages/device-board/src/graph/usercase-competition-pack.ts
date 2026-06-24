@@ -1,6 +1,8 @@
 import type { DeviceScenarioDocument, ScenarioSubgraph } from '@membrana/core';
+import { DEFAULT_COMPETITION_TIMEOUT_SEC } from '@membrana/core';
 
 import { collapseSelectionToFunction } from './collapse-to-function.js';
+import { stampCompetitionDocumentMeta } from './execution-policy.js';
 import { serializeScenarioFunction } from './serialize-scenario-function.js';
 import {
   deserializeScenarioSubgraph,
@@ -219,20 +221,23 @@ export function packMvpUserCaseForTeam(
   baseDocument: DeviceScenarioDocument,
 ): DeviceScenarioDocument {
   const meta = TEAM_META[team];
-  let document: DeviceScenarioDocument = {
+  let document: DeviceScenarioDocument = stampCompetitionDocumentMeta({
     ...structuredClone(baseDocument),
     meta: {
       ...baseDocument.meta,
       title: meta.title,
       exportedAt: new Date().toISOString(),
       commentGroupProfile: meta.commentGroupProfile,
-    } as DeviceScenarioDocument['meta'],
+      isCompetitionTemplate: true,
+      executionPolicy: 'competition',
+      competitionTimeoutSec: DEFAULT_COMPETITION_TIMEOUT_SEC,
+    },
     scenario: {
       ...structuredClone(baseDocument.scenario),
       functions: [],
       commentGroups: [],
     },
-  };
+  });
 
   for (const collapse of TEAM_MAIN_COLLAPSES[team]) {
     document = applyBranchCollapse(document, 'main', collapse);

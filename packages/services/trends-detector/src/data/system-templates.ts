@@ -1,6 +1,6 @@
 import type { PatternTemplate } from '../types.js';
 
-/** Системные шаблоны акустических сцен (порт из trendsFFT demo + восстановленные классы). */
+/** Системные шаблоны акустических сцен для classifyTrends. */
 export const SYSTEM_TEMPLATES: readonly PatternTemplate[] = [
   {
     key: 'WIND',

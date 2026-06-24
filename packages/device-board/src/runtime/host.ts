@@ -205,6 +205,10 @@ export interface ScenarioRuntimeHost {
   readonly clearScenarioTraceBuffer?: () => void;
   readonly subscribeScenarioTraceBuffer?: (listener: () => void) => () => void;
   readonly watchConnection?: (handlers: ScenarioConnectionHandlers) => () => void;
+  /** Competition mode: stub log for server verification (background-media, Phase 3). */
+  readonly postCompetitionRunLog?: (
+    payload: import('./competition-run-log.js').CompetitionRunLogPayload,
+  ) => void | Promise<void>;
 }
 
 /** Заглушка host для тестов и playground. */
@@ -411,6 +415,7 @@ export function createStubScenarioRuntimeHost(
       })),
     waitUntilNextLoopTick: overrides.waitUntilNextLoopTick,
     watchConnection: overrides.watchConnection,
+    postCompetitionRunLog: overrides.postCompetitionRunLog,
     log,
   };
 }

@@ -27,7 +27,7 @@ techies68 9b40fa4 + 655acf1
 
 **Follow-up.** Редактор пользовательских шаблонов — отдельная задача `trends-fft-template-editor` (#57).
 
-**Отложено (out of scope v1).** sample-library mode; SoundTemplateEditor / zustand persist.
+**Отложено (out of scope v1).** sample-library mode; полный редактор шаблонов (#57).
 
 ---
 

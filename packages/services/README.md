@@ -25,6 +25,7 @@
 | [`telemetry`](./telemetry) | foundation | RAM-буфер телеметрии (legacy writers, MP5 upload) | Структурщик |
 | [`telemetry-journal`](./telemetry-journal) | foundation | Live journal: track + report items, storage backends (TJ1–TJ6) | Структурщик |
 | [`media-library`](./media-library) | foundation | Sample library storage port + quota | Структурщик |
+| [`usercase-catalog`](./usercase-catalog) | platform facade | UserCase catalog entitlement over device-board bundled index | Структурщик |
 | [`rag`](./rag) | foundation-infra | Dual-circuit RAG for rituals (LanceDB + repo operative) | Структурщик |
 | [`tdoa`](./tdoa) | analyzer | TDOA — **frozen** до stage-gate 1→2. | — |
 

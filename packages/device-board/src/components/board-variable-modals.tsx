@@ -279,6 +279,76 @@ export const DeleteVariableModal: React.FC<DeleteVariableModalProps> = ({
 
 export { PencilIcon, TrashIcon };
 
+export interface RenameFunctionModalProps {
+  readonly functionId: string | null;
+  readonly functionName: string;
+  readonly onClose: () => void;
+  readonly onConfirm: (functionId: string, name: string) => void;
+}
+
+/** Модалка переименования пользовательской функции. */
+export const RenameFunctionModal: React.FC<RenameFunctionModalProps> = ({
+  functionId,
+  functionName,
+  onClose,
+  onConfirm,
+}) => {
+  const titleId = useId();
+  const inputId = useId();
+  const [draft, setDraft] = useState(functionName);
+
+  useEffect(() => {
+    setDraft(functionName);
+  }, [functionId, functionName]);
+
+  if (functionId === null) {
+    return null;
+  }
+
+  const commit = (): void => {
+    const trimmed = draft.trim();
+    if (trimmed.length === 0 || trimmed === functionName) {
+      onClose();
+      return;
+    }
+    onConfirm(functionId, trimmed);
+    onClose();
+  };
+
+  return (
+    <BoardModal open titleId={titleId} onClose={onClose}>
+      <h3 id={titleId} className="text-lg font-bold">
+        Переименовать функцию
+      </h3>
+      <label className="form-control mt-4 w-full" htmlFor={inputId}>
+        <span className="label-text text-xs text-base-content/60">Имя</span>
+        <input
+          id={inputId}
+          type="text"
+          className="input input-bordered input-sm w-full"
+          value={draft}
+          autoFocus
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              commit();
+            }
+          }}
+        />
+      </label>
+      <div className="mt-4 flex justify-end gap-2">
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>
+          Отмена
+        </button>
+        <button type="button" className="btn btn-primary btn-sm" onClick={commit}>
+          Сохранить
+        </button>
+      </div>
+    </BoardModal>
+  );
+};
+
 export interface DeleteFunctionModalProps {
   readonly functionName: string | null;
   readonly onClose: () => void;

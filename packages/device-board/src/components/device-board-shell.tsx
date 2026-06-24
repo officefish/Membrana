@@ -17,7 +17,7 @@ import {
   DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR,
 } from '@membrana/core';
 import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
-import type { Edge, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
+import type { Edge, Node, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
 import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
 import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
@@ -58,9 +58,10 @@ import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
 import { DeleteFunctionModal } from './board-variable-modals.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { PlaybackClusterControl } from './playback-cluster-control.js';
+import { CompetitionRunTimer } from './competition-run-timer.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
-import { referenceTypeLabel, isBoardGroupNode } from '../graph/index.js';
+import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds } from '../graph/index.js';
 import type { BoardGroupNodeData } from '../graph/index.js';
 import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
 import {
@@ -111,6 +112,8 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeLabel, setSelectedNodeLabel] = useState<string | null>(null);
   const [selectedNodeKind, setSelectedNodeKind] = useState<ScenarioNodeKind | null>(null);
+  const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
+  const [selectedFunctionName, setSelectedFunctionName] = useState<string | null>(null);
   const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
   const [selectedCollectorConfig, setSelectedCollectorConfig] = useState<ScenarioCollectorConfig | null>(
     null,
@@ -241,6 +244,8 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedGroupTitle('');
     setSelectedGroupDescription('');
     setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
+    setSelectedFunctionId(null);
+    setSelectedFunctionName(null);
   }, []);
 
   const resolveBranchEdges = useCallback((): readonly Edge[] => {
@@ -291,6 +296,8 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedGroupTitle('');
       setSelectedGroupDescription('');
       setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
+      setSelectedFunctionId(null);
+      setSelectedFunctionName(null);
       return;
     }
     setSelectedNodeId(node.id);
@@ -313,10 +320,22 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedVariableId(null);
       setSelectedGetterPure(false);
       setSelectedGetterPureLocked(false);
+      setSelectedFunctionId(null);
+      setSelectedFunctionName(null);
       return;
     }
     const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
     setSelectedNodeLabel(label);
+    const blockKind = node.data?.blockKind;
+    const functionId = typeof node.data?.functionId === 'string' ? node.data.functionId : null;
+    if (blockKind === 'subgraph' && functionId !== null) {
+      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
+      setSelectedFunctionId(functionId);
+      setSelectedFunctionName(fn?.name ?? label);
+    } else {
+      setSelectedFunctionId(null);
+      setSelectedFunctionName(null);
+    }
     const kind = typeof node.data?.nodeKind === 'string' ? (node.data.nodeKind as ScenarioNodeKind) : null;
     setSelectedNodeKind(kind);
     const micId = typeof node.data?.microphoneId === 'string' ? node.data.microphoneId : null;
@@ -363,7 +382,7 @@ const DeviceBoardShellInner: React.FC<{
     if (kind === 'get-microphone') {
       void refreshMicrophoneOptions();
     }
-  }, [refreshMicrophoneOptions, resolveBranchEdges]);
+  }, [graph.scenarioFunctionDrafts, refreshMicrophoneOptions, resolveBranchEdges]);
 
   const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
@@ -421,6 +440,47 @@ const DeviceBoardShellInner: React.FC<{
     clearSelection();
     dismissFunctionAction();
   }, [clearSelection, dismissFunctionAction, functionActionTarget, graph]);
+
+  const handleOpenFunctionEditor = useCallback(
+    (functionId: string) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      graph.selectUserFunction(functionId);
+      clearSelection();
+    },
+    [clearSelection, graph, isRuntime, isSignal],
+  );
+
+  const handleRenameFunction = useCallback(
+    (functionId: string, name: string) => {
+      graph.updateUserFunctionMeta(functionId, { name });
+      if (selectedFunctionId === functionId) {
+        setSelectedFunctionName(name);
+      }
+    },
+    [graph, selectedFunctionId],
+  );
+
+  const handleNodeDoubleClick = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      if (isSignal || isRuntime || graph.isSessionReadOnly) {
+        return;
+      }
+      if (scenarioBranch === 'function') {
+        return;
+      }
+      const functionId =
+        node.data?.blockKind === 'subgraph' && typeof node.data.functionId === 'string'
+          ? node.data.functionId
+          : null;
+      if (functionId !== null) {
+        graph.selectUserFunction(functionId);
+        clearSelection();
+      }
+    },
+    [clearSelection, graph, isRuntime, isSignal, scenarioBranch],
+  );
 
   const handleInsertUserFunction = useCallback(() => {
     if (functionActionTarget === null) {
@@ -565,7 +625,9 @@ const DeviceBoardShellInner: React.FC<{
   const handleClearBoard = useCallback(() => {
     const layerLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
     const preserveNote = shouldPreserveLockedNodes(isSignal ? 'signal' : 'scenario', scenarioBranch)
-      ? ' Системный Event-узел останется.'
+      ? scenarioBranch === 'function'
+        ? ' Узлы Input и Output останутся.'
+        : ' Системный Event-узел останется.'
       : '';
     if (
       typeof window !== 'undefined' &&
@@ -670,6 +732,11 @@ const DeviceBoardShellInner: React.FC<{
       onConnect: graph.onScenarioFunctionConnect,
     };
   }, [scenarioBranch, graph]);
+
+  const validationErrorNodeIds = useMemo(() => {
+    const edges = isSignal ? graph.signalEdges : scenarioCanvas.edges;
+    return collectValidationErrorNodeIds(graph.validationIssues, edges);
+  }, [graph.validationIssues, graph.signalEdges, isSignal, scenarioCanvas.edges]);
 
   const collectCanvasSelectedIds = useCallback((): readonly string[] => {
     const fromCanvas = scenarioCanvas.nodes.filter((node) => node.selected).map((node) => node.id);
@@ -1329,6 +1396,14 @@ const DeviceBoardShellInner: React.FC<{
               Только просмотр
             </span>
           ) : null}
+          {graph.isCompetitionMode ? (
+            <span
+              className="badge badge-warning badge-outline badge-sm shrink-0"
+              title="Конкурсный сценарий: структура заблокирована, параметры можно менять"
+            >
+              Конкурс
+            </span>
+          ) : null}
           <BoardCanvasBreadcrumb
             segments={canvasBreadcrumbSegments}
             detailTitle={scenarioTitle}
@@ -1511,10 +1586,12 @@ const DeviceBoardShellInner: React.FC<{
               graph.isValidConnection(isSignal ? 'signal' : 'scenario', connection)
             }
             onSelectionChange={handleSelectionChange}
+            onNodeDoubleClick={handleNodeDoubleClick}
             onPaneClick={handlePaneClick}
             onPaneContextMenu={handlePaneContextMenu}
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
+            validationErrorNodeIds={validationErrorNodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
             readOnly={isCanvasReadOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}
@@ -1578,6 +1655,7 @@ const DeviceBoardShellInner: React.FC<{
             activeFunctionId={graph.activeFunctionId}
             onSelectFunction={handleUserFunctionListClick}
             onCreateFunction={graph.createUserFunction}
+            onRenameFunction={handleRenameFunction}
             onRemoveFunction={handleRemoveUserFunction}
           />
         </aside>
@@ -1604,6 +1682,8 @@ const DeviceBoardShellInner: React.FC<{
             selectedGroupDescription={selectedGroupDescription}
             selectedGroupFrameColor={selectedGroupFrameColor}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
+            selectedFunctionId={selectedFunctionId}
+            selectedFunctionName={selectedFunctionName}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
             canEditScenario={!isSignal}
@@ -1645,6 +1725,7 @@ const DeviceBoardShellInner: React.FC<{
               }
             }}
             onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
+            onOpenFunctionEditor={handleOpenFunctionEditor}
             onAddFunctionPin={(side) => {
               const error = graph.addActiveFunctionPin(side, 'data');
               if (error !== null) {
@@ -1738,15 +1819,23 @@ const DeviceBoardShellInner: React.FC<{
         mode={clipboardPaneModal ?? 'selection'}
         selectedCount={clipboardPaneSelectedCount}
         clipboardCount={graph.boardClipboardNodeCount}
-        copyDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
-        pasteDisabled={graph.isSessionReadOnly || graph.boardClipboardNodeCount === 0}
-        deleteDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
+        copyDisabled={graph.isStructureLocked || clipboardPaneSelectedCount < 1}
+        pasteDisabled={graph.isStructureLocked || graph.boardClipboardNodeCount === 0}
+        deleteDisabled={graph.isStructureLocked || clipboardPaneSelectedCount < 1}
         onCopy={handleClipboardPaneCopy}
         onDelete={handleClipboardPaneDelete}
         onPaste={handleClipboardPanePaste}
         onClearClipboard={handleClipboardPaneClear}
         onDismiss={closeClipboardPaneModal}
       />
+
+      {graph.isCompetitionMode ? (
+        <CompetitionRunTimer
+          isRunning={isRuntime}
+          runStartedAtMs={graph.runtimeState.runStartedAtMs}
+          timeoutSec={graph.competitionTimeoutSec}
+        />
+      ) : null}
     </div>
   );
 };

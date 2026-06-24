@@ -1,6 +1,8 @@
 # Example Caddy v2 site block for background-media (A5c).
 # Place on VPS, e.g. /etc/caddy/Caddyfile.d/media.caddy
-# Replace media.example.com with your subdomain.
+#
+# Production (membrana.space): use deploy/Caddyfile.media.membrana.space
+# or run: node scripts/_ssh-media-tls-setup.mjs
 
 media.example.com {
 	encode gzip

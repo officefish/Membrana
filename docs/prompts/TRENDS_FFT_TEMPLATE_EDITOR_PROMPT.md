@@ -12,7 +12,7 @@
 
 Плагин `trends-fft-analyzer` (#56, archived) классифицирует акустические сцены по **системным** шаблонам из `@membrana/trends-detector-service`. Пользовательские шаблоны и редактор — follow-up (#57).
 
-Референс UX: `apps/demos/trendsFFT/` (`SoundTemplateEditor`, `patterns.store`). **Не копировать** демо-код напрямую.
+Референс UX: `apps/client/src/plugins/trends-fft-analyzer/components/` (`TrendsTemplateEditor`, `TrendsTemplateList`, `userTemplatesStore`).
 
 **Зависимость:** `trends-fft-microphone-plugin` (archived).
 
@@ -175,7 +175,7 @@ thresholds: {
 - `sample-library` mode для trends-fft
 - ML-классификатор
 - Backend sync шаблонов
-- Полный порт 900+ строк демо `SoundTemplateEditor` без адаптации
+- Полный порт legacy UI без адаптации под DaisyUI и plugin state
 
 ---
 

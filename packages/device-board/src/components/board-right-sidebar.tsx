@@ -92,6 +92,8 @@ export interface BoardRightSidebarProps {
   readonly selectedGroupDescription: string;
   readonly selectedGroupFrameColor: ScenarioCommentGroupFrameColor;
   readonly selectedVariableTypeLabel: string | null;
+  readonly selectedFunctionId: string | null;
+  readonly selectedFunctionName: string | null;
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
   readonly microphoneOptionsLoading?: boolean;
   readonly canEditScenario: boolean;
@@ -121,6 +123,7 @@ export interface BoardRightSidebarProps {
   readonly onUpdateFunctionMeta: (
     patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
   ) => void;
+  readonly onOpenFunctionEditor: (functionId: string) => void;
   readonly onAddFunctionPin: (side: FunctionPinSide) => void;
   readonly onUpdateFunctionPin: (
     side: FunctionPinSide,
@@ -162,6 +165,8 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedGroupDescription,
   selectedGroupFrameColor,
   selectedVariableTypeLabel,
+  selectedFunctionId,
+  selectedFunctionName,
   microphoneOptions,
   microphoneOptionsLoading = false,
   canEditScenario,
@@ -182,6 +187,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onVariableValueChange,
   onCommentGroupMetadataChange,
   onUpdateFunctionMeta,
+  onOpenFunctionEditor,
   onAddFunctionPin,
   onUpdateFunctionPin,
   onRemoveFunctionPin,
@@ -207,12 +213,12 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   );
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
-  const showFunctionInspector =
-    isFunctionBranch &&
-    functionMeta !== null &&
-    !isRuntime &&
-    selectedNodeId !== null &&
-    (selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output');
+  const showFunctionInspector = isFunctionBranch && functionMeta !== null && !isRuntime;
+  const showSubgraphFunctionInspector =
+    !isFunctionBranch &&
+    selectedFunctionId !== null &&
+    selectedFunctionName !== null &&
+    !isRuntime;
 
   useEffect(() => {
     setVariableNameDraft(selectedVariableName);
@@ -392,6 +398,30 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
               </pre>
             </section>
           ) : null}
+        </div>
+      ) : showSubgraphFunctionInspector ? (
+        <div className="flex flex-col gap-3 p-4 text-sm">
+          <div className="border-b border-base-200 pb-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+              Пользовательская функция
+            </p>
+            <h2 className="text-sm font-semibold text-base-content truncate">{selectedFunctionName}</h2>
+          </div>
+          <p className="text-xs leading-relaxed text-base-content/55">
+            Двойной клик по блоку на канвасе открывает редактор функции.
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm w-full"
+            disabled={editDisabled}
+            onClick={() => {
+              if (selectedFunctionId !== null) {
+                onOpenFunctionEditor(selectedFunctionId);
+              }
+            }}
+          >
+            Открыть редактор
+          </button>
         </div>
       ) : showFunctionInspector ? (
         <BoardFunctionPinInspector

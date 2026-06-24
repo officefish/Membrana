@@ -243,6 +243,8 @@ export {
   DEVICE_SCENARIO_DOCUMENT_KIND,
   DEVICE_SCENARIO_DOCUMENT_VERSION,
   DEVICE_SCENARIO_MIN_DOCUMENT_VERSION,
+  DEFAULT_COMPETITION_TIMEOUT_SEC,
+  type DeviceScenarioExecutionPolicy,
   type DeviceScenarioMeta,
   type DeviceScenarioWorkspaceKind,
   type DeviceScenarioDocument,

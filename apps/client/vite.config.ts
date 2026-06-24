@@ -56,6 +56,9 @@ export default defineConfig(({ mode }) => {
         '@membrana/media-library-service': fileURLToPath(
           new URL('../../packages/services/media-library/src/index.ts', import.meta.url),
         ),
+        '@membrana/usercase-catalog-service': fileURLToPath(
+          new URL('../../packages/services/usercase-catalog/src/index.ts', import.meta.url),
+        ),
         '@membrana/audio-data-viz': fileURLToPath(
           new URL('../../packages/libs/audioDataViz/src/index.ts', import.meta.url),
         ),

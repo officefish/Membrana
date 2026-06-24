@@ -32,6 +32,90 @@
 
 Из корня репозитория: `yarn office:dev`, `yarn office:build`, `yarn office:verify-swagger`.
 
+## Docker Compose (локальный/staging)
+
+Stateless образ (без PostgreSQL). Нужен Docker Engine + Compose v2.
+
+```bash
+# из корня репозитория
+cp packages/background-office/.env.docker.example packages/background-office/.env.docker
+# при smoke Claude/Linear — подставьте реальные ключи в .env.docker
+
+yarn office:docker:build
+yarn office:docker:up
+curl http://localhost:3000/health
+```
+
+| Команда (корень) | Назначение |
+|------------------|------------|
+| `yarn office:docker:build` | собрать образ `membrana/background-office:local` |
+| `yarn office:docker:up` | поднять `office-api` |
+| `yarn office:docker:down` | остановить контейнер |
+| `yarn office:docker:logs` | логи API |
+
+Порт по умолчанию **3000** (не конфликтует с media `3010`). Плейсхолдеры в `.env.docker.example` достаточны для `/health`; для `POST /v1/claude/ask` нужен настоящий `ANTHROPIC_API_KEY`.
+
+Прод VPS + TLS: [`docs/deploy/BACKGROUND_OFFICE_DEPLOY.md`](../../docs/deploy/BACKGROUND_OFFICE_DEPLOY.md). Smoke: `node scripts/_ssh-office-smoke.mjs`.
+
+## Production deployment
+
+| Параметр | Значение |
+|----------|----------|
+| URL | `https://office.membrana.space` |
+| Health | `GET /health` (без токена) |
+| Env на VPS | `/etc/membrana/office.env` (mode `600`, не в git) |
+| Compose | `deploy/office-stack.sh` + `deploy/background-office.prod.compose.yml` |
+| TLS | Caddy + Let's Encrypt (`deploy/Caddyfile.office.membrana.space`) |
+| Linear webhook | `POST https://office.membrana.space/webhooks/linear` |
+
+### Секреты на VPS (`/etc/membrana/office.env`)
+
+| Переменная | Назначение |
+|------------|------------|
+| `API_INTERNAL_TOKEN` | `X-Membrana-Token` для `/v1/*` (генерируется `deploy/generate-office-env.sh`) |
+| `ANTHROPIC_API_KEY` | исходящие вызовы Claude |
+| `LINEAR_API_KEY` | исходящий GraphQL Linear |
+| `LINEAR_WEBHOOK_SECRET` | **другой** секрет — подпись входящих webhook'ов |
+| `GITHUB_TOKEN` | чтение Issues (Octokit) |
+
+Показать `API_INTERNAL_TOKEN` с VPS (локально, не коммитить): `node scripts/_ssh-office-show-token.mjs`.
+
+### Деплой и smoke
+
+```bash
+# первичный деплой (из Windows, пока office не в remote git)
+node scripts/_ssh-office-prod-up.mjs
+
+# TLS site block
+node scripts/_ssh-office-tls-setup.mjs
+
+# приёмка O4
+node scripts/_sync-office-env-from-root.mjs --restart
+node scripts/_ssh-office-smoke.mjs
+node scripts/_ssh-office-smoke.mjs --external
+```
+
+### Ротация секретов (кратко)
+
+1. Сгенерировать новый секрет (или в UI провайдера — новый API key / webhook secret).
+2. `nano /etc/membrana/office.env` на VPS → заменить значение.
+3. `cd /root/membrana && ./deploy/office-stack.sh up` (перечитать env).
+4. Для `LINEAR_WEBHOOK_SECRET` — обновить тот же secret в Linear → Webhooks → Edit.
+5. Для `API_INTERNAL_TOKEN` — обновить у всех клиентов/скриптов с `X-Membrana-Token`.
+
+### Troubleshooting
+
+| Симптом | Что проверить |
+|---------|----------------|
+| DNS не резолвится | A `office.membrana.space` → IP VPS; `node scripts/_ssh-office-tls-setup.mjs --check-dns` |
+| HTTPS 502 / timeout | `node scripts/_ssh-office-check.mjs`; контейнер healthy? Caddy reload? |
+| Cert не выдаётся | порты 80/443, DNS пропагация; `journalctl -u caddy -n 50` на VPS |
+| `401` на `/v1/*` | неверный `X-Membrana-Token`; `node scripts/_ssh-office-show-token.mjs` |
+| `403` на webhook | неверный `LINEAR_WEBHOOK_SECRET` или подпись; unsigned POST должен давать 403 |
+| Claude `5xx` | `ANTHROPIC_API_KEY` в `office.env`, лимиты API |
+
+Старый эпик: [`BACKGROUND_OFFICE_V1_EPIC_PROMPT.md`](../../docs/prompts/BACKGROUND_OFFICE_V1_EPIC_PROMPT.md).
+
 ## Swagger
 
 При запущенном сервере (`yarn office:dev`):

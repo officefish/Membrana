@@ -1,4 +1,4 @@
-import { describe, expect, it, afterEach } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import type { UserCaseCatalogEntrySummary } from '@membrana/device-board';
 import { UserCaseCatalogService } from '@membrana/device-board';
@@ -7,7 +7,7 @@ import {
   ClientUserCaseCatalogService,
   getDefaultClientUserCaseCatalogService,
   resetDefaultClientUserCaseCatalogService,
-} from './user-case-catalog-service.js';
+} from './service.js';
 
 const tariffSummary: UserCaseCatalogEntrySummary = {
   id: 'usercase-tariff-demo',

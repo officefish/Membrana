@@ -496,6 +496,83 @@
       ]
     },
     {
+      "id": "background-office-v1",
+      "title": "background-office v1: продовый деплой (эпик)",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_V1_EPIC_PROMPT.md",
+      "githubIssue": 60,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Epic O1-O4: https://office.membrana.space prod; PR pending",
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o1-docker",
+      "title": "background-office O1: Docker образ и compose",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O1_DOCKER_PROMPT.md",
+      "githubIssue": 60,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Dockerfile, docker-compose, yarn office:docker:*; local+VPS healthy",
+      "dependsOn": [
+        "background-office-v1"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o2-prod-compose",
+      "title": "background-office O2: prod compose и deploy-скрипты",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O2_PROD_COMPOSE_PROMPT.md",
+      "githubIssue": 60,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "office-stack.sh, prod compose, SSH prod-up/check/smoke",
+      "dependsOn": [
+        "background-office-o1-docker"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o3-tls-deploy",
+      "title": "background-office O3: TLS, DNS office.membrana.space",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O3_TLS_DEPLOY_PROMPT.md",
+      "githubIssue": 61,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Caddy LE, office.membrana.space HTTPS",
+      "dependsOn": [
+        "background-office-o2-prod-compose"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o4-webhook-acceptance",
+      "title": "background-office O4: Linear webhook и приёмка прода",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O4_WEBHOOK_ACCEPTANCE_PROMPT.md",
+      "githubIssue": 61,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Linear webhook signed 200; smoke 5 OK",
+      "dependsOn": [
+        "background-office-o3-tls-deploy"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
       "id": "background-media-a5d-swagger",
       "title": "background-media A5d: полная Swagger/OpenAPI документация",
       "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md",
@@ -6837,6 +6914,92 @@
       "notes": "Lead: Vesnin. USERCASE_MVP_V2_GROUPS_ASYNC_LGTM.md",
       "leadPersona": "vesnin",
       "supportPersonas": []
+    },
+    {
+      "id": "device-board-phase-3",
+      "title": "Device-board Phase 3: catalog service, validators, competition",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Consilium phase-3-architecture-decisions-2026-06-24. After Phase 2b LGTM.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-p3-a1-usercase-catalog-service",
+      "title": "DB-P3-A1: migrate usercase-catalog-service package",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Ozhegov. Move ClientUserCaseCatalogService from apps/client to packages/services/usercase-catalog.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-p3-a2-runtime-validators",
+      "title": "DB-P3-A2: runtime validators + live UI",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Dynin + Rodchenko. Pure validators in device-board/runtime/validators; verify-usercase-prerun + canvas hints.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-p3-a3-competition-restrictions",
+      "title": "DB-P3-A3: competition executionPolicy + restrictions",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-p3-a2-runtime-validators"
+      ],
+      "notes": "Lead: Kuryokhin + Rodchenko. meta.executionPolicy, background-media templates, readOnly + timeout UI.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
     }
   ]
 }
