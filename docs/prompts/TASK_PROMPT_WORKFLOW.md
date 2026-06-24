@@ -137,11 +137,17 @@ yarn task:register --id <slug> --title "..." --prompt docs/prompts/<SLUG>_PROMPT
 docs/prompts/<SLUG>_PROMPT.md (блок «Промпт целиком»).
 ```
 
-### Шаг 4. Triage (Teamlead)
+### Шаг 4. Triage (Teamlead) + Linear (неблокирующий)
 
-- Создать Linear ticket, `status:linear` на Issue.
-- В комментарии Issue — Linear-ID.
-- Уточнить `size` и `package:*` labels.
+**Обязательно для M/L:** уточнить `size` и `package:*` labels.
+
+**Linear (рекомендуется, не блокирует старт кода):** см. [`LINEAR_GITHUB_SYNC_REGULATION.md`](./LINEAR_GITHUB_SYNC_REGULATION.md) — этап **R1**.
+
+- При наличии `githubIssue` — ticket в Linear **привязывается** к Issue, **не дублирует** его.
+- Записать `linearId` в `registry.json`; комментарий в Issue с URL Linear.
+- По желанию: `status:linear` на Issue.
+
+Отсутствие Linear **не** блокирует шаги 5–7.
 
 ### Шаг 5. Реализация
 

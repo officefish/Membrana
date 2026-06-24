@@ -496,6 +496,83 @@
       ]
     },
     {
+      "id": "background-office-v1",
+      "title": "background-office v1: продовый деплой (эпик)",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_V1_EPIC_PROMPT.md",
+      "githubIssue": 60,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Epic O1-O4: https://office.membrana.space prod; PR pending",
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o1-docker",
+      "title": "background-office O1: Docker образ и compose",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O1_DOCKER_PROMPT.md",
+      "githubIssue": 60,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Dockerfile, docker-compose, yarn office:docker:*; local+VPS healthy",
+      "dependsOn": [
+        "background-office-v1"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o2-prod-compose",
+      "title": "background-office O2: prod compose и deploy-скрипты",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O2_PROD_COMPOSE_PROMPT.md",
+      "githubIssue": 60,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "office-stack.sh, prod compose, SSH prod-up/check/smoke",
+      "dependsOn": [
+        "background-office-o1-docker"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o3-tls-deploy",
+      "title": "background-office O3: TLS, DNS office.membrana.space",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O3_TLS_DEPLOY_PROMPT.md",
+      "githubIssue": 61,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Caddy LE, office.membrana.space HTTPS",
+      "dependsOn": [
+        "background-office-o2-prod-compose"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
+      "id": "background-office-o4-webhook-acceptance",
+      "title": "background-office O4: Linear webhook и приёмка прода",
+      "promptPath": "docs/prompts/BACKGROUND_OFFICE_O4_WEBHOOK_ACCEPTANCE_PROMPT.md",
+      "githubIssue": 61,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-13",
+      "archivedAt": "2026-06-13",
+      "archiveNotes": "Linear webhook signed 200; smoke 5 OK",
+      "dependsOn": [
+        "background-office-o3-tls-deploy"
+      ],
+      "githubIssueClosedAt": "2026-06-13"
+    },
+    {
       "id": "background-media-a5d-swagger",
       "title": "background-media A5d: полная Swagger/OpenAPI документация",
       "promptPath": "docs/prompts/BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md",

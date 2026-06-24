@@ -17,6 +17,7 @@
 | **Код** | Изменения в `main` (merge PR) **или** зафиксированное исключение в `archiveNotes` (см. §4). |
 | **GitHub** | В Issue [#N] — формальный отчёт; Issue закрыт (`Closes #N` при merge или вручную после отчёта). |
 | **Реестр** | `yarn task:archive <id>`; карточка в `docs/tasks/archive/<id>.md`; промпт **не удаляется**. |
+| **Linear** | Рекомендуется **Done** (этап R3); **не блокирует** архив — см. [`LINEAR_GITHUB_SYNC_REGULATION.md`](./LINEAR_GITHUB_SYNC_REGULATION.md). |
 
 Без архивации в реестре задача остаётся **active** — даже если Issue уже closed.
 
@@ -125,7 +126,7 @@ DoD по a11y и теме (DaisyUI) — отметить в отчёте. Нас
 
 - [ ] Issue закрыт (авто через `Closes #N`, `yarn task:close-github`, или вручную).
 - [ ] В реестре `githubIssueClosedAt` проставлена дата (автоматически после `task:close-github`).
-- [ ] При наличии Linear — ticket в **Done**.
+- [ ] **Linear (неблокирующий):** ticket в **Done** и `linearId` в реестре — см. [`LINEAR_GITHUB_SYNC_REGULATION.md`](./LINEAR_GITHUB_SYNC_REGULATION.md) R3.
 
 ### D. Реестр (исполнитель или Teamlead)
 
@@ -173,6 +174,7 @@ GitHub #41; PR #45 merged 2026-05-15. Плагин fft-indices-viz: live centroi
 | [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md) | Жизненный цикл 1–7 |
 | **Этот файл** | Детальный чеклист закрытия |
 | [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | Issue, PR, формат отчёта |
+| [`LINEAR_GITHUB_SYNC_REGULATION.md`](./LINEAR_GITHUB_SYNC_REGULATION.md) | Linear R1–R3 (неблокирующий) |
 | [`docs/tasks/README.md`](../tasks/README.md) | Список active/archived |
 | [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли при приёмке |
 

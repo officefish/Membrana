@@ -25,6 +25,9 @@
 2. **Одна рабочая зона — Linear.** Реальная декомпозиция, статусы, циклы,
    внутренние обсуждения хода работы — в Linear. Это снимает шум с GitHub
    и даёт нормальный workflow исполнителю.
+
+   Этапы Linear **неблокирующие**; при GitHub Issue ticket **синхронизируется**,
+   не дублирует — [`LINEAR_GITHUB_SYNC_REGULATION.md`](./prompts/LINEAR_GITHUB_SYNC_REGULATION.md).
 3. **Обязательный отчёт перед закрытием.** Прежде чем закрыть GitHub Issue,
    автор PR оставляет в нём формальный отчёт (раздел 6). Без отчёта Issue
    не считается закрытой — Teamlead может переоткрыть.
@@ -373,20 +376,22 @@ GitHub Issue в теле **ссылается** на `docs/prompts/<SLUG>_PROMPT
 ### Triage (Teamlead)
 
 - [ ] Проставлены `package:*` (если применимо).
-- [ ] Создан Linear ticket и оставлена ссылка в комментарии.
-- [ ] Метка `status:triage` снята, поставлена `status:linear`.
+- [ ] **Linear (неблокирующий):** ticket привязан к GitHub Issue — [`LINEAR_GITHUB_SYNC_REGULATION.md`](./prompts/LINEAR_GITHUB_SYNC_REGULATION.md) R1.
+- [ ] `linearId` в `registry.json` (если ticket создан).
+- [ ] По желанию: `status:linear` на Issue.
 - [ ] Если задача нерелевантна — закрыта с одной из меток `wontfix` / `duplicate` / `out-of-scope` и короткой причиной.
 
 ### Закрытие Issue после реализации
 
-- [ ] Все упомянутые PR смержены.
-- [ ] Linear ticket — Done.
+- [ ] Все упомянутые PR смержены (или исключение в `archiveNotes`).
+- [ ] **Linear → Done** (неблокирующий, R3 в [`LINEAR_GITHUB_SYNC_REGULATION.md`](./prompts/LINEAR_GITHUB_SYNC_REGULATION.md)).
 - [ ] Оставлен формальный отчёт по форме из раздела 6.
-- [ ] Issue закрыта (или закрыта автоматически через `Closes #N`).
+- [ ] Issue закрыта (или закрыта автоматически через `Closes #N` / `yarn task:close-github`).
 
 ---
 
 ## 12. Изменения документа
 
 - v0.1 — начальная версия, методология «GitHub Issues + Linear».
+- v0.2 (2026-06-12) — неблокирующие этапы Linear; sync с Issue без дублирования — [`LINEAR_GITHUB_SYNC_REGULATION.md`](./prompts/LINEAR_GITHUB_SYNC_REGULATION.md).
 - Любые правки — через PR с пометкой `/architect` и LGTM Teamlead.
