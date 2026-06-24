@@ -422,6 +422,15 @@ const DeviceBoardShellInner: React.FC<{
     [graph.isSessionReadOnly, isRuntime, isSignal],
   );
 
+  useEffect(() => {
+    if (
+      scenarioBranch !== 'function' &&
+      (selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output')
+    ) {
+      clearSelection();
+    }
+  }, [clearSelection, scenarioBranch, selectedNodeKind]);
+
   const handleUserFunctionListClick = useCallback(
     (functionId: string, draftIndex: number) => {
       if (isSignal || isRuntime) {
@@ -1676,7 +1685,10 @@ const DeviceBoardShellInner: React.FC<{
             activeFunctionId={graph.activeFunctionId}
             activeFunctionDraftIndex={graph.activeFunctionDraftIndex}
             onSelectFunction={handleUserFunctionListClick}
-            onCreateFunction={graph.createUserFunction}
+            onCreateFunction={() => {
+              clearSelection();
+              graph.createUserFunction();
+            }}
             onRenameFunction={handleRenameFunction}
             onRemoveFunction={handleRemoveUserFunction}
             constructorCrudDisabled={scenarioEditFlags.constructorCrudDisabled}
