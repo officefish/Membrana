@@ -1,21 +1,21 @@
-<!-- Сгенерировано: 2026-06-24 (PR #162 review) -->
+<!-- Сгенерировано: 2026-06-24 (PR #162 review, refresh после follow-up) -->
 
 Tier: T1
 
-[Teamlead]: PR #162 — UX-регрессия в редакторе пользовательской функции: правая панель в ветке `function` показывала только `BoardFunctionPinInspector`, палитра нод была в недостижимой ветке `else` ternary. Исправление: вынесен `BoardNodePalettePanel`, в function-режиме — stack (инспектор pins сверху, палитра снизу); при «+» в сайдбаре — `clearSelection()` перед `createUserFunction()` (как у «Открыть редактор»). Scope — только `@membrana/device-board` UI. **LGTM** после зелёного CI.
+[Teamlead]: PR #162 — три итерации UX правого сайдбара в ветке `function`: (1) палитра была недостижима — exclusive ternary `showFunctionInspector`; вынесен `BoardNodePalettePanel`, `clearSelection()` при «+»; (2) палитра «залипала» на группах/нодах — `showFunctionPinPanel` только при `selectedNodeId === null`; (3) function-input/output держали pin+palette — отдельный `showFunctionPinInspectorOnly` (pins без палитры) + сброс stale IO selection при уходе с ветки `function`. Scope: `@membrana/device-board` UI only. **LGTM** после зелёного CI.
 
-[Структурщик]: **C1** — изменения локализованы в `board-right-sidebar.tsx` (композиция панелей) и `device-board-shell.tsx` (сброс selection). Границы пакетов не нарушены; graph/context без правок. DRY: палитра не дублируется — один компонент для handler и function веток. ✅
+[Структурщик]: **C1** — `board-right-sidebar.tsx` (state machine панелей), `device-board-shell.tsx` (selection lifecycle). Graph/context/runtime без изменений. DRY: одна `BoardNodePalettePanel` для handler и function. ✅
 
 [Математик]: —
 
 [Музыкант]: —
 
-[Верстальщик]: **C5** — layout: `flex-col overflow-hidden`, pin inspector в scrollable `flex-1`, палитра `shrink-0 border-t`. `showFunctionPinPanel` — pin+palette только без selection; function-input/output → pin inspector без палитры; palette/group/прочие ноды → инспектор ноды. ✅
+[Верстальщик]: **C5** — итоговая матрица function-редактора: пустой канвас → pin inspector + палитра; function-input/output → только pin inspector (`pinEditSide`); группа/Print/… → инспектор ноды как на handler-ветках; handler-ветки без регрессии. ✅
 
 ---
 
 **Итоговый артефакт:**  
-Палитра нод снова доступна в редакторе пользовательской функции; сброс selection при создании функции.
+Стабильный правый сайдбар в редакторе пользовательской функции: палитра доступна, инспектор нод и групп не блокируется, IO не залипает.
 
 **Definition of Done:**
 ```bash
@@ -23,6 +23,12 @@ yarn workspace @membrana/device-board build
 yarn workspace @membrana/device-board test
 ```
 
-**Риски:** P2 — узкий sidebar при длинном списке pins + полной палитре; scroll на pin-блоке смягчает.
+**Operator smoke:**
+- «+» в пользовательских функциях → pin + палитра
+- Print/группа внутри функции → инспектор ноды
+- Input/Output → только pins
+- On start / Main после function → обычный сайдбар
+
+**Риски:** P2 — узкий sidebar при pin+palette на пустом канвасе (scroll).
 
 **Вердикт:** **LGTM**
