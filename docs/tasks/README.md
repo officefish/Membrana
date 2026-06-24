@@ -156,6 +156,12 @@
 | `db-es-r5-sequence-async` | DB-ES-R5: Sequence async parallel mode | M | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
 | `db-es-r6-docs-tests` | DB-ES-R6: CONCEPT + catalog + CI | S | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
 | `db-es-r7-archive` | DB-ES-R7: archive epic exec-sequence UX | S | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `device-board-recording-graph-clarity` | Device-board: recording graph clarity (StartRecording anti-pattern) | M | [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md) | [#167](https://github.com/officefish/Membrana/issues/167) |
+| `db-rgc-r0-inspector-notes` | DB-RGC-R0: operator notes registry (StartRecording) | S | [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md) | — |
+| `db-rgc-r1-loop-lint` | DB-RGC-R1: start-recording unconditional loop path lint | M | [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md) | — |
+| `db-rgc-r2-mvp-usercase` | DB-RGC-R2: MVP usercase — bootstrap off main hot path | M | [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md) | — |
+| `db-rgc-r3-docs-smoke` | DB-RGC-R3: USERCASE doc + chain-log cookbook | S | [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md) | — |
+| `db-rgc-r4-archive` | DB-RGC-R4: archive recording graph clarity epic | S | [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md) | — |
 
 ---
 

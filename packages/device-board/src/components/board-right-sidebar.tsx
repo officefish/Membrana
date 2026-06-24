@@ -71,6 +71,7 @@ import {
 } from '../types/board-ui.js';
 import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
 import { BoardFunctionPinInspector, type FunctionPinEditSide } from './board-function-pin-inspector.js';
+import { BoardNodeInspectorNotes } from './board-node-inspector-notes.js';
 import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-document.js';
 import type { FunctionPinSide } from '../graph/function-pin-ops.js';
 
@@ -1268,6 +1269,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
               палитре нод.
             </p>
           )}
+          <BoardNodeInspectorNotes nodeKind={selectedNodeKind} />
             </>
           )}
         </div>

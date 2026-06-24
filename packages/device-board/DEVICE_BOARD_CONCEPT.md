@@ -802,6 +802,21 @@ disabled + `title`/`aria-label` «нет связи с устройством» 
 инспекторе из `host.enumerateMicrophones` (audio-engine enumerate), data-выход
 `MicrophoneRef` через `resolveInput` для set переменной Microphone.
 
+#### 15.5.1 Operator notes (инспектор узла)
+
+Для узлов с неочевидным runtime/host-поведением — **операторские заметки** в правом
+сайдбаре (не validation banner и не Mintlify).
+
+| Слой | Путь | Правило |
+| ---- | ---- | ------- |
+| Реестр | `graph/scenario-node-inspector-notes.ts` | `SCENARIO_NODE_INSPECTOR_NOTES[nodeKind]` — секции `info` / `warning` |
+| UI | `components/board-node-inspector-notes.tsx` | Рендер `alert-info` / `alert-warning` при выборе узла |
+| Lint (будущее) | `validate-*.ts` | Те же формулировки, что в заметках; severity `warning` |
+
+Заметки **не сериализуются** в `DeviceScenarioDocument` — только UX редактора.
+Первый кейс: `start-recording` — идемпотентный skip при активной сессии и канон
+размещения на графе (не на каждом tick лупа).
+
 ### 15.6 Контракты (DBR0, уже в `@membrana/core`)
 
 - `SocketType += 'DeviceRef' | 'MicrophoneRef'`; `REFERENCE_SOCKET_TYPES`,

@@ -7478,6 +7478,117 @@
       "notes": "yarn task:archive device-board-exec-sequence-ux; close Issue #166",
       "leadPersona": "vesnin",
       "supportPersonas": []
+    },
+    {
+      "id": "device-board-recording-graph-clarity",
+      "title": "Device-board: recording graph clarity (StartRecording anti-pattern)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md",
+      "githubIssue": 167,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-24",
+      "notes": "Operator notes + loop lint warning + MVP usercase topology; host idempotent unchanged",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-rgc-r0-inspector-notes",
+      "title": "DB-RGC-R0: operator notes registry (StartRecording)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-recording-graph-clarity",
+      "createdAt": "2026-06-24",
+      "dependsOn": [],
+      "notes": "scenario-node-inspector-notes + BoardNodeInspectorNotes; CONCEPT 15.5.1",
+      "leadPersona": "rodchenko",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-rgc-r1-loop-lint",
+      "title": "DB-RGC-R1: start-recording unconditional loop path lint",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-recording-graph-clarity",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-rgc-r0-inspector-notes"
+      ],
+      "notes": "validate-start-recording-loop; warning start-recording-unconditional-loop-path",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-rgc-r2-mvp-usercase",
+      "title": "DB-RGC-R2: MVP usercase — bootstrap off main hot path",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-recording-graph-clarity",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-rgc-r1-loop-lint"
+      ],
+      "notes": "onStart StartRecording; main gate-only restart; usercase:build-mvp-microphone",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-rgc-r3-docs-smoke",
+      "title": "DB-RGC-R3: USERCASE doc + chain-log cookbook",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-recording-graph-clarity",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-rgc-r2-mvp-usercase"
+      ],
+      "notes": "USERCASE_MVP_MICROPHONE.md; SCENARIO_CHAIN_LOG_COOKBOOK recording markers",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-rgc-r4-archive",
+      "title": "DB-RGC-R4: archive recording graph clarity epic",
+      "promptPath": "docs/prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-recording-graph-clarity",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-rgc-r3-docs-smoke"
+      ],
+      "notes": "yarn task:archive device-board-recording-graph-clarity",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
     }
   ]
 }

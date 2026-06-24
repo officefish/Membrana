@@ -263,6 +263,16 @@ export { scenarioDocumentFingerprint } from './scenario-snapshot.js';
 export { syncVariableNodeLabels } from './sync-variable-node-labels.js';
 export { formatSocketPortLabel } from './socket-port-label.js';
 export {
+  getScenarioNodeInspectorNotes,
+  hasScenarioNodeInspectorNotes,
+  SCENARIO_NODE_INSPECTOR_NOTES,
+} from './scenario-node-inspector-notes.js';
+export type {
+  ScenarioNodeInspectorNote,
+  ScenarioNodeInspectorNoteSection,
+  ScenarioNodeInspectorNoteVariant,
+} from './scenario-node-inspector-notes.js';
+export {
   socketHandleClass,
   REFERENCE_SOCKET_HANDLE_CLASS,
   NULL_SOCKET_HANDLE_CLASS,
