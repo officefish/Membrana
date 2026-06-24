@@ -1,18 +1,16 @@
 # CURRENT_TASK
 
-> **Phase 3 закрыт** · эпик `device-board-phase-3` archived 2026-06-24 · PR [#156](https://github.com/officefish/Membrana/pull/156)
+> **Day sprint:** `device-board-fn-blocks-sprint-2026-06-24` · [#172](https://github.com/officefish/Membrana/issues/172)  
+> **Промпт:** [`DEVICE_BOARD_FN_BLOCKS_SPRINT_2026-06-24_PROMPT.md`](./prompts/DEVICE_BOARD_FN_BLOCKS_SPRINT_2026-06-24_PROMPT.md)  
+> **Фаза:** `db-fb-s1-inspector-list` (active)
 
-## Итог Phase 3
+## S1 — fn-blocks inspector
 
-| # | Task id | Статус |
-|---|---------|--------|
-| 1 | `db-p3-a1-usercase-catalog-service` | archived |
-| 2 | `db-p3-a2-runtime-validators` | archived |
-| 3 | `db-p3-a3-competition-restrictions` | archived |
-| — | `device-board-phase-3` (epic) | archived |
+- [ ] `list-subgraph-blocks-for-function.ts` + test
+- [ ] Sidebar: список экземпляров + jump select
+- [ ] CONCEPT §18 — fn-blocks inspector UX
+- [ ] PR + code review
 
-Консилиум: [`phase-3-architecture-decisions-2026-06-24`](./seanses/phase-3-architecture-decisions-2026-06-24.md)
+## Контекст
 
-## Следующий фокус
-
-См. [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и [`docs/tasks/README.md`](./tasks/README.md) (active).
+Предшественник: PR batch sprint closed — #170 multi-insert, #171 pure getters.

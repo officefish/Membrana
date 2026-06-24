@@ -32,6 +32,7 @@ import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
 import type { PaletteConnectionSuggestion } from '../graph/connection-suggest.js';
 import { suggestPaletteNodesForOutgoingConnection } from '../graph/index.js';
+import { listSubgraphBlocksForFunction } from '../graph/list-subgraph-blocks-for-function.js';
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
@@ -875,6 +876,29 @@ const DeviceBoardShellInner: React.FC<{
     }));
     scenarioCanvas.onNodesChange(changes);
   }, [isSignal, scenarioCanvas]);
+
+  const selectCanvasNodeById = useCallback(
+    (nodeId: string) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      const changes: NodeChange[] = scenarioCanvas.nodes.map((node) => ({
+        type: 'select',
+        id: node.id,
+        selected: node.id === nodeId,
+      }));
+      scenarioCanvas.onNodesChange(changes);
+      viewportApiRef.current?.focusNodeIds([nodeId]);
+    },
+    [isRuntime, isSignal, scenarioCanvas],
+  );
+
+  const selectedFunctionBlockInstances = useMemo(() => {
+    if (selectedFunctionId === null || isSignal || scenarioBranch === 'function') {
+      return [];
+    }
+    return listSubgraphBlocksForFunction(scenarioCanvas.nodes, selectedFunctionId);
+  }, [isSignal, scenarioBranch, scenarioCanvas.nodes, selectedFunctionId]);
 
   const dismissSelectionAction = useCallback(() => {
     setSelectionActionOpen(false);
@@ -1745,6 +1769,7 @@ const DeviceBoardShellInner: React.FC<{
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             selectedFunctionId={selectedFunctionId}
             selectedFunctionName={selectedFunctionName}
+            selectedFunctionBlockInstances={selectedFunctionBlockInstances}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
             canEditScenario={scenarioEditFlags.canEditScenario}
@@ -1788,6 +1813,7 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
             onOpenFunctionEditor={handleOpenFunctionEditor}
+            onSelectFunctionBlockInstance={selectCanvasNodeById}
             onAddFunctionPin={(side) => {
               const error = graph.addActiveFunctionPin(side, 'data');
               if (error !== null) {

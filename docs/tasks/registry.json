@@ -7641,6 +7641,39 @@
         "rodchenko",
         "dynin"
       ]
+    },
+    {
+      "id": "device-board-fn-blocks-sprint-2026-06-24",
+      "title": "Day sprint: device-board fn-blocks inspector (#172)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_FN_BLOCKS_SPRINT_2026-06-24_PROMPT.md",
+      "githubIssue": 172,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-24",
+      "sprintKind": "day-sprint",
+      "notes": "Follow-up multi-insert #170; S1 inspector list + jump select",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-fb-s1-inspector-list",
+      "title": "DB-FB S1: fn-blocks list in subgraph inspector",
+      "promptPath": "docs/prompts/DEVICE_BOARD_FN_BLOCKS_SPRINT_2026-06-24_PROMPT.md",
+      "githubIssue": 172,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-24",
+      "sprintKind": "day-sprint",
+      "parentEpic": "device-board-fn-blocks-sprint-2026-06-24",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     }
   ]
 }
