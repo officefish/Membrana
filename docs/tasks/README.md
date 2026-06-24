@@ -147,12 +147,15 @@
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-3-pack-verify` | UCV2-3: usercase:build + verify-pack + smoke | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-4-operator-signoff` | UCV2-4: operator LGTM doc + epic close | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
-| `db-vo-r0-audit` | DB-VO-R0: gap audit system-preview UX | S | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
-| `db-vo-r1-canvas-viewport` | DB-VO-R1: canvas pan/zoom при structure read-only | M | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
-| `db-vo-r2-right-sidebar` | DB-VO-R2: right sidebar — hide palette, disable inspector | M | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
-| `db-vo-r3-left-sidebar` | DB-VO-R3: left sidebar — lock variable/function CRUD | M | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
-| `db-vo-r4-docs-tests` | DB-VO-R4: docs + tests view-only UX | S | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
-| `db-vo-r5-archive` | DB-VO-R5: archive epic view-only UX | S | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
+| `device-board-exec-sequence-ux` | Device-board: optional pins, exec fan-out ban, Sequence node | L | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | [#166](https://github.com/officefish/Membrana/issues/166) |
+| `db-es-r0-consilium` | DB-ES-R0: consilium + gap audit exec/sequence | S | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `db-es-r1-optional-pin-labels` | DB-ES-R1: optional pin labels (? suffix) | M | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `db-es-r2-exec-fanout-ban` | DB-ES-R2: exec fan-out forbidden | M | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `db-es-r3-sequence-editor` | DB-ES-R3: Sequence node editor (Then 0..8) | L | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `db-es-r4-sequence-runtime-sync` | DB-ES-R4: Sequence sync runtime | L | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `db-es-r5-sequence-async` | DB-ES-R5: Sequence async parallel mode | M | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `db-es-r6-docs-tests` | DB-ES-R6: CONCEPT + catalog + CI | S | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
+| `db-es-r7-archive` | DB-ES-R7: archive epic exec-sequence UX | S | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | — |
 
 ---
 
@@ -172,6 +175,12 @@
 | `db-ufc-c4-refactor-backlog` | DB-UFC-C4: P0/P1 refactor from consilium (or Issues) | 2026-06-24 | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — | [карточка](./archive/db-ufc-c4-refactor-backlog.md) |
 | `db-ufc-c5-archive` | DB-UFC-C5: CI green, smoke, task archive | 2026-06-24 | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — | [карточка](./archive/db-ufc-c5-archive.md) |
 | `device-board-view-only-ux` | Device-board: UX режима «только просмотр» (system-preview) | 2026-06-24 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | #163 (Issue открыт) | [карточка](./archive/device-board-view-only-ux.md) |
+| `db-vo-r0-audit` | DB-VO-R0: gap audit system-preview UX | 2026-06-24 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — | [карточка](./archive/db-vo-r0-audit.md) |
+| `db-vo-r1-canvas-viewport` | DB-VO-R1: canvas pan/zoom при structure read-only | 2026-06-24 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — | [карточка](./archive/db-vo-r1-canvas-viewport.md) |
+| `db-vo-r2-right-sidebar` | DB-VO-R2: right sidebar — hide palette, disable inspector | 2026-06-24 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — | [карточка](./archive/db-vo-r2-right-sidebar.md) |
+| `db-vo-r3-left-sidebar` | DB-VO-R3: left sidebar — lock variable/function CRUD | 2026-06-24 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — | [карточка](./archive/db-vo-r3-left-sidebar.md) |
+| `db-vo-r4-docs-tests` | DB-VO-R4: docs + tests view-only UX | 2026-06-24 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — | [карточка](./archive/db-vo-r4-docs-tests.md) |
+| `db-vo-r5-archive` | DB-VO-R5: archive epic view-only UX | 2026-06-24 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — | [карточка](./archive/db-vo-r5-archive.md) |
 | `membrana-studio-ms0-ms4-day-sprint` | Day sprint: Membrana Studio MS0–MS4 (canon → installer) | 2026-06-23 | [`MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms0-ms4-day-sprint.md) |
 | `membrana-studio-ms0-canon` | MS0: канон Studio vs Device + пути документации | 2026-06-23 | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms0-canon.md) |
 | `membrana-studio-ms1-shell` | MS1: Electron shell apps/membrana-studio + yarn studio:dev | 2026-06-23 | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms1-shell.md) |

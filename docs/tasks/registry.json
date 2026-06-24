@@ -7184,7 +7184,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-view-only-ux",
@@ -7192,7 +7192,9 @@
       "dependsOn": [],
       "notes": "Gap table in epic prompt; confirm scope excludes competition mode",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Parent epic archived PR #164"
     },
     {
       "id": "db-vo-r1-canvas-viewport",
@@ -7201,7 +7203,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-view-only-ux",
@@ -7211,7 +7213,9 @@
       ],
       "notes": "BoardFlowCanvas: structure vs viewport; shell isScenarioViewOnly",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Parent epic archived PR #164"
     },
     {
       "id": "db-vo-r2-right-sidebar",
@@ -7220,7 +7224,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-view-only-ux",
@@ -7230,7 +7234,9 @@
       ],
       "notes": "canEditScenario includes isSessionReadOnly; no BoardNodePalettePanel",
       "leadPersona": "rodchenko",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Parent epic archived PR #164"
     },
     {
       "id": "db-vo-r3-left-sidebar",
@@ -7239,7 +7245,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-view-only-ux",
@@ -7249,7 +7255,9 @@
       ],
       "notes": "constructorDisabled + BoardFunctionList; keep branch navigation",
       "leadPersona": "rodchenko",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Parent epic archived PR #164"
     },
     {
       "id": "db-vo-r4-docs-tests",
@@ -7258,7 +7266,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-view-only-ux",
@@ -7272,7 +7280,9 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Parent epic archived PR #164"
     },
     {
       "id": "db-vo-r5-archive",
@@ -7281,7 +7291,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-view-only-ux",
@@ -7290,6 +7300,182 @@
         "db-vo-r4-docs-tests"
       ],
       "notes": "yarn task:archive device-board-view-only-ux; close GitHub Issue",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Parent epic archived PR #164"
+    },
+    {
+      "id": "device-board-exec-sequence-ux",
+      "title": "Device-board: optional pins, exec fan-out ban, Sequence node",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": 166,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-24",
+      "notes": "Operator AC: optional ? labels; forbid exec fan-out; Sequence 1-9 Then; async parallel mode",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-es-r0-consilium",
+      "title": "DB-ES-R0: consilium + gap audit exec/sequence",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [],
+      "notes": "UE Sequence ref; gap table; async contract decision",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-es-r1-optional-pin-labels",
+      "title": "DB-ES-R1: optional pin labels (? suffix)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-es-r0-consilium"
+      ],
+      "notes": "socket-port-label + resolve-context-port-label; no bare & null",
+      "leadPersona": "rodchenko",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-es-r2-exec-fanout-ban",
+      "title": "DB-ES-R2: exec fan-out forbidden",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-es-r0-consilium"
+      ],
+      "notes": "onConnect guard + pre-run validator exec-fan-out-forbidden",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-es-r3-sequence-editor",
+      "title": "DB-ES-R3: Sequence node editor (Then 0..8)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-es-r2-exec-fanout-ban"
+      ],
+      "notes": "palette, pins, inspector then count 1-9",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-es-r4-sequence-runtime-sync",
+      "title": "DB-ES-R4: Sequence sync runtime",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-es-r3-sequence-editor"
+      ],
+      "notes": "exec-sequence.ts; top-to-bottom Then chain; reuse exec-successor",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-es-r5-sequence-async",
+      "title": "DB-ES-R5: Sequence async parallel mode",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-es-r4-sequence-runtime-sync"
+      ],
+      "notes": "parallelAsync checkbox; supportsAsync gate; Promise.all",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-es-r6-docs-tests",
+      "title": "DB-ES-R6: CONCEPT + catalog + CI",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-es-r1-optional-pin-labels",
+        "db-es-r5-sequence-async"
+      ],
+      "notes": "DEVICE_BOARD_CONCEPT; catalog verify; turbo CI",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-es-r7-archive",
+      "title": "DB-ES-R7: archive epic exec-sequence UX",
+      "promptPath": "docs/prompts/DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-exec-sequence-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-es-r6-docs-tests"
+      ],
+      "notes": "yarn task:archive device-board-exec-sequence-ux; close Issue #166",
       "leadPersona": "vesnin",
       "supportPersonas": []
     }
