@@ -58,6 +58,7 @@ import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
 import { DeleteFunctionModal } from './board-variable-modals.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { PlaybackClusterControl } from './playback-cluster-control.js';
+import { CompetitionRunTimer } from './competition-run-timer.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
 import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds } from '../graph/index.js';
@@ -1395,6 +1396,14 @@ const DeviceBoardShellInner: React.FC<{
               Только просмотр
             </span>
           ) : null}
+          {graph.isCompetitionMode ? (
+            <span
+              className="badge badge-warning badge-outline badge-sm shrink-0"
+              title="Конкурсный сценарий: структура заблокирована, параметры можно менять"
+            >
+              Конкурс
+            </span>
+          ) : null}
           <BoardCanvasBreadcrumb
             segments={canvasBreadcrumbSegments}
             detailTitle={scenarioTitle}
@@ -1810,15 +1819,23 @@ const DeviceBoardShellInner: React.FC<{
         mode={clipboardPaneModal ?? 'selection'}
         selectedCount={clipboardPaneSelectedCount}
         clipboardCount={graph.boardClipboardNodeCount}
-        copyDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
-        pasteDisabled={graph.isSessionReadOnly || graph.boardClipboardNodeCount === 0}
-        deleteDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
+        copyDisabled={graph.isStructureLocked || clipboardPaneSelectedCount < 1}
+        pasteDisabled={graph.isStructureLocked || graph.boardClipboardNodeCount === 0}
+        deleteDisabled={graph.isStructureLocked || clipboardPaneSelectedCount < 1}
         onCopy={handleClipboardPaneCopy}
         onDelete={handleClipboardPaneDelete}
         onPaste={handleClipboardPanePaste}
         onClearClipboard={handleClipboardPaneClear}
         onDismiss={closeClipboardPaneModal}
       />
+
+      {graph.isCompetitionMode ? (
+        <CompetitionRunTimer
+          isRunning={isRuntime}
+          runStartedAtMs={graph.runtimeState.runStartedAtMs}
+          timeoutSec={graph.competitionTimeoutSec}
+        />
+      ) : null}
     </div>
   );
 };

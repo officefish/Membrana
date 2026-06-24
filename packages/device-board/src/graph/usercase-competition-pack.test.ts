@@ -48,6 +48,8 @@ describe('usercase-competition-pack', () => {
         variables: hydrated.variables,
       });
       expect(isPreRunValid(preRunIssues), JSON.stringify(preRunIssues)).toBe(true);
+      expect(canon.meta?.executionPolicy).toBe('competition');
+      expect(canon.meta?.isCompetitionTemplate).toBe(true);
     });
   }
 

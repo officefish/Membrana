@@ -12,6 +12,7 @@ import {
   createRecordingPolicyValue,
   createScenarioVariable,
   DEFAULT_RECORDING_POLICY,
+  DEFAULT_COMPETITION_TIMEOUT_SEC,
   resolveScenarioCollectorConfig,
   resolveScenarioRecordingPolicy,
   resolveScenarioFftTrendsPolicy,
@@ -76,6 +77,8 @@ import {
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,
   stampSystemPreviewDocument,
+  resolveCompetitionExecutionPolicy,
+  isCompetitionStructureLocked,
   createEmptyFunctionDraft,
   type VariableNodeKind,
   type V04PaletteNodeKind,
@@ -247,6 +250,10 @@ export interface DeviceBoardGraphContextValue {
   /** U10 W2: user workspace slots (undefined host → поля no-op). */
   readonly workspaceEnabled: boolean;
   readonly isSessionReadOnly: boolean;
+  /** Competition mode: block structure edits (delete, paste, collapse). */
+  readonly isStructureLocked: boolean;
+  readonly isCompetitionMode: boolean;
+  readonly competitionTimeoutSec: number;
   readonly sessionTitle: string | null;
   readonly workspaceList: readonly DeviceBoardWorkspaceListItem[];
   readonly activeWorkspaceId: string | null;
@@ -415,6 +422,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   workspaceHost,
   boardSession = null,
 }) => {
+  const isSessionReadOnly = isDeviceBoardSessionReadOnly(boardSession);
+  const structureLockRef = useRef({
+    locked: isSessionReadOnly,
+    competition: false,
+    timeoutSec: DEFAULT_COMPETITION_TIMEOUT_SEC,
+  });
+
   const defaultState = useMemo(
     () => initialHydratedState ?? createDefaultHydratedBoardState(deviceKindProp),
     [deviceKindProp, initialHydratedState],
@@ -1411,6 +1425,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const collapseMarqueeToFunction = useCallback(
     (branch: ScenarioBranchTab, selectedNodeIds: readonly string[]): string | null => {
+      if (structureLockRef.current.locked) {
+        return structureLockRef.current.competition
+          ? 'Конкурсный сценарий: структура заблокирована'
+          : 'Режим только просмотра';
+      }
       if (branch === 'function') {
         return 'Объединение доступно только на ветках сценария';
       }
@@ -1444,6 +1463,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const collapseMarqueeToCommentGroup = useCallback(
     (branch: ScenarioCommentGroupBranch, selectedNodeIds: readonly string[]): CollapseMarqueeToCommentGroupResult => {
+      if (structureLockRef.current.locked) {
+        return {
+          error: structureLockRef.current.competition
+            ? 'Конкурсный сценарий: структура заблокирована'
+            : 'Режим только просмотра',
+          groupNode: null,
+        };
+      }
       const branchNodes = branch === 'signal' ? signalNodes : readScenarioBranchGraph(branch).nodes;
       const branchEdges =
         branch === 'signal' ? signalEdges : readScenarioBranchGraph(branch).edges;
@@ -1598,7 +1625,6 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnStopEdges,
       scenarioOnDisconnectNodes,
       scenarioOnDisconnectEdges,
-      scenarioOnDisconnectEdges,
       scenarioFunctions: hydratedFunctionInputs(buildHydratedSnapshot()),
       variables,
     });
@@ -1615,6 +1641,24 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     buildHydratedSnapshotRef.current = buildHydratedSnapshot;
     runValidationRef.current = runValidation;
   }, [buildDocument, buildHydratedSnapshot, runValidation]);
+
+  const scenarioPolicy = useMemo(() => {
+    const meta = buildDocument().meta;
+    const competition = resolveCompetitionExecutionPolicy(meta);
+    return {
+      isCompetitionMode: competition !== null,
+      competitionTimeoutSec: competition?.timeoutSec ?? DEFAULT_COMPETITION_TIMEOUT_SEC,
+      isStructureLocked: isSessionReadOnly || isCompetitionStructureLocked(meta),
+    };
+  }, [buildDocument, isSessionReadOnly]);
+
+  useEffect(() => {
+    structureLockRef.current = {
+      locked: scenarioPolicy.isStructureLocked,
+      competition: scenarioPolicy.isCompetitionMode,
+      timeoutSec: scenarioPolicy.competitionTimeoutSec,
+    };
+  }, [scenarioPolicy]);
 
   const onSignalNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -2053,7 +2097,6 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const maxUserWorkspaces = workspaceHost?.maxUserWorkspaces ?? 0;
   const workspaceEnabled = workspaceHost !== undefined;
-  const isSessionReadOnly = isDeviceBoardSessionReadOnly(boardSession);
   const sessionTitle = boardSession?.title ?? null;
 
   const refreshWorkspaces = useCallback(async (): Promise<void> => {
@@ -2786,9 +2829,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       branch: scenarioBranch,
       clipboardCount: boardClipboardRef.current?.nodes.length ?? 0,
       anchor: anchorFlowPosition ?? null,
-      readOnly: isSessionReadOnly,
+      readOnly: structureLockRef.current.locked,
     });
-    if (isSessionReadOnly) {
+    if (structureLockRef.current.locked) {
       logBoardClipboardStep(showInfoLogsRef.current, 'paste-failed', {
         branch: scenarioBranch,
         reason: 'read-only-session',
@@ -2832,9 +2875,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       logBoardClipboardStep(showInfoLogsRef.current, 'delete-attempt', {
         branch: scenarioBranch,
         nodeIds,
-        readOnly: isSessionReadOnly,
+        readOnly: structureLockRef.current.locked,
       });
-      if (isSessionReadOnly) {
+      if (structureLockRef.current.locked) {
         logBoardClipboardStep(showInfoLogsRef.current, 'delete-failed', {
           branch: scenarioBranch,
           reason: 'read-only-session',
@@ -3123,6 +3166,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       reloadScenarioFromServer,
       workspaceEnabled,
       isSessionReadOnly,
+      isStructureLocked: scenarioPolicy.isStructureLocked,
+      isCompetitionMode: scenarioPolicy.isCompetitionMode,
+      competitionTimeoutSec: scenarioPolicy.competitionTimeoutSec,
       sessionTitle,
       workspaceList,
       activeWorkspaceId,
@@ -3226,6 +3272,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       inspectRuntimeNode,
       isDirty,
       isSessionReadOnly,
+      scenarioPolicy,
       sessionTitle,
       isValidConnectionForLayer,
       onScenarioAlarmConnect,
@@ -3308,6 +3355,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       syncStatus,
       workspaceEnabled,
       isSessionReadOnly,
+      scenarioPolicy,
       sessionTitle,
       workspaceList,
       validationIssues,

@@ -36,6 +36,12 @@ export const DEVICE_SCENARIO_MIN_DOCUMENT_VERSION = 1 as const;
 /** Происхождение persisted-документа (U10 User Workspace). */
 export type DeviceScenarioWorkspaceKind = 'user' | 'system' | 'seed';
 
+/** Политика исполнения сценария (Phase 3 competition mode). */
+export type DeviceScenarioExecutionPolicy = 'free' | 'competition';
+
+/** Дефолтный лимит прогона конкурсного сценария (сек). */
+export const DEFAULT_COMPETITION_TIMEOUT_SEC = 600;
+
 /** Метаданные export/import (hash обязателен при export — бриф V5). */
 export interface DeviceScenarioMeta {
   readonly title?: string;
@@ -45,6 +51,14 @@ export interface DeviceScenarioMeta {
   readonly workspaceKind?: DeviceScenarioWorkspaceKind;
   readonly workspaceId?: string;
   readonly clonedFromUserCaseId?: string;
+  /** Профиль semantic comment frames (competition / layout canon). */
+  readonly commentGroupProfile?: string;
+  /** Шаблон конкурсного UserCase (загрузка из media templates). */
+  readonly isCompetitionTemplate?: boolean;
+  /** `competition` — readOnly-структура, timeout, server log stub. */
+  readonly executionPolicy?: DeviceScenarioExecutionPolicy;
+  /** Переопределение timeout для `executionPolicy: competition` (сек). */
+  readonly competitionTimeoutSec?: number;
 }
 
 /** Полный документ сценария устройства v1. */

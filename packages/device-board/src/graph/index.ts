@@ -348,6 +348,15 @@ export {
   stampSystemPreviewDocument,
 } from './device-scenario-workspace.js';
 export {
+  resolveCompetitionExecutionPolicy,
+  isCompetitionDocument,
+  isCompetitionStructureLocked,
+  stampCompetitionDocumentMeta,
+  resolveCompetitionRunLimits,
+  type CompetitionExecutionPolicy,
+  type CompetitionRunLimits,
+} from './execution-policy.js';
+export {
   cloneUserCaseToWorkspaceDocument,
   deepCopyDeviceScenarioDocument,
 } from './clone-user-case-to-workspace.js';

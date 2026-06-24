@@ -4,6 +4,7 @@ import {
 } from '@membrana/core';
 
 import { DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT } from './default-usercase-mvp-microphone-beta.generated.js';
+import { stampCompetitionDocumentMeta } from './execution-policy.js';
 
 let cachedDocument: DeviceScenarioDocument | null = null;
 
@@ -16,6 +17,6 @@ export function getDefaultMvpMicrophoneBetaDocument(): DeviceScenarioDocument {
   if (!parsed.ok) {
     throw new Error(`Beta UserCase document invalid: ${parsed.error.message}`);
   }
-  cachedDocument = parsed.value;
+  cachedDocument = stampCompetitionDocumentMeta(parsed.value);
   return cachedDocument;
 }

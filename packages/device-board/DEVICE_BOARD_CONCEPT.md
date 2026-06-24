@@ -1180,6 +1180,25 @@ block-executor       → executeScenarioBlock (узловой dispatch; вызы
 
 Контракт ошибки: `{ code, message, blockId?, pinId?, path?, severity? }`. UI: `BoardValidationBanner` + класс `board-node--validation-error` на canvas. Graph `validatePreRun` мержит document-валидаторы (без дублирования edge-missing).
 
+#### 18.3.3 Competition mode (Phase 3 A3)
+
+Конкурсные UserCase — обычные `device-scenario` документы с meta-флагами (не отдельный класс):
+
+| Поле meta | Значение |
+| --------- | -------- |
+| `isCompetitionTemplate` | `true` для alpha/beta/gamma |
+| `executionPolicy` | `'competition'` |
+| `competitionTimeoutSec` | лимит прогона (default 600) |
+
+Шаблоны JSON: `packages/background-media/templates/competition/` (`index.json` + `<team>/device-scenario.json`). Bundled embed в device-board остаётся для offline-каталога; media-сервер читает templates через `competition-templates.ts`.
+
+Restrictions при `executionPolicy: 'competition'`:
+
+- **UI:** badge «Конкурс», footer-таймер при Run, `isStructureLocked` (delete/paste/collapse off; параметры блоков editable).
+- **Runtime:** timeout в main-loop → `stop('timeout')`; `host.postCompetitionRunLog` stub для server verification.
+
+Pure: `graph/execution-policy.ts`, `runtime/competition-run-log.ts`.
+
 ### 18.4 Comment groups (G1)
 
 ```ts
