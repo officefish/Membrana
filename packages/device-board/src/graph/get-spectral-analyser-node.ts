@@ -5,7 +5,7 @@ import { isBoardFlowNodeData } from './board-node-data.js';
 
 /**
  * GetSpectralAnalyser — метод устройства: singleton SpectralAnalyserRef для DeviceRef.
- * Host-сессия регистрируется в DBC2; на графе — exec + device in, analyser out.
+ * Ref-provider getter: default pure (data-only); impure — exec passthrough.
  */
 export const GET_SPECTRAL_ANALYSER_NODE_KIND = 'get-spectral-analyser' as const;
 
@@ -18,28 +18,27 @@ export const GET_SPECTRAL_ANALYSER_OUT_HANDLE = 'analyser' as const;
 const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
 const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 
-/** Пины GetSpectralAnalyser: exec + device in, exec + analyser out. */
-export function getSpectralAnalyserNodePins(): {
+/** Пины GetSpectralAnalyser: pure (default) — device in, analyser out; impure — + exec. */
+export function getSpectralAnalyserNodePins(pure = true): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
+  const deviceIn: BoardSocketPin = {
+    name: GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
+    kind: 'data',
+    socketType: 'DeviceRef',
+  };
+  const analyserOut: BoardSocketPin = {
+    name: GET_SPECTRAL_ANALYSER_OUT_HANDLE,
+    kind: 'data',
+    socketType: 'SpectralAnalyserRef',
+  };
+  if (pure) {
+    return { inputs: [deviceIn], outputs: [analyserOut] };
+  }
   return {
-    inputs: [
-      EXEC_IN,
-      {
-        name: GET_SPECTRAL_ANALYSER_DEVICE_HANDLE,
-        kind: 'data',
-        socketType: 'DeviceRef',
-      },
-    ],
-    outputs: [
-      EXEC_OUT,
-      {
-        name: GET_SPECTRAL_ANALYSER_OUT_HANDLE,
-        kind: 'data',
-        socketType: 'SpectralAnalyserRef',
-      },
-    ],
+    inputs: [EXEC_IN, deviceIn],
+    outputs: [EXEC_OUT, analyserOut],
   };
 }
 

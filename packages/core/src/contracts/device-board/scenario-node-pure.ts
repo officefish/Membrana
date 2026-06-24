@@ -22,12 +22,19 @@ export type ConstructorAlwaysPureScenarioNodeKind = PolicyConstructorScenarioNod
 
 /**
  * Getters с галочкой Pure ↔ Impure в inspector.
- * Ref-provider getters (GetJournal, GetReporter) — default pure, data-pull без exec.
+ *
+ * **Ref-provider getters** (только отдают ссылку на singleton/session — без per-tick host I/O):
+ * `get-journal`, `get-reporter`, `get-recorder`, `get-spectral-analyser`.
+ * Default pure: data-edge достаточен, exec passthrough не нужен.
+ *
+ * `variable-get` — document-scope variable read (value или ref).
  */
 export const PURE_ELIGIBLE_SCENARIO_NODE_KINDS = [
   'variable-get',
   'get-journal',
   'get-reporter',
+  'get-recorder',
+  'get-spectral-analyser',
 ] as const satisfies readonly ScenarioNodeKind[];
 
 export type PureEligibleScenarioNodeKind = (typeof PURE_ELIGIBLE_SCENARIO_NODE_KINDS)[number];
@@ -44,8 +51,6 @@ export const PURE_LOCKED_IMPURE_SCENARIO_NODE_KINDS = [
   'get-audio-stream',
   'get-sample',
   'get-fft-frame',
-  'get-recorder',
-  'get-spectral-analyser',
   'collect-samples',
   'collect-fft-frames',
   ...REF_CONSTRUCTOR_SCENARIO_NODE_KINDS,

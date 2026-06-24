@@ -270,7 +270,9 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
         deviceHandle = deviceRef.handle;
       }
     }
-    host.log('get-recorder', { nodeId: node.id, branch, device: deviceHandle });
+    if (!resolveScenarioGraphNodePure(node)) {
+      host.log('get-recorder', { nodeId: node.id, branch, device: deviceHandle });
+    }
     return { lastDetection, stopRequested: false };
   }
 
@@ -292,7 +294,9 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
         deviceHandle = deviceRef.handle;
       }
     }
-    host.log('get-spectral-analyser', { nodeId: node.id, branch, device: deviceHandle });
+    if (!resolveScenarioGraphNodePure(node)) {
+      host.log('get-spectral-analyser', { nodeId: node.id, branch, device: deviceHandle });
+    }
     return { lastDetection, stopRequested: false };
   }
 

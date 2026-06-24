@@ -5,7 +5,7 @@ import { isBoardFlowNodeData } from './board-node-data.js';
 
 /**
  * GetRecorder — метод устройства: возвращает singleton RecorderRef для DeviceRef.
- * Host-сессия регистрируется в DBC2; на графе — exec + device in, recorder out.
+ * Ref-provider getter: default pure (data-only); impure — exec passthrough.
  */
 export const GET_RECORDER_NODE_KIND = 'get-recorder' as const;
 
@@ -18,28 +18,27 @@ export const GET_RECORDER_OUT_HANDLE = 'recorder' as const;
 const EXEC_IN: BoardSocketPin = { name: 'exec-in', kind: 'exec' };
 const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 
-/** Пины GetRecorder: exec + device in, exec + recorder out. */
-export function getRecorderNodePins(): {
+/** Пины GetRecorder: pure (default) — device in, recorder out; impure — + exec. */
+export function getRecorderNodePins(pure = true): {
   inputs: readonly BoardSocketPin[];
   outputs: readonly BoardSocketPin[];
 } {
+  const deviceIn: BoardSocketPin = {
+    name: GET_RECORDER_DEVICE_HANDLE,
+    kind: 'data',
+    socketType: 'DeviceRef',
+  };
+  const recorderOut: BoardSocketPin = {
+    name: GET_RECORDER_OUT_HANDLE,
+    kind: 'data',
+    socketType: 'RecorderRef',
+  };
+  if (pure) {
+    return { inputs: [deviceIn], outputs: [recorderOut] };
+  }
   return {
-    inputs: [
-      EXEC_IN,
-      {
-        name: GET_RECORDER_DEVICE_HANDLE,
-        kind: 'data',
-        socketType: 'DeviceRef',
-      },
-    ],
-    outputs: [
-      EXEC_OUT,
-      {
-        name: GET_RECORDER_OUT_HANDLE,
-        kind: 'data',
-        socketType: 'RecorderRef',
-      },
-    ],
+    inputs: [EXEC_IN, deviceIn],
+    outputs: [EXEC_OUT, recorderOut],
   };
 }
 

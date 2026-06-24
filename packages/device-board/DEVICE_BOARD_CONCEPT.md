@@ -846,9 +846,14 @@ runtime (`@membrana/core` `scenario-node-pure.ts`, эпик
 | **Pure** (`pure: true`) | **нет** | пропуск (transparent) | pull через `resolveInput` / `resolveNodeOutput` на каждый read (D4: без tick-cache) |
 | **Impure** (`pure: false`) | exec-in → exec-out | выполняется на exec-тике | выход фиксируется на шаге exec |
 
-**Sidebar:** галочка **Pure** для `PURE_ELIGIBLE` (`variable-get`, `get-journal`, `get-reporter`); ref-getter — read-only
+**Sidebar:** галочка **Pure** для `PURE_ELIGIBLE` — ref-provider getters (`get-journal`,
+`get-reporter`, `get-recorder`, `get-spectral-analyser`) и `variable-get`; ref-getter — read-only
 bound/empty badge (D2); value-getter — редактирование выходного value. Переключение
 **impure → pure** удаляет все exec-рёбра узла (D1).
+
+**Критерий ref-provider pure:** узел только **отдаёт ссылку** (singleton/session lookup),
+без per-tick host sample/FFT I/O. Остаются **impure-only:** `get-sample`, `get-fft-frame`,
+`get-audio-stream`, `get-microphone`.
 
 **Два класса конструкторов** (`CONSTRUCTOR_SCENARIO_NODE_KINDS` в core):
 
