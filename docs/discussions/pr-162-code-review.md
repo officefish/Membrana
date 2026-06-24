@@ -10,7 +10,7 @@ Tier: T1
 
 [Музыкант]: —
 
-[Верстальщик]: **C5** — layout: `flex-col overflow-hidden`, pin inspector в scrollable `flex-1`, палитра `shrink-0 border-t`. `showFunctionPinPanel` — pin+palette только без selection или на function-input/output; palette/group/прочие ноды → инспектор ноды (как на handler-ветках). ✅
+[Верстальщик]: **C5** — layout: `flex-col overflow-hidden`, pin inspector в scrollable `flex-1`, палитра `shrink-0 border-t`. `showFunctionPinPanel` — pin+palette только без selection; function-input/output → pin inspector без палитры; palette/group/прочие ноды → инспектор ноды. ✅
 
 ---
 

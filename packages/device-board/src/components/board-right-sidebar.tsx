@@ -322,9 +322,11 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   const showFunctionInspector = isFunctionBranch && functionMeta !== null && !isRuntime;
   const isFunctionSystemNode =
     selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output';
-  /** Pin inspector + palette: только без выделения или при клике на function-input/output. */
-  const showFunctionPinPanel =
-    showFunctionInspector && (selectedNodeId === null || isFunctionSystemNode);
+  /** Pin inspector + palette: только пустой канвас в редакторе функции. */
+  const showFunctionPinPanel = showFunctionInspector && selectedNodeId === null;
+  /** Только pins при клике на function-input/output (без закреплённой палитры). */
+  const showFunctionPinInspectorOnly =
+    showFunctionInspector && selectedNodeId !== null && isFunctionSystemNode;
   const showSubgraphFunctionInspector =
     !isFunctionBranch &&
     selectedFunctionId !== null &&
@@ -556,6 +558,19 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             onAddLegacyNode={onAddLegacyNode}
             onClearBoard={onClearBoard}
             borderedTop
+          />
+        </div>
+      ) : showFunctionPinInspectorOnly ? (
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <BoardFunctionPinInspector
+            meta={functionMeta}
+            pinEditSide={functionPinEditSide}
+            disabled={editDisabled}
+            onUpdateMeta={onUpdateFunctionMeta}
+            onAddPin={onAddFunctionPin}
+            onUpdatePin={onUpdateFunctionPin}
+            onRemovePin={onRemoveFunctionPin}
+            onDeleteFunction={onDeleteFunction}
           />
         </div>
       ) : selectedNodeId ? (

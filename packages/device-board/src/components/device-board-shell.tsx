@@ -412,6 +412,15 @@ const DeviceBoardShellInner: React.FC<{
   const scenarioBranch = graph.scenarioBranch;
   const isRuntime = graph.runtimeState.isRunning;
 
+  useEffect(() => {
+    if (
+      scenarioBranch !== 'function' &&
+      (selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output')
+    ) {
+      clearSelection();
+    }
+  }, [clearSelection, scenarioBranch, selectedNodeKind]);
+
   const handleUserFunctionListClick = useCallback(
     (functionId: string, draftIndex: number) => {
       if (isSignal || isRuntime) {
