@@ -7,7 +7,7 @@
 
 ## Контекст
 
-Glyph — outline символов кодовой базы (ТЗ §3). **Опционален:** нужен `uv` + git clone вне репо.
+Glyph — outline символов кодовой базы (benmyles/glyph, Go). **Опционален:** нужен Go (`go install`).
 
 Fragment: [`tier3-glyph.fragment.json`](../mcp/tier3-glyph.fragment.json).  
 Конфиденциальность: [`MCP_INTEGRATION_STRATEGY.md`](../MCP_INTEGRATION_STRATEGY.md) §5.
@@ -18,10 +18,9 @@ Fragment: [`tier3-glyph.fragment.json`](../mcp/tier3-glyph.fragment.json).
 
 ### Задача
 
-1. `uv --version`; clone `https://github.com/benmyles/glyph` в `$HOME/glyph` (не submodule Membrana).
-2. `uv sync`; `uv run --directory <path> glyph-mcp --help`.
-3. Merge fragment в локальный config; `__GLYPH_ROOT__` → абсолютный путь.
-4. Smoke: outline `packages/services/detectors` (ТЗ §6.3).
+1. Go: `winget install GoLang.Go` (если нет `go`).
+2. `yarn mcp:phase-c:install` — `go install github.com/benmyles/glyph@latest`, merge в `~/.cursor/mcp.json`.
+3. Перезапуск Cursor; smoke: outline `packages/services/detectors` (ТЗ §6.3).
 
 ### Fallback
 

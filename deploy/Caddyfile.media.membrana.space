@@ -1,0 +1,16 @@
+# Caddy v2 — production site block for @membrana/background-media
+# Copy to VPS: /etc/caddy/Caddyfile.d/media.caddy
+# TLS: automatic Let's Encrypt (needs DNS A → VPS, ports 80+443 open)
+#
+# Install via: node scripts/_ssh-media-tls-setup.mjs
+
+media.membrana.space {
+	encode gzip
+	reverse_proxy 127.0.0.1:3010
+}
+
+# Optional: restrict /docs in production (Swagger)
+# @swagger path /docs*
+# handle @swagger {
+# 	respond "Not found" 404
+# }

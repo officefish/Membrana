@@ -3,13 +3,11 @@
 > **Task-промпт для агента-разработчика** · размер **M–L**  
 > Ожидаемый артефакт: **1 PR** — `@membrana/trends-detector-service` + плагин `trends-fft-analyzer` на модуле «Микрофон».  
 > Реестр: `trends-fft-microphone-plugin` · **зависит от** `analyzer-frame-feed-refactor`.  
-> Референс демо: `apps/demos/trendsFFT/` (старый проект, не собирается в monorepo).
-
 ---
 
 ## Контекст
 
-В `apps/demos/trendsFFT/` перенесён прототип **анализатора тенденций FFT**: сбор серии кадров (centroid, flux, RMS), вычисление временных паттернов, fuzzy-классификация по шаблонам сцен (ветер, тишина, трафик, дрон-bootstrap и т.д.). В отличие от `fft-threshold-test` (pass/fail по порогам) — **многоклассовая** классификация с весом ~70% temporal / ~30% spectral.
+**Анализатор тенденций FFT**: сбор серии кадров (centroid, flux, RMS), вычисление временных паттернов, fuzzy-классификация по шаблонам сцен (ветер, тишина, трафик, дрон-bootstrap и т.д.). В отличие от `fft-threshold-test` (pass/fail по порогам) — **многоклассовая** классификация с весом ~70% temporal / ~30% spectral. Каноническая реализация: `@membrana/trends-detector-service` + плагин `trends-fft-analyzer`.
 
 Продуктовая модель (зафиксирована постановщиком):
 
@@ -36,7 +34,7 @@
 | [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) | `Detection` socket |
 | [`single-node-detection-first`](../tasks/README.md) | #47 — trends = scene tagging, не stage-gate harmonic |
 
-**Референс UX/математики (не копировать импорты):** `apps/demos/trendsFFT/` — `ImprovedFFTTrendsService.ts`, `types/index.ts`, `TrendsFFTDetectorWidget.tsx`.
+**Референс UX/математики:** `packages/services/trends-detector/` (`classifyTrends`, `system-templates.ts`) и `apps/client/src/plugins/trends-fft-analyzer/`.
 
 **GitHub Issue:** [#56](https://github.com/officefish/Membrana/issues/56) · блокируется [#55](https://github.com/officefish/Membrana/issues/55).
 
@@ -94,8 +92,8 @@ function classifyTrends(
 ): TrendsDetectionResult;
 ```
 
-- Порт математики из `apps/demos/trendsFFT/services/ImprovedFFTTrendsService.ts` — **один** канонический набор весов (70% temporal / 30% spectral).
-- Системные шаблоны в `src/data/system-templates.ts` — восстановить полный набор из старого репо (в демо в `types/index.ts` только `WIND`; дополнить WIND, QUIET, TRAFFIC, DRONE-bootstrap, BIRDS, VOICE по материалам демо/старого проекта).
+- Математика в `packages/services/trends-detector/src/` — **один** канонический набор весов (70% temporal / 30% spectral).
+- Системные шаблоны в `src/data/system-templates.ts` — WIND, QUIET, TRAFFIC, DRONE-bootstrap, BIRDS, VOICE и др.
 - Unit-тесты: синус, белый шум, стабильный шум (ветер-like), пустое окно.
 
 #### 2. Плагин `trends-fft-analyzer` (модуль «Микрофон»)
@@ -145,9 +143,8 @@ function classifyTrends(
 
 - Прямой `subscribeMicrophoneStream` в плагине (только feed).
 - `new AudioContext()` в client.
-- Импорт из `apps/demos/trendsFFT/` (только порт логики).
 - Замена `harmonic-detector-viz` или публикация в `droneDetectionHub` при каждом кадре.
-- Тяжёлый `SoundTemplateEditor`, import/export JSON шаблонов.
+- Тяжёлый редактор шаблонов и import/export JSON в v1 (follow-up #57).
 
 **Связь с #47:** trends-классификация — **scene tagging** для датасета и оператора; **не** stage-gate детектора БПЛА.
 
@@ -192,7 +189,7 @@ function classifyTrends(
 ### Out of scope
 
 - Режим `sample-library` и «создать шаблон из сэмпла» (задача C)
-- Полный редактор шаблонов из демо (`SoundTemplateEditor`, zustand persist)
+- Полный редактор пользовательских шаблонов (follow-up #57, `TrendsTemplateEditor`)
 - UI device-board
 - ML / neural classifier
 - Интеграция с `droneDetectionHub` (кроме явного решения Teamlead)
@@ -227,7 +224,7 @@ Definition of Done: …
 
 ## Заметки для человека-постановщика
 
-1. GitHub Issue (`wish`): «Trends FFT analyzer plugin + trends-detector-service» + ссылки на этот промпт, `analyzer-frame-feed-refactor`, демо `apps/demos/trendsFFT/`.
+1. GitHub Issue (`wish`): «Trends FFT analyzer plugin + trends-detector-service» + ссылки на этот промпт и `analyzer-frame-feed-refactor`.
 2. Старт разработки **после merge** `analyzer-frame-feed-refactor`.
 3. Follow-up задачи (не в реестре v1): `trends-fft-sample-library`, device-board D1 nodes.
 4. После merge: `yarn task:archive trends-fft-microphone-plugin --notes "PR #…"`.

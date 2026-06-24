@@ -12,16 +12,17 @@ name: membrana-media
 
 services:
   postgres:
-    ports: !override []
+    # !reset: replace base ports (avoid duplicate publish rules when merging)
+    ports: !reset []
     restart: unless-stopped
 
   media-api:
     restart: unless-stopped
     # Bind to localhost only; expose 443 via Caddy/nginx on the host
+    # !override: replace base ports/volumes (merge would duplicate 3010 publish)
     ports: !override
       - '127.0.0.1:${MEDIA_PORT:-3010}:3010'
-    # Host path for straightforward backup/rsync (see BACKGROUND_MEDIA_DEPLOY.md §7)
-    volumes:
+    volumes: !override
       - ${MEDIA_BLOB_HOST_DIR:-/var/lib/membrana/media-blobs}:/data/blobs
     networks:
       - default
