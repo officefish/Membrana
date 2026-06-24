@@ -1,7 +1,8 @@
 # Промпт (day sprint): Device-Board — приёмка PR batch #168–#171
 
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
-> **Реестр:** эпик **`device-board-pr-batch-sprint-2026-06-24`**  
+> **Статус:** **closed** 2026-06-24 · closure [`CLOSURE.md`](../day-sprint/device-board-pr-batch-sprint-2026-06-24/CLOSURE.md)  
+> **Merged:** [#170](https://github.com/officefish/Membrana/pull/170), [#171](https://github.com/officefish/Membrana/pull/171) · follow-up [#172](https://github.com/officefish/Membrana/issues/172)  
 > **Консилиум:** [`docs/seanses/device-board-pr-batch-sprint-2026-06-24-2026-06-24.md`](../seanses/device-board-pr-batch-sprint-2026-06-24-2026-06-24.md)  
 > **Сводный review:** [`docs/discussions/sprint-device-board-pr-batch-2026-06-24-code-review.md`](../discussions/sprint-device-board-pr-batch-2026-06-24-code-review.md)  
 > **Пакеты:** `@membrana/device-board` · `@membrana/core` (только #171 pure-eligibility)
@@ -66,5 +67,5 @@
 - [x] Code review LGTM на #170 и #171
 - [x] CONCEPT обновлён
 - [x] #170 и #171 merged в `main`, CI green
-- [ ] Follow-up Issue создан
-- [ ] Эпик archived в `docs/tasks/registry.json`
+- [x] Follow-up Issue создан ([#172](https://github.com/officefish/Membrana/issues/172))
+- [x] Эпик archived в `docs/tasks/registry.json`

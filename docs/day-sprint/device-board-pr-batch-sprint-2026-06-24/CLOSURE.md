@@ -23,7 +23,7 @@
 
 ## Follow-up
 
-- GitHub Issue: fn-blocks inspector (вложенные функции в subgraph-блоке)
+- GitHub Issue [#172](https://github.com/officefish/Membrana/issues/172): fn-blocks inspector (вложенные функции в subgraph-блоке)
 
 ## Команды закрытия
 
