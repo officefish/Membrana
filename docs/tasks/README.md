@@ -147,6 +147,13 @@
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-3-pack-verify` | UCV2-3: usercase:build + verify-pack + smoke | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-4-operator-signoff` | UCV2-4: operator LGTM doc + epic close | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
+| `device-board-user-function-closeout` | Device-board user function closeout (PR #159 + #160) | L | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | [#161](https://github.com/officefish/Membrana/issues/161) |
+| `db-ufc-c0-consilium` | DB-UFC-C0: consilium on PR #159/#160 merge and docs | M | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — |
+| `db-ufc-c1-merge-159` | DB-UFC-C1: merge PR #159 (unique function id on collapse) | S | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — |
+| `db-ufc-c2-merge-160` | DB-UFC-C2: rebase and merge PR #160 | M | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — |
+| `db-ufc-c3-docs-sync` | DB-UFC-C3: documentation sync (CONCEPT, catalog, user-functions.mdx) | M | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — |
+| `db-ufc-c4-refactor-backlog` | DB-UFC-C4: P0/P1 refactor from consilium (or Issues) | S | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — |
+| `db-ufc-c5-archive` | DB-UFC-C5: CI green, smoke, task archive | S | [`DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_USER_FUNCTION_CLOSEOUT_EPIC_PROMPT.md) | — |
 
 ---
 
