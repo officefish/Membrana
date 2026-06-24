@@ -4,6 +4,7 @@ import type { Edge } from '@xyflow/react';
 
 import { createMakeRecordingPolicyBoardNode } from './make-recording-policy-node.js';
 import { createGetJournalBoardNode } from './get-journal-node.js';
+import { createGetRecorderBoardNode } from './get-recorder-node.js';
 import { createGetReporterBoardNode, getReporterNodePins } from './get-reporter-node.js';
 import { createVariableBoardNode } from './variable-node.js';
 import {
@@ -149,5 +150,12 @@ describe('pure-node-graph (G2)', () => {
     expect(getReporterNodePins(false).inputs.some((pin) => pin.name === 'exec-in')).toBe(true);
     expect(synced?.data.inputs?.some((pin) => pin.name === 'exec-in')).toBe(true);
     expect(synced?.data.pure).toBe(false);
+  });
+
+  it('syncPureNodePins removes exec pins from pure get-recorder', () => {
+    const recorder = createGetRecorderBoardNode({ id: 'grc' });
+    const [synced] = syncPureNodePins([recorder], []);
+    expect(synced?.data.inputs?.some((pin) => pin.name === 'exec-in')).toBe(false);
+    expect(synced?.data.outputs?.some((pin) => pin.name === 'exec-out')).toBe(false);
   });
 });

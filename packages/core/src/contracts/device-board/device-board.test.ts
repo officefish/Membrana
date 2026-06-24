@@ -421,12 +421,19 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
       'make-recording-policy',
       'make-fft-trends-policy',
     ]);
-    expect(PURE_ELIGIBLE_SCENARIO_NODE_KINDS).toEqual(['variable-get', 'get-journal', 'get-reporter']);
+    expect(PURE_ELIGIBLE_SCENARIO_NODE_KINDS).toEqual([
+      'variable-get',
+      'get-journal',
+      'get-reporter',
+      'get-recorder',
+      'get-spectral-analyser',
+    ]);
     expect(isConstructorAlwaysPureScenarioNodeKind('make-recording-policy')).toBe(true);
     expect(isPureEligibleScenarioNodeKind('variable-get')).toBe(true);
+    expect(isPureEligibleScenarioNodeKind('get-recorder')).toBe(true);
     expect(isPureLockedImpureScenarioNodeKind('get-audio-stream')).toBe(true);
-    expect(isPureLockedImpureScenarioNodeKind('get-journal')).toBe(false);
-    expect(isPureLockedImpureScenarioNodeKind('get-reporter')).toBe(false);
+    expect(isPureLockedImpureScenarioNodeKind('get-recorder')).toBe(false);
+    expect(isPureLockedImpureScenarioNodeKind('get-spectral-analyser')).toBe(false);
     expect(isPureLockedImpureScenarioNodeKind('make-track')).toBe(true);
     expect(isPureLockedImpureScenarioNodeKind('variable-get')).toBe(false);
   });
@@ -444,11 +451,16 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     expect(
       resolveScenarioGraphNodePure({ nodeKind: 'get-audio-stream', pure: true }),
     ).toBe(false);
+    expect(resolveScenarioGraphNodePure({ nodeKind: 'get-recorder' })).toBe(DEFAULT_PURE_ELIGIBLE);
+    expect(
+      resolveScenarioGraphNodePure({ nodeKind: 'get-recorder', pure: false }),
+    ).toBe(false);
     expect(
       resolveScenarioGraphNodePure({ nodeKind: 'start-recording' }),
     ).toBe(false);
     expect(isScenarioNodePureFieldApplicable('variable-get')).toBe(true);
     expect(isScenarioNodePureFieldApplicable('get-journal')).toBe(true);
+    expect(isScenarioNodePureFieldApplicable('get-recorder')).toBe(true);
     expect(isScenarioNodePureFieldApplicable('print')).toBe(false);
   });
 

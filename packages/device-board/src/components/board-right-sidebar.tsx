@@ -787,6 +787,18 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                       <code className="font-mono">reporter</code>. Pure — без exec passthrough.
                     </p>
                   ) : null}
+                  {selectedNodeKind === 'get-recorder' ? (
+                    <p className="text-base-content/55 leading-relaxed">
+                      Data-only: <code className="font-mono">device</code> →{' '}
+                      <code className="font-mono">recorder</code>. Singleton ref; Pure — без exec.
+                    </p>
+                  ) : null}
+                  {selectedNodeKind === 'get-spectral-analyser' ? (
+                    <p className="text-base-content/55 leading-relaxed">
+                      Data-only: <code className="font-mono">device</code> →{' '}
+                      <code className="font-mono">analyser</code>. Singleton ref; Pure — без exec.
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
               {selectedNodeKind === 'get-microphone' ? (

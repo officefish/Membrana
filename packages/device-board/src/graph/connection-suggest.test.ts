@@ -36,8 +36,8 @@ describe('connection-suggest', () => {
     );
     expect(suggestions.some((item) => item.nodeKind === 'stop-runtime')).toBe(true);
     expect(suggestions.some((item) => item.nodeKind === 'get-microphone')).toBe(true);
-    expect(suggestions.some((item) => item.nodeKind === 'get-recorder')).toBe(true);
-    expect(suggestions.some((item) => item.nodeKind === 'get-spectral-analyser')).toBe(true);
+    expect(suggestions.some((item) => item.nodeKind === 'get-recorder')).toBe(false);
+    expect(suggestions.some((item) => item.nodeKind === 'get-spectral-analyser')).toBe(false);
   });
 
   it('suggests get-microphone and stop-runtime for GetDevice device output', () => {
