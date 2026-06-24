@@ -188,7 +188,6 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioFunctionDrafts: readonly ScenarioFunctionDraft[];
   readonly activeFunctionId: string;
   readonly activeFunctionDraftIndex: number;
-  readonly activeFunctionDraftIndex: number;
   readonly validationIssues: readonly PreRunValidationIssue[];
   readonly canRun: boolean;
   readonly runDisabledReason: string | null;

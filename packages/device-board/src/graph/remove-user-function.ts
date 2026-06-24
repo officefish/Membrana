@@ -78,7 +78,7 @@ export function stripSubgraphBlocksForFunctionOccurrence(
   for (const branch of branchGraphs) {
     for (let nodeIndex = 0; nodeIndex < branch.nodes.length; nodeIndex += 1) {
       const node = branch.nodes[nodeIndex];
-      if (!isSubgraphBlockForFunction(node, functionId)) {
+      if (node === undefined || !isSubgraphBlockForFunction(node, functionId)) {
         continue;
       }
       if (seen !== occurrence) {
