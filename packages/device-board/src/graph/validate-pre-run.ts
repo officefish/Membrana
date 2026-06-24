@@ -25,6 +25,7 @@ import { findSequenceAsyncPreRunIssues } from './validate-sequence-async.js';
 import { buildDeviceScenarioDocument } from './build-device-scenario.js';
 import { validateFunctionDepth } from './validate-function-depth.js';
 import { findPureExecEdgeHints } from './validate-pure-exec.js';
+import { findStartRecordingUnconditionalLoopIssues } from './validate-start-recording-loop.js';
 import { validateUserCaseDocument } from '../runtime/validators/validate-user-case-document.js';
 import { mergePreRunWithUserCaseDocumentIssues } from '../runtime/validators/validation-bridge.js';
 
@@ -206,6 +207,14 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
       'scenario.loops.main.edges',
     ),
   );
+  issues.push(
+    ...findStartRecordingUnconditionalLoopIssues(
+      input.scenarioMainNodes,
+      input.scenarioMainEdges,
+      SCENARIO_MAIN_ENTRY,
+      'scenario.loops.main',
+    ),
+  );
 
   pushEntryIssue(issues, input.scenarioAlarmNodes, SCENARIO_ALARM_ENTRY, 'scenario.loops.alarm.entry');
   pushEdgeIssues(
@@ -214,6 +223,14 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     input.scenarioAlarmEdges,
     'scenario',
     'scenario.loops.alarm.edges',
+  );
+  issues.push(
+    ...findStartRecordingUnconditionalLoopIssues(
+      input.scenarioAlarmNodes,
+      input.scenarioAlarmEdges,
+      SCENARIO_ALARM_ENTRY,
+      'scenario.loops.alarm',
+    ),
   );
 
   pushEntryIssue(issues, input.scenarioOnStopNodes, SCENARIO_ON_STOP_ENTRY, 'scenario.triggers.onStop.entry');
