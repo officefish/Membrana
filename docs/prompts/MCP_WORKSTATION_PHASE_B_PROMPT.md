@@ -19,8 +19,9 @@ Fallback: [`MCP_USAGE.md`](../MCP_USAGE.md).
 ### Perplexity (опционально)
 
 1. Получить `pplx-…` (ТЗ §2) — billing личный.
-2. Merge fragment в **локальный** MCP config; ключ **не** в git.
-3. Smoke: «MCP news last 7 days» (ТЗ §6.1).
+2. Добавить `PERPLEXITY_API_KEY=pplx-…` в корневой `.env` (не в git).
+3. `yarn mcp:phase-b:install` — merge tier1+tier2 в `~/.cursor/mcp.json`.
+4. Перезапустить Cursor; smoke: «MCP news last 7 days» (ТЗ §6.1).
 
 **Skip:** нет ключа / 403 → удалить блок perplexity; research вручную + `yarn analyzers:research:week` (если есть Anthropic key).
 

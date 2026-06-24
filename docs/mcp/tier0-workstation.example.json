@@ -5,13 +5,8 @@
       "args": ["-y", "gitnexus@latest", "mcp"]
     },
     "git": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-git",
-        "--repository",
-        "__MEMBRANA_ROOT__"
-      ]
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "__MEMBRANA_ROOT__"]
     },
     "filesystem": {
       "command": "npx",

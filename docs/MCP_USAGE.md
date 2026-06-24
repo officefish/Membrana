@@ -12,7 +12,7 @@
 | Сервер | Задача | Fallback если MCP недоступен |
 |--------|--------|------------------------------|
 | **gitnexus** | Граф зависимостей, impact | `rg`, `yarn turbo run … --dry`, IDE «Find references» |
-| **Git** (example) | diff, log, blame через MCP | `git` в терминале |
+| **Git** (example) | diff, log, blame через MCP (`uvx mcp-server-git`; npm-пакет снят) | `git` в терминале |
 | **Filesystem** (example) | чтение дерева в scope | Cursor @files, Read tool |
 
 Committed config [`.cursor/mcp.json`](../.cursor/mcp.json) содержит **только gitnexus**, чтобы Cursor не падал на чужих путях/ключах.
@@ -23,7 +23,8 @@ Workstation merge: [`mcp/tier0-workstation.example.json`](./mcp/tier0-workstatio
 
 ## Tier 1 — Perplexity (ключ опционален)
 
-| Нужен ключ | `PERPLEXITY_API_KEY` (`pplx-…`) в локальном Claude/Cursor config |
+| Нужен ключ | `PERPLEXITY_API_KEY` (`pplx-…`) в корневом `.env` или локальном MCP config |
+| Установка | `yarn mcp:phase-b:install` (читает `.env`, merge в `~/.cursor/mcp.json`) |
 |------------|---------------------------------------------------------------------|
 | Пример | [`mcp/tier1-perplexity.fragment.json`](./mcp/tier1-perplexity.fragment.json) |
 
@@ -53,10 +54,10 @@ Workstation merge: [`mcp/tier0-workstation.example.json`](./mcp/tier0-workstatio
 
 ---
 
-## Tier 3 — Glyph (uv + clone, без API-ключа)
+## Tier 3 — Glyph (Go, без API-ключа)
 
-| Setup | ТЗ §3: clone `benmyles/glyph`, `uv sync`, путь в config |
-|-------|----------------------------------------------------------|
+| Setup | `go install github.com/benmyles/glyph@latest` → `yarn mcp:phase-c:install` |
+|-------|-------------------------------------------------------------------------------|
 | Пример | [`mcp/tier3-glyph.fragment.json`](./mcp/tier3-glyph.fragment.json) |
 
 **Fallback:**
@@ -64,7 +65,7 @@ Workstation merge: [`mcp/tier0-workstation.example.json`](./mcp/tier0-workstatio
 - gitnexus + `rg -n "symbol" packages/`
 - IDE outline / Go to symbol
 
-**Если uv не установлен:** пропустить фазу C; зафиксировать skip в Issue #53.
+**Если Go не установлен:** `winget install GoLang.Go`, затем `yarn mcp:phase-c:install`. Или skip + gitnexus.
 
 ---
 

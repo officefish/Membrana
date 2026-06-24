@@ -1,0 +1,49 @@
+{
+  "mcpServers": {
+    "gitnexus": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "gitnexus@latest",
+        "mcp"
+      ]
+    },
+    "git": {
+      "command": "C:/Users/user190825/.local/bin/uvx.exe",
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "C:/Users/user190825/practice/Membrana"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:/Users/user190825/practice/Membrana"
+      ]
+    },
+    "perplexity": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@perplexity-ai/mcp-server"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "pplx-REDACTED"
+      }
+    },
+    "playwright": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
