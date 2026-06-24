@@ -66,6 +66,30 @@ describe('collapse-to-function', () => {
     expect(draft.entry).toBe('fn-new-input');
   });
 
+  it('picks next function id when existingFunctionIds is set', () => {
+    const a = createScenarioBoardNode('record-chunk', { id: 'a', position: { x: 200, y: 100 } });
+    const b = createScenarioBoardNode('trends-fft-detect', { id: 'b', position: { x: 400, y: 100 } });
+    const first = collapseSelectionToFunction({
+      selectedNodeIds: ['a', 'b'],
+      branchNodes: [a, b],
+      branchEdges: [],
+      existingFunctionIds: [],
+    });
+    const second = collapseSelectionToFunction({
+      selectedNodeIds: ['a', 'b'],
+      branchNodes: [a, b],
+      branchEdges: [],
+      existingFunctionIds: first.ok ? [first.functionDraft.id] : [],
+    });
+    expect(first.ok).toBe(true);
+    expect(second.ok).toBe(true);
+    if (first.ok && second.ok) {
+      expect(first.functionDraft.id).toBe('fn-1');
+      expect(second.functionDraft.id).toBe('fn-2');
+      expect(second.functionDraft.name).toBe('Function 2');
+    }
+  });
+
   it('dedupes fan-in boundary pins (same handle from outside)', () => {
     const policy = createMakeRecordingPolicyBoardNode({ id: 'policy', position: { x: 0, y: 0 } });
     const startA = createStartRecordingBoardNode({ id: 'start-a', position: { x: 200, y: 0 } });
