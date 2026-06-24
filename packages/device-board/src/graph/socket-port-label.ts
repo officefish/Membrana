@@ -23,9 +23,21 @@ const REFERENCE_NOUN: Record<string, string> = {
   FftTrendAnalysisRef: 'fft trend analysis',
 };
 
+function formatSocketPortBase(pin: BoardSocketPin): string {
+  if (pin.socketType !== undefined && isReferenceSocketType(pin.socketType)) {
+    const noun = REFERENCE_NOUN[pin.socketType] ?? pin.socketType.toLowerCase();
+    return `& ${noun}`;
+  }
+  if (pin.socketType !== undefined) {
+    return pin.socketType.toLowerCase();
+  }
+  return pin.name;
+}
+
 /**
  * Человекочитаемая подпись data/exec-порта на ноде.
  * Ссылочные типы: префикс `&` (DeviceRef → `& device`).
+ * Nullable / необязательный порт: суффикс ` ?` (как TypeScript optional).
  */
 export function formatSocketPortLabel(pin: BoardSocketPin): string {
   if (pin.kind === 'event') {
@@ -46,15 +58,12 @@ export function formatSocketPortLabel(pin: BoardSocketPin): string {
   if (pin.name === 'tickMs') {
     return 'tick ms';
   }
+  const base = formatSocketPortBase(pin);
   if (pin.nullable === true) {
-    return '& null';
+    if (pin.socketType === undefined && base === pin.name) {
+      return 'any ?';
+    }
+    return `${base} ?`;
   }
-  if (pin.socketType !== undefined && isReferenceSocketType(pin.socketType)) {
-    const noun = REFERENCE_NOUN[pin.socketType] ?? pin.socketType.toLowerCase();
-    return `& ${noun}`;
-  }
-  if (pin.socketType !== undefined) {
-    return pin.socketType.toLowerCase();
-  }
-  return pin.name;
+  return base;
 }

@@ -1895,7 +1895,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   const isValidConnectionForLayer = useCallback(
     (layer: BoardLayerTab, connection: Connection) => {
       if (layer === 'signal') {
-        return isValidBoardConnection(connection, signalNodes, layer);
+        return isValidBoardConnection(connection, signalNodes, layer, signalEdges);
       }
       const nodes =
         scenarioBranch === 'initial'
@@ -1911,17 +1911,39 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
                   : scenarioBranch === 'onDisconnect'
                     ? scenarioOnDisconnectNodes
                     : scenarioFunctionNodes;
-      return isValidBoardConnection(connection, nodes, layer);
+      const edges =
+        scenarioBranch === 'initial'
+          ? scenarioInitialEdges
+          : scenarioBranch === 'onConnect'
+            ? scenarioOnConnectEdges
+            : scenarioBranch === 'main'
+              ? scenarioMainEdges
+              : scenarioBranch === 'alarm'
+                ? scenarioAlarmEdges
+                : scenarioBranch === 'onStop'
+                  ? scenarioOnStopEdges
+                  : scenarioBranch === 'onDisconnect'
+                    ? scenarioOnDisconnectEdges
+                    : scenarioFunctionEdges;
+      return isValidBoardConnection(connection, nodes, layer, edges);
     },
     [
+      scenarioAlarmEdges,
       scenarioAlarmNodes,
       scenarioBranch,
+      scenarioInitialEdges,
       scenarioInitialNodes,
+      scenarioOnConnectEdges,
       scenarioOnConnectNodes,
+      scenarioMainEdges,
       scenarioMainNodes,
+      scenarioOnStopEdges,
       scenarioOnStopNodes,
+      scenarioOnDisconnectEdges,
       scenarioOnDisconnectNodes,
+      scenarioFunctionEdges,
       scenarioFunctionNodes,
+      signalEdges,
       signalNodes,
     ],
   );

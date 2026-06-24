@@ -20,6 +20,7 @@ import { isEventNode } from './event-node.js';
 import type { BoardLayerTab } from '../types/board-ui.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { isValidBoardEdge } from './connection-validation.js';
+import { EXEC_FAN_OUT_MESSAGE, findExecFanOutEdges } from './validate-exec-fanout.js';
 import { buildDeviceScenarioDocument } from './build-device-scenario.js';
 import { validateFunctionDepth } from './validate-function-depth.js';
 import { findPureExecEdgeHints } from './validate-pure-exec.js';
@@ -56,6 +57,22 @@ export interface PreRunValidationInput {
   readonly variables?: readonly ScenarioVariable[];
 }
 
+function pushExecFanOutIssues(
+  issues: PreRunValidationIssue[],
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  pathPrefix: string,
+): void {
+  for (const edge of findExecFanOutEdges(edges, nodes)) {
+    issues.push({
+      code: 'exec-fan-out-forbidden',
+      message: EXEC_FAN_OUT_MESSAGE,
+      path: `${pathPrefix}/${edge.id}`,
+      severity: 'warning',
+    });
+  }
+}
+
 function pushEdgeIssues(
   issues: PreRunValidationIssue[],
   nodes: readonly Node[],
@@ -83,10 +100,12 @@ function pushEdgeIssues(
       issues.push({
         code: 'edge-invalid-socket',
         message: `Несовместимое соединение ${edge.sourceHandle ?? '?'} → ${edge.targetHandle ?? '?'}`,
-
         path: `${pathPrefix}/${edge.id}`,
       });
     }
+  }
+  if (layer === 'scenario') {
+    pushExecFanOutIssues(issues, nodes, edges, pathPrefix);
   }
 }
 

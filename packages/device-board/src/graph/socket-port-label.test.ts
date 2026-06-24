@@ -28,10 +28,17 @@ describe('formatSocketPortLabel', () => {
     ).toBe('& fft frame');
   });
 
-  it('formats nullable port as & null', () => {
+  it('formats nullable reference port as type plus optional marker', () => {
     expect(
       formatSocketPortLabel({ name: 'device', kind: 'data', socketType: 'DeviceRef', nullable: true }),
-    ).toBe('& null');
+    ).toBe('& device ?');
+    expect(
+      formatSocketPortLabel({ name: 'datetime', kind: 'data', socketType: 'DateTime', nullable: true }),
+    ).toBe('datetime ?');
+  });
+
+  it('formats nullable port without socketType as any ?', () => {
+    expect(formatSocketPortLabel({ name: 'value', kind: 'data', nullable: true })).toBe('any ?');
   });
 
   it('formats DateTime port as datetime (value, no ampersand)', () => {

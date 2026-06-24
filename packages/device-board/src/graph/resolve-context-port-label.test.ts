@@ -89,10 +89,10 @@ describe('resolveContextValuePortLabel', () => {
     expect(resolveContextValuePortLabel('iv', valuePin, [], [getNode, isValid])).toBe('value');
   });
 
-  it('variable-set value input shows & null without data edge', () => {
+  it('variable-set value input shows optional type without data edge', () => {
     const setNode = createVariableBoardNode('variable-set', deviceVar, { id: 'set' });
     const valuePinSet = { name: 'value' as const, kind: 'data' as const, socketType: 'DeviceRef' as const };
-    expect(resolveContextValuePortLabel('set', valuePinSet, [], [setNode])).toBe('& null');
+    expect(resolveContextValuePortLabel('set', valuePinSet, [], [setNode])).toBe('& device ?');
   });
 
   it('variable-set value mirrors connected source type', () => {
