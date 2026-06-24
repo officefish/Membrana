@@ -1083,7 +1083,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
           </div>
           <p className="text-xs leading-relaxed text-base-content/55">
             Палитра и редактирование недоступны. Выберите узел на канвасе, чтобы просмотреть параметры.
-            Перемещение и масштаб канваса работают как обычно.
+            Перетаскивание канваса и колёсико мыши перемещают вид; удерживайте Space для pan поверх узлов.
           </p>
         </div>
       ) : (
