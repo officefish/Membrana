@@ -1,8 +1,8 @@
 # Промпт (day sprint): Device-Board — fn-blocks inspector (#172)
 
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
-> **Реестр:** эпик **`device-board-fn-blocks-sprint-2026-06-24`**  
-> **GitHub:** [#172](https://github.com/officefish/Membrana/issues/172)  
+> **Реестр:** эпик **`device-board-fn-blocks-sprint-2026-06-24`** (archived)  
+> **Статус:** **closed** · PR [#173](https://github.com/officefish/Membrana/pull/173) · closure [`CLOSURE.md`](../day-sprint/device-board-fn-blocks-sprint-2026-06-24/CLOSURE.md)  
 > **Предшественник:** [`DEVICE_BOARD_PR_BATCH_SPRINT_2026-06-24_PROMPT.md`](./DEVICE_BOARD_PR_BATCH_SPRINT_2026-06-24_PROMPT.md) (merged #170/#171)  
 > **Пакет:** `@membrana/device-board` only
 

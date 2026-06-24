@@ -1,16 +1,17 @@
 # CURRENT_TASK
 
-> **Day sprint:** `device-board-fn-blocks-sprint-2026-06-24` · [#172](https://github.com/officefish/Membrana/issues/172)  
-> **Промпт:** [`DEVICE_BOARD_FN_BLOCKS_SPRINT_2026-06-24_PROMPT.md`](./prompts/DEVICE_BOARD_FN_BLOCKS_SPRINT_2026-06-24_PROMPT.md)  
-> **Фаза:** `db-fb-s1-inspector-list` (active)
+> **Fn-blocks sprint закрыт** · PR [#173](https://github.com/officefish/Membrana/pull/173) merged · #172 closed  
+> **Closure:** [`device-board-fn-blocks-sprint-2026-06-24/CLOSURE.md`](./day-sprint/device-board-fn-blocks-sprint-2026-06-24/CLOSURE.md)
 
-## S1 — fn-blocks inspector
+## Итог цепочки device-board (2026-06-24)
 
-- [ ] `list-subgraph-blocks-for-function.ts` + test
-- [ ] Sidebar: список экземпляров + jump select
-- [ ] CONCEPT §18 — fn-blocks inspector UX
-- [ ] PR + code review
+| PR | Тема |
+|----|------|
+| #168 | Sequence UX + recording graph clarity |
+| #170 | Multi-function insert |
+| #171 | Pure-eligible ref getters |
+| #173 | Fn-blocks inspector |
 
-## Контекст
+## Следующий фокус
 
-Предшественник: PR batch sprint closed — #170 multi-insert, #171 pure getters.
+См. [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и [`docs/tasks/README.md`](./tasks/README.md) (active).
