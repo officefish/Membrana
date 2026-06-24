@@ -179,6 +179,33 @@ const DeviceBoardShellInner: React.FC<{
     viewportApiRef.current = api;
   }, []);
 
+  const flashEditHint = useCallback((message: string) => {
+    setClipboardHint(message);
+    if (clipboardHintTimerRef.current !== null) {
+      window.clearTimeout(clipboardHintTimerRef.current);
+    }
+    clipboardHintTimerRef.current = window.setTimeout(() => {
+      setClipboardHint(null);
+      clipboardHintTimerRef.current = null;
+    }, 5000);
+  }, []);
+
+  const flashClipboardHint = useCallback(
+    (count: number) => {
+      flashEditHint(`в буфере ${count} узлов`);
+    },
+    [flashEditHint],
+  );
+
+  useEffect(
+    () => () => {
+      if (clipboardHintTimerRef.current !== null) {
+        window.clearTimeout(clipboardHintTimerRef.current);
+      }
+    },
+    [],
+  );
+
   const addPaletteNodeAtViewportCenter = useCallback(
     (nodeKind: Parameters<typeof graph.addPaletteNodeToCurrentBranch>[0]) => {
       const center = viewportApiRef.current?.getCenterFlowPosition();
@@ -524,17 +551,21 @@ const DeviceBoardShellInner: React.FC<{
     if (functionActionTarget === null) {
       return;
     }
-    const error = graph.insertUserFunctionIntoBranch(
+    const center = viewportApiRef.current?.getCenterFlowPosition();
+    const result = graph.insertUserFunctionIntoBranch(
       functionActionTarget.functionId,
       scenarioBranch,
+      center,
     );
-    if (error !== null) {
-      setFunctionActionMessage(error);
+    if (!result.ok) {
+      setFunctionActionMessage(result.message);
       return;
     }
-    setFunctionActionMessage(`Функция «${functionActionTarget.functionName}» добавлена на ветку`);
+    flashEditHint(`функция «${functionActionTarget.functionName}» добавлена`);
     setFunctionActionTarget(null);
-  }, [functionActionTarget, graph, scenarioBranch]);
+    setFunctionActionMessage(null);
+    viewportApiRef.current?.focusNodeIds([result.nodeId]);
+  }, [flashEditHint, functionActionTarget, graph, scenarioBranch]);
 
   const functionInsertDisabled = !isScenarioBranchForFunctionInsert(scenarioBranch);
 
@@ -1119,26 +1150,6 @@ const DeviceBoardShellInner: React.FC<{
   marqueeSelectedIdsRef.current = marqueeSelectedIds;
   const selectedNodeIdRef = useRef(selectedNodeId);
   selectedNodeIdRef.current = selectedNodeId;
-
-  const flashClipboardHint = useCallback((count: number) => {
-    setClipboardHint(`в буфере ${count} узлов`);
-    if (clipboardHintTimerRef.current !== null) {
-      window.clearTimeout(clipboardHintTimerRef.current);
-    }
-    clipboardHintTimerRef.current = window.setTimeout(() => {
-      setClipboardHint(null);
-      clipboardHintTimerRef.current = null;
-    }, 5000);
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (clipboardHintTimerRef.current !== null) {
-        window.clearTimeout(clipboardHintTimerRef.current);
-      }
-    },
-    [],
-  );
 
   const collectForcedSelectionIds = useCallback((): readonly string[] => {
     const canvas = scenarioCanvasRef.current;
@@ -1844,14 +1855,6 @@ const DeviceBoardShellInner: React.FC<{
           }
         }}
       />
-
-      {functionActionMessage !== null && functionActionTarget === null ? (
-        <div className="toast toast-top toast-center z-50">
-          <div className="alert alert-success alert-sm shadow-lg">
-            <span>{functionActionMessage}</span>
-          </div>
-        </div>
-      ) : null}
 
       <BoardSelectionActionModal
         open={selectionActionOpen && !isRuntime}

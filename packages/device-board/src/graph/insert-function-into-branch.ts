@@ -11,6 +11,8 @@ export interface InsertFunctionSubgraphBlockInput {
     'id' | 'name' | 'inputPins' | 'outputPins'
   >;
   readonly branchNodes: readonly Node[];
+  /** Центр видимой области канваса; без него — под существующими узлами. */
+  readonly position?: { readonly x: number; readonly y: number };
 }
 
 export interface InsertFunctionSubgraphBlockResult {
@@ -50,7 +52,7 @@ export function insertFunctionSubgraphBlock(
 ): InsertFunctionSubgraphBlockOutcome {
   const blockPins = functionPinsToSubgraphBlockPins(input.draft.inputPins, input.draft.outputPins);
   const nodeId = nextSubgraphBlockId(input.draft.id, input.branchNodes);
-  const position = defaultInsertPosition(input.branchNodes);
+  const position = input.position ?? defaultInsertPosition(input.branchNodes);
 
   const node: Node = {
     id: nodeId,

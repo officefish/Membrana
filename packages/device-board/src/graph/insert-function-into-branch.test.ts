@@ -26,6 +26,22 @@ describe('insertFunctionSubgraphBlock', () => {
     assert.match(String(result.node.data?.label), /Capture/);
   });
 
+  it('places block at explicit position when provided', () => {
+    const result = insertFunctionSubgraphBlock({
+      draft: {
+        id: 'fn-pos',
+        name: 'Centered',
+        inputPins: [createDefaultFunctionExecInputPin()],
+        outputPins: [createDefaultFunctionExecOutputPin()],
+      },
+      branchNodes: [{ id: 'other', type: 'board', position: { x: 0, y: 0 }, data: {} }],
+      position: { x: 420, y: 280 },
+    });
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+    assert.deepEqual(result.node.position, { x: 420, y: 280 });
+  });
+
   it('allows multiple subgraph blocks for the same function on one branch', () => {
     const draft = {
       id: 'fn-2',
