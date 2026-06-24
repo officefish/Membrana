@@ -65,6 +65,6 @@
 - [x] Консилиум сохранён
 - [x] Code review LGTM на #170 и #171
 - [x] CONCEPT обновлён
-- [ ] #170 и #171 merged в `main`, CI green
+- [x] #170 и #171 merged в `main`, CI green
 - [ ] Follow-up Issue создан
 - [ ] Эпик archived в `docs/tasks/registry.json`
