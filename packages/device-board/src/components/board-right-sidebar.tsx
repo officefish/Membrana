@@ -320,6 +320,11 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
   const showFunctionInspector = isFunctionBranch && functionMeta !== null && !isRuntime;
+  const isFunctionSystemNode =
+    selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output';
+  /** Pin inspector + palette: только без выделения или при клике на function-input/output. */
+  const showFunctionPinPanel =
+    showFunctionInspector && (selectedNodeId === null || isFunctionSystemNode);
   const showSubgraphFunctionInspector =
     !isFunctionBranch &&
     selectedFunctionId !== null &&
@@ -529,7 +534,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             Открыть редактор
           </button>
         </div>
-      ) : showFunctionInspector ? (
+      ) : showFunctionPinPanel ? (
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <div className="min-h-0 flex-1 overflow-y-auto">
             <BoardFunctionPinInspector

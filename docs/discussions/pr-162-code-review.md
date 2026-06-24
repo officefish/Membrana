@@ -10,7 +10,7 @@ Tier: T1
 
 [Музыкант]: —
 
-[Верстальщик]: **C5** — layout: `flex-col overflow-hidden`, pin inspector в scrollable `flex-1`, палитра `shrink-0 border-t`. Палитра остаётся видимой при входе через «+»; на обычных ветках поведение без изменений (палитра при отсутствии selection). P2 follow-up: при выборе palette-ноды внутри function editor инспектор ноды по-прежнему не показывается (pin inspector перехватывает ветку) — отдельный UX-тикет при необходимости. ✅
+[Верстальщик]: **C5** — layout: `flex-col overflow-hidden`, pin inspector в scrollable `flex-1`, палитра `shrink-0 border-t`. `showFunctionPinPanel` — pin+palette только без selection или на function-input/output; palette/group/прочие ноды → инспектор ноды (как на handler-ветках). ✅
 
 ---
 
@@ -23,6 +23,6 @@ yarn workspace @membrana/device-board build
 yarn workspace @membrana/device-board test
 ```
 
-**Риски:** P2 — узкий sidebar при длинном списке pins + полной палитре; scroll на pin-блоке смягчает. P2 — node inspector внутри function body при selected node (не в scope PR).
+**Риски:** P2 — узкий sidebar при длинном списке pins + полной палитре; scroll на pin-блоке смягчает.
 
 **Вердикт:** **LGTM**
