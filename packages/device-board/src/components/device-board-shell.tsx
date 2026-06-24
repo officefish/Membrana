@@ -55,7 +55,7 @@ import { BoardBranchImportModal } from './board-branch-import-modal.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
-import { DeleteFunctionModal, RenameFunctionModal } from './board-variable-modals.js';
+import { DeleteFunctionModal } from './board-variable-modals.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
@@ -113,10 +113,6 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedNodeKind, setSelectedNodeKind] = useState<ScenarioNodeKind | null>(null);
   const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
   const [selectedFunctionName, setSelectedFunctionName] = useState<string | null>(null);
-  const [renameFunctionTarget, setRenameFunctionTarget] = useState<{
-    readonly id: string;
-    readonly name: string;
-  } | null>(null);
   const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
   const [selectedCollectorConfig, setSelectedCollectorConfig] = useState<ScenarioCollectorConfig | null>(
     null,
@@ -455,18 +451,7 @@ const DeviceBoardShellInner: React.FC<{
     [clearSelection, graph, isRuntime, isSignal],
   );
 
-  const handleRenameFunctionRequest = useCallback(
-    (functionId: string) => {
-      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
-      if (fn === undefined) {
-        return;
-      }
-      setRenameFunctionTarget({ id: functionId, name: fn.name });
-    },
-    [graph.scenarioFunctionDrafts],
-  );
-
-  const handleConfirmRenameFunction = useCallback(
+  const handleRenameFunction = useCallback(
     (functionId: string, name: string) => {
       graph.updateUserFunctionMeta(functionId, { name });
       if (selectedFunctionId === functionId) {
@@ -1655,6 +1640,7 @@ const DeviceBoardShellInner: React.FC<{
             activeFunctionId={graph.activeFunctionId}
             onSelectFunction={handleUserFunctionListClick}
             onCreateFunction={graph.createUserFunction}
+            onRenameFunction={handleRenameFunction}
             onRemoveFunction={handleRemoveUserFunction}
           />
         </aside>
@@ -1724,7 +1710,6 @@ const DeviceBoardShellInner: React.FC<{
               }
             }}
             onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
-            onRenameFunction={handleRenameFunctionRequest}
             onOpenFunctionEditor={handleOpenFunctionEditor}
             onAddFunctionPin={(side) => {
               const error = graph.addActiveFunctionPin(side, 'data');
@@ -1788,13 +1773,6 @@ const DeviceBoardShellInner: React.FC<{
             handleRemoveUserFunction(deleteFunctionTargetId);
           }
         }}
-      />
-
-      <RenameFunctionModal
-        functionId={renameFunctionTarget?.id ?? null}
-        functionName={renameFunctionTarget?.name ?? ''}
-        onClose={() => setRenameFunctionTarget(null)}
-        onConfirm={handleConfirmRenameFunction}
       />
 
       {functionActionMessage !== null && functionActionTarget === null ? (

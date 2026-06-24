@@ -5,7 +5,7 @@ import { MAX_SCENARIO_FUNCTION_PINS_PER_SIDE, SOCKET_TYPES } from '@membrana/cor
 import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-document.js';
 import type { FunctionPinSide } from '../graph/function-pin-ops.js';
 import { socketTypeIndicatorClass } from '../graph/socket-type-indicator.js';
-import { TrashIcon, PencilIcon } from './board-variable-modals.js';
+import { TrashIcon } from './board-variable-modals.js';
 
 export type FunctionPinEditSide = 'input' | 'output' | null;
 
@@ -14,7 +14,6 @@ export interface BoardFunctionPinInspectorProps {
   readonly pinEditSide: FunctionPinEditSide;
   readonly disabled: boolean;
   readonly onUpdateMeta: (patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>) => void;
-  readonly onOpenRename?: () => void;
   readonly onAddPin: (side: FunctionPinSide) => void;
   readonly onUpdatePin: (
     side: FunctionPinSide,
@@ -161,7 +160,6 @@ export const BoardFunctionPinInspector: React.FC<BoardFunctionPinInspectorProps>
   pinEditSide,
   disabled,
   onUpdateMeta,
-  onOpenRename,
   onAddPin,
   onUpdatePin,
   onRemovePin,
@@ -178,26 +176,10 @@ export const BoardFunctionPinInspector: React.FC<BoardFunctionPinInspectorProps>
   return (
     <div className="flex flex-col gap-3 p-4 text-sm">
       <div className="border-b border-base-200 pb-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
-              Пользовательская функция
-            </p>
-            <h2 className="text-sm font-semibold text-base-content">{meta.name}</h2>
-          </div>
-          {onOpenRename !== undefined ? (
-            <button
-              type="button"
-              className="btn btn-ghost btn-xs shrink-0 px-1"
-              aria-label={`Переименовать функцию ${meta.name}`}
-              title="Переименовать"
-              disabled={disabled}
-              onClick={onOpenRename}
-            >
-              <PencilIcon />
-            </button>
-          ) : null}
-        </div>
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+          Пользовательская функция
+        </p>
+        <h2 className="text-sm font-semibold text-base-content">{meta.name}</h2>
       </div>
 
       <label className="flex flex-col gap-1 text-xs">

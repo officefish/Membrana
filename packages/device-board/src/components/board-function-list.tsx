@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { ScenarioFunctionDraft } from '../graph/index.js';
-import { TrashIcon } from './board-variable-modals.js';
+import { PencilIcon, TrashIcon } from './board-variable-modals.js';
 
 export interface BoardFunctionListProps {
   readonly functions: readonly ScenarioFunctionDraft[];
@@ -9,6 +9,7 @@ export interface BoardFunctionListProps {
   readonly disabled: boolean;
   readonly onSelect: (functionId: string) => void;
   readonly onCreate: () => void;
+  readonly onRename: (functionId: string) => void;
   readonly onDelete: (functionId: string) => void;
 }
 
@@ -17,8 +18,9 @@ const FunctionRow: React.FC<{
   readonly active: boolean;
   readonly disabled: boolean;
   readonly onSelect: (functionId: string) => void;
+  readonly onRename: (functionId: string) => void;
   readonly onDelete: (functionId: string) => void;
-}> = ({ fn, active, disabled, onSelect, onDelete }) => (
+}> = ({ fn, active, disabled, onSelect, onRename, onDelete }) => (
   <div
     className={`group flex h-9 min-w-0 items-center gap-1 rounded-md border border-transparent px-1 ${
       disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-base-300 hover:bg-base-100/80'
@@ -50,6 +52,19 @@ const FunctionRow: React.FC<{
     </span>
     <button
       type="button"
+      className="btn btn-ghost btn-xs shrink-0 px-1 opacity-70 group-hover:opacity-100"
+      aria-label={`Редактировать имя ${fn.name}`}
+      title="Редактировать имя"
+      disabled={disabled}
+      onClick={(event) => {
+        event.stopPropagation();
+        onRename(fn.id);
+      }}
+    >
+      <PencilIcon />
+    </button>
+    <button
+      type="button"
       className="btn btn-ghost btn-xs shrink-0 px-1 text-error opacity-70 group-hover:opacity-100"
       aria-label={`Удалить функцию ${fn.name}`}
       title="Удалить функцию"
@@ -71,6 +86,7 @@ export const BoardFunctionList: React.FC<BoardFunctionListProps> = ({
   disabled,
   onSelect,
   onCreate,
+  onRename,
   onDelete,
 }) => (
   <div className="mt-3 border-t border-base-300 pt-3">
@@ -102,6 +118,7 @@ export const BoardFunctionList: React.FC<BoardFunctionListProps> = ({
               active={fn.id === activeFunctionId}
               disabled={disabled}
               onSelect={onSelect}
+              onRename={onRename}
               onDelete={onDelete}
             />
           </li>
