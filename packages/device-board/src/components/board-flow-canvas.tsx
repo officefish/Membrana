@@ -41,12 +41,22 @@ import { BoardFlowNode } from './board-flow-node.js';
 import { BoardGroupNode } from './board-group-node.js';
 import { BoardLayoutGhostNode } from './board-layout-ghost-node.js';
 import { BoardMarqueeOverlay } from './board-marquee-overlay.js';
+import { filterStructureReadOnlyNodeChanges } from './board-flow-readonly-node-changes.js';
 
 const NODE_TYPES: NodeTypes = {
   board: BoardFlowNode,
   boardGroup: BoardGroupNode,
   boardLayoutGhost: BoardLayoutGhostNode,
 };
+
+/** MiniMap: SVG fill не резолвит daisyUI `oklch(var(--*))` — только явные цвета. */
+const MINIMAP_NODE_COLOR_SCENARIO = '#a855f7';
+const MINIMAP_NODE_COLOR_SIGNAL = '#38bdf8';
+const MINIMAP_MASK_COLOR = 'rgba(12, 14, 20, 0.55)';
+
+function resolveMiniMapNodeColor(node: Node): string {
+  return node.data?.layer === 'scenario' ? MINIMAP_NODE_COLOR_SCENARIO : MINIMAP_NODE_COLOR_SIGNAL;
+}
 
 /** API координат канваса (viewport → flow space). */
 export interface BoardFlowViewportApi {
@@ -125,6 +135,8 @@ export interface BoardFlowCanvasProps {
   readonly highlightExecEdgeIds?: ReadonlySet<string>;
   /** Запрет структурного редактирования графа (drag, connect, delete); pan/zoom не блокируются. */
   readonly readOnly?: boolean;
+  /** Явный режим навигации: pan/zoom при structure lock (system-preview). */
+  readonly viewNavigationOnly?: boolean;
   readonly onViewportApiReady?: (api: BoardFlowViewportApi) => void;
   /** Отпускание ребра над пустым полем (не на handle узла). */
   readonly onConnectionDropOnPane?: (payload: BoardConnectionDropOnPanePayload) => void;
@@ -157,6 +169,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   validationErrorNodeIds,
   highlightExecEdgeIds,
   readOnly = false,
+  viewNavigationOnly = false,
   onViewportApiReady,
   onConnectionDropOnPane,
   onMarqueeSelection,
@@ -174,7 +187,9 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   } | null>(null);
   const [marqueeRect, setMarqueeRect] = useState<ScreenRect | null>(null);
   const [snapGuides, setSnapGuides] = useState<readonly FlowGuideLine[]>([]);
-  const marqueeEnabled = !readOnly && onMarqueeSelection !== undefined;
+  const structureLocked = readOnly;
+  const marqueeEnabled = !structureLocked && onMarqueeSelection !== undefined;
+  const navigationOnly = viewNavigationOnly || (structureLocked && !marqueeEnabled);
 
   const displayNodes = useMemo(() => {
     const base = layoutGhostNodes.length === 0 ? nodes : [...nodes, ...layoutGhostNodes];
@@ -216,6 +231,9 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     });
   }, [reactFlow]);
 
+  const ensureGraphVisibleRef = useRef(ensureGraphVisible);
+  ensureGraphVisibleRef.current = ensureGraphVisible;
+
   const viewportApi = useMemo<BoardFlowViewportApi>(
     () => ({
       getCenterFlowPosition: () => {
@@ -254,7 +272,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     const frame = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (!cancelled) {
-          ensureGraphVisible();
+          ensureGraphVisibleRef.current();
         }
       });
     });
@@ -262,7 +280,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
       cancelled = true;
       cancelAnimationFrame(frame);
     };
-  }, [ensureGraphVisible, viewportFitKey]);
+  }, [viewportFitKey]);
 
   useEffect(() => {
     onViewportApiReady?.(viewportApi);
@@ -289,10 +307,12 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         return;
       }
       if (readOnly) {
-        const selectionOnly = filtered.every((change) => change.type === 'select');
-        if (!selectionOnly) {
+        const preserved = filterStructureReadOnlyNodeChanges(filtered);
+        if (preserved.length === 0) {
           return;
         }
+        onNodesChange(preserved);
+        return;
       }
 
       let nextGuides: readonly FlowGuideLine[] = [];
@@ -605,11 +625,15 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
     <div
       ref={wrapperRef}
       className="relative h-full w-full min-h-0"
-      onPointerDown={handleWrapperPointerDown}
-      onPointerMove={handleWrapperPointerMove}
-      onPointerUp={handleWrapperPointerUp}
-      onPointerCancel={handleWrapperPointerCancel}
-      onContextMenu={handleWrapperContextMenu}
+      {...(marqueeEnabled || onPaneContextMenu !== undefined
+        ? {
+            onPointerDown: handleWrapperPointerDown,
+            onPointerMove: handleWrapperPointerMove,
+            onPointerUp: handleWrapperPointerUp,
+            onPointerCancel: handleWrapperPointerCancel,
+            onContextMenu: handleWrapperContextMenu,
+          }
+        : {})}
     >
       <BoardMarqueeOverlay rect={marqueeRect} />
       <ReactFlow
@@ -621,25 +645,33 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         onConnectEnd={handleConnectEnd}
         isValidConnection={handleValidConnection}
         nodeTypes={NODE_TYPES}
-        nodesDraggable={!readOnly}
-        nodesConnectable={!readOnly}
+        nodesDraggable={!structureLocked}
+        nodesConnectable={!structureLocked}
         elementsSelectable
-        edgesReconnectable={!readOnly}
-        deleteKeyCode={readOnly ? null : ['Backspace', 'Delete']}
-        panOnDrag={marqueeEnabled ? [1, 2] : true}
+        edgesReconnectable={!structureLocked}
+        deleteKeyCode={structureLocked ? null : ['Backspace', 'Delete']}
+        panOnDrag={navigationOnly ? true : marqueeEnabled ? [1, 2] : true}
+        zoomOnScroll
+        zoomOnPinch
+        zoomOnDoubleClick={!navigationOnly}
+        selectionOnDrag={marqueeEnabled}
+        selectNodesOnDrag={!navigationOnly}
+        panActivationKeyCode={navigationOnly ? 'Space' : null}
         proOptions={{ hideAttribution: true }}
         onSelectionChange={handleSelectionChange}
         onNodeDoubleClick={onNodeDoubleClick}
         onPaneClick={clearCanvasSelection}
-        className="board-flow-canvas"
+        className={`board-flow-canvas${navigationOnly ? ' board-flow-canvas--view-nav' : ''}`}
         style={{ width: '100%', height: '100%' }}
         aria-label={ariaLabel}
       >
         <Controls className="!border-base-300 !bg-base-100 !shadow-sm [&_button]:!border-base-300 [&_button]:!bg-base-100" />
         <MiniMap
           className="board-flow-minimap !border-base-300 !bg-base-100"
-          nodeColor={(node) => (node.data?.layer === 'scenario' ? 'oklch(var(--s))' : 'oklch(var(--p))')}
-          maskColor="oklch(var(--b1) / 0.65)"
+          pannable
+          zoomable
+          nodeColor={resolveMiniMapNodeColor}
+          maskColor={MINIMAP_MASK_COLOR}
         />
         <BoardSnapGuidesOverlay guides={snapGuides} />
       </ReactFlow>
