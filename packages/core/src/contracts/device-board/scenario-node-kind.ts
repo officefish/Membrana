@@ -21,6 +21,8 @@ export const SCENARIO_NODE_KINDS = [
   'device-global',
   'stop-runtime',
   'pause-runtime',
+  /** Exec fan-out replacement: Then 0..N + exec-out. */
+  'sequence',
   'start-streaming',
   'stop-streaming',
   'get-audio-stream',

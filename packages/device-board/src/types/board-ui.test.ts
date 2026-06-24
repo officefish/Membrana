@@ -70,6 +70,7 @@ describe('scenario node palette (v0.4 DBR5)', () => {
       'device-global',
       'stop-runtime',
       'pause-runtime',
+      'sequence',
       'print',
       'is-valid',
       'get-microphone',

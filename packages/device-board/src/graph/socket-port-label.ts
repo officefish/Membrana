@@ -50,6 +50,9 @@ export function formatSocketPortLabel(pin: BoardSocketPin): string {
     if (pin.name === IS_VALID_FALSE_HANDLE) {
       return 'false';
     }
+    if (pin.name.startsWith('then-')) {
+      return pin.name.slice('then-'.length);
+    }
     return 'exec';
   }
   if (pin.name === 'deltatime') {

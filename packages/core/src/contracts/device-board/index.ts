@@ -73,6 +73,13 @@ export {
 } from './scenario-node-pure.js';
 
 export {
+  DEFAULT_ASYNC_CAPABLE_SCENARIO_NODE_KINDS,
+  type DefaultAsyncCapableScenarioNodeKind,
+  isDefaultAsyncCapableScenarioNodeKind,
+  resolveScenarioGraphNodeSupportsAsync,
+} from './scenario-node-async.js';
+
+export {
   JOURNAL_SCOPE_KINDS,
   JOURNAL_REF_HANDLE_PREFIX,
   REPORTER_REF_HANDLE_PREFIX,
@@ -111,6 +118,15 @@ export {
   resolveScenarioCollectorConfig,
   isScenarioCollectorConfig,
 } from './collector-config.js';
+
+export {
+  DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+  MAX_SCENARIO_SEQUENCE_THEN_COUNT,
+  MIN_SCENARIO_SEQUENCE_THEN_COUNT,
+  type ScenarioSequenceConfig,
+  resolveScenarioSequenceConfig,
+  isScenarioSequenceConfig,
+} from './sequence-config.js';
 
 export {
   RECORDING_WINDOW_SEC_PRESETS,

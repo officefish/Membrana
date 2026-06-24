@@ -1,5 +1,5 @@
 import type { ScenarioNodeKind } from '@membrana/core';
-import { DEFAULT_FFT_TRENDS_POLICY, DEFAULT_SCENARIO_COLLECTOR_CONFIG, DEFAULT_RECORDING_POLICY } from '@membrana/core';
+import { DEFAULT_FFT_TRENDS_POLICY, DEFAULT_SCENARIO_COLLECTOR_CONFIG, DEFAULT_RECORDING_POLICY, DEFAULT_SCENARIO_SEQUENCE_CONFIG, resolveScenarioSequenceConfig } from '@membrana/core';
 import type { Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
@@ -17,6 +17,7 @@ import { makeTrackNodePins } from './make-track-node.js';
 import { makeFftTrendsAnalysisNodePins } from './make-fft-trends-analysis-node.js';
 import { stopRuntimeNodePins } from './stop-runtime-node.js';
 import { pauseRuntimeNodePins } from './pause-runtime-node.js';
+import { sequenceNodePins } from './sequence-node.js';
 import { makeRecordingPolicyNodePins } from './make-recording-policy-node.js';
 import { makeFftTrendsPolicyNodePins } from './make-fft-trends-policy-node.js';
 import { startRecordingNodePins } from './start-recording-node.js';
@@ -95,6 +96,7 @@ export const V04_PALETTE_NODE_KINDS = [
   'device-global',
   'stop-runtime',
   'pause-runtime',
+  'sequence',
   'print',
   'is-valid',
   'get-microphone',
@@ -128,6 +130,7 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'device-global': 'GetDevice',
   'stop-runtime': 'StopRuntime',
   'pause-runtime': 'PauseRuntime',
+  sequence: 'Sequence',
   print: 'Print',
   'is-valid': 'isValid',
   'get-microphone': 'GetMicrophone',
@@ -172,6 +175,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return stopRuntimeNodePins();
     case 'pause-runtime':
       return pauseRuntimeNodePins();
+    case 'sequence':
+      return sequenceNodePins(DEFAULT_SCENARIO_SEQUENCE_CONFIG.thenCount);
     case 'print':
       return {
         inputs: [EXEC_IN, { name: PALETTE_VALUE_HANDLE, kind: 'data' }],
@@ -295,6 +300,7 @@ export interface CreatePaletteBoardNodeOptions {
   readonly collectorConfig?: BoardFlowNodeData['collectorConfig'];
   readonly recordingPolicy?: BoardFlowNodeData['recordingPolicy'];
   readonly fftTrendsPolicy?: BoardFlowNodeData['fftTrendsPolicy'];
+  readonly sequenceConfig?: BoardFlowNodeData['sequenceConfig'];
 }
 
 let paletteNodeSeq = 0;
@@ -306,7 +312,17 @@ export function createPaletteBoardNode(
 ): Node {
   paletteNodeSeq += 1;
   const id = options.id ?? `node-${nodeKind}-${Date.now().toString(36)}-${paletteNodeSeq}`;
-  const { inputs, outputs } = paletteNodePins(nodeKind);
+  const sequenceConfig =
+    nodeKind === 'sequence'
+      ? resolveScenarioSequenceConfig({
+          ...DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+          ...options.sequenceConfig,
+        })
+      : undefined;
+  const { inputs, outputs } =
+    nodeKind === 'sequence' && sequenceConfig !== undefined
+      ? sequenceNodePins(sequenceConfig.thenCount)
+      : paletteNodePins(nodeKind);
   const data: BoardFlowNodeData = {
     label: paletteNodeLabel(nodeKind),
     layer: 'scenario',
@@ -344,6 +360,9 @@ export function createPaletteBoardNode(
             ...options.fftTrendsPolicy,
           },
         }
+      : {}),
+    ...(nodeKind === 'sequence' && sequenceConfig !== undefined
+      ? { sequenceConfig }
       : {}),
   };
   return {

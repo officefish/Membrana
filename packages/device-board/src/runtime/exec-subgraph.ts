@@ -16,6 +16,7 @@ import type { ScenarioVariableStore } from './variable-store.js';
 import { isExecTransparentPureNode } from './scenario-node-pure-runtime.js';
 import { MAX_SUBGRAPH_EXEC_STEPS, yieldToEventLoop } from './runtime-timing.js';
 import { findExecSuccessor } from './exec-successor.js';
+import { runSequenceThenBranches } from './exec-sequence.js';
 
 export interface RunSubgraphOnceResult {
   readonly lastDetection: ScenarioDetectionResult | null;
@@ -131,6 +132,40 @@ export async function runSubgraphOnce(
         await yieldToEventLoop(signal);
       }
       currentId = skipNextId;
+      continue;
+    }
+
+    if (node.nodeKind === 'sequence') {
+      callbacks.onNodeEnter?.(node);
+      lastDetection = await runSequenceThenBranches(
+        subgraph,
+        node,
+        host,
+        signal,
+        options,
+        callbacks,
+        lastDetection,
+      );
+      if (signal.aborted) {
+        return finish();
+      }
+      const nextId = findExecSuccessor(subgraph, currentId, 'exec-out');
+      if (nextId === null) {
+        return finish();
+      }
+      if (nextId === entryId) {
+        return finish();
+      }
+      const nextNode = findNode(subgraph, nextId);
+      pendingFunctionOutputHandle =
+        nextNode?.nodeKind === 'function-output' ? 'exec-out' : undefined;
+      if (isLoopBranch) {
+        if (options.awaitUnpaused !== undefined) {
+          await options.awaitUnpaused();
+        }
+        await yieldToEventLoop(signal);
+      }
+      currentId = nextId;
       continue;
     }
 

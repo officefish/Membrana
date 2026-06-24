@@ -93,6 +93,8 @@
 
 User functions: `exec-subgraph.ts` — вход через `function-input`, выход через `function-output`; depth ≤ 1. Exec pins первые на Input/Output, неудаляемы; subgraph-блок на ветке — badge `custom`, label = имя пользователя; unique id на collapse (#159), repair/delete по draftIndex (#160).
 
+**Exec / Sequence (ES1–ES4):** optional data-pins — подпись `?` (напр. `& device ?`); exec fan-out блокируется при connect; узел **Sequence** (`then-0…then-8`, sync или parallel async) — см. CONCEPT §18.3.1. Pre-run: `validate-exec-fanout.ts`, `validate-sequence-async.ts`.
+
 ---
 
 ## 7. Зависимости

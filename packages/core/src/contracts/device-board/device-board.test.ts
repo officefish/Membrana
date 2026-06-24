@@ -48,6 +48,8 @@ import {
   isScenarioNodePureFieldApplicable,
   resolveScenarioGraphNodePure,
   normalizeScenarioGraphNodePure,
+  resolveScenarioGraphNodeSupportsAsync,
+  isDefaultAsyncCapableScenarioNodeKind,
   DEFAULT_RECORDING_POLICY,
   DEFAULT_FFT_TRENDS_POLICY,
   resolveScenarioRecordingPolicy,
@@ -165,6 +167,7 @@ describe('device-board reference types & node kinds (v0.4)', () => {
   it('scenario node kinds: event is system, print is not', () => {
     expect(isScenarioNodeKind('event')).toBe(true);
     expect(isScenarioNodeKind('print')).toBe(true);
+    expect(isScenarioNodeKind('sequence')).toBe(true);
     expect(isScenarioNodeKind('unknown')).toBe(false);
     expect(isSystemScenarioNodeKind('event')).toBe(true);
     expect(isSystemScenarioNodeKind('loop-repeat')).toBe(true);
@@ -479,6 +482,33 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
       pure: true,
     });
     expect(hostStrip).not.toHaveProperty('pure');
+  });
+
+  it('resolveScenarioGraphNodeSupportsAsync applies defaults and pure allowance', () => {
+    expect(isDefaultAsyncCapableScenarioNodeKind('pause-runtime')).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({ nodeKind: 'pause-runtime' }),
+    ).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({ nodeKind: 'print' }),
+    ).toBe(false);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({
+        nodeKind: 'make-recording-policy',
+      }),
+    ).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({
+        nodeKind: 'print',
+        supportsAsync: true,
+      }),
+    ).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({
+        nodeKind: 'pause-runtime',
+        supportsAsync: false,
+      }),
+    ).toBe(false);
   });
 
   it('parseDeviceScenarioDocument normalizes node pure on subgraph import', () => {

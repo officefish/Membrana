@@ -1142,7 +1142,20 @@ Pure: `collapse-to-function.ts`, `function-pin-ops.ts`, `repair-duplicate-scenar
 - Граница collapsed function: ребро в `function-output` с `sourceHandle === targetHandle`
   (именованный exec-пин на выходе функции); `exec-subgraph` фиксирует `execOutHandle` при return.
 - Pure-узлы пропускаются через `isExecTransparentPureNode` + тот же `findExecSuccessor`.
+- **Exec fan-out запрещён** (ES2): от одного `(source, sourceHandle)` — не более одного
+  exec-ребра на `exec-in`; при connect — отказ; в legacy-графах — pre-run **warning**
+  (`exec-fan-out-forbidden`). Сообщение: использовать узел **Sequence**.
 - **Не** зависит от `block-executor` (нет циклов); потребители: `exec-subgraph.ts`, `event-dispatch.ts`.
+
+**Sequence node (`nodeKind: 'sequence'`, ES3–ES4):**
+
+- Pins: `exec-in` + `then-0` … `then-8` (1–9 в инспекторе) + `exec-out`.
+- **Sync** (default): Then-ветки по индексу сверху вниз; пустой Then пропускается; после всех Then — `exec-out`.
+- **Parallel async** (`sequenceConfig.parallelAsync`): Then-ветки стартуют параллельно, runtime ждёт `Promise.all`.
+- **Async gate** (pre-run): на Then-ветке при `parallelAsync` допустимы узлы с
+  `supportsAsync` (явно или по умолчанию: `pause-runtime`, `sequence`, pure-узлы).
+  Impure sync (напр. `print`) → `sequence-async-unsupported-node`.
+- Runtime: `runtime/exec-sequence.ts`; editor: `graph/sequence-node.ts`.
 
 **Data bridge (`function-call-resolve.ts`):**
 

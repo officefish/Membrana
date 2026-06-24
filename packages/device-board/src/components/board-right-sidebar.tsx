@@ -5,6 +5,7 @@ import type {
   ScenarioFftTrendsPolicy,
   ScenarioNodeKind,
   ScenarioRecordingPolicy,
+  ScenarioSequenceConfig,
   ScenarioVariableType,
   ScenarioVariableValue,
   ScenarioCommentGroupFrameColor,
@@ -13,6 +14,9 @@ import type {
 } from '@membrana/core';
 import {
   DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+  DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+  MAX_SCENARIO_SEQUENCE_THEN_COUNT,
+  MIN_SCENARIO_SEQUENCE_THEN_COUNT,
   FFT_TRENDS_BUILTIN_TEMPLATE_KEYS,
   FFT_TRENDS_DETECTION_MODES,
   SCENARIO_COMMENT_GROUP_FRAME_COLOR_PRESETS,
@@ -30,6 +34,7 @@ import {
   resolveScenarioCommentGroupFrameColor,
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
+  resolveScenarioSequenceConfig,
 } from '@membrana/core';
 
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
@@ -81,6 +86,7 @@ export interface BoardRightSidebarProps {
   /** True, если порт policy подключён dataflow (MakeRecordingPolicy / variable-get). */
   readonly selectedRecordingPolicyWired: boolean;
   readonly selectedFftTrendsPolicy: ScenarioFftTrendsPolicy | null;
+  readonly selectedSequenceConfig: ScenarioSequenceConfig | null;
   readonly selectedVariableName: string;
   readonly selectedVariableId: string | null;
   readonly selectedVariableType: ScenarioVariableType | null;
@@ -109,6 +115,7 @@ export interface BoardRightSidebarProps {
   readonly onCollectorConfigChange: (nodeId: string, config: ScenarioCollectorConfig) => void;
   readonly onRecordingPolicyChange: (nodeId: string, policy: ScenarioRecordingPolicy) => void;
   readonly onFftTrendsPolicyChange: (nodeId: string, policy: ScenarioFftTrendsPolicy) => void;
+  readonly onSequenceConfigChange: (nodeId: string, config: ScenarioSequenceConfig) => void;
   readonly onAssignVariableName: (nodeId: string, variableName: string) => void;
   readonly onVariableGetterPureChange: (nodeId: string, pure: boolean) => void;
   readonly onVariableValueChange: (variableId: string, value: ScenarioVariableValue | null) => void;
@@ -260,6 +267,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedRecordingPolicy,
   selectedRecordingPolicyWired,
   selectedFftTrendsPolicy,
+  selectedSequenceConfig,
   selectedVariableName,
   selectedVariableId,
   selectedVariableType,
@@ -288,6 +296,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onCollectorConfigChange,
   onRecordingPolicyChange,
   onFftTrendsPolicyChange,
+  onSequenceConfigChange,
   onAssignVariableName,
   onVariableGetterPureChange,
   onVariableValueChange,
@@ -316,6 +325,9 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   );
   const [fftTrendsPolicyDraft, setFftTrendsPolicyDraft] = useState<ScenarioFftTrendsPolicy>(
     selectedFftTrendsPolicy ?? resolveScenarioFftTrendsPolicy(undefined),
+  );
+  const [sequenceDraft, setSequenceDraft] = useState<ScenarioSequenceConfig>(
+    selectedSequenceConfig ?? DEFAULT_SCENARIO_SEQUENCE_CONFIG,
   );
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
@@ -368,6 +380,10 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
       selectedFftTrendsPolicy ?? resolveScenarioFftTrendsPolicy(undefined),
     );
   }, [selectedNodeId, selectedFftTrendsPolicy]);
+
+  useEffect(() => {
+    setSequenceDraft(selectedSequenceConfig ?? DEFAULT_SCENARIO_SEQUENCE_CONFIG);
+  }, [selectedNodeId, selectedSequenceConfig]);
 
   const commitRecordingPolicyField = (
     patch: Partial<ScenarioRecordingPolicy>,
@@ -465,6 +481,15 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
     const next = resolveScenarioCollectorConfig({ ...collectorDraft, ...patch });
     setCollectorDraft(next);
     onCollectorConfigChange(selectedNodeId, next);
+  };
+
+  const commitSequenceField = (patch: Partial<ScenarioSequenceConfig>) => {
+    if (selectedNodeId === null || editDisabled) {
+      return;
+    }
+    const next = resolveScenarioSequenceConfig({ ...sequenceDraft, ...patch });
+    setSequenceDraft(next);
+    onSequenceConfigChange(selectedNodeId, next);
   };
 
   return (
@@ -787,6 +812,40 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                 Список обновляется при выборе узла (audio-engine enumerate).
               </span>
             </label>
+          ) : selectedNodeKind === 'sequence' ? (
+            <div className="flex flex-col gap-3 text-xs">
+              <p className="text-base-content/55 leading-relaxed">
+                Then 0…N сверху вниз: каждая ветка выполняется по очереди. Пустой Then переходит к
+                следующему. Для нескольких exec-веток с одного узла — только через Sequence.
+              </p>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">Количество Then</span>
+                <input
+                  type="number"
+                  className="input input-bordered input-sm w-full font-mono"
+                  min={MIN_SCENARIO_SEQUENCE_THEN_COUNT}
+                  max={MAX_SCENARIO_SEQUENCE_THEN_COUNT}
+                  step={1}
+                  disabled={editDisabled}
+                  value={sequenceDraft.thenCount}
+                  onChange={(event) =>
+                    commitSequenceField({ thenCount: Number(event.target.value) })
+                  }
+                />
+              </label>
+              <label className="label cursor-pointer justify-start gap-2 py-0">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm"
+                  disabled={editDisabled}
+                  checked={sequenceDraft.parallelAsync}
+                  onChange={(event) =>
+                    commitSequenceField({ parallelAsync: event.target.checked })
+                  }
+                />
+                <span className="label-text text-xs">Параллельный async (Promise)</span>
+              </label>
+            </div>
           ) : selectedNodeKind === 'collect-samples' || selectedNodeKind === 'collect-fft-frames' ? (
             <div className="flex flex-col gap-3 text-xs">
               <p className="text-base-content/55 leading-relaxed">

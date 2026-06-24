@@ -7,6 +7,7 @@ import {
   resolveScenarioCollectorConfig,
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
+  resolveScenarioSequenceConfig,
 } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
@@ -108,6 +109,10 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       node.data.fftTrendsPolicy !== undefined
         ? resolveScenarioFftTrendsPolicy(node.data.fftTrendsPolicy)
         : undefined;
+    const sequenceConfig =
+      node.data.sequenceConfig !== undefined
+        ? resolveScenarioSequenceConfig(node.data.sequenceConfig)
+        : undefined;
     return finalizeScenarioNode({
       id: node.id,
       blockKind,
@@ -118,6 +123,7 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       ...(collectorConfig !== undefined ? { collectorConfig } : {}),
       ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
       ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
+      ...(sequenceConfig !== undefined ? { sequenceConfig } : {}),
       ...(readPureFromData(node.data) !== undefined ? { pure: readPureFromData(node.data) } : {}),
     } as ScenarioGraphNode);
   }
@@ -290,6 +296,8 @@ export function deserializeScenarioSubgraph(
         .recordingPolicy;
       const fftTrendsPolicy = (item as { fftTrendsPolicy?: ScenarioGraphNode['fftTrendsPolicy'] })
         .fftTrendsPolicy;
+      const sequenceConfig = (item as { sequenceConfig?: ScenarioGraphNode['sequenceConfig'] })
+        .sequenceConfig;
       nodes.push(
         createPaletteBoardNode(item.nodeKind, {
           id: item.id,
@@ -298,6 +306,7 @@ export function deserializeScenarioSubgraph(
           ...(collectorConfig !== undefined ? { collectorConfig } : {}),
           ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
           ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
+          ...(sequenceConfig !== undefined ? { sequenceConfig } : {}),
         }),
       );
       if (typeof item.label === 'string') {

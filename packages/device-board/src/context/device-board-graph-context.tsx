@@ -22,6 +22,8 @@ import {
   type ScenarioCollectorConfig,
   type ScenarioRecordingPolicy,
   type ScenarioFftTrendsPolicy,
+  type ScenarioSequenceConfig,
+  resolveScenarioSequenceConfig,
   type ScenarioVariable,
   type ScenarioVariableType,
   type ScenarioVariableValue,
@@ -111,6 +113,11 @@ import {
   type FunctionPinSide,
 } from '../graph/function-pin-ops.js';
 import { addBoardEdge, dedupeBoardEdges } from '../graph/dedupe-board-edges.js';
+import {
+  applySequenceConfigToNodeData,
+  pruneSequenceThenEdges,
+} from '../graph/sequence-node.js';
+import { isBoardFlowNodeData } from '../graph/board-node-data.js';
 import {
   logBoardClipboardStep,
   planNodeRemovalUndo,
@@ -326,6 +333,7 @@ export interface DeviceBoardGraphContextValue {
   readonly updateRecordingPolicy: (nodeId: string, policy: ScenarioRecordingPolicy) => void;
   /** v0.8 B0: обновить fftTrendsPolicy на MakeFftTrendsPolicy. */
   readonly updateFftTrendsPolicy: (nodeId: string, policy: ScenarioFftTrendsPolicy) => void;
+  readonly updateSequenceConfig: (nodeId: string, config: ScenarioSequenceConfig) => void;
   /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
   readonly variables: readonly ScenarioVariable[];
   /** v0.4: объявить новую переменную ссылочного типа. */
@@ -3066,6 +3074,36 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [patchNodeData],
   );
 
+  const updateSequenceConfig = useCallback((nodeId: string, config: ScenarioSequenceConfig) => {
+    const resolved = resolveScenarioSequenceConfig(config);
+    const mapNodes = (nodes: Node[]) =>
+      nodes.map((node) => {
+        if (
+          node.id !== nodeId ||
+          !isBoardFlowNodeData(node.data) ||
+          node.data.nodeKind !== 'sequence'
+        ) {
+          return node;
+        }
+        return { ...node, data: applySequenceConfigToNodeData(node.data, resolved) };
+      });
+    const mapEdges = (edges: Edge[]) => pruneSequenceThenEdges(edges, nodeId, resolved.thenCount);
+    setScenarioInitialNodes(mapNodes);
+    setScenarioInitialEdges(mapEdges);
+    setScenarioOnConnectNodes(mapNodes);
+    setScenarioOnConnectEdges(mapEdges);
+    setScenarioMainNodes(mapNodes);
+    setScenarioMainEdges(mapEdges);
+    setScenarioAlarmNodes(mapNodes);
+    setScenarioAlarmEdges(mapEdges);
+    setScenarioOnStopNodes(mapNodes);
+    setScenarioOnStopEdges(mapEdges);
+    setScenarioOnDisconnectNodes(mapNodes);
+    setScenarioOnDisconnectEdges(mapEdges);
+    setScenarioFunctionNodes(mapNodes);
+    setScenarioFunctionEdges(mapEdges);
+  }, []);
+
   const updateCommentGroupMetadata = useCallback(
     (
       branch: ScenarioCommentGroupBranch,
@@ -3306,6 +3344,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateCollectorConfig,
       updateRecordingPolicy,
       updateFftTrendsPolicy,
+      updateSequenceConfig,
       updateActiveFunctionMeta,
       updateUserFunctionMeta,
       addActiveFunctionPin,
@@ -3342,6 +3381,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateCollectorConfig,
       updateRecordingPolicy,
       updateFftTrendsPolicy,
+      updateSequenceConfig,
       updateActiveFunctionMeta,
       updateUserFunctionMeta,
       addActiveFunctionPin,
