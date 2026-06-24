@@ -2,6 +2,7 @@ import type { DeviceScenarioDocument } from '@membrana/core';
 
 import {
   isLegacyHackathonDefaultScenario,
+  needsBundledV09FunctionsMigration,
   needsFftTrendsPolicyConstructorMigration,
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';
@@ -26,6 +27,7 @@ export function shouldMigrateMicrophoneScenarioToBundledMvp(
   }
   return (
     isLegacyHackathonDefaultScenario(document) ||
+    needsBundledV09FunctionsMigration(document) ||
     needsRecordingGateBootstrapMigration(document) ||
     needsFftTrendsPolicyConstructorMigration(document)
   );

@@ -44,7 +44,8 @@ import {
   defaultVariableNamePrefix,
   branchScenarioExportFilename,
   buildBranchScenarioExport,
-  exportDeviceScenarioDocument,
+  deviceScenarioExportFilename,
+  downloadDeviceScenarioJson,
   getDefaultMvpMicrophoneDocument,
   hydrateBoardFromDocument,
   importDeviceScenarioFromJson,
@@ -244,6 +245,8 @@ export interface DeviceBoardGraphContextValue {
   readonly refreshValidation: () => readonly PreRunValidationIssue[];
   /** Signal — полный документ; scenario — только активная ветка-обработчик. */
   readonly exportJson: (layer?: BoardLayerTab) => Promise<void>;
+  /** Полный `device-scenario` (все ветки + `functions[]`), независимо от активного слоя. */
+  readonly exportFullUserCaseJson: () => Promise<void>;
   readonly importJsonFile: (file: File) => Promise<string | null>;
   /** Ожидает сопоставления ссылочных переменных после импорта branch-scenario. */
   readonly pendingBranchImport: PendingBranchImportState | null;
@@ -1964,15 +1967,26 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     ],
   );
 
+  const exportFullUserCaseJson = useCallback(async () => {
+    await downloadDeviceScenarioJson(
+      buildDocument(),
+      deviceScenarioExportFilename(buildDocument()),
+    );
+    runValidation();
+  }, [buildDocument, runValidation]);
+
   const exportJson = useCallback(
     async (layer: BoardLayerTab = 'scenario') => {
       let json: string;
       let downloadName: string;
 
       if (layer === 'signal') {
-        const exported = await exportDeviceScenarioDocument(buildDocument());
-        json = exported.json;
-        downloadName = `device-scenario-${deviceKind}.json`;
+        await downloadDeviceScenarioJson(
+          buildDocument(),
+          deviceScenarioExportFilename(buildDocument(), { label: `device-scenario-${deviceKind}` }),
+        );
+        runValidation();
+        return;
       } else {
         const branchNodes =
           scenarioBranch === 'initial'
@@ -3307,6 +3321,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       forgetPendingEditUndo,
       refreshValidation,
       exportJson,
+      exportFullUserCaseJson,
       importJsonFile,
       pendingBranchImport,
       confirmBranchImport,
@@ -3416,6 +3431,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       clearCurrentBranch,
       deviceKind,
       exportJson,
+      exportFullUserCaseJson,
       importJsonFile,
       pendingBranchImport,
       confirmBranchImport,

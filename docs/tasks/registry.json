@@ -7678,6 +7678,23 @@
       "supportPersonas": [
         "ozhegov"
       ]
+    },
+    {
+      "id": "device-board-bundled-mvp-v09-sprint-2026-06-25",
+      "title": "Day sprint: bundled MVP v0.9-functions cutover",
+      "promptPath": "docs/prompts/DEVICE_BOARD_BUNDLED_MVP_V09_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "notes": "Golden v0.9-functions; build pipeline; migrate BD5; logs:parse; LGTM addendum",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "rodchenko"
+      ]
     }
   ]
 }

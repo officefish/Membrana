@@ -4,7 +4,7 @@
 Task: `db-scenario-chain-trace-p0` … `db-scenario-chain-trace-p3`  
 Фильтр консоли: `[device-board]`
 
-Включите чекбокс **INFO** на device-board. Сохраняйте вывод в [`logs/info.txt`](./logs/info.txt).
+Включите чекбокс **INFO** на device-board. Сохраняйте вывод в [`logs/apps/client/logs.txt`](../../logs/apps/client/logs.txt) (или `console-logs.txt`). Разбор: [`CLIENT_LOGS_PARSING.md`](./CLIENT_LOGS_PARSING.md) · `yarn logs:parse`.
 
 ## Correlation fields
 

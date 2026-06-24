@@ -46,12 +46,21 @@ export function isLegacyHackathonDefaultScenario(document: DeviceScenarioDocumen
     'subgraph',
     'handle-disconnect',
   ]);
+  const isUserFunctionBlock = (node: {
+    readonly id: string;
+    readonly blockKind: string;
+    readonly label?: string;
+  }): boolean =>
+    node.blockKind === 'subgraph' &&
+    (node.id.includes('fn-') || node.label?.includes('::fn-') === true);
   const nodes = [
     ...document.scenario.initial.nodes,
     ...document.scenario.loops.main.nodes,
     ...document.scenario.loops.alarm.nodes,
   ];
-  return nodes.some((node) => legacyBlockKinds.has(node.blockKind));
+  return nodes.some(
+    (node) => legacyBlockKinds.has(node.blockKind) && !isUserFunctionBlock(node),
+  );
 }
 
 /**
@@ -59,15 +68,35 @@ export function isLegacyHackathonDefaultScenario(document: DeviceScenarioDocumen
  * с legacy exec-hop через policy constructors или без MakeTrack→restart exec —
  * подменяем bundled MVP.
  */
+function isStartRecordingFunctionBlock(node: { readonly id: string; readonly blockKind: string; readonly label?: string }): boolean {
+  return (
+    node.blockKind === 'subgraph' &&
+    (node.id === 'fn-1-block' || node.label?.includes('StartRecording') === true)
+  );
+}
+
+function hasV09UserFunctions(document: DeviceScenarioDocument): boolean {
+  return (document.scenario.functions?.length ?? 0) > 0;
+}
+
+/** Flat v0.8 без `scenario.functions[]` — подменяем bundled v0.9-functions (BD5). */
+export function needsBundledV09FunctionsMigration(document: DeviceScenarioDocument): boolean {
+  if (hasV09UserFunctions(document)) {
+    return false;
+  }
+  const main = document.scenario.loops.main;
+  const hasFlatRecordingPolicy = main.nodes.some((node) => node.nodeKind === 'make-recording-policy');
+  const hasFunctionBlocks = main.nodes.some((node) => isStartRecordingFunctionBlock(node));
+  return hasFlatRecordingPolicy && !hasFunctionBlocks;
+}
+
 export function needsFftTrendsPolicyConstructorMigration(
   document: DeviceScenarioDocument,
 ): boolean {
   const main = document.scenario.loops.main;
-  const recordingPolicy = main.nodes.find((node) => node.nodeKind === 'make-recording-policy');
   const policyNode = main.nodes.find((node) => node.nodeKind === 'make-fft-trends-policy');
   const analysisNode = main.nodes.find((node) => node.nodeKind === 'make-fft-trends-analysis');
   const makeTrack = main.nodes.find((node) => node.nodeKind === 'make-track');
-  const restartRecording = main.nodes.find((node) => node.id === 'node-start-recording-mqv07-36');
   if (policyNode === undefined || analysisNode === undefined) {
     return policyNode === undefined;
   }
@@ -82,9 +111,11 @@ export function needsFftTrendsPolicyConstructorMigration(
   if (!hasFftPolicyDataEdge) {
     return true;
   }
-  const policyIds = new Set(
-    [recordingPolicy?.id, policyNode.id].filter((id): id is string => id !== undefined),
-  );
+  const policyIds = new Set([policyNode.id]);
+  const recordingPolicy = main.nodes.find((node) => node.nodeKind === 'make-recording-policy');
+  if (recordingPolicy !== undefined) {
+    policyIds.add(recordingPolicy.id);
+  }
   const hasExecThroughPolicies = main.edges.some(
     (edge) =>
       edge.kind === 'exec' &&
@@ -93,6 +124,33 @@ export function needsFftTrendsPolicyConstructorMigration(
   if (hasExecThroughPolicies) {
     return true;
   }
+
+  if (hasV09UserFunctions(document)) {
+    if (makeTrack === undefined) {
+      return true;
+    }
+    const restartBlock = main.nodes.find((node) => isStartRecordingFunctionBlock(node));
+    const fn3Blocks = main.nodes.filter(
+      (node) => node.blockKind === 'subgraph' && node.id.includes('fn-3'),
+    );
+    const hasMakeTrackToFn3 = main.edges.some(
+      (edge) =>
+        edge.kind === 'exec' &&
+        edge.source === makeTrack.id &&
+        fn3Blocks.some((block) => block.id === edge.target),
+    );
+    const hasFn3ToRestart =
+      restartBlock !== undefined &&
+      main.edges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          fn3Blocks.some((block) => block.id === edge.source) &&
+          edge.target === restartBlock.id,
+      );
+    return !(hasMakeTrackToFn3 && hasFn3ToRestart);
+  }
+
+  const restartRecording = main.nodes.find((node) => node.id === 'node-start-recording-mqv07-36');
   if (recordingPolicy === undefined || restartRecording === undefined || makeTrack === undefined) {
     return recordingPolicy === undefined;
   }
@@ -122,6 +180,13 @@ export function needsFftTrendsPolicyConstructorMigration(
 export function needsRecordingGateBootstrapMigration(
   document: DeviceScenarioDocument,
 ): boolean {
+  if (hasV09UserFunctions(document)) {
+    const hasFn1Bootstrap = document.scenario.initial.nodes.some((node) =>
+      isStartRecordingFunctionBlock(node),
+    );
+    return !hasFn1Bootstrap;
+  }
+
   const main = document.scenario.loops.main;
   const gateNode = main.nodes.find((node) => node.nodeKind === 'is-recording-window-full');
   if (gateNode === undefined) {

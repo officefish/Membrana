@@ -1626,6 +1626,13 @@ const DeviceBoardShellInner: React.FC<{
                   {isSignal ? 'Export JSON' : `Export ${BRANCH_TAB_LABEL[scenarioBranch]}`}
                 </button>
               </li>
+              {!isSignal ? (
+                <li>
+                  <button type="button" onClick={() => void graph.exportFullUserCaseJson()}>
+                    Export full UserCase
+                  </button>
+                </li>
+              ) : null}
             </ul>
           </div>
         </div>

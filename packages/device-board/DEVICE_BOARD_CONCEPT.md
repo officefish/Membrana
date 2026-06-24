@@ -664,6 +664,9 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 ## 14. Статус и порядок изменения
 
 - **Статус:** v0.10 — концепт (+ user workspace §22, U10 W2-module).
+- **Changelog v0.10.1 (2026-06-24):** bundled MVP **v0.9-functions** — runtime-validated user scenario
+  (`fn-1` StartRecording, `fn-3` GetAudioStream, multi-insert, duplicate getters) как target для
+  `usercase-mvp-microphone`; §16.5.1; async track/report/publish — roadmap, не cutover.
 - **Changelog v0.10 (2026-06-23):** эпик U10 (`db-user-workspace-u10`, #147): IndexedDB multi-slot,
   module launcher, system preview RO, clone catalog → user slot, shell picker deprecated;
   `meta.workspaceKind`, `clone-user-case-to-workspace.ts`, `DeviceBoardSession`.
@@ -935,7 +938,8 @@ Parallel: CollectSamples → [event] → NewTrack
 ### 16.5 Целевой MVP: AudioStream → track + report (v0.8 LGTM)
 
 > **Достигнуто 2026-06-21:** bundled `usercase-mvp-microphone` на device-board; sign-off [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md).  
-> **Дальше:** usability + docs snapshot + server persist — [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md).
+> **Переход v0.9-functions (WIP, 2026-06-24):** runtime-validated user scenario с `scenario.functions[]` — новый bundled target; см. §16.5.1. Flat v0.8 остаётся в codegen до cutover.  
+> **Дальше:** usability + async delivery + server persist — [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md).
 
 **Центральная продуктовая цель device-board:** observation bundles с микрофона (recording gate + trends report).
 Один bundle = **TrackRef (preview/upload)** + **Trends FFT report** (`trends-fft/v0.1`) в journal.
@@ -1010,6 +1014,36 @@ start-recording → … → recording-window-full
 stop-recording → track concat-ok uploadMode:async → start-recording
 analyser-flush → fft-trends-input → publish-report (trends-fft/v0.1)
 ```
+
+### 16.5.1 Bundled v0.9-functions (cutover 2026-06-24)
+
+> Эталон: bundled default после sprint `device-board-bundled-mvp-v09-sprint-2026-06-24`; smoke **`runId 7e8a289c`**: 10 recording windows, 10 trends `publish-done`, async `upload-ok`.  
+> Документ: [`USERCASE_MVP_MICROPHONE.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE.md) · LGTM addendum · `yarn logs:parse`.
+
+**Отличия от flat §16.5:**
+
+| Тема | v0.8 flat | v0.9-functions (bundled target) |
+|------|-----------|----------------------------------|
+| StartRecording | inline `start-recording` + `MakeRecordingPolicy` data-edge | **user function** `fn-1`; policy **внутри** тела |
+| GetAudioStream / guards | `isValid` на parent main | **user function** `fn-3`; guards **внутри** тела |
+| Геттеры | один экземпляр, длинные рёбра | **несколько экземпляров** одного getter рядом с потребителем — UX-канон |
+| Multi-insert | — | `fn-3` дважды на main (tick start + перед restart) |
+| CollectSamples | не в MVP | допустимо (batches → `MakeTrack.samples`) |
+| Publish | один trends report | trends + optional track report (2× `PublishReport`) |
+
+**Main gate-true (validated exec):**
+
+```text
+StopRecording → MakeTrack → GetAudioStream (fn-3) → StartRecording (fn-1)
+  → FlushSpectralAnalyser → MakeFftTrendsAnalysis → MakeReportFromAnalysis
+  → PublishReport → MakeReportFromTrack → PublishReport → loop-repeat
+```
+
+**Bundled document:** `scenario.functions[]` обязателен (не пустой). Branch-export `branch-scenario` один — недостаточен без `referencedFunctions[]` (импорт/экспорт — эпик [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md)).
+
+**Interim limitation (ucv2-2):** `MakeTrack`, report и `PublishReport` на gate-true **синхронно блокируют** exec path. Roadmap: async user functions — [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md).
+
+**Codegen:** `scripts/build-usercase-mvp-microphone.mjs` → golden `usercase-mvp-microphone-v09-functions.document.json`; `yarn usercase:build-mvp-microphone`. Migrate: `needsBundledV09FunctionsMigration`.
 
 ### 16.6 Контракты collectors (DBC0, `@membrana/core`)
 

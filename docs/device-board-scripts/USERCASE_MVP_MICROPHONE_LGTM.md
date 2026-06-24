@@ -55,3 +55,50 @@
 1. **Usability** — editor UX, policy inspectors, run/debug affordances  
 2. **Documentation snapshot** — зафиксировать v0.8 board state в CONCEPT + catalog  
 3. **Server support** — `device-scenario` persist через `background-media`, pairing path
+
+---
+
+## Addendum: v0.9-functions cutover (2026-06-24)
+
+> **Sprint:** `device-board-bundled-mvp-v09-sprint-2026-06-25`  
+> **Предшественник:** v0.8 LGTM выше (flat graph) остаётся в силе для parity-эпиков.  
+> **Smoke:** `logs/apps/client/logs.txt` · `runId 7e8a289c` · `yarn logs:parse`  
+> **Teamlead LGTM:** **approved** 2026-06-24
+
+### Вердикт
+
+**Bundled default `usercase-mvp-microphone` переведён на v0.9-functions** — `scenario.functions[]`, onStart bootstrap через `fn-1-block`, main hot path с `fn-3` + recording gate, auto-migrate flat v0.8 (BD5).
+
+### Критерии (P0.4 / operator)
+
+| # | Критерий | Статус | Доказательство |
+|---|----------|--------|----------------|
+| L1 | Embedded `functions[]` ≠ `[]` | **PASS** | `default-usercase-mvp-microphone.generated.ts` · `yarn usercase:build-mvp-microphone` |
+| L2 | onStart `fn-1-block` bootstrap | **PASS** | `logs:parse` · `[recording] start-recording` до main |
+| L3 | Run ≥60s, ≥2 gate windows | **PASS** | `7e8a289c`: max tick 376, 10 gate ticks |
+| L4 | Trends `publish-done` на journal | **PASS** | 10/10 gate · server trends reports |
+| L5 | Tracks upload (async) | **WARN** | 3/10 `upload-ok` до Stop; 7 догружаются async — не блокер BD2/P7 |
+| L6 | CI `@membrana/device-board` | **PASS** | P6 sprint 2026-06-24 |
+| L7 | Migrate flat → v0.9 | **PASS** | `needsBundledV09FunctionsMigration` + unit tests |
+
+### Известные ограничения (не регресс cutover)
+
+| Тема | Статус |
+|------|--------|
+| `drone-skip: track-not-in-journal` на 2-м PublishReport | Ожидаемо до `ucv2-2` async |
+| `fn-3` `is-valid: false` на main | Не блокирует Run (guard внутри fn) |
+| cabinet `live-records` 500 | P7 infra |
+| Id `fn-1`/`fn-3` vs BD4 `fn-StartRecording` | Follow-up rename |
+
+### Закрытые задачи спринта (code)
+
+- Golden document + build pipeline от golden  
+- Export full UserCase (device-board shell + launcher)  
+- Competition pack / parity matrices обновлены под v0.9 topology  
+
+### Deferred
+
+- **BD4** canonical function ids  
+- **P3** `referencedFunctions[]` branch export/import  
+- **P4** comment groups layout  
+- **P7** async MakeTrack/Publish — [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md)

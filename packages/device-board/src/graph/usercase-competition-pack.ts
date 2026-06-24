@@ -22,24 +22,18 @@ interface CollapseSpec {
 type PackBranch = 'main' | 'onConnect';
 
 const GATE_NODE_IDS = [
-  'node-get-recorder-mqmo3mba-31',
+  'node-get-recorder-mqs3ir02-168',
   'node-is-recording-window-full-mqmo40ie-32',
   'node-stop-recording-mqmod4yf-35',
   'node-make-track-mqmcipn5-28',
-  'node-start-recording-mqv07-36',
 ] as const;
 
 const TRENDS_PUBLISH_NODE_IDS = [
-  'node-flush-spectral-analyser-mqmoa8o7-34',
-  'node-make-fft-trends-analysis-mqmo96xz-33',
-  'node-get-reporter-mqm9yfmy-29',
+  'node-flush-spectral-analyser-mqs6tcs6-172',
+  'node-make-fft-trends-analysis-mqs6vdme-174',
+  'node-get-reporter-mqs5wkzi-169',
   'node-make-report-from-analysis-mqma356z-34',
   'node-publish-report-mqma49xv-35',
-] as const;
-
-const POLICY_NODE_IDS = [
-  'node-make-recording-policy-v08-1',
-  'node-make-fft-trends-policy-v08-1',
 ] as const;
 
 const ONCONNECT_BOOTSTRAP_NODE_IDS = [
@@ -76,12 +70,6 @@ const TEAM_MAIN_COLLAPSES: Readonly<Record<CompetitionTeamId, readonly CollapseS
       functionName: 'Recording gate',
       description: '5 s window gate + MakeTrack',
       nodeIds: GATE_NODE_IDS,
-    },
-    {
-      functionId: 'fn-beta-policy-build',
-      functionName: 'Build policies',
-      description: 'MakeRecordingPolicy + MakeFftTrendsPolicy constructors',
-      nodeIds: POLICY_NODE_IDS,
     },
   ],
   gamma: [
@@ -142,6 +130,40 @@ export interface TeamPackLayoutMetrics {
   readonly functionCount: number;
   readonly commentGroupCount: number;
   readonly execSpanPx: number;
+}
+
+function stripBundledUserFunctionBlocks(document: DeviceScenarioDocument): DeviceScenarioDocument {
+  const pruneSubgraph = (subgraph: ScenarioSubgraph): ScenarioSubgraph => {
+    const removed = new Set(
+      subgraph.nodes
+        .filter(
+          (node) =>
+            node.blockKind === 'subgraph' &&
+            (node.id.includes('fn-') || node.label?.includes('::fn-') === true),
+        )
+        .map((node) => node.id),
+    );
+    if (removed.size === 0) {
+      return subgraph;
+    }
+    return {
+      ...subgraph,
+      nodes: subgraph.nodes.filter((node) => !removed.has(node.id)),
+      edges: subgraph.edges.filter((edge) => !removed.has(edge.source) && !removed.has(edge.target)),
+    };
+  };
+
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      initial: pruneSubgraph(document.scenario.initial),
+      loops: {
+        ...document.scenario.loops,
+        main: pruneSubgraph(document.scenario.loops.main),
+      },
+    },
+  };
 }
 
 function readSubgraph(document: DeviceScenarioDocument, branch: PackBranch): ScenarioSubgraph {
@@ -220,10 +242,11 @@ export function packMvpUserCaseForTeam(
   baseDocument: DeviceScenarioDocument,
 ): DeviceScenarioDocument {
   const meta = TEAM_META[team];
+  const strippedBase = stripBundledUserFunctionBlocks(baseDocument);
   let document: DeviceScenarioDocument = stampCompetitionDocumentMeta({
-    ...structuredClone(baseDocument),
+    ...structuredClone(strippedBase),
     meta: {
-      ...baseDocument.meta,
+      ...strippedBase.meta,
       title: meta.title,
       exportedAt: new Date().toISOString(),
       commentGroupProfile: meta.commentGroupProfile,
@@ -232,7 +255,7 @@ export function packMvpUserCaseForTeam(
       competitionTimeoutSec: DEFAULT_COMPETITION_TIMEOUT_SEC,
     },
     scenario: {
-      ...structuredClone(baseDocument.scenario),
+      ...structuredClone(strippedBase.scenario),
       functions: [],
       commentGroups: [],
     },

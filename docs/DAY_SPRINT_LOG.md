@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-24 — `device-board-bundled-mvp-v09-sprint-2026-06-25` — **CLOSED**
+
+- **Cutover:** bundled `usercase-mvp-microphone` v0.9-functions (golden → codegen → migrate BD5)
+- **Smoke:** `runId 7e8a289c` · `yarn logs:parse`
+- **Closure:** [`day-sprint/device-board-bundled-mvp-v09-sprint-2026-06-25/CLOSURE.md`](./day-sprint/device-board-bundled-mvp-v09-sprint-2026-06-25/CLOSURE.md)
+
+---
+
 ## 2026-06-23 — `membrana-studio-ms0-ms4-day-sprint` — **CLOSED**
 
 - **MS0–MS4:** verify+archive; `studio:build` + `studio:package` OK; no `apps/client` changes

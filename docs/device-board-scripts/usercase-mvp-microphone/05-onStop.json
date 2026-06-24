@@ -1,102 +1,95 @@
 {
   "exportKind": "branch-scenario",
   "branch": "onStop",
-  "branchLabel": "On stop",
+  "branchLabel": "onStop",
   "scenarioTitle": "UserCase MVP microphone: onStop → StopStreaming",
+  "userCaseId": "usercase-mvp-microphone",
+  "userCaseBranch": "onStop",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "on-stop-event",
     "nodes": [
       {
         "id": "on-stop-event",
-        "blockKind": "custom",
+        "label": "On stop",
+        "system": true,
+        "nodeKind": "event",
         "position": {
           "x": 104,
           "y": 48
         },
-        "label": "On stop",
-        "nodeKind": "event",
-        "system": true,
+        "blockKind": "custom",
         "eventVariant": "handler"
       },
       {
         "id": "node-is-valid-mqm9nw3u-21",
-        "blockKind": "custom",
+        "label": "isValid",
+        "nodeKind": "is-valid",
         "position": {
           "x": 568,
           "y": 48
         },
-        "label": "isValid",
-        "nodeKind": "is-valid"
+        "blockKind": "custom"
       },
       {
         "id": "node-stop-streaming-mqm9ofcy-22",
-        "blockKind": "custom",
+        "label": "StopStreaming",
+        "nodeKind": "stop-streaming",
         "position": {
           "x": 1032,
           "y": 48
         },
-        "label": "StopStreaming",
-        "nodeKind": "stop-streaming"
+        "blockKind": "custom"
       },
       {
         "id": "node-device-global-mvp-onstop-1",
-        "blockKind": "custom",
+        "label": "GetDevice",
+        "nodeKind": "device-global",
         "position": {
           "x": -120,
           "y": 184
         },
-        "label": "GetDevice",
-        "nodeKind": "device-global"
+        "blockKind": "custom"
       },
       {
         "id": "node-get-microphone-mvp-onstop-1",
-        "blockKind": "custom",
+        "label": "GetMicrophone",
+        "nodeKind": "get-microphone",
         "position": {
           "x": 56,
           "y": 312
         },
-        "label": "GetMicrophone",
-        "nodeKind": "get-microphone",
+        "blockKind": "custom",
         "microphoneId": "0928f245e15f012de6b0d9e32f70efd5e6bc3957af6381c2b28da7536d150c04"
       }
     ],
     "edges": [
       {
+        "kind": "exec",
         "source": "on-stop-event",
-        "sourceHandle": "exec-out",
         "target": "node-is-valid-mqm9nw3u-21",
-        "targetHandle": "exec-in",
-        "kind": "exec"
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
       },
       {
+        "kind": "exec",
         "source": "node-is-valid-mqm9nw3u-21",
-        "sourceHandle": "exec-true-out",
         "target": "node-stop-streaming-mqm9ofcy-22",
-        "targetHandle": "exec-in",
-        "kind": "exec"
+        "sourceHandle": "exec-true-out",
+        "targetHandle": "exec-in"
       },
       {
-        "source": "node-device-global-mvp-onstop-1",
-        "sourceHandle": "device",
-        "target": "node-get-microphone-mvp-onstop-1",
-        "targetHandle": "device",
         "kind": "data",
-        "dataType": "DeviceRef"
+        "source": "node-device-global-mvp-onstop-1",
+        "target": "node-get-microphone-mvp-onstop-1",
+        "dataType": "DeviceRef",
+        "sourceHandle": "device",
+        "targetHandle": "device"
       }
     ]
   },
-  "variables": [
-    {
-      "id": "var-JournalRef-mqm9dl4a-6",
-      "name": "journal1",
-      "type": "JournalRef",
-      "value": null
-    }
-  ],
+  "variables": [],
+  "referenceVariableSlots": [],
   "referencedVariableIds": [],
-  "exportedAt": "2026-06-24T12:20:53.798Z",
-  "userCaseId": "usercase-mvp-microphone",
-  "userCaseBranch": "onStop",
-  "referenceVariableSlots": []
+  "exportedAt": "2026-06-24T17:40:46.269Z"
 }

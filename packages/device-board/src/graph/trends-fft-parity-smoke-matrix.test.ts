@@ -39,7 +39,7 @@ describe('trends FFT parity smoke matrix (B3)', () => {
     },
   );
 
-  it('v08 constructor scenario imports with MakeFftTrendsPolicy wired to analysis', () => {
+  it('v09 main branch imports with MakeFftTrendsPolicy wired to analysis', () => {
     const parsed = parseBranchScenarioExportJson(readFileSync(v08ScenarioPath, 'utf8'));
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) {
@@ -52,11 +52,11 @@ describe('trends FFT parity smoke matrix (B3)', () => {
     const reportNode = parsed.export.subgraph.nodes.find(
       (n) => n.nodeKind === 'make-report-from-analysis',
     );
-    const publishNode = parsed.export.subgraph.nodes.find((n) => n.nodeKind === 'publish-report');
+    const publishNodes = parsed.export.subgraph.nodes.filter((n) => n.nodeKind === 'publish-report');
     expect(policyNode).toBeDefined();
     expect(analysisNode).toBeDefined();
     expect(reportNode).toBeDefined();
-    expect(publishNode).toBeDefined();
+    expect(publishNodes.length).toBe(2);
     expect(
       parsed.export.subgraph.edges.some(
         (e) =>
@@ -67,17 +67,21 @@ describe('trends FFT parity smoke matrix (B3)', () => {
       ),
     ).toBe(true);
     const makeTrack = parsed.export.subgraph.nodes.find((n) => n.nodeKind === 'make-track');
-    const restartRecording = parsed.export.subgraph.nodes.find(
-      (n) => n.id === 'node-start-recording-mqv07-36',
-    );
     expect(makeTrack).toBeDefined();
-    expect(restartRecording).toBeDefined();
     expect(
       parsed.export.subgraph.edges.some(
         (e) =>
           e.kind === 'exec' &&
           e.source === makeTrack?.id &&
-          e.target === restartRecording?.id,
+          e.target === 'fn-3-block-2',
+      ),
+    ).toBe(true);
+    expect(
+      parsed.export.subgraph.edges.some(
+        (e) =>
+          e.kind === 'exec' &&
+          e.source === 'fn-3-block-2' &&
+          e.target === 'fn-1-block',
       ),
     ).toBe(true);
     expect(
@@ -93,14 +97,6 @@ describe('trends FFT parity smoke matrix (B3)', () => {
           e.source === analysisNode?.id &&
           e.target === reportNode?.id &&
           e.dataType === 'FftTrendAnalysisRef',
-      ),
-    ).toBe(true);
-    expect(
-      parsed.export.subgraph.edges.some(
-        (e) =>
-          e.source === reportNode?.id &&
-          e.target === publishNode?.id &&
-          e.dataType === 'ReportRef',
       ),
     ).toBe(true);
     const vars = parsed.export.variables ?? [];

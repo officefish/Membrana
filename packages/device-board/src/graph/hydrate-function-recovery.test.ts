@@ -75,8 +75,8 @@ describe('hydrate function canvas recovery', () => {
     expect(state.scenarioFunctionMeta.entry).toBe('fn-custom-input');
   });
 
-  it('hydratedFunctionInput uses demo when function canvas was cleared', () => {
-    const state = createDefaultHydratedBoardState();
+  it('hydratedFunctionInput uses demo when function canvas was cleared (non-mic default)', () => {
+    const state = createDefaultHydratedBoardState('mic-array');
     const cleared = {
       ...state,
       scenarioFunctionNodes: [],
@@ -85,5 +85,18 @@ describe('hydrate function canvas recovery', () => {
     const input = hydratedFunctionInput(cleared);
     expect(input.entry).toBe(DEMO_FUNCTION_CAPTURE_DETECT_ENTRY);
     expect(input.nodes.some((node) => node.id === DEMO_FUNCTION_CAPTURE_DETECT_ENTRY)).toBe(true);
+  });
+
+  it('hydratedFunctionInput uses bundled function draft when MVP canvas was cleared', () => {
+    const state = createDefaultHydratedBoardState('microphone');
+    const cleared = {
+      ...state,
+      scenarioFunctionNodes: [],
+      scenarioFunctionEdges: [],
+    };
+    const input = hydratedFunctionInput(cleared);
+    expect(input.id).toBe(state.activeFunctionId);
+    expect(input.entry).toBe(state.scenarioFunctionMeta.entry);
+    expect(input.nodes.length).toBeGreaterThan(0);
   });
 });

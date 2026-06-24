@@ -309,6 +309,10 @@ export type { BuildDeviceScenarioInput } from './build-device-scenario.js';
 export { exportDeviceScenarioDocument } from './export-device-scenario.js';
 export type { ExportedDeviceScenario } from './export-device-scenario.js';
 export {
+  deviceScenarioExportFilename,
+  downloadDeviceScenarioJson,
+} from './download-device-scenario-json.js';
+export {
   branchScenarioExportFilename,
   buildBranchScenarioExport,
 } from './export-branch-scenario.js';
@@ -348,6 +352,7 @@ export {
   createDefaultMvpMicrophoneHydratedState,
   getDefaultMvpMicrophoneDocument,
   isLegacyHackathonDefaultScenario,
+  needsBundledV09FunctionsMigration,
   needsFftTrendsPolicyConstructorMigration,
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';

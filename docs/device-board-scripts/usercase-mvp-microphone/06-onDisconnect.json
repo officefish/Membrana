@@ -1,95 +1,94 @@
 {
   "exportKind": "branch-scenario",
   "branch": "onDisconnect",
-  "branchLabel": "On disconnect",
+  "branchLabel": "onDisconnect",
   "scenarioTitle": "UserCase MVP microphone: onDisconnect → invalidate journal1",
+  "userCaseId": "usercase-mvp-microphone",
+  "userCaseBranch": "onDisconnect",
   "deviceKind": "microphone",
   "subgraph": {
     "entry": "on-disconnect-event",
     "nodes": [
       {
         "id": "on-disconnect-event",
-        "blockKind": "custom",
+        "label": "On disconnect",
+        "system": true,
+        "nodeKind": "event",
         "position": {
           "x": -96,
           "y": -128
         },
-        "label": "On disconnect",
-        "nodeKind": "event",
-        "system": true,
+        "blockKind": "custom",
         "eventVariant": "handler"
       },
       {
         "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
-        "blockKind": "custom",
+        "label": "journal1",
+        "nodeKind": "variable-set",
         "position": {
           "x": 368,
           "y": -128
         },
-        "label": "journal1",
-        "nodeKind": "variable-set",
+        "blockKind": "custom",
         "variableId": "var-JournalRef-mqm9dl4a-6"
       },
       {
         "id": "node-device-global-mqm9pz9v-23",
-        "blockKind": "custom",
+        "label": "GetDevice",
+        "nodeKind": "device-global",
         "position": {
           "x": -104,
           "y": 88
         },
-        "label": "GetDevice",
-        "nodeKind": "device-global"
+        "blockKind": "custom"
       },
       {
         "id": "node-get-journal-mqm9q43m-24",
-        "blockKind": "custom",
+        "label": "GetJournal",
+        "nodeKind": "get-journal",
         "position": {
           "x": 184,
           "y": 8
         },
-        "label": "GetJournal",
-        "nodeKind": "get-journal"
+        "blockKind": "custom"
       }
     ],
     "edges": [
       {
+        "kind": "data",
         "source": "node-device-global-mqm9pz9v-23",
-        "sourceHandle": "device",
         "target": "node-get-journal-mqm9q43m-24",
-        "targetHandle": "device",
-        "kind": "data",
-        "dataType": "DeviceRef"
+        "dataType": "DeviceRef",
+        "sourceHandle": "device",
+        "targetHandle": "device"
       },
       {
+        "kind": "exec",
         "source": "on-disconnect-event",
-        "sourceHandle": "exec-out",
         "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
-        "targetHandle": "exec-in",
-        "kind": "exec"
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
       },
       {
-        "source": "node-get-journal-mqm9q43m-24",
-        "sourceHandle": "journal",
-        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
-        "targetHandle": "value",
         "kind": "data",
-        "dataType": "JournalRef"
+        "source": "node-get-journal-mqm9q43m-24",
+        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+        "dataType": "JournalRef",
+        "sourceHandle": "journal",
+        "targetHandle": "value"
       }
     ]
   },
-  "variables": [
+  "variables": [],
+  "referenceVariableSlots": [
     {
-      "id": "var-JournalRef-mqm9dl4a-6",
-      "name": "journal1",
+      "exportVariableId": "var-JournalRef-mqm9dl4a-6",
       "type": "JournalRef",
-      "value": null
+      "nameHint": "journal1"
     }
   ],
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-24T12:20:53.800Z",
-  "userCaseId": "usercase-mvp-microphone",
-  "userCaseBranch": "onDisconnect",
-  "referenceVariableSlots": []
+  "exportedAt": "2026-06-24T17:40:46.272Z"
 }

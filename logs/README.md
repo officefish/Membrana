@@ -4,6 +4,7 @@
 
 | Путь | Приложение |
 |------|------------|
-| [`apps/client/console-logs.txt`](./apps/client/console-logs.txt) | Membrana client (Vite, browser console) |
+| [`apps/client/logs.txt`](./apps/client/logs.txt) | Device-board trace (приоритет для `yarn logs:parse`) |
+| [`apps/client/console-logs.txt`](./apps/client/console-logs.txt) | Membrana client (Vite, browser console) — fallback |
 
-Агентам: при «читай лог» / «ошибка в client» — сначала `logs/apps/client/console-logs.txt`.
+Агентам: при «читай лог» / «обновил логи» — `yarn logs:parse` (см. [`docs/device-board-scripts/CLIENT_LOGS_PARSING.md`](../docs/device-board-scripts/CLIENT_LOGS_PARSING.md)).
