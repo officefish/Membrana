@@ -565,7 +565,9 @@ const DeviceBoardShellInner: React.FC<{
   const handleClearBoard = useCallback(() => {
     const layerLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
     const preserveNote = shouldPreserveLockedNodes(isSignal ? 'signal' : 'scenario', scenarioBranch)
-      ? ' Системный Event-узел останется.'
+      ? scenarioBranch === 'function'
+        ? ' Узлы Input и Output останутся.'
+        : ' Системный Event-узел останется.'
       : '';
     if (
       typeof window !== 'undefined' &&

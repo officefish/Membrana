@@ -1643,7 +1643,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'function', nodeIds: plan.nodeIds });
       }
-      setScenarioFunctionNodes((nodes) => applyNodeChanges(changes, nodes));
+      setScenarioFunctionNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
     },
     [captureEditUndoSnapshot, scenarioFunctionNodes],
   );

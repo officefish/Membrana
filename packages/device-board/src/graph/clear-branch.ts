@@ -18,7 +18,13 @@ export function shouldPreserveLockedNodes(
   layer: BoardLayerTab,
   branch: ScenarioBranchTab,
 ): boolean {
-  return layer === 'scenario' && (EVENT_HANDLER_BRANCHES.has(branch) || LOOP_TICK_BRANCHES.has(branch));
+  if (layer !== 'scenario') {
+    return false;
+  }
+  if (branch === 'function') {
+    return true;
+  }
+  return EVENT_HANDLER_BRANCHES.has(branch) || LOOP_TICK_BRANCHES.has(branch);
 }
 
 /** Удаляет пользовательские узлы ветки; при `preserveLocked` оставляет Event/system. */
