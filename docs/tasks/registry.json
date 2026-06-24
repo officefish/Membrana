@@ -3159,7 +3159,7 @@
       "strategicWave": "W3",
       "archivedAt": "2026-06-23",
       "archiveNotes": "MS0-MS4 verify shipped; studio:package 0.1.0; MS5 deferred",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "membrana-studio-ms0-canon",
@@ -3183,7 +3183,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "membrana-studio-ms1-shell",
@@ -3206,7 +3206,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "membrana-studio-ms2-media-fs",
@@ -3230,7 +3230,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "membrana-studio-ms3-journal-fs",
@@ -3253,7 +3253,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "membrana-studio-ms4-installer",
@@ -3276,7 +3276,7 @@
         "ozhegov"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "membrana-studio-ms5-prod-smoke",
@@ -3300,7 +3300,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "device-board-refactor-v04",
@@ -7022,7 +7022,7 @@
       ],
       "archivedAt": "2026-06-24",
       "archiveNotes": "Merge train done: PR #159 + #160 merged (6cb04b7). CI green. Issue #161 closed. C3 docs in CONCEPT, catalog, user-functions.mdx. C4 P2 refactor deferred to backlog Issues.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "db-ufc-c0-consilium",
@@ -7175,7 +7175,7 @@
       ],
       "archivedAt": "2026-06-24",
       "archiveNotes": "PR #164 merged, issue #163 closed; view-only UX for system-preview",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "db-vo-r0-audit",
@@ -7312,7 +7312,7 @@
       "githubIssue": 166,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "createdAt": "2026-06-24",
@@ -7322,7 +7322,10 @@
         "ozhegov",
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity",
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "db-es-r0-consilium",
@@ -7331,7 +7334,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7339,7 +7342,9 @@
       "dependsOn": [],
       "notes": "UE Sequence ref; gap table; async contract decision",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168"
     },
     {
       "id": "db-es-r1-optional-pin-labels",
@@ -7348,7 +7353,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7358,7 +7363,9 @@
       ],
       "notes": "socket-port-label + resolve-context-port-label; no bare & null",
       "leadPersona": "rodchenko",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-es-r2-exec-fanout-ban",
@@ -7367,7 +7374,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7377,7 +7384,9 @@
       ],
       "notes": "onConnect guard + pre-run validator exec-fan-out-forbidden",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-es-r3-sequence-editor",
@@ -7386,7 +7395,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7398,7 +7407,9 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-es-r4-sequence-runtime-sync",
@@ -7407,7 +7418,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7417,7 +7428,9 @@
       ],
       "notes": "exec-sequence.ts; top-to-bottom Then chain; reuse exec-successor",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-es-r5-sequence-async",
@@ -7426,7 +7439,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7438,7 +7451,9 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-es-r6-docs-tests",
@@ -7447,7 +7462,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7458,7 +7473,9 @@
       ],
       "notes": "DEVICE_BOARD_CONCEPT; catalog verify; turbo CI",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-es-r7-archive",
@@ -7467,7 +7484,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-exec-sequence-ux",
@@ -7477,7 +7494,9 @@
       ],
       "notes": "yarn task:archive device-board-exec-sequence-ux; close Issue #166",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "device-board-recording-graph-clarity",
@@ -7486,7 +7505,7 @@
       "githubIssue": 167,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "createdAt": "2026-06-24",
@@ -7495,7 +7514,10 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity",
+      "githubIssueClosedAt": "2026-06-24"
     },
     {
       "id": "db-rgc-r0-inspector-notes",
@@ -7504,7 +7526,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-recording-graph-clarity",
@@ -7512,7 +7534,9 @@
       "dependsOn": [],
       "notes": "scenario-node-inspector-notes + BoardNodeInspectorNotes; CONCEPT 15.5.1",
       "leadPersona": "rodchenko",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-rgc-r1-loop-lint",
@@ -7521,7 +7545,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-recording-graph-clarity",
@@ -7531,7 +7555,9 @@
       ],
       "notes": "validate-start-recording-loop; warning start-recording-unconditional-loop-path",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-rgc-r2-mvp-usercase",
@@ -7540,7 +7566,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-recording-graph-clarity",
@@ -7550,7 +7576,9 @@
       ],
       "notes": "onStart StartRecording; main gate-only restart; usercase:build-mvp-microphone",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-rgc-r3-docs-smoke",
@@ -7559,7 +7587,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-recording-graph-clarity",
@@ -7569,7 +7597,9 @@
       ],
       "notes": "USERCASE_MVP_MICROPHONE.md; SCENARIO_CHAIN_LOG_COOKBOOK recording markers",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     },
     {
       "id": "db-rgc-r4-archive",
@@ -7578,7 +7608,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-recording-graph-clarity",
@@ -7588,7 +7618,9 @@
       ],
       "notes": "yarn task:archive device-board-recording-graph-clarity",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
     }
   ]
 }
