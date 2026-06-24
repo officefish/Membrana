@@ -439,6 +439,8 @@ export {
 } from './remove-user-function.js';
 export {
   collapseSelectionToCommentGroup,
+  applyBoardNodeChangesWithCommentGroupDissolve,
+  applyBranchNodeRemovals,
   collectCommentGroupsFromBoard,
   collectCommentGroupNodeIdsFromBoard,
   dedupeCommentGroupIds,
