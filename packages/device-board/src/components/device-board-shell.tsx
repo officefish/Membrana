@@ -22,6 +22,7 @@ import type { Edge, Node, NodeChange, OnSelectionChangeParams } from '@xyflow/re
 import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
 import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
 import { BoardEditUndoControl } from './board-edit-undo-control.js';
+import { resolveScenarioEditFlags } from './scenario-edit-flags.js';
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
@@ -411,6 +412,15 @@ const DeviceBoardShellInner: React.FC<{
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
   const isRuntime = graph.runtimeState.isRunning;
+  const scenarioEditFlags = useMemo(
+    () =>
+      resolveScenarioEditFlags({
+        isSignal,
+        isRuntime,
+        isSessionReadOnly: graph.isSessionReadOnly,
+      }),
+    [graph.isSessionReadOnly, isRuntime, isSignal],
+  );
 
   useEffect(() => {
     if (
@@ -478,7 +488,7 @@ const DeviceBoardShellInner: React.FC<{
 
   const handleNodeDoubleClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
-      if (isSignal || isRuntime || graph.isSessionReadOnly) {
+      if (isSignal || isRuntime) {
         return;
       }
       if (scenarioBranch === 'function') {
@@ -681,7 +691,7 @@ const DeviceBoardShellInner: React.FC<{
     graph.syncStatus !== 'loading';
   const mode = graph.mode;
   const isSaving = graph.syncStatus === 'saving';
-  const isCanvasReadOnly = isRuntime || graph.isSessionReadOnly;
+  const isCanvasReadOnly = scenarioEditFlags.isCanvasStructureReadOnly;
 
   const scenarioCanvas = useMemo(() => {
     if (scenarioBranch === 'initial') {
@@ -1602,18 +1612,24 @@ const DeviceBoardShellInner: React.FC<{
             onSelectionChange={handleSelectionChange}
             onNodeDoubleClick={handleNodeDoubleClick}
             onPaneClick={handlePaneClick}
-            onPaneContextMenu={handlePaneContextMenu}
+            onPaneContextMenu={
+              !isSignal && !isRuntime && !graph.isSessionReadOnly ? handlePaneContextMenu : undefined
+            }
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
             validationErrorNodeIds={validationErrorNodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
             readOnly={isCanvasReadOnly}
+            viewNavigationOnly={scenarioEditFlags.isScenarioViewOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             viewportFitKey={canvasViewportFitKey}
             onConnectionDropOnPane={handleConnectionDropOnPane}
             onMarqueeSelection={
-              !isSignal && !isRuntime && execLayoutPreview === null
+              !isSignal &&
+              !isRuntime &&
+              !graph.isSessionReadOnly &&
+              execLayoutPreview === null
                 ? handleMarqueeSelection
                 : undefined
             }
@@ -1675,6 +1691,7 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onRenameFunction={handleRenameFunction}
             onRemoveFunction={handleRemoveUserFunction}
+            constructorCrudDisabled={scenarioEditFlags.constructorCrudDisabled}
           />
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
@@ -1704,7 +1721,7 @@ const DeviceBoardShellInner: React.FC<{
             selectedFunctionName={selectedFunctionName}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
-            canEditScenario={!isSignal}
+            canEditScenario={scenarioEditFlags.canEditScenario}
             isFunctionBranch={!isSignal && scenarioBranch === 'function'}
             functionMeta={!isSignal && scenarioBranch === 'function' ? graph.scenarioFunctionMeta : null}
             functionPinEditSide={functionPinEditSide}

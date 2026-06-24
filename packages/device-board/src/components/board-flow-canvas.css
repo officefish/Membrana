@@ -11,6 +11,18 @@
   cursor: crosshair;
 }
 
+.board-flow-canvas.board-flow-canvas--view-nav .react-flow__pane {
+  cursor: grab;
+}
+
+.board-flow-canvas.board-flow-canvas--view-nav .react-flow__pane:active {
+  cursor: grabbing;
+}
+
+.board-flow-canvas.board-flow-canvas--view-nav .react-flow__node {
+  cursor: grab;
+}
+
 .board-flow-canvas .react-flow__node {
   cursor: grab;
 }

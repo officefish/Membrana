@@ -7155,6 +7155,143 @@
       "supportPersonas": [],
       "archivedAt": "2026-06-24",
       "archiveNotes": "Epic archived, Issue #161 closed"
+    },
+    {
+      "id": "device-board-view-only-ux",
+      "title": "Device-board: UX режима «только просмотр» (system-preview)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md",
+      "githubIssue": 163,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-24",
+      "notes": "Operator AC: canvas pan/zoom; hide palette; lock right/left sidebar CRUD. Parallel to PR #162 defer.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #164 merged, issue #163 closed; view-only UX for system-preview",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "db-vo-r0-audit",
+      "title": "DB-VO-R0: gap audit system-preview UX",
+      "promptPath": "docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-view-only-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [],
+      "notes": "Gap table in epic prompt; confirm scope excludes competition mode",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-vo-r1-canvas-viewport",
+      "title": "DB-VO-R1: canvas pan/zoom при structure read-only",
+      "promptPath": "docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-view-only-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-vo-r0-audit"
+      ],
+      "notes": "BoardFlowCanvas: structure vs viewport; shell isScenarioViewOnly",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-vo-r2-right-sidebar",
+      "title": "DB-VO-R2: right sidebar — hide palette, disable inspector",
+      "promptPath": "docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-view-only-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-vo-r0-audit"
+      ],
+      "notes": "canEditScenario includes isSessionReadOnly; no BoardNodePalettePanel",
+      "leadPersona": "rodchenko",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-vo-r3-left-sidebar",
+      "title": "DB-VO-R3: left sidebar — lock variable/function CRUD",
+      "promptPath": "docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-view-only-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-vo-r0-audit"
+      ],
+      "notes": "constructorDisabled + BoardFunctionList; keep branch navigation",
+      "leadPersona": "rodchenko",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-vo-r4-docs-tests",
+      "title": "DB-VO-R4: docs + tests view-only UX",
+      "promptPath": "docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-view-only-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-vo-r1-canvas-viewport",
+        "db-vo-r2-right-sidebar",
+        "db-vo-r3-left-sidebar"
+      ],
+      "notes": "CONCEPT, catalog verify, CI green",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-vo-r5-archive",
+      "title": "DB-VO-R5: archive epic view-only UX",
+      "promptPath": "docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-view-only-ux",
+      "createdAt": "2026-06-24",
+      "dependsOn": [
+        "db-vo-r4-docs-tests"
+      ],
+      "notes": "yarn task:archive device-board-view-only-ux; close GitHub Issue",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
     }
   ]
 }
