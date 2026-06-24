@@ -7686,7 +7686,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "notes": "Golden v0.9-functions; build pipeline; migrate BD5; logs:parse; LGTM addendum",
@@ -7694,7 +7694,9 @@
       "supportPersonas": [
         "vesnin",
         "rodchenko"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "commit 358a504; v0.9-functions cutover; smoke runId 7e8a289c"
     }
   ]
 }
