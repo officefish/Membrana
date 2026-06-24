@@ -49,10 +49,13 @@ description: >-
 **Order matters** — archive morning files **before** code-review:
 
 1. `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/`
-2. `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`
-3. `yarn task:archive <id>` (per accepted tasks; may have been done daytime)
-4. `yarn save-code-review`
-5. `yarn task:close-github:dry` then `yarn task:close-github`
+2. `yarn rag:index:incremental` (non-blocking; in `ritual:evening` chain)
+3. `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`
+4. `yarn task:archive <id>` (per accepted tasks; may have been done daytime)
+5. `yarn save-code-review`
+6. `yarn task:close-github` → `yarn team-evening-feedback` (via `ritual-evening-tail.mjs`)
+
+Team feedback: `membrana-team-evening-feedback` → `docs/seanses/team-evening-feedback-<date>.md`
 
 ## Output format
 

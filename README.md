@@ -90,7 +90,7 @@ yarn check:boundaries
 | **По ситуации** | `yarn consilium "…"` (консенсус всех ролей), `yarn ask <persona> …` (совет одной роли) |
 | **Триаж issues** | `yarn issues:audit --manifest docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json` |
 
-Для скриптов с Claude нужен `ANTHROPIC_API_KEY` в `.env`. Утро: `yarn ritual:day`. Вечер: `yarn ritual:evening` (сначала архив плана/стендапа/фокуса, затем code-review). Code-review **не** утром. Фокус дня: `docs/MAIN_DAY_ISSUE.md`. Архив: [`docs/archive/README.md`](./docs/archive/README.md).
+Для скриптов с Claude нужен `ANTHROPIC_API_KEY` в `.env`. Утро: `yarn ritual:day`. Вечер: `yarn ritual:evening` (архив плана/стендапа/фокуса → code-review → team-evening-feedback в `docs/seanses/`). Code-review **не** утром. Фокус дня: `docs/MAIN_DAY_ISSUE.md`. Архив: [`docs/archive/README.md`](./docs/archive/README.md).
 
 ## Полезные yarn-команды
 

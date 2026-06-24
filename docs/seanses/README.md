@@ -1,12 +1,13 @@
-# docs/seanses — протоколы консилиумов
+# docs/seanses — протоколы консилиумов и вечерний фидбек
 
-Архив **коллективных обсуждений** виртуальной команды (все пять ролей, консенсус, ≥20 реплик).
+Архив **коллективных обсуждений** виртуальной команды.
 
 | Способ | Куда пишется |
 |--------|----------------|
 | `yarn consilium "<вопрос>"` | `docs/seanses/<slug>-<YYYY-MM-DD>.md` |
 | `yarn consilium --save-as <slug> "…"` | `<slug>-<дата>.md` |
-| Вручную в Cursor | По [`CONSILIUM_PROMPT.md`](../prompts/CONSILIUM_PROMPT.md), затем сохранить сюда |
+| `yarn team-evening-feedback` | `docs/seanses/team-evening-feedback-<YYYY-MM-DD>.md` |
+| Вручную в Cursor | По [`CONSILIUM_PROMPT.md`](../prompts/CONSILIUM_PROMPT.md) или [`TEAM_EVENING_FEEDBACK.md`](../prompts/TEAM_EVENING_FEEDBACK.md) |
 
 ## Соглашение по именам
 
@@ -26,6 +27,6 @@
 
 ## Ссылки
 
-- Промпт и правила: [`docs/prompts/CONSILIUM_PROMPT.md`](../prompts/CONSILIUM_PROMPT.md)
+- Консилиум: [`docs/prompts/CONSILIUM_PROMPT.md`](../prompts/CONSILIUM_PROMPT.md) · `scripts/consilium.mjs`
+- Team Evening Feedback: [`docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md`](../prompts/TEAM_EVENING_FEEDBACK_REGULATION.md) · `scripts/team-evening-feedback.mjs`
 - Роли: [`docs/VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md)
-- Скрипт: `scripts/consilium.mjs`

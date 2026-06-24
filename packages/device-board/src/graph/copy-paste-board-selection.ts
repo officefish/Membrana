@@ -29,6 +29,20 @@ function cloneEdge(edge: Edge): Edge {
   return structuredClone(edge);
 }
 
+/** Объединяет `node.selected` и явные id (marquee / inspector fallback). */
+export function collectBoardSelectionNodeIds(
+  branchNodes: readonly Node[],
+  forcedSelectedIds?: readonly string[],
+): ReadonlySet<string> {
+  const selectedIds = new Set(
+    branchNodes.filter((node) => node.selected).map((node) => node.id),
+  );
+  for (const id of forcedSelectedIds ?? []) {
+    selectedIds.add(id);
+  }
+  return selectedIds;
+}
+
 /**
  * Собирает clipboard из выделенных на канвасе узлов и рёбер между ними.
  * @returns null если нет пригодных узлов
@@ -36,10 +50,9 @@ function cloneEdge(edge: Edge): Edge {
 export function extractBoardSelectionClipboard(
   branchNodes: readonly Node[],
   branchEdges: readonly Edge[],
+  forcedSelectedIds?: readonly string[],
 ): BoardSelectionClipboard | null {
-  const selectedIds = new Set(
-    branchNodes.filter((node) => node.selected).map((node) => node.id),
-  );
+  const selectedIds = collectBoardSelectionNodeIds(branchNodes, forcedSelectedIds);
   if (selectedIds.size === 0) {
     return null;
   }
@@ -94,15 +107,21 @@ export function cloneBoardSelectionForPaste(
     ? { dx: anchorFlowPosition.x - center.x, dy: anchorFlowPosition.y - center.y }
     : { dx: BOARD_PASTE_OFFSET.x, dy: BOARD_PASTE_OFFSET.y };
 
-  const nodes = clipboard.nodes.map((node) => ({
-    ...cloneNode(node),
-    id: idMap.get(node.id) ?? `board-${generateId()}`,
-    position: {
-      x: node.position.x + translate.dx,
-      y: node.position.y + translate.dy,
-    },
-    selected: true,
-  }));
+  const nodes = clipboard.nodes.map((node) => {
+    const cloned = cloneNode(node);
+    return {
+      ...cloned,
+      id: idMap.get(node.id) ?? `board-${generateId()}`,
+      position: {
+        x: node.position.x + translate.dx,
+        y: node.position.y + translate.dy,
+      },
+      selected: true,
+      // Вставка всегда на корень ветки — иначе parentId от группы делает узлы невидимыми.
+      parentId: undefined,
+      extent: undefined,
+    };
+  });
 
   const edges = clipboard.edges.map((edge) => {
     const source = idMap.get(edge.source) ?? edge.source;

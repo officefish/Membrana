@@ -45,6 +45,10 @@ import {
   type BoardMarqueeSelectionPayload,
 } from './board-flow-canvas.js';
 import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
+import {
+  BoardClipboardPaneModal,
+  type BoardClipboardPaneModalMode,
+} from './board-clipboard-pane-modal.js';
 import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardFunctionActionModal } from './board-function-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
@@ -79,6 +83,7 @@ import {
   isCollapseToGroupEligibleNode,
 } from '../graph/collapse-selection-eligibility.js';
 import { computeRuntimeExecHighlight } from '../graph/runtime-exec-highlight.js';
+import { logBoardClipboardStep } from '../graph/edit-step-log.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -142,6 +147,11 @@ const DeviceBoardShellInner: React.FC<{
   >([]);
   const pendingConnectionDropRef = useRef<BoardConnectionDropOnPanePayload | null>(null);
   const [selectionActionOpen, setSelectionActionOpen] = useState(false);
+  const [clipboardPaneModal, setClipboardPaneModal] = useState<BoardClipboardPaneModalMode | null>(
+    null,
+  );
+  const [clipboardHint, setClipboardHint] = useState<string | null>(null);
+  const clipboardHintTimerRef = useRef<number | null>(null);
   const [execLayoutPreview, setExecLayoutPreview] = useState<
     Map<string, { readonly x: number; readonly y: number }> | null
   >(null);
@@ -357,6 +367,9 @@ const DeviceBoardShellInner: React.FC<{
 
   const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
+      setMarqueeSelectedIds([]);
+      setSelectionActionOpen(false);
+      setClipboardPaneModal(null);
       graph.setScenarioBranch(branch);
       setActiveLayer('scenario');
       clearSelection();
@@ -374,10 +387,6 @@ const DeviceBoardShellInner: React.FC<{
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
   const isRuntime = graph.runtimeState.isRunning;
-
-  const handlePaneClick = useCallback(() => {
-    clearSelection();
-  }, [clearSelection]);
 
   const handleUserFunctionListClick = useCallback(
     (functionId: string) => {
@@ -662,6 +671,63 @@ const DeviceBoardShellInner: React.FC<{
     };
   }, [scenarioBranch, graph]);
 
+  const collectCanvasSelectedIds = useCallback((): readonly string[] => {
+    const fromCanvas = scenarioCanvas.nodes.filter((node) => node.selected).map((node) => node.id);
+    return [
+      ...new Set([
+        ...fromCanvas,
+        ...marqueeSelectedIds,
+        ...(selectedNodeId !== null ? [selectedNodeId] : []),
+      ]),
+    ];
+  }, [marqueeSelectedIds, scenarioCanvas.nodes, selectedNodeId]);
+
+  const handlePaneClick = useCallback((): boolean => {
+    setClipboardPaneModal(null);
+    setSelectionActionOpen(false);
+    setMarqueeSelectedIds([]);
+    clearSelection();
+    return false;
+  }, [clearSelection]);
+
+  const handlePaneContextMenu = useCallback(
+    (event: React.MouseEvent) => {
+      if (isSignal || isRuntime || graph.isSessionReadOnly) {
+        return;
+      }
+      lastCanvasPointerRef.current = { clientX: event.clientX, clientY: event.clientY };
+      const selectedIds = collectCanvasSelectedIds();
+      if (selectedIds.length >= 2) {
+        setClipboardPaneModal('selection');
+        logBoardClipboardStep(graph.showInfoLogs, 'pane-modal-open', {
+          mode: 'selection',
+          selectedCount: selectedIds.length,
+          branch: scenarioBranch,
+          trigger: 'contextmenu',
+        });
+        return;
+      }
+      if (graph.boardClipboardNodeCount > 0) {
+        setClipboardPaneModal('paste');
+        logBoardClipboardStep(graph.showInfoLogs, 'pane-modal-open', {
+          mode: 'paste',
+          clipboardCount: graph.boardClipboardNodeCount,
+          branch: scenarioBranch,
+          trigger: 'contextmenu',
+        });
+      }
+    },
+    [
+      collectCanvasSelectedIds,
+      graph.boardClipboardNodeCount,
+      graph.isSessionReadOnly,
+      graph.showInfoLogs,
+      isRuntime,
+      isSignal,
+      scenarioBranch,
+    ],
+  );
+
   const clearCanvasNodeSelection = useCallback(() => {
     if (isSignal) {
       return;
@@ -934,19 +1000,6 @@ const DeviceBoardShellInner: React.FC<{
     }
   }, [dismissSelectionAction, isRuntime, selectionActionOpen]);
 
-  useEffect(() => {
-    if (!selectionActionOpen) {
-      return;
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        closeSelectionActionModal();
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [closeSelectionActionModal, selectionActionOpen]);
-
   const canUndoRef = useRef(graph.canUndoLastEdit);
   canUndoRef.current = graph.canUndoLastEdit;
   const undoLastEditRef = useRef(graph.undoLastEdit);
@@ -955,6 +1008,181 @@ const DeviceBoardShellInner: React.FC<{
   copyBoardSelectionRef.current = graph.copyBoardSelection;
   const pasteBoardSelectionRef = useRef(graph.pasteBoardSelection);
   pasteBoardSelectionRef.current = graph.pasteBoardSelection;
+  const scenarioCanvasRef = useRef(scenarioCanvas);
+  scenarioCanvasRef.current = scenarioCanvas;
+  const marqueeSelectedIdsRef = useRef(marqueeSelectedIds);
+  marqueeSelectedIdsRef.current = marqueeSelectedIds;
+  const selectedNodeIdRef = useRef(selectedNodeId);
+  selectedNodeIdRef.current = selectedNodeId;
+
+  const flashClipboardHint = useCallback((count: number) => {
+    setClipboardHint(`в буфере ${count} узлов`);
+    if (clipboardHintTimerRef.current !== null) {
+      window.clearTimeout(clipboardHintTimerRef.current);
+    }
+    clipboardHintTimerRef.current = window.setTimeout(() => {
+      setClipboardHint(null);
+      clipboardHintTimerRef.current = null;
+    }, 5000);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (clipboardHintTimerRef.current !== null) {
+        window.clearTimeout(clipboardHintTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  const collectForcedSelectionIds = useCallback((): readonly string[] => {
+    const canvas = scenarioCanvasRef.current;
+    const fromCanvas = canvas.nodes.filter((node) => node.selected).map((node) => node.id);
+    return [
+      ...new Set([
+        ...fromCanvas,
+        ...marqueeSelectedIdsRef.current,
+        ...(selectedNodeIdRef.current !== null ? [selectedNodeIdRef.current] : []),
+      ]),
+    ];
+  }, []);
+
+  const performBoardCopy = useCallback((): number | null => {
+    const forcedIds = collectForcedSelectionIds();
+    if (forcedIds.length === 0) {
+      return null;
+    }
+    const canvas = scenarioCanvasRef.current;
+    const copiedCount = copyBoardSelectionRef.current({
+      forcedSelectedIds: forcedIds,
+      branchNodes: canvas.nodes,
+      branchEdges: canvas.edges,
+    });
+    if (copiedCount !== null) {
+      flashClipboardHint(copiedCount);
+    }
+    return copiedCount;
+  }, [collectForcedSelectionIds, flashClipboardHint]);
+
+  const performBoardPaste = useCallback((): boolean => {
+    const pointer = lastCanvasPointerRef.current;
+    const anchor =
+      pointer !== null
+        ? viewportApiRef.current?.clientToFlowPosition(pointer.clientX, pointer.clientY)
+        : viewportApiRef.current?.getCenterFlowPosition();
+    const pastedIds = pasteBoardSelectionRef.current(anchor);
+    if (pastedIds === null) {
+      return false;
+    }
+    if (pastedIds.length > 0) {
+      viewportApiRef.current?.focusNodeIds(pastedIds);
+    }
+    return true;
+  }, []);
+
+  const closeClipboardPaneModal = useCallback(() => {
+    setClipboardPaneModal(null);
+  }, []);
+
+  const handleClipboardPaneCopy = useCallback(() => {
+    if (performBoardCopy() !== null) {
+      closeClipboardPaneModal();
+    }
+  }, [closeClipboardPaneModal, performBoardCopy]);
+
+  const handleClipboardPaneDelete = useCallback(() => {
+    const removed = graph.removeNodesFromCurrentBranch(collectForcedSelectionIds());
+    if (removed > 0) {
+      closeClipboardPaneModal();
+      dismissSelectionAction();
+    }
+  }, [closeClipboardPaneModal, collectForcedSelectionIds, dismissSelectionAction, graph]);
+
+  const handleClipboardPanePaste = useCallback(() => {
+    if (performBoardPaste()) {
+      closeClipboardPaneModal();
+    }
+  }, [closeClipboardPaneModal, performBoardPaste]);
+
+  const handleClipboardPaneClear = useCallback(() => {
+    graph.clearBoardClipboard();
+    setClipboardHint(null);
+    closeClipboardPaneModal();
+  }, [closeClipboardPaneModal, graph]);
+
+  const clipboardPaneSelectedCount = useMemo(() => {
+    const fromCanvas = scenarioCanvas.nodes.filter((node) => node.selected).map((node) => node.id);
+    return new Set([
+      ...fromCanvas,
+      ...marqueeSelectedIds,
+      ...(selectedNodeId !== null ? [selectedNodeId] : []),
+    ]).size;
+  }, [marqueeSelectedIds, scenarioCanvas.nodes, selectedNodeId]);
+
+  const runBoardClipboardHotkey = useCallback((event: KeyboardEvent): boolean => {
+    if (!(event.ctrlKey || event.metaKey)) {
+      return false;
+    }
+    const target = event.target;
+    if (target instanceof HTMLElement) {
+      const tag = target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
+        return false;
+      }
+    }
+    if (event.code === 'KeyC') {
+      const copiedCount = performBoardCopy();
+      if (copiedCount !== null) {
+        event.preventDefault();
+        event.stopPropagation();
+        return true;
+      }
+      return false;
+    }
+    if (event.code === 'KeyV') {
+      if (performBoardPaste()) {
+        event.preventDefault();
+        event.stopPropagation();
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }, [performBoardCopy, performBoardPaste]);
+
+  useEffect(() => {
+    if (!selectionActionOpen) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeSelectionActionModal();
+        return;
+      }
+      if (!isRuntime && !isSignal) {
+        runBoardClipboardHotkey(event);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [closeSelectionActionModal, isRuntime, isSignal, runBoardClipboardHotkey, selectionActionOpen]);
+
+  useEffect(() => {
+    if (clipboardPaneModal === null) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeClipboardPaneModal();
+        return;
+      }
+      if (!isRuntime && !isSignal) {
+        runBoardClipboardHotkey(event);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [clipboardPaneModal, closeClipboardPaneModal, isRuntime, isSignal, runBoardClipboardHotkey]);
 
   const handleUndoLastEdit = useCallback(() => {
     if (!graph.canUndoLastEdit) {
@@ -988,41 +1216,15 @@ const DeviceBoardShellInner: React.FC<{
   }, [isRuntime]);
 
   useEffect(() => {
-    if (isRuntime || isSignal || graph.isSessionReadOnly) {
+    if (isRuntime || isSignal) {
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {
-      const key = event.key.toLowerCase();
-      if (!(event.ctrlKey || event.metaKey) || (key !== 'c' && key !== 'v')) {
-        return;
-      }
-      const target = event.target;
-      if (target instanceof HTMLElement) {
-        const tag = target.tagName;
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
-          return;
-        }
-      }
-      if (key === 'c') {
-        if (copyBoardSelectionRef.current()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        return;
-      }
-      const pointer = lastCanvasPointerRef.current;
-      const anchor =
-        pointer !== null
-          ? viewportApiRef.current?.clientToFlowPosition(pointer.clientX, pointer.clientY)
-          : viewportApiRef.current?.getCenterFlowPosition();
-      if (anchor !== undefined && pasteBoardSelectionRef.current(anchor)) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
+      runBoardClipboardHotkey(event);
     };
     window.addEventListener('keydown', onKeyDown, true);
     return () => window.removeEventListener('keydown', onKeyDown, true);
-  }, [graph.isSessionReadOnly, isRuntime, isSignal]);
+  }, [isRuntime, isSignal, runBoardClipboardHotkey]);
 
   const runtimeExecHighlight = useMemo(() => {
     if (!isRuntime || isSignal) {
@@ -1310,6 +1512,7 @@ const DeviceBoardShellInner: React.FC<{
             }
             onSelectionChange={handleSelectionChange}
             onPaneClick={handlePaneClick}
+            onPaneContextMenu={handlePaneContextMenu}
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
@@ -1336,6 +1539,7 @@ const DeviceBoardShellInner: React.FC<{
                 canUndo={graph.canUndoLastEdit}
                 lastActionLabel={graph.lastUndoableEditLabel}
                 onUndo={handleUndoLastEdit}
+                clipboardHint={clipboardHint}
               />
             </div>
           </div>
@@ -1527,6 +1731,21 @@ const DeviceBoardShellInner: React.FC<{
         onSmartAlign={handleSmartAlign}
         onExecChainLayout={handleExecChainLayout}
         onDismiss={closeSelectionActionModal}
+      />
+
+      <BoardClipboardPaneModal
+        open={clipboardPaneModal !== null && !isRuntime}
+        mode={clipboardPaneModal ?? 'selection'}
+        selectedCount={clipboardPaneSelectedCount}
+        clipboardCount={graph.boardClipboardNodeCount}
+        copyDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
+        pasteDisabled={graph.isSessionReadOnly || graph.boardClipboardNodeCount === 0}
+        deleteDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
+        onCopy={handleClipboardPaneCopy}
+        onDelete={handleClipboardPaneDelete}
+        onPaste={handleClipboardPanePaste}
+        onClearClipboard={handleClipboardPaneClear}
+        onDismiss={closeClipboardPaneModal}
       />
     </div>
   );

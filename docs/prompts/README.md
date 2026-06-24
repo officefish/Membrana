@@ -11,6 +11,7 @@
 | **[`TASK_PROMPT_TEMPLATE.md`](./TASK_PROMPT_TEMPLATE.md)** | Шаблон нового `*_PROMPT.md` |
 | **[`docs/tasks/README.md`](../tasks/README.md)** | Активные и архивные задачи |
 | **[`CONSILIUM_PROMPT.md`](./CONSILIUM_PROMPT.md)** | Консилиум всех ролей → `docs/seanses/` |
+| **[`TEAM_EVENING_FEEDBACK_REGULATION.md`](./TEAM_EVENING_FEEDBACK_REGULATION.md)** | Вечерняя ретроспектива команды; `yarn team-evening-feedback` → `docs/seanses/` |
 | **[`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md)** | Night Build между evening и morning ritual |
 | **[`HACKATHON_REGULATION.md`](../HACKATHON_REGULATION.md)** | Много-дневный хакатон (замена ritual:day/evening) |
 | **[`DEVICE_BOARD_HACKATHON_BRIEF.md`](./DEVICE_BOARD_HACKATHON_BRIEF.md)** | **Подготовка** — бриф хакатона device-board v0.2 |
