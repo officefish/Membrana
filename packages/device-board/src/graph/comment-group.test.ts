@@ -4,7 +4,6 @@ import { createScenarioBoardNode } from './board-node-factory.js';
 import { createEventBoardNode } from './event-node.js';
 import {
   collapseSelectionToCommentGroup,
-  applyBoardNodeChangesWithCommentGroupDissolve,
   applyBranchNodeRemovals,
   dissolveCommentGroups,
   extractCommentGroupsFromNodes,
