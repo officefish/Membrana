@@ -7163,7 +7163,7 @@
       "githubIssue": 163,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "createdAt": "2026-06-24",
@@ -7172,7 +7172,10 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #164 merged, issue #163 closed; view-only UX for system-preview",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-vo-r0-audit",
