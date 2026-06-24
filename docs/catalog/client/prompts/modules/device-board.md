@@ -41,7 +41,7 @@
 | **runtime** (`isRunning`) | канвас read-only; exec highlight; инспектор портов по клику |
 | **validation errors** | баннер pre-run |
 | **launcher** (U10) | выбор system-preview / user-edit до входа в board mode; quota N/max |
-| **system-preview** | Save disabled; клон из модуля |
+| **system-preview** | Save disabled; клон из модуля; pan/zoom/minimap; палитра скрыта; инспектор RO; CRUD vars/fn locked; навигация по веткам OK |
 | **user-edit** | Save → active IndexedDB workspace |
 
 Операторская документация: [`user-workspace.mdx`](../../../../apps/docs/device-board/user-workspace.mdx) · [`edit-and-navigation.mdx`](../../../../apps/docs/device-board/editor/edit-and-navigation.mdx) · [`user-functions.mdx`](../../../../apps/docs/device-board/editor/user-functions.mdx).
