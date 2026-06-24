@@ -59,6 +59,10 @@ import {
   createFftTrendsPolicyValue,
   isScenarioFftTrendsPolicyValue,
   fftTrendsAnalysisDurationSec,
+  canonicalizeScenarioFunctionPinOrder,
+  createDefaultFunctionExecInputPin,
+  createDefaultFunctionExecOutputPin,
+  normalizeScenarioFunctionPins,
 } from './index.js';
 
 describe('device-board contracts', () => {
@@ -523,5 +527,34 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     expect(nodes[0]).not.toHaveProperty('pure');
     expect(nodes[1]?.pure).toBe(true);
     expect(nodes[2]).not.toHaveProperty('pure');
+  });
+
+  it('normalizeScenarioFunctionPins places exec pin first on input and output', () => {
+    const defaultInput = [createDefaultFunctionExecInputPin()];
+    const defaultOutput = [createDefaultFunctionExecOutputPin()];
+    const dataPin = {
+      id: 'policy',
+      name: 'policy',
+      kind: 'data' as const,
+      socketType: 'RecordingPolicy' as const,
+    };
+    const inputOrdered = normalizeScenarioFunctionPins([dataPin, createDefaultFunctionExecInputPin()], defaultInput);
+    expect(inputOrdered[0]?.kind).toBe('exec');
+    expect(inputOrdered[1]?.id).toBe('policy');
+
+    const outputOrdered = normalizeScenarioFunctionPins(
+      [dataPin, createDefaultFunctionExecOutputPin()],
+      defaultOutput,
+    );
+    expect(outputOrdered[0]?.kind).toBe('exec');
+    expect(outputOrdered[1]?.id).toBe('policy');
+  });
+
+  it('canonicalizeScenarioFunctionPinOrder inserts default exec when missing', () => {
+    const dataOnly = [{ id: 'x', name: 'x', kind: 'data' as const, socketType: 'DeviceRef' as const }];
+    const result = canonicalizeScenarioFunctionPinOrder(dataOnly, createDefaultFunctionExecInputPin());
+    expect(result).toHaveLength(2);
+    expect(result[0]?.id).toBe('exec-in');
+    expect(result[1]?.id).toBe('x');
   });
 });

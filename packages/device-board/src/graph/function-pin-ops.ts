@@ -66,12 +66,12 @@ export function removeFunctionPinFromList(
   pins: readonly ScenarioFunctionPin[],
   pinId: string,
 ): readonly ScenarioFunctionPin[] | FunctionPinOpError {
-  if (pins.length <= 1) {
-    return { error: 'На каждой стороне должен остаться минимум один pin' };
-  }
   const pin = pins.find((candidate) => candidate.id === pinId);
   if (pin?.kind === 'exec') {
     return { error: 'Exec pin нельзя удалить' };
+  }
+  if (pins.length <= 1) {
+    return { error: 'На каждой стороне должен остаться минимум один pin' };
   }
   const next = pins.filter((candidate) => candidate.id !== pinId);
   if (next.length === pins.length) {
@@ -103,6 +103,9 @@ export function updateFunctionPinInList(
   const current = pins[index]!;
   if (current.kind === 'exec' && patch.kind !== undefined && patch.kind !== 'exec') {
     return { error: 'Тип exec pin нельзя изменить' };
+  }
+  if (current.kind === 'exec' && patch.name !== undefined && patch.name.trim() !== current.name) {
+    return { error: 'Имя exec pin нельзя изменить' };
   }
   const nextName = patch.name !== undefined ? patch.name.trim() : current.name;
   if (nextName.length === 0) {

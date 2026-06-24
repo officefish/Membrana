@@ -103,7 +103,8 @@ const PinRow: React.FC<{
             type="text"
             className="input input-bordered input-xs w-full font-mono"
             value={nameDraft}
-            disabled={disabled}
+            disabled={disabled || isExecPin}
+            readOnly={isExecPin}
             aria-label={`Имя pin ${pin.id}`}
             onChange={(event) => setNameDraft(event.target.value)}
             onBlur={() => {

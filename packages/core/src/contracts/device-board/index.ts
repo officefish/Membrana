@@ -223,6 +223,7 @@ export {
   createDefaultFunctionExecOutputPin,
   normalizeScenarioFunctionPin,
   normalizeScenarioFunctionPins,
+  canonicalizeScenarioFunctionPinOrder,
   isScenarioFunctionPinCountValid,
 } from './scenario-function-pin.js';
 

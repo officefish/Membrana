@@ -37,7 +37,7 @@
 | **edit** | палитра, переменные, drag/connect; breadcrumbs в header канваса |
 | **dirty** | кнопка «Сохранить» активна; handler switch без Save → откат к saved document (F7) |
 | **undo pending** | кнопка ↶; Ctrl+Z / Cmd+Z (не в input) |
-| **function branch** | inline editor в сайдбаре; pin meter `n/9`; список функций |
+| **function branch** | inline editor в сайдбаре; pin meter `n/9`; exec-first pins; subgraph **custom** badge + user name |
 | **runtime** (`isRunning`) | канвас read-only; exec highlight; инспектор портов по клику |
 | **validation errors** | баннер pre-run |
 | **launcher** (U10) | выбор system-preview / user-edit до входа в board mode; quota N/max |
@@ -91,7 +91,7 @@
 | Edit | не запущен | mutating ops, undo, marquee |
 | Run | `start()` / `stop()` | read-only canvas, `inspectRuntimeNode`, exec overlay |
 
-User functions: `exec-subgraph.ts` — вход через `function-input`, выход через `function-output`; depth ≤ 1.
+User functions: `exec-subgraph.ts` — вход через `function-input`, выход через `function-output`; depth ≤ 1. Exec pins первые на Input/Output, неудаляемы; subgraph-блок на ветке — badge `custom`, label = имя пользователя; unique id на collapse (#159), repair/delete по draftIndex (#160).
 
 ---
 

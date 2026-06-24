@@ -1106,12 +1106,15 @@ interface ScenarioFunctionPin {
 ```
 
 - **D-PINS-9:** не более **9** pins на Input и **9** на Output (exec + data в общем лимите).
+- **Exec-first:** на каждой стороне **exec pin всегда первый** (верхний handle); `canonicalizeScenarioFunctionPinOrder` в core на hydrate/collapse/commit; exec pins **неудаляемы**.
 - Enforce: UI disabled при count === 9, `collapse-to-function` отказ, `validate-pre-run` (`function-pin-limit`).
 - Legacy migrate: `string[]` pins → `normalizeScenarioFunctionPin` on hydrate.
 
 **Collapse to function:** selection `S` → boundary edges → infer pins → create/update
 `ScenarioFunctionSubgraph` → `subgraph`-блок на родителе → open function tab.
-Pure: `collapse-to-function.ts`, `function-pin-ops.ts`.
+На родительской ветке subgraph-блок показывает **имя пользователя** (без `::fn-id` в UI) и badge **`custom`** (presentation; `blockKind` остаётся `subgraph`).
+Уникальный `functionId` при marquee collapse (#159); repair legacy duplicate ids на hydrate + delete по `draftIndex` (#160).
+Pure: `collapse-to-function.ts`, `function-pin-ops.ts`, `repair-duplicate-scenario-functions.ts`.
 
 **Function editor UX (post-#139):** на ветке `function` — inline-редактор (имя, описание, pins)
 в сайдбаре; **клик по функции в списке** сразу открывает editor **без modal**, если уже на

@@ -57,15 +57,37 @@ export function normalizeScenarioFunctionPin(
   };
 }
 
+/**
+ * Exec pin всегда первый (верхний handle на Input/Output). При отсутствии exec — вставляет default.
+ * Дополнительные exec pins отбрасываются (не поддерживаются).
+ */
+export function canonicalizeScenarioFunctionPinOrder(
+  pins: readonly ScenarioFunctionPin[],
+  defaultExecPin: ScenarioFunctionPin,
+): readonly ScenarioFunctionPin[] {
+  const execPin = pins.find((pin) => pin.kind === 'exec');
+  const dataPins = pins.filter((pin) => pin.kind !== 'exec');
+  return [execPin ?? defaultExecPin, ...dataPins];
+}
+
+function defaultExecPinFromFallback(fallback: readonly ScenarioFunctionPin[]): ScenarioFunctionPin {
+  const fromFallback = fallback.find((pin) => pin.kind === 'exec');
+  if (fromFallback !== undefined) {
+    return fromFallback;
+  }
+  return fallback[0] ?? createDefaultFunctionExecInputPin();
+}
+
 /** Нормализует массив pins (legacy `string[]` или structured). */
 export function normalizeScenarioFunctionPins(
   values: readonly (string | ScenarioFunctionPin)[] | undefined,
   fallback: readonly ScenarioFunctionPin[],
 ): readonly ScenarioFunctionPin[] {
   if (values === undefined || values.length === 0) {
-    return fallback;
+    return canonicalizeScenarioFunctionPinOrder(fallback, defaultExecPinFromFallback(fallback));
   }
-  return values.map((item) => normalizeScenarioFunctionPin(item));
+  const normalized = values.map((item) => normalizeScenarioFunctionPin(item));
+  return canonicalizeScenarioFunctionPinOrder(normalized, defaultExecPinFromFallback(fallback));
 }
 
 /** True, если количество pins на стороне в пределах D-PINS-9. */

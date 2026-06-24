@@ -61,7 +61,7 @@ import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { CompetitionRunTimer } from './competition-run-timer.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
-import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds } from '../graph/index.js';
+import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds, parseEncodedSubgraphRefLabel } from '../graph/index.js';
 import type { BoardGroupNodeData } from '../graph/index.js';
 import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
 import {
@@ -164,7 +164,10 @@ const DeviceBoardShellInner: React.FC<{
     readonly functionName: string;
   } | null>(null);
   const [functionActionMessage, setFunctionActionMessage] = useState<string | null>(null);
-  const [deleteFunctionTargetId, setDeleteFunctionTargetId] = useState<string | null>(null);
+  const [deleteFunctionTarget, setDeleteFunctionTarget] = useState<{
+    readonly id: string;
+    readonly index: number;
+  } | null>(null);
 
   const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
     viewportApiRef.current = api;
@@ -324,15 +327,17 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedFunctionName(null);
       return;
     }
-    const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
-    setSelectedNodeLabel(label);
+    const rawLabel = typeof node.data?.label === 'string' ? node.data.label : node.id;
     const blockKind = node.data?.blockKind;
     const functionId = typeof node.data?.functionId === 'string' ? node.data.functionId : null;
     if (blockKind === 'subgraph' && functionId !== null) {
       const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
+      const displayName = fn?.name ?? parseEncodedSubgraphRefLabel(rawLabel);
+      setSelectedNodeLabel(displayName);
       setSelectedFunctionId(functionId);
-      setSelectedFunctionName(fn?.name ?? label);
+      setSelectedFunctionName(displayName);
     } else {
+      setSelectedNodeLabel(rawLabel);
       setSelectedFunctionId(null);
       setSelectedFunctionName(null);
     }
@@ -408,17 +413,17 @@ const DeviceBoardShellInner: React.FC<{
   const isRuntime = graph.runtimeState.isRunning;
 
   const handleUserFunctionListClick = useCallback(
-    (functionId: string) => {
+    (functionId: string, draftIndex: number) => {
       if (isSignal || isRuntime) {
         return;
       }
       if (scenarioBranch === 'function') {
-        graph.selectUserFunction(functionId);
+        graph.selectUserFunction(functionId, draftIndex);
         clearSelection();
         return;
       }
-      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
-      if (fn === undefined) {
+      const fn = graph.scenarioFunctionDrafts[draftIndex];
+      if (fn === undefined || fn.id !== functionId) {
         return;
       }
       setFunctionActionMessage(null);
@@ -436,7 +441,7 @@ const DeviceBoardShellInner: React.FC<{
     if (functionActionTarget === null) {
       return;
     }
-    graph.selectUserFunction(functionActionTarget.functionId);
+    graph.selectUserFunction(functionActionTarget.functionId, graph.activeFunctionDraftIndex);
     clearSelection();
     dismissFunctionAction();
   }, [clearSelection, dismissFunctionAction, functionActionTarget, graph]);
@@ -514,16 +519,16 @@ const DeviceBoardShellInner: React.FC<{
   }, [scenarioBranch, selectedNodeKind]);
 
   const deleteFunctionTargetName = useMemo(() => {
-    if (deleteFunctionTargetId === null) {
+    if (deleteFunctionTarget === null) {
       return null;
     }
-    const draft = graph.scenarioFunctionDrafts.find((fn) => fn.id === deleteFunctionTargetId);
+    const draft = graph.scenarioFunctionDrafts[deleteFunctionTarget.index];
     return draft?.name ?? null;
-  }, [deleteFunctionTargetId, graph.scenarioFunctionDrafts]);
+  }, [deleteFunctionTarget, graph.scenarioFunctionDrafts]);
 
   const handleRemoveUserFunction = useCallback(
-    (functionId: string) => {
-      const error = graph.removeUserFunction(functionId);
+    (functionId: string, draftIndex: number) => {
+      const error = graph.removeUserFunction(functionId, draftIndex);
       if (error !== null) {
         setImportError(error);
         return;
@@ -1653,6 +1658,7 @@ const DeviceBoardShellInner: React.FC<{
             onAddVariableNode={addVariableNodeAtViewportCenter}
             scenarioFunctions={graph.scenarioFunctionDrafts}
             activeFunctionId={graph.activeFunctionId}
+            activeFunctionDraftIndex={graph.activeFunctionDraftIndex}
             onSelectFunction={handleUserFunctionListClick}
             onCreateFunction={graph.createUserFunction}
             onRenameFunction={handleRenameFunction}
@@ -1746,7 +1752,10 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onDeleteFunction={() => {
               if (graph.activeFunctionId !== '') {
-                setDeleteFunctionTargetId(graph.activeFunctionId);
+                setDeleteFunctionTarget({
+                  id: graph.activeFunctionId,
+                  index: graph.activeFunctionDraftIndex,
+                });
               }
             }}
             onClearBoard={handleClearBoard}
@@ -1782,10 +1791,11 @@ const DeviceBoardShellInner: React.FC<{
 
       <DeleteFunctionModal
         functionName={deleteFunctionTargetName}
-        onClose={() => setDeleteFunctionTargetId(null)}
+        onClose={() => setDeleteFunctionTarget(null)}
         onConfirm={() => {
-          if (deleteFunctionTargetId !== null) {
-            handleRemoveUserFunction(deleteFunctionTargetId);
+          if (deleteFunctionTarget !== null) {
+            handleRemoveUserFunction(deleteFunctionTarget.id, deleteFunctionTarget.index);
+            setDeleteFunctionTarget(null);
           }
         }}
       />

@@ -60,10 +60,12 @@ describe('collapse-to-function', () => {
     }
   });
 
-  it('createEmptyFunctionDraft includes IO nodes', () => {
+  it('createEmptyFunctionDraft includes IO nodes with exec pins first', () => {
     const draft = createEmptyFunctionDraft('fn-new', 'New');
     expect(draft.nodes).toHaveLength(2);
     expect(draft.entry).toBe('fn-new-input');
+    expect(draft.inputPins[0]?.kind).toBe('exec');
+    expect(draft.outputPins[0]?.kind).toBe('exec');
   });
 
   it('picks next function id when existingFunctionIds is set', () => {
@@ -119,6 +121,7 @@ describe('collapse-to-function', () => {
     });
     expect(result.ok).toBe(true);
     if (result.ok) {
+      expect(result.functionDraft.inputPins[0]?.kind).toBe('exec');
       const policyPins = result.functionDraft.inputPins.filter((pin) => pin.name === 'policy');
       expect(policyPins).toHaveLength(1);
       const policyToBlock = result.branchEdges.filter(

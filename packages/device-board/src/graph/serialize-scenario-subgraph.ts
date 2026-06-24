@@ -16,7 +16,7 @@ import { resolveHandle } from './handle-catalog.js';
 import { createEventBoardNode, createLoopTickEventBoardNode } from './event-node.js';
 import { createLoopRepeatBoardNode } from './loop-repeat-node.js';
 import { createPaletteBoardNode, isPaletteNodeKind } from './palette-node.js';
-import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
+import { encodeSubgraphRef, parseEncodedSubgraphRefLabel, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 import { createVariableBoardNode } from './variable-node.js';
 import {
   createFunctionInputBoardNode,
@@ -129,7 +129,9 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
     label:
       blockKind === 'subgraph' && typeof node.data.functionId === 'string'
         ? encodeSubgraphRef(
-            typeof node.data.label === 'string' ? node.data.label : blockKind,
+            parseEncodedSubgraphRefLabel(
+              typeof node.data.label === 'string' ? node.data.label : blockKind,
+            ),
             node.data.functionId,
           )
         : node.data.label,

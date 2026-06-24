@@ -26,6 +26,9 @@ import {
   type ScenarioVariableType,
   type ScenarioVariableValue,
   isPureEligibleScenarioNodeKind,
+  canonicalizeScenarioFunctionPinOrder,
+  createDefaultFunctionExecInputPin,
+  createDefaultFunctionExecOutputPin,
 } from '@membrana/core';
 
 import type { ScenarioCommentGroupBranch, ScenarioCommentGroupFrameColor, SocketType } from '@membrana/core';
@@ -91,8 +94,8 @@ import {
   type ScenarioFunctionCanvasMeta,
   insertFunctionSubgraphBlock,
   removeUserFunctionDraft,
-  stripSubgraphBlocksForFunction,
 } from '../graph/index.js';
+import { stripSubgraphBlocksForFunctionOccurrence } from '../graph/remove-user-function.js';
 import { isScenarioBranchForFunctionInsert } from '../types/board-ui.js';
 import {
   syncFunctionIoNodePins,
@@ -184,6 +187,7 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioFunctionMeta: ScenarioFunctionCanvasMeta;
   readonly scenarioFunctionDrafts: readonly ScenarioFunctionDraft[];
   readonly activeFunctionId: string;
+  readonly activeFunctionDraftIndex: number;
   readonly validationIssues: readonly PreRunValidationIssue[];
   readonly canRun: boolean;
   readonly runDisabledReason: string | null;
@@ -351,9 +355,9 @@ export interface DeviceBoardGraphContextValue {
     },
   ) => string | null;
   readonly createUserFunction: () => void;
-  readonly selectUserFunction: (functionId: string) => void;
+  readonly selectUserFunction: (functionId: string, draftIndex?: number) => void;
   /** Удаляет пользовательскую функцию и её subgraph-блоки со всех веток. */
-  readonly removeUserFunction: (functionId: string) => string | null;
+  readonly removeUserFunction: (functionId: string, draftIndex?: number) => string | null;
   /** Вставляет subgraph-блок функции на указанную ветку (без автосвязки). */
   readonly insertUserFunctionIntoBranch: (functionId: string, branch: ScenarioBranchTab) => string | null;
   readonly collapseMarqueeToFunction: (
@@ -468,6 +472,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     defaultState.scenarioFunctionDrafts,
   );
   const [activeFunctionId, setActiveFunctionId] = useState(defaultState.activeFunctionId);
+  const [activeFunctionDraftIndex, setActiveFunctionDraftIndex] = useState(0);
   const [variables, setVariables] = useState<readonly ScenarioVariable[]>(defaultState.variables);
   const [pendingBranchImport, setPendingBranchImport] = useState<PendingBranchImportState | null>(
     null,
@@ -617,6 +622,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioFunctionMeta(state.scenarioFunctionMeta);
     setScenarioFunctionDrafts(state.scenarioFunctionDrafts);
     setActiveFunctionId(state.activeFunctionId);
+    setActiveFunctionDraftIndex(
+      Math.max(0, state.scenarioFunctionDrafts.findIndex((draft) => draft.id === state.activeFunctionId)),
+    );
     setVariables(state.variables);
     window.setTimeout(() => {
       skipDirtyRef.current = false;
@@ -793,37 +801,50 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     persistAdapter,
   ]);
 
-  const loadFunctionDraftToCanvas = useCallback((draft: ScenarioFunctionDraft) => {
-    setScenarioFunctionNodes([...draft.nodes]);
-    setScenarioFunctionEdges(dedupeBoardEdges(draft.edges));
-    setScenarioFunctionMeta({
-      id: draft.id,
-      name: draft.name,
-      entry: draft.entry,
-      description: draft.description,
-      inputPins: draft.inputPins,
-      outputPins: draft.outputPins,
-    });
-    setActiveFunctionId(draft.id);
-  }, []);
+  const loadFunctionDraftToCanvas = useCallback(
+    (draft: ScenarioFunctionDraft, draftIndex?: number) => {
+      setScenarioFunctionNodes([...draft.nodes]);
+      setScenarioFunctionEdges(dedupeBoardEdges(draft.edges));
+      setScenarioFunctionMeta({
+        id: draft.id,
+        name: draft.name,
+        entry: draft.entry,
+        description: draft.description,
+        inputPins: draft.inputPins,
+        outputPins: draft.outputPins,
+      });
+      setActiveFunctionId(draft.id);
+      setActiveFunctionDraftIndex(
+        draftIndex ?? scenarioFunctionDrafts.findIndex((item) => item.id === draft.id),
+      );
+    },
+    [scenarioFunctionDrafts],
+  );
 
   const commitActiveFunctionDraft = useCallback(
     (drafts: readonly ScenarioFunctionDraft[]): readonly ScenarioFunctionDraft[] =>
-      drafts.map((draft) =>
-        draft.id === activeFunctionId
+      drafts.map((draft, index) =>
+        index === activeFunctionDraftIndex && draft.id === activeFunctionId
           ? {
               ...draft,
               name: scenarioFunctionMeta.name,
               entry: scenarioFunctionMeta.entry,
               description: scenarioFunctionMeta.description,
-              inputPins: scenarioFunctionMeta.inputPins,
-              outputPins: scenarioFunctionMeta.outputPins,
+              inputPins: canonicalizeScenarioFunctionPinOrder(
+                scenarioFunctionMeta.inputPins,
+                createDefaultFunctionExecInputPin(),
+              ),
+              outputPins: canonicalizeScenarioFunctionPinOrder(
+                scenarioFunctionMeta.outputPins,
+                createDefaultFunctionExecOutputPin(),
+              ),
               nodes: scenarioFunctionNodes,
               edges: dedupeBoardEdges(scenarioFunctionEdges),
             }
           : draft,
       ),
     [
+      activeFunctionDraftIndex,
       activeFunctionId,
       scenarioFunctionEdges,
       scenarioFunctionMeta,
@@ -844,18 +865,24 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   );
 
   const selectUserFunction = useCallback(
-    (functionId: string) => {
+    (functionId: string, draftIndex?: number) => {
       const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
-      const target = committed.find((draft) => draft.id === functionId);
+      const targetIndex =
+        draftIndex ?? committed.findIndex((draft) => draft.id === functionId);
+      const target = targetIndex >= 0 ? committed[targetIndex] : undefined;
       if (target === undefined) {
         return;
       }
       setScenarioFunctionDrafts(committed);
-      if (functionId !== activeFunctionId) {
+      if (targetIndex !== activeFunctionDraftIndex || functionId !== activeFunctionId) {
         forgetPendingEditUndo('switch-function');
       }
-      if (functionId !== activeFunctionId || scenarioBranch !== 'function') {
-        loadFunctionDraftToCanvas(target);
+      if (
+        targetIndex !== activeFunctionDraftIndex ||
+        functionId !== activeFunctionId ||
+        scenarioBranch !== 'function'
+      ) {
+        loadFunctionDraftToCanvas(target, targetIndex);
       }
       if (scenarioBranch === 'function') {
         navigateScenarioBranch('function', inFunctionLayerRevertPolicy());
@@ -864,6 +891,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       }
     },
     [
+      activeFunctionDraftIndex,
       activeFunctionId,
       commitActiveFunctionDraft,
       forgetPendingEditUndo,
@@ -884,7 +912,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     const id = `fn-${seq}`;
     const draft = createEmptyFunctionDraft(id, `Function ${seq}`);
     setScenarioFunctionDrafts([...committed, draft]);
-    loadFunctionDraftToCanvas(draft);
+    loadFunctionDraftToCanvas(draft, committed.length);
     navigateScenarioBranch(
       'function',
       scenarioBranch === 'function' ? inFunctionLayerRevertPolicy() : sidebarHandlerRevertPolicy(),
@@ -899,49 +927,66 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   ]);
 
   const removeUserFunction = useCallback(
-    (functionId: string): string | null => {
+    (functionId: string, draftIndex?: number): string | null => {
       const committed =
         functionId === activeFunctionId
           ? commitActiveFunctionDraft(scenarioFunctionDrafts)
           : scenarioFunctionDrafts;
-      const removedIndex = committed.findIndex((draft) => draft.id === functionId);
-      const { drafts, removed } = removeUserFunctionDraft({ functionId, drafts: committed });
+      const resolvedIndex =
+        draftIndex ??
+        committed.findIndex((draft) => draft.id === functionId);
+      if (resolvedIndex < 0) {
+        return 'Функция не найдена';
+      }
+      const removedIndex = resolvedIndex;
+      const { drafts, removed } = removeUserFunctionDraft({
+        functionId,
+        drafts: committed,
+        draftIndex: removedIndex,
+      });
       if (!removed) {
         return 'Функция не найдена';
       }
-      captureEditUndoSnapshot('remove-function', { functionId });
+      captureEditUndoSnapshot('remove-function', { functionId, draftIndex: removedIndex });
 
-      const strip = (nodes: Node[], edges: Edge[]) =>
-        stripSubgraphBlocksForFunction(nodes, edges, functionId);
+      const branchGraphs = [
+        { nodes: scenarioInitialNodes, edges: scenarioInitialEdges },
+        { nodes: scenarioOnConnectNodes, edges: scenarioOnConnectEdges },
+        { nodes: scenarioMainNodes, edges: scenarioMainEdges },
+        { nodes: scenarioAlarmNodes, edges: scenarioAlarmEdges },
+        { nodes: scenarioOnStopNodes, edges: scenarioOnStopEdges },
+        { nodes: scenarioOnDisconnectNodes, edges: scenarioOnDisconnectEdges },
+      ];
+      const occurrence =
+        committed.slice(0, removedIndex).filter((draft) => draft.id === functionId).length;
+      stripSubgraphBlocksForFunctionOccurrence(branchGraphs, functionId, occurrence);
 
-      const initial = strip(scenarioInitialNodes, scenarioInitialEdges);
-      setScenarioInitialNodes(initial.nodes);
-      setScenarioInitialEdges(initial.edges);
-      const onConnect = strip(scenarioOnConnectNodes, scenarioOnConnectEdges);
-      setScenarioOnConnectNodes(onConnect.nodes);
-      setScenarioOnConnectEdges(onConnect.edges);
-      const main = strip(scenarioMainNodes, scenarioMainEdges);
-      setScenarioMainNodes(main.nodes);
-      setScenarioMainEdges(main.edges);
-      const alarm = strip(scenarioAlarmNodes, scenarioAlarmEdges);
-      setScenarioAlarmNodes(alarm.nodes);
-      setScenarioAlarmEdges(alarm.edges);
-      const onStop = strip(scenarioOnStopNodes, scenarioOnStopEdges);
-      setScenarioOnStopNodes(onStop.nodes);
-      setScenarioOnStopEdges(onStop.edges);
-      const onDisconnect = strip(scenarioOnDisconnectNodes, scenarioOnDisconnectEdges);
-      setScenarioOnDisconnectNodes(onDisconnect.nodes);
-      setScenarioOnDisconnectEdges(onDisconnect.edges);
+      setScenarioInitialNodes([...branchGraphs[0]!.nodes]);
+      setScenarioInitialEdges([...branchGraphs[0]!.edges]);
+      setScenarioOnConnectNodes([...branchGraphs[1]!.nodes]);
+      setScenarioOnConnectEdges([...branchGraphs[1]!.edges]);
+      setScenarioMainNodes([...branchGraphs[2]!.nodes]);
+      setScenarioMainEdges([...branchGraphs[2]!.edges]);
+      setScenarioAlarmNodes([...branchGraphs[3]!.nodes]);
+      setScenarioAlarmEdges([...branchGraphs[3]!.edges]);
+      setScenarioOnStopNodes([...branchGraphs[4]!.nodes]);
+      setScenarioOnStopEdges([...branchGraphs[4]!.edges]);
+      setScenarioOnDisconnectNodes([...branchGraphs[5]!.nodes]);
+      setScenarioOnDisconnectEdges([...branchGraphs[5]!.edges]);
 
       setScenarioFunctionDrafts(drafts);
 
-      if (functionId === activeFunctionId) {
+      if (removedIndex < activeFunctionDraftIndex) {
+        setActiveFunctionDraftIndex(activeFunctionDraftIndex - 1);
+      }
+
+      if (scenarioBranch === 'function' && committed[removedIndex]?.id === activeFunctionId) {
         if (drafts.length > 0) {
           const nextIndex = Math.min(
             removedIndex >= 0 ? removedIndex : 0,
             drafts.length - 1,
           );
-          loadFunctionDraftToCanvas(drafts[nextIndex]!);
+          loadFunctionDraftToCanvas(drafts[nextIndex]!, nextIndex);
           navigateScenarioBranch('function', inFunctionLayerRevertPolicy());
         } else {
           setScenarioFunctionNodes([]);
@@ -954,6 +999,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       return null;
     },
     [
+      activeFunctionDraftIndex,
       activeFunctionId,
       captureEditUndoSnapshot,
       commitActiveFunctionDraft,
@@ -961,6 +1007,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       navigateScenarioBranch,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
+      scenarioBranch,
       scenarioFunctionDrafts,
       scenarioInitialEdges,
       scenarioInitialNodes,
@@ -1448,7 +1495,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       captureEditUndoSnapshot('collapse-to-function', { branch, selectedCount: selectedNodeIds.length });
       setScenarioFunctionDrafts([...committed, result.functionDraft]);
       applyScenarioBranchGraph(branch, result.branchNodes, result.branchEdges);
-      loadFunctionDraftToCanvas(result.functionDraft);
+      loadFunctionDraftToCanvas(result.functionDraft, committed.length);
       navigateScenarioBranch('function', inFunctionLayerRevertPolicy());
       return null;
     },
@@ -3148,6 +3195,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioFunctionMeta,
       scenarioFunctionDrafts,
       activeFunctionId,
+      activeFunctionDraftIndex,
       validationIssues,
       canRun,
       runDisabledReason,
@@ -3338,6 +3386,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       runDisabledReason,
       runtimeState,
       activeFunctionId,
+      activeFunctionDraftIndex,
       scenarioAlarmEdges,
       scenarioAlarmNodes,
       scenarioBranch,

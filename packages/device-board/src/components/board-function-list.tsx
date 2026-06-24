@@ -6,21 +6,23 @@ import { PencilIcon, TrashIcon } from './board-variable-modals.js';
 export interface BoardFunctionListProps {
   readonly functions: readonly ScenarioFunctionDraft[];
   readonly activeFunctionId: string;
+  readonly activeFunctionDraftIndex: number;
   readonly disabled: boolean;
-  readonly onSelect: (functionId: string) => void;
+  readonly onSelect: (functionId: string, draftIndex: number) => void;
   readonly onCreate: () => void;
-  readonly onRename: (functionId: string) => void;
-  readonly onDelete: (functionId: string) => void;
+  readonly onRename: (functionId: string, draftIndex: number) => void;
+  readonly onDelete: (functionId: string, draftIndex: number) => void;
 }
 
 const FunctionRow: React.FC<{
   readonly fn: ScenarioFunctionDraft;
+  readonly draftIndex: number;
   readonly active: boolean;
   readonly disabled: boolean;
-  readonly onSelect: (functionId: string) => void;
-  readonly onRename: (functionId: string) => void;
-  readonly onDelete: (functionId: string) => void;
-}> = ({ fn, active, disabled, onSelect, onRename, onDelete }) => (
+  readonly onSelect: (functionId: string, draftIndex: number) => void;
+  readonly onRename: (functionId: string, draftIndex: number) => void;
+  readonly onDelete: (functionId: string, draftIndex: number) => void;
+}> = ({ fn, draftIndex, active, disabled, onSelect, onRename, onDelete }) => (
   <div
     className={`group flex h-9 min-w-0 items-center gap-1 rounded-md border border-transparent px-1 ${
       disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-base-300 hover:bg-base-100/80'
@@ -32,7 +34,7 @@ const FunctionRow: React.FC<{
     aria-disabled={disabled}
     onClick={() => {
       if (!disabled) {
-        onSelect(fn.id);
+        onSelect(fn.id, draftIndex);
       }
     }}
     onKeyDown={(event) => {
@@ -41,7 +43,7 @@ const FunctionRow: React.FC<{
       }
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        onSelect(fn.id);
+        onSelect(fn.id, draftIndex);
       }
     }}
   >
@@ -58,7 +60,7 @@ const FunctionRow: React.FC<{
       disabled={disabled}
       onClick={(event) => {
         event.stopPropagation();
-        onRename(fn.id);
+        onRename(fn.id, draftIndex);
       }}
     >
       <PencilIcon />
@@ -71,7 +73,7 @@ const FunctionRow: React.FC<{
       disabled={disabled}
       onClick={(event) => {
         event.stopPropagation();
-        onDelete(fn.id);
+        onDelete(fn.id, draftIndex);
       }}
     >
       <TrashIcon />
@@ -83,6 +85,7 @@ const FunctionRow: React.FC<{
 export const BoardFunctionList: React.FC<BoardFunctionListProps> = ({
   functions,
   activeFunctionId,
+  activeFunctionDraftIndex,
   disabled,
   onSelect,
   onCreate,
@@ -111,11 +114,12 @@ export const BoardFunctionList: React.FC<BoardFunctionListProps> = ({
       </p>
     ) : (
       <ul className="flex flex-col gap-0.5">
-        {functions.map((fn) => (
-          <li key={fn.id}>
+        {functions.map((fn, draftIndex) => (
+          <li key={`${fn.id}::${draftIndex}`}>
             <FunctionRow
               fn={fn}
-              active={fn.id === activeFunctionId}
+              draftIndex={draftIndex}
+              active={fn.id === activeFunctionId && draftIndex === activeFunctionDraftIndex}
               disabled={disabled}
               onSelect={onSelect}
               onRename={onRename}
