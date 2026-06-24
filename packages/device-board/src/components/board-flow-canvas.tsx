@@ -44,8 +44,8 @@ import { BoardMarqueeOverlay } from './board-marquee-overlay.js';
 import { filterStructureReadOnlyNodeChanges } from './board-flow-readonly-node-changes.js';
 
 /** Кнопки мыши для pan (0=ЛКМ, 1=СКМ, 2=ПКМ). В edit+marquee ЛКМ — рамка, pan — [1,2]. */
-const PAN_ON_DRAG_VIEW_NAV: readonly number[] = [0, 1, 2];
-const PAN_ON_DRAG_MARQUEE_MODE: readonly number[] = [1, 2];
+const PAN_ON_DRAG_VIEW_NAV: number[] = [0, 1, 2];
+const PAN_ON_DRAG_MARQUEE_MODE: number[] = [1, 2];
 
 const NODE_TYPES: NodeTypes = {
   board: BoardFlowNode,
