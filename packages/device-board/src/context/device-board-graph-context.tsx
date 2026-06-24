@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   applyEdgeChanges,
-  applyNodeChanges,
   type Connection,
   type Edge,
   type EdgeChange,
@@ -66,6 +65,8 @@ import {
   hydratedFunctionInputs,
   collapseSelectionToFunction,
   collapseSelectionToCommentGroup,
+  applyBoardNodeChangesWithCommentGroupDissolve,
+  applyBranchNodeRemovals,
   buildCommentGroupDataPatch,
   patchCommentGroupNodeData,
   collectCommentGroupNodeIdsFromBoard,
@@ -1666,7 +1667,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { layer: 'signal', nodeIds: plan.nodeIds });
       }
-      setSignalNodes((nodes) => applyNodeChanges(changes, nodes));
+      setSignalNodes((nodes) =>
+        applyBoardNodeChangesWithCommentGroupDissolve(changes, nodes),
+      );
     },
     [captureEditUndoSnapshot, signalNodes],
   );
@@ -1681,7 +1684,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'initial', nodeIds: plan.nodeIds });
       }
-      setScenarioInitialNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+      setScenarioInitialNodes((nodes) =>
+        applyBoardNodeChangesWithCommentGroupDissolve(
+          rejectSystemNodeRemovals(changes, nodes),
+          nodes,
+        ),
+      );
     },
     [captureEditUndoSnapshot, scenarioInitialNodes],
   );
@@ -1696,7 +1704,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'onConnect', nodeIds: plan.nodeIds });
       }
-      setScenarioOnConnectNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+      setScenarioOnConnectNodes((nodes) =>
+        applyBoardNodeChangesWithCommentGroupDissolve(
+          rejectSystemNodeRemovals(changes, nodes),
+          nodes,
+        ),
+      );
     },
     [captureEditUndoSnapshot, scenarioOnConnectNodes],
   );
@@ -1711,7 +1724,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'main', nodeIds: plan.nodeIds });
       }
-      setScenarioMainNodes((nodes) => applyNodeChanges(changes, nodes));
+      setScenarioMainNodes((nodes) =>
+        applyBoardNodeChangesWithCommentGroupDissolve(changes, nodes),
+      );
     },
     [captureEditUndoSnapshot, scenarioMainNodes],
   );
@@ -1726,7 +1741,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'alarm', nodeIds: plan.nodeIds });
       }
-      setScenarioAlarmNodes((nodes) => applyNodeChanges(changes, nodes));
+      setScenarioAlarmNodes((nodes) =>
+        applyBoardNodeChangesWithCommentGroupDissolve(changes, nodes),
+      );
     },
     [captureEditUndoSnapshot, scenarioAlarmNodes],
   );
@@ -1741,7 +1758,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'onStop', nodeIds: plan.nodeIds });
       }
-      setScenarioOnStopNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+      setScenarioOnStopNodes((nodes) =>
+        applyBoardNodeChangesWithCommentGroupDissolve(
+          rejectSystemNodeRemovals(changes, nodes),
+          nodes,
+        ),
+      );
     },
     [captureEditUndoSnapshot, scenarioOnStopNodes],
   );
@@ -1757,7 +1779,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         captureEditUndoSnapshot('remove-nodes', { branch: 'onDisconnect', nodeIds: plan.nodeIds });
       }
       setScenarioOnDisconnectNodes((nodes) =>
-        applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes),
+        applyBoardNodeChangesWithCommentGroupDissolve(
+          rejectSystemNodeRemovals(changes, nodes),
+          nodes,
+        ),
       );
     },
     [captureEditUndoSnapshot, scenarioOnDisconnectNodes],
@@ -1773,7 +1798,12 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       if (plan.shouldCapture) {
         captureEditUndoSnapshot('remove-nodes', { branch: 'function', nodeIds: plan.nodeIds });
       }
-      setScenarioFunctionNodes((nodes) => applyNodeChanges(rejectSystemNodeRemovals(changes, nodes), nodes));
+      setScenarioFunctionNodes((nodes) =>
+        applyBoardNodeChangesWithCommentGroupDissolve(
+          rejectSystemNodeRemovals(changes, nodes),
+          nodes,
+        ),
+      );
     },
     [captureEditUndoSnapshot, scenarioFunctionNodes],
   );
@@ -2885,33 +2915,35 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         return 0;
       }
       const { nodes: branchNodes, edges: branchEdges } = readScenarioBranchGraph(scenarioBranch);
-      const removableIds = nodeIds.filter((id) => {
-        const node = branchNodes.find((item) => item.id === id);
-        return node !== undefined && !isLockedBoardNode(node);
-      });
-      if (removableIds.length === 0) {
+      const removal = applyBranchNodeRemovals(
+        branchNodes,
+        nodeIds,
+        (node) => !isLockedBoardNode(node),
+      );
+      if (!removal) {
         logBoardClipboardStep(showInfoLogsRef.current, 'delete-failed', {
           branch: scenarioBranch,
           reason: 'no-removable-nodes',
         });
         return 0;
       }
-      const idSet = new Set(removableIds);
+      const { nodes: nextNodes, removedNodeIds, dissolvedGroupIds } = removal;
+      const deletedIds = [...removedNodeIds, ...dissolvedGroupIds];
       captureEditUndoSnapshot('remove-nodes', {
         branch: scenarioBranch,
-        nodeIds: removableIds,
+        nodeIds: deletedIds,
       });
-      const nextNodes = branchNodes.filter((node) => !idSet.has(node.id));
+      const deletedIdSet = new Set(deletedIds);
       const nextEdges = branchEdges.filter(
-        (edge) => !idSet.has(edge.source) && !idSet.has(edge.target),
+        (edge) => !deletedIdSet.has(edge.source) && !deletedIdSet.has(edge.target),
       );
       applyScenarioBranchGraph(scenarioBranch, nextNodes, nextEdges);
       logBoardClipboardStep(showInfoLogsRef.current, 'delete-ok', {
         branch: scenarioBranch,
-        removedCount: removableIds.length,
-        nodeIds: removableIds,
+        removedCount: deletedIds.length,
+        nodeIds: deletedIds,
       });
-      return removableIds.length;
+      return deletedIds.length;
     },
     [
       applyScenarioBranchGraph,

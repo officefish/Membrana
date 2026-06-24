@@ -3,6 +3,7 @@ import type { Node, NodeChange } from '@xyflow/react';
 import type { ScenarioBranchTab } from '../types/board-ui.js';
 import { hasNodeRemovalChanges } from './edit-undo-snapshot.js';
 import { rejectSystemNodeRemovals } from './event-node.js';
+import { rejectCommentGroupMemberRemovals } from './comment-group.js';
 
 /** Типы mutating-операций, для которых сохраняется undo depth=1. */
 export type BoardEditStepAction =
@@ -62,10 +63,11 @@ export function planNodeRemovalUndo(
   const filtered: NodeChange[] = rejectSystem
     ? rejectSystemNodeRemovals([...changes], [...nodes])
     : [...changes];
-  if (!hasNodeRemovalChanges(filtered)) {
+  const withoutGroupMemberRemovals = rejectCommentGroupMemberRemovals(filtered, nodes);
+  if (!hasNodeRemovalChanges(withoutGroupMemberRemovals)) {
     return { shouldCapture: false, nodeIds: [] };
   }
-  const nodeIds = filtered
+  const nodeIds = withoutGroupMemberRemovals
     .filter((change): change is NodeChange & { type: 'remove'; id: string } => change.type === 'remove')
     .map((change) => change.id);
   return { shouldCapture: true, nodeIds };

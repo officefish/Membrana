@@ -4,6 +4,8 @@ import { createScenarioBoardNode } from './board-node-factory.js';
 import { createEventBoardNode } from './event-node.js';
 import {
   collapseSelectionToCommentGroup,
+  applyBranchNodeRemovals,
+  dissolveCommentGroups,
   extractCommentGroupsFromNodes,
   sortBoardNodesParentsBeforeChildren,
   stripCommentGroupNodes,
@@ -78,5 +80,53 @@ describe('comment-group', () => {
     const groupIndex = sorted.findIndex((node) => node.type === 'boardGroup');
     const childIndex = sorted.findIndex((node) => node.id === 'a');
     expect(groupIndex).toBeLessThan(childIndex);
+  });
+
+  it('dissolveCommentGroups removes frame and keeps members with absolute position', () => {
+    const a = createScenarioBoardNode('write-journal', { id: 'a', position: { x: 10, y: 20 } });
+    const b = createScenarioBoardNode('record-chunk', { id: 'b', position: { x: 50, y: 30 } });
+    const collapsed = collapseSelectionToCommentGroup({
+      branch: 'main',
+      selectedNodeIds: ['a', 'b'],
+      branchNodes: [a, b],
+      groupId: 'group-dissolve',
+    });
+    expect(collapsed.ok).toBe(true);
+    if (!collapsed.ok) {
+      return;
+    }
+    const dissolved = dissolveCommentGroups(collapsed.branchNodes, ['group-dissolve']);
+    expect(dissolved.some((node) => node.id === 'group-dissolve')).toBe(false);
+    expect(dissolved).toHaveLength(2);
+    const childA = dissolved.find((node) => node.id === 'a');
+    const childB = dissolved.find((node) => node.id === 'b');
+    expect(childA?.parentId).toBeUndefined();
+    expect(childB?.parentId).toBeUndefined();
+    expect(childA?.position).toEqual({ x: 10, y: 20 });
+    expect(childB?.position).toEqual({ x: 50, y: 30 });
+  });
+
+  it('applyBranchNodeRemovals dissolves group without deleting member nodes', () => {
+    const a = createScenarioBoardNode('write-journal', { id: 'a', position: { x: 10, y: 20 } });
+    const b = createScenarioBoardNode('record-chunk', { id: 'b', position: { x: 50, y: 30 } });
+    const collapsed = collapseSelectionToCommentGroup({
+      branch: 'main',
+      selectedNodeIds: ['a', 'b'],
+      branchNodes: [a, b],
+      groupId: 'group-remove',
+    });
+    expect(collapsed.ok).toBe(true);
+    if (!collapsed.ok) {
+      return;
+    }
+    const result = applyBranchNodeRemovals(collapsed.branchNodes, ['group-remove'], () => true);
+    expect(result).not.toBeNull();
+    if (!result) {
+      return;
+    }
+    expect(result.dissolvedGroupIds).toEqual(['group-remove']);
+    expect(result.removedNodeIds).toEqual([]);
+    expect(result.nodes).toHaveLength(2);
+    expect(result.nodes.map((node) => node.id).sort()).toEqual(['a', 'b']);
   });
 });
