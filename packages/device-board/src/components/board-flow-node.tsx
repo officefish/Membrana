@@ -17,6 +17,7 @@ import { formatSocketPortLabel } from '../graph/socket-port-label.js';
 import { formatRecordingPolicyBadge } from '../graph/recording-policy-ui.js';
 import { formatFftTrendsPolicyBadge } from '../graph/fft-trends-policy-ui.js';
 import { socketHandleClass } from '../graph/socket-type-palette.js';
+import { parseEncodedSubgraphRefLabel } from '../graph/subgraph-ref.js';
 
 const LAYER_BORDER: Record<BoardFlowNodeData['layer'], string> = {
   signal: 'border-primary/40',
@@ -44,6 +45,9 @@ function variableDisplayName(data: BoardFlowNodeData): string {
 }
 
 function renderNodeTitle(data: BoardFlowNodeData): React.ReactNode {
+  if (data.blockKind === 'subgraph') {
+    return parseEncodedSubgraphRefLabel(data.label);
+  }
   if (data.nodeKind === 'loop-repeat') {
     return (
       <span className="text-lg leading-none" aria-label="Новый цикл лупа">
@@ -83,6 +87,9 @@ function policyBadgeForNode(data: BoardFlowNodeData): string | null {
 }
 
 function pureBadgeForNode(data: BoardFlowNodeData): string | null {
+  if (data.blockKind === 'subgraph') {
+    return null;
+  }
   const kind = data.nodeKind;
   if (kind === undefined) {
     return null;
@@ -97,6 +104,10 @@ function pureBadgeForNode(data: BoardFlowNodeData): string | null {
     return 'pure';
   }
   return null;
+}
+
+function customBadgeForNode(data: BoardFlowNodeData): string | null {
+  return data.blockKind === 'subgraph' ? 'custom' : null;
 }
 
 function renderHandles(
@@ -196,6 +207,7 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
   const statusBadgeClass = status !== 'active' ? STATUS_BADGE[status] : undefined;
   const policyBadge = policyBadgeForNode(flowData);
   const pureBadge = pureBadgeForNode(flowData);
+  const customBadge = customBadgeForNode(flowData);
   const pinRows = Math.max(inputs.length, outputs.length, flowData.nodeKind === 'loop-repeat' ? 1 : 0, 1);
   const bodyHeightPx = flowData.nodeKind === 'loop-repeat' ? 48 : pinRows * PIN_ROW_PX + 8;
 
@@ -227,6 +239,9 @@ export const BoardFlowNode: React.FC<NodeProps> = ({ id, data, selected }) => {
           <span className="badge badge-xs shrink-0 badge-accent">system</span>
         ) : (
           <span className="flex shrink-0 items-center gap-1">
+            {customBadge !== null ? (
+              <span className="badge badge-xs badge-secondary">{customBadge}</span>
+            ) : null}
             {pureBadge !== null ? (
               <span className="badge badge-xs badge-accent">{pureBadge}</span>
             ) : null}

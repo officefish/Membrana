@@ -61,7 +61,7 @@ import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { CompetitionRunTimer } from './competition-run-timer.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
-import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds } from '../graph/index.js';
+import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds, parseEncodedSubgraphRefLabel } from '../graph/index.js';
 import type { BoardGroupNodeData } from '../graph/index.js';
 import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
 import {
@@ -327,15 +327,17 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedFunctionName(null);
       return;
     }
-    const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
-    setSelectedNodeLabel(label);
+    const rawLabel = typeof node.data?.label === 'string' ? node.data.label : node.id;
     const blockKind = node.data?.blockKind;
     const functionId = typeof node.data?.functionId === 'string' ? node.data.functionId : null;
     if (blockKind === 'subgraph' && functionId !== null) {
       const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
+      const displayName = fn?.name ?? parseEncodedSubgraphRefLabel(rawLabel);
+      setSelectedNodeLabel(displayName);
       setSelectedFunctionId(functionId);
-      setSelectedFunctionName(fn?.name ?? label);
+      setSelectedFunctionName(displayName);
     } else {
+      setSelectedNodeLabel(rawLabel);
       setSelectedFunctionId(null);
       setSelectedFunctionName(null);
     }

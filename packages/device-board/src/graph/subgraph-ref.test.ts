@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
+import { encodeSubgraphRef, parseEncodedSubgraphRefLabel, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 
 describe('subgraph-ref', () => {
   it('round-trips function id in subgraph label', () => {
@@ -12,5 +12,6 @@ describe('subgraph-ref', () => {
     };
     expect(parseSubgraphFunctionId(node)).toBe('fn-capture-detect');
     expect(parseSubgraphDisplayLabel(node)).toBe('Capture+Detect');
+    expect(parseEncodedSubgraphRefLabel(node.label)).toBe('Capture+Detect');
   });
 });

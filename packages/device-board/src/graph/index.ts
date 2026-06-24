@@ -501,7 +501,7 @@ export type { ResolveRunDisabledReasonInput } from './run-gating.js';
 export { canonicalizeJson, sha256Hex } from './document-hash.js';
 export { serializeScenarioFunction } from './serialize-scenario-function.js';
 export type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
-export { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
+export { encodeSubgraphRef, parseEncodedSubgraphRefLabel, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 export { validateFunctionDepth } from './validate-function-depth.js';
 export type { SubgraphNodesRef } from './validate-function-depth.js';
 export {
