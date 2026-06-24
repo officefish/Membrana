@@ -39,6 +39,42 @@ describe('hydrate function canvas recovery', () => {
     );
   });
 
+  it('recreates function-io nodes when user nodes exist but io tunnels are missing', () => {
+    const base = createEmptyDeviceScenarioDocument('microphone');
+    const document = {
+      ...base,
+      scenario: {
+        ...base.scenario,
+        functions: [
+          {
+            id: 'fn-custom',
+            name: 'Custom',
+            entry: 'fn-custom-input',
+            nodes: [
+              {
+                id: 'user-1',
+                blockKind: 'write-journal',
+                position: { x: 200, y: 100 },
+              },
+            ],
+            edges: [],
+            inputPins: ['exec-in'],
+            outputPins: ['exec-out'],
+          },
+        ],
+      },
+    };
+
+    const state = hydrateBoardFromDocument(document);
+    expect(state.scenarioFunctionNodes.some((node) => node.data?.nodeKind === 'function-input')).toBe(
+      true,
+    );
+    expect(state.scenarioFunctionNodes.some((node) => node.data?.nodeKind === 'function-output')).toBe(
+      true,
+    );
+    expect(state.scenarioFunctionMeta.entry).toBe('fn-custom-input');
+  });
+
   it('hydratedFunctionInput uses demo when function canvas was cleared', () => {
     const state = createDefaultHydratedBoardState();
     const cleared = {

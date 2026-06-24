@@ -376,6 +376,7 @@ export type {
 export {
   createFunctionInputBoardNode,
   createFunctionOutputBoardNode,
+  ensureFunctionIoNodes,
   syncFunctionIoNodePins,
   functionPinsToSubgraphBlockPins,
   isFunctionIoNode,

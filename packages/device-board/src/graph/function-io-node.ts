@@ -59,6 +59,7 @@ export function createFunctionInputBoardNode(options: CreateFunctionIoNodeOption
     id: options.id ?? FUNCTION_INPUT_NODE_ID,
     type: 'board',
     position: options.position ?? { x: 40, y: 160 },
+    deletable: false,
     data: {
       label: 'Input',
       layer: 'scenario',
@@ -80,6 +81,7 @@ export function createFunctionOutputBoardNode(options: CreateFunctionIoNodeOptio
     id: options.id ?? FUNCTION_OUTPUT_NODE_ID,
     type: 'board',
     position: options.position ?? { x: 480, y: 160 },
+    deletable: false,
     data: {
       label: 'Output',
       layer: 'scenario',
@@ -103,6 +105,46 @@ export function isFunctionOutputNode(node: Node): boolean {
 
 export function isFunctionIoNode(node: Node): boolean {
   return isFunctionInputNode(node) || isFunctionOutputNode(node);
+}
+
+export interface EnsureFunctionIoNodesResult {
+  readonly nodes: Node[];
+  readonly entry: string;
+}
+
+/**
+ * Гарантирует наличие function-input / function-output на канвасе функции.
+ * Восстанавливает IO после «Очистить ветку», битого persist или ручного удаления.
+ */
+export function ensureFunctionIoNodes(
+  nodes: readonly Node[],
+  inputPins: readonly ScenarioFunctionPin[],
+  outputPins: readonly ScenarioFunctionPin[],
+  functionId: string,
+  entry: string,
+): EnsureFunctionIoNodesResult {
+  let nextNodes = [...nodes];
+  let resolvedEntry = entry;
+
+  let inputNode = nextNodes.find(isFunctionInputNode);
+  if (inputNode === undefined) {
+    const inputId = entry.length > 0 ? entry : `${functionId}-input`;
+    inputNode = createFunctionInputBoardNode({ id: inputId, inputPins });
+    nextNodes = [inputNode, ...nextNodes];
+    resolvedEntry = inputId;
+  } else if (!nextNodes.some((node) => node.id === resolvedEntry)) {
+    resolvedEntry = inputNode.id;
+  }
+
+  if (!nextNodes.some(isFunctionOutputNode)) {
+    const outputId = `${functionId}-output`;
+    nextNodes = [...nextNodes, createFunctionOutputBoardNode({ id: outputId, outputPins })];
+  }
+
+  return {
+    nodes: syncFunctionIoNodePins(nextNodes, inputPins, outputPins),
+    entry: resolvedEntry,
+  };
 }
 
 /** Синхронизирует handles IO-узлов с pins функции. */

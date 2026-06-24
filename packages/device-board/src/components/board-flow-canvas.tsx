@@ -109,6 +109,8 @@ export interface BoardFlowCanvasProps {
   readonly onSelectionChange?: (selection: OnSelectionChangeParams) => void;
   /** Клик по пустому полю канваса. Верните `true`, чтобы сохранить selection на канвасе. */
   readonly onPaneClick?: () => boolean;
+  /** Двойной клик по узлу (например subgraph → редактор функции). */
+  readonly onNodeDoubleClick?: (event: React.MouseEvent, node: Node) => void;
   /** ПКМ по пустому полю канваса (не по узлу). */
   readonly onPaneContextMenu?: (event: React.MouseEvent) => void;
   /** Не снимать canvas selection при клике по pane (модалка marquee). */
@@ -144,6 +146,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   isValidConnection,
   onSelectionChange,
   onPaneClick,
+  onNodeDoubleClick,
   onPaneContextMenu,
   preserveCanvasSelectionOnPaneClick = false,
   ariaLabel,
@@ -614,6 +617,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         panOnDrag={marqueeEnabled ? [1, 2] : true}
         proOptions={{ hideAttribution: true }}
         onSelectionChange={handleSelectionChange}
+        onNodeDoubleClick={onNodeDoubleClick}
         onPaneClick={clearCanvasSelection}
         className="board-flow-canvas"
         style={{ width: '100%', height: '100%' }}

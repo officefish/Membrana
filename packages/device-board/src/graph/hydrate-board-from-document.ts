@@ -49,7 +49,7 @@ import { applyPureGraphHygiene } from './pure-node-graph.js';
 import { deserializeSignalGraph } from './serialize-signal-graph.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { createDefaultMvpMicrophoneHydratedState } from './default-usercase-mvp-microphone.js';
-import { syncFunctionIoNodePins } from './function-io-node.js';
+import { ensureFunctionIoNodes } from './function-io-node.js';
 import { syncAllSubgraphBlocksFromFunctionDrafts } from './function-pin-ops.js';
 import { dedupeBoardEdges } from './dedupe-board-edges.js';
 import { applyCommentGroupsToBranchNodes } from './comment-group.js';
@@ -106,15 +106,15 @@ function functionSubgraphToDraft(
     },
     variables,
   );
-  const nodes = syncFunctionIoNodePins(hydrated.nodes, inputPins, outputPins);
+  const ensured = ensureFunctionIoNodes(hydrated.nodes, inputPins, outputPins, fn.id, fn.entry);
   return {
     id: fn.id,
     name: fn.name,
-    entry: fn.entry,
+    entry: ensured.entry,
     description: fn.description,
     inputPins,
     outputPins,
-    nodes,
+    nodes: ensured.nodes,
     edges: hydrated.edges,
   };
 }
