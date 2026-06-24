@@ -20,6 +20,7 @@
 | [LIVE_DETECTION_UI.md](./LIVE_DETECTION_UI.md) | Live-детекция: сглаживание isDrone/confidence, вёрстка demo |
 | [MODULE_AND_PLUGIN_UI.md](./MODULE_AND_PLUGIN_UI.md) | Оболочка модулей, сайдбар плагинов, карточки, Tailwind `content` |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | PR, агенты, ссылки на документы выше |
+| [DOCUMENTATION_WORKFLOW.md](./DOCUMENTATION_WORKFLOW.md) | Слои документации: `docs/` vs Mintlify `apps/docs/` (device-board MVP) |
 | [UI_UX_DEVELOPER_PROMPT.md](./UI_UX_DEVELOPER_PROMPT.md) | Расширение роли Верстальщика — детали для UI-агента |
 | [DAILY_CODE_REVIEW.md](./DAILY_CODE_REVIEW.md) | Вечернее ревью (`yarn code-review`); утром — вход для standup |
 | [STRATEGIC_PLAN_DAY.md](./STRATEGIC_PLAN_DAY.md) | План на следующий день по WHITE_PAPER и git (`yarn plan:day`) |
