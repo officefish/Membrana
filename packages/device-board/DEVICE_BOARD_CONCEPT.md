@@ -1483,6 +1483,7 @@ sequenceDiagram
   Mod->>Board: enterBoardMode(system-preview | user-edit)
   alt system-preview
     Board->>Board: Save disabled, badge «Только просмотр»
+    Board->>Board: structure read-only; viewport pan/zoom/minimap active
     Op->>Mod: Клонировать в мой сценарий
     Mod->>WS: quota check, deepCopy + workspaceKind=user
     Mod->>Board: enterBoardMode(user-edit)
@@ -1494,6 +1495,7 @@ sequenceDiagram
 ```
 
 - **Системный шаблон:** preview/run на доске без Save; клон — кнопка на карточке в модуле.
+- **System-preview UX (view-only):** shell сводит флаги через `resolveScenarioEditFlags()` (`isScenarioViewOnly`, `canEditScenario`, `isCanvasStructureReadOnly`). Канвас блокирует структурные мутации (drag/connect/delete/marquee), но **viewport интерактивен** — pan (ЛКМ/ПКМ/средняя кнопка, Space поверх узлов), zoom, minimap, Controls. Правый сайдбар: палитра скрыта, empty-state «Режим просмотра», инспектор только для чтения. Левый сайдбар: CRUD переменных и user-функций отключён; навигация по веткам и выбор функции для просмотра сохранены. **Не путать** с competition mode: там structure lock, но параметры узлов редактируемы.
 - **Свой сценарий:** пустой слот или клон; после reload/rebuild client документ на месте (IndexedDB).
 - **Шапка доски:** Save, Run/Stop, «Выйти из доски» — **без** переключателя «Мои сценарии».
 
