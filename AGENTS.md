@@ -15,7 +15,7 @@ For detailed architecture, conventions, and coding rules, see `.cursorrules` and
 
 **Agent skills (project playbooks):** [`.cursor/skills/README.md`](./.cursor/skills/README.md) — rhythm, **code review**, task lifecycle, virtual team, domain guards. Регламент ревью: [`docs/prompts/CODE_REVIEW_REGULATION.md`](docs/prompts/CODE_REVIEW_REGULATION.md). Claude Code mirror: [`.claude/CLAUDE.md`](./.claude/CLAUDE.md).
 
-For **new M/L agent tasks**, follow `docs/prompts/TASK_PROMPT_WORKFLOW.md` and register in `docs/tasks/registry.json`. **Closing a task:** `docs/prompts/TASK_CLOSURE_REGULATION.md` → `yarn task:archive <id>` (day) → `yarn task:close-github` (EOD batch for Issues). Active/archive: `docs/tasks/README.md`.
+For **new M/L agent tasks**, follow `docs/prompts/TASK_PROMPT_WORKFLOW.md` and register in `docs/tasks/registry.json`. **Linear (неблокирующий):** [`docs/prompts/LINEAR_GITHUB_SYNC_REGULATION.md`](./docs/prompts/LINEAR_GITHUB_SYNC_REGULATION.md). **Closing a task:** `docs/prompts/TASK_CLOSURE_REGULATION.md` → `yarn task:archive <id>` (day) → `yarn task:close-github` (EOD batch for Issues). Active/archive: `docs/tasks/README.md`.
 
 ### Key commands
 

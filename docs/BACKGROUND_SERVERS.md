@@ -1,6 +1,6 @@
 # Фоновые серверы Membrana (`packages/background-*`)
 
-> **Статус:** `background-office` — реализован (v0.1). `background-media` — **в разработке** (эпик [#58](https://github.com/officefish/Membrana/issues/58), промпты A5a–A5c).
+> **Статус:** `background-office` — реализован (v0.1), прод: `https://office.membrana.space` (O1–O3). `background-media` — **в разработке** (эпик [#58](https://github.com/officefish/Membrana/issues/58), промпты A5a–A5c).
 >
 > Связанные документы: [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1d–§1e, [`MEDIA_LIBRARY_ARCHITECTURE.md`](./MEDIA_LIBRARY_ARCHITECTURE.md), [`INTEGRATIONS_STRATEGY.md`](./INTEGRATIONS_STRATEGY.md) §1.1 (эшелон 2).
 
@@ -48,11 +48,11 @@ flowchart LR
   INT -.->|не хранит blobs| X[ ]
 ```
 
-| Пакет | Порт (dev) | Stateful? | Назначение |
-|-------|------------|-----------|------------|
-| **`@membrana/background-office`** | 3000 | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4). Скрипты `yarn ask`, CI, dev-tools. |
-| **`@membrana/background-media`** | 3010 | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент); v2 эпика #67 — scope по **`membraneId`**. Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
-| **`@membrana/background-cabinet`** *(план)* | 3020 | **Да** | **Identity + domain:** users (login/password), membranes, nodes, access keys (TTL enum), tariffs, telemetry metadata. SPA: `apps/cabinet` → `cabinet.membrana.space`. |
+| Пакет | Порт (dev) | Prod URL | Stateful? | Назначение |
+|-------|------------|----------|-----------|------------|
+| **`@membrana/background-office`** | 3000 | `https://office.membrana.space` | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4). Скрипты `yarn ask`, CI, dev-tools. |
+| **`@membrana/background-media`** | 3010 | `https://media.membrana.space` | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент); v2 эпика #67 — scope по **`membraneId`**. Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
+| **`@membrana/background-cabinet`** *(план)* | 3020 | `https://cabinet.membrana.space` | **Да** | **Identity + domain:** users (login/password), membranes, nodes, access keys (TTL enum), tariffs, telemetry metadata. SPA: `apps/cabinet` → `cabinet.membrana.space`. |
 
 ### Жёсткие границы
 
@@ -211,6 +211,8 @@ Device (deviceId)
 | Dev media | `yarn media:dev` |
 | Dev cabinet *(план)* | `yarn cabinet:dev` / `yarn cabinet:app:dev` |
 | Docker cabinet | `yarn cabinet:docker:up` · VPS: `deploy/cabinet-stack.sh` |
+| Docker office (локально) | `yarn office:docker:up` |
+| Docker office (VPS prod) | `deploy/office-stack.sh` + [`docs/deploy/BACKGROUND_OFFICE_DEPLOY.md`](./deploy/BACKGROUND_OFFICE_DEPLOY.md) |
 | Docker media (локально / staging) | `yarn media:docker:up` |
 | Docker media (VPS prod) | `deploy/media-stack.sh` + [`docs/deploy/BACKGROUND_MEDIA_DEPLOY.md`](./deploy/BACKGROUND_MEDIA_DEPLOY.md) |
 | README office | [`packages/background-office/README.md`](../packages/background-office/README.md) |

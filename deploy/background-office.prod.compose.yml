@@ -1,0 +1,18 @@
+# Production overrides for VPS deploy (O2).
+# Usage on server:
+#   docker compose \
+#     -f packages/background-office/docker-compose.yml \
+#     -f deploy/background-office.prod.compose.yml \
+#     --env-file /etc/membrana/office.env \
+#     up -d
+#
+# Do NOT commit real secrets. See docs/deploy/BACKGROUND_OFFICE_DEPLOY.md
+
+name: membrana-office
+
+services:
+  office-api:
+    restart: unless-stopped
+    # !override: bind API to localhost only (Caddy terminates TLS in O3)
+    ports: !override
+      - '127.0.0.1:${OFFICE_PORT:-3000}:3000'

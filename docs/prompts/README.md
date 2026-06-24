@@ -8,6 +8,7 @@
 |----------|------------|
 | **[`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)** | Стандарт постановки: Issue → реестр → промпт → PR → архив |
 | **[`TASK_CLOSURE_REGULATION.md`](./TASK_CLOSURE_REGULATION.md)** | Регламент закрытия: DoD, отчёт в Issue, `task:archive` |
+| **[`LINEAR_GITHUB_SYNC_REGULATION.md`](./LINEAR_GITHUB_SYNC_REGULATION.md)** | Linear ↔ GitHub: R1–R3, неблокирующий, без дублирования Issue |
 | **[`TASK_PROMPT_TEMPLATE.md`](./TASK_PROMPT_TEMPLATE.md)** | Шаблон нового `*_PROMPT.md` |
 | **[`docs/tasks/README.md`](../tasks/README.md)** | Активные и архивные задачи |
 | **[`CONSILIUM_PROMPT.md`](./CONSILIUM_PROMPT.md)** | Консилиум всех ролей → `docs/seanses/` |
@@ -81,6 +82,11 @@ Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](
 | [`BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md`](./BACKGROUND_MEDIA_A5B_DOCKER_PROMPT.md) | **Активная** `background-media-a5b-docker` — Docker Compose |
 | [`BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md`](./BACKGROUND_MEDIA_A5C_DEPLOY_PROMPT.md) | **Активная** `background-media-a5c-deploy` — прод-деплой |
 | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](./BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | **Активная** `background-media-a5d-swagger` — Swagger/OpenAPI (#64) |
+| [`BACKGROUND_OFFICE_V1_EPIC_PROMPT.md`](./BACKGROUND_OFFICE_V1_EPIC_PROMPT.md) | **Архив** `background-office-v1` — эпик прод-деплой office (4 PR) |
+| [`BACKGROUND_OFFICE_O1_DOCKER_PROMPT.md`](./BACKGROUND_OFFICE_O1_DOCKER_PROMPT.md) | **Архив** `background-office-o1-docker` — Docker образ office |
+| [`BACKGROUND_OFFICE_O2_PROD_COMPOSE_PROMPT.md`](./BACKGROUND_OFFICE_O2_PROD_COMPOSE_PROMPT.md) | **Архив** `background-office-o2-prod-compose` — prod compose + scripts |
+| [`BACKGROUND_OFFICE_O3_TLS_DEPLOY_PROMPT.md`](./BACKGROUND_OFFICE_O3_TLS_DEPLOY_PROMPT.md) | **Архив** `background-office-o3-tls-deploy` — TLS office.membrana.space |
+| [`BACKGROUND_OFFICE_O4_WEBHOOK_ACCEPTANCE_PROMPT.md`](./BACKGROUND_OFFICE_O4_WEBHOOK_ACCEPTANCE_PROMPT.md) | **Архив** `background-office-o4-webhook-acceptance` — Linear webhook |
 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](./MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | **Активная** `membrane-platform-v1` — эпик cabinet, pairing, tariff, journal (#67) |
 | [`TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md`](./TURBO_BUILD_GREEN_APPS_EPIC_PROMPT.md) | **Активная** `turbo-build-green-apps` — typecheck honesty, cabinet refs, TS fixes, CI techies68 |
 

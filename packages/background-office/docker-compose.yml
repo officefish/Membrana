@@ -1,0 +1,42 @@
+# Локальный/staging стек: office API (stateless, без PostgreSQL).
+# Из корня репозитория:
+#   cp packages/background-office/.env.docker.example packages/background-office/.env.docker
+#   yarn office:docker:up
+
+name: membrana-office
+
+services:
+  office-api:
+    build:
+      context: ../..
+      dockerfile: packages/background-office/Dockerfile
+    image: membrana/background-office:local
+    restart: unless-stopped
+    ports:
+      - '${OFFICE_PORT:-3000}:3000'
+    env_file:
+      - .env.docker
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      API_INTERNAL_TOKEN: ${API_INTERNAL_TOKEN:-dev-token-change-me}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-docker-placeholder-not-for-api}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-haiku-4-5-20251001}
+      LINEAR_API_KEY: ${LINEAR_API_KEY:-docker-placeholder}
+      LINEAR_WEBHOOK_SECRET: ${LINEAR_WEBHOOK_SECRET:-docker-placeholder}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-docker-placeholder}
+      GITHUB_OWNER: ${GITHUB_OWNER:-officefish}
+      GITHUB_REPO: ${GITHUB_REPO:-Membrana}
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

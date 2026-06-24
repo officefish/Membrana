@@ -1,4 +1,4 @@
-# Docker build context exclusions (background-media image; monorepo root context)
+# Docker build context exclusions (background-* images; monorepo root context)
 .git
 .github
 .turbo
@@ -51,3 +51,9 @@ scripts
 node_modules
 *.md
 !packages/background-media/README.md
+!packages/background-office/README.md
+docs/**
+!docs/WHITE_PAPER.md
+!docs/ARCHITECTURE.md
+!docs/SERVICES.md
+!docs/virtual-team
