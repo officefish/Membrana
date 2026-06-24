@@ -1,9 +1,5 @@
 import type { ScenarioSequenceConfig } from '@membrana/core';
-import {
-  DEFAULT_SCENARIO_SEQUENCE_CONFIG,
-  MAX_SCENARIO_SEQUENCE_THEN_COUNT,
-  resolveScenarioSequenceConfig,
-} from '@membrana/core';
+import { MAX_SCENARIO_SEQUENCE_THEN_COUNT, resolveScenarioSequenceConfig } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
 import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';

@@ -1269,7 +1269,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
               палитре нод.
             </p>
           )}
-          <BoardNodeInspectorNotes nodeKind={selectedNodeKind} />
+          <BoardNodeInspectorNotes nodeKind={selectedNodeKind ?? undefined} />
             </>
           )}
         </div>
