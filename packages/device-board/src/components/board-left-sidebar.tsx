@@ -42,10 +42,11 @@ export interface BoardLeftSidebarProps {
   readonly onAddVariableNode: (kind: VariableNodeKind, variableId: string) => void;
   readonly scenarioFunctions: readonly ScenarioFunctionDraft[];
   readonly activeFunctionId: string;
-  readonly onSelectFunction: (functionId: string) => void;
+  readonly activeFunctionDraftIndex: number;
+  readonly onSelectFunction: (functionId: string, draftIndex: number) => void;
   readonly onCreateFunction: () => void;
   readonly onRenameFunction: (functionId: string, name: string) => void;
-  readonly onRemoveFunction: (functionId: string) => void;
+  readonly onRemoveFunction: (functionId: string, draftIndex: number) => void;
 }
 
 const VariableRow: React.FC<{
@@ -132,6 +133,7 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   onAddVariableNode,
   scenarioFunctions,
   activeFunctionId,
+  activeFunctionDraftIndex,
   onSelectFunction,
   onCreateFunction,
   onRenameFunction,
@@ -145,14 +147,17 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
     readonly name: string;
   } | null>(null);
   const [deleteVariable, setDeleteVariable] = useState<ScenarioVariable | null>(null);
-  const [deleteFunctionId, setDeleteFunctionId] = useState<string | null>(null);
+  const [deleteFunctionTarget, setDeleteFunctionTarget] = useState<{
+    readonly id: string;
+    readonly index: number;
+  } | null>(null);
 
   const constructorDisabled = !isScenarioLayer || isRuntime;
   const showRuntimeInputs = isRuntime && runtimeInspection !== null;
   const deleteFunctionName =
-    deleteFunctionId === null
+    deleteFunctionTarget === null
       ? null
-      : (scenarioFunctions.find((fn) => fn.id === deleteFunctionId)?.name ?? null);
+      : (scenarioFunctions[deleteFunctionTarget.index]?.name ?? null);
 
   return (
     <>
@@ -260,16 +265,19 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
           <BoardFunctionList
             functions={scenarioFunctions}
             activeFunctionId={activeFunctionId}
+            activeFunctionDraftIndex={activeFunctionDraftIndex}
             disabled={isRuntime}
             onSelect={onSelectFunction}
             onCreate={onCreateFunction}
-            onRename={(functionId) => {
-              const fn = scenarioFunctions.find((item) => item.id === functionId);
-              if (fn !== undefined) {
+            onRename={(functionId, draftIndex) => {
+              const fn = scenarioFunctions[draftIndex];
+              if (fn !== undefined && fn.id === functionId) {
                 setRenameFunction({ id: fn.id, name: fn.name });
               }
             }}
-            onDelete={setDeleteFunctionId}
+            onDelete={(functionId, draftIndex) => {
+              setDeleteFunctionTarget({ id: functionId, index: draftIndex });
+            }}
           />
         ) : null}
 
@@ -333,10 +341,11 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
       />
       <DeleteFunctionModal
         functionName={deleteFunctionName}
-        onClose={() => setDeleteFunctionId(null)}
+        onClose={() => setDeleteFunctionTarget(null)}
         onConfirm={() => {
-          if (deleteFunctionId !== null) {
-            onRemoveFunction(deleteFunctionId);
+          if (deleteFunctionTarget !== null) {
+            onRemoveFunction(deleteFunctionTarget.id, deleteFunctionTarget.index);
+            setDeleteFunctionTarget(null);
           }
         }}
       />

@@ -436,7 +436,12 @@ export type { FunctionPinSide } from './function-pin-ops.js';
 export {
   removeUserFunctionDraft,
   stripSubgraphBlocksForFunction,
+  stripSubgraphBlocksForFunctionOccurrence,
 } from './remove-user-function.js';
+export {
+  repairDuplicateScenarioFunctionDrafts,
+  remapFunctionDraftId,
+} from './repair-duplicate-scenario-functions.js';
 export {
   collapseSelectionToCommentGroup,
   applyBoardNodeChangesWithCommentGroupDissolve,

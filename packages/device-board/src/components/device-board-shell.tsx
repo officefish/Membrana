@@ -164,7 +164,10 @@ const DeviceBoardShellInner: React.FC<{
     readonly functionName: string;
   } | null>(null);
   const [functionActionMessage, setFunctionActionMessage] = useState<string | null>(null);
-  const [deleteFunctionTargetId, setDeleteFunctionTargetId] = useState<string | null>(null);
+  const [deleteFunctionTarget, setDeleteFunctionTarget] = useState<{
+    readonly id: string;
+    readonly index: number;
+  } | null>(null);
 
   const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
     viewportApiRef.current = api;
@@ -408,17 +411,17 @@ const DeviceBoardShellInner: React.FC<{
   const isRuntime = graph.runtimeState.isRunning;
 
   const handleUserFunctionListClick = useCallback(
-    (functionId: string) => {
+    (functionId: string, draftIndex: number) => {
       if (isSignal || isRuntime) {
         return;
       }
       if (scenarioBranch === 'function') {
-        graph.selectUserFunction(functionId);
+        graph.selectUserFunction(functionId, draftIndex);
         clearSelection();
         return;
       }
-      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
-      if (fn === undefined) {
+      const fn = graph.scenarioFunctionDrafts[draftIndex];
+      if (fn === undefined || fn.id !== functionId) {
         return;
       }
       setFunctionActionMessage(null);
@@ -436,7 +439,7 @@ const DeviceBoardShellInner: React.FC<{
     if (functionActionTarget === null) {
       return;
     }
-    graph.selectUserFunction(functionActionTarget.functionId);
+    graph.selectUserFunction(functionActionTarget.functionId, graph.activeFunctionDraftIndex);
     clearSelection();
     dismissFunctionAction();
   }, [clearSelection, dismissFunctionAction, functionActionTarget, graph]);
@@ -514,16 +517,16 @@ const DeviceBoardShellInner: React.FC<{
   }, [scenarioBranch, selectedNodeKind]);
 
   const deleteFunctionTargetName = useMemo(() => {
-    if (deleteFunctionTargetId === null) {
+    if (deleteFunctionTarget === null) {
       return null;
     }
-    const draft = graph.scenarioFunctionDrafts.find((fn) => fn.id === deleteFunctionTargetId);
+    const draft = graph.scenarioFunctionDrafts[deleteFunctionTarget.index];
     return draft?.name ?? null;
-  }, [deleteFunctionTargetId, graph.scenarioFunctionDrafts]);
+  }, [deleteFunctionTarget, graph.scenarioFunctionDrafts]);
 
   const handleRemoveUserFunction = useCallback(
-    (functionId: string) => {
-      const error = graph.removeUserFunction(functionId);
+    (functionId: string, draftIndex: number) => {
+      const error = graph.removeUserFunction(functionId, draftIndex);
       if (error !== null) {
         setImportError(error);
         return;
@@ -1653,6 +1656,7 @@ const DeviceBoardShellInner: React.FC<{
             onAddVariableNode={addVariableNodeAtViewportCenter}
             scenarioFunctions={graph.scenarioFunctionDrafts}
             activeFunctionId={graph.activeFunctionId}
+            activeFunctionDraftIndex={graph.activeFunctionDraftIndex}
             onSelectFunction={handleUserFunctionListClick}
             onCreateFunction={graph.createUserFunction}
             onRenameFunction={handleRenameFunction}
@@ -1746,7 +1750,10 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onDeleteFunction={() => {
               if (graph.activeFunctionId !== '') {
-                setDeleteFunctionTargetId(graph.activeFunctionId);
+                setDeleteFunctionTarget({
+                  id: graph.activeFunctionId,
+                  index: graph.activeFunctionDraftIndex,
+                });
               }
             }}
             onClearBoard={handleClearBoard}
@@ -1782,10 +1789,11 @@ const DeviceBoardShellInner: React.FC<{
 
       <DeleteFunctionModal
         functionName={deleteFunctionTargetName}
-        onClose={() => setDeleteFunctionTargetId(null)}
+        onClose={() => setDeleteFunctionTarget(null)}
         onConfirm={() => {
-          if (deleteFunctionTargetId !== null) {
-            handleRemoveUserFunction(deleteFunctionTargetId);
+          if (deleteFunctionTarget !== null) {
+            handleRemoveUserFunction(deleteFunctionTarget.id, deleteFunctionTarget.index);
+            setDeleteFunctionTarget(null);
           }
         }}
       />

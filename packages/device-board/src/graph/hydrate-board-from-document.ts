@@ -54,6 +54,7 @@ import { syncAllSubgraphBlocksFromFunctionDrafts } from './function-pin-ops.js';
 import { dedupeBoardEdges } from './dedupe-board-edges.js';
 import { applyCommentGroupsToBranchNodes } from './comment-group.js';
 import type { ScenarioFunctionDraft } from './collapse-to-function.js';
+import { repairDuplicateScenarioFunctionDrafts } from './repair-duplicate-scenario-functions.js';
 
 export interface ScenarioFunctionCanvasMeta {
   readonly id: string;
@@ -177,6 +178,7 @@ function resolveFunctionDrafts(
 function resolveFunctionCanvas(
   functions: readonly ScenarioFunctionSubgraph[],
   variables: readonly ScenarioVariable[],
+  branchGraphs: readonly { nodes: Node[]; edges: Edge[] }[],
 ): {
   nodes: Node[];
   edges: Edge[];
@@ -184,7 +186,12 @@ function resolveFunctionCanvas(
   drafts: ScenarioFunctionDraft[];
   activeFunctionId: string;
 } {
-  const { drafts, active } = resolveFunctionDrafts(functions, variables);
+  const { drafts: rawDrafts, active: rawActive } = resolveFunctionDrafts(functions, variables);
+  const drafts = repairDuplicateScenarioFunctionDrafts(rawDrafts, branchGraphs);
+  const active =
+    drafts.find((draft) => draft.id === rawActive.id) ??
+    drafts[0] ??
+    rawActive;
   const canvas = draftToCanvasState(active);
   return {
     ...canvas,
@@ -238,7 +245,15 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
     INITIAL_SCENARIO_ON_DISCONNECT_EDGES,
     variables,
   );
-  const fn = resolveFunctionCanvas(document.scenario.functions, variables);
+  const branchGraphs = [
+    initial,
+    onConnect,
+    main,
+    alarm,
+    onStop,
+    onDisconnect,
+  ];
+  const fn = resolveFunctionCanvas(document.scenario.functions, variables, branchGraphs);
 
   // v0.4 (DBR3): системный Event-узел — обязательный entry каждого обработчика.
   // Авто-инжект для legacy/мигрированных документов без Event-узла.
