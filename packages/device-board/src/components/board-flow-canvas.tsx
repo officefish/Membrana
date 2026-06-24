@@ -658,7 +658,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
         zoomOnScroll
         zoomOnPinch
         zoomOnDoubleClick={!navigationOnly}
-        selectionOnDrag={marqueeEnabled}
+        selectionOnDrag={false}
         selectNodesOnDrag={!navigationOnly}
         panActivationKeyCode={navigationOnly ? 'Space' : null}
         proOptions={{ hideAttribution: true }}
