@@ -77,6 +77,7 @@ export {
   validateBlockLinks,
   validateBlockParameters,
   collectValidationErrorNodeIds,
+  isUserCaseValidationValid,
   userCaseErrorsToPreRunIssues,
   type UserCaseValidationError,
   type UserCaseValidationResult,
