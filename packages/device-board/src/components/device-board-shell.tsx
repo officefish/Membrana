@@ -1603,18 +1603,24 @@ const DeviceBoardShellInner: React.FC<{
             onSelectionChange={handleSelectionChange}
             onNodeDoubleClick={handleNodeDoubleClick}
             onPaneClick={handlePaneClick}
-            onPaneContextMenu={handlePaneContextMenu}
+            onPaneContextMenu={
+              !isSignal && !isRuntime && !graph.isSessionReadOnly ? handlePaneContextMenu : undefined
+            }
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
             validationErrorNodeIds={validationErrorNodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
             readOnly={isCanvasReadOnly}
+            viewNavigationOnly={scenarioEditFlags.isScenarioViewOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             viewportFitKey={canvasViewportFitKey}
             onConnectionDropOnPane={handleConnectionDropOnPane}
             onMarqueeSelection={
-              !isSignal && !isRuntime && execLayoutPreview === null
+              !isSignal &&
+              !isRuntime &&
+              !graph.isSessionReadOnly &&
+              execLayoutPreview === null
                 ? handleMarqueeSelection
                 : undefined
             }
