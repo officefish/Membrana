@@ -101,6 +101,11 @@ export interface BoardRightSidebarProps {
   readonly selectedVariableTypeLabel: string | null;
   readonly selectedFunctionId: string | null;
   readonly selectedFunctionName: string | null;
+  /** Экземпляры subgraph-блоков выбранной функции на текущей ветке. */
+  readonly selectedFunctionBlockInstances: readonly {
+    readonly nodeId: string;
+    readonly occurrence: number;
+  }[];
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
   readonly microphoneOptionsLoading?: boolean;
   readonly canEditScenario: boolean;
@@ -132,6 +137,7 @@ export interface BoardRightSidebarProps {
     patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
   ) => void;
   readonly onOpenFunctionEditor: (functionId: string) => void;
+  readonly onSelectFunctionBlockInstance: (nodeId: string) => void;
   readonly onAddFunctionPin: (side: FunctionPinSide) => void;
   readonly onUpdateFunctionPin: (
     side: FunctionPinSide,
@@ -282,6 +288,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedVariableTypeLabel,
   selectedFunctionId,
   selectedFunctionName,
+  selectedFunctionBlockInstances,
   microphoneOptions,
   microphoneOptionsLoading = false,
   canEditScenario,
@@ -304,6 +311,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onCommentGroupMetadataChange,
   onUpdateFunctionMeta,
   onOpenFunctionEditor,
+  onSelectFunctionBlockInstance,
   onAddFunctionPin,
   onUpdateFunctionPin,
   onRemoveFunctionPin,
@@ -546,6 +554,40 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             </p>
             <h2 className="text-sm font-semibold text-base-content truncate">{selectedFunctionName}</h2>
           </div>
+          {selectedFunctionBlockInstances.length > 0 ? (
+            <section className="flex flex-col gap-2" aria-label="Экземпляры функции на ветке">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+                {selectedFunctionBlockInstances.length === 1
+                  ? 'Экземпляр на ветке'
+                  : `Экземпляры на ветке (${selectedFunctionBlockInstances.length})`}
+              </p>
+              <ul className="flex flex-col gap-1">
+                {selectedFunctionBlockInstances.map((instance) => {
+                  const isActive = instance.nodeId === selectedNodeId;
+                  return (
+                    <li key={instance.nodeId}>
+                      <button
+                        type="button"
+                        className={`btn btn-xs w-full justify-start font-normal ${
+                          isActive ? 'btn-primary' : 'btn-ghost'
+                        }`}
+                        disabled={isRuntime}
+                        aria-current={isActive ? 'true' : undefined}
+                        onClick={() => {
+                          onSelectFunctionBlockInstance(instance.nodeId);
+                        }}
+                      >
+                        <span className="truncate">
+                          Вызов {instance.occurrence}
+                          <span className="ml-1 font-mono text-[10px] opacity-70">{instance.nodeId}</span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ) : null}
           <p className="text-xs leading-relaxed text-base-content/55">
             Двойной клик по блоку на канвасе открывает редактор функции.
           </p>

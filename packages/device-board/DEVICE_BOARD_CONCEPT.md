@@ -1149,6 +1149,10 @@ Pure: `collapse-to-function.ts`, `function-pin-ops.ts`, `repair-duplicate-scenar
 (`getCenterFlowPosition()`); опциональный `position` в API. Подтверждение — краткий edit-hint
 в зоне clipboard-hint (`flashEditHint`, 5 с), без отдельного top-toast.
 
+**Fn-blocks inspector (post-#172):** при выборе subgraph-блока правый инспектор показывает
+список **всех экземпляров** той же функции на текущей ветке («Вызов n» + `nodeId`);
+клик переключает selection на канвасе и фокусирует viewport (`list-subgraph-blocks-for-function.ts`).
+
 **Runtime bridge:** `function-input` / `function-output` — pass-through в `exec-subgraph`
 (entry exec-in → first inner node; `function-output` → return).
 
