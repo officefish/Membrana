@@ -31,14 +31,14 @@
     "initial": {
       "bundleFile": "02-onStart.json",
       "legacyFile": "device-scenario-microphone-initial.json",
-      "nodeCount": 9,
-      "edgeCount": 13
+      "nodeCount": 12,
+      "edgeCount": 19
     },
     "main": {
       "bundleFile": "03-onMainTick.json",
       "legacyFile": "device-scenario-microphone-main-v08-policy-constructor.json",
-      "nodeCount": 27,
-      "edgeCount": 54
+      "nodeCount": 26,
+      "edgeCount": 50
     },
     "onStop": {
       "bundleFile": "05-onStop.json",

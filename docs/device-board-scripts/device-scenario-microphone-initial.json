@@ -51,6 +51,45 @@
         "nodeKind": "start-streaming"
       },
       {
+        "id": "node-get-recorder-mvp-initial-bootstrap-1",
+        "blockKind": "custom",
+        "position": {
+          "x": 896,
+          "y": -600
+        },
+        "label": "GetRecorder",
+        "nodeKind": "get-recorder"
+      },
+      {
+        "id": "node-make-recording-policy-mvp-initial-1",
+        "blockKind": "custom",
+        "position": {
+          "x": 896,
+          "y": -360
+        },
+        "label": "MakeRecordingPolicy",
+        "nodeKind": "make-recording-policy",
+        "pure": true,
+        "recordingPolicy": {
+          "windowSec": 5,
+          "captureFormat": "wav"
+        }
+      },
+      {
+        "id": "node-start-recording-bootstrap-v08-2",
+        "blockKind": "custom",
+        "position": {
+          "x": 1360,
+          "y": -600
+        },
+        "label": "StartRecording (bootstrap)",
+        "nodeKind": "start-recording",
+        "recordingPolicy": {
+          "windowSec": 5,
+          "captureFormat": "wav"
+        }
+      },
+      {
         "id": "node-is-valid-mqm9i48b-18",
         "blockKind": "custom",
         "position": {
@@ -195,6 +234,52 @@
         "kind": "exec"
       },
       {
+        "source": "node-start-streaming-mql556hh-49",
+        "sourceHandle": "exec-out",
+        "target": "node-get-recorder-mvp-initial-bootstrap-1",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "initial-event",
+        "sourceHandle": "device",
+        "target": "node-get-recorder-mvp-initial-bootstrap-1",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-recorder-mvp-initial-bootstrap-1",
+        "sourceHandle": "exec-out",
+        "target": "node-start-recording-bootstrap-v08-2",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-recorder-mvp-initial-bootstrap-1",
+        "sourceHandle": "recorder",
+        "target": "node-start-recording-bootstrap-v08-2",
+        "targetHandle": "recorder",
+        "kind": "data",
+        "dataType": "RecorderRef"
+      },
+      {
+        "source": "node-start-streaming-mql556hh-49",
+        "sourceHandle": "stream",
+        "target": "node-start-recording-bootstrap-v08-2",
+        "targetHandle": "stream",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
+      {
+        "source": "node-make-recording-policy-mvp-initial-1",
+        "sourceHandle": "policy",
+        "target": "node-start-recording-bootstrap-v08-2",
+        "targetHandle": "policy",
+        "kind": "data",
+        "dataType": "RecordingPolicy"
+      },
+      {
         "source": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9it3v-10",
         "sourceHandle": "exec-out",
         "target": "node-print-mqksbm4o-3",
@@ -214,7 +299,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:08:50.654Z",
+  "exportedAt": "2026-06-24T12:20:53.792Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "initial",
   "referenceVariableSlots": []

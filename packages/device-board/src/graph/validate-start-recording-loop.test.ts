@@ -76,7 +76,7 @@ describe('findStartRecordingUnconditionalLoopIssues', () => {
     expect(issues).toHaveLength(0);
   });
 
-  it('flags bootstrap StartRecording on bundled MVP main loop (pre-R2 topology)', () => {
+  it('does not warn on canonical MVP main loop after bootstrap moved to onStart', () => {
     const hydrated = createDefaultMvpMicrophoneHydratedState();
     const issues = findStartRecordingUnconditionalLoopIssues(
       hydrated.scenarioMainNodes,
@@ -85,12 +85,10 @@ describe('findStartRecordingUnconditionalLoopIssues', () => {
       'scenario.loops.main',
     );
 
-    expect(
-      issues.some((issue) => issue.path?.includes('node-start-recording-bootstrap-v08-2')),
-    ).toBe(true);
+    expect(issues).toHaveLength(0);
   });
 
-  it('validatePreRun keeps Run enabled with loop-path warning on MVP', () => {
+  it('validatePreRun has no loop-path warning on canonical MVP', () => {
     const hydrated = createDefaultMvpMicrophoneHydratedState();
     const preRunIssues = validatePreRun({
       deviceKind: hydrated.deviceKind,
@@ -114,7 +112,7 @@ describe('findStartRecordingUnconditionalLoopIssues', () => {
 
     expect(
       preRunIssues.some((issue) => issue.code === 'start-recording-unconditional-loop-path'),
-    ).toBe(true);
+    ).toBe(false);
     expect(isPreRunValid(preRunIssues)).toBe(true);
   });
 });
