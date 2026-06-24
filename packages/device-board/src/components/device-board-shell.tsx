@@ -17,7 +17,7 @@ import {
   DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR,
 } from '@membrana/core';
 import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
-import type { Edge, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
+import type { Edge, Node, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
 import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
 import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
@@ -55,7 +55,7 @@ import { BoardBranchImportModal } from './board-branch-import-modal.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
-import { DeleteFunctionModal } from './board-variable-modals.js';
+import { DeleteFunctionModal, RenameFunctionModal } from './board-variable-modals.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
@@ -111,6 +111,12 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeLabel, setSelectedNodeLabel] = useState<string | null>(null);
   const [selectedNodeKind, setSelectedNodeKind] = useState<ScenarioNodeKind | null>(null);
+  const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
+  const [selectedFunctionName, setSelectedFunctionName] = useState<string | null>(null);
+  const [renameFunctionTarget, setRenameFunctionTarget] = useState<{
+    readonly id: string;
+    readonly name: string;
+  } | null>(null);
   const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string | null>(null);
   const [selectedCollectorConfig, setSelectedCollectorConfig] = useState<ScenarioCollectorConfig | null>(
     null,
@@ -241,6 +247,8 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedGroupTitle('');
     setSelectedGroupDescription('');
     setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
+    setSelectedFunctionId(null);
+    setSelectedFunctionName(null);
   }, []);
 
   const resolveBranchEdges = useCallback((): readonly Edge[] => {
@@ -291,6 +299,8 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedGroupTitle('');
       setSelectedGroupDescription('');
       setSelectedGroupFrameColor(DEFAULT_SCENARIO_COMMENT_GROUP_FRAME_COLOR);
+      setSelectedFunctionId(null);
+      setSelectedFunctionName(null);
       return;
     }
     setSelectedNodeId(node.id);
@@ -313,10 +323,22 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedVariableId(null);
       setSelectedGetterPure(false);
       setSelectedGetterPureLocked(false);
+      setSelectedFunctionId(null);
+      setSelectedFunctionName(null);
       return;
     }
     const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
     setSelectedNodeLabel(label);
+    const blockKind = node.data?.blockKind;
+    const functionId = typeof node.data?.functionId === 'string' ? node.data.functionId : null;
+    if (blockKind === 'subgraph' && functionId !== null) {
+      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
+      setSelectedFunctionId(functionId);
+      setSelectedFunctionName(fn?.name ?? label);
+    } else {
+      setSelectedFunctionId(null);
+      setSelectedFunctionName(null);
+    }
     const kind = typeof node.data?.nodeKind === 'string' ? (node.data.nodeKind as ScenarioNodeKind) : null;
     setSelectedNodeKind(kind);
     const micId = typeof node.data?.microphoneId === 'string' ? node.data.microphoneId : null;
@@ -363,7 +385,7 @@ const DeviceBoardShellInner: React.FC<{
     if (kind === 'get-microphone') {
       void refreshMicrophoneOptions();
     }
-  }, [refreshMicrophoneOptions, resolveBranchEdges]);
+  }, [graph.scenarioFunctionDrafts, refreshMicrophoneOptions, resolveBranchEdges]);
 
   const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
@@ -421,6 +443,58 @@ const DeviceBoardShellInner: React.FC<{
     clearSelection();
     dismissFunctionAction();
   }, [clearSelection, dismissFunctionAction, functionActionTarget, graph]);
+
+  const handleOpenFunctionEditor = useCallback(
+    (functionId: string) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      graph.selectUserFunction(functionId);
+      clearSelection();
+    },
+    [clearSelection, graph, isRuntime, isSignal],
+  );
+
+  const handleRenameFunctionRequest = useCallback(
+    (functionId: string) => {
+      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
+      if (fn === undefined) {
+        return;
+      }
+      setRenameFunctionTarget({ id: functionId, name: fn.name });
+    },
+    [graph.scenarioFunctionDrafts],
+  );
+
+  const handleConfirmRenameFunction = useCallback(
+    (functionId: string, name: string) => {
+      graph.updateUserFunctionMeta(functionId, { name });
+      if (selectedFunctionId === functionId) {
+        setSelectedFunctionName(name);
+      }
+    },
+    [graph, selectedFunctionId],
+  );
+
+  const handleNodeDoubleClick = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      if (isSignal || isRuntime || graph.isSessionReadOnly) {
+        return;
+      }
+      if (scenarioBranch === 'function') {
+        return;
+      }
+      const functionId =
+        node.data?.blockKind === 'subgraph' && typeof node.data.functionId === 'string'
+          ? node.data.functionId
+          : null;
+      if (functionId !== null) {
+        graph.selectUserFunction(functionId);
+        clearSelection();
+      }
+    },
+    [clearSelection, graph, isRuntime, isSignal, scenarioBranch],
+  );
 
   const handleInsertUserFunction = useCallback(() => {
     if (functionActionTarget === null) {
@@ -1513,6 +1587,7 @@ const DeviceBoardShellInner: React.FC<{
               graph.isValidConnection(isSignal ? 'signal' : 'scenario', connection)
             }
             onSelectionChange={handleSelectionChange}
+            onNodeDoubleClick={handleNodeDoubleClick}
             onPaneClick={handlePaneClick}
             onPaneContextMenu={handlePaneContextMenu}
             pulseEdges={isRuntime}
@@ -1606,6 +1681,8 @@ const DeviceBoardShellInner: React.FC<{
             selectedGroupDescription={selectedGroupDescription}
             selectedGroupFrameColor={selectedGroupFrameColor}
             selectedVariableTypeLabel={selectedVariableTypeLabel}
+            selectedFunctionId={selectedFunctionId}
+            selectedFunctionName={selectedFunctionName}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
             canEditScenario={!isSignal}
@@ -1647,6 +1724,8 @@ const DeviceBoardShellInner: React.FC<{
               }
             }}
             onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
+            onRenameFunction={handleRenameFunctionRequest}
+            onOpenFunctionEditor={handleOpenFunctionEditor}
             onAddFunctionPin={(side) => {
               const error = graph.addActiveFunctionPin(side, 'data');
               if (error !== null) {
@@ -1709,6 +1788,13 @@ const DeviceBoardShellInner: React.FC<{
             handleRemoveUserFunction(deleteFunctionTargetId);
           }
         }}
+      />
+
+      <RenameFunctionModal
+        functionId={renameFunctionTarget?.id ?? null}
+        functionName={renameFunctionTarget?.name ?? ''}
+        onClose={() => setRenameFunctionTarget(null)}
+        onConfirm={handleConfirmRenameFunction}
       />
 
       {functionActionMessage !== null && functionActionTarget === null ? (

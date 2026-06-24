@@ -158,6 +158,68 @@ describe('device-board navigation integration', () => {
     });
   });
 
+  it('preserves function rename when leaving function body to handler tab', async () => {
+    const { result } = renderGraph();
+
+    await waitFor(() => {
+      expect(result.current.syncStatus).not.toBe('loading');
+    });
+
+    act(() => {
+      result.current.createUserFunction();
+    });
+
+    const functionId = result.current.activeFunctionId;
+
+    act(() => {
+      result.current.updateActiveFunctionMeta({ name: 'Renamed handler fn' });
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioFunctionMeta.name).toBe('Renamed handler fn');
+    });
+
+    act(() => {
+      result.current.setScenarioBranch('main');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioBranch).toBe('main');
+      expect(
+        result.current.scenarioFunctionDrafts.find((draft) => draft.id === functionId)?.name,
+      ).toBe('Renamed handler fn');
+    });
+  });
+
+  it('updateUserFunctionMeta renames inactive function draft', async () => {
+    const { result } = renderGraph();
+
+    await waitFor(() => {
+      expect(result.current.syncStatus).not.toBe('loading');
+    });
+
+    act(() => {
+      result.current.createUserFunction();
+    });
+
+    const firstFunctionId = result.current.activeFunctionId;
+
+    act(() => {
+      result.current.createUserFunction();
+    });
+
+    act(() => {
+      result.current.updateUserFunctionMeta(firstFunctionId, { name: 'Inactive renamed' });
+    });
+
+    await waitFor(() => {
+      expect(
+        result.current.scenarioFunctionDrafts.find((draft) => draft.id === firstFunctionId)?.name,
+      ).toBe('Inactive renamed');
+      expect(result.current.scenarioFunctionMeta.name).not.toBe('Inactive renamed');
+    });
+  });
+
   it('clears undo when leaving scenario layer (shell contract)', async () => {
     const { result } = renderGraph();
 

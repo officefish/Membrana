@@ -66,6 +66,7 @@ import {
 } from '../types/board-ui.js';
 import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
 import { BoardFunctionPinInspector, type FunctionPinEditSide } from './board-function-pin-inspector.js';
+import { PencilIcon } from './board-variable-modals.js';
 import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-document.js';
 import type { FunctionPinSide } from '../graph/function-pin-ops.js';
 
@@ -92,6 +93,8 @@ export interface BoardRightSidebarProps {
   readonly selectedGroupDescription: string;
   readonly selectedGroupFrameColor: ScenarioCommentGroupFrameColor;
   readonly selectedVariableTypeLabel: string | null;
+  readonly selectedFunctionId: string | null;
+  readonly selectedFunctionName: string | null;
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
   readonly microphoneOptionsLoading?: boolean;
   readonly canEditScenario: boolean;
@@ -121,6 +124,8 @@ export interface BoardRightSidebarProps {
   readonly onUpdateFunctionMeta: (
     patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
   ) => void;
+  readonly onRenameFunction: (functionId: string) => void;
+  readonly onOpenFunctionEditor: (functionId: string) => void;
   readonly onAddFunctionPin: (side: FunctionPinSide) => void;
   readonly onUpdateFunctionPin: (
     side: FunctionPinSide,
@@ -162,6 +167,8 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedGroupDescription,
   selectedGroupFrameColor,
   selectedVariableTypeLabel,
+  selectedFunctionId,
+  selectedFunctionName,
   microphoneOptions,
   microphoneOptionsLoading = false,
   canEditScenario,
@@ -182,6 +189,8 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onVariableValueChange,
   onCommentGroupMetadataChange,
   onUpdateFunctionMeta,
+  onRenameFunction,
+  onOpenFunctionEditor,
   onAddFunctionPin,
   onUpdateFunctionPin,
   onRemoveFunctionPin,
@@ -207,12 +216,12 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   );
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
-  const showFunctionInspector =
-    isFunctionBranch &&
-    functionMeta !== null &&
-    !isRuntime &&
-    selectedNodeId !== null &&
-    (selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output');
+  const showFunctionInspector = isFunctionBranch && functionMeta !== null && !isRuntime;
+  const showSubgraphFunctionInspector =
+    !isFunctionBranch &&
+    selectedFunctionId !== null &&
+    selectedFunctionName !== null &&
+    !isRuntime;
 
   useEffect(() => {
     setVariableNameDraft(selectedVariableName);
@@ -393,12 +402,57 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             </section>
           ) : null}
         </div>
+      ) : showSubgraphFunctionInspector ? (
+        <div className="flex flex-col gap-3 p-4 text-sm">
+          <div className="border-b border-base-200 pb-2">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+                  Пользовательская функция
+                </p>
+                <h2 className="text-sm font-semibold text-base-content truncate">
+                  {selectedFunctionName}
+                </h2>
+              </div>
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs shrink-0 px-1"
+                aria-label={`Переименовать функцию ${selectedFunctionName}`}
+                title="Переименовать"
+                disabled={editDisabled}
+                onClick={() => {
+                  if (selectedFunctionId !== null) {
+                    onRenameFunction(selectedFunctionId);
+                  }
+                }}
+              >
+                <PencilIcon />
+              </button>
+            </div>
+          </div>
+          <p className="text-xs leading-relaxed text-base-content/55">
+            Двойной клик по блоку на канвасе открывает редактор функции.
+          </p>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm w-full"
+            disabled={editDisabled}
+            onClick={() => {
+              if (selectedFunctionId !== null) {
+                onOpenFunctionEditor(selectedFunctionId);
+              }
+            }}
+          >
+            Открыть редактор
+          </button>
+        </div>
       ) : showFunctionInspector ? (
         <BoardFunctionPinInspector
           meta={functionMeta}
           pinEditSide={functionPinEditSide}
           disabled={editDisabled}
           onUpdateMeta={onUpdateFunctionMeta}
+          onOpenRename={() => onRenameFunction(functionMeta.id)}
           onAddPin={onAddFunctionPin}
           onUpdatePin={onUpdateFunctionPin}
           onRemovePin={onRemoveFunctionPin}

@@ -32,4 +32,10 @@ describe('branch-navigation', () => {
     expect(plan.shouldRevertIfDirty).toBe(false);
     expect(plan.undoClearReason).toBe('enter-function-body');
   });
+
+  it('leaving function body to handler keeps dirty (rename / draft commit)', () => {
+    const plan = planBranchNavigation('function', 'main', inFunctionLayerRevertPolicy());
+    expect(plan.shouldRevertIfDirty).toBe(false);
+    expect(plan.undoClearReason).toBe('leave-function-body');
+  });
 });
