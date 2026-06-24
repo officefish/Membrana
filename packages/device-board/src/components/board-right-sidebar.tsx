@@ -139,6 +139,112 @@ export interface BoardRightSidebarProps {
   readonly onClearBoard: () => void;
 }
 
+interface BoardNodePalettePanelProps {
+  readonly isRuntime: boolean;
+  readonly canEditScenario: boolean;
+  readonly legacyPalette: boolean;
+  readonly onAddPaletteNode: (nodeKind: V04PaletteNodeKind) => void;
+  readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
+  readonly onClearBoard: () => void;
+  readonly borderedTop?: boolean;
+}
+
+/** Палитра нод + «Очистить ветку» (общий блок для ветки и редактора функции). */
+const BoardNodePalettePanel: React.FC<BoardNodePalettePanelProps> = ({
+  isRuntime,
+  canEditScenario,
+  legacyPalette,
+  onAddPaletteNode,
+  onAddLegacyNode,
+  onClearBoard,
+  borderedTop = false,
+}) => (
+  <div
+    className={`flex flex-col ${borderedTop ? 'shrink-0 border-t border-base-200' : 'flex-1'}`}
+    aria-label="Палитра нод"
+  >
+    <div className={`border-b border-base-200 px-4 py-3 ${borderedTop ? '' : ''}`}>
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+        {isRuntime ? 'Runtime' : 'Палитра нод'}
+      </p>
+      <h2 className="text-sm font-semibold text-base-content">
+        {isRuntime
+          ? 'Выберите узел на канвасе'
+          : canEditScenario
+            ? 'Добавьте ноды в активную ветку'
+            : 'Выберите ветку сценария'}
+      </h2>
+    </div>
+
+    {!isRuntime ? (
+      <div className="flex flex-col gap-4 p-4">
+        {!legacyPalette ? (
+          SCENARIO_V04_PALETTE_SECTIONS.map((section) => (
+            <div key={section.title} className="flex flex-col gap-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
+                {section.title}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {section.items.map((item) => (
+                  <button
+                    key={item.nodeKind}
+                    type="button"
+                    className="btn btn-xs btn-outline btn-primary"
+                    disabled={!canEditScenario}
+                    onClick={() => onAddPaletteNode(item.nodeKind)}
+                    title={item.label}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          LEGACY_SCENARIO_NODE_PALETTE.map((category) => (
+            <div key={category.title} className="flex flex-col gap-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
+                {category.title}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {category.blockKinds.map((blockKind) => (
+                  <button
+                    key={blockKind}
+                    type="button"
+                    className="btn btn-xs btn-outline"
+                    disabled={!canEditScenario}
+                    onClick={() => onAddLegacyNode(blockKind)}
+                    title={D0_SCENARIO_NODE_CATALOG[blockKind].label}
+                  >
+                    {D0_SCENARIO_NODE_CATALOG[blockKind].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    ) : (
+      <p className="p-4 text-xs leading-relaxed text-base-content/50">
+        Во время выполнения сценария палитра скрыта. Кликните по узлу, чтобы увидеть значения портов.
+      </p>
+    )}
+
+    {!isRuntime ? (
+      <div className="mt-auto border-t border-base-200 p-4">
+        <button
+          type="button"
+          className="btn btn-sm btn-outline btn-error w-full"
+          disabled={!canEditScenario}
+          onClick={onClearBoard}
+        >
+          Очистить ветку
+        </button>
+      </div>
+    ) : null}
+  </div>
+);
+
 /**
  * Правый сайдбар доски (MP7b RT6 / v0.4 DBR5): инспектор выбранной ноды
  * или палитра v0.4 (Print / isValid / GetMicrophone); legacy D0 — под флагом.
@@ -424,16 +530,29 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
           </button>
         </div>
       ) : showFunctionInspector ? (
-        <BoardFunctionPinInspector
-          meta={functionMeta}
-          pinEditSide={functionPinEditSide}
-          disabled={editDisabled}
-          onUpdateMeta={onUpdateFunctionMeta}
-          onAddPin={onAddFunctionPin}
-          onUpdatePin={onUpdateFunctionPin}
-          onRemovePin={onRemoveFunctionPin}
-          onDeleteFunction={onDeleteFunction}
-        />
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <BoardFunctionPinInspector
+              meta={functionMeta}
+              pinEditSide={functionPinEditSide}
+              disabled={editDisabled}
+              onUpdateMeta={onUpdateFunctionMeta}
+              onAddPin={onAddFunctionPin}
+              onUpdatePin={onUpdateFunctionPin}
+              onRemovePin={onRemoveFunctionPin}
+              onDeleteFunction={onDeleteFunction}
+            />
+          </div>
+          <BoardNodePalettePanel
+            isRuntime={isRuntime}
+            canEditScenario={canEditScenario}
+            legacyPalette={legacyPalette}
+            onAddPaletteNode={onAddPaletteNode}
+            onAddLegacyNode={onAddLegacyNode}
+            onClearBoard={onClearBoard}
+            borderedTop
+          />
+        </div>
       ) : selectedNodeId ? (
         <div className="flex flex-col gap-3 p-4 text-sm">
           <div className="border-b border-base-200 pb-2">
@@ -1074,88 +1193,14 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
           )}
         </div>
       ) : (
-        <div className="flex flex-1 flex-col">
-          <div className="border-b border-base-200 px-4 py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
-              {isRuntime ? 'Runtime' : 'Палитра нод'}
-            </p>
-            <h2 className="text-sm font-semibold text-base-content">
-              {isRuntime
-                ? 'Выберите узел на канвасе'
-                : canEditScenario
-                  ? 'Добавьте ноды в активную ветку'
-                  : 'Выберите ветку сценария'}
-            </h2>
-          </div>
-
-          {!isRuntime ? (
-            <div className="flex flex-1 flex-col gap-4 p-4">
-              {!legacyPalette ? (
-                SCENARIO_V04_PALETTE_SECTIONS.map((section) => (
-                  <div key={section.title} className="flex flex-col gap-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
-                      {section.title}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {section.items.map((item) => (
-                        <button
-                          key={item.nodeKind}
-                          type="button"
-                          className="btn btn-xs btn-outline btn-primary"
-                          disabled={!canEditScenario}
-                          onClick={() => onAddPaletteNode(item.nodeKind)}
-                          title={item.label}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                LEGACY_SCENARIO_NODE_PALETTE.map((category) => (
-                  <div key={category.title} className="flex flex-col gap-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
-                      {category.title}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {category.blockKinds.map((blockKind) => (
-                        <button
-                          key={blockKind}
-                          type="button"
-                          className="btn btn-xs btn-outline"
-                          disabled={!canEditScenario}
-                          onClick={() => onAddLegacyNode(blockKind)}
-                          title={D0_SCENARIO_NODE_CATALOG[blockKind].label}
-                        >
-                          {D0_SCENARIO_NODE_CATALOG[blockKind].label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          ) : (
-            <p className="p-4 text-xs leading-relaxed text-base-content/50">
-              Во время выполнения сценария палитра скрыта. Кликните по узлу, чтобы увидеть значения
-              портов.
-            </p>
-          )}
-
-          {!isRuntime ? (
-            <div className="mt-auto border-t border-base-200 p-4">
-              <button
-                type="button"
-                className="btn btn-sm btn-outline btn-error w-full"
-                disabled={!canEditScenario}
-                onClick={onClearBoard}
-              >
-                Очистить ветку
-              </button>
-            </div>
-          ) : null}
-        </div>
+        <BoardNodePalettePanel
+          isRuntime={isRuntime}
+          canEditScenario={canEditScenario}
+          legacyPalette={legacyPalette}
+          onAddPaletteNode={onAddPaletteNode}
+          onAddLegacyNode={onAddLegacyNode}
+          onClearBoard={onClearBoard}
+        />
       )}
 
       {showRuntimeOutputs ? (

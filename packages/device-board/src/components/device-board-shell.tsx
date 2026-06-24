@@ -1660,7 +1660,10 @@ const DeviceBoardShellInner: React.FC<{
             activeFunctionId={graph.activeFunctionId}
             activeFunctionDraftIndex={graph.activeFunctionDraftIndex}
             onSelectFunction={handleUserFunctionListClick}
-            onCreateFunction={graph.createUserFunction}
+            onCreateFunction={() => {
+              clearSelection();
+              graph.createUserFunction();
+            }}
             onRenameFunction={handleRenameFunction}
             onRemoveFunction={handleRemoveUserFunction}
           />
