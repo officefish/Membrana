@@ -476,6 +476,7 @@ export {
 } from './pure-node-graph.js';
 export { validatePreRun, isPreRunValid } from './validate-pre-run.js';
 export type { PreRunValidationIssue, PreRunValidationInput } from './validate-pre-run.js';
+export { collectValidationErrorNodeIds } from '../runtime/validators/validation-bridge.js';
 export {
   DEVICE_OFFLINE_RUN_HINT,
   resolveRunDisabledReason,

@@ -71,3 +71,13 @@ export {
 } from './inspect-node-ports.js';
 export { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
 export { resolveNodeOutput } from './resolve-input.js';
+export {
+  validateUserCaseDocument,
+  validateUserCaseStructure,
+  validateBlockLinks,
+  validateBlockParameters,
+  collectValidationErrorNodeIds,
+  userCaseErrorsToPreRunIssues,
+  type UserCaseValidationError,
+  type UserCaseValidationResult,
+} from './validators/index.js';

@@ -6914,6 +6914,92 @@
       "notes": "Lead: Vesnin. USERCASE_MVP_V2_GROUPS_ASYNC_LGTM.md",
       "leadPersona": "vesnin",
       "supportPersonas": []
+    },
+    {
+      "id": "device-board-phase-3",
+      "title": "Device-board Phase 3: catalog service, validators, competition",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Consilium phase-3-architecture-decisions-2026-06-24. After Phase 2b LGTM.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-p3-a1-usercase-catalog-service",
+      "title": "DB-P3-A1: migrate usercase-catalog-service package",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Ozhegov. Move ClientUserCaseCatalogService from apps/client to packages/services/usercase-catalog.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-p3-a2-runtime-validators",
+      "title": "DB-P3-A2: runtime validators + live UI",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Dynin + Rodchenko. Pure validators in device-board/runtime/validators; verify-usercase-prerun + canvas hints.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-p3-a3-competition-restrictions",
+      "title": "DB-P3-A3: competition executionPolicy + restrictions",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-p3-a2-runtime-validators"
+      ],
+      "notes": "Lead: Kuryokhin + Rodchenko. meta.executionPolicy, background-media templates, readOnly + timeout UI.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
     }
   ]
 }

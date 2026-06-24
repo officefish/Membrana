@@ -3,7 +3,7 @@ import type { ModuleProps } from '@membrana/agenda';
 
 import {
   ClientUserCaseCatalogService,
-} from './user-case-catalog-service.js';
+} from '@membrana/usercase-catalog-service';
 import {
   normalizeDeviceBoardModuleConfig,
   type DeviceBoardModuleConfig,

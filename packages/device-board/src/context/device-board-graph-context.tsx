@@ -1598,11 +1598,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioOnStopEdges,
       scenarioOnDisconnectNodes,
       scenarioOnDisconnectEdges,
+      scenarioOnDisconnectEdges,
       scenarioFunctions: hydratedFunctionInputs(buildHydratedSnapshot()),
+      variables,
     });
     setValidationIssues(issues);
     return issues;
-  }, [buildHydratedSnapshot, deviceKind, scenarioAlarmEdges, scenarioAlarmNodes, scenarioInitialEdges, scenarioInitialNodes, scenarioOnConnectEdges, scenarioOnConnectNodes, scenarioMainEdges, scenarioMainNodes, scenarioOnDisconnectEdges, scenarioOnDisconnectNodes, scenarioOnStopEdges, scenarioOnStopNodes, signalEdges, signalNodes]);
+  }, [buildHydratedSnapshot, deviceKind, scenarioAlarmEdges, scenarioAlarmNodes, scenarioInitialEdges, scenarioInitialNodes, scenarioOnConnectEdges, scenarioOnConnectNodes, scenarioMainEdges, scenarioMainNodes, scenarioOnDisconnectEdges, scenarioOnDisconnectNodes, scenarioOnStopEdges, scenarioOnStopNodes, signalEdges, signalNodes, variables]);
 
   const refreshValidation = useCallback((): readonly PreRunValidationIssue[] => {
     return runValidation();

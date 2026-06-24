@@ -6,7 +6,7 @@ import {
   ClientUserCaseCatalogService,
   getDefaultClientUserCaseCatalogService,
   type UserCaseCatalogCard,
-} from './user-case-catalog-service.js';
+} from '@membrana/usercase-catalog-service';
 
 export interface UseUserCaseCatalogResult {
   readonly cards: readonly UserCaseCatalogCard[];

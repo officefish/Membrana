@@ -1121,6 +1121,65 @@ Pure: `collapse-to-function.ts`, `function-pin-ops.ts`.
 **Runtime bridge:** `function-input` / `function-output` — pass-through в `exec-subgraph`
 (entry exec-in → first inner node; `function-output` → return).
 
+#### 18.3.1 Executor & successor pattern (Phase 2b audit)
+
+Три модуля отвечают за **разные слои** user-function; дублирования логики нет
+(аудит 2026-06-21 NB1, повтор 2026-06-24 Phase 2b — LGTM, refactor не требуется).
+
+| Модуль | Слой | Когда | Вход | Выход |
+| ------ | ---- | ----- | ---- | ----- |
+| `graph/function-pin-ops.ts` | **Editor / graph** | collapse, hydrate, sidebar pin CRUD | React Flow nodes, `ScenarioFunctionPin[]` | Обновлённые nodes/edges, pin proposals |
+| `runtime/function-call-resolve.ts` | **Runtime / data** | `executeScenarioBlock` на subgraph-блоке | Parent-branch subgraph + block id | `ResolveInputContext` с `resolveFunctionInputPin` |
+| `runtime/exec-successor.ts` | **Runtime / exec flow** | `runSubgraphOnce`, `runEventBranchFromNode` | `ScenarioSubgraph`, node id, sourceHandle | Следующий node id или `null` |
+
+**Exec traversal (`exec-successor.ts`):**
+
+- Единая точка поиска следующей exec-ноды: `findExecSuccessor(subgraph, nodeId, sourceHandle?)`.
+- Стандартный случай: `exec-out` → `exec-in` (или именованный exec-out ветвления, напр. `exec-false-out`).
+- Граница collapsed function: ребро в `function-output` с `sourceHandle === targetHandle`
+  (именованный exec-пин на выходе функции); `exec-subgraph` фиксирует `execOutHandle` при return.
+- Pure-узлы пропускаются через `isExecTransparentPureNode` + тот же `findExecSuccessor`.
+- **Не** зависит от `block-executor` (нет циклов); потребители: `exec-subgraph.ts`, `event-dispatch.ts`.
+
+**Data bridge (`function-call-resolve.ts`):**
+
+- При вызове subgraph-блока `block-executor` оборачивает `resolveContext` через
+  `augmentResolveContextForFunctionCall({ parentSubgraph, blockNodeId, variables, baseContext })`.
+- Добавляет `resolveFunctionInputPin(pinId)`: ищет **data**-ребро parent → block по `targetHandle`,
+  делегирует значение в `resolveNodeOutput` на источнике в parent-ветке.
+- `function-input` внутри тела функции читает pin через `resolveInput` → `context.resolveFunctionInputPin`
+  (`resolve-input.ts`, `nodeKind === 'function-input'`).
+- Конкурентные сценарии (L9–L12): parent `Event.server` → block value pin; pure policy-build → downstream gate.
+
+**Граница editor vs runtime (`function-pin-ops.ts`):**
+
+- Определяет и синхронизирует метаданные pins (id, kind, socketType) на canvas.
+- Имена handle (`exec-in`, `policy`, …) совпадают со строками в runtime, но **логика не общая**:
+  editor мутирует граф; runtime только читает сериализованный `ScenarioSubgraph`.
+
+```
+function-pin-ops     → graph-context, hydrate, serialize, collapse
+function-call-resolve → block-executor (subgraph call) → resolve-input
+exec-successor       → exec-subgraph, event-dispatch
+block-executor       → executeScenarioBlock (узловой dispatch; вызывает runSubgraphOnce)
+```
+
+Подробная матрица overlap: [`docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md`](../../docs/discussions/db-pcd-nb1-runtime-dry-audit-2026-06-21.md).
+
+#### 18.3.2 Validation layer (Phase 3 A2)
+
+Чистые валидаторы в `runtime/validators/` — единый контракт для CI (`verify-usercase-prerun.mjs`) и live-редактора:
+
+| Модуль | Роль |
+| ------ | ---- |
+| `validate-user-case-structure.ts` | variables, functions, comment groups, entry |
+| `validate-block-links.ts` | missing source/target, data handles |
+| `validate-block-parameters.ts` | policy bounds (`recordingPolicy`, расширяемо) |
+| `validate-user-case-document.ts` | orchestrator |
+| `validation-bridge.ts` | `PreRunValidationIssue` ↔ canvas `blockId` highlight |
+
+Контракт ошибки: `{ code, message, blockId?, pinId?, path?, severity? }`. UI: `BoardValidationBanner` + класс `board-node--validation-error` на canvas. Graph `validatePreRun` мержит document-валидаторы (без дублирования edge-missing).
+
 ### 18.4 Comment groups (G1)
 
 ```ts
@@ -1158,6 +1217,7 @@ interface ScenarioCommentGroup {
 | Слой | Путь |
 | ---- | ---- |
 | Graph ops | `marquee-selection.ts`, `collapse-to-function.ts`, `comment-group.ts`, `align-nodes.ts`, `function-pin-ops.ts` |
+| Runtime exec/data | `block-executor.ts`, `exec-subgraph.ts`, `exec-successor.ts`, `function-call-resolve.ts`, `event-dispatch.ts`, `resolve-input.ts` |
 | UI | `board-marquee-overlay.tsx`, `board-selection-action-modal.tsx`, `board-group-node.tsx`, `board-function-list.tsx`, `board-function-pin-inspector.tsx` |
 | Context | `device-board-graph-context.tsx` — multi-function state, collapse, pin CRUD sync IO nodes |
 | Shell | `device-board-shell.tsx` — marquee handlers, runtime gating, branch exec layout |
@@ -1224,7 +1284,7 @@ Yarn: `yarn usercase:verify-layout <id>` · реализация: `usercase-layo
 | Слой | Путь | Ответственность |
 | ---- | ---- | --------------- |
 | Bundled index | `packages/device-board/src/catalog/` | `UserCaseCatalogService`, embedded loaders |
-| Client entitlement | `apps/client/.../user-case-catalog-service.ts` | tariff SKU stub → `bundled` / `entitled` / `locked` |
+| Client entitlement | `@membrana/usercase-catalog-service` | tariff SKU stub → `bundled` / `entitled` / `locked` |
 | Settings gate (G1) | `UserCaseSettingsPanel`, `readDeviceBoardUserCaseGate()` | toggle «Показывать каталог на доске» |
 
 Tariff lookup **не** в `@membrana/core` — только client + будущий cabinet SKU hook.

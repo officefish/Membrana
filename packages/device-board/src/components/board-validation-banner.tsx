@@ -29,7 +29,12 @@ export const BoardValidationBanner: React.FC<BoardValidationBannerProps> = ({
       <p className="text-xs font-semibold text-warning">Pre-run validation</p>
       <ul className="mt-1 list-inside list-disc text-xs text-base-content/80">
         {issues.map((issue) => (
-          <li key={`${issue.code}-${issue.path ?? issue.message}`}>{issue.message}</li>
+          <li
+            key={`${issue.code}-${issue.path ?? issue.message}`}
+            title={issue.path ?? undefined}
+          >
+            {issue.message}
+          </li>
         ))}
       </ul>
     </div>

@@ -60,7 +60,7 @@ import { BoardRuntimeStatus } from './board-runtime-status.js';
 import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
-import { referenceTypeLabel, isBoardGroupNode } from '../graph/index.js';
+import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds } from '../graph/index.js';
 import type { BoardGroupNodeData } from '../graph/index.js';
 import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
 import {
@@ -731,6 +731,11 @@ const DeviceBoardShellInner: React.FC<{
       onConnect: graph.onScenarioFunctionConnect,
     };
   }, [scenarioBranch, graph]);
+
+  const validationErrorNodeIds = useMemo(() => {
+    const edges = isSignal ? graph.signalEdges : scenarioCanvas.edges;
+    return collectValidationErrorNodeIds(graph.validationIssues, edges);
+  }, [graph.validationIssues, graph.signalEdges, isSignal, scenarioCanvas.edges]);
 
   const collectCanvasSelectedIds = useCallback((): readonly string[] => {
     const fromCanvas = scenarioCanvas.nodes.filter((node) => node.selected).map((node) => node.id);
@@ -1577,6 +1582,7 @@ const DeviceBoardShellInner: React.FC<{
             onPaneContextMenu={handlePaneContextMenu}
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
+            validationErrorNodeIds={validationErrorNodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
             readOnly={isCanvasReadOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}

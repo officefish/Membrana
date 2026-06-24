@@ -20,7 +20,7 @@ import {
   entitlementBadgeClass,
   entitlementBadgeLabel,
 } from './user-case-settings-gate.js';
-import type { UserCaseCatalogCard } from './user-case-catalog-service.js';
+import type { UserCaseCatalogCard } from '@membrana/usercase-catalog-service';
 
 type LauncherSelection =
   | { readonly kind: 'user-edit'; readonly workspaceId: string; readonly title: string }

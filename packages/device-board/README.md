@@ -47,7 +47,7 @@
 | Apply-all | `src/graph/apply-user-case.ts` |
 | Layout canon | `src/graph/usercase-layout-canon.ts` |
 | Board picker (legacy) | `src/components/board-usercase-picker-modal.tsx` |
-| Client entitlement | `apps/client/src/modules/device-board/user-case-catalog-service.ts` |
+| Client entitlement | `@membrana/usercase-catalog-service` |
 
 ```bash
 yarn usercase:build usercase-mvp-microphone

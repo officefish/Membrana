@@ -120,6 +120,8 @@ export interface BoardFlowCanvasProps {
   readonly pulseEdges?: boolean;
   /** Подсветка exec-цепочки к активному runtime-узлу (F5). */
   readonly runtimeHighlightNodeIds?: ReadonlySet<string>;
+  /** Подсветка узлов с ошибками pre-run / UserCase validation (Phase 3 A2). */
+  readonly validationErrorNodeIds?: ReadonlySet<string>;
   readonly highlightExecEdgeIds?: ReadonlySet<string>;
   /** Запрет редактирования графа (drag, connect, delete) при runtime. */
   readonly readOnly?: boolean;
@@ -152,6 +154,7 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
   ariaLabel,
   pulseEdges = false,
   runtimeHighlightNodeIds,
+  validationErrorNodeIds,
   highlightExecEdgeIds,
   readOnly = false,
   onViewportApiReady,
@@ -175,19 +178,28 @@ const BoardFlowCanvasInner: React.FC<BoardFlowCanvasProps> = ({
 
   const displayNodes = useMemo(() => {
     const base = layoutGhostNodes.length === 0 ? nodes : [...nodes, ...layoutGhostNodes];
-    if (runtimeHighlightNodeIds === undefined || runtimeHighlightNodeIds.size === 0) {
+    const hasRuntime = runtimeHighlightNodeIds !== undefined && runtimeHighlightNodeIds.size > 0;
+    const hasValidation = validationErrorNodeIds !== undefined && validationErrorNodeIds.size > 0;
+    if (!hasRuntime && !hasValidation) {
       return base;
     }
     return base.map((node) => {
-      if (!runtimeHighlightNodeIds.has(node.id)) {
+      const extraClasses: string[] = [];
+      if (runtimeHighlightNodeIds?.has(node.id) === true) {
+        extraClasses.push('board-node--runtime-exec-active');
+      }
+      if (validationErrorNodeIds?.has(node.id) === true) {
+        extraClasses.push('board-node--validation-error');
+      }
+      if (extraClasses.length === 0) {
         return node;
       }
       return {
         ...node,
-        className: [node.className, 'board-node--runtime-exec-active'].filter(Boolean).join(' '),
+        className: [node.className, ...extraClasses].filter(Boolean).join(' '),
       };
     });
-  }, [layoutGhostNodes, nodes, runtimeHighlightNodeIds]);
+  }, [layoutGhostNodes, nodes, runtimeHighlightNodeIds, validationErrorNodeIds]);
 
   const ensureGraphVisible = useCallback(() => {
     const visibleNodes = reactFlow

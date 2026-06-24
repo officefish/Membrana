@@ -1,6 +1,7 @@
 import {
   parseDeviceScenarioDocument,
   type DeviceScenarioDocument,
+  type ScenarioVariable,
   type ValidationError,
   MAX_SCENARIO_FUNCTION_PINS_PER_SIDE,
   isScenarioFunctionPinCountValid,
@@ -22,6 +23,8 @@ import { isValidBoardEdge } from './connection-validation.js';
 import { buildDeviceScenarioDocument } from './build-device-scenario.js';
 import { validateFunctionDepth } from './validate-function-depth.js';
 import { findPureExecEdgeHints } from './validate-pure-exec.js';
+import { validateUserCaseDocument } from '../runtime/validators/validate-user-case-document.js';
+import { mergePreRunWithUserCaseDocumentIssues } from '../runtime/validators/validation-bridge.js';
 
 export interface PreRunValidationIssue {
   readonly code: string;
@@ -49,6 +52,8 @@ export interface PreRunValidationInput {
   readonly scenarioOnDisconnectNodes: readonly Node[];
   readonly scenarioOnDisconnectEdges: readonly Edge[];
   readonly scenarioFunctions: readonly SerializeScenarioFunctionInput[];
+  /** Document-scope variables (required for variable-get/set validation). */
+  readonly variables?: readonly ScenarioVariable[];
 }
 
 function pushEdgeIssues(
@@ -242,6 +247,7 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     scenarioOnDisconnectNodes: input.scenarioOnDisconnectNodes,
     scenarioOnDisconnectEdges: input.scenarioOnDisconnectEdges,
     scenarioFunctions: input.scenarioFunctions,
+    variables: input.variables,
   });
 
   for (const fn of input.scenarioFunctions) {
@@ -272,7 +278,11 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     pushSchemaIssue(issues, parsed.error);
   }
 
-  return issues;
+  const documentErrors = validateUserCaseDocument(document).errors.filter(
+    (error) => error.code !== 'block-missing-source' && error.code !== 'block-missing-target',
+  );
+
+  return mergePreRunWithUserCaseDocumentIssues(issues, documentErrors);
 }
 
 export function isPreRunValid(issues: readonly PreRunValidationIssue[]): boolean {

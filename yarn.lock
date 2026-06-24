@@ -2340,6 +2340,7 @@ __metadata:
     "@membrana/telemetry-journal-service": "npm:*"
     "@membrana/telemetry-service": "npm:*"
     "@membrana/trends-detector-service": "npm:*"
+    "@membrana/usercase-catalog-service": "npm:*"
     "@playwright/test": "npm:^1.52.0"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
@@ -2679,6 +2680,28 @@ __metadata:
     vite: "npm:^5.3.0"
     vite-plugin-dts: "npm:^3.9.1"
     vitest: "npm:^1.4.0"
+  languageName: unknown
+  linkType: soft
+
+"@membrana/usercase-catalog-service@npm:*, @membrana/usercase-catalog-service@workspace:packages/services/usercase-catalog":
+  version: 0.0.0-use.local
+  resolution: "@membrana/usercase-catalog-service@workspace:packages/services/usercase-catalog"
+  dependencies:
+    "@membrana/core": "npm:*"
+    "@membrana/device-board": "npm:*"
+    "@types/react": "npm:^18.3.3"
+    "@types/react-dom": "npm:^18.3.0"
+    "@vitejs/plugin-react": "npm:^4.3.1"
+    eslint: "npm:^8.57.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vite: "npm:^5.3.0"
+    vite-plugin-dts: "npm:^3.9.1"
+    vitest: "npm:^1.4.0"
+  peerDependencies:
+    react: ^18.0.0
   languageName: unknown
   linkType: soft
 
