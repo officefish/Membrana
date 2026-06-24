@@ -7008,7 +7008,7 @@
       "githubIssue": 161,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "createdAt": "2026-06-24",
@@ -7019,7 +7019,10 @@
         "dynin",
         "musician",
         "rodchenko"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Merge train done: PR #159 + #160 merged (6cb04b7). CI green. Issue #161 closed. C3 docs in CONCEPT, catalog, user-functions.mdx. C4 P2 refactor deferred to backlog Issues.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-ufc-c0-consilium",
@@ -7028,7 +7031,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-user-function-closeout",
@@ -7039,7 +7042,9 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Consilium: docs/seanses/device-board-user-function-closeout-2026-06-24.md"
     },
     {
       "id": "db-ufc-c1-merge-159",
@@ -7048,7 +7053,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-user-function-closeout",
@@ -7058,7 +7063,9 @@
       ],
       "notes": "CI green + LGTM; merge fix/user-function-id-collision",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #159 merged 8a1a104"
     },
     {
       "id": "db-ufc-c2-merge-160",
@@ -7067,7 +7074,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-user-function-closeout",
@@ -7079,7 +7086,9 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "PR #160 merged 6cb04b7, CI green"
     },
     {
       "id": "db-ufc-c3-docs-sync",
@@ -7088,7 +7097,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-user-function-closeout",
@@ -7100,7 +7109,9 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "CONCEPT, catalog, user-functions.mdx in #160"
     },
     {
       "id": "db-ufc-c4-refactor-backlog",
@@ -7109,7 +7120,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-user-function-closeout",
@@ -7119,7 +7130,9 @@
       ],
       "notes": "Only P0 before merge; P2 → separate Issues",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "No P0/P1 pre-merge; P2 deferred to separate Issues"
     },
     {
       "id": "db-ufc-c5-archive",
@@ -7128,7 +7141,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-user-function-closeout",
@@ -7139,7 +7152,9 @@
       ],
       "notes": "yarn task:archive device-board-user-function-closeout; close GitHub Issue",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Epic archived, Issue #161 closed"
     }
   ]
 }
