@@ -39,6 +39,7 @@ export class DevicesController {
       userStorageQuotaBytes: membrane.userStorageQuotaBytes,
       bufferQuotaBytes: membrane.bufferQuotaBytes,
       datasetCatalogId: membrane.datasetCatalogId,
+      maxUserWorkspaces: membrane.maxUserWorkspaces,
     };
   }
 

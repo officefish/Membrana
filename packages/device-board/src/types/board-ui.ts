@@ -39,6 +39,11 @@ export const BOARD_LEFT_SIDEBAR_WIDTH_CLASS = 'w-[clamp(14rem,18vw,20rem)]' as c
 /** Отступ шапки от левого края до зоны контента (после сайдбара). */
 export const BOARD_HEADER_CONTENT_OFFSET_CLASS = 'pl-[clamp(14rem,18vw,20rem)]' as const;
 
+/** Класс отступа шапки с учётом свёрнутого левого сайдбара. */
+export function boardHeaderContentOffsetClass(leftSidebarCollapsed: boolean): string {
+  return leftSidebarCollapsed ? '' : BOARD_HEADER_CONTENT_OFFSET_CLASS;
+}
+
 /**
  * Презентационные лейблы веток (MP7b RT6). Сериализованный ключ `initial`
  * не переименовывается в схеме документа — здесь только UI-лейбл «On start».
@@ -136,6 +141,7 @@ export const SCENARIO_V04_PALETTE_SECTIONS: readonly V04PaletteSection[] = [
   paletteSection('Устройство и управление', [
     'device-global',
     'stop-runtime',
+    'pause-runtime',
     'print',
     'is-valid',
     'get-microphone',

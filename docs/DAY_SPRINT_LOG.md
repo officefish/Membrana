@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-23 — `membrana-studio-ms0-ms4-day-sprint` — **CLOSED**
+
+- **MS0–MS4:** verify+archive; `studio:build` + `studio:package` OK; no `apps/client` changes
+- **Closure:** [`day-sprint/membrana-studio-ms0-ms4-2026-06-23/CLOSURE.md`](./day-sprint/membrana-studio-ms0-ms4-2026-06-23/CLOSURE.md)
+
+---
+
+## 2026-06-23 — `membrana-studio-ms0-ms4-day-sprint` — ~~OPEN~~
+
+- **Scope:** MS0–MS4 verify/archive; **MS5 deferred**; **no `apps/client`**
+- **Open brief:** [`day-sprint/membrana-studio-ms0-ms4-2026-06-23/OPEN.md`](./day-sprint/membrana-studio-ms0-ms4-2026-06-23/OPEN.md)
+- **Prompt:** [`prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](./prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md)
+
+---
+
+## 2026-06-23 — `server-tariff-enforcement-v1` — **CLOSED**
+
+- Prod deploy + smoke; STE v1 shipped
+- **Closure:** [`day-sprint/server-tariff-enforcement-v1-2026-06-23/CLOSURE.md`](./day-sprint/server-tariff-enforcement-v1-2026-06-23/CLOSURE.md)
+
+---
+
 ## 2026-06-22 — `device-board-doc-v04-sprint-2026-06-22` — **CLOSED**
 
 - **DV1–DV6:** 43 Mintlify pages, full V04 palette reference

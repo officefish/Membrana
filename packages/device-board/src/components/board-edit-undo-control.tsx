@@ -20,6 +20,8 @@ export interface BoardEditUndoControlProps {
   readonly canUndo: boolean;
   readonly lastActionLabel: string | null;
   readonly onUndo: () => void;
+  /** Жёлтая подсказка рядом с undo (например «в буфере N узлов»). */
+  readonly clipboardHint?: string | null;
 }
 
 /**
@@ -30,6 +32,7 @@ export const BoardEditUndoControl: React.FC<BoardEditUndoControlProps> = ({
   canUndo,
   lastActionLabel,
   onUndo,
+  clipboardHint = null,
 }) => {
   const title = canUndo
     ? lastActionLabel !== null
@@ -38,17 +41,22 @@ export const BoardEditUndoControl: React.FC<BoardEditUndoControlProps> = ({
     : 'Нет шага для отмены';
 
   return (
-    <button
-      type="button"
-      className={`btn btn-sm btn-square border-base-300 bg-base-100 shadow-md ${
-        canUndo ? 'btn-ghost hover:btn-primary' : 'btn-disabled opacity-40'
-      }`}
-      disabled={!canUndo}
-      onClick={onUndo}
-      title={title}
-      aria-label={title}
-    >
-      <UndoIcon />
-    </button>
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        className={`btn btn-sm btn-square border-base-300 bg-base-100 shadow-md ${
+          canUndo ? 'btn-ghost hover:btn-primary' : 'btn-disabled opacity-40'
+        }`}
+        disabled={!canUndo}
+        onClick={onUndo}
+        title={title}
+        aria-label={title}
+      >
+        <UndoIcon />
+      </button>
+      {clipboardHint !== null ? (
+        <span className="text-[10px] font-medium leading-tight text-warning">{clipboardHint}</span>
+      ) : null}
+    </div>
   );
 };

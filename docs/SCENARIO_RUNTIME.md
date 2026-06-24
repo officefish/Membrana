@@ -163,6 +163,21 @@ Alarm loop использует отдельную паузу `ALARM_LOOP_PAUSE_
 
 Переход edit → run: `ScenarioRuntime.start()` после pre-run validation. Stop — `stop()` или системные триггеры (`onStop`, disconnect).
 
+### Pause / Resume (v0.7, DBP0–DBP2)
+
+| Механизм | Семантика |
+|----------|-----------|
+| **Stop** | `isRunning → false`, ветка `onStop`, teardown |
+| **Pause** | `isPaused: true`, `isRunning` остаётся `true`, `onStop` **не** вызывается |
+| **Resume** | снимает паузу, exec продолжается с точки ожидания |
+| `loopTickPauseMs` | планировщик между тиками лупа — **не** пользовательская пауза |
+
+**UI:** кнопки Pause / Resume в `device-board-shell` (рядом с Run/Stop).
+
+**Граф:** узел `pause-runtime` (exec-in → exec-out) — вызывает `pause()` и блокирует цепочку до Resume.
+
+Аудио-поток при паузе **не** останавливается; замораживается только scenario graph.
+
 **User functions:** runtime входит в подграф через `exec-subgraph` (см. `function-input` / `function-output` в графе). Навигация между функциями в UI **не** перезагружает runtime — только editor state (`keep-dirty` drafts).
 
 Документация оператора: Mintlify [Edit & navigation](../apps/docs/device-board/editor/edit-and-navigation.mdx) · канон [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §21.
@@ -178,4 +193,4 @@ Alarm loop использует отдельную паузу `ALARM_LOOP_PAUSE_
 | `block-executor.ts` | семантика блоков, `loop-repeat` |
 | `host.ts` | контракт портов |
 | `runtime-timing.ts` | паузы, yield, константы |
-| `event-node.ts` / `loop-repeat-node.ts` | onTick и ∞ в графе |
+| `pause-runtime-node.ts` | узел PauseRuntime в графе (DBP2) |

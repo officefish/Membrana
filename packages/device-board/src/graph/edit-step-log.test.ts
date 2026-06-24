@@ -3,6 +3,7 @@ import type { NodeChange } from '@xyflow/react';
 
 import {
   boardEditActionLabel,
+  logBoardClipboardStep,
   logBoardEditStep,
   planNodeRemovalUndo,
   resolveBranchNavigationUndoClearReason,
@@ -59,6 +60,20 @@ describe('edit-step-log', () => {
     expect(spy).toHaveBeenLastCalledWith(
       '[INFO] device-board edit: clear',
       expect.objectContaining({ label: 'Сброс шага отмены', reason: 'switch-function' }),
+    );
+
+    spy.mockRestore();
+  });
+
+  it('logBoardClipboardStep writes clipboard events when enabled', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    logBoardClipboardStep(false, 'copy-ok', { nodeCount: 2 });
+    expect(spy).not.toHaveBeenCalled();
+
+    logBoardClipboardStep(true, 'copy-ok', { nodeCount: 2 });
+    expect(spy).toHaveBeenCalledWith(
+      '[INFO] device-board clipboard: copy-ok',
+      expect.objectContaining({ nodeCount: 2 }),
     );
 
     spy.mockRestore();

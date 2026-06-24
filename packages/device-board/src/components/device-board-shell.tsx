@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ScenarioCommentGroupBranch } from '@membrana/core';
 import type {
+  DeviceScenarioDocument,
   ScenarioNodeKind,
   ScenarioCollectorConfig,
   ScenarioFftTrendsPolicy,
@@ -31,7 +32,7 @@ import { suggestPaletteNodesForOutgoingConnection } from '../graph/index.js';
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
-  BOARD_HEADER_CONTENT_OFFSET_CLASS,
+  boardHeaderContentOffsetClass,
   SIGNAL_LAYER_TITLE,
   isSignalAdvancedEnabled,
   isScenarioBranchForFunctionInsert,
@@ -44,16 +45,19 @@ import {
   type BoardMarqueeSelectionPayload,
 } from './board-flow-canvas.js';
 import { BoardConnectionSuggestModal } from './board-connection-suggest-modal.js';
+import {
+  BoardClipboardPaneModal,
+  type BoardClipboardPaneModalMode,
+} from './board-clipboard-pane-modal.js';
 import { BoardSelectionActionModal } from './board-selection-action-modal.js';
 import { BoardFunctionActionModal } from './board-function-action-modal.js';
 import { BoardBranchImportModal } from './board-branch-import-modal.js';
-import { BoardUserCasePickerModal } from './board-usercase-picker-modal.js';
-import type { DeviceBoardUserCasePickerConfig } from '../types/user-case-picker.js';
 import { BoardLeftSidebar } from './board-left-sidebar.js';
 import { BoardRightSidebar } from './board-right-sidebar.js';
 import type { FunctionPinEditSide } from './board-function-pin-inspector.js';
 import { DeleteFunctionModal } from './board-variable-modals.js';
 import { BoardRuntimeStatus } from './board-runtime-status.js';
+import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
 import { referenceTypeLabel, isBoardGroupNode } from '../graph/index.js';
@@ -71,8 +75,15 @@ import {
 import type { LoopExecLayoutBranch } from '../graph/layout-exec-chain.js';
 import { BoardExecLayoutPreviewModal } from './board-exec-layout-preview-modal.js';
 import type { BoardAlignMode } from '../graph/align-nodes.js';
-import { isSystemNode } from '../graph/event-node.js';
+import {
+  isCollapseToFunctionEnabled,
+  isCollapseToGroupEnabled,
+  pickCollapseEligibleNodeIds,
+  isCollapseToFunctionEligibleNode,
+  isCollapseToGroupEligibleNode,
+} from '../graph/collapse-selection-eligibility.js';
 import { computeRuntimeExecHighlight } from '../graph/runtime-exec-highlight.js';
+import { logBoardClipboardStep } from '../graph/edit-step-log.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
@@ -83,8 +94,8 @@ export interface DeviceBoardShellProps {
   readonly showRunControls?: boolean;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
   readonly deviceLive?: boolean;
-  /** UserCase catalog picker (U9 P1); undefined — кнопка скрыта. */
-  readonly userCasePicker?: DeviceBoardUserCasePickerConfig;
+  /** Загрузка документа каталога (U10 W2-module: выбор в launcher модуля). */
+  readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -92,8 +103,7 @@ const DeviceBoardShellInner: React.FC<{
   exitLabel: string;
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
-  userCasePicker?: DeviceBoardUserCasePickerConfig;
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, userCasePicker }) => {
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -123,17 +133,25 @@ const DeviceBoardShellInner: React.FC<{
   const [microphoneOptions, setMicrophoneOptions] = useState<readonly ScenarioMicrophoneOption[]>([]);
   const [microphoneOptionsLoading, setMicrophoneOptionsLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
-  const [userCasePickerOpen, setUserCasePickerOpen] = useState(false);
-  const [userCaseAppliedMessage, setUserCaseAppliedMessage] = useState<string | null>(null);
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
+  const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false);
   const [traceCopyStatus, setTraceCopyStatus] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const viewportApiRef = useRef<BoardFlowViewportApi | null>(null);
+  const lastCanvasPointerRef = useRef<{ readonly clientX: number; readonly clientY: number } | null>(
+    null,
+  );
   const [connectionSuggestOpen, setConnectionSuggestOpen] = useState(false);
   const [connectionSuggestItems, setConnectionSuggestItems] = useState<
     readonly PaletteConnectionSuggestion[]
   >([]);
   const pendingConnectionDropRef = useRef<BoardConnectionDropOnPanePayload | null>(null);
   const [selectionActionOpen, setSelectionActionOpen] = useState(false);
+  const [clipboardPaneModal, setClipboardPaneModal] = useState<BoardClipboardPaneModalMode | null>(
+    null,
+  );
+  const [clipboardHint, setClipboardHint] = useState<string | null>(null);
+  const clipboardHintTimerRef = useRef<number | null>(null);
   const [execLayoutPreview, setExecLayoutPreview] = useState<
     Map<string, { readonly x: number; readonly y: number }> | null
   >(null);
@@ -349,6 +367,9 @@ const DeviceBoardShellInner: React.FC<{
 
   const handleSelectBranch = useCallback(
     (branch: ScenarioBranchTab) => {
+      setMarqueeSelectedIds([]);
+      setSelectionActionOpen(false);
+      setClipboardPaneModal(null);
       graph.setScenarioBranch(branch);
       setActiveLayer('scenario');
       clearSelection();
@@ -366,10 +387,6 @@ const DeviceBoardShellInner: React.FC<{
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
   const isRuntime = graph.runtimeState.isRunning;
-
-  const handlePaneClick = useCallback(() => {
-    clearSelection();
-  }, [clearSelection]);
 
   const handleUserFunctionListClick = useCallback(
     (functionId: string) => {
@@ -581,9 +598,14 @@ const DeviceBoardShellInner: React.FC<{
   const syncLabel =
     graph.syncStatus === 'error' ? graph.syncError ?? 'Ошибка сохранения' : null;
 
-  const canSave = graph.isDirty && graph.syncStatus !== 'saving' && graph.syncStatus !== 'loading';
+  const canSave =
+    !graph.isSessionReadOnly &&
+    graph.isDirty &&
+    graph.syncStatus !== 'saving' &&
+    graph.syncStatus !== 'loading';
   const mode = graph.mode;
   const isSaving = graph.syncStatus === 'saving';
+  const isCanvasReadOnly = isRuntime || graph.isSessionReadOnly;
 
   const scenarioCanvas = useMemo(() => {
     if (scenarioBranch === 'initial') {
@@ -649,6 +671,63 @@ const DeviceBoardShellInner: React.FC<{
     };
   }, [scenarioBranch, graph]);
 
+  const collectCanvasSelectedIds = useCallback((): readonly string[] => {
+    const fromCanvas = scenarioCanvas.nodes.filter((node) => node.selected).map((node) => node.id);
+    return [
+      ...new Set([
+        ...fromCanvas,
+        ...marqueeSelectedIds,
+        ...(selectedNodeId !== null ? [selectedNodeId] : []),
+      ]),
+    ];
+  }, [marqueeSelectedIds, scenarioCanvas.nodes, selectedNodeId]);
+
+  const handlePaneClick = useCallback((): boolean => {
+    setClipboardPaneModal(null);
+    setSelectionActionOpen(false);
+    setMarqueeSelectedIds([]);
+    clearSelection();
+    return false;
+  }, [clearSelection]);
+
+  const handlePaneContextMenu = useCallback(
+    (event: React.MouseEvent) => {
+      if (isSignal || isRuntime || graph.isSessionReadOnly) {
+        return;
+      }
+      lastCanvasPointerRef.current = { clientX: event.clientX, clientY: event.clientY };
+      const selectedIds = collectCanvasSelectedIds();
+      if (selectedIds.length >= 2) {
+        setClipboardPaneModal('selection');
+        logBoardClipboardStep(graph.showInfoLogs, 'pane-modal-open', {
+          mode: 'selection',
+          selectedCount: selectedIds.length,
+          branch: scenarioBranch,
+          trigger: 'contextmenu',
+        });
+        return;
+      }
+      if (graph.boardClipboardNodeCount > 0) {
+        setClipboardPaneModal('paste');
+        logBoardClipboardStep(graph.showInfoLogs, 'pane-modal-open', {
+          mode: 'paste',
+          clipboardCount: graph.boardClipboardNodeCount,
+          branch: scenarioBranch,
+          trigger: 'contextmenu',
+        });
+      }
+    },
+    [
+      collectCanvasSelectedIds,
+      graph.boardClipboardNodeCount,
+      graph.isSessionReadOnly,
+      graph.showInfoLogs,
+      isRuntime,
+      isSignal,
+      scenarioBranch,
+    ],
+  );
+
   const clearCanvasNodeSelection = useCallback(() => {
     if (isSignal) {
       return;
@@ -669,7 +748,6 @@ const DeviceBoardShellInner: React.FC<{
 
   const closeSelectionActionModal = useCallback(() => {
     setSelectionActionOpen(false);
-    setMarqueeSelectedIds([]);
   }, []);
 
   const handleMarqueeSelection = useCallback(
@@ -685,20 +763,44 @@ const DeviceBoardShellInner: React.FC<{
 
   const marqueeSelectionMeta = useMemo(() => {
     const selected = scenarioCanvas.nodes.filter((node) => marqueeSelectedIds.includes(node.id));
-    const hasSystem = selected.some((node) => isSystemNode(node));
+    const functionEligibleIds = pickCollapseEligibleNodeIds(
+      scenarioCanvas.nodes,
+      marqueeSelectedIds,
+      isCollapseToFunctionEligibleNode,
+    );
+    const groupEligibleIds = pickCollapseEligibleNodeIds(
+      scenarioCanvas.nodes,
+      marqueeSelectedIds,
+      isCollapseToGroupEligibleNode,
+    );
     const count = selected.length;
     const idSet = new Set(marqueeSelectedIds);
+    const collapseFunctionDisabled =
+      scenarioBranch === 'function' || !isCollapseToFunctionEnabled(scenarioCanvas.nodes, marqueeSelectedIds);
+    const collapseGroupDisabled = !isCollapseToGroupEnabled(scenarioCanvas.nodes, marqueeSelectedIds);
     return {
       count,
-      collapseFunctionDisabled: count < 2 || hasSystem,
-      collapseGroupDisabled: count < 2 || hasSystem,
+      functionEligibleIds,
+      groupEligibleIds,
+      collapseFunctionDisabled,
+      collapseGroupDisabled,
+      collapseFunctionDisabledReason:
+        scenarioBranch === 'function'
+          ? 'Только на ветках сценария (не в теле функции)'
+          : functionEligibleIds.length < 2
+            ? 'Нужно ≥2 обычных узла (системные Event/loop не считаются)'
+            : undefined,
+      collapseGroupDisabledReason:
+        groupEligibleIds.length < 2
+          ? 'Нужно ≥2 обычных узла вне группы (системные Event/loop не считаются)'
+          : undefined,
       execChainLayoutDisabled: !isExecChainLayoutEnabled(
         scenarioCanvas.nodes,
         scenarioCanvas.edges,
         idSet,
       ),
     };
-  }, [marqueeSelectedIds, scenarioCanvas.edges, scenarioCanvas.nodes]);
+  }, [marqueeSelectedIds, scenarioBranch, scenarioCanvas.edges, scenarioCanvas.nodes]);
 
   const applyAlignPositions = useCallback(
     (positions: Map<string, { readonly x: number; readonly y: number }>) => {
@@ -846,7 +948,10 @@ const DeviceBoardShellInner: React.FC<{
     if (isSignal || isRuntime) {
       return;
     }
-    const error = graph.collapseMarqueeToFunction(scenarioBranch, marqueeSelectedIds);
+    const error = graph.collapseMarqueeToFunction(
+      scenarioBranch,
+      marqueeSelectionMeta.functionEligibleIds,
+    );
     if (error !== null) {
       setImportError(error);
     }
@@ -856,7 +961,7 @@ const DeviceBoardShellInner: React.FC<{
     graph,
     isRuntime,
     isSignal,
-    marqueeSelectedIds,
+    marqueeSelectionMeta.functionEligibleIds,
     scenarioBranch,
   ]);
 
@@ -865,7 +970,10 @@ const DeviceBoardShellInner: React.FC<{
       return;
     }
     const branch: ScenarioCommentGroupBranch = isSignal ? 'signal' : scenarioBranch;
-    const result = graph.collapseMarqueeToCommentGroup(branch, marqueeSelectedIds);
+    const result = graph.collapseMarqueeToCommentGroup(
+      branch,
+      marqueeSelectionMeta.groupEligibleIds,
+    );
     if (result.error !== null) {
       setImportError(result.error);
       dismissSelectionAction();
@@ -882,7 +990,7 @@ const DeviceBoardShellInner: React.FC<{
     handleSelectionChange,
     isRuntime,
     isSignal,
-    marqueeSelectedIds,
+    marqueeSelectionMeta.groupEligibleIds,
     scenarioBranch,
   ]);
 
@@ -892,23 +1000,189 @@ const DeviceBoardShellInner: React.FC<{
     }
   }, [dismissSelectionAction, isRuntime, selectionActionOpen]);
 
+  const canUndoRef = useRef(graph.canUndoLastEdit);
+  canUndoRef.current = graph.canUndoLastEdit;
+  const undoLastEditRef = useRef(graph.undoLastEdit);
+  undoLastEditRef.current = graph.undoLastEdit;
+  const copyBoardSelectionRef = useRef(graph.copyBoardSelection);
+  copyBoardSelectionRef.current = graph.copyBoardSelection;
+  const pasteBoardSelectionRef = useRef(graph.pasteBoardSelection);
+  pasteBoardSelectionRef.current = graph.pasteBoardSelection;
+  const scenarioCanvasRef = useRef(scenarioCanvas);
+  scenarioCanvasRef.current = scenarioCanvas;
+  const marqueeSelectedIdsRef = useRef(marqueeSelectedIds);
+  marqueeSelectedIdsRef.current = marqueeSelectedIds;
+  const selectedNodeIdRef = useRef(selectedNodeId);
+  selectedNodeIdRef.current = selectedNodeId;
+
+  const flashClipboardHint = useCallback((count: number) => {
+    setClipboardHint(`в буфере ${count} узлов`);
+    if (clipboardHintTimerRef.current !== null) {
+      window.clearTimeout(clipboardHintTimerRef.current);
+    }
+    clipboardHintTimerRef.current = window.setTimeout(() => {
+      setClipboardHint(null);
+      clipboardHintTimerRef.current = null;
+    }, 5000);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (clipboardHintTimerRef.current !== null) {
+        window.clearTimeout(clipboardHintTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  const collectForcedSelectionIds = useCallback((): readonly string[] => {
+    const canvas = scenarioCanvasRef.current;
+    const fromCanvas = canvas.nodes.filter((node) => node.selected).map((node) => node.id);
+    return [
+      ...new Set([
+        ...fromCanvas,
+        ...marqueeSelectedIdsRef.current,
+        ...(selectedNodeIdRef.current !== null ? [selectedNodeIdRef.current] : []),
+      ]),
+    ];
+  }, []);
+
+  const performBoardCopy = useCallback((): number | null => {
+    const forcedIds = collectForcedSelectionIds();
+    if (forcedIds.length === 0) {
+      return null;
+    }
+    const canvas = scenarioCanvasRef.current;
+    const copiedCount = copyBoardSelectionRef.current({
+      forcedSelectedIds: forcedIds,
+      branchNodes: canvas.nodes,
+      branchEdges: canvas.edges,
+    });
+    if (copiedCount !== null) {
+      flashClipboardHint(copiedCount);
+    }
+    return copiedCount;
+  }, [collectForcedSelectionIds, flashClipboardHint]);
+
+  const performBoardPaste = useCallback((): boolean => {
+    const pointer = lastCanvasPointerRef.current;
+    const anchor =
+      pointer !== null
+        ? viewportApiRef.current?.clientToFlowPosition(pointer.clientX, pointer.clientY)
+        : viewportApiRef.current?.getCenterFlowPosition();
+    const pastedIds = pasteBoardSelectionRef.current(anchor);
+    if (pastedIds === null) {
+      return false;
+    }
+    if (pastedIds.length > 0) {
+      viewportApiRef.current?.focusNodeIds(pastedIds);
+    }
+    return true;
+  }, []);
+
+  const closeClipboardPaneModal = useCallback(() => {
+    setClipboardPaneModal(null);
+  }, []);
+
+  const handleClipboardPaneCopy = useCallback(() => {
+    if (performBoardCopy() !== null) {
+      closeClipboardPaneModal();
+    }
+  }, [closeClipboardPaneModal, performBoardCopy]);
+
+  const handleClipboardPaneDelete = useCallback(() => {
+    const removed = graph.removeNodesFromCurrentBranch(collectForcedSelectionIds());
+    if (removed > 0) {
+      closeClipboardPaneModal();
+      dismissSelectionAction();
+    }
+  }, [closeClipboardPaneModal, collectForcedSelectionIds, dismissSelectionAction, graph]);
+
+  const handleClipboardPanePaste = useCallback(() => {
+    if (performBoardPaste()) {
+      closeClipboardPaneModal();
+    }
+  }, [closeClipboardPaneModal, performBoardPaste]);
+
+  const handleClipboardPaneClear = useCallback(() => {
+    graph.clearBoardClipboard();
+    setClipboardHint(null);
+    closeClipboardPaneModal();
+  }, [closeClipboardPaneModal, graph]);
+
+  const clipboardPaneSelectedCount = useMemo(() => {
+    const fromCanvas = scenarioCanvas.nodes.filter((node) => node.selected).map((node) => node.id);
+    return new Set([
+      ...fromCanvas,
+      ...marqueeSelectedIds,
+      ...(selectedNodeId !== null ? [selectedNodeId] : []),
+    ]).size;
+  }, [marqueeSelectedIds, scenarioCanvas.nodes, selectedNodeId]);
+
+  const runBoardClipboardHotkey = useCallback((event: KeyboardEvent): boolean => {
+    if (!(event.ctrlKey || event.metaKey)) {
+      return false;
+    }
+    const target = event.target;
+    if (target instanceof HTMLElement) {
+      const tag = target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
+        return false;
+      }
+    }
+    if (event.code === 'KeyC') {
+      const copiedCount = performBoardCopy();
+      if (copiedCount !== null) {
+        event.preventDefault();
+        event.stopPropagation();
+        return true;
+      }
+      return false;
+    }
+    if (event.code === 'KeyV') {
+      if (performBoardPaste()) {
+        event.preventDefault();
+        event.stopPropagation();
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }, [performBoardCopy, performBoardPaste]);
+
   useEffect(() => {
     if (!selectionActionOpen) {
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        dismissSelectionAction();
+        closeSelectionActionModal();
+        return;
+      }
+      if (!isRuntime && !isSignal) {
+        runBoardClipboardHotkey(event);
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [dismissSelectionAction, selectionActionOpen]);
+  }, [closeSelectionActionModal, isRuntime, isSignal, runBoardClipboardHotkey, selectionActionOpen]);
 
-  const canUndoRef = useRef(graph.canUndoLastEdit);
-  canUndoRef.current = graph.canUndoLastEdit;
-  const undoLastEditRef = useRef(graph.undoLastEdit);
-  undoLastEditRef.current = graph.undoLastEdit;
+  useEffect(() => {
+    if (clipboardPaneModal === null) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeClipboardPaneModal();
+        return;
+      }
+      if (!isRuntime && !isSignal) {
+        runBoardClipboardHotkey(event);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [clipboardPaneModal, closeClipboardPaneModal, isRuntime, isSignal, runBoardClipboardHotkey]);
 
   const handleUndoLastEdit = useCallback(() => {
     if (!graph.canUndoLastEdit) {
@@ -940,6 +1214,17 @@ const DeviceBoardShellInner: React.FC<{
     window.addEventListener('keydown', onKeyDown, true);
     return () => window.removeEventListener('keydown', onKeyDown, true);
   }, [isRuntime]);
+
+  useEffect(() => {
+    if (isRuntime || isSignal) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      runBoardClipboardHotkey(event);
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [isRuntime, isSignal, runBoardClipboardHotkey]);
 
   const runtimeExecHighlight = useMemo(() => {
     if (!isRuntime || isSignal) {
@@ -1006,8 +1291,10 @@ const DeviceBoardShellInner: React.FC<{
       ? graph.runtimeState.printOutputs[selectedNodeId] ?? null
       : null;
 
+  const headerContentOffsetClass = boardHeaderContentOffsetClass(leftSidebarCollapsed);
+
   return (
-    <div className="flex h-full min-h-0 flex-col bg-base-100 [scrollbar-gutter:stable]">
+    <div className="flex h-full min-h-0 flex-col bg-base-100 [scrollbar-gutter:stable]" data-testid="device-board-shell">
       <header className="relative flex items-center justify-between gap-3 border-b border-base-200 py-2 pr-4 shadow-sm">
         <div
           className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center justify-center"
@@ -1019,7 +1306,7 @@ const DeviceBoardShellInner: React.FC<{
           </span>
         </div>
 
-        <div className={`flex min-w-0 flex-1 items-center gap-3 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}>
+        <div className={`flex min-w-0 flex-1 items-center gap-3 ${headerContentOffsetClass}`}>
           <div className="flex h-5 w-5 shrink-0 items-center justify-center">
             {isSaving ? (
               <span
@@ -1032,10 +1319,16 @@ const DeviceBoardShellInner: React.FC<{
             type="button"
             className="btn btn-sm btn-primary shrink-0"
             disabled={!canSave}
+            title={graph.isSessionReadOnly ? 'Сохранение недоступно в режиме просмотра системного UserCase' : undefined}
             onClick={() => void graph.saveScenario()}
           >
             Сохранить
           </button>
+          {graph.isSessionReadOnly ? (
+            <span className="badge badge-ghost badge-sm shrink-0" title={graph.sessionTitle ?? undefined}>
+              Только просмотр
+            </span>
+          ) : null}
           <BoardCanvasBreadcrumb
             segments={canvasBreadcrumbSegments}
             detailTitle={scenarioTitle}
@@ -1052,7 +1345,24 @@ const DeviceBoardShellInner: React.FC<{
               Упорядочить цепочку
             </button>
           ) : null}
-          {syncLabel !== null ? (
+          {graph.syncConflict ? (
+            <div
+              className="alert alert-warning flex shrink-0 items-center gap-2 py-1 pl-3 pr-1"
+              role="status"
+            >
+              <span className="text-xs">
+                {graph.syncError ?? 'На сервере более новая версия сценария'}
+              </span>
+              <button
+                type="button"
+                className="btn btn-xs btn-outline"
+                disabled={graph.syncStatus === 'loading'}
+                onClick={() => void graph.reloadScenarioFromServer()}
+              >
+                Загрузить с сервера
+              </button>
+            </div>
+          ) : syncLabel !== null ? (
             <span className="shrink-0 text-xs text-error" title={graph.syncError ?? undefined}>
               {syncLabel}
             </span>
@@ -1093,26 +1403,16 @@ const DeviceBoardShellInner: React.FC<{
               >
                 ↓
               </button>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-primary"
-                  onClick={() => void graph.startScenario()}
-                  disabled={!graph.canRun}
-                  title={graph.canRun ? 'Запуск сценария' : (graph.runDisabledReason ?? 'Запуск недоступен')}
-                  aria-label={graph.canRun ? 'Запуск сценария' : graph.runDisabledReason ?? 'Запуск недоступен'}
-                >
-                  Run
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-ghost"
-                  onClick={() => graph.stopScenario('user')}
-                  disabled={!graph.runtimeState.isRunning}
-                >
-                  Stop
-                </button>
-              </div>
+              <PlaybackClusterControl
+                  isRunning={graph.runtimeState.isRunning}
+                  isPaused={graph.runtimeState.isPaused}
+                  canRun={graph.canRun}
+                  runDisabledReason={graph.runDisabledReason}
+                  onStart={() => graph.startScenario()}
+                  onResume={() => graph.resumeScenario()}
+                  onPause={() => graph.pauseScenario()}
+                  onStop={() => graph.stopScenario('user')}
+                />
 
               <div role="group" aria-label="Режим" className="join">
                 <button
@@ -1170,13 +1470,6 @@ const DeviceBoardShellInner: React.FC<{
                   Import JSON
                 </button>
               </li>
-              {userCasePicker !== undefined ? (
-                <li>
-                  <button type="button" onClick={() => setUserCasePickerOpen(true)}>
-                    UserCase…
-                  </button>
-                </li>
-              ) : null}
               <li>
                 <button
                   type="button"
@@ -1194,23 +1487,15 @@ const DeviceBoardShellInner: React.FC<{
       {importError !== null ? (
         <div className="border-b border-error/30 bg-error/10 px-4 py-2 text-xs text-error">{importError}</div>
       ) : null}
-      {userCaseAppliedMessage !== null ? (
-        <div className="border-b border-success/30 bg-success/10 px-4 py-2 text-xs text-success flex items-center justify-between gap-3">
-          <span>{userCaseAppliedMessage}</span>
-          <button
-            type="button"
-            className="btn btn-ghost btn-xs"
-            onClick={() => setUserCaseAppliedMessage(null)}
-            aria-label="Закрыть"
-          >
-            ✕
-          </button>
-        </div>
-      ) : null}
       <BoardRuntimeStatus state={graph.runtimeState} />
 
       <div className="relative min-h-0 flex-1 basis-0 overflow-hidden">
-        <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 z-0"
+          onPointerMove={(event) => {
+            lastCanvasPointerRef.current = { clientX: event.clientX, clientY: event.clientY };
+          }}
+        >
           <BoardFlowCanvas
             layer={isSignal ? 'signal' : 'scenario'}
             nodes={isSignal ? graph.signalNodes : scenarioCanvas.nodes}
@@ -1227,10 +1512,11 @@ const DeviceBoardShellInner: React.FC<{
             }
             onSelectionChange={handleSelectionChange}
             onPaneClick={handlePaneClick}
+            onPaneContextMenu={handlePaneContextMenu}
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
-            readOnly={isRuntime}
+            readOnly={isCanvasReadOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             viewportFitKey={canvasViewportFitKey}
@@ -1246,13 +1532,14 @@ const DeviceBoardShellInner: React.FC<{
 
         {!isRuntime ? (
           <div
-            className={`pointer-events-none absolute bottom-3 z-20 ${BOARD_HEADER_CONTENT_OFFSET_CLASS}`}
+            className={`pointer-events-none absolute bottom-3 z-20 ${headerContentOffsetClass}`}
           >
             <div className="pointer-events-auto pl-3">
               <BoardEditUndoControl
                 canUndo={graph.canUndoLastEdit}
                 lastActionLabel={graph.lastUndoableEditLabel}
                 onUndo={handleUndoLastEdit}
+                clipboardHint={clipboardHint}
               />
             </div>
           </div>
@@ -1270,22 +1557,10 @@ const DeviceBoardShellInner: React.FC<{
           onDismiss={graph.cancelBranchImport}
         />
 
-        {userCasePicker !== undefined ? (
-          <BoardUserCasePickerModal
-            open={userCasePickerOpen}
-            cards={userCasePicker.cards}
-            onDismiss={() => setUserCasePickerOpen(false)}
-            onApplied={(userCaseId) => {
-              const card = userCasePicker.cards.find((item) => item.id === userCaseId);
-              setUserCaseAppliedMessage(
-                card !== undefined ? `UserCase «${card.title}» применён` : 'UserCase применён',
-              );
-            }}
-          />
-        ) : null}
-
         <aside className="absolute bottom-0 left-0 top-0 z-10" aria-label="Палитра и ветки">
           <BoardLeftSidebar
+            collapsed={leftSidebarCollapsed}
+            onToggleCollapse={() => setLeftSidebarCollapsed((v) => !v)}
             activeBranch={scenarioBranch}
             isScenarioLayer={!isSignal}
             isRuntime={isRuntime}
@@ -1308,6 +1583,8 @@ const DeviceBoardShellInner: React.FC<{
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
           <BoardRightSidebar
+            collapsed={rightSidebarCollapsed}
+            onToggleCollapse={() => setRightSidebarCollapsed((v) => !v)}
             selectedNodeId={selectedNodeId}
             selectedNodeLabel={selectedNodeLabel}
             selectedNodeKind={selectedNodeKind}
@@ -1351,7 +1628,11 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onVariableValueChange={graph.updateVariableValue}
             onCommentGroupMetadataChange={(nodeId, patch) => {
-              graph.updateCommentGroupMetadata(nodeId, patch);
+              const branch: ScenarioCommentGroupBranch = isSignal ? 'signal' : scenarioBranch;
+              graph.updateCommentGroupMetadata(branch, nodeId, patch);
+              if (nodeId !== selectedNodeId) {
+                return;
+              }
               if (patch.title !== undefined) {
                 setSelectedGroupTitle(patch.title.trim() || 'Группа');
                 setSelectedNodeLabel(patch.title.trim() || 'Группа');
@@ -1441,13 +1722,30 @@ const DeviceBoardShellInner: React.FC<{
         selectedCount={marqueeSelectionMeta.count}
         collapseFunctionDisabled={marqueeSelectionMeta.collapseFunctionDisabled}
         collapseGroupDisabled={marqueeSelectionMeta.collapseGroupDisabled}
+        collapseFunctionDisabledReason={marqueeSelectionMeta.collapseFunctionDisabledReason}
+        collapseGroupDisabledReason={marqueeSelectionMeta.collapseGroupDisabledReason}
         execChainLayoutDisabled={marqueeSelectionMeta.execChainLayoutDisabled}
         onCollapseToFunction={handleCollapseToFunction}
         onCollapseToGroup={handleCollapseToGroup}
         onAlignMode={handleAlignMode}
         onSmartAlign={handleSmartAlign}
         onExecChainLayout={handleExecChainLayout}
-        onDismiss={dismissSelectionAction}
+        onDismiss={closeSelectionActionModal}
+      />
+
+      <BoardClipboardPaneModal
+        open={clipboardPaneModal !== null && !isRuntime}
+        mode={clipboardPaneModal ?? 'selection'}
+        selectedCount={clipboardPaneSelectedCount}
+        clipboardCount={graph.boardClipboardNodeCount}
+        copyDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
+        pasteDisabled={graph.isSessionReadOnly || graph.boardClipboardNodeCount === 0}
+        deleteDisabled={graph.isSessionReadOnly || clipboardPaneSelectedCount < 1}
+        onCopy={handleClipboardPaneCopy}
+        onDelete={handleClipboardPaneDelete}
+        onPaste={handleClipboardPanePaste}
+        onClearClipboard={handleClipboardPaneClear}
+        onDismiss={closeClipboardPaneModal}
       />
     </div>
   );
@@ -1462,21 +1760,25 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   exitLabel = 'Выйти из доски',
   showRunControls = true,
   deviceLive,
-  userCasePicker,
-}) => (
+  loadUserCaseDocument,
+}) => {
+  const { session } = useDeviceBoardMode();
+
+  return (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
     persistAdapter={persistAdapter}
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
-    loadUserCaseDocument={userCasePicker?.loadDocument}
+    loadUserCaseDocument={loadUserCaseDocument}
+    boardSession={session}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
-      userCasePicker={userCasePicker}
     />
   </DeviceBoardGraphProvider>
-);
+  );
+};

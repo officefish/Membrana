@@ -1,0 +1,83 @@
+# U10 User Workspace — prod deploy verify (W4/W5)
+# Ручной запуск: Actions → U10 workspace prod → deploy или smoke-only.
+
+name: U10 workspace prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: deploy (media+cabinet+smoke) or smoke-only
+        required: true
+        default: smoke-only
+        type: choice
+        options:
+          - smoke-only
+          - deploy
+      cabinet_image_tag:
+        description: CABINET_IMAGE_TAG for deploy mode (build = VPS docker build)
+        required: false
+        default: build
+
+permissions:
+  contents: read
+
+jobs:
+  prod:
+    name: U10 prod ${{ inputs.mode }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Require VPS secrets
+        run: |
+          if [ -z "${{ secrets.BACKGROUND_MEDIA_IPV4 }}" ] || [ -z "${{ secrets.BACKGROUND_MEDIA_PASSWORD }}" ]; then
+            echo "Configure repository secrets BACKGROUND_MEDIA_IPV4 and BACKGROUND_MEDIA_PASSWORD,"
+            echo "or run locally: yarn cabinet:u10-workspace:prod"
+            echo "See docs/deploy/U10_WORKSPACE_DEPLOY.md"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Write deploy .env
+        run: |
+          cat > .env <<EOF
+          BACKGROUND_MEDIA_IPV4=${{ secrets.BACKGROUND_MEDIA_IPV4 }}
+          BACKGROUND_MEDIA_PASSWORD=${{ secrets.BACKGROUND_MEDIA_PASSWORD }}
+          EOF
+
+      - name: Prod deploy + smoke
+        if: inputs.mode == 'deploy'
+        env:
+          CABINET_GIT_BRANCH: u10-workspace-prod
+          CABINET_IMAGE_TAG: ${{ inputs.cabinet_image_tag }}
+          DEPLOY_ALLOW_DIRTY: '1'
+          DEPLOY_ALLOW_RED_CI: '1'
+        run: yarn cabinet:u10-workspace:prod
+
+      - name: Prod smoke only
+        if: inputs.mode == 'smoke-only'
+        run: yarn cabinet:u10-workspace:smoke
+
+      - name: Upload deploy summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: u10-workspace-prod-artifacts
+          path: deploy-artifacts/u10-workspace-prod-*.json
+          if-no-files-found: ignore

@@ -37,6 +37,7 @@ export const envSchema = z.object({
     .positive()
     .default(1_073_741_824),
   MEDIA_DEFAULT_DATASET_CATALOG_ID: z.string().min(1).default('free-v1-catalog'),
+  MEDIA_DEFAULT_MAX_USER_WORKSPACES: z.coerce.number().int().positive().default(3),
   /** Absolute path to catalog dir (manifest.json + wav tree). Default: repo data/detectors-benchmark/v0.2 */
   MEDIA_CATALOG_ROOT: z.string().min(1).optional(),
   MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(52_428_800),

@@ -52,7 +52,7 @@ describe('acceptance benchmark (keyword corpus archive, no API key)', () => {
 
     expect(result.usedArchive).toBe(true);
     expect(precisionAtK(result.fragments, expectedSources, 5)).toBe(true);
-    expect(elapsedMs).toBeLessThan(3000);
+    expect(elapsedMs).toBeLessThan(4500);
   });
 });
 

@@ -13,7 +13,8 @@ export type BoardEditStepAction =
   | 'collapse-to-function'
   | 'collapse-to-group'
   | 'clear-branch'
-  | 'align-layout';
+  | 'align-layout'
+  | 'paste-nodes';
 
 const EDIT_ACTION_LABELS: Record<BoardEditStepAction, string> = {
   'remove-nodes': 'Удаление узлов',
@@ -24,6 +25,7 @@ const EDIT_ACTION_LABELS: Record<BoardEditStepAction, string> = {
   'collapse-to-group': 'Свёртка в группу',
   'clear-branch': 'Очистка ветки',
   'align-layout': 'Выравнивание / layout',
+  'paste-nodes': 'Вставка узлов',
 };
 
 /** Человекочитаемая подпись для tooltip кнопки undo. */
@@ -92,6 +94,39 @@ export function logBoardEditStep(
   console.log(`[INFO] device-board edit: ${kind}`, {
     action,
     label,
+    at: new Date().toISOString(),
+    ...meta,
+  });
+}
+
+/** События copy/paste/delete на канвасе (W0-H2 debug). */
+export type BoardClipboardLogEvent =
+  | 'copy-attempt'
+  | 'copy-ok'
+  | 'copy-failed'
+  | 'paste-attempt'
+  | 'paste-ok'
+  | 'paste-failed'
+  | 'delete-attempt'
+  | 'delete-ok'
+  | 'delete-failed'
+  | 'clear-ok'
+  | 'pane-modal-open';
+
+/**
+ * INFO-лог clipboard workflow (галочка INFO на доске).
+ * Формат: `[INFO] device-board clipboard: <event>` — фильтр в DevTools / trace buffer.
+ */
+export function logBoardClipboardStep(
+  enabled: boolean,
+  event: BoardClipboardLogEvent,
+  meta?: Record<string, unknown>,
+): void {
+  if (!enabled) {
+    return;
+  }
+  // eslint-disable-next-line no-console
+  console.log(`[INFO] device-board clipboard: ${event}`, {
     at: new Date().toISOString(),
     ...meta,
   });

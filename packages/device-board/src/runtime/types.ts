@@ -44,6 +44,8 @@ export interface FftTrendsAnalysisHostResult {
 export interface ScenarioRuntimeState {
   readonly phase: ScenarioRuntimePhase;
   readonly isRunning: boolean;
+  /** Пользовательская пауза: exec заморожен, onStop не вызывается. */
+  readonly isPaused: boolean;
   /** Ручной режим (MP7b RT3): `alarm` форсит alarm-loop, `normal` — main + авто detection-front. */
   readonly mode: RuntimeMode;
   readonly activeBranch: ScenarioSystemBranch | null;
@@ -84,6 +86,7 @@ export function createIdleScenarioRuntimeState(): ScenarioRuntimeState {
   return {
     phase: 'idle',
     isRunning: false,
+    isPaused: false,
     mode: 'normal',
     activeBranch: null,
     activeNodeId: null,

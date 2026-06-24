@@ -20,6 +20,7 @@ export const SCENARIO_NODE_KINDS = [
   'get-microphone',
   'device-global',
   'stop-runtime',
+  'pause-runtime',
   'start-streaming',
   'stop-streaming',
   'get-audio-stream',

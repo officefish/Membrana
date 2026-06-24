@@ -8,6 +8,8 @@
 
 **GitHub Issue:** [#93](https://github.com/officefish/Membrana/issues/93).
 
+**Day-sprint (MS0–MS4, active 2026-06-23):** [`MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](./MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md) · реестр `membrana-studio-ms0-ms4-day-sprint` · **без правок `apps/client`**. MS5 — отдельно после LGTM MS0–MS4.
+
 ---
 
 ## Контекст продукта

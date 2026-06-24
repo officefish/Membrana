@@ -54,6 +54,7 @@ export class PairService {
       userStorageQuotaBytes: node.membrane.tariff.userStorageQuotaBytes.toString(),
       bufferQuotaBytes: node.membrane.tariff.bufferQuotaBytes.toString(),
       datasetCatalogId: node.membrane.tariff.datasetCatalogId,
+      maxUserWorkspaces: node.membrane.tariff.maxUserWorkspaces,
     };
 
     if (!mediaDeviceId) {
@@ -106,6 +107,10 @@ export class PairService {
       membrane: { id: node.membrane.id },
       node: { id: node.id, label: node.label },
       pairedKeyId: matched.id,
+      tariff: {
+        id: node.membrane.tariff.id,
+        maxUserWorkspaces: node.membrane.tariff.maxUserWorkspaces,
+      },
     };
   }
 
@@ -113,6 +118,7 @@ export class PairService {
     const membrane = await this.prisma.membrane.findUnique({
       where: { userId },
       include: {
+        tariff: true,
         nodes: {
           include: { device: true },
           take: 1,
@@ -154,6 +160,10 @@ export class PairService {
       deviceId: device.mediaDeviceId,
       pairedKeyId: device.pairedKeyId,
       sessionExpiresAt: session?.expiresAt.toISOString() ?? null,
+      tariff: {
+        id: membrane.tariff.id,
+        maxUserWorkspaces: membrane.tariff.maxUserWorkspaces,
+      },
     };
   }
 

@@ -119,8 +119,10 @@ yarn save-daily-day
 yarn archive:daily-day --force
 
 # 1. Code-review (вечерняя процедура → docs/DAILY_CODE_REVIEW.md)
+#    Регламент: docs/prompts/CODE_REVIEW_REGULATION.md
 yarn code-review
 yarn code-review:full
+# PR перед merge: yarn code-review:pr -- 140
 
 # 2. Архив task-промптов, принятых за день (можно было и днём)
 yarn task:archive <id> --notes "кратко: что сделано, PR, Issue"
@@ -132,14 +134,21 @@ yarn save-code-review
 yarn task:close-github:dry
 yarn task:close-github
 
+# 5. Team Evening Feedback — ретроспектива виртуальной команды
+#    Регламент: docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md
+yarn team-evening-feedback
+yarn team-evening-feedback:dry   # без API — только сбор контекста
+
 # Периодический аудит backlog (после крупного эпика или раз в 2–4 недели):
 # manifest → docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json
 # yarn issues:audit:apply --manifest docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json
 # См. docs/prompts/GITHUB_ISSUES_AUDIT_PROMPT.md
 
-# архив дня + ревью + снимок ревью одной командой:
+# архив дня + ревью + снимок ревью + закрытие Issues + team feedback одной командой:
 yarn ritual:evening
 ```
+
+**Выход team feedback:** `docs/seanses/team-evening-feedback-<YYYY-MM-DD>.md` — пять ролей, голосование за полезность дня (1–10), сводка на завтра, резюме Teamlead по стратегии.
 
 ### Архивация утренних артефактов (`archive:daily-day`)
 

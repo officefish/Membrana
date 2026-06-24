@@ -15,6 +15,7 @@
         "device-board/architecture",
         "device-board/canvas-overview",
         "device-board/usercases",
+        "device-board/user-workspace",
         "device-board/editor/overview",
         "device-board/editor/edit-and-navigation",
         "device-board/editor/user-functions"

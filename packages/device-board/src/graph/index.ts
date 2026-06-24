@@ -59,6 +59,13 @@ export {
 } from './stop-runtime-node.js';
 export type { CreateStopRuntimeBoardNodeOptions } from './stop-runtime-node.js';
 export {
+  createPauseRuntimeBoardNode,
+  pauseRuntimeNodePins,
+  PAUSE_RUNTIME_NODE_KIND,
+  isPauseRuntimeNode,
+} from './pause-runtime-node.js';
+export type { CreatePauseRuntimeBoardNodeOptions } from './pause-runtime-node.js';
+export {
   createGetRecorderBoardNode,
   getRecorderNodePins,
   GET_RECORDER_NODE_KIND,
@@ -334,12 +341,32 @@ export {
   needsFftTrendsPolicyConstructorMigration,
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';
+export {
+  isUserOwnedDeviceScenarioDocument,
+  shouldMigrateMicrophoneScenarioToBundledMvp,
+  stampUserWorkspaceDocument,
+  stampSystemPreviewDocument,
+} from './device-scenario-workspace.js';
+export {
+  cloneUserCaseToWorkspaceDocument,
+  deepCopyDeviceScenarioDocument,
+} from './clone-user-case-to-workspace.js';
+export type { CloneUserCaseToWorkspaceInput } from './clone-user-case-to-workspace.js';
 export type { HydratedBoardState, ScenarioFunctionCanvasMeta } from './hydrate-board-from-document.js';
 export {
   collapseSelectionToFunction,
   createEmptyFunctionDraft,
 } from './collapse-to-function.js';
 export type { ScenarioFunctionDraft, CollapseToFunctionOutcome } from './collapse-to-function.js';
+export {
+  cloneBoardSelectionForPaste,
+  collectBoardSelectionNodeIds,
+  extractBoardSelectionClipboard,
+  isBoardSelectionCopyEligibleNode,
+  selectionFlowBBoxCenter,
+  BOARD_PASTE_OFFSET,
+} from './copy-paste-board-selection.js';
+export type { BoardSelectionClipboard } from './copy-paste-board-selection.js';
 export {
   insertFunctionSubgraphBlock,
 } from './insert-function-into-branch.js';
@@ -403,8 +430,12 @@ export {
 export {
   collapseSelectionToCommentGroup,
   collectCommentGroupsFromBoard,
+  collectCommentGroupNodeIdsFromBoard,
+  dedupeCommentGroupIds,
   applyCommentGroupsToBranchNodes,
   extractCommentGroupsFromNodes,
+  buildCommentGroupDataPatch,
+  patchCommentGroupNodeData,
   sortBoardNodesParentsBeforeChildren,
   BOARD_GROUP_NODE_TYPE,
   COMMENT_GROUP_DESCRIPTION_MAX_LENGTH,

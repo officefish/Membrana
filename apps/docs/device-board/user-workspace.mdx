@@ -1,0 +1,124 @@
+---
+title: User Workspace
+description: Редактируемые сценарии device-board — launcher, квота слотов, paired sync и LWW (U10 + U11).
+---
+
+# User Workspace
+
+**User workspace** — до **N** редактируемых копий сценария на узел (`deviceId`). На тарифе **free-v1**
+сейчас **N = 3**. Системные UserCases из каталога в лимит **не входят**.
+
+Канон: [`DEVICE_BOARD_CONCEPT.md`](https://github.com/officefish/Membrana/blob/main/packages/device-board/DEVICE_BOARD_CONCEPT.md) §22 ·
+квоты: [`TARIFF_MATRIX.md`](https://github.com/officefish/Membrana/blob/main/docs/TARIFF_MATRIX.md).
+
+Эпики: U10 (launcher, persist, media API) · U11 (paired hardening, LWW 409, conflict UX) · **STE v1** (server tariff enforcement, #150).
+
+## Server tariff (STE v1, paired)
+
+| Компонент | Роль |
+|-----------|------|
+| **Cabinet `Tariff`** | `maxUserWorkspaces` и прочие оси — источник правды |
+| **Media `Device`** | Snapshot лимитов при pair (`PATCH .../membrane`) |
+| **Media PUT workspace** | Новый слот → **403** при `used >= max`; документ **v1–v2** |
+| **Client** | `resolveWorkspaceTariff()`; autonomous = local **free-v1** (3) |
+
+При ошибке квоты launcher показывает **`used/max`** и обновляет список с media.
+
+Переключение контекста — **в модуле «Доска устройства»** (дашборд), **до** входа в полноэкранную доску.
+В шапке открытой доски нет списка «Мои сценарии» — только **Сохранить**, **Run/Stop** и **Выйти из доски**.
+
+1. Откройте модуль **«Доска устройства»** на дашборде.
+2. В секции **«Системные UserCases»** или **«Мои сценарии»** выберите контекст.
+3. Нажмите **«Открыть доску»**.
+
+Чтобы сменить сценарий — **выйдите из доски** и выберите другой контекст в модуле.
+
+## Системный UserCase (только просмотр)
+
+1. Включите каталог (toggle **«Каталог»** в секции системных шаблонов).
+2. Выберите карточку bundled/tariff шаблона.
+3. **Открыть доску** — режим **только просмотр**: кнопка **Сохранить** недоступна, badge «Только просмотр».
+4. Можно **прогнать** сценарий (Run), если pre-run validation проходит.
+
+Чтобы редактировать шаблон — **клонируйте** его в свой слот (см. ниже). Каталог при этом **не меняется**.
+
+## Мои сценарии (редактирование)
+
+| Действие | Как |
+|----------|-----|
+| **Создать пустой** | Поле названия + **«Создать пустой»** (если слотов &lt; N) |
+| **Клонировать из каталога** | На карточке системного шаблона → **«Клонировать в мой сценарий»** |
+| **Переименовать / удалить** | Иконки ✎ / ✕ на строке слота |
+| **Сохранить правки** | На доске → **Сохранить** (только в режиме user-edit) |
+
+<Warning>
+При **N/N** слотах создание и клонирование заблокированы. Удалите слот, чтобы освободить место.
+</Warning>
+
+## Квота по тарифам
+
+| Тариф | `maxUserWorkspaces` |
+|-------|---------------------|
+| `free-v1` | **3** |
+| `indie-v1` | 10 (план) |
+| `business-v1` | 25 (план) |
+
+В **paired**-режиме лимит приходит из cabinet (`pair.tariff.maxUserWorkspaces`); client использует fallback **3**, если tariff недоступен.
+
+## Autonomous (без пары)
+
+Список слотов и документы хранятся в **IndexedDB** браузера (`membrana-device-board-workspaces`).
+После перезагрузки страницы или пересборки client данные остаются на этом устройстве.
+
+## Paired-режим (U10 + U11)
+
+При связи с мембраной (**paired**) user workspace живёт на **`background-media`**
+(`GET/PUT /v1/devices/:deviceId/device-workspaces`). Cabinet отдаёт только **квоту** и pairing — JSON сценария в cabinet **не** хранится.
+
+### Источник правды
+
+| Слой | Роль |
+|------|------|
+| **media** | список слотов, активный `workspaceId`, документы, `updatedAt` |
+| **IndexedDB** | локальный кэш для быстрого открытия и offline-first load |
+| **legacy** `/device-scenario` | fallback, если multi-workspace API недоступен (старый media) |
+
+С U11 paired client работает **remote-first**: list/CRUD идут на media; IndexedDB синхронизируется после успешных операций.
+
+### Два клиента с одной парой
+
+1. Создайте или отредактируйте workspace на client A → **Сохранить**.
+2. На client B откройте модуль «Доска устройства» или вернитесь на вкладку — список **обновится** (`visibilitychange` / focus).
+3. Откройте тот же слот — документ совпадает с media.
+
+### Reinstall / пустой IndexedDB
+
+Если локальный кэш пуст (новый профиль браузера, очистка данных), client **подтягивает** список workspace с media при первом list.
+
+### Конфликт версий (LWW, U11 S3)
+
+При **Сохранить** client отправляет `expectedUpdatedAt` (последний известный `updatedAt` с сервера).
+Если на media уже более новая версия → **409** `WORKSPACE_CONFLICT`.
+
+На доске появляется предупреждение и кнопка **«Загрузить с сервера»** — локальные несохранённые правки не перезаписывают сервер молча.
+
+При **загрузке** сценария client сравнивает local и remote по `updatedAt` и берёт **более новую** копию (LWW на read).
+
+<Note>
+Полевой client (`apps/client`) сейчас разрабатывается локально (`yarn workspace @membrana/client dev`).
+Conflict UX и `expectedUpdatedAt` доступны в этой сборке после pull `main`; отдельного prod-хостинга client пока нет.
+</Note>
+
+### Prod smoke
+
+После деплоя media: `yarn cabinet:u10-workspace:smoke` (проверки U10 + STE: v2 PUT, 2-й слот, `userWorkspacesQuota`).
+См. [`docs/deploy/U10_WORKSPACE_DEPLOY.md`](https://github.com/officefish/Membrana/blob/main/docs/deploy/U10_WORKSPACE_DEPLOY.md) — разделы U11 и **STE v1**.
+
+<CardGroup cols={2}>
+  <Card title="UserCases (каталог)" icon="book" href="/device-board/usercases">
+    Bundled шаблоны, entitlement, сборка usercase
+  </Card>
+  <Card title="Editor overview" icon="pen-ruler" href="/device-board/editor/overview">
+    Save, export, clear branch
+  </Card>
+</CardGroup>

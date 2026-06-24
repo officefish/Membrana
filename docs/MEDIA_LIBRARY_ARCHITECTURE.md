@@ -128,9 +128,20 @@ packages/background-media/             # NestJS + Fastify, Prisma, PostgreSQL
   ├── blob/                          # volume: wav, mp3, flac, ogg (как загружено)
   └── REST: collections, samples, blobs (multipart)
 
-apps/membrana-studio/                  # Membrana Studio — preload: electronAPI.mediaLibrary.*
+apps/membrana-studio/                  # Membrana Studio — preload: electronAPI.{mediaLibrary,journal,trendsTemplates}
 apps/membrana-device/                  # Membrana Device (v2) — тот же контракт preload, узкий renderer
 ```
+
+**On-disk layout (Studio, Windows `%APPDATA%/Membrana/`):**
+
+| Путь | Содержимое | Фаза |
+|------|------------|------|
+| `media-library/manifest.json` | коллекции + метаданные сэмплов | MS2 |
+| `media-library/blobs/*.bin` | WAV и др. | MS2 |
+| `journal/items.json` | live journal (tracks/reports) | MS3 |
+| `trends-templates.json` | пользовательские FFT-шаблоны trends | MS3 |
+
+Канон shell: [`apps/membrana-studio/README.md`](../apps/membrana-studio/README.md) · day-sprint [`MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](./prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md).
 
 **Граф зависимостей** (как §1a ARCHITECTURE):
 

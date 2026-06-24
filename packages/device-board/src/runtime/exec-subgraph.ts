@@ -34,6 +34,8 @@ export interface ExecSubgraphOptions {
   readonly onPrintOutput?: (nodeId: string, message: string) => void;
   /** v0.4 device-global StopRuntime. */
   readonly onStopRuntime?: () => void;
+  /** v0.7 PauseRuntime node / toolbar freeze. */
+  readonly onPauseRuntime?: () => void;
   /** v0.5 DBC3: Collect flush/batch store. */
   readonly collectStore?: CollectRuntimeStore;
   /** v0.6 DBJ3: ReportRef payloads от make-report узлов. */
@@ -44,6 +46,8 @@ export interface ExecSubgraphOptions {
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
   /** v0.7: RecordingSliceRef от StopRecording. */
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
+  /** v0.7: ждать снятия пользовательской паузы. */
+  readonly awaitUnpaused?: () => Promise<void>;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -78,6 +82,12 @@ export async function runSubgraphOnce(
   });
 
   for (;;) {
+    if (signal.aborted) {
+      return finish();
+    }
+    if (options.awaitUnpaused !== undefined) {
+      await options.awaitUnpaused();
+    }
     if (signal.aborted) {
       return finish();
     }
@@ -139,6 +149,8 @@ export async function runSubgraphOnce(
       resolveContext: options.resolveContext,
       onPrintOutput: options.onPrintOutput,
       onStopRuntime: options.onStopRuntime,
+      onPauseRuntime: options.onPauseRuntime,
+      awaitUnpaused: options.awaitUnpaused,
       collectStore: options.collectStore,
       reportStore: options.reportStore,
       trackStore: options.trackStore,
@@ -183,6 +195,9 @@ export async function runSubgraphOnce(
       nextNode?.nodeKind === 'function-output' ? outgoingHandle : undefined;
 
     if (isLoopBranch) {
+      if (options.awaitUnpaused !== undefined) {
+        await options.awaitUnpaused();
+      }
       await yieldToEventLoop(signal);
     }
 

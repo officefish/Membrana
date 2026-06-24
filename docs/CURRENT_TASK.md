@@ -1,22 +1,17 @@
-# CURRENT_TASK — buffer
+# CURRENT_TASK
 
-> **Phase 3:** closed `device-board-doc-v04-phase3-canvas-2026-06-22`  
-> **Closure:** [`day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md`](./day-sprint/device-board-doc-v04-phase3-canvas-2026-06-22/CLOSURE.md)  
-> **PR:** [#140](https://github.com/officefish/Membrana/pull/140) — Teamlead LGTM
+> **W0 hotfix** device-board · эпик `device-board-w0-hotfix` · Issue [#151](https://github.com/officefish/Membrana/issues/151)
 
-## Epic `db-doc-v04-mvp`
+## Порядок
 
-Phases 0–3 complete. Pending: Teamlead LGTM, optional ChatPRD `update-prd` sync, RAG index after merge `@membrana/rag-service`.
+| # | Issue | Task id |
+|---|-------|---------|
+| 1 | [#153](https://github.com/officefish/Membrana/issues/153) | `db-w0-h3-selection-modal-keep` |
+| 2 | [#146](https://github.com/officefish/Membrana/issues/146) | `db-w0-h1-function-palette` |
+| 3 | [#152](https://github.com/officefish/Membrana/issues/152) | `db-w0-h2-copy-paste-hotkeys` |
 
-## Open canvases (Cursor IDE)
+Промпт: [`DEVICE_BOARD_W0_HOTFIX_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_W0_HOTFIX_EPIC_PROMPT.md)
 
-- [architecture](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-architecture.canvas.tsx)
-- [streaming](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-streaming-pipeline.canvas.tsx)
-- [branches](file:///C:/Users/user190825/.cursor/projects/c-Users-user190825-practice-Membrana/canvases/device-board-branch-variable-map.canvas.tsx)
+## Прочее (не блокирует W0)
 
-## Verify
-
-```bash
-yarn docs:lint
-yarn docs:dev
-```
+MS5 / MP7 WS — [`membrana-studio-ms5-2026-06-23/CLOSURE.md`](./day-sprint/membrana-studio-ms5-2026-06-23/CLOSURE.md)

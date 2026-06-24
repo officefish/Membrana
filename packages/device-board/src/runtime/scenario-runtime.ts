@@ -136,6 +136,10 @@ export class ScenarioRuntime {
   /** Correlation id for one scenario run (chain trace logging). */
   private runId: string | null = null;
 
+  private readonly pauseResumeWaiters = new Set<() => void>();
+
+  private runSignal: AbortSignal | null = null;
+
   constructor(host: ScenarioRuntimeHost, options: ScenarioRuntimeOptions = {}) {
     this.host = host;
     this.options = options;
@@ -217,15 +221,18 @@ export class ScenarioRuntime {
     this.analysisStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.abortController = new AbortController();
+    this.runSignal = this.abortController.signal;
     this.patchState({
       ...this.idleState(),
       isRunning: true,
+      isPaused: false,
       phase: 'initial',
     });
 
     this.runPromise = this.runLoadedDocument(this.document, this.abortController.signal).finally(() => {
       this.runPromise = null;
       this.abortController = null;
+      this.runSignal = null;
     });
 
     return this.runPromise;
@@ -233,11 +240,67 @@ export class ScenarioRuntime {
 
   /** Остановка сценария: UI-кнопка (`user`) или системное событие (`system`, T1). */
   stop(reason: ScenarioStopReason = 'user'): void {
+    this.wakePauseWaiters();
     this.stopRequested = true;
     this.stopReason = reason;
     this.abortController?.abort();
     if (this.state.isRunning) {
-      this.patchState({ ...this.state, phase: 'stopping', lastStopReason: reason });
+      this.patchState({ ...this.state, isPaused: false, phase: 'stopping', lastStopReason: reason });
+    }
+  }
+
+  /** Заморозить exec без onStop (DBP0). */
+  pause(): void {
+    if (!this.state.isRunning || this.state.isPaused) {
+      return;
+    }
+    this.host.log('runtime pause', {});
+    this.patchState({ ...this.state, isPaused: true });
+  }
+
+  /** Продолжить после pause(). */
+  resume(): void {
+    if (!this.state.isRunning || !this.state.isPaused) {
+      return;
+    }
+    this.host.log('runtime resume', {});
+    this.patchState({ ...this.state, isPaused: false });
+    this.wakePauseWaiters();
+  }
+
+  private wakePauseWaiters(): void {
+    for (const wake of this.pauseResumeWaiters) {
+      wake();
+    }
+    this.pauseResumeWaiters.clear();
+  }
+
+  private async waitWhileUnpaused(signal: AbortSignal): Promise<void> {
+    if (!this.state.isPaused || signal.aborted) {
+      return;
+    }
+    await new Promise<void>((resolve, reject) => {
+      if (signal.aborted) {
+        reject(signal.reason ?? new DOMException('Aborted', 'AbortError'));
+        return;
+      }
+      const onAbort = (): void => {
+        cleanup();
+        reject(signal.reason ?? new DOMException('Aborted', 'AbortError'));
+      };
+      const onResume = (): void => {
+        cleanup();
+        resolve();
+      };
+      const cleanup = (): void => {
+        signal.removeEventListener('abort', onAbort);
+        this.pauseResumeWaiters.delete(onResume);
+      };
+      signal.addEventListener('abort', onAbort, { once: true });
+      this.pauseResumeWaiters.add(onResume);
+    });
+    if (this.state.isPaused && !signal.aborted) {
+      await this.waitWhileUnpaused(signal);
     }
   }
 
@@ -246,6 +309,7 @@ export class ScenarioRuntime {
     if (!this.state.isRunning) {
       return;
     }
+    this.wakePauseWaiters();
     this.wasRunningBeforeDisconnect = true;
     this.disconnectRequested = true;
     this.abortController?.abort();
@@ -476,11 +540,14 @@ export class ScenarioRuntime {
       resolveContext,
       onPrintOutput: (nodeId: string, message: string) => this.recordPrintOutput(nodeId, message),
       onStopRuntime: () => this.stop('user'),
+      onPauseRuntime: () => this.pause(),
       collectStore: this.collectStore,
       reportStore: this.reportStore,
       trackStore: this.trackStore,
       analysisStore: this.analysisStore,
       recordingSliceStore: this.recordingSliceStore,
+      awaitUnpaused:
+        this.runSignal !== null ? () => this.waitWhileUnpaused(this.runSignal!) : undefined,
     };
   }
 
@@ -527,6 +594,11 @@ export class ScenarioRuntime {
       });
 
       while (!signal.aborted) {
+        await this.waitWhileUnpaused(signal);
+        if (signal.aborted) {
+          break;
+        }
+
         // MP7b RT3: ручной режим alarm — приоритетный override, форсит alarm-loop.
         if (this.mode === 'alarm') {
           this.host.log('main → alarm (manual override)', {});
@@ -592,6 +664,7 @@ export class ScenarioRuntime {
 
         if (this.loopTickPauseMs > 0) {
           try {
+            await this.waitWhileUnpaused(signal);
             await waitUntilNextLoopTick(this.host, this.loopTickPauseMs, signal);
           } catch {
             break;
@@ -646,6 +719,11 @@ export class ScenarioRuntime {
     let alarmIteration = 0;
 
     while (!signal.aborted) {
+      await this.waitWhileUnpaused(signal);
+      if (signal.aborted) {
+        return;
+      }
+
       alarmIteration += 1;
       this.patchState({
         ...this.state,
@@ -665,6 +743,7 @@ export class ScenarioRuntime {
 
       // Ручной override активен — удерживаем alarm независимо от уровня.
       if (this.mode === 'alarm') {
+        await this.waitWhileUnpaused(signal);
         await waitUntilNextLoopTick(this.host, ALARM_LOOP_PAUSE_MS, signal);
         continue;
       }
@@ -682,6 +761,7 @@ export class ScenarioRuntime {
         return;
       }
 
+      await this.waitWhileUnpaused(signal);
       await waitUntilNextLoopTick(this.host, ALARM_LOOP_PAUSE_MS, signal);
     }
   }

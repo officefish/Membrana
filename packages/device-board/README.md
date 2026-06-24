@@ -5,9 +5,9 @@
 представление того же конвейера, что сейчас настраивается через сайдбар
 плагинов.
 
-**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.9 — §21 edit/navigation post-#140).  
+**Канонический концепт:** [`DEVICE_BOARD_CONCEPT.md`](./DEVICE_BOARD_CONCEPT.md) (v0.10 — §22 user workspace, §21 edit model).  
 **Scenario runtime (onTick, лупы, host):** [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md).  
-**Операторская документация (Mintlify):** [`apps/docs`](../../apps/docs/README.md) — `yarn docs:dev` · [UserCases](../../apps/docs/device-board/usercases.mdx).
+**Операторская документация (Mintlify):** [`apps/docs`](../../apps/docs/README.md) — `yarn docs:dev` · [User Workspace](../../apps/docs/device-board/user-workspace.mdx) · [UserCases](../../apps/docs/device-board/usercases.mdx).
 
 См. также: [`ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) §1f,
 [`MODULE_AND_PLUGIN_UI.md`](../../docs/MODULE_AND_PLUGIN_UI.md) §3.1.
@@ -23,8 +23,21 @@
 - **Пресеты** — `*.graph.json` по `DeviceKind` (например `Mic → FFT → Detector → Emitter`).
 - **Валидация** — типы сокетов из `@membrana/core` (`SocketType`), проверка
   соединений через `isValidConnection`.
-- **UserCases (U9)** — bundled каталог готовых сценариев: `UserCaseCatalogService`,
-  apply-all через `applyUserCaseDocument` (signal layer intact), modal picker на shell.
+- **UserCases (U9)** — bundled каталог готовых сценариев: preview RO + клон в user workspace (U10).
+- **User workspace (U10)** — до N редактируемых слотов per `deviceId`; IndexedDB + module launcher.
+
+## User workspace (U10)
+
+| Компонент | Путь |
+| --------- | ---- |
+| Launcher UI | `apps/client/.../DeviceBoardLauncher.tsx` |
+| IndexedDB store | `apps/client/.../device-board-workspace-store.ts` |
+| Persist active slot | `apps/client/.../device-board-workspace-persist.ts` |
+| Session types | `src/types/device-board-session.ts` |
+| Clone catalog → slot | `src/graph/clone-user-case-to-workspace.ts` |
+| Migrate guard | `src/graph/device-scenario-workspace.ts` |
+
+Оператор: [`user-workspace.mdx`](../../apps/docs/device-board/user-workspace.mdx). Квота: [`TARIFF_MATRIX.md`](../../docs/TARIFF_MATRIX.md).
 
 ## UserCases catalog (U9)
 
@@ -33,9 +46,8 @@
 | Bundled index | `src/catalog/user-case-catalog.ts` |
 | Apply-all | `src/graph/apply-user-case.ts` |
 | Layout canon | `src/graph/usercase-layout-canon.ts` |
-| Board picker | `src/components/board-usercase-picker-modal.tsx` |
+| Board picker (legacy) | `src/components/board-usercase-picker-modal.tsx` |
 | Client entitlement | `apps/client/src/modules/device-board/user-case-catalog-service.ts` |
-| Settings gate | `apps/client/.../UserCaseSettingsPanel.tsx` |
 
 ```bash
 yarn usercase:build usercase-mvp-microphone
@@ -76,7 +88,7 @@ yarn usercase:verify-layout usercase-mvp-microphone
 | Слой | Статус |
 | ---- | ------ |
 | Signal + scenario graph, runtime, persist | **реализовано** (хакатон H0–H4, v0.4–v0.8) |
-| User functions, groups, align, UserCases (U8–U9) | **реализовано** — CONCEPT §18–§20 |
+| User functions, groups, align, UserCases (U8–U9), User workspace (U10) | **реализовано** — CONCEPT §18–§22 |
 | Function editor, undo, branch navigation (post-#140) | **реализовано** — CONCEPT §21 |
 | XYFlow shell, validation, export/import | **реализовано** — `device-board-shell`, `graph/*` |
 

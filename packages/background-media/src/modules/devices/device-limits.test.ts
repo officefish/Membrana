@@ -10,13 +10,16 @@ const baseDevice: Device = {
   userStorageQuotaBytes: null,
   bufferQuotaBytes: null,
   datasetCatalogId: null,
+  maxUserWorkspaces: null,
   createdAt: new Date('2026-01-01'),
+  activeWorkspaceId: null,
 };
 
 const config = {
   MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE: 1_000,
   MEDIA_BUFFER_QUOTA_BYTES_PER_DEVICE: 2_000,
   MEDIA_DEFAULT_DATASET_CATALOG_ID: 'env-catalog',
+  MEDIA_DEFAULT_MAX_USER_WORKSPACES: 3,
 } as const;
 
 describe('device-limits', () => {
@@ -42,7 +45,16 @@ describe('device-limits', () => {
       userStorageQuotaBytes: 10_000,
       bufferQuotaBytes: 20_000,
       datasetCatalogId: 'pro-catalog',
+      maxUserWorkspaces: 3,
     });
+  });
+
+  it('resolveDeviceLimits uses device maxUserWorkspaces when set', () => {
+    const limits = resolveDeviceLimits(
+      { ...baseDevice, maxUserWorkspaces: 10 },
+      config as never,
+    );
+    expect(limits.maxUserWorkspaces).toBe(10);
   });
 
   it('resolveDeviceLimits falls back to env for legacy devices', () => {
@@ -51,6 +63,7 @@ describe('device-limits', () => {
       userStorageQuotaBytes: 1_000,
       bufferQuotaBytes: 2_000,
       datasetCatalogId: 'env-catalog',
+      maxUserWorkspaces: 3,
     });
   });
 });

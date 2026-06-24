@@ -23,6 +23,7 @@ import {
   createFunctionOutputBoardNode,
 } from './function-io-node.js';
 import { nodesForScenarioSubgraphSerialize } from './comment-group.js';
+import { dedupeBoardEdges } from './dedupe-board-edges.js';
 import { syncSubgraphBlocksForFunctionPins } from './function-pin-ops.js';
 
 function finalizeScenarioNode(node: ScenarioGraphNode): ScenarioGraphNode {
@@ -333,13 +334,15 @@ export function deserializeScenarioSubgraph(
     });
   }
 
-  const edges: Edge[] = subgraph.edges.map((item) => ({
-    id: `${item.source}:${item.sourceHandle}->${item.target}:${item.targetHandle}`,
-    source: item.source,
-    sourceHandle: item.sourceHandle,
-    target: item.target,
-    targetHandle: item.targetHandle,
-  }));
+  const edges: Edge[] = dedupeBoardEdges(
+    subgraph.edges.map((item) => ({
+      id: `${item.source}:${item.sourceHandle}->${item.target}:${item.targetHandle}`,
+      source: item.source,
+      sourceHandle: item.sourceHandle,
+      target: item.target,
+      targetHandle: item.targetHandle,
+    })),
+  );
 
   if (functions.length === 0) {
     return { nodes, edges };

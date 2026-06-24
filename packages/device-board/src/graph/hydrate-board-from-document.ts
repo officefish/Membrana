@@ -51,6 +51,7 @@ import type { SerializeScenarioFunctionInput } from './serialize-scenario-functi
 import { createDefaultMvpMicrophoneHydratedState } from './default-usercase-mvp-microphone.js';
 import { syncFunctionIoNodePins } from './function-io-node.js';
 import { syncAllSubgraphBlocksFromFunctionDrafts } from './function-pin-ops.js';
+import { dedupeBoardEdges } from './dedupe-board-edges.js';
 import { applyCommentGroupsToBranchNodes } from './comment-group.js';
 import type { ScenarioFunctionDraft } from './collapse-to-function.js';
 
@@ -125,7 +126,7 @@ function draftToCanvasState(draft: ScenarioFunctionDraft): {
 } {
   return {
     nodes: [...draft.nodes],
-    edges: [...draft.edges],
+    edges: dedupeBoardEdges(draft.edges),
     meta: {
       id: draft.id,
       name: draft.name,
@@ -328,6 +329,19 @@ export function hydrateBoardFromDocument(document: DeviceScenarioDocument): Hydr
     signal.nodes.push(...INITIAL_SIGNAL_NODES);
     signal.edges.push(...INITIAL_SIGNAL_EDGES);
   }
+
+  signal.edges = dedupeBoardEdges(signal.edges);
+  initial.edges = dedupeBoardEdges(initial.edges);
+  onConnect.edges = dedupeBoardEdges(onConnect.edges);
+  main.edges = dedupeBoardEdges(main.edges);
+  alarm.edges = dedupeBoardEdges(alarm.edges);
+  onStop.edges = dedupeBoardEdges(onStop.edges);
+  onDisconnect.edges = dedupeBoardEdges(onDisconnect.edges);
+  fn.edges = dedupeBoardEdges(fn.edges);
+  fn.drafts = fn.drafts.map((draft) => ({
+    ...draft,
+    edges: dedupeBoardEdges(draft.edges),
+  }));
 
   return {
     deviceKind: document.deviceKind,

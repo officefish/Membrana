@@ -16,6 +16,7 @@ import { collectFftFramesNodePins } from './collect-fft-frames-node.js';
 import { makeTrackNodePins } from './make-track-node.js';
 import { makeFftTrendsAnalysisNodePins } from './make-fft-trends-analysis-node.js';
 import { stopRuntimeNodePins } from './stop-runtime-node.js';
+import { pauseRuntimeNodePins } from './pause-runtime-node.js';
 import { makeRecordingPolicyNodePins } from './make-recording-policy-node.js';
 import { makeFftTrendsPolicyNodePins } from './make-fft-trends-policy-node.js';
 import { startRecordingNodePins } from './start-recording-node.js';
@@ -93,6 +94,7 @@ const EXEC_OUT: BoardSocketPin = { name: 'exec-out', kind: 'exec' };
 export const V04_PALETTE_NODE_KINDS = [
   'device-global',
   'stop-runtime',
+  'pause-runtime',
   'print',
   'is-valid',
   'get-microphone',
@@ -125,6 +127,7 @@ export type V04PaletteNodeKind = (typeof V04_PALETTE_NODE_KINDS)[number];
 const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'device-global': 'GetDevice',
   'stop-runtime': 'StopRuntime',
+  'pause-runtime': 'PauseRuntime',
   print: 'Print',
   'is-valid': 'isValid',
   'get-microphone': 'GetMicrophone',
@@ -167,6 +170,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return deviceGlobalNodePins();
     case 'stop-runtime':
       return stopRuntimeNodePins();
+    case 'pause-runtime':
+      return pauseRuntimeNodePins();
     case 'print':
       return {
         inputs: [EXEC_IN, { name: PALETTE_VALUE_HANDLE, kind: 'data' }],
