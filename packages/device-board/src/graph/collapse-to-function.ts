@@ -2,6 +2,7 @@ import type { Edge, Node } from '@xyflow/react';
 import type { ScenarioFunctionPin, SocketType } from '@membrana/core';
 import {
   MAX_SCENARIO_FUNCTION_PINS_PER_SIDE,
+  canonicalizeScenarioFunctionPinOrder,
   createDefaultFunctionExecInputPin,
   createDefaultFunctionExecOutputPin,
 } from '@membrana/core';
@@ -139,8 +140,8 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
     (edge) => selected.has(edge.source) !== selected.has(edge.target),
   );
 
-  const inputPins: ScenarioFunctionPin[] = [];
-  const outputPins: ScenarioFunctionPin[] = [];
+  const inputPinsRaw: ScenarioFunctionPin[] = [];
+  const outputPinsRaw: ScenarioFunctionPin[] = [];
   const usedInputIds = new Set<string>();
   const usedOutputIds = new Set<string>();
   const inputPinByKey = new Map<string, ScenarioFunctionPin>();
@@ -169,7 +170,7 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
     const pin: ScenarioFunctionPin = isExecHandle(handle)
       ? { id, name: id, kind: 'exec' }
       : { id, name: handle, kind: 'data', socketType };
-    inputPins.push(pin);
+    inputPinsRaw.push(pin);
     inputPinByKey.set(key, pin);
     return pin;
   }
@@ -183,7 +184,7 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
     const pin: ScenarioFunctionPin = isExecHandle(handle)
       ? { id, name: id, kind: 'exec' }
       : { id, name: handle, kind: 'data', socketType };
-    outputPins.push(pin);
+    outputPinsRaw.push(pin);
     outputPinByKey.set(key, pin);
     return pin;
   }
@@ -205,12 +206,14 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
     }
   }
 
-  if (inputPins.length === 0) {
-    inputPins.push(createDefaultFunctionExecInputPin());
-  }
-  if (outputPins.length === 0) {
-    outputPins.push(createDefaultFunctionExecOutputPin());
-  }
+  const inputPins = canonicalizeScenarioFunctionPinOrder(
+    inputPinsRaw,
+    createDefaultFunctionExecInputPin(),
+  );
+  const outputPins = canonicalizeScenarioFunctionPinOrder(
+    outputPinsRaw,
+    createDefaultFunctionExecOutputPin(),
+  );
 
   if (
     inputPins.length > MAX_SCENARIO_FUNCTION_PINS_PER_SIDE ||

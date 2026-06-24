@@ -26,6 +26,9 @@ import {
   type ScenarioVariableType,
   type ScenarioVariableValue,
   isPureEligibleScenarioNodeKind,
+  canonicalizeScenarioFunctionPinOrder,
+  createDefaultFunctionExecInputPin,
+  createDefaultFunctionExecOutputPin,
 } from '@membrana/core';
 
 import type { ScenarioCommentGroupBranch, ScenarioCommentGroupFrameColor, SocketType } from '@membrana/core';
@@ -828,8 +831,14 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
               name: scenarioFunctionMeta.name,
               entry: scenarioFunctionMeta.entry,
               description: scenarioFunctionMeta.description,
-              inputPins: scenarioFunctionMeta.inputPins,
-              outputPins: scenarioFunctionMeta.outputPins,
+              inputPins: canonicalizeScenarioFunctionPinOrder(
+                scenarioFunctionMeta.inputPins,
+                createDefaultFunctionExecInputPin(),
+              ),
+              outputPins: canonicalizeScenarioFunctionPinOrder(
+                scenarioFunctionMeta.outputPins,
+                createDefaultFunctionExecOutputPin(),
+              ),
               nodes: scenarioFunctionNodes,
               edges: dedupeBoardEdges(scenarioFunctionEdges),
             }

@@ -1,28 +1,29 @@
-<!-- Сгенерировано: 2026-06-24 (branch review, pre-PR) -->
+<!-- Сгенерировано: 2026-06-24 (branch review, PR #160) -->
 
 Tier: T2
 
-[Teamlead]: Ветка `fix/user-function-delete-repair` — follow-up к P0 duplicate `fn-1` (симптом: React duplicate keys в `BoardFunctionList` / MiniMap после перезапуска). Repair на hydrate переназначает коллизии id и subgraph-блоки; удаление функции — по `draftIndex`, снимается один блок (`stripSubgraphBlocksForFunctionOccurrence`). `activeFunctionDraftIndex` разводит commit/select при совпадающих id. Комплементарно PR #159 (профилактика при collapse). **LGTM** после зелёного CI.
+[Teamlead]: Ветка `fix/user-function-delete-repair` — два блока: (1) P0 duplicate `fn-1` — repair на hydrate, delete по `draftIndex`, `activeFunctionDraftIndex`; (2) CGF F1 — exec-поток **первым** портом на Input/Output при создании, collapse и hydrate (`canonicalizeScenarioFunctionPinOrder` в core); exec pins неудаляемы (graph + UI). Комплементарно PR #159. **LGTM** после зелёного CI.
 
-[Структурщик]: **C1** — только `@membrana/device-board`. Pure repair в `repair-duplicate-scenario-functions.ts`, hydrate вызывает до `syncAllSubgraphBlocksFromFunctionDrafts`. UI передаёт индекс в delete/select — без ломки публичного API core. Тесты: repair + remove by index + occurrence strip. ✅
+[Структурщик]: **C1** — `@membrana/core` (контракт pins: `canonicalizeScenarioFunctionPinOrder`, расширенный `normalizeScenarioFunctionPins`) + `@membrana/device-board` (collapse, commit draft, pin-ops, inspector). Repair — pure `repair-duplicate-scenario-functions.ts`, hydrate до sync subgraph. Тесты: repair, remove, pin order, exec delete guard. ✅
 
 [Математик]: —
 
 [Музыкант]: —
 
-[Верстальщик]: Список функций: `key={fn.id::index}`, active по id+index. Модалки удаления получают корректное имя по индексу. Консольные warning duplicate key должны исчезнуть после hydrate repair. ✅
+[Верстальщик]: Порядок handles на канвасе = порядок массива pins → exec сверху. Inspector: exec без кнопки удаления, имя read-only, badge `exec`. Список функций: `key={fn.id::index}`. ✅
 
 ---
 
 **Итоговый артефакт:**  
-Восстановление и безопасное удаление пользовательских функций при legacy-дубликатах `fn-N`.
+Восстановление/безопасное удаление дубликатов пользовательских функций + канонический exec-first порядок граничных pins.
 
 **Definition of Done:**
 ```bash
-yarn workspace @membrana/device-board run test -- src/graph/repair-duplicate-scenario-functions.test.ts src/graph/remove-user-function.test.ts
-yarn workspace @membrana/device-board run lint
+yarn workspace @membrana/core test -- src/contracts/device-board/device-board.test.ts
+yarn workspace @membrana/device-board test -- src/graph/repair-duplicate-scenario-functions.test.ts src/graph/remove-user-function.test.ts src/graph/collapse-to-function.test.ts src/graph/function-pin-ops.test.ts
+yarn workspace @membrana/device-board lint
 ```
 
-**Риски:** P2 — без PR #159 новые collapse всё ещё могут создавать дубликаты; repair/delete смягчают последствия. Рекомендуется мержить #159 первым или параллельно.
+**Риски:** P2 — без PR #159 новые collapse всё ещё могут создавать дубликаты id; repair/delete смягчают последствия. Legacy сценарии с data-only function pins получат exec-in/out при hydrate.
 
 **Вердикт:** **LGTM**
