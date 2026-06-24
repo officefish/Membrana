@@ -7621,6 +7621,24 @@
       "supportPersonas": [],
       "archivedAt": "2026-06-24",
       "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity"
+    },
+    {
+      "id": "device-board-pr-batch-sprint-2026-06-24",
+      "title": "Day sprint: device-board PR batch #170+#171 acceptance",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PR_BATCH_SPRINT_2026-06-24_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-24",
+      "sprintKind": "day-sprint",
+      "notes": "Consilium + code review + docs; merge #170 then #171. Context: #168 merged.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "dynin"
+      ]
     }
   ]
 }
