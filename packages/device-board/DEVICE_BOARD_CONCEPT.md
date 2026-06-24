@@ -811,7 +811,7 @@ disabled + `title`/`aria-label` «нет связи с устройством» 
 | ---- | ---- | ------- |
 | Реестр | `graph/scenario-node-inspector-notes.ts` | `SCENARIO_NODE_INSPECTOR_NOTES[nodeKind]` — секции `info` / `warning` |
 | UI | `components/board-node-inspector-notes.tsx` | Рендер `alert-info` / `alert-warning` при выборе узла |
-| Lint (будущее) | `validate-*.ts` | Те же формулировки, что в заметках; severity `warning` |
+| Lint (recording loop) | `graph/validate-start-recording-loop.ts` | `start-recording-unconditional-loop-path`; severity `warning` |
 
 Заметки **не сериализуются** в `DeviceScenarioDocument` — только UX редактора.
 Первый кейс: `start-recording` — идемпотентный skip при активной сессии и канон
