@@ -26,29 +26,22 @@ describe('insertFunctionSubgraphBlock', () => {
     assert.match(String(result.node.data?.label), /Capture/);
   });
 
-  it('rejects duplicate function on same branch', () => {
-    const first = insertFunctionSubgraphBlock({
-      draft: {
-        id: 'fn-2',
-        name: 'Twice',
-        inputPins: [createDefaultFunctionExecInputPin()],
-        outputPins: [createDefaultFunctionExecOutputPin()],
-      },
-      branchNodes: [],
-    });
+  it('allows multiple subgraph blocks for the same function on one branch', () => {
+    const draft = {
+      id: 'fn-2',
+      name: 'Twice',
+      inputPins: [createDefaultFunctionExecInputPin()],
+      outputPins: [createDefaultFunctionExecOutputPin()],
+    };
+    const first = insertFunctionSubgraphBlock({ draft, branchNodes: [] });
     assert.equal(first.ok, true);
     if (!first.ok) return;
-    const second = insertFunctionSubgraphBlock({
-      draft: {
-        id: 'fn-2',
-        name: 'Twice',
-        inputPins: [createDefaultFunctionExecInputPin()],
-        outputPins: [createDefaultFunctionExecOutputPin()],
-      },
-      branchNodes: [first.node],
-    });
-    assert.equal(second.ok, false);
-    if (second.ok) return;
-    assert.equal(second.code, 'duplicate-block');
+    const second = insertFunctionSubgraphBlock({ draft, branchNodes: [first.node] });
+    assert.equal(second.ok, true);
+    if (!second.ok) return;
+    assert.equal(first.node.data?.functionId, 'fn-2');
+    assert.equal(second.node.data?.functionId, 'fn-2');
+    assert.notEqual(first.node.id, second.node.id);
+    assert.equal(second.node.id, 'fn-2-block-2');
   });
 });
