@@ -147,6 +147,13 @@
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-3-pack-verify` | UCV2-3: usercase:build + verify-pack + smoke | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-4-operator-signoff` | UCV2-4: operator LGTM doc + epic close | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
+| `device-board-view-only-ux` | Device-board: UX режима «только просмотр» (system-preview) | L | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | [#163](https://github.com/officefish/Membrana/issues/163) |
+| `db-vo-r0-audit` | DB-VO-R0: gap audit system-preview UX | S | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
+| `db-vo-r1-canvas-viewport` | DB-VO-R1: canvas pan/zoom при structure read-only | M | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
+| `db-vo-r2-right-sidebar` | DB-VO-R2: right sidebar — hide palette, disable inspector | M | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
+| `db-vo-r3-left-sidebar` | DB-VO-R3: left sidebar — lock variable/function CRUD | M | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
+| `db-vo-r4-docs-tests` | DB-VO-R4: docs + tests view-only UX | S | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
+| `db-vo-r5-archive` | DB-VO-R5: archive epic view-only UX | S | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | — |
 
 ---
 
