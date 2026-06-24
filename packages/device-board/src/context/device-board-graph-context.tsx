@@ -1435,16 +1435,17 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         return 'Объединение доступно только на ветках сценария';
       }
       const { nodes: branchNodes, edges: branchEdges } = readScenarioBranchGraph(branch);
+      const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
       const result = collapseSelectionToFunction({
         selectedNodeIds,
         branchNodes,
         branchEdges,
+        existingFunctionIds: committed.map((draft) => draft.id),
       });
       if (!result.ok) {
         return result.message;
       }
       captureEditUndoSnapshot('collapse-to-function', { branch, selectedCount: selectedNodeIds.length });
-      const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
       setScenarioFunctionDrafts([...committed, result.functionDraft]);
       applyScenarioBranchGraph(branch, result.branchNodes, result.branchEdges);
       loadFunctionDraftToCanvas(result.functionDraft);

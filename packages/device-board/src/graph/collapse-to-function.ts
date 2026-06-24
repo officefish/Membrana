@@ -33,6 +33,8 @@ export interface CollapseToFunctionInput {
   readonly branchEdges: readonly Edge[];
   readonly functionId?: string;
   readonly functionName?: string;
+  /** Уже занятые id пользовательских функций — для авто-выбора `fn-N`. */
+  readonly existingFunctionIds?: readonly string[];
 }
 
 export interface CollapseToFunctionResult {
@@ -221,8 +223,9 @@ export function collapseSelectionToFunction(input: CollapseToFunctionInput): Col
     };
   }
 
-  const functionId = input.functionId ?? nextFunctionId(new Set());
-  const functionName = input.functionName ?? `Function ${functionId}`;
+  const reservedIds = new Set(input.existingFunctionIds ?? []);
+  const functionId = input.functionId ?? nextFunctionId(reservedIds);
+  const functionName = input.functionName ?? `Function ${functionId.replace(/^fn-/, '')}`;
   const inputNode = createFunctionInputBoardNode({
     id: `${functionId}-input`,
     position: { x: 40, y: 160 },
