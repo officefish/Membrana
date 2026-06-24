@@ -413,7 +413,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
           <button
             type="button"
             className="btn btn-primary btn-sm w-full"
-            disabled={editDisabled}
+            disabled={isRuntime}
             onClick={() => {
               if (selectedFunctionId !== null) {
                 onOpenFunctionEditor(selectedFunctionId);
@@ -1072,6 +1072,19 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
           )}
             </>
           )}
+        </div>
+      ) : !canEditScenario && !isRuntime ? (
+        <div className="flex flex-1 flex-col gap-3 p-4 text-sm">
+          <div className="border-b border-base-200 pb-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+              Режим просмотра
+            </p>
+            <h2 className="text-sm font-semibold text-base-content">Сценарий только для чтения</h2>
+          </div>
+          <p className="text-xs leading-relaxed text-base-content/55">
+            Палитра и редактирование недоступны. Выберите узел на канвасе, чтобы просмотреть параметры.
+            Перемещение и масштаб канваса работают как обычно.
+          </p>
         </div>
       ) : (
         <div className="flex flex-1 flex-col">

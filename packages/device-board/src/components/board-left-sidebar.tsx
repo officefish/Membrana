@@ -47,6 +47,8 @@ export interface BoardLeftSidebarProps {
   readonly onCreateFunction: () => void;
   readonly onRenameFunction: (functionId: string, name: string) => void;
   readonly onRemoveFunction: (functionId: string, draftIndex: number) => void;
+  /** Блокирует add/rename/delete переменных (system-preview, signal, runtime). */
+  readonly constructorCrudDisabled?: boolean;
 }
 
 const VariableRow: React.FC<{
@@ -138,6 +140,7 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
   onCreateFunction,
   onRenameFunction,
   onRemoveFunction,
+  constructorCrudDisabled = false,
 }) => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [nodeKindVariable, setNodeKindVariable] = useState<ScenarioVariable | null>(null);
@@ -152,7 +155,7 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
     readonly index: number;
   } | null>(null);
 
-  const constructorDisabled = !isScenarioLayer || isRuntime;
+  const constructorDisabled = !isScenarioLayer || isRuntime || constructorCrudDisabled;
   const showRuntimeInputs = isRuntime && runtimeInspection !== null;
   const deleteFunctionName =
     deleteFunctionTarget === null
@@ -241,7 +244,9 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
               </p>
             ) : variables.length === 0 ? (
               <p className="px-2 text-[10px] leading-relaxed text-base-content/40">
-                Создайте переменную кнопкой «+», затем выберите её для добавления get/set на канвас.
+                {constructorCrudDisabled && isScenarioLayer
+                  ? 'Переменные доступны только для просмотра.'
+                  : 'Создайте переменную кнопкой «+», затем выберите её для добавления get/set на канвас.'}
               </p>
             ) : (
               <ul className="flex flex-col gap-0.5 overflow-y-auto">
@@ -266,7 +271,7 @@ export const BoardLeftSidebar: React.FC<BoardLeftSidebarProps> = ({
             functions={scenarioFunctions}
             activeFunctionId={activeFunctionId}
             activeFunctionDraftIndex={activeFunctionDraftIndex}
-            disabled={isRuntime}
+            crudDisabled={isRuntime || constructorCrudDisabled}
             onSelect={onSelectFunction}
             onCreate={onCreateFunction}
             onRename={(functionId, draftIndex) => {

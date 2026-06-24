@@ -123,7 +123,7 @@ export interface BoardFlowCanvasProps {
   /** Подсветка узлов с ошибками pre-run / UserCase validation (Phase 3 A2). */
   readonly validationErrorNodeIds?: ReadonlySet<string>;
   readonly highlightExecEdgeIds?: ReadonlySet<string>;
-  /** Запрет редактирования графа (drag, connect, delete) при runtime. */
+  /** Запрет структурного редактирования графа (drag, connect, delete); pan/zoom не блокируются. */
   readonly readOnly?: boolean;
   readonly onViewportApiReady?: (api: BoardFlowViewportApi) => void;
   /** Отпускание ребра над пустым полем (не на handle узла). */
