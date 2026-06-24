@@ -1141,6 +1141,14 @@ Pure: `collapse-to-function.ts`, `function-pin-ops.ts`, `repair-duplicate-scenar
 `function` branch (F2). Modal picker остаётся при входе с handler-ветки. Viewport fit + minimap
 на function canvas. Pin meter **`n/9`** per Input/Output (F4).
 
+**Multi-insert user functions (post-#170):** одна и та же `ScenarioFunction` может быть
+вставлена на родительскую ветку **несколько раз** — каждый вызов = отдельный subgraph-блок
+с уникальным `nodeId` (`fn-{id}-block`, `fn-{id}-block-2`, …). Runtime резолвит тело по
+общему `functionId`; дубликат-guard на ветке **снят** (`insert-function-into-branch.ts`).
+Вставка из sidebar/modal: позиция по умолчанию — **центр viewport**
+(`getCenterFlowPosition()`); опциональный `position` в API. Подтверждение — краткий edit-hint
+в зоне clipboard-hint (`flashEditHint`, 5 с), без отдельного top-toast.
+
 **Runtime bridge:** `function-input` / `function-output` — pass-through в `exec-subgraph`
 (entry exec-in → first inner node; `function-output` → return).
 

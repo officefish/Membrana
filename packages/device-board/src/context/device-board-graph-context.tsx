@@ -172,6 +172,10 @@ export interface CollapseMarqueeToCommentGroupResult {
   readonly groupNode: Node | null;
 }
 
+export type InsertUserFunctionIntoBranchResult =
+  | { readonly ok: true; readonly nodeId: string }
+  | { readonly ok: false; readonly message: string };
+
 export interface DeviceBoardGraphContextValue {
   readonly deviceKind: DeviceKind;
   readonly signalNodes: Node[];
@@ -367,7 +371,11 @@ export interface DeviceBoardGraphContextValue {
   /** Удаляет пользовательскую функцию и её subgraph-блоки со всех веток. */
   readonly removeUserFunction: (functionId: string, draftIndex?: number) => string | null;
   /** Вставляет subgraph-блок функции на указанную ветку (без автосвязки). */
-  readonly insertUserFunctionIntoBranch: (functionId: string, branch: ScenarioBranchTab) => string | null;
+  readonly insertUserFunctionIntoBranch: (
+    functionId: string,
+    branch: ScenarioBranchTab,
+    position?: { readonly x: number; readonly y: number },
+  ) => InsertUserFunctionIntoBranchResult;
   readonly collapseMarqueeToFunction: (
     branch: ScenarioBranchTab,
     selectedNodeIds: readonly string[],
@@ -2577,14 +2585,21 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   );
 
   const insertUserFunctionIntoBranch = useCallback(
-    (functionId: string, branch: ScenarioBranchTab): string | null => {
+    (
+      functionId: string,
+      branch: ScenarioBranchTab,
+      position?: { readonly x: number; readonly y: number },
+    ): InsertUserFunctionIntoBranchResult => {
       if (!isScenarioBranchForFunctionInsert(branch)) {
-        return 'Вставка доступна только на ветках сценария (не на вкладке функции)';
+        return {
+          ok: false,
+          message: 'Вставка доступна только на ветках сценария (не на вкладке функции)',
+        };
       }
       const committed = commitActiveFunctionDraft(scenarioFunctionDrafts);
       const draft = committed.find((item) => item.id === functionId);
       if (draft === undefined) {
-        return 'Функция не найдена';
+        return { ok: false, message: 'Функция не найдена' };
       }
       setScenarioFunctionDrafts(committed);
 
@@ -2606,13 +2621,11 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       const outcome = insertFunctionSubgraphBlock({
         draft,
         branchNodes,
+        position,
       });
-      if (!outcome.ok) {
-        return outcome.message;
-      }
 
       appendNodeToBranch(branch, outcome.node);
-      return null;
+      return { ok: true, nodeId: outcome.node.id };
     },
     [
       appendNodeToBranch,
