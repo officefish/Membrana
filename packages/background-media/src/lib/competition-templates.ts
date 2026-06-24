@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { parseDeviceScenarioDocument, type DeviceScenarioDocument } from '@membrana/core';
-
+import { validateDeviceScenarioDocument } from './device-scenario-assert';
 import { getPackageRootDir } from './paths';
 
 export interface CompetitionTemplateIndexEntry {
@@ -31,16 +30,17 @@ export function readCompetitionTemplateIndex(): CompetitionTemplateIndex {
 }
 
 /** Loads a team device-scenario template from `templates/competition/<team>/`. */
-export function loadCompetitionTemplateDocument(teamId: string): DeviceScenarioDocument {
+export function loadCompetitionTemplateDocument(teamId: string): Record<string, unknown> {
   const index = readCompetitionTemplateIndex();
   const entry = index.teams.find((team) => team.id === teamId);
   if (entry === undefined) {
     throw new Error(`Unknown competition team template: ${teamId}`);
   }
   const raw = readFileSync(join(competitionTemplatesRoot(), entry.documentPath), 'utf8');
-  const parsed = parseDeviceScenarioDocument(JSON.parse(raw));
-  if (!parsed.ok) {
-    throw new Error(`Invalid competition template ${teamId}: ${parsed.error.message}`);
+  const document = JSON.parse(raw) as Record<string, unknown>;
+  const validationError = validateDeviceScenarioDocument(document);
+  if (validationError !== null) {
+    throw new Error(`Invalid competition template ${teamId}: ${validationError}`);
   }
-  return parsed.value;
+  return document;
 }

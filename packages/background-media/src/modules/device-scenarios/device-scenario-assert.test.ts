@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
-import { assertDeviceScenarioDocument } from './device-scenario-assert';
+import { assertDeviceScenarioDocument } from '../../lib/device-scenario-assert';
 
 const baseV1 = {
   kind: 'device-scenario',

@@ -5,7 +5,7 @@ import { APP_CONFIG } from '../../config/config.tokens';
 import { Prisma } from '../../prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { resolveDeviceLimits } from '../devices/device-limits';
-import { assertDeviceScenarioDocument } from '../device-scenarios/device-scenario-assert';
+import { assertDeviceScenarioDocument } from '../../lib/device-scenario-assert';
 import type {
   DeleteWorkspaceResultDto,
   DeviceWorkspaceListDto,

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { DeviceScenarioRecordDto } from './device-scenarios.dto';
-import { assertDeviceScenarioDocument } from './device-scenario-assert';
+import { assertDeviceScenarioDocument } from '../../lib/device-scenario-assert';
 
 @Injectable()
 export class DeviceScenariosService {
