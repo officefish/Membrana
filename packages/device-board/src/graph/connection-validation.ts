@@ -5,12 +5,15 @@ import type { BoardLayerTab } from '../types/board-ui.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 import { PALETTE_VALUE_HANDLE } from './palette-node.js';
 import { resolveHandle } from './handle-catalog.js';
+import { wouldCreateExecFanOut } from './validate-exec-fanout.js';
 
 /** XYFlow `isValidConnection`: exec/exec или data с совпадающим SocketType. */
 export function isValidBoardConnection(
   connection: Connection,
   nodes: readonly Node[],
   layer: BoardLayerTab,
+  edges: readonly Edge[] = [],
+  options?: { readonly rejectExecFanOut?: boolean },
 ): boolean {
   const { source, target, sourceHandle, targetHandle } = connection;
   if (
@@ -30,11 +33,21 @@ export function isValidBoardConnection(
   }
 
   if (layer === 'scenario') {
+    const rejectFanOut = options?.rejectExecFanOut !== false;
     if (sourceResolved.pinKind === 'exec' && targetResolved.pinKind === 'exec') {
+      if (rejectFanOut && wouldCreateExecFanOut(connection, edges, nodes)) {
+        return false;
+      }
       return true;
     }
     if (sourceResolved.pinKind === 'event' && targetResolved.pinKind === 'exec') {
-      return targetHandle === 'exec-in';
+      if (targetHandle !== 'exec-in') {
+        return false;
+      }
+      if (rejectFanOut && wouldCreateExecFanOut(connection, edges, nodes)) {
+        return false;
+      }
+      return true;
     }
     if (sourceResolved.pinKind === 'data' && targetResolved.pinKind === 'data') {
       const targetNode = nodes.find((item) => item.id === target);
@@ -81,5 +94,7 @@ export function isValidBoardEdge(
     },
     nodes,
     layer,
+    [],
+    { rejectExecFanOut: false },
   );
 }

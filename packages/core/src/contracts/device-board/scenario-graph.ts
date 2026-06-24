@@ -12,6 +12,7 @@ import type { ScenarioFftTrendsPolicy } from './fft-trends-policy.js';
 import type { ScenarioRecordingPolicy } from './recording-policy.js';
 import type { ScenarioFunctionPin } from './scenario-function-pin.js';
 import type { ScenarioCommentGroup } from './scenario-comment-group.js';
+import type { ScenarioSequenceConfig } from './sequence-config.js';
 
 /**
  * Системные ветки сценария (фиксированы на устройстве).
@@ -80,6 +81,8 @@ export interface ScenarioGraphNode {
   readonly recordingPolicy?: ScenarioRecordingPolicy;
   /** v0.8: policy FFT trends (MakeFftTrendsPolicy). */
   readonly fftTrendsPolicy?: ScenarioFftTrendsPolicy;
+  /** Sequence node: Then count + parallel async mode. */
+  readonly sequenceConfig?: ScenarioSequenceConfig;
   /**
    * v0.9: Blueprint-style pure getter flag.
    * - policy constructors: always `true` (locked);
@@ -87,6 +90,11 @@ export interface ScenarioGraphNode {
    * - host I/O / exec nodes: поле не сериализуется.
    */
   readonly pure?: boolean;
+  /**
+   * ES4: явный override async-capable для Sequence parallel Then-веток.
+   * Без поля — см. `resolveScenarioGraphNodeSupportsAsync`.
+   */
+  readonly supportsAsync?: boolean;
 }
 
 /** Ребро scenario graph. */

@@ -116,8 +116,8 @@ export function needsFftTrendsPolicyConstructorMigration(
   return !hasMakeTrackExecToRestart;
 }
 /**
- * v0.8 gate без bootstrap StartRecording перед IsRecordingWindowFull —
- * запись никогда не стартует (exec-false → ∞ каждый tick).
+ * Main loop: GetRecorder → gate без bootstrap на onStart — запись не стартует.
+ * Канон после RGC2: bootstrap в `scenario.initial`, main — прямой exec к gate.
  */
 export function needsRecordingGateBootstrapMigration(
   document: DeviceScenarioDocument,
@@ -127,11 +127,18 @@ export function needsRecordingGateBootstrapMigration(
   if (gateNode === undefined) {
     return false;
   }
-  return main.edges.some(
+  const hasDirectRecorderToGate = main.edges.some(
     (edge) =>
       edge.kind === 'exec' &&
       edge.target === gateNode.id &&
       edge.targetHandle === 'exec-in' &&
       main.nodes.find((node) => node.id === edge.source)?.nodeKind === 'get-recorder',
   );
+  if (!hasDirectRecorderToGate) {
+    return false;
+  }
+  const hasInitialBootstrap = document.scenario.initial.nodes.some(
+    (node) => node.id === 'node-start-recording-bootstrap-v08-2',
+  );
+  return !hasInitialBootstrap;
 }

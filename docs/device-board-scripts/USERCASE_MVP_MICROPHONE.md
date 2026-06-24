@@ -3,6 +3,7 @@
 > **id:** `usercase-mvp-microphone`  
 > **Статус:** **LGTM 2026-06-21** — UserCase выполнен через device-board runtime · [`USERCASE_MVP_MICROPHONE_LGTM.md`](./USERCASE_MVP_MICROPHONE_LGTM.md)  
 > **Канон:** [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) §16.5  
+> **Recording topology (RGC2):** bootstrap `StartRecording` в **onStart**; main — gate без hot-path start · [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md)  
 > **Main loop:** MakeRecordingPolicy + MakeFftTrendsPolicy → gate → track + `trends-fft/v0.1` report  
 > **Дальше:** [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md)
 
@@ -48,8 +49,44 @@ yarn usercase:build-mvp-microphone
    - `server1` → ServerRef (onConnect)
    - `datetime1` → DateTime (onStart)
 3. **Порядок импорта** (рекомендуется): On start → On connect → onMainTick → onAlarmTick → On stop → On disconnect.
-4. Проверка main: узел **MakeRecordingPolicy** (5s · WAV) → **StartRecording**; **нет** CollectSamples / legacy `new-track`.
-5. Run ≥ 60 s → chain-log: [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](./SCENARIO_CHAIN_LOG_COOKBOOK.md) § v0.8.
+4. Проверка **onStart**: после `StartStreaming` — `GetRecorder` → `StartRecording (bootstrap)` (один раз при Run).
+5. Проверка **main**: `GetRecorder` → `IsRecordingWindowFull` **без** bootstrap на hot path; рестарт только `StopRecording` → `MakeTrack` → `StartRecording (restart)`; **нет** CollectSamples / legacy `new-track`.
+6. Run ≥ 60 s → chain-log: [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](./SCENARIO_CHAIN_LOG_COOKBOOK.md) § v0.8 + § recording markers.
+
+---
+
+## Топология записи (канон после RGC2)
+
+```mermaid
+flowchart LR
+  subgraph onStart["On start (once per Run)"]
+    SS[StartStreaming]
+    GR0[GetRecorder]
+    SR0["StartRecording bootstrap"]
+    SS --> GR0 --> SR0
+  end
+
+  subgraph mainTick["onMainTick (each tick)"]
+    GR[GetRecorder]
+    GATE[IsRecordingWindowFull]
+    STOP[StopRecording]
+    MT[MakeTrack]
+    SR1["StartRecording restart"]
+    GR --> GATE
+    GATE -->|false| INF["∞"]
+    GATE -->|true| STOP --> MT --> SR1
+  end
+
+  onStart -.->|session active| mainTick
+```
+
+| Ветка | StartRecording | Когда |
+|-------|----------------|-------|
+| **onStart** | `node-start-recording-bootstrap-v08-2` | Один раз после `StartStreaming` — открывает clip |
+| **main** | `node-start-recording-mqv07-36` | Только после `StopRecording` на gate-true (рестарт окна) |
+| **main hot path** | — | `GetRecorder` exec → gate **напрямую**; не вызывать bootstrap каждый tick |
+
+Pre-run lint (`start-recording-unconditional-loop-path`) предупреждает, если `start-recording` достижим от `onTick` без предшествующего `stop-recording` на том же exec-пути. Host-идемпотентность (`start-recording-idempotent`) — предохранитель, не норма.
 
 ---
 
@@ -61,18 +98,22 @@ yarn usercase:build-mvp-microphone
 
 ### On start
 
-`Event` → isValid(journal1)? → GetJournal / set refs → GetMicrophone → set microphone1 → StartStreaming → set audiostream1. **Без** StartRecording (gate только в main).
+`Event` → isValid(journal1)? → GetJournal / set refs → GetMicrophone → StartStreaming → **GetRecorder → StartRecording (bootstrap)** с policy dataflow (`MakeRecordingPolicy` 5s · WAV). Bootstrap выполняется **один раз** при старте Run; не дублировать на каждом main tick.
 
 ### onMainTick (§16.5)
 
 ```text
 onTick → mic/stream valid → GetSample → GetFFTFrame → GetSpectralAnalyser → CollectFftFrames
-  → gate: IsRecordingWindowFull → StopRecording → MakeTrack
-  → MakeRecordingPolicy → MakeFftTrendsPolicy → StartRecording → FlushSpectralAnalyser
-  → MakeFftTrendsAnalysis → MakeReportFromAnalysis → PublishReport → ∞
+  → GetRecorder → gate: IsRecordingWindowFull
+       ├─ false → ∞
+       └─ true → StopRecording → MakeTrack
+            → MakeRecordingPolicy (data) → StartRecording (restart)
+            → FlushSpectralAnalyser → MakeFftTrendsAnalysis → MakeReportFromAnalysis
+            → PublishReport → ∞
 ```
 
-Policy: **MakeRecordingPolicy** `{ windowSec: 5, captureFormat: 'wav' }` и **MakeFftTrendsPolicy** `{ 20×500ms, catalog: DRONE_TIGHT + WIND/QUIET/TRAFFIC/BIRDS/VOICE }`.
+Policy (pure, data-only): **MakeRecordingPolicy** `{ windowSec: 5, captureFormat: 'wav' }` на restart-узел;
+**MakeFftTrendsPolicy** `{ 20×500ms, catalog: DRONE_TIGHT + WIND/QUIET/TRAFFIC/BIRDS/VOICE }` на analysis.
 
 ### onAlarmTick
 
@@ -93,7 +134,7 @@ GetJournal(device) → set journal1 (invalidate on disconnect semantics).
 | Файл | Причина |
 |------|---------|
 | `device-scenario-microphone-main-mvp.json` | legacy CollectSamples + `new-track` |
-| `device-scenario-microphone-initial (1).json` | StartRecording ошибочно в onStart |
+| `device-scenario-microphone-initial (1).json` | устаревший черновик (до RGC2 bootstrap в onStart) |
 | `device-scenario-microphone-main (1..5).json` | черновики до v0.7 gate |
 
 ---
@@ -101,4 +142,5 @@ GetJournal(device) → set journal1 (invalidate on disconnect semantics).
 ## Связанные промпты
 
 - Recording parity v0.8: [`DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md)
+- Recording graph clarity (bootstrap / lint / operator notes): [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md)
 - UserCases (будущий UI): § Future в том же промпте

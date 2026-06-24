@@ -23,7 +23,6 @@ type PackBranch = 'main' | 'onConnect';
 
 const GATE_NODE_IDS = [
   'node-get-recorder-mqmo3mba-31',
-  'node-start-recording-bootstrap-v08-2',
   'node-is-recording-window-full-mqmo40ie-32',
   'node-stop-recording-mqmod4yf-35',
   'node-make-track-mqmcipn5-28',

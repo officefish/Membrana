@@ -66,6 +66,36 @@ function resolveVariableSetSourceType(
   return inferSourceSocketType(incoming, edges, nodes);
 }
 
+function resolveSourcePin(
+  edge: Edge,
+  edges: readonly Edge[],
+  nodes: readonly Node[],
+): BoardSocketPin | undefined {
+  if (edge.sourceHandle === undefined || edge.sourceHandle === null) {
+    return undefined;
+  }
+  const sourceNode = nodes.find((node) => node.id === edge.source);
+  if (sourceNode === undefined || !isBoardFlowNodeData(sourceNode.data)) {
+    return undefined;
+  }
+  const outputs = sourceNode.data.outputs ?? [];
+  const sourcePin = outputs.find((pin) => pin.name === edge.sourceHandle);
+  if (
+    sourceNode.data.nodeKind === 'variable-set' &&
+    edge.sourceHandle === VARIABLE_VALUE_HANDLE &&
+    sourcePin !== undefined
+  ) {
+    const nestedType = resolveVariableSetSourceType(sourceNode.id, sourcePin, edges, nodes);
+    if (nestedType === 'nullable') {
+      return { ...sourcePin, nullable: true };
+    }
+    if (nestedType !== undefined) {
+      return { ...sourcePin, socketType: nestedType, nullable: undefined };
+    }
+  }
+  return sourcePin;
+}
+
 function inferSourceSocketType(
   edge: Edge,
   edges: readonly Edge[],
@@ -96,9 +126,15 @@ function inferSourceSocketType(
   return resolved?.socketType;
 }
 
-function formatContextSourceLabel(sourceType: SocketType | 'nullable' | undefined): string {
+function formatContextSourceLabel(
+  sourceType: SocketType | 'nullable' | undefined,
+  fallbackPin?: BoardSocketPin,
+): string {
   if (sourceType === 'nullable') {
-    return '& null';
+    if (fallbackPin !== undefined) {
+      return formatSocketPortLabel({ ...fallbackPin, nullable: true });
+    }
+    return 'any ?';
   }
   if (sourceType === 'DateTime') {
     return 'datetime';
@@ -155,7 +191,7 @@ function pinFromContextSource(
 
 /**
  * Подпись data-порта `value` у print/is-valid/variable-set.
- * Без ребра у reference-setter — `& null`; DeviceRef → `& device`; и т.д.
+ * Без ребра у reference-setter — `& device ?`; с ребром — тип источника.
  */
 export function resolveContextValuePortLabel(
   nodeId: string,
@@ -168,8 +204,21 @@ export function resolveContextValuePortLabel(
   }
 
   if (isVariableSetValuePin(nodeId, pin, nodes)) {
-    const sourceType = resolveVariableSetSourceType(nodeId, pin, edges, nodes);
-    return formatContextSourceLabel(sourceType);
+    const incoming = edges.find(
+      (edge) => edge.target === nodeId && edge.targetHandle === VARIABLE_VALUE_HANDLE,
+    );
+    if (incoming === undefined) {
+      if (pin.socketType !== undefined && isReferenceSocketType(pin.socketType)) {
+        return formatSocketPortLabel({ ...pin, nullable: true });
+      }
+      return formatSocketPortLabel(pin);
+    }
+    const sourceType = inferSourceSocketType(incoming, edges, nodes);
+    const sourcePin = resolveSourcePin(incoming, edges, nodes);
+    if (sourcePin?.nullable === true) {
+      return formatSocketPortLabel({ ...sourcePin, nullable: true });
+    }
+    return formatContextSourceLabel(sourceType, pin);
   }
 
   const incoming = edges.find(
@@ -179,7 +228,12 @@ export function resolveContextValuePortLabel(
     return 'value';
   }
 
-  return formatContextSourceLabel(inferSourceSocketType(incoming, edges, nodes));
+  const sourceType = inferSourceSocketType(incoming, edges, nodes);
+  const sourcePin = resolveSourcePin(incoming, edges, nodes);
+  if (sourcePin?.nullable === true) {
+    return formatSocketPortLabel({ ...sourcePin, nullable: true });
+  }
+  return formatContextSourceLabel(sourceType);
 }
 
 /** Pin для handle-стиля: подмешивает socketType с подключённого источника. */

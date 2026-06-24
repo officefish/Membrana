@@ -142,6 +142,7 @@ export const SCENARIO_V04_PALETTE_SECTIONS: readonly V04PaletteSection[] = [
     'device-global',
     'stop-runtime',
     'pause-runtime',
+    'sequence',
     'print',
     'is-valid',
     'get-microphone',

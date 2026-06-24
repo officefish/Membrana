@@ -18,6 +18,7 @@ describe('palette-node (DBR5)', () => {
       'device-global',
       'stop-runtime',
       'pause-runtime',
+      'sequence',
       'print',
       'is-valid',
       'get-microphone',

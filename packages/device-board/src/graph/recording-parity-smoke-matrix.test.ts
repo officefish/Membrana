@@ -50,11 +50,11 @@ describe('recording parity smoke matrix (A4)', () => {
     expect(parsed.export.subgraph.nodes.some((n) => n.nodeKind === 'start-recording')).toBe(true);
     expect(
       parsed.export.subgraph.nodes.some((n) => n.id === 'node-start-recording-bootstrap-v08-2'),
-    ).toBe(true);
+    ).toBe(false);
     expect(
       parsed.export.subgraph.edges.some(
         (e) =>
-          e.source === 'node-start-recording-bootstrap-v08-2' &&
+          e.source === 'node-get-recorder-mqmo3mba-31' &&
           e.target === 'node-is-recording-window-full-mqmo40ie-32' &&
           e.kind === 'exec',
       ),

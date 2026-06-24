@@ -6,11 +6,13 @@ import type {
   ScenarioCollectorConfig,
   ScenarioFftTrendsPolicy,
   ScenarioRecordingPolicy,
+  ScenarioSequenceConfig,
 } from '@membrana/core';
 import {
   isPureEligibleScenarioNodeKind,
   resolveScenarioCollectorConfig,
   resolveScenarioFftTrendsPolicy,
+  resolveScenarioSequenceConfig,
   resolveScenarioGraphNodePure,
   resolveScenarioRecordingPolicy,
   resolveScenarioCommentGroupFrameColor,
@@ -125,6 +127,9 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedRecordingPolicyWired, setSelectedRecordingPolicyWired] = useState(false);
   const [selectedFftTrendsPolicy, setSelectedFftTrendsPolicy] =
     useState<ScenarioFftTrendsPolicy | null>(null);
+  const [selectedSequenceConfig, setSelectedSequenceConfig] = useState<ScenarioSequenceConfig | null>(
+    null,
+  );
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
   const [selectedGetterPure, setSelectedGetterPure] = useState(true);
   const [selectedGetterPureLocked, setSelectedGetterPureLocked] = useState(false);
@@ -241,6 +246,7 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedRecordingPolicy(null);
     setSelectedRecordingPolicyWired(false);
     setSelectedFftTrendsPolicy(null);
+    setSelectedSequenceConfig(null);
     setSelectedVariableId(null);
     setSelectedGetterPure(true);
     setSelectedGetterPureLocked(false);
@@ -293,6 +299,7 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedRecordingPolicy(null);
       setSelectedRecordingPolicyWired(false);
       setSelectedFftTrendsPolicy(null);
+    setSelectedSequenceConfig(null);
       setSelectedVariableId(null);
       setSelectedGetterPure(true);
       setSelectedGetterPureLocked(false);
@@ -321,6 +328,7 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedRecordingPolicy(null);
       setSelectedRecordingPolicyWired(false);
       setSelectedFftTrendsPolicy(null);
+    setSelectedSequenceConfig(null);
       setSelectedVariableId(null);
       setSelectedGetterPure(false);
       setSelectedGetterPureLocked(false);
@@ -370,6 +378,12 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedFftTrendsPolicy(
       fftTrendsRaw !== undefined && fftTrendsRaw !== null && typeof fftTrendsRaw === 'object'
         ? resolveScenarioFftTrendsPolicy(fftTrendsRaw as Partial<ScenarioFftTrendsPolicy>)
+        : null,
+    );
+    const sequenceRaw = node.data?.sequenceConfig;
+    setSelectedSequenceConfig(
+      sequenceRaw !== undefined && sequenceRaw !== null && typeof sequenceRaw === 'object'
+        ? resolveScenarioSequenceConfig(sequenceRaw as Partial<ScenarioSequenceConfig>)
         : null,
     );
     const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
@@ -1706,6 +1720,7 @@ const DeviceBoardShellInner: React.FC<{
             selectedRecordingPolicy={selectedRecordingPolicy}
             selectedRecordingPolicyWired={selectedRecordingPolicyWired}
             selectedFftTrendsPolicy={selectedFftTrendsPolicy}
+            selectedSequenceConfig={selectedSequenceConfig}
             selectedVariableName={selectedVariableName}
             selectedVariableId={selectedVariableId}
             selectedVariableType={selectedVariable?.type ?? null}
@@ -1734,6 +1749,7 @@ const DeviceBoardShellInner: React.FC<{
             onCollectorConfigChange={graph.updateCollectorConfig}
             onRecordingPolicyChange={graph.updateRecordingPolicy}
             onFftTrendsPolicyChange={graph.updateFftTrendsPolicy}
+            onSequenceConfigChange={graph.updateSequenceConfig}
             onAssignVariableName={graph.assignNodeVariableName}
             onVariableGetterPureChange={(nodeId, pure) => {
               graph.setVariableGetterPure(nodeId, pure);

@@ -237,20 +237,6 @@
         "nodeKind": "start-recording"
       },
       {
-        "id": "node-start-recording-bootstrap-v08-2",
-        "blockKind": "custom",
-        "position": {
-          "x": 3936,
-          "y": -280
-        },
-        "label": "StartRecording (bootstrap)",
-        "nodeKind": "start-recording",
-        "recordingPolicy": {
-          "windowSec": 5,
-          "captureFormat": "wav"
-        }
-      },
-      {
         "id": "node-make-recording-policy-v08-1",
         "blockKind": "custom",
         "position": {
@@ -534,32 +520,9 @@
       {
         "source": "node-get-recorder-mqmo3mba-31",
         "sourceHandle": "exec-out",
-        "target": "node-start-recording-bootstrap-v08-2",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-start-recording-bootstrap-v08-2",
-        "sourceHandle": "exec-out",
         "target": "node-is-recording-window-full-mqmo40ie-32",
         "targetHandle": "exec-in",
         "kind": "exec"
-      },
-      {
-        "source": "node-get-recorder-mqmo3mba-31",
-        "sourceHandle": "recorder",
-        "target": "node-start-recording-bootstrap-v08-2",
-        "targetHandle": "recorder",
-        "kind": "data",
-        "dataType": "RecorderRef"
-      },
-      {
-        "source": "node-make-recording-policy-v08-1",
-        "sourceHandle": "policy",
-        "target": "node-start-recording-bootstrap-v08-2",
-        "targetHandle": "policy",
-        "kind": "data",
-        "dataType": "RecordingPolicy"
       },
       {
         "source": "node-make-fft-trends-policy-v08-1",
@@ -715,14 +678,6 @@
         "targetHandle": "stream",
         "kind": "data",
         "dataType": "AudioStreamRef"
-      },
-      {
-        "source": "node-get-audio-stream-mql3ckno-7",
-        "sourceHandle": "stream",
-        "target": "node-start-recording-bootstrap-v08-2",
-        "targetHandle": "stream",
-        "kind": "data",
-        "dataType": "AudioStreamRef"
       }
     ]
   },
@@ -738,7 +693,7 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-21T13:08:50.655Z",
+  "exportedAt": "2026-06-24T12:20:53.795Z",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "main"
 }

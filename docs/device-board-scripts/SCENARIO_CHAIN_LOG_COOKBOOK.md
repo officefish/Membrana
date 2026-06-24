@@ -129,21 +129,44 @@ Smoke checklist: [`DB_RECORDING_PARITY_SMOKE_MATRIX.md`](./DB_RECORDING_PARITY_S
 
 ### Нормальный цикл gate (один window)
 
+Bundled MVP (`usercase-mvp-microphone`): **первый** `[recording] start-recording` — в ветке **onStart**
+(после `StartStreaming`), не на каждом main tick. Main ticks до gate-true идут без повторного
+`start-recording` (сессия уже активна).
+
 ```
+[device-board] scenario-run-start { runId, … }
+… onStart branch …
 [device-board][recording] start-recording { windowSec, captureFormat, encoder: 'worklet'|'mediarecorder' }
-… main ticks: [capture] ok без feed в recorder …
+… main ticks: [capture] ok, GetRecorder → gate (exec-false) …
 [device-board][recording] recording-window-full { windowSec }
 [device-board][recording] stop-recording { handle, durationSec, captureFormat, encoder, blobBytes }
 [device-board][track] slice-start { durationSec, captureFormat, mimeType via upload }
+[device-board][recording] start-recording { … }   ← restart path only (after StopRecording)
 [device-board][media] upload-start { captureFormat, mimeType, durationSec }
 [device-board][media] upload-ok
 [device-board][track] done
 ```
 
+### Маркеры `start-recording` vs `start-recording-idempotent`
+
+Источник: `scenarioMicJournalBridge.startRecorderRecording` (client bridge).
+
+| Chain-log маркер | Когда появляется | Интерпретация |
+|------------------|------------------|---------------|
+| `start-recording` | Сессия записи **не** была активна; открыт новый clip | **Норма:** onStart bootstrap или restart после `stop-recording` |
+| `start-recording-idempotent` | Exec `StartRecording`, но `session.isActive()` уже true | **Предохранитель:** host не открывает второй clip. Если видите на **каждом** tick — антипаттерн топологии |
+| `start-recording-skip` | `invalid-stream` / `no-stream` | StartStreaming / mic не live — чинить поток, не граф |
+| Pre-run `start-recording-unconditional-loop-path` | Lint до Run (warning) | `StartRecording` exec-достижим от `onTick` без `StopRecording` ранее на пути |
+
+**Канон MVP:** один `start-recording` в onStart + редкие `start-recording` на gate-true; **не** `start-recording-idempotent` на каждом tick.
+
+Operator note в инспекторе узла `start-recording` и CONCEPT §15.5.1 согласованы с этой таблицей.
+
 ### Типичные сбои (v0.8)
 
 | Последовательность | Причина |
 |--------------------|---------|
+| `start-recording-idempotent` на каждом main tick | bootstrap на hot path лупа — исправить граф; см. [`USERCASE_MVP_MICROPHONE.md`](./USERCASE_MVP_MICROPHONE.md) § topology |
 | `start-recording-skip` reason `no-stream` | StartStreaming / mic module не live |
 | `stop-recording-empty` | clipRecorder не успел / stream muted |
 | `durationSec` << windowSec | старый tick-chunk path (реgress) |

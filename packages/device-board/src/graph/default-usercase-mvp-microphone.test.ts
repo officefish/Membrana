@@ -21,8 +21,11 @@ describe('default-usercase-mvp-microphone', () => {
       true,
     );
     expect(
-      doc.scenario.loops.main.nodes.some((node) => node.id === 'node-start-recording-bootstrap-v08-2'),
+      doc.scenario.initial.nodes.some((node) => node.id === 'node-start-recording-bootstrap-v08-2'),
     ).toBe(true);
+    expect(
+      doc.scenario.loops.main.nodes.some((node) => node.id === 'node-start-recording-bootstrap-v08-2'),
+    ).toBe(false);
     expect(doc.scenario.loops.alarm.nodes.some((node) => node.id === 'alarm-infinity')).toBe(true);
     expect(doc.scenario.triggers.onStop.nodes.some((node) => node.nodeKind === 'stop-streaming')).toBe(
       true,
@@ -75,7 +78,7 @@ describe('default-usercase-mvp-microphone', () => {
     expect(isLegacyHackathonDefaultScenario(legacy)).toBe(true);
   });
 
-  it('detects broken gate topology without bootstrap StartRecording', () => {
+  it('detects broken gate topology without onStart bootstrap StartRecording', () => {
     const doc = getDefaultMvpMicrophoneDocument();
     expect(needsRecordingGateBootstrapMigration(doc)).toBe(false);
     const gateNode = doc.scenario.loops.main.nodes.find(
@@ -89,28 +92,20 @@ describe('default-usercase-mvp-microphone', () => {
       ...doc,
       scenario: {
         ...doc.scenario,
-        loops: {
-          ...doc.scenario.loops,
-          main: {
-            ...doc.scenario.loops.main,
-            nodes: doc.scenario.loops.main.nodes.filter(
-              (node) => node.id !== 'node-start-recording-bootstrap-v08-2',
-            ),
-            edges: [
-              ...doc.scenario.loops.main.edges.filter(
-                (edge) =>
-                  edge.source !== 'node-start-recording-bootstrap-v08-2' &&
-                  edge.target !== 'node-start-recording-bootstrap-v08-2',
-              ),
-              {
-                source: 'node-get-recorder-mqmo3mba-31',
-                sourceHandle: 'exec-out',
-                target: gateNode.id,
-                targetHandle: 'exec-in',
-                kind: 'exec' as const,
-              },
-            ],
-          },
+        initial: {
+          ...doc.scenario.initial,
+          nodes: doc.scenario.initial.nodes.filter(
+            (node) => node.id !== 'node-start-recording-bootstrap-v08-2',
+          ),
+          edges: doc.scenario.initial.edges.filter(
+            (edge) =>
+              edge.source !== 'node-start-recording-bootstrap-v08-2' &&
+              edge.target !== 'node-start-recording-bootstrap-v08-2' &&
+              edge.source !== 'node-get-recorder-mvp-initial-bootstrap-1' &&
+              edge.target !== 'node-get-recorder-mvp-initial-bootstrap-1' &&
+              edge.source !== 'node-make-recording-policy-mvp-initial-1' &&
+              edge.target !== 'node-make-recording-policy-mvp-initial-1',
+          ),
         },
       },
     };

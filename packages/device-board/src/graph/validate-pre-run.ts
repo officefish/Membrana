@@ -20,9 +20,12 @@ import { isEventNode } from './event-node.js';
 import type { BoardLayerTab } from '../types/board-ui.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { isValidBoardEdge } from './connection-validation.js';
+import { EXEC_FAN_OUT_MESSAGE, findExecFanOutEdges } from './validate-exec-fanout.js';
+import { findSequenceAsyncPreRunIssues } from './validate-sequence-async.js';
 import { buildDeviceScenarioDocument } from './build-device-scenario.js';
 import { validateFunctionDepth } from './validate-function-depth.js';
 import { findPureExecEdgeHints } from './validate-pure-exec.js';
+import { findStartRecordingUnconditionalLoopIssues } from './validate-start-recording-loop.js';
 import { validateUserCaseDocument } from '../runtime/validators/validate-user-case-document.js';
 import { mergePreRunWithUserCaseDocumentIssues } from '../runtime/validators/validation-bridge.js';
 
@@ -56,6 +59,22 @@ export interface PreRunValidationInput {
   readonly variables?: readonly ScenarioVariable[];
 }
 
+function pushExecFanOutIssues(
+  issues: PreRunValidationIssue[],
+  nodes: readonly Node[],
+  edges: readonly Edge[],
+  pathPrefix: string,
+): void {
+  for (const edge of findExecFanOutEdges(edges, nodes)) {
+    issues.push({
+      code: 'exec-fan-out-forbidden',
+      message: EXEC_FAN_OUT_MESSAGE,
+      path: `${pathPrefix}/${edge.id}`,
+      severity: 'warning',
+    });
+  }
+}
+
 function pushEdgeIssues(
   issues: PreRunValidationIssue[],
   nodes: readonly Node[],
@@ -83,10 +102,13 @@ function pushEdgeIssues(
       issues.push({
         code: 'edge-invalid-socket',
         message: `Несовместимое соединение ${edge.sourceHandle ?? '?'} → ${edge.targetHandle ?? '?'}`,
-
         path: `${pathPrefix}/${edge.id}`,
       });
     }
+  }
+  if (layer === 'scenario') {
+    pushExecFanOutIssues(issues, nodes, edges, pathPrefix);
+    issues.push(...findSequenceAsyncPreRunIssues(nodes, edges, pathPrefix));
   }
 }
 
@@ -185,6 +207,14 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
       'scenario.loops.main.edges',
     ),
   );
+  issues.push(
+    ...findStartRecordingUnconditionalLoopIssues(
+      input.scenarioMainNodes,
+      input.scenarioMainEdges,
+      SCENARIO_MAIN_ENTRY,
+      'scenario.loops.main',
+    ),
+  );
 
   pushEntryIssue(issues, input.scenarioAlarmNodes, SCENARIO_ALARM_ENTRY, 'scenario.loops.alarm.entry');
   pushEdgeIssues(
@@ -193,6 +223,14 @@ export function validatePreRun(input: PreRunValidationInput): readonly PreRunVal
     input.scenarioAlarmEdges,
     'scenario',
     'scenario.loops.alarm.edges',
+  );
+  issues.push(
+    ...findStartRecordingUnconditionalLoopIssues(
+      input.scenarioAlarmNodes,
+      input.scenarioAlarmEdges,
+      SCENARIO_ALARM_ENTRY,
+      'scenario.loops.alarm',
+    ),
   );
 
   pushEntryIssue(issues, input.scenarioOnStopNodes, SCENARIO_ON_STOP_ENTRY, 'scenario.triggers.onStop.entry');
