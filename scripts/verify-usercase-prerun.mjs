@@ -84,6 +84,7 @@ try {
     scenarioOnDisconnectNodes: hydrated.scenarioOnDisconnectNodes,
     scenarioOnDisconnectEdges: hydrated.scenarioOnDisconnectEdges,
     scenarioFunctions: graph.hydratedFunctionInputs(hydrated),
+    variables: hydrated.variables,
   });
 
   if (!graph.isPreRunValid(issues)) {
