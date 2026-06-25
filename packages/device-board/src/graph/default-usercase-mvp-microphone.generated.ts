@@ -10,7 +10,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "UserCase MVP microphone (v2.0-async)",
-    "exportedAt": "2026-06-25T10:00:55.634Z",
+    "exportedAt": "2026-06-25T14:20:37.100Z",
     "bundledGraphVersion": "v2.0-async"
   },
   "signalGraph": {

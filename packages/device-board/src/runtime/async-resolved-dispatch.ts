@@ -14,8 +14,10 @@ import {
   ASYNC_PROMISE_REF_HANDLE,
   ON_ASYNC_RESOLVED_NODE_KIND,
 } from '../graph/async-orchestration-nodes.js';
+import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ExecSubgraphOptions } from './exec-subgraph.js';
+import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { resolveInput } from './resolve-input.js';
 import type { PromiseRuntimeStore } from './promise-runtime-store.js';
@@ -32,6 +34,71 @@ export interface AsyncResolvedTarget {
 interface SubgraphBranchBinding {
   readonly branch: ScenarioRuntimeBranch;
   readonly subgraph: ScenarioSubgraph;
+}
+
+interface FunctionBlockBinding {
+  readonly branch: ScenarioRuntimeBranch;
+  readonly parentSubgraph: ScenarioSubgraph;
+  readonly blockNodeId: string;
+}
+
+function findFunctionIdForSubgraph(
+  document: DeviceScenarioDocument,
+  subgraph: ScenarioSubgraph,
+): string | null {
+  const fn = document.scenario.functions.find((item) => item.entry === subgraph.entry);
+  return fn?.id ?? null;
+}
+
+function findFunctionBlockBindings(
+  document: DeviceScenarioDocument,
+  functionId: string,
+): readonly FunctionBlockBinding[] {
+  const bindings: FunctionBlockBinding[] = [];
+  const { scenario } = document;
+  const branches: ReadonlyArray<readonly [ScenarioRuntimeBranch, ScenarioSubgraph]> = [
+    ['initial', scenario.initial],
+    ['main', scenario.loops.main],
+    ['alarm', scenario.loops.alarm],
+    ['onStop', scenario.triggers.onStop],
+    ['onDisconnect', scenario.triggers.onDisconnect],
+  ];
+  for (const [branch, parentSubgraph] of branches) {
+    for (const node of parentSubgraph.nodes) {
+      if (node.blockKind !== 'subgraph') {
+        continue;
+      }
+      if (parseSubgraphFunctionId(node) === functionId) {
+        bindings.push({ branch, parentSubgraph, blockNodeId: node.id });
+      }
+    }
+  }
+  return bindings;
+}
+
+/** Collapsed user functions: bridge parent block data pins into detached async dispatch. */
+function augmentExecOptionsForFunctionSubgraph(
+  document: DeviceScenarioDocument,
+  target: AsyncResolvedTarget,
+  baseOptions: ExecSubgraphOptions,
+): ExecSubgraphOptions {
+  const functionId = findFunctionIdForSubgraph(document, target.subgraph);
+  if (functionId === null) {
+    return baseOptions;
+  }
+  const bindings = findFunctionBlockBindings(document, functionId);
+  if (bindings.length === 0) {
+    return baseOptions;
+  }
+  const binding =
+    bindings.find((item) => item.branch === target.branch) ?? bindings[0]!;
+  const resolveContext = augmentResolveContextForFunctionCall({
+    parentSubgraph: binding.parentSubgraph,
+    blockNodeId: binding.blockNodeId,
+    variables: baseOptions.variableStore?.getAll() ?? [],
+    baseContext: baseOptions.resolveContext,
+  });
+  return { ...baseOptions, resolveContext };
 }
 
 function collectSubgraphBindings(document: DeviceScenarioDocument): readonly SubgraphBranchBinding[] {
@@ -142,7 +209,11 @@ export async function dispatchAsyncResolvedBranches(
 
   const lastDetection = input.initialDetection ?? null;
   for (const target of targets) {
-    const options = input.execOptions(target.branch);
+    const options = augmentExecOptionsForFunctionSubgraph(
+      input.document,
+      target,
+      input.execOptions(target.branch),
+    );
     void dispatchCollectEventBranches({
       subgraph: target.subgraph,
       sourceNodeId: target.nodeId,

@@ -43,11 +43,21 @@
         "nodeKind": "device-global"
       },
       {
+        "id": "fn-3-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": -2280,
+          "y": -768
+        },
+        "label": "GetAudioStream::fn-3",
+        "supportsAsync": true
+      },
+      {
         "id": "node-collect-samples-mqs2lopv-164",
         "blockKind": "custom",
         "position": {
-          "x": -704,
-          "y": -616
+          "x": -424,
+          "y": -768
         },
         "label": "CollectSamples",
         "nodeKind": "collect-samples",
@@ -62,8 +72,8 @@
         "id": "node-get-sample-mqs2mt0a-165",
         "blockKind": "custom",
         "position": {
-          "x": -1888,
-          "y": -688
+          "x": -1816,
+          "y": -768
         },
         "label": "GetSample",
         "nodeKind": "get-sample"
@@ -82,8 +92,8 @@
         "id": "node-get-fft-frame-mqs3h75e-166",
         "blockKind": "custom",
         "position": {
-          "x": -1512,
-          "y": -712
+          "x": -1352,
+          "y": -768
         },
         "label": "GetFFTFrame",
         "nodeKind": "get-fft-frame"
@@ -92,8 +102,8 @@
         "id": "node-collect-fft-frames-mqs3hhnu-167",
         "blockKind": "custom",
         "position": {
-          "x": -1120,
-          "y": -720
+          "x": -888,
+          "y": -768
         },
         "label": "CollectFftFrames",
         "nodeKind": "collect-fft-frames",
@@ -114,6 +124,26 @@
         "label": "journal1",
         "nodeKind": "variable-get",
         "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "fn-1-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 1256,
+          "y": -720
+        },
+        "label": "StartRecording::fn-1",
+        "supportsAsync": true
+      },
+      {
+        "id": "fn-3-block-2",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 864,
+          "y": -680
+        },
+        "label": "GetAudioStream::fn-3",
+        "supportsAsync": true
       },
       {
         "id": "node-device-global-mqs5ibg8-126",
@@ -221,8 +251,8 @@
         "id": "fn-gamma-async-live-bundle-block",
         "blockKind": "subgraph",
         "position": {
-          "x": 624,
-          "y": -608
+          "x": 504,
+          "y": -704
         },
         "label": "Async upload bundle::fn-gamma-async-live-bundle",
         "supportsAsync": true
@@ -241,14 +271,36 @@
         "id": "fn-gamma-recording-gate-block",
         "blockKind": "subgraph",
         "position": {
-          "x": -1680,
-          "y": -608
+          "x": 40,
+          "y": -680
         },
         "label": "Захват · окно записи::fn-gamma-recording-gate",
         "supportsAsync": true
       }
     ],
     "edges": [
+      {
+        "source": "main-on-tick",
+        "sourceHandle": "exec-out",
+        "target": "fn-3-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-3-block",
+        "sourceHandle": "exec-out",
+        "target": "node-get-sample-mqs2mt0a-165",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-3-block",
+        "sourceHandle": "data-out",
+        "target": "node-get-sample-mqs2mt0a-165",
+        "targetHandle": "stream",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
       {
         "source": "node-device-global-mqm0q2fd-14",
         "sourceHandle": "device",
@@ -311,14 +363,6 @@
         "kind": "exec"
       },
       {
-        "source": "fn-gamma-recording-gate-block",
-        "sourceHandle": "recorder",
-        "target": "node-collect-samples-mqs2lopv-164",
-        "targetHandle": "recorder",
-        "kind": "data",
-        "dataType": "RecorderRef"
-      },
-      {
         "source": "node-get-sample-mqs2mt0a-165",
         "sourceHandle": "sample",
         "target": "node-collect-samples-mqs2lopv-164",
@@ -355,6 +399,29 @@
         "targetHandle": "track",
         "kind": "data",
         "dataType": "TrackRef"
+      },
+      {
+        "source": "fn-3-block-2",
+        "sourceHandle": "data-out",
+        "target": "fn-1-block",
+        "targetHandle": "stream",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
+      {
+        "source": "node-device-global-mqs5ibg8-126",
+        "sourceHandle": "device",
+        "target": "fn-1-block",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "fn-3-block-2",
+        "sourceHandle": "exec-out",
+        "target": "fn-1-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
       },
       {
         "source": "fn-gamma-async-live-bundle-block",
@@ -437,20 +504,6 @@
         "dataType": "FftTrendsPolicy"
       },
       {
-        "source": "node-sequence-gate-v20-async",
-        "sourceHandle": "then-0",
-        "target": "fn-gamma-recording-gate-block",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
-        "source": "node-sequence-gate-v20-async",
-        "sourceHandle": "then-1",
-        "target": "fn-gamma-recording-gate-block",
-        "targetHandle": "exec-in",
-        "kind": "exec"
-      },
-      {
         "source": "fn-gamma-recording-gate-block",
         "sourceHandle": "exec-out",
         "target": "fn-gamma-async-live-bundle-block",
@@ -466,10 +519,32 @@
       },
       {
         "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-3",
+        "target": "fn-3-block-2",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-sequence-gate-v20-async",
         "sourceHandle": "exec-out",
         "target": "main-infinity",
         "targetHandle": "exec-in",
         "kind": "exec"
+      },
+      {
+        "kind": "data",
+        "source": "node-get-recorder-mqs6hyo6-171",
+        "sourceHandle": "recorder",
+        "target": "node-collect-samples-mqs2lopv-164",
+        "targetHandle": "recorder",
+        "dataType": "RecorderRef"
+      },
+      {
+        "kind": "exec",
+        "source": "fn-gamma-recording-gate-block",
+        "sourceHandle": "exec-true-out",
+        "target": "node-sequence-gate-v20-async",
+        "targetHandle": "exec-in"
       }
     ]
   },
@@ -484,5 +559,5 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-25T12:44:21.606Z"
+  "exportedAt": "2026-06-25T14:07:47.173Z"
 }

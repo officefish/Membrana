@@ -197,6 +197,9 @@ export class MediaLibraryService {
     meta: NewSampleMeta,
     options?: ImportBlobOptions,
   ): Promise<MediaSample> {
+    // Ensure __buffer__ exists on server without full init() (refresh + catalog seed).
+    await this.backend.ensureReservedCollections();
+
     const importStartedAt = performance.now();
     mediaLibraryTrace('importBlob-start', {
       collectionId,

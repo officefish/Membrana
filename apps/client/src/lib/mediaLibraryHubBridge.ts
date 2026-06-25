@@ -27,6 +27,25 @@ let bridgeInstalled = false;
 let serviceUnsub: (() => void) | null = null;
 let configureGeneration = 0;
 let pairedUpgradeTimer: number | null = null;
+let configureReady: Promise<void> = Promise.resolve();
+let resolveConfigureReady: (() => void) | null = null;
+
+function beginConfigure(): void {
+  configureGeneration += 1;
+  configureReady = new Promise((resolve) => {
+    resolveConfigureReady = resolve;
+  });
+}
+
+function finishConfigure(): void {
+  resolveConfigureReady?.();
+  resolveConfigureReady = null;
+}
+
+/** Resolves when the latest media-library reconfigure + init attempt finished. */
+export function whenMediaLibraryConfigured(): Promise<void> {
+  return configureReady;
+}
 
 const PAIRED_MEDIA_UPGRADE_INTERVAL_MS = 30_000;
 
@@ -108,18 +127,25 @@ export async function reconfigureMediaLibraryFromConnection(
   mode?: NodeConnectionMode | null,
   pairing?: PairedNodeCredentials | null,
 ): Promise<void> {
-  const generation = ++configureGeneration;
-  const backend = await resolveMediaLibraryBackend(mode, pairing);
-  if (generation !== configureGeneration) return;
-  const svc = configureDefaultMediaLibraryService(backend);
-  if (generation !== configureGeneration) return;
-  const attached = await attachService(svc);
-  if (generation !== configureGeneration) return;
-  if (!attached && mode === 'paired' && pairing) {
-    const fallback = createBrowserLimitedStorageBackend(DEFAULT_LOCAL_QUOTA_BYTES);
-    const fallbackSvc = configureDefaultMediaLibraryService(fallback);
+  beginConfigure();
+  const generation = configureGeneration;
+  try {
+    const backend = await resolveMediaLibraryBackend(mode, pairing);
     if (generation !== configureGeneration) return;
-    await attachService(fallbackSvc);
+    const svc = configureDefaultMediaLibraryService(backend);
+    if (generation !== configureGeneration) return;
+    const attached = await attachService(svc);
+    if (generation !== configureGeneration) return;
+    if (!attached && mode === 'paired' && pairing) {
+      const fallback = createBrowserLimitedStorageBackend(DEFAULT_LOCAL_QUOTA_BYTES);
+      const fallbackSvc = configureDefaultMediaLibraryService(fallback);
+      if (generation !== configureGeneration) return;
+      await attachService(fallbackSvc);
+    }
+  } finally {
+    if (generation === configureGeneration) {
+      finishConfigure();
+    }
   }
 }
 

@@ -16,6 +16,7 @@
 |---------|----------|
 | «обновил логи», «читай лог», «разбери logs.txt» | `yarn logs:parse` |
 | Smoke P5 / operator sign-off | parse + сверка gate / publish / upload |
+| `upload-failed` / paired mode | `yarn media:diag` — [`MEDIA_SERVER_DIAGNOSTICS.md`](../deploy/MEDIA_SERVER_DIAGNOSTICS.md) |
 | reports ≠ tracks на сервере | parse + § «Reports vs tracks» ниже |
 | Ошибка cabinet `live-records 500` | parse + grep `live-records` в дампе |
 

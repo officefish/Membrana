@@ -40,6 +40,7 @@ import {
   getDefaultMediaLibraryService,
   resolveMediaLibraryStorageMode,
 } from '@membrana/media-library-service';
+import { whenMediaLibraryConfigured } from '@/lib/mediaLibraryHubBridge';
 import { FftAnalyzer, frameLoudness } from '@membrana/fft-analyzer-service';
 
 import {
@@ -788,6 +789,7 @@ export class ScenarioMicJournalBridge {
     }
 
     setScenarioTraceNodeId(correlation.nodeId);
+    await whenMediaLibraryConfigured();
     void this.uploadTrackAsync({
       ...pending,
       nodeId: correlation.nodeId,
@@ -899,6 +901,7 @@ export class ScenarioMicJournalBridge {
         });
       }
     } catch (err) {
+      const errorCode = err instanceof DomainError ? err.code : null;
       const detail =
         err instanceof DomainError
           ? `${err.message} (${err.code})`
@@ -912,6 +915,7 @@ export class ScenarioMicJournalBridge {
         captureFormat,
         mimeType: blob.type,
         error: detail,
+        ...(errorCode !== null ? { code: errorCode } : {}),
         durationSec: durationSec.toFixed(3),
       });
       if (promiseId !== undefined && asyncJobStore !== undefined) {

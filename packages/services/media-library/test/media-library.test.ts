@@ -315,6 +315,85 @@ describe('MediaLibraryService', () => {
     ).resolves.toMatchObject({ id: 'buf-new' });
     expect(putSample).toHaveBeenCalledOnce();
   });
+
+  it('importBlob awaits ensureReservedCollections before putSample on cold service', async () => {
+    const ensureReservedCollections = vi.fn(async () => {});
+    const putSample = vi.fn(async () => ({
+      id: 'buf-cold',
+      collectionId: BUFFER_COLLECTION_ID,
+      title: 'cold',
+      class: 'buffer',
+      label: 'unlabeled' as const,
+      source: 'mic-recording' as const,
+      durationSec: 1,
+      sampleRate: 48000,
+      sizeBytes: 100,
+      createdAt: new Date().toISOString(),
+    }));
+    const backend = {
+      ensureReservedCollections,
+      listCollections: vi.fn(async () => []),
+      listSamples: vi.fn(async () => []),
+      listSamplesPage: vi.fn(async () => ({
+        items: [],
+        page: 1,
+        limit: 40,
+        total: 0,
+        totalPages: 0,
+      })),
+      getQuota: vi.fn(async () => ({
+        usedBytes: 0,
+        limitBytes: 1_073_741_824,
+        backend: 'server' as const,
+        serverReachable: true,
+        bufferUsedBytes: 0,
+        bufferLimitBytes: 1_073_741_824,
+      })),
+      putSample,
+      removeSample: vi.fn(async () => {}),
+      moveSample: vi.fn(async () => {
+        throw new Error('not used');
+      }),
+      updateSampleLabelNotes: vi.fn(async () => {
+        throw new Error('not used');
+      }),
+      readBlob: vi.fn(async () => new Blob()),
+      createCollection: vi.fn(async () => {
+        throw new Error('not used');
+      }),
+      deleteCollection: vi.fn(async () => {}),
+      importCatalogSample: vi.fn(async () => ({
+        id: 'catalog-1',
+        collectionId: TARIFF_DATASET_COLLECTION_ID,
+        title: 'catalog',
+        class: 'wind',
+        label: 'unlabeled' as const,
+        source: 'catalog' as const,
+        durationSec: 1,
+        sampleRate: 48000,
+        sizeBytes: 10,
+        createdAt: new Date().toISOString(),
+      })),
+    } as unknown as import('../src/ports/storage-backend.js').IStorageBackend;
+
+    const svc = createMediaLibraryService(backend);
+    const blob = new Blob([new Uint8Array(10)], { type: 'audio/wav' });
+    await svc.importBlob(
+      BUFFER_COLLECTION_ID,
+      blob,
+      {
+        title: 'cold',
+        class: 'buffer',
+        label: 'unlabeled',
+        source: 'mic-recording',
+        durationSec: 1,
+        sampleRate: 48000,
+      },
+      { skipRefresh: true },
+    );
+    expect(ensureReservedCollections).toHaveBeenCalled();
+    expect(putSample).toHaveBeenCalledOnce();
+  });
 });
 
 describe('bundled catalog seed', () => {

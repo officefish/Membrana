@@ -16,7 +16,7 @@
         "nodeKind": "event",
         "position": {
           "x": -1888,
-          "y": -728
+          "y": -600
         },
         "blockKind": "custom",
         "eventVariant": "handler"
@@ -26,8 +26,8 @@
         "label": "GetMicrophone",
         "nodeKind": "get-microphone",
         "position": {
-          "x": -1424,
-          "y": -728
+          "x": -1520,
+          "y": -696
         },
         "blockKind": "custom",
         "microphoneId": "0928f245e15f012de6b0d9e32f70efd5e6bc3957af6381c2b28da7536d150c04"
@@ -37,10 +37,19 @@
         "label": "StartStreaming",
         "nodeKind": "start-streaming",
         "position": {
-          "x": -960,
+          "x": -1240,
           "y": -728
         },
         "blockKind": "custom"
+      },
+      {
+        "id": "fn-1-block",
+        "label": "StartRecording::fn-1",
+        "position": {
+          "x": -856,
+          "y": -600
+        },
+        "blockKind": "subgraph"
       }
     ],
     "edges": [
@@ -73,11 +82,34 @@
         "target": "node-get-microphone-mqkpxb3c-5",
         "sourceHandle": "exec-out",
         "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "node-start-streaming-mql556hh-49",
+        "target": "fn-1-block",
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "data",
+        "source": "initial-event",
+        "target": "fn-1-block",
+        "dataType": "DeviceRef",
+        "sourceHandle": "device",
+        "targetHandle": "device"
+      },
+      {
+        "kind": "data",
+        "source": "node-start-streaming-mql556hh-49",
+        "target": "fn-1-block",
+        "dataType": "AudioStreamRef",
+        "sourceHandle": "stream",
+        "targetHandle": "stream"
       }
     ]
   },
   "variables": [],
   "referenceVariableSlots": [],
   "referencedVariableIds": [],
-  "exportedAt": "2026-06-25T12:43:52.723Z"
+  "exportedAt": "2026-06-25T14:20:45.667Z"
 }

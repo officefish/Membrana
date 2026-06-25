@@ -41,6 +41,15 @@
           "y": -728
         },
         "blockKind": "custom"
+      },
+      {
+        "id": "fn-1-block",
+        "label": "StartRecording::fn-1",
+        "position": {
+          "x": -496,
+          "y": -728
+        },
+        "blockKind": "subgraph"
       }
     ],
     "edges": [
@@ -73,11 +82,34 @@
         "target": "node-get-microphone-mqkpxb3c-5",
         "sourceHandle": "exec-out",
         "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "node-start-streaming-mql556hh-49",
+        "target": "fn-1-block",
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "data",
+        "source": "initial-event",
+        "target": "fn-1-block",
+        "dataType": "DeviceRef",
+        "sourceHandle": "device",
+        "targetHandle": "device"
+      },
+      {
+        "kind": "data",
+        "source": "node-start-streaming-mql556hh-49",
+        "target": "fn-1-block",
+        "dataType": "AudioStreamRef",
+        "sourceHandle": "stream",
+        "targetHandle": "stream"
       }
     ]
   },
   "variables": [],
   "referenceVariableSlots": [],
   "referencedVariableIds": [],
-  "exportedAt": "2026-06-25T12:44:21.605Z"
+  "exportedAt": "2026-06-25T14:07:47.172Z"
 }

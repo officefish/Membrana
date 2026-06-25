@@ -1,0 +1,55 @@
+{
+  "$schema": "./competition-operator-findings-registry.schema.md",
+  "version": 1,
+  "description": "Cross-sprint operator debug findings from competition packaging Phase C.",
+  "entries": [
+    {
+      "id": "ODF-av2-alpha-001",
+      "packagingSprintId": "comp-packaging-catalog-2026-06-25",
+      "competitionSprintId": "comp-mvp-async-v2-2026-06-25",
+      "forkId": "usercase-mvp-microphone-alpha-async-v2",
+      "team": "alpha",
+      "lessonId": "L13",
+      "status": "resolved",
+      "symptom": "gate-true: 0, publish-done: 0, main-on-tick only (runId 2d906cf2)",
+      "rootCause": "stripBundledUserFunctionBlocks removed fn-3-block; gate exec-true boundary lost on async v2 pack",
+      "fix": "usercase-competition-pack.ts preserve fn-3 + repairAsyncV2MainLoopWiring; yarn usercase:build-competition-async-v2-all",
+      "prevention": "Pack tests main-on-tick→fn-3-block; CONCEPT lists bundled tick helpers on v2.0-async",
+      "commitSha": null,
+      "loggedAt": "2026-06-25",
+      "tags": ["async-v2", "pack", "exec-chain", "publish"]
+    },
+    {
+      "id": "ODF-av2-alpha-002",
+      "packagingSprintId": "comp-packaging-catalog-2026-06-25",
+      "competitionSprintId": "comp-mvp-async-v2-2026-06-25",
+      "forkId": "usercase-mvp-microphone-alpha-async-v2",
+      "team": "alpha",
+      "lessonId": "L14",
+      "status": "resolved",
+      "symptom": "tick=1 ResolveInputError function-input not a data source at collect-samples (runId 6cdcbfa7)",
+      "rootCause": "gate-block.recorder -> collect-samples before gate subgraph executes",
+      "fix": "repairAsyncV2MainLoopWiring: main GetRecorder mqs6hyo6-171 -> collect-samples",
+      "prevention": "Pack test collect-samples recorder from main GetRecorder not gate output",
+      "commitSha": null,
+      "loggedAt": "2026-06-25",
+      "tags": ["async-v2", "pack", "resolve-input", "recording-gate"]
+    },
+    {
+      "id": "ODF-av2-alpha-003",
+      "packagingSprintId": "comp-packaging-catalog-2026-06-25",
+      "competitionSprintId": "comp-mvp-async-v2-2026-06-25",
+      "forkId": "usercase-mvp-microphone-alpha-async-v2",
+      "team": "alpha",
+      "lessonId": "L15",
+      "status": "resolved",
+      "symptom": "137 ticks gate-true 0, collect append ok, window never full (runId 1d779790)",
+      "rootCause": "strip removed fn-1-block StartRecording from initial branch",
+      "fix": "preserve fn-1/fn-1-block; repairAsyncV2InitialStartRecording; then-3 restart wiring",
+      "prevention": "Pack test initial start-streaming to fn-1-block",
+      "commitSha": null,
+      "loggedAt": "2026-06-25",
+      "tags": ["async-v2", "pack", "start-recording", "initial"]
+    }
+  ]
+}

@@ -8181,6 +8181,24 @@
       "parentEpic": "comp-mvp-async-v2-2026-06-25",
       "leadPersona": "vesnin",
       "notes": "Phase A LGTM — picker ×3, comp:publish-catalog, skill. Open: synthesis + operator smoke."
+    },
+    {
+      "id": "async-v2-track-upload-178",
+      "title": "Fix async-v2 track upload — blocks detached drone report (#178)",
+      "promptPath": "docs/prompts/ASYNC_V2_TRACK_UPLOAD_PROMPT.md",
+      "githubIssue": 178,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "competition-packaging",
+      "parentEpic": "comp-packaging-catalog-2026-06-25",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin"
+      ],
+      "notes": "Phase C Alpha blocked: upload-ok=0, async rejected×3. Client + server diag (yarn media:diag)."
     }
   ]
 }

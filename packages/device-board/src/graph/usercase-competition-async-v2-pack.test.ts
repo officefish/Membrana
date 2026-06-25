@@ -9,9 +9,9 @@ import {
 import { applyUserCaseLayoutCanon, verifyUserCaseDocumentLayout } from './usercase-layout-canon.js';
 
 const EXPECTED_ASYNC_V2_FUNCTIONS: Record<'alpha' | 'beta' | 'gamma', number> = {
-  alpha: 4,
-  beta: 3,
-  gamma: 3,
+  alpha: 6,
+  beta: 5,
+  gamma: 5,
 };
 
 describe('usercase-competition-async-v2-pack (Phase 2β)', () => {
@@ -63,6 +63,71 @@ describe('usercase-competition-async-v2-pack (Phase 2β)', () => {
     const kinds = new Set(canon.scenario.loops.main.nodes.map((node) => node.nodeKind));
     expect(kinds.has('start-async-job')).toBe(true);
     expect(kinds.has('on-async-resolved')).toBe(false);
+    const mainEdges = canon.scenario.loops.main.edges;
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'main-on-tick' &&
+          edge.target === 'fn-3-block',
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source.includes('recording-gate-block') &&
+          edge.sourceHandle === 'exec-out' &&
+          edge.target.includes('sequence'),
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'node-sequence-gate-v20-async' &&
+          edge.sourceHandle === 'then-0' &&
+          edge.target === 'node-start-async-job-v20',
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'data' &&
+          edge.source === 'node-get-recorder-mqs6hyo6-171' &&
+          edge.sourceHandle === 'recorder' &&
+          edge.target === 'node-collect-samples-mqs2lopv-164' &&
+          edge.targetHandle === 'recorder',
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'data' &&
+          edge.source.includes('recording-gate-block') &&
+          edge.sourceHandle === 'recorder' &&
+          edge.target === 'node-collect-samples-mqs2lopv-164',
+      ),
+    ).toBe(false);
+    const initialEdges = canon.scenario.initial.edges;
+    expect(canon.scenario.initial.nodes.some((node) => node.id === 'fn-1-block')).toBe(true);
+    expect(
+      initialEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'node-start-streaming-mql556hh-49' &&
+          edge.target === 'fn-1-block',
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'node-sequence-gate-v20-async' &&
+          edge.sourceHandle === 'then-3' &&
+          edge.target === 'fn-3-block-2',
+      ),
+    ).toBe(true);
   });
 
   it('beta collapses upload pipeline into one function block', () => {

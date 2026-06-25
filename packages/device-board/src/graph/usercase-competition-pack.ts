@@ -12,6 +12,8 @@ import type { UserCaseCommentGroupProfileId } from './usercase-comment-group-pro
 
 export type CompetitionTeamId = 'alpha' | 'beta' | 'gamma';
 
+type PackedScenarioFunction = DeviceScenarioDocument['scenario']['functions'][number];
+
 interface CollapseSpec {
   readonly functionId: string;
   readonly functionName: string;
@@ -41,6 +43,28 @@ const ONCONNECT_BOOTSTRAP_NODE_IDS = [
   'node-get-journal-mqm98hvn-18',
   'node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8',
 ] as const;
+
+/** Bundled v2.0-async helpers that competition pack must keep (main tick GetAudioStream). */
+const BUNDLED_ASYNC_V2_AUX_FUNCTION_IDS = ['fn-1', 'fn-3'] as const;
+
+/** Bundled subgraph blocks kept on initial/main (StartRecording bootstrap + tick entry). */
+const BUNDLED_ASYNC_V2_PRESERVE_BLOCK_IDS = [
+  'fn-1-block',
+  'fn-3-block',
+  'fn-3-block-2',
+] as const;
+
+const RECORDING_WINDOW_FULL_NODE_ID = 'node-is-recording-window-full-mqmo40ie-32';
+const STOP_RECORDING_NODE_ID = 'node-stop-recording-mqmod4yf-35';
+const MAKE_TRACK_NODE_ID = 'node-make-track-mqmcipn5-28';
+/** Main-loop collect-samples + external GetRecorder (outside collapsed gate). */
+const COLLECT_SAMPLES_NODE_ID = 'node-collect-samples-mqs2lopv-164';
+const MAIN_LOOP_GET_RECORDER_NODE_ID = 'node-get-recorder-mqs6hyo6-171';
+const INITIAL_START_STREAMING_NODE_ID = 'node-start-streaming-mql556hh-49';
+const FN1_BLOCK_ID = 'fn-1-block';
+const FN3_BLOCK_2_ID = 'fn-3-block-2';
+const MAIN_DEVICE_GLOBAL_FOR_FN1_ID = 'node-device-global-mqs5ibg8-126';
+const START_ASYNC_JOB_NODE_ID = 'node-start-async-job-v20';
 
 /** Порядок: leaf → root (tail collapse first). */
 const TEAM_MAIN_COLLAPSES: Readonly<Record<CompetitionTeamId, readonly CollapseSpec[]>> = {
@@ -132,14 +156,342 @@ export interface TeamPackLayoutMetrics {
   readonly execSpanPx: number;
 }
 
-function stripBundledUserFunctionBlocks(document: DeviceScenarioDocument): DeviceScenarioDocument {
+function getMainTickExecTargets(subgraph: ScenarioSubgraph): ReadonlySet<string> {
+  return new Set(
+    subgraph.edges
+      .filter((edge) => edge.kind === 'exec' && edge.source === subgraph.entry)
+      .map((edge) => edge.target),
+  );
+}
+
+function preservedBundledAsyncV2Functions(
+  baseDocument: DeviceScenarioDocument,
+  competitionBase?: string,
+): readonly PackedScenarioFunction[] {
+  if (competitionBase !== 'v2.0-async') {
+    return [];
+  }
+  const keep = new Set<string>(BUNDLED_ASYNC_V2_AUX_FUNCTION_IDS);
+  return baseDocument.scenario.functions.filter((fn) => keep.has(fn.id));
+}
+
+function hasScenarioEdge(
+  edges: ScenarioSubgraph['edges'],
+  source: string,
+  sourceHandle: string,
+  target: string,
+  targetHandle: string,
+): boolean {
+  return edges.some(
+    (edge) =>
+      edge.source === source &&
+      edge.sourceHandle === sourceHandle &&
+      edge.target === target &&
+      edge.targetHandle === targetHandle,
+  );
+}
+
+function repairRecordingGateFunctionExecSpurious(fn: PackedScenarioFunction): PackedScenarioFunction {
+  if (!fn.id.endsWith('-recording-gate')) {
+    return fn;
+  }
+  const inputNodeId = `${fn.id}-input`;
+  const edges = fn.edges.filter(
+    (edge) =>
+      !(
+        edge.kind === 'exec' &&
+        edge.source === inputNodeId &&
+        edge.sourceHandle === 'exec-in' &&
+        edge.target !== RECORDING_WINDOW_FULL_NODE_ID
+      ),
+  );
+  return { ...fn, edges };
+}
+
+function repairRecordingGateFunctionExecTrue(fn: PackedScenarioFunction): PackedScenarioFunction {
+  if (!fn.id.endsWith('-recording-gate')) {
+    return fn;
+  }
+  const outputNodeId = `${fn.id}-output`;
+  const edges = [...fn.edges];
+
+  const addExec = (source: string, sourceHandle: string, target: string, targetHandle: string): void => {
+    if (!hasScenarioEdge(edges, source, sourceHandle, target, targetHandle)) {
+      edges.push({
+        kind: 'exec',
+        source,
+        sourceHandle,
+        target,
+        targetHandle,
+      });
+    }
+  };
+
+  addExec(
+    RECORDING_WINDOW_FULL_NODE_ID,
+    'exec-true-out',
+    STOP_RECORDING_NODE_ID,
+    'exec-in',
+  );
+  addExec(STOP_RECORDING_NODE_ID, 'exec-out', MAKE_TRACK_NODE_ID, 'exec-in');
+  addExec(MAKE_TRACK_NODE_ID, 'exec-out', outputNodeId, 'exec-out');
+
+  const outputPins = [...fn.outputPins];
+  for (const pin of [
+    { id: 'exec-out', name: 'exec-out', kind: 'exec' as const },
+    { id: 'exec-true-out', name: 'exec-true-out', kind: 'exec' as const },
+  ]) {
+    if (!outputPins.some((existing) => existing.id === pin.id)) {
+      outputPins.push(pin);
+    }
+  }
+
+  addExec(RECORDING_WINDOW_FULL_NODE_ID, 'exec-true-out', outputNodeId, 'exec-true-out');
+
+  return { ...fn, edges, outputPins };
+}
+
+function repairAsyncV2InitialStartRecording(document: DeviceScenarioDocument): DeviceScenarioDocument {
+  const initial = document.scenario.initial;
+  const fn1Block = initial.nodes.find((node) => node.id === FN1_BLOCK_ID);
+  const startStreaming = initial.nodes.find((node) => node.id === INITIAL_START_STREAMING_NODE_ID);
+  if (!fn1Block || !startStreaming) {
+    return document;
+  }
+
+  const edges = [...initial.edges];
+  const addExec = (source: string, sourceHandle: string, target: string, targetHandle: string): void => {
+    if (!hasScenarioEdge(edges, source, sourceHandle, target, targetHandle)) {
+      edges.push({ kind: 'exec', source, sourceHandle, target, targetHandle });
+    }
+  };
+
+  addExec(INITIAL_START_STREAMING_NODE_ID, 'exec-out', FN1_BLOCK_ID, 'exec-in');
+  if (!hasScenarioEdge(edges, 'initial-event', 'device', FN1_BLOCK_ID, 'device')) {
+    edges.push({
+      kind: 'data',
+      source: 'initial-event',
+      sourceHandle: 'device',
+      target: FN1_BLOCK_ID,
+      targetHandle: 'device',
+      dataType: 'DeviceRef',
+    });
+  }
+  if (
+    !hasScenarioEdge(
+      edges,
+      INITIAL_START_STREAMING_NODE_ID,
+      'stream',
+      FN1_BLOCK_ID,
+      'stream',
+    )
+  ) {
+    edges.push({
+      kind: 'data',
+      source: INITIAL_START_STREAMING_NODE_ID,
+      sourceHandle: 'stream',
+      target: FN1_BLOCK_ID,
+      targetHandle: 'stream',
+      dataType: 'AudioStreamRef',
+    });
+  }
+
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      initial: { ...initial, edges },
+    },
+  };
+}
+
+function repairAsyncV2MainLoopWiring(document: DeviceScenarioDocument): DeviceScenarioDocument {
+  const main = document.scenario.loops.main;
+  const sequenceNode = main.nodes.find((node) => node.nodeKind === 'sequence');
+  const gateBlock = main.nodes.find(
+    (node) => node.blockKind === 'subgraph' && node.id.includes('recording-gate-block'),
+  );
+  if (!sequenceNode || !gateBlock) {
+    return document;
+  }
+
+  const collectSamples = main.nodes.find((node) => node.id === COLLECT_SAMPLES_NODE_ID);
+  const mainGetRecorder = main.nodes.find((node) => node.id === MAIN_LOOP_GET_RECORDER_NODE_ID);
+
+  let edges = [...main.edges].filter(
+    (edge) =>
+      !(
+        edge.kind === 'exec' &&
+        edge.source === sequenceNode.id &&
+        (edge.sourceHandle === 'then-0' || edge.sourceHandle === 'then-1') &&
+        edge.target === gateBlock.id
+      ),
+  );
+
+  // Collapse rewires internal GetRecorder → gate output pin; collect-samples runs before
+  // the gate subgraph and must pull RecorderRef from main-loop GetRecorder instead.
+  if (collectSamples) {
+    edges = edges.filter(
+      (edge) =>
+        !(
+          edge.kind === 'data' &&
+          edge.source === gateBlock.id &&
+          edge.sourceHandle === 'recorder' &&
+          edge.target === collectSamples.id &&
+          edge.targetHandle === 'recorder'
+        ),
+    );
+    if (
+      mainGetRecorder &&
+      !hasScenarioEdge(
+        edges,
+        mainGetRecorder.id,
+        'recorder',
+        collectSamples.id,
+        'recorder',
+      )
+    ) {
+      edges.push({
+        kind: 'data',
+        source: mainGetRecorder.id,
+        sourceHandle: 'recorder',
+        target: collectSamples.id,
+        targetHandle: 'recorder',
+        dataType: 'RecorderRef',
+      });
+    }
+  }
+
+  const startAsyncJob = main.nodes.find((node) => node.id === START_ASYNC_JOB_NODE_ID);
+
+  // Collapsed gate returns exec-out (make-track path), not exec-true-out. Flat MVP wired
+  // window-full → sequence; async-v2 must use gate exec-out → sequence → then-0 async upload.
+  edges = edges.filter(
+    (edge) =>
+      !(
+        edge.kind === 'exec' &&
+        edge.source === gateBlock.id &&
+        ((edge.sourceHandle === 'exec-true-out' && edge.target === sequenceNode.id) ||
+          (startAsyncJob !== undefined &&
+            edge.sourceHandle === 'exec-out' &&
+            edge.target === startAsyncJob.id))
+      ),
+  );
+
+  if (!hasScenarioEdge(edges, gateBlock.id, 'exec-out', sequenceNode.id, 'exec-in')) {
+    edges.push({
+      kind: 'exec',
+      source: gateBlock.id,
+      sourceHandle: 'exec-out',
+      target: sequenceNode.id,
+      targetHandle: 'exec-in',
+    });
+  }
+
+  if (
+    startAsyncJob !== undefined &&
+    !hasScenarioEdge(edges, sequenceNode.id, 'then-0', startAsyncJob.id, 'exec-in')
+  ) {
+    edges.push({
+      kind: 'exec',
+      source: sequenceNode.id,
+      sourceHandle: 'then-0',
+      target: startAsyncJob.id,
+      targetHandle: 'exec-in',
+    });
+  }
+
+  const fn3Block2 = main.nodes.find((node) => node.id === FN3_BLOCK_2_ID);
+  const fn1MainBlock = main.nodes.find((node) => node.id === FN1_BLOCK_ID);
+  if (fn3Block2 && sequenceNode) {
+    if (!hasScenarioEdge(edges, sequenceNode.id, 'then-3', fn3Block2.id, 'exec-in')) {
+      edges.push({
+        kind: 'exec',
+        source: sequenceNode.id,
+        sourceHandle: 'then-3',
+        target: fn3Block2.id,
+        targetHandle: 'exec-in',
+      });
+    }
+  }
+  if (fn3Block2 && fn1MainBlock) {
+    if (!hasScenarioEdge(edges, fn3Block2.id, 'exec-out', fn1MainBlock.id, 'exec-in')) {
+      edges.push({
+        kind: 'exec',
+        source: fn3Block2.id,
+        sourceHandle: 'exec-out',
+        target: fn1MainBlock.id,
+        targetHandle: 'exec-in',
+      });
+    }
+    if (
+      !hasScenarioEdge(edges, fn3Block2.id, 'data-out', fn1MainBlock.id, 'stream')
+    ) {
+      edges.push({
+        kind: 'data',
+        source: fn3Block2.id,
+        sourceHandle: 'data-out',
+        target: fn1MainBlock.id,
+        targetHandle: 'stream',
+        dataType: 'AudioStreamRef',
+      });
+    }
+    if (
+      !hasScenarioEdge(
+        edges,
+        MAIN_DEVICE_GLOBAL_FOR_FN1_ID,
+        'device',
+        fn1MainBlock.id,
+        'device',
+      )
+    ) {
+      edges.push({
+        kind: 'data',
+        source: MAIN_DEVICE_GLOBAL_FOR_FN1_ID,
+        sourceHandle: 'device',
+        target: fn1MainBlock.id,
+        targetHandle: 'device',
+        dataType: 'DeviceRef',
+      });
+    }
+  }
+
+  const functions = document.scenario.functions
+    .map(repairRecordingGateFunctionExecSpurious)
+    .map(repairRecordingGateFunctionExecTrue);
+
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      functions,
+      loops: {
+        ...document.scenario.loops,
+        main: { ...main, edges },
+      },
+    },
+  };
+}
+
+function stripBundledUserFunctionBlocks(
+  document: DeviceScenarioDocument,
+  options?: {
+    preserveMainTickEntryTargets?: ReadonlySet<string>;
+    preserveBundledBlockIds?: ReadonlySet<string>;
+  },
+): DeviceScenarioDocument {
   const pruneSubgraph = (subgraph: ScenarioSubgraph): ScenarioSubgraph => {
+    const preserve = new Set<string>([
+      ...(options?.preserveBundledBlockIds ?? []),
+      ...(options?.preserveMainTickEntryTargets ?? []),
+    ]);
     const removed = new Set(
       subgraph.nodes
         .filter(
           (node) =>
             node.blockKind === 'subgraph' &&
-            (node.id.includes('fn-') || node.label?.includes('::fn-') === true),
+            (node.id.includes('fn-') || node.label?.includes('::fn-') === true) &&
+            !preserve.has(node.id),
         )
         .map((node) => node.id),
     );
@@ -324,7 +676,19 @@ function packMvpUserCaseForTeamInternal(
   options: PackTeamOptions = {},
 ): DeviceScenarioDocument {
   const meta = (options.metaProfile ?? TEAM_META)[team];
-  const strippedBase = stripBundledUserFunctionBlocks(baseDocument);
+  const preserveMainTick =
+    options.competitionBase === 'v2.0-async'
+      ? getMainTickExecTargets(baseDocument.scenario.loops.main)
+      : undefined;
+  const preserveBundledBlocks =
+    options.competitionBase === 'v2.0-async'
+      ? new Set<string>(BUNDLED_ASYNC_V2_PRESERVE_BLOCK_IDS)
+      : undefined;
+  const strippedBase = stripBundledUserFunctionBlocks(baseDocument, {
+    preserveMainTickEntryTargets: preserveMainTick,
+    preserveBundledBlockIds: preserveBundledBlocks,
+  });
+  const bundledHelpers = preservedBundledAsyncV2Functions(baseDocument, options.competitionBase);
   let document: DeviceScenarioDocument = stampCompetitionDocumentMeta({
     ...structuredClone(strippedBase),
     meta: {
@@ -339,7 +703,7 @@ function packMvpUserCaseForTeamInternal(
     },
     scenario: {
       ...structuredClone(strippedBase.scenario),
-      functions: [],
+      functions: [...bundledHelpers],
       commentGroups: [],
     },
   });
@@ -354,6 +718,11 @@ function packMvpUserCaseForTeamInternal(
 
   for (const collapse of TEAM_ONCONNECT_COLLAPSES[team] ?? []) {
     document = applyBranchCollapse(document, 'onConnect', collapse);
+  }
+
+  if (options.competitionBase === 'v2.0-async') {
+    document = repairAsyncV2InitialStartRecording(document);
+    document = repairAsyncV2MainLoopWiring(document);
   }
 
   return markMainSubgraphBlocksSupportsAsync(document);

@@ -2,7 +2,9 @@
 
 > Живой документ для агентов и команды. Читать **перед** programmatic collapse, fork UserCase и sprint packaging.
 >
+> **Operator debug (Phase C):** [`COMPETITION_OPERATOR_DEBUG_REGULATION.md`](../prompts/COMPETITION_OPERATOR_DEBUG_REGULATION.md) · registry [`competition-operator-findings-registry.json`](./competition-operator-findings-registry.json)  
 > **Sprint `comp-mvp-packaging-2026-06-21`:** closed — все три fork Run-green; победитель не merged.  
+> **Sprint `comp-mvp-async-v2-2026-06-25`:** packaging Phase C — см. [`OPERATOR_DEBUG_LOG.md`](../competition-sprint/comp-packaging-catalog-2026-06-25/OPERATOR_DEBUG_LOG.md).  
 > **Agent prompt:** [`docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md)  
 > **Regulation:** [`USERCASE_GENERATION_REGULATION.md`](./USERCASE_GENERATION_REGULATION.md)  
 > **Runtime map (CONCEPT §4.7):** [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md#47-runtime-execution-pipeline-exec--function-calls)  
@@ -223,6 +225,90 @@ ResolveInputError: Node "fn-beta-policy-build-block" (kind=subgraph) is not a da
 
 - [ ] Test: policy-build block → gate `resolveFunctionInputPin('policy')`
 - [ ] Любой data-only collapsed function: проверить Run без exec на block
+
+---
+
+### L13 — Async v2 pack: stripped GetAudioStream entry + gate exec-true boundary
+
+**Симптом (alpha async-v2 Run, runId 2d906cf2):**
+
+```text
+main ticks: max=337 · gate-true: 0 · publish-done: 0
+node-enter only main-on-tick each tick
+```
+
+**Что:** `packMvpUserCaseForTeamAsyncV2` вызывает `stripBundledUserFunctionBlocks`, который удаляет **все** `fn-*-block` на main, включая bundled `fn-3-block` (GetAudioStream). На `v2.0-async` bundled MVP входит в tick через `main-on-tick → fn-3-block → GetSample…`. После strip **нет exec-ребра** от `main-on-tick` — runtime крутит только event tick, gate/observation/publish не вызываются.
+
+Дополнительно: collapse `recording-gate` на async v2 терял boundary `is-recording-window-full exec-true-out → sequence` (в flat MVP шло в sequence, не в stop напрямую).
+
+**Fix:** `usercase-competition-pack.ts`:
+
+- preserve main-tick targets + `fn-3` function для `competitionBase: v2.0-async`
+- `repairAsyncV2MainLoopWiring` — exec-true-out gate block → sequence; window-full exec-true path внутри gate function
+- rebuild: `yarn usercase:build-competition-async-v2-all`
+
+**Профилактика:**
+
+- [ ] Pack test: `main-on-tick → fn-3-block` exec edge exists
+- [ ] Pack test: `recording-gate-block exec-true-out → sequence`
+- [ ] CONCEPT Phase 1: explicit «bundled tick helpers» на v2.0-async base
+- [ ] `yarn logs:parse` async-v2 mode (не только `fn-1-block` bootstrap heuristic)
+
+### L14 — Async v2 pack: collect-samples recorder from gate output (pre-exec)
+
+**Симптом (alpha async-v2, runId 6cdcbfa7):**
+
+```text
+scenario-runtime error tick=1: Node "fn-alpha-recording-gate-input" (kind=function-input) is not a data source
+```
+
+**Что:** после collapse `recording-gate` pack оставил data edge `gate-block.recorder → collect-samples.recorder`. `collect-samples` выполняется **до** входа в gate subgraph; резолвер тянет output pin gate-block → внутри function → `function-input`, где на main loop нет `resolveFunctionInputPin`.
+
+В flat v2.0-async recorder шёл от `node-get-recorder-mqs3ir02-168` (внутри gate selection); на main остаётся `node-get-recorder-mqs6hyo6-171`.
+
+**Fix:** `repairAsyncV2MainLoopWiring` — удалить gate→collect recorder; добавить `mqs6hyo6-171.recorder → collect-samples.recorder`.
+
+**Профилактика:**
+
+- [ ] Pack test: collect-samples recorder от main GetRecorder, не от gate output
+- [ ] Collapse review: upstream data consumers вне selection → input pin, не output pin
+
+### L15 — Async v2 pack: stripped StartRecording on initial
+
+**Симптом (alpha async-v2, runId 1d779790):**
+
+```text
+main ticks: 137 · gate-true: 0 · publish-done: 0
+collect-samples append ok each tick · is-recording-window-full never true
+```
+
+**Что:** bundled v2.0-async стартует WAV recorder на **initial**: `StartStreaming → fn-1-block (StartRecording)`. Competition strip удалил все `fn-*-block`, включая initial `fn-1-block`. `collect-samples` пишет в recorder ref, но `recordingSessions` без `startRecorderRecording` — gate window никогда не заполняется.
+
+**Fix:** preserve `fn-1` + `fn-1-block` (+ main `fn-3-block-2` для restart); `repairAsyncV2InitialStartRecording`; sequence `then-3 → fn-3-block-2 → fn-1-block`.
+
+**Профилактика:**
+
+- [ ] Pack test: initial `fn-1-block` + exec от start-streaming
+- [ ] Operator smoke: `start-recording` в логах on initial
+
+### L16 — Async v2 track-upload: media init race + ensure-reserved hang
+
+**Симптом (alpha async-v2, runId 043ec8d6):**
+
+```text
+gate-true: 3 · publish-done: 3 · upload-ok: 0 · async rejected: 3 · detached: 0
+v20 happy path: FAIL
+```
+
+**Что:** `StartAsyncJob(track-upload)` → `importBlob` в `__buffer__` падает до detached report. На prod upload path рабочий (curl 201), квота не исчерпана. Две причины: (1) клиент стартует upload до завершения `reconfigureMediaLibraryFromConnection` / `ensureReserved`; (2) серверный `POST ensure-reserved` мог блокироваться на catalog provision (advisory lock) — диаг «висит» до `docker restart media-api`.
+
+**Fix:** `whenMediaLibraryConfigured()` перед upload; `importBlob` вызывает `ensureReservedCollections`; `ensure-reserved` отдаёт коллекции сразу, catalog — `void` deferred; `upload-failed` с полем `code`.
+
+**Профилактика:**
+
+- [ ] Packaging smoke: `yarn media:diag` / `yarn media:prod:upload-smoke`
+- [ ] Operator: при hung ensure-reserved — `yarn media:prod:restart-api`
+- [ ] Pack/bridge: не `void` критичный media init перед async jobs
 
 ---
 

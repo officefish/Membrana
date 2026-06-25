@@ -25,7 +25,11 @@ Design synthesis: [`COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md`](./competition-spr
 
 ## Phase C (open)
 
-- [ ] Operator: Apply + Run + `yarn logs:parse` на каждый fork
+Operator debug по регламенту [`COMPETITION_OPERATOR_DEBUG_REGULATION.md`](./prompts/COMPETITION_OPERATOR_DEBUG_REGULATION.md):
+
+- [ ] Последовательно alpha → beta → gamma
+- [ ] [`OPERATOR_DEBUG_LOG.md`](./competition-sprint/comp-packaging-catalog-2026-06-25/OPERATOR_DEBUG_LOG.md)
+- [ ] Находки → ODF + L13+ + JSON registry
 
 ## Competition sprint (closed)
 
