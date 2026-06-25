@@ -147,6 +147,16 @@
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-3-pack-verify` | UCV2-3: usercase:build + verify-pack + smoke | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-4-operator-signoff` | UCV2-4: operator LGTM doc + epic close | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
+| `opencode-proxy-sprint-2026-06-25` | Day sprint: OpenCode + LLM proxy providers (freemodel.dev) | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
+| `oc-proxy-s0-research-isolation` | OC0: research + env isolation for LLM proxy | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
+| `oc-proxy-s1-opencode-install` | OC1: install OpenCode CLI | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
+| `oc-proxy-s2-freemodel-keys` | OC2: freemodel.dev keys + smoke | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
+| `oc-proxy-s3-llm-proxy-script` | OC3: llm-proxy-ask.mjs CLI | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
+| `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
+| `night-hunt-sprint-2026-06-25` | Day sprint: Night Hunt (office cron → proxy → PR) | L | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
+| `nh-s1-office-module` | NH1: night-hunt module in background-office | M | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
+| `nh-s2-fly-deploy` | NH2: Fly.io deploy + secrets | S | [`BACKGROUND_OFFICE_FLY_DEPLOY.md`](../docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
+| `nh-s3-rituals` | NH3: morning PR review + evening archive | S | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 
 ---
 
@@ -432,4 +442,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-24.*
+*Файл обновлён автоматически: 2026-06-25.*

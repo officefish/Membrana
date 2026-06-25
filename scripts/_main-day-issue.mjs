@@ -65,6 +65,11 @@ const INPUT_DOCS = [
     label: 'Вспомогательный буфер CURRENT_TASK (черновики; может содержать шум)',
   },
   { rel: 'docs/DAY_ISSUES.md', required: false, label: 'Бэклог DAY_ISSUES' },
+  {
+    rel: 'docs/NIGHT_HUNT_PR_REVIEW.md',
+    required: false,
+    label: 'Night Hunt PR (утренний обзор ночных отчётов)',
+  },
 ];
 
 function collectDocBlocks() {
