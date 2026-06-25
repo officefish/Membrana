@@ -140,7 +140,7 @@ export async function dispatchAsyncResolvedBranches(
     targets: targets.map((target) => target.nodeId),
   });
 
-  let lastDetection = input.initialDetection ?? null;
+  const lastDetection = input.initialDetection ?? null;
   for (const target of targets) {
     const options = input.execOptions(target.branch);
     void dispatchCollectEventBranches({

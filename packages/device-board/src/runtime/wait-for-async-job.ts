@@ -16,21 +16,6 @@ export function waitForAsyncJobTerminal(
   }
 
   return new Promise((resolve, reject) => {
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
-    const cleanup = (): void => {
-      unsubscribe();
-      if (timeoutId !== undefined) {
-        clearTimeout(timeoutId);
-      }
-      signal.removeEventListener('abort', onAbort);
-    };
-
-    const onAbort = (): void => {
-      cleanup();
-      reject(new DOMException('Scenario aborted', 'AbortError'));
-    };
-
     const unsubscribe = store.subscribe((record) => {
       if (record.promiseId !== promiseId) {
         return;
@@ -41,15 +26,25 @@ export function waitForAsyncJobTerminal(
       }
     });
 
-    signal.addEventListener('abort', onAbort, { once: true });
-    if (signal.aborted) {
-      onAbort();
-      return;
-    }
+    const onAbort = (): void => {
+      cleanup();
+      reject(new DOMException('Scenario aborted', 'AbortError'));
+    };
 
-    timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       cleanup();
       reject(new Error(`await-promise timeout after ${timeoutMs}ms (promiseId=${promiseId})`));
     }, timeoutMs);
+
+    function cleanup(): void {
+      unsubscribe();
+      clearTimeout(timeoutId);
+      signal.removeEventListener('abort', onAbort);
+    }
+
+    signal.addEventListener('abort', onAbort, { once: true });
+    if (signal.aborted) {
+      onAbort();
+    }
   });
 }

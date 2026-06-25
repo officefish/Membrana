@@ -1,8 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   createEmptyScenarioGraph,
-  createReferenceValue,
-  formatTrackRefHandle,
 } from '@membrana/core';
 
 import { ASYNC_PROMISE_REF_HANDLE } from '../graph/async-orchestration-nodes.js';
@@ -17,7 +15,6 @@ import { PromiseRuntimeStore } from './promise-runtime-store.js';
 import { createStubScenarioRuntimeHost } from './host.js';
 import { ScenarioVariableStore } from './variable-store.js';
 import { dispatchAsyncResolvedBranches } from './async-resolved-dispatch.js';
-import { runSubgraphOnce } from './exec-subgraph.js';
 
 function buildStartAwaitSubgraph(): {
   subgraph: {
