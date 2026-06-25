@@ -38,8 +38,8 @@
     "main": {
       "bundleFile": "03-onMainTick.json",
       "legacyFile": "device-scenario-microphone-main-v08-policy-constructor.json",
-      "nodeCount": 29,
-      "edgeCount": 48
+      "nodeCount": 32,
+      "edgeCount": 51
     },
     "onStop": {
       "bundleFile": "05-onStop.json",

@@ -13,6 +13,7 @@ import type { ScenarioRecordingPolicy } from './recording-policy.js';
 import type { ScenarioFunctionPin } from './scenario-function-pin.js';
 import type { ScenarioCommentGroup } from './scenario-comment-group.js';
 import type { ScenarioSequenceConfig } from './sequence-config.js';
+import type { ScenarioAsyncJobNodeConfig } from './scenario-async-job-node-config.js';
 
 /**
  * Системные ветки сценария (фиксированы на устройстве).
@@ -83,6 +84,8 @@ export interface ScenarioGraphNode {
   readonly fftTrendsPolicy?: ScenarioFftTrendsPolicy;
   /** Sequence node: Then count + parallel async mode. */
   readonly sequenceConfig?: ScenarioSequenceConfig;
+  /** AP v1: jobKind / await timeout для promise orchestration nodes. */
+  readonly asyncJobConfig?: ScenarioAsyncJobNodeConfig;
   /**
    * v0.9: Blueprint-style pure getter flag.
    * - policy constructors: always `true` (locked);

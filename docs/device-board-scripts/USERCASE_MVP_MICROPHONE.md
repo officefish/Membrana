@@ -1,17 +1,19 @@
 # UserCase MVP — microphone (device-board)
 
 > **id:** `usercase-mvp-microphone`  
-> **Статус:** **v0.8 LGTM 2026-06-21** (flat graph) · **v0.9-functions cutover 2026-06-24** (bundled default + migrate).  
-> Sign-off v0.8: [`USERCASE_MVP_MICROPHONE_LGTM.md`](./USERCASE_MVP_MICROPHONE_LGTM.md) · v0.9 addendum: тот же файл § v0.9-functions.  
-> Smoke: `runId 7e8a289c` · `yarn logs:parse` · [`CLIENT_LOGS_PARSING.md`](./CLIENT_LOGS_PARSING.md).  
-> **Канон:** [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) §16.5 + §16.5.1  
+> **Статус:** **v0.8 LGTM 2026-06-21** · **v0.9-functions 2026-06-24** · **v2.0-async 2026-06-25** (bundled default).  
+> Sign-off: [`USERCASE_MVP_MICROPHONE_LGTM.md`](./USERCASE_MVP_MICROPHONE_LGTM.md) · AP v1: [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](./DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).  
+> Smoke v2.0: `yarn logs:parse` → `smoke v2.0-async` · legacy baseline `runId 7e8a289c`.  
+> **Канон:** [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) §16.5.2  
 > **Recording topology (RGC2):** bootstrap `StartRecording` в **onStart**; main — gate без hot-path start · [`DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_RECORDING_GRAPH_CLARITY_EPIC_PROMPT.md)  
-> **Main loop (v0.9):** user functions + inline `MakeFftTrendsPolicy` → gate → track + trends report (+ optional track report)  
-> **Дальше (не сегодня):** async user functions для track/report/publish — не блокировать main tick · [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md)
+> **Main loop (v2.0-async):** latent Sequence → async track-upload + sync trends publish; drone report detached  
+> **История:** v0.9 sync hot path — §16.5.1; async cutover — Issue #176
 
 Когда persist сбрасывает граф, доска раньше откатывалась к D0-заглушкам (`select-microphone`, `write-journal`). С **v0.8** bundled usercase — дефолт в `@membrana/device-board`; JSON ниже — для ручного re-import.
 
-**v0.9-functions cutover (2026-06-24):** `yarn usercase:build-mvp-microphone` читает golden [`golden/usercase-mvp-microphone-v09-functions.document.json`](./golden/usercase-mvp-microphone-v09-functions.document.json) и собирает embedded document с **`scenario.functions[]`** (2 функции: `fn-1` StartRecording, `fn-3` GetAudioStream). Flat v0.8 при hydrate заменяется автоматически (`needsBundledV09FunctionsMigration`, BD5).
+**v2.0-async cutover (2026-06-25):** `yarn usercase:build-mvp-microphone` → golden [`golden/usercase-mvp-microphone-v20-async.document.json`](./golden/usercase-mvp-microphone-v20-async.document.json). Sequence `latentThen`, `StartAsyncJob(track-upload)`, detached drone. Migrate: `needsBundledV20AsyncMigration`. LGTM: [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](./DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).
+
+**v0.9-functions (исторический):** golden `usercase-mvp-microphone-v09-functions.document.json` · `needsBundledV09FunctionsMigration` · flat v0.8 → v0.9 (BD5).
 
 **Импорт ветки без функций:** по **BD1** bundled cutover — только **full `device-scenario`** (launcher JSON / Export full UserCase). Branch-import `branch-scenario` **не** подмешивает `scenario.functions[]`; subgraph `Name::fn-id` требует уже существующие тела на доске. `referencedFunctions[]` в branch-export — follow-up эпик (см. [`DEVICE_BOARD_BUNDLED_MVP_V09_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_BUNDLED_MVP_V09_SPRINT_PROMPT.md) P3).
 
@@ -56,8 +58,8 @@ yarn usercase:build-mvp-microphone
    - `datetime1` → DateTime (onStart)
 3. **Порядок импорта** (рекомендуется): On start → On connect → onMainTick → onAlarmTick → On stop → On disconnect.
 4. Проверка **onStart**: после `StartStreaming` — `GetRecorder` → `StartRecording (bootstrap)` (один раз при Run).
-5. Проверка **main (v0.9-functions):** `GetAudioStream` (fn-3) → gate; на gate-true: `StopRecording` → `MakeTrack` → `GetAudioStream` (2-й вызов) → `StartRecording` (fn-1) → `FlushSpectralAnalyser` → trends → `PublishReport` → `∞`.
-6. Run ≥ 60 s → `yarn logs:parse` или chain-log: [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](./SCENARIO_CHAIN_LOG_COOKBOOK.md) · [`CLIENT_LOGS_PARSING.md`](./CLIENT_LOGS_PARSING.md); ожидаем ≥2× gate-true, `publish-done` (trends); `upload-ok` может отставать (async).
+5. Проверка **main (v2.0-async):** gate-true → Sequence (latent) → StopRecording → MakeTrack + StartAsyncJob → trends publish (sync) → fn-3/fn-1 → loop; drone report на detached `on-async-resolved`.
+6. Run ≥ 60 s → `yarn logs:parse` → **smoke v2.0-async: PASS**, `drone-skip: 0` (v2.0); legacy v0.9 допускал `drone-skip` до upload.
 
 ---
 

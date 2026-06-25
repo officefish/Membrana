@@ -31,6 +31,18 @@ export async function runSequenceThenBranches(
       initialDetection,
     );
   }
+  if (config.latentThen) {
+    return runSequenceLatent(
+      subgraph,
+      sequenceNode.id,
+      config,
+      host,
+      signal,
+      options,
+      callbacks,
+      initialDetection,
+    );
+  }
   return runSequenceSync(
     subgraph,
     sequenceNode.id,
@@ -85,6 +97,73 @@ async function runSequenceSync(
     );
   }
   return lastDetection;
+}
+
+/**
+ * Latent Then: стартует каждую ветку без await; Sequence возвращается сразу.
+ * Завершение веток — в фоне (on-async-resolved / detached event).
+ */
+async function runSequenceLatent(
+  subgraph: ScenarioSubgraph,
+  sequenceNodeId: string,
+  config: ScenarioSequenceConfig,
+  host: ScenarioRuntimeHost,
+  signal: AbortSignal,
+  options: ExecSubgraphOptions,
+  callbacks: ExecSubgraphCallbacks,
+  initialDetection: ScenarioDetectionResult | null,
+): Promise<ScenarioDetectionResult | null> {
+  const pending: Promise<ScenarioDetectionResult | null>[] = [];
+  for (let index = 0; index < config.thenCount; index += 1) {
+    if (signal.aborted) {
+      return initialDetection;
+    }
+    const handle = sequenceThenHandle(index);
+    const startId = findExecSuccessor(subgraph, sequenceNodeId, handle);
+    if (startId === null) {
+      host.log('sequence-then-skip', {
+        nodeId: sequenceNodeId,
+        thenIndex: index,
+        branch: options.branch,
+      });
+      continue;
+    }
+    host.log('sequence-latent-then-start', {
+      nodeId: sequenceNodeId,
+      thenIndex: index,
+      startNodeId: startId,
+      branch: options.branch,
+    });
+    const branchPromise = runEventBranchFromNode(
+      subgraph,
+      startId,
+      host,
+      signal,
+      options,
+      callbacks,
+      initialDetection,
+    ).then((detection) => {
+      host.log('sequence-latent-then-done', {
+        nodeId: sequenceNodeId,
+        thenIndex: index,
+        startNodeId: startId,
+        branch: options.branch,
+      });
+      return detection;
+    });
+    pending.push(branchPromise);
+  }
+  if (pending.length > 0) {
+    host.log('sequence-latent-dispatch-done', {
+      nodeId: sequenceNodeId,
+      branchCount: pending.length,
+      branch: options.branch,
+    });
+    void Promise.all(pending).catch(() => {
+      /* abort / runtime stop — фоновые ветки уже логируют через host */
+    });
+  }
+  return initialDetection;
 }
 
 async function runSequenceParallelAsync(

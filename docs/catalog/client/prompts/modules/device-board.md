@@ -93,7 +93,9 @@
 
 User functions: `exec-subgraph.ts` — вход через `function-input`, выход через `function-output`; depth ≤ 1. Exec pins первые на Input/Output, неудаляемы; subgraph-блок на ветке — badge `custom`, label = имя пользователя; unique id на collapse (#159), repair/delete по draftIndex (#160).
 
-**Exec / Sequence (ES1–ES4):** optional data-pins — подпись `?` (напр. `& device ?`); exec fan-out блокируется при connect; узел **Sequence** (`then-0…then-8`, sync или parallel async) — см. CONCEPT §18.3.1. Pre-run: `validate-exec-fanout.ts`, `validate-sequence-async.ts`.
+**Exec / Sequence (ES1–ES4):** optional data-pins — подпись `?` (напр. `& device ?`); exec fan-out блокируется при connect; узел **Sequence** (`then-0…then-8`, sync, **parallel async**, или **latent Then** `latentThen`) — см. CONCEPT §18.3.1. Pre-run: `validate-exec-fanout.ts`, `validate-sequence-async.ts`, `validate-async-promise.ts`.
+
+**Async pipeline (AP v1):** палитра Promise nodes — `start-async-job`, `await-promise`, `on-async-resolved`, `cancel-async-jobs`; runtime `AsyncJobStore`; host bridge в client (`scenarioMicJournalBridge`); UI subscribe — `ScenarioAsyncJobHub` (`@membrana/agenda`). Bundled MVP v2.0-async: CONCEPT §16.5.2 · [`SCENARIO_RUNTIME.md`](../../../SCENARIO_RUNTIME.md) §10.
 
 **Operator notes (инспектор узла):** реестр `graph/scenario-node-inspector-notes.ts` + `BoardNodeInspectorNotes` — статические подсказки по nodeKind (не в JSON сценария). Пример: `start-recording` — идемпотентный skip + канон размещения (onStart bootstrap, не каждый tick). Pre-run: `validate-start-recording-loop.ts`. CONCEPT §15.5.1 · cookbook § recording markers.
 

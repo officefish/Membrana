@@ -12,11 +12,17 @@ export interface ScenarioSequenceConfig {
   readonly thenCount: number;
   /** Параллельный запуск Then-веток (требует async-capable узлов). */
   readonly parallelAsync: boolean;
+  /**
+   * Latent Then: стартовать Then-ветку без await завершения перед следующим Then.
+   * Не смешивать с `parallelAsync` на одном узле (pre-run forbidden).
+   */
+  readonly latentThen: boolean;
 }
 
 export const DEFAULT_SCENARIO_SEQUENCE_CONFIG: ScenarioSequenceConfig = {
   thenCount: 2,
   parallelAsync: false,
+  latentThen: false,
 };
 
 function clampThenCount(value: number): number {
@@ -40,6 +46,7 @@ export function resolveScenarioSequenceConfig(
   return {
     thenCount: clampThenCount(raw.thenCount ?? base.thenCount),
     parallelAsync: raw.parallelAsync === true,
+    latentThen: raw.latentThen === true,
   };
 }
 
@@ -49,5 +56,14 @@ export function isScenarioSequenceConfig(value: unknown): value is ScenarioSeque
     return false;
   }
   const o = value as Record<string, unknown>;
-  return typeof o.thenCount === 'number' && typeof o.parallelAsync === 'boolean';
+  return (
+    typeof o.thenCount === 'number' &&
+    typeof o.parallelAsync === 'boolean' &&
+    typeof o.latentThen === 'boolean'
+  );
+}
+
+/** Pre-run: parallelAsync и latentThen взаимоисключающи. */
+export function isScenarioSequenceModeConflict(config: ScenarioSequenceConfig): boolean {
+  return config.parallelAsync && config.latentThen;
 }

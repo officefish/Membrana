@@ -1,0 +1,1762 @@
+{
+  "version": 2,
+  "kind": "device-scenario",
+  "deviceKind": "microphone",
+  "meta": {
+    "title": "UserCase MVP microphone (v2.0-async)",
+    "bundledGraphVersion": "v2.0-async"
+  },
+  "signalGraph": {
+    "nodes": [
+      {
+        "id": "signal-capture",
+        "pluginId": "microphone",
+        "position": {
+          "x": 80,
+          "y": 140
+        }
+      },
+      {
+        "id": "signal-analyzer",
+        "pluginId": "fft-analyzer",
+        "position": {
+          "x": 340,
+          "y": 140
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "signal-capture",
+        "target": "signal-analyzer",
+        "sourceHandle": "audio-out",
+        "targetHandle": "audio-in"
+      }
+    ]
+  },
+  "scenario": {
+    "initial": {
+      "entry": "initial-event",
+      "nodes": [
+        {
+          "id": "initial-event",
+          "label": "On start",
+          "system": true,
+          "nodeKind": "event",
+          "position": {
+            "x": -1888,
+            "y": -600
+          },
+          "blockKind": "custom",
+          "eventVariant": "handler"
+        },
+        {
+          "id": "node-get-microphone-mqkpxb3c-5",
+          "label": "GetMicrophone",
+          "nodeKind": "get-microphone",
+          "position": {
+            "x": -1523.999999999999,
+            "y": -698
+          },
+          "blockKind": "custom",
+          "microphoneId": "0928f245e15f012de6b0d9e32f70efd5e6bc3957af6381c2b28da7536d150c04"
+        },
+        {
+          "id": "node-start-streaming-mql556hh-49",
+          "label": "StartStreaming",
+          "nodeKind": "start-streaming",
+          "position": {
+            "x": -1237,
+            "y": -727
+          },
+          "blockKind": "custom"
+        },
+        {
+          "id": "fn-1-block",
+          "label": "StartRecording::fn-1",
+          "position": {
+            "x": -858.2996783395429,
+            "y": -601.0107263268901
+          },
+          "blockKind": "subgraph"
+        }
+      ],
+      "edges": [
+        {
+          "kind": "data",
+          "source": "initial-event",
+          "target": "node-get-microphone-mqkpxb3c-5",
+          "dataType": "DeviceRef",
+          "sourceHandle": "device",
+          "targetHandle": "device"
+        },
+        {
+          "kind": "data",
+          "source": "node-get-microphone-mqkpxb3c-5",
+          "target": "node-start-streaming-mql556hh-49",
+          "dataType": "MicrophoneRef",
+          "sourceHandle": "microphone",
+          "targetHandle": "microphone"
+        },
+        {
+          "kind": "exec",
+          "source": "node-get-microphone-mqkpxb3c-5",
+          "target": "node-start-streaming-mql556hh-49",
+          "sourceHandle": "exec-out",
+          "targetHandle": "exec-in"
+        },
+        {
+          "kind": "exec",
+          "source": "initial-event",
+          "target": "node-get-microphone-mqkpxb3c-5",
+          "sourceHandle": "exec-out",
+          "targetHandle": "exec-in"
+        },
+        {
+          "kind": "exec",
+          "source": "node-start-streaming-mql556hh-49",
+          "target": "fn-1-block",
+          "sourceHandle": "exec-out",
+          "targetHandle": "exec-in"
+        },
+        {
+          "kind": "data",
+          "source": "initial-event",
+          "target": "fn-1-block",
+          "dataType": "DeviceRef",
+          "sourceHandle": "device",
+          "targetHandle": "device"
+        },
+        {
+          "kind": "data",
+          "source": "node-start-streaming-mql556hh-49",
+          "target": "fn-1-block",
+          "dataType": "AudioStreamRef",
+          "sourceHandle": "stream",
+          "targetHandle": "stream"
+        }
+      ]
+    },
+    "onConnect": {
+      "entry": "on-connect-event",
+      "nodes": [
+        {
+          "id": "on-connect-event",
+          "label": "On connect",
+          "system": true,
+          "nodeKind": "event",
+          "position": {
+            "x": -144,
+            "y": -96
+          },
+          "blockKind": "custom",
+          "eventVariant": "handler"
+        },
+        {
+          "id": "node-is-valid-mqm97w5v-17",
+          "label": "isValid",
+          "nodeKind": "is-valid",
+          "position": {
+            "x": 294.4888888888889,
+            "y": -148.8444444444444
+          },
+          "blockKind": "custom"
+        },
+        {
+          "id": "node-get-journal-mqm98hvn-18",
+          "label": "GetJournal",
+          "nodeKind": "get-journal",
+          "position": {
+            "x": 286.3879582315942,
+            "y": 63.69216948373625
+          },
+          "blockKind": "custom"
+        },
+        {
+          "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+          "label": "journal1",
+          "nodeKind": "variable-set",
+          "position": {
+            "x": 669.6557095053714,
+            "y": -145.2888108143123
+          },
+          "blockKind": "custom",
+          "variableId": "var-JournalRef-mqm9dl4a-6"
+        },
+        {
+          "id": "board-mqrk8res-sfp1k7n9",
+          "label": "journal1",
+          "nodeKind": "variable-set",
+          "position": {
+            "x": 676.983186443509,
+            "y": -8.952163921667363
+          },
+          "blockKind": "custom",
+          "variableId": "var-JournalRef-mqm9dl4a-6"
+        },
+        {
+          "id": "node-get-journal-mqrk8yrn-121",
+          "label": "GetJournal",
+          "nodeKind": "get-journal",
+          "position": {
+            "x": 287.8612685828725,
+            "y": -40.00774321074732
+          },
+          "blockKind": "custom"
+        }
+      ],
+      "edges": [
+        {
+          "kind": "exec",
+          "source": "on-connect-event",
+          "target": "node-is-valid-mqm97w5v-17",
+          "sourceHandle": "exec-out",
+          "targetHandle": "exec-in"
+        },
+        {
+          "kind": "data",
+          "source": "on-connect-event",
+          "target": "node-is-valid-mqm97w5v-17",
+          "dataType": "ServerRef",
+          "sourceHandle": "server",
+          "targetHandle": "value"
+        },
+        {
+          "kind": "data",
+          "source": "on-connect-event",
+          "target": "node-get-journal-mqm98hvn-18",
+          "dataType": "ServerRef",
+          "sourceHandle": "server",
+          "targetHandle": "server"
+        },
+        {
+          "kind": "exec",
+          "source": "node-is-valid-mqm97w5v-17",
+          "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+          "sourceHandle": "exec-true-out",
+          "targetHandle": "exec-in"
+        },
+        {
+          "kind": "data",
+          "source": "node-get-journal-mqm98hvn-18",
+          "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+          "dataType": "JournalRef",
+          "sourceHandle": "journal",
+          "targetHandle": "value"
+        },
+        {
+          "kind": "data",
+          "source": "on-connect-event",
+          "target": "node-get-journal-mqrk8yrn-121",
+          "dataType": "DeviceRef",
+          "sourceHandle": "device",
+          "targetHandle": "device"
+        },
+        {
+          "kind": "exec",
+          "source": "node-is-valid-mqm97w5v-17",
+          "target": "board-mqrk8res-sfp1k7n9",
+          "sourceHandle": "exec-false-out",
+          "targetHandle": "exec-in"
+        },
+        {
+          "kind": "data",
+          "source": "node-get-journal-mqrk8yrn-121",
+          "target": "board-mqrk8res-sfp1k7n9",
+          "dataType": "JournalRef",
+          "sourceHandle": "journal",
+          "targetHandle": "value"
+        }
+      ]
+    },
+    "loops": {
+      "main": {
+        "entry": "main-on-tick",
+        "nodes": [
+          {
+            "id": "main-on-tick",
+            "label": "onTick",
+            "system": true,
+            "nodeKind": "event",
+            "position": {
+              "x": -2745.588289934323,
+              "y": -764.4876698177688
+            },
+            "blockKind": "custom",
+            "eventVariant": "loopTick"
+          },
+          {
+            "id": "main-infinity",
+            "label": "∞",
+            "system": true,
+            "nodeKind": "loop-repeat",
+            "position": {
+              "x": 3934.985888158687,
+              "y": -285.8951269362307
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-device-global-mqm0q2fd-14",
+            "label": "GetDevice",
+            "nodeKind": "device-global",
+            "position": {
+              "x": -2069.523561412253,
+              "y": -45.20588266201863
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-make-report-from-analysis-mqma356z-34",
+            "label": "MakeReportFromAnalysis",
+            "nodeKind": "make-report-from-analysis",
+            "position": {
+              "x": 2661.494065090822,
+              "y": -759.6337611905101
+            },
+            "blockKind": "custom",
+            "supportsAsync": true
+          },
+          {
+            "id": "node-publish-report-mqma49xv-35",
+            "label": "PublishReport",
+            "nodeKind": "publish-report",
+            "position": {
+              "x": 2955.668555837203,
+              "y": -679.3777545168867
+            },
+            "blockKind": "custom",
+            "supportsAsync": true
+          },
+          {
+            "id": "node-make-track-mqmcipn5-28",
+            "label": "MakeTrack",
+            "nodeKind": "make-track",
+            "position": {
+              "x": 382.6020453304001,
+              "y": -610.7053292294004
+            },
+            "blockKind": "custom",
+            "supportsAsync": true
+          },
+          {
+            "id": "node-is-recording-window-full-mqmo40ie-32",
+            "label": "IsRecordingWindowFull",
+            "nodeKind": "is-recording-window-full",
+            "position": {
+              "x": -384.9040226305319,
+              "y": -463.9154658629095
+            },
+            "blockKind": "custom",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          },
+          {
+            "id": "node-stop-recording-mqmod4yf-35",
+            "label": "StopRecording",
+            "nodeKind": "stop-recording",
+            "position": {
+              "x": 22.31538234868972,
+              "y": -405.1695827274908
+            },
+            "blockKind": "custom",
+            "supportsAsync": true
+          },
+          {
+            "id": "fn-3-block",
+            "label": "GetAudioStream::fn-3",
+            "position": {
+              "x": -2337.234720308966,
+              "y": -688.7028177864934
+            },
+            "blockKind": "subgraph"
+          },
+          {
+            "id": "node-collect-samples-mqs2lopv-164",
+            "label": "CollectSamples",
+            "nodeKind": "collect-samples",
+            "position": {
+              "x": -705.9924108661323,
+              "y": -618.4057432860172
+            },
+            "blockKind": "custom",
+            "collectorConfig": {
+              "windowSec": 3,
+              "bufferSize": 2048,
+              "queueCapacity": 10,
+              "smoothingTimeConstant": 0.75
+            }
+          },
+          {
+            "id": "node-get-sample-mqs2mt0a-165",
+            "label": "GetSample",
+            "nodeKind": "get-sample",
+            "position": {
+              "x": -1889.693955167817,
+              "y": -684.6380943349759
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-spectral-analyser-mqs3gj4q-165",
+            "label": "GetSpectralAnalyser",
+            "nodeKind": "get-spectral-analyser",
+            "position": {
+              "x": -1671.555206896516,
+              "y": -162.5414130295804
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-fft-frame-mqs3h75e-166",
+            "label": "GetFFTFrame",
+            "nodeKind": "get-fft-frame",
+            "position": {
+              "x": -1510.386030875111,
+              "y": -714.9489031526444
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-collect-fft-frames-mqs3hhnu-167",
+            "label": "CollectFftFrames",
+            "nodeKind": "collect-fft-frames",
+            "position": {
+              "x": -1120.289741037981,
+              "y": -717.8648824679815
+            },
+            "blockKind": "custom",
+            "collectorConfig": {
+              "windowSec": 3,
+              "bufferSize": 2048,
+              "queueCapacity": 10,
+              "smoothingTimeConstant": 0.75
+            }
+          },
+          {
+            "id": "node-get-recorder-mqs3ir02-168",
+            "label": "GetRecorder",
+            "nodeKind": "get-recorder",
+            "position": {
+              "x": -1676.339322721673,
+              "y": -35.32594850468013
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs51rew-13",
+            "label": "journal1",
+            "nodeKind": "variable-get",
+            "position": {
+              "x": 1899.987915355299,
+              "y": -1107.348650642095
+            },
+            "blockKind": "custom",
+            "variableId": "var-JournalRef-mqm9dl4a-6"
+          },
+          {
+            "id": "fn-1-block",
+            "label": "StartRecording::fn-1",
+            "position": {
+              "x": 1255.244447406016,
+              "y": -718.4489061476467
+            },
+            "blockKind": "subgraph",
+            "supportsAsync": true
+          },
+          {
+            "id": "node-make-report-from-track-mqs54kgw-177",
+            "label": "MakeReportFromTrack",
+            "nodeKind": "make-report-from-track",
+            "position": {
+              "x": 3209.40904304523,
+              "y": -606.4672103098972
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "fn-3-block-2",
+            "label": "GetAudioStream::fn-3",
+            "position": {
+              "x": 867.559177157787,
+              "y": -679
+            },
+            "blockKind": "subgraph",
+            "supportsAsync": true
+          },
+          {
+            "id": "node-device-global-mqs5ibg8-126",
+            "label": "GetDevice",
+            "nodeKind": "device-global",
+            "position": {
+              "x": 550.9400292388616,
+              "y": -828.720872102208
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "board-mqs5v7w1-9c8xw62e",
+            "label": "PublishReport",
+            "nodeKind": "publish-report",
+            "position": {
+              "x": 3471.305967163058,
+              "y": -521.098202670229
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-reporter-mqs5wkzi-169",
+            "label": "GetReporter",
+            "nodeKind": "get-reporter",
+            "position": {
+              "x": 2256.707293190796,
+              "y": -1008.278331819306
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-device-global-mqs6hsz3-170",
+            "label": "GetDevice",
+            "nodeKind": "device-global",
+            "position": {
+              "x": -286.9868143687734,
+              "y": -1076.226614546226
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-recorder-mqs6hyo6-171",
+            "label": "GetRecorder",
+            "nodeKind": "get-recorder",
+            "position": {
+              "x": 11.62647158272678,
+              "y": -804.4657720300767
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs6jso7-15",
+            "label": "journal1",
+            "nodeKind": "variable-get",
+            "position": {
+              "x": 2182.639568143995,
+              "y": -435.8248653121827
+            },
+            "blockKind": "custom",
+            "variableId": "var-JournalRef-mqm9dl4a-6"
+          },
+          {
+            "id": "node-flush-spectral-analyser-mqs6tcs6-172",
+            "label": "FlushSpectralAnalyser",
+            "nodeKind": "flush-spectral-analyser",
+            "position": {
+              "x": 1796.259133369734,
+              "y": -820.2758379435678
+            },
+            "blockKind": "custom",
+            "supportsAsync": true
+          },
+          {
+            "id": "node-get-spectral-analyser-mqs6uey7-173",
+            "label": "GetSpectralAnalyser",
+            "nodeKind": "get-spectral-analyser",
+            "position": {
+              "x": 1079.406857559712,
+              "y": -1071.577768026275
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-make-fft-trends-analysis-mqs6vdme-174",
+            "label": "MakeFftTrendsAnalysis",
+            "nodeKind": "make-fft-trends-analysis",
+            "position": {
+              "x": 2182.578357220574,
+              "y": -757.5293489105918
+            },
+            "blockKind": "custom",
+            "supportsAsync": true
+          },
+          {
+            "id": "node-make-fft-trends-policy-mqs6wrpr-175",
+            "pure": true,
+            "label": "MakeFftTrendsPolicy",
+            "nodeKind": "make-fft-trends-policy",
+            "position": {
+              "x": 1672.283774428619,
+              "y": -625.3492628482554
+            },
+            "blockKind": "custom",
+            "fftTrendsPolicy": {
+              "minRms": 0.02,
+              "intervalMs": 500,
+              "detectionMode": "auto",
+              "minConfidence": 0.55,
+              "measurementsCount": 20,
+              "enabledTemplateKeys": [
+                "DRONE_TIGHT",
+                "WIND",
+                "QUIET",
+                "TRAFFIC",
+                "BIRDS",
+                "VOICE"
+              ]
+            }
+          },
+          {
+            "id": "node-sequence-gate-v20-async",
+            "label": "Sequence",
+            "nodeKind": "sequence",
+            "blockKind": "custom",
+            "position": {
+              "x": 120,
+              "y": -360
+            },
+            "sequenceConfig": {
+              "thenCount": 4,
+              "parallelAsync": false,
+              "latentThen": true
+            }
+          },
+          {
+            "id": "node-start-async-job-v20",
+            "label": "StartAsyncJob",
+            "nodeKind": "start-async-job",
+            "blockKind": "custom",
+            "position": {
+              "x": 620,
+              "y": -540
+            },
+            "asyncJobConfig": {
+              "jobKind": "track-upload"
+            },
+            "supportsAsync": true
+          },
+          {
+            "id": "node-on-async-resolved-v20",
+            "label": "OnAsyncResolved",
+            "nodeKind": "on-async-resolved",
+            "blockKind": "custom",
+            "position": {
+              "x": 880,
+              "y": -460
+            }
+          }
+        ],
+        "edges": [
+          {
+            "kind": "data",
+            "source": "node-stop-recording-mqmod4yf-35",
+            "target": "node-make-track-mqmcipn5-28",
+            "dataType": "RecordingSliceRef",
+            "sourceHandle": "slice",
+            "targetHandle": "slice"
+          },
+          {
+            "kind": "exec",
+            "source": "main-on-tick",
+            "target": "fn-3-block",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "fn-3-block",
+            "target": "node-get-sample-mqs2mt0a-165",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "fn-3-block",
+            "target": "node-get-sample-mqs2mt0a-165",
+            "dataType": "AudioStreamRef",
+            "sourceHandle": "data-out",
+            "targetHandle": "stream"
+          },
+          {
+            "kind": "data",
+            "source": "node-device-global-mqm0q2fd-14",
+            "target": "node-get-spectral-analyser-mqs3gj4q-165",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-sample-mqs2mt0a-165",
+            "target": "node-get-fft-frame-mqs3h75e-166",
+            "dataType": "AudioSampleRef",
+            "sourceHandle": "sample",
+            "targetHandle": "sample"
+          },
+          {
+            "kind": "exec",
+            "source": "node-get-sample-mqs2mt0a-165",
+            "target": "node-get-fft-frame-mqs3h75e-166",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-spectral-analyser-mqs3gj4q-165",
+            "target": "node-collect-fft-frames-mqs3hhnu-167",
+            "dataType": "SpectralAnalyserRef",
+            "sourceHandle": "analyser",
+            "targetHandle": "analyser"
+          },
+          {
+            "kind": "exec",
+            "source": "node-get-fft-frame-mqs3h75e-166",
+            "target": "node-collect-fft-frames-mqs3hhnu-167",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-fft-frame-mqs3h75e-166",
+            "target": "node-collect-fft-frames-mqs3hhnu-167",
+            "dataType": "FftFrameRef",
+            "sourceHandle": "frame",
+            "targetHandle": "frame"
+          },
+          {
+            "kind": "data",
+            "source": "node-device-global-mqm0q2fd-14",
+            "target": "node-get-recorder-mqs3ir02-168",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-recorder-mqs3ir02-168",
+            "target": "node-stop-recording-mqmod4yf-35",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "recorder"
+          },
+          {
+            "kind": "exec",
+            "source": "node-collect-fft-frames-mqs3hhnu-167",
+            "target": "node-collect-samples-mqs2lopv-164",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-recorder-mqs3ir02-168",
+            "target": "node-collect-samples-mqs2lopv-164",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "recorder"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-sample-mqs2mt0a-165",
+            "target": "node-collect-samples-mqs2lopv-164",
+            "dataType": "AudioSampleRef",
+            "sourceHandle": "sample",
+            "targetHandle": "sample"
+          },
+          {
+            "kind": "data",
+            "source": "node-collect-samples-mqs2lopv-164",
+            "target": "node-make-track-mqmcipn5-28",
+            "dataType": "AudioSampleRefList",
+            "sourceHandle": "batches",
+            "targetHandle": "samples"
+          },
+          {
+            "kind": "exec",
+            "source": "node-collect-samples-mqs2lopv-164",
+            "target": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "target": "main-infinity",
+            "sourceHandle": "exec-false-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-recorder-mqs3ir02-168",
+            "target": "node-is-recording-window-full-mqmo40ie-32",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "recorder"
+          },
+          {
+            "kind": "data",
+            "source": "node-make-report-from-analysis-mqma356z-34",
+            "target": "node-publish-report-mqma49xv-35",
+            "dataType": "ReportRef",
+            "sourceHandle": "report",
+            "targetHandle": "report"
+          },
+          {
+            "kind": "data",
+            "source": "node-make-track-mqmcipn5-28",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "dataType": "TrackRef",
+            "sourceHandle": "track",
+            "targetHandle": "track"
+          },
+          {
+            "kind": "data",
+            "source": "fn-3-block-2",
+            "target": "fn-1-block",
+            "dataType": "AudioStreamRef",
+            "sourceHandle": "data-out",
+            "targetHandle": "stream"
+          },
+          {
+            "kind": "data",
+            "source": "node-device-global-mqs5ibg8-126",
+            "target": "fn-1-block",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "exec",
+            "source": "fn-3-block-2",
+            "target": "fn-1-block",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-make-report-from-analysis-mqma356z-34",
+            "target": "node-publish-report-mqma49xv-35",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-make-report-from-track-mqs54kgw-177",
+            "target": "board-mqs5v7w1-9c8xw62e",
+            "dataType": "ReportRef",
+            "sourceHandle": "report",
+            "targetHandle": "report"
+          },
+          {
+            "kind": "data",
+            "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs51rew-13",
+            "target": "node-get-reporter-mqs5wkzi-169",
+            "dataType": "JournalRef",
+            "sourceHandle": "value",
+            "targetHandle": "journal"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-reporter-mqs5wkzi-169",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "dataType": "ReporterRef",
+            "sourceHandle": "reporter",
+            "targetHandle": "reporter"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-reporter-mqs5wkzi-169",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "dataType": "ReporterRef",
+            "sourceHandle": "reporter",
+            "targetHandle": "reporter"
+          },
+          {
+            "kind": "data",
+            "source": "node-device-global-mqs6hsz3-170",
+            "target": "node-get-recorder-mqs6hyo6-171",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-recorder-mqs6hyo6-171",
+            "target": "node-make-track-mqmcipn5-28",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "recorder"
+          },
+          {
+            "kind": "data",
+            "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs6jso7-15",
+            "target": "node-publish-report-mqma49xv-35",
+            "dataType": "JournalRef",
+            "sourceHandle": "value",
+            "targetHandle": "journal"
+          },
+          {
+            "kind": "data",
+            "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs6jso7-15",
+            "target": "board-mqs5v7w1-9c8xw62e",
+            "dataType": "JournalRef",
+            "sourceHandle": "value",
+            "targetHandle": "journal"
+          },
+          {
+            "kind": "data",
+            "source": "node-device-global-mqs6hsz3-170",
+            "target": "node-get-spectral-analyser-mqs6uey7-173",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-spectral-analyser-mqs6uey7-173",
+            "target": "node-flush-spectral-analyser-mqs6tcs6-172",
+            "dataType": "SpectralAnalyserRef",
+            "sourceHandle": "analyser",
+            "targetHandle": "analyser"
+          },
+          {
+            "kind": "data",
+            "source": "node-flush-spectral-analyser-mqs6tcs6-172",
+            "target": "node-make-fft-trends-analysis-mqs6vdme-174",
+            "dataType": "FftFrameRefList",
+            "sourceHandle": "frames",
+            "targetHandle": "frames"
+          },
+          {
+            "kind": "data",
+            "source": "node-make-fft-trends-analysis-mqs6vdme-174",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "dataType": "FftTrendAnalysisRef",
+            "sourceHandle": "analysis",
+            "targetHandle": "analysis"
+          },
+          {
+            "kind": "exec",
+            "source": "node-flush-spectral-analyser-mqs6tcs6-172",
+            "target": "node-make-fft-trends-analysis-mqs6vdme-174",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-spectral-analyser-mqs6uey7-173",
+            "target": "node-make-fft-trends-analysis-mqs6vdme-174",
+            "dataType": "SpectralAnalyserRef",
+            "sourceHandle": "analyser",
+            "targetHandle": "analyser"
+          },
+          {
+            "kind": "data",
+            "source": "node-make-fft-trends-policy-mqs6wrpr-175",
+            "target": "node-make-fft-trends-analysis-mqs6vdme-174",
+            "dataType": "FftTrendsPolicy",
+            "sourceHandle": "policy",
+            "targetHandle": "policy"
+          },
+          {
+            "kind": "exec",
+            "source": "node-make-fft-trends-analysis-mqs6vdme-174",
+            "target": "node-make-report-from-analysis-mqma356z-34",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-true-out",
+            "target": "node-sequence-gate-v20-async",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-0",
+            "target": "node-stop-recording-mqmod4yf-35",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-1",
+            "target": "node-make-track-mqmcipn5-28",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-make-track-mqmcipn5-28",
+            "sourceHandle": "exec-out",
+            "target": "node-start-async-job-v20",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-make-track-mqmcipn5-28",
+            "sourceHandle": "track",
+            "target": "node-start-async-job-v20",
+            "targetHandle": "track",
+            "dataType": "TrackRef"
+          },
+          {
+            "kind": "data",
+            "source": "node-start-async-job-v20",
+            "sourceHandle": "promise",
+            "target": "node-on-async-resolved-v20",
+            "targetHandle": "promise",
+            "dataType": "PromiseRef"
+          },
+          {
+            "kind": "event",
+            "source": "node-on-async-resolved-v20",
+            "sourceHandle": "event-out",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-2",
+            "target": "node-flush-spectral-analyser-mqs6tcs6-172",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-3",
+            "target": "fn-3-block-2",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "exec-out",
+            "target": "main-infinity",
+            "targetHandle": "exec-in"
+          }
+        ]
+      },
+      "alarm": {
+        "entry": "alarm-on-tick",
+        "nodes": [
+          {
+            "id": "alarm-on-tick",
+            "label": "onTick",
+            "system": true,
+            "nodeKind": "event",
+            "position": {
+              "x": 40,
+              "y": 184
+            },
+            "blockKind": "custom",
+            "eventVariant": "loopTick"
+          },
+          {
+            "id": "alarm-infinity",
+            "label": "∞",
+            "system": true,
+            "nodeKind": "loop-repeat",
+            "position": {
+              "x": 504,
+              "y": 184
+            },
+            "blockKind": "custom"
+          }
+        ],
+        "edges": [
+          {
+            "kind": "exec",
+            "source": "alarm-on-tick",
+            "target": "alarm-infinity",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          }
+        ]
+      }
+    },
+    "triggers": {
+      "onStop": {
+        "entry": "on-stop-event",
+        "nodes": [
+          {
+            "id": "on-stop-event",
+            "label": "On stop",
+            "system": true,
+            "nodeKind": "event",
+            "position": {
+              "x": 104,
+              "y": 48
+            },
+            "blockKind": "custom",
+            "eventVariant": "handler"
+          },
+          {
+            "id": "node-is-valid-mqm9nw3u-21",
+            "label": "isValid",
+            "nodeKind": "is-valid",
+            "position": {
+              "x": 568,
+              "y": 48
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-stop-streaming-mqm9ofcy-22",
+            "label": "StopStreaming",
+            "nodeKind": "stop-streaming",
+            "position": {
+              "x": 1032,
+              "y": 48
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-device-global-mvp-onstop-1",
+            "label": "GetDevice",
+            "nodeKind": "device-global",
+            "position": {
+              "x": -120,
+              "y": 184
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-microphone-mvp-onstop-1",
+            "label": "GetMicrophone",
+            "nodeKind": "get-microphone",
+            "position": {
+              "x": 56,
+              "y": 312
+            },
+            "blockKind": "custom",
+            "microphoneId": "0928f245e15f012de6b0d9e32f70efd5e6bc3957af6381c2b28da7536d150c04"
+          }
+        ],
+        "edges": [
+          {
+            "kind": "exec",
+            "source": "on-stop-event",
+            "target": "node-is-valid-mqm9nw3u-21",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqm9nw3u-21",
+            "target": "node-stop-streaming-mqm9ofcy-22",
+            "sourceHandle": "exec-true-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-device-global-mvp-onstop-1",
+            "target": "node-get-microphone-mvp-onstop-1",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          }
+        ]
+      },
+      "onDisconnect": {
+        "entry": "on-disconnect-event",
+        "nodes": [
+          {
+            "id": "on-disconnect-event",
+            "label": "On disconnect",
+            "system": true,
+            "nodeKind": "event",
+            "position": {
+              "x": -96,
+              "y": -128
+            },
+            "blockKind": "custom",
+            "eventVariant": "handler"
+          },
+          {
+            "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+            "label": "journal1",
+            "nodeKind": "variable-set",
+            "position": {
+              "x": 368,
+              "y": -128
+            },
+            "blockKind": "custom",
+            "variableId": "var-JournalRef-mqm9dl4a-6"
+          },
+          {
+            "id": "node-device-global-mqm9pz9v-23",
+            "label": "GetDevice",
+            "nodeKind": "device-global",
+            "position": {
+              "x": -104,
+              "y": 88
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-journal-mqm9q43m-24",
+            "label": "GetJournal",
+            "nodeKind": "get-journal",
+            "position": {
+              "x": 184,
+              "y": 8
+            },
+            "blockKind": "custom"
+          }
+        ],
+        "edges": [
+          {
+            "kind": "data",
+            "source": "node-device-global-mqm9pz9v-23",
+            "target": "node-get-journal-mqm9q43m-24",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "exec",
+            "source": "on-disconnect-event",
+            "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-journal-mqm9q43m-24",
+            "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+            "dataType": "JournalRef",
+            "sourceHandle": "journal",
+            "targetHandle": "value"
+          }
+        ]
+      },
+      "custom": []
+    },
+    "functions": [
+      {
+        "id": "fn-3",
+        "name": "GetAudioStream",
+        "edges": [
+          {
+            "kind": "data",
+            "source": "node-device-global-mqrtadee-143",
+            "target": "node-get-microphone-mqrtaojo-144",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "exec",
+            "source": "fn-3-input",
+            "target": "node-get-microphone-mqrtaojo-144",
+            "sourceHandle": "exec-in",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-get-microphone-mqrtaojo-144",
+            "target": "node-is-valid-mqrtb1vo-145",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-microphone-mqrtaojo-144",
+            "target": "node-is-valid-mqrtb1vo-145",
+            "dataType": "MicrophoneRef",
+            "sourceHandle": "microphone",
+            "targetHandle": "value"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-microphone-mqrtaojo-144",
+            "target": "node-get-audio-stream-mqrtbjp1-146",
+            "dataType": "MicrophoneRef",
+            "sourceHandle": "microphone",
+            "targetHandle": "microphone"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtb1vo-145",
+            "target": "node-get-audio-stream-mqrtbjp1-146",
+            "sourceHandle": "exec-true-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-get-audio-stream-mqrtbjp1-146",
+            "target": "node-is-valid-mqrtbtth-147",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtbtth-147",
+            "target": "fn-3-output",
+            "sourceHandle": "exec-true-out",
+            "targetHandle": "exec-out"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtbtth-147",
+            "target": "node-stop-runtime-mqrtc7wk-148",
+            "sourceHandle": "exec-false-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtb1vo-145",
+            "target": "node-stop-runtime-mqrtc7wk-148",
+            "sourceHandle": "exec-false-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-audio-stream-mqrtbjp1-146",
+            "target": "fn-3-output",
+            "dataType": "AudioStreamRef",
+            "sourceHandle": "stream",
+            "targetHandle": "data-out"
+          }
+        ],
+        "entry": "fn-3-input",
+        "nodes": [
+          {
+            "id": "fn-3-input",
+            "label": "Input",
+            "system": true,
+            "nodeKind": "function-input",
+            "position": {
+              "x": -197.8576369407539,
+              "y": 132.70273952222
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "fn-3-output",
+            "label": "Output",
+            "system": true,
+            "nodeKind": "function-output",
+            "position": {
+              "x": 1875.504186537517,
+              "y": 194.6729156931742
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-device-global-mqrtadee-143",
+            "label": "GetDevice",
+            "nodeKind": "device-global",
+            "position": {
+              "x": -202.2769420992359,
+              "y": 240.7246938455063
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-microphone-mqrtaojo-144",
+            "label": "GetMicrophone",
+            "nodeKind": "get-microphone",
+            "position": {
+              "x": 216,
+              "y": 288
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-is-valid-mqrtb1vo-145",
+            "label": "isValid",
+            "nodeKind": "is-valid",
+            "position": {
+              "x": 560.1806938620865,
+              "y": 452.2054288961824
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-audio-stream-mqrtbjp1-146",
+            "label": "GetAudioStream",
+            "nodeKind": "get-audio-stream",
+            "position": {
+              "x": 928,
+              "y": 288
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-is-valid-mqrtbtth-147",
+            "label": "isValid",
+            "nodeKind": "is-valid",
+            "position": {
+              "x": 1250.677601982825,
+              "y": 438.5216431548339
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-stop-runtime-mqrtc7wk-148",
+            "label": "StopRuntime",
+            "nodeKind": "stop-runtime",
+            "position": {
+              "x": 1622.225867327608,
+              "y": 616.4108577923648
+            },
+            "blockKind": "custom"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "kind": "exec",
+            "name": "exec-in"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "kind": "exec",
+            "name": "exec-out"
+          },
+          {
+            "id": "data-out",
+            "kind": "data",
+            "name": "data-out",
+            "socketType": "AudioStreamRef"
+          }
+        ]
+      },
+      {
+        "id": "fn-1",
+        "name": "StartRecording",
+        "edges": [
+          {
+            "kind": "exec",
+            "source": "node-get-recorder-mqmo3mba-31",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "board-mqrklt5g-mwcrwuv3",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "dataType": "RecordingPolicy",
+            "sourceHandle": "policy",
+            "targetHandle": "policy"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-recorder-mqmo3mba-31",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "recorder"
+          },
+          {
+            "kind": "data",
+            "source": "fn-1-input",
+            "target": "node-get-recorder-mqmo3mba-31",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "data",
+            "source": "fn-1-input",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "dataType": "AudioStreamRef",
+            "sourceHandle": "stream",
+            "targetHandle": "stream"
+          },
+          {
+            "kind": "exec",
+            "source": "fn-1-input",
+            "target": "node-get-recorder-mqmo3mba-31",
+            "sourceHandle": "exec-in",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-start-recording-bootstrap-v08-2",
+            "target": "fn-1-output",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-out"
+          },
+          {
+            "kind": "data",
+            "source": "node-start-recording-bootstrap-v08-2",
+            "target": "fn-1-output",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "data-out"
+          }
+        ],
+        "entry": "fn-1-input",
+        "nodes": [
+          {
+            "id": "fn-1-input",
+            "label": "Input",
+            "system": true,
+            "nodeKind": "function-input",
+            "position": {
+              "x": -1417.320630802658,
+              "y": -467.6156232265353
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "fn-1-output",
+            "label": "Output",
+            "system": true,
+            "nodeKind": "function-output",
+            "position": {
+              "x": -306.2865166627112,
+              "y": -458.1857798446048
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-recorder-mqmo3mba-31",
+            "label": "GetRecorder",
+            "nodeKind": "get-recorder",
+            "position": {
+              "x": -957.4652105015881,
+              "y": -532.7027259346488
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-start-recording-bootstrap-v08-2",
+            "label": "StartRecording (bootstrap)",
+            "nodeKind": "start-recording",
+            "position": {
+              "x": -651.2676367697529,
+              "y": -470.2492737369895
+            },
+            "blockKind": "custom",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          },
+          {
+            "id": "board-mqrklt5g-mwcrwuv3",
+            "pure": true,
+            "label": "MakeRecordingPolicy",
+            "nodeKind": "make-recording-policy",
+            "position": {
+              "x": -958.5855628106891,
+              "y": -339.548743239578
+            },
+            "blockKind": "custom",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "kind": "exec",
+            "name": "exec-in"
+          },
+          {
+            "id": "device",
+            "kind": "data",
+            "name": "device",
+            "socketType": "DeviceRef"
+          },
+          {
+            "id": "stream",
+            "kind": "data",
+            "name": "stream",
+            "socketType": "AudioStreamRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "kind": "exec",
+            "name": "exec-out"
+          },
+          {
+            "id": "data-out",
+            "kind": "data",
+            "name": "data-out",
+            "socketType": "RecorderRef"
+          }
+        ]
+      }
+    ],
+    "scheduled": [],
+    "commentGroups": [
+      {
+        "id": "group-2",
+        "rect": {
+          "x": -1545,
+          "y": -747,
+          "width": 552,
+          "height": 152
+        },
+        "title": "Включаем микрофон",
+        "branch": "initial",
+        "nodeIds": [
+          "node-get-microphone-mqkpxb3c-5",
+          "node-start-streaming-mql556hh-49"
+        ],
+        "frameColor": {
+          "preset": "accent"
+        },
+        "description": "При старте уточняем модель микрофона и запускаем его. Обратите внимание что GetMicrophone в настройках выбирает конкретную модель."
+      },
+      {
+        "id": "group-1",
+        "rect": {
+          "x": 264,
+          "y": -176,
+          "width": 656,
+          "height": 336
+        },
+        "title": "Ссылка на журнал",
+        "branch": "onConnect",
+        "nodeIds": [
+          "node-is-valid-mqm97w5v-17",
+          "node-get-journal-mqm98hvn-18",
+          "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9du8z-8",
+          "board-mqrk8res-sfp1k7n9",
+          "node-get-journal-mqrk8yrn-121"
+        ],
+        "frameColor": {
+          "preset": "accent"
+        },
+        "description": "Если сервер доступен, работаем с серверным журналом иначе работаем с журналом устройства локально."
+      },
+      {
+        "id": "group-4",
+        "rect": {
+          "x": 0.6020453303999318,
+          "y": -653.2622250517395,
+          "width": 624,
+          "height": 344
+        },
+        "title": "Создание трека",
+        "branch": "main",
+        "nodeIds": [
+          "node-make-track-mqmcipn5-28",
+          "node-stop-recording-mqmod4yf-35"
+        ],
+        "frameColor": {
+          "preset": "accent"
+        },
+        "description": "Создаем трек из накопленных семплов., останавливаем текущую запись."
+      },
+      {
+        "id": "group-3",
+        "rect": {
+          "x": -1910,
+          "y": -738,
+          "width": 1040,
+          "height": 152
+        },
+        "title": "Отрывок звука",
+        "branch": "main",
+        "nodeIds": [
+          "node-get-sample-mqs2mt0a-165",
+          "node-get-fft-frame-mqs3h75e-166",
+          "node-collect-fft-frames-mqs3hhnu-167"
+        ],
+        "frameColor": {
+          "preset": "warning"
+        }
+      },
+      {
+        "id": "group-5",
+        "rect": {
+          "x": -728,
+          "y": -640,
+          "width": 592,
+          "height": 304
+        },
+        "title": "Данные для трека",
+        "branch": "main",
+        "nodeIds": [
+          "node-is-recording-window-full-mqmo40ie-32",
+          "node-collect-samples-mqs2lopv-164"
+        ],
+        "frameColor": {
+          "preset": "warning"
+        },
+        "description": "Как только семплов для формирования треков накопилось достаточно, делаем новый трек"
+      },
+      {
+        "id": "group-6",
+        "rect": {
+          "x": 2634.213324844781,
+          "y": -783.1974383041364,
+          "width": 1080,
+          "height": 376
+        },
+        "title": "Публикация отчетов",
+        "branch": "main",
+        "nodeIds": [
+          "node-make-report-from-analysis-mqma356z-34",
+          "node-publish-report-mqma49xv-35",
+          "node-make-report-from-track-mqs54kgw-177",
+          "board-mqs5v7w1-9c8xw62e"
+        ],
+        "frameColor": {
+          "preset": "secondary"
+        }
+      },
+      {
+        "id": "group-7",
+        "rect": {
+          "x": 1647.33982027866,
+          "y": -843.035595493631,
+          "width": 776,
+          "height": 296
+        },
+        "title": "Создаем анализ",
+        "branch": "main",
+        "nodeIds": [
+          "node-flush-spectral-analyser-mqs6tcs6-172",
+          "node-make-fft-trends-analysis-mqs6vdme-174",
+          "node-make-fft-trends-policy-mqs6wrpr-175"
+        ],
+        "frameColor": {
+          "preset": "accent"
+        }
+      },
+      {
+        "id": "group-8",
+        "rect": {
+          "x": 838,
+          "y": -754,
+          "width": 680,
+          "height": 168
+        },
+        "title": "",
+        "branch": "main",
+        "nodeIds": [
+          "fn-1-block",
+          "fn-3-block-2"
+        ],
+        "frameColor": {
+          "preset": "accent"
+        },
+        "description": "Снова запускаем запись после отправки отчетов"
+      }
+    ],
+    "variables": [
+      {
+        "id": "var-JournalRef-mqm9dl4a-6",
+        "name": "journal1",
+        "type": "JournalRef",
+        "value": null
+      }
+    ],
+    "groups": []
+  }
+}

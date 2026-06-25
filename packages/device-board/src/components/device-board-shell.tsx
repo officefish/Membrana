@@ -7,12 +7,14 @@ import type {
   ScenarioFftTrendsPolicy,
   ScenarioRecordingPolicy,
   ScenarioSequenceConfig,
+  ScenarioAsyncJobNodeConfig,
 } from '@membrana/core';
 import {
   isPureEligibleScenarioNodeKind,
   resolveScenarioCollectorConfig,
   resolveScenarioFftTrendsPolicy,
   resolveScenarioSequenceConfig,
+  resolveScenarioAsyncJobNodeConfig,
   resolveScenarioGraphNodePure,
   resolveScenarioRecordingPolicy,
   resolveScenarioCommentGroupFrameColor,
@@ -129,6 +131,9 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedFftTrendsPolicy, setSelectedFftTrendsPolicy] =
     useState<ScenarioFftTrendsPolicy | null>(null);
   const [selectedSequenceConfig, setSelectedSequenceConfig] = useState<ScenarioSequenceConfig | null>(
+    null,
+  );
+  const [selectedAsyncJobConfig, setSelectedAsyncJobConfig] = useState<ScenarioAsyncJobNodeConfig | null>(
     null,
   );
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
@@ -275,6 +280,7 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedRecordingPolicyWired(false);
     setSelectedFftTrendsPolicy(null);
     setSelectedSequenceConfig(null);
+    setSelectedAsyncJobConfig(null);
     setSelectedVariableId(null);
     setSelectedGetterPure(true);
     setSelectedGetterPureLocked(false);
@@ -328,6 +334,7 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedRecordingPolicyWired(false);
       setSelectedFftTrendsPolicy(null);
     setSelectedSequenceConfig(null);
+    setSelectedAsyncJobConfig(null);
       setSelectedVariableId(null);
       setSelectedGetterPure(true);
       setSelectedGetterPureLocked(false);
@@ -357,6 +364,7 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedRecordingPolicyWired(false);
       setSelectedFftTrendsPolicy(null);
     setSelectedSequenceConfig(null);
+    setSelectedAsyncJobConfig(null);
       setSelectedVariableId(null);
       setSelectedGetterPure(false);
       setSelectedGetterPureLocked(false);
@@ -412,6 +420,12 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedSequenceConfig(
       sequenceRaw !== undefined && sequenceRaw !== null && typeof sequenceRaw === 'object'
         ? resolveScenarioSequenceConfig(sequenceRaw as Partial<ScenarioSequenceConfig>)
+        : null,
+    );
+    const asyncJobRaw = node.data?.asyncJobConfig;
+    setSelectedAsyncJobConfig(
+      asyncJobRaw !== undefined && asyncJobRaw !== null && typeof asyncJobRaw === 'object'
+        ? resolveScenarioAsyncJobNodeConfig(asyncJobRaw as Partial<ScenarioAsyncJobNodeConfig>)
         : null,
     );
     const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
@@ -1763,6 +1777,7 @@ const DeviceBoardShellInner: React.FC<{
             selectedRecordingPolicyWired={selectedRecordingPolicyWired}
             selectedFftTrendsPolicy={selectedFftTrendsPolicy}
             selectedSequenceConfig={selectedSequenceConfig}
+            selectedAsyncJobConfig={selectedAsyncJobConfig}
             selectedVariableName={selectedVariableName}
             selectedVariableId={selectedVariableId}
             selectedVariableType={selectedVariable?.type ?? null}
@@ -1793,6 +1808,7 @@ const DeviceBoardShellInner: React.FC<{
             onRecordingPolicyChange={graph.updateRecordingPolicy}
             onFftTrendsPolicyChange={graph.updateFftTrendsPolicy}
             onSequenceConfigChange={graph.updateSequenceConfig}
+            onAsyncJobConfigChange={graph.updateAsyncJobConfig}
             onAssignVariableName={graph.assignNodeVariableName}
             onVariableGetterPureChange={(nodeId, pure) => {
               graph.setVariableGetterPure(nodeId, pure);

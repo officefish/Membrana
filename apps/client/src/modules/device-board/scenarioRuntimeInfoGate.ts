@@ -57,7 +57,8 @@ export function scenarioChainLog(
     | 'media'
     | 'analysis'
     | 'report'
-    | 'journal',
+    | 'journal'
+    | 'async-job',
   event: string,
   context?: Readonly<Record<string, unknown>>,
 ): void {

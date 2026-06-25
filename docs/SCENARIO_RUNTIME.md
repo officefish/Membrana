@@ -125,6 +125,10 @@ Alarm loop использует отдельную паузу `ALARM_LOOP_PAUSE_
 |-------|------------|--------|
 | `host.log` / bridge | галочка **INFO** в shell | `[INFO] [device-board] event` |
 | `host.printLine` | узел Print в сценарии | `[device-board] 33` |
+| `scenarioChainLog` | stages: recording, track, media, report, **async-job** | `[device-board][async-job] resolved` |
+| `main-tick-blocked-ms` | каждый main tick | `elapsedMs` — budget gate path (AP v1) |
+
+Parse: [`CLIENT_LOGS_PARSING.md`](./device-board-scripts/CLIENT_LOGS_PARSING.md) · `yarn logs:parse`.
 
 ---
 
@@ -147,6 +151,52 @@ Alarm loop использует отдельную паузу `ALARM_LOOP_PAUSE_
 | Remote runtime | `runtime.state` / `runtime.log` по WS; ядро без изменений |
 
 Обсуждение команды (2026-06-18): зафиксировано в ходе консилиума по onTick; итоговые решения — этот документ.
+
+---
+
+## 10. Async pipeline (AP v1, 2026-06-25)
+
+> Epic: `device-board-async-pipeline-v1` · Issue #176 · CONCEPT §16.5.2 · LGTM [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](./device-board-scripts/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).
+
+### Слои (не смешивать)
+
+| Слой | Пакет | Ответственность |
+|------|-------|-----------------|
+| Contracts | `@membrana/core` | `ScenarioAsyncJobRecord`, `PromiseRef`, node kinds, `latentThen` |
+| Store + runtime | `@membrana/device-board` | `AsyncJobStore`, `exec-sequence`, promise executor, detached `event-dispatch` |
+| Host I/O | `apps/client` | `scenarioMicJournalBridge.startAsyncJob`, upload resolve/reject |
+| UI subscribe | `@membrana/agenda` | `ScenarioAsyncJobHub` (не product event bus) |
+
+### Lifecycle
+
+1. **`start-async-job`** — `AsyncJobStore.register` → `host.startAsyncJob` (deferred upload).
+2. **Main tick** — Sequence `latentThen` dispatch Then-веток без блокировки `exec-out`.
+3. **`on-async-resolved`** — `event-dispatch` с `detach: true` → drone/report ветка.
+4. **Terminal** — `async-job-resolved` / `rejected` / `cancelled` (chain-log + hub publish).
+
+### Chain-log (operator / `yarn logs:parse`)
+
+| Маркер | Когда |
+|--------|--------|
+| `async-job-start` | job зарегистрирован (runtime) |
+| `[async-job] resolved` / `rejected` | host bridge terminal |
+| `sequence-latent-then-start` | latent Then dispatch |
+| `event-dispatch-detached-start` | detached event branch |
+| `async-resolved-dispatch` | store → on-async-resolved wiring |
+| `main-tick-blocked-ms` | длительность main tick (`elapsedMs`) |
+
+Smoke v2.0: `smokeV20Async.passV20HappyPath` — `drone-skip: 0`, trends = gate, async markers present.
+
+### Ключевые файлы (дополнение к §12)
+
+| Файл | Роль |
+|------|------|
+| `async-job-store.ts` | in-memory job registry |
+| `async-promise-executor.ts` | start / await / cancel nodes |
+| `async-resolved-dispatch.ts` | on-async-resolved → detached branches |
+| `exec-sequence.ts` | sync / parallel / **latent** Then modes |
+| `event-dispatch.ts` | Collect multicast + `detach` |
+| `scenario-async-job-hub.ts` (`agenda`) | UI subscribe facade |
 
 ---
 
@@ -194,3 +244,7 @@ Alarm loop использует отдельную паузу `ALARM_LOOP_PAUSE_
 | `host.ts` | контракт портов |
 | `runtime-timing.ts` | паузы, yield, константы |
 | `pause-runtime-node.ts` | узел PauseRuntime в графе (DBP2) |
+| `async-job-store.ts` | AP v1 job registry |
+| `exec-sequence.ts` | Sequence Then modes (incl. latent) |
+| `async-promise-executor.ts` | promise node dispatch |
+| `event-dispatch.ts` | event branches + detach |

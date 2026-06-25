@@ -5,6 +5,7 @@ import {
   getDefaultMvpMicrophoneDocument,
   isLegacyHackathonDefaultScenario,
   needsBundledV09FunctionsMigration,
+  needsBundledV20AsyncMigration,
   needsRecordingGateBootstrapMigration,
   needsFftTrendsPolicyConstructorMigration,
 } from './default-usercase-mvp-microphone.js';
@@ -76,10 +77,12 @@ describe('default-usercase-mvp-microphone', () => {
     expect(isLegacyHackathonDefaultScenario(legacy)).toBe(true);
   });
 
-  it('does not flag v0.9-functions for flat bootstrap migration', () => {
+  it('does not flag v2.0-async for bundled migrations', () => {
     const doc = getDefaultMvpMicrophoneDocument();
     expect(needsRecordingGateBootstrapMigration(doc)).toBe(false);
     expect(needsBundledV09FunctionsMigration(doc)).toBe(false);
+    expect(needsBundledV20AsyncMigration(doc)).toBe(false);
+    expect(doc.meta?.bundledGraphVersion).toBe('v2.0-async');
   });
 
   it('detects broken gate topology without onStart fn-1 bootstrap', () => {
@@ -104,6 +107,7 @@ describe('default-usercase-mvp-microphone', () => {
     const doc = getDefaultMvpMicrophoneDocument();
     const flat = {
       ...doc,
+      meta: { title: doc.meta?.title },
       scenario: {
         ...doc.scenario,
         functions: [],
@@ -168,6 +172,93 @@ describe('default-usercase-mvp-microphone', () => {
     expect(needsFftTrendsPolicyConstructorMigration(withoutPolicy)).toBe(true);
   });
 
+  it('main loop wires async pipeline: latent Sequence, detached drone, fn-3 restart', () => {
+    const doc = getDefaultMvpMicrophoneDocument();
+    const main = doc.scenario.loops.main;
+    const sequence = main.nodes.find((node) => node.nodeKind === 'sequence');
+    const startAsync = main.nodes.find((node) => node.nodeKind === 'start-async-job');
+    const onResolved = main.nodes.find((node) => node.nodeKind === 'on-async-resolved');
+    const makeTrack = main.nodes.find((node) => node.nodeKind === 'make-track');
+    const fn3Block = main.nodes.find((node) => node.id === 'fn-3-block-2');
+    const publishTrends = main.nodes.find((node) => node.id === 'node-publish-report-mqma49xv-35');
+    const makeReportTrack = main.nodes.find((node) => node.nodeKind === 'make-report-from-track');
+    expect(sequence?.sequenceConfig?.latentThen).toBe(true);
+    expect(startAsync?.asyncJobConfig?.jobKind).toBe('track-upload');
+    expect(onResolved).toBeDefined();
+    expect(makeTrack).toBeDefined();
+    expect(fn3Block).toBeDefined();
+    expect(publishTrends).toBeDefined();
+    expect(makeReportTrack).toBeDefined();
+    if (
+      sequence === undefined ||
+      startAsync === undefined ||
+      onResolved === undefined ||
+      makeTrack === undefined ||
+      fn3Block === undefined ||
+      publishTrends === undefined ||
+      makeReportTrack === undefined
+    ) {
+      return;
+    }
+    expect(
+      main.edges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === sequence.id &&
+          edge.sourceHandle === 'then-3' &&
+          edge.target === fn3Block.id,
+      ),
+    ).toBe(true);
+    expect(
+      main.edges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === makeTrack.id &&
+          edge.target === startAsync.id,
+      ),
+    ).toBe(true);
+    expect(
+      main.edges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === publishTrends.id &&
+          edge.target === makeReportTrack.id,
+      ),
+    ).toBe(false);
+    expect(
+      main.edges.some(
+        (edge) =>
+          edge.kind === 'event' &&
+          edge.source === onResolved.id &&
+          edge.target === makeReportTrack.id,
+      ),
+    ).toBe(true);
+  });
+
+  it('detects v0.9 main without async pipeline for v2.0-async migration', () => {
+    const doc = getDefaultMvpMicrophoneDocument();
+    const legacy = {
+      ...doc,
+      meta: { ...doc.meta, bundledGraphVersion: 'v0.9-functions' },
+      scenario: {
+        ...doc.scenario,
+        loops: {
+          ...doc.scenario.loops,
+          main: {
+            ...doc.scenario.loops.main,
+            nodes: doc.scenario.loops.main.nodes.filter(
+              (node) =>
+                node.nodeKind !== 'start-async-job' &&
+                node.nodeKind !== 'on-async-resolved' &&
+                node.nodeKind !== 'sequence',
+            ),
+          },
+        },
+      },
+    };
+    expect(needsBundledV20AsyncMigration(legacy)).toBe(true);
+  });
+
   it('main loop wires fft policy via data-only and makeTrack restarts via fn-3 → fn-1', () => {
     const doc = getDefaultMvpMicrophoneDocument();
     const main = doc.scenario.loops.main;
@@ -207,7 +298,7 @@ describe('default-usercase-mvp-microphone', () => {
           edge.source === makeTrack.id &&
           edge.target === fn3Block.id,
       ),
-    ).toBe(true);
+    ).toBe(false);
     expect(
       main.edges.some(
         (edge) =>

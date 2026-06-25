@@ -38,7 +38,7 @@ describe('sequence-node', () => {
       outputs?: { name: string }[];
     };
     expect(data.nodeKind).toBe('sequence');
-    expect(data.sequenceConfig).toEqual({ thenCount: 4, parallelAsync: true });
+    expect(data.sequenceConfig).toEqual({ thenCount: 4, parallelAsync: true, latentThen: false });
     expect(data.outputs?.map((pin) => pin.name)).toEqual([
       'then-0',
       'then-1',
@@ -46,6 +46,19 @@ describe('sequence-node', () => {
       'then-3',
       'exec-out',
     ]);
+  });
+
+  it('round-trips latentThen in sequenceConfig', () => {
+    const node = createSequenceBoardNode({
+      id: 'seq-latent',
+      sequenceConfig: { thenCount: 2, latentThen: true },
+    });
+    const sub = serializeScenarioSubgraph('seq-latent', [node], []);
+    expect(sub.nodes[0]?.sequenceConfig).toEqual({
+      thenCount: 2,
+      parallelAsync: false,
+      latentThen: true,
+    });
   });
 
   it('prunes edges from removed Then pins', () => {

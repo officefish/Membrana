@@ -84,20 +84,35 @@ yarn logs:parse -- --file logs/apps/client/logs.txt --run-id <id>
 | `gate-true` ticks | Окна `windowSec` заполнены → hot path MakeTrack |
 | `publish-done` | Trends reports ушли в journal (синхронно с gate) |
 | `upload-ok` | WAV на media API (часто **позже** gate-тика) |
-| `drone-skip` | `MakeReportFromTrack` без track в journal |
-| `operator smoke` | MVP критерии без ожидания всех upload |
+| `drone-skip` | `MakeReportFromTrack` без track в journal (**v0.9**); **v2.0-async** ожидает **0** на happy path |
+| `asyncJobs` | AP v1: `start` / `resolved` / `rejected` / `cancelled` по chain-log |
+| `mainTick` | `main-tick-blocked-ms` · `elapsedMs` на gate path |
+| `smoke v2.0-async` | AP v1 operator matrix (`smokeV20Async` в JSON) |
+| `operator smoke` | MVP v0.9 критерии; для v2.0 см. `smoke v2.0-async` |
 
-### 4. Типовой gate-цикл (v0.9-functions)
+### 4. Типовой gate-цикл
 
-На каждом gate-true tick:
+**v2.0-async (bundled default):**
 
 1. `[recording] recording-window-full`
-2. `stop-recording` → `[track] slice-start` → `[media] upload-start` (async)
-3. `fft-trends-done` → `trends-report-done` → `[journal] publish-done`
-4. `[report] drone-skip: track-not-in-journal` (если upload ещё не завершён)
+2. `sequence-latent-then-start` → Then branches fire-and-forget
+3. `stop-recording` → `[track] slice-start` → `async-job-start` (track-upload)
+4. `fft-trends-done` → `trends-report-done` → `[journal] publish-done` (sync, Then-2)
+5. `main-tick-blocked-ms` — без ожидания `upload-ok` на том же tick
+6. Detached: `[async-job] resolved` → drone `publish-done`
+7. `main-infinity` → следующий tick
+
+Ожидание: `smoke v2.0-async: PASS` · `drone-skip: 0`.
+
+**v0.9-functions (legacy `7e8a289c`):**
+
+1. `[recording] recording-window-full`
+2. `stop-recording` → `[track] slice-start` → `[media] upload-start`
+3. `fft-trends-done` → `[journal] publish-done`
+4. `[report] drone-skip: track-not-in-journal` (upload ещё не завершён)
 5. `main-infinity` → следующий tick
 
-Пример эталонного прогона: `runId 7e8a289c` — 10 gate ticks `44,85,…,376`; 10 publish; 3 upload-ok до Stop.
+10 gate ticks; 10 publish; 3 upload-ok до Stop; **drone-skip: 9**.
 
 ### 5. Интерпретация для operator / sprint
 
@@ -113,13 +128,15 @@ yarn logs:parse -- --file logs/apps/client/logs.txt --run-id <id>
 
 ## Reports vs tracks (timing)
 
-**Ожидаемое поведение (BD2, до P7 async):**
+**v2.0-async:** trends publish sync на gate; upload async via `StartAsyncJob`; drone report **после** `async-job resolved` — нет stable `drone-skip` на happy path.
+
+**v0.9-functions (legacy):**
 
 - `publish-done` (trends) — **на gate tick**.
 - `upload-ok` — **на более позднем tick** (fire-and-forget `MakeTrack`).
-- `drone-skip: track-not-in-journal` — второй `PublishReport` (track-based) не срабатывает до upload.
+- `drone-skip: track-not-in-journal` — sync второй `PublishReport` до upload.
 
-Поэтому на сервере **reports раньше tracks** — не регресс v0.9 topology.
+Поэтому на сервере **reports раньше tracks** — норма для v0.9, не для v2.0 happy path.
 
 ```
 gate tick 44:  publish-done ✓   upload-ok ✗
@@ -134,8 +151,9 @@ gate tick 330: upload-ok ✓     (slice от tick ~309)
 
 | anomaly | Действие |
 |---------|----------|
-| `reports-ahead-of-tracks` | Информационно; объяснить operator |
-| `drone-skip-track-not-in-journal` | Норма до P7; не блокер cutover |
+| `reports-ahead-of-tracks` | v0.9: информационно; v2.0: проверить detached drone path |
+| `drone-skip-track-not-in-journal` | **v0.9:** норма до upload; **v2.0:** регресс — см. `smoke v2.0-async` |
+| `main-tick-blocked-on-upload` | v2.0: регресс latent path (main tick ждёт upload) |
 | `cabinet-telemetry-errors` | Отдельный тикет (cabinet `live-records` 500), не media upload |
 
 ---
@@ -153,7 +171,11 @@ gate tick 330: upload-ok ✓     (slice от tick ~309)
 | `[media] upload-start` / `upload-ok` | media pipeline |
 | `[journal] publish-done` | report в journal |
 | `[report] trends-report-done` | FFT trends path |
-| `[report] drone-skip` | пропуск track report |
+| `[report] drone-skip` | пропуск track report (v0.9 race) |
+| `async-job-start` / `[async-job] resolved` | AP v1 job lifecycle |
+| `sequence-latent-then-start` | latent Sequence dispatch |
+| `event-dispatch-detached-start` | detached event branch |
+| `main-tick-blocked-ms` | длительность main tick (`elapsedMs`) |
 | `main-infinity` + `loop-repeat` | gate-false путь |
 
 Полный cookbook: [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](./SCENARIO_CHAIN_LOG_COOKBOOK.md).
@@ -169,6 +191,8 @@ gate tick 330: upload-ok ✓     (slice от tick ~309)
 ---
 
 ## Пример вывода
+
+**v0.9 baseline (`7e8a289c`):**
 
 ```text
 file: logs/apps/client/logs.txt
@@ -187,6 +211,8 @@ smoke MVP microphone:
   gate windows ≥2: PASS (10)
   operator smoke (no upload wait): PASS
 ```
+
+**v2.0-async (ожидаемый live run):** секция `smoke v2.0-async: PASS`, `drone-skip: 0`, маркеры `asyncJobs` / `mainTick`. Fixture: `node --test scripts/client-logs-parser.test.mjs`.
 
 ---
 
