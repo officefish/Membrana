@@ -3,6 +3,7 @@
 | Phase | Deliverable | Commit |
 |-------|-------------|--------|
 | A | Catalog publish (picker ×3) + `comp:publish-catalog` + skill + regulation | `55fe27d` |
+| B | `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` (Anthropic) | pending commit |
 
 ## Phase A notes
 
@@ -13,5 +14,4 @@
 
 ## Deferred
 
-- Phase B: `yarn competition:synthesis-async-v2`
 - Phase C: operator F7 smoke per fork

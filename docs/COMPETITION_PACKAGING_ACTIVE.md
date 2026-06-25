@@ -17,9 +17,14 @@ Catalog publish: три async-v2 fork в device-board picker (`tier: community`)
 
 **Publish:** `yarn comp:publish-catalog --id comp-mvp-async-v2-2026-06-25`
 
-## Phase B–C (open)
+## Phase B (done)
 
-- [ ] `yarn competition:synthesis-async-v2` → design synthesis doc
+Design synthesis: [`COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md)
+
+**Generate:** `yarn competition:synthesis-async-v2`
+
+## Phase C (open)
+
 - [ ] Operator: Apply + Run + `yarn logs:parse` на каждый fork
 
 ## Competition sprint (closed)

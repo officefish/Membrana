@@ -34,7 +34,7 @@
 | D3 | `COMPETITION_CATALOG_PUBLISH_REGULATION.md` | ✅ |
 | D4 | Skill `membrana-competition-packaging` | ✅ |
 | D5 | Catalog tests green | ✅ |
-| D6 | `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` | ⏳ optional |
+| D6 | `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` | ✅ |
 | D7 | Operator F7 smoke per fork | ⏳ human |
 
 ---
