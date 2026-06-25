@@ -55,15 +55,28 @@ curl http://localhost:3000/health
 
 Порт по умолчанию **3000** (не конфликтует с media `3010`). Плейсхолдеры в `.env.docker.example` достаточны для `/health`; для `POST /v1/claude/ask` нужен настоящий `ANTHROPIC_API_KEY`.
 
-Прод VPS + TLS: [`docs/deploy/BACKGROUND_OFFICE_DEPLOY.md`](../../docs/deploy/BACKGROUND_OFFICE_DEPLOY.md). Smoke: `node scripts/_ssh-office-smoke.mjs`.
+Прод VPS + TLS: [`docs/deploy/BACKGROUND_OFFICE_DEPLOY.md`](../../docs/deploy/BACKGROUND_OFFICE_DEPLOY.md).  
+**Fly (Night Hunt) + когда переезжать на VPS:** [`DEPLOY.md`](./DEPLOY.md) · [`docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md`](../../docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md).
+
+Smoke VPS: `node scripts/_ssh-office-smoke.mjs` (если скрипт есть в checkout).
 
 ## Production deployment
 
+| Параметр | Fly (Night Hunt пилот) | VPS (prod) |
+|----------|------------------------|------------|
+| URL | `https://membrana-office-night-hunt.fly.dev` | `https://office.membrana.space` |
+| Роль | cron Night Hunt → OpenRouter → GitHub PR | Claude, Linear, webhooks, RAG |
+| Деплой | `fly deploy` — см. [`DEPLOY.md`](./DEPLOY.md) | `deploy/office-stack.sh` |
+| Env | `fly secrets` | `/etc/membrana/office.env` |
+
+Полная матрица, пороги миграции Fly → VPS: **[`DEPLOY.md`](./DEPLOY.md)**.
+
+### VPS (`office.membrana.space`)
+
 | Параметр | Значение |
 |----------|----------|
-| URL | `https://office.membrana.space` |
 | Health | `GET /health` (без токена) |
-| Env на VPS | `/etc/membrana/office.env` (mode `600`, не в git) |
+| Env | `/etc/membrana/office.env` (mode `600`, не в git) |
 | Compose | `deploy/office-stack.sh` + `deploy/background-office.prod.compose.yml` |
 | TLS | Caddy + Let's Encrypt (`deploy/Caddyfile.office.membrana.space`) |
 | Linear webhook | `POST https://office.membrana.space/webhooks/linear` |
@@ -76,7 +89,7 @@ curl http://localhost:3000/health
 | `ANTHROPIC_API_KEY` | исходящие вызовы Claude |
 | `LINEAR_API_KEY` | исходящий GraphQL Linear |
 | `LINEAR_WEBHOOK_SECRET` | **другой** секрет — подпись входящих webhook'ов |
-| `GITHUB_TOKEN` | чтение Issues (Octokit) |
+| `GITHUB_TOKEN` | чтение Issues (Octokit); для Night Hunt на Fly — **repo** write |
 
 Показать `API_INTERNAL_TOKEN` с VPS (локально, не коммитить): `node scripts/_ssh-office-show-token.mjs`.
 

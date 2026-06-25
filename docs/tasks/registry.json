@@ -7813,7 +7813,7 @@
     {
       "id": "nh-s2-fly-deploy",
       "title": "NH2: Fly.io deploy + secrets",
-      "promptPath": "docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md",
+      "promptPath": "packages/background-office/DEPLOY.md",
       "githubIssue": 174,
       "linearId": null,
       "size": "S",

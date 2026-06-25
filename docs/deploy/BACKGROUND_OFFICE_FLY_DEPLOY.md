@@ -1,7 +1,8 @@
 # Fly.io — временный бесплатный хостинг background-office (Night Hunt)
 
 > **Пакет:** `@membrana/background-office`  
-> **Альтернатива prod:** `https://office.membrana.space` (VPS) — см. [`BACKGROUND_OFFICE_DEPLOY.md`](./BACKGROUND_OFFICE_DEPLOY.md)
+> **Канон (две площадки, пороги Fly → VPS):** [`packages/background-office/DEPLOY.md`](../../packages/background-office/DEPLOY.md)  
+> **Prod VPS:** `https://office.membrana.space` — [`BACKGROUND_OFFICE_DEPLOY.md`](./BACKGROUND_OFFICE_DEPLOY.md)
 
 ## Почему Fly.io
 
