@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Beta (Measured modular UserCase, async v2)",
-    "exportedAt": "2026-06-25T14:20:49.321Z",
+    "exportedAt": "2026-06-25T16:07:40.121Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "beta",
     "isCompetitionTemplate": true,
@@ -301,7 +301,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 968,
-              "y": -944
+              "y": -816
             },
             "label": "∞",
             "nodeKind": "loop-repeat",
@@ -405,7 +405,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "blockKind": "subgraph",
             "position": {
               "x": 1432,
-              "y": -880
+              "y": -760
             },
             "label": "StartRecording::fn-1",
             "supportsAsync": true
@@ -415,7 +415,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "blockKind": "subgraph",
             "position": {
               "x": 968,
-              "y": -816
+              "y": -688
             },
             "label": "GetAudioStream::fn-3",
             "supportsAsync": true
@@ -425,7 +425,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 552,
-              "y": -752
+              "y": -832
             },
             "label": "GetDevice",
             "nodeKind": "device-global"
@@ -512,7 +512,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 504,
-              "y": -880
+              "y": -704
             },
             "label": "Sequence",
             "nodeKind": "sequence",
@@ -526,8 +526,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "id": "fn-beta-async-upload-pipeline-block",
             "blockKind": "subgraph",
             "position": {
-              "x": 504,
-              "y": -624
+              "x": 968,
+              "y": -944
             },
             "label": "Upload pipeline::fn-beta-async-upload-pipeline",
             "supportsAsync": true
@@ -537,7 +537,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "blockKind": "subgraph",
             "position": {
               "x": 968,
-              "y": -688
+              "y": -560
             },
             "label": "Trends publish::fn-beta-trends-publish",
             "supportsAsync": true
@@ -779,13 +779,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "dataType": "FftTrendsPolicy"
           },
           {
-            "source": "fn-beta-recording-gate-block",
-            "sourceHandle": "exec-out",
-            "target": "fn-beta-async-upload-pipeline-block",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
             "source": "node-sequence-gate-v20-async",
             "sourceHandle": "then-2",
             "target": "fn-beta-trends-publish-block",
@@ -819,6 +812,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
             "source": "fn-beta-recording-gate-block",
             "sourceHandle": "exec-out",
             "target": "node-sequence-gate-v20-async",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-0",
+            "target": "fn-beta-async-upload-pipeline-block",
             "targetHandle": "exec-in"
           }
         ]
@@ -2119,9 +2119,9 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
         },
         "rect": {
           "x": 480,
-          "y": -904,
-          "width": 272,
-          "height": 408
+          "y": -968,
+          "width": 736,
+          "height": 392
         },
         "nodeIds": [
           "node-sequence-gate-v20-async",
@@ -2137,8 +2137,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
           "preset": "accent"
         },
         "rect": {
-          "x": 480,
-          "y": -648,
+          "x": 944,
+          "y": -968,
           "width": 272,
           "height": 152
         },

@@ -66,6 +66,23 @@ const FN3_BLOCK_2_ID = 'fn-3-block-2';
 const MAIN_DEVICE_GLOBAL_FOR_FN1_ID = 'node-device-global-mqs5ibg8-126';
 const START_ASYNC_JOB_NODE_ID = 'node-start-async-job-v20';
 
+/** Collapsed async exec on main (Beta upload-pipeline, Gamma live-bundle). */
+function isCollapsedAsyncExecBlock(node: { readonly blockKind?: string; readonly id: string }): boolean {
+  return (
+    node.blockKind === 'subgraph' &&
+    (node.id.includes('async-upload-pipeline') || node.id.includes('async-live-bundle'))
+  );
+}
+
+function findCollapsedAsyncExecTarget(
+  main: DeviceScenarioDocument['scenario']['loops']['main'],
+): { readonly id: string } | undefined {
+  return (
+    main.nodes.find((node) => node.id === START_ASYNC_JOB_NODE_ID) ??
+    main.nodes.find(isCollapsedAsyncExecBlock)
+  );
+}
+
 /** Порядок: leaf → root (tail collapse first). */
 const TEAM_MAIN_COLLAPSES: Readonly<Record<CompetitionTeamId, readonly CollapseSpec[]>> = {
   alpha: [
@@ -362,19 +379,21 @@ function repairAsyncV2MainLoopWiring(document: DeviceScenarioDocument): DeviceSc
     }
   }
 
-  const startAsyncJob = main.nodes.find((node) => node.id === START_ASYNC_JOB_NODE_ID);
+  const asyncUploadExecTarget = findCollapsedAsyncExecTarget(main);
 
   // Collapsed gate returns exec-out (make-track path), not exec-true-out. Flat MVP wired
   // window-full → sequence; async-v2 must use gate exec-out → sequence → then-0 async upload.
+  // Beta/Gamma collapse upload into fn-*-async-*-block — strip direct gate→upload exec
+  // (first-match successor would skip sequence, trends publish, and then-3 restart).
   edges = edges.filter(
     (edge) =>
       !(
         edge.kind === 'exec' &&
         edge.source === gateBlock.id &&
         ((edge.sourceHandle === 'exec-true-out' && edge.target === sequenceNode.id) ||
-          (startAsyncJob !== undefined &&
+          (asyncUploadExecTarget !== undefined &&
             edge.sourceHandle === 'exec-out' &&
-            edge.target === startAsyncJob.id))
+            edge.target === asyncUploadExecTarget.id))
       ),
   );
 
@@ -389,14 +408,20 @@ function repairAsyncV2MainLoopWiring(document: DeviceScenarioDocument): DeviceSc
   }
 
   if (
-    startAsyncJob !== undefined &&
-    !hasScenarioEdge(edges, sequenceNode.id, 'then-0', startAsyncJob.id, 'exec-in')
+    asyncUploadExecTarget !== undefined &&
+    !hasScenarioEdge(
+      edges,
+      sequenceNode.id,
+      'then-0',
+      asyncUploadExecTarget.id,
+      'exec-in',
+    )
   ) {
     edges.push({
       kind: 'exec',
       source: sequenceNode.id,
       sourceHandle: 'then-0',
-      target: startAsyncJob.id,
+      target: asyncUploadExecTarget.id,
       targetHandle: 'exec-in',
     });
   }

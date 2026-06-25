@@ -8180,7 +8180,7 @@
       "sprintKind": "competition-packaging",
       "parentEpic": "comp-mvp-async-v2-2026-06-25",
       "leadPersona": "vesnin",
-      "notes": "Phase A LGTM — picker ×3, comp:publish-catalog, skill. Open: synthesis + operator smoke."
+      "notes": "Phase A–C complete. Operator smoke PASS all forks (2026-06-25). Pack L17/L20 in closure PR."
     },
     {
       "id": "async-v2-track-upload-178",

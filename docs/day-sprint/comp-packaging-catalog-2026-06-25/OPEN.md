@@ -4,7 +4,7 @@
 |------|----------|
 | **Sprint** | `comp-packaging-catalog-2026-06-25` |
 | **Registry** | `comp-packaging-catalog-2026-06-25` |
-| **Status** | **open** (D1–D6 done; D7 operator) |
+| **Status** | **closed** (D1–D7 done; operator sign-off 2026-06-25) |
 | **Parent** | `comp-mvp-async-v2-2026-06-25` closed |
 
 **Brief:** [`COMPETITION_PACKAGING_SPRINT_BRIEF.md`](../../competition-sprint/comp-packaging-catalog-2026-06-25/COMPETITION_PACKAGING_SPRINT_BRIEF.md)  
@@ -19,7 +19,7 @@
 |-------|-------------|--------|
 | A | Catalog publish (picker ×3) + script + skill | ✅ |
 | B | Async v2 design synthesis (LLM) | ✅ |
-| C | Operator browser debug + logs | ⏳ human |
+| C | Operator browser debug + ODF registry | ✅ — runs `9afa0b80` / `51448c9b` / `6d19b6eb` |
 
 ---
 

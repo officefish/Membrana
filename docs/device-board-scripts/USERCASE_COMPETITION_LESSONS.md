@@ -310,6 +310,77 @@ v20 happy path: FAIL
 - [ ] Operator: при hung ensure-reserved — `yarn media:prod:restart-api`
 - [ ] Pack/bridge: не `void` критичный media init перед async jobs
 
+### L17 — Async v2 pack: direct gate exec-out → collapsed upload block bypasses sequence
+
+**Симптом (beta async-v2, runId 07222603 / partial patterns on alpha):**
+
+```text
+gate-true: 1+ · upload-ok: 1 · publish-done: 0 · latent-then: 0
+make-track fires · sequence/trends/restart never run
+```
+
+**Что:** collapse оставляет `gate exec-out → fn-*-async-upload-pipeline-block`. `repairAsyncV2MainLoopWiring` добавляет второе ребро `gate exec-out → sequence`, но `findExecSuccessor` берёт **первое** — upload стартует напрямую, `then-2` (trends) и `then-3` (restart) не выполняются.
+
+**Fix:** strip direct `gate exec-out → collapsed async exec target`; wire `sequence then-0 → upload block` (как Alpha `then-0 → start-async-job` на main).
+
+**Профилактика:**
+
+- [x] Pack test beta: нет direct gate→upload exec; есть sequence then-0→upload и then-2→trends
+- [ ] Rebuild: `yarn usercase:build-competition-async-v2-all`
+
+### L18 — Clip recorder: stop-recording-empty on second gate cycle (non-blocking)
+
+**Симптом (beta async-v2, runId f73b167b):**
+
+```text
+gate tick 77 · recording-window-full · stop-recording-empty · no second make-track
+```
+
+**Что:** после then-3 restart session timer считает окно полным, но `stopRecorderRecording` возвращает пустой clip blob на втором цикле. Operator partial run; pass возможен при полном прогоне (`51448c9b`).
+
+**Fix:** backlog client — `startClipRecorder` restart semantics в `scenarioMicJournalBridge`.
+
+**Профилактика:**
+
+- [ ] Unit/integration: start → stop → start → stop с non-empty blob
+- [ ] Operator: не Stop раньше 2-го gate без диагностики
+
+### L19 — Detached report dispatch in collapsed upload pipeline (non-blocking)
+
+**Симптом (alpha/beta/gamma pass runs):**
+
+```text
+event-dispatch-detached-error on on-async-resolved-v20 inside fn-*-async-*-block
+detached=2–3 · FFT trends publish = gate (PASS)
+```
+
+**Что:** `dispatchAsyncResolvedBranches` внутри collapsed function не резолвит parent block data pins для `make-report-from-track` (drone detached path).
+
+**Fix:** `augmentExecOptionsForFunctionSubgraph` в `async-resolved-dispatch.ts` (частично); полный bridge для collapsed upload/live-bundle — follow-up.
+
+**Профилактика:**
+
+- [ ] Operator smoke: `detached` не блокер если `trends = gate` и `upload-ok` догоняет
+- [ ] Pack test + runtime test для collapsed on-async-resolved
+
+### L20 — Async v2 pack: Gamma `async-live-bundle` not matched by L17 repair
+
+**Симптом (gamma async-v2, runId 8f3a86c6):**
+
+```text
+gate-true: 1 · upload-ok: 1 · publish-done: 0 · latent-then: 0
+(same as L17 — direct gate → bundle)
+```
+
+**Что:** L17 искал только `async-upload-pipeline` (Beta). Gamma сворачивает upload в `fn-gamma-async-live-bundle-block` — repair не срабатывал.
+
+**Fix:** `findCollapsedAsyncExecTarget` — также `async-live-bundle`; strip direct gate→bundle; `sequence then-0 → bundle`; gamma pack test.
+
+**Профилактика:**
+
+- [x] Pack test gamma: gate→sequence, then-0→bundle, no direct gate→bundle exec
+- [ ] Любой новый collapsed async block id — добавить в `isCollapsedAsyncExecBlock` или общий суффикс-конвенция
+
 ---
 
 ## Чеклист перед merge competition UserCase

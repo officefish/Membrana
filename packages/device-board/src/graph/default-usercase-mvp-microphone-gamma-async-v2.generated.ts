@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Gamma (Poster UserCase, async v2)",
-    "exportedAt": "2026-06-25T14:07:43.954Z",
+    "exportedAt": "2026-06-25T16:45:17.115Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "gamma",
     "isCompetitionTemplate": true,
@@ -289,7 +289,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -2744,
-              "y": -768
+              "y": -824
             },
             "label": "onTick",
             "nodeKind": "event",
@@ -300,8 +300,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "id": "main-infinity",
             "blockKind": "custom",
             "position": {
-              "x": 3936,
-              "y": -288
+              "x": 968,
+              "y": -816
             },
             "label": "∞",
             "nodeKind": "loop-repeat",
@@ -322,7 +322,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "subgraph",
             "position": {
               "x": -2280,
-              "y": -768
+              "y": -824
             },
             "label": "GetAudioStream::fn-3",
             "supportsAsync": true
@@ -332,7 +332,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -424,
-              "y": -768
+              "y": -824
             },
             "label": "CollectSamples",
             "nodeKind": "collect-samples",
@@ -348,7 +348,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -1816,
-              "y": -768
+              "y": -824
             },
             "label": "GetSample",
             "nodeKind": "get-sample"
@@ -368,7 +368,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -1352,
-              "y": -768
+              "y": -824
             },
             "label": "GetFFTFrame",
             "nodeKind": "get-fft-frame"
@@ -378,7 +378,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -888,
-              "y": -768
+              "y": -824
             },
             "label": "CollectFftFrames",
             "nodeKind": "collect-fft-frames",
@@ -404,8 +404,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "id": "fn-1-block",
             "blockKind": "subgraph",
             "position": {
-              "x": 1256,
-              "y": -720
+              "x": 1432,
+              "y": -760
             },
             "label": "StartRecording::fn-1",
             "supportsAsync": true
@@ -414,8 +414,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "id": "fn-3-block-2",
             "blockKind": "subgraph",
             "position": {
-              "x": 864,
-              "y": -680
+              "x": 968,
+              "y": -688
             },
             "label": "GetAudioStream::fn-3",
             "supportsAsync": true
@@ -455,7 +455,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 8,
-              "y": -808
+              "y": -696
             },
             "label": "GetRecorder",
             "nodeKind": "get-recorder"
@@ -511,8 +511,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "id": "node-sequence-gate-v20-async",
             "blockKind": "custom",
             "position": {
-              "x": 120,
-              "y": -360
+              "x": 504,
+              "y": -704
             },
             "label": "Sequence",
             "nodeKind": "sequence",
@@ -526,8 +526,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "id": "fn-gamma-async-live-bundle-block",
             "blockKind": "subgraph",
             "position": {
-              "x": 504,
-              "y": -704
+              "x": 968,
+              "y": -944
             },
             "label": "Async upload bundle::fn-gamma-async-live-bundle",
             "supportsAsync": true
@@ -536,8 +536,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "id": "fn-gamma-trends-publish-block",
             "blockKind": "subgraph",
             "position": {
-              "x": 1800,
-              "y": -1008
+              "x": 968,
+              "y": -560
             },
             "label": "Анализ · публикация::fn-gamma-trends-publish",
             "supportsAsync": true
@@ -547,7 +547,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "subgraph",
             "position": {
               "x": 40,
-              "y": -680
+              "y": -824
             },
             "label": "Захват · окно записи::fn-gamma-recording-gate",
             "supportsAsync": true
@@ -779,13 +779,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "dataType": "FftTrendsPolicy"
           },
           {
-            "source": "fn-gamma-recording-gate-block",
-            "sourceHandle": "exec-out",
-            "target": "fn-gamma-async-live-bundle-block",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
             "source": "node-sequence-gate-v20-async",
             "sourceHandle": "then-2",
             "target": "fn-gamma-trends-publish-block",
@@ -817,8 +810,15 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
           {
             "kind": "exec",
             "source": "fn-gamma-recording-gate-block",
-            "sourceHandle": "exec-true-out",
+            "sourceHandle": "exec-out",
             "target": "node-sequence-gate-v20-async",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-0",
+            "target": "fn-gamma-async-live-bundle-block",
             "targetHandle": "exec-in"
           }
         ]
@@ -1817,7 +1817,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -40,
-              "y": -576
+              "y": -648
             },
             "label": "IsRecordingWindowFull",
             "nodeKind": "is-recording-window-full",
@@ -1831,7 +1831,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 424,
-              "y": -608
+              "y": -648
             },
             "label": "StopRecording",
             "nodeKind": "stop-recording",
@@ -1889,20 +1889,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
           },
           {
             "source": "fn-gamma-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-stop-recording-mqmod4yf-35",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-gamma-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-make-track-mqmcipn5-28",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-gamma-recording-gate-input",
             "sourceHandle": "device",
             "target": "node-get-recorder-mqs3ir02-168",
             "targetHandle": "device",
@@ -1954,20 +1940,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
             "targetHandle": "recorder",
             "kind": "data",
             "dataType": "RecorderRef"
-          },
-          {
-            "source": "fn-gamma-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-stop-recording-mqmod4yf-35",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-gamma-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-make-track-mqmcipn5-28",
-            "targetHandle": "exec-in",
-            "kind": "exec"
           },
           {
             "kind": "exec",
@@ -2085,7 +2057,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
         },
         "rect": {
           "x": 16,
-          "y": -704,
+          "y": -848,
           "width": 272,
           "height": 152
         },
@@ -2124,8 +2096,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
           "preset": "info"
         },
         "rect": {
-          "x": 1776,
-          "y": -1032,
+          "x": 944,
+          "y": -584,
           "width": 272,
           "height": 152
         },
@@ -2142,10 +2114,10 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT = {
           "preset": "info"
         },
         "rect": {
-          "x": 96,
-          "y": -728,
-          "width": 656,
-          "height": 496
+          "x": 480,
+          "y": -968,
+          "width": 736,
+          "height": 392
         },
         "nodeIds": [
           "node-sequence-gate-v20-async",

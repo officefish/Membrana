@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` |
+| **status** | `closed` |
 | **sprintId** | `comp-packaging-catalog-2026-06-25` |
 | **kind** | `competition-packaging` |
 | **brief** | [`COMPETITION_PACKAGING_SPRINT_BRIEF.md`](./competition-sprint/comp-packaging-catalog-2026-06-25/COMPETITION_PACKAGING_SPRINT_BRIEF.md) |
@@ -23,13 +23,15 @@ Design synthesis: [`COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md`](./competition-spr
 
 **Generate:** `yarn competition:synthesis-async-v2`
 
-## Phase C (open)
+## Phase C (done)
 
-Operator debug по регламенту [`COMPETITION_OPERATOR_DEBUG_REGULATION.md`](./prompts/COMPETITION_OPERATOR_DEBUG_REGULATION.md):
+Operator debug — [`OPERATOR_DEBUG_LOG.md`](./competition-sprint/comp-packaging-catalog-2026-06-25/OPERATOR_DEBUG_LOG.md):
 
-- [ ] Последовательно alpha → beta → gamma
-- [ ] [`OPERATOR_DEBUG_LOG.md`](./competition-sprint/comp-packaging-catalog-2026-06-25/OPERATOR_DEBUG_LOG.md)
-- [ ] Находки → ODF + L13+ + JSON registry
+- [x] Последовательно alpha → beta → gamma
+- [x] ODF cards + L17–L20 + JSON registry
+- [x] Smoke runs: `9afa0b80` / `51448c9b` / `6d19b6eb`
+
+**Archive:** `yarn task:archive comp-packaging-catalog-2026-06-25` (after pack PR merge)
 
 ## Competition sprint (closed)
 

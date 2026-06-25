@@ -20,6 +20,6 @@
 ## Deferred (не блокирует Phase A)
 
 - [x] `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` (Anthropic 2026-06-25)
-- [ ] Operator F7 smoke logs per fork → [`OPERATOR_DEBUG_LOG.md`](./OPERATOR_DEBUG_LOG.md)
+- [x] Operator F7 smoke logs per fork → [`OPERATOR_DEBUG_LOG.md`](./OPERATOR_DEBUG_LOG.md) (Alpha `9afa0b80`, Beta `51448c9b`, Gamma `6d19b6eb`)
 
 **Closed @** `55fe27d` (Phase A)

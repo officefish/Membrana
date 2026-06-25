@@ -137,6 +137,45 @@ describe('usercase-competition-async-v2-pack (Phase 2β)', () => {
     ).toBe(true);
     const kinds = new Set(packed.scenario.loops.main.nodes.map((node) => node.nodeKind));
     expect(kinds.has('start-async-job')).toBe(false);
+
+    const mainEdges = packed.scenario.loops.main.edges;
+    const uploadBlockId = 'fn-beta-async-upload-pipeline-block';
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source.includes('recording-gate-block') &&
+          edge.sourceHandle === 'exec-out' &&
+          edge.target.includes('sequence'),
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'node-sequence-gate-v20-async' &&
+          edge.sourceHandle === 'then-0' &&
+          edge.target === uploadBlockId,
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source.includes('recording-gate-block') &&
+          edge.sourceHandle === 'exec-out' &&
+          edge.target === uploadBlockId,
+      ),
+    ).toBe(false);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'node-sequence-gate-v20-async' &&
+          edge.sourceHandle === 'then-2' &&
+          edge.target.includes('trends-publish'),
+      ),
+    ).toBe(true);
   });
 
   it('beta Phase 5 polish applies gamma ⑤⑥ titles to async comment groups', () => {
@@ -146,5 +185,53 @@ describe('usercase-competition-async-v2-pack (Phase 2β)', () => {
     const titles = (canon.scenario.commentGroups ?? []).map((group) => group.title);
     expect(titles).toContain('⑤ Отправка в фоне');
     expect(titles).toContain('⑥ Отчёт дрон (detached)');
+  });
+
+  it('gamma collapses async live bundle and wires sequence before upload block', () => {
+    const packed = packMvpUserCaseForTeamAsyncV2('gamma', DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT);
+    expect(
+      packed.scenario.functions.some((fn) => fn.id === 'fn-gamma-async-live-bundle'),
+    ).toBe(true);
+    const kinds = new Set(packed.scenario.loops.main.nodes.map((node) => node.nodeKind));
+    expect(kinds.has('start-async-job')).toBe(false);
+
+    const mainEdges = packed.scenario.loops.main.edges;
+    const bundleBlockId = 'fn-gamma-async-live-bundle-block';
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source.includes('recording-gate-block') &&
+          edge.sourceHandle === 'exec-out' &&
+          edge.target.includes('sequence'),
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'node-sequence-gate-v20-async' &&
+          edge.sourceHandle === 'then-0' &&
+          edge.target === bundleBlockId,
+      ),
+    ).toBe(true);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source.includes('recording-gate-block') &&
+          edge.sourceHandle === 'exec-out' &&
+          edge.target === bundleBlockId,
+      ),
+    ).toBe(false);
+    expect(
+      mainEdges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === 'node-sequence-gate-v20-async' &&
+          edge.sourceHandle === 'then-2' &&
+          edge.target.includes('trends-publish'),
+      ),
+    ).toBe(true);
   });
 });

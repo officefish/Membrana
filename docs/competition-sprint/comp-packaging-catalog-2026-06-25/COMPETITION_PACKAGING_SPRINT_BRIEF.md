@@ -35,7 +35,7 @@
 | D4 | Skill `membrana-competition-packaging` | ✅ |
 | D5 | Catalog tests green | ✅ |
 | D6 | `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` | ✅ |
-| D7 | Operator F7 smoke per fork + ODF registry | ⏳ Phase C — [`OPERATOR_DEBUG_LOG.md`](./OPERATOR_DEBUG_LOG.md) |
+| D7 | Operator F7 smoke per fork + ODF registry | ✅ [`OPERATOR_DEBUG_LOG.md`](./OPERATOR_DEBUG_LOG.md) |
 
 ---
 

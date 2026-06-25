@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Alpha (Live Observation Pipeline, async v2)",
-    "exportedAt": "2026-06-25T14:20:41.920Z",
+    "exportedAt": "2026-06-25T16:07:27.913Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "alpha",
     "isCompetitionTemplate": true,
