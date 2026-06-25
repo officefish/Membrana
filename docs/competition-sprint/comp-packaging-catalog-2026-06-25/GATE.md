@@ -22,4 +22,4 @@
 - [ ] `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` (DeepSeek 402 → Anthropic fallback)
 - [ ] Operator F7 smoke logs per fork
 
-**Closed @** pending commit SHA (Phase A)
+**Closed @** `55fe27d` (Phase A)
