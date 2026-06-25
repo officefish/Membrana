@@ -94,6 +94,6 @@
 
 - [x] `packMvpUserCaseForTeamAsyncV2` — detached report function, StartAsyncJob visible
 - [x] `yarn usercase:verify-competition-async-v2` green
-- [ ] F7 operator smoke (browser Run ≥60s)
+- [ ] F7 operator smoke — *deferred* (PHASE_2B_GATE; smoke на winner)
 
 *Team Alpha · comp-mvp-async-v2-2026-06-25*

@@ -82,6 +82,6 @@
 
 - [x] `fn-gamma-async-live-bundle` poster strip
 - [x] `yarn usercase:verify-competition-async-v2` green
-- [ ] F7 operator smoke
+- [ ] F7 operator smoke — *deferred*
 
 *Team Gamma · comp-mvp-async-v2-2026-06-25*

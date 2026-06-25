@@ -69,7 +69,7 @@ Bundled MVP **v2.0-async** (Issue #176) доказан технически: lat
 - [x] `usercase-mvp-microphone-<team>-async-v2`
 - [x] `meta.competitionBase: v2.0-async`
 - [x] `yarn usercase:build-competition-async-v2` + `verify-layout` + `verify-competition-async-v2` green
-- [ ] Demo script PASS + smoke v2.0-async (operator)
+- [ ] Demo script PASS + smoke v2.0-async (operator — deferred to winner, см. PHASE_2B_GATE)
 - [x] `CONCEPT.md` §Implementation + наследование замысла v1
 
 ---
