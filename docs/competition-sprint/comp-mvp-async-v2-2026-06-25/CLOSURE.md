@@ -51,7 +51,7 @@ Bundled production: **`usercase-mvp-microphone`** (`bundledGraphVersion: v2.0-as
 |----|------|
 | F7-AV2 | Live operator smoke on winner fork (`smoke v2.0-async: PASS`) |
 | MERGE-AV2 | Merge winner ideas into bundled MVP — product decision |
-| CAT-AV2 | Picker exposure (archived loaders only) |
+| CAT-AV2 | **done** — [`comp-packaging-catalog-2026-06-25`](../comp-packaging-catalog-2026-06-25/COMPETITION_PACKAGING_SPRINT_BRIEF.md) |
 
 F7 не блокирует closure: bundled v2.0-async smoke baseline + verify-prerun green (см. [`PHASE_2B_GATE.md`](./PHASE_2B_GATE.md)).
 

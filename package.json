@@ -23,6 +23,8 @@
     "deepseek:task": "node scripts/deepseek-task.mjs",
     "competition:synthesis-v1": "node scripts/generate-competition-v1-synthesis.mjs",
     "comp:open": "node scripts/comp-open.mjs",
+    "comp:publish-catalog": "node scripts/comp-publish-catalog.mjs",
+    "competition:synthesis-async-v2": "node scripts/generate-competition-async-v2-synthesis.mjs",
     "claude:code": "node scripts/claude-code-with-proxy.mjs",
     "night-hunt:pr-review": "node scripts/night-hunt-pr-review.mjs",
     "archive:night-hunt": "node scripts/archive-night-hunt-artifacts.mjs",

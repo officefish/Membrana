@@ -40,19 +40,21 @@ describe('ClientUserCaseCatalogService', () => {
     expect(cards[0]?.canApply).toBe(true);
   });
 
-  it('community competition entries are applicable', () => {
+  it('community competition async-v2 entries are applicable', () => {
     const service = new ClientUserCaseCatalogService();
     for (const id of [
-      'usercase-mvp-microphone-alpha',
-      'usercase-mvp-microphone-beta',
-      'usercase-mvp-microphone-gamma',
+      'usercase-mvp-microphone-alpha-async-v2',
+      'usercase-mvp-microphone-beta-async-v2',
+      'usercase-mvp-microphone-gamma-async-v2',
     ]) {
       expect(service.canApply(id, 'microphone')).toBe(true);
       const card = service.listCards('microphone').find((c) => c.id === id);
       expect(card?.entitlement).toBe('community');
       expect(card?.canApply).toBe(true);
     }
-    expect(service.loadDocumentIfEntitled('usercase-mvp-microphone-alpha', 'microphone')).not.toBeNull();
+    expect(
+      service.loadDocumentIfEntitled('usercase-mvp-microphone-beta-async-v2', 'microphone'),
+    ).not.toBeNull();
   });
 
   it('tariff entry locked without entitled SKU', () => {

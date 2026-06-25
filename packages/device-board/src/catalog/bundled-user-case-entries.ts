@@ -1,9 +1,11 @@
 import type { UserCaseCatalogEntry } from './user-case-catalog-types.js';
 import { getDefaultMvpMicrophoneDocument } from '../graph/default-usercase-mvp-microphone.js';
+import { COMMUNITY_COMPETITION_USER_CASE_ENTRIES } from './community-competition-user-case-entries.js';
 
 /**
  * Active bundled UserCase entries (runtime catalog picker).
- * Competition v1 forks archived — см. `archived-competition-user-case-entries.ts`.
+ * Competition forks: `community-competition-user-case-entries.ts` (yarn comp:publish-catalog).
+ * Historical loaders: `archived-competition-user-case-entries.ts`.
  */
 export const BUNDLED_USER_CASE_ENTRIES: readonly UserCaseCatalogEntry[] = [
   {
@@ -28,4 +30,5 @@ export const BUNDLED_USER_CASE_ENTRIES: readonly UserCaseCatalogEntry[] = [
     },
     loadDocument: getDefaultMvpMicrophoneDocument,
   },
+  ...COMMUNITY_COMPETITION_USER_CASE_ENTRIES,
 ];

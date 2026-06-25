@@ -141,12 +141,21 @@
 | `smoke-s1-nb2-smoke-tests-testids` | NB2: data-testid + 5 Playwright @smoke specs | M | [`SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md) | [#81](https://github.com/officefish/Membrana/issues/81) |
 | `smoke-s1-nb3-optional-ci-workflow` | NB3: e2e-smoke.yml (continue-on-error, non-blocking) | S | [`SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md) | [#81](https://github.com/officefish/Membrana/issues/81) |
 | `smoke-s1-nb4-docs-handoff` | NB4: e2e README, CONTRIBUTING, night:close handoff | S | [`SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SMOKE_TESTING_S1_NIGHT_BUILD_EPIC_PROMPT.md) | [#81](https://github.com/officefish/Membrana/issues/81) |
-| `usercase-mvp-v2-groups-async` | UserCase MVP v2: groups, functions, async tracks on freeze | L | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
+| `usercase-mvp-v2-groups-async` | UserCase MVP v2: groups, functions, async pipeline (umbrella W1) | L | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-0-spec-lgtm` | UCV2-0: spec graph + groups/functions map + LGTM | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-1-graph-collapse` | UCV2-1: mic graph → groups + collapse to function | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
-| `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
-| `ucv2-3-pack-verify` | UCV2-3: usercase:build + verify-pack + smoke | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
-| `ucv2-4-operator-signoff` | UCV2-4: operator LGTM doc + epic close | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
+| `db-ap-r1-core-contracts` | DB-AP-R1: core PromiseRef + async job types + node kinds | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r2-core-sequence-latent` | DB-AP-R2: core sequenceConfig.latentThen | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r3-async-job-store` | DB-AP-R3: AsyncJobStore + backpressure + cancel | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r4-sequence-latent-runtime` | DB-AP-R4: exec-sequence latent Then mode | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r5-promise-nodes-editor` | DB-AP-R5: promise nodes palette + inspector + validators | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r6-promise-nodes-executor` | DB-AP-R6: block-executor promise nodes + supportsAsync | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r7-host-bridge-jobs` | DB-AP-R7: scenarioMicJournalBridge async job wiring | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r8-detached-event-dispatch` | DB-AP-R8: detached event branches + abort | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r9-mvp-graph-v2` | DB-AP-R9: bundled MVP graph v2.0-async + groups | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r10-agenda-async-hub` | DB-AP-R10: ScenarioAsyncJobHub in @membrana/agenda | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r11-observability-tests` | DB-AP-R11: chain-log, logs:parse, vitest smoke matrix | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
+| `db-ap-r12-docs-signoff` | DB-AP-R12: CONCEPT, SCENARIO_RUNTIME, operator LGTM, archive | S | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
 | `opencode-proxy-sprint-2026-06-25` | Day sprint: OpenCode + LLM proxy providers (freemodel.dev) | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s0-research-isolation` | OC0: research + env isolation for LLM proxy | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s1-opencode-install` | OC1: install OpenCode CLI | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
@@ -155,8 +164,9 @@
 | `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `night-hunt-sprint-2026-06-25` | Day sprint: Night Hunt (office cron → proxy → PR) | L | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `nh-s1-office-module` | NH1: night-hunt module in background-office | M | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
-| `nh-s2-fly-deploy` | NH2: Fly.io deploy + secrets | S | [`packages/background-office/DEPLOY.md`](../../packages/background-office/DEPLOY.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
+| `nh-s2-fly-deploy` | NH2: Fly.io deploy + secrets | S | [`DEPLOY.md`](../packages/background-office/DEPLOY.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `nh-s3-rituals` | NH3: morning PR review + evening archive | S | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
+| `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
 
 ---
 
@@ -164,6 +174,12 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports (SUPERSEDED) | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — | [карточка](./archive/ucv2-2-freeze-async-tracks.md) |
+| `ucv2-3-pack-verify` | UCV2-3: pack verify (SUPERSEDED) | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — | [карточка](./archive/ucv2-3-pack-verify.md) |
+| `ucv2-4-operator-signoff` | UCV2-4: operator signoff (SUPERSEDED) | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — | [карточка](./archive/ucv2-4-operator-signoff.md) |
+| `db-ap-r0-consilium-spec` | DB-AP-R0: consilium + ADR + GitHub Issue | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | #176 (Issue открыт) | [карточка](./archive/db-ap-r0-consilium-spec.md) |
+| `competition-async-v2-prep-2026-06-25` | Prep sprint: archive comp v1 + synthesis + brief async v2 | 2026-06-25 | [`COMPETITION_ASYNC_V2_PREP_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_ASYNC_V2_PREP_SPRINT_PROMPT.md) | — | [карточка](./archive/competition-async-v2-prep-2026-06-25.md) |
+| `comp-mvp-async-v2-2026-06-25` | Competition Sprint: MVP UserCase async v2 packaging | 2026-06-25 | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md) | — | [карточка](./archive/comp-mvp-async-v2-2026-06-25.md) |
 | `device-board-phase-3` | Device-board Phase 3: catalog service, validators, competition | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/device-board-phase-3.md) |
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a1-usercase-catalog-service.md) |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a2-runtime-validators.md) |
