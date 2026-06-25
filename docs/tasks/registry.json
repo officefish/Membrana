@@ -7697,6 +7697,144 @@
       ],
       "archivedAt": "2026-06-24",
       "archiveNotes": "commit 358a504; v0.9-functions cutover; smoke runId 7e8a289c"
+    },
+    {
+      "id": "opencode-proxy-sprint-2026-06-25",
+      "title": "Day sprint: OpenCode + LLM proxy providers (freemodel.dev)",
+      "promptPath": "docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "notes": "Experimental llm-proxy CLI; isolated .env.llm-proxy; OpenCode optional",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "oc-proxy-s0-research-isolation",
+      "title": "OC0: research + env isolation for LLM proxy",
+      "promptPath": "docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-proxy-sprint-2026-06-25",
+      "leadPersona": "ozhegov"
+    },
+    {
+      "id": "oc-proxy-s1-opencode-install",
+      "title": "OC1: install OpenCode CLI",
+      "promptPath": "docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-proxy-sprint-2026-06-25",
+      "leadPersona": "ozhegov"
+    },
+    {
+      "id": "oc-proxy-s2-freemodel-keys",
+      "title": "OC2: freemodel.dev keys + smoke",
+      "promptPath": "docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-proxy-sprint-2026-06-25",
+      "leadPersona": "ozhegov",
+      "notes": "User adds FREEMODEL_DEV_API_KEY to .env.llm-proxy"
+    },
+    {
+      "id": "oc-proxy-s3-llm-proxy-script",
+      "title": "OC3: llm-proxy-ask.mjs CLI",
+      "promptPath": "docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-proxy-sprint-2026-06-25",
+      "leadPersona": "ozhegov"
+    },
+    {
+      "id": "oc-proxy-s4-opencode-config",
+      "title": "OC4: OpenCode config template",
+      "promptPath": "docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-proxy-sprint-2026-06-25",
+      "leadPersona": "ozhegov"
+    },
+    {
+      "id": "night-hunt-sprint-2026-06-25",
+      "title": "Day sprint: Night Hunt (office cron → proxy → PR)",
+      "promptPath": "docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md",
+      "githubIssue": 174,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "notes": "Issue #174; background-office + Fly.io; docs/seanses/night-hunt",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "nh-s1-office-module",
+      "title": "NH1: night-hunt module in background-office",
+      "promptPath": "docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md",
+      "githubIssue": 174,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "night-hunt-sprint-2026-06-25",
+      "leadPersona": "ozhegov"
+    },
+    {
+      "id": "nh-s2-fly-deploy",
+      "title": "NH2: Fly.io deploy + secrets",
+      "promptPath": "docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md",
+      "githubIssue": 174,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "night-hunt-sprint-2026-06-25",
+      "leadPersona": "ozhegov"
+    },
+    {
+      "id": "nh-s3-rituals",
+      "title": "NH3: morning PR review + evening archive",
+      "promptPath": "docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md",
+      "githubIssue": 174,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": "night-hunt-sprint-2026-06-25",
+      "leadPersona": "vesnin"
     }
   ]
 }

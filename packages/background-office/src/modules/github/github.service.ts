@@ -77,6 +77,143 @@ export class GithubService {
     };
   }
 
+  /** Read a text file from the repo (base64 decode). Returns null if missing. */
+  async fetchTextFile(path: string, ref?: string): Promise<string | null> {
+    const octokit = await this.getOctokit();
+    try {
+      const res = await octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path,
+        ref,
+      });
+      const data = res.data;
+      if (Array.isArray(data) || data.type !== 'file' || !('content' in data)) {
+        return null;
+      }
+      const raw = Buffer.from(data.content, 'base64').toString('utf8');
+      return raw;
+    } catch (err: unknown) {
+      const status = (err as { status?: number })?.status;
+      if (status === 404) return null;
+      throw err;
+    }
+  }
+
+  /** List open PRs with a label (e.g. night-hunt). */
+  async listOpenPullRequestsByLabel(label: string): Promise<
+    { number: number; title: string; url: string; headRef: string }[]
+  > {
+    const octokit = await this.getOctokit();
+    const res = await octokit.rest.pulls.list({
+      owner: this.owner,
+      repo: this.repo,
+      state: 'open',
+      per_page: 30,
+    });
+    return res.data
+      .filter((pr) => (pr.labels ?? []).some((l) => (typeof l === 'string' ? l : l.name) === label))
+      .map((pr) => ({
+        number: pr.number,
+        title: pr.title ?? '',
+        url: pr.html_url,
+        headRef: pr.head.ref,
+      }));
+  }
+
+  /**
+   * Create branch + commit one file + open PR. Skips if an open PR exists for same branch prefix.
+   */
+  async createPullRequestWithFile(opts: {
+    branchPrefix: string;
+    baseBranch: string;
+    title: string;
+    body: string;
+    filePath: string;
+    content: string;
+    labels?: string[];
+  }): Promise<{ prUrl: string; branch: string; created: boolean } | { skipped: true; reason: string }> {
+    const octokit = await this.getOctokit();
+    const branch = `${opts.branchPrefix}-${Date.now()}`;
+
+    const openByLabel = await octokit.rest.issues.listForRepo({
+      owner: this.owner,
+      repo: this.repo,
+      state: 'open',
+      labels: 'night-hunt',
+      per_page: 20,
+    });
+    const dup = openByLabel.data.find(
+      (issue) => issue.title?.includes(opts.title.split(' (')[0] ?? opts.title),
+    );
+    if (dup) {
+      return { skipped: true, reason: `open night-hunt PR/issue: #${dup.number}` };
+    }
+
+    const baseRef = await octokit.rest.git.getRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${opts.baseBranch}`,
+    });
+    const baseSha = baseRef.data.object.sha;
+
+    await octokit.rest.git.createRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `refs/heads/${branch}`,
+      sha: baseSha,
+    });
+
+    let fileSha: string | undefined;
+    try {
+      const existingFile = await octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: opts.filePath,
+        ref: branch,
+      });
+      if (!Array.isArray(existingFile.data) && 'sha' in existingFile.data) {
+        fileSha = existingFile.data.sha;
+      }
+    } catch {
+      /* new file */
+    }
+
+    await octokit.rest.repos.createOrUpdateFileContents({
+      owner: this.owner,
+      repo: this.repo,
+      path: opts.filePath,
+      message: `chore(night-hunt): ${opts.title}`,
+      content: Buffer.from(opts.content, 'utf8').toString('base64'),
+      branch,
+      sha: fileSha,
+    });
+
+    const pr = await octokit.rest.pulls.create({
+      owner: this.owner,
+      repo: this.repo,
+      title: opts.title,
+      head: branch,
+      base: opts.baseBranch,
+      body: opts.body,
+    });
+
+    for (const label of opts.labels ?? []) {
+      try {
+        await octokit.rest.issues.addLabels({
+          owner: this.owner,
+          repo: this.repo,
+          issue_number: pr.data.number,
+          labels: [label],
+        });
+      } catch (e) {
+        this.logger.warn({ label, err: e }, 'github.addLabel failed');
+      }
+    }
+
+    return { prUrl: pr.data.html_url, branch, created: true };
+  }
+
   formatIssueAsTicket(issue: GhIssueShape): string {
     const lines: string[] = [];
     lines.push(`# GitHub Issue #${issue.number}: ${issue.title}`);

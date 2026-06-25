@@ -1,5 +1,9 @@
-# Active day sprint — closed
+# Active day sprint
 
-> **Last closed:** `device-board-bundled-mvp-v09-sprint-2026-06-25` · [`CLOSURE.md`](./day-sprint/device-board-bundled-mvp-v09-sprint-2026-06-25/CLOSURE.md)
+> **Epic:** `night-hunt-sprint-2026-06-25`  
+> **OPEN:** [`docs/day-sprint/night-hunt-sprint-2026-06-25/OPEN.md`](./day-sprint/night-hunt-sprint-2026-06-25/OPEN.md)  
+> **Промпт:** [`docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md`](./prompts/NIGHT_HUNT_SPRINT_PROMPT.md)
 
-**MS5** (`membrana-studio-ms5-prod-smoke`) — active in epic `membrana-studio-desktop`, отдельный день.
+**Текущая фаза:** NH0 → NH1 PR (код готов, ждём Issue + merge).
+
+**Блокер оператора:** NH2 deploy — только после merge PR.
