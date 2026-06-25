@@ -233,6 +233,26 @@ function applyBranchCollapse(
   };
 }
 
+/** Subgraph function blocks в latent Then требуют `supportsAsync: true` (AP v1). */
+function markMainSubgraphBlocksSupportsAsync(
+  document: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  const main = document.scenario.loops.main;
+  const nodes = main.nodes.map((node) =>
+    node.blockKind === 'subgraph' ? { ...node, supportsAsync: true as const } : node,
+  );
+  if (nodes === main.nodes) {
+    return document;
+  }
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      loops: { ...document.scenario.loops, main: { ...main, nodes } },
+    },
+  };
+}
+
 /**
  * Fork bundled MVP document with team-specific user functions (competition sprint).
  * Layout canon + comment groups применяются отдельно через `applyUserCaseLayoutCanon`.
@@ -269,7 +289,7 @@ export function packMvpUserCaseForTeam(
     document = applyBranchCollapse(document, 'onConnect', collapse);
   }
 
-  return document;
+  return markMainSubgraphBlocksSupportsAsync(document);
 }
 
 export function competitionUserCaseId(team: CompetitionTeamId): string {

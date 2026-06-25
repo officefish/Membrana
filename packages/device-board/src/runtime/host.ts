@@ -1,4 +1,6 @@
-import { createReferenceValue, type ScenarioBlockKind, type ScenarioCaptureFormat, type ScenarioFftTrendsPolicy, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioRecordingPolicy, type ScenarioVariableValue } from '@membrana/core';
+import { createReferenceValue, type ScenarioBlockKind, type ScenarioCaptureFormat, type ScenarioFftTrendsPolicy, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioRecordingPolicy, type ScenarioVariableValue, type ScenarioAsyncJobKind, type ScenarioAsyncJobCorrelation } from '@membrana/core';
+
+import type { AsyncJobStore } from './async-job-store.js';
 
 import type { CollectorSessionFlushSnapshot } from './collector-sessions.js';
 import type {
@@ -175,6 +177,17 @@ export interface ScenarioRuntimeHost {
     journalRef: ScenarioReferenceValue,
     payload: ScenarioReportPayload,
   ) => Promise<boolean>;
+  /**
+   * AP v1: host bridge стартует side-effect async job (upload, report-build, …).
+   * Runtime регистрирует job до вызова; host resolve/reject через `asyncJobStore`.
+   */
+  readonly startAsyncJob?: (input: {
+    readonly promiseId: string;
+    readonly kind: ScenarioAsyncJobKind;
+    readonly correlation: ScenarioAsyncJobCorrelation;
+    readonly trackRef: ScenarioReferenceValue | null;
+    readonly asyncJobStore: AsyncJobStore;
+  }) => void | Promise<void>;
   readonly writeJournal: (event: ScenarioJournalEvent) => Promise<void>;
   readonly recordChunk: (options: { readonly durationMs: number }) => Promise<{ readonly clipId: string }>;
   /** v0.5 DBC4: concat AudioSampleRef[] → journal track. */

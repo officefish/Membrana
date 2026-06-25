@@ -149,6 +149,12 @@ export const SCENARIO_V04_PALETTE_SECTIONS: readonly V04PaletteSection[] = [
     'get-recorder',
     'get-spectral-analyser',
   ]),
+  paletteSection('Async pipeline', [
+    'start-async-job',
+    'await-promise',
+    'on-async-resolved',
+    'cancel-async-jobs',
+  ]),
   paletteSection('Поток и захват', [
     'start-streaming',
     'stop-streaming',

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createReferenceValue } from '@membrana/core';
+import { createReferenceValue, formatTrackRefHandle } from '@membrana/core';
+import { AsyncJobStore } from '@membrana/device-board';
 
 import { createScenarioMicJournalBridge } from './scenarioMicJournalBridge.js';
 
@@ -85,5 +86,71 @@ describe('scenarioMicJournalBridge collector sessions (DBC2)', () => {
     expect(
       bridge.startRecorderRecording('dev-6', streamRef, { windowSec: 5, captureFormat: 'wav' }),
     ).toBe(false);
+  });
+});
+
+describe('scenarioMicJournalBridge async jobs (AP v1 R7)', () => {
+  it('startAsyncJob track-upload rejects without track ref', async () => {
+    const bridge = createScenarioMicJournalBridge();
+    const store = new AsyncJobStore();
+    const promiseId = 'job-missing-ref';
+    store.register({
+      promiseId,
+      kind: 'track-upload',
+      correlation: {
+        runId: 'run-1',
+        branch: 'main',
+        nodeId: 'start-async',
+        startedAtMs: Date.now(),
+      },
+    });
+
+    await bridge.startAsyncJob({
+      promiseId,
+      kind: 'track-upload',
+      correlation: {
+        runId: 'run-1',
+        branch: 'main',
+        nodeId: 'start-async',
+        startedAtMs: Date.now(),
+      },
+      trackRef: null,
+      asyncJobStore: store,
+    });
+
+    expect(store.get(promiseId)?.state).toBe('rejected');
+  });
+
+  it('startAsyncJob track-upload rejects when pending payload missing', async () => {
+    const bridge = createScenarioMicJournalBridge();
+    const store = new AsyncJobStore();
+    const promiseId = 'job-no-pending';
+    const trackId = 'track-missing';
+    store.register({
+      promiseId,
+      kind: 'track-upload',
+      correlation: {
+        runId: 'run-1',
+        branch: 'main',
+        nodeId: 'start-async',
+        startedAtMs: Date.now(),
+      },
+    });
+
+    await bridge.startAsyncJob({
+      promiseId,
+      kind: 'track-upload',
+      correlation: {
+        runId: 'run-1',
+        branch: 'main',
+        nodeId: 'start-async',
+        startedAtMs: Date.now(),
+      },
+      trackRef: createReferenceValue('TrackRef', formatTrackRefHandle(trackId)),
+      asyncJobStore: store,
+    });
+
+    expect(store.get(promiseId)?.state).toBe('rejected');
+    expect(store.get(promiseId)?.errorMessage).toContain('pending-track-not-found');
   });
 });

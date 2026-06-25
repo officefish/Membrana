@@ -101,4 +101,26 @@
 - **BD4** canonical function ids  
 - **P3** `referencedFunctions[]` branch export/import  
 - **P4** comment groups layout  
-- **P7** async MakeTrack/Publish — [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md)
+- ~~**P7** async MakeTrack/Publish~~ — **closed** AP v1 (`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`)
+
+---
+
+## Addendum: v2.0-async cutover (2026-06-25)
+
+> **Epic:** `device-board-async-pipeline-v1` · Issue #176  
+> **LGTM:** [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](./DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md)  
+> **Smoke:** `yarn logs:parse` → **smoke v2.0-async** (fixture PASS; live runId — после operator Run)
+
+### Вердикт
+
+**Bundled default переведён на v2.0-async** — latent Sequence на gate, `StartAsyncJob(track-upload)`, drone report через detached `on-async-resolved`. Снимает `drone-skip: track-not-in-journal` race v0.9.
+
+### Критерии
+
+| # | Критерий | Статус |
+|---|----------|--------|
+| V1 | Golden `usercase-mvp-microphone-v20-async.document.json` | **PASS** |
+| V2 | `meta.bundledGraphVersion: v2.0-async` | **PASS** |
+| V3 | `needsBundledV20AsyncMigration` | **PASS** |
+| V4 | `smokeV20Async` fixture | **PASS** |
+| V5 | Live operator `drone-skip: 0` | **pending** (post-merge Run) |

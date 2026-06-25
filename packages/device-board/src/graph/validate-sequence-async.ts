@@ -1,4 +1,4 @@
-import { resolveScenarioGraphNodeSupportsAsync } from '@membrana/core';
+import { isScenarioSequenceModeConflict, resolveScenarioGraphNodeSupportsAsync } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
 import { isBoardFlowNodeData } from './board-node-data.js';
@@ -68,6 +68,32 @@ export function findSequenceAsyncGateIssues(
           nodeKind,
         });
       }
+    }
+  }
+  return issues;
+}
+
+export const SEQUENCE_MODE_CONFLICT_MESSAGE =
+  'Sequence: «Параллельный async» и «Latent Then» взаимоисключающи.';
+
+/** Pre-run: parallelAsync + latentThen на одном Sequence. */
+export function findSequenceModePreRunIssues(
+  nodes: readonly Node[],
+  pathPrefix: string,
+): readonly { readonly code: string; readonly message: string; readonly path: string }[] {
+  const issues: { readonly code: string; readonly message: string; readonly path: string }[] =
+    [];
+  for (const node of nodes) {
+    if (!isSequenceNode(node)) {
+      continue;
+    }
+    const config = readSequenceConfig(node.data);
+    if (isScenarioSequenceModeConflict(config)) {
+      issues.push({
+        code: 'sequence-mode-conflict',
+        message: SEQUENCE_MODE_CONFLICT_MESSAGE,
+        path: `${pathPrefix}/${node.id}`,
+      });
     }
   }
   return issues;

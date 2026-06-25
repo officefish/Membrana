@@ -7,6 +7,8 @@ import type { ReportRuntimeStore } from './report-runtime-store.js';
 import type { TrackRuntimeStore } from './track-runtime-store.js';
 import type { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import type { AsyncJobStore } from './async-job-store.js';
+import type { PromiseRuntimeStore } from './promise-runtime-store.js';
 import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
@@ -49,6 +51,12 @@ export interface ExecSubgraphOptions {
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
   /** v0.7: ждать снятия пользовательской паузы. */
   readonly awaitUnpaused?: () => Promise<void>;
+  /** AP v1: async job store. */
+  readonly asyncJobStore?: AsyncJobStore;
+  /** AP v1: PromiseRef outputs. */
+  readonly promiseRuntimeStore?: PromiseRuntimeStore;
+  readonly runId?: string | null;
+  readonly loopTick?: number;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -191,6 +199,10 @@ export async function runSubgraphOnce(
       trackStore: options.trackStore,
       analysisStore: options.analysisStore,
       recordingSliceStore: options.recordingSliceStore,
+      asyncJobStore: options.asyncJobStore,
+      promiseRuntimeStore: options.promiseRuntimeStore,
+      runId: options.runId,
+      loopTick: options.loopTick,
     });
 
     if (result.stopRequested) {

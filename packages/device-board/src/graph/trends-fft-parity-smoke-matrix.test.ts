@@ -12,9 +12,9 @@ import { parseBranchScenarioExportJson } from './import-branch-scenario.js';
 import { formatFftTrendsPolicyBadge } from './fft-trends-policy-ui.js';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
-const v08ScenarioPath = join(
+const v09GoldenPath = join(
   repoRoot,
-  'docs/device-board-scripts/device-scenario-microphone-main-v08-policy-constructor.json',
+  'docs/device-board-scripts/golden/usercase-mvp-microphone-v09-functions.document.json',
 );
 
 /** Автоматическая часть B3 smoke matrix (6 count × 5 interval presets). */
@@ -40,7 +40,19 @@ describe('trends FFT parity smoke matrix (B3)', () => {
   );
 
   it('v09 main branch imports with MakeFftTrendsPolicy wired to analysis', () => {
-    const parsed = parseBranchScenarioExportJson(readFileSync(v08ScenarioPath, 'utf8'));
+    const golden = JSON.parse(readFileSync(v09GoldenPath, 'utf8')) as {
+      scenario: { loops: { main: unknown } };
+      meta?: { title?: string };
+    };
+    const parsed = parseBranchScenarioExportJson(
+      JSON.stringify({
+        exportKind: 'branch-scenario',
+        branch: 'main',
+        branchLabel: 'onMainTick',
+        deviceKind: 'microphone',
+        subgraph: golden.scenario.loops.main,
+      }),
+    );
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) {
       return;

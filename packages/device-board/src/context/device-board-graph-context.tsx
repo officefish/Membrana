@@ -23,7 +23,9 @@ import {
   type ScenarioRecordingPolicy,
   type ScenarioFftTrendsPolicy,
   type ScenarioSequenceConfig,
+  type ScenarioAsyncJobNodeConfig,
   resolveScenarioSequenceConfig,
+  resolveScenarioAsyncJobNodeConfig,
   type ScenarioVariable,
   type ScenarioVariableType,
   type ScenarioVariableValue,
@@ -341,6 +343,8 @@ export interface DeviceBoardGraphContextValue {
   /** v0.8 B0: обновить fftTrendsPolicy на MakeFftTrendsPolicy. */
   readonly updateFftTrendsPolicy: (nodeId: string, policy: ScenarioFftTrendsPolicy) => void;
   readonly updateSequenceConfig: (nodeId: string, config: ScenarioSequenceConfig) => void;
+  /** AP v1: asyncJobConfig на promise orchestration nodes. */
+  readonly updateAsyncJobConfig: (nodeId: string, config: ScenarioAsyncJobNodeConfig) => void;
   /** v0.4: переменные сценария (document-scope) для конструктора переменных. */
   readonly variables: readonly ScenarioVariable[];
   /** v0.4: объявить новую переменную ссылочного типа. */
@@ -3131,6 +3135,13 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     setScenarioFunctionEdges(mapEdges);
   }, []);
 
+  const updateAsyncJobConfig = useCallback(
+    (nodeId: string, config: ScenarioAsyncJobNodeConfig) => {
+      patchNodeData(nodeId, { asyncJobConfig: resolveScenarioAsyncJobNodeConfig(config) });
+    },
+    [patchNodeData],
+  );
+
   const updateCommentGroupMetadata = useCallback(
     (
       branch: ScenarioCommentGroupBranch,
@@ -3373,6 +3384,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateRecordingPolicy,
       updateFftTrendsPolicy,
       updateSequenceConfig,
+      updateAsyncJobConfig,
       updateActiveFunctionMeta,
       updateUserFunctionMeta,
       addActiveFunctionPin,
@@ -3410,6 +3422,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       updateRecordingPolicy,
       updateFftTrendsPolicy,
       updateSequenceConfig,
+      updateAsyncJobConfig,
       updateActiveFunctionMeta,
       updateUserFunctionMeta,
       addActiveFunctionPin,

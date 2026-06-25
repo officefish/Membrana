@@ -59,6 +59,8 @@ export interface DeviceScenarioMeta {
   readonly executionPolicy?: DeviceScenarioExecutionPolicy;
   /** Переопределение timeout для `executionPolicy: competition` (сек). */
   readonly competitionTimeoutSec?: number;
+  /** Версия bundled graph (напр. `v2.0-async` для migrate-on-load). */
+  readonly bundledGraphVersion?: string;
 }
 
 /** Полный документ сценария устройства v1. */

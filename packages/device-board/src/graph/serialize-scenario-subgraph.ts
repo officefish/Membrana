@@ -8,6 +8,7 @@ import {
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
   resolveScenarioSequenceConfig,
+  resolveScenarioAsyncJobNodeConfig,
 } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
@@ -33,6 +34,10 @@ function finalizeScenarioNode(node: ScenarioGraphNode): ScenarioGraphNode {
 
 function readPureFromData(data: Record<string, unknown>): boolean | undefined {
   return typeof data.pure === 'boolean' ? data.pure : undefined;
+}
+
+function readSupportsAsyncFromData(data: Record<string, unknown>): boolean | undefined {
+  return typeof data.supportsAsync === 'boolean' ? data.supportsAsync : undefined;
 }
 
 function toScenarioNode(node: Node): ScenarioGraphNode | null {
@@ -113,6 +118,10 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       node.data.sequenceConfig !== undefined
         ? resolveScenarioSequenceConfig(node.data.sequenceConfig)
         : undefined;
+    const asyncJobConfig =
+      node.data.asyncJobConfig !== undefined
+        ? resolveScenarioAsyncJobNodeConfig(node.data.asyncJobConfig)
+        : undefined;
     return finalizeScenarioNode({
       id: node.id,
       blockKind,
@@ -124,7 +133,11 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
       ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
       ...(sequenceConfig !== undefined ? { sequenceConfig } : {}),
+      ...(asyncJobConfig !== undefined ? { asyncJobConfig } : {}),
       ...(readPureFromData(node.data) !== undefined ? { pure: readPureFromData(node.data) } : {}),
+      ...(readSupportsAsyncFromData(node.data) !== undefined
+        ? { supportsAsync: readSupportsAsyncFromData(node.data) }
+        : {}),
     } as ScenarioGraphNode);
   }
 
@@ -141,6 +154,9 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
             node.data.functionId,
           )
         : node.data.label,
+    ...(readSupportsAsyncFromData(node.data) !== undefined
+      ? { supportsAsync: readSupportsAsyncFromData(node.data) }
+      : {}),
   });
 }
 
@@ -298,6 +314,9 @@ export function deserializeScenarioSubgraph(
         .fftTrendsPolicy;
       const sequenceConfig = (item as { sequenceConfig?: ScenarioGraphNode['sequenceConfig'] })
         .sequenceConfig;
+      const asyncJobConfig = (item as { asyncJobConfig?: ScenarioGraphNode['asyncJobConfig'] })
+        .asyncJobConfig;
+      const supportsAsync = (item as { supportsAsync?: boolean }).supportsAsync;
       nodes.push(
         createPaletteBoardNode(item.nodeKind, {
           id: item.id,
@@ -307,6 +326,7 @@ export function deserializeScenarioSubgraph(
           ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
           ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
           ...(sequenceConfig !== undefined ? { sequenceConfig } : {}),
+          ...(asyncJobConfig !== undefined ? { asyncJobConfig } : {}),
         }),
       );
       if (typeof item.label === 'string') {
@@ -316,12 +336,17 @@ export function deserializeScenarioSubgraph(
             ...last.data,
             label: item.label,
             ...(item.pure === true ? { pure: true } : {}),
+            ...(supportsAsync === true ? { supportsAsync: true } : {}),
           };
         }
-      } else if (item.pure === true) {
+      } else if (item.pure === true || supportsAsync === true) {
         const last = nodes.at(-1);
         if (last !== undefined) {
-          last.data = { ...last.data, pure: true };
+          last.data = {
+            ...last.data,
+            ...(item.pure === true ? { pure: true } : {}),
+            ...(supportsAsync === true ? { supportsAsync: true } : {}),
+          };
         }
       }
       continue;
@@ -340,6 +365,9 @@ export function deserializeScenarioSubgraph(
         label: item.blockKind === 'subgraph' ? parseSubgraphDisplayLabel(item) : (item.label ?? data.label),
         ...(item.blockKind === 'subgraph'
           ? { functionId: parseSubgraphFunctionId(item) ?? undefined }
+          : {}),
+        ...((item as { supportsAsync?: boolean }).supportsAsync === true
+          ? { supportsAsync: true }
           : {}),
       },
     });

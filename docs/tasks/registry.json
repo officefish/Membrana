@@ -6788,7 +6788,7 @@
     },
     {
       "id": "usercase-mvp-v2-groups-async",
-      "title": "UserCase MVP v2: groups, functions, async tracks on freeze",
+      "title": "UserCase MVP v2: groups, functions, async pipeline (umbrella W1)",
       "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
@@ -6801,7 +6801,7 @@
       "dependsOn": [
         "db-usercase-mvp-microphone-lgtm"
       ],
-      "notes": "Product wave W1. Base mic MVP + comment groups + user functions + async track/report on pause. STRATEGIC_WAVE.md.",
+      "notes": "W1 umbrella. Technical epic: device-board-async-pipeline-v1 (Promise nodes + latent Sequence). STRATEGIC_WAVE.md.",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
@@ -6855,21 +6855,21 @@
     },
     {
       "id": "ucv2-2-freeze-async-tracks",
-      "title": "UCV2-2: async MakeTrack + reports while runtime paused",
-      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "title": "UCV2-2: async MakeTrack + reports (SUPERSEDED)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "Superseded by device-board-async-pipeline-v1 (Promise nodes + latent Sequence).",
       "dependsOn": [
         "ucv2-1-graph-collapse"
       ],
-      "notes": "Lead: Ozhegov. DBP pause v0.7; chain-log async markers.",
+      "notes": "Superseded 2026-06-25. See db-ap-r6, db-ap-r7, db-ap-r9.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
@@ -6877,41 +6877,343 @@
     },
     {
       "id": "ucv2-3-pack-verify",
-      "title": "UCV2-3: usercase:build + verify-pack + smoke",
-      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "title": "UCV2-3: pack verify (SUPERSEDED)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "Superseded by db-ap-r11-observability-tests + db-ap-r12-docs-signoff.",
       "dependsOn": [
         "ucv2-2-freeze-async-tracks"
       ],
-      "notes": "Lead: Ozhegov.",
+      "notes": "Superseded 2026-06-25.",
       "leadPersona": "ozhegov",
       "supportPersonas": []
     },
     {
       "id": "ucv2-4-operator-signoff",
-      "title": "UCV2-4: operator LGTM doc + epic close",
-      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
+      "title": "UCV2-4: operator signoff (SUPERSEDED)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "strategicWave": "W1",
+      "parentEpic": "usercase-mvp-v2-groups-async",
+      "createdAt": "2026-06-23",
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "Superseded by db-ap-r12-docs-signoff.",
+      "dependsOn": [
+        "ucv2-3-pack-verify"
+      ],
+      "notes": "Superseded 2026-06-25. LGTM → DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md.",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "device-board-async-pipeline-v1",
+      "title": "Device-board async pipeline: Promise nodes, latent Sequence, non-blocking runtime",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": 176,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "kuryokhin",
+        "rodchenko"
+      ],
+      "parentEpic": "usercase-mvp-v2-groups-async"
+    },
+    {
+      "id": "db-ap-r0-consilium-spec",
+      "title": "DB-AP-R0: consilium + ADR + GitHub Issue",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": 176,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "P0 complete: Issue #176, Teamlead LGTM AD1-AD7, consilium approved.",
+      "dependsOn": [],
+      "notes": "Lead: Vesnin. docs/discussions/device-board-async-pipeline-consilium-2026-06-25.md; AD1-AD7 LGTM.",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-ap-r1-core-contracts",
+      "title": "DB-AP-R1: core PromiseRef + async job types + node kinds",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r0-consilium-spec"
+      ],
+      "notes": "Branch vesnin. packages/core contracts device-board.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-ap-r2-core-sequence-latent",
+      "title": "DB-AP-R2: core sequenceConfig.latentThen",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r0-consilium-spec"
+      ],
+      "notes": "Branch vesnin. Distinct from parallelAsync.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db-ap-r3-async-job-store",
+      "title": "DB-AP-R3: AsyncJobStore + backpressure + cancel",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r1-core-contracts"
+      ],
+      "notes": "Lead: Ozhegov. runtime/async-job-store.ts",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-ap-r4-sequence-latent-runtime",
+      "title": "DB-AP-R4: exec-sequence latent Then mode",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r2-core-sequence-latent",
+        "db-ap-r3-async-job-store"
+      ],
+      "notes": "Lead: Ozhegov. Non-blocking Then dispatch.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-ap-r5-promise-nodes-editor",
+      "title": "DB-AP-R5: promise nodes palette + inspector + validators",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r1-core-contracts"
+      ],
+      "notes": "Lead: Rodchenko. start-async-job, await-promise, on-async-resolved, cancel-async-jobs.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-ap-r6-promise-nodes-executor",
+      "title": "DB-AP-R6: block-executor promise nodes + supportsAsync",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r3-async-job-store",
+        "db-ap-r5-promise-nodes-editor"
+      ],
+      "notes": "Lead: Ozhegov. Fire-and-continue impure nodes.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-ap-r7-host-bridge-jobs",
+      "title": "DB-AP-R7: scenarioMicJournalBridge async job wiring",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r6-promise-nodes-executor"
+      ],
+      "notes": "Lead: Ozhegov. track-upload, report-build, journal-publish jobs.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "id": "db-ap-r8-detached-event-dispatch",
+      "title": "DB-AP-R8: detached event branches + abort",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r6-promise-nodes-executor"
+      ],
+      "notes": "Lead: Ozhegov. dispatchCollectEventBranches detach mode.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-ap-r9-mvp-graph-v2",
+      "title": "DB-AP-R9: bundled MVP graph v2.0-async + groups",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r4-sequence-latent-runtime",
+        "db-ap-r7-host-bridge-jobs",
+        "db-ap-r8-detached-event-dispatch",
+        "ucv2-1-graph-collapse"
+      ],
+      "notes": "Lead: Ozhegov. golden + codegen; merges ucv2-1 collapse.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-ap-r10-agenda-async-hub",
+      "title": "DB-AP-R10: ScenarioAsyncJobHub in @membrana/agenda",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r3-async-job-store"
+      ],
+      "notes": "Thin subscribe facade; core types only.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-ap-r11-observability-tests",
+      "title": "DB-AP-R11: chain-log, logs:parse, vitest smoke matrix",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ap-r9-mvp-graph-v2"
+      ],
+      "notes": "Lead: Dynin. async-job-* markers; operator smoke parser.",
+      "leadPersona": "dynin",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-ap-r12-docs-signoff",
+      "title": "DB-AP-R12: CONCEPT, SCENARIO_RUNTIME, operator LGTM, archive",
+      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
       "status": "active",
+      "sprintKind": "day-sprint",
       "strategicWave": "W1",
-      "parentEpic": "usercase-mvp-v2-groups-async",
-      "createdAt": "2026-06-23",
+      "parentEpic": "device-board-async-pipeline-v1",
+      "createdAt": "2026-06-25",
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [
-        "ucv2-3-pack-verify"
+        "db-ap-r11-observability-tests"
       ],
-      "notes": "Lead: Vesnin. USERCASE_MVP_V2_GROUPS_ASYNC_LGTM.md",
+      "notes": "Lead: Vesnin. yarn task:archive device-board-async-pipeline-v1.",
       "leadPersona": "vesnin",
       "supportPersonas": []
     },
@@ -7813,7 +8115,7 @@
     {
       "id": "nh-s2-fly-deploy",
       "title": "NH2: Fly.io deploy + secrets",
-      "promptPath": "docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md",
+      "promptPath": "packages/background-office/DEPLOY.md",
       "githubIssue": 174,
       "linearId": null,
       "size": "S",

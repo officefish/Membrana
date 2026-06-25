@@ -2,7 +2,7 @@
   "exportKind": "branch-scenario",
   "branch": "main",
   "branchLabel": "onMainTick",
-  "scenarioTitle": "UserCase MVP microphone: onMainTick → gate → MakeTrack → reports → fn-3/fn-1 restart (v0.9-functions)",
+  "scenarioTitle": "UserCase MVP microphone: onMainTick → gate → Sequence latentThen → async upload + trends + fn-1 restart (v2.0-async)",
   "userCaseId": "usercase-mvp-microphone",
   "userCaseBranch": "main",
   "deviceKind": "microphone",
@@ -50,7 +50,8 @@
           "x": 2664,
           "y": -760
         },
-        "blockKind": "custom"
+        "blockKind": "custom",
+        "supportsAsync": true
       },
       {
         "id": "node-publish-report-mqma49xv-35",
@@ -60,7 +61,8 @@
           "x": 2952,
           "y": -680
         },
-        "blockKind": "custom"
+        "blockKind": "custom",
+        "supportsAsync": true
       },
       {
         "id": "node-make-track-mqmcipn5-28",
@@ -70,7 +72,8 @@
           "x": 384,
           "y": -608
         },
-        "blockKind": "custom"
+        "blockKind": "custom",
+        "supportsAsync": true
       },
       {
         "id": "node-is-recording-window-full-mqmo40ie-32",
@@ -94,7 +97,8 @@
           "x": 24,
           "y": -408
         },
-        "blockKind": "custom"
+        "blockKind": "custom",
+        "supportsAsync": true
       },
       {
         "id": "fn-3-block",
@@ -195,7 +199,8 @@
           "x": 1256,
           "y": -720
         },
-        "blockKind": "subgraph"
+        "blockKind": "subgraph",
+        "supportsAsync": true
       },
       {
         "id": "node-make-report-from-track-mqs54kgw-177",
@@ -214,7 +219,8 @@
           "x": 864,
           "y": -680
         },
-        "blockKind": "subgraph"
+        "blockKind": "subgraph",
+        "supportsAsync": true
       },
       {
         "id": "node-device-global-mqs5ibg8-126",
@@ -285,7 +291,8 @@
           "x": 1800,
           "y": -824
         },
-        "blockKind": "custom"
+        "blockKind": "custom",
+        "supportsAsync": true
       },
       {
         "id": "node-get-spectral-analyser-mqs6uey7-173",
@@ -305,7 +312,8 @@
           "x": 2184,
           "y": -760
         },
-        "blockKind": "custom"
+        "blockKind": "custom",
+        "supportsAsync": true
       },
       {
         "id": "node-make-fft-trends-policy-mqs6wrpr-175",
@@ -332,6 +340,45 @@
             "VOICE"
           ]
         }
+      },
+      {
+        "id": "node-sequence-gate-v20-async",
+        "label": "Sequence",
+        "nodeKind": "sequence",
+        "blockKind": "custom",
+        "position": {
+          "x": 120,
+          "y": -360
+        },
+        "sequenceConfig": {
+          "thenCount": 4,
+          "parallelAsync": false,
+          "latentThen": true
+        }
+      },
+      {
+        "id": "node-start-async-job-v20",
+        "label": "StartAsyncJob",
+        "nodeKind": "start-async-job",
+        "blockKind": "custom",
+        "position": {
+          "x": 624,
+          "y": -536
+        },
+        "asyncJobConfig": {
+          "jobKind": "track-upload"
+        },
+        "supportsAsync": true
+      },
+      {
+        "id": "node-on-async-resolved-v20",
+        "label": "OnAsyncResolved",
+        "nodeKind": "on-async-resolved",
+        "blockKind": "custom",
+        "position": {
+          "x": 880,
+          "y": -456
+        }
       }
     ],
     "edges": [
@@ -347,13 +394,6 @@
         "kind": "exec",
         "source": "main-on-tick",
         "target": "fn-3-block",
-        "sourceHandle": "exec-out",
-        "targetHandle": "exec-in"
-      },
-      {
-        "kind": "exec",
-        "source": "node-stop-recording-mqmod4yf-35",
-        "target": "node-make-track-mqmcipn5-28",
         "sourceHandle": "exec-out",
         "targetHandle": "exec-in"
       },
@@ -475,13 +515,6 @@
       {
         "kind": "exec",
         "source": "node-is-recording-window-full-mqmo40ie-32",
-        "target": "node-stop-recording-mqmod4yf-35",
-        "sourceHandle": "exec-true-out",
-        "targetHandle": "exec-in"
-      },
-      {
-        "kind": "exec",
-        "source": "node-is-recording-window-full-mqmo40ie-32",
         "target": "main-infinity",
         "sourceHandle": "exec-false-out",
         "targetHandle": "exec-in"
@@ -537,20 +570,6 @@
         "kind": "exec",
         "source": "node-make-report-from-analysis-mqma356z-34",
         "target": "node-publish-report-mqma49xv-35",
-        "sourceHandle": "exec-out",
-        "targetHandle": "exec-in"
-      },
-      {
-        "kind": "exec",
-        "source": "node-publish-report-mqma49xv-35",
-        "target": "node-make-report-from-track-mqs54kgw-177",
-        "sourceHandle": "exec-out",
-        "targetHandle": "exec-in"
-      },
-      {
-        "kind": "exec",
-        "source": "node-make-report-from-track-mqs54kgw-177",
-        "target": "board-mqs5v7w1-9c8xw62e",
         "sourceHandle": "exec-out",
         "targetHandle": "exec-in"
       },
@@ -682,23 +701,74 @@
       },
       {
         "kind": "exec",
+        "source": "node-is-recording-window-full-mqmo40ie-32",
+        "sourceHandle": "exec-true-out",
+        "target": "node-sequence-gate-v20-async",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-0",
+        "target": "node-stop-recording-mqmod4yf-35",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-1",
+        "target": "node-make-track-mqmcipn5-28",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
         "source": "node-make-track-mqmcipn5-28",
-        "target": "fn-3-block-2",
         "sourceHandle": "exec-out",
+        "target": "node-start-async-job-v20",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "data",
+        "source": "node-make-track-mqmcipn5-28",
+        "sourceHandle": "track",
+        "target": "node-start-async-job-v20",
+        "targetHandle": "track",
+        "dataType": "TrackRef"
+      },
+      {
+        "kind": "data",
+        "source": "node-start-async-job-v20",
+        "sourceHandle": "promise",
+        "target": "node-on-async-resolved-v20",
+        "targetHandle": "promise",
+        "dataType": "PromiseRef"
+      },
+      {
+        "kind": "event",
+        "source": "node-on-async-resolved-v20",
+        "sourceHandle": "event-out",
+        "target": "node-make-report-from-track-mqs54kgw-177",
         "targetHandle": "exec-in"
       },
       {
         "kind": "exec",
-        "source": "fn-1-block",
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-2",
         "target": "node-flush-spectral-analyser-mqs6tcs6-172",
-        "sourceHandle": "exec-out",
         "targetHandle": "exec-in"
       },
       {
         "kind": "exec",
-        "source": "board-mqs5v7w1-9c8xw62e",
-        "target": "main-infinity",
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-3",
+        "target": "fn-3-block-2",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "node-sequence-gate-v20-async",
         "sourceHandle": "exec-out",
+        "target": "main-infinity",
         "targetHandle": "exec-in"
       }
     ]
@@ -714,5 +784,5 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-24T17:40:46.266Z"
+  "exportedAt": "2026-06-25T10:00:55.626Z"
 }

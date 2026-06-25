@@ -26,4 +26,12 @@ export { PluginToggle, PluginList } from './ui/controls/PluginToggle';
 export { ThemeSelector } from './ui/controls/ThemeSelector';
 export { SearchBar } from './ui/controls/SearchBar';
 
+export {
+  ScenarioAsyncJobHub,
+  bindScenarioAsyncJobPublisher,
+  type ScenarioAsyncJobHubSnapshot,
+  type ScenarioAsyncJobListener,
+  type BindScenarioAsyncJobPublisherOptions,
+} from './scenario-async-job-hub.js';
+export { useScenarioAsyncJobSnapshot } from './scenario-async-job-hooks.js';
 

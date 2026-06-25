@@ -15,6 +15,8 @@ const TICK_RE = /tick:\s*(\d+)/;
 const TRACK_ID_RE = /trackId:\s*'([^']+)'/;
 const REASON_RE = /reason:\s*'([^']+)'/;
 const WINDOW_SEC_RE = /windowSec:\s*(\d+)/;
+const ELAPSED_MS_RE = /elapsedMs:\s*(\d+)/;
+const PROMISE_ID_RE = /promiseId:\s*'([^']+)'/;
 
 /**
  * @param {string} line
@@ -139,8 +141,34 @@ export function summarizeRun(allEvents, runId) {
     event.payload.includes('main-infinity'),
   );
   const mainTickDone = filterMessage(events, 'main-tick-done');
+  const mainTickBlocked = filterMessage(events, 'main-tick-blocked-ms');
   const maxTickFromDone = mainTickDone.reduce((max, event) => Math.max(max, event.tick ?? 0), 0);
   const maxTick = events.reduce((max, event) => Math.max(max, event.tick ?? 0), maxTickFromDone);
+
+  const asyncJobStart = filterMessage(events, 'async-job-start');
+  const asyncJobResolved = filterPayload(events, '[async-job] resolved');
+  const asyncJobRejected = filterPayload(events, '[async-job] rejected');
+  const asyncJobCancelled = filterMessage(events, 'async-job-cancelled');
+  const sequenceLatentThenStart = filterMessage(events, 'sequence-latent-then-start');
+  const eventDispatchDetachedStart = filterMessage(events, 'event-dispatch-detached-start');
+  const asyncResolvedDispatch = filterMessage(events, 'async-resolved-dispatch');
+
+  const mainTickElapsedMs = [...mainTickDone, ...mainTickBlocked]
+    .map((event) => Number(ELAPSED_MS_RE.exec(event.payload)?.[1] ?? NaN))
+    .filter((value) => !Number.isNaN(value));
+  const maxMainTickBlockedMs =
+    mainTickElapsedMs.length > 0 ? Math.max(...mainTickElapsedMs) : null;
+
+  const gateUploadSameTick = gateTicks.filter((tick) =>
+    events.some(
+      (event) => event.tick === tick && event.payload.includes('[media] upload-ok'),
+    ),
+  );
+
+  const hasAsyncPipeline =
+    asyncJobStart.length > 0 ||
+    asyncJobResolved.length > 0 ||
+    sequenceLatentThenStart.length > 0;
 
   const hasFn1Block = allEvents.some(
     (event) =>
@@ -188,8 +216,19 @@ export function summarizeRun(allEvents, runId) {
     );
   }
   if (droneSkip.length > 0 && droneReasons.includes('track-not-in-journal')) {
+    if (hasAsyncPipeline) {
+      anomalies.push(
+        `drone-skip-regression-v20: ${droneSkip.length} (v2.0-async happy path expects 0)`,
+      );
+    } else {
+      anomalies.push(
+        `drone-skip-track-not-in-journal: ${droneSkip.length} (MakeReportFromTrack before upload-ok; see P7)`,
+      );
+    }
+  }
+  if (gateUploadSameTick.length > 0) {
     anomalies.push(
-      `drone-skip-track-not-in-journal: ${droneSkip.length} (MakeReportFromTrack before upload-ok; see P7)`,
+      `main-tick-blocked-on-upload: gate ticks with upload-ok=${gateUploadSameTick.join(',')}`,
     );
   }
   if (cabinetErrors.length > 0) {
@@ -241,6 +280,27 @@ export function summarizeRun(allEvents, runId) {
       droneSkip: droneSkip.length,
       droneReasons,
     },
+    asyncJobs: {
+      start: asyncJobStart.length,
+      resolved: asyncJobResolved.length,
+      rejected: asyncJobRejected.length,
+      cancelled: asyncJobCancelled.length,
+      promiseIds: [
+        ...new Set(
+          [...asyncJobStart, ...asyncJobResolved, ...asyncJobRejected]
+            .map((event) => PROMISE_ID_RE.exec(event.payload)?.[1])
+            .filter((id) => id !== undefined),
+        ),
+      ],
+      sequenceLatentThenStart: sequenceLatentThenStart.length,
+      eventDispatchDetachedStart: eventDispatchDetachedStart.length,
+      asyncResolvedDispatch: asyncResolvedDispatch.length,
+    },
+    mainTick: {
+      blockedMsMax: maxMainTickBlockedMs,
+      blockedMsSamples: mainTickElapsedMs.length,
+      gateTicksWithUploadOk: gateUploadSameTick,
+    },
     gatePerTick,
     anomalies,
     smokeMvpMicrophone: {
@@ -256,6 +316,25 @@ export function summarizeRun(allEvents, runId) {
         trendsDone.length >= 2 &&
         publishDone.length >= 2 &&
         maxTick >= 60,
+    },
+    smokeV20Async: {
+      hasAsyncPipeline,
+      asyncMarkersPresent:
+        asyncJobStart.length > 0 &&
+        (asyncJobResolved.length > 0 || asyncJobRejected.length > 0),
+      latentSequenceSeen: sequenceLatentThenStart.length > 0,
+      detachedDispatchSeen: eventDispatchDetachedStart.length > 0,
+      droneSkipZero: droneSkip.length === 0,
+      gateTicksNoUploadOk: gateUploadSameTick.length === 0,
+      mainTickBlockedMsTracked: mainTickElapsedMs.length > 0,
+      passV20HappyPath:
+        hasAsyncPipeline &&
+        asyncJobStart.length > 0 &&
+        asyncJobResolved.length > 0 &&
+        droneSkip.length === 0 &&
+        gateUploadSameTick.length === 0 &&
+        trendsDone.length === gateTicks.length &&
+        gateTicks.length >= 2,
     },
   };
 }
@@ -319,6 +398,14 @@ export function formatAnalysisReport(analysis) {
     lines.push(
       `publish-done: ${run.journal.publishDone} · trends: ${run.analysis.trendsReportDone} · upload-ok: ${run.media.uploadOk} · drone-skip: ${run.analysis.droneSkip}`,
     );
+    lines.push(
+      `async-jobs: start=${run.asyncJobs.start} resolved=${run.asyncJobs.resolved} rejected=${run.asyncJobs.rejected} · latent-then=${run.asyncJobs.sequenceLatentThenStart} · detached=${run.asyncJobs.eventDispatchDetachedStart}`,
+    );
+    if (run.mainTick.blockedMsMax !== null) {
+      lines.push(
+        `main-tick-blocked-ms: max=${run.mainTick.blockedMsMax} · samples=${run.mainTick.blockedMsSamples}`,
+      );
+    }
     if (run.media.uploadItems.length > 0) {
       lines.push(
         `upload-ok (async ticks): ${run.media.uploadItems.map((item) => `${item.tick}:${item.trackId ?? '?'}`).join(', ')}`,
@@ -342,6 +429,20 @@ export function formatAnalysisReport(analysis) {
     lines.push(
       `  operator smoke (no upload wait): ${smoke.passOperatorSmoke ? 'PASS' : 'FAIL'}`,
     );
+    if (run.smokeV20Async.hasAsyncPipeline) {
+      lines.push('');
+      lines.push('smoke v2.0-async:');
+      const v20 = run.smokeV20Async;
+      lines.push(`  async markers: ${v20.asyncMarkersPresent ? 'PASS' : 'FAIL'}`);
+      lines.push(`  drone-skip = 0: ${v20.droneSkipZero ? 'PASS' : 'FAIL'} (${run.analysis.droneSkip})`);
+      lines.push(
+        `  gate tick no upload-ok: ${v20.gateTicksNoUploadOk ? 'PASS' : 'FAIL'}`,
+      );
+      lines.push(
+        `  trends = gate: ${run.smokeMvpMicrophone.trendsPublishMatchesGate ? 'PASS' : 'FAIL'}`,
+      );
+      lines.push(`  v20 happy path: ${v20.passV20HappyPath ? 'PASS' : 'FAIL'}`);
+    }
   }
 
   return lines.join('\n');

@@ -6,15 +6,15 @@ import type {
   ScenarioNodeKind,
   ScenarioRecordingPolicy,
   ScenarioSequenceConfig,
-  ScenarioVariableType,
-  ScenarioVariableValue,
-  ScenarioCommentGroupFrameColor,
-  ScenarioCommentGroupFrameColorPreset,
+  ScenarioAsyncJobNodeConfig,
+  ScenarioAsyncJobKind,
   SocketType,
 } from '@membrana/core';
 import {
   DEFAULT_SCENARIO_COLLECTOR_CONFIG,
   DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+  DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG,
+  SCENARIO_ASYNC_JOB_KINDS,
   MAX_SCENARIO_SEQUENCE_THEN_COUNT,
   MIN_SCENARIO_SEQUENCE_THEN_COUNT,
   FFT_TRENDS_BUILTIN_TEMPLATE_KEYS,
@@ -35,6 +35,14 @@ import {
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
   resolveScenarioSequenceConfig,
+  resolveScenarioAsyncJobNodeConfig,
+  isScenarioSequenceModeConflict,
+} from '@membrana/core';
+import type {
+  ScenarioVariableType,
+  ScenarioVariableValue,
+  ScenarioCommentGroupFrameColor,
+  ScenarioCommentGroupFrameColorPreset,
 } from '@membrana/core';
 
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
@@ -88,6 +96,7 @@ export interface BoardRightSidebarProps {
   readonly selectedRecordingPolicyWired: boolean;
   readonly selectedFftTrendsPolicy: ScenarioFftTrendsPolicy | null;
   readonly selectedSequenceConfig: ScenarioSequenceConfig | null;
+  readonly selectedAsyncJobConfig: ScenarioAsyncJobNodeConfig | null;
   readonly selectedVariableName: string;
   readonly selectedVariableId: string | null;
   readonly selectedVariableType: ScenarioVariableType | null;
@@ -122,6 +131,7 @@ export interface BoardRightSidebarProps {
   readonly onRecordingPolicyChange: (nodeId: string, policy: ScenarioRecordingPolicy) => void;
   readonly onFftTrendsPolicyChange: (nodeId: string, policy: ScenarioFftTrendsPolicy) => void;
   readonly onSequenceConfigChange: (nodeId: string, config: ScenarioSequenceConfig) => void;
+  readonly onAsyncJobConfigChange: (nodeId: string, config: ScenarioAsyncJobNodeConfig) => void;
   readonly onAssignVariableName: (nodeId: string, variableName: string) => void;
   readonly onVariableGetterPureChange: (nodeId: string, pure: boolean) => void;
   readonly onVariableValueChange: (variableId: string, value: ScenarioVariableValue | null) => void;
@@ -275,6 +285,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedRecordingPolicyWired,
   selectedFftTrendsPolicy,
   selectedSequenceConfig,
+  selectedAsyncJobConfig,
   selectedVariableName,
   selectedVariableId,
   selectedVariableType,
@@ -305,6 +316,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onRecordingPolicyChange,
   onFftTrendsPolicyChange,
   onSequenceConfigChange,
+  onAsyncJobConfigChange,
   onAssignVariableName,
   onVariableGetterPureChange,
   onVariableValueChange,
@@ -337,6 +349,9 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   );
   const [sequenceDraft, setSequenceDraft] = useState<ScenarioSequenceConfig>(
     selectedSequenceConfig ?? DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+  );
+  const [asyncJobDraft, setAsyncJobDraft] = useState<ScenarioAsyncJobNodeConfig>(
+    selectedAsyncJobConfig ?? DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG,
   );
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
@@ -393,6 +408,10 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   useEffect(() => {
     setSequenceDraft(selectedSequenceConfig ?? DEFAULT_SCENARIO_SEQUENCE_CONFIG);
   }, [selectedNodeId, selectedSequenceConfig]);
+
+  useEffect(() => {
+    setAsyncJobDraft(selectedAsyncJobConfig ?? DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG);
+  }, [selectedNodeId, selectedAsyncJobConfig]);
 
   const commitRecordingPolicyField = (
     patch: Partial<ScenarioRecordingPolicy>,
@@ -496,9 +515,25 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
     if (selectedNodeId === null || editDisabled) {
       return;
     }
-    const next = resolveScenarioSequenceConfig({ ...sequenceDraft, ...patch });
+    let merged: Partial<ScenarioSequenceConfig> = { ...sequenceDraft, ...patch };
+    if (patch.parallelAsync === true) {
+      merged = { ...merged, latentThen: false };
+    }
+    if (patch.latentThen === true) {
+      merged = { ...merged, parallelAsync: false };
+    }
+    const next = resolveScenarioSequenceConfig(merged);
     setSequenceDraft(next);
     onSequenceConfigChange(selectedNodeId, next);
+  };
+
+  const commitAsyncJobField = (patch: Partial<ScenarioAsyncJobNodeConfig>) => {
+    if (selectedNodeId === null || editDisabled) {
+      return;
+    }
+    const next = resolveScenarioAsyncJobNodeConfig({ ...asyncJobDraft, ...patch });
+    setAsyncJobDraft(next);
+    onAsyncJobConfigChange(selectedNodeId, next);
   };
 
   return (
@@ -900,7 +935,77 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                 />
                 <span className="label-text text-xs">Параллельный async (Promise)</span>
               </label>
+              <label className="label cursor-pointer justify-start gap-2 py-0">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm"
+                  disabled={editDisabled}
+                  checked={sequenceDraft.latentThen}
+                  onChange={(event) =>
+                    commitSequenceField({ latentThen: event.target.checked })
+                  }
+                />
+                <span className="label-text text-xs">Latent Then (fire-and-continue)</span>
+              </label>
+              {isScenarioSequenceModeConflict(sequenceDraft) ? (
+                <p className="text-warning text-xs leading-relaxed">
+                  «Параллельный async» и «Latent Then» взаимоисключающи — оставьте только один режим.
+                </p>
+              ) : null}
             </div>
+          ) : selectedNodeKind === 'start-async-job' ||
+            selectedNodeKind === 'await-promise' ||
+            selectedNodeKind === 'cancel-async-jobs' ? (
+            <div className="flex flex-col gap-3 text-xs">
+              <p className="text-base-content/55 leading-relaxed">
+                {selectedNodeKind === 'start-async-job'
+                  ? 'Стартует async job в store; exec продолжается сразу. PromiseRef — на data-выходе «promise».'
+                  : selectedNodeKind === 'await-promise'
+                    ? 'Блокирует exec-цепочку до resolve/reject PromiseRef (latent branch).'
+                    : 'Отменяет pending jobs по фильтру jobKind (onStop / overflow).'}
+              </p>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">jobKind</span>
+                <select
+                  className="select select-bordered select-sm w-full font-mono"
+                  disabled={editDisabled}
+                  value={asyncJobDraft.jobKind}
+                  onChange={(event) =>
+                    commitAsyncJobField({
+                      jobKind: event.target.value as ScenarioAsyncJobKind,
+                    })
+                  }
+                >
+                  {SCENARIO_ASYNC_JOB_KINDS.map((kind) => (
+                    <option key={kind} value={kind}>
+                      {kind}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {selectedNodeKind === 'await-promise' ? (
+                <label className="flex flex-col gap-1">
+                  <span className="font-medium text-base-content/70">awaitTimeoutMs</span>
+                  <input
+                    type="number"
+                    className="input input-bordered input-sm w-full font-mono"
+                    min={1000}
+                    max={600_000}
+                    step={1000}
+                    disabled={editDisabled}
+                    value={asyncJobDraft.awaitTimeoutMs ?? DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG.awaitTimeoutMs}
+                    onChange={(event) =>
+                      commitAsyncJobField({ awaitTimeoutMs: Number(event.target.value) })
+                    }
+                  />
+                </label>
+              ) : null}
+            </div>
+          ) : selectedNodeKind === 'on-async-resolved' ? (
+            <p className="text-xs text-base-content/55 leading-relaxed">
+              Подключите data-вход «promise» к PromiseRef. При resolve срабатывает квадратный event-out
+              (как у Collect flush).
+            </p>
           ) : selectedNodeKind === 'collect-samples' || selectedNodeKind === 'collect-fft-frames' ? (
             <div className="flex flex-col gap-3 text-xs">
               <p className="text-base-content/55 leading-relaxed">

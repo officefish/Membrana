@@ -155,7 +155,7 @@
 | `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `night-hunt-sprint-2026-06-25` | Day sprint: Night Hunt (office cron → proxy → PR) | L | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `nh-s1-office-module` | NH1: night-hunt module in background-office | M | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
-| `nh-s2-fly-deploy` | NH2: Fly.io deploy + secrets | S | [`BACKGROUND_OFFICE_FLY_DEPLOY.md`](../docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
+| `nh-s2-fly-deploy` | NH2: Fly.io deploy + secrets | S | [`packages/background-office/DEPLOY.md`](../../packages/background-office/DEPLOY.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `nh-s3-rituals` | NH3: morning PR review + evening archive | S | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 
 ---

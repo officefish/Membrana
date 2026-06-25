@@ -26,7 +26,8 @@
 | Документ | Зачем |
 |----------|--------|
 | [`BACKGROUND_SERVERS.md`](../BACKGROUND_SERVERS.md) | Границы office |
-| [`BACKGROUND_OFFICE_FLY_DEPLOY.md`](../deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md) | Временный хостинг |
+| [`packages/background-office/DEPLOY.md`](../../packages/background-office/DEPLOY.md) | **Канон:** Fly + VPS, NH2, пороги миграции |
+| [`BACKGROUND_OFFICE_FLY_DEPLOY.md`](../deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md) | Краткий Fly quickstart |
 | [`opencode-proxy-processes-2026-06-25.md`](../seanses/opencode-proxy-processes-2026-06-25.md) | Классификация proxy vs direct |
 
 ---
@@ -90,7 +91,7 @@
 
 1. **NH1:** модуль night-hunt в background-office (OpenRouter + GitHub PR + cron).
 2. **NH3:** утренний `night-hunt:pr-review`, вечерний `archive:night-hunt`, врезка в `ritual:day` / `ritual:evening`.
-3. **NH2:** после merge PR — Fly deploy по [`BACKGROUND_OFFICE_FLY_DEPLOY.md`](../deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md) (**секреты — оператор**).
+3. **NH2:** после merge PR — Fly deploy по [`packages/background-office/DEPLOY.md`](../../packages/background-office/DEPLOY.md) (**секреты — оператор**).
 
 ### Definition of Done (эпик)
 
@@ -120,7 +121,7 @@
 
 ### NH2 — Fly.io secrets
 
-См. [`BACKGROUND_OFFICE_FLY_DEPLOY.md`](../deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md). **Обязательно от вас:**
+См. [`packages/background-office/DEPLOY.md`](../../packages/background-office/DEPLOY.md) (§ NH2). **Обязательно от вас:**
 
 - `fly auth login` + `fly deploy`
 - `GITHUB_TOKEN` с scope **`repo`** (write PR)

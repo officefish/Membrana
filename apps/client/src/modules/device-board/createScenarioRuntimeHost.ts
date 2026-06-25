@@ -291,6 +291,7 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     makeReportFromAnalysis: (reporterRef, analysisRef) =>
       bridge.makeReportFromAnalysis(reporterRef, analysisRef),
     publishReport: (journalRef, payload) => bridge.publishReport(journalRef, payload),
+    startAsyncJob: (input) => bridge.startAsyncJob(input),
     writeJournal: (event) => bridge.writeJournal(event),
     recordChunk: (options) => bridge.recordChunk(options),
     trendsFftDetect: () => bridge.trendsFftDetect(),

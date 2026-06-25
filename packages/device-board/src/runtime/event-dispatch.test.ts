@@ -10,7 +10,11 @@ import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { TrackRuntimeStore } from './track-runtime-store.js';
 import { createStubScenarioRuntimeHost } from './host.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
-import { findEventBranchTargets } from './event-dispatch.js';
+import {
+  dispatchCollectEventBranches,
+  findEventBranchTargets,
+  shouldDetachEventDispatch,
+} from './event-dispatch.js';
 import { ScenarioVariableStore } from './variable-store.js';
 
 describe('findEventBranchTargets (DBC5)', () => {
@@ -135,5 +139,112 @@ describe('runSubgraphOnce collect event dispatch (DBC5 E2E)', () => {
 
     expect(createTrackFromSampleRefs).toHaveBeenCalledWith('nt', [sampleRef]);
     expect(printLine).toHaveBeenCalled();
+  });
+});
+
+describe('dispatchCollectEventBranches detach (AP v1 R8)', () => {
+  const slowSubgraph: ScenarioSubgraph = {
+    entry: 'listener',
+    nodes: [
+      { id: 'listener', nodeKind: 'on-async-resolved', blockKind: 'custom', label: 'Listener' },
+      { id: 'print', nodeKind: 'print', blockKind: 'custom', label: 'Print' },
+    ],
+    edges: [
+      {
+        id: 'ev1',
+        kind: 'event',
+        source: 'listener',
+        sourceHandle: COLLECT_EVENT_OUT_HANDLE,
+        target: 'print',
+        targetHandle: 'exec-in',
+      },
+    ],
+  };
+
+  it('shouldDetachEventDispatch is true for on-async-resolved', () => {
+    expect(shouldDetachEventDispatch(slowSubgraph, 'listener')).toBe(true);
+    expect(shouldDetachEventDispatch(slowSubgraph, 'print')).toBe(false);
+  });
+
+  it('detach returns before slow event branch completes', async () => {
+    const log = vi.fn();
+    let releasePrint: (() => void) | undefined;
+    const printGate = new Promise<void>((resolve) => {
+      releasePrint = resolve;
+    });
+    const printLine = vi.fn(async () => {
+      await printGate;
+    });
+    const host = createStubScenarioRuntimeHost({ log, printLine });
+    const variableStore = new ScenarioVariableStore();
+    const signal = new AbortController().signal;
+    const options = {
+      branch: 'main' as const,
+      variableStore,
+      resolveContext: {},
+    };
+
+    const dispatchPromise = dispatchCollectEventBranches({
+      subgraph: slowSubgraph,
+      sourceNodeId: 'listener',
+      eventOutHandle: COLLECT_EVENT_OUT_HANDLE,
+      host,
+      signal,
+      options,
+      callbacks: {},
+      lastDetection: null,
+      detach: true,
+    });
+
+    const startedAt = performance.now();
+    await dispatchPromise;
+    const elapsedMs = performance.now() - startedAt;
+
+    expect(elapsedMs).toBeLessThan(50);
+    expect(log).toHaveBeenCalledWith(
+      'event-dispatch-detached-start',
+      expect.objectContaining({ sourceNodeId: 'listener', targets: ['print'] }),
+    );
+    expect(log).not.toHaveBeenCalledWith(
+      'event-dispatch-detached-done',
+      expect.any(Object),
+    );
+
+    releasePrint?.();
+    await vi.waitFor(() => {
+      expect(log).toHaveBeenCalledWith(
+        'event-dispatch-detached-done',
+        expect.objectContaining({ sourceNodeId: 'listener', targets: ['print'] }),
+      );
+    });
+  });
+
+  it('detach skips branch when signal already aborted', async () => {
+    const log = vi.fn();
+    const printLine = vi.fn();
+    const host = createStubScenarioRuntimeHost({ log, printLine });
+    const variableStore = new ScenarioVariableStore();
+    const abortController = new AbortController();
+    abortController.abort();
+
+    void dispatchCollectEventBranches({
+      subgraph: slowSubgraph,
+      sourceNodeId: 'listener',
+      eventOutHandle: COLLECT_EVENT_OUT_HANDLE,
+      host,
+      signal: abortController.signal,
+      options: {
+        branch: 'main',
+        variableStore,
+        resolveContext: {},
+      },
+      callbacks: {},
+      lastDetection: null,
+      detach: true,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(printLine).not.toHaveBeenCalled();
+    expect(log).toHaveBeenCalledWith('event-dispatch-detached-done', expect.any(Object));
   });
 });

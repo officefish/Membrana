@@ -21,7 +21,11 @@ import type { BoardLayerTab } from '../types/board-ui.js';
 import type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
 import { isValidBoardEdge } from './connection-validation.js';
 import { EXEC_FAN_OUT_MESSAGE, findExecFanOutEdges } from './validate-exec-fanout.js';
-import { findSequenceAsyncPreRunIssues } from './validate-sequence-async.js';
+import { findSequenceAsyncPreRunIssues, findSequenceModePreRunIssues } from './validate-sequence-async.js';
+import {
+  findPromiseRefPreRunIssues,
+  findSequenceLatentThenPreRunIssues,
+} from './validate-async-promise.js';
 import { buildDeviceScenarioDocument } from './build-device-scenario.js';
 import { validateFunctionDepth } from './validate-function-depth.js';
 import { findPureExecEdgeHints } from './validate-pure-exec.js';
@@ -108,7 +112,10 @@ function pushEdgeIssues(
   }
   if (layer === 'scenario') {
     pushExecFanOutIssues(issues, nodes, edges, pathPrefix);
+    issues.push(...findSequenceModePreRunIssues(nodes, pathPrefix));
     issues.push(...findSequenceAsyncPreRunIssues(nodes, edges, pathPrefix));
+    issues.push(...findSequenceLatentThenPreRunIssues(nodes, edges, pathPrefix));
+    issues.push(...findPromiseRefPreRunIssues(nodes, edges, pathPrefix));
   }
 }
 

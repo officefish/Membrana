@@ -81,6 +81,9 @@ function hasV09UserFunctions(document: DeviceScenarioDocument): boolean {
 
 /** Flat v0.8 без `scenario.functions[]` — подменяем bundled v0.9-functions (BD5). */
 export function needsBundledV09FunctionsMigration(document: DeviceScenarioDocument): boolean {
+  if (document.meta?.bundledGraphVersion === 'v2.0-async') {
+    return false;
+  }
   if (hasV09UserFunctions(document)) {
     return false;
   }
@@ -88,6 +91,27 @@ export function needsBundledV09FunctionsMigration(document: DeviceScenarioDocume
   const hasFlatRecordingPolicy = main.nodes.some((node) => node.nodeKind === 'make-recording-policy');
   const hasFunctionBlocks = main.nodes.some((node) => isStartRecordingFunctionBlock(node));
   return hasFlatRecordingPolicy && !hasFunctionBlocks;
+}
+
+/**
+ * v0.9-functions без async pipeline (Sequence latent + start-async-job) —
+ * подменяем bundled v2.0-async (DB-AP-R9).
+ */
+export function needsBundledV20AsyncMigration(document: DeviceScenarioDocument): boolean {
+  if (document.meta?.bundledGraphVersion === 'v2.0-async') {
+    return false;
+  }
+  if (!hasV09UserFunctions(document)) {
+    return false;
+  }
+  const main = document.scenario.loops.main;
+  const hasStartAsyncJob = main.nodes.some((node) => node.nodeKind === 'start-async-job');
+  const hasLatentSequence = main.nodes.some(
+    (node) =>
+      node.nodeKind === 'sequence' &&
+      node.sequenceConfig?.latentThen === true,
+  );
+  return !(hasStartAsyncJob && hasLatentSequence);
 }
 
 export function needsFftTrendsPolicyConstructorMigration(
@@ -133,12 +157,22 @@ export function needsFftTrendsPolicyConstructorMigration(
     const fn3Blocks = main.nodes.filter(
       (node) => node.blockKind === 'subgraph' && node.id.includes('fn-3'),
     );
+    const sequenceNode = main.nodes.find((node) => node.nodeKind === 'sequence');
     const hasMakeTrackToFn3 = main.edges.some(
       (edge) =>
         edge.kind === 'exec' &&
         edge.source === makeTrack.id &&
         fn3Blocks.some((block) => block.id === edge.target),
     );
+    const hasSequenceThen3ToFn3 =
+      sequenceNode !== undefined &&
+      main.edges.some(
+        (edge) =>
+          edge.kind === 'exec' &&
+          edge.source === sequenceNode.id &&
+          edge.sourceHandle === 'then-3' &&
+          fn3Blocks.some((block) => block.id === edge.target),
+      );
     const hasFn3ToRestart =
       restartBlock !== undefined &&
       main.edges.some(
@@ -147,7 +181,7 @@ export function needsFftTrendsPolicyConstructorMigration(
           fn3Blocks.some((block) => block.id === edge.source) &&
           edge.target === restartBlock.id,
       );
-    return !(hasMakeTrackToFn3 && hasFn3ToRestart);
+    return !((hasMakeTrackToFn3 || hasSequenceThen3ToFn3) && hasFn3ToRestart);
   }
 
   const restartRecording = main.nodes.find((node) => node.id === 'node-start-recording-mqv07-36');

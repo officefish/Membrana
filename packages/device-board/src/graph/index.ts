@@ -66,6 +66,34 @@ export {
 } from './pause-runtime-node.js';
 export type { CreatePauseRuntimeBoardNodeOptions } from './pause-runtime-node.js';
 export {
+  ASYNC_PROMISE_REF_HANDLE,
+  AWAIT_PROMISE_NODE_KIND,
+  CANCEL_ASYNC_JOBS_NODE_KIND,
+  ON_ASYNC_RESOLVED_NODE_KIND,
+  START_ASYNC_JOB_NODE_KIND,
+  START_ASYNC_JOB_TRACK_HANDLE,
+  awaitPromiseNodePins,
+  cancelAsyncJobsNodePins,
+  createAwaitPromiseBoardNode,
+  createCancelAsyncJobsBoardNode,
+  createOnAsyncResolvedBoardNode,
+  createStartAsyncJobBoardNode,
+  isAsyncOrchestrationNode,
+  onAsyncResolvedNodePins,
+  readAsyncJobNodeConfig,
+  startAsyncJobNodePins,
+} from './async-orchestration-nodes.js';
+export type { CreateAsyncOrchestrationBoardNodeOptions } from './async-orchestration-nodes.js';
+export {
+  AWAIT_PROMISE_MISSING_REF_MESSAGE,
+  ON_ASYNC_RESOLVED_MISSING_REF_MESSAGE,
+  SEQUENCE_LATENT_GATE_MESSAGE,
+  findPromiseRefMissingIssues,
+  findPromiseRefPreRunIssues,
+  findSequenceLatentThenGateIssues,
+  findSequenceLatentThenPreRunIssues,
+} from './validate-async-promise.js';
+export {
   createGetRecorderBoardNode,
   getRecorderNodePins,
   GET_RECORDER_NODE_KIND,
@@ -353,6 +381,7 @@ export {
   getDefaultMvpMicrophoneDocument,
   isLegacyHackathonDefaultScenario,
   needsBundledV09FunctionsMigration,
+  needsBundledV20AsyncMigration,
   needsFftTrendsPolicyConstructorMigration,
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';

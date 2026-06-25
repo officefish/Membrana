@@ -14,6 +14,9 @@ import { resolveScenarioGraphNodePure } from './scenario-node-pure.js';
 export const DEFAULT_ASYNC_CAPABLE_SCENARIO_NODE_KINDS = [
   'pause-runtime',
   'sequence',
+  'start-async-job',
+  'on-async-resolved',
+  'cancel-async-jobs',
 ] as const satisfies readonly ScenarioNodeKind[];
 
 export type DefaultAsyncCapableScenarioNodeKind =

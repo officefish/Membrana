@@ -1041,9 +1041,44 @@ StopRecording → MakeTrack → GetAudioStream (fn-3) → StartRecording (fn-1)
 
 **Bundled document:** `scenario.functions[]` обязателен (не пустой). Branch-export `branch-scenario` один — недостаточен без `referencedFunctions[]` (импорт/экспорт — эпик [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md)).
 
-**Interim limitation (ucv2-2):** `MakeTrack`, report и `PublishReport` на gate-true **синхронно блокируют** exec path. Roadmap: async user functions — [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md).
+**Interim limitation (ucv2-2, снято в v2.0-async):** ~~sync hot path~~ — см. §16.5.2.
 
-**Codegen:** `scripts/build-usercase-mvp-microphone.mjs` → golden `usercase-mvp-microphone-v09-functions.document.json`; `yarn usercase:build-mvp-microphone`. Migrate: `needsBundledV09FunctionsMigration`.
+**Codegen (исторический cutover):** golden `usercase-mvp-microphone-v09-functions.document.json`. **Текущий bundled default:** §16.5.2 (`v2.0-async`).
+
+### 16.5.2 Bundled v2.0-async (cutover 2026-06-25)
+
+> Эталон: epic `device-board-async-pipeline-v1` (Issue #176); golden [`usercase-mvp-microphone-v20-async.document.json`](../../docs/device-board-scripts/golden/usercase-mvp-microphone-v20-async.document.json); LGTM [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../docs/device-board-scripts/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).  
+> Parse: `yarn logs:parse` → секция **smoke v2.0-async** (`smokeV20Async` в JSON).
+
+**Цель:** non-blocking main tick на recording gate; drone report **только** после `async-job-resolved(track-upload)`; trends publish остаётся **sync на gate** (ADR AD3).
+
+**Main gate-true (validated exec):**
+
+```text
+is-recording-window-full [true]
+  → Sequence (latentThen)
+      Then 0: StopRecording
+      Then 1: MakeTrack → StartAsyncJob(track-upload) → PromiseRef
+      Then 2: FlushSpectralAnalyser → MakeFftTrendsAnalysis → MakeReportFromAnalysis → PublishReport (trends)
+      Then 3: GetAudioStream (fn-3) → StartRecording (fn-1)
+  → loop-repeat
+
+Detached (event-out, detach):
+  on-async-resolved(P1) → MakeReportFromTrack → PublishReport (drone)
+```
+
+**Отличия от v0.9-functions (§16.5.1):**
+
+| Тема | v0.9-functions | v2.0-async |
+|------|----------------|------------|
+| Upload | fire-and-forget после MakeTrack на hot path | `StartAsyncJob` + host bridge; `uploadMode:deferred` |
+| Drone report | sync на hot path → `drone-skip` race | detached после `async-job-resolved` |
+| Gate orchestration | линейный exec | **Sequence** `latentThen: true` |
+| Graph meta | — | `meta.bundledGraphVersion: v2.0-async` |
+
+**Codegen / migrate:** `scripts/build-usercase-mvp-microphone.mjs` → golden `usercase-mvp-microphone-v20-async.document.json`; `yarn usercase:build-mvp-microphone` · `needsBundledV20AsyncMigration` (v0.9 → v2.0 при load).
+
+**Groups (editor):** `fn-UploadPipeline`, `fn-TrendsPublish`.
 
 ### 16.6 Контракты collectors (DBC0, `@membrana/core`)
 
@@ -1218,10 +1253,22 @@ Pure: `collapse-to-function.ts`, `function-pin-ops.ts`, `repair-duplicate-scenar
 - Pins: `exec-in` + `then-0` … `then-8` (1–9 в инспекторе) + `exec-out`.
 - **Sync** (default): Then-ветки по индексу сверху вниз; пустой Then пропускается; после всех Then — `exec-out`.
 - **Parallel async** (`sequenceConfig.parallelAsync`): Then-ветки стартуют параллельно, runtime ждёт `Promise.all`.
-- **Async gate** (pre-run): на Then-ветке при `parallelAsync` допустимы узлы с
+- **Latent Then** (`sequenceConfig.latentThen`, AP v1): Then-ветки dispatch fire-and-forget; main tick продолжается на `exec-out` без await impure branches. Взаимоисключает `parallelAsync`. Pre-run: `validate-async-promise.ts` (`sequence-latent-unsupported-node`); impure узлы — `supportsAsync: true` на canvas.
+- **Async gate** (pre-run): на Then-ветке при `parallelAsync` или `latentThen` допустимы узлы с
   `supportsAsync` (явно или по умолчанию: `pause-runtime`, `sequence`, pure-узлы).
   Impure sync (напр. `print`) → `sequence-async-unsupported-node`.
 - Runtime: `runtime/exec-sequence.ts`; editor: `graph/sequence-node.ts`.
+
+**Promise orchestration nodes (AP v1, `nodeKind`):**
+
+| Узел (палитра) | Роль |
+|----------------|------|
+| `start-async-job` | Register job + `PromiseRef` out; host bridge (`startAsyncJob`) |
+| `await-promise` | Блокирует exec-цепочку до terminal / timeout |
+| `on-async-resolved` | `promise` in → `event-out` (detached fan-out) |
+| `cancel-async-jobs` | Cancel pending по `jobKind` |
+
+Store: `AsyncJobStore` (`runtime/async-job-store.ts`). UI hub: `ScenarioAsyncJobHub` (`@membrana/agenda`). Детали: [`SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md) §10.
 
 **Data bridge (`function-call-resolve.ts`):**
 

@@ -46,6 +46,9 @@ import {
 } from '../graph/make-track-node.js';
 import { resolveFftTrendsPolicyForNode } from './resolve-fft-trends-policy.js';
 import type { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
+import type { AsyncJobStore } from './async-job-store.js';
+import type { PromiseRuntimeStore } from './promise-runtime-store.js';
+import { executeAsyncOrchestrationNode } from './async-promise-executor.js';
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { formatVariableValueForPrintRuntime } from './format-reference.js';
@@ -93,6 +96,14 @@ export interface BlockExecutionInput {
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
   /** v0.7: RecordingSliceRef от StopRecording. */
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
+  /** AP v1: async job registry. */
+  readonly asyncJobStore?: AsyncJobStore;
+  /** AP v1: PromiseRef per start-async-job node. */
+  readonly promiseRuntimeStore?: PromiseRuntimeStore;
+  /** Correlation run id (scenario-runtime). */
+  readonly runId?: string | null;
+  /** Main/alarm loop tick for async job correlation. */
+  readonly loopTick?: number;
 }
 
 export interface BlockExecutionResult {
@@ -159,6 +170,10 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     trackStore,
     analysisStore,
     recordingSliceStore,
+    asyncJobStore,
+    promiseRuntimeStore,
+    runId,
+    loopTick,
   } = input;
 
   assertNotAborted(signal);
@@ -554,6 +569,30 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       device: deviceRef.handle,
     });
     return { lastDetection, stopRequested: true };
+  }
+
+  if (
+    node.nodeKind === 'start-async-job' ||
+    node.nodeKind === 'await-promise' ||
+    node.nodeKind === 'cancel-async-jobs'
+  ) {
+    if (runId === undefined || runId === null) {
+      throw new Error(`${node.nodeKind} requires runId`);
+    }
+    await executeAsyncOrchestrationNode({
+      host,
+      signal,
+      branch,
+      subgraph,
+      node,
+      runId,
+      loopTick,
+      variableStore,
+      resolveContext,
+      asyncJobStore,
+      promiseRuntimeStore,
+    });
+    return { lastDetection, stopRequested: false };
   }
 
   if (node.nodeKind === 'pause-runtime') {
@@ -997,6 +1036,10 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
         trackStore,
         analysisStore,
         recordingSliceStore,
+        asyncJobStore,
+        promiseRuntimeStore,
+        runId,
+        loopTick,
       });
       host.log('subgraph', { nodeId: node.id, functionId: fn.id, branch });
       return {

@@ -6,7 +6,9 @@ import { createSequenceBoardNode } from './sequence-node.js';
 import {
   findSequenceAsyncGateIssues,
   findSequenceAsyncPreRunIssues,
+  findSequenceModePreRunIssues,
   SEQUENCE_ASYNC_GATE_MESSAGE,
+  SEQUENCE_MODE_CONFLICT_MESSAGE,
 } from './validate-sequence-async.js';
 
 function execEdge(
@@ -74,5 +76,18 @@ describe('validate-sequence-async', () => {
     const edges: Edge[] = [execEdge('seq', 'then-0', 'print')];
 
     expect(findSequenceAsyncGateIssues(nodes, edges)).toHaveLength(0);
+  });
+
+  it('reports parallelAsync + latentThen conflict', () => {
+    const seq = createSequenceBoardNode({
+      id: 'seq',
+      sequenceConfig: { thenCount: 2, parallelAsync: true, latentThen: true },
+    });
+    const issues = findSequenceModePreRunIssues([seq], 'scenario.main.nodes');
+    expect(issues).toHaveLength(1);
+    expect(issues[0]).toMatchObject({
+      code: 'sequence-mode-conflict',
+      message: SEQUENCE_MODE_CONFLICT_MESSAGE,
+    });
   });
 });
