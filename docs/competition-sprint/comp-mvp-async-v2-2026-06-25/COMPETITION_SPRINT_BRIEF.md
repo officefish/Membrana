@@ -66,11 +66,11 @@ Bundled MVP **v2.0-async** (Issue #176) доказан технически: lat
 
 ## Definition of Done (Phase 2β)
 
-- [ ] `usercase-mvp-microphone-<team>-async-v2` (или согласованный id в brief amendment)
-- [ ] `meta.bundledGraphVersion` или `meta.competitionBase: v2.0-async`
-- [ ] `yarn usercase:build` + `verify-layout` + `verify-competition` green
-- [ ] Demo script PASS + smoke v2.0-async
-- [ ] `CONCEPT.md` §Implementation + наследование замысла v1 (ссылка на synthesis)
+- [x] `usercase-mvp-microphone-<team>-async-v2`
+- [x] `meta.competitionBase: v2.0-async`
+- [x] `yarn usercase:build-competition-async-v2` + `verify-layout` + `verify-competition-async-v2` green
+- [ ] Demo script PASS + smoke v2.0-async (operator)
+- [x] `CONCEPT.md` §Implementation + наследование замысла v1
 
 ---
 

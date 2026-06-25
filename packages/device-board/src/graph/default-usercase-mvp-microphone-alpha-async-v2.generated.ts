@@ -8,13 +8,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
   "kind": "device-scenario",
   "deviceKind": "microphone",
   "meta": {
-    "title": "MVP microphone · Alpha (Live Observation Pipeline)",
-    "exportedAt": "2026-06-25T11:47:30.946Z",
+    "title": "MVP microphone · Alpha (Live Observation Pipeline, async v2)",
+    "exportedAt": "2026-06-25T11:57:52.211Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "alpha",
     "isCompetitionTemplate": true,
     "executionPolicy": "competition",
-    "competitionTimeoutSec": 600
+    "competitionTimeoutSec": 600,
+    "competitionBase": "v2.0-async"
   },
   "signalGraph": {
     "nodes": [
@@ -321,16 +322,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "variableId": "var-JournalRef-mqm9dl4a-6"
           },
           {
-            "id": "node-make-report-from-track-mqs54kgw-177",
-            "blockKind": "custom",
-            "position": {
-              "x": 3208,
-              "y": -608
-            },
-            "label": "MakeReportFromTrack",
-            "nodeKind": "make-report-from-track"
-          },
-          {
             "id": "node-device-global-mqs5ibg8-126",
             "blockKind": "custom",
             "position": {
@@ -448,14 +439,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
             "supportsAsync": true
           },
           {
-            "id": "node-on-async-resolved-v20",
-            "blockKind": "custom",
+            "id": "fn-alpha-async-detached-report-block",
+            "blockKind": "subgraph",
             "position": {
               "x": 880,
-              "y": -456
+              "y": -608
             },
-            "label": "OnAsyncResolved",
-            "nodeKind": "on-async-resolved"
+            "label": "Detached drone report::fn-alpha-async-detached-report",
+            "supportsAsync": true
           },
           {
             "id": "fn-alpha-observation-tick-block",
@@ -581,13 +572,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           {
             "source": "fn-alpha-recording-gate-block",
             "sourceHandle": "track",
-            "target": "node-make-report-from-track-mqs54kgw-177",
+            "target": "fn-alpha-async-detached-report-block",
             "targetHandle": "track",
             "kind": "data",
             "dataType": "TrackRef"
           },
           {
-            "source": "node-make-report-from-track-mqs54kgw-177",
+            "source": "fn-alpha-async-detached-report-block",
             "sourceHandle": "report",
             "target": "board-mqs5v7w1-9c8xw62e",
             "targetHandle": "report",
@@ -605,7 +596,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           {
             "source": "fn-alpha-observation-tick-block",
             "sourceHandle": "reporter",
-            "target": "node-make-report-from-track-mqs54kgw-177",
+            "target": "fn-alpha-async-detached-report-block",
             "targetHandle": "reporter",
             "kind": "data",
             "dataType": "ReporterRef"
@@ -698,17 +689,10 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           {
             "source": "node-start-async-job-v20",
             "sourceHandle": "promise",
-            "target": "node-on-async-resolved-v20",
+            "target": "fn-alpha-async-detached-report-block",
             "targetHandle": "promise",
             "kind": "data",
             "dataType": "PromiseRef"
-          },
-          {
-            "source": "node-on-async-resolved-v20",
-            "sourceHandle": "event-out",
-            "target": "node-make-report-from-track-mqs54kgw-177",
-            "targetHandle": "exec-in",
-            "kind": "event"
           },
           {
             "source": "node-sequence-gate-v20-async",
@@ -923,6 +907,135 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
       "custom": []
     },
     "functions": [
+      {
+        "id": "fn-alpha-async-detached-report",
+        "name": "Detached drone report",
+        "entry": "fn-alpha-async-detached-report-input",
+        "nodes": [
+          {
+            "id": "fn-alpha-async-detached-report-input",
+            "blockKind": "custom",
+            "position": {
+              "x": 40,
+              "y": 160
+            },
+            "label": "Input",
+            "nodeKind": "function-input",
+            "system": true
+          },
+          {
+            "id": "fn-alpha-async-detached-report-output",
+            "blockKind": "custom",
+            "position": {
+              "x": 520,
+              "y": 160
+            },
+            "label": "Output",
+            "nodeKind": "function-output",
+            "system": true
+          },
+          {
+            "id": "node-make-report-from-track-mqs54kgw-177",
+            "blockKind": "custom",
+            "position": {
+              "x": 3088,
+              "y": -648
+            },
+            "label": "MakeReportFromTrack",
+            "nodeKind": "make-report-from-track"
+          },
+          {
+            "id": "node-on-async-resolved-v20",
+            "blockKind": "custom",
+            "position": {
+              "x": 760,
+              "y": -496
+            },
+            "label": "OnAsyncResolved",
+            "nodeKind": "on-async-resolved"
+          }
+        ],
+        "edges": [
+          {
+            "source": "node-on-async-resolved-v20",
+            "sourceHandle": "event-out",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "targetHandle": "exec-in",
+            "kind": "event"
+          },
+          {
+            "source": "fn-alpha-async-detached-report-input",
+            "sourceHandle": "track",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "targetHandle": "track",
+            "kind": "data",
+            "dataType": "TrackRef"
+          },
+          {
+            "source": "node-make-report-from-track-mqs54kgw-177",
+            "sourceHandle": "report",
+            "target": "fn-alpha-async-detached-report-output",
+            "targetHandle": "report",
+            "kind": "data",
+            "dataType": "ReportRef"
+          },
+          {
+            "source": "fn-alpha-async-detached-report-input",
+            "sourceHandle": "reporter",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "targetHandle": "reporter",
+            "kind": "data",
+            "dataType": "ReporterRef"
+          },
+          {
+            "source": "fn-alpha-async-detached-report-input",
+            "sourceHandle": "promise",
+            "target": "node-on-async-resolved-v20",
+            "targetHandle": "promise",
+            "kind": "data",
+            "dataType": "PromiseRef"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "name": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "id": "track",
+            "name": "track",
+            "kind": "data",
+            "socketType": "TrackRef"
+          },
+          {
+            "id": "reporter",
+            "name": "reporter",
+            "kind": "data",
+            "socketType": "ReporterRef"
+          },
+          {
+            "id": "promise",
+            "name": "promise",
+            "kind": "data",
+            "socketType": "PromiseRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "name": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "id": "report",
+            "name": "report",
+            "kind": "data",
+            "socketType": "ReportRef"
+          }
+        ],
+        "description": "on-async-resolved → MakeReportFromTrack (detached path)"
+      },
       {
         "id": "fn-alpha-observation-tick",
         "name": "Observation tick",
@@ -1645,15 +1758,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
           "preset": "accent"
         },
         "rect": {
-          "x": 856,
-          "y": -632,
-          "width": 2864,
-          "height": 304
+          "x": 3448,
+          "y": -544,
+          "width": 272,
+          "height": 152
         },
         "nodeIds": [
-          "node-make-report-from-track-mqs54kgw-177",
-          "board-mqs5v7w1-9c8xw62e",
-          "node-on-async-resolved-v20"
+          "board-mqs5v7w1-9c8xw62e"
         ]
       },
       {

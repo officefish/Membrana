@@ -61,7 +61,7 @@ async function loadDeviceBoardPackModule() {
 
   const [packMod, mvpMod] = await Promise.all([import(packUrl), import(mvpUrl)]);
   return {
-    packMvpUserCaseForTeam: packMod.packMvpUserCaseForTeam,
+    packMvpUserCaseForTeamAsyncV2: packMod.packMvpUserCaseForTeamAsyncV2,
     getDefaultMvpMicrophoneDocument: mvpMod.getDefaultMvpMicrophoneDocument,
   };
 }
@@ -174,8 +174,8 @@ if (!existsSync(mvpDir)) {
 
 try {
   seedTeamBundleFromMvp(teamArg);
-  const { packMvpUserCaseForTeam, getDefaultMvpMicrophoneDocument } = await loadDeviceBoardPackModule();
-  const packed = packMvpUserCaseForTeam(teamArg, getDefaultMvpMicrophoneDocument());
+  const { packMvpUserCaseForTeamAsyncV2, getDefaultMvpMicrophoneDocument } = await loadDeviceBoardPackModule();
+  const packed = packMvpUserCaseForTeamAsyncV2(teamArg, getDefaultMvpMicrophoneDocument());
   writeEmbeddedDocument(teamArg, packed);
   console.log(`Packed ${teamUserCaseId(teamArg)} → ${teamEmbeddedRelative(teamArg)}`);
 

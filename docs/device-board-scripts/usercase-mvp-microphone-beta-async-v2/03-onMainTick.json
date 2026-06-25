@@ -116,16 +116,6 @@
         "variableId": "var-JournalRef-mqm9dl4a-6"
       },
       {
-        "id": "node-make-report-from-track-mqs54kgw-177",
-        "blockKind": "custom",
-        "position": {
-          "x": 3208,
-          "y": -608
-        },
-        "label": "MakeReportFromTrack",
-        "nodeKind": "make-report-from-track"
-      },
-      {
         "id": "node-device-global-mqs5ibg8-126",
         "blockKind": "custom",
         "position": {
@@ -228,29 +218,14 @@
         }
       },
       {
-        "id": "node-start-async-job-v20",
-        "blockKind": "custom",
+        "id": "fn-beta-async-upload-pipeline-block",
+        "blockKind": "subgraph",
         "position": {
           "x": 624,
-          "y": -536
+          "y": -608
         },
-        "label": "StartAsyncJob",
-        "nodeKind": "start-async-job",
-        "asyncJobConfig": {
-          "jobKind": "track-upload",
-          "awaitTimeoutMs": 30000
-        },
+        "label": "Upload pipeline::fn-beta-async-upload-pipeline",
         "supportsAsync": true
-      },
-      {
-        "id": "node-on-async-resolved-v20",
-        "blockKind": "custom",
-        "position": {
-          "x": 880,
-          "y": -456
-        },
-        "label": "OnAsyncResolved",
-        "nodeKind": "on-async-resolved"
       },
       {
         "id": "fn-beta-trends-publish-block",
@@ -376,13 +351,13 @@
       {
         "source": "fn-beta-recording-gate-block",
         "sourceHandle": "track",
-        "target": "node-make-report-from-track-mqs54kgw-177",
+        "target": "fn-beta-async-upload-pipeline-block",
         "targetHandle": "track",
         "kind": "data",
         "dataType": "TrackRef"
       },
       {
-        "source": "node-make-report-from-track-mqs54kgw-177",
+        "source": "fn-beta-async-upload-pipeline-block",
         "sourceHandle": "report",
         "target": "board-mqs5v7w1-9c8xw62e",
         "targetHandle": "report",
@@ -400,7 +375,7 @@
       {
         "source": "fn-beta-trends-publish-block",
         "sourceHandle": "reporter",
-        "target": "node-make-report-from-track-mqs54kgw-177",
+        "target": "fn-beta-async-upload-pipeline-block",
         "targetHandle": "reporter",
         "kind": "data",
         "dataType": "ReporterRef"
@@ -478,32 +453,9 @@
       {
         "source": "fn-beta-recording-gate-block",
         "sourceHandle": "exec-out",
-        "target": "node-start-async-job-v20",
+        "target": "fn-beta-async-upload-pipeline-block",
         "targetHandle": "exec-in",
         "kind": "exec"
-      },
-      {
-        "source": "fn-beta-recording-gate-block",
-        "sourceHandle": "track",
-        "target": "node-start-async-job-v20",
-        "targetHandle": "track",
-        "kind": "data",
-        "dataType": "TrackRef"
-      },
-      {
-        "source": "node-start-async-job-v20",
-        "sourceHandle": "promise",
-        "target": "node-on-async-resolved-v20",
-        "targetHandle": "promise",
-        "kind": "data",
-        "dataType": "PromiseRef"
-      },
-      {
-        "source": "node-on-async-resolved-v20",
-        "sourceHandle": "event-out",
-        "target": "node-make-report-from-track-mqs54kgw-177",
-        "targetHandle": "exec-in",
-        "kind": "event"
       },
       {
         "source": "node-sequence-gate-v20-async",
@@ -532,5 +484,5 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-25T11:47:41.932Z"
+  "exportedAt": "2026-06-25T11:58:03.502Z"
 }

@@ -253,15 +253,77 @@ function markMainSubgraphBlocksSupportsAsync(
   };
 }
 
-/**
- * Fork bundled MVP document with team-specific user functions (competition sprint).
- * Layout canon + comment groups применяются отдельно через `applyUserCaseLayoutCanon`.
- */
-export function packMvpUserCaseForTeam(
+const TEAM_ASYNC_V2_PRE_COLLAPSES: Readonly<Record<CompetitionTeamId, readonly CollapseSpec[]>> = {
+  alpha: [
+    {
+      functionId: 'fn-alpha-async-detached-report',
+      functionName: 'Detached drone report',
+      description: 'on-async-resolved → MakeReportFromTrack (detached path)',
+      nodeIds: ['node-on-async-resolved-v20', 'node-make-report-from-track-mqs54kgw-177'],
+    },
+  ],
+  beta: [
+    {
+      functionId: 'fn-beta-async-upload-pipeline',
+      functionName: 'Upload pipeline',
+      description: 'StartAsyncJob → detached MakeReportFromTrack',
+      nodeIds: [
+        'node-start-async-job-v20',
+        'node-on-async-resolved-v20',
+        'node-make-report-from-track-mqs54kgw-177',
+      ],
+    },
+  ],
+  gamma: [
+    {
+      functionId: 'fn-gamma-async-live-bundle',
+      functionName: 'Async upload bundle',
+      description: 'Upload job + detached track report (poster strip)',
+      nodeIds: [
+        'node-start-async-job-v20',
+        'node-on-async-resolved-v20',
+        'node-make-report-from-track-mqs54kgw-177',
+      ],
+    },
+  ],
+};
+
+const TEAM_ASYNC_V2_META: Readonly<
+  Record<
+    CompetitionTeamId,
+    { readonly title: string; readonly description: string; readonly commentGroupProfile: UserCaseCommentGroupProfileId }
+  >
+> = {
+  alpha: {
+    title: 'MVP microphone · Alpha (Live Observation Pipeline, async v2)',
+    description:
+      'Team Alpha async v2: operator journey + Act IIb async narrative; latent Sequence visible.',
+    commentGroupProfile: 'alpha',
+  },
+  beta: {
+    title: 'MVP microphone · Beta (Measured modular UserCase, async v2)',
+    description: 'Team Beta async v2: modular upload pipeline function + orchestrator.',
+    commentGroupProfile: 'beta',
+  },
+  gamma: {
+    title: 'MVP microphone · Gamma (Poster UserCase, async v2)',
+    description: 'Team Gamma async v2: poster ①–⑥, async bundle collapsed.',
+    commentGroupProfile: 'gamma',
+  },
+};
+
+interface PackTeamOptions {
+  readonly preMainCollapses?: readonly CollapseSpec[];
+  readonly metaProfile?: typeof TEAM_META;
+  readonly competitionBase?: string;
+}
+
+function packMvpUserCaseForTeamInternal(
   team: CompetitionTeamId,
   baseDocument: DeviceScenarioDocument,
+  options: PackTeamOptions = {},
 ): DeviceScenarioDocument {
-  const meta = TEAM_META[team];
+  const meta = (options.metaProfile ?? TEAM_META)[team];
   const strippedBase = stripBundledUserFunctionBlocks(baseDocument);
   let document: DeviceScenarioDocument = stampCompetitionDocumentMeta({
     ...structuredClone(strippedBase),
@@ -273,6 +335,7 @@ export function packMvpUserCaseForTeam(
       isCompetitionTemplate: true,
       executionPolicy: 'competition',
       competitionTimeoutSec: DEFAULT_COMPETITION_TIMEOUT_SEC,
+      ...(options.competitionBase !== undefined ? { competitionBase: options.competitionBase } : {}),
     },
     scenario: {
       ...structuredClone(strippedBase.scenario),
@@ -280,6 +343,10 @@ export function packMvpUserCaseForTeam(
       commentGroups: [],
     },
   });
+
+  for (const collapse of options.preMainCollapses ?? []) {
+    document = applyBranchCollapse(document, 'main', collapse);
+  }
 
   for (const collapse of TEAM_MAIN_COLLAPSES[team]) {
     document = applyBranchCollapse(document, 'main', collapse);
@@ -292,8 +359,38 @@ export function packMvpUserCaseForTeam(
   return markMainSubgraphBlocksSupportsAsync(document);
 }
 
+/**
+ * Fork bundled MVP document with team-specific user functions (competition sprint).
+ * Layout canon + comment groups применяются отдельно через `applyUserCaseLayoutCanon`.
+ */
+export function packMvpUserCaseForTeam(
+  team: CompetitionTeamId,
+  baseDocument: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  return packMvpUserCaseForTeamInternal(team, baseDocument);
+}
+
+/**
+ * Async v2 competition pack: team-specific pre-collapses + `competitionBase: v2.0-async`.
+ */
+export function packMvpUserCaseForTeamAsyncV2(
+  team: CompetitionTeamId,
+  baseDocument: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  return packMvpUserCaseForTeamInternal(team, baseDocument, {
+    preMainCollapses: TEAM_ASYNC_V2_PRE_COLLAPSES[team],
+    metaProfile: TEAM_ASYNC_V2_META,
+    competitionBase: 'v2.0-async',
+  });
+}
+
 export function competitionUserCaseId(team: CompetitionTeamId): string {
   return `usercase-mvp-microphone-${team}`;
+}
+
+/** UserCase id for `comp-mvp-async-v2-2026-06-25` forks. */
+export function competitionUserCaseIdAsyncV2(team: CompetitionTeamId): string {
+  return `usercase-mvp-microphone-${team}-async-v2`;
 }
 
 /** Layout metrics для CONCEPT §Implementation (Team Beta). */

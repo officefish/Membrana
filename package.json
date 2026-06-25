@@ -178,6 +178,7 @@
     "usercase:verify-layout": "node scripts/verify-usercase-layout.mjs",
     "usercase:verify-prerun": "node scripts/verify-usercase-prerun.mjs",
     "usercase:verify-competition": "node scripts/usercase.mjs verify-competition",
+    "usercase:verify-competition-async-v2": "node scripts/usercase.mjs verify-competition-async-v2",
     "logs:parse": "node scripts/parse-client-logs.mjs",
     "usercase": "node scripts/usercase.mjs"
   },

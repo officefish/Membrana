@@ -93,4 +93,10 @@ Orchestrator walk: Policy → Gate (latent) → Trends sync → Upload async str
 - [x] orchestrator + async upload/detached comment frames
 - [x] verify-layout green
 
+### 2β — full DoD
+
+- [x] `fn-beta-async-upload-pipeline` (3-node collapse)
+- [x] `yarn usercase:verify-competition-async-v2` green
+- [ ] F7 operator smoke
+
 *Team Beta · comp-mvp-async-v2-2026-06-25*

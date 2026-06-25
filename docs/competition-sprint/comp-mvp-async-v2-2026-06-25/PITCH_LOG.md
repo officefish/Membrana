@@ -8,3 +8,6 @@
 | alpha | 2α | `4673255` | vertical slice + build |
 | beta | 2α | `4673255` | vertical slice + build |
 | gamma | 2α | `4673255` | vertical slice + build |
+| alpha | 2β | *pending* | packMvpUserCaseForTeamAsyncV2 |
+| beta | 2β | *pending* | upload pipeline collapse |
+| gamma | 2β | *pending* | async live bundle |

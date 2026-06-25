@@ -19,6 +19,7 @@ on:
       - 'docs/device-board-scripts/usercase-mvp-microphone-alpha/**'
       - 'docs/device-board-scripts/usercase-mvp-microphone-beta/**'
       - 'docs/device-board-scripts/usercase-mvp-microphone-gamma/**'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-*-async-v2/**'
   push:
     branches: [main, master, develop, vesnin, techies68]
     paths:
@@ -34,6 +35,7 @@ on:
       - 'docs/device-board-scripts/usercase-mvp-microphone-alpha/**'
       - 'docs/device-board-scripts/usercase-mvp-microphone-beta/**'
       - 'docs/device-board-scripts/usercase-mvp-microphone-gamma/**'
+      - 'docs/device-board-scripts/usercase-mvp-microphone-*-async-v2/**'
   workflow_dispatch:
 
 concurrency:
@@ -78,7 +80,13 @@ jobs:
       - name: Build @membrana/device-board
         run: yarn workspace @membrana/device-board build
 
-      - name: verify-competition (layout + pre-run)
+      - name: verify-competition async v2 (layout + pre-run)
+        run: |
+          node scripts/usercase.mjs verify-competition-async-v2
+        env:
+          USERCASE_VERIFY_SKIP_BUILD: '1'
+
+      - name: verify-competition v1 archived (layout + pre-run)
         run: node scripts/usercase.mjs verify-competition
         env:
           USERCASE_VERIFY_SKIP_BUILD: '1'

@@ -116,16 +116,6 @@
         "variableId": "var-JournalRef-mqm9dl4a-6"
       },
       {
-        "id": "node-make-report-from-track-mqs54kgw-177",
-        "blockKind": "custom",
-        "position": {
-          "x": 3208,
-          "y": -608
-        },
-        "label": "MakeReportFromTrack",
-        "nodeKind": "make-report-from-track"
-      },
-      {
         "id": "node-device-global-mqs5ibg8-126",
         "blockKind": "custom",
         "position": {
@@ -243,14 +233,14 @@
         "supportsAsync": true
       },
       {
-        "id": "node-on-async-resolved-v20",
-        "blockKind": "custom",
+        "id": "fn-alpha-async-detached-report-block",
+        "blockKind": "subgraph",
         "position": {
           "x": 880,
-          "y": -456
+          "y": -608
         },
-        "label": "OnAsyncResolved",
-        "nodeKind": "on-async-resolved"
+        "label": "Detached drone report::fn-alpha-async-detached-report",
+        "supportsAsync": true
       },
       {
         "id": "fn-alpha-observation-tick-block",
@@ -376,13 +366,13 @@
       {
         "source": "fn-alpha-recording-gate-block",
         "sourceHandle": "track",
-        "target": "node-make-report-from-track-mqs54kgw-177",
+        "target": "fn-alpha-async-detached-report-block",
         "targetHandle": "track",
         "kind": "data",
         "dataType": "TrackRef"
       },
       {
-        "source": "node-make-report-from-track-mqs54kgw-177",
+        "source": "fn-alpha-async-detached-report-block",
         "sourceHandle": "report",
         "target": "board-mqs5v7w1-9c8xw62e",
         "targetHandle": "report",
@@ -400,7 +390,7 @@
       {
         "source": "fn-alpha-observation-tick-block",
         "sourceHandle": "reporter",
-        "target": "node-make-report-from-track-mqs54kgw-177",
+        "target": "fn-alpha-async-detached-report-block",
         "targetHandle": "reporter",
         "kind": "data",
         "dataType": "ReporterRef"
@@ -493,17 +483,10 @@
       {
         "source": "node-start-async-job-v20",
         "sourceHandle": "promise",
-        "target": "node-on-async-resolved-v20",
+        "target": "fn-alpha-async-detached-report-block",
         "targetHandle": "promise",
         "kind": "data",
         "dataType": "PromiseRef"
-      },
-      {
-        "source": "node-on-async-resolved-v20",
-        "sourceHandle": "event-out",
-        "target": "node-make-report-from-track-mqs54kgw-177",
-        "targetHandle": "exec-in",
-        "kind": "event"
       },
       {
         "source": "node-sequence-gate-v20-async",
@@ -532,5 +515,5 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-25T11:47:34.055Z"
+  "exportedAt": "2026-06-25T11:57:55.559Z"
 }

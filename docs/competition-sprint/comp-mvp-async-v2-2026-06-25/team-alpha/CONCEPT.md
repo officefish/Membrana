@@ -90,4 +90,10 @@
 - [x] main: latent Sequence + Act IIb groups + gate/trends functions
 - [x] verify-layout green
 
+### 2β — full DoD
+
+- [x] `packMvpUserCaseForTeamAsyncV2` — detached report function, StartAsyncJob visible
+- [x] `yarn usercase:verify-competition-async-v2` green
+- [ ] F7 operator smoke (browser Run ≥60s)
+
 *Team Alpha · comp-mvp-async-v2-2026-06-25*

@@ -78,4 +78,10 @@
 - [x] poster ①–⑥ with async ⑤⑥ frames
 - [x] verify-layout green
 
+### 2β — full DoD
+
+- [x] `fn-gamma-async-live-bundle` poster strip
+- [x] `yarn usercase:verify-competition-async-v2` green
+- [ ] F7 operator smoke
+
 *Team Gamma · comp-mvp-async-v2-2026-06-25*

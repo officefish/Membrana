@@ -8,13 +8,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
   "kind": "device-scenario",
   "deviceKind": "microphone",
   "meta": {
-    "title": "MVP microphone · Beta (Measured modular UserCase)",
-    "exportedAt": "2026-06-25T11:47:37.618Z",
+    "title": "MVP microphone · Beta (Measured modular UserCase, async v2)",
+    "exportedAt": "2026-06-25T11:58:00.521Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "beta",
     "isCompetitionTemplate": true,
     "executionPolicy": "competition",
-    "competitionTimeoutSec": 600
+    "competitionTimeoutSec": 600,
+    "competitionBase": "v2.0-async"
   },
   "signalGraph": {
     "nodes": [
@@ -358,16 +359,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "variableId": "var-JournalRef-mqm9dl4a-6"
           },
           {
-            "id": "node-make-report-from-track-mqs54kgw-177",
-            "blockKind": "custom",
-            "position": {
-              "x": 3208,
-              "y": -608
-            },
-            "label": "MakeReportFromTrack",
-            "nodeKind": "make-report-from-track"
-          },
-          {
             "id": "node-device-global-mqs5ibg8-126",
             "blockKind": "custom",
             "position": {
@@ -470,29 +461,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             }
           },
           {
-            "id": "node-start-async-job-v20",
-            "blockKind": "custom",
+            "id": "fn-beta-async-upload-pipeline-block",
+            "blockKind": "subgraph",
             "position": {
               "x": 624,
-              "y": -536
+              "y": -608
             },
-            "label": "StartAsyncJob",
-            "nodeKind": "start-async-job",
-            "asyncJobConfig": {
-              "jobKind": "track-upload",
-              "awaitTimeoutMs": 30000
-            },
+            "label": "Upload pipeline::fn-beta-async-upload-pipeline",
             "supportsAsync": true
-          },
-          {
-            "id": "node-on-async-resolved-v20",
-            "blockKind": "custom",
-            "position": {
-              "x": 880,
-              "y": -456
-            },
-            "label": "OnAsyncResolved",
-            "nodeKind": "on-async-resolved"
           },
           {
             "id": "fn-beta-trends-publish-block",
@@ -618,13 +594,13 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           {
             "source": "fn-beta-recording-gate-block",
             "sourceHandle": "track",
-            "target": "node-make-report-from-track-mqs54kgw-177",
+            "target": "fn-beta-async-upload-pipeline-block",
             "targetHandle": "track",
             "kind": "data",
             "dataType": "TrackRef"
           },
           {
-            "source": "node-make-report-from-track-mqs54kgw-177",
+            "source": "fn-beta-async-upload-pipeline-block",
             "sourceHandle": "report",
             "target": "board-mqs5v7w1-9c8xw62e",
             "targetHandle": "report",
@@ -642,7 +618,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           {
             "source": "fn-beta-trends-publish-block",
             "sourceHandle": "reporter",
-            "target": "node-make-report-from-track-mqs54kgw-177",
+            "target": "fn-beta-async-upload-pipeline-block",
             "targetHandle": "reporter",
             "kind": "data",
             "dataType": "ReporterRef"
@@ -720,32 +696,9 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
           {
             "source": "fn-beta-recording-gate-block",
             "sourceHandle": "exec-out",
-            "target": "node-start-async-job-v20",
+            "target": "fn-beta-async-upload-pipeline-block",
             "targetHandle": "exec-in",
             "kind": "exec"
-          },
-          {
-            "source": "fn-beta-recording-gate-block",
-            "sourceHandle": "track",
-            "target": "node-start-async-job-v20",
-            "targetHandle": "track",
-            "kind": "data",
-            "dataType": "TrackRef"
-          },
-          {
-            "source": "node-start-async-job-v20",
-            "sourceHandle": "promise",
-            "target": "node-on-async-resolved-v20",
-            "targetHandle": "promise",
-            "kind": "data",
-            "dataType": "PromiseRef"
-          },
-          {
-            "source": "node-on-async-resolved-v20",
-            "sourceHandle": "event-out",
-            "target": "node-make-report-from-track-mqs54kgw-177",
-            "targetHandle": "exec-in",
-            "kind": "event"
           },
           {
             "source": "node-sequence-gate-v20-async",
@@ -960,6 +913,166 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
       "custom": []
     },
     "functions": [
+      {
+        "id": "fn-beta-async-upload-pipeline",
+        "name": "Upload pipeline",
+        "entry": "fn-beta-async-upload-pipeline-input",
+        "nodes": [
+          {
+            "id": "fn-beta-async-upload-pipeline-input",
+            "blockKind": "custom",
+            "position": {
+              "x": 40,
+              "y": -576
+            },
+            "label": "Input",
+            "nodeKind": "function-input",
+            "system": true
+          },
+          {
+            "id": "fn-beta-async-upload-pipeline-output",
+            "blockKind": "custom",
+            "position": {
+              "x": 520,
+              "y": 160
+            },
+            "label": "Output",
+            "nodeKind": "function-output",
+            "system": true
+          },
+          {
+            "id": "node-make-report-from-track-mqs54kgw-177",
+            "blockKind": "custom",
+            "position": {
+              "x": 3088,
+              "y": -648
+            },
+            "label": "MakeReportFromTrack",
+            "nodeKind": "make-report-from-track"
+          },
+          {
+            "id": "node-start-async-job-v20",
+            "blockKind": "custom",
+            "position": {
+              "x": 504,
+              "y": -576
+            },
+            "label": "StartAsyncJob",
+            "nodeKind": "start-async-job",
+            "asyncJobConfig": {
+              "jobKind": "track-upload",
+              "awaitTimeoutMs": 30000
+            },
+            "supportsAsync": true
+          },
+          {
+            "id": "node-on-async-resolved-v20",
+            "blockKind": "custom",
+            "position": {
+              "x": 760,
+              "y": -496
+            },
+            "label": "OnAsyncResolved",
+            "nodeKind": "on-async-resolved"
+          }
+        ],
+        "edges": [
+          {
+            "source": "node-start-async-job-v20",
+            "sourceHandle": "promise",
+            "target": "node-on-async-resolved-v20",
+            "targetHandle": "promise",
+            "kind": "data",
+            "dataType": "PromiseRef"
+          },
+          {
+            "source": "node-on-async-resolved-v20",
+            "sourceHandle": "event-out",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "targetHandle": "exec-in",
+            "kind": "event"
+          },
+          {
+            "source": "fn-beta-async-upload-pipeline-input",
+            "sourceHandle": "exec-in",
+            "target": "node-start-async-job-v20",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-beta-async-upload-pipeline-input",
+            "sourceHandle": "track",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "targetHandle": "track",
+            "kind": "data",
+            "dataType": "TrackRef"
+          },
+          {
+            "source": "node-make-report-from-track-mqs54kgw-177",
+            "sourceHandle": "report",
+            "target": "fn-beta-async-upload-pipeline-output",
+            "targetHandle": "report",
+            "kind": "data",
+            "dataType": "ReportRef"
+          },
+          {
+            "source": "fn-beta-async-upload-pipeline-input",
+            "sourceHandle": "reporter",
+            "target": "node-make-report-from-track-mqs54kgw-177",
+            "targetHandle": "reporter",
+            "kind": "data",
+            "dataType": "ReporterRef"
+          },
+          {
+            "source": "fn-beta-async-upload-pipeline-input",
+            "sourceHandle": "exec-in",
+            "target": "node-start-async-job-v20",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-beta-async-upload-pipeline-input",
+            "sourceHandle": "track",
+            "target": "node-start-async-job-v20",
+            "targetHandle": "track",
+            "kind": "data",
+            "dataType": "TrackRef"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "name": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "id": "track",
+            "name": "track",
+            "kind": "data",
+            "socketType": "TrackRef"
+          },
+          {
+            "id": "reporter",
+            "name": "reporter",
+            "kind": "data",
+            "socketType": "ReporterRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "name": "exec-out",
+            "kind": "exec"
+          },
+          {
+            "id": "report",
+            "name": "report",
+            "kind": "data",
+            "socketType": "ReportRef"
+          }
+        ],
+        "description": "StartAsyncJob → detached MakeReportFromTrack"
+      },
       {
         "id": "fn-beta-trends-publish",
         "name": "Trends publish",
@@ -1393,14 +1506,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
             "target": "node-make-track-mqmcipn5-28",
             "targetHandle": "exec-in",
             "kind": "exec"
-          },
-          {
-            "source": "node-make-track-mqmcipn5-28",
-            "sourceHandle": "track",
-            "target": "fn-beta-recording-gate-output",
-            "targetHandle": "track",
-            "kind": "data",
-            "dataType": "TrackRef"
           }
         ],
         "inputPins": [
@@ -1515,6 +1620,24 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
         ]
       },
       {
+        "id": "ucg-beta-fn-policy",
+        "branch": "main",
+        "title": "Function: policy build",
+        "description": "MakeRecordingPolicy + MakeFftTrendsPolicy",
+        "frameColor": {
+          "preset": "neutral"
+        },
+        "rect": {
+          "x": 1648,
+          "y": -648,
+          "width": 272,
+          "height": 152
+        },
+        "nodeIds": [
+          "node-make-fft-trends-policy-mqs6wrpr-175"
+        ]
+      },
+      {
         "id": "ucg-beta-async-upload",
         "branch": "main",
         "title": "Async: upload pipeline",
@@ -1524,32 +1647,31 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
         },
         "rect": {
           "x": 96,
-          "y": -560,
+          "y": -632,
           "width": 776,
-          "height": 328
+          "height": 400
         },
         "nodeIds": [
           "node-sequence-gate-v20-async",
-          "node-start-async-job-v20"
+          "fn-beta-async-upload-pipeline-block"
         ]
       },
       {
         "id": "ucg-beta-async-detached",
         "branch": "main",
         "title": "Async: detached report",
-        "description": "on-async-resolved → drone publish",
+        "description": "Promise handler inside upload pipeline function",
         "frameColor": {
           "preset": "accent"
         },
         "rect": {
-          "x": 856,
+          "x": 600,
           "y": -632,
-          "width": 2600,
-          "height": 304
+          "width": 272,
+          "height": 152
         },
         "nodeIds": [
-          "node-make-report-from-track-mqs54kgw-177",
-          "node-on-async-resolved-v20"
+          "fn-beta-async-upload-pipeline-block"
         ]
       }
     ],
