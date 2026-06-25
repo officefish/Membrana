@@ -73,4 +73,13 @@ describe('usercase-competition-async-v2-pack (Phase 2β)', () => {
     const kinds = new Set(packed.scenario.loops.main.nodes.map((node) => node.nodeKind));
     expect(kinds.has('start-async-job')).toBe(false);
   });
+
+  it('beta Phase 5 polish applies gamma ⑤⑥ titles to async comment groups', () => {
+    const canon = applyUserCaseLayoutCanon(
+      packMvpUserCaseForTeamAsyncV2('beta', DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT),
+    );
+    const titles = (canon.scenario.commentGroups ?? []).map((group) => group.title);
+    expect(titles).toContain('⑤ Отправка в фоне');
+    expect(titles).toContain('⑥ Отчёт дрон (detached)');
+  });
 });

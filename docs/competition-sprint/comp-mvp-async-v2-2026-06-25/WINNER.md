@@ -29,6 +29,12 @@
 
 **Bundled production:** `usercase-mvp-microphone` (v2.0-async) — unchanged.
 
+### Phase 5 polish (done)
+
+- [x] Beta async groups: `⑤ Отправка в фоне` / `⑥ Отчёт дрон (detached)` (gamma titles)
+- [x] Alpha RU descriptions on beta async frames
+- [x] Rebuild `usercase-mvp-microphone-beta-async-v2`
+
 ---
 
 ## Open follow-ups

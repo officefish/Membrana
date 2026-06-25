@@ -3,13 +3,13 @@
  */
 import type { DeviceScenarioDocument } from '@membrana/core';
 
-export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT = {
+export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
   "version": 2,
   "kind": "device-scenario",
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Alpha (Live Observation Pipeline, async v2)",
-    "exportedAt": "2026-06-25T11:57:52.211Z",
+    "exportedAt": "2026-06-25T12:44:10.734Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "alpha",
     "isCompetitionTemplate": true,

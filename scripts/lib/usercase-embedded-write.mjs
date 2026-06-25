@@ -5,6 +5,34 @@ import { assertUserCaseWritePath } from './usercase-write-guard.mjs';
 import { repoRootFromScripts, resolveUserCaseDir } from './usercase-paths.mjs';
 
 /**
+ * @param {string} absPath Absolute path to embedded .generated.ts
+ */
+function resolveEmbeddedExportName(absPath) {
+  if (absPath.includes('mvp-microphone-alpha-async-v2')) {
+    return 'DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT';
+  }
+  if (absPath.includes('mvp-microphone-beta-async-v2')) {
+    return 'DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT';
+  }
+  if (absPath.includes('mvp-microphone-gamma-async-v2')) {
+    return 'DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_ASYNC_V2_DOCUMENT';
+  }
+  if (absPath.includes('mvp-microphone-alpha')) {
+    return 'DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT';
+  }
+  if (absPath.includes('mvp-microphone-beta')) {
+    return 'DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT';
+  }
+  if (absPath.includes('mvp-microphone-gamma')) {
+    return 'DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT';
+  }
+  if (absPath.includes('mvp-microphone')) {
+    return 'DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT';
+  }
+  return 'DEFAULT_USERCASE_DOCUMENT';
+}
+
+/**
  * @param {string} embeddedRelativePath
  * @param {Record<string, unknown>} document
  * @param {string} [repoRoot]
@@ -16,15 +44,7 @@ export function writeEmbeddedDeviceScenarioDocument(
 ) {
   assertUserCaseWritePath(embeddedRelativePath, repoRoot);
   const abs = join(repoRoot, embeddedRelativePath);
-  const exportName = abs.includes('mvp-microphone-alpha')
-    ? 'DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_DOCUMENT'
-    : abs.includes('mvp-microphone-beta')
-      ? 'DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT'
-      : abs.includes('mvp-microphone-gamma')
-        ? 'DEFAULT_USERCASE_MVP_MICROPHONE_GAMMA_DOCUMENT'
-        : abs.includes('mvp-microphone')
-          ? 'DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT'
-          : 'DEFAULT_USERCASE_DOCUMENT';
+  const exportName = resolveEmbeddedExportName(abs);
   const body = JSON.stringify(document, null, 2);
   writeFileSync(
     abs,

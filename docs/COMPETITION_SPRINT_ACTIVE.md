@@ -2,38 +2,27 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` |
+| **status** | `closed` |
 | **sprintId** | `comp-mvp-async-v2-2026-06-25` |
 | **brief** | [`COMPETITION_SPRINT_BRIEF.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md) |
-| **baseBranch** | `main` |
-| **BASE_SHA** | `37641b3` |
-| **teams** | alpha, beta, gamma |
-| **phase** | **4** (vote closed) → **5** polish |
-| **openedAt** | 2026-06-25 |
-| **phase1Gate** | [`PHASE_1_GATE.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/PHASE_1_GATE.md) |
-| **phase2aGate** | [`PHASE_2A_GATE.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/PHASE_2A_GATE.md) |
-| **phase2bGate** | [`PHASE_2B_GATE.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/PHASE_2B_GATE.md) |
-| **consilium** | [`competition-sprint-comp-mvp-async-v2-2026-06-25-consilium.md`](./discussions/competition-sprint-comp-mvp-async-v2-2026-06-25-consilium.md) |
-| **winner** | [`WINNER.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/WINNER.md) — **Team Beta** |
+| **closure** | [`CLOSURE.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/CLOSURE.md) |
+| **winner** | Team **Beta** · [`WINNER.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/WINNER.md) |
+| **closedAt** | 2026-06-25 |
 
-## Branches
+## Summary
 
-| Team | Branch |
-|------|--------|
-| alpha | `comp/comp-mvp-async-v2-2026-06-25/alpha` |
-| beta | `comp/comp-mvp-async-v2-2026-06-25/beta` |
-| gamma | `comp/comp-mvp-async-v2-2026-06-25/gamma` |
+Async v2 packaging sprint на bundled `v2.0-async`. Winner: **Beta** (203.5). Phase 5 polish: gamma ⑤⑥ + alpha RU на beta async groups. Bundled MVP **не** заменён.
 
-## Phase 5 deliverable (polish)
+**Rebuild:** `yarn usercase:build-competition-async-v2-all` · `yarn usercase:verify-competition-async-v2`
 
-- [ ] Cherry-pick: beta pipeline + alpha Act IIb + gamma ⑤⑥ (см. WINNER.md)
-- [ ] F7 operator smoke на `usercase-mvp-microphone-beta-async-v2`
-- [ ] Закрыть sprint → CLOSURE.md
+## Deferred
 
-**Verify:** `yarn usercase:verify-competition-async-v2`
+- F7 operator smoke на winner fork
+- Product merge winner → bundled MVP
 
 ## Previous (archived)
 
 | sprintId | Статус |
 |----------|--------|
-| `comp-mvp-packaging-2026-06-21` | closed · forks archived from catalog |
+| `comp-mvp-packaging-2026-06-21` | closed · v1 forks archived |
+| `comp-mvp-async-v2-2026-06-25` | **closed** · async-v2 forks archived |

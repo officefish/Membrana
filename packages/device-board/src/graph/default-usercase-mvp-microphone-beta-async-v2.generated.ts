@@ -3,13 +3,13 @@
  */
 import type { DeviceScenarioDocument } from '@membrana/core';
 
-export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
+export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_ASYNC_V2_DOCUMENT = {
   "version": 2,
   "kind": "device-scenario",
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Beta (Measured modular UserCase, async v2)",
-    "exportedAt": "2026-06-25T11:58:00.521Z",
+    "exportedAt": "2026-06-25T12:43:49.287Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "beta",
     "isCompetitionTemplate": true,
@@ -1640,8 +1640,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
       {
         "id": "ucg-beta-async-upload",
         "branch": "main",
-        "title": "Async: upload pipeline",
-        "description": "StartAsyncJob track-upload (non-blocking)",
+        "title": "⑤ Отправка в фоне",
+        "description": "StartAsyncJob track-upload — не блокирует main tick",
         "frameColor": {
           "preset": "info"
         },
@@ -1659,8 +1659,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_BETA_DOCUMENT = {
       {
         "id": "ucg-beta-async-detached",
         "branch": "main",
-        "title": "Async: detached report",
-        "description": "Promise handler inside upload pipeline function",
+        "title": "⑥ Отчёт дрон (detached)",
+        "description": "Detached on-async-resolved → MakeReportFromTrack → PublishReport",
         "frameColor": {
           "preset": "accent"
         },
