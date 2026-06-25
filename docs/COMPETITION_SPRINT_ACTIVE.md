@@ -6,7 +6,7 @@
 | **sprintId** | `comp-mvp-async-v2-2026-06-25` |
 | **brief** | [`docs/competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md) |
 | **baseBranch** | `main` |
-| **BASE_SHA** | `49e0407` |
+| **BASE_SHA** | `998e950` |
 | **teams** | alpha, beta, gamma |
 | **phase** | 1 |
 | **openedAt** | 2026-06-25 |
