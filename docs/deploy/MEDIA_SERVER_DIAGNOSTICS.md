@@ -72,7 +72,7 @@ Verdict codes: `OK` · `SERVER_DOWN` · `AUTH` · `SERVER_QUOTA` · `SERVER_QUOT
 df -h
 docker stats --no-stream
 docker compose -f ... ps
-docker logs media-api --tail 200
+docker logs membrana-media-media-api-1 --tail 200
 
 # С хоста разработки
 yarn media:docker:logs
@@ -118,3 +118,5 @@ yarn cabinet:mp3:smoke    # pairing + media device reachability
 | `yarn media:prod:hotfix-deploy` | patch `collections.controller.ts` + rebuild image |
 
 **2026-06-25 (#178):** до hotfix `ensure-reserved` мог «висеть»; после `restart-api` / hotfix — ~0.1s. Upload path на prod рабочий (201/409); client race — `whenMediaLibraryConfigured()` + `ensureReservedCollections` в `importBlob`. Диск VPS ~84% — мониторить.
+
+**Deploy agent:** полный список препятствий — [`BACKGROUND_MEDIA_DEPLOY.md`](./BACKGROUND_MEDIA_DEPLOY.md) §10 · A5c prompt § «Предупреждения деплоя».

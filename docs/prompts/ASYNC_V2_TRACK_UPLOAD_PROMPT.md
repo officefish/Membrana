@@ -40,6 +40,7 @@ Competition packaging Phase C: operator smoke **alpha-async-v2** — gate + tren
 2. **Fix** в правильном слое (client bridge / media-library / background-media / ops).
 3. **`yarn media:diag`** — health → quota → ensure-reserved → test WAV upload.
 4. **Runbook** [`MEDIA_SERVER_DIAGNOSTICS.md`](../deploy/MEDIA_SERVER_DIAGNOSTICS.md).
+5. **Deploy pitfalls** [`BACKGROUND_MEDIA_DEPLOY.md`](../deploy/BACKGROUND_MEDIA_DEPLOY.md) §10
 5. Alpha operator smoke: `yarn logs:parse` → **v20 happy path: PASS**.
 
 ---

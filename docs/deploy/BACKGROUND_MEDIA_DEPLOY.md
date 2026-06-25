@@ -132,6 +132,8 @@ docker compose \
 ./deploy/media-stack.sh up
 ```
 
+**Важно:** стандартный `node scripts/_ssh-media-deploy.mjs` делает `git pull origin techies68`. Правки на **feature-ветке до merge** на сервер **не попадут** — см. §10.
+
 ---
 
 ## 5. TLS (Caddy)
@@ -239,10 +241,87 @@ curl -X POST https://media.<domain>/v1/devices \
 - [ ] CORS настроен, если клиент на другом origin (follow-up в API)
 - [ ] `yarn media:verify-swagger` — зелёный в CI/перед релизом
 - [ ] (опц.) `SWAGGER_ENABLED=true` + `https://media.<domain>/docs` для интеграторов
+- [ ] §10: `yarn media:prod:diag` exit 0; ensure-reserved &lt;1 s (после merge / hotfix)
 
 ---
 
-## 10. Локальная проверка (опционально)
+## 10. Известные препятствия (ops lessons, 2026-06-25, #178)
+
+> Агент деплоя **обязан** прочитать перед `build`/`up` и smoke. Диагностика: [`MEDIA_SERVER_DIAGNOSTICS.md`](./MEDIA_SERVER_DIAGNOSTICS.md).
+
+### 10a. `POST ensure-reserved` «висит» (минуты)
+
+| | |
+|---|---|
+| **Симптом** | `curl` на `.../collections/ensure-reserved` без ответа 2–5+ мин; client `upload-ok: 0`; `yarn media:prod:diag` exit 1 |
+| **Причина** | Синхронный catalog provision (120 WAV) + `pg_advisory_lock`; застрявший lock после OOM/kill |
+| **Не путать с** | quota (413), disk full, 404 collection — upload curl при этом может давать 201 |
+| **Fix код** | `ensure-reserved` отдаёт коллекции сразу, catalog — deferred (PR #179+) |
+| **Fix ops** | `yarn media:prod:restart-api` → повтор smoke; ensure-reserved должен быть **&lt;1 s** |
+| **Профилактика** | Всегда `curl -m 15` на ensure-reserved в SSH-скриптах; не ждать бесконечно |
+
+### 10b. Health сразу после `up` / restart — ложный FAIL
+
+| | |
+|---|---|
+| **Симптом** | `curl: (56) Recv failure: Connection reset by peer` через 3–10 s после recreate |
+| **Причина** | NestJS/Prisma ещё не слушает 3010 |
+| **Fix** | Retry: sleep 2–3 s, до 8–10 попыток; только потом smoke |
+| **Профилактика** | Не считать деплой failed по первому curl; см. `scripts/_ssh-media-restart-api.mjs` |
+
+### 10c. Feature-ветка ≠ prod без merge
+
+| | |
+|---|---|
+| **Симптом** | Локальный fix есть, prod после `./deploy/media-stack.sh build` — старое поведение |
+| **Причина** | VPS клон тянет только `techies68` (или заданную release-ветку) |
+| **Fix** | Merge PR → `git pull` на VPS **или** одноразовый hotfix: `yarn media:prod:hotfix-deploy` (патч файла + rebuild, **до merge**) |
+| **Профилактика** | В task prompt явно: «prod hotfix только после merge в deploy-ветку, иначе hotfix-deploy» |
+
+### 10d. Имена Docker-контейнеров
+
+Compose project `membrana-media` → контейнер **`membrana-media-media-api-1`**, не `media-api`.
+
+```bash
+docker logs membrana-media-media-api-1 --tail 100
+docker ps --format '{{.Names}}'
+```
+
+### 10e. Дешёвый VPS (14 GB)
+
+| Риск | Порог / симптом | Действие |
+|------|-----------------|----------|
+| Disk | `df` **&gt;80%** | cleanup buffer samples, монитор blob volume |
+| Build | `docker build` 3–10 мин | swap 2G (`_ssh-media-deploy.mjs` создаёт `/swapfile`) |
+| OOM | intermittent restart | `free -h`, `docker stats --no-stream` |
+
+### 10f. SSH-хелперы и git
+
+| Факт | Следствие |
+|------|-----------|
+| `scripts/_ssh-*.mjs` в `.gitignore` | `yarn media:prod:*` — только если скрипты есть локально |
+| Credentials | `BACKGROUND_MEDIA_*` в `.env` — не в чат, не в PR |
+| Логи SSH | `%TEMP%` / `$TMPDIR`, не корень репо |
+
+### 10g. Smoke интерпретация
+
+| HTTP | Значение |
+|------|----------|
+| 201 | upload path OK |
+| 409 duplicate title | path OK |
+| 404 collection | cold device / race до ensure-reserved |
+| 413 | quota |
+
+```bash
+yarn media:prod:diag
+yarn media:prod:ensure-reserved-smoke
+yarn media:prod:upload-smoke
+yarn cabinet:mp3:smoke
+```
+
+---
+
+## 11. Локальная проверка (опционально)
 
 Не обязательна перед VPS. Если нужна отладка образа на dev-машине:
 
