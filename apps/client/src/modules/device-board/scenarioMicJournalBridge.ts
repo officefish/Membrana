@@ -480,9 +480,17 @@ export class ScenarioMicJournalBridge {
       session = new RecorderRecordingSession();
       this.recordingSessions.set(deviceHandle, session);
     }
+    const activeCapture = this.activeClipRecorders.get(deviceHandle);
     if (session.isActive()) {
-      scenarioChainLog('recording', 'start-recording-idempotent', { deviceHandle });
-      return true;
+      if (activeCapture !== undefined) {
+        scenarioChainLog('recording', 'start-recording-idempotent', { deviceHandle });
+        return true;
+      }
+      // Gate cycle restart (then-3): session timer active but clip was consumed on StopRecording.
+      scenarioChainLog('recording', 'start-recording-rearm', {
+        deviceHandle,
+        reason: 'active-without-capture',
+      });
     }
     const stream = this.resolveActiveStreamSync();
     if (stream === null) {

@@ -226,6 +226,40 @@ ResolveInputError: Node "fn-beta-policy-build-block" (kind=subgraph) is not a da
 
 ---
 
+### L18 — Clip recorder: stop-recording-empty on second gate cycle
+
+**Симптом (beta async-v2, runId f73b167b):**
+
+```text
+gate tick 77 · recording-window-full · stop-recording-empty · no second make-track
+```
+
+**Что:** после then-3 `StartRecording` session timer активен, но clip recorder уже снят на первом `StopRecording`. Idempotent start пропускал re-arm → второй gate получал пустой blob.
+
+**Fix:** `scenarioMicJournalBridge.startRecorderRecording` — re-arm при `session.isActive()` без `activeClipRecorders` (#180).
+
+**Профилактика:**
+
+- [x] Unit: start → stop → re-arm → stop (`scenarioMicJournalBridge.test.ts`)
+
+### L19 — Detached report dispatch in collapsed upload pipeline
+
+**Симптом (alpha/beta/gamma pass runs):**
+
+```text
+event-dispatch-detached-error on on-async-resolved inside fn-*-async-*-block
+```
+
+**Что:** `dispatchAsyncResolvedBranches` внутри collapsed function не резолвил parent block data pins для `make-report-from-track` (track/reporter через function-input).
+
+**Fix:** `augmentResolveContextForFunctionSubgraphTarget` в `async-resolved-dispatch.ts` — bridge в `findAsyncResolvedTargets` и detached dispatch (#180).
+
+**Профилактика:**
+
+- [x] Runtime test collapsed upload pipeline (`async-resolved-dispatch.test.ts`)
+
+---
+
 ## Чеклист перед merge competition UserCase
 
 ```text
