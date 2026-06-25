@@ -13,4 +13,4 @@
 | gamma | 2β | `316660a` | async live bundle |
 | *all* | 3 | `914d3f0` | consilium closed |
 | *all* | 4 | `72a0dbd` | vote → **Beta** 203.5 |
-| beta | 5 | *pending* | winner polish + closure |
+| beta | 5 | `e8433b1` | winner polish + closure |
