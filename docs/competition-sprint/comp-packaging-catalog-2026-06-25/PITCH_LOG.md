@@ -3,7 +3,7 @@
 | Phase | Deliverable | Commit |
 |-------|-------------|--------|
 | A | Catalog publish (picker ×3) + `comp:publish-catalog` + skill + regulation | `55fe27d` |
-| B | `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` (Anthropic) | pending commit |
+| B | `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` (Anthropic) | `af0ab47` |
 
 ## Phase A notes
 
