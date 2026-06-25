@@ -1,0 +1,50 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "alarm",
+  "branchLabel": "onAlarmTick",
+  "scenarioTitle": "UserCase Alpha: Live Observation Pipeline (async v2): onAlarmTick → stub (∞ only; MVP observation в main)",
+  "userCaseId": "usercase-mvp-microphone-alpha-async-v2",
+  "userCaseBranch": "alarm",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "alarm-on-tick",
+    "nodes": [
+      {
+        "id": "alarm-on-tick",
+        "label": "onTick",
+        "system": true,
+        "nodeKind": "event",
+        "position": {
+          "x": 40,
+          "y": 184
+        },
+        "blockKind": "custom",
+        "eventVariant": "loopTick"
+      },
+      {
+        "id": "alarm-infinity",
+        "label": "∞",
+        "system": true,
+        "nodeKind": "loop-repeat",
+        "position": {
+          "x": 504,
+          "y": 184
+        },
+        "blockKind": "custom"
+      }
+    ],
+    "edges": [
+      {
+        "kind": "exec",
+        "source": "alarm-on-tick",
+        "target": "alarm-infinity",
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
+      }
+    ]
+  },
+  "variables": [],
+  "referenceVariableSlots": [],
+  "referencedVariableIds": [],
+  "exportedAt": "2026-06-25T11:47:34.057Z"
+}

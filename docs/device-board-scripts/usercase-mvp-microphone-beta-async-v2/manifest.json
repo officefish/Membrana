@@ -1,0 +1,61 @@
+{
+  "id": "usercase-mvp-microphone-beta-async-v2",
+  "title": "Beta: Measured modular UserCase (async v2)",
+  "description": "Competition async v2 Team Beta — modular async functions, verify-layout metrics.",
+  "deviceKind": "microphone",
+  "tier": "community",
+  "layoutProfile": "exec-lr-v1",
+  "minEditorFeatures": [
+    "align",
+    "groups",
+    "functions",
+    "exec-layout"
+  ],
+  "canon": "DEVICE_BOARD_CONCEPT.md §16.5.1",
+  "goldenDocument": "docs/device-board-scripts/golden/usercase-mvp-microphone-v09-functions.document.json",
+  "embeddedDocument": "packages/device-board/src/graph/default-usercase-mvp-microphone-beta-async-v2.generated.ts",
+  "importOrder": [
+    "02-onStart.json",
+    "01-onConnect.json",
+    "03-onMainTick.json",
+    "04-onAlarmTick.json",
+    "05-onStop.json",
+    "06-onDisconnect.json"
+  ],
+  "branches": {
+    "onConnect": {
+      "bundleFile": "01-onConnect.json",
+      "nodeCount": 6,
+      "edgeCount": 8
+    },
+    "initial": {
+      "bundleFile": "02-onStart.json",
+      "nodeCount": 4,
+      "edgeCount": 7
+    },
+    "main": {
+      "bundleFile": "03-onMainTick.json",
+      "nodeCount": 32,
+      "edgeCount": 51
+    },
+    "onStop": {
+      "bundleFile": "05-onStop.json",
+      "nodeCount": 5,
+      "edgeCount": 3
+    },
+    "onDisconnect": {
+      "bundleFile": "06-onDisconnect.json",
+      "nodeCount": 4,
+      "edgeCount": 3
+    },
+    "alarm": {
+      "bundleFile": "04-onAlarmTick.json",
+      "nodeCount": 2,
+      "edgeCount": 1
+    }
+  },
+  "commentGroupProfile": "beta",
+  "packProfile": "beta",
+  "competitionSprint": "comp-mvp-async-v2-2026-06-25",
+  "competitionBase": "v2.0-async"
+}

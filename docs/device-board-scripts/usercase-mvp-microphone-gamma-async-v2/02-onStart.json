@@ -1,0 +1,83 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "initial",
+  "branchLabel": "On start",
+  "scenarioTitle": "UserCase Gamma: Poster UserCase (async v2): onStart → GetMicrophone → StartStreaming → StartRecording (fn-1)",
+  "userCaseId": "usercase-mvp-microphone-gamma-async-v2",
+  "userCaseBranch": "initial",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "initial-event",
+    "nodes": [
+      {
+        "id": "initial-event",
+        "label": "On start",
+        "system": true,
+        "nodeKind": "event",
+        "position": {
+          "x": -1888,
+          "y": -728
+        },
+        "blockKind": "custom",
+        "eventVariant": "handler"
+      },
+      {
+        "id": "node-get-microphone-mqkpxb3c-5",
+        "label": "GetMicrophone",
+        "nodeKind": "get-microphone",
+        "position": {
+          "x": -1424,
+          "y": -728
+        },
+        "blockKind": "custom",
+        "microphoneId": "0928f245e15f012de6b0d9e32f70efd5e6bc3957af6381c2b28da7536d150c04"
+      },
+      {
+        "id": "node-start-streaming-mql556hh-49",
+        "label": "StartStreaming",
+        "nodeKind": "start-streaming",
+        "position": {
+          "x": -960,
+          "y": -728
+        },
+        "blockKind": "custom"
+      }
+    ],
+    "edges": [
+      {
+        "kind": "data",
+        "source": "initial-event",
+        "target": "node-get-microphone-mqkpxb3c-5",
+        "dataType": "DeviceRef",
+        "sourceHandle": "device",
+        "targetHandle": "device"
+      },
+      {
+        "kind": "data",
+        "source": "node-get-microphone-mqkpxb3c-5",
+        "target": "node-start-streaming-mql556hh-49",
+        "dataType": "MicrophoneRef",
+        "sourceHandle": "microphone",
+        "targetHandle": "microphone"
+      },
+      {
+        "kind": "exec",
+        "source": "node-get-microphone-mqkpxb3c-5",
+        "target": "node-start-streaming-mql556hh-49",
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "initial-event",
+        "target": "node-get-microphone-mqkpxb3c-5",
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
+      }
+    ]
+  },
+  "variables": [],
+  "referenceVariableSlots": [],
+  "referencedVariableIds": [],
+  "exportedAt": "2026-06-25T11:47:49.557Z"
+}

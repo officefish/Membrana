@@ -1,0 +1,95 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "onStop",
+  "branchLabel": "onStop",
+  "scenarioTitle": "UserCase Alpha: Live Observation Pipeline (async v2): onStop → StopStreaming",
+  "userCaseId": "usercase-mvp-microphone-alpha-async-v2",
+  "userCaseBranch": "onStop",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "on-stop-event",
+    "nodes": [
+      {
+        "id": "on-stop-event",
+        "label": "On stop",
+        "system": true,
+        "nodeKind": "event",
+        "position": {
+          "x": 104,
+          "y": 48
+        },
+        "blockKind": "custom",
+        "eventVariant": "handler"
+      },
+      {
+        "id": "node-is-valid-mqm9nw3u-21",
+        "label": "isValid",
+        "nodeKind": "is-valid",
+        "position": {
+          "x": 568,
+          "y": 48
+        },
+        "blockKind": "custom"
+      },
+      {
+        "id": "node-stop-streaming-mqm9ofcy-22",
+        "label": "StopStreaming",
+        "nodeKind": "stop-streaming",
+        "position": {
+          "x": 1032,
+          "y": 48
+        },
+        "blockKind": "custom"
+      },
+      {
+        "id": "node-device-global-mvp-onstop-1",
+        "label": "GetDevice",
+        "nodeKind": "device-global",
+        "position": {
+          "x": -120,
+          "y": 184
+        },
+        "blockKind": "custom"
+      },
+      {
+        "id": "node-get-microphone-mvp-onstop-1",
+        "label": "GetMicrophone",
+        "nodeKind": "get-microphone",
+        "position": {
+          "x": 56,
+          "y": 312
+        },
+        "blockKind": "custom",
+        "microphoneId": "0928f245e15f012de6b0d9e32f70efd5e6bc3957af6381c2b28da7536d150c04"
+      }
+    ],
+    "edges": [
+      {
+        "kind": "exec",
+        "source": "on-stop-event",
+        "target": "node-is-valid-mqm9nw3u-21",
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "node-is-valid-mqm9nw3u-21",
+        "target": "node-stop-streaming-mqm9ofcy-22",
+        "sourceHandle": "exec-true-out",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "data",
+        "source": "node-device-global-mvp-onstop-1",
+        "target": "node-get-microphone-mvp-onstop-1",
+        "dataType": "DeviceRef",
+        "sourceHandle": "device",
+        "targetHandle": "device"
+      }
+    ]
+  },
+  "variables": [],
+  "referenceVariableSlots": [],
+  "referencedVariableIds": [],
+  "exportedAt": "2026-06-25T11:47:34.056Z"
+}

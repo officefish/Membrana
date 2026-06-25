@@ -1,6 +1,6 @@
 # Concept — Team Alpha (Vesnin + Музыкант)
 
-> **Phase 1 draft** · sprint `comp-mvp-async-v2-2026-06-25` · наследие v1: [Live Observation Pipeline](../../comp-mvp-packaging-2026-06-21/team-alpha/CONCEPT.md) · синтез: [COMPETITION_V1_DESIGN_SYNTHESIS.md](../../comp-mvp-packaging-2026-06-21/COMPETITION_V1_DESIGN_SYNTHESIS.md)
+> **Phase 1 complete** · **Phase 2α in progress** · sprint `comp-mvp-async-v2-2026-06-25` · наследие v1: [Live Observation Pipeline](../../comp-mvp-packaging-2026-06-21/team-alpha/CONCEPT.md) · синтез: [COMPETITION_V1_DESIGN_SYNTHESIS.md](../../comp-mvp-packaging-2026-06-21/COMPETITION_V1_DESIGN_SYNTHESIS.md)
 
 ## One-liner
 
@@ -82,4 +82,12 @@
 
 ---
 
-*Team Alpha · Phase 1 · comp-mvp-async-v2-2026-06-25*
+## Implementation
+
+### 2α — vertical slice
+
+- [x] `yarn usercase:build-competition-async-v2 alpha`
+- [x] main: latent Sequence + Act IIb groups + gate/trends functions
+- [x] verify-layout green
+
+*Team Alpha · comp-mvp-async-v2-2026-06-25*

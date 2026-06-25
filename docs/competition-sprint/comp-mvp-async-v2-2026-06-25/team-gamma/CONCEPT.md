@@ -1,6 +1,6 @@
 # Concept — Team Gamma (Rodchenko)
 
-> **Phase 1 draft** · sprint `comp-mvp-async-v2-2026-06-25` · наследие v1: [Poster UserCase](../../comp-mvp-packaging-2026-06-21/team-gamma/CONCEPT.md)
+> **Phase 1 complete** · **Phase 2α in progress** · sprint `comp-mvp-async-v2-2026-06-25` · наследие v1: [Poster UserCase](../../comp-mvp-packaging-2026-06-21/team-gamma/CONCEPT.md)
 
 ## One-liner
 
@@ -70,4 +70,12 @@
 
 ---
 
-*Team Gamma · Phase 1 · comp-mvp-async-v2-2026-06-25*
+## Implementation
+
+### 2α — vertical slice
+
+- [x] `yarn usercase:build-competition-async-v2 gamma`
+- [x] poster ①–⑥ with async ⑤⑥ frames
+- [x] verify-layout green
+
+*Team Gamma · comp-mvp-async-v2-2026-06-25*

@@ -1,6 +1,6 @@
 # Concept — Team Beta (Ozhegov + Dynin)
 
-> **Phase 1 draft** · sprint `comp-mvp-async-v2-2026-06-25` · наследие v1: [Measured modular UserCase](../../comp-mvp-packaging-2026-06-21/team-beta/CONCEPT.md)
+> **Phase 1 complete** · **Phase 2α in progress** · sprint `comp-mvp-async-v2-2026-06-25` · наследие v1: [Measured modular UserCase](../../comp-mvp-packaging-2026-06-21/team-beta/CONCEPT.md)
 
 ## One-liner
 
@@ -85,4 +85,12 @@ Orchestrator walk: Policy → Gate (latent) → Trends sync → Upload async str
 
 ---
 
-*Team Beta · Phase 1 · comp-mvp-async-v2-2026-06-25*
+## Implementation
+
+### 2α — vertical slice
+
+- [x] `yarn usercase:build-competition-async-v2 beta`
+- [x] orchestrator + async upload/detached comment frames
+- [x] verify-layout green
+
+*Team Beta · comp-mvp-async-v2-2026-06-25*

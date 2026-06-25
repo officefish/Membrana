@@ -80,10 +80,16 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
     {
       id: 'ucg-alpha-main-gate',
       title: 'Акт II · Окно записи',
-      description: 'Gate: bootstrap → window full → MakeTrack → upload',
+      description: 'Latent Sequence gate: bootstrap → window full → MakeTrack',
       frameColor: { preset: 'warning' },
       functionIds: ['fn-alpha-recording-gate'],
-      nodeKinds: ['start-recording', 'stop-recording', 'is-recording-window-full', 'make-track'],
+      nodeKinds: [
+        'sequence',
+        'start-recording',
+        'stop-recording',
+        'is-recording-window-full',
+        'make-track',
+      ],
     },
     {
       id: 'ucg-alpha-main-trends',
@@ -98,6 +104,20 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
       description: 'Reporter и публикация на сервер',
       frameColor: { preset: 'accent' },
       nodeKinds: ['get-journal', 'get-reporter'],
+    },
+    {
+      id: 'ucg-alpha-async-iib-upload',
+      title: 'Акт IIb · Отправка в фоне',
+      description: 'StartAsyncJob track-upload — не блокирует main tick',
+      frameColor: { preset: 'warning' },
+      nodeKinds: ['start-async-job'],
+    },
+    {
+      id: 'ucg-alpha-async-iib-detached',
+      title: 'Акт IIb · Отчёт дрон',
+      description: 'Detached on-async-resolved → MakeReportFromTrack → PublishReport',
+      frameColor: { preset: 'accent' },
+      nodeKinds: ['on-async-resolved', 'make-report-from-track', 'publish-report'],
     },
   ],
   beta: [
@@ -137,6 +157,20 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
       frameColor: { preset: 'neutral' },
       functionIds: ['fn-beta-policy-build'],
     },
+    {
+      id: 'ucg-beta-async-upload',
+      title: 'Async: upload pipeline',
+      description: 'StartAsyncJob track-upload (non-blocking)',
+      frameColor: { preset: 'info' },
+      nodeKinds: ['start-async-job', 'sequence'],
+    },
+    {
+      id: 'ucg-beta-async-detached',
+      title: 'Async: detached report',
+      description: 'on-async-resolved → drone publish',
+      frameColor: { preset: 'accent' },
+      nodeKinds: ['on-async-resolved', 'make-report-from-track'],
+    },
   ],
   gamma: [
     {
@@ -163,16 +197,24 @@ export const USERCASE_COMMENT_GROUP_PROFILES: Readonly<
     {
       id: 'ucg-gamma-04-trends',
       title: '④ Классификация',
-      description: 'DRONE_TIGHT и каталог шаблонов',
+      description: 'DRONE_TIGHT, журнал и каталог шаблонов',
       frameColor: { preset: 'info' },
       functionIds: ['fn-gamma-trends-publish'],
+      nodeKinds: ['get-journal'],
     },
     {
-      id: 'ucg-gamma-05-journal',
-      title: '⑤ Отчёт на сервер',
-      description: 'Track + trends-fft/v0.1',
+      id: 'ucg-gamma-05-async-upload',
+      title: '⑤ Отправка в фоне',
+      description: 'StartAsyncJob — upload не блокирует tick',
+      frameColor: { preset: 'info' },
+      nodeKinds: ['start-async-job', 'sequence'],
+    },
+    {
+      id: 'ucg-gamma-06-async-detached',
+      title: '⑥ Отчёт дрон (detached)',
+      description: 'on-async-resolved → publish',
       frameColor: { preset: 'accent' },
-      nodeKinds: ['get-journal'],
+      nodeKinds: ['on-async-resolved', 'make-report-from-track', 'publish-report'],
     },
   ],
 };
