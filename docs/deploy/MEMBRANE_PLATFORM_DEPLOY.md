@@ -24,19 +24,30 @@ merge PR → деплой на VPS → prod-smoke фазы → отчёт в Iss
 
 ---
 
-## Prod-топология (цель)
+## Prod-топология (цель, v0.6 — 2 VPS)
 
-| DNS | Сервис | Порт (внутри) | Фаза появления |
-|-----|--------|---------------|----------------|
-| `media.membrana.space` | `background-media` | 3010 | уже есть (#58–#66) |
-| `cabinet.membrana.space` | `apps/cabinet` + API paths `/health`, `/v1/*` | 3020 / 8080 | **MP1** |
-| `cabinet-api.membrana.space` | `background-cabinet` (опционально) | 3020 | MP1+DNS |
+> Аудит диска 2026-06-25 (#178): combined 14 GB VPS — **legacy**; blobs малы, Docker overhead велик. Канон ёмкости: [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity».
 
-Один VPS (как media): Caddy TLS, Docker Compose, секреты в `/etc/membrana/*.env`.
+| VPS | Роль | Specs (ориентир) | DNS / сервисы |
+|-----|------|------------------|---------------|
+| **Platform** | paired data-plane + cabinet | **50 GB NVMe**, **4 GB RAM**, 2×5 GHz, 200 Mbps | `media.membrana.space` · `cabinet.membrana.space` |
+| **Integrations** | RAG + Claude/Linear/GitHub | **≥14 GB** disk (после split), **≥2 GB RAM** | `office.membrana.space` + LanceDB (`.membrana/rag/`) |
 
-Эталон media: [`BACKGROUND_MEDIA_DEPLOY.md`](./BACKGROUND_MEDIA_DEPLOY.md), `deploy/media-stack.sh`.
+| DNS | Сервис | Порт (внутри) | Фаза | VPS |
+|-----|--------|---------------|------|-----|
+| `media.membrana.space` | `background-media` | 3010 | #58–#66 | **Platform** |
+| `cabinet.membrana.space` | `apps/cabinet` + API paths `/health`, `/v1/*` | 3020 / 8080 | **MP1** | **Platform** |
+| `cabinet-api.membrana.space` | `background-cabinet` (опционально) | 3020 | MP1+DNS | **Platform** |
+| `office.membrana.space` | `background-office` + RAG | 3000 | O1–O3 | **Integrations** |
 
-**MP1:** Dockerfile + compose + Caddy для cabinet — реализовано; см. [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
+**Soft caps (shared platform 4 GB):** free-v1 до **100** paired membranes; indie-v1 до **30**; business-v1 — **отдельный** узел (см. TARIFF_MATRIX).
+
+Caddy TLS + Docker Compose на каждом VPS; секреты в `/etc/membrana/*.env`.
+
+Эталон media: [`BACKGROUND_MEDIA_DEPLOY.md`](./BACKGROUND_MEDIA_DEPLOY.md) §12, `deploy/media-stack.sh`.
+Эталон cabinet: [`BACKGROUND_CABINET_DEPLOY.md`](./BACKGROUND_CABINET_DEPLOY.md).
+
+**Legacy (до миграции):** media + cabinet + office на одном 14 GB хосте — допустимо для smoke, **не** для beta load.
 
 ---
 

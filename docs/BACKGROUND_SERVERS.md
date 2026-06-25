@@ -118,6 +118,23 @@ flowchart LR
 
 ---
 
+## Prod-топология (v0.6, 2 VPS)
+
+> Аудит 2026-06-25: combined 14 GB — legacy; Docker (containerd + build cache) >> user blobs early. Канон: [`TARIFF_MATRIX.md`](./TARIFF_MATRIX.md) §«Platform capacity».
+
+| VPS | Пакеты | Specs (ориентир) |
+|-----|--------|------------------|
+| **Platform** | `background-media` + `background-cabinet` | 50 GB NVMe, 4 GB RAM |
+| **Integrations** | `background-office` + LanceDB RAG | ≥14 GB disk, ≥2 GB RAM |
+
+**Не смешивать** после split: WAV blobs и RAG full index build на одном диске.
+
+**Soft caps (shared platform):** free-v1 **100**, indie-v1 **30**, business — dedicated node.
+
+Deploy: [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md) · media §12 · cabinet на том же platform host.
+
+---
+
 ## Стек `background-media` (зафиксировано до A5a)
 
 | Слой | Технология | Примечание |

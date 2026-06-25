@@ -136,5 +136,6 @@ sequenceDiagram
 ## Заметки для постановщика
 
 1. Создать GitHub Issue (wish/imperfection) со ссылкой на этот файл.
-2. Prod deploy: media migration + cabinet image; client — local build until client deploy pipeline.
-3. Consilium опционально перед W2 если спорят про grandfather при downgrade.
+2. **Prod deploy target:** **platform VPS** (50 GB NVMe, 4 GB RAM) — media + cabinet only; office+RAG на integrations VPS. Ёмкость и soft caps: [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity».
+3. Prod deploy: media migration + cabinet image; client — local build until client deploy pipeline.
+4. Consilium опционально перед W2 если спорят про grandfather при downgrade.

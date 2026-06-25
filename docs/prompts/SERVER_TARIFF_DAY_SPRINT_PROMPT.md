@@ -87,5 +87,6 @@
 ## Заметки для постановщика
 
 1. `yarn main-day-issue` — выставить `primaryFocusId: server-tariff-enforcement-v1`.
-2. Deploy: `media:migrate` + cabinet image после merge B0.
-3. Client — local dev build до появления client deploy pipeline.
+2. **Deploy target:** platform VPS (**50 GB / 4 GB RAM**) — media+cabinet; не combined 14 GB legacy. Capacity: [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity».
+3. Deploy: `media:migrate` + cabinet image после merge B0.
+4. Client — local dev build до появления client deploy pipeline.

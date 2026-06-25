@@ -1,6 +1,6 @@
 # TARIFF_MATRIX — матрица тарифов Membrane Platform
 
-> **Статус:** черновик v0.5 (2026-06-23). Продуктовая матрица на **3 тарифа**; технические id совпадают с seed в [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md).
+> **Статус:** черновик v0.6 (2026-06-25). Продуктовая матрица на **3 тарифа**; технические id совпадают с seed в [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md).
 >
 > **Связанные документы:** [`INTEGRATIONS_STRATEGY.md`](./INTEGRATIONS_STRATEGY.md) §4 (каталог детекторов), [`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md) (stage-gate), [`DATASET.md`](./DATASET.md) (корпуса каталогов).
 
@@ -69,9 +69,24 @@
 | **Hot retention** (записи в активном журнале) | **3 дня** | **10 дней** | **30 дней** |
 | **Архив журнала** (после hot) | — | — | перенос после 30 дней, квота **40 GiB** |
 | **Device-board user workspaces** (редактируемые слоты на узел) | **3** ✓ | **10** (план) | **25** (план) |
-| **Цена (ориентир)** | 0 ₽ | подписка | контракт |
+| **Цена (ориентир, v0.6)** | **0 ₽** | **790–990 ₽/мес** · **7 900 ₽/год** | **от 4 900 ₽/мес** · команда **от 12 900 ₽/мес** |
 
 ✓ — реализовано или зафиксировано в коде/seed. «Черновик» / «план» — продуктовый ориентир до MP billing.
+
+### Цены (черновик v0.6, не billing)
+
+| id | Модель | Ориентир | Примечание |
+|----|--------|----------|------------|
+| `free-v1` | Freemium | **0 ₽** | 1 node, hot 3 дня; lead-gen |
+| `indie-v1` | Подписка | **790–990 ₽/мес** за мембрану | MFCC/спектр, 600 сэмплов, neural pack |
+| `indie-v1` | Год | **7 900 ₽/год** (~−17%) | удержание операторов |
+| `business-v1` | Контракт | **от 4 900 ₽/мес** (1 node) | archive 40 GiB, SLA |
+| `business-v1` | Команда | **от 12 900 ₽/мес** | до 3 nodes / multi-key (план) |
+| add-on | Server inference | **+2 000 ₽/мес** | когда появится `background-inference` sidecar |
+
+Цена растёт **медленнее**, чем product-квоты (storage × catalog). Финальные цифры — LGTM Teamlead + billing sprint.
+
+**Soft caps на shared platform VPS** (§«Platform capacity»): free до **100** paired мембран/инстанс; indie до **30**; business — **не** на shared 4 GB RAM.
 
 ### Облачный журнал: hot, архив, export
 
@@ -201,6 +216,66 @@
 
 ---
 
+## Platform capacity & topology (v0.6)
+
+> Prod-аудит 2026-06-25. Деплой: [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md) · media: [`BACKGROUND_MEDIA_DEPLOY.md`](./deploy/BACKGROUND_MEDIA_DEPLOY.md) §12.
+
+### Целевая топология (2 VPS)
+
+| VPS | Роль | Рекомендуемые specs | Сервисы |
+|-----|------|---------------------|---------|
+| **Platform** | paired data-plane + cabinet | **50 GB NVMe**, **4 GB RAM**, 2×5 GHz CPU, 200 Mbps | `background-media` + `background-cabinet` + 2× PostgreSQL |
+| **Integrations** | RAG + Claude/Linear/GitHub | **≥14 GB** disk (legacy ok после миграции), **≥2 GB RAM** | `background-office` + LanceDB (`.membrana/rag/`) |
+
+**Не смешивать** media blobs и office RAG на одном диске после split — build cache Docker на platform узле съедает место быстрее user data.
+
+### Реальное потребление disk (free-v1, prod 2026-06)
+
+| Компонент | На deviceId | На инстанс (fixed) |
+|-----------|-------------|-------------------|
+| Tariff catalog (120 × 5 s @ 48 kHz) | **~58 MB** provision | — |
+| Buffer (типично) | **50–100 MB** | — |
+| User collections (ранний этап) | **10–50 MB** | — |
+| **Итого типично / free user** | **~150–250 MB** | — |
+| Docker images + PG (media+cabinet) | — | **~3 GB** |
+| Docker build cache (без prune) | — | **до 2.5 GB** — **не держать на prod** |
+
+Blobs **не** главный потребитель на ранней стадии; **containerd/build cache** — да (см. deploy §10).
+
+### Ёмкость platform VPS (50 GB NVMe, 4 GB RAM)
+
+Резерв под OS + Docker (disciplined prune): **~8–10 GB** → **~40 GB** под blobs.
+
+| Сценарий | Допущение | **Paired users (nodes)** |
+|----------|-----------|--------------------------|
+| **Тест / beta** | 100% free-v1, ~200 MB/user | **~150–200** |
+| **Реалистичный mix** | 70% free 200 MB + 30% heavy 800 MB | **~100** |
+| **Indie-heavy** | ~1 GB/user типично | **~35–40** |
+| **Worst-case quota** | все max 2 GiB free | **~20** (нереалистично) |
+
+**RAM (4 GB):** idle стек ~2–2.5 GB; одновременно активных mic/upload — планировать **10–20** без мониторинга; **50–80** paired free при редкой одновременности.
+
+**Bandwidth 200 Mbps:** не bottleneck для gate-WAV upload.
+
+### Soft caps (ops, до billing meter)
+
+| Тариф | Shared platform instance | Dedicated tier trigger |
+|-------|--------------------------|------------------------|
+| `free-v1` | до **100** paired membranes | — |
+| `indie-v1` | до **30** | NVMe **100 GB+** |
+| `business-v1` | **не** на shared 4 GB | отдельный VPS / archive tier |
+
+### Квота vs типичное (free-v1)
+
+| | Технический max / device | Типично ранний prod |
+|---|--------------------------|---------------------|
+| userStorage + buffer | 2 GiB | 150–250 MB |
+| Каталог | ~58 MB (не в userStorage quota) | provision once |
+
+Indie/business черновики (10+5 GiB, 50+20 GiB) **не** рассчитаны на один shared 4 GB узел без tiering.
+
+---
+
 ## Изменения документа
 
 | Дата | Версия | Что изменилось |
@@ -210,5 +285,6 @@
 | 2026-06-16 | v0.3 | Спектральный пакет (MFCC + спектрограмма сэмпла) с `indie-v1` |
 | 2026-06-23 | v0.4 | User workspace slots (`maxUserWorkspaces`): free **3** ✓; indie/business — план (U10 D1) |
 | 2026-06-23 | v0.5 | STE v1: server enforcement workspace quota + v2 document on media PUT |
+| 2026-06-25 | v0.6 | Platform capacity (2 VPS), pricing draft, soft caps; prod disk audit #178 |
 
 *Вопросы по квотам и детекции — Teamlead; правки — через PR с обновлением seed только после согласования.*

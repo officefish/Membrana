@@ -117,6 +117,8 @@ yarn cabinet:mp3:smoke    # pairing + media device reachability
 | `yarn media:prod:restart-api` | restart `media-api` (stuck advisory lock) |
 | `yarn media:prod:hotfix-deploy` | patch `collections.controller.ts` + rebuild image |
 
-**2026-06-25 (#178):** до hotfix `ensure-reserved` мог «висеть»; после `restart-api` / hotfix — ~0.1s. Upload path на prod рабочий (201/409); client race — `whenMediaLibraryConfigured()` + `ensureReservedCollections` в `importBlob`. Диск VPS ~84% — мониторить.
+**2026-06-25 (#178):** до hotfix `ensure-reserved` мог «висеть»; после `restart-api` / hotfix — ~0.1s. Upload path на prod рабочий (201/409); client race — `whenMediaLibraryConfigured()` + `ensureReservedCollections` в `importBlob`.
+
+**Capacity / disk:** на legacy combined 14 GB VPS диск часто занят **Docker** (containerd + build cache), не user blobs. Целевая топология — platform 50 GB (media+cabinet only): [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity», deploy §10e + §12.
 
 **Deploy agent:** полный список препятствий — [`BACKGROUND_MEDIA_DEPLOY.md`](./BACKGROUND_MEDIA_DEPLOY.md) §10 · A5c prompt § «Предупреждения деплоя».

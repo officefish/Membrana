@@ -40,8 +40,8 @@ Competition packaging Phase C: operator smoke **alpha-async-v2** — gate + tren
 2. **Fix** в правильном слое (client bridge / media-library / background-media / ops).
 3. **`yarn media:diag`** — health → quota → ensure-reserved → test WAV upload.
 4. **Runbook** [`MEDIA_SERVER_DIAGNOSTICS.md`](../deploy/MEDIA_SERVER_DIAGNOSTICS.md).
-5. **Deploy pitfalls** [`BACKGROUND_MEDIA_DEPLOY.md`](../deploy/BACKGROUND_MEDIA_DEPLOY.md) §10
-5. Alpha operator smoke: `yarn logs:parse` → **v20 happy path: PASS**.
+5. **Deploy pitfalls** [`BACKGROUND_MEDIA_DEPLOY.md`](../deploy/BACKGROUND_MEDIA_DEPLOY.md) §10 · **capacity** [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity» · deploy §12
+6. Alpha operator smoke: `yarn logs:parse` → **v20 happy path: PASS**.
 
 ---
 
@@ -73,7 +73,9 @@ Competition packaging Phase C: operator smoke **alpha-async-v2** — gate + tren
 ```bash
 yarn media:diag --register          # local: yarn media:db:up && yarn media:migrate && yarn media:dev
 yarn media:diag --device-id <id>    # prod paired device
-# VPS: df -h, docker stats, yarn media:docker:logs (логи в %TEMP%)
+# VPS: df -h, docker stats (Docker bloat >> blobs on 14 GB legacy — см. deploy §10e)
+# Platform target: 50 GB NVMe media+cabinet — TARIFF_MATRIX §Platform capacity
+# yarn media:docker:logs (логи в %TEMP%)
 ```
 
 Классифицировать root cause: `client` | `server-quota` | `server-infra` | `env-misconfig`.

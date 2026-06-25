@@ -1,6 +1,8 @@
 # Деплой `@membrana/background-cabinet` + `apps/cabinet` (MP1)
 
-Пошаговый чеклист для VPS (тот же хост, что `media.membrana.space`).
+Пошаговый чеклист для **platform VPS** (тот же хост, что `media.membrana.space`).
+
+> **Specs platform node:** ≥ **50 GB NVMe**, ≥ **4 GB RAM** — media + cabinet + test users. Ёмкость и soft caps: [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity», deploy media §12.
 
 Связанные документы: [`MEMBRANE_PLATFORM_DEPLOY.md`](./MEMBRANE_PLATFORM_DEPLOY.md), [`packages/background-cabinet/README.md`](../../packages/background-cabinet/README.md), эпик [#67](https://github.com/officefish/Membrana/issues/67).
 

@@ -56,11 +56,15 @@ node scripts/_ssh-media-tls-setup.mjs      # Caddy + Let's Encrypt
 |----------|----------|
 | Хост / IP | см. §1 |
 | SSH user | см. §1 |
-| DNS | `media.membrana.space` → A-record `72.56.27.58` |
+| DNS | `media.membrana.space` → A-record platform VPS |
 | OS | Ubuntu 22.04+ / Debian 12+ |
 | Docker | Engine 24+ + Compose v2 |
-| Диск | ≥ 20 GB (blobs + PG) |
+| **Диск (platform node)** | **≥ 50 GB NVMe** (рекомендуется для media+cabinet + test users) |
+| **RAM** | **≥ 4 GB** (2× PG + 2 API; swap 2G на build) |
+| CPU | 2+ vCPU @ ~5 GHz класс |
 | Порты наружу | **443** (Caddy), **22** (SSH); PostgreSQL **не** публичный |
+
+> **Legacy:** combined stack (media+cabinet+office) на **14 GB** disk — **не** целевая топология. Office+RAG → integrations VPS; media+cabinet → platform VPS. Ёмкость: [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity».
 
 ---
 
@@ -287,11 +291,13 @@ docker logs membrana-media-media-api-1 --tail 100
 docker ps --format '{{.Names}}'
 ```
 
-### 10e. Дешёвый VPS (14 GB)
+### 10e. Дешёвый / legacy VPS (14 GB combined)
 
 | Риск | Порог / симптом | Действие |
 |------|-----------------|----------|
-| Disk | `df` **&gt;80%** | cleanup buffer samples, монитор blob volume |
+| Disk | `df` **&gt;80%** на **combined** stack | **split:** office → integrations VPS; media+cabinet → platform 50 GB |
+| Docker bloat | containerd **~5 GB** + build cache **~2.5 GB** | `docker builder prune`; **не** build на prod в часы пик |
+| User blobs | часто **&lt;1 GB** total early | не путать с Docker overhead |
 | Build | `docker build` 3–10 мин | swap 2G (`_ssh-media-deploy.mjs` создаёт `/swapfile`) |
 | OOM | intermittent restart | `free -h`, `docker stats --no-stream` |
 
@@ -336,6 +342,33 @@ curl http://localhost:3010/health
 
 Остановка: `yarn media:docker:down`  
 Полная очистка volumes: `docker compose -f packages/background-media/docker-compose.yml down -v`
+
+---
+
+## 12. Platform capacity (paired users)
+
+> Канон: [`TARIFF_MATRIX.md`](../TARIFF_MATRIX.md) §«Platform capacity». Pricing soft caps — там же.
+
+**Platform VPS (цель):** 50 GB NVMe · 4 GB RAM · media + cabinet only.
+
+| Метрика | Ориентир |
+|---------|----------|
+| Типичный free-v1 user (blobs) | **150–250 MB** / deviceId |
+| Catalog provision (free-v1) | **~58 MB** / deviceId (120 × 5 s) |
+| Comfortable paired users (test) | **50–80** active; до **100–150** при редкой одновременности |
+| Concurrent mic/upload | **10–20** без ops monitoring |
+| Indie on same 4 GB box | cap **~30** users; business — **dedicated** node |
+
+**Post-migration checklist:**
+
+```bash
+docker builder prune -f          # освободить build cache на legacy node
+df -h /var/lib/membrana/media-blobs
+yarn media:prod:diag
+yarn cabinet:mp3:smoke
+```
+
+**Не на platform node:** `background-office`, RAG full index build, fat `docker build` loops.
 
 ---
 
