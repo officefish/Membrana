@@ -8137,6 +8137,34 @@
       "sprintKind": "day-sprint",
       "parentEpic": "night-hunt-sprint-2026-06-25",
       "leadPersona": "vesnin"
+    },
+    {
+      "id": "competition-async-v2-prep-2026-06-25",
+      "title": "Prep sprint: archive comp v1 + synthesis + brief async v2",
+      "promptPath": "docs/prompts/COMPETITION_ASYNC_V2_PREP_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": null,
+      "leadPersona": "vesnin",
+      "notes": "Closed 2026-06-25 — comp-mvp-async-v2 opened."
+    },
+    {
+      "id": "comp-mvp-async-v2-2026-06-25",
+      "title": "Competition Sprint: MVP UserCase async v2 packaging",
+      "promptPath": "docs/competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-25",
+      "sprintKind": "competition-sprint",
+      "parentEpic": null,
+      "leadPersona": "vesnin",
+      "notes": "OPEN Phase 1 — 3 teams alpha/beta/gamma; base v2.0-async; BASE_SHA 823057e."
     }
   ]
 }
