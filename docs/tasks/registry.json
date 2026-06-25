@@ -8175,12 +8175,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "competition-packaging",
       "parentEpic": "comp-mvp-async-v2-2026-06-25",
       "leadPersona": "vesnin",
-      "notes": "Phase A–C complete. Operator smoke PASS all forks (2026-06-25). Pack L17/L20 in closure PR."
+      "notes": "Phase A–C complete. Operator smoke PASS all forks (2026-06-25). Pack L17/L20 in closure PR.",
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "PR #179, L17/L20 pack wiring, operator smoke PASS alpha/beta/gamma, commit 762db7f"
     },
     {
       "id": "async-v2-track-upload-178",

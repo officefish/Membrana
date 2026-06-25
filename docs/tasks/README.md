@@ -166,7 +166,7 @@
 | `nh-s1-office-module` | NH1: night-hunt module in background-office | M | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `nh-s2-fly-deploy` | NH2: Fly.io deploy + secrets | S | [`DEPLOY.md`](../packages/background-office/DEPLOY.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `nh-s3-rituals` | NH3: morning PR review + evening archive | S | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
-| `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
+| `async-v2-track-upload-178` | Fix async-v2 track upload — blocks detached drone report (#178) | M | [`ASYNC_V2_TRACK_UPLOAD_PROMPT.md`](../docs/prompts/ASYNC_V2_TRACK_UPLOAD_PROMPT.md) | [#178](https://github.com/officefish/Membrana/issues/178) |
 
 ---
 
@@ -180,6 +180,7 @@
 | `db-ap-r0-consilium-spec` | DB-AP-R0: consilium + ADR + GitHub Issue | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | #176 (Issue открыт) | [карточка](./archive/db-ap-r0-consilium-spec.md) |
 | `competition-async-v2-prep-2026-06-25` | Prep sprint: archive comp v1 + synthesis + brief async v2 | 2026-06-25 | [`COMPETITION_ASYNC_V2_PREP_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_ASYNC_V2_PREP_SPRINT_PROMPT.md) | — | [карточка](./archive/competition-async-v2-prep-2026-06-25.md) |
 | `comp-mvp-async-v2-2026-06-25` | Competition Sprint: MVP UserCase async v2 packaging | 2026-06-25 | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md) | — | [карточка](./archive/comp-mvp-async-v2-2026-06-25.md) |
+| `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | 2026-06-25 | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — | [карточка](./archive/comp-packaging-catalog-2026-06-25.md) |
 | `device-board-phase-3` | Device-board Phase 3: catalog service, validators, competition | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/device-board-phase-3.md) |
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a1-usercase-catalog-service.md) |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a2-runtime-validators.md) |
