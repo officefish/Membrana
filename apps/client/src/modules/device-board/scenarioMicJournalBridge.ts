@@ -827,8 +827,33 @@ export class ScenarioMicJournalBridge {
       asyncJobStore,
     } = options;
     const createdAtIso = new Date().toISOString();
-    const mediaSnap = getDefaultMediaLibraryService().getSnapshot();
+    const mediaSvc = getDefaultMediaLibraryService();
+    await mediaSvc.init();
+    const mediaSnap = mediaSvc.getSnapshot();
     const mediaStorageMode = resolveMediaLibraryStorageMode(mediaSnap.quota);
+
+    if (blob.size === 0) {
+      const emptyDetail = 'Empty capture blob (EMPTY_BLOB)';
+      scenarioChainLog('media', 'upload-failed', {
+        nodeId,
+        trackId,
+        storageMode: mediaStorageMode,
+        captureFormat,
+        mimeType: blob.type,
+        error: emptyDetail,
+        durationSec: durationSec.toFixed(3),
+      });
+      if (promiseId !== undefined && asyncJobStore !== undefined) {
+        asyncJobStore.reject(promiseId, emptyDetail);
+        scenarioChainLog('async-job', 'rejected', {
+          promiseId,
+          kind: 'track-upload',
+          trackId,
+          error: emptyDetail,
+        });
+      }
+      return;
+    }
 
     scenarioChainLog('media', 'upload-start', {
       nodeId,
@@ -845,7 +870,7 @@ export class ScenarioMicJournalBridge {
     });
 
     try {
-      const imported = await getDefaultMediaLibraryService().importBlob(
+      const imported = await mediaSvc.importBlob(
         BUFFER_COLLECTION_ID,
         blob,
         {

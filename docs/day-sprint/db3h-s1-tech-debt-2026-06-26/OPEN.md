@@ -23,11 +23,30 @@
 | B | Issues audit manifest + report | ✅ `docs/archive/github-issues-audit-2026-06-26.md` |
 | C | task:archive merged + sync-readme | ⏳ (нет merged в manifest; sync при закрытии) |
 | D | Repo hygiene + `yarn test:scripts` in CI | ✅ scripts + ci.yml step (#12) |
-| E | async-v2 L18–L19 PR | ⏳ [PR #181](https://github.com/officefish/Membrana/pull/181) pushed `58e8571` |
+| E | async-v2 L18–L19 PR | ⏳ [PR #181](https://github.com/officefish/Membrana/pull/181) · `39cf260` OPEN link |
+| F | #178 track-upload smoke | ⏳ `uploadTrackAsync` → `mediaSvc.init()` + EMPTY_BLOB guard |
 
 ---
 
-## Команды
+## #178 — track-upload (2026-06-26)
+
+**Симптом:** `upload-failed` × N, `async-job rejected`, detached report не стартует.  
+**Не граф:** gate/trends OK; pending track есть; падение в `importBlob`.
+
+**Вероятные причины (ранжировано):**
+
+1. **remote-server** (`paired` + `background-media`): POST `/samples` — 401/413/unsupported MIME; смотреть `error` в chain-log `upload-failed`.
+2. **browser-limited:** `BUFFER_FULL` (≥10 samples) или `QUOTA_EXCEEDED`.
+3. **EMPTY_BLOB** — L18 до fix; второй gate без re-arm.
+4. **init race** — `importBlob` до `mediaSvc.init()` (холодный snapshot).
+
+**Правка в ветке:** `await mediaSvc.init()` + early reject `blob.size === 0`.
+
+**Smoke:** `yarn media:dev` если `storageMode: remote-server`; иначе autonomous browser fallback достаточен.
+
+```bash
+yarn logs:parse   # после run ≥60s
+```
 
 ```bash
 yarn turbo run lint typecheck test build --continue
