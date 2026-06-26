@@ -167,6 +167,13 @@
 | `nh-s2-fly-deploy` | NH2: Fly.io deploy + secrets | S | [`DEPLOY.md`](../packages/background-office/DEPLOY.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `nh-s3-rituals` | NH3: morning PR review + evening archive | S | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
+| `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
+| `db3h-s1-tech-debt` | DB3H-S1: техдолг — lint, CI, issues audit, repo hygiene | M | [`DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md`](../docs/prompts/DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md) | — |
+| `db3h-s2-cabinet-host` | DB3H-S2: device_board на сервере в кабинете пользователя | L | [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md) | — |
+| `db3h-s3-studio-host` | DB3H-S3: device_board в Electron Membrana Studio | L | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | — |
+| `db3h-s4-microphone-detectors` | DB3H-S4: рефакторинг микрофона + audit детекторов (async) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
+| `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton **(deferred)** | L | [`INTEGRATIONS_STRATEGY.md`](../docs/INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) **(deferred)** | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
 
 ---
 
@@ -180,6 +187,17 @@
 | `db-ap-r0-consilium-spec` | DB-AP-R0: consilium + ADR + GitHub Issue | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | #176 (Issue открыт) | [карточка](./archive/db-ap-r0-consilium-spec.md) |
 | `competition-async-v2-prep-2026-06-25` | Prep sprint: archive comp v1 + synthesis + brief async v2 | 2026-06-25 | [`COMPETITION_ASYNC_V2_PREP_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_ASYNC_V2_PREP_SPRINT_PROMPT.md) | — | [карточка](./archive/competition-async-v2-prep-2026-06-25.md) |
 | `comp-mvp-async-v2-2026-06-25` | Competition Sprint: MVP UserCase async v2 packaging | 2026-06-25 | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md) | — | [карточка](./archive/comp-mvp-async-v2-2026-06-25.md) |
+| `insight-process-registration-2026-06-25` | Day sprint: Insight process registration | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/insight-process-registration-2026-06-25.md) |
+| `ins-reg-a-regulation` | Insight A: regulation + templates + registry | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-reg-a-regulation.md) |
+| `ins-reg-b-script-core` | Insight B: insight.mjs create/list/help | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-reg-b-script-core.md) |
+| `ins-reg-c-research-cascade` | Insight C: Perplexity research cascade | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-reg-c-research-cascade.md) |
+| `ins-reg-d-review-anthropic` | Insight D: team review Anthropic /10 | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-reg-d-review-anthropic.md) |
+| `ins-reg-e-skill-rhythm` | Insight E: skill + DEVELOPER_RHYTHM | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-reg-e-skill-rhythm.md) |
+| `ins-reg-f-plan-week` | Insight F: plan:week registry hook | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-reg-f-plan-week.md) |
+| `ins-pilot-g-operator-smoke` | Insight pilot G: operator smoke CI gate | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-pilot-g-operator-smoke.md) |
+| `ins-pilot-h-async-v2-narrative` | Insight pilot H: async v2 product narrative | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-pilot-h-async-v2-narrative.md) |
+| `ins-pilot-i-catalog-pipeline` | Insight pilot I: competition catalog pipeline | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-pilot-i-catalog-pipeline.md) |
+| `ins-pilot-j-user-insights` | Insight pilot J: user-sourced insights (≥1) | 2026-06-25 | [`INSIGHT_PROCESS_SPRINT_PROMPT.md`](../docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md) | — | [карточка](./archive/ins-pilot-j-user-insights.md) |
 | `device-board-phase-3` | Device-board Phase 3: catalog service, validators, competition | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/device-board-phase-3.md) |
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a1-usercase-catalog-service.md) |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | 2026-06-24 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a2-runtime-validators.md) |
@@ -458,4 +476,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-25.*
+*Файл обновлён автоматически: 2026-06-26.*

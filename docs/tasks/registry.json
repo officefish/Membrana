@@ -8181,6 +8181,315 @@
       "parentEpic": "comp-mvp-async-v2-2026-06-25",
       "leadPersona": "vesnin",
       "notes": "Phase A LGTM — picker ×3, comp:publish-catalog, skill. Open: synthesis + operator smoke."
+    },
+    {
+      "id": "insight-process-registration-2026-06-25",
+      "title": "Day sprint: Insight process registration",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": null,
+      "leadPersona": "vesnin",
+      "notes": "Insight workflow: Perplexity cascade, review /10, plan:week hook. Phases A–J.",
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "Phases A-J done; 3 adopted + 1 deferred insight; CLOSURE.md"
+    },
+    {
+      "id": "ins-reg-a-regulation",
+      "title": "Insight A: regulation + templates + registry",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "INSIGHT_REGULATION, docs/insights/, 3 pilot drafts",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-b-script-core",
+      "title": "Insight B: insight.mjs create/list/help",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "scripts/insight.mjs + insight-ritual.mjs",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-c-research-cascade",
+      "title": "Insight C: Perplexity research cascade",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "API → MCP fallback → manual; research command",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-d-review-anthropic",
+      "title": "Insight D: team review Anthropic /10",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight review → REVIEW.md + weight",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-e-skill-rhythm",
+      "title": "Insight E: skill + DEVELOPER_RHYTHM",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "membrana-insight skill",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-f-plan-week",
+      "title": "Insight F: plan:week registry hook",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "weight ≥ 6 in strategic-plan-week",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-g-operator-smoke",
+      "title": "Insight pilot G: operator smoke CI gate",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight-operator-smoke-ci-gate — research + review",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-h-async-v2-narrative",
+      "title": "Insight pilot H: async v2 product narrative",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight-async-v2-product-narrative",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-i-catalog-pipeline",
+      "title": "Insight pilot I: competition catalog pipeline",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight-competition-catalog-pipeline",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-j-user-insights",
+      "title": "Insight pilot J: user-sourced insights (≥1)",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "yarn insight create --source user",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "device-board-three-hosts-2026-06-26",
+      "title": "Device-board UserCase: стабильность на cabinet + Studio + Device (эпик)",
+      "promptPath": "docs/seanses/neural-detectors-strategy-2026-06-26.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-async-pipeline-v1"
+      ],
+      "notes": "Консилиум 2026-06-26. Магистраль: спринты 1–4 (техдолг → cabinet → Studio → микрофон). Нейро deferred. primaryFocus MAIN_DAY_ISSUE 2026-06-26.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s1-tech-debt",
+      "title": "DB3H-S1: техдолг — lint, CI, issues audit, repo hygiene",
+      "promptPath": "docs/prompts/DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-three-hosts-2026-06-26"
+      ],
+      "notes": "OPEN: docs/day-sprint/db3h-s1-tech-debt-2026-06-26/. Без rag:index --full. Phase A: CI+lint.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s2-cabinet-host",
+      "title": "DB3H-S2: device_board на сервере в кабинете пользователя",
+      "promptPath": "docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db3h-s1-tech-debt"
+      ],
+      "notes": "UserCase async-v2 smoke в web-cabinet. background-cabinet pairing + scenario API.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db3h-s3-studio-host",
+      "title": "DB3H-S3: device_board в Electron Membrana Studio",
+      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db3h-s2-cabinet-host"
+      ],
+      "notes": "Тот же UserCase через host-bridge (db-ap-r7). yarn studio:dev smoke.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s4-microphone-detectors",
+      "title": "DB3H-S4: рефакторинг микрофона + audit детекторов (async)",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db3h-s3-studio-host"
+      ],
+      "notes": "audio-engine async hub; template-match vs legacy DSP; подготовка точки подключения neural без реализации.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "neural-tier-1b-contract",
+      "title": "Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton",
+      "promptPath": "docs/INTEGRATIONS_STRATEGY.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W5",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db3h-s4-microphone-detectors"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Консилиум 2026-06-26: после спринтов DB3H-S1..S4 (три хоста + микрофон). См. docs/seanses/neural-detectors-strategy-2026-06-26.md",
+      "freezeAt": "2026-06-26",
+      "notes": "Эшелон 1.B INTEGRATIONS_STRATEGY §4.1. Не начинать до green smoke cabinet/Studio/Device.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "neural-free-tier-dataset-report",
+      "title": "Free-tier: датасет + трек → детектор → отчёт (1 ГБ library)",
+      "promptPath": "docs/seanses/neural-detectors-strategy-2026-06-26.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W5",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "neural-tier-1b-contract"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Продуктовый фокус недели 2+ после neural-tier-1b-contract и стабильных трёх хостов.",
+      "freezeAt": "2026-06-26",
+      "notes": "Пользователь собирает датасет из sample library, сценарий device-board: трек → detect → journal report. Free tariff.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
     }
   ]
 }

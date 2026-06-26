@@ -218,7 +218,20 @@ yarn plan:week
 yarn plan:week:full
 ```
 
-**Что читать:** [`WEEKLY_ANALYZERS_RESEARCH.md`](./WEEKLY_ANALYZERS_RESEARCH.md), [`STRATEGIC_PLAN_WEEK.md`](./STRATEGIC_PLAN_WEEK.md).
+**Что читать:** [`WEEKLY_ANALYZERS_RESEARCH.md`](./WEEKLY_ANALYZERS_RESEARCH.md), [`STRATEGIC_PLAN_WEEK.md`](./STRATEGIC_PLAN_WEEK.md), [`INSIGHTS.md`](./INSIGHTS.md) (инсайты с weight ≥ 6 подмешиваются в `plan:week` автоматически).
+
+### Инсайт (вне дневного ритуала)
+
+Крупные идеи после эпиков — процесс **Insight**: не блокирует `ritual:day`, влияет на недельный план.
+
+```bash
+yarn insight create my-idea --title "…" --source user
+yarn insight research insight-my-idea    # каскад: API → MCP → manual
+yarn insight review insight-my-idea      # 5 ролей, оценка 1–10
+yarn insight close insight-my-idea --status adopted
+```
+
+Регламент: [`prompts/INSIGHT_REGULATION.md`](./prompts/INSIGHT_REGULATION.md) · skill `membrana-insight` · спринт `insight-process-registration-2026-06-25`.
 
 Раз в неделю имеет смысл **`yarn standup:full`**, если в `packages/temp/` накопились крупные наброски — они попадут в повестку.
 
@@ -235,6 +248,7 @@ yarn plan:week:full
 | Аудит одного документа | `yarn anthropic:task docs/ARCHITECTURE.md "…"` | stdout |
 | Проверка ключа / прокси | `yarn anthropic:smoke` | stdout |
 | Исследование новых аналайзеров | `yarn analyzers:research:week` | `WEEKLY_ANALYZERS_RESEARCH.md` |
+| **Инсайт** (стратегическая идея) | `yarn insight create` → `research` → `review` | [`docs/insights/`](./insights/) |
 | Ревью через Claude Code CLI | `yarn claude:code` | по сценарию в промпте |
 
 **Персонажи `yarn ask`:** `vesnin`, `ozhegov`, `dynin`, `rodchenko` (см. [`VIRTUAL_TEAM_PROMPT.md`](./VIRTUAL_TEAM_PROMPT.md)).

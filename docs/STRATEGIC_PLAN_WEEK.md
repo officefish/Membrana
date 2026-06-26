@@ -1,8 +1,40 @@
 <!-- Сгенерировано: 2026-05-17T09:56:45.423Z (yarn plan:week) -->
 <!-- Период: последние 7 дней (since="7 days ago"); горизонт: следующая неделя -->
 <!-- Источник цели: WHITE_PAPER.md -->
+<!-- Epic-candidate (ручная отметка 2026-06-25): insight-vesnin-adopted-epic-bridge → реализация 2026-06-26 -->
+<!-- Пересмотр 2026-06-26: консилиум neural-detectors-strategy — магистраль DB3H-S1..S4, нейро deferred -->
 
 # План на следующая неделя (2026-05-17…2026-05-23)
+
+## Пересмотр 2026-06-26 (консилиум + Teamlead)
+
+| Приоритет | Epic | Статус |
+|-----------|------|--------|
+| **1** | `db3h-s1-tech-debt` | активен — **сейчас** |
+| **2** | `db3h-s2-cabinet-host` | после S1 |
+| **3** | `db3h-s3-studio-host` | после S2 |
+| **4** | `db3h-s4-microphone-detectors` | после S3 |
+| **5** | `neural-tier-1b-contract` | **deferred** |
+| **6** | `neural-free-tier-dataset-report` | неделя 2+ |
+
+**Фокус недели:** UserCase async-v2 на cabinet + Membrana Studio + Device Board.  
+**Протокол:** [`seanses/neural-detectors-strategy-2026-06-26.md`](./seanses/neural-detectors-strategy-2026-06-26.md) · **канон дня:** [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md)
+
+---
+
+## Epic-candidate (инсайт, LGTM 2026-06-25)
+
+| Поле | Значение |
+|------|----------|
+| **ID** | `insight-vesnin-adopted-epic-bridge` |
+| **Тема** | Мост adopted insight → week epic (LGTM gate) |
+| **Weight** | 7.0 |
+| **Реализация** | 2026-06-26 (day sprint) |
+| **Артефакт** | [`insights/insight-vesnin-adopted-epic-bridge/INSIGHT.md`](./insights/insight-vesnin-adopted-epic-bridge/INSIGHT.md) |
+
+**Scope MVP:** § bridge в `INSIGHT_REGULATION.md`, hook в `plan:week`, шаблон epic-candidate в OPEN/active docs. `yarn task:register` — после merge регламента.
+
+---
 
 **Дата плана:** 2026-05-17  
 **Привязка к стратегии:** WHITE_PAPER.md §8 (Дорожная карта) — **Stage-gate 1→2: Single-Node Detection First**  

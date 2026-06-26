@@ -1,113 +1,22 @@
-<!-- Сгенерировано: 2026-06-21T16:33:24.927Z (yarn code-review) -->
+<!-- Сгенерировано: 2026-06-25T18:33:00.731Z (yarn code-review; daily) -->
 
-# Code Review: Состояние после Phase 2b (comp-mvp-packaging)
+Tier: T1
 
-## [Teamlead — Vesnin]
-
-**Статус:** ✅ Phase 2b завершена с полной Definition of Done. Основные достижения:
-
-1. **Архитектурная целостность сохранена:**
-   - UserCase-сценарии (alpha/beta/gamma) упакованы как замкнутые гены, генерируются из JSON без дублирования логики.
-   - Граница между `device-board` (плагин-UI) и `runtime` (интерпретатор) чётко держится: плагин не знает о block-executor, только о сценариях.
-   - `user-case-catalog-service` и `user-case-settings-gate` в `apps/client/src/modules/device-board/` — это **не** нарушение, а правильное место (фасад платформы над плагином, а не часть самого плагина).
-
-2. **Риски, требующие внимания:**
-   - **exec-successor.ts** (новый, untracked): уточнить роль. Похоже, это расширение `block-executor` для цепочек функций. Нужна документация в `DEVICE_BOARD_CONCEPT.md` о том, как это встраивается в runtime.
-   - **function-call-resolve.ts** (новый): убедиться, что это не дублирование логики разрешения пинов (см. `function-pin-ops.ts`). Если есть пересечение — нужен refactor.
-   - **Лог-файлы в корне**: нет следов `.txt`-логов, гигиена соблюдена ✓.
-
-3. **Инкременты для Phase 3 (consilium):**
-   - Консилиум должен утвердить: нужны ли отдельные сервисы для UserCase-валидации (сейчас это скрипты, но можно переместить в `packages/services/usercase-validator`)?
-   - Нужна ли отдельная маршрутизация для "competition pack" или это просто ещё один UserCase-вариант?
-
-## [Структурщик — Ozhegov]
-
-**Слабая связанность:** ✅ Хорошо. Проверка границ:
-
-| Пакет | Импортирует из | Статус | Комментарий |
-|-------|---|---|---|
-| `device-board` (плагин) | `device-board/src/runtime/*` | ✅ OK | Runtime — часть плагина, иерархия вертикальная |
-| `device-board/src/components/board-usercase-picker-modal.tsx` | `@membrana/device-board` | ✅ OK | UI-модуль, локальный импорт |
-| `user-case-catalog-service` | `device-board` | ⚠️ Уточнить | Сервис находится в `apps/client/src/modules/`, это **не** нарушение, но должен быть изолирован в отдельный пакет в `packages/services/` или хотя бы `apps/client/src/services/` |
-| `user-case-settings-gate` | ничего | ✅ OK | Чистый фасад, хранилище правил |
-| `runtime/exec-successor` | `runtime/block-executor` | ? | Новый файл — нужна проверка циклических зависимостей |
-| `runtime/function-call-resolve` | ? | ? | Новый файл — нужна проверка дублирования с `function-pin-ops` |
-
-**Действие:** Структурщик должен выполнить:
+[Teamlead]: День насыщенный — закрыли async-v2 Phase 5 (Beta победил), начали Phase A упаковки каталога, вчера сфиксили L18/L19 в recording-pipeline. Сегодня много инфраструктуры: `insight.mjs`, `llm-proxy`, новые skill'ы, docs-синтез. Линт зелёный по ядру; warning'и в device-board — нит-уровень. **Риск P1:** RAG-тесты упали (`@membrana/rag-service#test` error) — завтра утром `yarn turbo run test --filter=@membrana/rag-service --force` перед feature-работой. **Утро:**
 ```bash
-yarn lint  # уже проходит, но вручную проверить новые .ts
-# + глазом пройти по exec-successor и function-call-resolve
+yarn standup
+yarn main-day-issue
+yarn turbo run lint typecheck --filter=@membrana/device-board --force  # 3 warning'а в device-board
+yarn turbo run test --filter=@membrana/rag-service --force  # инвестигировать падение
+yarn plan:day
 ```
 
-**Предложение:** Если `user-case-catalog-service` и `user-case-settings-gate` будут расширяться, переместить в `packages/services/usercase-catalog/` и экспортировать через `SERVICES.md`.
+[Структурщик]: Инструментовка хороша — добавили `insight.mjs` (regulation + registry), `llm-proxy` preflight, обновили `consilium-prompt.mjs`. Границы пакетов не нарушены; `scripts/lib/` чистая организация. Новые skill'ы (`.cursor/membrana-insight`, `.cursor/membrana-opencode-proxy`) разделены корректно. Проверь: есть ли циклические зависимости в `llm-proxy` ↔ `background-office` (убедись, что `scripts/llm-proxy-*.mjs` — утилиты, не сервис).
 
-## [Математик — Dynin]
+Итоговый артефакт: [`docs/DAILY_CODE_REVIEW-2026-06-25.md`](./docs/archive/daily-code-review/DAILY_CODE_REVIEW-2026-06-25.md)
 
-**Статус:** — (не задействован в Phase 2b).
+Definition of Done: `yarn turbo run test --filter=@membrana/rag-service --force` зелёный; `yarn lint` без ошибок; device-board warning'ы либо фиксены, либо залоггены в Issue.
 
-Однако в Phase 3 consilium следует обсудить:
-- Если в runtime появятся новые вычислительные паттерны (например, параметризация UserCase по аудио-метрикам), математик должен подготовить чистые функции для анализа.
-- Сейчас runtime не знает об аудио — только о сценариях, это правильно.
+Риски: **P1** — RAG тесты; **P2** — `.sync-readme-out.txt` в неотслеживаемых (гигиена).
 
-## [Музыкант]
-
-**Статус:** — (не задействован в Phase 2b).
-
-**Note для Phase 3:** Если пользовательские UserCase будут включать audio-плагины (эффекты, обработку), музыкант подготовит их как отдельные ноды в device-board. Сейчас в alpha/beta/gamma нет аудио-узлов, только события и обработка данных.
-
-## [Верстальщик — Rodchenko]
-
-**Статус:** ✅ Фронт соответствует DESIGN.md.
-
-- **board-usercase-picker-modal.tsx**: модальное окно, управляемое состоянием, apply-all логика. Стиль и a11y не видны (нужна инспекция), но структура правильная.
-- **Новые классы и кейсы**: не добавлены (без регрессии).
-- **Действие:** При merge — убедиться, что modal проходит a11y-линт (`yarn lint`).
-
----
-
-## Итоговый артефакт
-
-### Файлы на проверку (новые и изменённые)
-
-**Новые (untracked):**
-1. `packages/device-board/src/runtime/exec-successor.ts` + `.test.ts` — **Требует документации в CONCEPT.md**
-2. `packages/device-board/src/runtime/function-call-resolve.ts` + `.test.ts` — **Требует audit на дублирование с function-pin-ops.ts**
-3. `scripts/usercase.mjs`, `build-usercase-competition-all.mjs`, `verify-usercase-prerun.mjs` — **CLI и скрипты, проверить на отсутствие побочных эффектов в файловой системе**
-4. `docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md`, `USERCASE_COMPETITION_LESSONS.md` — **Регламенты, LGTM Teamlead**
-
-**Измененные (критичные):**
-1. `packages/device-board/src/graph/collapse-to-function.ts` — Проверить, что коллапс функций не нарушает граф (циклы, потеря пинов).
-2. `packages/device-board/src/runtime/block-executor.ts` — Убедиться, что расширение для exec-successor не вводит side effects.
-3. `packages/device-board/DEVICE_BOARD_CONCEPT.md` — Актуализирована ли диаграмма runtime/executor?
-
-**Generated (авто):**
-- `default-usercase-mvp-microphone-{alpha,beta,gamma}.generated.ts` — ✅ OK, авто-генерация.
-
----
-
-## Definition of Done
-
-- ✅ **Тесты:** `yarn test` — 48/48 passed (✓ нет регрессии).
-- ✅ **Lint:** `yarn lint` — 29/29 passed (✓ нет нарушений стиля).
-- ✅ **Слабая связанность:** Прямых импортов между плагинами нет. `device-board` → платформа → другие плагины = иерархия соблюдена.
-- ⚠️ **Отсутствие клиппинга аудио:** N/A (нет аудио в UserCase alpha/beta/gamma, только события).
-- ⚠️ **Соответствие DESIGN.md:** Требует инспекции modal (a11y).
-- ⚠️ **Новые файлы:** Требуют документирования (exec-successor, function-call-resolve).
-
----
-
-## Рекомендации на Phase 3
-
-1. **Консилиум:** Обсудить граничные решения:
-   - Статус `user-case-catalog-service`: остаётся ли в `apps/client/` или переходит в `packages/services/`?
-   - Нужны ли отдельные функции-валидаторы в runtime для UserCase-гена?
-
-2. **Audit exec-successor & function-call-resolve:** Структурщик + Teamlead совместно проверят пересечения с существующей логикой разрешения пинов.
-
-3. **CONCEPT.md update:** Добавить диаграмму потока выполнения usercase через runtime → block-executor → exec-successor (если применимо).
-
-4. **Скрипты:** Убедиться, что `usercase.mjs` и компания не создают артефактов вне `docs/device-board-scripts/` и `dist/`.
-
----
-
-**LGTM условное:** ✅ Phase 2b может быть заарчивирована. Phase 3 consilium назначен на обсуждение архитектурных решений перед началом основной реализации.
+**Вердикт: LGTM после инвестигации RAG и утренних команд.**

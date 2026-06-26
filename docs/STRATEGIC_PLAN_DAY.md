@@ -1,74 +1,68 @@
-<!-- Сгенерировано: 2026-06-18T08:57:59.542Z (yarn plan:day) -->
+<!-- Сгенерировано: 2026-06-26T04:55:24.666Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->
 
-# План на следующий день (2026-06-18)
+# План на следующий день — Membrana (2026-06-25/26)
 
 ## 1. Что сделано за период (последние сутки)
 
-1. **docs: HORIZON_MOBILE_MULTIMODAL** — добавлена архитектура дальней перспективы (мобильные узлы, активное/отражательное зондирование, контур актуации). Документ завязан на WHITE_PAPER §7 как горизонт-замысел за границами наземной триангуляции. Это стратегический артефакт, реализация отложена на post-Stage 7.
+### Device Board & Async Pipeline (эпик #176)
+- **Завершена инфраструктура асинхронного пайплайна:** добавлены контракты `ScenarioAsyncJob`, `ScenarioAsyncJobNode`, `ScenarioPromiseRef` в `@membrana/core`; реализованы `async-promise-executor`, `async-job-store`, `async-resolved-dispatch` в `packages/device-board/src/runtime`.
+- **Три usercase-микрофона (alpha/beta/gamma) мигрированы на async-v2:** добавлены JSON-скрипты для `onConnect`, `onStart`, `onMainTick`, `onAlarmTick`, `onStop`, `onDisconnect` с поддержкой асинхронных узлов и групп комментариев.
+- **Сценарный граф расширен:** новые типы узлов (`async-orchestration-nodes`), валидаторы (`validate-async-promise`), тесты пакетов.
+- **Документация и CI:** добавлены `DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`, workflow GitHub Actions для usercase-competition, LGTM от Teamlead (Vesnin).
 
-2. **feat(platform): MP7 Node Realtime Gateway** — реализована WebSocket-транспортная слой (`background-cabinet` модуль `node-realtime-*`, контракты в `@membrana/core/contracts/node-realtime`). Включены:
-   - WSS журнал для синхронной двойной записи (REST fallback).
-   - Мост между клиентом и cabinet для связи узла в реальном времени.
-   - Бридж реалтайм-датасета микрофонного потока.
-   Это foundation-слой для **Stage 2 (многоузловая синхронизация)**, хотя сама многоузловость заморожена до stage-gate 1→2.
+### Competition Sprint: async-v2 & Packaging
+- **Открыта и завершена фаза async-v2:** три команды (Alpha/Beta/Gamma) разработали конкурирующие реализации async-pipeline; Beta выиграла голосование (consilium #72a0dbd).
+- **Packaging Sprint открыт:** три async-v2 UserCase внесены в каталог community-tier; добавлены скрипты `comp-publish-catalog`, `generate-competition-async-v2-synthesis`.
+- **Phase A (catalog publish) LGTM:** community-tier UserCase зарегистрированы в device-board picker; Phase B (async-v2 design synthesis) в работе.
 
-3. **feat(device-board): H2a/H2d — full scenario cycle** — завершен полный цикл Device Board (hackathon):
-   - Импорт/экспорт JSON сценариев (`device-scenarios.service` в background-media, Prisma).
-   - Симуляция сценария на клиенте (`DeviceBoardModule`, `scenarioRuntimeHost`, `analyzeChunkTrendsFft`).
-   - Cabinet sync и SSH-deploy (production).
-   - Это новый конструктор для экспериментирования с трендами FFT без запуска реального оборудования.
+### Night Hunt Ritual (эпик #174)
+- **Добавлена инфраструктура ночного запуска:** модули `night-hunt/{night-hunt.service, night-hunt.scheduler, night-hunt.controller}` в `packages/background-office`; утилиты `night-hunt-week.util` для расписания.
+- **OpenRouter интеграция:** новый модуль `openrouter.service` для проксирования LLM-запросов.
+- **Deploy инфраструктура:** `deploy/fly.office.toml`, `.env.llm-proxy.example`, workflow GitHub для night-hunt-office-trigger.
 
-4. **chore: Docker & deploy scripts** — подготовлены контексты сборки для media/cabinet и SSH-скрипты. Инфраструктура готова к развертыванию эшелона 1.A/1.B.
-
-5. **fix(detector-report): validate & parseDroneDetectionBriefReport** — добавлена валидация журнальных пейлодов детектора, безопасный парсинг. Улучшена семантика `analysisMode` в конфигурации плагина live-анализа.
-
-**Итого:** 5 крупных изменений; преимущественно инфраструктура (транспорт, процесс dev/prod, конструкторы для экспериментов) и горизонт-стратегия. Детекторные алгоритмы не трогались.
+### Фиксы и стабилизация
+- **L18 re-arm clip recording:** правка в `scenarioMicJournalBridge` для повторного включения захвата при активном сценарии.
+- **L19 detached report bridge:** исправление в `async-resolved-dispatch` для корректного рассеивания результатов в развёрнутых функциях upload/live-bundle.
+- **Неиспользуемые детекторы архивированы:** `harmonic`, `cepstral`, `spectral-flux` перемещены в archived-catalog (см. приоритеты FFT).
 
 ---
 
 ## 2. Привязка к стратегической цели
 
-### Текущая позиция на дорожной карте
+### Текущий этап дорожной карты
+По WHITE_PAPER §8:
+- **Этап 0 — Фундамент:** ✅ `audio-engine` поставляет кадры, `fft-analyzer` даёт спектр.
+- **Этап 1.A — DSP-эшелон (один узел):** ⚠️ **зафиксирован потолок** (~75–95% recall в зависимости от инструмента, но FPR 30–100% не разделяет дрон от фона). По `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6, **магистраль качества переходит на trends-template-match + DRONE_TIGHT** (уже достигает 95% recall / 30% FPR), не на unified benchmark трёх DSP.
+- **Этап 1.B — Neural & Agentic:** 🔄 начало: OpenRouter интеграция открывает путь к zero-shot моделям (CLAP, YAMNet), но рост качества пока идёт через trends, не через нейро.
+- **Этап 2 — Многоузловая синхронизация:** 🚫 **заморожен до stage-gate 1→2** (см. WHITE_PAPER §8, раздел о Single-Node Detection First).
 
-Мы находимся в **Этапе 0** (фундамент) и частично в **начале Этапа 1.A** (DSP-эшелон на одном узле):
+### Что приближает к цели
+1. **Device-board async-pipeline (завершено)** — готовит инфраструктуру для распределённого запуска сценариев и асинхронных операций (микрофон, захват, отправка). Это фундамент для future узлов сети.
+2. **OpenRouter + night-hunt ритуал** — расширение интеграций LLM, что позволит добавить Этап 1.B (agentic-detector, reasoning над FFT).
+3. **Packaging sprint** — демонстрирует масштабируемость device-board как платформы для расширяемых UserCase-ов.
 
-- ✅ **Этап 0** полностью (audio-engine поставляет кадры, fft-analyzer считает спектр, клиент показывает спектр).
-- ⚠️ **Этап 1.A — DSP-детекторы**: три независимых детектора (`harmonic`, `cepstral`, `spectral-flux`) — в коде, но качество не достигает stage-gate 1→2 (см. FFT_METRICS §4: recall 68–100%, FPR 88–100%).
-- 🔒 **Этап 2 и выше (TDOA, локализация, трекинг)** — заморожены до прохождения stage-gate 1→2.
+### Что нейтрально
+- Competition async-v2 спринт — полезная инженерная практика и развитие talent pool, но не продвигает детекцию или многоузловую архитектуру.
+- Night-hunt scheduling — операционное удобство для ночных расчётов, но не ядро Membrana.
 
-### Что из сделанного приближает к стратегии
+### Что отвлекает
+- **Избыток фокуса на async-pipeline вне контекста детекции:** device-board сильно расширился (async, competition, packaging), но **ни одного нового детектора или сенсорного слоя не появилось** со стороны detection/perception.
 
-1. **Device Board** — критически важен для Этапа 1.A. Позволяет быстро итерировать **тренды FFT** на куратируемых сценариях без боевых данных. Это инструмент валидации гипотез.
-2. **MP7 Realtime Gateway** — закладка под Stage 2 (многоузловая синхронизация, TDOA). Хотя Stage 2 заморозен, инфраструктура готова.
-3. **Валидация брифов детектора** — снижает риск скрытых ошибок в журналах, необходимо для доверия к метрикам.
+### Критически недостающие сервисы (Stage 2 и выше)
+По WHITE_PAPER §6 и архитектуре:
+- `@membrana/tdoa-service` *(frozen, Stage 2)* — разница времён прихода между узлами.
+- `@membrana/localizer-service` *(не существует, Stage 3)* — мультилатерация и 2D/3D локализация.
+- `@membrana/tracker-service` *(не существует, Stage 4)* — фильтр Калмана и ассоциация целей.
+- `@membrana/transport-service` *(не существует, Stage 1–2)* — распределённый транспорт между узлом и сервером.
+- **`@membrana/detection-ensemble-service`** *(не существует, Stage 1.B)* — агрегация результатов детекторов (trends + DSP + нейро).
 
-### Что отвлекает или нейтрально
-
-- **HORIZON_MOBILE_MULTIMODAL** — стратегический документ, но реализация far-future (после Stage 7). Сейчас это только планирование, не код.
-- **Docker & SSH-деплой** — operатор, нужны, но не влияют на качество детекции. Могут использоваться параллельно.
-
-### Недостающие критические сервисы
-
-По WHITE_PAPER дорожной карте нам нужны (но пока не начаты на уровне реализации):
-
-| Сервис | Статус | Этап | Почему нужен |
-|--------|--------|------|-------------|
-| `@membrana/detection-ensemble-service` | scaffold | 1.B | агрегация трёх DSP (после stage-gate 1→2) |
-| `@membrana/template-match-detector-service` | scaffold | 1.A | **prod-путь trends** (уже используется в Device Board) |
-| `@membrana/tdoa-service` | scaffold | Stage 2 | разница времён между узлами (заморозиться) |
-| `@membrana/localizer-service` | не начат | Stage 3 | мультилатерация на плоскости (заморозиться) |
-| `@membrana/tracker-service` | не начат | Stage 4 | фильтр Калмана, ассоциация целей (заморозиться) |
-| `@membrana/transport-service` | scaffold | foundation | обёртка над MP7 WSS для сервисов (уже идёт) |
-
-### Критерий stage-gate 1→2
-
-Из WHITE_PAPER §8 и DETECTOR_BENCHMARK.md:
-- **Лучший одиночный детектор ИЛИ согласованный ensemble: precision ≥ 85%, recall ≥ 90%.**
-- По FFT_METRICS §4: **trends DRONE_TIGHT достигает recall 95% / FPR 30% (precision 0.76)** на held-out val — **не проходит планку по precision** (нужна ≥0.85).
-
-**Это означает:** gate будет пройден либо через (а) новый датасет с лучшей размеченностью (validated-data эпик), либо через (б) эшелон 2 (нейро zero-shot, CLAP/YAMNet, agentic).
+### Детекция: текущее состояние (эпик #84 закрыт)
+- **Trends-FFT с шаблоном DRONE_TIGHT:** recall 95%, FPR 30%, **go** ✅ для prod.
+- **Harmonic/cepstral/spectral-flux (DSP):** recall 68–100%, FPR 88–100% — **no-go** как селекторы, только диагностика.
+- **Пороговый FFT-тест:** recall 75–85%, FPR 40–70% — **no-go** как детектор, только обучение/проверка спектра.
+- **Заключение:** эшелон 0 исчерпан. Дальнейший рост — либо новый датасет (validated labels), либо эшелон 2 (zero-shot CLAP, YAMNet, agentic reasoning).
 
 ---
 
@@ -76,183 +70,155 @@
 
 ### Технические риски
 
-1. **Потолок качества эшелона 0 зафиксирован** (FFT_METRICS §0).
-   - DSP-детекторы по отдельности: recall 68–100%, FPR 88–100% — не проходят stage-gate.
-   - Trends DRONE_TIGHT: recall 95%, FPR 30% (F1 0.844) — проходит мягкий предел (80%/40%), но не финальный (85%/90%).
-   - **Риск:** если не перейти на эшелон 2 (нейро/zero-shot), застрянем на 95% recall / 76% precision навсегда.
+| Риск | Тяжесть | Статус | Действие |
+|------|---------|--------|----------|
+| **Синхронизация времени между узлами** (см. WHITE_PAPER §9) | 🔴 High | Не адресован | Без GPS-PPS или NTP/PTP узлы не смогут участвовать в TDOA; временной джиттер > 10 мс убивает триангуляцию. |
+| **Многолучёвость (multipath)** в городе | 🟡 Medium | Известен, отложен | Отражения от зданий искажают TDOA; нужны робастные оценки (GCC-PHAT, медианная фильтрация) — Stage 2. |
+| **Скорость звука меняется с метеоусловиями** | 🟡 Medium | Задокументирован | Требует адаптивной модели в fusion-слое; не критично для Stage 1, но обязателен для Stage 3+. |
+| **Переобучение trends-шаблона на free-v1** | 🟡 Medium | Замечен | DRONE_TIGHT достигает 95% recall на val, но обучен на этом же датасете; нужен validated dataset / VDR для переоценки (эпик вне текущего горизонта). |
+| **Нет tested path для нейро-детекторов (CLAP, YAMNet)** | 🟡 Medium | Блокирует Stage 1.B | OpenRouter добавлена, но интеграция с `@membrana/detector-base` ещё не начиналась; нужна спецификация контракта. |
 
-2. **Синхронизация времени между узлами** (Stage 2) — пока не имплементирована, только архитектура.
-   - GPS-PPS доступен не везде; NTP/PTP может дать только миллисекунды (нужны микросекунды для TDOA на расстояниях в км).
-   - **Риск:** при переходе на Stage 2 может оказаться, что precision TDOA хуже, чем требует для 2D-локализации.
+### Накопленный технический долг
 
-3. **Multi-path & рефлексии звука** (WHITE_PAPER §9).
-   - Trends FFT работает на стационарных сигналах; рефлексия от зданий может исказить TDOA.
-   - **Риск:** stage-gate 1→2 нужна калибровка на реальных коридорах/открытых полях.
+1. **Детекторы harmonic/cepstral/spectral-flux архивированы, но код остаётся в монорепо.** Риск: путаница в планировании. **Action:** удалить исходники или явно пометить как `@deprecated` с путём миграции.
+2. **Device-board async-pipeline разрастался без явного определения roles и permissions.** Async-job-executor вызывается без валидации доступа (e.g., может ли узел запустить запись?). **Action:** добавить слой авторизации перед Stage 2 (когда многоузловые сценарии).
+3. **Trends-FFT встроена как plugin в library, но нет явной версионизации шаблонов.** DRONE_TIGHT может измениться, и старые сценарии сломаются. **Action:** enum/constant для версии template и миграция.
+4. **Night-hunt и background-office разбухают без явной разделения ответственности.** OpenRouter + github-service + night-hunt в одном модуле. **Action:** вынести OpenRouter в отдельный слой (background-integration-service?).
 
-### Накопленный долг
+### Нарушения границ пакетов (если видны в diff)
 
-1. **Validated Dataset (VDR)** — текущие метрики на `free-v1` (музыкальные записи + ESC-50). Реальные боевые данные (микрофоны на улице, города, разные дроны) — отсутствуют. Это ограничивает доверие к финальным цифрам.
-
-2. **Integration Tests** — device-board может симулировать сценарий, но нет сквозного теста «аудиопоток → детектор → трек → UI». Рискуем обнаружить ошибки поздно.
-
-3. **Документ DETECTOR_BENCHMARK.md** — требует автомированной регенерации (задача `yarn benchmark:detectors`), но скрипт может быть неполный. Нужна проверка.
-
-### Нарушения архитектурных границ (по diff-у)
-
-- ✅ Нарушений не обнаружено. Все новые пакеты (`node-realtime`, `device-scenarios`) лежат по месту и не импортируют друг друга циклически.
+- ✅ **Нарушений архитектуры не видно.** Device-board, agenda, core строго разделены.
+- ⚠️ **Потенциальное нарушение:** background-office начинает знать про OpenRouter API (внешняя зависимость). По BACKGROUND_SERVERS.md это допустимо (stateless шлюз), но требует явной документации контракта.
 
 ---
 
 ## 4. План на следующий день
 
-### Задача 4.1: Внедрить `DRONE_TIGHT` в prod-каталог template-match
+### 4.1. Детекция: нейро-эшелон и интеграция
 
-**Цель:** Переговить `trends-fft` с параметрами шаблона `DRONE_TIGHT` (из FFT_METRICS §2.3) в `@membrana/template-match-detector-service` и добавить его как лучшего конкурента в `background-media` (library-service для template-catalog).
+#### Задача A: Спецификация контракта `NeuralDetector` и интеграция CLAP
+- **Цель:** добавить в `@membrana/detector-base` интерфейс `NeuralDetector` с методами `predict(audioBuffer) → DetectionResult[]`, позволяющий подключать zero-shot модели (CLAP, YAMNet).
+- **Пакет / слой:** `@membrana/detector-base` (foundation); потом `@membrana/clap-detector-service` (analyzer, новый).
+- **Связь с WHITE_PAPER:** Этап 1.B — Neural & Agentic эшелон (§8).
+- **Definition of Done:**
+  1. Интерфейс `NeuralDetector` в `detector-base/src/types.ts` с методом `predict(window: AudioWindow, context?: InferenceContext) → Promise<DetectionResult>`.
+  2. Минимальная реализация: CLAP zero-shot через OpenRouter; тест на mock-данных.
+  3. Документация в README: как интегрировать новую нейросетевую модель (e.g., YAMNet).
+  4. CI green.
+- **Роль:** Математик (контракт) + Музыкант (интеграция OpenRouter).
+- **Размер:** M.
 
-**Пакет / слой:** `@membrana/template-match-detector-service` (analyzer) + `@membrana/media-library-service` (backend).
+#### Задача B: Удаление архивированных DSP-детекторов
+- **Цель:** удалить исходные коды `harmonic`, `cepstral`, `spectral-flux` из `packages/services/detectors/` и явно задокументировать, что они заменены trends-FFT.
+- **Пакет / слой:** Infrastructure / cleanup.
+- **Связь с WHITE_PAPER:** §8, Etap 1.A — зафиксирован потолок, DSP-детекторы не входят в магистраль.
+- **Definition of Done:**
+  1. Удалены папки `packages/services/detectors/{harmonic,cepstral,spectral-flux}-detector-service/`.
+  2. Добавлена секция в `DETECTOR_BENCHMARK.md` "Why trends-FFT is the only FFT path" с ссылкой на `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §4–5.
+  3. Обновлены ссылки в `ARCHITECTURE.md` §1e и prompts (удалить упоминания о harmonic/cepstral/spectral-flux из список recommended-детекторов).
+  4. Тесты монорепо (fixture imports) обновлены или удалены.
+- **Роль:** Структурщик.
+- **Размер:** S.
 
-**Связь с WHITE_PAPER:** Этап 1.A, Single-Node Detection First, prod-путь качества (по FFT_METRICS §5: только DRONE_TIGHT пробил планку).
+### 4.2. Многоузловая архитектура: стратегическая подготовка
 
-**Definition of Done:**
-- [ ] Шаблон `DRONE_TIGHT` экспортирован из `fft-analyzer/src/math/trends/*` в `template-match-detector-service`.
-- [ ] Детектор `@membrana/template-match-detector-service` регистрируется в `detector-base` контракте и включен в бенчмарк.
-- [ ] `background-media` содержит default-каталог с `DRONE_TIGHT` (JSON с параметрами).
-- [ ] `yarn benchmark:detectors` показывает recall 95% / precision 76% на val (не хуже текущего).
+#### Задача C: Основная спецификация `@membrana/transport-service`
+- **Цель:** написать концептуальный контракт (не реализацию) для транспорта между узлом и сервером: типы сообщений, шифрование, повторные попытки, буферизация при потере связи.
+- **Пакет / слой:** `@membrana/transport-service` (foundation, новый).
+- **Связь с WHITE_PAPER:** Этап 2, принцип 2 (локальная автономность), §4.2 (что делает узел).
+- **Definition of Done:**
+  1. Документ `packages/services/transport/CONCEPT.md`: типы `NodeMessage`, `ObservationBatch`, `AckMessage`, retry-стратегия, TLS/client-cert.
+  2. Interface `TransportClient { send(msg: NodeMessage) → Promise<AckMessage>, onMessageLost(), bufferSize }` в `detector-base` или отдельном файле.
+  3. Ссылка на WHITE_PAPER §7 (контракт наблюдения) — как `AcousticObservation` поступает в сеть.
+  4. Обзорная диаграмма в README (узел → edge gateway → fusion-server).
+- **Роль:** Структурщик.
+- **Размер:** M.
 
-**Роль:** Структурщик (архитектура каталога) + Математик (валидация параметров).
+#### Задача D: Skeleton TDOA-сервиса (frozen, но документирован)
+- **Цель:** создать заготовку `@membrana/tdoa-service` в `packages/services/` с помощью scaffold, описать его место в архитектуре и условия разморозки (когда stage-gate 1→2 пройден).
+- **Пакет / слой:** `@membrana/tdoa-service` (analyzer, frozen).
+- **Связь с WHITE_PAPER:** Этап 2 (Stage 2 — Network), раздел freeze condition.
+- **Definition of Done:**
+  1. Папка `packages/services/tdoa-service/` с `package.json`, `tsconfig.json`, `vite.config.ts`.
+  2. Файл `src/index.ts` экспортирует `interface TdoaAnalyzer { analyze(obs: AcousticObservation[]) → TdoaResult[] }` (типы в `core`).
+  3. Файл `FREEZE_CONDITION.md`: "Разморозить, когда trends-FFT + DRONE_TIGHT пройдёт stage-gate 1→2 и датасет будет validated".
+  4. Заглушка-реализация (just throw Not Yet Implemented).
+  5. Комментарий в `.cursorrules` / ARCHITECTURE.md §1a о frozen-пакетах.
+- **Роль:** Структурщик.
+- **Размер:** S.
 
-**Размер:** M (перемещение кода + контракты).
+### 4.3. Данные и бенчмарк
 
----
+#### Задача E: Обновление `DETECTOR_BENCHMARK.md` для trends-DRONE_TIGHT
+- **Цель:** внести результаты trends-FFT (recall 95%, FPR 30%) в таблицу бенчмарков, обновить команду что это лучший FFT-результат и что дальше идёт validated dataset (VDR) или нейро.
+- **Пакет / слой:** Documentation.
+- **Связь с WHITE_PAPER:** §11 (метрики успеха), stage-gate 1→2.
+- **Definition of Done:**
+  1. Обновлена таблица в `DETECTOR_BENCHMARK.md` с новой строкой "Trends FFT (DRONE_TIGHT)" и метриками.
+  2. Добавлена ссылка на `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §0 TL;DR и §6 (куда дальше).
+  3. Секция "Next Steps" явно называет: validated dataset (VDR) или zero-shot CLAP/YAMNet как пути роста.
+  4. Удалены из таблицы строки harmonic/cepstral/spectral-flux (или помечены как archived).
+- **Роль:** Верстальщик (документация) / Математик (метрики).
+- **Размер:** S.
 
-### Задача 4.2: Запустить Validated Dataset (VDR) эпик — подготовка
+### 4.4. Device-Board доработки и взаимодействие
 
-**Цель:** Подготовить план и инфраструктуру для сбора/разметки реального датасета (боевые записи микрофонов на улице, подтвержденные дроны). Это предусловие для stage-gate 1→2 и перехода на эшелон 2.
+#### Задача F: L20 async-pipeline stability — повторное включение рекординга
+- **Цель:** убедиться, что after L18 fix (re-arm clip capture) запись микрофона корректно повторно включается при перезагрузке сценария; добавить stress-тест.
+- **Пакет / слой:** `packages/device-board/src/runtime/` + `apps/client/src/modules/device-board/`.
+- **Связь с WHITE_PAPER:** Infrastructure (foundation).
+- **Definition of Done:**
+  1. Тест `async-resolved-dispatch.test.ts` или `scenarioMicJournalBridge.test.ts`: сценарий запускается 3 раза подряд, каждый раз захватывает микрофон, разработка ожидают success.
+  2. Integration test в CI: `yarn test device-board -- --grep "L18.*rearm"`.
+  3. Проверка на утечки таймеров (setInterval в WebAudio context).
+- **Роль:** Верстальщик (тесты).
+- **Размер:** S.
 
-**Пакет / слой:** Документация + `datasets/` каталог + `background-media` (хранилище VDR).
+### 4.5. Обновление планирования и ритуалов
 
-**Связь с WHITE_PAPER:** Этап 1.A → 1.B (stage-gate 1→2), риск §3 потолка качества.
-
-**Definition of Done:**
-- [ ] Написан промпт `VALIDATED_DATASET_COLLECTION_PROMPT.md` с процессом сбора, разметки, версионирования.
-- [ ] Подготовлена Prisma-миграция и API в `background-media` для хранения VDR-метаданных (источник, дата, GPS, класс, оценка quality).
-- [ ] Создан набросок скрипта `scripts/vdr-import.mjs` для массового импорта размеченных WAV.
-- [ ] Документ добавлен в `docs/tasks/registry.json` с маркером `type: "investigation"`.
-
-**Роль:** Teamlead (согласование процесса) + Структурщик (инфраструктура хранения).
-
-**Размер:** M (планирование + инфраструктура, без самого сбора).
-
----
-
-### Задача 4.3: Реализовать Stage 2 заморозку (документ + контракты)
-
-**Цель:** Официально обозначить, что Stage 2 (TDOA, многоузловая синхронизация) и выше — в режиме **frozen до прохождения stage-gate 1→2**. Обновить документацию и типы.
-
-**Пакет / слой:** Документация (`DETECTOR_BENCHMARK.md`, `ARCHITECTURE.md`) + аннотации типов `@membrana/core`.
-
-**Связь с WHITE_PAPER:** §8 (дорожная карта), принцип Single-Node Detection First.
-
-**Definition of Done:**
-- [ ] В `DETECTOR_BENCHMARK.md` добавлена секция «Stage-gate 1→2» с критериями (P≥85%, R≥90%) и текущим статусом (trends DRONE_TIGHT: R 95%, P 76%).
-- [ ] Все контракты Stage 2 в `@membrana/core/contracts/` помечены `@experimental @stage2 @frozen`.
-- [ ] `packages/services/tdoa/`, `packages/services/localizer/` — если они есть — переименованы на `_archived_` или помечены `@deprecated`.
-- [ ] Добавлена секция в `ARCHITECTURE.md` §1e с текущим состоянием Этапов.
-
-**Роль:** Teamlead (решение) + Структурщик (внедрение в коде).
-
-**Размер:** S (разметка + документация).
-
----
-
-### Задача 4.4: Интеграция с нейро zero-shot (план + прототип)
-
-**Цель:** Подготовить технический план интеграции YAMNet или CLAP как second-stage детектора в Этап 1.B, не дожидаясь финального перехода на эшелон 2. Это path to gate-pass.
-
-**Пакет / слой:** Документация (`prompts/INTEGRATIONS_STRATEGY.md` update) + scaffold `@membrana/yamnet-detector-service`.
-
-**Связь с WHITE_PAPER:** Этап 1.B, Принцип §1 (дешёвый узел + умная сеть).
-
-**Definition of Done:**
-- [ ] Обновлен `INTEGRATIONS_STRATEGY.md` с описанием YAMNet/CLAP (лицензия, размер модели, latency на Raspberry Pi).
-- [ ] Создан scaffold `packages/services/yamnet-detector-service` с базовой структурой (модель не загружена).
-- [ ] Написан промпт `YAMNET_DETECTOR_IMPLEMENTATION_PROMPT.md` с шагами интеграции + expected recall/precision.
-- [ ] Добавлено в `docs/tasks/registry.json` как `type: "implementation"`, assigned для Этапа 1.B.
-
-**Роль:** Музыкант (выбор модели, аудиообработка) + Математик (метрики).
-
-**Размер:** M (scaffold + документация).
-
----
-
-### Задача 4.5: Проверка sentry & журнальной целостности в клиенте
-
-**Цель:** Убедиться, что валидация `parseDroneDetectionBriefReport` (из коммита 255374a) полностью покрывает все пути загрузки журнала в UI, включая Electron-порт.
-
-**Пакет / слой:** `apps/client` (telemetry-journal модуль) + `packages/background-cabinet` (REST API).
-
-**Связь с WHITE_PAPER:** Принцип §5 (открытый формат событий), надёжность логирования.
-
-**Definition of Done:**
-- [ ] Написаны интеграционные тесты (`apps/client/src/modules/telemetry-journal/*.test.ts`) для загрузки некорректного JSON из cabinet/Electron.
-- [ ] Ошибки парсинга логируются в консоль (dev) и в sentry (prod).
-- [ ] UI gracefully показывает «Журнал повреждён» вместо краша.
-- [ ] Electron-порт обновлен с валидацией (`packages/services/telemetry-journal/src/ports/electron-journal-port.ts`).
-
-**Роль:** Верстальщик (UI) + Музыкант (тестирование).
-
-**Размер:** S (покрытие, валидация).
-
----
-
-### Задача 4.6: Документировать Device Board для end-user (quick-start)
-
-**Цель:** Написать пользовательскую документацию Device Board: как создать сценарий, загрузить тренд-шаблоны, экспортировать результаты. Это инструмент для экспериментаторов.
-
-**Пакет / слой:** `packages/device-board/README.md` + `docs/DEVICE_BOARD_USER_GUIDE.md`.
-
-**Связь с WHITE_PAPER:** Инструмент для валидации гипотез (Этап 1.A).
-
-**Definition of Done:**
-- [ ] Новый документ `docs/DEVICE_BOARD_USER_GUIDE.md` содержит: что такое board, как создать сценарий, как загрузить trends-template, как читать результаты.
-- [ ] Скриншоты или GIF-демо (если возможно).
-- [ ] Примеры JSON сценариев добавлены в `datasets/device-board-examples/`.
-- [ ] Ссылка добавлена в главный `docs/README.md`.
-
-**Роль:** Верстальщик (документация + примеры).
-
-**Размер:** S (документирование).
+#### Задача G: Синхронизация STRATEGIC_PLAN_DAY.md с FFT_METRICS_POTENTIAL_AND_LIMITS
+- **Цель:** убедиться, что дневные планы (morning standup via yarn plan:day) не предлагают магистраль "Этап 1.A / unified benchmark" и явно ссылаются на trends-DRONE_TIGHT как на текущий фокус.
+- **Пакет / слой:** Documentation + scripts.
+- **Связь с WHITE_PAPER:** §1, управление планом.
+- **Definition of Done:**
+  1. Обновлён файл `scripts/lib/detection-planning-priorities.mjs`: блокирует предложение "benchmark harmonic+cepstral+flux" в STDOUT (см. FFT_METRICS §6).
+  2. `DEVELOPER_RHYTHM.md` содержит явную ссылку на "trends-template-match is the prod path, not DSP-consensus".
+  3. Обновлена команда `yarn plan:day` чтобы читать из `FFT_METRICS_POTENTIAL_AND_LIMITS.md` и выводила актуальный статус детекции.
+- **Роль:** Teamlead (политика) / Структурщик (скрипты).
+- **Размер:** S.
 
 ---
 
 ## 5. Что НЕ делаем на этом горизонте
 
-1. **Не повторяем бенчмарк harmonic / cepstral / spectral-flux на free-v1** — см. FFT_METRICS §6. Их потолок (recall 68–100%, FPR 88–100%) зафиксирован. Прирост качества возможен только через новый датасет, алгоритм (trends) или модальность (нейро). Unified benchmark уже проведён; повтор — пустая трата вычисилий.
+1. **Не повторяем unified benchmark harmonic + cepstral + spectral-flux на free-v1 без нового датасета.** По `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6, потолок установлен, и дальше на чистом FFT некуда расти. **Исключение:** если появится новый класс дронов (e.g., электрические nano-дроны) — тогда перемеры.
 
-2. **Не начинаем Stage 2 (TDOA, многоузловая синхронизация) без gate-pass** — это явное требование WHITE_PAPER §8. Инфраструктура (MP7 WSS) готова, но реализация алгоритмов ждёт, пока лучший одиночный детектор не достигнет P≥85% / R≥90%.
+2. **Не начинаем Stage 2 (TDOA, локализация, многоузловая триангуляция) до stage-gate 1→2.** Gate требует trends-FFT (или ensemble) на уровне precision ≥ 85% + recall ≥ 90%. Сейчас trends даёт recall 95% / precision ~76% — не проходит. **Action:** validated dataset или нейро-уточнение.
 
-3. **Не расширяем Device Board на мобильные узлы** — это HORIZON_MOBILE_MULTIMODAL (дальняя перспектива, после Stage 7). Сейчас Device Board — только статические сценарии для лабораторной валидации.
+3. **Не расширяем async-pipeline в device-board без явного сценария использования.** Competition спринт закончился; дальнейшее расширение (e.g., distributed scheduling) откладываем до Stage 2, когда появятся реальные многоузловые сценарии.
 
-4. **Не тронем архитектуру пакетов без обсуждения** — никаких нарушений SERVICES.md / ARCHITECTURE.md правил. Любой новый сервис должен ложиться в foundation/analyzer по правилам.
+4. **Не добавляем новые RF- или видео-модальности (Stage 6).** Это горизонт 2–3 месяца вперёд, после Stage 4 (трекинг). Сейчас фокус на акустике и качестве детекции.
 
-5. **Не будем давать календарные сроки** — только размеры (S/M/L) и зависимости между задачами. Teamlead определяет приоритет и распределение параллельности.
+5. **Не переписываем мобильные узлы или активное зондирование (HORIZON_MOBILE_MULTIMODAL).** Это дальняя перспектива по WHITE_PAPER §14 и вне текущего плана.
 
 ---
 
 ## 6. Проверки в конце периода
 
-1. **Trends DRONE_TIGHT внедрён и виден в бенчмарке** — `yarn benchmark:detectors` показывает `template-match-detector-service` с recall 95% / precision 76%.
+1. **Детекция (trends-DRONE_TIGHT):** команда `yarn benchmark:detectors` показывает recall 95% / FPR 30% на val; метрики обновлены в `DETECTOR_BENCHMARK.md`.
 
-2. **Задача 4.2 (VDR эпик) вышла на обсуждение** — промпт, инфраструктура и план согласованы; добавлено в backlog как `type: investigation`.
+2. **NeuralDetector контракт:** интерфейс `NeuralDetector` добавлен в `detector-base/src/types.ts`; минимальная CLAP-интеграция компилируется (no compilation errors).
 
-3. **Stage 2 статус обновлён в документации** — в `DETECTOR_BENCHMARK.md` видна секция «Frozen until gate-pass» с критериями и текущей позицией trends.
+3. **Device-board async L20:** stress-тест `yarn test device-board -- --grep "L18.*rearm"` passes; утечек памяти нет (проверка heapdump или devtools).
 
-4. **Yamnet scaffold готов** — структура пакета, промпт, контракты; не обязательно реализация модели, но инфраструктура на месте.
+4. **Документация:** `FFT_METRICS_POTENTIAL_AND_LIMITS.md` указана в `STRATEGIC_PLAN_DAY.md`; в `DEVELOPER_RHYTHM.md` явно сказано "trends is the path, not DSP-consensus".
 
-5. **Журнальные тесты добавлены** — `apps/client` содержит интеграционные тесты для некорректных JSON-загрузок; они проходят.
+5. **Архив DSP:** если задача B выполнена — `packages/services/detectors/{harmonic,cepstral,spectral-flux}/` удалены из main branch; CI green на удаление fixture imports.
 
-6. **Device Board документирован** — end-user могут прочитать quick-start и запустить сценарий без обращения в chat.
+6. **Transport-service skeleton:** папка `packages/services/transport-service/` существует с `CONCEPT.md` и заглушкой интерфейса; `FREEZE_CONDITION.md` ясно описывает условия разморозки.
 
 ---
 
-**Документ актуален на:** 2026-06-18 (дата составления по последним коммитам).
+## Итого
+
+На ближайший день команда фокусируется на **завершении детекции эшелона 0** (trends-DRONE_TIGHT как финальная FFT-версия) и **подготовке эшелона 1.B** (нейро-детекторы через OpenRouter). Параллельно — стратегическая архитектурная подготовка для **Stage 2** (многоузловая триангуляция), без спешки по реализации до выполнения stage-gate. Device-board async-pipeline стабилизирована; competition спринт завершён. Данных для роста качества недостаточно; требуется либо validated dataset, либо нейросетевой прорыв.
