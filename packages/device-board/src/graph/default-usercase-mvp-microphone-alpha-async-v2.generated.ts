@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Alpha (Live Observation Pipeline, async v2)",
-    "exportedAt": "2026-06-25T12:44:10.734Z",
+    "exportedAt": "2026-06-26T06:58:28.323Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "alpha",
     "isCompetitionTemplate": true,
@@ -81,6 +81,15 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "y": -728
           },
           "blockKind": "custom"
+        },
+        {
+          "id": "fn-1-block",
+          "label": "StartRecording::fn-1",
+          "position": {
+            "x": -496,
+            "y": -728
+          },
+          "blockKind": "subgraph"
         }
       ],
       "edges": [
@@ -113,6 +122,29 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
           "target": "node-get-microphone-mqkpxb3c-5",
           "sourceHandle": "exec-out",
           "targetHandle": "exec-in"
+        },
+        {
+          "kind": "exec",
+          "source": "node-start-streaming-mql556hh-49",
+          "target": "fn-1-block",
+          "sourceHandle": "exec-out",
+          "targetHandle": "exec-in"
+        },
+        {
+          "kind": "data",
+          "source": "initial-event",
+          "target": "fn-1-block",
+          "dataType": "DeviceRef",
+          "sourceHandle": "device",
+          "targetHandle": "device"
+        },
+        {
+          "kind": "data",
+          "source": "node-start-streaming-mql556hh-49",
+          "target": "fn-1-block",
+          "dataType": "AudioStreamRef",
+          "sourceHandle": "stream",
+          "targetHandle": "stream"
         }
       ]
     },
@@ -220,7 +252,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -2744,
-              "y": -768
+              "y": -824
             },
             "label": "onTick",
             "nodeKind": "event",
@@ -231,8 +263,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "main-infinity",
             "blockKind": "custom",
             "position": {
-              "x": 3936,
-              "y": -288
+              "x": 968,
+              "y": -816
             },
             "label": "∞",
             "nodeKind": "loop-repeat",
@@ -249,11 +281,21 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "nodeKind": "device-global"
           },
           {
+            "id": "fn-3-block",
+            "blockKind": "subgraph",
+            "position": {
+              "x": -2280,
+              "y": -824
+            },
+            "label": "GetAudioStream::fn-3",
+            "supportsAsync": true
+          },
+          {
             "id": "node-collect-samples-mqs2lopv-164",
             "blockKind": "custom",
             "position": {
-              "x": -704,
-              "y": -616
+              "x": -424,
+              "y": -824
             },
             "label": "CollectSamples",
             "nodeKind": "collect-samples",
@@ -268,8 +310,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "node-get-sample-mqs2mt0a-165",
             "blockKind": "custom",
             "position": {
-              "x": -1888,
-              "y": -688
+              "x": -1816,
+              "y": -824
             },
             "label": "GetSample",
             "nodeKind": "get-sample"
@@ -288,8 +330,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "node-get-fft-frame-mqs3h75e-166",
             "blockKind": "custom",
             "position": {
-              "x": -1512,
-              "y": -712
+              "x": -1352,
+              "y": -824
             },
             "label": "GetFFTFrame",
             "nodeKind": "get-fft-frame"
@@ -298,8 +340,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "node-collect-fft-frames-mqs3hhnu-167",
             "blockKind": "custom",
             "position": {
-              "x": -1120,
-              "y": -720
+              "x": -888,
+              "y": -824
             },
             "label": "CollectFftFrames",
             "nodeKind": "collect-fft-frames",
@@ -320,6 +362,26 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "label": "journal1",
             "nodeKind": "variable-get",
             "variableId": "var-JournalRef-mqm9dl4a-6"
+          },
+          {
+            "id": "fn-1-block",
+            "blockKind": "subgraph",
+            "position": {
+              "x": 1432,
+              "y": -760
+            },
+            "label": "StartRecording::fn-1",
+            "supportsAsync": true
+          },
+          {
+            "id": "fn-3-block-2",
+            "blockKind": "subgraph",
+            "position": {
+              "x": 968,
+              "y": -688
+            },
+            "label": "GetAudioStream::fn-3",
+            "supportsAsync": true
           },
           {
             "id": "node-device-global-mqs5ibg8-126",
@@ -356,7 +418,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": 8,
-              "y": -808
+              "y": -696
             },
             "label": "GetRecorder",
             "nodeKind": "get-recorder"
@@ -412,8 +474,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "node-sequence-gate-v20-async",
             "blockKind": "custom",
             "position": {
-              "x": 120,
-              "y": -360
+              "x": 504,
+              "y": -704
             },
             "label": "Sequence",
             "nodeKind": "sequence",
@@ -427,8 +489,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "node-start-async-job-v20",
             "blockKind": "custom",
             "position": {
-              "x": 624,
-              "y": -536
+              "x": 968,
+              "y": -944
             },
             "label": "StartAsyncJob",
             "nodeKind": "start-async-job",
@@ -443,7 +505,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "blockKind": "subgraph",
             "position": {
               "x": 880,
-              "y": -608
+              "y": -432
             },
             "label": "Detached drone report::fn-alpha-async-detached-report",
             "supportsAsync": true
@@ -452,8 +514,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "fn-alpha-observation-tick-block",
             "blockKind": "subgraph",
             "position": {
-              "x": 1800,
-              "y": -1008
+              "x": 968,
+              "y": -560
             },
             "label": "Observation tick::fn-alpha-observation-tick",
             "supportsAsync": true
@@ -462,14 +524,36 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "fn-alpha-recording-gate-block",
             "blockKind": "subgraph",
             "position": {
-              "x": -1680,
-              "y": -608
+              "x": 40,
+              "y": -824
             },
             "label": "Recording gate::fn-alpha-recording-gate",
             "supportsAsync": true
           }
         ],
         "edges": [
+          {
+            "source": "main-on-tick",
+            "sourceHandle": "exec-out",
+            "target": "fn-3-block",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-3-block",
+            "sourceHandle": "exec-out",
+            "target": "node-get-sample-mqs2mt0a-165",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "fn-3-block",
+            "sourceHandle": "data-out",
+            "target": "node-get-sample-mqs2mt0a-165",
+            "targetHandle": "stream",
+            "kind": "data",
+            "dataType": "AudioStreamRef"
+          },
           {
             "source": "node-device-global-mqm0q2fd-14",
             "sourceHandle": "device",
@@ -578,6 +662,29 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "dataType": "TrackRef"
           },
           {
+            "source": "fn-3-block-2",
+            "sourceHandle": "data-out",
+            "target": "fn-1-block",
+            "targetHandle": "stream",
+            "kind": "data",
+            "dataType": "AudioStreamRef"
+          },
+          {
+            "source": "node-device-global-mqs5ibg8-126",
+            "sourceHandle": "device",
+            "target": "fn-1-block",
+            "targetHandle": "device",
+            "kind": "data",
+            "dataType": "DeviceRef"
+          },
+          {
+            "source": "fn-3-block-2",
+            "sourceHandle": "exec-out",
+            "target": "fn-1-block",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
             "source": "fn-alpha-async-detached-report-block",
             "sourceHandle": "report",
             "target": "board-mqs5v7w1-9c8xw62e",
@@ -658,27 +765,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "dataType": "FftTrendsPolicy"
           },
           {
-            "source": "node-sequence-gate-v20-async",
-            "sourceHandle": "then-0",
-            "target": "fn-alpha-recording-gate-block",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "node-sequence-gate-v20-async",
-            "sourceHandle": "then-1",
-            "target": "fn-alpha-recording-gate-block",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-alpha-recording-gate-block",
-            "sourceHandle": "exec-out",
-            "target": "node-start-async-job-v20",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
             "source": "fn-alpha-recording-gate-block",
             "sourceHandle": "track",
             "target": "node-start-async-job-v20",
@@ -703,10 +789,31 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
           },
           {
             "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-3",
+            "target": "fn-3-block-2",
+            "targetHandle": "exec-in",
+            "kind": "exec"
+          },
+          {
+            "source": "node-sequence-gate-v20-async",
             "sourceHandle": "exec-out",
             "target": "main-infinity",
             "targetHandle": "exec-in",
             "kind": "exec"
+          },
+          {
+            "kind": "exec",
+            "source": "fn-alpha-recording-gate-block",
+            "sourceHandle": "exec-out",
+            "target": "node-sequence-gate-v20-async",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-sequence-gate-v20-async",
+            "sourceHandle": "then-0",
+            "target": "node-start-async-job-v20",
+            "targetHandle": "exec-in"
           }
         ]
       },
@@ -907,6 +1014,361 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
       "custom": []
     },
     "functions": [
+      {
+        "id": "fn-3",
+        "name": "GetAudioStream",
+        "edges": [
+          {
+            "kind": "data",
+            "source": "node-device-global-mqrtadee-143",
+            "target": "node-get-microphone-mqrtaojo-144",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "exec",
+            "source": "fn-3-input",
+            "target": "node-get-microphone-mqrtaojo-144",
+            "sourceHandle": "exec-in",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-get-microphone-mqrtaojo-144",
+            "target": "node-is-valid-mqrtb1vo-145",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-microphone-mqrtaojo-144",
+            "target": "node-is-valid-mqrtb1vo-145",
+            "dataType": "MicrophoneRef",
+            "sourceHandle": "microphone",
+            "targetHandle": "value"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-microphone-mqrtaojo-144",
+            "target": "node-get-audio-stream-mqrtbjp1-146",
+            "dataType": "MicrophoneRef",
+            "sourceHandle": "microphone",
+            "targetHandle": "microphone"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtb1vo-145",
+            "target": "node-get-audio-stream-mqrtbjp1-146",
+            "sourceHandle": "exec-true-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-get-audio-stream-mqrtbjp1-146",
+            "target": "node-is-valid-mqrtbtth-147",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtbtth-147",
+            "target": "fn-3-output",
+            "sourceHandle": "exec-true-out",
+            "targetHandle": "exec-out"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtbtth-147",
+            "target": "node-stop-runtime-mqrtc7wk-148",
+            "sourceHandle": "exec-false-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-valid-mqrtb1vo-145",
+            "target": "node-stop-runtime-mqrtc7wk-148",
+            "sourceHandle": "exec-false-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-audio-stream-mqrtbjp1-146",
+            "target": "fn-3-output",
+            "dataType": "AudioStreamRef",
+            "sourceHandle": "stream",
+            "targetHandle": "data-out"
+          }
+        ],
+        "entry": "fn-3-input",
+        "nodes": [
+          {
+            "id": "fn-3-input",
+            "label": "Input",
+            "system": true,
+            "nodeKind": "function-input",
+            "position": {
+              "x": -200,
+              "y": 200
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "fn-3-output",
+            "label": "Output",
+            "system": true,
+            "nodeKind": "function-output",
+            "position": {
+              "x": 2120,
+              "y": 264
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-device-global-mqrtadee-143",
+            "label": "GetDevice",
+            "nodeKind": "device-global",
+            "position": {
+              "x": -200,
+              "y": 328
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-microphone-mqrtaojo-144",
+            "label": "GetMicrophone",
+            "nodeKind": "get-microphone",
+            "position": {
+              "x": 264,
+              "y": 200
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-is-valid-mqrtb1vo-145",
+            "label": "isValid",
+            "nodeKind": "is-valid",
+            "position": {
+              "x": 728,
+              "y": 200
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-audio-stream-mqrtbjp1-146",
+            "label": "GetAudioStream",
+            "nodeKind": "get-audio-stream",
+            "position": {
+              "x": 1192,
+              "y": 248
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-is-valid-mqrtbtth-147",
+            "label": "isValid",
+            "nodeKind": "is-valid",
+            "position": {
+              "x": 1656,
+              "y": 248
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-stop-runtime-mqrtc7wk-148",
+            "label": "StopRuntime",
+            "nodeKind": "stop-runtime",
+            "position": {
+              "x": 2120,
+              "y": 136
+            },
+            "blockKind": "custom"
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "kind": "exec",
+            "name": "exec-in"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "kind": "exec",
+            "name": "exec-out"
+          },
+          {
+            "id": "data-out",
+            "kind": "data",
+            "name": "data-out",
+            "socketType": "AudioStreamRef"
+          }
+        ]
+      },
+      {
+        "id": "fn-1",
+        "name": "StartRecording",
+        "edges": [
+          {
+            "kind": "exec",
+            "source": "node-get-recorder-mqmo3mba-31",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "data",
+            "source": "board-mqrklt5g-mwcrwuv3",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "dataType": "RecordingPolicy",
+            "sourceHandle": "policy",
+            "targetHandle": "policy"
+          },
+          {
+            "kind": "data",
+            "source": "node-get-recorder-mqmo3mba-31",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "recorder"
+          },
+          {
+            "kind": "data",
+            "source": "fn-1-input",
+            "target": "node-get-recorder-mqmo3mba-31",
+            "dataType": "DeviceRef",
+            "sourceHandle": "device",
+            "targetHandle": "device"
+          },
+          {
+            "kind": "data",
+            "source": "fn-1-input",
+            "target": "node-start-recording-bootstrap-v08-2",
+            "dataType": "AudioStreamRef",
+            "sourceHandle": "stream",
+            "targetHandle": "stream"
+          },
+          {
+            "kind": "exec",
+            "source": "fn-1-input",
+            "target": "node-get-recorder-mqmo3mba-31",
+            "sourceHandle": "exec-in",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-start-recording-bootstrap-v08-2",
+            "target": "fn-1-output",
+            "sourceHandle": "exec-out",
+            "targetHandle": "exec-out"
+          },
+          {
+            "kind": "data",
+            "source": "node-start-recording-bootstrap-v08-2",
+            "target": "fn-1-output",
+            "dataType": "RecorderRef",
+            "sourceHandle": "recorder",
+            "targetHandle": "data-out"
+          }
+        ],
+        "entry": "fn-1-input",
+        "nodes": [
+          {
+            "id": "fn-1-input",
+            "label": "Input",
+            "system": true,
+            "nodeKind": "function-input",
+            "position": {
+              "x": -1416,
+              "y": -536
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "fn-1-output",
+            "label": "Output",
+            "system": true,
+            "nodeKind": "function-output",
+            "position": {
+              "x": -24,
+              "y": -536
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-get-recorder-mqmo3mba-31",
+            "label": "GetRecorder",
+            "nodeKind": "get-recorder",
+            "position": {
+              "x": -952,
+              "y": -536
+            },
+            "blockKind": "custom"
+          },
+          {
+            "id": "node-start-recording-bootstrap-v08-2",
+            "label": "StartRecording (bootstrap)",
+            "nodeKind": "start-recording",
+            "position": {
+              "x": -488,
+              "y": -536
+            },
+            "blockKind": "custom",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          },
+          {
+            "id": "board-mqrklt5g-mwcrwuv3",
+            "pure": true,
+            "label": "MakeRecordingPolicy",
+            "nodeKind": "make-recording-policy",
+            "position": {
+              "x": -960,
+              "y": -336
+            },
+            "blockKind": "custom",
+            "recordingPolicy": {
+              "windowSec": 5,
+              "captureFormat": "wav"
+            }
+          }
+        ],
+        "inputPins": [
+          {
+            "id": "exec-in",
+            "kind": "exec",
+            "name": "exec-in"
+          },
+          {
+            "id": "device",
+            "kind": "data",
+            "name": "device",
+            "socketType": "DeviceRef"
+          },
+          {
+            "id": "stream",
+            "kind": "data",
+            "name": "stream",
+            "socketType": "AudioStreamRef"
+          }
+        ],
+        "outputPins": [
+          {
+            "id": "exec-out",
+            "kind": "exec",
+            "name": "exec-out"
+          },
+          {
+            "id": "data-out",
+            "kind": "data",
+            "name": "data-out",
+            "socketType": "RecorderRef"
+          }
+        ]
+      },
       {
         "id": "fn-alpha-async-detached-report",
         "name": "Detached drone report",
@@ -1285,7 +1747,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -504,
-              "y": -520
+              "y": -648
             },
             "label": "Input",
             "nodeKind": "function-input",
@@ -1295,8 +1757,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "fn-alpha-recording-gate-output",
             "blockKind": "custom",
             "position": {
-              "x": 520,
-              "y": 160
+              "x": 1352,
+              "y": -648
             },
             "label": "Output",
             "nodeKind": "function-output",
@@ -1306,7 +1768,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "node-make-track-mqmcipn5-28",
             "blockKind": "custom",
             "position": {
-              "x": -40,
+              "x": 888,
               "y": -648
             },
             "label": "MakeTrack",
@@ -1318,7 +1780,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "blockKind": "custom",
             "position": {
               "x": -40,
-              "y": -400
+              "y": -648
             },
             "label": "IsRecordingWindowFull",
             "nodeKind": "is-recording-window-full",
@@ -1331,8 +1793,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "id": "node-stop-recording-mqmod4yf-35",
             "blockKind": "custom",
             "position": {
-              "x": -40,
-              "y": -520
+              "x": 424,
+              "y": -648
             },
             "label": "StopRecording",
             "nodeKind": "stop-recording",
@@ -1390,20 +1852,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
           },
           {
             "source": "fn-alpha-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-stop-recording-mqmod4yf-35",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-alpha-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-make-track-mqmcipn5-28",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-alpha-recording-gate-input",
             "sourceHandle": "device",
             "target": "node-get-recorder-mqs3ir02-168",
             "targetHandle": "device",
@@ -1457,26 +1905,33 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "dataType": "RecorderRef"
           },
           {
-            "source": "fn-alpha-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-stop-recording-mqmod4yf-35",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
-            "source": "fn-alpha-recording-gate-input",
-            "sourceHandle": "exec-in",
-            "target": "node-make-track-mqmcipn5-28",
-            "targetHandle": "exec-in",
-            "kind": "exec"
-          },
-          {
             "source": "node-make-track-mqmcipn5-28",
             "sourceHandle": "track",
             "target": "fn-alpha-recording-gate-output",
             "targetHandle": "track",
             "kind": "data",
             "dataType": "TrackRef"
+          },
+          {
+            "kind": "exec",
+            "source": "node-is-recording-window-full-mqmo40ie-32",
+            "sourceHandle": "exec-true-out",
+            "target": "node-stop-recording-mqmod4yf-35",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-stop-recording-mqmod4yf-35",
+            "sourceHandle": "exec-out",
+            "target": "node-make-track-mqmcipn5-28",
+            "targetHandle": "exec-in"
+          },
+          {
+            "kind": "exec",
+            "source": "node-make-track-mqmcipn5-28",
+            "sourceHandle": "exec-out",
+            "target": "fn-alpha-recording-gate-output",
+            "targetHandle": "exec-out"
           }
         ],
         "inputPins": [
@@ -1703,10 +2158,10 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
           "preset": "warning"
         },
         "rect": {
-          "x": -1704,
-          "y": -632,
-          "width": 2072,
-          "height": 400
+          "x": 16,
+          "y": -848,
+          "width": 736,
+          "height": 272
         },
         "nodeIds": [
           "node-sequence-gate-v20-async",
@@ -1722,8 +2177,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
           "preset": "info"
         },
         "rect": {
-          "x": 1776,
-          "y": -1032,
+          "x": 944,
+          "y": -584,
           "width": 272,
           "height": 152
         },
@@ -1740,8 +2195,8 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
           "preset": "warning"
         },
         "rect": {
-          "x": 600,
-          "y": -560,
+          "x": 944,
+          "y": -968,
           "width": 272,
           "height": 152
         },

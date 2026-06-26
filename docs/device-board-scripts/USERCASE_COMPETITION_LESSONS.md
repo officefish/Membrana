@@ -258,6 +258,103 @@ event-dispatch-detached-error on on-async-resolved inside fn-*-async-*-block
 
 - [x] Runtime test collapsed upload pipeline (`async-resolved-dispatch.test.ts`)
 
+### L20 — Async v2 pack: orphaned main loop entry (GetAudioStream stripped)
+
+**Симптом (alpha async-v2, runId `044ec8eb`, 2026-06-26):**
+
+```text
+main ticks: 816 · gate-true: 0 · publish: 0 · upload: 0
+unique nodeIds on main: только main-on-tick (нет get-sample, gate, sequence)
+```
+
+**Что:** Рантайм крутится, серверный журнал пуст — main-пайплайн **никогда не стартует** после `onTick`.
+
+**Корневая причина (двойная):**
+
+1. `stripBundledUserFunctionBlocks` удалял `fn-3-block` (`GetAudioStream::fn-3`), т.к. парсинг label через маркер `::fn-` давал id `"3"` вместо `"fn-3"` → preserve не срабатывал.
+2. `packMvpUserCaseForTeamInternal` обнулял `scenario.functions` → терялась def `fn-3`; team collapses могли дополнительно выбросить entry edges.
+
+**Следствие:** Нет ребра `main-on-tick` → `fn-3-block` → `GetSample`; `runSubgraphOnce` завершает тик сразу после event-узла. Это **не** upload (#178) и **не** gate L18/L19 — до gate exec не доходит.
+
+**Fix (`usercase-competition-pack.ts`, 2026-06-26):**
+
+- `parseSubgraphFunctionId` для preserve whitelist (`fn-3`)
+- `preservedBundledFunctions` + не strip `fn-3-block` / `fn-3-block-2`
+- `restorePreservedMainLoopWiring` после collapses
+- Test: `main-on-tick` exec → `fn-3-block`; runtime smoke `runSubgraphOnce` past onTick
+
+**Профилактика:**
+
+- [x] Unit: strip preserves `fn-3-block` + entry exec edge
+- [x] Unit: packed alpha async v2 `runSubgraphOnce` enters `fn-3-block` or `get-sample`
+- [ ] После `yarn usercase:build-competition-async-v2 *` — grep embedded: `"source": "main-on-tick"` + target `fn-3-block`
+- [ ] Manual Run + `yarn logs:parse`: `gate-true` / `get-sample` > 0 (не только `main-on-tick`)
+- [ ] `validatePreRun` **не** ловит orphan entry — не считать green pack достаточным без L20 checks
+
+---
+
+### L21 — Collapsed gate: recorder data pull before exec (function-input bridge on main)
+
+**Симптом (alpha async-v2, runId `da5d1257`, 2026-06-26):**
+
+```text
+main tick 1: fn-3 → get-sample → fft → collect-fft → collect-samples
+scenario-runtime error: Node "fn-alpha-recording-gate-input" (kind=function-input) is not a data source
+```
+
+**Что:** L20 починил entry; первый main tick доходит до `collect-samples`, который тянет `recorder` с `fn-alpha-recording-gate-block` **до** exec-входа в gate. `resolveSubgraphBlockOutput` резолвил внутренний `GetRecorder` → `function-input.device` без `resolveFunctionInputPin` (bridge с parent edges на block).
+
+**Fix:** `resolve-input.ts` — в `resolveSubgraphBlockOutput` вызывать `augmentResolveContextForFunctionCall` перед резолвом внутренних output nodes (тот же контракт, что L9 в `block-executor`).
+
+**Профилактика:**
+
+- [x] Unit: `resolveNodeOutput(gate-block, recorder)` с parent `device-global → gate:device`
+- [ ] Run logs: tick 1 проходит `collect-samples` без `function-input` error
+- [ ] При новых collapsed functions с data-in pins — тест data pull с parent subgraph
+
+---
+
+### L22 — Competition pack: missing fn-1 bootstrap + broken gate hot path (async v2)
+
+**Симптом (alpha async-v2, runId `36da5e80`, 2026-06-26):**
+
+```text
+main ticks: max=150 · gate-true: 0 · publish-done: 0 · upload-ok: 0
+is-recording-window-full full: false (все 150 тиков)
+onStart: StartStreaming без start-recording
+```
+
+**Что:** L20/L21 починили entry и data-pull; тики идут, `collect-samples` append OK, но **запись никогда не стартует** — `stripBundledUserFunctionBlocks` вырезал `fn-1-block` с onStart (сохранён был только `fn-3`). Без `start-recording` `isRecorderWindowFull` всегда false. Дополнительно: collapsed `fn-*-recording-gate` fan-out `exec-in` → stop/make-track параллельно gate-check; на main нет `gate-block exec-out → Sequence`.
+
+**Fix:** `usercase-competition-pack.ts` — preserve `fn-1`, `restorePreservedBundledWiring` (initial + main), `repairCollapsedRecordingGateFunctions`, async v2 `restoreAsyncV2RecordingGateHotPath` (gate `exec-out` → `node-sequence-gate-v20-async`).
+
+**Профилактика:**
+
+- [x] Pack test: initial `fn-1-block` после `StartStreaming`; gate `exec-out → Sequence`; нет `then-0/1 → gate exec-in`
+- [ ] Run logs: `start-recording` на onStart; после ~5 s `recording-window-full` / gate-true
+- [ ] `yarn usercase:build-competition-async-v2 alpha` после правок pack
+
+---
+
+### L23 — Async v2: Sequence then-0 orphaned after gate collapse (no upload)
+
+**Симптом (alpha async-v2, runId `410387f3`, 2026-06-26):**
+
+```text
+gate-true: 4 · publish-done: 4 (trends) · upload-ok: 0 · async-jobs start: 0
+sequence-then-skip thenIndex: 0,1 · make-track/slice-start OK inside gate
+```
+
+**Что:** L22 перенёс stop/make-track в collapsed gate; flat `Sequence then-0/1` указывали на узлы, снятые с main. `StartAsyncJob` получал `track` data с gate-block, но **без exec-in** — upload и треки в journal не стартовали. Trends reports публикуются sync (then-2 observation).
+
+**Fix:** `restoreAsyncV2SequenceUploadWiring` — `then-0 → node-start-async-job-v20 exec-in` после pack.
+
+**Профилактика:**
+
+- [x] Pack test: sequence `then-0` → `StartAsyncJob`
+- [ ] Run logs: `async-job-start` / `[media] upload-ok` после gate-true
+- [ ] Серверный journal: tracks появляются (часто 1–3 тика после publish trends)
+
 ---
 
 ## Чеклист перед merge competition UserCase
@@ -288,8 +385,10 @@ event-dispatch-detached-error on on-async-resolved inside fn-*-async-*-block
 | `block-executor.ts` | Augmented context + all stores on subgraph call |
 | `serialize-scenario-subgraph.ts` | Deserialize + function pin sync |
 | `exec-successor.ts` | L11 function-output exec pins |
-| `resolve-input.ts` | L12 subgraph block data pull; scenarioFunctions |
+| `resolve-input.ts` | L12 subgraph block data pull; L21 `augmentResolveContextForFunctionCall` in `resolveSubgraphBlockOutput` |
 | `scenario-runtime.ts` | scenarioFunctions in resolve context |
+| `usercase-competition-pack.ts` | L20 preserve `fn-3`, `restorePreservedMainLoopWiring`, `parseSubgraphFunctionId` |
+| `usercase-competition-async-v2-pack.test.ts` | L20 entry wiring + runtime smoke |
 
 ---
 
