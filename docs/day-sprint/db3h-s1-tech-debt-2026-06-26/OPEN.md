@@ -23,7 +23,7 @@
 | B | Issues audit manifest + report | ✅ `docs/archive/github-issues-audit-2026-06-26.md` |
 | C | task:archive merged + sync-readme | ⏳ (нет merged в manifest; sync при закрытии) |
 | D | Repo hygiene + `yarn test:scripts` in CI | ✅ scripts + ci.yml step (#12) |
-| E | async-v2 L18–L19 PR | ⏳ (ветка `fix/async-v2-l18-l19-recording-detached`) |
+| E | async-v2 L18–L19 PR | ⏳ [PR #181](https://github.com/officefish/Membrana/pull/181) pushed `58e8571` |
 
 ---
 
