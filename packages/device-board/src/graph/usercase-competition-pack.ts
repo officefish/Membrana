@@ -1,6 +1,7 @@
-import type { DeviceScenarioDocument, ScenarioSubgraph } from '@membrana/core';
+import type { DeviceScenarioDocument, ScenarioGraphEdge, ScenarioGraphNode, ScenarioSubgraph } from '@membrana/core';
 import { DEFAULT_COMPETITION_TIMEOUT_SEC } from '@membrana/core';
 
+import { parseSubgraphFunctionId } from './subgraph-ref.js';
 import { collapseSelectionToFunction } from './collapse-to-function.js';
 import { stampCompetitionDocumentMeta } from './execution-policy.js';
 import { serializeScenarioFunction } from './serialize-scenario-function.js';
@@ -21,12 +22,20 @@ interface CollapseSpec {
 
 type PackBranch = 'main' | 'onConnect';
 
-const GATE_NODE_IDS = [
+const GATE_CHECK_NODE_IDS = [
   'node-get-recorder-mqs3ir02-168',
   'node-is-recording-window-full-mqmo40ie-32',
+] as const;
+
+const GATE_NODE_IDS = [
+  ...GATE_CHECK_NODE_IDS,
   'node-stop-recording-mqmod4yf-35',
   'node-make-track-mqmcipn5-28',
 ] as const;
+
+const RECORDING_WINDOW_FULL_NODE_ID = 'node-is-recording-window-full-mqmo40ie-32';
+const ASYNC_V2_SEQUENCE_NODE_ID = 'node-sequence-gate-v20-async';
+const ASYNC_V2_START_ASYNC_JOB_NODE_ID = 'node-start-async-job-v20';
 
 const TRENDS_PUBLISH_NODE_IDS = [
   'node-flush-spectral-analyser-mqs6tcs6-172',
@@ -132,14 +141,38 @@ export interface TeamPackLayoutMetrics {
   readonly execSpanPx: number;
 }
 
+/**
+ * Bundled MVP user functions kept on main after team pack (not replaced by team collapses).
+ * `fn-3` GetAudioStream wires `main-on-tick` → sample/FFT pipeline — stripping it orphans the loop entry.
+ * `fn-1` StartRecording bootstrap on onStart + gate restart on main — without it recorder window never fills.
+ */
+const PRESERVED_BUNDLED_FUNCTION_IDS = new Set(['fn-3', 'fn-1']);
+
+function isBundledUserFunctionSubgraphBlock(node: ScenarioGraphNode): boolean {
+  return (
+    node.blockKind === 'subgraph' &&
+    (node.id.includes('fn-') || node.label?.includes('::fn-') === true)
+  );
+}
+
+function isPreservedBundledUserFunctionBlock(node: ScenarioGraphNode): boolean {
+  if (!isBundledUserFunctionSubgraphBlock(node)) {
+    return false;
+  }
+  const functionId = parseSubgraphFunctionId(node);
+  return functionId !== null && PRESERVED_BUNDLED_FUNCTION_IDS.has(functionId);
+}
+
+function preservedBundledFunctions(document: DeviceScenarioDocument) {
+  return document.scenario.functions.filter((fn) => PRESERVED_BUNDLED_FUNCTION_IDS.has(fn.id));
+}
+
 function stripBundledUserFunctionBlocks(document: DeviceScenarioDocument): DeviceScenarioDocument {
   const pruneSubgraph = (subgraph: ScenarioSubgraph): ScenarioSubgraph => {
     const removed = new Set(
       subgraph.nodes
         .filter(
-          (node) =>
-            node.blockKind === 'subgraph' &&
-            (node.id.includes('fn-') || node.label?.includes('::fn-') === true),
+          (node) => isBundledUserFunctionSubgraphBlock(node) && !isPreservedBundledUserFunctionBlock(node),
         )
         .map((node) => node.id),
     );
@@ -164,6 +197,13 @@ function stripBundledUserFunctionBlocks(document: DeviceScenarioDocument): Devic
       },
     },
   };
+}
+
+/** @internal Exported for pack regression tests (main loop entry wiring). */
+export function stripBundledUserFunctionBlocksForTest(
+  document: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  return stripBundledUserFunctionBlocks(document);
 }
 
 function readSubgraph(document: DeviceScenarioDocument, branch: PackBranch): ScenarioSubgraph {
@@ -234,6 +274,330 @@ function applyBranchCollapse(
 }
 
 /** Subgraph function blocks в latent Then требуют `supportsAsync: true` (AP v1). */
+function scenarioGraphEdgeKey(edge: ScenarioGraphEdge): string {
+  return `${edge.source}:${edge.sourceHandle}->${edge.target}:${edge.targetHandle}`;
+}
+
+type PreservedWiringBranch = 'initial' | 'main';
+
+function readPreservedWiringSubgraph(
+  document: DeviceScenarioDocument,
+  branch: PreservedWiringBranch,
+): ScenarioSubgraph {
+  return branch === 'initial' ? document.scenario.initial : document.scenario.loops.main;
+}
+
+function writePreservedWiringSubgraph(
+  document: DeviceScenarioDocument,
+  branch: PreservedWiringBranch,
+  subgraph: ScenarioSubgraph,
+): DeviceScenarioDocument {
+  if (branch === 'initial') {
+    return {
+      ...document,
+      scenario: { ...document.scenario, initial: subgraph },
+    };
+  }
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      loops: { ...document.scenario.loops, main: subgraph },
+    },
+  };
+}
+
+/** Team collapses can drop preserved bundled blocks — restore nodes/edges from pre-collapse graph. */
+function restorePreservedBranchWiring(
+  document: DeviceScenarioDocument,
+  strippedBase: DeviceScenarioDocument,
+  branch: PreservedWiringBranch,
+): DeviceScenarioDocument {
+  const sourceSubgraph = readPreservedWiringSubgraph(strippedBase, branch);
+  const packedSubgraph = readPreservedWiringSubgraph(document, branch);
+  const sourceNodesById = new Map(sourceSubgraph.nodes.map((node) => [node.id, node]));
+
+  const touchesPreservedBlock = (edge: ScenarioGraphEdge): boolean => {
+    const sourceNode = sourceNodesById.get(edge.source);
+    const targetNode = sourceNodesById.get(edge.target);
+    return (
+      (sourceNode !== undefined && isPreservedBundledUserFunctionBlock(sourceNode)) ||
+      (targetNode !== undefined && isPreservedBundledUserFunctionBlock(targetNode))
+    );
+  };
+
+  const missingNodes = sourceSubgraph.nodes.filter(
+    (node) =>
+      isPreservedBundledUserFunctionBlock(node) &&
+      !packedSubgraph.nodes.some((packedNode) => packedNode.id === node.id),
+  );
+
+  const packedEdgeKeys = new Set(packedSubgraph.edges.map(scenarioGraphEdgeKey));
+  const missingEdges = sourceSubgraph.edges.filter((edge) => {
+    if (packedEdgeKeys.has(scenarioGraphEdgeKey(edge))) {
+      return false;
+    }
+    return edge.source === sourceSubgraph.entry || touchesPreservedBlock(edge);
+  });
+
+  if (missingNodes.length === 0 && missingEdges.length === 0) {
+    return document;
+  }
+
+  return writePreservedWiringSubgraph(document, branch, {
+    ...packedSubgraph,
+    nodes: [...packedSubgraph.nodes, ...missingNodes],
+    edges: [...packedSubgraph.edges, ...missingEdges],
+  });
+}
+
+function restorePreservedBundledWiring(
+  document: DeviceScenarioDocument,
+  strippedBase: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  let updated = restorePreservedBranchWiring(document, strippedBase, 'initial');
+  updated = restorePreservedBranchWiring(updated, strippedBase, 'main');
+  return updated;
+}
+
+function findRecordingGateBlockId(main: ScenarioSubgraph): string | null {
+  const block = main.nodes.find(
+    (node) => node.blockKind === 'subgraph' && node.id.includes('recording-gate-block'),
+  );
+  return block?.id ?? null;
+}
+
+/**
+ * Collapsed recording-gate functions can fan `exec-in` to stop/make-track in parallel with the
+ * window check. Repair to: check → (true) stop → make-track → exec-out | (false) exec-false-out.
+ */
+function repairCollapsedRecordingGateFunctions(
+  document: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  const gateFunctionIds = new Set(
+    document.scenario.functions
+      .filter((fn) => fn.id.endsWith('-recording-gate'))
+      .map((fn) => fn.id),
+  );
+  if (gateFunctionIds.size === 0) {
+    return document;
+  }
+
+  const functions = document.scenario.functions.map((fn) => {
+    if (!gateFunctionIds.has(fn.id)) {
+      return fn;
+    }
+
+    const inputId = fn.entry;
+    const outputNode = fn.nodes.find((node) => node.nodeKind === 'function-output');
+    const windowNode = fn.nodes.find((node) => node.nodeKind === 'is-recording-window-full');
+    const stopNode = fn.nodes.find((node) => node.nodeKind === 'stop-recording');
+    const makeTrackNode = fn.nodes.find((node) => node.nodeKind === 'make-track');
+    if (
+      outputNode === undefined ||
+      windowNode === undefined ||
+      stopNode === undefined ||
+      makeTrackNode === undefined
+    ) {
+      return fn;
+    }
+
+    const keepEdge = (edge: (typeof fn.edges)[number]): boolean => {
+      if (edge.kind !== 'exec') {
+        return true;
+      }
+      if (edge.source === inputId && edge.target !== windowNode.id) {
+        return false;
+      }
+      if (edge.source === windowNode.id && edge.sourceHandle === 'exec-true-out') {
+        return edge.target === stopNode.id;
+      }
+      return true;
+    };
+
+    const edges = fn.edges.filter(keepEdge);
+    const edgeKey = (edge: (typeof fn.edges)[number]): string =>
+      `${edge.kind}:${edge.source}:${edge.sourceHandle}->${edge.target}:${edge.targetHandle}`;
+
+    const addEdge = (edge: (typeof fn.edges)[number]): void => {
+      const key = edgeKey(edge);
+      if (!edges.some((item) => edgeKey(item) === key)) {
+        edges.push(edge);
+      }
+    };
+
+    addEdge({
+      kind: 'exec',
+      source: inputId,
+      sourceHandle: 'exec-in',
+      target: windowNode.id,
+      targetHandle: 'exec-in',
+    });
+    addEdge({
+      kind: 'exec',
+      source: windowNode.id,
+      sourceHandle: 'exec-true-out',
+      target: stopNode.id,
+      targetHandle: 'exec-in',
+    });
+    addEdge({
+      kind: 'exec',
+      source: stopNode.id,
+      sourceHandle: 'exec-out',
+      target: makeTrackNode.id,
+      targetHandle: 'exec-in',
+    });
+    addEdge({
+      kind: 'exec',
+      source: makeTrackNode.id,
+      sourceHandle: 'exec-out',
+      target: outputNode.id,
+      targetHandle: 'exec-out',
+    });
+
+    return { ...fn, edges };
+  });
+
+  return {
+    ...document,
+    scenario: { ...document.scenario, functions },
+  };
+}
+
+/**
+ * v2.0-async: wire gate block exec-out → Sequence; drop mistaken then-0/1 → gate exec-in.
+ */
+function restoreAsyncV2RecordingGateHotPath(
+  document: DeviceScenarioDocument,
+  strippedBase: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  const packedMain = document.scenario.loops.main;
+  const gateBlockId = findRecordingGateBlockId(packedMain);
+  if (gateBlockId === null) {
+    return document;
+  }
+
+  const hotPathEdge: ScenarioGraphEdge = {
+    kind: 'exec',
+    source: gateBlockId,
+    sourceHandle: 'exec-out',
+    target: ASYNC_V2_SEQUENCE_NODE_ID,
+    targetHandle: 'exec-in',
+  };
+
+  const filteredEdges = packedMain.edges.filter(
+    (edge) =>
+      !(
+        (edge.kind === 'exec' &&
+          edge.target === gateBlockId &&
+          edge.targetHandle === 'exec-in' &&
+          edge.source === ASYNC_V2_SEQUENCE_NODE_ID &&
+          (edge.sourceHandle === 'then-0' || edge.sourceHandle === 'then-1')) ||
+        (edge.kind === 'exec' &&
+          edge.source === gateBlockId &&
+          edge.sourceHandle === 'exec-out' &&
+          edge.target === 'node-start-async-job-v20') ||
+        scenarioGraphEdgeKey(edge) === scenarioGraphEdgeKey(hotPathEdge)
+      ),
+  );
+
+  const sourceMain = strippedBase.scenario.loops.main;
+  const hadFlatHotPath = sourceMain.edges.some(
+    (edge) =>
+      edge.kind === 'exec' &&
+      edge.source === RECORDING_WINDOW_FULL_NODE_ID &&
+      edge.sourceHandle === 'exec-true-out' &&
+      edge.target === ASYNC_V2_SEQUENCE_NODE_ID,
+  );
+  if (!hadFlatHotPath) {
+    return {
+      ...document,
+      scenario: {
+        ...document.scenario,
+        loops: {
+          ...document.scenario.loops,
+          main: { ...packedMain, edges: filteredEdges },
+        },
+      },
+    };
+  }
+
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      loops: {
+        ...document.scenario.loops,
+        main: {
+          ...packedMain,
+          edges: [...filteredEdges, hotPathEdge],
+        },
+      },
+    },
+  };
+}
+
+/**
+ * v2.0-async: stop/make-track live inside collapsed gate; flat Sequence then-0/1 orphans.
+ * Wire then-0 → StartAsyncJob (track data pin already on gate-block → async job).
+ */
+function restoreAsyncV2SequenceUploadWiring(document: DeviceScenarioDocument): DeviceScenarioDocument {
+  const packedMain = document.scenario.loops.main;
+  const hasAsyncJob = packedMain.nodes.some((node) => node.id === ASYNC_V2_START_ASYNC_JOB_NODE_ID);
+  if (!hasAsyncJob) {
+    return document;
+  }
+
+  const uploadThenEdge: ScenarioGraphEdge = {
+    kind: 'exec',
+    source: ASYNC_V2_SEQUENCE_NODE_ID,
+    sourceHandle: 'then-0',
+    target: ASYNC_V2_START_ASYNC_JOB_NODE_ID,
+    targetHandle: 'exec-in',
+  };
+
+  const filteredEdges = packedMain.edges.filter(
+    (edge) =>
+      !(
+        edge.kind === 'exec' &&
+        edge.source === ASYNC_V2_SEQUENCE_NODE_ID &&
+        (edge.sourceHandle === 'then-0' || edge.sourceHandle === 'then-1') &&
+        edge.target !== ASYNC_V2_START_ASYNC_JOB_NODE_ID
+      ),
+  );
+
+  const packedEdgeKeys = new Set(filteredEdges.map(scenarioGraphEdgeKey));
+  if (packedEdgeKeys.has(scenarioGraphEdgeKey(uploadThenEdge))) {
+    if (filteredEdges.length === packedMain.edges.length) {
+      return document;
+    }
+    return {
+      ...document,
+      scenario: {
+        ...document.scenario,
+        loops: {
+          ...document.scenario.loops,
+          main: { ...packedMain, edges: filteredEdges },
+        },
+      },
+    };
+  }
+
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      loops: {
+        ...document.scenario.loops,
+        main: {
+          ...packedMain,
+          edges: [...filteredEdges, uploadThenEdge],
+        },
+      },
+    },
+  };
+}
+
 function markMainSubgraphBlocksSupportsAsync(
   document: DeviceScenarioDocument,
 ): DeviceScenarioDocument {
@@ -316,6 +680,7 @@ interface PackTeamOptions {
   readonly preMainCollapses?: readonly CollapseSpec[];
   readonly metaProfile?: typeof TEAM_META;
   readonly competitionBase?: string;
+  readonly asyncV2?: boolean;
 }
 
 function packMvpUserCaseForTeamInternal(
@@ -325,6 +690,7 @@ function packMvpUserCaseForTeamInternal(
 ): DeviceScenarioDocument {
   const meta = (options.metaProfile ?? TEAM_META)[team];
   const strippedBase = stripBundledUserFunctionBlocks(baseDocument);
+  const keptBundledFunctions = preservedBundledFunctions(strippedBase);
   let document: DeviceScenarioDocument = stampCompetitionDocumentMeta({
     ...structuredClone(strippedBase),
     meta: {
@@ -339,7 +705,7 @@ function packMvpUserCaseForTeamInternal(
     },
     scenario: {
       ...structuredClone(strippedBase.scenario),
-      functions: [],
+      functions: keptBundledFunctions,
       commentGroups: [],
     },
   });
@@ -354,6 +720,13 @@ function packMvpUserCaseForTeamInternal(
 
   for (const collapse of TEAM_ONCONNECT_COLLAPSES[team] ?? []) {
     document = applyBranchCollapse(document, 'onConnect', collapse);
+  }
+
+  document = restorePreservedBundledWiring(document, strippedBase);
+  document = repairCollapsedRecordingGateFunctions(document);
+  if (options.asyncV2 === true) {
+    document = restoreAsyncV2RecordingGateHotPath(document, strippedBase);
+    document = restoreAsyncV2SequenceUploadWiring(document);
   }
 
   return markMainSubgraphBlocksSupportsAsync(document);
@@ -381,6 +754,7 @@ export function packMvpUserCaseForTeamAsyncV2(
     preMainCollapses: TEAM_ASYNC_V2_PRE_COLLAPSES[team],
     metaProfile: TEAM_ASYNC_V2_META,
     competitionBase: 'v2.0-async',
+    asyncV2: true,
   });
 }
 

@@ -47,6 +47,9 @@ jobs:
       - name: Full verify
         run: yarn turbo run lint typecheck test build --continue
 
+      - name: Script ritual tests (test:scripts)
+        run: yarn test:scripts
+
       - name: UserCase competition verify (alpha, beta, gamma)
         run: node scripts/usercase.mjs verify-competition
         env:

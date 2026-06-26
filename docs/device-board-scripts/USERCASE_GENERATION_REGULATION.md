@@ -2,7 +2,7 @@
 
 > **Для агентов:** читать **в этом порядке** перед любой генерацией / pack / collapse UserCase.  
 > **Task-промпт:** [`docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md)  
-> **RCA / история:** [`USERCASE_COMPETITION_LESSONS.md`](./USERCASE_COMPETITION_LESSONS.md) (L1–L12)  
+> **RCA / история:** [`USERCASE_COMPETITION_LESSONS.md`](./USERCASE_COMPETITION_LESSONS.md) (L1–L20)  
 > **CLI:** `node scripts/usercase.mjs help`  
 > **LGTM Teamlead (Vesnin):** 2026-06-21 — канон discovery для AI; merge sprint forks не требуется.
 
@@ -42,6 +42,7 @@
 | Z6 | Второй collapse без `deserialize(..., functions)` | L10 |
 | Z7 | Pure policy nodes на exec chain | L12 |
 | Z8 | Merge sprint fork в bundled MVP без отдельной product-задачи | CLOSURE |
+| Z9 | Strip/pack competition без preserve `fn-3` GetAudioStream на main | L20 |
 
 ---
 
@@ -123,7 +124,7 @@ node scripts/usercase.mjs verify-competition
 |---------------------|-----------------|
 | «Сгенерируй UserCase» | этот регламент + GENERATION_PROMPT |
 | «Добавь в catalog / picker» | + `DEVICE_BOARD_USERCASES_EPIC_PROMPT.md` (U9) |
-| «Run падает на collapsed function» | `USERCASE_COMPETITION_LESSONS.md` L9–L12 |
+| «Run падает на collapsed function» | `USERCASE_COMPETITION_LESSONS.md` L9–L20 |
 | «Новый node kind / runtime» | отдельный device-board epic, не этот регламент |
 
 ---

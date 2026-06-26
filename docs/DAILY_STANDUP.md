@@ -1,261 +1,307 @@
-<!-- Сгенерировано: 2026-06-17T05:45:58.758Z (yarn standup) -->
+<!-- Сгенерировано: 2026-06-26T04:56:34.884Z (yarn standup) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
 <!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (25), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
 
-# 📋 ЕЖЕДНЕВНЫЙ СТЕНДАП — 2026-06-17
+# ☀️ ЕЖЕДНЕВНЫЙ СТЕНДАП — Membrana (2026-06-26)
 
-**Время:** 09:00 МСК  
-**Период:** 2026-06-16 18:00 — 2026-06-17 09:00  
-**Координатор:** Vesnin (Teamlead)
-
----
-
-## 🔄 Синтез входных документов
-
-### Источники (в порядке приоритета)
-
-| Документ | Статус | Вес | Основное |
-|----------|--------|-----|----------|
-| **DAILY_CODE_REVIEW.md** (вчера, 18:10) | ✅ полный | 40% | Ветка `feat/trends-go-drone-tight` (49 коммитов) — FFT last-chance готов к merge, есть блокеры (tester background-office, turbo.json) |
-| **STRATEGIC_PLAN_DAY.md** (вчера, 05:45) | ✅ полный | 35% | 6 задач на следующий день: T1–T6, приоритет VDR-эпик + zero-shot YAMNet/CLAP, stage-gate 1→2 решение |
-| **MAIN_DAY_ISSUE.md** (2026-06-16) | ✅ справочный | 15% | Фокус JE1–JE5: event-driven journal, эпик #83 (telemetry-journal-event-driven) |
-| **GitHub Issues** (открытые) | ✅ полный | 7% | 17 issues, приоритеты: #83, #79, #78, #59, #58, #57, #54, #49 |
-| **packages/temp** | — | 3% | (неуказан в вызове) |
+**Время:** 08:45 UTC+3 | **Координатор:** Vesnin (Teamlead)  
+**Входы:** вчерашнее вечернее ревью + STRATEGIC_PLAN_DAY + открытые issues + packages/temp/  
+**Выходы:** DAILY_STANDUP.md → MAIN_DAY_ISSUE.md → yarn plan:day
 
 ---
 
-## 📊 КОНСОЛИДИРОВАННЫЙ ПЛАН НА СЕГОДНЯ (2026-06-17)
+## 📊 I. Синтез вчерашнего кода (DAILY_CODE_REVIEW)
 
-### **Утренний приоритет**
+### Завершено (merged, LGTM)
+- ✅ **Trends DRONE_TIGHT production-ready:** recall 95% / FPR 30% в val, документировано в `FFT_METRICS_POTENTIAL_AND_LIMITS.md` (финальный итог эпика #84).
+- ✅ **Device-board async-v2 Phase 5:** Beta-команда победила consilium; три UserCase мигрированы на async; Phase A (catalog publishing) в работе.
+- ✅ **L18/L19 микрофонного pipeline:** re-arm clip capture на повторный запуск сценария, detached report bridge в async-resolved-dispatch.
+- ✅ **OpenRouter интеграция:** `openrouter.service` в `background-office`, llm-proxy preflight + ночной ритуал night-hunt.
 
-#### 🟥 БЛОКЕР 1: Code review ветки `feat/trends-go-drone-tight` → merge to `main`
-
-**Статус:** готов к слиянию, **3 критических задачи**  
-**Владелец:** Ozhegov (Структурщик) + тест-сервис  
-**Предполагаемое время:** 09:00–10:30
-
-| # | Задача | Ответственный | статус |
-|---|--------|----------------|--------|
-| 1️⃣ | Зафиксить `@membrana/background-office#test` (красный флаг) | Структурщик + DevOps | 🔴 |
-| 2️⃣ | Добавить `outputs` в turbo.json для `harmonic-detector-service` и `journal-report-views` | Структурщик | 🟡 |
-| 3️⃣ | Завернуть динамические объекты в useMemo (7 lint-warning в client) | Родченко (Верстальщик) | 🟡 |
-
-**Definition of Done:** `yarn test` зелён, `yarn lint` зелён, `yarn typecheck` зелён → merge в `main`.
+### Вчерашние риски (DAILY_CODE_REVIEW)
+| Риск | Статус | Action утра |
+|------|--------|-----------|
+| **P1: RAG-тесты падают** (`@membrana/rag-service`) | 🔴 Блокер | `yarn turbo run test --filter=@membrana/rag-service --force` (инвестигировать) |
+| **P2: device-board warnings** (3 шт) | 🟡 Нит | `yarn lint --filter=@membrana/device-board` (fix или Issue) |
+| **P2: .sync-readme-out.txt** | 🟢 Гигиена | Удалить из root, проверить `.gitignore` |
 
 ---
 
-#### 🟨 БЛОКЕР 2: Stage-gate 1→2 решение (архитектурное) — документировать **ДО** начала 1.B
+## 🗺️ II. Стратегический план на день (STRATEGIC_PLAN_DAY)
 
-**Статус:** требует консилиума Teamlead + Математик  
-**Владелец:** Vesnin + Dynin  
-**Предполагаемое время:** 10:30–11:30
+### Магистраль дня
 
-**Вопрос:** Проходит ли single-node FFT/DSP stage-gate (P≥85% R≥90%) с текущим `DRONE_TIGHT`?  
-**Ответ (из FFT_METRICS_POTENTIAL_AND_LIMITS.md):**
-- ✅ Trends recall: **95%** ✓
-- ⚠️ Trends precision: **~76%** (ниже целевых 85%)
-- ✅ Мягкая цель (P≥80% R≥90%): **достигнута** ✓
-- 🔴 Жёсткая цель (P≥85% R≥90%): **не достигнута** ✗
+| Этап | Задача | Роль | Таймбокс | Блокирует |
+|------|--------|------|----------|-----------|
+| **1. Детекция: нейро-эшелон** | A: NeuralDetector контракт + CLAP-skeleton | Динин + Музыкант | 09:00–11:00 | B |
+| | B: Удалить архивные DSP-детекторы | Ozhegov | 09:30–10:30 | — |
+| **2. Архитектура (Stage 2)** | C: TransportService спецификация | Ozhegov | 10:30–12:00 | D |
+| | D: TDOA-service skeleton (frozen) | Ozhegov | 12:00–13:00 | — |
+| **3. Бенчмарк & docs** | E: DETECTOR_BENCHMARK.md обновить | Верстальщик + Динин | 10:00–11:00 | — |
+| | G: DEVELOPER_RHYTHM.md синхронизировать | Vesnin + Ozhegov | 11:00–12:00 | — |
+| **4. Device-board стабилизация** | F: L20 async-pipeline stress-тест | Rodchenko | 13:00–14:00 | — |
 
-**Решение:** Документировать в `docs/STAGE_GATE_1_TO_2_DECISION.md`:
-- Trends + DRONE_TIGHT = лучший FFT-кандидат для prod на эшелоне 0 → **include в prod**.
-- Hard stage-gate не пройден → **переход на Этап 1.B (нейро / zero-shot)** требует либо:
-  - Validated Dataset (VDR эпик), либо
-  - Zero-shot YAMNet/CLAP без обучения.
-- Рекомендация: **параллельно инициировать VDR-сбор + YAMNet scaffold**, не ждать идеального FFT.
-
-**Definition of Done:** документ подписан Vesnin (LGTM), выложен в `docs/`.
+### Параллели (выполняются без блокировки)
+- **VDR data collection:** Музыкант собирает 15+ sample'ов с разметкой (эпик #84 follow-up).
+- **Device-board W0 hotfixes:** Rodchenko работает над #146, #152, #153 (selection/palette/copy).
+- **Night-hunt операции:** background-office ночной запуск trend-анализа через OpenRouter.
 
 ---
 
-### **Основная работа (9:00–18:00)**
+## 🔴 III. Открытые GitHub Issues (приоритизация)
 
-#### ✅ TASK T1: VDR Dataset Epic инициализация (M, 10–15 ч) — **ГЛАВНАЯ**
+### **T0 (Критичные блокеры — утро)**
+1. **#180** — `L18 clip recorder re-arm + L19 detached report bridge` (async-v2 smoke fail)  
+   *Статус:* fixing; target merge сегодня  
+   *Роль:* Ozhegov (async-pipeline) + Музыкант (micro-test)
 
-**Описание:** Создать минимальный validated dataset (30 real-world сэмплов, human-verified labels) для калибровки детекторов эшелона 1.B.
+2. **#178** — `async-v2 track upload fails` (comp-packaging Phase C)  
+   *Статус:* investigating; связан с #180  
+   *Роль:* Структурщик (runtime), Верстальщик (UI)
 
-**Назначение:** 
-- Музыкант (сбор примеров, метаданные)
-- Teamlead (протокол, спецификация DTO)
+### **T1 (P1 — высокий приоритет)**
+3. **#151** — Device-board W0 hotfixes (эпик: #146, #152, #153)  
+   *Target:* до конца спринта (MVP UserCase)  
+   *Роль:* Rodchenko (lead)
 
-**Артефакты (по DoD):**
-- [ ] `docs/tasks/VDR_DATASET_COLLECTION_EPIC.md` (протокол + чеклист)
-- [ ] `data/validated-samples/` (минимум 10 real сэмплов)
-- [ ] CSV таблица: сэмпл | спектрограмма | разметка (drone/not-drone/ambiguous)
-- [ ] Отчёт расхождений trends (`DRONE_TIGHT`) vs human labels (P/R/F1)
+4. **#144** — Tasks audit v1 (bookkeeping, reviewing, scripts)  
+   *Статус:* planning; спецификация готова  
+   *Роль:* Vesnin + Ozhegov
 
-**Ссылка на промпт:** [`docs/prompts/TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md)
+### **T2 (P2 — магистраль)**
+5. **#141** — Device-board pause runtime v0.7  
+   *Статус:* в очереди; зависит от #151 (W0 polish)  
+   *Роль:* Ozhegov (runtime core)
 
-**Готовность в конце дня:** эпик инициирован, минимум 5–10 сэмплов загружено.
+6. **#131** — Device-Board Journal + Reporter v0.6  
+   *Статус:* active; phase DBJ1 in progress  
+   *Роль:* Музыкант (contracts) + Верстальщик (UI)
 
----
+7. **#95** — Device-Board Refactor v0.4 (variables, Event, dataflow)  
+   *Статус:* in progress; 6/7 фаз готовы  
+   *Роль:* Структурщик (core), Rodchenko (UI)
 
-#### 🟨 TASK T2: Zero-shot YAMNet + CLAP интеграция (M, 12–20 ч) — scaffold фаза
+8. **#157** — Bug: comment group deletion не должно удалять узлы  
+   *Статус:* bug; S-размер  
+   *Роль:* Rodchenko (graph logic)
 
-**Описание:** Контракты и skeleton для двух нейросервисов (YAMNet, CLAP) на эшелоне 1.B, готовые к интеграции после VDR.
+9. **#153** — W0-H3: selection при закрытии модалки  
+   *Статус:* bug; S-размер  
+   *Роль:* Rodchenko (modal/selection)
 
-**Назначение:** 
-- Математик (выбор моделей, инфер на mock-буферах)
-- Структурщик (пакеты, контракты, DI)
+10. **#146** — W0-H1: palette в редакторе функций отсутствует  
+    *Статус:* bug; S-размер  
+    *Роль:* Rodchenko (sidebar)
 
-**Артефакты (по DoD):**
-- [ ] `@membrana/yamnet-detector-service` (пакет + контракт `DroneDetector`)
-- [ ] `@membrana/clap-detector-service` (пакет + контракт `DroneDetector`)
-- [ ] Unit-тесты на mock-данных
-- [ ] Benchmark на ESC-50 (pre-flight, без VDR tie-in)
+### **T3 (P3 — операционные)**
+11. **#94** — Deploy детерминированность (POSTMORTEM MP7b)  
+    *Статус:* planning; solution consilium готова  
+    *Роль:* Математик (CI/scripts), Структурщик (staging)
 
-**Готовность в конце дня:** scaffold готов, unit-тесты на mock-буферах зелены.
-
----
-
-#### 🟢 TASK T3: Sample-library UX hardening (S, 6–10 ч)
-
-**Описание:** Упростить ручной тест trends и FFT-порогов в sample-library, добавить export.
-
-**Назначение:**
-- Верстальщик (UX + export компоненты)
-- Музыкант (конфигурация порогов)
-
-**Артефакты (по DoD):**
-- [ ] Side-by-side таблица: сэмпл | FFT-вердикт | trends-вердикт | human-class
-- [ ] Export CSV с метриками
-- [ ] Link на `droneTightCalibration` из UI
-
-**Готовность в конце дня:** основные компоненты готовы, export работает.
-
----
-
-#### 🟡 TASK T4: Stage-gate 1→2 решение (уже выше) — документ
-
-**Готовность в конце дня:** `STAGE_GATE_1_TO_2_DECISION.md` в `docs/` + signed LGTM.
+12. **#92** — MP7: Node Realtime Gateway (WebSocket для журнала)  
+    *Статус:* spec ready; waiting stage-gate 1→2  
+    *Роль:* Ozhegov (transport), Верстальщик (UI)
 
 ---
 
-#### 🟢 TASK T5: `@membrana/detection-ensemble-service` контракты (S, 5–8 ч)
+## 📦 IV. Наброски в packages/temp/ (если есть)
 
-**Описание:** Interfaces для агрегации результатов детекторов (DSP + neural).
+*Примечание: `yarn standup:dry` без API не может прочитать содержимое; если temp/ содержит:*
 
-**Назначение:**
-- Структурщик (контракты)
-- Математик (взвешивание)
+- **`temp/neural-detector-sketch.ts`** (Dynin's work-in-progress)  
+  → Перенести в `packages/services/detector-base/src/types.ts` как интерфейс `NeuralDetector` (задача A).
 
-**Артефакты (по DoD):**
-- [ ] `EnsembleConfig`, `EnsembleResult` interfaces
-- [ ] Три стратегии голосования (AND, OR, weighted-average)
-- [ ] Unit-тесты на mock-детекторах
-- [ ] ❌ **НЕ реализовывать интеграцию** — только скелет
+- **`temp/transport-concept.md`** (Ozhegov's notes)  
+  → Формализовать в `packages/services/transport-service/CONCEPT.md` (задача C).
 
-**Готовность в конце дня:** контракты одобрены, юнит-тесты зелены.
+- **`temp/device-board-w0-fixes.txt`** (Rodchenko's checklist)  
+  → Синхронизировать с #151 / #146 / #152 / #153; не дублировать.
 
 ---
 
-#### 🟡 TASK T6: Background-media audio-analysis endpoint (M, 10–15 ч)
+## 🎯 V. СИНТЕЗИРОВАННЫЙ ДНЕВНОЙ ПЛАН
 
-**Описание:** Завершить реализацию server-side endpoint для полного drone-detection-report.
-
-**Назначение:**
-- Структурщик (endpoint + контракты)
-- Математик (оркестровка детекторов)
-
-**Артефакты (по DoD):**
-- [ ] `POST /analysis/drone-detection` endpoint готов
-- [ ] Запускает trends + FFT-threshold
-- [ ] Плейсхолдеры для YAMNet + CLAP
-- [ ] Возвращает `DetectionReport` v1
-- [ ] Интеграционный тест с sample-library
-
-**Готовность в конце дня:** endpoint готов, не менее 50% функциональности.
-
----
-
-### **Вечерний ритуал (17:30–18:30)**
+### **09:00–09:30 — Утренний брифинг (all roles)**
 
 ```bash
-yarn ritual:evening
-# → yarn archive:daily-day
-# → yarn code-review
-# → yarn save-code-review
+yarn lint --filter=@membrana/device-board  # P2 lint warnings
+yarn turbo run test --filter=@membrana/rag-service --force  # P1 RAG debug
+yarn turbo run typecheck build --no-cache --filter=@membrana/{core,detector-base}  # verify base
 ```
 
-**Артефакты для следующего утра:**
-- `docs/archive/daily-day/2026-06-17/` (снимок плана, станапа, журнала)
-- `docs/DAILY_CODE_REVIEW.md` (новое ревью, read-only для завтрашнего утра)
+**Решение:** 
+- RAG-тесты: если падает на imports или mock — исправить за 10 мин; если системная ошибка — залогировать Issue, помечать как `blocked-by:rag-service-tests`.
+- Lint: device-board warnings → либо fix, либо #issues.
+- Base packages: зелёные → proceed.
 
 ---
 
-## 🎯 РЕКОМЕНДУЕМОЕ РАСПРЕДЕЛЕНИЕ ПО РОЛЯМ
+### **09:30–11:00 — Параллель A: Детекция (Динин + Музыкант)**
 
-| Роль | Сегодня (приоритет) | Параллельные |
-|------|---------------------|-------------|
-| **Vesnin (Teamlead)** | ✅ Stage-gate решение + LGTM ветки | Review T1, T4, T5 контрактов |
-| **Ozhegov (Структурщик)** | 🔴 Блокер #1: тесты + turbo.json | T2 scaffold, T5 контракты, T6 endpoint |
-| **Dynin (Математик)** | 🟡 Stage-gate анализ метрик | T2 инфер, T5 взвешивание |
-| **Музыкант** | 🟨 T1: сбор real samples | T3: конфигурация порогов |
-| **Rodchenko (Верстальщик)** | 🟢 T3: UX hardening | Lint-fix (useMemo) в ветке |
+**Задача A: NeuralDetector контракт + CLAP-skeleton**
+
+| Шаг | Содержание | Роль | Выход |
+|-----|-----------|------|--------|
+| A1 | Добавить `interface NeuralDetector { predict(window: AudioWindow, context?: InferenceContext) → Promise<DetectionResult> }` в `detector-base/src/types.ts` | Динин | файл типов |
+| A2 | Создать заготовку `packages/services/clap-detector-service/` (package.json, tsconfig, index.ts с заглушкой) | Динин | skeleton пакета |
+| A3 | Написать минимальный юнит-тест: CLAP inference на mock-буфере (48 kHz, 1 сек дрона) | Динин | test file + mock fixtures |
+| A4 | Задокументировать в README: как подключить YAMNet/Whisper/другую модель; контракт inference | Динин | README.md |
+| A5 | Интегрировать OpenRouter call для CLAP через `background-office` (skeleton, без full auth) | Музыкант | integration hook |
+| A6 | CI: `yarn turbo run typecheck test --filter=@membrana/clap-detector-service` = green | Динин | turbo green ✅ |
+
+**DoD:** Интерфейс добавлен; skeleton компилируется; unit-тесты пишутся; документация готова.  
+**Блокирует:** B (удаление DSP).
 
 ---
 
-## ⏱️ ТАЙМЛАЙН (примерный)
+### **09:30–10:30 — Параллель B: Инфраструктура (Структурщик)**
 
+**Задача B: Удалить архивные DSP-детекторы**
+
+| Шаг | Содержание | Роль | Выход |
+|-----|-----------|------|--------|
+| B1 | Удалить папки `packages/services/detectors/{harmonic,cepstral,spectral-flux}-detector-service/` | Ozhegov | git rm |
+| B2 | Проверить и обновить ссылки в `ARCHITECTURE.md` §1e (удалить упоминания DSP-трио) | Ozhegov | doc patch |
+| B3 | Добавить секцию в `DETECTOR_BENCHMARK.md`: "Why trends-FFT is the only FFT path" с ссылкой на `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §4–5 | Ozhegov | doc section |
+| B4 | Обновить `scripts/lib/detection-planning-priorities.mjs`: блокировать предложение "unified benchmark harmonic+cepstral+flux" | Ozhegov | script patch |
+| B5 | Turbo green: `yarn turbo run test --force` (обновить imports в тестах) | Ozhegov | turbo green ✅ |
+
+**DoD:** Папки удалены; docs обновлены; тесты не падают; CI зелёный.  
+**Блокирует:** ничего (параллельно).
+
+---
+
+### **10:30–12:00 — Параллель C: Многоузловая архитектура (Структурщик)**
+
+**Задача C: Transport-Service спецификация**
+
+| Шаг | Содержание | Роль | Выход |
+|-----|-----------|------|--------|
+| C1 | Создать `packages/services/transport-service/` + `CONCEPT.md` | Ozhegov | папка + doc |
+| C2 | Определить типы: `NodeMessage`, `ObservationBatch`, `AckMessage`, retry-стратегия (exponential backoff, max 5 retries), TLS/client-cert | Ozhegov | CONCEPT.md sections |
+| C3 | Интерфейс `TransportClient { send(msg: NodeMessage) → Promise<AckMessage>, onMessageLost(), bufferSize }` | Ozhegov | interface в типах |
+| C4 | Диаграмма в README: узел → edge-gateway → fusion-server; обозначить слои | Ozhegov | ASCII/Mermaid diagram |
+| C5 | Привязка к WHITE_PAPER §7 (контракт наблюдения `AcousticObservation`) | Ozhegov | cross-ref comment |
+
+**DoD:** Спецификация написана; интерфейсы ясны; диаграмма есть; связь с WHITE_PAPER явная.  
+**Блокирует:** D.
+
+---
+
+### **12:00–13:00 — Параллель D: TDOA skeleton (Структурщик)**
+
+**Задача D: TDOA-сервис (frozen, documented)**
+
+| Шаг | Содержание | Роль | Выход |
+|-----|-----------|------|--------|
+| D1 | Scaffold `packages/services/tdoa-service/` (package.json, tsconfig, vite.config.ts) | Ozhegov | папка |
+| D2 | Файл `src/index.ts`: экспорт `interface TdoaAnalyzer { analyze(obs: AcousticObservation[]) → TdoaResult[] }` (типы в @membrana/core) | Ozhegov | interface file |
+| D3 | Заглушка-реализация: `throw new Error('Not Yet Implemented: TDOA frozen until stage-gate 1→2')` | Ozhegov | stub impl |
+| D4 | Файл `FREEZE_CONDITION.md`: описать, когда разморозить (trends-DRONE_TIGHT ≥ P85%/R90%, validated dataset) | Ozhegov | freeze doc |
+| D5 | Комментарий в `.cursorrules` и ARCHITECTURE.md §1a о frozen-пакетах и условиях разморозки | Ozhegov | docs |
+
+**DoD:** Skeleton пакета создан; интерфейсы ясны; заглушка компилируется; freeze-условия задокументированы.  
+**Блокирует:** ничего (info-only для Stage 2 планирования).
+
+---
+
+### **10:00–11:00 — Параллель E: Бенчмарк & документация (Верстальщик + Динин)**
+
+**Задача E: Обновить DETECTOR_BENCHMARK.md для trends-DRONE_TIGHT**
+
+| Шаг | Содержание | Роль | Выход |
+|-----|-----------|------|--------|
+| E1 | Добавить новую строку в таблицу: "Trends FFT (DRONE_TIGHT)" с метриками recall 95% / FPR 30% / F1 0.844 | Динин | table row |
+| E2 | Добавить ссылку на `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §0 (TL;DR) и §6 (куда дальше) | Верстальщик | cross-ref |
+| E3 | Удалить или пометить как archived старые строки harmonic/cepstral/spectral-flux | Верстальщик | cleanup |
+| E4 | Добавить секцию "Next Steps": validated dataset (VDR) или zero-shot CLAP/YAMNet как пути роста | Динин | new section |
+| E5 | Добавить замечание о free-v1 датасете и необходимости переоценки на validated-корпусе | Динин | caveat |
+
+**DoD:** Таблица обновлена; ссылки добавлены; секция "Next Steps" написана; документ форматирован.  
+**Блокирует:** ничего (информационно).
+
+---
+
+### **11:00–12:00 — Параллель G: Синхронизация ритуалов (Teamlead + Структурщик)**
+
+**Задача G: DEVELOPER_RHYTHM.md синхронизировать с FFT_METRICS**
+
+| Шаг | Содержание | Роль | Выход |
+|-----|-----------|------|--------|
+| G1 | Обновить `scripts/lib/detection-planning-priorities.mjs`: новая функция `shouldBlockDspConsensusBenchmark()` возвращает true (блокирует proposing этого как магистраль) | Ozhegov | script |
+| G2 | В `DEVELOPER_RHYTHM.md` §«Morning Standup» добавить: "trends-template-match is the prod path (DRONE_TIGHT), not DSP-consensus" | Vesnin | doc section |
+| G3 | В `DEVELOPER_RHYTHM.md` §«Detection Planning» явно сказать: "На free-v1 FFT-потолок достигнут; дальше — VDR или нейро (эшелон 1.B)" | Vesnin | doc section |
+| G4 | Обновить команду `yarn plan:day` чтобы читала флаг из `FFT_METRICS_POTENTIAL_AND_LIMITS.md` и выводила в STDOUT "Current FFT status: SATURATED, trends-DRONE_TIGHT is prod-ready" | Vesnin | bash/mjs |
+
+**DoD:** Скрипты обновлены; документация синхронизирована; команда `yarn plan:day` читает статус и выводит актуальный вердикт.  
+**Блокирует:** ничего (политика + инструментовка).
+
+---
+
+### **13:00–14:00 — Параллель F: Device-Board стабилизация (Верстальщик)**
+
+**Задача F: L20 async-pipeline stress-тест**
+
+| Шаг | Содержание | Роль | Выход |
+|-----|-----------|------|--------|
+| F1 | Написать тест `async-resolved-dispatch.stress.test.ts`: запустить сценарий 3 раза подряд, каждый раз с микрофонной записью 1 сек | Rodchenko | test file |
+| F2 | Проверить: после каждого `stop` и повторного `start` запись корректно переключается (нет утечек буферов, таймеры очищены) | Rodchenko | test assertions |
+| F3 | Добавить проверку на утечки памяти: используя `jest.clearAllMocks()` и отслеживание `setInterval` вызовов | Rodchenko | test guards |
+| F4 | Интеграционный тест в CI: `yarn test device-board -- --grep "async.*re-arm"` | Rodchenko | CI config |
+| F5 | Smoke: `yarn workspace @membrana/client dev`, вручную пройти цикл start → stop → start сценария | Rodchenko | manual check |
+
+**DoD:** Stress-тесты написаны и проходят; утечек памяти нет; CI зелёный.  
+**Блокирует:** ничего (стабилизация L18/L19).
+
+---
+
+### **Параллельно весь день (фоновые задачи)**
+
+| Задача | Роль | Таймбокс | DoD |
+|--------|------|----------|-----|
+| **VDR data collection** | Музыкант | 09:00–17:00 | 15+ sample'ов с разметкой в `data/validated-samples/`, CSV |
+| **W0 hotfixes** (#146, #152, #153) | Rodchenko | 10:00–17:00 | 3 PR ready for review |
+| **Night-hunt operations** | background-office | 18:00–06:00 | daily trend-analysis run, logs в `/var/log/membrana-night-hunt/` |
+
+---
+
+## 📋 VI. Definition of Done (сегодня)
+
+- [ ] **RAG-тесты:** `yarn turbo run test --filter=@membrana/rag-service` = green или Issue залоггена.
+- [ ] **Детекция (A):** NeuralDetector контракт в detector-base; CLAP skeleton скомпилирован; unit-тесты пишутся.
+- [ ] **DSP cleanup (B):** Три папки удалены; docs обновлены; `yarn turbo run test` green.
+- [ ] **TransportService (C):** CONCEPT.md написан; типы определены; диаграмма есть.
+- [ ] **TDOA skeleton (D):** Пакет создан; freeze-условия документированы.
+- [ ] **DETECTOR_BENCHMARK (E):** Trends DRONE_TIGHT добавлена; "Next Steps" написаны.
+- [ ] **DEVELOPER_RHYTHM (G):** Script + docs обновлены; `yarn plan:day` выводит актуальный статус.
+- [ ] **L20 stress-тест (F):** Тесты написаны; no memory leaks; CI green.
+- [ ] **Вечерний ритуал:** `yarn archive:daily-day`, `yarn code-review`, `git commit docs/`.
+
+---
+
+## 🚀 VII. Команды дня (быстрая справка)
+
+```bash
+# Утро: инвестигация
+yarn lint --filter=@membrana/device-board
+yarn turbo run test --filter=@membrana/rag-service --force
+
+# Проверка base
+yarn turbo run typecheck build --no-cache --filter=@membrana/{core,detector-base}
+
+# Днём: параллельные запуски
+yarn turbo run typecheck test --filter=@membrana/{clap-detector-service,detector-base,device-board}
+yarn turbo run build --filter=@membrana/{transport-service,tdoa-service}  # skeleton only
+
+# Вечер: архив
+yarn ritual:evening  # = archive:daily-day + code-review + commit
 ```
-09:00–10:30  [БЛОКЕР 1] Code review → merge feat/trends-go-drone-tight
-10:30–11:30  [БЛОКЕР 2] Stage-gate решение документ (Vesnin + Dynin)
-11:30–12:00  Daily check-in (коротко, 15 мин)
-
-12:00–17:00  Основная работа (T1–T6 параллельно)
-             └─ T1 (VDR) — главная → готовность 50% к концу дня
-             └─ T2 (YAMNet/CLAP scaffold) → ready unit-tests
-             └─ T3 (sample-lib UX) → components green
-             └─ T4 (stage-gate doc) — done
-             └─ T5 (ensemble contracts) → signatures approved
-             └─ T6 (background-media) → 50% endpoint
-
-17:30–18:30  [Вечерний ритуал] Архив, code-review, commit
-```
 
 ---
 
-## 🔗 СВЯЗЬ С СТРАТЕГИЕЙ (WHITE_PAPER §8)
+## ✅ Итого
 
-| Этап | Статус сегодня | Путь вперёд |
-|------|-----------------|------------|
-| **Этап 0** | ✅ завершён | — |
-| **Этап 1.A (FFT/DSP)** | 🟡 исчерпан (потолок ~76% precision) | Trends DRONE_TIGHT в prod, остальное — диагностика |
-| **Этап 1.B (Neural & Agentic)** | 🟨 инициирован сегодня | VDR + YAMNet/CLAP scaffold → готовность через 3–5 дней |
-| **Этап 2+ (TDOA, multi-node)** | ❌ frozen | Разблокируется после stage-gate 1→2 (если прошли hard SLD) |
+**Дневной фокус:** Завершение эшелона 0 FFT (trends-DRONE_TIGHT в продакшене) и закладка фундамента эшелона 1.B (нейро-детекторы) + архитектурная подготовка Stage 2 (многоузловая триангуляция). Device-board стабилизируется параллельно. **Все задачи независимы; выполняются параллельно; нет критических блокеров после утреннего RAG-инвеста.**
 
----
-
-## 📌 КЛЮЧЕВЫЕ РЕШЕНИЯ (для LGTM)
-
-**Утверждаю (Teamlead Vesnin):**
-
-1. ✅ **Trends DRONE_TIGHT → prod** (recall 95%, precision ~76%, F1 0.844 на val).
-   - Софт stage-gate (P≥80% R≥90%) достигнут ✓
-   - Hard stage-gate (P≥85% R≥90%) не достигнут ✗
-   - Рекомендация: включить в prod, параллельно VDR + zero-shot.
-
-2. ✅ **VDR-эпик инициирован** как ближайший приоритет (follow-up к stage-gate).
-
-3. ✅ **YAMNet + CLAP scaffold** как реквизит для Этапа 1.B (без спешки).
-
-4. ✅ **Event-driven journal (JE1–JE5)** продолжает на параллельной ветке, не блокирует детекцию.
-
----
-
-## 🚀 ИТОГО НА 2026-06-17
-
-| Метрика | Целевое | Реалистичное |
-|---------|---------|-------------|
-| **Коммиты** | 10–15 | ~12 |
-| **PR merged to main** | 2 (ветка + LGTM) | 1 (trends-go-drone-tight) |
-| **Эпики инициированы** | 2 (VDR, 1.B start) | ✅ 2 |
-| **Задачи D.O.D.** | 4/6 | ~3/6 (T4, T5, частично T1/T2) |
-| **CI статус** | зелёный | 🟢 на конец дня |
-
----
-
-**Координатор:** Vesnin (Teamlead)  
-**Обновлено:** 2026-06-17T09:00+03:00  
-**Статус:** ACTIVE
+**Дата:** 2026-06-26 | **Публикация:** 08:45 UTC+3 | **Координатор:** Vesnin ✅

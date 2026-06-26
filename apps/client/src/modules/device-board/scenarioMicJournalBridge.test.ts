@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createReferenceValue, formatTrackRefHandle } from '@membrana/core';
-import { AsyncJobStore } from '@membrana/device-board';
+import { AsyncJobStore, RecorderRecordingSession } from '@membrana/device-board';
 
 import { createScenarioMicJournalBridge } from './scenarioMicJournalBridge.js';
 
@@ -78,6 +78,52 @@ describe('scenarioMicJournalBridge collector sessions (DBC2)', () => {
     expect(slice?.sampleRate).toBe(48_000);
     expect(slice?.captureFormat).toBe('wav');
     expect(mockStop).toHaveBeenCalled();
+  });
+
+  it('second gate cycle start-stop returns non-empty slice (L18)', async () => {
+    mockStop.mockClear();
+    const bridge = createScenarioMicJournalBridge();
+    const streamRef = createReferenceValue('AudioStreamRef', 'stream:mic-test');
+    const policy = { windowSec: 5, captureFormat: 'wav' as const };
+    const internal = bridge as unknown as {
+      audioStreamValid: boolean;
+      streamCaptureStream: MediaStream;
+    };
+    internal.audioStreamValid = true;
+    internal.streamCaptureStream = { active: true } as MediaStream;
+
+    expect(bridge.startRecorderRecording('dev-cycle', streamRef, policy)).toBe(true);
+    expect(await bridge.stopRecorderRecording('dev-cycle')).not.toBeNull();
+
+    expect(bridge.startRecorderRecording('dev-cycle', streamRef, policy)).toBe(true);
+    const secondSlice = await bridge.stopRecorderRecording('dev-cycle');
+    expect(secondSlice).not.toBeNull();
+    expect(mockStop).toHaveBeenCalledTimes(2);
+  });
+
+  it('re-arms clip capture when session active without recorder (L18)', async () => {
+    mockStop.mockClear();
+    const bridge = createScenarioMicJournalBridge();
+    const streamRef = createReferenceValue('AudioStreamRef', 'stream:mic-test');
+    const policy = { windowSec: 5, captureFormat: 'wav' as const };
+    const internal = bridge as unknown as {
+      audioStreamValid: boolean;
+      streamCaptureStream: MediaStream;
+      recordingSessions: Map<string, RecorderRecordingSession>;
+    };
+    internal.audioStreamValid = true;
+    internal.streamCaptureStream = { active: true } as MediaStream;
+
+    expect(bridge.startRecorderRecording('dev-rearm', streamRef, policy)).toBe(true);
+    expect(await bridge.stopRecorderRecording('dev-rearm')).not.toBeNull();
+
+    const session = internal.recordingSessions.get('dev-rearm');
+    expect(session).toBeDefined();
+    session!.start(policy, Date.now());
+
+    expect(bridge.startRecorderRecording('dev-rearm', streamRef, policy)).toBe(true);
+    expect(await bridge.stopRecorderRecording('dev-rearm')).not.toBeNull();
+    expect(mockStop).toHaveBeenCalledTimes(2);
   });
 
   it('startRecorderRecording fails without active stream', () => {

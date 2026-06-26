@@ -58,6 +58,9 @@ jobs:
       - name: Turbo — lint, typecheck, test, build
         run: yarn turbo run lint typecheck test build --continue
 
+      - name: Script ritual tests (test:scripts)
+        run: yarn test:scripts
+
       - name: Job summary
         if: always()
         run: |

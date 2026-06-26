@@ -1,191 +1,139 @@
-<!-- Сгенерировано: 2026-06-18T08:56:30.025Z (yarn main-day-issue) -->
+<!-- Обновлено: 2026-06-26 (консилиум neural-detectors-strategy; позиция Teamlead) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
-<!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: single-node-detection-first, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, background-media-v1, background-media-a5a-server, background-media-a5b-docker, background-media-a5c-deploy, background-media-a5d-swagger, membrane-platform-v1, cabinet-sample-library-v1, cabinet-sample-library-csl1-api, cabinet-sample-library-csl2-ui, cabinet-sample-library-csl3-remote-ops, cabinet-mp4-hardening-night-build, cabinet-mp4-nb0-merge-gate, cabinet-mp4-nb1-sample-playback-dry, cabinet-mp4-nb2-cabinet-facade, cabinet-mp4-nb3-quality-contracts, sample-library-drone-detection, sld3-dsp-detectors-free-v1, sld4-stage-gate-calibration, validated-drone-recognition, vdr1-sample-label-patch-api, vdr2-label-notes-ui, vdr3-ground-truth-export, vdr4-dsp-calibration-validated, vdr5-template-match-detector, vdr6-recognition-report-gate, drone-detector-detail-report, telemetry-journal-live-refactor, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, cabinet-journal-hotfix, cj-0-trends-enabled-keys, cj-1-media-api-safe-json, cj-2-journal-media-decouple, cj-3-brief-render-parity, cj-4-trends-counts-as-detection, cj-5-sync-push-observability, module-catalog-v1, mc-0-catalog-regulation, mc-1-prompt-templates, mc-2-registry-microphone-pilot, mc-3-pilot-plugins, mc-4-telemetry-journal-stable, mc-5-remaining-modules-draft, mc-6-remaining-plugins-draft, mc-7-verify-script-ci, mc-8-agent-rules-integration, mc-9-stable-review, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-realtime-gateway, membrane-node-realtime-nr0-contract, membrane-node-realtime-nr1-gateway, membrane-node-realtime-nr2-journal-ws, membrane-node-realtime-nr3-client-journal, membrane-node-realtime-nr4-mic-live, membrane-node-realtime-nr5-cabinet-live, membrane-node-realtime-nr6-prod-hardening, membrana-studio-desktop, membrana-studio-ms0-canon, membrana-studio-ms1-shell, membrana-studio-ms2-media-fs, membrana-studio-ms3-journal-fs, membrana-studio-ms4-installer, membrana-studio-ms5-prod-smoke -->
+<!-- Канон спринтов: docs/seanses/neural-detectors-strategy-2026-06-26.md -->
+<!-- primaryFocus: device-board-three-hosts-2026-06-26 / db3h-s1-tech-debt -->
+<!-- DEFERRED: neural-tier-1b-contract (после спринтов 1–4) -->
 
-# MAIN_DAY_ISSUE — 2026-06-18
+# MAIN_DAY_ISSUE — 2026-06-26
 
-**Дата:** 2026-06-18 · **Хранитель:** Teamlead (Vesnin)
-
----
-
-## 📋 Синтез входных данных
-
-| Документ | Статус | Ключевое |
-|----------|--------|----------|
-| **DAILY_STANDUP.md** (2026-06-17) | ✅ полный | 6 задач T1–T6: VDR инициирована, trends DRONE_TIGHT в prod, stage-gate решение требуется |
-| **STRATEGIC_PLAN_DAY.md** (2026-06-17) | ✅ полный | Блокеры #1 (merge ветки), #2 (stage-gate doc); приоритет: VDR-сбор |
-| **DAILY_CODE_REVIEW.md** (2026-06-16 вечер) | ✅ полный | Критично: нарушение слабой связанности (client → journal), membrana-studio без ADR, lint ошибки |
-| **FFT_METRICS_POTENTIAL_AND_LIMITS.md** | ✅ справочный | Trends precision ~76% (ниже target 85%), но recall 95% — лучший FFT-результат |
-| **registry.json** (активные эпики) | ✅ полный | 40+ active тикетов; стадия-ворота 1→2 открыта; stage 2+ frozen |
+**Дата:** 2026-06-26 · **Хранитель:** Teamlead (Vesnin)  
+**Пересмотр:** консилиум [`neural-detectors-strategy-2026-06-26`](./seanses/neural-detectors-strategy-2026-06-26.md)
 
 ---
 
-## 🎯 **ЕДИНСТВЕННЫЙ ОБЯЗАТЕЛЬНЫЙ ФОКУС ДНЯ**
+## Единственный обязательный фокус
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                                                          │
-│  🔴 MAIN_DAY_ISSUE_2026_06_18                            │
-│                                                          │
-│  ▸ Завершить Code Review ветки feat/trends-go-drone-tight
-│  ▸ Merge в main (3 блокира + LGTM)                       │
-│  ▸ Инициировать STAGE_GATE_1_TO_2_DECISION.md            │
-│                                                          │
-│  Все остальное (T1–T6) — вспомогательно.                 │
-│  Этот день = раскрытие дорожной карты на 3–5 дней вперед.
-│                                                          │
-└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                                                              │
+│  MAIN_DAY_ISSUE_2026_06_26 (пересмотр)                       │
+│                                                              │
+│  UserCase device-board стабилен на ТРЁХ интерфейсах:         │
+│    • кабинет пользователя (web)                              │
+│    • Membrana Studio (Electron)                              │
+│    • Device Board (лёгкий desktop)                           │
+│                                                              │
+│  Сегодня / эта неделя: спринт 1 — техдолг + smoke трёх хостов │
+│                                                              │
+│  NeuralDetector / эшелон 1.B — DEFERRED (после спринтов 1–4) │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-**Обоснование:** Вчера (2026-06-17) планировалось, но блокеры сдвинулись. Утром 18-го нужен hard reset:
-1. **БЛОКЕР #1:** `@membrana/background-office#test` зафиксить (red flag из review).
-2. **БЛОКЕР #2:** `turbo.json` добавить `outputs` для `harmonic-detector-service`, `journal-report-views`.
-3. **БЛОКЕР #3:** Lint-fix (useMemo в 7 компонентах client).
-4. **Merge ветки** в `main` с LGTM Teamlead'а.
-5. **Консилиум stage-gate:** recall 95% vs precision 76% → документировать решение в `STAGE_GATE_1_TO_2_DECISION.md`.
+---
+
+## Очередь спринтов (магистраль)
+
+| # | Epic ID | Фокус | Когда |
+|---|---------|-------|-------|
+| **1** | `db3h-s1-tech-debt` | lint, CI green, issues audit, test:scripts в CI, async L18–L19 | **сейчас** |
+| **2** | `db3h-s2-cabinet-host` | device_board на сервере в кабинете | после 1 |
+| **3** | `db3h-s3-studio-host` | device_board в Electron Membrana Studio | после 2 |
+| **4** | `db3h-s4-microphone-detectors` | микрофон async + audit детекторов (template-match vs legacy DSP) | после 3 |
+| **5** | `neural-tier-1b-contract` | `NeuralDetector`, YAMNet/CLAP skeleton, бенчмарк | **deferred** |
+| **6** | `neural-free-tier-dataset-report` | датасет + трек → детектор → отчёт (free 1 ГБ library) | **неделя 2+** |
+
+Umbrella: `device-board-three-hosts-2026-06-26` в [`docs/tasks/registry.json`](./tasks/registry.json).
 
 ---
 
-## 📊 Распределение по ролям (сегодня)
+## Критический путь (эта неделя)
 
-| Роль | Задача | Таймбокс | Блокирует |
-|------|--------|----------|-----------|
-| **Vesnin** (Teamlead) | ✅ Блокер #3 lint-fix + merge-review | 09:00–11:00 | T4 (stage-gate doc) |
-| **Ozhegov** (Структурщик) | ✅ Блокеры #1, #2 (тесты, turbo) | 09:00–10:30 | merge |
-| **Rodchenko** (Верстальщик) | ✅ useMemo в 7 компонентах | 09:30–10:30 | lint pass |
-| **Dynin** (Математик) | 🟡 консилиум метрик (T4) | 10:30–11:30 | stage-gate doc |
-| **Музыкант** | 🟢 T1 параллельно (VDR samples) | 11:00–17:00 | не блокирует |
+1. **Утро — CI baseline (без RAG index)**
+   ```bash
+   yarn turbo run lint typecheck test build --continue
+   yarn test:scripts
+   yarn turbo run lint --filter=@membrana/device-board --force
+   ```
+   > RAG: только unit-тесты (`@membrana/rag-service test`), **не** `yarn rag:index --full`.
 
----
+2. **Спринт 1 — техдолг** (`db3h-s1-tech-debt`, OPEN: `docs/day-sprint/db3h-s1-tech-debt-2026-06-26/`)
+   - device-board lint: **0 warnings** ✅
+   - Issues audit manifest + отчёт `docs/archive/github-issues-audit-2026-06-26.md`
+   - `yarn test:scripts` green
+   - Гигиена: не коммитить playwright-report, test-results, `.sync-readme-out.txt`
 
-## 🔴 Три критических блокера (УТРО)
+3. **Smoke UserCase на трёх хостах** (alpha/beta/gamma async-v2)
+   - Кабинет: web-cabinet + scenario runtime
+   - Studio: `yarn studio:dev` + host-bridge
+   - Device Board: лёгкий Electron renderer
 
-### **БЛОКЕР #1: Зафиксить `@membrana/background-office#test`**
-- **Статус:** red flag из DAILY_CODE_REVIEW.md.
-- **Действие:** Структурщик запускает `yarn workspace @membrana/background-office run test` и исправляет failing assertion'ы.
-- **DoD:** Все тесты green, no skips.
-
-### **БЛОКЕР #2: Добавить `outputs` в turbo.json**
-- **Пакеты:** `harmonic-detector-service`, `journal-report-views`.
-- **Действие:** Добавить стандартные выходы (`dist/`, `build/`) в turbo cacheable outputs.
-- **DoD:** `yarn turbo run build --no-cache` для этих двух пакетов проходит без ошибок.
-
-### **БЛОКЕР #3: Lint-fix (useMemo в client)**
-- **Компоненты:** 7 компонентов с warning'ами (из review).
-- **Действие:** Верстальщик оборачивает динамические объекты в `useMemo` для соответствия ESLint `react/exhaustive-deps`.
-- **DoD:** `yarn lint` зелён, нет warnings в client.
-
-### **Merge ветки `feat/trends-go-drone-tight`**
-- **После:** Все блокеры ✅ и Teamlead LGTM.
-- **Действие:** Merge → `main` с fast-forward.
-- **DoD:** `git log --oneline main | head -1` содержит коммит trends-DRONE_TIGHT.
+**DoD недели:** один UserCase JSON → одинаковый сценарий на cabinet / Studio / Device без расхождений runtime.
 
 ---
 
-## 🟡 Консилиум Stage-Gate 1→2
+## Снято с магистрали (было в утреннем плане 26.06)
 
-**Таймбокс:** 10:30–11:30 (после блокеров)
-
-**Участники:** Vesnin + Dynin (+ остальные роли на ревью).
-
-**Вопрос:** Пройден ли stage-gate 1→2 для single-node FFT?
-
-**Входные метрики (из FFT_METRICS_POTENTIAL_AND_LIMITS.md):**
-- Trends DRONE_TIGHT на held-out val:
-  - Recall: **95%** ✅
-  - Precision: **~76%** (target 85% ❌)
-  - F1: **0.844**
-  - FPR: **30%** ✓
-
-**Решение (документировать в `docs/STAGE_GATE_1_TO_2_DECISION.md`):**
-
-```markdown
-## Итоговое решение: Stage-Gate 1→2 — Conditional Pass
-
-### Вердикт
-- **Soft SLD (P≥80% R≥90%):** ✅ ПРОЙДЕН
-  - Recall: 95% ✓
-  - Precision: 76% (условие мягкое, интерпретируемо как P≥80% с F1-баланс)
-  
-- **Hard SLD (P≥85% R≥90%):** ❌ НЕ ПРОЙДЕН
-  - Precision: 76% < 85%
-
-### Рекомендация
-1. **Trends DRONE_TIGHT → Production** (эшелон 0, best FFT-результат)
-   - Поддерживает recall 95% при FPR 30%
-   - Это лучший одиночный детектор на свободном датасете
-
-2. **Этап 2 (TDOA, многоузловая архитектура) — Frozen** до преодоления плато hard SLD
-
-3. **Параллельно инициировать Этап 1.B (нейро/zero-shot):**
-   - VDR-сбор (validated dataset) для калибровки на реальных данных
-   - YAMNet/CLAP scaffold для интеграции после VDR
-   - Временная шкала: VDR готов за 3–5 дней, stage-gate 1→2 переоценка в конце спринта
-
-### Обоснование
-Физически FFT на свободном датасете (free-v1) не разделяет высокочастотный фон 
-(насекомые, техника) от гула БПЛА без временной структуры. Trends успешно это делает 
-через стабильность параметров (centroidStd, activityRatio, volumeTrend). 
-Дальнейший прирост требует либо больше аннотированных данных (VDR), либо нейросетей 
-(zero-shot с предобученными моделями).
-```
-
-**DoD:** Документ в `docs/STAGE_GATE_1_TO_2_DECISION.md`, подписан LGTM Vesnin, выложен в репо.
+| Было | Статус |
+|------|--------|
+| A — `NeuralDetector` + CLAP сегодня | **deferred** → спринт 5 |
+| B — удаление harmonic/cepstral/spectral-flux | **в спринт 4** (audit, не сегодня) |
+| C — TransportService CONCEPT | **frozen** (stage 2) |
+| D — TDOA skeleton | **frozen** (stage 2) |
+| E — DETECTOR_BENCHMARK refresh | фоном в спринте 4 |
 
 ---
 
-## 📋 Параллельные работы (остаток дня)
+## Продуктовая цель (зафиксирована, не блокер недели)
 
-| Задача | Роль | Таймбокс | DoD |
-|--------|------|----------|-----|
-| **T1: VDR инициирована** | Музыкант | 11:30–17:00 | 10+ сэмплов в `data/validated-samples/`, CSV с разметкой |
-| **T2: YAMNet scaffold** | Динин | 11:30–17:00 | Unit-тесты на mock-буферах |
-| **T3: Sample-lib UX** | Rodchenko | 11:30–16:00 | Export компоненты готовы |
-| **T4: Stage-gate doc** | Vesnin | 10:30–12:00 | ✅ выше |
-| **T5: Ensemble контракты** | Ozhegov | 12:00–17:00 | Signatures одобрены |
-| **T6: Background-media endpoint** | Ozhegov | 12:00–17:00 | 50% функциональности |
+На **free-тарифе** пользователь выжимает максимум из ~1 ГБ sample library:
+
+**датасет + трек → детектор → отчёт**
+
+Реализация после стабильных трёх хостов и спринта 4 — см. `neural-free-tier-dataset-report`.
 
 ---
 
-## 🚀 Команды дня
+## Definition of Done (конец недели)
+
+- [ ] `db3h-s1-tech-debt`: RAG green или Issue; device-board tests green; L18–L20 stress
+- [ ] Smoke UserCase async-v2 на cabinet + Studio + Device Board
+- [ ] Спринт 2 стартован (cabinet deploy) или явно залогирован блокер
+- [ ] `neural-tier-1b-contract` в registry со статусом deferred
+- [ ] Вечерний ритуал: `yarn ritual:evening`
+
+---
+
+## Быстрая справка команд
 
 ```bash
-# Утро: блокеры (за 90 минут)
-yarn workspace @membrana/background-office run test  # БЛОКЕР #1
-yarn turbo run build --filter=harmonic-detector-service --filter=journal-report-views  # БЛОКЕР #2
-yarn lint --fix                                      # БЛОКЕР #3
+# Диагностика
+yarn turbo run test --filter=@membrana/rag-service --force
+yarn lint --filter=@membrana/device-board
+yarn usercase:verify-layout
 
-# Проверка
-yarn turbo run typecheck lint test build --no-cache
+# Device-board
+yarn turbo run typecheck test --filter=@membrana/device-board
 
-# Merge (когда все блокеры ✅)
-git checkout main && git merge --ff feat/trends-go-drone-tight
+# Studio (когда хост готов)
+yarn studio:dev
 
-# Консилиум (10:30–11:30)
-yarn ask dynin --task-file ./docs/FFT_METRICS_POTENTIAL_AND_LIMITS.md \
-  --save-as STAGE_GATE_1_TO_2_DECISION \
-  "Пройден ли stage-gate hard SLD (P≥85% R≥90%) на trends DRONE_TIGHT?"
-
-# Итог вечером
-yarn ritual:evening
+# Реестр
+yarn task:list
+yarn task:sync-readme
 ```
 
 ---
 
-## ✅ Definition of Done (день)
+## Связь со стратегией
 
-- [ ] Все 3 блокера исправлены (тесты, turbo, lint).
-- [ ] Ветка merged в main.
-- [ ] Консилиум проведён; `STAGE_GATE_1_TO_2_DECISION.md` в docs с LGTM.
-- [ ] T1–T6 инициированы; PR-черновики готовы.
-- [ ] `yarn turbo run lint typecheck test build` — green.
-- [ ] Вечерний ритуал выполнен (архив, code-review, commit).
+- **Консилиум:** [`docs/seanses/neural-detectors-strategy-2026-06-26.md`](./seanses/neural-detectors-strategy-2026-06-26.md)
+- **Desktop line:** [`docs/seanses/desktop-product-line-2026-06-17-2026-06-17.md`](./seanses/desktop-product-line-2026-06-17-2026-06-17.md)
+- **Нейро (отложено):** [`docs/INTEGRATIONS_STRATEGY.md`](./INTEGRATIONS_STRATEGY.md) §4.1
+- **Stage-gate:** DRONE_TIGHT P 85.5% / R 88.3% — нейро после платформенной стабилизации
 
 ---
 
-**Статус:** 🟢 **READY FOR DAY**  
-**Фокус:** Merge + Stage-Gate Decision  
+**Статус:** READY — фокус на три хоста + техдолг  
 **Координатор:** Vesnin (Teamlead)  
-**Опубликовано:** 2026-06-18T08:45+03:00
+**Опубликовано:** 2026-06-26 (пересмотр после консилиума)

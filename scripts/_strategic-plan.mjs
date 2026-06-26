@@ -28,6 +28,7 @@ import {
   buildDetectionPlanningContextSection,
   readFftMetricsPotentialAndLimits,
 } from './lib/detection-planning-priorities.mjs';
+import { formatInsightsWeeklyBlock } from './lib/insight-ritual.mjs';
 
 const MAX_BUFFER = 12 * 1024 * 1024;
 
@@ -199,6 +200,7 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName, includeDetect
  *                                    в контекст промпта. Включается ТОЛЬКО для недельного плана.
  * @property {boolean} [includeDetectionPriorities] Подключать ли FFT_METRICS_POTENTIAL_AND_LIMITS
  *                                    и правила планирования детекции (дневной + недельный план).
+ * @property {boolean} [includeInsights] Подключать ли активные инсайты (docs/insights/registry.json).
  */
 
 /**
@@ -308,6 +310,19 @@ export async function runStrategicPlan(options) {
   if (options.includeDetectionPriorities) {
     const fftMetricsDoc = readFftMetricsPotentialAndLimits();
     sections.push(buildDetectionPlanningContextSection({ fftMetricsDoc }), '');
+  }
+  if (options.includeInsights) {
+    const insightsBlock = formatInsightsWeeklyBlock(process.cwd(), 6);
+    if (insightsBlock) {
+      sections.push(
+        '---',
+        insightsBlock,
+        '',
+        'Учитывай инсайты с weight ≥ 6 при формировании приоритетов недели.',
+        'Инсайты не заменяют MAIN_DAY_ISSUE — только стратегический backlog.',
+        '',
+      );
+    }
   }
   sections.push(
     '---',

@@ -14,6 +14,8 @@ import {
 
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 
+import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
+
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
 import {
@@ -184,6 +186,7 @@ function readMicrophoneId(node: ScenarioGraphNode): string | undefined {
 }
 
 function resolveSubgraphBlockOutput(
+  parentSubgraph: ScenarioSubgraph,
   functions: readonly ScenarioFunctionSubgraph[],
   blockNode: ScenarioGraphNode,
   outputPort: string,
@@ -240,12 +243,19 @@ function resolveSubgraphBlockOutput(
     );
   }
 
+  const callContext = augmentResolveContextForFunctionCall({
+    parentSubgraph,
+    blockNodeId: blockNode.id,
+    variables,
+    baseContext: context,
+  });
+
   return resolveNodeOutput(
     fn,
     variables,
     sourceNode,
     outboundEdge.sourceHandle,
-    context,
+    callContext,
     visiting,
   );
 }
@@ -900,6 +910,7 @@ export function resolveNodeOutput(
       );
     }
     return resolveSubgraphBlockOutput(
+      subgraph,
       functions,
       node,
       outputPort,
