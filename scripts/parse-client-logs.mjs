@@ -9,12 +9,14 @@
  *
  * Canon: docs/device-board-scripts/CLIENT_LOGS_PARSING.md
  */
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import os from 'node:os';
+import { isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
   DEFAULT_CLIENT_LOG_PATHS,
+  STUDIO_APPDATA_LOG_RELATIVE,
   analyzeClientLogs,
   formatAnalysisReport,
   listRunIds,
@@ -29,7 +31,7 @@ function printHelp() {
 Parse device-board client console dump and summarize recording-gate smoke.
 
 Options:
-  --file <path>     Log file (default: first existing of ${DEFAULT_CLIENT_LOG_PATHS.join(', ')})
+  --file <path>     Log file (repo-relative or absolute; default: newest of repo + %APPDATA%/Membrana/logs/*)
   --run-id <id>     Analyze specific 8-char runId (default: last run in file)
   --json            Machine-readable output
   --list-runs       Print runIds and exit
@@ -68,12 +70,29 @@ function parseArgs(args) {
   return options;
 }
 
+function appDataRoot() {
+  return process.env.APPDATA ?? join(os.homedir(), 'AppData', 'Roaming');
+}
+
+function defaultLogCandidates() {
+  /** @type {{ relative: string, absolute: string }[]} */
+  const candidates = [];
+  for (const relative of DEFAULT_CLIENT_LOG_PATHS) {
+    candidates.push({ relative, absolute: join(repoRoot, relative) });
+  }
+  for (const relative of STUDIO_APPDATA_LOG_RELATIVE) {
+    const absolute = join(appDataRoot(), relative);
+    candidates.push({ relative: absolute, absolute });
+  }
+  return candidates;
+}
+
 /**
  * @param {string | undefined} fileArg
  */
 function resolveLogFile(fileArg) {
   if (fileArg) {
-    const absolute = join(repoRoot, fileArg);
+    const absolute = isAbsolute(fileArg) ? resolve(fileArg) : join(repoRoot, fileArg);
     if (!existsSync(absolute)) {
       console.error(`Log file not found: ${fileArg}`);
       process.exit(1);
@@ -81,16 +100,24 @@ function resolveLogFile(fileArg) {
     return { path: absolute, relative: fileArg };
   }
 
-  for (const relative of DEFAULT_CLIENT_LOG_PATHS) {
-    const absolute = join(repoRoot, relative);
+  /** @type {{ relative: string, absolute: string, mtimeMs: number }[]} */
+  const existing = [];
+  for (const { relative, absolute } of defaultLogCandidates()) {
     if (existsSync(absolute)) {
-      return { path: absolute, relative };
+      existing.push({ relative, absolute, mtimeMs: statSync(absolute).mtimeMs });
     }
   }
+  if (existing.length > 0) {
+    existing.sort((a, b) => b.mtimeMs - a.mtimeMs);
+    const picked = existing[0];
+    return { path: picked.absolute, relative: picked.relative };
+  }
 
-  console.error(
-    `No log file found. Paste DevTools output to one of:\n  ${DEFAULT_CLIENT_LOG_PATHS.map((p) => `  ${p}`).join('\n')}`,
-  );
+  const hints = [
+    ...DEFAULT_CLIENT_LOG_PATHS.map((p) => `  ${p}`),
+    ...STUDIO_APPDATA_LOG_RELATIVE.map((p) => `  %APPDATA%/${p}`),
+  ];
+  console.error(`No log file found. Save trace to one of:\n${hints.join('\n')}`);
   process.exit(1);
 }
 

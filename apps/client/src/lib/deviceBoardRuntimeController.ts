@@ -6,6 +6,7 @@ import {
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
+  resolveServerFirstFlags,
   type ScenarioRuntimeState,
 } from '@membrana/device-board';
 import {
@@ -19,6 +20,8 @@ import {
   loadPersistedRuntimeMode,
   savePersistedRuntimeMode,
 } from '@/lib/runtimeModePersistence';
+import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
+import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 type StateListener = (state: ScenarioRuntimeState) => void;
 
@@ -67,20 +70,39 @@ class DeviceBoardRuntimeController {
     };
   }
 
-  async start(): Promise<void> {
+  async start(options?: { fromRemote?: boolean }): Promise<void> {
+    const deviceId = getNodeRealtimeClient().getDeviceId();
+    const flags = resolveServerFirstFlags({
+      deviceId,
+      editLease: useServerFirstStore.getState().editLease,
+      captureState: useServerFirstStore.getState().captureState,
+    });
+    if (!options?.fromRemote && flags.blockLocalRun) {
+      return;
+    }
     const runtime = this.ensureRuntime();
     if (runtime.getState().isRunning) {
       return;
     }
+    if (!options?.fromRemote && deviceId !== null) {
+      useServerFirstStore.getState().setFieldCapture(deviceId);
+    }
     this.asyncJobHub.clear();
     const document = await this.loadDocument();
     runtime.load(document);
-    // Не ждём завершения run-промиса: main loop крутится до stop.
     void runtime.start();
   }
 
   stop(): void {
     this.runtime?.stop('user');
+  }
+
+  pause(): void {
+    this.runtime?.pause();
+  }
+
+  resume(): void {
+    this.runtime?.resume();
   }
 
   /**

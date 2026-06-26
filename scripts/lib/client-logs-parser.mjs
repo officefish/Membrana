@@ -5,9 +5,17 @@
 
 /** @typedef {{ line: number, raw: string, channel: string, message: string, runId: string | null, tick: number | null, payload: string }} LogEvent */
 
+/** Studio packaged / `yarn studio:dev` — paste DevTools here; browser — `logs/apps/client/`. */
 export const DEFAULT_CLIENT_LOG_PATHS = [
+  'logs/apps/studio/logs.txt',
   'logs/apps/client/logs.txt',
   'logs/apps/client/console-logs.txt',
+];
+
+/** Fixed names under `%APPDATA%` — packaged Studio trace download (no repo paste). */
+export const STUDIO_APPDATA_LOG_RELATIVE = [
+  'Membrana/logs/device-board-trace-latest.txt',
+  'Membrana/logs/logs.txt',
 ];
 
 const RUN_ID_RE = /runId:\s*'([^']+)'/;

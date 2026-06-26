@@ -197,7 +197,7 @@ describe('onConnect alpha bootstrap journal seed (ST9)', () => {
         createReferenceValue('JournalRef', formatJournalRefHandle('device', deviceHandle)),
     };
 
-    const result = await runSubgraphOnce(onConnect, host, new AbortController().signal, {
+    await runSubgraphOnce(onConnect, host, new AbortController().signal, {
       branch: 'initial',
       functions: [bootstrapFn],
       variableStore: store,

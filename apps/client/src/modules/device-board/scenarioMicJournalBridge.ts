@@ -1447,7 +1447,7 @@ export class ScenarioMicJournalBridge {
         requestedDeviceId,
         reason: err instanceof Error ? err.message : String(err),
       });
-      this.selectedDeviceId = undefined;
+      this.selectedDeviceId = '';
       this.ownedStream = await acquireMicrophone(true);
     }
     publishMicrophoneStream(MICROPHONE_MODULE_ID, this.ownedStream);

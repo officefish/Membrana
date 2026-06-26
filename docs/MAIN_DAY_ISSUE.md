@@ -1,7 +1,7 @@
 <!-- Обновлено: 2026-06-26 (консилиум neural-detectors-strategy; позиция Teamlead) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Канон спринтов: docs/seanses/neural-detectors-strategy-2026-06-26.md -->
-<!-- primaryFocus: device-board-three-hosts-2026-06-26 / db3h-s1-tech-debt -->
+<!-- primaryFocus: device-board-server-first -->
 <!-- DEFERRED: neural-tier-1b-contract (после спринтов 1–4) -->
 
 # MAIN_DAY_ISSUE — 2026-06-26
@@ -23,7 +23,8 @@
 │    • Membrana Studio (Electron)                              │
 │    • Device Board (лёгкий desktop)                           │
 │                                                              │
-│  Сегодня / эта неделя: спринт 1 — техдолг + smoke трёх хостов │
+│  Сегодня: device-board server-first (кабинет, lease, capture)     │
+│  S5 logging DL-1/2 done. S4 детекторы — DEFERRED.                  │
 │                                                              │
 │  NeuralDetector / эшелон 1.B — DEFERRED (после спринтов 1–4) │
 │                                                              │
@@ -36,12 +37,13 @@
 
 | # | Epic ID | Фокус | Когда |
 |---|---------|-------|-------|
-| **1** | `db3h-s1-tech-debt` | lint, CI green, issues audit, test:scripts в CI, async L18–L19 | **сейчас** |
-| **2** | `db3h-s2-cabinet-host` | device_board на сервере в кабинете | после 1 |
-| **3** | `db3h-s3-studio-host` | device_board в Electron Membrana Studio | после 2 |
-| **4** | `db3h-s4-microphone-detectors` | микрофон async + audit детекторов (template-match vs legacy DSP) | после 3 |
-| **5** | `neural-tier-1b-contract` | `NeuralDetector`, YAMNet/CLAP skeleton, бенчмарк | **deferred** |
-| **6** | `neural-free-tier-dataset-report` | датасет + трек → детектор → отчёт (free 1 ГБ library) | **неделя 2+** |
+| ~~1~~ | `db3h-s1-tech-debt` | lint, CI, async L18–L23 | **closed** (#181) |
+| ~~2~~ | `db3h-s3-studio-host` | Studio host | **closed** |
+| **3** | `device-board-server-first` | server-first, lease, capture, Nodes | **сейчас** |
+| ~~4~~ | `db3h-s5-desktop-logging` | логи Studio + Device | DL-1/2 ✅ |
+| 5 | `db3h-s4-microphone-detectors` | микрофон + детекторы | **deferred** |
+| 5 | `neural-tier-1b-contract` | `NeuralDetector`, YAMNet/CLAP skeleton | **deferred** |
+| 6 | `neural-free-tier-dataset-report` | датасет + трек → детектор → отчёт | **неделя 2+** |
 
 Umbrella: `device-board-three-hosts-2026-06-26` в [`docs/tasks/registry.json`](./tasks/registry.json).
 
@@ -57,16 +59,12 @@ Umbrella: `device-board-three-hosts-2026-06-26` в [`docs/tasks/registry.json`](
    ```
    > RAG: только unit-тесты (`@membrana/rag-service test`), **не** `yarn rag:index --full`.
 
-2. **Спринт 1 — техдолг** (`db3h-s1-tech-debt`, OPEN: `docs/day-sprint/db3h-s1-tech-debt-2026-06-26/`)
-   - device-board lint: **0 warnings** ✅
-   - Issues audit manifest + отчёт `docs/archive/github-issues-audit-2026-06-26.md`
-   - `yarn test:scripts` green
-   - Гигиена: не коммитить playwright-report, test-results, `.sync-readme-out.txt`
+2. **Спринт 5 — desktop logging** (`db3h-s5-desktop-logging`)
+   - Канон: `docs/DESKTOP_APP_LOGGING_POLICY.md`
+   - `yarn desktop:support-collect` + support runbook
+   - DL-IMPL (auto-persist) — backlog, не обещать в 0.1.0
 
-3. **Smoke UserCase на трёх хостах** (alpha/beta/gamma async-v2)
-   - Кабинет: web-cabinet + scenario runtime
-   - Studio: `yarn studio:dev` + host-bridge
-   - Device Board: лёгкий Electron renderer
+~~Спринт 4 детекторы~~ — после закрытия S5
 
 **DoD недели:** один UserCase JSON → одинаковый сценарий на cabinet / Studio / Device без расхождений runtime.
 

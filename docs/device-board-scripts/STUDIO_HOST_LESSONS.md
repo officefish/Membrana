@@ -5,7 +5,7 @@
 > **Runtime/pack (общий с browser):** [`USERCASE_COMPETITION_LESSONS.md`](./USERCASE_COMPETITION_LESSONS.md) (L1–L23)  
 > **Контракт трёх хостов:** [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../STUDIO_HOST_BRIDGE_CONTRACT.md)  
 > **Спринт:** [`DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md`](../prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md)  
-> **Парсинг логов:** [`CLIENT_LOGS_PARSING.md`](./CLIENT_LOGS_PARSING.md)  
+> **Парсинг логов:** [`CLIENT_LOGS_PARSING.md`](./CLIENT_LOGS_PARSING.md) · **Desktop policy:** [`DESKTOP_APP_LOGGING_POLICY.md`](../DESKTOP_APP_LOGGING_POLICY.md)  
 > **Консилиум:** [`studio-host-smoke-registry-2026-06-26.md`](../seanses/studio-host-smoke-registry-2026-06-26.md)
 
 **Разделение зон:**
@@ -153,15 +153,23 @@ gate-true: 0 · is-recording-window-full (все тики)
 
 ### ST7 — Journal FS check: stale tracks from previous run
 
-**Симптом:** `studio:journal-fs-check` tracks=2 reports=0 при текущем run без gate.
+**Симптом:** `studio:journal-fs-check` tracks=2 reports=0 при текущем run без gate; или UI показывает записи, а `items.json` **missing**.
 
 **Что:** `items.json` накапливает записи между run'ами; tracks от upload path (~5 s duration) без reports в том же smoke.
 
-**Fix:** Operator procedure — очистить journal перед smoke; не смешивать runId в одном файле.
+**Ctrl+R vs полный перезапуск (важно):**
+
+| Действие | Renderer (UI) | Main (Electron journal FS) | `items.json` на диске |
+|----------|---------------|----------------------------|------------------------|
+| **Ctrl+R** | перезагрузка | **память main не сбрасывается** | не перечитывается с диска |
+| Удалили `items.json` при открытой Studio | journal снова с IPC/main RAM | старые items в RAM | файл отсутствует → **FS-check FAIL**, UI может показывать RAM |
+| **Закрыть Studio** (quit) + удалить `items.json` + новый запуск | чистый старт | загрузка с диска (пусто) | корректный ST7 |
+
+**Fix:** Operator procedure — **полностью закрыть** Membrana Studio, затем удалить/очистить `journal/items.json`, затем новый smoke. Не полагаться на Ctrl+R для сброса journal.
 
 **Профилактика:**
 
-- [ ] Перед ST2-J: backup/delete `journal/items.json`
+- [ ] Перед ST2-J: quit Studio → backup/delete `journal/items.json`
 - [ ] Сверять `createdAtIso` entries с временем текущего run
 - [ ] Backlog: `--since-run` в `studio:journal-fs-check`
 
@@ -180,6 +188,7 @@ gate-true: 0 · is-recording-window-full (все тики)
 **Профилактика:**
 
 - [ ] В CLIENT_LOGS_PARSING: предпочитать `elapsedSec` после ST-GATE merge
+- [ ] Operator: Download trace → `device-board-trace-latest.txt` (канон [`DESKTOP_APP_LOGGING_POLICY.md`](./DESKTOP_APP_LOGGING_POLICY.md))
 - [ ] Operator: `scenario-runtime` copy trace из UI если есть
 
 **Hosts:** all
@@ -220,7 +229,7 @@ yarn studio:journal-fs-check → tracks=3 reports=0 FAIL
 [ ] Hard refresh после pull
 [ ] Очистить %APPDATA%/Membrana/journal/items.json (ST7)
 [ ] Run alpha async-v2 ≥3 min
-[ ] logs → logs/apps/client/logs.txt
+[ ] logs → logs/apps/studio/logs.txt (Studio) или logs/apps/client/logs.txt (browser)
 [ ] yarn logs:parse → gate ≥2, publish-done ≥2
 [ ] yarn studio:journal-fs-check --min-tracks 2 --min-reports 2
 ```

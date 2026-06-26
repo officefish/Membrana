@@ -1,0 +1,14 @@
+{
+  "id": "insight-server-forwarding",
+  "title": "Server forwarding — серверные функции сценария",
+  "status": "adopted",
+  "source": "user",
+  "sprintPhase": null,
+  "horizon": "quarter",
+  "weight": 7.8,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["device-board", "server", "cabinet", "media", "rag", "integrations", "tokens", "tariff"]
+}

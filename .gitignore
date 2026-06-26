@@ -24,7 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Локальные дампы console client app (см. logs/README.md)
+# Локальные дампы console (см. logs/README.md)
 logs/apps/**/*
 !logs/**/.gitignore
 !logs/**/README.md

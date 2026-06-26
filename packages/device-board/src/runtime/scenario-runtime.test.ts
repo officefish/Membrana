@@ -618,6 +618,7 @@ function buildAutonomousJournalSeedDocument() {
 describe('ScenarioRuntime autonomous journal seed (ST9)', () => {
   it('runs onConnect at start when unlinked but device handle exists', async () => {
     const journalHandle = formatJournalRefHandle('device', AUTONOMOUS_DEVICE);
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
     let runtime!: ScenarioRuntime;
     const host = createStubScenarioRuntimeHost({
       isDeviceLinked: () => false,

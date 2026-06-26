@@ -6,7 +6,7 @@
 | **Registry** | `db3h-s3-studio-host` |
 | **Parent** | `device-board-three-hosts-2026-06-26` |
 | **Studio epic** | `membrana-studio-desktop` · [#93](https://github.com/officefish/Membrana/issues/93) |
-| **Status** | **ST2-J PASS** — run `ec18db91` (2026-06-26) |
+| **Status** | **closed** — [`CLOSURE.md`](./CLOSURE.md) · sign-off `092a986c` |
 | **Started** | 2026-06-26 |
 
 **Prompt:** [`DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md`](../../prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md)  
@@ -27,7 +27,7 @@
 | ST1 | alpha async-v2 UserCase в Studio | ✅ operator run `ec18db91` |
 | ST2-O | Online smoke (`paired`, optional) | ⏳ |
 | **ST2-J** | **Offline journal** — autonomous, `journal/items.json` | ✅ run `ec18db91` · `logs:parse` + `studio:journal-fs-check` |
-| ST3 | `yarn studio:package` + installed **offline** smoke | ⏳ **следующий** |
+| ST3 | `yarn studio:package` + installed **offline** smoke | ✅ run `092a986c` · `logs:parse:studio` operator PASS · `journal-fs-check` tracks=6 reports=6 |
 | ST4 | MP7 paired runbook (MS5 follow-up) | ⏳ deferred |
 | **ST5** | Host Bridge Contract + unit tests | ✅ contract + tests in PR |
 | **ST6** | Реестр [`STUDIO_HOST_LESSONS.md`](../../device-board-scripts/STUDIO_HOST_LESSONS.md) + ritual | ✅ ST1–ST9 |
@@ -68,7 +68,7 @@
 
 ```bash
 yarn studio:dev
-# autonomous → Run ≥3 min → logs → yarn logs:parse
+# autonomous → Run ≥3 min → paste DevTools → logs/apps/studio/logs.txt → yarn logs:parse
 yarn studio:journal-fs-check --min-tracks 2 --min-reports 2
 yarn workspace @membrana/membrana-studio test
 ```

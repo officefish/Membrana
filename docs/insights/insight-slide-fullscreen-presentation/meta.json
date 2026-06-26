@@ -1,0 +1,14 @@
+{
+  "id": "insight-slide-fullscreen-presentation",
+  "title": "Объект Slide и fullscreen-режим презентации сценария",
+  "status": "adopted",
+  "source": "user",
+  "sprintPhase": null,
+  "horizon": "month",
+  "weight": 7.8,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["device-board", "slide", "presentation", "ux", "export", "tariff"]
+}

@@ -5,6 +5,7 @@ import type { NewSampleMeta, UpdateSampleLabelNotes } from './media-library/type
 const ML = 'membrana:media-library';
 const JL = 'membrana:journal';
 const TT = 'membrana:trends-templates';
+const LG = 'membrana:logging';
 
 async function invoke<T>(channel: string, ...args: unknown[]): Promise<T> {
   return ipcRenderer.invoke(channel, ...args) as Promise<T>;
@@ -58,8 +59,18 @@ const trendsTemplates = {
   write: (json: string) => invoke<void>(`${TT}:write`, json),
 };
 
+const shellLog = {
+  write: (level: 'debug' | 'info' | 'warn' | 'error', process: string, message: string) =>
+    invoke<void>(`${LG}:write`, level, process, message),
+  getLogsDir: () => invoke<string>(`${LG}:getLogsDir`),
+  flushScenarioTrace: (text: string, runId: string | null) => {
+    ipcRenderer.sendSync(`${LG}:flushScenarioTrace`, text, runId);
+  },
+};
+
 contextBridge.exposeInMainWorld('electronAPI', {
   mediaLibrary,
   journal,
   trendsTemplates,
+  shellLog,
 });

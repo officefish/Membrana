@@ -35,6 +35,8 @@
 | [`DEVICE_BOARD_HACKATHON_BRIEF.md`](./DEVICE_BOARD_HACKATHON_BRIEF.md) | Сценарий «скачать desktop → pairing → device-board» (Studio) |
 | [`MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md`](./MEMBRANE_NODE_REALTIME_GATEWAY_EPIC_PROMPT.md) | MP7 WS — smoke в MS5 |
 | [`TASK_CLOSURE_REGULATION.md`](./TASK_CLOSURE_REGULATION.md) | Закрытие фаз + installer smoke |
+| [`DESKTOP_APP_LOGGING_POLICY.md`](../DESKTOP_APP_LOGGING_POLICY.md) | T1/M1, support; README Studio/Device |
+| [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../STUDIO_HOST_BRIDGE_CONTRACT.md) | MS6 · §7.5 Logging |
 
 **Ветка:** shell + preload → feature-ветка `membrana-studio` (или текущая рабочая). Контракты `@membrana/core` не трогаем без ветки `vesnin`.
 

@@ -8357,17 +8357,17 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "device-board-three-hosts-2026-06-26",
       "sprintKind": "day-sprint",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "PR #181 L18-L23 merged; smoke c778c4ee; CI+audit+test:scripts",
       "dependsOn": [
         "device-board-three-hosts-2026-06-26"
       ],
-      "notes": "OPEN: docs/day-sprint/db3h-s1-tech-debt-2026-06-26/. Без rag:index --full. Phase A: CI+lint.",
+      "notes": "CLOSED 2026-06-26. PR #181 L18-L23; smoke c778c4ee. CLOSURE: docs/day-sprint/db3h-s1-tech-debt-2026-06-26/",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
@@ -8389,7 +8389,7 @@
       "dependsOn": [
         "db3h-s1-tech-debt"
       ],
-      "notes": "UserCase async-v2 smoke в web-cabinet. background-cabinet pairing + scenario API.",
+      "notes": "UserCase async-v2 smoke в web-cabinet. **Deferred** — Studio (db3h-s3) приоритетнее (Vesnin 2026-06-26).",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko",
@@ -8399,10 +8399,32 @@
     {
       "id": "db3h-s3-studio-host",
       "title": "DB3H-S3: device_board в Electron Membrana Studio",
-      "promptPath": "docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md",
+      "promptPath": "docs/prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "L",
+      "status": "archived",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "ST2-J+ST3 PASS run 092a986c; MS6 contract; ST1-ST9. CLOSURE: docs/day-sprint/db3h-s3-studio-host-2026-06-26/CLOSURE.md",
+      "dependsOn": [
+        "db3h-s1-tech-debt"
+      ],
+      "notes": "CLOSED 2026-06-26. ST2-O/ST4 deferred.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s5-desktop-logging",
+      "title": "DB3H-S5: политика логов Studio + Device (support feedback)",
+      "promptPath": "docs/prompts/DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
       "status": "active",
       "strategicWave": "W1",
       "parentEpic": "device-board-three-hosts-2026-06-26",
@@ -8410,11 +8432,12 @@
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [
-        "db3h-s2-cabinet-host"
+        "db3h-s3-studio-host"
       ],
-      "notes": "Тот же UserCase через host-bridge (db-ap-r7). yarn studio:dev smoke.",
-      "leadPersona": "ozhegov",
+      "notes": "OPEN: docs/day-sprint/db3h-s5-desktop-logging-2026-06-26/. Canon: docs/DESKTOP_APP_LOGGING_POLICY.md v1.0. DL-DOC done; DL-1..3 backlog.",
+      "leadPersona": "vesnin",
       "supportPersonas": [
+        "ozhegov",
         "rodchenko"
       ]
     },
@@ -8432,12 +8455,246 @@
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [
-        "db3h-s3-studio-host"
+        "device-board-server-first"
       ],
-      "notes": "audio-engine async hub; template-match vs legacy DSP; подготовка точки подключения neural без реализации.",
+      "notes": "DEFERRED — не открывать. Фокус: device-board-server-first. OPEN: docs/day-sprint/db3h-s4-microphone-detectors-2026-06-26/",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "dynin",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "device-board-server-first",
+      "title": "Device-board server-first: lease, capture soft/strict, Nodes controls (SF0–SF9)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-node-realtime-gateway"
+      ],
+      "notes": "OPEN: docs/day-sprint/db-server-first-2026-06-26/. Canon: docs/DEVICE_BOARD_SERVER_FIRST.md. Blocks db3h-s4.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-sf-0-canon",
+      "title": "SF0: консилиум + canon DEVICE_BOARD_SERVER_FIRST",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-server-first"
+      ],
+      "notes": "Consilium: docs/seanses/device-board-server-first-2026-06-26.md",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-sf-1-core-contracts",
+      "title": "SF1: core board + runtime contracts (vesnin)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-0-canon"
+      ],
+      "notes": "Branch vesnin. Extends mp7b-rt0.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-sf-2-gateway-board",
+      "title": "SF2: gateway channel board",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-1-core-contracts"
+      ],
+      "notes": "background-cabinet node-realtime",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-sf-3-cabinet-lease-api",
+      "title": "SF3: REST edit lease + DeviceBoardPage",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-2-gateway-board"
+      ],
+      "notes": "apps/cabinet + background-cabinet",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-sf-4-client-follower",
+      "title": "SF4: field client follower soft/strict",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-2-gateway-board"
+      ],
+      "notes": "apps/client runtimeRealtimeBridge",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "id": "db-sf-5-board-flags-ui",
+      "title": "SF5: resolveServerFirstFlags + board UX",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-4-client-follower"
+      ],
+      "notes": "packages/device-board",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-sf-6-nodes-runtime",
+      "title": "SF6: NodesPage pause/run/mode",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-1-core-contracts"
+      ],
+      "notes": "apps/cabinet NodesPage",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db-sf-7-last-track-preview",
+      "title": "SF7: last journal track preview on node card",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-6-nodes-runtime"
+      ],
+      "notes": "cabinet live journal + audio element",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "id": "db-sf-8-tests-smoke",
+      "title": "SF8: tests + smoke runbook",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-5-board-flags-ui",
+        "db-sf-7-last-track-preview"
+      ],
+      "notes": "DEVICE_BOARD_SERVER_FIRST_SMOKE.md",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-sf-9-docs-sync",
+      "title": "SF9: docs sync CONCEPT/catalog/ARCHITECTURE",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-8-tests-smoke"
+      ],
+      "notes": "membrana-docs-sync skill",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
         "ozhegov"
       ]
     },

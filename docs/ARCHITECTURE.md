@@ -167,8 +167,13 @@ interface AudioWindow {
 |-------|------|----------|
 | `@membrana/background-office` | Интеграции: Claude, Linear, GitHub webhooks | Нет |
 | `@membrana/background-media` | Data-plane веб-клиента: сэмплы, trends-шаблоны, `deviceId` | PostgreSQL + blob volume |
+| `@membrana/background-cabinet` | Identity + domain: auth, мембраны, узлы, MP7 realtime gateway, telemetry journal, edit lease (SF) | PostgreSQL |
 
-**Не смешивать:** пользовательские WAV и шаблоны trends — только **media**; секреты LLM/тикетов и webhook'и — только **office**.
+**Не смешивать:** пользовательские WAV и шаблоны trends — только **media**; секреты LLM/тикетов и webhook'и — только **office**; login/узлы/lease/runtime WS — **cabinet** (не media).
+
+#### `background-cabinet` — кабинет и node realtime
+
+`@membrana/background-cabinet` (порт dev **3020**, SPA `apps/cabinet`): REST `/v1/*`, WebSocket `/v1/nodes/realtime` (каналы `journal`, `mic-live`, `presence`, `runtime`, `board`). Server-first: edit lease + capture authority — канон [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md). Деплой: [`deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md).
 
 #### `background-office` — интеграционный HTTP-шлюз
 
@@ -199,6 +204,12 @@ AudioContext и **не** Rete/DataflowEngine для сигнала.
 
 Полный концепт доски: [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md).  
 **Исполнение сценария (runtime, onTick, планировщик):** [`SCENARIO_RUNTIME.md`](./SCENARIO_RUNTIME.md).
+
+### 1g. Server-first (cabinet ↔ field)
+
+Когда оператор управляет узлом из кабинета, действуют три оси: **edit lease** (кто редактирует граф), **runtime authority** (кто запустил run), **follower mode** (soft / strict на поле). Wire: `@membrana/core` `node-realtime` (`board.*`, расширенный `runtime.*`); gateway и lease store — `background-cabinet`; UI flags — `device-board` `resolveServerFirstFlags()`; enforcement на поле — `apps/client`; управление и preview журнала — `apps/cabinet` `NodesPage` / `DeviceBoardPage`.
+
+Канон и smoke (prod E2E): [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md), [`device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](./device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md).
 
 ## 2. Плагины и слабая связанность (домен аудио)
 

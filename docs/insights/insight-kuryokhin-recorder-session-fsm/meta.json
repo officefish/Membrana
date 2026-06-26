@@ -1,0 +1,13 @@
+{
+  "id": "insight-kuryokhin-recorder-session-fsm",
+  "title": "Канонический FSM сессии recorder (anti-L18)",
+  "status": "adopted",
+  "source": "virtual-team-kuryokhin",
+  "horizon": "month",
+  "weight": 7.2,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["audio-engine", "recorder", "fsm", "device-board"]
+}

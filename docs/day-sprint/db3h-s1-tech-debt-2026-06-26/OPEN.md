@@ -5,7 +5,7 @@
 | **Sprint** | `db3h-s1-tech-debt-2026-06-26` |
 | **Registry** | `db3h-s1-tech-debt` |
 | **Parent** | `device-board-three-hosts-2026-06-26` |
-| **Status** | **open** |
+| **Status** | **closed** → [`CLOSURE.md`](./CLOSURE.md) |
 | **Started** | 2026-06-26 |
 
 **Prompt:** [`DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md`](../../prompts/DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md)  
@@ -21,10 +21,10 @@
 |-------|-------------|--------|
 | A | CI baseline + device-board lint 0 warnings | ✅ 126/126 turbo |
 | B | Issues audit manifest + report | ✅ `docs/archive/github-issues-audit-2026-06-26.md` |
-| C | task:archive merged + sync-readme | ⏳ (нет merged в manifest; sync при закрытии) |
+| C | task:archive merged + sync-readme | ✅ при CLOSURE |
 | D | Repo hygiene + `yarn test:scripts` in CI | ✅ scripts + ci.yml step (#12) |
-| E | async-v2 L18–L19 PR | ⏳ [PR #181](https://github.com/officefish/Membrana/pull/181) · `39cf260` OPEN link |
-| F | #178 track-upload smoke | ⏳ `uploadTrackAsync` → `mediaSvc.init()` + EMPTY_BLOB guard |
+| E | async-v2 L18–L23 PR | ✅ [PR #181](https://github.com/officefish/Membrana/pull/181) merged `639ca9d` |
+| F | #178 track-upload smoke | ✅ в #181; smoke `c778c4ee` upload-ok=4 |
 
 ---
 

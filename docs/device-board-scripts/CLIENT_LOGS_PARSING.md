@@ -28,8 +28,26 @@
 
 | Путь | Назначение |
 |------|------------|
-| `logs/apps/client/logs.txt` | Основной дамп (приоритет для `yarn logs:parse`) |
+| `logs/apps/studio/logs.txt` | **Membrana Studio** (packaged или `yarn studio:dev`) |
+| `logs/apps/client/logs.txt` | Browser / Vite client — device-board trace |
 | `logs/apps/client/console-logs.txt` | Fallback (см. `AGENTS.md`) |
+| `%APPDATA%/Membrana/logs/device-board-trace-latest.txt` | **T1** — packaged Studio/Device |
+| `%APPDATA%/Membrana/logs/shell-YYYY-MM-DD.log` | **M1** — shell (DL-1) |
+
+`yarn logs:parse` без `--file` выбирает **самый свежий** T1 из путей выше (не L0 `app-*.log`).
+
+### Membrana Studio / Device (packaged)
+
+Два канала: **T1** (scenario) + **M1** (shell). Канон v1.0: [`DESKTOP_APP_LOGGING_POLICY.md`](../../docs/DESKTOP_APP_LOGGING_POLICY.md).
+
+Studio **auto-persist T1** при stop/error и `beforeunload` → `device-board-trace-latest.txt` (+ архив `device-board-trace-<runId>.txt`).
+
+1. После smoke — Stop или дождаться конца Run.
+2. `yarn logs:parse` или `yarn desktop:support-collect`.
+
+Алиас: `yarn logs:parse:studio` → `logs/apps/studio/logs.txt` в репо.
+
+Support: [`docs/support/DESKTOP_SUPPORT_RUNBOOK.md`](../../docs/support/DESKTOP_SUPPORT_RUNBOOK.md) · [`logs/apps/studio/README.md`](../../logs/apps/studio/README.md).
 
 Формат строки (DevTools copy или trace export):
 
@@ -65,7 +83,7 @@ yarn logs:parse -- --list-runs
 
 ### 1. Найти файл и runId
 
-- Проверить `logs/apps/client/logs.txt`, иначе `console-logs.txt`.
+- Проверить `logs/apps/studio/logs.txt` (Studio) или `logs/apps/client/logs.txt` (browser); иначе `console-logs.txt`.
 - `yarn logs:parse -- --list-runs` — если в файле несколько прогонов.
 - По умолчанию анализируется **последний** `runId` (последний `scenario-run-start`).
 

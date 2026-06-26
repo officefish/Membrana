@@ -11,6 +11,7 @@ import { NodeConnectionShell } from './components/NodeConnectionShell';
 import { renderPluginSidebarDetails } from './pluginSidebarDetails';
 import { createScenarioRuntimeHost } from './modules/device-board/createScenarioRuntimeHost';
 import { useDeviceBoardClientBindings } from './modules/device-board/useDeviceBoardClientBindings';
+import { useServerFirstFieldUi } from './modules/device-board/useServerFirstBoardState';
 import { useDeviceLive } from './modules/device-board/useDeviceLive';
 import { useDeviceBoardUserCaseSettings } from './modules/device-board/useDeviceBoardUserCaseSettings';
 import { useNodeConnectionStore } from './stores/nodeConnectionStore';
@@ -18,9 +19,11 @@ import { useNodeConnectionStore } from './stores/nodeConnectionStore';
 function AppContentInner() {
   const { isBoardMode } = useDeviceBoardMode();
   const runtimeHost = useMemo(() => createScenarioRuntimeHost(), []);
-  const { persistAdapter } = useDeviceBoardClientBindings();
+  const { persistAdapter, deviceId } = useDeviceBoardClientBindings();
   const connectionMode = useNodeConnectionStore((s) => s.mode);
   const deviceLive = useDeviceLive();
+  const { serverFirstState, showRunControls: serverFirstShowRunControls } =
+    useServerFirstFieldUi(connectionMode === 'paired' ? deviceId : null);
   const { catalogEnabled, catalogService } = useDeviceBoardUserCaseSettings();
 
   const loadUserCaseDocument = useMemo(() => {
@@ -41,6 +44,8 @@ function AppContentInner() {
               persistAdapter={persistAdapter}
               loadUserCaseDocument={loadUserCaseDocument}
               deviceLive={connectionMode === 'paired' ? deviceLive : undefined}
+              serverFirstState={connectionMode === 'paired' ? serverFirstState : null}
+              showRunControls={connectionMode === 'paired' ? serverFirstShowRunControls : true}
             />
           </div>
         </div>

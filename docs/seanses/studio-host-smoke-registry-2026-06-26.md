@@ -93,8 +93,8 @@
 - [x] `STUDIO_HOST_LESSONS.md` создан, ST1–ST8 зафиксированы
 - [x] `STUDIO_HOST_BRIDGE_CONTRACT.md` — канон трёх хостов
 - [x] OPEN DB3H-S3 + промпт спринта + эпик MS6 обновлены
-- [ ] ST-GATE closed: operator smoke `gate-true ≥2`, `reports ≥2` autonomous
-- [ ] ST2-J closed: `yarn studio:journal-fs-check` PASS на чистом journal
+- [x] ST-GATE closed: operator smoke `gate-true ≥2`, `reports ≥2` autonomous — run `092a986c`
+- [x] ST2-J closed: `yarn studio:journal-fs-check` PASS — run `092a986c` tracks=6 reports=6
 
 ### Таблица фаз (обновлённая)
 

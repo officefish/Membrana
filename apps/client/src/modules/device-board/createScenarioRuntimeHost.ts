@@ -9,6 +9,8 @@ import {
 } from '@membrana/media-library-service';
 import { bindSamplePlaybackBlobReader } from '@membrana/sample-playback-service';
 
+import { persistScenarioTraceToDisk } from '@/lib/electronScenarioTracePort';
+
 import { scenarioChainLog, scenarioRuntimeInfo, setScenarioRuntimeInfoLogging } from './scenarioRuntimeInfoGate';
 import {
   clearScenarioTraceBuffer,
@@ -327,6 +329,10 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
         setScenarioTraceNodeId(null);
       }
       scenarioRuntimeInfo(`[device-board] ${message}`, context);
+      if (message === 'scenario-run-stop' || message === 'scenario-runtime error') {
+        const id = typeof context?.runId === 'string' ? context.runId : null;
+        persistScenarioTraceToDisk(id);
+      }
     },
   };
 }

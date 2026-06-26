@@ -1,0 +1,43 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "freemodel": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "FeeModel.dev (experimental)",
+      "options": {
+        "baseURL": "https://api.freemodel.dev/v1",
+        "apiKey": "{env:FREEMODEL_DEV_API_KEY}"
+      },
+      "models": {
+        "claude-haiku-4-5-20251001": {
+          "name": "Claude Haiku 4.5"
+        },
+        "claude-sonnet-4-20250514": {
+          "name": "Claude Sonnet 4"
+        },
+        "claude-opus-4-7-20251101": {
+          "name": "Claude Opus 4.7"
+        }
+      }
+    },
+    "openrouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OpenRouter (experimental)",
+      "options": {
+        "baseURL": "https://openrouter.ai/api/v1",
+        "apiKey": "{env:OPENROUTER_API_KEY}"
+      },
+      "models": {
+        "anthropic/claude-haiku-4-5-20251001": {
+          "name": "Claude Haiku 4.5"
+        },
+        "anthropic/claude-sonnet-4-20250514": {
+          "name": "Claude Sonnet 4"
+        },
+        "anthropic/claude-opus-4.7": {
+          "name": "Claude Opus 4.7"
+        }
+      }
+    }
+  }
+}

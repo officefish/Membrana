@@ -168,12 +168,11 @@
 | `nh-s3-rituals` | NH3: morning PR review + evening archive | S | [`NIGHT_HUNT_SPRINT_PROMPT.md`](../docs/prompts/NIGHT_HUNT_SPRINT_PROMPT.md) | [#174](https://github.com/officefish/Membrana/issues/174) |
 | `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
 | `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
-| `db3h-s1-tech-debt` | DB3H-S1: техдолг — lint, CI, issues audit, repo hygiene | M | [`DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md`](../docs/prompts/DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md) | — |
 | `db3h-s2-cabinet-host` | DB3H-S2: device_board на сервере в кабинете пользователя | L | [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md) | — |
-| `db3h-s3-studio-host` | DB3H-S3: device_board в Electron Membrana Studio | L | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | — |
+| `db3h-s3-studio-host` | DB3H-S3: device_board в Electron Membrana Studio | L | [`DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md`](../docs/prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md) | — |
 | `db3h-s4-microphone-detectors` | DB3H-S4: рефакторинг микрофона + audit детекторов (async) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
-| `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton **(deferred)** | L | [`INTEGRATIONS_STRATEGY.md`](../docs/INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
-| `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) **(deferred)** | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
+| `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`INTEGRATIONS_STRATEGY.md`](../docs/INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
 
 ---
 
@@ -181,6 +180,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `db3h-s1-tech-debt` | DB3H-S1: техдолг — lint, CI, issues audit, repo hygiene | 2026-06-26 | [`DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md`](../docs/prompts/DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md) | — | [карточка](./archive/db3h-s1-tech-debt.md) |
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports (SUPERSEDED) | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — | [карточка](./archive/ucv2-2-freeze-async-tracks.md) |
 | `ucv2-3-pack-verify` | UCV2-3: pack verify (SUPERSEDED) | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — | [карточка](./archive/ucv2-3-pack-verify.md) |
 | `ucv2-4-operator-signoff` | UCV2-4: operator signoff (SUPERSEDED) | 2026-06-25 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — | [карточка](./archive/ucv2-4-operator-signoff.md) |

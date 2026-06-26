@@ -142,6 +142,11 @@ import type {
 import type { DeviceBoardSession } from '../types/device-board-session.js';
 import { isDeviceBoardSessionReadOnly } from '../types/device-board-session.js';
 import {
+  resolveServerFirstFlags,
+  type ServerFirstFlags,
+  type ServerFirstFlagsInput,
+} from '../components/server-first-flags.js';
+import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
   inspectNodePorts,
@@ -271,6 +276,8 @@ export interface DeviceBoardGraphContextValue {
   /** U10 W2: user workspace slots (undefined host → поля no-op). */
   readonly workspaceEnabled: boolean;
   readonly isSessionReadOnly: boolean;
+  /** Server-first SF4/SF5: null если не paired / не передан serverFirstState. */
+  readonly serverFirstFlags: ServerFirstFlags | null;
   /** Competition mode: block structure edits (delete, paste, collapse). */
   readonly isStructureLocked: boolean;
   readonly isCompetitionMode: boolean;
@@ -437,6 +444,8 @@ export interface DeviceBoardGraphProviderProps {
   readonly workspaceHost?: DeviceBoardWorkspaceHost;
   /** Сессия из DeviceBoardModule launcher (U10 W2-module). */
   readonly boardSession?: DeviceBoardSession | null;
+  /** Server-first: edit lease + capture (полевой paired client). */
+  readonly serverFirstState?: ServerFirstFlagsInput | null;
 }
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
@@ -449,8 +458,17 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   loadUserCaseDocument,
   workspaceHost,
   boardSession = null,
+  serverFirstState = null,
 }) => {
-  const isSessionReadOnly = isDeviceBoardSessionReadOnly(boardSession);
+  const serverFirstFlags = useMemo(
+    () =>
+      serverFirstState !== null && serverFirstState !== undefined
+        ? resolveServerFirstFlags(serverFirstState)
+        : null,
+    [serverFirstState],
+  );
+  const isSessionReadOnly =
+    isDeviceBoardSessionReadOnly(boardSession) || serverFirstFlags?.cabinetEditLease === true;
   const structureLockRef = useRef({
     locked: isSessionReadOnly,
     competition: false,
@@ -2464,6 +2482,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   ]);
 
   const startScenario = useCallback(async () => {
+    if (serverFirstFlags?.blockLocalRun) {
+      return;
+    }
     const issues = runValidation();
     if (!isPreRunValid(issues)) {
       return;
@@ -2474,23 +2495,35 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     }
     runtime.load(buildDocument());
     await runtime.start();
-  }, [buildDocument, runValidation]);
+  }, [buildDocument, runValidation, serverFirstFlags]);
 
   const stopScenario = useCallback((reason: ScenarioStopReason = 'user') => {
+    if (serverFirstFlags && !serverFirstFlags.allowFieldStop) {
+      return;
+    }
     runtimeRef.current?.stop(reason);
-  }, []);
+  }, [serverFirstFlags]);
 
   const pauseScenario = useCallback(() => {
+    if (serverFirstFlags && !serverFirstFlags.allowFieldPause) {
+      return;
+    }
     runtimeRef.current?.pause();
-  }, []);
+  }, [serverFirstFlags]);
 
   const resumeScenario = useCallback(() => {
+    if (serverFirstFlags && !serverFirstFlags.allowFieldPause) {
+      return;
+    }
     runtimeRef.current?.resume();
-  }, []);
+  }, [serverFirstFlags]);
 
   const setMode = useCallback((mode: RuntimeMode) => {
+    if (serverFirstFlags && !serverFirstFlags.allowFieldSetMode) {
+      return;
+    }
     runtimeRef.current?.setMode(mode);
-  }, []);
+  }, [serverFirstFlags]);
 
   const clearCurrentBranch = useCallback(
     (layer: BoardLayerTab) => {
@@ -3244,8 +3277,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
         hasRuntimeHost: runtimeHost !== undefined,
         isRunning: runtimeState.isRunning,
         deviceLive,
+        blockLocalRun: serverFirstFlags?.blockLocalRun ?? false,
       }),
-    [deviceLive, runtimeHost, runtimeState.isRunning, validationIssues],
+    [deviceLive, runtimeHost, runtimeState.isRunning, serverFirstFlags, validationIssues],
   );
 
   const canRun = runDisabledReason === null;
@@ -3344,6 +3378,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       reloadScenarioFromServer,
       workspaceEnabled,
       isSessionReadOnly,
+      serverFirstFlags,
       isStructureLocked: scenarioPolicy.isStructureLocked,
       isCompetitionMode: scenarioPolicy.isCompetitionMode,
       competitionTimeoutSec: scenarioPolicy.competitionTimeoutSec,
@@ -3454,6 +3489,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       inspectRuntimeNode,
       isDirty,
       isSessionReadOnly,
+      serverFirstFlags,
       scenarioPolicy,
       sessionTitle,
       isValidConnectionForLayer,

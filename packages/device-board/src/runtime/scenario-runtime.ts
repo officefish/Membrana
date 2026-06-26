@@ -441,7 +441,11 @@ export class ScenarioRuntime {
       return;
     }
     const journalRef = resolveJournalRef(deviceHandle);
-    if (!isReferenceValid(journalRef)) {
+    if (journalRef === null || !isReferenceValid(journalRef)) {
+      return;
+    }
+    const journalHandle = journalRef.handle;
+    if (journalHandle === null) {
       return;
     }
     for (const variable of document.scenario.variables) {
@@ -456,7 +460,7 @@ export class ScenarioRuntime {
       this.host.setScenarioVariable?.(variable.id, journalRef);
       this.host.log('journal-ref-seed', {
         variableId: variable.id,
-        journal: journalRef.handle,
+        journal: journalHandle,
         device: deviceHandle,
         linked: false,
       });
@@ -821,6 +825,7 @@ export class ScenarioRuntime {
       }
       const message = error instanceof Error ? error.message : String(error);
       this.host.log('scenario-runtime error', {
+        runId: this.runId,
         message,
         stack: error instanceof Error ? error.stack ?? null : null,
         branch: this.state.activeBranch,
@@ -996,6 +1001,10 @@ export class ScenarioRuntime {
   }
 
   private async finishStopped(): Promise<void> {
+    this.host.log('scenario-run-stop', {
+      runId: this.runId,
+      reason: this.stopReason ?? 'system',
+    });
     this.asyncResolvedUnsubscribe?.();
     this.asyncResolvedUnsubscribe = null;
     if (this.runId !== null) {

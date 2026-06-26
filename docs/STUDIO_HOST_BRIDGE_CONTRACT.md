@@ -137,6 +137,26 @@ Shell **не** дублирует quota logic — только FS в main (`apps
 
 ---
 
+## §7.5 Logging (desktop hosts)
+
+Канон: [`DESKTOP_APP_LOGGING_POLICY.md`](./DESKTOP_APP_LOGGING_POLICY.md) v1.0 · консилиум [`seanses/desktop-logging-policy-2026-06-26.md`](./seanses/desktop-logging-policy-2026-06-26.md).
+
+| Канал | Файл под `userData/logs/` | Кто пишет |
+|-------|---------------------------|-----------|
+| **T1** scenario trace | `device-board-trace-latest.txt` | main IPC flush (**DL-2** ✅) |
+| **M1** shell | `shell-YYYY-MM-DD.log` | main via `electron-log` (**DL-1** ✅) |
+
+**Правила:**
+
+- Запись на диск — **только main**; renderer → IPC `membrana:logging` (backlog).
+- Бизнес-log device-board остаётся в client runtime; main не дублирует gate/upload семантику в M1.
+- Smoke: `yarn logs:parse` на **T1**; M1 — отдельный grep (backlog `logs:parse-shell`).
+- Deprecated: `app-*.log` (L0).
+
+README приложений: [`apps/membrana-studio/README.md`](../apps/membrana-studio/README.md), [`apps/membrana-device/README.md`](../apps/membrana-device/README.md).
+
+---
+
 ## §8 Ritual и реестры
 
 | Событие | Действие |
@@ -157,6 +177,7 @@ Shell **не** дублирует quota logic — только FS в main (`apps
 | Journal resolver | `apps/client/src/lib/resolveJournalBackend.ts` |
 | Studio shell | `apps/membrana-studio/src/main.ts`, `scripts/studio-dev.mjs` |
 | Log parser | `scripts/lib/client-logs-parser.mjs` |
+| Logging policy | `docs/DESKTOP_APP_LOGGING_POLICY.md` |
 | FS check | `scripts/studio-offline-journal-check.mjs` |
 
 ---

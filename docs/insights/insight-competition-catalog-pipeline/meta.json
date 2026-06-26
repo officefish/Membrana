@@ -1,0 +1,14 @@
+{
+  "id": "insight-competition-catalog-pipeline",
+  "title": "Competition sprint → catalog publish как повторяемый pipeline",
+  "status": "adopted",
+  "source": "packaging-epic",
+  "sprintPhase": "ins-pilot-i-catalog-pipeline",
+  "horizon": "week",
+  "weight": 6.6,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["competition", "catalog", "usercase", "tooling"]
+}

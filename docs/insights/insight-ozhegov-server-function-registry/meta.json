@@ -1,0 +1,13 @@
+{
+  "id": "insight-ozhegov-server-function-registry",
+  "title": "ServerFunctionRegistry в @membrana/core",
+  "status": "adopted",
+  "source": "virtual-team-ozhegov",
+  "horizon": "month",
+  "weight": 7.4,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["core", "server", "registry", "architecture"]
+}
