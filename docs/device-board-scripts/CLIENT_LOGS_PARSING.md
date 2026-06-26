@@ -6,6 +6,7 @@
 
 - Маркеры цепочки: [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](./SCENARIO_CHAIN_LOG_COOKBOOK.md)
 - Smoke MVP mic: [`USERCASE_MVP_MICROPHONE.md`](./USERCASE_MVP_MICROPHONE.md)
+- Studio host STx: [`STUDIO_HOST_LESSONS.md`](./STUDIO_HOST_LESSONS.md)
 - Куда класть лог: [`logs/README.md`](../../logs/README.md)
 
 ---
@@ -166,6 +167,7 @@ gate tick 330: upload-ok ✓     (slice от tick ~309)
 |--------|------|
 | `scenario-run-start` | начало runId |
 | `[recording] recording-window-full` | gate-true (не дубли `node-enter`) |
+| `is-recording-window-full` + `full: true` | gate-true (fallback если DevTools обрезал `[recording]` channel) |
 | `[recording] stop-recording` | конец окна |
 | `[track] slice-start` | MakeTrack |
 | `[media] upload-start` / `upload-ok` | media pipeline |

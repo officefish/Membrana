@@ -372,7 +372,9 @@ function resolveGetAudioStreamOutput(
     }
     const expectedHandle = `stream:${micRef.handle}`;
     if (active.handle !== expectedHandle) {
-      return invalidAudioStreamRef();
+      // Preset graph microphoneId may be stale (host switch, Electron fallback to default).
+      // Active capture stream from audio-engine is authoritative once streaming started.
+      return active;
     }
   }
 

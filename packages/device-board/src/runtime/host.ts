@@ -51,7 +51,8 @@ export interface ScenarioRuntimeHost {
   readonly getServerHandle?: () => string | null;
   /**
    * Узел связан с сервером (device↔server в архитектуре Membrana).
-   * onConnect/onDisconnect выполняются только при `true`.
+   * Явный `runOnConnect()` приложением — только при `true`.
+   * Старт сценария: onConnect также при autonomous `getDeviceHandle()` (Studio journal seed).
    */
   readonly isDeviceLinked?: () => boolean;
   /**

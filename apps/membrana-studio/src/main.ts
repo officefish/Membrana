@@ -46,7 +46,8 @@ function createMainWindow(): BrowserWindow {
   });
 
   if (isDev) {
-    void win.loadURL(STUDIO_DEV_URL);
+    const devUrl = process.env.MEMBRANA_STUDIO_DEV_URL ?? STUDIO_DEV_URL;
+    void win.loadURL(devUrl);
     win.webContents.openDevTools({ mode: 'detach' });
   } else {
     void win.loadFile(clientDistIndexPath());

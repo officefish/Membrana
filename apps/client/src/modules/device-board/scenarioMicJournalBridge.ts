@@ -1433,10 +1433,23 @@ export class ScenarioMicJournalBridge {
       // Модуль микрофона не смонтирован — свой поток.
     }
 
-    const audio: MediaTrackConstraints | true = this.selectedDeviceId
-      ? { deviceId: { exact: this.selectedDeviceId } }
+    const requestedDeviceId = this.selectedDeviceId;
+    const audio: MediaTrackConstraints | true = requestedDeviceId
+      ? { deviceId: { exact: requestedDeviceId } }
       : true;
-    this.ownedStream = await acquireMicrophone(audio);
+    try {
+      this.ownedStream = await acquireMicrophone(audio);
+    } catch (err) {
+      if (!requestedDeviceId) {
+        throw err;
+      }
+      scenarioChainLog('stream', 'mic-exact-fallback', {
+        requestedDeviceId,
+        reason: err instanceof Error ? err.message : String(err),
+      });
+      this.selectedDeviceId = undefined;
+      this.ownedStream = await acquireMicrophone(true);
+    }
     publishMicrophoneStream(MICROPHONE_MODULE_ID, this.ownedStream);
     this.usesCoordinator = false;
     scenarioRuntimeInfo('[device-board] startStream via owned MediaStream');

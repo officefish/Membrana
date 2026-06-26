@@ -177,6 +177,8 @@ export async function executeRecordingGateNode(
     if (isScenarioIntegerValue(windowWire)) {
       windowSec = nearestRecordingWindowPreset(windowWire.value);
     }
+    const elapsedSec =
+      deviceHandle !== null ? (host.getRecorderElapsedSec?.(deviceHandle) ?? null) : null;
     const full =
       deviceHandle !== null &&
       (host.isRecorderWindowFull?.(deviceHandle, windowSec) ?? false);
@@ -184,6 +186,7 @@ export async function executeRecordingGateNode(
       nodeId: node.id,
       deviceHandle,
       windowSec,
+      elapsedSec,
       full,
     });
     return {

@@ -31,6 +31,7 @@ import { isDeviceLive } from '@/lib/isDeviceLive';
 import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 
 import { createScenarioMicJournalBridge } from './scenarioMicJournalBridge';
+import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId';
 
 function readRuntimeLinkContext(): {
   readonly isLinked: boolean;
@@ -38,15 +39,19 @@ function readRuntimeLinkContext(): {
   readonly serverHandle: string | null;
 } {
   const { mode, pairing } = useNodeConnectionStore.getState();
-  if (mode !== 'paired' || pairing === null) {
-    return { isLinked: false, deviceHandle: null, serverHandle: null };
+  if (mode === 'paired' && pairing !== null) {
+    const wsState = getNodeRealtimeClient().getState();
+    const isLinked = isDeviceLive(pairing.deviceId, mode, wsState);
+    return {
+      isLinked,
+      deviceHandle: pairing.deviceId,
+      serverHandle: pairing.membraneId,
+    };
   }
-  const wsState = getNodeRealtimeClient().getState();
-  const isLinked = isDeviceLive(pairing.deviceId, mode, wsState);
   return {
-    isLinked,
-    deviceHandle: pairing.deviceId,
-    serverHandle: pairing.membraneId,
+    isLinked: false,
+    deviceHandle: resolveDeviceBoardPersistDeviceId(null),
+    serverHandle: null,
   };
 }
 

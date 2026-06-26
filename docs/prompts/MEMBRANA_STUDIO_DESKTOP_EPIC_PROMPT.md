@@ -78,6 +78,7 @@ DoD MS5: Studio + микрофон Windows, live brief в cabinet ≤1 с пос
 | **MS3** | `membrana-studio-ms3-journal-fs` | 3 | Ozhegov | Journal FS backend (замена stub); trendsTemplates на диске | MS2 |
 | **MS4** | `membrana-studio-ms4-installer` | 4 | Rodchenko | electron-builder, NSIS Windows, `yarn studio:package` | MS3 |
 | **MS5** | `membrana-studio-ms5-prod-smoke` | 5 | Vesnin | Prod env в build, paired + MP7 smoke, runbook | MS4 |
+| **MS6** | `membrana-studio-ms6-host-bridge` | 6 | Vesnin + Ozhegov | [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../STUDIO_HOST_BRIDGE_CONTRACT.md), [`STUDIO_HOST_LESSONS.md`](../device-board-scripts/STUDIO_HOST_LESSONS.md), smoke matrix browser/Studio | MS3 (параллельно DB3H-S3) |
 
 **Out of scope эпика Studio:**
 
@@ -129,6 +130,15 @@ DoD MS5: Studio + микрофон Windows, live brief в cabinet ≤1 с пос
 1. Собрать Studio с `VITE_CABINET_API_URL=https://cabinet.membrana.space`.
 2. Pairing → mic live → cabinet видит journal + brief по WS.
 3. Runbook в `apps/membrana-studio/README.md`.
+
+### MS6 — Host Bridge Canon (DB3H-S3)
+
+1. Канон [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../STUDIO_HOST_BRIDGE_CONTRACT.md) — device handle, journal/media backends, electronAPI, smoke matrix.
+2. Реестр [`STUDIO_HOST_LESSONS.md`](../device-board-scripts/STUDIO_HOST_LESSONS.md) (STx) — по образцу L1–L23; консилиум [`studio-host-smoke-registry-2026-06-26.md`](../seanses/studio-host-smoke-registry-2026-06-26.md).
+3. Unit parity: `createScenarioRuntimeHost`, `resolveJournalBackend`, studio dev URL.
+4. Operator: autonomous ST2-J = browser gate thresholds (`yarn logs:parse`).
+
+**Не дублировать:** pack/collapse bugs → `USERCASE_COMPETITION_LESSONS` (Lx).
 
 ### Запрещённые импорты (shell)
 

@@ -168,6 +168,7 @@
     "studio:build": "node scripts/studio-build.mjs",
     "studio:package": "node scripts/studio-package.mjs",
     "studio:ms5-smoke": "node scripts/studio-ms5-prod-smoke.mjs",
+    "studio:journal-fs-check": "node scripts/studio-offline-journal-check.mjs",
     "cabinet:tj6:prod": "node scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs",
     "cabinet:pairing:e2e:deploy": "node scripts/_ssh-cabinet-pairing-e2e-deploy.mjs",
     "recording-parity:smoke-matrix": "node scripts/recording-parity-smoke-matrix.mjs",

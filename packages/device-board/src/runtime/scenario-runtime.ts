@@ -18,6 +18,7 @@ import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import { resolveCompetitionRunLimits } from '../graph/execution-policy.js';
 import type { CompetitionRunLogPayload } from './competition-run-log.js';
+import { isReferenceValid } from './reference-validity.js';
 import {
   createIdleScenarioRuntimeState,
   runtimeBranchToHandlerBranch,
@@ -381,18 +382,33 @@ export class ScenarioRuntime {
     );
   }
 
+  /**
+   * onConnect seeds JournalRef (device scope when server is absent).
+   * Paired runs need link; Studio autonomous needs only a stable local device handle.
+   */
+  private shouldRunOnConnectAtStart(): boolean {
+    if (this.isDeviceLinked()) {
+      return true;
+    }
+    const deviceHandle = this.host.getDeviceHandle?.() ?? null;
+    return deviceHandle !== null && deviceHandle.length > 0;
+  }
+
   private async runOnConnectIfLinked(
     document: DeviceScenarioDocument,
     signal: AbortSignal,
   ): Promise<void> {
-    if (!this.isDeviceLinked()) {
+    if (!this.shouldRunOnConnectAtStart()) {
       return;
     }
     const onConnect = document.scenario.onConnect;
     if (onConnect.nodes.length === 0) {
       return;
     }
-    this.host.log('onConnect → onStart chain', {});
+    this.host.log('onConnect → onStart chain', {
+      linked: this.isDeviceLinked(),
+      device: this.host.getDeviceHandle?.() ?? null,
+    });
     await runSubgraphOnce(
       onConnect,
       this.host,
@@ -405,6 +421,46 @@ export class ScenarioRuntime {
       }),
       { onNodeEnter: (node) => this.onNodeEnter('initial', node) },
     );
+  }
+
+  /**
+   * Autonomous Studio: alpha onConnect bootstrap exits via function `exec-false-out`,
+   * but parent variable-set may not run if exec propagation stops at the subgraph block.
+   * Seed any unset JournalRef variables from host device scope before main loop.
+   */
+  private seedJournalRefVariablesIfNeeded(document: DeviceScenarioDocument): void {
+    if (this.isDeviceLinked()) {
+      return;
+    }
+    const deviceHandle = this.host.getDeviceHandle?.() ?? null;
+    if (deviceHandle === null || deviceHandle.length === 0) {
+      return;
+    }
+    const resolveJournalRef = this.host.getDeviceJournalRef;
+    if (resolveJournalRef === undefined) {
+      return;
+    }
+    const journalRef = resolveJournalRef(deviceHandle);
+    if (!isReferenceValid(journalRef)) {
+      return;
+    }
+    for (const variable of document.scenario.variables) {
+      if (variable.type !== 'JournalRef') {
+        continue;
+      }
+      const current = this.variableStore.getValue(variable.id);
+      if (current !== null && isReferenceValid(current)) {
+        continue;
+      }
+      this.variableStore.setValue(variable.id, journalRef);
+      this.host.setScenarioVariable?.(variable.id, journalRef);
+      this.host.log('journal-ref-seed', {
+        variableId: variable.id,
+        journal: journalRef.handle,
+        device: deviceHandle,
+        linked: false,
+      });
+    }
   }
 
   private isDeviceLinked(): boolean {
@@ -612,6 +668,8 @@ export class ScenarioRuntime {
         await this.finalizeRun(document);
         return;
       }
+
+      this.seedJournalRefVariablesIfNeeded(document);
 
       await runSubgraphOnce(document.scenario.initial, this.host, signal, this.execOptions('initial', document.scenario.functions), {
         onNodeEnter: (node) => this.onNodeEnter('initial', node),

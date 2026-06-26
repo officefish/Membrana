@@ -127,7 +127,11 @@ function uniqueTicks(events) {
  */
 export function summarizeRun(allEvents, runId) {
   const events = eventsForRun(allEvents, runId);
-  const gateTrue = filterPayload(events, '[recording] recording-window-full');
+  const gateTrue = events.filter(
+    (event) =>
+      event.payload.includes('[recording] recording-window-full') ||
+      (event.message === 'is-recording-window-full' && /full:\s*true/.test(event.payload)),
+  );
   const gateTicks = uniqueTicks(gateTrue);
   const publishDone = filterPayload(events, '[journal] publish-done');
   const uploadOk = filterPayload(events, '[media] upload-ok');
