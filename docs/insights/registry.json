@@ -256,6 +256,17 @@
         "tooling",
         "self-hosted"
       ]
+    },
+    {
+      "id": "insight-headroom-server-deploy",
+      "title": "Перенести headroom MCP на удалённый сервер",
+      "status": "researched",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-06-27",
+      "tags": []
     }
   ]
 }

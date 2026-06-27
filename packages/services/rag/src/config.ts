@@ -10,6 +10,7 @@ export interface RagConfig {
   embeddingProvider: RagEmbeddingProvider;
   embeddingModel: string;
   openaiBaseUrl: string;
+  voyageBaseUrl: string;
   vectorStore: RagVectorStoreKind;
   lanceDbPath: string;
   operativeDays: number;
@@ -25,6 +26,7 @@ const DEFAULTS: RagConfig = {
   embeddingProvider: 'openai',
   embeddingModel: 'text-embedding-3-small',
   openaiBaseUrl: 'https://api.openai.com/v1',
+  voyageBaseUrl: 'https://api.voyageai.com/v1',
   vectorStore: 'lancedb',
   lanceDbPath: '.membrana/rag/',
   operativeDays: 7,
@@ -65,13 +67,18 @@ function parseVectorStore(value: string | undefined): RagVectorStoreKind {
 
 /** Load config from `process.env` with documented defaults. */
 export function loadRagConfig(env: NodeJS.ProcessEnv = process.env): RagConfig {
+  const embeddingProvider = parseEmbeddingProvider(env.RAG_EMBEDDING_PROVIDER);
   const legacyOperativeThreshold = env.RAG_OBSIDIAN_RELEVANCE_THRESHOLD;
   const legacyMinCount = env.RAG_MIN_OBSIDIAN_COUNT;
 
   return {
-    embeddingProvider: parseEmbeddingProvider(env.RAG_EMBEDDING_PROVIDER),
-    embeddingModel: env.RAG_EMBEDDING_MODEL?.trim() || DEFAULTS.embeddingModel,
+    embeddingProvider,
+    embeddingModel:
+      env.RAG_EMBEDDING_MODEL?.trim() ||
+      (embeddingProvider === 'voyage' ? 'voyage-4-lite' : DEFAULTS.embeddingModel),
     openaiBaseUrl: env.OPENAI_BASE_URL?.trim().replace(/\/+$/, '') || DEFAULTS.openaiBaseUrl,
+    voyageBaseUrl:
+      env.VOYAGE_BASE_URL?.trim().replace(/\/+$/, '') || DEFAULTS.voyageBaseUrl,
     vectorStore: parseVectorStore(env.RAG_VECTOR_STORE),
     lanceDbPath: env.RAG_LANCEDB_PATH?.trim() || DEFAULTS.lanceDbPath,
     operativeDays: parseIntEnv(env.RAG_OPERATIVE_DAYS, DEFAULTS.operativeDays),

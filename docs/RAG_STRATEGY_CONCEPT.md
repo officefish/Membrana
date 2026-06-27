@@ -66,7 +66,8 @@
 
 - **Default model:** `text-embedding-3-small` (1536 dim, cosine).
 - **Не использовать** `text-embedding-ada-002`.
-- Optional: Voyage 3 Lite (`RAG_EMBEDDING_PROVIDER=voyage`).
+- Optional: `voyage-4-lite` at 1024 dimensions (`RAG_EMBEDDING_PROVIDER=voyage`);
+  switching provider/model requires a full index rebuild.
 
 ### 4.3 Индексируемые источники
 

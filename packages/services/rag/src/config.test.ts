@@ -13,4 +13,14 @@ describe('loadRagConfig OPENAI_BASE_URL', () => {
         .openaiBaseUrl,
     ).toBe('http://127.0.0.1:8080/openai/v1');
   });
+
+  it('selects current Voyage defaults and normalizes its endpoint', () => {
+    const config = loadRagConfig({
+      RAG_EMBEDDING_PROVIDER: 'voyage',
+      VOYAGE_BASE_URL: 'https://voyage.example/v1///',
+    });
+
+    expect(config.embeddingModel).toBe('voyage-4-lite');
+    expect(config.voyageBaseUrl).toBe('https://voyage.example/v1');
+  });
 });

@@ -1,6 +1,8 @@
+export type EmbeddingInputType = 'document' | 'query';
+
 export interface Embedder {
-  embedTexts(texts: readonly string[]): Promise<number[][]>;
+  embedTexts(texts: readonly string[], inputType?: EmbeddingInputType): Promise<number[][]>;
   readonly dimensions: number;
 }
 
-export const OPENAI_EMBEDDING_BATCH_SIZE = 32;
+export const EMBEDDING_BATCH_SIZE = 32;

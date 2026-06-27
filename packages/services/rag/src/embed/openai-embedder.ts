@@ -59,11 +59,12 @@ export async function embedInBatches(
   embedder: Embedder,
   texts: readonly string[],
   batchSize: number,
+  inputType?: 'document' | 'query',
 ): Promise<number[][]> {
   const vectors: number[][] = [];
   for (let i = 0; i < texts.length; i += batchSize) {
     const batch = texts.slice(i, i + batchSize);
-    const batchVectors = await embedder.embedTexts(batch);
+    const batchVectors = await embedder.embedTexts(batch, inputType);
     vectors.push(...batchVectors);
   }
   return vectors;

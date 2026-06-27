@@ -18,7 +18,7 @@
 |------|------|-------|
 | Оперативная память (Circuit A) | Obsidian REST (обязательно) | **Repo-native**: git recency + BM25/ripgrep по `docs/` |
 | Долговременная память (Circuit B) | Pinecone managed | **LanceDB embedded** (`.membrana/rag/`, gitignored) |
-| Embeddings | ada-002 (1536) | **`text-embedding-3-small`** (1536); опционально Voyage 3 Lite |
+| Embeddings | ada-002 (1536) | **`text-embedding-3-small`** (1536); опционально `voyage-4-lite` (1024) |
 | Chunking | LangChain RecursiveCharacterTextSplitter | **Собственный markdown/code splitter** |
 | Obsidian | Core | **Optional overlay** (Phase R7) |
 | Pinecone | Core | **Optional pluggable backend** (Phase R7+) |
@@ -82,7 +82,7 @@ Perplexity deep research (2025–2026):
 |-------|-----|---------------------|------------------|-------|
 | ada-002 | 1536 | Legacy | ~$0 | ❌ deprecated |
 | **text-embedding-3-small** | 1536 | Strong general | ~$0.01 | ✅ default |
-| **Voyage 3 Lite** | 512 | Best on code/specialized | ~$0.005 | ✅ optional A/B |
+| **`voyage-4-lite`** | 1024 | General-purpose / multilingual retrieval | vendor-priced | ✅ optional runtime + A/B |
 | Cohere Embed v4 | 1536 | Strong multilingual | similar | Overkill (English-only docs) |
 | nomic-embed (local) | 768 | Weaker on long tech docs | $0 infra | Эшелон 1 local; BGE-M3 лучше |
 

@@ -54,6 +54,8 @@ export { createKeywordCorpusArchivePort } from './retriever/keyword-corpus-archi
 
 export { createLanceDbStore, resolveManifestPath } from './store/lancedb-store.js';
 export { createOpenAiEmbedder, embedInBatches } from './embed/openai-embedder.js';
+export { createVoyageEmbedder } from './embed/voyage-embedder.js';
+export { createEmbedder, embeddingFingerprint } from './embed/embedder-factory.js';
 export { splitMarkdown } from './chunk/markdown-splitter.js';
 
 export type {
