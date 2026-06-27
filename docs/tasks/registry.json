@@ -9109,7 +9109,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
       "parentEpic": null,
@@ -9117,7 +9117,9 @@
       "supportPersonas": [
         "structure",
         "dynin"
-      ]
+      ],
+      "archivedAt": "2026-06-27",
+      "archiveNotes": "8 атомарных коммитов: docs-actions миграция (77 файлов), архивы задач da/oc/wc, sprint prompts/discussions, daily archives, MCP Tier5, opencode/agents tooling, scripts libuv-fix, sprint-ledger triage. lint+typecheck 84/84, test 52/52, build 32/32 — green. Secret-gate активен. Issue #184 closed."
     }
   ]
 }
