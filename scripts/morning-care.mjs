@@ -18,6 +18,7 @@ import {
   loadDotEnv,
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
+import { checkCodebaseMemoryIndex } from './lib/context-tooling.mjs';
 
 function parseArgs(argv) {
   const noAnthropic = argv.includes('--no-anthropic');
@@ -367,6 +368,10 @@ if (git.inside) {
 } else {
   console.log('[warn] не git-репозиторий — блок git пропущен');
 }
+
+console.log('\n--- codebase-memory index ---');
+const graph = checkCodebaseMemoryIndex(cwd);
+console.log(graph.ok ? '[ok]   codebase-memory index available' : `[warn] codebase-memory: ${graph.detail} (non-blocking)`);
 
 console.log('\n--- node --test (scripts) ---');
 const tests = runScriptTests(cwd);

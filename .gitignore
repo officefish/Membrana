@@ -45,6 +45,12 @@ docs/discussions/mcp-tier0.generated.json
 
 # RAG (@membrana/rag-service) — LanceDB index + hash manifest (local only)
 .membrana/rag/
+/docs/archive/*-audit-reads.json
+
+# Headroom local venv; keep only reproducible config/docs.
+/tools/headroom-venv/*
+!/tools/headroom-venv/headroom.env.example
+!/tools/headroom-venv/PROXY_SETUP.md
 
 # Редакторы
 .idea/

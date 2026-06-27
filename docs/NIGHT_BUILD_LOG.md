@@ -55,3 +55,7 @@
 ## Checkpoint NB0 — 2026-06-27T18:35:52.547Z
 - Status: **pass**
 - Note: Registry/prompt frozen; docs 45 OK; scripts 61 and RAG 31 baseline pass; evening review waiver: isolated worktree has no secrets, Ollama check timed out
+
+## Checkpoint NB1 — 2026-06-27T18:36:56.481Z
+- Status: **pass**
+- Note: C1 morning graph smoke non-blocking; C2 archiveTopK=15 operativeTopK=5; C3 graph update + ignored Headroom audit; 32 RAG tests, 64 script tests, typecheck/lint pass

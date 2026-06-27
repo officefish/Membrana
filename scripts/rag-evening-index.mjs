@@ -6,6 +6,7 @@
 import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { updateCodebaseMemoryIndex, writeHeadroomAudit } from './lib/context-tooling.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -31,5 +32,11 @@ if (result.status !== 0) {
     '[rag] incremental index failed or skipped (continuing evening ritual — check OPENAI_API_KEY / index)',
   );
 }
+
+const graph = updateCodebaseMemoryIndex(repoRoot);
+console.error(graph.ok ? '[codebase-memory] graph updated' : '[codebase-memory] graph update skipped or failed (non-blocking)');
+
+const audit = writeHeadroomAudit(repoRoot);
+console.error(audit.ok ? `[headroom] audit-reads written: ${audit.path}` : '[headroom] audit-reads skipped or failed (non-blocking)');
 
 process.exit(0);

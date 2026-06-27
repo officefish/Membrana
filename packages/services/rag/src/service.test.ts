@@ -14,6 +14,7 @@ describe('loadRagConfig', () => {
     expect(config.vectorStore).toBe('lancedb');
     expect(config.lanceDbPath).toBe('.membrana/rag/');
     expect(config.topK).toBe(RAG_CONFIG_DEFAULTS.topK);
+    expect(config.archiveTopK).toBe(15);
   });
 
   it('maps legacy OBSIDIAN env names to operative thresholds', () => {
@@ -23,6 +24,26 @@ describe('loadRagConfig', () => {
     });
     expect(config.operativeRelevanceThreshold).toBe(0.75);
     expect(config.minOperativeCount).toBe(4);
+  });
+});
+
+describe('archive topK', () => {
+  it('uses archiveTopK without changing the operative default', async () => {
+    let requestedTopK = 0;
+    const service = new RagService({
+      config: loadRagConfig({ RAG_TOP_K_ARCHIVE: '17' }),
+      repoRoot: REPO_ROOT,
+      archivePort: {
+        hasIndex: async () => true,
+        search: async (_query, topK) => {
+          requestedTopK = topK;
+          return [];
+        },
+      },
+    });
+    await service.retrieveContext('Membrana', { useLongTerm: true });
+    expect(service.config.topK).toBe(5);
+    expect(requestedTopK).toBe(17);
   });
 });
 

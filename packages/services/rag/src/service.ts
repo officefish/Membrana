@@ -49,7 +49,7 @@ export class RagService {
       };
     }
 
-    const topK = options.topK ?? this.config.topK;
+    const operativeTopK = options.topK ?? this.config.topK;
     const operative = await retrieveOperativeContext(
       this.repoRoot,
       trimmed,
@@ -68,7 +68,7 @@ export class RagService {
     if (plan.skipArchive) {
       return {
         query: trimmed,
-        fragments: operative.fragments.slice(0, topK),
+        fragments: operative.fragments.slice(0, operativeTopK),
         usedArchive: false,
         usedOperative: operative.usedOperative,
       };
@@ -76,14 +76,15 @@ export class RagService {
 
     let archiveFragments: RAGFragment[] = [];
     let usedArchive = false;
+    const resultTopK = options.topK ?? this.config.archiveTopK;
     if (plan.queryArchive) {
       usedArchive = true;
-      archiveFragments = await this.archivePort.search(trimmed, topK, options, this.config);
+      archiveFragments = await this.archivePort.search(trimmed, resultTopK, options, this.config);
     }
 
     return {
       query: trimmed,
-      fragments: mergeRetrievalResults(operative.fragments, archiveFragments, topK, options),
+      fragments: mergeRetrievalResults(operative.fragments, archiveFragments, resultTopK, options),
       usedArchive,
       usedOperative: operative.usedOperative,
     };
