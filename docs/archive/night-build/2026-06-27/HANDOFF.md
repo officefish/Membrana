@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-06-27
+
+> Epic: `agent-context-optimization-v1`
+> Закрыто: `2026-06-27T18:41:52.959Z` (`yarn night:close`)
+> Промпт: `docs/prompts/AGENT_CONTEXT_OPTIMIZATION_V1_EPIC_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/agent-context-optimization-v1-2026-06-27` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 # Night Build log
 
 ## Open — 2026-06-14T18:06:19.233Z
@@ -67,3 +88,24 @@
 ## Checkpoint NB3 — 2026-06-27T18:41:52.243Z
 - Status: **pass**
 - Note: Final scoped CI green: RAG lint/typecheck/build + 32 tests; 64 script tests; docs 45; catalog 20; syntax/diff checks
+
+
+---
+
+## Шаблон итога (заполнить вручную или агентом)
+
+| Фаза | Статус | PR / commit |
+|------|--------|-------------|
+| NB0 | done | `72a34ee` |
+| NB1 | done | `c06ec8a` |
+| NB2 | done | `b075e67` |
+| NB3 | done | final scoped CI + this handoff |
+
+**Блокеры:**
+
+- Evening Anthropic review was unavailable in the isolated worktree because secrets were not
+  copied. Local Ollama check timed out; the waiver is backed by the green baseline and final CI.
+- `codebase-memory` reports this separate worktree as unindexed; the main repository index remains
+  available. The new morning check is intentionally warning-only.
+
+**LGTM Vesnin:** pending morning review; no prod action performed.
