@@ -1,0 +1,28 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "skills": {
+    "paths": [
+      ".opencode/skills"
+    ]
+  },
+  "references": {
+    "docs": {
+      "path": "./docs",
+      "description": "Use for Membrana architecture, rituals, prompts, task lifecycle, and product documentation."
+    },
+    "opencode-prompts": {
+      "path": "./.opencode/prompts",
+      "description": "Use for project-specific opencode subagent prompts."
+    },
+    "opencode-commands": {
+      "path": "./.opencode/command",
+      "description": "Operator command workflows (standup, main-day, ritual-evening, full-ci, triage-issues, close-task) - thin wrappers over yarn scripts. Auto-discovered by OpenCode."
+    }
+  },
+  "plugin": [
+    "opencode-openai-codex-auth"
+  ]
+}
