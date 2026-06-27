@@ -44,24 +44,26 @@ if (result.status !== 0) {
 }
 
 // codebase-memory-mcp: incremental graph update (non-blocking, skips if binary absent)
-const cmBin = resolve(repoRoot, 'tools/bin/codebase-memory-mcp.exe');
+// Resolve binary: prefer system PATH install, fall back to local tools/bin/
 try {
   const { existsSync } = await import('node:fs');
-  if (existsSync(cmBin)) {
+  const { execFileSync } = await import('node:child_process');
+
+  const candidates = [
+    process.env.LOCALAPPDATA
+      ? resolve(process.env.LOCALAPPDATA, 'Programs', 'codebase-memory-mcp', 'codebase-memory-mcp.exe')
+      : null,
+    resolve(repoRoot, 'tools/bin/codebase-memory-mcp.exe'),
+  ].filter(Boolean);
+
+  const cmBin = candidates.find(p => existsSync(p)) ?? null;
+
+  if (cmBin) {
     console.error('[codebase-memory] incremental graph update…');
-    const payload = JSON.stringify({
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'tools/call',
-      params: {
-        name: 'index_repository',
-        arguments: { repo_path: repoRoot, mode: 'fast' },
-      },
-    });
-    const cm = spawnSync(cmBin, [], {
+    const args = JSON.stringify({ repo_path: repoRoot, mode: 'fast' });
+    const cm = spawnSync(cmBin, ['cli', 'index_repository', args], {
       cwd: repoRoot,
-      input: payload,
-      stdio: ['pipe', 'pipe', 'ignore'],
+      stdio: ['ignore', 'pipe', 'ignore'],
       timeout: 120_000,
     });
     const out = cm.stdout?.toString() ?? '';

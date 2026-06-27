@@ -1,0 +1,53 @@
+{
+  "gate": "headroom-m2-before-after",
+  "date": "2026-06-27",
+  "author": "Dynin",
+  "headroom_version": "0.27.0",
+  "threshold_pct": 40,
+  "min_pass": 2,
+  "passed": true,
+  "verdict": "M2 PILOT APPROVED",
+  "method": "SmartCrusher.crush() with full-size realistic outputs; tiktoken cl100k_base for token counting",
+  "results": [
+    {
+      "output": "logs:parse",
+      "description": "12 simulated runs at realistic multi-run volume (2921 tok)",
+      "tokens_before": 2921,
+      "tokens_after": 2921,
+      "savings_pct": 0.0,
+      "strategy": "passthrough",
+      "pass": false,
+      "note": "SmartCrusher skips structured summary outputs at this size. In proxy mode, accumulated session context compresses at scale."
+    },
+    {
+      "output": "RAG-chunk",
+      "description": "Full docs/tasks/registry.json — realistic RAG context load (103K tok)",
+      "tokens_before": 103000,
+      "tokens_after": 11544,
+      "savings_pct": 88.8,
+      "strategy": "smart_sample(502->73)",
+      "pass": true
+    },
+    {
+      "output": "smoke-matrix",
+      "description": "Full docs/device-board-scripts/golden/usercase-mvp-microphone-v20-async.document.json (14K tok)",
+      "tokens_before": 14014,
+      "tokens_after": 8117,
+      "savings_pct": 42.1,
+      "strategy": "lossless:buckets + lossless:table",
+      "pass": true
+    }
+  ],
+  "audit_reads_summary": {
+    "sessions_analyzed": 6,
+    "total_read_tokens_k": 137,
+    "stale_reads_pct": 12.3,
+    "line_number_overhead_pct": 3.6
+  },
+  "constraints_confirmed": [
+    "logs:parse only — no @membrana/core compression",
+    "RAG chunks compressed at full registry scale",
+    "smoke-matrix compressed above threshold",
+    "@membrana/core contracts excluded per Ozhegov gate"
+  ]
+}

@@ -13,8 +13,8 @@
 
 | Уровень | Серверы | Ключ / setup | В committed config |
 |---------|---------|--------------|-------------------|
-| **Tier 0** | gitnexus, Git, Filesystem | нет | только gitnexus в `.cursor/mcp.json`; Git/FS — в example |
-| **Tier 1** | Perplexity | `PERPLEXITY_API_KEY` | **не** в git; fragment example |
+| **Tier 0** | gitnexus, Git, Filesystem, **codebase-memory-mcp** | нет | gitnexus в `.cursor/mcp.json`; codebase-memory-mcp в `.claude/.mcp.json` (auto-install) |
+| **Tier 1** | Perplexity, **headroom** (пилот) | `PERPLEXITY_API_KEY`; headroom — `uv` + Rust | **не** в git; fragment example; headroom venv в `tools/headroom-venv/` |
 | **Tier 2** | Playwright | Chromium download | fragment example |
 | **Tier 3** | Glyph | `uv` + clone вне репо | fragment example |
 | **Tier 4** | Chrome MCP, mcp-firewall | — | **не внедряем** v1 |
@@ -92,3 +92,24 @@ Glyph ([`TZ_MCP_Servers_Membrana.md`](./TZ_MCP_Servers_Membrana.md) §3). Fallba
 | MAIN_DAY_ISSUE | `yarn main-day-issue --allow-missing-standup` | ручное редактирование |
 | Консилиум | протокол в чате / вручную | `docs/seanses/` |
 | Research | нет Perplexity MCP | docs, GitHub, arXiv вручную |
+
+---
+
+## §9. Спринт mcp-agent-tooling-2026-06-27
+
+> Консилиум: [`docs/discussions/mcp-agent-tooling-consilium-2026-06-27-PROTOCOL.md`](./discussions/mcp-agent-tooling-consilium-2026-06-27-PROTOCOL.md)
+
+| Фаза | Инструмент | Статус | Версия | Ограничения |
+|------|-----------|--------|--------|-------------|
+| M1 | codebase-memory-mcp | **active** | 0.8.1 | offline, MIT; граф 26 936 узлов / 60 872 рёбра |
+| M2 | headroom-ai[mcp] | **пилот** | 0.27.0 | только `logs:parse` + RAG-чанки; `@membrana/core` — вне компрессии; gate: экономия ≥40% на 2/3 выводов |
+| M3 | searXNG | **deferred** | — | Perplexity закрывает нишу; вернуть при keyless DSP-ресёрче |
+| M4 | hindsight | **deferred** | — | mini-spike отдельно; Vectorize-хостед — §5-запрет |
+
+**Открытые Issue:**
+- #185 `arch: services→device-board boundary violation` — 8 нарушений в `packages/services/usercase-catalog`, pre-existing
+
+**Хуки установлены (codebase-memory-mcp):**
+- `PreToolUse` — Grep/Glob search-graph augmenter (non-blocking)
+- `SessionStart` — напоминание об MCP при старте/resume/clear/compact
+- `rag-evening-index.mjs` — инкрементальный граф-апдейт после RAG (Tier 0 fallback: `tools/bin/`)
