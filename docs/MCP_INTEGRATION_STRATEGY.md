@@ -18,6 +18,7 @@
 | **Tier 2** | Playwright | Chromium download | fragment example |
 | **Tier 3** | Glyph | `uv` + clone вне репо | fragment example |
 | **Tier 4** | Chrome MCP, mcp-firewall | — | **не внедряем** v1 |
+| **Tier 5** | Linear | OAuth (`mcp-remote`, без ключа в git) | fragment example (keyless) |
 
 **Если сервер не стартует:** отключить его в Cursor/Claude (Settings → MCP) или удалить блок из **локального** конфига. Использовать fallback из [`MCP_USAGE.md`](./MCP_USAGE.md).
 

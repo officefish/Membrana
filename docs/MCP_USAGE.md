@@ -67,6 +67,26 @@ Workstation merge: [`mcp/tier0-workstation.example.json`](./mcp/tier0-workstatio
 
 **Если Go не установлен:** `winget install GoLang.Go`, затем `yarn mcp:phase-c:install`. Или skip + gitnexus.
 
+**Готовые промпты под Membrana:** [`mcp/GLYPH_PROMPTS.md`](./mcp/GLYPH_PROMPTS.md).
+
+---
+
+## Tier 5 — Linear (OAuth, без API-ключа в git)
+
+| Setup | `npx -y mcp-remote https://mcp.linear.app/sse` — авторизация OAuth при первом подключении |
+|-------|----------------------------------------------------------------------------------------------|
+| Пример | [`mcp/tier5-linear.fragment.json`](./mcp/tier5-linear.fragment.json) |
+
+Задачи: issues, статусы, PR-линковка из Cursor/Claude. Sync с GitHub — [`LINEAR_GITHUB_SYNC_REGULATION.md`](./prompts/LINEAR_GITHUB_SYNC_REGULATION.md).
+
+**Fallback без MCP:**
+
+- Linear web / desktop app.
+- `background-office` API (`LINEAR_API_KEY` в `.env`) + webhooks — `yarn office:dev`.
+- GitHub Issues как источник правды (#-номера в промптах).
+
+**Если OAuth не проходит / `mcp-remote` не стартует:** удалить блок `linear` из локального MCP config → Linear web + GitHub sync.
+
 ---
 
 ## Anthropic (не MCP)
