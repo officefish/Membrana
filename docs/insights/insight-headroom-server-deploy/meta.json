@@ -1,0 +1,13 @@
+{
+  "id": "insight-headroom-server-deploy",
+  "title": "Перенести headroom MCP на удалённый сервер",
+  "status": "researched",
+  "source": "user",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "2026-06-27",
+  "researchedAt": "2026-06-27",
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": []
+}

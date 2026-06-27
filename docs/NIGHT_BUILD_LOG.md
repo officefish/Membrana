@@ -46,3 +46,12 @@
 ## Checkpoint NB3 — 2026-06-21T16:50:47.925Z
 - Status: **pass**
 - Note: picker a11y; verify-paths 34 ok; test 401/401
+
+## Re-open — 2026-06-27T18:10:18.857Z
+- Epic: `agent-context-optimization-v1`
+- Continue: no
+
+
+## Checkpoint NB0 — 2026-06-27T18:35:52.547Z
+- Status: **pass**
+- Note: Registry/prompt frozen; docs 45 OK; scripts 61 and RAG 31 baseline pass; evening review waiver: isolated worktree has no secrets, Ollama check timed out
