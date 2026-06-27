@@ -18,7 +18,7 @@ Options:
   --help, -h              Справка`);
 }
 
-function runStep(label, script) {
+function runStep(label, script, { optional = false } = {}) {
   console.error(`\n=== ritual-evening-tail: ${label} ===\n`);
   const res = spawnSync('yarn', [script], {
     cwd: process.cwd(),
@@ -27,7 +27,11 @@ function runStep(label, script) {
     env: process.env,
   });
   if (res.status !== 0) {
-    process.exit(res.status ?? 1);
+    if (optional) {
+      console.error(`[warn] ${label} завершился с кодом ${res.status ?? 1} — продолжаем.`);
+    } else {
+      process.exit(res.status ?? 1);
+    }
   }
 }
 
@@ -41,7 +45,8 @@ const skipClose = argv.includes('--skip-close-github');
 const skipFeedback = argv.includes('--skip-team-feedback');
 
 if (!skipClose) {
-  runStep('task:close-github', 'task:close-github');
+  // optional=true: ошибки при закрытии Issues не должны блокировать team-feedback
+  runStep('task:close-github', 'task:close-github', { optional: true });
 }
 
 if (!skipFeedback) {
