@@ -22,7 +22,7 @@ yarn insight close <id> --status adopted|deferred|rejected
 
 Skill: [`.cursor/skills/membrana-insight/SKILL.md`](../.cursor/skills/membrana-insight/SKILL.md)
 
-## Реестр (2026-06-25)
+## Реестр (2026-06-27)
 
 | ID | Тема | Статус | Weight |
 |----|------|--------|--------|
@@ -44,6 +44,13 @@ Skill: [`.cursor/skills/membrana-insight/SKILL.md`](../.cursor/skills/membrana-i
 | `insight-dynin-chain-log-golden-oracle` | Dynin (Математик) | 7.2 |
 | `insight-kuryokhin-recorder-session-fsm` | Kuryokhin (Музыкант) | 7.2 |
 | `insight-rodchenko-operator-density-mode` | Rodchenko (Верстальщик) | 7.0 |
+
+### MCP Tooling consilium (2026-06-27)
+
+| ID | Тема | Статус | Weight |
+|----|------|--------|--------|
+| `insight-mcp-searxng-private-search` | SearXNG keyless приватный поиск | draft | — |
+| `insight-mcp-hindsight-agent-memory` | Hindsight обучающаяся память агента | draft | — |
 
 Полный индекс: [`insights/registry.json`](./insights/registry.json).
 

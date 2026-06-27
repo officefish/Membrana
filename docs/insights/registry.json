@@ -142,6 +142,28 @@
       "weight": 7.0,
       "createdAt": "2026-06-25",
       "tags": ["ui", "device-board", "operator", "design"]
+    },
+    {
+      "id": "insight-mcp-searxng-private-search",
+      "title": "SearXNG — приватный keyless веб-поиск для агентов",
+      "status": "draft",
+      "source": "mcp-tooling-consilium",
+      "sprintPhase": "mcp-tooling-m3-searxng",
+      "horizon": "month",
+      "weight": null,
+      "createdAt": "2026-06-27",
+      "tags": ["mcp", "search", "dsp", "privacy", "tooling", "self-hosted"]
+    },
+    {
+      "id": "insight-mcp-hindsight-agent-memory",
+      "title": "Hindsight — обучающаяся память агента между сессиями",
+      "status": "draft",
+      "source": "mcp-tooling-consilium",
+      "sprintPhase": "mcp-tooling-m4-hindsight-spike",
+      "horizon": "quarter",
+      "weight": null,
+      "createdAt": "2026-06-27",
+      "tags": ["mcp", "memory", "agent", "lessons", "tooling", "self-hosted"]
     }
   ]
 }
