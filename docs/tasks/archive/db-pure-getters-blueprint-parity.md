@@ -26,7 +26,7 @@ G0-G4 complete; proposal #1 closed
 | G1 | exec-subgraph transparent skip; validatePreRun hints; D4 no tick-cache |
 | G2 | Pure toggle; exec strip on impure→pure; ref bound/empty; value edit |
 | G3 | MVP main JSON data-only policy wires; MakeTrack→restart exec; migration v0.9 |
-| G4 | CONCEPT §15.7 v0.9; [`PURE_GETTERS_LGTM.md`](../../docs/device-board-scripts/PURE_GETTERS_LGTM.md) |
+| G4 | CONCEPT §15.7 v0.9; [`PURE_GETTERS_LGTM.md`](../../docs/actions/device-board/sign-offs/PURE_GETTERS_LGTM.md) |
 
 **Ключевой topology fix (G3):** policy constructors без exec-hop; `MakeRecordingPolicy` / `MakeFftTrendsPolicy` — data-only к consumers.
 
