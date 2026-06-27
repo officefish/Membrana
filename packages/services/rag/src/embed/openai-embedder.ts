@@ -1,7 +1,6 @@
 import type { RagConfig } from '../config.js';
 import type { Embedder } from './types.js';
 
-const OPENAI_EMBEDDING_URL = 'https://api.openai.com/v1/embeddings';
 const DEFAULT_DIMENSIONS = 1536;
 
 interface OpenAiEmbeddingResponse {
@@ -18,6 +17,8 @@ export function createOpenAiEmbedder(
     throw new Error('OPENAI_API_KEY is required for embedding (set in .env)');
   }
 
+  const embeddingUrl = `${config.openaiBaseUrl}/embeddings`;
+
   return {
     dimensions: DEFAULT_DIMENSIONS,
     async embedTexts(texts: readonly string[]): Promise<number[][]> {
@@ -25,7 +26,7 @@ export function createOpenAiEmbedder(
         return [];
       }
 
-      const response = await fetch(OPENAI_EMBEDDING_URL, {
+      const response = await fetch(embeddingUrl, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${apiKey}`,
