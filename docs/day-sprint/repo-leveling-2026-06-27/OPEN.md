@@ -196,6 +196,31 @@ yarn ritual:evening                # архив дня + code-review
 
 ---
 
+## Фаза F-fix — пост-seal регрессия (2026-06-27, после 8 коммитов)
+
+**Симптом:** 8 коммитов легли корректно, но рабочее дерево осталось грязным (10 изменений). Оборванный прогон ритуала перезаписал поверх sealed-состояния:
+
+- 🔴 `.gitignore` — **откатаны 11 строк Phase A** (игнор `.env.llm-proxy`, `playwright-report/`, `test-results/`, `.sync-readme-out.txt`). `git check-ignore .env.llm-proxy` → NOT ignored; секрет снова `??`. Risk-gate отменён в рабочем дереве (в историю **не** утёк).
+- 🔴 `docs/tasks/registry.json` — **битый JSON**, обрезан на строке 9119 (`"d` вместо `"dynin"`, нет финальных скобок). В HEAD файл целый.
+- ⚠️ Откаты в `scripts/{rag-evening-index,_daily-standup,_main-day-issue,morning-care}.mjs` и сдвиг сабмодуля `apps/demos/Harmonic-Detector`.
+- ⚠️ `device-board-server-first` в registry всё ещё `active` (CLOSURE.md есть; статус не переключён).
+
+**Восстановление — см. инструкцию для агента:** [`PHASE_F_FIX_AGENT_PROMPT.md`](./PHASE_F_FIX_AGENT_PROMPT.md).
+
+Короткая суть:
+
+```bash
+git checkout -- .gitignore docs/tasks/registry.json          # вернуть secret-gate + целый реестр
+git check-ignore .env.llm-proxy                              # → путь = снова ignored
+node -e "JSON.parse(require('fs').readFileSync('docs/tasks/registry.json'));console.log('registry OK')"
+git diff scripts/ apps/demos/Harmonic-Detector               # решить: keep (commit) или discard (checkout --)
+git status --short                                           # должно стать пусто
+```
+
+**Gate F-fix:** `check-ignore .env.llm-proxy` = ignored; registry.json парсится; `git status` пуст; решение по scripts/сабмодулю принято и зафиксировано.
+
+---
+
 ## Порядок и риск
 
 1. **A первым, всегда** — секрет до любого `git add`.
