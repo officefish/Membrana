@@ -6917,6 +6917,7 @@
     },
     {
       "id": "device-board-async-pipeline-v1",
+      "status": "closed",
       "title": "Device-board async pipeline: Promise nodes, latent Sequence, non-blocking runtime",
       "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
       "githubIssue": 176,
