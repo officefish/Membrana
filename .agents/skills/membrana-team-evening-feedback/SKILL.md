@@ -7,7 +7,7 @@ description: >-
 
 # Team Evening Feedback (Codex mirror)
 
-Канон: [`.cursor/skills/membrana-team-evening-feedback/SKILL.md`](../../.cursor/skills/membrana-team-evening-feedback/SKILL.md).
+Канон: [`.cursor/skills/membrana-team-evening-feedback/SKILL.md`](../../../.cursor/skills/membrana-team-evening-feedback/SKILL.md).
 
 ```bash
 yarn team-evening-feedback

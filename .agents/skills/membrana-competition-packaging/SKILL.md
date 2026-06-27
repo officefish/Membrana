@@ -7,4 +7,4 @@ description: >-
 
 # membrana-competition-packaging
 
-See [`.cursor/skills/membrana-competition-packaging/SKILL.md`](../../.cursor/skills/membrana-competition-packaging/SKILL.md).
+See [`.cursor/skills/membrana-competition-packaging/SKILL.md`](../../../.cursor/skills/membrana-competition-packaging/SKILL.md).

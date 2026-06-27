@@ -187,7 +187,8 @@
     "logs:parse": "node scripts/parse-client-logs.mjs",
     "logs:parse:studio": "node scripts/parse-client-logs.mjs --file logs/apps/studio/logs.txt",
     "desktop:support-collect": "node scripts/desktop-support-collect.mjs",
-    "usercase": "node scripts/usercase.mjs"
+    "usercase": "node scripts/usercase.mjs",
+    "proxy:claude": "node scripts/proxy-claude.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

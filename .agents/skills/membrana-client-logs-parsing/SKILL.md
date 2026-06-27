@@ -7,6 +7,6 @@ description: >-
 
 # Mirror — client logs parsing
 
-**Canonical:** [`.cursor/skills/membrana-client-logs-parsing/SKILL.md`](../../.cursor/skills/membrana-client-logs-parsing/SKILL.md)
+**Canonical:** [`.cursor/skills/membrana-client-logs-parsing/SKILL.md`](../../../.cursor/skills/membrana-client-logs-parsing/SKILL.md)
 
 Run that playbook verbatim.

@@ -6,4 +6,4 @@ description: >-
 
 # Mirror — docs sync
 
-**Canonical:** [`.cursor/skills/membrana-docs-sync/SKILL.md`](../../.cursor/skills/membrana-docs-sync/SKILL.md)
+**Canonical:** [`.cursor/skills/membrana-docs-sync/SKILL.md`](../../../.cursor/skills/membrana-docs-sync/SKILL.md)

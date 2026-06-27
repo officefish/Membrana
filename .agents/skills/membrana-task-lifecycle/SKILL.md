@@ -6,6 +6,6 @@ description: >-
 
 # Mirror — task lifecycle
 
-**Canonical:** [`.cursor/skills/membrana-task-lifecycle/SKILL.md`](../../.cursor/skills/membrana-task-lifecycle/SKILL.md)
+**Canonical:** [`.cursor/skills/membrana-task-lifecycle/SKILL.md`](../../../.cursor/skills/membrana-task-lifecycle/SKILL.md)
 
 Run that playbook verbatim.
