@@ -12,7 +12,7 @@
 
 Эпик **MS0–MS6** — [`docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md).
 
-**MS6** — Host Bridge Contract: [`docs/STUDIO_HOST_BRIDGE_CONTRACT.md`](../../docs/STUDIO_HOST_BRIDGE_CONTRACT.md) · дневник STx: [`docs/device-board-scripts/STUDIO_HOST_LESSONS.md`](../../docs/device-board-scripts/STUDIO_HOST_LESSONS.md).
+**MS6** — Host Bridge Contract: [`docs/STUDIO_HOST_BRIDGE_CONTRACT.md`](../../docs/STUDIO_HOST_BRIDGE_CONTRACT.md) · дневник STx: [`docs/actions/device-board/STUDIO_HOST_LESSONS.md`](../../docs/actions/device-board/STUDIO_HOST_LESSONS.md).
 
 **MS1** — shell + `yarn studio:dev`.  
 **MS2** — `electronAPI.mediaLibrary` → `%APPDATA%/Membrana/media-library/` (manifest + blobs).  
@@ -141,4 +141,4 @@ yarn logs:parse                 # или AppData trace, если новее
 yarn desktop:support-collect    # manifest + trace для тикета
 ```
 
-Подробнее: [`logs/apps/studio/README.md`](../../logs/apps/studio/README.md) · [`CLIENT_LOGS_PARSING.md`](../../docs/device-board-scripts/CLIENT_LOGS_PARSING.md).
+Подробнее: [`logs/apps/studio/README.md`](../../logs/apps/studio/README.md) · [`CLIENT_LOGS_PARSING.md`](../../docs/actions/device-board/CLIENT_LOGS_PARSING.md).

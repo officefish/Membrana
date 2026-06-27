@@ -23,10 +23,10 @@ MS0–MS4 уже shipped (2026-06-23): shell, media FS, journal FS, NSIS install
 | Документ | Зачем |
 |----------|--------|
 | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | MS0–MS5 канон |
-| [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) | L18–L23 pack/runtime |
-| [`STUDIO_HOST_LESSONS.md`](../device-board-scripts/STUDIO_HOST_LESSONS.md) | ST1–ST8 host/Electron |
+| [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) | L18–L23 pack/runtime |
+| [`STUDIO_HOST_LESSONS.md`](../actions/device-board/STUDIO_HOST_LESSONS.md) | ST1–ST8 host/Electron |
 | [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../STUDIO_HOST_BRIDGE_CONTRACT.md) | MS6 контракт трёх хостов |
-| [`CLIENT_LOGS_PARSING.md`](../device-board-scripts/CLIENT_LOGS_PARSING.md) | `yarn logs:parse` smoke |
+| [`CLIENT_LOGS_PARSING.md`](../actions/device-board/CLIENT_LOGS_PARSING.md) | `yarn logs:parse` smoke |
 | [`MEDIA_LIBRARY_ARCHITECTURE.md`](../MEDIA_LIBRARY_ARCHITECTURE.md) | On-disk layout, `electron-fs` backends |
 | [`apps/membrana-studio/README.md`](../../apps/membrana-studio/README.md) | Journal FS paths, paired vs local |
 
@@ -65,7 +65,7 @@ Offline — **обязательный** контур спринта. `upload-ok
 6. **ST4 — paired MP7 (MS5 follow-up):** prod env + journal WS; не блокер ST2-J.
 7. **ST-FS — политика ФС (опционально, по триггеру):** если ST2-J выявил пробелы — документировать в `MEDIA_LIBRARY_ARCHITECTURE.md` §Studio offline: пути, квоты, paired fallback, journal vs media-library; unit/smoke тесты shell. Можно вынести в отдельный спринт `studio-fs-policy` при scope > 0.5д.
 8. **ST5 — Host Bridge Contract:** канон [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../STUDIO_HOST_BRIDGE_CONTRACT.md); unit tests host parity (`getDeviceHandle`, journal backend, dev URL).
-9. **ST6 — реестр STx:** вести [`STUDIO_HOST_LESSONS.md`](../device-board-scripts/STUDIO_HOST_LESSONS.md); новый симптом smoke → ST+1; консилиум [`studio-host-smoke-registry-2026-06-26.md`](../seanses/studio-host-smoke-registry-2026-06-26.md).
+9. **ST6 — реестр STx:** вести [`STUDIO_HOST_LESSONS.md`](../actions/device-board/STUDIO_HOST_LESSONS.md); новый симптом smoke → ST+1; консилиум [`studio-host-smoke-registry-2026-06-26.md`](../seanses/studio-host-smoke-registry-2026-06-26.md).
 10. **ST-GATE — recording gate parity:** Studio autonomous = browser по `gate-true` / `elapsedSec`; закрыть ST6 open (run `f9939e7b`).
 
 ### Запрещено

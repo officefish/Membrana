@@ -13,4 +13,4 @@
 
 `yarn logs:parse` без `--file` берёт **самый свежий** из существующих файлов выше.
 
-Support: `yarn desktop:support-collect` · playbook: [`CLIENT_LOGS_PARSING.md`](../docs/device-board-scripts/CLIENT_LOGS_PARSING.md).
+Support: `yarn desktop:support-collect` · playbook: [`CLIENT_LOGS_PARSING.md`](../docs/actions/device-board/CLIENT_LOGS_PARSING.md).

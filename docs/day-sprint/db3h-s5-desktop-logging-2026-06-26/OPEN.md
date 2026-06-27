@@ -36,8 +36,8 @@
 | `apps/client/README.md` | ✅ |
 | `docs/STUDIO_HOST_BRIDGE_CONTRACT.md` §7.5 | ✅ |
 | `docs/support/DESKTOP_SUPPORT_RUNBOOK.md` | ✅ |
-| `docs/device-board-scripts/CLIENT_LOGS_PARSING.md` | ✅ |
-| `docs/device-board-scripts/STUDIO_HOST_LESSONS.md` | ✅ |
+| `docs/actions/device-board/CLIENT_LOGS_PARSING.md` | ✅ |
+| `docs/actions/device-board/STUDIO_HOST_LESSONS.md` | ✅ |
 | `logs/README.md`, `logs/apps/studio/README.md` | ✅ |
 | `.cursor/skills/membrana-client-logs-parsing/SKILL.md` | ✅ |
 | `AGENTS.md` | ✅ |

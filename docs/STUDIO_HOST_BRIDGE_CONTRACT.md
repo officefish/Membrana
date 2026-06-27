@@ -2,8 +2,8 @@
 
 > **Статус:** канон v0.1 (2026-06-26, консилиум [`studio-host-smoke-registry-2026-06-26.md`](./seanses/studio-host-smoke-registry-2026-06-26.md))  
 > **Эпик:** MS6 в [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md)  
-> **Операционный дневник:** [`device-board-scripts/STUDIO_HOST_LESSONS.md`](./device-board-scripts/STUDIO_HOST_LESSONS.md) (STx)  
-> **Pack/runtime:** [`device-board-scripts/USERCASE_COMPETITION_LESSONS.md`](./device-board-scripts/USERCASE_COMPETITION_LESSONS.md) (Lx)
+> **Операционный дневник:** [`actions/device-board/STUDIO_HOST_LESSONS.md`](./actions/device-board/STUDIO_HOST_LESSONS.md) (STx)  
+> **Pack/runtime:** [`actions/device-board/USERCASE_COMPETITION_LESSONS.md`](./actions/device-board/USERCASE_COMPETITION_LESSONS.md) (Lx)
 
 ---
 

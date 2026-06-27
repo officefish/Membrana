@@ -23,7 +23,7 @@
 ```bash
 yarn turbo run lint typecheck test build --continue
 # deploy: docs/day-sprint/db-server-first-2026-06-26/DEPLOY.md
-# prod E2E: docs/device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
+# prod E2E: docs/actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
 ```
 
 **Консилиум:** [`seanses/device-board-server-first-2026-06-26.md`](./seanses/device-board-server-first-2026-06-26.md)  

@@ -3,7 +3,7 @@
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
 > **Реестр (draft):** эпик **`device-board-bundled-mvp-v09-sprint-2026-06-25`**  
 > **Статус:** **closed** (2026-06-24)
-> **Предшественники:** runtime smoke `runId 1cf4983b` (2026-06-24); [`USERCASE_MVP_MICROPHONE.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE.md) § v0.9-functions; CONCEPT §16.5.1  
+> **Предшественники:** runtime smoke `runId 1cf4983b` (2026-06-24); [`USERCASE_MVP_MICROPHONE.md`](../actions/device-board/specs/USERCASE_MVP_MICROPHONE.md) § v0.9-functions; CONCEPT §16.5.1  
 > **Связанный эпик (W1):** `usercase-mvp-v2-groups-async` — async track/report **вне** этого спринта (фаза P7)  
 > **Пакеты:** `@membrana/device-board`, `docs/device-board-scripts`, `scripts/build-usercase-mvp-microphone.mjs`
 

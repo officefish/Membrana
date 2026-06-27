@@ -6,7 +6,7 @@
 | **Консилиум** | [`seanses/desktop-logging-policy-2026-06-26.md`](./seanses/desktop-logging-policy-2026-06-26.md) |
 | **Продукты** | Membrana Studio · Membrana Device (план) |
 | **Спринт** | `db3h-s5-desktop-logging` |
-| **Связано** | [`CLIENT_LOGS_PARSING.md`](./device-board-scripts/CLIENT_LOGS_PARSING.md) · [`STUDIO_HOST_LESSONS.md`](./device-board-scripts/STUDIO_HOST_LESSONS.md) |
+| **Связано** | [`CLIENT_LOGS_PARSING.md`](./actions/device-board/CLIENT_LOGS_PARSING.md) · [`STUDIO_HOST_LESSONS.md`](./actions/device-board/STUDIO_HOST_LESSONS.md) |
 
 Пользователи устанавливают **настольные** приложения на свои ПК. Support и разработка должны **одинаково** знать:
 
@@ -95,7 +95,7 @@ Membrana/
 | `runId` | 8 hex — один прогон |
 | `tick` | Main loop tick |
 
-**Разбор (разработка):** `yarn logs:parse` / `yarn logs:parse:studio` — см. [`CLIENT_LOGS_PARSING.md`](./device-board-scripts/CLIENT_LOGS_PARSING.md).
+**Разбор (разработка):** `yarn logs:parse` / `yarn logs:parse:studio` — см. [`CLIENT_LOGS_PARSING.md`](./actions/device-board/CLIENT_LOGS_PARSING.md).
 
 **Лимит буфера UI:** 10 000 строк — для длинных run предпочитать Download trace или auto-flush (DL-2).
 
@@ -196,8 +196,8 @@ Sentry — вне scope S5 v1.
 | **Web client** | `apps/client/README.md` | Dev paste; ссылка на desktop policy |
 | **Host contract** | `docs/STUDIO_HOST_BRIDGE_CONTRACT.md` | §Logging |
 | **Support RU** | `docs/support/DESKTOP_SUPPORT_RUNBOOK.md` | User-facing |
-| **Parse playbook** | `docs/device-board-scripts/CLIENT_LOGS_PARSING.md` | T1/M1, пути |
-| **Studio lessons** | `docs/device-board-scripts/STUDIO_HOST_LESSONS.md` | ST8 + ссылка на канон |
+| **Parse playbook** | `docs/actions/device-board/CLIENT_LOGS_PARSING.md` | T1/M1, пути |
+| **Studio lessons** | `docs/actions/device-board/STUDIO_HOST_LESSONS.md` | ST8 + ссылка на канон |
 | **Repo logs** | `logs/README.md`, `logs/apps/studio/README.md` | Operator paste |
 | **Agent skill** | `.cursor/skills/membrana-client-logs-parsing/SKILL.md` | + Claude mirror |
 | **Cloud agents** | `AGENTS.md` | Краткая ссылка |
@@ -210,7 +210,7 @@ Sentry — вне scope S5 v1.
 
 | Документ | Зачем |
 |----------|--------|
-| [`CLIENT_LOGS_PARSING.md`](./device-board-scripts/CLIENT_LOGS_PARSING.md) | Маркеры, smoke |
-| [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](./device-board-scripts/SCENARIO_CHAIN_LOG_COOKBOOK.md) | Цепочка capture → journal |
+| [`CLIENT_LOGS_PARSING.md`](./actions/device-board/CLIENT_LOGS_PARSING.md) | Маркеры, smoke |
+| [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](./actions/device-board/cookbooks/SCENARIO_CHAIN_LOG_COOKBOOK.md) | Цепочка capture → journal |
 | [`DESKTOP_SUPPORT_RUNBOOK.md`](./support/DESKTOP_SUPPORT_RUNBOOK.md) | Тикеты |
 | [`DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md`](./prompts/DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md) | Спринт |

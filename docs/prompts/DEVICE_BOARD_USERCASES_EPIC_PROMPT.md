@@ -9,7 +9,7 @@
 > **Статус:** **archived** · LGTM Teamlead 2026-06-21 · ветка `feat/db-usercases-catalog-u9`  
 > **Ветка:** `feat/db-usercases-catalog-u9` от `main` / `techies68` (после merge U8/U8a)
 
-> **Sibling (agents):** programmatic pack/collapse — [`USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md) → [`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](./DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) (не путать с U9 catalog UI).
+> **Sibling (agents):** programmatic pack/collapse — [`USERCASE_GENERATION_REGULATION.md`](../actions/device-board/USERCASE_GENERATION_REGULATION.md) → [`DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](./DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) (не путать с U9 catalog UI).
 
 ---
 
@@ -243,7 +243,7 @@ Settings → modal, не dropdown. Confirm destructive. Post-apply exec-layout a
 
 ## Связанные документы
 
-- [`USERCASE_MVP_MICROPHONE_LGTM.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md)
+- [`USERCASE_MVP_MICROPHONE_LGTM.md`](../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md)
 - [`usercase-mvp-microphone/manifest.json`](../device-board-scripts/usercase-mvp-microphone/manifest.json)
 - [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](./DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) (U8)
 - [`DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md`](./DEVICE_BOARD_NODE_ALIGN_ADVANCED_EPIC_PROMPT.md) (U8a)

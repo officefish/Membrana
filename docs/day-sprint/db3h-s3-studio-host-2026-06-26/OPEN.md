@@ -30,7 +30,7 @@
 | ST3 | `yarn studio:package` + installed **offline** smoke | ✅ run `092a986c` · `logs:parse:studio` operator PASS · `journal-fs-check` tracks=6 reports=6 |
 | ST4 | MP7 paired runbook (MS5 follow-up) | ⏳ deferred |
 | **ST5** | Host Bridge Contract + unit tests | ✅ contract + tests in PR |
-| **ST6** | Реестр [`STUDIO_HOST_LESSONS.md`](../../device-board-scripts/STUDIO_HOST_LESSONS.md) + ritual | ✅ ST1–ST9 |
+| **ST6** | Реестр [`STUDIO_HOST_LESSONS.md`](../../actions/device-board/STUDIO_HOST_LESSONS.md) + ritual | ✅ ST1–ST9 |
 | **ST-GATE** | Recording gate parity (ST6 open, `elapsedSec` logs) | ✅ gate≥2 run `ec18db91` |
 | ST-FS | Политика ФС (опционально, по триггеру) | — |
 

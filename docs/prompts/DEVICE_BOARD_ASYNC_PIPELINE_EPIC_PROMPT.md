@@ -30,7 +30,7 @@ Bundled **v0.9-functions** прошёл operator smoke (`runId 7e8a289c`): 10 re
 | [`DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md`](./DEVICE_BOARD_EXEC_SEQUENCE_EPIC_PROMPT.md) | closed PR #168 — sync + `parallelAsync` |
 | `ucv2-2-freeze-async-tracks` | **superseded** этим эпиком |
 
-**Baseline log:** `runId 7e8a289c` · [`CLIENT_LOGS_PARSING.md`](../device-board-scripts/CLIENT_LOGS_PARSING.md)
+**Baseline log:** `runId 7e8a289c` · [`CLIENT_LOGS_PARSING.md`](../actions/device-board/CLIENT_LOGS_PARSING.md)
 
 **Consilium + Perplexity:** [`docs/discussions/device-board-async-pipeline-consilium-2026-06-25.md`](../discussions/device-board-async-pipeline-consilium-2026-06-25.md)
 

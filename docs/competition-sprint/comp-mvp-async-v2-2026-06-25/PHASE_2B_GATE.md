@@ -23,7 +23,7 @@
 
 | Evidence | Status |
 |----------|--------|
-| Bundled MVP operator smoke | PASS — [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../device-board-scripts/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md) |
+| Bundled MVP operator smoke | PASS — [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md) |
 | Competition forks `verify-prerun` | PASS ×3 |
 | Live browser Run ≥60s per fork | **Deferred** — не блокирует consilium (прецедент v1: RUN-01) |
 

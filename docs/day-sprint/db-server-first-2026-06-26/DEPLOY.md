@@ -45,7 +45,7 @@ yarn cabinet:smoke:prod
 
 ### 3.2 Server-first (ручной чеклист)
 
-Полный сценарий: [`DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](../../device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md).
+Полный сценарий: [`DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](../../actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md).
 
 Кратко:
 

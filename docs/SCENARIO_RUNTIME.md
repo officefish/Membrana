@@ -128,7 +128,7 @@ Alarm loop использует отдельную паузу `ALARM_LOOP_PAUSE_
 | `scenarioChainLog` | stages: recording, track, media, report, **async-job** | `[device-board][async-job] resolved` |
 | `main-tick-blocked-ms` | каждый main tick | `elapsedMs` — budget gate path (AP v1) |
 
-Parse: [`CLIENT_LOGS_PARSING.md`](./device-board-scripts/CLIENT_LOGS_PARSING.md) · `yarn logs:parse`.
+Parse: [`CLIENT_LOGS_PARSING.md`](./actions/device-board/CLIENT_LOGS_PARSING.md) · `yarn logs:parse`.
 
 ---
 
@@ -156,7 +156,7 @@ Parse: [`CLIENT_LOGS_PARSING.md`](./device-board-scripts/CLIENT_LOGS_PARSING.md)
 
 ## 10. Async pipeline (AP v1, 2026-06-25)
 
-> Epic: `device-board-async-pipeline-v1` · Issue #176 · CONCEPT §16.5.2 · LGTM [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](./device-board-scripts/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).
+> Epic: `device-board-async-pipeline-v1` · Issue #176 · CONCEPT §16.5.2 · LGTM [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](./actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).
 
 ### Слои (не смешивать)
 

@@ -25,7 +25,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 |------|---------|
 | Install deps | `yarn install` |
 | Dev server (client) | `yarn workspace @membrana/client dev` (port 5173) |
-| **UserCase build / verify (agents)** | `node scripts/usercase.mjs help` — CI: `usercase-competition.yml` + weekly `scheduled-ci` · см. [`USERCASE_GENERATION_REGULATION.md`](docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
+| **UserCase build / verify (agents)** | `node scripts/usercase.mjs help` — CI: `usercase-competition.yml` + weekly `scheduled-ci` · см. [`USERCASE_GENERATION_REGULATION.md`](docs/actions/device-board/USERCASE_GENERATION_REGULATION.md) |
 | **RAG (dual-circuit)** | [`docs/RAG.md`](docs/RAG.md) · `yarn rag:query` / `yarn rag:index` · operative works without `OPENAI_API_KEY`; archive needs key + `--full` index |
 | Lint | `yarn lint` |
 | Typecheck | `yarn typecheck` |
@@ -44,6 +44,23 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 
+### OpenCode operator commands
+
+Operator workflows live in `.opencode/command/*.md` (auto-discovered) — thin wrappers over the `yarn` scripts above. Config: [`opencode.json`](./opencode.json) (`instructions: AGENTS.md`, `skills.paths: .opencode/skills`, `references.opencode-commands`). Sprint: `docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md` (Issue #183).
+
+| Command | Wraps | Skill |
+|---------|-------|-------|
+| `/standup` | `yarn standup` | membrana-developer-rhythm |
+| `/main-day` | `yarn main-day-issue` | membrana-developer-rhythm |
+| `/ritual-evening` | `yarn ritual:evening` | membrana-developer-rhythm, membrana-code-review |
+| `/full-ci` | `yarn turbo run lint typecheck test build --continue` | membrana-full-ci-operator |
+| `/triage-issues` | `yarn issues:audit` | membrana-issue-triage |
+| `/close-task <id>` | `yarn task:archive <id>` + `yarn task:close-github` | membrana-task-lifecycle |
+
+Operator skills (`.opencode/skills/`): `membrana-client-module-guard` (`yarn check:boundaries`), `membrana-full-ci-operator`, `membrana-issue-triage`, `membrana-opencode-self-maintenance` (how to extend the `.opencode/` layer).
+
+Operator skills — wave 2 (`docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_PROMPT.md`): `membrana-git-pr` (branches, scoped commits, lefthook, no secrets), `membrana-deploy-operator` (prod deploy navigator — wraps `cabinet:*:prod` / `device-board:deploy:prod` / `*:docker:prod:*`), `membrana-yarn-workspace` (corepack/Yarn 4/turbo gotchas), `membrana-security-review` (pre-merge checklist), `membrana-env-secrets-guard` (`.env`, proxy, keys, secrets hygiene).
+
 ### Gotchas for Cloud Agents
 
 - **Yarn 4 via corepack**: The VM ships with Yarn Classic 1.x. The update script runs `corepack enable` which makes the `yarn` shim read `"packageManager"` from `package.json` and resolve to Yarn 4.x automatically. If `yarn -v` still shows `1.22.x`, run `corepack enable` manually.
@@ -57,3 +74,5 @@ All standard dev commands are documented in the root `README.md` and `package.js
 - **Client module/plugin catalog**: Before editing `apps/client/src/modules/*` or `plugins/*`, read the catalog prompt from `docs/catalog/client/registry.json` → `promptPath` (see `docs/catalog/README.md`). CI runs `yarn catalog:verify-client`.
 - **Deploy debug logs**: Do not save SSH/deploy script output to the repo root (`cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt` via `Tee-Object` or shell redirect). Use `%TEMP%` / `$TMPDIR` instead; see `docs/CONTRIBUTING.md` → VPS deploy.
 - **Client / Studio console**: см. [`docs/DESKTOP_APP_LOGGING_POLICY.md`](docs/DESKTOP_APP_LOGGING_POLICY.md). Support: `yarn desktop:support-collect`. Parse: `yarn logs:parse` / `yarn logs:parse:studio`.
+
+## Imported Claude Cowork project instructions

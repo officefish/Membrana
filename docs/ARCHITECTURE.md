@@ -209,7 +209,7 @@ AudioContext и **не** Rete/DataflowEngine для сигнала.
 
 Когда оператор управляет узлом из кабинета, действуют три оси: **edit lease** (кто редактирует граф), **runtime authority** (кто запустил run), **follower mode** (soft / strict на поле). Wire: `@membrana/core` `node-realtime` (`board.*`, расширенный `runtime.*`); gateway и lease store — `background-cabinet`; UI flags — `device-board` `resolveServerFirstFlags()`; enforcement на поле — `apps/client`; управление и preview журнала — `apps/cabinet` `NodesPage` / `DeviceBoardPage`.
 
-Канон и smoke (prod E2E): [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md), [`device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](./device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md).
+Канон и smoke (prod E2E): [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md), [`actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](./actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md).
 
 ## 2. Плагины и слабая связанность (домен аудио)
 

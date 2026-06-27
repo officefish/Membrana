@@ -1,8 +1,8 @@
 # Промпт: автогенерация Device-Board UserCases
 
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
-> **Регламент (normative):** [`USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md)  
-> **Дневник уроков:** [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) (L1–L20)  
+> **Регламент (normative):** [`USERCASE_GENERATION_REGULATION.md`](../actions/device-board/USERCASE_GENERATION_REGULATION.md)  
+> **Дневник уроков:** [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) (L1–L20)  
 > **Эталон runtime:** bundled `usercase-mvp-microphone` (flat main, LGTM 2026-06-21)  
 > **Sprint reference:** `comp-mvp-packaging-2026-06-21` — alpha/beta/gamma, **Run parity доказан**, merge победителя **отложен**
 
@@ -89,7 +89,7 @@ node scripts/usercase.mjs verify-competition
 
 ### Phase 0 — Baseline
 
-1. Прочитать [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) (L1–L20).
+1. Прочитать [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) (L1–L20).
 2. Убедиться, что MVP flat собирается и Run зелёный:
    ```bash
    yarn usercase:build usercase-mvp-microphone
@@ -199,8 +199,8 @@ Manual в browser (`yarn workspace @membrana/client dev`):
 
 | Doc | Path |
 |-----|------|
-| Lessons diary | [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) |
-| **Regulation (normative)** | [`USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
+| Lessons diary | [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) |
+| **Regulation (normative)** | [`USERCASE_GENERATION_REGULATION.md`](../actions/device-board/USERCASE_GENERATION_REGULATION.md) |
 | Sprint closure | [`CLOSURE.md`](../competition-sprint/comp-mvp-packaging-2026-06-21/CLOSURE.md) |
 | U9 epic (catalog) | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) |
 | Device board concept | [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) |
@@ -214,7 +214,7 @@ Manual в browser (`yarn workspace @membrana/client dev`):
 
 Прочитай:
 - docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md
-- docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md
+- docs/actions/device-board/USERCASE_COMPETITION_LESSONS.md
 
 Baseline: usercase-mvp-microphone Run parity с flat graph.
 

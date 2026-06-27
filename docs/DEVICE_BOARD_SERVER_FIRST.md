@@ -117,7 +117,7 @@ Wire-контракт: `@membrana/core` SF1 — `RuntimeCommandPayload`, `parseR
 
 ## 8. Smoke checklist
 
-**Локально:** unit + gateway mock + green CI. **E2E — только на проде** после деплоя cabinet (см. [`DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](./device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md), [`day-sprint/db-server-first-2026-06-26/DEPLOY.md`](./day-sprint/db-server-first-2026-06-26/DEPLOY.md)).
+**Локально:** unit + gateway mock + green CI. **E2E — только на проде** после деплоя cabinet (см. [`DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](./actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md), [`day-sprint/db-server-first-2026-06-26/DEPLOY.md`](./day-sprint/db-server-first-2026-06-26/DEPLOY.md)).
 
 ```text
 [ ] Cabinet acquire lease → field board view-only

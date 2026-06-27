@@ -4,7 +4,7 @@
 > **Реестр:** `usercase-mvp-v2-groups-async`  
 > **Технический эпик (основной):** [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](./DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) — **`device-board-async-pipeline-v1`**  
 > **Статус:** **active** (W1)  
-> **Канон:** [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) §16.5.1 · [`USERCASE_MVP_MICROPHONE.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE.md)
+> **Канон:** [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) §16.5.1 · [`USERCASE_MVP_MICROPHONE.md`](../actions/device-board/specs/USERCASE_MVP_MICROPHONE.md)
 
 ---
 

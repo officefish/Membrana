@@ -51,6 +51,6 @@
 
 ```bash
 yarn turbo run lint typecheck test build --continue
-# prod smoke (после деплоя): docs/device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
+# prod smoke (после деплоя): docs/actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
 # deploy: docs/day-sprint/db-server-first-2026-06-26/DEPLOY.md
 ```

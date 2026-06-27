@@ -69,7 +69,7 @@
 | **SF5** | `db-sf-5-board-flags-ui` | M | `resolveServerFirstFlags`, badges, run cluster gating | SF4 |
 | **SF6** | `db-sf-6-nodes-runtime` | M | NodesPage: pause/resume, state isPaused, run+followerMode | SF1, `useCabinetNodeRuntime` |
 | **SF7** | `db-sf-7-last-track-preview` | S | Node card: play last journal track (cabinet live journal) | SF6, journal WS |
-| **SF8** | `db-sf-8-tests-smoke` | M | Unit + gateway mock + [`DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](../device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md) | SF4–SF7 |
+| **SF8** | `db-sf-8-tests-smoke` | M | Unit + gateway mock + [`DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](../actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md) | SF4–SF7 |
 | **SF9** | `db-sf-9-docs-sync` | S | CONCEPT, catalog, ARCHITECTURE §, tasks README | SF8 |
 
 **OPEN:** [`docs/day-sprint/db-server-first-2026-06-26/OPEN.md`](../day-sprint/db-server-first-2026-06-26/OPEN.md)
@@ -119,7 +119,7 @@ Teamlead + Ozhegov (wire/lease) + Dynin (state machine) + Kuryokhin (audio path)
 ```bash
 yarn turbo run lint typecheck test build --continue
 # SF3: yarn workspace @membrana/background-cabinet prisma migrate
-# SF8: manual — docs/device-board-scripts/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
+# SF8: manual — docs/actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
 ```
 
 ---
