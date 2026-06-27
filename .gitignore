@@ -109,3 +109,7 @@ apps/client/test-results/
 
 # Локальный дамп sync-readme (96 КБ, временный)
 .sync-readme-out.txt
+
+# Локальные бинари агентных инструментов (не коммитить)
+tools/bin/*.exe
+tools/bin/*.zip

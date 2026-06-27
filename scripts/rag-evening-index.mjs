@@ -43,4 +43,36 @@ if (result.status !== 0) {
   );
 }
 
+// codebase-memory-mcp: incremental graph update (non-blocking, skips if binary absent)
+const cmBin = resolve(repoRoot, 'tools/bin/codebase-memory-mcp.exe');
+try {
+  const { existsSync } = await import('node:fs');
+  if (existsSync(cmBin)) {
+    console.error('[codebase-memory] incremental graph update…');
+    const payload = JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'tools/call',
+      params: {
+        name: 'index_repository',
+        arguments: { repo_path: repoRoot, mode: 'fast' },
+      },
+    });
+    const cm = spawnSync(cmBin, [], {
+      cwd: repoRoot,
+      input: payload,
+      stdio: ['pipe', 'pipe', 'ignore'],
+      timeout: 120_000,
+    });
+    const out = cm.stdout?.toString() ?? '';
+    if (out.includes('"status":"indexed"') || out.includes('"status":"up-to-date"')) {
+      console.error('[codebase-memory] graph updated ✓');
+    } else {
+      console.error('[codebase-memory] graph update skipped or failed (non-blocking)');
+    }
+  }
+} catch {
+  // binary missing or platform incompatible — skip silently
+}
+
 process.exit(0);

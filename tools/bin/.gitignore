@@ -1,0 +1,4 @@
+# Binary files — download via install.ps1 or codebase-memory-mcp releases
+*.exe
+*.zip
+*.tar.gz
