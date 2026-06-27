@@ -394,7 +394,7 @@ if (!noAnthropic) {
 console.log('\n=== итог ===');
 if (failed) {
   console.log('[fail] есть ошибки — см. выше.');
-  process.exit(1);
+  process.exitCode = 1;
+} else {
+  console.log('[ok]   всё пройдено.');
 }
-console.log('[ok]   всё пройдено.');
-process.exit(0);

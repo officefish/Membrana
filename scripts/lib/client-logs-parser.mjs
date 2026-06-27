@@ -1,6 +1,6 @@
 /**
  * Pure parser for Membrana client device-board console dumps.
- * See docs/device-board-scripts/CLIENT_LOGS_PARSING.md
+ * See docs/actions/device-board/CLIENT_LOGS_PARSING.md
  */
 
 /** @typedef {{ line: number, raw: string, channel: string, message: string, runId: string | null, tick: number | null, payload: string }} LogEvent */

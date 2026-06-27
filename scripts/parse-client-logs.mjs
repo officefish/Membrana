@@ -7,7 +7,7 @@
  *   yarn logs:parse -- --file logs/apps/client/logs.txt
  *   yarn logs:parse -- --run-id 7e8a289c --json
  *
- * Canon: docs/device-board-scripts/CLIENT_LOGS_PARSING.md
+ * Canon: docs/actions/device-board/CLIENT_LOGS_PARSING.md
  */
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import os from 'node:os';
@@ -42,7 +42,7 @@ Examples:
   yarn logs:parse -- --file logs/apps/client/logs.txt --run-id 7e8a289c
   yarn logs:parse -- --json > /tmp/parse.json
 
-See docs/device-board-scripts/CLIENT_LOGS_PARSING.md
+See docs/actions/device-board/CLIENT_LOGS_PARSING.md
 `);
 }
 

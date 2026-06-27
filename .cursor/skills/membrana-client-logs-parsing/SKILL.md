@@ -11,9 +11,9 @@ description: >-
 
 ## Canon
 
-[`docs/device-board-scripts/CLIENT_LOGS_PARSING.md`](../../docs/device-board-scripts/CLIENT_LOGS_PARSING.md)  
+[`docs/actions/device-board/CLIENT_LOGS_PARSING.md`](../../docs/actions/device-board/CLIENT_LOGS_PARSING.md)  
 Desktop hosts (Studio/Device): [`docs/DESKTOP_APP_LOGGING_POLICY.md`](../../docs/DESKTOP_APP_LOGGING_POLICY.md)  
-Chain markers: [`docs/device-board-scripts/SCENARIO_CHAIN_LOG_COOKBOOK.md`](../../docs/device-board-scripts/SCENARIO_CHAIN_LOG_COOKBOOK.md)
+Chain markers: [`docs/actions/device-board/cookbooks/SCENARIO_CHAIN_LOG_COOKBOOK.md`](../../docs/actions/device-board/cookbooks/SCENARIO_CHAIN_LOG_COOKBOOK.md)
 
 ## Entry
 

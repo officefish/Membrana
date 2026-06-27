@@ -9,6 +9,17 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+// Load repo .env into process.env so the spawned `rag:index` inherits OPENAI_API_KEY.
+// The rag CLI reads keys from the environment and does NOT load .env itself, so a key
+// that only lives in .env (not exported in the shell) would otherwise be invisible.
+if (typeof process.loadEnvFile === 'function') {
+  try {
+    process.loadEnvFile(resolve(repoRoot, '.env'));
+  } catch {
+    // .env is optional — stay non-blocking (matches the evening-hook contract).
+  }
+}
+
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
   console.log(`Usage: node scripts/rag-evening-index.mjs
 

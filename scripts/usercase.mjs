@@ -58,7 +58,7 @@ Examples:
   node scripts/usercase.mjs verify-competition
 
 Agent spec: docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md
-Lessons:    docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md
+Lessons:    docs/actions/device-board/USERCASE_COMPETITION_LESSONS.md
 CI:         .github/workflows/usercase-competition.yml (set USERCASE_VERIFY_SKIP_BUILD=1 after device-board build)
 `);
 }

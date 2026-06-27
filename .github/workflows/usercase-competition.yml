@@ -1,5 +1,5 @@
 # CI gate: sprint UserCase forks (alpha, beta, gamma) stay layout + pre-run valid.
-# See docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md §4.
+# See docs/actions/device-board/USERCASE_GENERATION_REGULATION.md §4.
 
 name: UserCase competition verify
 

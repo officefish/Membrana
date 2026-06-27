@@ -19,7 +19,7 @@ const sources = [
   'team-alpha/CONCEPT.md',
   'team-beta/CONCEPT.md',
   'team-gamma/CONCEPT.md',
-  '../../device-board-scripts/USERCASE_COMPETITION_LESSONS.md',
+  '../../actions/device-board/USERCASE_COMPETITION_LESSONS.md',
 ].map((p) => resolve(sprintDir, p));
 
 const prompt = readFileSync(resolve(sprintDir, 'PREP_SYNTHESIS_PROMPT.txt'), 'utf8');
