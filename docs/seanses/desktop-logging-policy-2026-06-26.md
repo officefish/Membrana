@@ -6,7 +6,7 @@
 | Команда | консилиум (ручная фиксация + Perplexity research) |
 | Файл | `docs/seanses/desktop-logging-policy-2026-06-26.md` |
 | Порядок ролей | Teamlead → Структурщик → Математик → Музыкант → Верстальщик (циклически) |
-| Связанные документы | [`DESKTOP_APP_LOGGING_POLICY.md`](../DESKTOP_APP_LOGGING_POLICY.md) (черновик v0.1), [`DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md`](../prompts/DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md), [`STUDIO_HOST_LESSONS.md`](../device-board-scripts/STUDIO_HOST_LESSONS.md) ST8 |
+| Связанные документы | [`DESKTOP_APP_LOGGING_POLICY.md`](../DESKTOP_APP_LOGGING_POLICY.md) (черновик v0.1), [`DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md`](../prompts/DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md), [`STUDIO_HOST_LESSONS.md`](../actions/device-board/STUDIO_HOST_LESSONS.md) ST8 |
 
 **Вопрос консилиума:**
 

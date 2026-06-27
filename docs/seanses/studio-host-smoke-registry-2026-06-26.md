@@ -41,7 +41,7 @@
 
 [Верстальщик]: Operator smoke в Studio = autonomous + StorageRuntimeIndicator «Electron FS» + Run ≥3 мин. UI журнала должен показывать reports без cabinet. Для реестра STx — симптом в одну строку, как L22, плюс команда проверки (`yarn studio:journal-fs-check`). Чеклист перед закрытием ST2-J — в OPEN спринта, не в голове оператора.
 
-[Teamlead]: Решение по реестру: **да**, файл `docs/device-board-scripts/STUDIO_HOST_LESSONS.md`, нумерация **ST1, ST2…**, перекрёстные ссылки на L* где runtime общий. Агент читает ST* перед DB3H-S3 и MS5 smoke.
+[Teamlead]: Решение по реестру: **да**, файл `docs/actions/device-board/STUDIO_HOST_LESSONS.md`, нумерация **ST1, ST2…**, перекрёстные ссылки на L* где runtime общий. Агент читает ST* перед DB3H-S3 и MS5 smoke.
 
 [Структурщик]: Предлагаю фазы спринта DB3H-S3 дополнить: **ST5** — контракт + тесты host parity; **ST6** — реестр STx и ritual hook в `CLIENT_LOGS_PARSING.md`; **ST-GATE** — gate observability + закрытие open ST6 (elapsed). ST2-J остаётся блокером; ST5 параллелится с operator smoke.
 
@@ -79,7 +79,7 @@
 
 | # | Вопрос | Решение |
 |---|--------|---------|
-| 1 | Нужен ли реестр ошибок Studio? | **Да** — `docs/device-board-scripts/STUDIO_HOST_LESSONS.md`, нумерация ST1…, по образцу L1–L23 |
+| 1 | Нужен ли реестр ошибок Studio? | **Да** — `docs/actions/device-board/STUDIO_HOST_LESSONS.md`, нумерация ST1…, по образцу L1–L23 |
 | 2 | Разделение L* vs ST* | **L*** = pack/collapse/runtime graph; **ST*** = host bridge, Electron, backends, dev launcher |
 | 3 | Новые фазы DB3H-S3 | **ST5** Host parity contract + tests; **ST6** Registry + logs ritual; **ST-GATE** gate elapsed observability + fix ST6 open item |
 | 4 | Новая фаза эпика Studio | **MS6** — `STUDIO_HOST_BRIDGE_CONTRACT.md` + smoke matrix (browser / Studio / cabinet deferred) |

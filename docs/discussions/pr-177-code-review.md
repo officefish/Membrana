@@ -40,7 +40,7 @@ Merge условный: ✅ CI + `docs/discussions/branch-db-ap-r1-core-contract
 
 ---
 
-**Итоговый артефакт:** `docs/device-board-scripts/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md` + golden + fixture tests.
+**Итоговый артефакт:** `docs/actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md` + golden + fixture tests.
 
 **Риски:** P0 live A5 (smoke); P1 migration fallback; P2 UI subscribe (R10).
 
