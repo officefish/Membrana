@@ -92,6 +92,18 @@ git push -u origin vesnin
 **небезопасен** (старая схема уже не существует). Перед таким релизом фиксируется «точка невозврата»
 в отчёте; откат за неё делается только вместе с восстановлением БД из бэкапа.
 
+## Graph-first navigation
+
+For cross-package tasks, start with the code graph before opening broad file trees:
+
+1. `search_graph` to locate the owning symbols and packages.
+2. `trace_path` to verify the call/import path across package boundaries.
+3. Read only the files and contracts identified by the trace.
+
+Before a multi-package refactor, run `trace_path` from the symbol being changed and inspect every
+downstream consumer. The graph is an investigation aid; `yarn check:boundaries` remains the CI gate
+and the source code remains authoritative.
+
 ## Pull requests
 
 1. Описание PR: **что**, **зачем**, **какие пакеты** затронуты (`apps/client`, `packages/*`, `packages/services/*`).

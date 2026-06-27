@@ -59,3 +59,7 @@
 ## Checkpoint NB1 — 2026-06-27T18:36:56.481Z
 - Status: **pass**
 - Note: C1 morning graph smoke non-blocking; C2 archiveTopK=15 operativeTopK=5; C3 graph update + ignored Headroom audit; 32 RAG tests, 64 script tests, typecheck/lint pass
+
+## Checkpoint NB2 — 2026-06-27T18:37:56.743Z
+- Status: **pass**
+- Note: Graph-first CONTRIBUTING; mandatory HEADROOM_EXCLUDE; proxy perf guide; docs lint 45 pages pass

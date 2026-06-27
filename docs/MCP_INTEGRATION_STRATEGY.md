@@ -80,6 +80,19 @@ Glyph ([`TZ_MCP_Servers_Membrana.md`](./TZ_MCP_Servers_Membrana.md) §3). Fallba
 
 ---
 
+## §9. Agent context optimization
+
+- Use graph-first navigation for cross-package work: `search_graph` → `trace_path` → targeted reads.
+- Headroom remains a local Tier 1 pilot until proxy performance is measured.
+- `HEADROOM_EXCLUDE=packages/core/src` is mandatory before every proxy session; public contracts
+  and core types must remain lossless.
+- `RAG_TOP_K_ARCHIVE=15` applies only to the archive circuit. Operative retrieval remains at 5.
+- Evening `audit-reads` output is local and ignored under `docs/archive/*-audit-reads.json`.
+
+See [`tools/headroom-venv/PROXY_SETUP.md`](../tools/headroom-venv/PROXY_SETUP.md).
+
+---
+
 ## Связь с Anthropic CLI
 
 Скрипты `yarn ask`, `yarn consilium`, `yarn plan:day` используют `ANTHROPIC_API_KEY` — **отдельно** от MCP Perplexity.
