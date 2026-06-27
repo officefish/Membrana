@@ -49,8 +49,8 @@ Skill: [`.cursor/skills/membrana-insight/SKILL.md`](../.cursor/skills/membrana-i
 
 | ID | Тема | Статус | Weight |
 |----|------|--------|--------|
-| `insight-mcp-searxng-private-search` | SearXNG keyless приватный поиск | draft | — |
-| `insight-mcp-hindsight-agent-memory` | Hindsight обучающаяся память агента | draft | — |
+| `insight-mcp-searxng-private-search` | SearXNG keyless приватный поиск | adopted (M3) | 5.0 |
+| `insight-mcp-hindsight-agent-memory` | Hindsight обучающаяся память агента | deferred | 1.4 |
 
 Полный индекс: [`insights/registry.json`](./insights/registry.json).
 

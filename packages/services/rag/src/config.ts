@@ -71,7 +71,7 @@ export function loadRagConfig(env: NodeJS.ProcessEnv = process.env): RagConfig {
   return {
     embeddingProvider: parseEmbeddingProvider(env.RAG_EMBEDDING_PROVIDER),
     embeddingModel: env.RAG_EMBEDDING_MODEL?.trim() || DEFAULTS.embeddingModel,
-    openaiBaseUrl: env.OPENAI_BASE_URL?.trim().replace(/\/$/, '') || DEFAULTS.openaiBaseUrl,
+    openaiBaseUrl: env.OPENAI_BASE_URL?.trim().replace(/\/+$/, '') || DEFAULTS.openaiBaseUrl,
     vectorStore: parseVectorStore(env.RAG_VECTOR_STORE),
     lanceDbPath: env.RAG_LANCEDB_PATH?.trim() || DEFAULTS.lanceDbPath,
     operativeDays: parseIntEnv(env.RAG_OPERATIVE_DAYS, DEFAULTS.operativeDays),

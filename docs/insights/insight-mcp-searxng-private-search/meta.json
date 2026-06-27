@@ -1,14 +1,21 @@
 {
   "id": "insight-mcp-searxng-private-search",
   "title": "SearXNG — приватный keyless веб-поиск для агентов",
-  "status": "draft",
+  "status": "adopted",
   "source": "mcp-tooling-consilium",
   "sprintPhase": "mcp-tooling-m3-searxng",
   "horizon": "month",
-  "weight": null,
+  "weight": 5,
   "createdAt": "2026-06-27",
-  "researchedAt": null,
-  "reviewedAt": null,
-  "closedAt": null,
-  "tags": ["mcp", "search", "dsp", "privacy", "tooling", "self-hosted"]
+  "researchedAt": "2026-06-27",
+  "reviewedAt": "2026-06-27",
+  "closedAt": "2026-06-27",
+  "tags": [
+    "mcp",
+    "search",
+    "dsp",
+    "privacy",
+    "tooling",
+    "self-hosted"
+  ]
 }

@@ -48,6 +48,7 @@ Key vars:
 
 ```text
 OPENAI_API_KEY=...
+OPENAI_BASE_URL=https://api.openai.com/v1 # optional proxy / OpenAI-compatible endpoint
 RAG_EMBEDDING_MODEL=text-embedding-3-small
 RAG_VECTOR_STORE=lancedb
 RAG_LANCEDB_PATH=.membrana/rag/

@@ -30,6 +30,7 @@ yarn rag:index:incremental
 |------------|--------|
 | Operative only | Works **without** `OPENAI_API_KEY` |
 | Archive / `--full-rag` | Requires `OPENAI_API_KEY` + `yarn rag:index --full` |
+| `OPENAI_BASE_URL` | Optional proxy or OpenAI-compatible `/v1` endpoint |
 | `RAG_REPO_ROOT` | Override monorepo root (office / scripts) |
 
 Rituals use `scripts/lib/rag-ritual.mjs` — see [`docs/RAG.md`](../../../docs/RAG.md).
