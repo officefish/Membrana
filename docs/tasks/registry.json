@@ -9149,7 +9149,9 @@
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "dynin",
-      "supportPersonas": ["ozhegov"],
+      "supportPersonas": [
+        "ozhegov"
+      ],
       "archivedAt": null,
       "archiveNotes": null
     },
@@ -9197,7 +9199,9 @@
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "dynin",
-      "supportPersonas": ["vesnin"],
+      "supportPersonas": [
+        "vesnin"
+      ],
       "archivedAt": null,
       "archiveNotes": "Vectorize-хостед §5-запрет. Self-hostable вариант — отдельный mini-spike, не в этом спринте."
     },
@@ -9216,6 +9220,130 @@
       "supportPersonas": [],
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "rag-dual-circuit-v1",
+      "title": "RAG Dual-Circuit v1: doc-memory + code-structure (эпик)",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "kind": "epic",
+      "notes": "CRITICAL_RAG_AUDIT.md принят 2026-06-21; условный LGTM Vesnin после R3 acceptance-demo."
+    },
+    {
+      "id": "rag-r0-scaffold",
+      "title": "RAG R0: каркас пакета — types, config, stub query, .env.example",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Done post-factum. scaffold + typecheck green. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r1-lancedb-index",
+      "title": "RAG R1: LanceDB store + индексация (markdown-splitter, code-signature, openai-embedder, hash-manifest)",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-21",
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Done post-factum. yarn rag:index --full работает; ~500-800 chunks; incremental без дубликатов. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r2-operative-circuit",
+      "title": "RAG R2: operative circuit — recent-docs, keyword-search, path-filters, scoring, BM25-lite",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Done post-factum. operative/: recent-docs, keyword-search, path-filters, scoring. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r3-dual-retriever",
+      "title": "RAG R3: dual retriever — operative → LanceDB merge; acceptance demo 5 вопросов; условный LGTM Vesnin",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-24",
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Done post-factum. retriever/dual-retriever.ts + archive-port.ts. Условный LGTM Vesnin — pending acceptance-demo (ragx-c2). Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r4-office-endpoint",
+      "title": "RAG R4: background-office POST /api/rag/query — NestJS controller + gateway service",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "Done post-factum. background-office/modules/rag/: controller, service, module. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r5-rituals",
+      "title": "RAG R5: интеграция в ритуалы — evening hook rag-evening-index.mjs (non-blocking, 120s timeout)",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-27",
+      "archivedAt": "2026-06-27",
+      "archiveNotes": "Done post-factum (коммит dbaaff8). rag-evening-index.mjs интегрирован. standup/consilium через rag:query. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r6-closure",
+      "title": "RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-27",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "leadPersona": "dynin",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r7-optional",
+      "title": "RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-27",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Deferred per CRITICAL_RAG_AUDIT §12. Go/no-go после R6.",
+      "epicId": "rag-dual-circuit-v1"
     }
   ]
 }
