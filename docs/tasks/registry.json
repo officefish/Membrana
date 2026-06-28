@@ -2,6 +2,16 @@
   "version": 1,
   "tasks": [
     {
+      "id": "insights-lifecycle-2026-06-28",
+      "title": "Регистрация инсайтов и прогон через все стадии (draft → researched → reviewed → adopted)",
+      "promptPath": "docs/prompts/INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-28"
+    },
+    {
       "id": "fft-indices-viz",
       "title": "Плагин микрофона: live-визуализация FFT-индексов",
       "promptPath": "docs/prompts/FFT_INDICES_VIZ_PLUGIN_PROMPT.md",
