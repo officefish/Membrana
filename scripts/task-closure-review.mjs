@@ -207,8 +207,8 @@ async function runReview(cli) {
   const regulation = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_REGULATION.md'), 'utf8');
   const teamleadPrompt = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_PROMPT.md'), 'utf8');
   const diff = git(['diff', '--no-ext-diff', manifest.scope.baseRef, manifest.currentCommitSha]);
-  const prompt = buildTaskClosureReviewPrompt({ manifest, task, taskPrompt, regulation, teamleadPrompt, diff });
   if (cli.dryRun) {
+    const prompt = buildTaskClosureReviewPrompt({ manifest, task, taskPrompt, regulation, teamleadPrompt, diff });
     console.log(`Task: ${manifest.taskId}`);
     console.log(`Commit: ${manifest.currentCommitSha}`);
     console.log(`Tier: ${manifest.tier}`);

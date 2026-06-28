@@ -317,3 +317,19 @@ test('GitHub check-runs become SHA-bound pass/fail evidence', () => {
   assert.ok(checks.every((check) => check.commitSha === SHA_A));
   assert.match(checks[0].command, /^github-check:/);
 });
+
+test('review-file fallback does not require provider-sized diff', () => {
+  assert.throws(
+    () => buildTaskClosureReviewPrompt({
+      manifest: prepare(),
+      task,
+      taskPrompt: 'prompt',
+      regulation: 'regulation',
+      teamleadPrompt: 'teamlead',
+      diff: 'x'.repeat(80_001),
+    }),
+    /слишком велик/,
+  );
+  // The CLI intentionally bypasses prompt construction when --review-file is supplied.
+  assert.equal(parseTaskClosureReviewCli(['run', '--id', task.id, '--review-file', 'review.md']).reviewFile, 'review.md');
+});
