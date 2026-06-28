@@ -2688,7 +2688,6 @@ __metadata:
   resolution: "@membrana/usercase-catalog-service@workspace:packages/services/usercase-catalog"
   dependencies:
     "@membrana/core": "npm:*"
-    "@membrana/device-board": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"

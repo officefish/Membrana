@@ -1,14 +1,21 @@
-import type { DeviceKind, DeviceScenarioDocument } from '@membrana/core';
-import type { UserCaseCatalogEntrySummary } from '@membrana/device-board';
-import {
-  UserCaseCatalogService,
-  getDefaultUserCaseCatalogService,
-} from '@membrana/device-board';
+import type {
+  DeviceKind,
+  DeviceScenarioDocument,
+  UserCaseCatalogEntrySummary,
+} from '@membrana/core';
 
 import type { UserCaseCatalogCard, UserCaseEntitlementStatus } from './types.js';
 
+/** Runtime-neutral input port implemented by a catalog owner. */
+export interface UserCaseCatalogPort {
+  listSummaries(): readonly UserCaseCatalogEntrySummary[];
+  listForDeviceKind(deviceKind: DeviceKind): readonly UserCaseCatalogEntrySummary[];
+  getSummary(id: string): UserCaseCatalogEntrySummary | null;
+  loadDocument(id: string): DeviceScenarioDocument | null;
+}
+
 export interface ClientUserCaseCatalogServiceOptions {
-  readonly catalog?: UserCaseCatalogService;
+  readonly catalog: UserCaseCatalogPort;
   /** Tariff SKU active for current membrane (stub: empty Set). */
   readonly entitledTariffSkus?: ReadonlySet<string>;
 }
@@ -18,11 +25,11 @@ export interface ClientUserCaseCatalogServiceOptions {
  * Tariff lookup is stub until cabinet integration (G1).
  */
 export class ClientUserCaseCatalogService {
-  private readonly catalog: UserCaseCatalogService;
+  private readonly catalog: UserCaseCatalogPort;
   private readonly entitledTariffSkus: ReadonlySet<string>;
 
-  constructor(options: ClientUserCaseCatalogServiceOptions = {}) {
-    this.catalog = options.catalog ?? getDefaultUserCaseCatalogService();
+  constructor(options: ClientUserCaseCatalogServiceOptions) {
+    this.catalog = options.catalog;
     this.entitledTariffSkus = options.entitledTariffSkus ?? new Set();
   }
 
@@ -89,9 +96,14 @@ export class ClientUserCaseCatalogService {
 let defaultClientCatalog: ClientUserCaseCatalogService | null = null;
 
 /** Singleton client catalog (picker / settings). */
-export function getDefaultClientUserCaseCatalogService(): ClientUserCaseCatalogService {
+export function getDefaultClientUserCaseCatalogService(
+  options?: ClientUserCaseCatalogServiceOptions,
+): ClientUserCaseCatalogService {
   if (defaultClientCatalog === null) {
-    defaultClientCatalog = new ClientUserCaseCatalogService();
+    if (options === undefined) {
+      throw new Error('UserCase catalog port is required to initialize the default service');
+    }
+    defaultClientCatalog = new ClientUserCaseCatalogService(options);
   }
   return defaultClientCatalog;
 }

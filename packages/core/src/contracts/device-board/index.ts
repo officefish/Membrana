@@ -9,6 +9,12 @@ export {
   isDeviceKind,
 } from './device-kind.js';
 
+export type {
+  UserCaseCatalogEntrySummary,
+  UserCaseLayoutProfile,
+  UserCaseTier,
+} from './user-case-catalog.js';
+
 export {
   SOCKET_TYPES,
   D0_SOCKET_TYPES,

@@ -6978,6 +6978,29 @@
       ]
     },
     {
+      "id": "issue-185-services-device-board-boundary",
+      "title": "Issue #185: remove services → device-board boundary violations",
+      "promptPath": "docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md",
+      "githubIssue": 185,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-28",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-p3-a1-usercase-catalog-service"
+      ],
+      "notes": "Lead: Ozhegov; T2 review by Vesnin. Remove all @membrana/device-board imports from packages/services/usercase-catalog and reconcile docs with enforced boundary.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
       "id": "db-p3-a3-competition-restrictions",
       "title": "DB-P3-A3: competition executionPolicy + restrictions",
       "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",

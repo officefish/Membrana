@@ -1,4 +1,4 @@
-import type { UserCaseCatalogEntrySummary } from '@membrana/device-board';
+import type { UserCaseCatalogEntrySummary } from '@membrana/core';
 
 /** Entitlement status for catalog card UI (G1 stub + competition community). */
 export type UserCaseEntitlementStatus = 'bundled' | 'community' | 'entitled' | 'locked';

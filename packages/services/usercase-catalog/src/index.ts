@@ -10,6 +10,7 @@ export {
   getDefaultClientUserCaseCatalogService,
   resetDefaultClientUserCaseCatalogService,
   type ClientUserCaseCatalogServiceOptions,
+  type UserCaseCatalogPort,
 } from './service.js';
 
 export { useClientUserCaseCatalogService } from './hooks.js';

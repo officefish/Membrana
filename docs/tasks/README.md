@@ -147,6 +147,11 @@
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-3-pack-verify` | UCV2-3: usercase:build + verify-pack + smoke | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-4-operator-signoff` | UCV2-4: operator LGTM doc + epic close | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
+| `device-board-phase-3` | Device-board Phase 3: catalog service, validators, competition | L | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
+| `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
+| `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
+| `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | M | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | [#185](https://github.com/officefish/Membrana/issues/185) |
+| `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 
 ---
 
@@ -359,15 +364,15 @@
 | `membrane-platform-mp4-media-membrane` | Membrane Platform MP4: media scope по мембране, квоты userStorage/buffer, tariff dataset | 2026-06-14 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp4-media-membrane.md) |
 | `membrane-platform-mp5-telemetry-journal` | Membrane Platform MP5: TelemetryReport + LiveRecord, journal UI | 2026-06-14 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp5-telemetry-journal.md) |
 | `membrane-platform-mp6-prod-deploy` | Membrane Platform MP6: prod deploy cabinet.membrana.space | 2026-06-14 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp6-prod-deploy.md) |
-| `membrane-platform-mp0-domain` | Membrane Platform MP0: домен, глоссарий, MEMBRANE_PLATFORM.md | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp0-domain.md) |
-| `membrane-platform-mp1-auth-cabinet` | Membrane Platform MP1: background-cabinet auth + apps/cabinet shell | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp1-auth-cabinet.md) |
-| `membrane-platform-mp2-membrane-node-keys` | Membrane Platform MP2: Membrane, Tariff, Node, ключи TTL enum | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp2-membrane-node-keys.md) |
-| `membrane-platform-mp3-client-pairing` | Membrane Platform MP3: pairing + автономный режим узла в apps/client | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp3-client-pairing.md) |
 | `background-office-v1` | background-office v1: продовый деплой (эпик) | 2026-06-13 | [`BACKGROUND_OFFICE_V1_EPIC_PROMPT.md`](../docs/prompts/BACKGROUND_OFFICE_V1_EPIC_PROMPT.md) | #60 | [карточка](./archive/background-office-v1.md) |
 | `background-office-o1-docker` | background-office O1: Docker образ и compose | 2026-06-13 | [`BACKGROUND_OFFICE_O1_DOCKER_PROMPT.md`](../docs/prompts/BACKGROUND_OFFICE_O1_DOCKER_PROMPT.md) | #60 | [карточка](./archive/background-office-o1-docker.md) |
 | `background-office-o2-prod-compose` | background-office O2: prod compose и deploy-скрипты | 2026-06-13 | [`BACKGROUND_OFFICE_O2_PROD_COMPOSE_PROMPT.md`](../docs/prompts/BACKGROUND_OFFICE_O2_PROD_COMPOSE_PROMPT.md) | #60 | [карточка](./archive/background-office-o2-prod-compose.md) |
 | `background-office-o3-tls-deploy` | background-office O3: TLS, DNS office.membrana.space | 2026-06-13 | [`BACKGROUND_OFFICE_O3_TLS_DEPLOY_PROMPT.md`](../docs/prompts/BACKGROUND_OFFICE_O3_TLS_DEPLOY_PROMPT.md) | #61 | [карточка](./archive/background-office-o3-tls-deploy.md) |
 | `background-office-o4-webhook-acceptance` | background-office O4: Linear webhook и приёмка прода | 2026-06-13 | [`BACKGROUND_OFFICE_O4_WEBHOOK_ACCEPTANCE_PROMPT.md`](../docs/prompts/BACKGROUND_OFFICE_O4_WEBHOOK_ACCEPTANCE_PROMPT.md) | #61 | [карточка](./archive/background-office-o4-webhook-acceptance.md) |
+| `membrane-platform-mp0-domain` | Membrane Platform MP0: домен, глоссарий, MEMBRANE_PLATFORM.md | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp0-domain.md) |
+| `membrane-platform-mp1-auth-cabinet` | Membrane Platform MP1: background-cabinet auth + apps/cabinet shell | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp1-auth-cabinet.md) |
+| `membrane-platform-mp2-membrane-node-keys` | Membrane Platform MP2: Membrane, Tariff, Node, ключи TTL enum | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp2-membrane-node-keys.md) |
+| `membrane-platform-mp3-client-pairing` | Membrane Platform MP3: pairing + автономный режим узла в apps/client | 2026-06-13 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 | [карточка](./archive/membrane-platform-mp3-client-pairing.md) |
 | `mcp-workstation-phase-b` | MCP phase B: Perplexity + Playwright on workstation | 2026-06-12 | [`MCP_WORKSTATION_PHASE_B_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_B_PROMPT.md) | #52 | [карточка](./archive/mcp-workstation-phase-b.md) |
 | `mcp-workstation-phase-c` | MCP phase C: Glyph on workstation | 2026-06-12 | [`MCP_WORKSTATION_PHASE_C_PROMPT.md`](../docs/prompts/MCP_WORKSTATION_PHASE_C_PROMPT.md) | #53 | [карточка](./archive/mcp-workstation-phase-c.md) |
 | `analyzer-frame-feed-refactor` | Анализаторы: AudioFrameFeed и миграция fft-threshold-test + harmonic-detector-viz | 2026-06-11 | [`ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md`](../docs/prompts/ANALYZER_FRAME_FEED_REFACTOR_PROMPT.md) | #55 | [карточка](./archive/analyzer-frame-feed-refactor.md) |
@@ -395,4 +400,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-23.*
+*Файл обновлён автоматически: 2026-06-28.*

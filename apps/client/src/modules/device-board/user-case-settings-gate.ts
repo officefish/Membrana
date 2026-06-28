@@ -1,4 +1,5 @@
 import { MembranaRegistry } from '@membrana/agenda';
+import { getDefaultUserCaseCatalogService } from '@membrana/device-board';
 
 import {
   ClientUserCaseCatalogService,
@@ -33,6 +34,7 @@ export function readDeviceBoardUserCaseGate(): DeviceBoardUserCaseGate {
     catalogEnabled: config.userCasesCatalogEnabled,
     config,
     catalogService: new ClientUserCaseCatalogService({
+      catalog: getDefaultUserCaseCatalogService(),
       entitledTariffSkus: new Set(config.entitledTariffSkus),
     }),
   };

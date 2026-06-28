@@ -2,7 +2,7 @@
 
 ## Что делает
 
-Фасад entitlement над bundled UserCase-каталогом из `@membrana/device-board`: bundled / community / tariff SKU, `canApply`, `loadDocumentIfEntitled`.
+Фасад entitlement над инъецируемым UserCase-каталогом: bundled / community / tariff SKU, `canApply`, `loadDocumentIfEntitled`. Пакет зависит только от `@membrana/core`.
 
 ## Установка
 
@@ -13,19 +13,21 @@ Workspace dependency в монорепо: `"@membrana/usercase-catalog-service":
 ```ts
 import {
   ClientUserCaseCatalogService,
-  getDefaultClientUserCaseCatalogService,
+  type UserCaseCatalogPort,
 } from '@membrana/usercase-catalog-service';
 
-const service = getDefaultClientUserCaseCatalogService();
+declare const catalog: UserCaseCatalogPort; // composition root supplies the owner adapter
+const service = new ClientUserCaseCatalogService({ catalog });
 const cards = service.listCards('microphone');
 ```
 
 ## API
 
 - `ClientUserCaseCatalogService` — entitlement facade
+- `UserCaseCatalogPort` — runtime-neutral input port
 - `getDefaultClientUserCaseCatalogService` / `resetDefaultClientUserCaseCatalogService`
 - `useClientUserCaseCatalogService` — React hook
 
 ## Слой
 
-**Platform facade** (исключение из foundation-only): зависит от `@membrana/core` + `@membrana/device-board` (catalog types + bundled index). См. Phase 3 консилиум A1.
+**Platform facade**: зависит только от `@membrana/core`. Реализация каталога подключается в composition root (`apps/client`); см. решение Issue #185.

@@ -26,8 +26,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@membrana/core": "*",
-    "@membrana/device-board": "*"
+    "@membrana/core": "*"
   },
   "peerDependencies": {
     "react": "^18.0.0"
