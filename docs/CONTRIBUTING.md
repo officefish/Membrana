@@ -161,6 +161,20 @@ git push -u origin vesnin
 - **Обязательная проверка скриптов**: `yarn test:scripts` — Node built-in test для всех root-скриптов (политика путей, инварианты task-registry, usercase-manifest, и др.). Шаг выполняется в CI (после `yarn install`) и **обязателен локально** перед PR.
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
 
+### Результаты тестов в CI
+
+Пакеты `fft-analyzer-service`, `core`, `telemetry`, `background-office` публикуют JSON-отчёт
+в виде GitHub Actions artifact **`test-results`** (workflow «Unit tests»).
+Скачать: **Actions → прогон → Artifacts → test-results.zip**.
+
+Чтобы подключить новый пакет к отчёту:
+1. Добавить/обновить `vitest.config.ts`:
+   ```ts
+   reporters: process.env.CI ? ['verbose', 'json'] : ['default'],
+   outputFile: { json: 'test-results/results.json' },
+   ```
+2. Добавить путь `<pkg>/test-results/` в шаг «Upload test results» в `unit-tests.yml`.
+
 ### VPS deploy (SSH-скрипты)
 
 Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`.
