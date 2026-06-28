@@ -15,7 +15,7 @@
 ## Локальная разработка
 
 - Установка и скрипты — см. корневой `README.md` (если отсутствует — `package.json`).
-- Перед PR: те же проверки, что в CI — `yarn install --immutable` (при необходимости) и `yarn turbo run lint typecheck test build` для затронутых пакетов или всего монорепо.
+- Перед PR: те же проверки, что в CI — `yarn install --immutable` (при необходимости), `yarn test:scripts` (тесты политики путей и инвариантов скриптов) и `yarn turbo run lint typecheck test build` для затронутых пакетов или всего монорепо.
 - `yarn dev` / Vite HMR **не** заменяют typecheck: в apps `typecheck` = `tsc -b` (тот же solution build, что первый шаг `build`, без `vite build`).
 
 ## Архитектурная ветка `vesnin`
@@ -158,7 +158,7 @@ git push -u origin vesnin
 
 Переменные окружения для этих сценариев: `ANTHROPIC_API_KEY` (обязательно для `code-review`), опционально `ANTHROPIC_MODEL`, **`OPENAI_API_KEY`** (только archive RAG / `yarn rag:index`), прокси `HTTPS_PROXY` / `HTTP_PROXY` (см. `.env.example`).
 
-- Проверка политики путей (исключения чувствительных): `yarn test:scripts` (Node built-in test для `scripts/context-collector-paths.mjs`, `scripts/daily-standup-paths.mjs`).
+- **Обязательная проверка скриптов**: `yarn test:scripts` — Node built-in test для всех root-скриптов (политика путей, инварианты task-registry, usercase-manifest, и др.). Шаг выполняется в CI (после `yarn install`) и **обязателен локально** перед PR.
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
 
 ### VPS deploy (SSH-скрипты)
