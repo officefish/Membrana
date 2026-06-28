@@ -13,6 +13,7 @@ import {
   loadReviewManifest,
   manifestPath,
   markReviewArchived,
+  normalizeGithubCheckRuns,
   prepareReviewManifest,
   reviewStatus,
   saveReviewManifest,
@@ -305,4 +306,14 @@ test('accepted branch-only can archive without pretending merge', () => {
   assert.equal(archived.state, 'archived');
   assert.equal(archived.completion.mode, 'accepted_branch_only');
   assert.match(archived.completion.evidence, /owner deferred/);
+});
+
+test('GitHub check-runs become SHA-bound pass/fail evidence', () => {
+  const checks = normalizeGithubCheckRuns([
+    { name: 'CI', status: 'completed', conclusion: 'success', completed_at: '2026-06-28T12:00:00.000Z', html_url: 'https://example.test/pass' },
+    { name: 'Security', status: 'completed', conclusion: 'failure', completed_at: '2026-06-28T12:01:00.000Z', html_url: 'https://example.test/fail' },
+  ], SHA_A);
+  assert.deepEqual(checks.map((check) => check.status), ['pass', 'fail']);
+  assert.ok(checks.every((check) => check.commitSha === SHA_A));
+  assert.match(checks[0].command, /^github-check:/);
 });

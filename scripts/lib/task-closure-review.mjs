@@ -267,6 +267,22 @@ export function hasSufficientReviewEvidence(manifest) {
   return passed.length >= 2 && passed.some((check) => check.command !== 'git diff --check');
 }
 
+export function normalizeGithubCheckRuns(checkRuns, commitSha) {
+  return checkRuns.map((check) => ({
+    command: `github-check:${check.name}`,
+    status:
+      check.status === 'completed' && check.conclusion === 'success'
+        ? 'pass'
+        : check.status === 'completed'
+          ? 'fail'
+          : 'skipped',
+    exitCode: null,
+    commitSha,
+    checkedAt: check.completed_at ?? check.started_at ?? new Date(0).toISOString(),
+    note: [check.conclusion, check.html_url].filter(Boolean).join(' · '),
+  }));
+}
+
 export function applyTeamleadReview(manifest, body, now = new Date().toISOString()) {
   validateReviewManifest(manifest);
   if (!['review_pending', 'blocked', 'needs_fix'].includes(manifest.state)) {

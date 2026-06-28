@@ -8,6 +8,7 @@ import {
   buildTaskClosureReviewPrompt,
   finalizeReviewManifest,
   loadReviewManifest,
+  normalizeGithubCheckRuns,
   prepareReviewManifest,
   reviewStatus,
   saveReviewManifest,
@@ -92,6 +93,25 @@ function resolveGithub(pr) {
     ? `PR #${pr} merged ${data.mergedAt}${data.mergeCommit?.oid ? ` (${data.mergeCommit.oid})` : ''}`
     : null;
   return { remoteState, url: data.url ?? null, mergeEvidence };
+}
+
+function resolveRepoSlug() {
+  const url = git(['config', '--get', 'remote.origin.url'], { allowFailure: true });
+  const match = url.match(/github\.com[/:]([^/]+)\/([^/.]+?)(?:\.git)?$/u);
+  return match ? `${match[1]}/${match[2]}` : null;
+}
+
+function resolveGithubChecks(sha) {
+  const slug = resolveRepoSlug();
+  if (!slug) return [];
+  const result = spawnSync(
+    'gh',
+    ['api', `repos/${slug}/commits/${sha}/check-runs`],
+    { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 },
+  );
+  if (result.status !== 0) return [];
+  const data = JSON.parse(result.stdout);
+  return normalizeGithubCheckRuns(data.check_runs ?? [], sha);
 }
 
 function runPrepare(cli) {
@@ -198,11 +218,21 @@ async function runReview(cli) {
     return;
   }
 
+  const headSha = git(['rev-parse', 'HEAD']);
+  const clean = git(['status', '--porcelain']).length === 0;
+  if (cli.checks.length > 0 && (headSha !== manifest.currentCommitSha || !clean)) {
+    throw new Error('Local --check требует clean worktree и HEAD === reviewed SHA');
+  }
   const commands = ['git diff --check', ...cli.checks];
-  if (manifest.scope.files.some((file) => file.startsWith('scripts/')) && !commands.includes('yarn test:scripts')) {
+  if (
+    headSha === manifest.currentCommitSha &&
+    clean &&
+    manifest.scope.files.some((file) => file.startsWith('scripts/')) &&
+    !commands.includes('yarn test:scripts')
+  ) {
     commands.push('yarn test:scripts');
   }
-  const checks = commands.map((command) =>
+  const localChecks = commands.map((command) =>
     command === 'git diff --check'
       ? (() => {
           const result = spawnSync('git', ['diff', '--check', manifest.scope.baseRef, manifest.currentCommitSha], { encoding: 'utf8' });
@@ -217,6 +247,7 @@ async function runReview(cli) {
         })()
       : runEvidenceCheck(command, manifest.currentCommitSha),
   );
+  const checks = [...localChecks, ...resolveGithubChecks(manifest.currentCommitSha)];
   manifest = { ...manifest, evidence: { ...manifest.evidence, checks } };
   saveReviewManifest(manifest);
 

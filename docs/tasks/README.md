@@ -150,7 +150,6 @@
 | `device-board-phase-3` | Device-board Phase 3: catalog service, validators, competition | L | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
-| `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | M | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | [#185](https://github.com/officefish/Membrana/issues/185) |
 | `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `task-closure-teamlead-review-v1` | Automatic Teamlead review for Issue and sprint closure | L | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
 | `tcr-r0-regulation-schema` | TCR R0: closure review regulation, prompt and schema | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
@@ -166,6 +165,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | 2026-06-28 | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | #185 | [карточка](./archive/issue-185-services-device-board-boundary.md) |
 | `membrana-studio-ms0-ms4-day-sprint` | Day sprint: Membrana Studio MS0–MS4 (canon → installer) | 2026-06-23 | [`MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms0-ms4-day-sprint.md) |
 | `membrana-studio-ms0-canon` | MS0: канон Studio vs Device + пути документации | 2026-06-23 | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms0-canon.md) |
 | `membrana-studio-ms1-shell` | MS1: Electron shell apps/membrana-studio + yarn studio:dev | 2026-06-23 | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms1-shell.md) |

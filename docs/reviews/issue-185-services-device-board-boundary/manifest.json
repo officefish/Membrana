@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "taskId": "issue-185-services-device-board-boundary",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "techies68",
+  "currentCommitSha": "017f5cd5f4cccb66c2fa9892538ae8cdb886052b",
+  "reviewedCommitSha": "017f5cd5f4cccb66c2fa9892538ae8cdb886052b",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/issue-185-services-device-board-boundary/017f5cd5f4cccb66c2fa9892538ae8cdb886052b-review.md",
+  "github": {
+    "issue": 185,
+    "pullRequest": null,
+    "remoteState": "unknown",
+    "url": null
+  },
+  "scope": {
+    "baseRef": "19168c3",
+    "files": [
+      "apps/client/src/modules/device-board/UserCaseSettingsPanel.tsx",
+      "apps/client/src/modules/device-board/useUserCaseCatalog.ts",
+      "apps/client/src/modules/device-board/user-case-settings-gate.ts",
+      "docs/SERVICES.md",
+      "docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md",
+      "docs/seanses/issue-185-boundary-decision-2026-06-28.md",
+      "docs/tasks/README.md",
+      "docs/tasks/registry.json",
+      "packages/core/src/contracts/device-board/index.ts",
+      "packages/core/src/contracts/device-board/user-case-catalog.ts",
+      "packages/device-board/src/catalog/user-case-catalog-types.ts",
+      "packages/services/README.md",
+      "packages/services/usercase-catalog/README.md",
+      "packages/services/usercase-catalog/package.json",
+      "packages/services/usercase-catalog/src/hooks.ts",
+      "packages/services/usercase-catalog/src/index.ts",
+      "packages/services/usercase-catalog/src/service.test.ts",
+      "packages/services/usercase-catalog/src/service.ts",
+      "packages/services/usercase-catalog/src/types.ts",
+      "packages/services/usercase-catalog/vite.config.ts",
+      "yarn.lock"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/core",
+      "packages/device-board",
+      "packages/services/usercase-catalog"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "017f5cd5f4cccb66c2fa9892538ae8cdb886052b",
+        "checkedAt": "2026-06-28T16:54:08.354Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "017f5cd5f4cccb66c2fa9892538ae8cdb886052b",
+        "checkedAt": "2026-06-28T06:47:13Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28314095789/job/83884018454"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "accepted_branch_only",
+    "evidence": "Accepted branch-only: R5 legacy pilot: user requested closure; commit pushed to techies68, PR/merge deferred"
+  },
+  "createdAt": "2026-06-28T16:52:31.465Z",
+  "updatedAt": "2026-06-28T16:54:51.641Z"
+}

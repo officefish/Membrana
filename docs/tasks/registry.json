@@ -6930,12 +6930,7 @@
       "archiveNotes": null,
       "notes": "Consilium phase-3-architecture-decisions-2026-06-24. After Phase 2b LGTM.",
       "leadPersona": "vesnin",
-      "supportPersonas": [
-        "ozhegov",
-        "dynin",
-        "musician",
-        "rodchenko"
-      ]
+      "supportPersonas": ["ozhegov", "dynin", "musician", "rodchenko"]
     },
     {
       "id": "db-p3-a1-usercase-catalog-service",
@@ -6984,13 +6979,13 @@
       "githubIssue": 185,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "device-board-phase-3",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "review LGTM 017f5cd5f4cc; Accepted branch-only: R5 legacy pilot: user requested closure; commit pushed to techies68, PR/merge deferred",
       "dependsOn": [
         "db-p3-a1-usercase-catalog-service"
       ],
@@ -6998,7 +6993,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-28"
     },
     {
       "id": "db-p3-a3-competition-restrictions",
@@ -7039,7 +7035,12 @@
       "archiveNotes": null,
       "notes": "Consilium closure-review-process-consilium-2026-06-28. Fail-closed Teamlead verdict bound to task id and commit SHA.",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov", "dynin", "musician", "rodchenko"]
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
     },
     {
       "id": "tcr-r0-regulation-schema",
