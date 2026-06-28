@@ -6930,7 +6930,12 @@
       "archiveNotes": null,
       "notes": "Consilium phase-3-architecture-decisions-2026-06-24. After Phase 2b LGTM.",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov", "dynin", "musician", "rodchenko"]
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
     },
     {
       "id": "db-p3-a1-usercase-catalog-service",
@@ -7027,12 +7032,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "review LGTM 29648cf205fe; Accepted branch-only: R5 greenfield pilot: user requested sprint closure; exact SHA pushed to techies68, PR/merge deferred to the separate GitHub process",
       "notes": "Consilium closure-review-process-consilium-2026-06-28. Fail-closed Teamlead verdict bound to task id and commit SHA.",
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -7049,17 +7054,19 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "task-closure-teamlead-review-v1",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
       "dependsOn": [],
       "notes": "Canonical state machine, fail-closed policy, prompts and JSON Schema.",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov"]
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "tcr-r1-manifest-core",
@@ -7068,17 +7075,21 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "task-closure-teamlead-review-v1",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "dependsOn": ["tcr-r0-regulation-schema"],
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r0-regulation-schema"
+      ],
       "notes": "Pure transitions, per-task manifest, commit SHA invalidation, dry-run.",
       "leadPersona": "ozhegov",
-      "supportPersonas": ["vesnin"]
+      "supportPersonas": [
+        "vesnin"
+      ]
     },
     {
       "id": "tcr-r2-teamlead-runner",
@@ -7087,17 +7098,24 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "task-closure-teamlead-review-v1",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "dependsOn": ["tcr-r1-manifest-core"],
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r1-manifest-core"
+      ],
       "notes": "Reuse T0/T1/T2 regulation; write LGTM/BLOCK artifact bound to SHA.",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov", "dynin", "musician", "rodchenko"]
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
     },
     {
       "id": "tcr-r3-finalize-gate",
@@ -7106,17 +7124,21 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "task-closure-teamlead-review-v1",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "dependsOn": ["tcr-r2-teamlead-runner"],
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r2-teamlead-runner"
+      ],
       "notes": "Fail-closed finalize over archive and GitHub close queue; explicit branch-only path.",
       "leadPersona": "ozhegov",
-      "supportPersonas": ["vesnin"]
+      "supportPersonas": [
+        "vesnin"
+      ]
     },
     {
       "id": "tcr-r4-three-env-skills",
@@ -7125,17 +7147,21 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "task-closure-teamlead-review-v1",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "dependsOn": ["tcr-r2-teamlead-runner"],
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r2-teamlead-runner"
+      ],
       "notes": "Thin skills in .cursor, .claude and .agents plus semantic drift verifier.",
       "leadPersona": "ozhegov",
-      "supportPersonas": ["vesnin"]
+      "supportPersonas": [
+        "vesnin"
+      ]
     },
     {
       "id": "tcr-r5-github-pilot",
@@ -7144,17 +7170,25 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "parentEpic": "task-closure-teamlead-review-v1",
       "createdAt": "2026-06-28",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "dependsOn": ["tcr-r3-finalize-gate", "tcr-r4-three-env-skills"],
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r3-finalize-gate",
+        "tcr-r4-three-env-skills"
+      ],
       "notes": "Pilot on one M-task; optional labels/check; legacy migration report.",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov", "dynin", "musician", "rodchenko"]
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
     }
   ]
 }

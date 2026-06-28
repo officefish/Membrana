@@ -39,7 +39,16 @@ merged, while preserving an immutable exact-SHA verdict.
 
 ### Final result
 
-Pending final R5 commit and GitHub checks.
+- Reviewed commit: `29648cf205fe5d22e1d662278892f11c48ee9c72`.
+- Evidence: `git diff --check`, focused runner tests (21/21), and successful GitHub Actions
+  run `28330006844` (`Lint, typecheck, test, build`).
+- Verdict: T2 LGTM; no P0/P1.
+- P2: contiguous `base..SHA` scope included concurrent insight/CI commits; add a commit
+  allowlist or first-class PR diff. A merged-PR pilot is still required before hard-gating
+  the legacy archive command.
+- Completion: explicitly accepted branch-only on `techies68`. The epic and R0–R5 phases
+  were archived under the epic verdict.
+- Artifact: `docs/reviews/task-closure-teamlead-review-v1/29648cf205fe5d22e1d662278892f11c48ee9c72-review.md`.
 
 ## Migration notes
 

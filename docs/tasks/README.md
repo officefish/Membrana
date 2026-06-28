@@ -151,13 +151,6 @@
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
-| `task-closure-teamlead-review-v1` | Automatic Teamlead review for Issue and sprint closure | L | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
-| `tcr-r0-regulation-schema` | TCR R0: closure review regulation, prompt and schema | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
-| `tcr-r1-manifest-core` | TCR R1: manifest state library and prepare/status CLI | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
-| `tcr-r2-teamlead-runner` | TCR R2: Teamlead review runner and immutable verdict | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
-| `tcr-r3-finalize-gate` | TCR R3: guarded finalize and lifecycle integration | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
-| `tcr-r4-three-env-skills` | TCR R4: Cursor, Claude Code and Codex closure review skills | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
-| `tcr-r5-github-pilot` | TCR R5: GitHub integration pilot and migration decision | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
 
 ---
 
@@ -166,6 +159,13 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | 2026-06-28 | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | #185 | [карточка](./archive/issue-185-services-device-board-boundary.md) |
+| `task-closure-teamlead-review-v1` | Automatic Teamlead review for Issue and sprint closure | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/task-closure-teamlead-review-v1.md) |
+| `tcr-r0-regulation-schema` | TCR R0: closure review regulation, prompt and schema | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/tcr-r0-regulation-schema.md) |
+| `tcr-r1-manifest-core` | TCR R1: manifest state library and prepare/status CLI | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/tcr-r1-manifest-core.md) |
+| `tcr-r2-teamlead-runner` | TCR R2: Teamlead review runner and immutable verdict | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/tcr-r2-teamlead-runner.md) |
+| `tcr-r3-finalize-gate` | TCR R3: guarded finalize and lifecycle integration | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/tcr-r3-finalize-gate.md) |
+| `tcr-r4-three-env-skills` | TCR R4: Cursor, Claude Code and Codex closure review skills | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/tcr-r4-three-env-skills.md) |
+| `tcr-r5-github-pilot` | TCR R5: GitHub integration pilot and migration decision | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/tcr-r5-github-pilot.md) |
 | `membrana-studio-ms0-ms4-day-sprint` | Day sprint: Membrana Studio MS0–MS4 (canon → installer) | 2026-06-23 | [`MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms0-ms4-day-sprint.md) |
 | `membrana-studio-ms0-canon` | MS0: канон Studio vs Device + пути документации | 2026-06-23 | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms0-canon.md) |
 | `membrana-studio-ms1-shell` | MS1: Electron shell apps/membrana-studio + yarn studio:dev | 2026-06-23 | [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](../docs/prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) | #93 (Issue открыт) | [карточка](./archive/membrana-studio-ms1-shell.md) |
