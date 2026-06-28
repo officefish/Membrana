@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "cooldownMs": 45000,
+  "fallbackModel": "openrouter/anthropic/claude-sonnet-4.6",
+  "resumeWithSameModel": true,
+  "maxResumeAttempts": 2,
+  "disconnectStatusCodes": ["502", "503", "529", "500"],
+  "rateLimitPatterns": ["rate limit", "429", "quota", "overloaded"]
+}

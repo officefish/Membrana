@@ -9,9 +9,9 @@ import { applyUserCaseLayoutCanon, verifyUserCaseDocumentLayout } from './userca
 import { hydrateBoardFromDocument, hydratedFunctionInputs, isPreRunValid, validatePreRun } from './index.js';
 
 const EXPECTED_FUNCTIONS: Record<'alpha' | 'beta' | 'gamma', number> = {
-  alpha: 3,
-  beta: 2,
-  gamma: 2,
+  alpha: 5,
+  beta: 4,
+  gamma: 4,
 };
 
 describe('usercase-competition-pack', () => {
@@ -58,8 +58,8 @@ describe('usercase-competition-pack', () => {
       packMvpUserCaseForTeam('beta', DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT),
     );
     const metrics = computeTeamPackLayoutMetrics(canon);
-    expect(metrics.mainSubgraphBlockCount).toBe(2);
-    expect(metrics.mainScenarioNodeCount).toBeLessThanOrEqual(20);
+    expect(metrics.mainSubgraphBlockCount).toBe(5);
+    expect(metrics.mainScenarioNodeCount).toBeLessThanOrEqual(24);
   });
 
   it('alpha observation block keeps parent data edges after multi-collapse pack', () => {

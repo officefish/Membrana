@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-25",
+  "insights": [
+    {
+      "id": "insight-operator-smoke-ci-gate",
+      "title": "Operator smoke как pre-merge CI gate для async-v2 UserCase",
+      "status": "adopted",
+      "source": "packaging-epic",
+      "sprintPhase": "ins-pilot-g-operator-smoke",
+      "horizon": "week",
+      "weight": 7.0,
+      "createdAt": "2026-06-25",
+      "tags": ["competition", "operator", "ci", "device-board"]
+    },
+    {
+      "id": "insight-async-v2-product-narrative",
+      "title": "Async v2 topology как продуктовая история (Act IIb upload + detached drone)",
+      "status": "adopted",
+      "source": "packaging-epic",
+      "sprintPhase": "ins-pilot-h-async-v2-narrative",
+      "horizon": "month",
+      "weight": 6.6,
+      "createdAt": "2026-06-25",
+      "tags": ["async-v2", "ux", "competition", "device-board"]
+    },
+    {
+      "id": "insight-competition-catalog-pipeline",
+      "title": "Competition sprint → catalog publish как повторяемый pipeline",
+      "status": "adopted",
+      "source": "packaging-epic",
+      "sprintPhase": "ins-pilot-i-catalog-pipeline",
+      "horizon": "week",
+      "weight": 6.6,
+      "createdAt": "2026-06-25",
+      "tags": ["competition", "catalog", "usercase", "tooling"]
+    },
+    {
+      "id": "insight-loop-engineering-competition-test",
+      "title": "Loop engineering: соревновательное тестирование с точками останова",
+      "status": "deferred",
+      "source": "user",
+      "sprintPhase": "ins-pilot-j-user-insights",
+      "horizon": "month",
+      "weight": 6.8,
+      "createdAt": "2026-06-25",
+      "tags": ["competition", "operator", "device-board", "testing", "subagent", "breakpoint"]
+    },
+    {
+      "id": "insight-agent-scenario-builder",
+      "title": "AI-агент построения UserCase по описанию пользователя",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": "quarter",
+      "weight": 7.8,
+      "createdAt": "2026-06-25",
+      "tags": ["device-board", "usercase", "agent", "cabinet", "tokens", "palette", "ux"]
+    },
+    {
+      "id": "insight-slide-fullscreen-presentation",
+      "title": "Объект Slide и fullscreen-режим презентации сценария",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": "month",
+      "weight": 7.8,
+      "createdAt": "2026-06-25",
+      "tags": ["device-board", "slide", "presentation", "ux", "export", "tariff"]
+    },
+    {
+      "id": "insight-server-forwarding",
+      "title": "Server forwarding — серверные функции сценария",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": "quarter",
+      "weight": 7.8,
+      "createdAt": "2026-06-25",
+      "tags": ["device-board", "server", "cabinet", "media", "rag", "integrations", "tokens", "tariff"]
+    },
+    {
+      "id": "insight-sunrise-flash",
+      "title": "Sunrise flashes — утренний тематический flash (RAG + news)",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": "month",
+      "weight": 6.6,
+      "createdAt": "2026-06-25",
+      "tags": ["ritual", "rag", "news", "knowledge-tree", "standup", "perplexity"]
+    },
+    {
+      "id": "insight-vesnin-adopted-epic-bridge",
+      "title": "Мост adopted insight → week epic (LGTM gate)",
+      "status": "adopted",
+      "source": "virtual-team-vesnin",
+      "horizon": "week",
+      "weight": 7.0,
+      "createdAt": "2026-06-25",
+      "epicCandidate": true,
+      "epicCandidateAt": "2026-06-25",
+      "plannedImplementation": "2026-06-26",
+      "tags": ["process", "teamlead", "plan-week", "epic"]
+    },
+    {
+      "id": "insight-ozhegov-server-function-registry",
+      "title": "ServerFunctionRegistry в @membrana/core",
+      "status": "adopted",
+      "source": "virtual-team-ozhegov",
+      "horizon": "month",
+      "weight": 7.4,
+      "createdAt": "2026-06-25",
+      "tags": ["core", "server", "registry", "architecture"]
+    },
+    {
+      "id": "insight-dynin-chain-log-golden-oracle",
+      "title": "Chain-log golden oracle для operator smoke",
+      "status": "adopted",
+      "source": "virtual-team-dynin",
+      "horizon": "week",
+      "weight": 7.2,
+      "createdAt": "2026-06-25",
+      "tags": ["testing", "logs-parse", "operator", "golden"]
+    },
+    {
+      "id": "insight-kuryokhin-recorder-session-fsm",
+      "title": "Канонический FSM сессии recorder (anti-L18)",
+      "status": "adopted",
+      "source": "virtual-team-kuryokhin",
+      "horizon": "month",
+      "weight": 7.2,
+      "createdAt": "2026-06-25",
+      "tags": ["audio-engine", "recorder", "fsm", "device-board"]
+    },
+    {
+      "id": "insight-rodchenko-operator-density-mode",
+      "title": "Dual-density UI: operator vs engineer mode",
+      "status": "adopted",
+      "source": "virtual-team-rodchenko",
+      "horizon": "month",
+      "weight": 7.0,
+      "createdAt": "2026-06-25",
+      "tags": ["ui", "device-board", "operator", "design"]
+    },
+    {
+      "id": "insight-mcp-searxng-private-search",
+      "title": "SearXNG — приватный keyless веб-поиск для агентов",
+      "status": "draft",
+      "source": "mcp-tooling-consilium",
+      "sprintPhase": "mcp-tooling-m3-searxng",
+      "horizon": "month",
+      "weight": null,
+      "createdAt": "2026-06-27",
+      "tags": ["mcp", "search", "dsp", "privacy", "tooling", "self-hosted"]
+    },
+    {
+      "id": "insight-mcp-hindsight-agent-memory",
+      "title": "Hindsight — обучающаяся память агента между сессиями",
+      "status": "draft",
+      "source": "mcp-tooling-consilium",
+      "sprintPhase": "mcp-tooling-m4-hindsight-spike",
+      "horizon": "quarter",
+      "weight": null,
+      "createdAt": "2026-06-27",
+      "tags": ["mcp", "memory", "agent", "lessons", "tooling", "self-hosted"]
+    }
+  ]
+}

@@ -1,13 +1,21 @@
 /**
  * Pure parser for Membrana client device-board console dumps.
- * See docs/device-board-scripts/CLIENT_LOGS_PARSING.md
+ * See docs/actions/device-board/CLIENT_LOGS_PARSING.md
  */
 
 /** @typedef {{ line: number, raw: string, channel: string, message: string, runId: string | null, tick: number | null, payload: string }} LogEvent */
 
+/** Studio packaged / `yarn studio:dev` — paste DevTools here; browser — `logs/apps/client/`. */
 export const DEFAULT_CLIENT_LOG_PATHS = [
+  'logs/apps/studio/logs.txt',
   'logs/apps/client/logs.txt',
   'logs/apps/client/console-logs.txt',
+];
+
+/** Fixed names under `%APPDATA%` — packaged Studio trace download (no repo paste). */
+export const STUDIO_APPDATA_LOG_RELATIVE = [
+  'Membrana/logs/device-board-trace-latest.txt',
+  'Membrana/logs/logs.txt',
 ];
 
 const RUN_ID_RE = /runId:\s*'([^']+)'/;
@@ -127,7 +135,11 @@ function uniqueTicks(events) {
  */
 export function summarizeRun(allEvents, runId) {
   const events = eventsForRun(allEvents, runId);
-  const gateTrue = filterPayload(events, '[recording] recording-window-full');
+  const gateTrue = events.filter(
+    (event) =>
+      event.payload.includes('[recording] recording-window-full') ||
+      (event.message === 'is-recording-window-full' && /full:\s*true/.test(event.payload)),
+  );
   const gateTicks = uniqueTicks(gateTrue);
   const publishDone = filterPayload(events, '[journal] publish-done');
   const uploadOk = filterPayload(events, '[media] upload-ok');

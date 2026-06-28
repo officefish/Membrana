@@ -107,6 +107,16 @@ export class NodeRealtimeService {
     return true;
   }
 
+  /** SF2/SF3: board events — кабинет + полевой узел. */
+  broadcastBoardEnvelope(
+    membraneId: string,
+    mediaDeviceId: string,
+    envelope: NodeRealtimeEnvelope,
+  ): void {
+    this.fanOutToCabinet(membraneId, envelope);
+    this.sendToNode(mediaDeviceId, envelope);
+  }
+
   notifySessionInvalidated(
     mediaDeviceId: string,
     membraneId: string,

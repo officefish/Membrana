@@ -8,6 +8,8 @@ import { initMediaLibraryHubBridge } from './lib/mediaLibraryHubBridge'
 import { initJournalHubBridge } from './lib/journalHubBridge'
 import { initMicLiveRealtimeBridge } from './lib/micLiveRealtimeBridge'
 import { initUserTemplatesStore } from './plugins/trends-fft-analyzer/userTemplatesStore'
+import { initElectronShellLogBoot } from './lib/electronShellLogPort'
+import { initElectronScenarioTracePersist } from './lib/electronScenarioTracePort'
 
 /**
  * Cold-boot order (CRDC R2 / MP4):
@@ -23,6 +25,8 @@ initMediaLibraryHubBridge()
 initJournalHubBridge()
 initMicLiveRealtimeBridge()
 void initUserTemplatesStore()
+initElectronShellLogBoot()
+initElectronScenarioTracePersist()
 useMembranaStore.persist.onFinishHydration(() => {
   registerClientModules()
 })

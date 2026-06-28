@@ -6,7 +6,8 @@ import {
 
 import { fetchMediaSession, type MediaSessionDevice } from '@/api/sampleLibrary';
 import { fetchMembraneMe } from '@/api/membrane';
-import { createCabinetDeviceBoardPersistAdapter } from '@/lib/cabinetDeviceScenario';
+import { createCabinetDeviceBoardPersistAdapter, fetchDeviceScenarioRecord } from '@/lib/cabinetDeviceScenario';
+import { useCabinetEditLease } from '@/lib/useCabinetEditLease';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 
 interface DeviceBoardPageProps {
@@ -16,11 +17,15 @@ interface DeviceBoardPageProps {
 export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
   const [devices, setDevices] = useState<MediaSessionDevice[]>([]);
   const [deviceId, setDeviceId] = useState<string | null>(null);
+  const [nodeId, setNodeId] = useState<string | null>(null);
+  const [scenarioRevision, setScenarioRevision] = useState(0);
   const [membraneId, setMembraneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const runtime = useCabinetNodeRuntime(membraneId);
   const deviceLive = runtime.isDeviceLive(deviceId);
+
+  useCabinetEditLease(nodeId, scenarioRevision);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,8 +35,9 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
         if (cancelled) return;
         setDevices(session.devices);
         setMembraneId(me.membrane.id);
-        const first = session.devices[0]?.deviceId ?? null;
-        setDeviceId(first);
+        const first = session.devices[0] ?? null;
+        setDeviceId(first?.deviceId ?? null);
+        setNodeId(first?.nodeId ?? null);
       })
       .catch((e: unknown) => {
         if (cancelled) return;
@@ -45,9 +51,52 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (deviceId === null) {
+      setScenarioRevision(0);
+      return undefined;
+    }
+    let cancelled = false;
+    void fetchDeviceScenarioRecord(deviceId)
+      .then((record) => {
+        if (cancelled) return;
+        setScenarioRevision(record?.document.version ?? 0);
+      })
+      .catch(() => {
+        if (!cancelled) setScenarioRevision(0);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [deviceId]);
+
+  const handleDeviceChange = (nextDeviceId: string) => {
+    setDeviceId(nextDeviceId);
+    const next = devices.find((device) => device.deviceId === nextDeviceId);
+    setNodeId(next?.nodeId ?? null);
+  };
+
   const persistAdapter = useMemo(
     () => (deviceId !== null ? createCabinetDeviceBoardPersistAdapter(deviceId) : undefined),
     [deviceId],
+  );
+
+  const cabinetServerFirstState = useMemo(
+    () =>
+      deviceId !== null
+        ? {
+            deviceId,
+            editLease: {
+              deviceId,
+              holder: 'cabinet' as const,
+              sessionId: 'cabinet-editor',
+              revision: scenarioRevision,
+              expiresAt: null,
+            },
+            captureState: null,
+          }
+        : null,
+    [deviceId, scenarioRevision],
   );
 
   if (loading) {
@@ -90,7 +139,7 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
           id="cabinet-device-select"
           className="select select-bordered select-xs"
           value={deviceId}
-          onChange={(event) => setDeviceId(event.target.value)}
+          onChange={(event) => handleDeviceChange(event.target.value)}
         >
           {devices.map((device) => (
             <option key={device.deviceId} value={device.deviceId}>
@@ -108,6 +157,8 @@ export function DeviceBoardPage({ onBack }: DeviceBoardPageProps) {
             exitLabel="Назад в кабинет"
             showRunControls={false}
             deviceLive={deviceLive}
+            serverFirstState={cabinetServerFirstState}
+            serverFirstPerspective="cabinet"
           />
         </div>
       </DeviceBoardModeProvider>

@@ -29,8 +29,8 @@ Competition sprint **comp-mvp-packaging-2026-06-21** закрыт (RUN-01 ✅, w
 |----------|--------|
 | [`NIGHT_SPRINT_REGULATION.md`](../NIGHT_SPRINT_REGULATION.md) | night:open / checkpoint / close |
 | [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) | Целевая диаграмма runtime |
-| [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) | L1–L12 → regulation |
-| [`USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md) | CLI канон |
+| [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) | L1–L12 → regulation |
+| [`USERCASE_GENERATION_REGULATION.md`](../actions/device-board/USERCASE_GENERATION_REGULATION.md) | CLI канон |
 | [`DESIGN.md`](../DESIGN.md) | Modal a11y |
 | [`comp-mvp-packaging-2026-06-21/RETROSPECTIVE.md`](../competition-sprint/comp-mvp-packaging-2026-06-21/RETROSPECTIVE.md) | Scope freeze |
 

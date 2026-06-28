@@ -12,6 +12,7 @@ import { PairModule } from './modules/pair/pair.module';
 import { JournalModule } from './modules/journal/journal.module';
 import { SampleLibraryModule } from './modules/sample-library/sample-library.module';
 import { NodeRealtimeModule } from './modules/node-realtime/node-realtime.module';
+import { ScenarioEditLeaseModule } from './modules/scenario-edit-lease/scenario-edit-lease.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -39,7 +40,7 @@ const testImports =
       ];
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule],
+  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule, ScenarioEditLeaseModule],
   controllers: [HealthController],
 })
 export class AppModule {}

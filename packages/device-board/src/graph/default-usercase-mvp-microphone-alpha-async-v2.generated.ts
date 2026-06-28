@@ -9,7 +9,7 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
   "deviceKind": "microphone",
   "meta": {
     "title": "MVP microphone · Alpha (Live Observation Pipeline, async v2)",
-    "exportedAt": "2026-06-25T16:07:27.913Z",
+    "exportedAt": "2026-06-26T06:58:28.323Z",
     "bundledGraphVersion": "v2.0-async",
     "commentGroupProfile": "alpha",
     "isCompetitionTemplate": true,
@@ -616,6 +616,14 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "kind": "exec"
           },
           {
+            "source": "fn-alpha-recording-gate-block",
+            "sourceHandle": "recorder",
+            "target": "node-collect-samples-mqs2lopv-164",
+            "targetHandle": "recorder",
+            "kind": "data",
+            "dataType": "RecorderRef"
+          },
+          {
             "source": "node-get-sample-mqs2mt0a-165",
             "sourceHandle": "sample",
             "target": "node-collect-samples-mqs2lopv-164",
@@ -792,14 +800,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "target": "main-infinity",
             "targetHandle": "exec-in",
             "kind": "exec"
-          },
-          {
-            "kind": "data",
-            "source": "node-get-recorder-mqs6hyo6-171",
-            "sourceHandle": "recorder",
-            "target": "node-collect-samples-mqs2lopv-164",
-            "targetHandle": "recorder",
-            "dataType": "RecorderRef"
           },
           {
             "kind": "exec",
@@ -1932,13 +1932,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "sourceHandle": "exec-out",
             "target": "fn-alpha-recording-gate-output",
             "targetHandle": "exec-out"
-          },
-          {
-            "kind": "exec",
-            "source": "node-is-recording-window-full-mqmo40ie-32",
-            "sourceHandle": "exec-true-out",
-            "target": "fn-alpha-recording-gate-output",
-            "targetHandle": "exec-true-out"
           }
         ],
         "inputPins": [
@@ -1983,16 +1976,6 @@ export const DEFAULT_USERCASE_MVP_MICROPHONE_ALPHA_ASYNC_V2_DOCUMENT = {
             "name": "track",
             "kind": "data",
             "socketType": "TrackRef"
-          },
-          {
-            "id": "exec-out",
-            "name": "exec-out",
-            "kind": "exec"
-          },
-          {
-            "id": "exec-true-out",
-            "name": "exec-true-out",
-            "kind": "exec"
           }
         ],
         "description": "5 s WAV window → MakeTrack → restart"

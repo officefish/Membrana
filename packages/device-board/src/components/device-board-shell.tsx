@@ -23,10 +23,12 @@ import {
 import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
 import type { Edge, Node, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
+import { BoardServerFirstBadges } from './board-server-first-badges.js';
 import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
 import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
 import { BoardEditUndoControl } from './board-edit-undo-control.js';
 import { resolveScenarioEditFlags } from './scenario-edit-flags.js';
+import type { ServerFirstFlagsInput } from './server-first-flags.js';
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
@@ -103,6 +105,10 @@ export interface DeviceBoardShellProps {
   readonly deviceLive?: boolean;
   /** Загрузка документа каталога (U10 W2-module: выбор в launcher модуля). */
   readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
+  /** Server-first SF4: lease + capture с поля (paired client). */
+  readonly serverFirstState?: ServerFirstFlagsInput | null;
+  /** SF5: перспектива badge copy (поле vs кабинет). */
+  readonly serverFirstPerspective?: 'field' | 'cabinet';
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -110,7 +116,8 @@ const DeviceBoardShellInner: React.FC<{
   exitLabel: string;
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
+  serverFirstPerspective: 'field' | 'cabinet';
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, serverFirstPerspective }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -1478,7 +1485,12 @@ const DeviceBoardShellInner: React.FC<{
           >
             Сохранить
           </button>
-          {graph.isSessionReadOnly ? (
+          {graph.serverFirstFlags ? (
+            <BoardServerFirstBadges
+              flags={graph.serverFirstFlags}
+              perspective={serverFirstPerspective}
+            />
+          ) : graph.isSessionReadOnly ? (
             <span className="badge badge-ghost badge-sm shrink-0" title={graph.sessionTitle ?? undefined}>
               Только просмотр
             </span>
@@ -1957,6 +1969,8 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   showRunControls = true,
   deviceLive,
   loadUserCaseDocument,
+  serverFirstState = null,
+  serverFirstPerspective = 'field',
 }) => {
   const { session } = useDeviceBoardMode();
 
@@ -1968,12 +1982,14 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
     deviceLive={deviceLive}
     loadUserCaseDocument={loadUserCaseDocument}
     boardSession={session}
+    serverFirstState={serverFirstState}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
+      serverFirstPerspective={serverFirstPerspective}
     />
   </DeviceBoardGraphProvider>
   );

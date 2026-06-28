@@ -13,6 +13,17 @@ export { DeviceBoardGraphProvider, useDeviceBoardGraph } from './context/device-
 export type { DeviceBoardGraphContextValue, DeviceBoardGraphProviderProps, ApplyUserCaseOutcome } from './context/device-board-graph-context.js';
 export { DeviceBoardShell } from './components/device-board-shell.js';
 export type { DeviceBoardShellProps } from './components/device-board-shell.js';
+export {
+  isCabinetEditLeaseActive,
+  resolveServerFirstFlags,
+} from './components/server-first-flags.js';
+export type { ServerFirstFlags, ServerFirstFlagsInput } from './components/server-first-flags.js';
+export { resolveServerFirstBadgeDescriptors } from './components/server-first-badges.js';
+export type {
+  ServerFirstBadgeDescriptor,
+  ServerFirstBadgePerspective,
+} from './components/server-first-badges.js';
+export { BoardServerFirstBadges } from './components/board-server-first-badges.js';
 export { BoardUserCasePickerModal } from './components/board-usercase-picker-modal.js';
 export type { DeviceBoardUserCasePickerConfig, UserCasePickerCard } from './types/user-case-picker.js';
 export { BoardFlowCanvas } from './components/board-flow-canvas.js';

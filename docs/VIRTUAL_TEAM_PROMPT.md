@@ -94,9 +94,9 @@ GitHub Issue → запись в [`docs/tasks/registry.json`](./tasks/registry.j
 
 | # | Документ |
 |---|----------|
-| 1 | [`docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md`](./device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
+| 1 | [`docs/actions/device-board/USERCASE_GENERATION_REGULATION.md`](./actions/device-board/USERCASE_GENERATION_REGULATION.md) |
 | 2 | [`docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](./prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) |
-| 3 | [`docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md`](./device-board-scripts/USERCASE_COMPETITION_LESSONS.md) |
+| 3 | [`docs/actions/device-board/USERCASE_COMPETITION_LESSONS.md`](./actions/device-board/USERCASE_COMPETITION_LESSONS.md) |
 | 4 | `node scripts/usercase.mjs help` |
 
 Hub: [`docs/device-board-scripts/README.md`](./device-board-scripts/README.md). Catalog UI (U9): [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_USERCASES_EPIC_PROMPT.md).

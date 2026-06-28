@@ -95,7 +95,7 @@ yarn workspace @membrana/device-board test -- src/runtime/async-pipeline-observa
 ## CLOSURE
 
 **Дата:** 2026-06-25  
-**LGTM:** [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../device-board-scripts/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md)  
+**LGTM:** [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md)  
 **Docs:** CONCEPT §16.5.2 · `SCENARIO_RUNTIME.md` §10 · catalog `device-board.md` · `CLIENT_LOGS_PARSING.md`
 
 **Осталось operator (post-merge):**

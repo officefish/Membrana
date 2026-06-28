@@ -378,6 +378,14 @@
         "kind": "exec"
       },
       {
+        "source": "fn-alpha-recording-gate-block",
+        "sourceHandle": "recorder",
+        "target": "node-collect-samples-mqs2lopv-164",
+        "targetHandle": "recorder",
+        "kind": "data",
+        "dataType": "RecorderRef"
+      },
+      {
         "source": "node-get-sample-mqs2mt0a-165",
         "sourceHandle": "sample",
         "target": "node-collect-samples-mqs2lopv-164",
@@ -556,14 +564,6 @@
         "kind": "exec"
       },
       {
-        "kind": "data",
-        "source": "node-get-recorder-mqs6hyo6-171",
-        "sourceHandle": "recorder",
-        "target": "node-collect-samples-mqs2lopv-164",
-        "targetHandle": "recorder",
-        "dataType": "RecorderRef"
-      },
-      {
         "kind": "exec",
         "source": "fn-alpha-recording-gate-block",
         "sourceHandle": "exec-out",
@@ -590,5 +590,5 @@
   "referencedVariableIds": [
     "var-JournalRef-mqm9dl4a-6"
   ],
-  "exportedAt": "2026-06-25T14:20:45.514Z"
+  "exportedAt": "2026-06-26T06:58:33.270Z"
 }

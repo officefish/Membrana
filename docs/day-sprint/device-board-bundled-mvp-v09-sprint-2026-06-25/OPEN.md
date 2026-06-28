@@ -56,14 +56,14 @@ Cutover bundled `usercase-mvp-microphone` с flat v0.8 на runtime-validated **
 | `1cf4983b` (2026-06-24) | 21, 34, 54 | trends | partial | ручной |
 | **`7e8a289c`** (2026-06-24) | 44, 85, 112, 153, 190, 229, 269, 309, 344, 376 | **10** | **3** (async) | `yarn logs:parse -- --run-id 7e8a289c` |
 
-Canon: [`CLIENT_LOGS_PARSING.md`](../device-board-scripts/CLIENT_LOGS_PARSING.md)
+Canon: [`CLIENT_LOGS_PARSING.md`](../actions/device-board/CLIENT_LOGS_PARSING.md)
 
 ---
 
 ## Осталось до CLOSURE
 
 - [x] P6 CI green (`@membrana/device-board` — 525 tests)
-- [x] Teamlead LGTM на addendum v0.9 ([`USERCASE_MVP_MICROPHONE_LGTM.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md))
+- [x] Teamlead LGTM на addendum v0.9 ([`USERCASE_MVP_MICROPHONE_LGTM.md`](../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md))
 - [x] `CLOSURE.md`
 
 **Follow-up (не блокер):** BD4 rename `fn-1`/`fn-3` → `fn-StartRecording`/`fn-GetAudioStream`

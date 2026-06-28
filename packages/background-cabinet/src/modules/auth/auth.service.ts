@@ -1,5 +1,5 @@
 import { createSessionToken, hashPassword, sessionExpiresAt, verifyPassword } from './password.util';
-import type { AuthUser, LoginResult } from './auth.types';
+import type { AuthUser, LoginResult, ValidatedSession } from './auth.types';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
@@ -58,6 +58,11 @@ export class AuthService {
   }
 
   async validateSessionToken(token: string): Promise<AuthUser | null> {
+    const validated = await this.validateSession(token);
+    return validated?.user ?? null;
+  }
+
+  async validateSession(token: string): Promise<ValidatedSession | null> {
     const session = await this.prisma.session.findUnique({
       where: { token },
       include: { user: true },
@@ -68,7 +73,10 @@ export class AuthService {
       }
       return null;
     }
-    return { id: session.user.id, login: session.user.login, role: session.user.role };
+    return {
+      sessionId: session.id,
+      user: { id: session.user.id, login: session.user.login, role: session.user.role },
+    };
   }
 
   /** Pairing (MP3): session capped by key expiry. */

@@ -1,8 +1,8 @@
 # Промпт: автогенерация Device-Board UserCases
 
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
-> **Регламент (normative):** [`USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md)  
-> **Дневник уроков:** [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) (L1–L12)  
+> **Регламент (normative):** [`USERCASE_GENERATION_REGULATION.md`](../actions/device-board/USERCASE_GENERATION_REGULATION.md)  
+> **Дневник уроков:** [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) (L1–L20)  
 > **Эталон runtime:** bundled `usercase-mvp-microphone` (flat main, LGTM 2026-06-21)  
 > **Sprint reference:** `comp-mvp-packaging-2026-06-21` — alpha/beta/gamma, **Run parity доказан**, merge победителя **отложен**
 
@@ -14,7 +14,7 @@
 - Нужен **programmatic collapse** (functions + comment groups) без ручного редактирования embedded JSON.
 - Агент должен **повторить попытку** после правок в `usercase-competition-pack.ts` или collapse runtime.
 
-**Не использовать** для правок runtime device-board без нового UserCase — см. [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](./DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) и дневник L9–L12.
+**Не использовать** для правок runtime device-board без нового UserCase — см. [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](./DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) и дневник L9–L20.
 
 ---
 
@@ -89,7 +89,7 @@ node scripts/usercase.mjs verify-competition
 
 ### Phase 0 — Baseline
 
-1. Прочитать [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) (L1–L12).
+1. Прочитать [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) (L1–L20).
 2. Убедиться, что MVP flat собирается и Run зелёный:
    ```bash
    yarn usercase:build usercase-mvp-microphone
@@ -137,7 +137,7 @@ Manual в browser (`yarn workspace @membrana/client dev`):
 
 ---
 
-## Правила collapse (из L1–L12, норматив)
+## Правила collapse (из L1–L20, норматив)
 
 ### Pack-time
 
@@ -146,6 +146,7 @@ Manual в browser (`yarn workspace @membrana/client dev`):
 - **L6:** node ids только из актуального MVP generated
 - **L7:** не более 9 pins на сторону function
 - **L10:** multi-collapse — `deserializeScenarioSubgraph(..., functions)` перед следующим collapse
+- **L20:** preserve `fn-3` GetAudioStream на main; grep `main-on-tick` → `fn-3-block`; runtime smoke past onTick
 
 ### Hydrate
 
@@ -198,8 +199,8 @@ Manual в browser (`yarn workspace @membrana/client dev`):
 
 | Doc | Path |
 |-----|------|
-| Lessons diary | [`USERCASE_COMPETITION_LESSONS.md`](../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) |
-| **Regulation (normative)** | [`USERCASE_GENERATION_REGULATION.md`](../device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
+| Lessons diary | [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) |
+| **Regulation (normative)** | [`USERCASE_GENERATION_REGULATION.md`](../actions/device-board/USERCASE_GENERATION_REGULATION.md) |
 | Sprint closure | [`CLOSURE.md`](../competition-sprint/comp-mvp-packaging-2026-06-21/CLOSURE.md) |
 | U9 epic (catalog) | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) |
 | Device board concept | [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) |
@@ -213,7 +214,7 @@ Manual в browser (`yarn workspace @membrana/client dev`):
 
 Прочитай:
 - docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md
-- docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md
+- docs/actions/device-board/USERCASE_COMPETITION_LESSONS.md
 
 Baseline: usercase-mvp-microphone Run parity с flat graph.
 

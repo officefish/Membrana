@@ -8,7 +8,10 @@ import type { FastifyRequest } from 'fastify';
 import { AuthService } from '../../modules/auth/auth.service';
 import type { AuthUser } from '../../modules/auth/auth.types';
 
-export type AuthenticatedRequest = FastifyRequest & { authUser?: AuthUser };
+export type AuthenticatedRequest = FastifyRequest & {
+  authUser?: AuthUser;
+  authSessionId?: string;
+};
 
 @Injectable()
 export class SessionGuard implements CanActivate {
@@ -20,11 +23,12 @@ export class SessionGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException('Missing or invalid Authorization header');
     }
-    const user = await this.authService.validateSessionToken(token);
-    if (!user) {
+    const validated = await this.authService.validateSession(token);
+    if (!validated) {
       throw new UnauthorizedException('Invalid or expired session');
     }
-    req.authUser = user;
+    req.authUser = validated.user;
+    req.authSessionId = validated.sessionId;
     return true;
   }
 

@@ -1,0 +1,14 @@
+{
+  "id": "insight-agent-scenario-builder",
+  "title": "AI-агент построения UserCase по описанию пользователя",
+  "status": "adopted",
+  "source": "user",
+  "sprintPhase": null,
+  "horizon": "quarter",
+  "weight": 7.8,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["device-board", "usercase", "agent", "cabinet", "tokens", "palette", "ux"]
+}

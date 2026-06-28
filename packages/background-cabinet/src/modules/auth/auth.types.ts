@@ -6,6 +6,11 @@ export interface AuthUser {
   role: UserRole;
 }
 
+export interface ValidatedSession {
+  user: AuthUser;
+  sessionId: string;
+}
+
 export interface AuthSession {
   token: string;
   expiresAt: string;

@@ -1,23 +1,24 @@
-# device-board-scripts — UserCase bundles
+# device-board-scripts — UserCase fixtures
 
-Каталог bundled / community UserCases и legacy branch JSON для `@membrana/device-board`.
+Каталог **bundled / community UserCases**, golden JSON и legacy branch exports для `@membrana/device-board`.
+
+**Процессы и регламенты** переехали в [`docs/actions/device-board/`](../actions/device-board/).  
+Hub actions: [`docs/actions/README.md`](../actions/README.md).
 
 ---
 
 ## Для AI-агентов: генерация UserCase
 
-**Старт здесь**, если пользователь просит собрать / упаковать / сгенерировать UserCase:
-
 | Приоритет | Документ |
 |-----------|----------|
-| 1 | [`USERCASE_GENERATION_REGULATION.md`](./USERCASE_GENERATION_REGULATION.md) — normative rules |
+| 1 | [`USERCASE_GENERATION_REGULATION.md`](../actions/device-board/USERCASE_GENERATION_REGULATION.md) — normative rules |
 | 2 | [`docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) — full workflow |
-| 3 | [`USERCASE_COMPETITION_LESSONS.md`](./USERCASE_COMPETITION_LESSONS.md) — RCA L1–L12 |
+| 3 | [`USERCASE_COMPETITION_LESSONS.md`](../actions/device-board/USERCASE_COMPETITION_LESSONS.md) — RCA L1–L23 |
 | 4 | `node scripts/usercase.mjs help` — build / verify CLI |
 
 **Write allowlist (NB3):** build scripts may write only under `docs/device-board-scripts/usercase-*` and `packages/device-board/src/graph/default-usercase-*.generated.ts`. Check: `node scripts/usercase.mjs verify-paths`.
 
-Также в [.cursorrules](../.cursorrules) (стратегический документ #10) и [`docs/prompts/README.md`](../prompts/README.md) § UserCase generation.
+Также в [`.cursorrules`](../.cursorrules) (стратегический документ #11) и [`docs/prompts/README.md`](../prompts/README.md).
 
 ---
 
@@ -48,14 +49,14 @@ yarn usercase:verify-prerun usercase-mvp-microphone-beta
 
 ---
 
-## Прочие документы
+## Sign-offs и specs (actions)
 
-| Doc | Назначение |
-|-----|------------|
-| [`USERCASE_MVP_MICROPHONE.md`](./USERCASE_MVP_MICROPHONE.md) | Operator spec MVP |
-| [`USERCASE_MVP_MICROPHONE_LGTM.md`](./USERCASE_MVP_MICROPHONE_LGTM.md) | Runtime sign-off |
-| [`logs/info.txt`](./logs/info.txt) | Manual Run trace (debug) |
+| Doc | Путь |
+|-----|------|
+| MVP operator spec | [`../actions/device-board/specs/USERCASE_MVP_MICROPHONE.md`](../actions/device-board/specs/USERCASE_MVP_MICROPHONE.md) |
+| MVP LGTM | [`../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md`](../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md) |
+| Manual Run trace | [`logs/info.txt`](./logs/info.txt) |
 
 ---
 
-*Index hub для `docs/device-board-scripts/` — обновлять при новых bundled UserCases.*
+*Fixtures hub для `docs/device-board-scripts/` — JSON/manifests only; processes → `docs/actions/device-board/`.*

@@ -104,3 +104,83 @@ describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
     expect(journalHandler.handleIncoming).toHaveBeenCalledWith(nodeMeta, envelope);
   });
 });
+
+describe('NodeRealtimeGateway board channel (server-first SF2)', () => {
+  const editLeasePayload = {
+    deviceId: 'd1',
+    holder: 'cabinet' as const,
+    sessionId: 'sess-1',
+    revision: 3,
+    expiresAt: '2026-06-26T12:00:00.000Z',
+  };
+
+  it('fans out board.edit-lease from node to cabinet subscribers', async () => {
+    const { gateway, realtimeService, journalHandler } = buildGateway();
+    const envelope: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'board',
+      type: NODE_REALTIME_EVENT_TYPES.board.editLease,
+      ts: '2026-06-18T09:00:00.000Z',
+      payload: editLeasePayload,
+    };
+
+    await gateway.dispatchEnvelope(nodeMeta, envelope);
+
+    expect(realtimeService.fanOutToCabinet).toHaveBeenCalledWith('m1', envelope);
+    expect(journalHandler.handleIncoming).not.toHaveBeenCalled();
+  });
+
+  it('routes board.edit-lease from cabinet to node and fans out to cabinet', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    const envelope: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'board',
+      type: NODE_REALTIME_EVENT_TYPES.board.editLease,
+      ts: '2026-06-18T09:00:00.000Z',
+      payload: editLeasePayload,
+    };
+
+    await gateway.dispatchEnvelope(cabinetMeta, envelope);
+
+    expect(realtimeService.fanOutToCabinet).toHaveBeenCalledWith('m1', envelope);
+    expect(realtimeService.sendToNode).toHaveBeenCalledWith('d1', envelope);
+  });
+
+  it('routes board.capture-state to target deviceId from payload (multi-node)', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    const envelope: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'board',
+      type: NODE_REALTIME_EVENT_TYPES.board.captureState,
+      ts: '2026-06-18T09:00:00.000Z',
+      payload: {
+        deviceId: 'd2',
+        authority: 'cabinet',
+        followerMode: 'strict',
+        isRunning: true,
+        isPaused: false,
+      },
+    };
+
+    await gateway.dispatchEnvelope(cabinetMeta, envelope);
+
+    expect(realtimeService.fanOutToCabinet).toHaveBeenCalledWith('m1', envelope);
+    expect(realtimeService.sendToNode).toHaveBeenCalledWith('d2', envelope);
+  });
+
+  it('drops invalid board.edit-lease payloads', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    const envelope: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'board',
+      type: NODE_REALTIME_EVENT_TYPES.board.editLease,
+      ts: '2026-06-18T09:00:00.000Z',
+      payload: { deviceId: 'd1', holder: 'cabinet', revision: 1, expiresAt: null },
+    };
+
+    await gateway.dispatchEnvelope(cabinetMeta, envelope);
+
+    expect(realtimeService.fanOutToCabinet).not.toHaveBeenCalled();
+    expect(realtimeService.sendToNode).not.toHaveBeenCalled();
+  });
+});

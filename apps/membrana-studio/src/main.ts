@@ -1,6 +1,8 @@
 import { app, BrowserWindow, session, shell } from 'electron';
 import path from 'node:path';
 
+import { registerLoggingIpc, attachWindowShellLogging } from './logging/register-ipc';
+import { initShellLog, writeShellLog } from './logging/shell-log';
 import { createMediaLibraryFsStore } from './media-library/media-library-fs';
 import { registerMediaLibraryIpc } from './media-library/register-ipc';
 import { createJournalFsStore } from './journal/journal-fs';
@@ -46,11 +48,14 @@ function createMainWindow(): BrowserWindow {
   });
 
   if (isDev) {
-    void win.loadURL(STUDIO_DEV_URL);
+    const devUrl = process.env.MEMBRANA_STUDIO_DEV_URL ?? STUDIO_DEV_URL;
+    void win.loadURL(devUrl);
     win.webContents.openDevTools({ mode: 'detach' });
   } else {
     void win.loadFile(clientDistIndexPath());
   }
+
+  attachWindowShellLogging(win);
 
   return win;
 }
@@ -68,6 +73,13 @@ if (!app.requestSingleInstanceLock()) {
 
   app.whenReady().then(() => {
     const userData = app.getPath('userData');
+    initShellLog(userData, isDev);
+    registerLoggingIpc();
+    writeShellLog('info', 'main', 'app ready', {
+      version: app.getVersion(),
+      isDev,
+    });
+
     const mediaStore = createMediaLibraryFsStore(path.join(userData, 'media-library'));
     registerMediaLibraryIpc(mediaStore);
     const journalStore = createJournalFsStore(path.join(userData, 'journal'));

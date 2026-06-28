@@ -2,7 +2,7 @@
 
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
 > **Реестр:** `id` = **`db-post-usercase-roadmap`**  
-> **Предшественник:** [`USERCASE_MVP_MICROPHONE_LGTM.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) (2026-06-21)  
+> **Предшественник:** [`USERCASE_MVP_MICROPHONE_LGTM.md`](../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md) (2026-06-21)  
 > **Ветка:** feature-ветки от `vesnin`; UX/docs — обычные PR, server — с `background-media`
 
 **Статус:** **active** — UserCase MVP microphone **достигнут**; этот документ — план работ **после** parity A+B.
@@ -35,7 +35,7 @@ Device-board впервые выполняет полный **UserCase MVP micro
 | U4 | Run controls: pre-run validation UX, trace export discoverability | chain trace P0–P3 |
 | U5 | CollectFftFrames append-only vs flush — подсказка в inspector | post-fix 2026-06-21 |
 | U6 | Manual save / dirty state / branch import modal polish | [`DEVICE_BOARD_MANUAL_SAVE_PROMPT.md`](./DEVICE_BOARD_MANUAL_SAVE_PROMPT.md) |
-| U7 | ~~Pure Getters (Blueprint parity)~~ **LGTM** | [`PURE_GETTERS_LGTM.md`](../device-board-scripts/PURE_GETTERS_LGTM.md) |
+| U7 | ~~Pure Getters (Blueprint parity)~~ **LGTM** | [`PURE_GETTERS_LGTM.md`](../actions/device-board/sign-offs/PURE_GETTERS_LGTM.md) |
 | U8 | Canvas: marquee, groups, user functions, align MVP | [`DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md`](./DEVICE_BOARD_CANVAS_GROUPS_FUNCTIONS_EPIC_PROMPT.md) |
 | U8a | Node align advanced (snap, guides, dagre) | `db-node-align-advanced` (отдельный эпик) |
 | **U9** | **UserCases catalog** (settings + modal + apply-all + layout canon) | [`DEVICE_BOARD_USERCASES_EPIC_PROMPT.md`](./DEVICE_BOARD_USERCASES_EPIC_PROMPT.md) · [`консилиум`](../discussions/device-board-usercases-consilium-2026-06-21.md) |
@@ -54,7 +54,7 @@ Device-board впервые выполняет полный **UserCase MVP micro
 | D2 | `USERCASE_MVP_MICROPHONE.md` | LGTM banner + ссылка на sign-off |
 | D3 | `docs/catalog/client/` | promptPath для device-board module (если отсутствует) |
 | D4 | Node palette / socket types table | Синхрон с `@membrana/core` CONSTRUCTOR + gate kinds |
-| D5 | Cookbook | [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](../device-board-scripts/SCENARIO_CHAIN_LOG_COOKBOOK.md) — v08 main loop default |
+| D5 | Cookbook | [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](../actions/device-board/cookbooks/SCENARIO_CHAIN_LOG_COOKBOOK.md) — v08 main loop default |
 | D6 | Package README | `packages/device-board/README.md` — UserCase MVP + yarn scripts |
 
 **DoD направления D:** разработчик без чата находит «как устроен MVP» за ≤10 мин только по `docs/` + CONCEPT.

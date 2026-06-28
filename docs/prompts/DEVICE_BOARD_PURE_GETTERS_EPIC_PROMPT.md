@@ -3,7 +3,7 @@
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)  
 > **Реестр:** `id` = **`db-pure-getters-blueprint-parity`**  
 > **Родитель:** [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](./DEVICE_BOARD_POST_USERCASE_ROADMAP.md) (направление **U**)  
-> **Предшественник:** UserCase MVP LGTM · [`USERCASE_MVP_MICROPHONE_LGTM.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md)  
+> **Предшественник:** UserCase MVP LGTM · [`USERCASE_MVP_MICROPHONE_LGTM.md`](../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md)  
 > **Статус:** **LGTM** (G0–G4 закрыты · 2026-06-21) — proposal **#1** из серии UX-эпиков  
 > **Ветка:** `vesnin` (контракты `@membrana/core` + runtime `@membrana/device-board`)
 
@@ -171,7 +171,7 @@ Toggle pure: confirm если будут удалены exec edges (optional toa
 
 ## Связанные документы
 
-- [`PURE_GETTERS_LGTM.md`](../device-board-scripts/PURE_GETTERS_LGTM.md) — sign-off
+- [`PURE_GETTERS_LGTM.md`](../actions/device-board/sign-offs/PURE_GETTERS_LGTM.md) — sign-off
 - [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) §15.7 constructors
 - [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](./DEVICE_BOARD_POST_USERCASE_ROADMAP.md)
 - [`DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md`](./DEVICE_BOARD_UX_PORTS_HEADER_PROMPT.md)
@@ -182,6 +182,6 @@ Toggle pure: confirm если будут удалены exec edges (optional toa
 
 | # | Статус | Кратко |
 |---|--------|--------|
-| **1** | **closed** | Pure Getters — [`PURE_GETTERS_LGTM.md`](../device-board-scripts/PURE_GETTERS_LGTM.md) |
+| **1** | **closed** | Pure Getters — [`PURE_GETTERS_LGTM.md`](../actions/device-board/sign-offs/PURE_GETTERS_LGTM.md) |
 | 2 | _pending_ | _(опишет Product Owner после закрытия #1)_ |
 | 3 | _pending_ | … |

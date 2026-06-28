@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "auditDate": "2026-06-26",
+  "branch": "fix/async-v2-l18-l19-recording-detached",
+  "coordinator": "Vesnin",
+  "notes": "DB3H-S1 tech-debt sprint. RAG index --full out of scope (no OPENAI_API_KEY). Focus: CI green, lint, issues triage, registry hygiene.",
+  "closed": [],
+  "open": [
+    {
+      "number": 180,
+      "priority": "important",
+      "persona": "Rodchenko",
+      "summary": "async-v2 L18 clip recorder re-arm + L19 detached report — активная ветка спринта E.",
+      "registryId": null
+    },
+    {
+      "number": 178,
+      "priority": "important",
+      "persona": "Rodchenko",
+      "summary": "comp-packaging: async-v2 track upload fails — блокер detached drone report.",
+      "registryId": "comp-packaging-catalog-2026-06-25"
+    },
+    {
+      "number": 151,
+      "priority": "recommended",
+      "persona": "Ozhegov",
+      "summary": "Epic W0 hotfixes — db-w0-h1/h2/h3 в registry active.",
+      "registryId": "device-board-w0-hotfix"
+    },
+    {
+      "number": 146,
+      "priority": "recommended",
+      "persona": "Rodchenko",
+      "summary": "W0-H1 function palette в редакторе функций.",
+      "registryId": "db-w0-h1-function-palette"
+    },
+    {
+      "number": 153,
+      "priority": "recommended",
+      "persona": "Rodchenko",
+      "summary": "W0-H3 selection modal keep.",
+      "registryId": "db-w0-h3-selection-modal-keep"
+    },
+    {
+      "number": 157,
+      "priority": "recommended",
+      "persona": "Ozhegov",
+      "summary": "Comment group delete — не удалять дочерние узлы.",
+      "registryId": null
+    },
+    {
+      "number": 12,
+      "priority": "recommended",
+      "persona": "Ozhegov",
+      "summary": "yarn test:scripts в CI — часть DB3H-S1 phase D.",
+      "registryId": null
+    },
+    {
+      "number": 144,
+      "priority": "not-urgent",
+      "persona": "Vesnin",
+      "summary": "Tasks Audit v1 epic — bookkeeping scripts (tasks-audit.mjs missing).",
+      "registryId": null
+    },
+    {
+      "number": 7,
+      "priority": "optional",
+      "persona": "Dynin",
+      "summary": "Unit-тесты agenda store/registry.",
+      "registryId": null
+    },
+    {
+      "number": 8,
+      "priority": "optional",
+      "persona": "Rodchenko",
+      "summary": "Smoke регистрации модулей client.",
+      "registryId": null
+    }
+  ]
+}

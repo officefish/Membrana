@@ -3,7 +3,7 @@
 > **Task-промпт** · [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md)
 > **Эпик** · **Размер:** **L** (фазы **TBD** — после обсуждения команды)
 > **Реестр:** `id` = **`db-trends-fft-parity-mic-v08`**
-> **Статус:** **LGTM 2026-06-21** — B0–B3 complete; UserCase MVP достигнут (см. [`USERCASE_MVP_MICROPHONE_LGTM.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md))
+> **Статус:** **LGTM 2026-06-21** — B0–B3 complete; UserCase MVP достигнут (см. [`USERCASE_MVP_MICROPHONE_LGTM.md`](../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md))
 > **Blocked by:** [`DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md`](./DEVICE_BOARD_RECORDING_PARITY_V08_EPIC_PROMPT.md) (A5 LGTM ✓)
 > **Канон графа:** `docs/device-board-scripts/device-scenario-microphone-main-v07.json`
 

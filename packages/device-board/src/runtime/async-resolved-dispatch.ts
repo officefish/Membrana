@@ -19,7 +19,7 @@ import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ExecSubgraphOptions } from './exec-subgraph.js';
 import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
 import type { ScenarioRuntimeHost } from './host.js';
-import { resolveInput } from './resolve-input.js';
+import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import type { PromiseRuntimeStore } from './promise-runtime-store.js';
 import type { ScenarioDetectionResult } from './types.js';
 import type { ScenarioRuntimeBranch } from './types.js';
@@ -76,29 +76,58 @@ function findFunctionBlockBindings(
   return bindings;
 }
 
+/** Collapsed user functions: bridge parent block data pins into async-resolved paths. */
+function augmentResolveContextForFunctionSubgraphTarget(
+  document: DeviceScenarioDocument,
+  binding: SubgraphBranchBinding,
+  variableStore: ScenarioVariableStore,
+  baseContext: ResolveInputContext | undefined,
+): ResolveInputContext | undefined {
+  if (baseContext === undefined) {
+    return undefined;
+  }
+  const functionId = findFunctionIdForSubgraph(document, binding.subgraph);
+  if (functionId === null) {
+    return baseContext;
+  }
+  const blockBindings = findFunctionBlockBindings(document, functionId);
+  if (blockBindings.length === 0) {
+    return baseContext;
+  }
+  const blockBinding =
+    blockBindings.find((item) => item.branch === binding.branch) ?? blockBindings[0]!;
+  return augmentResolveContextForFunctionCall({
+    parentSubgraph: blockBinding.parentSubgraph,
+    blockNodeId: blockBinding.blockNodeId,
+    variables: variableStore.getAll(),
+    baseContext,
+  });
+}
+
 /** Collapsed user functions: bridge parent block data pins into detached async dispatch. */
 function augmentExecOptionsForFunctionSubgraph(
   document: DeviceScenarioDocument,
   target: AsyncResolvedTarget,
   baseOptions: ExecSubgraphOptions,
 ): ExecSubgraphOptions {
-  const functionId = findFunctionIdForSubgraph(document, target.subgraph);
-  if (functionId === null) {
+  const variableStore = baseOptions.variableStore;
+  if (variableStore === undefined) {
     return baseOptions;
   }
-  const bindings = findFunctionBlockBindings(document, functionId);
-  if (bindings.length === 0) {
+  const resolveContext = augmentResolveContextForFunctionSubgraphTarget(
+    document,
+    { branch: target.branch, subgraph: target.subgraph },
+    variableStore,
+    baseOptions.resolveContext,
+  );
+  if (resolveContext === baseOptions.resolveContext) {
     return baseOptions;
   }
-  const binding =
-    bindings.find((item) => item.branch === target.branch) ?? bindings[0]!;
-  const resolveContext = augmentResolveContextForFunctionCall({
-    parentSubgraph: binding.parentSubgraph,
-    blockNodeId: binding.blockNodeId,
-    variables: baseOptions.variableStore?.getAll() ?? [],
-    baseContext: baseOptions.resolveContext,
-  });
-  return { ...baseOptions, resolveContext };
+  return {
+    ...baseOptions,
+    functions: document.scenario.functions,
+    resolveContext,
+  };
 }
 
 function collectSubgraphBindings(document: DeviceScenarioDocument): readonly SubgraphBranchBinding[] {
@@ -130,10 +159,16 @@ export function findAsyncResolvedTargets(
   const targets: AsyncResolvedTarget[] = [];
 
   for (const binding of collectSubgraphBindings(document)) {
-    const resolveContext = resolveContextByBranch(binding.branch);
-    if (resolveContext === undefined) {
+    const baseContext = resolveContextByBranch(binding.branch);
+    if (baseContext === undefined) {
       continue;
     }
+    const resolveContext = augmentResolveContextForFunctionSubgraphTarget(
+      document,
+      binding,
+      variableStore,
+      baseContext,
+    );
     const augmented = {
       ...resolveContext,
       getPromiseRef: (nodeId: string) => promiseRuntimeStore.getPromiseRef(nodeId),

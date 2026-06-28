@@ -22,7 +22,7 @@
 ## Smoke sign-off
 
 - **Run:** `7e8a289c` · 10 gate windows · 10 trends publish
-- **LGTM:** [`USERCASE_MVP_MICROPHONE_LGTM.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) § v0.9
+- **LGTM:** [`USERCASE_MVP_MICROPHONE_LGTM.md`](../actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md) § v0.9
 
 ---
 

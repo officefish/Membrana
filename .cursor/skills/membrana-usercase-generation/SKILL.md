@@ -15,7 +15,7 @@ description: >-
 node scripts/usercase.mjs help
 ```
 
-Regulation (if present): `docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md`  
+Regulation (if present): `docs/actions/device-board/USERCASE_GENERATION_REGULATION.md`  
 Prompt: `docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`
 
 ## Workflow

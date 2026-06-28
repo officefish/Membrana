@@ -1,6 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createEmptyDeviceScenarioDocument } from '@membrana/core';
+import {
+  createEmptyDeviceScenarioDocument,
+  createReferenceValue,
+  createScenarioVariable,
+  formatJournalRefHandle,
+  type ScenarioGraphEdge,
+  type ScenarioGraphNode,
+} from '@membrana/core';
 
 
 
@@ -35,6 +42,13 @@ import {
 import { createStubScenarioRuntimeHost } from './host.js';
 
 import { ScenarioRuntime } from './scenario-runtime.js';
+
+import { EVENT_DEVICE_HANDLE } from '../graph/event-node.js';
+import {
+  GET_JOURNAL_DEVICE_HANDLE,
+  GET_JOURNAL_OUT_HANDLE,
+} from '../graph/get-journal-node.js';
+import { VARIABLE_VALUE_HANDLE } from '../graph/variable-node.js';
 
 
 
@@ -523,4 +537,107 @@ describe('ScenarioRuntime pause (DBP0)', () => {
   });
 });
 
+const AUTONOMOUS_DEVICE = 'local-studio-test-device';
+
+function autonomousJournalOnConnectNodes(
+  journalVarId: string,
+): { entry: string; nodes: ScenarioGraphNode[]; edges: ScenarioGraphEdge[] } {
+  return {
+    entry: 'on-connect-event',
+    nodes: [
+      {
+        id: 'on-connect-event',
+        blockKind: 'custom',
+        position: { x: 0, y: 0 },
+        label: 'On connect',
+        nodeKind: 'event',
+        system: true,
+      },
+      {
+        id: 'get-journal',
+        blockKind: 'custom',
+        position: { x: 0, y: 0 },
+        label: 'GetJournal',
+        nodeKind: 'get-journal',
+      },
+      {
+        id: 'set-journal',
+        blockKind: 'custom',
+        position: { x: 0, y: 0 },
+        label: 'journal1',
+        nodeKind: 'variable-set',
+        variableId: journalVarId,
+      },
+    ],
+    edges: [
+      {
+        kind: 'exec',
+        source: 'on-connect-event',
+        sourceHandle: 'exec-out',
+        target: 'set-journal',
+        targetHandle: 'exec-in',
+      },
+      {
+        kind: 'data',
+        source: 'on-connect-event',
+        sourceHandle: EVENT_DEVICE_HANDLE,
+        target: 'get-journal',
+        targetHandle: GET_JOURNAL_DEVICE_HANDLE,
+        dataType: 'DeviceRef',
+      },
+      {
+        kind: 'data',
+        source: 'get-journal',
+        sourceHandle: GET_JOURNAL_OUT_HANDLE,
+        target: 'set-journal',
+        targetHandle: VARIABLE_VALUE_HANDLE,
+        dataType: 'JournalRef',
+      },
+    ],
+  };
+}
+
+function buildAutonomousJournalSeedDocument() {
+  const journalVar = createScenarioVariable('var-journal', 'journal1', 'JournalRef');
+  const document = createEmptyDeviceScenarioDocument('microphone');
+  const onConnect = autonomousJournalOnConnectNodes(journalVar.id);
+  return {
+    ...document,
+    scenario: {
+      ...document.scenario,
+      onConnect: {
+        entry: onConnect.entry,
+        nodes: onConnect.nodes,
+        edges: onConnect.edges,
+      },
+      variables: [journalVar],
+    },
+  };
+}
+
+describe('ScenarioRuntime autonomous journal seed (ST9)', () => {
+  it('runs onConnect at start when unlinked but device handle exists', async () => {
+    const journalHandle = formatJournalRefHandle('device', AUTONOMOUS_DEVICE);
+    // eslint-disable-next-line prefer-const -- assigned after host closures capture it
+    let runtime!: ScenarioRuntime;
+    const host = createStubScenarioRuntimeHost({
+      isDeviceLinked: () => false,
+      getDeviceHandle: () => AUTONOMOUS_DEVICE,
+      getDeviceJournalRef: (deviceHandle) =>
+        createReferenceValue('JournalRef', formatJournalRefHandle('device', deviceHandle)),
+      recordChunk: async () => {
+        runtime.stop();
+        return { clipId: 'clip-1' };
+      },
+    });
+
+    runtime = new ScenarioRuntime(host, { loopTickPauseMs: 0 });
+    runtime.load(buildAutonomousJournalSeedDocument());
+    await runtime.start();
+
+    const journalVar = runtime.getVariables().find((item) => item.id === 'var-journal');
+    expect(journalVar?.value?.valid).toBe(true);
+    expect(journalVar?.value?.handle).toBe(journalHandle);
+  });
+});
 

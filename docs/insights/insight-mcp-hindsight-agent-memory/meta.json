@@ -1,0 +1,14 @@
+{
+  "id": "insight-mcp-hindsight-agent-memory",
+  "title": "Hindsight — обучающаяся память агента между сессиями",
+  "status": "draft",
+  "source": "mcp-tooling-consilium",
+  "sprintPhase": "mcp-tooling-m4-hindsight-spike",
+  "horizon": "quarter",
+  "weight": null,
+  "createdAt": "2026-06-27",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": ["mcp", "memory", "agent", "lessons", "tooling", "self-hosted"]
+}

@@ -2548,6 +2548,7 @@ __metadata:
     "@types/node": "npm:^20.14.0"
     electron: "npm:^33.2.1"
     electron-builder: "npm:^25.1.8"
+    electron-log: "npm:^5.2.0"
     rimraf: "npm:^5.0.0"
     typescript: "npm:^5.4.0"
     vitest: "npm:^1.4.0"
@@ -8022,6 +8023,13 @@ __metadata:
     electron-builder: cli.js
     install-app-deps: install-app-deps.js
   checksum: 10c0/9602a19f8c647fb75b07e44dc856012d2b1fe1afcb257ffd24cf17e07d7ae3b51405cf31da10403965ddcc7b194d60aca6bc5d7890e367b1be2ec95219edcbe8
+  languageName: node
+  linkType: hard
+
+"electron-log@npm:^5.2.0":
+  version: 5.4.4
+  resolution: "electron-log@npm:5.4.4"
+  checksum: 10c0/bdcf44eb9d35306352d8ee827159c4b95c171f3c0c77e2a75c05c7da626e8f83588a82d6c02e6e18ff6d70056cdbc9a845a820e905151aa8a0040b46c8143b13
   languageName: node
   linkType: hard
 

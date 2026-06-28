@@ -24,7 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Локальные дампы console client app (см. logs/README.md)
+# Локальные дампы console (см. logs/README.md)
 logs/apps/**/*
 !logs/**/.gitignore
 !logs/**/README.md
@@ -98,3 +98,14 @@ pnpm-lock.yaml
 
 # SSL сертификаты для https соединений
 ssl/
+
+# LLM proxy secret (локальный, не коммитить никогда)
+.env.llm-proxy
+.env.llm-proxy.local
+
+# Playwright / тестовые артефакты клиента
+apps/client/playwright-report/
+apps/client/test-results/
+
+# Локальный дамп sync-readme (96 КБ, временный)
+.sync-readme-out.txt

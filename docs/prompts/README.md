@@ -34,6 +34,7 @@
 | **[`DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md`](./DEVICE_BOARD_DOCS_POST_140_SPRINT_PROMPT.md)** | **Закрыт** — docs post-#140 + RAG workflow (D1–D4, index deferred) |
 | **[`CODE_REVIEW_REGULATION.md`](./CODE_REVIEW_REGULATION.md)** | **Системный регламент** code review (daily / PR / branch); `yarn code-review` |
 | **[`CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md`](./CURSOR_AGENT_SKILLS_SPRINT_PROMPT.md)** | **Закрыт** — Cursor / Claude agent skills S0–S8 |
+| **[`DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md`](./DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md)** | **Активный day-sprint** — `docs/actions/` фаза A: MD-процессы device-board из `device-board-scripts/` (DA A0–A6) |
 | **[`DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md`](./DEVICE_BOARD_DOC_V04_SPRINT_PROMPT.md)** | **Закрыт** — node reference DV1–DV6 (43 pages) |
 
 Команды: `yarn task:list`, `yarn task:sync-readme`, `yarn task:archive <id>`, `yarn night:open --id …`, `yarn consilium "<вопрос>"`.
@@ -46,6 +47,7 @@
 |-----------|-----------|-------|
 | **Role-промпт** | `docs/virtual-team/PROMPT_*.md` | Личность и зона ответственности роли (Vesnin, Dynin, …). |
 | **Task-промпт** | `docs/prompts/*.md` | Спецификация задачи: DoD, out of scope, архитектура. |
+| **Actions (process)** | `docs/actions/**` | Долгоживущие регламенты, smoke, lessons (см. [`actions/README.md`](../actions/README.md)). |
 | **Реестр** | `docs/tasks/registry.json` | Статус задачи: active / archived |
 
 Task-промпты не заменяют GitHub Issue ([`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md)); Issue ссылается на промпт и на `id` в реестре.

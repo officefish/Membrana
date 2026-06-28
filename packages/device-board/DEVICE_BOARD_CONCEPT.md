@@ -880,7 +880,7 @@ presets trends-fft-analyzer). Data-edge к `MakeFftTrendsAnalysis.policy`.
 ref constructors. `RecordingPolicy` **убран** из sidebar «Конструктор переменных» (legacy JSON
 variables мигрируют через `resolveScenarioRecordingPolicy`).
 
-**Sign-off:** [`docs/device-board-scripts/PURE_GETTERS_LGTM.md`](../../docs/device-board-scripts/PURE_GETTERS_LGTM.md).
+**Sign-off:** [`docs/actions/device-board/sign-offs/PURE_GETTERS_LGTM.md`](../../docs/actions/device-board/sign-offs/PURE_GETTERS_LGTM.md).
 
 ---
 
@@ -937,7 +937,7 @@ Parallel: CollectSamples → [event] → NewTrack
 
 ### 16.5 Целевой MVP: AudioStream → track + report (v0.8 LGTM)
 
-> **Достигнуто 2026-06-21:** bundled `usercase-mvp-microphone` на device-board; sign-off [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md).  
+> **Достигнуто 2026-06-21:** bundled `usercase-mvp-microphone` на device-board; sign-off [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md).  
 > **Переход v0.9-functions (WIP, 2026-06-24):** runtime-validated user scenario с `scenario.functions[]` — новый bundled target; см. §16.5.1. Flat v0.8 остаётся в codegen до cutover.  
 > **Дальше:** usability + async delivery + server persist — [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md).
 
@@ -1018,7 +1018,7 @@ analyser-flush → fft-trends-input → publish-report (trends-fft/v0.1)
 ### 16.5.1 Bundled v0.9-functions (cutover 2026-06-24)
 
 > Эталон: bundled default после sprint `device-board-bundled-mvp-v09-sprint-2026-06-24`; smoke **`runId 7e8a289c`**: 10 recording windows, 10 trends `publish-done`, async `upload-ok`.  
-> Документ: [`USERCASE_MVP_MICROPHONE.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE.md) · LGTM addendum · `yarn logs:parse`.
+> Документ: [`USERCASE_MVP_MICROPHONE.md`](../../docs/actions/device-board/specs/USERCASE_MVP_MICROPHONE.md) · LGTM addendum · `yarn logs:parse`.
 
 **Отличия от flat §16.5:**
 
@@ -1047,7 +1047,7 @@ StopRecording → MakeTrack → GetAudioStream (fn-3) → StartRecording (fn-1)
 
 ### 16.5.2 Bundled v2.0-async (cutover 2026-06-25)
 
-> Эталон: epic `device-board-async-pipeline-v1` (Issue #176); golden [`usercase-mvp-microphone-v20-async.document.json`](../../docs/device-board-scripts/golden/usercase-mvp-microphone-v20-async.document.json); LGTM [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../docs/device-board-scripts/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).  
+> Эталон: epic `device-board-async-pipeline-v1` (Issue #176); golden [`usercase-mvp-microphone-v20-async.document.json`](../../docs/device-board-scripts/golden/usercase-mvp-microphone-v20-async.document.json); LGTM [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../docs/actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).  
 > Parse: `yarn logs:parse` → секция **smoke v2.0-async** (`smokeV20Async` в JSON).
 
 **Цель:** non-blocking main tick на recording gate; drone report **только** после `async-job-resolved(track-upload)`; trends publish остаётся **sync на gate** (ADR AD3).
@@ -1485,7 +1485,7 @@ sequenceDiagram
 
 Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/usercases.mdx) (stub → расширение по мере новых bundled UserCases).
 
-Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) ·
+Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md) ·
 консилиум [`device-board-usercases-consilium-2026-06-21.md`](../../docs/discussions/device-board-usercases-consilium-2026-06-21.md).
 
 ---

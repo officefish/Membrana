@@ -481,9 +481,17 @@ export class ScenarioMicJournalBridge {
       session = new RecorderRecordingSession();
       this.recordingSessions.set(deviceHandle, session);
     }
+    const activeCapture = this.activeClipRecorders.get(deviceHandle);
     if (session.isActive()) {
-      scenarioChainLog('recording', 'start-recording-idempotent', { deviceHandle });
-      return true;
+      if (activeCapture !== undefined) {
+        scenarioChainLog('recording', 'start-recording-idempotent', { deviceHandle });
+        return true;
+      }
+      // Gate cycle restart (then-3): session timer active but clip was consumed on StopRecording.
+      scenarioChainLog('recording', 'start-recording-rearm', {
+        deviceHandle,
+        reason: 'active-without-capture',
+      });
     }
     const stream = this.resolveActiveStreamSync();
     if (stream === null) {
@@ -821,8 +829,33 @@ export class ScenarioMicJournalBridge {
       asyncJobStore,
     } = options;
     const createdAtIso = new Date().toISOString();
-    const mediaSnap = getDefaultMediaLibraryService().getSnapshot();
+    const mediaSvc = getDefaultMediaLibraryService();
+    await mediaSvc.init();
+    const mediaSnap = mediaSvc.getSnapshot();
     const mediaStorageMode = resolveMediaLibraryStorageMode(mediaSnap.quota);
+
+    if (blob.size === 0) {
+      const emptyDetail = 'Empty capture blob (EMPTY_BLOB)';
+      scenarioChainLog('media', 'upload-failed', {
+        nodeId,
+        trackId,
+        storageMode: mediaStorageMode,
+        captureFormat,
+        mimeType: blob.type,
+        error: emptyDetail,
+        durationSec: durationSec.toFixed(3),
+      });
+      if (promiseId !== undefined && asyncJobStore !== undefined) {
+        asyncJobStore.reject(promiseId, emptyDetail);
+        scenarioChainLog('async-job', 'rejected', {
+          promiseId,
+          kind: 'track-upload',
+          trackId,
+          error: emptyDetail,
+        });
+      }
+      return;
+    }
 
     scenarioChainLog('media', 'upload-start', {
       nodeId,
@@ -839,7 +872,7 @@ export class ScenarioMicJournalBridge {
     });
 
     try {
-      const imported = await getDefaultMediaLibraryService().importBlob(
+      const imported = await mediaSvc.importBlob(
         BUFFER_COLLECTION_ID,
         blob,
         {
@@ -1404,10 +1437,23 @@ export class ScenarioMicJournalBridge {
       // Модуль микрофона не смонтирован — свой поток.
     }
 
-    const audio: MediaTrackConstraints | true = this.selectedDeviceId
-      ? { deviceId: { exact: this.selectedDeviceId } }
+    const requestedDeviceId = this.selectedDeviceId;
+    const audio: MediaTrackConstraints | true = requestedDeviceId
+      ? { deviceId: { exact: requestedDeviceId } }
       : true;
-    this.ownedStream = await acquireMicrophone(audio);
+    try {
+      this.ownedStream = await acquireMicrophone(audio);
+    } catch (err) {
+      if (!requestedDeviceId) {
+        throw err;
+      }
+      scenarioChainLog('stream', 'mic-exact-fallback', {
+        requestedDeviceId,
+        reason: err instanceof Error ? err.message : String(err),
+      });
+      this.selectedDeviceId = '';
+      this.ownedStream = await acquireMicrophone(true);
+    }
     publishMicrophoneStream(MICROPHONE_MODULE_ID, this.ownedStream);
     this.usesCoordinator = false;
     scenarioRuntimeInfo('[device-board] startStream via owned MediaStream');

@@ -171,4 +171,4 @@ align-nodes.ts — unit tests на bbox/distribute без DOM.
 
 - [`DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md) §4.3 Blueprint parity, §12 depth ≤ 1
 - [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](./DEVICE_BOARD_POST_USERCASE_ROADMAP.md)
-- [`PURE_GETTERS_LGTM.md`](../device-board-scripts/PURE_GETTERS_LGTM.md)
+- [`PURE_GETTERS_LGTM.md`](../actions/device-board/sign-offs/PURE_GETTERS_LGTM.md)

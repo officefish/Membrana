@@ -1,0 +1,14 @@
+{
+  "id": "insight-async-v2-product-narrative",
+  "title": "Async v2 topology как продуктовая история (Act IIb upload + detached drone)",
+  "status": "adopted",
+  "source": "packaging-epic",
+  "sprintPhase": "ins-pilot-h-async-v2-narrative",
+  "horizon": "month",
+  "weight": 6.6,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["async-v2", "ux", "competition", "device-board"]
+}

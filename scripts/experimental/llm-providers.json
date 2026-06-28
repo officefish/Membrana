@@ -1,0 +1,89 @@
+{
+  "version": 2,
+  "providers": {
+    "freemodel-dev": {
+      "label": "FreeModel.dev",
+      "apiKeyEnv": "FREEMODEL_DEV_API_KEY",
+      "defaultTransport": "anthropic-messages",
+      "transports": {
+        "anthropic-messages": {
+          "label": "Anthropic /v1/messages (Claude)",
+          "apiFormat": "anthropic",
+          "baseUrlEnv": "FREEMODEL_DEV_ANTHROPIC_BASE_URL",
+          "defaultBaseUrl": "https://cc.freemodel.dev/v1",
+          "path": "/messages"
+        },
+        "openai-chat": {
+          "label": "OpenAI /v1/chat/completions",
+          "apiFormat": "openai-compatible",
+          "baseUrlEnv": "FREEMODEL_DEV_OPENAI_BASE_URL",
+          "defaultBaseUrl": "https://api.freemodel.dev/v1",
+          "path": "/chat/completions"
+        },
+        "openai-responses": {
+          "label": "OpenAI /v1/responses (Codex)",
+          "apiFormat": "openai-responses",
+          "baseUrlEnv": "FREEMODEL_DEV_OPENAI_BASE_URL",
+          "defaultBaseUrl": "https://api.freemodel.dev/v1",
+          "path": "/responses"
+        }
+      }
+    },
+    "openrouter": {
+      "label": "OpenRouter",
+      "apiKeyEnv": "OPENROUTER_API_KEY",
+      "defaultTransport": "openai-chat",
+      "transports": {
+        "openai-chat": {
+          "label": "OpenAI /v1/chat/completions",
+          "apiFormat": "openai-compatible",
+          "baseUrlEnv": "OPENROUTER_BASE_URL",
+          "defaultBaseUrl": "https://openrouter.ai/api/v1",
+          "path": "/chat/completions"
+        }
+      }
+    }
+  },
+  "models": {
+    "opus-4-7": {
+      "label": "Claude Opus 4.7",
+      "providerModels": {
+        "freemodel-dev": {
+          "modelId": "claude-opus-4-7",
+          "transport": "openai-chat",
+          "note": "cc.freemodel.dev/messages — только Claude Code; скрипт идёт через api.freemodel.dev/chat/completions"
+        },
+        "openrouter": {
+          "modelId": "anthropic/claude-opus-4.7",
+          "transport": "openai-chat"
+        }
+      }
+    },
+    "sonnet-4": {
+      "label": "Claude Sonnet 4.6",
+      "providerModels": {
+        "freemodel-dev": {
+          "modelId": "claude-sonnet-4-6",
+          "transport": "openai-chat"
+        },
+        "openrouter": {
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "transport": "openai-chat"
+        }
+      }
+    },
+    "haiku-4-5": {
+      "label": "Claude Haiku 4.5",
+      "providerModels": {
+        "freemodel-dev": {
+          "modelId": "claude-haiku-4-5-20251001",
+          "transport": "openai-chat"
+        },
+        "openrouter": {
+          "modelId": "anthropic/claude-haiku-4.5",
+          "transport": "openai-chat"
+        }
+      }
+    }
+  }
+}

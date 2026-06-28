@@ -1,33 +1,31 @@
 # CURRENT_TASK
 
-> **Активный спринт:** `async-v2-track-upload-178` · GitHub [#178](https://github.com/officefish/Membrana/issues/178)  
-> **Parent:** `comp-packaging-catalog-2026-06-25` Phase C (Alpha blocked)  
-> **Prompt:** [`docs/prompts/ASYNC_V2_TRACK_UPLOAD_PROMPT.md`](./prompts/ASYNC_V2_TRACK_UPLOAD_PROMPT.md)
+> **Буфер** — при конфликте проигрывает [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и реестру.
 
-## Фокус
+## Канон дня (2026-06-26)
 
-Fix `StartAsyncJob(track-upload)` → `importBlob` → `upload-failed` (×3); разблокировать `make-report-from-track` / detached publish.
+**Текущий спринт:** `device-board-server-first` ← **сейчас**  
+**Параллельно:** `db3h-s5-desktop-logging` (DL-3 optional) — не блокер
 
-**Не трогать:** L16 pack wiring (`usercase-competition-pack.ts`).
+### Фокус
 
-## Фазы
+**Device-board server-first** — консилиум ✅, спринт SF0–SF9. **Детекторы S4 не открываем.**
 
-| Phase | Статус | Действие |
-|-------|--------|----------|
-| 1a Client | ✅ | `whenMediaLibraryConfigured`, `ensureReservedCollections`, upload-failed `code` |
-| 1b Server | ✅ | VPS diag + hotfix deploy; ensure-reserved ~0.1s — [`MEDIA_SERVER_DIAGNOSTICS.md`](./deploy/MEDIA_SERVER_DIAGNOSTICS.md) |
-| 2 Fix | ✅ | client + `@membrana/background-media` (prod hotfix 2026-06-25) |
-| 3 Sign-off | ⏳ | Browser re-smoke Alpha ≥60s → `yarn logs:parse` → `v20 happy path: PASS` |
+### Очередь
 
-## Команды
+1. ~~`db3h-s3-studio-host`~~ — closed
+2. `db3h-s5-desktop-logging` — DL-1/DL-2 ✅; DL-3 optional
+3. **`device-board-server-first`** — SF0–SF9 ✅ · **deploy + prod smoke** next ([`DEPLOY.md`](./day-sprint/db-server-first-2026-06-26/DEPLOY.md))
+4. ~~`db3h-s4-microphone-detectors`~~ — **deferred** (после server-first)
+
+### Команды
 
 ```bash
-yarn media:prod:diag                    # VPS (SSH)
-yarn media:prod:upload-smoke            # prod upload path
-yarn workspace @membrana/client dev
-# Apply alpha-async-v2 → Run ≥60s → logs → yarn logs:parse
+yarn turbo run lint typecheck test build --continue
+# deploy: docs/day-sprint/db-server-first-2026-06-26/DEPLOY.md
+# prod E2E: docs/actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
 ```
 
-## DoD
-
-`v20 happy path: PASS` · `upload-ok ≥ gate-true` · `yarn media:diag` green · ODF-av2-alpha-004 resolved.
+**Консилиум:** [`seanses/device-board-server-first-2026-06-26.md`](./seanses/device-board-server-first-2026-06-26.md)  
+**Канон:** [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md)  
+**OPEN:** [`db-server-first-2026-06-26/OPEN.md`](./day-sprint/db-server-first-2026-06-26/OPEN.md)

@@ -37,10 +37,10 @@ Bundled reference по-прежнему: **`usercase-mvp-microphone`** (flat MVP
 
 | Artifact | Path |
 |----------|------|
-| **Generation regulation** | [`docs/device-board-scripts/USERCASE_GENERATION_REGULATION.md`](../../device-board-scripts/USERCASE_GENERATION_REGULATION.md) |
+| **Generation regulation** | [`docs/actions/device-board/USERCASE_GENERATION_REGULATION.md`](../../actions/device-board/USERCASE_GENERATION_REGULATION.md) |
 | **Generation prompt** | [`docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../../prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md) |
 | **Scripts hub** | [`docs/device-board-scripts/README.md`](../../device-board-scripts/README.md) |
-| **Lessons diary** | [`docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md`](../../device-board-scripts/USERCASE_COMPETITION_LESSONS.md) |
+| **Lessons diary** | [`docs/actions/device-board/USERCASE_COMPETITION_LESSONS.md`](../../actions/device-board/USERCASE_COMPETITION_LESSONS.md) |
 | **Agent CLI** | `node scripts/usercase.mjs help` |
 | Scorecard (historical) | [`SCORECARD.md`](./SCORECARD.md) |
 | Winner doc (historical packaging vote) | [`WINNER.md`](./WINNER.md) — **не** action item для merge |

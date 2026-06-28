@@ -22,7 +22,7 @@ CONCEPT 15.7 v0.9; PURE_GETTERS_LGTM.md
 **Артефакты:**
 
 - `packages/device-board/DEVICE_BOARD_CONCEPT.md` §15.7 + §16.5 diagram (v0.9)
-- `docs/device-board-scripts/PURE_GETTERS_LGTM.md`
+- `docs/actions/device-board/sign-offs/PURE_GETTERS_LGTM.md`
 - `docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md` — U7 marked LGTM
 
 **Parent epic archived:** `db-pure-getters-blueprint-parity`.

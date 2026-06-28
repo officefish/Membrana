@@ -4636,7 +4636,7 @@
     {
       "id": "db-usercase-mvp-microphone-lgtm",
       "title": "UserCase MVP microphone LGTM — device-board end-to-end",
-      "promptPath": "docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md",
+      "promptPath": "docs/actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
@@ -6917,6 +6917,7 @@
     },
     {
       "id": "device-board-async-pipeline-v1",
+      "status": "closed",
       "title": "Device-board async pipeline: Promise nodes, latent Sequence, non-blocking runtime",
       "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
       "githubIssue": 176,
@@ -8191,7 +8192,7 @@
       "githubIssue": 178,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "competition-packaging",
       "parentEpic": "comp-packaging-catalog-2026-06-25",
@@ -8200,7 +8201,1043 @@
         "dynin",
         "kuryokhin"
       ],
-      "notes": "Phase C Alpha blocked: upload-ok=0, async rejected×3. Client + server diag (yarn media:diag)."
+      "notes": "Fix: client race (await whenMediaLibraryConfigured) + server ensure-reserved deferred. Smoke PASS alpha/beta/gamma.",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "PR #179 — upload-ok restored, async-job resolved, detached report fires. Closes #178."
+    },
+    {
+      "id": "insight-process-registration-2026-06-25",
+      "title": "Day sprint: Insight process registration",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "sprintKind": "day-sprint",
+      "parentEpic": null,
+      "leadPersona": "vesnin",
+      "notes": "Insight workflow: Perplexity cascade, review /10, plan:week hook. Phases A–J.",
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "Phases A-J done; 3 adopted + 1 deferred insight; CLOSURE.md"
+    },
+    {
+      "id": "ins-reg-a-regulation",
+      "title": "Insight A: regulation + templates + registry",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "INSIGHT_REGULATION, docs/insights/, 3 pilot drafts",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-b-script-core",
+      "title": "Insight B: insight.mjs create/list/help",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "scripts/insight.mjs + insight-ritual.mjs",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-c-research-cascade",
+      "title": "Insight C: Perplexity research cascade",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "API → MCP fallback → manual; research command",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-d-review-anthropic",
+      "title": "Insight D: team review Anthropic /10",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight review → REVIEW.md + weight",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-e-skill-rhythm",
+      "title": "Insight E: skill + DEVELOPER_RHYTHM",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "membrana-insight skill",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-reg-f-plan-week",
+      "title": "Insight F: plan:week registry hook",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "weight ≥ 6 in strategic-plan-week",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-g-operator-smoke",
+      "title": "Insight pilot G: operator smoke CI gate",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight-operator-smoke-ci-gate — research + review",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-h-async-v2-narrative",
+      "title": "Insight pilot H: async v2 product narrative",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight-async-v2-product-narrative",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-i-catalog-pipeline",
+      "title": "Insight pilot I: competition catalog pipeline",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "insight-competition-catalog-pipeline",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "ins-pilot-j-user-insights",
+      "title": "Insight pilot J: user-sourced insights (≥1)",
+      "promptPath": "docs/prompts/INSIGHT_PROCESS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "parentEpic": "insight-process-registration-2026-06-25",
+      "notes": "yarn insight create --source user",
+      "archivedAt": "2026-06-25"
+    },
+    {
+      "id": "device-board-three-hosts-2026-06-26",
+      "title": "Device-board UserCase: стабильность на cabinet + Studio + Device (эпик)",
+      "promptPath": "docs/seanses/neural-detectors-strategy-2026-06-26.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-async-pipeline-v1"
+      ],
+      "notes": "Консилиум 2026-06-26. Магистраль: спринты 1–4 (техдолг → cabinet → Studio → микрофон). Нейро deferred. primaryFocus MAIN_DAY_ISSUE 2026-06-26.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s1-tech-debt",
+      "title": "DB3H-S1: техдолг — lint, CI, issues audit, repo hygiene",
+      "promptPath": "docs/prompts/DB3H_S1_TECH_DEBT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "PR #181 L18-L23 merged; smoke c778c4ee; CI+audit+test:scripts",
+      "dependsOn": [
+        "device-board-three-hosts-2026-06-26"
+      ],
+      "notes": "CLOSED 2026-06-26. PR #181 L18-L23; smoke c778c4ee. CLOSURE: docs/day-sprint/db3h-s1-tech-debt-2026-06-26/",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s2-cabinet-host",
+      "title": "DB3H-S2: device_board на сервере в кабинете пользователя",
+      "promptPath": "docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db3h-s1-tech-debt"
+      ],
+      "notes": "UserCase async-v2 smoke в web-cabinet. **Deferred** — Studio (db3h-s3) приоритетнее (Vesnin 2026-06-26).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db3h-s3-studio-host",
+      "title": "DB3H-S3: device_board в Electron Membrana Studio",
+      "promptPath": "docs/prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "ST2-J+ST3 PASS run 092a986c; MS6 contract; ST1-ST9. CLOSURE: docs/day-sprint/db3h-s3-studio-host-2026-06-26/CLOSURE.md",
+      "dependsOn": [
+        "db3h-s1-tech-debt"
+      ],
+      "notes": "CLOSED 2026-06-26. ST2-O/ST4 deferred.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s5-desktop-logging",
+      "title": "DB3H-S5: политика логов Studio + Device (support feedback)",
+      "promptPath": "docs/prompts/DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db3h-s3-studio-host"
+      ],
+      "notes": "OPEN: docs/day-sprint/db3h-s5-desktop-logging-2026-06-26/. Canon: docs/DESKTOP_APP_LOGGING_POLICY.md v1.0. DL-DOC done; DL-1..3 backlog.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db3h-s4-microphone-detectors",
+      "title": "DB3H-S4: рефакторинг микрофона + audit детекторов (async)",
+      "promptPath": "docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-three-hosts-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-server-first"
+      ],
+      "notes": "DEFERRED — не открывать. Фокус: device-board-server-first. OPEN: docs/day-sprint/db3h-s4-microphone-detectors-2026-06-26/",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "device-board-server-first",
+      "title": "Device-board server-first: lease, capture soft/strict, Nodes controls (SF0–SF9)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "membrane-node-realtime-gateway"
+      ],
+      "notes": "OPEN: docs/day-sprint/db-server-first-2026-06-26/. Canon: docs/DEVICE_BOARD_SERVER_FIRST.md. Blocks db3h-s4.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-sf-0-canon",
+      "title": "SF0: консилиум + canon DEVICE_BOARD_SERVER_FIRST",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-server-first"
+      ],
+      "notes": "Consilium: docs/seanses/device-board-server-first-2026-06-26.md",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-sf-1-core-contracts",
+      "title": "SF1: core board + runtime contracts (vesnin)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-0-canon"
+      ],
+      "notes": "Branch vesnin. Extends mp7b-rt0.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-sf-2-gateway-board",
+      "title": "SF2: gateway channel board",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-1-core-contracts"
+      ],
+      "notes": "background-cabinet node-realtime",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-sf-3-cabinet-lease-api",
+      "title": "SF3: REST edit lease + DeviceBoardPage",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-2-gateway-board"
+      ],
+      "notes": "apps/cabinet + background-cabinet",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-sf-4-client-follower",
+      "title": "SF4: field client follower soft/strict",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-2-gateway-board"
+      ],
+      "notes": "apps/client runtimeRealtimeBridge",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "id": "db-sf-5-board-flags-ui",
+      "title": "SF5: resolveServerFirstFlags + board UX",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-4-client-follower"
+      ],
+      "notes": "packages/device-board",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-sf-6-nodes-runtime",
+      "title": "SF6: NodesPage pause/run/mode",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-1-core-contracts"
+      ],
+      "notes": "apps/cabinet NodesPage",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db-sf-7-last-track-preview",
+      "title": "SF7: last journal track preview on node card",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-6-nodes-runtime"
+      ],
+      "notes": "cabinet live journal + audio element",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "id": "db-sf-8-tests-smoke",
+      "title": "SF8: tests + smoke runbook",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-5-board-flags-ui",
+        "db-sf-7-last-track-preview"
+      ],
+      "notes": "DEVICE_BOARD_SERVER_FIRST_SMOKE.md",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-sf-9-docs-sync",
+      "title": "SF9: docs sync CONCEPT/catalog/ARCHITECTURE",
+      "promptPath": "docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-server-first",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-sf-8-tests-smoke"
+      ],
+      "notes": "membrana-docs-sync skill",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "neural-tier-1b-contract",
+      "title": "Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton",
+      "promptPath": "docs/INTEGRATIONS_STRATEGY.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W5",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db3h-s4-microphone-detectors"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Консилиум 2026-06-26: после спринтов DB3H-S1..S4 (три хоста + микрофон). См. docs/seanses/neural-detectors-strategy-2026-06-26.md",
+      "freezeAt": "2026-06-26",
+      "notes": "Эшелон 1.B INTEGRATIONS_STRATEGY §4.1. Не начинать до green smoke cabinet/Studio/Device.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "neural-free-tier-dataset-report",
+      "title": "Free-tier: датасет + трек → детектор → отчёт (1 ГБ library)",
+      "promptPath": "docs/seanses/neural-detectors-strategy-2026-06-26.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W5",
+      "createdAt": "2026-06-26",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "neural-tier-1b-contract"
+      ],
+      "freezeStatus": "deferred",
+      "freezeReason": "Продуктовый фокус недели 2+ после neural-tier-1b-contract и стабильных трёх хостов.",
+      "freezeAt": "2026-06-26",
+      "notes": "Пользователь собирает датасет из sample library, сценарий device-board: трек → detect → journal report. Free tariff.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
+    },
+    {
+      "id": "docs-actions-phase-a-2026-06-26",
+      "title": "Day sprint: docs/actions phase A (device-board processes)",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase A complete. 13 MD -> docs/actions/device-board; stubs+steering done; verify-paths/competition green; A5 RAG deferred post-merge. Closes #182.",
+      "sprintKind": "day-sprint",
+      "notes": "Phase A: MD processes → docs/actions/device-board/; fixtures stay in device-board-scripts",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "da-a0-taxonomy-adr",
+      "title": "DA A0: docs/actions taxonomy + README hub",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "docs-actions-phase-a-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "docs/actions/README.md taxonomy + D-ACT-* decisions; OPEN tracker.",
+      "notes": "D-ACT-1/2: taxonomy README",
+      "leadPersona": "vesnin",
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "da-a1-scaffold-mv",
+      "title": "DA A1: git mv MD + redirect stubs",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "docs-actions-phase-a-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "git mv 13 MD -> docs/actions/device-board/**; 13 redirect-stubs on old paths.",
+      "dependsOn": [
+        "da-a0-taxonomy-adr"
+      ],
+      "notes": "13 MD + fixtures README",
+      "leadPersona": "ozhegov",
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "da-a2-link-audit",
+      "title": "DA A2: link audit across repo",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "docs-actions-phase-a-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Link audit: rg device-board-scripts/[A-Z_]*.md -> only README.md (fixtures hub, stays) + migration script + frozen seance transcript. Team reviews archived.",
+      "dependsOn": [
+        "da-a1-scaffold-mv"
+      ],
+      "notes": "grep gate: only stubs on old MD paths",
+      "leadPersona": "ozhegov",
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "da-a3-steering-sync",
+      "title": "DA A3: skills, cursorrules, AGENTS steering sync",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "docs-actions-phase-a-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": ".cursorrules #11, AGENTS.md, skills (usercase-generation, client-logs-parsing) point to docs/actions/device-board.",
+      "dependsOn": [
+        "da-a1-scaffold-mv"
+      ],
+      "notes": "skills + .cursorrules #11 + VIRTUAL_TEAM_PROMPT",
+      "leadPersona": "vesnin",
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "da-a4-verify-ci",
+      "title": "DA A4: verify-paths + CI green",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "parentEpic": "docs-actions-phase-a-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "verify-paths green (55 paths); verify-competition green; grep gate clean.",
+      "dependsOn": [
+        "da-a2-link-audit",
+        "da-a3-steering-sync"
+      ],
+      "notes": "verify-paths, verify-competition, link grep",
+      "leadPersona": "ozhegov",
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "da-a5-rag-index",
+      "title": "DA A5: RAG incremental index + smoke query",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "docs-actions-phase-a-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "DEFER: rag:index is post-merge local step (D-ACT-7). Requires @membrana/rag-service workspace build; run 'yarn rag:index' + smoke 'yarn rag:query USERCASE_GENERATION_REGULATION' after PR merge. DoD allows documented defer.",
+      "dependsOn": [
+        "da-a4-verify-ci"
+      ],
+      "notes": "yarn rag:index incremental",
+      "leadPersona": "vesnin",
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "da-a6-closure",
+      "title": "DA A6: sprint closure + LGTM",
+      "promptPath": "docs/prompts/DOCS_ACTIONS_PHASE_A_SPRINT_PROMPT.md",
+      "githubIssue": 182,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "parentEpic": "docs-actions-phase-a-2026-06-26",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "LGTM sign-off written; phases A0-A6 archived; Issue #182 report drafted (Closes #182).",
+      "dependsOn": [
+        "da-a5-rag-index"
+      ],
+      "notes": "Issue report, archive phases",
+      "leadPersona": "vesnin",
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "opencode-operator-workflows-2026-06-26",
+      "title": "Day sprint: OpenCode operator workflows & commands",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md",
+      "githubIssue": 183,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "OpenCode operator workflows: 4 skills + 6 commands + config. Closes #183.",
+      "sprintKind": "day-sprint",
+      "notes": "OpenCode: 4 skills + 6 commands, thin wrappers over existing yarn scripts",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "oc-b0-register",
+      "title": "OC B0: register sprint (registry + prompt + OPEN tracker)",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md",
+      "githubIssue": 183,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (Issue #183).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-workflows-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "oc-b1-skills",
+      "title": "OC B1: 4 OpenCode skills (client-module-guard, full-ci-operator, issue-triage, self-maintenance)",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md",
+      "githubIssue": 183,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (Issue #183).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-workflows-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "oc-b2-commands",
+      "title": "OC B2: 6 OpenCode commands (standup, main-day, ritual-evening, full-ci, triage-issues, close-task)",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md",
+      "githubIssue": 183,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (Issue #183).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-workflows-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "oc-b3-config",
+      "title": "OC B3: opencode.json references + AGENTS.md operator commands",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md",
+      "githubIssue": 183,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (Issue #183).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-workflows-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "oc-b4-closure",
+      "title": "OC B4: verify + archive + Issue report",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md",
+      "githubIssue": 183,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (Issue #183).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-workflows-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-06-26"
+    },
+    {
+      "id": "opencode-operator-skills-wave2-2026-06-26",
+      "title": "Day sprint: OpenCode operator skills wave 2 (git-pr, deploy, yarn, security, env)",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Wave 2: 5 Tier-1 operator skills (git-pr, deploy-operator, yarn-workspace, security-review, env-secrets-guard). deploy-operator dangling=0. Tier 2 deferred.",
+      "sprintKind": "day-sprint",
+      "notes": "Planned via consilium 2026-06-26; awaiting go before implementation. Tier 1 = 5 skills.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "wc-c0-register",
+      "title": "WC C0: register sprint (prompt + registry + OPEN)",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (wave 2).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-skills-wave2-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "wc-c1-git-yarn",
+      "title": "WC C1: membrana-git-pr + membrana-yarn-workspace skills",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (wave 2).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-skills-wave2-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "wc-c2-deploy",
+      "title": "WC C2: membrana-deploy-operator skill",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (wave 2).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-skills-wave2-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "wc-c3-security-env",
+      "title": "WC C3: membrana-security-review + membrana-env-secrets-guard",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (wave 2).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-skills-wave2-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "wc-c4-wire-close",
+      "title": "WC C4: wire config + verify + closure",
+      "promptPath": "docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-26",
+      "archivedAt": "2026-06-26",
+      "archiveNotes": "Phase complete (wave 2).",
+      "sprintKind": "day-sprint",
+      "parentEpic": "opencode-operator-skills-wave2-2026-06-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "repo-leveling",
+      "title": "Repo Leveling: выравнивание рабочего дерева main — gitignore secret, артефакты, докоммит готовой работы",
+      "promptPath": "docs/prompts/REPO_LEVELING_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-27",
+      "sprintKind": "day-sprint",
+      "parentEpic": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "structure",
+        "dynin"
+      ],
+      "archivedAt": "2026-06-27",
+      "archiveNotes": "8 атомарных коммитов: docs-actions миграция (77 файлов), архивы задач da/oc/wc, sprint prompts/discussions, daily archives, MCP Tier5, opencode/agents tooling, scripts libuv-fix, sprint-ledger triage. lint+typecheck 84/84, test 52/52, build 32/32 — green. Secret-gate активен. Issue #184 closed."
+    },
+    {
+      "id": "mcp-tooling-m0-consilium",
+      "title": "MCP Agent Tooling M0: консилиум + решения зафиксированы",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "XS",
+      "status": "closed",
+      "createdAt": "2026-06-27",
+      "sprintKind": "day-sprint",
+      "parentEpic": "mcp-agent-tooling-2026-06-27",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "archivedAt": null,
+      "archiveNotes": "Протокол: docs/discussions/mcp-agent-tooling-consilium-2026-06-27-PROTOCOL.md"
+    },
+    {
+      "id": "mcp-tooling-m1-codebase-memory",
+      "title": "MCP Agent Tooling M1: codebase-memory-mcp — бинарь, индекс, 3 запроса, хук в rag-evening-index",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-27",
+      "sprintKind": "day-sprint",
+      "parentEpic": "mcp-agent-tooling-2026-06-27",
+      "leadPersona": "dynin",
+      "supportPersonas": ["ozhegov"],
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "mcp-tooling-m2-headroom-pilot",
+      "title": "MCP Agent Tooling M2: headroom пилот на logs:parse + RAG-чанках, замер before/after токенов",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-27",
+      "sprintKind": "day-sprint",
+      "parentEpic": "mcp-agent-tooling-2026-06-27",
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
+      "id": "mcp-tooling-m3-searxng",
+      "title": "MCP Agent Tooling M3: SearXNG self-host (deferred)",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "deferred",
+      "createdAt": "2026-06-27",
+      "sprintKind": "day-sprint",
+      "parentEpic": "mcp-agent-tooling-2026-06-27",
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "archivedAt": null,
+      "archiveNotes": "Deferred: не на критическом пути. Вернуть при запросе product на keyless DSP-ресёрч."
+    },
+    {
+      "id": "mcp-tooling-m4-hindsight-spike",
+      "title": "MCP Agent Tooling M4: hindsight self-hostable spike (за рамками спринта)",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "deferred",
+      "createdAt": "2026-06-27",
+      "sprintKind": "day-sprint",
+      "parentEpic": "mcp-agent-tooling-2026-06-27",
+      "leadPersona": "dynin",
+      "supportPersonas": ["vesnin"],
+      "archivedAt": null,
+      "archiveNotes": "Vectorize-хостед §5-запрет. Self-hostable вариант — отдельный mini-spike, не в этом спринте."
+    },
+    {
+      "id": "mcp-tooling-m5-strategy-sync",
+      "title": "MCP Agent Tooling M5: обновить MCP_INTEGRATION_STRATEGY.md §5 тиры",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "XS",
+      "status": "active",
+      "createdAt": "2026-06-27",
+      "sprintKind": "day-sprint",
+      "parentEpic": "mcp-agent-tooling-2026-06-27",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

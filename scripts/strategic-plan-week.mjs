@@ -35,4 +35,5 @@ await runStrategicPlan({
   // Дневной план — нет (см. strategic-plan-day.mjs).
   includeAnalyzersResearch: true,
   includeDetectionPriorities: true,
+  includeInsights: true,
 });

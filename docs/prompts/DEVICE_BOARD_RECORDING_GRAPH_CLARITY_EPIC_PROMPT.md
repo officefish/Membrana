@@ -29,8 +29,8 @@
 | Документ | Зачем |
 |----------|--------|
 | [`DEVICE_BOARD_CONCEPT.md`](../../packages/device-board/DEVICE_BOARD_CONCEPT.md) | §15.5.1 operator notes; §16.5 recording gate |
-| [`USERCASE_MVP_MICROPHONE.md`](../device-board-scripts/USERCASE_MVP_MICROPHONE.md) | Канон веток MVP |
-| [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](../device-board-scripts/SCENARIO_CHAIN_LOG_COOKBOOK.md) | Маркеры recording |
+| [`USERCASE_MVP_MICROPHONE.md`](../actions/device-board/specs/USERCASE_MVP_MICROPHONE.md) | Канон веток MVP |
+| [`SCENARIO_CHAIN_LOG_COOKBOOK.md`](../actions/device-board/cookbooks/SCENARIO_CHAIN_LOG_COOKBOOK.md) | Маркеры recording |
 | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](./DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | Исходный gate |
 
 **GitHub Issue:** [#167](https://github.com/officefish/Membrana/issues/167)
