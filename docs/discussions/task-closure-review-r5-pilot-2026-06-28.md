@@ -1,7 +1,8 @@
 # R5 pilot: task closure Teamlead review
 
-Date: 2026-06-28  
-Owner: Vesnin  
+Date: 2026-06-28
+
+Owner: Vesnin
 Scope: one legacy M-task and the greenfield closure-review sprint itself.
 
 ## Decision
