@@ -1,13 +1,13 @@
 {
   "id": "insight-sessions-archive",
   "title": "Архивация сессий AI-агентов",
-  "status": "draft",
+  "status": "adopted",
   "source": "consilium",
   "horizon": "quarter",
-  "weight": 7.2,
+  "weight": 6.8,
   "createdAt": "2026-06-28",
-  "researchedAt": null,
-  "reviewedAt": null,
+  "researchedAt": "2026-06-28",
+  "reviewedAt": "2026-06-28",
   "closedAt": null,
   "tags": ["sessions", "archive", "rag", "background-services", "claude-code", "cursor", "codex", "scrub"]
 }

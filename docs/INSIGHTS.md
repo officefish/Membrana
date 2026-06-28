@@ -17,8 +17,8 @@ draft → researched → reviewed → adopted | deferred | rejected
 
 | ID | Тема | Статус | Weight | Горизонт |
 |----|------|--------|--------|----------|
-| `insight-sessions-archive` | Архивация сессий AI-агентов | draft | 7.2 | quarter |
-| `insight-task-archive-storage` | Хранилище архива задач: append-only vs Postgres | draft | 7.0 | week |
+| `insight-task-archive-storage` | Хранилище архива задач: append-only vs Postgres | **adopted** | 7.6 | week |
+| `insight-sessions-archive` | Архивация сессий AI-агентов | **adopted** | 6.8 | quarter |
 
 ## Источники
 
