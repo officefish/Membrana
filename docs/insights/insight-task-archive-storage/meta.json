@@ -1,0 +1,13 @@
+{
+  "id": "insight-task-archive-storage",
+  "title": "Хранилище архива закрытых задач: append-only log vs Postgres",
+  "status": "draft",
+  "source": "consilium",
+  "horizon": "week",
+  "weight": 7.0,
+  "createdAt": "2026-06-28",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": ["tasks", "registry", "jsonl", "cqrs", "archive", "background-office", "stage-gate"]
+}
