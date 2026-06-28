@@ -8,8 +8,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
-      "createdAt": "2026-06-28"
+      "status": "archived",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "review LGTM dad7426e84fb; Accepted branch-only: Инсайты — документация на feature-ветке techies68; merge в main запланирован в рамках общего PR ветки"
     },
     {
       "id": "fft-indices-viz",

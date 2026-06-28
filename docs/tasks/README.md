@@ -158,6 +158,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `insights-lifecycle-2026-06-28` | Регистрация инсайтов и прогон через все стадии (draft → researched → reviewed → adopted) | 2026-06-28 | [`INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md`](../docs/prompts/INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md) | — | [карточка](./archive/insights-lifecycle-2026-06-28.md) |
 | `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | 2026-06-28 | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | #185 | [карточка](./archive/issue-185-services-device-board-boundary.md) |
 | `task-closure-teamlead-review-v1` | Automatic Teamlead review for Issue and sprint closure | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/task-closure-teamlead-review-v1.md) |
 | `tcr-r0-regulation-schema` | TCR R0: closure review regulation, prompt and schema | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/tcr-r0-regulation-schema.md) |
