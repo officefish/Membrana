@@ -152,6 +152,13 @@
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | M | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | [#185](https://github.com/officefish/Membrana/issues/185) |
 | `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
+| `task-closure-teamlead-review-v1` | Automatic Teamlead review for Issue and sprint closure | L | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
+| `tcr-r0-regulation-schema` | TCR R0: closure review regulation, prompt and schema | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
+| `tcr-r1-manifest-core` | TCR R1: manifest state library and prepare/status CLI | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
+| `tcr-r2-teamlead-runner` | TCR R2: Teamlead review runner and immutable verdict | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
+| `tcr-r3-finalize-gate` | TCR R3: guarded finalize and lifecycle integration | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
+| `tcr-r4-three-env-skills` | TCR R4: Cursor, Claude Code and Codex closure review skills | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
+| `tcr-r5-github-pilot` | TCR R5: GitHub integration pilot and migration decision | M | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — |
 
 ---
 

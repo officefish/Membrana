@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "taskId": "example-task",
+  "state": "review_pending",
+  "tier": "T1",
+  "reviewMode": "standard",
+  "branch": "feature/example",
+  "currentCommitSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "reviewedCommitSha": null,
+  "verdict": "pending",
+  "reviewArtifact": null,
+  "github": { "issue": 185, "pullRequest": null, "remoteState": "open", "url": "https://github.com/officefish/Membrana/issues/185" },
+  "scope": { "baseRef": "origin/main", "files": ["src/example.ts"], "packages": ["example"] },
+  "evidence": { "hasUnresolvedP0P1": false, "checks": [{ "command": "yarn test", "status": "pass", "exitCode": 0, "commitSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "checkedAt": "2026-06-28T10:00:00.000Z" }] },
+  "reviewersStatus": { "vesnin": "pending", "ozhegov": "approved" },
+  "completion": { "mode": "pending", "evidence": null },
+  "createdAt": "2026-06-28T10:00:00.000Z",
+  "updatedAt": "2026-06-28T10:00:00.000Z"
+}

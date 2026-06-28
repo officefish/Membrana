@@ -10,6 +10,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-developer-rhythm`](./membrana-developer-rhythm/SKILL.md) | утро, вечер, `ritual:day`, `ritual:evening`, standup, main-day-issue |
 | [`membrana-code-review`](./membrana-code-review/SKILL.md) | code review, `yarn code-review`, PR LGTM, вечернее ревью |
 | [`membrana-task-lifecycle`](./membrana-task-lifecycle/SKILL.md) | M/L task, `task:archive`, closure, day-sprint phases |
+| [`membrana-task-closure-review`](./membrana-task-closure-review/SKILL.md) | automatic Teamlead review after push, exact-SHA LGTM/BLOCK, guarded finalize; mirrored to Claude/Codex |
 | [`membrana-virtual-team`](./membrana-virtual-team/SKILL.md) | `/architect`, `/refactor`, `/math`, `/ui`, `/audio`, `/review`, 5 roles |
 | [`membrana-audio-engine-guard`](./membrana-audio-engine-guard/SKILL.md) | mic, Web Audio, plugins, `AudioContext`, detectors |
 | [`membrana-service-scaffold`](./membrana-service-scaffold/SKILL.md) | `/service`, new `@membrana/*-service` |

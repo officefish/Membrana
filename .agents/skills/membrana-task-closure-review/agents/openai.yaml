@@ -1,0 +1,4 @@
+interface:
+  display_name: "Membrana Task Closure Review"
+  short_description: "Automatic Teamlead review before task closure"
+  default_prompt: "Use $membrana-task-closure-review to review and safely close the published Membrana task."
