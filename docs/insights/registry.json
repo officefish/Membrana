@@ -164,6 +164,19 @@
       "weight": null,
       "createdAt": "2026-06-27",
       "tags": ["mcp", "memory", "agent", "lessons", "tooling", "self-hosted"]
+    },
+    {
+      "id": "insight-ghost-task-closure-invariant",
+      "title": "Issue closure must account for every active registry child",
+      "status": "draft",
+      "source": "sprint",
+      "sprintPhase": "ghost-task-closure-sprint-2026-06-29",
+      "horizon": "week",
+      "weight": 8.2,
+      "createdAt": "2026-06-29",
+      "researchedAt": null,
+      "reviewedAt": null,
+      "tags": ["tasks", "registry", "github", "closure", "audit", "stage-gate"]
     }
   ]
 }
