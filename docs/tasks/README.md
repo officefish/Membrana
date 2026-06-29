@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `ci-test-stability-refactor` | Рефакторинг CI: vitest-конфиги, разделение integration/acceptance, CI-aware latency | M | [`CI_TEST_STABILITY_REFACTOR_PROMPT.md`](../docs/prompts/CI_TEST_STABILITY_REFACTOR_PROMPT.md) | [#191](https://github.com/officefish/Membrana/issues/191) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `real-dataset-live-calibration` | Real dataset v0.2: библиотеки → анализ → live matching → journal parity (неделя) | L | [`REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md`](../docs/prompts/REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
@@ -180,6 +179,7 @@
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
+| `ci-observability` | CI observability: ci.yml gap, reporters, artifact paths, testTimeout coupling | S | [`CI_OBSERVABILITY_PROMPT.md`](../docs/prompts/CI_OBSERVABILITY_PROMPT.md) | [#193](https://github.com/officefish/Membrana/issues/193) |
 
 ---
 
@@ -187,6 +187,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `ci-test-stability-refactor` | Рефакторинг CI: vitest-конфиги, разделение integration/acceptance, CI-aware latency | 2026-06-29 | [`CI_TEST_STABILITY_REFACTOR_PROMPT.md`](../docs/prompts/CI_TEST_STABILITY_REFACTOR_PROMPT.md) | #191 (Issue открыт) | [карточка](./archive/ci-test-stability-refactor.md) |
 | `main-sync-sprint-2026-06-29` | Branch reconciliation sprint: merge main → techies68 → PR → main | 2026-06-29 | [`MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md`](../docs/prompts/MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md) | — | [карточка](./archive/main-sync-sprint-2026-06-29.md) |
 | `membrane-platform-v1` | Membrane Platform v1: cabinet, pairing, tariff, cloud journal (эпик) | 2026-06-29 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/membrane-platform-v1.md) |
 | `cabinet-sample-library-v1` | Cabinet Sample Library v1: библиотека сэмплов в кабинете (эпик CSL1–CSL3) | 2026-06-29 | [`CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md`](../docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/cabinet-sample-library-v1.md) |

@@ -8,10 +8,11 @@
       "githubIssue": 191,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-29",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-29",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
     },
     {
       "id": "main-sync-sprint-2026-06-29",
@@ -9609,6 +9610,18 @@
       "archiveNotes": null,
       "notes": "Deferred per CRITICAL_RAG_AUDIT §12. Go/no-go после R6.",
       "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "ci-observability",
+      "title": "CI observability: ci.yml gap, reporters, artifact paths, testTimeout coupling",
+      "promptPath": "docs/prompts/CI_OBSERVABILITY_PROMPT.md",
+      "githubIssue": 193,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-29",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }
