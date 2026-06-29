@@ -38,6 +38,9 @@ logs/apps/**/*
 # Локальные TLS-ключи (не коммитить)
 ssl/
 
+# Git worktrees (локальные, не коммитить)
+.worktrees/
+
 # MCP (локальные индексы и конфиги с ключами)
 .gitnexus/
 claude_desktop_config.json
