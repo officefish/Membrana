@@ -75,4 +75,20 @@ Operator skills — wave 2 (`docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_
 - **Deploy debug logs**: Do not save SSH/deploy script output to the repo root (`cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt` via `Tee-Object` or shell redirect). Use `%TEMP%` / `$TMPDIR` instead; see `docs/CONTRIBUTING.md` → VPS deploy.
 - **Client / Studio console**: см. [`docs/DESKTOP_APP_LOGGING_POLICY.md`](docs/DESKTOP_APP_LOGGING_POLICY.md). Support: `yarn desktop:support-collect`. Parse: `yarn logs:parse` / `yarn logs:parse:studio`.
 
+### Intern onboarding
+
+Всё что связано со стажёром — только через `docs/intern/`. Точка входа: [`docs/intern/README.md`](docs/intern/README.md).
+
+| Файл | Для кого |
+|------|---------|
+| `INTERN_ONBOARDING_BACKGROUND_OFFICE.md` | стажёр — задачи T1/T2/T3, DoD, локальный запуск |
+| `CURATOR_CHECKLIST.md` | куратор — статус Фазы 0, команды агент-верификации |
+| `CURATOR_PHASE0_RUNBOOK.md` | куратор — пошаговый runbook с командами |
+| `CURATOR_INTERN_ONBOARDING_PLAYBOOK.md` | куратор — фазы 0–5, ворота перехода |
+| `AGENT_PROMPT_PHASE0_SCAFFOLD.md` | агент — промпт для файловой части Фазы 0 |
+
+Агент **не** трогает: branch protection/rulesets, права коллабораторов, ключи, реальный `.env`, выбор темы дайджеста.
+
+---
+
 ## Imported Claude Cowork project instructions
