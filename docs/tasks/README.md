@@ -132,7 +132,6 @@
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
-| `ghost-task-closure-sprint-2026-06-29` | Sprint: verify and close ghost task registry entries | L | [`TASK_PROMPT_GHOST_CLOSURE_SPRINT.md`](../docs/prompts/TASK_PROMPT_GHOST_CLOSURE_SPRINT.md) | — |
 | `db-ap-r1-core-contracts` | DB-AP-R1: core PromiseRef + async job types + node kinds | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
 | `db-ap-r2-core-sequence-latent` | DB-AP-R2: core sequenceConfig.latentThen | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
 | `db-ap-r3-async-job-store` | DB-AP-R3: AsyncJobStore + backpressure + cancel | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
@@ -179,6 +178,8 @@
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
+| `ci-observability` | CI observability: ci.yml gap, reporters, artifact paths, testTimeout coupling | S | [`CI_OBSERVABILITY_PROMPT.md`](../docs/prompts/CI_OBSERVABILITY_PROMPT.md) | [#193](https://github.com/officefish/Membrana/issues/193) |
+| `rag-top-k-c2` | RAG C2: archive-circuit topK 15, operative 5 — split RAG_TOP_K env (consilium #186-C2) | S | — | [#186](https://github.com/officefish/Membrana/issues/186) |
 
 ---
 
@@ -209,6 +210,8 @@
 | `db-recording-gate-r4-scenario-smoke` | DB Recording Gate R4: main-v07.json + smoke + LGTM | 2026-06-29 | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | #133 (Issue открыт) | [карточка](./archive/db-recording-gate-r4-scenario-smoke.md) |
 | `ci-observability` | CI observability: ci.yml gap, reporters, artifact paths, testTimeout coupling | 2026-06-29 | [`CI_OBSERVABILITY_PROMPT.md`](../docs/prompts/CI_OBSERVABILITY_PROMPT.md) | #193 (Issue открыт) | [карточка](./archive/ci-observability.md) |
 | `rag-top-k-c2` | RAG C2: archive-circuit topK 15, operative 5 — split RAG_TOP_K env (consilium #186-C2) | 2026-06-29 | — | #186 (Issue открыт) | [карточка](./archive/rag-top-k-c2.md) |
+| `ghost-task-closure-sprint-2026-06-29` | Sprint: verify and close ghost task registry entries | 2026-06-29 | [`TASK_PROMPT_GHOST_CLOSURE_SPRINT.md`](../docs/prompts/TASK_PROMPT_GHOST_CLOSURE_SPRINT.md) | — | [карточка](./archive/ghost-task-closure-sprint-2026-06-29.md) |
+| `issue-178-async-v2-reconciliation` | Issue #178: reconcile async-v2 upload fix and stale PR #179 | 2026-06-29 | [`ISSUE_178_ASYNC_V2_RECONCILIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_178_ASYNC_V2_RECONCILIATION_SPRINT_PROMPT.md) | #178 (Issue открыт) | [карточка](./archive/issue-178-async-v2-reconciliation.md) |
 | `insights-lifecycle-2026-06-28` | Регистрация инсайтов и прогон через все стадии (draft → researched → reviewed → adopted) | 2026-06-28 | [`INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md`](../docs/prompts/INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md) | — | [карточка](./archive/insights-lifecycle-2026-06-28.md) |
 | `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | 2026-06-28 | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | #185 | [карточка](./archive/issue-185-services-device-board-boundary.md) |
 | `task-closure-teamlead-review-v1` | Automatic Teamlead review for Issue and sprint closure | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/task-closure-teamlead-review-v1.md) |

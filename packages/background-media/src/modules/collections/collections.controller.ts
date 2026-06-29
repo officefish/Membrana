@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiHeader,
   ApiOperation,
@@ -28,6 +28,8 @@ import { CollectionsService } from './collections.service';
 @ApiHeader({ name: 'X-Membrana-Device-Id', required: false })
 @ApiParam({ name: 'deviceId', format: 'uuid' })
 export class CollectionsController {
+  private readonly logger = new Logger(CollectionsController.name);
+
   constructor(
     private readonly collections: CollectionsService,
     private readonly catalogProvision: CatalogProvisionService,
@@ -56,7 +58,11 @@ export class CollectionsController {
   @ApiStandardErrors()
   async ensureReserved(@Param('deviceId') deviceId: string) {
     const collections = await this.collections.ensureReserved(deviceId);
-    await this.catalogProvision.provisionTariffCatalogIfNeeded(deviceId);
+    // Catalog seed is eventual work; it must not hold the upload-critical __buffer__ path.
+    void this.catalogProvision.provisionTariffCatalogIfNeeded(deviceId).catch((error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Deferred catalog provision for ${deviceId}: ${message}`);
+    });
     return collections;
   }
 

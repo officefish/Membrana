@@ -7254,12 +7254,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "createdAt": "2026-06-29",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "PR #190; review LGTM 54209000e21d; PR #190 merged 2026-06-29T07:43:32Z (b3127ba110d4245c2e71b3ccd595df94fd2d870a)",
       "dependsOn": [],
       "notes": "Audit ghost candidates on issues #47, #67, #81, #93 and #133; no heuristic bulk archive; #47 stage-gate requires human confirmation.",
       "leadPersona": "vesnin",
@@ -9636,6 +9636,29 @@
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
       "epicId": "agent-context-optimization-v1",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "issue-178-async-v2-reconciliation",
+      "title": "Issue #178: reconcile async-v2 upload fix and stale PR #179",
+      "promptPath": "docs/prompts/ISSUE_178_ASYNC_V2_RECONCILIATION_SPRINT_PROMPT.md",
+      "githubIssue": 178,
+      "linearId": "DRU-93",
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-29",
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "PR #200; review LGTM 11fdb3cc05d7; PR #200 merged 2026-06-29T17:31:52Z (cf35592cadcfad0ad47c22267f1fe8b1a47dad82)",
+      "dependsOn": [],
+      "notes": "Reconcile stale PR #179 against merged PR #181; salvage only missing code, close Issue #178 with evidence.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician"
+      ],
       "githubIssueClosedAt": null
     }
   ]
