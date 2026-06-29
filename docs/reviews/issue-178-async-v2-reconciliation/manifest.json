@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "taskId": "issue-178-async-v2-reconciliation",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "codex/issue-178-reconcile",
+  "currentCommitSha": "11fdb3cc05d7b15e354e7276952632610cef6e09",
+  "reviewedCommitSha": "11fdb3cc05d7b15e354e7276952632610cef6e09",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/issue-178-async-v2-reconciliation/11fdb3cc05d7b15e354e7276952632610cef6e09-review.md",
+  "github": {
+    "issue": 178,
+    "pullRequest": 200,
+    "remoteState": "merged",
+    "url": "https://github.com/officefish/Membrana/pull/200"
+  },
+  "scope": {
+    "baseRef": "11fdb3cc05d7b15e354e7276952632610cef6e09^",
+    "files": [
+      "docs/discussions/issue-178-pr179-patch-map-2026-06-29.md",
+      "docs/prompts/ISSUE_178_ASYNC_V2_RECONCILIATION_SPRINT_PROMPT.md",
+      "docs/tasks/README.md",
+      "docs/tasks/registry.json",
+      "packages/background-media/src/modules/collections/collections.controller.test.ts",
+      "packages/background-media/src/modules/collections/collections.controller.ts",
+      "packages/services/media-library/src/media-library-service.ts",
+      "packages/services/media-library/test/media-library.test.ts"
+    ],
+    "packages": [
+      "packages/background-media",
+      "packages/services/media-library"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "11fdb3cc05d7b15e354e7276952632610cef6e09",
+        "checkedAt": "2026-06-29T17:28:00.895Z",
+        "note": ""
+      },
+      {
+        "command": "git status --short",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "11fdb3cc05d7b15e354e7276952632610cef6e09",
+        "checkedAt": "2026-06-29T17:28:00.997Z",
+        "note": ""
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #200 merged 2026-06-29T17:31:52Z (cf35592cadcfad0ad47c22267f1fe8b1a47dad82)"
+  },
+  "createdAt": "2026-06-29T17:17:04.725Z",
+  "updatedAt": "2026-06-29T17:33:16.000Z"
+}

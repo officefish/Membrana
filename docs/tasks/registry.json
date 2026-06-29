@@ -9643,16 +9643,21 @@
       "githubIssue": 178,
       "linearId": "DRU-93",
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "strategicWave": "W1",
       "createdAt": "2026-06-29",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "PR #200; review LGTM 11fdb3cc05d7; PR #200 merged 2026-06-29T17:31:52Z (cf35592cadcfad0ad47c22267f1fe8b1a47dad82)",
       "dependsOn": [],
       "notes": "Reconcile stale PR #179 against merged PR #181; salvage only missing code, close Issue #178 with evidence.",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov", "dynin", "musician"]
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician"
+      ],
+      "githubIssueClosedAt": null
     }
   ]
 }
