@@ -5,12 +5,29 @@
  * Не логируйте значения переменных.
  */
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, parse, resolve } from 'node:path';
 import { fetch as undiciFetch, ProxyAgent, Agent } from 'undici';
 
+export function resolveDotEnvPath(cwd = process.cwd()) {
+  const explicit = process.env.MEMBRANA_ENV_PATH?.trim();
+  if (explicit) {
+    const explicitPath = resolve(explicit);
+    return existsSync(explicitPath) ? explicitPath : null;
+  }
+
+  let current = resolve(cwd);
+  const root = parse(current).root;
+  while (true) {
+    const candidate = resolve(current, '.env');
+    if (existsSync(candidate)) return candidate;
+    if (current === root) return null;
+    current = dirname(current);
+  }
+}
+
 export function loadDotEnv(cwd = process.cwd()) {
-  const envPath = resolve(cwd, '.env');
-  if (!existsSync(envPath)) return;
+  const envPath = resolveDotEnvPath(cwd);
+  if (!envPath) return;
   let raw = readFileSync(envPath, 'utf8');
   if (raw.charCodeAt(0) === 0xfeff) raw = raw.slice(1);
 
