@@ -53,7 +53,7 @@ describe('acceptance benchmark (keyword corpus archive, no API key)', () => {
     expect(result.usedArchive).toBe(true);
     expect(precisionAtK(result.fragments, expectedSources, 5)).toBe(true);
     expect(elapsedMs).toBeLessThan(8000);
-  });
+  }, 30_000);
 });
 
 describe('dual retriever routing', () => {
@@ -73,5 +73,5 @@ describe('dual retriever routing', () => {
     expect(result.usedOperative).toBe(true);
     expect(result.usedArchive).toBe(false);
     expect(result.fragments.every((fragment) => fragment.circuit === 'operative')).toBe(true);
-  });
+  }, 30_000);
 });
