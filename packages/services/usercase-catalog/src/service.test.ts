@@ -85,9 +85,9 @@ describe('ClientUserCaseCatalogService', () => {
   it('community competition entries are applicable', () => {
     const service = new ClientUserCaseCatalogService({ catalog: createCatalog() });
     for (const id of [
-      'usercase-mvp-microphone-alpha-async-v2',
-      'usercase-mvp-microphone-beta-async-v2',
-      'usercase-mvp-microphone-gamma-async-v2',
+      'usercase-mvp-microphone-alpha',
+      'usercase-mvp-microphone-beta',
+      'usercase-mvp-microphone-gamma',
     ]) {
       expect(service.canApply(id, 'microphone')).toBe(true);
       const card = service.listCards('microphone').find((c) => c.id === id);
@@ -95,7 +95,7 @@ describe('ClientUserCaseCatalogService', () => {
       expect(card?.canApply).toBe(true);
     }
     expect(
-      service.loadDocumentIfEntitled('usercase-mvp-microphone-beta-async-v2', 'microphone'),
+      service.loadDocumentIfEntitled('usercase-mvp-microphone-beta', 'microphone'),
     ).not.toBeNull();
   });
 

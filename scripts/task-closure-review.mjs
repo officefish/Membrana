@@ -203,6 +203,7 @@ async function runReview(cli) {
   const registry = loadRegistry();
   const task = findTask(registry, cli.id);
   if (!task) throw new Error(`Task не найдена: ${cli.id}`);
+  if (!task.promptPath) throw new Error(`Task ${cli.id} не имеет promptPath — closure review невозможен`);
   const taskPrompt = readFileSync(resolve(process.cwd(), task.promptPath), 'utf8');
   const regulation = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_REGULATION.md'), 'utf8');
   const teamleadPrompt = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_PROMPT.md'), 'utf8');

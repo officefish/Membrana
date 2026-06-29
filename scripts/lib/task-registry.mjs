@@ -141,7 +141,7 @@ export function writeArchiveCard(task, cwd = process.cwd()) {
 | **Архивирована** | ${task.archivedAt ?? '—'} |
 | **GitHub Issue** | ${issue} |
 | **Linear** | ${linear} |
-| **Промпт** | [\`${task.promptPath}\`](../../${task.promptPath.replace(/\\/g, '/')}) |
+| **Промпт** | ${task.promptPath ? `[\`${task.promptPath}\`](../../${task.promptPath.replace(/\\/g, '/')})` : '—'} |
 
 ## Заметки при закрытии
 
