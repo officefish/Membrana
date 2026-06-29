@@ -9622,6 +9622,19 @@
       "createdAt": "2026-06-29",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "rag-top-k-c2",
+      "title": "RAG C2: archive-circuit topK 15, operative 5 — split RAG_TOP_K env (consilium #186-C2)",
+      "promptPath": null,
+      "githubIssue": 186,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-29",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "epicId": "agent-context-optimization-v1"
     }
   ]
 }
