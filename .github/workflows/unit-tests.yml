@@ -55,8 +55,16 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Turbo — test (все воркспейсы)
+      - name: Turbo — unit tests (все воркспейсы, без acceptance/integration)
         run: yarn turbo run test --continue
+
+      - name: RAG — acceptance tests (keyword corpus I/O, timeout 30 s/тест)
+        if: always()
+        run: yarn workspace @membrana/rag-service test:acceptance
+
+      - name: Harmonic — integration test (FFT processing, timeout 10 s)
+        if: always()
+        run: yarn workspace @membrana/harmonic-detector-service test:integration
 
       - name: Upload test results
         if: always()
@@ -77,9 +85,10 @@ jobs:
           {
             echo "## Unit tests (Membrana)"
             echo ""
-            echo "- Команда: \`yarn turbo run test --continue\`"
+            echo "- Unit tests: \`yarn turbo run test --continue\` (без acceptance/integration)"
+            echo "- Acceptance: \`yarn workspace @membrana/rag-service test:acceptance\` (timeout 30 s/тест)"
+            echo "- Integration: \`yarn workspace @membrana/harmonic-detector-service test:integration\` (timeout 10 s)"
             echo "- Пакетный менеджер: **Yarn 4** (\`packageManager\` в корневом \`package.json\`)."
-            echo "- В каждом воркспейсе тесты поднимает Vitest (\`vitest run\`)."
             echo ""
             echo "Локально перед PR выполните \`yarn test\` (см. \`docs/CONTRIBUTING.md\`)."
             echo ""

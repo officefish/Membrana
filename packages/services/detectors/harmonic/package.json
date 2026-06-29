@@ -22,7 +22,8 @@
     "dev:demo": "vite --config demo/vite.config.ts",
     "lint": "eslint src demo --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --exclude '**/detector.integration.test.ts'",
+    "test:integration": "vitest run src/detector.integration.test.ts"
   },
   "dependencies": {
     "@membrana/audio-engine-service": "*",
