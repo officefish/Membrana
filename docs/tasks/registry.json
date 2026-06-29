@@ -9635,6 +9635,24 @@
       "archivedAt": null,
       "archiveNotes": null,
       "epicId": "agent-context-optimization-v1"
+    },
+    {
+      "id": "issue-178-async-v2-reconciliation",
+      "title": "Issue #178: reconcile async-v2 upload fix and stale PR #179",
+      "promptPath": "docs/prompts/ISSUE_178_ASYNC_V2_RECONCILIATION_SPRINT_PROMPT.md",
+      "githubIssue": 178,
+      "linearId": "DRU-93",
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-29",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Reconcile stale PR #179 against merged PR #181; salvage only missing code, close Issue #178 with evidence.",
+      "leadPersona": "vesnin",
+      "supportPersonas": ["ozhegov", "dynin", "musician"]
     }
   ]
 }
