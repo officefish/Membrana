@@ -610,10 +610,10 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-13",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; MP0-MP6 archived, prod regression complete",
       "dependsOn": [
         "background-media-a5a-server"
       ],
@@ -621,7 +621,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-platform-mp0-domain",
@@ -743,10 +744,10 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; implementation merged via PR #82 commit f3483c2",
       "dependsOn": [
         "membrane-platform-mp4-media-membrane",
         "tariff-dataset-v1"
@@ -755,7 +756,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-sample-library-csl1-api",
@@ -764,17 +766,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; API implementation merged via PR #82 commit f3483c2",
       "dependsOn": [
         "cabinet-sample-library-v1"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-sample-library-csl2-ui",
@@ -783,17 +786,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; cabinet SPA implementation merged via PR #82 commit f3483c2",
       "dependsOn": [
         "cabinet-sample-library-csl1-api"
       ],
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-sample-library-csl3-remote-ops",
@@ -802,17 +806,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; remote ops merged via PR #82 commit f3483c2",
       "dependsOn": [
         "cabinet-sample-library-csl2-ui"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-hardening-night-build",
@@ -821,11 +826,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB0-NB3 pass, PR #76 merged",
       "dependsOn": [
         "membrane-platform-mp4-media-membrane"
       ],
@@ -833,7 +838,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb0-merge-gate",
@@ -842,19 +848,20 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB0 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-hardening-night-build"
       ],
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb1-sample-playback-dry",
@@ -863,17 +870,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB1 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-nb0-merge-gate"
       ],
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb2-cabinet-facade",
@@ -882,19 +890,20 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB2 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-nb1-sample-playback-dry"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb3-quality-contracts",
@@ -903,19 +912,20 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB3 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-nb2-cabinet-facade"
       ],
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "sample-library-drone-detection",
@@ -1934,10 +1944,10 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "membrane-platform-mp5-telemetry-journal"
       ],
@@ -1946,7 +1956,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-0-trends-enabled-keys",
@@ -1955,11 +1966,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
@@ -1968,7 +1979,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-1-media-api-safe-json",
@@ -1977,11 +1989,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
@@ -1990,7 +2002,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-2-journal-media-decouple",
@@ -1999,11 +2012,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cj-1-media-api-safe-json"
       ],
@@ -2012,7 +2025,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-3-brief-render-parity",
@@ -2021,11 +2035,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
@@ -2034,7 +2048,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-4-trends-counts-as-detection",
@@ -2043,11 +2058,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cj-0-trends-enabled-keys"
       ],
@@ -2056,7 +2071,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-5-sync-push-observability",
@@ -2065,11 +2081,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cj-2-journal-media-decouple"
       ],
@@ -2078,7 +2094,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "module-catalog-v1",
@@ -4379,7 +4396,7 @@
       "githubIssue": 133,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-20",
       "dependsOn": [
         "db-realtime-observation-pipeline"
@@ -4389,7 +4406,9 @@
       "leadPersona": "musician",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #133 closed; PR #132 merged and v0.8 parity A0-A5 archived"
     },
     {
       "id": "db-recording-gate-r0-contracts",
@@ -4471,7 +4490,7 @@
       "githubIssue": 133,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-recording-gate-v07",
       "createdAt": "2026-06-20",
       "dependsOn": [
@@ -4483,7 +4502,9 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #133 closed; original blocker superseded and verified by v0.8 parity smoke in PR #132"
     },
     {
       "id": "db-recording-parity-mic-r5",
@@ -7200,6 +7221,26 @@
         "dynin",
         "musician",
         "rodchenko"
+      ]
+    },
+    {
+      "id": "ghost-task-closure-sprint-2026-06-29",
+      "title": "Sprint: verify and close ghost task registry entries",
+      "promptPath": "docs/prompts/TASK_PROMPT_GHOST_CLOSURE_SPRINT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-29",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Audit ghost candidates on issues #47, #67, #81, #93 and #133; no heuristic bulk archive; #47 stage-gate requires human confirmation.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
       ]
     }
   ]
