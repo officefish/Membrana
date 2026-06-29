@@ -179,7 +179,6 @@
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
-| `ci-observability` | CI observability: ci.yml gap, reporters, artifact paths, testTimeout coupling | S | [`CI_OBSERVABILITY_PROMPT.md`](../docs/prompts/CI_OBSERVABILITY_PROMPT.md) | [#193](https://github.com/officefish/Membrana/issues/193) |
 
 ---
 
@@ -208,6 +207,8 @@
 | `cj-5-sync-push-observability` | CJ-5: Sync journal push warn + incremental cabinet poll | 2026-06-29 | [`CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md`](../docs/prompts/CABINET_JOURNAL_HOTFIX_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/cj-5-sync-push-observability.md) |
 | `db-recording-gate-v07` | DB Recording Gate v0.7: StartRecording nodes + unified observation window (эпик R0–R4) | 2026-06-29 | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | #133 (Issue открыт) | [карточка](./archive/db-recording-gate-v07.md) |
 | `db-recording-gate-r4-scenario-smoke` | DB Recording Gate R4: main-v07.json + smoke + LGTM | 2026-06-29 | [`DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_RECORDING_GATE_V07_EPIC_PROMPT.md) | #133 (Issue открыт) | [карточка](./archive/db-recording-gate-r4-scenario-smoke.md) |
+| `ci-observability` | CI observability: ci.yml gap, reporters, artifact paths, testTimeout coupling | 2026-06-29 | [`CI_OBSERVABILITY_PROMPT.md`](../docs/prompts/CI_OBSERVABILITY_PROMPT.md) | #193 (Issue открыт) | [карточка](./archive/ci-observability.md) |
+| `rag-top-k-c2` | RAG C2: archive-circuit topK 15, operative 5 — split RAG_TOP_K env (consilium #186-C2) | 2026-06-29 | — | #186 (Issue открыт) | [карточка](./archive/rag-top-k-c2.md) |
 | `insights-lifecycle-2026-06-28` | Регистрация инсайтов и прогон через все стадии (draft → researched → reviewed → adopted) | 2026-06-28 | [`INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md`](../docs/prompts/INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md) | — | [карточка](./archive/insights-lifecycle-2026-06-28.md) |
 | `issue-185-services-device-board-boundary` | Issue #185: remove services → device-board boundary violations | 2026-06-28 | [`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md) | #185 | [карточка](./archive/issue-185-services-device-board-boundary.md) |
 | `task-closure-teamlead-review-v1` | Automatic Teamlead review for Issue and sprint closure | 2026-06-28 | [`TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md`](../docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md) | — | [карточка](./archive/task-closure-teamlead-review-v1.md) |

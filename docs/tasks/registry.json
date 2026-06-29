@@ -9618,10 +9618,11 @@
       "githubIssue": 193,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-29",
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-06-29",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
     },
     {
       "id": "rag-top-k-c2",
@@ -9630,11 +9631,12 @@
       "githubIssue": 186,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-29",
-      "archivedAt": null,
+      "archivedAt": "2026-06-29",
       "archiveNotes": null,
-      "epicId": "agent-context-optimization-v1"
+      "epicId": "agent-context-optimization-v1",
+      "githubIssueClosedAt": null
     }
   ]
 }
