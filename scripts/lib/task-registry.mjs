@@ -167,13 +167,13 @@ export function renderTasksReadme(registry, cwd = process.cwd()) {
   );
 
   const row = (t) => {
-    const prompt = `[\`${t.promptPath.split('/').pop()}\`](../${t.promptPath})`;
+    const prompt = t.promptPath ? `[\`${t.promptPath.split('/').pop()}\`](../${t.promptPath})` : '—';
     const gh = t.githubIssue != null ? `[#${t.githubIssue}](https://github.com/officefish/Membrana/issues/${t.githubIssue})` : '—';
     return `| \`${t.id}\` | ${t.title} | ${t.size} | ${prompt} | ${gh} |`;
   };
 
   const archivedRow = (t) => {
-    const prompt = `[\`${t.promptPath.split('/').pop()}\`](../${t.promptPath})`;
+    const prompt = t.promptPath ? `[\`${t.promptPath.split('/').pop()}\`](../${t.promptPath})` : '—';
     const card = `[карточка](./archive/${t.id}.md)`;
     const gh = t.githubIssue != null ? `#${t.githubIssue}` : '—';
     const ghPending =
