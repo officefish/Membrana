@@ -17,6 +17,8 @@ export interface RagConfig {
   minOperativeCount: number;
   longTermPenalty: number;
   topK: number;
+  operativeTopK: number;
+  archiveTopK: number;
   obsidianEnabled: boolean;
   obsidianVaultPath: string | null;
 }
@@ -32,6 +34,8 @@ const DEFAULTS: RagConfig = {
   minOperativeCount: 3,
   longTermPenalty: 0.9,
   topK: 5,
+  operativeTopK: 5,
+  archiveTopK: 15,
   obsidianEnabled: false,
   obsidianVaultPath: null,
 };
@@ -85,6 +89,8 @@ export function loadRagConfig(env: NodeJS.ProcessEnv = process.env): RagConfig {
     ),
     longTermPenalty: parseFloatEnv(env.RAG_LONG_TERM_PENALTY, DEFAULTS.longTermPenalty),
     topK: parseIntEnv(env.RAG_TOP_K, DEFAULTS.topK),
+    operativeTopK: parseIntEnv(env.RAG_OPERATIVE_TOP_K, DEFAULTS.operativeTopK),
+    archiveTopK: parseIntEnv(env.RAG_ARCHIVE_TOP_K, DEFAULTS.archiveTopK),
     obsidianEnabled: env.OBSIDIAN_ENABLED === 'true',
     obsidianVaultPath: env.OBSIDIAN_VAULT_PATH?.trim() || null,
   };

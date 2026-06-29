@@ -76,6 +76,8 @@ jobs:
             packages/core/test-results/
             packages/services/telemetry/test-results/
             packages/background-office/test-results/
+            packages/services/rag/test-results/
+            packages/services/detectors/harmonic/test-results/
           if-no-files-found: ignore
           retention-days: 7
 
@@ -92,5 +94,5 @@ jobs:
             echo ""
             echo "Локально перед PR выполните \`yarn test\` (см. \`docs/CONTRIBUTING.md\`)."
             echo ""
-            echo "JSON-отчёты (fft-analyzer, core, telemetry, background-office) — artifact \`test-results\` этого прогона."
+            echo "JSON-отчёты (fft-analyzer, core, telemetry, background-office, rag, harmonic) — artifact \`test-results\` этого прогона."
           } >> "$GITHUB_STEP_SUMMARY"

@@ -61,6 +61,14 @@ jobs:
       - name: Turbo — lint, typecheck, test, build
         run: yarn turbo run lint typecheck test build --continue
 
+      - name: RAG — acceptance tests (keyword corpus I/O, timeout 30 s/тест)
+        if: always()
+        run: yarn workspace @membrana/rag-service test:acceptance
+
+      - name: Harmonic — integration test (FFT processing, timeout 10 s)
+        if: always()
+        run: yarn workspace @membrana/harmonic-detector-service test:integration
+
       - name: Script ritual tests (test:scripts)
         run: yarn test:scripts
 
