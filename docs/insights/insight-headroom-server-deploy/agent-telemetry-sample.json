@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "date": "2026-06-29",
+    "phase": "headroom-codex-night-fixture",
+    "note": "Deterministic fixture for per-client Headroom reporting. Not a live proxy measurement."
+  },
+  "events": [
+    {
+      "client": "claude-code",
+      "workflow": "proxy-perf",
+      "phase": "C6",
+      "transform": "FileSystemSync",
+      "durationMs": 245,
+      "cacheHit": true,
+      "inputTokens": 1000,
+      "outputTokens": 820,
+      "tokensSaved": 180
+    },
+    {
+      "client": "claude-code",
+      "workflow": "proxy-perf",
+      "phase": "C6",
+      "transform": "TokenCounter",
+      "durationMs": 18,
+      "cacheHit": false,
+      "inputTokens": 100,
+      "outputTokens": 100,
+      "tokensSaved": 0
+    },
+    {
+      "client": "codex",
+      "workflow": "task-closure-review",
+      "phase": "NB2",
+      "transform": "PromptTemplateApply",
+      "durationMs": 12,
+      "cacheHit": true,
+      "inputTokens": 800,
+      "outputTokens": 640,
+      "tokensSaved": 160
+    },
+    {
+      "client": "codex",
+      "workflow": "sprint-context",
+      "phase": "NB2",
+      "transform": "TaskClosureContext",
+      "durationMs": 30,
+      "cacheHit": false,
+      "inputTokens": 1200,
+      "outputTokens": 1000,
+      "tokensSaved": 200
+    }
+  ],
+  "operationalWork": [
+    {
+      "client": "codex",
+      "summary": "Issue #178 reconciliation, PR/CI/merge actions were operational work and not part of this Headroom telemetry fixture."
+    }
+  ]
+}

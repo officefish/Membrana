@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-06-29
+
+> Epic: `headroom-codex-telemetry-night-build`
+> Закрыто: `2026-06-29T19:02:25.279Z` (`yarn night:close`)
+> Промпт: `docs/prompts/HEADROOM_CODEX_TELEMETRY_NIGHT_BUILD_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/headroom-codex-telemetry-night-build-2026-06-29` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 # Night Build log
 
 ## Open — 2026-06-14T18:06:19.233Z
@@ -66,3 +87,21 @@
 ## Checkpoint NB3 — 2026-06-29T19:01:20.451Z
 - Status: **pass**
 - Note: Integrated per-client Headroom attribution docs and AGENTS guidance; no live proxy dependency
+
+
+---
+
+## Шаблон итога (заполнить вручную или агентом)
+
+| Фаза | Статус | PR / commit |
+|------|--------|-------------|
+| NB0 | pending / done / deferred | |
+| NB1 | pending / done / deferred | |
+| NB2 | pending / done / deferred | |
+| NB3 | pending / done / deferred | |
+
+**Блокеры:**
+
+- …
+
+**LGTM Vesnin:** pending

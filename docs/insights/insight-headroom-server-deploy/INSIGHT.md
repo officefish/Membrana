@@ -61,3 +61,22 @@ tools/headroom-venv/Scripts/headroom.exe perf --format json > docs/insights/insi
 ```
 
 **Отчёт:** `proxy-perf-report.json` (baseline synthetic), `proxy-perf-report-real.json` (real session, pending)
+
+---
+
+## Agent runtime attribution
+
+Headroom measurements must be reported as measured traffic by runtime, not as a proxy for all agent
+work. Use [`docs/HEADROOM_AGENT_TELEMETRY.md`](../../HEADROOM_AGENT_TELEMETRY.md) and:
+
+```bash
+yarn headroom:agent-report --input docs/insights/insight-headroom-server-deploy/proxy-perf-report.json
+```
+
+Current synthetic baseline has no client label and is therefore reported as `client=unknown`, not as
+Codex. The deterministic fixture
+[`agent-telemetry-sample.json`](./agent-telemetry-sample.json) demonstrates the target split:
+
+- `client=claude-code` for Claude Code proxy traffic;
+- `client=codex` for Codex context/prompt transforms;
+- operational Codex actions outside Headroom are listed separately.

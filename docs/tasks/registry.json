@@ -9660,6 +9660,31 @@
         "musician"
       ],
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "headroom-codex-telemetry-night-build",
+      "title": "Night Build: Headroom × Codex first-class telemetry",
+      "promptPath": "docs/prompts/HEADROOM_CODEX_TELEMETRY_NIGHT_BUILD_PROMPT.md",
+      "githubIssue": 187,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-29",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "mcp-tooling-m2-headroom-pilot"
+      ],
+      "notes": "Make Codex observable as a distinct Headroom telemetry client; do not close #187 during the night.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov",
+        "musician"
+      ],
+      "epicId": "agent-context-optimization-v1"
     }
   ]
 }
