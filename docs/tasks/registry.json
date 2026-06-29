@@ -2,6 +2,18 @@
   "version": 1,
   "tasks": [
     {
+      "id": "ci-test-stability-refactor",
+      "title": "Рефакторинг CI: vitest-конфиги, разделение integration/acceptance, CI-aware latency",
+      "promptPath": "docs/prompts/CI_TEST_STABILITY_REFACTOR_PROMPT.md",
+      "githubIssue": 191,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-06-29",
+      "archivedAt": null,
+      "archiveNotes": null
+    },
+    {
       "id": "main-sync-sprint-2026-06-29",
       "title": "Branch reconciliation sprint: merge main → techies68 → PR → main",
       "promptPath": "docs/prompts/MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md",
