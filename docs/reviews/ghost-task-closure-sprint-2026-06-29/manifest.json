@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "taskId": "ghost-task-closure-sprint-2026-06-29",
+  "state": "archived",
+  "tier": "T0",
+  "reviewMode": "concise-t0",
+  "branch": "codex/ghost-task-closure-finalize",
+  "currentCommitSha": "54209000e21d2f9e968206bf4105cc9d9819ff28",
+  "reviewedCommitSha": "54209000e21d2f9e968206bf4105cc9d9819ff28",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/ghost-task-closure-sprint-2026-06-29/54209000e21d2f9e968206bf4105cc9d9819ff28-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 190,
+    "remoteState": "merged",
+    "url": "https://github.com/officefish/Membrana/pull/190"
+  },
+  "scope": {
+    "baseRef": "f502573",
+    "files": [
+      "docs/discussions/ghost-task-closure-sprint-2026-06-29.md",
+      "docs/insights/insight-ghost-task-closure-invariant/INSIGHT.md",
+      "docs/insights/insight-ghost-task-closure-invariant/meta.json",
+      "docs/insights/registry.json",
+      "docs/prompts/TASK_PROMPT_GHOST_CLOSURE_SPRINT.md",
+      "docs/tasks/README.md",
+      "docs/tasks/archive/cabinet-journal-hotfix.md",
+      "docs/tasks/archive/cabinet-mp4-hardening-night-build.md",
+      "docs/tasks/archive/cabinet-mp4-nb0-merge-gate.md",
+      "docs/tasks/archive/cabinet-mp4-nb1-sample-playback-dry.md",
+      "docs/tasks/archive/cabinet-mp4-nb2-cabinet-facade.md",
+      "docs/tasks/archive/cabinet-mp4-nb3-quality-contracts.md",
+      "docs/tasks/archive/cabinet-sample-library-csl1-api.md",
+      "docs/tasks/archive/cabinet-sample-library-csl2-ui.md",
+      "docs/tasks/archive/cabinet-sample-library-csl3-remote-ops.md",
+      "docs/tasks/archive/cabinet-sample-library-v1.md",
+      "docs/tasks/archive/cj-0-trends-enabled-keys.md",
+      "docs/tasks/archive/cj-1-media-api-safe-json.md",
+      "docs/tasks/archive/cj-2-journal-media-decouple.md",
+      "docs/tasks/archive/cj-3-brief-render-parity.md",
+      "docs/tasks/archive/cj-4-trends-counts-as-detection.md",
+      "docs/tasks/archive/cj-5-sync-push-observability.md",
+      "docs/tasks/archive/db-recording-gate-r4-scenario-smoke.md",
+      "docs/tasks/archive/db-recording-gate-v07.md",
+      "docs/tasks/archive/membrane-platform-v1.md",
+      "docs/tasks/registry.json"
+    ],
+    "packages": []
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "54209000e21d2f9e968206bf4105cc9d9819ff28",
+        "checkedAt": "2026-06-29T11:59:19.979Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "54209000e21d2f9e968206bf4105cc9d9819ff28",
+        "checkedAt": "2026-06-29T06:51:13Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28353776170/job/83992014987"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #190 merged 2026-06-29T07:43:32Z (b3127ba110d4245c2e71b3ccd595df94fd2d870a)"
+  },
+  "createdAt": "2026-06-29T11:57:01.404Z",
+  "updatedAt": "2026-06-29T11:59:25.489Z"
+}
