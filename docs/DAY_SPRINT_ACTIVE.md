@@ -1,5 +1,11 @@
-# Active day sprint — closed
+# Active day sprint
 
-> **Last closed:** `membrana-studio-ms0-ms4-day-sprint` · [`CLOSURE.md`](./day-sprint/membrana-studio-ms0-ms4-2026-06-23/CLOSURE.md)
+> **Epic:** `device-board-three-hosts-2026-06-26` / `membrana-studio-desktop`  
+> **OPEN:** [`docs/day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md`](./day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md)  
+> **Промпт:** [`docs/prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md`](./prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md)
 
-**MS5** (`membrana-studio-ms5-prod-smoke`) — active in epic `membrana-studio-desktop`, отдельный день.
+**Текущая фаза:** ST0 → **ST2-J** (offline journal на ФС, без server).
+
+**Критический DoD:** autonomous Run → `%APPDATA%/Membrana/journal/items.json` + UI journal.
+
+**Предшественник:** [`db3h-s1-tech-debt-2026-06-26/CLOSURE.md`](./day-sprint/db3h-s1-tech-debt-2026-06-26/CLOSURE.md) (merged PR #181).

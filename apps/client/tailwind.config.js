@@ -9,6 +9,7 @@ export default {
   content: [
     './index.html',
     './src/**/*.{ts,tsx}',
+    '!./src/**/*.test.{ts,tsx}',
     '../../packages/agenda/src/**/*.{ts,tsx}',
     '../../packages/core/src/**/*.{ts,tsx}',
     '../../packages/device-board/src/**/*.{ts,tsx}',

@@ -12,7 +12,13 @@ import {
 } from '@nestjs/websockets';
 import type { IncomingMessage } from 'node:http';
 import type { Server, WebSocket } from 'ws';
-import { parseNodeRealtimeEnvelope, type NodeRealtimeEnvelope } from '../../domain/node-realtime-wire';
+import {
+  NODE_REALTIME_EVENT_TYPES,
+  parseBoardCaptureStatePayload,
+  parseBoardEditLeasePayload,
+  parseNodeRealtimeEnvelope,
+  type NodeRealtimeEnvelope,
+} from '../../domain/node-realtime-wire';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
 import { NodeRealtimeAuthService } from './node-realtime-auth.service';
@@ -129,29 +135,69 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
         this.realtimeService.fanOutToCabinet(meta.membraneId, envelope);
         return;
       }
+      // SF2: board events (lease/capture) от узла — в кабинет.
+      if (envelope.channel === 'board') {
+        if (!this.isValidBoardEnvelope(envelope)) {
+          return;
+        }
+        this.realtimeService.fanOutToCabinet(meta.membraneId, envelope);
+        return;
+      }
       await this.journalHandler.handleIncoming(meta, envelope);
       return;
     }
 
+    if (meta.role === 'cabinet' && envelope.channel === 'board') {
+      if (!this.isValidBoardEnvelope(envelope)) {
+        return;
+      }
+      const deviceId = this.resolveTargetDeviceId(meta, envelope);
+      this.realtimeService.fanOutToCabinet(meta.membraneId, envelope);
+      if (deviceId) {
+        this.realtimeService.sendToNode(deviceId, envelope);
+      }
+      return;
+    }
+
     // MP7b: команды runtime (run/stop/setMode) и mic-live идут из кабинета на узел.
-    if (
-      meta.role === 'cabinet' &&
-      (envelope.channel === 'mic-live' || envelope.channel === 'runtime')
-    ) {
-      // RT5 multi-node: команда может адресовать конкретный узел через payload.deviceId;
-      // иначе берём узел, привязанный к подключению кабинета.
-      const targetDeviceId =
-        (envelope.channel === 'runtime'
-          ? (envelope.payload as { deviceId?: unknown } | null)?.deviceId
-          : undefined);
-      const deviceId =
-        typeof targetDeviceId === 'string' && targetDeviceId.length > 0
-          ? targetDeviceId
-          : meta.mediaDeviceId;
+    if (meta.role === 'cabinet' && (envelope.channel === 'mic-live' || envelope.channel === 'runtime')) {
+      const deviceId = this.resolveTargetDeviceId(meta, envelope);
       if (deviceId) {
         this.realtimeService.sendToNode(deviceId, envelope);
       }
     }
+  }
+
+  private resolveTargetDeviceId(
+    meta: NodeRealtimeSocketMeta,
+    envelope: NodeRealtimeEnvelope,
+  ): string | null {
+    if (envelope.channel === 'runtime' || envelope.channel === 'board') {
+      const targetDeviceId = (envelope.payload as { deviceId?: unknown } | null)?.deviceId;
+      if (typeof targetDeviceId === 'string' && targetDeviceId.length > 0) {
+        return targetDeviceId;
+      }
+    }
+    return meta.mediaDeviceId;
+  }
+
+  private isValidBoardEnvelope(envelope: NodeRealtimeEnvelope): boolean {
+    if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.editLease) {
+      if (parseBoardEditLeasePayload(envelope.payload) === null) {
+        this.logger.debug({ type: envelope.type }, 'invalid board.edit-lease payload');
+        return false;
+      }
+      return true;
+    }
+    if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.captureState) {
+      if (parseBoardCaptureStatePayload(envelope.payload) === null) {
+        this.logger.debug({ type: envelope.type }, 'invalid board.capture-state payload');
+        return false;
+      }
+      return true;
+    }
+    this.logger.debug({ type: envelope.type }, 'unsupported board event type');
+    return false;
   }
 
   private pingClients(): void {

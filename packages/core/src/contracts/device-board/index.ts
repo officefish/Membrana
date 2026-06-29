@@ -54,12 +54,15 @@ export {
   POLICY_CONSTRUCTOR_SCENARIO_NODE_KINDS,
   REF_CONSTRUCTOR_SCENARIO_NODE_KINDS,
   CONSTRUCTOR_SCENARIO_NODE_KINDS,
+  ASYNC_ORCHESTRATION_SCENARIO_NODE_KINDS,
   type PolicyConstructorScenarioNodeKind,
   type RefConstructorScenarioNodeKind,
   type ConstructorScenarioNodeKind,
+  type AsyncOrchestrationScenarioNodeKind,
   isPolicyConstructorScenarioNodeKind,
   isRefConstructorScenarioNodeKind,
   isConstructorScenarioNodeKind,
+  isAsyncOrchestrationScenarioNodeKind,
 } from './scenario-node-kind.js';
 
 export {
@@ -77,6 +80,13 @@ export {
   resolveScenarioGraphNodePure,
   normalizeScenarioGraphNodePure,
 } from './scenario-node-pure.js';
+
+export {
+  DEFAULT_ASYNC_CAPABLE_SCENARIO_NODE_KINDS,
+  type DefaultAsyncCapableScenarioNodeKind,
+  isDefaultAsyncCapableScenarioNodeKind,
+  resolveScenarioGraphNodeSupportsAsync,
+} from './scenario-node-async.js';
 
 export {
   JOURNAL_SCOPE_KINDS,
@@ -117,6 +127,43 @@ export {
   resolveScenarioCollectorConfig,
   isScenarioCollectorConfig,
 } from './collector-config.js';
+
+export {
+  DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+  MAX_SCENARIO_SEQUENCE_THEN_COUNT,
+  MIN_SCENARIO_SEQUENCE_THEN_COUNT,
+  type ScenarioSequenceConfig,
+  resolveScenarioSequenceConfig,
+  isScenarioSequenceConfig,
+  isScenarioSequenceModeConflict,
+} from './sequence-config.js';
+
+export {
+  SCENARIO_ASYNC_JOB_STATES,
+  SCENARIO_ASYNC_JOB_KINDS,
+  DEFAULT_MAX_PENDING_TRACK_UPLOAD_JOBS,
+  DEFAULT_SCENARIO_ASYNC_JOB_AWAIT_TIMEOUT_MS,
+  type ScenarioAsyncJobState,
+  type ScenarioAsyncJobKind,
+  type ScenarioAsyncJobCorrelation,
+  type ScenarioAsyncJobRecord,
+  isTerminalScenarioAsyncJobState,
+  isScenarioAsyncJobKind,
+  isScenarioAsyncJobState,
+} from './scenario-async-job.js';
+
+export {
+  PROMISE_REF_HANDLE_PREFIX,
+  formatPromiseRefHandle,
+  parsePromiseRefHandle,
+} from './scenario-promise-ref.js';
+
+export {
+  DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG,
+  type ScenarioAsyncJobNodeConfig,
+  resolveScenarioAsyncJobNodeConfig,
+  isScenarioAsyncJobNodeConfig,
+} from './scenario-async-job-node-config.js';
 
 export {
   RECORDING_WINDOW_SEC_PRESETS,
@@ -229,6 +276,7 @@ export {
   createDefaultFunctionExecOutputPin,
   normalizeScenarioFunctionPin,
   normalizeScenarioFunctionPins,
+  canonicalizeScenarioFunctionPinOrder,
   isScenarioFunctionPinCountValid,
 } from './scenario-function-pin.js';
 

@@ -1,6 +1,6 @@
 import type { ScenarioBlockKind, ScenarioNodeKind, SocketType } from '@membrana/core';
 
-import type { ScenarioCollectorConfig, ScenarioRecordingPolicy, ScenarioFftTrendsPolicy } from '@membrana/core';
+import type { ScenarioCollectorConfig, ScenarioFftTrendsPolicy, ScenarioRecordingPolicy, ScenarioSequenceConfig, ScenarioAsyncJobNodeConfig } from '@membrana/core';
 import type { ScenarioPinKind } from '@membrana/core';
 
 /** Семантика pin на ноде доски (канон — `ScenarioPinKind` в core). */
@@ -46,8 +46,14 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
   readonly recordingPolicy?: ScenarioRecordingPolicy;
   /** v0.8: для MakeFftTrendsPolicy — параметры trends-анализа. */
   readonly fftTrendsPolicy?: ScenarioFftTrendsPolicy;
+  /** Sequence: Then count + parallel async. */
+  readonly sequenceConfig?: ScenarioSequenceConfig;
+  /** AP v1: jobKind / await timeout для promise orchestration nodes. */
+  readonly asyncJobConfig?: ScenarioAsyncJobNodeConfig;
   /** v0.9: Pure ↔ Impure для eligible getters (`variable-get`). */
   readonly pure?: boolean;
+  /** ES4: override async-capable для Sequence parallel Then-веток. */
+  readonly supportsAsync?: boolean;
   /** v0.4+: `event` — `handler` (обработчик) или `loopTick` (onTick в лупе). */
   readonly eventVariant?: 'handler' | 'loopTick';
   /** Subgraph-блок: id функции из `scenario.functions`. */

@@ -1,0 +1,94 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "onDisconnect",
+  "branchLabel": "onDisconnect",
+  "scenarioTitle": "UserCase Gamma: Poster UserCase (async v2): onDisconnect → invalidate journal1",
+  "userCaseId": "usercase-mvp-microphone-gamma-async-v2",
+  "userCaseBranch": "onDisconnect",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "on-disconnect-event",
+    "nodes": [
+      {
+        "id": "on-disconnect-event",
+        "label": "On disconnect",
+        "system": true,
+        "nodeKind": "event",
+        "position": {
+          "x": -96,
+          "y": -128
+        },
+        "blockKind": "custom",
+        "eventVariant": "handler"
+      },
+      {
+        "id": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+        "label": "journal1",
+        "nodeKind": "variable-set",
+        "position": {
+          "x": 368,
+          "y": -128
+        },
+        "blockKind": "custom",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "node-device-global-mqm9pz9v-23",
+        "label": "GetDevice",
+        "nodeKind": "device-global",
+        "position": {
+          "x": -104,
+          "y": 88
+        },
+        "blockKind": "custom"
+      },
+      {
+        "id": "node-get-journal-mqm9q43m-24",
+        "label": "GetJournal",
+        "nodeKind": "get-journal",
+        "position": {
+          "x": 184,
+          "y": 8
+        },
+        "blockKind": "custom"
+      }
+    ],
+    "edges": [
+      {
+        "kind": "data",
+        "source": "node-device-global-mqm9pz9v-23",
+        "target": "node-get-journal-mqm9q43m-24",
+        "dataType": "DeviceRef",
+        "sourceHandle": "device",
+        "targetHandle": "device"
+      },
+      {
+        "kind": "exec",
+        "source": "on-disconnect-event",
+        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "data",
+        "source": "node-get-journal-mqm9q43m-24",
+        "target": "node-variable-set-var-JournalRef-mqm9dl4a-6-mqm9pmz6-12",
+        "dataType": "JournalRef",
+        "sourceHandle": "journal",
+        "targetHandle": "value"
+      }
+    ]
+  },
+  "variables": [],
+  "referenceVariableSlots": [
+    {
+      "exportVariableId": "var-JournalRef-mqm9dl4a-6",
+      "type": "JournalRef",
+      "nameHint": "journal1"
+    }
+  ],
+  "referencedVariableIds": [
+    "var-JournalRef-mqm9dl4a-6"
+  ],
+  "exportedAt": "2026-06-25T12:44:21.609Z"
+}

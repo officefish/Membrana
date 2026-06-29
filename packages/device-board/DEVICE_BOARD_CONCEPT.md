@@ -664,6 +664,9 @@ description, frame color, rect, `nodeIds`). **Не участвуют в Run**; 
 ## 14. Статус и порядок изменения
 
 - **Статус:** v0.10 — концепт (+ user workspace §22, U10 W2-module).
+- **Changelog v0.10.1 (2026-06-24):** bundled MVP **v0.9-functions** — runtime-validated user scenario
+  (`fn-1` StartRecording, `fn-3` GetAudioStream, multi-insert, duplicate getters) как target для
+  `usercase-mvp-microphone`; §16.5.1; async track/report/publish — roadmap, не cutover.
 - **Changelog v0.10 (2026-06-23):** эпик U10 (`db-user-workspace-u10`, #147): IndexedDB multi-slot,
   module launcher, system preview RO, clone catalog → user slot, shell picker deprecated;
   `meta.workspaceKind`, `clone-user-case-to-workspace.ts`, `DeviceBoardSession`.
@@ -802,6 +805,21 @@ disabled + `title`/`aria-label` «нет связи с устройством» 
 инспекторе из `host.enumerateMicrophones` (audio-engine enumerate), data-выход
 `MicrophoneRef` через `resolveInput` для set переменной Microphone.
 
+#### 15.5.1 Operator notes (инспектор узла)
+
+Для узлов с неочевидным runtime/host-поведением — **операторские заметки** в правом
+сайдбаре (не validation banner и не Mintlify).
+
+| Слой | Путь | Правило |
+| ---- | ---- | ------- |
+| Реестр | `graph/scenario-node-inspector-notes.ts` | `SCENARIO_NODE_INSPECTOR_NOTES[nodeKind]` — секции `info` / `warning` |
+| UI | `components/board-node-inspector-notes.tsx` | Рендер `alert-info` / `alert-warning` при выборе узла |
+| Lint (recording loop) | `graph/validate-start-recording-loop.ts` | `start-recording-unconditional-loop-path`; severity `warning` |
+
+Заметки **не сериализуются** в `DeviceScenarioDocument` — только UX редактора.
+Первый кейс: `start-recording` — идемпотентный skip при активной сессии и канон
+размещения на графе (не на каждом tick лупа).
+
 ### 15.6 Контракты (DBR0, уже в `@membrana/core`)
 
 - `SocketType += 'DeviceRef' | 'MicrophoneRef'`; `REFERENCE_SOCKET_TYPES`,
@@ -831,9 +849,14 @@ runtime (`@membrana/core` `scenario-node-pure.ts`, эпик
 | **Pure** (`pure: true`) | **нет** | пропуск (transparent) | pull через `resolveInput` / `resolveNodeOutput` на каждый read (D4: без tick-cache) |
 | **Impure** (`pure: false`) | exec-in → exec-out | выполняется на exec-тике | выход фиксируется на шаге exec |
 
-**Sidebar:** галочка **Pure** для `PURE_ELIGIBLE` (`variable-get`, `get-journal`, `get-reporter`); ref-getter — read-only
+**Sidebar:** галочка **Pure** для `PURE_ELIGIBLE` — ref-provider getters (`get-journal`,
+`get-reporter`, `get-recorder`, `get-spectral-analyser`) и `variable-get`; ref-getter — read-only
 bound/empty badge (D2); value-getter — редактирование выходного value. Переключение
 **impure → pure** удаляет все exec-рёбра узла (D1).
+
+**Критерий ref-provider pure:** узел только **отдаёт ссылку** (singleton/session lookup),
+без per-tick host sample/FFT I/O. Остаются **impure-only:** `get-sample`, `get-fft-frame`,
+`get-audio-stream`, `get-microphone`.
 
 **Два класса конструкторов** (`CONSTRUCTOR_SCENARIO_NODE_KINDS` в core):
 
@@ -857,7 +880,7 @@ presets trends-fft-analyzer). Data-edge к `MakeFftTrendsAnalysis.policy`.
 ref constructors. `RecordingPolicy` **убран** из sidebar «Конструктор переменных» (legacy JSON
 variables мигрируют через `resolveScenarioRecordingPolicy`).
 
-**Sign-off:** [`docs/device-board-scripts/PURE_GETTERS_LGTM.md`](../../docs/device-board-scripts/PURE_GETTERS_LGTM.md).
+**Sign-off:** [`docs/actions/device-board/sign-offs/PURE_GETTERS_LGTM.md`](../../docs/actions/device-board/sign-offs/PURE_GETTERS_LGTM.md).
 
 ---
 
@@ -914,8 +937,9 @@ Parallel: CollectSamples → [event] → NewTrack
 
 ### 16.5 Целевой MVP: AudioStream → track + report (v0.8 LGTM)
 
-> **Достигнуто 2026-06-21:** bundled `usercase-mvp-microphone` на device-board; sign-off [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md).  
-> **Дальше:** usability + docs snapshot + server persist — [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md).
+> **Достигнуто 2026-06-21:** bundled `usercase-mvp-microphone` на device-board; sign-off [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md).  
+> **Переход v0.9-functions (WIP, 2026-06-24):** runtime-validated user scenario с `scenario.functions[]` — новый bundled target; см. §16.5.1. Flat v0.8 остаётся в codegen до cutover.  
+> **Дальше:** usability + async delivery + server persist — [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md).
 
 **Центральная продуктовая цель device-board:** observation bundles с микрофона (recording gate + trends report).
 Один bundle = **TrackRef (preview/upload)** + **Trends FFT report** (`trends-fft/v0.1`) в journal.
@@ -990,6 +1014,71 @@ start-recording → … → recording-window-full
 stop-recording → track concat-ok uploadMode:async → start-recording
 analyser-flush → fft-trends-input → publish-report (trends-fft/v0.1)
 ```
+
+### 16.5.1 Bundled v0.9-functions (cutover 2026-06-24)
+
+> Эталон: bundled default после sprint `device-board-bundled-mvp-v09-sprint-2026-06-24`; smoke **`runId 7e8a289c`**: 10 recording windows, 10 trends `publish-done`, async `upload-ok`.  
+> Документ: [`USERCASE_MVP_MICROPHONE.md`](../../docs/actions/device-board/specs/USERCASE_MVP_MICROPHONE.md) · LGTM addendum · `yarn logs:parse`.
+
+**Отличия от flat §16.5:**
+
+| Тема | v0.8 flat | v0.9-functions (bundled target) |
+|------|-----------|----------------------------------|
+| StartRecording | inline `start-recording` + `MakeRecordingPolicy` data-edge | **user function** `fn-1`; policy **внутри** тела |
+| GetAudioStream / guards | `isValid` на parent main | **user function** `fn-3`; guards **внутри** тела |
+| Геттеры | один экземпляр, длинные рёбра | **несколько экземпляров** одного getter рядом с потребителем — UX-канон |
+| Multi-insert | — | `fn-3` дважды на main (tick start + перед restart) |
+| CollectSamples | не в MVP | допустимо (batches → `MakeTrack.samples`) |
+| Publish | один trends report | trends + optional track report (2× `PublishReport`) |
+
+**Main gate-true (validated exec):**
+
+```text
+StopRecording → MakeTrack → GetAudioStream (fn-3) → StartRecording (fn-1)
+  → FlushSpectralAnalyser → MakeFftTrendsAnalysis → MakeReportFromAnalysis
+  → PublishReport → MakeReportFromTrack → PublishReport → loop-repeat
+```
+
+**Bundled document:** `scenario.functions[]` обязателен (не пустой). Branch-export `branch-scenario` один — недостаточен без `referencedFunctions[]` (импорт/экспорт — эпик [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../../docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md)).
+
+**Interim limitation (ucv2-2, снято в v2.0-async):** ~~sync hot path~~ — см. §16.5.2.
+
+**Codegen (исторический cutover):** golden `usercase-mvp-microphone-v09-functions.document.json`. **Текущий bundled default:** §16.5.2 (`v2.0-async`).
+
+### 16.5.2 Bundled v2.0-async (cutover 2026-06-25)
+
+> Эталон: epic `device-board-async-pipeline-v1` (Issue #176); golden [`usercase-mvp-microphone-v20-async.document.json`](../../docs/device-board-scripts/golden/usercase-mvp-microphone-v20-async.document.json); LGTM [`DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md`](../../docs/actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md).  
+> Parse: `yarn logs:parse` → секция **smoke v2.0-async** (`smokeV20Async` в JSON).
+
+**Цель:** non-blocking main tick на recording gate; drone report **только** после `async-job-resolved(track-upload)`; trends publish остаётся **sync на gate** (ADR AD3).
+
+**Main gate-true (validated exec):**
+
+```text
+is-recording-window-full [true]
+  → Sequence (latentThen)
+      Then 0: StopRecording
+      Then 1: MakeTrack → StartAsyncJob(track-upload) → PromiseRef
+      Then 2: FlushSpectralAnalyser → MakeFftTrendsAnalysis → MakeReportFromAnalysis → PublishReport (trends)
+      Then 3: GetAudioStream (fn-3) → StartRecording (fn-1)
+  → loop-repeat
+
+Detached (event-out, detach):
+  on-async-resolved(P1) → MakeReportFromTrack → PublishReport (drone)
+```
+
+**Отличия от v0.9-functions (§16.5.1):**
+
+| Тема | v0.9-functions | v2.0-async |
+|------|----------------|------------|
+| Upload | fire-and-forget после MakeTrack на hot path | `StartAsyncJob` + host bridge; `uploadMode:deferred` |
+| Drone report | sync на hot path → `drone-skip` race | detached после `async-job-resolved` |
+| Gate orchestration | линейный exec | **Sequence** `latentThen: true` |
+| Graph meta | — | `meta.bundledGraphVersion: v2.0-async` |
+
+**Codegen / migrate:** `scripts/build-usercase-mvp-microphone.mjs` → golden `usercase-mvp-microphone-v20-async.document.json`; `yarn usercase:build-mvp-microphone` · `needsBundledV20AsyncMigration` (v0.9 → v2.0 при load).
+
+**Groups (editor):** `fn-UploadPipeline`, `fn-TrendsPublish`.
 
 ### 16.6 Контракты collectors (DBC0, `@membrana/core`)
 
@@ -1106,17 +1195,32 @@ interface ScenarioFunctionPin {
 ```
 
 - **D-PINS-9:** не более **9** pins на Input и **9** на Output (exec + data в общем лимите).
+- **Exec-first:** на каждой стороне **exec pin всегда первый** (верхний handle); `canonicalizeScenarioFunctionPinOrder` в core на hydrate/collapse/commit; exec pins **неудаляемы**.
 - Enforce: UI disabled при count === 9, `collapse-to-function` отказ, `validate-pre-run` (`function-pin-limit`).
 - Legacy migrate: `string[]` pins → `normalizeScenarioFunctionPin` on hydrate.
 
 **Collapse to function:** selection `S` → boundary edges → infer pins → create/update
 `ScenarioFunctionSubgraph` → `subgraph`-блок на родителе → open function tab.
-Pure: `collapse-to-function.ts`, `function-pin-ops.ts`.
+На родительской ветке subgraph-блок показывает **имя пользователя** (без `::fn-id` в UI) и badge **`custom`** (presentation; `blockKind` остаётся `subgraph`).
+Уникальный `functionId` при marquee collapse (#159); repair legacy duplicate ids на hydrate + delete по `draftIndex` (#160).
+Pure: `collapse-to-function.ts`, `function-pin-ops.ts`, `repair-duplicate-scenario-functions.ts`.
 
 **Function editor UX (post-#139):** на ветке `function` — inline-редактор (имя, описание, pins)
 в сайдбаре; **клик по функции в списке** сразу открывает editor **без modal**, если уже на
 `function` branch (F2). Modal picker остаётся при входе с handler-ветки. Viewport fit + minimap
 на function canvas. Pin meter **`n/9`** per Input/Output (F4).
+
+**Multi-insert user functions (post-#170):** одна и та же `ScenarioFunction` может быть
+вставлена на родительскую ветку **несколько раз** — каждый вызов = отдельный subgraph-блок
+с уникальным `nodeId` (`fn-{id}-block`, `fn-{id}-block-2`, …). Runtime резолвит тело по
+общему `functionId`; дубликат-guard на ветке **снят** (`insert-function-into-branch.ts`).
+Вставка из sidebar/modal: позиция по умолчанию — **центр viewport**
+(`getCenterFlowPosition()`); опциональный `position` в API. Подтверждение — краткий edit-hint
+в зоне clipboard-hint (`flashEditHint`, 5 с), без отдельного top-toast.
+
+**Fn-blocks inspector (post-#172):** при выборе subgraph-блока правый инспектор показывает
+список **всех экземпляров** той же функции на текущей ветке («Вызов n» + `nodeId`);
+клик переключает selection на канвасе и фокусирует viewport (`list-subgraph-blocks-for-function.ts`).
 
 **Runtime bridge:** `function-input` / `function-output` — pass-through в `exec-subgraph`
 (entry exec-in → first inner node; `function-output` → return).
@@ -1139,7 +1243,32 @@ Pure: `collapse-to-function.ts`, `function-pin-ops.ts`.
 - Граница collapsed function: ребро в `function-output` с `sourceHandle === targetHandle`
   (именованный exec-пин на выходе функции); `exec-subgraph` фиксирует `execOutHandle` при return.
 - Pure-узлы пропускаются через `isExecTransparentPureNode` + тот же `findExecSuccessor`.
+- **Exec fan-out запрещён** (ES2): от одного `(source, sourceHandle)` — не более одного
+  exec-ребра на `exec-in`; при connect — отказ; в legacy-графах — pre-run **warning**
+  (`exec-fan-out-forbidden`). Сообщение: использовать узел **Sequence**.
 - **Не** зависит от `block-executor` (нет циклов); потребители: `exec-subgraph.ts`, `event-dispatch.ts`.
+
+**Sequence node (`nodeKind: 'sequence'`, ES3–ES4):**
+
+- Pins: `exec-in` + `then-0` … `then-8` (1–9 в инспекторе) + `exec-out`.
+- **Sync** (default): Then-ветки по индексу сверху вниз; пустой Then пропускается; после всех Then — `exec-out`.
+- **Parallel async** (`sequenceConfig.parallelAsync`): Then-ветки стартуют параллельно, runtime ждёт `Promise.all`.
+- **Latent Then** (`sequenceConfig.latentThen`, AP v1): Then-ветки dispatch fire-and-forget; main tick продолжается на `exec-out` без await impure branches. Взаимоисключает `parallelAsync`. Pre-run: `validate-async-promise.ts` (`sequence-latent-unsupported-node`); impure узлы — `supportsAsync: true` на canvas.
+- **Async gate** (pre-run): на Then-ветке при `parallelAsync` или `latentThen` допустимы узлы с
+  `supportsAsync` (явно или по умолчанию: `pause-runtime`, `sequence`, pure-узлы).
+  Impure sync (напр. `print`) → `sequence-async-unsupported-node`.
+- Runtime: `runtime/exec-sequence.ts`; editor: `graph/sequence-node.ts`.
+
+**Promise orchestration nodes (AP v1, `nodeKind`):**
+
+| Узел (палитра) | Роль |
+|----------------|------|
+| `start-async-job` | Register job + `PromiseRef` out; host bridge (`startAsyncJob`) |
+| `await-promise` | Блокирует exec-цепочку до terminal / timeout |
+| `on-async-resolved` | `promise` in → `event-out` (detached fan-out) |
+| `cancel-async-jobs` | Cancel pending по `jobKind` |
+
+Store: `AsyncJobStore` (`runtime/async-job-store.ts`). UI hub: `ScenarioAsyncJobHub` (`@membrana/agenda`). Детали: [`SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md) §10.
 
 **Data bridge (`function-call-resolve.ts`):**
 
@@ -1356,7 +1485,7 @@ sequenceDiagram
 
 Mintlify: [`apps/docs/device-board/usercases`](../../apps/docs/device-board/usercases.mdx) (stub → расширение по мере новых bundled UserCases).
 
-Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md) ·
+Связанные: [`USERCASE_MVP_MICROPHONE_LGTM.md`](../../docs/actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md) ·
 консилиум [`device-board-usercases-consilium-2026-06-21.md`](../../docs/discussions/device-board-usercases-consilium-2026-06-21.md).
 
 ---
@@ -1480,6 +1609,7 @@ sequenceDiagram
   Mod->>Board: enterBoardMode(system-preview | user-edit)
   alt system-preview
     Board->>Board: Save disabled, badge «Только просмотр»
+    Board->>Board: structure read-only; viewport pan/zoom/minimap active
     Op->>Mod: Клонировать в мой сценарий
     Mod->>WS: quota check, deepCopy + workspaceKind=user
     Mod->>Board: enterBoardMode(user-edit)
@@ -1491,6 +1621,7 @@ sequenceDiagram
 ```
 
 - **Системный шаблон:** preview/run на доске без Save; клон — кнопка на карточке в модуле.
+- **System-preview UX (view-only):** shell сводит флаги через `resolveScenarioEditFlags()` (`isScenarioViewOnly`, `canEditScenario`, `isCanvasStructureReadOnly`). Канвас блокирует структурные мутации (drag/connect/delete/marquee), но **viewport интерактивен** — pan (ЛКМ/ПКМ/средняя кнопка, Space поверх узлов), zoom, minimap, Controls. Правый сайдбар: палитра скрыта, empty-state «Режим просмотра», инспектор только для чтения. Левый сайдбар: CRUD переменных и user-функций отключён; навигация по веткам и выбор функции для просмотра сохранены. **Не путать** с competition mode: там structure lock, но параметры узлов редактируемы.
 - **Свой сценарий:** пустой слот или клон; после reload/rebuild client документ на месте (IndexedDB).
 - **Шапка доски:** Save, Run/Stop, «Выйти из доски» — **без** переключателя «Мои сценарии».
 

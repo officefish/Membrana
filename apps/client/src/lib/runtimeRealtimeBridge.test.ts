@@ -16,11 +16,15 @@ import {
 function fakeController(): RuntimeBridgeController & {
   start: ReturnType<typeof vi.fn>;
   stop: ReturnType<typeof vi.fn>;
+  pause: ReturnType<typeof vi.fn>;
+  resume: ReturnType<typeof vi.fn>;
   setMode: ReturnType<typeof vi.fn>;
 } {
   return {
     start: vi.fn(),
     stop: vi.fn(),
+    pause: vi.fn(),
+    resume: vi.fn(),
     setMode: vi.fn(),
   };
 }
@@ -38,6 +42,7 @@ describe('runtimeRealtimeBridge helpers', () => {
     expect(payload).toEqual({
       phase: 'main',
       isRunning: true,
+      isPaused: false,
       mode: 'alarm',
       activeBranch: 'main',
       activeNodeId: null,
@@ -69,5 +74,11 @@ describe('runtimeRealtimeBridge helpers', () => {
 
     expect(applyRuntimeCommand(controller, { action: 'setMode', mode: 'alarm' })).toBe(true);
     expect(controller.setMode).toHaveBeenCalledWith('alarm');
+
+    expect(applyRuntimeCommand(controller, { action: 'pause' })).toBe(true);
+    expect(controller.pause).toHaveBeenCalledTimes(1);
+
+    expect(applyRuntimeCommand(controller, { action: 'resume' })).toBe(true);
+    expect(controller.resume).toHaveBeenCalledTimes(1);
   });
 });

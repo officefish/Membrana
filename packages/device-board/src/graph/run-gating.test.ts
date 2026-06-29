@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DEVICE_OFFLINE_RUN_HINT,
+  CABINET_CAPTURE_RUN_HINT,
   resolveRunDisabledReason,
 } from './run-gating.js';
 
@@ -44,5 +45,11 @@ describe('resolveRunDisabledReason', () => {
         validationIssues: [{ code: 'empty-main', message: 'Main branch is empty' }],
       }),
     ).toMatch(/валидации/);
+  });
+
+  it('blocks local run under cabinet capture', () => {
+    expect(resolveRunDisabledReason({ ...validBase, blockLocalRun: true })).toBe(
+      CABINET_CAPTURE_RUN_HINT,
+    );
   });
 });

@@ -9,6 +9,7 @@ const MP7_CHANNELS: ReadonlySet<NodeRealtimeChannel> = new Set([
   'mic-live',
   'presence',
   'runtime',
+  'board',
 ]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {

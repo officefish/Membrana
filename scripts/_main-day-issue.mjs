@@ -65,6 +65,11 @@ const INPUT_DOCS = [
     label: 'Вспомогательный буфер CURRENT_TASK (черновики; может содержать шум)',
   },
   { rel: 'docs/DAY_ISSUES.md', required: false, label: 'Бэклог DAY_ISSUES' },
+  {
+    rel: 'docs/NIGHT_HUNT_PR_REVIEW.md',
+    required: false,
+    label: 'Night Hunt PR (утренний обзор ночных отчётов)',
+  },
 ];
 
 function collectDocBlocks() {
@@ -180,7 +185,8 @@ export async function runMainDayIssue(options) {
     if (!v.ok) {
       console.error(v.message);
       console.error('Активные id:', active.map((t) => t.id).join(', ') || '(нет)');
-      process.exit(1);
+      process.exitCode = 1;
+      return;
     }
   }
 
@@ -195,7 +201,8 @@ export async function runMainDayIssue(options) {
   const virtualTeamPath = resolve(process.cwd(), 'docs/VIRTUAL_TEAM_PROMPT.md');
   if (!existsSync(virtualTeamPath)) {
     console.error('Не найден docs/VIRTUAL_TEAM_PROMPT.md');
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   const virtualTeamPrompt = readFileSync(virtualTeamPath, 'utf8');
 
@@ -279,7 +286,8 @@ export async function runMainDayIssue(options) {
   } catch (e) {
     console.error(e.message);
     console.error('См. .env.example. Без API: yarn main-day-issue:dry');
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   const model = defaultModel();
@@ -336,7 +344,7 @@ export async function runMainDayIssue(options) {
     exitCode = 1;
   }
 
-  process.exit(exitCode);
+  process.exitCode = exitCode;
 }
 
 function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {

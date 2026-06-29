@@ -17,6 +17,14 @@ export const envSchema = z.object({
   HTTP_PROXY: z.string().optional(),
   RAG_REPO_ROOT: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
+  /** Night Hunt: optional scheduled proxy jobs → GitHub PR */
+  NIGHT_HUNT_ENABLED: z
+    .string()
+    .optional()
+    .transform((v) => v === 'true' || v === '1'),
+  OPENROUTER_API_KEY: z.string().optional(),
+  OPENROUTER_MODEL: z.string().optional(),
+  NIGHT_HUNT_BASE_BRANCH: z.string().optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

@@ -23,4 +23,18 @@ export {
   type SessionInvalidatedPayload,
 } from './events.js';
 
+export {
+  type BoardCaptureStatePayload,
+  type BoardEditLeaseHolder,
+  type BoardEditLeasePayload,
+  type RuntimeAuthority,
+  type RuntimeFollowerMode,
+} from './board-events.js';
+
+export {
+  parseBoardCaptureStatePayload,
+  parseBoardEditLeasePayload,
+  parseRuntimeCommandPayload,
+} from './validate-payloads.js';
+
 export { createNodeRealtimeEnvelope, parseNodeRealtimeEnvelope } from './parse.js';

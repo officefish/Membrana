@@ -55,6 +55,7 @@ yarn mcp:phase-d:install        # записать в ~/.cursor/mcp.json
 | chatprd | `https://app.chatprd.ai/mcp` | PRD, DoD, alignment |
 | atlan-docs | `https://docs.atlan.com/mcp` | Справка по Atlan |
 | atlan | `https://mcp.atlan.com/mcp` | Glossary, semantic_search |
+| linear | `mcp-remote https://mcp.linear.app/sse` | Issues, статусы, PR-линковка (Tier 5, OAuth) |
 
 Установите также **Mintlify** и **ChatPRD** plugins из Cursor Marketplace.
 

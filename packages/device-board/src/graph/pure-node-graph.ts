@@ -9,7 +9,9 @@ import type { Edge, Node } from '@xyflow/react';
 
 import { isBoardFlowNodeData } from './board-node-data.js';
 import { getJournalNodePins } from './get-journal-node.js';
+import { getRecorderNodePins } from './get-recorder-node.js';
 import { getReporterNodePins } from './get-reporter-node.js';
+import { getSpectralAnalyserNodePins } from './get-spectral-analyser-node.js';
 import { makeFftTrendsPolicyNodePins } from './make-fft-trends-policy-node.js';
 import { makeRecordingPolicyNodePins } from './make-recording-policy-node.js';
 import { variableNodePins } from './variable-node.js';
@@ -140,6 +142,23 @@ export function syncPureNodePins(
       const pure = resolveScenarioGraphNodePure({ nodeKind: kind, pure: node.data.pure });
       const { inputs, outputs } =
         kind === 'get-journal' ? getJournalNodePins(pure) : getReporterNodePins(pure);
+      const nextData = { ...node.data, inputs, outputs };
+      if (pure) {
+        if ('pure' in nextData) {
+          const { pure: _omit, ...rest } = nextData;
+          return { ...node, data: rest };
+        }
+        return { ...node, data: nextData };
+      }
+      return { ...node, data: { ...nextData, pure: false } };
+    }
+
+    if (kind === 'get-recorder' || kind === 'get-spectral-analyser') {
+      const pure = resolveScenarioGraphNodePure({ nodeKind: kind, pure: node.data.pure });
+      const { inputs, outputs } =
+        kind === 'get-recorder'
+          ? getRecorderNodePins(pure)
+          : getSpectralAnalyserNodePins(pure);
       const nextData = { ...node.data, inputs, outputs };
       if (pure) {
         if ('pure' in nextData) {

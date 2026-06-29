@@ -11,40 +11,40 @@
     "nodes": [
       {
         "id": "alarm-on-tick",
-        "blockKind": "custom",
+        "label": "onTick",
+        "system": true,
+        "nodeKind": "event",
         "position": {
           "x": 40,
           "y": 184
         },
-        "label": "onTick",
-        "nodeKind": "event",
-        "system": true,
+        "blockKind": "custom",
         "eventVariant": "loopTick"
       },
       {
         "id": "alarm-infinity",
-        "blockKind": "custom",
+        "label": "∞",
+        "system": true,
+        "nodeKind": "loop-repeat",
         "position": {
           "x": 504,
           "y": 184
         },
-        "label": "∞",
-        "nodeKind": "loop-repeat",
-        "system": true
+        "blockKind": "custom"
       }
     ],
     "edges": [
       {
+        "kind": "exec",
         "source": "alarm-on-tick",
-        "sourceHandle": "exec-out",
         "target": "alarm-infinity",
-        "targetHandle": "exec-in",
-        "kind": "exec"
+        "sourceHandle": "exec-out",
+        "targetHandle": "exec-in"
       }
     ]
   },
   "variables": [],
   "referenceVariableSlots": [],
   "referencedVariableIds": [],
-  "exportedAt": "2026-06-21T13:08:50.663Z"
+  "exportedAt": "2026-06-25T10:00:55.632Z"
 }

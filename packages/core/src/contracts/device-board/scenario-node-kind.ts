@@ -10,6 +10,7 @@
  * - v0.6: get-journal, get-reporter, make-report-*, publish-report
  * - v0.7: start-recording, stop-recording, is-recording-window-full, flush-spectral-analyser
  * - v0.8: make-recording-policy, make-fft-trends-policy (policy constructors)
+ * - AP v1: start-async-job, await-promise, on-async-resolved, cancel-async-jobs
  */
 export const SCENARIO_NODE_KINDS = [
   'event',
@@ -21,6 +22,8 @@ export const SCENARIO_NODE_KINDS = [
   'device-global',
   'stop-runtime',
   'pause-runtime',
+  /** Exec fan-out replacement: Then 0..N + exec-out. */
+  'sequence',
   'start-streaming',
   'stop-streaming',
   'get-audio-stream',
@@ -60,6 +63,14 @@ export const SCENARIO_NODE_KINDS = [
   'make-recording-policy',
   /** v0.8: MakeFftTrendsPolicy — exec → FftTrendsPolicy value (constructor). */
   'make-fft-trends-policy',
+  /** AP v1: fire-and-forget async job → PromiseRef. */
+  'start-async-job',
+  /** AP v1: latent await PromiseRef on exec branch. */
+  'await-promise',
+  /** AP v1: data-in PromiseRef → event-out on resolve. */
+  'on-async-resolved',
+  /** AP v1: cancel pending async jobs (onStop / backpressure). */
+  'cancel-async-jobs',
   /** CGF F1: system Input tunnel (function canvas). */
   'function-input',
   /** CGF F1: system Output tunnel (function canvas). */
@@ -148,6 +159,24 @@ export const CONSTRUCTOR_SCENARIO_NODE_KINDS = [
 ] as const satisfies readonly ScenarioNodeKind[];
 
 export type ConstructorScenarioNodeKind = (typeof CONSTRUCTOR_SCENARIO_NODE_KINDS)[number];
+
+/** Async orchestration узлы (Promise pipeline). */
+export const ASYNC_ORCHESTRATION_SCENARIO_NODE_KINDS = [
+  'start-async-job',
+  'await-promise',
+  'on-async-resolved',
+  'cancel-async-jobs',
+] as const satisfies readonly ScenarioNodeKind[];
+
+export type AsyncOrchestrationScenarioNodeKind =
+  (typeof ASYNC_ORCHESTRATION_SCENARIO_NODE_KINDS)[number];
+
+/** True, если async orchestration node kind. */
+export function isAsyncOrchestrationScenarioNodeKind(
+  value: string,
+): value is AsyncOrchestrationScenarioNodeKind {
+  return (ASYNC_ORCHESTRATION_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
+}
 
 /** True, если policy value constructor v0.8. */
 export function isPolicyConstructorScenarioNodeKind(

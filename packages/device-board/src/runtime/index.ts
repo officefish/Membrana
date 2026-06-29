@@ -27,11 +27,27 @@ export { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 export { RecorderRecordingSession } from './recorder-recording-session.js';
 export { executeRecordingGateNode } from './recording-gate-executor.js';
 export { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+export { AsyncJobStore, type RegisterAsyncJobInput, type AsyncJobListener } from './async-job-store.js';
+export { PromiseRuntimeStore } from './promise-runtime-store.js';
+export {
+  executeStartAsyncJob,
+  executeAwaitPromise,
+  executeCancelAsyncJobs,
+  executeAsyncOrchestrationNode,
+} from './async-promise-executor.js';
+export { waitForAsyncJobTerminal } from './wait-for-async-job.js';
+export {
+  dispatchAsyncResolvedBranches,
+  findAsyncResolvedTargets,
+  wireAsyncResolvedDispatch,
+} from './async-resolved-dispatch.js';
 export { executeCollectNode } from './collect-node-executor.js';
 export {
   dispatchCollectEventBranches,
+  dispatchDetachedEventBranches,
   findEventBranchTargets,
   runEventBranchFromNode,
+  shouldDetachEventDispatch,
 } from './event-dispatch.js';
 export { resolveRefListMembers } from './resolve-ref-list.js';
 export type { RefListKind } from './resolve-ref-list.js';

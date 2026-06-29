@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-26 — `db3h-s1-tech-debt` — **CLOSED**
+
+- **Delivered:** CI green, issues audit, test:scripts, PR #181 L18–L23, smoke `c778c4ee`
+- **Closure:** [`day-sprint/db3h-s1-tech-debt-2026-06-26/CLOSURE.md`](./day-sprint/db3h-s1-tech-debt-2026-06-26/CLOSURE.md)
+
+---
+
+## 2026-06-26 — `db3h-s3-studio-host` — **OPEN**
+
+- **Scope:** device_board в Membrana Studio; alpha async-v2 parity с browser
+- **Open brief:** [`day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md`](./day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md)
+- **Prompt:** [`prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md`](./prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md)
+
+---
+
+
+- **Cutover:** bundled `usercase-mvp-microphone` v0.9-functions (golden → codegen → migrate BD5)
+- **Smoke:** `runId 7e8a289c` · `yarn logs:parse`
+- **Closure:** [`day-sprint/device-board-bundled-mvp-v09-sprint-2026-06-25/CLOSURE.md`](./day-sprint/device-board-bundled-mvp-v09-sprint-2026-06-25/CLOSURE.md)
+
+---
+
 ## 2026-06-23 — `membrana-studio-ms0-ms4-day-sprint` — **CLOSED**
 
 - **MS0–MS4:** verify+archive; `studio:build` + `studio:package` OK; no `apps/client` changes

@@ -6,11 +6,15 @@ import type {
   ScenarioCollectorConfig,
   ScenarioFftTrendsPolicy,
   ScenarioRecordingPolicy,
+  ScenarioSequenceConfig,
+  ScenarioAsyncJobNodeConfig,
 } from '@membrana/core';
 import {
   isPureEligibleScenarioNodeKind,
   resolveScenarioCollectorConfig,
   resolveScenarioFftTrendsPolicy,
+  resolveScenarioSequenceConfig,
+  resolveScenarioAsyncJobNodeConfig,
   resolveScenarioGraphNodePure,
   resolveScenarioRecordingPolicy,
   resolveScenarioCommentGroupFrameColor,
@@ -19,9 +23,12 @@ import {
 import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
 import type { Edge, Node, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
+import { BoardServerFirstBadges } from './board-server-first-badges.js';
 import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
 import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
 import { BoardEditUndoControl } from './board-edit-undo-control.js';
+import { resolveScenarioEditFlags } from './scenario-edit-flags.js';
+import type { ServerFirstFlagsInput } from './server-first-flags.js';
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
@@ -29,6 +36,7 @@ import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
 import type { PaletteConnectionSuggestion } from '../graph/connection-suggest.js';
 import { suggestPaletteNodesForOutgoingConnection } from '../graph/index.js';
+import { listSubgraphBlocksForFunction } from '../graph/list-subgraph-blocks-for-function.js';
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
@@ -61,7 +69,7 @@ import { PlaybackClusterControl } from './playback-cluster-control.js';
 import { CompetitionRunTimer } from './competition-run-timer.js';
 import { BoardValidationBanner } from './board-validation-banner.js';
 import { shouldPreserveLockedNodes } from '../graph/clear-branch.js';
-import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds } from '../graph/index.js';
+import { referenceTypeLabel, isBoardGroupNode, collectValidationErrorNodeIds, parseEncodedSubgraphRefLabel } from '../graph/index.js';
 import type { BoardGroupNodeData } from '../graph/index.js';
 import { computeSmartAlignPositions, computeAlignPositions } from '../graph/align-nodes.js';
 import {
@@ -97,6 +105,10 @@ export interface DeviceBoardShellProps {
   readonly deviceLive?: boolean;
   /** Загрузка документа каталога (U10 W2-module: выбор в launcher модуля). */
   readonly loadUserCaseDocument?: (id: string) => DeviceScenarioDocument | null;
+  /** Server-first SF4: lease + capture с поля (paired client). */
+  readonly serverFirstState?: ServerFirstFlagsInput | null;
+  /** SF5: перспектива badge copy (поле vs кабинет). */
+  readonly serverFirstPerspective?: 'field' | 'cabinet';
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -104,7 +116,8 @@ const DeviceBoardShellInner: React.FC<{
   exitLabel: string;
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost }) => {
+  serverFirstPerspective: 'field' | 'cabinet';
+}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, serverFirstPerspective }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -124,6 +137,12 @@ const DeviceBoardShellInner: React.FC<{
   const [selectedRecordingPolicyWired, setSelectedRecordingPolicyWired] = useState(false);
   const [selectedFftTrendsPolicy, setSelectedFftTrendsPolicy] =
     useState<ScenarioFftTrendsPolicy | null>(null);
+  const [selectedSequenceConfig, setSelectedSequenceConfig] = useState<ScenarioSequenceConfig | null>(
+    null,
+  );
+  const [selectedAsyncJobConfig, setSelectedAsyncJobConfig] = useState<ScenarioAsyncJobNodeConfig | null>(
+    null,
+  );
   const [selectedVariableId, setSelectedVariableId] = useState<string | null>(null);
   const [selectedGetterPure, setSelectedGetterPure] = useState(true);
   const [selectedGetterPureLocked, setSelectedGetterPureLocked] = useState(false);
@@ -164,11 +183,41 @@ const DeviceBoardShellInner: React.FC<{
     readonly functionName: string;
   } | null>(null);
   const [functionActionMessage, setFunctionActionMessage] = useState<string | null>(null);
-  const [deleteFunctionTargetId, setDeleteFunctionTargetId] = useState<string | null>(null);
+  const [deleteFunctionTarget, setDeleteFunctionTarget] = useState<{
+    readonly id: string;
+    readonly index: number;
+  } | null>(null);
 
   const handleViewportApiReady = useCallback((api: BoardFlowViewportApi) => {
     viewportApiRef.current = api;
   }, []);
+
+  const flashEditHint = useCallback((message: string) => {
+    setClipboardHint(message);
+    if (clipboardHintTimerRef.current !== null) {
+      window.clearTimeout(clipboardHintTimerRef.current);
+    }
+    clipboardHintTimerRef.current = window.setTimeout(() => {
+      setClipboardHint(null);
+      clipboardHintTimerRef.current = null;
+    }, 5000);
+  }, []);
+
+  const flashClipboardHint = useCallback(
+    (count: number) => {
+      flashEditHint(`в буфере ${count} узлов`);
+    },
+    [flashEditHint],
+  );
+
+  useEffect(
+    () => () => {
+      if (clipboardHintTimerRef.current !== null) {
+        window.clearTimeout(clipboardHintTimerRef.current);
+      }
+    },
+    [],
+  );
 
   const addPaletteNodeAtViewportCenter = useCallback(
     (nodeKind: Parameters<typeof graph.addPaletteNodeToCurrentBranch>[0]) => {
@@ -237,6 +286,8 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedRecordingPolicy(null);
     setSelectedRecordingPolicyWired(false);
     setSelectedFftTrendsPolicy(null);
+    setSelectedSequenceConfig(null);
+    setSelectedAsyncJobConfig(null);
     setSelectedVariableId(null);
     setSelectedGetterPure(true);
     setSelectedGetterPureLocked(false);
@@ -289,6 +340,8 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedRecordingPolicy(null);
       setSelectedRecordingPolicyWired(false);
       setSelectedFftTrendsPolicy(null);
+    setSelectedSequenceConfig(null);
+    setSelectedAsyncJobConfig(null);
       setSelectedVariableId(null);
       setSelectedGetterPure(true);
       setSelectedGetterPureLocked(false);
@@ -317,6 +370,8 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedRecordingPolicy(null);
       setSelectedRecordingPolicyWired(false);
       setSelectedFftTrendsPolicy(null);
+    setSelectedSequenceConfig(null);
+    setSelectedAsyncJobConfig(null);
       setSelectedVariableId(null);
       setSelectedGetterPure(false);
       setSelectedGetterPureLocked(false);
@@ -324,15 +379,17 @@ const DeviceBoardShellInner: React.FC<{
       setSelectedFunctionName(null);
       return;
     }
-    const label = typeof node.data?.label === 'string' ? node.data.label : node.id;
-    setSelectedNodeLabel(label);
+    const rawLabel = typeof node.data?.label === 'string' ? node.data.label : node.id;
     const blockKind = node.data?.blockKind;
     const functionId = typeof node.data?.functionId === 'string' ? node.data.functionId : null;
     if (blockKind === 'subgraph' && functionId !== null) {
       const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
+      const displayName = fn?.name ?? parseEncodedSubgraphRefLabel(rawLabel);
+      setSelectedNodeLabel(displayName);
       setSelectedFunctionId(functionId);
-      setSelectedFunctionName(fn?.name ?? label);
+      setSelectedFunctionName(displayName);
     } else {
+      setSelectedNodeLabel(rawLabel);
       setSelectedFunctionId(null);
       setSelectedFunctionName(null);
     }
@@ -364,6 +421,18 @@ const DeviceBoardShellInner: React.FC<{
     setSelectedFftTrendsPolicy(
       fftTrendsRaw !== undefined && fftTrendsRaw !== null && typeof fftTrendsRaw === 'object'
         ? resolveScenarioFftTrendsPolicy(fftTrendsRaw as Partial<ScenarioFftTrendsPolicy>)
+        : null,
+    );
+    const sequenceRaw = node.data?.sequenceConfig;
+    setSelectedSequenceConfig(
+      sequenceRaw !== undefined && sequenceRaw !== null && typeof sequenceRaw === 'object'
+        ? resolveScenarioSequenceConfig(sequenceRaw as Partial<ScenarioSequenceConfig>)
+        : null,
+    );
+    const asyncJobRaw = node.data?.asyncJobConfig;
+    setSelectedAsyncJobConfig(
+      asyncJobRaw !== undefined && asyncJobRaw !== null && typeof asyncJobRaw === 'object'
+        ? resolveScenarioAsyncJobNodeConfig(asyncJobRaw as Partial<ScenarioAsyncJobNodeConfig>)
         : null,
     );
     const varId = typeof node.data?.variableId === 'string' ? node.data.variableId : null;
@@ -406,19 +475,37 @@ const DeviceBoardShellInner: React.FC<{
   const isSignal = activeLayer === 'signal';
   const scenarioBranch = graph.scenarioBranch;
   const isRuntime = graph.runtimeState.isRunning;
+  const scenarioEditFlags = useMemo(
+    () =>
+      resolveScenarioEditFlags({
+        isSignal,
+        isRuntime,
+        isSessionReadOnly: graph.isSessionReadOnly,
+      }),
+    [graph.isSessionReadOnly, isRuntime, isSignal],
+  );
+
+  useEffect(() => {
+    if (
+      scenarioBranch !== 'function' &&
+      (selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output')
+    ) {
+      clearSelection();
+    }
+  }, [clearSelection, scenarioBranch, selectedNodeKind]);
 
   const handleUserFunctionListClick = useCallback(
-    (functionId: string) => {
+    (functionId: string, draftIndex: number) => {
       if (isSignal || isRuntime) {
         return;
       }
       if (scenarioBranch === 'function') {
-        graph.selectUserFunction(functionId);
+        graph.selectUserFunction(functionId, draftIndex);
         clearSelection();
         return;
       }
-      const fn = graph.scenarioFunctionDrafts.find((draft) => draft.id === functionId);
-      if (fn === undefined) {
+      const fn = graph.scenarioFunctionDrafts[draftIndex];
+      if (fn === undefined || fn.id !== functionId) {
         return;
       }
       setFunctionActionMessage(null);
@@ -436,7 +523,7 @@ const DeviceBoardShellInner: React.FC<{
     if (functionActionTarget === null) {
       return;
     }
-    graph.selectUserFunction(functionActionTarget.functionId);
+    graph.selectUserFunction(functionActionTarget.functionId, graph.activeFunctionDraftIndex);
     clearSelection();
     dismissFunctionAction();
   }, [clearSelection, dismissFunctionAction, functionActionTarget, graph]);
@@ -464,7 +551,7 @@ const DeviceBoardShellInner: React.FC<{
 
   const handleNodeDoubleClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
-      if (isSignal || isRuntime || graph.isSessionReadOnly) {
+      if (isSignal || isRuntime) {
         return;
       }
       if (scenarioBranch === 'function') {
@@ -486,17 +573,21 @@ const DeviceBoardShellInner: React.FC<{
     if (functionActionTarget === null) {
       return;
     }
-    const error = graph.insertUserFunctionIntoBranch(
+    const center = viewportApiRef.current?.getCenterFlowPosition();
+    const result = graph.insertUserFunctionIntoBranch(
       functionActionTarget.functionId,
       scenarioBranch,
+      center,
     );
-    if (error !== null) {
-      setFunctionActionMessage(error);
+    if (!result.ok) {
+      setFunctionActionMessage(result.message);
       return;
     }
-    setFunctionActionMessage(`Функция «${functionActionTarget.functionName}» добавлена на ветку`);
+    flashEditHint(`функция «${functionActionTarget.functionName}» добавлена`);
     setFunctionActionTarget(null);
-  }, [functionActionTarget, graph, scenarioBranch]);
+    setFunctionActionMessage(null);
+    viewportApiRef.current?.focusNodeIds([result.nodeId]);
+  }, [flashEditHint, functionActionTarget, graph, scenarioBranch]);
 
   const functionInsertDisabled = !isScenarioBranchForFunctionInsert(scenarioBranch);
 
@@ -514,16 +605,16 @@ const DeviceBoardShellInner: React.FC<{
   }, [scenarioBranch, selectedNodeKind]);
 
   const deleteFunctionTargetName = useMemo(() => {
-    if (deleteFunctionTargetId === null) {
+    if (deleteFunctionTarget === null) {
       return null;
     }
-    const draft = graph.scenarioFunctionDrafts.find((fn) => fn.id === deleteFunctionTargetId);
+    const draft = graph.scenarioFunctionDrafts[deleteFunctionTarget.index];
     return draft?.name ?? null;
-  }, [deleteFunctionTargetId, graph.scenarioFunctionDrafts]);
+  }, [deleteFunctionTarget, graph.scenarioFunctionDrafts]);
 
   const handleRemoveUserFunction = useCallback(
-    (functionId: string) => {
-      const error = graph.removeUserFunction(functionId);
+    (functionId: string, draftIndex: number) => {
+      const error = graph.removeUserFunction(functionId, draftIndex);
       if (error !== null) {
         setImportError(error);
         return;
@@ -667,7 +758,7 @@ const DeviceBoardShellInner: React.FC<{
     graph.syncStatus !== 'loading';
   const mode = graph.mode;
   const isSaving = graph.syncStatus === 'saving';
-  const isCanvasReadOnly = isRuntime || graph.isSessionReadOnly;
+  const isCanvasReadOnly = scenarioEditFlags.isCanvasStructureReadOnly;
 
   const scenarioCanvas = useMemo(() => {
     if (scenarioBranch === 'initial') {
@@ -806,6 +897,29 @@ const DeviceBoardShellInner: React.FC<{
     }));
     scenarioCanvas.onNodesChange(changes);
   }, [isSignal, scenarioCanvas]);
+
+  const selectCanvasNodeById = useCallback(
+    (nodeId: string) => {
+      if (isSignal || isRuntime) {
+        return;
+      }
+      const changes: NodeChange[] = scenarioCanvas.nodes.map((node) => ({
+        type: 'select',
+        id: node.id,
+        selected: node.id === nodeId,
+      }));
+      scenarioCanvas.onNodesChange(changes);
+      viewportApiRef.current?.focusNodeIds([nodeId]);
+    },
+    [isRuntime, isSignal, scenarioCanvas],
+  );
+
+  const selectedFunctionBlockInstances = useMemo(() => {
+    if (selectedFunctionId === null || isSignal || scenarioBranch === 'function') {
+      return [];
+    }
+    return listSubgraphBlocksForFunction(scenarioCanvas.nodes, selectedFunctionId);
+  }, [isSignal, scenarioBranch, scenarioCanvas.nodes, selectedFunctionId]);
 
   const dismissSelectionAction = useCallback(() => {
     setSelectionActionOpen(false);
@@ -1081,26 +1195,6 @@ const DeviceBoardShellInner: React.FC<{
   marqueeSelectedIdsRef.current = marqueeSelectedIds;
   const selectedNodeIdRef = useRef(selectedNodeId);
   selectedNodeIdRef.current = selectedNodeId;
-
-  const flashClipboardHint = useCallback((count: number) => {
-    setClipboardHint(`в буфере ${count} узлов`);
-    if (clipboardHintTimerRef.current !== null) {
-      window.clearTimeout(clipboardHintTimerRef.current);
-    }
-    clipboardHintTimerRef.current = window.setTimeout(() => {
-      setClipboardHint(null);
-      clipboardHintTimerRef.current = null;
-    }, 5000);
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (clipboardHintTimerRef.current !== null) {
-        window.clearTimeout(clipboardHintTimerRef.current);
-      }
-    },
-    [],
-  );
 
   const collectForcedSelectionIds = useCallback((): readonly string[] => {
     const canvas = scenarioCanvasRef.current;
@@ -1391,7 +1485,12 @@ const DeviceBoardShellInner: React.FC<{
           >
             Сохранить
           </button>
-          {graph.isSessionReadOnly ? (
+          {graph.serverFirstFlags ? (
+            <BoardServerFirstBadges
+              flags={graph.serverFirstFlags}
+              perspective={serverFirstPerspective}
+            />
+          ) : graph.isSessionReadOnly ? (
             <span className="badge badge-ghost badge-sm shrink-0" title={graph.sessionTitle ?? undefined}>
               Только просмотр
             </span>
@@ -1553,6 +1652,13 @@ const DeviceBoardShellInner: React.FC<{
                   {isSignal ? 'Export JSON' : `Export ${BRANCH_TAB_LABEL[scenarioBranch]}`}
                 </button>
               </li>
+              {!isSignal ? (
+                <li>
+                  <button type="button" onClick={() => void graph.exportFullUserCaseJson()}>
+                    Export full UserCase
+                  </button>
+                </li>
+              ) : null}
             </ul>
           </div>
         </div>
@@ -1588,18 +1694,24 @@ const DeviceBoardShellInner: React.FC<{
             onSelectionChange={handleSelectionChange}
             onNodeDoubleClick={handleNodeDoubleClick}
             onPaneClick={handlePaneClick}
-            onPaneContextMenu={handlePaneContextMenu}
+            onPaneContextMenu={
+              !isSignal && !isRuntime && !graph.isSessionReadOnly ? handlePaneContextMenu : undefined
+            }
             pulseEdges={isRuntime}
             runtimeHighlightNodeIds={runtimeExecHighlight.nodeIds}
             validationErrorNodeIds={validationErrorNodeIds}
             highlightExecEdgeIds={runtimeExecHighlight.edgeIds}
             readOnly={isCanvasReadOnly}
+            viewNavigationOnly={scenarioEditFlags.isScenarioViewOnly}
             ariaLabel={`Канвас: ${canvasLabel}`}
             onViewportApiReady={handleViewportApiReady}
             viewportFitKey={canvasViewportFitKey}
             onConnectionDropOnPane={handleConnectionDropOnPane}
             onMarqueeSelection={
-              !isSignal && !isRuntime && execLayoutPreview === null
+              !isSignal &&
+              !isRuntime &&
+              !graph.isSessionReadOnly &&
+              execLayoutPreview === null
                 ? handleMarqueeSelection
                 : undefined
             }
@@ -1653,10 +1765,15 @@ const DeviceBoardShellInner: React.FC<{
             onAddVariableNode={addVariableNodeAtViewportCenter}
             scenarioFunctions={graph.scenarioFunctionDrafts}
             activeFunctionId={graph.activeFunctionId}
+            activeFunctionDraftIndex={graph.activeFunctionDraftIndex}
             onSelectFunction={handleUserFunctionListClick}
-            onCreateFunction={graph.createUserFunction}
+            onCreateFunction={() => {
+              clearSelection();
+              graph.createUserFunction();
+            }}
             onRenameFunction={handleRenameFunction}
             onRemoveFunction={handleRemoveUserFunction}
+            constructorCrudDisabled={scenarioEditFlags.constructorCrudDisabled}
           />
         </aside>
         <aside className="absolute bottom-0 right-0 top-0 z-10" aria-label="Инспектор и палитра">
@@ -1671,6 +1788,8 @@ const DeviceBoardShellInner: React.FC<{
             selectedRecordingPolicy={selectedRecordingPolicy}
             selectedRecordingPolicyWired={selectedRecordingPolicyWired}
             selectedFftTrendsPolicy={selectedFftTrendsPolicy}
+            selectedSequenceConfig={selectedSequenceConfig}
+            selectedAsyncJobConfig={selectedAsyncJobConfig}
             selectedVariableName={selectedVariableName}
             selectedVariableId={selectedVariableId}
             selectedVariableType={selectedVariable?.type ?? null}
@@ -1684,9 +1803,10 @@ const DeviceBoardShellInner: React.FC<{
             selectedVariableTypeLabel={selectedVariableTypeLabel}
             selectedFunctionId={selectedFunctionId}
             selectedFunctionName={selectedFunctionName}
+            selectedFunctionBlockInstances={selectedFunctionBlockInstances}
             microphoneOptions={microphoneOptions}
             microphoneOptionsLoading={microphoneOptionsLoading}
-            canEditScenario={!isSignal}
+            canEditScenario={scenarioEditFlags.canEditScenario}
             isFunctionBranch={!isSignal && scenarioBranch === 'function'}
             functionMeta={!isSignal && scenarioBranch === 'function' ? graph.scenarioFunctionMeta : null}
             functionPinEditSide={functionPinEditSide}
@@ -1699,6 +1819,8 @@ const DeviceBoardShellInner: React.FC<{
             onCollectorConfigChange={graph.updateCollectorConfig}
             onRecordingPolicyChange={graph.updateRecordingPolicy}
             onFftTrendsPolicyChange={graph.updateFftTrendsPolicy}
+            onSequenceConfigChange={graph.updateSequenceConfig}
+            onAsyncJobConfigChange={graph.updateAsyncJobConfig}
             onAssignVariableName={graph.assignNodeVariableName}
             onVariableGetterPureChange={(nodeId, pure) => {
               graph.setVariableGetterPure(nodeId, pure);
@@ -1726,6 +1848,7 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onUpdateFunctionMeta={graph.updateActiveFunctionMeta}
             onOpenFunctionEditor={handleOpenFunctionEditor}
+            onSelectFunctionBlockInstance={selectCanvasNodeById}
             onAddFunctionPin={(side) => {
               const error = graph.addActiveFunctionPin(side, 'data');
               if (error !== null) {
@@ -1746,7 +1869,10 @@ const DeviceBoardShellInner: React.FC<{
             }}
             onDeleteFunction={() => {
               if (graph.activeFunctionId !== '') {
-                setDeleteFunctionTargetId(graph.activeFunctionId);
+                setDeleteFunctionTarget({
+                  id: graph.activeFunctionId,
+                  index: graph.activeFunctionDraftIndex,
+                });
               }
             }}
             onClearBoard={handleClearBoard}
@@ -1782,21 +1908,14 @@ const DeviceBoardShellInner: React.FC<{
 
       <DeleteFunctionModal
         functionName={deleteFunctionTargetName}
-        onClose={() => setDeleteFunctionTargetId(null)}
+        onClose={() => setDeleteFunctionTarget(null)}
         onConfirm={() => {
-          if (deleteFunctionTargetId !== null) {
-            handleRemoveUserFunction(deleteFunctionTargetId);
+          if (deleteFunctionTarget !== null) {
+            handleRemoveUserFunction(deleteFunctionTarget.id, deleteFunctionTarget.index);
+            setDeleteFunctionTarget(null);
           }
         }}
       />
-
-      {functionActionMessage !== null && functionActionTarget === null ? (
-        <div className="toast toast-top toast-center z-50">
-          <div className="alert alert-success alert-sm shadow-lg">
-            <span>{functionActionMessage}</span>
-          </div>
-        </div>
-      ) : null}
 
       <BoardSelectionActionModal
         open={selectionActionOpen && !isRuntime}
@@ -1850,6 +1969,8 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   showRunControls = true,
   deviceLive,
   loadUserCaseDocument,
+  serverFirstState = null,
+  serverFirstPerspective = 'field',
 }) => {
   const { session } = useDeviceBoardMode();
 
@@ -1861,12 +1982,14 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
     deviceLive={deviceLive}
     loadUserCaseDocument={loadUserCaseDocument}
     boardSession={session}
+    serverFirstState={serverFirstState}
   >
     <DeviceBoardShellInner
       onRequestExit={onRequestExit}
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
+      serverFirstPerspective={serverFirstPerspective}
     />
   </DeviceBoardGraphProvider>
   );

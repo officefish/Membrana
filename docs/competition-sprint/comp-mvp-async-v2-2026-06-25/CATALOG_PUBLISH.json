@@ -1,0 +1,31 @@
+{
+  "sprintId": "comp-mvp-async-v2-2026-06-25",
+  "winner": "beta",
+  "verifyCommand": "node scripts/usercase.mjs verify-competition-async-v2",
+  "entries": [
+    {
+      "id": "usercase-mvp-microphone-alpha-async-v2",
+      "loader": "getDefaultMvpMicrophoneAlphaAsyncV2Document",
+      "loaderModule": "default-usercase-mvp-microphone-alpha-async-v2.js",
+      "title": "Alpha: Live Observation Pipeline (async v2)",
+      "description": "Competition async v2 — Act IIb narrative, StartAsyncJob visible on main. Operator journey + async story.",
+      "functionCount": 4
+    },
+    {
+      "id": "usercase-mvp-microphone-beta-async-v2",
+      "loader": "getDefaultMvpMicrophoneBetaAsyncV2Document",
+      "loaderModule": "default-usercase-mvp-microphone-beta-async-v2.js",
+      "title": "Beta: Measured modular UserCase (async v2 · winner)",
+      "description": "Competition async v2 winner — fn-beta-async-upload-pipeline, poster ⑤⑥ cherry-pick on async groups.",
+      "functionCount": 3
+    },
+    {
+      "id": "usercase-mvp-microphone-gamma-async-v2",
+      "loader": "getDefaultMvpMicrophoneGammaAsyncV2Document",
+      "loaderModule": "default-usercase-mvp-microphone-gamma-async-v2.js",
+      "title": "Gamma: Poster UserCase (async v2)",
+      "description": "Competition async v2 — poster ①–⑥, async upload + detached report as numbered steps.",
+      "functionCount": 3
+    }
+  ]
+}

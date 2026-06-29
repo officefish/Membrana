@@ -1,0 +1,116 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "onConnect",
+  "branchLabel": "onConnect",
+  "scenarioTitle": "UserCase Alpha: Live Observation Pipeline (async v2): onConnect → GetJournal → journal1",
+  "userCaseId": "usercase-mvp-microphone-alpha-async-v2",
+  "userCaseBranch": "onConnect",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "on-connect-event",
+    "nodes": [
+      {
+        "id": "on-connect-event",
+        "blockKind": "custom",
+        "position": {
+          "x": -144,
+          "y": -152
+        },
+        "label": "On connect",
+        "nodeKind": "event",
+        "system": true,
+        "eventVariant": "handler"
+      },
+      {
+        "id": "board-mqrk8res-sfp1k7n9",
+        "blockKind": "custom",
+        "position": {
+          "x": 680,
+          "y": -8
+        },
+        "label": "journal1",
+        "nodeKind": "variable-set",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "node-get-journal-mqrk8yrn-121",
+        "blockKind": "custom",
+        "position": {
+          "x": 288,
+          "y": -40
+        },
+        "label": "GetJournal",
+        "nodeKind": "get-journal"
+      },
+      {
+        "id": "fn-alpha-bootstrap-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 320,
+          "y": -152
+        },
+        "label": "Bootstrap journal::fn-alpha-bootstrap"
+      }
+    ],
+    "edges": [
+      {
+        "source": "on-connect-event",
+        "sourceHandle": "exec-out",
+        "target": "fn-alpha-bootstrap-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "on-connect-event",
+        "sourceHandle": "server",
+        "target": "fn-alpha-bootstrap-block",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "ServerRef"
+      },
+      {
+        "source": "on-connect-event",
+        "sourceHandle": "server",
+        "target": "fn-alpha-bootstrap-block",
+        "targetHandle": "server",
+        "kind": "data",
+        "dataType": "ServerRef"
+      },
+      {
+        "source": "on-connect-event",
+        "sourceHandle": "device",
+        "target": "node-get-journal-mqrk8yrn-121",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "fn-alpha-bootstrap-block",
+        "sourceHandle": "exec-false-out",
+        "target": "board-mqrk8res-sfp1k7n9",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-journal-mqrk8yrn-121",
+        "sourceHandle": "journal",
+        "target": "board-mqrk8res-sfp1k7n9",
+        "targetHandle": "value",
+        "kind": "data",
+        "dataType": "JournalRef"
+      }
+    ]
+  },
+  "variables": [],
+  "referenceVariableSlots": [
+    {
+      "exportVariableId": "var-JournalRef-mqm9dl4a-6",
+      "type": "JournalRef",
+      "nameHint": "journal1"
+    }
+  ],
+  "referencedVariableIds": [
+    "var-JournalRef-mqm9dl4a-6"
+  ],
+  "exportedAt": "2026-06-26T06:58:33.268Z"
+}

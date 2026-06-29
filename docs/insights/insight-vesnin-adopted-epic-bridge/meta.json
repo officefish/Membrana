@@ -1,0 +1,17 @@
+{
+  "id": "insight-vesnin-adopted-epic-bridge",
+  "title": "Мост adopted insight → week epic (LGTM gate)",
+  "status": "adopted",
+  "source": "virtual-team-vesnin",
+  "horizon": "week",
+  "weight": 7.0,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "epicCandidate": true,
+  "epicCandidateAt": "2026-06-25",
+  "plannedImplementation": "2026-06-26",
+  "lgtmBy": "user",
+  "tags": ["process", "teamlead", "plan-week", "epic"]
+}

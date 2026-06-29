@@ -1,8 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
+import type { CabinetRunFollowerMode } from '@/lib/cabinetNodeRuntimeCommands';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
 import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
+import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/lib/useCabinetNodesJournalPreview';
+import { NodeLastTrackPreview } from '@/components/nodes/NodeLastTrackPreview';
 
 interface NodesPageProps {
   onOpenJournal: () => void;
@@ -18,6 +21,14 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
 
   const membraneId = data?.membrane.id ?? null;
   const runtime = useCabinetNodeRuntime(membraneId);
+  const deviceIds = useMemo(
+    () =>
+      (data?.nodes ?? [])
+        .map((node) => node.device?.mediaDeviceId ?? null)
+        .filter((id): id is string => id != null),
+    [data?.nodes],
+  );
+  const journalPreview = useCabinetNodesJournalPreview(membraneId, deviceIds);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -115,6 +126,7 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
               key={node.id}
               node={node}
               runtime={runtime}
+              journalPreview={journalPreview.getPreview(node.device?.mediaDeviceId ?? '')}
               busy={busy}
               onOpenJournal={onOpenJournal}
               onOpenDeviceBoard={onOpenDeviceBoard}
@@ -154,6 +166,7 @@ function runtimeConnectionLabel(state: ReturnType<typeof useCabinetNodeRuntime>[
 function NodeCard({
   node,
   runtime,
+  journalPreview,
   busy,
   onOpenJournal,
   onOpenDeviceBoard,
@@ -162,6 +175,7 @@ function NodeCard({
 }: {
   node: NodeView;
   runtime: ReturnType<typeof useCabinetNodeRuntime>;
+  journalPreview: NodeJournalPreviewState;
   busy: boolean;
   onOpenJournal: () => void;
   onOpenDeviceBoard: () => void;
@@ -173,12 +187,26 @@ function NodeCard({
   const deviceLive = runtime.isDeviceLive(deviceId);
   const canStart = deviceId !== null && deviceLive;
   const isRunning = state?.isRunning ?? false;
+  const isPaused = state?.isPaused ?? false;
   const mode = state?.mode ?? 'normal';
+  const [followerMode, setFollowerMode] = useState<CabinetRunFollowerMode>('soft');
+
+  const statusBadge = !isRunning ? (
+    <span className="badge badge-ghost">Остановлен</span>
+  ) : isPaused ? (
+    <span className="badge badge-ghost">Пауза</span>
+  ) : (
+    <span className={`badge ${mode === 'alarm' ? 'badge-warning' : 'badge-info'}`}>
+      {mode === 'alarm' ? 'Тревога' : 'Работает'}
+    </span>
+  );
 
   const borderClass = isRunning
-    ? mode === 'alarm'
-      ? 'border-warning'
-      : 'border-info animate-pulse'
+    ? isPaused
+      ? 'border-base-300'
+      : mode === 'alarm'
+        ? 'border-warning'
+        : 'border-info animate-pulse'
     : 'border-transparent';
 
   return (
@@ -198,44 +226,83 @@ function NodeCard({
               <span className="badge badge-ghost badge-sm mt-1">не сопряжён</span>
             )}
           </div>
-          {isRunning ? (
-            <span className={`badge ${mode === 'alarm' ? 'badge-warning' : 'badge-info'}`}>
-              {mode === 'alarm' ? 'Тревога' : 'Работает'}
-            </span>
-          ) : (
-            <span className="badge badge-ghost">Остановлен</span>
-          )}
+          {statusBadge}
         </div>
 
+        <span className="sr-only" role="status" aria-live="polite">
+          {isRunning
+            ? isPaused
+              ? 'Сценарий на паузе'
+              : `Режим: ${mode === 'alarm' ? 'тревога' : 'обычный'}`
+            : 'Сценарий остановлен'}
+        </span>
+
         <div className="flex flex-wrap items-center gap-2">
-          {isRunning ? (
-            <button
-              type="button"
-              className="btn btn-sm btn-error"
-              disabled={!deviceId}
-              onClick={() => deviceId && runtime.stop(deviceId)}
-            >
-              Стоп
-            </button>
+          {!isRunning ? (
+            <>
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                disabled={!canStart}
+                title={
+                  !deviceId
+                    ? 'Узел не сопряжён с устройством'
+                    : !deviceLive
+                      ? DEVICE_OFFLINE_RUN_HINT
+                      : undefined
+                }
+                aria-label={
+                  !canStart && deviceId && !deviceLive ? DEVICE_OFFLINE_RUN_HINT : undefined
+                }
+                onClick={() => deviceId && runtime.run(deviceId, { followerMode })}
+              >
+                Пуск
+              </button>
+              <label className="flex items-center gap-1.5 text-xs text-base-content/70">
+                <span>Захват</span>
+                <select
+                  className="select select-bordered select-xs"
+                  value={followerMode}
+                  onChange={(event) =>
+                    setFollowerMode(event.target.value as CabinetRunFollowerMode)
+                  }
+                  aria-label="Режим follower при запуске с кабинета"
+                >
+                  <option value="soft">мягкий</option>
+                  <option value="strict">строгий</option>
+                </select>
+              </label>
+            </>
           ) : (
-            <button
-              type="button"
-              className="btn btn-sm btn-primary"
-              disabled={!canStart}
-              title={
-                !deviceId
-                  ? 'Узел не сопряжён с устройством'
-                  : !deviceLive
-                    ? DEVICE_OFFLINE_RUN_HINT
-                    : undefined
-              }
-              aria-label={
-                !canStart && deviceId && !deviceLive ? DEVICE_OFFLINE_RUN_HINT : undefined
-              }
-              onClick={() => deviceId && runtime.run(deviceId)}
-            >
-              Пуск
-            </button>
+            <>
+              {isPaused ? (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  disabled={!deviceId}
+                  onClick={() => deviceId && runtime.resume(deviceId)}
+                >
+                  Продолжить
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline"
+                  disabled={!deviceId}
+                  onClick={() => deviceId && runtime.pause(deviceId)}
+                >
+                  Пауза
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn-sm btn-error"
+                disabled={!deviceId}
+                onClick={() => deviceId && runtime.stop(deviceId)}
+              >
+                Стоп
+              </button>
+            </>
           )}
 
           {isRunning && deviceId ? (
@@ -284,6 +351,15 @@ function NodeCard({
             </button>
           </div>
         </div>
+
+        {deviceId ? (
+          <NodeLastTrackPreview
+            deviceId={deviceId}
+            deviceLive={deviceLive}
+            lastTrack={journalPreview.lastTrack}
+            loading={journalPreview.loading}
+          />
+        ) : null}
       </div>
     </div>
   );

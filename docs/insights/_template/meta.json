@@ -1,0 +1,13 @@
+{
+  "id": "{{ID}}",
+  "title": "{{TITLE}}",
+  "status": "draft",
+  "source": "{{SOURCE}}",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "{{DATE}}",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": []
+}

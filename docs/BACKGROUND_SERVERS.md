@@ -213,6 +213,7 @@ Device (deviceId)
 | Docker cabinet | `yarn cabinet:docker:up` · VPS: `deploy/cabinet-stack.sh` |
 | Docker office (локально) | `yarn office:docker:up` |
 | Docker office (VPS prod) | `deploy/office-stack.sh` + [`docs/deploy/BACKGROUND_OFFICE_DEPLOY.md`](./deploy/BACKGROUND_OFFICE_DEPLOY.md) |
+| Docker office (Fly Night Hunt) | `fly deploy` + [`packages/background-office/DEPLOY.md`](../packages/background-office/DEPLOY.md) |
 | Docker media (локально / staging) | `yarn media:docker:up` |
 | Docker media (VPS prod) | `deploy/media-stack.sh` + [`docs/deploy/BACKGROUND_MEDIA_DEPLOY.md`](./deploy/BACKGROUND_MEDIA_DEPLOY.md) |
 | README office | [`packages/background-office/README.md`](../packages/background-office/README.md) |

@@ -9,6 +9,7 @@ export type RagVectorStoreKind = 'lancedb' | 'pinecone' | 'pgvector';
 export interface RagConfig {
   embeddingProvider: RagEmbeddingProvider;
   embeddingModel: string;
+  openaiBaseUrl: string;
   vectorStore: RagVectorStoreKind;
   lanceDbPath: string;
   operativeDays: number;
@@ -23,6 +24,7 @@ export interface RagConfig {
 const DEFAULTS: RagConfig = {
   embeddingProvider: 'openai',
   embeddingModel: 'text-embedding-3-small',
+  openaiBaseUrl: 'https://api.openai.com/v1',
   vectorStore: 'lancedb',
   lanceDbPath: '.membrana/rag/',
   operativeDays: 7,
@@ -69,6 +71,7 @@ export function loadRagConfig(env: NodeJS.ProcessEnv = process.env): RagConfig {
   return {
     embeddingProvider: parseEmbeddingProvider(env.RAG_EMBEDDING_PROVIDER),
     embeddingModel: env.RAG_EMBEDDING_MODEL?.trim() || DEFAULTS.embeddingModel,
+    openaiBaseUrl: env.OPENAI_BASE_URL?.trim().replace(/\/$/, '') || DEFAULTS.openaiBaseUrl,
     vectorStore: parseVectorStore(env.RAG_VECTOR_STORE),
     lanceDbPath: env.RAG_LANCEDB_PATH?.trim() || DEFAULTS.lanceDbPath,
     operativeDays: parseIntEnv(env.RAG_OPERATIVE_DAYS, DEFAULTS.operativeDays),

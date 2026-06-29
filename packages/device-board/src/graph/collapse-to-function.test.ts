@@ -60,10 +60,36 @@ describe('collapse-to-function', () => {
     }
   });
 
-  it('createEmptyFunctionDraft includes IO nodes', () => {
+  it('createEmptyFunctionDraft includes IO nodes with exec pins first', () => {
     const draft = createEmptyFunctionDraft('fn-new', 'New');
     expect(draft.nodes).toHaveLength(2);
     expect(draft.entry).toBe('fn-new-input');
+    expect(draft.inputPins[0]?.kind).toBe('exec');
+    expect(draft.outputPins[0]?.kind).toBe('exec');
+  });
+
+  it('picks next function id when existingFunctionIds is set', () => {
+    const a = createScenarioBoardNode('record-chunk', { id: 'a', position: { x: 200, y: 100 } });
+    const b = createScenarioBoardNode('trends-fft-detect', { id: 'b', position: { x: 400, y: 100 } });
+    const first = collapseSelectionToFunction({
+      selectedNodeIds: ['a', 'b'],
+      branchNodes: [a, b],
+      branchEdges: [],
+      existingFunctionIds: [],
+    });
+    const second = collapseSelectionToFunction({
+      selectedNodeIds: ['a', 'b'],
+      branchNodes: [a, b],
+      branchEdges: [],
+      existingFunctionIds: first.ok ? [first.functionDraft.id] : [],
+    });
+    expect(first.ok).toBe(true);
+    expect(second.ok).toBe(true);
+    if (first.ok && second.ok) {
+      expect(first.functionDraft.id).toBe('fn-1');
+      expect(second.functionDraft.id).toBe('fn-2');
+      expect(second.functionDraft.name).toBe('Function 2');
+    }
   });
 
   it('dedupes fan-in boundary pins (same handle from outside)', () => {
@@ -95,6 +121,7 @@ describe('collapse-to-function', () => {
     });
     expect(result.ok).toBe(true);
     if (result.ok) {
+      expect(result.functionDraft.inputPins[0]?.kind).toBe('exec');
       const policyPins = result.functionDraft.inputPins.filter((pin) => pin.name === 'policy');
       expect(policyPins).toHaveLength(1);
       const policyToBlock = result.branchEdges.filter(

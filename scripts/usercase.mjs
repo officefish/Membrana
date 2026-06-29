@@ -22,6 +22,12 @@ const COMPETITION_IDS = [
   'usercase-mvp-microphone-gamma',
 ];
 
+const COMPETITION_ASYNC_V2_IDS = [
+  'usercase-mvp-microphone-alpha-async-v2',
+  'usercase-mvp-microphone-beta-async-v2',
+  'usercase-mvp-microphone-gamma-async-v2',
+];
+
 /** @param {string} script @param {string[]} args */
 function runScript(script, args = []) {
   const result = spawnSync(process.execPath, [join(scriptsDir, script), ...args], {
@@ -42,7 +48,8 @@ Commands:
   verify-layout <usercase-id>      Layout canon metrics
   verify-prerun <usercase-id>      Hydrate + validatePreRun
   verify-pack <usercase-id>        layout + prerun
-  verify-competition               verify-pack for alpha, beta, gamma
+  verify-competition               verify-pack for alpha, beta, gamma (v1 archived)
+  verify-competition-async-v2      verify-pack for *-async-v2 forks (active sprint)
   verify-paths                     manifest write paths ⊆ allowlist
 
 Examples:
@@ -51,7 +58,7 @@ Examples:
   node scripts/usercase.mjs verify-competition
 
 Agent spec: docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md
-Lessons:    docs/device-board-scripts/USERCASE_COMPETITION_LESSONS.md
+Lessons:    docs/actions/device-board/USERCASE_COMPETITION_LESSONS.md
 CI:         .github/workflows/usercase-competition.yml (set USERCASE_VERIFY_SKIP_BUILD=1 after device-board build)
 `);
 }
@@ -112,6 +119,14 @@ switch (command) {
 
   case 'verify-competition':
     for (const id of COMPETITION_IDS) {
+      console.log(`\n--- verify-pack: ${id} ---\n`);
+      runScript('verify-usercase-layout.mjs', [id]);
+      runScript('verify-usercase-prerun.mjs', [id]);
+    }
+    break;
+
+  case 'verify-competition-async-v2':
+    for (const id of COMPETITION_ASYNC_V2_IDS) {
       console.log(`\n--- verify-pack: ${id} ---\n`);
       runScript('verify-usercase-layout.mjs', [id]);
       runScript('verify-usercase-prerun.mjs', [id]);

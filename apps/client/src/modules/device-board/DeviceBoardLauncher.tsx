@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ModuleProps } from '@membrana/agenda';
 import {
   useDeviceBoardMode,
+  deviceScenarioExportFilename,
+  downloadDeviceScenarioJson,
   type DeviceBoardSession,
   type DeviceBoardWorkspaceListItem,
 } from '@membrana/device-board';
@@ -224,6 +226,50 @@ export const DeviceBoardLauncher: React.FC<{
     [refreshWorkspaces, run, selection, workspaceHost],
   );
 
+  const handleExportWorkspace = useCallback(
+    async (workspaceId: string, title: string): Promise<void> => {
+      await run('Экспортируем сценарий…', async () => {
+        setActionError(null);
+        try {
+          const document = await workspaceHost.loadWorkspace(workspaceId);
+          if (document === null) {
+            setActionError('Сценарий не найден');
+            return;
+          }
+          await downloadDeviceScenarioJson(document, deviceScenarioExportFilename(document, { label: title }));
+        } catch (error: unknown) {
+          setActionError(error instanceof Error ? error.message : 'Не удалось экспортировать сценарий');
+        }
+      });
+    },
+    [run, workspaceHost],
+  );
+
+  const handleExportSystemUserCase = useCallback(
+    async (card: UserCaseCatalogCard): Promise<void> => {
+      if (!card.canApply) {
+        return;
+      }
+      await run('Экспортируем UserCase…', async () => {
+        setActionError(null);
+        try {
+          const document = catalogService.loadDocumentIfEntitled(card.id, 'microphone');
+          if (document === null) {
+            setActionError('Нет доступа к шаблону');
+            return;
+          }
+          await downloadDeviceScenarioJson(
+            document,
+            deviceScenarioExportFilename(document, { label: card.id }),
+          );
+        } catch (error: unknown) {
+          setActionError(error instanceof Error ? error.message : 'Не удалось экспортировать UserCase');
+        }
+      });
+    },
+    [catalogService, run],
+  );
+
   const handleOpenBoardClick = useCallback((): void => {
     if (selection === null) {
       return;
@@ -391,6 +437,16 @@ export const DeviceBoardLauncher: React.FC<{
                   <div className="flex shrink-0 flex-wrap items-center gap-2">
                     <button
                       type="button"
+                      className="btn btn-ghost btn-xs"
+                      data-testid={`device-board-launcher-export-system-${card.id}`}
+                      disabled={!card.canApply || isBusy}
+                      aria-label={`Экспорт JSON «${card.title}»`}
+                      onClick={() => void handleExportSystemUserCase(card)}
+                    >
+                      JSON
+                    </button>
+                    <button
+                      type="button"
                       className="btn btn-outline btn-primary btn-xs"
                       data-testid={`device-board-launcher-clone-${card.id}`}
                       disabled={!card.canApply || atQuota || isBusy}
@@ -481,6 +537,16 @@ export const DeviceBoardLauncher: React.FC<{
                         </p>
                       </button>
                       <div className="flex shrink-0 gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          disabled={isBusy}
+                          data-testid={`device-board-launcher-export-${item.workspaceId}`}
+                          aria-label={`Экспорт JSON «${item.title}»`}
+                          onClick={() => void handleExportWorkspace(item.workspaceId, item.title)}
+                        >
+                          JSON
+                        </button>
                         <button
                           type="button"
                           className="btn btn-ghost btn-xs"

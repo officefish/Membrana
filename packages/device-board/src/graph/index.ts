@@ -66,6 +66,34 @@ export {
 } from './pause-runtime-node.js';
 export type { CreatePauseRuntimeBoardNodeOptions } from './pause-runtime-node.js';
 export {
+  ASYNC_PROMISE_REF_HANDLE,
+  AWAIT_PROMISE_NODE_KIND,
+  CANCEL_ASYNC_JOBS_NODE_KIND,
+  ON_ASYNC_RESOLVED_NODE_KIND,
+  START_ASYNC_JOB_NODE_KIND,
+  START_ASYNC_JOB_TRACK_HANDLE,
+  awaitPromiseNodePins,
+  cancelAsyncJobsNodePins,
+  createAwaitPromiseBoardNode,
+  createCancelAsyncJobsBoardNode,
+  createOnAsyncResolvedBoardNode,
+  createStartAsyncJobBoardNode,
+  isAsyncOrchestrationNode,
+  onAsyncResolvedNodePins,
+  readAsyncJobNodeConfig,
+  startAsyncJobNodePins,
+} from './async-orchestration-nodes.js';
+export type { CreateAsyncOrchestrationBoardNodeOptions } from './async-orchestration-nodes.js';
+export {
+  AWAIT_PROMISE_MISSING_REF_MESSAGE,
+  ON_ASYNC_RESOLVED_MISSING_REF_MESSAGE,
+  SEQUENCE_LATENT_GATE_MESSAGE,
+  findPromiseRefMissingIssues,
+  findPromiseRefPreRunIssues,
+  findSequenceLatentThenGateIssues,
+  findSequenceLatentThenPreRunIssues,
+} from './validate-async-promise.js';
+export {
   createGetRecorderBoardNode,
   getRecorderNodePins,
   GET_RECORDER_NODE_KIND,
@@ -263,6 +291,16 @@ export { scenarioDocumentFingerprint } from './scenario-snapshot.js';
 export { syncVariableNodeLabels } from './sync-variable-node-labels.js';
 export { formatSocketPortLabel } from './socket-port-label.js';
 export {
+  getScenarioNodeInspectorNotes,
+  hasScenarioNodeInspectorNotes,
+  SCENARIO_NODE_INSPECTOR_NOTES,
+} from './scenario-node-inspector-notes.js';
+export type {
+  ScenarioNodeInspectorNote,
+  ScenarioNodeInspectorNoteSection,
+  ScenarioNodeInspectorNoteVariant,
+} from './scenario-node-inspector-notes.js';
+export {
   socketHandleClass,
   REFERENCE_SOCKET_HANDLE_CLASS,
   NULL_SOCKET_HANDLE_CLASS,
@@ -298,6 +336,10 @@ export { buildDeviceScenarioDocument } from './build-device-scenario.js';
 export type { BuildDeviceScenarioInput } from './build-device-scenario.js';
 export { exportDeviceScenarioDocument } from './export-device-scenario.js';
 export type { ExportedDeviceScenario } from './export-device-scenario.js';
+export {
+  deviceScenarioExportFilename,
+  downloadDeviceScenarioJson,
+} from './download-device-scenario-json.js';
 export {
   branchScenarioExportFilename,
   buildBranchScenarioExport,
@@ -338,6 +380,8 @@ export {
   createDefaultMvpMicrophoneHydratedState,
   getDefaultMvpMicrophoneDocument,
   isLegacyHackathonDefaultScenario,
+  needsBundledV09FunctionsMigration,
+  needsBundledV20AsyncMigration,
   needsFftTrendsPolicyConstructorMigration,
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';
@@ -436,9 +480,16 @@ export type { FunctionPinSide } from './function-pin-ops.js';
 export {
   removeUserFunctionDraft,
   stripSubgraphBlocksForFunction,
+  stripSubgraphBlocksForFunctionOccurrence,
 } from './remove-user-function.js';
 export {
+  repairDuplicateScenarioFunctionDrafts,
+  remapFunctionDraftId,
+} from './repair-duplicate-scenario-functions.js';
+export {
   collapseSelectionToCommentGroup,
+  applyBoardNodeChangesWithCommentGroupDissolve,
+  applyBranchNodeRemovals,
   collectCommentGroupsFromBoard,
   collectCommentGroupNodeIdsFromBoard,
   dedupeCommentGroupIds,
@@ -494,7 +545,7 @@ export type { ResolveRunDisabledReasonInput } from './run-gating.js';
 export { canonicalizeJson, sha256Hex } from './document-hash.js';
 export { serializeScenarioFunction } from './serialize-scenario-function.js';
 export type { SerializeScenarioFunctionInput } from './serialize-scenario-function.js';
-export { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
+export { encodeSubgraphRef, parseEncodedSubgraphRefLabel, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 export { validateFunctionDepth } from './validate-function-depth.js';
 export type { SubgraphNodesRef } from './validate-function-depth.js';
 export {

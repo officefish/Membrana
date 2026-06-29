@@ -6,8 +6,13 @@ import {
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
+  resolveServerFirstFlags,
   type ScenarioRuntimeState,
 } from '@membrana/device-board';
+import {
+  ScenarioAsyncJobHub,
+  bindScenarioAsyncJobPublisher,
+} from '@membrana/agenda';
 
 import { createScenarioRuntimeHost } from '@/modules/device-board/createScenarioRuntimeHost';
 import { createClientDeviceBoardPersistAdapterFromSession } from '@/modules/device-board/deviceScenarioPersistence';
@@ -15,6 +20,8 @@ import {
   loadPersistedRuntimeMode,
   savePersistedRuntimeMode,
 } from '@/lib/runtimeModePersistence';
+import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
+import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 type StateListener = (state: ScenarioRuntimeState) => void;
 
@@ -31,6 +38,10 @@ class DeviceBoardRuntimeController {
 
   private unsubscribeRuntime: (() => void) | null = null;
 
+  private unsubscribeAsyncJobs: (() => void) | null = null;
+
+  private readonly asyncJobHub = new ScenarioAsyncJobHub();
+
   // RT7: режим восстанавливается из localStorage при инициализации узла.
   private mode: RuntimeMode = loadPersistedRuntimeMode();
 
@@ -46,6 +57,12 @@ class DeviceBoardRuntimeController {
     return this.mode;
   }
 
+  /** AP v1 R10: UI subscribe facade (pending upload badge, debug). */
+  getAsyncJobHub(): ScenarioAsyncJobHub {
+    this.ensureRuntime();
+    return this.asyncJobHub;
+  }
+
   subscribe(listener: StateListener): () => void {
     this.listeners.add(listener);
     return () => {
@@ -53,19 +70,39 @@ class DeviceBoardRuntimeController {
     };
   }
 
-  async start(): Promise<void> {
+  async start(options?: { fromRemote?: boolean }): Promise<void> {
+    const deviceId = getNodeRealtimeClient().getDeviceId();
+    const flags = resolveServerFirstFlags({
+      deviceId,
+      editLease: useServerFirstStore.getState().editLease,
+      captureState: useServerFirstStore.getState().captureState,
+    });
+    if (!options?.fromRemote && flags.blockLocalRun) {
+      return;
+    }
     const runtime = this.ensureRuntime();
     if (runtime.getState().isRunning) {
       return;
     }
+    if (!options?.fromRemote && deviceId !== null) {
+      useServerFirstStore.getState().setFieldCapture(deviceId);
+    }
+    this.asyncJobHub.clear();
     const document = await this.loadDocument();
     runtime.load(document);
-    // Не ждём завершения run-промиса: main loop крутится до stop.
     void runtime.start();
   }
 
   stop(): void {
     this.runtime?.stop('user');
+  }
+
+  pause(): void {
+    this.runtime?.pause();
+  }
+
+  resume(): void {
+    this.runtime?.resume();
   }
 
   /**
@@ -90,7 +127,10 @@ class DeviceBoardRuntimeController {
     this.runtime?.stop('system');
     this.unsubscribeRuntime?.();
     this.unsubscribeRuntime = null;
+    this.unsubscribeAsyncJobs?.();
+    this.unsubscribeAsyncJobs = null;
     this.runtime = null;
+    this.asyncJobHub.clear();
     this.mode = 'normal';
     this.state = createIdleScenarioRuntimeState();
     this.listeners.clear();
@@ -101,6 +141,12 @@ class DeviceBoardRuntimeController {
       return this.runtime;
     }
     const runtime = new ScenarioRuntime(createScenarioRuntimeHost());
+    this.unsubscribeAsyncJobs?.();
+    this.unsubscribeAsyncJobs = bindScenarioAsyncJobPublisher(
+      this.asyncJobHub,
+      (listener) => runtime.subscribeAsyncJobs(listener),
+      { seed: () => runtime.listPendingAsyncJobs() },
+    );
     this.unsubscribeRuntime = runtime.subscribe((state) => {
       this.state = state;
       this.notify(state);

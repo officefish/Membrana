@@ -6,12 +6,13 @@ import {
   type IJournalStorageBackend,
 } from '@membrana/telemetry-journal-service';
 
-import { pingCabinetApi } from '@/api/pairing';
+import { fetchPairStatus, pingCabinetApi } from '@/api/pairing';
 import { createCabinetJournalPort } from '@/lib/createCabinetJournalPort';
 import { createRealtimeJournalPushPort } from '@/lib/nodeRealtimeJournalPush';
 import { getElectronJournalPort } from '@/lib/electronJournalPort';
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 import { getRuntimeStorageMode } from '@/lib/runtimeStorageMode';
+import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 
 const NODE_CONNECTION_STORAGE_KEY = 'membrana.client.nodeConnection';
 
@@ -49,19 +50,47 @@ function delay(ms: number): Promise<void> {
   });
 }
 
+function invalidateStalePairing(reason: 'session_expired' | 'revoked' | 'expired'): void {
+  const { mode, handlePairingInvalid } = useNodeConnectionStore.getState();
+  if (mode === 'paired') {
+    handlePairingInvalid(reason);
+  }
+}
+
+async function isPairingSessionActive(pairing: PairedNodeCredentials): Promise<boolean> {
+  const status = await fetchPairStatus(pairing.token);
+  if (status === 'session_expired') {
+    invalidateStalePairing('session_expired');
+    return false;
+  }
+  if (status === 'endpoint_unavailable') {
+    return false;
+  }
+  if (!status.linked || !status.keyActive) {
+    invalidateStalePairing(status.linked && status.inactiveReason === 'expired' ? 'expired' : 'revoked');
+    return false;
+  }
+  return true;
+}
+
 async function createPairedBackend(pairing: PairedNodeCredentials): Promise<IJournalStorageBackend | null> {
   for (let attempt = 0; attempt < PAIRED_CABINET_PING_ATTEMPTS; attempt += 1) {
     const cabinetOk = await pingCabinetApi();
-    if (cabinetOk) {
-      return createSyncJournalStorageBackend(createCabinetJournalPort(pairing.token), {
-        localCacheKey: journalLocalCacheKey(pairing.deviceId),
-        mediaDeviceId: pairing.deviceId,
-        realtimePush: createRealtimeJournalPushPort(),
-      });
+    if (!cabinetOk) {
+      if (attempt < PAIRED_CABINET_PING_ATTEMPTS - 1) {
+        await delay(PAIRED_CABINET_PING_DELAY_MS * (attempt + 1));
+      }
+      continue;
     }
-    if (attempt < PAIRED_CABINET_PING_ATTEMPTS - 1) {
-      await delay(PAIRED_CABINET_PING_DELAY_MS * (attempt + 1));
+    const sessionActive = await isPairingSessionActive(pairing);
+    if (!sessionActive) {
+      return null;
     }
+    return createSyncJournalStorageBackend(createCabinetJournalPort(pairing.token), {
+      localCacheKey: journalLocalCacheKey(pairing.deviceId),
+      mediaDeviceId: pairing.deviceId,
+      realtimePush: createRealtimeJournalPushPort(),
+    });
   }
   return null;
 }

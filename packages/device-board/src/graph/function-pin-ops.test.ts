@@ -28,10 +28,13 @@ describe('function-pin-ops', () => {
     expect('error' in result).toBe(true);
   });
 
-  it('removeFunctionPinFromList keeps at least one pin', () => {
+  it('removeFunctionPinFromList rejects exec pin removal', () => {
     const pins = [createDefaultFunctionExecInputPin()];
     const result = removeFunctionPinFromList(pins, 'exec-in');
     expect('error' in result).toBe(true);
+    if ('error' in result) {
+      expect(result.error).toContain('Exec pin');
+    }
   });
 
   it('updateFunctionPinInList renames id from name', () => {

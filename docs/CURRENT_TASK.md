@@ -1,21 +1,31 @@
 # CURRENT_TASK
 
-> **Phase 3 day-sprint** · эпик `device-board-phase-3` · консилиум [`phase-3-architecture-decisions-2026-06-24`](./seanses/phase-3-architecture-decisions-2026-06-24.md)
+> **Буфер** — при конфликте проигрывает [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и реестру.
 
-## Порядок (W1)
+## Канон дня (2026-06-26)
 
-| # | Task id | Фокус | Lead | Статус |
-|---|---------|-------|------|--------|
-| 1 | `db-p3-a1-usercase-catalog-service` | `@membrana/usercase-catalog-service` | Ozhegov | done |
-| 2 | `db-p3-a2-runtime-validators` | `runtime/validators/` + live UI | Dynin + Rodchenko | done |
-| 3 | `db-p3-a3-competition-restrictions` | `executionPolicy` + templates | Kuryokhin | done |
+**Текущий спринт:** `device-board-server-first` ← **сейчас**  
+**Параллельно:** `db3h-s5-desktop-logging` (DL-3 optional) — не блокер
 
-Промпт: [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md)
+### Фокус
 
-## Ветка
+**Device-board server-first** — консилиум ✅, спринт SF0–SF9. **Детекторы S4 не открываем.**
 
-`fix/device-board-function-io-guard` → Phase 3 A1 на текущей ветке; после hotfix — `feat/device-board-phase-3` или merge в `techies68`.
+### Очередь
 
-## Не в спринте
+1. ~~`db3h-s3-studio-host`~~ — closed
+2. `db3h-s5-desktop-logging` — DL-1/DL-2 ✅; DL-3 optional
+3. **`device-board-server-first`** — SF0–SF9 ✅ · **deploy + prod smoke** next ([`DEPLOY.md`](./day-sprint/db-server-first-2026-06-26/DEPLOY.md))
+4. ~~`db3h-s4-microphone-detectors`~~ — **deferred** (после server-first)
 
-W0 hotfix (#151), trends T1–T2, Transport T3 — см. [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md).
+### Команды
+
+```bash
+yarn turbo run lint typecheck test build --continue
+# deploy: docs/day-sprint/db-server-first-2026-06-26/DEPLOY.md
+# prod E2E: docs/actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
+```
+
+**Консилиум:** [`seanses/device-board-server-first-2026-06-26.md`](./seanses/device-board-server-first-2026-06-26.md)  
+**Канон:** [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md)  
+**OPEN:** [`db-server-first-2026-06-26/OPEN.md`](./day-sprint/db-server-first-2026-06-26/OPEN.md)

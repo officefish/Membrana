@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { ScenarioFunctionSubgraph, ScenarioSubgraph } from '@membrana/core';
 
+import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
+import { GET_RECORDER_OUT_HANDLE } from '../graph/get-recorder-node.js';
 import { PALETTE_VALUE_HANDLE } from '../graph/palette-node.js';
 import { EVENT_SERVER_HANDLE } from '../graph/event-node.js';
 import { MAKE_RECORDING_POLICY_OUT_HANDLE } from '../graph/make-recording-policy-node.js';
@@ -170,6 +172,104 @@ describe('function-call-resolve', () => {
     expect(gateCallContext.resolveFunctionInputPin?.('policy')).toMatchObject({
       kind: 'RecordingPolicy',
       windowSec: 5,
+    });
+  });
+
+  it('resolves collapsed gate recorder output via parent device pin (L21)', () => {
+    const gateFunction: ScenarioFunctionSubgraph = {
+      id: 'fn-alpha-recording-gate',
+      name: 'Recording gate',
+      entry: 'fn-alpha-recording-gate-input',
+      nodes: [
+        {
+          id: 'fn-alpha-recording-gate-input',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'function-input',
+          system: true,
+        },
+        {
+          id: 'fn-alpha-recording-gate-output',
+          blockKind: 'custom',
+          position: { x: 520, y: 0 },
+          nodeKind: 'function-output',
+          system: true,
+        },
+        {
+          id: 'node-get-recorder',
+          blockKind: 'custom',
+          position: { x: 200, y: 0 },
+          nodeKind: 'get-recorder',
+        },
+      ],
+      edges: [
+        {
+          kind: 'data',
+          source: 'fn-alpha-recording-gate-input',
+          sourceHandle: 'device',
+          target: 'node-get-recorder',
+          targetHandle: 'device',
+          dataType: 'DeviceRef',
+        },
+        {
+          kind: 'data',
+          source: 'node-get-recorder',
+          sourceHandle: GET_RECORDER_OUT_HANDLE,
+          target: 'fn-alpha-recording-gate-output',
+          targetHandle: 'recorder',
+          dataType: 'RecorderRef',
+        },
+      ],
+    };
+
+    const parentSubgraph: ScenarioSubgraph = {
+      entry: 'main-on-tick',
+      nodes: [
+        {
+          id: 'node-device-global',
+          blockKind: 'custom',
+          position: { x: 0, y: 0 },
+          nodeKind: 'device-global',
+        },
+        {
+          id: 'gate-block',
+          blockKind: 'subgraph',
+          position: { x: 240, y: 0 },
+          label: 'Recording gate::fn-alpha-recording-gate',
+        },
+      ],
+      edges: [
+        {
+          kind: 'data',
+          source: 'node-device-global',
+          sourceHandle: DEVICE_GLOBAL_DEVICE_HANDLE,
+          target: 'gate-block',
+          targetHandle: 'device',
+          dataType: 'DeviceRef',
+        },
+      ],
+    };
+
+    const recorder = resolveNodeOutput(
+      parentSubgraph,
+      [],
+      parentSubgraph.nodes[1]!,
+      'recorder',
+      {
+        scenarioFunctions: [gateFunction],
+        deviceHandle: 'device-1',
+        getRecorderSessionRef: (deviceHandle) => ({
+          kind: 'RecorderRef',
+          handle: `recorder:${deviceHandle}`,
+          valid: true,
+        }),
+      },
+    );
+
+    expect(recorder).toMatchObject({
+      kind: 'RecorderRef',
+      handle: 'recorder:device-1',
+      valid: true,
     });
   });
 });

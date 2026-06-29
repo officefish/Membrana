@@ -1,0 +1,13 @@
+{
+  "id": "insight-rodchenko-operator-density-mode",
+  "title": "Dual-density UI: operator vs engineer mode",
+  "status": "adopted",
+  "source": "virtual-team-rodchenko",
+  "horizon": "month",
+  "weight": 7.0,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["ui", "device-board", "operator", "design"]
+}

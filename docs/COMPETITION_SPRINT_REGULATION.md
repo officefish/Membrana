@@ -349,6 +349,19 @@ Score(team) = \sum_{jury} \sum_{criterion} weight_c \times score_{team,jury,c}
 4. `yarn task:archive comp-<slug>` + подзадачи; промпт brief **остаётся**.
 5. Lessons learned append в brief или `docs/archive/competition-sprint/<id>/RETROSPECTIVE.md`.
 
+### Phase 5b — Catalog publish (operator debug)
+
+После closure — вынести **все** team fork в device-board picker (`tier: community`), без merge в bundled MVP.
+
+| Шаг | Команда |
+|-----|---------|
+| Manifest | `docs/competition-sprint/<id>/CATALOG_PUBLISH.json` |
+| Publish | `yarn comp:publish-catalog --id <sprint-id>` |
+| Регламент | [`COMPETITION_CATALOG_PUBLISH_REGULATION.md`](./prompts/COMPETITION_CATALOG_PUBLISH_REGULATION.md) |
+| Skill | `membrana-competition-packaging` |
+
+Опционально: `yarn competition:synthesis-<sprint>` — синтез трёх замыслов для документации.
+
 ---
 
 ## Что приостановлено при `COMPETITION_SPRINT_ACTIVE.md` → `open`

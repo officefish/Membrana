@@ -10,6 +10,15 @@ declare global {
         read: () => Promise<string | null>;
         write: (json: string) => Promise<void>;
       };
+      shellLog?: {
+        write: (
+          level: 'debug' | 'info' | 'warn' | 'error',
+          process: string,
+          message: string,
+        ) => Promise<void>;
+        getLogsDir: () => Promise<string>;
+        flushScenarioTrace: (text: string, runId: string | null) => void;
+      };
     };
   }
 }

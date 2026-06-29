@@ -376,7 +376,8 @@ export async function runDailyStandup(options) {
   const { blocks: docBlocks, missingRequired } = collectDocInputs();
   if (missingRequired.length > 0) {
     console.error('Обязательные файлы не найдены:', missingRequired.join(', '));
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   const virtualTeamPath = resolve(process.cwd(), 'docs/VIRTUAL_TEAM_PROMPT.md');
@@ -457,7 +458,8 @@ export async function runDailyStandup(options) {
   } catch (e) {
     console.error(e.message);
     console.error('См. .env.example. Для проверки контекста без API: yarn standup:dry');
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   const model = defaultModel();
@@ -510,7 +512,7 @@ export async function runDailyStandup(options) {
     exitCode = 1;
   }
 
-  process.exit(exitCode);
+  process.exitCode = exitCode;
 }
 
 function writeStandupFile({ outputPath, commandName, body, meta }) {

@@ -48,6 +48,8 @@ import {
   isScenarioNodePureFieldApplicable,
   resolveScenarioGraphNodePure,
   normalizeScenarioGraphNodePure,
+  resolveScenarioGraphNodeSupportsAsync,
+  isDefaultAsyncCapableScenarioNodeKind,
   DEFAULT_RECORDING_POLICY,
   DEFAULT_FFT_TRENDS_POLICY,
   resolveScenarioRecordingPolicy,
@@ -59,6 +61,10 @@ import {
   createFftTrendsPolicyValue,
   isScenarioFftTrendsPolicyValue,
   fftTrendsAnalysisDurationSec,
+  canonicalizeScenarioFunctionPinOrder,
+  createDefaultFunctionExecInputPin,
+  createDefaultFunctionExecOutputPin,
+  normalizeScenarioFunctionPins,
 } from './index.js';
 
 describe('device-board contracts', () => {
@@ -161,6 +167,7 @@ describe('device-board reference types & node kinds (v0.4)', () => {
   it('scenario node kinds: event is system, print is not', () => {
     expect(isScenarioNodeKind('event')).toBe(true);
     expect(isScenarioNodeKind('print')).toBe(true);
+    expect(isScenarioNodeKind('sequence')).toBe(true);
     expect(isScenarioNodeKind('unknown')).toBe(false);
     expect(isSystemScenarioNodeKind('event')).toBe(true);
     expect(isSystemScenarioNodeKind('loop-repeat')).toBe(true);
@@ -414,12 +421,19 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
       'make-recording-policy',
       'make-fft-trends-policy',
     ]);
-    expect(PURE_ELIGIBLE_SCENARIO_NODE_KINDS).toEqual(['variable-get', 'get-journal', 'get-reporter']);
+    expect(PURE_ELIGIBLE_SCENARIO_NODE_KINDS).toEqual([
+      'variable-get',
+      'get-journal',
+      'get-reporter',
+      'get-recorder',
+      'get-spectral-analyser',
+    ]);
     expect(isConstructorAlwaysPureScenarioNodeKind('make-recording-policy')).toBe(true);
     expect(isPureEligibleScenarioNodeKind('variable-get')).toBe(true);
+    expect(isPureEligibleScenarioNodeKind('get-recorder')).toBe(true);
     expect(isPureLockedImpureScenarioNodeKind('get-audio-stream')).toBe(true);
-    expect(isPureLockedImpureScenarioNodeKind('get-journal')).toBe(false);
-    expect(isPureLockedImpureScenarioNodeKind('get-reporter')).toBe(false);
+    expect(isPureLockedImpureScenarioNodeKind('get-recorder')).toBe(false);
+    expect(isPureLockedImpureScenarioNodeKind('get-spectral-analyser')).toBe(false);
     expect(isPureLockedImpureScenarioNodeKind('make-track')).toBe(true);
     expect(isPureLockedImpureScenarioNodeKind('variable-get')).toBe(false);
   });
@@ -437,11 +451,16 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     expect(
       resolveScenarioGraphNodePure({ nodeKind: 'get-audio-stream', pure: true }),
     ).toBe(false);
+    expect(resolveScenarioGraphNodePure({ nodeKind: 'get-recorder' })).toBe(DEFAULT_PURE_ELIGIBLE);
+    expect(
+      resolveScenarioGraphNodePure({ nodeKind: 'get-recorder', pure: false }),
+    ).toBe(false);
     expect(
       resolveScenarioGraphNodePure({ nodeKind: 'start-recording' }),
     ).toBe(false);
     expect(isScenarioNodePureFieldApplicable('variable-get')).toBe(true);
     expect(isScenarioNodePureFieldApplicable('get-journal')).toBe(true);
+    expect(isScenarioNodePureFieldApplicable('get-recorder')).toBe(true);
     expect(isScenarioNodePureFieldApplicable('print')).toBe(false);
   });
 
@@ -475,6 +494,33 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
       pure: true,
     });
     expect(hostStrip).not.toHaveProperty('pure');
+  });
+
+  it('resolveScenarioGraphNodeSupportsAsync applies defaults and pure allowance', () => {
+    expect(isDefaultAsyncCapableScenarioNodeKind('pause-runtime')).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({ nodeKind: 'pause-runtime' }),
+    ).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({ nodeKind: 'print' }),
+    ).toBe(false);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({
+        nodeKind: 'make-recording-policy',
+      }),
+    ).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({
+        nodeKind: 'print',
+        supportsAsync: true,
+      }),
+    ).toBe(true);
+    expect(
+      resolveScenarioGraphNodeSupportsAsync({
+        nodeKind: 'pause-runtime',
+        supportsAsync: false,
+      }),
+    ).toBe(false);
   });
 
   it('parseDeviceScenarioDocument normalizes node pure on subgraph import', () => {
@@ -523,5 +569,34 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     expect(nodes[0]).not.toHaveProperty('pure');
     expect(nodes[1]?.pure).toBe(true);
     expect(nodes[2]).not.toHaveProperty('pure');
+  });
+
+  it('normalizeScenarioFunctionPins places exec pin first on input and output', () => {
+    const defaultInput = [createDefaultFunctionExecInputPin()];
+    const defaultOutput = [createDefaultFunctionExecOutputPin()];
+    const dataPin = {
+      id: 'policy',
+      name: 'policy',
+      kind: 'data' as const,
+      socketType: 'RecordingPolicy' as const,
+    };
+    const inputOrdered = normalizeScenarioFunctionPins([dataPin, createDefaultFunctionExecInputPin()], defaultInput);
+    expect(inputOrdered[0]?.kind).toBe('exec');
+    expect(inputOrdered[1]?.id).toBe('policy');
+
+    const outputOrdered = normalizeScenarioFunctionPins(
+      [dataPin, createDefaultFunctionExecOutputPin()],
+      defaultOutput,
+    );
+    expect(outputOrdered[0]?.kind).toBe('exec');
+    expect(outputOrdered[1]?.id).toBe('policy');
+  });
+
+  it('canonicalizeScenarioFunctionPinOrder inserts default exec when missing', () => {
+    const dataOnly = [{ id: 'x', name: 'x', kind: 'data' as const, socketType: 'DeviceRef' as const }];
+    const result = canonicalizeScenarioFunctionPinOrder(dataOnly, createDefaultFunctionExecInputPin());
+    expect(result).toHaveLength(2);
+    expect(result[0]?.id).toBe('exec-in');
+    expect(result[1]?.id).toBe('x');
   });
 });

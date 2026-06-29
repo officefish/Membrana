@@ -1,21 +1,44 @@
 import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
+  parseRuntimeCommandPayload,
   type NodeRealtimeEnvelope,
   type RuntimeCommandPayload,
   type RuntimeMode,
   type RuntimeStatePayload,
 } from '@membrana/core';
-import type { ScenarioRuntimeState } from '@membrana/device-board';
+import { resolveServerFirstFlags, type ScenarioRuntimeState } from '@membrana/device-board';
 
 import { getDeviceBoardRuntimeController } from '@/lib/deviceBoardRuntimeController';
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
+import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 /** Минимальный контракт контроллера, нужный мосту (упрощает unit-тесты). */
 export interface RuntimeBridgeController {
-  start: () => void | Promise<void>;
+  start: (options?: { fromRemote?: boolean }) => void | Promise<void>;
   stop: () => void;
+  pause: () => void;
+  resume: () => void;
   setMode: (mode: RuntimeMode) => void;
+}
+
+function getCaptureWireFields(deviceId: string | null): Pick<
+  RuntimeStatePayload,
+  'authority' | 'followerMode'
+> {
+  const store = useServerFirstStore.getState();
+  const flags = resolveServerFirstFlags({
+    deviceId,
+    editLease: store.editLease,
+    captureState: store.captureState,
+  });
+  if (flags.authority === null) {
+    return {};
+  }
+  return {
+    authority: flags.authority,
+    followerMode: flags.followerMode,
+  };
 }
 
 /** Проекция снимка ScenarioRuntime в wire-payload runtime.state. */
@@ -24,33 +47,98 @@ export function runtimeStateToPayload(
   mode: RuntimeMode,
   deviceId?: string | null,
 ): RuntimeStatePayload {
+  const capture = getCaptureWireFields(deviceId ?? null);
   return {
     ...(deviceId ? { deviceId } : {}),
     phase: state.phase,
     isRunning: state.isRunning,
+    isPaused: state.isPaused,
     mode,
     activeBranch: state.activeBranch,
     activeNodeId: state.activeNodeId,
     mainLoopIteration: state.mainLoopIteration,
     alarmLoopIteration: state.alarmLoopIteration,
     lastError: state.lastError,
+    ...capture,
   };
+}
+
+function syncCaptureAfterCommand(
+  deviceId: string | null,
+  payload: RuntimeCommandPayload,
+): void {
+  if (deviceId === null) {
+    return;
+  }
+  const store = useServerFirstStore.getState();
+  switch (payload.action) {
+    case 'run':
+      store.setCaptureFromRunCommand(deviceId, {
+        authority: payload.authority,
+        followerMode: payload.followerMode,
+        isRunning: true,
+        isPaused: false,
+      });
+      break;
+    case 'stop':
+      store.setCaptureState({
+        deviceId,
+        authority: store.captureState?.authority ?? 'field',
+        followerMode: store.captureState?.followerMode ?? null,
+        isRunning: false,
+        isPaused: false,
+      });
+      break;
+    case 'pause':
+      if (store.captureState?.deviceId === deviceId) {
+        store.setCaptureState({
+          ...store.captureState,
+          isPaused: true,
+        });
+      }
+      break;
+    case 'resume':
+      if (store.captureState?.deviceId === deviceId) {
+        store.setCaptureState({
+          ...store.captureState,
+          isPaused: false,
+          isRunning: true,
+        });
+      }
+      break;
+    default:
+      break;
+  }
 }
 
 /** Применяет команду runtime.command к контроллеру. Возвращает true, если команда распознана. */
 export function applyRuntimeCommand(
   controller: RuntimeBridgeController,
   payload: RuntimeCommandPayload,
+  deviceId: string | null = null,
 ): boolean {
-  switch (payload.action) {
+  const parsed = parseRuntimeCommandPayload(payload);
+  if (parsed === null) {
+    return false;
+  }
+
+  syncCaptureAfterCommand(deviceId, parsed);
+
+  switch (parsed.action) {
     case 'run':
-      void controller.start();
+      void controller.start({ fromRemote: true });
       return true;
     case 'stop':
       controller.stop();
       return true;
+    case 'pause':
+      controller.pause();
+      return true;
+    case 'resume':
+      controller.resume();
+      return true;
     case 'setMode':
-      controller.setMode(payload.mode);
+      controller.setMode(parsed.mode);
       return true;
     default:
       return false;
@@ -95,11 +183,7 @@ function emitRuntimeState(
 }
 
 /**
- * MP7b RT2/RT7: связывает Node Realtime client с headless scenario runtime.
- *  - runtime.command (кабинет → узел) → start/stop/setMode контроллера;
- *  - изменения состояния runtime → runtime.state (узел → кабинет);
- *  - RT7: при (пере)подключении повторно публикуем текущий снимок состояния,
- *    чтобы кабинет получил актуальный статус после reconnect.
+ * MP7b RT2/RT7 + SF4: связывает Node Realtime client с headless scenario runtime.
  */
 export function startRuntimeRealtimeBridge(): void {
   if (messageUnsub !== null) {
@@ -112,7 +196,8 @@ export function startRuntimeRealtimeBridge(): void {
     if (!isRuntimeCommandEnvelope(envelope)) {
       return;
     }
-    applyRuntimeCommand(controller, envelope.payload as RuntimeCommandPayload);
+    const payload = envelope.payload as RuntimeCommandPayload;
+    applyRuntimeCommand(controller, payload, client.getDeviceId());
   });
 
   stateUnsub = controller.subscribe((state) => {

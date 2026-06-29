@@ -1,4 +1,4 @@
-import type { DeviceScenarioDocument, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable } from '@membrana/core';
+import type { DeviceScenarioDocument, ScenarioGraphNode, ScenarioSubgraph, ScenarioVariable, ScenarioAsyncJobRecord } from '@membrana/core';
 import { createStringValue } from '@membrana/core';
 
 import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
@@ -10,11 +10,15 @@ import { ReportRuntimeStore } from './report-runtime-store.js';
 import { TrackRuntimeStore } from './track-runtime-store.js';
 import { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import { AsyncJobStore } from './async-job-store.js';
+import { PromiseRuntimeStore } from './promise-runtime-store.js';
+import { wireAsyncResolvedDispatch } from './async-resolved-dispatch.js';
 import type { ScenarioRuntimeHost } from './host.js';
 import { LOOP_TICK_PAUSE_MS, waitUntilNextLoopTick } from './runtime-timing.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import { resolveCompetitionRunLimits } from '../graph/execution-policy.js';
 import type { CompetitionRunLogPayload } from './competition-run-log.js';
+import { isReferenceValid } from './reference-validity.js';
 import {
   createIdleScenarioRuntimeState,
   runtimeBranchToHandlerBranch,
@@ -116,6 +120,12 @@ export class ScenarioRuntime {
 
   private readonly analysisStore = new FftTrendAnalysisRuntimeStore();
 
+  private readonly asyncJobStore = new AsyncJobStore();
+
+  private readonly promiseRuntimeStore = new PromiseRuntimeStore();
+
+  private asyncResolvedUnsubscribe: (() => void) | null = null;
+
   private runPromise: Promise<void> | null = null;
 
   private stopRequested = false;
@@ -166,6 +176,16 @@ export class ScenarioRuntime {
     return () => this.listeners.delete(listener);
   }
 
+  /** Подписка на lifecycle async jobs → `ScenarioAsyncJobHub` в client (AP v1 R10). */
+  subscribeAsyncJobs(listener: (record: ScenarioAsyncJobRecord) => void): () => void {
+    return this.asyncJobStore.subscribe(listener);
+  }
+
+  /** Снимок pending jobs для hub seed при bind. */
+  listPendingAsyncJobs(): readonly ScenarioAsyncJobRecord[] {
+    return this.asyncJobStore.listPending();
+  }
+
   /**
    * Ручной режим (MP7b RT3): `alarm` — приоритетный override (форсит alarm-loop,
    * авто detection-front игнорируется); `normal` — возврат к main + авто-детект.
@@ -196,6 +216,8 @@ export class ScenarioRuntime {
     this.trackStore.resetAll();
     this.recordingSliceStore.resetAll();
     this.analysisStore.resetAll();
+    this.asyncJobStore.clear();
+    this.promiseRuntimeStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.stopRequested = false;
     this.disconnectRequested = false;
@@ -221,6 +243,8 @@ export class ScenarioRuntime {
     this.trackStore.resetAll();
     this.recordingSliceStore.resetAll();
     this.analysisStore.resetAll();
+    this.asyncJobStore.clear();
+    this.promiseRuntimeStore.resetAll();
     this.host.resetCollectorSessions?.();
     this.abortController = new AbortController();
     this.runSignal = this.abortController.signal;
@@ -358,18 +382,33 @@ export class ScenarioRuntime {
     );
   }
 
+  /**
+   * onConnect seeds JournalRef (device scope when server is absent).
+   * Paired runs need link; Studio autonomous needs only a stable local device handle.
+   */
+  private shouldRunOnConnectAtStart(): boolean {
+    if (this.isDeviceLinked()) {
+      return true;
+    }
+    const deviceHandle = this.host.getDeviceHandle?.() ?? null;
+    return deviceHandle !== null && deviceHandle.length > 0;
+  }
+
   private async runOnConnectIfLinked(
     document: DeviceScenarioDocument,
     signal: AbortSignal,
   ): Promise<void> {
-    if (!this.isDeviceLinked()) {
+    if (!this.shouldRunOnConnectAtStart()) {
       return;
     }
     const onConnect = document.scenario.onConnect;
     if (onConnect.nodes.length === 0) {
       return;
     }
-    this.host.log('onConnect → onStart chain', {});
+    this.host.log('onConnect → onStart chain', {
+      linked: this.isDeviceLinked(),
+      device: this.host.getDeviceHandle?.() ?? null,
+    });
     await runSubgraphOnce(
       onConnect,
       this.host,
@@ -382,6 +421,50 @@ export class ScenarioRuntime {
       }),
       { onNodeEnter: (node) => this.onNodeEnter('initial', node) },
     );
+  }
+
+  /**
+   * Autonomous Studio: alpha onConnect bootstrap exits via function `exec-false-out`,
+   * but parent variable-set may not run if exec propagation stops at the subgraph block.
+   * Seed any unset JournalRef variables from host device scope before main loop.
+   */
+  private seedJournalRefVariablesIfNeeded(document: DeviceScenarioDocument): void {
+    if (this.isDeviceLinked()) {
+      return;
+    }
+    const deviceHandle = this.host.getDeviceHandle?.() ?? null;
+    if (deviceHandle === null || deviceHandle.length === 0) {
+      return;
+    }
+    const resolveJournalRef = this.host.getDeviceJournalRef;
+    if (resolveJournalRef === undefined) {
+      return;
+    }
+    const journalRef = resolveJournalRef(deviceHandle);
+    if (journalRef === null || !isReferenceValid(journalRef)) {
+      return;
+    }
+    const journalHandle = journalRef.handle;
+    if (journalHandle === null) {
+      return;
+    }
+    for (const variable of document.scenario.variables) {
+      if (variable.type !== 'JournalRef') {
+        continue;
+      }
+      const current = this.variableStore.getValue(variable.id);
+      if (current !== null && isReferenceValid(current)) {
+        continue;
+      }
+      this.variableStore.setValue(variable.id, journalRef);
+      this.host.setScenarioVariable?.(variable.id, journalRef);
+      this.host.log('journal-ref-seed', {
+        variableId: variable.id,
+        journal: journalHandle,
+        device: deviceHandle,
+        linked: false,
+      });
+    }
   }
 
   private isDeviceLinked(): boolean {
@@ -423,7 +506,10 @@ export class ScenarioRuntime {
     const analysis: Pick<ResolveInputContext, 'getFftTrendAnalysisRef'> = {
       getFftTrendAnalysisRef: (nodeId) => this.analysisStore.getAnalysisRef(nodeId),
     };
-    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis };
+    const promise: Pick<ResolveInputContext, 'getPromiseRef'> = {
+      getPromiseRef: (nodeId) => this.promiseRuntimeStore.getPromiseRef(nodeId),
+    };
+    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis, ...promise };
     if (Object.keys(merged).length === 0) {
       return context;
     }
@@ -548,6 +634,15 @@ export class ScenarioRuntime {
       trackStore: this.trackStore,
       analysisStore: this.analysisStore,
       recordingSliceStore: this.recordingSliceStore,
+      asyncJobStore: this.asyncJobStore,
+      promiseRuntimeStore: this.promiseRuntimeStore,
+      runId: this.runId,
+      loopTick:
+        branch === 'main'
+          ? this.state.mainLoopIteration
+          : branch === 'alarm'
+            ? this.state.alarmLoopIteration
+            : undefined,
       awaitUnpaused:
         this.runSignal !== null ? () => this.waitWhileUnpaused(this.runSignal!) : undefined,
     };
@@ -578,6 +673,8 @@ export class ScenarioRuntime {
         return;
       }
 
+      this.seedJournalRefVariablesIfNeeded(document);
+
       await runSubgraphOnce(document.scenario.initial, this.host, signal, this.execOptions('initial', document.scenario.functions), {
         onNodeEnter: (node) => this.onNodeEnter('initial', node),
       });
@@ -602,6 +699,19 @@ export class ScenarioRuntime {
         linked: this.host.isDeviceLinked?.() ?? false,
         device: this.host.getDeviceHandle?.() ?? null,
         server: this.host.getServerHandle?.() ?? null,
+      });
+
+      this.asyncResolvedUnsubscribe?.();
+      this.asyncResolvedUnsubscribe = wireAsyncResolvedDispatch({
+        document,
+        host: this.host,
+        variableStore: this.variableStore,
+        promiseRuntimeStore: this.promiseRuntimeStore,
+        subscribe: (listener) => this.asyncJobStore.subscribe(listener),
+        getSignal: () => this.runSignal,
+        execOptions: (branch) =>
+          this.execOptions(branch, document.scenario.functions, undefined, undefined),
+        onNodeEnter: (branch, node) => this.onNodeEnter(branch, node),
       });
 
       while (!signal.aborted) {
@@ -650,6 +760,7 @@ export class ScenarioRuntime {
         this.host.log('main-tick-start', { runId: this.runId, tick: mainIteration, branch: 'main' });
 
         const mainResolveContext = this.buildLoopTickResolveContext('main');
+        const mainTickStartedAt = performance.now();
         const { lastDetection } = await runSubgraphOnce(
           document.scenario.loops.main,
           this.host,
@@ -664,6 +775,7 @@ export class ScenarioRuntime {
           break;
         }
 
+        const mainTickElapsedMs = Math.round(performance.now() - mainTickStartedAt);
         this.host.log('main-tick-done', {
           runId: this.runId,
           tick: mainIteration,
@@ -671,6 +783,13 @@ export class ScenarioRuntime {
           detected: lastDetection?.detected ?? false,
           confidence: lastDetection?.confidence ?? null,
           templateId: lastDetection?.templateId ?? null,
+          elapsedMs: mainTickElapsedMs,
+        });
+        this.host.log('main-tick-blocked-ms', {
+          runId: this.runId,
+          tick: mainIteration,
+          branch: 'main',
+          elapsedMs: mainTickElapsedMs,
         });
 
         // Авто detection-front работает только в normal-режиме.
@@ -706,6 +825,7 @@ export class ScenarioRuntime {
       }
       const message = error instanceof Error ? error.message : String(error);
       this.host.log('scenario-runtime error', {
+        runId: this.runId,
         message,
         stack: error instanceof Error ? error.stack ?? null : null,
         branch: this.state.activeBranch,
@@ -881,6 +1001,21 @@ export class ScenarioRuntime {
   }
 
   private async finishStopped(): Promise<void> {
+    this.host.log('scenario-run-stop', {
+      runId: this.runId,
+      reason: this.stopReason ?? 'system',
+    });
+    this.asyncResolvedUnsubscribe?.();
+    this.asyncResolvedUnsubscribe = null;
+    if (this.runId !== null) {
+      const cancelled = this.asyncJobStore.cancelByRunId(this.runId);
+      if (cancelled.length > 0) {
+        this.host.log('async-job-cancelled-run', {
+          runId: this.runId,
+          count: cancelled.length,
+        });
+      }
+    }
     const document = this.document;
     if (document !== null && this.scenarioStartedAtMs !== null) {
       const competitionLimits = resolveCompetitionRunLimits(document);

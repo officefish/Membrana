@@ -13,7 +13,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./test/setup-env.ts'],
     environment: 'node',
-    include: ['test/**/*.test.ts'],
+    include: ['test/**/*.test.ts', 'src/**/*.test.ts'],
     testTimeout: 30_000,
     hookTimeout: 30_000,
     pool: 'forks',

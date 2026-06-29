@@ -1,6 +1,10 @@
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import {
+  startBoardLeaseBridge,
+  stopBoardLeaseBridge,
+} from '@/lib/boardLeaseBridge';
+import {
   startRuntimeRealtimeBridge,
   stopRuntimeRealtimeBridge,
 } from '@/lib/runtimeRealtimeBridge';
@@ -19,6 +23,7 @@ export function reconfigureNodeRealtimeFromConnection(
   const client = getNodeRealtimeClient();
   if (mode === 'paired' && pairing) {
     client.connectNode(pairing);
+    startBoardLeaseBridge();
     startRuntimeRealtimeBridge();
     sessionInvalidatedUnsub = client.onSessionInvalidated((reason) => {
       useNodeConnectionStore.getState().handlePairingInvalid(reason);
@@ -27,6 +32,7 @@ export function reconfigureNodeRealtimeFromConnection(
   }
 
   stopRuntimeRealtimeBridge();
+  stopBoardLeaseBridge();
   client.disconnect();
 }
 
@@ -34,5 +40,6 @@ export function resetNodeRealtimeHubBridgeForTests(): void {
   sessionInvalidatedUnsub?.();
   sessionInvalidatedUnsub = null;
   stopRuntimeRealtimeBridge();
+  stopBoardLeaseBridge();
   getNodeRealtimeClient().disconnect();
 }

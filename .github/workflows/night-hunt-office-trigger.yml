@@ -1,0 +1,29 @@
+# Optional backup: trigger Night Hunt on background-office (Fly/VPS) when local PC is off.
+# Secrets: OFFICE_URL, OFFICE_API_TOKEN (repository secrets)
+
+name: night-hunt-office-trigger
+
+on:
+  schedule:
+    - cron: '10 7 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: POST night-hunt run-all (optional backup)
+        continue-on-error: true
+        env:
+          OFFICE_URL: ${{ secrets.OFFICE_URL }}
+          OFFICE_API_TOKEN: ${{ secrets.OFFICE_API_TOKEN }}
+        run: |
+          if [ -z "$OFFICE_URL" ] || [ -z "$OFFICE_API_TOKEN" ]; then
+            echo "OFFICE_URL or OFFICE_API_TOKEN not set — skip (optional)"
+            exit 0
+          fi
+          curl -fsS -X POST "${OFFICE_URL%/}/v1/night-hunt/run-all" \
+            -H "X-Membrana-Token: ${OFFICE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --max-time 300 || echo "night-hunt trigger failed (optional)"

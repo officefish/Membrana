@@ -20,15 +20,19 @@ export function parseSubgraphFunctionId(node: ScenarioGraphNode): string | null 
   return label.slice(separatorIndex + SUBGRAPH_REF_SEPARATOR.length);
 }
 
+/** Отображаемое имя из закодированного `label` subgraph-блока (`Name::fn-id` → `Name`). */
+export function parseEncodedSubgraphRefLabel(encodedLabel: string): string {
+  const separatorIndex = encodedLabel.lastIndexOf(SUBGRAPH_REF_SEPARATOR);
+  if (separatorIndex === -1) {
+    return encodedLabel;
+  }
+  return encodedLabel.slice(0, separatorIndex);
+}
+
 /** Отображаемое имя subgraph-блока. */
 export function parseSubgraphDisplayLabel(node: ScenarioGraphNode): string {
   if (node.blockKind !== 'subgraph') {
     return node.label ?? node.id;
   }
-  const label = node.label ?? node.id;
-  const separatorIndex = label.lastIndexOf(SUBGRAPH_REF_SEPARATOR);
-  if (separatorIndex === -1) {
-    return label;
-  }
-  return label.slice(0, separatorIndex);
+  return parseEncodedSubgraphRefLabel(node.label ?? node.id);
 }

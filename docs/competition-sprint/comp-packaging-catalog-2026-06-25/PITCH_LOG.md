@@ -1,0 +1,17 @@
+# PITCH_LOG — comp-packaging-catalog-2026-06-25
+
+| Phase | Deliverable | Commit |
+|-------|-------------|--------|
+| A | Catalog publish (picker ×3) + `comp:publish-catalog` + skill + regulation | `55fe27d` |
+| B | `COMPETITION_ASYNC_V2_DESIGN_SYNTHESIS.md` (Anthropic) | `af0ab47` |
+
+## Phase A notes
+
+- Parent sprint `comp-mvp-async-v2-2026-06-25` closed; winner Beta.
+- Bundled MVP `usercase-mvp-microphone` unchanged.
+- Community picker: alpha / beta / gamma async-v2 (`tier: community`).
+- Gate LGTM: [`GATE.md`](./GATE.md).
+
+## Deferred
+
+- Phase C: operator F7 smoke per fork

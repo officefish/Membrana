@@ -5,14 +5,18 @@ import type {
   ScenarioFftTrendsPolicy,
   ScenarioNodeKind,
   ScenarioRecordingPolicy,
-  ScenarioVariableType,
-  ScenarioVariableValue,
-  ScenarioCommentGroupFrameColor,
-  ScenarioCommentGroupFrameColorPreset,
+  ScenarioSequenceConfig,
+  ScenarioAsyncJobNodeConfig,
+  ScenarioAsyncJobKind,
   SocketType,
 } from '@membrana/core';
 import {
   DEFAULT_SCENARIO_COLLECTOR_CONFIG,
+  DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+  DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG,
+  SCENARIO_ASYNC_JOB_KINDS,
+  MAX_SCENARIO_SEQUENCE_THEN_COUNT,
+  MIN_SCENARIO_SEQUENCE_THEN_COUNT,
   FFT_TRENDS_BUILTIN_TEMPLATE_KEYS,
   FFT_TRENDS_DETECTION_MODES,
   SCENARIO_COMMENT_GROUP_FRAME_COLOR_PRESETS,
@@ -30,6 +34,15 @@ import {
   resolveScenarioCommentGroupFrameColor,
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
+  resolveScenarioSequenceConfig,
+  resolveScenarioAsyncJobNodeConfig,
+  isScenarioSequenceModeConflict,
+} from '@membrana/core';
+import type {
+  ScenarioVariableType,
+  ScenarioVariableValue,
+  ScenarioCommentGroupFrameColor,
+  ScenarioCommentGroupFrameColorPreset,
 } from '@membrana/core';
 
 import { D0_SCENARIO_NODE_CATALOG } from '../graph/index.js';
@@ -66,6 +79,7 @@ import {
 } from '../types/board-ui.js';
 import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
 import { BoardFunctionPinInspector, type FunctionPinEditSide } from './board-function-pin-inspector.js';
+import { BoardNodeInspectorNotes } from './board-node-inspector-notes.js';
 import type { ScenarioFunctionCanvasMeta } from '../graph/hydrate-board-from-document.js';
 import type { FunctionPinSide } from '../graph/function-pin-ops.js';
 
@@ -81,6 +95,8 @@ export interface BoardRightSidebarProps {
   /** True, если порт policy подключён dataflow (MakeRecordingPolicy / variable-get). */
   readonly selectedRecordingPolicyWired: boolean;
   readonly selectedFftTrendsPolicy: ScenarioFftTrendsPolicy | null;
+  readonly selectedSequenceConfig: ScenarioSequenceConfig | null;
+  readonly selectedAsyncJobConfig: ScenarioAsyncJobNodeConfig | null;
   readonly selectedVariableName: string;
   readonly selectedVariableId: string | null;
   readonly selectedVariableType: ScenarioVariableType | null;
@@ -94,6 +110,11 @@ export interface BoardRightSidebarProps {
   readonly selectedVariableTypeLabel: string | null;
   readonly selectedFunctionId: string | null;
   readonly selectedFunctionName: string | null;
+  /** Экземпляры subgraph-блоков выбранной функции на текущей ветке. */
+  readonly selectedFunctionBlockInstances: readonly {
+    readonly nodeId: string;
+    readonly occurrence: number;
+  }[];
   readonly microphoneOptions: readonly ScenarioMicrophoneOption[];
   readonly microphoneOptionsLoading?: boolean;
   readonly canEditScenario: boolean;
@@ -109,6 +130,8 @@ export interface BoardRightSidebarProps {
   readonly onCollectorConfigChange: (nodeId: string, config: ScenarioCollectorConfig) => void;
   readonly onRecordingPolicyChange: (nodeId: string, policy: ScenarioRecordingPolicy) => void;
   readonly onFftTrendsPolicyChange: (nodeId: string, policy: ScenarioFftTrendsPolicy) => void;
+  readonly onSequenceConfigChange: (nodeId: string, config: ScenarioSequenceConfig) => void;
+  readonly onAsyncJobConfigChange: (nodeId: string, config: ScenarioAsyncJobNodeConfig) => void;
   readonly onAssignVariableName: (nodeId: string, variableName: string) => void;
   readonly onVariableGetterPureChange: (nodeId: string, pure: boolean) => void;
   readonly onVariableValueChange: (variableId: string, value: ScenarioVariableValue | null) => void;
@@ -124,6 +147,7 @@ export interface BoardRightSidebarProps {
     patch: Partial<Pick<ScenarioFunctionCanvasMeta, 'name' | 'description'>>,
   ) => void;
   readonly onOpenFunctionEditor: (functionId: string) => void;
+  readonly onSelectFunctionBlockInstance: (nodeId: string) => void;
   readonly onAddFunctionPin: (side: FunctionPinSide) => void;
   readonly onUpdateFunctionPin: (
     side: FunctionPinSide,
@@ -138,6 +162,112 @@ export interface BoardRightSidebarProps {
   readonly onDeleteFunction: () => void;
   readonly onClearBoard: () => void;
 }
+
+interface BoardNodePalettePanelProps {
+  readonly isRuntime: boolean;
+  readonly canEditScenario: boolean;
+  readonly legacyPalette: boolean;
+  readonly onAddPaletteNode: (nodeKind: V04PaletteNodeKind) => void;
+  readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
+  readonly onClearBoard: () => void;
+  readonly borderedTop?: boolean;
+}
+
+/** Палитра нод + «Очистить ветку» (общий блок для ветки и редактора функции). */
+const BoardNodePalettePanel: React.FC<BoardNodePalettePanelProps> = ({
+  isRuntime,
+  canEditScenario,
+  legacyPalette,
+  onAddPaletteNode,
+  onAddLegacyNode,
+  onClearBoard,
+  borderedTop = false,
+}) => (
+  <div
+    className={`flex flex-col ${borderedTop ? 'shrink-0 border-t border-base-200' : 'flex-1'}`}
+    aria-label="Палитра нод"
+  >
+    <div className={`border-b border-base-200 px-4 py-3 ${borderedTop ? '' : ''}`}>
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+        {isRuntime ? 'Runtime' : 'Палитра нод'}
+      </p>
+      <h2 className="text-sm font-semibold text-base-content">
+        {isRuntime
+          ? 'Выберите узел на канвасе'
+          : canEditScenario
+            ? 'Добавьте ноды в активную ветку'
+            : 'Выберите ветку сценария'}
+      </h2>
+    </div>
+
+    {!isRuntime ? (
+      <div className="flex flex-col gap-4 p-4">
+        {!legacyPalette ? (
+          SCENARIO_V04_PALETTE_SECTIONS.map((section) => (
+            <div key={section.title} className="flex flex-col gap-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
+                {section.title}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {section.items.map((item) => (
+                  <button
+                    key={item.nodeKind}
+                    type="button"
+                    className="btn btn-xs btn-outline btn-primary"
+                    disabled={!canEditScenario}
+                    onClick={() => onAddPaletteNode(item.nodeKind)}
+                    title={item.label}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          LEGACY_SCENARIO_NODE_PALETTE.map((category) => (
+            <div key={category.title} className="flex flex-col gap-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
+                {category.title}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {category.blockKinds.map((blockKind) => (
+                  <button
+                    key={blockKind}
+                    type="button"
+                    className="btn btn-xs btn-outline"
+                    disabled={!canEditScenario}
+                    onClick={() => onAddLegacyNode(blockKind)}
+                    title={D0_SCENARIO_NODE_CATALOG[blockKind].label}
+                  >
+                    {D0_SCENARIO_NODE_CATALOG[blockKind].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    ) : (
+      <p className="p-4 text-xs leading-relaxed text-base-content/50">
+        Во время выполнения сценария палитра скрыта. Кликните по узлу, чтобы увидеть значения портов.
+      </p>
+    )}
+
+    {!isRuntime ? (
+      <div className="mt-auto border-t border-base-200 p-4">
+        <button
+          type="button"
+          className="btn btn-sm btn-outline btn-error w-full"
+          disabled={!canEditScenario}
+          onClick={onClearBoard}
+        >
+          Очистить ветку
+        </button>
+      </div>
+    ) : null}
+  </div>
+);
 
 /**
  * Правый сайдбар доски (MP7b RT6 / v0.4 DBR5): инспектор выбранной ноды
@@ -154,6 +284,8 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedRecordingPolicy,
   selectedRecordingPolicyWired,
   selectedFftTrendsPolicy,
+  selectedSequenceConfig,
+  selectedAsyncJobConfig,
   selectedVariableName,
   selectedVariableId,
   selectedVariableType,
@@ -167,6 +299,7 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   selectedVariableTypeLabel,
   selectedFunctionId,
   selectedFunctionName,
+  selectedFunctionBlockInstances,
   microphoneOptions,
   microphoneOptionsLoading = false,
   canEditScenario,
@@ -182,12 +315,15 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onCollectorConfigChange,
   onRecordingPolicyChange,
   onFftTrendsPolicyChange,
+  onSequenceConfigChange,
+  onAsyncJobConfigChange,
   onAssignVariableName,
   onVariableGetterPureChange,
   onVariableValueChange,
   onCommentGroupMetadataChange,
   onUpdateFunctionMeta,
   onOpenFunctionEditor,
+  onSelectFunctionBlockInstance,
   onAddFunctionPin,
   onUpdateFunctionPin,
   onRemoveFunctionPin,
@@ -211,9 +347,22 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   const [fftTrendsPolicyDraft, setFftTrendsPolicyDraft] = useState<ScenarioFftTrendsPolicy>(
     selectedFftTrendsPolicy ?? resolveScenarioFftTrendsPolicy(undefined),
   );
+  const [sequenceDraft, setSequenceDraft] = useState<ScenarioSequenceConfig>(
+    selectedSequenceConfig ?? DEFAULT_SCENARIO_SEQUENCE_CONFIG,
+  );
+  const [asyncJobDraft, setAsyncJobDraft] = useState<ScenarioAsyncJobNodeConfig>(
+    selectedAsyncJobConfig ?? DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG,
+  );
   const showRuntimeOutputs = isRuntime && runtimeInspection !== null;
   const editDisabled = isRuntime || !canEditScenario;
   const showFunctionInspector = isFunctionBranch && functionMeta !== null && !isRuntime;
+  const isFunctionSystemNode =
+    selectedNodeKind === 'function-input' || selectedNodeKind === 'function-output';
+  /** Pin inspector + palette: только пустой канвас в редакторе функции. */
+  const showFunctionPinPanel = showFunctionInspector && selectedNodeId === null;
+  /** Только pins при клике на function-input/output (без закреплённой палитры). */
+  const showFunctionPinInspectorOnly =
+    showFunctionInspector && selectedNodeId !== null && isFunctionSystemNode;
   const showSubgraphFunctionInspector =
     !isFunctionBranch &&
     selectedFunctionId !== null &&
@@ -255,6 +404,14 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
       selectedFftTrendsPolicy ?? resolveScenarioFftTrendsPolicy(undefined),
     );
   }, [selectedNodeId, selectedFftTrendsPolicy]);
+
+  useEffect(() => {
+    setSequenceDraft(selectedSequenceConfig ?? DEFAULT_SCENARIO_SEQUENCE_CONFIG);
+  }, [selectedNodeId, selectedSequenceConfig]);
+
+  useEffect(() => {
+    setAsyncJobDraft(selectedAsyncJobConfig ?? DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG);
+  }, [selectedNodeId, selectedAsyncJobConfig]);
 
   const commitRecordingPolicyField = (
     patch: Partial<ScenarioRecordingPolicy>,
@@ -354,6 +511,31 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
     onCollectorConfigChange(selectedNodeId, next);
   };
 
+  const commitSequenceField = (patch: Partial<ScenarioSequenceConfig>) => {
+    if (selectedNodeId === null || editDisabled) {
+      return;
+    }
+    let merged: Partial<ScenarioSequenceConfig> = { ...sequenceDraft, ...patch };
+    if (patch.parallelAsync === true) {
+      merged = { ...merged, latentThen: false };
+    }
+    if (patch.latentThen === true) {
+      merged = { ...merged, parallelAsync: false };
+    }
+    const next = resolveScenarioSequenceConfig(merged);
+    setSequenceDraft(next);
+    onSequenceConfigChange(selectedNodeId, next);
+  };
+
+  const commitAsyncJobField = (patch: Partial<ScenarioAsyncJobNodeConfig>) => {
+    if (selectedNodeId === null || editDisabled) {
+      return;
+    }
+    const next = resolveScenarioAsyncJobNodeConfig({ ...asyncJobDraft, ...patch });
+    setAsyncJobDraft(next);
+    onAsyncJobConfigChange(selectedNodeId, next);
+  };
+
   return (
     <aside
       className={`flex h-full ${
@@ -407,13 +589,47 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             </p>
             <h2 className="text-sm font-semibold text-base-content truncate">{selectedFunctionName}</h2>
           </div>
+          {selectedFunctionBlockInstances.length > 0 ? (
+            <section className="flex flex-col gap-2" aria-label="Экземпляры функции на ветке">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
+                {selectedFunctionBlockInstances.length === 1
+                  ? 'Экземпляр на ветке'
+                  : `Экземпляры на ветке (${selectedFunctionBlockInstances.length})`}
+              </p>
+              <ul className="flex flex-col gap-1">
+                {selectedFunctionBlockInstances.map((instance) => {
+                  const isActive = instance.nodeId === selectedNodeId;
+                  return (
+                    <li key={instance.nodeId}>
+                      <button
+                        type="button"
+                        className={`btn btn-xs w-full justify-start font-normal ${
+                          isActive ? 'btn-primary' : 'btn-ghost'
+                        }`}
+                        disabled={isRuntime}
+                        aria-current={isActive ? 'true' : undefined}
+                        onClick={() => {
+                          onSelectFunctionBlockInstance(instance.nodeId);
+                        }}
+                      >
+                        <span className="truncate">
+                          Вызов {instance.occurrence}
+                          <span className="ml-1 font-mono text-[10px] opacity-70">{instance.nodeId}</span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ) : null}
           <p className="text-xs leading-relaxed text-base-content/55">
             Двойной клик по блоку на канвасе открывает редактор функции.
           </p>
           <button
             type="button"
             className="btn btn-primary btn-sm w-full"
-            disabled={editDisabled}
+            disabled={isRuntime}
             onClick={() => {
               if (selectedFunctionId !== null) {
                 onOpenFunctionEditor(selectedFunctionId);
@@ -423,17 +639,43 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
             Открыть редактор
           </button>
         </div>
-      ) : showFunctionInspector ? (
-        <BoardFunctionPinInspector
-          meta={functionMeta}
-          pinEditSide={functionPinEditSide}
-          disabled={editDisabled}
-          onUpdateMeta={onUpdateFunctionMeta}
-          onAddPin={onAddFunctionPin}
-          onUpdatePin={onUpdateFunctionPin}
-          onRemovePin={onRemoveFunctionPin}
-          onDeleteFunction={onDeleteFunction}
-        />
+      ) : showFunctionPinPanel ? (
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <BoardFunctionPinInspector
+              meta={functionMeta}
+              pinEditSide={functionPinEditSide}
+              disabled={editDisabled}
+              onUpdateMeta={onUpdateFunctionMeta}
+              onAddPin={onAddFunctionPin}
+              onUpdatePin={onUpdateFunctionPin}
+              onRemovePin={onRemoveFunctionPin}
+              onDeleteFunction={onDeleteFunction}
+            />
+          </div>
+          <BoardNodePalettePanel
+            isRuntime={isRuntime}
+            canEditScenario={canEditScenario}
+            legacyPalette={legacyPalette}
+            onAddPaletteNode={onAddPaletteNode}
+            onAddLegacyNode={onAddLegacyNode}
+            onClearBoard={onClearBoard}
+            borderedTop
+          />
+        </div>
+      ) : showFunctionPinInspectorOnly ? (
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <BoardFunctionPinInspector
+            meta={functionMeta}
+            pinEditSide={functionPinEditSide}
+            disabled={editDisabled}
+            onUpdateMeta={onUpdateFunctionMeta}
+            onAddPin={onAddFunctionPin}
+            onUpdatePin={onUpdateFunctionPin}
+            onRemovePin={onRemoveFunctionPin}
+            onDeleteFunction={onDeleteFunction}
+          />
+        </div>
       ) : selectedNodeId ? (
         <div className="flex flex-col gap-3 p-4 text-sm">
           <div className="border-b border-base-200 pb-2">
@@ -622,6 +864,18 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                       <code className="font-mono">reporter</code>. Pure — без exec passthrough.
                     </p>
                   ) : null}
+                  {selectedNodeKind === 'get-recorder' ? (
+                    <p className="text-base-content/55 leading-relaxed">
+                      Data-only: <code className="font-mono">device</code> →{' '}
+                      <code className="font-mono">recorder</code>. Singleton ref; Pure — без exec.
+                    </p>
+                  ) : null}
+                  {selectedNodeKind === 'get-spectral-analyser' ? (
+                    <p className="text-base-content/55 leading-relaxed">
+                      Data-only: <code className="font-mono">device</code> →{' '}
+                      <code className="font-mono">analyser</code>. Singleton ref; Pure — без exec.
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
               {selectedNodeKind === 'get-microphone' ? (
@@ -648,6 +902,110 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
                 Список обновляется при выборе узла (audio-engine enumerate).
               </span>
             </label>
+          ) : selectedNodeKind === 'sequence' ? (
+            <div className="flex flex-col gap-3 text-xs">
+              <p className="text-base-content/55 leading-relaxed">
+                Then 0…N сверху вниз: каждая ветка выполняется по очереди. Пустой Then переходит к
+                следующему. Для нескольких exec-веток с одного узла — только через Sequence.
+              </p>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">Количество Then</span>
+                <input
+                  type="number"
+                  className="input input-bordered input-sm w-full font-mono"
+                  min={MIN_SCENARIO_SEQUENCE_THEN_COUNT}
+                  max={MAX_SCENARIO_SEQUENCE_THEN_COUNT}
+                  step={1}
+                  disabled={editDisabled}
+                  value={sequenceDraft.thenCount}
+                  onChange={(event) =>
+                    commitSequenceField({ thenCount: Number(event.target.value) })
+                  }
+                />
+              </label>
+              <label className="label cursor-pointer justify-start gap-2 py-0">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm"
+                  disabled={editDisabled}
+                  checked={sequenceDraft.parallelAsync}
+                  onChange={(event) =>
+                    commitSequenceField({ parallelAsync: event.target.checked })
+                  }
+                />
+                <span className="label-text text-xs">Параллельный async (Promise)</span>
+              </label>
+              <label className="label cursor-pointer justify-start gap-2 py-0">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm"
+                  disabled={editDisabled}
+                  checked={sequenceDraft.latentThen}
+                  onChange={(event) =>
+                    commitSequenceField({ latentThen: event.target.checked })
+                  }
+                />
+                <span className="label-text text-xs">Latent Then (fire-and-continue)</span>
+              </label>
+              {isScenarioSequenceModeConflict(sequenceDraft) ? (
+                <p className="text-warning text-xs leading-relaxed">
+                  «Параллельный async» и «Latent Then» взаимоисключающи — оставьте только один режим.
+                </p>
+              ) : null}
+            </div>
+          ) : selectedNodeKind === 'start-async-job' ||
+            selectedNodeKind === 'await-promise' ||
+            selectedNodeKind === 'cancel-async-jobs' ? (
+            <div className="flex flex-col gap-3 text-xs">
+              <p className="text-base-content/55 leading-relaxed">
+                {selectedNodeKind === 'start-async-job'
+                  ? 'Стартует async job в store; exec продолжается сразу. PromiseRef — на data-выходе «promise».'
+                  : selectedNodeKind === 'await-promise'
+                    ? 'Блокирует exec-цепочку до resolve/reject PromiseRef (latent branch).'
+                    : 'Отменяет pending jobs по фильтру jobKind (onStop / overflow).'}
+              </p>
+              <label className="flex flex-col gap-1">
+                <span className="font-medium text-base-content/70">jobKind</span>
+                <select
+                  className="select select-bordered select-sm w-full font-mono"
+                  disabled={editDisabled}
+                  value={asyncJobDraft.jobKind}
+                  onChange={(event) =>
+                    commitAsyncJobField({
+                      jobKind: event.target.value as ScenarioAsyncJobKind,
+                    })
+                  }
+                >
+                  {SCENARIO_ASYNC_JOB_KINDS.map((kind) => (
+                    <option key={kind} value={kind}>
+                      {kind}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {selectedNodeKind === 'await-promise' ? (
+                <label className="flex flex-col gap-1">
+                  <span className="font-medium text-base-content/70">awaitTimeoutMs</span>
+                  <input
+                    type="number"
+                    className="input input-bordered input-sm w-full font-mono"
+                    min={1000}
+                    max={600_000}
+                    step={1000}
+                    disabled={editDisabled}
+                    value={asyncJobDraft.awaitTimeoutMs ?? DEFAULT_SCENARIO_ASYNC_JOB_NODE_CONFIG.awaitTimeoutMs}
+                    onChange={(event) =>
+                      commitAsyncJobField({ awaitTimeoutMs: Number(event.target.value) })
+                    }
+                  />
+                </label>
+              ) : null}
+            </div>
+          ) : selectedNodeKind === 'on-async-resolved' ? (
+            <p className="text-xs text-base-content/55 leading-relaxed">
+              Подключите data-вход «promise» к PromiseRef. При resolve срабатывает квадратный event-out
+              (как у Collect flush).
+            </p>
           ) : selectedNodeKind === 'collect-samples' || selectedNodeKind === 'collect-fft-frames' ? (
             <div className="flex flex-col gap-3 text-xs">
               <p className="text-base-content/55 leading-relaxed">
@@ -1070,92 +1428,32 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
               палитре нод.
             </p>
           )}
+          <BoardNodeInspectorNotes nodeKind={selectedNodeKind ?? undefined} />
             </>
           )}
         </div>
-      ) : (
-        <div className="flex flex-1 flex-col">
-          <div className="border-b border-base-200 px-4 py-3">
+      ) : !canEditScenario && !isRuntime ? (
+        <div className="flex flex-1 flex-col gap-3 p-4 text-sm">
+          <div className="border-b border-base-200 pb-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/50">
-              {isRuntime ? 'Runtime' : 'Палитра нод'}
+              Режим просмотра
             </p>
-            <h2 className="text-sm font-semibold text-base-content">
-              {isRuntime
-                ? 'Выберите узел на канвасе'
-                : canEditScenario
-                  ? 'Добавьте ноды в активную ветку'
-                  : 'Выберите ветку сценария'}
-            </h2>
+            <h2 className="text-sm font-semibold text-base-content">Сценарий только для чтения</h2>
           </div>
-
-          {!isRuntime ? (
-            <div className="flex flex-1 flex-col gap-4 p-4">
-              {!legacyPalette ? (
-                SCENARIO_V04_PALETTE_SECTIONS.map((section) => (
-                  <div key={section.title} className="flex flex-col gap-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
-                      {section.title}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {section.items.map((item) => (
-                        <button
-                          key={item.nodeKind}
-                          type="button"
-                          className="btn btn-xs btn-outline btn-primary"
-                          disabled={!canEditScenario}
-                          onClick={() => onAddPaletteNode(item.nodeKind)}
-                          title={item.label}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                LEGACY_SCENARIO_NODE_PALETTE.map((category) => (
-                  <div key={category.title} className="flex flex-col gap-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-base-content/40">
-                      {category.title}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {category.blockKinds.map((blockKind) => (
-                        <button
-                          key={blockKind}
-                          type="button"
-                          className="btn btn-xs btn-outline"
-                          disabled={!canEditScenario}
-                          onClick={() => onAddLegacyNode(blockKind)}
-                          title={D0_SCENARIO_NODE_CATALOG[blockKind].label}
-                        >
-                          {D0_SCENARIO_NODE_CATALOG[blockKind].label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          ) : (
-            <p className="p-4 text-xs leading-relaxed text-base-content/50">
-              Во время выполнения сценария палитра скрыта. Кликните по узлу, чтобы увидеть значения
-              портов.
-            </p>
-          )}
-
-          {!isRuntime ? (
-            <div className="mt-auto border-t border-base-200 p-4">
-              <button
-                type="button"
-                className="btn btn-sm btn-outline btn-error w-full"
-                disabled={!canEditScenario}
-                onClick={onClearBoard}
-              >
-                Очистить ветку
-              </button>
-            </div>
-          ) : null}
+          <p className="text-xs leading-relaxed text-base-content/55">
+            Палитра и редактирование недоступны. Выберите узел на канвасе, чтобы просмотреть параметры.
+            Перетаскивание канваса и колёсико мыши перемещают вид; удерживайте Space для pan поверх узлов.
+          </p>
         </div>
+      ) : (
+        <BoardNodePalettePanel
+          isRuntime={isRuntime}
+          canEditScenario={canEditScenario}
+          legacyPalette={legacyPalette}
+          onAddPaletteNode={onAddPaletteNode}
+          onAddLegacyNode={onAddLegacyNode}
+          onClearBoard={onClearBoard}
+        />
       )}
 
       {showRuntimeOutputs ? (

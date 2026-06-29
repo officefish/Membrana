@@ -7,6 +7,8 @@ import type { ReportRuntimeStore } from './report-runtime-store.js';
 import type { TrackRuntimeStore } from './track-runtime-store.js';
 import type { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import type { AsyncJobStore } from './async-job-store.js';
+import type { PromiseRuntimeStore } from './promise-runtime-store.js';
 import { dispatchCollectEventBranches } from './event-dispatch.js';
 import type { ResolveInputContext } from './resolve-input.js';
 import type { ScenarioDetectionResult } from './types.js';
@@ -16,6 +18,7 @@ import type { ScenarioVariableStore } from './variable-store.js';
 import { isExecTransparentPureNode } from './scenario-node-pure-runtime.js';
 import { MAX_SUBGRAPH_EXEC_STEPS, yieldToEventLoop } from './runtime-timing.js';
 import { findExecSuccessor } from './exec-successor.js';
+import { runSequenceThenBranches } from './exec-sequence.js';
 
 export interface RunSubgraphOnceResult {
   readonly lastDetection: ScenarioDetectionResult | null;
@@ -48,6 +51,12 @@ export interface ExecSubgraphOptions {
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
   /** v0.7: ждать снятия пользовательской паузы. */
   readonly awaitUnpaused?: () => Promise<void>;
+  /** AP v1: async job store. */
+  readonly asyncJobStore?: AsyncJobStore;
+  /** AP v1: PromiseRef outputs. */
+  readonly promiseRuntimeStore?: PromiseRuntimeStore;
+  readonly runId?: string | null;
+  readonly loopTick?: number;
 }
 
 export interface ExecSubgraphCallbacks {
@@ -134,6 +143,40 @@ export async function runSubgraphOnce(
       continue;
     }
 
+    if (node.nodeKind === 'sequence') {
+      callbacks.onNodeEnter?.(node);
+      lastDetection = await runSequenceThenBranches(
+        subgraph,
+        node,
+        host,
+        signal,
+        options,
+        callbacks,
+        lastDetection,
+      );
+      if (signal.aborted) {
+        return finish();
+      }
+      const nextId = findExecSuccessor(subgraph, currentId, 'exec-out');
+      if (nextId === null) {
+        return finish();
+      }
+      if (nextId === entryId) {
+        return finish();
+      }
+      const nextNode = findNode(subgraph, nextId);
+      pendingFunctionOutputHandle =
+        nextNode?.nodeKind === 'function-output' ? 'exec-out' : undefined;
+      if (isLoopBranch) {
+        if (options.awaitUnpaused !== undefined) {
+          await options.awaitUnpaused();
+        }
+        await yieldToEventLoop(signal);
+      }
+      currentId = nextId;
+      continue;
+    }
+
     callbacks.onNodeEnter?.(node);
 
     const result = await executeScenarioBlock({
@@ -156,6 +199,10 @@ export async function runSubgraphOnce(
       trackStore: options.trackStore,
       analysisStore: options.analysisStore,
       recordingSliceStore: options.recordingSliceStore,
+      asyncJobStore: options.asyncJobStore,
+      promiseRuntimeStore: options.promiseRuntimeStore,
+      runId: options.runId,
+      loopTick: options.loopTick,
     });
 
     if (result.stopRequested) {

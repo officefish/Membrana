@@ -1,0 +1,594 @@
+{
+  "exportKind": "branch-scenario",
+  "branch": "main",
+  "branchLabel": "onMainTick",
+  "scenarioTitle": "UserCase Alpha: Live Observation Pipeline (async v2): onMainTick → gate → Sequence latentThen → async upload + trends + fn-1 restart (v2.0-async)",
+  "userCaseId": "usercase-mvp-microphone-alpha-async-v2",
+  "userCaseBranch": "main",
+  "deviceKind": "microphone",
+  "subgraph": {
+    "entry": "main-on-tick",
+    "nodes": [
+      {
+        "id": "main-on-tick",
+        "blockKind": "custom",
+        "position": {
+          "x": -2744,
+          "y": -824
+        },
+        "label": "onTick",
+        "nodeKind": "event",
+        "system": true,
+        "eventVariant": "loopTick"
+      },
+      {
+        "id": "main-infinity",
+        "blockKind": "custom",
+        "position": {
+          "x": 968,
+          "y": -816
+        },
+        "label": "∞",
+        "nodeKind": "loop-repeat",
+        "system": true
+      },
+      {
+        "id": "node-device-global-mqm0q2fd-14",
+        "blockKind": "custom",
+        "position": {
+          "x": -2072,
+          "y": -48
+        },
+        "label": "GetDevice",
+        "nodeKind": "device-global"
+      },
+      {
+        "id": "fn-3-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": -2280,
+          "y": -824
+        },
+        "label": "GetAudioStream::fn-3",
+        "supportsAsync": true
+      },
+      {
+        "id": "node-collect-samples-mqs2lopv-164",
+        "blockKind": "custom",
+        "position": {
+          "x": -424,
+          "y": -824
+        },
+        "label": "CollectSamples",
+        "nodeKind": "collect-samples",
+        "collectorConfig": {
+          "bufferSize": 2048,
+          "smoothingTimeConstant": 0.75,
+          "windowSec": 3,
+          "queueCapacity": 10
+        }
+      },
+      {
+        "id": "node-get-sample-mqs2mt0a-165",
+        "blockKind": "custom",
+        "position": {
+          "x": -1816,
+          "y": -824
+        },
+        "label": "GetSample",
+        "nodeKind": "get-sample"
+      },
+      {
+        "id": "node-get-spectral-analyser-mqs3gj4q-165",
+        "blockKind": "custom",
+        "position": {
+          "x": -1672,
+          "y": -160
+        },
+        "label": "GetSpectralAnalyser",
+        "nodeKind": "get-spectral-analyser"
+      },
+      {
+        "id": "node-get-fft-frame-mqs3h75e-166",
+        "blockKind": "custom",
+        "position": {
+          "x": -1352,
+          "y": -824
+        },
+        "label": "GetFFTFrame",
+        "nodeKind": "get-fft-frame"
+      },
+      {
+        "id": "node-collect-fft-frames-mqs3hhnu-167",
+        "blockKind": "custom",
+        "position": {
+          "x": -888,
+          "y": -824
+        },
+        "label": "CollectFftFrames",
+        "nodeKind": "collect-fft-frames",
+        "collectorConfig": {
+          "bufferSize": 2048,
+          "smoothingTimeConstant": 0.75,
+          "windowSec": 3,
+          "queueCapacity": 10
+        }
+      },
+      {
+        "id": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs51rew-13",
+        "blockKind": "custom",
+        "position": {
+          "x": 1896,
+          "y": -1104
+        },
+        "label": "journal1",
+        "nodeKind": "variable-get",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "fn-1-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 1432,
+          "y": -760
+        },
+        "label": "StartRecording::fn-1",
+        "supportsAsync": true
+      },
+      {
+        "id": "fn-3-block-2",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 968,
+          "y": -688
+        },
+        "label": "GetAudioStream::fn-3",
+        "supportsAsync": true
+      },
+      {
+        "id": "node-device-global-mqs5ibg8-126",
+        "blockKind": "custom",
+        "position": {
+          "x": 552,
+          "y": -832
+        },
+        "label": "GetDevice",
+        "nodeKind": "device-global"
+      },
+      {
+        "id": "board-mqs5v7w1-9c8xw62e",
+        "blockKind": "custom",
+        "position": {
+          "x": 3472,
+          "y": -520
+        },
+        "label": "PublishReport",
+        "nodeKind": "publish-report"
+      },
+      {
+        "id": "node-device-global-mqs6hsz3-170",
+        "blockKind": "custom",
+        "position": {
+          "x": -288,
+          "y": -1080
+        },
+        "label": "GetDevice",
+        "nodeKind": "device-global"
+      },
+      {
+        "id": "node-get-recorder-mqs6hyo6-171",
+        "blockKind": "custom",
+        "position": {
+          "x": 8,
+          "y": -696
+        },
+        "label": "GetRecorder",
+        "nodeKind": "get-recorder"
+      },
+      {
+        "id": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs6jso7-15",
+        "blockKind": "custom",
+        "position": {
+          "x": 2184,
+          "y": -432
+        },
+        "label": "journal1",
+        "nodeKind": "variable-get",
+        "variableId": "var-JournalRef-mqm9dl4a-6"
+      },
+      {
+        "id": "node-get-spectral-analyser-mqs6uey7-173",
+        "blockKind": "custom",
+        "position": {
+          "x": 1080,
+          "y": -1072
+        },
+        "label": "GetSpectralAnalyser",
+        "nodeKind": "get-spectral-analyser"
+      },
+      {
+        "id": "node-make-fft-trends-policy-mqs6wrpr-175",
+        "blockKind": "custom",
+        "position": {
+          "x": 1672,
+          "y": -624
+        },
+        "label": "MakeFftTrendsPolicy",
+        "nodeKind": "make-fft-trends-policy",
+        "fftTrendsPolicy": {
+          "detectionMode": "auto",
+          "measurementsCount": 20,
+          "intervalMs": 500,
+          "minConfidence": 0.55,
+          "minRms": 0.02,
+          "enabledTemplateKeys": [
+            "DRONE_TIGHT",
+            "WIND",
+            "QUIET",
+            "TRAFFIC",
+            "BIRDS",
+            "VOICE"
+          ]
+        },
+        "pure": true
+      },
+      {
+        "id": "node-sequence-gate-v20-async",
+        "blockKind": "custom",
+        "position": {
+          "x": 504,
+          "y": -704
+        },
+        "label": "Sequence",
+        "nodeKind": "sequence",
+        "sequenceConfig": {
+          "thenCount": 4,
+          "parallelAsync": false,
+          "latentThen": true
+        }
+      },
+      {
+        "id": "node-start-async-job-v20",
+        "blockKind": "custom",
+        "position": {
+          "x": 968,
+          "y": -944
+        },
+        "label": "StartAsyncJob",
+        "nodeKind": "start-async-job",
+        "asyncJobConfig": {
+          "jobKind": "track-upload",
+          "awaitTimeoutMs": 30000
+        },
+        "supportsAsync": true
+      },
+      {
+        "id": "fn-alpha-async-detached-report-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 880,
+          "y": -432
+        },
+        "label": "Detached drone report::fn-alpha-async-detached-report",
+        "supportsAsync": true
+      },
+      {
+        "id": "fn-alpha-observation-tick-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 968,
+          "y": -560
+        },
+        "label": "Observation tick::fn-alpha-observation-tick",
+        "supportsAsync": true
+      },
+      {
+        "id": "fn-alpha-recording-gate-block",
+        "blockKind": "subgraph",
+        "position": {
+          "x": 40,
+          "y": -824
+        },
+        "label": "Recording gate::fn-alpha-recording-gate",
+        "supportsAsync": true
+      }
+    ],
+    "edges": [
+      {
+        "source": "main-on-tick",
+        "sourceHandle": "exec-out",
+        "target": "fn-3-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-3-block",
+        "sourceHandle": "exec-out",
+        "target": "node-get-sample-mqs2mt0a-165",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-3-block",
+        "sourceHandle": "data-out",
+        "target": "node-get-sample-mqs2mt0a-165",
+        "targetHandle": "stream",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
+      {
+        "source": "node-device-global-mqm0q2fd-14",
+        "sourceHandle": "device",
+        "target": "node-get-spectral-analyser-mqs3gj4q-165",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-sample-mqs2mt0a-165",
+        "sourceHandle": "sample",
+        "target": "node-get-fft-frame-mqs3h75e-166",
+        "targetHandle": "sample",
+        "kind": "data",
+        "dataType": "AudioSampleRef"
+      },
+      {
+        "source": "node-get-sample-mqs2mt0a-165",
+        "sourceHandle": "exec-out",
+        "target": "node-get-fft-frame-mqs3h75e-166",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-spectral-analyser-mqs3gj4q-165",
+        "sourceHandle": "analyser",
+        "target": "node-collect-fft-frames-mqs3hhnu-167",
+        "targetHandle": "analyser",
+        "kind": "data",
+        "dataType": "SpectralAnalyserRef"
+      },
+      {
+        "source": "node-get-fft-frame-mqs3h75e-166",
+        "sourceHandle": "exec-out",
+        "target": "node-collect-fft-frames-mqs3hhnu-167",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-get-fft-frame-mqs3h75e-166",
+        "sourceHandle": "frame",
+        "target": "node-collect-fft-frames-mqs3hhnu-167",
+        "targetHandle": "frame",
+        "kind": "data",
+        "dataType": "FftFrameRef"
+      },
+      {
+        "source": "node-device-global-mqm0q2fd-14",
+        "sourceHandle": "device",
+        "target": "fn-alpha-recording-gate-block",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-collect-fft-frames-mqs3hhnu-167",
+        "sourceHandle": "exec-out",
+        "target": "node-collect-samples-mqs2lopv-164",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-alpha-recording-gate-block",
+        "sourceHandle": "recorder",
+        "target": "node-collect-samples-mqs2lopv-164",
+        "targetHandle": "recorder",
+        "kind": "data",
+        "dataType": "RecorderRef"
+      },
+      {
+        "source": "node-get-sample-mqs2mt0a-165",
+        "sourceHandle": "sample",
+        "target": "node-collect-samples-mqs2lopv-164",
+        "targetHandle": "sample",
+        "kind": "data",
+        "dataType": "AudioSampleRef"
+      },
+      {
+        "source": "node-collect-samples-mqs2lopv-164",
+        "sourceHandle": "batches",
+        "target": "fn-alpha-recording-gate-block",
+        "targetHandle": "samples",
+        "kind": "data",
+        "dataType": "AudioSampleRefList"
+      },
+      {
+        "source": "node-collect-samples-mqs2lopv-164",
+        "sourceHandle": "exec-out",
+        "target": "fn-alpha-recording-gate-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-alpha-recording-gate-block",
+        "sourceHandle": "exec-false-out",
+        "target": "main-infinity",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-alpha-recording-gate-block",
+        "sourceHandle": "track",
+        "target": "fn-alpha-async-detached-report-block",
+        "targetHandle": "track",
+        "kind": "data",
+        "dataType": "TrackRef"
+      },
+      {
+        "source": "fn-3-block-2",
+        "sourceHandle": "data-out",
+        "target": "fn-1-block",
+        "targetHandle": "stream",
+        "kind": "data",
+        "dataType": "AudioStreamRef"
+      },
+      {
+        "source": "node-device-global-mqs5ibg8-126",
+        "sourceHandle": "device",
+        "target": "fn-1-block",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "fn-3-block-2",
+        "sourceHandle": "exec-out",
+        "target": "fn-1-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "fn-alpha-async-detached-report-block",
+        "sourceHandle": "report",
+        "target": "board-mqs5v7w1-9c8xw62e",
+        "targetHandle": "report",
+        "kind": "data",
+        "dataType": "ReportRef"
+      },
+      {
+        "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs51rew-13",
+        "sourceHandle": "value",
+        "target": "fn-alpha-observation-tick-block",
+        "targetHandle": "journal",
+        "kind": "data",
+        "dataType": "JournalRef"
+      },
+      {
+        "source": "fn-alpha-observation-tick-block",
+        "sourceHandle": "reporter",
+        "target": "fn-alpha-async-detached-report-block",
+        "targetHandle": "reporter",
+        "kind": "data",
+        "dataType": "ReporterRef"
+      },
+      {
+        "source": "node-device-global-mqs6hsz3-170",
+        "sourceHandle": "device",
+        "target": "node-get-recorder-mqs6hyo6-171",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-recorder-mqs6hyo6-171",
+        "sourceHandle": "recorder",
+        "target": "fn-alpha-recording-gate-block",
+        "targetHandle": "recorder",
+        "kind": "data",
+        "dataType": "RecorderRef"
+      },
+      {
+        "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs6jso7-15",
+        "sourceHandle": "value",
+        "target": "fn-alpha-observation-tick-block",
+        "targetHandle": "journal",
+        "kind": "data",
+        "dataType": "JournalRef"
+      },
+      {
+        "source": "node-variable-get-var-JournalRef-mqm9dl4a-6-mqs6jso7-15",
+        "sourceHandle": "value",
+        "target": "board-mqs5v7w1-9c8xw62e",
+        "targetHandle": "journal",
+        "kind": "data",
+        "dataType": "JournalRef"
+      },
+      {
+        "source": "node-device-global-mqs6hsz3-170",
+        "sourceHandle": "device",
+        "target": "node-get-spectral-analyser-mqs6uey7-173",
+        "targetHandle": "device",
+        "kind": "data",
+        "dataType": "DeviceRef"
+      },
+      {
+        "source": "node-get-spectral-analyser-mqs6uey7-173",
+        "sourceHandle": "analyser",
+        "target": "fn-alpha-observation-tick-block",
+        "targetHandle": "analyser",
+        "kind": "data",
+        "dataType": "SpectralAnalyserRef"
+      },
+      {
+        "source": "node-make-fft-trends-policy-mqs6wrpr-175",
+        "sourceHandle": "policy",
+        "target": "fn-alpha-observation-tick-block",
+        "targetHandle": "policy",
+        "kind": "data",
+        "dataType": "FftTrendsPolicy"
+      },
+      {
+        "source": "fn-alpha-recording-gate-block",
+        "sourceHandle": "track",
+        "target": "node-start-async-job-v20",
+        "targetHandle": "track",
+        "kind": "data",
+        "dataType": "TrackRef"
+      },
+      {
+        "source": "node-start-async-job-v20",
+        "sourceHandle": "promise",
+        "target": "fn-alpha-async-detached-report-block",
+        "targetHandle": "promise",
+        "kind": "data",
+        "dataType": "PromiseRef"
+      },
+      {
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-2",
+        "target": "fn-alpha-observation-tick-block",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-3",
+        "target": "fn-3-block-2",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "exec-out",
+        "target": "main-infinity",
+        "targetHandle": "exec-in",
+        "kind": "exec"
+      },
+      {
+        "kind": "exec",
+        "source": "fn-alpha-recording-gate-block",
+        "sourceHandle": "exec-out",
+        "target": "node-sequence-gate-v20-async",
+        "targetHandle": "exec-in"
+      },
+      {
+        "kind": "exec",
+        "source": "node-sequence-gate-v20-async",
+        "sourceHandle": "then-0",
+        "target": "node-start-async-job-v20",
+        "targetHandle": "exec-in"
+      }
+    ]
+  },
+  "variables": [],
+  "referenceVariableSlots": [
+    {
+      "exportVariableId": "var-JournalRef-mqm9dl4a-6",
+      "type": "JournalRef",
+      "nameHint": "journal1"
+    }
+  ],
+  "referencedVariableIds": [
+    "var-JournalRef-mqm9dl4a-6"
+  ],
+  "exportedAt": "2026-06-26T06:58:33.270Z"
+}

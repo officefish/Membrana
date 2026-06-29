@@ -1,0 +1,11 @@
+Напиши связный документ «Три замысла упаковки UserCase MVP microphone async v2» для команды Membrana.
+
+Структура:
+1) Зачем было соревнование async v2 (packaging поверх bundled v2.0-async, не runtime).
+2) Общий контракт F1–F7 и C7 Async clarity.
+3) Три раздела — Alpha, Beta, Gamma — каждый: философия одним абзацем, ключевые решения упаковки (pre-collapses, comment groups, functions), как это выглядит на canvas, сильные стороны, слабые стороны, для кого подходит.
+4) Сравнительная таблица (functions, StartAsyncJob on main, poster steps, upload pipeline collapse).
+5) Итог голосования: Beta winner +1.0, что cherry-pick в Phase 5 polish.
+6) Уроки для следующего catalog publish / operator debug.
+
+Пиши толково, без пафоса, на русском. Markdown.

@@ -1,4 +1,4 @@
-import type { Node } from '@xyflow/react';
+import { applyNodeChanges, type Node, type NodeChange } from '@xyflow/react';
 import type {
   ScenarioCommentGroup,
   ScenarioCommentGroupBranch,
@@ -267,6 +267,155 @@ export function extractCommentGroupsFromNodes(
 /** Убирает group-ноды перед сериализацией scenario subgraph. */
 export function stripCommentGroupNodes(nodes: readonly Node[]): Node[] {
   return nodes.filter((node) => !isBoardGroupNode(node));
+}
+
+/** ID `boardGroup` среди кандидатов на удаление. */
+export function pickDissolvableCommentGroupIds(
+  nodes: readonly Node[],
+  candidateIds: readonly string[],
+): readonly string[] {
+  const candidates = new Set(candidateIds);
+  return nodes
+    .filter((node) => candidates.has(node.id) && isBoardGroupNode(node))
+    .map((node) => node.id);
+}
+
+/** Member nodes, которые нельзя удалять вместе с рамкой группы. */
+export function commentGroupMemberIdsProtectedFromRemoval(
+  nodes: readonly Node[],
+  dissolvingGroupIds: readonly string[],
+): ReadonlySet<string> {
+  const dissolveSet = new Set(dissolvingGroupIds);
+  const protectedIds = new Set<string>();
+  for (const node of nodes) {
+    if (node.parentId !== undefined && dissolveSet.has(node.parentId)) {
+      protectedIds.add(node.id);
+    }
+  }
+  return protectedIds;
+}
+
+/**
+ * XYFlow при Delete на parent шлёт `remove` и для детей — отбрасываем удаление member nodes.
+ */
+export function rejectCommentGroupMemberRemovals(
+  changes: readonly NodeChange[],
+  nodes: readonly Node[],
+): NodeChange[] {
+  const dissolvingGroupIds = changes
+    .filter((change): change is NodeChange & { type: 'remove'; id: string } => change.type === 'remove')
+    .map((change) => change.id)
+    .filter((id) => {
+      const node = nodes.find((item) => item.id === id);
+      return node !== undefined && isBoardGroupNode(node);
+    });
+  if (dissolvingGroupIds.length === 0) {
+    return [...changes];
+  }
+  const protectedIds = commentGroupMemberIdsProtectedFromRemoval(nodes, dissolvingGroupIds);
+  return changes.filter(
+    (change) => !(change.type === 'remove' && protectedIds.has(change.id)),
+  );
+}
+
+/**
+ * Снимает рамки групп: member nodes остаются с absolute position, без parentId/extent.
+ */
+export function dissolveCommentGroups(
+  nodes: readonly Node[],
+  groupIds: readonly string[],
+): Node[] {
+  const dissolveSet = new Set(
+    groupIds.filter((id) => {
+      const node = nodes.find((item) => item.id === id);
+      return node !== undefined && isBoardGroupNode(node);
+    }),
+  );
+  if (dissolveSet.size === 0) {
+    return [...nodes];
+  }
+
+  const groupPositions = new Map<string, { x: number; y: number }>();
+  for (const node of nodes) {
+    if (dissolveSet.has(node.id)) {
+      groupPositions.set(node.id, node.position);
+    }
+  }
+
+  return nodes
+    .filter((node) => !dissolveSet.has(node.id))
+    .map((node) => {
+      const parentId = node.parentId;
+      if (parentId === undefined || !dissolveSet.has(parentId)) {
+        return node;
+      }
+      const parentPos = groupPositions.get(parentId) ?? { x: 0, y: 0 };
+      const { parentId: _parentId, extent: _extent, ...rest } = node;
+      return {
+        ...rest,
+        position: {
+          x: node.position.x + parentPos.x,
+          y: node.position.y + parentPos.y,
+        },
+      };
+    });
+}
+
+/** Применяет NodeChange с dissolve comment group вместо каскадного удаления детей. */
+export function applyBoardNodeChangesWithCommentGroupDissolve(
+  changes: readonly NodeChange[],
+  nodes: readonly Node[],
+): Node[] {
+  const filtered = rejectCommentGroupMemberRemovals(changes, nodes);
+  const dissolvingGroupIds = filtered
+    .filter((change): change is NodeChange & { type: 'remove'; id: string } => change.type === 'remove')
+    .map((change) => change.id)
+    .filter((id) => {
+      const node = nodes.find((item) => item.id === id);
+      return node !== undefined && isBoardGroupNode(node);
+    });
+  const afterApply = applyNodeChanges(filtered, [...nodes]);
+  return dissolveCommentGroups(afterApply, dissolvingGroupIds);
+}
+
+export interface BranchNodeRemovalResult {
+  readonly nodes: Node[];
+  readonly removedNodeIds: readonly string[];
+  readonly dissolvedGroupIds: readonly string[];
+}
+
+/**
+ * Удаляет узлы ветки: comment group → dissolve (дети сохраняются), остальное — hard delete.
+ */
+export function applyBranchNodeRemovals(
+  nodes: readonly Node[],
+  candidateIds: readonly string[],
+  isRemovable: (node: Node) => boolean,
+): BranchNodeRemovalResult | null {
+  const removableIds = candidateIds.filter((id) => {
+    const node = nodes.find((item) => item.id === id);
+    return node !== undefined && isRemovable(node);
+  });
+  if (removableIds.length === 0) {
+    return null;
+  }
+
+  const dissolvedGroupIds = pickDissolvableCommentGroupIds(nodes, removableIds);
+  const protectedMemberIds = commentGroupMemberIdsProtectedFromRemoval(nodes, dissolvedGroupIds);
+  const removedNodeIds = removableIds.filter(
+    (id) => !dissolvedGroupIds.includes(id) && !protectedMemberIds.has(id),
+  );
+
+  let nextNodes = nodes.filter(
+    (node) => !removedNodeIds.includes(node.id) && !dissolvedGroupIds.includes(node.id),
+  );
+  nextNodes = dissolveCommentGroups(nextNodes, dissolvedGroupIds);
+
+  return {
+    nodes: nextNodes,
+    removedNodeIds,
+    dissolvedGroupIds,
+  };
 }
 
 /**

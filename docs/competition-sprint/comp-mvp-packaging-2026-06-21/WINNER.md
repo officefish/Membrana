@@ -31,7 +31,7 @@ Packaging consilium preferred Beta modularity — **не** означает merg
 | beta | ✅ | ✅ | ✅ |
 | gamma | ✅ | ✅ | ✅ |
 
-Runtime fixes: L9–L12 in [`USERCASE_COMPETITION_LESSONS.md`](../../device-board-scripts/USERCASE_COMPETITION_LESSONS.md).
+Runtime fixes: L9–L12 in [`USERCASE_COMPETITION_LESSONS.md`](../../actions/device-board/USERCASE_COMPETITION_LESSONS.md).
 
 ---
 

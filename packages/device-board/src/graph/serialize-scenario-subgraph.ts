@@ -7,6 +7,8 @@ import {
   resolveScenarioCollectorConfig,
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
+  resolveScenarioSequenceConfig,
+  resolveScenarioAsyncJobNodeConfig,
 } from '@membrana/core';
 import type { Edge, Node } from '@xyflow/react';
 
@@ -16,7 +18,7 @@ import { resolveHandle } from './handle-catalog.js';
 import { createEventBoardNode, createLoopTickEventBoardNode } from './event-node.js';
 import { createLoopRepeatBoardNode } from './loop-repeat-node.js';
 import { createPaletteBoardNode, isPaletteNodeKind } from './palette-node.js';
-import { encodeSubgraphRef, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
+import { encodeSubgraphRef, parseEncodedSubgraphRefLabel, parseSubgraphDisplayLabel, parseSubgraphFunctionId } from './subgraph-ref.js';
 import { createVariableBoardNode } from './variable-node.js';
 import {
   createFunctionInputBoardNode,
@@ -32,6 +34,10 @@ function finalizeScenarioNode(node: ScenarioGraphNode): ScenarioGraphNode {
 
 function readPureFromData(data: Record<string, unknown>): boolean | undefined {
   return typeof data.pure === 'boolean' ? data.pure : undefined;
+}
+
+function readSupportsAsyncFromData(data: Record<string, unknown>): boolean | undefined {
+  return typeof data.supportsAsync === 'boolean' ? data.supportsAsync : undefined;
 }
 
 function toScenarioNode(node: Node): ScenarioGraphNode | null {
@@ -108,6 +114,14 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       node.data.fftTrendsPolicy !== undefined
         ? resolveScenarioFftTrendsPolicy(node.data.fftTrendsPolicy)
         : undefined;
+    const sequenceConfig =
+      node.data.sequenceConfig !== undefined
+        ? resolveScenarioSequenceConfig(node.data.sequenceConfig)
+        : undefined;
+    const asyncJobConfig =
+      node.data.asyncJobConfig !== undefined
+        ? resolveScenarioAsyncJobNodeConfig(node.data.asyncJobConfig)
+        : undefined;
     return finalizeScenarioNode({
       id: node.id,
       blockKind,
@@ -118,7 +132,12 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
       ...(collectorConfig !== undefined ? { collectorConfig } : {}),
       ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
       ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
+      ...(sequenceConfig !== undefined ? { sequenceConfig } : {}),
+      ...(asyncJobConfig !== undefined ? { asyncJobConfig } : {}),
       ...(readPureFromData(node.data) !== undefined ? { pure: readPureFromData(node.data) } : {}),
+      ...(readSupportsAsyncFromData(node.data) !== undefined
+        ? { supportsAsync: readSupportsAsyncFromData(node.data) }
+        : {}),
     } as ScenarioGraphNode);
   }
 
@@ -129,10 +148,15 @@ function toScenarioNode(node: Node): ScenarioGraphNode | null {
     label:
       blockKind === 'subgraph' && typeof node.data.functionId === 'string'
         ? encodeSubgraphRef(
-            typeof node.data.label === 'string' ? node.data.label : blockKind,
+            parseEncodedSubgraphRefLabel(
+              typeof node.data.label === 'string' ? node.data.label : blockKind,
+            ),
             node.data.functionId,
           )
         : node.data.label,
+    ...(readSupportsAsyncFromData(node.data) !== undefined
+      ? { supportsAsync: readSupportsAsyncFromData(node.data) }
+      : {}),
   });
 }
 
@@ -288,6 +312,11 @@ export function deserializeScenarioSubgraph(
         .recordingPolicy;
       const fftTrendsPolicy = (item as { fftTrendsPolicy?: ScenarioGraphNode['fftTrendsPolicy'] })
         .fftTrendsPolicy;
+      const sequenceConfig = (item as { sequenceConfig?: ScenarioGraphNode['sequenceConfig'] })
+        .sequenceConfig;
+      const asyncJobConfig = (item as { asyncJobConfig?: ScenarioGraphNode['asyncJobConfig'] })
+        .asyncJobConfig;
+      const supportsAsync = (item as { supportsAsync?: boolean }).supportsAsync;
       nodes.push(
         createPaletteBoardNode(item.nodeKind, {
           id: item.id,
@@ -296,6 +325,8 @@ export function deserializeScenarioSubgraph(
           ...(collectorConfig !== undefined ? { collectorConfig } : {}),
           ...(recordingPolicy !== undefined ? { recordingPolicy } : {}),
           ...(fftTrendsPolicy !== undefined ? { fftTrendsPolicy } : {}),
+          ...(sequenceConfig !== undefined ? { sequenceConfig } : {}),
+          ...(asyncJobConfig !== undefined ? { asyncJobConfig } : {}),
         }),
       );
       if (typeof item.label === 'string') {
@@ -305,12 +336,17 @@ export function deserializeScenarioSubgraph(
             ...last.data,
             label: item.label,
             ...(item.pure === true ? { pure: true } : {}),
+            ...(supportsAsync === true ? { supportsAsync: true } : {}),
           };
         }
-      } else if (item.pure === true) {
+      } else if (item.pure === true || supportsAsync === true) {
         const last = nodes.at(-1);
         if (last !== undefined) {
-          last.data = { ...last.data, pure: true };
+          last.data = {
+            ...last.data,
+            ...(item.pure === true ? { pure: true } : {}),
+            ...(supportsAsync === true ? { supportsAsync: true } : {}),
+          };
         }
       }
       continue;
@@ -329,6 +365,9 @@ export function deserializeScenarioSubgraph(
         label: item.blockKind === 'subgraph' ? parseSubgraphDisplayLabel(item) : (item.label ?? data.label),
         ...(item.blockKind === 'subgraph'
           ? { functionId: parseSubgraphFunctionId(item) ?? undefined }
+          : {}),
+        ...((item as { supportsAsync?: boolean }).supportsAsync === true
+          ? { supportsAsync: true }
           : {}),
       },
     });

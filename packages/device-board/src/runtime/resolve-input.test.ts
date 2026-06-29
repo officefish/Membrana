@@ -593,13 +593,13 @@ describe('resolveInput (DBR4)', () => {
     expect(value).toEqual(activeStream);
   });
 
-  it('returns invalid AudioStreamRef when microphone does not match active stream', () => {
+  it('returns active AudioStreamRef when preset microphone id does not match capture handle', () => {
     const streamVar = createScenarioVariable('var-stream', 'stream1', 'AudioStreamRef');
     const micVar = {
       ...createScenarioVariable('var-mic', 'mic1', 'MicrophoneRef'),
       value: createReferenceValue('MicrophoneRef', 'mic-1'),
     };
-    const activeStream = createReferenceValue('AudioStreamRef', 'stream:other-mic');
+    const activeStream = createReferenceValue('AudioStreamRef', 'stream:default');
     const sg = subgraph(
       'evt',
       [
@@ -622,7 +622,7 @@ describe('resolveInput (DBR4)', () => {
     const value = resolveInput(sg, [streamVar, micVar], 'set', VARIABLE_VALUE_HANDLE, {
       getActiveAudioStreamRef: () => activeStream,
     });
-    expect(value).toEqual({ kind: 'AudioStreamRef', handle: null, valid: false });
+    expect(value).toEqual(activeStream);
   });
 
   it('resolves print text output from runtime context', () => {

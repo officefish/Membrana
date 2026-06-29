@@ -42,6 +42,8 @@ export const SOCKET_TYPES = [
   'RecordingPolicy',
   /** v0.8: policy FFT trends-анализа (MakeFftTrendsPolicy). */
   'FftTrendsPolicy',
+  /** AP v1: handle in-flight async job (start-async-job → await / on-async-resolved). */
+  'PromiseRef',
 ] as const;
 
 /** Имя типа сокета signal graph. */
@@ -72,6 +74,7 @@ export const REFERENCE_SOCKET_TYPES = [
   'ReportRef',
   'FftTrendAnalysisRef',
   'RecordingSliceRef',
+  'PromiseRef',
 ] as const satisfies readonly SocketType[];
 
 /**

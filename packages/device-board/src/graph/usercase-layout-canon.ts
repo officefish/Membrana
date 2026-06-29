@@ -462,6 +462,10 @@ export function applyUserCaseLayoutCanon(document: DeviceScenarioDocument): Devi
         onStop,
         onDisconnect,
       },
+      functions: document.scenario.functions.map((fn) => ({
+        ...fn,
+        ...applyExecLayoutToSubgraphWithOverlapFix(fn, variables),
+      })),
       commentGroups,
     },
   };

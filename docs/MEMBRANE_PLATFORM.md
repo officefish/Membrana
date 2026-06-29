@@ -37,6 +37,8 @@
 
 **Архитектура shell (Studio MS1–MS3):** Electron main хранит journal / media-library / trends на диске и отдаёт в renderer через `electronAPI`; бизнес-логика анализа остаётся в `apps/client` + `packages/services/*`. Дублирование FS в shell — граница ОС, не второй доменный слой.
 
+**Контракт трёх хостов (MS6):** [`STUDIO_HOST_BRIDGE_CONTRACT.md`](./STUDIO_HOST_BRIDGE_CONTRACT.md) — browser | Studio | cabinet; операционный дневник STx — [`actions/device-board/STUDIO_HOST_LESSONS.md`](./actions/device-board/STUDIO_HOST_LESSONS.md).
+
 Эпики: Studio — [`prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md) (`membrana-studio-desktop`, Issue [#93](https://github.com/officefish/Membrana/issues/93)); day-sprint MS0–MS4 — [`MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md`](./prompts/MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md). Device — отдельный эпик после MS4 (общий опыт упаковки).
 
 ---

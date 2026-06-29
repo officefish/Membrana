@@ -1,0 +1,14 @@
+{
+  "id": "insight-sunrise-flash",
+  "title": "Sunrise flashes — утренний тематический flash (RAG + news)",
+  "status": "adopted",
+  "source": "user",
+  "sprintPhase": null,
+  "horizon": "month",
+  "weight": 6.6,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["ritual", "rag", "news", "knowledge-tree", "standup", "perplexity"]
+}

@@ -3,6 +3,41 @@
     "gitnexus": {
       "command": "npx",
       "args": ["-y", "gitnexus@latest", "mcp"]
+    },
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "__MEMBRANA_ROOT__"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "__MEMBRANA_ROOT__"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "glyph": {
+      "command": "__GLYPH_BIN__",
+      "args": ["mcp"]
+    },
+    "linear": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.linear.app/sse"]
+    },
+    "mintlify-reference": {
+      "url": "https://mintlify.com/docs/mcp"
+    },
+    "mintlify-admin": {
+      "url": "https://mcp.mintlify.com"
+    },
+    "chatprd": {
+      "url": "https://app.chatprd.ai/mcp"
+    },
+    "atlan-docs": {
+      "url": "https://docs.atlan.com/mcp"
+    },
+    "atlan": {
+      "url": "https://mcp.atlan.com/mcp"
     }
   }
 }

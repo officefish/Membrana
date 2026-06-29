@@ -1,0 +1,13 @@
+{
+  "id": "insight-dynin-chain-log-golden-oracle",
+  "title": "Chain-log golden oracle для operator smoke",
+  "status": "adopted",
+  "source": "virtual-team-dynin",
+  "horizon": "week",
+  "weight": 7.2,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["testing", "logs-parse", "operator", "golden"]
+}

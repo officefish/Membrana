@@ -38,6 +38,7 @@ model Session {
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+  scenarioEditLeases NodeScenarioEditLease[]
 
   @@index([userId])
   @@index([expiresAt])
@@ -70,6 +71,7 @@ model Membrane {
   nodes     Node[]
   reports   TelemetryReport[]
   liveRecords TelemetryLiveRecord[]
+  scenarioEditLeases NodeScenarioEditLease[]
   createdAt DateTime @default(now())
 
   @@index([tariffId])
@@ -82,6 +84,7 @@ model Node {
   label      String
   accessKeys NodeAccessKey[]
   device     Device?
+  scenarioEditLease NodeScenarioEditLease?
   createdAt  DateTime        @default(now())
 
   @@index([membraneId])
@@ -161,4 +164,23 @@ model TelemetryLiveRecord {
 
   @@index([membraneId, status, startedAt(sort: Desc)])
   @@unique([membraneId, clientRecordId])
+}
+
+/** Server-first edit lease: один holder cabinet на (membraneId, mediaDeviceId). */
+model NodeScenarioEditLease {
+  id            String   @id @default(uuid()) @db.Uuid
+  membraneId    String   @db.Uuid
+  membrane      Membrane @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  nodeId        String   @unique @db.Uuid
+  node          Node     @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  mediaDeviceId String   @db.Uuid
+  sessionId     String   @db.Uuid
+  session       Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  revision      Int      @default(0)
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([membraneId, mediaDeviceId])
+  @@index([expiresAt])
 }

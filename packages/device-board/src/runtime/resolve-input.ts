@@ -14,6 +14,8 @@ import {
 
 import { parseSubgraphFunctionId } from '../graph/subgraph-ref.js';
 
+import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
+
 import { EVENT_DEVICE_HANDLE, EVENT_DATETIME_HANDLE, EVENT_DELTATIME_HANDLE, EVENT_SERVER_HANDLE, EVENT_TICK_MS_HANDLE } from '../graph/event-node.js';
 import { DEVICE_GLOBAL_DEVICE_HANDLE } from '../graph/device-global-node.js';
 import {
@@ -55,6 +57,10 @@ import {
   isMakeFftTrendsAnalysisNodeKind,
 } from '../graph/make-fft-trends-analysis-node.js';
 import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
+import {
+  ASYNC_PROMISE_REF_HANDLE,
+  START_ASYNC_JOB_NODE_KIND,
+} from '../graph/async-orchestration-nodes.js';
 import {
   START_RECORDING_OUT_RECORDER_HANDLE,
   START_RECORDING_RECORDER_HANDLE,
@@ -117,6 +123,8 @@ export interface ResolveInputContext {
   readonly getFftTrendAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** AP v1: PromiseRef от Start Async Job. */
+  readonly getPromiseRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Текст последнего Print по nodeId (host/runtime state). */
   readonly getPrintOutputValue?: (nodeId: string) => ScenarioVariableValue | null;
   /** User function call: resolve data pin from parent branch into function-input. */
@@ -178,6 +186,7 @@ function readMicrophoneId(node: ScenarioGraphNode): string | undefined {
 }
 
 function resolveSubgraphBlockOutput(
+  parentSubgraph: ScenarioSubgraph,
   functions: readonly ScenarioFunctionSubgraph[],
   blockNode: ScenarioGraphNode,
   outputPort: string,
@@ -234,12 +243,19 @@ function resolveSubgraphBlockOutput(
     );
   }
 
+  const callContext = augmentResolveContextForFunctionCall({
+    parentSubgraph,
+    blockNodeId: blockNode.id,
+    variables,
+    baseContext: context,
+  });
+
   return resolveNodeOutput(
     fn,
     variables,
     sourceNode,
     outboundEdge.sourceHandle,
-    context,
+    callContext,
     visiting,
   );
 }
@@ -321,6 +337,10 @@ function invalidFftTrendAnalysisRef(): ScenarioReferenceValue {
   return { kind: 'FftTrendAnalysisRef', handle: null, valid: false };
 }
 
+function invalidPromiseRef(): ScenarioReferenceValue {
+  return { kind: 'PromiseRef', handle: null, valid: false };
+}
+
 function resolveGetAudioStreamOutput(
   subgraph: ScenarioSubgraph,
   variables: readonly ScenarioVariable[],
@@ -352,7 +372,9 @@ function resolveGetAudioStreamOutput(
     }
     const expectedHandle = `stream:${micRef.handle}`;
     if (active.handle !== expectedHandle) {
-      return invalidAudioStreamRef();
+      // Preset graph microphoneId may be stale (host switch, Electron fallback to default).
+      // Active capture stream from audio-engine is authoritative once streaming started.
+      return active;
     }
   }
 
@@ -754,6 +776,20 @@ export function resolveNodeOutput(
     return resolver(node.id) ?? invalidTrackRef();
   }
 
+  if (node.nodeKind === START_ASYNC_JOB_NODE_KIND) {
+    if (outputPort !== ASYNC_PROMISE_REF_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown start-async-job output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getPromiseRef;
+    if (resolver === undefined) {
+      return invalidPromiseRef();
+    }
+    return resolver(node.id) ?? invalidPromiseRef();
+  }
+
   if (isMakeFftTrendsAnalysisNodeKind(node.nodeKind)) {
     if (outputPort !== MAKE_FFT_TRENDS_ANALYSIS_OUT_HANDLE) {
       throw new ResolveInputError(
@@ -876,6 +912,7 @@ export function resolveNodeOutput(
       );
     }
     return resolveSubgraphBlockOutput(
+      subgraph,
       functions,
       node,
       outputPort,

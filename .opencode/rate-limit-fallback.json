@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "cooldownMs": 60000,
+  "fallbackMode": "cycle",
+  "fallbackModels": [
+    {
+      "providerID": "openrouter",
+      "modelID": "anthropic/claude-haiku-4.5"
+    },
+    {
+      "providerID": "openrouter",
+      "modelID": "anthropic/claude-sonnet-4.6"
+    },
+    {
+      "providerID": "ollama",
+      "modelID": "mistral:7b"
+    }
+  ],
+  "retryPolicy": {
+    "maxRetries": 2,
+    "strategy": "exponential",
+    "baseDelayMs": 2000
+  }
+}

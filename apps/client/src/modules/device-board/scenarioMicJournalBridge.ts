@@ -1,4 +1,4 @@
-import { createReferenceValue, DomainError, type ScenarioFftTrendsPolicy, type ScenarioReferenceValue, type ScenarioReportPayload, createScenarioReportPayload, FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX, parseJournalRefHandle, TRACK_REF_HANDLE_PREFIX, formatRecordingSliceRefHandle, type ScenarioCaptureFormat, type ScenarioRecordingPolicy } from '@membrana/core';
+import { createReferenceValue, DomainError, type ScenarioFftTrendsPolicy, type ScenarioReferenceValue, type ScenarioReportPayload, createScenarioReportPayload, FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX, parseJournalRefHandle, TRACK_REF_HANDLE_PREFIX, formatRecordingSliceRefHandle, type ScenarioCaptureFormat, type ScenarioRecordingPolicy, type ScenarioAsyncJobCorrelation, type ScenarioAsyncJobKind } from '@membrana/core';
 import { scenarioChainLog, scenarioRuntimeInfo } from './scenarioRuntimeInfoGate';
 import { setScenarioTraceNodeId } from './scenarioTraceContext';
 import {
@@ -7,6 +7,7 @@ import {
   type DeviceCollectorRegistry,
   RecorderRecordingSession,
   type RecordingSliceMeta,
+  type AsyncJobStore,
 } from '@membrana/device-board';
 import {
   LiveSampler,
@@ -110,6 +111,25 @@ export interface RecordedChunkMeta {
   readonly durationSec: number;
   readonly sampleRate: number;
   readonly blob: Blob;
+}
+
+/** Отложенный upload трека (AP v1: стартует через Start Async Job). */
+interface PendingTrackUpload {
+  readonly nodeId: string;
+  readonly trackId: string;
+  readonly title: string;
+  readonly blob: Blob;
+  readonly durationSec: number;
+  readonly sampleRate: number;
+  readonly captureFormat: ScenarioCaptureFormat;
+}
+
+export interface StartAsyncJobBridgeInput {
+  readonly promiseId: string;
+  readonly kind: ScenarioAsyncJobKind;
+  readonly correlation: ScenarioAsyncJobCorrelation;
+  readonly trackRef: ScenarioReferenceValue | null;
+  readonly asyncJobStore: AsyncJobStore;
 }
 
 function createEntryId(prefix: string): string {
@@ -240,6 +260,8 @@ export class ScenarioMicJournalBridge {
   private readonly recordingSessions = new Map<string, RecorderRecordingSession>();
 
   private readonly recordingSlicePayloads = new Map<string, RecordingSlicePayload>();
+
+  private readonly pendingTrackUploads = new Map<string, PendingTrackUpload>();
 
   private readonly activeClipRecorders = new Map<string, ActiveClipCapture>();
 
@@ -458,9 +480,17 @@ export class ScenarioMicJournalBridge {
       session = new RecorderRecordingSession();
       this.recordingSessions.set(deviceHandle, session);
     }
+    const activeCapture = this.activeClipRecorders.get(deviceHandle);
     if (session.isActive()) {
-      scenarioChainLog('recording', 'start-recording-idempotent', { deviceHandle });
-      return true;
+      if (activeCapture !== undefined) {
+        scenarioChainLog('recording', 'start-recording-idempotent', { deviceHandle });
+        return true;
+      }
+      // Gate cycle restart (then-3): session timer active but clip was consumed on StopRecording.
+      scenarioChainLog('recording', 'start-recording-rearm', {
+        deviceHandle,
+        reason: 'active-without-capture',
+      });
     }
     const stream = this.resolveActiveStreamSync();
     if (stream === null) {
@@ -634,10 +664,10 @@ export class ScenarioMicJournalBridge {
       peakRms: peakRms.toFixed(6),
       peakAbs: peakSampleAbs(concat.samples).toFixed(6),
       wavBytes: blob.size,
-      uploadMode: 'async',
+      uploadMode: 'deferred',
     });
 
-    void this.uploadTrackAsync({
+    this.pendingTrackUploads.set(trackId, {
       nodeId,
       trackId,
       title,
@@ -676,7 +706,7 @@ export class ScenarioMicJournalBridge {
       durationSec: durationSec.toFixed(3),
       captureFormat: slice.captureFormat,
       blobBytes: slice.blob.size,
-      uploadMode: 'async',
+      uploadMode: 'deferred',
     });
     const trackId = createEntryId('track');
     const titleSuffix = trackId.startsWith('track-')
@@ -684,7 +714,7 @@ export class ScenarioMicJournalBridge {
       : trackId.slice(0, 12);
     const title = `MakeTrack ${titleSuffix}`;
     const uploadBlob = normalizeCaptureBlob(slice.blob, slice.captureFormat);
-    void this.uploadTrackAsync({
+    this.pendingTrackUploads.set(trackId, {
       nodeId,
       trackId,
       title,
@@ -697,6 +727,83 @@ export class ScenarioMicJournalBridge {
     return { trackId };
   }
 
+  /**
+   * AP v1: host bridge для `start-async-job` — upload / report side-effects с resolve/reject job.
+   */
+  async startAsyncJob(input: StartAsyncJobBridgeInput): Promise<void> {
+    const { promiseId, kind, correlation, trackRef, asyncJobStore } = input;
+
+    if (kind !== 'track-upload') {
+      asyncJobStore.reject(promiseId, `unsupported-async-job-kind:${kind}`);
+      scenarioChainLog('async-job', 'rejected', {
+        promiseId,
+        kind,
+        reason: 'unsupported-kind',
+      });
+      return;
+    }
+
+    if (
+      trackRef === null ||
+      !trackRef.valid ||
+      trackRef.handle === null ||
+      trackRef.kind !== 'TrackRef'
+    ) {
+      asyncJobStore.reject(promiseId, 'missing-track-ref');
+      scenarioChainLog('async-job', 'rejected', {
+        promiseId,
+        kind,
+        reason: 'missing-track-ref',
+      });
+      return;
+    }
+
+    const trackId = parseTrackIdFromHandle(trackRef.handle);
+    if (trackId === null) {
+      asyncJobStore.reject(promiseId, 'bad-track-handle');
+      scenarioChainLog('async-job', 'rejected', {
+        promiseId,
+        kind,
+        reason: 'bad-track-handle',
+        handle: trackRef.handle,
+      });
+      return;
+    }
+
+    const journalItems = getDefaultLiveJournalService().getSnapshot().items;
+    const existing = findTrackForReport(journalItems, trackId);
+    if (existing?.kind === 'track' && existing.track !== undefined) {
+      asyncJobStore.resolve(promiseId);
+      scenarioChainLog('async-job', 'resolved', {
+        promiseId,
+        kind,
+        trackId,
+        reason: 'already-in-journal',
+      });
+      return;
+    }
+
+    const pending = this.pendingTrackUploads.get(trackId);
+    if (pending === undefined) {
+      asyncJobStore.reject(promiseId, 'pending-track-not-found');
+      scenarioChainLog('async-job', 'rejected', {
+        promiseId,
+        kind,
+        trackId,
+        reason: 'pending-track-not-found',
+      });
+      return;
+    }
+
+    setScenarioTraceNodeId(correlation.nodeId);
+    void this.uploadTrackAsync({
+      ...pending,
+      nodeId: correlation.nodeId,
+      promiseId,
+      asyncJobStore,
+    });
+  }
+
   private async uploadTrackAsync(options: {
     readonly nodeId: string;
     readonly trackId: string;
@@ -705,11 +812,48 @@ export class ScenarioMicJournalBridge {
     readonly durationSec: number;
     readonly sampleRate: number;
     readonly captureFormat: ScenarioCaptureFormat;
+    readonly promiseId?: string;
+    readonly asyncJobStore?: AsyncJobStore;
   }): Promise<void> {
-    const { nodeId, trackId, title, blob, durationSec, sampleRate, captureFormat } = options;
+    const {
+      nodeId,
+      trackId,
+      title,
+      blob,
+      durationSec,
+      sampleRate,
+      captureFormat,
+      promiseId,
+      asyncJobStore,
+    } = options;
     const createdAtIso = new Date().toISOString();
-    const mediaSnap = getDefaultMediaLibraryService().getSnapshot();
+    const mediaSvc = getDefaultMediaLibraryService();
+    await mediaSvc.init();
+    const mediaSnap = mediaSvc.getSnapshot();
     const mediaStorageMode = resolveMediaLibraryStorageMode(mediaSnap.quota);
+
+    if (blob.size === 0) {
+      const emptyDetail = 'Empty capture blob (EMPTY_BLOB)';
+      scenarioChainLog('media', 'upload-failed', {
+        nodeId,
+        trackId,
+        storageMode: mediaStorageMode,
+        captureFormat,
+        mimeType: blob.type,
+        error: emptyDetail,
+        durationSec: durationSec.toFixed(3),
+      });
+      if (promiseId !== undefined && asyncJobStore !== undefined) {
+        asyncJobStore.reject(promiseId, emptyDetail);
+        scenarioChainLog('async-job', 'rejected', {
+          promiseId,
+          kind: 'track-upload',
+          trackId,
+          error: emptyDetail,
+        });
+      }
+      return;
+    }
 
     scenarioChainLog('media', 'upload-start', {
       nodeId,
@@ -726,7 +870,7 @@ export class ScenarioMicJournalBridge {
     });
 
     try {
-      const imported = await getDefaultMediaLibraryService().importBlob(
+      const imported = await mediaSvc.importBlob(
         BUFFER_COLLECTION_ID,
         blob,
         {
@@ -777,6 +921,16 @@ export class ScenarioMicJournalBridge {
         sampleId: imported.id,
         journalItemCount: service.getSnapshot().items.length,
       });
+      this.pendingTrackUploads.delete(trackId);
+      if (promiseId !== undefined && asyncJobStore !== undefined) {
+        asyncJobStore.resolve(promiseId);
+        scenarioChainLog('async-job', 'resolved', {
+          promiseId,
+          kind: 'track-upload',
+          trackId,
+          sampleId: imported.id,
+        });
+      }
     } catch (err) {
       const detail =
         err instanceof DomainError
@@ -793,6 +947,15 @@ export class ScenarioMicJournalBridge {
         error: detail,
         durationSec: durationSec.toFixed(3),
       });
+      if (promiseId !== undefined && asyncJobStore !== undefined) {
+        asyncJobStore.reject(promiseId, detail);
+        scenarioChainLog('async-job', 'rejected', {
+          promiseId,
+          kind: 'track-upload',
+          trackId,
+          error: detail,
+        });
+      }
     }
   }
 
@@ -1270,10 +1433,23 @@ export class ScenarioMicJournalBridge {
       // Модуль микрофона не смонтирован — свой поток.
     }
 
-    const audio: MediaTrackConstraints | true = this.selectedDeviceId
-      ? { deviceId: { exact: this.selectedDeviceId } }
+    const requestedDeviceId = this.selectedDeviceId;
+    const audio: MediaTrackConstraints | true = requestedDeviceId
+      ? { deviceId: { exact: requestedDeviceId } }
       : true;
-    this.ownedStream = await acquireMicrophone(audio);
+    try {
+      this.ownedStream = await acquireMicrophone(audio);
+    } catch (err) {
+      if (!requestedDeviceId) {
+        throw err;
+      }
+      scenarioChainLog('stream', 'mic-exact-fallback', {
+        requestedDeviceId,
+        reason: err instanceof Error ? err.message : String(err),
+      });
+      this.selectedDeviceId = '';
+      this.ownedStream = await acquireMicrophone(true);
+    }
     publishMicrophoneStream(MICROPHONE_MODULE_ID, this.ownedStream);
     this.usesCoordinator = false;
     scenarioRuntimeInfo('[device-board] startStream via owned MediaStream');

@@ -1,4 +1,5 @@
 import type { NodeRealtimeEnvelope } from './envelope.js';
+import type { RuntimeAuthority, RuntimeFollowerMode } from './board-events.js';
 
 /** Курсор reconnect (per deviceId). */
 export interface JournalAckPayload {
@@ -66,12 +67,19 @@ export type RuntimeMode = 'normal' | 'alarm';
 /**
  * Команда кабинета узлу по каналу `runtime` (cabinet → server → node).
  * `setMode` — приоритетный override: `alarm` форсит alarm-loop, `normal` форсит main.
- * `deviceId` — целевой узел (multi-node, MP7b RT5); если не задан, gateway использует
- * привязанный к подключению кабинета `mediaDeviceId`.
+ * `run` — опционально `authority` + `followerMode` (server-first SF1).
+ * `deviceId` — целевой узел (multi-node, MP7b RT5).
  */
 export type RuntimeCommandPayload =
-  | { readonly action: 'run'; readonly deviceId?: string }
+  | {
+      readonly action: 'run';
+      readonly deviceId?: string;
+      readonly authority?: RuntimeAuthority;
+      readonly followerMode?: RuntimeFollowerMode;
+    }
   | { readonly action: 'stop'; readonly deviceId?: string }
+  | { readonly action: 'pause'; readonly deviceId?: string }
+  | { readonly action: 'resume'; readonly deviceId?: string }
   | { readonly action: 'setMode'; readonly mode: RuntimeMode; readonly deviceId?: string };
 
 /** Снимок состояния runtime (node → server → cabinet). Только скаляры, без кадров. */
@@ -95,6 +103,12 @@ export interface RuntimeStatePayload {
   readonly mainLoopIteration: number;
   readonly alarmLoopIteration: number;
   readonly lastError: string | null;
+  /** SF1: exec заморожен (ScenarioRuntime.pause). */
+  readonly isPaused?: boolean;
+  /** SF1: кто инициировал run. */
+  readonly authority?: RuntimeAuthority;
+  /** SF1: soft/strict при authority=cabinet. */
+  readonly followerMode?: RuntimeFollowerMode | null;
 }
 
 /** Строка лога runtime (node → server → cabinet). */
@@ -124,6 +138,10 @@ export const NODE_REALTIME_EVENT_TYPES = {
     command: 'runtime.command',
     state: 'runtime.state',
     log: 'runtime.log',
+  },
+  board: {
+    editLease: 'board.edit-lease',
+    captureState: 'board.capture-state',
   },
 } as const;
 

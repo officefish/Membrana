@@ -1,0 +1,14 @@
+{
+  "id": "insight-loop-engineering-competition-test",
+  "title": "Loop engineering: соревновательное тестирование с точками останова",
+  "status": "deferred",
+  "source": "user",
+  "sprintPhase": "ins-pilot-j-user-insights",
+  "horizon": "month",
+  "weight": 6.8,
+  "createdAt": "2026-06-25",
+  "researchedAt": "2026-06-25",
+  "reviewedAt": "2026-06-25",
+  "closedAt": "2026-06-25",
+  "tags": ["competition", "operator", "device-board", "testing", "subagent", "breakpoint"]
+}

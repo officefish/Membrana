@@ -8,10 +8,22 @@ import {
 } from '@membrana/core';
 
 import {
+  buildCabinetPauseCommand,
+  buildCabinetResumeCommand,
+  buildCabinetRunCommand,
+  buildCabinetSetModeCommand,
+  buildCabinetStopCommand,
+  type CabinetRunFollowerMode,
+} from '@/lib/cabinetNodeRuntimeCommands';
+import {
   getCabinetNodeRealtimeClient,
   type CabinetRealtimeClientState,
 } from '@/lib/cabinetNodeRealtimeClient';
 import { isDeviceLive as checkDeviceLive } from '@/lib/isDeviceLive';
+
+export interface CabinetRunOptions {
+  readonly followerMode?: CabinetRunFollowerMode;
+}
 
 export interface CabinetNodeRuntime {
   /** Последнее состояние runtime по deviceId узла. */
@@ -21,15 +33,15 @@ export interface CabinetNodeRuntime {
   readonly onlineDeviceIds: ReadonlySet<string>;
   /** Единый селектор «связь жива» для gating Пуска (DBR6). */
   readonly isDeviceLive: (deviceId: string | null | undefined) => boolean;
-  readonly run: (deviceId: string) => void;
+  readonly run: (deviceId: string, options?: CabinetRunOptions) => void;
   readonly stop: (deviceId: string) => void;
+  readonly pause: (deviceId: string) => void;
+  readonly resume: (deviceId: string) => void;
   readonly setMode: (deviceId: string, mode: RuntimeMode) => void;
 }
 
 /**
- * MP7b RT5: подключение кабинета к runtime-каналу и управление узлами.
- * Команды адресуются конкретному узлу через payload.deviceId; состояние
- * сопоставляется по deviceId из runtime.state.
+ * MP7b RT5 + SF6: подключение кабинета к runtime-каналу и управление узлами.
  */
 export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRuntime {
   const [states, setStates] = useState<Record<string, RuntimeStatePayload>>({});
@@ -86,20 +98,30 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
   }, []);
 
   const run = useCallback(
-    (deviceId: string) => sendCommand({ action: 'run', deviceId }),
+    (deviceId: string, options?: CabinetRunOptions) =>
+      sendCommand(buildCabinetRunCommand(deviceId, options?.followerMode)),
     [sendCommand],
   );
   const stop = useCallback(
-    (deviceId: string) => sendCommand({ action: 'stop', deviceId }),
+    (deviceId: string) => sendCommand(buildCabinetStopCommand(deviceId)),
+    [sendCommand],
+  );
+  const pause = useCallback(
+    (deviceId: string) => sendCommand(buildCabinetPauseCommand(deviceId)),
+    [sendCommand],
+  );
+  const resume = useCallback(
+    (deviceId: string) => sendCommand(buildCabinetResumeCommand(deviceId)),
     [sendCommand],
   );
   const setMode = useCallback(
-    (deviceId: string, mode: RuntimeMode) => sendCommand({ action: 'setMode', mode, deviceId }),
+    (deviceId: string, mode: RuntimeMode) =>
+      sendCommand(buildCabinetSetModeCommand(deviceId, mode)),
     [sendCommand],
   );
 
   return useMemo(
-    () => ({ states, connection, onlineDeviceIds, isDeviceLive, run, stop, setMode }),
-    [connection, isDeviceLive, onlineDeviceIds, run, setMode, states, stop],
+    () => ({ states, connection, onlineDeviceIds, isDeviceLive, run, stop, pause, resume, setMode }),
+    [connection, isDeviceLive, onlineDeviceIds, pause, resume, run, setMode, states, stop],
   );
 }

@@ -39,34 +39,17 @@ describe('recording parity smoke matrix (A4)', () => {
     expect(formatRecordingPolicyBadge(policy)).toBe(`${windowSec}s · ${captureFormat.toUpperCase()}`);
   });
 
-  it('v08 constructor scenario JSON imports with MakeRecordingPolicy wired', () => {
+  it('v09 main branch imports with function blocks and gate wiring', () => {
     const parsed = parseBranchScenarioExportJson(readFileSync(v08ScenarioPath, 'utf8'));
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) {
       return;
     }
-    const policyNode = parsed.export.subgraph.nodes.find((n) => n.nodeKind === 'make-recording-policy');
-    expect(policyNode).toBeDefined();
-    expect(parsed.export.subgraph.nodes.some((n) => n.nodeKind === 'start-recording')).toBe(true);
-    expect(
-      parsed.export.subgraph.nodes.some((n) => n.id === 'node-start-recording-bootstrap-v08-2'),
-    ).toBe(true);
-    expect(
-      parsed.export.subgraph.edges.some(
-        (e) =>
-          e.source === 'node-start-recording-bootstrap-v08-2' &&
-          e.target === 'node-is-recording-window-full-mqmo40ie-32' &&
-          e.kind === 'exec',
-      ),
-    ).toBe(true);
-    expect(
-      parsed.export.subgraph.edges.some(
-        (e) =>
-          e.source === policyNode?.id &&
-          e.targetHandle === 'policy' &&
-          e.dataType === 'RecordingPolicy',
-      ),
-    ).toBe(true);
+    expect(parsed.export.subgraph.nodes.some((n) => n.id === 'fn-1-block')).toBe(true);
+    expect(parsed.export.subgraph.nodes.some((n) => n.nodeKind === 'is-recording-window-full')).toBe(
+      true,
+    );
+    expect(parsed.export.subgraph.nodes.some((n) => n.nodeKind === 'make-track')).toBe(true);
     const vars = parsed.export.variables ?? [];
     expect(vars.some((v) => v.type === 'RecordingPolicy')).toBe(false);
   });

@@ -1,7 +1,7 @@
 {
   "id": "usercase-mvp-microphone",
-  "title": "MVP microphone: realtime observation + recording gate v0.8",
-  "description": "Bundled reference UserCase: six handlers, recording gate v0.8, MakeRecordingPolicy + MakeFftTrendsPolicy, journal trends-fft.",
+  "title": "MVP microphone: realtime observation + recording gate v0.9-functions",
+  "description": "Bundled reference UserCase: six handlers, user functions StartRecording/GetAudioStream, recording gate, MakeFftTrendsPolicy, journal trends-fft.",
   "deviceKind": "microphone",
   "tier": "bundled",
   "layoutProfile": "exec-lr-v1",
@@ -11,7 +11,8 @@
     "functions",
     "exec-layout"
   ],
-  "canon": "DEVICE_BOARD_CONCEPT.md §16.5",
+  "canon": "DEVICE_BOARD_CONCEPT.md §16.5.1",
+  "goldenDocument": "docs/device-board-scripts/golden/usercase-mvp-microphone-v09-functions.document.json",
   "embeddedDocument": "packages/device-board/src/graph/default-usercase-mvp-microphone.generated.ts",
   "importOrder": [
     "02-onStart.json",
@@ -25,20 +26,20 @@
     "onConnect": {
       "bundleFile": "01-onConnect.json",
       "legacyFile": "device-scenario-microphone-onConnect.json",
-      "nodeCount": 4,
-      "edgeCount": 5
+      "nodeCount": 6,
+      "edgeCount": 8
     },
     "initial": {
       "bundleFile": "02-onStart.json",
       "legacyFile": "device-scenario-microphone-initial.json",
-      "nodeCount": 9,
-      "edgeCount": 13
+      "nodeCount": 4,
+      "edgeCount": 7
     },
     "main": {
       "bundleFile": "03-onMainTick.json",
       "legacyFile": "device-scenario-microphone-main-v08-policy-constructor.json",
-      "nodeCount": 27,
-      "edgeCount": 54
+      "nodeCount": 32,
+      "edgeCount": 51
     },
     "onStop": {
       "bundleFile": "05-onStop.json",

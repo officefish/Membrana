@@ -20,6 +20,7 @@ const REQUIRED_FILES = [
   'docs/mcp/tier2-playwright.fragment.json',
   'docs/mcp/tier3-glyph.fragment.json',
   'docs/mcp/tier4-documentation.fragment.json',
+  'docs/mcp/tier5-linear.fragment.json',
   'docs/mcp/documentation-workstation.example.json',
   'docs/DOCUMENTATION_WORKFLOW.md',
   'datasets/.gitkeep',
