@@ -68,7 +68,7 @@ export class RagService {
     if (plan.skipArchive) {
       return {
         query: trimmed,
-        fragments: operative.fragments.slice(0, this.config.operativeTopK),
+        fragments: operative.fragments.slice(0, Math.min(this.config.operativeTopK, mergeTopK)),
         usedArchive: false,
         usedOperative: operative.usedOperative,
       };
