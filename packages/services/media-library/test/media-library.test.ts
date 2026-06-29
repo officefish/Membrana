@@ -85,6 +85,33 @@ describe('quota-status', () => {
     expect(isBufferRecordingBlocked(quota, 9, 10)).toBe(false);
     expect(isBufferRecordingBlocked(quota, 10, 10)).toBe(true);
   });
+
+  it('ensures reserved collections before a cold import', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 });
+    const ensureReserved = vi.spyOn(backend, 'ensureReservedCollections');
+    const putSample = vi.spyOn(backend, 'putSample');
+    const svc = createMediaLibraryService(backend);
+
+    await svc.importBlob(
+      BUFFER_COLLECTION_ID,
+      new Blob([new Uint8Array(8)], { type: 'audio/wav' }),
+      {
+        title: 'cold upload',
+        class: 'buffer',
+        label: 'unlabeled',
+        source: 'mic-recording',
+        durationSec: 1,
+        sampleRate: 48_000,
+      },
+      { skipRefresh: true },
+    );
+
+    expect(ensureReserved).toHaveBeenCalled();
+    expect(putSample).toHaveBeenCalledOnce();
+    expect(ensureReserved.mock.invocationCallOrder[0]).toBeLessThan(
+      putSample.mock.invocationCallOrder[0],
+    );
+  });
 });
 
 describe('MediaLibraryService', () => {

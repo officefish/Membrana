@@ -197,6 +197,9 @@ export class MediaLibraryService {
     meta: NewSampleMeta,
     options?: ImportBlobOptions,
   ): Promise<MediaSample> {
+    // Cold uploads must not depend on a previous init()/refresh creating __buffer__.
+    await this.backend.ensureReservedCollections();
+
     const importStartedAt = performance.now();
     mediaLibraryTrace('importBlob-start', {
       collectionId,

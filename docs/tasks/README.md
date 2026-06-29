@@ -180,6 +180,7 @@
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
 | `ci-observability` | CI observability: ci.yml gap, reporters, artifact paths, testTimeout coupling | S | [`CI_OBSERVABILITY_PROMPT.md`](../docs/prompts/CI_OBSERVABILITY_PROMPT.md) | [#193](https://github.com/officefish/Membrana/issues/193) |
 | `rag-top-k-c2` | RAG C2: archive-circuit topK 15, operative 5 — split RAG_TOP_K env (consilium #186-C2) | S | — | [#186](https://github.com/officefish/Membrana/issues/186) |
+| `issue-178-async-v2-reconciliation` | Issue #178: reconcile async-v2 upload fix and stale PR #179 | L | [`ISSUE_178_ASYNC_V2_RECONCILIATION_SPRINT_PROMPT.md`](../docs/prompts/ISSUE_178_ASYNC_V2_RECONCILIATION_SPRINT_PROMPT.md) | [#178](https://github.com/officefish/Membrana/issues/178) |
 
 ---
 
