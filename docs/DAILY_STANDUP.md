@@ -1,295 +1,209 @@
-<!-- Сгенерировано: 2026-06-28T05:49:06.537Z (yarn standup) -->
+<!-- Сгенерировано: 2026-06-29T06:30:35.372Z (yarn standup) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
 <!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (25), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
 
-# 🌅 ЕЖЕДНЕВНЫЙ СТЕНДАП MEMBRANA — 2026-06-28
+# 🌅 ЕЖЕДНЕВНЫЙ СТЕНДАП — 29 июня 2026
 
-**Время:** 06:42 UTC | **Горизонт:** следующие 24 часа  
-**Координатор:** Vesnin (Teamlead) | **Цепь:** `yarn standup` + `yarn plan:day` + `yarn main-day-issue`
-
----
-
-## 📊 СИНТЕЗ: Вчерашнее вечернее ревью + текущие блокеры
-
-### ✅ Code Review (вчера 16:33 UTC)
-
-| Статус | Сфера | Вывод |
-|--------|-------|-------|
-| ✅ | **Phase 2b (device-board-packaging)** | Архитектура целостна; UserCase-сценарии упакованы как замкнутые гены |
-| ⚠️ | **exec-successor.ts + function-call-resolve.ts** (новые) | Требуют документирования в CONCEPT.md; проверить дублирование с function-pin-ops |
-| ⚠️ | **user-case-catalog-service** (Location: apps/client) | Должен переместиться в `packages/services/usercase-catalog` (нарушение boundary) |
-| ✅ | **Гигиена дерева** | Нет .txt-логов, рабочее дерево чистое |
-| 🟡 | **Definition of Done** | Lint/typecheck зелень; Playwright green (48/48); a11y modal требует инспекции |
-
-**Критерий LGTM:** Условный pass; Phase 3 требует консилиума на архитектурные решения.
+**Дата:** 2026-06-29 · **Время:** 06:30 UTC · **Координатор:** Vesnin (Teamlead)  
+**Источники:** вчерашний code-review + STRATEGIC_PLAN_DAY + открытые Issues + packages/temp
 
 ---
 
-### 📌 Стратегический план дня (вчера 05:42 UTC)
+## 📋 Сводка вчерашнего дня (28 июня)
 
-**Главная ось:** Завершить stage-gate 1→2 консилиум + зафиксировать FFT-потолок.
+### ✅ Завершено
 
-| Задача | Приоритет | Статус | Блокирует |
-|--------|-----------|--------|-----------|
-| **4.1** Документирование stage-gate 1→2 decision | 🔴 P0 | ⏳ Ожидает консилиума | Этап 2 (TDOA, multi-node) |
-| **4.2** Frozen-mark в `@membrana/core` | 🟡 P1 | Sketch готов | Архитектурная граница |
-| **4.3** Cepstral-detector → Working State | 🟡 P1 | Scaffold готов | Эшелон 1.A диагностика |
-| **4.4** Refactor ensemble-service skeleton | 🟡 P1 | Контракты готовы | Этап 1.B (после gate) |
-| **4.5** Promote trends `DRONE_TIGHT` в curated | 🟠 P2 | Шаблон готов | User-facing UX |
-| **4.6** Multi-node transport sketch | 🟡 P1 | Тип-контракт sketch | Этап 2 foundation |
-| **4.7** Dependency audit | 🟠 P2 | Скрипт нужен | CI/CD integrity |
+| Область | Результат | Статус |
+|---------|-----------|--------|
+| **Консилиум stage-gate 1→2** | Conditional Pass (soft SLD) | ✅ DONE |
+| **#185 (boundary refactor)** | PR готов к ревью; циклич. зависимость разрешена | ✅ DONE |
+| **#178 (async-v2 upload)** | Root-cause identified: `importBlob()` timeout | ⚠️ ROOT-CAUSE |
+| **W0-H3 (#153)** | Selection state fix в progress | 🔄 IN PROGRESS |
+| **Trends DRONE_TIGHT** | 95% recall / 30% FPR задокументирована | ✅ DONE |
+| **VDR bootstrap** | Schema + scripts готовы к заполнению | ✅ DONE |
+| **Task-closure-review** | Пилот R5 завершён, workflow нормализирован | ✅ DONE |
+| **CI coverage-reporting** | JSON-артефакты загружаются в GitHub Actions | ✅ DONE |
 
----
+### ⚠️ Нарушения и долги
 
-### 🔴 OPEN GITHUB ISSUES (активные блокеры)
-
-| ID | Название | Пакет | Severity | Resolve |
-|----|----------|-------|----------|---------|
-| **#187** | headroom proxy-perf замер (C6 of #186) | infra (tools) | 🟡 medium | Smoke-сеанс Claude Code |
-| **#186** | agent context optimization — headroom+RAG | infra (ritual) | 🔴 high | C1–C6 интеграция в ритуал |
-| **#185** | services→device-board boundary violation (8 imports) | `usercase-catalog` | 🔴 high | Refactor imports; вынести в core или shared |
-| **#178** | async-v2 track upload fails (detached report blocked) | device-board, client | 🔴 high | UserCase async-job resolve flow |
-| **#157** | comment group deletion removes child nodes | device-board | 🟠 medium | React Flow reparent logic |
-| **#153** | selection cleared when closing grouping modal | device-board | 🟠 medium | Part of W0-hotfixes (#151) |
-| **#151** | Device-board W0 hotfixes (H1–H3) | device-board, client | 🟠 medium | Backlog: H3→H1→H2 |
-
-**Критическое:** #185 нарушает архитектурную границу и блокирует gate-проверку; нужен рефакторинг до LGTM.
+- **#178 async-upload:** `scenarioMicJournalBridge.importBlob()` зависает; detached-report блокирован.
+- **#153 selection:** Backdrop-close ещё не зафиксирован.
+- **RAG operative context:** Dual-circuit работает, но RAG_TOP_K требует пересчёта (задача #186-C2).
 
 ---
 
-### 📂 packages/temp/ (наброски)
+## 📊 Текущее состояние проекта
+
+### 🎯 Stage-Gate 1 → 2 (Conditional Pass)
+
+**Вердикт:** Soft SLD пройден (P 76% / R 95% / F1 0.844).  
+**Решение:** Trends DRONE_TIGHT в куратор; VDR-сбор параллельно; Этап 2 (TDOA) заморожен до hard SLD (P ≥85%).
+
+**Что дальше:** Ensemble single-node + VDR (3–5 дней для улучшения precision).
+
+### 🔍 Открытые критические Issues (по приоритету)
+
+| ID | Название | Блокирует | Таймбокс | Lead |
+|----|----------|-----------|----------|------|
+| **#178** | async-v2 upload (timeout) | detached-report | 2–3ч | Ozhegov |
+| **#187** | headroom proxy-perf замер | #186-C6 | 1–2ч | Dynin |
+| **#153** | selection clearance (W0-H3) | W0 hotfix | 1ч | Rodchenko |
+| **#186** | agent context opt (эпик) | ritual:day + RAG | 6+ ч | Dynin |
+| **#146** | palette в fn-editor (W0-H1) | W0 hotfix | 1–2ч | Rodchenko |
+
+### 📦 Наброски в packages/temp/ (черновики)
 
 ```
 packages/temp/
-├── exec-successor.ts (new, ~120 LOC)
-│   ├── Что: расширение block-executor для цепочек функций
-│   ├── Статус: untracked, требует документирования
-│   └── Action: привязать к DEVICE_BOARD_CONCEPT.md §Runtime
-│
-├── function-call-resolve.ts (new, ~90 LOC)
-│   ├── Что: resolver пинов/вызовов функций
-│   ├── Статус: untracked, возможен дублём с function-pin-ops.ts
-│   └── Action: audit на пересечения, merge или разделить зоны
-│
-└── trends-template-curated.generated.ts (auto-gen, 540 LOC)
-    ├── Что: JSON→TS for DRONE_TIGHT шаблон
-    ├── Статус: ready for curated catalog
-    └── Action: integrate в device-board/src/catalogs/
+├── research-tree-xyflow-demo/        # Knowledge Graph визуализация (React+xyflow)
+├── vdr-tooling-bootstrap/            # VDR CLI утилиты (vdr:list/validate/export)
+├── trends-curator-v1/                # Шаблоны trends-detector (DRONE_TIGHT.json)
+├── headroom-config-audit/            # Config audit для headroom proxy (C5)
+└── closure-review-finalization/      # Закрытие task-closure-review пилота
 ```
 
----
-
-## 🎯 ГЛАВНЫЙ ФОКУС ДНЯ (MAIN_DAY_ISSUE, обновлено 28.06)
-
-```
-┌───────────────────────────────────────────────────────────┐
-│                                                           │
-│  🔴 ЕДИНСТВЕННЫЙ ОБЯЗАТЕЛЬНЫЙ ФОКУС                       │
-│                                                           │
-│  1. Разрешить #185 (boundary violation)                   │
-│     → Вынести UserCaseCatalogEntrySummary в @membrana/core
-│     → Обновить imports в usercase-catalog-service       │
-│                                                           │
-│  2. Консилиум stage-gate 1→2                              │
-│     → Recall 95% ✅ / Precision 76% vs target 85% ⚠️      │
-│     → Документировать в STAGE_GATE_1_TO_2_DECISION.md    │
-│     → Принять: "Conditional Pass" (soft SLD) или         │
-│       "Требуется доработка ensemble/trends-конкуренты"  │
-│                                                           │
-│  3. Fix #178 async-v2 track upload                        │
-│     → Жизненный цикл async-job в device-board runtime    │
-│     → Detached drone report зависит от resolve           │
-│                                                           │
-│  ⏱️ Таймбокс: 09:00–13:00 (4 часа критических работ)      │
-│                                                           │
-└───────────────────────────────────────────────────────────┘
-```
+**Действие:** Перенести готовые артефакты в основные пакеты; удалить черновики.
 
 ---
 
-## 📋 НАЗНАЧЕНИЕ ПО РОЛЯМ (сегодня)
+## 🚀 План на сегодня (29 июня) — 5 приоритетных задач
 
-### [Teamlead — Vesnin]
+### Задача 1️⃣ — Закрытие #178 (async-v2 upload fix) — **P0**
+**Таймбокс:** 09:00–11:30 (2.5ч)  
+**Lead:** Ozhegov (Структурщик)
 
-**Фокус:** Stage-gate консилиум + граница CORE
+**Действие:**
+1. **Диагностика** (09:00–10:00): запустить debug-сеанс device-board → load UserCase → track upload. Логи в `docs/audit-uploads-2026-06-29.md`.
+2. **Fix/workaround** (10:00–11:00): если простой timeout → увеличить timeout + документировать. Если race condition → patch `importBlob()` sequencing.
+3. **Commit + test** (11:00–11:30): `yarn test @membrana/device-board` + smoke upload.
 
-1. **09:00–09:30:** Инициировать консилиум stage-gate 1→2 (Dynin + Ozhegov)
-   - Входные метрики из FFT_METRICS_POTENTIAL_AND_LIMITS.md
-   - Дискуссия: recall 95% / precision 76% — мягкий SLD или доработка?
-   - Выход: `STAGE_GATE_1_TO_2_DECISION.md` с LGTM
-
-2. **09:30–10:30:**审查 #185 (boundary violation)
-   - Какие типы нужны в usercase-catalog-service?
-   - Вариант: `UserCaseCatalogEntrySummary` → `@membrana/core/src/device-board-types.ts`
-   - Или: дублировать локально в usercase-catalog без зависимости
-
-3. **10:30–11:00:** Review / LGTM для Phase 2b (device-board-packaging)
-   - Проверить exec-successor, function-call-resolve на документирование
-   - LGTM или return to Phase 3
-
-**DoD:**
-- [ ] Консилиум завершён; STAGE_GATE_1_TO_2_DECISION.md в docs
-- [ ] #185 разрешена (выбран путь refactor)
-- [ ] LGTM или conditional pass Phase 2b
+**DoD:** #178 tagged `fixed` или `awaiting-data` (с объяснением).
 
 ---
 
-### [Структурщик — Ozhegov]
+### Задача 2️⃣ — W0-H3 (#153) selection clearance + merge — **P1**
+**Таймбокс:** 09:00–10:30 (1.5ч)  
+**Lead:** Rodchenko (Верстальщик)
 
-**Фокус:** Boundary refactor + #178 fix
+**Действие:**
+1. Fix: `dismissSelectionAction` → НЕ вызывать `clearCanvasNodeSelection()`, только `closeSelectionActionModal()`.
+2. Test: backdrop click / Escape → modal closed, nodes still selected.
+3. Commit + PR merge (после lint ✅).
 
-1. **09:00–10:00:** Audit #185 (8 нарушений boundary)
-   - Проверить все imports usercase-catalog → device-board
-   - Выбрать: вынести в core или дублировать типы
-   - PR-черновик с рефактором
-
-2. **10:00–11:00:** Разобраться с #178 (async-v2 upload fails)
-   - Жизненный цикл: make-track → start-async-job → upload → detached-report
-   - Где обрывается chain?
-   - Точка fix: scenarioMicJournalBridge / getDefaultMediaLibraryService
-
-3. **11:00–12:30:** Реализация #185 рефактора
-   - Merge exec-successor, function-call-resolve в runtime или scaffold
-   - Проверить дублирования с function-pin-ops
-
-**DoD:**
-- [ ] #185 PR готов к review (boundary refactored)
-- [ ] #178 root-cause identified; fix-план описан
-- [ ] `yarn turbo run lint typecheck --no-cache` — зелень
+**DoD:** #153 merged, W0-H3 done.
 
 ---
 
-### [Верстальщик — Rodchenko]
+### Задача 3️⃣ — Headroom proxy-perf замер (#187) — **P1**
+**Таймбокс:** 11:00–12:30 (1.5ч)  
+**Lead:** Dynin (Математик)
 
-**Фокус:** W0-hotfixes + Phase 2b smoke
+**Действие:**
+1. Запустить headroom proxy: `tools/headroom-venv && headroom proxy --port 8787`
+2. Claude Code сеанс: `ANTHROPIC_BASE_URL=http://localhost:8787 yarn claude:code` — 20–30 tool calls.
+3. `headroom perf --format json > docs/insights/insight-headroom-server-deploy/proxy-perf-report.json`
+4. Залогировать: `savings_pct`, `cache_hit_pct`, топ-3 transforms.
 
-1. **09:00–10:30:** Smoke Phase 2b UserCase
-   - Запустить alpha/beta/gamma сценарии в dev-режиме
-   - Проверить ношу (копирование узлов) — для #152 подготовка
-   - a11y инспекция modal из Phase 2b
-
-2. **10:30–12:00:** W0-hotfix #153 (selection clearance)
-   - Backdrop / Escape → узлы остаются выделенными
-   - Fix: dismissSelectionAction не должна вызывать clearCanvasNodeSelection
-
-3. **12:00–13:00:** Ожидание ЛГТМ #185; если merge — smoke новых типов
-
-**DoD:**
-- [ ] Smoke Phase 2b пройдён; ошибок отмечены
-- [ ] W0-H3 (#153) merged (или PR готов)
-- [ ] a11y инспекция завершена
+**DoD:** proxy-perf-report.json заполнен; комментарий в #187 с метриками.
 
 ---
 
-### [Математик — Dynin]
+### Задача 4️⃣ — RAG-circuit balance (#186-C2) — **P1**
+**Таймбокс:** 10:30–12:00 (1.5ч)  
+**Lead:** Dynin (Математик)
 
-**Фокус:** Консилиум метрик + C3 headroom audit
+**Действие:**
+1. Поднять `RAG_TOP_K` (archive-circuit): 5–7 → **15–20**.
+2. Operative остаётся: **5–7** (fast-path).
+3. Обновить `CONTRIBUTING.md` (рекомендация о `trace_path`).
+4. `yarn ritual:day` smoke: `codebase-memory-mcp index_status` не падает.
 
-1. **09:00–10:00:** Участие в консилиума stage-gate
-   - Прочитать FFT_METRICS_POTENTIAL_AND_LIMITS.md
-   - Защитить точность precision-метрик; предложить пути к 85%
-   - Проголосовать за gate decision
-
-2. **10:00–11:00:** Реализация C3 headroom-audit (`yarn ritual:evening`)
-   - Добавить `headroom audit-reads --format json` в rag-evening-index.mjs
-   - Сохранять в `docs/archive/<date>-audit-reads.json`
-   - Smoke-тест: ночной ритуал запускается без ошибок
-
-3. **11:00–13:00:** Подготовка C6 (proxy-perf замер)
-   - Запустить headroom proxy (tools/headroom-venv)
-   - Провести рабочий сеанс Claude Code (≥20 tool calls)
-   - Заполнить proxy-perf-report.json
-
-**DoD:**
-- [ ] Консилиум завершён; метрики задокументированы
-- [ ] C3 headroom-audit интегрирована в ритуал
-- [ ] C6 proxy-perf-report готов (или smoke-план)
+**DoD:** #186-C2 merged, ritual:day smoke pass.
 
 ---
 
-### [Музыкант — Kuryokhin]
+### Задача 5️⃣ — VDR-сбор (параллельно, T1) — **P2**
+**Таймбокс:** 12:00–17:00 (5ч)  
+**Lead:** Kuryokhin (Музыкант)
 
-**Фокус:** Параллельно T1–T2 (VDR, YAMNet)
+**Действие:**
+1. Собрать 10–15 сэмплов drone-audio (разные частоты, длительности, фоны).
+2. Лейбл по VDR_SCHEMA: source, datetime, drone-type, confidence.
+3. Коммит в `docs/datasets/free-v1-validated/` (пилот).
 
-1. **11:00–16:00:** Продолжить VDR-сбор (из вчерашнего плана T1)
-   - 10+ сэмплов в `data/validated-samples/`
-   - CSV разметка (time, class, confidence notes)
-   - Параллельно: YAMNet scaffold (если время)
-
-2. **Async:** Monitoring #178 (может потребоваться audio-плагин в device-board)
-   - Если фикс требует Web Audio интеграции — готов помочь
-   - Но сегодня это не критический путь
-
-**DoD:**
-- [ ] 10+ VDR-сэмплов в данных
-- [ ] YAMNet scaffold (типы, контракты) готов
+**DoD:** 10+ сэмплов в git; `yarn vdr:list` показывает их.
 
 ---
 
-## 🔧 КОМАНДЫ УТРА
+## 🔧 Параллельные работы
+
+| Задача | Lead | Таймбокс | DoD |
+|--------|------|----------|-----|
+| W0-H1 (#146) palette-in-fn-editor | Rodchenko | 10:30–12:00 | PR ready |
+| W0-H2 (#152) hotkeys copy/paste | — | **завтра** | — |
+| Research-Tree render (приложение) | Rodchenko + Dynin | 13:00–17:00 | React компоненты |
+| TDOA/localizer контракты (spec) | Ozhegov + Dynin | 13:00–17:00 | types exported |
+
+---
+
+## ✅ Проверочный лист (конец дня)
+
+- [ ] #178 диагностика завершена, fix в progress или merged.
+- [ ] #153 merged, selection state fix verified.
+- [ ] #187 proxy-perf report.json заполнен.
+- [ ] #186-C2 RAG_TOP_K поднят; ritual:day smoke pass.
+- [ ] VDR bootstrap: ≥10 сэмплов в репо.
+- [ ] `yarn turbo run lint typecheck test --no-cache` ✅ (zero errors).
+- [ ] `yarn standup` → обновить DAILY_STANDUP.md с прогрессом.
+- [ ] `yarn ritual:evening` → архив + code-review на завтра.
+
+---
+
+## 🎯 Магистраль дня
+
+**1. Закрыть критические блокеры** (#178, #153, #187).  
+**2. Параллельно: RAG-balance** (#186-C2) и **VDR-сбор** (T1).  
+**3. Подготовка Этапа 2** (контракты TDOA/localizer).  
+**4. Архивизация вечером** (ritual:evening).
+
+---
+
+## 📌 Что НЕ делаем сегодня
+
+❌ Повторный FFT-бенчмарк на free-v1 (исчерпан; ждём VDR).  
+❌ Реализация TDOA (stage-gate не пройден hard; дизайн type-контрактов — это OK).  
+❌ Интеграция YAMNet/CLAP (стратегия в INTEGRATIONS_STRATEGY.md недельного горизонта).
+
+---
+
+## 🎬 Команды на старт
 
 ```bash
-# Синхронизация состояния
+# Утро: поднять основные сервисы
 yarn install --frozen-lockfile
-yarn turbo run lint typecheck test --no-cache
+yarn turbo run build --no-cache
 
-# Консилиум stage-gate (10 мин)
-yarn ask dynin --task-file ./docs/FFT_METRICS_POTENTIAL_AND_LIMITS.md \
-  --save-as STAGE_GATE_1_TO_2_DECISION \
-  "Пройден ли gate hard SLD (P≥85% R≥90%) на trends DRONE_TIGHT? \
-   Или принимаем soft SLD (P≥75% R≥90%) с условием VDR-эпика в 3–5 дней?"
+# Проверка качества
+yarn turbo run lint typecheck test --filter='@membrana/core @membrana/device-board @membrana/fft-analyzer' --no-cache
 
-# Проверка #185 (boundary)
-node scripts/check-package-boundaries.mjs --filter=services-no-device-board-imports
+# #178 диагностика
+yarn workspace apps/client run dev &
+# (load device-board, track upload, check logs)
 
-# Smoke Phase 2b (dev-режим)
-yarn workspace @membrana/client dev &
-# в браузере: Device Board → Load UserCase → alpha scenario
+# #187 headroom proxy
+cd tools/headroom-venv && source venv/bin/activate
+headroom proxy --port 8787 &
 
-# Ночной ритуал (эхо вечером)
-yarn ritual:day
+# VDR init
+yarn vdr:list  # Should show bootstrap sample
+
+# Вечер
+yarn ritual:evening
 ```
 
 ---
 
-## ✅ Definition of Done (день)
-
-- [ ] **Консилиум stage-gate 1→2 завершён** → STAGE_GATE_1_TO_2_DECISION.md в docs с LGTM
-- [ ] **#185 boundary refactor** → PR в review ИЛИ merged
-- [ ] **#178 root-cause identified** → fix-план или hotfix merge
-- [ ] **W0-H3 (#153)** → PR merged
-- [ ] **C3 headroom-audit в ритуале** → smoke-тест green
-- [ ] **Smoke Phase 2b** → ошибки задокументированы
-- [ ] **`yarn turbo run lint typecheck test build`** → ✅ zero errors
-- [ ] **Вечерний ритуал выполнен** (`yarn ritual:evening`, архив + code-review)
-
----
-
-## 📅 Контекст (связь с WHITE_PAPER)
-
-| Документ | Актуальность | Применимо |
-|----------|--------------|-----------|
-| **WHITE_PAPER.md** | Stage-gate 1→2 определен в §8 | ✅ Основа консилиума |
-| **FFT_METRICS_POTENTIAL_AND_LIMITS.md** | Trends DRONE_TIGHT 95%/30%, precision 76% | ✅ Входные метрики |
-| **ARCHITECTURE.md** | Граница services ↔ device-board | ✅ #185 boundary rule |
-| **SERVICES.md** | usercase-catalog-service в foundation | ✅ Переместить в packages/services/ |
-| **DEVELOPER_RHYTHM.md** | Ежедневный ритуал, консилиум, code-review | ✅ Наш календарь |
-
----
-
-## 🚀 Статус готовности
-
-```
-09:00 — 🟢 Команда готова к запуску утренних блокеров
-10:00 — 🟡 Консилиум на параллельном потоке (Dynin + Vesnin)
-12:00 — 🟡 Ожидание ЛГТМ #185 и smoke Phase 2b
-13:00 — 🟢 Вечерний ритуал (архив, code-review, планирование завтра)
-```
-
----
-
-**Опубликовано:** 2026-06-28T06:42 UTC  
-**Координатор:** Vesnin (Teamlead)  
-**Ветка:** `techies68` (Phase 3, device-board W1) + `rodchenko` (W0-hotfixes)  
-**Целевой эшелон:** Этап 1.A завершен; gate-1→2 решение; Этап 2 frozen до ЛГТМ
+**Статус:** 🟢 **READY TO START**  
+**Прогноз:** 5 задач × 9.5 часов — плотный, но достижимый день.  
+**Ответственность:** Vesnin (координация), Ozhegov (#178), Rodchenko (W0), Dynin (headroom + RAG), Kuryokhin (VDR).

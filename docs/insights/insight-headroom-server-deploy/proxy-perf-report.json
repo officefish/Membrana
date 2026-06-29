@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "date": "2026-06-29",
+    "version": "0.27.0",
+    "issue": "#187",
+    "phase": "baseline-synthetic",
+    "note": "Baseline run with synthetic API calls. Real Claude Code session measurement pending (M2 gate)."
+  },
+  "headroom_perf": {
+    "window_hours": 168.0,
+    "actual_window": {
+      "oldest": "2026-06-29 09:50:38",
+      "newest": "2026-06-29 09:54:45"
+    },
+    "total_requests": 10,
+    "total_tokens_before": 1200,
+    "total_tokens_after": 1200,
+    "tokens_saved": 0,
+    "savings_pct": 0.0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "cache_hit_pct": 0.0,
+    "by_model": [
+      {
+        "model": "claude-haiku-4-5-20251001",
+        "requests": 10,
+        "tokens_before": 1200,
+        "tokens_after": 1200,
+        "tokens_saved": 0,
+        "savings_pct": 0.0
+      }
+    ],
+    "by_transform": [
+      {
+        "transform": "content_router",
+        "uses": 10,
+        "tokens_before": 1029,
+        "tokens_saved": 0,
+        "savings_pct": 0.0,
+        "routing": {
+          "compressed": 0,
+          "excluded_read_glob": 0,
+          "skipped_under_50_words": 13,
+          "unchanged_ratio_too_high": 0
+        }
+      }
+    ],
+    "overhead_ms": {
+      "average": 54,
+      "max": 496
+    },
+    "throughput": {
+      "compression_p50_tok_s": 17193.37,
+      "compression_p95_tok_s": 140061.55,
+      "generation_p50_tok_s": 43.51,
+      "generation_p95_tok_s": 58.91
+    }
+  },
+  "findings": {
+    "proxy_health": "healthy",
+    "proxy_startup": "ok — requires headroom-ai[proxy] installed (done 2026-06-29)",
+    "synthetic_savings_pct": 0.0,
+    "synthetic_cache_hit_pct": 0.0,
+    "why_zero_savings": "All synthetic test messages < 50 words — content_router threshold not reached. System prompt (4612 tokens) passes through uncompressed.",
+    "overhead_acceptable": true,
+    "compression_engine_speed": "17k-140k tok/s — fast, not a bottleneck",
+    "gotchas": [
+      "curl/urllib route through HTTPS_PROXY (Hiddify:12334) by default — must set NO_PROXY=127.0.0.1 for localhost calls",
+      "headroom-ai[proxy] deps not installed by default in venv — added via uv pip install",
+      "headroom perf counts message content tokens, not full API input_tokens (system prompt excluded from compression stats)"
+    ]
+  },
+  "m2_gate_status": {
+    "target": ">=40% token savings on 2/3 of real Claude Code session outputs",
+    "current": "0% on synthetic baseline (expected — threshold not met)",
+    "next_step": "Run real Claude Code session via ANTHROPIC_BASE_URL=http://127.0.0.1:8787 claude:code and re-run headroom perf"
+  }
+}

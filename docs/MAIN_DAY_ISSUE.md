@@ -1,245 +1,236 @@
-<!-- Сгенерировано: 2026-06-28T05:50:32.106Z (yarn main-day-issue) -->
+<!-- Сгенерировано: 2026-06-29T06:31:55.899Z (yarn main-day-issue) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: single-node-detection-first, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, background-media-v1, background-media-a5a-server, background-media-a5b-docker, background-media-a5c-deploy, background-media-a5d-swagger, membrane-platform-v1, cabinet-sample-library-v1, cabinet-sample-library-csl1-api, cabinet-sample-library-csl2-ui, cabinet-sample-library-csl3-remote-ops, cabinet-mp4-hardening-night-build, cabinet-mp4-nb0-merge-gate, cabinet-mp4-nb1-sample-playback-dry, cabinet-mp4-nb2-cabinet-facade, cabinet-mp4-nb3-quality-contracts, sample-library-drone-detection, sld3-dsp-detectors-free-v1, sld4-stage-gate-calibration, validated-drone-recognition, vdr1-sample-label-patch-api, vdr2-label-notes-ui, vdr3-ground-truth-export, vdr4-dsp-calibration-validated, vdr5-template-match-detector, vdr6-recognition-report-gate, drone-detector-detail-report, telemetry-journal-live-refactor, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, cabinet-journal-hotfix, cj-0-trends-enabled-keys, cj-1-media-api-safe-json, cj-2-journal-media-decouple, cj-3-brief-render-parity, cj-4-trends-counts-as-detection, cj-5-sync-push-observability, module-catalog-v1, mc-0-catalog-regulation, mc-1-prompt-templates, mc-2-registry-microphone-pilot, mc-3-pilot-plugins, mc-4-telemetry-journal-stable, mc-5-remaining-modules-draft, mc-6-remaining-plugins-draft, mc-7-verify-script-ci, mc-8-agent-rules-integration, mc-9-stable-review, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-realtime-gateway, membrane-node-realtime-nr0-contract, membrane-node-realtime-nr1-gateway, membrane-node-realtime-nr2-journal-ws, membrane-node-realtime-nr3-client-journal, membrane-node-realtime-nr4-mic-live, membrane-node-realtime-nr5-cabinet-live, membrane-node-realtime-nr6-prod-hardening, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, deploy-pipeline-refactor, dpr-dr0-git-hygiene-gate, dpr-dr1-ci-gate, dpr-dr2-image-registry, dpr-dr3-rollback-runbook, dpr-dr4-smoke-suite, dpr-dr5-branch-migration-policy, dpr-dr6-client-delivery, dpr-dr7-zero-downtime, membrana-studio-desktop, device-board-refactor-v04, dbr-0-concept-core, dbr-1-fullscreen, dbr-2-variables, dbr-3-event-node, dbr-4-dataflow-resolve, dbr-5-palette-nodes, dbr-6-run-gating, device-board-cabinet-hotfix, dbh-0-canvas-overlay, dbh-1-sidebar-clamp, dbh-2-nav-split, dbh-3-delete-node, dbh-4-purge-expired-keys, device-board-w0-hotfix, db-w0-h3-selection-modal-keep, db-w0-h1-function-palette, db-w0-h2-copy-paste-hotkeys, db-doc-v04-mvp, db-recording-gate-v07, db-recording-gate-r4-scenario-smoke, db-post-usercase-roadmap, smoke-testing-s1-night-build, smoke-s1-nb0-gate-docs, smoke-s1-nb1-playwright-scaffold, smoke-s1-nb2-smoke-tests-testids, smoke-s1-nb3-optional-ci-workflow, smoke-s1-nb4-docs-handoff, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions -->
+<!-- active в реестре: single-node-detection-first, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, background-media-v1, background-media-a5a-server, background-media-a5b-docker, background-media-a5c-deploy, background-media-a5d-swagger, membrane-platform-v1, cabinet-sample-library-v1, cabinet-sample-library-csl1-api, cabinet-sample-library-csl2-ui, cabinet-sample-library-csl3-remote-ops, cabinet-mp4-hardening-night-build, cabinet-mp4-nb0-merge-gate, cabinet-mp4-nb1-sample-playback-dry, cabinet-mp4-nb2-cabinet-facade, cabinet-mp4-nb3-quality-contracts, sample-library-drone-detection, sld3-dsp-detectors-free-v1, sld4-stage-gate-calibration, validated-drone-recognition, vdr1-sample-label-patch-api, vdr2-label-notes-ui, vdr3-ground-truth-export, vdr4-dsp-calibration-validated, vdr5-template-match-detector, vdr6-recognition-report-gate, drone-detector-detail-report, telemetry-journal-live-refactor, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, cabinet-journal-hotfix, cj-0-trends-enabled-keys, cj-1-media-api-safe-json, cj-2-journal-media-decouple, cj-3-brief-render-parity, cj-4-trends-counts-as-detection, cj-5-sync-push-observability, module-catalog-v1, mc-0-catalog-regulation, mc-1-prompt-templates, mc-2-registry-microphone-pilot, mc-3-pilot-plugins, mc-4-telemetry-journal-stable, mc-5-remaining-modules-draft, mc-6-remaining-plugins-draft, mc-7-verify-script-ci, mc-8-agent-rules-integration, mc-9-stable-review, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-realtime-gateway, membrane-node-realtime-nr0-contract, membrane-node-realtime-nr1-gateway, membrane-node-realtime-nr2-journal-ws, membrane-node-realtime-nr3-client-journal, membrane-node-realtime-nr4-mic-live, membrane-node-realtime-nr5-cabinet-live, membrane-node-realtime-nr6-prod-hardening, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, deploy-pipeline-refactor, dpr-dr0-git-hygiene-gate, dpr-dr1-ci-gate, dpr-dr2-image-registry, dpr-dr3-rollback-runbook, dpr-dr4-smoke-suite, dpr-dr5-branch-migration-policy, dpr-dr6-client-delivery, dpr-dr7-zero-downtime, membrana-studio-desktop, device-board-refactor-v04, dbr-0-concept-core, dbr-1-fullscreen, dbr-2-variables, dbr-3-event-node, dbr-4-dataflow-resolve, dbr-5-palette-nodes, dbr-6-run-gating, device-board-cabinet-hotfix, dbh-0-canvas-overlay, dbh-1-sidebar-clamp, dbh-2-nav-split, dbh-3-delete-node, dbh-4-purge-expired-keys, device-board-w0-hotfix, db-w0-h3-selection-modal-keep, db-w0-h1-function-palette, db-w0-h2-copy-paste-hotkeys, db-doc-v04-mvp, db-recording-gate-v07, db-recording-gate-r4-scenario-smoke, db-post-usercase-roadmap, smoke-testing-s1-night-build, smoke-s1-nb0-gate-docs, smoke-s1-nb1-playwright-scaffold, smoke-s1-nb2-smoke-tests-testids, smoke-s1-nb3-optional-ci-workflow, smoke-s1-nb4-docs-handoff, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions, ghost-task-closure-sprint-2026-06-29 -->
 
-# MAIN_DAY_ISSUE — 2026-06-28
+# MAIN_DAY_ISSUE — 29 июня 2026
 
-**Дата:** 2026-06-28 · **Координатор:** Vesnin (Teamlead)  
-**Фокус:** Консилиум stage-gate 1→2 + разрешение #185 (boundary violation) + stabilize Phase 2b
+**Дата:** 2026-06-29 · **Координатор:** Vesnin (Teamlead)  
+**Время генерации:** 06:35 UTC · **Статус ветки:** techies68
 
 ---
 
 ## 🔴 **ЕДИНСТВЕННЫЙ ОБЯЗАТЕЛЬНЫЙ ФОКУС ДНЯ**
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                                                         │
-│  ⚡ MAIN_DAY_ISSUE_2026_06_28                            │
-│                                                         │
-│  1. Консилиум stage-gate 1→2 (09:00–10:00)             │
-│     Метрики: recall 95% / precision 76% vs target      │
-│     → STAGE_GATE_1_TO_2_DECISION.md                    │
-│                                                         │
-│  2. Разрешить #185 (boundary violation)                │
-│     8 импортов usercase-catalog → device-board        │
-│     → Refactor + PR ready для review                   │
-│                                                         │
-│  3. Fix #178 (async-v2 track upload fails)             │
-│     Detached drone report blocked на async-job        │
-│     → Root-cause identified + fix-план                │
-│                                                         │
-│  ⏱️  ТАЙМБОКС: 09:00–13:00 (4 часа)                    │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                                                              │
+│  ⚡ MAIN_DAY_ISSUE_2026_06_29                                 │
+│                                                              │
+│  Закрыть три критических блокера + подготовить Этап 2       │
+│                                                              │
+│  1️⃣  #178 async-v2 upload FIX (блокирует detached-report)   │
+│      Lead: Ozhegov (Структурщик)                            │
+│      Таймбокс: 09:00–11:30 (2.5ч)                           │
+│      DoD: #178 tagged `fixed` или с обоснованием            │
+│                                                              │
+│  2️⃣  W0-H3 (#153) selection clearance + MERGE              │
+│      Lead: Rodchenko (Верстальщик)                          │
+│      Таймбокс: 09:00–10:30 (1.5ч)                           │
+│      DoD: #153 merged, selection state работает             │
+│                                                              │
+│  3️⃣  Headroom proxy-perf замер (#187) + RAG-balance (#186)  │
+│      Lead: Dynin (Математик)                                │
+│      Таймбокс: 10:30–12:30 (2ч)                             │
+│      DoD: proxy-perf-report.json + RAG_TOP_K поднят         │
+│                                                              │
+│  ⏱️  МАГИСТРАЛЬ: 09:00–12:30 (3.5 часа фокуса)              │
+│  🎯 ПАРАЛЛЕЛЬ: VDR-сбор T1 (Kuryokhin, 11:00–17:00)         │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
 ```
-
-**Обоснование:**
-- **Консилиум stage-gate** определяет, блокирует ли precision ~76% переход к этапу 2.
-- **#185 boundary refactor** критичен для архитектурной целостности и gate-проверки.
-- **#178 async-v2** блокирует detached report, необходим для device-board smoke.
 
 ---
 
-## 📊 Распределение по ролям (сегодня, 09:00–13:00)
+## 📊 Распределение по ролям
 
-| Роль | Главная задача | Таймбокс | DoD | Блокирует |
-|------|---|---|---|---|
-| **Vesnin** (Teamlead) | Консилиум gate + #185 граница | 09:00–11:00 | STAGE_GATE_1_TO_2_DECISION.md, LGTM | merge phase 2b |
-| **Ozhegov** (Структурщик) | #185 refactor + #178 диагностика | 09:00–12:30 | PR #185 ready, root-cause #178 | Vesnin LGTM |
-| **Rodchenko** (Верстальщик) | W0-hotfix #153 + smoke phase 2b | 09:00–13:00 | #153 merged, smoke done | lint pass |
-| **Dynin** (Математик) | Консилиум метрик + C3 headroom | 09:00–13:00 | DECISION signed, C3 smoke | gate doc |
-| **Kuryokhin** (Музыкант) | T1 VDR-сбор параллельно | 11:00–17:00 | 10+ сэмплов | не блокирует |
+| Роль | Фокус | Таймбокс | Блокирует | DoD |
+|------|-------|----------|-----------|-----|
+| **Vesnin** | Координация + smoke ritual:day | 09:00–12:30 | завтрашний standup | lint/typecheck/test ✅ |
+| **Ozhegov** | #178 диагностика + fix | 09:00–11:30 | detached-report | root-cause + fix-план |
+| **Rodchenko** | #153 selection + merge | 09:00–10:30 | W0 hotfix | PR merged |
+| **Dynin** | headroom + RAG-balance | 10:30–12:30 | Этап 2 контракты | proxy-perf + C2 done |
+| **Kuryokhin** | T1 VDR-сбор (параллель) | 11:00–17:00 | Этап 1.B ensemble | 10+ сэмплов в git |
 
 ---
 
-## 🔧 Три критических действия утром
+## 🔧 Три критических действия (09:00–12:30)
 
-### **Действие 1: Консилиум stage-gate 1→2 (09:00–10:00)**
+### **1. #178: async-v2 track upload — ROOT-CAUSE + FIX**
 
-**Участники:** Vesnin + Dynin + Ozhegov (advisory).
+**Состояние:**  
+`scenarioMicJournalBridge.importBlob()` зависает при upload. Detached drone report не генерируется.
 
-**Вопрос:** Пройден ли stage-gate для перехода к этапу 2?
+**Действия Ozhegov (Структурщик):**
 
-**Входные метрики (FFT_METRICS_POTENTIAL_AND_LIMITS.md):**
-```
-Trends DRONE_TIGHT на held-out validation:
-  Recall: 95% ✅
-  Precision: ~76% ❌ (target 85%)
-  F1: 0.844
-  FPR: 30% ✓
-```
+1. **09:00–10:00 | Диагностика**
+   - Запустить `yarn workspace apps/client run dev` (debug mode).
+   - Device Board → Load UserCase → Create track → Trigger async-v2 upload.
+   - Браузер DevTools:
+     - Network tab: trace HTTP/WebSocket calls.
+     - Console: errors/warnings.
+     - Storage: проверить localStorage/IndexedDB состояние.
+   - Логирование: `docs/audit-uploads-2026-06-29.md` (где обрывается цепь).
 
-**Решение (выбрать один вариант):**
+2. **10:00–11:00 | Fix или workaround**
+   - **Гипотеза A (вероятнее):** timeout в `importBlob()` из-за отсутствия abort-механизма.
+     - Fix: добавить `AbortController` + `AbortSignal` в сигнатуру.
+   - **Гипотеза B:** race condition в async-job состоянии.
+     - Fix: ensure atomicity через mutex или более строгую sequencing.
+   - **Гипотеза C:** missing dependency в device-board → media-library.
+     - Fix: импорт или рефакторинг контракта.
+   - Реализовать выбранное fix (код + коммит).
 
-**Вариант A: Conditional Pass (рекомендуемый)**
-```markdown
-## Вердикт: Conditional Pass
-
-### Обоснование
-- Soft SLD (P≥75% R≥90%): ✅ ПРОЙДЕН
-  - Recall 95%, Precision 76% → F1 0.844 покрывает soft критерий
-- Trends DRONE_TIGHT — лучший FFT-детектор; продолжаем в stage 1.B (ensemble)
-
-### Действие
-- ✅ Этап 1.B (ensemble single-node): ensemble-service skeleton, конкуренты
-- ✅ Параллельно VDR-сбор (validated dataset) для улучшения precision
-- ❌ Этап 2 (TDOA) остаётся frozen до финального решения в конце спринта
-  (требуется precision ≥85% на реальных данных)
-```
-
-**Вариант B: Hard Requirement (консервативный)**
-```markdown
-## Вердикт: Hard SLD Failed
-
-Precision 76% < target 85% → Stage 1.A не пройден.
-Требуется:
-1. Доработка trends (добавить конкуренты, ансамбль)
-2. Или ускорить VDR + retrain на реальных данных
-
-Этап 2 остаётся frozen.
-```
-
-**Документирование:** Файл `docs/seanses/stage-gate-1-2-decision-2026-06-28.md` с таблицей, решением, дальнейшими шагами.
+3. **11:00–11:30 | Тестирование**
+   - Запустить `yarn test @membrana/device-board`.
+   - Smoke upload: Device Board UI → трек загружается → отчёт генерируется.
+   - Коммит fix'а или открытие issue с пометкой `awaiting-data` (если нужны реальные данные для диагностики).
 
 **DoD:**
-- [ ] Консилиум проведён (участники подписались).
-- [ ] Решение документировано в docs/seanses/.
-- [ ] LGTM Teamlead в файле.
+- [ ] `docs/audit-uploads-2026-06-29.md` заполнен с логами.
+- [ ] #178 tagged `fixed` (PR) или `awaiting-data` (комментарий).
+- [ ] Smoke-тест device-board pass.
 
 ---
 
-### **Действие 2: Refactor #185 (boundary violation) — 09:30–12:30**
+### **2. W0-H3 (#153): Selection clearance — FIX + MERGE**
 
-**Статус:** 8 импортов usercase-catalog → device-board нарушают архитектурную границу.
+**Состояние:**  
+`dismissSelectionAction` неправильно очищает selection state. Backdrop click должен закрыть modal, но оставить nodes selected.
 
-**Проблема:** `usercase-catalog-service` находится в `apps/client/src/modules/device-board/services/`, но импортирует типы из `device-board` и создаёт циклическую зависимость.
+**Действия Rodchenko (Верстальщик):**
 
-**Решение (выбрать один путь):**
+1. **09:00–09:30 | Fix**
+   - Open `apps/client/src/modules/device-board/components/SelectionActionModal.tsx`.
+   - Fix: заменить `clearCanvasNodeSelection()` на `closeSelectionActionModal()`.
+   - Логика: modal ≠ selection; modal закрывается, selection остаётся.
 
-**Путь A: Вынести UserCaseCatalogEntrySummary в @membrana/core (рекомендуемый)**
-```typescript
-// @membrana/core/src/device-board-types.ts
-export interface UserCaseCatalogEntrySummary {
-  id: string;
-  name: string;
-  description: string;
-  tags: string[];
-  thumbnail?: string;
-}
+2. **09:30–10:00 | Тестирование**
+   - UI test: select nodes → open modal → click backdrop → modal closed, nodes still selected ✓
+   - Unit-тест: `dismissSelectionAction` → modal closed, selection intact ✓
 
-// apps/client/src/modules/device-board/services/usercase-catalog-service.ts
-import { UserCaseCatalogEntrySummary } from '@membrana/core';
-```
-
-**Путь B: Дублировать типы локально (если тип не переиспользуется)**
-```typescript
-// apps/client/src/modules/device-board/services/usercase-catalog-service.ts
-interface LocalUserCaseCatalogEntry { … }
-// Нет зависимостей от device-board типов
-```
-
-**Действие Структурщика (Ozhegov):**
-1. Выбрать путь (обсудить с Teamlead в консилиуме).
-2. Refactor: переместить типы ИЛИ дублировать и убрать импорты.
-3. Проверить: `yarn lint` и `yarn turbo run typecheck --no-cache`.
-4. PR с описанием решения (1 абзац).
+3. **10:00–10:30 | Merge**
+   - Lint + typecheck ✅
+   - PR merge в `techies68`.
 
 **DoD:**
-- [ ] #185 PR ready to review.
-- [ ] Нет циклических импортов между usercase-catalog и device-board.
-- [ ] Lint + typecheck green.
+- [ ] #153 merged.
+- [ ] W0-H3 closed as resolved.
+- [ ] Smoke: device-board branch switch works without errors.
 
 ---
 
-### **Действие 3: Диагностика #178 (async-v2 track upload fails) — 10:00–12:00**
+### **3. #187 + #186-C2: Headroom + RAG-balance**
 
-**Статус:** `async-v2` upload зависает, detached-report не генерируется.
+**Состояние:**  
+- #187: headroom proxy performance не измерена.
+- #186-C2: RAG context balance — RAG_TOP_K требует пересчёта.
 
-**Цепочка жизненного цикла:**
-```
-make-track (device-board)
-  ↓
-start-async-job (scenarioMicJournalBridge?)
-  ↓
-upload (где обрывается?)
-  ↓
-detached-report (замёрзло здесь)
-```
+**Действия Dynin (Математик):**
 
-**Действие Структурщика (Ozhegov):**
-1. **Trace-исследование:**
-   - Запустить `yarn workspace apps/client run dev` в режиме debug.
-   - Load UserCase из device-board → track upload → Check console + network tab.
-   - Где обрывается цепь?
+1. **10:30–11:00 | Headroom proxy setup**
+   - Поднять headroom server: `tools/headroom-venv && source venv/bin/activate && headroom proxy --port 8787`.
+   - Verify: `curl http://localhost:8787/health` → 200 ✓
 
-2. **Root-cause гипотезы:**
-   - `getDefaultMediaLibraryService()` не инициализирован?
-   - Async-job storage не сохраняет state?
-   - WebSocket/HTTP upload timeout?
+2. **11:00–11:30 | Headroom perf measurement**
+   - Claude Code сеанс с proxy:
+     ```bash
+     ANTHROPIC_BASE_URL=http://localhost:8787 \
+     yarn claude:code --no-max-turns 20  # 20–30 tool calls
+     ```
+   - Логирование: headroom proxy собирает метрики (latency, cache hit, transforms).
+   - Export: `headroom perf --format json > docs/insights/insight-headroom-server-deploy/proxy-perf-report.json`.
+   - Комментарий в #187: `savings_pct`, `cache_hit_pct`, топ-3 transforms.
 
-3. **Документирование в PR/issue:**
-   - Описать найденный bottleneck.
-   - Предложить fix (может быть, небольшой patch).
+3. **11:30–12:30 | RAG-balance (#186-C2)**
+   - Update `@membrana/background-office` config:
+     ```typescript
+     RAG_TOP_K = {
+       archive: 15–20,  // было 5–7
+       operative: 5–7   // без изменений
+     }
+     ```
+   - Обновить `CONTRIBUTING.md`: рекомендация использовать `trace_path` при увеличении archive-circuit.
+   - Smoke: `yarn ritual:day` → `codebase-memory-mcp index_status` не падает ✅
+   - Коммит + PR.
 
 **DoD:**
-- [ ] Root-cause identified и задокументирован.
-- [ ] Fix-план описан (1–2 абзаца).
-- [ ] Если fix простой (< 30 мин) → merge; если сложный → добавить в backlog.
+- [ ] `proxy-perf-report.json` заполнен.
+- [ ] Комментарий в #187 с метриками.
+- [ ] #186-C2 merged.
+- [ ] ritual:day smoke pass.
 
 ---
 
-## 📋 Параллельные работы (остаток дня)
+## 🎯 Параллельная работа (T1)
 
-| Задача | Роль | Таймбокс | DoD |
-|--------|------|----------|-----|
-| **W0-H3 (#153): selection clearance** | Rodchenko | 09:00–11:00 | PR merged |
-| **Smoke Phase 2b (alpha/beta/gamma)** | Rodchenko | 11:00–13:00 | Ошибки задокументированы |
-| **C3 headroom-audit интеграция** | Dynin | 10:00–12:00 | Smoke-тест green |
-| **T1 VDR-сбор параллельно** | Kuryokhin | 11:00–17:00 | 10+ сэмплов |
+### **VDR-сбор (Kuryokhin, 11:00–17:00)**
+
+**Цель:** Собрать 10–15 валидационных сэмплов для улучшения precision trends-детектора.
+
+**Действия:**
+1. **Сбор аудио:** 10–15 различных drone-сэмплов (разные частоты, расстояния, фоны).
+2. **Лейбелирование:** По VDR_SCHEMA (source, datetime, drone-type, confidence).
+3. **Коммит:** `docs/datasets/free-v1-validated/` (пилот).
+4. **Регистрация:** `yarn vdr:list` показывает новые сэмплы.
+
+**DoD:**
+- [ ] 10+ сэмплов в git (WAV + JSON metadata).
+- [ ] `yarn vdr:list` shows them.
+- [ ] Документ: `docs/datasets/free-v1-validated/README.md` с инструкциями.
 
 ---
 
-## 🚀 Команды дня
+## ✅ Проверочный лист (конец магистрального дня)
+
+**К 12:30 (конец магистрали):**
+- [ ] #178 диагностика завершена + fix merged или documented.
+- [ ] #153 merged, W0-H3 closed.
+- [ ] #187 proxy-perf-report.json заполнен.
+- [ ] #186-C2 RAG_TOP_K поднят; ritual:day smoke pass.
+- [ ] `yarn turbo run lint typecheck` ✅
+
+**К 17:00 (конец рабочего дня):**
+- [ ] VDR-сбор: ≥10 сэмплов в репо.
+- [ ] `yarn turbo run test --filter='@membrana/core @membrana/device-board'` ✅
+- [ ] `yarn ritual:evening` → архив + code-review на завтра.
+
+---
+
+## 🚀 Команды на старт (09:00)
 
 ```bash
-# Утро: Консилиум (09:00–10:00)
-yarn ask dynin --task-file ./docs/FFT_METRICS_POTENTIAL_AND_LIMITS.md \
-  --save-as STAGE_GATE_1_TO_2_DECISION \
-  "Пройден ли stage-gate hard SLD (P≥85% R≥90%) на trends DRONE_TIGHT 95%/76%? \
-   Или принимаем soft SLD (P≥75%) с условием VDR-эпика в 3–5 дней?"
+# 1. Тесты качества
+yarn turbo run lint typecheck test --no-cache --filter='@membrana/core @membrana/device-board'
 
-# Проверка code качества
-yarn turbo run lint typecheck test --no-cache
+# 2. Диагностика #178
+yarn workspace apps/client run dev &
+# Device Board → Load UserCase → Trigger upload (check console + network)
 
-# Smoke Phase 2b
-yarn workspace @membrana/client run dev &
-# Device Board → Load UserCase → alpha scenario
+# 3. Headroom proxy (фон)
+cd tools/headroom-venv && source venv/bin/activate
+headroom proxy --port 8787 &
 
-# Headroom-audit smoke
-yarn ritual:day  # включает ритуал, который проверит C3
+# 4. Smoke ritual:day
+yarn ritual:day
 
-# Вечер
+# 5. Вечер: архивизация
 yarn ritual:evening
 ```
 
 ---
 
-## ✅ Definition of Done (день)
+## 📌 Результаты дня (для завтрашнего MAIN_DAY_ISSUE)
 
-- [ ] **Консилиум завершён** → `STAGE_GATE_1_TO_2_DECISION.md` с LGTM Teamlead.
-- [ ] **#185 refactor** → PR ready to review или merged.
-- [ ] **#178 root-cause identified** → fix-план в issue или PR.
-- [ ] **W0-H3 (#153) merged** → selection-clearance работает.
-- [ ] **Smoke Phase 2b** → ошибки задокументированы в `docs/audit-phase-2b-smoke-2026-06-28.md`.
-- [ ] **C3 headroom-audit интегрирована** → smoke-тест green.
-- [ ] **`yarn turbo run lint typecheck test build`** → ✅ zero errors.
-- [ ] **Вечерний ритуал выполнен** (`yarn ritual:evening`, архив + code-review).
+Если все три критических блокера закрыты сегодня → завтра (30 июня):
+- **Магистраль:** Trends-куратор DRONE_TIGHT финализация + VDR bootstrap.
+- **Параллель:** Phase 2b smoke (alpha/beta/gamma scenarios).
+- **Подготовка:** Этап 2 контракты (TDOA/localization) design-review.
 
 ---
 
-**Статус:** 🟢 **READY FOR EXECUTION**  
-**Фокус дня:** Консилиум + граница #185 + диагностика #178  
-**Ответственность:** Vesnin (координация), Ozhegov (refactor + диаг.), Dynin (метрики)  
-**Опубликовано:** 2026-06-28T05:49 UTC
+**Статус:** 🟢 **READY TO START**  
+**Фокус дня:** Закрыть #178, #153, #187 | VDR-сбор T1  
+**Ответственность:** Ozhegov (#178), Rodchenko (#153), Dynin (#187/#186), Kuryokhin (VDR)  
+**Опубликовано:** 2026-06-29T06:35 UTC

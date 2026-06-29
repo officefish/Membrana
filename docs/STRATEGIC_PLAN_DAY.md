@@ -1,85 +1,94 @@
-<!-- Сгенерировано: 2026-06-28T05:42:01.184Z (yarn plan:day) -->
+<!-- Сгенерировано: 2026-06-29T06:29:11.876Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->
 
 # План на следующий день
 
-> **Дата документа:** 2026-06-16 (по состоянию репозитория)  
-> **Статус:** синтез стратегии (WHITE_PAPER v0.1) + анализ текущего кодового долга  
-> **Хранитель:** Teamlead  
+**Дата:** 2026-06-29 | **Период:** 2026-06-28 (последние ~24 часа) | **Статус ветки:** techies68
 
 ---
 
 ## 1. Что сделано за период (последние сутки)
 
-**По git-логу:** коммитов за последние сутки не обнаружено. Последний фиксированный коммит — `19168c3` (4 дня назад): `fix(background-media): local scenario validation without ESM core import`.
+### 1.1 Инфраструктура и workflows
+- **Commit f502573, 697f289, dc42514:** Добавлена структура **team evening feedback** (обязательный skill для проактивного сбора ревью команды в `ritual:evening`). Обновлены `CLAUDE.md`, добавлена карточка скилла в `.claude/skills/`.
+- **Commit bbca9d9:** Автоматизирована **дневная архивизация** (DAILY_STANDUP, MAIN_DAY_ISSUE, STRATEGIC_PLAN переносятся в `docs/archive/daily-day/` с манифестом).
 
-**По состоянию рабочего дерева:**
-- Отслеживаемые файлы: 2830 (без критических нарушений).
-- Незафиксированные изменения: отсутствуют в отслеживаемых файлах; рабочее дерево чистое.
-- Branch: `techies68` (feature-branch, требует анализа).
-- Артефакты сборки / интеграции: `playwright-report/`, `test-results/` наличествуют (признак того, что последнее прогон интеграционных тестов был, но давнее).
+### 1.2 Инсайты и исследовательский слой
+- **Commit 2c5d00c:** **Полный lifecycle двух инсайтов:**
+  - `insight-sessions-archive` (weight 6.8, quarter-горизонт) — архивация сессий Claude-Code с JSONL-адаптером и скрабом.
+  - `insight-task-archive-storage` (weight 7.6, week-горизонт) — хранилище архива задач через append-only JSONL вместо Postgres.
+  - Оба прошли RESEARCH → REVIEW → ADOPTED; регистрация в `docs/insights/registry.json`.
+- **Commit 9973346:** Инсайты зафиксированы в `docs/INSIGHTS.md` с метаинформацией.
 
-**Вывод:** За последние сутки активной разработки не велось. Это точка стабилизации перед новым плановым циклом.
+### 1.3 Workflows: автоматизация закрытия задач
+- **Commit 75f0a3c:** Добавлена **автоматизированная система closure review** (TCR — Task Closure Review):
+  - `TASK_CLOSURE_REVIEW_PROMPT.md` (полный prompt для Teamlead-проверки закрытия).
+  - Обновлены скилы в `.agents/`, `.claude/`, `.cursor/` с regulation-схемой.
+  - Scripts: `task-closure-review.mjs`, тесты, JSON-schema для отчётов.
+  - Интегрирована в `package.json` (`task:review:prepare/run/status/finalize`).
+
+### 1.4 CI/CD: видимость тестов
+- **Commit f92b705 (closes #29):** Добавлены **JSON-репортёры тестов** в 4 пакета (`fft-analyzer`, `core`, `telemetry`, `background-office`). Артефакты загружаются в GitHub Actions (retention 7d). Документировано в `CONTRIBUTING.md`.
+- **Commit 946d2aa (closes #12):** Добавлен обязательный шаг `yarn test:scripts` в CI (проверка инвариантов root-скриптов).
+
+### 1.5 Архитектура: устранение boundary-нарушения
+- **Commit 017f5cd (closes #185):** **Удалена граница сервис ↔ device-board** — `@membrana/usercase-catalog-service` больше не зависит от `device-board`, контракты миграли в `@membrana/core`. Обновлены импорты в `apps/client`, `packages/device-board/`, `packages/services/usercase-catalog/`. Добавлены промпт и консилиум обоснования (`ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md`, `seanses/issue-185-boundary-decision-2026-06-28.md`).
+
+### 1.6 Исследовательский прототип: Research-Tree
+- **Commit 30c130b:** Фиксирована начальная версия **Knowledge Graph для Research-Tree** (`membrana-knowledge-graph.json` v0.3, 60+ узлов). Подготовлены спецификации: `KNOWLEDGE_GRAPH_SPEC.md`, `DEMO_STACK.md`, `AGENT_TASK.md`, `README.md`. Стек: React+Vite+xyflow+DaisyUI (0 новых зависимостей).
+
+### 1.7 Инструментарий разработчика
+- **Commit f6cbe17:** Добавлены скрипты `proxy:claude` (Hiddify-specific launcher) и команды `task:review:*` в `package.json`.
+- **Commit 9061433:** Добавлен `scripts/proxy-claude.mjs` для альтернативного запуска Claude Code через Hiddify Mixed (порт 12334).
+
+**Итог:** Сутки сосредоточены на **инфраструктуре workflows** (closure review, evening feedback, архивизация), **инсайт-исследовании** (sessions/task-archive), **CI-видимости** (тесты в GitHub Actions) и **архитектурной чистке** (device-board boundary). **Основной код детекции и fusion не менялся.**
 
 ---
 
 ## 2. Привязка к стратегической цели
 
-### Текущая позиция на дорожной карте (WHITE_PAPER §8)
+### Текущая позиция на дорожной карте
+Система находится **на конце Этапа 0 — Фундамент** (WHITE_PAPER §8):
+- ✅ `audio-engine` поставляет кадры.
+- ✅ `fft-analyzer` даёт спектр в реальном времени.
+- ✅ Клиент умеет показывать спектр.
+- **На пороге Этапа 1.A (DSP-эшелон)**, но **не** в смысле «давайте бенчмарка harmonic/cepstral/flux», а в смысле **продакшн-готовности trends-детектора**.
 
-Система находится между **Этапом 0** (фундамент) и **Этапом 1.A** (DSP-эшелон, один узел):
+### Что из сделанного приближает цель
+1. **Хранилище инсайтов** (`insight-task-archive-storage`) — закладывает основу для **логирования и доказательной базы** целей, требуемой в WHITE_PAPER §2 (п. 5: «логи и доказательная база»).
+2. **Closure review & evening feedback** — систематизируют анализ, нужны для скорости итераций на Этапе 1.A/1.B (где много дита в детекторы ложится).
+3. **CI-видимость тестов** — обеспечивает confidence перед переходом на многоузловую архитектуру (Этапы 2–4), где синхронизация критична.
+4. **Device-board boundary fix** — убирает архитектурный долг, освобождает руки для фокуса на core-функциональность.
 
-| Компонент | Статус | Связь с WP |
-|-----------|--------|-----------|
-| `@membrana/audio-engine-service` | ✅ реализован | foundation; захват + кольцевой буфер (§4.2) |
-| `@membrana/fft-analyzer-service` | ✅ реализован | analyzer; спектральный анализ (§4.2) |
-| `@membrana/detector-base` | ✅ контрактный слой | stage-gate 1→2 (§8, консилиум single-node-detection-first) |
-| DSP-детекторы (harmonic, cepstral, spectral-flux, trends) | ⚠️ scaffold / impl | эшелон 1.A DSP; **эпик #84 завершил**: trends+DRONE_TIGHT проходит планку (95%/30%, §6 FFT_METRICS) |
-| `@membrana/detection-ensemble-service` | ❌ не начат | агрегация после stage-gate (план 1.B) |
-| `@membrana/device-board` (сценарии полей, узлы) | ✅ наличествует | поддержка конфигурации (§6) |
-| `@membrana/agenda` (расписание, алерты) | ✅ наличествует | ситуационный слой (§4.6) |
-| Multi-node слой (TDOA, локализация, трекинг) | ❌ заморожены | stage-gate 1→2 не пройден; Single-Node First доминирует |
-| `apps/client` (ситуационная карта) | ✅ live-плагины есть | UI готовит почву (§4.6) |
+### Что нейтрально
+- Research-Tree (Knowledge Graph) — горизонтный проект визуализации, вспомогательный для обучения, не блокирует основной путь.
 
-### Что из сделанного приближает к цели
+### Что отвлекает (минимум)
+- Нет критических отвлечений; все сделанное — инфраструктурное улучшение, необходимое для масштабирования.
 
-1. **Завершение эпика #84 (fft-last-chance-calibration):** trends-детектор с шаблоном `DRONE_TIGHT` дал 95%/30% на held-out validation. Это **покрывает мягкую цель** (80%/40%) из `DETECTOR_BENCHMARK.md`, но **не** исходный stage-gate строгий (P≥85% / R≥90%). Тем не менее, это лучший FFT-кандидат для продакшена.
+### Недостающие сервисы для Этапов 1.A—4
 
-2. **Архитектурные границы (ARCHITECTURE.md §1a–1e, SERVICES.md) держатся:** зависимости между пакетами соответствуют контракту, нет циклических импортов, микрофон капсулирован в `audio-engine`.
+По WHITE_PAPER §6 и ARCHITECTURE.md §1a, нужны:
 
-3. **Локализация плагин-системы (`MembranaRegistry` + lazy-loading):** infrastructure для будущих analyzer-сервисов готова.
+| Сервис | Статус | Целевой этап | Примечание |
+|--------|--------|--------------|-----------|
+| `@membrana/harmonic-detector-service` | реализован v0.1 | 1.A | DSP, только диагностика (не gate-критерий) |
+| `@membrana/cepstral-detector-service` | scaffold | 1.A | DSP, только индикатор |
+| `@membrana/spectral-flux-detector-service` | scaffold | 1.A | DSP, только индикатор |
+| `@membrana/detection-ensemble-service` | план | после gate 1→2 | агрегация детекторов |
+| `@membrana/tdoa-service` | **заморожен до gate** | 2 | извлечение TDOA |
+| `@membrana/localizer-service` | **не начат** | 3 | мультилатерация |
+| `@membrana/tracker-service` | **не начат** | 4 | ассоциация + Калман |
+| `@membrana/transport-service` | **не начат** | 2+ | шина событий узел↔сервер |
 
-### Что нейтрально / отвлекает
+**Стратегический вывод:** Ближайшие 2–3 дня должны сосредоточиться на **продакшн-готовности trends-detector** (DRONE_TIGHT + template-match catalog) и **validated dataset**, а НЕ на повторном бенчмарке трёх отдельных DSP-детекторов.
 
-- **Background-серверы (`background-media`, `background-office`):** не входят в магистраль детекции, но требуют поддержки. `BACKGROUND_SERVERS.md` зафиксирован — готово.
-- **Playwright-интеграции:** тесты там, но не критичны для стратегии эшелона 0.
-
-### Недостающие сервисы (критический путь, этап 2+)
-
-Пока эти компоненты **заморожены** по stage-gate, но требуют архитектурной подготовки:
-
-| Сервис | Назначение | Тип | Когда нужен |
-|--------|-----------|-----|-------------|
-| `@membrana/tdoa-service` | Разница времён прихода между узлами (§4.4) | analyzer | stage-gate 1→2 пройден (этап 2) |
-| `@membrana/localizer-service` | Мультилатерация на плоскости (§4.4) | analyzer | этап 3 |
-| `@membrana/tracker-service` | Фильтр Калмана + ассоциация целей (§4.4) | analyzer | этап 4 |
-| `@membrana/transport-service` | Шина событий узел↔сервер | foundation | этап 2 (параллельно tdoa) |
-| `@membrana/detection-ensemble-service` | Агрегация решений детекторов после gate | analyzer | 1.B (после single-node) |
-
-### Детекция: стратегическая ясность (опора на FFT_METRICS_POTENTIAL_AND_LIMITS.md)
-
-**Эшелон 0 (DSP/FFT) на free-v1 исчерпан:**
-- Потолок — trends `DRONE_TIGHT` 95%/30% (F1 0.844).
-- Пороговый тест, гармонический, кепстральный детекторы — вспомогательные инструменты (диагностика, индикаторы), **не** селекторы дронов.
-- **Ключевой вывод (§6):** без новых данных / алгоритмов / модальностей дальше расти невозможно.
-
-**Магистраль качества — два пути:**
-
-1. **Validated Data (VDR-эпик):** собрать/пересмотреть датасет с надёжной разметкой, новые инженерные признаки → переснять бенчмарк trends+DSP.
-2. **Эшелон 2 (нейро, zero-shot, agentic):** CLAP, YAMNet, reasoning-агент над FFT → INTEGRATIONS_STRATEGY.md.
-
-**Что НЕ делаем:** unified benchmark harmonic+cepstral+spectral-flux без смены датасета (они дают OR-recall ~100%, FPR ~100%) — это потеря времени (см. FFT_METRICS §6).
+### Детекция: что говорит FFT_METRICS_POTENTIAL_AND_LIMITS.md
+- **Эшелон 0 (DSP/FFT на free-v1) исчерпан:** лучший результат — trends `DRONE_TIGHT` (95% recall / 30% FPR).
+- **Гармонический, кепстральный, spectral-flux по отдельности** — НЕ проходят даже мягкую планку (88–100% FPR).
+- **Что дальше:** trends-куратор в template-match (catalog), validated датасет (VDR) или прыжок на эшелон 2 (CLAP/YAMNet zero-shot).
+- **Не делать:** `yarn benchmark:detectors` на free-v1 без смены датасета, алгоритма или fusion-стратегии (см. §6 того документа).
 
 ---
 
@@ -87,294 +96,182 @@
 
 ### Технические риски
 
-| Риск | Срок проявления | Что делаем |
-|------|-----------------|-----------|
-| **Синхронизация времени узлов не моделирована** | Этап 2 (TDOA) | Резервируем GPS-PPS, NTP/PTP в `tdoa-service` (контракт в `@membrana/core`) |
-| **Многолучёвость (отражения) не учитывается в алгоритме** | Этап 3 (локализация) | GCC-PHAT, медианная фильтрация TDOA, геометрия с избыточностью узлов (WHITE_PAPER §9) |
-| **Скорость звука фиксирована** | Метрология | Модель температуры/влажности в fusion (White Paper §5.3) — будущий эпик |
-| **Масштабируемость fusion на 10+ узлов не протестирована** | Этап 4+ | Load-тесты; сегментирование на соты 2–4 км (WHITE_PAPER §4.3) |
+1. **Синхронизация времени (WHITE_PAPER §9, риск 4):** Система на Этапе 1.A ещё одноузловая, поэтому синхронизация кажется не критичной. **Риск:** когда дойдём до Этапа 2 (TDOA на паре узлов), обнаружим, что NTP-разброс превышает допуск (микросекунды нужны для разрешения в метры). **Действие:** начать накапливать GPS-PPS данные и тестовые мотажи с dual-sync уже сейчас, параллельно trends-куратору.
+
+2. **Многолучёвость (WHITE_PAPER §9, риск 3):** Акустические отражения в реальном помещении/на улице будут портить TDOA. На одном узле невидимо. **Риск:** на Этапе 2–3 обнаружим, что GCC-PHAT даёт систематическое смещение. **Действие:** заложить в `@membrana/core` типы для robust-оценок и median-фильтрации уже в фундамент (не откладывать на Этап 2).
+
+3. **Дальность vs звук (WHITE_PAPER §9, риск 2):** Система рассчитана на нижнее небо (до ~1500 м), но за пределами слышимости (ветер, расстояние) гулит в шуме. На текущих данных это видимо (тихие дроны в ESC-50), но иммунитета нет. **Риск:** при расширении датасета на реальную тишину (сельская местность ночью) может потребоваться переучивание trends-шаблонов. **Действие:** зафиксировать текущий куратор как `DRONE_TIGHT_FREE_V1` (версия) и подготовить VDR-pipeline для сквозной переучивания.
 
 ### Накопленный архитектурный долг
 
-1. **Stage-gate 1→2 требует refresh DETECTOR_BENCHMARK.md:**
-   - Текущие метрики (precision/recall) собраны по эпику #84 на `val`, но **precision ~76% / recall 95%** не попадает в исходный gate (P≥85%, R≥90%).
-   - Решение: либо расслабить ворота до **P≥75% / R≥90%** (логично, дрон — важнее ложь), либо найти прирост precision через ensemble/trends-конкуренты.
-   - Документировать в `docs/seanses/stage-gate-1-2-decision-YYYY-MM-DD.md`.
+1. ✅ **Device-board boundary** — устранен в commit 017f5cd. Долг погашен.
+2. **Сокращение Cursor rules vs действительность:** `.cursorrules` может не синхронизироваться с новыми соглашениями (skills, closure review, evening feedback). **Действие:** добавить в `yarn test:scripts` проверку консистентности `.cursorrules` ↔ docs.
+3. **Research-Tree & Knowledge Graph:** Достаточно автономна, но нужна интеграция с основным монорепо после render-фазы (синхронизация версий, веб-deployment). Пока risk low (изолирован в `apps/demos/`).
 
-2. **Multi-node контракты в `@membrana/core` — заморожены, но не отмечены как frozen:**
-   - `TdoaResult`, `SyncedTimestamp`, `TimeSyncProvider` из `core` помечены `@experimental @stage 2`, но это неявно.
-   - **Action:** явно добавить comment в `core/src/types.ts` (раздел multi-node): «Frozen до stage-gate 1→2; обновлять **только** при solve поменьше в DETECTOR_BENCHMARK или консилиум Teamlead».
+### Нарушения границ пакетов (по дифф-у)
 
-3. **DSP-детекторы в scaffold состоянии (cepstral, spectral-flux):**
-   - Реализованы на базе контракта `DroneDetector`, но не интегрированы в `detection-ensemble`.
-   - **Action:** scaffold → рабочее состояние (unit-тесты, CI, эшелон 1.A docs) ИЛИ явно закрыть как диагностические инструменты (не для stage-gate).
-
-### Нарушения границ пакетов (по diff-у рабочего дерева)
-
-Незначительные:
-- `background-media` использует ESM-imports в scenario-validation без fallback — исправлено в `19168c3` (4 дня назад).
-- `.env.llm-proxy` в gitignore (внешние интеграции) — no-issue.
+- **Commit 017f5cd:** Исправлены нарушения — больше нет. `usercase-catalog-service` перестала зависеть от `device-board`.
+- **Повторная проверка:** На ветке есть untracked файлы (`docs/intern/`, `docs/prompts/TASK_PROMPT_GHOST_CLOSURE_SPRINT.md`, `tools/`) — скорее всего draft-материалы. Нужно очистить перед merge.
 
 ---
 
 ## 4. План на следующий день
 
-### Задача 4.1 — Документирование stage-gate 1→2 decision
+### Задача 1: Продакшн-готовность trends-детектора (DRONE_TIGHT куратор)
 
-**Цель:** зафиксировать консилиум по пересмотру ворот stage-gate: принять точную формулировку criteria для перехода от одиночного детектора к многоузловой архитектуре.
+**Цель:** Фиксировать в `template-match` каталоге окончательный шаблон `DRONE_TIGHT` с документацией, готовым к использованию в `@membrana/trends-detector-service`.
 
-**Пакет / слой:** документация (`docs/seanses/`, `DETECTOR_BENCHMARK.md`).
+**Пакет / слой:** `packages/services/trends-detector/` (analyzer) + `packages/core` (типы шаблонов).
 
-**Связь с WHITE_PAPER:** §8 (дорожная карта, stage-gate), §11 (метрики успеха: P95-точность, задержка, доля ложных тревог).
+**Связь с WHITE_PAPER:** §8 Этап 1.A — демонстрируемое качество на одном узле; §5 Контракт наблюдения — шаблоны — часть контракта фьюжена.
 
 **Definition of Done:**
-1. Консилиум или async-решение Teamlead: "Принимаем trends `DRONE_TIGHT` 95%/30% как **go** к этапу 2" ИЛИ "Требуем доработку ensemble+конкуренты до 85%/40%".
-2. Документ `docs/seanses/stage-gate-1-2-decision-2026-06-16.md` с таблицей метрик, обоснованием, следующими шагами.
-3. `DETECTOR_BENCHMARK.md` обновлён: критерии gate явно сформулированы, статус trends отмечен.
+- [ ] `packages/core/src/detector/template.ts` расширена: версионирование шаблонов (DRONE_TIGHT_FREE_V1 vs будущие), metadata (датасет, метрики recall/FPR на валидационном сете).
+- [ ] `packages/services/trends-detector/templates/` содержит окончательный `DRONE_TIGHT.json` с сигнатурой: спектр (centroid 2900–4300, flux 0.03–0.16, rms 0.07–0.28), temporal (stability high/veryHigh, volumeTrend stable, frequencyTrend stable), конкурирующие шаблоны-фоны.
+- [ ] README.md в trends-detector обновлен: таблица шаблонов, когда какой использовать, результаты бенчмарка на val (95% recall / 30% FPR / F1 0.844).
+- [ ] Unit-тесты в `trends-detector.service.test.ts` — scoring на mock-сэмплах с known-patterns (drone stabil, bird chirp, wind gust).
 
-**Роль:** Teamlead (консилиум) + Структурщик (документирование).
+**Роль:** Математик (туняет параметры шаблона) + Музыкант (проверяет на реальных аудиосэмплах).
 
-**Размер:** M (консилиум 0.5 ч + doc 1 ч).
+**Размер:** M (3–4 часа дизайна + 1–2 часа рефакторинга, если нужна версионизация в core).
 
 ---
 
-### Задача 4.2 — Frozen mark в `@membrana/core` и freeze-комментарии
+### Задача 2: Validated Dataset Infrastructure (VDR) — спецификация и bootstrap
 
-**Цель:** явно отметить, какие типы в `core` заморожены до stage-gate 1→2, чтобы случайно не было попыток их использовать.
+**Цель:** Создать облегченное хранилище для валидационного датасета с контролем версий и метаданными, готовое к заполнению на следующих неделях.
 
-**Пакет / слой:** `@membrana/core` (foundation типов).
+**Пакет / слой:** `docs/datasets/` (новый) + `scripts/` (утилиты для VDR).
 
-**Связь с WHITE_PAPER:** §6 (контракт наблюдения), архитектурная граница stage-gate.
+**Связь с WHITE_PAPER:** §8 Этап 1.A: stage-gate требует надежного датасета, не free-v1 с его шумом.
 
 **Definition of Done:**
-1. `packages/core/src/types.ts` дополнен JSDoc-комментариями:
-   ```typescript
-   /**
-    * @frozen @stage 2 — Используется для TDOA, синхронизации.
-    * Не трогать до gate-1→2. История: WHITE_PAPER §8, консилиум <дата>.
-    */
-   export interface SyncedTimestamp { … }
-   ```
-2. Раздел «Multi-node types (Stage 2)» в `core/README.md` с явной пометкой.
-3. Тест / линтер (опционально): warning при import `SyncedTimestamp` в пакеты вне scope Stage 2.
+- [ ] `docs/datasets/VDR_SCHEMA.md` — спецификация структуры (сэмплы, labels, metadata: source, datetime, drone-type, confidence).
+- [ ] `docs/datasets/README.md` — кто может добавлять, как валидировать, где хранить (рекомендация: git-lfs или S3 для больших файлов).
+- [ ] `scripts/vdr-tools.mjs` — утилиты: `vdr:list` (показать датасеты), `vdr:validate` (проверить целостность), `vdr:export-as-train-test` (сплит для бенчмарка).
+- [ ] Bootstrap: один тестовый сэмпл в `docs/datasets/free-v1-curated/` как пример.
+- [ ] Документирование в `CONTRIBUTING.md` — как добавить новый сэмпл в VDR.
 
-**Роль:** Структурщик (рефакторинг типов).
+**Роль:** Структурщик (дизайн schema) + Теслад (approval спецификации).
 
-**Размер:** S (1–2 ч).
+**Размер:** S (3–4 часа дизайна + bootstrap).
 
 ---
 
-### Задача 4.3 — Scaffold → Working State для `@membrana/cepstral-detector-service`
+### Задача 3: Закрытие task-closure-review пилота (R5) и финализация workflow
 
-**Цель:** перевести кепстральный детектор из scaffold в рабочее состояние (unit-тесты, CI-интеграция, эшелон 1.A документация).
+**Цель:** Стабилизировать механизм closure review (piloted в R5), обновить документацию, готовый к использованию для всех будущих tasks.
 
-**Пакет / слой:** `packages/services/detectors/@membrana/cepstral-detector-service` (analyzer).
+**Пакет / слой:** Корневая инфра (`scripts/`, `package.json`, `docs/`).
 
-**Связь с WHITE_PAPER:** §8 (эшелон 1.A DSP), но с оговоркой: **не магистраль качества** (see FFT_METRICS §4–6), вспомогательный индикатор.
+**Связь с WHITE_PAPER:** Косвенно — повышает качество итераций и прозрачность Этапов 1–4.
 
 **Definition of Done:**
-1. `src/service.ts` завершён: `CepstralDetector` класс с методами `analyze(audioWindow): DetectionResult`.
-2. `src/hooks.ts`: `useCepstralDetector()` React-хук с правильной очисткой ресурсов.
-3. `test/cepstral.spec.ts`: 5–7 unit-тестов (normal drone, silence, bird, wind, city noise), coverage ≥ 80%.
-4. CI/CD: `yarn test:detectors` включает cepstral, баш-скрипт завершается успешно.
-5. `README.md`: API, параметры (quefrency, peakRatio thresholds), пример вызова, **explicit mark** «вспомогательный, используй в ensemble или trends».
-6. `DETECTOR_BENCHMARK.md` обновлён: cepstral добавлен в таблицу (recall, precision, FPR на free-v1 валидации).
+- [ ] `docs/seanses/closure-review-process-consilium-2026-06-28.md` обновлена с выводами R5-пилота (что работало, что нужно улучшить).
+- [ ] `TASK_CLOSURE_REVIEW_REGULATION.md` нормализована под финальное использование (убираем слово «pilot»).
+- [ ] Скрипты `task:review:*` протестированы на 2–3 真實 closed tasks (не пилотных) → отчёты в `docs/reviews/`.
+- [ ] Integration test в `scripts/task-closure-review.test.mjs` проходит со 100% покрытием новых путей.
+- [ ] `CONTRIBUTING.md` расширена: раздел «Закрытие task'а» с примером.
 
-**Роль:** Математик (алгоритм кепстра) + Верстальщик (хуки, tests).
+**Роль:** Teamlead (regulation, approval) + Структурщик (scripts + тесты).
 
-**Размер:** M (3–4 ч; алгоритм простой, но нужно аккуратно с FFT → IFFT).
+**Размер:** M (4–5 часов работы с пилотом + нормализация).
 
 ---
 
-### Задача 4.4 — Refactor: `detection-ensemble-service` skeleton
+### Задача 4: Research-Tree render-фаза — bootstrap React компонентов
 
-**Цель:** заложить архитектуру ensemble-агрегатора (после stage-gate 1→2, но контракт готов сейчас), который комбинирует решения от разных детекторов (harmonic, cepstral, spectral-flux, trends).
+**Цель:** Подготовить базовый React+Vite прототип для визуализации Knowledge Graph (xyflow-based), готовый к наполнению на следующей фазе.
 
-**Пакет / слой:** `packages/services/@membrana/detection-ensemble-service` (analyzer, **новый**).
+**Пакет / слой:** `apps/demos/Research-Tree/` (прототип).
 
-**Связь с WHITE_PAPER:** §8 (этап 1.B, но фундамент кладём сейчас), ARCHITECTURE §1e (детекторы).
+**Связь с WHITE_PAPER:** Вспомогательный проект для обучения и визуализации архитектуры; не critical-path, но ускоряет onboarding команды.
 
 **Definition of Done:**
-1. Пакет создан: `packages/services/detection-ensemble/` с правильными `package.json`, `vite.config.ts`.
-2. `src/types.ts`: `EnsembleConfig` (список детекторов, веса, стратегия голосования), `EnsembleResult`.
-3. `src/service.ts`: класс `DetectionEnsemble` с методом `aggregate(results: DetectionResult[]): EnsembleResult`. Реализованы стратегии: `OR`, `AND`, `majority`, `weighted-sum`.
-4. `src/hooks.ts`: `useDetectionEnsemble(config)`.
-5. `README.md`: описание каждой стратегии, примеры конфигураций (DRONE_TIGHT + trends как leading, DSP как supporting).
-6. No unit-tests ещё (ждём данных из detector-base), но сигнатуры готовы.
+- [ ] `apps/demos/Research-Tree/` содержит `vite.config.ts` с alias'ами на монорепо-типы; `src/components/` с KnowledgeGraphRenderer (xyflow-based).
+- [ ] Mock-данные из `membrana-knowledge-graph.json` загружаются и визуализируются: узлы (concept, artifact, service) + edges (depends, implements, leverages).
+- [ ] `yarn dev` в Research-Tree запускается без ошибок, показывает граф; интерактивность (pan/zoom/select) работает.
+- [ ] README.md обновлен: как запустить, как добавить новый узел в граф (edit JSON + reload).
+- [ ] Нет новых npm-зависимостей (xyflow уже есть в экосистеме или совместимо).
 
-**Роль:** Структурщик (архитектура ensemble), Математик (взвешивание).
+**Роль:** Верстальщик (React, xyflow, стили) + Математик (граф-логика).
 
-**Размер:** M (skeleton + contracts = 2–3 ч; реальная логика — позже).
+**Размер:** M (4–5 часов, есть spec, нужно воплощение).
 
 ---
 
-### Задача 4.5 — Promote trends `DRONE_TIGHT` в curated template-catalog
+### Задача 5: Specification — TDOA и Localizer контракты (дизайн, не реализация)
 
-**Цель:** переместить шаблон `DRONE_TIGHT` из экспериментального в production-ready состояние: добавить в curated sample-library, создать curated-каталог trends-шаблонов.
+**Цель:** Подготовить контракты `@membrana/core` для Этапа 2 (TDOA & локализация), чтобы когда stage-gate 1 пройдет, можно сразу начинать реализацию без переделки типов.
 
-**Пакет / слой:** `@membrana/device-board` (сценарии, шаблоны) + `@membrana/media-library-service` (каталог примеров).
+**Пакет / слой:** `packages/core/src/` (новые типы) + `docs/prompts/` (спецификация).
 
-**Связь с WHITE_PAPER:** §6 (контракт наблюдения, шаблоны trends), §8 этап 1.A completion.
+**Связь с WHITE_PAPER:** §4.4 Слияние данных — локализация через TDOA; §5.2 Мультилатерация — математика.
 
 **Definition of Done:**
-1. `packages/device-board/src/catalogs/trends-templates-curated.ts`: шаблон `DRONE_TIGHT` с полной документацией (centroid 2900–4300, flux 0.03–0.16, rms 0.07–0.28, stability + временные признаки).
-2. `@membrana/media-library-service` обновлён: UI-плагин для выбора шаблонов (DRONE_TIGHT, DRONE_CURATED, и конкуренты).
-3. Пересчёт `yarn benchmark:detectors` с `DRONE_TIGHT` как baseline → новый отчёт в `docs/datasets/week-2026-06-16/trends-promotion-report.md`.
-4. Документ `docs/TRENDS_TEMPLATE_GUIDE.md` (инструкция для пользователя: как калибровать шаблон на своих данных).
+- [ ] `packages/core/src/tdoa/index.ts` — типы: `SyncedObservation`, `TimeSyncProvider` (PPS vs NTP contracts), `TdoaResult` (пара узлов → delay + confidence).
+- [ ] `packages/core/src/localization/index.ts` — типы: `LocalizationHypothesis` (координаты + covariance), `MultilaterationInput` (набор TDOA), `LocalizerPort` (интерфейс сервиса).
+- [ ] `docs/prompts/TDOA_AND_LOCALIZATION_SPEC_PROMPT.md` — full specification: algorithm (GCC-PHAT для TDOA, Gauss-Newton для мультилатерации), инварианты (обусловленность, robust-оценки), тестовые cases.
+- [ ] Диаграмма в `docs/architecture/fusion-pipeline.md` — где живут эти контракты в слое fusion.
+- [ ] `packages/core` компилируется без ошибок, новые типы экспортируются из `index.ts`.
 
-**Роль:** Верстальщик (UI) + Математик (таблицы метрик).
+**Роль:** Структурщик (дизайн типов) + Математик (спец контракта).
 
-**Размер:** M (2–3 ч; большая часть — перестановка existing кода).
+**Размер:** M (3–4 часа дизайна, 1–2 часа документации).
 
 ---
 
-### Задача 4.6 — Multi-node контракт: sketch для `@membrana/transport-service`
+### Задача 6: CI — добавить test-coverage reporting (GitHub Actions artifact)
 
-**Цель:** спроектировать (но не реализовывать) шину транспорта «узел ↔ сервер fusion» на базе event-контракта из WHITE_PAPER §7.
+**Цель:** Расширить CI видимость тестов: добавить coverage-отчёты (Istanbul/c8) в 4 пакета, загрузить в GitHub Actions для trend-анализа.
 
-**Пакет / слой:** `@membrana/transport-service` (foundation, **новый**, но для этапа 2).
+**Пакет / слой:** Корневая инфра (`.github/workflows/`, `vitest.config.ts` в пакетах).
 
-**Связь с WHITE_PAPER:** §4.2–4.4 (архитектура узлов, слой слияния), §6 (контракт наблюдения), SERVICES.md (foundation-сервис).
-
-**Definition of Done:**
-1. `packages/services/transport/` создан (пустой пакет, только `package.json`, `README.md`).
-2. `src/types.ts`: контракты `NodeId`, `AcousticObservation` (из WP §7), `EventBus`, `TransportProvider` (интерфейс для различных реализаций: REST, WebSocket, gRPC, LoRa).
-3. `README.md`: диаграмма архитектуры (node → transport-service → fusion-server), примеры payload, описание требований к синхронизации времени (GPS-PPS, NTP fallback).
-4. Comment в коде: `@experimental @stage 2 Frozen до gate-1→2`.
-5. No implementation (ждём решения gate).
-
-**Роль:** Структурщик (архитектура контракта).
-
-**Размер:** S (1–2 ч; sketch, не код).
-
----
-
-### Задача 4.7 — Audit: проверка соответствия ARCHITECTURE.md и SERVICES.md текущему коду
-
-**Цель:** убедиться, что все текущие пакеты (audio-engine, fft-analyzer, детекторы, agenda, device-board, client) соответствуют обязательным границам, нет hidden зависимостей между analyzer-сервисами.
-
-**Пакет / слой:** infra (лinting, тесты).
-
-**Связь с WHITE_PAPER:** §6 (архитектурные правила), ARCHITECTURE §1a–1e (граф зависимостей).
+**Связь с WHITE_PAPER:** Косвенно — перед переходом на Этапы 2–4 (multi-node) нужна высокая confidence в core-функциях.
 
 **Definition of Done:**
-1. Скрипт `scripts/lint-dependencies.js` (или eslint-плагин) запускается в CI и проверяет:
-   - Нет импортов из `packages/services/<analyzer-N>` в `packages/services/<analyzer-M>` (N≠M).
-   - Нет циклических зависимостей между пакетами.
-   - Все analyzer-сервисы импортируют только `@membrana/core` + свой foundation (не другие analyzer).
-2. Отчёт с результатами в `docs/audits/dependency-audit-2026-06-16.md` (какие ошибки найдены, как их исправить).
-3. CI/CD: `yarn audit:dependencies` добавлен в pre-commit hook / PR checks.
+- [ ] `.github/workflows/unit-tests.yml` расширена: добавлен шаг "Generate coverage" (c8 или встроенный vitest --coverage).
+- [ ] Coverage-JSON загружается как artifact (actions/upload-artifact@v4, name: coverage-reports, retention 30d).
+- [ ] Comment-bot в PR показывает дельта-coverage (если упал — флаг warning). Опционально: интеграция с codecov или Coveralls.
+- [ ] `vitest.config.ts` в 4 пакетах (`core`, `fft-analyzer`, `telemetry`, `background-office`) имеет `coverage: { provider: 'v8', reporter: ['json', 'html'] }`.
+- [ ] `CONTRIBUTING.md` обновлен: требуемый уровень coverage (e.g., ≥85% на новый код).
 
-**Роль:** Структурщик (написание скрипта).
+**Роль:** Структурщик (CI) + DevOps-touch (GitHub Actions).
 
-**Размер:** M (2–3 ч, если нет уже готовых lint-solution'ов).
+**Размер:** S (2–3 часа настройки + тестирование).
 
 ---
 
 ## 5. Что НЕ делаем на этом горизонте
 
-### 5.1 Повторный unified benchmark harmonic/cepstral/spectral-flux на free-v1
+1. **Не повторяем unified benchmark harmonic + cepstral + spectral-flux на free-v1.** Это исчерпано (see FFT_METRICS_POTENTIAL_AND_LIMITS.md §6). Ждём либо нового датасета (VDR-эпик), либо смены алгоритма (trends куратор), либо jump на эшелон 2 (CLAP/YAMNet zero-shot). Benchmark можно переснять, когда `DRONE_TIGHT` in catalog + VDR готов.
 
-**Почему:** FFT_METRICS_POTENTIAL_AND_LIMITS.md §6 установил, что DSP-детекторы на free-v1 дают recall ~68–100% и FPR ~88–100%. Любое их OR-объединение ('OR'-consensus) подтягивает recall к 100%, но FPR остаётся ~100%. Без **новых данных / алгоритмов / модальностей** дальше расти невозможно.
+2. **Не начинаем Этап 2 (TDOA, локализация на паре узлов) до stage-gate 1 → 2.** Stage-gate требует precision ≥85% + recall ≥90% на одном узле, или обоснованное отклонение (e.g., trends=go, одиночные DSP=no, но в совокупности pass). Сейчас trends достаточно сильна; TDOA может подождать.
 
-**Что это блокирует:** попытки «давайте прогоним бенчмарк ещё раз, может улучшится» — не улучшится. Энергия → в validated-data-сбор или эшелон 2.
+3. **Не трогаем детекторы (harmonic/cepstral/spectral-flux) как селекторы дронов.** Они only диагностические (объяснимость, обучение). DSP-энергия идёт на куратор trends-шаблонов и фоновых конкурентов (bird, insect, wind, etc.).
 
----
+4. **Не интегрируем нейро-модели (YAMNet, CLAP, etc.) до эшелона 2, пока не будет стратегии в INTEGRATIONS_STRATEGY.md.** Research-Tree graph можно пополнять идеями, но code-integration — позже.
 
-### 5.2 Этап 1.B (neural-детекторы: YAMNet, CLAP) без эшелона 2 strategy
-
-**Почему:** INTEGRATIONS_STRATEGY.md определяет, какие модели open-weights (CLAP, YAMNet, ASTFormer) подойдут, как их файнтюнить, где хранить веса. Без этого документа начинать интеграцию рискованно (переподгонка, OOM, лицензионные риски).
-
-**Что это блокирует:** любые PR'ы типа «добавил YAMNet в detector-service» без фундамента стратегии.
-
----
-
-### 5.3 Этап 2 (multi-node, TDOA, локализация) до gate-1→2
-
-**Почему:** WHITE_PAPER §8 явно ставит stage-gate 1→2 как обязательный переход. Без достоверных детекций на одном узле многоузловое слияние даст мусор. Синхронизация, TDOA, мультилатерация — наваливаются потом.
-
-**Что это блокирует:** любые попытки «давайте уже интегрируем два узла и TDOA» без подтверждения качества одиночного детектора.
-
----
-
-### 5.4 Рефакторинг `@membrana/core` без консилиума Teamlead
-
-**Почему:** core — фундаментальный пакет; все остальные на него опираются. Любые изменения контрактов (`AcousticObservation`, `DetectionResult`, `Track`) потребуют синхронного обновления всех сервисов.
-
-**Что это блокирует:** самовольные правки типов в core без обсуждения impact analysis.
-
----
-
-### 5.5 Background-серверы (media, office) — только поддержка, не новые feature'ы
-
-**Почему:** Они вне критического пути детекции (WHITE_PAPER критическая дорожная карта). Их контракт зафиксирован в BACKGROUND_SERVERS.md. Новые feature'ы в background → отдельный эпик, не магистраль дня.
-
-**Что это блокирует:** «давайте добавим LLM-интеграцию в background-office» как часть эшелона 0–1.
+5. **Не масштабируем Knowledge Graph до render-фазы, пока не будет консенсуса по UI/UX.** Сейчас bootstrap достаточно; рендер идёт параллельно в задаче 4.
 
 ---
 
 ## 6. Проверки в конце периода
 
-### 6.1 Консилиум stage-gate 1→2 проведён, документирован
+1. **Trends-куратор финализирован и задокументирован:** `DRONE_TIGHT.json` в каталоге, README с метриками (95% recall / 30% FPR / F1 0.844), unit-тесты pass, `yarn test:services:trends-detector` ≥95% покрытие.
 
-**Проверка:** файл `docs/seanses/stage-gate-1-2-decision-2026-06-16.md` существует, содержит:
-- Дату и участников консилиума.
-- Таблицу метрик trends `DRONE_TIGHT` (recall, precision, FPR, F1) на held-out validation.
-- Решение: "go к этапу 2" ИЛИ "требуется доработка до X%/Y%".
-- Дальнейшие шаги (какие архитектурные компоненты активировать).
+2. **VDR инфраструктура подготовлена:** `docs/datasets/VDR_SCHEMA.md` и утилиты `vdr:list/validate/export` работают, один test-сэмпл в репо, CONTRIBUTING.md обновлен.
 
----
+3. **Task-closure-review нормализирован:** скрипты `task:review:*` успешно закрывают ≥2 реальных task'а, отчёты в `docs/reviews/`, regulation.md финализирована.
 
-### 6.2 `@membrana/core` помечена frozen-комментариями на stage-2-типах
+4. **Research-Tree render-фаза: граф видится в браузере:** `yarn dev` в `apps/demos/Research-Tree/` показывает Knowledge Graph с xyflow-интерактивностью, no new npm deps, граф загружается из JSON.
 
-**Проверка:** в `packages/core/src/types.ts` все type'ы `SyncedTimestamp`, `TdoaResult` и т.п. имеют `@frozen @stage 2` комментарий с ссылкой на консилиум.
+5. **Core-типы Этапа 2 готовы к дизайну:** `packages/core` компилируется, `tdoa/` и `localization/` контракты экспортируются, spec-промпт готов для реализации на следующей итерации.
+
+6. **CI: coverage-reporting настроен и работает:** GitHub Actions загружает coverage-artifacts, пример pull-request comment с дельта-coverage видимо (или dry-run в документации).
 
 ---
 
-### 6.3 `@membrana/cepstral-detector-service` в рабочем состоянии
+## Итого
 
-**Проверка:**
-- `yarn test:detectors` включает cepstral, тесты проходят.
-- `yarn benchmark:detectors` выводит метрики cepstral в таблицу (recall, precision).
-- `packages/services/detectors/cepstral/README.md` явно отмечает, что это вспомогательный инструмент, а не магистраль.
-
----
-
-### 6.4 Sketch `@membrana/transport-service` и `detection-ensemble-service` созданы
-
-**Проверка:**
-- Пакеты созданы в `packages/services/`.
-- `src/types.ts` содержит контракты (`AcousticObservation`, `EnsembleConfig`).
-- CI не жалуется на отсутствующие зависимости.
-
----
-
-### 6.5 Dependency audit прошёл без ошибок
-
-**Проверка:**
-- `yarn audit:dependencies` запускается без ошибок.
-- Отчёт `docs/audits/dependency-audit-2026-06-16.md` отсутствует или содержит "No violations found".
-- Никаких горизонтальных импортов между analyzer-сервисами.
-
----
-
-### 6.6 Trends `DRONE_TIGHT` интегрирован в curated catalog
-
-**Проверка:**
-- `packages/device-board/src/catalogs/trends-templates-curated.ts` содержит DRONE_TIGHT с полными параметрами.
-- UI плагин в media-library отображает шаблоны.
-- Benchmark переснят, новый отчёт в `docs/datasets/week-2026-06-16/trends-promotion-report.md`.
-
----
-
-## Итого: стратегическая позиция
-
-На конец дня:
-
-1. **Stage-gate 1→2 спрещён:** trends + DRONE_TIGHT готов к promotion.
-2. **Архитектурные границы укреплены:** frozen-комментарии, dependency audit.
-3. **Scaffold'ы переведены в working state:** cepstral готов, ensemble заложен.
-4. **Магистраль ясна:** следующий этап (2 → 3) стартует только после gate, не раньше.
-5. **DSP-путь исчерпан на etalon-уровне:** дальше → validated data ИЛИ нейро/zero-shot.
-
-Документ соответствует WHITE_PAPER v0.1 и текущему состоянию монорепо. Готов к обсуждению с Teamlead.
+**Магистраль:** Trends-куратор (задача 1) + VDR bootstrap (задача 2) → готовимся к stage-gate. Задачи 3–6 — инфра и подготовка Этапа 2. **Антимагистраль:** не трогаем повторный FFT-бенчмарк на free-v1, не начинаем Этап 2 без gate, не интегрируем нейро без стратегии.
