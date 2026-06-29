@@ -8,8 +8,9 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
-      "createdAt": "2026-06-29"
+      "status": "archived",
+      "createdAt": "2026-06-29",
+      "archivedAt": "2026-06-29"
     },
     {
       "id": "insights-lifecycle-2026-06-28",

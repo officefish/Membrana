@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `main-sync-sprint-2026-06-29` | Branch reconciliation sprint: merge main → techies68 → PR → main | M | [`MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md`](../docs/prompts/MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md) | — |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `real-dataset-live-calibration` | Real dataset v0.2: библиотеки → анализ → live matching → journal parity (неделя) | L | [`REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md`](../docs/prompts/REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
@@ -187,6 +186,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `main-sync-sprint-2026-06-29` | Branch reconciliation sprint: merge main → techies68 → PR → main | 2026-06-29 | [`MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md`](../docs/prompts/MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md) | — | [карточка](./archive/main-sync-sprint-2026-06-29.md) |
 | `membrane-platform-v1` | Membrane Platform v1: cabinet, pairing, tariff, cloud journal (эпик) | 2026-06-29 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/membrane-platform-v1.md) |
 | `cabinet-sample-library-v1` | Cabinet Sample Library v1: библиотека сэмплов в кабинете (эпик CSL1–CSL3) | 2026-06-29 | [`CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md`](../docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/cabinet-sample-library-v1.md) |
 | `cabinet-sample-library-csl1-api` | Cabinet Sample Library CSL1: membrane-scoped API + cabinet auth to media | 2026-06-29 | [`CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md`](../docs/prompts/CABINET_SAMPLE_LIBRARY_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/cabinet-sample-library-csl1-api.md) |
