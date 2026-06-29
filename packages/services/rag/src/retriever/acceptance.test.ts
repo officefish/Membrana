@@ -53,11 +53,12 @@ describe('acceptance benchmark (keyword corpus archive, no API key)', () => {
     expect(result.usedArchive).toBe(true);
     expect(precisionAtK(result.fragments, expectedSources, 5)).toBe(true);
     expect(elapsedMs).toBeLessThan(8000);
-  });
+  }, 30_000);
 });
 
 describe('dual retriever routing', () => {
   it('returns operative-only when hits are sufficient and useLongTerm is false', async () => {
+    // corpus scan may take a few seconds; explicit timeout since config testTimeout is 5s
     const config = loadRagConfig({
       RAG_OPERATIVE_RELEVANCE_THRESHOLD: '0.01',
       RAG_MIN_OPERATIVE_COUNT: '1',
