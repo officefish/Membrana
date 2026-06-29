@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import type { DeviceKind } from '@membrana/core';
+import { getDefaultUserCaseCatalogService } from '@membrana/device-board';
 
 import {
   ClientUserCaseCatalogService,
@@ -15,7 +16,13 @@ export interface UseUserCaseCatalogResult {
 
 /** React hook: bundled UserCase catalog cards (U9 C1). */
 export function useUserCaseCatalog(deviceKind?: DeviceKind): UseUserCaseCatalogResult {
-  const service = useMemo(() => getDefaultClientUserCaseCatalogService(), []);
+  const service = useMemo(
+    () =>
+      getDefaultClientUserCaseCatalogService({
+        catalog: getDefaultUserCaseCatalogService(),
+      }),
+    [],
+  );
   const cards = useMemo(() => service.listCards(deviceKind), [service, deviceKind]);
 
   return useMemo(

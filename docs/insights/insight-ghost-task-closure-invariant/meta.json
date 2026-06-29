@@ -1,0 +1,13 @@
+{
+  "id": "insight-ghost-task-closure-invariant",
+  "title": "Issue closure must account for every active registry child",
+  "status": "draft",
+  "source": "sprint",
+  "horizon": "week",
+  "weight": 8.2,
+  "createdAt": "2026-06-29",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": ["tasks", "registry", "github", "closure", "audit", "stage-gate"]
+}

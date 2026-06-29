@@ -22,18 +22,27 @@ yarn insight close <id> --status adopted|deferred|rejected
 
 Skill: [`.cursor/skills/membrana-insight/SKILL.md`](../.cursor/skills/membrana-insight/SKILL.md)
 
-## Реестр (2026-06-27)
+## Жизненный цикл
 
-| ID | Тема | Статус | Weight |
-|----|------|--------|--------|
-| `insight-operator-smoke-ci-gate` | Operator smoke pre-merge gate | adopted | 7.0 |
-| `insight-async-v2-product-narrative` | Async topology как продуктовая история | adopted | 6.6 |
-| `insight-competition-catalog-pipeline` | Competition → catalog pipeline | adopted | 6.6 |
-| `insight-loop-engineering-competition-test` | Loop engineering + breakpoints | deferred | 6.8 |
-| `insight-agent-scenario-builder` | AI-агент UserCase (3 режима, токены) | adopted | 7.8 |
-| `insight-slide-fullscreen-presentation` | Slide object + fullscreen slides + export | adopted | 7.8 |
-| `insight-server-forwarding` | Server forwarding + RAG + cabinet tokens | adopted | 7.8 |
-| `insight-sunrise-flash` | Sunrise flash 06:00, topic cloud, news digest | adopted | 6.6 |
+```text
+draft → researched → reviewed → adopted | deferred | rejected
+```
+
+## Реестр (2026-06-29)
+
+| ID | Тема | Статус | Weight | Горизонт |
+|----|------|--------|--------|----------|
+| `insight-operator-smoke-ci-gate` | Operator smoke pre-merge gate | adopted | 7.0 | week |
+| `insight-async-v2-product-narrative` | Async topology как продуктовая история | adopted | 6.6 | month |
+| `insight-competition-catalog-pipeline` | Competition → catalog pipeline | adopted | 6.6 | week |
+| `insight-loop-engineering-competition-test` | Loop engineering + breakpoints | deferred | 6.8 | month |
+| `insight-agent-scenario-builder` | AI-агент UserCase (3 режима, токены) | adopted | 7.8 | quarter |
+| `insight-slide-fullscreen-presentation` | Slide object + fullscreen slides + export | adopted | 7.8 | month |
+| `insight-server-forwarding` | Server forwarding + RAG + cabinet tokens | adopted | 7.8 | quarter |
+| `insight-sunrise-flash` | Sunrise flash 06:00, topic cloud, news digest | adopted | 6.6 | month |
+| `insight-task-archive-storage` | Хранилище архива задач: append-only vs Postgres | **adopted** | 7.6 | week |
+| `insight-sessions-archive` | Архивация сессий AI-агентов | **adopted** | 6.8 | quarter |
+| `insight-ghost-task-closure-invariant` | Issue closure must account for every active registry child | draft | 8.2 | week |
 
 ### Виртуальная команда (2026-06-25)
 
@@ -59,6 +68,7 @@ Skill: [`.cursor/skills/membrana-insight/SKILL.md`](../.cursor/skills/membrana-i
 | `source` | Кто инициирует |
 |----------|----------------|
 | `user` | Teamlead / пользователь в чате |
+| `consilium` | Консилиум виртуальной команды |
 | `packaging-epic` | Пилот из эпика (G–I) |
 | `virtual-team-vesnin` | Teamlead (Vesnin) |
 | `virtual-team-ozhegov` | Структурщик |

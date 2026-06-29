@@ -45,7 +45,7 @@
 - **Analyzer-сервисы** зависят от `@membrana/core` + одного или нескольких foundation-сервисов. **НЕ** зависят от других analyzer-сервисов.
 - Циклические зависимости запрещены на любом уровне.
 - Сервисы **не зависят** от `@membrana/agenda` / `@membrana/device-board` / `apps/client`. Только наоборот.
-- **Исключение (platform facade):** `@membrana/usercase-catalog-service` — entitlement над bundled catalog в `device-board`; зависит от `core` + `device-board`, обратного импорта нет. Консилиум Phase 3 A1 (2026-06-24).
+- `@membrana/usercase-catalog-service` получает каталог через `UserCaseCatalogPort`; concrete adapter передаёт composition root клиента. Контракты карточки живут в `@membrana/core`.
 - Сервис **не импортирует** React-компоненты — только React API (`useState`, `useEffect`, …).
 
 ### Подкаталог `packages/services/detectors/*`

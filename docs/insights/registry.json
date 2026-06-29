@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-25",
+  "updatedAt": "2026-06-29",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -164,6 +164,45 @@
       "weight": null,
       "createdAt": "2026-06-27",
       "tags": ["mcp", "memory", "agent", "lessons", "tooling", "self-hosted"]
+    },
+    {
+      "id": "insight-sessions-archive",
+      "title": "Архивация сессий AI-агентов",
+      "status": "adopted",
+      "source": "consilium",
+      "sprintPhase": null,
+      "horizon": "quarter",
+      "weight": 6.8,
+      "createdAt": "2026-06-28",
+      "researchedAt": "2026-06-28",
+      "reviewedAt": "2026-06-28",
+      "tags": ["sessions", "archive", "rag", "background-services", "claude-code", "cursor", "codex", "scrub"]
+    },
+    {
+      "id": "insight-task-archive-storage",
+      "title": "Хранилище архива закрытых задач: append-only log vs Postgres",
+      "status": "adopted",
+      "source": "consilium",
+      "sprintPhase": null,
+      "horizon": "week",
+      "weight": 7.6,
+      "createdAt": "2026-06-28",
+      "researchedAt": "2026-06-28",
+      "reviewedAt": "2026-06-28",
+      "tags": ["tasks", "registry", "jsonl", "cqrs", "archive", "background-office", "stage-gate"]
+    },
+    {
+      "id": "insight-ghost-task-closure-invariant",
+      "title": "Issue closure must account for every active registry child",
+      "status": "draft",
+      "source": "sprint",
+      "sprintPhase": "ghost-task-closure-sprint-2026-06-29",
+      "horizon": "week",
+      "weight": 8.2,
+      "createdAt": "2026-06-29",
+      "researchedAt": null,
+      "reviewedAt": null,
+      "tags": ["tasks", "registry", "github", "closure", "audit", "stage-gate"]
     }
   ]
 }

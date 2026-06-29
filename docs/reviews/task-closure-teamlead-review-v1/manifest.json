@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "taskId": "task-closure-teamlead-review-v1",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "techies68",
+  "currentCommitSha": "29648cf205fe5d22e1d662278892f11c48ee9c72",
+  "reviewedCommitSha": "29648cf205fe5d22e1d662278892f11c48ee9c72",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/task-closure-teamlead-review-v1/29648cf205fe5d22e1d662278892f11c48ee9c72-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": null,
+    "remoteState": "unknown",
+    "url": null
+  },
+  "scope": {
+    "baseRef": "946d2aa",
+    "files": [
+      ".agents/skills/membrana-task-closure-review/SKILL.md",
+      ".agents/skills/membrana-task-closure-review/agents/openai.yaml",
+      ".claude/skills/membrana-task-closure-review/SKILL.md",
+      ".cursor/skills/README.md",
+      ".cursor/skills/membrana-task-closure-review/SKILL.md",
+      ".github/workflows/unit-tests.yml",
+      "docs/CONTRIBUTING.md",
+      "docs/INSIGHTS.md",
+      "docs/INSIGHT_2026-06-28_SESSIONS_ARCHIVE.md",
+      "docs/INSIGHT_2026-06-28_TASK_ARCHIVE_STORAGE_1.md",
+      "docs/discussions/task-closure-review-r5-pilot-2026-06-28.md",
+      "docs/insights/insight-sessions-archive/INSIGHT.md",
+      "docs/insights/insight-sessions-archive/meta.json",
+      "docs/insights/insight-task-archive-storage/INSIGHT.md",
+      "docs/insights/insight-task-archive-storage/meta.json",
+      "docs/insights/registry.json",
+      "docs/prompts/TASK_CLOSURE_REVIEW_PROMPT.md",
+      "docs/prompts/TASK_CLOSURE_REVIEW_REGULATION.md",
+      "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "docs/reviews/examples/lgtm.json",
+      "docs/reviews/examples/review-pending.json",
+      "docs/reviews/issue-185-services-device-board-boundary/017f5cd5f4cccb66c2fa9892538ae8cdb886052b-review.md",
+      "docs/reviews/issue-185-services-device-board-boundary/manifest.json",
+      "docs/schemas/task-closure-review.schema.json",
+      "docs/seanses/closure-review-process-consilium-2026-06-28.md",
+      "docs/tasks/README.md",
+      "docs/tasks/archive/issue-185-services-device-board-boundary.md",
+      "docs/tasks/registry.json",
+      "package.json",
+      "packages/background-office/vitest.config.ts",
+      "packages/core/vitest.config.ts",
+      "packages/services/fft-analyzer/vitest.config.ts",
+      "packages/services/telemetry/vitest.config.ts",
+      "scripts/lib/task-closure-review.mjs",
+      "scripts/sync-task-closure-review-skills.mjs",
+      "scripts/task-closure-review-schema.test.mjs",
+      "scripts/task-closure-review-skills.test.mjs",
+      "scripts/task-closure-review.mjs",
+      "scripts/task-closure-review.test.mjs",
+      "turbo.json"
+    ],
+    "packages": [
+      "packages/background-office",
+      "packages/core",
+      "packages/services/fft-analyzer",
+      "packages/services/telemetry"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "29648cf205fe5d22e1d662278892f11c48ee9c72",
+        "checkedAt": "2026-06-28T17:26:42.226Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "29648cf205fe5d22e1d662278892f11c48ee9c72",
+        "checkedAt": "2026-06-28T17:25:33Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28330006844/job/83926447258"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "accepted_branch_only",
+    "evidence": "Accepted branch-only: R5 greenfield pilot: user requested sprint closure; exact SHA pushed to techies68, PR/merge deferred to the separate GitHub process"
+  },
+  "createdAt": "2026-06-28T17:13:59.236Z",
+  "updatedAt": "2026-06-28T17:27:23.003Z"
+}

@@ -4,5 +4,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['test/**/*.test.ts'],
+    reporters: process.env.CI ? ['verbose', 'json'] : ['default'],
+    outputFile: { json: 'test-results/results.json' },
   },
 });

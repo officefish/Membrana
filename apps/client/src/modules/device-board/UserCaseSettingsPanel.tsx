@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import type { ModuleProps } from '@membrana/agenda';
+import { getDefaultUserCaseCatalogService } from '@membrana/device-board';
 
 import {
   ClientUserCaseCatalogService,
@@ -23,6 +24,7 @@ export const UserCaseSettingsPanel: React.FC<{
   const catalogService = useMemo(
     () =>
       new ClientUserCaseCatalogService({
+        catalog: getDefaultUserCaseCatalogService(),
         entitledTariffSkus: new Set(normalized.entitledTariffSkus),
       }),
     [normalized.entitledTariffSkus.join('|')],

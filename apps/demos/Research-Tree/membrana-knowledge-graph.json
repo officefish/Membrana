@@ -1,0 +1,1588 @@
+{
+  "version": "0.3",
+  "updated": "2026-06-28",
+  "root": "core.acoustic-modality",
+  "meta": {
+    "node_types": {
+      "knowledge": "Область знания — математика, физика, акустика",
+      "capability": "Инженерный слой / реализованная возможность",
+      "service": "Конкретный детектор или сервис",
+      "process": "Процесс/дисциплина (не артефакт кода)"
+    },
+    "states": {
+      "fog": "Хотя бы одна предпосылка не закреплена",
+      "available": "Все предпосылки закреплены, работа не начата",
+      "exploring": "Работа идёт, шлюз не пройден",
+      "established": "Шлюз пройден либо узел без шлюза завершён"
+    },
+    "facets": {
+      "skill": {
+        "hard": "Кодифицируемое, измеримое: техника",
+        "soft": "Процесс, координация, коммуникация"
+      },
+      "process": {
+        "internal": "Служит команде/разработке",
+        "external": "Обращён наружу: продукт, рынок, инвестор"
+      },
+      "quadrants": {
+        "hard.internal": "Техника для себя — машинерия разработки",
+        "hard.external": "Техника наружу — развёрнутый продукт и интеграции",
+        "soft.internal": "Процесс для себя — дисциплина и ритм команды",
+        "soft.external": "Процесс наружу — инвесторам, фондам, рынку"
+      },
+      "refinement_4x4": "16 = 2(skill) x 2(process) x 4(materiality). См. meta.facets.materiality.",
+      "materiality": {
+        "axis": "Третья грань: вес артефакта от физического к информационному. Квадрант x материальность = 16 ячеек.",
+        "levels": {
+          "M1": "Материя — физический капитал; медленно и дорого менять (capex).",
+          "M2": "Субстрат — внешняя основа, на которой строим, но не владеем.",
+          "M3": "Структура — наши композиции: собрали и держим.",
+          "M4": "Действие — гранулярное, эфемерное, разовое (opex)."
+        },
+        "correlates": "M1->M4 = capex->opex по каденции затрат и необратимое->сбрасываемое по цене разворота.",
+        "knowledge": "Узлы type=knowledge вне шкалы (materiality=null): чистое понимание — информационный предел, не артефакт.",
+        "note": "Уровни проставлены по правилам (verify): требуют ручной калибровки, особенно метки в soft-квадрантах."
+      }
+    },
+    "state_rule": "fog, если хотя бы один require не established; иначе available; exploring/established ставятся вручную. Узел в exploring/established обязан иметь все requires established.",
+    "epoch_thresholds": {
+      "entered": "Закреплён >=1 узел эпохи (мягкий порог).",
+      "tier_reached": "Закреплён tier_node эпохи (жёсткий порог)."
+    },
+    "epoch_scope": "Эпохи — лестница зрелости продукта детекции. Касаются в основном hard-узлов. soft-узлы (process/comm) обычно epoch=null. Исключение: process.stage-gate управляет переходами, но сам вне лестницы.",
+    "strategy": {
+      "balanced": "Закрепить большинство узлов перед входом в следующую эпоху/квадрант.",
+      "breakthrough": "Протащить одну цепочку до tier_node, оставив соседей. Дешевле, создаёт долг.",
+      "debt": "established/total < 1 при переходе — список незакрытых узлов как технический долг.",
+      "quadrant_balance": "Второй измеритель: established/total по каждому квадранту. Прорыв в одном при банкротстве в другом — видимый перекос портфеля."
+    },
+    "economy": {
+      "unit": "tokens",
+      "balance_kind": "daily_flow",
+      "note": "Дневной баланс — поток, не запас. Ограничивает скорость и параллелизм, не достижимость.",
+      "cost_semantics": "tokens_budget — оценка цены попытки; tokens_spent — факт. Трата токенов НЕ закрывает узел; закрывает gate. spent>budget при открытом gate = 'бюджет спалён, шлюз не взят'.",
+      "do_not_fabricate": "Числа cost — из реального учёта. null = не измерено."
+    },
+    "flags": {
+      "verify": "Состояние проставлено по памяти/докам, требует ручной сверки."
+    },
+    "contour": {
+      "axis": "Эпистемическая ось: насколько ясен ПУТЬ к узлу (отдельно от state — готовности предпосылок).",
+      "values": {
+        "реальность": "Узел established.",
+        "план": "Путь прочерчен до established-ядра; известна энергия и как идти.",
+        "горизонт": "Направление видно, путь с пробелами.",
+        "возможность": "Несвязный припаркованный узел во внешнем кольце."
+      },
+      "input": "Ручной вход — поле path: complete (умолч.) | partial | floating. Остальное выводится.",
+      "derivation": "established -> реальность; path=floating -> возможность; path=partial или любой апстрим горизонт/возможность -> горизонт; иначе план.",
+      "energy_rule": "Энергия считается только для плана: сумма cost.tokens_budget по непройденным узлам замыкания. Для горизонта/возможности не определена.",
+      "layout": "Концентрические кольца (радиус): реальность в центре, возможность на внешнем ободе.",
+      "lifecycle": "возможность -> горизонт -> план -> реальность. Ортогональна state-жизни fog -> available -> exploring -> established."
+    },
+    "artifacts": {
+      "definition": "Спутники узла — собираемые деливераблы, орбитирующие узел. Не часть DAG; их коллекция и есть субстанция освоения.",
+      "relation": "node — основной владелец; also[] — узлы, пользующиеся им тоже (many-to-many).",
+      "status_values": "collected | in_progress | missing",
+      "completion": "Прогресс узла = collected / total. Текстура состояния exploring.",
+      "gate": "Узел не established, пока требуемые артефакты не collected и gate не passed.",
+      "cost": "Энергия тратится на сбор артефактов; node.cost = свёртка их cost.",
+      "materiality": "Артефакт несёт свою materiality (датасет/прогон/железо — разный вес).",
+      "kinds": "dataset | config | module | report | doc | script | command | hardware"
+    },
+    "lifecycle": {
+      "capital": "Открыт один раз, держится без затрат (умолч.). Знание, конфиг, скрипт.",
+      "sustained": "Требует upkeep: дренит ресурс в единицу времени, пока established.",
+      "upkeep": "node.upkeep = {energy: low|med|high, kind: [tokens|stamina|money|infra]}.",
+      "decay": "Sustained-узел с неоплаченным upkeep деградирует established -> exploring. Establishment не монотонен.",
+      "capacity_gate": "epoch.capacity_gate — ресурсный порог входа (люди/токен-поток/стоячая ёмкость), конъюнкция с tier_node. Прибл. = сумма upkeep sustained-узлов эпохи."
+    }
+  },
+  "branches": {
+    "core": "Корень — первичная модальность",
+    "spectral": "Спектральная математика",
+    "detection-infra": "Инфраструктура детекции",
+    "quality": "Статистика качества",
+    "detector-family": "Семейство детекторов",
+    "spatial": "Пространственная математика и локализация",
+    "field-infra": "Полевая инфраструктура",
+    "runtime": "Рантайм и язык",
+    "monorepo": "Монорепо и сборка",
+    "backend": "Бэкенд-сервисы",
+    "frontend": "Клиенты",
+    "llm-stack": "LLM и локальные модели",
+    "integration": "Интеграции и MCP",
+    "rag": "Память и RAG",
+    "infra-ops": "Инфраструктура и эксплуатация",
+    "cicd": "CI/CD",
+    "dev-process": "Процесс разработки",
+    "comms": "Внешние коммуникации"
+  },
+  "epochs": [
+    {
+      "id": "E0",
+      "title": "Фундамент",
+      "product_tier": "R&D — без внешнего SKU",
+      "tier_node": "layer.benchmark",
+      "entered": true,
+      "tier_reached": true
+    },
+    {
+      "id": "E1",
+      "title": "Одноузловая детекция",
+      "product_tier": "Детектор одного узла — первый демонстрируемый продукт",
+      "tier_node": "service.single-node-detector",
+      "entered": true,
+      "tier_reached": false
+    },
+    {
+      "id": "E2",
+      "title": "Локализация",
+      "product_tier": "Локализующая сеть — направление и дистанция",
+      "tier_node": "capability.two-node-localization",
+      "entered": false,
+      "tier_reached": false,
+      "capacity_gate": {
+        "requirement": "Стоячая ёмкость удерживать полевую сеть: +1 embedded/hardware, инфра-бюджет на узлы.",
+        "status": "open",
+        "verify": true
+      }
+    },
+    {
+      "id": "E3",
+      "title": "Ситуационная картина",
+      "product_tier": "Трекинг и счёт целей",
+      "tier_node": "capability.tracking",
+      "entered": false,
+      "tier_reached": false,
+      "capacity_gate": {
+        "requirement": "+эксплуатация/мониторинг: ёмкость держать трекинг живым.",
+        "status": "open",
+        "verify": true
+      }
+    },
+    {
+      "id": "E4",
+      "title": "Расширение",
+      "product_tier": "Мультимодальная масштабируемая сеть",
+      "tier_node": "capability.modality-expansion",
+      "entered": false,
+      "tier_reached": false,
+      "capacity_gate": {
+        "requirement": "+масштаб: команда эксплуатации и soft.external для go-to-market.",
+        "status": "open",
+        "verify": true
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "core.acoustic-modality",
+      "title": "Звук как первичная модальность",
+      "type": "knowledge",
+      "branch": "core",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": null
+      },
+      "state": "established",
+      "requires": [],
+      "cost": {
+        "tokens_budget": null,
+        "tokens_spent": null
+      },
+      "evidence": "Детекция в реальном времени, ноутбук + USB-микрофон."
+    },
+    {
+      "id": "math.fourier",
+      "title": "Преобразование Фурье / FFT",
+      "type": "knowledge",
+      "branch": "spectral",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": null
+      },
+      "state": "established",
+      "requires": ["core.acoustic-modality"]
+    },
+    {
+      "id": "math.spectral-features",
+      "title": "Гармонический анализ, кепстр, спектральный поток",
+      "type": "knowledge",
+      "branch": "spectral",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": null
+      },
+      "state": "established",
+      "requires": ["math.fourier"]
+    },
+    {
+      "id": "math.quality-stats",
+      "title": "Метрики качества: precision/recall/F1, FPR, ROC",
+      "type": "knowledge",
+      "branch": "quality",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": null
+      },
+      "state": "established",
+      "requires": ["layer.benchmark"]
+    },
+    {
+      "id": "math.wave-physics",
+      "title": "Волновая физика, скорость звука как предел канала",
+      "type": "knowledge",
+      "branch": "spatial",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": null
+      },
+      "state": "established",
+      "requires": ["core.acoustic-modality"]
+    },
+    {
+      "id": "math.tdoa",
+      "title": "TDOA и гиперболическая мультилатерация",
+      "type": "knowledge",
+      "branch": "spatial",
+      "epoch": "E2",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": null
+      },
+      "state": "available",
+      "requires": ["math.wave-physics"]
+    },
+    {
+      "id": "stack.nodejs",
+      "title": "Node.js рантайм",
+      "type": "capability",
+      "branch": "runtime",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": []
+    },
+    {
+      "id": "stack.typescript",
+      "title": "TypeScript, project references",
+      "type": "capability",
+      "branch": "runtime",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.nodejs"]
+    },
+    {
+      "id": "stack.mjs-scripts",
+      "title": "Скрипты автоматизации (.mjs): ритуал, usercase, proxy",
+      "type": "capability",
+      "branch": "runtime",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M4"
+      },
+      "state": "established",
+      "requires": ["stack.nodejs"]
+    },
+    {
+      "id": "stack.yarn4",
+      "title": "Yarn 4 (Berry) + Corepack, workspaces",
+      "type": "capability",
+      "branch": "monorepo",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.nodejs"]
+    },
+    {
+      "id": "stack.turborepo",
+      "title": "Turborepo, оркестрация задач",
+      "type": "capability",
+      "branch": "monorepo",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.yarn4"]
+    },
+    {
+      "id": "stack.boundaries",
+      "title": "check:boundaries, изоляция пакетов",
+      "type": "capability",
+      "branch": "monorepo",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["stack.turborepo"]
+    },
+    {
+      "id": "stack.lint-format",
+      "title": "ESLint + Prettier",
+      "type": "capability",
+      "branch": "monorepo",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.typescript"]
+    },
+    {
+      "id": "layer.foundation",
+      "title": "Монорепо-фундамент (контракты в core, ритм CI)",
+      "type": "capability",
+      "branch": "detection-infra",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["stack.turborepo", "stack.typescript", "stack.boundaries"]
+    },
+    {
+      "id": "layer.audio-engine",
+      "title": "Audio-engine и плагинная модель",
+      "type": "capability",
+      "branch": "detection-infra",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["core.acoustic-modality", "layer.foundation"]
+    },
+    {
+      "id": "layer.detector-contract",
+      "title": "Единый контракт детектора",
+      "type": "capability",
+      "branch": "detection-infra",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["layer.audio-engine"]
+    },
+    {
+      "id": "layer.benchmark",
+      "title": "Benchmark-инфраструктура",
+      "type": "capability",
+      "branch": "detection-infra",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["layer.detector-contract"]
+    },
+    {
+      "id": "layer.trends-fft",
+      "title": "Комбинация trends + FFT, шаблоны стабильности",
+      "type": "capability",
+      "branch": "detection-infra",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["layer.benchmark", "math.spectral-features"],
+      "note": "Конфиг 1-tight+competitors, DRONE_TIGHT. FFT-threshold отброшен."
+    },
+    {
+      "id": "service.single-node-detector",
+      "title": "Детектор одного узла (DSP-гармонический)",
+      "type": "service",
+      "branch": "detector-family",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "exploring",
+      "requires": ["layer.trends-fft", "math.spectral-features", "math.quality-stats"],
+      "cost": {
+        "tokens_budget": null,
+        "tokens_spent": null
+      },
+      "gate": {
+        "criterion": "precision >= 0.85 и recall >= 0.90 на одном узле",
+        "status": "open"
+      },
+      "note": "Фронтир. tier_node E1.",
+      "draws": {
+        "stamina": "heavy",
+        "_verify": true
+      }
+    },
+    {
+      "id": "service.open-nn",
+      "title": "Открытые НС-детекторы (YAMNet, CLAP), zero-shot",
+      "type": "service",
+      "branch": "detector-family",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "available",
+      "requires": ["layer.detector-contract", "layer.benchmark"],
+      "note": "Не начато сознательно — дисциплина stage-gate."
+    },
+    {
+      "id": "service.agentic-llm",
+      "title": "Агентные LLM-детекторы поверх спектра",
+      "type": "service",
+      "branch": "detector-family",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "available",
+      "requires": ["layer.detector-contract", "math.spectral-features", "stack.claude-api"]
+    },
+    {
+      "id": "stack.nestjs",
+      "title": "NestJS + Fastify (background-*)",
+      "type": "capability",
+      "branch": "backend",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.typescript"]
+    },
+    {
+      "id": "stack.prisma-pg",
+      "title": "Prisma + PostgreSQL",
+      "type": "capability",
+      "branch": "backend",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.nestjs"]
+    },
+    {
+      "id": "stack.sample-library",
+      "title": "Sample library + trends (background-media)",
+      "type": "capability",
+      "branch": "backend",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["stack.prisma-pg"],
+      "verify": true
+    },
+    {
+      "id": "stack.vite-react",
+      "title": "Vite + React + DaisyUI (client, cabinet)",
+      "type": "capability",
+      "branch": "frontend",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.typescript"]
+    },
+    {
+      "id": "stack.electron-studio",
+      "title": "Electron desktop (membrana-studio)",
+      "type": "capability",
+      "branch": "frontend",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "available",
+      "requires": ["stack.vite-react"],
+      "verify": true
+    },
+    {
+      "id": "stack.claude-api",
+      "title": "Claude API (agent reasoning, ритуал)",
+      "type": "capability",
+      "branch": "llm-stack",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.mjs-scripts"]
+    },
+    {
+      "id": "stack.ollama-local",
+      "title": "Ollama локальные модели (deepseek-r1, qwen2.5-coder…)",
+      "type": "capability",
+      "branch": "llm-stack",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.mjs-scripts"]
+    },
+    {
+      "id": "stack.perplexity-sonar",
+      "title": "Perplexity Sonar (research digest)",
+      "type": "capability",
+      "branch": "llm-stack",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "available",
+      "requires": ["stack.mjs-scripts"],
+      "verify": true,
+      "draws": {
+        "stamina": "light",
+        "_verify": true
+      },
+      "lifecycle": "sustained",
+      "upkeep": {
+        "energy": "low",
+        "kind": ["tokens"],
+        "why": "ночные дайджесты — постоянный дрен"
+      }
+    },
+    {
+      "id": "stack.github",
+      "title": "GitHub (officefish/Membrana)",
+      "type": "capability",
+      "branch": "integration",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": []
+    },
+    {
+      "id": "stack.linear-integration",
+      "title": "Linear (issue/PR трекинг)",
+      "type": "capability",
+      "branch": "integration",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.claude-api"]
+    },
+    {
+      "id": "stack.mcp-client",
+      "title": "MCP-серверы (Perplexity, Playwright, Filesystem, Git…)",
+      "type": "capability",
+      "branch": "integration",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "available",
+      "requires": ["stack.mjs-scripts"],
+      "verify": true
+    },
+    {
+      "id": "stack.linear-agents",
+      "title": "Linear Agent API (actor=app, OAuth)",
+      "type": "capability",
+      "branch": "integration",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "fog",
+      "requires": ["stack.linear-integration", "service.single-node-detector"],
+      "verify": true,
+      "note": "Отложено до прохождения single-node gate.",
+      "draws": {
+        "stamina": "heavy",
+        "_verify": true
+      },
+      "lifecycle": "sustained",
+      "upkeep": {
+        "energy": "low",
+        "kind": ["tokens"],
+        "why": "агенты жгут токены, пока работают"
+      }
+    },
+    {
+      "id": "stack.rag-operational",
+      "title": "Операционная память (filesystem/Obsidian, прямое адресование)",
+      "type": "capability",
+      "branch": "rag",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["stack.mjs-scripts"]
+    },
+    {
+      "id": "stack.embeddings",
+      "title": "Эмбеддинги (для долгосрочного корпуса)",
+      "type": "capability",
+      "branch": "rag",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "available",
+      "requires": ["stack.rag-operational"],
+      "verify": true
+    },
+    {
+      "id": "stack.pinecone",
+      "title": "Pinecone (долгосрочный RAG)",
+      "type": "capability",
+      "branch": "rag",
+      "epoch": "E2",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "fog",
+      "requires": ["stack.embeddings", "process.foreign-api-verification"],
+      "verify": true
+    },
+    {
+      "id": "stack.docker",
+      "title": "Docker (db:up, контейнеризация сервисов)",
+      "type": "capability",
+      "branch": "infra-ops",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.prisma-pg"],
+      "verify": true
+    },
+    {
+      "id": "stack.proxy-hiddify",
+      "title": "Hiddify proxy (Mixed Port 12334), HTTPS_PROXY routing",
+      "type": "capability",
+      "branch": "infra-ops",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.nodejs"]
+    },
+    {
+      "id": "stack.vps-timeweb",
+      "title": "VPS Timeweb (продакшн-субстрат)",
+      "type": "capability",
+      "branch": "infra-ops",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "external",
+        "materiality": "M1"
+      },
+      "state": "established",
+      "requires": [],
+      "verify": true
+    },
+    {
+      "id": "stack.vps-deploy",
+      "title": "Развёртывание на VPS (cabinet, data-plane)",
+      "type": "capability",
+      "branch": "infra-ops",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "external",
+        "materiality": "M4"
+      },
+      "state": "available",
+      "requires": ["stack.docker", "stack.vps-timeweb"],
+      "verify": true,
+      "lifecycle": "sustained",
+      "upkeep": {
+        "energy": "low",
+        "kind": ["money", "infra"],
+        "why": "месячный хостинг"
+      }
+    },
+    {
+      "id": "stack.github-actions",
+      "title": "GitHub Actions (usercase, scheduled-ci, virtual-team-context)",
+      "type": "capability",
+      "branch": "cicd",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["stack.github", "stack.ci-pipeline"]
+    },
+    {
+      "id": "stack.ci-pipeline",
+      "title": "CI-контур: turbo lint/typecheck/test/build",
+      "type": "capability",
+      "branch": "cicd",
+      "epoch": "E0",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["stack.turborepo", "stack.lint-format"]
+    },
+    {
+      "id": "layer.field-node",
+      "title": "Аппаратный узел (Pi-класс)",
+      "type": "capability",
+      "branch": "field-infra",
+      "epoch": "E1",
+      "facets": {
+        "skill": "hard",
+        "process": "internal",
+        "materiality": "M1"
+      },
+      "state": "available",
+      "requires": ["layer.audio-engine", "layer.trends-fft"]
+    },
+    {
+      "id": "layer.time-sync",
+      "title": "Синхронизация времени (GPS-PPS)",
+      "type": "capability",
+      "branch": "field-infra",
+      "epoch": "E2",
+      "facets": {
+        "skill": "hard",
+        "process": "external",
+        "materiality": "M1"
+      },
+      "state": "fog",
+      "requires": ["layer.field-node"],
+      "lifecycle": "sustained",
+      "upkeep": {
+        "energy": "med",
+        "kind": ["infra"]
+      }
+    },
+    {
+      "id": "capability.two-node-localization",
+      "title": "Двухузловая локализация (TDOA)",
+      "type": "capability",
+      "branch": "spatial",
+      "epoch": "E2",
+      "facets": {
+        "skill": "hard",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "fog",
+      "requires": ["service.single-node-detector", "math.tdoa", "layer.time-sync"],
+      "note": "tier_node E2.",
+      "lifecycle": "sustained",
+      "upkeep": {
+        "energy": "high",
+        "kind": ["infra", "stamina"],
+        "why": "калибровка, синхрон, мониторинг полевой сети"
+      }
+    },
+    {
+      "id": "capability.tracking",
+      "title": "Трекинг и счётчик целей",
+      "type": "capability",
+      "branch": "spatial",
+      "epoch": "E3",
+      "facets": {
+        "skill": "hard",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "fog",
+      "requires": ["capability.two-node-localization"],
+      "note": "tier_node E3.",
+      "lifecycle": "sustained",
+      "upkeep": {
+        "energy": "med",
+        "kind": ["infra", "stamina"]
+      }
+    },
+    {
+      "id": "capability.modality-expansion",
+      "title": "Расширение модальностей (RF, видео)",
+      "type": "capability",
+      "branch": "detection-infra",
+      "epoch": "E4",
+      "facets": {
+        "skill": "hard",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "fog",
+      "requires": ["layer.detector-contract", "capability.two-node-localization"],
+      "path": "partial",
+      "note": "tier_node E4. Путь RF/видео ещё не прочерчен — горизонт.",
+      "lifecycle": "sustained",
+      "upkeep": {
+        "energy": "med",
+        "kind": ["stamina"]
+      }
+    },
+    {
+      "id": "process.dev-rhythm",
+      "title": "Ритм утро/вечер/неделя",
+      "type": "process",
+      "branch": "dev-process",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["stack.mjs-scripts"],
+      "note": "morning-care → plan:day → standup → main-day-issue.",
+      "draws": {
+        "stamina": "light",
+        "_verify": true
+      }
+    },
+    {
+      "id": "process.code-review",
+      "title": "Ежедневный код-ревью (вечерний ритуал)",
+      "type": "process",
+      "branch": "dev-process",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["process.dev-rhythm"]
+    },
+    {
+      "id": "process.contract-testing",
+      "title": "Контрактное тестирование",
+      "type": "process",
+      "branch": "dev-process",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "internal",
+        "materiality": "M2"
+      },
+      "state": "established",
+      "requires": ["layer.foundation"]
+    },
+    {
+      "id": "process.virtual-team",
+      "title": "Виртуальная AI-команда (5 ролей, consilium, ask)",
+      "type": "process",
+      "branch": "dev-process",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["stack.claude-api"]
+    },
+    {
+      "id": "process.task-workflow",
+      "title": "TASK_PROMPT_WORKFLOW, registry, closure regulation",
+      "type": "process",
+      "branch": "dev-process",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "internal",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": []
+    },
+    {
+      "id": "process.stage-gate",
+      "title": "Дисциплина stage-gate (управляет переходами эпох)",
+      "type": "process",
+      "branch": "dev-process",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "internal",
+        "materiality": "M1"
+      },
+      "state": "established",
+      "requires": ["layer.benchmark", "math.quality-stats"]
+    },
+    {
+      "id": "process.foreign-api-verification",
+      "title": "Проверка внешних API curl-ом до коммита VDS",
+      "type": "process",
+      "branch": "dev-process",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "internal",
+        "materiality": "M4"
+      },
+      "state": "established",
+      "requires": []
+    },
+    {
+      "id": "comm.dual-use-positioning",
+      "title": "Dual-use позиционирование (наблюдательная система)",
+      "type": "process",
+      "branch": "comms",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "external",
+        "materiality": "M1"
+      },
+      "state": "established",
+      "requires": []
+    },
+    {
+      "id": "comm.one-pager",
+      "title": "One-pager",
+      "type": "process",
+      "branch": "comms",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "established",
+      "requires": ["comm.dual-use-positioning"]
+    },
+    {
+      "id": "comm.white-paper",
+      "title": "Публичный white paper",
+      "type": "process",
+      "branch": "comms",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "available",
+      "requires": ["comm.one-pager"],
+      "verify": true,
+      "draws": {
+        "stamina": "medium",
+        "_verify": true
+      }
+    },
+    {
+      "id": "comm.pitch-deck",
+      "title": "Pitch deck outline",
+      "type": "process",
+      "branch": "comms",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "available",
+      "requires": ["comm.one-pager"],
+      "verify": true,
+      "draws": {
+        "stamina": "medium",
+        "_verify": true
+      }
+    },
+    {
+      "id": "comm.grant-report",
+      "title": "Грантовый отчёт (CV/бюджет — пробелы)",
+      "type": "process",
+      "branch": "comms",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "exploring",
+      "requires": ["comm.one-pager"],
+      "verify": true,
+      "draws": {
+        "stamina": "medium",
+        "_verify": true
+      }
+    },
+    {
+      "id": "comm.landing",
+      "title": "Landing page membrana.space",
+      "type": "process",
+      "branch": "comms",
+      "epoch": null,
+      "facets": {
+        "skill": "soft",
+        "process": "external",
+        "materiality": "M3"
+      },
+      "state": "available",
+      "requires": ["comm.one-pager"],
+      "verify": true
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "art.cfg-1tight",
+      "title": "Конфиг 1-tight+competitors",
+      "node": "layer.trends-fft",
+      "kind": "config",
+      "status": "collected",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.tpl-drone-tight",
+      "title": "Шаблон стабильности DRONE_TIGHT",
+      "node": "layer.trends-fft",
+      "kind": "config",
+      "status": "collected",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.bench-run-trends",
+      "title": "Бенчмарк-прогон: recall/FPR/F1 приемлемы",
+      "node": "layer.trends-fft",
+      "also": ["service.single-node-detector"],
+      "kind": "report",
+      "status": "collected",
+      "materiality": "M4"
+    },
+    {
+      "id": "art.bench-infra",
+      "title": "Benchmark-инфраструктура (код)",
+      "node": "layer.benchmark",
+      "kind": "module",
+      "status": "collected",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.dsp-harmonic-module",
+      "title": "DSP-гармонический детектор (модуль)",
+      "node": "service.single-node-detector",
+      "kind": "module",
+      "status": "in_progress",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.field-dataset",
+      "title": "Полевой размеченный датасет",
+      "node": "service.single-node-detector",
+      "also": ["capability.two-node-localization"],
+      "kind": "dataset",
+      "status": "in_progress",
+      "materiality": "M3",
+      "verify": true
+    },
+    {
+      "id": "art.gate-run-singlenode",
+      "title": "Прогон шлюза precision/recall на одном узле",
+      "node": "service.single-node-detector",
+      "kind": "report",
+      "status": "missing",
+      "materiality": "M4",
+      "note": "Закрывает gate."
+    },
+    {
+      "id": "art.proxy-claude-mjs",
+      "title": "scripts/proxy-claude.mjs",
+      "node": "stack.proxy-hiddify",
+      "kind": "script",
+      "status": "collected",
+      "materiality": "M4",
+      "path": "scripts/proxy-claude.mjs"
+    },
+    {
+      "id": "art.yarn-proxy-claude",
+      "title": "yarn proxy:claude (package.json)",
+      "node": "stack.proxy-hiddify",
+      "kind": "command",
+      "status": "collected",
+      "materiality": "M4"
+    },
+    {
+      "id": "art.ritual-commands",
+      "title": "morning-care · plan:day · standup · main-day-issue",
+      "node": "process.dev-rhythm",
+      "kind": "command",
+      "status": "collected",
+      "materiality": "M4"
+    },
+    {
+      "id": "art.research-digest",
+      "title": "yarn research:digest -> docs/research/digest-YYYY-MM-DD.md",
+      "node": "stack.perplexity-sonar",
+      "kind": "script",
+      "status": "in_progress",
+      "materiality": "M4",
+      "verify": true
+    },
+    {
+      "id": "art.insight-linear-timing",
+      "title": "INSIGHT_2026-06-27_LINEAR_BUILD_TIMING.md",
+      "node": "stack.linear-agents",
+      "kind": "doc",
+      "status": "collected",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.one-pager-md",
+      "title": "MEMBRANA_ONE_PAGER.md",
+      "node": "comm.one-pager",
+      "kind": "doc",
+      "status": "collected",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.wp-prompt",
+      "title": "PROMPT_WHITE_PAPER.md",
+      "node": "comm.white-paper",
+      "kind": "doc",
+      "status": "collected",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.wp-draft",
+      "title": "Черновик публичного white paper",
+      "node": "comm.white-paper",
+      "kind": "doc",
+      "status": "missing",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.pitch-prompt",
+      "title": "PROMPT_PITCH_DECK.md",
+      "node": "comm.pitch-deck",
+      "kind": "doc",
+      "status": "collected",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.pitch-outline",
+      "title": "Gamma outline 13 слайдов",
+      "node": "comm.pitch-deck",
+      "kind": "doc",
+      "status": "missing",
+      "materiality": "M3"
+    },
+    {
+      "id": "art.grant-report-md",
+      "title": "MEMBRANA_GRANT_REPORT.md (пробелы: CV, бюджет)",
+      "node": "comm.grant-report",
+      "kind": "doc",
+      "status": "in_progress",
+      "materiality": "M3",
+      "verify": true
+    },
+    {
+      "id": "art.system-prompt",
+      "title": "CLAUDE_PROJECT_SYSTEM_PROMPT.md (dual-use тон, запреты)",
+      "node": "comm.dual-use-positioning",
+      "kind": "doc",
+      "status": "collected",
+      "materiality": "M1"
+    }
+  ],
+  "resources": {
+    "doc": "Материя, на которой держится граф. Три ресурса разной природы; биндят не одинаково.",
+    "binding_order": "Калибровка: сейчас НЕ насыщены ни стамина, ни токены (есть запас прочности). Текущий лимитер — серийный критический путь (sprint-каденция x прямое участие), который не оффлоадится ни агентами, ни фоновой полосой (Амдаль). Инфра-потолок не активен.",
+    "infra": {
+      "nature": "capacity_ceiling (запас, capex, M1)",
+      "note": "Бюджет здесь — потолок параллелизма и скорости, не поток. Заполняет ячейки M1.",
+      "inventory": [
+        {
+          "id": "infra.dev-machine",
+          "title": "Dev-машина (Windows, Ollama as service)",
+          "specs": {
+            "ram_gb": null,
+            "cpu": null,
+            "gpu": null
+          },
+          "constrains": ["stack.ollama-local"],
+          "note": "RAM лимитирует локальную модель — qwen3.5:4b как рабочая, deepseek-r1:8b для reasoning.",
+          "verify": true
+        },
+        {
+          "id": "infra.vps-timeweb",
+          "title": "VPS Timeweb",
+          "specs": {
+            "vcpu": null,
+            "ram_gb": null,
+            "disk_gb": null,
+            "price_month": null
+          },
+          "constrains": ["stack.vps-deploy", "stack.nestjs", "stack.prisma-pg"],
+          "verify": true
+        },
+        {
+          "id": "infra.vds-second",
+          "title": "Второй VDS",
+          "specs": {},
+          "status": "planned",
+          "note": "После эмпирической проверки внешних API (anthropic/linear/github/perplexity/pinecone).",
+          "verify": true
+        }
+      ]
+    },
+    "spend": {
+      "doc": "Денежная экономика. Три формы биллинга биндят по-разному.",
+      "billing_shapes": {
+        "metered": "Per-token, маржинально, растёт с работой -> node.draws.tokens.",
+        "subscription": "Flat месяц + потолок пропускной способности. Предоплаченная ёмкость машинной работы (ближе к инфре, чем к потоку).",
+        "overhead": "Flat месяц, не атрибутируется узлам. Базовый burn — горит и в ноль-прогресс день."
+      },
+      "metered": [
+        {
+          "model": "claude-opus-4-8",
+          "in_per_mtok": 5.0,
+          "out_per_mtok": 25.0,
+          "unit": "USD"
+        },
+        {
+          "model": "claude-sonnet-4-6",
+          "in_per_mtok": 3.0,
+          "out_per_mtok": 15.0,
+          "unit": "USD",
+          "note": "Рабочая лошадь агентов: near-Opus, дешевле."
+        },
+        {
+          "model": "claude-haiku-4-5",
+          "in_per_mtok": 1.0,
+          "out_per_mtok": 5.0,
+          "unit": "USD",
+          "note": "Классификация/роутинг/извлечение."
+        },
+        {
+          "model": "perplexity-sonar",
+          "in_per_mtok": 1.0,
+          "out_per_mtok": 1.0,
+          "unit": "USD",
+          "note": "+ request fee $5-14 / 1000 по объёму контекста."
+        },
+        {
+          "model": "perplexity-sonar-pro",
+          "in_per_mtok": 3.0,
+          "out_per_mtok": 15.0,
+          "unit": "USD"
+        },
+        {
+          "model": "ollama-local",
+          "in_per_mtok": 0.0,
+          "out_per_mtok": 0.0,
+          "unit": "USD",
+          "note": "Маржинально 0; реальная цена — RAM и электричество (см. infra.dev-machine).",
+          "lane": "lane.background"
+        },
+        {
+          "model": "openrouter",
+          "note": "Роутер: ставки провайдера + небольшая комиссия, pay-as-you-go кредиты. Per-model.",
+          "status": "planned",
+          "verify": true,
+          "lane": "lane.background"
+        },
+        {
+          "model": "glm-5.2 (z.ai / z-code)",
+          "in_per_mtok": null,
+          "out_per_mtok": null,
+          "note": "Метеред; публичную ставку дотянуть при активации.",
+          "status": "potential",
+          "verify": true,
+          "lane": "lane.background"
+        }
+      ],
+      "levers": "batch -50%; prompt-cache ~0.1x на вход; роутинг Haiku<Sonnet<Opus (5-25x спред).",
+      "tariffs_source": "Публичные ставки на июнь 2026; сверь со своим планом/скидками.",
+      "subscriptions": [
+        {
+          "id": "sub.claude-plus",
+          "title": "Claude Plus",
+          "price_month": null,
+          "lane": "lane.peak",
+          "quota": {
+            "window": "~5ч",
+            "burn": "~2ч интенсива",
+            "recovery": "восстанавливается после выжигания"
+          },
+          "covers": "интерактивный драйв критического пути",
+          "verify": true
+        },
+        {
+          "id": "sub.codex",
+          "title": "Codex (plus)",
+          "price_month": null,
+          "lane": "lane.peak",
+          "quota": {
+            "burn": "выжигается вместе с Claude Plus за ~2ч",
+            "recovery": "регенерация"
+          },
+          "covers": "кодинг-агент на критическом пути",
+          "verify": true
+        },
+        {
+          "id": "sub.cursor-pro-plus",
+          "title": "Cursor Pro+",
+          "price_month": null,
+          "lane": "lane.sustain",
+          "covers": "полоса поддержки после премиум-квоты",
+          "verify": true
+        },
+        {
+          "id": "sub.perplexity-pro",
+          "title": "Perplexity Pro",
+          "price_month": null,
+          "lane": "lane.background",
+          "covers": "chat + $5/мес API-кредитов",
+          "optional": true,
+          "verify": true
+        }
+      ],
+      "overhead": [
+        {
+          "id": "ovh.internet",
+          "title": "Интернет",
+          "price_month": null,
+          "verify": true
+        },
+        {
+          "id": "ovh.hosting",
+          "title": "Хостинг",
+          "price_month": null,
+          "note": "Частично = infra.vps-timeweb.",
+          "verify": true
+        },
+        {
+          "id": "ovh.cellular",
+          "title": "Сотовая связь",
+          "price_month": null,
+          "verify": true
+        }
+      ],
+      "out_of_scope": [
+        "аренда",
+        "электричество",
+        "прочее — реальные, но вынесены за скобки; электричество частично питает infra.dev-machine/Ollama"
+      ],
+      "monthly_baseline": "sum(subscriptions.price_month)+sum(overhead.price_month) = фиксированный пол burn до любой работы. Приватный ввод.",
+      "tool_sprawl_warning": "Подписки и метеред множат машинную пропускную способность, не стамину. Ёмкость сверх wip_limit простаивает."
+    },
+    "stamina": {
+      "nature": "scarce_flow + WIP_cap (человек)",
+      "note": "Истинное бутылочное горло соло-разработки.",
+      "daily": null,
+      "wip_limit": null,
+      "draw_field": "node.draws.stamina: light|medium|heavy — сколько внимания тянет фронт.",
+      "constraint": "count(state==exploring) <= wip_limit И sum(draws.stamina по exploring) <= stamina.daily.",
+      "virtual_team": "Виртуальная команда множит токен-пропускную способность, НЕ стамину. Агенты параллелят машину; интеграция, решения и ревью остаются на одном человеке.",
+      "debt": "Хронический перерасход снижает wip_limit (выгорание) — человеческий аналог долга прорыва.",
+      "current_assessment": "Не насыщена. Запас прочности есть. Биндит не исчерпание, а серийность критического пути. wip_limit с запасом относительно текущих фронтов.",
+      "vector_note": "С командой wip_limit становится по-квадрантным; соло — скаляр."
+    },
+    "day_structure": {
+      "doc": "День — чередование полос с разной ёмкостью и регенерацией, не плоский бюджет.",
+      "lanes": [
+        {
+          "id": "lane.peak",
+          "title": "Пик",
+          "window": "~2ч из 5",
+          "source": ["sub.claude-plus", "sub.codex"],
+          "work": "критический путь: основной продукт, прямое участие",
+          "stamina": "heavy",
+          "binds": "квота подписок (выжиг ~2ч, затем регенерация)"
+        },
+        {
+          "id": "lane.sustain",
+          "title": "Поддержка",
+          "window": "~3ч",
+          "source": ["sub.cursor-pro-plus", "offline"],
+          "work": "доводка, офлайн-задачи",
+          "stamina": "medium"
+        },
+        {
+          "id": "lane.background",
+          "title": "Фон (ночь)",
+          "window": "async, ночь",
+          "source": ["openrouter", "ollama-local", "glm-5.2 (z.ai / z-code)"],
+          "work": "необязательные накопительные операции: исследования, дайджесты, тренировка/эрудиция агентов",
+          "stamina": "none",
+          "note": "Структурно не касается критического пути. Кормит внешнее кольцо (возможность/горизонт) и soft-внутр эрудицию."
+        }
+      ]
+    },
+    "sprint": {
+      "cadence_per_day": "3-4",
+      "unit": "мелкий шаг этап->этап на критическом пути; требует прямого участия",
+      "maps_to": "sprint ~= один артефакт-шаг у exploring-узла (продвижение коллекции спутников / к gate).",
+      "limiter": "Серийная доля (Амдаль): фон параллелит необязательное, критический путь не ускоряет."
+    },
+    "team": {
+      "doc": "Расширяемый слой. Участники — провайдеры ёмкости (стамина по квадрантам, токен-поток, деньги).",
+      "stamina_is_vector": "Стамина — вектор по квадрантам, не скаляр. Найм заполняет компоненту там, где движется путь.",
+      "amdahl_brooks": "Команда даёт параллелизм МЕЖДУ квадрантами; серийное ядро критического пути людьми не ускоряется.",
+      "members": [
+        {
+          "id": "team.founder",
+          "title": "Основатель",
+          "supplies": {
+            "stamina": {
+              "hard.internal": "primary",
+              "soft.internal": "primary",
+              "hard.external": "secondary",
+              "soft.external": "secondary"
+            }
+          },
+          "status": "active",
+          "note": "Единственная точка интеграции и решений."
+        },
+        {
+          "id": "team.ai-personas",
+          "title": "Виртуальная AI-команда (5 ролей)",
+          "supplies": {
+            "tokens": "throughput"
+          },
+          "status": "active",
+          "note": "Множит машинную пропускную, не стамину."
+        },
+        {
+          "id": "team.second-dev",
+          "title": "Второй разработчик (part-time)",
+          "supplies": {
+            "stamina": {
+              "hard.internal": "secondary"
+            }
+          },
+          "status": "onboarding",
+          "note": "Scoped API keys, локальный background-office."
+        },
+        {
+          "id": "team.future-design",
+          "title": "Дизайнер",
+          "supplies": {
+            "stamina": {
+              "soft.external": "primary"
+            }
+          },
+          "status": "planned"
+        },
+        {
+          "id": "team.future-marketing",
+          "title": "Маркетолог",
+          "supplies": {
+            "stamina": {
+              "soft.external": "primary"
+            }
+          },
+          "status": "planned"
+        },
+        {
+          "id": "team.future-dev",
+          "title": "Сильный разработчик(и)",
+          "supplies": {
+            "stamina": {
+              "hard.internal": "primary"
+            }
+          },
+          "status": "planned",
+          "note": "Условие/следствие capacity-gate."
+        }
+      ]
+    }
+  }
+}

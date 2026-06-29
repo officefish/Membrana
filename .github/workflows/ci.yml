@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Root scripts — политика путей и инварианты скриптов
+        run: yarn test:scripts
+
       - name: Catalog — verify client module/plugin prompts
         run: yarn catalog:verify-client
 

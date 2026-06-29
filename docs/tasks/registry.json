@@ -2,6 +2,29 @@
   "version": 1,
   "tasks": [
     {
+      "id": "main-sync-sprint-2026-06-29",
+      "title": "Branch reconciliation sprint: merge main → techies68 → PR → main",
+      "promptPath": "docs/prompts/MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-29",
+      "archivedAt": "2026-06-29"
+    },
+    {
+      "id": "insights-lifecycle-2026-06-28",
+      "title": "Регистрация инсайтов и прогон через все стадии (draft → researched → reviewed → adopted)",
+      "promptPath": "docs/prompts/INSIGHTS_LIFECYCLE_2026_06_28_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "review LGTM dad7426e84fb; Accepted branch-only: Инсайты — документация на feature-ветке techies68; merge в main запланирован в рамках общего PR ветки"
+    },
+    {
       "id": "fft-indices-viz",
       "title": "Плагин микрофона: live-визуализация FFT-индексов",
       "promptPath": "docs/prompts/FFT_INDICES_VIZ_PLUGIN_PROMPT.md",
@@ -598,10 +621,10 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-13",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; MP0-MP6 archived, prod regression complete",
       "dependsOn": [
         "background-media-a5a-server"
       ],
@@ -609,7 +632,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-platform-mp0-domain",
@@ -731,10 +755,10 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; implementation merged via PR #82 commit f3483c2",
       "dependsOn": [
         "membrane-platform-mp4-media-membrane",
         "tariff-dataset-v1"
@@ -743,7 +767,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-sample-library-csl1-api",
@@ -752,17 +777,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; API implementation merged via PR #82 commit f3483c2",
       "dependsOn": [
         "cabinet-sample-library-v1"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-sample-library-csl2-ui",
@@ -771,17 +797,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; cabinet SPA implementation merged via PR #82 commit f3483c2",
       "dependsOn": [
         "cabinet-sample-library-csl1-api"
       ],
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-sample-library-csl3-remote-ops",
@@ -790,17 +817,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; remote ops merged via PR #82 commit f3483c2",
       "dependsOn": [
         "cabinet-sample-library-csl2-ui"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-hardening-night-build",
@@ -809,11 +837,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB0-NB3 pass, PR #76 merged",
       "dependsOn": [
         "membrane-platform-mp4-media-membrane"
       ],
@@ -821,7 +849,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb0-merge-gate",
@@ -830,19 +859,20 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB0 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-hardening-night-build"
       ],
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb1-sample-playback-dry",
@@ -851,17 +881,18 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB1 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-nb0-merge-gate"
       ],
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb2-cabinet-facade",
@@ -870,19 +901,20 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB2 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-nb1-sample-playback-dry"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "cabinet-mp4-nb3-quality-contracts",
@@ -891,19 +923,20 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "cabinet-mp4-hardening-night-build",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; NB3 checkpoint pass, PR #76 merged",
       "dependsOn": [
         "cabinet-mp4-nb2-cabinet-facade"
       ],
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "sample-library-drone-detection",
@@ -1922,10 +1955,10 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "membrane-platform-mp5-telemetry-journal"
       ],
@@ -1934,7 +1967,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-0-trends-enabled-keys",
@@ -1943,11 +1977,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
@@ -1956,7 +1990,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-1-media-api-safe-json",
@@ -1965,11 +2000,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
@@ -1978,7 +2013,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-2-journal-media-decouple",
@@ -1987,11 +2023,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cj-1-media-api-safe-json"
       ],
@@ -2000,7 +2036,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-3-brief-render-parity",
@@ -2009,11 +2046,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cabinet-journal-hotfix"
       ],
@@ -2022,7 +2059,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-4-trends-counts-as-detection",
@@ -2031,11 +2069,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cj-0-trends-enabled-keys"
       ],
@@ -2044,7 +2082,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cj-5-sync-push-observability",
@@ -2053,11 +2092,11 @@
       "githubIssue": 67,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-journal-hotfix",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #67 closed; hotfix merged via PR #88 commit 6b074f3",
       "dependsOn": [
         "cj-2-journal-media-decouple"
       ],
@@ -2066,7 +2105,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "module-catalog-v1",
@@ -3159,7 +3199,7 @@
       "strategicWave": "W3",
       "archivedAt": "2026-06-23",
       "archiveNotes": "MS0-MS4 verify shipped; studio:package 0.1.0; MS5 deferred",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-28"
     },
     {
       "id": "membrana-studio-ms0-canon",
@@ -3183,7 +3223,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-28"
     },
     {
       "id": "membrana-studio-ms1-shell",
@@ -3206,7 +3246,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-28"
     },
     {
       "id": "membrana-studio-ms2-media-fs",
@@ -3230,7 +3270,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms3-journal-fs",
@@ -3253,7 +3293,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-28"
     },
     {
       "id": "membrana-studio-ms4-installer",
@@ -3276,7 +3316,7 @@
         "ozhegov"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-28"
     },
     {
       "id": "membrana-studio-ms5-prod-smoke",
@@ -3300,7 +3340,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-28"
     },
     {
       "id": "device-board-refactor-v04",
@@ -4367,7 +4407,7 @@
       "githubIssue": 133,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-20",
       "dependsOn": [
         "db-realtime-observation-pipeline"
@@ -4377,7 +4417,9 @@
       "leadPersona": "musician",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #133 closed; PR #132 merged and v0.8 parity A0-A5 archived"
     },
     {
       "id": "db-recording-gate-r0-contracts",
@@ -4459,7 +4501,7 @@
       "githubIssue": 133,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "db-recording-gate-v07",
       "createdAt": "2026-06-20",
       "dependsOn": [
@@ -4471,7 +4513,9 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "archivedAt": "2026-06-29",
+      "archiveNotes": "Issue #133 closed; original blocker superseded and verified by v0.8 parity smoke in PR #132"
     },
     {
       "id": "db-recording-parity-mic-r5",
@@ -4636,7 +4680,7 @@
     {
       "id": "db-usercase-mvp-microphone-lgtm",
       "title": "UserCase MVP microphone LGTM — device-board end-to-end",
-      "promptPath": "docs/actions/device-board/sign-offs/USERCASE_MVP_MICROPHONE_LGTM.md",
+      "promptPath": "docs/device-board-scripts/USERCASE_MVP_MICROPHONE_LGTM.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
@@ -6788,7 +6832,7 @@
     },
     {
       "id": "usercase-mvp-v2-groups-async",
-      "title": "UserCase MVP v2: groups, functions, async pipeline (umbrella W1)",
+      "title": "UserCase MVP v2: groups, functions, async tracks on freeze",
       "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
@@ -6801,7 +6845,7 @@
       "dependsOn": [
         "db-usercase-mvp-microphone-lgtm"
       ],
-      "notes": "W1 umbrella. Technical epic: device-board-async-pipeline-v1 (Promise nodes + latent Sequence). STRATEGIC_WAVE.md.",
+      "notes": "Product wave W1. Base mic MVP + comment groups + user functions + async track/report on pause. STRATEGIC_WAVE.md.",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
@@ -6855,21 +6899,21 @@
     },
     {
       "id": "ucv2-2-freeze-async-tracks",
-      "title": "UCV2-2: async MakeTrack + reports (SUPERSEDED)",
-      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "title": "UCV2-2: async MakeTrack + reports while runtime paused",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "archived",
+      "status": "active",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": "2026-06-25",
-      "archiveNotes": "Superseded by device-board-async-pipeline-v1 (Promise nodes + latent Sequence).",
+      "archivedAt": null,
+      "archiveNotes": null,
       "dependsOn": [
         "ucv2-1-graph-collapse"
       ],
-      "notes": "Superseded 2026-06-25. See db-ap-r6, db-ap-r7, db-ap-r9.",
+      "notes": "Lead: Ozhegov. DBP pause v0.7; chain-log async markers.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
@@ -6877,43 +6921,338 @@
     },
     {
       "id": "ucv2-3-pack-verify",
-      "title": "UCV2-3: pack verify (SUPERSEDED)",
-      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "title": "UCV2-3: usercase:build + verify-pack + smoke",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "archived",
+      "status": "active",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": "2026-06-25",
-      "archiveNotes": "Superseded by db-ap-r11-observability-tests + db-ap-r12-docs-signoff.",
+      "archivedAt": null,
+      "archiveNotes": null,
       "dependsOn": [
         "ucv2-2-freeze-async-tracks"
       ],
-      "notes": "Superseded 2026-06-25.",
+      "notes": "Lead: Ozhegov.",
       "leadPersona": "ozhegov",
       "supportPersonas": []
     },
     {
       "id": "ucv2-4-operator-signoff",
-      "title": "UCV2-4: operator signoff (SUPERSEDED)",
-      "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "title": "UCV2-4: operator LGTM doc + epic close",
+      "promptPath": "docs/prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "archived",
+      "status": "active",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": "2026-06-25",
-      "archiveNotes": "Superseded by db-ap-r12-docs-signoff.",
+      "archivedAt": null,
+      "archiveNotes": null,
       "dependsOn": [
         "ucv2-3-pack-verify"
       ],
-      "notes": "Superseded 2026-06-25. LGTM → DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md.",
+      "notes": "Lead: Vesnin. USERCASE_MVP_V2_GROUPS_ASYNC_LGTM.md",
       "leadPersona": "vesnin",
       "supportPersonas": []
+    },
+    {
+      "id": "device-board-phase-3",
+      "title": "Device-board Phase 3: catalog service, validators, competition",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Consilium phase-3-architecture-decisions-2026-06-24. After Phase 2b LGTM.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-p3-a1-usercase-catalog-service",
+      "title": "DB-P3-A1: migrate usercase-catalog-service package",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Ozhegov. Move ClientUserCaseCatalogService from apps/client to packages/services/usercase-catalog.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "db-p3-a2-runtime-validators",
+      "title": "DB-P3-A2: runtime validators + live UI",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Lead: Dynin + Rodchenko. Pure validators in device-board/runtime/validators; verify-usercase-prerun + canvas hints.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "issue-185-services-device-board-boundary",
+      "title": "Issue #185: remove services → device-board boundary violations",
+      "promptPath": "docs/prompts/ISSUE_185_BOUNDARY_REMEDIATION_SPRINT_PROMPT.md",
+      "githubIssue": 185,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "review LGTM 017f5cd5f4cc; Accepted branch-only: R5 legacy pilot: user requested closure; commit pushed to techies68, PR/merge deferred",
+      "dependsOn": [
+        "db-p3-a1-usercase-catalog-service"
+      ],
+      "notes": "Lead: Ozhegov; T2 review by Vesnin. Remove all @membrana/device-board imports from packages/services/usercase-catalog and reconcile docs with enforced boundary.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "githubIssueClosedAt": "2026-06-28"
+    },
+    {
+      "id": "db-p3-a3-competition-restrictions",
+      "title": "DB-P3-A3: competition executionPolicy + restrictions",
+      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "device-board-phase-3",
+      "createdAt": "2026-06-24",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-p3-a2-runtime-validators"
+      ],
+      "notes": "Lead: Kuryokhin + Rodchenko. meta.executionPolicy, background-media templates, readOnly + timeout UI.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "task-closure-teamlead-review-v1",
+      "title": "Automatic Teamlead review for Issue and sprint closure",
+      "promptPath": "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "review LGTM 29648cf205fe; Accepted branch-only: R5 greenfield pilot: user requested sprint closure; exact SHA pushed to techies68, PR/merge deferred to the separate GitHub process",
+      "notes": "Consilium closure-review-process-consilium-2026-06-28. Fail-closed Teamlead verdict bound to task id and commit SHA.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "tcr-r0-regulation-schema",
+      "title": "TCR R0: closure review regulation, prompt and schema",
+      "promptPath": "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "task-closure-teamlead-review-v1",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [],
+      "notes": "Canonical state machine, fail-closed policy, prompts and JSON Schema.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "tcr-r1-manifest-core",
+      "title": "TCR R1: manifest state library and prepare/status CLI",
+      "promptPath": "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "task-closure-teamlead-review-v1",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r0-regulation-schema"
+      ],
+      "notes": "Pure transitions, per-task manifest, commit SHA invalidation, dry-run.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "tcr-r2-teamlead-runner",
+      "title": "TCR R2: Teamlead review runner and immutable verdict",
+      "promptPath": "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "task-closure-teamlead-review-v1",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r1-manifest-core"
+      ],
+      "notes": "Reuse T0/T1/T2 regulation; write LGTM/BLOCK artifact bound to SHA.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "tcr-r3-finalize-gate",
+      "title": "TCR R3: guarded finalize and lifecycle integration",
+      "promptPath": "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "task-closure-teamlead-review-v1",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r2-teamlead-runner"
+      ],
+      "notes": "Fail-closed finalize over archive and GitHub close queue; explicit branch-only path.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "tcr-r4-three-env-skills",
+      "title": "TCR R4: Cursor, Claude Code and Codex closure review skills",
+      "promptPath": "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "task-closure-teamlead-review-v1",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r2-teamlead-runner"
+      ],
+      "notes": "Thin skills in .cursor, .claude and .agents plus semantic drift verifier.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "tcr-r5-github-pilot",
+      "title": "TCR R5: GitHub integration pilot and migration decision",
+      "promptPath": "docs/prompts/TASK_CLOSURE_TEAMLEAD_REVIEW_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "parentEpic": "task-closure-teamlead-review-v1",
+      "createdAt": "2026-06-28",
+      "archivedAt": "2026-06-28",
+      "archiveNotes": "Covered by T2 LGTM for epic task-closure-teamlead-review-v1 at 29648cf205fe5d22e1d662278892f11c48ee9c72; branch-only closure accepted by user",
+      "dependsOn": [
+        "tcr-r3-finalize-gate",
+        "tcr-r4-three-env-skills"
+      ],
+      "notes": "Pilot on one M-task; optional labels/check; legacy migration report.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "ghost-task-closure-sprint-2026-06-29",
+      "title": "Sprint: verify and close ghost task registry entries",
+      "promptPath": "docs/prompts/TASK_PROMPT_GHOST_CLOSURE_SPRINT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-29",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Audit ghost candidates on issues #47, #67, #81, #93 and #133; no heuristic bulk archive; #47 stage-gate requires human confirmation.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     },
     {
       "id": "device-board-async-pipeline-v1",
@@ -7217,92 +7556,6 @@
       "notes": "Lead: Vesnin. yarn task:archive device-board-async-pipeline-v1.",
       "leadPersona": "vesnin",
       "supportPersonas": []
-    },
-    {
-      "id": "device-board-phase-3",
-      "title": "Device-board Phase 3: catalog service, validators, competition",
-      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "L",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "strategicWave": "W1",
-      "createdAt": "2026-06-24",
-      "archivedAt": "2026-06-24",
-      "archiveNotes": "PR #156 merged 2026-06-24. A1+A2+A3 complete.",
-      "notes": "Consilium phase-3-architecture-decisions-2026-06-24. After Phase 2b LGTM.",
-      "leadPersona": "vesnin",
-      "supportPersonas": [
-        "ozhegov",
-        "dynin",
-        "musician",
-        "rodchenko"
-      ]
-    },
-    {
-      "id": "db-p3-a1-usercase-catalog-service",
-      "title": "DB-P3-A1: migrate usercase-catalog-service package",
-      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "strategicWave": "W1",
-      "parentEpic": "device-board-phase-3",
-      "createdAt": "2026-06-24",
-      "archivedAt": "2026-06-24",
-      "archiveNotes": "PR #156",
-      "dependsOn": [],
-      "notes": "Lead: Ozhegov. Move ClientUserCaseCatalogService from apps/client to packages/services/usercase-catalog.",
-      "leadPersona": "ozhegov",
-      "supportPersonas": []
-    },
-    {
-      "id": "db-p3-a2-runtime-validators",
-      "title": "DB-P3-A2: runtime validators + live UI",
-      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "strategicWave": "W1",
-      "parentEpic": "device-board-phase-3",
-      "createdAt": "2026-06-24",
-      "archivedAt": "2026-06-24",
-      "archiveNotes": "PR #156",
-      "dependsOn": [],
-      "notes": "Lead: Dynin + Rodchenko. Pure validators in device-board/runtime/validators; verify-usercase-prerun + canvas hints.",
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "rodchenko"
-      ]
-    },
-    {
-      "id": "db-p3-a3-competition-restrictions",
-      "title": "DB-P3-A3: competition executionPolicy + restrictions",
-      "promptPath": "docs/prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "strategicWave": "W1",
-      "parentEpic": "device-board-phase-3",
-      "createdAt": "2026-06-24",
-      "archivedAt": "2026-06-24",
-      "archiveNotes": "PR #156",
-      "dependsOn": [
-        "db-p3-a2-runtime-validators"
-      ],
-      "notes": "Lead: Kuryokhin + Rodchenko. meta.executionPolicy, background-media templates, readOnly + timeout UI.",
-      "leadPersona": "musician",
-      "supportPersonas": [
-        "rodchenko",
-        "ozhegov"
-      ]
     },
     {
       "id": "device-board-user-function-closeout",
@@ -9149,7 +9402,9 @@
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "dynin",
-      "supportPersonas": ["ozhegov"],
+      "supportPersonas": [
+        "ozhegov"
+      ],
       "archivedAt": null,
       "archiveNotes": null
     },
@@ -9197,7 +9452,9 @@
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "dynin",
-      "supportPersonas": ["vesnin"],
+      "supportPersonas": [
+        "vesnin"
+      ],
       "archivedAt": null,
       "archiveNotes": "Vectorize-хостед §5-запрет. Self-hostable вариант — отдельный mini-spike, не в этом спринте."
     },
@@ -9216,6 +9473,130 @@
       "supportPersonas": [],
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "rag-dual-circuit-v1",
+      "title": "RAG Dual-Circuit v1: doc-memory + code-structure (эпик)",
+      "promptPath": "docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-21",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "kind": "epic",
+      "notes": "CRITICAL_RAG_AUDIT.md принят 2026-06-21; условный LGTM Vesnin после R3 acceptance-demo."
+    },
+    {
+      "id": "rag-r0-scaffold",
+      "title": "RAG R0: каркас пакета — types, config, stub query, .env.example",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-06-21",
+      "archivedAt": "2026-06-21",
+      "archiveNotes": "Done post-factum. scaffold + typecheck green. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r1-lancedb-index",
+      "title": "RAG R1: LanceDB store + индексация (markdown-splitter, code-signature, openai-embedder, hash-manifest)",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-21",
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Done post-factum. yarn rag:index --full работает; ~500-800 chunks; incremental без дубликатов. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r2-operative-circuit",
+      "title": "RAG R2: operative circuit — recent-docs, keyword-search, path-filters, scoring, BM25-lite",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-22",
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Done post-factum. operative/: recent-docs, keyword-search, path-filters, scoring. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r3-dual-retriever",
+      "title": "RAG R3: dual retriever — operative → LanceDB merge; acceptance demo 5 вопросов; условный LGTM Vesnin",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-24",
+      "archivedAt": "2026-06-24",
+      "archiveNotes": "Done post-factum. retriever/dual-retriever.ts + archive-port.ts. Условный LGTM Vesnin — pending acceptance-demo (ragx-c2). Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r4-office-endpoint",
+      "title": "RAG R4: background-office POST /api/rag/query — NestJS controller + gateway service",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-25",
+      "archivedAt": "2026-06-25",
+      "archiveNotes": "Done post-factum. background-office/modules/rag/: controller, service, module. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r5-rituals",
+      "title": "RAG R5: интеграция в ритуалы — evening hook rag-evening-index.mjs (non-blocking, 120s timeout)",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "createdAt": "2026-06-27",
+      "archivedAt": "2026-06-27",
+      "archiveNotes": "Done post-factum (коммит dbaaff8). rag-evening-index.mjs интегрирован. standup/consilium через rag:query. Эпик: rag-dual-circuit-v1.",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r6-closure",
+      "title": "RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-27",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "leadPersona": "dynin",
+      "epicId": "rag-dual-circuit-v1"
+    },
+    {
+      "id": "rag-r7-optional",
+      "title": "RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-06-27",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Deferred per CRITICAL_RAG_AUDIT §12. Go/no-go после R6.",
+      "epicId": "rag-dual-circuit-v1"
     }
   ]
 }

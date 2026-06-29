@@ -20,9 +20,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@membrana/core': fileURLToPath(new URL('../../core/src/index.ts', import.meta.url)),
-      '@membrana/device-board': fileURLToPath(
-        new URL('../../device-board/src/index.ts', import.meta.url),
-      ),
     },
   },
 
@@ -38,7 +35,6 @@ export default defineConfig({
         'react-dom',
         'react/jsx-runtime',
         '@membrana/core',
-        '@membrana/device-board',
       ],
     },
     sourcemap: true,

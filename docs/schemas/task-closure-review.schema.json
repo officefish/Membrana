@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://membrana.local/schemas/task-closure-review.schema.json",
+  "title": "Membrana task closure review manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "taskId",
+    "state",
+    "tier",
+    "branch",
+    "currentCommitSha",
+    "verdict",
+    "reviewedCommitSha",
+    "reviewArtifact",
+    "github",
+    "scope",
+    "evidence",
+    "reviewersStatus",
+    "completion",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "taskId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "state": {
+      "enum": [
+        "implementation_ready",
+        "published",
+        "review_pending",
+        "blocked",
+        "needs_fix",
+        "lgtm",
+        "merged",
+        "accepted_branch_only",
+        "archived"
+      ]
+    },
+    "tier": { "enum": ["T0", "T1", "T2"] },
+    "reviewMode": { "enum": ["standard", "concise-t0"] },
+    "branch": { "type": "string", "minLength": 1 },
+    "currentCommitSha": { "$ref": "#/$defs/sha" },
+    "reviewedCommitSha": {
+      "oneOf": [{ "$ref": "#/$defs/sha" }, { "type": "null" }]
+    },
+    "verdict": { "enum": ["pending", "LGTM", "BLOCK"] },
+    "reviewArtifact": {
+      "oneOf": [
+        { "type": "string", "pattern": "^docs/reviews/[a-z0-9-]+/[0-9a-f]{40}-review\\.md$" },
+        { "type": "null" }
+      ]
+    },
+    "github": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue", "pullRequest", "remoteState"],
+      "properties": {
+        "issue": { "type": ["integer", "null"], "minimum": 1 },
+        "pullRequest": { "type": ["integer", "null"], "minimum": 1 },
+        "remoteState": { "enum": ["unknown", "offline", "open", "merged", "closed"] },
+        "url": { "type": ["string", "null"], "format": "uri" }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseRef", "files", "packages"],
+      "properties": {
+        "baseRef": { "type": "string", "minLength": 1 },
+        "files": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "packages": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checks", "hasUnresolvedP0P1"],
+      "properties": {
+        "hasUnresolvedP0P1": { "type": "boolean" },
+        "checks": { "type": "array", "items": { "$ref": "#/$defs/check" } }
+      }
+    },
+    "reviewersStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vesnin": { "$ref": "#/$defs/reviewerStatus" },
+        "ozhegov": { "$ref": "#/$defs/reviewerStatus" },
+        "dynin": { "$ref": "#/$defs/reviewerStatus" },
+        "musician": { "$ref": "#/$defs/reviewerStatus" },
+        "rodchenko": { "$ref": "#/$defs/reviewerStatus" }
+      }
+    },
+    "completion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "evidence"],
+      "properties": {
+        "mode": { "enum": ["pending", "merged", "accepted_branch_only"] },
+        "evidence": { "type": ["string", "null"] }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "state": { "enum": ["blocked", "needs_fix"] } }, "required": ["state"] },
+      "then": { "properties": { "verdict": { "const": "BLOCK" }, "evidence": { "type": "object", "properties": { "hasUnresolvedP0P1": { "const": true } } } } }
+    },
+    {
+      "if": { "properties": { "state": { "enum": ["lgtm", "merged", "accepted_branch_only", "archived"] } }, "required": ["state"] },
+      "then": {
+        "properties": {
+          "verdict": { "const": "LGTM" },
+          "reviewedCommitSha": { "$ref": "#/$defs/sha" },
+          "reviewArtifact": { "type": "string" },
+          "evidence": { "type": "object", "properties": { "hasUnresolvedP0P1": { "const": false } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "state": { "const": "merged" } }, "required": ["state"] },
+      "then": { "properties": { "completion": { "type": "object", "properties": { "mode": { "const": "merged" }, "evidence": { "type": "string", "minLength": 1 } } } } }
+    },
+    {
+      "if": { "properties": { "state": { "const": "accepted_branch_only" } }, "required": ["state"] },
+      "then": { "properties": { "completion": { "type": "object", "properties": { "mode": { "const": "accepted_branch_only" }, "evidence": { "type": "string", "minLength": 1 } } } } }
+    },
+    {
+      "if": { "properties": { "state": { "const": "archived" } }, "required": ["state"] },
+      "then": { "properties": { "completion": { "type": "object", "properties": { "mode": { "enum": ["merged", "accepted_branch_only"] }, "evidence": { "type": "string", "minLength": 1 } } } } }
+    }
+  ],
+  "$defs": {
+    "sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "reviewerStatus": { "enum": ["not_required", "pending", "approved", "blocked"] },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "status", "commitSha", "checkedAt"],
+      "properties": {
+        "command": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["pass", "fail", "stale", "skipped"] },
+        "exitCode": { "type": ["integer", "null"] },
+        "commitSha": { "$ref": "#/$defs/sha" },
+        "checkedAt": { "type": "string", "format": "date-time" },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}
