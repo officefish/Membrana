@@ -21,7 +21,7 @@
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --exclude '**/acceptance.test.ts'",
+    "test": "vitest run",
     "test:acceptance": "vitest run src/retriever/acceptance.test.ts",
     "index": "node ./dist/cli/index.js",
     "query": "node ./dist/cli/query.js"
