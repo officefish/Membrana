@@ -42,6 +42,8 @@ Full legacy migration is manifest-driven:
 - `docs/tasks/backups/registry-YYYYMMDD.json` — exact pre-migration backup.
 - `docs/tasks/migrations/task-archive-migration-YYYY-MM-DD.json` — ids, source statuses and checksums.
 
+Completed migration brief: [`TASK_ARCHIVE_MIGRATION_SPRINT_2026_06_30.md`](./TASK_ARCHIVE_MIGRATION_SPRINT_2026_06_30.md).
+
 Commands:
 
 - `yarn tasks:migrate-archive:preflight` — dry-run counts.
