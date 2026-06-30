@@ -48,11 +48,18 @@ Key vars:
 
 ```text
 OPENAI_API_KEY=...
+OPENAI_BASE_URL=https://api.openai.com/v1 # optional proxy / OpenAI-compatible endpoint
+RAG_EMBEDDING_PROVIDER=openai             # openai | voyage
 RAG_EMBEDDING_MODEL=text-embedding-3-small
 RAG_VECTOR_STORE=lancedb
 RAG_LANCEDB_PATH=.membrana/rag/
 RAG_OPERATIVE_DAYS=7
 ```
+
+For Voyage use `VOYAGE_API_KEY` and `RAG_EMBEDDING_PROVIDER=voyage`; the default model is
+`voyage-4-lite`. Provider selection is explicit: runtime failover is intentionally disabled
+because providers use different vector spaces. Changing provider or model requires
+`yarn rag:index --full`; incremental indexing rejects a mismatched embedding fingerprint.
 
 Index directory is **gitignored** — regenerate with `yarn rag:index --full`.
 

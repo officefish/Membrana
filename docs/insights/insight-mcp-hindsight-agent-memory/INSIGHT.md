@@ -3,7 +3,7 @@
 | Поле | Значение |
 |------|----------|
 | **ID** | `insight-mcp-hindsight-agent-memory` |
-| **Статус** | draft |
+| **Статус** | deferred (weight 1.4) |
 | **Источник** | `mcp-tooling-consilium` (2026-06-27) |
 | **Создан** | 2026-06-27 |
 

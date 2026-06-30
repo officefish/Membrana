@@ -10,7 +10,13 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { anthropicPost, defaultModel, getAnthropicKey, loadDotEnv } from './_anthropic-env.mjs';
+import {
+  anthropicPost,
+  defaultModel,
+  getAnthropicKey,
+  loadDotEnv,
+  printAnthropicHttpError,
+} from './_anthropic-env.mjs';
 import {
   REVIEW_PROMPT_PATH,
   VIRTUAL_TEAM_PATH,
@@ -116,13 +122,28 @@ try {
     }
 
     const key = getAnthropicKey();
-    const response = await anthropicPost(key, {
-      model: defaultModel(),
-      max_tokens: 4096,
-      system: `${reviewPrompt}\n\n---\n\n${virtualTeam}`,
-      messages: [{ role: 'user', content: userMessage }],
-    });
-    const text = response.content?.find((b) => b.type === 'text')?.text ?? '';
+    const { ok, status, text: responseText } = await anthropicPost(
+      'https://api.anthropic.com/v1/messages',
+      {
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+        },
+        bodyJson: {
+          model: defaultModel(),
+          max_tokens: 8192,
+          system: `${reviewPrompt}\n\n---\n\n${virtualTeam}`,
+          messages: [{ role: 'user', content: userMessage }],
+        },
+      },
+    );
+    if (!ok) {
+      printAnthropicHttpError(status, responseText);
+      throw new Error(`Anthropic review failed with HTTP ${status}`);
+    }
+    const response = JSON.parse(responseText);
+    const text = response.content?.find((block) => block.type === 'text')?.text ?? '';
     if (!text.trim()) {
       throw new Error('Empty review from Anthropic');
     }
@@ -147,6 +168,8 @@ try {
     }
     writeRegistry(repoRoot, registry);
     console.log(`REVIEW.md записан: ${join(dir, 'REVIEW.md')}`);
+    // Give undici's dispatcher a tick to finish closing on Windows before forcing exit.
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, 150));
     process.exit(0);
   }
 

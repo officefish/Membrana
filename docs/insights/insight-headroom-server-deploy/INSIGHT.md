@@ -80,3 +80,15 @@ Codex. The deterministic fixture
 - `client=claude-code` for Claude Code proxy traffic;
 - `client=codex` for Codex context/prompt transforms;
 - operational Codex actions outside Headroom are listed separately.
+
+---
+
+## Retained remote MCP research context
+
+The original M1 insight framed Headroom as a candidate remote MCP/shared proxy service rather than a purely local Windows install. That context remains relevant for future work:
+
+- Windows local install cost: `headroom-ai[mcp]` may require Rust/PyO3/MSVC build tooling, which raises onboarding friction for every developer and CI worker.
+- Remote-service hypothesis: package Headroom as a Docker/VPS-hosted HTTP/SSE or MCP-compatible endpoint so agents can connect through configuration instead of compiling local binaries.
+- Research questions still open: transport choice (SSE vs stdio-proxy), Claude Code remote MCP configuration, latency/auth limits, and security risks around exposing compressed agent context over the network.
+
+For the current M2 baseline, this file records local proxy measurements and per-client telemetry attribution; the remote MCP deployment question should be handled as a follow-up hardening/deployment sprint.

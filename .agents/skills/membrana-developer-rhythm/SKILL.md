@@ -6,6 +6,6 @@ description: >-
 
 # Mirror — developer rhythm
 
-**Canonical:** [`.cursor/skills/membrana-developer-rhythm/SKILL.md`](../../.cursor/skills/membrana-developer-rhythm/SKILL.md)
+**Canonical:** [`.cursor/skills/membrana-developer-rhythm/SKILL.md`](../../../.cursor/skills/membrana-developer-rhythm/SKILL.md)
 
 Run that playbook verbatim.

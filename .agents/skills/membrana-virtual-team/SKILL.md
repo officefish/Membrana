@@ -6,4 +6,4 @@ description: >-
 
 # Mirror — virtual team
 
-**Canonical:** [`.cursor/skills/membrana-virtual-team/SKILL.md`](../../.cursor/skills/membrana-virtual-team/SKILL.md)
+**Canonical:** [`.cursor/skills/membrana-virtual-team/SKILL.md`](../../../.cursor/skills/membrana-virtual-team/SKILL.md)

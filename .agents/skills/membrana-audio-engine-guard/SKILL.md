@@ -6,4 +6,4 @@ description: >-
 
 # Mirror — audio engine guard
 
-**Canonical:** [`.cursor/skills/membrana-audio-engine-guard/SKILL.md`](../../.cursor/skills/membrana-audio-engine-guard/SKILL.md)
+**Canonical:** [`.cursor/skills/membrana-audio-engine-guard/SKILL.md`](../../../.cursor/skills/membrana-audio-engine-guard/SKILL.md)

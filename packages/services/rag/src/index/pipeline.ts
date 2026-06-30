@@ -2,8 +2,9 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import type { RagConfig } from '../config.js';
-import { createOpenAiEmbedder, embedInBatches } from '../embed/openai-embedder.js';
-import { OPENAI_EMBEDDING_BATCH_SIZE } from '../embed/types.js';
+import { createEmbedder, embeddingFingerprint } from '../embed/embedder-factory.js';
+import { embedInBatches } from '../embed/openai-embedder.js';
+import { EMBEDDING_BATCH_SIZE } from '../embed/types.js';
 import { buildChunksForSource } from './build-chunks.js';
 import { collectSourceFiles } from './collect-sources.js';
 import {
@@ -45,12 +46,20 @@ export async function runIndexPipeline(
     throw new Error(`R1 supports only lancedb store (got ${config.vectorStore})`);
   }
 
-  const embedder = createOpenAiEmbedder(config, env);
+  const embedder = createEmbedder(config, env);
+  const fingerprint = embeddingFingerprint(config, embedder);
   const store = createLanceDbStore(repoRoot, config.lanceDbPath);
   const manifestPath = resolveManifestPath(repoRoot, config.lanceDbPath);
   const sources = await collectSourceFiles(repoRoot);
   const previousManifest = mode === 'incremental' ? await loadHashManifest(manifestPath) : {};
-  const nextManifest: FileHashManifest = {};
+  if (
+    mode === 'incremental' &&
+    previousManifest.__embedding_fingerprint &&
+    previousManifest.__embedding_fingerprint !== fingerprint
+  ) {
+    throw new Error('Embedding provider or model changed; run yarn rag:index --full');
+  }
+  const nextManifest: FileHashManifest = { __embedding_fingerprint: fingerprint };
 
   const changedSources = [];
   for (const source of sources) {
@@ -65,7 +74,9 @@ export async function runIndexPipeline(
   const removedSources =
     mode === 'incremental'
       ? Object.keys(previousManifest).filter(
-          (path) => !sources.some((source) => source.relativePath === path),
+          (path) =>
+            path !== '__embedding_fingerprint' &&
+            !sources.some((source) => source.relativePath === path),
         )
       : [];
 
@@ -84,7 +95,8 @@ export async function runIndexPipeline(
       const vectors = await embedInBatches(
         embedder,
         chunks.map((chunk) => chunk.text),
-        OPENAI_EMBEDDING_BATCH_SIZE,
+        EMBEDDING_BATCH_SIZE,
+        'document',
       );
       for (let i = 0; i < chunks.length; i += 1) {
         const chunk = chunks[i];
@@ -113,7 +125,8 @@ export async function runIndexPipeline(
       const vectors = await embedInBatches(
         embedder,
         chunks.map((chunk) => chunk.text),
-        OPENAI_EMBEDDING_BATCH_SIZE,
+        EMBEDDING_BATCH_SIZE,
+        'document',
       );
       const rows = chunks.map((chunk, index) => {
         const vector = vectors[index];

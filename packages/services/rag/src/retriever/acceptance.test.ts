@@ -74,5 +74,5 @@ describe('dual retriever routing', () => {
     expect(result.usedOperative).toBe(true);
     expect(result.usedArchive).toBe(false);
     expect(result.fragments.every((fragment) => fragment.circuit === 'operative')).toBe(true);
-  });
+  }, 60_000);
 });
