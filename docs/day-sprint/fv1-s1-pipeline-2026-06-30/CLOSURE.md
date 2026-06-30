@@ -8,8 +8,8 @@
 | **Opened** | 2026-06-30 |
 | **Closed** | 2026-06-30 |
 | **Verdict** | **shipped** |
-| **PR** | TBD (ветка `feat/fv1-s1-pipeline`) |
-| **Commit** | `3bbe73b` |
+| **PR** | [#207](https://github.com/officefish/Membrana/pull/207) |
+| **Commits** | `3bbe73b` (S1 core), `b945179` (drone-first policy) |
 
 ---
 
@@ -33,6 +33,7 @@
 | Схема датасета | `docs/datasets/free-v1/README.md` |
 | Acoustic research | `docs/insights/insight-free-v1-acoustic-classes/RESEARCH.md` |
 | Generated template | `packages/services/trends-detector/templates/DRONE.json` |
+| Drone-first policy | `ClassifyTrendsOptions.droneFirstMinGap` · `classifyTrends.ts` |
 
 ---
 
@@ -40,6 +41,7 @@
 
 1. **Regression check** — containment semantics вместо closeness: envelope должен содержать DRONE_TIGHT, не совпадать с ним. Tolerance 90%.
 2. **P0 research** — главный дискриминатор DRONE vs MACHINE_HUM: spectral centroid (drone >2kHz, hum <1kHz). GUNSHOT изолируется через `peakToAverageRatio > 8` + `activityRatio < 0.2`.
+3. **Drone-first policy** — продуктовое решение: `droneFirstMinGap` (рек. 20) — не-дроновый класс должен обогнать лучший дрон-шаблон минимум на `gap` очков, иначе победитель — дрон. Ложная тревога на двигатель предпочтительнее пропущенного дрона.
 
 ---
 

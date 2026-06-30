@@ -18,11 +18,10 @@
 
 ---
 
-## 2026-06-30 — `fv1-s1-pipeline` — **OPEN**
+## 2026-06-30 — `fv1-s1-pipeline` — **CLOSED**
 
-- **Scope:** параметризация пайплайна генерации шаблонов; Perplexity research акустики 7 классов; схема датасета free-v1
-- **Open brief:** [`day-sprint/fv1-s1-pipeline-2026-06-30/OPEN.md`](./day-sprint/fv1-s1-pipeline-2026-06-30/OPEN.md)
-- **Prompt:** [`prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md §Спринт 1`](./prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md)
+- **Delivered:** `buildClassTemplateFromMetricSamples`, `mergeClassTemplates`, `generate-class-template.mjs`, dataset schema, acoustic research, `droneFirstMinGap` policy · PR [#207](https://github.com/officefish/Membrana/pull/207)
+- **Closure:** [`day-sprint/fv1-s1-pipeline-2026-06-30/CLOSURE.md`](./day-sprint/fv1-s1-pipeline-2026-06-30/CLOSURE.md)
 
 ---
 
