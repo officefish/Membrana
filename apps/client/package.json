@@ -13,7 +13,8 @@
     "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.app .tsbuildinfo.node",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc -b",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:node": "node --experimental-strip-types --test src/plugins/microphone-stream-viz/types.test.ts src/modules/microphone/microphoneStreamHub.test.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.0",

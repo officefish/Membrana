@@ -33,35 +33,34 @@
 - [x] OPEN.md
 - [x] DAY_SPRINT_ACTIVE.md
 
-### ⬜ BC1 — Verify & close: #146, #151, #54
+### ✅ BC1 — Verify & close: #146, #151, #54
 
-- [ ] #146: проверить PR #162 vs acceptance criteria → закрыть / задокументировать
-- [ ] #151: проверить дочерние (#146, #152, #153) → закрыть эпик
-- [ ] #54: проверить composite test и deployment record → закрыть / сузить
+- [x] #146: PR #162 покрывает все acceptance criteria → CLOSED
+- [x] #151: все дочерние #146/#152/#153 закрыты → CLOSED
+- [x] #54: все MCP sub-tasks заархивированы → CLOSED
 
-### ⬜ BC2 — Аудит: #7, #8, #34
+### ✅ BC2 — Аудит: #7, #8, #34
 
-- [ ] #7: сверить acceptance с текущими тестами
-- [ ] #8: проверить smoke coverage
-- [ ] #34: статус по #10; закрыть или задокументировать residual
+- [x] #7: store/registry тесты НЕ существуют → RESIDUAL (прокомментировано)
+- [x] #8: client registration smoke тесты НЕ существуют → RESIDUAL (прокомментировано)
+- [x] #34: edge-case docs зависят от #10 → RESIDUAL (прокомментировано)
 
-### ⬜ BC3 — S-PR или закрытие: #11
+### ✅ BC3 — S-PR: #11 resolveMicStreamVizConfig tests
 
-- [ ] Проверить текущую нормализацию и тесты viz config
-- [ ] Результат: close (если покрыто) или S-PR
+- [x] `apps/client/src/plugins/microphone-stream-viz/types.test.ts` — 6 тестов, 6/6 PASS
+- [x] `apps/client/package.json` + `test:node` script
+- [x] #11 CLOSED
 
-### ⬜ BC4 — S-PR: #9 microphoneStreamHub tests
+### ✅ BC4 — S-PR: #9 microphoneStreamHub tests
 
-- [ ] replay тест
-- [ ] unsubscribe тест
-- [ ] isolation тест
-- [ ] PR merged, #9 закрыт
+- [x] `apps/client/src/modules/microphone/microphoneStreamHub.test.ts` — 4 теста, 4/4 PASS
+- [x] #9 CLOSED
 
-### ⬜ BC5 — P0 impl: #157 dissolve comment group
+### ✅ BC5 — #157 dissolve comment group
 
-- [ ] Изучить scope и текущий код
-- [ ] Реализация dissolve
-- [ ] Тест undo/save-reload
-- [ ] PR merged, #157 закрыт
+- [x] Аудит: реализация уже существует в `comment-group.ts` (dissolveCommentGroups, applyBoardNodeChangesWithCommentGroupDissolve, applyBranchNodeRemovals)
+- [x] Подключено в graph-context.tsx в 9 точках
+- [x] Тесты в `comment-group.test.ts` уже покрывают dissolve
+- [x] #157 CLOSED
 
 ### ⬜ BC6 — PR + CLOSURE
