@@ -1,0 +1,2855 @@
+{
+  "version": 1,
+  "id": "task-archive-migration-2026-06-30",
+  "createdAt": "2026-06-30T04:54:28.333Z",
+  "source": "docs/tasks/registry.json",
+  "target": "docs/tasks/archive.jsonl",
+  "registryBefore": {
+    "total": 517,
+    "checksum": "a8a7d0f285a115b683df6277ec2d43ca6d0bd0a0899ee3edee6a54ca6f7aa9de"
+  },
+  "moveCount": 355,
+  "keepCount": 162,
+  "tasks": [
+    {
+      "id": "ci-test-stability-refactor",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 191,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "d699ffb0e3b8f28d38dfc90d1117ba55c1d44e2cbe94b8f04ef67e48b1028df2"
+    },
+    {
+      "id": "main-sync-sprint-2026-06-29",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "39072d684f2d8aa30b6233582b836d1e3c4f517c7634e7b2fd96965aa32eec24"
+    },
+    {
+      "id": "insights-lifecycle-2026-06-28",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "a44f07f7b6a526979ee65044c10d3a8aba10ef73a729557491906bd7ba688648"
+    },
+    {
+      "id": "fft-indices-viz",
+      "status": "archived",
+      "archivedAt": "2026-05-15",
+      "githubIssue": 41,
+      "githubIssueClosedAt": "2026-05-15",
+      "checksum": "3dffb391a3e72e1391ebc8ca141ea55af33985b2fb7511a6c3d9d9da765e321b"
+    },
+    {
+      "id": "sound-quality-viz",
+      "status": "archived",
+      "archivedAt": "2026-05-15",
+      "githubIssue": 42,
+      "githubIssueClosedAt": "2026-05-15",
+      "checksum": "7b3b90e63fa5c874730e9a0b5b11883e97cd9cdf18a5a7fe0993520ba995cdd7"
+    },
+    {
+      "id": "telemetry-journal-report-viz",
+      "status": "archived",
+      "archivedAt": "2026-05-15",
+      "githubIssue": 43,
+      "githubIssueClosedAt": "2026-05-15",
+      "checksum": "07327196ed6a99aa9128aafaa68c6e4d24d2422f75ba30374a1baa23233686e6"
+    },
+    {
+      "id": "dsp-drone-detector",
+      "status": "archived",
+      "archivedAt": "2026-05-16",
+      "githubIssue": 45,
+      "githubIssueClosedAt": "2026-05-17",
+      "checksum": "022a8d9433b31d6ed856f3ed24fb5cf42292200be7e38b1fd7b4847352411476"
+    },
+    {
+      "id": "tariff-dataset-v1",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "f56d667568a9d6756bdb8f42b2329d39461ab4e8074d5194a379693a552fbd6f"
+    },
+    {
+      "id": "tariff-dataset-ds1-corpus",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "b1e1a2438110884ffa09e54891853c5d65637a24fca3bb4955ffdc403d857e25"
+    },
+    {
+      "id": "tariff-dataset-ds2-domain",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "21238f209d5efd14a3902146bf4c1e605942dba3c64c365e5d6479d7595ddb85"
+    },
+    {
+      "id": "tariff-dataset-ds3-client-bundled",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "07af9f91283b04f423fd5984dc4a60c692f6a36de46942683158017210b1292d"
+    },
+    {
+      "id": "tariff-dataset-ds4-benchmark-v02",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "614ade90fd51e957f2d730b4b0c4fe1eadbaa27dba15bcc6fc240958f74a3205"
+    },
+    {
+      "id": "tariff-dataset-ds5-server-provision",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "70073f05c5f575e16c189f1100104454b562da53e57331e36693434b7bbe41f4"
+    },
+    {
+      "id": "mcp-repo-bootstrap",
+      "status": "archived",
+      "archivedAt": "2026-06-09",
+      "githubIssue": 50,
+      "githubIssueClosedAt": "2026-06-09",
+      "checksum": "1a189d9fa8d949014cc121c0b71584f47275f12480806f18c25038aa7631d701"
+    },
+    {
+      "id": "mcp-workstation-phase-a",
+      "status": "archived",
+      "archivedAt": "2026-06-09",
+      "githubIssue": 51,
+      "githubIssueClosedAt": "2026-06-09",
+      "checksum": "62ae7f98b1e5db4696b8c158465536154e20b0ba40362fc5b0451881f33c9f2f"
+    },
+    {
+      "id": "mcp-workstation-phase-b",
+      "status": "archived",
+      "archivedAt": "2026-06-12",
+      "githubIssue": 52,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "177e88502fcc4602ea15ae7fcf845a50d7a9d193c0d26779c805b735255df974"
+    },
+    {
+      "id": "mcp-workstation-phase-c",
+      "status": "archived",
+      "archivedAt": "2026-06-12",
+      "githubIssue": 53,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "14189033827e506150deda56f3e008dc30fc93d5ad27ebc1fab53ee865a34a34"
+    },
+    {
+      "id": "media-library-a1-storage",
+      "status": "archived",
+      "archivedAt": "2026-06-09",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "99e422cd3f9b87b7f18d75488d50c9a9ccef773556e588a4f08e26e289ab7bf9"
+    },
+    {
+      "id": "media-library-a2-ui",
+      "status": "archived",
+      "archivedAt": "2026-06-09",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "7eb33d6333995f4f3b79de240e018ae187a087e583dab1991183718783240a03"
+    },
+    {
+      "id": "detection-base-contract",
+      "status": "archived",
+      "archivedAt": "2026-06-10",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-11",
+      "checksum": "b7736c834175d929ec569ff5c893ad8121ee78a79ee0ef782343e62f24a2d8ac"
+    },
+    {
+      "id": "detection-dataset-v01",
+      "status": "archived",
+      "archivedAt": "2026-06-10",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-11",
+      "checksum": "6cf2726dd460d43f58f8c06d1754bac930a0a1adf9b31799fa952ce70d27041d"
+    },
+    {
+      "id": "detection-benchmark-runner",
+      "status": "archived",
+      "archivedAt": "2026-06-10",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-11",
+      "checksum": "d84fc123815ef5903b8365c6353f25de6ab8397a37b7bd481591e7b20790d91a"
+    },
+    {
+      "id": "detection-harmonic-gate",
+      "status": "archived",
+      "archivedAt": "2026-06-10",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-11",
+      "checksum": "57ec996d6cf5f29ac414c35e312f2206f335d74e9046268ce505bd1ef6d0162e"
+    },
+    {
+      "id": "detection-architecture-freeze",
+      "status": "archived",
+      "archivedAt": "2026-06-10",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-11",
+      "checksum": "0bf1022542997a087bbc2c74ed75300ecc411ea602f909aed6f01a4b6ee5f6ab"
+    },
+    {
+      "id": "analyzer-frame-feed-refactor",
+      "status": "archived",
+      "archivedAt": "2026-06-11",
+      "githubIssue": 55,
+      "githubIssueClosedAt": "2026-06-11",
+      "checksum": "6c51e25dd95acb14913426e6a7a9e09d27d1da276aff83ebce50fcb4ba81c0e0"
+    },
+    {
+      "id": "trends-fft-microphone-plugin",
+      "status": "archived",
+      "archivedAt": "2026-06-11",
+      "githubIssue": 56,
+      "githubIssueClosedAt": "2026-06-11",
+      "checksum": "97b069e8137a962a1ee1f76cfe3288d45b8a099ea02871c9a8fd9711fa63b3c6"
+    },
+    {
+      "id": "background-office-v1",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 60,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "9328acf226fc934b48b0fef525ce208bec4bb031248c102d1a302685bd530c3e"
+    },
+    {
+      "id": "background-office-o1-docker",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 60,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "1edaf178bd764853fb21c39694382929dc8baed20bc0855f508b1d95bd1a027e"
+    },
+    {
+      "id": "background-office-o2-prod-compose",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 60,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "65fb4cbeef17bd74418688866c129b8ecba2708af8382794894d6e1e9d017e9c"
+    },
+    {
+      "id": "background-office-o3-tls-deploy",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 61,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "f7d838cead3525c71e7b0397125787834ede470bc13310e5798bc20cc62f6d80"
+    },
+    {
+      "id": "background-office-o4-webhook-acceptance",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 61,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "724e12d6a25d42b94fbf4706726de15f71f7bf30a9b24bac44dc0be23346b6a2"
+    },
+    {
+      "id": "membrane-platform-v1",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "d9d545ed5fa8fa1bbe0d19087de11c12b58249dac1976d75e6212190ff195b2f"
+    },
+    {
+      "id": "membrane-platform-mp0-domain",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "7b61a6c9a0e3f1ba3496847894a6a1bc5fe0a56844b30e26038581a647f163d1"
+    },
+    {
+      "id": "membrane-platform-mp1-auth-cabinet",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "e61a5e3e2b4aac4aa717fc2e86e3c93a88705fcdc6044b164500cfc999ee7aa4"
+    },
+    {
+      "id": "membrane-platform-mp2-membrane-node-keys",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "fc160f7f2a87a51670427f55faa4ee669971eea50864980ddd89f644af9c76de"
+    },
+    {
+      "id": "membrane-platform-mp3-client-pairing",
+      "status": "archived",
+      "archivedAt": "2026-06-13",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-13",
+      "checksum": "3c93065de6c148dbb5ad8d2179359be5aac10dbb209e1c8c86fd11cb3f2ba049"
+    },
+    {
+      "id": "membrane-platform-mp4-media-membrane",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "a36854888c14cd18186a6e401656a69dfa851cc4ad9b4a5c5945198afdd9d72c"
+    },
+    {
+      "id": "membrane-platform-mp5-telemetry-journal",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "710ea6867aa8d1ebcf563f521f9159ca847fc942fb084d202185a1d2733f549d"
+    },
+    {
+      "id": "membrane-platform-mp6-prod-deploy",
+      "status": "archived",
+      "archivedAt": "2026-06-14",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-14",
+      "checksum": "2138a207a2e33dccf888db69bc337f9d7c8006dbfc5d81f8f9661bc1242a4ddd"
+    },
+    {
+      "id": "cabinet-sample-library-v1",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "1ca794a2cdc5d25900cf29978440a77b98e0fc0582a169d572fddceeb539974b"
+    },
+    {
+      "id": "cabinet-sample-library-csl1-api",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "83493abb5e5ca123aa309c31cd9d0f2f802bfac42665b61a9b044e8e424c8adb"
+    },
+    {
+      "id": "cabinet-sample-library-csl2-ui",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "304da9b7dd7f5e085a78e2ccef20f2efe8d728272eb5251d5a7090cce054cf13"
+    },
+    {
+      "id": "cabinet-sample-library-csl3-remote-ops",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "651d5e0c633900739919e2a3c0d7bb2b447f72560d32749476b3790e35c0192d"
+    },
+    {
+      "id": "cabinet-mp4-hardening-night-build",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "ff9ebe6319e6786993484edf0b3977c70b1c633f106a1e86ce5fa4745c729975"
+    },
+    {
+      "id": "cabinet-mp4-nb0-merge-gate",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "255d8a315f6ba9357341eff4ad7fe3ebdc7c17cafb17d9e9747db49e256c56cc"
+    },
+    {
+      "id": "cabinet-mp4-nb1-sample-playback-dry",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "250fcaaa6564a4c22b0f6900368124467e0880273e77d9e1d18494d0b45e140c"
+    },
+    {
+      "id": "cabinet-mp4-nb2-cabinet-facade",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "a47a08e4a41c8d8fe35fc65fb19bec896090c9dbf8b352b1b5f461c5d9dfcfc8"
+    },
+    {
+      "id": "cabinet-mp4-nb3-quality-contracts",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "cb219d52751c4808557fb046fd71a6ebf731a41c61281f5677815537a5c28bfa"
+    },
+    {
+      "id": "sld1-sample-detection-contract",
+      "status": "archived",
+      "archivedAt": "2026-06-15",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-15",
+      "checksum": "c18ea073279b5f5e20d5bb9a7c191c4de0e0453be3fd16e307f53291dfda9d15"
+    },
+    {
+      "id": "sld2-sample-library-drone-plugin",
+      "status": "archived",
+      "archivedAt": "2026-06-15",
+      "githubIssue": 47,
+      "githubIssueClosedAt": "2026-06-15",
+      "checksum": "c75d594bd925f8fe79f0f30d9c30d14775aa40b84d27976a686efafae0910cb2"
+    },
+    {
+      "id": "telemetry-journal-ux-hardening",
+      "status": "archived",
+      "archivedAt": "2026-06-15",
+      "githubIssue": 81,
+      "githubIssueClosedAt": "2026-06-15",
+      "checksum": "379aa3246d439d34b1dce7073eedd1727a8c7e96cbb0dd703ab5e7f14b5c57bd"
+    },
+    {
+      "id": "telemetry-journal-event-driven",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 83,
+      "githubIssueClosedAt": "2026-06-19",
+      "checksum": "3c517fba35f15c323a8549d81a3588bd01eca5e3f83a270257fb9d413e907587"
+    },
+    {
+      "id": "je1-buffer-clear-event-chain",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 83,
+      "githubIssueClosedAt": "2026-06-19",
+      "checksum": "30d6abfe56f6666172200defc211e05ed9c1a5d2027704c2acbe8bd37ab3c1fb"
+    },
+    {
+      "id": "je2-stop-triggers-analysis",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 83,
+      "githubIssueClosedAt": "2026-06-19",
+      "checksum": "515e0ee2129afcd97a7756b6d84aeba020ada94e6a809d37cf577f4852036d30"
+    },
+    {
+      "id": "je3-client-journal-hub-refresh",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 83,
+      "githubIssueClosedAt": "2026-06-19",
+      "checksum": "69511abecd61e5358ca50092d6aae0d1dffce417c56699fd4b583b4fef9084aa"
+    },
+    {
+      "id": "je4-cabinet-journal-fast-refresh",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 83,
+      "githubIssueClosedAt": "2026-06-19",
+      "checksum": "845008f5fd2ade6b8f6ab48e445cfd5981ac8f3c4562f9f129c3a02953243607"
+    },
+    {
+      "id": "je5-journal-contextual-clear",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 83,
+      "githubIssueClosedAt": "2026-06-19",
+      "checksum": "cb841152278d4ebb74482e2b86c40b4b4daaf6923d96bfa840558202e06fb316"
+    },
+    {
+      "id": "mic-buffer-sample-count-loading",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "705098fd8490d3a9b8c7eb284ea7055c99de67de16b8a681623a6af15f74bf19"
+    },
+    {
+      "id": "live-journal-sync-pagination",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "6a1e9e3cdc3464d757e3ea2201979b575a761da8283242af1559a88eedcfd70c"
+    },
+    {
+      "id": "js1-server-journal-full-fetch",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "cdd89f0542f14a7ac62c50730826a89e430e4cf0dbcdf46b4198a6ad5d10a264"
+    },
+    {
+      "id": "js2-client-journal-reconcile",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "2c3e7ede981fe4d2b8660ba4a2d05f5502d1e99a6e63e7571b96cb45111e4f07"
+    },
+    {
+      "id": "js3-per-filter-pagination-contract",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "7dd71d31cf94f464c95b648e61ab4cfb4c593a9c8066e6e546d82416e4d077af"
+    },
+    {
+      "id": "js4-journal-clear-bidirectional-sync",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b1dfacb536bd7a701841e39aff31e793f83880adab6f936a41ee91a58f7ffe51"
+    },
+    {
+      "id": "fft-last-chance-calibration",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 84,
+      "githubIssueClosedAt": "2026-06-16",
+      "checksum": "6f5fadc694125c8c38da2443565b3ab34a13dc14e52e7493d4bb2cfca49fe958"
+    },
+    {
+      "id": "fl1-sample-library-fft-threshold-plugin",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 84,
+      "githubIssueClosedAt": "2026-06-16",
+      "checksum": "bfd6b3bbde4dc2071db4c90cf1f06db407bb0b2311dc8bf4e1d272309a88202b"
+    },
+    {
+      "id": "fl2-benchmark-fft-trends-harness",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 84,
+      "githubIssueClosedAt": "2026-06-16",
+      "checksum": "f2db28ec4e7b88ebf9a7f73d2b7f15154f69aa923e17282b234a257f83f0b885"
+    },
+    {
+      "id": "fl3-threshold-calibration",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 84,
+      "githubIssueClosedAt": "2026-06-16",
+      "checksum": "e9a176d2dcb03a77c1af1e6d348ae9f1a7f0c564b69ae68d79b851ebc80ad87a"
+    },
+    {
+      "id": "fl4-trends-template-calibration",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 84,
+      "githubIssueClosedAt": "2026-06-16",
+      "checksum": "b347a3bf58efcd52e839377eb4f683937d494e9cfa626e947055c8534d5b418e"
+    },
+    {
+      "id": "fl5-fft-last-chance-report",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": 84,
+      "githubIssueClosedAt": "2026-06-16",
+      "checksum": "b853c8f1620c3b74717fd0c046bb4410f12e72c869a4af56b728d84e8f26ea89"
+    },
+    {
+      "id": "trends-drone-tight-curated-promotion",
+      "status": "archived",
+      "archivedAt": "2026-06-16",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "591ac34d40665c8c4c2356bc18ae395783156a50398dffd48f8895da4c6ee715"
+    },
+    {
+      "id": "trends-fft-sample-library-drone-tight",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "1636804bd0ee72ade5525eb8f7d854d8388fc4576125ab0c51d948c4f55fbd9b"
+    },
+    {
+      "id": "trends-go-drone-tight-merge-hardening",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "74f49eb904072bcd2e8f921afe67d0f3cba4a8120a246c6683e2363123caea30"
+    },
+    {
+      "id": "tgdt-r1-architecture-contract",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b23de486be3f36133999e4e95ace9e2547783c27b1a148d8dd9ec9e86f487f69"
+    },
+    {
+      "id": "tgdt-r2-ci-merge-gate",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d9e75219be9278399d019f6f8e3364ba22cc87b71cd4bed35758796e98c39756"
+    },
+    {
+      "id": "tgdt-r5-trends-ui-lint-a11y",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "afea19642857363aa2c60ce4b13b70e40a20ce3d04f821d169ee33511cb21b37"
+    },
+    {
+      "id": "tgdt-r4-audio-constraints-doc",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "dd185df6f69fb2509de99b48bc310e5f5d5cd377e8a0f33642e216de5e12d734"
+    },
+    {
+      "id": "tgdt-r3-pr-merge-techies68",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "f75d124ca0e607e5b9d7e076e0ff70f05876c1b750ea66b70124cdb3e281f497"
+    },
+    {
+      "id": "turbo-build-green-apps",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": 86,
+      "githubIssueClosedAt": "2026-06-17",
+      "checksum": "68678ac3dca24a9d3e6fe54e0c66a993553aa74ae3dbadeb5f245d039ae481ea"
+    },
+    {
+      "id": "tbga-f0-typecheck-honesty",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "cd3ffa45e1d3a2e202662b7c566ee38b9c5d0771990fde47516fd8f1210bf60b"
+    },
+    {
+      "id": "tbga-f1-cabinet-project-refs",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "604efa79a64668e11c69fa8aad73f7979ac65e1381c5e51807ca9d4b8e37cd9a"
+    },
+    {
+      "id": "tbga-f2-lib-export-quick-wins",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "a0abf21a69d9b196e9087ed3237e0f06d71fb83af8c54fb48c3f8f397fea38a0"
+    },
+    {
+      "id": "tbga-f3-plugin-live-config-types",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "296078a00a7403ba1b30c654b24e0079f637ad7a02c0d2c732ec5719d0666df6"
+    },
+    {
+      "id": "tbga-f4-journal-trends-typing",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "bcd2f346a3c939b969c23cd54373702700a1b95c7d73de4faf5383bae2cc56fd"
+    },
+    {
+      "id": "tbga-f5-build-prod-alignment",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "09afd9e97b86594f9596332aabd1bdc929c1d95e91bced0d1c99be56dee098c7"
+    },
+    {
+      "id": "tbga-f6-ci-green-merge",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c99ea2ac374bb35954fb25c9d56b52155a11b8aa0f4dd956685ec667c9716b3e"
+    },
+    {
+      "id": "cabinet-journal-hotfix",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "71e3fb26bd4d6478628365fffcc7da6fc121d75aa1112715e50fbe865780535c"
+    },
+    {
+      "id": "cj-0-trends-enabled-keys",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "e4dbd38f70e3027deeedc8a9cda026a42a370b8b5227d54191874c6e3e0defef"
+    },
+    {
+      "id": "cj-1-media-api-safe-json",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "9012609671788e0d0ef0f2d1481f94387f60323341f1c3e24bdf67a0455104f2"
+    },
+    {
+      "id": "cj-2-journal-media-decouple",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "cf91c47557bd422fc7a086be32fcb3cd0549b08ef5c7954062443e5022a8d236"
+    },
+    {
+      "id": "cj-3-brief-render-parity",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "46534ee93bfe6ad588f6abf5bc967b46a65724043d8516a019635dabd2241a5c"
+    },
+    {
+      "id": "cj-4-trends-counts-as-detection",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "97479057c6ad8a26f3356103529da87ec955346fd9aca845f5e8849fb9f263fa"
+    },
+    {
+      "id": "cj-5-sync-push-observability",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 67,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "69e1be903b036b9a048782e6e10188f1d649bac7cc0189cbc542f6d734fb7f4e"
+    },
+    {
+      "id": "db-h0-concept-interview",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "09005ff0f4366ec6a34a2f7cddcf09aecd9aea0f5fe1ca9597e9935d64281665"
+    },
+    {
+      "id": "db-h1a-core-contracts",
+      "status": "archived",
+      "archivedAt": "2026-06-17",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "0e1e007affe44b4069d5f80c4ced8b01a68df7972c0a75a45e5962852059cce4"
+    },
+    {
+      "id": "membrana-studio-ms0-ms4-day-sprint",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 93,
+      "githubIssueClosedAt": "2026-06-28",
+      "checksum": "3d3ec6550a605aaa5ca59c05b9abb002d7e6b67f29284d0f1e8b78b0f99fc559"
+    },
+    {
+      "id": "membrana-studio-ms0-canon",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 93,
+      "githubIssueClosedAt": "2026-06-28",
+      "checksum": "acbec97ebfe7633620f7a788e867e6ffb3fd434eba99e0d5c91d9b54b37ee641"
+    },
+    {
+      "id": "membrana-studio-ms1-shell",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 93,
+      "githubIssueClosedAt": "2026-06-28",
+      "checksum": "255608326787a1f7e04a427e72da42d86ac84921191ba0bc2a96e7fe9622153b"
+    },
+    {
+      "id": "membrana-studio-ms2-media-fs",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 93,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "551f57e5422d1cbb87e651e6009bf4e53c21a32ebc2fb6b3de7719bfdc0c0e52"
+    },
+    {
+      "id": "membrana-studio-ms3-journal-fs",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 93,
+      "githubIssueClosedAt": "2026-06-28",
+      "checksum": "283cfbec574d25099e348e9725c02447da042f4090584bd5199f513a3e821ca5"
+    },
+    {
+      "id": "membrana-studio-ms4-installer",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 93,
+      "githubIssueClosedAt": "2026-06-28",
+      "checksum": "f44f08cfad20e3987545a0d09e46eb172d44ca7f7395ece71a5ccba70e07d8c3"
+    },
+    {
+      "id": "membrana-studio-ms5-prod-smoke",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 93,
+      "githubIssueClosedAt": "2026-06-28",
+      "checksum": "91b83c7f43c1ea16fbbd8316bb66c411e70321c18a50dd70d8109231362ef475"
+    },
+    {
+      "id": "device-board-clear-branch",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 106,
+      "githubIssueClosedAt": null,
+      "checksum": "899f87cb4794d3fa76213d4157b0a9174be7794f0cbcb068f3d8dc08c2b20360"
+    },
+    {
+      "id": "device-board-manual-save",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 108,
+      "githubIssueClosedAt": null,
+      "checksum": "14bb6aa9e83fab164d2c4f581b96c2510926117e3b8cffe7c1e321a2274e52ec"
+    },
+    {
+      "id": "device-board-ux-ports-header",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 110,
+      "githubIssueClosedAt": null,
+      "checksum": "fe9cff6ca8a8c89d909e088d055a562d1351e12b5f2a828c8cb4b23f2a8c795b"
+    },
+    {
+      "id": "code-review-debt-closeout-jun2026",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "895e3ffcb39bd24c6f3178247eb51bb56126c1bfda5afa0c8ecc64dd6c3aafef"
+    },
+    {
+      "id": "crdc-d0-baseline-audit",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "e7594855fb5096e6474449cce914f904328f57751b5705506ff0ad82e7dd2479"
+    },
+    {
+      "id": "crdc-d1-boundaries-registry",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "af65f8f48b556ee2db1158464ab6c3075c6b870a4118815413fae2004e10596e"
+    },
+    {
+      "id": "crdc-d2-lint-hooks-green",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "38df97964dbfbe919c81de49d02ee99b1e884113491ff4407dbfee30c13219f9"
+    },
+    {
+      "id": "crdc-d3-test-health",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "87e1df04324a63be957f1a76751212daebd84356c4c2b290d7b560e0b15cb2cb"
+    },
+    {
+      "id": "crdc-d4-waveform-a11y",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "1fb9e238145d821d3576f31c195869f8dafa621a1294dd7ec69565c7a90c694a"
+    },
+    {
+      "id": "crdc-d5-hygiene-guardrails",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "cc5806c78f162e808c45412f4297f10555360048db44894d65b008083f0838f3"
+    },
+    {
+      "id": "crdc-d6-ci-green-archive",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 126,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "f4a6699bd98160305e831be8c1dff6c7ec22bb4e45de7deea274e0cf17543929"
+    },
+    {
+      "id": "device-board-collectors-v05",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "a777d130aea5d748d219fc8ddd5ca8589fbae1f45583fd9d2208eb853fd5ba9e"
+    },
+    {
+      "id": "dbc-0-core-contracts",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "35229c3fb4e51e9f574c3df983660beeba664ef36066240f9f71b25e2534581e"
+    },
+    {
+      "id": "dbc-1-getter-nodes",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "e11509c0dc3d9802923eff40d0c8df6ce8e559d70e3487ca4be4349e8effa075"
+    },
+    {
+      "id": "dbc-2-host-singletons",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "ae1682dd02a7c4bec5707a925b31d472403c2681b797ddf3bad547eaa85ba220"
+    },
+    {
+      "id": "dbc-3-collect-nodes",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "56398f64aaa9e87ea1fbd01d28adb71de4bf45cddb38b9e0ebe20bef3d06b2f9"
+    },
+    {
+      "id": "dbc-4-terminal-nodes",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "801838581063c7dabfdb6c37bbcab464fd3416b61ab860f001e8018498fefaba"
+    },
+    {
+      "id": "dbc-5-runtime-event-dispatch",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "ac30d24b9e8e366edff362f5505aa64a0dea4f895ea3e0d1d5411575446a8b49"
+    },
+    {
+      "id": "dbc-6-teamlead-review",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 130,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "806036c8e9cab0dc1a771d5ead84c734bc28af843bda955239c438ab62840441"
+    },
+    {
+      "id": "device-board-journal-reporter-v06",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "e8dcbced3cca078775daf67dbbb991cd1815e6ca0b3c1674d14cae2a3f23489d"
+    },
+    {
+      "id": "dbj-0-core-contracts",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "ea120ab3c040b2f60260774234d5ca31936fefdf7b63022fae2a7327d9383e12"
+    },
+    {
+      "id": "dbj-1-get-journal",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "3c3886b17808e3b6cd52a17abc38e4c87892d82567a2039a9524b88d17893a21"
+    },
+    {
+      "id": "dbj-2-get-reporter",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "63382ab66cba0c16d8c813762886b257863a49a8a82c32f5f05200e2cbb89382"
+    },
+    {
+      "id": "dbj-3-make-reports",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "6d520b17e5a86efaa5ceab2b9a9cd0e3d20ffe5714ee5ed79edfec1ef2475fa1"
+    },
+    {
+      "id": "dbj-4-publish-report",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "d8a0f007baba1904087d8794fe2cf0f9d02ad8c77465c751fd5a2753cbb47c4e"
+    },
+    {
+      "id": "dbj-5-legacy-terminals",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "1daf6a772dba2714de15c9acfed20aee21b56d42faeb2040b317aef07d6a8fdf"
+    },
+    {
+      "id": "dbj-6-teamlead-review",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 131,
+      "githubIssueClosedAt": null,
+      "checksum": "225277df780f14ff5a1ef795e92a15a2d3bdaadad84d684411bfbb64af0444bd"
+    },
+    {
+      "id": "db-scenario-chain-trace-p0",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c8652352e03d06db19c81cd2445ea5a47c79467d9dc7eb9d44def6413041549b"
+    },
+    {
+      "id": "db-scenario-chain-unblock-p1",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "460708b801b2d368e266fd9d935b43fe67b07e44c161e47a0c4933176af50ede"
+    },
+    {
+      "id": "db-scenario-chain-trace-p2",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b4cc7638cc4baeb7954834908371a43256dbb2f8cdb88d8368afa71714525a20"
+    },
+    {
+      "id": "db-scenario-chain-trace-p3",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "99e5a5ea121194507b4cc4b1474185d0649e2ac904bf88f69c9106dde75a18c8"
+    },
+    {
+      "id": "db-realtime-observation-pipeline",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "811ef3c5d5d6e8d03afd1dd83adae02558ebfccadec568e3b9c6ddf3491a7036"
+    },
+    {
+      "id": "db-observation-p0-quick-wins",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "a638c9e5a70c2338bc54a40dd145a8d0234565dfd001adf4b2f5feef7c800f60"
+    },
+    {
+      "id": "db-observation-p1-continuous-buffer",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "1bdb02f7d3c76063ace2f4c526d51c357da54c74951772e24069f273a8de1510"
+    },
+    {
+      "id": "db-observation-p2-bundle",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "a2c63de01b01c54a79beb597701b3621fa695ee74afd6692c04649f1c2d9f0db"
+    },
+    {
+      "id": "db-observation-p3-frame-trends",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "0a32315c0ceb7a4f312dd9a5f5b001dfeae695a8263b25a9944f36485a2a8c78"
+    },
+    {
+      "id": "db-recording-gate-v07",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "b56c9a69b2536f0357094d190beb3e726216168783542410be797b8594baa271"
+    },
+    {
+      "id": "db-recording-gate-r0-contracts",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "899bfd0e9b39237ca1644b060a1368ecf91038c6332c84c207932801a878389e"
+    },
+    {
+      "id": "db-recording-gate-r1-graph-nodes",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "3c8fcd6e77485cc54cdfa4d4d3a920a0516439b33a6a0deb35e51b95d5bd2bef"
+    },
+    {
+      "id": "db-recording-gate-r2-host-bridge",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "4184489ce309d3e6e3f950f0108d2751d02cda6cafb4e5b2a6dd6fafc9a6c70f"
+    },
+    {
+      "id": "db-recording-gate-r3-executor",
+      "status": "archived",
+      "archivedAt": "2026-06-20",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "4b44fc8269989d0ab5944dfaf1add05f27e8cded62a3f643275ffddc555f9100"
+    },
+    {
+      "id": "db-recording-gate-r4-scenario-smoke",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "7cc32dee154eb722d495969d58f6981c26d1fe8003819623d1e498207d86c826"
+    },
+    {
+      "id": "db-recording-parity-mic-r5",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "e216dc4cc659e6ea38b791f788c40dd0688ff6d19cf2f765bbecae73fb840dd0"
+    },
+    {
+      "id": "db-recording-parity-mic-v08",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "8fa79ec9319275a2b9cacb3fea7f4cf4cd0f39542556368e8e1d93c965f29170"
+    },
+    {
+      "id": "db-rec-parity-a0-policy-contract",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "290528b7b908c6581b2118d170f51e5a15f696aa1fb14f78368864a8f0c02cc9"
+    },
+    {
+      "id": "db-rec-parity-a1-capture-path",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "66e4bd87aa013a3fc433d7a8cf0d3be57a830e286b927c7ddea591f7dee19b23"
+    },
+    {
+      "id": "db-rec-parity-a2-encode-upload",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "22acdadbb8029ada5d03b239295cc117af1ce328b2ffcce9e0baee1b0818bd31"
+    },
+    {
+      "id": "db-rec-parity-a3-constructor-ui",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "bbb6cf303304be1e106aea4f40df796433e0ed398f468f9312a2cd12b6d66622"
+    },
+    {
+      "id": "db-rec-parity-a4-smoke-matrix",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "2f575d2ff8bb32c67dd96345ec6dd848ce82f8024043f9b5570608265279f513"
+    },
+    {
+      "id": "db-rec-parity-a5-lgtm",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 133,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "c7b3123df88ca72b6551a2e66ecac8fac354b38f5b39a800edb6688ab28dd1c6"
+    },
+    {
+      "id": "db-trends-fft-parity-mic-v08",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "ba3eeaf6e094009b634a2a79872c63d0fe4a3991e2a934c64a4e1a94475b1188"
+    },
+    {
+      "id": "db-usercase-mvp-microphone-lgtm",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "25f86ef84fd732e5cdaf7d3b827a13f156b5eb706bdf3a1f1271df0af6ecdf2c"
+    },
+    {
+      "id": "db-user-workspace-u10",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "902a57546e9c994f44c9f3f6e39048aa6f423e2cf1e171149bceed02b8df1e0a"
+    },
+    {
+      "id": "db-uw-p0-migrate-guard",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "a03b40aaf19c9cc6e909726fd249d44a71f7ddf27977910b75113768b9a5f001"
+    },
+    {
+      "id": "db-uw-w1-indexeddb",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "d768d78f1439a77dbce75aadd9ab3a5bea7c8d0742d57f5c01d0a372b419209e"
+    },
+    {
+      "id": "db-uw-w3-persist-adapter",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "c44c53b300624edf998f02a8a9831d2223eb5153a281ae7229b4d5366ef4e1ce"
+    },
+    {
+      "id": "db-uw-w2-shell-interim",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "7b22f27a1738ac3c7cccc7542fdc8202fe6aa5f6d4729964f1862dd906b8ef8f"
+    },
+    {
+      "id": "db-uw-w2-module-launcher",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "3bdcebfd5abf2b44bffaf004203e672e0f79a463620ca7b21bd36b37f99dbdf6"
+    },
+    {
+      "id": "db-uw-w2-clone-catalog",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "611e3c0fe87334f4b2cead3ddf11b756eff1499af47f3df80302a6167716b24f"
+    },
+    {
+      "id": "db-uw-w2-deprecate-shell",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "c1016a6638dabd401690f84d19df09b963a180585938d4e4bd34ff34e17d4e50"
+    },
+    {
+      "id": "db-uw-w5-media-api",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "a28553b2868e69ec78f4bafe62e946d8cdc53a2b9e73a8221aec89bbfff39c9d"
+    },
+    {
+      "id": "db-uw-w4-tariff",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "b31443748bcbb3a90d64abd62931d07cedb26b0cada0627ff5087ad353d3c87e"
+    },
+    {
+      "id": "db-uw-d1-docs",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 147,
+      "githubIssueClosedAt": null,
+      "checksum": "8d71c6c3e85f34b85e8ff661953a21d254d6208ffd2f83cf826c51d9052b3690"
+    },
+    {
+      "id": "db-user-workspace-u11",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "b35edc259c92fbe0f812ff52fa2731ae4bcdb6e878160f25fc7727e88afde8b0"
+    },
+    {
+      "id": "db-uw11-s2-remote-first",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "6c557e6328e07f12547c5dd62d0e8842e7b455a30fcd9ea49995d6789ebfeb68"
+    },
+    {
+      "id": "db-uw11-s2-launcher-recovery",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "836184a8d87f189034e40e5adc6d4c629b73377f2c31cbf9475927500c193ec9"
+    },
+    {
+      "id": "db-uw11-s2-paired-smoke",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "f0a10b26837f4f8b64802f19e75bbd53db6e54f20bc08eb451895ad421fde0a5"
+    },
+    {
+      "id": "db-uw11-s3-lww-media",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "58f9772ecb69bdd303d5c699f2d78834875fb11f2e92cc8d50af30d47160b72d"
+    },
+    {
+      "id": "db-uw11-s3-lww-client",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "7a61fdba5b441441d6f0576081e5ca86246c86af0182a93ba4d86238a66866d4"
+    },
+    {
+      "id": "db-uw11-s3-conflict-ux",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "65de7ed94beb2cc2e332c1565e3713cd4866f72ad8027f06c7f9f9d5587c682d"
+    },
+    {
+      "id": "db-uw11-d1-docs",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 149,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "057badfeff00b1073faa65295e8f9e4bce9613baf7d5f3737d864ee548f3395c"
+    },
+    {
+      "id": "server-tariff-enforcement-v1",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 150,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "91dd3b181c2705b404ff9c108c960d185ad9b602ad3af2ddc26e9701392188a8"
+    },
+    {
+      "id": "ste-v1-w1-media-quota",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 150,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "168c31cc0db4140a4c42d07f9dc92ee037d904dea90c24e65415b2bf676c5e17"
+    },
+    {
+      "id": "ste-v1-b0-second-workspace",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 150,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "4e03a821c860ee73e32c344505c9bc38e6a7c32a0bae1d86c15a3bba46128a07"
+    },
+    {
+      "id": "ste-v1-w2-cabinet-sync",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 150,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "5ae31dede8aab48432daa7561523a49ebf00cc03b471659168143da2675aaa6d"
+    },
+    {
+      "id": "ste-v1-w3-client-403",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 150,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "1e3bf1601d2e779e498c13428f635b2413857e588ae04550c73de708760ae443"
+    },
+    {
+      "id": "ste-v1-s1-prod-smoke",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 150,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "519fbf91dd52b83fe8a842b6d9a75dabe489acc5610584cfc7036937976ea5b8"
+    },
+    {
+      "id": "ste-v1-d1-docs",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 150,
+      "githubIssueClosedAt": "2026-06-23",
+      "checksum": "cc8203c24381fe460f5f6111a8857678d1ae487e604fd8f6e897eef73a8dfddb"
+    },
+    {
+      "id": "db-pure-getters-blueprint-parity",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b9fe630430573674058964168a8f63b2f521fe24bff072df29f75d831190d3cc"
+    },
+    {
+      "id": "db-pure-getters-g0-core-contract",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "15494306bd6542aaf67323924867fab9a68bdecbc5a5163825d9452020dbf63c"
+    },
+    {
+      "id": "db-pure-getters-g1-runtime-validation",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "52fd1e4fc9f23111659ca7fbb3ba4ab6a4f6779002ebb1f41e095a1b6adb20dd"
+    },
+    {
+      "id": "db-pure-getters-g2-inspector-canvas",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "7e22a121036d8b528b150d3473741afd872cef0ce524352365acee5c98f4bac9"
+    },
+    {
+      "id": "db-pure-getters-g3-constructor-mvp",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "bee6d8df4447b6855ce0e3825094158cef1d00001036ed26827aad8950ab1848"
+    },
+    {
+      "id": "db-pure-getters-g4-lgtm",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "9cf00ac7f174b0ea235bf53fe9524692a208a1382a6f283e86a81578732b71aa"
+    },
+    {
+      "id": "db-pure-getters-p0-spec-lgtm",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "2eadac245e7c60b003a3e4f6f85ed88f0d2360ae494341de1d3505324c5b1b6d"
+    },
+    {
+      "id": "db-trends-parity-p0-spec-lgtm",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "574716e2ceb3f23357a6c81d6876684592e605df24a3ff26f55d6e78c27f67f4"
+    },
+    {
+      "id": "db-trends-parity-b0-policy-contract",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "1bf81368274dd77edb255de10ab78886c7bd7f820393593ae4c25e81ea217e7f"
+    },
+    {
+      "id": "db-trends-parity-b1-runtime-parity",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "f72afec08f84ba0889e3178a69a5d8d329517ccf68c6d92c9428fcf00cadbeaf"
+    },
+    {
+      "id": "db-trends-parity-b2-report-schema",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d48fd7e2b13089aa3c3a079608b613b5372552fe60496c40f4bfbe7d05707593"
+    },
+    {
+      "id": "db-trends-parity-b3-smoke-lgtm",
+      "status": "completed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "e40e9d8e45dbd6d3842dffe352cd9298657da491ca9c37dbc28ecc973fcaf447"
+    },
+    {
+      "id": "db-canvas-groups-functions",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b2ed7b06d91d8c16110a3a8490de837ff143cd968ccc28c4834dbc191ebdd1d4"
+    },
+    {
+      "id": "db-cgf-r0-marquee-modal",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d674cade297191e4e5771db1019f7ae3fc3b48ef7da13d3aec79da72a8b89580"
+    },
+    {
+      "id": "db-cgf-f1-user-functions",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "396ea3792f40f4f748c9a4e6b0d91d8d895c9e1d7346a096deb5818017546d1f"
+    },
+    {
+      "id": "db-cgf-g1-comment-groups",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "63f3060d53a0beeec42de03df10ef01ac57ec083bdb4a17f1f6d7e7ff53c69fc"
+    },
+    {
+      "id": "db-cgf-a0-align-basic",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "ac6121809735f042eca79cb10de3718e106a320784f78d5ba74031969888db8e"
+    },
+    {
+      "id": "db-node-align-advanced",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "279e14ba72c5dcc71c9b65b7225093aea4d91a1b4a31680f89cd0c358f7bd7fa"
+    },
+    {
+      "id": "db-naa-l1-exec-dagre",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c2b78e1e0c8d26b69bd1aab48a1e55efc83658c27468afe514a2f37371263130"
+    },
+    {
+      "id": "db-naa-l2-branch-entry",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "8182c0e10b8554786c6c446c43b72175352a0c81ee99d7064421b766cca128b5"
+    },
+    {
+      "id": "db-naa-l3-snap-guides",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "ff03e82b7d5a31c35e18ab15e0f5e6d1c4c55b2ead0172b8c34b7c330f49c4cc"
+    },
+    {
+      "id": "db-usercases-catalog-u9",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 136,
+      "githubIssueClosedAt": "2026-06-21",
+      "checksum": "898c1fc1cdc1be02aaba563983ef1e698e6f0ab2af78f2c01d9ffeff1cd13ba1"
+    },
+    {
+      "id": "db-uc-r0-schema",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 136,
+      "githubIssueClosedAt": "2026-06-21",
+      "checksum": "1d43e448c2b495b76663f29ceda9521bb096da8317493c12970fb47970d00506"
+    },
+    {
+      "id": "db-uc-l1-layout-canon",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 136,
+      "githubIssueClosedAt": "2026-06-21",
+      "checksum": "e9966eec310d7a8a38873008811cd0d27f1f783c41f3c78bb8330a80fa15682e"
+    },
+    {
+      "id": "db-uc-c1-catalog",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 136,
+      "githubIssueClosedAt": "2026-06-21",
+      "checksum": "7fa8ca90ef6e4382a1926b602bc252b7a40d7ea1ae6572e5f46e40875552b6f1"
+    },
+    {
+      "id": "db-uc-g1-settings-gate",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 136,
+      "githubIssueClosedAt": "2026-06-21",
+      "checksum": "478c93984c989abcb276a2531d77ca3d63ca7e0af3e0a30432e40fb97cf03555"
+    },
+    {
+      "id": "db-uc-p1-picker-modal",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 136,
+      "githubIssueClosedAt": "2026-06-21",
+      "checksum": "2dea822e18fa570982db5a4a4f9ff6e185ea3aa5422b9cd7e03cba3624f0777a"
+    },
+    {
+      "id": "db-uc-d1-docs",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": 136,
+      "githubIssueClosedAt": "2026-06-21",
+      "checksum": "abf14412ccb07a55caa11b575bb51e13a6318bee23516a35c59e4cacde53d41e"
+    },
+    {
+      "id": "device-board-function-modal-sprint-2026-06-22",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d0609a10057ced386fa9a1a86b4e0942956d98998ca882c6d8fe6d42a26d205d"
+    },
+    {
+      "id": "db-fn-modal-s1-ui",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "9dc9fa03ec4c5ce44ca2612e2907664f960c2e0553ee06abe5e6701a7c3c7929"
+    },
+    {
+      "id": "device-board-ui-followup-sprint-2026-06-22",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "40f29688ce3554905591c4bab6e5b1bfd32e844dbb2e0c1db70d7df2dec90aee"
+    },
+    {
+      "id": "db-ui-f1-context-breadcrumbs",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d9d8c934e51412422ade21749eeff9e9c7259f1f7480d330439d508346e20d28"
+    },
+    {
+      "id": "db-ui-f2-direct-function-edit",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "e452140c6271775e6b12aba19cb5dbd0be6c1b84717f29b1c949f672f0b0884f"
+    },
+    {
+      "id": "db-ui-f6-global-getter-deletable",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "60e8c99d2014cfbc981de388b8f70a3780d8ad2a848ab99ca351b7b048ae20ee"
+    },
+    {
+      "id": "db-ui-f7-branch-snapshot-restore",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "6e62a538c6428ce7db3a0c7ad35923a7bb3191ce8a58947e3d021c16d6b36e75"
+    },
+    {
+      "id": "db-ui-f3-undo-ctrl-z",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "4d5b55c060b1bec7c88501c6079555155f69877d0ad3532bf46098d9bffc6e30"
+    },
+    {
+      "id": "db-ui-f4-pin-limit-meter",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "7e808131b2ad5bb38c6c33d521bf983aab543472b6e1e78a26630fe368735e33"
+    },
+    {
+      "id": "db-ui-f5-runtime-exec-highlight",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "1fb8b56c128bb29e8f92a5bba1b35e95acbf97ae7c85535e99cceea7d1386e75"
+    },
+    {
+      "id": "device-board-edit-model-v2-2026-06-22",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "88829bcfebc0973d17e06ebe546174378a893fa3b7bb24be0f4aec68b2fa116b"
+    },
+    {
+      "id": "db-edit-v2-nav-contract",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "91bb63d4477aa05e2db0865b4cf8c2a7bfa76fbdb01e7959a1f0997977617c62"
+    },
+    {
+      "id": "db-edit-v2-extract-modules",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "ea9345973d330f207f10a98204e6cb98701a818c46b333688f78915aefe083f4"
+    },
+    {
+      "id": "db-edit-v2-nav-integration-tests",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "8ed7186eb6b91978841b75cb4e7df9c63738c7ebae2bda9da02cb73042fb731f"
+    },
+    {
+      "id": "device-board-docs-post-140-sprint-2026-06-22",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "112472a102077dfe4f95a6b9aa1125f30436721edb1839b1d5e87ad942d94555"
+    },
+    {
+      "id": "db-docs-d1-canon-sync",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c0679c32465d31d943214244ceae7897bcb941aa53fe925c2c91ce3abab14ec4"
+    },
+    {
+      "id": "db-docs-d2-mintlify-editor",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "fd75db64c5efe1fc679c0f59dc054a18cfdaca0587975f977f29ff719f1cb6b7"
+    },
+    {
+      "id": "db-docs-d3-catalog-runtime",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d458a73b0756ac5213e1af07d61c549496c72807c19fff5d74f15e65984711b9"
+    },
+    {
+      "id": "db-docs-d4-rag-index",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "88e9a737b45479f665cda9f22286891d4828af1bc039d162a0ecdecf3492367c"
+    },
+    {
+      "id": "cursor-agent-skills-sprint-2026-06-22",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "3e7797b3e2bcc90c0941376f19e9115d4fe0daa8a0c1168d5cce5fde844649e0"
+    },
+    {
+      "id": "cs-sk-s0-index-bootstrap",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "28c6e776b3c291cbbb5d14c926986b1222c0d971e34173624e6bc19825af57e5"
+    },
+    {
+      "id": "cs-sk-s1-developer-rhythm",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "04dec20297b1b0e99d79f179ef753218ffc327dd840e74f524949a5b4f288434"
+    },
+    {
+      "id": "cs-sk-s2-task-lifecycle",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "aab833268c5f535af7949cde7299dfc24129ea0a248e09b972d810289611bd6f"
+    },
+    {
+      "id": "cs-sk-s3-virtual-team-guards",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "3efc5bea4b5169973f2ca0a2ff9a50231acba5c93609c4c32dd0b85435c88635"
+    },
+    {
+      "id": "cs-sk-s4-service-scaffold",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "672a090fd0023167b26199c89611c2d1bdc58d5a0f1d60b55037e4794bdd77ea"
+    },
+    {
+      "id": "cs-sk-s5-domain-docs",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "9e086827381ba3093f40a13c43d8453acd06bfbf4f13b477cbcfd38b32d61b65"
+    },
+    {
+      "id": "cs-sk-s6-ops-workflows",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "5316aa18bcbcb20886831fc43f784b45d5d968a49dcde200b9bc38e43abbd09b"
+    },
+    {
+      "id": "cs-sk-s7-claude-mirror",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d7e910780e25a77719377a6185970f0a7cb05f5298b4c0bc736d585e96b9f4d8"
+    },
+    {
+      "id": "cs-sk-s8-deferred-stubs",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "4b7b07a86bd87edc0b7b35aaef44cea406285bf8e831210e118ac6b791999cca"
+    },
+    {
+      "id": "device-board-doc-v04-sprint-2026-06-22",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "7a537d979c161bb0c99172be3c9850a4c2f074b608138374651600f39907d133"
+    },
+    {
+      "id": "db-doc-v04-dv1-nav-index",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "0bc440cd7e2ef61a6e3f538dcf71d26bbc87414ee056289baea039893739c501"
+    },
+    {
+      "id": "db-doc-v04-dv2-streaming-globals",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "fcb27d49e99415cfc7ccba89fe4052b12d3573bf8d17420159c8e20fe22d9755"
+    },
+    {
+      "id": "db-doc-v04-dv3-collectors",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b889a4944d129b2f81e324904ccf8869b0e470e41f4aaf130103b137aa9b4959"
+    },
+    {
+      "id": "db-doc-v04-dv4-journal-reporter",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "888e1acb9ae402b2a89027820278d4570cc9212ebe42730ffa7b766b6c8c85ed"
+    },
+    {
+      "id": "db-doc-v04-dv5-recording-policy",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "aa91724c3ae0edb7cdbb1b087e32e7d3c970ea96c368934bb18c5a5338abb416"
+    },
+    {
+      "id": "db-doc-v04-dv6-cookbooks-system",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "2c249a9729bdce16a4c81732cfea7b6114e3d5f656f80dc5cf84abe654321fa8"
+    },
+    {
+      "id": "device-board-doc-v04-phase3-canvas-2026-06-22",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "7c00b5c669409d6c956c5210344437a392d1ebf3de58a19c6208d2d201d116c5"
+    },
+    {
+      "id": "db-doc-v04-dv7-canvas-architecture",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "973a303dda70b0c97004ecaf074416f8a58a03016ef71592ae5e66ee27237913"
+    },
+    {
+      "id": "db-doc-v04-dv8-canvas-streaming",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "81312643654e973d10024f2dda7fe0a37be5f7d28f70b89713818de24995800f"
+    },
+    {
+      "id": "db-doc-v04-dv9-canvas-branches",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "748a74b9d3a6b84a182085997b30f47f0a8142f11ad3286e55dd759ce45c80c0"
+    },
+    {
+      "id": "db-doc-v04-dv10-prd-alignment",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "9af8c4cf26a9767766b768fcfb53ad6bbf854a31718468e595e57352628b7c20"
+    },
+    {
+      "id": "device-board-pause-runtime-v07",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": 142,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "799b9f8471b80d4aba8a3c12cad23243c2c7a302bf44be5cd9888befded4505a"
+    },
+    {
+      "id": "dbp-hf-marquee-collapse",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": 142,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "7dc37152c95cd25b355544ff88214545c2bce7bef33b6da2ee01ee1713a5dfbc"
+    },
+    {
+      "id": "dbp-0-runtime-pause-core",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": 142,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "1d6ef3656fa5a34c53f9f2bf026cbc5acb4e2da2220a7cc2418be508feb85f3c"
+    },
+    {
+      "id": "dbp-1-ui-toolbar",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": 142,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "b75424c52af2fb851866f2a1764c6362f4fbf35973c837600af2a5811a1afbbd"
+    },
+    {
+      "id": "dbp-2-pause-runtime-node",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": 142,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "dc8fc9aa83d8a46fef05d8c1c51dff1db7bb0b1c165e64d014fd4feae58f9328"
+    },
+    {
+      "id": "dbp-3-docs-scenario-runtime",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": 142,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "2e5be5358564b1ebccd601e208e11d5501a908a9296b5a7d3b5e6ec7bade5f52"
+    },
+    {
+      "id": "dbp-4-teamlead-closure",
+      "status": "archived",
+      "archivedAt": "2026-06-22",
+      "githubIssue": 142,
+      "githubIssueClosedAt": "2026-06-22",
+      "checksum": "9b5617c41aaf22bbe8a5d49665dfa2c778e3149c9fb802b39fe5ef292af51363"
+    },
+    {
+      "id": "tasks-audit-v1",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "c9e10d8edba0c795af1c7d87ab9024d8a91ea86a3a42ab02e1970aed5f5e2b5c"
+    },
+    {
+      "id": "ta-0-process-regulations",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "4eeeb240247a164001fd9213e42e5278c0023a7f1bfa3ea2112694603075d7cc"
+    },
+    {
+      "id": "ta-1-audit-paths-lib",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "bda013d03b28dc224b05106ac54ae453ecab2b2e532551b1b9923877ef10dfa4"
+    },
+    {
+      "id": "ta-2-bookkeeping-script",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "16e71c8a1fe5731a8ddc5fa189ce6f71d8ccbdddf416a059118dcdb59f28fc29"
+    },
+    {
+      "id": "ta-3-reviewing-script",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "407dcdf82ec40fae3cee07bac8a8fa7cdfe3832f7522e27a35dd9dd307839abf"
+    },
+    {
+      "id": "ta-4-audit-orchestrator",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "2a8f0d022320506da11d20d796ccc6b35a54195e9032faf7049d34eab55ab4b5"
+    },
+    {
+      "id": "ta-5-script-tests",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "fdc45d8e49a78742e829b8fab049f10de9dc30cc6e94299120ee26b0adb9328b"
+    },
+    {
+      "id": "ta-6-cursor-skills",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "079cc4a2deb86ffd2e9fa6f31c2867eb22df71262cd7baa32011e4c0e95ebf82"
+    },
+    {
+      "id": "ta-7-docs-ritual-integration",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "022d79c0c4651244236ec2a2a1bf0539eddcead24b9b276dec591b7bf22ac045"
+    },
+    {
+      "id": "ta-8-epic-lgtm",
+      "status": "archived",
+      "archivedAt": "2026-06-23",
+      "githubIssue": 144,
+      "githubIssueClosedAt": null,
+      "checksum": "f31a6ea0a0c4894b197892071b4cc89b81d9e749adcb7bb917231a6d9631b5ce"
+    },
+    {
+      "id": "issue-185-services-device-board-boundary",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": 185,
+      "githubIssueClosedAt": "2026-06-28",
+      "checksum": "7b605d5f96e5bf95d53f57c6c055a32693cf854714d3d023975c0d44188a1421"
+    },
+    {
+      "id": "task-closure-teamlead-review-v1",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "409efd7068db8469140bd94b3305608b64d855fef8694e2788f42ec1fc63bf82"
+    },
+    {
+      "id": "tcr-r0-regulation-schema",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "1b786d49c7af215228fb0004c87f2b3bf1af09a1b27da580d198e70a04d0251f"
+    },
+    {
+      "id": "tcr-r1-manifest-core",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "4f19090121c22a79fc874f2a0fd45a7f6ec8f7aec54435905bbe3de2ccd92959"
+    },
+    {
+      "id": "tcr-r2-teamlead-runner",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "238e39703985b1b86fb176c677617e782514980ff03147a024f430b41cb419ab"
+    },
+    {
+      "id": "tcr-r3-finalize-gate",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "9187a38e4bf86a67dc0ea656dd5593ed3071e6749f33aa800c273eb351910527"
+    },
+    {
+      "id": "tcr-r4-three-env-skills",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "301ae9cb48f5f020eb2f67da88dbaa749c7cb0db2ba1ca7b2a47db26644afaa4"
+    },
+    {
+      "id": "tcr-r5-github-pilot",
+      "status": "archived",
+      "archivedAt": "2026-06-28",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "bc06643e283c82260402e206ed5b08d850d23499097e2f6ebc1a8c879a4f09f0"
+    },
+    {
+      "id": "ghost-task-closure-sprint-2026-06-29",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d880285f3c0c8497586781a1fb438caba5c0e02e4f7df7cb9f96738236a45e10"
+    },
+    {
+      "id": "device-board-async-pipeline-v1",
+      "status": "closed",
+      "archivedAt": null,
+      "githubIssue": 176,
+      "githubIssueClosedAt": null,
+      "checksum": "b46dafa316c0dabbade0a953f7ee7dbc6ee5f6cc2881429aed8c2c26b626a220"
+    },
+    {
+      "id": "db-ap-r0-consilium-spec",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": 176,
+      "githubIssueClosedAt": null,
+      "checksum": "90e87385ba1e710b9344684760c2816ec17196a43a08e1e02d518d6fa7b8107c"
+    },
+    {
+      "id": "device-board-user-function-closeout",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": 161,
+      "githubIssueClosedAt": "2026-06-24",
+      "checksum": "6587397047838c8e71e952ad79e62e62526de0d1fdc13745beacec1ac7c3de75"
+    },
+    {
+      "id": "db-ufc-c0-consilium",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "fb8a758fbd7818af6c0324b31c277eec35fb385f854a8efec7c1a472a7c6ee34"
+    },
+    {
+      "id": "db-ufc-c1-merge-159",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "1eaf7c58ea2cea2d679b0338726cb94abe495b8ff3232d651b16762a50f3ad2b"
+    },
+    {
+      "id": "db-ufc-c2-merge-160",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "283ca78fd41f0cadc39e6c1bca61af8ec23ea64f1ef0ad91ddc2e3d22243a4c5"
+    },
+    {
+      "id": "db-ufc-c3-docs-sync",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "eb0b24b7eb67aa9647640b9fd66087661021308de7be693200200d7251bd9df1"
+    },
+    {
+      "id": "db-ufc-c4-refactor-backlog",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c5b0fa551bceb6086359fc057030ee1751d7fd0d7bd0c22327e572b3ed851577"
+    },
+    {
+      "id": "db-ufc-c5-archive",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "fbb834c4d260931f38f0ed8a98b54639104b8fadf17fb2a4f5494fabc2a530f2"
+    },
+    {
+      "id": "device-board-view-only-ux",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": 163,
+      "githubIssueClosedAt": "2026-06-24",
+      "checksum": "917d0fcf8f5f66179fad13b04e213c1ea8809c608bdfea2d325de2a69d82855a"
+    },
+    {
+      "id": "db-vo-r0-audit",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "bb864c40ee903e4abfca9b792732b603fdfc8875a850829eb76723494c525c6e"
+    },
+    {
+      "id": "db-vo-r1-canvas-viewport",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "479f5c23c0cee8ab4c83c12386873997fc6333d1351e2059794b4606e1c9b599"
+    },
+    {
+      "id": "db-vo-r2-right-sidebar",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "6bbd16b84d6adc8802a6380f09e35f2c8507df244709c40cacab54a0aa765d64"
+    },
+    {
+      "id": "db-vo-r3-left-sidebar",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c9c730a77ecc03522e62239ab3e81d7db13e2b6eea5b7acdec0abbf3aee4bd12"
+    },
+    {
+      "id": "db-vo-r4-docs-tests",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "0386d42d60f55e526535fbbfb069a6efe4554e8a40ea04b9e5153a4af35a75b0"
+    },
+    {
+      "id": "db-vo-r5-archive",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "69141eedc27953400953cee6ec4d5ea32ed9dcdbb14a76c2670a21d28146017f"
+    },
+    {
+      "id": "device-board-exec-sequence-ux",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": 166,
+      "githubIssueClosedAt": "2026-06-24",
+      "checksum": "e4802787bc3433de6920566cd9708ecdcbad21f29bf9567bbd28cfe97d0e7ec4"
+    },
+    {
+      "id": "db-es-r0-consilium",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "24e41c7ecb1934b0c774a254bef8cace4e5e1eb9caa87131bd178996e5012765"
+    },
+    {
+      "id": "db-es-r1-optional-pin-labels",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "258b48deaa834b5d4014149cb90fa4a1fe82a698f60a7421288a2b93b9252f40"
+    },
+    {
+      "id": "db-es-r2-exec-fanout-ban",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "0f680ca050a77a0d21b480e6d38b4601272cf70871b82ae28501c94e039ad6d4"
+    },
+    {
+      "id": "db-es-r3-sequence-editor",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "fefd8fbd2ed19db5624667d98265d12c96495fcacba31e9eb375d2130cb686ce"
+    },
+    {
+      "id": "db-es-r4-sequence-runtime-sync",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c4e6f2dbbd9427e81698ac7570488bc2758f2d39b045ccd801a0f52377ca4b39"
+    },
+    {
+      "id": "db-es-r5-sequence-async",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "93a2da734245042c7ad888b62ed7943d00a19234a3ba46a7f729520c48a019b2"
+    },
+    {
+      "id": "db-es-r6-docs-tests",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "18fa70c0bc0ee3a47c50d39125f77870e4cde9bfc693c5a8e9471848d12146d1"
+    },
+    {
+      "id": "db-es-r7-archive",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "2850b8ff92aeff0fb5072334efe171d63d20cb4052324f7d823e5f57a70d7ce5"
+    },
+    {
+      "id": "device-board-recording-graph-clarity",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": 167,
+      "githubIssueClosedAt": "2026-06-24",
+      "checksum": "e0bf7f0324f66c87db56b035b731412cdf68f8f57117183ebb09a0ddb9303b5c"
+    },
+    {
+      "id": "db-rgc-r0-inspector-notes",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b3ecb6713910625f9cf26440da94135332d244a6586260ab78b1d1fcd292f6a6"
+    },
+    {
+      "id": "db-rgc-r1-loop-lint",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "618bd0cdb7164d6b40767562126f8845b9dd47fb149bc58c89a61d46b2c5ce7a"
+    },
+    {
+      "id": "db-rgc-r2-mvp-usercase",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "a3523c51fb03ed7fd735313286555e69530039502309d559d8284a845b5bd85e"
+    },
+    {
+      "id": "db-rgc-r3-docs-smoke",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "0d109ffe4fa04efa91eb43f6fa5aeb5bd4b1ab49d2fa833ae442fb9ebdb61604"
+    },
+    {
+      "id": "db-rgc-r4-archive",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "5c44e535fefd7cbe470d29e0275733624575139483977e9caea14e0fac8366f8"
+    },
+    {
+      "id": "device-board-pr-batch-sprint-2026-06-24",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": 172,
+      "githubIssueClosedAt": null,
+      "checksum": "e6ba1f7106800050a515e99298acb5c629ed080ade702cc1c9132a8f439e7c35"
+    },
+    {
+      "id": "device-board-fn-blocks-sprint-2026-06-24",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": 172,
+      "githubIssueClosedAt": null,
+      "checksum": "9c32b8bda66536e813af70119e2acc0d7ea76c48c636832f1a8f45993c99e6ca"
+    },
+    {
+      "id": "db-fb-s1-inspector-list",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": 172,
+      "githubIssueClosedAt": null,
+      "checksum": "a4fe7740c58be341c73285219862401632919bbeebfcb1f0f3d459dd254c6e6c"
+    },
+    {
+      "id": "device-board-bundled-mvp-v09-sprint-2026-06-25",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "9169946e4b9f0182f1333badb8d9b9e7066f499c678cbc564e4510516b3aa831"
+    },
+    {
+      "id": "competition-async-v2-prep-2026-06-25",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "79ee62e913c2474038c381114bf085d5293e773ad5401341991fd3b392dc7989"
+    },
+    {
+      "id": "comp-mvp-async-v2-2026-06-25",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "14caa1b13fbaf86b67668899e15fb66664505e3278dbf48ec5180eabb2c30d2b"
+    },
+    {
+      "id": "insight-process-registration-2026-06-25",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "69d16016583d02f6a6cda56a257274e3c68859d777ba8de3693044fbe444fd0c"
+    },
+    {
+      "id": "ins-reg-a-regulation",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "52c55bbf46f1a285ebab64dc2f5da63929ba4a69ebd61f58163d953164b67bd0"
+    },
+    {
+      "id": "ins-reg-b-script-core",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "b7cd523bf1631dcbb547ef9948d8d7ef78047378d5b959573ae8a39d00c4037a"
+    },
+    {
+      "id": "ins-reg-c-research-cascade",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "2e98e563d3878c730c82f14d5299f22f030ac84589ff75fa259f5052a3b514b2"
+    },
+    {
+      "id": "ins-reg-d-review-anthropic",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "15bac6af386f24281224fc2ba8134ce0558d05b77fb9e56336b4686d389c9495"
+    },
+    {
+      "id": "ins-reg-e-skill-rhythm",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "40ec27ce547ca1cd960d6471d6262b1c5612ff6d7d8de282e62fd55ef65f36d2"
+    },
+    {
+      "id": "ins-reg-f-plan-week",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "84169550bcf546066e4bdccb24b2fbbe62ba1397e4f84ec74d9ff6e85e2e13cb"
+    },
+    {
+      "id": "ins-pilot-g-operator-smoke",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "97a306cee0e75b4468485a5651624a3a2a391a2c648d0ba281316f0994a23cf5"
+    },
+    {
+      "id": "ins-pilot-h-async-v2-narrative",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "3deeec6431302d25c0e3d291ff688fe0839649ae29d2fd9f63946d876ab002aa"
+    },
+    {
+      "id": "ins-pilot-i-catalog-pipeline",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "fe5b1a3656dbd842c17879d63dc6d8b6b358461423cf4f1808f5d19b1af1c1a8"
+    },
+    {
+      "id": "ins-pilot-j-user-insights",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "1313c98099dc9baf3b2404a747d12965a4a29065bc19ab6bce42ff0b574ea79e"
+    },
+    {
+      "id": "db3h-s1-tech-debt",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "4e44c2cdecaf193852afdd76b8e5f2ecc3cbb393bacf0416536c6494958758d0"
+    },
+    {
+      "id": "db3h-s3-studio-host",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "3553e7810972613cd313e4b5b42190281ac7c1e53e18ae7af2fa3e45849b9fc9"
+    },
+    {
+      "id": "docs-actions-phase-a-2026-06-26",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "322d3e8b0349bf5489796ca00fc6ce196d9c54365902d06f100842a3afe8fc4a"
+    },
+    {
+      "id": "da-a0-taxonomy-adr",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "3572e868126ed0aecfec3976ae58d217e1e3ded8eab545750edeea2b0c29057a"
+    },
+    {
+      "id": "da-a1-scaffold-mv",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "4eff71c2e3c269bfd3790601089dbb9345456d2499d459430bf8866c0930a0a9"
+    },
+    {
+      "id": "da-a2-link-audit",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "7f3f3c44575ae72948f22522e8c5506f316d2ef53c9441cf84358b9acfac875c"
+    },
+    {
+      "id": "da-a3-steering-sync",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "6b9629873300a19436fc24923f6f14525512b0d370e53f903e2fc99671bd70d1"
+    },
+    {
+      "id": "da-a4-verify-ci",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "08f20b7a49c9d0d4d129550dea9cd4e8f6484318c26a5b541296b389b9fa7d1f"
+    },
+    {
+      "id": "da-a5-rag-index",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "2f570c9aad7827b899d7c82d9e81e5440393cbcbb0661ccb98fe80a7b6efa184"
+    },
+    {
+      "id": "da-a6-closure",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 182,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "be761ee17ca586a239e1a130a98f20a0e08d69feff9c3a19450b53b84092a0fe"
+    },
+    {
+      "id": "opencode-operator-workflows-2026-06-26",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 183,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "a6a9e004e3d4c5acbc45154d1ceebeb18b386cc7ddb285ab7b6f7fc7d0b6b2c0"
+    },
+    {
+      "id": "oc-b0-register",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 183,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "dc4fe2d7861a5390659988542933f6fe7f0342bd549d8c6a9f4f2ad8bc175af2"
+    },
+    {
+      "id": "oc-b1-skills",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 183,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "e547a8ed026dee589c6ebbcdc76ba9a567d1a55fa770756f0afa65719a2239b4"
+    },
+    {
+      "id": "oc-b2-commands",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 183,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "b45eefbe1dd1174b55f5ab67b032701bf281adfa500219bbea15559656a645fa"
+    },
+    {
+      "id": "oc-b3-config",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 183,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "51805e34c25077f5a92222370736c12952dc490fce35fce49e5f3b29759086c5"
+    },
+    {
+      "id": "oc-b4-closure",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": 183,
+      "githubIssueClosedAt": "2026-06-26",
+      "checksum": "88f842ffda98adb78e9f81b2bfbcfb23a2483abb3fdbb401dcf8714550c3ba05"
+    },
+    {
+      "id": "opencode-operator-skills-wave2-2026-06-26",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "21a7b8218157d0bf8a4edaf253208928f99e5bbd0e75a350701bc0443542e80b"
+    },
+    {
+      "id": "wc-c0-register",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "04a45c851c4a9c0d9fd34db18bdaf918706a0bb6a4cfe2f4dfb127832ef852e7"
+    },
+    {
+      "id": "wc-c1-git-yarn",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "e5097d7f55fc322eac6a9edb5b971582df2b8d3dfc062483fd83b0b16611b94c"
+    },
+    {
+      "id": "wc-c2-deploy",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "c7e5ac69b2a84123db8f8ba50c5715ce985285449abcaafcff16a8d2502ceffe"
+    },
+    {
+      "id": "wc-c3-security-env",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "8347872c7a0c05ff862bb59dcb124a4f5373e5a391a325ced2e20d7375eb2426"
+    },
+    {
+      "id": "wc-c4-wire-close",
+      "status": "archived",
+      "archivedAt": "2026-06-26",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d648224e7a03a7a0f1eda348641b001b27af203557ff9778df3b28e0beebeb12"
+    },
+    {
+      "id": "repo-leveling",
+      "status": "archived",
+      "archivedAt": "2026-06-27",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "72a3730effde16a2f964a5ac50e24a6e316feb34b89de668fc5f51390b914bad"
+    },
+    {
+      "id": "mcp-tooling-m0-consilium",
+      "status": "closed",
+      "archivedAt": null,
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "970366f0fd7ae8b3ac5566cc7162edeb401e959b9d84607db1beae72b11dca0e"
+    },
+    {
+      "id": "rag-r0-scaffold",
+      "status": "archived",
+      "archivedAt": "2026-06-21",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "17beacc069f2cbf0ead02834765fefa872fc5d5514dd2001cc3fd6c79ec90a85"
+    },
+    {
+      "id": "rag-r1-lancedb-index",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "6247cf441534ec604f10b836298bbf7beb1712bd02cda764f8aa918bb7bcb986"
+    },
+    {
+      "id": "rag-r2-operative-circuit",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "d47fd06d933e96bfc41ada8874c31e8cf706c2615b91553199e27630e3f97627"
+    },
+    {
+      "id": "rag-r3-dual-retriever",
+      "status": "archived",
+      "archivedAt": "2026-06-24",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "4f27259a756277cbaa33280f87a64bc176e9fde50f4d4c60d79a5e88d5fc7956"
+    },
+    {
+      "id": "rag-r4-office-endpoint",
+      "status": "archived",
+      "archivedAt": "2026-06-25",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "8e5a71e869503efbbaa4b4938a50a9fdcd58654a71e545d00c1bc638b806a083"
+    },
+    {
+      "id": "rag-r5-rituals",
+      "status": "archived",
+      "archivedAt": "2026-06-27",
+      "githubIssue": null,
+      "githubIssueClosedAt": null,
+      "checksum": "ffac789b8d38588467505646f4dfb2a75240c2ea4e4210e80eb693b93f7dde9f"
+    },
+    {
+      "id": "ci-observability",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 193,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "cabf3d2413433a4b8105b98a359d5b8c6aea4d965c1e3f1e5e39007a0bed0a4c"
+    },
+    {
+      "id": "rag-top-k-c2",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 186,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "43285f4a27c8b73cfea377afa36108405451382d6c92dd7e5cf6d3f829f79cf1"
+    },
+    {
+      "id": "issue-178-async-v2-reconciliation",
+      "status": "archived",
+      "archivedAt": "2026-06-29",
+      "githubIssue": 178,
+      "githubIssueClosedAt": "2026-06-29",
+      "checksum": "59dd4fe6ea56bfaaa90f42774d782423223fe1582ff05b878c639e8d626b2849"
+    }
+  ]
+}
