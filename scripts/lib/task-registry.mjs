@@ -1,10 +1,13 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 export const REGISTRY_REL = 'docs/tasks/registry.json';
 export const TASKS_README_REL = 'docs/tasks/README.md';
 export const ARCHIVE_DIR_REL = 'docs/tasks/archive';
 export const ARCHIVE_LOG_REL = 'docs/tasks/archive.jsonl';
+export const TASKS_BACKUP_DIR_REL = 'docs/tasks/backups';
+export const TASKS_MIGRATION_DIR_REL = 'docs/tasks/migrations';
 
 export const HOT_TASK_STATUSES = new Set(['draft', 'active', 'review', 'paused', 'deferred']);
 export const RITUAL_TASK_STATUSES = new Set(['active', 'review']);
@@ -81,6 +84,28 @@ export function listArchived(registry) {
   return registry.tasks.filter((t) => t.status === 'archived');
 }
 
+/** @param {{ version: number, tasks: TaskEntry[] }} registry */
+export function listLegacyClosed(registry) {
+  return registry.tasks.filter((t) => CLOSED_TASK_STATUSES.has(t.status));
+}
+
+/** @param {unknown} data */
+export function stableJson(data) {
+  if (Array.isArray(data)) return `[${data.map((item) => stableJson(item)).join(',')}]`;
+  if (data && typeof data === 'object') {
+    return `{${Object.keys(data)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${stableJson(data[key])}`)
+      .join(',')}}`;
+  }
+  return JSON.stringify(data);
+}
+
+/** @param {unknown} data */
+export function checksumJson(data) {
+  return createHash('sha256').update(stableJson(data)).digest('hex');
+}
+
 /** @param {string} path @param {unknown} data */
 function atomicWriteJson(path, data) {
   mkdirSync(dirname(path), { recursive: true });
@@ -96,12 +121,14 @@ export function resolveArchiveLogPath(cwd = process.cwd()) {
 
 /** @param {TaskEntry} task */
 export function normalizeArchiveRecord(task) {
-  return {
+  const record = {
     ...task,
     status: 'archived',
     archivedAt: task.archivedAt ?? new Date().toISOString().slice(0, 10),
     archiveSchemaVersion: 1,
   };
+  if (task.status && task.status !== 'archived') record.originalStatus = task.originalStatus ?? task.status;
+  return record;
 }
 
 /** @param {string} [cwd] */
@@ -148,10 +175,122 @@ export function appendArchiveLog(task, cwd = process.cwd()) {
 export function listArchivedAll(registry, cwd = process.cwd()) {
   const byId = new Map();
   for (const task of loadArchiveLog(cwd)) byId.set(task.id, task);
-  for (const task of listArchived(registry)) {
+  for (const task of listLegacyClosed(registry)) {
     if (!byId.has(task.id)) byId.set(task.id, task);
   }
   return [...byId.values()];
+}
+
+/** @param {string} [cwd] */
+export function resolveTasksBackupDir(cwd = process.cwd()) {
+  return resolve(cwd, TASKS_BACKUP_DIR_REL);
+}
+
+/** @param {string} [cwd] */
+export function resolveTasksMigrationDir(cwd = process.cwd()) {
+  return resolve(cwd, TASKS_MIGRATION_DIR_REL);
+}
+
+/** @param {string} stamp @param {string} [cwd] */
+export function backupRegistry(stamp, cwd = process.cwd()) {
+  const dir = resolveTasksBackupDir(cwd);
+  mkdirSync(dir, { recursive: true });
+  const target = resolve(dir, `registry-${stamp}.json`);
+  copyFileSync(resolveRegistryPath(cwd), target);
+  return target;
+}
+
+/**
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ * @param {{ id?: string, createdAt?: string }} [options]
+ */
+export function buildLegacyArchiveMigrationManifest(registry, options = {}) {
+  const createdAt = options.createdAt ?? new Date().toISOString();
+  const legacyClosed = listLegacyClosed(registry);
+  return {
+    version: 1,
+    id: options.id ?? `task-archive-migration-${createdAt.slice(0, 10)}`,
+    createdAt,
+    source: REGISTRY_REL,
+    target: ARCHIVE_LOG_REL,
+    registryBefore: {
+      total: registry.tasks.length,
+      checksum: checksumJson(registry),
+    },
+    moveCount: legacyClosed.length,
+    keepCount: registry.tasks.length - legacyClosed.length,
+    tasks: legacyClosed.map((task) => ({
+      id: task.id,
+      status: task.status,
+      archivedAt: task.archivedAt ?? null,
+      githubIssue: task.githubIssue ?? null,
+      githubIssueClosedAt: task.githubIssueClosedAt ?? null,
+      checksum: checksumJson(task),
+    })),
+  };
+}
+
+/**
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ * @param {{ version: number, id: string, tasks: { id: string, checksum: string }[] }} manifest
+ * @param {string} [cwd]
+ */
+export function migrateLegacyClosedToArchiveLog(registry, manifest, cwd = process.cwd()) {
+  const existingArchive = loadArchiveLog(cwd);
+  const byId = new Map(existingArchive.map((record) => [record.id, record]));
+  const manifestIds = new Set(manifest.tasks.map((task) => task.id));
+  const moved = [];
+  const kept = [];
+
+  for (const task of registry.tasks) {
+    if (!manifestIds.has(task.id)) {
+      kept.push(task);
+      continue;
+    }
+    const manifestTask = manifest.tasks.find((entry) => entry.id === task.id);
+    if (!manifestTask) throw new Error(`Migration manifest missing task: ${task.id}`);
+    if (checksumJson(task) !== manifestTask.checksum) {
+      throw new Error(`Task changed since manifest was created: ${task.id}`);
+    }
+    const archived = normalizeArchiveRecord(task);
+    if (!byId.has(archived.id)) byId.set(archived.id, archived);
+    moved.push(archived);
+  }
+
+  registry.tasks = kept;
+  saveArchiveLog([...byId.values()], cwd);
+  return { moved, kept };
+}
+
+/**
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ * @param {{ tasks: { id: string }[] }} manifest
+ * @param {string} [cwd]
+ */
+export function rollbackLegacyClosedMigration(registry, manifest, cwd = process.cwd()) {
+  const manifestIds = new Set(manifest.tasks.map((task) => task.id));
+  const archive = loadArchiveLog(cwd);
+  const restored = [];
+  const remainingArchive = [];
+  const existingHotIds = new Set(registry.tasks.map((task) => task.id));
+
+  for (const record of archive) {
+    if (!manifestIds.has(record.id)) {
+      remainingArchive.push(record);
+      continue;
+    }
+    if (!existingHotIds.has(record.id)) {
+      const restoredTask = { ...record };
+      if (restoredTask.originalStatus) restoredTask.status = restoredTask.originalStatus;
+      delete restoredTask.archiveSchemaVersion;
+      delete restoredTask.originalStatus;
+      restored.push(restoredTask);
+    }
+  }
+
+  registry.tasks.push(...restored);
+  saveArchiveLog(remainingArchive, cwd);
+  return { restored, remainingArchive };
 }
 
 /** Архивные задачи с Issue, которые ещё не закрыты на GitHub. */
