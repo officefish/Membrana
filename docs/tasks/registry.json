@@ -9660,6 +9660,86 @@
         "musician"
       ],
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "free-v1-sound-catalog",
+      "title": "Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор",
+      "promptPath": "docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md",
+      "githubIssue": 205,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "createdAt": "2026-06-30",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Магистральная задача этапа 1.B. Расширяет free-v1 до 7 классов; снижает FPR дрона < 15%. 3 спринта: pipeline, content, integration.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "fv1-s1-pipeline",
+      "title": "fv1-S1: параметризация пайплайна генерации шаблонов + Perplexity research акустики классов",
+      "promptPath": "docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md",
+      "githubIssue": 205,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "createdAt": "2026-06-30",
+      "archivedAt": "2026-06-30",
+      "archiveNotes": "PR feat/fv1-s1-pipeline, commit 3bbe73b: buildClassTemplateFromMetricSamples+mergeClassTemplates, generate-class-template.mjs, dataset schema, acoustic research. Regression PASS containment 90%.",
+      "notes": "yarn templates:generate --class <name> --src samples/<name>/. Регрессия DRONE_TIGHT не деградирует.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "epicId": "free-v1-sound-catalog",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "fv1-s2-content",
+      "title": "fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA",
+      "promptPath": "docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md",
+      "githubIssue": 205,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-30",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Классы: SILENCE, WIND, BIRDS, SPEECH, MACHINE_HUM (приоритет), GUNSHOT. Perplexity: источники датасетов.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "epicId": "free-v1-sound-catalog"
+    },
+    {
+      "id": "fv1-s3-integration",
+      "title": "fv1-S3: multi-class routing в детекторе, калибровка порогов, stage-gate FPR<15%, free_v1 release",
+      "promptPath": "docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md",
+      "githubIssue": 205,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-30",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "DoD: FPR < 15% / recall >= 90% на смешанном датасете. Plugin + cabinet UI показывают класс.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko"
+      ],
+      "epicId": "free-v1-sound-catalog"
     }
   ]
 }

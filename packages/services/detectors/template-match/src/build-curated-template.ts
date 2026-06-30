@@ -114,6 +114,89 @@ export function buildTemplateFromMetricSamples(
   };
 }
 
+export interface ClassTemplateMeta {
+  readonly name: string;
+  readonly icon?: string;
+  readonly color?: string;
+  readonly description?: string;
+  readonly countsAsDetection?: boolean;
+}
+
+const DEFAULT_CLASS_ICON = '🔊';
+const DEFAULT_CLASS_COLOR = '#6b8cff';
+
+/** Build a class-agnostic pattern template from a corpus of FFT metric series. */
+export function buildClassTemplateFromMetricSamples(
+  samples: readonly MetricSample[],
+  key: string,
+  meta: ClassTemplateMeta,
+): PatternTemplate {
+  if (samples.length === 0) {
+    throw new Error('buildClassTemplateFromMetricSamples: empty samples');
+  }
+
+  const centroid = boundsFromValues(samples.map((s) => s.centroid));
+  const flux = boundsFromValues(samples.map((s) => s.flux));
+  const rmsBounds = boundsFromValues(samples.map((s) => s.rms));
+  const thresholds: PatternTemplate['thresholds'] = {
+    centroid,
+    flux,
+    rms: rmsBounds,
+    frameHitRatio: buildFrameHitRatio(samples, { centroid, flux, rms: rmsBounds }),
+  };
+
+  const features = computeTemporalFeatures(samples, 0.02);
+
+  return {
+    key,
+    name: meta.name,
+    icon: meta.icon ?? DEFAULT_CLASS_ICON,
+    color: meta.color ?? DEFAULT_CLASS_COLOR,
+    description:
+      meta.description ?? `Auto-generated template (${samples.length} FFT measurements)`,
+    thresholds,
+    temporalPatterns: buildTemporalPatterns(features),
+    ...(meta.countsAsDetection !== undefined ? { countsAsDetection: meta.countsAsDetection } : {}),
+  };
+}
+
+/** Merge per-sample class templates into one envelope template. */
+export function mergeClassTemplates(
+  templates: readonly PatternTemplate[],
+  key: string,
+  meta: ClassTemplateMeta,
+): PatternTemplate {
+  if (templates.length === 0) {
+    throw new Error('mergeClassTemplates: no templates to merge');
+  }
+
+  const first = templates[0]!;
+  let centroid = { ...first.thresholds.centroid };
+  let flux = { ...first.thresholds.flux };
+  let rmsBounds = { ...first.thresholds.rms };
+  let frameHitRatio = first.thresholds.frameHitRatio ?? DEFAULT_FRAME_HIT_RATIO;
+
+  for (const template of templates.slice(1)) {
+    centroid = mergeBounds(centroid, template.thresholds.centroid);
+    flux = mergeBounds(flux, template.thresholds.flux);
+    rmsBounds = mergeBounds(rmsBounds, template.thresholds.rms);
+    if (template.thresholds.frameHitRatio) {
+      frameHitRatio = mergeBounds(frameHitRatio, template.thresholds.frameHitRatio);
+    }
+  }
+
+  return {
+    key,
+    name: meta.name,
+    icon: meta.icon ?? DEFAULT_CLASS_ICON,
+    color: meta.color ?? DEFAULT_CLASS_COLOR,
+    description: meta.description ?? `Merged template from ${templates.length} samples`,
+    thresholds: { centroid, flux, rms: rmsBounds, frameHitRatio },
+    temporalPatterns: first.temporalPatterns,
+    ...(meta.countsAsDetection !== undefined ? { countsAsDetection: meta.countsAsDetection } : {}),
+  };
+}
+
 /** Merge per-sample drone templates into one envelope template for classifyTrends. */
 export function mergeCuratedDroneTemplate(
   templates: readonly PatternTemplate[],

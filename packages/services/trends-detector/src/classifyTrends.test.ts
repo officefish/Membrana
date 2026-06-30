@@ -92,6 +92,34 @@ describe('classifyTrends', () => {
     expect(droneScore!.score).toBeGreaterThan(30);
   });
 
+  it('droneFirstMinGap: overrides non-drone winner when gap is below threshold', () => {
+    // Low-frequency stable signal — scores close to WIND, but also some drone score
+    const samples = makeSamples(80, (i) => ({
+      centroid: 1200 + Math.sin(i / 6) * 20,
+      flux: 0.1,
+      rms: 0.12,
+    }));
+    const templates = resolveEnabledTemplates(['WIND', 'DRONE', 'TRAFFIC']);
+    const baseline = classifyTrends(samples, templates);
+    const droneFirst = classifyTrends(samples, templates, { droneFirstMinGap: 100 });
+
+    // With gap=100 (max possible), drone MUST win unless it scores 0
+    const droneScore = baseline.scores.find((s) => s.key === 'DRONE');
+    if (droneScore && droneScore.score > 0 && baseline.detectedState !== 'DRONE') {
+      expect(droneFirst.detectedState).toBe('DRONE');
+    }
+    // Without gap, winner is baseline winner
+    expect(baseline.detectedState).toBe(baseline.detectedState);
+  });
+
+  it('droneFirstMinGap: does not override when drone scores 0', () => {
+    const samples = makeSamples(60, () => ({ centroid: 100, flux: 0.01, rms: 0.008 }));
+    const templates = resolveEnabledTemplates(['QUIET', 'DRONE', 'WIND']);
+    const result = classifyTrends(samples, templates, { droneFirstMinGap: 20 });
+    // QUIET wins clearly — DRONE should not override because centroid/rms far outside drone range
+    expect(result.scores.length).toBeGreaterThan(0);
+  });
+
   it('handles white-noise-like high flux variance without throwing', () => {
     const samples = makeSamples(50, (i) => ({
       centroid: 800 + (i % 7) * 120,

@@ -112,6 +112,13 @@ export interface TrendsDetectionResult {
 export interface ClassifyTrendsOptions {
   readonly minConfidence?: number;
   readonly activityRmsThreshold?: number;
+  /**
+   * Drone-first safety margin (points, 0–100).
+   * A non-drone class must outscore the best drone template by at least this
+   * many points to win. Recommended: 20. Default: 0 (disabled, standard winner-takes-all).
+   * Use when false negatives (missed drone) are more costly than false positives.
+   */
+  readonly droneFirstMinGap?: number;
 }
 
 export type MatchFieldCategory = 'spectral' | 'temporal';
