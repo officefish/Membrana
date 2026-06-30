@@ -54,7 +54,7 @@ export function classifyTrends(
   }
 
   const features = computeTemporalFeatures(samples, activityRmsThreshold);
-  const scores = templates.map((template) => {
+  let scores = templates.map((template) => {
     const scored = scoreTemplate(features, template, samples);
     return {
       key: template.key,
@@ -65,6 +65,23 @@ export function classifyTrends(
   });
 
   scores.sort((a, b) => b.score - a.score);
+
+  // Drone-first policy: non-drone class must win by droneFirstMinGap points to override.
+  if (options.droneFirstMinGap && options.droneFirstMinGap > 0) {
+    const droneFirst = scores.find((s) => {
+      const t = templates.find((t) => t.key === s.key);
+      return t ? templateCountsAsDetection(t) : false;
+    });
+    if (droneFirst) {
+      const winner = scores[0]!;
+      const winnerTpl = templates.find((t) => t.key === winner.key);
+      const winnerIsDrone = winnerTpl ? templateCountsAsDetection(winnerTpl) : false;
+      if (!winnerIsDrone && winner.score - droneFirst.score < options.droneFirstMinGap) {
+        scores = [droneFirst, ...scores.filter((s) => s.key !== droneFirst.key)];
+      }
+    }
+  }
+
   const best = scores[0]!;
   const second = scores[1];
   const winnerTemplate = templates.find((t) => t.key === best.key);
