@@ -28,10 +28,10 @@ export interface MicBufferRecorderSnapshot {
 
 class MicBufferRecorderPluginStateImpl {
   private streamLive = false;
-  private mode: MediaLibraryRecordingMode = 'manual';
+  private mode: MediaLibraryRecordingMode = 'auto';
   private format: MediaLibraryCaptureFormat = 'wav';
   private manualPresetSec: ManualDurationPresetSec = 5;
-  private autoSegmentSec: AutoSegmentPresetSec = 10;
+  private autoSegmentSec: AutoSegmentPresetSec = 5;
   private pauseSec = 1;
   private isRecording = false;
   private elapsedSec = 0;

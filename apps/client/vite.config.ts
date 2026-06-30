@@ -48,6 +48,9 @@ export default defineConfig(({ mode }) => {
         '@membrana/telemetry-service': fileURLToPath(
           new URL('../../packages/services/telemetry/src/index.ts', import.meta.url),
         ),
+        '@membrana/telemetry-journal-service': fileURLToPath(
+          new URL('../../packages/services/telemetry-journal/src/index.ts', import.meta.url),
+        ),
         '@membrana/media-library-service': fileURLToPath(
           new URL('../../packages/services/media-library/src/index.ts', import.meta.url),
         ),

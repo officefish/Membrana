@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 
 import { usePairStatusMonitor } from '@/hooks/usePairStatusMonitor';
-import { useTelemetryCloudSync } from '@/hooks/useTelemetryCloudSync';
 import { reconfigureMediaLibraryFromConnection, schedulePairedMediaLibraryUpgrade, stopPairedMediaLibraryUpgrade } from '@/lib/mediaLibraryHubBridge';
+import { reconfigureJournalFromConnection, schedulePairedJournalUpgrade, stopPairedJournalUpgrade } from '@/lib/journalHubBridge';
 import { ConnectionFallbackDialog } from './node-connection/ConnectionFallbackDialog';
 import { MembraneLinkedPanel } from './node-connection/MembraneLinkedPanel';
 import { MembranePairingPanel } from './node-connection/MembranePairingPanel';
@@ -31,19 +31,24 @@ export const NodeConnectionShell: React.FC = () => {
     if (lastConnectionKeyRef.current === key) return;
     lastConnectionKeyRef.current = key;
     void reconfigureMediaLibraryFromConnection(mode, pairing);
+    void reconfigureJournalFromConnection(mode, pairing);
   }, [hydrated, mode, pairing]);
 
   useEffect(() => {
     if (!hydrated) return;
     if (mode === 'paired' && pairing) {
       schedulePairedMediaLibraryUpgrade(mode, pairing);
-      return () => stopPairedMediaLibraryUpgrade();
+      schedulePairedJournalUpgrade(mode, pairing);
+      return () => {
+        stopPairedMediaLibraryUpgrade();
+        stopPairedJournalUpgrade();
+      };
     }
     stopPairedMediaLibraryUpgrade();
+    stopPairedJournalUpgrade();
   }, [hydrated, mode, pairing]);
 
   usePairStatusMonitor();
-  useTelemetryCloudSync();
 
   return (
     <>

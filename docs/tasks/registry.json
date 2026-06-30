@@ -941,6 +941,18 @@
       "createdAt": "2026-06-14",
       "archivedAt": null,
       "archiveNotes": null
+    },
+    {
+      "id": "telemetry-journal-live-refactor",
+      "title": "Live-журнал телеметрии (TJ1–TJ6)",
+      "promptPath": "docs/prompts/TELEMETRY_JOURNAL_LIVE_EPIC_PROMPT.md",
+      "githubIssue": 79,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-06-14",
+      "archivedAt": null,
+      "archiveNotes": null
     }
   ]
 }

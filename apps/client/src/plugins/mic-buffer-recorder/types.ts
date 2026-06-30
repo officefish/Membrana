@@ -29,10 +29,10 @@ export interface MicBufferRecorderPluginConfig {
 }
 
 export const defaultMicBufferRecorderConfig: MicBufferRecorderPluginConfig = {
-  defaultMode: 'manual',
+  defaultMode: 'auto',
   defaultFormat: 'wav',
   manualPresetSec: 5,
-  autoSegmentSec: 10,
+  autoSegmentSec: 5,
   pauseSec: 1,
 };
 

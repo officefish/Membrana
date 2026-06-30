@@ -101,4 +101,5 @@ export {
   type MediaLibraryHubEventName,
   type MediaLibraryQuotaUpdatedPayload,
   type MediaLibraryRecordingMode,
+  type MediaLibrarySampleImportedPayload,
 } from './hub-events.js';
