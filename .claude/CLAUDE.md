@@ -6,6 +6,36 @@ Read first: [`AGENTS.md`](../AGENTS.md), [`.cursorrules`](../.cursorrules).
 
 Claude Code skills in `.claude/skills/` are **thin mirrors** — follow the linked `.cursor/skills/*/SKILL.md` for full playbooks.
 
+## ⛔ Pre-sprint gate — ОБЯЗАТЕЛЕН перед первым Write/Edit нового спринта
+
+Когда пользователь говорит «начинаем», «да», «поехали», «продолжаем спринт», «идём в спринт» —
+**СТОП**. Прежде чем открыть первый файл:
+
+1. Вызвать `membrana-task-lifecycle start <id>` (скилл загружен и применён)
+2. Задача в `docs/tasks/registry.json`: `"id": "<id>", "status": "active"`
+3. GitHub issue открыт, номер известен
+4. `docs/day-sprint/<id>-YYYY-MM-DD/OPEN.md` создан с фазами DoD
+5. `docs/DAY_SPRINT_ACTIVE.md` обновлён
+
+**Только после всех 5 пунктов — первый коммит с кодом.**
+Пропуск любого пункта — нарушение регламента.
+
+## Shell: PowerShell 5.1 (Windows)
+
+Среда разработки — Windows, shell — **PowerShell 5.1**. Bash-синтаксис не работает.
+
+| Нужно | Запрещено |
+|-------|-----------|
+| `@'...'@` (heredoc) | `cat <<'EOF'` |
+| `; if ($?) { B }` (цепочка) | `A && B` |
+| `$env:VAR` | `$VAR` (без env:) |
+| `New-Item -ItemType Directory -Force` | `mkdir -p` |
+
+## Уточнение перед реализацией
+
+Если термин допускает ≥2 разные интерпретации (пример: «регрессия» = closeness или containment?) —
+**задай вопрос до написания первой строки кода**. Не угадывай.
+
 ## Daily rhythm
 
 - Morning: `yarn ritual:day` — see `membrana-developer-rhythm`

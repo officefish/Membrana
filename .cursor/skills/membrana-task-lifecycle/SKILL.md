@@ -24,10 +24,20 @@ description: >-
 
 ## Start (before first commit on M/L)
 
-1. Confirm `id` in [`docs/tasks/registry.json`](../../../docs/tasks/registry.json) — `status: active`.
-2. Read full task prompt `docs/prompts/*_PROMPT.md` — block **«Промпт целиком»**.
-3. Read [`docs/MAIN_DAY_ISSUE.md`](../../../docs/MAIN_DAY_ISSUE.md) if day work.
-4. Do **not** expand scope without new Issue/prompt.
+> ⛔ **СТОП — до первого Write/Edit/Bash с кодом:**
+>
+> Шаги 1–4 обязательны. Пропуск любого = нарушение регламента.
+
+1. **Registry** — создать или подтвердить `id` в [`docs/tasks/registry.json`](../../../docs/tasks/registry.json) c `status: active`.
+2. **Issue** — GitHub issue открыт, номер зафиксирован.
+3. **OPEN.md** — `docs/day-sprint/<id>-YYYY-MM-DD/OPEN.md` создан с фазами DoD до старта работы.
+4. **ACTIVE** — `docs/DAY_SPRINT_ACTIVE.md` указывает на этот спринт.
+
+Только после 1–4:
+
+5. Read full task prompt `docs/prompts/*_PROMPT.md` — block **«Промпт целиком»**.
+6. Read [`docs/MAIN_DAY_ISSUE.md`](../../../docs/MAIN_DAY_ISSUE.md) if day work.
+7. Do **not** expand scope without new Issue/prompt.
 
 ## Close (four levels)
 
