@@ -35,8 +35,17 @@ export interface DomainEvent {
 }
 
 export type {
+  AcousticNodeGeometry,
+  LocalizationErrorEllipse,
+  LocalizationFailureCode,
+  LocalizationHypothesis,
+  MultilaterationInput,
+  SyncedAcousticObservation,
   SyncedTimestamp,
+  TdoaEstimationMethod,
+  TdoaQualityDiagnostics,
   TimeSyncProvider,
+  TimeSyncSource,
   TdoaResult,
 } from './acoustic-network.js';
 

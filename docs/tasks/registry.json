@@ -9777,6 +9777,27 @@
       "notes": "Триггер: двойное нарушение регламента в fv1-s1. Правки в .claude/CLAUDE.md и .cursor/skills/membrana-task-lifecycle/SKILL.md",
       "leadPersona": "vesnin",
       "supportPersonas": []
+    },
+    {
+      "id": "tdoa-localizer-spec-s1",
+      "title": "TDOA/localizer spec S1: контракты Stage 2/3 без разморозки реализации",
+      "promptPath": "docs/prompts/TDOA_LOCALIZER_SPEC_S1_PROMPT.md",
+      "githubIssue": 211,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-30",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Design/spec sprint: TDOA pair estimation, time sync quality, node geometry, localization hypotheses. Stage 2 remains frozen; no runtime/client integration. Each implementation step has exactly one accountable virtual-team persona.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "kuryokhin",
+        "rodchenko"
+      ]
     }
   ]
 }

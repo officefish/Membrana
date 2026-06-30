@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-30 — `tdoa-localizer-spec-s1` — **OPEN**
+
+- **Scope:** TDOA/localizer Stage 2/3 spec-design, experimental contract draft, freeze boundary; one accountable owner per implementation step
+- **Issue:** [#211](https://github.com/officefish/Membrana/issues/211)
+- **Open brief:** [`day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md`](./day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md)
+
+---
+
 ## 2026-06-26 — `db3h-s1-tech-debt` — **CLOSED**
 
 - **Delivered:** CI green, issues audit, test:scripts, PR #181 L18–L23, smoke `c778c4ee`
@@ -25,6 +33,7 @@
 - **Closure:** [`day-sprint/sprint-process-guard-2026-06-30/CLOSURE.md`](./day-sprint/sprint-process-guard-2026-06-30/CLOSURE.md)
 
 ---
+
 ## 2026-06-30 — `session-archive-s1` — **CLOSED**
 
 - **Delivered:** `@membrana/session-archive-service` (parse+scrub+hash+dedup), SECRET_PATTERNS в core, archive-session.mjs, list-sessions.mjs, inspect-session.mjs, SESSION_ARCHIVE_REGULATION.md, integration-тест 4/4 PASS · PR [#209](https://github.com/officefish/Membrana/pull/209)

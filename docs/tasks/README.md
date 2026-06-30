@@ -181,6 +181,7 @@
 | `free-v1-sound-catalog` | Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
 | `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
 | `fv1-s3-integration` | fv1-S3: multi-class routing в детекторе, калибровка порогов, stage-gate FPR<15%, free_v1 release | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
+| `tdoa-localizer-spec-s1` | TDOA/localizer spec S1: контракты Stage 2/3 без разморозки реализации | M | [`TDOA_LOCALIZER_SPEC_S1_PROMPT.md`](../docs/prompts/TDOA_LOCALIZER_SPEC_S1_PROMPT.md) | [#211](https://github.com/officefish/Membrana/issues/211) |
 
 ---
 

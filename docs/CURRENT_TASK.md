@@ -1,31 +1,28 @@
 # CURRENT_TASK
 
-> **Буфер** — при конфликте проигрывает [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и реестру.
+> **Буфер** — при конфликте проигрывает [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md), реестру и task-промпту.
 
-## Канон дня (2026-06-30)
+## Канон текущего sprint (2026-06-30)
 
-**Текущий спринт:** `device-board-server-first` ← **сейчас**  
-**Параллельно:** `db3h-s5-desktop-logging` (DL-3 optional) — не блокер
+**Текущий sprint:** `tdoa-localizer-spec-s1` ← **сейчас**
+**Issue:** [#211](https://github.com/officefish/Membrana/issues/211)
+**Prompt:** [`docs/prompts/TDOA_LOCALIZER_SPEC_S1_PROMPT.md`](./prompts/TDOA_LOCALIZER_SPEC_S1_PROMPT.md)
+**OPEN:** [`docs/day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md`](./day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md)
 
 ### Фокус
 
-**Device-board server-first** — консилиум ✅, спринт SF0–SF9. **Детекторы S4 не открываем.**
+TDOA/localizer Stage 2/3 **spec/design-review** без разморозки runtime-реализации.
 
-### Очередь
+### Особое правило
 
-1. ~~`db3h-s3-studio-host`~~ — closed
-2. `db3h-s5-desktop-logging` — DL-1/DL-2 ✅; DL-3 optional
-3. **`device-board-server-first`** — SF0–SF9 ✅ · **deploy + prod smoke** next ([`DEPLOY.md`](./day-sprint/db-server-first-2026-06-26/DEPLOY.md))
-4. ~~`db3h-s4-microphone-detectors`~~ — **deferred** (после server-first)
+Каждый шаг реализации имеет ровно одного accountable owner из виртуальной команды Membrana.
 
-### Команды
+### Текущая фаза
+
+**TL2 — Closure / PR handoff** (Owner: Vesnin): подготовить CLOSURE.md после PR/LGTM и архивировать `tdoa-localizer-spec-s1`.
+
+### Проверки
 
 ```bash
-yarn turbo run lint typecheck test build --continue
-# deploy: docs/day-sprint/db-server-first-2026-06-26/DEPLOY.md
-# prod E2E: docs/actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md
+yarn workspace @membrana/core typecheck
 ```
-
-**Консилиум:** [`seanses/device-board-server-first-2026-06-26.md`](./seanses/device-board-server-first-2026-06-26.md)  
-**Канон:** [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md)  
-**OPEN:** [`db-server-first-2026-06-26/OPEN.md`](./day-sprint/db-server-first-2026-06-26/OPEN.md)
