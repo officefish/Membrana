@@ -273,6 +273,8 @@ export function normalizeGithubCheckRuns(checkRuns, commitSha) {
     status:
       check.status === 'completed' && check.conclusion === 'success'
         ? 'pass'
+        : check.status === 'completed' && check.conclusion === 'skipped'
+          ? 'skipped'
         : check.status === 'completed'
           ? 'fail'
           : 'skipped',

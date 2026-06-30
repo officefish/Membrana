@@ -312,8 +312,9 @@ test('GitHub check-runs become SHA-bound pass/fail evidence', () => {
   const checks = normalizeGithubCheckRuns([
     { name: 'CI', status: 'completed', conclusion: 'success', completed_at: '2026-06-28T12:00:00.000Z', html_url: 'https://example.test/pass' },
     { name: 'Security', status: 'completed', conclusion: 'failure', completed_at: '2026-06-28T12:01:00.000Z', html_url: 'https://example.test/fail' },
+    { name: 'Optional', status: 'completed', conclusion: 'skipped', completed_at: '2026-06-28T12:02:00.000Z', html_url: 'https://example.test/skipped' },
   ], SHA_A);
-  assert.deepEqual(checks.map((check) => check.status), ['pass', 'fail']);
+  assert.deepEqual(checks.map((check) => check.status), ['pass', 'fail', 'skipped']);
   assert.ok(checks.every((check) => check.commitSha === SHA_A));
   assert.match(checks[0].command, /^github-check:/);
 });
