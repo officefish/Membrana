@@ -9750,7 +9750,7 @@
       "size": "M",
       "status": "archived",
       "archivedAt": "2026-06-30",
-      "archiveNotes": "PR #209 feat/session-archive-s1: SECRET_PATTERNS в @membrana/core, parseClaudeCodeJSONL+scrubSecrets+computeTurnHash+deduplicateTurns, archive-session.mjs, 4/4 integration PASS"
+      "archiveNotes": "PR #209 feat/session-archive-s1: SECRET_PATTERNS в @membrana/core, parseClaudeCodeJSONL+scrubSecrets+computeTurnHash+deduplicateTurns, archive-session.mjs, 4/4 integration PASS",
       "sprintKind": "day-sprint",
       "createdAt": "2026-06-30",
       "archivedAt": null,
@@ -9771,14 +9771,35 @@
       "githubIssue": 210,
       "linearId": null,
       "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-30",
+      "archivedAt": "2026-06-30",
+      "archiveNotes": "PR #212: pre-sprint gate в CLAUDE.md (5 пунктов), PowerShell table, semantic clarification rule; STOP-блок в task-lifecycle SKILL.md",
+      "notes": "Триггер: двойное нарушение регламента в fv1-s1. Правки в .claude/CLAUDE.md и .cursor/skills/membrana-task-lifecycle/SKILL.md",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
+    },
+    {
+      "id": "tdoa-localizer-spec-s1",
+      "title": "TDOA/localizer spec S1: контракты Stage 2/3 без разморозки реализации",
+      "promptPath": "docs/prompts/TDOA_LOCALIZER_SPEC_S1_PROMPT.md",
+      "githubIssue": 211,
+      "linearId": null,
+      "size": "M",
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-06-30",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Триггер: двойное нарушение регламента в fv1-s1. Правки в .claude/CLAUDE.md и .cursor/skills/membrana-task-lifecycle/SKILL.md",
+      "notes": "Design/spec sprint: TDOA pair estimation, time sync quality, node geometry, localization hypotheses. Stage 2 remains frozen; no runtime/client integration. Each implementation step has exactly one accountable virtual-team persona.",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "kuryokhin",
+        "rodchenko"
+      ]
     }
   ]
 }
