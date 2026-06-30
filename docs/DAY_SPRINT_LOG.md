@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-30 — `backlog-cleanup-s1` — **OPEN**
+
+- **Scope:** Queue A audit (#146, #151, #54, #7, #8, #34) + S-PR тесты (#11, #9) + P0 #157 dissolve comment group
+- **Issue:** [#214](https://github.com/officefish/Membrana/issues/214)
+- **Open brief:** [`day-sprint/backlog-cleanup-s1-2026-06-30/OPEN.md`](./day-sprint/backlog-cleanup-s1-2026-06-30/OPEN.md)
+
+---
+
 ## 2026-06-30 — `tdoa-localizer-spec-s1` — **OPEN**
 
 - **Scope:** TDOA/localizer Stage 2/3 spec-design, experimental contract draft, freeze boundary; one accountable owner per implementation step

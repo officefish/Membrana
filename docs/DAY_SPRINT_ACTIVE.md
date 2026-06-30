@@ -1,14 +1,10 @@
 # Active day sprint
 
-> **Активный спринт:** `tdoa-localizer-spec-s1` · открыт 2026-06-30
-> **Issue:** [#211](https://github.com/officefish/Membrana/issues/211)
-> **Ветка:** `codex/tdoa-localizer-spec-s1`
-> **OPEN:** [`docs/day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md`](./day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md)
+> **Активный спринт:** `backlog-cleanup-s1` · открыт 2026-06-30  
+> **Issue:** [#214](https://github.com/officefish/Membrana/issues/214)  
+> **Ветка:** `chore/backlog-cleanup-s1`  
+> **OPEN:** [`docs/day-sprint/backlog-cleanup-s1-2026-06-30/OPEN.md`](./day-sprint/backlog-cleanup-s1-2026-06-30/OPEN.md)
 
 ## Текущая фаза
 
-**TL2** — Closure / PR handoff (Owner: Vesnin) ← **сейчас**
-
-## Особое правило
-
-Каждый шаг реализации имеет ровно одного accountable owner из виртуальной команды Membrana.
+**BC1** — verify & close: #146, #151, #54 ← **сейчас**

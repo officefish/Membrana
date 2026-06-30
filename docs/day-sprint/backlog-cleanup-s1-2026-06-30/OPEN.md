@@ -1,0 +1,67 @@
+# OPEN: backlog-cleanup-s1 — аудит и закрытие Queue A
+
+| Поле | Значение |
+|------|----------|
+| **Sprint** | `backlog-cleanup-s1` |
+| **Issue** | [#214](https://github.com/officefish/Membrana/issues/214) |
+| **Ветка** | `chore/backlog-cleanup-s1` |
+| **Opened** | 2026-06-30 |
+| **Источник** | `docs/discussions/github-issues-status-report-2026-06-30.md` |
+
+## Выбранные issues
+
+| # | Issue | Тип | Ожидаемые усилия |
+|---|-------|-----|-----------------|
+| #146 | W0-H1 палитра в function editor | verify & close | ~10 мин |
+| #151 | Epic W0 hotfixes | verify & close | ~10 мин |
+| #54 | MCP rollout acceptance | verify & close | ~15 мин |
+| #7 | agenda store/registry tests | audit | ~15 мин |
+| #8 | client registration smoke tests | audit | ~15 мин |
+| #34 | FFT edge-case docs | audit/close | ~10 мин |
+| #11 | viz config tests | S-PR или close | ~30 мин |
+| #9 | microphoneStreamHub tests | S-PR | ~45 мин |
+| #157 | dissolve comment group | P0 impl | ~90 мин |
+
+## Фазы
+
+### ✅ BC0 — Регламент
+
+- [x] Issue #214 создан
+- [x] Ветка `chore/backlog-cleanup-s1`
+- [x] Промпт: `docs/prompts/BACKLOG_CLEANUP_S1_PROMPT.md`
+- [x] registry.json: `backlog-cleanup-s1` → active
+- [x] OPEN.md
+- [x] DAY_SPRINT_ACTIVE.md
+
+### ⬜ BC1 — Verify & close: #146, #151, #54
+
+- [ ] #146: проверить PR #162 vs acceptance criteria → закрыть / задокументировать
+- [ ] #151: проверить дочерние (#146, #152, #153) → закрыть эпик
+- [ ] #54: проверить composite test и deployment record → закрыть / сузить
+
+### ⬜ BC2 — Аудит: #7, #8, #34
+
+- [ ] #7: сверить acceptance с текущими тестами
+- [ ] #8: проверить smoke coverage
+- [ ] #34: статус по #10; закрыть или задокументировать residual
+
+### ⬜ BC3 — S-PR или закрытие: #11
+
+- [ ] Проверить текущую нормализацию и тесты viz config
+- [ ] Результат: close (если покрыто) или S-PR
+
+### ⬜ BC4 — S-PR: #9 microphoneStreamHub tests
+
+- [ ] replay тест
+- [ ] unsubscribe тест
+- [ ] isolation тест
+- [ ] PR merged, #9 закрыт
+
+### ⬜ BC5 — P0 impl: #157 dissolve comment group
+
+- [ ] Изучить scope и текущий код
+- [ ] Реализация dissolve
+- [ ] Тест undo/save-reload
+- [ ] PR merged, #157 закрыт
+
+### ⬜ BC6 — PR + CLOSURE

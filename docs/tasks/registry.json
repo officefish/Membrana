@@ -9713,7 +9713,7 @@
       "createdAt": "2026-06-30",
       "archivedAt": null,
       "archiveNotes": null,
-      "notes": "Классы: SILENCE, WIND, BIRDS, SPEECH, MACHINE_HUM (приоритет), GUNSHOT. Perplexity: источники датасетов.",
+      "notes": "Ready for Teamlead review: SILENCE 20, WIND 22, BIRDS 22, SPEECH 22, MACHINE_HUM 25, GUNSHOT 19; synthetic=0. Sources: BirdVox, Wind Noise Dataset, LibriSpeech, DataSEC, Gunshot/Gunfire Audio Dataset.",
       "leadPersona": "musician",
       "supportPersonas": [
         "dynin",
@@ -9801,6 +9801,22 @@
         "rodchenko"
       ],
       "githubIssueClosedAt": "2026-06-30"
+    },
+    {
+      "id": "backlog-cleanup-s1",
+      "title": "Backlog cleanup S1: аудит и закрытие Queue A (#146, #151, #54, #7, #8, #34, #11, #9) + P0 #157",
+      "promptPath": "docs/prompts/BACKLOG_CLEANUP_S1_PROMPT.md",
+      "githubIssue": 214,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-30",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Источник: docs/discussions/github-issues-status-report-2026-06-30.md. BC1-BC2: verify&close, BC3-BC4: S-PR тесты, BC5: #157 dissolve comment group",
+      "leadPersona": "vesnin",
+      "supportPersonas": ["ozhegov", "dynin", "rodchenko", "kuryokhin"]
     }
   ]
 }
