@@ -2,6 +2,21 @@
   "version": 1,
   "tasks": [
     {
+      "id": "backlog-cleanup-s1",
+      "title": "Backlog cleanup S1: аудит и закрытие Queue A (#146, #151, #54, #7, #8, #34, #11, #9) + P0 #157",
+      "promptPath": "docs/prompts/BACKLOG_CLEANUP_S1_PROMPT.md",
+      "githubIssue": 214,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-30",
+      "archivedAt": "2026-06-30",
+      "archiveNotes": "Закрыто 6 issues (#146 #151 #54 #11 #9 #157), residual задокументирован для #7 #8 #34. Написано 12 тестов, все зелёные. PR #215.",
+      "leadPersona": "vesnin",
+      "supportPersonas": ["ozhegov", "dynin", "rodchenko", "kuryokhin"]
+    },
+    {
       "id": "ci-test-stability-refactor",
       "title": "Рефакторинг CI: vitest-конфиги, разделение integration/acceptance, CI-aware latency",
       "promptPath": "docs/prompts/CI_TEST_STABILITY_REFACTOR_PROMPT.md",

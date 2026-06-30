@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-30 — `backlog-cleanup-s1` — **CLOSED**
+
+- **Delivered:** 6 issues закрыто (#146 #151 #54 #11 #9 #157), 3 residual задокументировано (#7 #8 #34), 12 тестов добавлено · PR [#215](https://github.com/officefish/Membrana/pull/215)
+- **Issue:** [#214](https://github.com/officefish/Membrana/issues/214)
+- **Closure:** [`day-sprint/backlog-cleanup-s1-2026-06-30/CLOSURE.md`](./day-sprint/backlog-cleanup-s1-2026-06-30/CLOSURE.md)
+
+---
+
 ## 2026-06-26 — `db3h-s1-tech-debt` — **CLOSED**
 
 - **Delivered:** CI green, issues audit, test:scripts, PR #181 L18–L23, smoke `c778c4ee`
