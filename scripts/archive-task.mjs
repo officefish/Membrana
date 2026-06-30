@@ -5,6 +5,7 @@
  *   yarn task:archive <task-id> [--notes "текст"] [--force]
  */
 import {
+  archiveTask,
   archiveCardPath,
   findTask,
   loadRegistry,
@@ -74,18 +75,13 @@ if (task.status === 'archived' && !opts.force) {
   process.exit(1);
 }
 
-const today = new Date().toISOString().slice(0, 10);
-task.status = 'archived';
-task.archivedAt = today;
-if (opts.notes) {
-  task.archiveNotes = opts.notes;
-}
-if (task.githubIssue != null && task.githubIssueClosedAt === undefined) {
-  task.githubIssueClosedAt = null;
-}
+const archivedTask = archiveTask(registry, opts.id, {
+  notes: opts.notes,
+  force: opts.force,
+});
 
 saveRegistry(registry);
-const cardPath = writeArchiveCard(task);
+const cardPath = writeArchiveCard(archivedTask);
 const readmePath = syncTasksReadme(registry);
 
 console.log(`Архивировано: ${opts.id}`);

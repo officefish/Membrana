@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://membrana.local/schemas/task-registry.schema.json",
+  "title": "Membrana hot task registry",
+  "type": "object",
+  "required": ["version", "tasks"],
+  "additionalProperties": true,
+  "properties": {
+    "version": { "type": "number" },
+    "tasks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/task" }
+    }
+  },
+  "$defs": {
+    "task": {
+      "type": "object",
+      "required": ["id", "title", "status", "createdAt"],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "promptPath": {
+          "type": ["string", "null"]
+        },
+        "githubIssue": {
+          "type": ["number", "null"]
+        },
+        "linearId": {
+          "type": ["string", "null"]
+        },
+        "size": {
+          "type": "string",
+          "enum": ["XS", "S", "M", "L"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "review", "paused", "deferred"]
+        },
+        "createdAt": { "type": "string" },
+        "archivedAt": { "type": ["string", "null"] },
+        "archiveNotes": { "type": ["string", "null"] },
+        "githubIssueClosedAt": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["active", "review", "paused"] }
+            }
+          },
+          "then": {
+            "properties": {
+              "promptPath": { "type": "string", "minLength": 1 }
+            },
+            "required": ["promptPath"]
+          }
+        }
+      ]
+    }
+  }
+}
