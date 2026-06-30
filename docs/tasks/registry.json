@@ -9690,16 +9690,17 @@
       "githubIssue": 205,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-30",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-30",
+      "archiveNotes": "PR feat/fv1-s1-pipeline, commit 3bbe73b: buildClassTemplateFromMetricSamples+mergeClassTemplates, generate-class-template.mjs, dataset schema, acoustic research. Regression PASS containment 90%.",
       "notes": "yarn templates:generate --class <name> --src samples/<name>/. Регрессия DRONE_TIGHT не деградирует.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
-      "epicId": "free-v1-sound-catalog"
+      "epicId": "free-v1-sound-catalog",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fv1-s2-content",
