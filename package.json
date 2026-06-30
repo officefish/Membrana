@@ -47,6 +47,8 @@
     "calibrate:detectors": "yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service && node scripts/calibrate-detectors.mjs",
     "benchmark:fft-trends": "yarn turbo run build --filter=@membrana/fft-analyzer-service --filter=@membrana/trends-detector-service --filter=@membrana/template-match-detector-service && node scripts/benchmark-fft-trends.mjs",
     "templates:build-from-dataset": "yarn workspace @membrana/template-match-detector-service build && node scripts/build-templates-from-dataset.mjs",
+    "templates:generate": "yarn workspace @membrana/template-match-detector-service build && node scripts/generate-class-template.mjs",
+    "templates:generate:drone-regression": "yarn workspace @membrana/template-match-detector-service build && node scripts/generate-class-template.mjs --class drone --src data/detectors-benchmark/v0.2/drone/ --regression-against packages/services/detectors/template-match/src/data/curated-drone-templates.json",
     "report:vdr6": "node scripts/generate-vdr6-report.mjs",
     "save-daily-day": "yarn run archive:daily-day",
     "code-review:full": "node scripts/code-review.mjs --full",

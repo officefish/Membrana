@@ -11,11 +11,18 @@
 
 ---
 
-## 2026-06-26 — `db3h-s3-studio-host` — **OPEN**
+## 2026-06-26 — `db3h-s3-studio-host` — **CLOSED**
 
-- **Scope:** device_board в Membrana Studio; alpha async-v2 parity с browser
-- **Open brief:** [`day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md`](./day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md)
-- **Prompt:** [`prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md`](./prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md)
+- **Delivered:** Studio offline host + journal FS (ST2-J), studio:package + smoke `092a986c`
+- **Closure:** [`day-sprint/db3h-s3-studio-host-2026-06-26/CLOSURE.md`](./day-sprint/db3h-s3-studio-host-2026-06-26/CLOSURE.md)
+
+---
+
+## 2026-06-30 — `fv1-s1-pipeline` — **OPEN**
+
+- **Scope:** параметризация пайплайна генерации шаблонов; Perplexity research акустики 7 классов; схема датасета free-v1
+- **Open brief:** [`day-sprint/fv1-s1-pipeline-2026-06-30/OPEN.md`](./day-sprint/fv1-s1-pipeline-2026-06-30/OPEN.md)
+- **Prompt:** [`prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md §Спринт 1`](./prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md)
 
 ---
 
