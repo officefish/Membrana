@@ -15,7 +15,7 @@ import {
   markReviewArchived,
   writeReviewArtifact,
 } from './lib/task-closure-review.mjs';
-import { findTask, loadRegistry } from './lib/task-registry.mjs';
+import { findArchivedTask, findTask, loadRegistry } from './lib/task-registry.mjs';
 import {
   anthropicPost,
   defaultModel,
@@ -267,7 +267,7 @@ function runFinalize(cli) {
   if (!manifest) throw new Error(`Manifest не найден: ${cli.id}. Запусти prepare.`);
   const actualSha = git(['rev-parse', cli.ref]);
   const registry = loadRegistry();
-  const task = findTask(registry, cli.id);
+  const task = findTask(registry, cli.id) ?? findArchivedTask(registry, cli.id);
   if (!task) throw new Error(`Task не найдена: ${cli.id}`);
 
   if (manifest.state === 'archived') {

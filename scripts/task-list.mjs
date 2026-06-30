@@ -3,7 +3,7 @@
  */
 import {
   listActive,
-  listArchived,
+  listArchivedAll,
   loadRegistry,
   syncTasksReadme,
 } from './lib/task-registry.mjs';
@@ -19,7 +19,7 @@ if (sync) {
 }
 
 const active = listActive(registry);
-const archived = listArchived(registry);
+const archived = listArchivedAll(registry);
 
 console.log(`Активные (${active.length}):`);
 if (active.length === 0) {

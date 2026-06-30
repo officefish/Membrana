@@ -5,12 +5,16 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  archiveTask,
   findTask,
+  listArchivedAll,
   listPendingGithubClose,
+  loadArchiveLog,
   loadRegistry,
   renderTasksReadme,
   saveRegistry,
   validateTaskId,
+  validateRegistryContract,
   writeArchiveCard,
 } from './lib/task-registry.mjs';
 
@@ -53,39 +57,100 @@ describe('task-registry', () => {
   });
 
   it('listPendingGithubClose finds archived tasks with open Issue', () => {
-    const pending = listPendingGithubClose({
+    const cwd = mkdtempSync(join(tmpdir(), 'membrana-task-'));
+    try {
+      const registry = {
+        version: 1,
+        tasks: [
+          {
+            id: 'done-legacy-open',
+            title: 'Done',
+            promptPath: 'docs/prompts/X.md',
+            githubIssue: 41,
+            linearId: null,
+            size: 'M',
+            status: 'archived',
+            createdAt: '2026-05-01',
+            archivedAt: '2026-05-10',
+            archiveNotes: null,
+            githubIssueClosedAt: null,
+          },
+        ],
+      };
+      saveRegistry(registry, cwd);
+      const archived = archiveTask(registry, 'done-legacy-open', { cwd, force: true });
+      saveRegistry(registry, cwd);
+      assert.equal(archived.status, 'archived');
+      const pending = listPendingGithubClose(loadRegistry(cwd));
+      assert.equal(pending.length, 1);
+      assert.equal(pending[0].id, 'done-legacy-open');
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it('archiveTask moves hot task to archive.jsonl and removes it from registry', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'membrana-task-'));
+    try {
+      const registry = {
+        version: 1,
+        tasks: [
+          {
+            id: 'done-open',
+            title: 'Done',
+            promptPath: 'docs/prompts/X.md',
+            githubIssue: 41,
+            linearId: null,
+            size: 'M',
+            status: 'active',
+            createdAt: '2026-05-01',
+            archivedAt: null,
+            archiveNotes: null,
+          },
+        ],
+      };
+      saveRegistry(registry, cwd);
+      const archived = archiveTask(registry, 'done-open', { cwd, notes: 'Merged PR #1' });
+      saveRegistry(registry, cwd);
+      assert.equal(findTask(loadRegistry(cwd), 'done-open'), null);
+      assert.equal(archived.archiveNotes, 'Merged PR #1');
+      const archiveLog = loadArchiveLog(cwd);
+      assert.equal(archiveLog.length, 1);
+      assert.equal(archiveLog[0].id, 'done-open');
+      assert.equal(listArchivedAll(loadRegistry(cwd), cwd)[0].id, 'done-open');
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it('validateRegistryContract rejects hot promptless tasks but allows deferred promptless tasks', () => {
+    const validation = validateRegistryContract({
       version: 1,
       tasks: [
         {
-          id: 'done-open',
-          title: 'Done',
-          promptPath: 'docs/prompts/X.md',
-          githubIssue: 41,
+          id: 'deferred-no-prompt',
+          title: 'Deferred',
+          promptPath: null,
+          githubIssue: null,
           linearId: null,
-          size: 'M',
-          status: 'archived',
-          createdAt: '2026-05-01',
-          archivedAt: '2026-05-10',
-          archiveNotes: null,
-          githubIssueClosedAt: null,
+          size: 'S',
+          status: 'deferred',
+          createdAt: '2026-06-30',
         },
         {
-          id: 'done-closed',
-          title: 'Closed',
-          promptPath: 'docs/prompts/Y.md',
-          githubIssue: 2,
+          id: 'active-no-prompt',
+          title: 'Active',
+          promptPath: null,
+          githubIssue: null,
           linearId: null,
-          size: 'M',
-          status: 'archived',
-          createdAt: '2026-05-01',
-          archivedAt: '2026-05-10',
-          archiveNotes: null,
-          githubIssueClosedAt: '2026-05-11',
+          size: 'S',
+          status: 'active',
+          createdAt: '2026-06-30',
         },
       ],
     });
-    assert.equal(pending.length, 1);
-    assert.equal(pending[0].id, 'done-open');
+    assert.equal(validation.ok, false);
+    assert.match(validation.errors.join('\n'), /active-no-prompt/);
   });
 
   it('renderTasksReadme lists active and archived', () => {

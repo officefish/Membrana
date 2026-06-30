@@ -28,8 +28,9 @@ import {
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
 } from './lib/detection-planning-priorities.mjs';
 import {
-  listActive,
   listPendingGithubClose,
+  listRitualPromptPathProblems,
+  listRitualTasks,
   loadRegistry,
 } from './lib/task-registry.mjs';
 import {
@@ -177,7 +178,8 @@ export async function runMainDayIssue(options) {
   loadDotEnv();
 
   const registry = loadRegistry();
-  const active = listActive(registry);
+  const active = listRitualTasks(registry);
+  const skippedPromptless = listRitualPromptPathProblems(registry);
   const pendingClose = listPendingGithubClose(registry);
 
   if (options.focusOverride) {
@@ -209,6 +211,14 @@ export async function runMainDayIssue(options) {
   const issues = await collectOpenIssues({ limit: options.issueLimit });
   const status = collectStatusSnapshot();
   const registryBlock = formatRegistryBlock(active, { pendingGithubClose: pendingClose });
+  const skippedPromptlessBlock = skippedPromptless.length
+    ? [
+        '### Пропущены в утреннем ritual-контексте (нет promptPath)',
+        '',
+        ...skippedPromptless.map((t) => `- \`${t.id}\` [${t.status}] — ${t.title}`),
+        '',
+      ].join('\n')
+    : '';
   const promptExcerpts = collectActivePromptExcerpts(active, { full: options.full });
   const outputRel = relative(process.cwd(), options.outputPath).replace(/\\/g, '/');
 
@@ -240,6 +250,8 @@ export async function runMainDayIssue(options) {
     '## Реестр task-промптов',
     '',
     registryBlock,
+    '',
+    skippedPromptlessBlock,
     '',
     '---',
     '## Выдержки из активных task-промптов',

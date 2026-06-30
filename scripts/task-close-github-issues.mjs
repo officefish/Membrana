@@ -22,6 +22,7 @@ import {
   extractGithubIssueReport,
   listPendingGithubClose,
   loadRegistry,
+  markArchiveGithubIssueClosed,
   saveRegistry,
 } from './lib/task-registry.mjs';
 
@@ -123,6 +124,7 @@ for (const task of pending) {
     ghIssueComment(issue, body);
     ghIssueClose(issue);
     task.githubIssueClosedAt = today;
+    markArchiveGithubIssueClosed(task.id, today);
     ok++;
     console.log(`  OK`);
   } catch (err) {
