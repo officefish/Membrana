@@ -18,12 +18,11 @@
 
 ---
 
-## 2026-06-30 — `session-archive-s1` — **OPEN**
+## 2026-06-30 — `session-archive-s1` — **CLOSED**
 
-- **Scope:** `@membrana/session-archive-service` — Claude Code JSONL collector, SECRET_PATTERNS, скруб, дедуп, фасад, npm-скрипты, integration-тест
+- **Delivered:** `@membrana/session-archive-service` (parse+scrub+hash+dedup), SECRET_PATTERNS в core, archive-session.mjs, list-sessions.mjs, inspect-session.mjs, SESSION_ARCHIVE_REGULATION.md, integration-тест 4/4 PASS · PR [#209](https://github.com/officefish/Membrana/pull/209)
 - **Issue:** [#208](https://github.com/officefish/Membrana/issues/208)
-- **Консилиум:** [`seanses/sessions-archive-rescue-2026-06-30-2026-06-30.md`](./seanses/sessions-archive-rescue-2026-06-30-2026-06-30.md)
-- **Open brief:** [`day-sprint/session-archive-s1-2026-06-30/OPEN.md`](./day-sprint/session-archive-s1-2026-06-30/OPEN.md)
+- **Closure:** [`day-sprint/session-archive-s1-2026-06-30/CLOSURE.md`](./day-sprint/session-archive-s1-2026-06-30/CLOSURE.md)
 
 ---
 
