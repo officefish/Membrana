@@ -1,0 +1,20 @@
+{
+  "id": "insight-agent-worktree-cleanup-skill",
+  "title": "Worktree cleanup skill for all agents",
+  "status": "draft",
+  "source": "user",
+  "horizon": "week",
+  "weight": null,
+  "createdAt": "2026-06-30",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": [
+    "agent-skills",
+    "git-hygiene",
+    "worktree-cleanup",
+    "cursor",
+    "claude-code",
+    "codex"
+  ]
+}
