@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-30 — `tdoa-localizer-spec-s1` — **OPEN**
+
+- **Scope:** TDOA/localizer Stage 2/3 spec-design, experimental contract draft, freeze boundary; one accountable owner per implementation step
+- **Issue:** [#211](https://github.com/officefish/Membrana/issues/211)
+- **Open brief:** [`day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md`](./day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md)
+
+---
+
 ## 2026-06-26 — `db3h-s1-tech-debt` — **CLOSED**
 
 - **Delivered:** CI green, issues audit, test:scripts, PR #181 L18–L23, smoke `c778c4ee`
@@ -18,11 +26,11 @@
 
 ---
 
-## 2026-06-30 — `sprint-process-guard` — **OPEN**
+## 2026-06-30 — `sprint-process-guard` — **CLOSED**
 
-- **Scope:** pre-sprint gate в CLAUDE.md, PowerShell reminder, semantic clarification rule, STOP-барьер в task-lifecycle SKILL.md
+- **Delivered:** pre-sprint gate в CLAUDE.md, PowerShell reminder, semantic clarification rule, STOP-барьер в task-lifecycle SKILL.md · PR [#212](https://github.com/officefish/Membrana/pull/212)
 - **Issue:** [#210](https://github.com/officefish/Membrana/issues/210)
-- **Open brief:** [`day-sprint/sprint-process-guard-2026-06-30/OPEN.md`](./day-sprint/sprint-process-guard-2026-06-30/OPEN.md)
+- **Closure:** [`day-sprint/sprint-process-guard-2026-06-30/CLOSURE.md`](./day-sprint/sprint-process-guard-2026-06-30/CLOSURE.md)
 
 ---
 
