@@ -177,8 +177,25 @@ Append в `docs/NIGHT_BUILD_LOG.md`:
 
 ---
 
+## Координация нескольких агентов
+
+Если ночью работает больше одного агента (Claude Code, Codex, Cursor Cloud):
+
+| Правило | Детали |
+|---------|--------|
+| **Один эпик — один агент** | Каждый `epic-id` закреплён за одним агентом в `NIGHT_BUILD_ACTIVE.md`. Два агента на одном эпике запрещены. |
+| **Изоляция через worktree** | Каждый агент работает в своём worktree: `.worktrees/<epic-id>-<agent>/`. Никаких прямых checkout на общих файлах. |
+| **Табу на shared state** | Ночью не трогать: `docs/tasks/registry.json`, `docs/tasks/README.md`, `MAIN_DAY_ISSUE.md`, `NIGHT_BUILD_ACTIVE.md` (кроме своего эпика), `.env*`. |
+| **Push только своей ветки** | Агент пушит только в `night/<own-epic-id>-<date>`. Чужие ветки не трогать. |
+| **Конфликт при закрытии** | Если `NIGHT_BUILD_ACTIVE.md` занят другим агентом — открыть с `--force` нельзя. Дождаться `night:close` или обратиться к человеку. |
+
+Утром человек читает все `HANDOFF.md` по порядку перед `yarn ritual:day`.
+
+---
+
 ## Версия
 
 - **v1.0** (2026-06-14) — регламент, команды `night:*`, эпик cabinet MP4 hardening.
+- **v1.1** (2026-06-29) — секция multi-agent coordination; зеркало `.claude/skills/membrana-night-sprint/`.
 
 Изменения — PR с `/architect` и LGTM Vesnin.

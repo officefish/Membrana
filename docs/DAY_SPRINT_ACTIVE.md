@@ -1,10 +1,5 @@
 # Active day sprint
 
-> **Активный спринт:** `sprint-process-guard` · открыт 2026-06-30  
-> **Issue:** [#210](https://github.com/officefish/Membrana/issues/210)  
-> **Ветка:** `process/sprint-process-guard`  
-> **OPEN:** [`docs/day-sprint/sprint-process-guard-2026-06-30/OPEN.md`](./day-sprint/sprint-process-guard-2026-06-30/OPEN.md)
-
-## Текущая фаза
-
-**PG1** — pre-sprint gate в CLAUDE.md ← **сейчас**
+> Нет активного спринта. Последний закрыт: `sprint-process-guard` · 2026-06-30
+> **PR:** [#212](https://github.com/officefish/Membrana/pull/212)
+> **CLOSURE:** [`docs/day-sprint/sprint-process-guard-2026-06-30/CLOSURE.md`](./day-sprint/sprint-process-guard-2026-06-30/CLOSURE.md)
