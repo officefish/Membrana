@@ -2,7 +2,7 @@
 
 > **Активный спринт:** `tdoa-localizer-spec-s1` · открыт 2026-06-30
 > **Issue:** [#211](https://github.com/officefish/Membrana/issues/211)
-> **Ветка:** `process/sprint-process-guard`  
+> **Ветка:** `codex/tdoa-localizer-spec-s1`
 > **OPEN:** [`docs/day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md`](./day-sprint/tdoa-localizer-spec-s1-2026-06-30/OPEN.md)
 
 ## Текущая фаза
