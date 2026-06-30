@@ -7,6 +7,8 @@ import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { resolveDotEnvPath } from './_anthropic-env.mjs';
+
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Load repo .env into process.env so the spawned `rag:index` inherits OPENAI_API_KEY.
@@ -14,7 +16,8 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 // that only lives in .env (not exported in the shell) would otherwise be invisible.
 if (typeof process.loadEnvFile === 'function') {
   try {
-    process.loadEnvFile(resolve(repoRoot, '.env'));
+    const envPath = resolveDotEnvPath(repoRoot);
+    if (envPath) process.loadEnvFile(envPath);
   } catch {
     // .env is optional — stay non-blocking (matches the evening-hook contract).
   }
