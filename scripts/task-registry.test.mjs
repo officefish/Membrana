@@ -85,7 +85,7 @@ describe('task-registry', () => {
       const archived = archiveTask(registry, 'done-legacy-open', { cwd, force: true });
       saveRegistry(registry, cwd);
       assert.equal(archived.status, 'archived');
-      const pending = listPendingGithubClose(loadRegistry(cwd));
+      const pending = listPendingGithubClose(loadRegistry(cwd), cwd);
       assert.equal(pending.length, 1);
       assert.equal(pending[0].id, 'done-legacy-open');
     } finally {

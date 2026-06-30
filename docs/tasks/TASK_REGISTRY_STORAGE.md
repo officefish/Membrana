@@ -31,8 +31,23 @@ Legacy statuses `archived`, `closed`, `completed` пока читаются ка
 - `archivedAt`
 - `archiveNotes`
 - `githubIssueClosedAt`
+- `originalStatus` — optional migration trace for legacy `closed` / `completed` rows.
 
 Запись/обновление делаются атомарно через temporary file → rename.
+
+## Migration artifacts
+
+Full legacy migration is manifest-driven:
+
+- `docs/tasks/backups/registry-YYYYMMDD.json` — exact pre-migration backup.
+- `docs/tasks/migrations/task-archive-migration-YYYY-MM-DD.json` — ids, source statuses and checksums.
+
+Commands:
+
+- `yarn tasks:migrate-archive:preflight` — dry-run counts.
+- `yarn tasks:migrate-archive:preflight --write` — clean-tree R0 backup + manifest.
+- `yarn tasks:migrate-archive` — R1 move legacy `archived` / `closed` / `completed` rows to `archive.jsonl`.
+- `yarn tasks:migrate-archive:rollback` — restore migrated rows from `archive.jsonl` by manifest.
 
 ## Ritual invariant
 

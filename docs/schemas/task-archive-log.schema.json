@@ -21,6 +21,7 @@
     "archivedAt": { "type": "string" },
     "archiveNotes": { "type": ["string", "null"] },
     "githubIssueClosedAt": { "type": ["string", "null"] },
+    "originalStatus": { "type": ["string", "null"], "enum": ["closed", "completed", null] },
     "resolution": { "type": ["string", "null"] }
   }
 }

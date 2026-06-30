@@ -127,7 +127,9 @@ export function normalizeArchiveRecord(task) {
     archivedAt: task.archivedAt ?? new Date().toISOString().slice(0, 10),
     archiveSchemaVersion: 1,
   };
-  if (task.status && task.status !== 'archived') record.originalStatus = task.originalStatus ?? task.status;
+  if (CLOSED_TASK_STATUSES.has(task.status) && task.status !== 'archived') {
+    record.originalStatus = task.originalStatus ?? task.status;
+  }
   return record;
 }
 
@@ -294,8 +296,8 @@ export function rollbackLegacyClosedMigration(registry, manifest, cwd = process.
 }
 
 /** Архивные задачи с Issue, которые ещё не закрыты на GitHub. */
-export function listPendingGithubClose(registry) {
-  return listArchivedAll(registry).filter(
+export function listPendingGithubClose(registry, cwd = process.cwd()) {
+  return listArchivedAll(registry, cwd).filter(
     (t) => t.githubIssue != null && !t.githubIssueClosedAt,
   );
 }
