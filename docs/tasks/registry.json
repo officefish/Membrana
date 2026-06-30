@@ -9750,7 +9750,7 @@
       "size": "M",
       "status": "archived",
       "archivedAt": "2026-06-30",
-      "archiveNotes": "PR #209 feat/session-archive-s1: SECRET_PATTERNS в @membrana/core, parseClaudeCodeJSONL+scrubSecrets+computeTurnHash+deduplicateTurns, archive-session.mjs, 4/4 integration PASS",
+      "archiveNotes": "PR #209 feat/session-archive-s1: SECRET_PATTERNS в @membrana/core, parseClaudeCodeJSONL+scrubSecrets+computeTurnHash+deduplicateTurns, archive-session.mjs, 4/4 integration PASS"
       "sprintKind": "day-sprint",
       "createdAt": "2026-06-30",
       "archivedAt": null,
@@ -9763,6 +9763,22 @@
       ],
       "consiliumPath": "docs/seanses/sessions-archive-rescue-2026-06-30-2026-06-30.md",
       "insightPath": "docs/insights/insight-sessions-archive-rescue/RESEARCH.md"
+    },
+    {
+      "id": "sprint-process-guard",
+      "title": "Процессная защита: pre-sprint gate в CLAUDE.md + task-lifecycle STOP-барьер",
+      "promptPath": "docs/prompts/SPRINT_PROCESS_GUARD_PROMPT.md",
+      "githubIssue": 210,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-30",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Триггер: двойное нарушение регламента в fv1-s1. Правки в .claude/CLAUDE.md и .cursor/skills/membrana-task-lifecycle/SKILL.md",
+      "leadPersona": "vesnin",
+      "supportPersonas": []
     }
   ]
 }

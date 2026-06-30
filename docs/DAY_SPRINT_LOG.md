@@ -18,6 +18,14 @@
 
 ---
 
+## 2026-06-30 — `sprint-process-guard` — **OPEN**
+
+- **Scope:** pre-sprint gate в CLAUDE.md, PowerShell reminder, semantic clarification rule, STOP-барьер в task-lifecycle SKILL.md
+- **Issue:** [#210](https://github.com/officefish/Membrana/issues/210)
+- **Open brief:** [`day-sprint/sprint-process-guard-2026-06-30/OPEN.md`](./day-sprint/sprint-process-guard-2026-06-30/OPEN.md)
+
+---
+
 ## 2026-06-30 — `session-archive-s1` — **CLOSED**
 
 - **Delivered:** `@membrana/session-archive-service` (parse+scrub+hash+dedup), SECRET_PATTERNS в core, archive-session.mjs, list-sessions.mjs, inspect-session.mjs, SESSION_ARCHIVE_REGULATION.md, integration-тест 4/4 PASS · PR [#209](https://github.com/officefish/Membrana/pull/209)
