@@ -181,7 +181,6 @@
 | `free-v1-sound-catalog` | Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
 | `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
 | `fv1-s3-integration` | fv1-S3: multi-class routing в детекторе, калибровка порогов, stage-gate FPR<15%, free_v1 release | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
-| `tdoa-localizer-spec-s1` | TDOA/localizer spec S1: контракты Stage 2/3 без разморозки реализации | M | [`TDOA_LOCALIZER_SPEC_S1_PROMPT.md`](../docs/prompts/TDOA_LOCALIZER_SPEC_S1_PROMPT.md) | [#211](https://github.com/officefish/Membrana/issues/211) |
 
 ---
 
@@ -192,6 +191,7 @@
 | `fv1-s1-pipeline` | fv1-S1: параметризация пайплайна генерации шаблонов + Perplexity research акустики классов | 2026-06-30 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/fv1-s1-pipeline.md) |
 | `session-archive-s1` | session-archive S1: @membrana/session-archive-service — Claude Code JSONL collector + скруб + дедуп | 2026-06-30 | [`SESSION_ARCHIVE_S1_PROMPT.md`](../docs/prompts/SESSION_ARCHIVE_S1_PROMPT.md) | #208 (Issue открыт) | [карточка](./archive/session-archive-s1.md) |
 | `sprint-process-guard` | Процессная защита: pre-sprint gate в CLAUDE.md + task-lifecycle STOP-барьер | 2026-06-30 | [`SPRINT_PROCESS_GUARD_PROMPT.md`](../docs/prompts/SPRINT_PROCESS_GUARD_PROMPT.md) | #210 (Issue открыт) | [карточка](./archive/sprint-process-guard.md) |
+| `tdoa-localizer-spec-s1` | TDOA/localizer spec S1: контракты Stage 2/3 без разморозки реализации | 2026-06-30 | [`TDOA_LOCALIZER_SPEC_S1_PROMPT.md`](../docs/prompts/TDOA_LOCALIZER_SPEC_S1_PROMPT.md) | #211 (Issue открыт) | [карточка](./archive/tdoa-localizer-spec-s1.md) |
 | `ci-test-stability-refactor` | Рефакторинг CI: vitest-конфиги, разделение integration/acceptance, CI-aware latency | 2026-06-29 | [`CI_TEST_STABILITY_REFACTOR_PROMPT.md`](../docs/prompts/CI_TEST_STABILITY_REFACTOR_PROMPT.md) | #191 (Issue открыт) | [карточка](./archive/ci-test-stability-refactor.md) |
 | `main-sync-sprint-2026-06-29` | Branch reconciliation sprint: merge main → techies68 → PR → main | 2026-06-29 | [`MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md`](../docs/prompts/MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md) | — | [карточка](./archive/main-sync-sprint-2026-06-29.md) |
 | `membrane-platform-v1` | Membrane Platform v1: cabinet, pairing, tariff, cloud journal (эпик) | 2026-06-29 | [`MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md`](../docs/prompts/MEMBRANE_PLATFORM_V1_EPIC_PROMPT.md) | #67 (Issue открыт) | [карточка](./archive/membrane-platform-v1.md) |

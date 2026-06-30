@@ -9785,11 +9785,11 @@
       "githubIssue": 211,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-06-30",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-06-30",
+      "archiveNotes": "PR #213; review LGTM 1fc639778726; PR #213 merged 2026-06-30T11:27:30Z (121a11fe2d659dbdeb27ad8b04e2e6d0ec4ea23e)",
       "notes": "Design/spec sprint: TDOA pair estimation, time sync quality, node geometry, localization hypotheses. Stage 2 remains frozen; no runtime/client integration. Each implementation step has exactly one accountable virtual-team persona.",
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -9797,7 +9797,8 @@
         "dynin",
         "kuryokhin",
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     }
   ]
 }
