@@ -4,11 +4,11 @@
 
 ---
 
-## 2026-06-30 — `backlog-cleanup-s1` — **OPEN**
+## 2026-06-30 — `backlog-cleanup-s1` — **CLOSED**
 
-- **Scope:** Queue A audit (#146, #151, #54, #7, #8, #34) + S-PR тесты (#11, #9) + P0 #157 dissolve comment group
+- **Delivered:** 6 issues закрыто (#146 #151 #54 #11 #9 #157), 3 residual задокументировано (#7 #8 #34), 10 тестов добавлено · PR [#215](https://github.com/officefish/Membrana/pull/215)
 - **Issue:** [#214](https://github.com/officefish/Membrana/issues/214)
-- **Open brief:** [`day-sprint/backlog-cleanup-s1-2026-06-30/OPEN.md`](./day-sprint/backlog-cleanup-s1-2026-06-30/OPEN.md)
+- **Closure:** [`day-sprint/backlog-cleanup-s1-2026-06-30/CLOSURE.md`](./day-sprint/backlog-cleanup-s1-2026-06-30/CLOSURE.md)
 
 ---
 
