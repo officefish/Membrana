@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Шина потока модуля «Микрофон» для плагинов.
  * Плагины подписываются в install() и снимают подписку в возвращаемом callback (сохранить в замыкании).
  */
@@ -40,4 +40,9 @@ export function publishMicrophoneStream(
   for (const fn of set) {
     fn(stream);
   }
+}
+
+export function resetMicrophoneStreamHubForTests(): void {
+  byModule.clear();
+  lastStreamByModule.clear();
 }
