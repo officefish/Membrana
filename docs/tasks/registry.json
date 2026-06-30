@@ -9740,6 +9740,27 @@
         "rodchenko"
       ],
       "epicId": "free-v1-sound-catalog"
+    },
+    {
+      "id": "session-archive-s1",
+      "title": "session-archive S1: @membrana/session-archive-service — Claude Code JSONL collector + скруб + дедуп",
+      "promptPath": "docs/prompts/SESSION_ARCHIVE_S1_PROMPT.md",
+      "githubIssue": 208,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-06-30",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Консилиум: docs/seanses/sessions-archive-rescue-2026-06-30-2026-06-30.md. Топология: коллектор Windows → POST background-media → S3. SECRET_PATTERNS в @membrana/core.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "consiliumPath": "docs/seanses/sessions-archive-rescue-2026-06-30-2026-06-30.md",
+      "insightPath": "docs/insights/insight-sessions-archive-rescue/RESEARCH.md"
     }
   ]
 }
