@@ -1,18 +1,19 @@
-import { test } from 'node:test';
+import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   subscribeMicrophoneStream,
   publishMicrophoneStream,
+  resetMicrophoneStreamHubForTests,
 } from './microphoneStreamHub.ts';
 
-test('late subscriber receives last published stream', () => {
-  const moduleId = 'hub-late-receive';
-  const fakeStream = {} as MediaStream;
+afterEach(() => resetMicrophoneStreamHubForTests());
 
-  publishMicrophoneStream(moduleId, fakeStream);
+test('late subscriber receives last published stream', () => {
+  const fakeStream = {} as MediaStream;
+  publishMicrophoneStream('mod', fakeStream);
 
   const received: (MediaStream | null)[] = [];
-  const unsub = subscribeMicrophoneStream(moduleId, (s) => received.push(s));
+  const unsub = subscribeMicrophoneStream('mod', (s) => received.push(s));
 
   assert.equal(received.length, 1);
   assert.equal(received[0], fakeStream);
@@ -20,14 +21,11 @@ test('late subscriber receives last published stream', () => {
 });
 
 test('late subscriber gets null when stream was stopped', () => {
-  const moduleId = 'hub-late-null';
-  const fakeStream = {} as MediaStream;
-
-  publishMicrophoneStream(moduleId, fakeStream);
-  publishMicrophoneStream(moduleId, null);
+  publishMicrophoneStream('mod', {} as MediaStream);
+  publishMicrophoneStream('mod', null);
 
   const received: (MediaStream | null)[] = [];
-  const unsub = subscribeMicrophoneStream(moduleId, (s) => received.push(s));
+  const unsub = subscribeMicrophoneStream('mod', (s) => received.push(s));
 
   assert.equal(received.length, 1);
   assert.equal(received[0], null);
@@ -35,26 +33,30 @@ test('late subscriber gets null when stream was stopped', () => {
 });
 
 test('unsubscribe stops listener from receiving further publishes', () => {
-  const moduleId = 'hub-unsub';
   const received: (MediaStream | null)[] = [];
-
-  const unsub = subscribeMicrophoneStream(moduleId, (s) => received.push(s));
-  publishMicrophoneStream(moduleId, {} as MediaStream);
+  const unsub = subscribeMicrophoneStream('mod', (s) => received.push(s));
+  publishMicrophoneStream('mod', {} as MediaStream);
   unsub();
-  publishMicrophoneStream(moduleId, null);
+  publishMicrophoneStream('mod', null);
 
   assert.equal(received.length, 1);
 });
 
-test('publish to one moduleId does not fire listeners on another moduleId', () => {
-  const moduleA = 'hub-isolation-a';
-  const moduleB = 'hub-isolation-b';
-  const fakeStream = {} as MediaStream;
+test('publish to moduleA does not fire listeners on moduleB (live path)', () => {
+  const receivedB: (MediaStream | null)[] = [];
+  const unsubB = subscribeMicrophoneStream('modB', (s) => receivedB.push(s));
+
+  publishMicrophoneStream('modA', {} as MediaStream);
+
+  assert.equal(receivedB.length, 0);
+  unsubB();
+});
+
+test('late subscriber on moduleB does not receive replay from moduleA publish', () => {
+  publishMicrophoneStream('modA', {} as MediaStream);
 
   const receivedB: (MediaStream | null)[] = [];
-  const unsubB = subscribeMicrophoneStream(moduleB, (s) => receivedB.push(s));
-
-  publishMicrophoneStream(moduleA, fakeStream);
+  const unsubB = subscribeMicrophoneStream('modB', (s) => receivedB.push(s));
 
   assert.equal(receivedB.length, 0);
   unsubB();

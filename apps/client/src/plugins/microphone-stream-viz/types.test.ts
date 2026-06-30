@@ -22,12 +22,12 @@ test('empty object → all defaults', () => {
 
 test('partial object: valid booleans override, rest default', () => {
   const cfg = resolveMicStreamVizConfig({ showVolume: false, showFftBars: false });
-  assert.equal(cfg.showVolume, false);
-  assert.equal(cfg.showFftBars, false);
-  assert.equal(cfg.showQuality, defaultMicStreamVizConfig.showQuality);
-  assert.equal(cfg.showWaveform, defaultMicStreamVizConfig.showWaveform);
-  assert.equal(cfg.showSpectrum, defaultMicStreamVizConfig.showSpectrum);
-  assert.equal(cfg.showSpectrumLine, defaultMicStreamVizConfig.showSpectrumLine);
+  assert.deepEqual(cfg, { ...defaultMicStreamVizConfig, showVolume: false, showFftBars: false });
+});
+
+test('partial object: single field true, others absent → others use default', () => {
+  const cfg = resolveMicStreamVizConfig({ showVolume: true });
+  assert.deepEqual(cfg, { ...defaultMicStreamVizConfig, showVolume: true });
 });
 
 test('wrong types on all fields → all defaults', () => {
@@ -51,6 +51,5 @@ test('boolean false preserved (not treated as missing)', () => {
     showFftBars: false,
     showSpectrumLine: false,
   };
-  const cfg = resolveMicStreamVizConfig(all);
-  assert.deepEqual(cfg, all);
+  assert.deepEqual(resolveMicStreamVizConfig(all), all);
 });

@@ -41,3 +41,8 @@ export function publishMicrophoneStream(
     fn(stream);
   }
 }
+
+export function resetMicrophoneStreamHubForTests(): void {
+  byModule.clear();
+  lastStreamByModule.clear();
+}

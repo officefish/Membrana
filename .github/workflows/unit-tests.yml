@@ -66,6 +66,16 @@ jobs:
         if: always()
         run: yarn workspace @membrana/harmonic-detector-service test:integration
 
+      - name: Setup Node.js 22 (для TypeScript-native тестов)
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Client — TypeScript native tests (node:test, Node 22)
+        if: always()
+        run: yarn workspace @membrana/client test:node
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -90,6 +100,7 @@ jobs:
             echo "- Unit tests: \`yarn turbo run test --continue\` (без acceptance/integration)"
             echo "- Acceptance: \`yarn workspace @membrana/rag-service test:acceptance\` (timeout 30 s/тест)"
             echo "- Integration: \`yarn workspace @membrana/harmonic-detector-service test:integration\` (timeout 10 s)"
+            echo "- TS-native tests: \`yarn workspace @membrana/client test:node\` (node:test runner, Node 22)"
             echo "- Пакетный менеджер: **Yarn 4** (\`packageManager\` в корневом \`package.json\`)."
             echo ""
             echo "Локально перед PR выполните \`yarn test\` (см. \`docs/CONTRIBUTING.md\`)."
