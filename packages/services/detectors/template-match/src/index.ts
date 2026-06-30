@@ -8,7 +8,10 @@ export { collectMetricSamples } from './collect-metric-samples.js';
 export {
   buildTemplateFromMetricSamples,
   mergeCuratedDroneTemplate,
+  buildClassTemplateFromMetricSamples,
+  mergeClassTemplates,
 } from './build-curated-template.js';
+export type { ClassTemplateMeta } from './build-curated-template.js';
 export {
   resolveTemplateMatchCatalog,
   isDroneTemplateKey,

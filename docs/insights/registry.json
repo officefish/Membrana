@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-29",
+  "updatedAt": "2026-06-30",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -9,9 +9,14 @@
       "source": "packaging-epic",
       "sprintPhase": "ins-pilot-g-operator-smoke",
       "horizon": "week",
-      "weight": 7.0,
+      "weight": 7,
       "createdAt": "2026-06-25",
-      "tags": ["competition", "operator", "ci", "device-board"]
+      "tags": [
+        "competition",
+        "operator",
+        "ci",
+        "device-board"
+      ]
     },
     {
       "id": "insight-async-v2-product-narrative",
@@ -22,7 +27,12 @@
       "horizon": "month",
       "weight": 6.6,
       "createdAt": "2026-06-25",
-      "tags": ["async-v2", "ux", "competition", "device-board"]
+      "tags": [
+        "async-v2",
+        "ux",
+        "competition",
+        "device-board"
+      ]
     },
     {
       "id": "insight-competition-catalog-pipeline",
@@ -33,7 +43,12 @@
       "horizon": "week",
       "weight": 6.6,
       "createdAt": "2026-06-25",
-      "tags": ["competition", "catalog", "usercase", "tooling"]
+      "tags": [
+        "competition",
+        "catalog",
+        "usercase",
+        "tooling"
+      ]
     },
     {
       "id": "insight-loop-engineering-competition-test",
@@ -44,7 +59,14 @@
       "horizon": "month",
       "weight": 6.8,
       "createdAt": "2026-06-25",
-      "tags": ["competition", "operator", "device-board", "testing", "subagent", "breakpoint"]
+      "tags": [
+        "competition",
+        "operator",
+        "device-board",
+        "testing",
+        "subagent",
+        "breakpoint"
+      ]
     },
     {
       "id": "insight-agent-scenario-builder",
@@ -55,7 +77,15 @@
       "horizon": "quarter",
       "weight": 7.8,
       "createdAt": "2026-06-25",
-      "tags": ["device-board", "usercase", "agent", "cabinet", "tokens", "palette", "ux"]
+      "tags": [
+        "device-board",
+        "usercase",
+        "agent",
+        "cabinet",
+        "tokens",
+        "palette",
+        "ux"
+      ]
     },
     {
       "id": "insight-slide-fullscreen-presentation",
@@ -66,7 +96,14 @@
       "horizon": "month",
       "weight": 7.8,
       "createdAt": "2026-06-25",
-      "tags": ["device-board", "slide", "presentation", "ux", "export", "tariff"]
+      "tags": [
+        "device-board",
+        "slide",
+        "presentation",
+        "ux",
+        "export",
+        "tariff"
+      ]
     },
     {
       "id": "insight-server-forwarding",
@@ -77,7 +114,16 @@
       "horizon": "quarter",
       "weight": 7.8,
       "createdAt": "2026-06-25",
-      "tags": ["device-board", "server", "cabinet", "media", "rag", "integrations", "tokens", "tariff"]
+      "tags": [
+        "device-board",
+        "server",
+        "cabinet",
+        "media",
+        "rag",
+        "integrations",
+        "tokens",
+        "tariff"
+      ]
     },
     {
       "id": "insight-sunrise-flash",
@@ -88,7 +134,14 @@
       "horizon": "month",
       "weight": 6.6,
       "createdAt": "2026-06-25",
-      "tags": ["ritual", "rag", "news", "knowledge-tree", "standup", "perplexity"]
+      "tags": [
+        "ritual",
+        "rag",
+        "news",
+        "knowledge-tree",
+        "standup",
+        "perplexity"
+      ]
     },
     {
       "id": "insight-vesnin-adopted-epic-bridge",
@@ -96,12 +149,17 @@
       "status": "adopted",
       "source": "virtual-team-vesnin",
       "horizon": "week",
-      "weight": 7.0,
+      "weight": 7,
       "createdAt": "2026-06-25",
       "epicCandidate": true,
       "epicCandidateAt": "2026-06-25",
       "plannedImplementation": "2026-06-26",
-      "tags": ["process", "teamlead", "plan-week", "epic"]
+      "tags": [
+        "process",
+        "teamlead",
+        "plan-week",
+        "epic"
+      ]
     },
     {
       "id": "insight-ozhegov-server-function-registry",
@@ -111,7 +169,12 @@
       "horizon": "month",
       "weight": 7.4,
       "createdAt": "2026-06-25",
-      "tags": ["core", "server", "registry", "architecture"]
+      "tags": [
+        "core",
+        "server",
+        "registry",
+        "architecture"
+      ]
     },
     {
       "id": "insight-dynin-chain-log-golden-oracle",
@@ -121,7 +184,12 @@
       "horizon": "week",
       "weight": 7.2,
       "createdAt": "2026-06-25",
-      "tags": ["testing", "logs-parse", "operator", "golden"]
+      "tags": [
+        "testing",
+        "logs-parse",
+        "operator",
+        "golden"
+      ]
     },
     {
       "id": "insight-kuryokhin-recorder-session-fsm",
@@ -131,7 +199,12 @@
       "horizon": "month",
       "weight": 7.2,
       "createdAt": "2026-06-25",
-      "tags": ["audio-engine", "recorder", "fsm", "device-board"]
+      "tags": [
+        "audio-engine",
+        "recorder",
+        "fsm",
+        "device-board"
+      ]
     },
     {
       "id": "insight-rodchenko-operator-density-mode",
@@ -139,9 +212,14 @@
       "status": "adopted",
       "source": "virtual-team-rodchenko",
       "horizon": "month",
-      "weight": 7.0,
+      "weight": 7,
       "createdAt": "2026-06-25",
-      "tags": ["ui", "device-board", "operator", "design"]
+      "tags": [
+        "ui",
+        "device-board",
+        "operator",
+        "design"
+      ]
     },
     {
       "id": "insight-mcp-searxng-private-search",
@@ -152,7 +230,14 @@
       "horizon": "month",
       "weight": null,
       "createdAt": "2026-06-27",
-      "tags": ["mcp", "search", "dsp", "privacy", "tooling", "self-hosted"]
+      "tags": [
+        "mcp",
+        "search",
+        "dsp",
+        "privacy",
+        "tooling",
+        "self-hosted"
+      ]
     },
     {
       "id": "insight-mcp-hindsight-agent-memory",
@@ -163,7 +248,14 @@
       "horizon": "quarter",
       "weight": null,
       "createdAt": "2026-06-27",
-      "tags": ["mcp", "memory", "agent", "lessons", "tooling", "self-hosted"]
+      "tags": [
+        "mcp",
+        "memory",
+        "agent",
+        "lessons",
+        "tooling",
+        "self-hosted"
+      ]
     },
     {
       "id": "insight-sessions-archive",
@@ -176,7 +268,16 @@
       "createdAt": "2026-06-28",
       "researchedAt": "2026-06-28",
       "reviewedAt": "2026-06-28",
-      "tags": ["sessions", "archive", "rag", "background-services", "claude-code", "cursor", "codex", "scrub"]
+      "tags": [
+        "sessions",
+        "archive",
+        "rag",
+        "background-services",
+        "claude-code",
+        "cursor",
+        "codex",
+        "scrub"
+      ]
     },
     {
       "id": "insight-task-archive-storage",
@@ -189,7 +290,15 @@
       "createdAt": "2026-06-28",
       "researchedAt": "2026-06-28",
       "reviewedAt": "2026-06-28",
-      "tags": ["tasks", "registry", "jsonl", "cqrs", "archive", "background-office", "stage-gate"]
+      "tags": [
+        "tasks",
+        "registry",
+        "jsonl",
+        "cqrs",
+        "archive",
+        "background-office",
+        "stage-gate"
+      ]
     },
     {
       "id": "insight-ghost-task-closure-invariant",
@@ -202,7 +311,25 @@
       "createdAt": "2026-06-29",
       "researchedAt": null,
       "reviewedAt": null,
-      "tags": ["tasks", "registry", "github", "closure", "audit", "stage-gate"]
+      "tags": [
+        "tasks",
+        "registry",
+        "github",
+        "closure",
+        "audit",
+        "stage-gate"
+      ]
+    },
+    {
+      "id": "insight-free-v1-acoustic-classes",
+      "title": "Акустические характеристики 7 классов звука free-v1: discriminative FFT features",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-06-30",
+      "tags": []
     }
   ]
 }

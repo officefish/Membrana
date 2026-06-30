@@ -11,11 +11,25 @@
 
 ---
 
-## 2026-06-26 — `db3h-s3-studio-host` — **OPEN**
+## 2026-06-26 — `db3h-s3-studio-host` — **CLOSED**
 
-- **Scope:** device_board в Membrana Studio; alpha async-v2 parity с browser
-- **Open brief:** [`day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md`](./day-sprint/db3h-s3-studio-host-2026-06-26/OPEN.md)
-- **Prompt:** [`prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md`](./prompts/DB3H_S3_STUDIO_HOST_SPRINT_PROMPT.md)
+- **Delivered:** Studio offline host + journal FS (ST2-J), studio:package + smoke `092a986c`
+- **Closure:** [`day-sprint/db3h-s3-studio-host-2026-06-26/CLOSURE.md`](./day-sprint/db3h-s3-studio-host-2026-06-26/CLOSURE.md)
+
+---
+
+## 2026-06-30 — `session-archive-s1` — **CLOSED**
+
+- **Delivered:** `@membrana/session-archive-service` (parse+scrub+hash+dedup), SECRET_PATTERNS в core, archive-session.mjs, list-sessions.mjs, inspect-session.mjs, SESSION_ARCHIVE_REGULATION.md, integration-тест 4/4 PASS · PR [#209](https://github.com/officefish/Membrana/pull/209)
+- **Issue:** [#208](https://github.com/officefish/Membrana/issues/208)
+- **Closure:** [`day-sprint/session-archive-s1-2026-06-30/CLOSURE.md`](./day-sprint/session-archive-s1-2026-06-30/CLOSURE.md)
+
+---
+
+## 2026-06-30 — `fv1-s1-pipeline` — **CLOSED**
+
+- **Delivered:** `buildClassTemplateFromMetricSamples`, `mergeClassTemplates`, `generate-class-template.mjs`, dataset schema, acoustic research, `droneFirstMinGap` policy · PR [#207](https://github.com/officefish/Membrana/pull/207)
+- **Closure:** [`day-sprint/fv1-s1-pipeline-2026-06-30/CLOSURE.md`](./day-sprint/fv1-s1-pipeline-2026-06-30/CLOSURE.md)
 
 ---
 
