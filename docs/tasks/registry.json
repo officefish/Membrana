@@ -12,7 +12,7 @@
       "createdAt": "2026-06-29",
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "main-sync-sprint-2026-06-29",
@@ -646,7 +646,7 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "membrane-platform-mp0-domain",
@@ -781,7 +781,7 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-sample-library-csl1-api",
@@ -801,7 +801,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-sample-library-csl2-ui",
@@ -821,7 +821,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-sample-library-csl3-remote-ops",
@@ -841,7 +841,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-mp4-hardening-night-build",
@@ -863,7 +863,7 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-mp4-nb0-merge-gate",
@@ -885,7 +885,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-mp4-nb1-sample-playback-dry",
@@ -905,7 +905,7 @@
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-mp4-nb2-cabinet-facade",
@@ -927,7 +927,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cabinet-mp4-nb3-quality-contracts",
@@ -949,7 +949,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "sample-library-drone-detection",
@@ -1981,7 +1981,7 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cj-0-trends-enabled-keys",
@@ -2004,7 +2004,7 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cj-1-media-api-safe-json",
@@ -2027,7 +2027,7 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cj-2-journal-media-decouple",
@@ -2050,7 +2050,7 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cj-3-brief-render-parity",
@@ -2073,7 +2073,7 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cj-4-trends-counts-as-detection",
@@ -2096,7 +2096,7 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "cj-5-sync-push-observability",
@@ -2119,7 +2119,7 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "module-catalog-v1",
@@ -3283,7 +3283,7 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "membrana-studio-ms3-journal-fs",
@@ -4426,7 +4426,7 @@
         "db-realtime-observation-pipeline"
       ],
       "notes": "Lead: Vesnin. Graph nodes for §16.5 MVP; Issue #133.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-30",
       "leadPersona": "musician",
       "supportPersonas": [
         "ozhegov"
@@ -4521,7 +4521,7 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Partial: main-v07.json + Publish exec-out + smoke started; quality blocked on R5 parity.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-30",
       "leadPersona": "musician",
       "supportPersonas": [
         "ozhegov"
@@ -9622,7 +9622,7 @@
       "createdAt": "2026-06-29",
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "rag-top-k-c2",
@@ -9636,7 +9636,7 @@
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
       "epicId": "agent-context-optimization-v1",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "issue-178-async-v2-reconciliation",
@@ -9659,7 +9659,7 @@
         "dynin",
         "musician"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "free-v1-sound-catalog",
@@ -9700,7 +9700,7 @@
         "dynin"
       ],
       "epicId": "free-v1-sound-catalog",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "fv1-s2-content",
@@ -9760,7 +9760,8 @@
         "vesnin"
       ],
       "consiliumPath": "docs/seanses/sessions-archive-rescue-2026-06-30-2026-06-30.md",
-      "insightPath": "docs/insights/insight-sessions-archive-rescue/RESEARCH.md"
+      "insightPath": "docs/insights/insight-sessions-archive-rescue/RESEARCH.md",
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "sprint-process-guard",
@@ -9776,7 +9777,8 @@
       "archiveNotes": "PR #212: pre-sprint gate в CLAUDE.md (5 пунктов), PowerShell table, semantic clarification rule; STOP-блок в task-lifecycle SKILL.md",
       "notes": "Триггер: двойное нарушение регламента в fv1-s1. Правки в .claude/CLAUDE.md и .cursor/skills/membrana-task-lifecycle/SKILL.md",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-06-30"
     },
     {
       "id": "tdoa-localizer-spec-s1",
@@ -9798,7 +9800,7 @@
         "kuryokhin",
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30"
     }
   ]
 }
