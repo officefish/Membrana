@@ -19,7 +19,8 @@ export function createTrendsFftScenarioReportPayload(
     reportId: report.reportId,
     trackId: trendsFftSyntheticTrackId(moduleId, report.reportId),
     isDetected: report.isDetected,
+    soundClass: report.class,
     summaryText: buildTrendsFftSummaryText(report),
-    payload: { report },
+    payload: { soundClass: report.class, report },
   });
 }

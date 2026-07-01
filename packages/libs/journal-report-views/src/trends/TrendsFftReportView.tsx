@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   getTemplateFromCatalog,
+  soundClassFromTemplateKey,
   type ConfidenceLevel,
   type PatternTemplate,
   type TrendsDetectionResult,
@@ -34,7 +35,12 @@ function reconstructResult(
   report: TrendsFftReport,
   detectedStateColor: string,
 ): TrendsDetectionResult {
+  const soundClass = report.class ?? soundClassFromTemplateKey(report.detectedState);
+  const isDrone = report.isDrone ?? (soundClass === 'drone' && report.isDetected);
   return {
+    class: soundClass,
+    isDrone,
+    isClassified: report.isClassified ?? soundClass !== 'unknown',
     detectedState: report.detectedState,
     detectedStateName: report.detectedStateName,
     detectedStateIcon: report.detectedStateIcon,

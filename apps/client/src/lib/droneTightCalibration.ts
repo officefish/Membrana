@@ -16,7 +16,12 @@ import {
   DEFAULT_MEASUREMENTS_COUNT,
   DEFAULT_MIN_CONFIDENCE,
 } from '@membrana/template-match-detector-service';
-import type { PatternTemplate } from '@membrana/trends-detector-service';
+import {
+  FREE_V1_CLASS_MIN_CONFIDENCE,
+  FREE_V1_DRONE_FIRST_MIN_GAP,
+  type ClassifyTrendsOptions,
+  type PatternTemplate,
+} from '@membrana/trends-detector-service';
 
 export const DRONE_TIGHT_TEMPLATE_KEY = 'DRONE_TIGHT' as const;
 
@@ -30,7 +35,21 @@ export function getDroneTightEnabledTemplateKeys(): readonly string[] {
   return getDroneTightTrendsCatalog().map((t) => t.key);
 }
 
-export const DRONE_TIGHT_MIN_CONFIDENCE = DEFAULT_MIN_CONFIDENCE;
+export const DRONE_TIGHT_MIN_CONFIDENCE = FREE_V1_CLASS_MIN_CONFIDENCE.drone
+  ?? DEFAULT_MIN_CONFIDENCE;
+
+export function getFreeV1ClassifyOptions(
+  droneMinConfidence = DRONE_TIGHT_MIN_CONFIDENCE,
+): Pick<ClassifyTrendsOptions, 'minConfidence' | 'classMinConfidence' | 'droneFirstMinGap'> {
+  return {
+    minConfidence: droneMinConfidence,
+    classMinConfidence: {
+      ...FREE_V1_CLASS_MIN_CONFIDENCE,
+      drone: droneMinConfidence,
+    },
+    droneFirstMinGap: FREE_V1_DRONE_FIRST_MIN_GAP,
+  };
+}
 
 export const DRONE_TIGHT_TRENDS_INTERVAL_MS = DEFAULT_INTERVAL_MS;
 export const DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT = DEFAULT_MEASUREMENTS_COUNT;

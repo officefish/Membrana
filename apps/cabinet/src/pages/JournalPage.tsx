@@ -1,4 +1,5 @@
 import type { LiveJournalFilter } from '@membrana/telemetry-journal-service';
+import { SOUND_CLASSES, type SoundClass } from '@membrana/core';
 
 import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJournalItemRow';
 import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
@@ -10,6 +11,17 @@ const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'reports', label: 'Отчёты' },
   { value: 'detections', label: 'Обнаружения' },
 ];
+
+const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
+  drone: 'Дрон',
+  silence: 'Тишина',
+  wind: 'Ветер',
+  birds: 'Птицы',
+  speech: 'Речь',
+  'machine-hum': 'Машинный гул',
+  gunshot: 'Стрельба',
+  unknown: 'Неизвестно',
+};
 
 export function JournalPage() {
   const journal = useCabinetLiveJournal();
@@ -160,6 +172,25 @@ export function JournalPage() {
             ) : null}
 
             <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-end">
+              <label className="form-control min-w-[11rem]">
+                <span className="label py-0">
+                  <span className="label-text text-xs">Класс звука</span>
+                </span>
+                <select
+                  className="select select-bordered select-sm"
+                  value={journal.soundClassFilter}
+                  onChange={(event) =>
+                    journal.setSoundClassFilter(event.target.value as 'all' | SoundClass)
+                  }
+                >
+                  <option value="all">Все классы</option>
+                  {SOUND_CLASSES.map((soundClass) => (
+                    <option key={soundClass} value={soundClass}>
+                      {SOUND_CLASS_LABELS[soundClass]}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <label className="form-control flex-1 min-w-[12rem]">
                 <span className="label py-0">
                   <span className="label-text text-xs">Поиск</span>

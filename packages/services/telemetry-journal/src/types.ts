@@ -1,4 +1,6 @@
 /** Live journal track row schema (TJ1). */
+import type { SoundClass } from '@membrana/core';
+
 export const TELEMETRY_TRACK_SCHEMA_VERSION = 'telemetry-track/v1' as const;
 
 export type TelemetryTrackSchemaVersion = typeof TELEMETRY_TRACK_SCHEMA_VERSION;
@@ -27,6 +29,7 @@ export interface LiveJournalReportPayload {
   readonly reportId: string;
   readonly trackId: string;
   readonly isDetected: boolean;
+  readonly soundClass?: SoundClass;
   readonly summaryText?: string;
   readonly payload: Readonly<Record<string, unknown>>;
 }
@@ -68,3 +71,4 @@ export interface AppendLiveJournalReportInput {
 }
 
 export type LiveJournalFilter = 'all' | 'tracks' | 'reports' | 'detections';
+export type LiveJournalSoundClassFilter = 'all' | SoundClass;

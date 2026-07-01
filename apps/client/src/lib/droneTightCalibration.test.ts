@@ -49,8 +49,8 @@ describe('droneTightCalibration', () => {
 
   it('filterTrendsTemplatesByEnabledKeys keeps only checked templates', () => {
     const catalog = getDroneTightTrendsCatalog();
-    const filtered = filterTrendsTemplatesByEnabledKeys(catalog, ['WIND', 'QUIET']);
-    expect(filtered.map((t) => t.key)).toEqual(['WIND', 'QUIET']);
+    const filtered = filterTrendsTemplatesByEnabledKeys(catalog, ['WIND', 'SILENCE']);
+    expect(filtered.map((t) => t.key)).toEqual(['SILENCE', 'WIND']);
     expect(filtered.some((t) => t.key === DRONE_TIGHT_TEMPLATE_KEY)).toBe(false);
   });
 

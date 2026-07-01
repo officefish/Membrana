@@ -5,6 +5,7 @@ import {
   countLiveJournalFilters,
   createLiveJournalService,
   createMemoryJournalStorageBackend,
+  getLiveJournalSoundClass,
   liveJournalReportClientEntryId,
   liveJournalTrackClientEntryId,
   matchesLiveJournalFilter,
@@ -62,11 +63,22 @@ describe('live journal filters', () => {
       clientEntryId: 'r2',
       report: { ...reportDetected.report, reportId: 'rep-2', isDetected: false },
     };
+    const reportSpeech = {
+      ...reportClear,
+      id: '4',
+      clientEntryId: 'r3',
+      report: {
+        ...reportClear.report,
+        reportId: 'rep-3',
+        payload: { report: { class: 'speech' } },
+      },
+    };
 
     expect(matchesLiveJournalFilter(track, 'tracks')).toBe(true);
     expect(matchesLiveJournalFilter(reportDetected, 'reports')).toBe(true);
     expect(matchesLiveJournalFilter(reportDetected, 'detections')).toBe(true);
     expect(matchesLiveJournalFilter(reportClear, 'detections')).toBe(false);
+    expect(getLiveJournalSoundClass(reportSpeech)).toBe('speech');
 
     const counts = countLiveJournalFilters([track, reportDetected, reportClear]);
     expect(counts).toEqual({ all: 3, tracks: 1, reports: 2, detections: 1 });

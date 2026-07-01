@@ -15,7 +15,10 @@ import {
 
 import { createAnalysisFrameFeed, type AudioFrameFeed } from '../../lib/audioAnalysis';
 import { publishDroneDetected } from '../../lib/droneDetectionHub';
-import { resolveTrendsTemplatesForAnalysis } from '../../lib/droneTightCalibration';
+import {
+  getFreeV1ClassifyOptions,
+  resolveTrendsTemplatesForAnalysis,
+} from '../../lib/droneTightCalibration';
 import { buildTrendsFftReport } from './buildTrendsFftReport';
 import {
   registerTrendsFftController,
@@ -155,7 +158,7 @@ export function createTrendsFftAnalyzerPlugin(): Plugin<TrendsFftAnalyzerPluginC
           config.enabledTemplateKeys,
         );
         const result = classifyTrends(collectedSamples, templates, {
-          minConfidence: config.minConfidence,
+          ...getFreeV1ClassifyOptions(config.minConfidence),
           activityRmsThreshold: config.minRms,
         });
 

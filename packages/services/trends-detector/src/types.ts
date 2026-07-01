@@ -74,6 +74,7 @@ export const DEFAULT_FRAME_HIT_RATIO: Bounds = { min: 0.5, max: 0.8 };
 
 export interface PatternTemplate {
   readonly key: string;
+  readonly catalogVersion?: string;
   readonly name: string;
   readonly icon: string;
   readonly color: string;
@@ -97,6 +98,9 @@ export interface TemplateScore {
 }
 
 export interface TrendsDetectionResult {
+  readonly class: SoundClass;
+  readonly isDrone: boolean;
+  readonly isClassified: boolean;
   readonly detectedState: string;
   readonly detectedStateName: string;
   readonly detectedStateIcon: string;
@@ -111,6 +115,7 @@ export interface TrendsDetectionResult {
 
 export interface ClassifyTrendsOptions {
   readonly minConfidence?: number;
+  readonly classMinConfidence?: Readonly<Partial<Record<SoundClass, number>>>;
   readonly activityRmsThreshold?: number;
   /**
    * Drone-first safety margin (points, 0–100).
@@ -139,3 +144,4 @@ export interface TemplateMatchBreakdown {
   readonly temporalScore: number;
   readonly fields: readonly MatchFieldBreakdown[];
 }
+import type { SoundClass } from '@membrana/core';

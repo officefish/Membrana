@@ -427,7 +427,7 @@ export const TrendsFftLabView: React.FC<TrendsFftLabViewProps> = ({
                     <div className="text-sm text-base-content/70">
                       Уверенность: {result.confidence}% ({result.confidenceLevel})
                     </div>
-                    {!result.isDetected && (
+                    {!result.isClassified && (
                       <div className="text-xs text-warning mt-1">
                         Ниже порога minConfidence ({config.minConfidence}%)
                       </div>

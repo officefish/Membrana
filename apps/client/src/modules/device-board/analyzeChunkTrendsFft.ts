@@ -10,6 +10,7 @@ import {
   DRONE_TIGHT_TRENDS_INTERVAL_MS,
   DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
   getDroneTightEnabledTemplateKeys,
+  getFreeV1ClassifyOptions,
   resolveTrendsTemplatesForAnalysis,
 } from '@/lib/droneTightCalibration';
 import { userTemplatesStore } from '@/plugins/trends-fft-analyzer/userTemplatesStore';
@@ -36,7 +37,7 @@ export function analyzeChunkTrendsFft(
   );
 
   const result = classifyTrends(metricSamples, templates, {
-    minConfidence: DRONE_TIGHT_MIN_CONFIDENCE,
+    ...getFreeV1ClassifyOptions(DRONE_TIGHT_MIN_CONFIDENCE),
     activityRmsThreshold: 0.02,
   });
 

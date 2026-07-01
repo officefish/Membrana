@@ -84,6 +84,9 @@ export function runTemplateMatchSampleAnalysis(
 
   if (metricSamples.length === 0) {
     const emptyTrends: TrendsDetectionResult = {
+      class: 'unknown',
+      isDrone: false,
+      isClassified: false,
       detectedState: 'UNKNOWN',
       detectedStateName: 'Неизвестно',
       detectedStateIcon: '❓',

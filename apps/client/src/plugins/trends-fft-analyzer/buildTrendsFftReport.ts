@@ -1,4 +1,5 @@
 import type { TrendsDetectionResult } from '@membrana/trends-detector-service';
+import type { SoundClass } from '@membrana/core';
 
 export interface TrendsFftReport {
   readonly reportId: string;
@@ -8,6 +9,9 @@ export interface TrendsFftReport {
   readonly intervalMs: number;
   readonly measurementsCount: number;
   readonly mode: 'auto' | 'manual';
+  readonly class: SoundClass;
+  readonly isDrone: boolean;
+  readonly isClassified: boolean;
   readonly detectedState: string;
   readonly detectedStateName: string;
   readonly detectedStateIcon: string;
@@ -41,6 +45,9 @@ export function buildTrendsFftReport(params: {
     intervalMs: params.intervalMs,
     measurementsCount: params.measurementsCount,
     mode: params.mode,
+    class: params.result.class,
+    isDrone: params.result.isDrone,
+    isClassified: params.result.isClassified,
     detectedState: params.result.detectedState,
     detectedStateName: params.result.detectedStateName,
     detectedStateIcon: params.result.detectedStateIcon,

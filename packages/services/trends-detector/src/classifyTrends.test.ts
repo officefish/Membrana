@@ -51,6 +51,8 @@ describe('classifyTrends', () => {
   it('returns unknown for empty window', () => {
     const result = classifyTrends([], SYSTEM_TEMPLATES);
     expect(result.detectedState).toBe('UNKNOWN');
+    expect(result.class).toBe('unknown');
+    expect(result.isClassified).toBe(false);
     expect(result.isDetected).toBe(false);
   });
 
@@ -62,6 +64,8 @@ describe('classifyTrends', () => {
     }));
     const result = classifyTrends(samples, resolveEnabledTemplates(['WIND', 'QUIET', 'TRAFFIC']));
     expect(result.detectedState).toBe('WIND');
+    expect(result.class).toBe('wind');
+    expect(result.isClassified).toBe(true);
     expect(result.confidence).toBeGreaterThan(35);
     expect(result.isDetected).toBe(false);
   });
@@ -74,7 +78,18 @@ describe('classifyTrends', () => {
     }));
     const result = classifyTrends(samples, resolveEnabledTemplates(['QUIET', 'WIND']));
     expect(result.detectedState).toBe('QUIET');
+    expect(result.class).toBe('silence');
     expect(result.isDetected).toBe(false);
+  });
+
+  it('routes below-threshold winners to unknown', () => {
+    const samples = makeSamples(60, () => ({ centroid: 100, flux: 0.01, rms: 0.008 }));
+    const result = classifyTrends(samples, resolveEnabledTemplates(['QUIET']), {
+      classMinConfidence: { silence: 101 },
+    });
+    expect(result.detectedState).toBe('QUIET');
+    expect(result.class).toBe('unknown');
+    expect(result.isClassified).toBe(false);
   });
 
   it('scores drone-like sustained high-centroid signal', () => {

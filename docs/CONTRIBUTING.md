@@ -213,3 +213,18 @@ git push -u origin vesnin
 ## Разрешение споров
 
 При противоречии между удобством реализации и архитектурой выигрывает **ARCHITECTURE.md** и решение **Teamlead**.
+# Extending the free_v1 sound catalog
+
+The released catalog is intentionally limited to the seven classes documented
+in `docs/datasets/free-v1/RELEASE_NOTES.md`. Adding an eighth class requires a
+new consilium and catalog version.
+
+For an approved class change:
+
+1. add licensed real recordings and per-file provenance metadata under
+   `docs/datasets/free-v1/<class>/`;
+2. generate the template with `yarn templates:generate --class <class> --src <path>`;
+3. register the template in the versioned default catalog and map its key to a
+   core `SoundClass`;
+4. rerun `yarn templates:stage-gate` and commit both reports;
+5. do not release when the drone FPR/recall gate fails.

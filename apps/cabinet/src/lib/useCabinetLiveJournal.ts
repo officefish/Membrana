@@ -15,12 +15,14 @@ import {
   countLiveJournalPages,
   findReportsForTrack,
   findTrackForReport,
+  getLiveJournalSoundClass,
   liveJournalItemFromJournalAppendPayload,
   matchesLiveJournalFilter,
   matchesLiveJournalSearch,
   sliceLiveJournalPage,
   type LiveJournalFilter,
   type LiveJournalItem,
+  type LiveJournalSoundClassFilter,
 } from '@membrana/telemetry-journal-service';
 import type { AnalysisBriefPayload, JournalAppendPayload } from '@membrana/core';
 
@@ -62,6 +64,7 @@ export function useCabinetLiveJournal() {
     number
   > | null>(null);
   const [filter, setFilter] = useState<LiveJournalFilter>('all');
+  const [soundClassFilter, setSoundClassFilter] = useState<LiveJournalSoundClassFilter>('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [journalLoading, setJournalLoading] = useState(true);
@@ -198,7 +201,7 @@ export function useCabinetLiveJournal() {
 
   useEffect(() => {
     setPage(1);
-  }, [filter, search, selectedDeviceId]);
+  }, [filter, search, selectedDeviceId, soundClassFilter]);
 
   const pollJournal = useCallback(() => {
     if (!selectedDeviceId) return;
@@ -255,11 +258,14 @@ export function useCabinetLiveJournal() {
 
   const filtered = useMemo(() => {
     let list = items.filter((item) => matchesLiveJournalFilter(item, filter));
+    if (soundClassFilter !== 'all') {
+      list = list.filter((item) => getLiveJournalSoundClass(item) === soundClassFilter);
+    }
     if (search.trim()) {
       list = list.filter((item) => matchesLiveJournalSearch(item, search));
     }
     return [...list].sort((a, b) => b.timestamp - a.timestamp);
-  }, [items, filter, search]);
+  }, [items, filter, search, soundClassFilter]);
 
   const activeFilterTotal = search.trim() ? filtered.length : filterCounts[filter];
   const totalPages = countLiveJournalPages(activeFilterTotal);
@@ -326,6 +332,8 @@ export function useCabinetLiveJournal() {
     items,
     filter,
     setFilter,
+    soundClassFilter,
+    setSoundClassFilter,
     search,
     setSearch,
     filterCounts,

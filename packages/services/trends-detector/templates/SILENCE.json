@@ -1,6 +1,7 @@
 [
   {
     "key": "SILENCE",
+    "catalogVersion": "free_v1",
     "name": "Тишина",
     "icon": "🤫",
     "color": "#c8c8c8",

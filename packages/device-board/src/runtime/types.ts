@@ -1,4 +1,4 @@
-import type { RuntimeMode, ScenarioBlockKind, ScenarioSystemBranch } from '@membrana/core';
+import type { RuntimeMode, ScenarioBlockKind, ScenarioSystemBranch, SoundClass } from '@membrana/core';
 
 /** Фаза исполнения scenario runtime. */
 export type ScenarioRuntimePhase =
@@ -74,6 +74,8 @@ export interface ScenarioJournalEvent {
 export interface ScenarioDetectionResult {
   readonly detected: boolean;
   readonly confidence: number;
+  readonly soundClass?: SoundClass;
+  readonly isDrone?: boolean;
   readonly templateId?: string;
   readonly rawLevel?: number;
 }

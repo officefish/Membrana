@@ -56,6 +56,7 @@
     "templates:content:research": "node scripts/research-free-v1-real-sources.mjs",
     "templates:content:generate": "yarn templates:generate --class silence --src docs/datasets/free-v1/silence && yarn templates:generate --class wind --src docs/datasets/free-v1/wind && yarn templates:generate --class birds --src docs/datasets/free-v1/birds && yarn templates:generate --class speech --src docs/datasets/free-v1/speech && yarn templates:generate --class machine-hum --src docs/datasets/free-v1/machine-hum && yarn templates:generate --class gunshot --src docs/datasets/free-v1/gunshot",
     "templates:content:qa": "yarn workspace @membrana/template-match-detector-service build && node scripts/evaluate-free-v1-content.mjs",
+    "templates:stage-gate": "yarn workspace @membrana/trends-detector-service build && yarn workspace @membrana/template-match-detector-service build && node scripts/evaluate-free-v1-stage-gate.mjs",
     "templates:content:real:speech": "python scripts/materialize-free-v1-real.py speech",
     "templates:content:real:birds": "python scripts/materialize-free-v1-real.py birds",
     "templates:content:real:wind": "python scripts/materialize-free-v1-real.py wind",
