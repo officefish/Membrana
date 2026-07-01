@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "date": "2026-07-01",
+    "version": "0.27.0",
+    "issue": "#187",
+    "phase": "real-session",
+    "session": "lint + fix sprint через yarn headroom:claude",
+    "note": "Реальная Claude Code сессия через headroom proxy. Включает 10 синтетических вызовов (2026-06-29) + ~95 реальных (2026-07-01)."
+  },
+  "headroom_perf": {
+    "window_hours": 168.0,
+    "actual_window": {
+      "oldest": "2026-06-29 09:50:38",
+      "newest": "2026-07-01 11:32:43"
+    },
+    "total_requests": 105,
+    "total_tokens_before": 3807026,
+    "total_tokens_after": 3621498,
+    "tokens_saved": 185528,
+    "savings_pct": 4.9,
+    "cache_read_tokens": 7903933,
+    "cache_write_tokens": 142566,
+    "cache_hit_pct": 98.2,
+    "by_model": [
+      {
+        "model": "claude-haiku-4-5-20251001",
+        "requests": 105,
+        "tokens_before": 3807026,
+        "tokens_after": 3621498,
+        "tokens_saved": 185528,
+        "savings_pct": 4.9
+      }
+    ],
+    "by_transform": [
+      {
+        "transform": "content_router",
+        "uses": 105,
+        "tokens_before": 5847481,
+        "tokens_saved": 8349,
+        "savings_pct": 0.1
+      }
+    ],
+    "throughput": {
+      "compression_p50_tok_s": 180007,
+      "compression_p95_tok_s": 260931,
+      "generation_p50_tok_s": 131,
+      "generation_p95_tok_s": 205
+    }
+  },
+  "findings": {
+    "content_compression_savings_pct": 4.9,
+    "cache_hit_pct": 98.2,
+    "m2_gate_cleared": false,
+    "why_low_compression": "Claude Code messages dominated by structured tool call JSON and file diffs — content_router threshold (50 words prose) rarely triggered. 105 requests, 8349 tokens saved by content_router (0.1%).",
+    "unexpected_positive": "cache_hit_pct=98.2% — prompt cache extremely effective. 7.9M cache_read_tokens vs 143k cache_write_tokens. Real cost savings come from Anthropic's prompt cache, not headroom compression.",
+    "overhead_acceptable": true
+  },
+  "m2_gate_status": {
+    "target": ">=40% token savings on 2/3 of real Claude Code session outputs",
+    "result": "4.9% content compression — gate NOT cleared",
+    "recommendation": "Headroom content_router не даёт значимой компрессии для Claude Code workload. Prompt cache (98.2% hit) — реальный механизм экономии. Рассмотреть переопределение M2 gate под cache_hit_pct вместо content compression."
+  }
+}
