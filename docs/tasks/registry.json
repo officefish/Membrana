@@ -9880,6 +9880,25 @@
       "githubIssueClosedAt": "2026-06-30"
     },
     {
+      "id": "fv1-s2-closeout",
+      "title": "Night Build: fv1-S2 closeout — реестр/worktree reconciliation после merge #217/#218",
+      "promptPath": "docs/prompts/FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "night-build",
+      "strategicWave": "W1",
+      "createdAt": "2026-07-01",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Фазы NB0-NB3: gate, S2 registry reconcile, epic archive, worktree cleanup. База main (техотклонение — techies68 отстал). См. epic-промпт.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
       "id": "free-v1-sound-catalog",
       "title": "Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор",
       "promptPath": "docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md",
