@@ -9,10 +9,10 @@
  * Запуск: yarn claude:code
  * С аргументами CLI: yarn claude:code -- --help
  */
-import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { loadDotEnv } from './_anthropic-env.mjs';
+import { spawnClaude } from './lib/spawn-claude.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 loadDotEnv(repoRoot);
@@ -33,17 +33,4 @@ if (proxy) {
   console.error('');
 }
 
-const args = process.argv.slice(2);
-const child = spawn('claude', args, {
-  stdio: 'inherit',
-  env: process.env,
-  shell: true,
-});
-
-child.on('exit', (code, signal) => {
-  if (signal) {
-    process.kill(process.pid, signal);
-    return;
-  }
-  process.exit(code ?? 1);
-});
+spawnClaude(process.argv.slice(2), process.env);

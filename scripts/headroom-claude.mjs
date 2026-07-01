@@ -10,10 +10,10 @@
  * С аргументами: yarn headroom:claude -- --resume <id>
  * Кастомные порты: HEADROOM_PORT=8787 HIDDIFY_PORT=12334 yarn headroom:claude
  */
-import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { loadDotEnv } from './_anthropic-env.mjs';
+import { spawnClaude } from './lib/spawn-claude.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 loadDotEnv(repoRoot);
@@ -31,26 +31,7 @@ const env = {
   NO_PROXY: '127.0.0.1,localhost',
 };
 
-const args = process.argv.slice(2);
-
 console.log(`Claude Code → headroom http://127.0.0.1:${headroomPort}`);
 console.log('');
 
-const child = spawn('claude', args, {
-  env,
-  stdio: 'inherit',
-  shell: true, // необходим на Windows для разрешения claude.cmd через PATH
-});
-
-child.on('error', (err) => {
-  console.error('Не удалось запустить claude:', err.message);
-  process.exit(1);
-});
-
-child.on('exit', (code, signal) => {
-  if (signal) {
-    process.kill(process.pid, signal);
-    return;
-  }
-  process.exit(code ?? 1);
-});
+spawnClaude(process.argv.slice(2), env);
