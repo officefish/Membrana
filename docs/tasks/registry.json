@@ -4720,14 +4720,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "completed",
+      "status": "archived",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-rec-parity-a5-lgtm"
       ],
       "notes": "P0–B3 complete; UserCase MVP LGTM 2026-06-21. Archive after commit embedded doc.",
       "githubIssueClosedAt": null,
-      "completedAt": "2026-06-21"
+      "completedAt": "2026-06-21",
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-usercase-mvp-microphone-lgtm",
@@ -4736,7 +4737,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-trends-fft-parity-mic-v08",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -4744,7 +4745,8 @@
       ],
       "notes": "Operator sign-off: live mic, journal trends-fft/v0.1, 6-template catalog.",
       "githubIssueClosedAt": null,
-      "completedAt": "2026-06-21"
+      "completedAt": "2026-06-21",
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-post-usercase-roadmap",
@@ -5367,14 +5369,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-pure-getters-blueprint-parity",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-pure-getters-p0-spec-lgtm"
       ],
       "notes": "scenario-node-pure.ts; ScenarioGraphNode.pure; parse hydrate normalize.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-pure-getters-g1-runtime-validation",
@@ -5383,14 +5386,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-pure-getters-blueprint-parity",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-pure-getters-g0-core-contract"
       ],
       "notes": "exec-subgraph transparent pure skip; validate hints; impure getter exec log.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-pure-getters-g2-inspector-canvas",
@@ -5399,14 +5403,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-pure-getters-blueprint-parity",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-pure-getters-g1-runtime-validation"
       ],
       "notes": "Pure checkbox; exec strip; ref bound/empty; value edit; canvas badge.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-pure-getters-g3-constructor-mvp",
@@ -5415,14 +5420,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-pure-getters-blueprint-parity",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-pure-getters-g2-inspector-canvas"
       ],
       "notes": "MVP main: data-only policy wires; MakeTrack→restart exec; migration v0.9.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-pure-getters-g4-lgtm",
@@ -5449,14 +5455,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-pure-getters-blueprint-parity",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-pure-getters-blueprint-parity"
       ],
       "notes": "LGTM D1–D5: pure/impure toggle, ref read-only, CONSTRUCTOR_ALWAYS_PURE, no data cache.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-trends-parity-p0-spec-lgtm",
@@ -5465,7 +5472,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-trends-fft-parity-mic-v08",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -5473,7 +5480,8 @@
       ],
       "notes": "Product owner answers 2026-06-21; epic prompt + CURRENT_TASK updated.",
       "githubIssueClosedAt": null,
-      "completedAt": "2026-06-21"
+      "completedAt": "2026-06-21",
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-trends-parity-b0-policy-contract",
@@ -5482,7 +5490,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-trends-fft-parity-mic-v08",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -5490,7 +5498,8 @@
       ],
       "notes": "FftTrendsPolicy contract, MakeFftTrendsPolicy node, inspector, resolveInput, tests.",
       "githubIssueClosedAt": null,
-      "completedAt": "2026-06-21"
+      "completedAt": "2026-06-21",
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-trends-parity-b1-runtime-parity",
@@ -5499,7 +5508,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-trends-fft-parity-mic-v08",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -5507,7 +5516,8 @@
       ],
       "notes": "Policy port on MakeFftTrendsAnalysis; subsampleFftFramesForTrendsPolicy; resolveFftTrendsPolicyForNode.",
       "githubIssueClosedAt": null,
-      "completedAt": "2026-06-21"
+      "completedAt": "2026-06-21",
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-trends-parity-b2-report-schema",
@@ -5516,7 +5526,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-trends-fft-parity-mic-v08",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -5524,7 +5534,8 @@
       ],
       "notes": "createTrendsFftScenarioReportPayload; MakeReportFromAnalysis → trends-fft/v0.1.",
       "githubIssueClosedAt": null,
-      "completedAt": "2026-06-21"
+      "completedAt": "2026-06-21",
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-trends-parity-b3-smoke-lgtm",
@@ -5533,7 +5544,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "completed",
+      "status": "archived",
       "parentEpic": "db-trends-fft-parity-mic-v08",
       "createdAt": "2026-06-21",
       "dependsOn": [
@@ -5541,7 +5552,8 @@
       ],
       "notes": "trends-parity:smoke-matrix; v08 MakeFftTrendsPolicy wired; signoff doc.",
       "githubIssueClosedAt": null,
-      "completedAt": "2026-06-21"
+      "completedAt": "2026-06-21",
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "db-canvas-groups-functions",
@@ -7308,7 +7320,7 @@
     },
     {
       "id": "device-board-async-pipeline-v1",
-      "status": "closed",
+      "status": "archived",
       "title": "Device-board async pipeline: Promise nodes, latent Sequence, non-blocking runtime",
       "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
       "githubIssue": 176,
@@ -7319,7 +7331,9 @@
         "kuryokhin",
         "rodchenko"
       ],
-      "parentEpic": "usercase-mvp-v2-groups-async"
+      "parentEpic": "usercase-mvp-v2-groups-async",
+      "archivedAt": "2026-07-01",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-ap-r0-consilium-spec",
@@ -9433,13 +9447,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "XS",
-      "status": "closed",
+      "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": "Протокол: docs/discussions/mcp-agent-tooling-consilium-2026-06-27-PROTOCOL.md"
     },
     {
@@ -9449,7 +9463,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
@@ -9457,8 +9471,9 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "codebase-memory-mcp 0.8.1 запущен, граф 26936/60872, хуки подключены — M1 gate снят",
+      "completedAt": "2026-07-01"
     },
     {
       "id": "mcp-tooling-m2-headroom-pilot",
@@ -9517,14 +9532,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "XS",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "MCP_INTEGRATION_STRATEGY.md §5 обновлён в рамках спринта mcp-agent-tooling-2026-06-27",
+      "completedAt": "2026-07-01"
     },
     {
       "id": "rag-dual-circuit-v1",
