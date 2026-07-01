@@ -18,8 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `research-tree-marathon-prep` | Research-Tree: подготовка к марафону (prep epic) | M | — | [#219](https://github.com/officefish/Membrana/issues/219) |
-| `rt-prep-s2-state-decision` | RT-PREP-S2: закрыть §5 DEMO_STACK.md — state-слой (TanStack Query vs Zustand vs useReducer) | S | — | [#219](https://github.com/officefish/Membrana/issues/219) |
+| `rt-recon-s1` | RT-RECON-S1: реконструкция хронологии transitions[] из git-истории | M | [`RT_RECON_PROMPT.md`](../docs/prompts/RT_RECON_PROMPT.md) | [#221](https://github.com/officefish/Membrana/issues/221) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `real-dataset-live-calibration` | Real dataset v0.2: библиотеки → анализ → live matching → journal parity (неделя) | L | [`REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md`](../docs/prompts/REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
@@ -152,8 +151,11 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `rt-chron-s1-time-travel` | RT-CHRON-S1: event-sourcing архитектура + two-state playhead (genesis / now) | 2026-07-01 | — | #220 (Issue открыт) | [карточка](./archive/rt-chron-s1-time-travel.md) |
+| `research-tree-marathon-prep` | Research-Tree: подготовка к марафону (prep epic) | 2026-07-01 | — | #219 (Issue открыт) | [карточка](./archive/research-tree-marathon-prep.md) |
 | `rt-prep-s0-registration` | RT-PREP-S0: регистрация prep-epic + GitHub issue #219 | 2026-07-01 | — | #219 (Issue открыт) | [карточка](./archive/rt-prep-s0-registration.md) |
 | `rt-prep-s1-bootstrap` | RT-PREP-S1: scaffold workspace @membrana/research-tree-demo | 2026-07-01 | — | #219 (Issue открыт) | [карточка](./archive/rt-prep-s1-bootstrap.md) |
+| `rt-prep-s2-state-decision` | RT-PREP-S2: закрыть §5 DEMO_STACK.md — state-слой (TanStack Query vs Zustand vs useReducer) | 2026-07-01 | — | #219 (Issue открыт) | [карточка](./archive/rt-prep-s2-state-decision.md) |
 | `fix-async-jobs-client` | ФИК-СПРИНТ: Исправление 11 типо-ошибок @membrana/client (async-jobs интеграция) | 2026-07-01 | [`FIX_ASYNC_JOBS_CLIENT_PROMPT.md`](../docs/prompts/FIX_ASYNC_JOBS_CLIENT_PROMPT.md) | — | [карточка](./archive/fix-async-jobs-client.md) |
 | `background-media-a5d-swagger` | background-media A5d: полная Swagger/OpenAPI документация | 2026-07-01 | [`BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md`](../docs/prompts/BACKGROUND_MEDIA_A5D_SWAGGER_PROMPT.md) | #64 (Issue открыт) | [карточка](./archive/background-media-a5d-swagger.md) |
 | `drone-detector-detail-report` | Подробный отчёт детекторов дрона (DDR1–4) | 2026-07-01 | [`DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md`](../docs/prompts/DRONE_DETECTOR_DETAIL_REPORT_PROMPT.md) | #78 (Issue открыт) | [карточка](./archive/drone-detector-detail-report.md) |

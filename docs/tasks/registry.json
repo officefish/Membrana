@@ -1,13 +1,44 @@
 {
   "tasks": [
     {
+      "id": "rt-recon-s1",
+      "title": "RT-RECON-S1: реконструкция хронологии transitions[] из git-истории",
+      "promptPath": "docs/prompts/RT_RECON_PROMPT.md",
+      "githubIssue": 221,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-01",
+      "archivedAt": null,
+      "parentEpic": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": ["dynin", "rodchenko"],
+      "notes": "Консилиум завершён 2026-07-01. Фазы: RECON-1 git анализ, RECON-2 заполнить transitions[], RECON-3 проверка playhead, RECON-4 PR."
+    },
+    {
+      "id": "rt-chron-s1-time-travel",
+      "title": "RT-CHRON-S1: event-sourcing архитектура + two-state playhead (genesis / now)",
+      "promptPath": null,
+      "githubIssue": 220,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-01",
+      "archivedAt": "2026-07-01",
+      "parentEpic": null,
+      "leadPersona": "dynin",
+      "supportPersonas": ["vesnin"],
+      "archiveNotes": "52 перехода в transitions[]: 17 genesis (2026-05-12) + 35 now (2026-07-01). computeStatesAt + buildFlowGraph(playhead). UI-тогл в шапке. PR #220. TypeScript чистый.",
+      "notes": "Ретроактивная регистрация: работа выполнена без промпта. Архитектурное решение: event sourcing через transitions[] в JSON, playhead в UIState."
+    },
+    {
       "id": "research-tree-marathon-prep",
       "title": "Research-Tree: подготовка к марафону (prep epic)",
       "promptPath": null,
       "githubIssue": 219,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-01",
       "sprintKind": "day-sprint",
       "parentEpic": null,
@@ -15,9 +46,10 @@
       "supportPersonas": [
         "dynin"
       ],
-      "archivedAt": null,
-      "archiveNotes": null,
-      "notes": "Research-Tree — самостоятельный проект мониторинга разработки. Prep-epic готовит репо к марафону: bootstrap + state decision."
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Prep-epic завершён: S1 bootstrap, S2 state-decision, S3 verify-сверка (14 узлов), RT-RENDER марафон (интерактивный граф xyflow+dagre), 4 документа из треда добавлены. PR #220.",
+      "notes": "Research-Tree — самостоятельный проект мониторинга разработки. Prep-epic готовит репо к марафону: bootstrap + state decision.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "rt-prep-s0-registration",
@@ -59,7 +91,7 @@
       "promptPath": null,
       "githubIssue": 219,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-01",
       "parentEpic": "research-tree-marathon-prep",
       "leadPersona": "vesnin",
@@ -69,9 +101,10 @@
       "dependsOn": [
         "rt-prep-s1-bootstrap"
       ],
-      "archivedAt": null,
-      "archiveNotes": null,
-      "notes": "STATE_ARCHITECTURE.md указывает на TanStack Query для git time-travel. Нужно зафиксировать финальное решение и закрыть открытый вопрос §5."
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "STATE_ARCHITECTURE.md создан, выбрана 4-слойная архитектура: URL=useSearchParams, Async=TanStack Query, Canvas=xyflow store, Transient=useReducer+Context. PR #220.",
+      "notes": "STATE_ARCHITECTURE.md указывает на TanStack Query для git time-travel. Нужно зафиксировать финальное решение и закрыть открытый вопрос §5.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fix-async-jobs-client",
