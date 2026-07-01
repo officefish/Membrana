@@ -5,7 +5,7 @@
   "tier": "T2",
   "reviewMode": "standard",
   "branch": "codex/fv1-s3-integration",
-  "currentCommitSha": "9fa108cdf3fb0ff2f3fe5a817adaf78000ced889",
+  "currentCommitSha": "2768d48edc10afc2e0689bf33aa7a8569e15985d",
   "reviewedCommitSha": null,
   "verdict": "pending",
   "reviewArtifact": null,
@@ -16,7 +16,7 @@
     "url": null
   },
   "scope": {
-    "baseRef": "9fa108cdf3fb0ff2f3fe5a817adaf78000ced889^",
+    "baseRef": "main",
     "files": [
       "apps/cabinet/src/lib/useCabinetLiveJournal.ts",
       "apps/cabinet/src/pages/JournalPage.tsx",
@@ -38,6 +38,7 @@
       "docs/datasets/free-v1/STAGE_GATE_REPORT.md",
       "docs/datasets/free-v1/stage-gate-report.json",
       "docs/day-sprint/fv1-s3-integration-2026-07-01/OPEN.md",
+      "docs/reviews/fv1-s3-integration/manifest.json",
       "package.json",
       "packages/core/src/contracts/device-board/scenario-report.ts",
       "packages/core/src/contracts/index.ts",
@@ -82,7 +83,16 @@
   },
   "evidence": {
     "hasUnresolvedP0P1": false,
-    "checks": []
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "fail",
+        "exitCode": 2,
+        "commitSha": "2768d48edc10afc2e0689bf33aa7a8569e15985d",
+        "checkedAt": "2026-07-01T16:57:25.207Z",
+        "note": "docs/datasets/free-v1/RELEASE_NOTES.md:3: trailing whitespace.\n+**Release:** `free_v1`  \ndocs/datasets/free-v1/RELEASE_NOTES.md:4: trailing whitespace.\n+**Date:** 2026-07-01  \ndocs/datasets/free-v1/STAGE_GATE_REPORT.md:54: new blank line at EOF."
+      }
+    ]
   },
   "reviewersStatus": {
     "vesnin": "pending",
@@ -93,5 +103,5 @@
     "evidence": null
   },
   "createdAt": "2026-07-01T16:50:43.655Z",
-  "updatedAt": "2026-07-01T16:50:43.655Z"
+  "updatedAt": "2026-07-01T16:54:34.043Z"
 }
