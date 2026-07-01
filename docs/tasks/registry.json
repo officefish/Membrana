@@ -30,7 +30,7 @@
         "rodchenko"
       ],
       "notes": "Консилиум завершён 2026-07-01. Фазы: RECON-1 git анализ, RECON-2 заполнить transitions[], RECON-3 проверка playhead, RECON-4 PR.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "rt-chron-s1-time-travel",
@@ -68,7 +68,7 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "Prep-epic завершён: S1 bootstrap, S2 state-decision, S3 verify-сверка (14 узлов), RT-RENDER марафон (интерактивный граф xyflow+dagre), 4 документа из треда добавлены. PR #220.",
       "notes": "Research-Tree — самостоятельный проект мониторинга разработки. Prep-epic готовит репо к марафону: bootstrap + state decision.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "rt-prep-s0-registration",
@@ -83,7 +83,7 @@
       "supportPersonas": [],
       "archivedAt": "2026-07-01",
       "archiveNotes": "Issue #219 открыт, epic + 3 задачи зарегистрированы в реестре.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "rt-prep-s1-bootstrap",
@@ -102,7 +102,7 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "Workspace создан, yarn dev запускается на :5174, граф грузится из JSON (60 узлов). package.json workspace прописан явно (Harmonic-Detector — legacy pnpm, несовместим с apps/demos/*).",
       "notes": "По §4 DEMO_STACK.md: package.json, tsconfig, vite.config.ts, tailwind, index.html, src/main.tsx + App.tsx. yarn dev запускается, JSON грузится.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "rt-prep-s2-state-decision",
@@ -123,7 +123,7 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "STATE_ARCHITECTURE.md создан, выбрана 4-слойная архитектура: URL=useSearchParams, Async=TanStack Query, Canvas=xyflow store, Transient=useReducer+Context. PR #220.",
       "notes": "STATE_ARCHITECTURE.md указывает на TanStack Query для git time-travel. Нужно зафиксировать финальное решение и закрыть открытый вопрос §5.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "fix-async-jobs-client",
@@ -789,7 +789,7 @@
       "supportPersonas": [
         "dynin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "membrane-platform-v1",
@@ -1400,7 +1400,7 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "telemetry-journal-live-refactor",
@@ -1417,7 +1417,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "telemetry-journal-ux-hardening",
@@ -2304,7 +2304,7 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-0-catalog-regulation",
@@ -2324,7 +2324,7 @@
       "notes": "Lead: Vesnin. docs/catalog/README.md lifecycle draft→stable→deprecated.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-1-prompt-templates",
@@ -2346,7 +2346,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-2-registry-microphone-pilot",
@@ -2366,7 +2366,7 @@
       "notes": "Lead: Ozhegov + Музыкант. hub, coordinator, 8 child plugins.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-3-pilot-plugins",
@@ -2388,7 +2388,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-4-telemetry-journal-stable",
@@ -2408,7 +2408,7 @@
       "notes": "Lead: Rodchenko. journal-report-views, live refresh UX.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-5-remaining-modules-draft",
@@ -2431,7 +2431,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-6-remaining-plugins-draft",
@@ -2452,7 +2452,7 @@
       "notes": "Lead: Ozhegov. distill from archived task prompts where available.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-7-verify-script-ci",
@@ -2474,7 +2474,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-8-agent-rules-integration",
@@ -2494,7 +2494,7 @@
       "notes": "Lead: Vesnin. read catalog prompt before module/plugin edits.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "mc-9-stable-review",
@@ -2515,7 +2515,7 @@
       "notes": "Lead: Vesnin. microphone + telemetry-journal stable; agent smoke test.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "device-board-hackathon-1",
@@ -3367,7 +3367,7 @@
         "ozhegov"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "membrana-studio-ms0-ms4-day-sprint",
@@ -3733,7 +3733,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "dbh-0-canvas-overlay",
@@ -3755,7 +3755,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "dbh-1-sidebar-clamp",
@@ -3777,7 +3777,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "dbh-2-nav-split",
@@ -3799,7 +3799,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "dbh-3-delete-node",
@@ -3821,7 +3821,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "dbh-4-purge-expired-keys",
@@ -3843,7 +3843,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "device-board-clear-branch",
@@ -3920,7 +3920,7 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "db-w0-h3-selection-modal-keep",
@@ -3941,7 +3941,7 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "db-w0-h1-function-palette",
@@ -3962,7 +3962,7 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "db-w0-h2-copy-paste-hotkeys",
@@ -3985,7 +3985,7 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "db-doc-v04-mvp",
@@ -6708,7 +6708,7 @@
         "ozhegov",
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "smoke-s1-nb0-gate-docs",
@@ -6731,7 +6731,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "smoke-s1-nb1-playwright-scaffold",
@@ -6752,7 +6752,7 @@
       "nightPhase": "NB1",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "smoke-s1-nb2-smoke-tests-testids",
@@ -6776,7 +6776,7 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "smoke-s1-nb3-optional-ci-workflow",
@@ -6797,7 +6797,7 @@
       "nightPhase": "NB3",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "smoke-s1-nb4-docs-handoff",
@@ -6820,7 +6820,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "tasks-audit-v1",
@@ -7488,7 +7488,7 @@
       ],
       "parentEpic": "usercase-mvp-v2-groups-async",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "db-ap-r0-consilium-spec",
@@ -8574,7 +8574,7 @@
         "rodchenko"
       ],
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "nh-s1-office-module",
@@ -8589,7 +8589,7 @@
       "parentEpic": "night-hunt-sprint-2026-06-25",
       "leadPersona": "ozhegov",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "nh-s2-fly-deploy",
@@ -8604,7 +8604,7 @@
       "parentEpic": "night-hunt-sprint-2026-06-25",
       "leadPersona": "ozhegov",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "nh-s3-rituals",
@@ -8619,7 +8619,7 @@
       "parentEpic": "night-hunt-sprint-2026-06-25",
       "leadPersona": "vesnin",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-01"
     },
     {
       "id": "competition-async-v2-prep-2026-06-25",
