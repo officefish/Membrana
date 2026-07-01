@@ -1,0 +1,79 @@
+[
+  {
+    "key": "MACHINE_HUM",
+    "name": "Машинный гул",
+    "icon": "⚙️",
+    "color": "#ffd166",
+    "description": "Merged template from 25 samples",
+    "thresholds": {
+      "centroid": {
+        "min": 0,
+        "max": 9466.967074174954
+      },
+      "flux": {
+        "min": 0,
+        "max": 0.3518238770926942
+      },
+      "rms": {
+        "min": 0,
+        "max": 0.44713115990083113
+      },
+      "frameHitRatio": {
+        "min": 0.95,
+        "max": 1
+      }
+    },
+    "temporalPatterns": {
+      "centroidStd": {
+        "min": 1118.888403105217,
+        "max": 2610.739607245507
+      },
+      "fluxStd": {
+        "min": 0.003464159898435588,
+        "max": 0.008083039763016373
+      },
+      "rmsStd": {
+        "min": 0.013644449219482832,
+        "max": 0.03183704817879328
+      },
+      "activityRatio": {
+        "min": 0.675,
+        "max": 1.125
+      },
+      "avgSilenceDuration": {
+        "min": 0.225,
+        "max": 0.675
+      },
+      "avgBurstDuration": {
+        "min": 2.025,
+        "max": 6.074999999999999
+      },
+      "volumeTrend": [
+        "stable"
+      ],
+      "frequencyTrend": [
+        "decreasing"
+      ],
+      "longTermStability": [
+        "veryLow"
+      ],
+      "periodicity": [
+        "none"
+      ],
+      "envelopeShape": [
+        "sustained"
+      ],
+      "peakToAverageRatio": {
+        "min": 1,
+        "max": 1.9943473149162254
+      },
+      "frequencyJumps": {
+        "enabled": true,
+        "minJumpsRequired": 8,
+        "densityPerSecond": {
+          "max": 2.6666666666666665
+        }
+      }
+    }
+  }
+]

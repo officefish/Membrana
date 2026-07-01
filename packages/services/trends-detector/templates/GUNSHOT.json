@@ -1,0 +1,79 @@
+[
+  {
+    "key": "GUNSHOT",
+    "name": "Стрельба",
+    "icon": "💥",
+    "color": "#ff4040",
+    "description": "Merged template from 19 samples",
+    "thresholds": {
+      "centroid": {
+        "min": 0,
+        "max": 8005.886564978486
+      },
+      "flux": {
+        "min": 0,
+        "max": 0.1765662101690288
+      },
+      "rms": {
+        "min": 0,
+        "max": 0.36536282480535337
+      },
+      "frameHitRatio": {
+        "min": 0.95,
+        "max": 1
+      }
+    },
+    "temporalPatterns": {
+      "centroidStd": {
+        "min": 329.31091081916804,
+        "max": 768.3921252447254
+      },
+      "fluxStd": {
+        "min": 0,
+        "max": 0.0016089686905665403
+      },
+      "rmsStd": {
+        "min": 0.00013073983193312498,
+        "max": 0.0021307398319331252
+      },
+      "activityRatio": {
+        "min": 0,
+        "max": 0.001
+      },
+      "avgSilenceDuration": {
+        "min": 0,
+        "max": 0.001
+      },
+      "avgBurstDuration": {
+        "min": 0,
+        "max": 0.001
+      },
+      "volumeTrend": [
+        "increasing"
+      ],
+      "frequencyTrend": [
+        "oscillating"
+      ],
+      "longTermStability": [
+        "veryLow"
+      ],
+      "periodicity": [
+        "none"
+      ],
+      "envelopeShape": [
+        "sustained"
+      ],
+      "peakToAverageRatio": {
+        "min": 2.6653687779830597,
+        "max": 5.535765923503277
+      },
+      "frequencyJumps": {
+        "enabled": true,
+        "minJumpsRequired": 8,
+        "densityPerSecond": {
+          "max": 2.6666666666666665
+        }
+      }
+    }
+  }
+]
