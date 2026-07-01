@@ -1,4 +1,3 @@
-import React from 'react';
 import graph from '../membrana-knowledge-graph.json';
 
 const nodesByState = graph.nodes.reduce<Record<string, number>>((acc, n) => {
@@ -39,7 +38,7 @@ export default function App() {
                   {node.state}
                 </span>
               </div>
-              <p className="text-sm text-base-content">{node.label}</p>
+              <p className="text-sm text-base-content">{node.title}</p>
             </div>
           </div>
         ))}
