@@ -72,7 +72,7 @@ export function DetailPanel({ graph }: DetailPanelProps) {
       )}
 
       {node.evidence && (
-        <div className="text-xs text-base-content/60 italic">"{node.evidence}"</div>
+        <div className="text-xs text-base-content/60 italic">&quot;{node.evidence}&quot;</div>
       )}
 
       {node.note && (
