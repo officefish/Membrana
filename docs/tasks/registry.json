@@ -654,9 +654,9 @@
       "githubIssue": 64,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-13",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "background-media-a5a-server"
@@ -664,7 +664,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-platform-v1",
@@ -1263,9 +1264,9 @@
       "githubIssue": 78,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "leadPersona": "dynin",
       "supportPersonas": [
@@ -1274,7 +1275,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "telemetry-journal-live-refactor",
@@ -1283,14 +1285,15 @@
       "githubIssue": 79,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "telemetry-journal-ux-hardening",
@@ -2167,16 +2170,17 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "notes": "Консилиум 2026-06-17: docs/catalog/ отдельно от task registry; 7 modules + 12 plugins client.",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "meta"
+      "strategicWave": "meta",
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-0-catalog-regulation",
@@ -2185,17 +2189,18 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "module-catalog-v1"
       ],
       "notes": "Lead: Vesnin. docs/catalog/README.md lifecycle draft→stable→deprecated.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-1-prompt-templates",
@@ -2204,10 +2209,10 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-0-catalog-regulation"
@@ -2216,7 +2221,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-2-registry-microphone-pilot",
@@ -2225,17 +2231,18 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-1-prompt-templates"
       ],
       "notes": "Lead: Ozhegov + Музыкант. hub, coordinator, 8 child plugins.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-3-pilot-plugins",
@@ -2244,10 +2251,10 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-2-registry-microphone-pilot"
@@ -2256,7 +2263,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-4-telemetry-journal-stable",
@@ -2265,17 +2273,18 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-1-prompt-templates"
       ],
       "notes": "Lead: Rodchenko. journal-report-views, live refresh UX.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-5-remaining-modules-draft",
@@ -2284,10 +2293,10 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-2-registry-microphone-pilot",
@@ -2297,7 +2306,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-6-remaining-plugins-draft",
@@ -2306,10 +2316,10 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-3-pilot-plugins",
@@ -2317,7 +2327,8 @@
       ],
       "notes": "Lead: Ozhegov. distill from archived task prompts where available.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-7-verify-script-ci",
@@ -2326,10 +2337,10 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-6-remaining-plugins-draft"
@@ -2338,7 +2349,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-8-agent-rules-integration",
@@ -2347,17 +2359,18 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-0-catalog-regulation"
       ],
       "notes": "Lead: Vesnin. read catalog prompt before module/plugin edits.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "mc-9-stable-review",
@@ -2366,10 +2379,10 @@
       "githubIssue": 90,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "module-catalog-v1",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "mc-7-verify-script-ci",
@@ -2377,7 +2390,8 @@
       ],
       "notes": "Lead: Vesnin. microphone + telemetry-journal stable; agent smoke test.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-hackathon-1",
@@ -3218,17 +3232,18 @@
       "githubIssue": 93,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "notes": "Day-sprint MS0–MS4 active 2026-06-23 (no apps/client). MS5 deferred. Prompt: MEMBRANA_STUDIO_MS0_MS4_DAY_SPRINT_PROMPT.md",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W3"
+      "strategicWave": "W3",
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-ms0-ms4-day-sprint",
@@ -3582,9 +3597,9 @@
       "githubIssue": 104,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "device-board-refactor-v04"
@@ -3593,7 +3608,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbh-0-canvas-overlay",
@@ -3602,10 +3618,10 @@
       "githubIssue": 104,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "device-board-cabinet-hotfix"
@@ -3614,7 +3630,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbh-1-sidebar-clamp",
@@ -3623,10 +3640,10 @@
       "githubIssue": 104,
       "linearId": null,
       "size": "XS",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "device-board-cabinet-hotfix"
@@ -3635,7 +3652,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbh-2-nav-split",
@@ -3644,10 +3662,10 @@
       "githubIssue": 104,
       "linearId": null,
       "size": "XS",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "device-board-cabinet-hotfix"
@@ -3656,7 +3674,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbh-3-delete-node",
@@ -3665,10 +3684,10 @@
       "githubIssue": 104,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "device-board-cabinet-hotfix"
@@ -3677,7 +3696,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbh-4-purge-expired-keys",
@@ -3686,10 +3706,10 @@
       "githubIssue": 104,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "dbh-3-delete-node"
@@ -3698,7 +3718,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-clear-branch",
@@ -6551,10 +6572,10 @@
       "githubIssue": 81,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [],
       "notes": "Lead: Vesnin. Non-blocking e2e-smoke.yml; consilium 2026-06-22.",
@@ -6562,7 +6583,8 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "smoke-s1-nb0-gate-docs",
@@ -6571,11 +6593,11 @@
       "githubIssue": 81,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "smoke-testing-s1-night-build",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "smoke-testing-s1-night-build"
@@ -6584,7 +6606,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "smoke-s1-nb1-playwright-scaffold",
@@ -6593,18 +6616,19 @@
       "githubIssue": 81,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "smoke-testing-s1-night-build",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "smoke-s1-nb0-gate-docs"
       ],
       "nightPhase": "NB1",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "smoke-s1-nb2-smoke-tests-testids",
@@ -6613,11 +6637,11 @@
       "githubIssue": 81,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "smoke-testing-s1-night-build",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "smoke-s1-nb1-playwright-scaffold"
@@ -6627,7 +6651,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "smoke-s1-nb3-optional-ci-workflow",
@@ -6636,18 +6661,19 @@
       "githubIssue": 81,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "smoke-testing-s1-night-build",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "smoke-s1-nb2-smoke-tests-testids"
       ],
       "nightPhase": "NB3",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "smoke-s1-nb4-docs-handoff",
@@ -6656,11 +6682,11 @@
       "githubIssue": 81,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "parentEpic": "smoke-testing-s1-night-build",
       "createdAt": "2026-06-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "archiveNotes": null,
       "dependsOn": [
         "smoke-s1-nb3-optional-ci-workflow"
@@ -6669,7 +6695,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "tasks-audit-v1",
@@ -8413,7 +8440,7 @@
       "githubIssue": 174,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "notes": "Issue #174; background-office + Fly.io; docs/seanses/night-hunt",
@@ -8421,7 +8448,9 @@
       "supportPersonas": [
         "vesnin",
         "rodchenko"
-      ]
+      ],
+      "archivedAt": "2026-07-01",
+      "githubIssueClosedAt": null
     },
     {
       "id": "nh-s1-office-module",
@@ -8430,11 +8459,13 @@
       "githubIssue": 174,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "night-hunt-sprint-2026-06-25",
-      "leadPersona": "ozhegov"
+      "leadPersona": "ozhegov",
+      "archivedAt": "2026-07-01",
+      "githubIssueClosedAt": null
     },
     {
       "id": "nh-s2-fly-deploy",
@@ -8443,11 +8474,13 @@
       "githubIssue": 174,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "night-hunt-sprint-2026-06-25",
-      "leadPersona": "ozhegov"
+      "leadPersona": "ozhegov",
+      "archivedAt": "2026-07-01",
+      "githubIssueClosedAt": null
     },
     {
       "id": "nh-s3-rituals",
@@ -8456,11 +8489,13 @@
       "githubIssue": 174,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "night-hunt-sprint-2026-06-25",
-      "leadPersona": "vesnin"
+      "leadPersona": "vesnin",
+      "archivedAt": "2026-07-01",
+      "githubIssueClosedAt": null
     },
     {
       "id": "competition-async-v2-prep-2026-06-25",
