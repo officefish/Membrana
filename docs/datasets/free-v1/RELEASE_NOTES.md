@@ -1,8 +1,8 @@
 # free_v1 Sound Catalog Release Notes
 
-**Release:** `free_v1`  
-**Date:** 2026-07-01  
-**Owner:** Vesnin
+- **Release:** `free_v1`
+- **Date:** 2026-07-01
+- **Owner:** Vesnin
 
 ## Scope
 

@@ -318,6 +318,20 @@ test('GitHub check-runs become SHA-bound pass/fail evidence', () => {
   assert.match(checks[0].command, /^github-check:/);
 });
 
+test('GitHub check-runs treat skipped/neutral/cancelled conclusions as non-blocking, not fail', () => {
+  const checks = normalizeGithubCheckRuns([
+    { name: 'optional-review', status: 'completed', conclusion: 'skipped', completed_at: '2026-06-28T12:00:00.000Z' },
+    { name: 'neutral-job', status: 'completed', conclusion: 'neutral', completed_at: '2026-06-28T12:00:00.000Z' },
+    { name: 'cancelled-job', status: 'completed', conclusion: 'cancelled', completed_at: '2026-06-28T12:00:00.000Z' },
+    { name: 'still-running', status: 'in_progress', conclusion: null },
+    { name: 'real-failure', status: 'completed', conclusion: 'failure', completed_at: '2026-06-28T12:00:00.000Z' },
+  ], SHA_A);
+  assert.deepEqual(
+    checks.map((check) => check.status),
+    ['skipped', 'skipped', 'skipped', 'skipped', 'fail'],
+  );
+});
+
 test('review-file fallback does not require provider-sized diff', () => {
   assert.throws(
     () => buildTaskClosureReviewPrompt({

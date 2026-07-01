@@ -51,4 +51,3 @@
 
 - The numerical S3 drone gate passes on the mixed corpus.
 - This report evaluates the committed release templates. It is not evidence of geographic or device-domain generalization.
-
