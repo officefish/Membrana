@@ -9946,10 +9946,10 @@
       "githubIssue": 205,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-30",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "PR #222; review LGTM 7b00c851433f; PR #222 merged 2026-07-01T18:18:50Z (c4b42af5695a3ca46c42bdbbf0691aae337fcd63)",
       "notes": "DoD: FPR < 15% / recall >= 90% на смешанном датасете. Plugin + cabinet UI показывают класс.",
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -9957,7 +9957,8 @@
         "dynin",
         "rodchenko"
       ],
-      "epicId": "free-v1-sound-catalog"
+      "epicId": "free-v1-sound-catalog",
+      "githubIssueClosedAt": null
     }
   ]
 }
