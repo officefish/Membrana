@@ -32,7 +32,12 @@ const logDir = join(homedir(), '.headroom', 'logs');
 mkdirSync(logDir, { recursive: true });
 const logFile = join(logDir, 'proxy.log');
 
-const headroomBin = resolve(repoRoot, 'tools', 'headroom-venv', 'Scripts', 'headroom.exe');
+const isWindows = process.platform === 'win32';
+const headroomBin = resolve(
+  repoRoot, 'tools', 'headroom-venv',
+  isWindows ? 'Scripts' : 'bin',
+  isWindows ? 'headroom.exe' : 'headroom',
+);
 
 const env = {
   ...process.env,
@@ -46,7 +51,7 @@ console.log(`headroom proxy → http://127.0.0.1:${headroomPort}`);
 console.log(`outbound via   → ${outboundProxy}`);
 console.log(`log            → ${logFile}`);
 console.log('');
-console.log('Проверка после старта: curl.exe --noproxy 127.0.0.1 http://127.0.0.1:8787/livez');
+console.log(`Проверка после старта: curl.exe --noproxy 127.0.0.1 http://127.0.0.1:${headroomPort}/livez`);
 console.log('Claude Code через headroom: yarn headroom:claude');
 console.log('');
 

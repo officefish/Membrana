@@ -34,16 +34,17 @@ const env = {
 const args = process.argv.slice(2);
 
 console.log(`Claude Code → headroom http://127.0.0.1:${headroomPort}`);
-console.log('После сеанса (20-30 tool calls) запустить:');
-console.log(
-  '  tools\\headroom-venv\\Scripts\\headroom.exe perf --format json | Out-File -Encoding utf8 docs\\insights\\insight-headroom-server-deploy\\proxy-perf-report-real.json',
-);
 console.log('');
 
 const child = spawn('claude', args, {
   env,
   stdio: 'inherit',
-  shell: true,
+  shell: true, // необходим на Windows для разрешения claude.cmd через PATH
+});
+
+child.on('error', (err) => {
+  console.error('Не удалось запустить claude:', err.message);
+  process.exit(1);
 });
 
 child.on('exit', (code, signal) => {
@@ -51,5 +52,5 @@ child.on('exit', (code, signal) => {
     process.kill(process.pid, signal);
     return;
   }
-  process.exit(code ?? 0);
+  process.exit(code ?? 1);
 });
