@@ -8,7 +8,8 @@
     "packages/libs/*",
     "packages/services/*",
     "packages/services/detectors/*",
-    "apps/*"
+    "apps/*",
+    "apps/demos/Research-Tree"
   ],
   "scripts": {
     "build": "turbo run build",

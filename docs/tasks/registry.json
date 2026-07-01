@@ -40,7 +40,7 @@
       "promptPath": null,
       "githubIssue": 219,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-01",
       "parentEpic": "research-tree-marathon-prep",
       "leadPersona": "dynin",
@@ -48,9 +48,10 @@
       "dependsOn": [
         "rt-prep-s0-registration"
       ],
-      "archivedAt": null,
-      "archiveNotes": null,
-      "notes": "По §4 DEMO_STACK.md: package.json, tsconfig, vite.config.ts, tailwind, index.html, src/main.tsx + App.tsx. yarn dev запускается, JSON грузится."
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Workspace создан, yarn dev запускается на :5174, граф грузится из JSON (60 узлов). package.json workspace прописан явно (Harmonic-Detector — legacy pnpm, несовместим с apps/demos/*).",
+      "notes": "По §4 DEMO_STACK.md: package.json, tsconfig, vite.config.ts, tailwind, index.html, src/main.tsx + App.tsx. yarn dev запускается, JSON грузится.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "rt-prep-s2-state-decision",
