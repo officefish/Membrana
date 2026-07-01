@@ -30,10 +30,19 @@ export interface KnowledgeArtifact {
   path?: string;
 }
 
+export interface GraphTransition {
+  id: string;
+  nodeId: string;
+  to: NodeState;
+  date: string;
+  note?: string;
+}
+
 export interface KnowledgeGraph {
   version: string;
   updated: string;
   nodes: KnowledgeNode[];
   artifacts: KnowledgeArtifact[];
   branches: Record<string, string>;
+  transitions?: GraphTransition[];
 }

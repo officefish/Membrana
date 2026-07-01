@@ -11,7 +11,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { KnowledgeNodeCard } from './KnowledgeNodeCard.js';
-import { buildFlowGraph, matchesFilters, STATE_COLORS } from '../graph/adapter.js';
+import { buildFlowGraph, matchesFilters, STATE_COLORS, GENESIS_DATE } from '../graph/adapter.js';
 import { useUIContext } from '../state/UIContext.js';
 import type { KnowledgeGraph } from '../graph/types.js';
 
@@ -26,18 +26,20 @@ interface GraphCanvasProps {
 function FlowInner({ graph }: GraphCanvasProps) {
   const { state, dispatch } = useUIContext();
 
+  const playheadDate = state.playhead === 'genesis' ? GENESIS_DATE : undefined;
+
   const { nodes: layoutNodes, edges: layoutEdges } = useMemo(
-    () => buildFlowGraph(graph),
-    [graph],
+    () => buildFlowGraph(graph, playheadDate),
+    [graph, playheadDate],
   );
 
   const visibleNodeIds = useMemo(() => {
     return new Set(
-      graph.nodes
-        .filter((n) => matchesFilters(n, state.filters.states, state.filters.epochs))
+      layoutNodes
+        .filter((n) => matchesFilters(n.data.node, state.filters.states, state.filters.epochs))
         .map((n) => n.id),
     );
-  }, [graph.nodes, state.filters]);
+  }, [layoutNodes, state.filters]);
 
   const nodes = useMemo(
     () =>

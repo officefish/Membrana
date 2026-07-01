@@ -7,6 +7,7 @@ export const INITIAL_UI_STATE: UIState = {
     epochs: [],
   },
   highlightFrontier: false,
+  playhead: 'now',
 };
 
 function toggleItem<T>(arr: T[], item: T): T[] {
@@ -37,6 +38,8 @@ export function uiReducer(state: UIState, action: UIAction): UIState {
       return { ...state, highlightFrontier: !state.highlightFrontier };
     case 'RESET_FILTERS':
       return { ...state, filters: { states: [], epochs: [] }, highlightFrontier: false };
+    case 'SET_PLAYHEAD':
+      return { ...state, playhead: action.playhead, selectedNodeId: null };
     default:
       return state;
   }
