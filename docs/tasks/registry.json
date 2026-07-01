@@ -1,6 +1,18 @@
 {
   "tasks": [
     {
+      "id": "rt-day-report-script",
+      "title": "RT DAY-REPORT: скрипт yarn rt:day-report — анализ дня по git + transitions",
+      "promptPath": "docs/prompts/RT_DAY_REPORT_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "branch": "chore/backlog-cleanup-s1-clean",
+      "opened": "2026-07-01",
+      "closed": null
+    },
+    {
       "id": "rt-recon-s1",
       "title": "RT-RECON-S1: реконструкция хронологии transitions[] из git-истории",
       "promptPath": "docs/prompts/RT_RECON_PROMPT.md",

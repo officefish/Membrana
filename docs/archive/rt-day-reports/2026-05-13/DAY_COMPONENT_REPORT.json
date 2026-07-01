@@ -1,0 +1,68 @@
+{
+  "date": "2026-05-13",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 3,
+    "established": 1,
+    "exploring": 2,
+    "totalLinesAdded": 2352,
+    "totalLinesDeleted": 903,
+    "totalLines": 3255,
+    "totalTokens": 13020,
+    "timeFirst": "2026-05-13 15:44:55 +0300",
+    "timeLast": "2026-05-13 17:51:16 +0000"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-01",
+      "nodeId": "layer.audio-engine",
+      "nodeName": "Audio-engine и плагинная модель",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 1487,
+      "linesDeleted": 903,
+      "tokens": 9560,
+      "commitSHAs": [
+        "a634b4b"
+      ],
+      "commitMessages": [
+        "a634b4b — audio-engine added"
+      ],
+      "time": "2026-05-13 15:44:55 +0300"
+    },
+    {
+      "transitionId": "t-m-02",
+      "nodeId": "comm.white-paper",
+      "nodeName": "Публичный white paper",
+      "epoch": null,
+      "to": "exploring",
+      "linesAdded": 415,
+      "linesDeleted": 0,
+      "tokens": 1660,
+      "commitSHAs": [
+        "01fe383"
+      ],
+      "commitMessages": [
+        "01fe383 — docs: add WHITE_PAPER.md — strategic concept of spatial sky reconnaissance"
+      ],
+      "time": "2026-05-13 17:22:32 +0000"
+    },
+    {
+      "transitionId": "t-m-03",
+      "nodeId": "process.dev-rhythm",
+      "nodeName": "Ритм утро/вечер/неделя",
+      "epoch": null,
+      "to": "exploring",
+      "linesAdded": 450,
+      "linesDeleted": 0,
+      "tokens": 1800,
+      "commitSHAs": [
+        "8a80cde"
+      ],
+      "commitMessages": [
+        "8a80cde — feat(scripts): plan:day and plan:week — strategic planners anchored to docs/WHITE_PAPER.md"
+      ],
+      "time": "2026-05-13 17:51:16 +0000"
+    }
+  ]
+}

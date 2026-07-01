@@ -1,0 +1,85 @@
+{
+  "date": "2026-06-13",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 4,
+    "established": 4,
+    "exploring": 0,
+    "totalLinesAdded": 3090,
+    "totalLinesDeleted": 26,
+    "totalLines": 3116,
+    "totalTokens": 12464,
+    "timeFirst": "2026-06-13 18:30:40 +0300",
+    "timeLast": "2026-06-13 18:47:02 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-28",
+      "nodeId": "stack.prisma-pg",
+      "nodeName": "Prisma + PostgreSQL",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 2877,
+      "linesDeleted": 8,
+      "tokens": 11540,
+      "commitSHAs": [
+        "cfbbb37"
+      ],
+      "commitMessages": [
+        "cfbbb37 — feat(membrane-platform): MP1 cabinet auth API, SPA, and prod deploy pack"
+      ],
+      "time": "2026-06-13 18:30:40 +0300"
+    },
+    {
+      "transitionId": "t-m-29",
+      "nodeId": "stack.vps-timeweb",
+      "nodeName": "VPS Timeweb (продакшн-субстрат)",
+      "epoch": "E1",
+      "to": "established",
+      "linesAdded": 71,
+      "linesDeleted": 6,
+      "tokens": 308,
+      "commitSHAs": [
+        "e3eb85a"
+      ],
+      "commitMessages": [
+        "e3eb85a — chore(tasks): archive MP1 after prod smoke on cabinet.membrana.space"
+      ],
+      "time": "2026-06-13 18:47:02 +0300"
+    },
+    {
+      "transitionId": "t-m-30",
+      "nodeId": "stack.vps-deploy",
+      "nodeName": "Развёртывание на VPS (cabinet, data-plane)",
+      "epoch": "E1",
+      "to": "established",
+      "linesAdded": 71,
+      "linesDeleted": 6,
+      "tokens": 308,
+      "commitSHAs": [
+        "e3eb85a"
+      ],
+      "commitMessages": [
+        "e3eb85a — chore(tasks): archive MP1 after prod smoke on cabinet.membrana.space"
+      ],
+      "time": "2026-06-13 18:47:02 +0300"
+    },
+    {
+      "transitionId": "t-m-31",
+      "nodeId": "process.foreign-api-verification",
+      "nodeName": "Проверка внешних API curl-ом до коммита VDS",
+      "epoch": null,
+      "to": "established",
+      "linesAdded": 71,
+      "linesDeleted": 6,
+      "tokens": 308,
+      "commitSHAs": [
+        "e3eb85a"
+      ],
+      "commitMessages": [
+        "e3eb85a — chore(tasks): archive MP1 after prod smoke on cabinet.membrana.space"
+      ],
+      "time": "2026-06-13 18:47:02 +0300"
+    }
+  ]
+}

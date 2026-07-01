@@ -1,0 +1,2104 @@
+{
+  "generatedAt": "2026-06-30T16:30:56.273Z",
+  "owner": "Dynin",
+  "method": "leave-one-out class-envelope scoring",
+  "warning": "The corpus is real-only. S3 still requires threshold calibration and its own mixed-dataset stage gate.",
+  "all": {
+    "samples": 130,
+    "accuracy": 0.47692307692307695,
+    "metrics": {
+      "silence": {
+        "samples": 20,
+        "precision": 0.2,
+        "recall": 0.05,
+        "f1": 0.08000000000000002
+      },
+      "wind": {
+        "samples": 22,
+        "precision": 0.9166666666666666,
+        "recall": 1,
+        "f1": 0.9565217391304348
+      },
+      "birds": {
+        "samples": 22,
+        "precision": 0.3157894736842105,
+        "recall": 0.2727272727272727,
+        "f1": 0.2926829268292683
+      },
+      "speech": {
+        "samples": 22,
+        "precision": 0.39215686274509803,
+        "recall": 0.9090909090909091,
+        "f1": 0.547945205479452
+      },
+      "machine-hum": {
+        "samples": 25,
+        "precision": 0.3157894736842105,
+        "recall": 0.24,
+        "f1": 0.2727272727272727
+      },
+      "gunshot": {
+        "samples": 19,
+        "precision": 0.5833333333333334,
+        "recall": 0.3684210526315789,
+        "f1": 0.4516129032258065
+      }
+    },
+    "confusion": {
+      "silence": {
+        "silence": 1,
+        "wind": 0,
+        "birds": 10,
+        "speech": 3,
+        "machine-hum": 5,
+        "gunshot": 1
+      },
+      "wind": {
+        "silence": 0,
+        "wind": 22,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "birds": {
+        "silence": 1,
+        "wind": 0,
+        "birds": 6,
+        "speech": 8,
+        "machine-hum": 7,
+        "gunshot": 0
+      },
+      "speech": {
+        "silence": 0,
+        "wind": 2,
+        "birds": 0,
+        "speech": 20,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "machine-hum": {
+        "silence": 1,
+        "wind": 0,
+        "birds": 3,
+        "speech": 11,
+        "machine-hum": 6,
+        "gunshot": 4
+      },
+      "gunshot": {
+        "silence": 2,
+        "wind": 0,
+        "birds": 0,
+        "speech": 9,
+        "machine-hum": 1,
+        "gunshot": 7
+      }
+    }
+  },
+  "real": {
+    "samples": 130,
+    "accuracy": 0.47692307692307695,
+    "metrics": {
+      "silence": {
+        "samples": 20,
+        "precision": 0.2,
+        "recall": 0.05,
+        "f1": 0.08000000000000002
+      },
+      "wind": {
+        "samples": 22,
+        "precision": 0.9166666666666666,
+        "recall": 1,
+        "f1": 0.9565217391304348
+      },
+      "birds": {
+        "samples": 22,
+        "precision": 0.3157894736842105,
+        "recall": 0.2727272727272727,
+        "f1": 0.2926829268292683
+      },
+      "speech": {
+        "samples": 22,
+        "precision": 0.39215686274509803,
+        "recall": 0.9090909090909091,
+        "f1": 0.547945205479452
+      },
+      "machine-hum": {
+        "samples": 25,
+        "precision": 0.3157894736842105,
+        "recall": 0.24,
+        "f1": 0.2727272727272727
+      },
+      "gunshot": {
+        "samples": 19,
+        "precision": 0.5833333333333334,
+        "recall": 0.3684210526315789,
+        "f1": 0.4516129032258065
+      }
+    },
+    "confusion": {
+      "silence": {
+        "silence": 1,
+        "wind": 0,
+        "birds": 10,
+        "speech": 3,
+        "machine-hum": 5,
+        "gunshot": 1
+      },
+      "wind": {
+        "silence": 0,
+        "wind": 22,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "birds": {
+        "silence": 1,
+        "wind": 0,
+        "birds": 6,
+        "speech": 8,
+        "machine-hum": 7,
+        "gunshot": 0
+      },
+      "speech": {
+        "silence": 0,
+        "wind": 2,
+        "birds": 0,
+        "speech": 20,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "machine-hum": {
+        "silence": 1,
+        "wind": 0,
+        "birds": 3,
+        "speech": 11,
+        "machine-hum": 6,
+        "gunshot": 4
+      },
+      "gunshot": {
+        "silence": 2,
+        "wind": 0,
+        "birds": 0,
+        "speech": 9,
+        "machine-hum": 1,
+        "gunshot": 7
+      }
+    }
+  },
+  "synthetic": {
+    "samples": 0,
+    "accuracy": null,
+    "metrics": {
+      "silence": {
+        "samples": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "wind": {
+        "samples": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "birds": {
+        "samples": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "speech": {
+        "samples": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "machine-hum": {
+        "samples": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "gunshot": {
+        "samples": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null
+      }
+    },
+    "confusion": {
+      "silence": {
+        "silence": 0,
+        "wind": 0,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "wind": {
+        "silence": 0,
+        "wind": 0,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "birds": {
+        "silence": 0,
+        "wind": 0,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "speech": {
+        "silence": 0,
+        "wind": 0,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "machine-hum": {
+        "silence": 0,
+        "wind": 0,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      },
+      "gunshot": {
+        "silence": 0,
+        "wind": 0,
+        "birds": 0,
+        "speech": 0,
+        "machine-hum": 0,
+        "gunshot": 0
+      }
+    }
+  },
+  "predictions": [
+    {
+      "file": "silence-001-a.wav",
+      "actual": "silence",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6611190801009302,
+        "wind": 0.49821309590625507,
+        "birds": 0.8069244800381787,
+        "speech": 0.5815212868519275,
+        "machine-hum": 0.6729304238013561,
+        "gunshot": 0.8167111903617537
+      }
+    },
+    {
+      "file": "silence-002-a.wav",
+      "actual": "silence",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.6994178867333639,
+        "birds": 0.6262896552076289,
+        "speech": 0.8274936951604146,
+        "machine-hum": 0.7545278001726444,
+        "gunshot": 0.5907403091649907
+      }
+    },
+    {
+      "file": "silence-003-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7527147889335055,
+        "wind": 0.5029970052704861,
+        "birds": 0.9843141986562249,
+        "speech": 0.6764972157440723,
+        "machine-hum": 0.8120545157989159,
+        "gunshot": 0.5832866817355147
+      }
+    },
+    {
+      "file": "silence-004-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.531318444897146,
+        "birds": 0.8984060160890279,
+        "speech": 0.6918278328046824,
+        "machine-hum": 0.8564711776160578,
+        "gunshot": 0.5014791896530679
+      }
+    },
+    {
+      "file": "silence-005-a.wav",
+      "actual": "silence",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.2597197494814337,
+        "wind": 0.5608603193110593,
+        "birds": 0.5,
+        "speech": 0.6485069828859782,
+        "machine-hum": 0.5734612344989183,
+        "gunshot": 0.6158679765294072
+      }
+    },
+    {
+      "file": "silence-006-a.wav",
+      "actual": "silence",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5935595441927681,
+        "wind": 0.6184481435900444,
+        "birds": 0.8384491395024463,
+        "speech": 0.7344291092286473,
+        "machine-hum": 0.9077916838241286,
+        "gunshot": 0.5149431468024009
+      }
+    },
+    {
+      "file": "silence-007-a.wav",
+      "actual": "silence",
+      "predicted": "silence",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.967106743188068,
+        "wind": 0.4723733702885012,
+        "birds": 0.7383317973354072,
+        "speech": 0.5670773179686318,
+        "machine-hum": 0.6255274269772337,
+        "gunshot": 0.8641063079016429
+      }
+    },
+    {
+      "file": "silence-008-a.wav",
+      "actual": "silence",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.4880578492322232,
+        "wind": 0.7106356440216269,
+        "birds": 0.6513436803885694,
+        "speech": 0.821900565504899,
+        "machine-hum": 0.8100385129041344,
+        "gunshot": 0.5803842175440057
+      }
+    },
+    {
+      "file": "silence-009-a.wav",
+      "actual": "silence",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5,
+        "wind": 0.5675156154032457,
+        "birds": 0.814561432991683,
+        "speech": 0.7044351942038217,
+        "machine-hum": 0.8738968400203054,
+        "gunshot": 0.5300187865312476
+      }
+    },
+    {
+      "file": "silence-010-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.704421452508363,
+        "wind": 0.5317488005597243,
+        "birds": 1,
+        "speech": 0.7023475903749381,
+        "machine-hum": 0.8889097891580758,
+        "gunshot": 0.498300475217116
+      }
+    },
+    {
+      "file": "silence-011-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6307556910906992,
+        "wind": 0.5503970812911371,
+        "birds": 0.9541566884729726,
+        "speech": 0.7103084219772046,
+        "machine-hum": 0.8825063430176182,
+        "gunshot": 0.5106026177467339
+      }
+    },
+    {
+      "file": "silence-012-a.wav",
+      "actual": "silence",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5333142724885923,
+        "wind": 0.656077724795671,
+        "birds": 0.6519732944013221,
+        "speech": 0.7666300661684301,
+        "machine-hum": 0.9201872952351584,
+        "gunshot": 0.5263185886784527
+      }
+    },
+    {
+      "file": "silence-013-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6631649362601493,
+        "wind": 0.5904949964564857,
+        "birds": 0.9726516619211345,
+        "speech": 0.7430999235097039,
+        "machine-hum": 0.9139680439194292,
+        "gunshot": 0.5180336930918265
+      }
+    },
+    {
+      "file": "silence-014-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6001325458777357,
+        "wind": 0.5841741909212502,
+        "birds": 0.8963181421343633,
+        "speech": 0.70762425578988,
+        "machine-hum": 0.8759026376243713,
+        "gunshot": 0.5120115154368164
+      }
+    },
+    {
+      "file": "silence-015-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6652737667196634,
+        "wind": 0.5887467630495422,
+        "birds": 0.9622608559727481,
+        "speech": 0.7320544543325166,
+        "machine-hum": 0.9124684609530016,
+        "gunshot": 0.5052052735584969
+      }
+    },
+    {
+      "file": "silence-016-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.5250824096547908,
+        "birds": 0.9468249640002933,
+        "speech": 0.6991681610983459,
+        "machine-hum": 0.8788097217106277,
+        "gunshot": 0.49050518313728475
+      }
+    },
+    {
+      "file": "silence-017-a.wav",
+      "actual": "silence",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.5745280778636694,
+        "birds": 0.7849843459758863,
+        "speech": 0.7462051561956142,
+        "machine-hum": 0.9131877140659327,
+        "gunshot": 0.5004712240908017
+      }
+    },
+    {
+      "file": "silence-018-a.wav",
+      "actual": "silence",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.5755333852230771,
+        "birds": 0.7973452277625294,
+        "speech": 0.7488376384646027,
+        "machine-hum": 0.9119987426063502,
+        "gunshot": 0.5015406823139892
+      }
+    },
+    {
+      "file": "silence-019-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6847299900663915,
+        "wind": 0.5722004871154577,
+        "birds": 0.9509330878154163,
+        "speech": 0.6939502264765408,
+        "machine-hum": 0.8689470560448417,
+        "gunshot": 0.5139687748782149
+      }
+    },
+    {
+      "file": "silence-020-a.wav",
+      "actual": "silence",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.5379514362033753,
+        "birds": 0.875,
+        "speech": 0.7054154738194437,
+        "machine-hum": 0.8745339583833152,
+        "gunshot": 0.4956045549374398
+      }
+    },
+    {
+      "file": "wind-001-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.34699148174940375,
+        "wind": 0.944535621136727,
+        "birds": 0.4794894764459361,
+        "speech": 0.9379534120251362,
+        "machine-hum": 0.5832410126532425,
+        "gunshot": 0.6171116710247943
+      }
+    },
+    {
+      "file": "wind-002-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3289957093410936,
+        "wind": 0.9952827582426784,
+        "birds": 0.4947257903528992,
+        "speech": 0.9294024963824286,
+        "machine-hum": 0.6077798442884358,
+        "gunshot": 0.5909337302392599
+      }
+    },
+    {
+      "file": "wind-003-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.33698848952778915,
+        "wind": 0.9964176702640564,
+        "birds": 0.4486473735650246,
+        "speech": 0.9030555937837096,
+        "machine-hum": 0.600740607569079,
+        "gunshot": 0.6194178199459607
+      }
+    },
+    {
+      "file": "wind-004-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3386245550730448,
+        "wind": 0.996187093477397,
+        "birds": 0.366575559430557,
+        "speech": 0.862175874663954,
+        "machine-hum": 0.48799737478097727,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-005-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.33049587608593267,
+        "wind": 0.9642621042149359,
+        "birds": 0.4824261079825036,
+        "speech": 0.887980583874594,
+        "machine-hum": 0.7326998135920088,
+        "gunshot": 0.6006123716298409
+      }
+    },
+    {
+      "file": "wind-006-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.336155685564407,
+        "wind": 1,
+        "birds": 0.4960333157795596,
+        "speech": 0.937515997047869,
+        "machine-hum": 0.6073362626210834,
+        "gunshot": 0.6154180618384401
+      }
+    },
+    {
+      "file": "wind-007-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.327368546311506,
+        "wind": 0.9842045381609341,
+        "birds": 0.49931233791027935,
+        "speech": 0.9147766873808003,
+        "machine-hum": 0.7128045193192336,
+        "gunshot": 0.5795230406829484
+      }
+    },
+    {
+      "file": "wind-008-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3269207816629094,
+        "wind": 0.9859079416529044,
+        "birds": 0.5030850219141376,
+        "speech": 0.9269646250700622,
+        "machine-hum": 0.6172987572107017,
+        "gunshot": 0.5792829233834176
+      }
+    },
+    {
+      "file": "wind-009-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3380609755146729,
+        "wind": 0.9353363078626581,
+        "birds": 0.41851409177476595,
+        "speech": 0.8704830273416579,
+        "machine-hum": 0.6848981481078049,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-010-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.346160424475287,
+        "wind": 0.8597305536438804,
+        "birds": 0.37289478097418854,
+        "speech": 0.7829340447691336,
+        "machine-hum": 0.7241913539070772,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-011-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.34306307860613733,
+        "wind": 0.8036072150101454,
+        "birds": 0.33438725473530206,
+        "speech": 0.7704201868675395,
+        "machine-hum": 0.5610922918113389,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-012-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3410061478209464,
+        "wind": 0.941128478599835,
+        "birds": 0.36942567274470894,
+        "speech": 0.8407406972937842,
+        "machine-hum": 0.6872688990244845,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-013-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3472544302163467,
+        "wind": 0.94596334170405,
+        "birds": 0.40080833191574783,
+        "speech": 0.8473582012479614,
+        "machine-hum": 0.6366055667573679,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-014-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3329500336008284,
+        "wind": 0.965895727583911,
+        "birds": 0.4814490108393455,
+        "speech": 0.8978269583548488,
+        "machine-hum": 0.7190969478569949,
+        "gunshot": 0.6175155119617824
+      }
+    },
+    {
+      "file": "wind-015-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.33320386592529494,
+        "wind": 0.9687383709294298,
+        "birds": 0.398676228896691,
+        "speech": 0.8860130017801273,
+        "machine-hum": 0.6334636700677241,
+        "gunshot": 0.6189939745371678
+      }
+    },
+    {
+      "file": "wind-016-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3290025388066381,
+        "wind": 0.9829852123631281,
+        "birds": 0.4050606450128692,
+        "speech": 0.9310205410697847,
+        "machine-hum": 0.6054826565401984,
+        "gunshot": 0.6082727777532673
+      }
+    },
+    {
+      "file": "wind-017-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3298890775878849,
+        "wind": 0.9996633549868033,
+        "birds": 0.502782044938627,
+        "speech": 0.9112221650961011,
+        "machine-hum": 0.6674101540797714,
+        "gunshot": 0.5949888907543908
+      }
+    },
+    {
+      "file": "wind-018-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3368400496246321,
+        "wind": 0.95808193159152,
+        "birds": 0.39959312488617726,
+        "speech": 0.8514278408408641,
+        "machine-hum": 0.6302070194248042,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-019-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3549060732592752,
+        "wind": 0.7251625751856877,
+        "birds": 0.5036187349383825,
+        "speech": 0.7086406697380236,
+        "machine-hum": 0.6952816204438942,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-020-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.33763452129988486,
+        "wind": 0.9256214643708534,
+        "birds": 0.3403907605429934,
+        "speech": 0.8184903843240244,
+        "machine-hum": 0.5851748153764986,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-021-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.34698523290419264,
+        "wind": 0.7667132184381662,
+        "birds": 0.348790945219862,
+        "speech": 0.7334587745929467,
+        "machine-hum": 0.5963564249915199,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "wind-022-a.wav",
+      "actual": "wind",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.35039802924400554,
+        "wind": 0.789036732558814,
+        "birds": 0.4030739710077189,
+        "speech": 0.7425018310885085,
+        "machine-hum": 0.5751371628028833,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "birds-001-a.wav",
+      "actual": "birds",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.75,
+        "wind": 0.535861774796681,
+        "birds": 0.9036863065781362,
+        "speech": 0.7065597894564576,
+        "machine-hum": 0.8710462024155816,
+        "gunshot": 0.5120374805703192
+      }
+    },
+    {
+      "file": "birds-002-a.wav",
+      "actual": "birds",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5747068658449351,
+        "wind": 0.6818690392076053,
+        "birds": 0.7332515508264474,
+        "speech": 0.8122784534057816,
+        "machine-hum": 0.8541827105269705,
+        "gunshot": 0.5272014688088202
+      }
+    },
+    {
+      "file": "birds-003-a.wav",
+      "actual": "birds",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6127968162340554,
+        "wind": 0.6078492754839218,
+        "birds": 0.7394624962090117,
+        "speech": 0.7685260509910025,
+        "machine-hum": 0.8290698542123845,
+        "gunshot": 0.48755378179507414
+      }
+    },
+    {
+      "file": "birds-004-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5519781139565247,
+        "wind": 0.743068371645063,
+        "birds": 0.682378971241668,
+        "speech": 0.7969743022087369,
+        "machine-hum": 0.7763863179089331,
+        "gunshot": 0.5292783512265431
+      }
+    },
+    {
+      "file": "birds-005-a.wav",
+      "actual": "birds",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.5696098633448927,
+        "birds": 0.934026424575502,
+        "speech": 0.6611075016706767,
+        "machine-hum": 0.8937575131388074,
+        "gunshot": 0.48660233456003044
+      }
+    },
+    {
+      "file": "birds-006-a.wav",
+      "actual": "birds",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6278568358440586,
+        "wind": 0.5609059368487683,
+        "birds": 0.9548473470627523,
+        "speech": 0.668355155318116,
+        "machine-hum": 0.9025063297542599,
+        "gunshot": 0.48375134688432264
+      }
+    },
+    {
+      "file": "birds-007-a.wav",
+      "actual": "birds",
+      "predicted": "silence",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.9980311771456232,
+        "wind": 0.4916645477101169,
+        "birds": 0.7968310366967333,
+        "speech": 0.5894899160224022,
+        "machine-hum": 0.6507241804117053,
+        "gunshot": 0.847482132511351
+      }
+    },
+    {
+      "file": "birds-008-a.wav",
+      "actual": "birds",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5832177153347288,
+        "wind": 0.6717433197578007,
+        "birds": 0.7028960678512631,
+        "speech": 0.7943788542068914,
+        "machine-hum": 0.8559098368026204,
+        "gunshot": 0.5198680732804704
+      }
+    },
+    {
+      "file": "birds-009-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.49694321508346484,
+        "birds": 0.375,
+        "speech": 0.5472009041876641,
+        "machine-hum": 0.4684391904303157,
+        "gunshot": 0.5029291448572776
+      }
+    },
+    {
+      "file": "birds-010-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5395875371286597,
+        "wind": 0.7708268330280814,
+        "birds": 0.6583746971069956,
+        "speech": 0.8456796222063205,
+        "machine-hum": 0.7949056512952749,
+        "gunshot": 0.5204264419486551
+      }
+    },
+    {
+      "file": "birds-011-a.wav",
+      "actual": "birds",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.5240699407499321,
+        "birds": 0.9413454378114521,
+        "speech": 0.6956192313338877,
+        "machine-hum": 0.8712955473334945,
+        "gunshot": 0.49227573645003486
+      }
+    },
+    {
+      "file": "birds-012-a.wav",
+      "actual": "birds",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.6252172124927129,
+        "birds": 0.8035929415679344,
+        "speech": 0.7877014867373848,
+        "machine-hum": 0.6859397931474919,
+        "gunshot": 0.5768238909867329
+      }
+    },
+    {
+      "file": "birds-013-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6140007647594822,
+        "wind": 0.777990898459721,
+        "birds": 0.75,
+        "speech": 0.7789681115589571,
+        "machine-hum": 0.6628529443494133,
+        "gunshot": 0.5088766571154968
+      }
+    },
+    {
+      "file": "birds-014-a.wav",
+      "actual": "birds",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.6776670947784662,
+        "birds": 0.7965128568988944,
+        "speech": 0.7644813100468748,
+        "machine-hum": 0.9155505514550033,
+        "gunshot": 0.5036455372915376
+      }
+    },
+    {
+      "file": "birds-015-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6106160637642198,
+        "wind": 0.664440500385286,
+        "birds": 0.75,
+        "speech": 0.8051031128267109,
+        "machine-hum": 0.7468743965357669,
+        "gunshot": 0.5145040773239568
+      }
+    },
+    {
+      "file": "birds-016-a.wav",
+      "actual": "birds",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.75,
+        "wind": 0.57836058169542,
+        "birds": 1,
+        "speech": 0.6808048983909832,
+        "machine-hum": 0.8892602253265278,
+        "gunshot": 0.48808774371141495
+      }
+    },
+    {
+      "file": "birds-017-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6227038607158683,
+        "wind": 0.6534164309999109,
+        "birds": 0.7597314123444203,
+        "speech": 0.8119868942641594,
+        "machine-hum": 0.7911740681106258,
+        "gunshot": 0.5074419358681413
+      }
+    },
+    {
+      "file": "birds-018-a.wav",
+      "actual": "birds",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5843538500302743,
+        "wind": 0.5923018708686448,
+        "birds": 0.7612229036201077,
+        "speech": 0.7476670249352273,
+        "machine-hum": 0.9178958268317671,
+        "gunshot": 0.5168499288639843
+      }
+    },
+    {
+      "file": "birds-019-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.766708108164128,
+        "birds": 0.75,
+        "speech": 0.8223275583163481,
+        "machine-hum": 0.7859422269860238,
+        "gunshot": 0.4904009970254654
+      }
+    },
+    {
+      "file": "birds-020-a.wav",
+      "actual": "birds",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5897889983977247,
+        "wind": 0.5567732280013609,
+        "birds": 0.887087218791424,
+        "speech": 0.7123689366754502,
+        "machine-hum": 0.8888864894944822,
+        "gunshot": 0.5121916760162254
+      }
+    },
+    {
+      "file": "birds-021-a.wav",
+      "actual": "birds",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.576474354682158,
+        "wind": 0.6319413866675485,
+        "birds": 0.8715021339143549,
+        "speech": 0.7006358441123659,
+        "machine-hum": 0.8761589042252942,
+        "gunshot": 0.5617168507240227
+      }
+    },
+    {
+      "file": "birds-022-a.wav",
+      "actual": "birds",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.6744895210623426,
+        "birds": 0.75,
+        "speech": 0.8123931493587736,
+        "machine-hum": 0.789595998878396,
+        "gunshot": 0.5018577917509831
+      }
+    },
+    {
+      "file": "speech-001-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.71908380166034,
+        "birds": 0.5250996872436341,
+        "speech": 0.9513164740773647,
+        "machine-hum": 0.6815066255467321,
+        "gunshot": 0.5
+      }
+    },
+    {
+      "file": "speech-002-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.8176085217432008,
+        "birds": 0.4625,
+        "speech": 0.997540209093166,
+        "machine-hum": 0.593962968994715,
+        "gunshot": 0.5598875899612779
+      }
+    },
+    {
+      "file": "speech-003-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.7776733765016152,
+        "birds": 0.4375,
+        "speech": 0.9910714285714286,
+        "machine-hum": 0.6349104931129518,
+        "gunshot": 0.5
+      }
+    },
+    {
+      "file": "speech-004-a.wav",
+      "actual": "speech",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.9981197031603152,
+        "birds": 0.48116857790504497,
+        "speech": 0.9274484398148172,
+        "machine-hum": 0.6709436163090292,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "speech-005-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.7851485882045177,
+        "birds": 0.49400160248658337,
+        "speech": 0.9910714285714286,
+        "machine-hum": 0.6396123946357903,
+        "gunshot": 0.5
+      }
+    },
+    {
+      "file": "speech-006-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.8895656170068793,
+        "birds": 0.5043981137575645,
+        "speech": 0.9775231751598639,
+        "machine-hum": 0.6000440094916273,
+        "gunshot": 0.6221295713366868
+      }
+    },
+    {
+      "file": "speech-007-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.620205463910206,
+        "wind": 0.500130759201917,
+        "birds": 0.6202107534853921,
+        "speech": 0.7191584872483935,
+        "machine-hum": 0.6883438478710869,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "speech-008-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3879318860632925,
+        "wind": 0.736100033842304,
+        "birds": 0.6088800305266513,
+        "speech": 0.9614739141889633,
+        "machine-hum": 0.8605355915443444,
+        "gunshot": 0.48279610781406695
+      }
+    },
+    {
+      "file": "speech-009-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.4899130553339738,
+        "wind": 0.6679786737477795,
+        "birds": 0.625,
+        "speech": 0.966670884454108,
+        "machine-hum": 0.875,
+        "gunshot": 0.4550061420533894
+      }
+    },
+    {
+      "file": "speech-010-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.8186254802485042,
+        "birds": 0.5334065558688376,
+        "speech": 1,
+        "machine-hum": 0.6927433051441154,
+        "gunshot": 0.49473748074566964
+      }
+    },
+    {
+      "file": "speech-011-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.7636954113778905,
+        "birds": 0.5531351801717708,
+        "speech": 0.9869893222017918,
+        "machine-hum": 0.8001242267854759,
+        "gunshot": 0.4967164269063165
+      }
+    },
+    {
+      "file": "speech-012-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.7778518642437655,
+        "birds": 0.4375,
+        "speech": 0.9850175347187791,
+        "machine-hum": 0.7013888888888888,
+        "gunshot": 0.5
+      }
+    },
+    {
+      "file": "speech-013-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.7991396936572722,
+        "birds": 0.5371744083948591,
+        "speech": 0.9890914358565367,
+        "machine-hum": 0.7727317632221735,
+        "gunshot": 0.4839376374831025
+      }
+    },
+    {
+      "file": "speech-014-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.8572275594156868,
+        "birds": 0.5159245622394233,
+        "speech": 0.9966797796746463,
+        "machine-hum": 0.6715725075577634,
+        "gunshot": 0.5017466885360564
+      }
+    },
+    {
+      "file": "speech-015-a.wav",
+      "actual": "speech",
+      "predicted": "wind",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3642647002405788,
+        "wind": 0.9396102997155924,
+        "birds": 0.532788804141731,
+        "speech": 0.8771057884481618,
+        "machine-hum": 0.7695361904502026,
+        "gunshot": 0.6048626673455758
+      }
+    },
+    {
+      "file": "speech-016-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.6875642890588093,
+        "birds": 0.5552156903607792,
+        "speech": 0.8561275968517613,
+        "machine-hum": 0.7200166197378955,
+        "gunshot": 0.5
+      }
+    },
+    {
+      "file": "speech-017-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.8395970118096656,
+        "birds": 0.5602320574856076,
+        "speech": 1,
+        "machine-hum": 0.7057676492510621,
+        "gunshot": 0.4865931883867853
+      }
+    },
+    {
+      "file": "speech-018-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.42695516277302165,
+        "wind": 0.660912908251853,
+        "birds": 0.6875,
+        "speech": 0.8935000327922655,
+        "machine-hum": 0.8337867275751404,
+        "gunshot": 0.46783643411403414
+      }
+    },
+    {
+      "file": "speech-019-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.7971638467551911,
+        "birds": 0.4750909396066516,
+        "speech": 1,
+        "machine-hum": 0.6258325383637227,
+        "gunshot": 0.5
+      }
+    },
+    {
+      "file": "speech-020-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.7867138418638234,
+        "birds": 0.5481635688809707,
+        "speech": 0.9970076993088004,
+        "machine-hum": 0.8009958991726925,
+        "gunshot": 0.4891974972724318
+      }
+    },
+    {
+      "file": "speech-021-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.6925698204518893,
+        "birds": 0.6108592087521444,
+        "speech": 1,
+        "machine-hum": 0.7587957470923228,
+        "gunshot": 0.4797387112451247
+      }
+    },
+    {
+      "file": "speech-022-a.wav",
+      "actual": "speech",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.8079148978676678,
+        "birds": 0.5795223590453965,
+        "speech": 0.9886335357772009,
+        "machine-hum": 0.6971093363787072,
+        "gunshot": 0.5344911029818225
+      }
+    },
+    {
+      "file": "machine-hum-001-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5,
+        "wind": 0.5293144335925596,
+        "birds": 0.6809672976281914,
+        "speech": 0.8855638868474559,
+        "machine-hum": 0.5883821258403285,
+        "gunshot": 0.44912746123179637
+      }
+    },
+    {
+      "file": "machine-hum-002-a.wav",
+      "actual": "machine-hum",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7009153062074173,
+        "wind": 0.7929826738208992,
+        "birds": 0.9488640462712074,
+        "speech": 0.7640041522665506,
+        "machine-hum": 0.8397849222078106,
+        "gunshot": 0.5490944225928037
+      }
+    },
+    {
+      "file": "machine-hum-003-a.wav",
+      "actual": "machine-hum",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.48874941958210866,
+        "wind": 0.5793161276762645,
+        "birds": 0.7173515579409445,
+        "speech": 0.8563095357620278,
+        "machine-hum": 0.9765484600145413,
+        "gunshot": 0.560142611353392
+      }
+    },
+    {
+      "file": "machine-hum-004-a.wav",
+      "actual": "machine-hum",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.49132915968726004,
+        "wind": 0.8021013261077766,
+        "birds": 0.6883950149539313,
+        "speech": 0.8044539311481278,
+        "machine-hum": 0.8179421375530358,
+        "gunshot": 0.5654768080946652
+      }
+    },
+    {
+      "file": "machine-hum-005-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.35238066950726377,
+        "wind": 0.8665540573454867,
+        "birds": 0.5340967005129111,
+        "speech": 0.9195042960696426,
+        "machine-hum": 0.7212727579328412,
+        "gunshot": 0.5977224455707373
+      }
+    },
+    {
+      "file": "machine-hum-006-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.64862986290334,
+        "birds": 0.5492323959454106,
+        "speech": 0.9805669716991731,
+        "machine-hum": 0.7837527614012244,
+        "gunshot": 0.5812047206742306
+      }
+    },
+    {
+      "file": "machine-hum-007-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.4940610800426938,
+        "wind": 0.8544483594015057,
+        "birds": 0.6154997319214031,
+        "speech": 0.8689598008455557,
+        "machine-hum": 0.817977277288556,
+        "gunshot": 0.5718314312368468
+      }
+    },
+    {
+      "file": "machine-hum-008-a.wav",
+      "actual": "machine-hum",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6033565260665026,
+        "wind": 0.6773810230011481,
+        "birds": 0.5496516437681861,
+        "speech": 0.6592284668739832,
+        "machine-hum": 0.5614994860147574,
+        "gunshot": 0.875
+      }
+    },
+    {
+      "file": "machine-hum-009-a.wav",
+      "actual": "machine-hum",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.822218333489836,
+        "wind": 0.4927020215357207,
+        "birds": 0.7140875658247587,
+        "speech": 0.6551148338250004,
+        "machine-hum": 0.7354163696148515,
+        "gunshot": 0.8347878842446841
+      }
+    },
+    {
+      "file": "machine-hum-010-a.wav",
+      "actual": "machine-hum",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.41718678438051926,
+        "wind": 0.8706954928548892,
+        "birds": 0.6607885247033226,
+        "speech": 0.8334531539573884,
+        "machine-hum": 0.8843879114641576,
+        "gunshot": 0.5757256005265773
+      }
+    },
+    {
+      "file": "machine-hum-011-a.wav",
+      "actual": "machine-hum",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.8286155237363986,
+        "wind": 0.6477183580634979,
+        "birds": 0.60595594693306,
+        "speech": 0.6170229897339373,
+        "machine-hum": 0.6525870003468003,
+        "gunshot": 0.9479729861995296
+      }
+    },
+    {
+      "file": "machine-hum-012-a.wav",
+      "actual": "machine-hum",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.6008925909336,
+        "birds": 0.5734393938039533,
+        "speech": 0.7272393776291709,
+        "machine-hum": 0.7641705904892205,
+        "gunshot": 0.4930607060062911
+      }
+    },
+    {
+      "file": "machine-hum-013-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.4961272723201288,
+        "wind": 0.6976255589783488,
+        "birds": 0.625,
+        "speech": 0.9532176392755728,
+        "machine-hum": 0.8715268712782167,
+        "gunshot": 0.4886817436350842
+      }
+    },
+    {
+      "file": "machine-hum-014-a.wav",
+      "actual": "machine-hum",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.8603371109142326,
+        "wind": 0.6217167449797376,
+        "birds": 0.9029621643158583,
+        "speech": 0.6623510042023133,
+        "machine-hum": 0.783096457592465,
+        "gunshot": 0.7556215818306891
+      }
+    },
+    {
+      "file": "machine-hum-015-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5,
+        "wind": 0.7357075274680571,
+        "birds": 0.625,
+        "speech": 0.9030927945254827,
+        "machine-hum": 0.7901207538226193,
+        "gunshot": 0.5705888438814792
+      }
+    },
+    {
+      "file": "machine-hum-016-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5,
+        "wind": 0.6115109320465592,
+        "birds": 0.625,
+        "speech": 0.9446269080798024,
+        "machine-hum": 0.75,
+        "gunshot": 0.44605628844151046
+      }
+    },
+    {
+      "file": "machine-hum-017-a.wav",
+      "actual": "machine-hum",
+      "predicted": "birds",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6685975901148363,
+        "wind": 0.6549277088330399,
+        "birds": 0.9451442340147528,
+        "speech": 0.6868932410920374,
+        "machine-hum": 0.8517034337156013,
+        "gunshot": 0.509238698399705
+      }
+    },
+    {
+      "file": "machine-hum-018-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.4168059027894501,
+        "wind": 0.6478042723263344,
+        "birds": 0.5396990984275081,
+        "speech": 0.9625203130514715,
+        "machine-hum": 0.8509532681079,
+        "gunshot": 0.5433933745555672
+      }
+    },
+    {
+      "file": "machine-hum-019-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.8042196581802148,
+        "birds": 0.5,
+        "speech": 0.9359128926010349,
+        "machine-hum": 0.6454596274992145,
+        "gunshot": 0.625
+      }
+    },
+    {
+      "file": "machine-hum-020-a.wav",
+      "actual": "machine-hum",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.5235480127338776,
+        "wind": 0.8141153404096348,
+        "birds": 0.7675166349731894,
+        "speech": 0.8008227317219954,
+        "machine-hum": 0.9193016531664594,
+        "gunshot": 0.5328444698994215
+      }
+    },
+    {
+      "file": "machine-hum-021-a.wav",
+      "actual": "machine-hum",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.4158749286003298,
+        "wind": 0.5958269325427936,
+        "birds": 0.5513784572019886,
+        "speech": 0.6647808336466103,
+        "machine-hum": 0.6787914589952373,
+        "gunshot": 0.5705367751091288
+      }
+    },
+    {
+      "file": "machine-hum-022-a.wav",
+      "actual": "machine-hum",
+      "predicted": "silence",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.8840540879275278,
+        "wind": 0.5688414357171598,
+        "birds": 0.6778138089141833,
+        "speech": 0.5884333778811687,
+        "machine-hum": 0.6667432188611149,
+        "gunshot": 0.8813499038552582
+      }
+    },
+    {
+      "file": "machine-hum-023-a.wav",
+      "actual": "machine-hum",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.8498437600429416,
+        "wind": 0.5292517507374872,
+        "birds": 0.619377308336591,
+        "speech": 0.5803271176845295,
+        "machine-hum": 0.6386505683337559,
+        "gunshot": 0.898874851628731
+      }
+    },
+    {
+      "file": "machine-hum-024-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.49743897477178756,
+        "wind": 0.4092245663105181,
+        "birds": 0.589168136462691,
+        "speech": 0.8012850448393294,
+        "machine-hum": 0.75,
+        "gunshot": 0.4483742129662867
+      }
+    },
+    {
+      "file": "machine-hum-025-a.wav",
+      "actual": "machine-hum",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3268121139118481,
+        "wind": 0.3325432353925155,
+        "birds": 0.5093749875646926,
+        "speech": 0.7160095314765831,
+        "machine-hum": 0.6952684526404069,
+        "gunshot": 0.48973817411604403
+      }
+    },
+    {
+      "file": "gunshot-001-a.wav",
+      "actual": "gunshot",
+      "predicted": "silence",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7191098917142309,
+        "wind": 0.631867805930508,
+        "birds": 0.49763567670791187,
+        "speech": 0.6337941662403215,
+        "machine-hum": 0.5442783143351456,
+        "gunshot": 0.6947604179179337
+      }
+    },
+    {
+      "file": "gunshot-002-a.wav",
+      "actual": "gunshot",
+      "predicted": "machine-hum",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.4262175531492726,
+        "wind": 0.4024000153408184,
+        "birds": 0.6204838690003296,
+        "speech": 0.6890085122696596,
+        "machine-hum": 0.6976494151242096,
+        "gunshot": 0.5
+      }
+    },
+    {
+      "file": "gunshot-003-a.wav",
+      "actual": "gunshot",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7238178735440786,
+        "wind": 0.6810438088446541,
+        "birds": 0.5633597171963312,
+        "speech": 0.6581941478377701,
+        "machine-hum": 0.6681830599465638,
+        "gunshot": 0.9682399353745114
+      }
+    },
+    {
+      "file": "gunshot-004-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.79730120434276,
+        "birds": 0.5032726823509648,
+        "speech": 1,
+        "machine-hum": 0.6193496193560453,
+        "gunshot": 0.5444169406420246
+      }
+    },
+    {
+      "file": "gunshot-005-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.35783401898034883,
+        "wind": 0.8874874578593587,
+        "birds": 0.5576178509927275,
+        "speech": 0.9471009266085344,
+        "machine-hum": 0.7770968392358354,
+        "gunshot": 0.6161157620633873
+      }
+    },
+    {
+      "file": "gunshot-006-a.wav",
+      "actual": "gunshot",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7174033680656481,
+        "wind": 0.6450443007379929,
+        "birds": 0.5161874592256902,
+        "speech": 0.6757279283990142,
+        "machine-hum": 0.5803927168330714,
+        "gunshot": 0.974138919629379
+      }
+    },
+    {
+      "file": "gunshot-007-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.5023426937568977,
+        "birds": 0.3875,
+        "speech": 0.6719122373334292,
+        "machine-hum": 0.49804939708180557,
+        "gunshot": 0.6026310357219135
+      }
+    },
+    {
+      "file": "gunshot-008-a.wav",
+      "actual": "gunshot",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.625,
+        "wind": 0.5606868152253158,
+        "birds": 0.588591345358657,
+        "speech": 0.5404084737664926,
+        "machine-hum": 0.5841502993317268,
+        "gunshot": 0.7790349731316348
+      }
+    },
+    {
+      "file": "gunshot-009-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.42674501854526437,
+        "wind": 0.8511115369185057,
+        "birds": 0.6068836041541384,
+        "speech": 0.9117274559027964,
+        "machine-hum": 0.8361995540736908,
+        "gunshot": 0.590201708385347
+      }
+    },
+    {
+      "file": "gunshot-010-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.5897322362791522,
+        "birds": 0.375,
+        "speech": 0.7232862719792562,
+        "machine-hum": 0.625,
+        "gunshot": 0.4197337230631461
+      }
+    },
+    {
+      "file": "gunshot-011-a.wav",
+      "actual": "gunshot",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7650308587887703,
+        "wind": 0.6116630272769703,
+        "birds": 0.5377817576201694,
+        "speech": 0.6052834341808404,
+        "machine-hum": 0.5126745298326666,
+        "gunshot": 0.9513501899439902
+      }
+    },
+    {
+      "file": "gunshot-012-a.wav",
+      "actual": "gunshot",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7861666239675269,
+        "wind": 0.6794045607853693,
+        "birds": 0.5737237663228056,
+        "speech": 0.6485886787463851,
+        "machine-hum": 0.6677438652983095,
+        "gunshot": 0.9573473543678895
+      }
+    },
+    {
+      "file": "gunshot-013-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.46868820513457254,
+        "wind": 0.8866617498361288,
+        "birds": 0.5932834393809745,
+        "speech": 0.9106035241613567,
+        "machine-hum": 0.8268058783993321,
+        "gunshot": 0.5793380518244777
+      }
+    },
+    {
+      "file": "gunshot-014-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.375,
+        "wind": 0.5615252221858431,
+        "birds": 0.375,
+        "speech": 0.7109784561767816,
+        "machine-hum": 0.625,
+        "gunshot": 0.4214000599693009
+      }
+    },
+    {
+      "file": "gunshot-015-a.wav",
+      "actual": "gunshot",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.7265864521070462,
+        "wind": 0.6686272295102547,
+        "birds": 0.5329315209256658,
+        "speech": 0.6651201859133867,
+        "machine-hum": 0.5980051937837634,
+        "gunshot": 0.9398086509303476
+      }
+    },
+    {
+      "file": "gunshot-016-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.3700390261530835,
+        "wind": 0.758261088801579,
+        "birds": 0.42643049382744674,
+        "speech": 0.8140343114212568,
+        "machine-hum": 0.7549964240987238,
+        "gunshot": 0.5790273599555893
+      }
+    },
+    {
+      "file": "gunshot-017-a.wav",
+      "actual": "gunshot",
+      "predicted": "speech",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.459736666083012,
+        "wind": 0.8141931988994103,
+        "birds": 0.6192678978639219,
+        "speech": 0.917105838117514,
+        "machine-hum": 0.8671377172542196,
+        "gunshot": 0.5855872204267494
+      }
+    },
+    {
+      "file": "gunshot-018-a.wav",
+      "actual": "gunshot",
+      "predicted": "gunshot",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.6770174629891176,
+        "wind": 0.4845552431938194,
+        "birds": 0.5815850261841642,
+        "speech": 0.6507232652860266,
+        "machine-hum": 0.6328142825700183,
+        "gunshot": 0.8056972864798878
+      }
+    },
+    {
+      "file": "gunshot-019-a.wav",
+      "actual": "gunshot",
+      "predicted": "silence",
+      "provenance": "real",
+      "scores": {
+        "silence": 0.9674934826789349,
+        "wind": 0.5872631503402341,
+        "birds": 0.7387832168362901,
+        "speech": 0.5787673379169229,
+        "machine-hum": 0.6291017209290035,
+        "gunshot": 0.8809996093207602
+      }
+    }
+  ]
+}

@@ -30,6 +30,7 @@
     "proxy:claude": "node scripts/proxy-claude.mjs",
     "headroom:start": "node scripts/headroom-start.mjs",
     "headroom:claude": "node scripts/headroom-claude.mjs",
+    "rt:day-report": "node scripts/rt-day-report.mjs",
     "night-hunt:pr-review": "node scripts/night-hunt-pr-review.mjs",
     "archive:night-hunt": "node scripts/archive-night-hunt-artifacts.mjs",
     "code-review": "node scripts/code-review.mjs",
