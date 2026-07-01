@@ -150,6 +150,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `rt-day-report-script` | RT DAY-REPORT: скрипт yarn rt:day-report — анализ дня по git + transitions | 2026-07-01 | [`RT_DAY_REPORT_PROMPT.md`](../docs/prompts/RT_DAY_REPORT_PROMPT.md) | — | [карточка](./archive/rt-day-report-script.md) |
 | `rt-recon-s1` | RT-RECON-S1: реконструкция хронологии transitions[] из git-истории | 2026-07-01 | [`RT_RECON_PROMPT.md`](../docs/prompts/RT_RECON_PROMPT.md) | #221 (Issue открыт) | [карточка](./archive/rt-recon-s1.md) |
 | `rt-chron-s1-time-travel` | RT-CHRON-S1: event-sourcing архитектура + two-state playhead (genesis / now) | 2026-07-01 | — | #220 (Issue открыт) | [карточка](./archive/rt-chron-s1-time-travel.md) |
 | `research-tree-marathon-prep` | Research-Tree: подготовка к марафону (prep epic) | 2026-07-01 | — | #219 (Issue открыт) | [карточка](./archive/research-tree-marathon-prep.md) |

@@ -6,11 +6,12 @@
       "promptPath": "docs/prompts/RT_DAY_REPORT_PROMPT.md",
       "githubIssue": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "branch": "chore/backlog-cleanup-s1-clean",
       "opened": "2026-07-01",
-      "closed": null
+      "closed": null,
+      "archivedAt": "2026-07-01"
     },
     {
       "id": "rt-recon-s1",
