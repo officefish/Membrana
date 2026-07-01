@@ -3764,17 +3764,18 @@
       "githubIssue": 151,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Все подзадачи H1-H3 слиты в main (c429011, 192d81e). Epic закрыт.",
       "dependsOn": [],
       "notes": "W0 polish перед W1 UserCase. Child: #146 #152 #153.",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-w0-h3-selection-modal-keep",
@@ -3783,18 +3784,19 @@
       "githubIssue": 153,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-w0-hotfix",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Фикс уже в main: коммит c429011 (2026-06-23) — dismissSelectionAction → closeSelectionActionModal для backdrop/Отмена/Escape. Задача была закрыта вместе с H1/H2 в одном PR.",
       "dependsOn": [],
       "notes": "dismissSelectionAction → closeSelectionActionModal для backdrop/Отмена/Escape.",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-w0-h1-function-palette",
@@ -3803,18 +3805,19 @@
       "githubIssue": 146,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-w0-hotfix",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Слито в main: c429011 (2026-06-23) вместе с H2/H3.",
       "dependsOn": [],
       "notes": "board-right-sidebar: palette when no selection on function branch.",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-w0-h2-copy-paste-hotkeys",
@@ -3823,11 +3826,11 @@
       "githubIssue": 152,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-w0-hotfix",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Слито в main: c429011 и 192d81e (2026-06-23).",
       "dependsOn": [
         "db-w0-h3-selection-modal-keep"
       ],
@@ -3836,7 +3839,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "db-doc-v04-mvp",
