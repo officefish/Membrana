@@ -1,0 +1,79 @@
+[
+  {
+    "key": "BIRDS",
+    "name": "Пение птиц",
+    "icon": "🐦",
+    "color": "#90be6d",
+    "description": "Merged template from 22 samples",
+    "thresholds": {
+      "centroid": {
+        "min": 1709.4212822574511,
+        "max": 4675.091150299687
+      },
+      "flux": {
+        "min": 0,
+        "max": 0.11002838242252168
+      },
+      "rms": {
+        "min": 0,
+        "max": 0.5698461356704253
+      },
+      "frameHitRatio": {
+        "min": 0.95,
+        "max": 1
+      }
+    },
+    "temporalPatterns": {
+      "centroidStd": {
+        "min": 49.22798215165644,
+        "max": 114.86529168719835
+      },
+      "fluxStd": {
+        "min": 0.0018808461372749423,
+        "max": 0.004388640986974866
+      },
+      "rmsStd": {
+        "min": 0.005290691072814138,
+        "max": 0.012344945836566323
+      },
+      "activityRatio": {
+        "min": 0.75,
+        "max": 1.25
+      },
+      "avgSilenceDuration": {
+        "min": 0,
+        "max": 0.001
+      },
+      "avgBurstDuration": {
+        "min": 2.25,
+        "max": 6.75
+      },
+      "volumeTrend": [
+        "stable"
+      ],
+      "frequencyTrend": [
+        "oscillating"
+      ],
+      "longTermStability": [
+        "veryLow"
+      ],
+      "periodicity": [
+        "none"
+      ],
+      "envelopeShape": [
+        "sustained"
+      ],
+      "peakToAverageRatio": {
+        "min": 1.0006157050867694,
+        "max": 2.0782018490263674
+      },
+      "frequencyJumps": {
+        "enabled": true,
+        "minJumpsRequired": 6,
+        "densityPerSecond": {
+          "max": 2
+        }
+      }
+    }
+  }
+]

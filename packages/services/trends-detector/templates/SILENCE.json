@@ -1,0 +1,79 @@
+[
+  {
+    "key": "SILENCE",
+    "name": "Тишина",
+    "icon": "🤫",
+    "color": "#c8c8c8",
+    "description": "Merged template from 20 samples",
+    "thresholds": {
+      "centroid": {
+        "min": 1652.6462664748522,
+        "max": 5201.739697219455
+      },
+      "flux": {
+        "min": 0,
+        "max": 0.12696611070765704
+      },
+      "rms": {
+        "min": 0,
+        "max": 0.46552044862335074
+      },
+      "frameHitRatio": {
+        "min": 0.95,
+        "max": 1
+      }
+    },
+    "temporalPatterns": {
+      "centroidStd": {
+        "min": 50.233515756330554,
+        "max": 117.2115367647713
+      },
+      "fluxStd": {
+        "min": 0.0012987260778555762,
+        "max": 0.0032987260778555762
+      },
+      "rmsStd": {
+        "min": 0.00044891458492946415,
+        "max": 0.002448914584929464
+      },
+      "activityRatio": {
+        "min": 0,
+        "max": 0.001
+      },
+      "avgSilenceDuration": {
+        "min": 0,
+        "max": 0.001
+      },
+      "avgBurstDuration": {
+        "min": 0,
+        "max": 0.001
+      },
+      "volumeTrend": [
+        "stable"
+      ],
+      "frequencyTrend": [
+        "oscillating"
+      ],
+      "longTermStability": [
+        "veryLow"
+      ],
+      "periodicity": [
+        "none"
+      ],
+      "envelopeShape": [
+        "sustained"
+      ],
+      "peakToAverageRatio": {
+        "min": 1,
+        "max": 1.5849629364802917
+      },
+      "frequencyJumps": {
+        "enabled": true,
+        "minJumpsRequired": 4,
+        "densityPerSecond": {
+          "max": 1.3888888888888888
+        }
+      }
+    }
+  }
+]

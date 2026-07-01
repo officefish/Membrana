@@ -1,0 +1,79 @@
+[
+  {
+    "key": "SPEECH",
+    "name": "Человеческая речь",
+    "icon": "🗣️",
+    "color": "#b5838d",
+    "description": "Merged template from 22 samples",
+    "thresholds": {
+      "centroid": {
+        "min": 0,
+        "max": 7857.826134927159
+      },
+      "flux": {
+        "min": 0,
+        "max": 0.1542644777465975
+      },
+      "rms": {
+        "min": 0,
+        "max": 0.21087745360009116
+      },
+      "frameHitRatio": {
+        "min": 0.95,
+        "max": 1
+      }
+    },
+    "temporalPatterns": {
+      "centroidStd": {
+        "min": 1023.9760618992118,
+        "max": 2389.277477764828
+      },
+      "fluxStd": {
+        "min": 0.022441167532437818,
+        "max": 0.05236272424235491
+      },
+      "rmsStd": {
+        "min": 0.026807321457105376,
+        "max": 0.06255041673324588
+      },
+      "activityRatio": {
+        "min": 0.5249999999999999,
+        "max": 0.875
+      },
+      "avgSilenceDuration": {
+        "min": 0.225,
+        "max": 0.675
+      },
+      "avgBurstDuration": {
+        "min": 0.525,
+        "max": 1.5750000000000002
+      },
+      "volumeTrend": [
+        "stable"
+      ],
+      "frequencyTrend": [
+        "oscillating"
+      ],
+      "longTermStability": [
+        "veryLow"
+      ],
+      "periodicity": [
+        "none"
+      ],
+      "envelopeShape": [
+        "sustained"
+      ],
+      "peakToAverageRatio": {
+        "min": 1.8405743050788241,
+        "max": 3.822731249009865
+      },
+      "frequencyJumps": {
+        "enabled": true,
+        "minJumpsRequired": 9,
+        "densityPerSecond": {
+          "max": 3
+        }
+      }
+    }
+  }
+]

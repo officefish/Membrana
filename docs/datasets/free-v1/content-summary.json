@@ -1,0 +1,54 @@
+{
+  "owner": "Kuryokhin",
+  "classes": [
+    {
+      "class": "drone",
+      "samples": 60,
+      "real": 60,
+      "synthetic": 0,
+      "status": "existing"
+    },
+    {
+      "class": "silence",
+      "samples": 20,
+      "real": 20,
+      "synthetic": 0,
+      "status": "field-ready"
+    },
+    {
+      "class": "wind",
+      "samples": 22,
+      "real": 22,
+      "synthetic": 0,
+      "status": "field-ready"
+    },
+    {
+      "class": "birds",
+      "samples": 22,
+      "real": 22,
+      "synthetic": 0,
+      "status": "field-ready"
+    },
+    {
+      "class": "speech",
+      "samples": 22,
+      "real": 22,
+      "synthetic": 0,
+      "status": "field-ready"
+    },
+    {
+      "class": "machine-hum",
+      "samples": 25,
+      "real": 25,
+      "synthetic": 0,
+      "status": "field-ready"
+    },
+    {
+      "class": "gunshot",
+      "samples": 19,
+      "real": 19,
+      "synthetic": 0,
+      "status": "field-ready"
+    }
+  ]
+}
