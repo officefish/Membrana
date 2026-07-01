@@ -6,14 +6,18 @@
       "promptPath": "docs/prompts/RT_RECON_PROMPT.md",
       "githubIssue": 221,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-01",
-      "archivedAt": null,
+      "archivedAt": "2026-07-01",
       "parentEpic": null,
       "leadPersona": "vesnin",
-      "supportPersonas": ["dynin", "rodchenko"],
-      "notes": "Консилиум завершён 2026-07-01. Фазы: RECON-1 git анализ, RECON-2 заполнить transitions[], RECON-3 проверка playhead, RECON-4 PR."
+      "supportPersonas": [
+        "dynin",
+        "rodchenko"
+      ],
+      "notes": "Консилиум завершён 2026-07-01. Фазы: RECON-1 git анализ, RECON-2 заполнить transitions[], RECON-3 проверка playhead, RECON-4 PR.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "rt-chron-s1-time-travel",
@@ -27,7 +31,9 @@
       "archivedAt": "2026-07-01",
       "parentEpic": null,
       "leadPersona": "dynin",
-      "supportPersonas": ["vesnin"],
+      "supportPersonas": [
+        "vesnin"
+      ],
       "archiveNotes": "52 перехода в transitions[]: 17 genesis (2026-05-12) + 35 now (2026-07-01). computeStatesAt + buildFlowGraph(playhead). UI-тогл в шапке. PR #220. TypeScript чистый.",
       "notes": "Ретроактивная регистрация: работа выполнена без промпта. Архитектурное решение: event sourcing через transitions[] в JSON, playhead в UIState."
     },

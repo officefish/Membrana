@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `rt-recon-s1` | RT-RECON-S1: реконструкция хронологии transitions[] из git-истории | M | [`RT_RECON_PROMPT.md`](../docs/prompts/RT_RECON_PROMPT.md) | [#221](https://github.com/officefish/Membrana/issues/221) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `real-dataset-live-calibration` | Real dataset v0.2: библиотеки → анализ → live matching → journal parity (неделя) | L | [`REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md`](../docs/prompts/REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
@@ -151,6 +150,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `rt-recon-s1` | RT-RECON-S1: реконструкция хронологии transitions[] из git-истории | 2026-07-01 | [`RT_RECON_PROMPT.md`](../docs/prompts/RT_RECON_PROMPT.md) | #221 (Issue открыт) | [карточка](./archive/rt-recon-s1.md) |
 | `rt-chron-s1-time-travel` | RT-CHRON-S1: event-sourcing архитектура + two-state playhead (genesis / now) | 2026-07-01 | — | #220 (Issue открыт) | [карточка](./archive/rt-chron-s1-time-travel.md) |
 | `research-tree-marathon-prep` | Research-Tree: подготовка к марафону (prep epic) | 2026-07-01 | — | #219 (Issue открыт) | [карточка](./archive/research-tree-marathon-prep.md) |
 | `rt-prep-s0-registration` | RT-PREP-S0: регистрация prep-epic + GitHub issue #219 | 2026-07-01 | — | #219 (Issue открыт) | [карточка](./archive/rt-prep-s0-registration.md) |
