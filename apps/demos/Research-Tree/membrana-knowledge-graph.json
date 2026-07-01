@@ -1,6 +1,6 @@
 {
   "version": "0.3",
-  "updated": "2026-06-28",
+  "updated": "2026-07-01",
   "root": "core.acoustic-modality",
   "meta": {
     "node_types": {
@@ -531,7 +531,7 @@
       },
       "state": "established",
       "requires": ["stack.prisma-pg"],
-      "verify": true
+      "note": "packages/background-media — модули samples и trends-templates активны."
     },
     {
       "id": "stack.vite-react",
@@ -558,9 +558,9 @@
         "process": "internal",
         "materiality": "M2"
       },
-      "state": "available",
+      "state": "exploring",
       "requires": ["stack.vite-react"],
-      "verify": true
+      "note": "apps/membrana-studio — начато, Electron ^33.2.1."
     },
     {
       "id": "stack.claude-api",
@@ -603,7 +603,7 @@
       },
       "state": "available",
       "requires": ["stack.mjs-scripts"],
-      "verify": true,
+      "note": "research:digest в задумке. scripts/_analyzers-research.mjs работает без Perplexity.",
       "draws": {
         "stamina": "light",
         "_verify": true
@@ -654,9 +654,9 @@
         "process": "internal",
         "materiality": "M2"
       },
-      "state": "available",
+      "state": "established",
       "requires": ["stack.mjs-scripts"],
-      "verify": true
+      "note": ".cursor/mcp.json — 6 серверов активны (gitnexus, mintlify-reference, mintlify-admin, chatprd, atlan-docs, atlan)."
     },
     {
       "id": "stack.linear-agents",
@@ -671,8 +671,7 @@
       },
       "state": "fog",
       "requires": ["stack.linear-integration", "service.single-node-detector"],
-      "verify": true,
-      "note": "Отложено до прохождения single-node gate.",
+      "note": "Отложено до прохождения single-node gate. service.single-node-detector ещё exploring.",
       "draws": {
         "stamina": "heavy",
         "_verify": true
@@ -711,7 +710,7 @@
       },
       "state": "available",
       "requires": ["stack.rag-operational"],
-      "verify": true
+      "note": "Не начато сознательно — дисциплина stage-gate."
     },
     {
       "id": "stack.pinecone",
@@ -726,7 +725,7 @@
       },
       "state": "fog",
       "requires": ["stack.embeddings", "process.foreign-api-verification"],
-      "verify": true
+      "note": "stack.embeddings не established — fog по правилу."
     },
     {
       "id": "stack.docker",
@@ -741,7 +740,7 @@
       },
       "state": "established",
       "requires": ["stack.prisma-pg"],
-      "verify": true
+      "note": "Docker 29.2.0 подтверждён, docker-compose в background-media."
     },
     {
       "id": "stack.proxy-hiddify",
@@ -770,7 +769,7 @@
       },
       "state": "established",
       "requires": [],
-      "verify": true
+      "note": "VPS работает — cabinet и background-media развёрнуты."
     },
     {
       "id": "stack.vps-deploy",
@@ -783,9 +782,9 @@
         "process": "external",
         "materiality": "M4"
       },
-      "state": "available",
+      "state": "established",
       "requires": ["stack.docker", "stack.vps-timeweb"],
-      "verify": true,
+      "note": "Cabinet и background-media задеплоены на Timeweb VPS.",
       "lifecycle": "sustained",
       "upkeep": {
         "energy": "low",
@@ -1058,9 +1057,9 @@
         "process": "external",
         "materiality": "M3"
       },
-      "state": "available",
+      "state": "exploring",
       "requires": ["comm.one-pager"],
-      "verify": true,
+      "note": "docs/WHITE_PAPER.md — черновик в работе.",
       "draws": {
         "stamina": "medium",
         "_verify": true
@@ -1079,7 +1078,6 @@
       },
       "state": "available",
       "requires": ["comm.one-pager"],
-      "verify": true,
       "draws": {
         "stamina": "medium",
         "_verify": true
@@ -1098,7 +1096,7 @@
       },
       "state": "exploring",
       "requires": ["comm.one-pager"],
-      "verify": true,
+      "note": "docs/foundation/MEMBRANA_GRANT_REPORT.md — 227 строк, пробелы: CV/бюджет.",
       "draws": {
         "stamina": "medium",
         "_verify": true
@@ -1116,8 +1114,7 @@
         "materiality": "M3"
       },
       "state": "available",
-      "requires": ["comm.one-pager"],
-      "verify": true
+      "requires": ["comm.one-pager"]
     }
   ],
   "artifacts": [
@@ -1170,7 +1167,7 @@
       "kind": "dataset",
       "status": "in_progress",
       "materiality": "M3",
-      "verify": true
+      "path": "docs/datasets/free-v1/"
     },
     {
       "id": "art.gate-run-singlenode",
@@ -1208,12 +1205,13 @@
     },
     {
       "id": "art.research-digest",
-      "title": "yarn research:digest -> docs/research/digest-YYYY-MM-DD.md",
+      "title": "scripts/_analyzers-research.mjs (yarn analyzers:research:week)",
       "node": "stack.perplexity-sonar",
       "kind": "script",
       "status": "in_progress",
       "materiality": "M4",
-      "verify": true
+      "path": "scripts/_analyzers-research.mjs",
+      "note": "Perplexity не подключён; скрипт работает без него. Полный дайджест — в задумке."
     },
     {
       "id": "art.insight-linear-timing",
@@ -1244,8 +1242,9 @@
       "title": "Черновик публичного white paper",
       "node": "comm.white-paper",
       "kind": "doc",
-      "status": "missing",
-      "materiality": "M3"
+      "status": "in_progress",
+      "materiality": "M3",
+      "path": "docs/WHITE_PAPER.md"
     },
     {
       "id": "art.pitch-prompt",
@@ -1270,7 +1269,7 @@
       "kind": "doc",
       "status": "in_progress",
       "materiality": "M3",
-      "verify": true
+      "path": "docs/foundation/MEMBRANA_GRANT_REPORT.md"
     },
     {
       "id": "art.system-prompt",
