@@ -100,6 +100,10 @@ function collectActivePromptExcerpts(active, { full }) {
   const blocks = [];
 
   for (const t of active) {
+    if (!t.promptPath) {
+      blocks.push(`#### Task \`${t.id}\`\n\n(промпт не зарегистрирован)\n`);
+      continue;
+    }
     const abs = resolve(process.cwd(), t.promptPath);
     const text = readBounded(abs, limit);
     blocks.push(

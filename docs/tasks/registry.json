@@ -8,13 +8,17 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "fix",
       "createdAt": "2026-07-01",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Commit e51e62a; все 11 TS-ошибок исправлены; typecheck GREEN",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov", "dynin", "rodchenko"]
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko"
+      ]
     },
     {
       "id": "backlog-cleanup-s1",
