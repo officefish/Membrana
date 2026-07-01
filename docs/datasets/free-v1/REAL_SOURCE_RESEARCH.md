@@ -1,7 +1,7 @@
 # Real-source research for free-v1 S2
 
-**Owner:** Kuryokhin  
-**Provider:** Perplexity Sonar  
+**Owner:** Kuryokhin
+**Provider:** Perplexity Sonar
 **Policy:** CC0 / CC BY / public domain; primary-source verification required before import.
 
 > This file preserves raw research output for auditability. Its license and dataset

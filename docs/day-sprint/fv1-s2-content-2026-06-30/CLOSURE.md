@@ -1,7 +1,7 @@
 # CLOSURE CANDIDATE: fv1-S2 — real-only content and template QA
 
-**Sprint:** `fv1-s2-content`  
-**Epic:** `free-v1-sound-catalog` / GitHub #205  
+**Sprint:** `fv1-s2-content`
+**Epic:** `free-v1-sound-catalog` / GitHub #205
 **Result:** implementation evidence ready; exact-SHA Teamlead review pending
 
 ## Accountability

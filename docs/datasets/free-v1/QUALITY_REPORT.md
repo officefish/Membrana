@@ -1,7 +1,7 @@
 # free-v1 S2 Template Quality Passport
 
-**Owner:** Dynin  
-**Method:** leave-one-out class-envelope scoring  
+**Owner:** Dynin
+**Method:** leave-one-out class-envelope scoring
 **Samples:** 130 (130 real, 0 synthetic)
 
 > The corpus is real-only. S3 still requires threshold calibration and its own mixed-dataset stage gate.
@@ -17,8 +17,8 @@
 | machine-hum |      25 |     31.6% |  24.0% | 27.3% |
 | gunshot     |      19 |     58.3% |  36.8% | 45.2% |
 
-**Overall accuracy:** 47.7%  
-**Real-only accuracy:** 47.7%  
+**Overall accuracy:** 47.7%
+**Real-only accuracy:** 47.7%
 **Synthetic-only accuracy:** n/a
 
 ## Confusion matrix
