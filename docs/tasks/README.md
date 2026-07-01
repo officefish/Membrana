@@ -179,7 +179,6 @@
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
 | `free-v1-sound-catalog` | Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
-| `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
 | `fv1-s3-integration` | fv1-S3: multi-class routing в детекторе, калибровка порогов, stage-gate FPR<15%, free_v1 release | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
 
 ---
@@ -188,6 +187,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/fv1-s2-content.md) |
+| `backlog-cleanup-s1` | Backlog cleanup S1: аудит и закрытие Queue A (#146, #151, #54, #7, #8, #34, #11, #9) + P0 #157 | 2026-06-30 | [`BACKLOG_CLEANUP_S1_PROMPT.md`](../docs/prompts/BACKLOG_CLEANUP_S1_PROMPT.md) | #214 (Issue открыт) | [карточка](./archive/backlog-cleanup-s1.md) |
 | `fv1-s1-pipeline` | fv1-S1: параметризация пайплайна генерации шаблонов + Perplexity research акустики классов | 2026-06-30 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/fv1-s1-pipeline.md) |
 | `ci-test-stability-refactor` | Рефакторинг CI: vitest-конфиги, разделение integration/acceptance, CI-aware latency | 2026-06-29 | [`CI_TEST_STABILITY_REFACTOR_PROMPT.md`](../docs/prompts/CI_TEST_STABILITY_REFACTOR_PROMPT.md) | #191 (Issue открыт) | [карточка](./archive/ci-test-stability-refactor.md) |
 | `main-sync-sprint-2026-06-29` | Branch reconciliation sprint: merge main → techies68 → PR → main | 2026-06-29 | [`MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md`](../docs/prompts/MAIN_SYNC_SPRINT_2026_06_29_PROMPT.md) | — | [карточка](./archive/main-sync-sprint-2026-06-29.md) |
@@ -540,4 +541,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-06-30.*
+*Файл обновлён автоматически: 2026-07-01.*

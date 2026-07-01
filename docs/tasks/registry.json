@@ -14,7 +14,12 @@
       "archivedAt": "2026-06-30",
       "archiveNotes": "Закрыто 6 issues (#146 #151 #54 #11 #9 #157), residual задокументирован для #7 #8 #34. Написано 12 тестов, все зелёные. PR #215.",
       "leadPersona": "vesnin",
-      "supportPersonas": ["ozhegov", "dynin", "rodchenko", "kuryokhin"]
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ]
     },
     {
       "id": "ci-test-stability-refactor",
@@ -9724,17 +9729,18 @@
       "githubIssue": 205,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-30",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "PR #217 merged 2026-07-01 (4da71c7); 130 real-only samples, six templates, synthetic=0, LOO baseline 47.7%; S3 calibration deferred.",
       "notes": "Классы: SILENCE, WIND, BIRDS, SPEECH, MACHINE_HUM (приоритет), GUNSHOT. Perplexity: источники датасетов.",
       "leadPersona": "musician",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
-      "epicId": "free-v1-sound-catalog"
+      "epicId": "free-v1-sound-catalog",
+      "githubIssueClosedAt": null
     },
     {
       "id": "fv1-s3-integration",
