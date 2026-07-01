@@ -2574,10 +2574,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/research-tree-demo@workspace:apps/demos/Research-Tree"
   dependencies:
+    "@dagrejs/dagre": "npm:^3.0.0"
     "@tanstack/react-query": "npm:^5.51.1"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"
+    "@xyflow/react": "npm:^12.11.0"
     autoprefixer: "npm:^10.4.19"
     daisyui: "npm:^4.12.10"
     eslint: "npm:^8.57.0"

@@ -1,10 +1,8 @@
-export type NodeState = 'fog' | 'available' | 'exploring' | 'established';
-
-export type Epoch = 'E0' | 'E1' | 'E2' | 'E3' | 'E4';
+export type { NodeState, Epoch } from '../graph/types.js';
 
 export interface UIFilters {
-  states: NodeState[];
-  epochs: Epoch[];
+  states: import('../graph/types.js').NodeState[];
+  epochs: import('../graph/types.js').Epoch[];
 }
 
 export interface UIState {
@@ -15,7 +13,7 @@ export interface UIState {
 
 export type UIAction =
   | { type: 'SELECT_NODE'; id: string | null }
-  | { type: 'TOGGLE_STATE_FILTER'; state: NodeState }
-  | { type: 'TOGGLE_EPOCH_FILTER'; epoch: Epoch }
+  | { type: 'TOGGLE_STATE_FILTER'; state: import('../graph/types.js').NodeState }
+  | { type: 'TOGGLE_EPOCH_FILTER'; epoch: import('../graph/types.js').Epoch }
   | { type: 'TOGGLE_FRONTIER' }
   | { type: 'RESET_FILTERS' };
