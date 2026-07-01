@@ -1,0 +1,34 @@
+{
+  "date": "2026-06-27",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 1,
+    "established": 1,
+    "exploring": 0,
+    "totalLinesAdded": 6927,
+    "totalLinesDeleted": 0,
+    "totalLines": 6927,
+    "totalTokens": 27708,
+    "timeFirst": "2026-06-27 11:19:00 +0300",
+    "timeLast": "2026-06-27 11:19:00 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-38",
+      "nodeId": "stack.mcp-client",
+      "nodeName": "MCP-серверы (Perplexity, Playwright, Filesystem, Git…)",
+      "epoch": "E1",
+      "to": "established",
+      "linesAdded": 6927,
+      "linesDeleted": 0,
+      "tokens": 27708,
+      "commitSHAs": [
+        "dbaaff8"
+      ],
+      "commitMessages": [
+        "dbaaff8 — feat(mcp-m1): codebase-memory-mcp v0.8.1 — binary, gitignore, evening hook"
+      ],
+      "time": "2026-06-27 11:19:00 +0300"
+    }
+  ]
+}

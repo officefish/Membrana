@@ -1,0 +1,34 @@
+{
+  "date": "2026-05-21",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 1,
+    "established": 0,
+    "exploring": 1,
+    "totalLinesAdded": 228,
+    "totalLinesDeleted": 0,
+    "totalLines": 228,
+    "totalTokens": 912,
+    "timeFirst": "2026-05-21 13:04:55 +0300",
+    "timeLast": "2026-05-21 13:04:55 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-22",
+      "nodeId": "comm.grant-report",
+      "nodeName": "Грантовый отчёт (CV/бюджет — пробелы)",
+      "epoch": null,
+      "to": "exploring",
+      "linesAdded": 228,
+      "linesDeleted": 0,
+      "tokens": 912,
+      "commitSHAs": [
+        "88a41af"
+      ],
+      "commitMessages": [
+        "88a41af — Grand report added"
+      ],
+      "time": "2026-05-21 13:04:55 +0300"
+    }
+  ]
+}

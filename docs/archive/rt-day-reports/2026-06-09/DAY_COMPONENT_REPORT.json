@@ -1,0 +1,68 @@
+{
+  "date": "2026-06-09",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 3,
+    "established": 2,
+    "exploring": 1,
+    "totalLinesAdded": 2857,
+    "totalLinesDeleted": 9,
+    "totalLines": 2866,
+    "totalTokens": 11464,
+    "timeFirst": "2026-06-09 20:28:51 +0300",
+    "timeLast": "2026-06-09 21:17:36 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-23",
+      "nodeId": "stack.ollama-local",
+      "nodeName": "Ollama локальные модели (deepseek-r1, qwen2.5-coder…)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 1092,
+      "linesDeleted": 5,
+      "tokens": 4388,
+      "commitSHAs": [
+        "e4cf038"
+      ],
+      "commitMessages": [
+        "e4cf038 — Add MCP rollout bootstrap with tiered configs and keyless fallbacks."
+      ],
+      "time": "2026-06-09 20:28:51 +0300"
+    },
+    {
+      "transitionId": "t-m-25",
+      "nodeId": "stack.mcp-client",
+      "nodeName": "MCP-серверы (Perplexity, Playwright, Filesystem, Git…)",
+      "epoch": "E1",
+      "to": "exploring",
+      "linesAdded": 181,
+      "linesDeleted": 2,
+      "tokens": 732,
+      "commitSHAs": [
+        "e456b82"
+      ],
+      "commitMessages": [
+        "e456b82 — feat(mcp): add phase A workstation script and archive bootstrap task."
+      ],
+      "time": "2026-06-09 20:37:07 +0300"
+    },
+    {
+      "transitionId": "t-m-24",
+      "nodeId": "stack.sample-library",
+      "nodeName": "Sample library + trends (background-media)",
+      "epoch": "E1",
+      "to": "established",
+      "linesAdded": 1584,
+      "linesDeleted": 2,
+      "tokens": 6344,
+      "commitSHAs": [
+        "531e446"
+      ],
+      "commitMessages": [
+        "531e446 — feat(media-library): add storage service and sample library UI (A1/A2)."
+      ],
+      "time": "2026-06-09 21:17:36 +0300"
+    }
+  ]
+}

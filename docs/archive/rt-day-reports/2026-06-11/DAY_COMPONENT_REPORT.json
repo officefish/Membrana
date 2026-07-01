@@ -1,0 +1,34 @@
+{
+  "date": "2026-06-11",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 1,
+    "established": 0,
+    "exploring": 1,
+    "totalLinesAdded": 2782,
+    "totalLinesDeleted": 1,
+    "totalLines": 2783,
+    "totalTokens": 11132,
+    "timeFirst": "2026-06-11 10:49:44 +0300",
+    "timeLast": "2026-06-11 10:49:44 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-26",
+      "nodeId": "layer.trends-fft",
+      "nodeName": "Комбинация trends + FFT, шаблоны стабильности",
+      "epoch": "E1",
+      "to": "exploring",
+      "linesAdded": 2782,
+      "linesDeleted": 1,
+      "tokens": 11132,
+      "commitSHAs": [
+        "9b40fa4"
+      ],
+      "commitMessages": [
+        "9b40fa4 — feat(client): trends FFT analyzer plugin and trends-detector-service"
+      ],
+      "time": "2026-06-11 10:49:44 +0300"
+    }
+  ]
+}
