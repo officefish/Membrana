@@ -1,0 +1,172 @@
+{
+  "date": "2026-05-14",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 9,
+    "established": 9,
+    "exploring": 0,
+    "totalLinesAdded": 8804,
+    "totalLinesDeleted": 336,
+    "totalLines": 9140,
+    "totalTokens": 36560,
+    "timeFirst": "2026-05-14 06:24:31 +0000",
+    "timeLast": "2026-05-14 17:25:34 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-12",
+      "nodeId": "process.task-workflow",
+      "nodeName": "TASK_PROMPT_WORKFLOW, registry, closure regulation",
+      "epoch": null,
+      "to": "established",
+      "linesAdded": 492,
+      "linesDeleted": 8,
+      "tokens": 2000,
+      "commitSHAs": [
+        "67961db"
+      ],
+      "commitMessages": [
+        "67961db — docs+ci: TASKS_MANAGEMENT.md + GitHub Issue templates (wish/bug/imperfection)"
+      ],
+      "time": "2026-05-14 06:24:31 +0000"
+    },
+    {
+      "transitionId": "t-m-11",
+      "nodeId": "process.virtual-team",
+      "nodeName": "Виртуальная AI-команда (5 ролей, consilium, ask)",
+      "epoch": null,
+      "to": "established",
+      "linesAdded": 125,
+      "linesDeleted": 18,
+      "tokens": 572,
+      "commitSHAs": [
+        "1d88ad0"
+      ],
+      "commitMessages": [
+        "1d88ad0 — docs(team): personas Vesnin (Teamlead) and Dynin (Mathematician) + персональные git-ветки"
+      ],
+      "time": "2026-05-14 08:04:15 +0000"
+    },
+    {
+      "transitionId": "t-m-04",
+      "nodeId": "stack.mjs-scripts",
+      "nodeName": "Скрипты автоматизации (.mjs): ритуал, usercase, proxy",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 931,
+      "linesDeleted": 0,
+      "tokens": 3724,
+      "commitSHAs": [
+        "9e9c7ff",
+        "6be6bcb"
+      ],
+      "commitMessages": [
+        "9e9c7ff — feat(scripts): yarn ask <persona> — Step 1 (CLI, без Linear API)",
+        "6be6bcb — scripts: weekly analyzers research engine (HF Hub + arXiv + Claude)"
+      ],
+      "time": "2026-05-14 08:20:16 +0000"
+    },
+    {
+      "transitionId": "t-m-09",
+      "nodeId": "stack.claude-api",
+      "nodeName": "Claude API (agent reasoning, ритуал)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 325,
+      "linesDeleted": 0,
+      "tokens": 1300,
+      "commitSHAs": [
+        "9e9c7ff"
+      ],
+      "commitMessages": [
+        "9e9c7ff — feat(scripts): yarn ask <persona> — Step 1 (CLI, без Linear API)"
+      ],
+      "time": "2026-05-14 08:20:16 +0000"
+    },
+    {
+      "transitionId": "t-m-06",
+      "nodeId": "layer.foundation",
+      "nodeName": "Монорепо-фундамент (контракты в core, ритм CI)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 587,
+      "linesDeleted": 116,
+      "tokens": 2812,
+      "commitSHAs": [
+        "c8eeaa4"
+      ],
+      "commitMessages": [
+        "c8eeaa4 — feat(agenda): registry, plugin lifecycle, client registration"
+      ],
+      "time": "2026-05-14 09:38:42 +0300"
+    },
+    {
+      "transitionId": "t-m-10",
+      "nodeId": "stack.linear-integration",
+      "nodeName": "Linear (issue/PR трекинг)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 325,
+      "linesDeleted": 0,
+      "tokens": 1300,
+      "commitSHAs": [
+        "d5490cf"
+      ],
+      "commitMessages": [
+        "d5490cf — Merge pull request #14 from officefish/cursor/ask-persona-step1-e144"
+      ],
+      "time": "2026-05-14 11:23:55 +0300"
+    },
+    {
+      "transitionId": "t-m-07",
+      "nodeId": "stack.ci-pipeline",
+      "nodeName": "CI-контур: turbo lint/typecheck/test/build",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 72,
+      "linesDeleted": 0,
+      "tokens": 288,
+      "commitSHAs": [
+        "d543bf2"
+      ],
+      "commitMessages": [
+        "d543bf2 — ci: add dedicated unit-tests workflow"
+      ],
+      "time": "2026-05-14 13:22:25 +0000"
+    },
+    {
+      "transitionId": "t-m-05",
+      "nodeId": "stack.nestjs",
+      "nodeName": "NestJS + Fastify (background-*)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 5913,
+      "linesDeleted": 194,
+      "tokens": 24428,
+      "commitSHAs": [
+        "5403860"
+      ],
+      "commitMessages": [
+        "5403860 — feat(background-office): NestJS HTTP-шлюз + Journal UI + интеграция mic-плагина под новый lifecycle"
+      ],
+      "time": "2026-05-14 13:56:46 +0300"
+    },
+    {
+      "transitionId": "t-m-08",
+      "nodeId": "stack.github-actions",
+      "nodeName": "GitHub Actions (usercase, scheduled-ci, virtual-team-context)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 34,
+      "linesDeleted": 0,
+      "tokens": 136,
+      "commitSHAs": [
+        "5bb15c3"
+      ],
+      "commitMessages": [
+        "5bb15c3 — Merge pull request #22 from officefish/cursor/env-setup-agents-md-a812"
+      ],
+      "time": "2026-05-14 17:25:34 +0300"
+    }
+  ]
+}

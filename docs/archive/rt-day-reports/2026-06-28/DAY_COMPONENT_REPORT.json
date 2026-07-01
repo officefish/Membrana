@@ -1,0 +1,34 @@
+{
+  "date": "2026-06-28",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 1,
+    "established": 1,
+    "exploring": 0,
+    "totalLinesAdded": 22,
+    "totalLinesDeleted": 0,
+    "totalLines": 22,
+    "totalTokens": 88,
+    "timeFirst": "2026-06-28 15:51:07 +0300",
+    "timeLast": "2026-06-28 15:51:07 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-39",
+      "nodeId": "stack.proxy-hiddify",
+      "nodeName": "Hiddify proxy (Mixed Port 12334), HTTPS_PROXY routing",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 22,
+      "linesDeleted": 0,
+      "tokens": 88,
+      "commitSHAs": [
+        "9061433"
+      ],
+      "commitMessages": [
+        "9061433 — feat(scripts): add proxy-claude.mjs — Hiddify-specific Claude Code launcher"
+      ],
+      "time": "2026-06-28 15:51:07 +0300"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "date": "2026-06-12",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 1,
+    "established": 1,
+    "exploring": 0,
+    "totalLinesAdded": 584,
+    "totalLinesDeleted": 8,
+    "totalLines": 592,
+    "totalTokens": 2368,
+    "timeFirst": "2026-06-12 19:24:00 +0300",
+    "timeLast": "2026-06-12 19:24:00 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-27",
+      "nodeId": "stack.docker",
+      "nodeName": "Docker (db:up, контейнеризация сервисов)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 584,
+      "linesDeleted": 8,
+      "tokens": 2368,
+      "commitSHAs": [
+        "7ae16ae"
+      ],
+      "commitMessages": [
+        "7ae16ae — feat(background-media): Docker Compose and VPS deploy prep (A5b)"
+      ],
+      "time": "2026-06-12 19:24:00 +0300"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "version": "0.3",
-  "updated": "2026-06-28",
+  "updated": "2026-07-01",
   "root": "core.acoustic-modality",
   "meta": {
     "node_types": {
@@ -531,7 +531,7 @@
       },
       "state": "established",
       "requires": ["stack.prisma-pg"],
-      "verify": true
+      "note": "packages/background-media — модули samples и trends-templates активны."
     },
     {
       "id": "stack.vite-react",
@@ -558,9 +558,9 @@
         "process": "internal",
         "materiality": "M2"
       },
-      "state": "available",
+      "state": "exploring",
       "requires": ["stack.vite-react"],
-      "verify": true
+      "note": "apps/membrana-studio — начато, Electron ^33.2.1."
     },
     {
       "id": "stack.claude-api",
@@ -603,7 +603,7 @@
       },
       "state": "available",
       "requires": ["stack.mjs-scripts"],
-      "verify": true,
+      "note": "research:digest в задумке. scripts/_analyzers-research.mjs работает без Perplexity.",
       "draws": {
         "stamina": "light",
         "_verify": true
@@ -654,9 +654,9 @@
         "process": "internal",
         "materiality": "M2"
       },
-      "state": "available",
+      "state": "established",
       "requires": ["stack.mjs-scripts"],
-      "verify": true
+      "note": ".cursor/mcp.json — 6 серверов активны (gitnexus, mintlify-reference, mintlify-admin, chatprd, atlan-docs, atlan)."
     },
     {
       "id": "stack.linear-agents",
@@ -671,8 +671,7 @@
       },
       "state": "fog",
       "requires": ["stack.linear-integration", "service.single-node-detector"],
-      "verify": true,
-      "note": "Отложено до прохождения single-node gate.",
+      "note": "Отложено до прохождения single-node gate. service.single-node-detector ещё exploring.",
       "draws": {
         "stamina": "heavy",
         "_verify": true
@@ -711,7 +710,7 @@
       },
       "state": "available",
       "requires": ["stack.rag-operational"],
-      "verify": true
+      "note": "Не начато сознательно — дисциплина stage-gate."
     },
     {
       "id": "stack.pinecone",
@@ -726,7 +725,7 @@
       },
       "state": "fog",
       "requires": ["stack.embeddings", "process.foreign-api-verification"],
-      "verify": true
+      "note": "stack.embeddings не established — fog по правилу."
     },
     {
       "id": "stack.docker",
@@ -741,7 +740,7 @@
       },
       "state": "established",
       "requires": ["stack.prisma-pg"],
-      "verify": true
+      "note": "Docker 29.2.0 подтверждён, docker-compose в background-media."
     },
     {
       "id": "stack.proxy-hiddify",
@@ -770,7 +769,7 @@
       },
       "state": "established",
       "requires": [],
-      "verify": true
+      "note": "VPS работает — cabinet и background-media развёрнуты."
     },
     {
       "id": "stack.vps-deploy",
@@ -783,9 +782,9 @@
         "process": "external",
         "materiality": "M4"
       },
-      "state": "available",
+      "state": "established",
       "requires": ["stack.docker", "stack.vps-timeweb"],
-      "verify": true,
+      "note": "Cabinet и background-media задеплоены на Timeweb VPS.",
       "lifecycle": "sustained",
       "upkeep": {
         "energy": "low",
@@ -1058,9 +1057,9 @@
         "process": "external",
         "materiality": "M3"
       },
-      "state": "available",
+      "state": "exploring",
       "requires": ["comm.one-pager"],
-      "verify": true,
+      "note": "docs/WHITE_PAPER.md — черновик в работе.",
       "draws": {
         "stamina": "medium",
         "_verify": true
@@ -1079,7 +1078,6 @@
       },
       "state": "available",
       "requires": ["comm.one-pager"],
-      "verify": true,
       "draws": {
         "stamina": "medium",
         "_verify": true
@@ -1098,7 +1096,7 @@
       },
       "state": "exploring",
       "requires": ["comm.one-pager"],
-      "verify": true,
+      "note": "docs/foundation/MEMBRANA_GRANT_REPORT.md — 227 строк, пробелы: CV/бюджет.",
       "draws": {
         "stamina": "medium",
         "_verify": true
@@ -1116,8 +1114,7 @@
         "materiality": "M3"
       },
       "state": "available",
-      "requires": ["comm.one-pager"],
-      "verify": true
+      "requires": ["comm.one-pager"]
     }
   ],
   "artifacts": [
@@ -1170,7 +1167,7 @@
       "kind": "dataset",
       "status": "in_progress",
       "materiality": "M3",
-      "verify": true
+      "path": "docs/datasets/free-v1/"
     },
     {
       "id": "art.gate-run-singlenode",
@@ -1208,12 +1205,13 @@
     },
     {
       "id": "art.research-digest",
-      "title": "yarn research:digest -> docs/research/digest-YYYY-MM-DD.md",
+      "title": "scripts/_analyzers-research.mjs (yarn analyzers:research:week)",
       "node": "stack.perplexity-sonar",
       "kind": "script",
       "status": "in_progress",
       "materiality": "M4",
-      "verify": true
+      "path": "scripts/_analyzers-research.mjs",
+      "note": "Perplexity не подключён; скрипт работает без него. Полный дайджест — в задумке."
     },
     {
       "id": "art.insight-linear-timing",
@@ -1244,8 +1242,9 @@
       "title": "Черновик публичного white paper",
       "node": "comm.white-paper",
       "kind": "doc",
-      "status": "missing",
-      "materiality": "M3"
+      "status": "in_progress",
+      "materiality": "M3",
+      "path": "docs/WHITE_PAPER.md"
     },
     {
       "id": "art.pitch-prompt",
@@ -1270,7 +1269,7 @@
       "kind": "doc",
       "status": "in_progress",
       "materiality": "M3",
-      "verify": true
+      "path": "docs/foundation/MEMBRANA_GRANT_REPORT.md"
     },
     {
       "id": "art.system-prompt",
@@ -1584,5 +1583,98 @@
         }
       ]
     }
-  }
+  },
+  "transitions": [
+    { "id": "t-g-1",  "nodeId": "core.acoustic-modality",   "to": "established", "date": "2026-05-12", "note": "Концепт проекта — звуковая детекция дронов" },
+    { "id": "t-g-2",  "nodeId": "math.fourier",              "to": "established", "date": "2026-05-12", "note": "FFTModule.tsx в apps/client в initial commit" },
+    { "id": "t-g-3",  "nodeId": "stack.nodejs",              "to": "established", "date": "2026-05-12" },
+    { "id": "t-g-4",  "nodeId": "stack.typescript",          "to": "established", "date": "2026-05-12", "note": "tsconfig в initial commit" },
+    { "id": "t-g-5",  "nodeId": "stack.yarn4",               "to": "established", "date": "2026-05-12", "note": ".yarnrc.yml в initial commit" },
+    { "id": "t-g-6",  "nodeId": "stack.turborepo",           "to": "established", "date": "2026-05-12", "note": "Монорепо-скаффолд в initial commit" },
+    { "id": "t-g-7",  "nodeId": "stack.lint-format",         "to": "established", "date": "2026-05-12", "note": ".prettierrc.json в initial commit" },
+    { "id": "t-g-8",  "nodeId": "stack.vite-react",          "to": "established", "date": "2026-05-12", "note": "apps/client с Vite+React в initial commit" },
+    { "id": "t-g-9",  "nodeId": "stack.github",              "to": "established", "date": "2026-05-12" },
+    { "id": "t-g-10", "nodeId": "comm.dual-use-positioning", "to": "established", "date": "2026-05-12", "note": "Позиционирование как наблюдательная система — с первого дня" },
+    { "id": "t-g-11", "nodeId": "process.task-workflow",     "to": "established", "date": "2026-05-12", "note": "Базовый рабочий процесс заложен с первого дня" },
+    { "id": "t-g-12", "nodeId": "layer.audio-engine",        "to": "exploring",   "date": "2026-05-12", "note": "FFTModule, OscilloscopeModule, SpectrumModule в apps/client" },
+    { "id": "t-g-13", "nodeId": "layer.foundation",          "to": "exploring",   "date": "2026-05-12", "note": "Монорепо-фундамент заложен в initial commit" },
+    { "id": "t-g-14", "nodeId": "process.virtual-team",      "to": "exploring",   "date": "2026-05-12", "note": "virtual team docs added" },
+    { "id": "t-g-15", "nodeId": "stack.ci-pipeline",         "to": "exploring",   "date": "2026-05-12", "note": "CI настройка началась в день основания" },
+    { "id": "t-g-16", "nodeId": "stack.github-actions",      "to": "exploring",   "date": "2026-05-12", "note": "handshake with claude via git actions" },
+    { "id": "t-g-17", "nodeId": "stack.boundaries",          "to": "exploring",   "date": "2026-05-12", "note": "Изоляция пакетов настраивалась с первого дня" },
+    { "id": "t-m-01", "nodeId": "layer.audio-engine",               "to": "established", "date": "2026-05-13", "note": "a634b4b — audio-engine added" },
+    { "id": "t-m-02", "nodeId": "comm.white-paper",                 "to": "exploring",   "date": "2026-05-13", "note": "01fe383 — WHITE_PAPER.md: strategic concept of spatial sky reconnaissance" },
+    { "id": "t-m-03", "nodeId": "process.dev-rhythm",               "to": "exploring",   "date": "2026-05-13", "note": "8a80cde — plan:day и plan:week — первые ритуальные скрипты" },
+    { "id": "t-m-04", "nodeId": "stack.mjs-scripts",                "to": "established", "date": "2026-05-14", "note": "9e9c7ff, 6be6bcb — ask-persona + weekly analyzers research engine" },
+    { "id": "t-m-05", "nodeId": "stack.nestjs",                     "to": "established", "date": "2026-05-14", "note": "5403860 — NestJS HTTP-шлюз background-office" },
+    { "id": "t-m-06", "nodeId": "layer.foundation",                 "to": "established", "date": "2026-05-14", "note": "c8eeaa4 — agenda: registry, plugin lifecycle, client registration" },
+    { "id": "t-m-07", "nodeId": "stack.ci-pipeline",                "to": "established", "date": "2026-05-14", "note": "d543bf2 — ci: add dedicated unit-tests workflow" },
+    { "id": "t-m-08", "nodeId": "stack.github-actions",             "to": "established", "date": "2026-05-14", "note": "5bb15c3 — PR #22: env-setup + AGENTS.md; PR #23: unit-tests workflow" },
+    { "id": "t-m-09", "nodeId": "stack.claude-api",                 "to": "established", "date": "2026-05-14", "note": "9e9c7ff — yarn ask <persona> — Claude API в скриптах" },
+    { "id": "t-m-10", "nodeId": "stack.linear-integration",         "to": "established", "date": "2026-05-14", "note": "d5490cf — merge PR #14 ask-persona + Linear workflow" },
+    { "id": "t-m-11", "nodeId": "process.virtual-team",             "to": "established", "date": "2026-05-14", "note": "1d88ad0 — personas Vesnin (Teamlead) и Dynin (Mathematician)" },
+    { "id": "t-m-12", "nodeId": "process.task-workflow",            "to": "established", "date": "2026-05-14", "note": "67961db — TASKS_MANAGEMENT.md + GitHub Issue templates" },
+    { "id": "t-m-13", "nodeId": "math.spectral-features",           "to": "established", "date": "2026-05-15", "note": "3681d15 — FFT threshold test plugin: гармоники, спектральный анализ" },
+    { "id": "t-m-14", "nodeId": "process.dev-rhythm",               "to": "established", "date": "2026-05-16", "note": "de7e789 + a6254e5 — утренний+вечерний ритуал введён" },
+    { "id": "t-m-15", "nodeId": "process.stage-gate",               "to": "established", "date": "2026-05-16", "note": "34089bd — Single-Node Detection First: roadmap, stage-gate discipline" },
+    { "id": "t-m-16", "nodeId": "math.wave-physics",                "to": "established", "date": "2026-05-16", "note": "34089bd — spatial sky reconnaissance roadmap" },
+    { "id": "t-m-17", "nodeId": "layer.detector-contract",          "to": "established", "date": "2026-05-16", "note": "b628c26 — implement harmonic drone detector service phase 1" },
+    { "id": "t-m-18", "nodeId": "service.single-node-detector",     "to": "exploring",   "date": "2026-05-16", "note": "b628c26 — первая реализация гармонического детектора" },
+    { "id": "t-m-19", "nodeId": "layer.benchmark",                  "to": "established", "date": "2026-05-16", "note": "d82b57f — benchmark:detectors runner + DETECTOR_BENCHMARK report" },
+    { "id": "t-m-20", "nodeId": "math.quality-stats",               "to": "established", "date": "2026-05-16", "note": "d82b57f — benchmark runner: precision/recall/F1 метрики" },
+    { "id": "t-m-21", "nodeId": "comm.one-pager",                   "to": "established", "date": "2026-05-16", "note": "2d1f308 — Membrana foundation one-pager" },
+    { "id": "t-m-22", "nodeId": "comm.grant-report",                "to": "exploring",   "date": "2026-05-21", "note": "88a41af — Grand report added" },
+    { "id": "t-m-23", "nodeId": "stack.ollama-local",               "to": "established", "date": "2026-06-09", "note": "e4cf038 — MCP bootstrap с keyless fallbacks; Ollama как background lane" },
+    { "id": "t-m-24", "nodeId": "stack.sample-library",             "to": "established", "date": "2026-06-09", "note": "531e446 — storage service + sample library UI (A1/A2)" },
+    { "id": "t-m-25", "nodeId": "stack.mcp-client",                 "to": "exploring",   "date": "2026-06-09", "note": "e456b82 — MCP phase A workstation script" },
+    { "id": "t-m-26", "nodeId": "layer.trends-fft",                 "to": "exploring",   "date": "2026-06-11", "note": "9b40fa4 — trends FFT analyzer plugin и trends-detector-service" },
+    { "id": "t-m-27", "nodeId": "stack.docker",                     "to": "established", "date": "2026-06-12", "note": "7ae16ae — Docker Compose и VPS deploy prep (A5b)" },
+    { "id": "t-m-28", "nodeId": "stack.prisma-pg",                  "to": "established", "date": "2026-06-13", "note": "cfbbb37 — MP1 cabinet auth API, SPA, prod deploy pack" },
+    { "id": "t-m-29", "nodeId": "stack.vps-timeweb",                "to": "established", "date": "2026-06-13", "note": "e3eb85a — prod smoke на cabinet.membrana.space" },
+    { "id": "t-m-30", "nodeId": "stack.vps-deploy",                 "to": "established", "date": "2026-06-13", "note": "e3eb85a — MP1 archive after prod smoke on cabinet.membrana.space" },
+    { "id": "t-m-31", "nodeId": "process.foreign-api-verification", "to": "established", "date": "2026-06-13", "note": "e3eb85a — prod deploy с проверкой внешних API" },
+    { "id": "t-m-32", "nodeId": "layer.trends-fft",                 "to": "established", "date": "2026-06-17", "note": "e84e347 — DRONE_TIGHT stack + зелёная сборка" },
+    { "id": "t-m-33", "nodeId": "stack.electron-studio",            "to": "exploring",   "date": "2026-06-18", "note": "ba381ac — membrana-studio app + studio scripts" },
+    { "id": "t-m-34", "nodeId": "stack.boundaries",                 "to": "established", "date": "2026-06-20", "note": "fdfb1ab — CRDC D1: package boundaries и registry bootstrap contract" },
+    { "id": "t-m-35", "nodeId": "process.contract-testing",         "to": "established", "date": "2026-06-20", "note": "aa637a3 — CRDC D3: test health — passWithNoTests policy and coverage" },
+    { "id": "t-m-36", "nodeId": "stack.rag-operational",            "to": "established", "date": "2026-06-22", "note": "87612ee — dual-circuit RAG v1 (R0-R6)" },
+    { "id": "t-m-37", "nodeId": "process.code-review",              "to": "established", "date": "2026-06-22", "note": "b04f9fe — code review regulation v0.2 + multi-mode ritual" },
+    { "id": "t-m-38", "nodeId": "stack.mcp-client",                 "to": "established", "date": "2026-06-27", "note": "dbaaff8 — codebase-memory-mcp v0.8.1 + evening hook" },
+    { "id": "t-m-39", "nodeId": "stack.proxy-hiddify",              "to": "established", "date": "2026-06-28", "note": "9061433 — proxy-claude.mjs — Hiddify-specific Claude Code launcher" },
+    { "id": "t-n-1",  "nodeId": "math.spectral-features",    "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-2",  "nodeId": "math.wave-physics",         "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-3",  "nodeId": "math.quality-stats",        "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-4",  "nodeId": "stack.mjs-scripts",         "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-5",  "nodeId": "stack.boundaries",          "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-6",  "nodeId": "layer.foundation",          "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-7",  "nodeId": "layer.audio-engine",        "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-8",  "nodeId": "layer.detector-contract",   "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-9",  "nodeId": "layer.benchmark",           "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-10", "nodeId": "layer.trends-fft",          "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-11", "nodeId": "stack.nestjs",              "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-12", "nodeId": "stack.prisma-pg",           "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-13", "nodeId": "stack.sample-library",      "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-14", "nodeId": "stack.claude-api",          "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-15", "nodeId": "stack.ollama-local",        "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-16", "nodeId": "stack.linear-integration",  "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-17", "nodeId": "stack.mcp-client",          "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-18", "nodeId": "stack.rag-operational",     "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-19", "nodeId": "stack.docker",              "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-20", "nodeId": "stack.proxy-hiddify",       "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-21", "nodeId": "stack.vps-timeweb",         "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-22", "nodeId": "stack.vps-deploy",          "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-23", "nodeId": "stack.github-actions",      "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-24", "nodeId": "stack.ci-pipeline",         "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-25", "nodeId": "process.dev-rhythm",        "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-26", "nodeId": "process.code-review",       "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-27", "nodeId": "process.contract-testing",  "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-28", "nodeId": "process.virtual-team",      "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-29", "nodeId": "process.stage-gate",        "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-30", "nodeId": "process.foreign-api-verification", "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-31", "nodeId": "comm.one-pager",            "to": "established", "date": "2026-07-01" },
+    { "id": "t-n-32", "nodeId": "service.single-node-detector", "to": "exploring", "date": "2026-07-01", "note": "Фронтир — шлюз precision/recall открыт" },
+    { "id": "t-n-33", "nodeId": "stack.electron-studio",     "to": "exploring",   "date": "2026-07-01" },
+    { "id": "t-n-34", "nodeId": "comm.white-paper",          "to": "exploring",   "date": "2026-07-01" },
+    { "id": "t-n-35", "nodeId": "comm.grant-report",         "to": "exploring",   "date": "2026-07-01" }
+  ]
 }

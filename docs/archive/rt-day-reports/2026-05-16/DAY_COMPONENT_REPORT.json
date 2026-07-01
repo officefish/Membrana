@@ -1,0 +1,155 @@
+{
+  "date": "2026-05-16",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 8,
+    "established": 7,
+    "exploring": 1,
+    "totalLinesAdded": 8680,
+    "totalLinesDeleted": 517,
+    "totalLines": 9197,
+    "totalTokens": 36788,
+    "timeFirst": "2026-05-16 08:45:34 +0300",
+    "timeLast": "2026-05-16 14:13:33 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-14",
+      "nodeId": "process.dev-rhythm",
+      "nodeName": "Ритм утро/вечер/неделя",
+      "epoch": null,
+      "to": "established",
+      "linesAdded": 1472,
+      "linesDeleted": 223,
+      "tokens": 6780,
+      "commitSHAs": [
+        "de7e789",
+        "a6254e5"
+      ],
+      "commitMessages": [
+        "de7e789 — morning doc added",
+        "a6254e5 — Archive morning docs before evening code review."
+      ],
+      "time": "2026-05-16 08:45:34 +0300"
+    },
+    {
+      "transitionId": "t-m-15",
+      "nodeId": "process.stage-gate",
+      "nodeName": "Дисциплина stage-gate (управляет переходами эпох)",
+      "epoch": null,
+      "to": "established",
+      "linesAdded": 2414,
+      "linesDeleted": 81,
+      "tokens": 9980,
+      "commitSHAs": [
+        "34089bd"
+      ],
+      "commitMessages": [
+        "34089bd — Single-Node Detection First: roadmap, detector scaffolding, stage-gate."
+      ],
+      "time": "2026-05-16 09:35:47 +0300"
+    },
+    {
+      "transitionId": "t-m-16",
+      "nodeId": "math.wave-physics",
+      "nodeName": "Волновая физика, скорость звука как предел канала",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 2414,
+      "linesDeleted": 81,
+      "tokens": 9980,
+      "commitSHAs": [
+        "34089bd"
+      ],
+      "commitMessages": [
+        "34089bd — Single-Node Detection First: roadmap, detector scaffolding, stage-gate."
+      ],
+      "time": "2026-05-16 09:35:47 +0300"
+    },
+    {
+      "transitionId": "t-m-21",
+      "nodeId": "comm.one-pager",
+      "nodeName": "One-pager",
+      "epoch": null,
+      "to": "established",
+      "linesAdded": 72,
+      "linesDeleted": 0,
+      "tokens": 288,
+      "commitSHAs": [
+        "2d1f308"
+      ],
+      "commitMessages": [
+        "2d1f308 — Add Membrana foundation one-pager."
+      ],
+      "time": "2026-05-16 10:05:25 +0300"
+    },
+    {
+      "transitionId": "t-m-17",
+      "nodeId": "layer.detector-contract",
+      "nodeName": "Единый контракт детектора",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 531,
+      "linesDeleted": 21,
+      "tokens": 2208,
+      "commitSHAs": [
+        "b628c26"
+      ],
+      "commitMessages": [
+        "b628c26 — Implement harmonic drone detector service (GitHub #45 phase 1)."
+      ],
+      "time": "2026-05-16 10:34:04 +0300"
+    },
+    {
+      "transitionId": "t-m-18",
+      "nodeId": "service.single-node-detector",
+      "nodeName": "Детектор одного узла (DSP-гармонический)",
+      "epoch": "E1",
+      "to": "exploring",
+      "linesAdded": 531,
+      "linesDeleted": 21,
+      "tokens": 2208,
+      "commitSHAs": [
+        "b628c26"
+      ],
+      "commitMessages": [
+        "b628c26 — Implement harmonic drone detector service (GitHub #45 phase 1)."
+      ],
+      "time": "2026-05-16 10:34:04 +0300"
+    },
+    {
+      "transitionId": "t-m-19",
+      "nodeId": "layer.benchmark",
+      "nodeName": "Benchmark-инфраструктура",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 623,
+      "linesDeleted": 45,
+      "tokens": 2672,
+      "commitSHAs": [
+        "d82b57f"
+      ],
+      "commitMessages": [
+        "d82b57f — Add benchmark:detectors runner with autogen DETECTOR_BENCHMARK report."
+      ],
+      "time": "2026-05-16 14:13:33 +0300"
+    },
+    {
+      "transitionId": "t-m-20",
+      "nodeId": "math.quality-stats",
+      "nodeName": "Метрики качества: precision/recall/F1, FPR, ROC",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 623,
+      "linesDeleted": 45,
+      "tokens": 2672,
+      "commitSHAs": [
+        "d82b57f"
+      ],
+      "commitMessages": [
+        "d82b57f — Add benchmark:detectors runner with autogen DETECTOR_BENCHMARK report."
+      ],
+      "time": "2026-05-16 14:13:33 +0300"
+    }
+  ]
+}

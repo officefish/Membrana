@@ -1,0 +1,34 @@
+{
+  "date": "2026-06-17",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 1,
+    "established": 1,
+    "exploring": 0,
+    "totalLinesAdded": 4411,
+    "totalLinesDeleted": 840,
+    "totalLines": 5251,
+    "totalTokens": 21004,
+    "timeFirst": "2026-06-17 08:34:36 +0300",
+    "timeLast": "2026-06-17 08:34:36 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-32",
+      "nodeId": "layer.trends-fft",
+      "nodeName": "Комбинация trends + FFT, шаблоны стабильности",
+      "epoch": "E1",
+      "to": "established",
+      "linesAdded": 4411,
+      "linesDeleted": 840,
+      "tokens": 21004,
+      "commitSHAs": [
+        "e84e347"
+      ],
+      "commitMessages": [
+        "e84e347 — feat(detection): DRONE_TIGHT stack + green turbo build for apps (#84 #86)"
+      ],
+      "time": "2026-06-17 08:34:36 +0300"
+    }
+  ]
+}

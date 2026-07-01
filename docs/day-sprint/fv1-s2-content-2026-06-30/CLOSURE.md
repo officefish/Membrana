@@ -1,18 +1,18 @@
 # CLOSURE CANDIDATE: fv1-S2 — real-only content and template QA
 
-**Sprint:** `fv1-s2-content`
-**Epic:** `free-v1-sound-catalog` / GitHub #205
+**Sprint:** `fv1-s2-content`  
+**Epic:** `free-v1-sound-catalog` / GitHub #205  
 **Result:** implementation evidence ready; exact-SHA Teamlead review pending
 
 ## Accountability
 
-| Deliverable                               | Accountable persona | Evidence                                             |
-| ----------------------------------------- | ------------------- | ---------------------------------------------------- |
-| 130 licensed real recordings and metadata | Kuryokhin           | `docs/datasets/free-v1/*/metadata.json`              |
-| Reproducible materializer and inventory   | Ozhegov             | `materialize-free-v1-real.py`, `yarn vdr:list`       |
-| Six generated templates                   | Ozhegov             | `packages/services/trends-detector/templates/*.json` |
-| LOO metrics and confusion matrix          | Dynin               | `QUALITY_REPORT.md`, `quality-report.json`           |
-| Scope and handoff decision                | Vesnin              | pending exact-SHA review artifact                    |
+| Deliverable | Accountable persona | Evidence |
+|---|---|---|
+| 130 licensed real recordings and metadata | Kuryokhin | `docs/datasets/free-v1/*/metadata.json` |
+| Reproducible materializer and inventory | Ozhegov | `materialize-free-v1-real.py`, `yarn vdr:list` |
+| Six generated templates | Ozhegov | `packages/services/trends-detector/templates/*.json` |
+| LOO metrics and confusion matrix | Dynin | `QUALITY_REPORT.md`, `quality-report.json` |
+| Scope and handoff decision | Vesnin | pending exact-SHA review artifact |
 
 ## DoD
 

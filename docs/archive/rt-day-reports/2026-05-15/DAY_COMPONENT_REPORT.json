@@ -1,0 +1,34 @@
+{
+  "date": "2026-05-15",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 1,
+    "established": 1,
+    "exploring": 0,
+    "totalLinesAdded": 2188,
+    "totalLinesDeleted": 11,
+    "totalLines": 2199,
+    "totalTokens": 8796,
+    "timeFirst": "2026-05-15 12:11:13 +0300",
+    "timeLast": "2026-05-15 12:11:13 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-13",
+      "nodeId": "math.spectral-features",
+      "nodeName": "Гармонический анализ, кепстр, спектральный поток",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 2188,
+      "linesDeleted": 11,
+      "tokens": 8796,
+      "commitSHAs": [
+        "3681d15"
+      ],
+      "commitMessages": [
+        "3681d15 — feat(client): add FFT threshold test plugin for microphone"
+      ],
+      "time": "2026-05-15 12:11:13 +0300"
+    }
+  ]
+}

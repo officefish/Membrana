@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { spawnClaude } from './lib/spawn-claude.mjs';
 
 // Порт Hiddify Mixed; можно переопределить: HIDDIFY_PORT=2334 yarn proxy:claude
 const port = process.env.HIDDIFY_PORT ?? '12334';
@@ -11,12 +11,4 @@ const env = {
 };
 
 // Прокидываем любые доп. аргументы: yarn proxy:claude --resume и т.п.
-const args = process.argv.slice(2);
-
-const child = spawn('claude', args, {
-  env,
-  stdio: 'inherit',  // интерактивный TUI Claude Code работает как обычно
-  shell: true,       // нужно, чтобы Windows нашёл claude.cmd
-});
-
-child.on('exit', (code) => process.exit(code ?? 0));
+spawnClaude(process.argv.slice(2), env);

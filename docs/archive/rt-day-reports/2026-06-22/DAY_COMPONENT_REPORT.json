@@ -1,0 +1,51 @@
+{
+  "date": "2026-06-22",
+  "tokenCoefficient": 4,
+  "summary": {
+    "totalNodes": 2,
+    "established": 2,
+    "exploring": 0,
+    "totalLinesAdded": 6269,
+    "totalLinesDeleted": 114,
+    "totalLines": 6383,
+    "totalTokens": 25532,
+    "timeFirst": "2026-06-22 08:58:23 +0300",
+    "timeLast": "2026-06-22 18:35:03 +0300"
+  },
+  "nodes": [
+    {
+      "transitionId": "t-m-36",
+      "nodeId": "stack.rag-operational",
+      "nodeName": "Операционная память (filesystem/Obsidian, прямое адресование)",
+      "epoch": "E0",
+      "to": "established",
+      "linesAdded": 5410,
+      "linesDeleted": 49,
+      "tokens": 21836,
+      "commitSHAs": [
+        "87612ee"
+      ],
+      "commitMessages": [
+        "87612ee — feat(rag): dual-circuit RAG v1 (R0-R6) — service, office API, ritual hooks"
+      ],
+      "time": "2026-06-22 08:58:23 +0300"
+    },
+    {
+      "transitionId": "t-m-37",
+      "nodeId": "process.code-review",
+      "nodeName": "Ежедневный код-ревью (вечерний ритуал)",
+      "epoch": null,
+      "to": "established",
+      "linesAdded": 859,
+      "linesDeleted": 65,
+      "tokens": 3696,
+      "commitSHAs": [
+        "b04f9fe"
+      ],
+      "commitMessages": [
+        "b04f9fe — feat(scripts): code review regulation v0.2 and multi-mode ritual"
+      ],
+      "time": "2026-06-22 18:35:03 +0300"
+    }
+  ]
+}
