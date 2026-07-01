@@ -3,6 +3,7 @@ import { classifyTrends } from '@membrana/trends-detector-service';
 import { DEFAULT_FFT_TRENDS_POLICY, type ScenarioFftTrendsPolicy } from '@membrana/core';
 
 import {
+  getFreeV1ClassifyOptions,
   resolveTrendsTemplatesForAnalysis,
 } from '@/lib/droneTightCalibration';
 import { userTemplatesStore } from '@/plugins/trends-fft-analyzer/userTemplatesStore';
@@ -110,7 +111,7 @@ export function analyzeTrendsFromFftFrames(
     resolveTrendsTemplatesForAnalysis(userTemplatesStore.getTemplates(), policy.enabledTemplateKeys);
 
   const result = classifyTrends(metricSamples, templates, {
-    minConfidence: policy.minConfidence,
+    ...getFreeV1ClassifyOptions(policy.minConfidence),
     activityRmsThreshold: policy.minRms,
   });
 

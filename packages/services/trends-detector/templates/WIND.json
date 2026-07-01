@@ -1,6 +1,7 @@
 [
   {
     "key": "WIND",
+    "catalogVersion": "free_v1",
     "name": "Ветер",
     "icon": "💨",
     "color": "#a0c4ff",

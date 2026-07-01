@@ -1,6 +1,7 @@
 [
   {
     "key": "DRONE_TIGHT",
+    "catalogVersion": "free_v1",
     "name": "Дрон (tight p10-p90)",
     "icon": "🛸",
     "color": "#ff6b6b",

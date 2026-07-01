@@ -1,6 +1,7 @@
 [
   {
     "key": "GUNSHOT",
+    "catalogVersion": "free_v1",
     "name": "Стрельба",
     "icon": "💥",
     "color": "#ff4040",

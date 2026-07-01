@@ -3,6 +3,8 @@
  * Зеркалит `LiveJournalReportPayload` (@membrana/telemetry-journal-service) без зависимости.
  * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §17
  */
+import type { SoundClass } from '../sound-class.js';
+
 
 /** Известные schema version для MakeReportFromTrack / MakeReportFromAnalysis. */
 export const SCENARIO_REPORT_SCHEMAS = [
@@ -22,6 +24,7 @@ export interface ScenarioReportPayload {
   readonly reportId: string;
   readonly trackId: string;
   readonly isDetected: boolean;
+  readonly soundClass?: SoundClass;
   readonly summaryText?: string;
   readonly payload: Readonly<Record<string, unknown>>;
 }
@@ -64,6 +67,7 @@ export function createScenarioReportPayload(
     reportId: input.reportId,
     trackId: input.trackId,
     isDetected: input.isDetected,
+    soundClass: input.soundClass,
     summaryText: input.summaryText,
     payload: input.payload,
   };

@@ -10,6 +10,7 @@ import {
   DRONE_TIGHT_MIN_CONFIDENCE,
   DRONE_TIGHT_TRENDS_INTERVAL_MS,
   DRONE_TIGHT_TRENDS_MEASUREMENTS_COUNT,
+  getFreeV1ClassifyOptions,
   resolveTrendsTemplatesForAnalysis,
 } from '../../lib/droneTightCalibration';
 import { buildTrendsFftReport, type TrendsFftReport } from '../trends-fft-analyzer/buildTrendsFftReport';
@@ -56,7 +57,7 @@ export async function analyzeSampleTrendsFft(
     config.enabledTemplateKeys,
   );
   const result = classifyTrends(metricSamples, templates, {
-    minConfidence: config.minConfidence,
+    ...getFreeV1ClassifyOptions(config.minConfidence),
     activityRmsThreshold: config.minRms,
   });
 

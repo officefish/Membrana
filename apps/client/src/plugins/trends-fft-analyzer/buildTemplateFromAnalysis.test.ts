@@ -8,6 +8,9 @@ import {
 
 function makeResult(overrides: Partial<TrendsDetectionResult> = {}): TrendsDetectionResult {
   return {
+    class: 'wind',
+    isDrone: false,
+    isClassified: true,
     detectedState: 'WIND',
     detectedStateName: 'Ветер',
     detectedStateIcon: '💨',

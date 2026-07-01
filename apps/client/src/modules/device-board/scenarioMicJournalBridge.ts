@@ -1045,6 +1045,8 @@ export class ScenarioMicJournalBridge {
     this.lastDetection = {
       detected: analysis.result.isDetected,
       confidence: analysis.result.confidence,
+      soundClass: analysis.result.class,
+      isDrone: analysis.result.isDrone,
       templateId: analysis.result.detectedState,
       rawLevel: analysis.rawLevel,
     };
@@ -1574,6 +1576,8 @@ export class ScenarioMicJournalBridge {
     this.lastDetection = {
       detected: analysis.result.isDetected,
       confidence: analysis.result.confidence,
+      soundClass: analysis.result.class,
+      isDrone: analysis.result.isDrone,
       templateId: analysis.result.detectedState,
       rawLevel: analysis.rawLevel,
     };

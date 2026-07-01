@@ -1,4 +1,5 @@
 import type { TrendsDetectionResult } from '@membrana/trends-detector-service';
+import type { SoundClass } from '@membrana/core';
 
 /**
  * Journal DTO contract for an FFT trends analyzer report (`trends-fft/v0.1`).
@@ -14,6 +15,9 @@ export interface TrendsFftReport {
   readonly intervalMs: number;
   readonly measurementsCount: number;
   readonly mode: 'auto' | 'manual';
+  readonly class?: SoundClass;
+  readonly isDrone?: boolean;
+  readonly isClassified?: boolean;
   readonly detectedState: string;
   readonly detectedStateName: string;
   readonly detectedStateIcon: string;

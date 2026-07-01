@@ -1,4 +1,4 @@
-import { SYSTEM_TEMPLATES, type PatternTemplate } from '@membrana/trends-detector-service';
+import { FREE_V1_NON_DRONE_TEMPLATES, type PatternTemplate } from '@membrana/trends-detector-service';
 
 import { DRONE_TEMPLATE_KEY_PREFIX } from './constants.js';
 
@@ -8,10 +8,7 @@ import { DRONE_TEMPLATE_KEY_PREFIX } from './constants.js';
 export function resolveTemplateMatchCatalog(
   curatedDroneTemplates: readonly PatternTemplate[],
 ): PatternTemplate[] {
-  const nonDroneSystem = SYSTEM_TEMPLATES.filter(
-    (t: PatternTemplate) => !t.key.startsWith(DRONE_TEMPLATE_KEY_PREFIX),
-  );
-  return [...curatedDroneTemplates, ...nonDroneSystem];
+  return [...curatedDroneTemplates, ...FREE_V1_NON_DRONE_TEMPLATES];
 }
 
 export function isDroneTemplateKey(key: string, prefix = DRONE_TEMPLATE_KEY_PREFIX): boolean {

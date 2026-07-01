@@ -8,6 +8,7 @@ import type {
 import { computeTemporalFeatures } from './math/temporalFeatures.js';
 import { scoreTemplate } from './math/scoring.js';
 import { templateCountsAsDetection } from './templateCountsAsDetection.js';
+import { soundClassFromTemplateKey } from './sound-class.js';
 
 const CONFIDENCE_THRESHOLDS = {
   high: 75,
@@ -28,6 +29,9 @@ function confidenceLevel(
 
 function unknownResult(samples: readonly MetricSample[]): TrendsDetectionResult {
   return {
+    class: 'unknown',
+    isDrone: false,
+    isClassified: false,
     detectedState: 'UNKNOWN',
     detectedStateName: 'Неизвестно',
     detectedStateIcon: '❓',
@@ -89,8 +93,16 @@ export function classifyTrends(
   const roundedConfidence = Math.round(best.score);
   const level = confidenceLevel(best.score, second?.score ?? 0);
   const countsAsDetection = winnerTemplate ? templateCountsAsDetection(winnerTemplate) : false;
+  const winnerClass = soundClassFromTemplateKey(best.key);
+  const winnerThreshold = options.classMinConfidence?.[winnerClass] ?? minConfidence;
+  const isClassified = winnerClass !== 'unknown' && roundedConfidence >= winnerThreshold;
+  const soundClass = isClassified ? winnerClass : 'unknown';
+  const isDrone = soundClass === 'drone' && countsAsDetection;
 
   return {
+    class: soundClass,
+    isDrone,
+    isClassified,
     detectedState: best.key,
     detectedStateName: winnerTemplate?.name ?? best.key,
     detectedStateIcon: winnerTemplate?.icon ?? '❓',
@@ -98,7 +110,7 @@ export function classifyTrends(
     confidence: roundedConfidence,
     confidenceLevel: level,
     samples,
-    isDetected: roundedConfidence >= minConfidence && countsAsDetection,
+    isDetected: isDrone,
     scores,
     temporalFeatures: features,
   };

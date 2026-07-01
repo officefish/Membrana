@@ -267,15 +267,19 @@ export function hasSufficientReviewEvidence(manifest) {
   return passed.length >= 2 && passed.some((check) => check.command !== 'git diff --check');
 }
 
+const NON_BLOCKING_CONCLUSIONS = new Set(['skipped', 'neutral', 'cancelled']);
+
 export function normalizeGithubCheckRuns(checkRuns, commitSha) {
   return checkRuns.map((check) => ({
     command: `github-check:${check.name}`,
     status:
-      check.status === 'completed' && check.conclusion === 'success'
-        ? 'pass'
-        : check.status === 'completed'
-          ? 'fail'
-          : 'skipped',
+      check.status !== 'completed'
+        ? 'skipped'
+        : check.conclusion === 'success'
+          ? 'pass'
+          : NON_BLOCKING_CONCLUSIONS.has(check.conclusion)
+            ? 'skipped'
+            : 'fail',
     exitCode: null,
     commitSha,
     checkedAt: check.completed_at ?? check.started_at ?? new Date(0).toISOString(),

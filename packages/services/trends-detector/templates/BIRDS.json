@@ -1,6 +1,7 @@
 [
   {
     "key": "BIRDS",
+    "catalogVersion": "free_v1",
     "name": "Пение птиц",
     "icon": "🐦",
     "color": "#90be6d",

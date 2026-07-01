@@ -1,6 +1,7 @@
 [
   {
     "key": "SPEECH",
+    "catalogVersion": "free_v1",
     "name": "Человеческая речь",
     "icon": "🗣️",
     "color": "#b5838d",

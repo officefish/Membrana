@@ -1,6 +1,7 @@
 [
   {
     "key": "MACHINE_HUM",
+    "catalogVersion": "free_v1",
     "name": "Машинный гул",
     "icon": "⚙️",
     "color": "#ffd166",

@@ -39,6 +39,7 @@ export type {
   TimeSyncProvider,
   TdoaResult,
 } from './acoustic-network.js';
+export { SOUND_CLASSES, isSoundClass, type SoundClass } from './sound-class.js';
 
 export * from './device-board/index.js';
 export * from './node-realtime/index.js';

@@ -1,4 +1,22 @@
 import type { LiveJournalFilter, LiveJournalItem } from './types.js';
+import { isSoundClass, type SoundClass } from '@membrana/core';
+
+export function getLiveJournalSoundClass(item: LiveJournalItem): SoundClass | null {
+  if (item.kind !== 'report' || !item.report) return null;
+  if (isSoundClass(item.report.soundClass)) return item.report.soundClass;
+  const payload = item.report.payload;
+  if (isSoundClass(payload.soundClass)) return payload.soundClass;
+  const nestedReport = payload.report;
+  if (typeof nestedReport === 'object' && nestedReport !== null) {
+    const record = nestedReport as Record<string, unknown>;
+    if (isSoundClass(record.class)) return record.class;
+    if (typeof record.result === 'object' && record.result !== null) {
+      const result = record.result as Record<string, unknown>;
+      if (isSoundClass(result.class)) return result.class;
+    }
+  }
+  return null;
+}
 
 export function isLiveJournalDetection(item: LiveJournalItem): boolean {
   return item.kind === 'report' && item.report?.isDetected === true;

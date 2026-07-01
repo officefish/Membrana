@@ -38,8 +38,10 @@ export async function appendTrendsFftJournalReport(
       reportId: report.reportId,
       trackId: trendsFftSyntheticTrackId(moduleId, report.reportId),
       isDetected: report.isDetected,
+      soundClass: report.class,
       summaryText: buildTrendsFftSummaryText(report),
       payload: {
+        soundClass: report.class,
         report,
       },
     },

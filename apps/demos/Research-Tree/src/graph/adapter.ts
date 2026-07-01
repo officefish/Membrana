@@ -26,7 +26,7 @@ export function computeStatesAt(
   const result: Record<string, NodeState> = {};
   for (const node of graph.nodes) {
     if (node.id in explicit) {
-      result[node.id] = explicit[node.id];
+      result[node.id] = explicit[node.id]!;
     } else {
       result[node.id] = node.requires.every((r) => established.has(r)) ? 'available' : 'fog';
     }

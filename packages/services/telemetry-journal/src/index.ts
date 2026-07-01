@@ -32,6 +32,7 @@ export {
   type LiveJournalItem,
   type LiveJournalItemKind,
   type LiveJournalReportPayload,
+  type LiveJournalSoundClassFilter,
   type LiveJournalSnapshot,
   type LiveJournalStorageMode,
   type LiveJournalTrackPayload,
@@ -54,6 +55,7 @@ export {
   findReportsForTrack,
   findTrackForReport,
   isLiveJournalDetection,
+  getLiveJournalSoundClass,
   matchesLiveJournalFilter,
 } from './filters.js';
 

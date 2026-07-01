@@ -16,6 +16,18 @@ describe('template-match detector contract', () => {
     expect(detector.family).toBe('dsp');
   });
 
+  it('ships the exact seven-class free_v1 catalog', () => {
+    expect(createDefaultTemplateMatchCatalog().map((template) => template.key)).toEqual([
+      'DRONE_TIGHT',
+      'SILENCE',
+      'WIND',
+      'BIRDS',
+      'SPEECH',
+      'MACHINE_HUM',
+      'GUNSHOT',
+    ]);
+  });
+
   it('detect returns DetectionResult on synthetic buffer', async () => {
     const sampleRate = 48_000;
     const samples = new Float32Array(sampleRate * 5);
