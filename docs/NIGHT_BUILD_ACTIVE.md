@@ -1,6 +1,6 @@
 # Night Build — closed
 
-> Закрыто: `2026-06-21T16:50:48.164Z`
-> Handoff: [`docs/archive/night-build/2026-06-21/HANDOFF.md`](./archive/night-build/2026-06-21/HANDOFF.md)
+> Закрыто: `2026-07-01T19:05:07.656Z`
+> Handoff: [`docs/archive/night-build/2026-07-01/HANDOFF.md`](./archive/night-build/2026-07-01/HANDOFF.md)
 
-Epic `device-board-post-comp-debt-night-build` — sprint завершён. Для нового: `yarn night:open --id device-board-post-comp-debt-night-build --continue`.
+Epic `fv1-s2-closeout` — sprint завершён. Для нового: `yarn night:open --id fv1-s2-closeout --continue`.
