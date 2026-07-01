@@ -1,6 +1,77 @@
 {
-  "version": 1,
   "tasks": [
+    {
+      "id": "research-tree-marathon-prep",
+      "title": "Research-Tree: подготовка к марафону (prep epic)",
+      "promptPath": null,
+      "githubIssue": 219,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-07-01",
+      "sprintKind": "day-sprint",
+      "parentEpic": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Research-Tree — самостоятельный проект мониторинга разработки. Prep-epic готовит репо к марафону: bootstrap + state decision."
+    },
+    {
+      "id": "rt-prep-s0-registration",
+      "title": "RT-PREP-S0: регистрация prep-epic + GitHub issue #219",
+      "promptPath": null,
+      "githubIssue": 219,
+      "size": "S",
+      "status": "archived",
+      "createdAt": "2026-07-01",
+      "parentEpic": "research-tree-marathon-prep",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Issue #219 открыт, epic + 3 задачи зарегистрированы в реестре.",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-prep-s1-bootstrap",
+      "title": "RT-PREP-S1: scaffold workspace @membrana/research-tree-demo",
+      "promptPath": null,
+      "githubIssue": 219,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-07-01",
+      "parentEpic": "research-tree-marathon-prep",
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "dependsOn": [
+        "rt-prep-s0-registration"
+      ],
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "По §4 DEMO_STACK.md: package.json, tsconfig, vite.config.ts, tailwind, index.html, src/main.tsx + App.tsx. yarn dev запускается, JSON грузится."
+    },
+    {
+      "id": "rt-prep-s2-state-decision",
+      "title": "RT-PREP-S2: закрыть §5 DEMO_STACK.md — state-слой (TanStack Query vs Zustand vs useReducer)",
+      "promptPath": null,
+      "githubIssue": 219,
+      "size": "S",
+      "status": "active",
+      "createdAt": "2026-07-01",
+      "parentEpic": "research-tree-marathon-prep",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "dependsOn": [
+        "rt-prep-s1-bootstrap"
+      ],
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "STATE_ARCHITECTURE.md указывает на TanStack Query для git time-travel. Нужно зафиксировать финальное решение и закрыть открытый вопрос §5."
+    },
     {
       "id": "fix-async-jobs-client",
       "title": "ФИК-СПРИНТ: Исправление 11 типо-ошибок @membrana/client (async-jobs интеграция)",
