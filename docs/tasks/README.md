@@ -172,7 +172,6 @@
 | `db-sf-9-docs-sync` | SF9: docs sync CONCEPT/catalog/ARCHITECTURE | S | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
 | `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`INTEGRATIONS_STRATEGY.md`](../docs/INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
-| `mcp-tooling-m2-headroom-pilot` | MCP Agent Tooling M2: headroom пилот на logs:parse + RAG-чанках, замер before/after токенов | S | — | — |
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
@@ -202,6 +201,7 @@
 | `device-board-async-pipeline-v1` | Device-board async pipeline: Promise nodes, latent Sequence, non-blocking runtime | 2026-07-01 | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | #176 (Issue открыт) | [карточка](./archive/device-board-async-pipeline-v1.md) |
 | `mcp-tooling-m0-consilium` | MCP Agent Tooling M0: консилиум + решения зафиксированы | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m0-consilium.md) |
 | `mcp-tooling-m1-codebase-memory` | MCP Agent Tooling M1: codebase-memory-mcp — бинарь, индекс, 3 запроса, хук в rag-evening-index | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m1-codebase-memory.md) |
+| `mcp-tooling-m2-headroom-pilot` | MCP Agent Tooling M2: headroom пилот на logs:parse + RAG-чанках, замер before/after токенов | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m2-headroom-pilot.md) |
 | `mcp-tooling-m5-strategy-sync` | MCP Agent Tooling M5: обновить MCP_INTEGRATION_STRATEGY.md §5 тиры | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m5-strategy-sync.md) |
 | `backlog-cleanup-s1` | Backlog cleanup S1: аудит и закрытие Queue A (#146, #151, #54, #7, #8, #34, #11, #9) + P0 #157 | 2026-06-30 | [`BACKLOG_CLEANUP_S1_PROMPT.md`](../docs/prompts/BACKLOG_CLEANUP_S1_PROMPT.md) | #214 (Issue открыт) | [карточка](./archive/backlog-cleanup-s1.md) |
 | `fv1-s1-pipeline` | fv1-S1: параметризация пайплайна генерации шаблонов + Perplexity research акустики классов | 2026-06-30 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 | [карточка](./archive/fv1-s1-pipeline.md) |

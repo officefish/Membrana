@@ -9482,14 +9482,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "archivedAt": null,
-      "archiveNotes": null
+      "archivedAt": "2026-07-01",
+      "archiveNotes": "Реальная сессия замерена: 4.9% compression (gate не пройден), но cache_hit=98.2% — прокси не мешает prompt cache. Рекомендация: переопределить gate на cache_hit ≥80%. Отчёт: proxy-perf-report-real.json"
     },
     {
       "id": "mcp-tooling-m3-searxng",
