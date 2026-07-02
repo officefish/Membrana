@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-07-01
+
+> Epic: `fv1-s2-closeout`
+> Закрыто: `2026-07-01T19:05:07.655Z` (`yarn night:close`)
+> Промпт: `docs/prompts/FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/fv1-s2-closeout-2026-07-01` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 # Night Build log
 
 ## Open — 2026-06-14T18:06:19.233Z
@@ -67,3 +88,31 @@
 ## Checkpoint NB3 — 2026-07-01T19:04:51.500Z
 - Status: **pass**
 - Note: worktree fv1-s2-publish (+ ранее fv1-s2-close) удалены; ветки codex/fv1-s2-* сохранены в git; prune чист
+
+
+---
+
+## Итог fv1-s2-closeout
+
+| Фаза | Статус | Commit |
+|------|--------|--------|
+| NB0 Gate | done | 80a7609 (setup) |
+| NB1 S2 registry reconcile | done | 89608a4 |
+| NB2 Epic archive | done | 89608a4 |
+| NB3 Worktree cleanup | done | (worktree remove, не коммит) |
+
+**Результат:**
+
+- `fv1-s2-content` и эпик `free-v1-sound-catalog` → `archived` в реестре (консистентно с карточками и CLOSED #205). Все 3 спринта (S1/S2/S3) теперь archived.
+- Worktree `fv1-s2-publish` и `fv1-s2-close` удалены; ветки `codex/fv1-s2-*` сохранены в git; `git worktree prune` чист.
+- Заброшенный `review_pending` манифест S2 не воскрешался (замещён ручным bookkeeping #218) — удалён вместе с worktree.
+- `test:scripts` 102/102 на открытие и закрытие ночи.
+
+**Отклонение от регламента (осознанное):** база ветки — `main`, а не `techies68`.
+Причина: `techies68` отстал от `main` на 7 коммитов (нет S3-архива и актуального
+registry.json, расхождение +375/−177). Closeout правит реестр → обязан базироваться
+на текущем main. Утром merge целить в `main`, не в `techies68`.
+
+**Блокеры:** —
+
+**LGTM Vesnin:** pending (утренний review night-ветки перед merge в main)
