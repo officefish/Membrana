@@ -140,8 +140,7 @@
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
-| `free-v1-sound-catalog` | Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
-| `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | L | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | [#205](https://github.com/officefish/Membrana/issues/205) |
+| `fv1-s2-closeout` | Night Build: fv1-S2 closeout — реестр/worktree reconciliation после merge #217/#218 | S | [`FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 
 ---
 
@@ -149,6 +148,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `cabinet-device-board-tailwind-fix` | Кабинет: фикс вёрстки device-board (tailwind content globs) + prod deploy | 2026-07-02 | [`CABINET_DEVICE_BOARD_TAILWIND_FIX_PROMPT.md`](../docs/prompts/CABINET_DEVICE_BOARD_TAILWIND_FIX_PROMPT.md) | — | [карточка](./archive/cabinet-device-board-tailwind-fix.md) |
 | `rt-day-report-script` | RT DAY-REPORT: скрипт yarn rt:day-report — анализ дня по git + transitions | 2026-07-01 | [`RT_DAY_REPORT_PROMPT.md`](../docs/prompts/RT_DAY_REPORT_PROMPT.md) | — | [карточка](./archive/rt-day-report-script.md) |
 | `rt-recon-s1` | RT-RECON-S1: реконструкция хронологии transitions[] из git-истории | 2026-07-01 | [`RT_RECON_PROMPT.md`](../docs/prompts/RT_RECON_PROMPT.md) | #221 | [карточка](./archive/rt-recon-s1.md) |
 | `rt-chron-s1-time-travel` | RT-CHRON-S1: event-sourcing архитектура + two-state playhead (genesis / now) | 2026-07-01 | — | #220 (Issue открыт) | [карточка](./archive/rt-chron-s1-time-travel.md) |
@@ -209,6 +209,8 @@
 | `mcp-tooling-m1-codebase-memory` | MCP Agent Tooling M1: codebase-memory-mcp — бинарь, индекс, 3 запроса, хук в rag-evening-index | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m1-codebase-memory.md) |
 | `mcp-tooling-m2-headroom-pilot` | MCP Agent Tooling M2: headroom пилот на logs:parse + RAG-чанках, замер before/after токенов | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m2-headroom-pilot.md) |
 | `mcp-tooling-m5-strategy-sync` | MCP Agent Tooling M5: обновить MCP_INTEGRATION_STRATEGY.md §5 тиры | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m5-strategy-sync.md) |
+| `free-v1-sound-catalog` | Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/free-v1-sound-catalog.md) |
+| `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/fv1-s2-content.md) |
 | `fv1-s3-integration` | fv1-S3: multi-class routing в детекторе, калибровка порогов, stage-gate FPR<15%, free_v1 release | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/fv1-s3-integration.md) |
 | `backlog-cleanup-s1` | Backlog cleanup S1: аудит и закрытие Queue A (#146, #151, #54, #7, #8, #34, #11, #9) + P0 #157 | 2026-06-30 | [`BACKLOG_CLEANUP_S1_PROMPT.md`](../docs/prompts/BACKLOG_CLEANUP_S1_PROMPT.md) | #214 (Issue открыт) | [карточка](./archive/backlog-cleanup-s1.md) |
 | `fv1-s1-pipeline` | fv1-S1: параметризация пайплайна генерации шаблонов + Perplexity research акустики классов | 2026-06-30 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 | [карточка](./archive/fv1-s1-pipeline.md) |
@@ -563,4 +565,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-01.*
+*Файл обновлён автоматически: 2026-07-02.*

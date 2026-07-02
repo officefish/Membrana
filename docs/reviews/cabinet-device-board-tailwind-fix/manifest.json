@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "cabinet-device-board-tailwind-fix",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T1",
   "reviewMode": "standard",
   "branch": "fix/cabinet-device-board-tailwind",
@@ -68,9 +68,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #224 merged 2026-07-02T05:41:35Z (e97ec8090a13bb4ab5891011dc1f508871e59280)"
   },
   "createdAt": "2026-07-02T05:19:25.558Z",
-  "updatedAt": "2026-07-02T05:32:08.412Z"
+  "updatedAt": "2026-07-02T05:42:32.594Z"
 }
