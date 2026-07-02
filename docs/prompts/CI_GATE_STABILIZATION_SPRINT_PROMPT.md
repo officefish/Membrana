@@ -32,6 +32,10 @@ Lead Ozhegov+Rodchenko, S. CONTRIBUTING § CI & Testing: таблица smoke vs
 
 Scoped CI-gate деплоя / package-level gate'ы — только если flaky > 10% после CG1 (≤5% статус-кво; 5–10% дофиксить). Path-filter docs-only — малый приоритет.
 
+## Кандидат (обнаружено 2026-07-02, спринт db-capture-tariff-v2)
+
+**Stacked PR без CI-checks → closure review не набирает evidence.** `ci.yml` `pull_request.branches` покрывает только `[main, develop, vesnin, …]`; PR с base = feature-ветка (stacked, PR #227) не получает checks, а T1+ ревью требует ≥2 pass на SHA. Локальный `--check` недоступен по построению (untracked манифест ревью → worktree грязный). Workaround: ручной `workflow_dispatch` scheduled-ci на ветку. Фикс: добавить `feat/**` в `pull_request.branches` ci.yml (concurrency per-PR уже есть — лишних прогонов не будет). Размер XS, кандидат в CG2 или отдельным PR.
+
 ## Out of scope
 
 Отмена DR5-гейтов; версионирование пакетов (отдельный консилиум).
