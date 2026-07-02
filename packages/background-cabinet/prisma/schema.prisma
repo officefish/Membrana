@@ -39,6 +39,7 @@ model Session {
   expiresAt DateTime
   createdAt DateTime @default(now())
   scenarioEditLeases NodeScenarioEditLease[]
+  deviceCaptures     NodeDeviceCapture[]
 
   @@index([userId])
   @@index([expiresAt])
@@ -72,6 +73,7 @@ model Membrane {
   reports   TelemetryReport[]
   liveRecords TelemetryLiveRecord[]
   scenarioEditLeases NodeScenarioEditLease[]
+  deviceCaptures     NodeDeviceCapture[]
   createdAt DateTime @default(now())
 
   @@index([tariffId])
@@ -85,6 +87,7 @@ model Node {
   accessKeys NodeAccessKey[]
   device     Device?
   scenarioEditLease NodeScenarioEditLease?
+  deviceCapture     NodeDeviceCapture?
   createdAt  DateTime        @default(now())
 
   @@index([membraneId])
@@ -167,6 +170,31 @@ model TelemetryLiveRecord {
 }
 
 /** Server-first edit lease: один holder cabinet на (membraneId, mediaDeviceId). */
+enum DeviceCaptureMode {
+  soft
+  hard
+}
+
+/// Явный захват устройства кабинетом (tariff v2, канон DEVICE_BOARD_SERVER_FIRST.md v2.0).
+model NodeDeviceCapture {
+  id            String            @id @default(uuid()) @db.Uuid
+  membraneId    String            @db.Uuid
+  membrane      Membrane          @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  nodeId        String            @unique @db.Uuid
+  node          Node              @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  mediaDeviceId String            @db.Uuid
+  sessionId     String            @db.Uuid
+  session       Session           @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  mode          DeviceCaptureMode
+  acquiredAt    DateTime          @default(now())
+  expiresAt     DateTime
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([membraneId, mediaDeviceId])
+  @@index([expiresAt])
+}
+
 model NodeScenarioEditLease {
   id            String   @id @default(uuid()) @db.Uuid
   membraneId    String   @db.Uuid

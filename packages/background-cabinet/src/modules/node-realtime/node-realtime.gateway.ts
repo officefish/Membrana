@@ -17,10 +17,13 @@ import {
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
   parseNodeRealtimeEnvelope,
+  parseRuntimeCommandPayload,
   type NodeRealtimeEnvelope,
 } from '../../domain/node-realtime-wire';
+import { isCabinetRuntimeCommandAllowed } from '../../domain/device-capture';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
+import { DeviceCaptureRegistry } from './device-capture.registry';
 import { NodeRealtimeAuthService } from './node-realtime-auth.service';
 import { NodeRealtimeJournalHandler } from './node-realtime-journal.handler';
 import { NodeRealtimeService } from './node-realtime.service';
@@ -52,6 +55,7 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
     private readonly authService: NodeRealtimeAuthService,
     private readonly realtimeService: NodeRealtimeService,
     private readonly journalHandler: NodeRealtimeJournalHandler,
+    private readonly captureRegistry: DeviceCaptureRegistry,
   ) {
     this.heartbeatTimer = setInterval(() => this.pingClients(), 30_000);
   }
@@ -159,13 +163,58 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       return;
     }
 
-    // MP7b: команды runtime (run/stop/setMode) и mic-live идут из кабинета на узел.
-    if (meta.role === 'cabinet' && (envelope.channel === 'mic-live' || envelope.channel === 'runtime')) {
+    // CT2: runtime-команды кабинета — только при активном захвате и в whitelist тарифа.
+    if (meta.role === 'cabinet' && envelope.channel === 'runtime') {
+      this.dispatchCabinetRuntimeCommand(meta, envelope);
+      return;
+    }
+
+    if (meta.role === 'cabinet' && envelope.channel === 'mic-live') {
       const deviceId = this.resolveTargetDeviceId(meta, envelope);
       if (deviceId) {
         this.realtimeService.sendToNode(deviceId, envelope);
       }
     }
+  }
+
+  /**
+   * Enforcement тарифа v2 (канон §4): единственная точка контроля — gateway.
+   * Без активного захвата у кабинета нет контроля; вне whitelist → drop
+   * (WS-эквивалент 403). UI-блокировки — вторичная косметика.
+   */
+  private dispatchCabinetRuntimeCommand(
+    meta: NodeRealtimeSocketMeta,
+    envelope: NodeRealtimeEnvelope,
+  ): void {
+    if (envelope.type !== NODE_REALTIME_EVENT_TYPES.runtime.command) {
+      this.logger.debug({ type: envelope.type }, 'cabinet may only send runtime.command');
+      return;
+    }
+    const command = parseRuntimeCommandPayload(envelope.payload);
+    if (!command) {
+      this.logger.debug('invalid runtime.command payload');
+      return;
+    }
+    if (!isCabinetRuntimeCommandAllowed(command.action)) {
+      this.logger.warn(
+        { action: command.action },
+        'runtime.command rejected: not in tariff v2 whitelist',
+      );
+      return;
+    }
+    const deviceId = this.resolveTargetDeviceId(meta, envelope);
+    if (!deviceId) {
+      return;
+    }
+    const capture = this.captureRegistry.get(deviceId);
+    if (!capture || capture.membraneId !== meta.membraneId) {
+      this.logger.warn(
+        { action: command.action, deviceId },
+        'runtime.command rejected: device is not captured by cabinet',
+      );
+      return;
+    }
+    this.realtimeService.sendToNode(deviceId, envelope);
   }
 
   private resolveTargetDeviceId(
@@ -182,6 +231,16 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   private isValidBoardEnvelope(envelope: NodeRealtimeEnvelope): boolean {
+    // CT2: capture/heartbeat/release создаёт только DeviceCaptureService
+    // (REST + broadcast) — входящие по WS отбрасываем (server-authoritative).
+    if (
+      envelope.type === NODE_REALTIME_EVENT_TYPES.board.capture ||
+      envelope.type === NODE_REALTIME_EVENT_TYPES.board.heartbeat ||
+      envelope.type === NODE_REALTIME_EVENT_TYPES.board.release
+    ) {
+      this.logger.debug({ type: envelope.type }, 'board capture events are server-originated');
+      return false;
+    }
     if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.editLease) {
       if (parseBoardEditLeasePayload(envelope.payload) === null) {
         this.logger.debug({ type: envelope.type }, 'invalid board.edit-lease payload');
