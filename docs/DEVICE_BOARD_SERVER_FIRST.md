@@ -161,6 +161,8 @@ board.event:
 
 ## 11. Smoke checklist
 
+Runbook (prod E2E, CT8): [`actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md`](./actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md)
+
 ```text
 [ ] Без захвата: сервер не может run/stop (reject), клиент полностью автономен
 [ ] Захват мягкий → клиент может play/stop, edit/пауза заблокированы

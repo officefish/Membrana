@@ -87,3 +87,18 @@
 **Хелперы:** `@membrana/media-library-service` — `SAMPLE_LABEL_OPTIONS`, `sampleLabelBadgeClass`, `sampleLabelTitle`.
 
 **Регламент:** [`LIVE_DETECTION_UI.md`](./LIVE_DETECTION_UI.md) — сглаживание, demo layout, эталон harmonic demo.
+
+## Device capture state (tariff v2, CT5/CT9)
+
+Индикация явного захвата устройства (канон [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md) v2.0 §7). Источник: `@membrana/device-board` — `resolveServerFirstBadgeDescriptors()` (поле и борд) + локальные бейджи `NodesPage` (кабинет).
+
+| Состояние | Badge (DaisyUI) | Поле | Кабинет |
+|-----------|-----------------|------|---------|
+| Отпущено (после release) | `badge badge-ghost badge-sm` | «Отпущено» | — (виден кластер «Захватить») |
+| Захват мягкий | `badge badge-info badge-sm` | «Захват: мягкий» | «Захвачено: мягкий» |
+| Захват жёсткий | `badge badge-warning badge-sm` | «Захват: жёсткий» | «Захвачено: жёсткий» |
+| WS потеряна при захвате | `badge badge-warning badge-outline badge-sm` | «Соединение потеряно» (без countdown — TTL 5 мин отпустит сам) | — |
+
+**Alert вытеснения (требование п.9 брифа):** toast `toast toast-end` + `alert alert-warning`, **ручное закрытие** (не автоскрытие), `aria-live="polite"`; release оператором — `alert-info`; auto-release по TTL — `alert-warning`. Молчаливая остановка сценария запрещена — переход контроля всегда озвучен. Компонент: `apps/client` `CaptureAlertToasts`.
+
+**Кнопки поля:** controls остаются видимыми и дизейблятся по `resolveDeviceCaptureFlags()` (hard: только emergency stop); скрытие кластера — паттерн v1 strict, в v2 не используется.
