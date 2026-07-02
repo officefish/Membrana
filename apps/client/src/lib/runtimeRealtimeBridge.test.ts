@@ -17,16 +17,10 @@ import { resetServerFirstStoreForTests, useServerFirstStore } from '@/stores/ser
 function fakeController(): RuntimeBridgeController & {
   start: ReturnType<typeof vi.fn>;
   stop: ReturnType<typeof vi.fn>;
-  pause: ReturnType<typeof vi.fn>;
-  resume: ReturnType<typeof vi.fn>;
-  setMode: ReturnType<typeof vi.fn>;
 } {
   return {
     start: vi.fn(),
     stop: vi.fn(),
-    pause: vi.fn(),
-    resume: vi.fn(),
-    setMode: vi.fn(),
   };
 }
 
@@ -64,7 +58,7 @@ describe('runtimeRealtimeBridge helpers', () => {
     expect(isRuntimeCommandEnvelope(journal)).toBe(false);
   });
 
-  it('applyRuntimeCommand routes run/stop/setMode', () => {
+  it('applyRuntimeCommand routes run/stop; pause/resume/setMode отброшены (CT7)', () => {
     const controller = fakeController();
 
     expect(applyRuntimeCommand(controller, { action: 'run' })).toBe(true);
@@ -73,14 +67,18 @@ describe('runtimeRealtimeBridge helpers', () => {
     expect(applyRuntimeCommand(controller, { action: 'stop' })).toBe(true);
     expect(controller.stop).toHaveBeenCalledTimes(1);
 
-    expect(applyRuntimeCommand(controller, { action: 'setMode', mode: 'alarm' })).toBe(true);
-    expect(controller.setMode).toHaveBeenCalledWith('alarm');
-
-    expect(applyRuntimeCommand(controller, { action: 'pause' })).toBe(true);
-    expect(controller.pause).toHaveBeenCalledTimes(1);
-
-    expect(applyRuntimeCommand(controller, { action: 'resume' })).toBe(true);
-    expect(controller.resume).toHaveBeenCalledTimes(1);
+    // CT7 (канон §9): v1-команды удалены из wire — парсер возвращает null.
+    // Tariff v3: вернуть маршрутизацию pause/resume/setMode.
+    const legacy = [
+      { action: 'setMode', mode: 'alarm' },
+      { action: 'pause' },
+      { action: 'resume' },
+    ] as unknown as Parameters<typeof applyRuntimeCommand>[1][];
+    for (const payload of legacy) {
+      expect(applyRuntimeCommand(controller, payload)).toBe(false);
+    }
+    expect(controller.start).toHaveBeenCalledTimes(1);
+    expect(controller.stop).toHaveBeenCalledTimes(1);
   });
 
   it('applyRuntimeCommand: selectScenario фиксирует выбор кабинета (CT4)', () => {

@@ -71,9 +71,8 @@ export type RuntimeMode = 'normal' | 'alarm';
  * (`board.capture`). Enforcement — gateway whitelist (канон §4.1).
  * `deviceId` — целевой узел (multi-node, MP7b RT5).
  *
- * `pause` / `resume` / `setMode` — Tariff v3: удаляются из wire в CT7.
- * `authority` / `followerMode` на `run` — deprecated (v1 неявный захват);
- * в v2 захват передаётся отдельным `board.capture`.
+ * CT7: v1-поверхность удалена из wire (канон §9).
+ * // Tariff v3: pause / resume / setMode; authority/followerMode на run.
  */
 export type RuntimeCommandPayload =
   | {
@@ -81,10 +80,6 @@ export type RuntimeCommandPayload =
       readonly deviceId?: string;
       /** v2: запуск конкретного существующего сценария (после selectScenario). */
       readonly scenarioId?: string;
-      /** @deprecated Tariff v3 / v1 legacy — захват теперь явный (`board.capture`). Удаляется в CT7. */
-      readonly authority?: RuntimeAuthority;
-      /** @deprecated Tariff v3 / v1 legacy — заменён на `capture.mode`. Удаляется в CT7. */
-      readonly followerMode?: RuntimeFollowerMode;
     }
   | {
       readonly action: 'selectScenario';
@@ -96,11 +91,7 @@ export type RuntimeCommandPayload =
       readonly deviceId?: string;
       /** 0 = hard-cut (emergency stop); 200 = graceful вытеснение (канон §3.1). */
       readonly fadeOutMs?: number;
-    }
-  /** @deprecated Tariff v3: pause/resume/setMode удаляются из wire в CT7. */
-  | { readonly action: 'pause'; readonly deviceId?: string }
-  | { readonly action: 'resume'; readonly deviceId?: string }
-  | { readonly action: 'setMode'; readonly mode: RuntimeMode; readonly deviceId?: string };
+    };
 
 /** Снимок состояния runtime (node → server → cabinet). Только скаляры, без кадров. */
 export interface RuntimeStatePayload {

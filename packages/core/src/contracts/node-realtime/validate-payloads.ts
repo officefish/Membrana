@@ -12,7 +12,7 @@ import type {
   DeviceCaptureMode,
   DeviceCaptureReleaseReason,
 } from './capture-events.js';
-import type { RuntimeCommandPayload, RuntimeMode } from './events.js';
+import type { RuntimeCommandPayload } from './events.js';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -20,10 +20,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
-}
-
-function isRuntimeMode(value: unknown): value is RuntimeMode {
-  return value === 'normal' || value === 'alarm';
 }
 
 function isRuntimeAuthority(value: unknown): value is RuntimeAuthority {
@@ -60,7 +56,9 @@ function parseOptionalDeviceId(raw: Record<string, unknown>): string | undefined
 
 /**
  * Валидирует payload runtime.command. Возвращает null при неизвестном action.
- * `followerMode` допустим только при `action: run` и `authority: cabinet`.
+ * CT7 (канон §9): `pause`/`resume`/`setMode` и `authority`/`followerMode`
+ * на run удалены из wire — такие payload'ы отбрасываются.
+ * // Tariff v3: вернуть pause/resume/setMode.
  */
 export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload | null {
   if (!isRecord(raw)) {
@@ -71,18 +69,7 @@ export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload 
 
   switch (action) {
     case 'run': {
-      const authority = raw.authority;
-      const followerMode = raw.followerMode;
       const scenarioId = raw.scenarioId;
-      if (authority !== undefined && !isRuntimeAuthority(authority)) {
-        return null;
-      }
-      if (followerMode !== undefined && !isFollowerMode(followerMode)) {
-        return null;
-      }
-      if (followerMode !== undefined && authority !== 'cabinet') {
-        return null;
-      }
       if (scenarioId !== undefined && !isNonEmptyString(scenarioId)) {
         return null;
       }
@@ -90,8 +77,6 @@ export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload 
         action: 'run',
         ...(deviceId !== undefined ? { deviceId } : {}),
         ...(isNonEmptyString(scenarioId) ? { scenarioId } : {}),
-        ...(isRuntimeAuthority(authority) ? { authority } : {}),
-        ...(isFollowerMode(followerMode) ? { followerMode } : {}),
       };
     }
     case 'selectScenario': {
@@ -115,21 +100,6 @@ export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload 
         action: 'stop',
         ...(deviceId !== undefined ? { deviceId } : {}),
         ...(fadeOutMs !== undefined ? { fadeOutMs } : {}),
-      };
-    }
-    case 'pause':
-      return { action: 'pause', ...(deviceId !== undefined ? { deviceId } : {}) };
-    case 'resume':
-      return { action: 'resume', ...(deviceId !== undefined ? { deviceId } : {}) };
-    case 'setMode': {
-      const mode = raw.mode;
-      if (!isRuntimeMode(mode)) {
-        return null;
-      }
-      return {
-        action: 'setMode',
-        mode,
-        ...(deviceId !== undefined ? { deviceId } : {}),
       };
     }
     default:

@@ -12,7 +12,8 @@ import { PairModule } from './modules/pair/pair.module';
 import { JournalModule } from './modules/journal/journal.module';
 import { SampleLibraryModule } from './modules/sample-library/sample-library.module';
 import { NodeRealtimeModule } from './modules/node-realtime/node-realtime.module';
-import { ScenarioEditLeaseModule } from './modules/scenario-edit-lease/scenario-edit-lease.module';
+// CT7 (канон §9): edit lease вне тарифа v2 — REST endpoints отключены.
+// Tariff v3: вернуть ScenarioEditLeaseModule.
 import { DeviceCaptureModule } from './modules/device-capture/device-capture.module';
 
 const testImports =
@@ -41,7 +42,7 @@ const testImports =
       ];
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule, ScenarioEditLeaseModule, DeviceCaptureModule],
+  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule, DeviceCaptureModule],
   controllers: [HealthController],
 })
 export class AppModule {}

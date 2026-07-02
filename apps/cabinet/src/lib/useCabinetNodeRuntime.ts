@@ -3,7 +3,6 @@ import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
   type RuntimeCommandPayload,
-  type RuntimeMode,
   type RuntimeStatePayload,
 } from '@membrana/core';
 
@@ -14,10 +13,7 @@ import {
   type DeviceCaptureView,
 } from '@/api/deviceCapture';
 import {
-  buildCabinetPauseCommand,
-  buildCabinetResumeCommand,
   buildCabinetRunScenarioCommand,
-  buildCabinetSetModeCommand,
   buildCabinetStopScenarioCommand,
 } from '@/lib/cabinetNodeRuntimeCommands';
 import {
@@ -42,12 +38,7 @@ export interface CabinetNodeRuntime {
   readonly releaseDevice: (nodeId: string) => Promise<void>;
   readonly run: (deviceId: string) => void;
   readonly stop: (deviceId: string) => void;
-  /** @deprecated Tariff v3 — вне тарифа v2, gateway отвергает. Удаляется в CT7. */
-  readonly pause: (deviceId: string) => void;
-  /** @deprecated Tariff v3 — вне тарифа v2, gateway отвергает. Удаляется в CT7. */
-  readonly resume: (deviceId: string) => void;
-  /** @deprecated Tariff v3 — вне тарифа v2, gateway отвергает. Удаляется в CT7. */
-  readonly setMode: (deviceId: string, mode: RuntimeMode) => void;
+  // CT7: pause/resume/setMode удалены (// Tariff v3).
 }
 
 /**
@@ -159,19 +150,6 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
     (deviceId: string) => sendCommand(buildCabinetStopScenarioCommand(deviceId)),
     [sendCommand],
   );
-  const pause = useCallback(
-    (deviceId: string) => sendCommand(buildCabinetPauseCommand(deviceId)),
-    [sendCommand],
-  );
-  const resume = useCallback(
-    (deviceId: string) => sendCommand(buildCabinetResumeCommand(deviceId)),
-    [sendCommand],
-  );
-  const setMode = useCallback(
-    (deviceId: string, mode: RuntimeMode) =>
-      sendCommand(buildCabinetSetModeCommand(deviceId, mode)),
-    [sendCommand],
-  );
 
   return useMemo(
     () => ({
@@ -184,9 +162,6 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       releaseDevice,
       run,
       stop,
-      pause,
-      resume,
-      setMode,
     }),
     [
       captureDevice,
@@ -194,11 +169,8 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       connection,
       isDeviceLive,
       onlineDeviceIds,
-      pause,
       releaseDevice,
-      resume,
       run,
-      setMode,
       states,
       stop,
     ],

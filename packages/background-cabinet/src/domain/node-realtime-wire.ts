@@ -338,17 +338,14 @@ export type RuntimeMode = 'normal' | 'alarm';
 /**
  * Команда кабинета узлу по каналу `runtime`. Тариф v2: только
  * selectScenario/run/stop (gateway whitelist, канон §4.1).
- * pause/resume/setMode — Tariff v3: удаляются из wire в CT7.
+ * CT7 (канон §9): v1-поверхность удалена из wire.
+ * // Tariff v3: pause / resume / setMode; authority/followerMode на run.
  */
 export type RuntimeCommandPayload =
   | {
       readonly action: 'run';
       readonly deviceId?: string;
       readonly scenarioId?: string;
-      /** @deprecated v1 legacy — захват теперь явный (`board.capture`). Удаляется в CT7. */
-      readonly authority?: RuntimeAuthority;
-      /** @deprecated v1 legacy — заменён на `capture.mode`. Удаляется в CT7. */
-      readonly followerMode?: RuntimeFollowerMode;
     }
   | {
       readonly action: 'selectScenario';
@@ -360,15 +357,7 @@ export type RuntimeCommandPayload =
       readonly deviceId?: string;
       /** 0 = hard-cut (emergency stop); 200 = graceful вытеснение. */
       readonly fadeOutMs?: number;
-    }
-  /** @deprecated Tariff v3: pause/resume/setMode удаляются из wire в CT7. */
-  | { readonly action: 'pause'; readonly deviceId?: string }
-  | { readonly action: 'resume'; readonly deviceId?: string }
-  | { readonly action: 'setMode'; readonly mode: RuntimeMode; readonly deviceId?: string };
-
-function isRuntimeMode(value: unknown): value is RuntimeMode {
-  return value === 'normal' || value === 'alarm';
-}
+    };
 
 function parseOptionalDeviceId(raw: Record<string, unknown>): string | undefined {
   const deviceId = raw.deviceId;
@@ -378,7 +367,10 @@ function parseOptionalDeviceId(raw: Record<string, unknown>): string | undefined
   return isNonEmptyString(deviceId) ? deviceId : undefined;
 }
 
-/** Валидирует payload runtime.command. Возвращает null при неизвестном action. */
+/**
+ * Валидирует payload runtime.command. Возвращает null при неизвестном action.
+ * CT7: pause/resume/setMode и authority/followerMode отбрасываются.
+ */
 export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload | null {
   if (!isRecord(raw)) {
     return null;
@@ -388,18 +380,7 @@ export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload 
 
   switch (action) {
     case 'run': {
-      const authority = raw.authority;
-      const followerMode = raw.followerMode;
       const scenarioId = raw.scenarioId;
-      if (authority !== undefined && !isRuntimeAuthority(authority)) {
-        return null;
-      }
-      if (followerMode !== undefined && !isFollowerMode(followerMode)) {
-        return null;
-      }
-      if (followerMode !== undefined && authority !== 'cabinet') {
-        return null;
-      }
       if (scenarioId !== undefined && !isNonEmptyString(scenarioId)) {
         return null;
       }
@@ -407,8 +388,6 @@ export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload 
         action: 'run',
         ...(deviceId !== undefined ? { deviceId } : {}),
         ...(isNonEmptyString(scenarioId) ? { scenarioId } : {}),
-        ...(isRuntimeAuthority(authority) ? { authority } : {}),
-        ...(isFollowerMode(followerMode) ? { followerMode } : {}),
       };
     }
     case 'selectScenario': {
@@ -432,21 +411,6 @@ export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload 
         action: 'stop',
         ...(deviceId !== undefined ? { deviceId } : {}),
         ...(fadeOutMs !== undefined ? { fadeOutMs } : {}),
-      };
-    }
-    case 'pause':
-      return { action: 'pause', ...(deviceId !== undefined ? { deviceId } : {}) };
-    case 'resume':
-      return { action: 'resume', ...(deviceId !== undefined ? { deviceId } : {}) };
-    case 'setMode': {
-      const mode = raw.mode;
-      if (!isRuntimeMode(mode)) {
-        return null;
-      }
-      return {
-        action: 'setMode',
-        mode,
-        ...(deviceId !== undefined ? { deviceId } : {}),
       };
     }
     default:
