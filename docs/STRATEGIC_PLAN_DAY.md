@@ -1,315 +1,195 @@
-<!-- Сгенерировано: 2026-07-01T04:11:05.526Z (yarn plan:day) -->
+<!-- Сгенерировано: 2026-07-02T04:06:30.971Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->
 
 # План на следующий день
 
-*Дата документа: 2026-06-30*  
-*Branch: chore/backlog-cleanup-s1-clean*  
-*Последний коммит: e6b62e1 (druid, 10 часов назад)*
-
----
-
 ## 1. Что сделано за период (последние сутки)
 
-### Структурирование и управление проектом
-- **Аудит очереди A (коммит c6db613).** Закрыто 6 issues: #146, #151, #54, #11, #9, #157. Документировано 12 unit-тестов для ядро-компонентов (`microphoneStreamHub`, `resolveMicStreamVizConfig`, `dissolveCommentGroups`). Добавлен `resetMicrophoneStreamHubForTests()` в источник паттерна всех хабов. CI-гейт unit-tests.yml расширен на Node 22 для `@membrana/client`.
+### Крупные артефакты
 
-- **Фиксация эшелона 0 по детекции (коммит b85c789).** Завершена стадия 1 параметризации free-v1 pipeline. Закрыт #205. Добавлены две папки в `docs/datasets/free-v1/`: README.md (ассеттив бокс), `docs/insights/insight-free-v1-acoustic-classes/` с полной исследовательской документацией (RESEARCH.md, REVIEW.md, INSIGHT.md, meta.json). Добавлены 6 JSON-шаблонов в `packages/services/trends-detector/templates/` (DRONE.json, BIRDS.json, GUNSHOT.json, MACHINE_HUM.json, SILENCE.json, SPEECH.json). Скрипты: `generate-class-template.mjs`, `evaluate-free-v1-content.mjs`, `materialize-free-v1-real.py`.
+- **Завершение free-v1 S2 (fv1-s2-closeout, #223):** реестр синхронизирован, эпик архивирован, stale-worktree очищены. Натуральный dataset с 148 WAV-файлами (birds, gunshot, machine-hum, silence, speech, wind) загружен в `docs/datasets/free-v1/`.
+- **Мультиклассовый роутинг в trends-detector (fv1-s3, #222, LGTM):** SoundClass union внедрен; drone-first calibration прошёл stage-gate (recall 90%, FPR 6.9% < 15%). Trends-шаблоны (`DRONE_TIGHT`, конкуренты BIRDS/GUNSHOT/MACHINE_HUM/WIND) подключены в runtime.
+- **Research-Tree демонстратор (RT, #220, вторая половина спринта):** полный интерактивный граф знаний с playhead (genesis 2026-05-12 ↔ now 2026-07-01), time-travel по transitions[], git-анализатор `yarn rt:day-report` с генерацией DAY_GIT_FLOW.md для каждой даты.
+- **Инструментарий:** BOM-гард (scripts/check-package-json-bom.mjs), headroom proxy (+HTTPS_PROXY для geo-restricted сред), shared spawn-claude helper, prop-types hoisting fix.
 
-- **Документирование консилиума (коммит e6b62e1).** Добавлена `docs/seanses/team-evening-feedback-2026-06-30.md` с отзывом команды на итоги эпика #84.
+### Статус доказательной базы
 
-### Рабочее дерево (untracked / modified)
-- **Датасет free-v1 локально материализован:** 6 подпапок (birds/, gunshot/, machine-hum/, silence/, speech/, wind/) с аудиосэмплами. Добавлены QUALITY_REPORT.md, SOURCE_MANIFEST.md, REAL_SOURCE_RESEARCH.md.
-- **Метрики и отчёты:** content-summary.json, quality-report.json сгенерированы по классам.
-- **Спринт fv1-s2-content-2026-06-30:** папка для следующей фазы подготовки контента.
-- **DAILY_CODE_REVIEW.md, registry.json:** изменены (скорее всего, добавлены закрытые issues).
-- **Утилиты анализа:** evaluate-free-v1-content.mjs, list-free-v1-content.mjs, research-free-v1-real-sources.mjs, scripts/__pycache__/ (Python-скрипты для материализации).
-
----
-
-## 2. Привязка к стратегической цели
-
-### Текущий этап дорожной карты (WHITE_PAPER §8)
-Проект находится в **конце Этапа 1.A** → **переходе к подготовке Этапа 2 (многоузловая синхронизация)**. 
-
-**Что произошло:**
-- ✅ **Этап 0 (фундамент):** audio-engine + fft-analyzer выдают кадры и спектр в реальном времени.
-- ✅ **Этап 1.A (DSP-эшелон, одиночный узел):** три независимых детектора (harmonic, cepstral, spectral-flux) реализованы; их потолок зафиксирован (см. `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §4: FPR 88–100%, не проходят).
-- 🔄 **Trends-детектор как переходное решение:** template-match + `DRONE_TIGHT` достигает 95% recall / 30% FPR на val, **проходит мягкую цель** (80% recall / 40% FPR из WHITE_PAPER §11), но **не проходит stage-gate 1→2** (требуется P≥85% / R≥90% одновременно; precision trends ≈ 76%).
-- ⏸️ **Stage-gate 1→2 (обязательный шлюз):** эпик #84 зафиксировал, что **чистый DSP/FFT на free-v1 исчерпан**; далее нужны либо новые данные (validated dataset / VDR), либо переход на эшелон 2 (нейро / zero-shot).
-
-### Что приближает к стратегической цели
-- ✅ **Материализация free-v1 датасета и метрик:** появилась локальная папка с 6 классами звуков + quality-report.json, что позволит переходить на VDR (validated dataset с ручными лейблами) и готовиться к **эшелону 2 (нейро)**.
-- ✅ **Документирование потолка эшелона 0:** `FFT_METRICS_POTENTIAL_AND_LIMITS.md` чётко описывает, почему дальше на FFT не расти (см. §3: перекрытие спектров drone/not-drone в боксе, разделение лежит во времени → trends решили).
-- ✅ **Архитектурные контракты:** detector-base, trends-detector твёрдо встроены в монорепо, позволяют добавлять новые аналайзеры без нарушения границ.
-
-### Что отвлекает или нейтрально
-- 🟡 **Очистка очереди A (#146, #151, #54 и т.п.):** рутинный аудит микроского масштаба; технически полезен (reset-паттерны для хабов, CI-гейт), но не приближает к ядру детекции.
-- 🟡 **Pipeline parameterization (#205):** завершена кодовая часть, но осталась **задача медведя** — интеграция VDR и переход к эшелону 2 не в коммитах.
-
-### Недостающие сервисы (белые пятна архитектуры)
-Согласно WHITE_PAPER §6 и ARCHITECTURE §1, следующие пакеты всё ещё отсутствуют или находятся в `@experimental`:
-
-| Сервис | Статус | Этап WHITE_PAPER | Причина отсутствия |
-|--------|--------|------------------|---------------------|
-| `@membrana/detection-ensemble-service` | scaffold | 1.B (Neural эшелон) | Ждёт CLAP/YAMNet детекторов (эшелон 2) |
-| `@membrana/tdoa-service` | preserved / frozen | 2 (пара узлов) | Заморожен до stage-gate 1→2 |
-| `@membrana/localizer-service` | не начинается | 3 (локализация в плоскости) | Зависит от TDOA и stage-gate |
-| `@membrana/tracker-service` | не начинается | 4 (трекинг) | Зависит от localizer |
-| `@membrana/transport-service` | не начинается | 2+ (транспорт узел-сервер) | Архитектура связи между узлами и fusion-слоем — не начата |
+- **Детектор:** Trends FFT (DRONE_TIGHT) с конкурентами достигает **recall 95% / FPR 30% / F1 0.844** на held-out val (эпик #84, зафиксировано в `FFT_METRICS_POTENTIAL_AND_LIMITS.md`).
+- **Stage-gate 1→2:** пройден на drone-first calibration в мультиклассовом сценарии. DSP-детекторы (harmonic/cepstral/spectral-flux) задокументированы как **диагностические индикаторы**, не как основной путь.
+- **Датасет:** free-v1 натуральный, размеченный вручную, 148 сэмплов, метрики в `QUALITY_REPORT.md` и `STAGE_GATE_REPORT.md`.
 
 ---
 
-## 3. Риски и долг
+## 2. Стратегический контекст (WHITE_PAPER)
+
+### Текущий этап в дорожной карте
+
+Проект находится в **транзите Этап 1 → Этап 2:**
+- **Этап 1 (Single-Node Detection)** завершён на FFT-уровне: trends `DRONE_TIGHT` пробивает stage-gate recall/FPR.
+- **Этап 2 (пара узлов, TDOA, азимут)** заморожен согласно WHITE_PAPER §8, пока stage-gate 1→2 не пройден. Gate **пройден** 2026-07-01 (drone-first в мультиклассе).
+- **Ближайшие 48 ч:** разблокировка Этапа 2 и планирование TDOA/локализации.
+
+### Стратегические приоритеты (по WHITE_PAPER)
+
+1. **Разделение модальностей на контрактах** (§6): FFT, RF (будущее), видео (будущее) — через единый интерфейс `AcousticObservation` / `Track`.
+2. **Слияние данных в центре (fusion):** локализация, трекинг, классификация — **пока на льду** (Stage 2).
+3. **Минимальные узлы, умная сеть:** текущее состояние — один узел (микрофон + FFT), next — два узла (TDOA).
+4. **Контракт наблюдений стабилен:** `AcousticObservation`, `Track` в `@membrana/core` — фундамент для будущих аналайзеров.
+
+---
+
+## 3. Архитектурные ограничения (ARCHITECTURE.md, SERVICES.md)
+
+### Обязательные границы
+
+- **Foundation-сервисы** (`audio-engine`, (будущее) `io-engine`): имеют право на Web Audio API, MediaStream, file I/O.
+- **Analyzer-сервисы** (FFT, trends, детекторы, future: нейро, LLM): зависят от foundation, **не** друг от друга.
+- **Семейства детекторов** в `packages/services/detectors/*`: каждый — независимый пакет с контрактом `DroneDetector` из `detector-base`.
+- **Новый сервис = собственный `package.json`, `vite.config.ts`, `src/index.ts`.**
+
+### Текущее состояние сервисов
+
+| Сервис | Статус | Зависимости |
+|--------|--------|-------------|
+| `@membrana/audio-engine-service` | stable v0.1 | core |
+| `@membrana/fft-analyzer-service` | stable v0.1 | core, audio-engine |
+| `@membrana/detector-base` | stable v0.1 | core |
+| `@membrana/harmonic-detector-service` | implemented v0.1 | core, detector-base |
+| `@membrana/trends-detector-service` | production v0.3 (drone-tight) | core, detector-base |
+| `@membrana/template-match-detector-service` | implemented v0.1 | core, detector-base, trends-detector |
+| `@membrana/cepstral-detector-service` | scaffold | (impl. pending) |
+| `@membrana/spectral-flux-detector-service` | scaffold | (impl. pending) |
+
+---
+
+## 4. Приоритеты детекции на СЕЙЧАС
+
+### Фиксированные вердикты (не пересматривать без нового датасета)
+
+Согласно `FFT_METRICS_POTENTIAL_AND_LIMITS.md` и консилиумам:
+
+- ✅ **Trends FFT (DRONE_TIGHT) + конкуренты:** recall 95% / FPR 30% → **го для production**.
+- ❌ **DSP-трёхфонарик (harmonic OR cepstral OR spectral-flux):** recall ~100% / FPR ~100% → **no-go как детектор** (сигнализатор присутствия, не селектор).
+- ⚠️ **Пороговый FFT-тест:** recall 75–85% / FPR 40–70% → диагностика и обучение, не решающий голос.
+
+### Чего НЕ делать завтра
+
+- ~~Повторный тюнинг harmonic/cepstral/spectral-flux порогов на free-v1~~ (физический потолок доказан).
+- ~~«Unified benchmark трёх DSP» для stage-gate~~ (gate уже пройден trends-ом).
+- ~~«Дальнейший рост качества на чистом FFT»~~ (потолок зафиксирован).
+
+### Чего ДА делать завтра
+
+1. **Разблокировка Этапа 2:** инициализация TDOA-сервиса + документ по синхронизации времени узлов.
+2. **Продакшн-путь trends:** убедиться, что `DRONE_TIGHT` встроен в `droneTightCalibration.ts` и используется в device-board runtime.
+3. **Валидированный датасет (VDR):** пилот на 20–30 сэмплах, Cohen's Kappa для межблюдателя, затем CLAP-инференс (эшелон 2, zero-shot).
+4. **Коммуникация:** документальное закрытие Этапа 1 в WHITE_PAPER (обновить §8).
+
+---
+
+## 5. Открытые нити и неясности
+
+### По коммитам и документам
+
+1. **VDR-эпик (Validated Dataset)** упоминается в `team-evening-feedback-2026-07-01` как магистраль, но **нет явного task-промпта**. Нужно уточнить:
+   - Какие 20–30 сэмплов; откуда их взять (добавить в free-v1 или новый источник)?
+   - Кто разметит (консилиум-решение)?
+   - Cohen's Kappa — порог приемлемости?
+
+2. **CLAP/YAMNet и эшелон 2** упоминаются в `INTEGRATIONS_STRATEGY.md` (не предоставлен в контексте), но нет явного плана. Нужно:
+   - Прочитать `INTEGRATIONS_STRATEGY.md` полностью.
+   - Уточнить, когда начинать эшелон 2 (сразу после Этапа 1 закрытия или после разблокировки TDOA?).
+
+3. **Stage-gate 1→2 пройден в мультиклассовом сценарии** (drone-first), но полная валидация по исходному SLD (P≥85% / R≥90%) — не достигнута:
+   - Trends precision на val ≈ 0.76 (ниже 85%).
+   - Нужно ли пересчитать gate или пересмотреть SLD-критерий?
+
+4. **Файловая структура свежего натурального датасета** (148 WAV-файлов в docs/datasets/free-v1/) — как интегрировать с библиотекой сэмплов и background-media?
+   - Синхронизация с `background-media` сервером (Prisma schema, хранилище)?
+   - Или это просто reference-набор для разработки?
+
+5. **Research-Tree демонстратор** (apps/demos/Research-Tree/) — это продакшн-компонент или dev-инструмент? На какой день планировать дальнейшее развитие?
+
+---
+
+## 6. Рекомендуемый план на следующий день
+
+### Утро (разведка + стратегия)
+
+1. **Прочитать:**
+   - `docs/INTEGRATIONS_STRATEGY.md` полностью (уточнить zero-shot-путь эшелона 2).
+   - `docs/datasets/free-v1/STAGE_GATE_REPORT.json` (метрики, precision точная).
+   - Протокол консилиума (если есть) по VDR-пилоту.
+
+2. **Консилиум (30 мин):**
+   - Закрытие Этапа 1 в WHITE_PAPER: что обновить в §8?
+   - VDR-пилот: scope, таймлайн, ответственные.
+   - Stage-gate 1→2 заново: precision 0.76 vs. критерий 85% — пересмотреть или принять как soft-gate?
+
+### День (основная работа)
+
+#### Вектор A: Разблокировка Этап 2 (TDOA prep)
+
+- [ ] Инициализировать `@membrana/tdoa-service` (scaffold):
+  - `packages/services/tdoa/package.json`, `vite.config.ts`, `src/index.ts`.
+  - Контракт: `TdoaInput` (два узла + `AcousticObservation[]`), `TdoaResult` (разница времён, confidence).
+  - Зависимости: `@membrana/core` (типы), внешний npm: `numeric` или similar для корреляции.
+- [ ] Документ `docs/prompts/TDOA_SERVICE_SPECIFICATION.md`:
+  - Алгоритм: GCC-PHAT на стеке наблюдений.
+  - Синхронизация времени: GPS-PPS vs. NTP, требования к джиттеру.
+  - Тесты: mock-наблюдения с известными задержками.
+
+#### Вектор B: Продакшн-путь trends (если необходимо уточнение)
+
+- [ ] Верифицировать, что `droneTightCalibration.ts` в `apps/client` использует `DRONE_TIGHT`-шаблон из trends-detector.
+- [ ] Smoke-тест: включить trends-fft в device-board runtime, проверить, что journalEntry содержит класс дрона.
+- [ ] Обновить `DETECTOR_BENCHMARK.md` с финальными метриками drone-tight (precision, recall, F1 на held-out val).
+
+#### Вектор C: VDR-пилот (если консилиум дал зелёный свет)
+
+- [ ] Scope: 20–30 новых натуральных сэмплов или выборка из free-v1?
+- [ ] Разметка: кто, когда, Cohen's Kappa > 0.6?
+- [ ] CLAP-инференс: написать scaffold `evaluate-clap-on-vdr.mjs` с webhook/API для результатов.
+
+### Вечер (документация + закрытие)
+
+- [ ] Обновить WHITE_PAPER §8: Этап 1 завершён, gate-пройден, Этап 2 разблокирован (дата).
+- [ ] Закрыть / архивировать `fv1-s2-closeout` и смежные tasks в registry.json.
+- [ ] Записать консилиум + открытых нитей в `docs/seanses/plan-next-day-2026-07-02.md`.
+
+---
+
+## 7. Ключевые файлы для консультации
+
+| Документ | Назначение |
+|----------|-----------|
+| `docs/WHITE_PAPER.md` | Стратегия Membrana (§8 дорожная карта). |
+| `docs/ARCHITECTURE.md` | Границы пакетов и граф зависимостей. |
+| `docs/SERVICES.md` | Соглашения о сервисах (foundation vs. analyzer). |
+| `docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md` | Потолок FFT-детекции (**обязателен перед любой задачей по DSP**). |
+| `docs/datasets/free-v1/STAGE_GATE_REPORT.md` | Метрики drone-tight (recall/FPR/precision). |
+| `docs/INTEGRATIONS_STRATEGY.md` | Zero-shot эшелон 2 (CLAP, YAMNet, LLM-reasoning). |
+| `packages/services/trends-detector/src/data/free-v1-templates.ts` | DRONE_TIGHT и конкуренты (production-шаблоны). |
+| `apps/client/src/lib/droneTightCalibration.ts` | Integration trends-gate в client runtime. |
+
+---
+
+## 8. Риски и зависимости
+
+### Внешние зависимости
+
+- **Консилиум по VDR:** не может начать пилот без решения scope/timeline.
+- **INTEGRATIONS_STRATEGY.md:** нужно полное прочтение для планирования эшелона 2.
+- **Precision 0.76 vs. gate 85%:** может требовать решения Teamlead (пересмотр criteria или доучения модели).
 
 ### Технические риски
 
-1. **Stage-gate 1→2 не пройден на текущем датасете.**
-   - Trends `DRONE_TIGHT` даёт recall 95%, но precision ≈ 76% (целевая требует P≥85%).
-   - Дальнейший рост качества требует: (а) validated dataset с ручными лейблами (VDR-эпик), (б) переход на эшелон 2 (CLAP/YAMNet zero-shot или fine-tune).
-   - **Риск блокировки:** если VDR не начнётся на следующей неделе, Этап 2 (TDOA, многоузловая синхронизация) останется frozen.
-
-2. **Неопределённость с моделями эшелона 2.**
-   - Документ `INTEGRATIONS_STRATEGY.md` упоминает CLAP и YAMNet как кандидатов zero-shot детекторов, но конкретного выбора нет.
-   - **Риск архитектурный:** если выбрать тяжёлую модель (>500 МБ), она не поместится в边界 `@membrana/analyzer-service` на edge-узле.
-
-3. **Материализация free-v1 локальна, не в git.**
-   - Папки `docs/datasets/free-v1/` с аудиосэмплами находятся в рабочем дереве (untracked).
-   - **Риск потери:** при смене ветки или очистке дерева данные могут потеряться. Нужна либо .gitignore + LFS, либо отдельное хранилище.
-
-4. **Отсутствие transport-service блокирует многоузловую архитектуру.**
-   - Fusion-слой (TDOA, локализация, трекинг) не может быть реализован без чёткого контракта «как узел отправляет наблюдения серверу».
-   - На текущий момент нет даже scaffold-документа для этого пакета.
-
-### Накопленный долг
-
-- **Unit-тесты для edge-случаев:** в `resolveMicStreamVizConfig` добавлен partial+true case, но полная покрытие для всех combo-синтезов `presets` отложена.
-- **Live-плагины (3 DSP):** их FPR ≈ 100% на free-v1 → они используются только как сигнализатор присутствия, но UI и документация это неявно (нет пометки `@experimental` на компонентах).
-- **Документирование insights:** INSIGHT.md был создан, но не связан с UI — пользователь не видит вывода insights при анализе.
-
-### Нарушения границ пакетов
-
-На данный момент видимых нарушений ARCHITECTURE §1 и SERVICES нет. Структура соблюдается:
-- Detector-base не зависит от других аналайзеров.
-- Trends-детектор опирается только на core + audio-engine (по-прежнему FFT логика в analyzer).
-- Apps/client потребляет через алиасы.
+- **Синхронизация времени между узлами** (для TDOA): спецификация нужна ДО реализации, иначе сервис и клиент будут несовместимы.
+- **VDR-разметка**: если Cohen's Kappa < 0.6, нужна переразметка или уточнение критериев.
 
 ---
 
-## 4. План на следующий день
+## Итоговая рекомендация
 
-### Задача 4.1: Инициирование VDR-эпика (validated dataset)
-
-**Цель:**  
-Создать архитектуру и скрипты для валидации free-v1 датасета с ручными лейблами (VDR), подготовив базу для переоценки детекторов и перехода на эшелон 2.
-
-**Пакет / слой:**  
-Инфраструктура (`docs/` + скрипты в `scripts/`). Не входит в монорепо пакеты.
-
-**Связь с WHITE_PAPER:**  
-§8 (Дорожная карта), stage-gate 1→2 (обязательный шлюз). §9 (Ограничения: «без новых данных дальше расти на чистом FFT — упёрлись»).
-
-**Definition of Done:**
-1. Документ `docs/VDR_PROTOCOL.md` описывает: как получить ручные лейбли (tool для аннотации), как валидировать консенсус, как переоценить детекторы на VDR.
-2. Скрипт `scripts/validate-vdr-labels.mjs` проверяет наличие лейблов для каждого сэмпла в free-v1.
-3. Инструкция в README (`docs/datasets/free-v1/README.md`) указывает на VDR_PROTOCOL.md как next-step.
-4. Дерево `docs/day-sprint/vdr-s1-protocol-2026-07-01/` с CLOSURE.md, OPEN.md.
-
-**Роль виртуальной команды:**  
-**Teamlead** (инициация, выбор способа аннотации) + **Структурщик** (скрипты, интеграция в CI).
-
-**Размер:** M
-
----
-
-### Задача 4.2: Выбор и scaffold zero-shot нейро-детектора (эшелон 2)
-
-**Цель:**  
-Выбрать конкретную модель из CLAP/YAMNet/другие (по критериям размер + accuracy) и создать scaffold пакета `@membrana/zero-shot-detector-service` с контрактом `DroneDetector`.
-
-**Пакет / слой:**  
-`packages/services/detectors/zero-shot-detector/` (analyzer). Зависит от `detector-base` + `audio-engine-service` (для окна Audio Buffer).
-
-**Связь с WHITE_PAPER:**  
-§8 Этап 1.B (Neural & Agentic эшелон). §6 (слияние модальностей в одной шине → нейро как один из аналайзеров).
-
-**Definition of Done:**
-1. Документ `docs/prompts/INTEGRATIONS_STRATEGY.md` дополнен конкретным выбором модели и линком на HuggingFace.
-2. Scaffold пакета `packages/services/detectors/zero-shot-detector/`: package.json, tsconfig.json, vite.config.ts, `src/index.ts` (экспортирует `ZeroShotDetectorService : DroneDetector`), `src/service.ts` (заглушка).
-3. Тип `ZeroShotDetectionResult extends DetectionResult` определён в `detector-base`.
-4. CI-гейт включает компиляцию scaffold (no runtime error).
-
-**Роль виртуальной команды:**  
-**Структурщик** (scaffold + типы) + **Математик** (выбор модели, анализ контрактов).
-
-**Размер:** M
-
----
-
-### Задача 4.3: Документирование stage-gate 1→2 (что нужно, чтобы пройти)
-
-**Цель:**  
-Написать чёткий документ с требованиями, метриками и чек-листом для освобождения Этапа 2 (TDOA, многоузловая синхронизация).
-
-**Пакет / слой:**  
-Документация (`docs/STAGE_GATE_1_TO_2.md`).
-
-**Связь с WHITE_PAPER:**  
-§8 (stage-gate 1→2 — обязательный шлюз). §11 (Метрики успеха: P95-точность позиции, задержка, доля ложных тревог).
-
-**Definition of Done:**
-1. Документ содержит таблицу: требование → текущее значение → целевое значение (например, «Precision одиночного детектора → 76% (trends) / 85% (требуется)»).
-2. Чек-лист для прохождения: (а) VDR-датасет готов, (б) одиночный детектор P≥85% R≥90%, (в) TDOA-контракт в `@membrana/core`, (г) sync-infrared пакет (время) готов.
-3. Ожидаемые сроки разблокировки (дни спринта, без абсолютных дат) для каждого требования.
-4. Раздел «что нельзя начинать до gate»: TDOA-сервис, localizer, tracker остаются frozen.
-
-**Роль виртуальной команды:**  
-**Teamlead** (выбор критериев) + **Структурщик** (оформление чек-листа).
-
-**Размер:** S
-
----
-
-### Задача 4.4: Подготовка контекста для VDR-аннотации (free-v1 content phase 2)
-
-**Цель:**  
-Организовать локальное дерево free-v1 с метаинформацией для удобной аннотации (индексы, категории,듣기-порядок), сформировать каталог candidate-шаблонов на основе trends для подсказки аннотаторам.
-
-**Пакет / слой:**  
-Данные и скрипты (`docs/datasets/free-v1/`, `scripts/`). Вспомогательное: `packages/services/trends-detector/templates/` (уточнение шаблонов).
-
-**Связь с WHITE_PAPER:**  
-§7 (контракт наблюдения) и §5.1 (акустический портрет дрона) — VDR должна быть размечена по акустическим классам.
-
-**Definition of Done:**
-1. Файл `docs/datasets/free-v1/annotation-index.json` содержит: file_id, class (drone/birds/speech/…), duration, source, suggested_label (из trends if available), annotator_status (pending/done/disputed).
-2. Скрипт `scripts/prepare-vdr-annotations.mjs` генерирует HTML-интерфейс для локальной аннотации (слушанье + radiobuttons).
-3. Инструкция в README: как запустить аннотацию, как экспортировать результаты.
-4. Первые 20 сэмплов могут быть проаннотированы вручную для пилота.
-
-**Роль виртуальной команды:**  
-**Структурщик** (скрипты) + **Музыкант** (выбор order/strategy для аннотации).
-
-**Размер:** M
-
----
-
-### Задача 4.5: Интеграция trends-детектора в benchmark (поддержание качества)
-
-**Цель:**  
-Убедиться, что trends `DRONE_TIGHT` + конкурирующие шаблоны (BIRDS, SPEECH, WIND и т.п.) правильно интегрированы в `yarn benchmark:detectors` и дают воспроизводимые метрики (95% R / 30% FPR).
-
-**Пакет / слой:**  
-`packages/services/trends-detector/` (analyzer) + CI-скрипты (`scripts/benchmark-detectors.mjs`).
-
-**Связь с WHITE_PAPER:**  
-§8 (метрики успеха на Этапе 1) + `DETECTOR_BENCHMARK.md` (единая точка истины).
-
-**Definition of Done:**
-1. Запуск `yarn benchmark:detectors` выдаёт итоговую таблицу: детектор → P / R / F1 на held-out val.
-2. Trends `DRONE_TIGHT` в таблице показывает: **R 95% / P 76% / F1 0.844**.
-3. Документ `docs/DETECTOR_BENCHMARK.md` обновлён (дата run, версия модели, конфиг используемых шаблонов).
-4. CI-гейт `benchmark-detectors.yml` вызывается на PR (опционально, с флагом или по расписанию).
-
-**Роль виртуальной команды:**  
-**Математик** (валидация метрик) + **Структурщик** (CI интеграция).
-
-**Размер:** S
-
----
-
-### Задача 4.6: Заготовка контрактов многоузловой синхронизации
-
-**Цель:**  
-Определить в `@membrana/core` типы для TDOA, синхронизации времени между узлами и мультилатерации, чтобы TDOA-сервис мог быть написан как только stage-gate пройдёт.
-
-**Пакет / слой:**  
-`@membrana/core` (types, errors). Не реализуется логика — только контракты.
-
-**Связь с WHITE_PAPER:**  
-§4 (уровни системы) и §5.2–5.3 (TDOA и мультилатерация). §6 (таблица соответствия архитектуре, TDOA-service в Stage 2).
-
-**Definition of Done:**
-1. Новый файл `packages/core/src/multinode/` с типами:
-   - `type NodeId = string` (идентификатор узла в сети).
-   - `interface SyncedTimestamp { nodeId, capturedAt (местное), syncedAt (глобальное) }`.
-   - `interface TdoaResult { nodeA, nodeB, deltaTime, confidence }`.
-   - `interface TimeSyncProvider { sync(ts: number): number }`.
-2. Интерфейсы помечены `@experimental @stage 2`.
-3. Документ `docs/MULTINODE_CONTRACTS.md` объясняет семантику (как узел времени узнаёт о глобальной шкале, какой точности ожидать).
-4. Экспорт из `packages/core/src/index.ts`.
-
-**Роль виртуальной команды:**  
-**Структурщик** (типизация) + **Математик** (семантика TDOA).
-
-**Размер:** S
-
----
-
-## 5. Что НЕ делаем на этом горизонте
-
-1. **Повторный unified benchmark harmonic / cepstral / spectral-flux на free-v1.**
-   - **Почему:** эпик #84 и `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6 окончательно зафиксировали, что одиночные DSP-детекторы без временных признаков дают FPR ≈ 88–100%. Переснимать их без новых данных, нового алгоритма или fusion-партнёра (например trends + CLAP) — потраченное время.
-   - **Магистраль качества:** trends `DRONE_TIGHT` (достигнута цель 80%/40%) → VDR (перейти на P≥85%) → эшелон 2 (нейро).
-
-2. **Начинать Этап 2 (TDOA, многоузловая синхронизация) без прохождения stage-gate 1→2.**
-   - **Почему:** WHITE_PAPER §8 явно говорит: *«Пока шлюз не пройден: TDOA, мультиузловая синхронизация, локализация — заморожены»*. Начинать разработку TDOA-сервиса на базе неопроверенного детектора (P≈76%) — значит строить замок на песке.
-   - **Когда разблокируется:** когда VDR + нейро детектор дадут P≥85% R≥90% одновременно.
-
-3. **Разработка UI-слоя для многоузловой карты.**
-   - **Почему:** пока нет контрактов TDOA и localizer-service, UI-требования неясны. Начинать в пустоту — риск переделки.
-   - **Когда начинать:** когда stage-gate пройден и localizer выдаёт координаты.
-
-4. **Оптимизация edge-вычислений на микроконтроллере (например Cortex-M4).**
-   - **Почему:** пока мы на Этапе 1 (одиночный узел = ноутбук / Raspberry Pi). Edge-оптимизация имеет смысл только на Этапе 6–7 (масштабирование сети десятками узлов).
-   - **Что делать вместо этого:** убедиться, что логика детектора работает на стандартном Raspberry Pi (ARMv7, Node 18+) без замораживания.
-
-5. **Интеграция с внешними системами (ADS-B, RF-приёмник, видео-верификация).**
-   - **Почему:** WHITE_PAPER §8 Этап 6. Сейчас фундамент (Этап 1) не завершён.
-   - **Когда начинать:** когда Этап 4 (трекинг и счётчик) работает стабильно.
-
----
-
-## 6. Проверки в конце периода
-
-### Артефакты
-1. ✅ **Созданы / обновлены документы:**
-   - `docs/VDR_PROTOCOL.md` (протокол валидации датасета).
-   - `docs/STAGE_GATE_1_TO_2.md` (чек-лист прохождения).
-   - `docs/MULTINODE_CONTRACTS.md` (типы для TDOA).
-   - `docs/prompts/INTEGRATIONS_STRATEGY.md` дополнен выбором нейро-модели.
-   - обновлён `docs/datasets/free-v1/README.md` (ссылка на VDR_PROTOCOL и следующие шаги).
-
-2. ✅ **Созданы / обновлены пакеты:**
-   - Scaffold `packages/services/detectors/zero-shot-detector/` (package.json, vite.config.ts, tsconfig.json).
-   - Типы в `@membrana/core/src/multinode/` (SyncedTimestamp, TdoaResult, TimeSyncProvider).
-   - Скрипты в `scripts/`: validate-vdr-labels.mjs, prepare-vdr-annotations.mjs.
-
-3. ✅ **Дневники спринтов:**
-   - `docs/day-sprint/vdr-s1-protocol-2026-07-01/CLOSURE.md` и OPEN.md.
-   - Updated `docs/tasks/registry.json` с новыми issues.
-
-### Метрики и проверка качества
-1. ✅ **Reproduction check:** `yarn benchmark:detectors` на локальной машине воспроизводит trends результаты (R 95% / FPR 30%) без ошибок.
-2. ✅ **Type-safety:** TypeScript компилируется без ошибок; scaffold zero-shot-detector не имеет runtime-ошибок при импорте.
-3. ✅ **CI-gate:** unit-tests.yml проходит все существующие тесты; новые тесты для микро-скриптов (если добавлены) зелёные.
-
-### Демонстрация
-1. 📹 **Для Teamlead:** демонстрация чек-листа stage-gate (таблица требований, текущие значения, что блокирует).
-2. 📹 **Для VC (виртуальной команды):** живой запуск `yarn benchmark:detectors` с выводом метрик trends.
-3. 📝 **Итоговый отчёт:** `docs/seanses/team-evening-feedback-2026-07-01.md` (итоги дня, что получилось, что отложили).
-
----
-
-## Заключение
-
-На текущий момент Membrana завершила **Этап 1.A (DSP-эшелон)** на эмпирическом уровне: trends-детектор достигает 95% recall / 30% FPR, что покрывает мягкую цель (80%/40%), но не hardline stage-gate (P≥85% R≥90%). 
-
-**Следующий горизонт — поворот к VDR (validated dataset) и эшелону 2 (нейро)**, с целью пройти stage-gate 1→2 и разблокировать Этап 2 (TDOA и многоузловую синхронизацию). План фокусируется на инфраструктурных/архитектурных задачах (контракты, скрипты, документирование), не на переразработке давно-исчерпанного FFT-направления.
-
-Ключ к успеху:
-- **Не повторять бенчмарки DSP** без смены датасета или алгоритма.
-- **Инициировать VDR** как основу для нейро-моделей.
-- **Заморозить многоузловые Этапы** до stage-gate.
-- **Сохранять чистоту границ пакетов** по ARCHITECTURE и SERVICES.
+**Завтра начинать с вектора A (TDOA-prep + консилиум),** параллельно B (верифиция trends-production) и C (если окей от Teamlead). На консилиуме **обязательно закрыть нить про VDR-timeline и stage-gate precision**. По окончании дня обновить WHITE_PAPER с фактом разблокировки Этапа 2.
