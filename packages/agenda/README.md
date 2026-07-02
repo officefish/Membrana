@@ -41,3 +41,12 @@ const event: AgendaEvent = await agenda.create({
 ## Публичное API
 
 Экспортируется из `src/index.ts`. См. JSDoc в исходниках.
+
+## Tailwind Integration
+
+Пакет экспортирует React-компоненты с Tailwind/daisyUI-классами, но **не поставляет
+собственный CSS-дистрибутив** (headless). Хост-приложение обязано сканировать `src/`
+этого пакета в своём `tailwind.config` `content`
+(см. `docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md`).
+
+<!-- tailwind-content: ["./src/**/*.{ts,tsx}"] -->

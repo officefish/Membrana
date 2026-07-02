@@ -148,3 +148,12 @@ import { DeviceBoardShell, DeviceBoardGraphProvider } from '@membrana/device-boa
 
 Экспортируется из `src/index.ts`: graph provider, shell, scenario runtime types, catalog helpers.
 Актуальные сигнатуры — JSDoc в исходниках, этот README и `DEVICE_BOARD_CONCEPT.md`.
+
+## Tailwind Integration
+
+Пакет экспортирует React-компоненты с Tailwind/daisyUI-классами, но **не поставляет
+собственный CSS-дистрибутив** (headless). Хост-приложение обязано сканировать `src/`
+этого пакета в своём `tailwind.config` `content`, иначе утилиты не попадут в CSS и
+вёрстка узлов/канваса разъедется (см. `docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md`).
+
+<!-- tailwind-content: ["./src/**/*.{ts,tsx}"] -->

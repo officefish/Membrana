@@ -228,3 +228,26 @@ For an approved class change:
    core `SoundClass`;
 4. rerun `yarn templates:stage-gate` and commit both reports;
 5. do not release when the drone FPR/recall gate fails.
+
+## Multi-app Tailwind Setup
+
+UI-пакеты в `packages/` (например `@membrana/device-board`) — **headless**: они
+экспортируют компоненты с Tailwind/daisyUI-классами, но не поставляют свой CSS.
+Каждое хост-приложение (`apps/client`, `apps/cabinet`) обязано сканировать `src/`
+всех таких пакетов, которые оно (транзитивно) импортирует, в своём
+`tailwind.config.js` `content` — иначе утилиты не попадут в CSS и вёрстка разъедется
+(так был сломан device-board в кабинете, см. `docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md`).
+
+Правила:
+
+1. Добавляя UI-пакет, впиши в его `README.md` секцию с машиночитаемым фронтматтером:
+   ```markdown
+   ## Tailwind Integration
+
+   <!-- tailwind-content: ["./src/**/*.{ts,tsx}"] -->
+   ```
+2. Прогони `yarn tailwind:configs:fix` — он допишет недостающие пути в конфиги приложений.
+3. `yarn verify:tailwind-coverage` (входит в `test:scripts`, гоняется в CI) падает, если
+   какое-то приложение не покрывает импортируемый UI-пакет.
+
+Скилл для агентов: `membrana-tailwind-coverage` (Cursor/Claude Code/Codex).
