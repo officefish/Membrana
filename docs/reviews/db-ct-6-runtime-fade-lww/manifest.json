@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "taskId": "db-ct-6-runtime-fade-lww",
+  "state": "lgtm",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feat/db-ct-6-runtime-fade-lww",
+  "currentCommitSha": "f7d403b0ab12bc27d3488a5ff1c64e6c170eb629",
+  "reviewedCommitSha": "f7d403b0ab12bc27d3488a5ff1c64e6c170eb629",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/db-ct-6-runtime-fade-lww/f7d403b0ab12bc27d3488a5ff1c64e6c170eb629-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 229,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/229"
+  },
+  "scope": {
+    "baseRef": "f7d403b0ab12bc27d3488a5ff1c64e6c170eb629^",
+    "files": [
+      "apps/client/src/lib/deviceBoardRuntimeController.ts",
+      "apps/client/src/lib/runtimePreemption.test.ts",
+      "apps/client/src/lib/runtimePreemption.ts",
+      "apps/client/src/lib/runtimeRealtimeBridge.test.ts",
+      "apps/client/src/lib/runtimeRealtimeBridge.ts",
+      "packages/services/audio-engine/src/core/buffer-player.ts",
+      "packages/services/audio-engine/src/core/fade-out.test.ts",
+      "packages/services/audio-engine/src/core/fade-out.ts",
+      "packages/services/audio-engine/src/core/playback-registry.test.ts",
+      "packages/services/audio-engine/src/core/playback-registry.ts",
+      "packages/services/audio-engine/src/index.ts"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/services/audio-engine"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "f7d403b0ab12bc27d3488a5ff1c64e6c170eb629",
+        "checkedAt": "2026-07-02T13:13:07.108Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "f7d403b0ab12bc27d3488a5ff1c64e6c170eb629",
+        "checkedAt": "2026-07-02T13:10:19Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28592600568/job/84779713768"
+      },
+      {
+        "command": "github-check:verify",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "f7d403b0ab12bc27d3488a5ff1c64e6c170eb629",
+        "checkedAt": "2026-07-02T13:10:07Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28592208389/job/84778355832"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "pending",
+    "evidence": null
+  },
+  "createdAt": "2026-07-02T13:13:05.379Z",
+  "updatedAt": "2026-07-02T13:13:19.002Z"
+}
