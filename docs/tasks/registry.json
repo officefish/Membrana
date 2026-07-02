@@ -10145,6 +10145,240 @@
       ],
       "epicId": "free-v1-sound-catalog",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "device-board-capture-tariff-v2",
+      "title": "Device-board capture tariff v2: явный захват, soft/hard, gateway whitelist (CT0–CT9)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "strategicWave": "W1",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-server-first"
+      ],
+      "notes": "OPEN: docs/day-sprint/db-capture-tariff-v2-2026-07-02/. Canon: docs/DEVICE_BOARD_SERVER_FIRST.md v2.0. Consilium: docs/seanses/device-board-capture-tariff-v2-2026-07-02.md. Ревизует v1 (не задеплоен). Скоуп: cabinet ↔ apps/client; Studio — отдельный спринт.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-ct-0-canon",
+      "title": "CT0: консилиум + canon v2.0 + регистрация спринта",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-capture-tariff-v2"
+      ],
+      "notes": "Выполнено 2026-07-02 (канон v2.0 + OPEN) — закрыть через yarn task:archive при коммите.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-ct-1-core-contracts",
+      "title": "CT1: core wire — board.capture/heartbeat/release, stop{fadeOutMs}, tariff capability set",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-0-canon"
+      ],
+      "notes": "packages/core. Удалить pause/resume/setMode/followerMode из wire-типов (совместно с CT7).",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-ct-2-gateway-capture",
+      "title": "CT2: gateway capture lifecycle — heartbeat 2м/TTL 5м + tariff whitelist (403)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-1-core-contracts"
+      ],
+      "notes": "packages/background-cabinet. Единственная точка enforcement тарифа.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-ct-3-cabinet-capture-ui",
+      "title": "CT3: cabinet — захват/отпуск (мягкий/жёсткий) + read-only scenario selector",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-2-gateway-capture"
+      ],
+      "notes": "apps/cabinet: NodesPage + board. getScenarios() dropdown, select+run+stop. Без pause/setMode.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db-ct-4-client-follower",
+      "title": "CT4: client — capture store, enforcement soft/hard, TTL auto-release",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-1-core-contracts"
+      ],
+      "notes": "apps/client. Optimistic UI-блокировка + обработка 403. Emergency stop всегда доступен.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "db-ct-5-indicators-alert",
+      "title": "CT5: badges захвата + alert вытеснения + a11y (aria-live)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-4-client-follower"
+      ],
+      "notes": "Отпущено/мягкий/жёсткий/соединение потеряно. Ревизия resolveServerFirstFlags() под оси v2.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db-ct-6-runtime-fade-lww",
+      "title": "CT6: audio-engine stop(fadeOutMs) + last-write-win конкуренции run",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-1-core-contracts"
+      ],
+      "notes": "Инвариант: без permission-проверок в audio-engine. Вытеснение = stop{fadeOutMs:200}; emergency = 0.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "id": "db-ct-7-v1-cleanup",
+      "title": "CT7: cleanup v1 superset — pause/resume/setMode/edit-lease из wire и gateway",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-2-gateway-capture"
+      ],
+      "notes": "Комментировать с пометкой // Tariff v3. Тесты pause → skip tariff=v3. Git-история сохраняет v1.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "db-ct-8-tests-smoke",
+      "title": "CT8: tests + smoke runbook (канон §11)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-5-indicators-alert",
+        "db-ct-6-runtime-fade-lww",
+        "db-ct-7-v1-cleanup"
+      ],
+      "notes": "Локально unit + gateway mock; prod E2E после окна деплоя cabinet (вместе с prod-gate v1).",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "db-ct-9-docs-sync",
+      "title": "CT9: docs sync — DESIGN (capture badges), ARCHITECTURE (оси v2), WHITE_PAPER (тарифы)",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "device-board-capture-tariff-v2",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "db-ct-8-tests-smoke"
+      ],
+      "notes": "Emergency-stop инвариант в ARCHITECTURE.md явным текстом (решение консилиума OQ10a).",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     }
   ]
 }

@@ -121,6 +121,11 @@
 | `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../docs/prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
 | `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
+| `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
+| `cg1-flaky-rag-service` | CG1: стабилизация флейки @membrana/rag-service retrieveContext (timeout 5000ms) | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
+| `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
+| `cg3-flaky-metrics-week` | CG3: логирование + сбор flaky-метрик за неделю (7 прогонов main) | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
+| `cg4-ci-testing-docs` | CG4: CONTRIBUTING § CI & Testing — таблица smoke vs full, классификация тестов | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `db3h-s2-cabinet-host` | DB3H-S2: device_board на сервере в кабинете пользователя | L | [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../docs/prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md) | — |
 | `db3h-s5-desktop-logging` | DB3H-S5: политика логов Studio + Device (support feedback) | M | [`DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md`](../docs/prompts/DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md) | — |
 | `db3h-s4-microphone-detectors` | DB3H-S4: рефакторинг микрофона + audit детекторов (async) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../docs/prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
@@ -141,6 +146,17 @@
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
 | `fv1-s2-closeout` | Night Build: fv1-S2 closeout — реестр/worktree reconciliation после merge #217/#218 | S | [`FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `device-board-capture-tariff-v2` | Device-board capture tariff v2: явный захват, soft/hard, gateway whitelist (CT0–CT9) | L | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-0-canon` | CT0: консилиум + canon v2.0 + регистрация спринта | S | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-1-core-contracts` | CT1: core wire — board.capture/heartbeat/release, stop{fadeOutMs}, tariff capability set | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-2-gateway-capture` | CT2: gateway capture lifecycle — heartbeat 2м/TTL 5м + tariff whitelist (403) | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-3-cabinet-capture-ui` | CT3: cabinet — захват/отпуск (мягкий/жёсткий) + read-only scenario selector | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-4-client-follower` | CT4: client — capture store, enforcement soft/hard, TTL auto-release | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-5-indicators-alert` | CT5: badges захвата + alert вытеснения + a11y (aria-live) | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-6-runtime-fade-lww` | CT6: audio-engine stop(fadeOutMs) + last-write-win конкуренции run | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-7-v1-cleanup` | CT7: cleanup v1 superset — pause/resume/setMode/edit-lease из wire и gateway | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-8-tests-smoke` | CT8: tests + smoke runbook (канон §11) | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-ct-9-docs-sync` | CT9: docs sync — DESIGN (capture badges), ARCHITECTURE (оси v2), WHITE_PAPER (тарифы) | S | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
 
 ---
 
