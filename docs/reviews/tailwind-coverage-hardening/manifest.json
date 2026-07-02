@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "tailwind-coverage-hardening",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T2",
   "reviewMode": "standard",
   "branch": "feat/tailwind-coverage-hardening",
@@ -79,9 +79,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #225 merged 2026-07-02T07:42:44Z (09fd3f72e3c9c694b1b04c0772cc01b5abe9120f)"
   },
   "createdAt": "2026-07-02T07:28:45.306Z",
-  "updatedAt": "2026-07-02T07:35:36.430Z"
+  "updatedAt": "2026-07-02T07:46:20.770Z"
 }

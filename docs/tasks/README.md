@@ -148,6 +148,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `tailwind-coverage-hardening` | Epic: Tailwind coverage hardening — per-package README frontmatter + генератор конфигов + CI-гейт + скиллы 3 агентов | 2026-07-02 | [`TAILWIND_COVERAGE_HARDENING_PROMPT.md`](../docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tailwind-coverage-hardening.md) |
+| `twc-l1-package-readme-frontmatter` | TWC-L1: секция ## Tailwind Integration с машиночитаемым фронтматтером в README UI-пакетов | 2026-07-02 | [`TAILWIND_COVERAGE_HARDENING_PROMPT.md`](../docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md) | — | [карточка](./archive/twc-l1-package-readme-frontmatter.md) |
+| `twc-l2-config-generator-and-skills` | TWC-L2: generate-tailwind-configs.mjs + verify:tailwind-coverage CI-гейт + CONTRIBUTING + скиллы tailwind-coverage для cursor/claude/opencode | 2026-07-02 | [`TAILWIND_COVERAGE_HARDENING_PROMPT.md`](../docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md) | — | [карточка](./archive/twc-l2-config-generator-and-skills.md) |
 | `cabinet-device-board-tailwind-fix` | Кабинет: фикс вёрстки device-board (tailwind content globs) + prod deploy | 2026-07-02 | [`CABINET_DEVICE_BOARD_TAILWIND_FIX_PROMPT.md`](../docs/prompts/CABINET_DEVICE_BOARD_TAILWIND_FIX_PROMPT.md) | — | [карточка](./archive/cabinet-device-board-tailwind-fix.md) |
 | `rt-day-report-script` | RT DAY-REPORT: скрипт yarn rt:day-report — анализ дня по git + transitions | 2026-07-01 | [`RT_DAY_REPORT_PROMPT.md`](../docs/prompts/RT_DAY_REPORT_PROMPT.md) | — | [карточка](./archive/rt-day-report-script.md) |
 | `rt-recon-s1` | RT-RECON-S1: реконструкция хронологии transitions[] из git-истории | 2026-07-01 | [`RT_RECON_PROMPT.md`](../docs/prompts/RT_RECON_PROMPT.md) | #221 | [карточка](./archive/rt-recon-s1.md) |
