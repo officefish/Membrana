@@ -8871,7 +8871,11 @@
       "archiveNotes": null,
       "notes": "Из консилиума ci-gate-friction-2026-07-02: сначала стабилизировать флейки (rag-service retrieveContext timeout) + метрики, scoped-gate деплоя отложен до недели данных. DR5 prod-гейты не трогаем.",
       "leadPersona": "dynin",
-      "supportPersonas": ["ozhegov", "kuryokhin", "rodchenko"]
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin",
+        "rodchenko"
+      ]
     },
     {
       "id": "cg1-flaky-rag-service",
@@ -8888,7 +8892,9 @@
       "archiveNotes": null,
       "notes": "Реальный флейки, заблокировавший прод-деплой кабинета. Диагностика гонка vs жёсткий таймаут, fix, прогон N раз. Lead Dynin+Kuryokhin.",
       "leadPersona": "dynin",
-      "supportPersonas": ["kuryokhin"]
+      "supportPersonas": [
+        "kuryokhin"
+      ]
     },
     {
       "id": "cg2-two-tier-test-gate",
@@ -8900,13 +8906,17 @@
       "status": "active",
       "strategicWave": "W1",
       "parentEpic": "ci-gate-stabilization",
-      "dependsOn": ["cg1-flaky-rag-service"],
+      "dependsOn": [
+        "cg1-flaky-rag-service"
+      ],
       "createdAt": "2026-07-02",
       "archivedAt": null,
       "archiveNotes": null,
       "notes": "vitest projects/теги (НЕ jest — консилиум ошибся). smoke < ~2 мин в CI, full опционально/ночью. Lead Ozhegov.",
       "leadPersona": "ozhegov",
-      "supportPersonas": ["dynin"]
+      "supportPersonas": [
+        "dynin"
+      ]
     },
     {
       "id": "cg3-flaky-metrics-week",
@@ -8935,13 +8945,17 @@
       "status": "active",
       "strategicWave": "W1",
       "parentEpic": "ci-gate-stabilization",
-      "dependsOn": ["cg2-two-tier-test-gate"],
+      "dependsOn": [
+        "cg2-two-tier-test-gate"
+      ],
       "createdAt": "2026-07-02",
       "archivedAt": null,
       "archiveNotes": null,
       "notes": "Документирование двухуровневого gate. Lead Ozhegov+Rodchenko.",
       "leadPersona": "ozhegov",
-      "supportPersonas": ["rodchenko"]
+      "supportPersonas": [
+        "rodchenko"
+      ]
     },
     {
       "id": "tailwind-coverage-hardening",
@@ -10123,7 +10137,8 @@
         "dynin",
         "ozhegov"
       ],
-      "epicId": "free-v1-sound-catalog"
+      "epicId": "free-v1-sound-catalog",
+      "githubIssueClosedAt": "2026-07-02"
     },
     {
       "id": "fv1-s3-integration",
@@ -10144,7 +10159,7 @@
         "rodchenko"
       ],
       "epicId": "free-v1-sound-catalog",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-02"
     },
     {
       "id": "device-board-capture-tariff-v2",
