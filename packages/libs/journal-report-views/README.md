@@ -49,3 +49,12 @@ if (trends) return <TrendsFftReportView report={trends} getTemplate={getTemplate
 - `fftThresholdReportFromItem`, `FFT_THRESHOLD_JOURNAL_SCHEMA`
 - `trendsFftReportFromItem`, `TRENDS_FFT_JOURNAL_SCHEMA`
 - Типы: `FftThresholdTestReport`, `FftThresholdFrameReportRow`, `TrendsFftReport`
+
+## Tailwind Integration
+
+Пакет экспортирует React-компоненты с Tailwind/daisyUI-классами, но **не поставляет
+собственный CSS-дистрибутив** (headless). Хост-приложение (`apps/client`, `apps/cabinet`)
+обязано сканировать `src/` этого пакета в своём `tailwind.config` `content`
+(см. `docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md`).
+
+<!-- tailwind-content: ["./src/**/*.{ts,tsx}"] -->
