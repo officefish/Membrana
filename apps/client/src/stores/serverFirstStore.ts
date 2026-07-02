@@ -20,6 +20,8 @@ interface ServerFirstStoreState {
   readonly lastCaptureRelease: DeviceCaptureReleaseReason | null;
   /** v2: сценарий, выбранный кабинетом (runtime.selectScenario). */
   readonly selectedScenarioId: string | null;
+  /** CT5: живо ли WS-соединение realtime (для badge «Соединение потеряно»). */
+  readonly realtimeConnected: boolean;
   setEditLease: (lease: BoardEditLeasePayload | null) => void;
   setCaptureState: (capture: BoardCaptureStatePayload | null) => void;
   setCaptureFromRunCommand: (deviceId: string, input: {
@@ -33,6 +35,7 @@ interface ServerFirstStoreState {
   applyCaptureHeartbeat: (sessionId: string, expiresAt: string) => void;
   releaseCapture: (reason: DeviceCaptureReleaseReason) => void;
   setSelectedScenarioId: (scenarioId: string | null) => void;
+  setRealtimeConnected: (connected: boolean) => void;
   reset: () => void;
 }
 
@@ -42,6 +45,7 @@ export const useServerFirstStore = create<ServerFirstStoreState>((set, get) => (
   capture: null,
   lastCaptureRelease: null,
   selectedScenarioId: null,
+  realtimeConnected: true,
   setEditLease: (lease) => set({ editLease: lease }),
   setCaptureState: (capture) => set({ captureState: capture }),
   setCaptureFromRunCommand: (deviceId, input) => {
@@ -80,6 +84,7 @@ export const useServerFirstStore = create<ServerFirstStoreState>((set, get) => (
   },
   releaseCapture: (reason) => set({ capture: null, lastCaptureRelease: reason }),
   setSelectedScenarioId: (scenarioId) => set({ selectedScenarioId: scenarioId }),
+  setRealtimeConnected: (connected) => set({ realtimeConnected: connected }),
   reset: () =>
     set({
       editLease: null,
@@ -87,6 +92,7 @@ export const useServerFirstStore = create<ServerFirstStoreState>((set, get) => (
       capture: null,
       lastCaptureRelease: null,
       selectedScenarioId: null,
+      realtimeConnected: true,
     }),
 }));
 

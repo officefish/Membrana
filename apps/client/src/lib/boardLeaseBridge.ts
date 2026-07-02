@@ -12,6 +12,7 @@ import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 let messageUnsub: (() => void) | null = null;
+let connectionUnsub: (() => void) | null = null;
 let captureTtlTimer: ReturnType<typeof setTimeout> | null = null;
 
 function clearCaptureTtlTimer(): void {
@@ -113,7 +114,7 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
   }
 }
 
-/** SF4: подписка на board.edit-lease и board.capture-state для полевого узла. */
+/** SF4 + CT5: подписка на board-события и connection state для полевого узла. */
 export function startBoardLeaseBridge(): void {
   if (messageUnsub !== null) {
     return;
@@ -125,11 +126,18 @@ export function startBoardLeaseBridge(): void {
     }
     applyBoardEnvelope(envelope, client.getDeviceId());
   });
+  // CT5 (канон §7): при разрыве WS под захватом показываем «Соединение потеряно»;
+  // сам захват отпустит TTL-таймер (канон §3), не разрыв.
+  connectionUnsub = client.subscribeState((connectionState) => {
+    useServerFirstStore.getState().setRealtimeConnected(connectionState === 'connected');
+  });
 }
 
 export function stopBoardLeaseBridge(): void {
   messageUnsub?.();
   messageUnsub = null;
+  connectionUnsub?.();
+  connectionUnsub = null;
   clearCaptureTtlTimer();
   useServerFirstStore.getState().reset();
 }

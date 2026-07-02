@@ -8,14 +8,20 @@ import { useServerFirstStore } from '@/stores/serverFirstStore';
 export function useServerFirstBoardState(deviceId: string | null): ServerFirstFlagsInput {
   const editLease = useServerFirstStore((s) => s.editLease);
   const captureState = useServerFirstStore((s) => s.captureState);
+  const capture = useServerFirstStore((s) => s.capture);
+  const lastCaptureRelease = useServerFirstStore((s) => s.lastCaptureRelease);
+  const realtimeConnected = useServerFirstStore((s) => s.realtimeConnected);
 
   return useMemo(
     () => ({
       deviceId,
       editLease,
       captureState,
+      capture,
+      captureConnectionLost: capture !== null && !realtimeConnected,
+      lastCaptureRelease,
     }),
-    [captureState, deviceId, editLease],
+    [capture, captureState, deviceId, editLease, lastCaptureRelease, realtimeConnected],
   );
 }
 

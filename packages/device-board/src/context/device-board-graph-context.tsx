@@ -468,7 +468,10 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
     [serverFirstState],
   );
   const isSessionReadOnly =
-    isDeviceBoardSessionReadOnly(boardSession) || serverFirstFlags?.cabinetEditLease === true;
+    isDeviceBoardSessionReadOnly(boardSession) ||
+    serverFirstFlags?.cabinetEditLease === true ||
+    // CT5 (канон §4.2): под явным захватом v2 структура read-only (soft и hard).
+    serverFirstFlags?.blockStructureEdit === true;
   const structureLockRef = useRef({
     locked: isSessionReadOnly,
     competition: false,
