@@ -10379,6 +10379,27 @@
       "supportPersonas": [
         "rodchenko"
       ]
+    },
+    {
+      "id": "db-scenario-selector",
+      "title": "Селектор сценариев захваченного устройства: реестр/запрос списка workspaces с устройства + dropdown в кабинете",
+      "promptPath": "docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "device-board-capture-tariff-v2"
+      ],
+      "notes": "Отложено из CT3 решением владельца 2026-07-02: у устройства на сервере один сценарий (background-media device-scenario), U10-workspaces живут на устройстве. Wire-заготовки selectScenario/run{scenarioId}/getScenarios готовы (CT1). Нужен механизм запроса списка с устройства по WS или серверный реестр сценариев.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "rodchenko"
+      ]
     }
   ]
 }

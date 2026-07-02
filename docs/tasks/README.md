@@ -157,6 +157,7 @@
 | `db-ct-7-v1-cleanup` | CT7: cleanup v1 superset — pause/resume/setMode/edit-lease из wire и gateway | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
 | `db-ct-8-tests-smoke` | CT8: tests + smoke runbook (канон §11) | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
 | `db-ct-9-docs-sync` | CT9: docs sync — DESIGN (capture badges), ARCHITECTURE (оси v2), WHITE_PAPER (тарифы) | S | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
+| `db-scenario-selector` | Селектор сценариев захваченного устройства: реестр/запрос списка workspaces с устройства + dropdown в кабинете | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
 
 ---
 
