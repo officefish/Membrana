@@ -116,3 +116,10 @@ apps/client/test-results/
 # Локальные бинари агентных инструментов (не коммитить)
 tools/bin/*.exe
 tools/bin/*.zip
+
+# Vite HMR/esbuild временные конфиги (регенерируются; блокировали deploy preflight)
+*.timestamp-*.mjs
+
+# Python bytecode-кэш скриптов
+__pycache__/
+*.pyc
