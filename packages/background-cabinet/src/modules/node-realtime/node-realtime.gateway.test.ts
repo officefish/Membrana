@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { NODE_REALTIME_EVENT_TYPES, type NodeRealtimeEnvelope } from '../../domain/node-realtime-wire';
+import { deviceCaptureExpiresAt } from '../../domain/device-capture';
+import { DeviceCaptureRegistry } from './device-capture.registry';
 import { NodeRealtimeGateway } from './node-realtime.gateway';
 import type { NodeRealtimeService } from './node-realtime.service';
 import type { NodeRealtimeJournalHandler } from './node-realtime-journal.handler';
@@ -14,15 +16,32 @@ function buildGateway() {
   const journalHandler = {
     handleIncoming: vi.fn().mockResolvedValue(undefined),
   } as unknown as NodeRealtimeJournalHandler;
+  const captureRegistry = new DeviceCaptureRegistry();
 
   const gateway = new NodeRealtimeGateway(
     { NODE_REALTIME_ENABLED: true } as never,
     {} as never,
     realtimeService,
     journalHandler,
+    captureRegistry,
   );
   gateway.onModuleDestroy();
-  return { gateway, realtimeService, journalHandler };
+  return { gateway, realtimeService, journalHandler, captureRegistry };
+}
+
+/** Активный захват d-устройства кабинетом m1 (тариф v2). */
+function registerCapture(
+  registry: DeviceCaptureRegistry,
+  mediaDeviceId: string,
+  mode: 'soft' | 'hard' = 'soft',
+): void {
+  registry.set(mediaDeviceId, {
+    membraneId: 'm1',
+    nodeId: 'n1',
+    sessionId: 'sess-1',
+    mode,
+    expiresAt: deviceCaptureExpiresAt(),
+  });
 }
 
 const nodeMeta: NodeRealtimeSocketMeta = {
@@ -58,14 +77,15 @@ describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
     expect(journalHandler.handleIncoming).not.toHaveBeenCalled();
   });
 
-  it('routes runtime.command from cabinet to the node socket', async () => {
-    const { gateway, realtimeService } = buildGateway();
+  it('routes runtime.command from cabinet to the node socket when device is captured (CT2)', async () => {
+    const { gateway, realtimeService, captureRegistry } = buildGateway();
+    registerCapture(captureRegistry, 'd1');
     const envelope: NodeRealtimeEnvelope = {
       v: 1,
       channel: 'runtime',
       type: NODE_REALTIME_EVENT_TYPES.runtime.command,
       ts: '2026-06-18T09:00:00.000Z',
-      payload: { action: 'setMode', mode: 'alarm' },
+      payload: { action: 'run', scenarioId: 'scn-1' },
     };
 
     await gateway.dispatchEnvelope(cabinetMeta, envelope);
@@ -74,7 +94,8 @@ describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
   });
 
   it('routes runtime.command to the target deviceId from payload (multi-node)', async () => {
-    const { gateway, realtimeService } = buildGateway();
+    const { gateway, realtimeService, captureRegistry } = buildGateway();
+    registerCapture(captureRegistry, 'd2');
     const envelope: NodeRealtimeEnvelope = {
       v: 1,
       channel: 'runtime',
@@ -87,6 +108,89 @@ describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
 
     // payload.deviceId перебивает привязанный к подключению meta.mediaDeviceId ('d1')
     expect(realtimeService.sendToNode).toHaveBeenCalledWith('d2', envelope);
+  });
+
+  it('rejects runtime.command without an active capture (канон §1: без захвата нет контроля)', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    const envelope: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+      ts: '2026-07-02T09:00:00.000Z',
+      payload: { action: 'run' },
+    };
+
+    await gateway.dispatchEnvelope(cabinetMeta, envelope);
+
+    expect(realtimeService.sendToNode).not.toHaveBeenCalled();
+  });
+
+  it('rejects runtime.command outside tariff v2 whitelist even with capture (канон §4.1)', async () => {
+    const { gateway, realtimeService, captureRegistry } = buildGateway();
+    registerCapture(captureRegistry, 'd1');
+    for (const payload of [
+      { action: 'setMode', mode: 'alarm' },
+      { action: 'pause' },
+      { action: 'resume' },
+    ]) {
+      const envelope: NodeRealtimeEnvelope = {
+        v: 1,
+        channel: 'runtime',
+        type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+        ts: '2026-07-02T09:00:00.000Z',
+        payload,
+      };
+      await gateway.dispatchEnvelope(cabinetMeta, envelope);
+    }
+
+    expect(realtimeService.sendToNode).not.toHaveBeenCalled();
+  });
+
+  it('rejects runtime.command when capture belongs to another membrane', async () => {
+    const { gateway, realtimeService, captureRegistry } = buildGateway();
+    captureRegistry.set('d1', {
+      membraneId: 'm-other',
+      nodeId: 'n1',
+      sessionId: 'sess-9',
+      mode: 'soft',
+      expiresAt: deviceCaptureExpiresAt(),
+    });
+    const envelope: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+      ts: '2026-07-02T09:00:00.000Z',
+      payload: { action: 'stop', fadeOutMs: 0 },
+    };
+
+    await gateway.dispatchEnvelope(cabinetMeta, envelope);
+
+    expect(realtimeService.sendToNode).not.toHaveBeenCalled();
+  });
+
+  it('forwards selectScenario and stop{fadeOutMs} under capture (tariff v2 whitelist)', async () => {
+    const { gateway, realtimeService, captureRegistry } = buildGateway();
+    registerCapture(captureRegistry, 'd1', 'hard');
+    const select: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+      ts: '2026-07-02T09:00:00.000Z',
+      payload: { action: 'selectScenario', scenarioId: 'scn-7' },
+    };
+    const stop: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+      ts: '2026-07-02T09:00:01.000Z',
+      payload: { action: 'stop', fadeOutMs: 200 },
+    };
+
+    await gateway.dispatchEnvelope(cabinetMeta, select);
+    await gateway.dispatchEnvelope(cabinetMeta, stop);
+
+    expect(realtimeService.sendToNode).toHaveBeenNthCalledWith(1, 'd1', select);
+    expect(realtimeService.sendToNode).toHaveBeenNthCalledWith(2, 'd1', stop);
   });
 
   it('still delegates journal envelopes from node to the journal handler', async () => {
@@ -166,6 +270,34 @@ describe('NodeRealtimeGateway board channel (server-first SF2)', () => {
 
     expect(realtimeService.fanOutToCabinet).toHaveBeenCalledWith('m1', envelope);
     expect(realtimeService.sendToNode).toHaveBeenCalledWith('d2', envelope);
+  });
+
+  it('drops board.capture/heartbeat/release arriving over WS (server-originated only, CT2)', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    for (const type of [
+      NODE_REALTIME_EVENT_TYPES.board.capture,
+      NODE_REALTIME_EVENT_TYPES.board.heartbeat,
+      NODE_REALTIME_EVENT_TYPES.board.release,
+    ]) {
+      const envelope: NodeRealtimeEnvelope = {
+        v: 1,
+        channel: 'board',
+        type,
+        ts: '2026-07-02T09:00:00.000Z',
+        payload: {
+          deviceId: 'd1',
+          mode: 'hard',
+          sessionId: 'sess-1',
+          acquiredAt: '2026-07-02T09:00:00.000Z',
+          expiresAt: '2026-07-02T09:05:00.000Z',
+        },
+      };
+      await gateway.dispatchEnvelope(cabinetMeta, envelope);
+      await gateway.dispatchEnvelope(nodeMeta, envelope);
+    }
+
+    expect(realtimeService.fanOutToCabinet).not.toHaveBeenCalled();
+    expect(realtimeService.sendToNode).not.toHaveBeenCalled();
   });
 
   it('drops invalid board.edit-lease payloads', async () => {

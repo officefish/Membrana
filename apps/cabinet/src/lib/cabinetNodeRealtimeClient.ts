@@ -1,7 +1,13 @@
 import {
   NODE_REALTIME_EVENT_TYPES,
+  parseBoardCaptureHeartbeatPayload,
+  parseBoardCapturePayload,
+  parseBoardCaptureReleasePayload,
   parseNodeRealtimeEnvelope,
   type AnalysisBriefPayload,
+  type BoardCaptureHeartbeatPayload,
+  type BoardCapturePayload,
+  type BoardCaptureReleasePayload,
   type JournalAppendPayload,
   type NodeOnlinePayload,
   type NodeRealtimeEnvelope,
@@ -23,6 +29,9 @@ type MicBriefHandler = (payload: AnalysisBriefPayload) => void;
 type RuntimeStateHandler = (payload: RuntimeStatePayload) => void;
 type PresenceOnlineHandler = (payload: NodeOnlinePayload) => void;
 type PresenceOfflineHandler = (payload: NodeOnlinePayload) => void;
+type BoardCaptureHandler = (payload: BoardCapturePayload) => void;
+type BoardCaptureHeartbeatHandler = (payload: BoardCaptureHeartbeatPayload) => void;
+type BoardCaptureReleaseHandler = (payload: BoardCaptureReleasePayload) => void;
 
 const MAX_BACKOFF_MS = 30_000;
 
@@ -48,6 +57,12 @@ class CabinetNodeRealtimeClientImpl {
   private readonly presenceOnlineHandlers = new Set<PresenceOnlineHandler>();
 
   private readonly presenceOfflineHandlers = new Set<PresenceOfflineHandler>();
+
+  private readonly boardCaptureHandlers = new Set<BoardCaptureHandler>();
+
+  private readonly boardCaptureHeartbeatHandlers = new Set<BoardCaptureHeartbeatHandler>();
+
+  private readonly boardCaptureReleaseHandlers = new Set<BoardCaptureReleaseHandler>();
 
   getState(): CabinetRealtimeClientState {
     return this.state;
@@ -87,6 +102,22 @@ class CabinetNodeRealtimeClientImpl {
   subscribePresenceOffline(handler: PresenceOfflineHandler): () => void {
     this.presenceOfflineHandlers.add(handler);
     return () => this.presenceOfflineHandlers.delete(handler);
+  }
+
+  /** CT3 (tariff v2): состояние явного захвата устройств (board.capture). */
+  subscribeBoardCapture(handler: BoardCaptureHandler): () => void {
+    this.boardCaptureHandlers.add(handler);
+    return () => this.boardCaptureHandlers.delete(handler);
+  }
+
+  subscribeBoardCaptureHeartbeat(handler: BoardCaptureHeartbeatHandler): () => void {
+    this.boardCaptureHeartbeatHandlers.add(handler);
+    return () => this.boardCaptureHeartbeatHandlers.delete(handler);
+  }
+
+  subscribeBoardCaptureRelease(handler: BoardCaptureReleaseHandler): () => void {
+    this.boardCaptureReleaseHandlers.add(handler);
+    return () => this.boardCaptureReleaseHandlers.delete(handler);
   }
 
   connect(membraneId: string): void {
@@ -194,6 +225,33 @@ class CabinetNodeRealtimeClientImpl {
           const payload = envelope.payload as NodeOnlinePayload;
           for (const handler of this.presenceOfflineHandlers) {
             handler(payload);
+          }
+        }
+        // CT3 (tariff v2): board.capture/heartbeat/release — server-originated broadcast.
+        if (envelope.channel === 'board') {
+          if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.capture) {
+            const payload = parseBoardCapturePayload(envelope.payload);
+            if (payload !== null) {
+              for (const handler of this.boardCaptureHandlers) {
+                handler(payload);
+              }
+            }
+          }
+          if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.heartbeat) {
+            const payload = parseBoardCaptureHeartbeatPayload(envelope.payload);
+            if (payload !== null) {
+              for (const handler of this.boardCaptureHeartbeatHandlers) {
+                handler(payload);
+              }
+            }
+          }
+          if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.release) {
+            const payload = parseBoardCaptureReleasePayload(envelope.payload);
+            if (payload !== null) {
+              for (const handler of this.boardCaptureReleaseHandlers) {
+                handler(payload);
+              }
+            }
           }
         }
       } catch {
