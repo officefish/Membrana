@@ -14,6 +14,7 @@ import {
   ScenarioAsyncJobHub,
   bindScenarioAsyncJobPublisher,
 } from '@membrana/agenda';
+import { stopAllActivePlayback } from '@membrana/audio-engine-service';
 
 import { createScenarioRuntimeHost } from '@/modules/device-board/createScenarioRuntimeHost';
 import { createClientDeviceBoardPersistAdapterFromSession } from '@/modules/device-board/deviceScenarioPersistence';
@@ -22,6 +23,7 @@ import {
   savePersistedRuntimeMode,
 } from '@/lib/runtimeModePersistence';
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
+import { preemptRunningScenario } from '@/lib/runtimePreemption';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 type StateListener = (state: ScenarioRuntimeState) => void;
@@ -36,6 +38,9 @@ type StateListener = (state: ScenarioRuntimeState) => void;
  */
 class DeviceBoardRuntimeController {
   private runtime: ScenarioRuntime | null = null;
+
+  /** CT6: активный run для LWW-preemption (ожидание settle перед перезапуском). */
+  private scenarioRunPromise: Promise<void> | undefined;
 
   private unsubscribeRuntime: (() => void) | null = null;
 
@@ -92,8 +97,10 @@ class DeviceBoardRuntimeController {
       }
     }
     const runtime = this.ensureRuntime();
-    if (runtime.getState().isRunning) {
-      return;
+    // CT6 (канон §3.2): last-write-win — последний run побеждает,
+    // проигравший сценарий останавливается.
+    if (!(await preemptRunningScenario(runtime, this.scenarioRunPromise))) {
+      return; // конкурентный preempt уже перезапустил runtime
     }
     if (!options?.fromRemote && deviceId !== null) {
       useServerFirstStore.getState().setFieldCapture(deviceId);
@@ -101,14 +108,17 @@ class DeviceBoardRuntimeController {
     this.asyncJobHub.clear();
     const document = await this.loadDocument();
     runtime.load(document);
-    void runtime.start();
+    this.scenarioRunPromise = runtime.start().catch(() => undefined);
   }
 
   /**
    * Emergency stop: доступен ВСЕГДА, в любом режиме захвата —
    * инвариант канона §3.3 (audio-engine без permission-check).
+   * CT6: `fadeOutMs` > 0 гасит слышимое воспроизведение плавно
+   * (вытеснение захватом = 200 мс); 0/умолчание — hard-cut.
    */
-  stop(): void {
+  stop(options?: { fadeOutMs?: number }): void {
+    void stopAllActivePlayback({ fadeOutMs: options?.fadeOutMs ?? 0 });
     this.runtime?.stop('user');
   }
 
@@ -147,6 +157,7 @@ class DeviceBoardRuntimeController {
   /** Сброс синглтона между тестами. */
   reset(): void {
     this.runtime?.stop('system');
+    this.scenarioRunPromise = undefined;
     this.unsubscribeRuntime?.();
     this.unsubscribeRuntime = null;
     this.unsubscribeAsyncJobs?.();

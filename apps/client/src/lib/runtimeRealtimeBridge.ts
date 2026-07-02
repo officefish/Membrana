@@ -16,7 +16,7 @@ import { useServerFirstStore } from '@/stores/serverFirstStore';
 /** Минимальный контракт контроллера, нужный мосту (упрощает unit-тесты). */
 export interface RuntimeBridgeController {
   start: (options?: { fromRemote?: boolean }) => void | Promise<void>;
-  stop: () => void;
+  stop: (options?: { fadeOutMs?: number }) => void;
   pause: () => void;
   resume: () => void;
   setMode: (mode: RuntimeMode) => void;
@@ -137,8 +137,9 @@ export function applyRuntimeCommand(
       useServerFirstStore.getState().setSelectedScenarioId(parsed.scenarioId);
       return true;
     case 'stop':
-      // fadeOutMs прокидывается в audio-engine в CT6; здесь стоп немедленный.
-      controller.stop();
+      // CT6 (канон §3.1): fadeOutMs из wire — graceful вытеснение (200 мс)
+      // или hard-cut (0/умолчание) — гасится в audio-engine.
+      controller.stop(parsed.fadeOutMs !== undefined ? { fadeOutMs: parsed.fadeOutMs } : undefined);
       return true;
     case 'pause':
       controller.pause();

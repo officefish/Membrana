@@ -105,10 +105,14 @@ describe('runtimeRealtimeBridge helpers', () => {
     expect(controller.start).toHaveBeenCalledWith({ fromRemote: true });
   });
 
-  it('applyRuntimeCommand: stop{fadeOutMs} распознаётся (fade — CT6)', () => {
+  it('applyRuntimeCommand: stop{fadeOutMs} прокидывает fade в контроллер (CT6)', () => {
     const controller = fakeController();
 
     expect(applyRuntimeCommand(controller, { action: 'stop', fadeOutMs: 200 })).toBe(true);
-    expect(controller.stop).toHaveBeenCalledTimes(1);
+    expect(controller.stop).toHaveBeenCalledWith({ fadeOutMs: 200 });
+
+    // Emergency stop: hard-cut без опций.
+    expect(applyRuntimeCommand(controller, { action: 'stop' })).toBe(true);
+    expect(controller.stop).toHaveBeenLastCalledWith(undefined);
   });
 });
