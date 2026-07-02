@@ -8857,6 +8857,66 @@
       ]
     },
     {
+      "id": "tailwind-coverage-hardening",
+      "title": "Epic: Tailwind coverage hardening — per-package README frontmatter + генератор конфигов + CI-гейт + скиллы 3 агентов",
+      "promptPath": "docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Из консилиума deploy-friction-2026-07-02: Tailwind content дублирование — естественный порог monorepo, лечим операционной защитой (docs+генерация+CI-гейт), без архитектурного рефакторинга. Пункт Б (CI-gate/флейки) — отдельный консилиум после спринта.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin",
+        "dynin"
+      ]
+    },
+    {
+      "id": "twc-l1-package-readme-frontmatter",
+      "title": "TWC-L1: секция ## Tailwind Integration с машиночитаемым фронтматтером в README UI-пакетов",
+      "promptPath": "docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "tailwind-coverage-hardening",
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "device-board, core (если CSS), journal-report-views, audioDataViz и др. UI-пакеты. Источник правды для генератора L2. Lead Rodchenko, срок — завтра.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": []
+    },
+    {
+      "id": "twc-l2-config-generator-and-skills",
+      "title": "TWC-L2: generate-tailwind-configs.mjs + verify:tailwind-coverage CI-гейт + CONTRIBUTING + скиллы tailwind-coverage для cursor/claude/opencode",
+      "promptPath": "docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "strategicWave": "W1",
+      "parentEpic": "tailwind-coverage-hardening",
+      "dependsOn": [
+        "twc-l1-package-readme-frontmatter"
+      ],
+      "createdAt": "2026-07-02",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Генератор конфигов из README-фронтматтера (рекурсивно по графу @membrana/*), CI-гейт в test:scripts, CONTRIBUTING. + скилл membrana-tailwind-coverage для трёх агентов (.cursor/skills, .claude/skills зеркало, .opencode/skills). Lead Kuryokhin+Dynin.",
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko"
+      ]
+    },
+    {
       "id": "cabinet-device-board-tailwind-fix",
       "title": "Кабинет: фикс вёрстки device-board (tailwind content globs) + prod deploy",
       "promptPath": "docs/prompts/CABINET_DEVICE_BOARD_TAILWIND_FIX_PROMPT.md",
