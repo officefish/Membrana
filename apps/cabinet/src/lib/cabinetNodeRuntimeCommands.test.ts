@@ -1,14 +1,33 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  CABINET_STOP_FADE_OUT_MS,
   buildCabinetPauseCommand,
   buildCabinetResumeCommand,
   buildCabinetRunCommand,
+  buildCabinetRunScenarioCommand,
   buildCabinetSetModeCommand,
   buildCabinetStopCommand,
+  buildCabinetStopScenarioCommand,
 } from './cabinetNodeRuntimeCommands';
 
 describe('cabinetNodeRuntimeCommands', () => {
+  it('v2: run без authority/followerMode — захват явный, отдельным шагом (CT3)', () => {
+    expect(buildCabinetRunScenarioCommand('dev-1')).toEqual({
+      action: 'run',
+      deviceId: 'dev-1',
+    });
+  });
+
+  it('v2: stop с graceful fade-out по умолчанию; emergency = 0 явно', () => {
+    expect(buildCabinetStopScenarioCommand('dev-1')).toEqual({
+      action: 'stop',
+      deviceId: 'dev-1',
+      fadeOutMs: CABINET_STOP_FADE_OUT_MS,
+    });
+    expect(buildCabinetStopScenarioCommand('dev-1', 0).fadeOutMs).toBe(0);
+  });
+
   it('buildCabinetRunCommand sets cabinet authority and followerMode', () => {
     expect(buildCabinetRunCommand('dev-1')).toEqual({
       action: 'run',
