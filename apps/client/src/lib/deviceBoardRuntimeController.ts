@@ -6,6 +6,7 @@ import {
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
+  resolveDeviceCaptureFlags,
   resolveServerFirstFlags,
   type ScenarioRuntimeState,
 } from '@membrana/device-board';
@@ -72,13 +73,23 @@ class DeviceBoardRuntimeController {
 
   async start(options?: { fromRemote?: boolean }): Promise<void> {
     const deviceId = getNodeRealtimeClient().getDeviceId();
-    const flags = resolveServerFirstFlags({
-      deviceId,
-      editLease: useServerFirstStore.getState().editLease,
-      captureState: useServerFirstStore.getState().captureState,
-    });
-    if (!options?.fromRemote && flags.blockLocalRun) {
-      return;
+    const captureFlags = resolveDeviceCaptureFlags(useServerFirstStore.getState().capture);
+    if (captureFlags.captured) {
+      // CT4 (канон §4.2): при явном захвате v2 решает ось capture —
+      // hard блокирует локальный run, soft разрешает (last-write-win §3.2).
+      if (!options?.fromRemote && !captureFlags.allowFieldRun) {
+        return;
+      }
+    } else {
+      // v1 legacy path (неявный run=capture) — до CT7 cleanup.
+      const flags = resolveServerFirstFlags({
+        deviceId,
+        editLease: useServerFirstStore.getState().editLease,
+        captureState: useServerFirstStore.getState().captureState,
+      });
+      if (!options?.fromRemote && flags.blockLocalRun) {
+        return;
+      }
     }
     const runtime = this.ensureRuntime();
     if (runtime.getState().isRunning) {
@@ -93,15 +104,26 @@ class DeviceBoardRuntimeController {
     void runtime.start();
   }
 
+  /**
+   * Emergency stop: доступен ВСЕГДА, в любом режиме захвата —
+   * инвариант канона §3.3 (audio-engine без permission-check).
+   */
   stop(): void {
     this.runtime?.stop('user');
   }
 
   pause(): void {
+    // CT4 (канон §4.2): пауза под захватом заблокирована (soft и hard) — тариф v3.
+    if (resolveDeviceCaptureFlags(useServerFirstStore.getState().capture).captured) {
+      return;
+    }
     this.runtime?.pause();
   }
 
   resume(): void {
+    if (resolveDeviceCaptureFlags(useServerFirstStore.getState().capture).captured) {
+      return;
+    }
     this.runtime?.resume();
   }
 

@@ -126,9 +126,18 @@ export function applyRuntimeCommand(
 
   switch (parsed.action) {
     case 'run':
+      // CT4: выбранный кабинетом сценарий фиксируем в store; фактическая
+      // загрузка по scenarioId — CT3 (selector) + CT6 (runtime).
+      if (parsed.scenarioId !== undefined) {
+        useServerFirstStore.getState().setSelectedScenarioId(parsed.scenarioId);
+      }
       void controller.start({ fromRemote: true });
       return true;
+    case 'selectScenario':
+      useServerFirstStore.getState().setSelectedScenarioId(parsed.scenarioId);
+      return true;
     case 'stop':
+      // fadeOutMs прокидывается в audio-engine в CT6; здесь стоп немедленный.
       controller.stop();
       return true;
     case 'pause':

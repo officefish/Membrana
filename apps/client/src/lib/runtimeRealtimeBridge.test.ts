@@ -12,6 +12,7 @@ import {
   runtimeStateToPayload,
   type RuntimeBridgeController,
 } from './runtimeRealtimeBridge';
+import { resetServerFirstStoreForTests, useServerFirstStore } from '@/stores/serverFirstStore';
 
 function fakeController(): RuntimeBridgeController & {
   start: ReturnType<typeof vi.fn>;
@@ -80,5 +81,34 @@ describe('runtimeRealtimeBridge helpers', () => {
 
     expect(applyRuntimeCommand(controller, { action: 'resume' })).toBe(true);
     expect(controller.resume).toHaveBeenCalledTimes(1);
+  });
+
+  it('applyRuntimeCommand: selectScenario фиксирует выбор кабинета (CT4)', () => {
+    resetServerFirstStoreForTests();
+    const controller = fakeController();
+
+    expect(
+      applyRuntimeCommand(controller, { action: 'selectScenario', scenarioId: 'scn-7' }),
+    ).toBe(true);
+
+    expect(useServerFirstStore.getState().selectedScenarioId).toBe('scn-7');
+    expect(controller.start).not.toHaveBeenCalled();
+  });
+
+  it('applyRuntimeCommand: run{scenarioId} фиксирует выбор и стартует', () => {
+    resetServerFirstStoreForTests();
+    const controller = fakeController();
+
+    expect(applyRuntimeCommand(controller, { action: 'run', scenarioId: 'scn-9' })).toBe(true);
+
+    expect(useServerFirstStore.getState().selectedScenarioId).toBe('scn-9');
+    expect(controller.start).toHaveBeenCalledWith({ fromRemote: true });
+  });
+
+  it('applyRuntimeCommand: stop{fadeOutMs} распознаётся (fade — CT6)', () => {
+    const controller = fakeController();
+
+    expect(applyRuntimeCommand(controller, { action: 'stop', fadeOutMs: 200 })).toBe(true);
+    expect(controller.stop).toHaveBeenCalledTimes(1);
   });
 });
