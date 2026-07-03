@@ -199,4 +199,71 @@ describe('boardLeaseBridge capture v2 (CT4)', () => {
 
     expect(useServerFirstStore.getState().capture).toBeNull();
   });
+
+  it('TTL-разряд отпускает ровно один раз; heartbeat после release не воскрешает (SC1)', () => {
+    applyBoardEnvelopeForTests(
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, capturePayload),
+      deviceId,
+    );
+
+    // Далеко за TTL: release не должен дублироваться отменёнными таймерами.
+    vi.advanceTimersByTime(30 * 60 * 1000);
+    expect(useServerFirstStore.getState().capture).toBeNull();
+    expect(useServerFirstStore.getState().lastCaptureRelease).toBe('ttl-expired');
+
+    // Запоздалый heartbeat мёртвой сессии — захват не воскресает.
+    applyBoardEnvelopeForTests(
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.heartbeat, {
+        deviceId,
+        sessionId: 'sess-1',
+        expiresAt: '2026-07-02T11:00:00.000Z',
+      }),
+      deviceId,
+    );
+    expect(useServerFirstStore.getState().capture).toBeNull();
+    expect(useServerFirstStore.getState().lastCaptureRelease).toBe('ttl-expired');
+  });
+
+  it('Studio-shell focus: один раз на acquire, не на смену режима той же сессии (SC1)', () => {
+    const notify = vi.fn();
+    // Тесты идут в node-окружении: минимальный window-стаб для electron-порта.
+    vi.stubGlobal('window', { electronAPI: { studioShell: { notifyCaptureAcquired: notify } } });
+    try {
+      applyBoardEnvelopeForTests(
+        createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, capturePayload),
+        deviceId,
+      );
+      expect(notify).toHaveBeenCalledTimes(1);
+
+      // Та же сессия, смена режима — окно не дёргаем повторно.
+      applyBoardEnvelopeForTests(
+        createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, {
+          ...capturePayload,
+          mode: 'soft' as const,
+        }),
+        deviceId,
+      );
+      expect(notify).toHaveBeenCalledTimes(1);
+
+      // Новая сессия захвата — снова focus.
+      applyBoardEnvelopeForTests(
+        createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.release, {
+          deviceId,
+          sessionId: 'sess-1',
+          reason: 'operator',
+        }),
+        deviceId,
+      );
+      applyBoardEnvelopeForTests(
+        createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, {
+          ...capturePayload,
+          sessionId: 'sess-2',
+        }),
+        deviceId,
+      );
+      expect(notify).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });
