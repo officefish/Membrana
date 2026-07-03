@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "vdr-hg1-pilot-corpus",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T1",
   "reviewMode": "standard",
   "branch": "feat/vdr-hg1-pilot-corpus",
@@ -73,9 +73,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #233 merged 2026-07-03T11:28:15Z (1a4414cf2c69685042096c2b6a8cb9b07288de41)"
   },
   "createdAt": "2026-07-03T05:49:32.339Z",
-  "updatedAt": "2026-07-03T05:59:07.685Z"
+  "updatedAt": "2026-07-03T11:33:00.777Z"
 }

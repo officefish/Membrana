@@ -1223,7 +1223,7 @@
       "id": "validated-drone-recognition",
       "title": "Epic: Validated drone recognition — ground truth, ≥80% accuracy, templates",
       "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "L",
       "status": "archived",
@@ -1241,13 +1241,14 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "notes": " GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03."
     },
     {
       "id": "vdr1-sample-label-patch-api",
       "title": "VDR1: PATCH sample label + notes API (background-media)",
       "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "M",
       "status": "archived",
@@ -1264,13 +1265,14 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "notes": " GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03."
     },
     {
       "id": "vdr2-label-notes-ui",
       "title": "VDR2: label/notes UI — client user + cabinet admin",
       "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "L",
       "status": "archived",
@@ -1289,13 +1291,14 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "notes": " GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03."
     },
     {
       "id": "vdr3-ground-truth-export",
       "title": "VDR3: export curated manifest + DATASET_CURATION protocol",
       "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "M",
       "status": "archived",
@@ -1312,13 +1315,14 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "notes": " GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03."
     },
     {
       "id": "vdr4-dsp-calibration-validated",
       "title": "VDR4: DSP calibration on validated labels — target ≥80% val accuracy",
       "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "L",
       "status": "archived",
@@ -1337,13 +1341,14 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "notes": " GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03."
     },
     {
       "id": "vdr5-template-match-detector",
       "title": "VDR5: template-match detector from validated drone templates",
       "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "L",
       "status": "archived",
@@ -1360,13 +1365,14 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "notes": " GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03."
     },
     {
       "id": "vdr6-recognition-report-gate",
       "title": "VDR6: recognition report — best detector, gap to 80% and stage-gate",
       "promptPath": "docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "M",
       "status": "archived",
@@ -1386,7 +1392,8 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "notes": " GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03."
     },
     {
       "id": "drone-detector-detail-report",
@@ -10448,45 +10455,47 @@
       "id": "vdr-hg1-pilot-corpus",
       "title": "HG1: пилотный корпус 30–35 (DAD-остаток + ESC-срезы, независимость от train) + intra-rater >=95% + validate-vdr.mjs + фильтр статуса в VDR2-UI",
       "promptPath": "docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "vdr-hard-gate",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "PR #233; review LGTM 5bbb48ae31aa; PR #233 merged 2026-07-03T11:28:15Z (1a4414cf2c69685042096c2b6a8cb9b07288de41)",
       "dependsOn": [
         "vdr-hard-gate"
       ],
-      "notes": "manifest: data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json. Sign-off в DATASET_CURATION.md секция «Пилот hard-gate». Фильтр/счётчик — toggle в toolbar (Rodchenko, ~2ч). 2026-07-03: код готов (PR #233 LGTM, копим merge). РАЗМЕТКА+intra-rater отложены до оборудования (~2026-07-17).",
+      "notes": "manifest: data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json. Sign-off в DATASET_CURATION.md секция «Пилот hard-gate». Фильтр/счётчик — toggle в toolbar (Rodchenko, ~2ч). 2026-07-03: код готов (PR #233 LGTM, копим merge). РАЗМЕТКА+intra-rater отложены до оборудования (~2026-07-17). GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03.",
       "leadPersona": "dynin",
       "supportPersonas": [
         "musician",
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr-hg2-mic-validation-plugin",
       "title": "HG2: плагин «VDR-валидация» модуля Микрофон — прогон пилота + live, pred-vs-truth, P/R/F1 gate в UI",
       "promptPath": "docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md",
-      "githubIssue": 47,
+      "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "vdr-hard-gate",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "PR #234; review LGTM 91d35800ac09; PR #234 merged 2026-07-03T11:29:28Z (bd8eddabe250b32dcf71d10c2c234492a9872be5)",
       "dependsOn": [
         "vdr-hg1-pilot-corpus"
       ],
-      "notes": "Требование владельца 2026-07-03: эксперименты в продукте как плагин микрофона. MembranaRegistry, звук только audio-engine (guard-скилл), catalog prompt, DESIGN-токены, a11y. Скрипты остаются каноном метрик.",
+      "notes": "Требование владельца 2026-07-03: эксперименты в продукте как плагин микрофона. MembranaRegistry, звук только audio-engine (guard-скилл), catalog prompt, DESIGN-токены, a11y. Скрипты остаются каноном метрик. GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03.",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "musician",
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr-hg3-trends-benchmark",
@@ -10503,7 +10512,7 @@
       "dependsOn": [
         "vdr-hg1-pilot-corpus"
       ],
-      "notes": "yarn benchmark:detectors на vdr-hard-gate-pilot; расхождение скрипт-плагин <= погрешности. BLOCKED операторской истиной до ~2026-07-17; программно допустим только предварительный прогон по originLabel (не gate).",
+      "notes": "yarn benchmark:detectors на vdr-hard-gate-pilot; расхождение скрипт-плагин <= погрешности. BLOCKED операторской истиной до ~2026-07-17; программно допустим только предварительный прогон по originLabel (не gate). 2026-07-03: механика merged (PR #235, LGTM 4d4e3a9) + fix регрессии template-match (fv1-s3): canon v0.2 F1 77.1; preliminary пилота (origin-labels) F1 63.4. Остаток: финальный прогон на операторских метках после разметки.",
       "leadPersona": "dynin",
       "supportPersonas": [
         "musician"
