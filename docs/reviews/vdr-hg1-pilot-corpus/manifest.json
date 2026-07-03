@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "taskId": "vdr-hg1-pilot-corpus",
-  "state": "review_pending",
+  "state": "lgtm",
   "tier": "T1",
   "reviewMode": "standard",
   "branch": "feat/vdr-hg1-pilot-corpus",
-  "currentCommitSha": "a51fc04129550d7deaf6436a6dd79d413bbb4728",
-  "reviewedCommitSha": null,
-  "verdict": "pending",
-  "reviewArtifact": null,
+  "currentCommitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+  "reviewedCommitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/vdr-hg1-pilot-corpus/5bbb48ae31aab6e43314f8055256f3948270c1e4-review.md",
   "github": {
     "issue": 47,
     "pullRequest": 233,
@@ -16,44 +16,10 @@
     "url": "https://github.com/officefish/Membrana/pull/233"
   },
   "scope": {
-    "baseRef": "a51fc04129550d7deaf6436a6dd79d413bbb4728^",
+    "baseRef": "5bbb48ae31aab6e43314f8055256f3948270c1e4^",
     "files": [
       "apps/cabinet/src/components/sample-library/CabinetSampleCollectionBody.tsx",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/README.md",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-001.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-002.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-003.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-004.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-005.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-006.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-007.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-008.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-009.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-010.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-011.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-012.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-013.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-014.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-015.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/drone/pilot-drone-016.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-airplane-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-chainsaw-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-chainsaw-02.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-chirping-birds-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-chirping-birds-02.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-engine-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-engine-02.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-helicopter-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-helicopter-02.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-helicopter-03.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-vacuum-cleaner-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-vacuum-cleaner-02.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-vacuum-cleaner-03.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-washing-machine-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-washing-machine-02.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-wind-01.wav",
-      "data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/pilot-not-wind-02.wav",
+      "docs/reviews/vdr-hg1-pilot-corpus/manifest.json",
       "package.json",
       "scripts/fetch-real-dataset-collection.mjs",
       "scripts/fetch-vdr-pilot-corpus.mjs",
@@ -72,46 +38,38 @@
         "command": "git diff --check",
         "status": "pass",
         "exitCode": 0,
-        "commitSha": "a51fc04129550d7deaf6436a6dd79d413bbb4728",
-        "checkedAt": "2026-07-03T05:49:34.487Z",
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:58:47.676Z",
         "note": ""
       },
       {
         "command": "github-check:optional-review",
         "status": "skipped",
         "exitCode": null,
-        "commitSha": "a51fc04129550d7deaf6436a6dd79d413bbb4728",
-        "checkedAt": "2026-07-03T05:43:21Z",
-        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28641049738/job/84937102203"
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:51:23Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28641344309/job/84938045606"
       },
       {
         "command": "github-check:Lint, typecheck, test, build",
-        "status": "skipped",
+        "status": "pass",
         "exitCode": null,
-        "commitSha": "a51fc04129550d7deaf6436a6dd79d413bbb4728",
-        "checkedAt": "2026-07-03T05:43:24Z",
-        "note": "https://github.com/officefish/Membrana/actions/runs/28641049782/job/84937101566"
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:57:55Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28641344312/job/84938027365"
       },
       {
         "command": "github-check:Turbo unit tests",
         "status": "pass",
         "exitCode": null,
-        "commitSha": "a51fc04129550d7deaf6436a6dd79d413bbb4728",
-        "checkedAt": "2026-07-03T05:47:09Z",
-        "note": "success · https://github.com/officefish/Membrana/actions/runs/28641049741/job/84937101515"
-      },
-      {
-        "command": "github-check:verify",
-        "status": "pass",
-        "exitCode": null,
-        "commitSha": "a51fc04129550d7deaf6436a6dd79d413bbb4728",
-        "checkedAt": "2026-07-03T05:48:55Z",
-        "note": "success · https://github.com/officefish/Membrana/actions/runs/28641023199/job/84937025130"
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:55:44Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28641344275/job/84938027321"
       }
     ]
   },
   "reviewersStatus": {
-    "vesnin": "pending",
+    "vesnin": "approved",
     "ozhegov": "pending"
   },
   "completion": {
@@ -119,5 +77,5 @@
     "evidence": null
   },
   "createdAt": "2026-07-03T05:49:32.339Z",
-  "updatedAt": "2026-07-03T05:49:32.339Z"
+  "updatedAt": "2026-07-03T05:59:07.685Z"
 }
