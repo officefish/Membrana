@@ -10459,7 +10459,7 @@
       "dependsOn": [
         "vdr-hard-gate"
       ],
-      "notes": "manifest: data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json. Sign-off в DATASET_CURATION.md секция «Пилот hard-gate». Фильтр/счётчик — toggle в toolbar (Rodchenko, ~2ч).",
+      "notes": "manifest: data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json. Sign-off в DATASET_CURATION.md секция «Пилот hard-gate». Фильтр/счётчик — toggle в toolbar (Rodchenko, ~2ч). 2026-07-03: код готов (PR #233 LGTM, копим merge). РАЗМЕТКА+intra-rater отложены до оборудования (~2026-07-17).",
       "leadPersona": "dynin",
       "supportPersonas": [
         "musician",
@@ -10503,7 +10503,7 @@
       "dependsOn": [
         "vdr-hg1-pilot-corpus"
       ],
-      "notes": "yarn benchmark:detectors на vdr-hard-gate-pilot; расхождение скрипт-плагин <= погрешности.",
+      "notes": "yarn benchmark:detectors на vdr-hard-gate-pilot; расхождение скрипт-плагин <= погрешности. BLOCKED операторской истиной до ~2026-07-17; программно допустим только предварительный прогон по originLabel (не gate).",
       "leadPersona": "dynin",
       "supportPersonas": [
         "musician"
@@ -10525,7 +10525,7 @@
         "vdr-hg2-mic-validation-plugin",
         "vdr-hg3-trends-benchmark"
       ],
-      "notes": "Приём: F1>=85% hard-gate пройден; 80-85 мягкий; <80 team-разбор (повтор разметки vs R&D-эпик). LGTM Vesnin.",
+      "notes": "Приём: F1>=85% hard-gate пройден; 80-85 мягкий; <80 team-разбор (повтор разметки vs R&D-эпик). LGTM Vesnin. BLOCKED до разметки (~2026-07-17).",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
