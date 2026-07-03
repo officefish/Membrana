@@ -88,6 +88,12 @@
 `transport-service` не реализуются и не подключаются в клиент до precision ≥85% и recall ≥90%
 на бенчмарке ([`DETECTOR_BENCHMARK.md`](./DETECTOR_BENCHMARK.md)).
 
+**Статус gate (2026-07-03):** DSP-семейство провалило validated-калибровку (лучший 50%
+val accuracy, `DETECTOR_CALIBRATION.md`); фаворит — **trends/template-match** (мягкий gate
+95/30 пройден на fv1). Hard-gate валидируется эпиком `vdr-hard-gate` (пилотный корпус +
+intra-rater ≥95% + плагин «VDR-валидация» модуля «Микрофон» — требование владельца:
+эксперименты имеют продуктовую поверхность). Neural/agentic (1.B) — после решения по пилоту.
+
 **Контракт (единый для всех детекторов):**
 
 ```typescript

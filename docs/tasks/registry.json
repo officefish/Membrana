@@ -1226,10 +1226,10 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "Эпик закрыт консилиумом vdr-validation-scope-2026-07-03: VDR1-3 done, VDR4 done-fail (DSP 50% vs 80%), VDR5-6 перенесены в эпик vdr-hard-gate. GH #47 остаётся открытым (neural wave).",
       "dependsOn": [
         "sld4-stage-gate-calibration"
       ],
@@ -1240,7 +1240,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr1-sample-label-patch-api",
@@ -1249,11 +1250,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "validated-drone-recognition",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "DONE: PATCH label/notes API + role admin реализованы (media-library-service updateSampleLabelNotes, все backends). Консилиум 2026-07-03.",
       "dependsOn": [
         "validated-drone-recognition"
       ],
@@ -1262,7 +1263,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr2-label-notes-ui",
@@ -1271,11 +1273,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "validated-drone-recognition",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "DONE: UI разметки client+cabinet, badges в DESIGN.md, плагин показывает label. Консилиум 2026-07-03.",
       "dependsOn": [
         "vdr1-sample-label-patch-api"
       ],
@@ -1286,7 +1288,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr3-ground-truth-export",
@@ -1295,11 +1298,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "validated-drone-recognition",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "DONE: DATASET_CURATION.md + sign-off 2026-06-14 (120/120, 60/60, 0 unlabeled), manifest v0.2 экспортирован.",
       "dependsOn": [
         "vdr2-label-notes-ui"
       ],
@@ -1308,7 +1311,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr4-dsp-calibration-validated",
@@ -1317,11 +1321,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "validated-drone-recognition",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "DONE-FAIL: цель >=80% не достигнута -- лучший DSP cepstral 50% val accuracy (harmonic 40%, cepstral/flux TN=0). Отчёт: DETECTOR_CALIBRATION.md (2026-06-15). Рекомендация: trends/template-match + hard-gate. Консилиум 2026-07-03.",
       "dependsOn": [
         "vdr3-ground-truth-export"
       ],
@@ -1332,7 +1336,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr5-template-match-detector",
@@ -1341,11 +1346,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "validated-drone-recognition",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "Перенесён: template-match-detector-service реализован v0.1 (ARCHITECTURE 1e); сравнение на hard-gate корпусе -- vdr-hg3. Консилиум 2026-07-03.",
       "dependsOn": [
         "vdr3-ground-truth-export"
       ],
@@ -1354,7 +1359,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "vdr6-recognition-report-gate",
@@ -1363,11 +1369,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "validated-drone-recognition",
       "createdAt": "2026-06-14",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-03",
+      "archiveNotes": "Перенесён в vdr-hg4-hard-gate-report (новый эпик vdr-hard-gate). Консилиум 2026-07-03.",
       "dependsOn": [
         "vdr4-dsp-calibration-validated",
         "vdr5-template-match-detector"
@@ -1379,7 +1385,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "drone-detector-detail-report",
@@ -10414,6 +10421,114 @@
       "supportPersonas": [
         "vesnin",
         "rodchenko"
+      ]
+    },
+    {
+      "id": "vdr-hard-gate",
+      "title": "Epic: VDR-Hard-Gate — пилот валидации (30–35), плагин микрофона «VDR-валидация», trends benchmark 85/90 (HG1–HG4)",
+      "promptPath": "docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [],
+      "notes": "Консилиум: docs/seanses/vdr-validation-scope-2026-07-03.md. Наследник validated-drone-recognition (VDR1-3 done, VDR4 done-fail). Требование владельца 2026-07-03: эксперименты в продукте = плагин модуля Микрофон (HG2). Intra-rater >=95% вместо Kappa. Приём: trends F1>=85% hard / <80% team-разбор.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "musician"
+      ]
+    },
+    {
+      "id": "vdr-hg1-pilot-corpus",
+      "title": "HG1: пилотный корпус 30–35 (DAD-остаток + ESC-срезы, независимость от train) + intra-rater >=95% + validate-vdr.mjs + фильтр статуса в VDR2-UI",
+      "promptPath": "docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "vdr-hard-gate",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr-hard-gate"
+      ],
+      "notes": "manifest: data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json. Sign-off в DATASET_CURATION.md секция «Пилот hard-gate». Фильтр/счётчик — toggle в toolbar (Rodchenko, ~2ч).",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "musician",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "vdr-hg2-mic-validation-plugin",
+      "title": "HG2: плагин «VDR-валидация» модуля Микрофон — прогон пилота + live, pred-vs-truth, P/R/F1 gate в UI",
+      "promptPath": "docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "parentEpic": "vdr-hard-gate",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr-hg1-pilot-corpus"
+      ],
+      "notes": "Требование владельца 2026-07-03: эксперименты в продукте как плагин микрофона. MembranaRegistry, звук только audio-engine (guard-скилл), catalog prompt, DESIGN-токены, a11y. Скрипты остаются каноном метрик.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "musician",
+        "ozhegov"
+      ]
+    },
+    {
+      "id": "vdr-hg3-trends-benchmark",
+      "title": "HG3: benchmark trends на пилоте (канон метрик) + сравнение с template-match v0.1; плагин зеркалит числа",
+      "promptPath": "docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "vdr-hard-gate",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr-hg1-pilot-corpus"
+      ],
+      "notes": "yarn benchmark:detectors на vdr-hard-gate-pilot; расхождение скрипт-плагин <= погрешности.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "musician"
+      ]
+    },
+    {
+      "id": "vdr-hg4-hard-gate-report",
+      "title": "HG4: отчёт hard-gate (DATASET_CURATION) + WHITE_PAPER §8 + ARCHITECTURE §1e + решение по критерию приёма",
+      "promptPath": "docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md",
+      "githubIssue": 47,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "vdr-hard-gate",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "dependsOn": [
+        "vdr-hg2-mic-validation-plugin",
+        "vdr-hg3-trends-benchmark"
+      ],
+      "notes": "Приём: F1>=85% hard-gate пройден; 80-85 мягкий; <80 team-разбор (повтор разметки vs R&D-эпик). LGTM Vesnin.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
       ]
     }
   ]

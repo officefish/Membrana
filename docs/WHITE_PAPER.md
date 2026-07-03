@@ -303,6 +303,17 @@ interface Track {
 Консилиум и task-промпт: `docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md`,
 протокол `docs/seanses/single-node-detection-first-2026-05-16.md`.
 
+**Статус gate (2026-07-03, консилиум `vdr-validation-scope`):** эпик VDR
+(валидированная детекция через DSP) завершён на этапе мягкого гейта. Лучший
+результат DSP-семейства — 50% val accuracy (**провал**, `DETECTOR_CALIBRATION.md`);
+**trends-детектор** (FFT + шаблоны) достиг **95% recall / 30% FPR** на fv1-корпусе —
+мягкий гейт пройден. Hard-gate 85/90 проверяется на независимом пилотном корпусе
+(30–35 сэмплов, intra-rater ≥95%) — эпик `vdr-hard-gate`
+([`VDR_HARD_GATE_EPIC_PROMPT.md`](./prompts/VDR_HARD_GATE_EPIC_PROMPT.md));
+эксперимент представлен в продукте плагином «VDR-валидация» модуля «Микрофон».
+После пилота: hard-gate пройден → trends production-ready; провал → R&D-эпик
+нейросетевого подхода (эшелон 1.B).
+
 ### Этап 0 — Фундамент (есть сейчас)
 
 - `audio-engine` поставляет кадры.
