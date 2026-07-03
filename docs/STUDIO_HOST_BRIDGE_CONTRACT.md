@@ -1,6 +1,6 @@
 # Studio Host Bridge — контракт трёх хостов device-board
 
-> **Статус:** канон v0.2 (2026-07-03: +§4.5 Capture tariff v2, консилиум [`studio-capture-adaptation-2026-07-03.md`](./seanses/studio-capture-adaptation-2026-07-03.md); v0.1 — 2026-06-26, [`studio-host-smoke-registry-2026-06-26.md`](./seanses/studio-host-smoke-registry-2026-06-26.md))  
+> **Статус:** канон v0.2 (2026-07-03: +§4.5 Capture tariff v2, консилиум [`studio-capture-adaptation-2026-07-03.md`](./seanses/studio-capture-adaptation-2026-07-03.md); v0.1 — 2026-06-26, [`studio-host-smoke-registry-2026-06-26.md`](./seanses/studio-host-smoke-registry-2026-06-26.md))\
 > **Эпик:** MS6 в [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md)  
 > **Операционный дневник:** [`actions/device-board/STUDIO_HOST_LESSONS.md`](./actions/device-board/STUDIO_HOST_LESSONS.md) (STx)  
 > **Pack/runtime:** [`actions/device-board/USERCASE_COMPETITION_LESSONS.md`](./actions/device-board/USERCASE_COMPETITION_LESSONS.md) (Lx)
