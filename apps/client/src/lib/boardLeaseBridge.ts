@@ -10,6 +10,7 @@ import {
 
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { notifyStudioCaptureAcquired } from '@/lib/electronStudioShellPort';
+import { writeElectronShellLog } from '@/lib/electronShellLogPort';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 let messageUnsub: (() => void) | null = null;
@@ -33,11 +34,14 @@ function armCaptureTtl(expiresAt: string): void {
   const delay = Date.parse(expiresAt) - Date.now();
   if (!Number.isFinite(delay) || delay <= 0) {
     useServerFirstStore.getState().releaseCapture('ttl-expired');
+    writeElectronShellLog('info', '[capture] release reason=ttl-expired (expired on arm)');
     return;
   }
   captureTtlTimer = setTimeout(() => {
     captureTtlTimer = null;
     useServerFirstStore.getState().releaseCapture('ttl-expired');
+    // SC4: capture-lifecycle в M1 shell-лог студии (no-op в браузере) — logs:parse:shell.
+    writeElectronShellLog('info', '[capture] release reason=ttl-expired (local TTL)');
   }, delay);
 }
 
@@ -88,6 +92,11 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
       expiresAt: payload.expiresAt,
     });
     armCaptureTtl(payload.expiresAt);
+    // SC4: capture-lifecycle в M1 shell-лог студии (no-op в браузере).
+    writeElectronShellLog(
+      'info',
+      `[capture] acquired mode=${payload.mode} session=${payload.sessionId}`,
+    );
     // SC1: Studio-shell поднимает окно один раз на acquire (не на смену режима
     // той же сессии) — оператору нужен alert и доступ к emergency stop (§3.3).
     if (previous === null || previous.sessionId !== payload.sessionId) {
@@ -107,6 +116,7 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
     }
     store.applyCaptureHeartbeat(payload.sessionId, payload.expiresAt);
     armCaptureTtl(payload.expiresAt);
+    writeElectronShellLog('debug', `[capture] heartbeat session=${payload.sessionId}`);
     return;
   }
 
@@ -118,6 +128,7 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
     clearCaptureTtlTimer();
     // Release НЕ останавливает играющий сценарий (канон §3) — только состояние.
     store.releaseCapture(payload.reason);
+    writeElectronShellLog('info', `[capture] release reason=${payload.reason}`);
   }
 }
 

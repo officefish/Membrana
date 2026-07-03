@@ -67,6 +67,29 @@
 
 ---
 
+## §Studio (Electron) capture smoke — SC4
+
+> Спринт [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../../../prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) · контракт [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../../../STUDIO_HOST_BRIDGE_CONTRACT.md) §4.5 Capture
+
+### Программные пункты (этот спринт)
+
+- [ ] Unit TTL/heartbeat/focus-once: `yarn workspace @membrana/client test src/lib/boardLeaseBridge.test.ts` — зелёный (SC1: TTL-разряд ровно один раз, мёртвый heartbeat не воскрешает, focus per acquire).
+- [ ] Capture-lifecycle в M1 shell-лог: renderer пишет `[capture] acquired/heartbeat/release`, main — `capture acquired — window focused` (SC1/SC4).
+- [ ] Парсер: `yarn logs:parse:shell -- --file %APPDATA%/Membrana/logs/shell-<дата>.log --require-acquired 1 --require-release 1` — счётчики по режимам/причинам, exit 1 при недоборе.
+- [ ] `backgroundThrottling: false` в `createWindow()` (grep main.ts).
+- [ ] `clientVersion` в WS handshake (SC5, после реализации).
+
+### Ручные пункты — **deferred ~2026-07-17 (оборудование)**
+
+- [ ] Paired Studio + cabinet: полный цикл capture(soft/hard)/release/TTL; badges и alert-toast поверх фуллскрин-борда; окно поднимается в foreground при захвате.
+- [ ] Реальный троттлинг: свернуть окно на 6+ мин под захватом без heartbeat → auto-release вовремя (OQ6, real timers).
+- [ ] LWW при мягком захвате (Пуск с поля vs Пуск с кабинета).
+- [ ] Слуховая проверка fade 200мс при вытеснении/стопе — без артефактов на стыке (Kuryokhin).
+- [ ] Плагин «VDR-валидация» при захвате: live-окно и corpus runner работоспособны.
+- [ ] Итоги внести в этот раздел (дата, оператор, PASS/замечания → STx при симптомах).
+
+---
+
 ## Разбор инцидентов
 
 - Gateway warn-логи: `runtime.command rejected` (whitelist / not captured) — ожидаемые при негативных проверках.
