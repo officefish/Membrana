@@ -229,6 +229,7 @@ export function buildTaskClosureReviewPrompt({
     '```',
     '',
     `Review only task ${manifest.taskId} at commit ${manifest.currentCommitSha}.`,
+    `Output contract: строка "Tier:" обязана быть ровно "${manifest.tier}" — tier уже вычислен правилами манифеста (multi-package/T2-префиксы), НЕ пересчитывай его по размеру диффа.`,
   ].join('\n');
 }
 
