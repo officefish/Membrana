@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "taskId": "sca-s1-ttl-throttling",
+  "state": "lgtm",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feat/sca-s1-ttl-throttling",
+  "currentCommitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+  "reviewedCommitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/sca-s1-ttl-throttling/ba4b1f16f2e8a33481aad1ec032f517e4666c239-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 237,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/237"
+  },
+  "scope": {
+    "baseRef": "ba4b1f16f2e8a33481aad1ec032f517e4666c239^",
+    "files": [
+      "apps/client/src/lib/boardLeaseBridge.test.ts",
+      "apps/client/src/lib/boardLeaseBridge.ts",
+      "apps/client/src/lib/electronMediaLibraryPort.ts",
+      "apps/client/src/lib/electronStudioShellPort.ts",
+      "apps/membrana-studio/src/main.ts",
+      "apps/membrana-studio/src/preload.ts"
+    ],
+    "packages": [
+      "apps/client",
+      "apps/membrana-studio"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+        "checkedAt": "2026-07-03T13:01:27.278Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Package Membrana Studio (Windows nsis)",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+        "checkedAt": "2026-07-03T12:15:00Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28659533561/job/84996766653"
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+        "checkedAt": "2026-07-03T12:07:53Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28659533547/job/84996603084"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+        "checkedAt": "2026-07-03T12:11:41Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28659533578/job/84996578855"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+        "checkedAt": "2026-07-03T12:14:27Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28659533570/job/84996578591"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+        "checkedAt": "2026-07-03T12:09:04Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28659533561/job/84996578589"
+      },
+      {
+        "command": "github-check:verify",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "ba4b1f16f2e8a33481aad1ec032f517e4666c239",
+        "checkedAt": "2026-07-03T12:13:50Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28659508125/job/84996496635"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "pending",
+    "evidence": null
+  },
+  "createdAt": "2026-07-03T12:22:37.130Z",
+  "updatedAt": "2026-07-03T13:01:39.513Z"
+}
