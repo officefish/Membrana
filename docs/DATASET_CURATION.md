@@ -91,10 +91,34 @@ yarn calibrate:detectors    # VDR4 — пороги на train, отчёт на 
 |----------|----------|
 | Корпус | 30–35 новых сэмплов: остатки DAD + свежие срезы ESC-50 (3–5 с), **без пересечения с train v0.2** (сверка по IDs manifest) |
 | Манифест | `data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json` (`sampleId, source, label, operator, date, notes`) |
-| Разметка | 100% через cabinet VDR2-UI (протокол выше); фильтр статуса + счётчик прогресса |
+| Разметка | 100% через клиентскую **«Библиотеку сэмплов»** (основной инструмент оператора; кабинетная таблица — параллельный путь). Фильтр по метке + счётчик прогресса есть в обоих |
 | **Качество разметки** | **Intra-rater**: оператор повторно размечает 15–20% подвыборки через 3–5 дней **не подглядывая** старую разметку; воспроизводимость **≥95%**. Cohen's Kappa — отложена до появления второго человека-аннотатора |
 | Аудит | `yarn validate:vdr` (`scripts/validate-vdr.mjs`): счётчики (всего/drone/not-drone/unlabeled/дубли), `--intra-rater-threshold` (default 95%), Kappa при двух файлах разметки, JSON export. Без CI-гейта — вспомогательный |
 | Продуктовая поверхность | Плагин **«VDR-валидация»** модуля «Микрофон» (требование владельца): pred-vs-truth, P/R/F1; скрипты — канон воспроизводимости |
 | Критерий приёма | trends **F1 ≥85%** → hard-gate пройден; 80–85% → мягкий; **<80%** → team-разбор: шумная разметка → повтор intra-rater; неадекватность trends → R&D-эпик |
 
-Sign-off пилота добавляется сюда же после HG1 (таблица по образцу выше).
+### Операторский путь разметки пилота (label round-trip, night build 2026-07-03)
+
+1. **Импорт**: модуль «Библиотека сэмплов» → создать коллекцию (например `vdr-pilot`) → «Импорт WAV» (multi-select) → выбрать все 33 файла из `data/detectors-benchmark/vdr-hard-gate-pilot/samples/`. Метки встанут `unlabeled`.
+2. **Разметка**: слушать плеером в таблице, ставить `drone`/`not-drone` + заметку. Фильтр «Неразмеченные» и счётчик «размечено N из M» показывают остаток.
+3. **Экспорт**: кнопка **«Экспорт меток (JSON)»** у коллекции → файл `vdr-pilot-labels.json`.
+4. **Merge в манифест** (истина корпуса):
+
+   ```bash
+   yarn vdr:labels-merge -- --labels vdr-pilot-labels.json \
+     --manifest data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json --dry-run   # проверить отчёт
+   yarn vdr:labels-merge -- --labels vdr-pilot-labels.json \
+     --manifest data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json             # применить
+   yarn validate:vdr                                                                    # аудит
+   ```
+
+5. **Intra-rater** (через 3–5 дней): сбросить метки 5–7 сэмплов в `unlabeled` (или отдельная коллекция-копия), разметить заново не подглядывая → экспорт JSON → плоский файл и проверка:
+
+   ```bash
+   yarn vdr:labels-merge -- --labels vdr-pilot-relabel.json --labels-only relabel.json
+   yarn validate:vdr -- --intra-rater relabel.json
+   ```
+
+6. Коммит обновлённого манифеста + sign-off таблица сюда же (по образцу выше).
+
+Sign-off пилота добавляется сюда же после разметки (таблица по образцу выше).
