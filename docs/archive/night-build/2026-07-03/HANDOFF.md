@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-07-03
+
+> Epic: `vdr-label-roundtrip-night-build`
+> Закрыто: `2026-07-03T16:34:04.610Z` (`yarn night:close`)
+> Промпт: `docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/vdr-label-roundtrip-night-build-2026-07-03` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 ﻿# Night Build log
 
 ## Open вЂ” 2026-06-14T18:06:19.233Z
@@ -92,3 +113,28 @@
 ## Checkpoint NB4 вЂ” 2026-07-03T15:32:28.575Z
 - Status: **pass**
 - Note:
+
+
+---
+
+## Итог ночи (агент)
+
+| Фаза | Статус | PR / commit |
+|------|--------|-------------|
+| NB0 gate (baseline + модель хранения) | **done** | baseline: client FULL TURBO, scripts 113/0; матч = MediaSample.title (имя файла) ↔ manifest id |
+| NB1 экспорт меток (JSON) + multi-select импорт | **done** | `26c14cb4` |
+| NB2 `yarn vdr:labels-merge` (+`--labels-only`, 5 тестов, E2E dry-run) | **done** | `ce6699a1` |
+| NB3 фильтр по метке + прогресс в библиотеке | **done** | `26c14cb4` |
+| NB4 операторский путь в DATASET_CURATION §Пилот | **done** | `898516a6` |
+
+**PR:** https://github.com/officefish/Membrana/pull/241 (base **main**, не мержить до LGTM)
+**Scoped CI конца ночи:** client 21/21, `test:scripts` 118/0, полный scheduled-ci **зелёный со 2-го прогона**.
+
+**Блокеры:**
+
+- Нет. Отклонение от замороженного scope одно и минимальное: `multiple` у существующего input импорта (без него оператору 33 клика на пилот) — в духе цели NB1, отмечено здесь.
+- Flake (не наш код): `@membrana/rag-service` `retrieveContext (R1 archive)` — 2 теста timeout 5s на первом прогоне CI, второй прогон зелёный. Улика для CG-спринта (ci-gate-stabilization).
+
+**Рекомендация утра:** merge PR #241 → `task:archive` nb-vlr-0..4 + эпик; примечание в HG-эпик: разметка пилота полностью готова к приходу оборудования (~2026-07-17).
+
+**LGTM Vesnin:** pending (утро)
