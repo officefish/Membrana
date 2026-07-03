@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "sca-s5-delivery-version",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T2",
   "reviewMode": "standard",
   "branch": "feat/sca-s5-delivery-version",
@@ -67,9 +67,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #240 merged 2026-07-03T13:44:42Z (61ac4d9dd5103ef59947cd578725317048b4dfe8)"
   },
   "createdAt": "2026-07-03T13:43:13.114Z",
-  "updatedAt": "2026-07-03T13:43:32.205Z"
+  "updatedAt": "2026-07-03T13:46:57.721Z"
 }

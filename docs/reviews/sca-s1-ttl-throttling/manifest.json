@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "sca-s1-ttl-throttling",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T2",
   "reviewMode": "standard",
   "branch": "feat/sca-s1-ttl-throttling",
@@ -96,9 +96,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #237 merged 2026-07-03T13:44:24Z (b3fec6938271caaef5c1bf5ba6a51a2be0ddb73e)"
   },
   "createdAt": "2026-07-03T12:22:37.130Z",
-  "updatedAt": "2026-07-03T13:01:39.513Z"
+  "updatedAt": "2026-07-03T13:46:43.396Z"
 }

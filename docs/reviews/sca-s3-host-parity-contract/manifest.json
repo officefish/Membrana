@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "sca-s3-host-parity-contract",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T0",
   "reviewMode": "concise-t0",
   "branch": "feat/sca-s3-host-parity",
@@ -42,9 +42,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #238 merged 2026-07-03T13:44:30Z (a99871c72c50f78ac011dcfb9d76df4e26757820)"
   },
   "createdAt": "2026-07-03T13:26:00.714Z",
-  "updatedAt": "2026-07-03T13:27:34.581Z"
+  "updatedAt": "2026-07-03T13:46:46.347Z"
 }

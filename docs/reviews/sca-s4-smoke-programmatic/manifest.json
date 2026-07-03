@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "sca-s4-smoke-programmatic",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T1",
   "reviewMode": "standard",
   "branch": "feat/sca-s4-smoke-programmatic",
@@ -62,9 +62,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #239 merged 2026-07-03T13:44:36Z (5935cc3db29a646925a2f8d8aee43a03cbde564a)"
   },
   "createdAt": "2026-07-03T13:37:26.984Z",
-  "updatedAt": "2026-07-03T13:38:22.731Z"
+  "updatedAt": "2026-07-03T13:46:54.604Z"
 }
