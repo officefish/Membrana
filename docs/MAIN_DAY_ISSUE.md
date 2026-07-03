@@ -1,13 +1,13 @@
-<!-- Сгенерировано: 2026-07-02T04:08:00.752Z (yarn main-day-issue) -->
+<!-- Сгенерировано: 2026-07-03T04:56:35.448Z (yarn main-day-issue) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: single-node-detection-first, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, background-media-v1, background-media-a5a-server, background-media-a5b-docker, background-media-a5c-deploy, sample-library-drone-detection, sld3-dsp-detectors-free-v1, sld4-stage-gate-calibration, validated-drone-recognition, vdr1-sample-label-patch-api, vdr2-label-notes-ui, vdr3-ground-truth-export, vdr4-dsp-calibration-validated, vdr5-template-match-detector, vdr6-recognition-report-gate, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-realtime-gateway, membrane-node-realtime-nr0-contract, membrane-node-realtime-nr1-gateway, membrane-node-realtime-nr2-journal-ws, membrane-node-realtime-nr3-client-journal, membrane-node-realtime-nr4-mic-live, membrane-node-realtime-nr5-cabinet-live, membrane-node-realtime-nr6-prod-hardening, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, deploy-pipeline-refactor, dpr-dr0-git-hygiene-gate, dpr-dr1-ci-gate, dpr-dr2-image-registry, dpr-dr3-rollback-runbook, dpr-dr4-smoke-suite, dpr-dr5-branch-migration-policy, dpr-dr6-client-delivery, dpr-dr7-zero-downtime, device-board-refactor-v04, dbr-0-concept-core, dbr-1-fullscreen, dbr-2-variables, dbr-3-event-node, dbr-4-dataflow-resolve, dbr-5-palette-nodes, dbr-6-run-gating, db-doc-v04-mvp, db-post-usercase-roadmap, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions, db-ap-r1-core-contracts, db-ap-r2-core-sequence-latent, db-ap-r3-async-job-store, db-ap-r4-sequence-latent-runtime, db-ap-r5-promise-nodes-editor, db-ap-r6-promise-nodes-executor, db-ap-r7-host-bridge-jobs, db-ap-r8-detached-event-dispatch, db-ap-r9-mvp-graph-v2, db-ap-r10-agenda-async-hub, db-ap-r11-observability-tests, db-ap-r12-docs-signoff, opencode-proxy-sprint-2026-06-25, oc-proxy-s0-research-isolation, oc-proxy-s1-opencode-install, oc-proxy-s2-freemodel-keys, oc-proxy-s3-llm-proxy-script, oc-proxy-s4-opencode-config, comp-packaging-catalog-2026-06-25, device-board-three-hosts-2026-06-26, db3h-s2-cabinet-host, db3h-s5-desktop-logging, db3h-s4-microphone-detectors, device-board-server-first, db-sf-0-canon, db-sf-1-core-contracts, db-sf-2-gateway-board, db-sf-3-cabinet-lease-api, db-sf-4-client-follower, db-sf-5-board-flags-ui, db-sf-6-nodes-runtime, db-sf-7-last-track-preview, db-sf-8-tests-smoke, db-sf-9-docs-sync, neural-tier-1b-contract, neural-free-tier-dataset-report, rag-dual-circuit-v1, rag-r6-closure, rag-r7-optional, fv1-s2-closeout -->
+<!-- active в реестре: single-node-detection-first, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, background-media-v1, background-media-a5a-server, background-media-a5b-docker, background-media-a5c-deploy, sample-library-drone-detection, sld3-dsp-detectors-free-v1, sld4-stage-gate-calibration, validated-drone-recognition, vdr1-sample-label-patch-api, vdr2-label-notes-ui, vdr3-ground-truth-export, vdr4-dsp-calibration-validated, vdr5-template-match-detector, vdr6-recognition-report-gate, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-realtime-gateway, membrane-node-realtime-nr0-contract, membrane-node-realtime-nr1-gateway, membrane-node-realtime-nr2-journal-ws, membrane-node-realtime-nr3-client-journal, membrane-node-realtime-nr4-mic-live, membrane-node-realtime-nr5-cabinet-live, membrane-node-realtime-nr6-prod-hardening, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, deploy-pipeline-refactor, dpr-dr0-git-hygiene-gate, dpr-dr1-ci-gate, dpr-dr2-image-registry, dpr-dr3-rollback-runbook, dpr-dr4-smoke-suite, dpr-dr5-branch-migration-policy, dpr-dr6-client-delivery, dpr-dr7-zero-downtime, device-board-refactor-v04, dbr-0-concept-core, dbr-1-fullscreen, dbr-2-variables, dbr-3-event-node, dbr-4-dataflow-resolve, dbr-5-palette-nodes, dbr-6-run-gating, db-doc-v04-mvp, db-post-usercase-roadmap, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions, db-ap-r1-core-contracts, db-ap-r2-core-sequence-latent, db-ap-r3-async-job-store, db-ap-r4-sequence-latent-runtime, db-ap-r5-promise-nodes-editor, db-ap-r6-promise-nodes-executor, db-ap-r7-host-bridge-jobs, db-ap-r8-detached-event-dispatch, db-ap-r9-mvp-graph-v2, db-ap-r10-agenda-async-hub, db-ap-r11-observability-tests, db-ap-r12-docs-signoff, opencode-proxy-sprint-2026-06-25, oc-proxy-s0-research-isolation, oc-proxy-s1-opencode-install, oc-proxy-s2-freemodel-keys, oc-proxy-s3-llm-proxy-script, oc-proxy-s4-opencode-config, comp-packaging-catalog-2026-06-25, device-board-three-hosts-2026-06-26, ci-gate-stabilization, cg1-flaky-rag-service, cg2-two-tier-test-gate, cg3-flaky-metrics-week, cg4-ci-testing-docs, db3h-s2-cabinet-host, db3h-s5-desktop-logging, db3h-s4-microphone-detectors, device-board-server-first, db-sf-0-canon, db-sf-1-core-contracts, db-sf-2-gateway-board, db-sf-3-cabinet-lease-api, db-sf-4-client-follower, db-sf-5-board-flags-ui, db-sf-6-nodes-runtime, db-sf-7-last-track-preview, db-sf-8-tests-smoke, db-sf-9-docs-sync, neural-tier-1b-contract, neural-free-tier-dataset-report, rag-dual-circuit-v1, rag-r6-closure, rag-r7-optional, fv1-s2-closeout, db-scenario-selector -->
 
-# MAIN_DAY_ISSUE — 2026-07-02
+# MAIN_DAY_ISSUE — 2026-07-03
 
-**Дата:** 2026-07-02 | **Координатор:** Vesnin (Teamlead)  
-**Время генерации:** 04:30 UTC | **Статус:** Ready for human action
+**Дата:** 2026-07-03 | **Координатор:** Vesnin (Teamlead)  
+**Время генерации:** 04:55 UTC | **Статус:** Ready for human action
 
 ---
 
@@ -16,236 +16,307 @@
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                                                              │
-│  ⚡ РАЗБЛОКИРОВКА ЭТАПА 2 + VDR-ИНИЦИАЦИЯ                    │
+│  ⚡ VALIATION & STAGE-GATE CLEARANCE (VDR-INITIATION)        │
 │                                                              │
-│  🎯 МАГИСТРАЛЬ: VDR-протокол (09:00–14:00, 5 ч)             │
+│  🎯 ГЛАВНАЯ МАГИСТРАЛЬ: VDR-Protocol (09:00–14:00, 5 ч)      │
 │     Lead: Vesnin + Ozhegov                                  │
-│     DoD: VDR_PROTOCOL.md + validate-vdr-labels.mjs          │
+│     Артефакт: docs/VDR_PROTOCOL.md + validate-vdr.mjs      │
+│     DoD: Протокол завершён, скрипты работают                │
 │                                                              │
-│  📦 ПАРАЛЛЕЛЬ: Zero-shot scaffold (13:00–15:00, 2 ч)        │
+│  📦 ПАРАЛЛЕЛЬ A: Zero-shot scaffold (13:00–15:00, 2 ч)      │
 │     Lead: Ozhegov + Dynin                                   │
-│     DoD: @membrana/zero-shot-detector компилируется         │
+│     Артефакт: @membrana/zero-shot-detector live            │
+│     DoD: Пакет компилируется, контракт реализован           │
 │                                                              │
-│  ✅ ПАРАЛЛЕЛЬ: Stage-gate 1→2 doc (14:00–15:30, 1.5 ч)      │
+│  ✅ ПАРАЛЛЕЛЬ B: Stage-gate 1→2 doc (14:00–15:30, 1.5 ч)    │
 │     Lead: Vesnin                                            │
-│     DoD: STAGE_GATE_1_TO_2.md готов                         │
+│     Артефакт: docs/STAGE_GATE_1_TO_2.md                    │
+│     DoD: Чек-лист и критерии gate зафиксированы            │
+│                                                              │
+│  🟢 УТРЕННЯЯ БЛОКИРУЮЩАЯ ФАЗА: Lint/Test (06:00–09:00, 3 ч) │
+│     Lead: Ozhegov + Rodchenko                               │
+│     Артефакт: Зелёный статус main                          │
+│     DoD: @membrana/client && @membrana/research-tree-demo  │
 │                                                              │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📋 Синхронизация со входными документами
+## 📌 Синхронизация с входными документами
 
-**DAILY_STANDUP.md:** Вчерашние блокеры (lint @membrana/client, test @membrana/research-tree-demo) — требуют **немедленного fix в 06:00–09:00**.
-
-**STRATEGIC_PLAN_DAY.md:** Три вектора на сегодня (VDR + zero-shot + stage-gate) — **все в MAIN_DAY_ISSUE**.
-
-**DAILY_CODE_REVIEW.md:** P0 блокеры:
-- ❌ `yarn lint typecheck` падают в @membrana/client
-- ❌ Tests не проходят в @membrana/research-tree-demo
-- ⚠️ Untracked mjs-timestamps в packages/services
+| Источник | Ключевой вывод | Как попадает в MAIN_DAY_ISSUE |
+|----------|----------------|-----------------------------| 
+| **DAILY_STANDUP.md** | ❌ 2 блокера: lint/test падают в @membrana/client и research-tree-demo | **ФАЗА 0 (06:00–09:00)** — fix-on-arrival |
+| **STRATEGIC_PLAN_DAY.md** | 3 вектора: VDR + zero-shot + stage-gate docs | **ФАЗЫ 1–3 (09:00–15:30)** — магистраль + параллели |
+| **DAILY_CODE_REVIEW.md** | P0: lint/typecheck/test; P2: git-гигиена | **ФАЗА 0 + вечер (cleanup)** |
+| **FFT_METRICS_POTENTIAL_AND_LIMITS.md** | Trends-DRONE_TIGHT пройден (95%/30%), hard-gate требует нового датасета (VDR) | **Контекст VDR-инициации** |
 
 ---
 
-## 📊 Три магистральных вектора дня
+## 🕐 Временна́я кодировка дня
 
-### **ВЕКТОР A: VDR-протокол (ГЛАВНЫЙ, 09:00–14:00)**
+### **ФАЗА 0: Утренняя стабилизация (06:00–09:00, критичная)**
 
-**Ответственность:** Vesnin (TL) + Ozhegov (Структурщик)
-
-#### **Шаг 1: Утро (06:00–09:00) — Lint-fix и smoke**
+**Ответственность:** Ozhegov (Структурщик) + Rodchenko (Верстальщик)
 
 ```bash
-# КРИТИЧНОЕ: зелёный тест перед основной работой
-yarn turbo run lint typecheck --filter='@membrana/client' --filter='@membrana/research-tree-demo' --fix
-yarn turbo run test --filter='@membrana/client'
-yarn turbo run test --filter='@membrana/research-tree-demo'
-
-# Валидация чистоты дерева
+# Шаг 1: Диагностика (06:00–06:30)
 git status
-# → должно быть: только tracked files, нет .txt-логов
+yarn turbo run lint typecheck --filter='@membrana/client' --filter='@membrana/research-tree-demo' 2>&1 | tee /tmp/lint-report.txt
+
+# Шаг 2: Автоправки (06:30–07:30)
+yarn turbo run lint typecheck --filter='@membrana/client' --filter='@membrana/research-tree-demo' --fix
+
+# Шаг 3: Unit-тесты (07:30–08:30)
+yarn turbo run test --filter='@membrana/client' --filter='@membrana/research-tree-demo'
+
+# Шаг 4: Git-гигиена (08:30–09:00)
+# Удалить логи, зафиксировать статус
+rm -f deploy-*.txt *.mjs.timestamp
+git status  # → only tracked files, no .txt-logs
 ```
 
 **DoD к 09:00:**
-- ✅ Все три пакета компилируются без ошибок
-- ✅ Tests pass на @membrana/client
-- ✅ Git-дерево чистое
+- ✅ `yarn turbo run lint typecheck` pass на обоих пакетах
+- ✅ `yarn turbo run test` pass
+- ✅ Git дерево чистое (no untracked .txt-logs)
+- ✅ Smoke-тест аудиомодуля: `yarn turbo run test --filter='@membrana/audio-engine'` pass
+- ✅ **Merge `feat/db-capture-tariff-v2-integration` → main** после green
 
-#### **Шаг 2: Документ VDR_PROTOCOL.md (09:00–11:00, 2 часа)**
-
-**Размещение:** `docs/VDR_PROTOCOL.md` (200–300 строк)
-
-**Обязательные разделы:**
-
-1. **Обзор:**
-   - Определение: размеченный корпус free-v1 (ручные лейблы drone/not-drone)
-   - Цель: валидация детекторов → stage-gate P≥85% R≥90%
-   - Фазы: pilot (20–30) → alpha (100+) → beta (200+)
-
-2. **Процесс аннотации:**
-   - Инструмент: HTML-UI + прослушивание + radios
-   - Консенсус: 2+ аннотатора → спорное → escalation
-   - Метаданные: source, datetime, SNR, confidence
-
-3. **Cohen's Kappa ≥0.75:**
-   - Валидация межблюдателя
-   - Спорные (< 0.6) → не входят в train/val
-
-4. **Переоценка детекторов:**
-   - Train 60% / val 20% / test 20%
-   - `yarn benchmark:detectors --dataset vdr`
-   - Метрики: P, R, F1 на каждом
-
-5. **Gate решение:**
-   - Если P≥85% R≥90% → **ПРОЙДЕН** → разморозить TDOA
-   - Если нет → ensemble или zero-shot
-
-#### **Шаг 3: Скрипты валидации (11:00–13:00, 2 часа)**
-
-**1. `scripts/validate-vdr-labels.mjs`**
-```bash
-yarn validate:vdr --dataset free-v1-validated
-# Output: { total_samples, labeled_samples, kappa_score, disputed_count, table }
-```
-
-**2. `scripts/prepare-vdr-annotations.mjs`**
-```bash
-yarn prepare:vdr-ui --output docs/datasets/free-v1/annotation-ui.html
-```
-
-**3. CI-интеграция (.github/workflows/vdr-validate.yml)**
-```yaml
-on: [pull_request, push]
-jobs:
-  validate-vdr:
-    runs-on: ubuntu-latest
-    steps:
-      - run: yarn validate:vdr --strict
-```
-
-**DoD к 14:00:**
-- ✅ docs/VDR_PROTOCOL.md завершён
-- ✅ `yarn validate:vdr` работает
-- ✅ `yarn prepare:vdr-ui` генерирует HTML
-- ✅ CI-гейт в git (dry-run)
+**Роль Teamlead:** Контроль статуса; если блокер нерешим → переназначить ФАЗУ 1 на утро (+3ч) и пересчитать планы.
 
 ---
 
-### **ВЕКТОР B: Zero-shot scaffold (ПАРАЛЛЕЛЬ, 13:00–15:00)**
+### **ФАЗА 1: VDR-Протокол (09:00–14:00, магистраль)**
 
-**Ответственность:** Ozhegov (Структурщик) + Dynin (Математик)
+**Ответственность:** Vesnin (TL, нарратив) + Ozhegov (структура)
 
-#### **Фаза B.1: Выбор модели (13:00–13:30)**
+#### **1.1 Документ `docs/VDR_PROTOCOL.md` (09:00–11:00)**
 
-**Dynin обновляет** `docs/prompts/INTEGRATIONS_STRATEGY.md`:
-- ✅ Выбор: **CLAP v2** (HuggingFace, ~170 МБ, >80% accuracy)
-- ✅ Link: `https://huggingface.co/laion/clap-htsat-unfused`
-- ✅ Документировать: загрузка, инференс-контракт, edge-развёртывание
+**Объём:** 250–350 строк Markdown  
+**Место:** `/docs/VDR_PROTOCOL.md`
 
-#### **Фаза B.2: Scaffold пакета (13:30–14:30)**
+**Обязательные разделы:**
+
+```markdown
+# VDR Protocol: Validated Drone Recognition
+
+## 1. Overview
+- **Определение:** Размеченный корпус free-v1; целевые лейблы drone / not-drone
+- **Цель:** Валидация детекторов для stage-gate (P ≥ 85%, R ≥ 90%)
+- **Фазы:** 
+  - Pilot: 20–30 сэмплов, консенсус 2+ аннотатора
+  - Alpha: 100+ сэмплов
+  - Beta: 200+ сэмплов (если нужно уточнение)
+
+## 2. Annotation Process
+- **Инструмент:** HTML-UI (прослушивание + radio-бокс drone/not-drone)
+- **Консенсус:** Cohen's Kappa ≥ 0.75 между двумя аннотаторами
+- **Disputations:** Если Kappa < 0.6, сэмпл → ручной разбор (3-й эксперт) или исключение
+- **Метаданные:** source (free-v1-file), datetime, SNR-estimate, confidence
+
+## 3. Cohen's Kappa ≥ 0.75
+- Формула и интерпретация
+- Пороги: >= 0.75 ✅, 0.60–0.74 🟡 (escalation), < 0.60 ❌ (exclude)
+
+## 4. Detector Re-evaluation
+- **Split:** Train 60% / Val 20% / Test 20% (стратифицировано по классам)
+- **Запуск:** `yarn benchmark:detectors --dataset vdr --splits validated`
+- **Метрики:** Precision, Recall, F1 для каждого детектора
+
+## 5. Gate Decision
+- **Условие PASS:** P ≥ 85% AND R ≥ 90% на валидационном сете
+- **Если PASS:** Разморозить TDOA-сервис (Этап 2)
+- **Если FAIL:** Ensemble детекторов ИЛИ zero-shot (YAMNet/CLAP)
+- **Document:** Решение в [STAGE_GATE_1_TO_2.md]
+```
+
+**DoD к 11:00:**
+- ✅ Документ размещён в git
+- ✅ Все 5 разделов раскрыты
+- ✅ Ссылки на связанные docs (WHITE_PAPER, DETECTOR_BENCHMARK)
+
+---
+
+#### **1.2 Скрипты валидации (11:00–13:00)**
+
+**Скрипт 1: `scripts/validate-vdr-labels.mjs`**
+
+```bash
+yarn validate:vdr --dataset free-v1-validated [--output json|table]
+
+# Output примера:
+# {
+#   "total_samples": 120,
+#   "labeled_samples": 115,
+#   "unlabeled": 5,
+#   "drone_count": 58,
+#   "not_drone_count": 57,
+#   "kappa_score": 0.78,
+#   "disputed_count": 3,
+#   "comparison_table": [
+#     { "sample_id": "...", "annotator1": "drone", "annotator2": "not-drone", "agreement": false }
+#   ]
+# }
+```
+
+**Скрипт 2: `scripts/prepare-vdr-annotations.mjs`**
+
+```bash
+yarn prepare:vdr-ui --output docs/datasets/free-v1/annotation-ui.html
+
+# Генерирует HTML с:
+# - Списком файлов из free-v1
+# - Плеером WAV
+# - Radio-боксом drone / not-drone / unclear
+# - Сохранением в JSON локально (для последующей заливки в VDR)
+```
+
+**Скрипт 3: CI-регистрация (`.github/workflows/vdr-validate.yml`)**
+
+```yaml
+name: VDR Validate
+on: [pull_request, push]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: yarn install
+      - run: yarn validate:vdr --dataset free-v1-validated --strict
+        # Fails if kappa < 0.70 или missing-labels > 10%
+```
+
+**DoD к 13:00:**
+- ✅ Оба скрипта компилируются и работают без ошибок
+- ✅ `yarn validate:vdr` на test-датасете (mock) выдаёт корректный JSON
+- ✅ `yarn prepare:vdr-ui` генерирует валидный HTML
+- ✅ CI-워크플로 добавлена в `.github/workflows/`
+
+---
+
+### **ФАЗА 2: Zero-shot Scaffold (13:00–15:00, параллель A)**
+
+**Ответственность:** Ozhegov (структура) + Dynin (контракт модели)
+
+#### **2.1 Выбор и документирование модели (13:00–13:30)**
+
+**Dynin обновляет** `docs/prompts/INTEGRATIONS_STRATEGY.md` (раздел Zero-shot Models):
+
+```markdown
+## Zero-shot Models for Drone Detection
+
+### CLAP v2 (HuggingFace)
+- **Link:** https://huggingface.co/laion/clap-htsat-unfused
+- **Size:** ~170 MB
+- **Accuracy:** Contrastive learning; 80%+ on unseen audio categories
+- **Inference:** ONNX Runtime or PyTorch (latency ~50–100ms per window)
+- **Integration:** @membrana/zero-shot-detector service
+
+### YAMNet (Google)
+- **Link:** https://github.com/google-research/perceptual-learning-of-audio
+- **Size:** ~3.5 MB (quantized)
+- **Output:** Multi-label classification (aircraft, helicopter, drone, wind, rain, …)
+- **Integration:** Adaptive labels → isDrone ∈ {drone, helicopter, aircraft}
+
+---
+```
+
+**DoD к 13:30:**
+- ✅ docs/prompts/INTEGRATIONS_STRATEGY.md обновлена
+- ✅ Ссылки на модели и ремарки о latency/accuracy
+
+---
+
+#### **2.2 Scaffold пакета (13:30–14:30)**
 
 ```bash
 mkdir -p packages/services/detectors/zero-shot-detector/{src,__tests__}
 ```
 
-**Структура:**
+**Структура файлов:**
+
 ```
-src/
-├── index.ts
-├── service.ts (stub DroneDetector)
-├── types.ts (ZeroShotDetectionResult)
-└── __tests__/service.spec.ts (smoke)
+packages/services/detectors/zero-shot-detector/
+├── src/
+│   ├── index.ts                    # Re-exports
+│   ├── service.ts                  # ZeroShotDetector class
+│   ├── types.ts                    # ZeroShotDetectionResult interface
+│   ├── model-loader.ts             # stub: load CLAP/YAMNet
+│   └── inference.ts                # stub: run inference on AudioWindow
+├── __tests__/
+│   └── service.spec.ts             # Smoke tests
+├── package.json                    # @membrana/zero-shot-detector
+└── README.md                       # Usage & API
+
 ```
 
-**Типы в @membrana/core:**
+**`src/service.ts` (stub):**
+
 ```typescript
-export interface ZeroShotDetectionResult extends DetectionResult {
-  modelVersion: string;
-  embeddings?: number[];
+import { DroneDetector, DetectionResult } from '@membrana/detector-base';
+
+export class ZeroShotDetector implements DroneDetector {
+  constructor(private modelVersion: string) {}
+
+  async detect(window: AudioWindow): Promise<DetectionResult> {
+    // TODO: Load CLAP/YAMNet embeddings
+    // TODO: Compare audio embedding with "drone" reference
+    return {
+      isDrone: false,
+      confidence: 0,
+      reasoning: 'Stub: not yet implemented',
+    };
+  }
+
+  async getConfig(): Promise<DetectorConfig> {
+    return {
+      name: 'zero-shot-detector',
+      modelVersion: this.modelVersion,
+      stage: 'experimental',
+    };
+  }
 }
 ```
 
-#### **Фаза B.3: CI (14:30–15:00)**
+**`__tests__/service.spec.ts`:**
+
+```typescript
+import { ZeroShotDetector } from '../src/service';
+
+describe('ZeroShotDetector', () => {
+  it('should instantiate', () => {
+    const detector = new ZeroShotDetector('clap-v2');
+    expect(detector).toBeDefined();
+  });
+
+  it('should return stub detection', async () => {
+    const detector = new ZeroShotDetector('clap-v2');
+    const mockWindow: AudioWindow = { /* ... */ };
+    const result = await detector.detect(mockWindow);
+    expect(result.isDrone).toBe(false);
+    expect(result.confidence).toBe(0);
+  });
+});
+```
+
+**DoD к 14:30:**
+- ✅ Пакет структурирован по SERVICES.md
+- ✅ Реализует контракт DroneDetector из @membrana/detector-base
+- ✅ Unit-тесты проходят (`yarn test`)
+- ✅ Нет зависимостей на другие детекторные сервисы (чистая архитектура)
+
+---
+
+#### **2.3 CI & PR (14:30–15:00)**
 
 ```bash
-yarn turbo run build --filter='@membrana/zero-shot-detector' ✅
-yarn turbo run test --filter='@membrana/zero-shot-detector' ✅
-```
+# Build & Test
+yarn turbo run build --filter='@membrana/zero-shot-detector'
+yarn turbo run test --filter='@membrana/zero-shot-detector'
 
-**DoD к 15:00:**
-- ✅ Пакет в git, компилируется
-- ✅ Типы экспортированы
-- ✅ PR открыт, marked `@experimental @stage 2`
-
----
-
-### **ВЕКТОР C: Stage-gate 1→2 документирование (ПАРАЛЛЕЛЬ, 14:00–15:30)**
-
-**Ответственность:** Vesnin (TL)
-
-**Документ:** `docs/STAGE_GATE_1_TO_2.md` (300–400 строк)
-
-**Структура:**
-
-1. **Определение:** P≥85% R≥90% на одиночном детекторе
-2. **Текущие метрики** (free-v1):
-   | Детектор | P | R | F1 | Статус |
-   |----------|---|---|-----|--------|
-   | Trends DRONE_TIGHT | 76% | 95% | 0.844 | 🟡 |
-   | Требование | **≥85%** | **≥90%** | — | |
-
-3. **Чек-лист:**
-   - VDR-pilot готов (≥20 сэмплов)
-   - Cohen's Kappa ≥0.75
-   - Переоценка даёт P≥85% R≥90%
-   - Консилиум согласен
-
-4. **Что нельзя до gate:**
-   - ❌ @membrana/tdoa-service (scaffold/frozen)
-   - ❌ @membrana/localizer-service
-   - ❌ @membrana/tracker-service
-
-**DoD к 15:30:**
-- ✅ Документ завершён
-- ✅ Связан с WHITE_PAPER §8
-- ✅ Чек-лист раскрыт
-
----
-
-## ✅ Definition of Done (день)
-
-```
-УТРО (06:00–09:00):
-  ✅ yarn turbo run lint typecheck --fix pass
-  ✅ yarn turbo run test pass
-  ✅ Git дерево чистое
-
-ДЕНЬ (09:00–15:30):
-  ✅ docs/VDR_PROTOCOL.md завершён
-  ✅ scripts/validate-vdr-labels.mjs работает
-  ✅ scripts/prepare-vdr-annotations.mjs генерирует HTML
-  ✅ @membrana/zero-shot-detector scaffold компилируется
-  ✅ docs/STAGE_GATE_1_TO_2.md готов
-  ✅ Все три вектора выдали артефакты в git
-
-ВЕЧЕР (17:00–18:00):
-  ✅ yarn ritual:evening выполнен
-  ✅ WHITE_PAPER §8 обновлён
-  ✅ docs/DAILY_CODE_REVIEW.md готов на завтра
-```
-
----
-
-## 📌 Приоритет
-
-1. **ВЕКТОР A (VDR-протокол)** — разблокирует Этап 2
-2. **ВЕКТОР B (Zero-shot)** — подготовка эшелона 2
-3. **ВЕКТОР C (Stage-gate)** — документальное закрытие Этапа 1
-
-**Если времени не хватит:** ВЕКТОР C может перейти на завтра; ВЕКТОР A — **must-have**.
-
----
-
-**Статус:** 🟢 Ready for human action  
-**Консилиум (если нужен):** `yarn consilium "уточнить VDR scope и stage-gate criteria"`
+# Create branch & PR
+git checkout -b feat/zero-shot-detector-scaffold
+git add packages/services/detectors/zero-shot-detector/
+git commit -m "feat:
