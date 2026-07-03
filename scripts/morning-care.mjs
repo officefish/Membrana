@@ -232,7 +232,9 @@ async function runAnthropicProbe() {
   }
 }
 
-const DEFAULT_WORK_BRANCH = process.env.MEMBRANA_WORK_BRANCH?.trim() || 'techies68';
+// 2026-07-03: повседневная интеграция — main (DR5 «main деплоируемое»);
+// techies68 синхронизирована с main и уходит в архив регламентом DR5.
+const DEFAULT_WORK_BRANCH = process.env.MEMBRANA_WORK_BRANCH?.trim() || 'main';
 
 function ensureWorkBranch(cwd, branchName) {
   try {

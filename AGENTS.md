@@ -33,7 +33,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Build all | `yarn build` |
 | Dev all (Turbo) | `yarn dev` |
 | Full CI pipeline | `yarn turbo run lint typecheck test build --continue` (34 tasks) |
-| Morning checks (proxy, git, script tests, Anthropic) | `yarn morning-care` (без API: `--no-anthropic`; переключает на ветку **`techies68`**) |
+| Morning checks (proxy, git, script tests, Anthropic) | `yarn morning-care` (без API: `--no-anthropic`; переключает на work-ветку **`main`**; override: `MEMBRANA_WORK_BRANCH`) |
 | Daily standup (план + вчерашнее ревью + issues) | `yarn standup` (после `yarn plan:day`; **не** после `code-review`; dry: `yarn standup:dry`) |
 | Вечер (архив дня + ревью) | `yarn archive:daily-day` → incremental RAG index (non-blocking) → `yarn code-review` → `yarn save-code-review` → `yarn task:close-github` → `yarn team-evening-feedback`; цепочка: `yarn ritual:evening` |
 | Архив утренних артефактов (вечер, до code-review) | `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/` |

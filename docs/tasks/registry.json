@@ -3302,7 +3302,7 @@
       "archivedAt": null,
       "archiveNotes": null,
       "dependsOn": [],
-      "notes": "Lead: Vesnin. Параллельно DR0–DR4. Предпосылка к DR7 (expand/contract совместимые миграции).",
+      "notes": "Lead: Vesnin. Параллельно DR0–DR4. Предпосылка к DR7 (expand/contract совместимые миграции). 2026-07-03: techies68 синхронизирована с main (force, уникального контента не было), morning-care DEFAULT_WORK_BRANCH -> main. Остаток DR5: night-build base, _ssh-media-deploy/_ssh-media-swagger-deploy (VPS пуллит techies68!), CI branch list, COMPETITION_SPRINT_REGULATION/TASKS_MANAGEMENT/CONTRIBUTING, судьба ветки.",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
