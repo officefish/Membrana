@@ -59,6 +59,13 @@ const trendsTemplates = {
   write: (json: string) => invoke<void>(`${TT}:write`, json),
 };
 
+/** SC1: захват устройства (tariff v2) — сигнал main-процессу поднять окно. */
+const studioShell = {
+  notifyCaptureAcquired: () => {
+    ipcRenderer.send('membrana:studio-shell:captureAcquired');
+  },
+};
+
 const shellLog = {
   write: (level: 'debug' | 'info' | 'warn' | 'error', process: string, message: string) =>
     invoke<void>(`${LG}:write`, level, process, message),
@@ -72,5 +79,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   mediaLibrary,
   journal,
   trendsTemplates,
+  studioShell,
   shellLog,
 });

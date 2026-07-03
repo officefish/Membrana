@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, session, shell } from 'electron';
 import path from 'node:path';
 
 import { registerLoggingIpc, attachWindowShellLogging } from './logging/register-ipc';
@@ -35,6 +35,10 @@ function createMainWindow(): BrowserWindow {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      // SC1 (консилиум studio-capture-adaptation 2026-07-03): таймеры TTL/heartbeat
+      // захвата (tariff v2) живут в renderer — свёрнутое окно не должно их троттлить,
+      // иначе auto-release опоздает и студия «зависнет» в ведомости дольше TTL.
+      backgroundThrottling: false,
     },
   });
 
@@ -87,6 +91,18 @@ if (!app.requestSingleInstanceLock()) {
     const trendsStore = createTrendsTemplatesFsStore(userData);
     registerTrendsTemplatesIpc(trendsStore);
     configureMediaPermissions();
+
+    // SC1: сервер захватил устройство (board.capture) — поднимаем окно в foreground,
+    // чтобы оператор увидел alert и имел мгновенный доступ к emergency stop
+    // (канон DEVICE_BOARD_SERVER_FIRST v2.0 §3.3; tray-стоп — ST7, GH #236).
+    ipcMain.on('membrana:studio-shell:captureAcquired', () => {
+      const win = BrowserWindow.getAllWindows()[0];
+      if (!win) return;
+      if (win.isMinimized()) win.restore();
+      win.focus();
+      writeShellLog('info', 'main', 'capture acquired — window focused', {});
+    });
+
     createMainWindow();
 
     app.on('activate', () => {

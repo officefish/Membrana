@@ -9,6 +9,7 @@ import {
 } from '@membrana/core';
 
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
+import { notifyStudioCaptureAcquired } from '@/lib/electronStudioShellPort';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 let messageUnsub: (() => void) | null = null;
@@ -80,12 +81,18 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
     if (payload === null || payload.deviceId !== localDeviceId) {
       return;
     }
+    const previous = useServerFirstStore.getState().capture;
     store.setCapture({
       mode: payload.mode,
       sessionId: payload.sessionId,
       expiresAt: payload.expiresAt,
     });
     armCaptureTtl(payload.expiresAt);
+    // SC1: Studio-shell поднимает окно один раз на acquire (не на смену режима
+    // той же сессии) — оператору нужен alert и доступ к emergency stop (§3.3).
+    if (previous === null || previous.sessionId !== payload.sessionId) {
+      notifyStudioCaptureAcquired();
+    }
     return;
   }
 
