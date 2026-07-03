@@ -67,3 +67,12 @@
 ## Checkpoint NB3 — 2026-07-01T19:04:51.500Z
 - Status: **pass**
 - Note: worktree fv1-s2-publish (+ ранее fv1-s2-close) удалены; ветки codex/fv1-s2-* сохранены в git; prune чист
+
+## Re-open — 2026-07-03T15:22:13.665Z
+- Epic: `vdr-label-roundtrip-night-build`
+- Continue: no
+
+
+## Checkpoint NB0 — 2026-07-03T15:23:46.248Z
+- Status: **pass**
+- Note: 

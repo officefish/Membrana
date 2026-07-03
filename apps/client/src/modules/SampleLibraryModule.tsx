@@ -8,6 +8,7 @@ import {
   useMediaLibrary,
   type Collection,
   type MediaSample,
+  type SampleLabel,
   type UpdateSampleLabelNotes,
 } from '@membrana/media-library-service';
 
@@ -55,6 +56,14 @@ export interface SampleLibraryConfig {
   defaultImportClass: (typeof CLASS_OPTIONS)[number];
 }
 
+/** NB3 (vdr-label-roundtrip): фильтр таблицы по метке — порт HG1-UX из кабинета. */
+const LABEL_FILTER_OPTIONS: ReadonlyArray<{ value: 'all' | SampleLabel; title: string }> = [
+  { value: 'all', title: 'Все' },
+  { value: 'drone', title: 'Дрон' },
+  { value: 'not-drone', title: 'Не дрон' },
+  { value: 'unlabeled', title: 'Неразмеченные' },
+];
+
 export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = ({
   module,
 }) => {
@@ -68,6 +77,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
+  const [labelFilter, setLabelFilter] = useState<'all' | SampleLabel>('all');
   const { busy: clearingBuffer, run: runRemoteMutation } = useRemoteMutation();
 
   useEffect(() => {
@@ -79,6 +89,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
   const samples = snapshot.samplesByCollection[selectedId] ?? [];
   const selected = snapshot.collections.find((c) => c.id === selectedId);
+  // NB3: фильтр по метке + прогресс разметки (HG1-UX).
+  const filteredSamples =
+    labelFilter === 'all' ? samples : samples.filter((s) => s.label === labelFilter);
+  const labeledCount = samples.filter((s) => s.label !== 'unlabeled').length;
   const quotaBlocked = isQuotaFull(snapshot.quota);
   const isTariffDataset =
     selected?.kind === 'system' && selected.systemKey === TARIFF_DATASET_SYSTEM_KEY;
@@ -126,24 +140,52 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   }, [selected, service]);
 
   const handleImport = useCallback(
-    async (file: File) => {
+    async (files: readonly File[]) => {
       if (!selected) return;
       setError(null);
       try {
-        await service.importBlob(selected.id, file, {
-          title: file.name,
-          class: config.defaultImportClass || 'unlabeled',
-          label: 'unlabeled',
-          source: 'disk-import',
-          durationSec: 0,
-          sampleRate: 48000,
-        });
+        // Последовательно: квота/refresh не гоняются параллельно (NB1: multi-select
+        // для импорта корпуса, например 33 WAV пилота hard-gate).
+        for (const file of files) {
+          await service.importBlob(selected.id, file, {
+            title: file.name,
+            class: config.defaultImportClass || 'unlabeled',
+            label: 'unlabeled',
+            source: 'disk-import',
+            durationSec: 0,
+            sampleRate: 48000,
+          });
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
       }
     },
     [config.defaultImportClass, selected, service],
   );
+
+  /**
+   * NB1 (vdr-label-roundtrip): экспорт меток коллекции в JSON — вход для
+   * `yarn vdr:labels-merge` (перенос операторской истины в манифест корпуса,
+   * например data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json).
+   */
+  const handleExportLabels = useCallback(() => {
+    if (!selected) return;
+    const payload = {
+      collection: selected.name,
+      collectionId: selected.id,
+      exportedAt: new Date().toISOString(),
+      labels: samples.map((s) => ({
+        fileName: s.title,
+        label: s.label,
+        notes: s.notes ?? null,
+      })),
+    };
+    const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {
+      type: 'application/json',
+    });
+    const safeName = selected.name.toLowerCase().replaceAll(/[^a-z0-9-]+/g, '-');
+    downloadBlob(blob, `${safeName || 'collection'}-labels.json`);
+  }, [samples, selected]);
 
   const handleRemove = useCallback(
     async (sampleId: string) => {
@@ -324,11 +366,12 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               <input
                 type="file"
                 accept="audio/*,.wav"
+                multiple
                 className="hidden"
                 disabled={quotaBlocked}
                 onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) void handleImport(f);
+                  const files = Array.from(e.target.files ?? []);
+                  if (files.length > 0) void handleImport(files);
                   e.target.value = '';
                 }}
               />
@@ -336,7 +379,39 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             ) : (
               <span className="ml-auto text-sm text-base-content/60">Только чтение</span>
             )}
+            {canLabelAnnotate && samples.length > 0 ? (
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={handleExportLabels}
+              >
+                Экспорт меток (JSON)
+              </button>
+            ) : null}
           </div>
+
+          {canLabelAnnotate && samples.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="join" role="group" aria-label="Фильтр по метке">
+                {LABEL_FILTER_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`btn btn-xs join-item ${
+                      labelFilter === option.value ? 'btn-primary' : 'btn-ghost'
+                    }`}
+                    aria-pressed={labelFilter === option.value}
+                    onClick={() => setLabelFilter(option.value)}
+                  >
+                    {option.title}
+                  </button>
+                ))}
+              </div>
+              <span className="text-xs text-base-content/60 tabular-nums" aria-live="polite">
+                размечено {labeledCount} из {samples.length}
+              </span>
+            </div>
+          ) : null}
 
           <SamplePlaybackBar playback={playback} compact />
 
@@ -353,16 +428,18 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 </tr>
               </thead>
               <tbody>
-                {samples.length === 0 ? (
+                {filteredSamples.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center text-base-content/50">
-                      {isTariffDataset
-                        ? 'Загрузка базового набора… (запустите yarn dataset:sync-free-v1 при dev)'
-                        : 'Нет сэмплов.'}
+                      {samples.length > 0
+                        ? 'Нет сэмплов с выбранной меткой.'
+                        : isTariffDataset
+                          ? 'Загрузка базового набора… (запустите yarn dataset:sync-free-v1 при dev)'
+                          : 'Нет сэмплов.'}
                     </td>
                   </tr>
                 ) : (
-                  samples.map((s: MediaSample) => {
+                  filteredSamples.map((s: MediaSample) => {
                     const isSelected = playback.selectedSampleId === s.id;
                     const saving = labelSavingId === s.id;
                     return (
