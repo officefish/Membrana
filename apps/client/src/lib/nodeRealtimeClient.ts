@@ -6,6 +6,7 @@ import {
   type SessionInvalidatedPayload,
 } from '@membrana/core';
 
+import { getClientRuntimeVersion } from '@/lib/electronStudioShellPort';
 import type { PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 import { getCabinetRealtimeWsUrl } from '@/lib/nodeRealtimeUrl';
 
@@ -105,6 +106,9 @@ class NodeRealtimeClientImpl {
     url.searchParams.set('role', 'node');
     url.searchParams.set('token', this.pairing.token);
     url.searchParams.set('deviceId', this.pairing.deviceId);
+    // SC5: маркер сборки (studio-<semver> | web) — cabinet логирует устаревшие
+    // сборки warning-ом (тихая деградация принята консилиумом; strict gate — DR6).
+    url.searchParams.set('clientVersion', getClientRuntimeVersion());
 
     this.setState(this.reconnectAttempt > 0 ? 'reconnecting' : 'connecting');
     const ws = new WebSocket(url.toString());

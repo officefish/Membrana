@@ -103,6 +103,10 @@ if (!app.requestSingleInstanceLock()) {
       writeShellLog('info', 'main', 'capture acquired — window focused', {});
     });
 
+    // SC5: версия сборки студии — renderer включает её в WS handshake (clientVersion),
+    // cabinet логирует устаревшие сборки warning-ом (strict gate — DR6).
+    ipcMain.handle('membrana:studio-shell:getAppVersion', () => app.getVersion());
+
     createMainWindow();
 
     app.on('activate', () => {

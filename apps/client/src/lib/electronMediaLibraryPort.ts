@@ -19,9 +19,10 @@ declare global {
         getLogsDir: () => Promise<string>;
         flushScenarioTrace: (text: string, runId: string | null) => void;
       };
-      /** SC1 (studio-capture-adaptation): сигнал shell поднять окно при захвате. */
+      /** SC1/SC5 (studio-capture-adaptation): focus при захвате; версия сборки. */
       studioShell?: {
         notifyCaptureAcquired: () => void;
+        getAppVersion?: () => Promise<string>;
       };
     };
   }
