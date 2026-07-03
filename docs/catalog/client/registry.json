@@ -20,10 +20,17 @@
         "harmonic-detector-viz",
         "trends-fft-analyzer",
         "mic-buffer-recorder",
-        "mic-live-drone-analysis"
+        "mic-live-drone-analysis",
+        "vdr-validation"
       ],
-      "services": ["@membrana/audio-engine-service"],
-      "relatedTasks": ["dsp-drone-detector", "trends-fft-microphone-plugin", "media-library-a3-mic-recorder"]
+      "services": [
+        "@membrana/audio-engine-service"
+      ],
+      "relatedTasks": [
+        "dsp-drone-detector",
+        "trends-fft-microphone-plugin",
+        "media-library-a3-mic-recorder"
+      ]
     },
     {
       "id": "device-board",
@@ -36,8 +43,14 @@
         "moduleFile": "apps/client/src/modules/device-board/DeviceBoardModule.tsx"
       },
       "plugins": [],
-      "services": ["@membrana/audio-engine-service"],
-      "relatedTasks": ["module-catalog-v1", "device-board-realtime-runtime", "device-board-docs-post-140-sprint-2026-06-22"]
+      "services": [
+        "@membrana/audio-engine-service"
+      ],
+      "relatedTasks": [
+        "module-catalog-v1",
+        "device-board-realtime-runtime",
+        "device-board-docs-post-140-sprint-2026-06-22"
+      ]
     },
     {
       "id": "telemetry-journal",
@@ -56,7 +69,11 @@
         "@membrana/sample-playback-service",
         "@membrana/journal-report-views"
       ],
-      "relatedTasks": ["telemetry-journal-report-viz", "telemetry-journal-live-refactor", "lp5-journal-report-renderers"]
+      "relatedTasks": [
+        "telemetry-journal-report-viz",
+        "telemetry-journal-live-refactor",
+        "lp5-journal-report-renderers"
+      ]
     },
     {
       "id": "sample-library",
@@ -74,8 +91,14 @@
         "sample-library-fft-threshold-test",
         "trends-fft-sample-analyzer"
       ],
-      "services": ["@membrana/media-library-service", "@membrana/audio-engine-service"],
-      "relatedTasks": ["media-library-a2-ui", "sample-library-drone-detection"]
+      "services": [
+        "@membrana/media-library-service",
+        "@membrana/audio-engine-service"
+      ],
+      "relatedTasks": [
+        "media-library-a2-ui",
+        "sample-library-drone-detection"
+      ]
     },
     {
       "id": "fft-analyzer",
@@ -88,7 +111,10 @@
         "moduleFile": "apps/client/src/modules/FFTModule.tsx"
       },
       "plugins": [],
-      "services": ["@membrana/fft-analyzer-service", "@membrana/audio-engine-service"],
+      "services": [
+        "@membrana/fft-analyzer-service",
+        "@membrana/audio-engine-service"
+      ],
       "relatedTasks": []
     },
     {
@@ -102,7 +128,9 @@
         "moduleFile": "apps/client/src/modules/SpectrumModule.tsx"
       },
       "plugins": [],
-      "services": ["@membrana/fft-analyzer-service"],
+      "services": [
+        "@membrana/fft-analyzer-service"
+      ],
       "relatedTasks": []
     },
     {
@@ -116,7 +144,10 @@
         "moduleFile": "apps/client/src/modules/AudioFileUploadModule.tsx"
       },
       "plugins": [],
-      "services": ["@membrana/audio-engine-service", "@membrana/fft-analyzer-service"],
+      "services": [
+        "@membrana/audio-engine-service",
+        "@membrana/fft-analyzer-service"
+      ],
       "relatedTasks": []
     },
     {
@@ -130,7 +161,9 @@
         "moduleFile": "apps/client/src/modules/OscilloscopeModule.tsx"
       },
       "plugins": [],
-      "services": ["@membrana/audio-engine-service"],
+      "services": [
+        "@membrana/audio-engine-service"
+      ],
       "relatedTasks": []
     },
     {
@@ -143,7 +176,9 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/microphone-stream-viz/micStreamVizPlugin.ts"
       },
-      "services": ["@membrana/audio-engine-service"],
+      "services": [
+        "@membrana/audio-engine-service"
+      ],
       "relatedTasks": []
     },
     {
@@ -161,7 +196,10 @@
         "@membrana/trends-detector-service",
         "@membrana/telemetry-journal-service"
       ],
-      "relatedTasks": ["trends-fft-microphone-plugin", "cj-4-trends-counts-as-detection"]
+      "relatedTasks": [
+        "trends-fft-microphone-plugin",
+        "cj-4-trends-counts-as-detection"
+      ]
     },
     {
       "id": "fft-threshold-test",
@@ -173,8 +211,12 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/fft-threshold-test/fftThresholdTestPlugin.ts"
       },
-      "services": ["@membrana/fft-analyzer-service"],
-      "relatedTasks": ["fft-last-chance-calibration"]
+      "services": [
+        "@membrana/fft-analyzer-service"
+      ],
+      "relatedTasks": [
+        "fft-last-chance-calibration"
+      ]
     },
     {
       "id": "fft-indices-viz",
@@ -186,8 +228,12 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/fft-indices-viz/fftIndicesVizPlugin.ts"
       },
-      "services": ["@membrana/fft-analyzer-service"],
-      "relatedTasks": ["fft-indices-viz"]
+      "services": [
+        "@membrana/fft-analyzer-service"
+      ],
+      "relatedTasks": [
+        "fft-indices-viz"
+      ]
     },
     {
       "id": "sound-quality-viz",
@@ -199,8 +245,12 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/sound-quality-viz/soundQualityVizPlugin.ts"
       },
-      "services": ["@membrana/fft-analyzer-service"],
-      "relatedTasks": ["sound-quality-viz"]
+      "services": [
+        "@membrana/fft-analyzer-service"
+      ],
+      "relatedTasks": [
+        "sound-quality-viz"
+      ]
     },
     {
       "id": "harmonic-detector-viz",
@@ -212,8 +262,13 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/harmonic-detector-viz/harmonicDetectorVizPlugin.ts"
       },
-      "services": ["@membrana/harmonic-detector-service", "@membrana/fft-analyzer-service"],
-      "relatedTasks": ["dsp-drone-detector"]
+      "services": [
+        "@membrana/harmonic-detector-service",
+        "@membrana/fft-analyzer-service"
+      ],
+      "relatedTasks": [
+        "dsp-drone-detector"
+      ]
     },
     {
       "id": "mic-buffer-recorder",
@@ -225,8 +280,13 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/mic-buffer-recorder/micBufferRecorderPlugin.ts"
       },
-      "services": ["@membrana/audio-engine-service", "@membrana/media-library-service"],
-      "relatedTasks": ["media-library-a3-mic-recorder"]
+      "services": [
+        "@membrana/audio-engine-service",
+        "@membrana/media-library-service"
+      ],
+      "relatedTasks": [
+        "media-library-a3-mic-recorder"
+      ]
     },
     {
       "id": "mic-live-drone-analysis",
@@ -238,8 +298,26 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/mic-live-drone-analysis/micLiveDroneAnalysisPlugin.ts"
       },
-      "services": ["@membrana/drone-detection-orchestrator-service"],
-      "relatedTasks": ["lp1-mic-drone-stream-modes"]
+      "services": [
+        "@membrana/drone-detection-orchestrator-service"
+      ],
+      "relatedTasks": [
+        "lp1-mic-drone-stream-modes"
+      ]
+    },
+    {
+      "id": "vdr-validation",
+      "kind": "plugin",
+      "name": "VDR-валидация",
+      "status": "draft",
+      "promptPath": "docs/catalog/client/prompts/plugins/vdr-validation.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/vdr-validation/vdrValidationPlugin.ts"
+      },
+      "relatedTasks": [
+        "vdr-hg2-mic-validation-plugin"
+      ],
+      "parentModuleId": "microphone"
     },
     {
       "id": "sample-library-player",
@@ -251,8 +329,13 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/sample-library-player/sampleLibraryPlayerPlugin.ts"
       },
-      "services": ["@membrana/sample-playback-service", "@membrana/media-library-service"],
-      "relatedTasks": ["media-library-a4-sample-player"]
+      "services": [
+        "@membrana/sample-playback-service",
+        "@membrana/media-library-service"
+      ],
+      "relatedTasks": [
+        "media-library-a4-sample-player"
+      ]
     },
     {
       "id": "sample-library-drone-analysis",
@@ -264,8 +347,12 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/sample-library-drone-analysis/sampleLibraryDroneAnalysisPlugin.ts"
       },
-      "services": ["@membrana/drone-detection-orchestrator-service"],
-      "relatedTasks": ["sld2-sample-library-drone-plugin"]
+      "services": [
+        "@membrana/drone-detection-orchestrator-service"
+      ],
+      "relatedTasks": [
+        "sld2-sample-library-drone-plugin"
+      ]
     },
     {
       "id": "sample-library-fft-threshold-test",
@@ -277,8 +364,12 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/sample-library-fft-threshold-test/sampleLibraryFftThresholdTestPlugin.ts"
       },
-      "services": ["@membrana/fft-analyzer-service"],
-      "relatedTasks": ["fl1-sample-library-fft-threshold-plugin"]
+      "services": [
+        "@membrana/fft-analyzer-service"
+      ],
+      "relatedTasks": [
+        "fl1-sample-library-fft-threshold-plugin"
+      ]
     },
     {
       "id": "trends-fft-sample-analyzer",
@@ -290,8 +381,13 @@
       "code": {
         "pluginFile": "apps/client/src/plugins/trends-fft-sample-analyzer/trendsFftSampleAnalyzerPlugin.ts"
       },
-      "services": ["@membrana/trends-detector-service", "@membrana/fft-analyzer-service"],
-      "relatedTasks": ["trends-fft-sample-library-drone-tight"]
+      "services": [
+        "@membrana/trends-detector-service",
+        "@membrana/fft-analyzer-service"
+      ],
+      "relatedTasks": [
+        "trends-fft-sample-library-drone-tight"
+      ]
     }
   ]
 }

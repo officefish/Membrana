@@ -11,6 +11,7 @@ import { createSampleLibraryFftThresholdTestPlugin } from '../plugins/sample-lib
 import { createTrendsFftSampleAnalyzerPlugin } from '../plugins/trends-fft-sample-analyzer';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 import { createTrendsFftAnalyzerPlugin } from '../plugins/trends-fft-analyzer';
+import { createVdrValidationPlugin } from '../plugins/vdr-validation';
 
 /**
  * Регистрация всех клиентских модулей и плагинов.
@@ -173,6 +174,8 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createTrendsFftAnalyzerPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicBufferRecorderPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicLiveDroneAnalysisPlugin());
+  // vdr-hg2: продуктовая поверхность hard-gate экспериментов (требование владельца 2026-07-03).
+  MembranaRegistry.registerPlugin('microphone', createVdrValidationPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryDroneAnalysisPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryFftThresholdTestPlugin());
