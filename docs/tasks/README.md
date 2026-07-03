@@ -145,6 +145,12 @@
 | `vdr-hg4-hard-gate-report` | HG4: отчёт hard-gate (DATASET_CURATION) + WHITE_PAPER §8 + ARCHITECTURE §1e + решение по критерию приёма | S | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `studio-capture-adaptation` | Epic: Studio — адаптация к явному захвату v2 (SC1/SC3/SC4/SC5 + manual deferred) | M | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
 | `sca-manual-smoke` | SC-manual: ручной smoke Studio paired (capture/TTL/LWW/fade слухом, VDR-плагин) — DEFERRED | M | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `vdr-label-roundtrip-night-build` | Night Build: VDR label round-trip — разметка пилота через клиентскую библиотеку (NB0–NB4) | M | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-vlr-0-gate` | NB0: gate — baseline scoped CI + фиксация модели хранения библиотеки | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-vlr-1-labels-export-ui` | NB1: кнопка «Экспорт меток (JSON)» коллекции в SampleLibraryModule | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-vlr-2-labels-merge-script` | NB2: yarn vdr:labels-merge — merge меток в манифест пилота + --labels-only для intra-rater | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-vlr-3-library-label-filter` | NB3: фильтр по метке + счётчик прогресса в клиентской библиотеке (порт HG1-UX) | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 
 ---
 

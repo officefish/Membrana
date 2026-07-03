@@ -10670,6 +10670,136 @@
         "rodchenko",
         "dynin"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "vdr-label-roundtrip-night-build",
+      "title": "Night Build: VDR label round-trip — разметка пилота через клиентскую библиотеку (NB0–NB4)",
+      "size": "M",
+      "sprintKind": "night-build",
+      "parentEpic": "vdr-hard-gate",
+      "dependsOn": [
+        "vdr-hg1-pilot-corpus"
+      ],
+      "notes": "Ночь 2026-07-03→04. Оператор размечает в клиентской библиотеке (память labeling-via-client-library); недостающее звено — экспорт меток + merge в манифест пилота. Scope заморожен; кабинет/core/prod — out of scope. Merge утром после LGTM.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko",
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-vlr-0-gate",
+      "title": "NB0: gate — baseline scoped CI + фиксация модели хранения библиотеки",
+      "size": "XS",
+      "parentEpic": "vdr-label-roundtrip-night-build",
+      "dependsOn": [
+        "vdr-label-roundtrip-night-build"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-vlr-1-labels-export-ui",
+      "title": "NB1: кнопка «Экспорт меток (JSON)» коллекции в SampleLibraryModule",
+      "size": "S",
+      "parentEpic": "vdr-label-roundtrip-night-build",
+      "dependsOn": [
+        "nb-vlr-0-gate"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-vlr-2-labels-merge-script",
+      "title": "NB2: yarn vdr:labels-merge — merge меток в манифест пилота + --labels-only для intra-rater",
+      "size": "S",
+      "parentEpic": "vdr-label-roundtrip-night-build",
+      "dependsOn": [
+        "nb-vlr-0-gate"
+      ],
+      "notes": "",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-vlr-3-library-label-filter",
+      "title": "NB3: фильтр по метке + счётчик прогресса в клиентской библиотеке (порт HG1-UX)",
+      "size": "S",
+      "parentEpic": "vdr-label-roundtrip-night-build",
+      "dependsOn": [
+        "nb-vlr-1-labels-export-ui"
+      ],
+      "notes": "",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-vlr-4-docs",
+      "title": "NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip",
+      "size": "XS",
+      "parentEpic": "vdr-label-roundtrip-night-build",
+      "dependsOn": [
+        "nb-vlr-2-labels-merge-script",
+        "nb-vlr-3-library-label-filter"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ]
     }
   ]
 }
