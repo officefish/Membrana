@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "taskId": "vdr-hg1-pilot-corpus",
+  "state": "lgtm",
+  "tier": "T1",
+  "reviewMode": "standard",
+  "branch": "feat/vdr-hg1-pilot-corpus",
+  "currentCommitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+  "reviewedCommitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/vdr-hg1-pilot-corpus/5bbb48ae31aab6e43314f8055256f3948270c1e4-review.md",
+  "github": {
+    "issue": 47,
+    "pullRequest": 233,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/233"
+  },
+  "scope": {
+    "baseRef": "5bbb48ae31aab6e43314f8055256f3948270c1e4^",
+    "files": [
+      "apps/cabinet/src/components/sample-library/CabinetSampleCollectionBody.tsx",
+      "docs/reviews/vdr-hg1-pilot-corpus/manifest.json",
+      "package.json",
+      "scripts/fetch-real-dataset-collection.mjs",
+      "scripts/fetch-vdr-pilot-corpus.mjs",
+      "scripts/lib/dataset-audio.mjs",
+      "scripts/validate-vdr.mjs",
+      "scripts/validate-vdr.test.mjs"
+    ],
+    "packages": [
+      "apps/cabinet"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:58:47.676Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:51:23Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28641344309/job/84938045606"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:57:55Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28641344312/job/84938027365"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "5bbb48ae31aab6e43314f8055256f3948270c1e4",
+        "checkedAt": "2026-07-03T05:55:44Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28641344275/job/84938027321"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "pending",
+    "evidence": null
+  },
+  "createdAt": "2026-07-03T05:49:32.339Z",
+  "updatedAt": "2026-07-03T05:59:07.685Z"
+}

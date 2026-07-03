@@ -1,9 +1,25 @@
+import { useMemo, useState } from 'react';
+
 import type { MembraneCatalogSample } from '@/api/sampleLibrary';
 import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
 import { CabinetSampleTable } from '@/components/sample-library/CabinetSampleTable';
 import { CabinetSampleTablePagination } from '@/components/sample-library/CabinetSampleTablePagination';
 import type { SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
 import type { Collection, MediaSample, UpdateSampleLabelNotes } from '@membrana/media-library-service';
+
+/** VDR-HG1: фильтр статуса разметки (toggle в toolbar, консилиум 2026-07-03 D5). */
+type LabelFilter = 'all' | 'drone' | 'not-drone' | 'unlabeled';
+
+const LABEL_FILTERS: readonly { value: LabelFilter; title: string }[] = [
+  { value: 'all', title: 'Все' },
+  { value: 'drone', title: 'Дрон' },
+  { value: 'not-drone', title: 'Не дрон' },
+  { value: 'unlabeled', title: 'Не размечено' },
+];
+
+function rowLabel(row: MembraneCatalogSample | MediaSample): string {
+  return (row as { label?: string | null }).label ?? 'unlabeled';
+}
 
 export interface CabinetSampleCollectionBodyProps {
   readonly libLoading: boolean;
@@ -64,6 +80,22 @@ export function CabinetSampleCollectionBody({
   onSamplesPageChange,
 }: CabinetSampleCollectionBodyProps) {
   const tableLoading = libLoading || samplesPageLoading;
+  const [labelFilter, setLabelFilter] = useState<LabelFilter>('all');
+
+  // VDR-HG1: счётчик прогресса разметки и фильтр — по текущей странице
+  // (пилотный корпус 30–35 умещается в одну страницу целиком).
+  const labelStats = useMemo(() => {
+    const all = rows as Array<MembraneCatalogSample | MediaSample>;
+    const unlabeled = all.filter((row) => rowLabel(row) === 'unlabeled').length;
+    return { total: all.length, labeled: all.length - unlabeled };
+  }, [rows]);
+
+  const filteredRows = useMemo(() => {
+    if (labelFilter === 'all') return rows;
+    const all = rows as Array<MembraneCatalogSample | MediaSample>;
+    return all.filter((row) => rowLabel(row) === labelFilter) as typeof rows;
+  }, [labelFilter, rows]);
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <CabinetSamplePlayerSection
@@ -71,11 +103,40 @@ export function CabinetSampleCollectionBody({
         selectedSample={selectedSample}
         onExport={onExportSelected}
       />
+      {canLabelAnnotate ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <div
+            className="join"
+            role="group"
+            aria-label="Фильтр по статусу разметки"
+          >
+            {LABEL_FILTERS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={`btn btn-xs join-item ${labelFilter === option.value ? 'btn-active' : 'btn-ghost'}`}
+                aria-pressed={labelFilter === option.value}
+                onClick={() => setLabelFilter(option.value)}
+              >
+                {option.title}
+              </button>
+            ))}
+          </div>
+          <span
+            className="text-xs text-base-content/60"
+            role="status"
+            aria-live="polite"
+            title="Прогресс разметки текущей страницы (протокол: DATASET_CURATION.md)"
+          >
+            Размечено на странице: {labelStats.labeled}/{labelStats.total}
+          </span>
+        </div>
+      ) : null}
       {tableLoading ? (
         <span className="loading loading-spinner loading-sm" aria-label="Загрузка медиа" />
       ) : null}
       <CabinetSampleTable
-        rows={rows}
+        rows={filteredRows}
         playback={playback}
         playbackDisabled={playbackDisabled}
         onSelectRow={onSelectRow}
