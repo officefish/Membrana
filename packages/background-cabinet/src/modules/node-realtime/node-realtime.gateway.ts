@@ -87,6 +87,18 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       } else if (role === 'node') {
         meta = await this.authService.authenticateNode(token, deviceId);
         this.realtimeService.registerNode(meta, client);
+        // SC5 (studio-capture-adaptation): маркер сборки клиента. Отсутствие =
+        // сборка до tariff v2 — её pause/setMode будут отброшены whitelist-ом
+        // (тихая деградация принята консилиумом; strict gate — DR6).
+        const clientVersion = url.searchParams.get('clientVersion');
+        if (clientVersion) {
+          this.logger.log({ deviceId, clientVersion }, 'node client version');
+        } else {
+          this.logger.warn(
+            { deviceId },
+            'node client without clientVersion — устаревшая сборка (pre-v2)',
+          );
+        }
       } else {
         client.close(4400, 'Missing or invalid role');
         return;

@@ -59,11 +59,12 @@ const trendsTemplates = {
   write: (json: string) => invoke<void>(`${TT}:write`, json),
 };
 
-/** SC1: захват устройства (tariff v2) — сигнал main-процессу поднять окно. */
+/** SC1/SC5: захват устройства (tariff v2) — сигнал main поднять окно; версия сборки. */
 const studioShell = {
   notifyCaptureAcquired: () => {
     ipcRenderer.send('membrana:studio-shell:captureAcquired');
   },
+  getAppVersion: () => invoke<string>('membrana:studio-shell:getAppVersion'),
 };
 
 const shellLog = {

@@ -10,6 +10,7 @@ import { initMicLiveRealtimeBridge } from './lib/micLiveRealtimeBridge'
 import { initUserTemplatesStore } from './plugins/trends-fft-analyzer/userTemplatesStore'
 import { initElectronShellLogBoot } from './lib/electronShellLogPort'
 import { initElectronScenarioTracePersist } from './lib/electronScenarioTracePort'
+import { prefetchStudioAppVersion } from './lib/electronStudioShellPort'
 
 /**
  * Cold-boot order (CRDC R2 / MP4):
@@ -27,6 +28,7 @@ initMicLiveRealtimeBridge()
 void initUserTemplatesStore()
 initElectronShellLogBoot()
 initElectronScenarioTracePersist()
+prefetchStudioAppVersion() // SC5: clientVersion для WS handshake (no-op в браузере)
 useMembranaStore.persist.onFinishHydration(() => {
   registerClientModules()
 })
