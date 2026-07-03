@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "db-ct-8-tests-smoke",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T0",
   "reviewMode": "concise-t0",
   "branch": "feat/db-capture-tariff-v2-integration",
@@ -91,9 +91,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #232 merged 2026-07-03T04:16:56Z (32a5b80a4ace450d770afe1c90534ab3f5eaf318)"
   },
   "createdAt": "2026-07-02T19:04:16.004Z",
-  "updatedAt": "2026-07-02T19:04:32.750Z"
+  "updatedAt": "2026-07-03T04:38:44.730Z"
 }

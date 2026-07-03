@@ -146,17 +146,6 @@
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
 | `fv1-s2-closeout` | Night Build: fv1-S2 closeout — реестр/worktree reconciliation после merge #217/#218 | S | [`FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `device-board-capture-tariff-v2` | Device-board capture tariff v2: явный захват, soft/hard, gateway whitelist (CT0–CT9) | L | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-0-canon` | CT0: консилиум + canon v2.0 + регистрация спринта | S | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-1-core-contracts` | CT1: core wire — board.capture/heartbeat/release, stop{fadeOutMs}, tariff capability set | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-2-gateway-capture` | CT2: gateway capture lifecycle — heartbeat 2м/TTL 5м + tariff whitelist (403) | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-3-cabinet-capture-ui` | CT3: cabinet — захват/отпуск (мягкий/жёсткий) + read-only scenario selector | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-4-client-follower` | CT4: client — capture store, enforcement soft/hard, TTL auto-release | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-5-indicators-alert` | CT5: badges захвата + alert вытеснения + a11y (aria-live) | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-6-runtime-fade-lww` | CT6: audio-engine stop(fadeOutMs) + last-write-win конкуренции run | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-7-v1-cleanup` | CT7: cleanup v1 superset — pause/resume/setMode/edit-lease из wire и gateway | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-8-tests-smoke` | CT8: tests + smoke runbook (канон §11) | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
-| `db-ct-9-docs-sync` | CT9: docs sync — DESIGN (capture badges), ARCHITECTURE (оси v2), WHITE_PAPER (тарифы) | S | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
 | `db-scenario-selector` | Селектор сценариев захваченного устройства: реестр/запрос списка workspaces с устройства + dropdown в кабинете | M | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — |
 
 ---
@@ -165,6 +154,17 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `device-board-capture-tariff-v2` | Device-board capture tariff v2: явный захват, soft/hard, gateway whitelist (CT0–CT9) | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/device-board-capture-tariff-v2.md) |
+| `db-ct-0-canon` | CT0: консилиум + canon v2.0 + регистрация спринта | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-0-canon.md) |
+| `db-ct-1-core-contracts` | CT1: core wire — board.capture/heartbeat/release, stop{fadeOutMs}, tariff capability set | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-1-core-contracts.md) |
+| `db-ct-2-gateway-capture` | CT2: gateway capture lifecycle — heartbeat 2м/TTL 5м + tariff whitelist (403) | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-2-gateway-capture.md) |
+| `db-ct-3-cabinet-capture-ui` | CT3: cabinet — захват/отпуск (мягкий/жёсткий) + read-only scenario selector | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-3-cabinet-capture-ui.md) |
+| `db-ct-4-client-follower` | CT4: client — capture store, enforcement soft/hard, TTL auto-release | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-4-client-follower.md) |
+| `db-ct-5-indicators-alert` | CT5: badges захвата + alert вытеснения + a11y (aria-live) | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-5-indicators-alert.md) |
+| `db-ct-6-runtime-fade-lww` | CT6: audio-engine stop(fadeOutMs) + last-write-win конкуренции run | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-6-runtime-fade-lww.md) |
+| `db-ct-7-v1-cleanup` | CT7: cleanup v1 superset — pause/resume/setMode/edit-lease из wire и gateway | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-7-v1-cleanup.md) |
+| `db-ct-8-tests-smoke` | CT8: tests + smoke runbook (канон §11) | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-8-tests-smoke.md) |
+| `db-ct-9-docs-sync` | CT9: docs sync — DESIGN (capture badges), ARCHITECTURE (оси v2), WHITE_PAPER (тарифы) | 2026-07-03 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-ct-9-docs-sync.md) |
 | `tailwind-coverage-hardening` | Epic: Tailwind coverage hardening — per-package README frontmatter + генератор конфигов + CI-гейт + скиллы 3 агентов | 2026-07-02 | [`TAILWIND_COVERAGE_HARDENING_PROMPT.md`](../docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md) | — | [карточка](./archive/tailwind-coverage-hardening.md) |
 | `twc-l1-package-readme-frontmatter` | TWC-L1: секция ## Tailwind Integration с машиночитаемым фронтматтером в README UI-пакетов | 2026-07-02 | [`TAILWIND_COVERAGE_HARDENING_PROMPT.md`](../docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md) | — | [карточка](./archive/twc-l1-package-readme-frontmatter.md) |
 | `twc-l2-config-generator-and-skills` | TWC-L2: generate-tailwind-configs.mjs + verify:tailwind-coverage CI-гейт + CONTRIBUTING + скиллы tailwind-coverage для cursor/claude/opencode | 2026-07-02 | [`TAILWIND_COVERAGE_HARDENING_PROMPT.md`](../docs/prompts/TAILWIND_COVERAGE_HARDENING_PROMPT.md) | — | [карточка](./archive/twc-l2-config-generator-and-skills.md) |
@@ -230,8 +230,8 @@
 | `mcp-tooling-m2-headroom-pilot` | MCP Agent Tooling M2: headroom пилот на logs:parse + RAG-чанках, замер before/after токенов | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m2-headroom-pilot.md) |
 | `mcp-tooling-m5-strategy-sync` | MCP Agent Tooling M5: обновить MCP_INTEGRATION_STRATEGY.md §5 тиры | 2026-07-01 | — | — | [карточка](./archive/mcp-tooling-m5-strategy-sync.md) |
 | `free-v1-sound-catalog` | Epic: free-v1 Sound Catalog — 7 классов звуков, auto-генерация шаблонов, интеграция в детектор | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/free-v1-sound-catalog.md) |
-| `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/fv1-s2-content.md) |
-| `fv1-s3-integration` | fv1-S3: multi-class routing в детекторе, калибровка порогов, stage-gate FPR<15%, free_v1 release | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 (Issue открыт) | [карточка](./archive/fv1-s3-integration.md) |
+| `fv1-s2-content` | fv1-S2: сбор 130+ сэмплов (до 250 итого), лейбелирование, авто-генерация 6 шаблонов, QA | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 | [карточка](./archive/fv1-s2-content.md) |
+| `fv1-s3-integration` | fv1-S3: multi-class routing в детекторе, калибровка порогов, stage-gate FPR<15%, free_v1 release | 2026-07-01 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 | [карточка](./archive/fv1-s3-integration.md) |
 | `backlog-cleanup-s1` | Backlog cleanup S1: аудит и закрытие Queue A (#146, #151, #54, #7, #8, #34, #11, #9) + P0 #157 | 2026-06-30 | [`BACKLOG_CLEANUP_S1_PROMPT.md`](../docs/prompts/BACKLOG_CLEANUP_S1_PROMPT.md) | #214 (Issue открыт) | [карточка](./archive/backlog-cleanup-s1.md) |
 | `fv1-s1-pipeline` | fv1-S1: параметризация пайплайна генерации шаблонов + Perplexity research акустики классов | 2026-06-30 | [`FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md`](../docs/prompts/FREE_V1_SOUND_CATALOG_EPIC_PROMPT.md) | #205 | [карточка](./archive/fv1-s1-pipeline.md) |
 | `ci-test-stability-refactor` | Рефакторинг CI: vitest-конфиги, разделение integration/acceptance, CI-aware latency | 2026-06-29 | [`CI_TEST_STABILITY_REFACTOR_PROMPT.md`](../docs/prompts/CI_TEST_STABILITY_REFACTOR_PROMPT.md) | #191 | [карточка](./archive/ci-test-stability-refactor.md) |
@@ -585,4 +585,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-02.*
+*Файл обновлён автоматически: 2026-07-03.*

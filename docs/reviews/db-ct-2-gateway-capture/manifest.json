@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "db-ct-2-gateway-capture",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T1",
   "reviewMode": "standard",
   "branch": "feat/db-ct-2-gateway-capture",
@@ -73,9 +73,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "accepted_branch_only",
+    "evidence": "Accepted branch-only: merged в main через интеграционный PR #232 (merge-commit 32a5b80); reviewed SHA — ancestor main; авторизовано владельцем 2026-07-03"
   },
   "createdAt": "2026-07-02T10:41:58.107Z",
-  "updatedAt": "2026-07-02T11:04:10.773Z"
+  "updatedAt": "2026-07-03T04:40:08.116Z"
 }

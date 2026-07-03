@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "db-ct-3-cabinet-capture-ui",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T1",
   "reviewMode": "standard",
   "branch": "feat/db-ct-3-cabinet-capture-ui",
@@ -63,9 +63,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "accepted_branch_only",
+    "evidence": "Accepted branch-only: merged в main через интеграционный PR #232 (merge-commit 32a5b80); reviewed SHA — ancestor main; авторизовано владельцем 2026-07-03"
   },
   "createdAt": "2026-07-02T18:11:03.364Z",
-  "updatedAt": "2026-07-02T18:11:18.210Z"
+  "updatedAt": "2026-07-03T04:40:11.421Z"
 }
