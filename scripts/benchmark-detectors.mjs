@@ -1,9 +1,19 @@
 /**
  * Benchmark detectors on data/detectors-benchmark manifest (v0.2 free-v1 catalog).
- * Usage: yarn benchmark:detectors
+ *
+ * Usage:
+ *   yarn benchmark:detectors                                   # канон: v0.2, патчит DETECTOR_BENCHMARK.md
+ *   yarn benchmark:detectors -- --manifest data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json
+ *   yarn benchmark:detectors -- --manifest <...> --origin-labels
+ *
+ * vdr-hg3: `--manifest` — прогон на альтернативном корпусе (отчёт пишется в
+ * reports/ ЭТОГО корпуса; канонический DETECTOR_BENCHMARK.md и v0.2 latest.json
+ * НЕ трогаются). `--origin-labels` — ПРЕДВАРИТЕЛЬНЫЙ прогон по originLabel
+ * (провенанс, НЕ операторская истина — консилиум vdr-validation-scope-2026-07-03);
+ * отчёт помечается preliminaryOriginLabels и не является gate-результатом.
  */
 import { access, readFile, writeFile, mkdir } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import {
@@ -19,10 +29,36 @@ import { filterCuratedSamples } from './lib/manifest-labels.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
-const MANIFEST_PATH = join(DATASET_DIR, 'manifest.json');
-const REPORT_JSON = join(DATASET_DIR, 'reports', 'latest.json');
+const DEFAULT_DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
+const DEFAULT_MANIFEST_PATH = join(DEFAULT_DATASET_DIR, 'manifest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
+
+function parseArgs(argv) {
+  const options = { manifestPath: DEFAULT_MANIFEST_PATH, originLabels: false };
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--manifest' && argv[i + 1]) {
+      options.manifestPath = resolve(ROOT, argv[++i]);
+    } else if (argv[i] === '--origin-labels') {
+      options.originLabels = true;
+    }
+  }
+  // Канонический MD патчится ТОЛЬКО дефолтным (v0.2) прогоном по операторским меткам.
+  options.isCanonicalRun =
+    options.manifestPath === DEFAULT_MANIFEST_PATH && !options.originLabels;
+  return options;
+}
+
+/**
+ * Эффективные метки: операторская label; при --origin-labels для unlabeled
+ * берётся originLabel (провенанс) — только предварительный пайплайн-смоук.
+ */
+function applyOriginLabels(samples) {
+  return samples.map((entry) =>
+    entry.label === 'unlabeled' && (entry.originLabel === 'drone' || entry.originLabel === 'not-drone')
+      ? { ...entry, label: entry.originLabel }
+      : entry,
+  );
+}
 const TEMPLATE_MATCH_DIST = join(
   ROOT,
   'packages',
@@ -32,7 +68,8 @@ const TEMPLATE_MATCH_DIST = join(
   'dist',
   'index.js',
 );
-const CURATED_TEMPLATES_JSON = join(DATASET_DIR, 'curated-drone-templates.json');
+// Шаблоны — конфиг детектора, не корпус: всегда из канонического v0.2.
+const CURATED_TEMPLATES_JSON = join(DEFAULT_DATASET_DIR, 'curated-drone-templates.json');
 const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
 
 const DSP_DETECTORS = [
@@ -69,7 +106,7 @@ async function ensureBuilt(distPath, label) {
   }
 }
 
-async function runDetector(manifestSamples, spec) {
+async function runDetector(manifestSamples, spec, datasetDir) {
   await ensureBuilt(spec.dist, spec.label);
   const { analyzeSample } = await import(pathToFileURL(DETECTOR_BASE_DIST).href);
   const mod = await import(pathToFileURL(spec.dist).href);
@@ -81,7 +118,7 @@ async function runDetector(manifestSamples, spec) {
   const allLatencies = [];
 
   for (const entry of manifestSamples) {
-    const wavPath = join(DATASET_DIR, entry.path);
+    const wavPath = join(datasetDir, entry.path);
     const { samples, sampleRate } = await readWavMono(wavPath);
     const { verdict, frameLatenciesMs } = await analyzeSample(samples, sampleRate, detector, {
       fftSize,
@@ -124,7 +161,7 @@ async function runDetector(manifestSamples, spec) {
   };
 }
 
-async function runTemplateMatch(manifestSamples) {
+async function runTemplateMatch(manifestSamples, datasetDir) {
   await ensureBuilt(TEMPLATE_MATCH_DIST, 'template-match-detector');
   const mod = await import(pathToFileURL(TEMPLATE_MATCH_DIST).href);
 
@@ -144,7 +181,7 @@ async function runTemplateMatch(manifestSamples) {
   const allLatencies = [];
 
   for (const entry of manifestSamples) {
-    const wavPath = join(DATASET_DIR, entry.path);
+    const wavPath = join(datasetDir, entry.path);
     const { samples, sampleRate } = await readWavMono(wavPath);
     const verdict = await mod.analyzeTemplateMatch(samples, sampleRate, detector);
     perSample.push({
@@ -191,25 +228,38 @@ const SCAFFOLD_DETECTORS = [
 ];
 
 async function main() {
+  const options = parseArgs(process.argv.slice(2));
+  const datasetDir = dirname(options.manifestPath);
+  const reportJson = join(datasetDir, 'reports', 'latest.json');
   await ensureBuilt(DETECTOR_BASE_DIST, 'detector-base');
 
-  const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
-  const curated = filterCuratedSamples(manifest.samples);
+  const manifest = JSON.parse(await readFile(options.manifestPath, 'utf8'));
+  const effectiveSamples = options.originLabels
+    ? applyOriginLabels(manifest.samples)
+    : manifest.samples;
+  const curated = filterCuratedSamples(effectiveSamples);
   const withSplit = curated.filter((s) => s.split === 'test');
   const testSamples = withSplit.length > 0 ? withSplit : curated;
-  const skippedUnlabeled = manifest.samples.length - curated.length;
+  const skippedUnlabeled = effectiveSamples.length - curated.length;
   if (skippedUnlabeled > 0) {
     console.log(`Skipping ${skippedUnlabeled} unlabeled samples`);
   }
   if (testSamples.length === 0) {
-    throw new Error('No samples in manifest — run yarn dataset:sync-free-v1');
+    throw new Error(
+      'No labeled samples in manifest — разметьте корпус (или используйте --origin-labels для предварительного прогона)',
+    );
   }
 
+  if (options.originLabels) {
+    console.log(
+      'ПРЕДВАРИТЕЛЬНЫЙ прогон по originLabel (провенанс, не операторская истина) — не gate-результат.',
+    );
+  }
   console.log(`Benchmark: ${testSamples.length} samples (dataset v${manifest.version})`);
 
   const benchmarked = [];
   for (const spec of DSP_DETECTORS) {
-    const result = await runDetector(testSamples, spec);
+    const result = await runDetector(testSamples, spec, datasetDir);
     benchmarked.push(result);
     const m = result.metrics;
     console.log(
@@ -217,7 +267,7 @@ async function main() {
     );
   }
 
-  const templateResult = await runTemplateMatch(testSamples);
+  const templateResult = await runTemplateMatch(testSamples, datasetDir);
   benchmarked.push(templateResult);
   {
     const m = templateResult.metrics;
@@ -235,21 +285,28 @@ async function main() {
     generatedAt: new Date().toISOString(),
     datasetVersion: `v${manifest.version}`,
     curatedOnly: true,
+    preliminaryOriginLabels: options.originLabels,
     skippedUnlabeled,
     groundTruth: manifest.groundTruth ?? null,
     sampleCount: testSamples.length,
-    manifestPath: 'data/detectors-benchmark/v0.2/manifest.json',
+    manifestPath: options.manifestPath.replace(`${ROOT}`, '').replace(/^[/\\]/, '').replace(/\\/g, '/'),
     detectors,
   };
 
-  await mkdir(dirname(REPORT_JSON), { recursive: true });
-  await writeFile(REPORT_JSON, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  console.log(`Wrote ${REPORT_JSON}`);
+  await mkdir(dirname(reportJson), { recursive: true });
+  await writeFile(reportJson, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  console.log(`Wrote ${reportJson}`);
 
-  const md = await readFile(BENCHMARK_MD, 'utf8');
-  const patched = patchDetectorBenchmarkMd(md, report);
-  await writeFile(BENCHMARK_MD, patched, 'utf8');
-  console.log(`Updated ${BENCHMARK_MD}`);
+  if (options.isCanonicalRun) {
+    const md = await readFile(BENCHMARK_MD, 'utf8');
+    const patched = patchDetectorBenchmarkMd(md, report);
+    await writeFile(BENCHMARK_MD, patched, 'utf8');
+    console.log(`Updated ${BENCHMARK_MD}`);
+  } else {
+    console.log(
+      'Канонический DETECTOR_BENCHMARK.md не тронут (не-v0.2 манифест или --origin-labels).',
+    );
+  }
 }
 
 main().catch((err) => {
