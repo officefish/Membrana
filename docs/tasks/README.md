@@ -143,6 +143,12 @@
 | `vdr-hard-gate` | Epic: VDR-Hard-Gate — пилот валидации (30–35), плагин микрофона «VDR-валидация», trends benchmark 85/90 (HG1–HG4) | L | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `vdr-hg3-trends-benchmark` | HG3: benchmark trends на пилоте (канон метрик) + сравнение с template-match v0.1; плагин зеркалит числа | M | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `vdr-hg4-hard-gate-report` | HG4: отчёт hard-gate (DATASET_CURATION) + WHITE_PAPER §8 + ARCHITECTURE §1e + решение по критерию приёма | S | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../docs/prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `studio-capture-adaptation` | Epic: Studio — адаптация к явному захвату v2 (SC1/SC3/SC4/SC5 + manual deferred) | M | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `sca-s1-ttl-throttling` | SC1: backgroundThrottling=false + focus при захвате (IPC) + доп. TTL-тесты boardLeaseBridge | S | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `sca-s3-host-parity-contract` | SC3: STUDIO_HOST_BRIDGE_CONTRACT §Capture — таблица паритета трёх хостов | S | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `sca-s4-smoke-programmatic` | SC4: smoke Studio-хоста (программная часть) — runbook §Studio + logs:parse capture-lifecycle + UI snapshot | S | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `sca-s5-delivery-version` | SC5: пересборка client-dist + clientVersion в WS handshake + условная сборка desktop-studio.yml | M | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `sca-manual-smoke` | SC-manual: ручной smoke Studio paired (capture/TTL/LWW/fade слухом, VDR-плагин) — DEFERRED | M | [`STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md) | — |
 
 ---
 

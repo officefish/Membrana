@@ -10539,6 +10539,137 @@
       "supportPersonas": [
         "dynin"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "studio-capture-adaptation",
+      "title": "Epic: Studio — адаптация к явному захвату v2 (SC1/SC3/SC4/SC5 + manual deferred)",
+      "size": "M",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "device-board-capture-tariff-v2"
+      ],
+      "notes": "Консилиум: docs/seanses/studio-capture-adaptation-2026-07-03.md. Renderer=apps/client уже несёт v2-логику; спринт — Electron-специфика. Ручной smoke deferred ~2026-07-17 (оборудование). Risk ST7 (tray stop) — GH #236. Тихая деградация старых сборок принята (strict gate -> dpr-dr6).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin",
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "sca-s1-ttl-throttling",
+      "title": "SC1: backgroundThrottling=false + focus при захвате (IPC) + доп. TTL-тесты boardLeaseBridge",
+      "size": "S",
+      "parentEpic": "studio-capture-adaptation",
+      "dependsOn": [
+        "studio-capture-adaptation"
+      ],
+      "notes": "main.ts createWindow + IPC capture-acquired -> focus (once per acquire). Тесты УЖЕ есть в apps/client/src/lib/boardLeaseBridge.test.ts (CT4) — дополнить: release ровно один раз, heartbeat после release не воскрешает. Поправка к консилиуму: не packages/agenda.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "sca-s3-host-parity-contract",
+      "title": "SC3: STUDIO_HOST_BRIDGE_CONTRACT §Capture — таблица паритета трёх хостов",
+      "size": "S",
+      "parentEpic": "studio-capture-adaptation",
+      "dependsOn": [
+        "studio-capture-adaptation"
+      ],
+      "notes": "Документация: browser/studio follower + cabinet захватчик × состояния × поведение; autonomous без WS — захват невозможен by design.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "sca-s4-smoke-programmatic",
+      "title": "SC4: smoke Studio-хоста (программная часть) — runbook §Studio + logs:parse capture-lifecycle + UI snapshot",
+      "size": "S",
+      "parentEpic": "studio-capture-adaptation",
+      "dependsOn": [
+        "sca-s1-ttl-throttling"
+      ],
+      "notes": "Ручные пункты в runbook помечаются deferred ~2026-07-17.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "sca-s5-delivery-version",
+      "title": "SC5: пересборка client-dist + clientVersion в WS handshake + условная сборка desktop-studio.yml",
+      "size": "M",
+      "parentEpic": "studio-capture-adaptation",
+      "dependsOn": [
+        "sca-s1-ttl-throttling"
+      ],
+      "notes": "background-cabinet логирует устаревшие сборки warning (без strict gate — DR6). Вход для dpr-dr6-client-delivery.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-03",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "sca-manual-smoke",
+      "title": "SC-manual: ручной smoke Studio paired (capture/TTL/LWW/fade слухом, VDR-плагин) — DEFERRED",
+      "size": "M",
+      "parentEpic": "studio-capture-adaptation",
+      "dependsOn": [
+        "sca-s4-smoke-programmatic",
+        "sca-s5-delivery-version"
+      ],
+      "notes": "DEFERRED до оборудования (~2026-07-17): оператор недоступен. Итоги — в smoke-runbook §Studio manual; слуховая проверка fade — Kuryokhin.",
+      "leadPersona": "musician",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
     }
   ]
 }
