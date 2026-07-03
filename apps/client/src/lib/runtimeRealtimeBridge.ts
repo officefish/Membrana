@@ -13,13 +13,14 @@ import { getDeviceBoardRuntimeController } from '@/lib/deviceBoardRuntimeControl
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
-/** Минимальный контракт контроллера, нужный мосту (упрощает unit-тесты). */
+/**
+ * Минимальный контракт контроллера, нужный мосту (упрощает unit-тесты).
+ * CT7: pause/resume/setMode удалены из wire (// Tariff v3) — мост их
+ * больше не маршрутизирует; локальные методы контроллера не затронуты.
+ */
 export interface RuntimeBridgeController {
   start: (options?: { fromRemote?: boolean }) => void | Promise<void>;
-  stop: () => void;
-  pause: () => void;
-  resume: () => void;
-  setMode: (mode: RuntimeMode) => void;
+  stop: (options?: { fadeOutMs?: number }) => void;
 }
 
 function getCaptureWireFields(deviceId: string | null): Pick<
@@ -73,9 +74,10 @@ function syncCaptureAfterCommand(
   const store = useServerFirstStore.getState();
   switch (payload.action) {
     case 'run':
+      // CT7: authority/followerMode ушли из wire — remote run в v2 всегда
+      // идёт под явным захватом (ось capture); legacy captureState — cabinet.
       store.setCaptureFromRunCommand(deviceId, {
-        authority: payload.authority,
-        followerMode: payload.followerMode,
+        authority: 'cabinet',
         isRunning: true,
         isPaused: false,
       });
@@ -88,23 +90,6 @@ function syncCaptureAfterCommand(
         isRunning: false,
         isPaused: false,
       });
-      break;
-    case 'pause':
-      if (store.captureState?.deviceId === deviceId) {
-        store.setCaptureState({
-          ...store.captureState,
-          isPaused: true,
-        });
-      }
-      break;
-    case 'resume':
-      if (store.captureState?.deviceId === deviceId) {
-        store.setCaptureState({
-          ...store.captureState,
-          isPaused: false,
-          isRunning: true,
-        });
-      }
       break;
     default:
       break;
@@ -126,20 +111,22 @@ export function applyRuntimeCommand(
 
   switch (parsed.action) {
     case 'run':
+      // CT4: выбранный кабинетом сценарий фиксируем в store; фактическая
+      // загрузка по scenarioId — CT3 (selector) + CT6 (runtime).
+      if (parsed.scenarioId !== undefined) {
+        useServerFirstStore.getState().setSelectedScenarioId(parsed.scenarioId);
+      }
       void controller.start({ fromRemote: true });
       return true;
+    case 'selectScenario':
+      useServerFirstStore.getState().setSelectedScenarioId(parsed.scenarioId);
+      return true;
     case 'stop':
-      controller.stop();
+      // CT6 (канон §3.1): fadeOutMs из wire — graceful вытеснение (200 мс)
+      // или hard-cut (0/умолчание) — гасится в audio-engine.
+      controller.stop(parsed.fadeOutMs !== undefined ? { fadeOutMs: parsed.fadeOutMs } : undefined);
       return true;
-    case 'pause':
-      controller.pause();
-      return true;
-    case 'resume':
-      controller.resume();
-      return true;
-    case 'setMode':
-      controller.setMode(parsed.mode);
-      return true;
+    // CT7: pause/resume/setMode удалены из wire (// Tariff v3).
     default:
       return false;
   }

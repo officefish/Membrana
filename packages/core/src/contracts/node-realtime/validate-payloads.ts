@@ -5,7 +5,14 @@ import type {
   RuntimeAuthority,
   RuntimeFollowerMode,
 } from './board-events.js';
-import type { RuntimeCommandPayload, RuntimeMode } from './events.js';
+import type {
+  BoardCaptureHeartbeatPayload,
+  BoardCapturePayload,
+  BoardCaptureReleasePayload,
+  DeviceCaptureMode,
+  DeviceCaptureReleaseReason,
+} from './capture-events.js';
+import type { RuntimeCommandPayload } from './events.js';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -13,10 +20,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
-}
-
-function isRuntimeMode(value: unknown): value is RuntimeMode {
-  return value === 'normal' || value === 'alarm';
 }
 
 function isRuntimeAuthority(value: unknown): value is RuntimeAuthority {
@@ -31,6 +34,18 @@ function isLeaseHolder(value: unknown): value is BoardEditLeaseHolder {
   return value === 'cabinet' || value === 'field' || value === 'none';
 }
 
+function isCaptureMode(value: unknown): value is DeviceCaptureMode {
+  return value === 'soft' || value === 'hard';
+}
+
+function isCaptureReleaseReason(value: unknown): value is DeviceCaptureReleaseReason {
+  return value === 'operator' || value === 'ttl-expired' || value === 'server-restart';
+}
+
+function isIsoDateString(value: unknown): value is string {
+  return typeof value === 'string' && !Number.isNaN(Date.parse(value));
+}
+
 function parseOptionalDeviceId(raw: Record<string, unknown>): string | undefined {
   const deviceId = raw.deviceId;
   if (deviceId === undefined) {
@@ -41,7 +56,9 @@ function parseOptionalDeviceId(raw: Record<string, unknown>): string | undefined
 
 /**
  * Валидирует payload runtime.command. Возвращает null при неизвестном action.
- * `followerMode` допустим только при `action: run` и `authority: cabinet`.
+ * CT7 (канон §9): `pause`/`resume`/`setMode` и `authority`/`followerMode`
+ * на run удалены из wire — такие payload'ы отбрасываются.
+ * // Tariff v3: вернуть pause/resume/setMode.
  */
 export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload | null {
   if (!isRecord(raw)) {
@@ -52,39 +69,37 @@ export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload 
 
   switch (action) {
     case 'run': {
-      const authority = raw.authority;
-      const followerMode = raw.followerMode;
-      if (authority !== undefined && !isRuntimeAuthority(authority)) {
-        return null;
-      }
-      if (followerMode !== undefined && !isFollowerMode(followerMode)) {
-        return null;
-      }
-      if (followerMode !== undefined && authority !== 'cabinet') {
+      const scenarioId = raw.scenarioId;
+      if (scenarioId !== undefined && !isNonEmptyString(scenarioId)) {
         return null;
       }
       return {
         action: 'run',
         ...(deviceId !== undefined ? { deviceId } : {}),
-        ...(isRuntimeAuthority(authority) ? { authority } : {}),
-        ...(isFollowerMode(followerMode) ? { followerMode } : {}),
+        ...(isNonEmptyString(scenarioId) ? { scenarioId } : {}),
       };
     }
-    case 'stop':
-      return { action: 'stop', ...(deviceId !== undefined ? { deviceId } : {}) };
-    case 'pause':
-      return { action: 'pause', ...(deviceId !== undefined ? { deviceId } : {}) };
-    case 'resume':
-      return { action: 'resume', ...(deviceId !== undefined ? { deviceId } : {}) };
-    case 'setMode': {
-      const mode = raw.mode;
-      if (!isRuntimeMode(mode)) {
+    case 'selectScenario': {
+      if (!isNonEmptyString(raw.scenarioId)) {
         return null;
       }
       return {
-        action: 'setMode',
-        mode,
+        action: 'selectScenario',
+        scenarioId: raw.scenarioId,
         ...(deviceId !== undefined ? { deviceId } : {}),
+      };
+    }
+    case 'stop': {
+      const fadeOutMs = raw.fadeOutMs;
+      if (fadeOutMs !== undefined) {
+        if (typeof fadeOutMs !== 'number' || !Number.isFinite(fadeOutMs) || fadeOutMs < 0) {
+          return null;
+        }
+      }
+      return {
+        action: 'stop',
+        ...(deviceId !== undefined ? { deviceId } : {}),
+        ...(fadeOutMs !== undefined ? { fadeOutMs } : {}),
       };
     }
     default:
@@ -155,5 +170,67 @@ export function parseBoardCaptureStatePayload(raw: unknown): BoardCaptureStatePa
         : followerMode,
     isRunning: raw.isRunning,
     isPaused: raw.isPaused,
+  };
+}
+
+/** Валидирует board.capture payload (тариф v2, канон §6). */
+export function parseBoardCapturePayload(raw: unknown): BoardCapturePayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.deviceId) || !isCaptureMode(raw.mode)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.sessionId)) {
+    return null;
+  }
+  if (!isIsoDateString(raw.acquiredAt) || !isIsoDateString(raw.expiresAt)) {
+    return null;
+  }
+  return {
+    deviceId: raw.deviceId,
+    mode: raw.mode,
+    sessionId: raw.sessionId,
+    acquiredAt: raw.acquiredAt,
+    expiresAt: raw.expiresAt,
+  };
+}
+
+/** Валидирует board.heartbeat payload (продление TTL захвата). */
+export function parseBoardCaptureHeartbeatPayload(
+  raw: unknown,
+): BoardCaptureHeartbeatPayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.deviceId) || !isNonEmptyString(raw.sessionId)) {
+    return null;
+  }
+  if (!isIsoDateString(raw.expiresAt)) {
+    return null;
+  }
+  return {
+    deviceId: raw.deviceId,
+    sessionId: raw.sessionId,
+    expiresAt: raw.expiresAt,
+  };
+}
+
+/** Валидирует board.release payload. Release НЕ останавливает играющий сценарий. */
+export function parseBoardCaptureReleasePayload(raw: unknown): BoardCaptureReleasePayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.deviceId) || !isCaptureReleaseReason(raw.reason)) {
+    return null;
+  }
+  const sessionId = raw.sessionId;
+  if (sessionId !== null && sessionId !== undefined && !isNonEmptyString(sessionId)) {
+    return null;
+  }
+  return {
+    deviceId: raw.deviceId,
+    sessionId: isNonEmptyString(sessionId) ? sessionId : null,
+    reason: raw.reason,
   };
 }

@@ -66,21 +66,32 @@ export type RuntimeMode = 'normal' | 'alarm';
 
 /**
  * Команда кабинета узлу по каналу `runtime` (cabinet → server → node).
- * `setMode` — приоритетный override: `alarm` форсит alarm-loop, `normal` форсит main.
- * `run` — опционально `authority` + `followerMode` (server-first SF1).
+ * Тариф v2 (канон DEVICE_BOARD_SERVER_FIRST.md v2.0): кабинету доступны
+ * только `selectScenario` / `run` / `stop` — и только при активном захвате
+ * (`board.capture`). Enforcement — gateway whitelist (канон §4.1).
  * `deviceId` — целевой узел (multi-node, MP7b RT5).
+ *
+ * CT7: v1-поверхность удалена из wire (канон §9).
+ * // Tariff v3: pause / resume / setMode; authority/followerMode на run.
  */
 export type RuntimeCommandPayload =
   | {
       readonly action: 'run';
       readonly deviceId?: string;
-      readonly authority?: RuntimeAuthority;
-      readonly followerMode?: RuntimeFollowerMode;
+      /** v2: запуск конкретного существующего сценария (после selectScenario). */
+      readonly scenarioId?: string;
     }
-  | { readonly action: 'stop'; readonly deviceId?: string }
-  | { readonly action: 'pause'; readonly deviceId?: string }
-  | { readonly action: 'resume'; readonly deviceId?: string }
-  | { readonly action: 'setMode'; readonly mode: RuntimeMode; readonly deviceId?: string };
+  | {
+      readonly action: 'selectScenario';
+      readonly scenarioId: string;
+      readonly deviceId?: string;
+    }
+  | {
+      readonly action: 'stop';
+      readonly deviceId?: string;
+      /** 0 = hard-cut (emergency stop); 200 = graceful вытеснение (канон §3.1). */
+      readonly fadeOutMs?: number;
+    };
 
 /** Снимок состояния runtime (node → server → cabinet). Только скаляры, без кадров. */
 export interface RuntimeStatePayload {
@@ -103,11 +114,11 @@ export interface RuntimeStatePayload {
   readonly mainLoopIteration: number;
   readonly alarmLoopIteration: number;
   readonly lastError: string | null;
-  /** SF1: exec заморожен (ScenarioRuntime.pause). */
+  /** @deprecated Tariff v3 (в v2 паузы нет). Удаляется в CT7. */
   readonly isPaused?: boolean;
-  /** SF1: кто инициировал run. */
+  /** Чья команда `run` выполнялась последней (last-write-win, канон §3.2). */
   readonly authority?: RuntimeAuthority;
-  /** SF1: soft/strict при authority=cabinet. */
+  /** @deprecated v1 legacy — заменён на `capture.mode` (board.capture). Удаляется в CT7. */
   readonly followerMode?: RuntimeFollowerMode | null;
 }
 
@@ -140,8 +151,16 @@ export const NODE_REALTIME_EVENT_TYPES = {
     log: 'runtime.log',
   },
   board: {
+    /** @deprecated Tariff v3 (edit lease вне тарифа v2). Удаляется в CT7. */
     editLease: 'board.edit-lease',
+    /** @deprecated v1 legacy — заменён парой capture/release. Удаляется в CT7. */
     captureState: 'board.capture-state',
+    /** v2: явный захват устройства кабинетом. */
+    capture: 'board.capture',
+    /** v2: продление TTL захвата (каждые 2 мин). */
+    heartbeat: 'board.heartbeat',
+    /** v2: отпускание захвата (НЕ стоп играющего сценария). */
+    release: 'board.release',
   },
 } as const;
 

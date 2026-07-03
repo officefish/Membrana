@@ -1,5 +1,8 @@
 import {
   NODE_REALTIME_EVENT_TYPES,
+  parseBoardCaptureHeartbeatPayload,
+  parseBoardCapturePayload,
+  parseBoardCaptureReleasePayload,
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
   type NodeRealtimeEnvelope,
@@ -9,6 +12,33 @@ import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 let messageUnsub: (() => void) | null = null;
+let connectionUnsub: (() => void) | null = null;
+let captureTtlTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearCaptureTtlTimer(): void {
+  if (captureTtlTimer !== null) {
+    clearTimeout(captureTtlTimer);
+    captureTtlTimer = null;
+  }
+}
+
+/**
+ * TTL auto-release (канон §3): 5 мин без heartbeat — включая разрыв WS —
+ * и клиент самостоятельно возвращается в автономию. Восстановление
+ * соединения до дедлайна переармирует таймер очередным heartbeat.
+ */
+function armCaptureTtl(expiresAt: string): void {
+  clearCaptureTtlTimer();
+  const delay = Date.parse(expiresAt) - Date.now();
+  if (!Number.isFinite(delay) || delay <= 0) {
+    useServerFirstStore.getState().releaseCapture('ttl-expired');
+    return;
+  }
+  captureTtlTimer = setTimeout(() => {
+    captureTtlTimer = null;
+    useServerFirstStore.getState().releaseCapture('ttl-expired');
+  }, delay);
+}
 
 function isBoardEnvelope(envelope: NodeRealtimeEnvelope): boolean {
   return envelope.channel === 'board';
@@ -40,10 +70,51 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
       return;
     }
     store.setCaptureState(payload);
+    return;
+  }
+
+  // --- Явный захват v2 (CT4, канон §3) ---
+
+  if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.capture) {
+    const payload = parseBoardCapturePayload(envelope.payload);
+    if (payload === null || payload.deviceId !== localDeviceId) {
+      return;
+    }
+    store.setCapture({
+      mode: payload.mode,
+      sessionId: payload.sessionId,
+      expiresAt: payload.expiresAt,
+    });
+    armCaptureTtl(payload.expiresAt);
+    return;
+  }
+
+  if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.heartbeat) {
+    const payload = parseBoardCaptureHeartbeatPayload(envelope.payload);
+    if (payload === null || payload.deviceId !== localDeviceId) {
+      return;
+    }
+    const current = useServerFirstStore.getState().capture;
+    if (current === null || current.sessionId !== payload.sessionId) {
+      return;
+    }
+    store.applyCaptureHeartbeat(payload.sessionId, payload.expiresAt);
+    armCaptureTtl(payload.expiresAt);
+    return;
+  }
+
+  if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.release) {
+    const payload = parseBoardCaptureReleasePayload(envelope.payload);
+    if (payload === null || payload.deviceId !== localDeviceId) {
+      return;
+    }
+    clearCaptureTtlTimer();
+    // Release НЕ останавливает играющий сценарий (канон §3) — только состояние.
+    store.releaseCapture(payload.reason);
   }
 }
 
-/** SF4: подписка на board.edit-lease и board.capture-state для полевого узла. */
+/** SF4 + CT5: подписка на board-события и connection state для полевого узла. */
 export function startBoardLeaseBridge(): void {
   if (messageUnsub !== null) {
     return;
@@ -55,11 +126,19 @@ export function startBoardLeaseBridge(): void {
     }
     applyBoardEnvelope(envelope, client.getDeviceId());
   });
+  // CT5 (канон §7): при разрыве WS под захватом показываем «Соединение потеряно»;
+  // сам захват отпустит TTL-таймер (канон §3), не разрыв.
+  connectionUnsub = client.subscribeState((connectionState) => {
+    useServerFirstStore.getState().setRealtimeConnected(connectionState === 'connected');
+  });
 }
 
 export function stopBoardLeaseBridge(): void {
   messageUnsub?.();
   messageUnsub = null;
+  connectionUnsub?.();
+  connectionUnsub = null;
+  clearCaptureTtlTimer();
   useServerFirstStore.getState().reset();
 }
 

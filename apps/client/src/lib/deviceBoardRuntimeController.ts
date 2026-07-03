@@ -6,6 +6,7 @@ import {
 import {
   ScenarioRuntime,
   createIdleScenarioRuntimeState,
+  resolveDeviceCaptureFlags,
   resolveServerFirstFlags,
   type ScenarioRuntimeState,
 } from '@membrana/device-board';
@@ -13,6 +14,7 @@ import {
   ScenarioAsyncJobHub,
   bindScenarioAsyncJobPublisher,
 } from '@membrana/agenda';
+import { stopAllActivePlayback } from '@membrana/audio-engine-service';
 
 import { createScenarioRuntimeHost } from '@/modules/device-board/createScenarioRuntimeHost';
 import { createClientDeviceBoardPersistAdapterFromSession } from '@/modules/device-board/deviceScenarioPersistence';
@@ -21,6 +23,7 @@ import {
   savePersistedRuntimeMode,
 } from '@/lib/runtimeModePersistence';
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
+import { preemptRunningScenario } from '@/lib/runtimePreemption';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 type StateListener = (state: ScenarioRuntimeState) => void;
@@ -35,6 +38,9 @@ type StateListener = (state: ScenarioRuntimeState) => void;
  */
 class DeviceBoardRuntimeController {
   private runtime: ScenarioRuntime | null = null;
+
+  /** CT6: активный run для LWW-preemption (ожидание settle перед перезапуском). */
+  private scenarioRunPromise: Promise<void> | undefined;
 
   private unsubscribeRuntime: (() => void) | null = null;
 
@@ -72,17 +78,29 @@ class DeviceBoardRuntimeController {
 
   async start(options?: { fromRemote?: boolean }): Promise<void> {
     const deviceId = getNodeRealtimeClient().getDeviceId();
-    const flags = resolveServerFirstFlags({
-      deviceId,
-      editLease: useServerFirstStore.getState().editLease,
-      captureState: useServerFirstStore.getState().captureState,
-    });
-    if (!options?.fromRemote && flags.blockLocalRun) {
-      return;
+    const captureFlags = resolveDeviceCaptureFlags(useServerFirstStore.getState().capture);
+    if (captureFlags.captured) {
+      // CT4 (канон §4.2): при явном захвате v2 решает ось capture —
+      // hard блокирует локальный run, soft разрешает (last-write-win §3.2).
+      if (!options?.fromRemote && !captureFlags.allowFieldRun) {
+        return;
+      }
+    } else {
+      // v1 legacy path (неявный run=capture) — до CT7 cleanup.
+      const flags = resolveServerFirstFlags({
+        deviceId,
+        editLease: useServerFirstStore.getState().editLease,
+        captureState: useServerFirstStore.getState().captureState,
+      });
+      if (!options?.fromRemote && flags.blockLocalRun) {
+        return;
+      }
     }
     const runtime = this.ensureRuntime();
-    if (runtime.getState().isRunning) {
-      return;
+    // CT6 (канон §3.2): last-write-win — последний run побеждает,
+    // проигравший сценарий останавливается.
+    if (!(await preemptRunningScenario(runtime, this.scenarioRunPromise))) {
+      return; // конкурентный preempt уже перезапустил runtime
     }
     if (!options?.fromRemote && deviceId !== null) {
       useServerFirstStore.getState().setFieldCapture(deviceId);
@@ -90,18 +108,32 @@ class DeviceBoardRuntimeController {
     this.asyncJobHub.clear();
     const document = await this.loadDocument();
     runtime.load(document);
-    void runtime.start();
+    this.scenarioRunPromise = runtime.start().catch(() => undefined);
   }
 
-  stop(): void {
+  /**
+   * Emergency stop: доступен ВСЕГДА, в любом режиме захвата —
+   * инвариант канона §3.3 (audio-engine без permission-check).
+   * CT6: `fadeOutMs` > 0 гасит слышимое воспроизведение плавно
+   * (вытеснение захватом = 200 мс); 0/умолчание — hard-cut.
+   */
+  stop(options?: { fadeOutMs?: number }): void {
+    void stopAllActivePlayback({ fadeOutMs: options?.fadeOutMs ?? 0 });
     this.runtime?.stop('user');
   }
 
   pause(): void {
+    // CT4 (канон §4.2): пауза под захватом заблокирована (soft и hard) — тариф v3.
+    if (resolveDeviceCaptureFlags(useServerFirstStore.getState().capture).captured) {
+      return;
+    }
     this.runtime?.pause();
   }
 
   resume(): void {
+    if (resolveDeviceCaptureFlags(useServerFirstStore.getState().capture).captured) {
+      return;
+    }
     this.runtime?.resume();
   }
 
@@ -125,6 +157,7 @@ class DeviceBoardRuntimeController {
   /** Сброс синглтона между тестами. */
   reset(): void {
     this.runtime?.stop('system');
+    this.scenarioRunPromise = undefined;
     this.unsubscribeRuntime?.();
     this.unsubscribeRuntime = null;
     this.unsubscribeAsyncJobs?.();

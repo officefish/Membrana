@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "taskId": "db-ct-5-indicators-alert",
+  "state": "lgtm",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feat/db-ct-5-indicators-alert",
+  "currentCommitSha": "d537beee606337d8c6b8202d2ce4f140be754318",
+  "reviewedCommitSha": "d537beee606337d8c6b8202d2ce4f140be754318",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/db-ct-5-indicators-alert/d537beee606337d8c6b8202d2ce4f140be754318-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 230,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/230"
+  },
+  "scope": {
+    "baseRef": "d537beee606337d8c6b8202d2ce4f140be754318^",
+    "files": [
+      "apps/client/src/App.tsx",
+      "apps/client/src/components/CaptureAlertToasts.tsx",
+      "apps/client/src/lib/boardLeaseBridge.ts",
+      "apps/client/src/lib/captureToasts.test.ts",
+      "apps/client/src/lib/captureToasts.ts",
+      "apps/client/src/modules/device-board/useServerFirstBoardState.ts",
+      "apps/client/src/stores/serverFirstStore.ts",
+      "packages/device-board/src/components/server-first-badges.test.ts",
+      "packages/device-board/src/components/server-first-badges.ts",
+      "packages/device-board/src/components/server-first-flags.test.ts",
+      "packages/device-board/src/components/server-first-flags.ts",
+      "packages/device-board/src/context/device-board-graph-context.tsx"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/device-board"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "d537beee606337d8c6b8202d2ce4f140be754318",
+        "checkedAt": "2026-07-02T17:31:16.374Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "d537beee606337d8c6b8202d2ce4f140be754318",
+        "checkedAt": "2026-07-02T17:02:46Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28607687325/job/84832038241"
+      },
+      {
+        "command": "github-check:verify",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "d537beee606337d8c6b8202d2ce4f140be754318",
+        "checkedAt": "2026-07-02T17:07:15Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28607608655/job/84831775026"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "pending",
+    "evidence": null
+  },
+  "createdAt": "2026-07-02T17:31:14.255Z",
+  "updatedAt": "2026-07-02T17:31:29.733Z"
+}

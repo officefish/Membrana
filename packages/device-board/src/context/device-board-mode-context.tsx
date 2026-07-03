@@ -16,12 +16,17 @@ const DeviceBoardModeContext = createContext<DeviceBoardModeContextValue | null>
 
 export interface DeviceBoardModeProviderProps {
   readonly children: React.ReactNode;
+  /** CT7: стартовая сессия (кабинетский view-only борд в тарифе v2). */
+  readonly initialSession?: DeviceBoardSession | null;
 }
 
 /** Провайдер режима полноэкранной доски (board mode). */
-export const DeviceBoardModeProvider: React.FC<DeviceBoardModeProviderProps> = ({ children }) => {
+export const DeviceBoardModeProvider: React.FC<DeviceBoardModeProviderProps> = ({
+  children,
+  initialSession = null,
+}) => {
   const [isBoardMode, setIsBoardMode] = useState(false);
-  const [session, setSession] = useState<DeviceBoardSession | null>(null);
+  const [session, setSession] = useState<DeviceBoardSession | null>(initialSession);
 
   const enterBoardMode = useCallback((nextSession: DeviceBoardSession) => {
     setSession(nextSession);

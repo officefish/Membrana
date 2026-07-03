@@ -42,8 +42,16 @@ export const NODE_REALTIME_EVENT_TYPES = {
     log: 'runtime.log',
   },
   board: {
+    /** @deprecated Tariff v3 (edit lease вне тарифа v2). Удаляется в CT7. */
     editLease: 'board.edit-lease',
+    /** @deprecated v1 legacy — заменён парой capture/release. Удаляется в CT7. */
     captureState: 'board.capture-state',
+    /** v2: явный захват устройства кабинетом. */
+    capture: 'board.capture',
+    /** v2: продление TTL захвата (каждые 2 мин). */
+    heartbeat: 'board.heartbeat',
+    /** v2: отпускание захвата (НЕ стоп играющего сценария). */
+    release: 'board.release',
   },
 } as const;
 
@@ -216,4 +224,196 @@ export function parseBoardCaptureStatePayload(raw: unknown): BoardCaptureStatePa
     isRunning: raw.isRunning,
     isPaused: raw.isPaused,
   };
+}
+
+// --- Capture tariff v2 (синхрон с packages/core capture-events.ts, CT1) ---
+
+/** Режим захвата: мягкий (поле может start/stop) / жёсткий (полностью ведомое). */
+export type DeviceCaptureMode = 'soft' | 'hard';
+
+/** Причина отпускания захвата. */
+export type DeviceCaptureReleaseReason = 'operator' | 'ttl-expired' | 'server-restart';
+
+/** Захват устройства кабинетом (канал `board`, событие `board.capture`). */
+export interface BoardCapturePayload {
+  readonly deviceId: string;
+  readonly mode: DeviceCaptureMode;
+  readonly sessionId: string;
+  readonly acquiredAt: string;
+  readonly expiresAt: string;
+}
+
+/** Продление захвата (канал `board`, событие `board.heartbeat`). */
+export interface BoardCaptureHeartbeatPayload {
+  readonly deviceId: string;
+  readonly sessionId: string;
+  readonly expiresAt: string;
+}
+
+/** Отпускание захвата (канал `board`, событие `board.release`). */
+export interface BoardCaptureReleasePayload {
+  readonly deviceId: string;
+  readonly sessionId: string | null;
+  readonly reason: DeviceCaptureReleaseReason;
+}
+
+function isCaptureMode(value: unknown): value is DeviceCaptureMode {
+  return value === 'soft' || value === 'hard';
+}
+
+function isCaptureReleaseReason(value: unknown): value is DeviceCaptureReleaseReason {
+  return value === 'operator' || value === 'ttl-expired' || value === 'server-restart';
+}
+
+function isIsoDateString(value: unknown): value is string {
+  return typeof value === 'string' && !Number.isNaN(Date.parse(value));
+}
+
+/** Валидирует board.capture payload (тариф v2). */
+export function parseBoardCapturePayload(raw: unknown): BoardCapturePayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.deviceId) || !isCaptureMode(raw.mode)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.sessionId)) {
+    return null;
+  }
+  if (!isIsoDateString(raw.acquiredAt) || !isIsoDateString(raw.expiresAt)) {
+    return null;
+  }
+  return {
+    deviceId: raw.deviceId,
+    mode: raw.mode,
+    sessionId: raw.sessionId,
+    acquiredAt: raw.acquiredAt,
+    expiresAt: raw.expiresAt,
+  };
+}
+
+/** Валидирует board.heartbeat payload. */
+export function parseBoardCaptureHeartbeatPayload(
+  raw: unknown,
+): BoardCaptureHeartbeatPayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.deviceId) || !isNonEmptyString(raw.sessionId)) {
+    return null;
+  }
+  if (!isIsoDateString(raw.expiresAt)) {
+    return null;
+  }
+  return {
+    deviceId: raw.deviceId,
+    sessionId: raw.sessionId,
+    expiresAt: raw.expiresAt,
+  };
+}
+
+/** Валидирует board.release payload. Release НЕ останавливает играющий сценарий. */
+export function parseBoardCaptureReleasePayload(raw: unknown): BoardCaptureReleasePayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (!isNonEmptyString(raw.deviceId) || !isCaptureReleaseReason(raw.reason)) {
+    return null;
+  }
+  const sessionId = raw.sessionId;
+  if (sessionId !== null && sessionId !== undefined && !isNonEmptyString(sessionId)) {
+    return null;
+  }
+  return {
+    deviceId: raw.deviceId,
+    sessionId: isNonEmptyString(sessionId) ? sessionId : null,
+    reason: raw.reason,
+  };
+}
+
+// --- Runtime command (синхрон с packages/core events.ts + validate-payloads.ts, CT1) ---
+
+export type RuntimeMode = 'normal' | 'alarm';
+
+/**
+ * Команда кабинета узлу по каналу `runtime`. Тариф v2: только
+ * selectScenario/run/stop (gateway whitelist, канон §4.1).
+ * CT7 (канон §9): v1-поверхность удалена из wire.
+ * // Tariff v3: pause / resume / setMode; authority/followerMode на run.
+ */
+export type RuntimeCommandPayload =
+  | {
+      readonly action: 'run';
+      readonly deviceId?: string;
+      readonly scenarioId?: string;
+    }
+  | {
+      readonly action: 'selectScenario';
+      readonly scenarioId: string;
+      readonly deviceId?: string;
+    }
+  | {
+      readonly action: 'stop';
+      readonly deviceId?: string;
+      /** 0 = hard-cut (emergency stop); 200 = graceful вытеснение. */
+      readonly fadeOutMs?: number;
+    };
+
+function parseOptionalDeviceId(raw: Record<string, unknown>): string | undefined {
+  const deviceId = raw.deviceId;
+  if (deviceId === undefined) {
+    return undefined;
+  }
+  return isNonEmptyString(deviceId) ? deviceId : undefined;
+}
+
+/**
+ * Валидирует payload runtime.command. Возвращает null при неизвестном action.
+ * CT7: pause/resume/setMode и authority/followerMode отбрасываются.
+ */
+export function parseRuntimeCommandPayload(raw: unknown): RuntimeCommandPayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  const action = raw.action;
+  const deviceId = parseOptionalDeviceId(raw);
+
+  switch (action) {
+    case 'run': {
+      const scenarioId = raw.scenarioId;
+      if (scenarioId !== undefined && !isNonEmptyString(scenarioId)) {
+        return null;
+      }
+      return {
+        action: 'run',
+        ...(deviceId !== undefined ? { deviceId } : {}),
+        ...(isNonEmptyString(scenarioId) ? { scenarioId } : {}),
+      };
+    }
+    case 'selectScenario': {
+      if (!isNonEmptyString(raw.scenarioId)) {
+        return null;
+      }
+      return {
+        action: 'selectScenario',
+        scenarioId: raw.scenarioId,
+        ...(deviceId !== undefined ? { deviceId } : {}),
+      };
+    }
+    case 'stop': {
+      const fadeOutMs = raw.fadeOutMs;
+      if (fadeOutMs !== undefined) {
+        if (typeof fadeOutMs !== 'number' || !Number.isFinite(fadeOutMs) || fadeOutMs < 0) {
+          return null;
+        }
+      }
+      return {
+        action: 'stop',
+        ...(deviceId !== undefined ? { deviceId } : {}),
+        ...(fadeOutMs !== undefined ? { fadeOutMs } : {}),
+      };
+    }
+    default:
+      return null;
+  }
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
-import type { CabinetRunFollowerMode } from '@/lib/cabinetNodeRuntimeCommands';
+import type { DeviceCaptureMode } from '@/api/deviceCapture';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
 import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
@@ -184,29 +184,68 @@ function NodeCard({
 }) {
   const deviceId = node.device?.mediaDeviceId ?? null;
   const state = deviceId ? runtime.states[deviceId] : undefined;
+  const capture = deviceId ? runtime.captures[deviceId] : undefined;
   const deviceLive = runtime.isDeviceLive(deviceId);
-  const canStart = deviceId !== null && deviceLive;
   const isRunning = state?.isRunning ?? false;
-  const isPaused = state?.isPaused ?? false;
   const mode = state?.mode ?? 'normal';
-  const [followerMode, setFollowerMode] = useState<CabinetRunFollowerMode>('soft');
+  const [captureMode, setCaptureMode] = useState<DeviceCaptureMode>('soft');
+  const [captureBusy, setCaptureBusy] = useState(false);
+  const [captureError, setCaptureError] = useState<string | null>(null);
+
+  // CT3 (канон §1): без захвата у кабинета нет контроля над сценариями узла.
+  const isCaptured = capture !== undefined;
+  const canCapture = deviceId !== null && deviceLive && !captureBusy;
+
+  const handleCapture = async () => {
+    setCaptureBusy(true);
+    setCaptureError(null);
+    try {
+      await runtime.captureDevice(node.id, captureMode);
+    } catch (e) {
+      setCaptureError(e instanceof Error ? e.message : 'Не удалось захватить устройство');
+    } finally {
+      setCaptureBusy(false);
+    }
+  };
+
+  const handleRelease = async () => {
+    setCaptureBusy(true);
+    setCaptureError(null);
+    try {
+      await runtime.releaseDevice(node.id);
+    } catch (e) {
+      setCaptureError(e instanceof Error ? e.message : 'Не удалось отпустить устройство');
+    } finally {
+      setCaptureBusy(false);
+    }
+  };
 
   const statusBadge = !isRunning ? (
     <span className="badge badge-ghost">Остановлен</span>
-  ) : isPaused ? (
-    <span className="badge badge-ghost">Пауза</span>
   ) : (
     <span className={`badge ${mode === 'alarm' ? 'badge-warning' : 'badge-info'}`}>
       {mode === 'alarm' ? 'Тревога' : 'Работает'}
     </span>
   );
 
+  // CT3 (канон §7): состояние захвата видно с обеих сторон.
+  const captureBadge = isCaptured ? (
+    <span
+      className={`badge ${capture.mode === 'hard' ? 'badge-warning' : 'badge-info'}`}
+      title={
+        capture.mode === 'hard'
+          ? 'Устройство полностью ведомое; поле только смотрит'
+          : 'Поле может запускать и останавливать сценарии; правка и пауза заблокированы'
+      }
+    >
+      {capture.mode === 'hard' ? 'Захвачено: жёсткий' : 'Захвачено: мягкий'}
+    </span>
+  ) : null;
+
   const borderClass = isRunning
-    ? isPaused
-      ? 'border-base-300'
-      : mode === 'alarm'
-        ? 'border-warning'
-        : 'border-info animate-pulse'
+    ? mode === 'alarm'
+      ? 'border-warning'
+      : 'border-info animate-pulse'
     : 'border-transparent';
 
   return (
@@ -226,24 +265,34 @@ function NodeCard({
               <span className="badge badge-ghost badge-sm mt-1">не сопряжён</span>
             )}
           </div>
-          {statusBadge}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {captureBadge}
+            {statusBadge}
+          </div>
         </div>
 
         <span className="sr-only" role="status" aria-live="polite">
-          {isRunning
-            ? isPaused
-              ? 'Сценарий на паузе'
-              : `Режим: ${mode === 'alarm' ? 'тревога' : 'обычный'}`
-            : 'Сценарий остановлен'}
+          {`${
+            isCaptured
+              ? `Устройство захвачено (${capture.mode === 'hard' ? 'жёсткий' : 'мягкий'} режим). `
+              : ''
+          }${isRunning ? `Режим: ${mode === 'alarm' ? 'тревога' : 'обычный'}` : 'Сценарий остановлен'}`}
         </span>
 
+        {captureError ? (
+          <div className="alert alert-error py-2 text-sm">
+            <span>{captureError}</span>
+          </div>
+        ) : null}
+
         <div className="flex flex-wrap items-center gap-2">
-          {!isRunning ? (
+          {!isCaptured ? (
+            // CT3 шаг 1 (канон §1): явный захват — до него контроля нет.
             <>
               <button
                 type="button"
                 className="btn btn-sm btn-primary"
-                disabled={!canStart}
+                disabled={!canCapture}
                 title={
                   !deviceId
                     ? 'Узел не сопряжён с устройством'
@@ -251,78 +300,59 @@ function NodeCard({
                       ? DEVICE_OFFLINE_RUN_HINT
                       : undefined
                 }
-                aria-label={
-                  !canStart && deviceId && !deviceLive ? DEVICE_OFFLINE_RUN_HINT : undefined
-                }
-                onClick={() => deviceId && runtime.run(deviceId, { followerMode })}
+                onClick={() => void handleCapture()}
               >
-                Пуск
+                Захватить
               </button>
               <label className="flex items-center gap-1.5 text-xs text-base-content/70">
-                <span>Захват</span>
+                <span>Режим</span>
                 <select
                   className="select select-bordered select-xs"
-                  value={followerMode}
-                  onChange={(event) =>
-                    setFollowerMode(event.target.value as CabinetRunFollowerMode)
-                  }
-                  aria-label="Режим follower при запуске с кабинета"
+                  value={captureMode}
+                  onChange={(event) => setCaptureMode(event.target.value as DeviceCaptureMode)}
+                  aria-label="Режим захвата устройства"
                 >
                   <option value="soft">мягкий</option>
-                  <option value="strict">строгий</option>
+                  <option value="hard">жёсткий</option>
                 </select>
               </label>
             </>
           ) : (
+            // CT3 шаг 2: под захватом — запуск/остановка сохранённого сценария
+            // устройства (селектор из нескольких сценариев — отдельная задача).
             <>
-              {isPaused ? (
+              {!isRunning ? (
                 <button
                   type="button"
                   className="btn btn-sm btn-primary"
-                  disabled={!deviceId}
-                  onClick={() => deviceId && runtime.resume(deviceId)}
+                  disabled={!deviceId || !deviceLive}
+                  title={!deviceLive ? DEVICE_OFFLINE_RUN_HINT : 'Запустить сохранённый сценарий устройства'}
+                  onClick={() => deviceId && runtime.run(deviceId)}
                 >
-                  Продолжить
+                  Пуск
                 </button>
               ) : (
                 <button
                   type="button"
-                  className="btn btn-sm btn-outline"
+                  className="btn btn-sm btn-error"
                   disabled={!deviceId}
-                  onClick={() => deviceId && runtime.pause(deviceId)}
+                  title="Остановить с плавным затуханием (200 мс)"
+                  onClick={() => deviceId && runtime.stop(deviceId)}
                 >
-                  Пауза
+                  Стоп
                 </button>
               )}
               <button
                 type="button"
-                className="btn btn-sm btn-error"
-                disabled={!deviceId}
-                onClick={() => deviceId && runtime.stop(deviceId)}
+                className="btn btn-sm btn-outline"
+                disabled={captureBusy}
+                title="Отпустить управление; играющий сценарий продолжит играть"
+                onClick={() => void handleRelease()}
               >
-                Стоп
+                Отпустить
               </button>
             </>
           )}
-
-          {isRunning && deviceId ? (
-            <div className="join">
-              <button
-                type="button"
-                className={`btn btn-sm join-item ${mode === 'normal' ? 'btn-info' : 'btn-ghost'}`}
-                onClick={() => runtime.setMode(deviceId, 'normal')}
-              >
-                Обычный
-              </button>
-              <button
-                type="button"
-                className={`btn btn-sm join-item ${mode === 'alarm' ? 'btn-warning' : 'btn-ghost'}`}
-                onClick={() => runtime.setMode(deviceId, 'alarm')}
-              >
-                Тревога
-              </button>
-            </div>
-          ) : null}
 
           <div className="ml-auto flex gap-2">
             {onOpenKeys ? (

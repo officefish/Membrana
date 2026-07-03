@@ -21,8 +21,15 @@ export type {
   BufferPlayerPlayOptions,
   BufferPlayerProgress,
   BufferPlayerState,
+  BufferPlayerStopOptions,
 } from './core/buffer-player.js';
 export { clampPlaybackOffset } from './core/playback-offset.js';
+
+// CT6 (tariff v2): fade-out + остановка всего активного воспроизведения.
+export { FADE_OUT_FLOOR_GAIN, scheduleFadeOut } from './core/fade-out.js';
+export type { FadeTargetParam } from './core/fade-out.js';
+export { stopAllActivePlayback } from './core/playback-registry.js';
+export type { StoppablePlayback } from './core/playback-registry.js';
 
 // Web Audio helpers
 export {

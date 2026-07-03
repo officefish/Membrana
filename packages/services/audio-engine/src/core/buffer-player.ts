@@ -14,7 +14,12 @@ import {
 } from '../types.js';
 
 import { closeAudioContext, createAudioContext } from './audio-context.js';
+import { scheduleFadeOut } from './fade-out.js';
 import { clampPlaybackOffset } from './playback-offset.js';
+import {
+  registerActivePlayback,
+  unregisterActivePlayback,
+} from './playback-registry.js';
 
 export type BufferPlayerState =
   | 'idle'
@@ -45,6 +50,11 @@ export interface BufferPlayerPlayOptions {
   readonly startOffsetSec?: number;
 }
 
+/** CT6 (канон §3.1): 0/умолчание = hard-cut (emergency), >0 = graceful fade. */
+export interface BufferPlayerStopOptions {
+  readonly fadeOutMs?: number;
+}
+
 type Listener<E extends BufferPlayerEvent> = (
   payload: BufferPlayerEventMap[E],
 ) => void;
@@ -53,7 +63,9 @@ export class BufferPlayer {
   private config: LiveCaptureConfig;
   private audioContext: AudioContext | null = null;
   private analyserNode: AnalyserNode | null = null;
+  private gainNode: GainNode | null = null;
   private sourceNode: AudioBufferSourceNode | null = null;
+  private fadeOutInProgress = false;
   private rafId: number | null = null;
   private state: BufferPlayerState = 'idle';
   private currentBuffer: AudioBuffer | null = null;
@@ -162,8 +174,12 @@ export class BufferPlayer {
 
       this.sourceNode = this.audioContext.createBufferSource();
       this.sourceNode.buffer = buffer;
+      // CT6: gain ПОСЛЕ analyser — fade гасит слышимый выход,
+      // не искажая данные анализа (frame/fft читаются до gain).
+      this.gainNode = this.audioContext.createGain();
       this.sourceNode.connect(this.analyserNode);
-      this.analyserNode.connect(this.audioContext.destination);
+      this.analyserNode.connect(this.gainNode);
+      this.gainNode.connect(this.audioContext.destination);
 
       this.sourceNode.onended = (): void => {
         if (this.state !== 'playing') return;
@@ -175,6 +191,7 @@ export class BufferPlayer {
       this.playheadAnchor = this.audioContext.currentTime;
       this.sourceNode.start(0, this.startOffsetSec);
       this.state = 'playing';
+      registerActivePlayback(this);
       this.emit('start', undefined);
       this.startLoop();
     } catch (err) {
@@ -213,11 +230,43 @@ export class BufferPlayer {
     }
   }
 
-  async stop(): Promise<void> {
+  /**
+   * CT6 (канон §3.1/§3.3): `fadeOutMs > 0` — graceful затухание перед
+   * teardown (вытеснение захватом = 200 мс); 0/умолчание — hard-cut
+   * (emergency stop). Повторный stop во время fade режет немедленно.
+   * Без permission-проверок — engine останавливается для любого вызывающего.
+   */
+  async stop(options: BufferPlayerStopOptions = {}): Promise<void> {
     const wasActive =
       this.state === 'playing' ||
       this.state === 'starting' ||
       this.state === 'paused';
+
+    const fadeOutMs = options.fadeOutMs ?? 0;
+    if (
+      fadeOutMs > 0 &&
+      this.state === 'playing' &&
+      !this.fadeOutInProgress &&
+      this.gainNode !== null &&
+      this.audioContext !== null
+    ) {
+      this.fadeOutInProgress = true;
+      const settleMs = scheduleFadeOut(
+        this.gainNode.gain,
+        this.audioContext.currentTime,
+        fadeOutMs,
+      );
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, settleMs);
+      });
+      // Emergency stop (fadeOutMs=0) во время fade уже мог снести playback.
+      if (this.state !== 'playing') {
+        this.fadeOutInProgress = false;
+        return;
+      }
+    }
+    this.fadeOutInProgress = false;
+
     await this.teardownPlayback();
     this.currentBuffer = null;
     this.startOffsetSec = 0;
@@ -227,6 +276,7 @@ export class BufferPlayer {
   }
 
   private async teardownPlayback(): Promise<void> {
+    unregisterActivePlayback(this);
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
@@ -248,6 +298,10 @@ export class BufferPlayer {
     if (this.analyserNode) {
       this.analyserNode.disconnect();
       this.analyserNode = null;
+    }
+    if (this.gainNode) {
+      this.gainNode.disconnect();
+      this.gainNode = null;
     }
     if (this.audioContext) {
       await closeAudioContext(this.audioContext);

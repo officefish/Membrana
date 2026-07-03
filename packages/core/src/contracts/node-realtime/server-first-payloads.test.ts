@@ -10,28 +10,21 @@ import {
 } from './index.js';
 
 describe('server-first SF1 payloads', () => {
-  it('parseRuntimeCommandPayload accepts pause and run with authority', () => {
-    expect(parseRuntimeCommandPayload({ action: 'pause', deviceId: 'dev-1' })).toEqual({
-      action: 'pause',
-      deviceId: 'dev-1',
-    });
+  it('CT7: pause/resume/setMode удалены из wire — парсер отбрасывает', () => {
+    // Tariff v3: вернуть парсинг pause/resume/setMode.
+    expect(parseRuntimeCommandPayload({ action: 'pause', deviceId: 'dev-1' })).toBeNull();
+    expect(parseRuntimeCommandPayload({ action: 'resume' })).toBeNull();
+    expect(parseRuntimeCommandPayload({ action: 'setMode', mode: 'alarm' })).toBeNull();
+  });
+
+  it('CT7: run игнорирует v1 authority/followerMode (захват явный, board.capture)', () => {
     expect(
       parseRuntimeCommandPayload({
         action: 'run',
         authority: 'cabinet',
         followerMode: 'strict',
       }),
-    ).toEqual({
-      action: 'run',
-      authority: 'cabinet',
-      followerMode: 'strict',
-    });
-  });
-
-  it('parseRuntimeCommandPayload rejects followerMode without cabinet authority', () => {
-    expect(
-      parseRuntimeCommandPayload({ action: 'run', authority: 'field', followerMode: 'soft' }),
-    ).toBeNull();
+    ).toEqual({ action: 'run' });
   });
 
   it('parseBoardEditLeasePayload validates cabinet lease', () => {

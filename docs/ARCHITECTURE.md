@@ -167,13 +167,13 @@ interface AudioWindow {
 |-------|------|----------|
 | `@membrana/background-office` | Интеграции: Claude, Linear, GitHub webhooks | Нет |
 | `@membrana/background-media` | Data-plane веб-клиента: сэмплы, trends-шаблоны, `deviceId` | PostgreSQL + blob volume |
-| `@membrana/background-cabinet` | Identity + domain: auth, мембраны, узлы, MP7 realtime gateway, telemetry journal, edit lease (SF) | PostgreSQL |
+| `@membrana/background-cabinet` | Identity + domain: auth, мембраны, узлы, MP7 realtime gateway, telemetry journal, device capture (tariff v2) | PostgreSQL |
 
 **Не смешивать:** пользовательские WAV и шаблоны trends — только **media**; секреты LLM/тикетов и webhook'и — только **office**; login/узлы/lease/runtime WS — **cabinet** (не media).
 
 #### `background-cabinet` — кабинет и node realtime
 
-`@membrana/background-cabinet` (порт dev **3020**, SPA `apps/cabinet`): REST `/v1/*`, WebSocket `/v1/nodes/realtime` (каналы `journal`, `mic-live`, `presence`, `runtime`, `board`). Server-first: edit lease + capture authority — канон [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md). Деплой: [`deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md).
+`@membrana/background-cabinet` (порт dev **3020**, SPA `apps/cabinet`): REST `/v1/*`, WebSocket `/v1/nodes/realtime` (каналы `journal`, `mic-live`, `presence`, `runtime`, `board`). Server-first: явный захват устройства (tariff v2, `NodeDeviceCapture` + gateway whitelist) — канон [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md) v2.0, §1g ниже. Деплой: [`deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md).
 
 #### `background-office` — интеграционный HTTP-шлюз
 
@@ -205,11 +205,20 @@ AudioContext и **не** Rete/DataflowEngine для сигнала.
 Полный концепт доски: [`packages/device-board/DEVICE_BOARD_CONCEPT.md`](../packages/device-board/DEVICE_BOARD_CONCEPT.md).  
 **Исполнение сценария (runtime, onTick, планировщик):** [`SCENARIO_RUNTIME.md`](./SCENARIO_RUNTIME.md).
 
-### 1g. Server-first (cabinet ↔ field)
+### 1g. Server-first: явный захват устройства (tariff v2)
 
-Когда оператор управляет узлом из кабинета, действуют три оси: **edit lease** (кто редактирует граф), **runtime authority** (кто запустил run), **follower mode** (soft / strict на поле). Wire: `@membrana/core` `node-realtime` (`board.*`, расширенный `runtime.*`); gateway и lease store — `background-cabinet`; UI flags — `device-board` `resolveServerFirstFlags()`; enforcement на поле — `apps/client`; управление и preview журнала — `apps/cabinet` `NodesPage` / `DeviceBoardPage`.
+Кабинет получает контроль над узлом только через **явный захват** (`board.capture`, tariff v2): без захвата — ноль контроля; после — только выбор + запуск + остановка существующего сценария. Оси: **capture** `{ holder, mode: soft|hard, sessionId, expiresAt }` и **authority** (чей run был последним, last-write-win). Мягкий режим: поле может start/stop, правка и пауза заблокированы; жёсткий: полностью ведомое устройство.
 
-Канон и smoke (prod E2E): [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md), [`actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md`](./actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md).
+Инварианты:
+
+- **Emergency stop:** `stop()` на поле доступен всегда, в любом режиме захвата — в `@membrana/audio-engine-service` нет permission-проверок; флаги захвата существуют только в UI и gateway.
+- **Enforcement тарифа — server-side:** gateway `background-cabinet` пропускает от кабинета только whitelist (`TARIFF_CABINET_RUNTIME_COMMANDS.v2` = selectScenario/run/stop) и только при активном захвате; UI-блокировки — косметика.
+- **Lifecycle:** heartbeat 2 мин / TTL 5 мин → auto-release на поле; `release` не останавливает играющий сценарий; вытеснение клиентского run при захвате — `stop { fadeOutMs: 200 }` + активный alert.
+- Редактирование/пауза/setMode с сервера — tariff v3 (edit lease отключён, точки помечены `// Tariff v3`).
+
+Wire: `@membrana/core` `node-realtime` (`board.capture/heartbeat/release`, `runtime.*` c `stop{fadeOutMs}`); gateway + capture store — `background-cabinet`; UI flags — `device-board` `resolveServerFirstFlags()` / `resolveDeviceCaptureFlags()`; enforcement на поле — `apps/client`; захват и управление — `apps/cabinet` `NodesPage` / `DeviceBoardPage` (борд в v2 — view-only просмотр).
+
+Канон и smoke (prod E2E): [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md) v2.0, [`actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md`](./actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md).
 
 ## 2. Плагины и слабая связанность (домен аудио)
 

@@ -32,6 +32,24 @@ export {
 } from './board-events.js';
 
 export {
+  CAPTURE_PREEMPTION_FADE_OUT_MS,
+  DEVICE_CAPTURE_HEARTBEAT_INTERVAL_MS,
+  DEVICE_CAPTURE_TTL_MS,
+  FIELD_ALLOWED_ACTIONS,
+  TARIFF_CABINET_RUNTIME_COMMANDS,
+  type BoardCaptureHeartbeatPayload,
+  type BoardCapturePayload,
+  type BoardCaptureReleasePayload,
+  type DeviceCaptureMode,
+  type DeviceCaptureReleaseReason,
+  type FieldLocalAction,
+  type TariffId,
+} from './capture-events.js';
+
+export {
+  parseBoardCaptureHeartbeatPayload,
+  parseBoardCapturePayload,
+  parseBoardCaptureReleasePayload,
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
   parseRuntimeCommandPayload,

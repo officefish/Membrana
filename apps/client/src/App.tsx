@@ -7,6 +7,7 @@ import {
 } from '@membrana/device-board';
 import { AppHeader } from './components/AppHeader';
 import { AppFooter } from './components/AppFooter';
+import { CaptureAlertToasts } from './components/CaptureAlertToasts';
 import { NodeConnectionShell } from './components/NodeConnectionShell';
 import { renderPluginSidebarDetails } from './pluginSidebarDetails';
 import { createScenarioRuntimeHost } from './modules/device-board/createScenarioRuntimeHost';
@@ -36,6 +37,8 @@ function AppContentInner() {
   return (
     <>
       <NodeConnectionShell />
+      {/* CT5: алерты захвата видимы и в дашборде, и поверх fullscreen-борда (z-60 > z-50). */}
+      {connectionMode === 'paired' ? <CaptureAlertToasts /> : null}
       {isBoardMode ? (
         <div className="fixed inset-0 z-50 flex flex-col bg-base-100">
           <div className="min-h-0 flex-1">

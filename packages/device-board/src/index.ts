@@ -18,6 +18,11 @@ export {
   resolveServerFirstFlags,
 } from './components/server-first-flags.js';
 export type { ServerFirstFlags, ServerFirstFlagsInput } from './components/server-first-flags.js';
+export {
+  isDeviceCaptureActive,
+  resolveDeviceCaptureFlags,
+} from './components/capture-flags.js';
+export type { DeviceCaptureClientState, DeviceCaptureFlags } from './components/capture-flags.js';
 export { resolveServerFirstBadgeDescriptors } from './components/server-first-badges.js';
 export type {
   ServerFirstBadgeDescriptor,

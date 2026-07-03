@@ -58,6 +58,74 @@ describe('resolveServerFirstFlags', () => {
     expect(flags.allowFieldStop).toBe(false);
   });
 
+  it('capture v2 soft: run/stop разрешены, edit/пауза заблокированы, controls видимы (CT5)', () => {
+    const flags = resolveServerFirstFlags({
+      deviceId,
+      editLease: null,
+      captureState: null,
+      capture: { mode: 'soft', sessionId: 's1', expiresAt: '2026-06-26T12:05:00.000Z' },
+      nowMs: now,
+    });
+    expect(flags.capturedByCabinet).toBe(true);
+    expect(flags.captureMode).toBe('soft');
+    expect(flags.blockLocalRun).toBe(false);
+    expect(flags.allowFieldStop).toBe(true);
+    expect(flags.allowFieldPause).toBe(false);
+    expect(flags.allowFieldSetMode).toBe(false);
+    expect(flags.blockStructureEdit).toBe(true);
+    expect(flags.hideFieldRuntimeControls).toBe(false);
+  });
+
+  it('capture v2 hard: только emergency stop, controls видимы но run заблокирован', () => {
+    const flags = resolveServerFirstFlags({
+      deviceId,
+      editLease: null,
+      captureState: null,
+      capture: { mode: 'hard', sessionId: 's1', expiresAt: '2026-06-26T12:05:00.000Z' },
+      captureConnectionLost: true,
+      nowMs: now,
+    });
+    expect(flags.captureMode).toBe('hard');
+    expect(flags.blockLocalRun).toBe(true);
+    expect(flags.allowFieldStop).toBe(true);
+    expect(flags.captureConnectionLost).toBe(true);
+    expect(flags.hideFieldRuntimeControls).toBe(false);
+  });
+
+  it('capture v2 приоритетнее v1 legacy captureState', () => {
+    const flags = resolveServerFirstFlags({
+      deviceId,
+      editLease: null,
+      captureState: {
+        deviceId,
+        authority: 'cabinet',
+        followerMode: 'strict',
+        isRunning: true,
+        isPaused: false,
+      },
+      capture: { mode: 'soft', sessionId: 's1', expiresAt: '2026-06-26T12:05:00.000Z' },
+      nowMs: now,
+    });
+    // v2 soft побеждает v1 strict: run разрешён, controls видимы.
+    expect(flags.blockLocalRun).toBe(false);
+    expect(flags.hideFieldRuntimeControls).toBe(false);
+  });
+
+  it('протухший capture v2 = отпущено; lastCaptureRelease даёт recentlyReleased', () => {
+    const flags = resolveServerFirstFlags({
+      deviceId,
+      editLease: null,
+      captureState: null,
+      capture: { mode: 'hard', sessionId: 's1', expiresAt: '2026-06-26T11:59:00.000Z' },
+      lastCaptureRelease: 'ttl-expired',
+      nowMs: now,
+    });
+    expect(flags.capturedByCabinet).toBe(false);
+    expect(flags.recentlyReleased).toBe(true);
+    expect(flags.blockStructureEdit).toBe(false);
+    expect(flags.blockLocalRun).toBe(false);
+  });
+
   it('cabinet edit lease active for matching device and expiry', () => {
     expect(
       isCabinetEditLeaseActive(

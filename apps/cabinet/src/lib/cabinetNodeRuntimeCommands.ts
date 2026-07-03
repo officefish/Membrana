@@ -1,35 +1,25 @@
-import type { RuntimeCommandPayload, RuntimeFollowerMode, RuntimeMode } from '@membrana/core';
+import type { RuntimeCommandPayload } from '@membrana/core';
 
-export type CabinetRunFollowerMode = RuntimeFollowerMode;
+/** Graceful стоп оператором (канон v2.0 §3.1); emergency = 0. */
+export const CABINET_STOP_FADE_OUT_MS = 200;
 
-/** Server-first: кабинет инициирует run с authority=cabinet (default follower soft). */
-export function buildCabinetRunCommand(
+/**
+ * CT3 (tariff v2): запуск сохранённого сценария устройства. Захват — отдельный
+ * явный шаг (REST /capture), поэтому команда не несёт authority/followerMode.
+ * Gateway отвергнет команду без активного захвата (канон §4.1).
+ */
+export function buildCabinetRunScenarioCommand(deviceId: string): RuntimeCommandPayload {
+  return { action: 'run', deviceId };
+}
+
+/** CT3 (tariff v2): стоп с graceful fade-out (по умолчанию 200 мс). */
+export function buildCabinetStopScenarioCommand(
   deviceId: string,
-  followerMode: CabinetRunFollowerMode = 'soft',
+  fadeOutMs: number = CABINET_STOP_FADE_OUT_MS,
 ): RuntimeCommandPayload {
-  return {
-    action: 'run',
-    deviceId,
-    authority: 'cabinet',
-    followerMode,
-  };
+  return { action: 'stop', deviceId, fadeOutMs };
 }
 
-export function buildCabinetStopCommand(deviceId: string): RuntimeCommandPayload {
-  return { action: 'stop', deviceId };
-}
-
-export function buildCabinetPauseCommand(deviceId: string): RuntimeCommandPayload {
-  return { action: 'pause', deviceId };
-}
-
-export function buildCabinetResumeCommand(deviceId: string): RuntimeCommandPayload {
-  return { action: 'resume', deviceId };
-}
-
-export function buildCabinetSetModeCommand(
-  deviceId: string,
-  mode: RuntimeMode,
-): RuntimeCommandPayload {
-  return { action: 'setMode', mode, deviceId };
-}
+// CT7 (канон §9): v1-билдеры удалены.
+// Tariff v3: buildCabinetPauseCommand / buildCabinetResumeCommand /
+// buildCabinetSetModeCommand / неявный run с authority+followerMode.
