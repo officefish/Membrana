@@ -31,6 +31,10 @@ import {
   MicLiveDroneAnalysisPanel,
 } from '../../plugins/mic-live-drone-analysis';
 import {
+  VDR_VALIDATION_PLUGIN_ID,
+  VdrValidationPanel,
+} from '../../plugins/vdr-validation';
+import {
   MIC_STREAM_VIZ_PLUGIN_ID,
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
@@ -290,6 +294,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(MIC_LIVE_DRONE_ANALYSIS_PLUGIN_ID) && (
           <MicLiveDroneAnalysisPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(VDR_VALIDATION_PLUGIN_ID) && (
+          <VdrValidationPanel moduleId={module.id} />
         )}
       </div>
     </div>
