@@ -1,6 +1,6 @@
 # Studio Host Bridge — контракт трёх хостов device-board
 
-> **Статус:** канон v0.1 (2026-06-26, консилиум [`studio-host-smoke-registry-2026-06-26.md`](./seanses/studio-host-smoke-registry-2026-06-26.md))  
+> **Статус:** канон v0.2 (2026-07-03: +§4.5 Capture tariff v2, консилиум [`studio-capture-adaptation-2026-07-03.md`](./seanses/studio-capture-adaptation-2026-07-03.md); v0.1 — 2026-06-26, [`studio-host-smoke-registry-2026-06-26.md`](./seanses/studio-host-smoke-registry-2026-06-26.md))  
 > **Эпик:** MS6 в [`MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md`](./prompts/MEMBRANA_STUDIO_DESKTOP_EPIC_PROMPT.md)  
 > **Операционный дневник:** [`actions/device-board/STUDIO_HOST_LESSONS.md`](./actions/device-board/STUDIO_HOST_LESSONS.md) (STx)  
 > **Pack/runtime:** [`actions/device-board/USERCASE_COMPETITION_LESSONS.md`](./actions/device-board/USERCASE_COMPETITION_LESSONS.md) (Lx)
@@ -94,15 +94,45 @@ Shell **не** дублирует quota logic — только FS в main (`apps
 
 ---
 
+## §4.5 Capture — явный захват устройства (tariff v2)
+
+> Канон: [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md) v2.0 · консилиум [`studio-capture-adaptation-2026-07-03.md`](./seanses/studio-capture-adaptation-2026-07-03.md) (SC3)
+
+Вся capture-логика — в общем renderer (`apps/client`: ось `capture` в store, `boardLeaseBridge` TTL/heartbeat, enforcement `resolveDeviceCaptureFlags`, alerts, LWW, fade). Хосты **не форкают** её; различия — только shell-слой.
+
+### Паритет трёх хостов
+
+| Состояние | Browser (follower) | Studio (follower, Electron) | Cabinet (захватчик) |
+|-----------|--------------------|-----------------------------|---------------------|
+| **Отпущено** | полная автономия (run/stop/edit/пауза) | = browser | кластер «Захватить» (мягкий/жёсткий); Пуск/Стоп недоступны |
+| **Захват мягкий** | run/stop разрешены (LWW §3.2); edit/пауза заблокированы; badge info + alert-toast | = browser **+ shell поднимает окно в foreground** (IPC `captureAcquired`, один раз на acquire — SC1) | badge «Захвачено: мягкий»; Пуск/Стоп сохранённого сценария |
+| **Захват жёсткий** | только **emergency stop** (§3.3); структура read-only; badge warning | = browser + focus-поведение как выше | badge «Захвачено: жёсткий»; Пуск/Стоп |
+| **WS потеряна при захвате** | badge «Соединение потеряно»; TTL-таймер (5 мин) → auto-release | = browser; **таймеры не троттлятся** (`backgroundThrottling: false` — SC1) | карточка узла offline |
+| **Release / TTL-expired** | toast info/warning; играющий сценарий продолжает | = browser | кластер возвращается к «Захватить» |
+| **Autonomous (без WS)** | захват невозможен by design | = browser (Studio offline — типовой режим) | n/a |
+
+### Studio-специфика
+
+- `backgroundThrottling: false` статически в `createWindow()` — TTL/heartbeat живут в renderer (SC1, OQ1: powerSaveBlocker отклонён).
+- Focus при захвате: renderer → `electronAPI.studioShell.notifyCaptureAcquired()` → main `restore()+focus()`; debounce по `sessionId`.
+- **Emergency stop при скрытом окне**: инвариант §3.3 выполняется UI-кнопкой после возврата окна (focus при захвате смягчает); tray/global-shortcut — **ST7, GH #236**.
+- Web Audio (fade, live-окно VDR-плагина) — Chromium, отличий от browser нет (OQ3); слуховая проверка — ручной smoke.
+- Старые сборки студии против gateway v2: `pause`/`setMode` — silent drop (whitelist), edit-lease — 404; маркер версии — SC5, strict gate — DR6.
+
+**Smoke:** [`actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md`](./actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md) §Studio (программная часть — SC4; ручная — deferred ~2026-07-17).
+
+---
+
 ## §5 Electron preload (`electronAPI`)
 
-Канон surface (Studio MS1–MS3):
+Канон surface (Studio MS1–MS3 + SC1):
 
 | API | Назначение | FS path |
 |-----|------------|---------|
 | `electronAPI.journal` | append/read journal items | `journal/items.json` |
 | `electronAPI.mediaLibrary` | manifest + blobs | `media-library/` |
 | `electronAPI.trendsTemplates` | user FFT templates | `trends-templates.json` |
+| `electronAPI.studioShell` | `notifyCaptureAcquired()` — focus окна при захвате (SC1) | — |
 
 `contextIsolation: true`, `nodeIntegration: false`. Preload — единственный мост.
 
