@@ -2,6 +2,9 @@ import type { SampleDetectionVerdict } from '@membrana/detector-base';
 import {
   buildTemplateMatchBreakdown,
   classifyTrends,
+  FREE_V1_CLASS_MIN_CONFIDENCE,
+  FREE_V1_DRONE_FIRST_MIN_GAP,
+  type ClassifyTrendsOptions,
   type PatternTemplate,
   type TemplateMatchBreakdown as TrendsTemplateMatchBreakdown,
   type TrendsDetectionResult,
@@ -42,6 +45,24 @@ function resolveConfig(config: TemplateMatchDetectorConfig): ResolvedTemplateMat
       intervalMs: config.metricCollection?.intervalMs ?? DEFAULT_INTERVAL_MS,
       fftSize: config.metricCollection?.fftSize,
     },
+  };
+}
+
+/**
+ * Опции classifyTrends для template-match — та же free-v1 калибровка, что в
+ * trends stage-gate пути (fv1-s3): drone-first gap + пер-классовые пороги.
+ * Регрессия 2026-07-03: после добавления FREE_V1_NON_DRONE_TEMPLATES в каталог
+ * (resolve-catalog) конкуренты перебивали DRONE_* без этих опций →
+ * isDrone всегда false (benchmark recall 0.000 на v0.2 при таблице 88.3%).
+ */
+export function buildClassifyOptions(
+  resolved: Pick<ResolvedTemplateMatchConfig, 'minConfidence' | 'activityRmsThreshold'>,
+): ClassifyTrendsOptions {
+  return {
+    minConfidence: resolved.minConfidence,
+    activityRmsThreshold: resolved.activityRmsThreshold,
+    droneFirstMinGap: FREE_V1_DRONE_FIRST_MIN_GAP,
+    classMinConfidence: FREE_V1_CLASS_MIN_CONFIDENCE,
   };
 }
 
@@ -124,10 +145,11 @@ export function runTemplateMatchSampleAnalysis(
     };
   }
 
-  const trendsResult = classifyTrends(metricSamples, resolved.templates, {
-    minConfidence: resolved.minConfidence,
-    activityRmsThreshold: resolved.activityRmsThreshold,
-  });
+  const trendsResult = classifyTrends(
+    metricSamples,
+    resolved.templates,
+    buildClassifyOptions(resolved),
+  );
 
   const isDrone =
     trendsResult.isDetected &&
