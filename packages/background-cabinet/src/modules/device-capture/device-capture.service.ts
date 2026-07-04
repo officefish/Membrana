@@ -196,6 +196,23 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * PL4 (pairing-lifecycle): системный форс-release захвата узла БЕЗ проверки
+   * сессии-держателя — вызывается при отзыве/удалении ключа (узел теряет
+   * сопряжение осознанно, держать захват над ним бессмысленно). Идемпотентно.
+   * Транзиентные разрывы WS НЕ трогают захват (их держит TTL) — решение владельца.
+   */
+  async forceReleaseByNode(
+    nodeId: string,
+    reason: DeviceCaptureReleaseReason = 'operator',
+  ): Promise<void> {
+    const existing = await this.prisma.nodeDeviceCapture.findUnique({ where: { nodeId } });
+    if (!existing) return;
+    await this.prisma.nodeDeviceCapture.delete({ where: { id: existing.id } });
+    this.registry.delete(existing.mediaDeviceId);
+    this.broadcastRelease(existing.membraneId, existing.mediaDeviceId, existing.sessionId, reason);
+  }
+
+  /**
    * Heartbeat loop (канон §3): живые захваты продлеваются (+TTL, broadcast
    * board.heartbeat); протухшие (например после даунтайма сервера) —
    * release с reason ttl-expired. Публичный для unit-тестов.
