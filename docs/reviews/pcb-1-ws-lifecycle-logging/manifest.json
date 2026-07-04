@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "pcb-1-ws-lifecycle-logging",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T1",
   "reviewMode": "standard",
   "branch": "feat/pcb1-ws-lifecycle-logging",
@@ -91,9 +91,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #248 merged 2026-07-04T18:03:02Z (87e906e42ca4ca41f982365f78bdf7541bcede60)"
   },
   "createdAt": "2026-07-04T18:01:40.803Z",
-  "updatedAt": "2026-07-04T18:01:52.015Z"
+  "updatedAt": "2026-07-04T18:05:14.129Z"
 }
