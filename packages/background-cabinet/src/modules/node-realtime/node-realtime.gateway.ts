@@ -73,20 +73,38 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       return;
     }
 
+    // PCB1 (presence-capture-board): deviceId/role в function-scope — нужны в catch
+    // для диагностики persistent-offline (различить H1 auth-fail от H3 нет-mediaDeviceId).
+    let logRole: string | null = null;
+    let logDeviceId = '';
     try {
       const url = parseHandshakeUrl(request);
       const role = url.searchParams.get('role');
       const token = url.searchParams.get('token') ?? '';
       const deviceId = url.searchParams.get('deviceId') ?? '';
       const membraneId = url.searchParams.get('membraneId') ?? undefined;
+      logRole = role;
+      logDeviceId = deviceId;
 
       let meta: NodeRealtimeSocketMeta;
       if (role === 'cabinet') {
         meta = await this.authService.authenticateCabinet(token, membraneId);
         this.realtimeService.registerCabinet(meta, client);
       } else if (role === 'node') {
+        // PCB1: три события WS-lifecycle узла (connect → authenticate → register).
+        this.logger.log({ deviceId, event: 'node-ws-connect' }, 'node-ws-connect');
         meta = await this.authService.authenticateNode(token, deviceId);
+        this.logger.log(
+          { deviceId, nodeId: meta.nodeId, event: 'node-ws-authenticate', ok: true },
+          'node-ws-authenticate ok',
+        );
         this.realtimeService.registerNode(meta, client);
+        this.logger.log(
+          { deviceId, mediaDeviceId: meta.mediaDeviceId, event: 'node-ws-register' },
+          meta.mediaDeviceId
+            ? 'node-ws-register ok'
+            : 'node-ws-register SKIPPED (no mediaDeviceId — H3)',
+        );
         // SC5 (studio-capture-adaptation): маркер сборки клиента. Отсутствие =
         // сборка до tariff v2 — её pause/setMode будут отброшены whitelist-ом
         // (тихая деградация принята консилиумом; strict gate — DR6).
@@ -109,7 +127,17 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
         void this.handleMessage(client, data);
       });
     } catch (err) {
-      this.logger.warn({ err }, 'websocket connection rejected');
+      // PCB1: auth-fail узла — вероятная причина persistent-offline (H1): клиент
+      // «связан» по credentials, но сессия истекла/отозвана → 4401, registerNode
+      // не вызван, кабинету узел не виден. Логируем deviceId + причину.
+      if (logRole === 'node') {
+        this.logger.error(
+          { deviceId: logDeviceId, event: 'node-ws-authenticate', ok: false, reason: String((err as Error)?.message ?? err) },
+          'node-ws-authenticate FAIL (H1: сессия истекла/отозвана → узел offline)',
+        );
+      } else {
+        this.logger.warn({ err, role: logRole }, 'websocket connection rejected');
+      }
       client.close(4401, 'Unauthorized');
     }
   }
