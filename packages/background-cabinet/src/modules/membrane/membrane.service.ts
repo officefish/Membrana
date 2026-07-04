@@ -272,6 +272,13 @@ export class MembraneService {
     return { deletedCount: result.count };
   }
 
+  /**
+   * PL3 (pairing-lifecycle): «Удалить» = revoke + delete одной операцией
+   * (решение владельца). Активный ключ больше НЕ даёт 409 — сначала отзыв
+   * (real-time invalidate узла + pairingStatus='revoked'), затем удаление.
+   * `Device.pairedKeyId` — не FK, поэтому чистим ссылку явно и переводим
+   * устройство в 'unpaired' (ключ больше не существует).
+   */
   async deleteAccessKey(userId: string, keyId: string) {
     const key = await this.prisma.nodeAccessKey.findUnique({
       where: { id: keyId },
@@ -281,9 +288,18 @@ export class MembraneService {
     if (key.node.membrane.userId !== userId) {
       throw new ForbiddenException('Access key access denied');
     }
+
+    // Активный ключ: отзыв (idempotent, шлёт notify узлу + помечает revoked).
     if (isAccessKeyActive(key.expiresAt, key.revokedAt)) {
-      throw new ConflictException('Cannot delete active access key');
+      await this.revokeAccessKey(userId, keyId);
     }
+
+    // Отвязка на уровне устройства: ключ удаляется, ссылка на него больше не
+    // имеет смысла — чистим pairedKeyId и переводим в unpaired.
+    await this.prisma.device.updateMany({
+      where: { pairedKeyId: keyId },
+      data: { pairedKeyId: null, pairingStatus: 'unpaired' },
+    });
 
     await this.prisma.nodeAccessKey.delete({ where: { id: keyId } });
 
