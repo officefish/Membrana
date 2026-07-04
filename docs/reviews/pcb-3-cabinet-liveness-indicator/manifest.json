@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "pcb-3-cabinet-liveness-indicator",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T2",
   "reviewMode": "standard",
   "branch": "fix/pcb3-cabinet-ws-loop",
@@ -93,9 +93,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #249 merged 2026-07-04T18:41:21Z (9b22792e1af5adbd64333119d67968642650b54f)"
   },
   "createdAt": "2026-07-04T18:40:05.449Z",
-  "updatedAt": "2026-07-04T18:40:19.998Z"
+  "updatedAt": "2026-07-04T18:42:54.213Z"
 }
