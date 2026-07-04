@@ -223,22 +223,26 @@ export class MembraneService {
       where: { pairedKeyId: keyId },
       select: { lastPairSessionToken: true, mediaDeviceId: true },
     });
-    if (pairedDevice?.lastPairSessionToken) {
-      await this.prisma.session.deleteMany({
-        where: { token: pairedDevice.lastPairSessionToken },
-      });
+    if (pairedDevice) {
+      if (pairedDevice.lastPairSessionToken) {
+        await this.prisma.session.deleteMany({
+          where: { token: pairedDevice.lastPairSessionToken },
+        });
+      }
+      // PL2: помечаем устройство revoked (pairedKeyId сохраняем для истории /
+      // диагностики getPairStatus — консилиум pairing-lifecycle OQ3).
       await this.prisma.device.updateMany({
         where: { pairedKeyId: keyId },
-        data: { lastPairSessionToken: null },
+        data: { lastPairSessionToken: null, pairingStatus: 'revoked' },
       });
-    }
 
-    if (pairedDevice?.mediaDeviceId) {
-      this.nodeRealtime.notifySessionInvalidated(
-        pairedDevice.mediaDeviceId,
-        key.node.membraneId,
-        'revoked',
-      );
+      if (pairedDevice.mediaDeviceId) {
+        this.nodeRealtime.notifySessionInvalidated(
+          pairedDevice.mediaDeviceId,
+          key.node.membraneId,
+          'revoked',
+        );
+      }
     }
 
     return { accessKey: serializeAccessKey(revoked) };

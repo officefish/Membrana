@@ -79,6 +79,8 @@ export class PairService {
         data: {
           lastSeenAt: now,
           pairedKeyId: matched.id,
+          // PL2: ре-пейринг восстанавливает статус (мог быть revoked/unpaired).
+          pairingStatus: 'paired',
           ...(clientLabel?.trim() ? { label: clientLabel.trim() } : {}),
         },
       });
@@ -155,6 +157,8 @@ export class PairService {
       linked: true as const,
       keyActive,
       inactiveReason,
+      // PL2: явный статус сопряжения устройства (paired/revoked/unpaired).
+      pairingStatus: device.pairingStatus,
       membrane: { id: membrane.id },
       node: { id: node.id, label: node.label },
       deviceId: device.mediaDeviceId,
