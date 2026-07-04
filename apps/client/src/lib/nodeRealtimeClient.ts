@@ -196,6 +196,11 @@ class NodeRealtimeClientImpl {
         authFail: event.code === 4401,
         deviceId: this.pairing?.deviceId,
       });
+      // PCB2: 4401 = сервер отверг сессию узла. Сигналим наверх немедленно
+      // (не ждём 60с поллинга usePairStatusMonitor); подписчик дебаунсит.
+      if (event.code === 4401) {
+        for (const handler of this.authFailedHandlers) handler();
+      }
       if (this.pairing) {
         this.scheduleReconnect();
       } else {
@@ -213,6 +218,14 @@ class NodeRealtimeClientImpl {
   onSessionInvalidated(handler: (reason: SessionInvalidatedPayload['reason']) => void): () => void {
     this.sessionInvalidatedHandlers.add(handler);
     return () => this.sessionInvalidatedHandlers.delete(handler);
+  }
+
+  /** PCB2: WS закрыт с 4401 (сервер отверг сессию узла) — auth-fail. */
+  private authFailedHandlers = new Set<() => void>();
+
+  onAuthFailed(handler: () => void): () => void {
+    this.authFailedHandlers.add(handler);
+    return () => this.authFailedHandlers.delete(handler);
   }
 
   private emitSessionInvalidated(reason: SessionInvalidatedPayload['reason']): void {
