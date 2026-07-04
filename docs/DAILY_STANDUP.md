@@ -1,401 +1,420 @@
-<!-- Сгенерировано: 2026-07-03T04:55:53.506Z (yarn standup) -->
+<!-- Сгенерировано: 2026-07-04T07:19:03.742Z (yarn standup) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
-<!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (17), packages/temp (0 файлов) -->
+<!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (18), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
 
-# ☀️ ЕЖЕДНЕВНЫЙ СТЕНДАП — 2026-07-03
+# 📊 ЕЖЕДНЕВНЫЙ СТЕНДАП MEMBRANA — 2026-07-04
 
-**Время**: 08:00 UTC | **Период**: последние 24 ч (с 2026-07-02 04:00)  
-**Координатор**: Vesnin (Teamlead) | **Источники**: DAILY_CODE_REVIEW (вчер.), STRATEGIC_PLAN_DAY, GitHub Issues, packages/temp
-
----
-
-## 📌 Вчерашний вечер: Code Review & Merge Status
-
-### ✅ Завершено (Device Board Capture Tariff v2)
-
-**Спринт:** `feat/db-capture-tariff-v2-integration` (CT0–CT9) → **готов к merge в main**
-
-| Компонент | Status | Notes |
-|-----------|--------|-------|
-| **@membrana/core** (CT1) | ✅ | Контракты board.capture/heartbeat/release реализованы |
-| **background-cabinet** (CT2) | ✅ | DeviceCaptureService + REST API ready |
-| **apps/cabinet** (CT3) | ✅ | UI Захватить/Отпустить, WS broadcast |
-| **apps/client** (CT4) | ✅ | serverFirstStore, TTL-таймер 5m |
-| **packages/audio-engine** (CT6) | ✅ | fadeOutMs в BufferPlayer, остановка вытеснённого |
-| **device-board** (CT5) | ✅ | CaptureAlertToasts, badges v2 |
-| **Docs** (CT9) | ✅ | ARCHITECTURE v2, DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md |
-
-**Code Review артефакты (CT7, CT8, CT9):** 7 коммитов назад, no new runtime changes.  
-**Test Status:** 68/68 pass, lint green, **нет P0/P1**.
+**Время:** 07:15 UTC | **Статус:** Ready for team sync  
+**Входные документы:** вчерашний code-review + стратплан + открытые issues
 
 ---
 
-## 🎯 Сегодняшний стратегический план (вчерашний STRATEGIC_PLAN_DAY)
+## 🎯 СИНТЕЗ: Вчера → Сегодня
 
-### Приоритет 1: Stabilization & Validation
+### ✅ Вчера вечером (код-ревью, T0/T1)
 
-**Task 4.1** — CI-gate stabilization (CG1–CG3)
-- Flaky-тесты в GitHub Actions
-- Pull request feat/ci-gate-flaky-fix требуется
+| Что | Статус | Примечание |
+|-----|--------|-----------|
+| **SC1–SC5** (studio-capture спринт) | ✅ Merged | Все 4 PR'а в main; backgroundThrottling off, focus-on-acquire, shell-logs, version-handshake |
+| **HG2** (VDR-валидация плагин) | ✅ Merged | Device-board module, trends на пилоте, gate-badge (hard/soft/fail) |
+| **HG3-механика** (benchmark v0.2) | ✅ Completed | template-match DRONE_TIGHT: **P 67.5% / R 90.0%** на v0.2; preliminary пилот P 52% (hard negatives) |
+| **Lint/Test** | 🟡 2x P2 warning | react-hooks/exhaustive-deps в UserCaseSettingsPanel (style, не logic) |
+| **Git tree** | ✅ Clean | Нет .txt-логов, ready for deploy |
 
-**Task 4.2** — DETECTOR_BENCHMARK.md обновление
-- Зафиксировать FFT_METRICS §4–6 как контекст
-- Таблица: trends-DRONE_TIGHT vs harmonic/cepstral/flux результаты
+### 📋 Входы сегодня (08:00)
 
-### Приоритет 2: Trends-DRONE_TIGHT → Curated Catalog
+1. **DAILY_CODE_REVIEW.md** → 2x P2 warning, иначе ✅
+2. **STRATEGIC_PLAN_DAY.md** → 6 параллельных задач (4.1–4.6), приоритет: 4.1 (DRONE_TIGHT curated) → 4.2 (VDR разметка)
+3. **FFT_METRICS_POTENTIAL_AND_LIMITS.md** → потолок эшелона 0: trends R 95% / FPR 30% ✅ прошёл; DSP отдельно не проходит
+4. **Open GitHub Issues** (6 live):
+   - #236 (ST7: tray emergency stop) — risk, отложено
+   - #195–#197 (Intern T1–T3) — онбординг, не блокер
+   - #187 (C6: headroom proxy perf) — agent-optimization, параллель
+   - #95 (DBR v0.4) — device-board refactor, backlog
+   - #94, #92, #59 — backlog/тех-долг
 
-**Task 4.3** — Интеграция trends-DRONE_TIGHT в background-media  
-- Prisma-модель TrendTemplate
-- REST-endpoint `/trends-templates` (cached)
-- `yarn benchmark:detectors` переснят
-
-**Task 4.4** — TrendCalibrationPanel (live-калибрация на микрофоне)
-- Компонент с слайдерами centroidMin/Max, fluxMin/Max, rmsMin/Max
-- Live-график спектральных метрик + попадание в бокс
-
-### Приоритет 3: Scaffold Эшелона 2 (нейро)
-
-**Task 4.5** — `@membrana/clap-detector-service` scaffold  
-- CLAP-инференс из Hugging Face
-- Контракт DroneDetector реализован
-- Unit-тесты + latency p95 < 500ms
-
-**Task 4.6** — `@membrana/yamnet-detector-service` scaffold  
-- YAMNet zero-shot, классификация в мультиклассе
-- Адаптер в detector-report
-
-### Приоритет 4: Документирование
-
-**Task 4.7** — WHITE_PAPER §9 SNR-таблица  
-- Сценарии: открытое поле / город днём / ночью / дождь
-- Требуемый SNR для детекции дрона
+5. **packages/temp** наброски → **нет активных черновиков** (last clean-up 2026-07-03)
 
 ---
 
-## 🔴 Блокеры вчерашних дневных операций (DAILY_CODE_REVIEW)
-
-### ❌ Блокер 1: yarn lint typecheck в @membrana/client
+## 🔴 **ГЛАВНЫЙ ФОКУС СЕГОДНЯ** (обязательный)
 
 ```
-status: REQUIRES FIX (until 09:00)
-severity: P0
-command: yarn turbo run lint typecheck --filter='@membrana/client' --fix
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║  ЗАДАЧА 4.1: Куратирование DRONE_TIGHT в production      ║
+║                                                            ║
+║  🎯 Цель:  Внедрить DRONE_TIGHT шаблон в каталог         ║
+║            template-match и переснять canonical v0.3       ║
+║                                                            ║
+║  Ответ:    Музыкант (параметры) + Математик (тесты)      ║
+║  Размер:   M (4–5 часов)                                  ║
+║  DoD:      ✓ Шаблон в catalog                            ║
+║            ✓ v0.3 benchmark: P≥65% / R≥88% / F1≥0.75     ║
+║            ✓ DETECTOR_BENCHMARK.md обновлён              ║
+║                                                            ║
+║  Блокирует: 4.2 (VDR разметка), stage-gate 1→2           ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
 ```
 
-**Причина:** Untracked typecheck errors после CT4 интеграции.  
-**Action:** Структурщик (Ozhegov) + Верстальщик (Rodchenko) исправляют в 06:00–09:00.
+### 🕐 Квота времени
 
-### ❌ Блокер 2: Tests в @membrana/research-tree-demo
-
-```
-status: REQUIRES FIX (until 09:00)
-severity: P0
-command: yarn turbo run test --filter='@membrana/research-tree-demo'
-```
-
-**Причина:** Broken imports после рефакторинга (CT3 UI).  
-**Action:** Структурщик (Ozhegov) — диагностика и fix.
-
-### ⚠️ Блокер 3: Untracked mjs-timestamps в packages/services
-
-```
-status: MINOR (cleanup)
-severity: P2
-файлы: packages/services/**/*.mjs.timestamp, deploy-*.txt
-```
-
-**Причина:** VPS-логирование (Постмортем #94).  
-**Action:** Git-гигиена перед merge в main (все .txt логи в %TEMP%, не в root).
+- **09:00–13:00** — основной пул (4 часа)
+- **13:00–14:00** — буфер + параллели (A: zero-shot scaffold, B: hard-gate doc)
 
 ---
 
-## 📊 Открытые GitHub Issues (приоритет ≥ 3)
+## 📝 План дня (по блокам)
 
-### 🔥 Hot Issues (Блокирующие)
-
-| # | Название | Статус | Роль | Действие |
-|---|----------|--------|------|----------|
-| **#197** | Intern T3: ресёрч-дайджест (Perplexity) | 🟡 TODO | Структурщик | Определить тему & yarn-команду |
-| **#196** | Intern T2: /health + /ready endpoints | 🟡 TODO | Структурщик | Scaffold NestJS endpoints |
-| **#195** | Intern T1: outbound self-check | 🟡 TODO | Математик | Пинг api.anthropic, Linear, GitHub |
-| **#187** | headroom proxy-perf замер (C6 of #186) | 🟡 待机 | Структурщик | Запустить Claude Code через proxy |
-| **#95** | Device-Board Refactor v0.4 (DBR0–DBR6) | 🟡 Active | Teamlead | §1–3 variables/Event/fullscreen |
-| **#94** | Deploy детерминированность & откат | 🟠 Planning | Структурщик | CI-gate + smoke suite |
-| **#92** | MP7: Node Realtime Gateway (NR0–NR6) | 🟠 Planning | Структурщик | WSS для journal+mic-live |
-| **#59** | Deploy background-media to prod (A5c) | 🟠 Planning | Структурщик | VPS TLS + DNS |
-| **#58** | background-media v1 (A5a–A5d) | 🟠 Phases | Структурщик | API/Docker/Deploy |
-| **#57** | Редактор trends-fft шаблонов | 🔵 Backlist | Верстальщик | CRUD UI для classifyTrends |
-| **#49** | MicrophoneCapturePanel | 🔵 Backlist | Верстальщик | Выразительный UI захвата |
-| **#34** | FFT edge cases docs | 🔵 Nice-to-have | Математик | JSDoc контрактов |
-
----
-
-## 📦 Наброски в packages/temp (статус)
-
-### Активные наброски
-
-```
-packages/temp/
-├── sketch-vdr-protocol.md           (VDR-protocol draft → STRATEGIC_PLAN 4.2)
-├── sketch-zero-shot-service.ts      (CLAP scaffold → STRATEGIC_PLAN 4.5)
-├── sketch-trends-calibration-ui.tsx (TrendCalibrationPanel → STRATEGIC_PLAN 4.4)
-├── sketch-stage-gate-1-to-2.md      (Stage-gate doc → STRATEGIC_PLAN 4.7)
-└── sketch-ci-gate-flaky-fix.yml     (GitHub Actions → STRATEGIC_PLAN 4.1)
-```
-
-**Что делать:** Превратить в PR-артефакты в порядке приоритета (§ ниже).
-
----
-
-## 🚀 ЕДИНЫЙ ПЛАН НА СЕГОДНЯ (консолидированный)
-
-### **ФАЗА 1: Утренняя стабилизация (06:00–09:00)**
+### **БЛОК 0: Morning standup & issue triage (08:00–09:00, обязательно)**
 
 ```bash
-# КРИТИЧНОЕ: зелёный статус до основной работы
-yarn turbo run lint typecheck --filter='@membrana/client' --filter='@membrana/research-tree-demo' --fix
-yarn turbo run test --filter='@membrana/client' --filter='@membrana/research-tree-demo'
+# Во время синхронизации команды
+yarn lint --filter=@membrana/client --fix   # react-hooks warning
+yarn test --filter=@membrana/client         # smoke test
 
 # Git-гигиена
-git status  # → no .txt-логов, только tracked files
-rm -f packages/**/*.mjs.timestamp deploy-*.txt  # если есть
-
-# Merge в main (когда зелено)
-git checkout main && git pull origin main
-git merge --ff-only feat/db-capture-tariff-v2-integration
-git push origin main
-
-# Smoke-тест CT4+CT6 (audio-engine + client)
-yarn turbo run test --filter='@membrana/audio-engine' --filter='@membrana/client'
-
-# Архив спринта DB-Capture-Tariff-v2
-yarn task:archive db-capture-tariff-v2
+rm -f deploy-*.txt cabinet-recover*.txt prod-check.txt
+git status  # → только tracked files
 ```
 
 **DoD к 09:00:**
-- ✅ Lint/typecheck/test pass
-- ✅ Main зелёный, ветка merged
-- ✅ Спринт архивирован
+- ✅ lint/typecheck pass
+- ✅ test pass
+- ✅ Git чистое дерево
+- ✅ Все 5 членов команды прочитали MAIN_DAY_ISSUE
 
 ---
 
-### **ФАЗА 2: Магистраль (09:00–14:00) — VDR-Protocol**
+### **БЛОК 1: DRONE_TIGHT Curated Catalog (09:00–13:00, магистраль)**
 
-**Lead:** Vesnin (TL) + Ozhegov (Структурщик)  
-**Размер:** L (5 ч)
+#### **1.1 Финализация параметров шаблона (Музыкант, 09:00–10:30)**
 
-#### 09:00–11:00: `docs/VDR_PROTOCOL.md` (2 ч)
+**Artifact:** `packages/services/detectors/template-match/src/patterns/DRONE_TIGHT.ts`
+
+```typescript
+// Обновить финальные bounds на основе free-v1 val-результатов (из эпика #84)
+export const DRONE_TIGHT: PatternTemplate = {
+  key: 'DRONE_TIGHT',
+  displayName: 'Drone (Tight Classification)',
+  
+  spectral: {
+    centroid: { min: 2900, max: 4300 },   // p10–p90 дронов
+    flux: { min: 0.03, max: 0.16 },
+    rms: { min: 0.07, max: 0.28 },
+    frameHitRatio: { min: 0.6, max: 1.0 }, // доля кадров, где все в боксе
+  },
+  
+  temporal: {
+    activityRatio: { min: 0.8, max: 1.0 },
+    centroidStd: { min: 0, max: 400 },
+    longTermStability: ['high', 'veryHigh'],
+    volumeTrend: ['stable'],
+    frequencyTrend: ['stable'],
+  },
+  
+  scoring: {
+    spectralWeight: 0.3,      // спектр 30%
+    temporalWeight: 0.7,      // время 70%
+    minConfidence: 35,        // порог уверенности
+  },
+};
+
+// Конкурентные шаблоны (не-дроны для discriminator)
+export const DRONE_COMPETITORS = [
+  SPEECH_BURST,       // импульсная речь/звуки
+  ENVIRONMENTAL_HUM,  // фоновый гул (техника)
+  BIRD_CHIRP,         // щебет птиц (ESC-50)
+  // … ещё 2–3 по результатам val
+];
+```
+
+**Проверки (Музыкант):**
+- [ ] Параметры согласованы с FFT_METRICS_POTENTIAL_AND_LIMITS.md §3 (перцентили)
+- [ ] Шаблон не переобучен на train (проверка через cross-val)
+- [ ] Конкурентные шаблоны покрывают основные false-positive-классы
+
+**DoD к 10:30:**
+- ✅ DRONE_TIGHT.ts обновлена и скомпилирована
+- ✅ Запущен quick-test: `yarn test --filter=@membrana/template-match --match="*DRONE_TIGHT*"`
+
+---
+
+#### **1.2 Benchmark v0.3 переснятие (Математик, 10:30–12:30)**
+
+**Artifact:** `data/detectors-benchmark/v0.3/`
+
+```bash
+# Запуск canonical benchmark с DRONE_TIGHT
+yarn benchmark:detectors \
+  --catalog drone-tight-curated \
+  --dataset free-v1 \
+  --splits canonical \
+  --output data/detectors-benchmark/v0.3/
+
+# Ожидаемый результат (из FFT_METRICS_POTENTIAL_AND_LIMITS.md §4):
+# template-match (DRONE_TIGHT): P ≥ 65%, R ≥ 88%, F1 ≥ 0.75
+```
+
+**Параллельно — таблица конкурентов:**
+
+| Детектор | P (%) | R (%) | FPR (%) | F1 | Статус |
+|----------|-------|-------|---------|-----|--------|
+| **trends-DRONE_TIGHT** | 67.5 | 90.0 | 30 | 0.77 | ✅ Ref |
+| template-match (old) | 55.2 | 87.3 | 45 | 0.68 | ⚠️ |
+| harmonic | 43.6 | 68.3 | 88 | 0.53 | 🔴 |
+| cepstral | — | 100 | 100 | — | 🔴 |
+| spectral-flux | — | 87 | 100 | — | 🔴 |
+| fft-threshold | 30–40 | 75–85 | 40–70 | 0.45–0.60 | 🔴 |
+
+**DoD к 12:30:**
+- ✅ v0.3 report json сгенерирован и сохранён
+- ✅ Таблица конкурентов заполнена (старые результаты из эпика #84)
+- ✅ Precision/Recall/F1 соответствуют целям (P≥65%, R≥88%)
+- ✅ Никаких регрессий vs. v0.2
+
+---
+
+#### **1.3 Документация DETECTOR_BENCHMARK.md (Teamlead, 12:30–13:00)**
+
+**Artifact:** `docs/DETECTOR_BENCHMARK.md` (обновление)
 
 ```markdown
-# VDR Protocol: Validated Drone Recognition
+## v0.3 Canonical Results (DRONE_TIGHT)
 
-## 1. Обзор
-- Размеченный корпус free-v1 (ручные лейблы drone/not-drone)
-- Цель: валидация детекторов для stage-gate P≥85% R≥90%
-- Фазы: pilot (20–30) → alpha (100+) → beta (200+)
+**Dataset:** free-v1 (120 samples, 60/20/20 split)  
+**Primary detector:** template-match DRONE_TIGHT  
+**Timestamp:** 2026-07-04T13:00:00Z
 
-## 2. Процесс аннотации
-- Инструмент: HTML-UI + прослушивание WAV + radios drone/not-drone
-- Консенсус: 2+ аннотатора → Cohen's Kappa ≥0.75
-- Метаданные: source, datetime, SNR, confidence
+### Main Result
+- **Precision:** 67.5% (P = TP / (TP + FP))
+- **Recall:** 90.0% (R = TP / (TP + FN))
+- **F1-score:** 0.77 (2·P·R / (P+R))
+- **False Positive Rate:** 30%
 
-## 3. Переоценка детекторов
-- Train 60% / val 20% / test 20%
-- yarn benchmark:detectors --dataset vdr
-- P, R, F1 для каждого
+### Competitor Detectors (Single-node DSP)
 
-## 4. Gate решение
-- Если P≥85% R≥90% → ПРОЙДЕН → разморозить TDOA
-- Если нет → ensemble или zero-shot
+[таблица из 1.2]
+
+### Hard-gate Threshold (Stage 1→2)
+
+To unfreeze TDOA and multi-node infrastructure:
+- **Precision ≥ 85%** AND
+- **Recall ≥ 90%** AND
+- **On validated ground-truth** (VDR protocol)
+
+Status: **NOT MET** (P 67.5%, missing validated labels)  
+Next check: After VDR operator annotation (~2026-07-17)
+
+### Methodology
+
+[формулы, кросс-валидация, конфиги]
 ```
 
-#### 11:00–13:00: Скрипты валидации (2 ч)
-
-```bash
-# 1. validate-vdr-labels.mjs
-yarn validate:vdr --dataset free-v1-validated
-# Output: { total_samples, labeled_samples, kappa_score, disputed_count, comparison_table }
-
-# 2. prepare-vdr-annotations.mjs
-yarn prepare:vdr-ui --output docs/datasets/free-v1/annotation-ui.html
-
-# 3. CI-гейт (git commit, не в CI ещё)
-cat > .github/workflows/vdr-validate.yml
-```
-
-**DoD к 14:00:**
-- ✅ docs/VDR_PROTOCOL.md завершён
-- ✅ `yarn validate:vdr` работает без ошибок
-- ✅ `yarn prepare:vdr-ui` генерирует HTML
-- ✅ CI-гейт зарегистрирован (dry-run)
+**DoD к 13:00:**
+- ✅ Раздел v0.3 с числами
+- ✅ Таблица конкурентов
+- ✅ Hard-gate критерии чётко сформулированы
+- ✅ Дата gate-повторной проверки зафиксирована
 
 ---
 
-### **ФАЗА 3: Параллель A (13:00–15:00) — Zero-shot Scaffold**
+### **БЛОК 2A: Zero-shot Scaffold (параллель, 13:00–14:30)**
 
-**Lead:** Ozhegov (Структурщик) + Dynin (Математик)  
-**Размер:** L (2 ч)
+**Ответственность:** Ozhegov (структура) + Dynin (модель)  
+**Размер:** M (параллельно с блоком 1)  
+**Блокирует:** эшелон 2 (нейро-интеграции)
 
-#### 13:00–13:30: Выбор модели
+#### **2A.1 INTEGRATIONS_STRATEGY обновление (Dynin, 13:00–13:30)**
 
-```bash
-# CLAP v2 от Hugging Face
-# Link: https://huggingface.co/laion/clap-htsat-unfused
-# Size: ~170 МБ
-# Docs: Обновить docs/prompts/INTEGRATIONS_STRATEGY.md
+**Artifact:** `docs/prompts/INTEGRATIONS_STRATEGY.md` (раздел Zero-shot Models)
+
+```markdown
+## Zero-shot Audio Models for Drone Detection
+
+### 1. CLAP v2 (LAION Contrastive Learning)
+- **HuggingFace:** laion/clap-htsat-unfused
+- **Size:** ~170 MB (quantized: ~50 MB)
+- **Input:** Audio window (16 kHz, mono or stereo)
+- **Output:** Embedding (512-dim), then cosine-similarity to "drone" reference
+- **Latency:** 50–100 ms per window (CPU) / 10–20 ms (CUDA)
+- **Integration point:** `@membrana/zero-shot-detector/src/model-loader.ts`
+
+### 2. YAMNet (Google Perceptual Learning)
+- **GitHub:** google-research/perceptual-learning-of-audio
+- **Size:** 3.5 MB (quantized TFLite)
+- **Classes:** 521 AudioSet categories (aircraft, helicopter, drone, wind, rain, etc.)
+- **Output:** Multi-label class predictions + confidence per class
+- **Adaptation:** `isDrone = ['drone', 'helicopter'].includes(topClass) && confidence > 0.5`
+- **Latency:** ~30 ms per window
+
+### 3. Selection Rationale
+- **Why CLAP:** Alignment-based, zero-shot on new categories, works on free audio
+- **Why YAMNet:** Lightweight, already trained on drones (AudioSet contains RC aircraft), explainable classes
+- **Ensemble strategy:** CLAP (embedding) → confidence ranking; YAMNet (class) → veto rule (if 'drone' class detected and not overridden)
+
+---
 ```
 
-#### 13:30–14:30: Scaffold пакета
+**DoD к 13:30:**
+- ✅ Обе модели документированы с параметрами
+- ✅ Latency-оценки указаны
+- ✅ Integration point'ы уточнены
+
+---
+
+#### **2A.2 Scaffold пакета `@membrana/zero-shot-detector` (Ozhegov, 13:30–14:30)**
 
 ```bash
+# Создать структуру
 mkdir -p packages/services/detectors/zero-shot-detector/{src,__tests__}
-```
 
-**Структура:**
-```
-src/
-├── index.ts
-├── service.ts (stub ZeroShotDetector implements DroneDetector)
-├── types.ts (ZeroShotDetectionResult extends DetectionResult)
-└── __tests__/service.spec.ts (smoke test)
-```
+# Содержимое: как описано в STRATEGIC_PLAN_DAY.md §4.3
+# Files: index.ts, service.ts, types.ts, model-loader.ts (stub), inference.ts (stub)
+# Tests: service.spec.ts (smoke tests)
 
-#### 14:30–15:00: CI + PR
-
-```bash
+# Build & test
 yarn turbo run build --filter='@membrana/zero-shot-detector'
 yarn turbo run test --filter='@membrana/zero-shot-detector'
-
-git commit -am "feat: scaffold @membrana/zero-shot-detector (CLAP)"
-git push origin feat/zero-shot-detector-scaffold
-# → открыть PR, marked @experimental @stage2
 ```
 
-**DoD к 15:00:**
-- ✅ Пакет компилируется без ошибок
-- ✅ Unit-тесты pass
-- ✅ PR открыт
+**DoD к 14:30:**
+- ✅ Пакет структурирован
+- ✅ Контракт DroneDetector реализован
+- ✅ Тесты проходят (stubs)
+- ✅ Нет нарушений слабой связанности (ARCHITECTURE.md)
 
 ---
 
-### **ФАЗА 4: Параллель B (14:00–15:30) — Stage-gate Documentation**
+### **БЛОК 2B: Hard-gate контракт (параллель, 14:00–14:30)**
 
-**Lead:** Vesnin (TL)  
-**Размер:** S (1.5 ч)
+**Ответственность:** Teamlead  
+**Размер:** S (параллельно)
+
+**Artifact:** `docs/STAGE_GATE_1_TO_2.md` (новый)
 
 ```markdown
-# docs/STAGE_GATE_1_TO_2.md
+# Stage-gate 1→2: Single-Node Detection Hard-gate
 
-## Definition: P≥85% R≥90%
+## Overview
 
-| Детектор | P | R | F1 | Status |
-|----------|---|---|-----|--------|
-| Trends DRONE_TIGHT | 76% | 95% | 0.844 | 🟡 soft-pass |
-| Требуемый | **≥85%** | **≥90%** | — | hard-gate |
+Условие разморозки TDOA-сервиса, multi-node архитектуры и Этапа 2:
 
-## Чек-лист
+**Detector must achieve P ≥ 85% AND R ≥ 90% on validated ground-truth dataset**
 
-- [ ] VDR-pilot готов (≥20 сэмплов)
-- [ ] Cohen's Kappa ≥0.75
-- [ ] Переоценка даёт P≥85% R≥90%
-- [ ] Консилиум согласен
+---
 
-## Что заморожено
+## Validation Dataset (VDR Protocol)
 
-- ❌ @membrana/tdoa-service
-- ❌ @membrana/localizer-service
-- ❌ @membrana/tracker-service
+See: [`docs/VDR_PROTOCOL.md`](./VDR_PROTOCOL.md)
+
+- **Pilot phase:** 20–30 samples, 2 annotators, Cohen's Kappa ≥ 0.75
+- **Alpha phase:** 100+ samples (if pilot passes)
+- **Acceptance:** Kappa ≥ 0.75; disputed samples reviewed by 3rd expert
+
+---
+
+## Detection Metrics (Precision & Recall)
+
+**Precision** = TP / (TP + FP)  
+**Recall** = TP / (TP + FN)
+
+Both computed on **validation split** (20% of VDR set).
+
+---
+
+## Current Status (2026-07-04)
+
+| Detector | P (%) | R (%) | Val Set | Notes |
+|----------|-------|-------|---------|-------|
+| trends-DRONE_TIGHT | 67.5 | 90.0 | free-v1 canonical | ✅ R passes; P fails |
+| template-match v0.2 | 55.2 | 87.3 | free-v1 canonical | Both fail |
+
+**Gate Status:** ❌ NOT PASSED — Need VDR ground-truth for authoritative evaluation
+
+---
+
+## Next Steps
+
+1. Annotate VDR pilot (20–30 samples)
+2. Re-evaluate all detectors on VDR pilot validation split
+3. If P ≥ 85% AND R ≥ 90%: **PASS** → unlock Stage 2
+4. If FAIL: Ensemble detectors OR escalate to zero-shot (CLAP/YAMNet)
+
+---
+
+## Timeline
+
+- **2026-07-04:** This document created
+- **~2026-07-17:** VDR operator annotation completed
+- **~2026-07-24:** Gate re-evaluation and decision
+
+---
 ```
 
-**DoD к 15:30:**
-- ✅ Документ завершён
-- ✅ Связан с WHITE_PAPER §8
-- ✅ Сохранён в git
+**DoD к 14:30:**
+- ✅ Документ создан и структурирован
+- ✅ Текущий статус и timeline чётки
+- ✅ Привязка к VDR_PROTOCOL
 
 ---
 
-## 📋 Definition of Done (день)
+## 🎬 Итоговый план-матрица
 
-```
-УТРО (06:00–09:00):
-  ✅ yarn turbo run lint typecheck --fix pass на @membrana/client и @membrana/research-tree-demo
-  ✅ yarn turbo run test pass
-  ✅ feat/db-capture-tariff-v2-integration merged в main
-  ✅ Git дерево чистое (no .txt-логов, no untracked files)
-
-ДЕНЬ (09:00–15:30):
-  ✅ docs/VDR_PROTOCOL.md завершён (200–300 строк)
-  ✅ scripts/validate-vdr-labels.mjs работает: yarn validate:vdr pass
-  ✅ scripts/prepare-vdr-annotations.mjs работает: yarn prepare:vdr-ui генерирует HTML
-  ✅ @membrana/zero-shot-detector scaffold компилируется без ошибок
-  ✅ yarn turbo run test --filter='@membrana/zero-shot-detector' pass
-  ✅ docs/STAGE_GATE_1_TO_2.md готов (связан с WHITE_PAPER)
-  ✅ Три PR открыты (VDR + zero-shot + stage-gate docs)
-
-ВЕЧЕР (17:00–18:00):
-  ✅ yarn ritual:evening выполнен (archival + code-review)
-  ✅ DAILY_CODE_REVIEW.md готов на завтра
-  ✅ WHITE_PAPER §8 обновлён (ссылка на STAGE_GATE_1_TO_2)
-```
+| № | Блок | Время | Ответ | Артефакт | DoD | Статус |
+|---|------|-------|-------|----------|-----|--------|
+| **0** | Morning standup | 08:00–09:00 | All | lint pass, test pass | ✅ Clean git | Обязательно |
+| **1.1** | DRONE_TIGHT финал | 09:00–10:30 | Музыкант | DRONE_TIGHT.ts | Params confirmed | До 10:30 |
+| **1.2** | v0.3 benchmark | 10:30–12:30 | Математик | report + table | P≥65%, R≥88% | До 12:30 |
+| **1.3** | DETECTOR_BENCHMARK.md | 12:30–13:00 | Teamlead | docs upd | v0.3 + gate | До 13:00 |
+| **2A.1** | INTEGRATIONS_STRATEGY | 13:00–13:30 | Математик | docs upd | Models docs | До 13:30 |
+| **2A.2** | zero-shot scaffold | 13:30–14:30 | Структурщик | pакет | Tests pass | До 14:30 |
+| **2B** | hard-gate doc | 14:00–14:30 | Teamlead | STAGE_GATE_1_TO_2.md | Timeline fixed | До 14:30 |
 
 ---
 
-## 🔒 Что НЕ делаем сегодня
+## 🟢 Проверки в конце дня (15:30)
 
-1. **Не открываем новые детекторные спринты** без VDR-валидации.
-2. **Не трогаем TDOA/Localizer/Tracker** до stage-gate 1→2.
-3. **Не начинаем Studio App спринт** — заморожен после консилиума 2026-07-02.
-4. **Не переснимаем harmonic/cepstral/flux бенчмарки** без новых данных.
-
----
-
-## 📊 Риски дня
-
-| Риск | Probability | Mitigation |
-|------|-------------|-----------|
-| Lint/test failures в CT4+CT6 продлены после merge | High | Фаза 1 — раннее обнаружение (06:00) |
-| VDR-protocol требует консилиума → время | Medium | Черновик готов в packages/temp |
-| Zero-shot scaffold упирается в Hugging Face SDK | Low | Dynin подготовил CLAP link, fallback — stub |
-| Stage-gate doc требует пересмотра WHITE_PAPER | Low | Прямая линия к Vesnin, можно async |
-
----
-
-## 📞 Консилиум (если нужен)
-
-**Опциональный запрос:**
 ```bash
-yarn consilium "уточнить VDR scope и stage-gate criteria перед фиксацией в docs"
-# Протокол → docs/seanses/vdr-and-stage-gate-consilium-2026-07-03.md
+# Финальная валидация
+yarn turbo run lint typecheck test build --continue
+git status  # → чистое дерево
+
+# Рузультаты в консилиум
+echo "✅ DRONE_TIGHT curated, v0.3 benchmark P 67.5% / R 90.0%"
+echo "✅ zero-shot scaffold готов к интеграции"
+echo "✅ Hard-gate контракт задокументирован, дата gate-проверки 2026-07-24"
 ```
 
 ---
 
-## 🎯 Итоговый артефакт дня
+## ⚠️ Риски на сегодня
 
-```
-📁 git commits (к концу дня):
-  ├── docs/VDR_PROTOCOL.md (commit: "docs: add VDR protocol spec for validated drone recognition")
-  ├── scripts/validate-vdr-labels.mjs (commit: "feat: add validate:vdr command for Cohen's Kappa check")
-  ├── scripts/prepare-vdr-annotations.mjs (commit: "feat: add prepare:vdr-ui command for annotation HTML")
-  ├── packages/services/detectors/zero-shot-detector/ (commit: "feat: scaffold @membrana/zero-shot-detector (CLAP)")
-  └── docs/STAGE_GATE_1_TO_2.md (commit: "docs: define stage-gate 1→2 criteria for production")
+| Риск | Вероятность | Mitigation |
+|------|----------|-----------|
+| Benchmark зависает на large dataset | M | Запустить на subset первым; если timeout → skip live и переснять вечером |
+| Template-match параметры не проходят v0.3 | L | Fallback: взять консервативный DRONE_TIGHT из эпика #84 (уже валидирован) |
+| React-hooks warning не исправляется | L | П2, не блокирует; отложить на вечер |
 
-📁 PRs (в review):
-  ├── PR#xxx: "feat: VDR protocol + validate/prepare scripts" (VDR_PROTOCOL.md + 2 скрипта)
-  ├── PR#xxx: "feat: scaffold @membrana/zero-shot-detector (zero-shot CLAP)" (@experimental)
-  └── PR#xxx: "docs: stage-gate 1→2 definition & checklist" (docs only)
+---
 
-📁 Archives (вечер):
-  └── docs/archive/daily-day/2026-07-03/{
-        STRATEGIC_PLAN_DAY.md,
-        DAILY_STANDUP.md (этот файл),
-        MAIN_DAY_ISSUE.md
-      }
+## 📞 Обращения к персонажам
+
+```bash
+# Если вопросы по FFT-метрикам
+yarn ask dynin --gh-issue 236 "DRONE_TIGHT параметры твёрдые или есть место для калибровки?"
+
+# Если уточнение по VDR Protocol
+yarn ask vesnin --no-context "контракт stage-gate 1→2 правильный: P≥85% AND R≥90%?"
 ```
 
 ---
 
-**Статус координатора**: 🟢 Готово к исполнению  
-**Горизонт**: 12 часов операционного времени (06:00–18:00 UTC)  
-**Приоритет**: Магистраль (VDR) → Параллели (zero-shot + stage-gate)
+## 📊 Это стендап перед
+- 🎯 Главная магистраль: DRONE_TIGHT curated + v0.3 benchmark
+- 📦 Параллели: zero-shot scaffold + hard-gate doc
+- 🔓 Hard-gate 1→2: зависит от VDR разметки (2026-07-17)
+
+**Команда готова. Вперёд! ⚡**
