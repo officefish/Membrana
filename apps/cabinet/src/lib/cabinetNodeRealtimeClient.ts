@@ -142,6 +142,18 @@ class CabinetNodeRealtimeClientImpl {
   }
 
   connect(membraneId: string): void {
+    // PCB3 (presence-capture-board): идемпотентность. Без неё повторный connect()
+    // (React StrictMode двойной эффект / ре-рендеры без disconnect в cleanup)
+    // закрывал ещё-CONNECTING сокет → «closed before connection established» →
+    // scheduleReconnect → петля; WS кабинета не устанавливался и presence не шёл.
+    const socket = this.socket;
+    if (
+      this.membraneId === membraneId &&
+      socket &&
+      (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)
+    ) {
+      return;
+    }
     this.membraneId = membraneId;
     this.openSocket();
   }
@@ -200,6 +212,7 @@ class CabinetNodeRealtimeClientImpl {
     this.socket = ws;
 
     ws.addEventListener('open', () => {
+      if (this.socket !== ws) return; // вытеснен новым сокетом — игнорируем
       this.reconnectAttempt = 0;
       this.setState('connected');
       logCabinetWs('open', { membraneId: this.membraneId });
@@ -306,6 +319,9 @@ class CabinetNodeRealtimeClientImpl {
     });
 
     ws.addEventListener('close', (event) => {
+      // PCB3: если этот сокет уже вытеснен новым (openSocket закрыл старый),
+      // его close НЕ должен планировать реконнект — иначе петля.
+      if (this.socket !== ws) return;
       logCabinetWs('close', { code: event.code, reason: event.reason || undefined });
       if (this.membraneId) {
         this.scheduleReconnect();
