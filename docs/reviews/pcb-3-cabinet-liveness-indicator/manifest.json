@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "taskId": "pcb-3-cabinet-liveness-indicator",
+  "state": "lgtm",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "fix/pcb3-cabinet-ws-loop",
+  "currentCommitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+  "reviewedCommitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/pcb-3-cabinet-liveness-indicator/af21abc0cc859a0e48d3a603051cbee2c6cbb854-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 249,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/249"
+  },
+  "scope": {
+    "baseRef": "af21abc0cc859a0e48d3a603051cbee2c6cbb854^",
+    "files": [
+      "apps/cabinet/src/lib/cabinetNodeRealtimeClient.test.ts",
+      "apps/cabinet/src/lib/cabinetNodeRealtimeClient.ts",
+      "apps/client/src/lib/nodeRealtimeClient.ts"
+    ],
+    "packages": [
+      "apps/cabinet",
+      "apps/client"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+        "checkedAt": "2026-07-04T18:40:07.853Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Package Membrana Studio (Windows nsis)",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+        "checkedAt": "2026-07-04T18:34:21Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28715761563/job/85156863395"
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+        "checkedAt": "2026-07-04T18:33:08Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28715761566/job/85156776154"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+        "checkedAt": "2026-07-04T18:37:10Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28715761613/job/85156775956"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+        "checkedAt": "2026-07-04T18:34:14Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28715761563/job/85156775786"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+        "checkedAt": "2026-07-04T18:40:04Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28715761567/job/85156775736"
+      },
+      {
+        "command": "github-check:verify",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "af21abc0cc859a0e48d3a603051cbee2c6cbb854",
+        "checkedAt": "2026-07-04T18:38:30Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28715746251/job/85156729487"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "pending",
+    "evidence": null
+  },
+  "createdAt": "2026-07-04T18:40:05.449Z",
+  "updatedAt": "2026-07-04T18:40:19.998Z"
+}
