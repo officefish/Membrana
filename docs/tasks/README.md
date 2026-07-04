@@ -115,7 +115,6 @@
 | `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../docs/prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
 | `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
-| `cg1-flaky-rag-service` | CG1: стабилизация флейки @membrana/rag-service retrieveContext (timeout 5000ms) | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg3-flaky-metrics-week` | CG3: логирование + сбор flaky-метрик за неделю (7 прогонов main) | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg4-ci-testing-docs` | CG4: CONTRIBUTING § CI & Testing — таблица smoke vs full, классификация тестов | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
@@ -151,12 +150,7 @@
 | `nb-vlr-2-labels-merge-script` | NB2: yarn vdr:labels-merge — merge меток в манифест пилота + --labels-only для intra-rater | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-vlr-3-library-label-filter` | NB3: фильтр по метке + счётчик прогресса в клиентской библиотеке (порт HG1-UX) | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `pairing-lifecycle` | Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5) | L | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
-| `pl2-device-pairing-status` | PL2: Device.pairingStatus (paired/revoked/unpaired) + revoke переводит в revoked | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
-| `pl3-delete-key-revoke` | PL3: deleteAccessKey=revoke+delete (без 409 на активном) + единая кнопка Удалить с модалкой | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
-| `pl4-capture-autorelease` | PL4: авто-release capture при инвалидации ключа (серверный unregister/TTL) + race-тест | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
-| `pl5-tests-docs-smoke` | PL5: контракт-тесты presence (WS-mock) + ARCHITECTURE/контракт docs + smoke-runbook | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 
 ---
 
@@ -164,7 +158,13 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `cg1-flaky-rag-service` | CG1: стабилизация флейки @membrana/rag-service retrieveContext (timeout 5000ms) | 2026-07-04 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg1-flaky-rag-service.md) |
+| `pairing-lifecycle` | Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5) | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pairing-lifecycle.md) |
 | `pl1-presence-snapshot` | PL1: PresenceSnapshot в core + registerCabinet отдаёт снапшот + seeding клиента | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl1-presence-snapshot.md) |
+| `pl2-device-pairing-status` | PL2: Device.pairingStatus (paired/revoked/unpaired) + revoke переводит в revoked | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl2-device-pairing-status.md) |
+| `pl3-delete-key-revoke` | PL3: deleteAccessKey=revoke+delete (без 409 на активном) + единая кнопка Удалить с модалкой | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl3-delete-key-revoke.md) |
+| `pl4-capture-autorelease` | PL4: авто-release capture при инвалидации ключа (серверный unregister/TTL) + race-тест | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl4-capture-autorelease.md) |
+| `pl5-tests-docs-smoke` | PL5: контракт-тесты presence (WS-mock) + ARCHITECTURE/контракт docs + smoke-runbook | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl5-tests-docs-smoke.md) |
 | `validated-drone-recognition` | Epic: Validated drone recognition — ground truth, ≥80% accuracy, templates | 2026-07-03 | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | — | [карточка](./archive/validated-drone-recognition.md) |
 | `vdr1-sample-label-patch-api` | VDR1: PATCH sample label + notes API (background-media) | 2026-07-03 | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | — | [карточка](./archive/vdr1-sample-label-patch-api.md) |
 | `vdr2-label-notes-ui` | VDR2: label/notes UI — client user + cabinet admin | 2026-07-03 | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | — | [карточка](./archive/vdr2-label-notes-ui.md) |

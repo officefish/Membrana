@@ -8898,13 +8898,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "ci-gate-stabilization",
       "createdAt": "2026-07-02",
-      "archivedAt": null,
+      "archivedAt": "2026-07-04",
       "archiveNotes": null,
-      "notes": "Реальный флейки, заблокировавший прод-деплой кабинета. Диагностика гонка vs жёсткий таймаут, fix, прогон N раз. Lead Dynin+Kuryokhin.",
+      "notes": "Реальный флейки, заблокировавший прод-деплой кабинета. Диагностика гонка vs жёсткий таймаут, fix, прогон N раз. Lead Dynin+Kuryokhin. MERGED #247 (2026-07-04): testTimeout 5->30s, флейк retrieveContext устранён.",
       "leadPersona": "dynin",
       "supportPersonas": [
         "kuryokhin"
@@ -10805,9 +10805,9 @@
       "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-04",
-      "archivedAt": null,
+      "archivedAt": "2026-07-04",
       "archiveNotes": null,
       "id": "pairing-lifecycle",
       "title": "Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5)",
@@ -10817,7 +10817,7 @@
       "dependsOn": [
         "device-board-server-first"
       ],
-      "notes": "Консилиум: docs/seanses/pairing-lifecycle-2026-07-04.md. Повод: узел offline в кабинете после пейринга. Код в background-cabinet (не office). Требование B (Удалить=revoke+delete) — решение владельца. Ручной E2E deferred (~конец июля). Прод-миграция pairingStatus в окне деплоя.",
+      "notes": "Консилиум: docs/seanses/pairing-lifecycle-2026-07-04.md. Повод: узел offline в кабинете после пейринга. Код в background-cabinet (не office). Требование B (Удалить=revoke+delete) — решение владельца. Ручной E2E deferred (~конец июля). Прод-миграция pairingStatus в окне деплоя. MERGED в main (#242-#246, 2026-07-04): presence-снапшот (offline-баг), pairingStatus, Удалить=revoke+delete, авто-release захвата, docs/smoke. Closure-review артефакт формально только у PL1 (LGTM); PL2-PL5 — code+CI verify green, review-runner инфра-флейк (output-contract + skipped-check gate, домен cg2); мёрж по явной санкции владельца. Остаток: прод-миграция pairingStatus + ручной E2E на железе (~конец июля).",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin",
@@ -10851,10 +10851,10 @@
       "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-04",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
       "id": "pl2-device-pairing-status",
       "title": "PL2: Device.pairingStatus (paired/revoked/unpaired) + revoke переводит в revoked",
       "size": "S",
@@ -10862,7 +10862,7 @@
       "dependsOn": [
         "pairing-lifecycle"
       ],
-      "notes": "НЕ чистим pairedKeyId (история для getPairStatus). Миграция prisma.",
+      "notes": "НЕ чистим pairedKeyId (история для getPairStatus). Миграция prisma. MERGED #243 (2026-07-04). Прод-миграция pairingStatus — в окне деплоя. Closure-review артефакт формально только у PL1 (LGTM); PL2-PL5 — code+CI verify green, review-runner инфра-флейк (output-contract + skipped-check gate, домен cg2); мёрж по явной санкции владельца.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
@@ -10893,10 +10893,10 @@
       "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-04",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
       "id": "pl3-delete-key-revoke",
       "title": "PL3: deleteAccessKey=revoke+delete (без 409 на активном) + единая кнопка Удалить с модалкой",
       "size": "M",
@@ -10904,7 +10904,7 @@
       "dependsOn": [
         "pl2-device-pairing-status"
       ],
-      "notes": "Решение владельца. FK pairedKeyId->NodeAccessKey = SET NULL. Модалка: имя ключа/дата/предупреждение.",
+      "notes": "Решение владельца. FK pairedKeyId->NodeAccessKey = SET NULL. Модалка: имя ключа/дата/предупреждение. MERGED #244 (2026-07-04).",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
@@ -10914,10 +10914,10 @@
       "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-04",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
       "id": "pl4-capture-autorelease",
       "title": "PL4: авто-release capture при инвалидации ключа (серверный unregister/TTL) + race-тест",
       "size": "M",
@@ -10925,7 +10925,7 @@
       "dependsOn": [
         "pl2-device-pairing-status"
       ],
-      "notes": "Узел проверки: boardLease.release на узле нереализуем (сокет рвётся, CT2 дропает node board-события) — делать серверную сторону.",
+      "notes": "Узел проверки: boardLease.release на узле нереализуем (сокет рвётся, CT2 дропает node board-события) — делать серверную сторону. MERGED #245 (2026-07-04).",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov",
@@ -10936,10 +10936,10 @@
       "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-04",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
       "id": "pl5-tests-docs-smoke",
       "title": "PL5: контракт-тесты presence (WS-mock) + ARCHITECTURE/контракт docs + smoke-runbook",
       "size": "M",
@@ -10949,7 +10949,7 @@
         "pl3-delete-key-revoke",
         "pl4-capture-autorelease"
       ],
-      "notes": "Ручной E2E на железе deferred (~конец июля); программный smoke локально/docker + WS-mock.",
+      "notes": "Ручной E2E на железе deferred (~конец июля); программный smoke локально/docker + WS-mock. MERGED #246 (2026-07-04).",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko",
