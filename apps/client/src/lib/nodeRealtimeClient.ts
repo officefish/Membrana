@@ -66,6 +66,18 @@ class NodeRealtimeClientImpl {
   }
 
   connectNode(pairing: PairedNodeCredentials): void {
+    // PCB3: идемпотентность (симметрично кабинету) — повторный connectNode с той
+    // же парой не рвёт ещё-CONNECTING сокет. Узел стабилен благодаря guard в
+    // NodeConnectionShell, но защита от петли «closed before established» нужна и здесь.
+    const socket = this.socket;
+    if (
+      this.pairing?.deviceId === pairing.deviceId &&
+      socket &&
+      (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)
+    ) {
+      this.pairing = pairing;
+      return;
+    }
     this.pairing = pairing;
     this.openSocket();
   }
@@ -134,6 +146,7 @@ class NodeRealtimeClientImpl {
     this.socket = ws;
 
     ws.addEventListener('open', () => {
+      if (this.socket !== ws) return; // вытеснен новым сокетом
       this.reconnectAttempt = 0;
       this.setState('connected');
       logNodeWs('open', { deviceId: this.pairing?.deviceId });
@@ -159,6 +172,7 @@ class NodeRealtimeClientImpl {
     });
 
     ws.addEventListener('close', (event) => {
+      if (this.socket !== ws) return; // PCB3: вытеснен новым — без реконнект-петли
       // PCB1: код close — ключевой сигнал. 4401 = auth-fail (H1: сессия истекла →
       // кабинет держит offline, хотя клиент «связан» по localStorage); 1006 = сеть.
       logNodeWs('close', {
