@@ -10800,6 +10800,161 @@
       "supportPersonas": [
         "dynin"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pairing-lifecycle",
+      "title": "Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "device-board-server-first"
+      ],
+      "notes": "Консилиум: docs/seanses/pairing-lifecycle-2026-07-04.md. Повод: узел offline в кабинете после пейринга. Код в background-cabinet (не office). Требование B (Удалить=revoke+delete) — решение владельца. Ручной E2E deferred (~конец июля). Прод-миграция pairingStatus в окне деплоя.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "rodchenko",
+        "kuryokhin",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pl1-presence-snapshot",
+      "title": "PL1: PresenceSnapshot в core + registerCabinet отдаёт снапшот + seeding клиента",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pairing-lifecycle"
+      ],
+      "notes": "Не обнулять onlineDeviceIds при реконнекте; snapshot до подписки на stream.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pl2-device-pairing-status",
+      "title": "PL2: Device.pairingStatus (paired/revoked/unpaired) + revoke переводит в revoked",
+      "size": "S",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pairing-lifecycle"
+      ],
+      "notes": "НЕ чистим pairedKeyId (история для getPairStatus). Миграция prisma.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pl2b-node-heartbeat",
+      "title": "PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО)",
+      "size": "S",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl1-presence-snapshot"
+      ],
+      "notes": "Deferrable: Математик предлагал отложить; режется первой при нехватке времени. lastSeenAt уже существует.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pl3-delete-key-revoke",
+      "title": "PL3: deleteAccessKey=revoke+delete (без 409 на активном) + единая кнопка Удалить с модалкой",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl2-device-pairing-status"
+      ],
+      "notes": "Решение владельца. FK pairedKeyId->NodeAccessKey = SET NULL. Модалка: имя ключа/дата/предупреждение.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pl4-capture-autorelease",
+      "title": "PL4: авто-release capture при инвалидации ключа (серверный unregister/TTL) + race-тест",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl2-device-pairing-status"
+      ],
+      "notes": "Узел проверки: boardLease.release на узле нереализуем (сокет рвётся, CT2 дропает node board-события) — делать серверную сторону.",
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pl5-tests-docs-smoke",
+      "title": "PL5: контракт-тесты presence (WS-mock) + ARCHITECTURE/контракт docs + smoke-runbook",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl1-presence-snapshot",
+        "pl3-delete-key-revoke",
+        "pl4-capture-autorelease"
+      ],
+      "notes": "Ручной E2E на железе deferred (~конец июля); программный smoke локально/docker + WS-mock.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
     }
   ]
 }

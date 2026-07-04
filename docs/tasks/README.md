@@ -151,6 +151,13 @@
 | `nb-vlr-2-labels-merge-script` | NB2: yarn vdr:labels-merge — merge меток в манифест пилота + --labels-only для intra-rater | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-vlr-3-library-label-filter` | NB3: фильтр по метке + счётчик прогресса в клиентской библиотеке (порт HG1-UX) | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `pairing-lifecycle` | Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5) | L | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
+| `pl1-presence-snapshot` | PL1: PresenceSnapshot в core + registerCabinet отдаёт снапшот + seeding клиента | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
+| `pl2-device-pairing-status` | PL2: Device.pairingStatus (paired/revoked/unpaired) + revoke переводит в revoked | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
+| `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
+| `pl3-delete-key-revoke` | PL3: deleteAccessKey=revoke+delete (без 409 на активном) + единая кнопка Удалить с модалкой | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
+| `pl4-capture-autorelease` | PL4: авто-release capture при инвалидации ключа (серверный unregister/TTL) + race-тест | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
+| `pl5-tests-docs-smoke` | PL5: контракт-тесты presence (WS-mock) + ARCHITECTURE/контракт docs + smoke-runbook | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 
 ---
 
@@ -602,4 +609,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-03.*
+*Файл обновлён автоматически: 2026-07-04.*
