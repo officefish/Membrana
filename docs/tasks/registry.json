@@ -10955,6 +10955,179 @@
         "rodchenko",
         "dynin"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "presence-capture-board",
+      "title": "Epic: Живость присутствия + view-only борд под захватом (PCB1–PCB6)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "pairing-lifecycle"
+      ],
+      "notes": "Консилиум presence-capture-board-2026-07-04. Повод: клиент на 1573 связан+перезапуски, кабинет offline (PL1 не закрыл). Поправки: serializeNode уже отдаёт lastSeenAt; registerNode в БД НЕ пишет (нужно добавить); force-open через agenda-стор не URL. Multi-node (D2) и тех-долг P4/P5 — отложены. Ручной E2E ~конец июля.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko",
+        "kuryokhin",
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-1-ws-lifecycle-logging",
+      "title": "PCB1: WS-lifecycle логи (connect/auth/register) обе стороны — диагностика H1-H4",
+      "size": "S",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "presence-capture-board"
+      ],
+      "notes": "Вскрыть реальный корень persistent-offline ДО фиксов PCB2/PCB3.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-2-auth-fail-banner",
+      "title": "PCB2: баннер auth-fail на клиенте (authFailedAt, дебаунс 2-3с, кнопка Пересопрячь)",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-1-ws-lifecycle-logging"
+      ],
+      "notes": "Не спамить на HMR-разрывах; отличать краткий ретрай от устойчивого auth-fail.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-3-cabinet-liveness-indicator",
+      "title": "PCB3: registerNode пишет Device.lastSeenAt + кабинет индикатор (online/connecting/виден Ns/offline)",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-1-ws-lifecycle-logging"
+      ],
+      "notes": "ПОПРАВКА: registerNode сейчас в БД НЕ пишет (мини-PL2b); serializeNode lastSeenAt уже отдаёт, кабинет не потребляет.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-4-link-state-endpoint",
+      "title": "PCB4: GET /v1/nodes/:id/link-state -> {paired, live, lastSeenAt} + тесты",
+      "size": "S",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-3-cabinet-liveness-indicator"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-5-force-open-viewonly-board",
+      "title": "PCB5: захват -> force-open device-board view-only (agenda-стор, не URL) + снятие на release",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-3-cabinet-liveness-indicator"
+      ],
+      "notes": "Блоки readOnly/cabinet-view уже есть; boardLeaseBridge на board.capture -> смена активного модуля + флаг isViewOnlyFromCapture. Инвариант §3.3 не нарушать.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-6-health-ping-endpoint",
+      "title": "PCB6: POST /v1/nodes/:id/health-ping (echo по WS, таймаут 3с) -> {reachable, latencyMs} + тесты",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-4-link-state-endpoint"
+      ],
+      "notes": "Узел отвечает на ping. Опц. индикатор в кабинете (Музыкант).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-d2-multinode",
+      "title": "PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список",
+      "size": "L",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-6-health-ping-endpoint"
+      ],
+      "notes": "Отложено: требует переделки UI кабинета. Владелец: связанных устройств со временем несколько.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
     }
   ]
 }
