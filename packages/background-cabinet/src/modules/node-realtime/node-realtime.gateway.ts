@@ -16,6 +16,7 @@ import {
   NODE_REALTIME_EVENT_TYPES,
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
+  parseHealthPongPayload,
   parseNodeRealtimeEnvelope,
   parseRuntimeCommandPayload,
   type NodeRealtimeEnvelope,
@@ -185,6 +186,17 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
           return;
         }
         this.realtimeService.fanOutToCabinet(meta.membraneId, envelope);
+        return;
+      }
+      // PCB6: узел отвечает на health.ping — резолвим ожидающий pingNode.
+      if (
+        envelope.channel === 'presence' &&
+        envelope.type === NODE_REALTIME_EVENT_TYPES.presence.healthPong
+      ) {
+        const payload = parseHealthPongPayload(envelope.payload);
+        if (payload) {
+          this.realtimeService.handleHealthPong(payload.pingId);
+        }
         return;
       }
       await this.journalHandler.handleIncoming(meta, envelope);

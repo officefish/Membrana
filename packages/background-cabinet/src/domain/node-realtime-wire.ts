@@ -20,6 +20,29 @@ export interface JournalAckPayload {
   readonly clientEntryId: string;
 }
 
+/** PCB6: проба живости узла (server → node). */
+export interface HealthPingPayload {
+  readonly pingId: string;
+  readonly sentAt: number;
+}
+
+/** PCB6: ответ узла на пробу (node → server). */
+export interface HealthPongPayload {
+  readonly pingId: string;
+}
+
+/** Валидирует health.pong payload (node → server). */
+export function parseHealthPongPayload(raw: unknown): HealthPongPayload | null {
+  if (typeof raw !== 'object' || raw === null) {
+    return null;
+  }
+  const pingId = (raw as { pingId?: unknown }).pingId;
+  if (typeof pingId !== 'string' || pingId.trim().length === 0) {
+    return null;
+  }
+  return { pingId };
+}
+
 export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
     /** PL1: снапшот присутствия кабинету при подключении (bootstrap online-набора). */
@@ -27,6 +50,10 @@ export const NODE_REALTIME_EVENT_TYPES = {
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',
+    /** PCB6: активная проба живости (server → node). */
+    healthPing: 'health.ping',
+    /** PCB6: ответ узла на пробу (node → server). */
+    healthPong: 'health.pong',
   },
   journal: {
     append: 'journal.append',

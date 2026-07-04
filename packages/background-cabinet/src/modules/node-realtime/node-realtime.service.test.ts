@@ -116,4 +116,66 @@ describe('NodeRealtimeService', () => {
     expect(ack.clientEntryId).toBe('entry-1');
     expect(nodeSocket.send).toHaveBeenCalled();
   });
+
+  describe('pingNode (PCB6)', () => {
+    function registerNodeSocket(service: NodeRealtimeService) {
+      const nodeSocket = mockSocket();
+      service.registerNode(
+        { role: 'node', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
+        nodeSocket,
+      );
+      (nodeSocket.send as ReturnType<typeof vi.fn>).mockClear();
+      return nodeSocket;
+    }
+
+    function sentPingId(nodeSocket: import('ws').WebSocket): string {
+      const call = (nodeSocket.send as ReturnType<typeof vi.fn>).mock.calls
+        .map((c) => JSON.parse(c[0] as string))
+        .find((e) => e.type === NODE_REALTIME_EVENT_TYPES.presence.healthPing);
+      return call.payload.pingId as string;
+    }
+
+    it('узел не live (нет сокета) → reachable:false без ожидания', async () => {
+      const service = new NodeRealtimeService();
+      await expect(service.pingNode('nope')).resolves.toEqual({
+        reachable: false,
+        latencyMs: null,
+      });
+    });
+
+    it('pong с тем же pingId → reachable:true + latencyMs', async () => {
+      const service = new NodeRealtimeService();
+      const nodeSocket = registerNodeSocket(service);
+      const pending = service.pingNode('d1');
+      const pingId = sentPingId(nodeSocket);
+      service.handleHealthPong(pingId);
+      const result = await pending;
+      expect(result.reachable).toBe(true);
+      expect(result.latencyMs).toBeGreaterThanOrEqual(0);
+    });
+
+    it('нет pong до таймаута → reachable:false', async () => {
+      vi.useFakeTimers();
+      try {
+        const service = new NodeRealtimeService();
+        registerNodeSocket(service);
+        const pending = service.pingNode('d1', 3000);
+        await vi.advanceTimersByTimeAsync(3000);
+        await expect(pending).resolves.toEqual({ reachable: false, latencyMs: null });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('поздний pong после таймаута игнорируется (нет висящего промиса)', async () => {
+      const service = new NodeRealtimeService();
+      const nodeSocket = registerNodeSocket(service);
+      const pending = service.pingNode('d1', 3000);
+      const pingId = sentPingId(nodeSocket);
+      service.handleHealthPong(pingId);
+      await pending;
+      // Повторный pong — no-op, не бросает.
+      expect(() => service.handleHealthPong(pingId)).not.toThrow();
+    });
+  });
 });
