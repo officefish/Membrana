@@ -21,6 +21,17 @@ type StateHandler = (state: NodeRealtimeClientState) => void;
 
 const MAX_BACKOFF_MS = 30_000;
 
+/**
+ * PCB1 (presence-capture-board): единая точка логов WS-жизненного цикла узла.
+ * Видно в консоли браузера (dev-песочница) — диагностика persistent-offline:
+ * связка connecting → open (registered) → close(code). code=4401 = auth-fail (H1).
+ */
+function logNodeWs(event: string, detail: Record<string, unknown>): void {
+  const level = detail.authFail || detail.code === 4401 ? 'warn' : 'info';
+  // eslint-disable-next-line no-console
+  console[level](`[node-ws] ${event}`, detail);
+}
+
 class NodeRealtimeClientImpl {
   private socket: WebSocket | null = null;
 
@@ -93,6 +104,7 @@ class NodeRealtimeClientImpl {
     const delay = Math.min(1000 * 2 ** this.reconnectAttempt, MAX_BACKOFF_MS);
     this.reconnectAttempt += 1;
     this.setState('reconnecting');
+    logNodeWs('reconnect-scheduled', { attempt: this.reconnectAttempt, delayMs: delay });
     this.reconnectTimer = window.setTimeout(() => this.openSocket(), delay);
   }
 
@@ -111,12 +123,20 @@ class NodeRealtimeClientImpl {
     url.searchParams.set('clientVersion', getClientRuntimeVersion());
 
     this.setState(this.reconnectAttempt > 0 ? 'reconnecting' : 'connecting');
+    // PCB1 (presence-capture-board): диагностика persistent-offline в браузерной
+    // консоли (песочница 1573). Токен не логируем.
+    logNodeWs('connecting', {
+      deviceId: this.pairing.deviceId,
+      attempt: this.reconnectAttempt,
+      url: `${url.origin}${url.pathname}`,
+    });
     const ws = new WebSocket(url.toString());
     this.socket = ws;
 
     ws.addEventListener('open', () => {
       this.reconnectAttempt = 0;
       this.setState('connected');
+      logNodeWs('open', { deviceId: this.pairing?.deviceId });
     });
 
     ws.addEventListener('message', (event) => {
@@ -138,7 +158,15 @@ class NodeRealtimeClientImpl {
       }
     });
 
-    ws.addEventListener('close', () => {
+    ws.addEventListener('close', (event) => {
+      // PCB1: код close — ключевой сигнал. 4401 = auth-fail (H1: сессия истекла →
+      // кабинет держит offline, хотя клиент «связан» по localStorage); 1006 = сеть.
+      logNodeWs('close', {
+        code: event.code,
+        reason: event.reason || undefined,
+        authFail: event.code === 4401,
+        deviceId: this.pairing?.deviceId,
+      });
       if (this.pairing) {
         this.scheduleReconnect();
       } else {
