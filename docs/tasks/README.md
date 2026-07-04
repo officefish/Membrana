@@ -152,7 +152,6 @@
 | `nb-vlr-3-library-label-filter` | NB3: фильтр по метке + счётчик прогресса в клиентской библиотеке (порт HG1-UX) | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `pairing-lifecycle` | Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5) | L | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
-| `pl1-presence-snapshot` | PL1: PresenceSnapshot в core + registerCabinet отдаёт снапшот + seeding клиента | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pl2-device-pairing-status` | PL2: Device.pairingStatus (paired/revoked/unpaired) + revoke переводит в revoked | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pl3-delete-key-revoke` | PL3: deleteAccessKey=revoke+delete (без 409 на активном) + единая кнопка Удалить с модалкой | M | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
@@ -165,6 +164,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `pl1-presence-snapshot` | PL1: PresenceSnapshot в core + registerCabinet отдаёт снапшот + seeding клиента | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl1-presence-snapshot.md) |
 | `validated-drone-recognition` | Epic: Validated drone recognition — ground truth, ≥80% accuracy, templates | 2026-07-03 | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | — | [карточка](./archive/validated-drone-recognition.md) |
 | `vdr1-sample-label-patch-api` | VDR1: PATCH sample label + notes API (background-media) | 2026-07-03 | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | — | [карточка](./archive/vdr1-sample-label-patch-api.md) |
 | `vdr2-label-notes-ui` | VDR2: label/notes UI — client user + cabinet admin | 2026-07-03 | [`VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md`](../docs/prompts/VALIDATED_DRONE_RECOGNITION_EPIC_PROMPT.md) | — | [карточка](./archive/vdr2-label-notes-ui.md) |

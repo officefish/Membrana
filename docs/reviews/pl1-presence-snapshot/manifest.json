@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "taskId": "pl1-presence-snapshot",
-  "state": "lgtm",
+  "state": "archived",
   "tier": "T2",
   "reviewMode": "standard",
   "branch": "feat/pl1-presence-snapshot",
@@ -84,9 +84,9 @@
     "ozhegov": "pending"
   },
   "completion": {
-    "mode": "pending",
-    "evidence": null
+    "mode": "merged",
+    "evidence": "PR #242 merged 2026-07-04T17:01:56Z (1ff09f7c73f877613c53218939e185f830c2a2ff)"
   },
   "createdAt": "2026-07-04T16:59:33.356Z",
-  "updatedAt": "2026-07-04T16:59:49.258Z"
+  "updatedAt": "2026-07-04T17:02:45.680Z"
 }
