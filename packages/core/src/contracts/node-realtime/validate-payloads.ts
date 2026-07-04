@@ -12,7 +12,7 @@ import type {
   DeviceCaptureMode,
   DeviceCaptureReleaseReason,
 } from './capture-events.js';
-import type { RuntimeCommandPayload } from './events.js';
+import type { PresenceSnapshotPayload, RuntimeCommandPayload } from './events.js';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -213,6 +213,26 @@ export function parseBoardCaptureHeartbeatPayload(
     deviceId: raw.deviceId,
     sessionId: raw.sessionId,
     expiresAt: raw.expiresAt,
+  };
+}
+
+/**
+ * PL1: валидирует presence.snapshot. onlineDeviceIds — массив непустых строк
+ * (пустой массив допустим: узлов онлайн нет). Дубликаты и не-строки отбрасываются.
+ */
+export function parsePresenceSnapshotPayload(raw: unknown): PresenceSnapshotPayload | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (!Array.isArray(raw.onlineDeviceIds) || typeof raw.timestampMs !== 'number') {
+    return null;
+  }
+  if (!raw.onlineDeviceIds.every((id) => isNonEmptyString(id))) {
+    return null;
+  }
+  return {
+    onlineDeviceIds: [...new Set(raw.onlineDeviceIds as string[])],
+    timestampMs: raw.timestampMs,
   };
 }
 

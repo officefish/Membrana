@@ -4,6 +4,7 @@ import {
   parseBoardCapturePayload,
   parseBoardCaptureReleasePayload,
   parseNodeRealtimeEnvelope,
+  parsePresenceSnapshotPayload,
   type AnalysisBriefPayload,
   type BoardCaptureHeartbeatPayload,
   type BoardCapturePayload,
@@ -11,6 +12,7 @@ import {
   type JournalAppendPayload,
   type NodeOnlinePayload,
   type NodeRealtimeEnvelope,
+  type PresenceSnapshotPayload,
   type RuntimeStatePayload,
 } from '@membrana/core';
 
@@ -27,6 +29,7 @@ type StateHandler = (state: CabinetRealtimeClientState) => void;
 type JournalAppendHandler = (envelope: NodeRealtimeEnvelope<JournalAppendPayload>) => void;
 type MicBriefHandler = (payload: AnalysisBriefPayload) => void;
 type RuntimeStateHandler = (payload: RuntimeStatePayload) => void;
+type PresenceSnapshotHandler = (payload: PresenceSnapshotPayload) => void;
 type PresenceOnlineHandler = (payload: NodeOnlinePayload) => void;
 type PresenceOfflineHandler = (payload: NodeOnlinePayload) => void;
 type BoardCaptureHandler = (payload: BoardCapturePayload) => void;
@@ -53,6 +56,8 @@ class CabinetNodeRealtimeClientImpl {
   private readonly micBriefHandlers = new Set<MicBriefHandler>();
 
   private readonly runtimeStateHandlers = new Set<RuntimeStateHandler>();
+
+  private readonly presenceSnapshotHandlers = new Set<PresenceSnapshotHandler>();
 
   private readonly presenceOnlineHandlers = new Set<PresenceOnlineHandler>();
 
@@ -92,6 +97,12 @@ class CabinetNodeRealtimeClientImpl {
   subscribeMicBrief(handler: MicBriefHandler): () => void {
     this.micBriefHandlers.add(handler);
     return () => this.micBriefHandlers.delete(handler);
+  }
+
+  /** PL1: bootstrap-снапшот присутствия при подключении кабинета. */
+  subscribePresenceSnapshot(handler: PresenceSnapshotHandler): () => void {
+    this.presenceSnapshotHandlers.add(handler);
+    return () => this.presenceSnapshotHandlers.delete(handler);
   }
 
   subscribePresenceOnline(handler: PresenceOnlineHandler): () => void {
@@ -207,6 +218,17 @@ class CabinetNodeRealtimeClientImpl {
           const payload = envelope.payload as RuntimeStatePayload;
           for (const handler of this.runtimeStateHandlers) {
             handler(payload);
+          }
+        }
+        if (
+          envelope.channel === 'presence' &&
+          envelope.type === NODE_REALTIME_EVENT_TYPES.presence.snapshot
+        ) {
+          const payload = parsePresenceSnapshotPayload(envelope.payload);
+          if (payload !== null) {
+            for (const handler of this.presenceSnapshotHandlers) {
+              handler(payload);
+            }
           }
         }
         if (

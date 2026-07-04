@@ -58,9 +58,13 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
     setConnection(client.getState());
     const unsubState = client.subscribeState((next) => {
       setConnection(next);
-      if (next === 'disconnected' || next === 'connecting') {
-        setOnlineDeviceIds(new Set());
-      }
+    });
+    // PL1: снапшот присутствия при подключении — авторитетный bootstrap набора.
+    // Заменяем целиком (не мерджим): сервер прислал полный список онлайн-узлов.
+    // Онлайн-состояние НЕ обнуляем при реконнекте — снапшот перезапишет его,
+    // иначе узел «мигал» бы в offline на каждый разрыв (корневой баг PL1).
+    const unsubSnapshot = client.subscribePresenceSnapshot((payload) => {
+      setOnlineDeviceIds(new Set(payload.onlineDeviceIds));
     });
     const unsubRuntime = client.subscribeRuntimeState((payload) => {
       if (!payload.deviceId) return;
@@ -111,6 +115,7 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
     });
     return () => {
       unsubState();
+      unsubSnapshot();
       unsubRuntime();
       unsubOnline();
       unsubOffline();
