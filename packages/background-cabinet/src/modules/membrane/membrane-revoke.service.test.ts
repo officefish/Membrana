@@ -6,6 +6,7 @@ import type { PrismaService } from '../../prisma/prisma.service';
 
 const userId = 'user-1';
 const keyId = 'key-1';
+const nodeId = 'node-1';
 const membraneId = 'membrane-1';
 const mediaDeviceId = 'device-1';
 
@@ -18,15 +19,19 @@ function buildService() {
   const nodeRealtime = {
     notifySessionInvalidated: vi.fn(),
   } as unknown as NodeRealtimeService;
-  const service = new MembraneService(prisma, nodeRealtime);
-  return { service, prisma, nodeRealtime };
+  const deviceCapture = {
+    forceReleaseByNode: vi.fn().mockResolvedValue(undefined),
+  } as unknown as import('../device-capture/device-capture.service').DeviceCaptureService;
+  const service = new MembraneService(prisma, nodeRealtime, deviceCapture);
+  return { service, prisma, nodeRealtime, deviceCapture };
 }
 
 describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
   it('revoke переводит устройство в revoked, сохраняя pairedKeyId, + notify узлу', async () => {
-    const { service, prisma, nodeRealtime } = buildService();
+    const { service, prisma, nodeRealtime, deviceCapture } = buildService();
     vi.mocked(prisma.nodeAccessKey.findUnique).mockResolvedValue({
       id: keyId,
+      nodeId,
       revokedAt: null,
       node: { membraneId, membrane: { userId } },
     } as never);
@@ -44,6 +49,9 @@ describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
 
     await service.revokeAccessKey(userId, keyId);
 
+    // PL4: захват над узлом форс-отпущен.
+    expect(deviceCapture.forceReleaseByNode).toHaveBeenCalledWith(nodeId);
+
     // Device помечен revoked; pairedKeyId НЕ трогаем (история для getPairStatus).
     expect(prisma.device.updateMany).toHaveBeenCalledWith({
       where: { pairedKeyId: keyId },
@@ -60,9 +68,10 @@ describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
   });
 
   it('deleteAccessKey активного ключа: revoke + отвязка устройства + delete, без 409 (PL3)', async () => {
-    const { service, prisma, nodeRealtime } = buildService();
+    const { service, prisma, nodeRealtime, deviceCapture } = buildService();
     const activeKey = {
       id: keyId,
+      nodeId,
       duration: 'hours_4',
       expiresAt: new Date(Date.now() + 60 * 60 * 1000), // ещё активен
       revokedAt: null,
@@ -97,6 +106,8 @@ describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
     expect(
       (prisma.nodeAccessKey as unknown as { delete: ReturnType<typeof vi.fn> }).delete,
     ).toHaveBeenCalledWith({ where: { id: keyId } });
+    // PL4: захват форс-отпущен (revoke-путь + явный вызов в delete).
+    expect(deviceCapture.forceReleaseByNode).toHaveBeenCalledWith(nodeId);
     expect(result).toEqual({ deletedKeyId: keyId });
   });
 

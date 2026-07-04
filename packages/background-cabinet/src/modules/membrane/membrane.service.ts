@@ -18,6 +18,7 @@ import {
 } from './access-key.util';
 import { isNodeLimitReached, nextNodeLabel } from '../../domain/node-limit';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
+import { DeviceCaptureService } from '../device-capture/device-capture.service';
 
 const FREE_TARIFF_ID = 'free-v1';
 const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
@@ -81,6 +82,7 @@ export class MembraneService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly nodeRealtime: NodeRealtimeService,
+    private readonly deviceCapture: DeviceCaptureService,
   ) {}
 
   async getOrCreateMembraneForUser(userId: string) {
@@ -243,6 +245,9 @@ export class MembraneService {
           'revoked',
         );
       }
+      // PL4: захват (держится сессией кабинета) над этим узлом бессмысленен —
+      // узел теряет сопряжение. Форс-release (broadcast кабинету), не ждём TTL.
+      await this.deviceCapture.forceReleaseByNode(key.nodeId);
     }
 
     return { accessKey: serializeAccessKey(revoked) };
@@ -300,6 +305,9 @@ export class MembraneService {
       where: { pairedKeyId: keyId },
       data: { pairedKeyId: null, pairingStatus: 'unpaired' },
     });
+
+    // PL4: гарантируем release даже для неактивного ключа (revoke выше не вызывался).
+    await this.deviceCapture.forceReleaseByNode(key.nodeId);
 
     await this.prisma.nodeAccessKey.delete({ where: { id: keyId } });
 

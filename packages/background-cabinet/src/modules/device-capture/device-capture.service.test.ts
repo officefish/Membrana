@@ -61,6 +61,37 @@ function captureRow(overrides: Record<string, unknown> = {}) {
   };
 }
 
+describe('DeviceCaptureService.forceReleaseByNode (PL4)', () => {
+  it('удаляет захват, чистит registry и broadcast release без проверки сессии', async () => {
+    const { service, prisma, nodeRealtime, registry } = buildService();
+    const row = captureRow();
+    registry.set(mediaDeviceId, {
+      membraneId,
+      nodeId,
+      sessionId,
+      mode: 'soft',
+      expiresAt: row.expiresAt,
+    });
+    vi.mocked(prisma.nodeDeviceCapture.findUnique).mockResolvedValue(row as never);
+
+    await service.forceReleaseByNode(nodeId);
+
+    expect(prisma.nodeDeviceCapture.delete).toHaveBeenCalledWith({ where: { id: 'cap-1' } });
+    expect(registry.get(mediaDeviceId)).toBeNull();
+    expect(nodeRealtime.broadcastBoardEnvelope).toHaveBeenCalled();
+  });
+
+  it('идемпотентно: захвата нет — ничего не делает', async () => {
+    const { service, prisma, nodeRealtime } = buildService();
+    vi.mocked(prisma.nodeDeviceCapture.findUnique).mockResolvedValue(null);
+
+    await service.forceReleaseByNode(nodeId);
+
+    expect(prisma.nodeDeviceCapture.delete).not.toHaveBeenCalled();
+    expect(nodeRealtime.broadcastBoardEnvelope).not.toHaveBeenCalled();
+  });
+});
+
 describe('DeviceCaptureService', () => {
   it('capture persists, fills registry, broadcasts board.capture and sends pre-emption stop', async () => {
     const { service, prisma, nodeRealtime, registry } = buildService();
