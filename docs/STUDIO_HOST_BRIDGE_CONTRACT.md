@@ -123,6 +123,24 @@ Shell **не** дублирует quota logic — только FS в main (`apps
 
 ---
 
+## §4.6 Presence — снапшот присутствия (pairing-lifecycle)
+
+> Канон: консилиум [`pairing-lifecycle-2026-07-04.md`](./seanses/pairing-lifecycle-2026-07-04.md) (PL1) · smoke [`PAIRING_LIFECYCLE_SMOKE.md`](./actions/device-board/smoke/PAIRING_LIFECYCLE_SMOKE.md)
+
+Online-статус узла в кабинете держится на in-memory реестре сокетов сервера + presence-канале WS. **При подключении кабинета** сервер шлёт снапшот, иначе узел, связавшийся раньше кабинета, был бы невидим.
+
+| Событие presence | Когда | Кому |
+|------------------|-------|------|
+| `presence.snapshot` (`onlineDeviceIds[]`, `timestampMs`) | один раз при `registerCabinet` | новому кабинетному сокету |
+| `presence.node.online` / `node.offline` | подключение/отключение узла | всем кабинетам membrane (stream) |
+| `presence.session.invalidated` | отзыв/удаление ключа | узлу + кабинетам |
+
+Клиент кабинета: снапшот **заменяет** набор `onlineDeviceIds` целиком (авторитетный bootstrap); онлайн-набор **не обнуляется** при реконнекте — снапшот перезапишет. Источник истины — in-memory `nodeSockets` (переживает клиентские реконнекты, не переживает рестарт сервера — heartbeat/`lastSeenAt` bootstrap отложен, PL2b).
+
+**Жизненный цикл сопряжения:** `Device.pairingStatus` (`paired`/`revoked`/`unpaired`); отзыв ключа → `revoked` (real-time invalidate узла + force-release захвата), «Удалить» ключ = revoke + delete + `unpaired`. См. консилиум PL2–PL4.
+
+---
+
 ## §5 Electron preload (`electronAPI`)
 
 Канон surface (Studio MS1–MS3 + SC1):
