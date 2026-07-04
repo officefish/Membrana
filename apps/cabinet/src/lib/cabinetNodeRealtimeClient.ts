@@ -38,6 +38,16 @@ type BoardCaptureReleaseHandler = (payload: BoardCaptureReleasePayload) => void;
 
 const MAX_BACKOFF_MS = 30_000;
 
+/**
+ * PCB1 (presence-capture-board): логи WS-жизненного цикла КАБИНЕТА в консоли.
+ * Диагностика persistent-offline со стороны кабинета: подключён ли WS кабинета,
+ * приходит ли presence-снапшот и есть ли в нём deviceId узла, ловятся ли online.
+ */
+function logCabinetWs(event: string, detail: Record<string, unknown>): void {
+  // eslint-disable-next-line no-console
+  console.info(`[cabinet-ws] ${event}`, detail);
+}
+
 class CabinetNodeRealtimeClientImpl {
   private socket: WebSocket | null = null;
 
@@ -181,12 +191,18 @@ class CabinetNodeRealtimeClientImpl {
     url.searchParams.set('membraneId', this.membraneId);
 
     this.setState(this.reconnectAttempt > 0 ? 'reconnecting' : 'connecting');
+    logCabinetWs('connecting', {
+      membraneId: this.membraneId,
+      attempt: this.reconnectAttempt,
+      url: `${url.origin}${url.pathname}`,
+    });
     const ws = new WebSocket(url.toString());
     this.socket = ws;
 
     ws.addEventListener('open', () => {
       this.reconnectAttempt = 0;
       this.setState('connected');
+      logCabinetWs('open', { membraneId: this.membraneId });
     });
 
     ws.addEventListener('message', (event) => {
@@ -225,6 +241,12 @@ class CabinetNodeRealtimeClientImpl {
           envelope.type === NODE_REALTIME_EVENT_TYPES.presence.snapshot
         ) {
           const payload = parsePresenceSnapshotPayload(envelope.payload);
+          // PCB1: пришёл ли снапшот и есть ли в нём онлайн-узлы? Пустой снапшот
+          // при подключённом узле = проблема на сервере (registerNode/membraneId).
+          logCabinetWs('presence.snapshot', {
+            onlineDeviceIds: payload?.onlineDeviceIds ?? null,
+            count: payload?.onlineDeviceIds.length ?? 0,
+          });
           if (payload !== null) {
             for (const handler of this.presenceSnapshotHandlers) {
               handler(payload);
@@ -236,6 +258,7 @@ class CabinetNodeRealtimeClientImpl {
           envelope.type === NODE_REALTIME_EVENT_TYPES.presence.nodeOnline
         ) {
           const payload = envelope.payload as NodeOnlinePayload;
+          logCabinetWs('presence.nodeOnline', { deviceId: payload.deviceId });
           for (const handler of this.presenceOnlineHandlers) {
             handler(payload);
           }
@@ -245,6 +268,7 @@ class CabinetNodeRealtimeClientImpl {
           envelope.type === NODE_REALTIME_EVENT_TYPES.presence.nodeOffline
         ) {
           const payload = envelope.payload as NodeOnlinePayload;
+          logCabinetWs('presence.nodeOffline', { deviceId: payload.deviceId });
           for (const handler of this.presenceOfflineHandlers) {
             handler(payload);
           }
@@ -281,7 +305,8 @@ class CabinetNodeRealtimeClientImpl {
       }
     });
 
-    ws.addEventListener('close', () => {
+    ws.addEventListener('close', (event) => {
+      logCabinetWs('close', { code: event.code, reason: event.reason || undefined });
       if (this.membraneId) {
         this.scheduleReconnect();
       } else {
