@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "taskId": "pl1-presence-snapshot",
+  "state": "lgtm",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feat/pl1-presence-snapshot",
+  "currentCommitSha": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229",
+  "reviewedCommitSha": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/pl1-presence-snapshot/c515dc61e0f4b4cdbe7c62c5f9d238eceab06229-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 242,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/242"
+  },
+  "scope": {
+    "baseRef": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229^",
+    "files": [
+      "apps/cabinet/src/lib/cabinetNodeRealtimeClient.ts",
+      "apps/cabinet/src/lib/useCabinetNodeRuntime.ts",
+      "packages/background-cabinet/src/domain/node-realtime-wire.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.service.test.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.service.ts",
+      "packages/core/src/contracts/node-realtime/events.ts",
+      "packages/core/src/contracts/node-realtime/index.ts",
+      "packages/core/src/contracts/node-realtime/presence-snapshot.test.ts",
+      "packages/core/src/contracts/node-realtime/validate-payloads.ts"
+    ],
+    "packages": [
+      "apps/cabinet",
+      "packages/background-cabinet",
+      "packages/core"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229",
+        "checkedAt": "2026-07-04T16:59:37.503Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:verify",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229",
+        "checkedAt": "2026-07-04T16:57:24Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28713059776/job/85149683923"
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229",
+        "checkedAt": "2026-07-04T16:49:12Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28713013058/job/85149565838"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229",
+        "checkedAt": "2026-07-04T16:53:06Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28713013062/job/85149565752"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "c515dc61e0f4b4cdbe7c62c5f9d238eceab06229",
+        "checkedAt": "2026-07-04T16:55:51Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28713013083/job/85149565705"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "pending",
+    "evidence": null
+  },
+  "createdAt": "2026-07-04T16:59:33.356Z",
+  "updatedAt": "2026-07-04T16:59:49.258Z"
+}
