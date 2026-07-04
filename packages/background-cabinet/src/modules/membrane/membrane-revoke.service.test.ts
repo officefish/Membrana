@@ -59,6 +59,47 @@ describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
     );
   });
 
+  it('deleteAccessKey активного ключа: revoke + отвязка устройства + delete, без 409 (PL3)', async () => {
+    const { service, prisma, nodeRealtime } = buildService();
+    const activeKey = {
+      id: keyId,
+      duration: 'hours_4',
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000), // ещё активен
+      revokedAt: null,
+      createdAt: new Date('2026-07-04T00:00:00.000Z'),
+      node: { membraneId, membrane: { userId } },
+    };
+    // findUnique вызывается в deleteAccessKey и внутри revokeAccessKey.
+    vi.mocked(prisma.nodeAccessKey.findUnique).mockResolvedValue(activeKey as never);
+    vi.mocked(prisma.nodeAccessKey.update).mockResolvedValue({ ...activeKey, revokedAt: new Date() } as never);
+    vi.mocked(prisma.device.findFirst).mockResolvedValue({
+      lastPairSessionToken: 'tok-1',
+      mediaDeviceId,
+    } as never);
+    (prisma.nodeAccessKey as unknown as { delete: ReturnType<typeof vi.fn> }).delete = vi
+      .fn()
+      .mockResolvedValue({ id: keyId } as never);
+
+    const result = await service.deleteAccessKey(userId, keyId);
+
+    // Отзыв случился (notify узлу).
+    expect(nodeRealtime.notifySessionInvalidated).toHaveBeenCalledWith(
+      mediaDeviceId,
+      membraneId,
+      'revoked',
+    );
+    // Отвязка на уровне устройства: pairedKeyId очищен, статус unpaired.
+    expect(prisma.device.updateMany).toHaveBeenCalledWith({
+      where: { pairedKeyId: keyId },
+      data: { pairedKeyId: null, pairingStatus: 'unpaired' },
+    });
+    // Ключ удалён.
+    expect(
+      (prisma.nodeAccessKey as unknown as { delete: ReturnType<typeof vi.fn> }).delete,
+    ).toHaveBeenCalledWith({ where: { id: keyId } });
+    expect(result).toEqual({ deletedKeyId: keyId });
+  });
+
   it('повторный revoke уже отозванного ключа — идемпотентен (без notify)', async () => {
     const { service, prisma, nodeRealtime } = buildService();
     vi.mocked(prisma.nodeAccessKey.findUnique).mockResolvedValue({

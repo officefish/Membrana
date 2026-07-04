@@ -5,7 +5,6 @@ import {
   deleteAccessKey,
   fetchMembraneMe,
   purgeRevokedAccessKeys,
-  revokeAccessKey,
   type MembraneView,
   type NodeAccessKeyDuration,
   type NodeView,
@@ -80,19 +79,6 @@ export function KeysPage({ initialNodeId = null }: KeysPageProps) {
     }
   };
 
-  const handleRevoke = async (keyId: string) => {
-    setBusy(true);
-    setError(null);
-    try {
-      await revokeAccessKey(keyId);
-      await load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не удалось отозвать ключ');
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const handlePurgeInactive = async () => {
     if (!node) return;
     const inactiveCount = node.accessKeys.filter((key) => !key.active).length;
@@ -116,12 +102,17 @@ export function KeysPage({ initialNodeId = null }: KeysPageProps) {
     }
   };
 
-  const handleDeleteKey = async (keyId: string) => {
-    if (!window.confirm('Удалить ключ из списка?')) return;
+  // PL3 (pairing-lifecycle): «Удалить» = отзыв + удаление одной операцией
+  // (решение владельца). На активном ключе предупреждаем о разрыве сеанса узла.
+  const handleDeleteKey = async (key: { id: string; active: boolean }, label: string) => {
+    const message = key.active
+      ? `Удалить ключ «${label}»? Он активен — удаление отзовёт сеанс сопряжённого узла (связь разорвётся сразу), затем ключ будет удалён.`
+      : `Удалить ключ «${label}» из списка?`;
+    if (!window.confirm(message)) return;
     setBusy(true);
     setError(null);
     try {
-      await deleteAccessKey(keyId);
+      await deleteAccessKey(key.id);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не удалось удалить ключ');
@@ -260,25 +251,14 @@ export function KeysPage({ initialNodeId = null }: KeysPageProps) {
                             {key.revokedAt ? 'отозван' : key.active ? 'активен' : 'истёк'}
                           </span>
                         </div>
-                        {key.active ? (
-                          <button
-                            type="button"
-                            className="btn btn-outline btn-sm"
-                            disabled={busy}
-                            onClick={() => void handleRevoke(key.id)}
-                          >
-                            Отозвать
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            className="btn btn-outline btn-sm"
-                            disabled={busy}
-                            onClick={() => void handleDeleteKey(key.id)}
-                          >
-                            Удалить
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          className="btn btn-outline btn-error btn-sm"
+                          disabled={busy}
+                          onClick={() => void handleDeleteKey(key, label)}
+                        >
+                          Удалить
+                        </button>
                       </li>
                     );
                   })}
