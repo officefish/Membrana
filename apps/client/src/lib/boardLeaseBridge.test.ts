@@ -4,10 +4,34 @@ import {
 } from '@membrana/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Изолируем от persist-middleware реального agenda-стора (в node-тестах нет
+// localStorage → setItem падает). Мок хранит только selectedModuleId.
+vi.mock('@membrana/agenda', () => {
+  const store = { selectedModuleId: null as string | null };
+  return {
+    useMembranaStore: {
+      getState: () => ({
+        selectedModuleId: store.selectedModuleId,
+        selectModule: (id: string | null) => {
+          store.selectedModuleId = id;
+        },
+      }),
+      setState: (patch: { selectedModuleId?: string | null }) => {
+        if ('selectedModuleId' in patch) {
+          store.selectedModuleId = patch.selectedModuleId ?? null;
+        }
+      },
+    },
+  };
+});
+
+import { useMembranaStore } from '@membrana/agenda';
+
 import {
   applyBoardEnvelopeForTests,
   resetBoardLeaseBridgeForTests,
 } from '@/lib/boardLeaseBridge';
+import { DEVICE_BOARD_MODULE_ID } from '@/modules/device-board/device-board-module-config';
 import { resetServerFirstStoreForTests, useServerFirstStore } from '@/stores/serverFirstStore';
 
 const deviceId = 'device-1';
@@ -265,5 +289,79 @@ describe('boardLeaseBridge capture v2 (CT4)', () => {
     } finally {
       vi.unstubAllGlobals();
     }
+  });
+});
+
+describe('boardLeaseBridge force-open view-only (PCB5)', () => {
+  const capturePayload = {
+    deviceId,
+    mode: 'hard' as const,
+    sessionId: 'sess-1',
+    acquiredAt: '2026-07-04T10:00:00.000Z',
+    expiresAt: '2026-07-04T10:05:00.000Z',
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-04T10:00:00.000Z'));
+    resetBoardLeaseBridgeForTests();
+    resetServerFirstStoreForTests();
+    useMembranaStore.setState({ selectedModuleId: null });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('board.capture форс-открывает device-board и ставит флаг view-only', () => {
+    applyBoardEnvelopeForTests(
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, capturePayload),
+      deviceId,
+    );
+
+    expect(useMembranaStore.getState().selectedModuleId).toBe(DEVICE_BOARD_MODULE_ID);
+    expect(useServerFirstStore.getState().isViewOnlyFromCapture).toBe(true);
+  });
+
+  it('оператор на другом модуле → захват переключает на device-board', () => {
+    useMembranaStore.setState({ selectedModuleId: 'microphone' });
+
+    applyBoardEnvelopeForTests(
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, capturePayload),
+      deviceId,
+    );
+
+    expect(useMembranaStore.getState().selectedModuleId).toBe(DEVICE_BOARD_MODULE_ID);
+  });
+
+  it('оператор уже на device-board → навигация не дёргается (остаёмся)', () => {
+    useMembranaStore.setState({ selectedModuleId: DEVICE_BOARD_MODULE_ID });
+
+    applyBoardEnvelopeForTests(
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, capturePayload),
+      deviceId,
+    );
+
+    expect(useMembranaStore.getState().selectedModuleId).toBe(DEVICE_BOARD_MODULE_ID);
+    expect(useServerFirstStore.getState().isViewOnlyFromCapture).toBe(true);
+  });
+
+  it('board.release снимает флаг view-only, не уводя с доски', () => {
+    applyBoardEnvelopeForTests(
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.capture, capturePayload),
+      deviceId,
+    );
+    applyBoardEnvelopeForTests(
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.release, {
+        deviceId,
+        sessionId: 'sess-1',
+        reason: 'operator',
+      }),
+      deviceId,
+    );
+
+    expect(useServerFirstStore.getState().isViewOnlyFromCapture).toBe(false);
+    // Доску не покидаем автоматически — оператор остаётся в контексте.
+    expect(useMembranaStore.getState().selectedModuleId).toBe(DEVICE_BOARD_MODULE_ID);
   });
 });
