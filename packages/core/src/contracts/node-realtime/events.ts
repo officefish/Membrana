@@ -57,6 +57,16 @@ export interface NodeOnlinePayload {
   readonly membraneId: string;
 }
 
+/**
+ * PL1 (pairing-lifecycle): снапшот присутствия, отправляемый кабинету один раз
+ * при подключении — bootstrap набора онлайн-узлов до потока nodeOnline/Offline.
+ * Закрывает offline-desync: узел, связавшийся до открытия кабинета, был невидим.
+ */
+export interface PresenceSnapshotPayload {
+  readonly onlineDeviceIds: readonly string[];
+  readonly timestampMs: number;
+}
+
 export interface SessionInvalidatedPayload {
   readonly reason: 'revoked' | 'expired' | 'session_expired';
 }
@@ -131,6 +141,7 @@ export interface RuntimeLogPayload {
 
 export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
+    snapshot: 'presence.snapshot',
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',

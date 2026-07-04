@@ -55,6 +55,48 @@ describe('NodeRealtimeService', () => {
     expect(cabinetSocket.send).toHaveBeenCalledTimes(1);
   });
 
+  it('registerCabinet отправляет presence.snapshot с онлайн-узлами своей membrane (PL1)', () => {
+    const service = new NodeRealtimeService();
+
+    // Узел membrane m1 онлайн до подключения кабинета — корневой сценарий бага.
+    service.registerNode(
+      { role: 'node', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
+      mockSocket(),
+    );
+    // Узел чужой membrane не должен попасть в снапшот.
+    service.registerNode(
+      { role: 'node', userId: 'u2', membraneId: 'm2', nodeId: 'n2', mediaDeviceId: 'd2' },
+      mockSocket(),
+    );
+
+    const cabinetSocket = mockSocket();
+    service.registerCabinet(
+      { role: 'cabinet', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
+      cabinetSocket,
+    );
+
+    const sent = (cabinetSocket.send as ReturnType<typeof vi.fn>).mock.calls
+      .map((c) => JSON.parse(c[0] as string))
+      .find((e) => e.type === NODE_REALTIME_EVENT_TYPES.presence.snapshot);
+    expect(sent).toBeDefined();
+    expect(sent.payload.onlineDeviceIds).toEqual(['d1']);
+    expect(typeof sent.payload.timestampMs).toBe('number');
+  });
+
+  it('registerCabinet без онлайн-узлов шлёт пустой снапшот (PL1)', () => {
+    const service = new NodeRealtimeService();
+    const cabinetSocket = mockSocket();
+    service.registerCabinet(
+      { role: 'cabinet', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
+      cabinetSocket,
+    );
+    const sent = (cabinetSocket.send as ReturnType<typeof vi.fn>).mock.calls
+      .map((c) => JSON.parse(c[0] as string))
+      .find((e) => e.type === NODE_REALTIME_EVENT_TYPES.presence.snapshot);
+    expect(sent).toBeDefined();
+    expect(sent.payload.onlineDeviceIds).toEqual([]);
+  });
+
   it('ackJournalAppend sends cursor to node socket', () => {
     const service = new NodeRealtimeService();
     const nodeSocket = mockSocket();

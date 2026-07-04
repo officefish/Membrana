@@ -53,6 +53,37 @@ export class NodeRealtimeService {
       this.cabinetSockets.set(meta.membraneId, set);
     }
     set.add({ socket, meta });
+    // PL1 (pairing-lifecycle): снапшот присутствия сразу этому кабинету —
+    // без него узел, связавшийся до открытия кабинета, висел offline
+    // (поток nodeOnline транзиентен и доходит только до уже-подключённых).
+    this.sendPresenceSnapshot(meta.membraneId, socket);
+  }
+
+  /** PL1: онлайн-узлы данной membrane из in-memory реестра сокетов. */
+  private onlineDeviceIdsForMembrane(membraneId: string): string[] {
+    const ids: string[] = [];
+    for (const [deviceId, tracked] of this.nodeSockets.entries()) {
+      if (tracked.meta.membraneId === membraneId) {
+        ids.push(deviceId);
+      }
+    }
+    return ids;
+  }
+
+  private sendPresenceSnapshot(membraneId: string, socket: WebSocket): void {
+    if (socket.readyState !== socket.OPEN) return;
+    socket.send(
+      JSON.stringify({
+        v: 1,
+        channel: 'presence',
+        type: NODE_REALTIME_EVENT_TYPES.presence.snapshot,
+        ts: new Date().toISOString(),
+        payload: {
+          onlineDeviceIds: this.onlineDeviceIdsForMembrane(membraneId),
+          timestampMs: Date.now(),
+        },
+      }),
+    );
   }
 
   unregister(socket: WebSocket): void {

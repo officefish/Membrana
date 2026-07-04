@@ -22,6 +22,8 @@ export interface JournalAckPayload {
 
 export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
+    /** PL1: снапшот присутствия кабинету при подключении (bootstrap online-набора). */
+    snapshot: 'presence.snapshot',
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',

@@ -16,6 +16,7 @@ export {
   type MicSessionPayload,
   type NodeOnlinePayload,
   type NodeRealtimeEnvelopeInput,
+  type PresenceSnapshotPayload,
   type RuntimeCommandPayload,
   type RuntimeLogPayload,
   type RuntimeMode,
@@ -52,6 +53,7 @@ export {
   parseBoardCaptureReleasePayload,
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
+  parsePresenceSnapshotPayload,
   parseRuntimeCommandPayload,
 } from './validate-payloads.js';
 
