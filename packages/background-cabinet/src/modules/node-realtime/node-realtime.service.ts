@@ -138,6 +138,16 @@ export class NodeRealtimeService {
     return true;
   }
 
+  /**
+   * PCB4 (presence-capture-board): «live» = у устройства есть OPEN node-сокет
+   * в in-memory реестре. Источник истины presence — тот же, что для fan-out
+   * (не БД): нет петли между «кабинет думает online» и реальным сокетом.
+   */
+  isDeviceLive(mediaDeviceId: string): boolean {
+    const tracked = this.nodeSockets.get(mediaDeviceId);
+    return tracked !== undefined && tracked.socket.readyState === tracked.socket.OPEN;
+  }
+
   /** SF2/SF3: board events — кабинет + полевой узел. */
   broadcastBoardEnvelope(
     membraneId: string,
