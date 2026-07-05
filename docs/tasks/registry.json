@@ -10881,7 +10881,8 @@
       "size": "S",
       "parentEpic": "pairing-lifecycle",
       "dependsOn": [
-        "pl1-presence-snapshot"
+        "pl1-presence-snapshot",
+        "pl2-device-pairing-status"
       ],
       "notes": "Deferrable: Математик предлагал отложить; режется первой при нехватке времени. lastSeenAt уже существует.",
       "leadPersona": "ozhegov",

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type { WebSocket } from 'ws';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -39,6 +39,8 @@ interface TrackedSocket {
 
 @Injectable()
 export class NodeRealtimeService {
+  private readonly logger = new Logger(NodeRealtimeService.name);
+
   private readonly nodeSockets = new Map<string, TrackedSocket>();
 
   private readonly cabinetSockets = new Map<string, Set<TrackedSocket>>();
@@ -98,8 +100,9 @@ export class NodeRealtimeService {
         select: { mediaDeviceId: true },
       });
       return devices.map((device) => device.mediaDeviceId);
-    } catch {
+    } catch (error) {
       // Presence bootstrap must not reject an otherwise authenticated cabinet socket.
+      this.logger.warn({ error, membraneId }, 'recent presence bootstrap failed');
       return [];
     }
   }
