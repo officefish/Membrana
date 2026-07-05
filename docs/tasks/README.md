@@ -152,7 +152,6 @@
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `presence-capture-board` | Epic: Живость присутствия + view-only борд под захватом (PCB1–PCB6) | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
-| `pcb-2-auth-fail-banner` | PCB2: баннер auth-fail на клиенте (authFailedAt, дебаунс 2-3с, кнопка Пересопрячь) | M | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
 | `pcb-5-force-open-viewonly-board` | PCB5: захват -> force-open device-board view-only (agenda-стор, не URL) + снятие на release | M | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
 | `pcb-d2-multinode` | PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
 
@@ -162,6 +161,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `pcb-2-auth-fail-banner` | PCB2: баннер auth-fail на клиенте (authFailedAt, дебаунс 2-3с, кнопка Пересопрячь) | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-2-auth-fail-banner.md) |
 | `pcb-4-link-state-endpoint` | PCB4: GET /v1/nodes/:id/link-state -> {paired, live, lastSeenAt} + тесты | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-4-link-state-endpoint.md) |
 | `pcb-6-health-ping-endpoint` | PCB6: POST /v1/nodes/:id/health-ping (echo по WS, таймаут 3с) -> {reachable, latencyMs} + тесты | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-6-health-ping-endpoint.md) |
 | `cg1-flaky-rag-service` | CG1: стабилизация флейки @membrana/rag-service retrieveContext (timeout 5000ms) | 2026-07-04 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg1-flaky-rag-service.md) |
