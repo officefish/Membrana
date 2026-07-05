@@ -22,6 +22,12 @@ interface ServerFirstStoreState {
   readonly selectedScenarioId: string | null;
   /** CT5: живо ли WS-соединение realtime (для badge «Соединение потеряно»). */
   readonly realtimeConnected: boolean;
+  /**
+   * PCB5: доска открыта принудительно захватом кабинета (view-only). Флаг
+   * снимается на release. Полевые контролы всё равно скрыты через
+   * resolveServerFirstFlags(capture); флаг нужен для force-open + индикатора.
+   */
+  readonly isViewOnlyFromCapture: boolean;
   setEditLease: (lease: BoardEditLeasePayload | null) => void;
   setCaptureState: (capture: BoardCaptureStatePayload | null) => void;
   setCaptureFromRunCommand: (deviceId: string, input: {
@@ -46,6 +52,7 @@ export const useServerFirstStore = create<ServerFirstStoreState>((set, get) => (
   lastCaptureRelease: null,
   selectedScenarioId: null,
   realtimeConnected: true,
+  isViewOnlyFromCapture: false,
   setEditLease: (lease) => set({ editLease: lease }),
   setCaptureState: (capture) => set({ captureState: capture }),
   setCaptureFromRunCommand: (deviceId, input) => {
@@ -73,7 +80,7 @@ export const useServerFirstStore = create<ServerFirstStoreState>((set, get) => (
         isPaused: false,
       },
     }),
-  setCapture: (capture) => set({ capture, lastCaptureRelease: null }),
+  setCapture: (capture) => set({ capture, lastCaptureRelease: null, isViewOnlyFromCapture: true }),
   applyCaptureHeartbeat: (sessionId, expiresAt) => {
     const current = get().capture;
     // Heartbeat чужой/мёртвой сессии не воскрешает захват (канон §3).
@@ -82,7 +89,7 @@ export const useServerFirstStore = create<ServerFirstStoreState>((set, get) => (
     }
     set({ capture: { ...current, expiresAt } });
   },
-  releaseCapture: (reason) => set({ capture: null, lastCaptureRelease: reason }),
+  releaseCapture: (reason) => set({ capture: null, lastCaptureRelease: reason, isViewOnlyFromCapture: false }),
   setSelectedScenarioId: (scenarioId) => set({ selectedScenarioId: scenarioId }),
   setRealtimeConnected: (connected) => set({ realtimeConnected: connected }),
   reset: () =>
@@ -93,6 +100,7 @@ export const useServerFirstStore = create<ServerFirstStoreState>((set, get) => (
       lastCaptureRelease: null,
       selectedScenarioId: null,
       realtimeConnected: true,
+      isViewOnlyFromCapture: false,
     }),
 }));
 
