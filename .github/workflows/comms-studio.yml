@@ -70,6 +70,9 @@ jobs:
       - name: Boundaries — позитивный/негативный тест правил contour
         run: node --test scripts/check-package-boundaries.test.mjs
 
+      - name: Comms — secret-scan (блокирующий; вычистка секретов out/ + src/)
+        run: yarn workspace @membrana/comms-studio secret-scan
+
       - name: Comms — typecheck
         run: yarn workspace @membrana/comms-studio typecheck
 
