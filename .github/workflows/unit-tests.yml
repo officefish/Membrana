@@ -11,8 +11,16 @@ name: Unit tests
 on:
   push:
     branches: [main, master, develop, vesnin]
+    # Контур communications имеет свою полосу (comms-studio.yml); правка ТОЛЬКО его путей
+    # не гоняет продуктовые unit-тесты. CC3.
+    paths-ignore:
+      - 'apps/comms-studio/**'
+      - 'docs/comms/**'
   pull_request:
     branches: [main, master, develop, vesnin]
+    paths-ignore:
+      - 'apps/comms-studio/**'
+      - 'docs/comms/**'
   workflow_dispatch:
 
 concurrency:
