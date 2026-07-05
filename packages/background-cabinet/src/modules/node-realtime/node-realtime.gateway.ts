@@ -17,6 +17,7 @@ import {
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
   parseHealthPongPayload,
+  parsePresenceHeartbeatPayload,
   parseNodeRealtimeEnvelope,
   parseRuntimeCommandPayload,
   type NodeRealtimeEnvelope,
@@ -90,7 +91,7 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       let meta: NodeRealtimeSocketMeta;
       if (role === 'cabinet') {
         meta = await this.authService.authenticateCabinet(token, membraneId);
-        this.realtimeService.registerCabinet(meta, client);
+        await this.realtimeService.registerCabinet(meta, client);
       } else if (role === 'node') {
         // PCB1: три события WS-lifecycle узла (connect → authenticate → register).
         this.logger.log({ deviceId, event: 'node-ws-connect' }, 'node-ws-connect');
@@ -196,6 +197,16 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
         const payload = parseHealthPongPayload(envelope.payload);
         if (payload) {
           this.realtimeService.handleHealthPong(payload.pingId);
+        }
+        return;
+      }
+      if (
+        envelope.channel === 'presence' &&
+        envelope.type === NODE_REALTIME_EVENT_TYPES.presence.heartbeat
+      ) {
+        const payload = parsePresenceHeartbeatPayload(envelope.payload);
+        if (payload && payload.deviceId === meta.mediaDeviceId) {
+          await this.realtimeService.recordPresenceHeartbeat(payload.deviceId);
         }
         return;
       }

@@ -31,6 +31,31 @@ export interface HealthPongPayload {
   readonly pingId: string;
 }
 
+/** PL2b: периодический сигнал присутствия узла (node → server). */
+export interface PresenceHeartbeatPayload {
+  readonly deviceId: string;
+  readonly timestampMs: number;
+}
+
+export const NODE_RECENT_PRESENCE_WINDOW_MS = 300_000;
+
+export function parsePresenceHeartbeatPayload(raw: unknown): PresenceHeartbeatPayload | null {
+  if (typeof raw !== 'object' || raw === null) {
+    return null;
+  }
+  const { deviceId, timestampMs } = raw as {
+    deviceId?: unknown;
+    timestampMs?: unknown;
+  };
+  if (typeof deviceId !== 'string' || deviceId.trim().length === 0) {
+    return null;
+  }
+  if (typeof timestampMs !== 'number' || !Number.isFinite(timestampMs) || timestampMs < 0) {
+    return null;
+  }
+  return { deviceId, timestampMs };
+}
+
 /** Валидирует health.pong payload (node → server). */
 export function parseHealthPongPayload(raw: unknown): HealthPongPayload | null {
   if (typeof raw !== 'object' || raw === null) {
@@ -47,6 +72,8 @@ export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
     /** PL1: снапшот присутствия кабинету при подключении (bootstrap online-набора). */
     snapshot: 'presence.snapshot',
+    /** PL2b: периодический heartbeat узла для Device.lastSeenAt. */
+    heartbeat: 'presence.heartbeat',
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',

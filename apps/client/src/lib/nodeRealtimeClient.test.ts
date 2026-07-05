@@ -13,6 +13,7 @@ class MockWebSocket {
   static readonly CLOSED = 3;
   static instances: MockWebSocket[] = [];
   readyState = 0;
+  sent: string[] = [];
   private listeners: Record<string, Array<(e: unknown) => void>> = {};
   constructor(public url: string) {
     MockWebSocket.instances.push(this);
@@ -31,7 +32,9 @@ class MockWebSocket {
   close(): void {
     this.readyState = MockWebSocket.CLOSED;
   }
-  send(): void {}
+  send(raw: string): void {
+    this.sent.push(raw);
+  }
 }
 
 const pairing: PairedNodeCredentials = {
@@ -47,12 +50,14 @@ const pairing: PairedNodeCredentials = {
 
 describe('NodeRealtimeClient (PCB2/PCB3)', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     MockWebSocket.instances = [];
     vi.stubGlobal('WebSocket', MockWebSocket);
-    vi.stubGlobal('window', { setTimeout, clearTimeout });
+    vi.stubGlobal('window', { setTimeout, clearTimeout, setInterval, clearInterval });
     resetNodeRealtimeClientForTests();
   });
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
@@ -79,5 +84,35 @@ describe('NodeRealtimeClient (PCB2/PCB3)', () => {
     client.connectNode(pairing);
     MockWebSocket.instances[0]!.emitClose(1006);
     expect(onAuth).not.toHaveBeenCalled();
+  });
+
+  it('PL2b: heartbeat отправляется при open и каждые 120 секунд', () => {
+    const client = getNodeRealtimeClient();
+    client.connectNode(pairing);
+    const socket = MockWebSocket.instances[0]!;
+
+    socket.emitOpen();
+    vi.advanceTimersByTime(120_000);
+
+    const heartbeats = socket.sent
+      .map((raw) => JSON.parse(raw))
+      .filter((envelope) => envelope.type === 'presence.heartbeat');
+    expect(heartbeats).toHaveLength(2);
+    expect(heartbeats[0].payload.deviceId).toBe('dev-1');
+  });
+
+  it('PL2b: close останавливает heartbeat до reconnect', () => {
+    const client = getNodeRealtimeClient();
+    client.connectNode(pairing);
+    const socket = MockWebSocket.instances[0]!;
+    socket.emitOpen();
+    socket.emitClose(1006);
+
+    vi.advanceTimersByTime(120_000);
+
+    const heartbeats = socket.sent
+      .map((raw) => JSON.parse(raw))
+      .filter((envelope) => envelope.type === 'presence.heartbeat');
+    expect(heartbeats).toHaveLength(1);
   });
 });

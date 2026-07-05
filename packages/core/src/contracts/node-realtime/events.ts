@@ -67,6 +67,16 @@ export interface PresenceSnapshotPayload {
   readonly timestampMs: number;
 }
 
+/** PL2b: периодический сигнал присутствия узла (node → server). */
+export interface PresenceHeartbeatPayload {
+  readonly deviceId: string;
+  readonly timestampMs: number;
+}
+
+export const NODE_PRESENCE_HEARTBEAT_INTERVAL_MS = 120_000;
+
+export const NODE_RECENT_PRESENCE_WINDOW_MS = 300_000;
+
 export interface SessionInvalidatedPayload {
   readonly reason: 'revoked' | 'expired' | 'session_expired';
 }
@@ -157,6 +167,7 @@ export interface RuntimeLogPayload {
 export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
     snapshot: 'presence.snapshot',
+    heartbeat: 'presence.heartbeat',
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',
