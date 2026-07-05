@@ -152,7 +152,6 @@
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pcb-d2-multinode` | PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
-| `comms-contour-environment` | Epic: Окружение партнёра по внешним коммуникациям — leaf-контур apps/comms-studio (CC1–CC9) | L | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
 
 ---
 
@@ -165,6 +164,7 @@
 | `pcb-4-link-state-endpoint` | PCB4: GET /v1/nodes/:id/link-state -> {paired, live, lastSeenAt} + тесты | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-4-link-state-endpoint.md) |
 | `pcb-5-force-open-viewonly-board` | PCB5: захват -> force-open device-board view-only (agenda-стор, не URL) + снятие на release | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-5-force-open-viewonly-board.md) |
 | `pcb-6-health-ping-endpoint` | PCB6: POST /v1/nodes/:id/health-ping (echo по WS, таймаут 3с) -> {reachable, latencyMs} + тесты | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-6-health-ping-endpoint.md) |
+| `comms-contour-environment` | Epic: Окружение партнёра по внешним коммуникациям — leaf-контур apps/comms-studio (CC1–CC9) | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/comms-contour-environment.md) |
 | `cc-1-leaf-workspace` | CC1: leaf-воркспейс apps/comms-studio (package.json без @membrana/*, out/, README тонкого среза) | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/cc-1-leaf-workspace.md) |
 | `cc-2-boundaries-invariant` | CC2: check:boundaries leaf-zero + позитивный/негативный тест (ребро к/от контура роняет сборку) | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/cc-2-boundaries-invariant.md) |
 | `cc-3-ci-path-filters-codeowners` | CC3: CI path-фильтры (отдельная comms-полоса) + CODEOWNERS apps/comms-studio/** | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/cc-3-ci-path-filters-codeowners.md) |
