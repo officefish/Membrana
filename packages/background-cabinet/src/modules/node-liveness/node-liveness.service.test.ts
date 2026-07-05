@@ -16,6 +16,7 @@ function buildService() {
   } as unknown as PrismaService;
   const nodeRealtime = {
     isDeviceLive: vi.fn().mockReturnValue(false),
+    pingNode: vi.fn().mockResolvedValue({ reachable: true, latencyMs: 12 }),
   } as unknown as NodeRealtimeService;
   const service = new NodeLinkStateService(prisma, nodeRealtime);
   return { service, prisma, nodeRealtime };
@@ -76,6 +77,26 @@ describe('NodeLinkStateService.linkState (PCB4)', () => {
     vi.mocked(prisma.node.findUnique).mockResolvedValue(null as never);
 
     await expect(service.linkState(userId, nodeId)).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('healthPing: сопряжённый узел → делегирует pingNode(mediaDeviceId)', async () => {
+    const { service, prisma, nodeRealtime } = buildService();
+    mockNode(prisma, { mediaDeviceId, pairingStatus: 'paired', lastSeenAt });
+
+    const result = await service.healthPing(userId, nodeId);
+
+    expect(result).toEqual({ reachable: true, latencyMs: 12 });
+    expect(nodeRealtime.pingNode).toHaveBeenCalledWith(mediaDeviceId);
+  });
+
+  it('healthPing: без устройства → unreachable, pingNode не дёргаем', async () => {
+    const { service, prisma, nodeRealtime } = buildService();
+    mockNode(prisma, null);
+
+    const result = await service.healthPing(userId, nodeId);
+
+    expect(result).toEqual({ reachable: false, latencyMs: null });
+    expect(nodeRealtime.pingNode).not.toHaveBeenCalled();
   });
 
   it('чужой узел → ForbiddenException', async () => {

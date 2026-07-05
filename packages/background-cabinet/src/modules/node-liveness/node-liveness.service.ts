@@ -1,6 +1,9 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
+import {
+  NodeRealtimeService,
+  type NodeHealthPingResult,
+} from '../node-realtime/node-realtime.service';
 
 /**
  * PCB4 (presence-capture-board): достоверное состояние связи узла для кабинета.
@@ -31,6 +34,19 @@ export class NodeLinkStateService {
       live,
       lastSeenAt: device?.lastSeenAt?.toISOString() ?? null,
     };
+  }
+
+  /**
+   * PCB6: активная проба живости узла (echo по WS, таймаут 3с). Не сопряжён
+   * с устройством или узел без mediaDeviceId → сразу unreachable.
+   */
+  async healthPing(userId: string, nodeId: string): Promise<NodeHealthPingResult> {
+    const node = await this.loadOwnedNode(userId, nodeId);
+    const mediaDeviceId = node.device?.mediaDeviceId;
+    if (!mediaDeviceId) {
+      return { reachable: false, latencyMs: null };
+    }
+    return this.nodeRealtime.pingNode(mediaDeviceId);
   }
 
   private async loadOwnedNode(userId: string, nodeId: string) {

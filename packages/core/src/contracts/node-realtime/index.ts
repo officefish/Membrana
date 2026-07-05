@@ -10,6 +10,8 @@ export {
   NODE_REALTIME_EVENT_TYPES,
   type AnalysisBriefPayload,
   type AnalysisLevelPayload,
+  type HealthPingPayload,
+  type HealthPongPayload,
   type JournalAckPayload,
   type JournalAppendPayload,
   type JournalLiveSessionPayload,

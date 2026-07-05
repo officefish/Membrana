@@ -2,6 +2,7 @@ import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
   parseNodeRealtimeEnvelope,
+  type HealthPingPayload,
   type NodeRealtimeEnvelope,
   type SessionInvalidatedPayload,
 } from '@membrana/core';
@@ -162,6 +163,20 @@ class NodeRealtimeClientImpl {
         ) {
           const payload = parsed.value.payload as SessionInvalidatedPayload;
           this.emitSessionInvalidated(payload.reason);
+        }
+        // PCB6: сервер пробует живость узла — отвечаем эхом с тем же pingId.
+        if (
+          parsed.value.channel === 'presence' &&
+          parsed.value.type === NODE_REALTIME_EVENT_TYPES.presence.healthPing
+        ) {
+          const payload = parsed.value.payload as HealthPingPayload;
+          if (payload && typeof payload.pingId === 'string') {
+            this.send(
+              createNodeRealtimeEnvelope('presence', NODE_REALTIME_EVENT_TYPES.presence.healthPong, {
+                pingId: payload.pingId,
+              }),
+            );
+          }
         }
         for (const handler of this.messageHandlers) {
           handler(parsed.value);

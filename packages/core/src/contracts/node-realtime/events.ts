@@ -71,6 +71,21 @@ export interface SessionInvalidatedPayload {
   readonly reason: 'revoked' | 'expired' | 'session_expired';
 }
 
+/**
+ * PCB6 (presence-capture-board): активная проба живости узла (cabinet → server →
+ * node). Сервер шлёт `health.ping` с nonce; узел отвечает `health.pong` с тем же
+ * `pingId`. `sentAt` — серверный Date.now() (мс) для расчёта latencyMs.
+ */
+export interface HealthPingPayload {
+  readonly pingId: string;
+  readonly sentAt: number;
+}
+
+/** PCB6: ответ узла на health.ping (node → server). */
+export interface HealthPongPayload {
+  readonly pingId: string;
+}
+
 /** Режим исполнения device-board runtime (MP7b). */
 export type RuntimeMode = 'normal' | 'alarm';
 
@@ -145,6 +160,10 @@ export const NODE_REALTIME_EVENT_TYPES = {
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',
+    /** PCB6: активная проба живости (server → node). */
+    healthPing: 'health.ping',
+    /** PCB6: ответ узла на пробу (node → server). */
+    healthPong: 'health.pong',
   },
   journal: {
     append: 'journal.append',

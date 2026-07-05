@@ -1,11 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import type { WebSocket } from 'ws';
 import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
+  type HealthPingPayload,
   type JournalAckPayload,
   type NodeRealtimeEnvelope,
 } from '../../domain/node-realtime-wire';
+
+export interface NodeHealthPingResult {
+  readonly reachable: boolean;
+  readonly latencyMs: number | null;
+}
+
+interface PendingPing {
+  readonly resolve: (latencyMs: number) => void;
+  readonly sentAt: number;
+  readonly timer: ReturnType<typeof setTimeout>;
+}
 
 export type NodeRealtimeSocketRole = 'node' | 'cabinet';
 
@@ -146,6 +159,48 @@ export class NodeRealtimeService {
   isDeviceLive(mediaDeviceId: string): boolean {
     const tracked = this.nodeSockets.get(mediaDeviceId);
     return tracked !== undefined && tracked.socket.readyState === tracked.socket.OPEN;
+  }
+
+  private readonly pendingPings = new Map<string, PendingPing>();
+
+  /**
+   * PCB6 (presence-capture-board): активная проба живости узла — echo по WS.
+   * Отправляем health.ping с nonce, ждём health.pong (таймаут) → latencyMs.
+   * Не «live» (нет OPEN-сокета) → сразу unreachable, без ожидания таймаута.
+   */
+  async pingNode(mediaDeviceId: string, timeoutMs = 3000): Promise<NodeHealthPingResult> {
+    const pingId = randomUUID();
+    const sentAt = Date.now();
+    const sent = this.sendToNode(
+      mediaDeviceId,
+      createNodeRealtimeEnvelope('presence', NODE_REALTIME_EVENT_TYPES.presence.healthPing, {
+        pingId,
+        sentAt,
+      } satisfies HealthPingPayload),
+    );
+    if (!sent) {
+      return { reachable: false, latencyMs: null };
+    }
+    return new Promise<NodeHealthPingResult>((resolve) => {
+      const timer = setTimeout(() => {
+        this.pendingPings.delete(pingId);
+        resolve({ reachable: false, latencyMs: null });
+      }, timeoutMs);
+      this.pendingPings.set(pingId, {
+        resolve: (latencyMs) => resolve({ reachable: true, latencyMs }),
+        sentAt,
+        timer,
+      });
+    });
+  }
+
+  /** PCB6: узел ответил на пробу — резолвим ожидающий pingNode с latencyMs. */
+  handleHealthPong(pingId: string): void {
+    const pending = this.pendingPings.get(pingId);
+    if (!pending) return;
+    clearTimeout(pending.timer);
+    this.pendingPings.delete(pingId);
+    pending.resolve(Date.now() - pending.sentAt);
   }
 
   /** SF2/SF3: board events — кабинет + полевой узел. */
