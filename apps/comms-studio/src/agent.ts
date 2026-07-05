@@ -29,7 +29,14 @@ export interface AgentOptions {
   readonly generate: Generate;
   /** Обновить рабочую копию (`git pull`) перед чтением канона. По умолчанию false. */
   readonly refresh?: boolean;
+  /**
+   * Если refresh запрошен, но `git pull` неуспешен — ронять прогон (не читать устаревшую копию).
+   * По умолчанию true: «закрытие точки дрейфа» строгое. CC8-review P2.
+   */
+  readonly failOnStaleRefresh?: boolean;
 }
+
+export class StaleRefreshError extends Error {}
 
 export interface AgentRunResult {
   readonly canon: CanonContext;
@@ -49,6 +56,9 @@ export function refreshWorkingCopy(repoRoot: string): boolean {
 /** Запускает агента: refresh → loadCanon → generate → write в out/. */
 export async function runAgent(opts: AgentOptions): Promise<AgentRunResult> {
   const refreshed = opts.refresh ? refreshWorkingCopy(opts.repoRoot) : false;
+  if (opts.refresh && !refreshed && opts.failOnStaleRefresh !== false) {
+    throw new StaleRefreshError('git pull неуспешен — прогон остановлен, чтобы не читать устаревший канон');
+  }
   const canon = loadCanon(opts.repoRoot);
   const artifacts = await opts.generate(canon);
   const written = artifacts.map((a) => writeArtifact(opts.pkgRoot, a.name, a.content));

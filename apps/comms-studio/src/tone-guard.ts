@@ -38,25 +38,48 @@ const HYPE = [
   'искусственный интеллект',
 ];
 
-/** Военная риторика. GLOSSARY §3 / system prompt. */
+/**
+ * Военная риторика. GLOSSARY §3 / system prompt. «удар» намеренно исключён как самый
+ * ложно-срабатывающий стем (ударение/удары дождя) — CC8-review P2; военный удар покрыт
+ * «поражение»/«уничтожение»/«военн».
+ */
 const MILITARY = [
   'поле боя',
   'противник',
   'вооружённые силы',
   'вооруженные силы',
   'военн',
-  'удар',
   'поражение',
   'уничтожение',
 ];
 
 const EMOJI_RE = /\p{Extended_Pictographic}/u;
 
-function scanTerms(line: string, terms: readonly string[], category: ToneCategory, lineNo: number): ToneViolation[] {
-  const lower = line.toLowerCase();
+/** Экранирует спецсимволы regex в терме. */
+function escapeRe(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Строит regex со ЛЕВОЙ границей слова (не матчит середину слова, напр. «псевдоинноваци»),
+ * стем открыт справа (суффиксы намеренно ловятся: «инноваци» → «инновация/инновационный»).
+ */
+function boundaryRe(term: string): RegExp {
+  return new RegExp('(?<![\\p{L}\\p{N}])' + escapeRe(term), 'iu');
+}
+
+const HYPE_RE = HYPE.map((t) => ({ term: t, re: boundaryRe(t) }));
+const MILITARY_RE = MILITARY.map((t) => ({ term: t, re: boundaryRe(t) }));
+
+function scanTerms(
+  line: string,
+  terms: readonly { term: string; re: RegExp }[],
+  category: ToneCategory,
+  lineNo: number,
+): ToneViolation[] {
   const out: ToneViolation[] = [];
-  for (const term of terms) {
-    if (lower.includes(term)) out.push({ category, term, line: lineNo });
+  for (const { term, re } of terms) {
+    if (re.test(line)) out.push({ category, term, line: lineNo });
   }
   return out;
 }
@@ -71,8 +94,8 @@ export function checkTone(text: string): ToneViolation[] {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!;
     const lineNo = i + 1;
-    violations.push(...scanTerms(line, HYPE, 'hype', lineNo));
-    violations.push(...scanTerms(line, MILITARY, 'military', lineNo));
+    violations.push(...scanTerms(line, HYPE_RE, 'hype', lineNo));
+    violations.push(...scanTerms(line, MILITARY_RE, 'military', lineNo));
     if (EMOJI_RE.test(line)) violations.push({ category: 'emoji', term: 'emoji', line: lineNo });
   }
   return violations;

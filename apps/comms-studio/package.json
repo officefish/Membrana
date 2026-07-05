@@ -10,12 +10,14 @@
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
     "secret-scan": "node scripts/check-secrets.mjs",
+    "generate:v0.1": "tsx src/run-v0.1.ts",
     "clean": "rimraf dist .turbo tsconfig.tsbuildinfo"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
     "eslint": "^8.57.0",
     "rimraf": "^5.0.0",
+    "tsx": "^4.7.0",
     "typescript": "^5.4.0",
     "vitest": "^1.4.0"
   }
