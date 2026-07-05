@@ -9,6 +9,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
+    "secret-scan": "node scripts/check-secrets.mjs",
     "clean": "rimraf dist .turbo tsconfig.tsbuildinfo"
   },
   "devDependencies": {
