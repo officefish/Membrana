@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "taskId": "cc-9-partner-slice-output",
+  "state": "archived",
+  "tier": "T1",
+  "reviewMode": "standard",
+  "branch": "feat/cc9-partner-slice-output",
+  "currentCommitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+  "reviewedCommitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/cc-9-partner-slice-output/35b5a71f64379cf8a9c99d89be6b9b83c69c5d00-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 264,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/264"
+  },
+  "scope": {
+    "baseRef": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00^",
+    "files": [
+      "apps/comms-studio/PARTNER.md",
+      "apps/comms-studio/out/v0.1/INDEX.md",
+      "apps/comms-studio/out/v0.1/nablyudatelnaya-sistema.md",
+      "apps/comms-studio/out/v0.1/semeystvo-detektorov.md",
+      "apps/comms-studio/out/v0.1/sensornyy-uzel.md",
+      "apps/comms-studio/out/v0.1/stage-gate.md",
+      "apps/comms-studio/out/v0.1/tdoa-lokalizaciya.md",
+      "apps/comms-studio/package.json",
+      "apps/comms-studio/src/agent.ts",
+      "apps/comms-studio/src/generator.test.ts",
+      "apps/comms-studio/src/generator.ts",
+      "apps/comms-studio/src/index.ts",
+      "apps/comms-studio/src/run-v0.1.ts",
+      "apps/comms-studio/src/tone-guard.ts",
+      "yarn.lock"
+    ],
+    "packages": [
+      "apps/comms-studio"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:39:02.063Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/comms-studio typecheck",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:39:05.213Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/comms-studio test",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:39:09.402Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/comms-studio secret-scan",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:39:10.915Z",
+        "note": ""
+      },
+      {
+        "command": "yarn check:boundaries",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:39:15.396Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:36:53Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28750858884/job/85249610318"
+      },
+      {
+        "command": "github-check:Comms contour — boundaries, typecheck, lint, test",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:38:20Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28750858894/job/85249602848"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:36:56Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28750858907/job/85249602835"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "35b5a71f64379cf8a9c99d89be6b9b83c69c5d00",
+        "checkedAt": "2026-07-05T18:36:58Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28750858883/job/85249602779"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #264 merged 2026-07-05T18:44:44Z (d515fa22f88646c1a2da294a7bfcab9b38e934ef)"
+  },
+  "createdAt": "2026-07-05T18:37:54.436Z",
+  "updatedAt": "2026-07-05T18:44:46.793Z"
+}

@@ -153,7 +153,6 @@
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pcb-d2-multinode` | PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
 | `comms-contour-environment` | Epic: Окружение партнёра по внешним коммуникациям — leaf-контур apps/comms-studio (CC1–CC9) | L | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
-| `cc-9-partner-slice-output` | CC9: тонкий срез партнёра (монитор out/** + Drive, обратный импорт запрещён) + первый выход v0.1 (3–5 компонентов, сверка Storybook/UI) | M | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
 
 ---
 
@@ -174,6 +173,7 @@
 | `cc-6-glossary` | CC6: GLOSSARY.md — заблокированный глоссарий терминов | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/cc-6-glossary.md) |
 | `cc-7-brand-tokens` | CC7: BRAND_TOKENS.md — палитра/шрифты/визуальные do-dont | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/cc-7-brand-tokens.md) |
 | `cc-8-live-read-agent` | CC8: comms-агент живого чтения (fs-read канон+исходники, git pull ритм, пишет только в out/, канон тона на рендере) | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/cc-8-live-read-agent.md) |
+| `cc-9-partner-slice-output` | CC9: тонкий срез партнёра (монитор out/** + Drive, обратный импорт запрещён) + первый выход v0.1 (3–5 компонентов, сверка Storybook/UI) | 2026-07-05 | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — | [карточка](./archive/cc-9-partner-slice-output.md) |
 | `cg1-flaky-rag-service` | CG1: стабилизация флейки @membrana/rag-service retrieveContext (timeout 5000ms) | 2026-07-04 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../docs/prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg1-flaky-rag-service.md) |
 | `pairing-lifecycle` | Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5) | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pairing-lifecycle.md) |
 | `pl1-presence-snapshot` | PL1: PresenceSnapshot в core + registerCabinet отдаёт снапшот + seeding клиента | 2026-07-04 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl1-presence-snapshot.md) |
