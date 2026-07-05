@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "taskId": "cc-5-facts-sheet",
+  "state": "archived",
+  "tier": "T0",
+  "reviewMode": "concise-t0",
+  "branch": "feat/cc5-facts-sheet",
+  "currentCommitSha": "67a3d80f9bf9d856517566c438da3eda38e0c2b0",
+  "reviewedCommitSha": "67a3d80f9bf9d856517566c438da3eda38e0c2b0",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/cc-5-facts-sheet/67a3d80f9bf9d856517566c438da3eda38e0c2b0-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 259,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/259"
+  },
+  "scope": {
+    "baseRef": "origin/main",
+    "files": [
+      "docs/comms/canon/FACTS_SHEET.md"
+    ],
+    "packages": []
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "67a3d80f9bf9d856517566c438da3eda38e0c2b0",
+        "checkedAt": "2026-07-05T14:30:51.348Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/comms-studio test",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "67a3d80f9bf9d856517566c438da3eda38e0c2b0",
+        "checkedAt": "2026-07-05T14:30:54.048Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Comms contour — boundaries, typecheck, lint, test",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "67a3d80f9bf9d856517566c438da3eda38e0c2b0",
+        "checkedAt": "2026-07-05T14:14:58Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28743607468/job/85230591360"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #259 merged 2026-07-05T14:32:29Z (198429ce7fc1f3d7f2fd96a76d73df60686ec742)"
+  },
+  "createdAt": "2026-07-05T13:40:14.227Z",
+  "updatedAt": "2026-07-05T14:32:32.450Z"
+}
