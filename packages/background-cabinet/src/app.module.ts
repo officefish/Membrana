@@ -15,6 +15,7 @@ import { NodeRealtimeModule } from './modules/node-realtime/node-realtime.module
 // CT7 (канон §9): edit lease вне тарифа v2 — REST endpoints отключены.
 // Tariff v3: вернуть ScenarioEditLeaseModule.
 import { DeviceCaptureModule } from './modules/device-capture/device-capture.module';
+import { NodeLivenessModule } from './modules/node-liveness/node-liveness.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -42,7 +43,7 @@ const testImports =
       ];
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule, DeviceCaptureModule],
+  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule, DeviceCaptureModule, NodeLivenessModule],
   controllers: [HealthController],
 })
 export class AppModule {}
