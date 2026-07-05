@@ -11335,6 +11335,154 @@
       "supportPersonas": [
         "vesnin"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-05",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "comms-sandbox-docs-adaptation",
+      "title": "Epic: Адаптация 4 партнёрских документов песочницы под реализацию CC1–CC9 (CD1–CD6)",
+      "size": "M",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "comms-contour-environment"
+      ],
+      "notes": "Доки в docs/comms/sandbox/ (baseline). Реализация CC1-CC9 приоритетнее доков; адаптировать, не выбрасывать. Партнёр действует по CHECKLIST+RUNBOOK. Ядро: топология Вариант A, живой канон вместо копий, hook переиспользует tone-guard.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-05",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cd-1-topology-variant-a",
+      "title": "CD1: зафиксировать топологию Вариант A по 4 докам (CONTOUR_DIR=apps/comms-studio, REPO=монорепо, убрать «до решения»)",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-05",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cd-2-live-canon-not-copies",
+      "title": "CD2: живой канон docs/comms/canon вместо копий (RUNBOOK §5.1/§6, CHECKLIST Блок C=готово, GUIDE §3/§8, INSIGHT §4)",
+      "size": "M",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-1-topology-variant-a"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-05",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cd-3-hook-reuse-tone-guard",
+      "title": "CD3: hook партнёра переиспользует наш tone-guard/blocked-terms (RUNBOOK §7, INSIGHT §3.3, GUIDE §5), не дублирует",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-2-live-canon-not-copies"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-05",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cd-4-sandbox-seam-relationship",
+      "title": "CD4: раздел о связи интерактивной песочницы и seam-генератора generate:v0.1 (общий канон, только out/)",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-1-topology-variant-a"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-05",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cd-5-precision-refs",
+      "title": "CD5: точность — Node 20/22, плейсхолдеры (Replit URL/Playwright pkg/даты), сверка ссылок (PROMPT_PITCH_DECK.md, membrana.space)",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-05",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cd-6-placement-registration",
+      "title": "CD6: финализировать размещение docs/comms/sandbox + cross-link + сквозная сверка 4 доков",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-2-live-canon-not-copies",
+        "cd-3-hook-reuse-tone-guard",
+        "cd-4-sandbox-seam-relationship",
+        "cd-5-precision-refs"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     }
   ]
 }

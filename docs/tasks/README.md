@@ -152,6 +152,13 @@
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pcb-d2-multinode` | PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
+| `comms-sandbox-docs-adaptation` | Epic: Адаптация 4 партнёрских документов песочницы под реализацию CC1–CC9 (CD1–CD6) | M | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `cd-1-topology-variant-a` | CD1: зафиксировать топологию Вариант A по 4 докам (CONTOUR_DIR=apps/comms-studio, REPO=монорепо, убрать «до решения») | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `cd-2-live-canon-not-copies` | CD2: живой канон docs/comms/canon вместо копий (RUNBOOK §5.1/§6, CHECKLIST Блок C=готово, GUIDE §3/§8, INSIGHT §4) | M | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `cd-3-hook-reuse-tone-guard` | CD3: hook партнёра переиспользует наш tone-guard/blocked-terms (RUNBOOK §7, INSIGHT §3.3, GUIDE §5), не дублирует | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `cd-4-sandbox-seam-relationship` | CD4: раздел о связи интерактивной песочницы и seam-генератора generate:v0.1 (общий канон, только out/) | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `cd-5-precision-refs` | CD5: точность — Node 20/22, плейсхолдеры (Replit URL/Playwright pkg/даты), сверка ссылок (PROMPT_PITCH_DECK.md, membrana.space) | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `cd-6-placement-registration` | CD6: финализировать размещение docs/comms/sandbox + cross-link + сквозная сверка 4 доков | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
 
 ---
 
