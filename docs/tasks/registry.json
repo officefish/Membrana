@@ -10960,10 +10960,10 @@
       "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-04",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "Спринт PCB1-PCB6 полностью закрыт 2026-07-05: PCB1/PCB3 (#248/#249, корневой фикс persistent-offline, подтверждён на проде 2026-07-04), PCB4 link-state (#250, T1), PCB6 health-ping (#251, T2), PCB2 auth-fail banner (#252, T1), PCB5 force-viewonly-board (#253, T1) — все closure-review LGTM. PCB-D2 (multi-node, Phase 3) отвязан в standalone deferred backlog. Хвосты: lastSeenAt на registerNode не пишется; P2 rate-limit на link-state.",
       "id": "presence-capture-board",
       "title": "Epic: Живость присутствия + view-only борд под захватом (PCB1–PCB6)",
       "size": "L",
@@ -11118,11 +11118,11 @@
       "id": "pcb-d2-multinode",
       "title": "PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список",
       "size": "L",
-      "parentEpic": "presence-capture-board",
+      "parentEpic": null,
       "dependsOn": [
         "pcb-6-health-ping-endpoint"
       ],
-      "notes": "Отложено: требует переделки UI кабинета. Владелец: связанных устройств со временем несколько.",
+      "notes": "Отложено (Phase 3, standalone backlog после закрытия эпика presence-capture-board 2026-07-05): требует переделки UI кабинета. Владелец: связанных устройств со временем несколько. multi-node getPairStatus/authenticateCabinet take:1 → массив узлов + UI список.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko",
