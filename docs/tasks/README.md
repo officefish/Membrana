@@ -152,6 +152,16 @@
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pcb-d2-multinode` | PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
+| `comms-contour-environment` | Epic: Окружение партнёра по внешним коммуникациям — leaf-контур apps/comms-studio (CC1–CC9) | L | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-1-leaf-workspace` | CC1: leaf-воркспейс apps/comms-studio (package.json без @membrana/*, out/, README тонкого среза) | M | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-2-boundaries-invariant` | CC2: check:boundaries leaf-zero + позитивный/негативный тест (ребро к/от контура роняет сборку) | M | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-3-ci-path-filters-codeowners` | CC3: CI path-фильтры (отдельная comms-полоса) + CODEOWNERS apps/comms-studio/** | M | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-4-isolated-env-secret-scan` | CC4: изолированный .env + блокирующий secret-scan чек в comms-CI | S | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-5-facts-sheet` | CC5: FACTS_SHEET.md — лист фактов (стадия/метрики/команда/дорожная карта; подтверждён/гипотеза/TBD) | M | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-6-glossary` | CC6: GLOSSARY.md — заблокированный глоссарий терминов | S | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-7-brand-tokens` | CC7: BRAND_TOKENS.md — палитра/шрифты/визуальные do-dont | M | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-8-live-read-agent` | CC8: comms-агент живого чтения (fs-read канон+исходники, git pull ритм, пишет только в out/, канон тона на рендере) | L | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
+| `cc-9-partner-slice-output` | CC9: тонкий срез партнёра (монитор out/** + Drive, обратный импорт запрещён) + первый выход v0.1 (3–5 компонентов, сверка Storybook/UI) | M | [`COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md`](../docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md) | — |
 
 ---
 
