@@ -19,7 +19,10 @@ export const UserCaseSettingsPanel: React.FC<{
   readonly config: DeviceBoardModuleConfig;
   readonly onUpdateConfig: ModuleProps<DeviceBoardModuleConfig>['onUpdateConfig'];
 }> = ({ config, onUpdateConfig }) => {
-  const normalized = normalizeDeviceBoardModuleConfig(config);
+  const normalized = useMemo(
+    () => normalizeDeviceBoardModuleConfig(config),
+    [config],
+  );
 
   const catalogService = useMemo(
     () =>
@@ -27,7 +30,7 @@ export const UserCaseSettingsPanel: React.FC<{
         catalog: getDefaultUserCaseCatalogService(),
         entitledTariffSkus: new Set(normalized.entitledTariffSkus),
       }),
-    [normalized.entitledTariffSkus.join('|')],
+    [normalized.entitledTariffSkus],
   );
 
   const cards = catalogService.listCards('microphone');
