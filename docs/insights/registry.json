@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-30",
+  "updatedAt": "2026-07-05",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -330,6 +330,25 @@
       "weight": null,
       "createdAt": "2026-06-30",
       "tags": []
+    },
+    {
+      "id": "insight-comms-contour-topology",
+      "title": "Контур внешних коммуникаций: изоляция по записи, не по чтению (Вариант A)",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": "week",
+      "weight": 8.6,
+      "createdAt": "2026-07-05",
+      "tags": [
+        "comms",
+        "topology",
+        "monorepo",
+        "boundaries",
+        "isolation",
+        "single-source-of-truth",
+        "architecture"
+      ]
     }
   ]
 }
