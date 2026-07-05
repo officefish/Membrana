@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "taskId": "pcb-6-health-ping-endpoint",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feat/pcb6-health-ping-endpoint",
+  "currentCommitSha": "1c4507446139df221269dc64f235f9df47272676",
+  "reviewedCommitSha": "1c4507446139df221269dc64f235f9df47272676",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/pcb-6-health-ping-endpoint/1c4507446139df221269dc64f235f9df47272676-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 251,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/251"
+  },
+  "scope": {
+    "baseRef": "1c4507446139df221269dc64f235f9df47272676^",
+    "files": [
+      "apps/client/src/lib/nodeRealtimeClient.ts",
+      "packages/background-cabinet/src/domain/node-realtime-wire.ts",
+      "packages/background-cabinet/src/modules/node-liveness/node-liveness.controller.ts",
+      "packages/background-cabinet/src/modules/node-liveness/node-liveness.service.test.ts",
+      "packages/background-cabinet/src/modules/node-liveness/node-liveness.service.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.gateway.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.service.test.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.service.ts",
+      "packages/core/src/contracts/node-realtime/events.ts",
+      "packages/core/src/contracts/node-realtime/index.ts"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/background-cabinet",
+      "packages/core"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:37:46.949Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/background-cabinet test --run node-liveness",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:37:51.021Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/background-cabinet test --run node-realtime",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:37:55.222Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Package Membrana Studio (Windows nsis)",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:37:46Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28732177970/job/85199840055"
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:36:25Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28732177968/job/85199767495"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:36:29Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28732177956/job/85199767308"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:36:30Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28732177961/job/85199767303"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "1c4507446139df221269dc64f235f9df47272676",
+        "checkedAt": "2026-07-05T06:37:42Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28732177970/job/85199767294"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #251 merged 2026-07-05T06:45:27Z (8038ad336a92c3628e483d2836990be80ee8e487)"
+  },
+  "createdAt": "2026-07-05T06:37:06.101Z",
+  "updatedAt": "2026-07-05T06:45:30.080Z"
+}
