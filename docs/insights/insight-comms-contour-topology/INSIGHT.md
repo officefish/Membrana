@@ -107,7 +107,8 @@ INTEGRATIONS_STRATEGY, SINGLE_NODE_DETECTION_FIRST) **дрейфует**; име
 - **Консилиумы:** `docs/seanses/comms-contour-topology-2026-07-05.md` (haiku, выбрал B — отклонён),
   `docs/seanses/comms-contour-topology-opus-2026-07-05.md` (opus, выбрал A — принят).
 - **Инвариант границ:** `yarn check:boundaries`.
-- **Следующий шаг:** спринт создания окружения партнёра (`apps/comms-studio` + Слой 1–3 канона).
+- **Реализация (закрыто):** спринт `comms-contour-environment` (CC1–CC9) — `apps/comms-studio` + Слой 1–3 канона (`docs/comms/canon/`).
+- **Окружение партнёра (доки):** `docs/comms/sandbox/` — `RUNBOOK_AGENT_SETUP`, `CHECKLIST_PARTNER_MANUAL_SETUP`, `INSIGHT_MCP_INTEGRATIONS`, `GUIDE_SKILLS_DEPLOYMENT` (адаптированы под Вариант A и живой канон спринтом `comms-sandbox-docs-adaptation`, CD1–CD6).
 
 ## Вопросы для research (Q1–Q3)
 
