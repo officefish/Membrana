@@ -150,7 +150,6 @@
 | `nb-vlr-2-labels-merge-script` | NB2: yarn vdr:labels-merge — merge меток в манифест пилота + --labels-only для intra-rater | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-vlr-3-library-label-filter` | NB3: фильтр по метке + счётчик прогресса в клиентской библиотеке (порт HG1-UX) | S | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pcb-d2-multinode` | PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
 | `partner-tutorials` | Epic: Туториалы для партнёра по внешним коммуникациям (PT0–PT3) | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
 | `pt-0-tutorial-template` | PT0: шаблон-конструкция туториала (шапка/что понадобится/шаги/результат/чек-лист + frontmatter версия+дата+FACTS_SHEET, тёмная тема, a11y) | S | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
@@ -164,6 +163,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | 2026-07-06 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl2b-node-heartbeat.md) |
 | `comms-sandbox-docs-adaptation` | Epic: Адаптация 4 партнёрских документов песочницы под реализацию CC1–CC9 (CD1–CD6) | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/comms-sandbox-docs-adaptation.md) |
 | `cd-1-topology-variant-a` | CD1: зафиксировать топологию Вариант A по 4 докам (CONTOUR_DIR=apps/comms-studio, REPO=монорепо, убрать «до решения») | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-1-topology-variant-a.md) |
 | `cd-2-live-canon-not-copies` | CD2: живой канон docs/comms/canon вместо копий (RUNBOOK §5.1/§6, CHECKLIST Блок C=готово, GUIDE §3/§8, INSIGHT §4) | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-2-live-canon-not-copies.md) |
