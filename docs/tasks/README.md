@@ -152,13 +152,11 @@
 | `nb-vlr-4-docs` | NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip | XS | [`VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | S | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — |
 | `pcb-d2-multinode` | PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список | L | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — |
-| `comms-sandbox-docs-adaptation` | Epic: Адаптация 4 партнёрских документов песочницы под реализацию CC1–CC9 (CD1–CD6) | M | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
-| `cd-1-topology-variant-a` | CD1: зафиксировать топологию Вариант A по 4 докам (CONTOUR_DIR=apps/comms-studio, REPO=монорепо, убрать «до решения») | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
-| `cd-2-live-canon-not-copies` | CD2: живой канон docs/comms/canon вместо копий (RUNBOOK §5.1/§6, CHECKLIST Блок C=готово, GUIDE §3/§8, INSIGHT §4) | M | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
-| `cd-3-hook-reuse-tone-guard` | CD3: hook партнёра переиспользует наш tone-guard/blocked-terms (RUNBOOK §7, INSIGHT §3.3, GUIDE §5), не дублирует | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
-| `cd-4-sandbox-seam-relationship` | CD4: раздел о связи интерактивной песочницы и seam-генератора generate:v0.1 (общий канон, только out/) | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
-| `cd-5-precision-refs` | CD5: точность — Node 20/22, плейсхолдеры (Replit URL/Playwright pkg/даты), сверка ссылок (PROMPT_PITCH_DECK.md, membrana.space) | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
-| `cd-6-placement-registration` | CD6: финализировать размещение docs/comms/sandbox + cross-link + сквозная сверка 4 доков | S | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — |
+| `partner-tutorials` | Epic: Туториалы для партнёра по внешним коммуникациям (PT0–PT3) | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
+| `pt-0-tutorial-template` | PT0: шаблон-конструкция туториала (шапка/что понадобится/шаги/результат/чек-лист + frontmatter версия+дата+FACTS_SHEET, тёмная тема, a11y) | S | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
+| `pt-1-read-facts-sheet` | PT1: как достать актуальные факты из FACTS_SHEET.md и не соврать (пометки подтверждён/гипотеза/TBD, [TBD] вместо выдумки) | S | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
+| `pt-2-first-output-v01-endtoend` | PT2: сквозной сценарий первого выхода v0.1 от канона до файла в out/ + сверка render-check/Playwright (НЕ Storybook), показ tone-guard | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
+| `pt-3-honest-tech-storytelling` | PT3: как честно рассказывать о технологии и стадии (пары до/после, пометки риска, dual-use GLOSSARY §4, без сырых внутренних цифр) | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
 
 ---
 
@@ -166,6 +164,13 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `comms-sandbox-docs-adaptation` | Epic: Адаптация 4 партнёрских документов песочницы под реализацию CC1–CC9 (CD1–CD6) | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/comms-sandbox-docs-adaptation.md) |
+| `cd-1-topology-variant-a` | CD1: зафиксировать топологию Вариант A по 4 докам (CONTOUR_DIR=apps/comms-studio, REPO=монорепо, убрать «до решения») | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-1-topology-variant-a.md) |
+| `cd-2-live-canon-not-copies` | CD2: живой канон docs/comms/canon вместо копий (RUNBOOK §5.1/§6, CHECKLIST Блок C=готово, GUIDE §3/§8, INSIGHT §4) | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-2-live-canon-not-copies.md) |
+| `cd-3-hook-reuse-tone-guard` | CD3: hook партнёра переиспользует наш tone-guard/blocked-terms (RUNBOOK §7, INSIGHT §3.3, GUIDE §5), не дублирует | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-3-hook-reuse-tone-guard.md) |
+| `cd-4-sandbox-seam-relationship` | CD4: раздел о связи интерактивной песочницы и seam-генератора generate:v0.1 (общий канон, только out/) | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-4-sandbox-seam-relationship.md) |
+| `cd-5-precision-refs` | CD5: точность — Node 20/22, плейсхолдеры (Replit URL/Playwright pkg/даты), сверка ссылок (PROMPT_PITCH_DECK.md, membrana.space) | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-5-precision-refs.md) |
+| `cd-6-placement-registration` | CD6: финализировать размещение docs/comms/sandbox + cross-link + сквозная сверка 4 доков | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-6-placement-registration.md) |
 | `presence-capture-board` | Epic: Живость присутствия + view-only борд под захватом (PCB1–PCB6) | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/presence-capture-board.md) |
 | `pcb-2-auth-fail-banner` | PCB2: баннер auth-fail на клиенте (authFailedAt, дебаунс 2-3с, кнопка Пересопрячь) | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-2-auth-fail-banner.md) |
 | `pcb-4-link-state-endpoint` | PCB4: GET /v1/nodes/:id/link-state -> {paired, live, lastSeenAt} + тесты | 2026-07-05 | [`PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`](../docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md) | — | [карточка](./archive/pcb-4-link-state-endpoint.md) |
@@ -634,4 +639,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-05.*
+*Файл обновлён автоматически: 2026-07-06.*
