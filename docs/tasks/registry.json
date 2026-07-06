@@ -11690,6 +11690,84 @@
       ],
       "archivedAt": "2026-07-06",
       "archiveNotes": "PR #269; review LGTM 6d4d13754c09; PR #269 merged 2026-07-06T14:06:43Z (7422522659d85290812ab095198a72480af9fc67)"
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "sandbox-link-diagnostics-night",
+      "title": "Night Build: диагностика связи узел↔cabinet из песочницы (NB0 пробник, NB1 видимый deviceId, NB2 флап вкладки Узлы)",
+      "size": "M",
+      "sprintKind": "night-build",
+      "strategicWave": "W1",
+      "dependsOn": [],
+      "notes": "Вечер 2026-07-06: узловой WS стабилен, кабинет offline, шапка «Узлы» мигает (кабинетная линия #269). Без prod; NB2 — фикс только если тривиален, иначе находка в handoff. Старая просьба владельца: подсвеченный deviceId при сопряжении (NB1).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-0-node-link-probe",
+      "title": "NB0: пробник устойчивости связи узел↔cabinet (scripts/node-link-probe.mjs, прокси-паритет, коды закрытия, вердикт)",
+      "size": "S",
+      "parentEpic": "sandbox-link-diagnostics-night",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-1-visible-device-id",
+      "title": "NB1: видимый deviceId сопряжения — полный id + подсветка + копирование в LinkedPanel, shortId в футер-индикаторе",
+      "size": "S",
+      "parentEpic": "sandbox-link-diagnostics-night",
+      "dependsOn": [],
+      "notes": "Просьба владельца из прошлого фикса, не была выполнена.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nb-2-nodes-tab-flap",
+      "title": "NB2: разбор флапа «связь установлена ↔ переподключение» во вкладке Узлы (#269) — причина по коду; фикс только если тривиален",
+      "size": "S",
+      "parentEpic": "sandbox-link-diagnostics-night",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     }
   ]
 }
