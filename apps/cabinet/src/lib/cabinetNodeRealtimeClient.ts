@@ -39,6 +39,19 @@ type BoardCaptureReleaseHandler = (payload: BoardCaptureReleasePayload) => void;
 const MAX_BACKOFF_MS = 30_000;
 
 /**
+ * NB2 (sandbox-link-diagnostics-night): keepalive кабинетной линии.
+ *
+ * У кабинетного сокета не было исходящего трафика вообще (у узла — heartbeat
+ * раз в 120с), а сервер пингует только role=node (PCB6). При тишине в realtime
+ * соединение — чистый idle, и промежуточный таймаут (nginx/прокси, типично 60с)
+ * закрывает его → клиент корректно реконнектится → в шапке «Узлы» вечное
+ * «установлена ↔ переподключение». 45с — ниже типовых idle-таймаутов.
+ * Сервер presence-канал от role=cabinet тихо игнорирует (dispatchEnvelope) —
+ * кадр служит только трафиком.
+ */
+export const CABINET_KEEPALIVE_INTERVAL_MS = 45_000;
+
+/**
  * PCB1 (presence-capture-board): логи WS-жизненного цикла КАБИНЕТА в консоли.
  * Диагностика persistent-offline со стороны кабинета: подключён ли WS кабинета,
  * приходит ли presence-снапшот и есть ли в нём deviceId узла, ловятся ли online.
@@ -58,6 +71,8 @@ class CabinetNodeRealtimeClientImpl {
   private reconnectAttempt = 0;
 
   private reconnectTimer: number | null = null;
+
+  private keepaliveTimer: number | null = null;
 
   private readonly stateHandlers = new Set<StateHandler>();
 
@@ -161,9 +176,34 @@ class CabinetNodeRealtimeClientImpl {
   disconnect(): void {
     this.membraneId = null;
     this.clearReconnectTimer();
+    this.stopKeepalive();
     this.socket?.close();
     this.socket = null;
     this.setState('disconnected');
+  }
+
+  /** NB2: периодический кадр — соединение не бывает idle для промежуточных таймаутов. */
+  private startKeepalive(ws: WebSocket): void {
+    this.stopKeepalive();
+    this.keepaliveTimer = window.setInterval(() => {
+      if (this.socket !== ws || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(
+        JSON.stringify({
+          v: 1,
+          channel: 'presence',
+          type: NODE_REALTIME_EVENT_TYPES.presence.heartbeat,
+          ts: new Date().toISOString(),
+          payload: {},
+        }),
+      );
+    }, CABINET_KEEPALIVE_INTERVAL_MS);
+  }
+
+  private stopKeepalive(): void {
+    if (this.keepaliveTimer !== null) {
+      window.clearInterval(this.keepaliveTimer);
+      this.keepaliveTimer = null;
+    }
   }
 
   private setState(next: CabinetRealtimeClientState): void {
@@ -215,6 +255,7 @@ class CabinetNodeRealtimeClientImpl {
       if (this.socket !== ws) return; // вытеснен новым сокетом — игнорируем
       this.reconnectAttempt = 0;
       this.setState('connected');
+      this.startKeepalive(ws); // NB2: анти-idle для прокси/nginx таймаутов
       logCabinetWs('open', { membraneId: this.membraneId });
     });
 
@@ -322,6 +363,7 @@ class CabinetNodeRealtimeClientImpl {
       // PCB3: если этот сокет уже вытеснен новым (openSocket закрыл старый),
       // его close НЕ должен планировать реконнект — иначе петля.
       if (this.socket !== ws) return;
+      this.stopKeepalive();
       logCabinetWs('close', { code: event.code, reason: event.reason || undefined });
       if (this.membraneId) {
         this.scheduleReconnect();
