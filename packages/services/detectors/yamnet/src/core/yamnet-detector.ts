@@ -41,9 +41,19 @@ export class YamnetDetector implements DroneDetector {
     return this.modelPromise;
   }
 
+  /**
+   * Прогрев: грузит модель заранее (инициализация плагина/пайплайна), чтобы
+   * первый detect() не платил загрузку графа на живом сигнале. P2 ревью ND1.
+   */
+  async warmUp(): Promise<void> {
+    await this.loadModel();
+  }
+
   async detect(window: AudioWindow): Promise<DetectionResult> {
-    const startedAt = performance.now();
     const model = await this.loadModel();
+    // latencyMs — только инференс: загрузка графа одноразовая и учитывается
+    // прогревом (warmUp), иначе первый вызов вводил бы потребителя в заблуждение.
+    const startedAt = performance.now();
     const waveform = prepareWaveform(window.samples, window.sampleRate);
     const { frameScores, frameCount } = await model.infer(waveform);
     const clipScores = meanScoresPerClass(frameScores, frameCount);

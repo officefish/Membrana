@@ -59,10 +59,12 @@ export class YamnetModel {
       const output = this.graph.execute(input, 'Identity:0') as tf.Tensor | tf.Tensor[];
       const scores = Array.isArray(output) ? output[0]! : output;
       try {
-        const [frameCount, numClasses] = scores.shape;
-        if (numClasses !== YAMNET_NUM_CLASSES) {
+        // P2 ревью ND1: валидируем ранг явно — при не-2D деструктуризация дала бы
+        // undefined без внятной диагностики.
+        if (scores.shape.length !== 2 || scores.shape[1] !== YAMNET_NUM_CLASSES) {
           throw new Error(`Неожиданный выход YAMNet: ${scores.shape.join('×')}`);
         }
+        const frameCount = scores.shape[0]!;
         const data = (await scores.data()) as Float32Array;
         return { frameScores: data, frameCount: frameCount ?? 0 };
       } finally {
