@@ -11590,6 +11590,88 @@
       "supportPersonas": [
         "vesnin"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "neural-drone-plugin",
+      "title": "Epic: Нейро-детекция дрона (UC2 free-тарифа, YAMNet zero-shot) — ND1–ND3",
+      "size": "M",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [],
+      "notes": "Форсайт docs/seanses/foresight-2026-07-06.md (S1 keystone). Zero-shot YAMNet TF.js, обучения нет, полевые записи 17.07 НЕ нужны. Инференс в yamnet-detector-service (node+браузер), веса бандлятся (офлайн Electron). Разблокирует combined UC (S2). Порядок ND1→ND2→ND3.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nd-1-yamnet-detector",
+      "title": "ND1: реализовать YamnetDetector.detect() — TF.js инференс, ресемпл 16кГц, класс-маппинг AudioSet→дрон, веса бандлятся, p95<100мс",
+      "size": "M",
+      "parentEpic": "neural-drone-plugin",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nd-2-neural-plugin-ui",
+      "title": "ND2: клиентский плагин нейро-детекции по образцу trends-fft-sample-analyzer (audio-engine, MembranaRegistry, каталог)",
+      "size": "M",
+      "parentEpic": "neural-drone-plugin",
+      "dependsOn": [
+        "nd-1-yamnet-detector"
+      ],
+      "notes": "",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "nd-3-benchmark-validation",
+      "title": "ND3: прогнать yamnet через benchmark:detectors на free-v1 + строка в DETECTOR_BENCHMARK.md, сравнить с DRONE_TIGHT",
+      "size": "S",
+      "parentEpic": "neural-drone-plugin",
+      "dependsOn": [
+        "nd-1-yamnet-detector"
+      ],
+      "notes": "",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ]
     }
   ]
 }
