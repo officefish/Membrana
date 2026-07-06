@@ -49,7 +49,7 @@
     "dataset:assign-splits": "node scripts/assign-dataset-splits.mjs",
     "dataset:export-ground-truth": "node scripts/export-ground-truth-manifest.mjs --from-prod",
     "vdr:collection-status": "node scripts/vdr-collection-status.mjs",
-    "benchmark:detectors": "yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service && node scripts/benchmark-detectors.mjs",
+    "benchmark:detectors": "yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service --filter=@membrana/yamnet-detector-service && node scripts/benchmark-detectors.mjs",
     "calibrate:detectors": "yarn turbo run build --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service && node scripts/calibrate-detectors.mjs",
     "benchmark:fft-trends": "yarn turbo run build --filter=@membrana/fft-analyzer-service --filter=@membrana/trends-detector-service --filter=@membrana/template-match-detector-service && node scripts/benchmark-fft-trends.mjs",
     "templates:build-from-dataset": "yarn workspace @membrana/template-match-detector-service build && node scripts/build-templates-from-dataset.mjs",

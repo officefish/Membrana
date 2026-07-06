@@ -11,7 +11,8 @@ Zero-shot нейро-детекция дрона: YAMNet (AudioSet, 521 клас
 2. Инференс graph-model TF.js, выход `Identity:0` = score `[кадры × 521]` (`src/core/model.ts`).
 3. clip-score = среднее по кадрам; drone-score = max взвешенных дрон-классов
    (Propeller/Helicopter/Light engine/Aircraft/…, `src/core/drone-classes.ts`);
-   `isDrone = drone-score ≥ 0.25` (порог до калибровки ND3) — `src/core/scoring.ts`.
+   `isDrone = drone-score ≥ 0.01` (калибровка ND3 на free-v1: P 71.4 / R 91.7 / FPR 36.7;
+   clip-mean zero-shot score мал по абсолюту — см. `drone-classes.ts`) — `src/core/scoring.ts`.
 
 ## Веса — бандл (офлайн)
 

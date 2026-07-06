@@ -47,12 +47,14 @@ describe('scoreToVerdict', () => {
     expect(verdict.features['drone:Propeller, airscrew']).toBeCloseTo(0.8, 3);
   });
 
-  it('вес класса ослабляет score: Buzz 0.5×0.4 ниже порога', () => {
+  it('вес класса ослабляет score: Buzz 0.5×0.4 = 0.2 (порог явный)', () => {
     const scores = zeroClipScores();
-    scores[125] = 0.5; // Buzz (вес 0.4) → 0.2 < 0.25
-    const verdict = scoreToVerdict(scores);
-    expect(verdict.isDrone).toBe(false);
-    expect(verdict.confidence).toBeCloseTo(0.2, 5);
+    scores[125] = 0.5; // Buzz (вес 0.4) → weighted 0.2
+    const below = scoreToVerdict(scores, { droneScoreThreshold: 0.25 });
+    expect(below.isDrone).toBe(false);
+    expect(below.confidence).toBeCloseTo(0.2, 5);
+    const above = scoreToVerdict(scores, { droneScoreThreshold: 0.2 });
+    expect(above.isDrone).toBe(true);
   });
 
   it('речь/музыка без дрон-классов → isDrone false, confidence 0', () => {
