@@ -47,9 +47,6 @@
 
 <!-- BENCHMARK:auto:end -->
 
-
-
-
 ### Заметка по stage-gate (template-match → DRONE_TIGHT)
 
 После эпика [`fft-last-chance-calibration`](./prompts/FFT_LAST_CHANCE_CALIBRATION_EPIC_PROMPT.md) (#84) curated-каталог переведён с переобученного `DRONE_CURATED` (merged envelope) на узкий **`DRONE_TIGHT`** (перцентили train-дронов + требования стабильности во времени).
@@ -58,6 +55,8 @@
 - **Стало** (DRONE_TIGHT): **P 85.5% / R 88.3% / F1 0.869 / FPR 15%** (TP 53 / FP 9 / FN 7 / TN 51).
 
 Результат **проходит** мягкую цель эпика (recall ≥ 80% при FPR ≤ 40%) с большим запасом и **почти достигает** строгого stage-gate (precision ≥ 85% ✅, recall ≥ 90% — не хватает 1.7 пп). Это лучший одиночный DSP-детектор на free-v1. Источник шаблона: `data/detectors-benchmark/v0.2/curated-drone-templates.json` и пакетный `packages/services/detectors/template-match/src/data/curated-drone-templates.json` (синхронизированы). Подробности математики — [`prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md).
+
+> Примечание: latency-колонки зависят от железа и загрузки машины — latency нестабилен между прогонами, расхождения p50/p95 между коммитами не читать как регресс.
 
 ### Заметка ND3: yamnet (нейро-эшелон, zero-shot) vs DRONE_TIGHT
 
@@ -92,16 +91,6 @@
 3. Порог 0.01 — свойство масштаба clip-mean сигмоид, а не «шум»: разделение распределений
    устойчивое (медианы отличаются на порядок), но абсолютные значения малы. VDR-корпус
    (после ~17.07) — следующая проверка обеих рабочих точек на реальных полевых данных.
-
-
-
-
-
-
-
-
-
-
 
 
 ## Протокол прогона
