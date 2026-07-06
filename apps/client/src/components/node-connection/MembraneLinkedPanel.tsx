@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { formatExpiresAt, shortId } from '../../lib/pairingDisplay';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
@@ -9,8 +9,24 @@ export const MembraneLinkedPanel: React.FC = () => {
   const closeLinkedPanel = useNodeConnectionStore((s) => s.closeLinkedPanel);
   const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
   const disconnectFromMembrane = useNodeConnectionStore((s) => s.disconnectFromMembrane);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 2_000);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
 
   if (!showLinkedPanel || !pairing) return null;
+
+  const copyDeviceId = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(pairing.deviceId);
+      setCopied(true);
+    } catch {
+      /* клипборд недоступен (например http) — id остаётся выделяемым текстом */
+    }
+  };
 
   return (
     <dialog className="modal modal-open" open aria-labelledby="linked-title">
@@ -33,10 +49,25 @@ export const MembraneLinkedPanel: React.FC = () => {
               {shortId(pairing.membraneId)}
             </dd>
           </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-base-content/60">Device ID</dt>
-            <dd className="font-mono text-xs text-right" title={pairing.deviceId}>
-              {shortId(pairing.deviceId)}
+          {/* NB1: сопряжённое устройство — полный id, подсвечен, копируется
+              (просьба владельца: видеть, С КАКИМ устройством сопряжён узел). */}
+          <div className="rounded-lg border border-primary/30 bg-primary/10 p-2">
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-xs font-semibold text-primary">Сопряжённое устройство</dt>
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs"
+                onClick={() => void copyDeviceId()}
+                aria-label="Скопировать Device ID"
+              >
+                {copied ? '✓ скопировано' : 'копировать'}
+              </button>
+            </div>
+            <dd
+              className="mt-1 select-all break-all font-mono text-xs font-medium text-primary"
+              data-testid="paired-device-id"
+            >
+              {pairing.deviceId}
             </dd>
           </div>
           {pairing.pairedKeyId ? (
