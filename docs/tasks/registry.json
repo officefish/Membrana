@@ -10881,9 +10881,10 @@
       "size": "S",
       "parentEpic": "pairing-lifecycle",
       "dependsOn": [
-        "pl1-presence-snapshot"
+        "pl1-presence-snapshot",
+        "pl2-device-pairing-status"
       ],
-      "notes": "Deferrable: Математик предлагал отложить; режется первой при нехватке времени. lastSeenAt уже существует.",
+      "notes": "Deferrable: Математик предлагал отложить; режется первой при нехватке времени. lastSeenAt уже существует. Schema evidence for bootstrap filter: packages/background-cabinet/prisma/schema.prisma already defines Device.pairingStatus @default(paired) and Device.lastSeenAt.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"

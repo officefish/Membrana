@@ -1,5 +1,6 @@
 import {
   NODE_REALTIME_EVENT_TYPES,
+  NODE_PRESENCE_HEARTBEAT_INTERVAL_MS,
   createNodeRealtimeEnvelope,
   parseNodeRealtimeEnvelope,
   type HealthPingPayload,
@@ -44,6 +45,8 @@ class NodeRealtimeClientImpl {
 
   private reconnectTimer: number | null = null;
 
+  private heartbeatTimer: number | null = null;
+
   private readonly messageHandlers = new Set<MessageHandler>();
 
   private readonly stateHandlers = new Set<StateHandler>();
@@ -86,6 +89,7 @@ class NodeRealtimeClientImpl {
   disconnect(): void {
     this.pairing = null;
     this.clearReconnectTimer();
+    this.clearHeartbeatTimer();
     this.socket?.close();
     this.socket = null;
     this.setState('disconnected');
@@ -111,9 +115,37 @@ class NodeRealtimeClientImpl {
     }
   }
 
+  private clearHeartbeatTimer(): void {
+    if (this.heartbeatTimer !== null) {
+      window.clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+  }
+
+  private sendPresenceHeartbeat(): void {
+    const deviceId = this.pairing?.deviceId;
+    if (!deviceId) return;
+    this.send(
+      createNodeRealtimeEnvelope('presence', NODE_REALTIME_EVENT_TYPES.presence.heartbeat, {
+        deviceId,
+        timestampMs: Date.now(),
+      }),
+    );
+  }
+
+  private startHeartbeat(): void {
+    this.clearHeartbeatTimer();
+    this.sendPresenceHeartbeat();
+    this.heartbeatTimer = window.setInterval(
+      () => this.sendPresenceHeartbeat(),
+      NODE_PRESENCE_HEARTBEAT_INTERVAL_MS,
+    );
+  }
+
   private scheduleReconnect(): void {
     if (!this.pairing) return;
     this.clearReconnectTimer();
+    this.clearHeartbeatTimer();
     const delay = Math.min(1000 * 2 ** this.reconnectAttempt, MAX_BACKOFF_MS);
     this.reconnectAttempt += 1;
     this.setState('reconnecting');
@@ -150,6 +182,7 @@ class NodeRealtimeClientImpl {
       if (this.socket !== ws) return; // вытеснен новым сокетом
       this.reconnectAttempt = 0;
       this.setState('connected');
+      this.startHeartbeat();
       logNodeWs('open', { deviceId: this.pairing?.deviceId });
     });
 
@@ -188,6 +221,7 @@ class NodeRealtimeClientImpl {
 
     ws.addEventListener('close', (event) => {
       if (this.socket !== ws) return; // PCB3: вытеснен новым — без реконнект-петли
+      this.clearHeartbeatTimer();
       // PCB1: код close — ключевой сигнал. 4401 = auth-fail (H1: сессия истекла →
       // кабинет держит offline, хотя клиент «связан» по localStorage); 1006 = сеть.
       logNodeWs('close', {

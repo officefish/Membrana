@@ -12,7 +12,11 @@ import type {
   DeviceCaptureMode,
   DeviceCaptureReleaseReason,
 } from './capture-events.js';
-import type { PresenceSnapshotPayload, RuntimeCommandPayload } from './events.js';
+import type {
+  PresenceHeartbeatPayload,
+  PresenceSnapshotPayload,
+  RuntimeCommandPayload,
+} from './events.js';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -234,6 +238,21 @@ export function parsePresenceSnapshotPayload(raw: unknown): PresenceSnapshotPayl
     onlineDeviceIds: [...new Set(raw.onlineDeviceIds as string[])],
     timestampMs: raw.timestampMs,
   };
+}
+
+/** Валидирует presence.heartbeat (node → server). */
+export function parsePresenceHeartbeatPayload(raw: unknown): PresenceHeartbeatPayload | null {
+  if (!isRecord(raw) || !isNonEmptyString(raw.deviceId)) {
+    return null;
+  }
+  if (
+    typeof raw.timestampMs !== 'number' ||
+    !Number.isFinite(raw.timestampMs) ||
+    raw.timestampMs < 0
+  ) {
+    return null;
+  }
+  return { deviceId: raw.deviceId, timestampMs: raw.timestampMs };
 }
 
 /** Валидирует board.release payload. Release НЕ останавливает играющий сценарий. */

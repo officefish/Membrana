@@ -12,6 +12,7 @@ function buildGateway() {
   const realtimeService = {
     fanOutToCabinet: vi.fn(),
     sendToNode: vi.fn(),
+    recordPresenceHeartbeat: vi.fn().mockResolvedValue(undefined),
   } as unknown as NodeRealtimeService;
   const journalHandler = {
     handleIncoming: vi.fn().mockResolvedValue(undefined),
@@ -61,6 +62,27 @@ const cabinetMeta: NodeRealtimeSocketMeta = {
 };
 
 describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
+  it('PL2b: принимает heartbeat только от аутентифицированного deviceId', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    const valid: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'presence',
+      type: NODE_REALTIME_EVENT_TYPES.presence.heartbeat,
+      ts: '2026-07-05T09:00:00.000Z',
+      payload: { deviceId: 'd1', timestampMs: 1 },
+    };
+    const spoofed: NodeRealtimeEnvelope = {
+      ...valid,
+      payload: { deviceId: 'd2', timestampMs: 2 },
+    };
+
+    await gateway.dispatchEnvelope(nodeMeta, valid);
+    await gateway.dispatchEnvelope(nodeMeta, spoofed);
+
+    expect(realtimeService.recordPresenceHeartbeat).toHaveBeenCalledTimes(1);
+    expect(realtimeService.recordPresenceHeartbeat).toHaveBeenCalledWith('d1');
+  });
+
   it('fans out runtime.state from node to cabinet subscribers', async () => {
     const { gateway, realtimeService, journalHandler } = buildGateway();
     const envelope: NodeRealtimeEnvelope = {

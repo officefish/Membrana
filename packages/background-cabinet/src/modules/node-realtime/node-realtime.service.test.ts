@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { NODE_REALTIME_EVENT_TYPES } from '../../domain/node-realtime-wire';
+import type { PrismaService } from '../../prisma/prisma.service';
 
 import { NodeRealtimeService } from './node-realtime.service.js';
 
@@ -14,13 +15,28 @@ function mockSocket() {
   } as unknown as import('ws').WebSocket;
 }
 
+function mockPrisma(recentDeviceIds: string[] = []) {
+  return {
+    device: {
+      findMany: vi.fn().mockResolvedValue(
+        recentDeviceIds.map((mediaDeviceId) => ({ mediaDeviceId })),
+      ),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+    },
+  } as unknown as PrismaService;
+}
+
+function buildService(prisma = mockPrisma()): NodeRealtimeService {
+  return new NodeRealtimeService(prisma);
+}
+
 describe('NodeRealtimeService', () => {
-  it('fanOutToCabinet sends envelope to subscribers', () => {
-    const service = new NodeRealtimeService();
+  it('fanOutToCabinet sends envelope to subscribers', async () => {
+    const service = buildService();
     const cabinetSocket = mockSocket();
     const nodeSocket = mockSocket();
 
-    service.registerCabinet(
+    await service.registerCabinet(
       {
         role: 'cabinet',
         userId: 'u1',
@@ -55,8 +71,8 @@ describe('NodeRealtimeService', () => {
     expect(cabinetSocket.send).toHaveBeenCalledTimes(1);
   });
 
-  it('registerCabinet отправляет presence.snapshot с онлайн-узлами своей membrane (PL1)', () => {
-    const service = new NodeRealtimeService();
+  it('registerCabinet отправляет presence.snapshot с онлайн-узлами своей membrane (PL1)', async () => {
+    const service = buildService();
 
     // Узел membrane m1 онлайн до подключения кабинета — корневой сценарий бага.
     service.registerNode(
@@ -70,7 +86,7 @@ describe('NodeRealtimeService', () => {
     );
 
     const cabinetSocket = mockSocket();
-    service.registerCabinet(
+    await service.registerCabinet(
       { role: 'cabinet', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
       cabinetSocket,
     );
@@ -83,10 +99,10 @@ describe('NodeRealtimeService', () => {
     expect(typeof sent.payload.timestampMs).toBe('number');
   });
 
-  it('registerCabinet без онлайн-узлов шлёт пустой снапшот (PL1)', () => {
-    const service = new NodeRealtimeService();
+  it('registerCabinet без онлайн-узлов шлёт пустой снапшот (PL1)', async () => {
+    const service = buildService();
     const cabinetSocket = mockSocket();
-    service.registerCabinet(
+    await service.registerCabinet(
       { role: 'cabinet', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
       cabinetSocket,
     );
@@ -97,8 +113,44 @@ describe('NodeRealtimeService', () => {
     expect(sent.payload.onlineDeviceIds).toEqual([]);
   });
 
+  it('registerCabinet добавляет recent lastSeenAt устройства после рестарта (PL2b)', async () => {
+    const prisma = mockPrisma(['recent-d1']);
+    const service = buildService(prisma);
+    const cabinetSocket = mockSocket();
+
+    await service.registerCabinet(
+      { role: 'cabinet', userId: 'u1', membraneId: 'm1', nodeId: null, mediaDeviceId: null },
+      cabinetSocket,
+    );
+
+    const sent = (cabinetSocket.send as ReturnType<typeof vi.fn>).mock.calls
+      .map((call) => JSON.parse(call[0] as string))
+      .find((envelope) => envelope.type === NODE_REALTIME_EVENT_TYPES.presence.snapshot);
+    expect(sent.payload.onlineDeviceIds).toEqual(['recent-d1']);
+    expect(prisma.device.findMany).toHaveBeenCalledWith({
+      where: {
+        node: { membraneId: 'm1' },
+        pairingStatus: 'paired',
+        lastSeenAt: { gt: expect.any(Date) },
+      },
+      select: { mediaDeviceId: true },
+    });
+  });
+
+  it('recordPresenceHeartbeat обновляет lastSeenAt по mediaDeviceId серверным временем', async () => {
+    const prisma = mockPrisma();
+    const service = buildService(prisma);
+
+    await service.recordPresenceHeartbeat('d1');
+
+    expect(prisma.device.updateMany).toHaveBeenCalledWith({
+      where: { mediaDeviceId: 'd1' },
+      data: { lastSeenAt: expect.any(Date) },
+    });
+  });
+
   it('ackJournalAppend sends cursor to node socket', () => {
-    const service = new NodeRealtimeService();
+    const service = buildService();
     const nodeSocket = mockSocket();
 
     service.registerNode(
@@ -136,7 +188,7 @@ describe('NodeRealtimeService', () => {
     }
 
     it('узел не live (нет сокета) → reachable:false без ожидания', async () => {
-      const service = new NodeRealtimeService();
+      const service = buildService();
       await expect(service.pingNode('nope')).resolves.toEqual({
         reachable: false,
         latencyMs: null,
@@ -144,7 +196,7 @@ describe('NodeRealtimeService', () => {
     });
 
     it('pong с тем же pingId → reachable:true + latencyMs', async () => {
-      const service = new NodeRealtimeService();
+      const service = buildService();
       const nodeSocket = registerNodeSocket(service);
       const pending = service.pingNode('d1');
       const pingId = sentPingId(nodeSocket);
@@ -157,7 +209,7 @@ describe('NodeRealtimeService', () => {
     it('нет pong до таймаута → reachable:false', async () => {
       vi.useFakeTimers();
       try {
-        const service = new NodeRealtimeService();
+        const service = buildService();
         registerNodeSocket(service);
         const pending = service.pingNode('d1', 3000);
         await vi.advanceTimersByTimeAsync(3000);
@@ -168,7 +220,7 @@ describe('NodeRealtimeService', () => {
     });
 
     it('поздний pong после таймаута игнорируется (нет висящего промиса)', async () => {
-      const service = new NodeRealtimeService();
+      const service = buildService();
       const nodeSocket = registerNodeSocket(service);
       const pending = service.pingNode('d1', 3000);
       const pingId = sentPingId(nodeSocket);

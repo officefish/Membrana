@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type { WebSocket } from 'ws';
+import { PrismaService } from '../../prisma/prisma.service';
 import {
+  NODE_RECENT_PRESENCE_WINDOW_MS,
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
   type HealthPingPayload,
@@ -37,11 +39,15 @@ interface TrackedSocket {
 
 @Injectable()
 export class NodeRealtimeService {
+  private readonly logger = new Logger(NodeRealtimeService.name);
+
   private readonly nodeSockets = new Map<string, TrackedSocket>();
 
   private readonly cabinetSockets = new Map<string, Set<TrackedSocket>>();
 
   private readonly journalCursors = new Map<string, string>();
+
+  constructor(private readonly prisma: PrismaService) {}
 
   registerNode(meta: NodeRealtimeSocketMeta, socket: WebSocket): void {
     if (!meta.mediaDeviceId) return;
@@ -59,7 +65,7 @@ export class NodeRealtimeService {
     });
   }
 
-  registerCabinet(meta: NodeRealtimeSocketMeta, socket: WebSocket): void {
+  async registerCabinet(meta: NodeRealtimeSocketMeta, socket: WebSocket): Promise<void> {
     let set = this.cabinetSockets.get(meta.membraneId);
     if (!set) {
       set = new Set();
@@ -69,7 +75,7 @@ export class NodeRealtimeService {
     // PL1 (pairing-lifecycle): снапшот присутствия сразу этому кабинету —
     // без него узел, связавшийся до открытия кабинета, висел offline
     // (поток nodeOnline транзиентен и доходит только до уже-подключённых).
-    this.sendPresenceSnapshot(meta.membraneId, socket);
+    await this.sendPresenceSnapshot(meta.membraneId, socket);
   }
 
   /** PL1: онлайн-узлы данной membrane из in-memory реестра сокетов. */
@@ -83,7 +89,28 @@ export class NodeRealtimeService {
     return ids;
   }
 
-  private sendPresenceSnapshot(membraneId: string, socket: WebSocket): void {
+  private async recentDeviceIdsForMembrane(membraneId: string): Promise<string[]> {
+    try {
+      const devices = await this.prisma.device.findMany({
+        where: {
+          node: { membraneId },
+          pairingStatus: 'paired',
+          lastSeenAt: { gt: new Date(Date.now() - NODE_RECENT_PRESENCE_WINDOW_MS) },
+        },
+        select: { mediaDeviceId: true },
+      });
+      return devices.map((device) => device.mediaDeviceId);
+    } catch (error) {
+      // Presence bootstrap must not reject an otherwise authenticated cabinet socket.
+      this.logger.warn({ error, membraneId }, 'recent presence bootstrap failed');
+      return [];
+    }
+  }
+
+  private async sendPresenceSnapshot(membraneId: string, socket: WebSocket): Promise<void> {
+    if (socket.readyState !== socket.OPEN) return;
+    const liveDeviceIds = this.onlineDeviceIdsForMembrane(membraneId);
+    const recentDeviceIds = await this.recentDeviceIdsForMembrane(membraneId);
     if (socket.readyState !== socket.OPEN) return;
     socket.send(
       JSON.stringify({
@@ -92,11 +119,19 @@ export class NodeRealtimeService {
         type: NODE_REALTIME_EVENT_TYPES.presence.snapshot,
         ts: new Date().toISOString(),
         payload: {
-          onlineDeviceIds: this.onlineDeviceIdsForMembrane(membraneId),
+          onlineDeviceIds: [...new Set([...liveDeviceIds, ...recentDeviceIds])],
           timestampMs: Date.now(),
         },
       }),
     );
+  }
+
+  /** PL2b: серверное время приёма — клиентский timestamp не является источником истины. */
+  async recordPresenceHeartbeat(mediaDeviceId: string): Promise<void> {
+    await this.prisma.device.updateMany({
+      where: { mediaDeviceId },
+      data: { lastSeenAt: new Date() },
+    });
   }
 
   unregister(socket: WebSocket): void {

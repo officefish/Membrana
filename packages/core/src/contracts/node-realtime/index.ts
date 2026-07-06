@@ -18,6 +18,9 @@ export {
   type MicSessionPayload,
   type NodeOnlinePayload,
   type NodeRealtimeEnvelopeInput,
+  NODE_PRESENCE_HEARTBEAT_INTERVAL_MS,
+  NODE_RECENT_PRESENCE_WINDOW_MS,
+  type PresenceHeartbeatPayload,
   type PresenceSnapshotPayload,
   type RuntimeCommandPayload,
   type RuntimeLogPayload,
@@ -55,6 +58,7 @@ export {
   parseBoardCaptureReleasePayload,
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
+  parsePresenceHeartbeatPayload,
   parsePresenceSnapshotPayload,
   parseRuntimeCommandPayload,
 } from './validate-payloads.js';

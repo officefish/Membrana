@@ -4,6 +4,7 @@ import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
   parseNodeRealtimeEnvelope,
+  parsePresenceHeartbeatPayload,
   parsePresenceSnapshotPayload,
 } from './index.js';
 
@@ -44,5 +45,20 @@ describe('presence.snapshot payload (PL1)', () => {
     if (parsed.ok) {
       expect(parsePresenceSnapshotPayload(parsed.value.payload)).toEqual(payload);
     }
+  });
+});
+
+describe('presence.heartbeat payload (PL2b)', () => {
+  it('accepts a finite timestamp and non-empty deviceId', () => {
+    expect(parsePresenceHeartbeatPayload({ deviceId: 'dev-1', timestampMs: 123 })).toEqual({
+      deviceId: 'dev-1',
+      timestampMs: 123,
+    });
+  });
+
+  it('rejects malformed heartbeat payloads', () => {
+    expect(parsePresenceHeartbeatPayload({ deviceId: '', timestampMs: 1 })).toBeNull();
+    expect(parsePresenceHeartbeatPayload({ deviceId: 'dev-1', timestampMs: Infinity })).toBeNull();
+    expect(parsePresenceHeartbeatPayload({ deviceId: 'dev-1', timestampMs: -1 })).toBeNull();
   });
 });
