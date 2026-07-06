@@ -11672,6 +11672,22 @@
       "supportPersonas": [
         "vesnin"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_SIDEBAR_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "id": "device-board-journal-sidebar",
+      "title": "Device-board: вкладки «Узлы | Журнал» в правом сайдбаре + drag-ресайз ширины (min 240px, max 50vw) для режима захвата",
+      "size": "M",
+      "dependsOn": [],
+      "notes": "Живой хвост scenario-трассы во вкладке журнала; источник — существующий ring buffer через host-контракт",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
     }
   ]
 }

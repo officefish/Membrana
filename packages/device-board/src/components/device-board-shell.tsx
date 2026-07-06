@@ -1813,6 +1813,12 @@ const DeviceBoardShellInner: React.FC<{
             isRuntime={isRuntime}
             runtimeInspection={runtimeInspection}
             printLastOutput={printLastOutput}
+            scenarioTraceLineCount={graph.scenarioTraceLineCount}
+            getScenarioTraceLines={graph.getScenarioTraceLines}
+            subscribeScenarioTrace={graph.subscribeScenarioTrace}
+            onCopyScenarioTrace={graph.copyScenarioTrace}
+            onDownloadScenarioTrace={graph.downloadScenarioTrace}
+            onClearScenarioTrace={graph.clearScenarioTrace}
             onAddLegacyNode={graph.addScenarioNodeToCurrentBranch}
             onAddPaletteNode={addPaletteNodeAtViewportCenter}
             onMicrophoneIdChange={graph.updatePaletteNodeMicrophoneId}

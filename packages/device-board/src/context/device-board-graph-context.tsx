@@ -305,6 +305,10 @@ export interface DeviceBoardGraphContextValue {
   readonly scenarioTraceLineCount: number;
   readonly copyScenarioTrace: () => Promise<boolean>;
   readonly downloadScenarioTrace: () => void;
+  /** Вкладка «Журнал»: снапшот строк трассы + подписка + очистка (стабильные ссылки). */
+  readonly getScenarioTraceLines: () => readonly string[];
+  readonly subscribeScenarioTrace: (listener: () => void) => () => void;
+  readonly clearScenarioTrace: () => void;
   /** Очистка узлов текущей ветки (Signal или активная Scenario-ветка); Event-entry сохраняется. */
   readonly clearCurrentBranch: (layer: BoardLayerTab) => void;
   /** Добавить legacy D0-ноду из палитры в активную ветку (только при legacy-флаге). */
@@ -447,6 +451,9 @@ export interface DeviceBoardGraphProviderProps {
   /** Server-first: edit lease + capture (полевой paired client). */
   readonly serverFirstState?: ServerFirstFlagsInput | null;
 }
+
+/** Стабильный пустой снапшот трассы: host без буфера не должен ронять useSyncExternalStore. */
+const EMPTY_TRACE_LINES: readonly string[] = [];
 
 export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> = ({
   children,
@@ -602,6 +609,21 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
 
   const downloadScenarioTrace = useCallback((): void => {
     runtimeHost?.downloadScenarioTrace?.(null);
+  }, [runtimeHost]);
+
+  const getScenarioTraceLines = useCallback(
+    (): readonly string[] => runtimeHost?.getScenarioTraceLines?.() ?? EMPTY_TRACE_LINES,
+    [runtimeHost],
+  );
+
+  const subscribeScenarioTrace = useCallback(
+    (listener: () => void): (() => void) =>
+      runtimeHost?.subscribeScenarioTraceBuffer?.(listener) ?? (() => {}),
+    [runtimeHost],
+  );
+
+  const clearScenarioTrace = useCallback((): void => {
+    runtimeHost?.clearScenarioTraceBuffer?.();
   }, [runtimeHost]);
 
   useEffect(() => {
@@ -3405,6 +3427,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       scenarioTraceLineCount,
       copyScenarioTrace,
       downloadScenarioTrace,
+      getScenarioTraceLines,
+      subscribeScenarioTrace,
+      clearScenarioTrace,
       clearCurrentBranch,
       addScenarioNodeToCurrentBranch,
       addPaletteNodeToCurrentBranch,
@@ -3559,6 +3584,9 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       setMode,
       copyScenarioTrace,
       downloadScenarioTrace,
+      getScenarioTraceLines,
+      subscribeScenarioTrace,
+      clearScenarioTrace,
       scenarioTraceLineCount,
       setShowInfoLogs,
       showInfoLogs,
