@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-05",
+  "updatedAt": "2026-07-06",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -349,6 +349,17 @@
         "single-source-of-truth",
         "architecture"
       ]
+    },
+    {
+      "id": "insight-telegram-work-reports",
+      "title": "Докладывать о проделанной работе через Telegram-канал на базе background-office",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 4,
+      "createdAt": "2026-07-06",
+      "tags": []
     }
   ]
 }
