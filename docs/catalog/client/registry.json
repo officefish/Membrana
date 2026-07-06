@@ -89,7 +89,8 @@
         "sample-library-player",
         "sample-library-drone-analysis",
         "sample-library-fft-threshold-test",
-        "trends-fft-sample-analyzer"
+        "trends-fft-sample-analyzer",
+        "neural-drone-analyzer"
       ],
       "services": [
         "@membrana/media-library-service",
@@ -387,6 +388,24 @@
       ],
       "relatedTasks": [
         "trends-fft-sample-library-drone-tight"
+      ]
+    },
+    {
+      "id": "neural-drone-analyzer",
+      "kind": "plugin",
+      "name": "Нейро-детекция дрона (сэмпл)",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/neural-drone-analyzer.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/neural-drone-analyzer/neuralDroneAnalyzerPlugin.ts"
+      },
+      "services": [
+        "@membrana/yamnet-detector-service",
+        "@membrana/sample-playback-service"
+      ],
+      "relatedTasks": [
+        "nd-2-neural-plugin-ui"
       ]
     }
   ]

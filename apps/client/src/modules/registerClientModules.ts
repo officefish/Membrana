@@ -9,6 +9,7 @@ import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-playe
 import { createSampleLibraryDroneAnalysisPlugin } from '../plugins/sample-library-drone-analysis';
 import { createSampleLibraryFftThresholdTestPlugin } from '../plugins/sample-library-fft-threshold-test';
 import { createTrendsFftSampleAnalyzerPlugin } from '../plugins/trends-fft-sample-analyzer';
+import { createNeuralDroneAnalyzerPlugin } from '../plugins/neural-drone-analyzer';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 import { createTrendsFftAnalyzerPlugin } from '../plugins/trends-fft-analyzer';
 import { createVdrValidationPlugin } from '../plugins/vdr-validation';
@@ -180,6 +181,8 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryDroneAnalysisPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryFftThresholdTestPlugin());
   MembranaRegistry.registerPlugin('sample-library', createTrendsFftSampleAnalyzerPlugin());
+  // ND2 (UC2 free): нейро-детекция YAMNet zero-shot по сэмплу, офлайн-бандл весов.
+  MembranaRegistry.registerPlugin('sample-library', createNeuralDroneAnalyzerPlugin());
 
   // Завершаем фазу регистрации — все модули зарегистрированы, persisted-prefs
   // уже применены в registerModule, дальше держать pendingModulePrefs смысла нет.

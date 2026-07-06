@@ -92,6 +92,15 @@ export default defineConfig(({ mode }) => {
             import.meta.url,
           ),
         ),
+        // ВАЖНО: assets-подпуть ПЕРЕД пакетным алиасом — vite матчит алиасы
+        // по префиксу в порядке объявления; иначе `assets/...?url` переписался
+        // бы в `src/index.ts/assets/...`.
+        '@membrana/yamnet-detector-service/assets': fileURLToPath(
+          new URL('../../packages/services/detectors/yamnet/assets', import.meta.url),
+        ),
+        '@membrana/yamnet-detector-service': fileURLToPath(
+          new URL('../../packages/services/detectors/yamnet/src/index.ts', import.meta.url),
+        ),
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
