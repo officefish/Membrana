@@ -12,8 +12,23 @@ export default defineConfig({
     },
   },
   build: {
-    lib: { entry: resolve(__dirname, 'src/index.ts'), formats: ['es'], fileName: 'index' },
-    rollupOptions: { external: ['@membrana/core', '@membrana/detector-base'] },
+    lib: {
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        node: resolve(__dirname, 'src/node.ts'),
+      },
+      formats: ['es'],
+    },
+    rollupOptions: {
+      // tfjs и node:* не бандлим: tfjs тяжёлый и общий, node-модули ломают браузерный бандл.
+      external: [
+        '@membrana/core',
+        '@membrana/detector-base',
+        '@tensorflow/tfjs',
+        '@tensorflow/tfjs-backend-wasm',
+        /^node:/,
+      ],
+    },
     sourcemap: true,
     target: 'es2022',
   },
