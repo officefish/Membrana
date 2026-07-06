@@ -7,7 +7,7 @@ name: Comms contour
 
 on:
   push:
-    branches: [main, master, develop, vesnin, techies68]
+    branches: [main, master, develop, vesnin]
     paths:
       - 'apps/comms-studio/**'
       - 'docs/comms/**'
@@ -15,7 +15,7 @@ on:
       - 'scripts/check-package-boundaries.test.mjs'
       - '.github/workflows/comms-studio.yml'
   pull_request:
-    branches: [main, master, develop, vesnin, techies68]
+    branches: [main, master, develop, vesnin]
     paths:
       - 'apps/comms-studio/**'
       - 'docs/comms/**'

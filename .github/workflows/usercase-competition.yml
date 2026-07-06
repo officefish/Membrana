@@ -5,7 +5,7 @@ name: UserCase competition verify
 
 on:
   pull_request:
-    branches: [main, master, develop, vesnin, techies68]
+    branches: [main, master, develop, vesnin]
     paths:
       - '.github/workflows/usercase-competition.yml'
       - 'scripts/usercase.mjs'
@@ -21,7 +21,7 @@ on:
       - 'docs/device-board-scripts/usercase-mvp-microphone-gamma/**'
       - 'docs/device-board-scripts/usercase-mvp-microphone-*-async-v2/**'
   push:
-    branches: [main, master, develop, vesnin, techies68]
+    branches: [main, master, develop, vesnin]
     paths:
       - '.github/workflows/usercase-competition.yml'
       - 'scripts/usercase.mjs'
