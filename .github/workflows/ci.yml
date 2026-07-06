@@ -5,14 +5,14 @@ name: CI
 
 on:
   push:
-    branches: [main, master, develop, vesnin, techies68, u10-workspace-prod]
+    branches: [main, master, develop, vesnin, u10-workspace-prod]
     # Контур communications (Вариант A) имеет свою полосу (comms-studio.yml);
     # правка ТОЛЬКО его путей не гоняет продуктовый pipeline. CC3.
     paths-ignore:
       - 'apps/comms-studio/**'
       - 'docs/comms/**'
   pull_request:
-    branches: [main, master, develop, vesnin, techies68, u10-workspace-prod]
+    branches: [main, master, develop, vesnin, u10-workspace-prod]
     paths-ignore:
       - 'apps/comms-studio/**'
       - 'docs/comms/**'

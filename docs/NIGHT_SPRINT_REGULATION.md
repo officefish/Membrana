@@ -43,7 +43,7 @@
 1. Выполнен **`yarn ritual:evening`** (или минимум `code-review` + архив ревью).
 2. Эпик зарегистрирован в [`docs/tasks/registry.json`](./tasks/registry.json) с `"sprintKind": "night-build"`.
 3. Epic-промпт содержит блок **«Night Build — промпт целиком»** и таблицу фаз NB0…NBn.
-4. Рабочая ветка создана: `night/<epic-id>-<YYYY-MM-DD>` от **`techies68`** (не от `main`).
+4. Рабочая ветка создана: `night/<epic-id>-<YYYY-MM-DD>` от актуального **`origin/main`**.
 
 ### Шаг 1. Открытие (`yarn night:open`)
 
@@ -120,7 +120,7 @@ Append в `docs/NIGHT_BUILD_LOG.md`:
 
 1. Прочитать `HANDOFF.md`.
 2. `yarn ritual:day` — standup подмешивает handoff (если скрипт видит свежий архив night-build).
-3. Решение: merge `night/*` → `techies68`, или день 2 night build (`yarn night:open --id … --continue`).
+3. Решение: PR `night/*` → `main`, или день 2 night build (`yarn night:open --id … --continue`).
 
 ---
 
@@ -129,7 +129,7 @@ Append в `docs/NIGHT_BUILD_LOG.md`:
 | Элемент | Правило |
 |---------|---------|
 | Ветка | `night/<epic-id>-<YYYY-MM-DD>` |
-| Base | `techies68` |
+| Base | `main` |
 | PR title | `night(<epic-id>): <краткое>` |
 | Merge | Утром после LGTM; CI full `yarn turbo run lint typecheck test build --continue` |
 | Prod | Только отдельным дневным PR + smoke из deploy runbook |
