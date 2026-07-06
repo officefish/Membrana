@@ -107,7 +107,10 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: 5173,
-      open: env.STUDIO_DEV !== '1',
+      // Автооткрытие браузера гасится STUDIO_DEV=1 (студийный dev) и BROWSER=none
+      // (общая конвенция; песочницы запрещают spawn внешних программ → EPERM
+      // ронял dev-сервер при старте, хотя сам сервер поднимался нормально).
+      open: env.STUDIO_DEV !== '1' && env.BROWSER !== 'none',
       proxy: {
         '/api-cabinet': {
           target: cabinetProxyTarget,
