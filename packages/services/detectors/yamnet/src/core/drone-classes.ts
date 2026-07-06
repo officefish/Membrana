@@ -30,7 +30,14 @@ export const DRONE_CLASSES: readonly DroneClassSpec[] = [
 ] as const;
 
 /**
- * Порог drone-score по умолчанию. YAMNet отдаёт сигмоидные multi-label score,
- * типичные уверенные значения — 0.2–0.6. Стартовое значение до калибровки ND3.
+ * Порог drone-score по умолчанию — калибровка ND3 на free-v1 (120 сэмплов, 2026-07-06).
+ *
+ * Clip-mean сигмоидных score дрон-классов на реальных записях МАЛ по абсолюту
+ * (медиана дронов ≈0.045, не-дронов ≈0.004): усреднение по кадрам разбавляет,
+ * а zero-shot классы AudioSet не «уверены» в бытовых записях дронов. Свип порога:
+ *   0.01 → P 71.4% / R 91.7% / F1 0.803 / FPR 36.7%  ← выбран (лучший F1)
+ *   0.02 → P 70.8% / R 85.0% / F1 0.773 / FPR 35.0%
+ *   0.25 → P 66.7% / R  6.7% / F1 0.121 (стартовая догадка — вне масштаба score)
+ * Для fusion (combined UC) использовать сырой confidence, не бинарный вердикт.
  */
-export const DEFAULT_DRONE_SCORE_THRESHOLD = 0.25;
+export const DEFAULT_DRONE_SCORE_THRESHOLD = 0.01;

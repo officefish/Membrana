@@ -10,7 +10,7 @@ export const NEURAL_DRONE_ANALYZER_PLUGIN_ID = 'neural-drone-analyzer';
 export interface NeuralDroneAnalyzerPluginConfig {
   /** Автозапуск анализа по окончании воспроизведения сэмпла. */
   readonly autoAnalyzeOnEnd: boolean;
-  /** Порог drone-score для вердикта (0..1); до калибровки ND3 — дефолт пакета. */
+  /** Порог drone-score для вердикта (0..1); дефолт пакета калиброван ND3 на free-v1. */
   readonly droneScoreThreshold: number;
 }
 

@@ -221,8 +221,79 @@ async function runTemplateMatch(manifestSamples, datasetDir) {
   };
 }
 
+const YAMNET_NODE_DIST = join(
+  ROOT,
+  'packages',
+  'services',
+  'detectors',
+  'yamnet',
+  'dist',
+  'node.js',
+);
+
+/**
+ * ND3 — yamnet: zero-shot нейро-детектор (бандленные веса + WASM-бэкенд).
+ * Паритет с клиентским плагином: весь клип одним AudioWindow (YAMNet сам
+ * нарезает фреймы 0.96 с, clip-score = среднее). warmUp до замера — latencyMs
+ * детектора не включает одноразовую загрузку графа.
+ */
+async function runYamnet(manifestSamples, datasetDir) {
+  await ensureBuilt(YAMNET_NODE_DIST, 'yamnet-detector (dist/node.js)');
+  const mod = await import(pathToFileURL(YAMNET_NODE_DIST).href);
+  const detector = mod.createYamnetDetectorNode();
+  await detector.warmUp();
+
+  /** @type {{ id: string; truthDrone: boolean; predDrone: boolean; maxConfidence: number }[]} */
+  const perSample = [];
+  const allLatencies = [];
+
+  for (const entry of manifestSamples) {
+    const wavPath = join(datasetDir, entry.path);
+    const { samples, sampleRate } = await readWavMono(wavPath);
+    const result = await detector.detect({
+      samples,
+      sampleRate,
+      timestamp: 0,
+      durationSec: samples.length / sampleRate,
+    });
+    perSample.push({
+      id: entry.id,
+      truthDrone: entry.label === 'drone',
+      predDrone: result.isDrone,
+      maxConfidence: result.confidence,
+    });
+    allLatencies.push(result.latencyMs);
+  }
+
+  const pairs = perSample.map((s) => ({
+    truthDrone: s.truthDrone,
+    predDrone: s.predDrone,
+  }));
+  const { tp, fp, fn, tn } = confusionFromPairs(pairs);
+  const prec = precision(tp, fp);
+  const rec = recall(tp, fn);
+  const sortedLat = sortNumbers(allLatencies);
+
+  return {
+    name: 'yamnet',
+    family: 'neural',
+    status: 'benchmarked',
+    metrics: {
+      tp,
+      fp,
+      fn,
+      tn,
+      precision: prec,
+      recall: rec,
+      f1: f1Score(prec, rec),
+      latencyP50Ms: percentile(sortedLat, 50),
+      latencyP95Ms: percentile(sortedLat, 95),
+    },
+    perSample,
+  };
+}
+
 const SCAFFOLD_DETECTORS = [
-  { name: 'yamnet', family: 'neural', status: 'scaffold' },
   { name: 'clap', family: 'neural', status: 'scaffold' },
   { name: 'agentic-claude', family: 'agentic', status: 'scaffold' },
 ];
@@ -273,6 +344,16 @@ async function main() {
     const m = templateResult.metrics;
     console.log(
       `template-match: precision=${m.precision?.toFixed(3) ?? '—'} recall=${m.recall?.toFixed(3) ?? '—'} F1=${m.f1?.toFixed(3) ?? '—'}`,
+    );
+  }
+
+  // ND3: zero-shot нейро-эшелон в общей таблице (сравнение с DRONE_TIGHT).
+  const yamnetResult = await runYamnet(testSamples, datasetDir);
+  benchmarked.push(yamnetResult);
+  {
+    const m = yamnetResult.metrics;
+    console.log(
+      `yamnet: precision=${m.precision?.toFixed(3) ?? '—'} recall=${m.recall?.toFixed(3) ?? '—'} F1=${m.f1?.toFixed(3) ?? '—'}`,
     );
   }
 
