@@ -6,6 +6,7 @@ import {
   copyScenarioTraceToClipboard,
   formatScenarioTraceLine,
   getScenarioTraceLineCount,
+  getScenarioTraceLines,
   getScenarioTraceText,
 } from './scenarioTraceBuffer';
 
@@ -23,6 +24,20 @@ describe('scenarioTraceBuffer', () => {
     expect(getScenarioTraceText()).toContain('upload-ok');
     clearScenarioTraceBuffer();
     expect(getScenarioTraceLineCount()).toBe(0);
+  });
+
+  it('getScenarioTraceLines: стабильный снапшот между мутациями (useSyncExternalStore)', () => {
+    clearScenarioTraceBuffer();
+    appendScenarioTraceLine('first');
+    const snapshot = getScenarioTraceLines();
+    expect(snapshot).toEqual(['[INFO] first']);
+    expect(getScenarioTraceLines()).toBe(snapshot);
+    appendScenarioTraceLine('second');
+    const next = getScenarioTraceLines();
+    expect(next).not.toBe(snapshot);
+    expect(next).toEqual(['[INFO] first', '[INFO] second']);
+    clearScenarioTraceBuffer();
+    expect(getScenarioTraceLines()).toEqual([]);
   });
 
   it('copyScenarioTraceToClipboard uses navigator.clipboard', async () => {

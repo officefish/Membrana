@@ -8,7 +8,11 @@ const MAX_TRACE_LINES = 10_000;
 const lines: string[] = [];
 const listeners = new Set<() => void>();
 
+/** Кэш снапшота для useSyncExternalStore: identity меняется только при мутации буфера. */
+let linesSnapshot: readonly string[] | null = null;
+
 function notify(): void {
+  linesSnapshot = null;
   listeners.forEach((listener) => listener());
 }
 
@@ -56,6 +60,14 @@ export function clearScenarioTraceBuffer(): void {
 
 export function getScenarioTraceLineCount(): number {
   return lines.length;
+}
+
+/** Снапшот строк буфера (стабильная ссылка между мутациями — для useSyncExternalStore). */
+export function getScenarioTraceLines(): readonly string[] {
+  if (linesSnapshot === null) {
+    linesSnapshot = lines.slice();
+  }
+  return linesSnapshot;
 }
 
 export function getScenarioTraceText(): string {

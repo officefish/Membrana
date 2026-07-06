@@ -17,6 +17,7 @@ import {
   copyScenarioTraceToClipboard,
   downloadScenarioTraceFile,
   getScenarioTraceLineCount,
+  getScenarioTraceLines,
   subscribeScenarioTraceBuffer,
 } from './scenarioTraceBuffer';
 import {
@@ -307,6 +308,7 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     watchConnection: (handlers) => bridge.watchConnection(handlers),
     setInfoLoggingEnabled: setScenarioRuntimeInfoLogging,
     getScenarioTraceLineCount,
+    getScenarioTraceLines,
     copyScenarioTraceToClipboard,
     downloadScenarioTrace: downloadScenarioTraceFile,
     clearScenarioTraceBuffer,

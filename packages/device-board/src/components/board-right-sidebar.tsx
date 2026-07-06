@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type {
   ScenarioBlockKind,
   ScenarioCollectorConfig,
@@ -77,6 +77,13 @@ import {
   LEGACY_SCENARIO_NODE_PALETTE,
   SCENARIO_V04_PALETTE_SECTIONS,
 } from '../types/board-ui.js';
+import { BoardJournalPanel } from './board-journal-panel.js';
+import {
+  RIGHT_SIDEBAR_MIN_WIDTH_PX,
+  RIGHT_SIDEBAR_WIDTH_STORAGE_KEY,
+  clampRightSidebarWidth,
+  parseStoredRightSidebarWidth,
+} from './right-sidebar-resize.js';
 import { BoardRuntimePortPanel } from './board-runtime-port-panel.js';
 import { BoardFunctionPinInspector, type FunctionPinEditSide } from './board-function-pin-inspector.js';
 import { BoardNodeInspectorNotes } from './board-node-inspector-notes.js';
@@ -124,6 +131,13 @@ export interface BoardRightSidebarProps {
   readonly isRuntime: boolean;
   readonly runtimeInspection: NodePortInspectionResult | null;
   readonly printLastOutput: string | null;
+  /** Вкладка «Журнал»: буфер scenario-trace (badge, снапшот строк, подписка). */
+  readonly scenarioTraceLineCount: number;
+  readonly getScenarioTraceLines: () => readonly string[];
+  readonly subscribeScenarioTrace: (listener: () => void) => () => void;
+  readonly onCopyScenarioTrace: () => Promise<boolean>;
+  readonly onDownloadScenarioTrace: () => void;
+  readonly onClearScenarioTrace: () => void;
   readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
   readonly onAddPaletteNode: (nodeKind: V04PaletteNodeKind) => void;
   readonly onMicrophoneIdChange: (nodeId: string, microphoneId: string) => void;
@@ -309,6 +323,12 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   isRuntime,
   runtimeInspection,
   printLastOutput,
+  scenarioTraceLineCount,
+  getScenarioTraceLines,
+  subscribeScenarioTrace,
+  onCopyScenarioTrace,
+  onDownloadScenarioTrace,
+  onClearScenarioTrace,
   onAddLegacyNode,
   onAddPaletteNode,
   onMicrophoneIdChange,
@@ -331,6 +351,78 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onClearBoard,
 }) => {
   const legacyPalette = isLegacyPaletteEnabled();
+  const [activeTab, setActiveTab] = useState<'inspector' | 'journal'>('inspector');
+  /** Ширина из drag-ресайза; null — дефолтный clamp-класс. */
+  const [sidebarWidthPx, setSidebarWidthPx] = useState<number | null>(() => {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    try {
+      const stored = parseStoredRightSidebarWidth(
+        window.localStorage.getItem(RIGHT_SIDEBAR_WIDTH_STORAGE_KEY),
+      );
+      return stored === null ? null : clampRightSidebarWidth(stored, window.innerWidth);
+    } catch {
+      return null;
+    }
+  });
+  const sidebarWidthPxRef = useRef(sidebarWidthPx);
+  sidebarWidthPxRef.current = sidebarWidthPx;
+  const asideRef = useRef<HTMLElement | null>(null);
+  const resizeDragRef = useRef<{
+    readonly pointerId: number;
+    readonly startX: number;
+    readonly startWidth: number;
+  } | null>(null);
+
+  const handleResizePointerDown = (event: React.PointerEvent<HTMLDivElement>): void => {
+    const startWidth =
+      asideRef.current?.getBoundingClientRect().width ?? RIGHT_SIDEBAR_MIN_WIDTH_PX;
+    resizeDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startWidth,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  };
+
+  const handleResizePointerMove = (event: React.PointerEvent<HTMLDivElement>): void => {
+    const drag = resizeDragRef.current;
+    if (drag === null || drag.pointerId !== event.pointerId) {
+      return;
+    }
+    setSidebarWidthPx(
+      clampRightSidebarWidth(drag.startWidth + (drag.startX - event.clientX), window.innerWidth),
+    );
+  };
+
+  const handleResizePointerEnd = (event: React.PointerEvent<HTMLDivElement>): void => {
+    const drag = resizeDragRef.current;
+    if (drag === null || drag.pointerId !== event.pointerId) {
+      return;
+    }
+    resizeDragRef.current = null;
+    const width = sidebarWidthPxRef.current;
+    try {
+      if (width !== null) {
+        window.localStorage.setItem(RIGHT_SIDEBAR_WIDTH_STORAGE_KEY, String(width));
+      }
+    } catch {
+      // private mode / quota: ширина живёт до перезагрузки
+    }
+  };
+
+  const resetSidebarWidth = (): void => {
+    resizeDragRef.current = null;
+    setSidebarWidthPx(null);
+    try {
+      window.localStorage.removeItem(RIGHT_SIDEBAR_WIDTH_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  };
+
   const [variableNameDraft, setVariableNameDraft] = useState(selectedVariableName);
   const [groupTitleDraft, setGroupTitleDraft] = useState(selectedGroupTitle);
   const [groupDescriptionDraft, setGroupDescriptionDraft] = useState(selectedGroupDescription);
@@ -538,23 +630,91 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
 
   return (
     <aside
-      className={`flex h-full ${
-        collapsed ? 'w-10' : 'w-[clamp(12rem,15vw,16rem)]'
+      ref={asideRef}
+      className={`relative flex h-full ${
+        collapsed
+          ? 'w-10'
+          : sidebarWidthPx === null
+            ? 'w-[clamp(12rem,15vw,16rem)]'
+            : ''
       } flex-col overflow-y-auto overflow-x-hidden border-l border-base-300 bg-base-100/95 shadow-lg backdrop-blur-sm`}
+      style={
+        collapsed || sidebarWidthPx === null
+          ? undefined
+          : {
+              width: sidebarWidthPx,
+              minWidth: RIGHT_SIDEBAR_MIN_WIDTH_PX,
+              maxWidth: '50vw',
+            }
+      }
       aria-label="Инспектор и палитра нод"
     >
-      {onToggleCollapse ? (
-        <button
-          type="button"
-          className="btn btn-ghost btn-xs m-2 self-start shrink-0"
-          aria-label={collapsed ? 'Развернуть правую панель' : 'Свернуть правую панель'}
-          title={collapsed ? 'Развернуть' : 'Свернуть'}
-          onClick={onToggleCollapse}
-        >
-          {collapsed ? '«' : '»'}
-        </button>
-      ) : null}
       {collapsed ? null : (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Изменить ширину правой панели"
+          title="Потяните, чтобы изменить ширину; двойной клик — сбросить"
+          className="absolute inset-y-0 left-0 z-20 w-1.5 shrink-0 cursor-col-resize touch-none transition-colors hover:bg-primary/40 active:bg-primary/60"
+          onPointerDown={handleResizePointerDown}
+          onPointerMove={handleResizePointerMove}
+          onPointerUp={handleResizePointerEnd}
+          onPointerCancel={handleResizePointerEnd}
+          onDoubleClick={resetSidebarWidth}
+        />
+      )}
+      <div
+        className={`flex shrink-0 items-center gap-1 p-2 ${collapsed ? '' : 'border-b border-base-200'}`}
+      >
+        {onToggleCollapse ? (
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs shrink-0"
+            aria-label={collapsed ? 'Развернуть правую панель' : 'Свернуть правую панель'}
+            title={collapsed ? 'Развернуть' : 'Свернуть'}
+            onClick={onToggleCollapse}
+          >
+            {collapsed ? '«' : '»'}
+          </button>
+        ) : null}
+        {collapsed ? null : (
+          <div role="tablist" className="tabs tabs-boxed tabs-xs flex-1" aria-label="Панели сайдбара">
+            <button
+              type="button"
+              role="tab"
+              className={`tab flex-1 ${activeTab === 'inspector' ? 'tab-active' : ''}`}
+              aria-selected={activeTab === 'inspector'}
+              onClick={() => setActiveTab('inspector')}
+            >
+              Узлы
+            </button>
+            <button
+              type="button"
+              role="tab"
+              className={`tab flex-1 gap-1 ${activeTab === 'journal' ? 'tab-active' : ''}`}
+              aria-selected={activeTab === 'journal'}
+              onClick={() => setActiveTab('journal')}
+            >
+              Журнал
+              {scenarioTraceLineCount > 0 ? (
+                <span className="badge badge-xs badge-ghost font-mono">
+                  {scenarioTraceLineCount}
+                </span>
+              ) : null}
+            </button>
+          </div>
+        )}
+      </div>
+      {collapsed ? null : activeTab === 'journal' ? (
+        <BoardJournalPanel
+          isRuntime={isRuntime}
+          getLines={getScenarioTraceLines}
+          subscribe={subscribeScenarioTrace}
+          onCopy={onCopyScenarioTrace}
+          onDownload={onDownloadScenarioTrace}
+          onClear={onClearScenarioTrace}
+        />
+      ) : (
         <>
       {showRuntimeOutputs ? (
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4 text-sm">
