@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
 import type { DeviceCaptureMode } from '@/api/deviceCapture';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
+import { resolveNodeCardStatus } from '@/lib/nodeCardStatus';
 import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/lib/useCabinetNodesJournalPreview';
@@ -188,6 +189,12 @@ function NodeCard({
   // CX3: объявленный узлом список сценариев (dropdown под захватом).
   const scenarioList = deviceId ? runtime.scenarioLists[deviceId] : undefined;
   const deviceLive = runtime.isDeviceLive(deviceId);
+  // #279: иерархия статуса карточки — ключ (revoked/expired) важнее транспорта.
+  const cardStatus = resolveNodeCardStatus({
+    paired: node.device != null,
+    pairedKeyStatus: node.device?.pairedKeyStatus ?? null,
+    deviceLive,
+  });
   const isRunning = state?.isRunning ?? false;
   const mode = state?.mode ?? 'normal';
   const [captureMode, setCaptureMode] = useState<DeviceCaptureMode>('soft');
@@ -295,14 +302,32 @@ function NodeCard({
                 </button>
               </div>
             ) : null}
-            {node.device ? (
-              deviceLive ? (
-                <span className="badge badge-success badge-sm mt-1">online</span>
-              ) : (
-                <span className="badge badge-warning badge-sm mt-1">сопряжён · offline</span>
-              )
-            ) : (
+            {/* #279: истёкший/отозванный ключ важнее online/offline — оператору
+                нужно действовать (перевыпустить ключ), а не ждать связи. */}
+            {cardStatus === 'not-paired' ? (
               <span className="badge badge-ghost badge-sm mt-1">не сопряжён</span>
+            ) : cardStatus === 'key-revoked' ? (
+              <span
+                className="badge badge-error badge-sm mt-1"
+                title="Ключ сопряжения отозван. Выпустите новый ключ и пересопрягите устройство"
+              >
+                ключ отозван
+              </span>
+            ) : cardStatus === 'key-expired' ? (
+              <span
+                className="badge badge-warning badge-sm mt-1"
+                title={`Ключ истёк${
+                  node.device?.pairedKeyExpiresAt
+                    ? ` ${new Date(node.device.pairedKeyExpiresAt).toLocaleString()}`
+                    : ''
+                }. Выпустите новый ключ и пересопрягите устройство`}
+              >
+                ключ устарел
+              </span>
+            ) : cardStatus === 'online' ? (
+              <span className="badge badge-success badge-sm mt-1">online</span>
+            ) : (
+              <span className="badge badge-warning badge-sm mt-1">сопряжён · offline</span>
             )}
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
