@@ -11793,7 +11793,7 @@
         "dynin",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -11813,7 +11813,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -11833,7 +11833,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -11854,7 +11854,7 @@
         "rodchenko",
         "dynin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -11877,7 +11877,7 @@
         "ozhegov",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -11897,7 +11897,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -11918,7 +11918,7 @@
         "rodchenko",
         "dynin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -11942,7 +11942,7 @@
         "rodchenko",
         "vesnin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -11962,7 +11962,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -11985,7 +11985,7 @@
         "ozhegov",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -12007,7 +12007,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CABINET_KEY_EXPIRED_STATUS_PROMPT.md",
@@ -12027,7 +12027,7 @@
         "rodchenko",
         "dynin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -12052,7 +12052,7 @@
         "dynin",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -12072,7 +12072,7 @@
       "supportPersonas": [
         "kuryokhin"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -12095,7 +12095,7 @@
         "dynin",
         "ozhegov"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -12117,7 +12117,7 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-07"
     }
   ]
 }
