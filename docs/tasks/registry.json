@@ -12029,10 +12029,10 @@
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
       "githubIssue": 281,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "Спринт закрыт 2026-07-07: CSR1 #282 (единый runtime), CSR2 #283 (матрица кнопок), CSR3 #284 (канон §3.4). Корень: два ScenarioRuntime на клиенте. Ручной E2E узел↔кабинет — по smoke-чеклисту §11 при следующем окне",
       "id": "capture-shared-runtime",
       "title": "Epic: Общий контроль сценария под захватом — единый runtime клиента (CSR1–CSR3)",
       "size": "L",
@@ -12047,7 +12047,8 @@
         "rodchenko",
         "dynin",
         "kuryokhin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -12096,10 +12097,10 @@
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
       "githubIssue": 281,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #284 squash-merged 2026-07-07; канон §3.4 единый runtime + CSR smoke-шаги",
       "id": "csr-3-docs-smoke",
       "title": "CSR3: docs (единый runtime, §3/§4 матрица) + ручной smoke на связке узел↔кабинет",
       "size": "S",
@@ -12111,7 +12112,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     }
   ]
 }
