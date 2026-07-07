@@ -12009,10 +12009,10 @@
       "promptPath": "docs/prompts/CABINET_KEY_EXPIRED_STATUS_PROMPT.md",
       "githubIssue": 279,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #280 squash-merged 2026-07-07; производный статус ключа без миграций, иерархия бейджей pure; Closes #279. Прод — со следующим деплоем кабинета",
       "id": "cabinet-key-expired-status",
       "title": "Кабинет различает «ключ устарел» и «сопряжён · offline» — производный статус ключа в membrane view + иерархия бейджей карточки",
       "size": "M",
@@ -12022,7 +12022,8 @@
       "supportPersonas": [
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     }
   ]
 }
