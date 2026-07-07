@@ -10416,10 +10416,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-02",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "Поглощена cx-3-scenario-list (спринт capture-scenario-ux, PR #275): список объявляет устройство при захвате, сервер хранит выбранный",
       "dependsOn": [
         "device-board-capture-tariff-v2"
       ],
@@ -11773,10 +11773,10 @@
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
       "githubIssue": 271,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "Спринт закрыт за день 2026-07-07: CX1-CX5 все merged (#272-#276), требования владельца с живого прода выполнены; остаток вне эпика — прод-деплой кабинета с CX-фазами",
       "id": "capture-scenario-ux",
       "title": "Epic: Захват, сценарии и связь — UX-контур узел↔кабинет (CX1–CX5)",
       "size": "L",
@@ -11792,16 +11792,17 @@
         "vesnin",
         "dynin",
         "kuryokhin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
       "githubIssue": 271,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #273 squash-merged 2026-07-07; полный deviceId с копированием, зеркально NB1",
       "id": "cx-1-node-card-device-id",
       "title": "CX1: карточка узла в кабинете — «связан с устройством {deviceId}» (полный id, копирование, зеркально NB1)",
       "size": "S",
@@ -11811,16 +11812,17 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
       "githubIssue": 271,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #272 squash-merged 2026-07-07; корень: стейт captures без bootstrap + журнал рвал общий WS; +фикс неотпускаемого захвата мёртвой сессии",
       "id": "cx-2-journal-nav-release",
       "title": "CX2: навигация кабинета (Журнал) не роняет захват — runtime на уровень shell; release любой причины отражается на клиенте",
       "size": "M",
@@ -11830,16 +11832,17 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
       "githubIssue": 271,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #275 squash-merged 2026-07-07; board.scenario-list contract-first, DeviceScenarioRegistry, dropdown в кабинете; поглотила db-scenario-selector",
       "id": "cx-3-scenario-list",
       "title": "CX3: список сценариев — клиент объявляет при захвате, сервер хранит выбранный (один всегда выбран), dropdown в кабинете",
       "size": "M",
@@ -11850,16 +11853,17 @@
       "supportPersonas": [
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
       "githubIssue": 271,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #276 squash-merged 2026-07-07; автооткрытие выбранного сценария, isBoardExitLocked + module guard, emergency stop не тронут",
       "id": "cx-4-board-lock",
       "title": "CX4: борд-лок на клиенте под захватом — открытие с выбранным сценарием сервера, выход заблокирован до release, emergency stop всегда доступен",
       "size": "M",
@@ -11872,16 +11876,17 @@
       "supportPersonas": [
         "ozhegov",
         "kuryokhin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
       "githubIssue": 271,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #274 squash-merged 2026-07-07; linkDegraded FSM + warning в AppHeader, авто-снятие на реконнекте",
       "id": "cx-5-header-link-warning",
       "title": "CX5: warning в шапке клиента «нет связи с сервером» при stay-linked; авто-снятие на реконнекте",
       "size": "S",
@@ -11891,7 +11896,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     }
   ]
 }
