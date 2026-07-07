@@ -11924,10 +11924,10 @@
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
       "githubIssue": 278,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "Спринт закрыт 2026-07-07: BTJ1 #285 (слот), BTJ2 #286 (панель телеметрии), BTJ3 #287 (docs). Сайдбар борда: Узлы|Журнал(телеметрия)|Трейс. Границы пакета целы (слот от хоста). Ручной smoke по чеклисту при сборке клиента",
       "id": "board-telemetry-journal",
       "title": "Epic: Журнал телеметрии в правом сайдбаре device-board вместо trace-хвоста (BTJ1–BTJ3)",
       "size": "M",
@@ -11941,7 +11941,8 @@
       "supportPersonas": [
         "rodchenko",
         "vesnin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -11990,10 +11991,10 @@
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
       "githubIssue": 278,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #287 squash-merged 2026-07-07; раскладка сайдбара документирована + smoke",
       "id": "btj-3-docs-smoke",
       "title": "BTJ3: docs sync (вкладки «Узлы | Журнал | Трейс», слот хоста) + ручной smoke чек-лист",
       "size": "S",
@@ -12005,7 +12006,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CABINET_KEY_EXPIRED_STATUS_PROMPT.md",
