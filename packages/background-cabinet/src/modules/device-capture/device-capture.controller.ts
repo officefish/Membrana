@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 import { parseCaptureDeviceDto } from './device-capture.dto';
 import { DeviceCaptureService } from './device-capture.service';
@@ -7,6 +7,12 @@ import { DeviceCaptureService } from './device-capture.service';
 @UseGuards(SessionGuard)
 export class DeviceCaptureController {
   constructor(private readonly captureService: DeviceCaptureService) {}
+
+  /** CX2: снапшот активных захватов — bootstrap кабинета после навигации/перезагрузки. */
+  @Get('captures')
+  list(@Req() req: AuthenticatedRequest) {
+    return this.captureService.listForUser(req.authUser!.id);
+  }
 
   @Post('nodes/:nodeId/capture')
   capture(

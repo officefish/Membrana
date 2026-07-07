@@ -8,6 +8,7 @@ import {
 
 import {
   captureDevice as captureDeviceApi,
+  fetchCaptures as fetchCapturesApi,
   releaseDevice as releaseDeviceApi,
   type DeviceCaptureMode,
   type DeviceCaptureView,
@@ -20,6 +21,7 @@ import {
   getCabinetNodeRealtimeClient,
   type CabinetRealtimeClientState,
 } from '@/lib/cabinetNodeRealtimeClient';
+import { capturesByDeviceId } from '@/lib/captureSnapshot';
 import { isDeviceLive as checkDeviceLive } from '@/lib/isDeviceLive';
 
 export interface CabinetNodeRuntime {
@@ -56,8 +58,25 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
     const client = getCabinetNodeRealtimeClient();
     client.connect(membraneId);
     setConnection(client.getState());
+    // CX2: авторитетный снапшот захватов с сервера (как presence-снапшот PL1).
+    // Стейт живёт в React и обнуляется при размонтировании раздела — без
+    // bootstrap'а кабинет показывал «Захватить» при живом захвате на сервере.
+    let disposed = false;
+    const refreshCaptures = (): void => {
+      void fetchCapturesApi()
+        .then(({ captures: list }) => {
+          if (disposed) return;
+          setCaptures(capturesByDeviceId(list));
+        })
+        .catch(() => {
+          /* best-effort: до следующего reconnect/broadcast живём на текущем стейте */
+        });
+    };
+    refreshCaptures();
     const unsubState = client.subscribeState((next) => {
       setConnection(next);
+      // Реконнект мог пропустить board-broadcast'ы — пересинхронизируемся.
+      if (next === 'connected') refreshCaptures();
     });
     // PL1: снапшот присутствия при подключении — авторитетный bootstrap набора.
     // Заменяем целиком (не мерджим): сервер прислал полный список онлайн-узлов.
@@ -114,6 +133,7 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       });
     });
     return () => {
+      disposed = true;
       unsubState();
       unsubSnapshot();
       unsubRuntime();
