@@ -13,6 +13,8 @@ export interface PlaybackClusterControlProps {
   readonly isPaused: boolean;
   readonly canRun: boolean;
   readonly runDisabledReason?: string | null;
+  /** CSR2: под захватом пауза заблокирована — кнопка disabled с подсказкой. */
+  readonly capturePauseBlocked?: boolean;
   readonly onStart: () => void | Promise<void>;
   readonly onResume: () => void;
   readonly onPause: () => void;
@@ -59,6 +61,7 @@ export const PlaybackClusterControl: React.FC<PlaybackClusterControlProps> = ({
   isPaused,
   canRun,
   runDisabledReason,
+  capturePauseBlocked,
   onStart,
   onResume,
   onPause,
@@ -70,6 +73,7 @@ export const PlaybackClusterControl: React.FC<PlaybackClusterControlProps> = ({
     isPaused,
     canRun,
     runDisabledReason,
+    capturePauseBlocked,
   });
 
   const handlePlay = useCallback(() => {
@@ -134,8 +138,8 @@ export const PlaybackClusterControl: React.FC<PlaybackClusterControlProps> = ({
           type="button"
           className={segmentClass('pause', pauseVisual)}
           disabled={model.pauseDisabled}
-          title="Пауза сценария"
-          aria-label="Пауза сценария"
+          title={model.pauseTitle}
+          aria-label={model.pauseTitle}
           onClick={onPause}
           {...bindPress('pause')}
         >

@@ -29,6 +29,7 @@ import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
 import { BoardEditUndoControl } from './board-edit-undo-control.js';
 import { resolveScenarioEditFlags } from './scenario-edit-flags.js';
 import { isBoardExitLocked, type ServerFirstFlagsInput } from './server-first-flags.js';
+import { resolveCapturePlaybackMatrix } from './capture-playback-matrix.js';
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 import type {
@@ -1594,6 +1595,16 @@ const DeviceBoardShellInner: React.FC<{
                   isPaused={graph.runtimeState.isPaused}
                   canRun={graph.canRun}
                   runDisabledReason={graph.runDisabledReason}
+                  // CSR2: под захватом пауза заблокирована (тариф v3) — кнопка
+                  // disabled с подсказкой; работает → остаётся только Stop.
+                  // Единый источник — чистая матрица прав поля.
+                  capturePauseBlocked={
+                    !resolveCapturePlaybackMatrix({
+                      captured: graph.serverFirstFlags?.capturedByCabinet === true,
+                      captureMode: graph.serverFirstFlags?.captureMode ?? null,
+                      isRunning: graph.runtimeState.isRunning,
+                    }).canPause && graph.serverFirstFlags?.capturedByCabinet === true
+                  }
                   onStart={() => graph.startScenario()}
                   onResume={() => graph.resumeScenario()}
                   onPause={() => graph.pauseScenario()}
