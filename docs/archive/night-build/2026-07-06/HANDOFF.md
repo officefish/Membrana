@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-07-06
+
+> Epic: `sandbox-link-diagnostics-night`
+> Закрыто: `2026-07-06T17:50:56.806Z` (`yarn night:close`)
+> Промпт: `docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/sandbox-link-diagnostics-night-2026-07-06` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 # Night Build log
 
 ## Open — 2026-06-14T18:06:19.233Z
@@ -84,3 +105,21 @@
 ## Checkpoint NB2 — 2026-07-06T17:50:25.707Z
 - Status: **pass**
 - Note: причина флапа названа по коду: кабинетная WS без keepalive + idle-таймаут; фикс 45с keepalive, cabinet 21/21
+
+
+---
+
+## Шаблон итога (заполнить вручную или агентом)
+
+| Фаза | Статус | PR / commit |
+|------|--------|-------------|
+| NB0 | pending / done / deferred | |
+| NB1 | pending / done / deferred | |
+| NB2 | pending / done / deferred | |
+| NB3 | pending / done / deferred | |
+
+**Блокеры:**
+
+- …
+
+**LGTM Vesnin:** pending
