@@ -11967,10 +11967,10 @@
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
       "githubIssue": 278,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #286 squash-merged 2026-07-07; компакт-панель телеметрии в слоте (lp5-рендереры), «Открыть журнал» уважает CX4-лок",
       "id": "btj-2-client-telemetry-panel",
       "title": "BTJ2: клиентская компакт-панель телеметрии для слота — useLiveJournal + lp5-рендереры, автообновление, «Открыть журнал» уважает борд-лок CX4",
       "size": "M",
@@ -11983,7 +11983,8 @@
       "supportPersonas": [
         "ozhegov",
         "kuryokhin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
