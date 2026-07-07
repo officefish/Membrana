@@ -29,6 +29,10 @@ export interface NodeDeviceView {
   mediaDeviceId: string;
   label: string | null;
   lastSeenAt: string;
+  /** #279: производный статус ключа сопряжения (истина сервера, без часов клиента). */
+  pairedKeyStatus: 'active' | 'expired' | 'revoked';
+  /** ISO; null, если ключ удалён и срок неизвестен. */
+  pairedKeyExpiresAt: string | null;
 }
 
 export interface AccessKeyView {

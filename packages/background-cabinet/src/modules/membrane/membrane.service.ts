@@ -17,6 +17,7 @@ import {
   hashAccessKeySecret,
 } from './access-key.util';
 import { isNodeLimitReached, nextNodeLabel } from '../../domain/node-limit';
+import { resolvePairedKeyStatus } from '../../domain/paired-key-status';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import { DeviceCaptureService } from '../device-capture/device-capture.service';
 
@@ -42,8 +43,23 @@ function serializeNode(node: {
   label: string;
   createdAt: Date;
   accessKeys: Parameters<typeof serializeAccessKey>[0][];
-  device?: { mediaDeviceId: string; label: string | null; lastSeenAt: Date } | null;
+  device?: {
+    mediaDeviceId: string;
+    label: string | null;
+    lastSeenAt: Date;
+    pairedKeyId: string | null;
+    pairingStatus: 'paired' | 'revoked' | 'unpaired';
+  } | null;
 }) {
+  // #279: производный статус ключа сопряжения — на чтении, без миграций.
+  // Ключи уже в выборке (accessKeys), лишних запросов нет.
+  const pairedKeyView = node.device
+    ? resolvePairedKeyStatus({
+        pairingStatus: node.device.pairingStatus,
+        pairedKey:
+          node.accessKeys.find((key) => key.id === node.device?.pairedKeyId) ?? null,
+      })
+    : null;
   return {
     id: node.id,
     label: node.label,
@@ -54,6 +70,8 @@ function serializeNode(node: {
           mediaDeviceId: node.device.mediaDeviceId,
           label: node.device.label,
           lastSeenAt: node.device.lastSeenAt.toISOString(),
+          pairedKeyStatus: pairedKeyView!.status,
+          pairedKeyExpiresAt: pairedKeyView!.expiresAt,
         }
       : null,
   };
