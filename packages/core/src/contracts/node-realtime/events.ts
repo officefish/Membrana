@@ -202,6 +202,12 @@ export const NODE_REALTIME_EVENT_TYPES = {
     heartbeat: 'board.heartbeat',
     /** v2: отпускание захвата (НЕ стоп играющего сценария). */
     release: 'board.release',
+    /**
+     * CX3: узел объявляет список своих сценариев + выбранный (node → server →
+     * cabinet). Сценарии пользовательские и живут на устройстве — сервер хранит
+     * только объявленный список и выбранный id (решение владельца 2026-07-02).
+     */
+    scenarioList: 'board.scenario-list',
   },
 } as const;
 

@@ -14,6 +14,7 @@ import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { notifyStudioCaptureAcquired } from '@/lib/electronStudioShellPort';
 import { writeElectronShellLog } from '@/lib/electronShellLogPort';
 import { DEVICE_BOARD_MODULE_ID } from '@/modules/device-board/device-board-module-config';
+import { announceScenarioList } from '@/modules/device-board/scenarioListAnnouncer';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
 /**
@@ -124,6 +125,13 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
     // управляет кабинет. Идемпотентно: если уже на доске, навигации нет.
     if (forceOpenDeviceBoard()) {
       writeElectronShellLog('info', '[capture] force-open device-board (view-only)');
+    }
+    // CX3: под захватом узел объявляет серверу список своих сценариев —
+    // кабинет показывает dropdown и шлёт selectScenario только по этому списку.
+    if (previous === null || previous.sessionId !== payload.sessionId) {
+      void announceScenarioList().then((sent) => {
+        if (sent) writeElectronShellLog('info', '[capture] scenario list announced');
+      });
     }
     return;
   }

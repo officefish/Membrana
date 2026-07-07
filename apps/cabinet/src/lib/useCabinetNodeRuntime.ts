@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
+  type BoardScenarioListItem,
   type RuntimeCommandPayload,
   type RuntimeStatePayload,
 } from '@membrana/core';
@@ -15,6 +16,7 @@ import {
 } from '@/api/deviceCapture';
 import {
   buildCabinetRunScenarioCommand,
+  buildCabinetSelectScenarioCommand,
   buildCabinetStopScenarioCommand,
 } from '@/lib/cabinetNodeRuntimeCommands';
 import {
@@ -24,6 +26,12 @@ import {
 import { capturesByDeviceId } from '@/lib/captureSnapshot';
 import { isDeviceLive as checkDeviceLive } from '@/lib/isDeviceLive';
 
+/** CX3: объявленный узлом список сценариев + выбранный. */
+export interface DeviceScenarioListView {
+  readonly scenarios: readonly BoardScenarioListItem[];
+  readonly selectedScenarioId: string | null;
+}
+
 export interface CabinetNodeRuntime {
   /** Последнее состояние runtime по deviceId узла. */
   readonly states: Record<string, RuntimeStatePayload>;
@@ -32,6 +40,8 @@ export interface CabinetNodeRuntime {
   readonly onlineDeviceIds: ReadonlySet<string>;
   /** CT3 (tariff v2): активные захваты по deviceId (board.capture broadcast + REST). */
   readonly captures: Record<string, DeviceCaptureView>;
+  /** CX3: списки сценариев по deviceId (объявление узла + bootstrap GET). */
+  readonly scenarioLists: Record<string, DeviceScenarioListView>;
   /** Единый селектор «связь жива» для gating Пуска (DBR6). */
   readonly isDeviceLive: (deviceId: string | null | undefined) => boolean;
   /** CT3: явный захват устройства (шаг 1 двухшаговой модели, канон §1). */
@@ -40,6 +50,8 @@ export interface CabinetNodeRuntime {
   readonly releaseDevice: (nodeId: string) => Promise<void>;
   readonly run: (deviceId: string) => void;
   readonly stop: (deviceId: string) => void;
+  /** CX3: выбрать сценарий из объявленного списка (сервер — источник истины). */
+  readonly selectScenario: (deviceId: string, scenarioId: string) => void;
   // CT7: pause/resume/setMode удалены (// Tariff v3).
 }
 
@@ -52,6 +64,7 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
   const [connection, setConnection] = useState<CabinetRealtimeClientState>('disconnected');
   const [onlineDeviceIds, setOnlineDeviceIds] = useState<ReadonlySet<string>>(() => new Set());
   const [captures, setCaptures] = useState<Record<string, DeviceCaptureView>>({});
+  const [scenarioLists, setScenarioLists] = useState<Record<string, DeviceScenarioListView>>({});
 
   useEffect(() => {
     if (!membraneId) return undefined;
@@ -67,6 +80,19 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
         .then(({ captures: list }) => {
           if (disposed) return;
           setCaptures(capturesByDeviceId(list));
+          // CX3: объявленные списки сценариев едут в том же снапшоте.
+          setScenarioLists((prev) => {
+            const next = { ...prev };
+            for (const capture of list) {
+              if (capture.scenarios !== undefined) {
+                next[capture.deviceId] = {
+                  scenarios: capture.scenarios,
+                  selectedScenarioId: capture.selectedScenarioId ?? null,
+                };
+              }
+            }
+            return next;
+          });
         })
         .catch(() => {
           /* best-effort: до следующего reconnect/broadcast живём на текущем стейте */
@@ -132,6 +158,16 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
         return next;
       });
     });
+    // CX3: объявление узла / ре-бродкаст select'а — авторитетная замена списка.
+    const unsubScenarioList = client.subscribeBoardScenarioList((payload) => {
+      setScenarioLists((prev) => ({
+        ...prev,
+        [payload.deviceId]: {
+          scenarios: payload.scenarios,
+          selectedScenarioId: payload.selectedScenarioId,
+        },
+      }));
+    });
     return () => {
       disposed = true;
       unsubState();
@@ -142,6 +178,7 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       unsubCapture();
       unsubHeartbeat();
       unsubRelease();
+      unsubScenarioList();
     };
   }, [membraneId]);
 
@@ -167,12 +204,27 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
     );
   }, []);
 
+  // CX3: «Пуск» запускает выбранный сценарий (если список объявлен);
+  // без списка — сохранённый сценарий устройства, как раньше.
   const run = useCallback(
-    (deviceId: string) => sendCommand(buildCabinetRunScenarioCommand(deviceId)),
-    [sendCommand],
+    (deviceId: string) =>
+      sendCommand(
+        buildCabinetRunScenarioCommand(
+          deviceId,
+          scenarioLists[deviceId]?.selectedScenarioId ?? undefined,
+        ),
+      ),
+    [scenarioLists, sendCommand],
   );
   const stop = useCallback(
     (deviceId: string) => sendCommand(buildCabinetStopScenarioCommand(deviceId)),
+    [sendCommand],
+  );
+  // CX3: выбор без optimistic-обновления — сервер валидирует против
+  // объявленного списка и ре-бродкастит авторитетный снапшот.
+  const selectScenario = useCallback(
+    (deviceId: string, scenarioId: string) =>
+      sendCommand(buildCabinetSelectScenarioCommand(deviceId, scenarioId)),
     [sendCommand],
   );
 
@@ -182,11 +234,13 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       connection,
       onlineDeviceIds,
       captures,
+      scenarioLists,
       isDeviceLive,
       captureDevice,
       releaseDevice,
       run,
       stop,
+      selectScenario,
     }),
     [
       captureDevice,
@@ -196,6 +250,8 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       onlineDeviceIds,
       releaseDevice,
       run,
+      scenarioLists,
+      selectScenario,
       states,
       stop,
     ],

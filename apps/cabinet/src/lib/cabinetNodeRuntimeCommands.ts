@@ -8,8 +8,23 @@ export const CABINET_STOP_FADE_OUT_MS = 200;
  * явный шаг (REST /capture), поэтому команда не несёт authority/followerMode.
  * Gateway отвергнет команду без активного захвата (канон §4.1).
  */
-export function buildCabinetRunScenarioCommand(deviceId: string): RuntimeCommandPayload {
-  return { action: 'run', deviceId };
+export function buildCabinetRunScenarioCommand(
+  deviceId: string,
+  scenarioId?: string,
+): RuntimeCommandPayload {
+  // CX3: запуск конкретного выбранного сценария (wire v2 поддерживает
+  // run{scenarioId}); без scenarioId — сохранённый сценарий устройства.
+  return scenarioId !== undefined
+    ? { action: 'run', deviceId, scenarioId }
+    : { action: 'run', deviceId };
+}
+
+/** CX3: выбор сценария из объявленного узлом списка (tariff v2 whitelist). */
+export function buildCabinetSelectScenarioCommand(
+  deviceId: string,
+  scenarioId: string,
+): RuntimeCommandPayload {
+  return { action: 'selectScenario', deviceId, scenarioId };
 }
 
 /** CT3 (tariff v2): стоп с graceful fade-out (по умолчанию 200 мс). */

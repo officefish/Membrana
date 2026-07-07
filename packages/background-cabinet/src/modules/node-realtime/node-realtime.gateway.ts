@@ -14,8 +14,10 @@ import type { IncomingMessage } from 'node:http';
 import type { Server, WebSocket } from 'ws';
 import {
   NODE_REALTIME_EVENT_TYPES,
+  createNodeRealtimeEnvelope,
   parseBoardCaptureStatePayload,
   parseBoardEditLeasePayload,
+  parseBoardScenarioListPayload,
   parseHealthPongPayload,
   parsePresenceHeartbeatPayload,
   parseNodeRealtimeEnvelope,
@@ -26,6 +28,7 @@ import { isCabinetRuntimeCommandAllowed } from '../../domain/device-capture';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
 import { DeviceCaptureRegistry } from './device-capture.registry';
+import { DeviceScenarioRegistry, type DeviceScenarioEntry } from './device-scenario.registry';
 import { NodeRealtimeAuthService } from './node-realtime-auth.service';
 import { NodeRealtimeJournalHandler } from './node-realtime-journal.handler';
 import { NodeRealtimeService } from './node-realtime.service';
@@ -58,6 +61,7 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
     private readonly realtimeService: NodeRealtimeService,
     private readonly journalHandler: NodeRealtimeJournalHandler,
     private readonly captureRegistry: DeviceCaptureRegistry,
+    private readonly scenarioRegistry: DeviceScenarioRegistry,
   ) {
     this.heartbeatTimer = setInterval(() => this.pingClients(), 30_000);
   }
@@ -183,6 +187,19 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       }
       // SF2: board events (lease/capture) от узла — в кабинет.
       if (envelope.channel === 'board') {
+        // CX3: объявление списка сценариев — узел авторитетен по составу списка.
+        // Сервер нормализует выбор (инвариант «один всегда выбран») и хранит
+        // снапшот для bootstrap кабинета (GET /v1/captures).
+        if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.scenarioList) {
+          const payload = parseBoardScenarioListPayload(envelope.payload);
+          if (payload === null) {
+            this.logger.debug('invalid board.scenario-list payload');
+            return;
+          }
+          const entry = this.scenarioRegistry.setList(meta.membraneId, payload);
+          this.broadcastScenarioList(meta.membraneId, payload.deviceId, entry);
+          return;
+        }
         if (!this.isValidBoardEnvelope(envelope)) {
           return;
         }
@@ -277,7 +294,37 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       );
       return;
     }
+    // CX3: сервер — держатель «выбранного сценария». selectScenario вне
+    // объявленного узлом списка отвергается; успешный выбор ре-бродкастится
+    // всем кабинетам (единый источник истины для dropdown'ов).
+    if (command.action === 'selectScenario') {
+      const entry = this.scenarioRegistry.select(deviceId, command.scenarioId);
+      if (entry === null) {
+        this.logger.warn(
+          { deviceId, scenarioId: command.scenarioId },
+          'selectScenario rejected: scenario is not in the announced list',
+        );
+        return;
+      }
+      this.broadcastScenarioList(meta.membraneId, deviceId, entry);
+    }
     this.realtimeService.sendToNode(deviceId, envelope);
+  }
+
+  /** CX3: снапшот списка сценариев — кабинетам мембраны (board.scenario-list). */
+  private broadcastScenarioList(
+    membraneId: string,
+    deviceId: string,
+    entry: DeviceScenarioEntry,
+  ): void {
+    this.realtimeService.fanOutToCabinet(
+      membraneId,
+      createNodeRealtimeEnvelope('board', NODE_REALTIME_EVENT_TYPES.board.scenarioList, {
+        deviceId,
+        scenarios: entry.scenarios,
+        selectedScenarioId: entry.selectedScenarioId,
+      }),
+    );
   }
 
   private resolveTargetDeviceId(
@@ -302,6 +349,12 @@ export class NodeRealtimeGateway implements OnGatewayConnection, OnGatewayDiscon
       envelope.type === NODE_REALTIME_EVENT_TYPES.board.release
     ) {
       this.logger.debug({ type: envelope.type }, 'board capture events are server-originated');
+      return false;
+    }
+    // CX3: список объявляет только узел (обрабатывается до этой проверки);
+    // scenario-list от кабинета — drop (выбор идёт runtime.selectScenario).
+    if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.scenarioList) {
+      this.logger.debug('board.scenario-list is node-originated');
       return false;
     }
     if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.editLease) {
