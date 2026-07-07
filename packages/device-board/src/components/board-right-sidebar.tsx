@@ -79,6 +79,12 @@ import {
 } from '../types/board-ui.js';
 import { BoardJournalPanel } from './board-journal-panel.js';
 import {
+  RIGHT_SIDEBAR_TAB_LABELS,
+  normalizeRightSidebarTab,
+  visibleRightSidebarTabs,
+  type RightSidebarTab,
+} from './right-sidebar-tabs.js';
+import {
   RIGHT_SIDEBAR_MIN_WIDTH_PX,
   RIGHT_SIDEBAR_WIDTH_STORAGE_KEY,
   clampRightSidebarWidth,
@@ -131,13 +137,19 @@ export interface BoardRightSidebarProps {
   readonly isRuntime: boolean;
   readonly runtimeInspection: NodePortInspectionResult | null;
   readonly printLastOutput: string | null;
-  /** Вкладка «Журнал»: буфер scenario-trace (badge, снапшот строк, подписка). */
+  /** BTJ1: вкладка «Трейс» — буфер scenario-trace (badge, снапшот строк, подписка). */
   readonly scenarioTraceLineCount: number;
   readonly getScenarioTraceLines: () => readonly string[];
   readonly subscribeScenarioTrace: (listener: () => void) => () => void;
   readonly onCopyScenarioTrace: () => Promise<boolean>;
   readonly onDownloadScenarioTrace: () => void;
   readonly onClearScenarioTrace: () => void;
+  /**
+   * BTJ1: вкладка «Журнал» — телеметрия хоста (клиент передаёт готовую панель;
+   * device-board зависит только от core и телеметрию сам не импортирует). Без
+   * слота вкладки — «Узлы | Трейс» (кабинет, автономные хосты).
+   */
+  readonly journalSlot?: React.ReactNode;
   readonly onAddLegacyNode: (blockKind: ScenarioBlockKind) => void;
   readonly onAddPaletteNode: (nodeKind: V04PaletteNodeKind) => void;
   readonly onMicrophoneIdChange: (nodeId: string, microphoneId: string) => void;
@@ -349,9 +361,13 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
   onRemoveFunctionPin,
   onDeleteFunction,
   onClearBoard,
+  journalSlot,
 }) => {
   const legacyPalette = isLegacyPaletteEnabled();
-  const [activeTab, setActiveTab] = useState<'inspector' | 'journal'>('inspector');
+  const [activeTabRaw, setActiveTab] = useState<RightSidebarTab>('inspector');
+  // BTJ1: слот мог исчезнуть при смене хоста — активная вкладка всегда видимая.
+  const hasJournalSlot = journalSlot !== undefined && journalSlot !== null;
+  const activeTab = normalizeRightSidebarTab(activeTabRaw, hasJournalSlot);
   /** Ширина из drag-ресайза; null — дефолтный clamp-класс. */
   const [sidebarWidthPx, setSidebarWidthPx] = useState<number | null>(() => {
     if (typeof window === 'undefined') {
@@ -679,33 +695,32 @@ export const BoardRightSidebar: React.FC<BoardRightSidebarProps> = ({
         ) : null}
         {collapsed ? null : (
           <div role="tablist" className="tabs tabs-boxed tabs-xs flex-1" aria-label="Панели сайдбара">
-            <button
-              type="button"
-              role="tab"
-              className={`tab flex-1 ${activeTab === 'inspector' ? 'tab-active' : ''}`}
-              aria-selected={activeTab === 'inspector'}
-              onClick={() => setActiveTab('inspector')}
-            >
-              Узлы
-            </button>
-            <button
-              type="button"
-              role="tab"
-              className={`tab flex-1 gap-1 ${activeTab === 'journal' ? 'tab-active' : ''}`}
-              aria-selected={activeTab === 'journal'}
-              onClick={() => setActiveTab('journal')}
-            >
-              Журнал
-              {scenarioTraceLineCount > 0 ? (
-                <span className="badge badge-xs badge-ghost font-mono">
-                  {scenarioTraceLineCount}
-                </span>
-              ) : null}
-            </button>
+            {visibleRightSidebarTabs(hasJournalSlot).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                className={`tab flex-1 gap-1 ${activeTab === tab ? 'tab-active' : ''}`}
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+              >
+                {RIGHT_SIDEBAR_TAB_LABELS[tab]}
+                {tab === 'trace' && scenarioTraceLineCount > 0 ? (
+                  <span className="badge badge-xs badge-ghost font-mono">
+                    {scenarioTraceLineCount}
+                  </span>
+                ) : null}
+              </button>
+            ))}
           </div>
         )}
       </div>
       {collapsed ? null : activeTab === 'journal' ? (
+        // BTJ1: телеметрия хоста — device-board только даёт место (слот).
+        <div className="flex min-h-0 flex-1 flex-col" aria-label="Журнал телеметрии">
+          {journalSlot}
+        </div>
+      ) : activeTab === 'trace' ? (
         <BoardJournalPanel
           isRuntime={isRuntime}
           getLines={getScenarioTraceLines}
