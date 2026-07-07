@@ -9,6 +9,7 @@ export const AppHeader: React.FC = () => {
   const openConnectionSettings = useNodeConnectionStore((s) => s.openConnectionSettings);
   const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
   const mode = useNodeConnectionStore((s) => s.mode);
+  const linkDegraded = useNodeConnectionStore((s) => s.linkDegraded);
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
@@ -41,6 +42,20 @@ export const AppHeader: React.FC = () => {
         className="flex w-full shrink-0 flex-wrap items-center justify-end gap-3 border-t border-base-200 pt-2 md:w-auto md:gap-4 md:border-t-0 md:pt-0"
         aria-label="Тема, узел и датчик детекции"
       >
+        {mode === 'paired' && linkDegraded ? (
+          /* CX5: оператор выбрал «остаться на связи» при недоступном сервере —
+             деградация видна в шапке, снимается автоматически при восстановлении. */
+          <button
+            type="button"
+            className="flex items-center gap-1 rounded bg-warning/15 px-2 py-1 text-[11px] font-medium text-warning hover:bg-warning/25"
+            role="status"
+            title="Сервер недоступен: данные копятся локально, синхронизация возобновится при восстановлении связи"
+            onClick={() => openConnectionSettings()}
+          >
+            <span aria-hidden="true">⚠</span>
+            нет связи с сервером
+          </button>
+        ) : null}
         <button
           type="button"
           className="btn btn-ghost btn-xs min-h-8"
