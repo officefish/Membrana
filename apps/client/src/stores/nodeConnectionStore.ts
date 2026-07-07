@@ -18,6 +18,11 @@ interface NodeConnectionState extends PersistedNodeConnection {
   showPairingInvalidDialog: boolean;
   pairingInvalidReason: PairingInvalidReason | null;
   lastConnectionError: string | null;
+  /**
+   * CX5: оператор выбрал «Остаться в связанном режиме» при недоступном сервере —
+   * связь деградирована, шапка показывает предупреждение до восстановления.
+   */
+  linkDegraded: boolean;
   hydrate: () => void;
   openModePicker: () => void;
   closeModePicker: () => void;
@@ -35,6 +40,10 @@ interface NodeConnectionState extends PersistedNodeConnection {
   reportConnectionError: (message: string) => void;
   dismissFallbackDialog: () => void;
   acceptAutonomousFallback: () => void;
+  /** CX5: закрыть диалог, остаться на связи — взводит linkDegraded (баннер в шапке). */
+  stayLinkedDespiteError: () => void;
+  /** CX5: связь с сервером восстановлена — снять деградацию. */
+  reportConnectionRestored: () => void;
 }
 
 function readPersisted(): PersistedNodeConnection {
@@ -73,6 +82,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
   showPairingInvalidDialog: false,
   pairingInvalidReason: null,
   lastConnectionError: null,
+  linkDegraded: false,
 
   hydrate: () => {
     if (get().hydrated) return;
@@ -117,6 +127,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       showPairingInvalidDialog: false,
       pairingInvalidReason: null,
       lastConnectionError: null,
+      linkDegraded: false,
     });
   },
 
@@ -132,6 +143,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       showPairingInvalidDialog: false,
       pairingInvalidReason: null,
       lastConnectionError: null,
+      linkDegraded: false,
     });
   },
 
@@ -147,6 +159,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       showPairingInvalidDialog: false,
       pairingInvalidReason: null,
       lastConnectionError: null,
+      linkDegraded: false,
     });
   },
 
@@ -184,6 +197,13 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
   acceptAutonomousFallback: () => {
     get().chooseAutonomous();
   },
+
+  stayLinkedDespiteError: () => set({ showFallbackDialog: false, linkDegraded: true }),
+
+  reportConnectionRestored: () => {
+    if (!get().linkDegraded) return;
+    set({ linkDegraded: false, lastConnectionError: null });
+  },
 }));
 
 /** Tests: reset store + storage. */
@@ -202,5 +222,6 @@ export function resetNodeConnectionStoreForTests(): void {
     showPairingInvalidDialog: false,
     pairingInvalidReason: null,
     lastConnectionError: null,
+    linkDegraded: false,
   });
 }

@@ -16,8 +16,16 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
   const pairing = useNodeConnectionStore((s) => s.pairing);
   const openConnectionSettings = useNodeConnectionStore((s) => s.openConnectionSettings);
   const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
+  const linkDegraded = useNodeConnectionStore((s) => s.linkDegraded);
+  const reportConnectionRestored = useNodeConnectionStore((s) => s.reportConnectionRestored);
   const [linkOk, setLinkOk] = useState<boolean | null>(null);
   const [wsState, setWsState] = useState<NodeRealtimeClientState>('disconnected');
+
+  // CX5: пинг media-API здесь — единственный периодический пробник связи;
+  // успешный ответ снимает деградацию (баннер в шапке) без действий оператора.
+  useEffect(() => {
+    if (linkDegraded && linkOk === true) reportConnectionRestored();
+  }, [linkDegraded, linkOk, reportConnectionRestored]);
 
   useEffect(() => {
     if (mode !== 'paired') {

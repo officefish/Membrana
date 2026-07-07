@@ -8,13 +8,15 @@ export const ConnectionFallbackDialog: React.FC = () => {
   const lastConnectionError = useNodeConnectionStore((s) => s.lastConnectionError);
   const mode = useNodeConnectionStore((s) => s.mode);
   const pairing = useNodeConnectionStore((s) => s.pairing);
-  const dismissFallbackDialog = useNodeConnectionStore((s) => s.dismissFallbackDialog);
+  const stayLinkedDespiteError = useNodeConnectionStore((s) => s.stayLinkedDespiteError);
   const acceptAutonomousFallback = useNodeConnectionStore((s) => s.acceptAutonomousFallback);
 
   if (!showFallbackDialog) return null;
 
   const onStayLinked = (): void => {
-    dismissFallbackDialog();
+    // CX5: остаёмся на связи при недоступном сервере — шапка предупреждает
+    // о деградации, пока связь не восстановится (иначе «всё молчит» без причины).
+    stayLinkedDespiteError();
     if (mode === 'paired' && pairing) {
       void tryUpgradeMediaLibraryToRemote(mode, pairing);
     }
