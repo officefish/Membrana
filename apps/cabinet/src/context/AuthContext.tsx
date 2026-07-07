@@ -17,6 +17,7 @@ import {
 } from '@/api/auth';
 import { resetCabinetMediaSession } from '@/lib/cabinetMediaLibrary';
 import { getCabinetNodeRealtimeClient } from '@/lib/cabinetNodeRealtimeClient';
+import { resetCabinetRuntimeStore } from '@/lib/cabinetNodeRuntimeStore';
 import { disposeSamplePlayback } from '@membrana/sample-playback-service';
 
 interface AuthContextValue {
@@ -64,6 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // CX2: жизненный цикл realtime-сокета принадлежит сессии кабинета —
     // разделы больше не рвут общий синглтон, закрываем его здесь.
     getCabinetNodeRealtimeClient().disconnect();
+    // CX6: runtime-состояние (presence/захваты/сценарии) не переживает сессию.
+    resetCabinetRuntimeStore();
     resetCabinetMediaSession();
     void disposeSamplePlayback();
   }, []);
