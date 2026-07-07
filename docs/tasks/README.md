@@ -155,6 +155,7 @@
 | `pt-1-read-facts-sheet` | PT1: как достать актуальные факты из FACTS_SHEET.md и не соврать (пометки подтверждён/гипотеза/TBD, [TBD] вместо выдумки) | S | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
 | `pt-2-first-output-v01-endtoend` | PT2: сквозной сценарий первого выхода v0.1 от канона до файла в out/ + сверка render-check/Playwright (НЕ Storybook), показ tone-guard | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
 | `pt-3-honest-tech-storytelling` | PT3: как честно рассказывать о технологии и стадии (пары до/после, пометки риска, dual-use GLOSSARY §4, без сырых внутренних цифр) | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
+| `cx-6-cabinet-runtime-store` | CX6: устойчивое состояние runtime кабинета — модульный стор вместо per-mount React-стейта (presence/захваты/сценарии переживают навигацию) | M | [`CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md`](../docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md) | [#271](https://github.com/officefish/Membrana/issues/271) |
 
 ---
 

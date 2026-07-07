@@ -116,6 +116,29 @@ capture-контура (канон `DEVICE_BOARD_SERVER_FIRST.md` v2.0) и prese
   навигации не блокирует остановку звука.
 - Тесты: pure-логика «можно ли покинуть борд» (unit); смена сценария под захватом.
 
+### CX6 — Устойчивое состояние runtime кабинета: модульный стор · M (прод-находка после CX1–CX5)
+
+**Пакет:** `apps/cabinet` (lib). **Повод:** владелец на проде `aaf4d119` (2026-07-07):
+переход в «Журнал»/«Device board» (сайдбар или кнопки карточки) → «сопряжён · offline»
+и нет dropdown сценариев до hard-reload (Ctrl+Shift+R «чинит»).
+
+- **Диагностика (зафиксировать в PR):** `presence.snapshot` сервер шлёт только при
+  открытии WS (`sendPresenceSnapshot` на register). До CX2 журнал рвал сокет, и возврат
+  давал реконнект → свежий снапшот. После CX2 сокет живёт (правильно), но
+  `onlineDeviceIds`/`states`/`scenarioLists` живут в React-состоянии `useCabinetNodeRuntime`
+  (per-mount) — после навигации стартуют пустыми, а нового снапшота не будет.
+- Фикс: снимок runtime — в **модульном сторе** вне React (по образцу синглтона
+  `cabinetNodeRealtimeClient`): подписки на realtime-клиент монтируются один раз,
+  React читает через `useSyncExternalStore`. Чистые редьюсеры отдельным файлом
+  (Dynin), стор только применяет их.
+- `useCabinetNodeRuntime` становится тонким хуком (connect + чтение стора + команды);
+  интерфейс `CabinetNodeRuntime` не меняется — страницы не трогаем.
+- Reset стора — на logout (`AuthContext`), вместе с disconnect сокета (CX2).
+- Bootstrap захватов/сценариев (GET /v1/captures) переезжает в стор: на старте
+  и на переходе соединения в `connected`.
+- Тесты: чистые редьюсеры (snapshot-замена, online/offline, capture lifecycle,
+  scenario-list); идемпотентность повторного старта стора.
+
 ### CX5 — Предупреждение в шапке клиента «нет связи с сервером» · S
 
 **Пакет:** `apps/client` (AppHeader, nodeConnectionStore, ConnectionFallbackDialog).
@@ -175,6 +198,9 @@ CX5 — warning в шапке по DESIGN.md, обе темы, role="status", н
 - [ ] CX4: борд открывается с выбранным сценарием сервера; выход заблокирован до release;
       emergency stop доступен всегда; unit на pure-логику лока.
 - [ ] CX5: warning в шапке клиента при stay-linked без связи; авто-снятие на реконнекте; тесты стора.
+- [ ] CX6: presence/захваты/сценарии переживают навигацию по разделам кабинета без hard-reload;
+      снимок runtime в модульном сторе; интерфейс CabinetNodeRuntime не изменён; reset на logout;
+      чистые редьюсеры покрыты тестами.
 - [ ] Каждая фаза: CI зелёный, `check:boundaries` зелёный, отчёт в Issue, Teamlead LGTM,
       `yarn task:archive cx-N --notes "PR #…"`.
 

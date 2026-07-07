@@ -11898,6 +11898,26 @@
         "ozhegov"
       ],
       "githubIssueClosedAt": null
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-6-cabinet-runtime-store",
+      "title": "CX6: устойчивое состояние runtime кабинета — модульный стор вместо per-mount React-стейта (presence/захваты/сценарии переживают навигацию)",
+      "size": "M",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "Прод-находка владельца 2026-07-07 после деплоя aaf4d119: после CX2 сокет живёт при навигации, но presence.snapshot сервер шлёт только на connect — размонтированный useCabinetNodeRuntime стартует с пустым onlineDeviceIds → «сопряжён · offline» до hard-reload. Фикс: singleton-стор (useSyncExternalStore), подписки на realtime-клиент один раз, reset на logout.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
     }
   ]
 }
