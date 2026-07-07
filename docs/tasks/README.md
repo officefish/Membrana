@@ -159,6 +159,7 @@
 | `btj-1-journal-slot` | BTJ1: слот журнала в DeviceBoardShell — «Журнал» = слот хоста, трейсы → вкладка «Трейс» (UX #269 сохранён) | M | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
 | `btj-2-client-telemetry-panel` | BTJ2: клиентская компакт-панель телеметрии для слота — useLiveJournal + lp5-рендереры, автообновление, «Открыть журнал» уважает борд-лок CX4 | M | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
 | `btj-3-docs-smoke` | BTJ3: docs sync (вкладки «Узлы | Журнал | Трейс», слот хоста) + ручной smoke чек-лист | S | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
+| `cabinet-key-expired-status` | Кабинет различает «ключ устарел» и «сопряжён · offline» — производный статус ключа в membrane view + иерархия бейджей карточки | M | [`CABINET_KEY_EXPIRED_STATUS_PROMPT.md`](../docs/prompts/CABINET_KEY_EXPIRED_STATUS_PROMPT.md) | [#279](https://github.com/officefish/Membrana/issues/279) |
 
 ---
 

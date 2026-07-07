@@ -12004,6 +12004,25 @@
       "supportPersonas": [
         "rodchenko"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/CABINET_KEY_EXPIRED_STATUS_PROMPT.md",
+      "githubIssue": 279,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cabinet-key-expired-status",
+      "title": "Кабинет различает «ключ устарел» и «сопряжён · offline» — производный статус ключа в membrane view + иерархия бейджей карточки",
+      "size": "M",
+      "dependsOn": [],
+      "notes": "Требование владельца 2026-07-07 (контур безопасности: истечение ключа — штатно). Без миграций: enum DevicePairingStatus не трогаем, статус вычисляется на чтении (pairedKeyId → NodeAccessKey.expiresAt). Иерархия: не сопряжён → отозван → устарел → online/offline. Источник времени — сервер. Issue #279.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
     }
   ]
 }
