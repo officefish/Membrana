@@ -16,6 +16,7 @@ export interface PlaybackClusterViewModel {
   readonly pauseDisabled: boolean;
   readonly stopDisabled: boolean;
   readonly playTitle: string;
+  readonly pauseTitle: string;
 }
 
 export interface PlaybackClusterStateInput {
@@ -23,7 +24,12 @@ export interface PlaybackClusterStateInput {
   readonly isPaused: boolean;
   readonly canRun: boolean;
   readonly runDisabledReason?: string | null;
+  /** CSR2: под захватом пауза заблокирована (тариф v3) — кнопка disabled с подсказкой. */
+  readonly capturePauseBlocked?: boolean;
 }
+
+const PAUSE_TITLE_DEFAULT = 'Пауза сценария';
+const PAUSE_TITLE_CAPTURED = 'Пауза недоступна под захватом кабинетом';
 
 /**
  * Edit: Play lit, Pause/Stop dim. Running: Play depressed+dim, Pause/Stop lit.
@@ -33,6 +39,8 @@ export function derivePlaybackClusterViewModel(
   state: PlaybackClusterStateInput,
 ): PlaybackClusterViewModel {
   const runReason = state.runDisabledReason ?? 'Запуск недоступен';
+  const pauseBlocked = state.capturePauseBlocked === true;
+  const pauseTitle = pauseBlocked ? PAUSE_TITLE_CAPTURED : PAUSE_TITLE_DEFAULT;
 
   if (state.isPaused) {
     return {
@@ -44,19 +52,22 @@ export function derivePlaybackClusterViewModel(
       pauseDisabled: true,
       stopDisabled: false,
       playTitle: 'Продолжить сценарий',
+      pauseTitle,
     };
   }
 
   if (state.isRunning) {
+    // CSR2: под захватом «работает → только Stop» — пауза заблокирована.
     return {
       playAction: 'none',
       playVisual: 'depressed',
-      pauseVisual: 'lit',
+      pauseVisual: pauseBlocked ? 'dim' : 'lit',
       stopVisual: 'lit',
       playDisabled: true,
-      pauseDisabled: false,
+      pauseDisabled: pauseBlocked,
       stopDisabled: false,
       playTitle: 'Сценарий выполняется',
+      pauseTitle,
     };
   }
 
@@ -69,6 +80,7 @@ export function derivePlaybackClusterViewModel(
     pauseDisabled: true,
     stopDisabled: true,
     playTitle: state.canRun ? 'Запуск сценария' : runReason,
+    pauseTitle,
   };
 }
 

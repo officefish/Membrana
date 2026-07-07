@@ -33,6 +33,21 @@ describe('derivePlaybackClusterViewModel', () => {
     expect(model.stopDisabled).toBe(false);
   });
 
+  // CSR2: под захватом «работает → только Stop» — пауза disabled с подсказкой.
+  it('running + capturePauseBlocked: остаётся только Stop, пауза заблокирована', () => {
+    const model = derivePlaybackClusterViewModel({
+      isRunning: true,
+      isPaused: false,
+      canRun: false,
+      capturePauseBlocked: true,
+    });
+    expect(model.pauseDisabled).toBe(true);
+    expect(model.pauseVisual).toBe('dim');
+    expect(model.stopDisabled).toBe(false);
+    expect(model.playDisabled).toBe(true);
+    expect(model.pauseTitle).toBe('Пауза недоступна под захватом кабинетом');
+  });
+
   it('paused: Pause depressed, Play lit, Stop lit', () => {
     const model = derivePlaybackClusterViewModel({
       isRunning: true,
