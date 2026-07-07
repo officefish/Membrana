@@ -11903,10 +11903,10 @@
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
       "githubIssue": 271,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #277 squash-merged 2026-07-07; presence per-mount → модульный стор (useSyncExternalStore), редьюсеры pure + тесты",
       "id": "cx-6-cabinet-runtime-store",
       "title": "CX6: устойчивое состояние runtime кабинета — модульный стор вместо per-mount React-стейта (presence/захваты/сценарии переживают навигацию)",
       "size": "M",
@@ -11917,7 +11917,8 @@
       "supportPersonas": [
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     }
   ]
 }
