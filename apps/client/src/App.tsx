@@ -12,6 +12,7 @@ import { NodeConnectionShell } from './components/NodeConnectionShell';
 import { renderPluginSidebarDetails } from './pluginSidebarDetails';
 import { createScenarioRuntimeHost } from './modules/device-board/createScenarioRuntimeHost';
 import { getDeviceBoardRuntimeController } from './lib/deviceBoardRuntimeController';
+import { BoardTelemetryJournalPanel } from './modules/device-board/BoardTelemetryJournalPanel';
 import { useDeviceBoardClientBindings } from './modules/device-board/useDeviceBoardClientBindings';
 import { useServerFirstFieldUi } from './modules/device-board/useServerFirstBoardState';
 import { useDeviceLive } from './modules/device-board/useDeviceLive';
@@ -56,6 +57,8 @@ function AppContentInner() {
             <DeviceBoardShell
               runtimeHost={runtimeHost}
               externalRuntime={externalRuntime}
+              // BTJ2: вкладка «Журнал» сайдбара = телеметрия устройства (слот клиента).
+              journalSlot={<BoardTelemetryJournalPanel />}
               persistAdapter={persistAdapter}
               loadUserCaseDocument={loadUserCaseDocument}
               deviceLive={connectionMode === 'paired' ? deviceLive : undefined}
