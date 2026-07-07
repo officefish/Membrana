@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "taskId": "nd-2-neural-plugin-ui",
+  "state": "archived",
+  "tier": "T1",
+  "reviewMode": "standard",
+  "branch": "feat/nd-1-yamnet-detector",
+  "currentCommitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+  "reviewedCommitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/nd-2-neural-plugin-ui/b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 266,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/266"
+  },
+  "scope": {
+    "baseRef": "b3a4abaa457aada8ca15aa70d1186efce6e6f5e9",
+    "files": [
+      "apps/client/src/modules/SampleLibraryModule.tsx",
+      "apps/client/src/modules/registerClientModules.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/NeuralDroneAnalyzerPanel.tsx",
+      "apps/client/src/plugins/neural-drone-analyzer/analyzeSampleNeural.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/index.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/neuralDroneAnalyzerPlugin.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/neuralDroneAnalyzerState.test.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/neuralDroneAnalyzerState.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/types.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/useNeuralDroneAnalyzer.ts",
+      "apps/client/src/plugins/neural-drone-analyzer/yamnetBrowserModel.ts",
+      "apps/client/tsconfig.app.json",
+      "apps/client/vite.config.ts",
+      "docs/catalog/client/prompts/plugins/neural-drone-analyzer.md",
+      "docs/catalog/client/registry.json"
+    ],
+    "packages": [
+      "apps/client"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:55:26.932Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/client test",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:55:43.408Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/client typecheck",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:55:47.200Z",
+        "note": ""
+      },
+      {
+        "command": "yarn catalog:verify-client",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:55:48.131Z",
+        "note": ""
+      },
+      {
+        "command": "yarn check:boundaries",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:55:50.329Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Package Membrana Studio (Windows nsis)",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:54:25Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28792925245/job/85376235397"
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:53:00Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28792925253/job/85375991770"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:54:22Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28792925245/job/85375959909"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:53:03Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28792925246/job/85375959820"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "b631d39ad465f75ce3c40ddb8fe5f8d81c1cde1c",
+        "checkedAt": "2026-07-06T12:53:02Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28792925244/job/85375959645"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #266 merged 2026-07-06T12:57:59Z (9a7ca7fd5d9b43198ddce5acf912829db572fed5)"
+  },
+  "createdAt": "2026-07-06T12:42:08.784Z",
+  "updatedAt": "2026-07-06T12:59:50.202Z"
+}

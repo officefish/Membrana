@@ -185,12 +185,31 @@ function NodeCard({
   const deviceId = node.device?.mediaDeviceId ?? null;
   const state = deviceId ? runtime.states[deviceId] : undefined;
   const capture = deviceId ? runtime.captures[deviceId] : undefined;
+  // CX3: объявленный узлом список сценариев (dropdown под захватом).
+  const scenarioList = deviceId ? runtime.scenarioLists[deviceId] : undefined;
   const deviceLive = runtime.isDeviceLive(deviceId);
   const isRunning = state?.isRunning ?? false;
   const mode = state?.mode ?? 'normal';
   const [captureMode, setCaptureMode] = useState<DeviceCaptureMode>('soft');
   const [captureBusy, setCaptureBusy] = useState(false);
   const [captureError, setCaptureError] = useState<string | null>(null);
+  const [deviceIdCopied, setDeviceIdCopied] = useState(false);
+
+  useEffect(() => {
+    if (!deviceIdCopied) return;
+    const timer = window.setTimeout(() => setDeviceIdCopied(false), 2_000);
+    return () => window.clearTimeout(timer);
+  }, [deviceIdCopied]);
+
+  const copyDeviceId = async (): Promise<void> => {
+    if (!deviceId) return;
+    try {
+      await navigator.clipboard.writeText(deviceId);
+      setDeviceIdCopied(true);
+    } catch {
+      /* клипборд недоступен (например http) — id остаётся выделяемым текстом */
+    }
+  };
 
   // CT3 (канон §1): без захвата у кабинета нет контроля над сценариями узла.
   const isCaptured = capture !== undefined;
@@ -252,9 +271,30 @@ function NodeCard({
     <div className={`card border-2 bg-base-200 ${borderClass}`}>
       <div className="card-body gap-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
+          <div className="min-w-0">
             <h2 className="card-title text-lg">{node.label}</h2>
             <p className="font-mono text-xs text-base-content/50">{node.id}</p>
+            {deviceId ? (
+              /* CX1: с каким устройством сопряжён узел — полный id, копируется;
+                 зеркально NB1 «Сопряжённое устройство» на клиенте (сверка глазами). */
+              <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                <span className="text-xs text-base-content/60">связан с устройством</span>
+                <span
+                  className="select-all break-all font-mono text-xs font-medium text-primary"
+                  data-testid="node-paired-device-id"
+                >
+                  {deviceId}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs"
+                  onClick={() => void copyDeviceId()}
+                  aria-label="Скопировать id устройства"
+                >
+                  {deviceIdCopied ? '✓ скопировано' : 'копировать'}
+                </button>
+              </div>
+            ) : null}
             {node.device ? (
               deviceLive ? (
                 <span className="badge badge-success badge-sm mt-1">online</span>
@@ -318,15 +358,46 @@ function NodeCard({
               </label>
             </>
           ) : (
-            // CT3 шаг 2: под захватом — запуск/остановка сохранённого сценария
-            // устройства (селектор из нескольких сценариев — отдельная задача).
+            // CT3 шаг 2 + CX3: под захватом — выбор сценария из объявленного
+            // узлом списка и запуск/остановка выбранного.
             <>
+              {scenarioList && scenarioList.scenarios.length > 0 ? (
+                <label className="flex items-center gap-1.5 text-xs text-base-content/70">
+                  <span>Сценарий</span>
+                  <select
+                    className="select select-bordered select-xs max-w-44"
+                    value={scenarioList.selectedScenarioId ?? ''}
+                    onChange={(event) => deviceId && runtime.selectScenario(deviceId, event.target.value)}
+                    disabled={!deviceLive}
+                    aria-label="Сценарий устройства"
+                  >
+                    {scenarioList.scenarios.map((scenario) => (
+                      <option key={scenario.id} value={scenario.id}>
+                        {scenario.title}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : (
+                <span
+                  className="text-xs text-base-content/50"
+                  title="Устройство ещё не объявило список сценариев — «Пуск» запустит сохранённый сценарий"
+                >
+                  сценарии не объявлены
+                </span>
+              )}
               {!isRunning ? (
                 <button
                   type="button"
                   className="btn btn-sm btn-primary"
                   disabled={!deviceId || !deviceLive}
-                  title={!deviceLive ? DEVICE_OFFLINE_RUN_HINT : 'Запустить сохранённый сценарий устройства'}
+                  title={
+                    !deviceLive
+                      ? DEVICE_OFFLINE_RUN_HINT
+                      : scenarioList && scenarioList.scenarios.length > 0
+                        ? 'Запустить выбранный сценарий'
+                        : 'Запустить сохранённый сценарий устройства'
+                  }
                   onClick={() => deviceId && runtime.run(deviceId)}
                 >
                   Пуск

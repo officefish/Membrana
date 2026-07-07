@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { NODE_REALTIME_EVENT_TYPES, type NodeRealtimeEnvelope } from '../../domain/node-realtime-wire';
 import { deviceCaptureExpiresAt } from '../../domain/device-capture';
 import { DeviceCaptureRegistry } from './device-capture.registry';
+import { DeviceScenarioRegistry } from './device-scenario.registry';
 import { NodeRealtimeGateway } from './node-realtime.gateway';
 import type { NodeRealtimeService } from './node-realtime.service';
 import type { NodeRealtimeJournalHandler } from './node-realtime-journal.handler';
@@ -12,11 +13,13 @@ function buildGateway() {
   const realtimeService = {
     fanOutToCabinet: vi.fn(),
     sendToNode: vi.fn(),
+    recordPresenceHeartbeat: vi.fn().mockResolvedValue(undefined),
   } as unknown as NodeRealtimeService;
   const journalHandler = {
     handleIncoming: vi.fn().mockResolvedValue(undefined),
   } as unknown as NodeRealtimeJournalHandler;
   const captureRegistry = new DeviceCaptureRegistry();
+  const scenarioRegistry = new DeviceScenarioRegistry();
 
   const gateway = new NodeRealtimeGateway(
     { NODE_REALTIME_ENABLED: true } as never,
@@ -24,9 +27,10 @@ function buildGateway() {
     realtimeService,
     journalHandler,
     captureRegistry,
+    scenarioRegistry,
   );
   gateway.onModuleDestroy();
-  return { gateway, realtimeService, journalHandler, captureRegistry };
+  return { gateway, realtimeService, journalHandler, captureRegistry, scenarioRegistry };
 }
 
 /** Активный захват d-устройства кабинетом m1 (тариф v2). */
@@ -61,6 +65,27 @@ const cabinetMeta: NodeRealtimeSocketMeta = {
 };
 
 describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
+  it('PL2b: принимает heartbeat только от аутентифицированного deviceId', async () => {
+    const { gateway, realtimeService } = buildGateway();
+    const valid: NodeRealtimeEnvelope = {
+      v: 1,
+      channel: 'presence',
+      type: NODE_REALTIME_EVENT_TYPES.presence.heartbeat,
+      ts: '2026-07-05T09:00:00.000Z',
+      payload: { deviceId: 'd1', timestampMs: 1 },
+    };
+    const spoofed: NodeRealtimeEnvelope = {
+      ...valid,
+      payload: { deviceId: 'd2', timestampMs: 2 },
+    };
+
+    await gateway.dispatchEnvelope(nodeMeta, valid);
+    await gateway.dispatchEnvelope(nodeMeta, spoofed);
+
+    expect(realtimeService.recordPresenceHeartbeat).toHaveBeenCalledTimes(1);
+    expect(realtimeService.recordPresenceHeartbeat).toHaveBeenCalledWith('d1');
+  });
+
   it('fans out runtime.state from node to cabinet subscribers', async () => {
     const { gateway, realtimeService, journalHandler } = buildGateway();
     const envelope: NodeRealtimeEnvelope = {
@@ -169,8 +194,17 @@ describe('NodeRealtimeGateway runtime channel (MP7b)', () => {
   });
 
   it('forwards selectScenario and stop{fadeOutMs} under capture (tariff v2 whitelist)', async () => {
-    const { gateway, realtimeService, captureRegistry } = buildGateway();
+    const { gateway, realtimeService, captureRegistry, scenarioRegistry } = buildGateway();
     registerCapture(captureRegistry, 'd1', 'hard');
+    // CX3: selectScenario валиден только против объявленного узлом списка.
+    scenarioRegistry.setList('m1', {
+      deviceId: 'd1',
+      scenarios: [
+        { id: 'scn-1', title: 'Основной' },
+        { id: 'scn-7', title: 'Нейро' },
+      ],
+      selectedScenarioId: 'scn-1',
+    });
     const select: NodeRealtimeEnvelope = {
       v: 1,
       channel: 'runtime',
@@ -314,5 +348,138 @@ describe('NodeRealtimeGateway board channel (server-first SF2)', () => {
 
     expect(realtimeService.fanOutToCabinet).not.toHaveBeenCalled();
     expect(realtimeService.sendToNode).not.toHaveBeenCalled();
+  });
+});
+
+// CX3: список сценариев узла — объявление, выбор, направление потока.
+describe('NodeRealtimeGateway board.scenario-list (CX3)', () => {
+  const listEnvelope = (payload: unknown): NodeRealtimeEnvelope => ({
+    v: 1,
+    channel: 'board',
+    type: NODE_REALTIME_EVENT_TYPES.board.scenarioList,
+    ts: '2026-07-07T09:00:00.000Z',
+    payload,
+  });
+
+  it('объявление узла пишется в реестр и ре-бродкастится кабинету нормализованным', async () => {
+    const { gateway, realtimeService, scenarioRegistry } = buildGateway();
+
+    await gateway.dispatchEnvelope(
+      nodeMeta,
+      listEnvelope({
+        deviceId: 'd1',
+        scenarios: [
+          { id: 'ws-1', title: 'Спектр' },
+          { id: 'ws-2', title: 'Нейро' },
+        ],
+        selectedScenarioId: 'ws-2',
+      }),
+    );
+
+    expect(scenarioRegistry.get('d1')).toEqual({
+      membraneId: 'm1',
+      scenarios: [
+        { id: 'ws-1', title: 'Спектр' },
+        { id: 'ws-2', title: 'Нейро' },
+      ],
+      selectedScenarioId: 'ws-2',
+    });
+    expect(realtimeService.fanOutToCabinet).toHaveBeenCalledWith(
+      'm1',
+      expect.objectContaining({
+        channel: 'board',
+        type: NODE_REALTIME_EVENT_TYPES.board.scenarioList,
+        payload: expect.objectContaining({ deviceId: 'd1', selectedScenarioId: 'ws-2' }),
+      }),
+    );
+  });
+
+  it('невалидное объявление (выбранный вне списка) отбрасывается', async () => {
+    const { gateway, realtimeService, scenarioRegistry } = buildGateway();
+
+    await gateway.dispatchEnvelope(
+      nodeMeta,
+      listEnvelope({
+        deviceId: 'd1',
+        scenarios: [{ id: 'ws-1', title: 'Спектр' }],
+        selectedScenarioId: 'ghost',
+      }),
+    );
+
+    expect(scenarioRegistry.get('d1')).toBeNull();
+    expect(realtimeService.fanOutToCabinet).not.toHaveBeenCalled();
+  });
+
+  it('scenario-list от кабинета — drop (node-originated only)', async () => {
+    const { gateway, realtimeService, scenarioRegistry } = buildGateway();
+
+    await gateway.dispatchEnvelope(
+      cabinetMeta,
+      listEnvelope({
+        deviceId: 'd1',
+        scenarios: [{ id: 'ws-1', title: 'Спектр' }],
+        selectedScenarioId: 'ws-1',
+      }),
+    );
+
+    expect(scenarioRegistry.get('d1')).toBeNull();
+    expect(realtimeService.sendToNode).not.toHaveBeenCalled();
+  });
+
+  it('selectScenario вне объявленного списка отвергается и не уходит узлу', async () => {
+    const { gateway, realtimeService, captureRegistry, scenarioRegistry } = buildGateway();
+    registerCapture(captureRegistry, 'd1');
+    scenarioRegistry.setList('m1', {
+      deviceId: 'd1',
+      scenarios: [{ id: 'ws-1', title: 'Спектр' }],
+      selectedScenarioId: 'ws-1',
+    });
+
+    await gateway.dispatchEnvelope(cabinetMeta, {
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+      ts: '2026-07-07T09:00:01.000Z',
+      payload: { action: 'selectScenario', scenarioId: 'ghost' },
+    });
+
+    expect(realtimeService.sendToNode).not.toHaveBeenCalled();
+    expect(scenarioRegistry.get('d1')?.selectedScenarioId).toBe('ws-1');
+  });
+
+  it('успешный selectScenario переставляет выбранный и ре-бродкастит список', async () => {
+    const { gateway, realtimeService, captureRegistry, scenarioRegistry } = buildGateway();
+    registerCapture(captureRegistry, 'd1');
+    scenarioRegistry.setList('m1', {
+      deviceId: 'd1',
+      scenarios: [
+        { id: 'ws-1', title: 'Спектр' },
+        { id: 'ws-2', title: 'Нейро' },
+      ],
+      selectedScenarioId: 'ws-1',
+    });
+
+    await gateway.dispatchEnvelope(cabinetMeta, {
+      v: 1,
+      channel: 'runtime',
+      type: NODE_REALTIME_EVENT_TYPES.runtime.command,
+      ts: '2026-07-07T09:00:02.000Z',
+      payload: { action: 'selectScenario', scenarioId: 'ws-2' },
+    });
+
+    expect(scenarioRegistry.get('d1')?.selectedScenarioId).toBe('ws-2');
+    expect(realtimeService.fanOutToCabinet).toHaveBeenCalledWith(
+      'm1',
+      expect.objectContaining({
+        type: NODE_REALTIME_EVENT_TYPES.board.scenarioList,
+        payload: expect.objectContaining({ selectedScenarioId: 'ws-2' }),
+      }),
+    );
+    expect(realtimeService.sendToNode).toHaveBeenCalledWith(
+      'd1',
+      expect.objectContaining({
+        payload: expect.objectContaining({ action: 'selectScenario', scenarioId: 'ws-2' }),
+      }),
+    );
   });
 });

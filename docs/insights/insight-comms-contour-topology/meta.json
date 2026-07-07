@@ -1,0 +1,13 @@
+{
+  "id": "insight-comms-contour-topology",
+  "title": "Контур внешних коммуникаций: изоляция по записи, не по чтению (Вариант A)",
+  "status": "adopted",
+  "source": "user",
+  "horizon": "week",
+  "weight": 8.6,
+  "createdAt": "2026-07-05",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": "2026-07-05",
+  "tags": ["comms", "topology", "monorepo", "boundaries", "isolation", "single-source-of-truth", "architecture"]
+}

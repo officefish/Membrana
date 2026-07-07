@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "taskId": "pcb-1-ws-lifecycle-logging",
+  "state": "archived",
+  "tier": "T1",
+  "reviewMode": "standard",
+  "branch": "feat/pcb1-ws-lifecycle-logging",
+  "currentCommitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+  "reviewedCommitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/pcb-1-ws-lifecycle-logging/7742bd5b44bbdc7233143f71c1b4ea65157a9f1f-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 248,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/248"
+  },
+  "scope": {
+    "baseRef": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f^",
+    "files": [
+      "apps/cabinet/src/lib/cabinetNodeRealtimeClient.ts",
+      "docs/actions/device-board/PRESENCE_OFFLINE_DIAGNOSTIC.md"
+    ],
+    "packages": [
+      "apps/cabinet"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+        "checkedAt": "2026-07-04T18:01:42.836Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Package Membrana Studio (Windows nsis)",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+        "checkedAt": "2026-07-04T18:00:53Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28714718882/job/85154075305"
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+        "checkedAt": "2026-07-04T17:54:00Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28714718880/job/85153987185"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+        "checkedAt": "2026-07-04T18:00:05Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28714718877/job/85153986885"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+        "checkedAt": "2026-07-04T17:57:51Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28714718883/job/85153986881"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+        "checkedAt": "2026-07-04T17:55:17Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28714718882/job/85153986834"
+      },
+      {
+        "command": "github-check:verify",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "7742bd5b44bbdc7233143f71c1b4ea65157a9f1f",
+        "checkedAt": "2026-07-04T18:00:24Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28714718030/job/85153985683"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #248 merged 2026-07-04T18:03:02Z (87e906e42ca4ca41f982365f78bdf7541bcede60)"
+  },
+  "createdAt": "2026-07-04T18:01:40.803Z",
+  "updatedAt": "2026-07-04T18:05:14.129Z"
+}

@@ -8898,13 +8898,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "ci-gate-stabilization",
       "createdAt": "2026-07-02",
-      "archivedAt": null,
+      "archivedAt": "2026-07-04",
       "archiveNotes": null,
-      "notes": "Реальный флейки, заблокировавший прод-деплой кабинета. Диагностика гонка vs жёсткий таймаут, fix, прогон N раз. Lead Dynin+Kuryokhin.",
+      "notes": "Реальный флейки, заблокировавший прод-деплой кабинета. Диагностика гонка vs жёсткий таймаут, fix, прогон N раз. Lead Dynin+Kuryokhin. MERGED #247 (2026-07-04): testTimeout 5->30s, флейк retrieveContext устранён.",
       "leadPersona": "dynin",
       "supportPersonas": [
         "kuryokhin"
@@ -10799,6 +10799,1098 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": null,
+      "id": "pairing-lifecycle",
+      "title": "Epic: Presence-снапшот + жизненный цикл сопряжения ключ/устройство (PL1–PL5)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "device-board-server-first"
+      ],
+      "notes": "Консилиум: docs/seanses/pairing-lifecycle-2026-07-04.md. Повод: узел offline в кабинете после пейринга. Код в background-cabinet (не office). Требование B (Удалить=revoke+delete) — решение владельца. Ручной E2E deferred (~конец июля). Прод-миграция pairingStatus в окне деплоя. MERGED в main (#242-#246, 2026-07-04): presence-снапшот (offline-баг), pairingStatus, Удалить=revoke+delete, авто-release захвата, docs/smoke. Closure-review артефакт формально только у PL1 (LGTM); PL2-PL5 — code+CI verify green, review-runner инфра-флейк (output-contract + skipped-check gate, домен cg2); мёрж по явной санкции владельца. Остаток: прод-миграция pairingStatus + ручной E2E на железе (~конец июля).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "rodchenko",
+        "kuryokhin",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "PR #242; review LGTM c515dc61e0f4; PR #242 merged 2026-07-04T17:01:56Z (1ff09f7c73f877613c53218939e185f830c2a2ff)",
+      "id": "pl1-presence-snapshot",
+      "title": "PL1: PresenceSnapshot в core + registerCabinet отдаёт снапшот + seeding клиента",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pairing-lifecycle"
+      ],
+      "notes": "Не обнулять onlineDeviceIds при реконнекте; snapshot до подписки на stream.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
+      "id": "pl2-device-pairing-status",
+      "title": "PL2: Device.pairingStatus (paired/revoked/unpaired) + revoke переводит в revoked",
+      "size": "S",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pairing-lifecycle"
+      ],
+      "notes": "НЕ чистим pairedKeyId (история для getPairStatus). Миграция prisma. MERGED #243 (2026-07-04). Прод-миграция pairingStatus — в окне деплоя. Closure-review артефакт формально только у PL1 (LGTM); PL2-PL5 — code+CI verify green, review-runner инфра-флейк (output-contract + skipped-check gate, домен cg2); мёрж по явной санкции владельца.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": "PR #263; review LGTM 062a32c89120; PR #263 merged 2026-07-06T05:27:21Z (062a32c891205f3952e33f0d8ad95591d1879229)",
+      "id": "pl2b-node-heartbeat",
+      "title": "PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО)",
+      "size": "S",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl1-presence-snapshot",
+        "pl2-device-pairing-status"
+      ],
+      "notes": "Deferrable: Математик предлагал отложить; режется первой при нехватке времени. lastSeenAt уже существует. Schema evidence for bootstrap filter: packages/background-cabinet/prisma/schema.prisma already defines Device.pairingStatus @default(paired) and Device.lastSeenAt.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
+      "id": "pl3-delete-key-revoke",
+      "title": "PL3: deleteAccessKey=revoke+delete (без 409 на активном) + единая кнопка Удалить с модалкой",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl2-device-pairing-status"
+      ],
+      "notes": "Решение владельца. FK pairedKeyId->NodeAccessKey = SET NULL. Модалка: имя ключа/дата/предупреждение. MERGED #244 (2026-07-04).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
+      "id": "pl4-capture-autorelease",
+      "title": "PL4: авто-release capture при инвалидации ключа (серверный unregister/TTL) + race-тест",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl2-device-pairing-status"
+      ],
+      "notes": "Узел проверки: boardLease.release на узле нереализуем (сокет рвётся, CT2 дропает node board-события) — делать серверную сторону. MERGED #245 (2026-07-04).",
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "merged, review-runner infra-flake",
+      "id": "pl5-tests-docs-smoke",
+      "title": "PL5: контракт-тесты presence (WS-mock) + ARCHITECTURE/контракт docs + smoke-runbook",
+      "size": "M",
+      "parentEpic": "pairing-lifecycle",
+      "dependsOn": [
+        "pl1-presence-snapshot",
+        "pl3-delete-key-revoke",
+        "pl4-capture-autorelease"
+      ],
+      "notes": "Ручной E2E на железе deferred (~конец июля); программный smoke локально/docker + WS-mock. MERGED #246 (2026-07-04).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "Спринт PCB1-PCB6 полностью закрыт 2026-07-05: PCB1/PCB3 (#248/#249, корневой фикс persistent-offline, подтверждён на проде 2026-07-04), PCB4 link-state (#250, T1), PCB6 health-ping (#251, T2), PCB2 auth-fail banner (#252, T1), PCB5 force-viewonly-board (#253, T1) — все closure-review LGTM. PCB-D2 (multi-node, Phase 3) отвязан в standalone deferred backlog. Хвосты: lastSeenAt на registerNode не пишется; P2 rate-limit на link-state.",
+      "id": "presence-capture-board",
+      "title": "Epic: Живость присутствия + view-only борд под захватом (PCB1–PCB6)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "pairing-lifecycle"
+      ],
+      "notes": "Консилиум presence-capture-board-2026-07-04. Повод: клиент на 1573 связан+перезапуски, кабинет offline (PL1 не закрыл). Поправки: serializeNode уже отдаёт lastSeenAt; registerNode в БД НЕ пишет (нужно добавить); force-open через agenda-стор не URL. Multi-node (D2) и тех-долг P4/P5 — отложены. Ручной E2E ~конец июля.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko",
+        "kuryokhin",
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "PR #248; review LGTM 7742bd5b44bb; PR #248 merged 2026-07-04T18:03:02Z (87e906e42ca4ca41f982365f78bdf7541bcede60)",
+      "id": "pcb-1-ws-lifecycle-logging",
+      "title": "PCB1: WS-lifecycle логи (connect/auth/register) обе стороны — диагностика H1-H4",
+      "size": "S",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "presence-capture-board"
+      ],
+      "notes": "Вскрыть реальный корень persistent-offline ДО фиксов PCB2/PCB3.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #252; review LGTM 84f2c2b75814; PR #252 merged 2026-07-05T07:00:39Z (2929d451b9132f0a7a037b51a484ce61f3b8756e)",
+      "id": "pcb-2-auth-fail-banner",
+      "title": "PCB2: баннер auth-fail на клиенте (authFailedAt, дебаунс 2-3с, кнопка Пересопрячь)",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-1-ws-lifecycle-logging"
+      ],
+      "notes": "Не спамить на HMR-разрывах; отличать краткий ретрай от устойчивого auth-fail.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-04",
+      "archiveNotes": "PR #249; review LGTM af21abc0cc85; PR #249 merged 2026-07-04T18:41:21Z (9b22792e1af5adbd64333119d67968642650b54f)",
+      "id": "pcb-3-cabinet-liveness-indicator",
+      "title": "PCB3: registerNode пишет Device.lastSeenAt + кабинет индикатор (online/connecting/виден Ns/offline)",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-1-ws-lifecycle-logging"
+      ],
+      "notes": "ПОПРАВКА: registerNode сейчас в БД НЕ пишет (мини-PL2b); serializeNode lastSeenAt уже отдаёт, кабинет не потребляет.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #250; review LGTM 5aff7012e2e5; PR #250 merged 2026-07-05T06:25:06Z (9db23d6c7ade5bae047a456d6ff970b3d27ce3f9)",
+      "id": "pcb-4-link-state-endpoint",
+      "title": "PCB4: GET /v1/nodes/:id/link-state -> {paired, live, lastSeenAt} + тесты",
+      "size": "S",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-3-cabinet-liveness-indicator"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #253; review LGTM 5f15c0d0f70f; PR #253 merged 2026-07-05T07:17:16Z (632633182717bedcf167c68dbd18970a4eee7db0)",
+      "id": "pcb-5-force-open-viewonly-board",
+      "title": "PCB5: захват -> force-open device-board view-only (agenda-стор, не URL) + снятие на release",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-3-cabinet-liveness-indicator"
+      ],
+      "notes": "Блоки readOnly/cabinet-view уже есть; boardLeaseBridge на board.capture -> смена активного модуля + флаг isViewOnlyFromCapture. Инвариант §3.3 не нарушать.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-04",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #251; review LGTM 1c4507446139; PR #251 merged 2026-07-05T06:45:27Z (8038ad336a92c3628e483d2836990be80ee8e487)",
+      "id": "pcb-6-health-ping-endpoint",
+      "title": "PCB6: POST /v1/nodes/:id/health-ping (echo по WS, таймаут 3с) -> {reachable, latencyMs} + тесты",
+      "size": "M",
+      "parentEpic": "presence-capture-board",
+      "dependsOn": [
+        "pcb-4-link-state-endpoint"
+      ],
+      "notes": "Узел отвечает на ping. Опц. индикатор в кабинете (Музыкант).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-04",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pcb-d2-multinode",
+      "title": "PCB-D2 (Фаза 3, ОТЛОЖЕНО): multi-node — getPairStatus/authenticateCabinet take:1 -> массив узлов + UI список",
+      "size": "L",
+      "parentEpic": null,
+      "dependsOn": [
+        "pcb-6-health-ping-endpoint"
+      ],
+      "notes": "Отложено (Phase 3, standalone backlog после закрытия эпика presence-capture-board 2026-07-05): требует переделки UI кабинета. Владелец: связанных устройств со временем несколько. multi-node getPairStatus/authenticateCabinet take:1 → массив узлов + UI список.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "Спринт CC1-CC9 полностью закрыт 2026-07-05 (PR #254-264, все closure-review LGTM). Вариант A (INSIGHT insight-comms-contour-topology). Фаза 1 изоляция (leaf apps/comms-studio, check:boundaries поз/нег, CI path-фильтры+CODEOWNERS, .env+secret-scan). Фаза 2 канон Слой 3 (FACTS_SHEET/GLOSSARY/BRAND_TOKENS из живого канона). Фаза 3 агент живого чтения (canon/tone-guard/out-writer/runAgent) + первый выход v0.1 (out/v0.1, 5 брифов из GLOSSARY) + срез партнёра PARTNER.md. Follow-up: out/v0.1 committed-vs-generator drift; Storybook отсутствует (сверка против канона).",
+      "id": "comms-contour-environment",
+      "title": "Epic: Окружение партнёра по внешним коммуникациям — leaf-контур apps/comms-studio (CC1–CC9)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [],
+      "notes": "Вариант A (INSIGHT insight-comms-contour-topology, adopted). Изоляция по записи, не по чтению; чтение≠импорт. Слой 1–2 канона читаются живьём; создаётся только Слой 3 (FACTS_SHEET/GLOSSARY/BRAND_TOKENS).",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #254; review LGTM e81590c253ad; PR #254 merged 2026-07-05T10:42:21Z (26637e25a4e8684a5113e0b58e28e802ed964395)",
+      "id": "cc-1-leaf-workspace",
+      "title": "CC1: leaf-воркспейс apps/comms-studio (package.json без @membrana/*, out/, README тонкого среза)",
+      "size": "M",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #255; review LGTM faa757f2528d; PR #255 merged 2026-07-05T12:21:24Z (546387ecbb01c657fe5d021d4203029ee6536d2f)",
+      "id": "cc-2-boundaries-invariant",
+      "title": "CC2: check:boundaries leaf-zero + позитивный/негативный тест (ребро к/от контура роняет сборку)",
+      "size": "M",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [
+        "cc-1-leaf-workspace"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #256; review LGTM a85c3e9378fb; PR #256 merged 2026-07-05T13:07:09Z (6b187c51ef400002332a61acfadba7d186876ecc)",
+      "id": "cc-3-ci-path-filters-codeowners",
+      "title": "CC3: CI path-фильтры (отдельная comms-полоса) + CODEOWNERS apps/comms-studio/**",
+      "size": "M",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [
+        "cc-1-leaf-workspace"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #258; review LGTM 4215c7c76a18; PR #258 merged 2026-07-05T13:27:40Z (c868783a6f1a8848018493320ba30e9377e1e7d5)",
+      "id": "cc-4-isolated-env-secret-scan",
+      "title": "CC4: изолированный .env + блокирующий secret-scan чек в comms-CI",
+      "size": "S",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [
+        "cc-1-leaf-workspace"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #259; review LGTM 67a3d80f9bf9; PR #259 merged 2026-07-05T14:32:29Z (198429ce7fc1f3d7f2fd96a76d73df60686ec742)",
+      "id": "cc-5-facts-sheet",
+      "title": "CC5: FACTS_SHEET.md — лист фактов (стадия/метрики/команда/дорожная карта; подтверждён/гипотеза/TBD)",
+      "size": "M",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #260; review LGTM 22438979176c; PR #260 merged 2026-07-05T14:45:30Z (c03d6e57a7810c0839fe58ff9aea617121a35d72)",
+      "id": "cc-6-glossary",
+      "title": "CC6: GLOSSARY.md — заблокированный глоссарий терминов",
+      "size": "S",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [
+        "cc-5-facts-sheet"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #261; review LGTM 00f09184c40b; PR #261 merged 2026-07-05T15:55:47Z (99e5ba81f9b588c3230b245aa9ac44e6c6cd87fb)",
+      "id": "cc-7-brand-tokens",
+      "title": "CC7: BRAND_TOKENS.md — палитра/шрифты/визуальные do-dont",
+      "size": "M",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [
+        "cc-5-facts-sheet"
+      ],
+      "notes": "",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #262; review LGTM e8e5ccffc58b; PR #262 merged 2026-07-05T16:26:06Z (df13f64d3c14f378e27ab97f15f2ff9fa48bf30d)",
+      "id": "cc-8-live-read-agent",
+      "title": "CC8: comms-агент живого чтения (fs-read канон+исходники, git pull ритм, пишет только в out/, канон тона на рендере)",
+      "size": "L",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [
+        "cc-1-leaf-workspace",
+        "cc-5-facts-sheet"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-05",
+      "archiveNotes": "PR #264; review LGTM 35b5a71f6437; PR #264 merged 2026-07-05T18:44:44Z (d515fa22f88646c1a2da294a7bfcab9b38e934ef)",
+      "id": "cc-9-partner-slice-output",
+      "title": "CC9: тонкий срез партнёра (монитор out/** + Drive, обратный импорт запрещён) + первый выход v0.1 (3–5 компонентов, сверка Storybook/UI)",
+      "size": "M",
+      "parentEpic": "comms-contour-environment",
+      "dependsOn": [
+        "cc-8-live-read-agent"
+      ],
+      "notes": "",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": "PR #265; review LGTM 6309071e6b42; PR #265 merged 2026-07-06T05:16:06Z (7e7e34783f860641cadab870e1d93aa9cef7f88e)",
+      "id": "comms-sandbox-docs-adaptation",
+      "title": "Epic: Адаптация 4 партнёрских документов песочницы под реализацию CC1–CC9 (CD1–CD6)",
+      "size": "M",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "comms-contour-environment"
+      ],
+      "notes": "Доки в docs/comms/sandbox/ (baseline). Реализация CC1-CC9 приоритетнее доков; адаптировать, не выбрасывать. Партнёр действует по CHECKLIST+RUNBOOK. Ядро: топология Вариант A, живой канон вместо копий, hook переиспользует tone-guard.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": null,
+      "id": "cd-1-topology-variant-a",
+      "title": "CD1: зафиксировать топологию Вариант A по 4 докам (CONTOUR_DIR=apps/comms-studio, REPO=монорепо, убрать «до решения»)",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": null,
+      "id": "cd-2-live-canon-not-copies",
+      "title": "CD2: живой канон docs/comms/canon вместо копий (RUNBOOK §5.1/§6, CHECKLIST Блок C=готово, GUIDE §3/§8, INSIGHT §4)",
+      "size": "M",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-1-topology-variant-a"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": null,
+      "id": "cd-3-hook-reuse-tone-guard",
+      "title": "CD3: hook партнёра переиспользует наш tone-guard/blocked-terms (RUNBOOK §7, INSIGHT §3.3, GUIDE §5), не дублирует",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-2-live-canon-not-copies"
+      ],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": null,
+      "id": "cd-4-sandbox-seam-relationship",
+      "title": "CD4: раздел о связи интерактивной песочницы и seam-генератора generate:v0.1 (общий канон, только out/)",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-1-topology-variant-a"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": null,
+      "id": "cd-5-precision-refs",
+      "title": "CD5: точность — Node 20/22, плейсхолдеры (Replit URL/Playwright pkg/даты), сверка ссылок (PROMPT_PITCH_DECK.md, membrana.space)",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-05",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": null,
+      "id": "cd-6-placement-registration",
+      "title": "CD6: финализировать размещение docs/comms/sandbox + cross-link + сквозная сверка 4 доков",
+      "size": "S",
+      "parentEpic": "comms-sandbox-docs-adaptation",
+      "dependsOn": [
+        "cd-2-live-canon-not-copies",
+        "cd-3-hook-reuse-tone-guard",
+        "cd-4-sandbox-seam-relationship",
+        "cd-5-precision-refs"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "partner-tutorials",
+      "title": "Epic: Туториалы для партнёра по внешним коммуникациям (PT0–PT3)",
+      "size": "M",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "comms-sandbox-docs-adaptation"
+      ],
+      "notes": "Консилиум docs/seanses/partner-tutorials-design-2026-07-06.md. 3 туториала + шаблон PT0. Показывают арсенал на живом сценарии (канон→out/), не перечисляют. Единый шаблон Верстальщика, термины ⊆ GLOSSARY, leaf-zero, «сток не исток». Поправка: тема PT2 = render-check/Playwright, НЕ Storybook. Приёмка: ≥80% шагов холодным читателем. Порядок PT0→PT1→PT2→PT3.",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pt-0-tutorial-template",
+      "title": "PT0: шаблон-конструкция туториала (шапка/что понадобится/шаги/результат/чек-лист + frontmatter версия+дата+FACTS_SHEET, тёмная тема, a11y)",
+      "size": "S",
+      "parentEpic": "partner-tutorials",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pt-1-read-facts-sheet",
+      "title": "PT1: как достать актуальные факты из FACTS_SHEET.md и не соврать (пометки подтверждён/гипотеза/TBD, [TBD] вместо выдумки)",
+      "size": "S",
+      "parentEpic": "partner-tutorials",
+      "dependsOn": [
+        "pt-0-tutorial-template"
+      ],
+      "notes": "",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pt-2-first-output-v01-endtoend",
+      "title": "PT2: сквозной сценарий первого выхода v0.1 от канона до файла в out/ + сверка render-check/Playwright (НЕ Storybook), показ tone-guard",
+      "size": "M",
+      "parentEpic": "partner-tutorials",
+      "dependsOn": [
+        "pt-1-read-facts-sheet"
+      ],
+      "notes": "",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-06",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "pt-3-honest-tech-storytelling",
+      "title": "PT3: как честно рассказывать о технологии и стадии (пары до/после, пометки риска, dual-use GLOSSARY §4, без сырых внутренних цифр)",
+      "size": "M",
+      "parentEpic": "partner-tutorials",
+      "dependsOn": [
+        "pt-1-read-facts-sheet",
+        "pt-2-first-output-v01-endtoend"
+      ],
+      "notes": "Выпуск только после LGTM на PT1 и PT2.",
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": null,
+      "id": "neural-drone-plugin",
+      "title": "Epic: Нейро-детекция дрона (UC2 free-тарифа, YAMNet zero-shot) — ND1–ND3",
+      "size": "M",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [],
+      "notes": "Форсайт docs/seanses/foresight-2026-07-06.md (S1 keystone). Zero-shot YAMNet TF.js, обучения нет, полевые записи 17.07 НЕ нужны. Инференс в yamnet-detector-service (node+браузер), веса бандлятся (офлайн Electron). Разблокирует combined UC (S2). Порядок ND1→ND2→ND3.",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko",
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": "PR #266; review LGTM b3a4abaa457a; PR #266 merged 2026-07-06T12:57:59Z (9a7ca7fd5d9b43198ddce5acf912829db572fed5)",
+      "id": "nd-1-yamnet-detector",
+      "title": "ND1: реализовать YamnetDetector.detect() — TF.js инференс, ресемпл 16кГц, класс-маппинг AudioSet→дрон, веса бандлятся, p95<100мс",
+      "size": "M",
+      "parentEpic": "neural-drone-plugin",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": "PR #266; review LGTM b631d39ad465; PR #266 merged 2026-07-06T12:57:59Z (9a7ca7fd5d9b43198ddce5acf912829db572fed5)",
+      "id": "nd-2-neural-plugin-ui",
+      "title": "ND2: клиентский плагин нейро-детекции по образцу trends-fft-sample-analyzer (audio-engine, MembranaRegistry, каталог)",
+      "size": "M",
+      "parentEpic": "neural-drone-plugin",
+      "dependsOn": [
+        "nd-1-yamnet-detector"
+      ],
+      "notes": "",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-06",
+      "archiveNotes": "PR #268; review LGTM f597345cada5; PR #268 merged 2026-07-06T13:23:56Z (8a53826da5eb380f193591b697417f892a5abfca)",
+      "id": "nd-3-benchmark-validation",
+      "title": "ND3: прогнать yamnet через benchmark:detectors на free-v1 + строка в DETECTOR_BENCHMARK.md, сравнить с DRONE_TIGHT",
+      "size": "S",
+      "parentEpic": "neural-drone-plugin",
+      "dependsOn": [
+        "nd-1-yamnet-detector"
+      ],
+      "notes": "",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/DEVICE_BOARD_JOURNAL_SIDEBAR_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "id": "device-board-journal-sidebar",
+      "title": "Device-board: вкладки «Узлы | Журнал» в правом сайдбаре + drag-ресайз ширины (min 240px, max 50vw) для режима захвата",
+      "size": "M",
+      "dependsOn": [],
+      "notes": "Живой хвост scenario-трассы во вкладке журнала; источник — существующий ring buffer через host-контракт",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "archivedAt": "2026-07-06",
+      "archiveNotes": "PR #269; review LGTM 6d4d13754c09; PR #269 merged 2026-07-06T14:06:43Z (7422522659d85290812ab095198a72480af9fc67)"
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-07",
+      "archiveNotes": null,
+      "id": "sandbox-link-diagnostics-night",
+      "title": "Night Build: диагностика связи узел↔cabinet из песочницы (NB0 пробник, NB1 видимый deviceId, NB2 флап вкладки Узлы)",
+      "size": "M",
+      "sprintKind": "night-build",
+      "strategicWave": "W1",
+      "dependsOn": [],
+      "notes": "Вечер 2026-07-06: узловой WS стабилен, кабинет offline, шапка «Узлы» мигает (кабинетная линия #269). Без prod; NB2 — фикс только если тривиален, иначе находка в handoff. Старая просьба владельца: подсвеченный deviceId при сопряжении (NB1).",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-07",
+      "archiveNotes": null,
+      "id": "nb-0-node-link-probe",
+      "title": "NB0: пробник устойчивости связи узел↔cabinet (scripts/node-link-probe.mjs, прокси-паритет, коды закрытия, вердикт)",
+      "size": "S",
+      "parentEpic": "sandbox-link-diagnostics-night",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-07",
+      "archiveNotes": null,
+      "id": "nb-1-visible-device-id",
+      "title": "NB1: видимый deviceId сопряжения — полный id + подсветка + копирование в LinkedPanel, shortId в футер-индикаторе",
+      "size": "S",
+      "parentEpic": "sandbox-link-diagnostics-night",
+      "dependsOn": [],
+      "notes": "Просьба владельца из прошлого фикса, не была выполнена.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "status": "archived",
+      "createdAt": "2026-07-06",
+      "archivedAt": "2026-07-07",
+      "archiveNotes": null,
+      "id": "nb-2-nodes-tab-flap",
+      "title": "NB2: разбор флапа «связь установлена ↔ переподключение» во вкладке Узлы (#269) — причина по коду; фикс только если тривиален",
+      "size": "S",
+      "parentEpic": "sandbox-link-diagnostics-night",
+      "dependsOn": [],
+      "notes": "",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "capture-scenario-ux",
+      "title": "Epic: Захват, сценарии и связь — UX-контур узел↔кабинет (CX1–CX5)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "device-board-capture-tariff-v2"
+      ],
+      "notes": "Требования владельца 2026-07-07 с живого прода (после деплоя bc6daa61). CX2 — регрессия (навигация кабинета роняет захват) — первый PR. CX4 строго после CX3. CX3 поглощает db-scenario-selector (wire-заготовки CT1 готовы). Issue #271.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin",
+        "dynin",
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-1-node-card-device-id",
+      "title": "CX1: карточка узла в кабинете — «связан с устройством {deviceId}» (полный id, копирование, зеркально NB1)",
+      "size": "S",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "Данные уже есть: NodeView.device.mediaDeviceId. Порядок в карточке: label → node.id → device → online/offline.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-2-journal-nav-release",
+      "title": "CX2: навигация кабинета (Журнал) не роняет захват — runtime на уровень shell; release любой причины отражается на клиенте",
+      "size": "M",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "Подозреваемый: useCabinetNodeRuntime живёт в NodesPage, размонтирование рвёт WS-сессию кабинета → серверный release. Диагностику зафиксировать в PR.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-3-scenario-list",
+      "title": "CX3: список сценариев — клиент объявляет при захвате, сервер хранит выбранный (один всегда выбран), dropdown в кабинете",
+      "size": "M",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "Contract-first в core (DeviceScenarioListPayload). selectScenario уже в whitelist v2; wire-заготовки CT1. Поглощает db-scenario-selector — при закрытии заархивировать её с notes.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-4-board-lock",
+      "title": "CX4: борд-лок на клиенте под захватом — открытие с выбранным сценарием сервера, выход заблокирован до release, emergency stop всегда доступен",
+      "size": "M",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [
+        "cx-3-scenario-list"
+      ],
+      "notes": "Расширяет PCB5 force-open. Инвариант канона §3.3: блокируем навигацию, не звук.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-5-header-link-warning",
+      "title": "CX5: warning в шапке клиента «нет связи с сервером» при stay-linked; авто-снятие на реконнекте",
+      "size": "S",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "AppHeader + nodeConnectionStore; не дублирует футер NB1. Конечный автомат переходов баннера — pure + тесты.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
       ]
     }
   ]

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "taskId": "pcb-4-link-state-endpoint",
+  "state": "archived",
+  "tier": "T1",
+  "reviewMode": "standard",
+  "branch": "feat/pcb4-link-state-endpoint",
+  "currentCommitSha": "5aff7012e2e547c7031d938e76012861c174f882",
+  "reviewedCommitSha": "5aff7012e2e547c7031d938e76012861c174f882",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/pcb-4-link-state-endpoint/5aff7012e2e547c7031d938e76012861c174f882-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 250,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/250"
+  },
+  "scope": {
+    "baseRef": "5aff7012e2e547c7031d938e76012861c174f882^",
+    "files": [
+      "packages/background-cabinet/src/app.module.ts",
+      "packages/background-cabinet/src/modules/node-liveness/node-liveness.controller.ts",
+      "packages/background-cabinet/src/modules/node-liveness/node-liveness.module.ts",
+      "packages/background-cabinet/src/modules/node-liveness/node-liveness.service.test.ts",
+      "packages/background-cabinet/src/modules/node-liveness/node-liveness.service.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.service.ts"
+    ],
+    "packages": [
+      "packages/background-cabinet"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "5aff7012e2e547c7031d938e76012861c174f882",
+        "checkedAt": "2026-07-05T06:23:56.970Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/background-cabinet test --run node-liveness",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "5aff7012e2e547c7031d938e76012861c174f882",
+        "checkedAt": "2026-07-05T06:24:01.171Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "5aff7012e2e547c7031d938e76012861c174f882",
+        "checkedAt": "2026-07-05T06:13:36Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28731675223/job/85198348982"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "5aff7012e2e547c7031d938e76012861c174f882",
+        "checkedAt": "2026-07-05T06:17:27Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28731675220/job/85198348755"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "5aff7012e2e547c7031d938e76012861c174f882",
+        "checkedAt": "2026-07-05T06:19:59Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28731675221/job/85198348695"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #250 merged 2026-07-05T06:25:06Z (9db23d6c7ade5bae047a456d6ff970b3d27ce3f9)"
+  },
+  "createdAt": "2026-07-05T06:14:59.436Z",
+  "updatedAt": "2026-07-05T06:25:47.275Z"
+}

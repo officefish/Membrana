@@ -1,0 +1,83 @@
+# Отдельная CI-полоса контура внешних коммуникаций (apps/comms-studio).
+# Триггерится ТОЛЬКО правкой контура/канона comms и граничного скрипта — не пересекается
+# с продуктовым `ci.yml` / `unit-tests.yml` (те, в свою очередь, игнорируют пути comms).
+# Топология — Вариант A (docs/insights/insight-comms-contour-topology). CC3.
+
+name: Comms contour
+
+on:
+  push:
+    branches: [main, master, develop, vesnin]
+    paths:
+      - 'apps/comms-studio/**'
+      - 'docs/comms/**'
+      - 'scripts/check-package-boundaries.mjs'
+      - 'scripts/check-package-boundaries.test.mjs'
+      - '.github/workflows/comms-studio.yml'
+  pull_request:
+    branches: [main, master, develop, vesnin]
+    paths:
+      - 'apps/comms-studio/**'
+      - 'docs/comms/**'
+      - 'scripts/check-package-boundaries.mjs'
+      - 'scripts/check-package-boundaries.test.mjs'
+      - '.github/workflows/comms-studio.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  comms:
+    name: Comms contour — boundaries, typecheck, lint, test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # На раннере setup-node ставит Yarn 1, поэтому Yarn 4 активируем через Corepack.
+      - name: Enable Corepack (Yarn 4 из packageManager)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+          echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> "$GITHUB_ENV"
+
+      - name: Yarn Berry cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.YARN_CACHE_FOLDER }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Boundaries — инвариант «сток, не исток» (indegree/outdegree = 0)
+        run: yarn check:boundaries
+
+      - name: Boundaries — позитивный/негативный тест правил contour
+        run: node --test scripts/check-package-boundaries.test.mjs
+
+      - name: Comms — secret-scan (блокирующий; вычистка секретов out/ + src/)
+        run: yarn workspace @membrana/comms-studio secret-scan
+
+      - name: Comms — typecheck
+        run: yarn workspace @membrana/comms-studio typecheck
+
+      - name: Comms — lint
+        run: yarn workspace @membrana/comms-studio lint
+
+      - name: Comms — test
+        run: yarn workspace @membrana/comms-studio test

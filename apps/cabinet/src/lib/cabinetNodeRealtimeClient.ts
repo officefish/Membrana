@@ -3,14 +3,18 @@ import {
   parseBoardCaptureHeartbeatPayload,
   parseBoardCapturePayload,
   parseBoardCaptureReleasePayload,
+  parseBoardScenarioListPayload,
   parseNodeRealtimeEnvelope,
+  parsePresenceSnapshotPayload,
   type AnalysisBriefPayload,
   type BoardCaptureHeartbeatPayload,
   type BoardCapturePayload,
   type BoardCaptureReleasePayload,
+  type BoardScenarioListPayload,
   type JournalAppendPayload,
   type NodeOnlinePayload,
   type NodeRealtimeEnvelope,
+  type PresenceSnapshotPayload,
   type RuntimeStatePayload,
 } from '@membrana/core';
 
@@ -27,13 +31,38 @@ type StateHandler = (state: CabinetRealtimeClientState) => void;
 type JournalAppendHandler = (envelope: NodeRealtimeEnvelope<JournalAppendPayload>) => void;
 type MicBriefHandler = (payload: AnalysisBriefPayload) => void;
 type RuntimeStateHandler = (payload: RuntimeStatePayload) => void;
+type PresenceSnapshotHandler = (payload: PresenceSnapshotPayload) => void;
 type PresenceOnlineHandler = (payload: NodeOnlinePayload) => void;
 type PresenceOfflineHandler = (payload: NodeOnlinePayload) => void;
 type BoardCaptureHandler = (payload: BoardCapturePayload) => void;
 type BoardCaptureHeartbeatHandler = (payload: BoardCaptureHeartbeatPayload) => void;
 type BoardCaptureReleaseHandler = (payload: BoardCaptureReleasePayload) => void;
+type BoardScenarioListHandler = (payload: BoardScenarioListPayload) => void;
 
 const MAX_BACKOFF_MS = 30_000;
+
+/**
+ * NB2 (sandbox-link-diagnostics-night): keepalive кабинетной линии.
+ *
+ * У кабинетного сокета не было исходящего трафика вообще (у узла — heartbeat
+ * раз в 120с), а сервер пингует только role=node (PCB6). При тишине в realtime
+ * соединение — чистый idle, и промежуточный таймаут (nginx/прокси, типично 60с)
+ * закрывает его → клиент корректно реконнектится → в шапке «Узлы» вечное
+ * «установлена ↔ переподключение». 45с — ниже типовых idle-таймаутов.
+ * Сервер presence-канал от role=cabinet тихо игнорирует (dispatchEnvelope) —
+ * кадр служит только трафиком.
+ */
+export const CABINET_KEEPALIVE_INTERVAL_MS = 45_000;
+
+/**
+ * PCB1 (presence-capture-board): логи WS-жизненного цикла КАБИНЕТА в консоли.
+ * Диагностика persistent-offline со стороны кабинета: подключён ли WS кабинета,
+ * приходит ли presence-снапшот и есть ли в нём deviceId узла, ловятся ли online.
+ */
+function logCabinetWs(event: string, detail: Record<string, unknown>): void {
+  // eslint-disable-next-line no-console
+  console.info(`[cabinet-ws] ${event}`, detail);
+}
 
 class CabinetNodeRealtimeClientImpl {
   private socket: WebSocket | null = null;
@@ -46,6 +75,8 @@ class CabinetNodeRealtimeClientImpl {
 
   private reconnectTimer: number | null = null;
 
+  private keepaliveTimer: number | null = null;
+
   private readonly stateHandlers = new Set<StateHandler>();
 
   private readonly journalHandlers = new Set<JournalAppendHandler>();
@@ -54,11 +85,15 @@ class CabinetNodeRealtimeClientImpl {
 
   private readonly runtimeStateHandlers = new Set<RuntimeStateHandler>();
 
+  private readonly presenceSnapshotHandlers = new Set<PresenceSnapshotHandler>();
+
   private readonly presenceOnlineHandlers = new Set<PresenceOnlineHandler>();
 
   private readonly presenceOfflineHandlers = new Set<PresenceOfflineHandler>();
 
   private readonly boardCaptureHandlers = new Set<BoardCaptureHandler>();
+
+  private readonly boardScenarioListHandlers = new Set<BoardScenarioListHandler>();
 
   private readonly boardCaptureHeartbeatHandlers = new Set<BoardCaptureHeartbeatHandler>();
 
@@ -94,6 +129,12 @@ class CabinetNodeRealtimeClientImpl {
     return () => this.micBriefHandlers.delete(handler);
   }
 
+  /** PL1: bootstrap-снапшот присутствия при подключении кабинета. */
+  subscribePresenceSnapshot(handler: PresenceSnapshotHandler): () => void {
+    this.presenceSnapshotHandlers.add(handler);
+    return () => this.presenceSnapshotHandlers.delete(handler);
+  }
+
   subscribePresenceOnline(handler: PresenceOnlineHandler): () => void {
     this.presenceOnlineHandlers.add(handler);
     return () => this.presenceOnlineHandlers.delete(handler);
@@ -110,6 +151,12 @@ class CabinetNodeRealtimeClientImpl {
     return () => this.boardCaptureHandlers.delete(handler);
   }
 
+  /** CX3: объявленный узлом список сценариев + выбранный (board.scenario-list). */
+  subscribeBoardScenarioList(handler: BoardScenarioListHandler): () => void {
+    this.boardScenarioListHandlers.add(handler);
+    return () => this.boardScenarioListHandlers.delete(handler);
+  }
+
   subscribeBoardCaptureHeartbeat(handler: BoardCaptureHeartbeatHandler): () => void {
     this.boardCaptureHeartbeatHandlers.add(handler);
     return () => this.boardCaptureHeartbeatHandlers.delete(handler);
@@ -121,6 +168,18 @@ class CabinetNodeRealtimeClientImpl {
   }
 
   connect(membraneId: string): void {
+    // PCB3 (presence-capture-board): идемпотентность. Без неё повторный connect()
+    // (React StrictMode двойной эффект / ре-рендеры без disconnect в cleanup)
+    // закрывал ещё-CONNECTING сокет → «closed before connection established» →
+    // scheduleReconnect → петля; WS кабинета не устанавливался и presence не шёл.
+    const socket = this.socket;
+    if (
+      this.membraneId === membraneId &&
+      socket &&
+      (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)
+    ) {
+      return;
+    }
     this.membraneId = membraneId;
     this.openSocket();
   }
@@ -128,9 +187,34 @@ class CabinetNodeRealtimeClientImpl {
   disconnect(): void {
     this.membraneId = null;
     this.clearReconnectTimer();
+    this.stopKeepalive();
     this.socket?.close();
     this.socket = null;
     this.setState('disconnected');
+  }
+
+  /** NB2: периодический кадр — соединение не бывает idle для промежуточных таймаутов. */
+  private startKeepalive(ws: WebSocket): void {
+    this.stopKeepalive();
+    this.keepaliveTimer = window.setInterval(() => {
+      if (this.socket !== ws || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(
+        JSON.stringify({
+          v: 1,
+          channel: 'presence',
+          type: NODE_REALTIME_EVENT_TYPES.presence.heartbeat,
+          ts: new Date().toISOString(),
+          payload: {},
+        }),
+      );
+    }, CABINET_KEEPALIVE_INTERVAL_MS);
+  }
+
+  private stopKeepalive(): void {
+    if (this.keepaliveTimer !== null) {
+      window.clearInterval(this.keepaliveTimer);
+      this.keepaliveTimer = null;
+    }
   }
 
   private setState(next: CabinetRealtimeClientState): void {
@@ -170,12 +254,20 @@ class CabinetNodeRealtimeClientImpl {
     url.searchParams.set('membraneId', this.membraneId);
 
     this.setState(this.reconnectAttempt > 0 ? 'reconnecting' : 'connecting');
+    logCabinetWs('connecting', {
+      membraneId: this.membraneId,
+      attempt: this.reconnectAttempt,
+      url: `${url.origin}${url.pathname}`,
+    });
     const ws = new WebSocket(url.toString());
     this.socket = ws;
 
     ws.addEventListener('open', () => {
+      if (this.socket !== ws) return; // вытеснен новым сокетом — игнорируем
       this.reconnectAttempt = 0;
       this.setState('connected');
+      this.startKeepalive(ws); // NB2: анти-idle для прокси/nginx таймаутов
+      logCabinetWs('open', { membraneId: this.membraneId });
     });
 
     ws.addEventListener('message', (event) => {
@@ -211,9 +303,27 @@ class CabinetNodeRealtimeClientImpl {
         }
         if (
           envelope.channel === 'presence' &&
+          envelope.type === NODE_REALTIME_EVENT_TYPES.presence.snapshot
+        ) {
+          const payload = parsePresenceSnapshotPayload(envelope.payload);
+          // PCB1: пришёл ли снапшот и есть ли в нём онлайн-узлы? Пустой снапшот
+          // при подключённом узле = проблема на сервере (registerNode/membraneId).
+          logCabinetWs('presence.snapshot', {
+            onlineDeviceIds: payload?.onlineDeviceIds ?? null,
+            count: payload?.onlineDeviceIds.length ?? 0,
+          });
+          if (payload !== null) {
+            for (const handler of this.presenceSnapshotHandlers) {
+              handler(payload);
+            }
+          }
+        }
+        if (
+          envelope.channel === 'presence' &&
           envelope.type === NODE_REALTIME_EVENT_TYPES.presence.nodeOnline
         ) {
           const payload = envelope.payload as NodeOnlinePayload;
+          logCabinetWs('presence.nodeOnline', { deviceId: payload.deviceId });
           for (const handler of this.presenceOnlineHandlers) {
             handler(payload);
           }
@@ -223,6 +333,7 @@ class CabinetNodeRealtimeClientImpl {
           envelope.type === NODE_REALTIME_EVENT_TYPES.presence.nodeOffline
         ) {
           const payload = envelope.payload as NodeOnlinePayload;
+          logCabinetWs('presence.nodeOffline', { deviceId: payload.deviceId });
           for (const handler of this.presenceOfflineHandlers) {
             handler(payload);
           }
@@ -253,13 +364,27 @@ class CabinetNodeRealtimeClientImpl {
               }
             }
           }
+          // CX3: список сценариев узла (объявление узла / ре-бродкаст select'а).
+          if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.scenarioList) {
+            const payload = parseBoardScenarioListPayload(envelope.payload);
+            if (payload !== null) {
+              for (const handler of this.boardScenarioListHandlers) {
+                handler(payload);
+              }
+            }
+          }
         }
       } catch {
         /* ignore malformed frames */
       }
     });
 
-    ws.addEventListener('close', () => {
+    ws.addEventListener('close', (event) => {
+      // PCB3: если этот сокет уже вытеснен новым (openSocket закрыл старый),
+      // его close НЕ должен планировать реконнект — иначе петля.
+      if (this.socket !== ws) return;
+      this.stopKeepalive();
+      logCabinetWs('close', { code: event.code, reason: event.reason || undefined });
       if (this.membraneId) {
         this.scheduleReconnect();
       } else {

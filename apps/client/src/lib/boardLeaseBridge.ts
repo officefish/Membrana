@@ -8,10 +8,29 @@ import {
   type NodeRealtimeEnvelope,
 } from '@membrana/core';
 
+import { useMembranaStore } from '@membrana/agenda';
+
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { notifyStudioCaptureAcquired } from '@/lib/electronStudioShellPort';
 import { writeElectronShellLog } from '@/lib/electronShellLogPort';
+import { DEVICE_BOARD_MODULE_ID } from '@/modules/device-board/device-board-module-config';
+import { announceScenarioList } from '@/modules/device-board/scenarioListAnnouncer';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
+
+/**
+ * PCB5 (presence-capture-board): захват принудительно открывает device-board
+ * в view-only через agenda-стор (смена активного модуля, НЕ URL). Если оператор
+ * уже на доске — не навигируем (не дёргаем экран; emergency stop §3.3 остаётся
+ * доступен, force-open ничего не блокирует). Возвращает true, если навигировали.
+ */
+function forceOpenDeviceBoard(): boolean {
+  const store = useMembranaStore.getState();
+  if (store.selectedModuleId === DEVICE_BOARD_MODULE_ID) {
+    return false;
+  }
+  store.selectModule(DEVICE_BOARD_MODULE_ID);
+  return true;
+}
 
 let messageUnsub: (() => void) | null = null;
 let connectionUnsub: (() => void) | null = null;
@@ -101,6 +120,18 @@ function applyBoardEnvelope(envelope: NodeRealtimeEnvelope, localDeviceId: strin
     // той же сессии) — оператору нужен alert и доступ к emergency stop (§3.3).
     if (previous === null || previous.sessionId !== payload.sessionId) {
       notifyStudioCaptureAcquired();
+    }
+    // PCB5: захват форс-открывает device-board (view-only) — оператор видит, чем
+    // управляет кабинет. Идемпотентно: если уже на доске, навигации нет.
+    if (forceOpenDeviceBoard()) {
+      writeElectronShellLog('info', '[capture] force-open device-board (view-only)');
+    }
+    // CX3: под захватом узел объявляет серверу список своих сценариев —
+    // кабинет показывает dropdown и шлёт selectScenario только по этому списку.
+    if (previous === null || previous.sessionId !== payload.sessionId) {
+      void announceScenarioList().then((sent) => {
+        if (sent) writeElectronShellLog('info', '[capture] scenario list announced');
+      });
     }
     return;
   }

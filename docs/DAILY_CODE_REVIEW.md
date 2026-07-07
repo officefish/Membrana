@@ -1,69 +1,25 @@
-<!-- Сгенерировано: 2026-07-03T13:50:43.290Z (yarn code-review; daily) -->
+<!-- Сгенерировано: 2026-07-06T17:31:05.835Z (yarn code-review; daily) -->
 
-# Вечернее Code Review — 2026-07-03
+Tier: T0
 
-**Tier: T0**
+[Teamlead]: Сводка дня: коммиты — сплошь `chore/docs/fix` инфраструктуры ритма (недельная стратегия по понедельникам, `BROWSER=none` для client-dev, архивация эпиков ND1-ND3 и comms-sandbox). Незакоммиченные изменения — только три docs-файла ритуала (`DAILY_STANDUP`, `MAIN_DAY_ISSUE`, `STRATEGIC_PLAN_DAY`) + один untracked скрипт `scripts/node-link-probe.mjs`. Runtime-код продукта не тронут → Tier T0. CI зелёный: 53/53 tasks, 72 test files passed, lint 33/33. Единственная зона внимания — `node-link-probe.mjs` untracked: скрипт диагностики node-link, вероятно связан с PL2b heartbeat / PCB link-state — до коммита пройдёт C8/C9 на утреннем ревью. Вердикт по дереву: чисто, блокеров нет.
 
----
+[Структурщик]: Изменения затрагивают только `docs/` (ритуальные артефакты) — границы пакетов не задеты, циклов нет (C1 —). `scripts/node-link-probe.mjs` — вне пакетов, standalone mjs-утилита в зоне Математика (Linux/scripts/*.mjs); при коммите проверить, что не хардкодит секреты/URL узла (C9) и пишет лог не в корень репо, а в `%TEMP%`/`docs/archive/` (гигиена дерева). Тесты рядом не требуются для diagnostics-скрипта (C7 —).
 
-## Анализ дня
+[Математик]: —
 
-За день завершены четыре PR по **studio-capture-adaptation** sprint (SC1/SC3/SC4/SC5) и закрыта задача HG3-механика. Все изменения касаются:
+[Музыкант]: —
 
-- `packages/core` (контракты, тесты) — T0/T1
-- `apps/client` (UI, плагины) — T1  
-- `docs/` (STUDIO_HOST_BRIDGE_CONTRACT, runbooks) — T0
-- `data/` (пилотный корпус) — T0
+[Верстальщик]: —
 
-Lint: 2 warning'а в `UserCaseSettingsPanel.tsx` (react-hooks/exhaustive-deps) — P2, не блокирует.
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (на утро 2026-07-07).
 
----
+Definition of Done (утро):
+- Прочитать этот `DAILY_CODE_REVIEW.md` перед `yarn standup`.
+- Определиться с `scripts/node-link-probe.mjs`: закоммитить осознанно (с проверкой отсутствия секретов) либо убрать из дерева перед deploy-preflight.
+- Прогон при коммите скрипта: `yarn docs:lint` (docs-изменения) и eslint для mjs, если покрыт: `yarn turbo run lint --filter=[scripts]` (или ручной `node --check scripts/node-link-probe.mjs`).
 
-## [Teamlead]
+Риски:
+- **P2** (opportunity): `scripts/node-link-probe.mjs` untracked без явного назначения в `MAIN_DAY_ISSUE` — при deploy-preflight «чистое дерево» может мешать; определить судьбу скрипта.
 
-SC1–SC5 closure review artifacts уже собраны и прошли LGTM (100d171a). Сегодня все PR'ы merged, CI зелёный, тесты pass. 
-
-**Риски на завтра:**  
-- react-hooks warning в `UserCaseSettingsPanel` (исправить нормализацию `entitledTariffSkus` в dependency array — P2, opportunity).
-- Следующий фокус: **VDR Hard Gate HG4** (benchmark доп. метрик) и **Tailwind Coverage Hardening** (TWC-L1 фронтматтер).
-
-**Утро (команды):**
-```bash
-yarn lint --filter=@membrana/client --fix    # исправить exhaustive-deps warning
-yarn test --filter=@membrana/client           # smoke device-board module + user-case-settings
-yarn turbo run typecheck --filter=@membrana/core @membrana/client  # проверить контракты
-```
-
-**Definition of Done (ночь):**  
-✓ SC sprint merged и архивирован  
-✓ CI: lint (2 P2 warning), tests (70 pass), typecheck (green)  
-✓ Docs: STUDIO_HOST_BRIDGE_CONTRACT §4.5 sync  
-
-**Риски:** P2 react-hooks warning; P0 нет.
-
----
-
-## [Структурщик]
-
-Границы пакетов соблюдены: `packages/core` (contracts) + `apps/client` (UI) разделены чётко. Новый плагин VDR-валидация (HG2) изолирован в отдельном модуле. Тесты в местах: `device-board-session.test.ts`, `trendsFftAnalyzerPlugin.test.ts` — структура правильная.
-
-Lint warning'ы (`react-hooks/exhaustive-deps`) — стилистические, не архитектурные.
-
----
-
-## Итоговый артефакт
-
-`docs/DAILY_CODE_REVIEW.md` (этот файл); closure artifacts PR'ов в `docs/discussions/pr-*.md`.
-
----
-
-## Риски
-
-| Уровень | Описание |
-|---------|----------|
-| **P2** | react-hooks/exhaustive-deps warning в UserCaseSettingsPanel (style, не logic) |
-| **—** | P0/P1 нет |
-
----
-
-**Вердикт:** ✅ **Ночь успешна, утро готово.**
+Вердикт: — (daily, вердикт LGTM/BLOCK не выносится вне pr/branch)

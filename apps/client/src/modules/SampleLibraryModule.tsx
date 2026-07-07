@@ -41,6 +41,10 @@ import {
   TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
   TrendsFftSampleAnalyzerPanel,
 } from '../plugins/trends-fft-sample-analyzer';
+import {
+  NEURAL_DRONE_ANALYZER_PLUGIN_ID,
+  NeuralDroneAnalyzerPanel,
+} from '../plugins/neural-drone-analyzer';
 
 const CLASS_OPTIONS = [
   'drone-multirotor',
@@ -269,6 +273,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
       {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
         <TrendsFftSampleAnalyzerPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
+        <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
 
       <MediaLibraryQuotaBanner quota={snapshot.quota} />

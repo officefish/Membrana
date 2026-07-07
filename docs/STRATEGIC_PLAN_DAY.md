@@ -1,241 +1,128 @@
-<!-- Сгенерировано: 2026-07-03T04:54:55.258Z (yarn plan:day) -->
+<!-- Сгенерировано: 2026-07-07T03:57:42.754Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->
 
-# План на следующий день (2026-07-03)
+# План на следующий день
 
-## 1. Что сделано за период (последние сутки, since="2026-07-02")
+> Стратегический план на день. Сгенерирован от git-истории за последние сутки, WHITE_PAPER v0.1, ARCHITECTURE.md / SERVICES.md, приоритетов детекции (эпик #84 / FFT_METRICS §6) и форсайта FREE-тарифа 2026-07-06.
 
-### Device Board Capture Tariff v2 (эпик завершён)
-- **CT0–CT9**: полный цикл реализации явного захвата устройства вместо неявного run=capture.
-  - **@membrana/core** (CT1): контракты `board.capture/heartbeat/release`, `selectScenario`, `run{scenarioId}`, `stop{fadeOutMs}` с деградацией v1-поверхности (@deprecated).
-  - **background-cabinet** (CT2): `DeviceCaptureService`, REST-захват, TTL 5m auto-release, вытеснение с `fadeOutMs:200`, gateway whitelist enforcement.
-  - **apps/cabinet** (CT3): REST API `capture(mode)/release`, мост на WS (board.capture/heartbeat/release broadcast), UI кластер Захватить/Отпустить.
-  - **apps/client** (CT4): `serverFirstStore` ось capture, TTL-таймер 5m, follower enforcement (hard блокирует run, soft разрешает last-write-win), boardLeaseBridge синхронизация.
-  - **packages/audio-engine** (CT6): `fadeOutMs` в `BufferPlayer`, `playback-registry`, остановка вытеснённого воспроизведения.
-  - **device-board** (CT5): `CaptureAlertToasts`, badges v2 (мягкий/жёсткий/TTL), a11y aria-live, server-first flags enforcement.
-  - **Wire CT7**: удаление pause/resume/setMode из wire (tariff v3), legacy-sync упрощение.
-  - **Docs CT9**: ARCHITECTURE обновлена под v2, DEVICE_BOARD_SERVER_FIRST v2.0 финализирована, DEVICE_BOARD_CAPTURE_TARIFF_V2_SMOKE.md runbook.
+## 1. Что сделано за период (последние сутки (since="1 day ago"))
 
-### Инфраструктурные спринты
-- **Tailwind Coverage Hardening** (TWC-L1/L2, PR #225): per-package README frontmatter, `generate-tailwind-configs.mjs`, CI gate `verify:tailwind-coverage`.
-  - **Cabinet fix** (PR #224): tailwind content глобы для device-board + core (node/minimap layout).
-- **CI-gate stabilization** (CG1–CG4): регистрация спринта; обнаружена проблема `pull_request.branches` для feat/* (workaround: `workflow_dispatch`).
-
-### Завершение эпиков и архивация
-- Device Board Capture Tariff v2 эпик архивирован (CT0–CT9 merged в main, prod-gate E2E на окно деплоя cabinet).
-- Tailwind Coverage Hardening эпик архивирован.
-- Evening ritual: DAILY_CODE_REVIEW, MAIN_DAY_ISSUE, STRATEGIC_PLAN_DAY архивированы в `docs/archive/daily-day/2026-07-02/`.
-
----
+- **`packages/services/detectors/yamnet` (analyzer) — ключевой прорыв.** Реализован `YamnetDetector` (zero-shot нейро-детекция дрона поверх YAMNet TF.js): ресемпл 16 кГц, инференс с явным выходом `Identity:0`, drone-score по взвешенным классам AudioSet (Propeller / Helicopter / Buzz…). Веса (~16 МБ) забандлены офлайн. Латентность WASM p95 56 мс (цель <100 мс достигнута). Тесты 23/23 (#266).
+- **`apps/client` (client) — плагин `neural-drone-analyzer`.** Клиентский плагин библиотеки сэмплов: браузерный провайдер модели (бандленные ассеты через vite `?url`, офлайн), паритет с trends-fft-плагином (ручной + автозапуск по `ended`, `publishDroneDetected`), прогрев на install. Аудио строго через engine (ARCHITECTURE §1b). Client 256/256 (#266).
+- **Детекция / бенчмарк.** ND3: `runYamnet` в `benchmark:detectors`, калибровка порога на free-v1 v0.2 (`DEFAULT_DRONE_SCORE_THRESHOLD = 0.01`) → **P 71.4 / R 91.7 / F1 0.803 / FPR 36.7 — лучший F1 таблицы** (обошёл template-match `DRONE_TIGHT` 0.771). Обновлён `DETECTOR_BENCHMARK.md` + заметка ND3 (профили ошибок DSP/нейро слабо коррелированы → аргумент за combined UC на сыром confidence) (#268).
+- **`packages/device-board` + `apps/client` (device-board) — журнал сайдбара (#269).** Вкладки «Узлы | Журнал» в правом сайдбаре, живой хвост scenario-трассы (follow-tail, копировать/скачать/очистить) через host-контракт `getScenarioTraceLines`, drag-ресайз ширины с сохранением в localStorage. Pure-логика clamp/parse покрыта тестами.
+- **`packages/background-cabinet` + `@membrana/core` (foundation / infra) — heartbeat узла (#263).** Persist node heartbeat liveness: события `node-realtime`, presence-snapshot, валидация payload'ов. Приближает транспортный слой «узел ↔ cabinet».
+- **Инфра / CI.** Кодификация main-only branch policy (#267); фикс dev-сервера в песочнице (`BROWSER=none` против EPERM); недельная стратегия по понедельникам (`plan-week-if-monday.mjs`, тесты 121/121); актуализация `detection-planning-priorities.mjs` (yamnet = go, продуктовая магистраль форсайта выше детекционной).
+- **Документация / процесс.** Форсайт FREE-тарифа (`foresight-2026-07-06.md`, роадмап S1–S5); регистрация спринтов `partner-tutorials` (PT0–PT3) и `sandbox-link-diagnostics-night` (NB0–NB2); архивация эпиков `neural-drone-plugin`, `comms-sandbox-docs-adaptation` (CD1–CD6); insight про Telegram-доклады (adopted, after-MVP).
 
 ## 2. Привязка к стратегической цели
 
-### Текущая позиция на дорожной карте
-По WHITE_PAPER §8, система находится на **рубеже Этапа 0–1.A**:
-- ✅ **Этап 0** (Фундамент): `audio-engine` и `fft-analyzer` полностью работают.
-- 🔄 **Этап 1.A** (DSP-эшелон): три детектора (`harmonic`, `cepstral`, `spectral-flux`) реализованы, но их качество на free-v1 не проходит stage-gate (см. FFT_METRICS §4).
-- ⏸️ **Этап 2–4** (Мультиузел, TDOA, локализация, трекинг): заморожены до stage-gate 1→2.
+**Где мы на дорожной карте (WHITE_PAPER §8).** Формально — **Этап 1.B (Neural & Agentic эшелон, один узел)**. Прорыв суток: yamnet-детектор с F1 0.803 — лучший результат на free-v1, что де-факто снимает формулировку «Этап 2 заморожен» через free-tier нейро-канал. Многоузловые этапы (2–4: TDOA, локализация, трекинг) остаются за stage-gate.
 
-### Что сделано — уточнение стратегии
-**Сделанное за сутки** относится **отдельно** к детекции:
-1. **Device Board Capture v2** — это **тактическое** улучшение управления сценариями на полевых узлах (Cabinet ↔ Client), не продвигает детекцию напрямую.
-2. **CI-gate & Tailwind** — инфраструктурные задолженности (нет дефектов в коде детекции).
-3. Архитектурных нарушений **не обнаружено**; граф зависимостей `@membrana/core` → foundation → analyzer остаётся чистым.
+**Что приближает к цели:**
+- yamnet-детектор + плагин + prod-бенчмарк (#266/#268) — прямой вклад в **UC2 (нейро)** free-тарифа и в принцип «слияние модальностей одним контрактом» (§3.3, §4.5). Аргумент ND3 (слабая корреляция ошибок DSP/нейро) — прямое обоснование **combined UC (fusion)**.
+- heartbeat узла (#263) — ранний кирпич будущего `transport-service` (foundation), § таблицы 6.
+- журнал device-board (#269) — движение к ситуационному слою / доказательной базе (§4.6).
 
-### Недостающие сервисы и что срочно нужно
-По WHITE_PAPER §6 и ARCHITECTURE §1a:
-- ❌ **`@membrana/detection-ensemble-service`** — агрегатор результатов трёх DSP-детекторов (stage-gate конкурент trends-fft).
-- ❌ **`@membrana/tdoa-service`** — разница времён прихода (заморожен до stage-gate 1→2).
-- ❌ **`@membrana/localizer-service`** — мультилатерация (заморожен).
-- ❌ **`@membrana/tracker-service`** — трекинг целей (заморожен).
-- ❌ **`@membrana/transport-service`** — шина событий узел ↔ сервер (заморожен).
+**Что нейтрально:** comms-doc адаптация (CD1–CD6), partner-tutorials, main-only policy, insight Telegram — организационно-коммуникационная полоса, не двигает детекцию/fusion, но обслуживает FREE-выпуск.
 
-### Осознание по детекции (FFT_METRICS_POTENTIAL_AND_LIMITS.md §6)
-**Эшелон 0 DSP/FFT на free-v1 исчерпан:**
-- Сырые покадровые метрики (centroid/flux/rms) + голосование — потолок ~75% recall / 40% FPR.
-- **Trends FFT с DRONE_TIGHT** — единственный FFT-кандидат продакшена (recall 95% / FPR 30% / F1 0.844, stage-gate пройден).
-- Гармонический, кепстральный, spectral-flux по отдельности — **no-go как детекторы** (FPR 88–100%); только диагностика.
-- **Дальнейший рост** — за пределами DSP: нейро (YAMNet/CLAP zero-shot) и validated data (VDR).
+**Что могло бы отвлечь (осознанно не берём в магистраль):** повторные DSP-калибровки на free-v1 — см. раздел 5.
 
-### Видимые отвлечения
-- **Tailwind coverage** (TWC-L1/L2) — необходимая техдолг, но косвенно релевантна детекции.
-- **CI-gate stabilization** (CG1–CG4) — решение боли в CI, зелёная линия важна, но не продвигает функцию.
-- **Cabinet Deploy Friction** — управленческий спринт (не вычислительный).
+**Недостающие сервисы (пока НЕ начинать — за stage-gate 1→2):** `tdoa-service`, `localizer-service`, `tracker-service` — заморожены до прохождения hard-gate. `transport-service` как foundation формально ещё не оформлен, но частично прорастает через `background-cabinet` (heartbeat, node-realtime) — это стоит осознавать как будущую консолидацию, а не заводить новый пакет сегодня.
 
----
+**Детекция (эпик #84, FFT_METRICS §6):** эшелон 0 (чистый DSP/FFT) на free-v1 **исчерпан** — потолок trends `DRONE_TIGHT` 95%/30%. Дальнейший рост качества — только за счёт эшелона 2 (yamnet, уже в prod) и **fusion** (trends + yamnet на сыром confidence). «Этап 1.A / unified benchmark harmonic+cepstral+flux» магистралью **не ставим**.
+
+**Магистраль дня подчинена продуктовой магистрали форсайта:** S2 combined UC (fusion спектр+нейро + alarm-loop «ближе/дальше» по громкости) → S3 упаковка UserCases → S4 студия-download → S5 лендинг. Сегодня — вход в **S2**.
 
 ## 3. Риски и долг
 
-### Технические риски
-
-| Риск | Статус | Как смягчаем |
-|------|--------|------------|
-| **Single-Node Detection First stage-gate не ломается, но FFT-эшелон потолок зафиксирован** | 🟠 Aktual | Не повторять бенчмарк harmonic/cepstral/flux на free-v1; переходить на trends/validated data или эшелон 2 (нейро). |
-| **Мультиузловая синхронизация (TDOA) зависит от GPS-PPS**, которого нет в текущей lab-среде | 🟠 Aktual | TDOA-сервис должен быть готов к обогащению NTP/PTP данными; пока заморожен до stage-gate. |
-| **Многолучёвость (отражение от зданий)** искажает TDOA на **10–30 м** — предусмотрено в WHITE_PAPER §9 | 🔵 Known | Архитектурно решено: избыточность узлов, robust-оценки (GCC-PHAT). Реализация отложена на Этап 3. |
-| **Скорость звука меняется с метеоусловиями** на **±1–2%** | 🔵 Known | Модель калмановского фильтра должна учитывать. Реализация отложена на Этап 4. |
-
-### Накопленный долг
-
-1. **CI-gate flaky tests (CG4)** — обнаружена проблема `pull_request.branches` для feat/*; недокрыта часть B (CI-gate granularity). Следующий консилиум.
-2. **Studio App** — device-board-capture-tariff-v2 скоуп не включал Studio; требует отдельного спринта (зафиксировано в консилиуме 2026-07-02).
-3. **Validated Dataset (VDR)** — free-v1 используется для trends; для нейро-эшелона нужны размеченные вручную дроны/не-дроны (эпик отсутствует).
-4. **Template-match catalog** — trends работает с `DRONE_TIGHT`-шаблоном; полный curated catalog требует интеграции с background-media (взаимосвязь не продумана).
-
-### Нарушения границ пакетов
-**Обнаружены?** Нет. `@membrana/core` → foundation → analyzer граф чист; cabinet ↔ client общаются только через WS + REST (согласно ARCHITECTURE §1).
-
----
+- **Долг объяснимости / выбора основного детектора.** На val два кандидата близки: yamnet (F1 0.803, FPR 36.7) vs trends `DRONE_TIGHT` (F1 0.771, FPR 43.3). Нет единой таблицы «кто основной в hard-gate, кто объяснимый бэкап» → риск неоднозначного контракта для combined UC.
+- **Fusion-контракт не зафиксирован.** ND3 предписывает fusion на **сыром confidence** yamnet (не бинарный вердикт), т.к. профили ошибок DSP/нейро слабо коррелированы. Контракта агрегации ещё нет — если сделать бинарный OR, потеряем весь смысл combined UC.
+- **Вес модели ~16 МБ в бандле клиента.** Приемлемо для офлайн-Studio, но раздувает вес free-Studio (S4 download). Долг: осознанно зафиксировать в упаковке, не тащить вслепую в лендинг.
+- **`transport-service` (foundation) не выделен как пакет.** Логика узел↔cabinet живёт в `background-cabinet` + `core/node-realtime`. Пока границы не нарушены (background-* — отдельное семейство вне графа сервисов, SERVICES.md), но при росте потребуется явное решение Структурщика, где живёт transport-контракт.
+- **Стабильность latency yamnet между прогонами** (заметка ND3) — не блокер, но для «3 с задержки до отображения» (§11) нужна воспроизводимость; отслеживать при интеграции в live.
+- **Ограничения из WHITE_PAPER (§9), релевантные сейчас:** hard-gate 85/90 на независимом пилотном корпусе (VDR-железо ~17.07) ещё не пройден — free выпускается в бете, не как валидированная детекция; alarm-loop «ближе/дальше» строится на грубой громкости, не на TDOA (синхронизация/многолучёвость — тема замороженного Этапа 2).
+- **Дрейф план↔факт (feedback 7.4/10).** Утренний канон вчера разошёлся с фактом (взяли нейро вместо DRONE_TIGHT A/B/C). Скорректировано в `detection-planning-priorities.mjs`, но риск повторного дрейфа сохраняется — план дня должен явно легализовать нейро/fusion-разворот.
 
 ## 4. План на следующий день
 
-### Приоритет 1: Stabilization & Validation
+### Задача 1 — Fusion-контракт combined UC: спектр + нейро на сыром confidence
 
-#### Task 4.1 — Запуск CI-gate stabilization спринта (CG1–CG3)
-- **Цель**: зафиксировать flaky-тесты в CI, восстановить зелёный статус для main.
-- **Пакет / слой**: корневая инфра (GitHub Actions, CI workflow).
-- **Связь с WHITE_PAPER**: §0 — инфраструктурное качество.
-- **Definition of Done**:
-  1. Выявлены все тесты с intermittent failures (yarn test:ci на 5 прогонах).
-  2. Pull request в feat/ci-gate-flaky-fix с выключением или переписью ненадёжных assertion-ов.
-  3. CI зелёный на main + scheduled-ci workaround документирован в docs/CI_GATE_STABILIZATION_SPRINT_PROMPT.md.
-- **Роль**: Структурщик (планирование + assessment), Верстальщик (workflow правки).
-- **Размер**: M.
+- **Цель.** Появляется чистый контракт слияния trends-fft (спектр) и yamnet (нейро) на **сыром confidence**, дающий combined-вердикт для UC2/S2.
+- **Пакет / слой.** `@membrana/core` (контракт типов слияния) + новый плагин/логика в `apps/client` (client). Contract-first: типы combined-наблюдения — в core; ни один analyzer-сервис не зависит от другого (SERVICES.md), слияние живёт на уровне клиента/будущего fusion, не внутри детекторов.
+- **Связь с WHITE_PAPER.** §3.3 (слияние модальностей одним контрактом), §4.4/§4.5 (fusion + классификация), Этап 1.B → мостик к combined UC форсайта (S2).
+- **Definition of Done.**
+  - В `@membrana/core` описан тип combined-результата (сырой confidence обоих источников + агрегированная оценка, без бинарного OR).
+  - Клиентская логика слияния покрыта unit-тестами на мок-входах (согласованный / расходящийся вердикты).
+  - Проверка `check:boundaries` зелёная (детекторы друг от друга не зависят).
+  - Обновлён `DETECTOR_BENCHMARK.md`/заметка: как combined-точка соотносится с одиночными yamnet и trends.
+- **Роль.** Математик (логика слияния) + Структурщик (границы, где живёт контракт).
+- **Размер.** M.
 
-#### Task 4.2 — Обновление docs/DETECTOR_BENCHMARK.md с новой интерпретацией эшелона 0
-- **Цель**: зафиксировать вердикт FFT_METRICS §4–6 как обязательный контекст для будущих детекторных задач.
-- **Пакет / слой**: документация (`docs/`), не код.
-- **Связь с WHITE_PAPER**: §8 Stage-gate 1→2, принцип Single-Node Detection First.
-- **Definition of Done**:
-  1. Таблица в DETECTOR_BENCHMARK.md: recall/FPR для trends-DRONE_TIGHT, harmon./cepstral/flux по отдельности, OR-консенсус.
-  2. Явная заметка: «Дальше рост — trends + CLAP/YAMNet (эшелон 2) или VDR» (см. FFT_METRICS §6).
-  3. Ссылка на FFT_METRICS_POTENTIAL_AND_LIMITS.md как обязательное чтение.
-- **Роль**: Структурщик (консолидация), Музыкант (валидация чисел).
-- **Размер**: S.
+### Задача 2 — Единая таблица «yamnet vs trends DRONE_TIGHT» на val (долг объяснимости)
 
-### Приоритет 2: Продуктивность детекции (trends-DRONE_TIGHT → кураторский каталог)
+- **Цель.** Появляется одна сводная таблица на held-out `val`, фиксирующая, кто **основной** детектор для hard-gate и кто **объяснимый бэкап**.
+- **Пакет / слой.** infra (скрипт `benchmark:detectors` / отчёт) + `docs/DETECTOR_BENCHMARK.md`. Без переобучения, без нового прогона DSP — только сопоставление уже полученных рабочих точек.
+- **Связь с WHITE_PAPER.** §8 stage-gate 1→2, §11 (доля ложных тревог <5% как ориентир), принцип «объяснимость в журнале».
+- **Definition of Done.**
+  - Таблица содержит P / R / FPR / F1 обоих кандидатов на одном val-срезе и рабочих точках.
+  - Явно зафиксировано: yamnet — основной кандидат hard-gate, trends `DRONE_TIGHT` — объяснимый бэкап.
+  - Документ не запускает новый DSP-тюнинг free-v1 (соответствие FFT_METRICS §6).
+- **Роль.** Математик (метрики) + Teamlead (LGTM выбора основного детектора).
+- **Размер.** S.
 
-#### Task 4.3 — Интеграция trends-DRONE_TIGHT в background-media (template catalog)
-- **Цель**: опубликовать `DRONE_TIGHT`-шаблон в curated-катлалоге background-media, сделать его доступным для client через media-library-service.
-- **Пакет / слой**: `packages/background-media` (NestJS), `@membrana/media-library-service` (analyzer), docs.
-- **Связь с WHITE_PAPER**: §5 Контракт наблюдений, §8 Этап 1.A (trends как лучший FFT-детектор).
-- **Definition of Done**:
-  1. Prisma-модель `TrendTemplate` с fields: `key` ('DRONE_TIGHT'), `centroidRange`, `fluxRange`, `rmsRange`, `temporalFeatures` (JSON).
-  2. REST-endpoint `/trends-templates` (GET, cached).
-  3. `@membrana/trends-detector-service` загружает каталог из media-library-service.
-  4. `yarn benchmark:detectors` переснят с DRONE_TIGHT из каталога → report в docs/datasets/.
-- **Роль**: Музыкант (интеграция шаблона), Структурщик (API контракт).
-- **Размер**: L.
+### Задача 3 — Alarm-loop «ближе/дальше» по громкости (грубый индикатор)
 
-#### Task 4.4 — Калибровочный плагин для trends в client (live-калибрация пользователем)
-- **Цель**: дать оператору UI для экспериментирования с bounds-ами trends на реальном микрофоне (ручная настройка DRONE_TIGHT).
-- **Пакет / слой**: `apps/client` (плагин), `@membrana/trends-detector-service` (конфигурируемость).
-- **Связь с WHITE_PAPER**: §4.6 Ситуационный слой, интерактивная диагностика.
-- **Definition of Done**:
-  1. Компонент `TrendCalibrationPanel` (слайдеры для centroidMin/Max, fluxMin/Max, rmsMin/Max, temporalThresholds).
-  2. Live-график спектральных метрик + попадание в текущий бокс (зелёный/красный).
-  3. Export калиброванных параметров в JSON.
-  4. Плагин регистрируется в `registerClientModules.ts` (lazy-loaded, см. ARCHITECTURE §1c).
-- **Роль**: Верстальщик (компоненты), Математик (визуализация метрик).
-- **Размер**: M.
+- **Цель.** Появляется грубый alarm-loop, сигнализирующий изменение близости цели по громкости (RMS-тренд), как часть combined UC.
+- **Пакет / слой.** `apps/client` (client-плагин) поверх `@membrana/fft-analyzer-service` (RMS/тренд) и engine; аудио строго через `audio-engine` (ARCHITECTURE §1b).
+- **Связь с WHITE_PAPER.** §4 (ситуационный слой, ранний алерт), форсайт S2 (alarm-loop). Сознательно **не** TDOA — Этап 2 заморожен; это индикатор, не локализация.
+- **Definition of Done.**
+  - Плагин показывает состояние «приближается / удаляется / стабильно» на основе RMS-тренда live.
+  - Pure-логика классификации тренда покрыта unit-тестами на синтетических рядах.
+  - Регистрация через `MembranaRegistry` (lazy, ARCHITECTURE §1c); teardown корректный.
+  - В UI явно помечено, что это грубый индикатор громкости, не координата.
+- **Роль.** Музыкант (DSP-тренд) + Верстальщик (UI индикатора).
+- **Размер.** M.
 
-### Приоритет 3: Фундамент для эшелона 2 (нейро)
+### Задача 4 — Скелет упаковки UserCases в device-board (вход в S3)
 
-#### Task 4.5 — Scaffold @membrana/clap-detector-service (контракт, заглушка)
-- **Цель**: создать пакет-сервис CLAP (Contrastive Language-Audio Pre-training) как analyzer-уровня детектор, готовый к zero-shot детекции дронов (без fine-tune на free-v1).
-- **Пакет / слой**: `packages/services/detectors/@membrana/clap-detector-service` (analyzer, зависит от detector-base + audio-engine).
-- **Связь с WHITE_PAPER**: §8 Этап 1.B Neural & Agentic, эшелон 2.
-- **Definition of Done**:
-  1. Структура: `src/math/clap-model.ts` (загрузка модели CLAP из Hugging Face или локально), `src/core/clap.ts` (инференс), `src/hooks/useClapDetector.ts`.
-  2. Контракт `DroneDetector` из `detector-base` реализован (методы `detect(window)`, `getConfig()`).
-  3. Unit-тесты на mock AudioWindow; latency p95 measure (цель < 500ms на CPU).
-  4. Интеграция в `@membrana/detector-report` (optional; за флагом эшелон2:enabled).
-  5. README с примером использования.
-- **Роль**: Математик (CLAP-инференс), Структурщик (контракт).
-- **Размер**: L.
+- **Цель.** Появляется каркас 3+1 UserCase (спектр / нейро / библиотека / combined) как сценарии device-board — заготовка под упаковку free-тарифа.
+- **Пакет / слой.** `@membrana/device-board` (сценарии/роли) + `apps/client`. По ARCHITECTURE — device-board зависит только от core.
+- **Связь с WHITE_PAPER.** §4.6 ситуационный слой, §6 (device-board = сценарии полей/узлов/ролей), форсайт S3.
+- **Definition of Done.**
+  - В device-board заведены заготовки 3+1 UC (без полной реализации combined — ссылка на Задачу 1/3).
+  - Сценарии проходят существующие scenario-тесты; журнал (#269) отражает их запуск.
+  - Границы пакетов зелёные (`check:boundaries`).
+- **Роль.** Структурщик (сценарии/границы) + Верстальщик (UI карточек UC).
+- **Размер.** M.
 
-#### Task 4.6 — Scaffold @membrana/yamnet-detector-service (аналогично CLAP)
-- **Цель**: YAMNet (Google Audio Model) как второй zero-shot конкурент (особенно для классификации «мульти-ротор vs крыло»).
-- **Пакет / слой**: `packages/services/detectors/@membrana/yamnet-detector-service` (analyzer).
-- **Связь с WHITE_PAPER**: §8 Этап 1.B, классификация.
-- **Definition of Done**:
-  1. Аналогично CLAP (контракт, инференс, hooks, latency).
-  2. Особенность: выход — не бинарный «дрон / не дрон», а распределение по классам (aircraft, helicopter, drone, wind, rain, …).
-  3. Адаптер в `detector-report`: агрегация классов в бинар isDrone (если класс ∈ {drone, helicopter, aircraft}).
-- **Роль**: Математик, Структурщик.
-- **Размер**: L.
+### Задача 5 — Ночной пробник устойчивости связи узел↔cabinet (NB0, поддерживающая)
 
-### Приоритет 4: Документирование ограничений
-
-#### Task 4.7 — Дополнить WHITE_PAPER §9 оценкой SNR-требований и шумового профиля
-- **Цель**: явно задокументировать, какой SNR требуется для детекции дрона в городской среде, чтобы будущие field-тесты имели метрику.
-- **Пакет / слой**: `docs/WHITE_PAPER.md` (раздел 9 Ограничения).
-- **Связь с WHITE_PAPER**: §9 Ограничения и риски.
-- **Definition of Done**:
-  1. Добавлена таблица: сценарий (открытое поле / город днём / город ночью / дождь) → требуемый SNR для дрона → рекомендуемая позиция микрофона.
-  2. Ссылка на ESC-50 / DCASE шумовые классы и как они маппятся на non-drone в free-v1.
-  3. Явное: «Ночная фоновая сигнала ниже, но меньше помех от ветра; город требует большей чувствительности».
-- **Роль**: Музыкант (акустические меры), Структурщик (интеграция).
-- **Размер**: S.
-
----
+- **Цель.** Появляется пробник флапа связи (переподключение вкладки «Узлы», #269) и видимый deviceId сопряжения (NB1) без вмешательства в prod.
+- **Пакет / слой.** `packages/background-cabinet` + `apps/client` (диагностика). Регламент NIGHT_SPRINT (`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`).
+- **Связь с WHITE_PAPER.** §3.2 локальная автономность (буферизация/переподключение), будущий `transport-service`.
+- **Definition of Done.**
+  - Пробник NB0 фиксирует поведение связи из песочницы (лог/отчёт).
+  - NB1: deviceId сопряжения виден в UI.
+  - NB2 (флап) — фикс только если тривиален; иначе — оформлен как находка.
+  - Никаких изменений prod-контрактов.
+- **Роль.** Структурщик (транспорт) + Верстальщик (deviceId в UI).
+- **Размер.** S.
 
 ## 5. Что НЕ делаем на этом горизонте
 
-1. **Не повторяем unified benchmark harmonic + cepstral + spectral-flux на free-v1 без нового датасета.**
-   - Причина: FFT_METRICS §4 чётко показал FPR ≈ 88–100% для каждого из них. Переснятие бенчмарка без изменения данных или алгоритма — потраченное время.
-   - Исключение: если появится validated dataset или новый метод (например, сочетание с trends в ensemble-сервисе).
-
-2. **Не начинаем Этап 2 (TDOA, мультиузловую синхронизацию) без stage-gate 1→2.**
-   - Причина: stage-gate требует precision ≥ 85% и recall ≥ 90% на одном узле. Trends-DRONE_TIGHT пока покрывает soft-цель (80%/40%), а не hard (85%/90%). Многоузловая архитектура даст прирост, но не компенсирует слабый одиночный детектор.
-   - Шаги: (а) валидировать trends на реальных данных; (б) интегрировать YAMNet/CLAP для диверсификации; (в) только потом TDOA.
-
-3. **Не выделяем @membrana/detection-ensemble-service до явного запроса.**
-   - Причина: OR-консенсус трёх DSP-детекторов имеет FPR ~100% (сигнализатор присутствия, не селектор). Ensemble имеет смысл только когда есть несколько качественных детекторов (trends + YAMNet + CLAP).
-   - Возможное: планировать на следующий спринт, когда scaffold YAMNet/CLAP завершены.
-
-4. **Не трогаем transport-service / fusion-layer / TDOA-service / localizer-service / tracker-service.**
-   - Причина: заморожены до stage-gate. Их незавершённость не блокирует текущий прогресс (не импортированы клиентом, не связаны с детекцией).
-   - Зависимость: как только завершена детекция (эшелон 1.A/1.B), возможна разработка TDOA, но независимо в отдельном спринте (эшелон 2).
-
-5. **Не выполняем Studio App спринт в этом окне.**
-   - Причина: консилиум 2026-07-02 явно исключил Studio из device-board-capture-tariff-v2 скоупа. Его требует отдельный спринт.
-
----
+- **Не** запускаем повторный unified benchmark harmonic / cepstral / spectral-flux на free-v1 без нового датасета, алгоритма или fusion-стратегии (FFT_METRICS §6: эшелон 0 исчерпан, DSP по одиночке — no-go/FPR 88–100%). Допустима только пересборка бенчмарка в рамках **fusion trends+yamnet** (Задача 1), не «ещё раз прогнать пороги».
+- **Не** начинаем `tdoa-service` / `localizer-service` / `tracker-service` — многоузловые Этапы 2–4 заморожены до прохождения hard-gate 85/90 (WHITE_PAPER §8). Alarm-loop заменяет локализацию грубым индикатором громкости.
+- **Не** переизобретаем yamnet-детектор/плагин/бенчмарк — они реализованы и в prod (#266/#268); не предлагаем «разведку эшелона 2».
+- **Не** выделяем сегодня отдельный foundation `transport-service` как пакет — транспорт пока прорастает через `background-cabinet`; консолидация — отдельное решение Структурщика/Teamlead после накопления контрактов.
+- **Не** гоним S4 (студия-download) и S5 (лендинг) вперёд S2/S3 — крит.путь форсайта S1→S2→S3→S5, S4 параллельно; сначала combined UC и упаковка.
 
 ## 6. Проверки в конце периода
 
-1. **CI зелёный на main после CG1–CG3.**
-   - Артефакт: PR с CI-gate fixes merged, GitHub Actions green для всех commits на main.
-   - Метрика: 0 intermittent failures на 3 последовательных прогонах scheduled-ci.
-
-2. **DETECTOR_BENCHMARK.md обновлена и ссылается на FFT_METRICS.**
-   - Артефакт: commit в docs/ с таблицей trends/harmonic/cepstral/flux результатов.
-   - Проверка: ревью Teamlead-ом; присутствие текста «дальше рост — эшелон 2 или VDR».
-
-3. **Background-media интеграция trends-DRONE_TIGHT завершена.**
-   - Артефакт: Prisma migration, REST-endpoint, cached каталог.
-   - Проверка: `yarn benchmark:detectors` переснят с DRONE_TIGHT из каталога, результат в docs/datasets/week-2026-07-03/.
-
-4. **TrendCalibrationPanel компонент live в client.**
-   - Артефакт: UI плагин открывается в меню; слайдеры управляют bounds-ами в реальном времени.
-   - Проверка: live-график на микрофонном потоке показывает попадание/непопадание метрик в бокс.
-
-5. **Scaffolds YAMNet + CLAP готовы к инференсу.**
-   - Артефакт: оба сервиса имеют структуру, контракт DroneDetector реализован, unit-тесты проходят.
-   - Проверка: `yarn build packages/services/detectors/*` без ошибок; README содержит примеры use.
-
-6. **WHITE_PAPER §9 дополнена SNR-таблицей.**
-   - Артефакт: commit в docs/WHITE_PAPER.md.
-   - Проверка: ревью Teamlead; ссылка на ESC-50 присутствует; явные сценарии (город / поле / ночь).
-
----
-
-## Резюме
-
-**Стратегическое движение**: Закрепляем эшелон 0 (trends-DRONE_TIGHT пройден через stage-gate soft), готовимся к эшелону 2 (YAMNet/CLAP zero-shot). Device Board Capture v2 — успешно завершён; инфраструктура стабилизируется (CI-gate, Tailwind).
-
-**Тактическое фокусирование**: Не ломаем FFT-бенчмарки заново, не начинаем мультиузловый TDOA без валидации одиночной детекции. Инвестируем в validated data и нейро-детекторы как путь через stage-gate к эшелону 2.
-
-**Команда готова**: Каждая задача привязана к роли и размеру; нет календарных обещаний, только техническая ясность.
+- **Fusion-контракт (Задача 1):** типы combined в `@membrana/core`, unit-тесты слияния зелёные, `check:boundaries` зелёный (детекторы не зависят друг от друга), combined-точка отражена в `DETECTOR_BENCHMARK.md`.
+- **Долг объяснимости (Задача 2):** одна таблица на val с yamnet и trends `DRONE_TIGHT`, зафиксирован основной/бэкап детектор, LGTM Teamlead — без нового DSP-тюнинга free-v1.
+- **Alarm-loop (Задача 3):** плагин демонстрирует «ближе/дальше/стабильно» на live-стриме, тренд-логика покрыта тестами, регистрация/teardown корректны.
+- **Упаковка UC (Задача 4):** 3+1 UC заведены в device-board, scenario-тесты и журнал (#269) отражают запуск, границы пакетов зелёные.
+- **Ночной пробник (Задача 5):** отчёт NB0 по устойчивости связи + видимый deviceId (NB1), prod не тронут.
+- **Общая согласованность:** нигде в дневных артефактах магистралью не стоит «Этап 1.A / unified DSP benchmark»; продуктовая магистраль (S2 combined UC) явно ведущая, детекция — поддерживающая полоса; план↔факт сходятся (снятие дрейфа 7.4/10).

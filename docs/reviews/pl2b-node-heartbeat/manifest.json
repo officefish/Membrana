@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taskId": "pl2b-node-heartbeat",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "codex/pl2b-node-heartbeat-finalize",
+  "currentCommitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+  "reviewedCommitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/pl2b-node-heartbeat/062a32c891205f3952e33f0d8ad95591d1879229-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 263,
+    "remoteState": "merged",
+    "url": "https://github.com/officefish/Membrana/pull/263"
+  },
+  "scope": {
+    "baseRef": "1eaaf13c1b034e91b1d9652ea1f2b9242a9cc30c",
+    "files": [
+      "apps/client/src/lib/nodeRealtimeClient.test.ts",
+      "apps/client/src/lib/nodeRealtimeClient.ts",
+      "docs/tasks/registry.json",
+      "packages/background-cabinet/src/domain/node-realtime-wire.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.gateway.test.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.gateway.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.service.test.ts",
+      "packages/background-cabinet/src/modules/node-realtime/node-realtime.service.ts",
+      "packages/core/src/contracts/node-realtime/events.ts",
+      "packages/core/src/contracts/node-realtime/index.ts",
+      "packages/core/src/contracts/node-realtime/presence-snapshot.test.ts",
+      "packages/core/src/contracts/node-realtime/validate-payloads.ts"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/background-cabinet",
+      "packages/core"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+        "checkedAt": "2026-07-06T05:58:02.869Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Package Membrana Studio (Windows nsis)",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+        "checkedAt": "2026-07-06T05:34:10Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28769889312/job/85301476281"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+        "checkedAt": "2026-07-06T05:34:52Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28769889308/job/85301463506"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+        "checkedAt": "2026-07-06T05:28:31Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28769889312/job/85301360015"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+        "checkedAt": "2026-07-06T05:31:26Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28769889313/job/85301359999"
+      },
+      {
+        "command": "github-check:Build and push cabinet images",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "062a32c891205f3952e33f0d8ad95591d1879229",
+        "checkedAt": "2026-07-06T05:30:54Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28769889307/job/85301359872"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #263 merged 2026-07-06T05:27:21Z (062a32c891205f3952e33f0d8ad95591d1879229)"
+  },
+  "createdAt": "2026-07-06T05:58:01.126Z",
+  "updatedAt": "2026-07-06T06:00:22.390Z"
+}

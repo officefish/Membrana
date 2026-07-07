@@ -10,10 +10,16 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "import": "./dist/node.js"
+    },
+    "./assets/*": "./assets/*"
   },
   "files": [
     "dist",
+    "assets",
     "README.md"
   ],
   "scripts": {
@@ -25,7 +31,9 @@
   },
   "dependencies": {
     "@membrana/core": "*",
-    "@membrana/detector-base": "*"
+    "@membrana/detector-base": "*",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-backend-wasm": "^4.22.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

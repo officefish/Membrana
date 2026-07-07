@@ -20,11 +20,67 @@ export interface JournalAckPayload {
   readonly clientEntryId: string;
 }
 
+/** PCB6: проба живости узла (server → node). */
+export interface HealthPingPayload {
+  readonly pingId: string;
+  readonly sentAt: number;
+}
+
+/** PCB6: ответ узла на пробу (node → server). */
+export interface HealthPongPayload {
+  readonly pingId: string;
+}
+
+/** PL2b: периодический сигнал присутствия узла (node → server). */
+export interface PresenceHeartbeatPayload {
+  readonly deviceId: string;
+  readonly timestampMs: number;
+}
+
+export const NODE_RECENT_PRESENCE_WINDOW_MS = 300_000;
+
+export function parsePresenceHeartbeatPayload(raw: unknown): PresenceHeartbeatPayload | null {
+  if (typeof raw !== 'object' || raw === null) {
+    return null;
+  }
+  const { deviceId, timestampMs } = raw as {
+    deviceId?: unknown;
+    timestampMs?: unknown;
+  };
+  if (typeof deviceId !== 'string' || deviceId.trim().length === 0) {
+    return null;
+  }
+  if (typeof timestampMs !== 'number' || !Number.isFinite(timestampMs) || timestampMs < 0) {
+    return null;
+  }
+  return { deviceId, timestampMs };
+}
+
+/** Валидирует health.pong payload (node → server). */
+export function parseHealthPongPayload(raw: unknown): HealthPongPayload | null {
+  if (typeof raw !== 'object' || raw === null) {
+    return null;
+  }
+  const pingId = (raw as { pingId?: unknown }).pingId;
+  if (typeof pingId !== 'string' || pingId.trim().length === 0) {
+    return null;
+  }
+  return { pingId };
+}
+
 export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
+    /** PL1: снапшот присутствия кабинету при подключении (bootstrap online-набора). */
+    snapshot: 'presence.snapshot',
+    /** PL2b: периодический heartbeat узла для Device.lastSeenAt. */
+    heartbeat: 'presence.heartbeat',
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',
+    /** PCB6: активная проба живости (server → node). */
+    healthPing: 'health.ping',
+    /** PCB6: ответ узла на пробу (node → server). */
+    healthPong: 'health.pong',
   },
   journal: {
     append: 'journal.append',
@@ -52,6 +108,8 @@ export const NODE_REALTIME_EVENT_TYPES = {
     heartbeat: 'board.heartbeat',
     /** v2: отпускание захвата (НЕ стоп играющего сценария). */
     release: 'board.release',
+    /** CX3: узел объявляет список сценариев + выбранный (node → server → cabinet). */
+    scenarioList: 'board.scenario-list',
   },
 } as const;
 
@@ -329,6 +387,71 @@ export function parseBoardCaptureReleasePayload(raw: unknown): BoardCaptureRelea
     sessionId: isNonEmptyString(sessionId) ? sessionId : null,
     reason: raw.reason,
   };
+}
+
+// --- Scenario list (CX3, синхрон с packages/core capture-events.ts) ---
+
+/** CX3: сценарий в объявляемом узлом списке. */
+export interface BoardScenarioListItem {
+  readonly id: string;
+  readonly title: string;
+}
+
+/**
+ * CX3: список сценариев узла (board.scenario-list, node → server → cabinet).
+ * Сервер хранит список + выбранный id; тел сценариев не хранит.
+ */
+export interface BoardScenarioListPayload {
+  readonly deviceId: string;
+  readonly scenarios: readonly BoardScenarioListItem[];
+  readonly selectedScenarioId: string | null;
+}
+
+/** CX3: инвариант «один всегда выбран» — предпочтение из списка, иначе первый. */
+export function normalizeScenarioSelection(
+  scenarios: readonly BoardScenarioListItem[],
+  preferredId: string | null | undefined,
+): string | null {
+  if (preferredId != null && scenarios.some((scenario) => scenario.id === preferredId)) {
+    return preferredId;
+  }
+  const first = scenarios[0];
+  return first === undefined ? null : first.id;
+}
+
+function parseScenarioListItem(raw: unknown): BoardScenarioListItem | null {
+  if (!isRecord(raw) || !isNonEmptyString(raw.id) || !isNonEmptyString(raw.title)) {
+    return null;
+  }
+  return { id: raw.id, title: raw.title };
+}
+
+/** CX3: валидирует board.scenario-list; выбранный обязан указывать на элемент списка. */
+export function parseBoardScenarioListPayload(raw: unknown): BoardScenarioListPayload | null {
+  if (!isRecord(raw) || !isNonEmptyString(raw.deviceId) || !Array.isArray(raw.scenarios)) {
+    return null;
+  }
+  const scenarios: BoardScenarioListItem[] = [];
+  const seen = new Set<string>();
+  for (const item of raw.scenarios) {
+    const parsed = parseScenarioListItem(item);
+    if (parsed === null || seen.has(parsed.id)) {
+      return null;
+    }
+    seen.add(parsed.id);
+    scenarios.push(parsed);
+  }
+  const selected = raw.selectedScenarioId;
+  if (scenarios.length === 0) {
+    if (selected !== null && selected !== undefined) {
+      return null;
+    }
+    return { deviceId: raw.deviceId, scenarios, selectedScenarioId: null };
+  }
+  if (!isNonEmptyString(selected) || !seen.has(selected)) {
+    return null;
+  }
+  return { deviceId: raw.deviceId, scenarios, selectedScenarioId: selected };
 }
 
 // --- Runtime command (синхрон с packages/core events.ts + validate-payloads.ts, CT1) ---

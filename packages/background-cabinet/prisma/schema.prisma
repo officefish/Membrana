@@ -100,6 +100,8 @@ model Device {
   mediaDeviceId        String   @unique @db.Uuid
   label                String?
   pairedKeyId          String?  @db.Uuid
+  /** PL2: статус сопряжения. pairedKeyId сохраняем для истории/диагностики. */
+  pairingStatus        DevicePairingStatus @default(paired)
   /** Last pairing session token — invalidated when access key is revoked. */
   lastPairSessionToken String?  @unique
   pairedAt             DateTime @default(now())
@@ -107,6 +109,13 @@ model Device {
 
   @@index([mediaDeviceId])
   @@index([pairedKeyId])
+}
+
+/** PL2 (pairing-lifecycle): жизненный цикл сопряжения устройства с ключом. */
+enum DevicePairingStatus {
+  paired
+  revoked
+  unpaired
 }
 
 model NodeAccessKey {

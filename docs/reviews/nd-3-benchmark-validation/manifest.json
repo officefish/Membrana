@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "taskId": "nd-3-benchmark-validation",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feat/nd-3-benchmark-validation",
+  "currentCommitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+  "reviewedCommitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/nd-3-benchmark-validation/f597345cada52db450ad48fe2f7b677c947dafd0-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 268,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/268"
+  },
+  "scope": {
+    "baseRef": "main",
+    "files": [
+      "apps/client/src/plugins/neural-drone-analyzer/types.ts",
+      "data/detectors-benchmark/v0.2/reports/latest.json",
+      "docs/DETECTOR_BENCHMARK.md",
+      "docs/catalog/client/prompts/plugins/neural-drone-analyzer.md",
+      "package.json",
+      "packages/services/detectors/yamnet/README.md",
+      "packages/services/detectors/yamnet/src/core/drone-classes.ts",
+      "packages/services/detectors/yamnet/src/core/scoring.test.ts",
+      "scripts/benchmark-detectors.mjs"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/services/detectors"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:22:12.029Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/yamnet-detector-service test",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:22:22.856Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/client test",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:22:49.436Z",
+        "note": ""
+      },
+      {
+        "command": "node --test scripts/benchmark-metrics.test.mjs",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:22:50.060Z",
+        "note": ""
+      },
+      {
+        "command": "yarn test:scripts",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:22:58.213Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:21:47Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/28794700716/job/85381972613"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:21:50Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28794700663/job/85381971926"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:21:51Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28794700620/job/85381971616"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "f597345cada52db450ad48fe2f7b677c947dafd0",
+        "checkedAt": "2026-07-06T13:21:50Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/28794700598/job/85381971253"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #268 merged 2026-07-06T13:23:56Z (8a53826da5eb380f193591b697417f892a5abfca)"
+  },
+  "createdAt": "2026-07-06T13:22:05.256Z",
+  "updatedAt": "2026-07-06T13:24:32.260Z"
+}

@@ -214,6 +214,8 @@ export interface ScenarioRuntimeHost {
   readonly setInfoLoggingEnabled?: (enabled: boolean) => void;
   /** Клиент Phase 3: ring buffer scenario trace for copy/download. */
   readonly getScenarioTraceLineCount?: () => number;
+  /** Снапшот строк трассы (вкладка «Журнал» правого сайдбара). */
+  readonly getScenarioTraceLines?: () => readonly string[];
   readonly copyScenarioTraceToClipboard?: () => Promise<boolean>;
   readonly downloadScenarioTrace?: (runId?: string | null) => void;
   readonly clearScenarioTraceBuffer?: () => void;

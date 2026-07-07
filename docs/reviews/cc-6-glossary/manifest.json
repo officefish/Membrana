@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "taskId": "cc-6-glossary",
+  "state": "archived",
+  "tier": "T0",
+  "reviewMode": "concise-t0",
+  "branch": "feat/cc6-glossary",
+  "currentCommitSha": "22438979176c8776cb1fb823584a21d23da36ddd",
+  "reviewedCommitSha": "22438979176c8776cb1fb823584a21d23da36ddd",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/cc-6-glossary/22438979176c8776cb1fb823584a21d23da36ddd-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 260,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/260"
+  },
+  "scope": {
+    "baseRef": "22438979176c8776cb1fb823584a21d23da36ddd^",
+    "files": [
+      "docs/comms/canon/GLOSSARY.md"
+    ],
+    "packages": []
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "22438979176c8776cb1fb823584a21d23da36ddd",
+        "checkedAt": "2026-07-05T14:43:11.021Z",
+        "note": ""
+      },
+      {
+        "command": "yarn workspace @membrana/comms-studio test",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "22438979176c8776cb1fb823584a21d23da36ddd",
+        "checkedAt": "2026-07-05T14:43:13.897Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Comms contour — boundaries, typecheck, lint, test",
+        "status": "pass",
+        "exitCode": null,
+        "commitSha": "22438979176c8776cb1fb823584a21d23da36ddd",
+        "checkedAt": "2026-07-05T14:40:11Z",
+        "note": "success · https://github.com/officefish/Membrana/actions/runs/28744288512/job/85232426175"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #260 merged 2026-07-05T14:45:30Z (c03d6e57a7810c0839fe58ff9aea617121a35d72)"
+  },
+  "createdAt": "2026-07-05T14:40:05.456Z",
+  "updatedAt": "2026-07-05T14:45:32.163Z"
+}

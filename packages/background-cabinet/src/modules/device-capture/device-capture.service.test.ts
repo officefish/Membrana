@@ -6,6 +6,7 @@ import {
   DEVICE_CAPTURE_TTL_MS,
 } from '../../domain/device-capture';
 import { DeviceCaptureRegistry } from '../node-realtime/device-capture.registry';
+import { DeviceScenarioRegistry } from '../node-realtime/device-scenario.registry';
 import { DeviceCaptureService } from './device-capture.service';
 import type { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import type { PrismaService } from '../../prisma/prisma.service';
@@ -33,8 +34,9 @@ function buildService() {
     sendToNode: vi.fn(),
   } as unknown as NodeRealtimeService;
   const registry = new DeviceCaptureRegistry();
-  const service = new DeviceCaptureService(prisma, nodeRealtime, registry);
-  return { service, prisma, nodeRealtime, registry };
+  const scenarioRegistry = new DeviceScenarioRegistry();
+  const service = new DeviceCaptureService(prisma, nodeRealtime, registry, scenarioRegistry);
+  return { service, prisma, nodeRealtime, registry, scenarioRegistry };
 }
 
 function mockOwnedNode(prisma: PrismaService) {
@@ -60,6 +62,37 @@ function captureRow(overrides: Record<string, unknown> = {}) {
     ...overrides,
   };
 }
+
+describe('DeviceCaptureService.forceReleaseByNode (PL4)', () => {
+  it('удаляет захват, чистит registry и broadcast release без проверки сессии', async () => {
+    const { service, prisma, nodeRealtime, registry } = buildService();
+    const row = captureRow();
+    registry.set(mediaDeviceId, {
+      membraneId,
+      nodeId,
+      sessionId,
+      mode: 'soft',
+      expiresAt: row.expiresAt,
+    });
+    vi.mocked(prisma.nodeDeviceCapture.findUnique).mockResolvedValue(row as never);
+
+    await service.forceReleaseByNode(nodeId);
+
+    expect(prisma.nodeDeviceCapture.delete).toHaveBeenCalledWith({ where: { id: 'cap-1' } });
+    expect(registry.get(mediaDeviceId)).toBeNull();
+    expect(nodeRealtime.broadcastBoardEnvelope).toHaveBeenCalled();
+  });
+
+  it('идемпотентно: захвата нет — ничего не делает', async () => {
+    const { service, prisma, nodeRealtime } = buildService();
+    vi.mocked(prisma.nodeDeviceCapture.findUnique).mockResolvedValue(null);
+
+    await service.forceReleaseByNode(nodeId);
+
+    expect(prisma.nodeDeviceCapture.delete).not.toHaveBeenCalled();
+    expect(nodeRealtime.broadcastBoardEnvelope).not.toHaveBeenCalled();
+  });
+});
 
 describe('DeviceCaptureService', () => {
   it('capture persists, fills registry, broadcasts board.capture and sends pre-emption stop', async () => {
@@ -136,16 +169,103 @@ describe('DeviceCaptureService', () => {
     expect(nodeRealtime.sendToNode).not.toHaveBeenCalled();
   });
 
-  it('release rejects foreign session capture', async () => {
-    const { service, prisma } = buildService();
+  // CX2: release — уровень владельца. Захват продлевается heartbeat'ом бессрочно,
+  // и проверка sessionId делала захват мёртвой сессии неотпускаемым (вечный 403).
+  it('release succeeds for another session of the same owner (deadlock fix)', async () => {
+    const { service, prisma, nodeRealtime, registry } = buildService();
     mockOwnedNode(prisma);
+    registry.set(mediaDeviceId, {
+      membraneId,
+      nodeId,
+      sessionId: 'other-session',
+      mode: 'soft',
+      expiresAt: new Date(Date.now() + DEVICE_CAPTURE_TTL_MS),
+    });
     vi.mocked(prisma.nodeDeviceCapture.findUnique).mockResolvedValue(
       captureRow({ sessionId: 'other-session' }) as never,
     );
 
+    const result = await service.release(userId, sessionId, nodeId);
+
+    expect(result.released).toBe(true);
+    expect(registry.get(mediaDeviceId)).toBeNull();
+    expect(nodeRealtime.broadcastBoardEnvelope).toHaveBeenCalledWith(
+      membraneId,
+      mediaDeviceId,
+      expect.objectContaining({
+        type: 'board.release',
+        payload: expect.objectContaining({ reason: 'operator', sessionId: 'other-session' }),
+      }),
+    );
+  });
+
+  it('release still rejects node of another user', async () => {
+    const { service, prisma } = buildService();
+    vi.mocked(prisma.node.findUnique).mockResolvedValue({
+      id: nodeId,
+      membraneId,
+      membrane: { userId: 'other-user' },
+      device: { mediaDeviceId },
+    } as never);
+
     await expect(service.release(userId, sessionId, nodeId)).rejects.toBeInstanceOf(
       ForbiddenException,
     );
+  });
+
+  // CX2: bootstrap состояния кабинета — снапшот активных захватов владельца.
+  it('listForUser returns active captures scoped to the owner', async () => {
+    const { service, prisma } = buildService();
+    const row = captureRow();
+    vi.mocked(prisma.nodeDeviceCapture.findMany).mockResolvedValue([row] as never);
+
+    const result = await service.listForUser(userId);
+
+    expect(prisma.nodeDeviceCapture.findMany).toHaveBeenCalledWith({
+      where: { membrane: { userId }, expiresAt: { gt: expect.any(Date) } },
+    });
+    expect(result.captures).toEqual([
+      {
+        deviceId: mediaDeviceId,
+        mode: 'soft',
+        sessionId,
+        acquiredAt: row.acquiredAt.toISOString(),
+        expiresAt: row.expiresAt.toISOString(),
+      },
+    ]);
+  });
+
+  it('listForUser returns empty list when nothing is captured', async () => {
+    const { service, prisma } = buildService();
+    vi.mocked(prisma.nodeDeviceCapture.findMany).mockResolvedValue([] as never);
+
+    await expect(service.listForUser(userId)).resolves.toEqual({ captures: [] });
+  });
+
+  // CX3: объявленный узлом список сценариев едет в bootstrap вместе с захватом.
+  it('listForUser merges announced scenario list into the capture view', async () => {
+    const { service, prisma, scenarioRegistry } = buildService();
+    const row = captureRow();
+    vi.mocked(prisma.nodeDeviceCapture.findMany).mockResolvedValue([row] as never);
+    scenarioRegistry.setList(membraneId, {
+      deviceId: mediaDeviceId,
+      scenarios: [
+        { id: 'ws-1', title: 'Спектр' },
+        { id: 'ws-2', title: 'Нейро' },
+      ],
+      selectedScenarioId: 'ws-2',
+    });
+
+    const result = await service.listForUser(userId);
+
+    expect(result.captures[0]).toMatchObject({
+      deviceId: mediaDeviceId,
+      scenarios: [
+        { id: 'ws-1', title: 'Спектр' },
+        { id: 'ws-2', title: 'Нейро' },
+      ],
+      selectedScenarioId: 'ws-2',
+    });
   });
 
   it('heartbeatSweep renews live captures with board.heartbeat broadcast', async () => {

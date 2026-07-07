@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { pingMediaApi } from '../../api/pairing';
+import { shortId } from '../../lib/pairingDisplay';
 import { getNodeRealtimeClient, type NodeRealtimeClientState } from '@/lib/nodeRealtimeClient';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
 
@@ -15,8 +16,16 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
   const pairing = useNodeConnectionStore((s) => s.pairing);
   const openConnectionSettings = useNodeConnectionStore((s) => s.openConnectionSettings);
   const openModePicker = useNodeConnectionStore((s) => s.openModePicker);
+  const linkDegraded = useNodeConnectionStore((s) => s.linkDegraded);
+  const reportConnectionRestored = useNodeConnectionStore((s) => s.reportConnectionRestored);
   const [linkOk, setLinkOk] = useState<boolean | null>(null);
   const [wsState, setWsState] = useState<NodeRealtimeClientState>('disconnected');
+
+  // CX5: пинг media-API здесь — единственный периодический пробник связи;
+  // успешный ответ снимает деградацию (баннер в шапке) без действий оператора.
+  useEffect(() => {
+    if (linkDegraded && linkOk === true) reportConnectionRestored();
+  }, [linkDegraded, linkOk, reportConnectionRestored]);
 
   useEffect(() => {
     if (mode !== 'paired') {
@@ -86,6 +95,12 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
   const status = linkOk === null ? '…' : linkOk ? 'online' : 'offline';
   const wsLabel =
     wsState === 'connected' ? 'ws' : wsState === 'reconnecting' ? 'ws…' : 'rest';
+  // NB1: deviceId сопряжения виден постоянно (короткий в строке, полный в title) —
+  // чтобы «с каким устройством связан узел» не требовало открывать модалку.
+  const deviceShort = pairing ? shortId(pairing.deviceId) : null;
+  const titleFull = `Связан с мембраной · ${label} · ${status} · ${wsLabel}${
+    pairing ? ` · device ${pairing.deviceId}` : ''
+  }`;
 
   if (compact) {
     return (
@@ -94,18 +109,27 @@ export const NodeConnectionFooterIndicator: React.FC<NodeConnectionFooterIndicat
         className={`shrink-0 text-[9px] tabular-nums underline-offset-2 hover:underline ${
           linkOk === false ? 'text-warning' : 'text-base-content/45'
         }`}
-        title={`Связан с мембраной · ${label} · ${status} · ${wsLabel}`}
+        title={titleFull}
         onClick={() => openConnectionSettings()}
       >
         {linkOk === false ? 'связь?' : 'связан'}
+        {deviceShort ? <span className="font-mono"> {deviceShort}</span> : null}
       </button>
     );
   }
 
   return (
-    <div className="flex items-center gap-2 text-[10px] text-base-content/55" role="status">
+    <div className="flex items-center gap-2 text-[10px] text-base-content/55" role="status" title={titleFull}>
       <span>
-        Связан: {label} · {status} · {wsLabel}
+        Связан: {label}
+        {deviceShort ? (
+          <>
+            {' · '}
+            <span className="font-mono text-primary/80">{deviceShort}</span>
+          </>
+        ) : null}
+        {' · '}
+        {status} · {wsLabel}
       </span>
       <button type="button" className="btn btn-ghost btn-xs" onClick={() => openConnectionSettings()}>
         связь

@@ -18,6 +18,7 @@ import {
 } from './access-key.util';
 import { isNodeLimitReached, nextNodeLabel } from '../../domain/node-limit';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
+import { DeviceCaptureService } from '../device-capture/device-capture.service';
 
 const FREE_TARIFF_ID = 'free-v1';
 const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
@@ -81,6 +82,7 @@ export class MembraneService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly nodeRealtime: NodeRealtimeService,
+    private readonly deviceCapture: DeviceCaptureService,
   ) {}
 
   async getOrCreateMembraneForUser(userId: string) {
@@ -223,22 +225,29 @@ export class MembraneService {
       where: { pairedKeyId: keyId },
       select: { lastPairSessionToken: true, mediaDeviceId: true },
     });
-    if (pairedDevice?.lastPairSessionToken) {
-      await this.prisma.session.deleteMany({
-        where: { token: pairedDevice.lastPairSessionToken },
-      });
+    if (pairedDevice) {
+      if (pairedDevice.lastPairSessionToken) {
+        await this.prisma.session.deleteMany({
+          where: { token: pairedDevice.lastPairSessionToken },
+        });
+      }
+      // PL2: помечаем устройство revoked (pairedKeyId сохраняем для истории /
+      // диагностики getPairStatus — консилиум pairing-lifecycle OQ3).
       await this.prisma.device.updateMany({
         where: { pairedKeyId: keyId },
-        data: { lastPairSessionToken: null },
+        data: { lastPairSessionToken: null, pairingStatus: 'revoked' },
       });
-    }
 
-    if (pairedDevice?.mediaDeviceId) {
-      this.nodeRealtime.notifySessionInvalidated(
-        pairedDevice.mediaDeviceId,
-        key.node.membraneId,
-        'revoked',
-      );
+      if (pairedDevice.mediaDeviceId) {
+        this.nodeRealtime.notifySessionInvalidated(
+          pairedDevice.mediaDeviceId,
+          key.node.membraneId,
+          'revoked',
+        );
+      }
+      // PL4: захват (держится сессией кабинета) над этим узлом бессмысленен —
+      // узел теряет сопряжение. Форс-release (broadcast кабинету), не ждём TTL.
+      await this.deviceCapture.forceReleaseByNode(key.nodeId);
     }
 
     return { accessKey: serializeAccessKey(revoked) };
@@ -268,6 +277,13 @@ export class MembraneService {
     return { deletedCount: result.count };
   }
 
+  /**
+   * PL3 (pairing-lifecycle): «Удалить» = revoke + delete одной операцией
+   * (решение владельца). Активный ключ больше НЕ даёт 409 — сначала отзыв
+   * (real-time invalidate узла + pairingStatus='revoked'), затем удаление.
+   * `Device.pairedKeyId` — не FK, поэтому чистим ссылку явно и переводим
+   * устройство в 'unpaired' (ключ больше не существует).
+   */
   async deleteAccessKey(userId: string, keyId: string) {
     const key = await this.prisma.nodeAccessKey.findUnique({
       where: { id: keyId },
@@ -277,9 +293,21 @@ export class MembraneService {
     if (key.node.membrane.userId !== userId) {
       throw new ForbiddenException('Access key access denied');
     }
+
+    // Активный ключ: отзыв (idempotent, шлёт notify узлу + помечает revoked).
     if (isAccessKeyActive(key.expiresAt, key.revokedAt)) {
-      throw new ConflictException('Cannot delete active access key');
+      await this.revokeAccessKey(userId, keyId);
     }
+
+    // Отвязка на уровне устройства: ключ удаляется, ссылка на него больше не
+    // имеет смысла — чистим pairedKeyId и переводим в unpaired.
+    await this.prisma.device.updateMany({
+      where: { pairedKeyId: keyId },
+      data: { pairedKeyId: null, pairingStatus: 'unpaired' },
+    });
+
+    // PL4: гарантируем release даже для неактивного ключа (revoke выше не вызывался).
+    await this.deviceCapture.forceReleaseByNode(key.nodeId);
 
     await this.prisma.nodeAccessKey.delete({ where: { id: keyId } });
 

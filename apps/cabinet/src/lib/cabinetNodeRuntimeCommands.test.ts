@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CABINET_STOP_FADE_OUT_MS,
   buildCabinetRunScenarioCommand,
+  buildCabinetSelectScenarioCommand,
   buildCabinetStopScenarioCommand,
 } from './cabinetNodeRuntimeCommands';
 
@@ -23,5 +24,25 @@ describe('cabinetNodeRuntimeCommands', () => {
       fadeOutMs: CABINET_STOP_FADE_OUT_MS,
     });
     expect(buildCabinetStopScenarioCommand('dev-1', 0).fadeOutMs).toBe(0);
+  });
+});
+
+// CX3: выбор и запуск конкретного сценария из объявленного списка.
+describe('CX3 scenario commands', () => {
+  it('buildCabinetSelectScenarioCommand несёт deviceId и scenarioId', () => {
+    expect(buildCabinetSelectScenarioCommand('dev-1', 'ws-2')).toEqual({
+      action: 'selectScenario',
+      deviceId: 'dev-1',
+      scenarioId: 'ws-2',
+    });
+  });
+
+  it('run с выбранным сценарием включает scenarioId, без выбора — нет', () => {
+    expect(buildCabinetRunScenarioCommand('dev-1', 'ws-2')).toEqual({
+      action: 'run',
+      deviceId: 'dev-1',
+      scenarioId: 'ws-2',
+    });
+    expect(buildCabinetRunScenarioCommand('dev-1')).toEqual({ action: 'run', deviceId: 'dev-1' });
   });
 });

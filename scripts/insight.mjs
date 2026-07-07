@@ -116,13 +116,30 @@ try {
     }
 
     const key = getAnthropicKey();
-    const response = await anthropicPost(key, {
-      model: defaultModel(),
-      max_tokens: 4096,
-      system: `${reviewPrompt}\n\n---\n\n${virtualTeam}`,
-      messages: [{ role: 'user', content: userMessage }],
-    });
-    const text = response.content?.find((b) => b.type === 'text')?.text ?? '';
+    const { ok, status, text: responseText } = await anthropicPost(
+      'https://api.anthropic.com/v1/messages',
+      {
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+        },
+        bodyJson: {
+          model: defaultModel(),
+          max_tokens: 4096,
+          system: `${reviewPrompt}\n\n---\n\n${virtualTeam}`,
+          messages: [{ role: 'user', content: userMessage }],
+        },
+      },
+    );
+    if (!ok) {
+      throw new Error(`Anthropic HTTP ${status}: ${responseText.slice(0, 300)}`);
+    }
+    const json = JSON.parse(responseText);
+    const text = (json.content ?? [])
+      .filter((b) => b?.type === 'text')
+      .map((b) => b.text)
+      .join('\n');
     if (!text.trim()) {
       throw new Error('Empty review from Anthropic');
     }

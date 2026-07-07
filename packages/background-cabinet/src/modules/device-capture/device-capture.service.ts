@@ -25,7 +25,9 @@ import {
 } from '../../domain/device-capture';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DeviceCaptureRegistry } from '../node-realtime/device-capture.registry';
+import { DeviceScenarioRegistry } from '../node-realtime/device-scenario.registry';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
+import type { BoardScenarioListItem } from '../../domain/node-realtime-wire';
 
 export interface DeviceCaptureView {
   readonly deviceId: string;
@@ -33,6 +35,10 @@ export interface DeviceCaptureView {
   readonly sessionId: string;
   readonly acquiredAt: string;
   readonly expiresAt: string;
+  /** CX3: объявленный узлом список сценариев (если узел уже объявил). */
+  readonly scenarios?: readonly BoardScenarioListItem[];
+  /** CX3: выбранный сценарий (инвариант: элемент scenarios; null при пустом). */
+  readonly selectedScenarioId?: string | null;
 }
 
 interface CaptureRow {
@@ -72,6 +78,7 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
     private readonly prisma: PrismaService,
     private readonly nodeRealtime: NodeRealtimeService,
     private readonly registry: DeviceCaptureRegistry,
+    private readonly scenarioRegistry: DeviceScenarioRegistry,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -165,9 +172,16 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
     return { capture };
   }
 
+  /**
+   * CX2: release — на уровне владельца, БЕЗ проверки сессии-держателя.
+   * Захват продлевается heartbeatSweep бессрочно; если держащая сессия умерла
+   * (перелогин кабинета), проверка sessionId делала захват неотпускаемым —
+   * владелец получал 403 навсегда. Владение узлом проверяет loadOwnedNode;
+   * конфликт двух живых сессий остаётся только на capture().
+   */
   async release(
     userId: string,
-    sessionId: string,
+    _sessionId: string,
     nodeId: string,
   ): Promise<{ released: true }> {
     const node = await this.loadOwnedNode(userId, nodeId);
@@ -184,15 +198,56 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
       this.broadcastRelease(node.membraneId, mediaDeviceId, null, 'operator');
       return { released: true };
     }
-    if (existing.sessionId !== sessionId) {
-      throw new ForbiddenException('Device is captured by another cabinet session');
-    }
 
     await this.prisma.nodeDeviceCapture.delete({ where: { id: existing.id } });
     this.registry.delete(mediaDeviceId);
     // Release = отпускание управления, НЕ стоп играющего сценария (канон §3).
     this.broadcastRelease(node.membraneId, mediaDeviceId, existing.sessionId, 'operator');
     return { released: true };
+  }
+
+  /**
+   * CX2: активные захваты мембран владельца — bootstrap состояния кабинета.
+   * Кабинет забывал захваты при перемонтировании раздела (стейт жил в React),
+   * показывая «Захватить» при живом захвате на сервере; снапшот делает сервер
+   * единственным источником истины (как presence-снапшот PL1).
+   */
+  async listForUser(userId: string): Promise<{ captures: DeviceCaptureView[] }> {
+    const now = new Date();
+    const rows = (await this.prisma.nodeDeviceCapture.findMany({
+      where: { membrane: { userId }, expiresAt: { gt: now } },
+    })) as CaptureRow[];
+    return {
+      captures: rows.map((row) => {
+        const capture = serializeCapture(row);
+        // CX3: объявленный список сценариев едет вместе с захватом —
+        // кабинет бутстрапится одним запросом.
+        const scenarios = this.scenarioRegistry.get(row.mediaDeviceId);
+        if (scenarios === null) return capture;
+        return {
+          ...capture,
+          scenarios: scenarios.scenarios,
+          selectedScenarioId: scenarios.selectedScenarioId,
+        };
+      }),
+    };
+  }
+
+  /**
+   * PL4 (pairing-lifecycle): системный форс-release захвата узла БЕЗ проверки
+   * сессии-держателя — вызывается при отзыве/удалении ключа (узел теряет
+   * сопряжение осознанно, держать захват над ним бессмысленно). Идемпотентно.
+   * Транзиентные разрывы WS НЕ трогают захват (их держит TTL) — решение владельца.
+   */
+  async forceReleaseByNode(
+    nodeId: string,
+    reason: DeviceCaptureReleaseReason = 'operator',
+  ): Promise<void> {
+    const existing = await this.prisma.nodeDeviceCapture.findUnique({ where: { nodeId } });
+    if (!existing) return;
+    await this.prisma.nodeDeviceCapture.delete({ where: { id: existing.id } });
+    this.registry.delete(existing.mediaDeviceId);
+    this.broadcastRelease(existing.membraneId, existing.mediaDeviceId, existing.sessionId, reason);
   }
 
   /**

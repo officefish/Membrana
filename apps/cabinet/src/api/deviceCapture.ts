@@ -13,6 +13,10 @@ export interface DeviceCaptureView {
   sessionId: string;
   acquiredAt: string;
   expiresAt: string;
+  /** CX3: объявленный узлом список сценариев (если узел уже объявил). */
+  scenarios?: readonly { readonly id: string; readonly title: string }[];
+  /** CX3: выбранный сценарий (элемент scenarios; null при пустом списке). */
+  selectedScenarioId?: string | null;
 }
 
 async function authFetch(path: string, init: RequestInit = {}): Promise<Response> {
@@ -34,6 +38,16 @@ async function parseError(res: Response): Promise<string> {
     /* ignore */
   }
   return res.statusText || 'Request failed';
+}
+
+/**
+ * CX2: снапшот активных захватов мембраны — авторитетный bootstrap состояния
+ * (кабинет не хранит захваты между размонтированиями разделов).
+ */
+export async function fetchCaptures(): Promise<{ captures: DeviceCaptureView[] }> {
+  const res = await authFetch('/v1/captures');
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { captures: DeviceCaptureView[] };
 }
 
 /** Захватить устройство узла (двухшаговая модель: сначала захват, потом run/stop). */

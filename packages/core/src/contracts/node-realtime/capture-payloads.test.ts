@@ -145,3 +145,78 @@ describe('capture tariff v2 payloads (CT1)', () => {
     expect(CAPTURE_PREEMPTION_FADE_OUT_MS).toBe(200);
   });
 });
+
+// CX3: список сценариев узла — контракт board.scenario-list.
+import {
+  normalizeScenarioSelection,
+  parseBoardScenarioListPayload,
+} from './index.js';
+
+describe('parseBoardScenarioListPayload (CX3)', () => {
+  const scenarios = [
+    { id: 'ws-1', title: 'Спектр' },
+    { id: 'ws-2', title: 'Нейро' },
+  ];
+
+  it('валидный payload с выбранным из списка', () => {
+    expect(
+      parseBoardScenarioListPayload({ deviceId: 'd', scenarios, selectedScenarioId: 'ws-2' }),
+    ).toEqual({ deviceId: 'd', scenarios, selectedScenarioId: 'ws-2' });
+  });
+
+  it('пустой список: selectedScenarioId только null', () => {
+    expect(
+      parseBoardScenarioListPayload({ deviceId: 'd', scenarios: [], selectedScenarioId: null }),
+    ).toEqual({ deviceId: 'd', scenarios: [], selectedScenarioId: null });
+    expect(
+      parseBoardScenarioListPayload({ deviceId: 'd', scenarios: [], selectedScenarioId: 'ws-1' }),
+    ).toBeNull();
+  });
+
+  it('отвергает выбранный вне списка (инвариант «один всегда выбран»)', () => {
+    expect(
+      parseBoardScenarioListPayload({ deviceId: 'd', scenarios, selectedScenarioId: 'ghost' }),
+    ).toBeNull();
+    expect(
+      parseBoardScenarioListPayload({ deviceId: 'd', scenarios, selectedScenarioId: null }),
+    ).toBeNull();
+  });
+
+  it('отвергает дубли id и мусорные элементы', () => {
+    expect(
+      parseBoardScenarioListPayload({
+        deviceId: 'd',
+        scenarios: [...scenarios, { id: 'ws-1', title: 'Дубль' }],
+        selectedScenarioId: 'ws-1',
+      }),
+    ).toBeNull();
+    expect(
+      parseBoardScenarioListPayload({
+        deviceId: 'd',
+        scenarios: [{ id: '', title: 'x' }],
+        selectedScenarioId: null,
+      }),
+    ).toBeNull();
+  });
+});
+
+describe('normalizeScenarioSelection (CX3)', () => {
+  const scenarios = [
+    { id: 'ws-1', title: 'Спектр' },
+    { id: 'ws-2', title: 'Нейро' },
+  ];
+
+  it('сохраняет предпочтение, если оно в списке', () => {
+    expect(normalizeScenarioSelection(scenarios, 'ws-2')).toBe('ws-2');
+  });
+
+  it('падает на первый при отсутствии/чужом предпочтении', () => {
+    expect(normalizeScenarioSelection(scenarios, null)).toBe('ws-1');
+    expect(normalizeScenarioSelection(scenarios, 'ghost')).toBe('ws-1');
+    expect(normalizeScenarioSelection(scenarios, undefined)).toBe('ws-1');
+  });
+
+  it('null только для пустого списка', () => {
+    expect(normalizeScenarioSelection([], 'ws-1')).toBeNull();
+  });
+});

@@ -57,8 +57,43 @@ export interface NodeOnlinePayload {
   readonly membraneId: string;
 }
 
+/**
+ * PL1 (pairing-lifecycle): снапшот присутствия, отправляемый кабинету один раз
+ * при подключении — bootstrap набора онлайн-узлов до потока nodeOnline/Offline.
+ * Закрывает offline-desync: узел, связавшийся до открытия кабинета, был невидим.
+ */
+export interface PresenceSnapshotPayload {
+  readonly onlineDeviceIds: readonly string[];
+  readonly timestampMs: number;
+}
+
+/** PL2b: периодический сигнал присутствия узла (node → server). */
+export interface PresenceHeartbeatPayload {
+  readonly deviceId: string;
+  readonly timestampMs: number;
+}
+
+export const NODE_PRESENCE_HEARTBEAT_INTERVAL_MS = 120_000;
+
+export const NODE_RECENT_PRESENCE_WINDOW_MS = 300_000;
+
 export interface SessionInvalidatedPayload {
   readonly reason: 'revoked' | 'expired' | 'session_expired';
+}
+
+/**
+ * PCB6 (presence-capture-board): активная проба живости узла (cabinet → server →
+ * node). Сервер шлёт `health.ping` с nonce; узел отвечает `health.pong` с тем же
+ * `pingId`. `sentAt` — серверный Date.now() (мс) для расчёта latencyMs.
+ */
+export interface HealthPingPayload {
+  readonly pingId: string;
+  readonly sentAt: number;
+}
+
+/** PCB6: ответ узла на health.ping (node → server). */
+export interface HealthPongPayload {
+  readonly pingId: string;
 }
 
 /** Режим исполнения device-board runtime (MP7b). */
@@ -131,9 +166,15 @@ export interface RuntimeLogPayload {
 
 export const NODE_REALTIME_EVENT_TYPES = {
   presence: {
+    snapshot: 'presence.snapshot',
+    heartbeat: 'presence.heartbeat',
     nodeOnline: 'node.online',
     nodeOffline: 'node.offline',
     sessionInvalidated: 'session.invalidated',
+    /** PCB6: активная проба живости (server → node). */
+    healthPing: 'health.ping',
+    /** PCB6: ответ узла на пробу (node → server). */
+    healthPong: 'health.pong',
   },
   journal: {
     append: 'journal.append',
@@ -161,6 +202,12 @@ export const NODE_REALTIME_EVENT_TYPES = {
     heartbeat: 'board.heartbeat',
     /** v2: отпускание захвата (НЕ стоп играющего сценария). */
     release: 'board.release',
+    /**
+     * CX3: узел объявляет список своих сценариев + выбранный (node → server →
+     * cabinet). Сценарии пользовательские и живут на устройстве — сервер хранит
+     * только объявленный список и выбранный id (решение владельца 2026-07-02).
+     */
+    scenarioList: 'board.scenario-list',
   },
 } as const;
 

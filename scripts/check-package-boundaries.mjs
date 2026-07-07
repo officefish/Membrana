@@ -9,7 +9,7 @@
  * @see docs/prompts/CODE_REVIEW_DEBT_CLOSEOUT_JUN2026_EPIC_PROMPT.md (D1)
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(fileURLToPath(import.meta.url), '..', '..');
@@ -17,7 +17,28 @@ const root = join(fileURLToPath(import.meta.url), '..', '..');
 /** @typedef {{ id: string; roots: string[]; patterns: RegExp[]; extensions?: RegExp }} BoundaryRule */
 
 /** @type {BoundaryRule[]} */
-const RULES = [
+export const RULES = [
+  {
+    // CC2 — контур communications: сток, не исток. outdegree(comms → продуктовые) = 0.
+    // Канон читается через fs-read (строковые пути), НЕ через import @membrana/* (чтение ≠ импорт).
+    id: 'comms-studio-no-product-imports',
+    roots: ['apps/comms-studio/src'],
+    patterns: [
+      /^\s*import\b[^;]*['"]@membrana\//,
+      /^\s*export\b[^;]*\bfrom\s+['"]@membrana\//,
+      /\brequire\(\s*['"]@membrana\//,
+    ],
+  },
+  {
+    // CC2 — контур communications: indegree(comms от продуктовых) = 0. Ни один пакет не импортирует контур.
+    id: 'comms-studio-no-inbound-imports',
+    roots: ['apps', 'packages'],
+    patterns: [
+      /^\s*import\b[^;]*['"]@membrana\/comms-studio/,
+      /^\s*export\b[^;]*\bfrom\s+['"]@membrana\/comms-studio/,
+      /\brequire\(\s*['"]@membrana\/comms-studio/,
+    ],
+  },
   {
     id: 'cabinet-no-background-server-imports',
     roots: ['apps/cabinet/src'],
@@ -66,7 +87,7 @@ const SOURCE_EXT = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$/;
  * @param {string[]} acc
  * @returns {string[]}
  */
-function walk(dir, acc = []) {
+export function walk(dir, acc = []) {
   for (const name of readdirSync(dir)) {
     const abs = join(dir, name);
     let st;
@@ -89,14 +110,16 @@ function walk(dir, acc = []) {
 
 /**
  * @param {BoundaryRule} rule
+ * @param {string} [baseRoot] корень для резолва `rule.roots` (по умолчанию — корень монорепо;
+ *   в тестах — временный каталог для изолированного негативного теста).
  * @returns {{ file: string; line: number; text: string; pattern: string }[]}
  */
-function scanRule(rule) {
+export function scanRule(rule, baseRoot = root) {
   /** @type {{ file: string; line: number; text: string; pattern: string }[]} */
   const violations = [];
 
   for (const relRoot of rule.roots) {
-    const absRoot = join(root, relRoot);
+    const absRoot = join(baseRoot, relRoot);
     let files;
     try {
       files = walk(absRoot);
@@ -156,4 +179,7 @@ function main() {
   console.log('\ncheck-package-boundaries — OK');
 }
 
-main();
+const isCli = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isCli) {
+  main();
+}

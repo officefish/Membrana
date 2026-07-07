@@ -32,7 +32,7 @@ yarn night:close --id <epic-id>
 
 1. Evening ritual done (min. code-review archived).
 2. Epic in registry with `sprintKind: "night-build"`.
-3. Branch: `night/<epic-id>-<YYYY-MM-DD>` from **`techies68`**.
+3. Branch: `night/<epic-id>-<YYYY-MM-DD>` from current **`origin/main`**.
 
 ## Forbidden in Night Build
 

@@ -56,12 +56,17 @@ git push -u origin vesnin
 1. **`main` всегда деплоируемое.** Каждый коммит в `main` обязан проходить обязательный CI
    (`turbo run lint typecheck test build` из чистого checkout). Красный `main` чинится в приоритете.
 2. **Выкат только из `main`.** Прод-образы (`cabinet-vX.Y.Z`) собираются из коммитов `main`;
-   деплой-скрипты гейтятся на `origin/<branch>` + зелёный CI (DR0/DR1). Деплой из произвольной
-   feature-ветки — только осознанный обход гейтов для hotfix, с последующим возвратом в `main`.
+   деплой-скрипты гейтятся на `origin/main` + зелёный CI (DR0/DR1). Деплой из произвольной
+   feature-ветки запрещён как штатный путь; hotfix сначала попадает в `main`, затем выкатывается.
 3. **Один эпик — одна ветка/серия PR.** Ветка живёт от своего эпика; PR небольшие и атомарные.
 4. **Длинные мульти-эпиковые ветки запрещены** как источник прод-выката: в них копятся
    незакоммиченные/несинхронизированные изменения, которые «works on my machine», но падают в CI/прод.
 5. **Контракты `@membrana/core`/`agenda`** — через `vesnin` (см. выше), оттуда в `main` до релиза.
+6. **`techies68` — legacy-ветка, не deploy base.** После синхронизации 2026-07-03 она не является
+   повседневной интеграционной веткой и не входит в default CI branch allowlist. Если её нужно
+   оживить для археологии, сначала открыть отдельную reconciliation-задачу и PR в `main`.
+7. **Миграции, влияющие на откат, проходят expand/contract.** Раздел ниже — обязательная
+   часть DR5: без обратносовместимой схемы откат образа из `main` может стать небезопасным.
 
 Деплой и откат — через image-модель: `docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`,
 `docs/deploy/BACKGROUND_CABINET_DEPLOY.md`.
@@ -91,6 +96,11 @@ git push -u origin vesnin
 **Правило отката:** если миграция выполнила `contract` (удаление), откат образа на релиз до неё —
 **небезопасен** (старая схема уже не существует). Перед таким релизом фиксируется «точка невозврата»
 в отчёте; откат за неё делается только вместе с восстановлением БД из бэкапа.
+
+**Пример:** переименование `Device.lastSeenAt` → `lastHeartbeatAt` нельзя делать одним `ALTER`.
+Сначала `expand`: добавить nullable `lastHeartbeatAt` и писать оба поля; затем `migrate`:
+бэкофилл + чтение нового поля с fallback на старое; только после релиза без старого кода —
+`contract`: удалить `lastSeenAt`.
 
 ## Pull requests
 
@@ -138,7 +148,7 @@ git push -u origin vesnin
 
 ## CI (ежедневный цикл)
 
-- **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop`, **`techies68`** выполняется `yarn install --immutable` и `yarn turbo run lint typecheck test build`. Локально перед коммитом имеет смысл запускать то же самое.
+- **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop`, `vesnin` и согласованные deploy/hotfix-ветки выполняется `yarn install --immutable` и `yarn turbo run lint typecheck test build`. `techies68` не входит в default branch allowlist после DR5; новые PR целятся в `main`. Локально перед коммитом имеет смысл запускать то же самое.
 - **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск; включает `node scripts/usercase.mjs verify-competition` (alpha/beta/gamma layout + pre-run).
 - **UserCase pack/collapse (PR)**: `.github/workflows/usercase-competition.yml` — при изменениях pack/collapse или sprint forks; `yarn usercase:verify-competition` локально.
 - **RAG (`@membrana/rag-service`)**: локально `yarn workspace @membrana/rag-service typecheck test` + `node --test scripts/rag-ritual.test.mjs`. Operative circuit в ритуалах работает без `OPENAI_API_KEY`; archive — после `yarn rag:index --full`. Оператор: [`docs/RAG.md`](./RAG.md), closure: [`docs/rag-dual-circuit-v1/CLOSURE.md`](./rag-dual-circuit-v1/CLOSURE.md).
@@ -177,7 +187,7 @@ git push -u origin vesnin
 
 ### VPS deploy (SSH-скрипты)
 
-Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`.
+Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`. Для prod штатное значение ветки — `main`; переопределение ветки допускается только для диагностического hotfix с явным отчётом и последующим merge обратно в `main`.
 
 | Команда | Назначение |
 |---------|------------|

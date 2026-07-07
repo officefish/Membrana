@@ -1,3 +1,8 @@
 *                              @officefish
 /.github/                      @officefish
 /packages/background-office/   @officefish
+
+# Контур внешних коммуникаций (Вариант A) — отдельная зона владения.
+# Пока solo @officefish; заменить на comms-owner, когда у партнёра/liaison появится аккаунт. CC3.
+/apps/comms-studio/            @officefish
+/docs/comms/                   @officefish

@@ -228,7 +228,9 @@ export function useCabinetLiveJournal() {
       unsubState();
       unsubJournal();
       unsubMic();
-      client.disconnect();
+      // CX2: клиент — общий синглтон всех разделов кабинета; disconnect() здесь
+      // рвал runtime/board-подписки раздела «Узлы» при уходе из журнала.
+      // Жизненный цикл сокета принадлежит сессии кабинета (logout), не разделу.
     };
   }, [membraneId]);
 

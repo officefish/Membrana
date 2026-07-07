@@ -1,7 +1,9 @@
 import {
   NODE_REALTIME_EVENT_TYPES,
+  NODE_PRESENCE_HEARTBEAT_INTERVAL_MS,
   createNodeRealtimeEnvelope,
   parseNodeRealtimeEnvelope,
+  type HealthPingPayload,
   type NodeRealtimeEnvelope,
   type SessionInvalidatedPayload,
 } from '@membrana/core';
@@ -21,6 +23,17 @@ type StateHandler = (state: NodeRealtimeClientState) => void;
 
 const MAX_BACKOFF_MS = 30_000;
 
+/**
+ * PCB1 (presence-capture-board): единая точка логов WS-жизненного цикла узла.
+ * Видно в консоли браузера (dev-песочница) — диагностика persistent-offline:
+ * связка connecting → open (registered) → close(code). code=4401 = auth-fail (H1).
+ */
+function logNodeWs(event: string, detail: Record<string, unknown>): void {
+  const level = detail.authFail || detail.code === 4401 ? 'warn' : 'info';
+  // eslint-disable-next-line no-console
+  console[level](`[node-ws] ${event}`, detail);
+}
+
 class NodeRealtimeClientImpl {
   private socket: WebSocket | null = null;
 
@@ -31,6 +44,8 @@ class NodeRealtimeClientImpl {
   private reconnectAttempt = 0;
 
   private reconnectTimer: number | null = null;
+
+  private heartbeatTimer: number | null = null;
 
   private readonly messageHandlers = new Set<MessageHandler>();
 
@@ -55,6 +70,18 @@ class NodeRealtimeClientImpl {
   }
 
   connectNode(pairing: PairedNodeCredentials): void {
+    // PCB3: идемпотентность (симметрично кабинету) — повторный connectNode с той
+    // же парой не рвёт ещё-CONNECTING сокет. Узел стабилен благодаря guard в
+    // NodeConnectionShell, но защита от петли «closed before established» нужна и здесь.
+    const socket = this.socket;
+    if (
+      this.pairing?.deviceId === pairing.deviceId &&
+      socket &&
+      (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)
+    ) {
+      this.pairing = pairing;
+      return;
+    }
     this.pairing = pairing;
     this.openSocket();
   }
@@ -62,6 +89,7 @@ class NodeRealtimeClientImpl {
   disconnect(): void {
     this.pairing = null;
     this.clearReconnectTimer();
+    this.clearHeartbeatTimer();
     this.socket?.close();
     this.socket = null;
     this.setState('disconnected');
@@ -87,12 +115,41 @@ class NodeRealtimeClientImpl {
     }
   }
 
+  private clearHeartbeatTimer(): void {
+    if (this.heartbeatTimer !== null) {
+      window.clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+  }
+
+  private sendPresenceHeartbeat(): void {
+    const deviceId = this.pairing?.deviceId;
+    if (!deviceId) return;
+    this.send(
+      createNodeRealtimeEnvelope('presence', NODE_REALTIME_EVENT_TYPES.presence.heartbeat, {
+        deviceId,
+        timestampMs: Date.now(),
+      }),
+    );
+  }
+
+  private startHeartbeat(): void {
+    this.clearHeartbeatTimer();
+    this.sendPresenceHeartbeat();
+    this.heartbeatTimer = window.setInterval(
+      () => this.sendPresenceHeartbeat(),
+      NODE_PRESENCE_HEARTBEAT_INTERVAL_MS,
+    );
+  }
+
   private scheduleReconnect(): void {
     if (!this.pairing) return;
     this.clearReconnectTimer();
+    this.clearHeartbeatTimer();
     const delay = Math.min(1000 * 2 ** this.reconnectAttempt, MAX_BACKOFF_MS);
     this.reconnectAttempt += 1;
     this.setState('reconnecting');
+    logNodeWs('reconnect-scheduled', { attempt: this.reconnectAttempt, delayMs: delay });
     this.reconnectTimer = window.setTimeout(() => this.openSocket(), delay);
   }
 
@@ -111,12 +168,22 @@ class NodeRealtimeClientImpl {
     url.searchParams.set('clientVersion', getClientRuntimeVersion());
 
     this.setState(this.reconnectAttempt > 0 ? 'reconnecting' : 'connecting');
+    // PCB1 (presence-capture-board): диагностика persistent-offline в браузерной
+    // консоли (песочница 1573). Токен не логируем.
+    logNodeWs('connecting', {
+      deviceId: this.pairing.deviceId,
+      attempt: this.reconnectAttempt,
+      url: `${url.origin}${url.pathname}`,
+    });
     const ws = new WebSocket(url.toString());
     this.socket = ws;
 
     ws.addEventListener('open', () => {
+      if (this.socket !== ws) return; // вытеснен новым сокетом
       this.reconnectAttempt = 0;
       this.setState('connected');
+      this.startHeartbeat();
+      logNodeWs('open', { deviceId: this.pairing?.deviceId });
     });
 
     ws.addEventListener('message', (event) => {
@@ -130,6 +197,20 @@ class NodeRealtimeClientImpl {
           const payload = parsed.value.payload as SessionInvalidatedPayload;
           this.emitSessionInvalidated(payload.reason);
         }
+        // PCB6: сервер пробует живость узла — отвечаем эхом с тем же pingId.
+        if (
+          parsed.value.channel === 'presence' &&
+          parsed.value.type === NODE_REALTIME_EVENT_TYPES.presence.healthPing
+        ) {
+          const payload = parsed.value.payload as HealthPingPayload;
+          if (payload && typeof payload.pingId === 'string') {
+            this.send(
+              createNodeRealtimeEnvelope('presence', NODE_REALTIME_EVENT_TYPES.presence.healthPong, {
+                pingId: payload.pingId,
+              }),
+            );
+          }
+        }
         for (const handler of this.messageHandlers) {
           handler(parsed.value);
         }
@@ -138,7 +219,22 @@ class NodeRealtimeClientImpl {
       }
     });
 
-    ws.addEventListener('close', () => {
+    ws.addEventListener('close', (event) => {
+      if (this.socket !== ws) return; // PCB3: вытеснен новым — без реконнект-петли
+      this.clearHeartbeatTimer();
+      // PCB1: код close — ключевой сигнал. 4401 = auth-fail (H1: сессия истекла →
+      // кабинет держит offline, хотя клиент «связан» по localStorage); 1006 = сеть.
+      logNodeWs('close', {
+        code: event.code,
+        reason: event.reason || undefined,
+        authFail: event.code === 4401,
+        deviceId: this.pairing?.deviceId,
+      });
+      // PCB2: 4401 = сервер отверг сессию узла. Сигналим наверх немедленно
+      // (не ждём 60с поллинга usePairStatusMonitor); подписчик дебаунсит.
+      if (event.code === 4401) {
+        for (const handler of this.authFailedHandlers) handler();
+      }
       if (this.pairing) {
         this.scheduleReconnect();
       } else {
@@ -156,6 +252,14 @@ class NodeRealtimeClientImpl {
   onSessionInvalidated(handler: (reason: SessionInvalidatedPayload['reason']) => void): () => void {
     this.sessionInvalidatedHandlers.add(handler);
     return () => this.sessionInvalidatedHandlers.delete(handler);
+  }
+
+  /** PCB2: WS закрыт с 4401 (сервер отверг сессию узла) — auth-fail. */
+  private authFailedHandlers = new Set<() => void>();
+
+  onAuthFailed(handler: () => void): () => void {
+    this.authFailedHandlers.add(handler);
+    return () => this.authFailedHandlers.delete(handler);
   }
 
   private emitSessionInvalidated(reason: SessionInvalidatedPayload['reason']): void {
