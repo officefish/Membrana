@@ -116,6 +116,8 @@ export interface DeviceBoardShellProps {
   readonly serverFirstState?: ServerFirstFlagsInput | null;
   /** SF5: перспектива badge copy (поле vs кабинет). */
   readonly serverFirstPerspective?: 'field' | 'cabinet';
+  /** BTJ1: вкладка «Журнал» правого сайдбара — телеметрия хоста (слот клиента). */
+  readonly journalSlot?: React.ReactNode;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -124,7 +126,16 @@ const DeviceBoardShellInner: React.FC<{
   showRunControls: boolean;
   runtimeHost?: ScenarioRuntimeHost;
   serverFirstPerspective: 'field' | 'cabinet';
-}> = ({ onRequestExit, exitLabel, showRunControls, runtimeHost, serverFirstPerspective }) => {
+  /** BTJ1: вкладка «Журнал» правого сайдбара — телеметрия хоста (слот клиента). */
+  journalSlot?: React.ReactNode;
+}> = ({
+  onRequestExit,
+  exitLabel,
+  showRunControls,
+  runtimeHost,
+  serverFirstPerspective,
+  journalSlot,
+}) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
   const signalAdvanced = isSignalAdvancedEnabled();
@@ -1848,6 +1859,7 @@ const DeviceBoardShellInner: React.FC<{
             isRuntime={isRuntime}
             runtimeInspection={runtimeInspection}
             printLastOutput={printLastOutput}
+            journalSlot={journalSlot}
             scenarioTraceLineCount={graph.scenarioTraceLineCount}
             getScenarioTraceLines={graph.getScenarioTraceLines}
             subscribeScenarioTrace={graph.subscribeScenarioTrace}
@@ -2013,6 +2025,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   loadUserCaseDocument,
   serverFirstState = null,
   serverFirstPerspective = 'field',
+  journalSlot,
 }) => {
   const { session } = useDeviceBoardMode();
 
@@ -2032,6 +2045,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
       exitLabel={exitLabel}
       showRunControls={showRunControls}
       runtimeHost={runtimeHost}
+      journalSlot={journalSlot}
       serverFirstPerspective={serverFirstPerspective}
     />
   </DeviceBoardGraphProvider>
