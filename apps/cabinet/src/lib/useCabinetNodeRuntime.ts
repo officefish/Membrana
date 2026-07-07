@@ -1,15 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useSyncExternalStore } from 'react';
 import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
-  type BoardScenarioListItem,
   type RuntimeCommandPayload,
   type RuntimeStatePayload,
 } from '@membrana/core';
 
 import {
   captureDevice as captureDeviceApi,
-  fetchCaptures as fetchCapturesApi,
   releaseDevice as releaseDeviceApi,
   type DeviceCaptureMode,
   type DeviceCaptureView,
@@ -23,14 +21,16 @@ import {
   getCabinetNodeRealtimeClient,
   type CabinetRealtimeClientState,
 } from '@/lib/cabinetNodeRealtimeClient';
-import { capturesByDeviceId } from '@/lib/captureSnapshot';
+import {
+  applyCaptureFromRest,
+  getCabinetRuntimeSnapshot,
+  startCabinetRuntimeStore,
+  subscribeCabinetRuntime,
+} from '@/lib/cabinetNodeRuntimeStore';
+import type { DeviceScenarioListView } from '@/lib/cabinetRuntimeState';
 import { isDeviceLive as checkDeviceLive } from '@/lib/isDeviceLive';
 
-/** CX3: объявленный узлом список сценариев + выбранный. */
-export interface DeviceScenarioListView {
-  readonly scenarios: readonly BoardScenarioListItem[];
-  readonly selectedScenarioId: string | null;
-}
+export type { DeviceScenarioListView } from '@/lib/cabinetRuntimeState';
 
 export interface CabinetNodeRuntime {
   /** Последнее состояние runtime по deviceId узла. */
@@ -56,141 +56,29 @@ export interface CabinetNodeRuntime {
 }
 
 /**
- * MP7b RT5 + SF6 + CT3: подключение кабинета к runtime/board каналам,
- * явный захват устройств и управление сохранённым сценарием (tariff v2).
+ * MP7b RT5 + SF6 + CT3 + CX6: тонкий хук над модульным стором runtime.
+ * Состояние (presence/захваты/сценарии) живёт в cabinetNodeRuntimeStore и
+ * переживает навигацию по разделам кабинета — presence.snapshot сервер шлёт
+ * только при открытии WS, per-mount React-стейт терял его до hard-reload
+ * (прод-находка владельца 2026-07-07). Интерфейс не изменён.
  */
 export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRuntime {
-  const [states, setStates] = useState<Record<string, RuntimeStatePayload>>({});
-  const [connection, setConnection] = useState<CabinetRealtimeClientState>('disconnected');
-  const [onlineDeviceIds, setOnlineDeviceIds] = useState<ReadonlySet<string>>(() => new Set());
-  const [captures, setCaptures] = useState<Record<string, DeviceCaptureView>>({});
-  const [scenarioLists, setScenarioLists] = useState<Record<string, DeviceScenarioListView>>({});
-
   useEffect(() => {
-    if (!membraneId) return undefined;
-    const client = getCabinetNodeRealtimeClient();
-    client.connect(membraneId);
-    setConnection(client.getState());
-    // CX2: авторитетный снапшот захватов с сервера (как presence-снапшот PL1).
-    // Стейт живёт в React и обнуляется при размонтировании раздела — без
-    // bootstrap'а кабинет показывал «Захватить» при живом захвате на сервере.
-    let disposed = false;
-    const refreshCaptures = (): void => {
-      void fetchCapturesApi()
-        .then(({ captures: list }) => {
-          if (disposed) return;
-          setCaptures(capturesByDeviceId(list));
-          // CX3: объявленные списки сценариев едут в том же снапшоте.
-          setScenarioLists((prev) => {
-            const next = { ...prev };
-            for (const capture of list) {
-              if (capture.scenarios !== undefined) {
-                next[capture.deviceId] = {
-                  scenarios: capture.scenarios,
-                  selectedScenarioId: capture.selectedScenarioId ?? null,
-                };
-              }
-            }
-            return next;
-          });
-        })
-        .catch(() => {
-          /* best-effort: до следующего reconnect/broadcast живём на текущем стейте */
-        });
-    };
-    refreshCaptures();
-    const unsubState = client.subscribeState((next) => {
-      setConnection(next);
-      // Реконнект мог пропустить board-broadcast'ы — пересинхронизируемся.
-      if (next === 'connected') refreshCaptures();
-    });
-    // PL1: снапшот присутствия при подключении — авторитетный bootstrap набора.
-    // Заменяем целиком (не мерджим): сервер прислал полный список онлайн-узлов.
-    // Онлайн-состояние НЕ обнуляем при реконнекте — снапшот перезапишет его,
-    // иначе узел «мигал» бы в offline на каждый разрыв (корневой баг PL1).
-    const unsubSnapshot = client.subscribePresenceSnapshot((payload) => {
-      setOnlineDeviceIds(new Set(payload.onlineDeviceIds));
-    });
-    const unsubRuntime = client.subscribeRuntimeState((payload) => {
-      if (!payload.deviceId) return;
-      const deviceId = payload.deviceId;
-      setStates((prev) => ({ ...prev, [deviceId]: payload }));
-    });
-    const unsubOnline = client.subscribePresenceOnline((payload) => {
-      setOnlineDeviceIds((prev) => {
-        const next = new Set(prev);
-        next.add(payload.deviceId);
-        return next;
-      });
-    });
-    const unsubOffline = client.subscribePresenceOffline((payload) => {
-      setOnlineDeviceIds((prev) => {
-        const next = new Set(prev);
-        next.delete(payload.deviceId);
-        return next;
-      });
-    });
-    // CT3: снимок захватов из board broadcast (единый источник — сервер).
-    const unsubCapture = client.subscribeBoardCapture((payload) => {
-      setCaptures((prev) => ({
-        ...prev,
-        [payload.deviceId]: {
-          deviceId: payload.deviceId,
-          mode: payload.mode,
-          sessionId: payload.sessionId,
-          acquiredAt: payload.acquiredAt,
-          expiresAt: payload.expiresAt,
-        },
-      }));
-    });
-    const unsubHeartbeat = client.subscribeBoardCaptureHeartbeat((payload) => {
-      setCaptures((prev) => {
-        const current = prev[payload.deviceId];
-        if (!current || current.sessionId !== payload.sessionId) return prev;
-        return { ...prev, [payload.deviceId]: { ...current, expiresAt: payload.expiresAt } };
-      });
-    });
-    const unsubRelease = client.subscribeBoardCaptureRelease((payload) => {
-      setCaptures((prev) => {
-        if (!(payload.deviceId in prev)) return prev;
-        const next = { ...prev };
-        delete next[payload.deviceId];
-        return next;
-      });
-    });
-    // CX3: объявление узла / ре-бродкаст select'а — авторитетная замена списка.
-    const unsubScenarioList = client.subscribeBoardScenarioList((payload) => {
-      setScenarioLists((prev) => ({
-        ...prev,
-        [payload.deviceId]: {
-          scenarios: payload.scenarios,
-          selectedScenarioId: payload.selectedScenarioId,
-        },
-      }));
-    });
-    return () => {
-      disposed = true;
-      unsubState();
-      unsubSnapshot();
-      unsubRuntime();
-      unsubOnline();
-      unsubOffline();
-      unsubCapture();
-      unsubHeartbeat();
-      unsubRelease();
-      unsubScenarioList();
-    };
+    if (!membraneId) return;
+    getCabinetNodeRealtimeClient().connect(membraneId);
+    startCabinetRuntimeStore();
   }, [membraneId]);
 
+  const snapshot = useSyncExternalStore(subscribeCabinetRuntime, getCabinetRuntimeSnapshot);
+
   const isDeviceLive = useCallback(
-    (deviceId: string | null | undefined) => checkDeviceLive(deviceId, onlineDeviceIds),
-    [onlineDeviceIds],
+    (deviceId: string | null | undefined) => checkDeviceLive(deviceId, snapshot.onlineDeviceIds),
+    [snapshot.onlineDeviceIds],
   );
 
   const captureDevice = useCallback(async (nodeId: string, mode: DeviceCaptureMode) => {
     const { capture } = await captureDeviceApi(nodeId, mode);
-    // REST-ответ применяем сразу (broadcast придёт следом — идемпотентно).
-    setCaptures((prev) => ({ ...prev, [capture.deviceId]: capture }));
+    applyCaptureFromRest(capture);
   }, []);
 
   const releaseDevice = useCallback(async (nodeId: string) => {
@@ -211,10 +99,10 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       sendCommand(
         buildCabinetRunScenarioCommand(
           deviceId,
-          scenarioLists[deviceId]?.selectedScenarioId ?? undefined,
+          getCabinetRuntimeSnapshot().scenarioLists[deviceId]?.selectedScenarioId ?? undefined,
         ),
       ),
-    [scenarioLists, sendCommand],
+    [sendCommand],
   );
   const stop = useCallback(
     (deviceId: string) => sendCommand(buildCabinetStopScenarioCommand(deviceId)),
@@ -230,11 +118,11 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
 
   return useMemo(
     () => ({
-      states,
-      connection,
-      onlineDeviceIds,
-      captures,
-      scenarioLists,
+      states: snapshot.states,
+      connection: snapshot.connection,
+      onlineDeviceIds: snapshot.onlineDeviceIds,
+      captures: snapshot.captures,
+      scenarioLists: snapshot.scenarioLists,
       isDeviceLive,
       captureDevice,
       releaseDevice,
@@ -242,18 +130,6 @@ export function useCabinetNodeRuntime(membraneId: string | null): CabinetNodeRun
       stop,
       selectScenario,
     }),
-    [
-      captureDevice,
-      captures,
-      connection,
-      isDeviceLive,
-      onlineDeviceIds,
-      releaseDevice,
-      run,
-      scenarioLists,
-      selectScenario,
-      states,
-      stop,
-    ],
+    [captureDevice, isDeviceLive, releaseDevice, run, selectScenario, snapshot, stop],
   );
 }
