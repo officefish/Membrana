@@ -1,240 +1,128 @@
-<!-- Сгенерировано: 2026-07-05T07:29:05.906Z (yarn plan:day) -->
+<!-- Сгенерировано: 2026-07-07T03:57:42.754Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->
 
-# План на следующий день — 2026-07-05
+# План на следующий день
 
-## 1. Что сделано за период (последние сутки)
+> Стратегический план на день. Сгенерирован от git-истории за последние сутки, WHITE_PAPER v0.1, ARCHITECTURE.md / SERVICES.md, приоритетов детекции (эпик #84 / FFT_METRICS §6) и форсайта FREE-тарифа 2026-07-06.
 
-### presence-capture-board спринт (PCB1–PCB6) — **завершён**
-- **PCB1** (7742bd5): Диагностические логи WS-жизненного цикла узла (`[node-ws] connecting/open/close`), WS-логи кабинета (`[cabinet-ws]`), гайд `PRESENCE_OFFLINE_DIAGNOSTIC.md` для root-cause узла → offline.
-- **PCB3** (af21abc): Root-cause fix — идемпотентная `connect()` в `nodeRealtimeClient` и `cabinetNodeRealtimeClient`, снятие WS-реконнект-петли (ре-рендеры без disconnect-cleanup).
-- **PCB4** (9db23d6c): Новый эндпоинт GET `/v1/nodes/:id/link-state` → `{paired, live, lastSeenAt}` (модуль `node-liveness`).
-- **PCB6** (8038ad33): Активная проба живости узла — POST `/v1/nodes/:id/health-ping` (echo по WS, таймаут 3 c) → `{reachable, latencyMs}`.
-- **PCB2** (2929d451): Сигнал auth-fail клиента при WS-close 4401, дебаунс 2.5 с → `PairingInvalidDialog`.
-- **PCB5** (63263318): Force-open device-board через agenda-store при захвате (флаг `isViewOnlyFromCapture`, view-only контролы скрыты).
+## 1. Что сделано за период (последние сутки (since="1 day ago"))
 
-### pairing-lifecycle спринт (PL1–PL5) — **реализован**
-- **PL1** (c515dc61): `PresenceSnapshotPayload` в core, presence-снапшот при registerCabinet (дедупликация узлов, чинит корневой offline-баг).
-- **PL2** (3f4edd99): `Device.pairingStatus` (paired/revoked/unpaired) с миграцией, история через `pairedKeyId`.
-- **PL3** (63fbf1bf): Удалить = revoke + delete одной кнопкой (усиленное подтверждение в кабинете).
-- **PL4** (e56b2884): Авто-release захвата при отзыве/удалении ключа (`DeviceCaptureService.forceReleaseByNode`).
-- **PL5** (c713a9b1): Smoke-рунбук `PAIRING_LIFECYCLE_SMOKE.md` + `STUDIO_HOST_BRIDGE_CONTRACT` §4.6 (Presence контракт).
-
-### ci-gate stabilization (cg1)
-- **cg1 fix** (63acf21f): RAG-тест timeout 5 s → 30 s (флейк retrieveContext на нагруженном раннере).
-
-### Tasks & Consiliums
-- Архивированы спринты PCB и PL, финализированы closure-reviews (T1/T2 LGTM).
-- Зарегистрированы промпты `PRESENCE_CAPTURE_BOARD_SPRINT_PROMPT.md`, `PAIRING_LIFECYCLE_SPRINT_PROMPT.md`.
-- Неполный PR-очередь: все ветки на мёрже, завтра будут LGTM из docs/reviews.
-
----
+- **`packages/services/detectors/yamnet` (analyzer) — ключевой прорыв.** Реализован `YamnetDetector` (zero-shot нейро-детекция дрона поверх YAMNet TF.js): ресемпл 16 кГц, инференс с явным выходом `Identity:0`, drone-score по взвешенным классам AudioSet (Propeller / Helicopter / Buzz…). Веса (~16 МБ) забандлены офлайн. Латентность WASM p95 56 мс (цель <100 мс достигнута). Тесты 23/23 (#266).
+- **`apps/client` (client) — плагин `neural-drone-analyzer`.** Клиентский плагин библиотеки сэмплов: браузерный провайдер модели (бандленные ассеты через vite `?url`, офлайн), паритет с trends-fft-плагином (ручной + автозапуск по `ended`, `publishDroneDetected`), прогрев на install. Аудио строго через engine (ARCHITECTURE §1b). Client 256/256 (#266).
+- **Детекция / бенчмарк.** ND3: `runYamnet` в `benchmark:detectors`, калибровка порога на free-v1 v0.2 (`DEFAULT_DRONE_SCORE_THRESHOLD = 0.01`) → **P 71.4 / R 91.7 / F1 0.803 / FPR 36.7 — лучший F1 таблицы** (обошёл template-match `DRONE_TIGHT` 0.771). Обновлён `DETECTOR_BENCHMARK.md` + заметка ND3 (профили ошибок DSP/нейро слабо коррелированы → аргумент за combined UC на сыром confidence) (#268).
+- **`packages/device-board` + `apps/client` (device-board) — журнал сайдбара (#269).** Вкладки «Узлы | Журнал» в правом сайдбаре, живой хвост scenario-трассы (follow-tail, копировать/скачать/очистить) через host-контракт `getScenarioTraceLines`, drag-ресайз ширины с сохранением в localStorage. Pure-логика clamp/parse покрыта тестами.
+- **`packages/background-cabinet` + `@membrana/core` (foundation / infra) — heartbeat узла (#263).** Persist node heartbeat liveness: события `node-realtime`, presence-snapshot, валидация payload'ов. Приближает транспортный слой «узел ↔ cabinet».
+- **Инфра / CI.** Кодификация main-only branch policy (#267); фикс dev-сервера в песочнице (`BROWSER=none` против EPERM); недельная стратегия по понедельникам (`plan-week-if-monday.mjs`, тесты 121/121); актуализация `detection-planning-priorities.mjs` (yamnet = go, продуктовая магистраль форсайта выше детекционной).
+- **Документация / процесс.** Форсайт FREE-тарифа (`foresight-2026-07-06.md`, роадмап S1–S5); регистрация спринтов `partner-tutorials` (PT0–PT3) и `sandbox-link-diagnostics-night` (NB0–NB2); архивация эпиков `neural-drone-plugin`, `comms-sandbox-docs-adaptation` (CD1–CD6); insight про Telegram-доклады (adopted, after-MVP).
 
 ## 2. Привязка к стратегической цели
 
-### Текущая позиция на дорожной карте
-Проект находится на **Этапе 0–1.A (Фундамент и базовая детекция)** по WHITE_PAPER §8:
-- ✅ `audio-engine` → кадры захватываются.
-- ✅ `fft-analyzer` → спектр в реальном времени.
-- ✅ Трёхсекундный live-анализ 3 DSP (harmonic/cepstral/spectral-flux) на клиенте.
-- ✅ Trends FFT детектор (`DRONE_TIGHT`) прошёл мягкий гейт (recall 95% / FPR 30%, F1 0.844).
-- ⚠ **Hard-gate (85%/90%)** в процессе валидации на независимом пилотном корпусе (30–35 сэмплов).
+**Где мы на дорожной карте (WHITE_PAPER §8).** Формально — **Этап 1.B (Neural & Agentic эшелон, один узел)**. Прорыв суток: yamnet-детектор с F1 0.803 — лучший результат на free-v1, что де-факто снимает формулировку «Этап 2 заморожен» через free-tier нейро-канал. Многоузловые этапы (2–4: TDOA, локализация, трекинг) остаются за stage-gate.
 
-### Сделанное приближает к цели
-Спринты **PCB** и **PL** решали **инфраструктурные блокеры**:
-- Диагностика offline-проблемы (WS-жизненный цикл) позволяет итерировать детекторы в боевых условиях.
-- Presence snapshot & здоровые сопряжения ключ-устройство → стабильная база для многоузлового тестирования (Этап 2).
-- Link-state & health-ping → фундамент мониторинга ферм узлов (Этап 3–4).
+**Что приближает к цели:**
+- yamnet-детектор + плагин + prod-бенчмарк (#266/#268) — прямой вклад в **UC2 (нейро)** free-тарифа и в принцип «слияние модальностей одним контрактом» (§3.3, §4.5). Аргумент ND3 (слабая корреляция ошибок DSP/нейро) — прямое обоснование **combined UC (fusion)**.
+- heartbeat узла (#263) — ранний кирпич будущего `transport-service` (foundation), § таблицы 6.
+- журнал device-board (#269) — движение к ситуационному слою / доказательной базе (§4.6).
 
-### Мостик к Этапу 2 (TDOA, локализация, трекинг)
-**Достаточно:** наблюдения с одного узла стабильны, детекция на мягком гейте, транспорт узел ↔ сервер работает.  
-**Не хватает:**
-- `tdoa-service` (извлечение разницы времён прихода между узлами).
-- `localizer-service` (мультилатерация).
-- `tracker-service` (трекинг целей, фильтр Калмана).
-- `transport-service` (асинхронная шина событий; сейчас WS-broadcast, нужна очередь/кеш при разрывах).
+**Что нейтрально:** comms-doc адаптация (CD1–CD6), partner-tutorials, main-only policy, insight Telegram — организационно-коммуникационная полоса, не двигает детекцию/fusion, но обслуживает FREE-выпуск.
 
-### Детекция: статус и магистраль
-По `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6:
-- **Эшелон 0 (DSP/FFT) исчерпан** на free-v1: лучший результат trends `DRONE_TIGHT` = **95% recall / 30% FPR**, precision ≈ 0.76 → не покрывает hard-gate 85%/90%.
-- **Не предлагать** как основную задачу дня: повторный benchmark harmonic/cepstral/flux, unified voting, тюнинг порогов на free-v1.
-- **Магистраль качества:**
-  1. **Validated Dataset (VDR hard-gate)** — независимый пилотный корпус (30–35 сэмплов, intra-rater ≥95%), включить в `benchmark:detectors`.
-  2. **Trends + DRONE_TIGHT curated-promotion** — внедрить в template-match, переснять val.
-  3. **Эшелон 2 (нейро/zero-shot)** — CLAP / YAMNet / reasoning-детектор поверх trends (см. `INTEGRATIONS_STRATEGY.md`).
+**Что могло бы отвлечь (осознанно не берём в магистраль):** повторные DSP-калибровки на free-v1 — см. раздел 5.
 
----
+**Недостающие сервисы (пока НЕ начинать — за stage-gate 1→2):** `tdoa-service`, `localizer-service`, `tracker-service` — заморожены до прохождения hard-gate. `transport-service` как foundation формально ещё не оформлен, но частично прорастает через `background-cabinet` (heartbeat, node-realtime) — это стоит осознавать как будущую консолидацию, а не заводить новый пакет сегодня.
+
+**Детекция (эпик #84, FFT_METRICS §6):** эшелон 0 (чистый DSP/FFT) на free-v1 **исчерпан** — потолок trends `DRONE_TIGHT` 95%/30%. Дальнейший рост качества — только за счёт эшелона 2 (yamnet, уже в prod) и **fusion** (trends + yamnet на сыром confidence). «Этап 1.A / unified benchmark harmonic+cepstral+flux» магистралью **не ставим**.
+
+**Магистраль дня подчинена продуктовой магистрали форсайта:** S2 combined UC (fusion спектр+нейро + alarm-loop «ближе/дальше» по громкости) → S3 упаковка UserCases → S4 студия-download → S5 лендинг. Сегодня — вход в **S2**.
 
 ## 3. Риски и долг
 
-### Технические риски
-
-| Риск | Статус | Действие |
-|------|--------|---------|
-| **Синхронизация времени узлов для TDOA** | Блокирует Этап 2 | Требует GPS-PPS или NTP/PTP в spec узлов; пока не дефайнен контракт `TimeSyncProvider`. |
-| **Многолучёвость акустики** | Постоянный (WHITE_PAPER §9) | На Этапе 3+ при мультилатерации — GCC-PHAT + робастная медиана TDOA-оценок. |
-| **Детекция vs классификация в одной сети** | Архитектурный вопрос | Классификатор (multirotор/крыло/не-дрон) пока только trends-шаблон; нейро ← Этап 1.B. |
-| **Отсутствие validated-датасета** | Критично для hard-gate | VDR-пилот (30–35 сэмплов, ручная разметка) — зависимость для Этапа 2. |
-
-### Накопленный долг
-
-| Компонент | Где | Описание |
-|-----------|-----|---------|
-| `TimeSyncProvider` контракт | `@membrana/core` | Отсутствует; нужен перед `tdoa-service`. |
-| `transport-service` архитектура | Foundation (не реализован) | Broadcast WS → очередь/дебаунс при разрывах (PL2b heartbeat → Foundation). |
-| Template-match каталог шаблонов | `background-media` vs `packages/services/detector-*` | Где живут `DRONE_TIGHT`-шаблоны — не чётко определено; нужна миграция / договор. |
-| E2E smoke multi-node | Ручной | Сейчас только single-node bench; multi-node presence/capture/board — only CI (unit). |
-
-### Нарушения границ (по коммитам)
-
-Не видно; архитектура соблюдается. Детекторы, agenda, device-board не смешиваются. Анализ: `ARCHITECTURE.md` §1c (registry) — MembranaRegistry работает как фасад, lazy-loading держит.
-
----
+- **Долг объяснимости / выбора основного детектора.** На val два кандидата близки: yamnet (F1 0.803, FPR 36.7) vs trends `DRONE_TIGHT` (F1 0.771, FPR 43.3). Нет единой таблицы «кто основной в hard-gate, кто объяснимый бэкап» → риск неоднозначного контракта для combined UC.
+- **Fusion-контракт не зафиксирован.** ND3 предписывает fusion на **сыром confidence** yamnet (не бинарный вердикт), т.к. профили ошибок DSP/нейро слабо коррелированы. Контракта агрегации ещё нет — если сделать бинарный OR, потеряем весь смысл combined UC.
+- **Вес модели ~16 МБ в бандле клиента.** Приемлемо для офлайн-Studio, но раздувает вес free-Studio (S4 download). Долг: осознанно зафиксировать в упаковке, не тащить вслепую в лендинг.
+- **`transport-service` (foundation) не выделен как пакет.** Логика узел↔cabinet живёт в `background-cabinet` + `core/node-realtime`. Пока границы не нарушены (background-* — отдельное семейство вне графа сервисов, SERVICES.md), но при росте потребуется явное решение Структурщика, где живёт transport-контракт.
+- **Стабильность latency yamnet между прогонами** (заметка ND3) — не блокер, но для «3 с задержки до отображения» (§11) нужна воспроизводимость; отслеживать при интеграции в live.
+- **Ограничения из WHITE_PAPER (§9), релевантные сейчас:** hard-gate 85/90 на независимом пилотном корпусе (VDR-железо ~17.07) ещё не пройден — free выпускается в бете, не как валидированная детекция; alarm-loop «ближе/дальше» строится на грубой громкости, не на TDOA (синхронизация/многолучёвость — тема замороженного Этапа 2).
+- **Дрейф план↔факт (feedback 7.4/10).** Утренний канон вчера разошёлся с фактом (взяли нейро вместо DRONE_TIGHT A/B/C). Скорректировано в `detection-planning-priorities.mjs`, но риск повторного дрейфа сохраняется — план дня должен явно легализовать нейро/fusion-разворот.
 
 ## 4. План на следующий день
 
-### 4.1. Validated Dataset (VDR) hard-gate pilot
+### Задача 1 — Fusion-контракт combined UC: спектр + нейро на сыром confidence
 
-| | |
-|---|---|
-| **Цель** | Собрать независимый пилотный датасет (30–35 audio-сэмплов) с ручной разметкой (intra-rater ≥95%) и переснять `benchmark:detectors` на нём. |
-| **Пакет / слой** | Dataset / docs; не код (доступ к железу / запись). |
-| **Связь с WHITE_PAPER** | §8 Stage-gate 1→2 (обязательный шлюз перед TDOA): hard-gate 85%/90% must-pass. |
-| **Definition of Done** | <ul><li>`docs/datasets/vdr-pilot-2026-07-*/manifest.json` (30–35 сэмплов, разметка, intra-rater метрики).</li><li>`yarn benchmark:detectors` на VDR-пилоте даёт P/R/F1 для trends DRONE_TIGHT, harmonic, cepstral, spectral-flux, live-brief.</li><li>Таблица результатов в `docs/DETECTOR_BENCHMARK.md` (VDR-пилот vs free-v1 val).</li><li>Вердикт: hard-gate пройден или провалился (действие по результату).</li></ul> |
-| **Роль** | Верстальщик (сбор + нотация), Математик (разметка валидности, intra-rater). |
-| **Размер** | **L** (полевая запись, ручная разметка, кросс-проверка). |
+- **Цель.** Появляется чистый контракт слияния trends-fft (спектр) и yamnet (нейро) на **сыром confidence**, дающий combined-вердикт для UC2/S2.
+- **Пакет / слой.** `@membrana/core` (контракт типов слияния) + новый плагин/логика в `apps/client` (client). Contract-first: типы combined-наблюдения — в core; ни один analyzer-сервис не зависит от другого (SERVICES.md), слияние живёт на уровне клиента/будущего fusion, не внутри детекторов.
+- **Связь с WHITE_PAPER.** §3.3 (слияние модальностей одним контрактом), §4.4/§4.5 (fusion + классификация), Этап 1.B → мостик к combined UC форсайта (S2).
+- **Definition of Done.**
+  - В `@membrana/core` описан тип combined-результата (сырой confidence обоих источников + агрегированная оценка, без бинарного OR).
+  - Клиентская логика слияния покрыта unit-тестами на мок-входах (согласованный / расходящийся вердикты).
+  - Проверка `check:boundaries` зелёная (детекторы друг от друга не зависят).
+  - Обновлён `DETECTOR_BENCHMARK.md`/заметка: как combined-точка соотносится с одиночными yamnet и trends.
+- **Роль.** Математик (логика слияния) + Структурщик (границы, где живёт контракт).
+- **Размер.** M.
 
----
+### Задача 2 — Единая таблица «yamnet vs trends DRONE_TIGHT» на val (долг объяснимости)
 
-### 4.2. Trends DRONE_TIGHT curated-promotion
+- **Цель.** Появляется одна сводная таблица на held-out `val`, фиксирующая, кто **основной** детектор для hard-gate и кто **объяснимый бэкап**.
+- **Пакет / слой.** infra (скрипт `benchmark:detectors` / отчёт) + `docs/DETECTOR_BENCHMARK.md`. Без переобучения, без нового прогона DSP — только сопоставление уже полученных рабочих точек.
+- **Связь с WHITE_PAPER.** §8 stage-gate 1→2, §11 (доля ложных тревог <5% как ориентир), принцип «объяснимость в журнале».
+- **Definition of Done.**
+  - Таблица содержит P / R / FPR / F1 обоих кандидатов на одном val-срезе и рабочих точках.
+  - Явно зафиксировано: yamnet — основной кандидат hard-gate, trends `DRONE_TIGHT` — объяснимый бэкап.
+  - Документ не запускает новый DSP-тюнинг free-v1 (соответствие FFT_METRICS §6).
+- **Роль.** Математик (метрики) + Teamlead (LGTM выбора основного детектора).
+- **Размер.** S.
 
-| | |
-|---|---|
-| **Цель** | Перевести `DRONE_TIGHT` FFT-шаблон из экспериментального статуса в prod-готовый, опубликовать в `background-media` каталоге как `trends-drone-tight-curated-v1`. |
-| **Пакет / слой** | `@membrana/trends-detector-service` (logic), `background-media` (catalog + versioning). |
-| **Связь с WHITE_PAPER** | §8 Этап 1.A DSP-эшелон финализация: trends — единственный FFT-детектор, прошедший мягкий гейт. |
-| **Definition of Done** | <ul><li>Шаблон `DRONE_TIGHT` из эпика #84 экспортирован в JSON-схему (спектральные пороги + временные признаки).</li><li>Версионирование в `background-media`: `templates/drone-tight-curated-v1.json` (метаданные: аттестация на free-v1, recall/FPR, дата).</li><li>CLI-утилита `yarn trends:curate --template drone-tight-curated-v1` переснимает bench на любом датасете с этим шаблоном.</li><li>Документация в `packages/services/trends-detector/README.md` (как использовать prod-шаблон, как кастомизировать для других сценариев).</li></ul> |
-| **Роль** | Структурщик (контракт шаблона, версионирование), Математик (валидация параметров). |
-| **Размер** | **M** (рефакторинг detection scoring, JSON-экспорт, вспомогательные скрипты). |
+### Задача 3 — Alarm-loop «ближе/дальше» по громкости (грубый индикатор)
 
----
+- **Цель.** Появляется грубый alarm-loop, сигнализирующий изменение близости цели по громкости (RMS-тренд), как часть combined UC.
+- **Пакет / слой.** `apps/client` (client-плагин) поверх `@membrana/fft-analyzer-service` (RMS/тренд) и engine; аудио строго через `audio-engine` (ARCHITECTURE §1b).
+- **Связь с WHITE_PAPER.** §4 (ситуационный слой, ранний алерт), форсайт S2 (alarm-loop). Сознательно **не** TDOA — Этап 2 заморожен; это индикатор, не локализация.
+- **Definition of Done.**
+  - Плагин показывает состояние «приближается / удаляется / стабильно» на основе RMS-тренда live.
+  - Pure-логика классификации тренда покрыта unit-тестами на синтетических рядах.
+  - Регистрация через `MembranaRegistry` (lazy, ARCHITECTURE §1c); teardown корректный.
+  - В UI явно помечено, что это грубый индикатор громкости, не координата.
+- **Роль.** Музыкант (DSP-тренд) + Верстальщик (UI индикатора).
+- **Размер.** M.
 
-### 4.3. TimeSyncProvider контракт в @membrana/core
+### Задача 4 — Скелет упаковки UserCases в device-board (вход в S3)
 
-| | |
-|---|---|
-| **Цель** | Определить интерфейс синхронизации времени между узлом и сервером (GPS-PPS, NTP/PTP, heartbeat-калибровка), потребуемый для TDOA-сервиса. |
-| **Пакет / слой** | `@membrana/core` (types, contracts; не реализация). |
-| **Связь с WHITE_PAPER** | §5.2 TDOA и мультилатерация: точность зависит от синхронизации времени (целевой джиттер — единицы мс). |
-| **Definition of Done** | <ul><li>Тип `TimeSyncProvider` в `packages/core/src/contracts/time-sync/` с методами `getCurrentSyncedTime()`, `getSyncOffset()`, `getJitterMs()`.</li><li>Версионированные контракты: `TimeSyncMethod` = 'gps-pps' \| 'ntp' \| 'ptp' \| 'heartbeat-calibration'.</li><li>Unit-тесты: mock TimeSyncProvider, оценка offsets при различных методах.</li><li>Документ `packages/core/TIME_SYNC_SPEC.md` (требования для каждого метода, типовые ошибки).</li></ul> |
-| **Роль** | Структурщик (контракт + иерархия), Математик (модель ошибок, джиттер). |
-| **Размер** | **M** (контракт, документация, unit-тесты). |
+- **Цель.** Появляется каркас 3+1 UserCase (спектр / нейро / библиотека / combined) как сценарии device-board — заготовка под упаковку free-тарифа.
+- **Пакет / слой.** `@membrana/device-board` (сценарии/роли) + `apps/client`. По ARCHITECTURE — device-board зависит только от core.
+- **Связь с WHITE_PAPER.** §4.6 ситуационный слой, §6 (device-board = сценарии полей/узлов/ролей), форсайт S3.
+- **Definition of Done.**
+  - В device-board заведены заготовки 3+1 UC (без полной реализации combined — ссылка на Задачу 1/3).
+  - Сценарии проходят существующие scenario-тесты; журнал (#269) отражает их запуск.
+  - Границы пакетов зелёные (`check:boundaries`).
+- **Роль.** Структурщик (сценарии/границы) + Верстальщик (UI карточек UC).
+- **Размер.** M.
 
----
+### Задача 5 — Ночной пробник устойчивости связи узел↔cabinet (NB0, поддерживающая)
 
-### 4.4. Transport-service скелет (foundation)
-
-| | |
-|---|---|
-| **Цель** | Создать заготовку `@membrana/transport-service` с поддержкой асинхронной шины событий (очередь при разрывах, дебаунс, replay на переподключении). |
-| **Пакет / слой** | `packages/services/transport/` (foundation; не зависит от других analyzer-сервисов). |
-| **Связь с WHITE_PAPER** | §4.4 Слияние данных (fusion): transport отделяет сенсорные узлы от фьюжн-слоя, буферизует потерянные события. |
-| **Definition of Done** | <ul><li>Базовые типы в `packages/services/transport/src/types.ts`: `TransportEvent`, `EventQueue`, `ReplayStrategy`.</li><li>Интерфейс `TransportService` (singleton): `enqueueEvent()`, `subscribeToEvents()`, `flush()`, `getQueueLength()`.</li><li>Реализация in-memory queue с ограничением по размеру (деградация — drop-old при переполнении).</li><li>Тесты: очередь, дебаунс переподключения, replay, идемпотентность.</li><li>README: архитектура, как подключить к fusion (на этапе 2).</li></ul> |
-| **Роль** | Структурщик (интерфейс, иерархия пакета), Математик (стратегия replay, оценка задержек). |
-| **Размер** | **M** (контракт, реализация памяти, unit-тесты). |
-
----
-
-### 4.5. Диагностический гайд: live-анализ 3 DSP на клиенте
-
-| | |
-|---|---|
-| **Цель** | Обновить `PRESENCE_OFFLINE_DIAGNOSTIC.md` с пошаговой инструкцией: как использовать live 3-DSP brief (`mic-live-drone-analysis`) для быстрой проверки, что микрофон слышит дрон-подобный сигнал (диагностика перед Этапом 2). |
-| **Пакет / слой** | Docs / actions; клиент (`apps/client/src/plugins/microphone-stream-viz/`). |
-| **Связь с WHITE_PAPER** | §4.2 Сенсорный узел: локальная автономность, буферизация для доказательной базы. |
-| **Definition of Done** | <ul><li>Раздел `PRESENCE_OFFLINE_DIAGNOSTIC.md` "§6 Live DSP Brief как диагностика": когда он срабатывает, когда молчит (ложные отрицания / положительные).</li><li>Плагин `mic-live-drone-analysis` в продакшене модуля «Микрофон» (кнопка «Запустить 3-сек анализ» → вывод: isDrone + harmonic/cepstral/spectral-flux confidence).</li><li>Примеры логов и интерпретация для операторов (фон не-дрон, слабый дрон, сильный дрон).</li></ul> |
-| **Роль** | Верстальщик (UI плагина), Музыкант (гайд, примеры). |
-| **Размер** | **S** (UI finalize + doc update). |
-
----
-
-### 4.6. Эпик-промпт INTEGRATIONS_STRATEGY уточнение (Этап 1.B подготовка)
-
-| | |
-|---|---|
-| **Цель** | Подготовить детальный задачник по интеграции zero-shot детекторов (CLAP, YAMNet) в качестве Этапа 1.B (после hard-gate VDR). |
-| **Пакет / слой** | `docs/prompts/` (архитектурный разбор, не реализация). |
-| **Связь с WHITE_PAPER** | §8 Этап 1.B Neural & Agentic эшелон: `@membrana/clap-detector-service`, `@membrana/yamnet-detector-service`. |
-| **Definition of Done** | <ul><li>Документ `docs/prompts/STAGE_1B_NEURAL_ROADMAP.md` (контракты детекторов, какие inference-движки, потребление VRAM, батчинг).</li><li>Таблица zero-shot моделей: CLAP (Laion), YAMNet (Google), их лицензии и требования к железу (CPU vs GPU vs Wasm).</li><li>Архитектурный выбор: где живут веса моделей (client assets vs background-media), как streaming vs batching.</li><li>Дефолтные параметры для free-v1 датасета (score threshold, confidence calibration).</li></ul> |
-| **Роль** | Структурщик (архитектура, разбор вариантов), Математик (калибровка + бенчмарк). |
-| **Размер** | **M** (исследование, документирование, примеры конфигов). |
-
----
+- **Цель.** Появляется пробник флапа связи (переподключение вкладки «Узлы», #269) и видимый deviceId сопряжения (NB1) без вмешательства в prod.
+- **Пакет / слой.** `packages/background-cabinet` + `apps/client` (диагностика). Регламент NIGHT_SPRINT (`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`).
+- **Связь с WHITE_PAPER.** §3.2 локальная автономность (буферизация/переподключение), будущий `transport-service`.
+- **Definition of Done.**
+  - Пробник NB0 фиксирует поведение связи из песочницы (лог/отчёт).
+  - NB1: deviceId сопряжения виден в UI.
+  - NB2 (флап) — фикс только если тривиален; иначе — оформлен как находка.
+  - Никаких изменений prod-контрактов.
+- **Роль.** Структурщик (транспорт) + Верстальщик (deviceId в UI).
+- **Размер.** S.
 
 ## 5. Что НЕ делаем на этом горизонте
 
-### 5.1. **Не** повторять unified benchmark harmonic/cepstral/spectral-flux на free-v1
-- **Причина:** эшелон 0 (FFT) физически исчерпан (см. `FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6). Лучший результат — trends DRONE_TIGHT (95%/30%). Одиночные DSP-детекторы дают FPR 88–100%.
-- **Альтернатива:** VDR hard-gate пилот на независимом датасете (4.1) или переход на Этап 1.B (нейро).
-
-### 5.2. **Не** начинать Этап 2 (TDOA, локализация, трекинг) без hard-gate
-- **Причина:** WHITE_PAPER §8 stage-gate 1→2 — обязательный шлюз: детекция на одном узле must-pass 85%/90%.
-- **Текущий статус:** trends DRONE_TIGHT = 95% recall / 30% FPR (мягкий гейт), но precision ≈ 0.76 < 0.85. Ждём VDR hard-gate.
-- **Когда распечатаем TDOA:** только после hard-gate LGTM Teamlead'а.
-
-### 5.3. **Не** писать нейросетевые детекторы без контракта `@membrana/detector-base`
-- **Причина:** ARCHITECTURE.md §1e требует единого контракта `DroneDetector`, иначе fusion не сможет их агрегировать.
-- **Подготовка:** контракт уже есть (2024); Этап 1.B ждёт INTEGRATIONS_STRATEGY (4.6).
-
-### 5.4. **Не** расширять presence/pairing логику без консилиума
-- **Причина:** PCB + PL спринты закончились; дальше — multi-node (PCB-D2, отложено). Новые фичи требуют согласования с transport-service (4.4) и health-ping (уже реализован).
-
-### 5.5. **Не** трогать архитектурные границы пакетов
-- Детекторы **не зависят** друг от друга (только `detector-base` и `audio-engine`).
-- Новые analyzer-сервисы **не зависят** от других analyzer-сервисов (только foundation).
-- Любое нарушение → Teamlead отклоняет PR (см. ARCHITECTURE.md §1).
-
----
+- **Не** запускаем повторный unified benchmark harmonic / cepstral / spectral-flux на free-v1 без нового датасета, алгоритма или fusion-стратегии (FFT_METRICS §6: эшелон 0 исчерпан, DSP по одиночке — no-go/FPR 88–100%). Допустима только пересборка бенчмарка в рамках **fusion trends+yamnet** (Задача 1), не «ещё раз прогнать пороги».
+- **Не** начинаем `tdoa-service` / `localizer-service` / `tracker-service` — многоузловые Этапы 2–4 заморожены до прохождения hard-gate 85/90 (WHITE_PAPER §8). Alarm-loop заменяет локализацию грубым индикатором громкости.
+- **Не** переизобретаем yamnet-детектор/плагин/бенчмарк — они реализованы и в prod (#266/#268); не предлагаем «разведку эшелона 2».
+- **Не** выделяем сегодня отдельный foundation `transport-service` как пакет — транспорт пока прорастает через `background-cabinet`; консолидация — отдельное решение Структурщика/Teamlead после накопления контрактов.
+- **Не** гоним S4 (студия-download) и S5 (лендинг) вперёд S2/S3 — крит.путь форсайта S1→S2→S3→S5, S4 параллельно; сначала combined UC и упаковка.
 
 ## 6. Проверки в конце периода
 
-### 6.1. VDR hard-gate dataset готов
-- ✅ В `docs/datasets/vdr-pilot-2026-07-*/` находится manifest.json с 30–35 сэмплами, разметкой, intra-rater ≥95%.
-- ✅ `yarn benchmark:detectors --dataset vdr-pilot` проходит green.
-
-### 6.2. Trends DRONE_TIGHT в prod-каталоге
-- ✅ Шаблон экспортирован в `background-media/templates/drone-tight-curated-v1.json`.
-- ✅ CLI-утилита работает: `yarn trends:curate --template drone-tight-curated-v1`.
-
-### 6.3. TimeSyncProvider контракт в core
-- ✅ Типы в `packages/core/src/contracts/time-sync/index.ts` (экспортируются в публичный API).
-- ✅ Unit-тесты в `*.test.ts` (mock provider, offset-оценка).
-- ✅ Документ `packages/core/TIME_SYNC_SPEC.md` прочитан Teamlead'ом (LGTM).
-
-### 6.4. Transport-service скелет
-- ✅ Пакет создан в `packages/services/transport/` с vite.config.ts, tsconfig.json, package.json.
-- ✅ Интерфейс `TransportService` в `src/service.ts`; основной контракт в `src/types.ts` экспортируется из `src/index.ts`.
-- ✅ Unit-тесты проходят (очередь, replay, дебаунс).
-
-### 6.5. Диагностический гайд live DSP
-- ✅ `PRESENCE_OFFLINE_DIAGNOSTIC.md` §6 написан и проверен на примерах из live-brief.
-- ✅ Плагин `mic-live-drone-analysis` включён в device-board (кнопка в UI).
-
-### 6.6. INTEGRATIONS_STRATEGY уточнено для Этапа 1.B
-- ✅ Промпт `docs/prompts/STAGE_1B_NEURAL_ROADMAP.md` готов (таблица моделей, inference-опции, параметры).
-- ✅ Зарегистрирован в `docs/tasks/registry.json` как вход в эпик 1.B.
-
----
-
-## Заключение
-
-На следующий день фокус переходит с **инфраструктурной стабилизации** (PCB, PL) на **закрытие Этапа 1.A** (детекция на одном узле) и **подготовку Этапа 2** (многоузловая триангуляция).
-
-**Критический путь:**
-1. VDR hard-gate (независимый датасет) — решает, идём ли дальше в TDOA или в нейро.
-2. Trends DRONE_TIGHT prodification — утверждаем стандартный FFT-детектор.
-3. Контракты (TimeSyncProvider, Transport) — раскрепощают Этап 2.
-4. Диагностические гайды — вовлекают операторов в тестирование ферм.
-
-**Не предлагаем магистралью:** повторный benchmark harmonic/cepstral, single-node stage-gate через несколько DSP, расширение Этапа 1.A без hard-gate.
+- **Fusion-контракт (Задача 1):** типы combined в `@membrana/core`, unit-тесты слияния зелёные, `check:boundaries` зелёный (детекторы не зависят друг от друга), combined-точка отражена в `DETECTOR_BENCHMARK.md`.
+- **Долг объяснимости (Задача 2):** одна таблица на val с yamnet и trends `DRONE_TIGHT`, зафиксирован основной/бэкап детектор, LGTM Teamlead — без нового DSP-тюнинга free-v1.
+- **Alarm-loop (Задача 3):** плагин демонстрирует «ближе/дальше/стабильно» на live-стриме, тренд-логика покрыта тестами, регистрация/teardown корректны.
+- **Упаковка UC (Задача 4):** 3+1 UC заведены в device-board, scenario-тесты и журнал (#269) отражают запуск, границы пакетов зелёные.
+- **Ночной пробник (Задача 5):** отчёт NB0 по устойчивости связи + видимый deviceId (NB1), prod не тронут.
+- **Общая согласованность:** нигде в дневных артефактах магистралью не стоит «Этап 1.A / unified DSP benchmark»; продуктовая магистраль (S2 combined UC) явно ведущая, детекция — поддерживающая полоса; план↔факт сходятся (снятие дрейфа 7.4/10).
