@@ -11768,6 +11768,130 @@
       "supportPersonas": [
         "rodchenko"
       ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "capture-scenario-ux",
+      "title": "Epic: Захват, сценарии и связь — UX-контур узел↔кабинет (CX1–CX5)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "device-board-capture-tariff-v2"
+      ],
+      "notes": "Требования владельца 2026-07-07 с живого прода (после деплоя bc6daa61). CX2 — регрессия (навигация кабинета роняет захват) — первый PR. CX4 строго после CX3. CX3 поглощает db-scenario-selector (wire-заготовки CT1 готовы). Issue #271.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin",
+        "dynin",
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-1-node-card-device-id",
+      "title": "CX1: карточка узла в кабинете — «связан с устройством {deviceId}» (полный id, копирование, зеркально NB1)",
+      "size": "S",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "Данные уже есть: NodeView.device.mediaDeviceId. Порядок в карточке: label → node.id → device → online/offline.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-2-journal-nav-release",
+      "title": "CX2: навигация кабинета (Журнал) не роняет захват — runtime на уровень shell; release любой причины отражается на клиенте",
+      "size": "M",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "Подозреваемый: useCabinetNodeRuntime живёт в NodesPage, размонтирование рвёт WS-сессию кабинета → серверный release. Диагностику зафиксировать в PR.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-3-scenario-list",
+      "title": "CX3: список сценариев — клиент объявляет при захвате, сервер хранит выбранный (один всегда выбран), dropdown в кабинете",
+      "size": "M",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "Contract-first в core (DeviceScenarioListPayload). selectScenario уже в whitelist v2; wire-заготовки CT1. Поглощает db-scenario-selector — при закрытии заархивировать её с notes.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-4-board-lock",
+      "title": "CX4: борд-лок на клиенте под захватом — открытие с выбранным сценарием сервера, выход заблокирован до release, emergency stop всегда доступен",
+      "size": "M",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [
+        "cx-3-scenario-list"
+      ],
+      "notes": "Расширяет PCB5 force-open. Инвариант канона §3.3: блокируем навигацию, не звук.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
+      "githubIssue": 271,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "cx-5-header-link-warning",
+      "title": "CX5: warning в шапке клиента «нет связи с сервером» при stay-linked; авто-снятие на реконнекте",
+      "size": "S",
+      "parentEpic": "capture-scenario-ux",
+      "dependsOn": [],
+      "notes": "AppHeader + nodeConnectionStore; не дублирует футер NB1. Конечный автомат переходов баннера — pure + тесты.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov"
+      ]
     }
   ]
 }
