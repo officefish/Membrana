@@ -11,6 +11,7 @@ import { CaptureAlertToasts } from './components/CaptureAlertToasts';
 import { NodeConnectionShell } from './components/NodeConnectionShell';
 import { renderPluginSidebarDetails } from './pluginSidebarDetails';
 import { createScenarioRuntimeHost } from './modules/device-board/createScenarioRuntimeHost';
+import { getDeviceBoardRuntimeController } from './lib/deviceBoardRuntimeController';
 import { useDeviceBoardClientBindings } from './modules/device-board/useDeviceBoardClientBindings';
 import { useServerFirstFieldUi } from './modules/device-board/useServerFirstBoardState';
 import { useDeviceLive } from './modules/device-board/useDeviceLive';
@@ -22,6 +23,16 @@ function AppContentInner() {
   const runtimeHost = useMemo(() => createScenarioRuntimeHost(), []);
   const { persistAdapter, deviceId } = useDeviceBoardClientBindings();
   const connectionMode = useNodeConnectionStore((s) => s.mode);
+  // CSR1: под связью борд делит единый runtime с realtime-мостом (на общем host) —
+  // кнопки борда и команды кабинета крутят один инстанс, состояние и журнал
+  // двунаправленно синхронизируются с сервером. Без связи — борд создаёт свой.
+  const externalRuntime = useMemo(
+    () =>
+      connectionMode === 'paired'
+        ? getDeviceBoardRuntimeController().acquireRuntime(runtimeHost)
+        : null,
+    [connectionMode, runtimeHost],
+  );
   const deviceLive = useDeviceLive();
   const { serverFirstState, showRunControls: serverFirstShowRunControls } =
     useServerFirstFieldUi(connectionMode === 'paired' ? deviceId : null);
@@ -44,6 +55,7 @@ function AppContentInner() {
           <div className="min-h-0 flex-1">
             <DeviceBoardShell
               runtimeHost={runtimeHost}
+              externalRuntime={externalRuntime}
               persistAdapter={persistAdapter}
               loadUserCaseDocument={loadUserCaseDocument}
               deviceLive={connectionMode === 'paired' ? deviceLive : undefined}

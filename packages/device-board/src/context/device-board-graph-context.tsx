@@ -438,6 +438,14 @@ export interface DeviceBoardGraphProviderProps {
   readonly children: React.ReactNode;
   readonly deviceKind?: DeviceKind;
   readonly runtimeHost?: ScenarioRuntimeHost;
+  /**
+   * CSR1 (capture-shared-runtime): внешний runtime, которым борд ДЕЛИТСЯ с
+   * realtime-мостом клиента (единый источник истины под связью). Когда задан —
+   * борд использует его вместо создания своего `ScenarioRuntime` и НЕ
+   * останавливает/уничтожает при размонтировании (жизненный цикл — у владельца,
+   * клиентского контроллера). Не задан — борд создаёт собственный (автономно).
+   */
+  readonly externalRuntime?: ScenarioRuntime | null;
   readonly persistAdapter?: DeviceBoardPersistAdapter;
   readonly initialHydratedState?: HydratedBoardState;
   /** Online-presence выбранного устройства; `undefined` — не проверять (автономный клиент). */
@@ -459,6 +467,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   children,
   deviceKind: deviceKindProp = 'microphone',
   runtimeHost,
+  externalRuntime = null,
   persistAdapter,
   initialHydratedState,
   deviceLive,
@@ -627,6 +636,20 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
   }, [runtimeHost]);
 
   useEffect(() => {
+    // CSR1: под связью борд делит единый runtime с realtime-мостом (владелец —
+    // клиентский контроллер). Не создаём и не уничтожаем его: подписываемся на
+    // состояние и seed'им текущее (команда кабинета, полученная до монтирования
+    // борда, уже отражена). Останов на размонтировании НЕ делаем — сценарий
+    // может продолжать идти headless (устройство пишет журнал на сервер).
+    if (externalRuntime !== null && externalRuntime !== undefined) {
+      runtimeRef.current = externalRuntime;
+      setRuntimeState(externalRuntime.getState());
+      const unsubscribe = externalRuntime.subscribe(setRuntimeState);
+      return () => {
+        unsubscribe();
+        runtimeRef.current = null;
+      };
+    }
     if (runtimeHost === undefined) {
       runtimeRef.current = null;
       setRuntimeState(createIdleScenarioRuntimeState());
@@ -640,7 +663,7 @@ export const DeviceBoardGraphProvider: React.FC<DeviceBoardGraphProviderProps> =
       runtime.stop('system');
       runtimeRef.current = null;
     };
-  }, [runtimeHost]);
+  }, [externalRuntime, runtimeHost]);
 
   useEffect(() => {
     if (runtimeHost?.watchConnection === undefined) {
