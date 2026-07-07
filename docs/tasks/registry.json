@@ -12073,10 +12073,10 @@
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
       "githubIssue": 281,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #283 squash-merged 2026-07-07; чистая матрица прав поля + видимый пауза-блок под захватом; emergency stop §3.3",
       "id": "csr-2-capture-button-matrix",
       "title": "CSR2: матрица кнопок под захватом — работает→только Stop, стоп+захват→Start, пауза заблокирована; emergency stop всегда",
       "size": "M",
@@ -12089,7 +12089,8 @@
       "supportPersonas": [
         "dynin",
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
