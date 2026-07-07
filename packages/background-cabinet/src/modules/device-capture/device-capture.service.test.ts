@@ -167,16 +167,77 @@ describe('DeviceCaptureService', () => {
     expect(nodeRealtime.sendToNode).not.toHaveBeenCalled();
   });
 
-  it('release rejects foreign session capture', async () => {
-    const { service, prisma } = buildService();
+  // CX2: release — уровень владельца. Захват продлевается heartbeat'ом бессрочно,
+  // и проверка sessionId делала захват мёртвой сессии неотпускаемым (вечный 403).
+  it('release succeeds for another session of the same owner (deadlock fix)', async () => {
+    const { service, prisma, nodeRealtime, registry } = buildService();
     mockOwnedNode(prisma);
+    registry.set(mediaDeviceId, {
+      membraneId,
+      nodeId,
+      sessionId: 'other-session',
+      mode: 'soft',
+      expiresAt: new Date(Date.now() + DEVICE_CAPTURE_TTL_MS),
+    });
     vi.mocked(prisma.nodeDeviceCapture.findUnique).mockResolvedValue(
       captureRow({ sessionId: 'other-session' }) as never,
     );
 
+    const result = await service.release(userId, sessionId, nodeId);
+
+    expect(result.released).toBe(true);
+    expect(registry.get(mediaDeviceId)).toBeNull();
+    expect(nodeRealtime.broadcastBoardEnvelope).toHaveBeenCalledWith(
+      membraneId,
+      mediaDeviceId,
+      expect.objectContaining({
+        type: 'board.release',
+        payload: expect.objectContaining({ reason: 'operator', sessionId: 'other-session' }),
+      }),
+    );
+  });
+
+  it('release still rejects node of another user', async () => {
+    const { service, prisma } = buildService();
+    vi.mocked(prisma.node.findUnique).mockResolvedValue({
+      id: nodeId,
+      membraneId,
+      membrane: { userId: 'other-user' },
+      device: { mediaDeviceId },
+    } as never);
+
     await expect(service.release(userId, sessionId, nodeId)).rejects.toBeInstanceOf(
       ForbiddenException,
     );
+  });
+
+  // CX2: bootstrap состояния кабинета — снапшот активных захватов владельца.
+  it('listForUser returns active captures scoped to the owner', async () => {
+    const { service, prisma } = buildService();
+    const row = captureRow();
+    vi.mocked(prisma.nodeDeviceCapture.findMany).mockResolvedValue([row] as never);
+
+    const result = await service.listForUser(userId);
+
+    expect(prisma.nodeDeviceCapture.findMany).toHaveBeenCalledWith({
+      where: { membrane: { userId }, expiresAt: { gt: expect.any(Date) } },
+    });
+    expect(result.captures).toEqual([
+      {
+        deviceId: mediaDeviceId,
+        mode: 'soft',
+        sessionId,
+        acquiredAt: row.acquiredAt.toISOString(),
+        expiresAt: row.expiresAt.toISOString(),
+      },
+    ]);
+  });
+
+  it('listForUser returns empty list when nothing is captured', async () => {
+    const { service, prisma } = buildService();
+    vi.mocked(prisma.nodeDeviceCapture.findMany).mockResolvedValue([] as never);
+
+    await expect(service.listForUser(userId)).resolves.toEqual({ captures: [] });
   });
 
   it('heartbeatSweep renews live captures with board.heartbeat broadcast', async () => {

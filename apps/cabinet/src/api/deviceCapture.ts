@@ -36,6 +36,16 @@ async function parseError(res: Response): Promise<string> {
   return res.statusText || 'Request failed';
 }
 
+/**
+ * CX2: снапшот активных захватов мембраны — авторитетный bootstrap состояния
+ * (кабинет не хранит захваты между размонтированиями разделов).
+ */
+export async function fetchCaptures(): Promise<{ captures: DeviceCaptureView[] }> {
+  const res = await authFetch('/v1/captures');
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as { captures: DeviceCaptureView[] };
+}
+
 /** Захватить устройство узла (двухшаговая модель: сначала захват, потом run/stop). */
 export async function captureDevice(
   nodeId: string,

@@ -165,9 +165,16 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
     return { capture };
   }
 
+  /**
+   * CX2: release — на уровне владельца, БЕЗ проверки сессии-держателя.
+   * Захват продлевается heartbeatSweep бессрочно; если держащая сессия умерла
+   * (перелогин кабинета), проверка sessionId делала захват неотпускаемым —
+   * владелец получал 403 навсегда. Владение узлом проверяет loadOwnedNode;
+   * конфликт двух живых сессий остаётся только на capture().
+   */
   async release(
     userId: string,
-    sessionId: string,
+    _sessionId: string,
     nodeId: string,
   ): Promise<{ released: true }> {
     const node = await this.loadOwnedNode(userId, nodeId);
@@ -184,15 +191,26 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
       this.broadcastRelease(node.membraneId, mediaDeviceId, null, 'operator');
       return { released: true };
     }
-    if (existing.sessionId !== sessionId) {
-      throw new ForbiddenException('Device is captured by another cabinet session');
-    }
 
     await this.prisma.nodeDeviceCapture.delete({ where: { id: existing.id } });
     this.registry.delete(mediaDeviceId);
     // Release = отпускание управления, НЕ стоп играющего сценария (канон §3).
     this.broadcastRelease(node.membraneId, mediaDeviceId, existing.sessionId, 'operator');
     return { released: true };
+  }
+
+  /**
+   * CX2: активные захваты мембран владельца — bootstrap состояния кабинета.
+   * Кабинет забывал захваты при перемонтировании раздела (стейт жил в React),
+   * показывая «Захватить» при живом захвате на сервере; снапшот делает сервер
+   * единственным источником истины (как presence-снапшот PL1).
+   */
+  async listForUser(userId: string): Promise<{ captures: DeviceCaptureView[] }> {
+    const now = new Date();
+    const rows = (await this.prisma.nodeDeviceCapture.findMany({
+      where: { membrane: { userId }, expiresAt: { gt: now } },
+    })) as CaptureRow[];
+    return { captures: rows.map(serializeCapture) };
   }
 
   /**
