@@ -81,6 +81,18 @@ function resolveCaptureForDevice(
 }
 
 /**
+ * CX4: пока устройство захвачено кабинетом, полевой оператор заперт в борде —
+ * выход разблокируется на release (канон: блокируем навигацию, НЕ звук —
+ * emergency stop §3.3 работает всегда). Кабинетной перспективы не касается.
+ */
+export function isBoardExitLocked(
+  flags: ServerFirstFlags | null,
+  perspective: 'field' | 'cabinet',
+): boolean {
+  return perspective === 'field' && flags !== null && flags.capturedByCabinet;
+}
+
+/**
  * Единый источник server-first флагов для shell и runtime gating.
  * Pan/zoom не блокируются — только структура (isSessionReadOnly).
  *

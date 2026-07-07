@@ -34,7 +34,22 @@ function forceOpenDeviceBoard(): boolean {
 
 let messageUnsub: (() => void) | null = null;
 let connectionUnsub: (() => void) | null = null;
+let moduleGuardUnsub: (() => void) | null = null;
 let captureTtlTimer: ReturnType<typeof setTimeout> | null = null;
+
+/**
+ * CX4: пока capture активен, оператор заперт в device-board — уход на другой
+ * модуль немедленно возвращается назад (страж на agenda-сторе, покрывает все
+ * пути переключения). Разблокировка — сама собой на release (capture === null).
+ * Звук не блокируется: emergency stop внутри борда доступен всегда (§3.3).
+ */
+function guardModuleSelection(): void {
+  if (useServerFirstStore.getState().capture === null) return;
+  const store = useMembranaStore.getState();
+  if (store.selectedModuleId === DEVICE_BOARD_MODULE_ID) return;
+  store.selectModule(DEVICE_BOARD_MODULE_ID);
+  writeElectronShellLog('info', '[capture] board exit blocked (module guard)');
+}
 
 function clearCaptureTtlTimer(): void {
   if (captureTtlTimer !== null) {
@@ -180,6 +195,8 @@ export function startBoardLeaseBridge(): void {
   connectionUnsub = client.subscribeState((connectionState) => {
     useServerFirstStore.getState().setRealtimeConnected(connectionState === 'connected');
   });
+  // CX4: борд-лок — страж срабатывает на любую смену выбранного модуля.
+  moduleGuardUnsub = useMembranaStore.subscribe(guardModuleSelection);
 }
 
 export function stopBoardLeaseBridge(): void {
@@ -187,6 +204,8 @@ export function stopBoardLeaseBridge(): void {
   messageUnsub = null;
   connectionUnsub?.();
   connectionUnsub = null;
+  moduleGuardUnsub?.();
+  moduleGuardUnsub = null;
   clearCaptureTtlTimer();
   useServerFirstStore.getState().reset();
 }
@@ -201,4 +220,9 @@ export function applyBoardEnvelopeForTests(
   localDeviceId: string | null,
 ): void {
   applyBoardEnvelope(envelope, localDeviceId);
+}
+
+/** @internal unit tests — CX4 module guard без живой подписки agenda. */
+export function guardModuleSelectionForTests(): void {
+  guardModuleSelection();
 }

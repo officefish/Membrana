@@ -8,6 +8,8 @@ import {
   type DeviceBoardWorkspaceListItem,
 } from '@membrana/device-board';
 
+import { useServerFirstStore } from '@/stores/serverFirstStore';
+
 import { useDeviceBoardClientBindings } from './useDeviceBoardClientBindings.js';
 import { formatWorkspaceQuotaMessage } from './workspace-tariff.js';
 import { isWorkspacePersistConflictError } from './workspace-persist-conflict.js';
@@ -115,6 +117,12 @@ export const DeviceBoardLauncher: React.FC<{
   const maxSlots = workspaceHost.maxUserWorkspaces;
   const atQuota = workspaces.length >= maxSlots;
 
+  // CX4: под захватом борд открывается сам — с выбранным на сервере сценарием
+  // (selectScenario кабинета / нормализованный выбор объявления CX3).
+  const capture = useServerFirstStore((s) => s.capture);
+  const selectedScenarioId = useServerFirstStore((s) => s.selectedScenarioId);
+  const autoOpenedRef = useRef<string | null>(null);
+
   const openBoard = useCallback(
     async (target: LauncherSelection): Promise<void> => {
       await run('Открываем доску…', async () => {
@@ -143,6 +151,24 @@ export const DeviceBoardLauncher: React.FC<{
     },
     [enterBoardMode, run, workspaceHost],
   );
+
+  useEffect(() => {
+    if (capture === null) {
+      autoOpenedRef.current = null;
+      return;
+    }
+    if (isBoardMode) return;
+    const target =
+      workspaces.find((workspace) => workspace.workspaceId === selectedScenarioId) ??
+      workspaces[0];
+    // Нет пользовательских сценариев — остаёмся на launcher (кабинет управляет
+    // сохранённым сценарием устройства, борд открывать не с чем).
+    if (target === undefined) return;
+    const openKey = `${capture.sessionId}:${target.workspaceId}`;
+    if (autoOpenedRef.current === openKey) return;
+    autoOpenedRef.current = openKey;
+    void openBoard({ kind: 'user-edit', workspaceId: target.workspaceId, title: target.title });
+  }, [capture, isBoardMode, openBoard, selectedScenarioId, workspaces]);
 
   const handleCreateWorkspace = useCallback(async (): Promise<void> => {
     await run('Создаём сценарий…', async () => {
