@@ -12024,6 +12024,92 @@
         "dynin"
       ],
       "githubIssueClosedAt": null
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
+      "githubIssue": 281,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "capture-shared-runtime",
+      "title": "Epic: Общий контроль сценария под захватом — единый runtime клиента (CSR1–CSR3)",
+      "size": "L",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "capture-scenario-ux"
+      ],
+      "notes": "Владелец 2026-07-07: кнопки play/pause/stop не синхронизированы с сервером. КОРЕНЬ (по коду): два ScenarioRuntime на клиенте — runtime доски (DeviceBoardGraphProvider) vs singleton DeviceBoardRuntimeController (realtime-мост, эмитит runtime.state+журнал). Кнопки борда правят не тот. Две оси: сопряжение=синк (всегда), захват=матрица управления. Единый runtime во ВСЕХ сопряжённых состояниях. Issue #281.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin",
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
+      "githubIssue": 281,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "csr-1-unified-runtime",
+      "title": "CSR1: единый runtime — борд делегирует исполнение общему контроллеру во всех сопряжённых состояниях (двунаправленный синк)",
+      "size": "L",
+      "parentEpic": "capture-shared-runtime",
+      "dependsOn": [],
+      "notes": "Устранить дубль ScenarioRuntime. Сопряжён-но-не-захвачен тоже единый runtime (журнал+state на сервер, полный локальный контроль). Несопряжён — локальный без эмиссии. Шов инъекции — Структурщик в PR.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
+      "githubIssue": 281,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "csr-2-capture-button-matrix",
+      "title": "CSR2: матрица кнопок под захватом — работает→только Stop, стоп+захват→Start, пауза заблокирована; emergency stop всегда",
+      "size": "M",
+      "parentEpic": "capture-shared-runtime",
+      "dependsOn": [
+        "csr-1-unified-runtime"
+      ],
+      "notes": "Чистая функция (captured, isRunning, mode) → {canStart, canStop, canPause} + полная таблица тестов. Инвариант §3.3: emergency stop не блокируется. Кнопки disabled+title, не прыгают.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
+      "githubIssue": 281,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "csr-3-docs-smoke",
+      "title": "CSR3: docs (единый runtime, §3/§4 матрица) + ручной smoke на связке узел↔кабинет",
+      "size": "S",
+      "parentEpic": "capture-shared-runtime",
+      "dependsOn": [
+        "csr-2-capture-button-matrix"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     }
   ]
 }

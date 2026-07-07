@@ -159,6 +159,10 @@
 | `btj-1-journal-slot` | BTJ1: слот журнала в DeviceBoardShell — «Журнал» = слот хоста, трейсы → вкладка «Трейс» (UX #269 сохранён) | M | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
 | `btj-2-client-telemetry-panel` | BTJ2: клиентская компакт-панель телеметрии для слота — useLiveJournal + lp5-рендереры, автообновление, «Открыть журнал» уважает борд-лок CX4 | M | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
 | `btj-3-docs-smoke` | BTJ3: docs sync (вкладки «Узлы | Журнал | Трейс», слот хоста) + ручной smoke чек-лист | S | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
+| `capture-shared-runtime` | Epic: Общий контроль сценария под захватом — единый runtime клиента (CSR1–CSR3) | L | [`CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md`](../docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md) | [#281](https://github.com/officefish/Membrana/issues/281) |
+| `csr-1-unified-runtime` | CSR1: единый runtime — борд делегирует исполнение общему контроллеру во всех сопряжённых состояниях (двунаправленный синк) | L | [`CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md`](../docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md) | [#281](https://github.com/officefish/Membrana/issues/281) |
+| `csr-2-capture-button-matrix` | CSR2: матрица кнопок под захватом — работает→только Stop, стоп+захват→Start, пауза заблокирована; emergency stop всегда | M | [`CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md`](../docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md) | [#281](https://github.com/officefish/Membrana/issues/281) |
+| `csr-3-docs-smoke` | CSR3: docs (единый runtime, §3/§4 матрица) + ручной smoke на связке узел↔кабинет | S | [`CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md`](../docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md) | [#281](https://github.com/officefish/Membrana/issues/281) |
 
 ---
 
