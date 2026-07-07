@@ -6,6 +6,7 @@ import {
   DEVICE_CAPTURE_TTL_MS,
 } from '../../domain/device-capture';
 import { DeviceCaptureRegistry } from '../node-realtime/device-capture.registry';
+import { DeviceScenarioRegistry } from '../node-realtime/device-scenario.registry';
 import { DeviceCaptureService } from './device-capture.service';
 import type { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import type { PrismaService } from '../../prisma/prisma.service';
@@ -33,8 +34,9 @@ function buildService() {
     sendToNode: vi.fn(),
   } as unknown as NodeRealtimeService;
   const registry = new DeviceCaptureRegistry();
-  const service = new DeviceCaptureService(prisma, nodeRealtime, registry);
-  return { service, prisma, nodeRealtime, registry };
+  const scenarioRegistry = new DeviceScenarioRegistry();
+  const service = new DeviceCaptureService(prisma, nodeRealtime, registry, scenarioRegistry);
+  return { service, prisma, nodeRealtime, registry, scenarioRegistry };
 }
 
 function mockOwnedNode(prisma: PrismaService) {
@@ -238,6 +240,32 @@ describe('DeviceCaptureService', () => {
     vi.mocked(prisma.nodeDeviceCapture.findMany).mockResolvedValue([] as never);
 
     await expect(service.listForUser(userId)).resolves.toEqual({ captures: [] });
+  });
+
+  // CX3: объявленный узлом список сценариев едет в bootstrap вместе с захватом.
+  it('listForUser merges announced scenario list into the capture view', async () => {
+    const { service, prisma, scenarioRegistry } = buildService();
+    const row = captureRow();
+    vi.mocked(prisma.nodeDeviceCapture.findMany).mockResolvedValue([row] as never);
+    scenarioRegistry.setList(membraneId, {
+      deviceId: mediaDeviceId,
+      scenarios: [
+        { id: 'ws-1', title: 'Спектр' },
+        { id: 'ws-2', title: 'Нейро' },
+      ],
+      selectedScenarioId: 'ws-2',
+    });
+
+    const result = await service.listForUser(userId);
+
+    expect(result.captures[0]).toMatchObject({
+      deviceId: mediaDeviceId,
+      scenarios: [
+        { id: 'ws-1', title: 'Спектр' },
+        { id: 'ws-2', title: 'Нейро' },
+      ],
+      selectedScenarioId: 'ws-2',
+    });
   });
 
   it('heartbeatSweep renews live captures with board.heartbeat broadcast', async () => {

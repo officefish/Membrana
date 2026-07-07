@@ -13,6 +13,10 @@ export interface DeviceCaptureView {
   sessionId: string;
   acquiredAt: string;
   expiresAt: string;
+  /** CX3: объявленный узлом список сценариев (если узел уже объявил). */
+  scenarios?: readonly { readonly id: string; readonly title: string }[];
+  /** CX3: выбранный сценарий (элемент scenarios; null при пустом списке). */
+  selectedScenarioId?: string | null;
 }
 
 async function authFetch(path: string, init: RequestInit = {}): Promise<Response> {

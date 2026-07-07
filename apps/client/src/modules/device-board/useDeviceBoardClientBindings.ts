@@ -7,6 +7,7 @@ import { createHybridDeviceBoardWorkspaceHost } from './createHybridDeviceBoardW
 import { invalidateDeviceWorkspacesApiCache } from './device-workspaces-api.js';
 import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId.js';
 import { resolveWorkspaceTariff } from './workspace-tariff.js';
+import { withScenarioListAnnouncements } from './scenarioListAnnouncer.js';
 
 /** Shared deviceId bindings для workspace host + persist adapter (U10 W3). */
 export function useDeviceBoardClientBindings() {
@@ -33,10 +34,12 @@ export function useDeviceBoardClientBindings() {
     const deviceId = resolveDeviceBoardPersistDeviceId(mode === 'paired' ? pairing : null);
     const workspaceTariff = resolveWorkspaceTariff(mode, pairing);
     const maxUserWorkspaces = workspaceTariff.maxUserWorkspaces;
-    const workspaceHost =
+    // CX3: под захватом мутации набора workspace'ов ре-объявляют список серверу.
+    const workspaceHost = withScenarioListAnnouncements(
       mode === 'paired' && pairing !== null
         ? createHybridDeviceBoardWorkspaceHost(deviceId, pairing, maxUserWorkspaces)
-        : createDeviceBoardWorkspaceHost(deviceId, maxUserWorkspaces);
+        : createDeviceBoardWorkspaceHost(deviceId, maxUserWorkspaces),
+    );
     return {
       deviceId,
       maxUserWorkspaces,

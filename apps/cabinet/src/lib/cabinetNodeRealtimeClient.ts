@@ -3,12 +3,14 @@ import {
   parseBoardCaptureHeartbeatPayload,
   parseBoardCapturePayload,
   parseBoardCaptureReleasePayload,
+  parseBoardScenarioListPayload,
   parseNodeRealtimeEnvelope,
   parsePresenceSnapshotPayload,
   type AnalysisBriefPayload,
   type BoardCaptureHeartbeatPayload,
   type BoardCapturePayload,
   type BoardCaptureReleasePayload,
+  type BoardScenarioListPayload,
   type JournalAppendPayload,
   type NodeOnlinePayload,
   type NodeRealtimeEnvelope,
@@ -35,6 +37,7 @@ type PresenceOfflineHandler = (payload: NodeOnlinePayload) => void;
 type BoardCaptureHandler = (payload: BoardCapturePayload) => void;
 type BoardCaptureHeartbeatHandler = (payload: BoardCaptureHeartbeatPayload) => void;
 type BoardCaptureReleaseHandler = (payload: BoardCaptureReleasePayload) => void;
+type BoardScenarioListHandler = (payload: BoardScenarioListPayload) => void;
 
 const MAX_BACKOFF_MS = 30_000;
 
@@ -90,6 +93,8 @@ class CabinetNodeRealtimeClientImpl {
 
   private readonly boardCaptureHandlers = new Set<BoardCaptureHandler>();
 
+  private readonly boardScenarioListHandlers = new Set<BoardScenarioListHandler>();
+
   private readonly boardCaptureHeartbeatHandlers = new Set<BoardCaptureHeartbeatHandler>();
 
   private readonly boardCaptureReleaseHandlers = new Set<BoardCaptureReleaseHandler>();
@@ -144,6 +149,12 @@ class CabinetNodeRealtimeClientImpl {
   subscribeBoardCapture(handler: BoardCaptureHandler): () => void {
     this.boardCaptureHandlers.add(handler);
     return () => this.boardCaptureHandlers.delete(handler);
+  }
+
+  /** CX3: объявленный узлом список сценариев + выбранный (board.scenario-list). */
+  subscribeBoardScenarioList(handler: BoardScenarioListHandler): () => void {
+    this.boardScenarioListHandlers.add(handler);
+    return () => this.boardScenarioListHandlers.delete(handler);
   }
 
   subscribeBoardCaptureHeartbeat(handler: BoardCaptureHeartbeatHandler): () => void {
@@ -349,6 +360,15 @@ class CabinetNodeRealtimeClientImpl {
             const payload = parseBoardCaptureReleasePayload(envelope.payload);
             if (payload !== null) {
               for (const handler of this.boardCaptureReleaseHandlers) {
+                handler(payload);
+              }
+            }
+          }
+          // CX3: список сценариев узла (объявление узла / ре-бродкаст select'а).
+          if (envelope.type === NODE_REALTIME_EVENT_TYPES.board.scenarioList) {
+            const payload = parseBoardScenarioListPayload(envelope.payload);
+            if (payload !== null) {
+              for (const handler of this.boardScenarioListHandlers) {
                 handler(payload);
               }
             }

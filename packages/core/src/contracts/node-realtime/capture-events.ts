@@ -50,6 +50,42 @@ export interface BoardCaptureReleasePayload {
   readonly reason: DeviceCaptureReleaseReason;
 }
 
+/** CX3: сценарий в объявляемом узлом списке (id + человекочитаемое имя). */
+export interface BoardScenarioListItem {
+  readonly id: string;
+  readonly title: string;
+}
+
+/**
+ * CX3: список сценариев узла (канал `board`, событие `board.scenario-list`,
+ * node → server → cabinet). Узел объявляет при захвате и при изменении набора
+ * под захватом; сервер хранит список + выбранный id, тел сценариев не хранит.
+ * Инвариант: `selectedScenarioId` указывает на элемент списка; `null` — только
+ * при пустом списке (см. normalizeScenarioSelection).
+ */
+export interface BoardScenarioListPayload {
+  readonly deviceId: string;
+  readonly scenarios: readonly BoardScenarioListItem[];
+  readonly selectedScenarioId: string | null;
+}
+
+/**
+ * CX3: инвариант «один сценарий всегда выбран». Возвращает `preferredId`, если
+ * он есть в списке; иначе первый сценарий; `null` — только при пустом списке.
+ * Чистая функция — используется узлом при объявлении и сервером при
+ * `selectScenario`/сжатии списка.
+ */
+export function normalizeScenarioSelection(
+  scenarios: readonly BoardScenarioListItem[],
+  preferredId: string | null | undefined,
+): string | null {
+  if (preferredId != null && scenarios.some((scenario) => scenario.id === preferredId)) {
+    return preferredId;
+  }
+  const first = scenarios[0];
+  return first === undefined ? null : first.id;
+}
+
 /**
  * Runtime-команды кабинета, разрешённые тарифом (enforcement — gateway
  * whitelist в background-cabinet, канон §4.1; UI — вторичен).

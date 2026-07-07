@@ -185,6 +185,8 @@ function NodeCard({
   const deviceId = node.device?.mediaDeviceId ?? null;
   const state = deviceId ? runtime.states[deviceId] : undefined;
   const capture = deviceId ? runtime.captures[deviceId] : undefined;
+  // CX3: объявленный узлом список сценариев (dropdown под захватом).
+  const scenarioList = deviceId ? runtime.scenarioLists[deviceId] : undefined;
   const deviceLive = runtime.isDeviceLive(deviceId);
   const isRunning = state?.isRunning ?? false;
   const mode = state?.mode ?? 'normal';
@@ -356,15 +358,46 @@ function NodeCard({
               </label>
             </>
           ) : (
-            // CT3 шаг 2: под захватом — запуск/остановка сохранённого сценария
-            // устройства (селектор из нескольких сценариев — отдельная задача).
+            // CT3 шаг 2 + CX3: под захватом — выбор сценария из объявленного
+            // узлом списка и запуск/остановка выбранного.
             <>
+              {scenarioList && scenarioList.scenarios.length > 0 ? (
+                <label className="flex items-center gap-1.5 text-xs text-base-content/70">
+                  <span>Сценарий</span>
+                  <select
+                    className="select select-bordered select-xs max-w-44"
+                    value={scenarioList.selectedScenarioId ?? ''}
+                    onChange={(event) => deviceId && runtime.selectScenario(deviceId, event.target.value)}
+                    disabled={!deviceLive}
+                    aria-label="Сценарий устройства"
+                  >
+                    {scenarioList.scenarios.map((scenario) => (
+                      <option key={scenario.id} value={scenario.id}>
+                        {scenario.title}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : (
+                <span
+                  className="text-xs text-base-content/50"
+                  title="Устройство ещё не объявило список сценариев — «Пуск» запустит сохранённый сценарий"
+                >
+                  сценарии не объявлены
+                </span>
+              )}
               {!isRunning ? (
                 <button
                   type="button"
                   className="btn btn-sm btn-primary"
                   disabled={!deviceId || !deviceLive}
-                  title={!deviceLive ? DEVICE_OFFLINE_RUN_HINT : 'Запустить сохранённый сценарий устройства'}
+                  title={
+                    !deviceLive
+                      ? DEVICE_OFFLINE_RUN_HINT
+                      : scenarioList && scenarioList.scenarios.length > 0
+                        ? 'Запустить выбранный сценарий'
+                        : 'Запустить сохранённый сценарий устройства'
+                  }
                   onClick={() => deviceId && runtime.run(deviceId)}
                 >
                   Пуск

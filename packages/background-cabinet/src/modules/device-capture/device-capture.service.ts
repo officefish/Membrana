@@ -25,7 +25,9 @@ import {
 } from '../../domain/device-capture';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DeviceCaptureRegistry } from '../node-realtime/device-capture.registry';
+import { DeviceScenarioRegistry } from '../node-realtime/device-scenario.registry';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
+import type { BoardScenarioListItem } from '../../domain/node-realtime-wire';
 
 export interface DeviceCaptureView {
   readonly deviceId: string;
@@ -33,6 +35,10 @@ export interface DeviceCaptureView {
   readonly sessionId: string;
   readonly acquiredAt: string;
   readonly expiresAt: string;
+  /** CX3: объявленный узлом список сценариев (если узел уже объявил). */
+  readonly scenarios?: readonly BoardScenarioListItem[];
+  /** CX3: выбранный сценарий (инвариант: элемент scenarios; null при пустом). */
+  readonly selectedScenarioId?: string | null;
 }
 
 interface CaptureRow {
@@ -72,6 +78,7 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
     private readonly prisma: PrismaService,
     private readonly nodeRealtime: NodeRealtimeService,
     private readonly registry: DeviceCaptureRegistry,
+    private readonly scenarioRegistry: DeviceScenarioRegistry,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -210,7 +217,20 @@ export class DeviceCaptureService implements OnModuleInit, OnModuleDestroy {
     const rows = (await this.prisma.nodeDeviceCapture.findMany({
       where: { membrane: { userId }, expiresAt: { gt: now } },
     })) as CaptureRow[];
-    return { captures: rows.map(serializeCapture) };
+    return {
+      captures: rows.map((row) => {
+        const capture = serializeCapture(row);
+        // CX3: объявленный список сценариев едет вместе с захватом —
+        // кабинет бутстрапится одним запросом.
+        const scenarios = this.scenarioRegistry.get(row.mediaDeviceId);
+        if (scenarios === null) return capture;
+        return {
+          ...capture,
+          scenarios: scenarios.scenarios,
+          selectedScenarioId: scenarios.selectedScenarioId,
+        };
+      }),
+    };
   }
 
   /**

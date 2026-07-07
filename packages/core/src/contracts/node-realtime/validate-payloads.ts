@@ -9,6 +9,8 @@ import type {
   BoardCaptureHeartbeatPayload,
   BoardCapturePayload,
   BoardCaptureReleasePayload,
+  BoardScenarioListItem,
+  BoardScenarioListPayload,
   DeviceCaptureMode,
   DeviceCaptureReleaseReason,
 } from './capture-events.js';
@@ -272,4 +274,43 @@ export function parseBoardCaptureReleasePayload(raw: unknown): BoardCaptureRelea
     sessionId: isNonEmptyString(sessionId) ? sessionId : null,
     reason: raw.reason,
   };
+}
+
+function parseScenarioListItem(raw: unknown): BoardScenarioListItem | null {
+  if (!isRecord(raw) || !isNonEmptyString(raw.id) || !isNonEmptyString(raw.title)) {
+    return null;
+  }
+  return { id: raw.id, title: raw.title };
+}
+
+/**
+ * CX3: валидирует board.scenario-list payload. Инвариант «один всегда выбран»
+ * проверяется структурно: selectedScenarioId обязан указывать на элемент
+ * списка; null допустим только при пустом списке.
+ */
+export function parseBoardScenarioListPayload(raw: unknown): BoardScenarioListPayload | null {
+  if (!isRecord(raw) || !isNonEmptyString(raw.deviceId) || !Array.isArray(raw.scenarios)) {
+    return null;
+  }
+  const scenarios: BoardScenarioListItem[] = [];
+  const seen = new Set<string>();
+  for (const item of raw.scenarios) {
+    const parsed = parseScenarioListItem(item);
+    if (parsed === null || seen.has(parsed.id)) {
+      return null;
+    }
+    seen.add(parsed.id);
+    scenarios.push(parsed);
+  }
+  const selected = raw.selectedScenarioId;
+  if (scenarios.length === 0) {
+    if (selected !== null && selected !== undefined) {
+      return null;
+    }
+    return { deviceId: raw.deviceId, scenarios, selectedScenarioId: null };
+  }
+  if (!isNonEmptyString(selected) || !seen.has(selected)) {
+    return null;
+  }
+  return { deviceId: raw.deviceId, scenarios, selectedScenarioId: selected };
 }
