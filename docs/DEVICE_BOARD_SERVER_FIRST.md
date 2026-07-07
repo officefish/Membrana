@@ -59,6 +59,40 @@
 
 **`stop()` на клиенте доступен всегда**, даже при `mode='hard'`. На уровне `audio-engine` нет проверок permissions/захвата — флаги захвата существуют только в UI (блокировка кнопок) и в gateway (whitelist команд). Emergency stop клиента = `stop { fadeOutMs: 0 }` (hard-cut). Обоснование: SCADA-практика — локальный аварийный останов не отключается никогда.
 
+### 3.4 Единый runtime клиента (CSR, спринт `capture-shared-runtime`)
+
+**Инвариант:** под связью борд и realtime-мост делят **один** `ScenarioRuntime`.
+
+Ранее на клиенте жили **два независимых** инстанса — runtime доски
+(`DeviceBoardGraphProvider`) и singleton `DeviceBoardRuntimeController`
+(realtime-мост, эмитит `runtime.state` + журнал на сервер). Кнопки борда правили
+не тот инстанс: сервер их не видел, а команда кабинета крутила инстанс, которого
+борд не показывал → «кнопки не влияют / не синхронизированы» (прод-находка
+владельца 2026-07-07).
+
+**Фикс (CSR1):** App под pairing передаёт борду runtime контроллера
+(`externalRuntime`, общий host). Борд использует его и **не уничтожает** при
+размонтировании (сценарий может идти headless — устройство пишет журнал на сервер).
+
+**Две независимые оси:**
+- **Сопряжение** решает синк с сервером (журнал + `runtime.state`) — идёт **всегда**,
+  захвачено устройство или нет. Сопряжён-но-не-захвачен = полный локальный контроль
+  + кабинет наблюдает.
+- **Захват** решает только матрицу управления (кнопки), синк не трогает.
+
+**Матрица кнопок под захватом (CSR2)** — чистая функция
+`resolveCapturePlaybackMatrix(captured, captureMode, isRunning)`:
+
+| Состояние | Клиент |
+|-----------|--------|
+| Сопряжён, не захвачен | play/stop/pause (полный) |
+| Захват, работает | только **Stop** (пауза заблокирована) |
+| Захват soft, остановлен | **Start** |
+| Захват hard, остановлен | ничего (ведомый; emergency stop при работе) |
+
+Пауза под захватом заблокирована **всегда** (тариф v3) — кнопка `disabled` с
+подсказкой; §3.3 (emergency stop) неприкосновенен.
+
 ---
 
 ## 4. Enforcement тарифа — server-side
@@ -173,6 +207,11 @@ Runbook (prod E2E, CT8): [`actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIF
 [ ] WS разорвана → badge «Соединение потеряно» → 5 мин → auto-release, автономия
 [ ] Gateway whitelist: pause при любом захвате → 403
 [ ] getScenarios(): dropdown в кабинете, select+run существующего сценария
+[ ] CSR: пуск с кабинета → борд показывает «Работает», доступен Stop
+[ ] CSR: Stop/Start с клиента под захватом → кабинет видит смену состояния
+[ ] CSR: сопряжён-но-не-захвачен → сценарий с борда пишет журнал на сервер
+[ ] CSR: пауза под захватом — кнопка disabled с подсказкой; emergency stop работает
+[ ] CSR: без связи (autonomous) — полный локальный контроль, без регрессий
 [ ] yarn turbo lint typecheck test build
 ```
 
@@ -183,6 +222,7 @@ Runbook (prod E2E, CT8): [`actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIF
 | Документ | Зачем |
 |----------|--------|
 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](./prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | Фазы CT0–CT9 |
+| [`CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md`](./prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md) | CSR1–CSR3: единый runtime + матрица кнопок (§3.4) |
 | [`DEVICE_BOARD_CAPTURE_TARIFF_BRIEF.md`](./DEVICE_BOARD_CAPTURE_TARIFF_BRIEF.md) | Бриф консилиума (требования D1–D10, OQ1–OQ10) |
 | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](./prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | v1 (архив модели) |
 | [`DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md`](./prompts/DEVICE_BOARD_VIEW_ONLY_UX_EPIC_PROMPT.md) | View-only UX reuse |
