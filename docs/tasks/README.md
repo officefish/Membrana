@@ -163,6 +163,10 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `sandbox-link-diagnostics-night` | Night Build: диагностика связи узел↔cabinet из песочницы (NB0 пробник, NB1 видимый deviceId, NB2 флап вкладки Узлы) | 2026-07-07 | [`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/sandbox-link-diagnostics-night.md) |
+| `nb-0-node-link-probe` | NB0: пробник устойчивости связи узел↔cabinet (scripts/node-link-probe.mjs, прокси-паритет, коды закрытия, вердикт) | 2026-07-07 | [`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/nb-0-node-link-probe.md) |
+| `nb-1-visible-device-id` | NB1: видимый deviceId сопряжения — полный id + подсветка + копирование в LinkedPanel, shortId в футер-индикаторе | 2026-07-07 | [`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/nb-1-visible-device-id.md) |
+| `nb-2-nodes-tab-flap` | NB2: разбор флапа «связь установлена ↔ переподключение» во вкладке Узлы (#269) — причина по коду; фикс только если тривиален | 2026-07-07 | [`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/nb-2-nodes-tab-flap.md) |
 | `pl2b-node-heartbeat` | PL2b: heartbeat узла (120с) → Device.lastSeenAt; bootstrap после рестарта (ОТДЕЛЯЕМО) | 2026-07-06 | [`PAIRING_LIFECYCLE_SPRINT_PROMPT.md`](../docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md) | — | [карточка](./archive/pl2b-node-heartbeat.md) |
 | `comms-sandbox-docs-adaptation` | Epic: Адаптация 4 партнёрских документов песочницы под реализацию CC1–CC9 (CD1–CD6) | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/comms-sandbox-docs-adaptation.md) |
 | `cd-1-topology-variant-a` | CD1: зафиксировать топологию Вариант A по 4 докам (CONTOUR_DIR=apps/comms-studio, REPO=монорепо, убрать «до решения») | 2026-07-06 | [`COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md`](../docs/prompts/COMMS_SANDBOX_DOCS_ADAPTATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cd-1-topology-variant-a.md) |
@@ -644,4 +648,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-06.*
+*Файл обновлён автоматически: 2026-07-07.*
