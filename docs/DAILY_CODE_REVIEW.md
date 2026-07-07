@@ -1,10 +1,10 @@
-<!-- Сгенерировано: 2026-07-05T19:13:27.091Z (yarn code-review; daily) -->
+<!-- Сгенерировано: 2026-07-06T17:31:05.835Z (yarn code-review; daily) -->
 
 Tier: T0
 
-[Teamlead]: День был чисто организационный — только `chore(tasks)`/`docs` коммиты: закрыт эпик comms-contour-environment (CC1–CC9, PR #254–#264), зарегистрирован новый спринт comms-sandbox-docs-adaptation (CD1–CD6), утренний ритуал 2026-07-05. Рабочее дерево чистое, единственное untracked — `docs/archive/daily-day/2026-07-05/` (вечерний снапшот, ожидаемо). CI зелёный: test 53/53 tasks, 71 файл passed; lint 33/33 успешно. Runtime-кода не тронуто — Tier T0, скоуп только docs/tasks. PR size: OK (метаданные реестра). Вердикт по дню: чисто, блокеров нет.
+[Teamlead]: Сводка дня: коммиты — сплошь `chore/docs/fix` инфраструктуры ритма (недельная стратегия по понедельникам, `BROWSER=none` для client-dev, архивация эпиков ND1-ND3 и comms-sandbox). Незакоммиченные изменения — только три docs-файла ритуала (`DAILY_STANDUP`, `MAIN_DAY_ISSUE`, `STRATEGIC_PLAN_DAY`) + один untracked скрипт `scripts/node-link-probe.mjs`. Runtime-код продукта не тронут → Tier T0. CI зелёный: 53/53 tasks, 72 test files passed, lint 33/33. Единственная зона внимания — `node-link-probe.mjs` untracked: скрипт диагностики node-link, вероятно связан с PL2b heartbeat / PCB link-state — до коммита пройдёт C8/C9 на утреннем ревью. Вердикт по дереву: чисто, блокеров нет.
 
-[Структурщик]: Границы пакетов не затрагивались — все изменения в `docs/tasks/` и `docs/archive/`. Тесты рядом с кодом не менялись, статус зелёный. Замечаний по связанности нет — C1/C3/C4/C7 неприменимы (—).
+[Структурщик]: Изменения затрагивают только `docs/` (ритуальные артефакты) — границы пакетов не задеты, циклов нет (C1 —). `scripts/node-link-probe.mjs` — вне пакетов, standalone mjs-утилита в зоне Математика (Linux/scripts/*.mjs); при коммите проверить, что не хардкодит секреты/URL узла (C9) и пишет лог не в корень репо, а в `%TEMP%`/`docs/archive/` (гигиена дерева). Тесты рядом не требуются для diagnostics-скрипта (C7 —).
 
 [Математик]: —
 
@@ -12,15 +12,14 @@ Tier: T0
 
 [Верстальщик]: —
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (на утро 2026-07-06).
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (на утро 2026-07-07).
 
 Definition of Done (утро):
-1. Прочитать этот `DAILY_CODE_REVIEW.md` и свежий `MAIN_DAY_ISSUE.md`.
-2. Закоммитить/проигнорировать `docs/archive/daily-day/2026-07-05/` — чтобы preflight «чистое дерево» у deploy не спотыкался.
-3. Стартовать CD1 из спринта comms-sandbox-docs-adaptation: `yarn plan:day && yarn standup && yarn main-day-issue`.
-4. Перед работой прогнать: `yarn docs:lint` (скоуп спринта — docs).
-5. При первом коде спринта: `yarn turbo run lint typecheck test --filter=[изменённый пакет]`.
+- Прочитать этот `DAILY_CODE_REVIEW.md` перед `yarn standup`.
+- Определиться с `scripts/node-link-probe.mjs`: закоммитить осознанно (с проверкой отсутствия секретов) либо убрать из дерева перед deploy-preflight.
+- Прогон при коммите скрипта: `yarn docs:lint` (docs-изменения) и eslint для mjs, если покрыт: `yarn turbo run lint --filter=[scripts]` (или ручной `node --check scripts/node-link-probe.mjs`).
 
-Риски: — (P0/P1/P2 отсутствуют; день без runtime-изменений)
+Риски:
+- **P2** (opportunity): `scripts/node-link-probe.mjs` untracked без явного назначения в `MAIN_DAY_ISSUE` — при deploy-preflight «чистое дерево» может мешать; определить судьбу скрипта.
 
-Вердикт: LGTM
+Вердикт: — (daily, вердикт LGTM/BLOCK не выносится вне pr/branch)
