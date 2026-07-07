@@ -8,6 +8,7 @@ import {
   createIdleScenarioRuntimeState,
   resolveDeviceCaptureFlags,
   resolveServerFirstFlags,
+  type ScenarioRuntimeHost,
   type ScenarioRuntimeState,
 } from '@membrana/device-board';
 import {
@@ -39,6 +40,15 @@ type StateListener = (state: ScenarioRuntimeState) => void;
 class DeviceBoardRuntimeController {
   private runtime: ScenarioRuntime | null = null;
 
+  /**
+   * CSR1: хост, на котором строится единственный runtime. App инъектирует свой
+   * host (`acquireRuntime`), чтобы борд и контроллер делили ОДИН runtime и хост —
+   * иначе на клиенте жили два инстанса (кнопки борда правили не тот, сервер их
+   * не видел). Fallback createScenarioRuntimeHost() — для headless-команд кабинета,
+   * если App ещё не инъектировал host.
+   */
+  private injectedHost: ScenarioRuntimeHost | null = null;
+
   /** CT6: активный run для LWW-preemption (ожидание settle перед перезапуском). */
   private scenarioRunPromise: Promise<void> | undefined;
 
@@ -54,6 +64,19 @@ class DeviceBoardRuntimeController {
   private state: ScenarioRuntimeState = createIdleScenarioRuntimeState();
 
   private readonly listeners = new Set<StateListener>();
+
+  /**
+   * CSR1: единый runtime для борда и realtime-моста. App вызывает при связи и
+   * передаёт полученный инстанс в DeviceBoardShell (externalRuntime), чтобы
+   * кнопки борда и команды кабинета крутили один и тот же runtime — состояние
+   * и журнал двунаправленно синхронизируются с сервером.
+   */
+  acquireRuntime(host?: ScenarioRuntimeHost): ScenarioRuntime {
+    if (host !== undefined) {
+      this.injectedHost = host;
+    }
+    return this.ensureRuntime();
+  }
 
   getState(): ScenarioRuntimeState {
     return this.state;
@@ -163,6 +186,7 @@ class DeviceBoardRuntimeController {
     this.unsubscribeAsyncJobs?.();
     this.unsubscribeAsyncJobs = null;
     this.runtime = null;
+    this.injectedHost = null;
     this.asyncJobHub.clear();
     this.mode = 'normal';
     this.state = createIdleScenarioRuntimeState();
@@ -173,7 +197,8 @@ class DeviceBoardRuntimeController {
     if (this.runtime !== null) {
       return this.runtime;
     }
-    const runtime = new ScenarioRuntime(createScenarioRuntimeHost());
+    // CSR1: общий host из App (если инъектирован) — иначе fallback для headless.
+    const runtime = new ScenarioRuntime(this.injectedHost ?? createScenarioRuntimeHost());
     this.unsubscribeAsyncJobs?.();
     this.unsubscribeAsyncJobs = bindScenarioAsyncJobPublisher(
       this.asyncJobHub,

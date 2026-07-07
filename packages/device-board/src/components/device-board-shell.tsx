@@ -31,7 +31,11 @@ import { resolveScenarioEditFlags } from './scenario-edit-flags.js';
 import { isBoardExitLocked, type ServerFirstFlagsInput } from './server-first-flags.js';
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
-import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
+import type {
+  ScenarioMicrophoneOption,
+  ScenarioRuntime,
+  ScenarioRuntimeHost,
+} from '../runtime/index.js';
 import type { DeviceBoardPersistAdapter } from '../persist/device-board-persist.js';
 import type { HydratedBoardState } from '../graph/hydrate-board-from-document.js';
 import type { PaletteConnectionSuggestion } from '../graph/connection-suggest.js';
@@ -96,6 +100,8 @@ import { logBoardClipboardStep } from '../graph/edit-step-log.js';
 
 export interface DeviceBoardShellProps {
   readonly runtimeHost?: ScenarioRuntimeHost;
+  /** CSR1: единый runtime, разделяемый с realtime-мостом клиента (под связью). */
+  readonly externalRuntime?: ScenarioRuntime | null;
   readonly persistAdapter?: DeviceBoardPersistAdapter;
   readonly initialHydratedState?: HydratedBoardState;
   readonly onRequestExit?: () => void;
@@ -1986,6 +1992,7 @@ const DeviceBoardShellInner: React.FC<{
 /** Полноэкранный shell доски (MP7b RT6): шапка run/stop + normal/alarm, сайдбары вкладок и палитры. */
 export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   runtimeHost,
+  externalRuntime = null,
   persistAdapter,
   initialHydratedState,
   onRequestExit,
@@ -2001,6 +2008,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   return (
   <DeviceBoardGraphProvider
     runtimeHost={runtimeHost}
+    externalRuntime={externalRuntime}
     persistAdapter={persistAdapter}
     initialHydratedState={initialHydratedState}
     deviceLive={deviceLive}
