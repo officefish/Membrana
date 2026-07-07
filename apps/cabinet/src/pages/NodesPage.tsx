@@ -191,6 +191,23 @@ function NodeCard({
   const [captureMode, setCaptureMode] = useState<DeviceCaptureMode>('soft');
   const [captureBusy, setCaptureBusy] = useState(false);
   const [captureError, setCaptureError] = useState<string | null>(null);
+  const [deviceIdCopied, setDeviceIdCopied] = useState(false);
+
+  useEffect(() => {
+    if (!deviceIdCopied) return;
+    const timer = window.setTimeout(() => setDeviceIdCopied(false), 2_000);
+    return () => window.clearTimeout(timer);
+  }, [deviceIdCopied]);
+
+  const copyDeviceId = async (): Promise<void> => {
+    if (!deviceId) return;
+    try {
+      await navigator.clipboard.writeText(deviceId);
+      setDeviceIdCopied(true);
+    } catch {
+      /* клипборд недоступен (например http) — id остаётся выделяемым текстом */
+    }
+  };
 
   // CT3 (канон §1): без захвата у кабинета нет контроля над сценариями узла.
   const isCaptured = capture !== undefined;
@@ -252,9 +269,30 @@ function NodeCard({
     <div className={`card border-2 bg-base-200 ${borderClass}`}>
       <div className="card-body gap-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
+          <div className="min-w-0">
             <h2 className="card-title text-lg">{node.label}</h2>
             <p className="font-mono text-xs text-base-content/50">{node.id}</p>
+            {deviceId ? (
+              /* CX1: с каким устройством сопряжён узел — полный id, копируется;
+                 зеркально NB1 «Сопряжённое устройство» на клиенте (сверка глазами). */
+              <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                <span className="text-xs text-base-content/60">связан с устройством</span>
+                <span
+                  className="select-all break-all font-mono text-xs font-medium text-primary"
+                  data-testid="node-paired-device-id"
+                >
+                  {deviceId}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs"
+                  onClick={() => void copyDeviceId()}
+                  aria-label="Скопировать id устройства"
+                >
+                  {deviceIdCopied ? '✓ скопировано' : 'копировать'}
+                </button>
+              </div>
+            ) : null}
             {node.device ? (
               deviceLive ? (
                 <span className="badge badge-success badge-sm mt-1">online</span>
