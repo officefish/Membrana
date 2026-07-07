@@ -28,7 +28,7 @@ import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
 import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
 import { BoardEditUndoControl } from './board-edit-undo-control.js';
 import { resolveScenarioEditFlags } from './scenario-edit-flags.js';
-import type { ServerFirstFlagsInput } from './server-first-flags.js';
+import { isBoardExitLocked, type ServerFirstFlagsInput } from './server-first-flags.js';
 import { useDeviceBoardMode } from '../context/device-board-mode-context.js';
 import { DeviceBoardGraphProvider, useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 import type { ScenarioMicrophoneOption, ScenarioRuntimeHost } from '../runtime/index.js';
@@ -694,7 +694,13 @@ const DeviceBoardShellInner: React.FC<{
     [dismissConnectionSuggest, graph],
   );
 
+  // CX4: под захватом кабинета полевой оператор заперт в борде до release.
+  const exitLocked = isBoardExitLocked(graph.serverFirstFlags, serverFirstPerspective);
+
   const handleExitBoardMode = useCallback(() => {
+    if (exitLocked) {
+      return;
+    }
     if (graph.isDirty) {
       const confirmed =
         typeof window === 'undefined' ||
@@ -711,7 +717,7 @@ const DeviceBoardShellInner: React.FC<{
       return;
     }
     exitBoardMode();
-  }, [exitBoardMode, graph, onRequestExit]);
+  }, [exitBoardMode, exitLocked, graph, onRequestExit]);
 
   const handleClearBoard = useCallback(() => {
     const layerLabel = isSignal ? 'Signal' : BRANCH_TAB_LABEL[scenarioBranch];
@@ -1615,7 +1621,19 @@ const DeviceBoardShellInner: React.FC<{
             </>
           ) : null}
 
-          <button type="button" className="btn btn-sm btn-outline" onClick={handleExitBoardMode}>
+          {/* CX4: кнопка не исчезает — дизейбл с подсказкой (Rodchenko);
+              разблокируется автоматически на board.release любой причины. */}
+          <button
+            type="button"
+            className="btn btn-sm btn-outline"
+            disabled={exitLocked}
+            title={
+              exitLocked
+                ? 'Устройство захвачено кабинетом — выход из борда заблокирован до отпускания'
+                : undefined
+            }
+            onClick={handleExitBoardMode}
+          >
             {exitLabel}
           </button>
 

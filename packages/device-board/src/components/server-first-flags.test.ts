@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isCabinetEditLeaseActive, resolveServerFirstFlags } from './server-first-flags.js';
+import { isBoardExitLocked, isCabinetEditLeaseActive, resolveServerFirstFlags } from './server-first-flags.js';
 
 const deviceId = 'dev-1';
 const now = Date.parse('2026-06-26T12:00:00.000Z');
@@ -153,5 +153,35 @@ describe('resolveServerFirstFlags', () => {
         now,
       ),
     ).toBe(false);
+  });
+});
+
+// CX4: полевой оператор заперт в борде, пока устройство захвачено.
+describe('isBoardExitLocked (CX4)', () => {
+  const capturedFlags = resolveServerFirstFlags({
+    deviceId: 'd1',
+    editLease: null,
+    captureState: null,
+    capture: {
+      mode: 'soft',
+      sessionId: 's1',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    },
+  });
+  const freeFlags = resolveServerFirstFlags({
+    deviceId: 'd1',
+    editLease: null,
+    captureState: null,
+    capture: null,
+  });
+
+  it('лочит выход только на поле и только под захватом', () => {
+    expect(isBoardExitLocked(capturedFlags, 'field')).toBe(true);
+    expect(isBoardExitLocked(freeFlags, 'field')).toBe(false);
+    expect(isBoardExitLocked(null, 'field')).toBe(false);
+  });
+
+  it('кабинетную перспективу не трогает', () => {
+    expect(isBoardExitLocked(capturedFlags, 'cabinet')).toBe(false);
   });
 });

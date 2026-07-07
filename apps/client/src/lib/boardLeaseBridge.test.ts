@@ -29,6 +29,7 @@ import { useMembranaStore } from '@membrana/agenda';
 
 import {
   applyBoardEnvelopeForTests,
+  guardModuleSelectionForTests,
   resetBoardLeaseBridgeForTests,
 } from '@/lib/boardLeaseBridge';
 import { DEVICE_BOARD_MODULE_ID } from '@/modules/device-board/device-board-module-config';
@@ -362,6 +363,58 @@ describe('boardLeaseBridge force-open view-only (PCB5)', () => {
 
     expect(useServerFirstStore.getState().isViewOnlyFromCapture).toBe(false);
     // Доску не покидаем автоматически — оператор остаётся в контексте.
+    expect(useMembranaStore.getState().selectedModuleId).toBe(DEVICE_BOARD_MODULE_ID);
+  });
+});
+
+// CX4: борд-лок — под захватом уход с device-board возвращается назад.
+describe('module guard (CX4)', () => {
+  beforeEach(() => {
+    resetBoardLeaseBridgeForTests();
+    resetServerFirstStoreForTests();
+    useMembranaStore.setState({ selectedModuleId: DEVICE_BOARD_MODULE_ID });
+  });
+
+  function capture(): void {
+    useServerFirstStore.getState().setCapture({
+      mode: 'soft',
+      sessionId: 'sess-cx4',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    });
+  }
+
+  it('под захватом смена модуля откатывается на device-board', () => {
+    capture();
+    useMembranaStore.getState().selectModule('microphone');
+
+    guardModuleSelectionForTests();
+
+    expect(useMembranaStore.getState().selectedModuleId).toBe(DEVICE_BOARD_MODULE_ID);
+  });
+
+  it('без захвата навигация свободна', () => {
+    useMembranaStore.getState().selectModule('microphone');
+
+    guardModuleSelectionForTests();
+
+    expect(useMembranaStore.getState().selectedModuleId).toBe('microphone');
+  });
+
+  it('после release (любой причины) выход разблокирован', () => {
+    capture();
+    useServerFirstStore.getState().releaseCapture('ttl-expired');
+    useMembranaStore.getState().selectModule('microphone');
+
+    guardModuleSelectionForTests();
+
+    expect(useMembranaStore.getState().selectedModuleId).toBe('microphone');
+  });
+
+  it('на device-board страж идемпотентен', () => {
+    capture();
+
+    guardModuleSelectionForTests();
+
     expect(useMembranaStore.getState().selectedModuleId).toBe(DEVICE_BOARD_MODULE_ID);
   });
 });
