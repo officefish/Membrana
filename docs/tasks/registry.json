@@ -12053,10 +12053,10 @@
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
       "githubIssue": 281,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-07",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-07",
+      "archiveNotes": "PR #282 squash-merged 2026-07-07; единый runtime (борд externalRuntime = контроллер на общем host); двунаправленный синк state+журнал",
       "id": "csr-1-unified-runtime",
       "title": "CSR1: единый runtime — борд делегирует исполнение общему контроллеру во всех сопряжённых состояниях (двунаправленный синк)",
       "size": "L",
@@ -12066,7 +12066,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "kuryokhin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
