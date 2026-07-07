@@ -11919,6 +11919,91 @@
         "dynin"
       ],
       "githubIssueClosedAt": null
+    },
+    {
+      "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
+      "githubIssue": 278,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "board-telemetry-journal",
+      "title": "Epic: Журнал телеметрии в правом сайдбаре device-board вместо trace-хвоста (BTJ1–BTJ3)",
+      "size": "M",
+      "sprintKind": "epic",
+      "strategicWave": "W1",
+      "dependsOn": [
+        "capture-scenario-ux"
+      ],
+      "notes": "Владелец 2026-07-07: журнал #269 в сайдбаре — трейсы, нужна телеметрия. Инвариант: device-board зависит только от core → телеметрия слотом от хоста; lp5-рендереры переиспользуются. Трейсы остаются вкладкой «Трейс» (дефолт Teamlead). Issue #278.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
+      "githubIssue": 278,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "btj-1-journal-slot",
+      "title": "BTJ1: слот журнала в DeviceBoardShell — «Журнал» = слот хоста, трейсы → вкладка «Трейс» (UX #269 сохранён)",
+      "size": "M",
+      "parentEpic": "board-telemetry-journal",
+      "dependsOn": [],
+      "notes": "Без слота (кабинет/автономный хост) — поведение как сейчас. Мемоизация: слот не дёргает канву.",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
+      "githubIssue": 278,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "btj-2-client-telemetry-panel",
+      "title": "BTJ2: клиентская компакт-панель телеметрии для слота — useLiveJournal + lp5-рендереры, автообновление, «Открыть журнал» уважает борд-лок CX4",
+      "size": "M",
+      "parentEpic": "board-telemetry-journal",
+      "dependsOn": [
+        "btj-1-journal-slot"
+      ],
+      "notes": "Переиспользование, не копия: LiveJournalItemRow, useLiveJournalAutoRefresh, liveJournalHub. Компакт = последние N + переход в модуль.",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin"
+      ]
+    },
+    {
+      "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
+      "githubIssue": 278,
+      "linearId": null,
+      "status": "active",
+      "createdAt": "2026-07-07",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "id": "btj-3-docs-smoke",
+      "title": "BTJ3: docs sync (вкладки «Узлы | Журнал | Трейс», слот хоста) + ручной smoke чек-лист",
+      "size": "S",
+      "parentEpic": "board-telemetry-journal",
+      "dependsOn": [
+        "btj-2-client-telemetry-panel"
+      ],
+      "notes": "",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko"
+      ]
     }
   ]
 }

@@ -155,6 +155,10 @@
 | `pt-1-read-facts-sheet` | PT1: как достать актуальные факты из FACTS_SHEET.md и не соврать (пометки подтверждён/гипотеза/TBD, [TBD] вместо выдумки) | S | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
 | `pt-2-first-output-v01-endtoend` | PT2: сквозной сценарий первого выхода v0.1 от канона до файла в out/ + сверка render-check/Playwright (НЕ Storybook), показ tone-guard | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
 | `pt-3-honest-tech-storytelling` | PT3: как честно рассказывать о технологии и стадии (пары до/после, пометки риска, dual-use GLOSSARY §4, без сырых внутренних цифр) | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
+| `board-telemetry-journal` | Epic: Журнал телеметрии в правом сайдбаре device-board вместо trace-хвоста (BTJ1–BTJ3) | M | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
+| `btj-1-journal-slot` | BTJ1: слот журнала в DeviceBoardShell — «Журнал» = слот хоста, трейсы → вкладка «Трейс» (UX #269 сохранён) | M | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
+| `btj-2-client-telemetry-panel` | BTJ2: клиентская компакт-панель телеметрии для слота — useLiveJournal + lp5-рендереры, автообновление, «Открыть журнал» уважает борд-лок CX4 | M | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
+| `btj-3-docs-smoke` | BTJ3: docs sync (вкладки «Узлы | Журнал | Трейс», слот хоста) + ручной smoke чек-лист | S | [`BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md`](../docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md) | [#278](https://github.com/officefish/Membrana/issues/278) |
 
 ---
 
