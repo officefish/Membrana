@@ -13,6 +13,29 @@ import { useServerFirstStore } from '@/stores/serverFirstStore';
 import { createHybridDeviceBoardWorkspaceHost } from './createHybridDeviceBoardWorkspaceHost.js';
 import { resolveDeviceBoardPersistDeviceId } from './resolveDeviceBoardPersistDeviceId.js';
 import { resolveWorkspaceTariff } from './workspace-tariff.js';
+import { readDeviceBoardUserCaseGate } from './user-case-settings-gate.js';
+
+/**
+ * csp-3: системные (по тарифу) сценарии узла из каталога UserCases. bundled
+ * доступны всегда; tariff-gated помечены entitlement (locked/entitled по
+ * entitledTariffSkus из config, который приходит с node.entitlements). Кабинет
+ * группирует их отдельно и показывает locked неактивными (апселл).
+ */
+export function collectSystemScenarios(): BoardScenarioListItem[] {
+  const gate = readDeviceBoardUserCaseGate();
+  if (!gate.catalogEnabled) return [];
+  // deviceKind фиксирован 'microphone': текущий полевой узел — микрофонный
+  // (FREE-каталог microphone-only). Обобщение на другие deviceKind — когда появятся.
+  return gate.catalogService.listCards('microphone').map((card) => ({
+    id: card.id,
+    title: card.title,
+    kind: 'system' as const,
+    ...(card.description !== undefined ? { description: card.description } : {}),
+    entitlement: card.entitlement,
+    branchCount: card.branchCount,
+    functionCount: card.functionCount,
+  }));
+}
 
 /**
  * CX3: объявление списка сценариев узла (board.scenario-list, узел → сервер).
@@ -44,10 +67,18 @@ export async function announceScenarioList(): Promise<boolean> {
       host.listWorkspaces(),
       host.getActiveWorkspaceId(),
     ]);
-    const scenarios: BoardScenarioListItem[] = items.map((workspace) => ({
+    const userScenarios: BoardScenarioListItem[] = items.map((workspace) => ({
       id: workspace.workspaceId,
       title: workspace.title,
+      kind: 'user' as const,
     }));
+    // csp-3: единый список = пользовательские + системные (по тарифу). Дедуп по id
+    // защищает инвариант сервера (parseBoardScenarioListPayload отвергает дубли).
+    const userIds = new Set(userScenarios.map((scenario) => scenario.id));
+    const scenarios: BoardScenarioListItem[] = [
+      ...userScenarios,
+      ...collectSystemScenarios().filter((scenario) => !userIds.has(scenario.id)),
+    ];
     const preferred =
       useServerFirstStore.getState().selectedScenarioId ?? activeWorkspaceId;
     client.send(
