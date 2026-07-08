@@ -162,6 +162,13 @@
 | `td-scenario-registry-persistence` | TD2: DeviceScenarioRegistry — реальная персистентность выбора сценария (P1) | M | [`TECH_DEBT_2026_07_SPRINT_PROMPT.md`](../docs/prompts/TECH_DEBT_2026_07_SPRINT_PROMPT.md) | [#293](https://github.com/officefish/Membrana/issues/293) |
 | `td-node-lastseen-reconnect` | TD2: lastSeenAt на registerNode/реконнекте (хвост PCB4) (P1) | S | [`TECH_DEBT_2026_07_SPRINT_PROMPT.md`](../docs/prompts/TECH_DEBT_2026_07_SPRINT_PROMPT.md) | [#294](https://github.com/officefish/Membrana/issues/294) |
 | `td-singleton-eslint-guard` | TD3: eslint-правило на 2 вектора дубля singleton §3.5 (P1) | M | [`TECH_DEBT_2026_07_SPRINT_PROMPT.md`](../docs/prompts/TECH_DEBT_2026_07_SPRINT_PROMPT.md) | [#295](https://github.com/officefish/Membrana/issues/295) |
+| `cabinet-scenario-picker-system` | Epic: cabinet-scenario-picker-system — user + system (по тарифу) сценарии в кабинете + UI-паритет с клиентом | L | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | — |
+| `csp-1-contract` | csp-1: обогатить BoardScenarioListItem (kind user|system + карточные поля), backward-compat | S | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#302](https://github.com/officefish/Membrana/issues/302) |
+| `csp-2-tariff-to-node` | csp-2 (G1): прокинуть тарифные права entitledTariffSkus сервер→узел | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#303](https://github.com/officefish/Membrana/issues/303) |
+| `csp-3-node-declares-system` | csp-3: узел объявляет user + entitled-system единым списком | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#304](https://github.com/officefish/Membrana/issues/304) |
+| `csp-4-shared-card` | csp-4: шареная презентационная карточка сценария (device-board) | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#305](https://github.com/officefish/Membrana/issues/305) |
+| `csp-5-cabinet-ui` | csp-5: кабинет — карточный список Пользовательские|Системные + tariff-бейджи | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#306](https://github.com/officefish/Membrana/issues/306) |
+| `csp-6-smoke-docs` | csp-6: smoke узел↔кабинет + docs | S | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#307](https://github.com/officefish/Membrana/issues/307) |
 
 ---
 
