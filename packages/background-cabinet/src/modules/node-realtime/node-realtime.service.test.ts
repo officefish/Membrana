@@ -71,6 +71,34 @@ describe('NodeRealtimeService', () => {
     expect(cabinetSocket.send).toHaveBeenCalledTimes(1);
   });
 
+  it('registerNode освежает Device.lastSeenAt в БД на реконнекте (TD2, PCB4 хвост)', async () => {
+    const prisma = mockPrisma();
+    const service = buildService(prisma);
+
+    service.registerNode(
+      { role: 'node', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
+      mockSocket(),
+    );
+    await new Promise((r) => setTimeout(r, 0)); // fire-and-forget
+
+    const updateMany = prisma.device.updateMany as ReturnType<typeof vi.fn>;
+    expect(updateMany).toHaveBeenCalledWith({
+      where: { mediaDeviceId: 'd1' },
+      data: { lastSeenAt: expect.any(Date) },
+    });
+  });
+
+  it('registerNode без mediaDeviceId не трогает БД', async () => {
+    const prisma = mockPrisma();
+    const service = buildService(prisma);
+    service.registerNode(
+      { role: 'node', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: '' },
+      mockSocket(),
+    );
+    await new Promise((r) => setTimeout(r, 0));
+    expect(prisma.device.updateMany as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
+  });
+
   it('registerCabinet отправляет presence.snapshot с онлайн-узлами своей membrane (PL1)', async () => {
     const service = buildService();
 

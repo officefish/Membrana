@@ -52,6 +52,16 @@ export class NodeRealtimeService {
   registerNode(meta: NodeRealtimeSocketMeta, socket: WebSocket): void {
     if (!meta.mediaDeviceId) return;
     this.nodeSockets.set(meta.mediaDeviceId, { socket, meta });
+    // TD2 (PCB4 хвост): реконнект/регистрация узла сразу освежает lastSeenAt в БД,
+    // не дожидаясь первого PL2b-heartbeat. Иначе presence-окно (recentDeviceIds) и
+    // «виден N назад» читают устаревшее время сразу после реконнекта.
+    // Fire-and-forget: не блокируем WS-connect, ошибка БД не рвёт присутствие.
+    void this.recordPresenceHeartbeat(meta.mediaDeviceId).catch((error: unknown) =>
+      this.logger.warn(
+        { error, mediaDeviceId: meta.mediaDeviceId },
+        'lastSeenAt refresh on registerNode failed',
+      ),
+    );
     this.fanOutToCabinet(meta.membraneId, {
       v: 1,
       channel: 'presence',
