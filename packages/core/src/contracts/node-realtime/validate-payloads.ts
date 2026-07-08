@@ -13,6 +13,7 @@ import type {
   BoardScenarioListPayload,
   DeviceCaptureMode,
   DeviceCaptureReleaseReason,
+  NodeEntitlementsPayload,
 } from './capture-events.js';
 import type {
   PresenceHeartbeatPayload,
@@ -305,6 +306,24 @@ function parseScenarioListItem(raw: unknown): BoardScenarioListItem | null {
     ...(isCount(raw.branchCount) ? { branchCount: raw.branchCount } : {}),
     ...(isCount(raw.functionCount) ? { functionCount: raw.functionCount } : {}),
   };
+}
+
+/**
+ * csp-2/G1: валидирует node.entitlements (server → node). tariffId непустой,
+ * entitledTariffSkus — массив непустых строк (может быть пустым), дедуплицируется.
+ */
+export function parseNodeEntitlementsPayload(raw: unknown): NodeEntitlementsPayload | null {
+  if (!isRecord(raw) || !isNonEmptyString(raw.tariffId) || !Array.isArray(raw.entitledTariffSkus)) {
+    return null;
+  }
+  const skus = new Set<string>();
+  for (const sku of raw.entitledTariffSkus) {
+    if (!isNonEmptyString(sku)) {
+      return null;
+    }
+    skus.add(sku);
+  }
+  return { tariffId: raw.tariffId, entitledTariffSkus: [...skus] };
 }
 
 /**

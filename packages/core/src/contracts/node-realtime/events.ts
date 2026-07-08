@@ -175,6 +175,8 @@ export const NODE_REALTIME_EVENT_TYPES = {
     healthPing: 'health.ping',
     /** PCB6: ответ узла на пробу (node → server). */
     healthPong: 'health.pong',
+    /** csp-2/G1: сервер шлёт узлу его тарифный контекст на коннекте (тариф → разрешённые UserCase-sku). */
+    entitlements: 'node.entitlements',
   },
   journal: {
     append: 'journal.append',

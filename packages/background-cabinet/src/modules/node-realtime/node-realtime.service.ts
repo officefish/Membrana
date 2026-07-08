@@ -62,6 +62,15 @@ export class NodeRealtimeService {
         'lastSeenAt refresh on registerNode failed',
       ),
     );
+    // csp-2/G1: на коннекте шлём узлу его тарифный контекст (тариф → разрешённые
+    // UserCase-sku). Узел кладёт в device-board config, по нему решает системные
+    // сценарии. Fire-and-forget: не блокирует WS-connect, best-effort.
+    void this.sendNodeEntitlements(meta, socket).catch((error: unknown) =>
+      this.logger.warn(
+        { error, membraneId: meta.membraneId },
+        'send node entitlements failed',
+      ),
+    );
     this.fanOutToCabinet(meta.membraneId, {
       v: 1,
       channel: 'presence',
@@ -133,6 +142,30 @@ export class NodeRealtimeService {
           timestampMs: Date.now(),
         },
       }),
+    );
+  }
+
+  /**
+   * csp-2/G1: резолвит node→membrane→tariff и шлёт узлу `node.entitlements`
+   * (tariffId + entitledUserCaseSkus тарифа). bundled-сценарии доступны всегда;
+   * список нужен для платных system-сценариев (tier:'tariff').
+   */
+  private async sendNodeEntitlements(
+    meta: NodeRealtimeSocketMeta,
+    socket: WebSocket,
+  ): Promise<void> {
+    const membrane = await this.prisma.membrane.findUnique({
+      where: { id: meta.membraneId },
+      select: { tariffId: true, tariff: { select: { entitledTariffSkus: true } } },
+    });
+    if (!membrane || socket.readyState !== socket.OPEN) return;
+    socket.send(
+      JSON.stringify(
+        createNodeRealtimeEnvelope('presence', NODE_REALTIME_EVENT_TYPES.presence.entitlements, {
+          tariffId: membrane.tariffId,
+          entitledTariffSkus: membrane.tariff.entitledTariffSkus,
+        }),
+      ),
     );
   }
 

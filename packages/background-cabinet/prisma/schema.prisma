@@ -54,6 +54,8 @@ model Tariff {
   bufferQuotaBytes       BigInt
   /** Read-only system dataset catalog id provisioned for this tariff (not a byte quota). */
   datasetCatalogId       String
+  /** csp-2/G1: tariffSku UserCases, которые выдаёт тариф (system-сценарии сверх bundled). Пусто по умолчанию. */
+  entitledTariffSkus     String[]   @default([])
   maxActiveKeysPerNode   Int        @default(1)
   /** Max paired nodes a membrane on this tariff may hold (MP7b multi-node). */
   maxNodesPerMembrane    Int        @default(1)

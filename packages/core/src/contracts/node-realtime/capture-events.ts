@@ -91,6 +91,17 @@ export interface BoardScenarioListPayload {
 }
 
 /**
+ * csp-2/G1: тарифный контекст узла (server → node на коннекте). Узел кладёт
+ * `entitledTariffSkus` в device-board config (вместо стаба) и по нему решает,
+ * какие СИСТЕМНЫЕ (tier:'tariff') UserCases разрешены; bundled-сценарии доступны
+ * всегда вне зависимости от этого списка.
+ */
+export interface NodeEntitlementsPayload {
+  readonly tariffId: string;
+  readonly entitledTariffSkus: readonly string[];
+}
+
+/**
  * CX3: инвариант «один сценарий всегда выбран». Возвращает `preferredId`, если
  * он есть в списке; иначе первый сценарий; `null` — только при пустом списке.
  * Чистая функция — используется узлом при объявлении и сервером при
