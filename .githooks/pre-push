@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+# Membrana pre-push gate (cg6 + cg7, спринт tech-debt-2026-07).
+#
+# Ловит ДО push два локальных футгана, которые роняли CI:
+#   cg7: новый плагин без записи в docs/catalog/client/registry.json
+#        → catalog:verify-client красный.
+#   cg6: stale dist соседнего пакета → одиночный typecheck ловит implicit-any.
+#        yarn typecheck идёт через turbo (^build) → dist всегда свежий.
+#
+# CI уже защищён turbo ^build; хук лишь переносит эти проверки левее (до push),
+# чтобы не узнавать о дыре из красного CI.
+#
+# Пропустить (аварийно): SKIP_PREPUSH=1 git push
+if [ "$SKIP_PREPUSH" = "1" ]; then
+  echo "pre-push: пропущено (SKIP_PREPUSH=1)"
+  exit 0
+fi
+
+set -e
+
+echo "pre-push [cg7]: yarn catalog:verify-client"
+yarn catalog:verify-client
+
+echo "pre-push [cg6]: yarn typecheck (turbo ^build → свежий dist)"
+yarn typecheck
+
+echo "pre-push: OK"
