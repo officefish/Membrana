@@ -93,6 +93,34 @@
 Пауза под захватом заблокирована **всегда** (тариф v3) — кнопка `disabled` с
 подсказкой; §3.3 (emergency stop) неприкосновенен.
 
+### 3.5 Аудит singleton-мостов клиент↔сервер (профилактика после CSR1)
+
+**Зачем.** Корень CSR1 — **два независимых инстанса** источника истины (runtime доски
+vs realtime-мост). Тот же класс дефекта дал PCB persistent-offline (неидемпотентный
+`connect()`). Ниже — реестр singleton-мостов контура «узел↔сервер↔кабинет» с гарантией
+единственности и вектором дубля. Все перечисленные — **один инстанс** сейчас; колонка
+«риск дубля» описывает, как единственность можно случайно сломать.
+
+| Мост | Где | Единственность | Риск дубля (как сломать) |
+|------|-----|----------------|--------------------------|
+| **Runtime-мост** `DeviceBoardRuntimeController` | `apps/client/src/lib/deviceBoardRuntimeController.ts` (`getDeviceBoardRuntimeController()`) | module-level `const controller = new …` + getter, `reset…ForTests` | ⚠️ **корень CSR1**: провайдер борда (`DeviceBoardGraphProvider`) создаёт СВОЙ `ScenarioRuntime` вместо общего → десинк «кнопки не влияют». Инвариант: борд принимает `externalRuntime`, не `new` свой (§3.4) |
+| **WS-транспорт** `NodeRealtimeClient` | `apps/client/src/lib/nodeRealtimeClient.ts` (`getNodeRealtimeClient()`) | module-level singleton + getter, `reset…ForTests` | ⚠️ **корень PCB persistent-offline**: неидемпотентный `connect()` под StrictMode рвёт ещё-`CONNECTING` сокет → реконнект-петля. Прикрыто guard'ом по `readyState` (CONNECTING/OPEN не рвём) |
+| **Presence/захват (клиент)** `useServerFirstStore` | `apps/client` (zustand global) | zustand store — один по построению | ✔️ низкий; риск не в дубле стора, а в чтении `getState()` в обход подписки (устаревший снимок) |
+| **Presence/захваты/сценарии (кабинет)** `cabinetNodeRuntimeStore` | `apps/cabinet/src/lib/cabinetNodeRuntimeStore.ts` (CX6) | module-level singleton, переживает навигацию | ✔️ низкий; **был** дубль до CX6 (стор пересоздавался на навигации) — зафиксировано, не регрессировать |
+| **Scenario-registry (сервер)** `DeviceScenarioRegistry` | `packages/background-cabinet/…/node-realtime/device-scenario.registry.ts` | `@Injectable()` NestJS provider (single-scope) + in-memory `Map` | ⚠️ провайд в >1 модуле → несколько `Map` → расщепление выбора сценария. Инвариант: провайдить один раз, экспортировать из общего модуля. **Плюс**: `Map` не персистентен — выбор теряется на рестарте (ограничение полевого узла, не дубль) |
+
+**Два канонических вектора дубля (запомнить):**
+1. **React-провайдер `new`-ит свой мост** вместо инъекции общего (корень CSR1) → провайдеры принимают инстанс пропом/контекстом, никогда не создают транспорт/runtime внутри себя.
+2. **StrictMode / повторный effect рвёт неидемпотентный ресурс** (корень PCB) → у `connect()`/`start()` обязателен guard идемпотентности (проверка `readyState`/уже-запущен).
+
+**Границы (проверено):** нарушений нет — `check:boundaries` зелёный. Мосты живут каждый
+в своём слое (client `lib`, cabinet `lib`, `background-cabinet` module); `device-board`
+не импортирует client/cabinet, синк идёт слотом от хоста (правило enforce'ится
+`device-board-no-agenda-or-client-imports`).
+
+**Долг:** персистентность `DeviceScenarioRegistry` (выбор сценария переживает рестарт
+сервера) — отдельная задача, вне D.
+
 ---
 
 ## 4. Enforcement тарифа — server-side
