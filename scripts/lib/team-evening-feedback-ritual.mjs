@@ -17,7 +17,7 @@ export const DEFAULT_SAVE_AS = 'team-evening-feedback';
 const MAX_BUFFER = 8 * 1024 * 1024;
 const MAX_DOC_CHARS = 24_000;
 const MAX_CONTEXT_CHARS = 90_000;
-const MAX_GIT_LOG_CHARS = 8_000;
+const MAX_GIT_LOG_CHARS = 12_000;
 
 /** @type {readonly { readonly rel: string; readonly label: string; readonly required?: boolean }[]} */
 export const DAY_DOC_INPUTS = [
@@ -148,17 +148,20 @@ export function collectGitDaySummary(opts = {}) {
   const branch = runGit(['rev-parse', '--abbrev-ref', 'HEAD']);
   const oneline = runGit(['log', '--oneline', '--since=midnight', '-30']);
   const stat = runGit(['log', '--since=midnight', '--pretty=format:', '--name-only']);
-  const files = [...new Set(stat.split('\n').map((line) => line.trim()).filter(Boolean))].slice(
-    0,
-    40,
-  );
+  // Сортируем и берём до 120 уникальных: git отдаёт коммиты новейшими-первыми, а
+  // прежний .slice(0,40) без сортировки отсекал файлы РАННИХ коммитов дня (напр.
+  // detection-fusion.ts из первого мерджа) → фидбэк не видел, что сделано утром, и
+  // не верил именам коммитов. Плотный день = 67 файлов, cap 120 покрывает.
+  const allFiles = [...new Set(stat.split('\n').map((line) => line.trim()).filter(Boolean))].sort();
+  const files = allFiles.slice(0, 120);
+  const filesMore = allFiles.length - files.length;
 
   let block =
     `## Git за ${day}\n\n` +
     `**Ветка:** ${branch}\n\n` +
     `### Коммиты (since midnight)\n\n` +
     (oneline || '(нет коммитов за календарный день)') +
-    '\n\n### Затронутые файлы (уникальные, до 40)\n\n' +
+    `\n\n### Затронутые файлы (уникальные, до 120${filesMore > 0 ? `, +${filesMore} ещё` : ''})\n\n` +
     (files.length > 0 ? files.map((f) => `- ${f}`).join('\n') : '(нет)');
 
   if (block.length > MAX_GIT_LOG_CHARS) {
