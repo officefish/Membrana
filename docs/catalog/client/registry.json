@@ -21,7 +21,8 @@
         "trends-fft-analyzer",
         "mic-buffer-recorder",
         "mic-live-drone-analysis",
-        "vdr-validation"
+        "vdr-validation",
+        "mic-proximity-alarm"
       ],
       "services": [
         "@membrana/audio-engine-service"
@@ -319,6 +320,17 @@
         "vdr-hg2-mic-validation-plugin"
       ],
       "parentModuleId": "microphone"
+    },
+    {
+      "id": "mic-proximity-alarm",
+      "kind": "plugin",
+      "name": "Alarm-loop «ближе/дальше»",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/mic-proximity-alarm.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/mic-proximity-alarm/micProximityAlarmPlugin.ts"
+      }
     },
     {
       "id": "sample-library-player",
