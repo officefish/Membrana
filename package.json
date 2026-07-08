@@ -12,6 +12,7 @@
     "apps/demos/Research-Tree"
   ],
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null && echo 'pre-push gate enabled (.githooks)' || echo 'pre-push gate skipped (no git context)'",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint --concurrency=3",

@@ -1,22 +1,27 @@
-<!-- Сгенерировано: 2026-07-08T06:41:17.160Z (yarn code-review; uncommitted) -->
+<!-- Сгенерировано: 2026-07-08T08:00:59.562Z (yarn code-review; uncommitted) -->
 
-Tier: T2
+Tier: T1
 
-[Teamlead]: Задача A (fusion-ядро в `@membrana/core`) — keystone дошёл до кода, это главное за день; хорошо, что `fuseDetectorConfidences` живёт в core, а не в `detectors/*`, и combined-точка зафиксирована в `DETECTOR_BENCHMARK.md`. Задача B (mic-proximity-alarm) реализована **до явного LGTM формы** — регламент (VIRTUAL_TEAM: «Музыкант перед существенным кодом фичи запрашивает одобрение формы») нарушен: **P1**, но форма аккуратная, легализую пост-фактум. PR size: **oversized (~1768 lines)** — но это осознанный snapshot-день (docs + два трека), рекомендую разбить commit на логические части (см. ниже), не auto-BLOCK. Автотесты (`detection-fusion.test.ts`, `loudness-trend.test.ts`, `types.test.ts`) присутствуют — C7 закрыт. Вердикт: **LGTM после зелёного gate**, при условии раздельных коммитов. PR size: oversized (+~1768 lines, обоснован snapshot-днём).
+[Teamlead]: Tier T1, uncommitted-режим. PR size OK (~28 lines). Diff вне магистрали дня (fusion A/C) — это инфраструктурный tech-debt-хук, не keystone; допустимо как побочный tooling, но не должен подменять ФАЗУ 1. Хук концептуально верный: переносит cg6/cg7-гейты левее (до push), CI-дубль сохранён. Один блокер по надёжности (см. Структурщик, B1) и один P2. Вердикт по сути LGTM после фикса B1; формально это не PR, поэтому — рекомендации до commit.
 
-[Структурщик]: Границы соблюдены: fusion в `packages/core/src/contracts/`, плагин зависит от `@membrana/fft-analyzer-service` и `@membrana/core` — не от `detectors/*` (C3 ✓, C1 ✓). Singleton `micProximityPluginState` повторяет проверенный паттерн `microphone-stream-viz`, lifecycle в `install()`, UI-хук тонкий (`useSyncExternalStore`) — C4 ✓. **Замечание (P2):** аудит singleton в `DEVICE_BOARD_SERVER_FIRST.md §3.5` отличный, но `check:boundaries` в diff не виден — подтвердите зелёным прогоном до commit. Рекомендую разбить: (1) core fusion, (2) proximity-alarm плагин, (3) docs/standup snapshot — три атомарных коммита. `resolveMicProximityAlarmConfig` с кламп-валидацией — образцовая защита границ.
+[Структурщик]: **B1 (P1):** `set -e` стоит **после** early-return блока `SKIP_PREPUSH` — это ок, но `yarn catalog:verify-client` и `yarn typecheck` без явной проверки выхода полагаются только на `set -e`; при `yarn`-обёртке код возврата пробрасывается корректно, так что критично другое — `prepare` через `core.hooksPath .githooks` меняет hooks-path **глобально для репо** и молча гасит ошибку (`|| true`), из-за чего на машине без прав хук просто не установится незаметно. Рекомендую логировать факт (не)установки, чтобы «зелёный push мимо гейта» не стал новым футганом. C7: сам хук — не код с тестами, тестовое покрытие не требуется. Границы пакетов не затронуты, циклов нет.
 
-[Математик]: Correctness fusion: проверьте краевой случай `presentCount === 0` — деление на суммарный вес должно давать `combinedScore: 0` без NaN (в diff тела `fuseDetectorConfidences` не видно целиком — **подтвердите тестом «все источники отсутствуют»**). `frameLoudness`/`LoudnessTrendTracker` — pure, unit-тесты на 3 сценария (согласие/расхождение/молчание) заявлены в DoD; вижу `loudness-trend.test.ts` (127 строк) — хорошо. `agreement = 1 − range` вынесен отдельным полем, политика порога у потребителя — правильное разделение (ND3 соблюдён). **P2:** в `clampNumber` при `windowSize` нечётном (тип требует «чётное ≥2») клампа чётности нет — либо ослабить комментарий в типе, либо добавить нормализацию.
+[Математик]: — (shell-гейт, чистых функций и числовых границ нет; fusion-ядро A/C этим diff не затрагивается)
 
-[Музыкант]: Аудио берётся через `LiveSampler` поверх `audio-engine-service` и shared `MediaStream` из `microphoneStreamHub` — **прямого Web Audio нет** (C2 ✓). Teardown корректен: `stopSampler()` → `tracker.reset()` → `setLive(false)`, guard `disposed`, `stop()` промис. **Замечание (P1, форма):** фича написана без предварительного согласования 1–2 абзацев с Teamlead — на будущее соблюдать; сама реализация формы («грубая громкость, не координата», порог на `combinedScore`, а не на самой громкости) — честная и корректная. `combinedScore = 0` пока нет продюсера (каркас E) — тревога неактивна, деградация безопасная.
+[Музыкант]: —
 
-[Верстальщик]: `MicProximityAlarmPanel` по духу DESIGN.md (daisyUI-токены, `text-warning/info/base-content`), `role="status"` + `aria-live="polite"` на блоке тревоги — a11y новых контролов закрыта (C5 ✓). Бизнес-логики в JSX нет — только чтение snapshot и рендер. **P2:** декоративные иконки `▲▼＝` помечены `aria-hidden` — хорошо; но текстовая метка тренда несёт смысл цветом (`view.tone`) — цвет не единственный носитель (есть `view.label`), так что контраст-требование выполнено. Явная пометка «не координата/не расстояние» присутствует — снимает риск ложных ожиданий оператора.
+[Верстальщик]: —
 
-Итоговый артефакт: markdown-ревью (`docs/discussions/uncommitted-code-review.md`)
-Definition of Done: `yarn turbo run lint typecheck test check:boundaries --filter=@membrana/core --filter=@membrana/client --filter=@membrana/fft-analyzer-service` + `yarn docs:lint`
+Итоговый артефакт: `.githooks/pre-push` + `prepare`-скрипт в `package.json`.
+
+Definition of Done (до commit):
+- Проверить, что `prepare` реально проставил `core.hooksPath` (`git config core.hooksPath` → `.githooks`), иначе гейт молча не работает.
+- Прогнать `SKIP_PREPUSH=1 git push` и обычный путь локально — убедиться, что оба сценария ведут себя как задумано.
+- `yarn docs:lint` (если правился сопутствующий docs) — здесь не затронут, «—».
+
 Риски:
-- **P1** (форма) — Задача B реализована без предварительного LGTM формы Teamlead; легализовано пост-фактум, на будущее соблюдать правило Музыканта/Верстальщика.
-- **P2** — подтвердить `check:boundaries` зелёным до commit; тест «все источники отсутствуют» для `fuseDetectorConfidences` (защита от NaN); нормализация чётности `windowSize` или правка комментария в типе.
-- **Рекомендация до commit:** разбить ~1768 строк на 3 атомарных коммита (core fusion / proximity-alarm плагин / docs snapshot) — упростит откат и историю.
+- **P1 (B1):** `2>/dev/null || true` в `prepare` глушит любую ошибку установки хука — на части машин гейт окажется неактивным без единого сигнала. Не блокирует commit, но добавь эхо об успехе/провале установки (follow-up допустим).
+- **P2:** shell использует `sh`, но `yarn` в хуке предполагает наличие Node/Yarn в PATH pre-push — на голом CI-агенте без Yarn хук упадёт; для локали ок, отметить в комментарии.
+- **P2:** нет `--filter` в `yarn typecheck` — turbo прогонит весь граф; для pre-push приемлемо, но на большом монорепо может ощутимо тормозить push (opportunity, не блокер).
 
-Вердикт: **LGTM** после зелёного gate и раздельных коммитов (P1/P2 — follow-up, не блокеры при чистом CI).
+Замечание вне scope (opportunity): diff не относится к keystone дня (fusion A). Убедись, что этот tooling-коммит не съедает слот 09:00–12:00 магистрали.
