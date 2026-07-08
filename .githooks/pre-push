@@ -21,6 +21,9 @@ set -e
 echo "pre-push [cg7]: yarn catalog:verify-client"
 yarn catalog:verify-client
 
+echo "pre-push [NB4]: yarn verify:wire-sync (core ↔ background-cabinet)"
+yarn verify:wire-sync
+
 echo "pre-push [cg6]: yarn typecheck (turbo ^build → свежий dist)"
 yarn typecheck
 
