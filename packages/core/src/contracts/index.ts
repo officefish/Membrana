@@ -40,6 +40,12 @@ export type {
   TdoaResult,
 } from './acoustic-network.js';
 export { SOUND_CLASSES, isSoundClass, type SoundClass } from './sound-class.js';
+export {
+  fuseDetectorConfidences,
+  type FusionSourceInput,
+  type FusionPerSource,
+  type DetectionFusionResult,
+} from './detection-fusion.js';
 
 export * from './device-board/index.js';
 export * from './node-realtime/index.js';
