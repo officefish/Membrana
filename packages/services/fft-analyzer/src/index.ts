@@ -30,6 +30,16 @@ export {
   spectralRolloff,
   spectralFlatness,
 } from './math/metrics.js';
+export {
+  LoudnessTrendTracker,
+  evaluateProximityAlarm,
+  type LoudnessTrend,
+  type LoudnessTrendResult,
+  type LoudnessTrendOptions,
+  type ProximityAlarmInput,
+  type ProximityAlarmOptions,
+  type ProximityAlarmResult,
+} from './math/loudness-trend.js';
 export { mean, std, minOf, maxOf, summarize } from './math/statistics.js';
 export {
   estimateNoiseFloor,

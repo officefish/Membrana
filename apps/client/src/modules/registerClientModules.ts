@@ -5,6 +5,7 @@ import { createFftThresholdTestPlugin } from '../plugins/fft-threshold-test';
 import { createHarmonicDetectorVizPlugin } from '../plugins/harmonic-detector-viz';
 import { createMicBufferRecorderPlugin } from '../plugins/mic-buffer-recorder';
 import { createMicLiveDroneAnalysisPlugin } from '../plugins/mic-live-drone-analysis';
+import { createMicProximityAlarmPlugin } from '../plugins/mic-proximity-alarm';
 import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-player';
 import { createSampleLibraryDroneAnalysisPlugin } from '../plugins/sample-library-drone-analysis';
 import { createSampleLibraryFftThresholdTestPlugin } from '../plugins/sample-library-fft-threshold-test';
@@ -175,6 +176,8 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createTrendsFftAnalyzerPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicBufferRecorderPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicLiveDroneAnalysisPlugin());
+  // Задача B: alarm-loop «ближе/дальше» — тренд громкости + порог тревоги по combinedScore.
+  MembranaRegistry.registerPlugin('microphone', createMicProximityAlarmPlugin());
   // vdr-hg2: продуктовая поверхность hard-gate экспериментов (требование владельца 2026-07-03).
   MembranaRegistry.registerPlugin('microphone', createVdrValidationPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());

@@ -31,6 +31,10 @@ import {
   MicLiveDroneAnalysisPanel,
 } from '../../plugins/mic-live-drone-analysis';
 import {
+  MIC_PROXIMITY_ALARM_PLUGIN_ID,
+  MicProximityAlarmPanel,
+} from '../../plugins/mic-proximity-alarm';
+import {
   VDR_VALIDATION_PLUGIN_ID,
   VdrValidationPanel,
 } from '../../plugins/vdr-validation';
@@ -294,6 +298,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(MIC_LIVE_DRONE_ANALYSIS_PLUGIN_ID) && (
           <MicLiveDroneAnalysisPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(MIC_PROXIMITY_ALARM_PLUGIN_ID) && (
+          <MicProximityAlarmPanel moduleId={module.id} />
         )}
 
         {activeIds.includes(VDR_VALIDATION_PLUGIN_ID) && (
