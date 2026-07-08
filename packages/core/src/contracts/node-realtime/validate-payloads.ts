@@ -276,11 +276,35 @@ export function parseBoardCaptureReleasePayload(raw: unknown): BoardCaptureRelea
   };
 }
 
+const SCENARIO_ENTITLEMENTS = ['bundled', 'community', 'entitled', 'locked'] as const;
+
+function isScenarioEntitlement(value: unknown): value is BoardScenarioListItem['entitlement'] {
+  return (
+    typeof value === 'string' &&
+    (SCENARIO_ENTITLEMENTS as readonly string[]).includes(value)
+  );
+}
+
+/** Счётчик карточки (branch/function): целое ≥ 0. */
+function isCount(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
 function parseScenarioListItem(raw: unknown): BoardScenarioListItem | null {
   if (!isRecord(raw) || !isNonEmptyString(raw.id) || !isNonEmptyString(raw.title)) {
     return null;
   }
-  return { id: raw.id, title: raw.title };
+  // csp-1: базовые id/title + опциональные карточные поля (additive, backward-compat:
+  // поле включается только при валидном значении; отсутствие kind = 'user').
+  return {
+    id: raw.id,
+    title: raw.title,
+    ...(raw.kind === 'system' || raw.kind === 'user' ? { kind: raw.kind } : {}),
+    ...(isNonEmptyString(raw.description) ? { description: raw.description } : {}),
+    ...(isScenarioEntitlement(raw.entitlement) ? { entitlement: raw.entitlement } : {}),
+    ...(isCount(raw.branchCount) ? { branchCount: raw.branchCount } : {}),
+    ...(isCount(raw.functionCount) ? { functionCount: raw.functionCount } : {}),
+  };
 }
 
 /**

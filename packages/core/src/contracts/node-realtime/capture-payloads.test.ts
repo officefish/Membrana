@@ -150,6 +150,7 @@ describe('capture tariff v2 payloads (CT1)', () => {
 import {
   normalizeScenarioSelection,
   parseBoardScenarioListPayload,
+  resolveScenarioItemKind,
 } from './index.js';
 
 describe('parseBoardScenarioListPayload (CX3)', () => {
@@ -197,6 +198,70 @@ describe('parseBoardScenarioListPayload (CX3)', () => {
         selectedScenarioId: null,
       }),
     ).toBeNull();
+  });
+
+  // csp-1: обогащённые системные сценарии (kind + карточные поля).
+  it('парсит системный сценарий с kind + карточными полями', () => {
+    const parsed = parseBoardScenarioListPayload({
+      deviceId: 'd',
+      scenarios: [
+        {
+          id: 'sys-1',
+          title: 'FREE · Спектр',
+          kind: 'system',
+          description: 'Системный',
+          entitlement: 'bundled',
+          branchCount: 6,
+          functionCount: 2,
+        },
+      ],
+      selectedScenarioId: 'sys-1',
+    });
+    expect(parsed?.scenarios[0]).toEqual({
+      id: 'sys-1',
+      title: 'FREE · Спектр',
+      kind: 'system',
+      description: 'Системный',
+      entitlement: 'bundled',
+      branchCount: 6,
+      functionCount: 2,
+    });
+  });
+
+  it('backward-compat: старый item без kind парсится без поля (kind не добавляется)', () => {
+    const parsed = parseBoardScenarioListPayload({
+      deviceId: 'd',
+      scenarios: [{ id: 'ws-1', title: 'Спектр' }],
+      selectedScenarioId: 'ws-1',
+    });
+    expect(parsed?.scenarios[0]).toEqual({ id: 'ws-1', title: 'Спектр' });
+    expect(parsed?.scenarios[0]).not.toHaveProperty('kind');
+  });
+
+  it('отбрасывает невалидные kind/entitlement/counts, сохраняя id+title', () => {
+    const parsed = parseBoardScenarioListPayload({
+      deviceId: 'd',
+      scenarios: [
+        {
+          id: 'ws-1',
+          title: 'Спектр',
+          kind: 'weird',
+          entitlement: 'nope',
+          branchCount: -1,
+          functionCount: 1.5,
+        },
+      ],
+      selectedScenarioId: 'ws-1',
+    });
+    expect(parsed?.scenarios[0]).toEqual({ id: 'ws-1', title: 'Спектр' });
+  });
+});
+
+describe('resolveScenarioItemKind (csp-1)', () => {
+  it('отсутствие kind → user; system → system', () => {
+    expect(resolveScenarioItemKind({ id: 'a', title: 'A' })).toBe('user');
+    expect(resolveScenarioItemKind({ id: 'a', title: 'A', kind: 'system' })).toBe('system');
+    expect(resolveScenarioItemKind({ id: 'a', title: 'A', kind: 'user' })).toBe('user');
   });
 });
 
