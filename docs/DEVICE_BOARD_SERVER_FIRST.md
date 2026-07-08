@@ -155,8 +155,39 @@ vs realtime-мост). Тот же класс дефекта дал PCB persiste
 ## 5. Выбор сценария с сервера
 
 - Read-only path: `getScenarios()` — сервер читает **список существующих** сценариев устройства (id, имя, метка).
-- Кабинет показывает dropdown → `selectScenario(id)` → `run(id)`.
+- Кабинет показывает список → `selectScenario(id)` → `run(id)`.
 - **Никаких** write-методов сценария из кабинета в этом тарифе.
+
+### 5.1 Пользовательские + системные сценарии (эпик `cabinet-scenario-picker-system`)
+
+Кабинетный выбор сценария показывает **пользовательские** (workspace'ы узла) **и
+системные** (UserCases по тарифу) сценарии единым карточным списком, приближённым к
+клиентскому `BoardUserCasePickerModal`.
+
+**Контракт (csp-1):** `BoardScenarioListItem` (@membrana/core) обогащён опциональными
+additive-полями `kind: 'user' | 'system'`, `description`, `entitlement`
+(`bundled|community|entitled|locked`), `branchCount`, `functionCount`. Отсутствие
+`kind` = `'user'` (backward-compat, `resolveScenarioItemKind`).
+
+**Поток данных (вариант A — узел объявляет оба):**
+1. **csp-2/G1:** сервер на коннекте узла резолвит node→membrane→tariff и шлёт
+   `node.entitlements { tariffId, entitledTariffSkus }` (Prisma `Tariff.entitledTariffSkus`).
+2. **csp-3:** узел объявляет `board.scenario-list` из user-workspace'ов + системных
+   UserCases каталога (`collectSystemScenarios`), помеченных `kind`/`entitlement`.
+   bundled-сценарии доступны всегда; tariff-gated — по `entitledTariffSkus`.
+3. Сервер (`background-cabinet`) парсит **с сохранением** обогащённых полей и хранит в
+   `DeviceScenarioRegistry`; fan-out в кабинет.
+4. **csp-4/csp-5:** кабинет рендерит шареный `UserCaseCardView` (device-board)
+   сгруппированно «Пользовательские | Системные», tariff-бейджи; **locked-системные
+   неактивны** (апселл, `title` «Доступно в тарифе»), выбор → `selectScenario`.
+
+**Отложено:** приём `node.entitlements` узлом (обновление `entitledTariffSkus` в
+device-board config) — нужен только для будущих **платных** system-сценариев; все текущие
+FREE-системные — `bundled` (доступны без entitledTariffSkus).
+
+**Тех-долг:** `BoardScenarioListItem` дублируется в `@membrana/core` (ESM) и
+`background-cabinet/domain/node-realtime-wire.ts` (CJS-копия, ручная синхронизация) —
+кандидат в бэклог единого wire-контракта.
 
 ---
 
@@ -240,6 +271,11 @@ Runbook (prod E2E, CT8): [`actions/device-board/smoke/DEVICE_BOARD_CAPTURE_TARIF
 [ ] CSR: сопряжён-но-не-захвачен → сценарий с борда пишет журнал на сервер
 [ ] CSR: пауза под захватом — кнопка disabled с подсказкой; emergency stop работает
 [ ] CSR: без связи (autonomous) — полный локальный контроль, без регрессий
+[ ] Пикер (csp): под захватом кабинет показывает карточный список — группы «Пользовательские | Системные»
+[ ] Пикер: системные FREE (bundled) видны с бейджем и выбираемы; выбор системного → selectScenario → run
+[ ] Пикер: locked-системный (если есть) неактивен, хинт «Доступно в тарифе», не выбирается
+[ ] Пикер: пользовательский сценарий выбирается и запускается как раньше (без регрессий)
+[ ] Пикер: карточка визуально как на клиенте (шареный UserCaseCardView) — заголовок/бейдж/счётчики
 [ ] yarn turbo lint typecheck test build
 ```
 
