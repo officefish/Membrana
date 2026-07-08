@@ -12294,6 +12294,126 @@
       "freezeStatus": "deferred",
       "freezeReason": "Backlog — фоном",
       "freezeAt": "2026-07-08"
+    },
+    {
+      "id": "cabinet-scenario-picker-system",
+      "title": "Epic: cabinet-scenario-picker-system — user + system (по тарифу) сценарии в кабинете + UI-паритет с клиентом",
+      "promptPath": "docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-08",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "notes": "Запрос владельца 2026-07-08. Вариант A (узел объявляет user+system), шареная карточка из BoardUserCasePickerModal. Крит.зависимость G1 (тариф→узел, снять стаб entitlement). Selection persistence уже есть (TD2).",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ]
+    },
+    {
+      "id": "csp-1-contract",
+      "title": "csp-1: обогатить BoardScenarioListItem (kind user|system + карточные поля), backward-compat",
+      "promptPath": "docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md",
+      "githubIssue": 302,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "cabinet-scenario-picker-system",
+      "createdAt": "2026-07-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": []
+    },
+    {
+      "id": "csp-2-tariff-to-node",
+      "title": "csp-2 (G1): прокинуть тарифные права entitledTariffSkus сервер→узел",
+      "promptPath": "docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md",
+      "githubIssue": 303,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "cabinet-scenario-picker-system",
+      "createdAt": "2026-07-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ]
+    },
+    {
+      "id": "csp-3-node-declares-system",
+      "title": "csp-3: узел объявляет user + entitled-system единым списком",
+      "promptPath": "docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md",
+      "githubIssue": 304,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "cabinet-scenario-picker-system",
+      "createdAt": "2026-07-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "dependsOn": [
+        "csp-1-contract",
+        "csp-2-tariff-to-node"
+      ]
+    },
+    {
+      "id": "csp-4-shared-card",
+      "title": "csp-4: шареная презентационная карточка сценария (device-board)",
+      "promptPath": "docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md",
+      "githubIssue": 305,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "cabinet-scenario-picker-system",
+      "createdAt": "2026-07-08",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [],
+      "dependsOn": [
+        "csp-1-contract"
+      ]
+    },
+    {
+      "id": "csp-5-cabinet-ui",
+      "title": "csp-5: кабинет — карточный список Пользовательские|Системные + tariff-бейджи",
+      "promptPath": "docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md",
+      "githubIssue": 306,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "parentEpic": "cabinet-scenario-picker-system",
+      "createdAt": "2026-07-08",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [],
+      "dependsOn": [
+        "csp-1-contract",
+        "csp-4-shared-card"
+      ]
+    },
+    {
+      "id": "csp-6-smoke-docs",
+      "title": "csp-6: smoke узел↔кабинет + docs",
+      "promptPath": "docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md",
+      "githubIssue": 307,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "parentEpic": "cabinet-scenario-picker-system",
+      "createdAt": "2026-07-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "dependsOn": [
+        "csp-3-node-declares-system",
+        "csp-5-cabinet-ui"
+      ]
     }
   ]
 }
