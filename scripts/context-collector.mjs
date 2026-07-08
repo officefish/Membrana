@@ -8,6 +8,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { CONTEXT_COLLECT_IGNORE_GLOBS, shouldSkipContextPath } from './context-collector-paths.mjs';
+import { todaysCommits } from './lib/git-day-context.mjs';
 
 const maxBuffer = 12 * 1024 * 1024;
 
@@ -130,12 +131,9 @@ export function collectRepositoryContext(options = {}) {
   const branch = runGit(['branch', '--show-current']) || 'detached';
   const lastCommit = runGit(['log', '-1', '--format=%h - %s (%an, %ar)']) || 'no commits';
 
-  // \u0414\u043d\u0435\u0432\u043d\u0430\u044f \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0441\u0442\u044c: \u0412\u0421\u0415 \u043a\u043e\u043c\u043c\u0438\u0442\u044b \u0432\u0435\u0442\u043a\u0438 \u0437\u0430 \u0441\u0435\u0433\u043e\u0434\u043d\u044f, \u0431\u0435\u0437 \u0444\u0438\u043b\u044c\u0442\u0440\u0430 \u043f\u043e \u043b\u043e\u043a\u0430\u043b\u044c\u043d\u043e\u043c\u0443
-  // git-\u0430\u0432\u0442\u043e\u0440\u0443. \u0420\u0430\u0431\u043e\u0442\u0430 \u0434\u043d\u044f \u043f\u0440\u0438\u0445\u043e\u0434\u0438\u0442 squash-\u043c\u0435\u0440\u0434\u0436\u0430\u043c\u0438 PR (\u0430\u0432\u0442\u043e\u0440 \u043a\u043e\u043c\u043c\u0438\u0442\u0430 = GitHub-\u0430\u043a\u043a\u0430\u0443\u043d\u0442
-  // \u043c\u0435\u0440\u0434\u0436\u0435\u0440\u0430, \u0430 \u041d\u0415 `git config user.name`), \u043f\u043e\u044d\u0442\u043e\u043c\u0443 `--author <user.name>` \u0434\u0430\u0432\u0430\u043b \u043b\u043e\u0436\u043d\u044b\u0439
-  // \u00abNo commits today\u00bb \u0432 \u043f\u043b\u043e\u0442\u043d\u044b\u0435 \u0434\u043d\u0438 (\u0441\u043c. team-evening-feedback 2026-07-08, \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0435 #3).
-  const todayLog = runGit(['log', '--since=midnight', '--pretty=format:\u2022 %h: %s (%an)']);
-  const activity = todayLog || 'No commits today';
+  // NB7: \u0434\u043d\u0435\u0432\u043d\u0430\u044f \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0441\u0442\u044c \u0447\u0435\u0440\u0435\u0437 \u043e\u0431\u0449\u0438\u0439 git-day-context (\u0431\u0435\u0437 --author-\u0444\u0438\u043b\u044c\u0442\u0440\u0430 \u2014
+  // squash-\u043c\u0435\u0440\u0434\u0436\u0438 PR \u0438\u043c\u0435\u044e\u0442 \u0430\u0432\u0442\u043e\u0440\u0430 GitHub-\u0430\u043a\u043a\u0430\u0443\u043d\u0442\u0430, \u0430 \u043d\u0435 user.name).
+  const activity = todaysCommits() || 'No commits today';
 
   const status = runGit(['status', '--short']) || 'Not a git repo';
   const nameStatus = runGit(['diff', '--name-status']) || 'No changes';
