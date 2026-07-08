@@ -1,21 +1,12 @@
-<!-- Сгенерировано: 2026-07-08T15:38:45.496Z (yarn code-review; daily) -->
+<!-- Сгенерировано: 2026-07-08T15:51:20.935Z (yarn code-review; daily) -->
 
-Tier: T0
+Tier: T1
 
-[Teamlead]: За сегодня коммитов нет (`No commits today`); последний merge — `44f81518` (docs device-board, csp-6, #307) 86 минут назад, уже прошёл через PR #314. Единственное изменение в дереве — untracked снимок ритуала `docs/archive/daily-day/2026-07-08/`, это артефакт `yarn archive:daily-day`, не продуктовый код. CI зелёный: тесты 53/53 tasks (76 файлов), lint 33/33 tasks. Остаётся 1 warning `react-hooks/exhaustive-deps` в `apps/client/src/modules/SampleLibraryModule.tsx:94` — P2, не блокирует, отдаём линтеру/follow-up. Ревьюить по существу нечего (только docs/config), поэтому Tier T0 и сокращённый формат. Вердикт по дню: чисто, рисков на завтра нет.
+[Teamlead]: День насыщенный: закрыт эпик `cabinet-scenario-picker-system` (csp-1…csp-6, #302–#307/#309–#314) через core → cabinet → client → device-board, плюс tech-debt хвост (TD2/TD3, ci-gate cg5–cg7) и вечерний ритуал. Затронуто ≥2 пакетов (`@membrana/core`, `background-cabinet`, `client`, `device-board`) — но всё уже смёржено в PR через `Sergey Inozemcev`, локальное дерево чистое, `Not a git repo` в CURRENT CHANGES → ревьюим по факту активности, не по diff. CI зелёный: test 53/53 (76 client-файлов passed), lint 0 errors. Единственный флаг — `react-hooks/exhaustive-deps` warning в `SampleLibraryModule.tsx:94` (не в scope сегодняшних коммитов, наследие). Риск на завтра: csp-цепочка тронула core-контракт `BoardScenarioListItem` (kind user|system) + тарифный контекст `node.entitlements` — это авто-T2 зона (`packages/core`, cabinet auth), требует сверки catalog/CONCEPT при следующем изменении. PR size: коммиты гранулярные (по одному csp-шагу), split соблюдён — OK.
+  Утро: прочитать `DAILY_CODE_REVIEW.md`; `yarn turbo run typecheck test --filter=@membrana/core --filter=@membrana/client`; `yarn catalog:verify-client` (после ca3d3583 регистрации mic-proximity-alarm); `yarn docs:lint`; smoke device-board пикер сценариев (§5.1 csp-6).
 
-[Структурщик]: Границы пакетов не затронуты — diff отсутствует, только новая папка снимка в `docs/archive/`. Тесты рядом с изменениями не требуются (C7 — «—»). Warning в `SampleLibraryModule.tsx` — `samples` внутри логического выражения в зависимостях `useCallback`: рекомендую обернуть инициализацию в `useMemo` (P2, opportunity, не в scope сегодня).
+[Структурщик]: Границы пакетов в csp-цепочке выдержаны корректно: обогащение контракта `BoardScenarioListItem` в core (csp-1) → доставка `node.entitlements` в cabinet (csp-2) → объявление списка на клиенте (csp-3) → шареная презентационная `UserCaseCardView` (csp-4) — карта именно так, ядро без React, презентация отдельно (C4 ✓). TD3 (#295/#301) добавил eslint-гейт против дубля singleton-мостов §3.5 — это усиление слабой связанности, одобряю направление (C1 ✓). TD2 персистентность `DeviceScenarioRegistry` (#293/#299) и `registerNode` освежает `lastSeenAt` (#294/#300) — состояние вынесено в модульный стор, не per-mount, согласовано с cx-6 из архива (C3 ✓). Тесты: 76 client-файлов зелёные, но по активности не вижу новых тестов рядом с csp-4/csp-5 (карточный выбор) — проверить C7 на завтра, что presentational-компонент и entitlements-маппинг покрыты. Warning `exhaustive-deps` в `SampleLibraryModule` — P2, отдать линтеру, не блокирует.
 
-[Математик]: —
-[Музыкант]: —
-[Верстальщик]: —
-
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (снимок дня без изменений кода).
-
-Definition of Done (утро):
-- Закоммитить/проверить снимок: `git status docs/archive/daily-day/2026-07-08/` → добавить в коммит ритуала, если нужен осознанный архив.
-- Прочитать этот `DAILY_CODE_REVIEW.md` перед стендапом.
-- Утренний ритуал: `yarn plan:day && yarn standup && yarn main-day-issue`.
-- Если возьмёшь warning в работу: `yarn turbo run lint typecheck test --filter=@membrana/client`.
-
-Риски: P2 — `react-hooks/exhaustive-deps` warning в `SampleLibraryModule.tsx:94` (не блокирует, follow-up). P0/P1 — нет.
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md`
+Definition of Done (утро): `yarn turbo run typecheck test --filter=@membrana/core --filter=@membrana/client` зелёный; `yarn catalog:verify-client` ok; `yarn docs:lint` ok; smoke пикера user+system сценариев.
+Риски: P2 — `react-hooks/exhaustive-deps` в `SampleLibraryModule.tsx:94` (наследие, обернуть `samples` в `useMemo`); P2 — проверить наличие тестов рядом с csp-4/csp-5 (C7). Core-контракт `BoardScenarioListItem` + cabinet `entitlements` — авто-T2 при следующем касании, сверять catalog/CONCEPT.
