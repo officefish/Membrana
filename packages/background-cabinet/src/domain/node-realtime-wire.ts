@@ -393,10 +393,19 @@ export function parseBoardCaptureReleasePayload(raw: unknown): BoardCaptureRelea
 
 // --- Scenario list (CX3, синхрон с packages/core capture-events.ts) ---
 
-/** CX3: сценарий в объявляемом узлом списке. */
+/** csp-1: происхождение сценария (отсутствие = 'user'). */
+export type ScenarioListItemKind = 'user' | 'system';
+export type ScenarioListItemEntitlement = 'bundled' | 'community' | 'entitled' | 'locked';
+
+/** CX3 + csp-1: сценарий в объявляемом узлом списке (см. @membrana/core, держим в синхроне). */
 export interface BoardScenarioListItem {
   readonly id: string;
   readonly title: string;
+  readonly kind?: ScenarioListItemKind;
+  readonly description?: string;
+  readonly entitlement?: ScenarioListItemEntitlement;
+  readonly branchCount?: number;
+  readonly functionCount?: number;
 }
 
 /**
@@ -421,11 +430,31 @@ export function normalizeScenarioSelection(
   return first === undefined ? null : first.id;
 }
 
+const SCENARIO_ENTITLEMENTS = ['bundled', 'community', 'entitled', 'locked'];
+
+function isScenarioEntitlement(value: unknown): value is ScenarioListItemEntitlement {
+  return typeof value === 'string' && SCENARIO_ENTITLEMENTS.includes(value);
+}
+
+function isCount(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
 function parseScenarioListItem(raw: unknown): BoardScenarioListItem | null {
   if (!isRecord(raw) || !isNonEmptyString(raw.id) || !isNonEmptyString(raw.title)) {
     return null;
   }
-  return { id: raw.id, title: raw.title };
+  // csp-1: сохраняем обогащённые карточные поля (kind/entitlement/counts/description),
+  // иначе система-сценарии узла теряют tariff-инфо на серверном парсе.
+  return {
+    id: raw.id,
+    title: raw.title,
+    ...(raw.kind === 'system' || raw.kind === 'user' ? { kind: raw.kind } : {}),
+    ...(isNonEmptyString(raw.description) ? { description: raw.description } : {}),
+    ...(isScenarioEntitlement(raw.entitlement) ? { entitlement: raw.entitlement } : {}),
+    ...(isCount(raw.branchCount) ? { branchCount: raw.branchCount } : {}),
+    ...(isCount(raw.functionCount) ? { functionCount: raw.functionCount } : {}),
+  };
 }
 
 /** CX3: валидирует board.scenario-list; выбранный обязан указывать на элемент списка. */

@@ -7,6 +7,7 @@ import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/lib/useCabinetNodesJournalPreview';
 import { NodeLastTrackPreview } from '@/components/nodes/NodeLastTrackPreview';
+import { CabinetScenarioPicker } from '@/components/CabinetScenarioPicker';
 
 interface NodesPageProps {
   onOpenJournal: () => void;
@@ -389,19 +390,12 @@ function NodeCard({
               {scenarioList && scenarioList.scenarios.length > 0 ? (
                 <label className="flex items-center gap-1.5 text-xs text-base-content/70">
                   <span>Сценарий</span>
-                  <select
-                    className="select select-bordered select-xs max-w-44"
-                    value={scenarioList.selectedScenarioId ?? ''}
-                    onChange={(event) => deviceId && runtime.selectScenario(deviceId, event.target.value)}
+                  <CabinetScenarioPicker
+                    scenarios={scenarioList.scenarios}
+                    selectedScenarioId={scenarioList.selectedScenarioId}
+                    onSelect={(id) => deviceId && runtime.selectScenario(deviceId, id)}
                     disabled={!deviceLive}
-                    aria-label="Сценарий устройства"
-                  >
-                    {scenarioList.scenarios.map((scenario) => (
-                      <option key={scenario.id} value={scenario.id}>
-                        {scenario.title}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </label>
               ) : (
                 <span
