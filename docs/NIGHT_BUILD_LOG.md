@@ -101,3 +101,8 @@
 ## Checkpoint NB2 — 2026-07-06T17:50:25.707Z
 - Status: **pass**
 - Note: причина флапа названа по коду: кабинетная WS без keepalive + idle-таймаут; фикс 45с keepalive, cabinet 21/21
+
+## Re-open — 2026-07-08T16:57:00.483Z
+- Epic: `agent-tooling-night-build`
+- Continue: no
+
