@@ -24,6 +24,11 @@
       "outputs": [],
       "inputs": ["src/**", "test/**", "tests/**"]
     },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["src/**", "test/**", "tests/**"]
+    },
     "clean": {
       "cache": false,
       "outputs": []

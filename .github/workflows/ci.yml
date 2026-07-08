@@ -75,7 +75,9 @@ jobs:
 
       - name: Harmonic — integration test (FFT processing, timeout 10 s)
         if: always()
-        run: yarn workspace @membrana/harmonic-detector-service test:integration
+        # Через turbo: dependsOn ["^build"] гарантирует dist @membrana/detector-base
+        # до теста (cg5 — устраняет флейки "Failed to resolve entry"). Не прямой yarn.
+        run: yarn turbo run test:integration --filter=@membrana/harmonic-detector-service
 
       - name: Script ritual tests (test:scripts)
         run: yarn test:scripts
