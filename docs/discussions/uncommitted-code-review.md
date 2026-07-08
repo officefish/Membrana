@@ -1,0 +1,22 @@
+<!-- Сгенерировано: 2026-07-08T06:41:17.160Z (yarn code-review; uncommitted) -->
+
+Tier: T2
+
+[Teamlead]: Задача A (fusion-ядро в `@membrana/core`) — keystone дошёл до кода, это главное за день; хорошо, что `fuseDetectorConfidences` живёт в core, а не в `detectors/*`, и combined-точка зафиксирована в `DETECTOR_BENCHMARK.md`. Задача B (mic-proximity-alarm) реализована **до явного LGTM формы** — регламент (VIRTUAL_TEAM: «Музыкант перед существенным кодом фичи запрашивает одобрение формы») нарушен: **P1**, но форма аккуратная, легализую пост-фактум. PR size: **oversized (~1768 lines)** — но это осознанный snapshot-день (docs + два трека), рекомендую разбить commit на логические части (см. ниже), не auto-BLOCK. Автотесты (`detection-fusion.test.ts`, `loudness-trend.test.ts`, `types.test.ts`) присутствуют — C7 закрыт. Вердикт: **LGTM после зелёного gate**, при условии раздельных коммитов. PR size: oversized (+~1768 lines, обоснован snapshot-днём).
+
+[Структурщик]: Границы соблюдены: fusion в `packages/core/src/contracts/`, плагин зависит от `@membrana/fft-analyzer-service` и `@membrana/core` — не от `detectors/*` (C3 ✓, C1 ✓). Singleton `micProximityPluginState` повторяет проверенный паттерн `microphone-stream-viz`, lifecycle в `install()`, UI-хук тонкий (`useSyncExternalStore`) — C4 ✓. **Замечание (P2):** аудит singleton в `DEVICE_BOARD_SERVER_FIRST.md §3.5` отличный, но `check:boundaries` в diff не виден — подтвердите зелёным прогоном до commit. Рекомендую разбить: (1) core fusion, (2) proximity-alarm плагин, (3) docs/standup snapshot — три атомарных коммита. `resolveMicProximityAlarmConfig` с кламп-валидацией — образцовая защита границ.
+
+[Математик]: Correctness fusion: проверьте краевой случай `presentCount === 0` — деление на суммарный вес должно давать `combinedScore: 0` без NaN (в diff тела `fuseDetectorConfidences` не видно целиком — **подтвердите тестом «все источники отсутствуют»**). `frameLoudness`/`LoudnessTrendTracker` — pure, unit-тесты на 3 сценария (согласие/расхождение/молчание) заявлены в DoD; вижу `loudness-trend.test.ts` (127 строк) — хорошо. `agreement = 1 − range` вынесен отдельным полем, политика порога у потребителя — правильное разделение (ND3 соблюдён). **P2:** в `clampNumber` при `windowSize` нечётном (тип требует «чётное ≥2») клампа чётности нет — либо ослабить комментарий в типе, либо добавить нормализацию.
+
+[Музыкант]: Аудио берётся через `LiveSampler` поверх `audio-engine-service` и shared `MediaStream` из `microphoneStreamHub` — **прямого Web Audio нет** (C2 ✓). Teardown корректен: `stopSampler()` → `tracker.reset()` → `setLive(false)`, guard `disposed`, `stop()` промис. **Замечание (P1, форма):** фича написана без предварительного согласования 1–2 абзацев с Teamlead — на будущее соблюдать; сама реализация формы («грубая громкость, не координата», порог на `combinedScore`, а не на самой громкости) — честная и корректная. `combinedScore = 0` пока нет продюсера (каркас E) — тревога неактивна, деградация безопасная.
+
+[Верстальщик]: `MicProximityAlarmPanel` по духу DESIGN.md (daisyUI-токены, `text-warning/info/base-content`), `role="status"` + `aria-live="polite"` на блоке тревоги — a11y новых контролов закрыта (C5 ✓). Бизнес-логики в JSX нет — только чтение snapshot и рендер. **P2:** декоративные иконки `▲▼＝` помечены `aria-hidden` — хорошо; но текстовая метка тренда несёт смысл цветом (`view.tone`) — цвет не единственный носитель (есть `view.label`), так что контраст-требование выполнено. Явная пометка «не координата/не расстояние» присутствует — снимает риск ложных ожиданий оператора.
+
+Итоговый артефакт: markdown-ревью (`docs/discussions/uncommitted-code-review.md`)
+Definition of Done: `yarn turbo run lint typecheck test check:boundaries --filter=@membrana/core --filter=@membrana/client --filter=@membrana/fft-analyzer-service` + `yarn docs:lint`
+Риски:
+- **P1** (форма) — Задача B реализована без предварительного LGTM формы Teamlead; легализовано пост-фактум, на будущее соблюдать правило Музыканта/Верстальщика.
+- **P2** — подтвердить `check:boundaries` зелёным до commit; тест «все источники отсутствуют» для `fuseDetectorConfidences` (защита от NaN); нормализация чётности `windowSize` или правка комментария в типе.
+- **Рекомендация до commit:** разбить ~1768 строк на 3 атомарных коммита (core fusion / proximity-alarm плагин / docs snapshot) — упростит откат и историю.
+
+Вердикт: **LGTM** после зелёного gate и раздельных коммитов (P1/P2 — follow-up, не блокеры при чистом CI).

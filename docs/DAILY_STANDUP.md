@@ -1,102 +1,140 @@
-<!-- Сгенерировано: 2026-07-07T03:58:38.058Z (yarn standup) -->
+<!-- Сгенерировано: 2026-07-08T04:57:03.138Z (yarn standup) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
 <!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (17), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
 
-# 🗓️ DAILY STANDUP — 2026-07-07
+# 🗓 DAILY STANDUP — 2026-07-08
 
-**Координатор:** Vesnin (Teamlead) · **Tier вчерашнего ревью:** T0 (чисто, блокеров нет)
-**Магистраль:** продуктовая (форсайт S2 — **combined UC: fusion спектр+нейро**) · детекция стала поддерживающей полосой
-
----
-
-## 1. Синтез входных сигналов
-
-| Источник | Ключевой вывод | Действие сегодня |
-|----------|----------------|------------------|
-| **CODE_REVIEW** (06.07 вечер) | T0, дерево чистое; один хвост — untracked `scripts/node-link-probe.mjs` | ФАЗА 0: осознанно закоммитить/убрать скрипт (проверить секреты/URL, лог не в корень) |
-| **STRATEGIC_PLAN_DAY** (07.07) | Прорыв суток — **yamnet F1 0.803** (лучший на free-v1); вход в **S2 fusion** | Магистраль = Задача 1 (fusion-контракт) → далее 2/3/4/5 |
-| **FFT_METRICS §6** (#84) | Эшелон 0 (DSP/FFT) исчерпан; рост — только fusion (trends+yamnet) на сыром confidence | Пересборка бенчмарка **только** в рамках fusion; НЕ повторять DSP-тюнинг free-v1 |
-| **Открытые Issues** | Продуктовых блокеров детекции нет; #34 (FFT edge-docs) попутно | В фон: #34 к math-касанию; intern #195–197, #236 — вне магистрали |
-| **packages/temp** | Набросков, двигающих магистраль, не обнаружено | — |
+**Координатор:** Vesnin (Teamlead)
+**Источники:** STRATEGIC_PLAN_DAY (08.07), DAILY_CODE_REVIEW (07.07 вечер), MAIN_DAY_ISSUE (07.07, канон предыдущего дня), open GitHub Issues, packages/temp
+**Магистраль недели:** финализация FREE-тарифа → S2 combined UC (fusion спектр+нейро)
 
 ---
 
-## 2. Разворот дня (легализация нейро/fusion)
+## 1. Свод входов (что читаем на входе)
 
-Вчерашний `MAIN_DAY_ISSUE` вёл к `DRONE_TIGHT` промоушену. За сутки картина изменилась: yamnet (#266/#268) вышел в prod с **F1 0.803**, обойдя trends `DRONE_TIGHT` (0.771). Магистраль официально переходит от «промоушена одиночного DSP» к **combined UC (fusion)**. Это снимает риск дрейфа план↔факт (feedback 7.4/10) — план дня явно легализует нейро/fusion-разворот.
+| Источник | Ключевой сигнал | Импликация на сегодня |
+|----------|-----------------|------------------------|
+| **Code-review 07.07** | T0, дерево code-clean; хвост — untracked `docs/archive/daily-day/2026-07-07/`; P2 warning `SampleLibraryModule.tsx:94` | ФАЗА 0: закоммитить снимок дня, зелёный client, docs:lint |
+| **STRATEGIC_PLAN_DAY 08.07** | Сутки ушли в UX-контур (CX/CSR/BTJ); детекционное ядро S2 **не двигалось** | Сегодня магистраль = fusion-хелпер (A), долг объяснимости (C) |
+| **MAIN_DAY_ISSUE 07.07** | Fusion-контракт вчера был центром; проверить, дошёл ли он до `main` | Уточнить статус Задачи A: контракт есть? функция есть? |
+| **Open Issues** | Продуктовых блокеров детекции нет; #34/#10 (FFT-долг) релевантны Задаче C | #10/#34 — попутно к таблице сравнения, не магистраль |
+| **packages/temp** | Набросков, ломающих план, не обнаружено | — |
+
+⚠️ **Разрыв планов:** STRATEGIC_PLAN_DAY (08.07) и MAIN_DAY_ISSUE (07.07) описывают **одну и ту же** пятёрку задач A–E. Судя по code-review 07.07 (день архивный, 0 строк кода), **вчерашняя магистраль fusion (Задача 1/A) не была реализована** — только заархивированы UX-эпики. Значит fusion переносится на сегодня как незакрытый keystone.
 
 ---
 
-## 3. План на сегодня по ролям
+## 2. Синхронизация ролей
 
 ```
-[Teamlead] (Vesnin):
-  • LGTM выбора основного детектора (Задача 2): yamnet = основной hard-gate, trends DRONE_TIGHT = объяснимый бэкап.
-  • Держать S2 ведущей, детекцию — поддерживающей; не пускать «unified DSP benchmark» в магистраль.
-  • go/no-go по границе transport-service (не выделять пакет сегодня).
+[Teamlead]: Держу магистраль: fusion-хелпер спектр+нейро (сырой confidence, НЕ бинарный OR) —
+            это вход в S2 FREE-тарифа. Вчера ушли в UX; сегодня возвращаем ядро.
+            Приоритет: A (fusion) → C (таблица val) → B/E (после контракта). D — профилактика.
+            LGTM держу на выводах C и D. Задачи A/C нельзя пропускать второй день подряд.
 
-[Структурщик] (Ozhegov):
-  • ФАЗА 0: судьба scripts/node-link-probe.mjs (секреты/URL нет; лог в %TEMP%/docs/archive, не в корень).
-  • Задача 1: где живёт fusion-контракт — в @membrana/core (типы combined), НЕ внутри detectors/*; check:boundaries зелёный.
-  • Задача 4: скелет 3+1 UserCase в device-board (зависит только от core).
-  • Задача 5 (NB0/NB1): пробник флапа связи узел↔cabinet, deviceId в UI.
+[Структурщик]: Границы: fusion живёт на уровне core/client, НЕ внутри detectors/*
+               (детекторы не зависят друг от друга — check:boundaries обязателен).
+               Веду D (аудит singleton после CSR1: runtime/presence/captures/scenario-registry).
+               Со-веду E (каркас 3+1 UC: device-board зависит только от core, UC — слотом от хоста).
 
-[Математик] (Dynin):
-  • Задача 1 (ВЕДЁТ): чистая функция слияния trends(спектр)+yamnet(нейро) на СЫРОМ confidence — не бинарный OR.
-    Вход: {trendsConfidence, yamnetConfidence(raw)} → выход: combined score + пер-источник. Unit-тесты: согласованный/расходящийся вердикт.
-  • Задача 2: единая таблица val (P/R/FPR/F1) yamnet vs trends DRONE_TIGHT — БЕЗ нового DSP-прогона.
-  • Попутно #34: FFT edge-cases в JSDoc/README fft-analyzer (пустой буфер, NaN, Nyquist, окно).
+[Математик]: Веду A: pure-функция слияния на СЫРОМ confidence (trends + yamnet),
+             unit-тесты на 3 сценария (согласие / расхождение / один молчит). Заметка ND3.
+             Веду C: таблица P/R/FPR/F1 обоих детекторов на ОДНОМ held-out val —
+             БЕЗ нового DSP-прогона free-v1 (FFT_METRICS §6, потолок зафиксирован).
+             Попутно вижу #10/#34 — тесты и edge-cases FFT-ядра; закрывать не сегодня.
 
-[Музыкант] (Kuryokhin):
-  • Задача 3 (DSP-часть): alarm-loop «ближе/дальше/стабильно» по RMS-тренду live (через audio-engine, §1b).
-    Pure-логика классификации тренда — на синтетических рядах. Форму фичи согласовать с Teamlead (1–2 абзаца).
+[Музыкант]: Задача B (alarm-loop «ближе/дальше» по RMS): согласую форму с Teamlead
+            (1–2 абзаца + модули) ДО кода. Аудио только через audio-engine, не Web Audio напрямую.
+            Порог алерта завязан на combinedScore из A → жду контракт A.
 
-[Верстальщик] (Rodchenko):
-  • Задача 3 (UI): индикатор «приближается/удаляется/стабильно»; явная пометка «грубый индикатор громкости, не координата».
-  • Задача 4 (UI): карточки 3+1 UC по DESIGN.md; бизнес-логика не в JSX.
-  • Задача 5: видимый deviceId сопряжения (NB1).
+[Верстальщик]: Веду B (UI-индикатор ближе/дальше) и со-веду E (карточки UC по DESIGN.md).
+               Бизнес-логика НЕ в JSX; индикатор явно помечен «грубая громкость, не координата».
+               Стартую после контракта A (~13:00).
 ```
 
 ---
 
-## 4. Календарная развёртка
+## 3. План на сегодня (приоритизированный)
 
-| Слот | Фаза | Кто | Артефакт |
-|------|------|-----|----------|
-| **08:00–09:00** | ФАЗА 0 (гигиена) | Ozhegov + Rodchenko | Чистое дерево (судьба `node-link-probe.mjs`); `@membrana/client` lint/typecheck/test зелёные; все 5 ролей прочитали standup |
-| **09:00–12:00** | Магистраль — Задача 1 (fusion-контракт) | Dynin вед. + Ozhegov | Тип combined в `core` + чистая функция слияния + unit-тесты; `check:boundaries` зелёный |
-| **11:00–13:00** | Задача 2 (долг объяснимости) | Dynin + Vesnin (LGTM) | Таблица val yamnet vs trends в `DETECTOR_BENCHMARK.md`; основной/бэкап зафиксирован |
-| **13:00–16:00** | Задача 3 (alarm-loop) ∥ | Kuryokhin + Rodchenko | Плагин «ближе/дальше», тренд-логика в тестах, регистрация/teardown |
-| **13:00–16:00** | Задача 4 (скелет UC) ∥ | Ozhegov + Rodchenko | 3+1 UC в device-board; scenario-тесты + журнал (#269); границы зелёные |
-| **по остатку** | Задача 5 (NB0/NB1) · #34 | Ozhegov + Rodchenko · Dynin | Отчёт пробника связи + deviceId; FFT edge-docs |
+### 🟢 ФАЗА 0 — Гигиена (08:00–09:00) · блокирующая
+- [ ] `git add docs/archive/daily-day/2026-07-07/ && git commit` — снимок дня (сейчас ломает preflight «чистое дерево»)
+- [ ] `git status --porcelain | grep -E '\.txt$'` — нет `.txt`-логов в корне
+- [ ] `yarn turbo run lint typecheck test --filter=@membrana/client` — зелёный после волны device-board
+- [ ] `yarn docs:lint` + `yarn catalog:verify-client` — после массовой правки docs/tasks + device-board runtime
+- **Роли:** Ozhegov + Rodchenko · **DoD:** дерево чистое, client green, все 5 ролей прочитали standup
 
----
+### 🔴 ФАЗА 1 — МАГИСТРАЛЬ: Задача A (09:00–12:00) · **центр дня**
+- **Fusion-хелпер спектр+нейро на сыром confidence** (перенос незакрытого keystone с 07.07)
+- **Ведёт:** Dynin (Математик) · **Границы:** Ozhegov · **LGTM детектора:** Vesnin · **Размер:** M
+- **DoD:**
+  - [ ] Тип combined-результата в `@membrana/core` — сырой confidence обоих + агрегат, **без бинарного OR**
+  - [ ] Pure-функция слияния (без побочных эффектов, без фреймворков)
+  - [ ] Unit-тесты: согласие / расхождение / один источник молчит
+  - [ ] `check:boundaries` зелёный — слияние не внутри `detectors/*`
+  - [ ] Combined-точка отражена в `DETECTOR_BENCHMARK.md`
 
-## 5. Итоговый артефакт дня
+### 🟡 ФАЗА 2 — Долг объяснимости: Задача C (11:00–13:00)
+- **Таблица trends `DRONE_TIGHT` vs yamnet на одном held-out val**
+- **Ведёт:** Dynin · **LGTM:** Vesnin · **Размер:** S
+- **DoD:**
+  - [ ] Строка P/R/FPR/F1 обоих в `DETECTOR_BENCHMARK.md`
+  - [ ] Вывод 2–3 фразы: **yamnet — основной hard-gate, trends — объяснимый бэкап**
+  - [ ] **БЕЗ** нового прогона free-v1 DSP (FFT_METRICS §6)
+  - [ ] Отмечено: hard-gate P≥85%/R≥90% пока НЕ достигнут (yamnet FPR 36.7 → ждёт VDR)
 
-**Fusion-контракт combined UC** (сырой confidence trends+yamnet) в `@membrana/core` + чистая функция слияния + единая val-таблица детекторов — вход в S2 продуктовой магистрали.
-
-## 6. Definition of Done (сводный)
-
-- ✅ **Задача 1:** тип combined-результата в `@membrana/core` (сырой confidence обоих источников + агрегат, **без бинарного OR**); unit-тесты слияния (согласованный/расходящийся); `check:boundaries` зелёный (детекторы не зависят друг от друга); combined-точка отражена в `DETECTOR_BENCHMARK.md`.
-- ✅ **Задача 2:** одна таблица на held-out `val` с P/R/FPR/F1 обоих кандидатов; зафиксировано «yamnet — основной, trends `DRONE_TIGHT` — бэкап»; **без нового DSP-тюнинга** free-v1; LGTM Teamlead.
-- ✅ **Задача 3:** плагин показывает «приближается/удаляется/стабильно» по RMS-тренду; pure-логика покрыта тестами; регистрация через `MembranaRegistry` (lazy), teardown корректный; аудио только через engine; UI помечает «грубый индикатор, не координата».
-- ✅ **Задача 4:** 3+1 UC заведены в device-board; scenario-тесты и журнал (#269) отражают запуск; `check:boundaries` зелёный.
-- ✅ **Задача 5:** отчёт NB0 (флап связи) + видимый deviceId (NB1); prod-контракты не тронуты.
-- ✅ **Гигиена/согласованность:** нет `.txt`-логов в корне; `node-link-probe.mjs` — осознанно закоммичен/убран; нигде магистралью не стоит «Этап 1.A / unified DSP benchmark»; S2 combined UC — ведущая полоса.
-
----
-
-## 7. Что НЕ делаем сегодня (антидрейф)
-
-- ❌ Повторный unified benchmark harmonic/cepstral/spectral-flux на free-v1 (эшелон 0 исчерпан, FFT_METRICS §6). Разрешена **только** пересборка в рамках fusion (Задача 1).
-- ❌ Бинарный OR trends+yamnet вместо fusion на сыром confidence — потеряется смысл combined UC.
-- ❌ `tdoa-service` / `localizer-service` / `tracker-service` — Этапы 2–4 заморожены до hard-gate 85/90.
-- ❌ Выделение отдельного пакета `transport-service` — транспорт пока прорастает через `background-cabinet`; только фиксация границы.
-- ❌ Гнать S4 (студия-download) / S5 (лендинг) вперёд S2/S3.
-- ❌ Переизобретать yamnet-детектор/плагин/бенчмарк — уже в prod (#266/#268).
+### 🟣 ФАЗА 3 — Параллельные треки (после контракта A, ~13:00–16:00)
+- [ ] **Задача B** — alarm-loop «ближе/дальше» (Kuryokhin + Rodchenko, M) · форма → LGTM Teamlead до кода
+- [ ] **Задача E** — каркас 3+1 UserCase в device-board (Ozhegov + Rodchenko, M) · lazy через `MembranaRegistry`, границы только на core
+- [ ] **Задача D** — аудит singleton клиент↔сервер (Ozhegov + Vesnin, S) · чек-лист в `DEVICE_BOARD_SERVER_FIRST.md`
 
 ---
 
-**Одна фраза дня:** сегодня строим **мост fusion** — сырой confidence спектра (trends) и нейро (yamnet) в один combined-контракт `@membrana/core`, открывая S2 продуктовой магистрали; детекция-DSP уходит в поддержку.
+## 4. Открытые Issues — триаж (не магистраль)
+
+| # | Тема | Решение на сегодня |
+|---|------|--------------------|
+| **#10** | Unit-тесты чистой математики fft-analyzer | Попутно к Задаче C — Математик рядом; закрывать позже отдельным PR |
+| **#34** | Документация FFT edge cases / windowing | Тот же контекст, что #10; не сегодня |
+| #236 | Studio tray/global-shortcut emergency stop | Risk-задача, вне магистрали (studio-capture-adaptation) |
+| #195–197 | Intern T1/T2/T3 onboarding | Вертикаль стажёра, отдельный трек, куратор |
+| #187 | headroom proxy-perf замер | Вне продуктовой магистрали |
+| #92 / #95 | MP7 realtime gateway / device-board v0.4 | Крупные эпики, не сегодня |
+| #57–59 | trends-template editor / background-media deploy | Заморожены относительно S2 |
+| #49 | MicrophoneCapturePanel UX | Не в фокусе дня |
+
+---
+
+## 5. Что НЕ делаем сегодня (границы)
+
+- ❌ Повтор unified DSP-бенчмарка harmonic/cepstral/flux на free-v1 — эшелон 0 исчерпан (FFT_METRICS §6, потолок 75%/40%)
+- ❌ Одиночные DSP как решающий голос hard-gate — их FPR 88–100%
+- ❌ Новые foundation-пакеты (`tdoa`/`localizer`/`tracker`/`transport`) — заморожены до hard-gate
+- ❌ «Разведка» yamnet — уже в prod-бенчмарке (F1 0.803)
+- ❌ Синхронизация времени / многолучёвость / GPS-PPS — Этап 2+
+- ❌ Fusion **внутри** `detectors/*` — только core/client (границы Структурщика)
+
+---
+
+## 6. Gate конца дня (проверки)
+
+```
+[Teamlead]: LGTM на выводах C (основной/бэкап) и D (аудит singleton). Fusion (A) не пропущен второй день.
+[Структурщик]: check:boundaries зелёный; fusion не в detectors/*; device-board зависит только от core.
+[Математик]: unit-тесты A зелёные (3 сценария); таблица C на одном val без нового DSP-прогона.
+[Музыкант]: alarm-loop — форма согласована до кода; аудио только через engine.
+[Верстальщик]: UI-индикатор реагирует на RMS live; помечен «не координата»; каркас UC монтируется lazy.
+```
+
+**Итоговый артефакт:** `docs/DAILY_STANDUP.md` (план на 08.07) + чек-лист фаз 0–3
+
+**Definition of Done дня:**
+- Чистое рабочее дерево, снимок 07.07 закоммичен, нет `.txt` в корне
+- `@membrana/client` lint/typecheck/test зелёные; `check:boundaries` зелёный
+- **Задача A (fusion)** доведена до типа+функции+тестов — keystone не переносится третий раз
+- Таблица C с выводом основной/бэкап + LGTM Teamlead
+- Ни одна задача не завела новый foundation/analyzer-пакет вне `SERVICES.md`
+
+---
+
+⚡ **Одна фраза дня:** возвращаем магистраль в детекционное ядро — **строим мост fusion** (сырой confidence trends+yamnet в `@membrana/core`), вчера ушедший под UX-волну; DSP-эшелон 0 закрыт, дальше только слияние модальностей.
