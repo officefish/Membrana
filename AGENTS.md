@@ -44,6 +44,23 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 
+### Agent tooling (night-build `agent-tooling`, 2026-07-08)
+
+Скрипты/хуки, ускоряющие агентский цикл (эпик `agent-tooling-night-build`):
+
+| Задача | Команда |
+|--------|---------|
+| One-shot PR-флоу (ветка→commit→PR→squash-merge→ff-sync) | `yarn pr:ship --type feat --scope core -m "..." [--issue N] [--branch x]` (default `--dry-run`; `--execute` — реально) |
+| Пересобрать dist изменённых пакетов (убить stale-dist) | `yarn build:affected` |
+| Сверить wire-контракт core ↔ background-cabinet CJS | `yarn verify:wire-sync` (в pre-push) |
+| Дождаться зелёного CI → напечатать команду деплоя (не запускает) | `yarn deploy:when-green` |
+| Оффлайн Prisma-миграция (diff HEAD↔рабочая схема) | `yarn prisma:migration --name X [--schema <path>]` |
+| Архив карточек с закрытыми GH-иссью | `yarn tasks:archive-closed [--execute]` |
+
+**Хуки** (`.githooks/`, авто через `prepare` → `core.hooksPath`): `pre-push` = catalog:verify-client + verify:wire-sync + affected typecheck (пропуск `SKIP_PREPUSH=1`); `commit-msg` = conventional-заголовок (блок) + Co-Authored-By трейлер (warn), пропуск `SKIP_COMMIT_MSG=1`.
+
+**Скиллы:** `membrana-ship` (add-A → code-review → pr:ship), `membrana-tooling-doctor` (health-check tooling). Общий «работа за сегодня» — `scripts/lib/git-day-context.mjs` (без --author-фильтра).
+
 ### OpenCode operator commands
 
 Operator workflows live in `.opencode/command/*.md` (auto-discovered) — thin wrappers over the `yarn` scripts above. Config: [`opencode.json`](./opencode.json) (`instructions: AGENTS.md`, `skills.paths: .opencode/skills`, `references.opencode-commands`). Sprint: `docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md` (Issue #183).
