@@ -15,13 +15,18 @@ function mockSocket() {
   } as unknown as import('ws').WebSocket;
 }
 
-function mockPrisma(recentDeviceIds: string[] = []) {
+function mockPrisma(recentDeviceIds: string[] = [], entitledSkus: string[] = []) {
   return {
     device: {
       findMany: vi.fn().mockResolvedValue(
         recentDeviceIds.map((mediaDeviceId) => ({ mediaDeviceId })),
       ),
       updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+    },
+    membrane: {
+      findUnique: vi
+        .fn()
+        .mockResolvedValue({ tariffId: 'free-v1', tariff: { entitledTariffSkus: entitledSkus } }),
     },
   } as unknown as PrismaService;
 }
@@ -85,6 +90,28 @@ describe('NodeRealtimeService', () => {
     expect(updateMany).toHaveBeenCalledWith({
       where: { mediaDeviceId: 'd1' },
       data: { lastSeenAt: expect.any(Date) },
+    });
+  });
+
+  it('registerNode шлёт узлу node.entitlements с тарифным контекстом (csp-2/G1)', async () => {
+    const prisma = mockPrisma([], ['pro-usercases-v1']);
+    const service = buildService(prisma);
+    const nodeSocket = mockSocket();
+
+    service.registerNode(
+      { role: 'node', userId: 'u1', membraneId: 'm1', nodeId: 'n1', mediaDeviceId: 'd1' },
+      nodeSocket,
+    );
+    await new Promise((r) => setTimeout(r, 0)); // fire-and-forget
+
+    const send = nodeSocket.send as ReturnType<typeof vi.fn>;
+    const entitlements = send.mock.calls
+      .map((call) => JSON.parse(call[0] as string))
+      .find((env) => env.type === 'node.entitlements');
+    expect(entitlements).toBeDefined();
+    expect(entitlements.payload).toEqual({
+      tariffId: 'free-v1',
+      entitledTariffSkus: ['pro-usercases-v1'],
     });
   });
 

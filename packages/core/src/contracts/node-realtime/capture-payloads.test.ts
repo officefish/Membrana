@@ -150,6 +150,7 @@ describe('capture tariff v2 payloads (CT1)', () => {
 import {
   normalizeScenarioSelection,
   parseBoardScenarioListPayload,
+  parseNodeEntitlementsPayload,
   resolveScenarioItemKind,
 } from './index.js';
 
@@ -254,6 +255,31 @@ describe('parseBoardScenarioListPayload (CX3)', () => {
       selectedScenarioId: 'ws-1',
     });
     expect(parsed?.scenarios[0]).toEqual({ id: 'ws-1', title: 'Спектр' });
+  });
+});
+
+describe('parseNodeEntitlementsPayload (csp-2/G1)', () => {
+  it('валидный tariff-контекст (пустой и непустой список skus)', () => {
+    expect(parseNodeEntitlementsPayload({ tariffId: 'free-v1', entitledTariffSkus: [] })).toEqual({
+      tariffId: 'free-v1',
+      entitledTariffSkus: [],
+    });
+    expect(
+      parseNodeEntitlementsPayload({ tariffId: 'pro', entitledTariffSkus: ['pro-usercases-v1'] }),
+    ).toEqual({ tariffId: 'pro', entitledTariffSkus: ['pro-usercases-v1'] });
+  });
+
+  it('дедуплицирует sku', () => {
+    expect(
+      parseNodeEntitlementsPayload({ tariffId: 'x', entitledTariffSkus: ['a', 'a', 'b'] }),
+    ).toEqual({ tariffId: 'x', entitledTariffSkus: ['a', 'b'] });
+  });
+
+  it('отвергает пустой tariffId, не-массив skus и мусорные sku', () => {
+    expect(parseNodeEntitlementsPayload({ tariffId: '', entitledTariffSkus: [] })).toBeNull();
+    expect(parseNodeEntitlementsPayload({ tariffId: 'x', entitledTariffSkus: 'nope' })).toBeNull();
+    expect(parseNodeEntitlementsPayload({ tariffId: 'x', entitledTariffSkus: [42] })).toBeNull();
+    expect(parseNodeEntitlementsPayload(null)).toBeNull();
   });
 });
 
