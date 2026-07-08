@@ -50,10 +50,31 @@ export interface BoardCaptureReleasePayload {
   readonly reason: DeviceCaptureReleaseReason;
 }
 
-/** CX3: сценарий в объявляемом узлом списке (id + человекочитаемое имя). */
+/** csp-1: происхождение сценария в списке узла. Отсутствие поля = 'user' (backward-compat). */
+export type ScenarioListItemKind = 'user' | 'system';
+
+/** csp-1: тарифное право на системный сценарий (совпадает с карточкой клиента). */
+export type ScenarioListItemEntitlement = 'bundled' | 'community' | 'entitled' | 'locked';
+
+/**
+ * CX3 + csp-1: сценарий в объявляемом узлом списке. Базово — id + имя;
+ * системные (по тарифу) сценарии несут `kind:'system'` + карточные поля для
+ * UI-паритета с клиентским пикером. Все поля сверх id/title — опциональны и
+ * additive: старый узел без них парсится как раньше, `kind` отсутствует → 'user'.
+ */
 export interface BoardScenarioListItem {
   readonly id: string;
   readonly title: string;
+  readonly kind?: ScenarioListItemKind;
+  readonly description?: string;
+  readonly entitlement?: ScenarioListItemEntitlement;
+  readonly branchCount?: number;
+  readonly functionCount?: number;
+}
+
+/** csp-1: эффективный kind элемента — отсутствие поля трактуем как 'user'. */
+export function resolveScenarioItemKind(item: BoardScenarioListItem): ScenarioListItemKind {
+  return item.kind ?? 'user';
 }
 
 /**
