@@ -1,27 +1,20 @@
-<!-- Сгенерировано: 2026-07-08T08:00:59.562Z (yarn code-review; uncommitted) -->
+<!-- Сгенерировано: 2026-07-08T10:31:22.660Z (yarn code-review; uncommitted) -->
 
 Tier: T1
 
-[Teamlead]: Tier T1, uncommitted-режим. PR size OK (~28 lines). Diff вне магистрали дня (fusion A/C) — это инфраструктурный tech-debt-хук, не keystone; допустимо как побочный tooling, но не должен подменять ФАЗУ 1. Хук концептуально верный: переносит cg6/cg7-гейты левее (до push), CI-дубль сохранён. Один блокер по надёжности (см. Структурщик, B1) и один P2. Вердикт по сути LGTM после фикса B1; формально это не PR, поэтому — рекомендации до commit.
+[Teamlead]: Tier T1 (одиночный пакет `background-cabinet`, runtime auth/presence — но не core/registry, поэтому не авто-T2). PR size OK (~38 lines). Изменение точечное: `registerNode` освежает `lastSeenAt` при реконнекте до первого heartbeat — обоснованный хвост PL2b/TD2. Fire-and-forget с `.catch` + `logger.warn` — корректный выбор, WS-connect не блокируется. Границы пакета соблюдены, диффа для `recordPresenceHeartbeat` не видно — предполагаю, что метод уже существует (см. вопрос Структурщику). **Вердикт: LGTM** после зелёного `yarn turbo run typecheck test --filter=@membrana/background-cabinet`.
 
-[Структурщик]: **B1 (P1):** `set -e` стоит **после** early-return блока `SKIP_PREPUSH` — это ок, но `yarn catalog:verify-client` и `yarn typecheck` без явной проверки выхода полагаются только на `set -e`; при `yarn`-обёртке код возврата пробрасывается корректно, так что критично другое — `prepare` через `core.hooksPath .githooks` меняет hooks-path **глобально для репо** и молча гасит ошибку (`|| true`), из-за чего на машине без прав хук просто не установится незаметно. Рекомендую логировать факт (не)установки, чтобы «зелёный push мимо гейта» не стал новым футганом. C7: сам хук — не код с тестами, тестовое покрытие не требуется. Границы пакетов не затронуты, циклов нет.
+[Структурщик]: C1/C3/C4 — ок, всё внутри модуля `node-realtime`, прямых зависимостей не добавлено. C7 — тесты рядом, покрыты обе ветки (с `mediaDeviceId` и без). **P2 (проверить, не блокер):** `recordPresenceHeartbeat` вызывается, но его определения нет в diff — убедись, что метод существует в текущем файле и идемпотентен относительно heartbeat PL2b (двойной вызов при реконнекте+heartbeat не должен ломать логику). Дедупликация `updateMany where: { mediaDeviceId }` выглядит безопасной.
 
-[Математик]: — (shell-гейт, чистых функций и числовых границ нет; fusion-ядро A/C этим diff не затрагивается)
+[Математик]: correctness — early return `if (!meta.mediaDeviceId) return;` стоит **до** нового кода, поэтому пустой id не долетает до БД, и тест `без mediaDeviceId не трогает БД` это фиксирует. Тест реконнекта использует `setTimeout(r, 0)` для дренажа микротаск-очереди fire-and-forget — приемлемо, но хрупко при переходе на реальные промисы; opportunity (P2): дождаться через flush явно, если появятся флаки. Error path покрыт `.catch` — ошибка БД не всплывает наружу.
 
 [Музыкант]: —
 
 [Верстальщик]: —
 
-Итоговый артефакт: `.githooks/pre-push` + `prepare`-скрипт в `package.json`.
+Итоговый артефакт: 2 файла в `packages/background-cabinet/modules/node-realtime` (сервис + тесты), 38 строк.
+Definition of Done: `yarn turbo run lint typecheck test --filter=@membrana/background-cabinet`
+Риски: P2 — подтвердить наличие/идемпотентность `recordPresenceHeartbeat` (Структурщик); P2 — потенциальная хрупкость `setTimeout(0)` в тесте fire-and-forget (Математик). P0/P1 — нет.
+Вердикт: LGTM (после зелёного CI пакета; ни один P2 не блокирует)
 
-Definition of Done (до commit):
-- Проверить, что `prepare` реально проставил `core.hooksPath` (`git config core.hooksPath` → `.githooks`), иначе гейт молча не работает.
-- Прогнать `SKIP_PREPUSH=1 git push` и обычный путь локально — убедиться, что оба сценария ведут себя как задумано.
-- `yarn docs:lint` (если правился сопутствующий docs) — здесь не затронут, «—».
-
-Риски:
-- **P1 (B1):** `2>/dev/null || true` в `prepare` глушит любую ошибку установки хука — на части машин гейт окажется неактивным без единого сигнала. Не блокирует commit, но добавь эхо об успехе/провале установки (follow-up допустим).
-- **P2:** shell использует `sh`, но `yarn` в хуке предполагает наличие Node/Yarn в PATH pre-push — на голом CI-агенте без Yarn хук упадёт; для локали ок, отметить в комментарии.
-- **P2:** нет `--filter` в `yarn typecheck` — turbo прогонит весь граф; для pre-push приемлемо, но на большом монорепо может ощутимо тормозить push (opportunity, не блокер).
-
-Замечание вне scope (opportunity): diff не относится к keystone дня (fusion A). Убедись, что этот tooling-коммит не съедает слот 09:00–12:00 магистрали.
+Примечание вне scope: коммит этого diff не отменяет ФАЗУ 0 из MAIN_DAY_ISSUE — снимок `docs/archive/daily-day/2026-07-07/` всё ещё нужно закоммитить отдельно, чтобы дерево было чистым для deploy-preflight.

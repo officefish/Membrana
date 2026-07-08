@@ -110,8 +110,8 @@ vs realtime-мост). Тот же класс дефекта дал PCB persiste
 | **Scenario-registry (сервер)** `DeviceScenarioRegistry` | `packages/background-cabinet/…/node-realtime/device-scenario.registry.ts` | `@Injectable()` NestJS provider (single-scope) + in-memory `Map` | ⚠️ провайд в >1 модуле → несколько `Map` → расщепление выбора сценария. Инвариант: провайдить один раз, экспортировать из общего модуля. **Плюс**: `Map` не персистентен — выбор теряется на рестарте (ограничение полевого узла, не дубль) |
 
 **Два канонических вектора дубля (запомнить):**
-1. **React-провайдер `new`-ит свой мост** вместо инъекции общего (корень CSR1) → провайдеры принимают инстанс пропом/контекстом, никогда не создают транспорт/runtime внутри себя.
-2. **StrictMode / повторный effect рвёт неидемпотентный ресурс** (корень PCB) → у `connect()`/`start()` обязателен guard идемпотентности (проверка `readyState`/уже-запущен).
+1. **React-провайдер `new`-ит свой мост** вместо инъекции общего (корень CSR1) → провайдеры принимают инстанс пропом/контекстом, никогда не создают транспорт/runtime внутри себя. **Статически enforce'ится (TD3):** eslint-правило `no-restricted-syntax` в `.eslintrc.cjs` запрещает `new DeviceBoardRuntimeController` / `new NodeRealtimeClientImpl` вне их фабрик — используйте `getDeviceBoardRuntimeController()` / `getNodeRealtimeClient()`.
+2. **StrictMode / повторный effect рвёт неидемпотентный ресурс** (корень PCB) → у `connect()`/`start()` обязателен guard идемпотентности (проверка `readyState`/уже-запущен). **Не lint'уется** (идемпотентность семантическая) — остаётся инвариантом code-review.
 
 **Границы (проверено):** нарушений нет — `check:boundaries` зелёный. Мосты живут каждый
 в своём слое (client `lib`, cabinet `lib`, `background-cabinet` module); `device-board`
