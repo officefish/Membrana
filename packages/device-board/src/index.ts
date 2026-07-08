@@ -30,6 +30,14 @@ export type {
 } from './components/server-first-badges.js';
 export { BoardServerFirstBadges } from './components/board-server-first-badges.js';
 export { BoardUserCasePickerModal } from './components/board-usercase-picker-modal.js';
+export {
+  UserCaseCardView,
+  entitlementBadgeLabel,
+  entitlementBadgeClass,
+  type UserCaseCardViewModel,
+  type UserCaseCardViewProps,
+  type UserCaseEntitlement,
+} from './components/user-case-card-view.js';
 export type { DeviceBoardUserCasePickerConfig, UserCasePickerCard } from './types/user-case-picker.js';
 export { BoardFlowCanvas } from './components/board-flow-canvas.js';
 export { BoardInspector } from './components/board-inspector.js';

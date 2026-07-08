@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReferenceVariableSlot } from '../graph/export-branch-scenario.js';
 import type { UserCasePickerCard } from '../types/user-case-picker.js';
 import { BoardReferenceMappingModal } from './board-reference-mapping-modal.js';
+import { UserCaseCardView } from './user-case-card-view.js';
 import { useDeviceBoardGraph } from '../context/device-board-graph-context.js';
 
 /** Stable ids for aria-labelledby / aria-describedby (NB3 a11y). */
@@ -78,36 +79,6 @@ export interface BoardUserCasePickerModalProps {
   readonly cards: readonly UserCasePickerCard[];
   readonly onDismiss: () => void;
   readonly onApplied?: (userCaseId: string) => void;
-}
-
-function entitlementBadgeLabel(status: UserCasePickerCard['entitlement']): string {
-  switch (status) {
-    case 'bundled':
-      return 'Bundled';
-    case 'community':
-      return 'Sprint';
-    case 'entitled':
-      return 'Тариф ✓';
-    case 'locked':
-      return 'Тариф';
-    default:
-      return status;
-  }
-}
-
-function entitlementBadgeClass(status: UserCasePickerCard['entitlement']): string {
-  switch (status) {
-    case 'bundled':
-      return 'badge badge-primary badge-sm';
-    case 'community':
-      return 'badge badge-secondary badge-sm';
-    case 'entitled':
-      return 'badge badge-success badge-sm';
-    case 'locked':
-      return 'badge badge-ghost badge-sm opacity-70';
-    default:
-      return 'badge badge-ghost badge-sm';
-  }
 }
 
 /** Modal picker UserCase + dirty confirm + ref-mapping (U9 P1). */
@@ -244,23 +215,7 @@ export const BoardUserCasePickerModal: React.FC<BoardUserCasePickerModalProps> =
                     onChange={() => setSelectedId(card.id)}
                   />
                   <span className="min-w-0 flex-1">
-                    <span className="flex items-start justify-between gap-2">
-                      <span className="text-sm font-medium truncate">{card.title}</span>
-                      <span className={entitlementBadgeClass(card.entitlement)}>
-                        {entitlementBadgeLabel(card.entitlement)}
-                      </span>
-                    </span>
-                    <span className="text-xs text-base-content/55 mt-0.5 block">
-                      {card.branchCount} веток · {card.functionCount} функций · {card.deviceKind}
-                    </span>
-                    {card.description ? (
-                      <span className="text-xs text-base-content/50 mt-1 block leading-relaxed">
-                        {card.description}
-                      </span>
-                    ) : null}
-                    {card.entitlement === 'locked' ? (
-                      <span className="text-xs text-warning mt-1 block">Доступно в тарифе (stub)</span>
-                    ) : null}
+                    <UserCaseCardView card={card} />
                   </span>
                 </label>
               </li>
