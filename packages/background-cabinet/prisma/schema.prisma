@@ -221,3 +221,18 @@ model NodeScenarioEditLease {
   @@unique([membraneId, mediaDeviceId])
   @@index([expiresAt])
 }
+
+/**
+ * TD2 (tech-debt-2026-07): персистентный список сценариев + выбор — переживает
+ * рестарт сервера (ранее in-memory Map в DeviceScenarioRegistry терялся на рестарте).
+ * Тела сценариев НЕ храним (пользовательские, живут на устройстве) — только список
+ * {id,title} (scenarios Json) + выбранный id. Ключ — mediaDeviceId (не FK: реестр
+ * ведёт себя как авторитетный снапшот-кэш, независимый от жизненного цикла Device).
+ */
+model NodeScenarioSelection {
+  mediaDeviceId      String   @id
+  membraneId         String   @db.Uuid
+  scenarios          Json
+  selectedScenarioId String?
+  updatedAt          DateTime @updatedAt
+}
