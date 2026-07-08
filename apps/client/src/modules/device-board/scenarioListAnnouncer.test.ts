@@ -3,7 +3,7 @@ import type { DeviceBoardWorkspaceHost } from '@membrana/device-board';
 
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
-import { withScenarioListAnnouncements } from './scenarioListAnnouncer';
+import { collectSystemScenarios, withScenarioListAnnouncements } from './scenarioListAnnouncer';
 
 // announceScenarioList сам ходит в сеть, но без paired-режима (reset стора)
 // коротко замыкается до send — unit проверяет делегирование и отсутствие
@@ -63,5 +63,21 @@ describe('withScenarioListAnnouncements (CX3)', () => {
 
     expect(host.listWorkspaces).toHaveBeenCalled();
     expect(host.getActiveWorkspaceId).toHaveBeenCalled();
+  });
+});
+
+describe('collectSystemScenarios (csp-3)', () => {
+  it('отдаёт системные сценарии каталога с kind:system + карточными полями', () => {
+    const system = collectSystemScenarios();
+    expect(system.length).toBeGreaterThan(0);
+    for (const item of system) {
+      expect(item.kind).toBe('system');
+      expect(typeof item.id).toBe('string');
+      expect(typeof item.title).toBe('string');
+      expect(['bundled', 'community', 'entitled', 'locked']).toContain(item.entitlement);
+    }
+    // FREE-каркас (bundled) присутствует и доступен всегда (вне зависимости от тарифа).
+    const free = system.find((s) => s.id === 'usercase-free-spectrum-live');
+    expect(free?.entitlement).toBe('bundled');
   });
 });
