@@ -169,6 +169,7 @@
 | `csp-4-shared-card` | csp-4: шареная презентационная карточка сценария (device-board) | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#305](https://github.com/officefish/Membrana/issues/305) |
 | `csp-5-cabinet-ui` | csp-5: кабинет — карточный список Пользовательские|Системные + tariff-бейджи | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#306](https://github.com/officefish/Membrana/issues/306) |
 | `csp-6-smoke-docs` | csp-6: smoke узел↔кабинет + docs | S | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#307](https://github.com/officefish/Membrana/issues/307) |
+| `hermes-brief` | Hermes brief: детерминированный yarn hermes:brief — сборщик состояния сессии (6 источников) | M | [`HERMES_BRIEF_PROMPT.md`](../docs/prompts/HERMES_BRIEF_PROMPT.md) | — |
 
 ---
 
@@ -678,4 +679,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-08.*
+*Файл обновлён автоматически: 2026-07-09.*

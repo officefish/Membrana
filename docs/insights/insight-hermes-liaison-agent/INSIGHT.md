@@ -9,6 +9,7 @@
 | **Консилиум** | [`docs/seanses/hermes-liaison-agent-2026-07-08.md`](../../seanses/hermes-liaison-agent-2026-07-08.md) (24 реплики, LGTM Teamlead) |
 | **Research** | [`RESEARCH.md`](./RESEARCH.md) — Perplexity Q1–Q3 (cross-session handoff patterns; детерминированный сбор vs LLM) |
 | **Review** | [`REVIEW.md`](./REVIEW.md) — 5 ролей, средний **7.4**; Teamlead → adopted, следующий шаг = task-промпт M (владелец Dynin) |
+| **Спринт** | → `hermes-brief` (2026-07-09): [`HERMES_BRIEF_PROMPT.md`](../../prompts/HERMES_BRIEF_PROMPT.md), реестр `status: active`, `insightId` обратной ссылкой |
 
 ---
 
