@@ -12706,11 +12706,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "dynin",
-      "epicId": "board-alarm-scenario-nodes"
+      "epicId": "board-alarm-scenario-nodes",
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #327; review LGTM 04488a9e9354; PR #327 merged 2026-07-09T16:48:05Z (40df6d800e7d1799f07e1cfc9d1b0d18681550e9)"
     },
     {
       "id": "basn-5-combined-report",
