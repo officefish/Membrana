@@ -25,6 +25,7 @@ describe('palette-node (DBR5)', () => {
       'cancel-async-jobs',
       'print',
       'is-valid',
+      'branch-on-detection',
       'get-microphone',
       'get-recorder',
       'get-spectral-analyser',

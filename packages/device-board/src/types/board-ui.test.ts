@@ -77,6 +77,7 @@ describe('scenario node palette (v0.4 DBR5)', () => {
       'cancel-async-jobs',
       'print',
       'is-valid',
+      'branch-on-detection',
       'get-microphone',
       'get-recorder',
       'get-spectral-analyser',
