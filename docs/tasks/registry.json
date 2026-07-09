@@ -12756,7 +12756,7 @@
       "githubIssue": 330,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "vesnin",
@@ -12764,7 +12764,9 @@
         "dynin"
       ],
       "epicId": "mintlify-docs-refresh",
-      "archivedAt": null
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #331; review LGTM e352fb0c8637; PR #331 merged 2026-07-09T17:41:31Z (b82553cf1101cff9655ace3bc509182724c3b2af)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "mdr-2-editor-pages-refresh",
