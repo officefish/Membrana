@@ -55,6 +55,8 @@ import { startClipRecorder, type ActiveClipRecorder } from '@/plugins/mic-buffer
 import { pickFallbackCaptureFormat } from '@/plugins/mic-buffer-recorder/recordingUtils';
 import { analyzeTrendsFromFftFrames } from './analyzeTrendsFromFftFrames';
 import { concatAudioSamplePayloads } from './concat-audio-samples';
+import { EnsembleProducer } from '@membrana/detection-ensemble-service';
+import { createCombinedStreamDetectors } from '../../plugins/mic-combined-detection/createCombinedStreamDetectors';
 import { ScenarioContinuousPcmBuffer } from './scenario-continuous-pcm-buffer';
 
 import { analyzeChunkTrendsFft } from './analyzeChunkTrendsFft';
@@ -1066,6 +1068,61 @@ export class ScenarioMicJournalBridge {
       analysisId: reportId,
       detection: this.lastDetection,
     };
+  }
+
+  /** basn-1 (#323): AudioSampleRef[] окно → DSP-ансамбль (EnsembleProducer) → EnsembleAnalysisRef. */
+  async makeEnsembleAnalysisFromSampleRefs(
+    nodeId: string,
+    refs: readonly ScenarioReferenceValue[],
+  ): Promise<{ readonly analysisId: string; readonly detection: ScenarioDetectionResult } | null> {
+    setScenarioTraceNodeId(nodeId);
+    const startedAt = Date.now();
+    const payloads: AudioSamplePayload[] = [];
+    for (const ref of refs) {
+      if (!ref.valid || ref.handle === null || ref.kind !== 'AudioSampleRef') {
+        continue;
+      }
+      const payload = this.audioSamplePayloads.get(ref.handle);
+      if (payload !== undefined) {
+        payloads.push(payload);
+      }
+    }
+    scenarioChainLog('analysis', 'ensemble-start', {
+      nodeId,
+      sampleRefCount: refs.length,
+      payloadCount: payloads.length,
+    });
+    const concat = concatAudioSamplePayloads(payloads);
+    if (concat === null) {
+      scenarioChainLog('analysis', 'ensemble-skip', { nodeId, reason: 'no-audio-payloads' });
+      return null;
+    }
+    // Слияние ансамбля считает detection-ensemble-service (магистраль S2, PR #317);
+    // сырой combinedScore идёт в detection.confidence — fusion-узел сливает сырые
+    // confidence, не бинарные вердикты (ND3).
+    const producer = new EnsembleProducer(createCombinedStreamDetectors(), { smoothing: 1 });
+    const result = await producer.analyze({
+      samples: concat.samples,
+      sampleRate: concat.sampleRate,
+      timestamp: startedAt,
+      durationSec: concat.durationSec,
+    });
+    const detected = result.presentCount > 0 && result.combinedScore >= 0.5;
+    const detection: ScenarioDetectionResult = {
+      detected,
+      confidence: result.combinedScore,
+      isDrone: detected,
+    };
+    const analysisId = createEntryId('ensemble');
+    scenarioChainLog('analysis', 'ensemble-done', {
+      nodeId,
+      analysisId,
+      presentCount: result.presentCount,
+      combinedScore: result.combinedScore.toFixed(4),
+      agreement: result.agreement.toFixed(4),
+      elapsedMs: Date.now() - startedAt,
+    });
+    return { analysisId, detection };
   }
 
   /** v0.6 DBJ3: TrackRef → drone-detection ScenarioReportPayload (без append в journal). */

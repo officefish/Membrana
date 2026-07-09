@@ -294,6 +294,8 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
       bridge.createTrackFromSampleRefs(nodeId, refs),
     analyzeFftTrendsFromFrameRefs: (nodeId, refs, policy) =>
       bridge.analyzeFftTrendsFromFrameRefs(nodeId, refs, policy),
+    makeEnsembleAnalysisFromSampleRefs: (nodeId, refs) =>
+      bridge.makeEnsembleAnalysisFromSampleRefs(nodeId, refs),
     makeReportFromTrack: (reporterRef, trackRef) =>
       bridge.makeReportFromTrack(reporterRef, trackRef),
     makeReportFromAnalysis: (reporterRef, analysisRef) =>

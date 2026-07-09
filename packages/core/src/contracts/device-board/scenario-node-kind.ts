@@ -81,6 +81,8 @@ export const SCENARIO_NODE_KINDS = [
   'make-detection-fusion',
   /** basn-3 (#323): exec-ветвление detected/not по combinedScore >= threshold. */
   'branch-on-detection',
+  /** basn-1 (#323): второй детектор — DSP-ансамбль через host → EnsembleAnalysisRef. */
+  'make-ensemble-analysis',
 ] as const;
 
 /** Вид узла scenario graph. */

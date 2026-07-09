@@ -176,6 +176,7 @@ export const SCENARIO_V04_PALETTE_SECTIONS: readonly V04PaletteSection[] = [
     'make-fft-trends-policy',
     'make-track',
     'make-fft-trends-analysis',
+    'make-ensemble-analysis',
     'make-detection-fusion',
     'make-report-from-track',
     'make-report-from-analysis',

@@ -196,6 +196,11 @@ export interface ScenarioRuntimeHost {
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
   ) => Promise<{ readonly trackId: string } | null>;
+  /** basn-1: AudioSampleRef[] окно → DSP-ансамбль (EnsembleProducer на хосте) → EnsembleAnalysisRef. */
+  readonly makeEnsembleAnalysisFromSampleRefs?: (
+    nodeId: string,
+    refs: readonly ScenarioReferenceValue[],
+  ) => Promise<{ readonly analysisId: string; readonly detection: ScenarioDetectionResult } | null>;
   /** v0.5/v0.6: FftFrameRef[] → in-memory FftTrendAnalysisRef (journal report через PublishReport). */
   readonly analyzeFftTrendsFromFrameRefs?: (
     nodeId: string,
@@ -399,6 +404,18 @@ export function createStubScenarioRuntimeHost(
       (async (nodeId, refs) => {
         log('createTrackFromSampleRefs', { nodeId, count: refs.length });
         return refs.length > 0 ? { trackId: 'stub-track' } : null;
+      }),
+    makeEnsembleAnalysisFromSampleRefs:
+      overrides.makeEnsembleAnalysisFromSampleRefs ??
+      (async (nodeId, refs) => {
+        log('makeEnsembleAnalysisFromSampleRefs', { nodeId, count: refs.length });
+        if (refs.length === 0) {
+          return null;
+        }
+        return {
+          analysisId: 'stub-ensemble',
+          detection: { detected: false, confidence: 0, isDrone: false },
+        };
       }),
     analyzeFftTrendsFromFrameRefs:
       overrides.analyzeFftTrendsFromFrameRefs ??
