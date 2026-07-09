@@ -47,6 +47,7 @@ describe('palette-node (DBR5)', () => {
       'make-ensemble-analysis',
       'make-detection-fusion',
       'make-proximity-trend',
+      'make-combined-report',
       'get-journal',
       'get-reporter',
       'make-report-from-track',

@@ -85,6 +85,8 @@ export const SCENARIO_NODE_KINDS = [
   'make-ensemble-analysis',
   /** basn-4 (#323): тренд «дистанции» (host-store) → ProximityRef; lost → invalid. */
   'make-proximity-trend',
+  /** basn-5 (#323): 2 анализа + трек → единый ReportRef (sync-конструктор). */
+  'make-combined-report',
 ] as const;
 
 /** Вид узла scenario graph. */

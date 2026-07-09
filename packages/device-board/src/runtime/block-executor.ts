@@ -62,6 +62,13 @@ import {
   isMakeProximityTrendNodeKind,
 } from '../graph/make-proximity-trend-node.js';
 import {
+  MAKE_COMBINED_REPORT_ANALYSIS_1_HANDLE,
+  MAKE_COMBINED_REPORT_ANALYSIS_2_HANDLE,
+  MAKE_COMBINED_REPORT_REPORTER_HANDLE,
+  MAKE_COMBINED_REPORT_TRACK_HANDLE,
+  isMakeCombinedReportNodeKind,
+} from '../graph/make-combined-report-node.js';
+import {
   BRANCH_ON_DETECTION_DETECTED_HANDLE,
   BRANCH_ON_DETECTION_FUSION_HANDLE,
   BRANCH_ON_DETECTION_NOT_DETECTED_HANDLE,
@@ -1011,6 +1018,98 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       sampleCount: sampleRefs.length,
       analysis: analysisHandle,
       detected,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (isMakeCombinedReportNodeKind(node.nodeKind)) {
+    if (
+      variableStore === undefined ||
+      resolveContext === undefined ||
+      reportStore === undefined ||
+      analysisStore === undefined
+    ) {
+      throw new Error(
+        'make-combined-report requires variableStore, resolveContext, reportStore and analysisStore',
+      );
+    }
+    let reporterRef: ScenarioVariableValue | null = null;
+    try {
+      reporterRef = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        MAKE_COMBINED_REPORT_REPORTER_HANDLE,
+        resolveContext,
+      );
+    } catch {
+      // Неподключённый/битый reporter → skip (invalid-reporter), не рушим сценарий.
+      reporterRef = null;
+    }
+    const analyses: { handle: string; kind: string; detection: ScenarioDetectionResult }[] = [];
+    for (const port of [MAKE_COMBINED_REPORT_ANALYSIS_1_HANDLE, MAKE_COMBINED_REPORT_ANALYSIS_2_HANDLE]) {
+      let ref: ScenarioVariableValue | null = null;
+      try {
+        ref = resolveInput(subgraph, variableStore.getAll(), node.id, port, resolveContext);
+      } catch {
+        ref = null;
+      }
+      if (ref === null || !isScenarioReferenceValue(ref) || ref.handle === null || !isReferenceValid(ref)) {
+        continue;
+      }
+      const detection =
+        ref.kind === 'EnsembleAnalysisRef'
+          ? ensembleStore?.getDetectionByHandle(ref.handle) ?? null
+          : analysisStore.getDetectionByHandle(ref.handle);
+      if (detection !== null) {
+        analyses.push({ handle: ref.handle, kind: ref.kind, detection });
+      }
+    }
+    let trackHandle: string | null = null;
+    try {
+      const trackRef = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        MAKE_COMBINED_REPORT_TRACK_HANDLE,
+        resolveContext,
+      );
+      if (
+        trackRef !== null &&
+        isScenarioReferenceValue(trackRef) &&
+        trackRef.kind === 'TrackRef' &&
+        isReferenceValid(trackRef)
+      ) {
+        trackHandle = trackRef.handle;
+      }
+    } catch {
+      trackHandle = null;
+    }
+    let reportId: string | null = null;
+    let skipReason: string | null = null;
+    if (
+      reporterRef === null ||
+      !isScenarioReferenceValue(reporterRef) ||
+      reporterRef.kind !== 'ReporterRef' ||
+      !isReferenceValid(reporterRef)
+    ) {
+      skipReason = 'invalid-reporter';
+    } else if (analyses.length === 0) {
+      skipReason = 'no-analyses';
+    } else if (host.makeCombinedReport !== undefined) {
+      const payload = await host.makeCombinedReport(reporterRef, { analyses, trackHandle });
+      if (payload !== null) {
+        reportStore.setNodeReport(node.id, payload);
+        reportId = payload.reportId;
+      }
+    }
+    host.log('make-combined-report', {
+      nodeId: node.id,
+      branch,
+      analyses: analyses.map((a) => a.handle),
+      track: trackHandle,
+      reportId,
+      skipReason,
     });
     return { lastDetection, stopRequested: false };
   }

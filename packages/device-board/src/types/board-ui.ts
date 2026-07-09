@@ -179,6 +179,7 @@ export const SCENARIO_V04_PALETTE_SECTIONS: readonly V04PaletteSection[] = [
     'make-ensemble-analysis',
     'make-detection-fusion',
     'make-proximity-trend',
+    'make-combined-report',
     'make-report-from-track',
     'make-report-from-analysis',
   ]),
