@@ -22,6 +22,7 @@
 | [`fft-analyzer`](./fft-analyzer) | analyzer | Спектральный анализ через FFT: центроид, flux, RMS, детекция, пресеты. | Математик |
 | [`detectors/`](./detetectors/) | analyzer | Семейства детекторов дрона (Single-Node Detection First): `detector-base` + 6 реализаций. | Математик + Структурщик |
 | [`drone-detection-orchestrator`](./drone-detection-orchestrator) | analyzer | Оркестрация полного DDR (4 DSP + template-match) над Float32; общий код client/server (LP1b). | Математик + Структурщик |
+| [`detection-ensemble-service`](./detection-ensemble-service) | analyzer | Combined-продюсер: инъецированные детекторы (trends+yamnet) → `combinedScore` из fusion-ядра `@membrana/core`. Детекторы через контракт `DroneDetector`, не импорт сервисов. | Математик |
 | [`telemetry`](./telemetry) | foundation | RAM-буфер телеметрии (legacy writers, MP5 upload) | Структурщик |
 | [`telemetry-journal`](./telemetry-journal) | foundation | Live journal: track + report items, storage backends (TJ1–TJ6) | Структурщик |
 | [`media-library`](./media-library) | foundation | Sample library storage port + quota | Структурщик |
