@@ -12656,16 +12656,18 @@
     },
     {
       "id": "basn-2-detection-fusion",
-      "title": "basn-2: узел make-detection-fusion — 2+ анализов → FusionRef (combinedScore, agreement) через core-ядро",
+      "title": "basn-2: узел make-detection-fusion — 2–4 анализов → value DetectionFusion (combinedScore, agreement) через core-ядро",
       "promptPath": "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "dynin",
-      "epicId": "board-alarm-scenario-nodes"
+      "epicId": "board-alarm-scenario-nodes",
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #324; review LGTM 6c7479798037; PR #324 merged 2026-07-09T15:19:30Z (e0001d80b00017977cc19d37b7aa669527432ed1)"
     },
     {
       "id": "basn-3-branch-on-detection",
