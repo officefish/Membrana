@@ -7,7 +7,7 @@ import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/lib/useCabinetNodesJournalPreview';
 import { NodeLastTrackPreview } from '@/components/nodes/NodeLastTrackPreview';
-import { CabinetScenarioPicker } from '@/components/CabinetScenarioPicker';
+import { NodeScenarioCell } from '@/components/nodes/NodeScenarioCell';
 
 interface NodesPageProps {
   onOpenJournal: () => void;
@@ -384,27 +384,9 @@ function NodeCard({
               </label>
             </>
           ) : (
-            // CT3 шаг 2 + CX3: под захватом — выбор сценария из объявленного
-            // узлом списка и запуск/остановка выбранного.
+            // CT3 шаг 2 + CX3: под захватом — запуск/остановка выбранного сценария.
+            // Выбор сценария вынесен в отдельную ячейку под треком (NodeScenarioCell).
             <>
-              {scenarioList && scenarioList.scenarios.length > 0 ? (
-                <label className="flex items-center gap-1.5 text-xs text-base-content/70">
-                  <span>Сценарий</span>
-                  <CabinetScenarioPicker
-                    scenarios={scenarioList.scenarios}
-                    selectedScenarioId={scenarioList.selectedScenarioId}
-                    onSelect={(id) => deviceId && runtime.selectScenario(deviceId, id)}
-                    disabled={!deviceLive}
-                  />
-                </label>
-              ) : (
-                <span
-                  className="text-xs text-base-content/50"
-                  title="Устройство ещё не объявило список сценариев — «Пуск» запустит сохранённый сценарий"
-                >
-                  сценарии не объявлены
-                </span>
-              )}
               {!isRunning ? (
                 <button
                   type="button"
@@ -478,6 +460,15 @@ function NodeCard({
             deviceLive={deviceLive}
             lastTrack={journalPreview.lastTrack}
             loading={journalPreview.loading}
+          />
+        ) : null}
+
+        {isCaptured && deviceId ? (
+          <NodeScenarioCell
+            scenarios={scenarioList?.scenarios ?? []}
+            selectedScenarioId={scenarioList?.selectedScenarioId ?? null}
+            onSelect={(id) => runtime.selectScenario(deviceId, id)}
+            disabled={!deviceLive}
           />
         ) : null}
       </div>
