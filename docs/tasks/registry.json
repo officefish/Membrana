@@ -12676,11 +12676,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "ozhegov",
-      "epicId": "board-alarm-scenario-nodes"
+      "epicId": "board-alarm-scenario-nodes",
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #325; review LGTM 5baa811e7c1b; PR #325 merged 2026-07-09T15:36:19Z (1521753b8a12861587a3eb3b869c4ee4c581bb8d)"
     },
     {
       "id": "basn-1-ensemble-analysis",
