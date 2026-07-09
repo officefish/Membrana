@@ -67,6 +67,7 @@ export {
   parseBoardScenarioListPayload,
   parseNodeEntitlementsPayload,
   parseBoardEditLeasePayload,
+  parseHealthPongPayload,
   parsePresenceHeartbeatPayload,
   parsePresenceSnapshotPayload,
   parseRuntimeCommandPayload,

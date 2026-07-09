@@ -16,6 +16,7 @@ import type {
   NodeEntitlementsPayload,
 } from './capture-events.js';
 import type {
+  HealthPongPayload,
   PresenceHeartbeatPayload,
   PresenceSnapshotPayload,
   RuntimeCommandPayload,
@@ -256,6 +257,14 @@ export function parsePresenceHeartbeatPayload(raw: unknown): PresenceHeartbeatPa
     return null;
   }
   return { deviceId: raw.deviceId, timestampMs: raw.timestampMs };
+}
+
+/** Валидирует health.pong payload (node → server). */
+export function parseHealthPongPayload(raw: unknown): HealthPongPayload | null {
+  if (!isRecord(raw) || !isNonEmptyString(raw.pingId)) {
+    return null;
+  }
+  return { pingId: raw.pingId };
 }
 
 /** Валидирует board.release payload. Release НЕ останавливает играющий сценарий. */
