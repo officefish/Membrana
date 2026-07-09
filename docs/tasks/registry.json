@@ -12731,6 +12731,76 @@
       "epicId": "board-alarm-scenario-nodes",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #328; review LGTM 6a592ab652f5; PR #328 merged 2026-07-09T17:02:45Z (1485483e39c8d303d62f7fc2d894ef97d7527661)"
+    },
+    {
+      "id": "mintlify-docs-refresh",
+      "title": "Эпик: актуализация Mintlify-доки device-board — detection-узлы basn + editor UX (mdr-1…mdr-3)",
+      "promptPath": "docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md",
+      "githubIssue": 330,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ],
+      "archivedAt": null
+    },
+    {
+      "id": "mdr-1-detection-node-pages",
+      "title": "mdr-1: 5 страниц узлов detection-цепочки (basn) + группа «Nodes — detection & alarm» в docs.json + cookbook полной цепочки",
+      "promptPath": "docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md",
+      "githubIssue": 330,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "epicId": "mintlify-docs-refresh",
+      "archivedAt": null
+    },
+    {
+      "id": "mdr-2-editor-pages-refresh",
+      "title": "mdr-2: ревизия editor/overview + edit-and-navigation — вкладки «Узлы | Журнал», журнал-телеметрия, матрица кнопок и борд-лок под захватом",
+      "promptPath": "docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md",
+      "githubIssue": 330,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "epicId": "mintlify-docs-refresh",
+      "archivedAt": null
+    },
+    {
+      "id": "mdr-3-verify-rag-publish",
+      "title": "mdr-3: docs:lint + catalog:verify-client + RAG-ритуал (index + smoke query) + проверка деплоя на аккаунте Mintlify",
+      "promptPath": "docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md",
+      "githubIssue": 330,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "epicId": "mintlify-docs-refresh",
+      "dependsOn": [
+        "mdr-1-detection-node-pages",
+        "mdr-2-editor-pages-refresh"
+      ],
+      "archivedAt": null
     }
   ]
 }

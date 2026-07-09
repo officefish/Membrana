@@ -179,6 +179,10 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `mintlify-docs-refresh` | Эпик: актуализация Mintlify-доки device-board — detection-узлы basn + editor UX (mdr-1…mdr-3) | M | [`MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md`](../docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md) | [#330](https://github.com/officefish/Membrana/issues/330) |
+| `mdr-1-detection-node-pages` | mdr-1: 5 страниц узлов detection-цепочки (basn) + группа «Nodes — detection & alarm» в docs.json + cookbook полной цепочки | M | [`MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md`](../docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md) | [#330](https://github.com/officefish/Membrana/issues/330) |
+| `mdr-2-editor-pages-refresh` | mdr-2: ревизия editor/overview + edit-and-navigation — вкладки «Узлы | Журнал», журнал-телеметрия, матрица кнопок и борд-лок под захватом | S | [`MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md`](../docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md) | [#330](https://github.com/officefish/Membrana/issues/330) |
+| `mdr-3-verify-rag-publish` | mdr-3: docs:lint + catalog:verify-client + RAG-ритуал (index + smoke query) + проверка деплоя на аккаунте Mintlify | S | [`MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md`](../docs/prompts/MINTLIFY_DOCS_REFRESH_SPRINT_PROMPT.md) | [#330](https://github.com/officefish/Membrana/issues/330) |
 
 ---
 
