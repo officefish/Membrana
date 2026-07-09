@@ -179,6 +179,20 @@ export function applyVariableSetValue(
     return { ...variable, value: incoming };
   }
 
+  if (incoming.kind === 'DetectionFusion') {
+    const current = variable.value;
+    if (
+      current !== null &&
+      current.kind === 'DetectionFusion' &&
+      current.combinedScore === incoming.combinedScore &&
+      current.agreement === incoming.agreement &&
+      current.presentCount === incoming.presentCount
+    ) {
+      return variable;
+    }
+    return { ...variable, value: incoming };
+  }
+
   const incomingRef = incoming;
   const currentRef = isScenarioReferenceValue(variable.value) ? variable.value : null;
   if (referencesEqual(currentRef, incomingRef)) {

@@ -95,6 +95,7 @@ describe('scenario node palette (v0.4 DBR5)', () => {
       'make-fft-trends-policy',
       'make-track',
       'make-fft-trends-analysis',
+      'make-detection-fusion',
       'get-journal',
       'get-reporter',
       'make-report-from-track',

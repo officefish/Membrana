@@ -77,6 +77,8 @@ export const SCENARIO_NODE_KINDS = [
   'function-output',
   /** Системный терминал лупа (∞): exec-ребро сюда → новая итерация. */
   'loop-repeat',
+  /** basn-2 (#323): fusion 2–4 анализов → value DetectionFusion (combinedScore). */
+  'make-detection-fusion',
 ] as const;
 
 /** Вид узла scenario graph. */

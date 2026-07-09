@@ -46,6 +46,8 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
   readonly recordingPolicy?: ScenarioRecordingPolicy;
   /** v0.8: для MakeFftTrendsPolicy — параметры trends-анализа. */
   readonly fftTrendsPolicy?: ScenarioFftTrendsPolicy;
+  /** basn-2: для MakeDetectionFusion — число входов анализов (2..4). */
+  readonly detectionFusionInputCount?: number;
   /** Sequence: Then count + parallel async. */
   readonly sequenceConfig?: ScenarioSequenceConfig;
   /** AP v1: jobKind / await timeout для promise orchestration nodes. */
