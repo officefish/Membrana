@@ -12604,7 +12604,7 @@
       "githubIssue": 318,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "rodchenko",
@@ -12612,7 +12612,10 @@
         "ozhegov",
         "kuryokhin"
       ],
-      "notes": "Кабинетный UI (NodesPage node card). S1: CabinetScenarioPicker из строки кнопок → отдельная ячейка ПОД NodeLastTrackPreview, collapsible (свёрнуто выбранный, раскрыто группы user/system), csp-5 семантика цела. S2: NodeLastTrackPreview голый audio → waveform-гистограмма SampleWaveformScrubber, данные по клику (offline-safe): fetchNodeTrackBlobUrl → декод audio-engine → computePeakEnvelope. Без сырого Web Audio, без изменения shared-сервисов. Обсуждено виртуальной командой. Out of scope: сервер/контракт журнала, автозагрузка waveform."
+      "notes": "Кабинетный UI (NodesPage node card). S1: CabinetScenarioPicker из строки кнопок → отдельная ячейка ПОД NodeLastTrackPreview, collapsible (свёрнуто выбранный, раскрыто группы user/system), csp-5 семантика цела. S2: NodeLastTrackPreview голый audio → waveform-гистограмма SampleWaveformScrubber, данные по клику (offline-safe): fetchNodeTrackBlobUrl → декод audio-engine → computePeakEnvelope. Без сырого Web Audio, без изменения shared-сервисов. Обсуждено виртуальной командой. Out of scope: сервер/контракт журнала, автозагрузка waveform.",
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #319; review LGTM 34aa1e31de24; PR #319 merged 2026-07-09T13:00:25Z (5e66efb84b78de86091c6887798f9ae90a003080)",
+      "githubIssueClosedAt": null
     }
   ]
 }

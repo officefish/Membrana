@@ -179,7 +179,6 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `cabinet-node-card-track-scenario` | Node card: сценарная ячейка под треком (collapsible) + waveform-оформление трека (как в библиотеке семплов) | M | [`CABINET_NODE_CARD_TRACK_SCENARIO_PROMPT.md`](../docs/prompts/CABINET_NODE_CARD_TRACK_SCENARIO_PROMPT.md) | [#318](https://github.com/officefish/Membrana/issues/318) |
 
 ---
 
@@ -189,6 +188,7 @@
 |----|----------|--------------|--------|--------|----------|
 | `hermes-brief` | Hermes brief: детерминированный yarn hermes:brief — сборщик состояния сессии (6 источников) | 2026-07-09 | [`HERMES_BRIEF_PROMPT.md`](../docs/prompts/HERMES_BRIEF_PROMPT.md) | — | [карточка](./archive/hermes-brief.md) |
 | `detection-ensemble-service` | Combined-продюсер: detection-ensemble-service питает combinedScore из fusion-ядра (DSP-детекторы на окне; yamnet при model-provider) | 2026-07-09 | [`DETECTION_ENSEMBLE_SERVICE_PROMPT.md`](../docs/prompts/DETECTION_ENSEMBLE_SERVICE_PROMPT.md) | — | [карточка](./archive/detection-ensemble-service.md) |
+| `cabinet-node-card-track-scenario` | Node card: сценарная ячейка под треком (collapsible) + waveform-оформление трека (как в библиотеке семплов) | 2026-07-09 | [`CABINET_NODE_CARD_TRACK_SCENARIO_PROMPT.md`](../docs/prompts/CABINET_NODE_CARD_TRACK_SCENARIO_PROMPT.md) | #318 (Issue открыт) | [карточка](./archive/cabinet-node-card-track-scenario.md) |
 | `db-scenario-selector` | Селектор сценариев захваченного устройства: реестр/запрос списка workspaces с устройства + dropdown в кабинете | 2026-07-07 | [`DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md`](../docs/prompts/DEVICE_BOARD_CAPTURE_TARIFF_V2_SPRINT_PROMPT.md) | — | [карточка](./archive/db-scenario-selector.md) |
 | `sandbox-link-diagnostics-night` | Night Build: диагностика связи узел↔cabinet из песочницы (NB0 пробник, NB1 видимый deviceId, NB2 флап вкладки Узлы) | 2026-07-07 | [`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/sandbox-link-diagnostics-night.md) |
 | `nb-0-node-link-probe` | NB0: пробник устойчивости связи узел↔cabinet (scripts/node-link-probe.mjs, прокси-паритет, коды закрытия, вердикт) | 2026-07-07 | [`SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/SANDBOX_LINK_DIAGNOSTICS_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/nb-0-node-link-probe.md) |
