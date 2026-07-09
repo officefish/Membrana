@@ -47,7 +47,7 @@ yarn insight create graph-trace-contract --title "…" --source virtual-team-ozh
 ## Agent rules
 
 - Инсайт **не** меняет `ritual:day` / `ritual:evening`.
-- `adopted` не создаёт task без LGTM Teamlead.
+- `adopted` не создаёт task без LGTM Teamlead. Переход adopted→спринт: [`membrana-insight-to-sprint`](../membrana-insight-to-sprint/SKILL.md).
 - Для research в Cursor без API: вызови Perplexity MCP 3 раза, запиши в `RESEARCH.md`.
 - Пилоты спринта: см. `docs/insights/registry.json`.
 
