@@ -12643,7 +12643,7 @@
       "githubIssue": 323,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "ozhegov",
@@ -12652,7 +12652,10 @@
         "kuryokhin",
         "rodchenko"
       ],
-      "notes": "Gap-анализ 09.07: палитра v0.4–v0.9 + AP v1 покрывает поток/трек/trends/отчёты/async/управление; не хватает 5 узлов. Алarm-loop = композиция branch-on-detection + make-proximity-trend + loop-repeat. device-board только core → сервисы через host-мост. DoD: smoke полного сценария из палитры + LGTM = gate соревнования (device-board-hackathon формат)."
+      "notes": "Gap-анализ 09.07: палитра v0.4–v0.9 + AP v1 покрывает поток/трек/trends/отчёты/async/управление; не хватает 5 узлов. Алarm-loop = композиция branch-on-detection + make-proximity-trend + loop-repeat. device-board только core → сервисы через host-мост. DoD: smoke полного сценария из палитры + LGTM = gate соревнования (device-board-hackathon формат).",
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #324-#329; 5/5 узлов + inspector-notes + эпик-smoke; консилиум 25 реплик; gate соревнования = LGTM владельца",
+      "githubIssueClosedAt": null
     },
     {
       "id": "basn-2-detection-fusion",
