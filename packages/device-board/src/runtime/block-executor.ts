@@ -54,6 +54,13 @@ import {
   isMakeDetectionFusionNodeKind,
 } from '../graph/make-detection-fusion-node.js';
 import {
+  BRANCH_ON_DETECTION_DETECTED_HANDLE,
+  BRANCH_ON_DETECTION_FUSION_HANDLE,
+  BRANCH_ON_DETECTION_NOT_DETECTED_HANDLE,
+  clampDetectionThreshold,
+  isBranchOnDetectionNodeKind,
+} from '../graph/branch-on-detection-node.js';
+import {
   isMakeTrackNodeKind,
   MAKE_TRACK_RECORDER_HANDLE,
   MAKE_TRACK_SAMPLES_HANDLE,
@@ -1014,6 +1021,45 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       agreement: fusionValue.agreement,
     });
     return { lastDetection, stopRequested: false };
+  }
+
+  if (isBranchOnDetectionNodeKind(node.nodeKind)) {
+    if (variableStore === undefined || resolveContext === undefined) {
+      throw new Error('branch-on-detection requires variableStore and resolveContext');
+    }
+    const threshold = clampDetectionThreshold(node.detectionThreshold);
+    let fusionInput: ScenarioVariableValue | null = null;
+    try {
+      fusionInput = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        BRANCH_ON_DETECTION_FUSION_HANDLE,
+        resolveContext,
+      );
+    } catch {
+      // Неподключённый/битый вход → not-detected, alarm-цепочка не рушится.
+      fusionInput = null;
+    }
+    const fusion =
+      fusionInput !== null && fusionInput.kind === 'DetectionFusion' ? fusionInput : null;
+    const detected =
+      fusion !== null && fusion.presentCount > 0 && fusion.combinedScore >= threshold;
+    host.log('branch-on-detection', {
+      nodeId: node.id,
+      branch,
+      threshold,
+      combinedScore: fusion?.combinedScore ?? null,
+      presentCount: fusion?.presentCount ?? 0,
+      detected,
+    });
+    return {
+      lastDetection,
+      stopRequested: false,
+      execOutHandle: detected
+        ? BRANCH_ON_DETECTION_DETECTED_HANDLE
+        : BRANCH_ON_DETECTION_NOT_DETECTED_HANDLE,
+    };
   }
 
   switch (node.blockKind) {

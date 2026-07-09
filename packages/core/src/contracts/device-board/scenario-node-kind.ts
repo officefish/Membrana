@@ -79,6 +79,8 @@ export const SCENARIO_NODE_KINDS = [
   'loop-repeat',
   /** basn-2 (#323): fusion 2–4 анализов → value DetectionFusion (combinedScore). */
   'make-detection-fusion',
+  /** basn-3 (#323): exec-ветвление detected/not по combinedScore >= threshold. */
+  'branch-on-detection',
 ] as const;
 
 /** Вид узла scenario graph. */

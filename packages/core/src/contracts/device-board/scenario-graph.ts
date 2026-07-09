@@ -84,6 +84,8 @@ export interface ScenarioGraphNode {
   readonly fftTrendsPolicy?: ScenarioFftTrendsPolicy;
   /** basn-2: MakeDetectionFusion — число входов анализов (2..4). */
   readonly detectionFusionInputCount?: number;
+  /** basn-3: BranchOnDetection — порог combinedScore (0..1, default 0.5). */
+  readonly detectionThreshold?: number;
   /** Sequence node: Then count + parallel async mode. */
   readonly sequenceConfig?: ScenarioSequenceConfig;
   /** AP v1: jobKind / await timeout для promise orchestration nodes. */
