@@ -12580,7 +12580,7 @@
     },
     {
       "id": "detection-ensemble-service",
-      "title": "Combined-продюсер: detection-ensemble-service питает combinedScore из fusion-ядра (trends+yamnet на окне)",
+      "title": "Combined-продюсер: detection-ensemble-service питает combinedScore из fusion-ядра (DSP-детекторы на окне; yamnet при model-provider)",
       "promptPath": "docs/prompts/DETECTION_ENSEMBLE_SERVICE_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
@@ -12593,7 +12593,7 @@
         "ozhegov",
         "kuryokhin"
       ],
-      "notes": "Магистраль дня 09.07 (MAIN_DAY_ISSUE Задача 1). Analyzer-сервис: инъецированные DroneDetector (контракт detector-base) → detect() на окне → fuseDetectorResults → ядро fuseDetectorConfidences. Зависит только от core + detector-base. Интеграция в mic-proximity-alarm (alarm на combinedScore, не громкости). Out of scope: combined UserCase граф (Задача 2), wire-контракт корень (Задача 3)."
+      "notes": "Магистраль дня 09.07 (MAIN_DAY_ISSUE Задача 1). Analyzer-сервис @membrana/detection-ensemble-service: инъецированные DroneDetector (контракт detector-base) → fuseDetectorResults → ядро fuseDetectorConfidences (EnsembleProducer + EMA). Зависит только от core + detector-base. Живая интеграция — отдельный client-плагин-продюсер mic-combined-detection (по каталогу: продюсер≠потребитель): гоняет DSP-детекторы (harmonic/cepstral/spectral-flux) через analyzeSample, публикует combinedScore в shared-store; mic-proximity-alarm читает его (alarm на combinedScore, не громкости). Нейро (yamnet) добавляется в набор при подключении model-provider → fusion DSP↔нейро (ND3). Out of scope: combined UserCase граф (Задача 2), браузерный smoke combinedScore>0."
     }
   ]
 }
