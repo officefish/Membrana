@@ -7,6 +7,7 @@ import { execFileSync } from 'node:child_process';
 
 import { slugify } from './consilium-paths.mjs';
 import { parseRagCliFlags } from './rag-ritual.mjs';
+import { todaysCommits, todaysChangedFiles } from './git-day-context.mjs';
 
 export const REGULATION_PATH = 'docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md';
 export const PROMPT_PATH = 'docs/prompts/TEAM_EVENING_FEEDBACK.md';
@@ -146,15 +147,10 @@ export function collectGitDaySummary(opts = {}) {
   const day = date.toISOString().slice(0, 10);
 
   const branch = runGit(['rev-parse', '--abbrev-ref', 'HEAD']);
-  const oneline = runGit(['log', '--oneline', '--since=midnight', '-30']);
-  const stat = runGit(['log', '--since=midnight', '--pretty=format:', '--name-only']);
-  // Сортируем и берём до 120 уникальных: git отдаёт коммиты новейшими-первыми, а
-  // прежний .slice(0,40) без сортировки отсекал файлы РАННИХ коммитов дня (напр.
-  // detection-fusion.ts из первого мерджа) → фидбэк не видел, что сделано утром, и
-  // не верил именам коммитов. Плотный день = 67 файлов, cap 120 покрывает.
-  const allFiles = [...new Set(stat.split('\n').map((line) => line.trim()).filter(Boolean))].sort();
-  const files = allFiles.slice(0, 120);
-  const filesMore = allFiles.length - files.length;
+  // NB7: через общий git-day-context (без --author; sort+cap 120 — не отсекать файлы
+  // РАННИХ коммитов дня, иначе фидбэк не видит утреннюю работу).
+  const oneline = todaysCommits({ format: '%h %s', limit: 30 });
+  const { files, more: filesMore } = todaysChangedFiles(120);
 
   let block =
     `## Git за ${day}\n\n` +

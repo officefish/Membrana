@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-07-08
+
+> Epic: `agent-tooling-night-build`
+> Закрыто: `2026-07-08T17:46:07.664Z` (`yarn night:close`)
+> Промпт: `docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/agent-tooling-night-build-2026-07-08` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 # Night Build log
 
 ## Open — 2026-06-14T18:06:19.233Z
@@ -142,3 +163,21 @@
 ## Checkpoint NB8 — 2026-07-08T17:43:08.861Z
 - Status: **pass**
 - Note: AGENTS tooling doc + ship/doctor skills
+
+
+---
+
+## Шаблон итога (заполнить вручную или агентом)
+
+| Фаза | Статус | PR / commit |
+|------|--------|-------------|
+| NB0 | pending / done / deferred | |
+| NB1 | pending / done / deferred | |
+| NB2 | pending / done / deferred | |
+| NB3 | pending / done / deferred | |
+
+**Блокеры:**
+
+- …
+
+**LGTM Vesnin:** pending

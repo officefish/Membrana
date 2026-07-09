@@ -21,7 +21,17 @@ set -e
 echo "pre-push [cg7]: yarn catalog:verify-client"
 yarn catalog:verify-client
 
-echo "pre-push [cg6]: yarn typecheck (turbo ^build → свежий dist)"
-yarn typecheck
+echo "pre-push [NB4]: yarn verify:wire-sync (core ↔ background-cabinet)"
+yarn verify:wire-sync
+
+# NB5: typecheck сужен до affected-пакетов (изменённые с origin/main + их зависимые),
+# turbo ^build держит dist свежим. Быстрее полного прогона → меньше соблазна SKIP.
+# Если origin/main недоступен (нет fetch) — fallback на полный typecheck.
+echo "pre-push [cg6/NB5]: yarn turbo run typecheck (affected)"
+if git rev-parse --verify --quiet origin/main >/dev/null; then
+  yarn turbo run typecheck --filter='...[origin/main]'
+else
+  yarn typecheck
+fi
 
 echo "pre-push: OK"

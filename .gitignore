@@ -123,3 +123,6 @@ tools/bin/*.zip
 # Python bytecode-кэш скриптов
 __pycache__/
 *.pyc
+
+# Артефакт code-review --uncommitted (перезаписывается каждым прогоном → autostash-трение)
+docs/discussions/uncommitted-code-review.md

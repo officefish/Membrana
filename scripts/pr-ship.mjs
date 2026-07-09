@@ -1,0 +1,98 @@
+#!/usr/bin/env node
+/**
+ * yarn pr:ship — one-shot PR-флоу: [ветка] → commit → push → PR (Closes #N) →
+ * squash-merge → ff-sync main. По итогам сессии 2026-07-08 (~26 ручных прогонов).
+ *
+ * БЕЗОПАСНОСТЬ: по умолчанию `--dry-run` (печатает команды, ничего не делает).
+ * `--execute` — реально выполнить. Гуарды: не коммитить на base-ветке без `--branch`.
+ *
+ * Usage:
+ *   yarn pr:ship --type feat --scope core --message "..." [--issue 123] [--branch feat/x]
+ *   yarn pr:ship ... --execute            # реально выполнить
+ *   yarn pr:ship ... --no-merge           # только PR, без squash-merge
+ *
+ * Логика планирования (planPrShip) — чистая и покрыта тестом; CLI лишь исполняет/печатает.
+ */
+import { execFileSync } from 'node:child_process';
+
+const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
+
+/**
+ * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean}} opts
+ * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[]}}
+ */
+export function planPrShip(opts) {
+  const { type, scope, message, issue, branch, base = 'main', merge = true } = opts;
+  if (!type || !message) throw new Error('pr:ship: --type и --message обязательны');
+  const title = `${type}${scope ? `(${scope})` : ''}: ${message}`;
+  const closes = issue ? `Closes #${issue}\n` : '';
+  const commitBody = `${title}\n\n${closes}${TRAILER}`;
+
+  /** @type {{label:string,cmd:string,args:string[]}[]} */
+  const steps = [];
+  if (branch) steps.push({ label: 'branch', cmd: 'git', args: ['checkout', '-b', branch] });
+  steps.push({ label: 'commit', cmd: 'git', args: ['commit', '-m', commitBody] });
+  steps.push({ label: 'push', cmd: 'git', args: ['push', '-u', 'origin', 'HEAD'] });
+  steps.push({
+    label: 'pr-create',
+    cmd: 'gh',
+    args: ['pr', 'create', '--base', base, '--title', title, '--body', closes ? closes.trim() : title],
+  });
+  if (merge) {
+    steps.push({ label: 'merge', cmd: 'gh', args: ['pr', 'merge', '--squash', '--delete-branch'] });
+    steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base] });
+    steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
+    steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`] });
+  }
+  return { title, commitBody, steps };
+}
+
+function parseArgs(argv) {
+  const o = { base: 'main', merge: true, execute: false };
+  for (let i = 2; i < argv.length; i += 1) {
+    const a = argv[i];
+    const next = () => argv[(i += 1)];
+    if (a === '--type') o.type = next();
+    else if (a === '--scope') o.scope = next();
+    else if (a === '--message' || a === '-m') o.message = next();
+    else if (a === '--issue') o.issue = next();
+    else if (a === '--branch') o.branch = next();
+    else if (a === '--base') o.base = next();
+    else if (a === '--no-merge') o.merge = false;
+    else if (a === '--execute') o.execute = true;
+  }
+  return o;
+}
+
+function main() {
+  const opts = parseArgs(process.argv);
+  const { title, steps } = planPrShip(opts);
+
+  // Гуард: без --branch коммит идёт в текущую ветку; запрет коммитить прямо в base.
+  const current = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim();
+  if (!opts.branch && current === opts.base) {
+    throw new Error(`pr:ship: на ветке "${opts.base}" без --branch — отказ (не коммитим прямо в base).`);
+  }
+
+  console.log(`pr:ship${opts.execute ? '' : ' [DRY-RUN]'}: ${title}`);
+  for (const s of steps) {
+    const printable = `${s.cmd} ${s.args.map((a) => (a.includes('\n') || a.includes(' ') ? JSON.stringify(a) : a)).join(' ')}`;
+    if (!opts.execute) {
+      console.log(`  · ${s.label}: ${printable.slice(0, 200)}`);
+      continue;
+    }
+    console.log(`  → ${s.label}`);
+    execFileSync(s.cmd, s.args, { stdio: 'inherit' });
+  }
+  if (!opts.execute) console.log('\n(dry-run — ничего не выполнено; добавь --execute)');
+}
+
+// ESM-эквивалент require.main === module
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('pr-ship.mjs')) {
+  try {
+    main();
+  } catch (e) {
+    console.error(String(e.message ?? e));
+    process.exit(1);
+  }
+}
