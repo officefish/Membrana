@@ -22,7 +22,7 @@ export function canSelect(item: BoardScenarioListItem): boolean {
   return resolveScenarioItemKind(item) === 'user' || item.entitlement !== 'locked';
 }
 
-function toCardModel(item: BoardScenarioListItem): UserCaseCardViewModel {
+export function toCardModel(item: BoardScenarioListItem): UserCaseCardViewModel {
   return {
     title: item.title,
     ...(item.entitlement !== undefined ? { entitlement: item.entitlement } : {}),
@@ -76,14 +76,42 @@ const ScenarioGroup: React.FC<{
   );
 };
 
+/**
+ * Список групп сценариев (Пользовательские | Системные) карточками. Переиспользуется
+ * dropdown-пикером и сценарной ячейкой узла (NodeScenarioCell) — csp-5 семантика
+ * (canSelect, tariff-бейджи, locked-апселл) живёт здесь в одном месте.
+ */
+export const ScenarioGroups: React.FC<{
+  readonly scenarios: readonly BoardScenarioListItem[];
+  readonly selectedScenarioId: string | null;
+  readonly onSelect: (id: string) => void;
+}> = ({ scenarios, selectedScenarioId, onSelect }) => {
+  const userScenarios = scenarios.filter((s) => resolveScenarioItemKind(s) === 'user');
+  const systemScenarios = scenarios.filter((s) => resolveScenarioItemKind(s) === 'system');
+  return (
+    <>
+      <ScenarioGroup
+        title="Пользовательские"
+        items={userScenarios}
+        selectedScenarioId={selectedScenarioId}
+        onSelect={onSelect}
+      />
+      <ScenarioGroup
+        title="Системные"
+        items={systemScenarios}
+        selectedScenarioId={selectedScenarioId}
+        onSelect={onSelect}
+      />
+    </>
+  );
+};
+
 export const CabinetScenarioPicker: React.FC<CabinetScenarioPickerProps> = ({
   scenarios,
   selectedScenarioId,
   onSelect,
   disabled = false,
 }) => {
-  const userScenarios = scenarios.filter((s) => resolveScenarioItemKind(s) === 'user');
-  const systemScenarios = scenarios.filter((s) => resolveScenarioItemKind(s) === 'system');
   const selected = scenarios.find((s) => s.id === selectedScenarioId) ?? null;
 
   return (
@@ -104,15 +132,8 @@ export const CabinetScenarioPicker: React.FC<CabinetScenarioPickerProps> = ({
           tabIndex={0}
           className="dropdown-content menu z-10 mt-1 w-72 max-h-72 flex-nowrap overflow-y-auto rounded-box border border-base-300 bg-base-100 p-2 shadow-lg"
         >
-          <ScenarioGroup
-            title="Пользовательские"
-            items={userScenarios}
-            selectedScenarioId={selectedScenarioId}
-            onSelect={onSelect}
-          />
-          <ScenarioGroup
-            title="Системные"
-            items={systemScenarios}
+          <ScenarioGroups
+            scenarios={scenarios}
             selectedScenarioId={selectedScenarioId}
             onSelect={onSelect}
           />
