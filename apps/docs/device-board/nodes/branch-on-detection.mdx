@@ -1,0 +1,45 @@
+---
+title: BranchOnDetection
+description: Exec-ветвление detected / not-detected по combinedScore ≥ threshold.
+---
+
+# BranchOnDetection
+
+Exec-ветвление по результату fusion: `detected` при `combinedScore ≥ threshold`,
+иначе `not-detected`. Порог задаётся на узле (дефолт **0.5**, кламп 0–1). Чистый узел,
+host не нужен. Имя без `make-*` — это ветвление, не конструктор.
+
+## Pins
+
+| | Handle | Тип |
+|---|--------|-----|
+| in | `fusion` | DetectionFusion (от MakeDetectionFusion) |
+| out | `detected` | exec |
+| out | `not-detected` | exec |
+
+## Runtime
+
+`detected` срабатывает при `combinedScore ≥ threshold` **и** `presentCount > 0`.
+Неподключённый, пустой или невалидный fusion всегда уводит в `not-detected`, а не
+роняет сценарий — ветка тревоги не запустится от молчащего входа.
+
+## Preconditions
+
+- `fusion` от [MakeDetectionFusion](/device-board/nodes/make-detection-fusion);
+  порог откалиброван под число детекторов.
+
+## Anti-patterns
+
+- Использовать как выход из alarm-loop — для этого
+  [MakeProximityTrend](/device-board/nodes/make-proximity-trend) + `is-valid`.
+
+## Minimal graph
+
+```text
+MakeDetectionFusion → fusion ─► BranchOnDetection ─ detected ──► alarm-ветка
+                                                 └ not-detected ► main-loop дальше
+```
+
+## Code
+
+`branch-on-detection-node.ts` · `runtime/branch-on-detection-executor.test.ts`

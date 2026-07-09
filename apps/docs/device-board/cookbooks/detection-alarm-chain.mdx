@@ -1,0 +1,77 @@
+---
+title: Detection + alarm-loop (basn)
+description: Полная детекционная цепочка — два детектора, fusion, branch, alarm-loop с «дистанцией», единый отчёт.
+---
+
+# Cookbook: полная detection-цепочка с alarm-loop
+
+Эталонный граф эпика **basn** (#323): аудиопоток анализируют **два** детектора,
+их слияние ветвит сценарий, тревога живёт пока цель «на дистанции», по выходу
+собирается единый отчёт. Все узлы — в палитре, отдельного alarm-механизма нет:
+цепочка целиком собирается композицией.
+
+## Граф
+
+```text
+main-loop (каждое окно):
+  CollectFftFrames ─► MakeFftTrendsAnalysis → analysis-1 ─┐
+  CollectSamples ──► MakeEnsembleAnalysis  → analysis-2 ─┼► MakeDetectionFusion
+                                                          │        ↓ fusion
+                                                          └► BranchOnDetection
+                                                    not-detected ─► LoopRepeat (main)
+                                                    detected ────► alarm-ветка
+
+alarm-loop (каждый тик):
+  MakeDetectionFusion → fusion ─► MakeProximityTrend → proximity ─► isValid
+        true  ─► LoopRepeat (alarm живёт: цель ближе/дальше, но не потеряна)
+        false ─► тревога кончилась (trend = lost) ─► упаковка отчёта
+
+выход из alarm:
+  StopRecording → MakeTrack → track ─────────────┐
+  MakeFftTrendsAnalysis → analysis-1 ─┐          │
+  MakeEnsembleAnalysis  → analysis-2 ─┼► MakeCombinedReport → report ─► PublishReport
+  GetReporter → reporter ─────────────┘
+```
+
+## Checklist
+
+<Steps>
+  <Step title="Два независимых детектора">
+    trends-FFT (`CollectFftFrames` → `MakeFftTrendsAnalysis`) и DSP-ансамбль
+    (`CollectSamples` → `MakeEnsembleAnalysis`). Fusion принимает 2–4 анализа.
+  </Step>
+  <Step title="Ветвление только по fusion">
+    `BranchOnDetection` читает `combinedScore ≥ threshold` (дефолт 0.5). Молчащий
+    fusion → `not-detected`, тревога не стартует от пустого входа.
+  </Step>
+  <Step title="Жизнь alarm-loop = валидность proximity">
+    `MakeProximityTrend` возвращает ProximityRef, невалидный при `lost`. Выход из
+    лупа — `is-valid` + `loop-repeat`, отдельного branch-узла нет.
+  </Step>
+  <Step title="Один отчёт на тревогу">
+    `MakeCombinedReport` идемпотентен по входам — повторные exec не плодят дубли;
+    тяжёлая упаковка уходит в async job `report-build`.
+  </Step>
+  <Step title="Публикация отдельно">
+    `PublishReport` в тот же journal, к которому scoped ReporterRef.
+  </Step>
+</Steps>
+
+## Runtime-семантика
+
+1. Детекторы исполняются хостом (ансамбль — `detection-ensemble-service` на клиенте),
+   узлы stateless; серии proximity копятся на хосте per nodeId и сбрасываются на Пуске.
+2. Fusion и branch — чистые узлы (`@membrana/core`), host не нужен.
+3. Async job `report-build` не блокирует рантайм — сценарий продолжает жить, пока
+   host пакует отчёт.
+
+## Узлы цепочки
+
+[MakeEnsembleAnalysis](/device-board/nodes/make-ensemble-analysis) ·
+[MakeDetectionFusion](/device-board/nodes/make-detection-fusion) ·
+[BranchOnDetection](/device-board/nodes/branch-on-detection) ·
+[MakeProximityTrend](/device-board/nodes/make-proximity-trend) ·
+[MakeCombinedReport](/device-board/nodes/make-combined-report)
+
+Источники: `packages/device-board/src/runtime/combined-report-executor.test.ts`
+(эпик-smoke полной цепочки) · `docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md`.
