@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   NODE_REALTIME_EVENT_TYPES,
   createNodeRealtimeEnvelope,
+  parseHealthPongPayload,
   parseNodeRealtimeEnvelope,
   parsePresenceHeartbeatPayload,
   parsePresenceSnapshotPayload,
@@ -60,5 +61,19 @@ describe('presence.heartbeat payload (PL2b)', () => {
     expect(parsePresenceHeartbeatPayload({ deviceId: '', timestampMs: 1 })).toBeNull();
     expect(parsePresenceHeartbeatPayload({ deviceId: 'dev-1', timestampMs: Infinity })).toBeNull();
     expect(parsePresenceHeartbeatPayload({ deviceId: 'dev-1', timestampMs: -1 })).toBeNull();
+  });
+});
+
+describe('health.pong payload (PCB6, апстрим из wire-копии)', () => {
+  it('accepts a non-empty pingId', () => {
+    expect(parseHealthPongPayload({ pingId: 'ping-1' })).toEqual({ pingId: 'ping-1' });
+  });
+
+  it('rejects malformed pong payloads', () => {
+    expect(parseHealthPongPayload(null)).toBeNull();
+    expect(parseHealthPongPayload({})).toBeNull();
+    expect(parseHealthPongPayload({ pingId: '' })).toBeNull();
+    expect(parseHealthPongPayload({ pingId: '  ' })).toBeNull();
+    expect(parseHealthPongPayload({ pingId: 42 })).toBeNull();
   });
 });

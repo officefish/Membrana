@@ -12616,6 +12616,22 @@
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #319; review LGTM 34aa1e31de24; PR #319 merged 2026-07-09T13:00:25Z (5e66efb84b78de86091c6887798f9ae90a003080)",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "wire-contract-codegen",
+      "title": "Wire-контракт core↔CJS: node-realtime-wire.ts генерируется из core (кодоген + freshness-гейт)",
+      "promptPath": "docs/prompts/WIRE_CONTRACT_CODEGEN_PROMPT.md",
+      "githubIssue": 320,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Задача 3 плана дня 09.07. Вариант B (решение команды): апстрим parseHealthPongPayload в core; scripts/generate-wire-contract.mjs (конкат 6 core-файлов, strip внутренних импортов, дедуп идентичных приватных хелперов, fail на неидентичных, баннер GENERATED); node-realtime-wire.ts = checked-in generated; verify:wire-sync → freshness-check (генерируй+байтово сравни, уже в pre-push). Out of scope: dual-build core (вариант A), изменение самого контракта."
     }
   ]
 }
