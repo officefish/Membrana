@@ -1,62 +1,40 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
-import {
-  extractEventTypeValues,
-  extractInterfaceFields,
-  wireSyncDiffs,
-} from './verify-wire-sync.mjs';
+import { normalizeEol, wireFreshness } from './verify-wire-sync.mjs';
+import { generateWireSource, root, WIRE_TARGET } from './generate-wire-contract.mjs';
 
-test('extractEventTypeValues: строки word.word', () => {
-  const src = `const X = { a: 'board.capture', b: 'node.entitlements', c: 'health.ping' };`;
-  assert.deepEqual([...extractEventTypeValues(src)].sort(), [
-    'board.capture',
-    'health.ping',
-    'node.entitlements',
-  ]);
+test('wireFreshness: идентичные тексты — fresh', () => {
+  const text = 'a\nb\nc\n';
+  assert.deepEqual(wireFreshness(text, text), { fresh: true, firstDiffLine: null });
 });
 
-test('extractInterfaceFields: readonly-поля вложенного интерфейса', () => {
-  const src = `
-    export interface BoardScenarioListItem {
-      readonly id: string;
-      readonly title: string;
-      readonly kind?: 'user' | 'system';
-      readonly branchCount?: number;
-    }`;
-  assert.deepEqual([...extractInterfaceFields(src, 'BoardScenarioListItem')].sort(), [
-    'branchCount',
-    'id',
-    'kind',
-    'title',
-  ]);
+test('wireFreshness: CRLF-вариант того же текста — fresh (Windows checkout)', () => {
+  assert.equal(wireFreshness('a\nb\n', 'a\r\nb\r\n').fresh, true);
+  assert.equal(normalizeEol('x\r\ny'), 'x\ny');
 });
 
-test('wireSyncDiffs: нет расхождений при равных множествах', () => {
-  const a = new Set(['x', 'y']);
-  const b = new Set(['y', 'x']);
-  assert.deepEqual(wireSyncDiffs([{ key: 'k', a, b }]), []);
+test('wireFreshness: расхождение — stale с номером первой строки', () => {
+  const r = wireFreshness('a\nb\nc\n', 'a\nB\nc\n');
+  assert.equal(r.fresh, false);
+  assert.equal(r.firstDiffLine, 2);
 });
 
-test('wireSyncDiffs: ловит поле только в одном источнике', () => {
-  const a = new Set(['id', 'title', 'kind']);
-  const b = new Set(['id', 'title']); // cabinet отстал (нет kind)
-  const diffs = wireSyncDiffs([{ key: 'BoardScenarioListItem', a, b }]);
-  assert.equal(diffs.length, 1);
-  assert.deepEqual(diffs[0].onlyA, ['kind']);
-  assert.deepEqual(diffs[0].onlyB, []);
+test('wireFreshness: недостающий хвост — stale', () => {
+  const r = wireFreshness('a\nb\nc\n', 'a\nb\n');
+  assert.equal(r.fresh, false);
+  assert.equal(r.firstDiffLine, 3);
 });
 
-test('реальные файлы core ↔ cabinet синхронны (после csp-2/csp-5)', async () => {
-  const { readFileSync } = await import('node:fs');
-  const core = readFileSync('packages/core/src/contracts/node-realtime/events.ts', 'utf8');
-  const cab = readFileSync(
-    'packages/background-cabinet/src/domain/node-realtime-wire.ts',
-    'utf8',
+test('реальный checked-in node-realtime-wire.ts свеж относительно core-канона', () => {
+  const expected = generateWireSource();
+  const actual = readFileSync(resolve(root, WIRE_TARGET), 'utf8');
+  const { fresh, firstDiffLine } = wireFreshness(expected, actual);
+  assert.equal(
+    fresh,
+    true,
+    `node-realtime-wire.ts stale (первое расхождение: строка ${firstDiffLine}) — запусти yarn wire:generate`,
   );
-  const diffs = wireSyncDiffs([
-    { key: 'events', a: extractEventTypeValues(core), b: extractEventTypeValues(cab) },
-  ]);
-  // node.entitlements + scenario-list + capture/* должны совпадать после сегодняшних синков.
-  assert.deepEqual(diffs, [], `wire рассинхронизирован: ${JSON.stringify(diffs)}`);
 });
