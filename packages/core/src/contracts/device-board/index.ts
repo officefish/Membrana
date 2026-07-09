@@ -312,3 +312,11 @@ export {
   createEmptyDeviceScenarioDocument,
   parseDeviceScenarioDocument,
 } from './device-scenario.js';
+
+export {
+  classifyProximityTrend,
+  type ProximityTrend,
+  type ProximityTrendInput,
+  type ProximityTrendOptions,
+  type ProximityTrendResult,
+} from './proximity-trend.js';

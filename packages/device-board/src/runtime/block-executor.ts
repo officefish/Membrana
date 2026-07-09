@@ -58,6 +58,10 @@ import {
   isMakeEnsembleAnalysisNodeKind,
 } from '../graph/make-ensemble-analysis-node.js';
 import {
+  MAKE_PROXIMITY_TREND_FUSION_HANDLE,
+  isMakeProximityTrendNodeKind,
+} from '../graph/make-proximity-trend-node.js';
+import {
   BRANCH_ON_DETECTION_DETECTED_HANDLE,
   BRANCH_ON_DETECTION_FUSION_HANDLE,
   BRANCH_ON_DETECTION_NOT_DETECTED_HANDLE,
@@ -87,6 +91,7 @@ import type { TrackRuntimeStore } from './track-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import type { DetectionFusionRuntimeStore } from './fusion-runtime-store.js';
 import type { EnsembleAnalysisRuntimeStore } from './ensemble-runtime-store.js';
+import type { ProximityRuntimeStore } from './proximity-runtime-store.js';
 import { resolveRefListMembers } from './resolve-ref-list.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
@@ -126,6 +131,8 @@ export interface BlockExecutionInput {
   readonly fusionStore?: DetectionFusionRuntimeStore;
   /** basn-1: EnsembleAnalysisRef от MakeEnsembleAnalysis. */
   readonly ensembleStore?: EnsembleAnalysisRuntimeStore;
+  /** basn-4: ProximityRef от MakeProximityTrend (lost → invalid). */
+  readonly proximityStore?: ProximityRuntimeStore;
   /** v0.7: RecordingSliceRef от StopRecording. */
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
   /** AP v1: async job registry. */
@@ -203,6 +210,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     analysisStore,
     fusionStore,
     ensembleStore,
+    proximityStore,
     recordingSliceStore,
     asyncJobStore,
     promiseRuntimeStore,
@@ -1003,6 +1011,48 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       sampleCount: sampleRefs.length,
       analysis: analysisHandle,
       detected,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
+  if (isMakeProximityTrendNodeKind(node.nodeKind)) {
+    if (variableStore === undefined || resolveContext === undefined || proximityStore === undefined) {
+      throw new Error('make-proximity-trend requires variableStore, resolveContext and proximityStore');
+    }
+    let combinedScore: number | null = null;
+    try {
+      const fusionInput = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        MAKE_PROXIMITY_TREND_FUSION_HANDLE,
+        resolveContext,
+      );
+      if (fusionInput !== null && fusionInput.kind === 'DetectionFusion') {
+        combinedScore = fusionInput.presentCount > 0 ? fusionInput.combinedScore : null;
+      }
+    } catch {
+      combinedScore = null;
+    }
+    let proximityHandle: string | null = null;
+    let trend = 'stable';
+    let ready = false;
+    if (host.evaluateProximityTrend !== undefined) {
+      const result = await host.evaluateProximityTrend(node.id, { combinedScore });
+      if (result !== null) {
+        const ref = proximityStore.setNodeResult(node.id, result);
+        proximityHandle = ref.handle;
+        trend = result.trend;
+        ready = result.ready;
+      }
+    }
+    host.log('make-proximity-trend', {
+      nodeId: node.id,
+      branch,
+      combinedScore,
+      trend,
+      ready,
+      proximity: proximityHandle,
     });
     return { lastDetection, stopRequested: false };
   }

@@ -56,6 +56,7 @@ import { pickFallbackCaptureFormat } from '@/plugins/mic-buffer-recorder/recordi
 import { analyzeTrendsFromFftFrames } from './analyzeTrendsFromFftFrames';
 import { concatAudioSamplePayloads } from './concat-audio-samples';
 import { EnsembleProducer } from '@membrana/detection-ensemble-service';
+import { classifyProximityTrend, type ProximityTrendResult } from '@membrana/core';
 import { createCombinedStreamDetectors } from '../../plugins/mic-combined-detection/createCombinedStreamDetectors';
 import { ScenarioContinuousPcmBuffer } from './scenario-continuous-pcm-buffer';
 
@@ -248,6 +249,8 @@ export class ScenarioMicJournalBridge {
   private audioSampleByNode = new Map<string, ScenarioReferenceValue>();
 
   private audioSamplePayloads = new Map<string, AudioSamplePayload>();
+  /** basn-4: серии громкости/score per nodeId для classifyProximityTrend. */
+  private proximityHistory = new Map<string, { loudness: number[]; scores: number[] }>();
 
   private fftFrameByNode = new Map<string, ScenarioReferenceValue>();
 
@@ -1068,6 +1071,47 @@ export class ScenarioMicJournalBridge {
       analysisId: reportId,
       detection: this.lastDetection,
     };
+  }
+
+  /**
+   * basn-4 (#323): тренд «дистанции» alarm-loop. Мост копит серии (громкость
+   * из evaluateSoundLevel + combinedScore) per nodeId и зовёт ЧИСТЫЙ
+   * classifyProximityTrend из core. История сбрасывается на scenario-run-start.
+   */
+  async evaluateProximityTrend(
+    nodeId: string,
+    input: { readonly combinedScore: number | null },
+  ): Promise<ProximityTrendResult | null> {
+    setScenarioTraceNodeId(nodeId);
+    const level = await this.evaluateSoundLevel();
+    let history = this.proximityHistory.get(nodeId);
+    if (history === undefined) {
+      history = { loudness: [], scores: [] };
+      this.proximityHistory.set(nodeId, history);
+    }
+    history.loudness.push(level.rawLevel);
+    if (history.loudness.length > 64) history.loudness.shift();
+    if (input.combinedScore !== null) {
+      history.scores.push(input.combinedScore);
+      if (history.scores.length > 16) history.scores.shift();
+    }
+    const result = classifyProximityTrend({
+      loudnessSeries: history.loudness,
+      scoreSeries: history.scores,
+    });
+    scenarioChainLog('analysis', 'proximity-tick', {
+      nodeId,
+      rawLevel: level.rawLevel.toFixed(5),
+      combinedScore: input.combinedScore,
+      trend: result.trend,
+      ready: result.ready,
+    });
+    return result;
+  }
+
+  /** basn-4: сброс истории proximity (вызывается на scenario-run-start). */
+  resetProximityHistory(): void {
+    this.proximityHistory.clear();
   }
 
   /** basn-1 (#323): AudioSampleRef[] окно → DSP-ансамбль (EnsembleProducer) → EnsembleAnalysisRef. */

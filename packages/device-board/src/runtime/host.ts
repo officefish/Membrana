@@ -1,4 +1,4 @@
-import { createReferenceValue, type ScenarioBlockKind, type ScenarioCaptureFormat, type ScenarioFftTrendsPolicy, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioRecordingPolicy, type ScenarioVariableValue, type ScenarioAsyncJobKind, type ScenarioAsyncJobCorrelation } from '@membrana/core';
+import { createReferenceValue, type ProximityTrendResult, type ScenarioBlockKind, type ScenarioCaptureFormat, type ScenarioFftTrendsPolicy, type ScenarioReferenceValue, type ScenarioReportPayload, type ScenarioRecordingPolicy, type ScenarioVariableValue, type ScenarioAsyncJobKind, type ScenarioAsyncJobCorrelation } from '@membrana/core';
 
 import type { AsyncJobStore } from './async-job-store.js';
 
@@ -196,6 +196,11 @@ export interface ScenarioRuntimeHost {
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
   ) => Promise<{ readonly trackId: string } | null>;
+  /** basn-4: тренд «дистанции» — host копит серии (громкость, score) per nodeId и зовёт core classifyProximityTrend. */
+  readonly evaluateProximityTrend?: (
+    nodeId: string,
+    input: { readonly combinedScore: number | null },
+  ) => Promise<ProximityTrendResult | null>;
   /** basn-1: AudioSampleRef[] окно → DSP-ансамбль (EnsembleProducer на хосте) → EnsembleAnalysisRef. */
   readonly makeEnsembleAnalysisFromSampleRefs?: (
     nodeId: string,
@@ -404,6 +409,12 @@ export function createStubScenarioRuntimeHost(
       (async (nodeId, refs) => {
         log('createTrackFromSampleRefs', { nodeId, count: refs.length });
         return refs.length > 0 ? { trackId: 'stub-track' } : null;
+      }),
+    evaluateProximityTrend:
+      overrides.evaluateProximityTrend ??
+      (async (nodeId, input) => {
+        log('evaluateProximityTrend', { nodeId, combinedScore: input.combinedScore });
+        return { trend: 'stable', ready: false, deltaRatio: 0 };
       }),
     makeEnsembleAnalysisFromSampleRefs:
       overrides.makeEnsembleAnalysisFromSampleRefs ??
