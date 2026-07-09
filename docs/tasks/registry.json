@@ -12577,6 +12577,23 @@
         "ozhegov"
       ],
       "notes": "Переход инсайт→спринт (см. insight-hermes-liaison-agent, adopted, вес 7.4/10). Первый шаг форсайт-горизонта. Scope: scripts/hermes-brief.mjs + yarn hermes:brief + юнит-тест детерминизма + .claude/agents/hermes.md. Запреты: LLM-резюме, паковщик handoff, оркестратор, UI-панель."
+    },
+    {
+      "id": "detection-ensemble-service",
+      "title": "Combined-продюсер: detection-ensemble-service питает combinedScore из fusion-ядра (trends+yamnet на окне)",
+      "promptPath": "docs/prompts/DETECTION_ENSEMBLE_SERVICE_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin"
+      ],
+      "notes": "Магистраль дня 09.07 (MAIN_DAY_ISSUE Задача 1). Analyzer-сервис: инъецированные DroneDetector (контракт detector-base) → detect() на окне → fuseDetectorResults → ядро fuseDetectorConfidences. Зависит только от core + detector-base. Интеграция в mic-proximity-alarm (alarm на combinedScore, не громкости). Out of scope: combined UserCase граф (Задача 2), wire-контракт корень (Задача 3)."
     }
   ]
 }
