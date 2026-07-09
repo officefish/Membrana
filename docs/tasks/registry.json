@@ -12577,6 +12577,23 @@
         "ozhegov"
       ],
       "notes": "Переход инсайт→спринт (см. insight-hermes-liaison-agent, adopted, вес 7.4/10). Первый шаг форсайт-горизонта. Scope: scripts/hermes-brief.mjs + yarn hermes:brief + юнит-тест детерминизма + .claude/agents/hermes.md. Запреты: LLM-резюме, паковщик handoff, оркестратор, UI-панель."
+    },
+    {
+      "id": "detection-ensemble-service",
+      "title": "Combined-продюсер: detection-ensemble-service питает combinedScore из fusion-ядра (DSP-детекторы на окне; yamnet при model-provider)",
+      "promptPath": "docs/prompts/DETECTION_ENSEMBLE_SERVICE_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin"
+      ],
+      "notes": "Магистраль дня 09.07 (MAIN_DAY_ISSUE Задача 1). Analyzer-сервис @membrana/detection-ensemble-service: инъецированные DroneDetector (контракт detector-base) → fuseDetectorResults → ядро fuseDetectorConfidences (EnsembleProducer + EMA). Зависит только от core + detector-base. Живая интеграция — отдельный client-плагин-продюсер mic-combined-detection (по каталогу: продюсер≠потребитель): гоняет DSP-детекторы (harmonic/cepstral/spectral-flux) через analyzeSample, публикует combinedScore в shared-store; mic-proximity-alarm читает его (alarm на combinedScore, не громкости). Нейро (yamnet) добавляется в набор при подключении model-provider → fusion DSP↔нейро (ND3). Out of scope: combined UserCase граф (Задача 2), браузерный smoke combinedScore>0."
     }
   ]
 }

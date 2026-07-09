@@ -23,6 +23,7 @@
     "@membrana/audio-engine-service": "*",
     "@membrana/cepstral-detector-service": "*",
     "@membrana/core": "*",
+    "@membrana/detection-ensemble-service": "*",
     "@membrana/detector-base": "*",
     "@membrana/detector-report": "*",
     "@membrana/device-board": "*",

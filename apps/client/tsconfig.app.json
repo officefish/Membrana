@@ -50,6 +50,8 @@
       "@membrana/trends-detector-service/*": ["../../packages/services/trends-detector/src/*"],
       "@membrana/drone-detection-orchestrator-service": ["../../packages/services/drone-detection-orchestrator/src/index.ts"],
       "@membrana/drone-detection-orchestrator-service/*": ["../../packages/services/drone-detection-orchestrator/src/*"],
+      "@membrana/detection-ensemble-service": ["../../packages/services/detection-ensemble-service/src/index.ts"],
+      "@membrana/detection-ensemble-service/*": ["../../packages/services/detection-ensemble-service/src/*"],
       "@membrana/yamnet-detector-service": ["../../packages/services/detectors/yamnet/src/index.ts"],
       "@membrana/yamnet-detector-service/*": ["../../packages/services/detectors/yamnet/src/*"],
       "@/*": ["./src/*"]
@@ -77,6 +79,7 @@
     { "path": "../../packages/services/detectors/template-match" },
     { "path": "../../packages/services/trends-detector" },
     { "path": "../../packages/services/drone-detection-orchestrator" },
+    { "path": "../../packages/services/detection-ensemble-service" },
     { "path": "../../packages/services/detectors/yamnet" }
   ]
 }
