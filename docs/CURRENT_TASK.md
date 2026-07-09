@@ -2,9 +2,14 @@
 
 > **Буфер** — при конфликте проигрывает [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и реестру.
 
-## Канон дня (2026-07-09)
+## Параллельный enabler-трек (2026-07-09)
 
-**Текущий спринт:** `hermes-brief` ← **сейчас** (переход из инсайта `insight-hermes-liaison-agent`)
+> ⚠️ **Магистраль дня — НЕ это.** Канон дня (`MAIN_DAY_ISSUE.md`) = **combined-продюсер**
+> (`detection-ensemble-service`). `hermes-brief` — **параллельный ops/tooling-трек**, ведётся
+> в **отдельной выделенной сессии**. Если эта сессия открыта под Hermes (стартовая строка ниже) —
+> работай **только** по `HERMES_BRIEF_PROMPT.md`, продуктовую магистраль (combined) **не трогай**.
+
+**Трек:** `hermes-brief` (переход из инсайта `insight-hermes-liaison-agent`, enabler, вес 7.4)
 
 ### Фокус
 
