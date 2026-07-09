@@ -12615,7 +12615,7 @@
       "notes": "Кабинетный UI (NodesPage node card). S1: CabinetScenarioPicker из строки кнопок → отдельная ячейка ПОД NodeLastTrackPreview, collapsible (свёрнуто выбранный, раскрыто группы user/system), csp-5 семантика цела. S2: NodeLastTrackPreview голый audio → waveform-гистограмма SampleWaveformScrubber, данные по клику (offline-safe): fetchNodeTrackBlobUrl → декод audio-engine → computePeakEnvelope. Без сырого Web Audio, без изменения shared-сервисов. Обсуждено виртуальной командой. Out of scope: сервер/контракт журнала, автозагрузка waveform.",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #319; review LGTM 34aa1e31de24; PR #319 merged 2026-07-09T13:00:25Z (5e66efb84b78de86091c6887798f9ae90a003080)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-09"
     },
     {
       "id": "wire-contract-codegen",
@@ -12634,7 +12634,7 @@
       "notes": "Задача 3 плана дня 09.07. Вариант B (решение команды): апстрим parseHealthPongPayload в core; scripts/generate-wire-contract.mjs (конкат 6 core-файлов, strip внутренних импортов, дедуп идентичных приватных хелперов, fail на неидентичных, баннер GENERATED); node-realtime-wire.ts = checked-in generated; verify:wire-sync → freshness-check (генерируй+байтово сравни, уже в pre-push). Out of scope: dual-build core (вариант A), изменение самого контракта.",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #321; review LGTM 59df295ba875; PR #321 merged 2026-07-09T14:10:38Z (0573b3ee7a9112e822f76a88e9b4f1039fac9a53)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-09"
     },
     {
       "id": "board-alarm-scenario-nodes",
@@ -12655,7 +12655,7 @@
       "notes": "Gap-анализ 09.07: палитра v0.4–v0.9 + AP v1 покрывает поток/трек/trends/отчёты/async/управление; не хватает 5 узлов. Алarm-loop = композиция branch-on-detection + make-proximity-trend + loop-repeat. device-board только core → сервисы через host-мост. DoD: smoke полного сценария из палитры + LGTM = gate соревнования (device-board-hackathon формат).",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #324-#329; 5/5 узлов + inspector-notes + эпик-smoke; консилиум 25 реплик; gate соревнования = LGTM владельца",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-09"
     },
     {
       "id": "basn-2-detection-fusion",
@@ -12749,7 +12749,7 @@
       ],
       "archivedAt": "2026-07-09",
       "archiveNotes": "Эпик закрыт: mdr-1 (PR #331, 5 node pages + cookbook + docs.json, LGTM), mdr-2 (PR #332, editor-страницы под текущий UX, LGTM), mdr-3 (verify OK, RAG archive-контур defer, деплой-аудит). ГЛАВНАЯ НАХОДКА: аккаунт Mintlify (membrana.mintlify.app) = отдельный репозиторий mintlify-community/docs-membrana-d6be932a, НЕ синхронизирован с apps/docs; detection-контент доставлен PR https://github.com/mintlify-community/docs-membrana-d6be932a/pull/1; выбор источника правды (reconnect на apps/docs vs вести Mintlify-репо) — отдельное решение владельца",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-09"
     },
     {
       "id": "mdr-1-detection-node-pages",
@@ -12768,7 +12768,7 @@
       "epicId": "mintlify-docs-refresh",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #331; review LGTM e352fb0c8637; PR #331 merged 2026-07-09T17:41:31Z (b82553cf1101cff9655ace3bc509182724c3b2af)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-09"
     },
     {
       "id": "mdr-2-editor-pages-refresh",
@@ -12787,7 +12787,7 @@
       "epicId": "mintlify-docs-refresh",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #332; review LGTM b8bf1b010efb; PR #332 merged 2026-07-09T17:51:55Z (a673360e497e1379bd9cd26e7acf1d4aa4e6272b)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-09"
     },
     {
       "id": "mdr-3-verify-rag-publish",
@@ -12808,7 +12808,7 @@
       ],
       "archivedAt": "2026-07-09",
       "archiveNotes": "docs:lint OK (51 pages) + catalog:verify-client OK; RAG: operative smoke query находит свежие термины, archive-контур (apps/docs mdx) DEFER — требует OPENAI_API_KEY; деплой-аудит: аккаунт Mintlify = ОТДЕЛЬНЫЙ репозиторий mintlify-community/docs-membrana-d6be932a (англ. реструктуризация, '37 файлов' ~2026-06-25), разошёлся с apps/docs; detection-контент доставлен туда аддитивным PR #1 (5 node pages + cookbook + palette index через Admin MCP), merge PR = решение владельца",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-09"
     },
     {
       "id": "deploy-image-tag-default",
