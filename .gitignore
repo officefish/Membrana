@@ -96,6 +96,8 @@ pnpm-lock.yaml
 !.claude/CLAUDE.md
 !.claude/skills/
 !.claude/skills/**
+!.claude/agents/
+!.claude/agents/**
 .continue/
 .cursor/mcp.json
 
@@ -126,3 +128,6 @@ __pycache__/
 
 # Артефакт code-review --uncommitted (перезаписывается каждым прогоном → autostash-трение)
 docs/discussions/uncommitted-code-review.md
+
+# Артефакт yarn hermes:brief (генерируемый снимок состояния сессии, перезаписывается)
+docs/HERMES_BRIEF.md
