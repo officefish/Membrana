@@ -28,6 +28,8 @@ export {
   isReferenceSocketType,
   isValueSocketType,
   isValidSocketConnection,
+  DETECTION_ANALYSIS_SOURCE_SOCKET_TYPES,
+  isDetectionAnalysisSourceSocketType,
 } from './socket-type.js';
 
 export {
@@ -210,6 +212,7 @@ export {
   type ScenarioStringValue,
   type ScenarioRecordingPolicyValue,
   type ScenarioFftTrendsPolicyValue,
+  type ScenarioDetectionFusionValue,
   type ScenarioVariableValue,
   type ScenarioVariable,
   createReferenceValue,
@@ -218,6 +221,7 @@ export {
   createStringValue,
   createRecordingPolicyValue,
   createFftTrendsPolicyValue,
+  createDetectionFusionValue,
   invalidateReference,
   createScenarioVariable,
   isScenarioVariableType,
@@ -227,6 +231,7 @@ export {
   isScenarioStringValue,
   isScenarioRecordingPolicyValue,
   isScenarioFftTrendsPolicyValue,
+  isScenarioDetectionFusionValue,
   isScenarioVariableValue,
   isScenarioVariable,
   migrateScenarioVariableLegacy,

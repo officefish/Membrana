@@ -1,7 +1,17 @@
-import type { ScenarioFunctionSubgraph, ScenarioGraphNode, ScenarioReferenceValue, ScenarioSubgraph } from '@membrana/core';
+import type {
+  FusionSourceInput,
+  ScenarioFunctionSubgraph,
+  ScenarioGraphNode,
+  ScenarioReferenceValue,
+  ScenarioSubgraph,
+  ScenarioVariableValue,
+} from '@membrana/core';
 import {
+  createDetectionFusionValue,
+  fuseDetectorConfidences,
   isPolicyConstructorScenarioNodeKind,
   isRecordingGateScenarioNodeKind,
+  isScenarioReferenceValue,
   resolveScenarioGraphNodePure,
 } from '@membrana/core';
 
@@ -39,6 +49,11 @@ import {
   MAKE_FFT_TRENDS_FRAMES_HANDLE,
 } from '../graph/make-fft-trends-analysis-node.js';
 import {
+  clampDetectionFusionInputCount,
+  detectionFusionAnalysisHandle,
+  isMakeDetectionFusionNodeKind,
+} from '../graph/make-detection-fusion-node.js';
+import {
   isMakeTrackNodeKind,
   MAKE_TRACK_RECORDER_HANDLE,
   MAKE_TRACK_SAMPLES_HANDLE,
@@ -59,6 +74,7 @@ import type { CollectRuntimeStore } from './collect-runtime-store.js';
 import type { ReportRuntimeStore } from './report-runtime-store.js';
 import type { TrackRuntimeStore } from './track-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import type { DetectionFusionRuntimeStore } from './fusion-runtime-store.js';
 import { resolveRefListMembers } from './resolve-ref-list.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
@@ -94,6 +110,8 @@ export interface BlockExecutionInput {
   readonly trackStore?: TrackRuntimeStore;
   /** v0.6: FftTrendAnalysisRef от NewFftTrendsAnalysis. */
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
+  /** basn-2: value DetectionFusion от MakeDetectionFusion. */
+  readonly fusionStore?: DetectionFusionRuntimeStore;
   /** v0.7: RecordingSliceRef от StopRecording. */
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
   /** AP v1: async job registry. */
@@ -169,6 +187,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     reportStore,
     trackStore,
     analysisStore,
+    fusionStore,
     recordingSliceStore,
     asyncJobStore,
     promiseRuntimeStore,
@@ -916,7 +935,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     if (host.analyzeFftTrendsFromFrameRefs !== undefined) {
       const result = await host.analyzeFftTrendsFromFrameRefs(node.id, frameRefs, fftTrendsPolicy);
       if (result !== null) {
-        const analysisRef = analysisStore.setNodeAnalysis(node.id, result.analysisId);
+        const analysisRef = analysisStore.setNodeAnalysis(node.id, result.analysisId, result.detection);
         analysisHandle = analysisRef.handle;
         detection = result.detection;
       }
@@ -932,6 +951,69 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       intervalMs: fftTrendsPolicy.intervalMs,
     });
     return { lastDetection: detection, stopRequested: false };
+  }
+
+  if (isMakeDetectionFusionNodeKind(node.nodeKind)) {
+    if (
+      variableStore === undefined ||
+      resolveContext === undefined ||
+      analysisStore === undefined ||
+      fusionStore === undefined
+    ) {
+      throw new Error(
+        'make-detection-fusion requires variableStore, resolveContext, analysisStore and fusionStore',
+      );
+    }
+    const inputCount = clampDetectionFusionInputCount(node.detectionFusionInputCount);
+    const sources: FusionSourceInput[] = [];
+    for (let i = 1; i <= inputCount; i += 1) {
+      const port = detectionFusionAnalysisHandle(i);
+      let ref: ScenarioVariableValue | null = null;
+      try {
+        ref = resolveInput(subgraph, variableStore.getAll(), node.id, port, resolveContext);
+      } catch {
+        // Неподключённый опциональный вход (сверх минимума) → молчащий источник.
+        ref = null;
+      }
+      if (
+        ref === null ||
+        !isScenarioReferenceValue(ref) ||
+        ref.handle === null ||
+        !isReferenceValid(ref)
+      ) {
+        sources.push({ name: port, family: 'unknown', confidence: 0, isDrone: false, present: false });
+        continue;
+      }
+      const detection = analysisStore.getDetectionByHandle(ref.handle);
+      if (detection === null) {
+        sources.push({ name: ref.handle, family: 'unknown', confidence: 0, isDrone: false, present: false });
+        continue;
+      }
+      sources.push({
+        name: ref.handle,
+        // basn-1 добавит нейро/ансамбль-семейства; trends-анализ — DSP.
+        family: ref.kind === 'FftTrendAnalysisRef' ? 'dsp' : 'ensemble',
+        confidence: detection.confidence,
+        isDrone: detection.isDrone ?? detection.detected,
+        present: true,
+      });
+    }
+    const fusion = fuseDetectorConfidences(sources);
+    const fusionValue = createDetectionFusionValue({
+      combinedScore: fusion.combinedScore,
+      agreement: fusion.agreement,
+      presentCount: fusion.presentCount,
+    });
+    fusionStore.setNodeFusion(node.id, fusionValue);
+    host.log('make-detection-fusion', {
+      nodeId: node.id,
+      branch,
+      inputCount,
+      presentCount: fusionValue.presentCount,
+      combinedScore: fusionValue.combinedScore,
+      agreement: fusionValue.agreement,
+    });
+    return { lastDetection, stopRequested: false };
   }
 
   switch (node.blockKind) {

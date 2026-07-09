@@ -78,6 +78,21 @@ export interface ScenarioFftTrendsPolicyValue {
   readonly enabledTemplateKeys: readonly string[];
 }
 
+/**
+ * Value результата детекционного fusion в dataflow (basn-2, консилиум 2026-07-09 т.1:
+ * value, не ref — у fusion нет идентичности и времени жизни). Слияние считает ядро
+ * `fuseDetectorConfidences`; узел MakeDetectionFusion лишь маппит анализы в источники.
+ */
+export interface ScenarioDetectionFusionValue {
+  readonly kind: 'DetectionFusion';
+  /** Взвешенное среднее сырых confidence присутствующих источников, [0..1]. */
+  readonly combinedScore: number;
+  /** Согласованность источников, [0..1] (1 — совпадают, 0 — максимальный разброс). */
+  readonly agreement: number;
+  /** Число отработавших (present) источников; 0 → сигнала нет. */
+  readonly presentCount: number;
+}
+
 /** Значение переменной сценария (ссылка или value). */
 export type ScenarioVariableValue =
   | ScenarioReferenceValue
@@ -85,7 +100,8 @@ export type ScenarioVariableValue =
   | ScenarioIntegerValue
   | ScenarioStringValue
   | ScenarioRecordingPolicyValue
-  | ScenarioFftTrendsPolicyValue;
+  | ScenarioFftTrendsPolicyValue
+  | ScenarioDetectionFusionValue;
 
 /** Переменная сценария (document-scope, объявляется в конструкторе переменных). */
 export interface ScenarioVariable {
@@ -132,6 +148,25 @@ export function createFftTrendsPolicyValue(
   params: Omit<ScenarioFftTrendsPolicyValue, 'kind'>,
 ): ScenarioFftTrendsPolicyValue {
   return { kind: 'FftTrendsPolicy', ...params };
+}
+
+function clamp01(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  if (value < 0) return 0;
+  if (value > 1) return 1;
+  return value;
+}
+
+/** Создаёт value DetectionFusion (клампит score/agreement в [0..1]). */
+export function createDetectionFusionValue(
+  params: Omit<ScenarioDetectionFusionValue, 'kind'>,
+): ScenarioDetectionFusionValue {
+  return {
+    kind: 'DetectionFusion',
+    combinedScore: clamp01(params.combinedScore),
+    agreement: clamp01(params.agreement),
+    presentCount: Math.max(0, Math.trunc(params.presentCount)),
+  };
 }
 
 /** Помечает ссылку невалидной (handle сохраняется для диагностики). */
@@ -227,6 +262,22 @@ export function isScenarioFftTrendsPolicyValue(value: unknown): value is Scenari
   );
 }
 
+/** Type guard для `ScenarioDetectionFusionValue`. */
+export function isScenarioDetectionFusionValue(
+  value: unknown,
+): value is ScenarioDetectionFusionValue {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    candidate['kind'] === 'DetectionFusion' &&
+    typeof candidate['combinedScore'] === 'number' &&
+    typeof candidate['agreement'] === 'number' &&
+    typeof candidate['presentCount'] === 'number'
+  );
+}
+
 /** Type guard для `ScenarioVariableValue`. */
 export function isScenarioVariableValue(value: unknown): value is ScenarioVariableValue {
   return (
@@ -235,7 +286,8 @@ export function isScenarioVariableValue(value: unknown): value is ScenarioVariab
     isScenarioIntegerValue(value) ||
     isScenarioStringValue(value) ||
     isScenarioRecordingPolicyValue(value) ||
-    isScenarioFftTrendsPolicyValue(value)
+    isScenarioFftTrendsPolicyValue(value) ||
+    isScenarioDetectionFusionValue(value)
   );
 }
 

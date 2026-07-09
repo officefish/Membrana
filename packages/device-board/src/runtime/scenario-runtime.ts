@@ -10,6 +10,7 @@ import { ReportRuntimeStore } from './report-runtime-store.js';
 import { TrackRuntimeStore } from './track-runtime-store.js';
 import { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import { DetectionFusionRuntimeStore } from './fusion-runtime-store.js';
 import { AsyncJobStore } from './async-job-store.js';
 import { PromiseRuntimeStore } from './promise-runtime-store.js';
 import { wireAsyncResolvedDispatch } from './async-resolved-dispatch.js';
@@ -119,6 +120,7 @@ export class ScenarioRuntime {
   private readonly recordingSliceStore = new RecordingSliceRuntimeStore();
 
   private readonly analysisStore = new FftTrendAnalysisRuntimeStore();
+  private readonly fusionStore = new DetectionFusionRuntimeStore();
 
   private readonly asyncJobStore = new AsyncJobStore();
 
@@ -216,6 +218,7 @@ export class ScenarioRuntime {
     this.trackStore.resetAll();
     this.recordingSliceStore.resetAll();
     this.analysisStore.resetAll();
+    this.fusionStore.resetAll();
     this.asyncJobStore.clear();
     this.promiseRuntimeStore.resetAll();
     this.host.resetCollectorSessions?.();
@@ -243,6 +246,7 @@ export class ScenarioRuntime {
     this.trackStore.resetAll();
     this.recordingSliceStore.resetAll();
     this.analysisStore.resetAll();
+    this.fusionStore.resetAll();
     this.asyncJobStore.clear();
     this.promiseRuntimeStore.resetAll();
     this.host.resetCollectorSessions?.();
@@ -506,10 +510,13 @@ export class ScenarioRuntime {
     const analysis: Pick<ResolveInputContext, 'getFftTrendAnalysisRef'> = {
       getFftTrendAnalysisRef: (nodeId) => this.analysisStore.getAnalysisRef(nodeId),
     };
+    const fusion: Pick<ResolveInputContext, 'getDetectionFusionValue'> = {
+      getDetectionFusionValue: (nodeId) => this.fusionStore.getFusionValue(nodeId),
+    };
     const promise: Pick<ResolveInputContext, 'getPromiseRef'> = {
       getPromiseRef: (nodeId) => this.promiseRuntimeStore.getPromiseRef(nodeId),
     };
-    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis, ...promise };
+    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis, ...fusion, ...promise };
     if (Object.keys(merged).length === 0) {
       return context;
     }
@@ -633,6 +640,7 @@ export class ScenarioRuntime {
       reportStore: this.reportStore,
       trackStore: this.trackStore,
       analysisStore: this.analysisStore,
+      fusionStore: this.fusionStore,
       recordingSliceStore: this.recordingSliceStore,
       asyncJobStore: this.asyncJobStore,
       promiseRuntimeStore: this.promiseRuntimeStore,

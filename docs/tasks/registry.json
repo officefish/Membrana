@@ -12635,6 +12635,89 @@
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #321; review LGTM 59df295ba875; PR #321 merged 2026-07-09T14:10:38Z (0573b3ee7a9112e822f76a88e9b4f1039fac9a53)",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "board-alarm-scenario-nodes",
+      "title": "Эпик: узлы полного детекционного сценария борда (N1–N5) — подготовка к соревнованию",
+      "promptPath": "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
+      "githubIssue": 323,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin",
+        "rodchenko"
+      ],
+      "notes": "Gap-анализ 09.07: палитра v0.4–v0.9 + AP v1 покрывает поток/трек/trends/отчёты/async/управление; не хватает 5 узлов. Алarm-loop = композиция branch-on-detection + make-proximity-trend + loop-repeat. device-board только core → сервисы через host-мост. DoD: smoke полного сценария из палитры + LGTM = gate соревнования (device-board-hackathon формат)."
+    },
+    {
+      "id": "basn-2-detection-fusion",
+      "title": "basn-2: узел make-detection-fusion — 2+ анализов → FusionRef (combinedScore, agreement) через core-ядро",
+      "promptPath": "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "dynin",
+      "epicId": "board-alarm-scenario-nodes"
+    },
+    {
+      "id": "basn-3-branch-on-detection",
+      "title": "basn-3: узел branch-on-detection — exec-ветвление detected/not по combinedScore ≥ threshold",
+      "promptPath": "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "ozhegov",
+      "epicId": "board-alarm-scenario-nodes"
+    },
+    {
+      "id": "basn-1-ensemble-analysis",
+      "title": "basn-1: узел make-ensemble-analysis — второй детектор (DSP-ансамбль) через host-мост → EnsembleAnalysisRef",
+      "promptPath": "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "kuryokhin",
+      "epicId": "board-alarm-scenario-nodes"
+    },
+    {
+      "id": "basn-4-proximity-trend",
+      "title": "basn-4: узел make-proximity-trend — ближе/дальше/lost (host-store per runId) — условие жизни alarm-loop",
+      "promptPath": "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "dynin",
+      "epicId": "board-alarm-scenario-nodes"
+    },
+    {
+      "id": "basn-5-combined-report",
+      "title": "basn-5: узел make-combined-report — N анализов + TrackRef → единый ReportRef (async report-build)",
+      "promptPath": "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "rodchenko",
+      "epicId": "board-alarm-scenario-nodes"
     }
   ]
 }

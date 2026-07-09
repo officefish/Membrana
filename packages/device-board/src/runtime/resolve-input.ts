@@ -4,6 +4,8 @@ import {
   resolveScenarioFftTrendsPolicy,
   resolveScenarioRecordingPolicy,
   createReferenceValue,
+  isSocketType,
+  isValidSocketConnection,
   type ScenarioFunctionSubgraph,
   type ScenarioGraphNode,
   type ScenarioReferenceValue,
@@ -56,6 +58,10 @@ import {
   MAKE_FFT_TRENDS_ANALYSIS_OUT_HANDLE,
   isMakeFftTrendsAnalysisNodeKind,
 } from '../graph/make-fft-trends-analysis-node.js';
+import {
+  MAKE_DETECTION_FUSION_OUT_HANDLE,
+  isMakeDetectionFusionNodeKind,
+} from '../graph/make-detection-fusion-node.js';
 import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
 import {
   ASYNC_PROMISE_REF_HANDLE,
@@ -121,6 +127,8 @@ export interface ResolveInputContext {
   readonly getRecordingSliceRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** FftTrendAnalysisRef последнего MakeFftTrendsAnalysis узла. */
   readonly getFftTrendAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** basn-2: value DetectionFusion последнего MakeDetectionFusion узла. */
+  readonly getDetectionFusionValue?: (nodeId: string) => ScenarioVariableValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** AP v1: PromiseRef от Start Async Job. */
@@ -171,6 +179,15 @@ function assertTypeCompatible(
   value: ScenarioVariableValue | null,
 ): void {
   if (value === null || edge.dataType === undefined) {
+    return;
+  }
+  // Канон совместимости — core isValidSocketConnection (включая union-вход
+  // DetectionAnalysisRef ← FftTrendAnalysisRef | EnsembleAnalysisRef, basn-2).
+  if (
+    isSocketType(value.kind) &&
+    isSocketType(edge.dataType) &&
+    isValidSocketConnection(value.kind, edge.dataType)
+  ) {
     return;
   }
   if (value.kind !== edge.dataType) {
@@ -335,6 +352,11 @@ function invalidRecordingSliceRef(): ScenarioReferenceValue {
 
 function invalidFftTrendAnalysisRef(): ScenarioReferenceValue {
   return { kind: 'FftTrendAnalysisRef', handle: null, valid: false };
+}
+
+/** Fusion ещё не считался: пустой value (score 0, present 0). */
+function emptyDetectionFusionValue(): ScenarioVariableValue {
+  return { kind: 'DetectionFusion', combinedScore: 0, agreement: 1, presentCount: 0 };
 }
 
 function invalidPromiseRef(): ScenarioReferenceValue {
@@ -802,6 +824,20 @@ export function resolveNodeOutput(
       return invalidFftTrendAnalysisRef();
     }
     return resolver(node.id) ?? invalidFftTrendAnalysisRef();
+  }
+
+  if (isMakeDetectionFusionNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_DETECTION_FUSION_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-detection-fusion output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getDetectionFusionValue;
+    if (resolver === undefined) {
+      return emptyDetectionFusionValue();
+    }
+    return resolver(node.id) ?? emptyDetectionFusionValue();
   }
 
   if (node.nodeKind === 'collect-samples') {

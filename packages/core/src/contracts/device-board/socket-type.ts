@@ -44,6 +44,13 @@ export const SOCKET_TYPES = [
   'FftTrendsPolicy',
   /** AP v1: handle in-flight async job (start-async-job → await / on-async-resolved). */
   'PromiseRef',
+  // basn (эпик #323, консилиум 2026-07-09): детекционный fusion.
+  /** basn-1: результат ансамбль-анализа (второй детектор), host-side артефакт. */
+  'EnsembleAnalysisRef',
+  /** basn-2: обобщённый ВХОД fusion — принимает FftTrendAnalysisRef | EnsembleAnalysisRef. */
+  'DetectionAnalysisRef',
+  /** basn-2: value-результат fusion (combinedScore, agreement) — снимок, не ссылка. */
+  'DetectionFusion',
 ] as const;
 
 /** Имя типа сокета signal graph. */
@@ -75,6 +82,8 @@ export const REFERENCE_SOCKET_TYPES = [
   'FftTrendAnalysisRef',
   'RecordingSliceRef',
   'PromiseRef',
+  'EnsembleAnalysisRef',
+  'DetectionAnalysisRef',
 ] as const satisfies readonly SocketType[];
 
 /**
@@ -87,6 +96,7 @@ export const VALUE_SOCKET_TYPES = [
   'String',
   'RecordingPolicy',
   'FftTrendsPolicy',
+  'DetectionFusion',
 ] as const satisfies readonly SocketType[];
 
 /** Имя ссылочного типа данных (подмножество `SocketType`). */
@@ -117,9 +127,29 @@ export function isSocketType(value: string): value is SocketType {
 }
 
 /**
+ * Конкретные типы анализов, принимаемые обобщённым входом `DetectionAnalysisRef`
+ * (fusion, basn-2; консилиум 2026-07-09 т.6). Единственное санкционированное
+ * union-исключение из правила «только одинаковые типы».
+ */
+export const DETECTION_ANALYSIS_SOURCE_SOCKET_TYPES = [
+  'FftTrendAnalysisRef',
+  'EnsembleAnalysisRef',
+] as const satisfies readonly SocketType[];
+
+/** True, если тип-источник допустим на входе DetectionAnalysisRef. */
+export function isDetectionAnalysisSourceSocketType(value: string): boolean {
+  return (DETECTION_ANALYSIS_SOURCE_SOCKET_TYPES as readonly string[]).includes(value);
+}
+
+/**
  * Совместимость data-соединения signal graph: только одинаковые типы.
+ * Исключение (консилиум basn): вход `DetectionAnalysisRef` принимает
+ * конкретные типы анализов из `DETECTION_ANALYSIS_SOURCE_SOCKET_TYPES`.
  * Exec-рёбра scenario graph валидируются отдельно.
  */
 export function isValidSocketConnection(source: SocketType, target: SocketType): boolean {
+  if (target === 'DetectionAnalysisRef') {
+    return source === 'DetectionAnalysisRef' || isDetectionAnalysisSourceSocketType(source);
+  }
   return source === target;
 }

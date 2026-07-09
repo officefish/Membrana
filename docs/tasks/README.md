@@ -179,6 +179,12 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `board-alarm-scenario-nodes` | Эпик: узлы полного детекционного сценария борда (N1–N5) — подготовка к соревнованию | L | [`BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md`](../docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md) | [#323](https://github.com/officefish/Membrana/issues/323) |
+| `basn-2-detection-fusion` | basn-2: узел make-detection-fusion — 2+ анализов → FusionRef (combinedScore, agreement) через core-ядро | S | [`BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md`](../docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md) | — |
+| `basn-3-branch-on-detection` | basn-3: узел branch-on-detection — exec-ветвление detected/not по combinedScore ≥ threshold | S | [`BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md`](../docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md) | — |
+| `basn-1-ensemble-analysis` | basn-1: узел make-ensemble-analysis — второй детектор (DSP-ансамбль) через host-мост → EnsembleAnalysisRef | M | [`BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md`](../docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md) | — |
+| `basn-4-proximity-trend` | basn-4: узел make-proximity-trend — ближе/дальше/lost (host-store per runId) — условие жизни alarm-loop | M | [`BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md`](../docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md) | — |
+| `basn-5-combined-report` | basn-5: узел make-combined-report — N анализов + TrackRef → единый ReportRef (async report-build) | M | [`BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md`](../docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md) | — |
 
 ---
 
