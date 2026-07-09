@@ -21,6 +21,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import os from 'node:os';
 import path from 'node:path';
 import { todaysCommits, todaysChangedFiles } from './lib/git-day-context.mjs';
 
@@ -178,13 +179,41 @@ function collectOpenPRs() {
   return { ok: true, prs: sortPRs(parsed) };
 }
 
+/**
+ * Слаг проекта Claude Code из абсолютного пути репо: `C:\Users\x\repo` →
+ * `c--Users-x-repo` (первый символ в lower, `:`/`\`/`/` → `-`). Детерминированно.
+ */
+export function claudeProjectSlug(repoRoot) {
+  const p = repoRoot.length > 0 ? repoRoot[0].toLowerCase() + repoRoot.slice(1) : repoRoot;
+  return p.replace(/[:\\/]/g, '-');
+}
+
+/**
+ * Кандидаты на путь индекса памяти агента, по приоритету:
+ * 1) HERMES_MEMORY_PATH (явный override);
+ * 2) авто-память Claude Code: ~/.claude/projects/<slug>/memory/MEMORY.md;
+ * 3) legacy: MEMORY.md в корне репо.
+ */
+export function memoryPathCandidates({ repoRoot = REPO_ROOT, home = os.homedir(), env = process.env } = {}) {
+  const out = [];
+  if (env.HERMES_MEMORY_PATH) {
+    const rel = env.HERMES_MEMORY_PATH;
+    out.push(path.isAbsolute(rel) ? rel : path.join(repoRoot, rel));
+  }
+  out.push(path.join(home, '.claude', 'projects', claudeProjectSlug(repoRoot), 'memory', 'MEMORY.md'));
+  out.push(path.join(repoRoot, 'MEMORY.md'));
+  return out;
+}
+
 function collectMemory() {
-  const rel = process.env.HERMES_MEMORY_PATH || 'MEMORY.md';
-  const abs = path.isAbsolute(rel) ? rel : path.join(REPO_ROOT, rel);
-  const md = readTextOrNull(abs);
-  if (md == null) return { ok: false, reason: `нет ${rel}` };
-  const entryCount = md.split('\n').filter((l) => /^\s*[-*]\s+/.test(l)).length;
-  return { ok: true, link: rel, entryCount };
+  const candidates = memoryPathCandidates();
+  for (const abs of candidates) {
+    const md = readTextOrNull(abs);
+    if (md == null) continue;
+    const entryCount = md.split('\n').filter((l) => /^\s*[-*]\s+/.test(l)).length;
+    return { ok: true, link: abs, entryCount };
+  }
+  return { ok: false, reason: `нет MEMORY.md (проверены ${candidates.length} пути)` };
 }
 
 function collectGit() {
