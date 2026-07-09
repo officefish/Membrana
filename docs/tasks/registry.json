@@ -12596,6 +12596,23 @@
       "notes": "Магистраль дня 09.07 (MAIN_DAY_ISSUE Задача 1). Analyzer-сервис @membrana/detection-ensemble-service: инъецированные DroneDetector (контракт detector-base) → fuseDetectorResults → ядро fuseDetectorConfidences (EnsembleProducer + EMA). Зависит только от core + detector-base. Живая интеграция — отдельный client-плагин-продюсер mic-combined-detection (по каталогу: продюсер≠потребитель): гоняет DSP-детекторы (harmonic/cepstral/spectral-flux) через analyzeSample, публикует combinedScore в shared-store; mic-proximity-alarm читает его (alarm на combinedScore, не громкости). Нейро (yamnet) добавляется в набор при подключении model-provider → fusion DSP↔нейро (ND3). Out of scope: combined UserCase граф (Задача 2), браузерный smoke combinedScore>0.",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #317; review LGTM 0143d09f54c4; PR #317 merged 2026-07-09T12:12:39Z (93fa603d2c259735ae533f1aa9ccedc66c325d5c)"
+    },
+    {
+      "id": "cabinet-node-card-track-scenario",
+      "title": "Node card: сценарная ячейка под треком (collapsible) + waveform-оформление трека (как в библиотеке семплов)",
+      "promptPath": "docs/prompts/CABINET_NODE_CARD_TRACK_SCENARIO_PROMPT.md",
+      "githubIssue": 318,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin"
+      ],
+      "notes": "Кабинетный UI (NodesPage node card). S1: CabinetScenarioPicker из строки кнопок → отдельная ячейка ПОД NodeLastTrackPreview, collapsible (свёрнуто выбранный, раскрыто группы user/system), csp-5 семантика цела. S2: NodeLastTrackPreview голый audio → waveform-гистограмма SampleWaveformScrubber, данные по клику (offline-safe): fetchNodeTrackBlobUrl → декод audio-engine → computePeakEnvelope. Без сырого Web Audio, без изменения shared-сервисов. Обсуждено виртуальной командой. Out of scope: сервер/контракт журнала, автозагрузка waveform."
     }
   ]
 }
