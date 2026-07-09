@@ -12721,11 +12721,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "rodchenko",
-      "epicId": "board-alarm-scenario-nodes"
+      "epicId": "board-alarm-scenario-nodes",
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #328; review LGTM 6a592ab652f5; PR #328 merged 2026-07-09T17:02:45Z (1485483e39c8d303d62f7fc2d894ef97d7527661)"
     }
   ]
 }
