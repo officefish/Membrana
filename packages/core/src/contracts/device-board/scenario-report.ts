@@ -11,6 +11,8 @@ export const SCENARIO_REPORT_SCHEMAS = [
   'telemetry-track/v1',
   'drone-detection-report/v1',
   'trends-fft/v0.1',
+  /** basn-5: единый combined-отчёт (2 анализа + трек + fusion). */
+  'combined-detection/v1',
 ] as const;
 
 export type ScenarioReportSchema = (typeof SCENARIO_REPORT_SCHEMAS)[number];

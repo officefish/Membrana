@@ -297,6 +297,7 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     makeEnsembleAnalysisFromSampleRefs: (nodeId, refs) =>
       bridge.makeEnsembleAnalysisFromSampleRefs(nodeId, refs),
     evaluateProximityTrend: (nodeId, input) => bridge.evaluateProximityTrend(nodeId, input),
+    makeCombinedReport: (reporterRef, input) => bridge.makeCombinedReport(reporterRef, input),
     makeReportFromTrack: (reporterRef, trackRef) =>
       bridge.makeReportFromTrack(reporterRef, trackRef),
     makeReportFromAnalysis: (reporterRef, analysisRef) =>

@@ -70,6 +70,10 @@ import {
   MAKE_PROXIMITY_TREND_OUT_HANDLE,
   isMakeProximityTrendNodeKind,
 } from '../graph/make-proximity-trend-node.js';
+import {
+  MAKE_COMBINED_REPORT_OUT_HANDLE,
+  isMakeCombinedReportNodeKind,
+} from '../graph/make-combined-report-node.js';
 import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
 import {
   ASYNC_PROMISE_REF_HANDLE,
@@ -844,6 +848,20 @@ export function resolveNodeOutput(
       return invalidFftTrendAnalysisRef();
     }
     return resolver(node.id) ?? invalidFftTrendAnalysisRef();
+  }
+
+  if (isMakeCombinedReportNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_COMBINED_REPORT_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-combined-report output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getReportRef;
+    if (resolver === undefined) {
+      return { kind: 'ReportRef', handle: null, valid: false };
+    }
+    return resolver(node.id) ?? { kind: 'ReportRef', handle: null, valid: false };
   }
 
   if (isMakeProximityTrendNodeKind(node.nodeKind)) {

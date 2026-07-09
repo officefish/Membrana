@@ -196,6 +196,18 @@ export interface ScenarioRuntimeHost {
     nodeId: string,
     refs: readonly ScenarioReferenceValue[],
   ) => Promise<{ readonly trackId: string } | null>;
+  /** basn-5: единый combined-отчёт — синхронный конструктор; идемпотентен по хэшу входов на хосте. */
+  readonly makeCombinedReport?: (
+    reporterRef: ScenarioReferenceValue,
+    input: {
+      readonly analyses: readonly {
+        readonly handle: string;
+        readonly kind: string;
+        readonly detection: ScenarioDetectionResult;
+      }[];
+      readonly trackHandle: string | null;
+    },
+  ) => Promise<ScenarioReportPayload | null>;
   /** basn-4: тренд «дистанции» — host копит серии (громкость, score) per nodeId и зовёт core classifyProximityTrend. */
   readonly evaluateProximityTrend?: (
     nodeId: string,
@@ -409,6 +421,25 @@ export function createStubScenarioRuntimeHost(
       (async (nodeId, refs) => {
         log('createTrackFromSampleRefs', { nodeId, count: refs.length });
         return refs.length > 0 ? { trackId: 'stub-track' } : null;
+      }),
+    makeCombinedReport:
+      overrides.makeCombinedReport ??
+      (async (reporterRef, input) => {
+        log('makeCombinedReport', {
+          reporter: reporterRef.handle,
+          analyses: input.analyses.map((a) => a.handle),
+          track: input.trackHandle,
+        });
+        if (input.analyses.length === 0) {
+          return null;
+        }
+        return {
+          schema: 'combined-detection/v1',
+          reportId: `combined-${input.analyses.map((a) => a.handle).join('+')}`,
+          trackId: input.trackHandle ?? 'none',
+          isDetected: input.analyses.some((a) => a.detection.detected),
+          payload: {},
+        };
       }),
     evaluateProximityTrend:
       overrides.evaluateProximityTrend ??

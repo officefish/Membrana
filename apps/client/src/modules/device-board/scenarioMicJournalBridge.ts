@@ -56,7 +56,7 @@ import { pickFallbackCaptureFormat } from '@/plugins/mic-buffer-recorder/recordi
 import { analyzeTrendsFromFftFrames } from './analyzeTrendsFromFftFrames';
 import { concatAudioSamplePayloads } from './concat-audio-samples';
 import { EnsembleProducer } from '@membrana/detection-ensemble-service';
-import { classifyProximityTrend, type ProximityTrendResult } from '@membrana/core';
+import { classifyProximityTrend, fuseDetectorConfidences, type ProximityTrendResult } from '@membrana/core';
 import { createCombinedStreamDetectors } from '../../plugins/mic-combined-detection/createCombinedStreamDetectors';
 import { ScenarioContinuousPcmBuffer } from './scenario-continuous-pcm-buffer';
 
@@ -251,6 +251,8 @@ export class ScenarioMicJournalBridge {
   private audioSamplePayloads = new Map<string, AudioSamplePayload>();
   /** basn-4: серии громкости/score per nodeId для classifyProximityTrend. */
   private proximityHistory = new Map<string, { loudness: number[]; scores: number[] }>();
+  /** basn-5: идемпотентность combined-отчётов по хэшу входов. */
+  private combinedReportCache = new Map<string, ScenarioReportPayload>();
 
   private fftFrameByNode = new Map<string, ScenarioReferenceValue>();
 
@@ -1109,9 +1111,81 @@ export class ScenarioMicJournalBridge {
     return result;
   }
 
-  /** basn-4: сброс истории proximity (вызывается на scenario-run-start). */
+  /** basn-4: сброс истории proximity + кэша combined-отчётов (scenario-run-start). */
   resetProximityHistory(): void {
     this.proximityHistory.clear();
+    this.combinedReportCache.clear();
+  }
+
+  /**
+   * basn-5 (#323): единый combined-отчёт — синхронный конструктор (консилиум т.4).
+   * ИДЕМПОТЕНТЕН по хэшу входов (sorted analysis handles + track): повторы
+   * alarm-loop возвращают тот же ReportRef, дубли не плодятся. Слияние
+   * confidence считает core fuseDetectorConfidences (не бинарный OR).
+   */
+  async makeCombinedReport(
+    reporterRef: ScenarioReferenceValue,
+    input: {
+      readonly analyses: readonly {
+        readonly handle: string;
+        readonly kind: string;
+        readonly detection: ScenarioDetectionResult;
+      }[];
+      readonly trackHandle: string | null;
+    },
+  ): Promise<ScenarioReportPayload | null> {
+    if (input.analyses.length === 0) {
+      return null;
+    }
+    const idempotencyKey = `${[...input.analyses.map((a) => a.handle)].sort().join('|')}::${input.trackHandle ?? 'none'}`;
+    const cached = this.combinedReportCache.get(idempotencyKey);
+    if (cached !== undefined) {
+      scenarioChainLog('report', 'combined-reuse', {
+        reportId: cached.reportId,
+        key: idempotencyKey,
+      });
+      return cached;
+    }
+    const fusion = fuseDetectorConfidences(
+      input.analyses.map((a) => ({
+        name: a.handle,
+        family: a.kind === 'EnsembleAnalysisRef' ? 'ensemble' : 'dsp',
+        confidence: a.detection.confidence,
+        isDrone: a.detection.isDrone ?? a.detection.detected,
+      })),
+    );
+    const trackId =
+      input.trackHandle !== null && input.trackHandle.startsWith(`${TRACK_REF_HANDLE_PREFIX}:`)
+        ? input.trackHandle.slice(TRACK_REF_HANDLE_PREFIX.length + 1)
+        : input.trackHandle ?? 'none';
+    const isDetected = fusion.presentCount > 0 && fusion.combinedScore >= 0.5;
+    const payload = createScenarioReportPayload({
+      schema: 'combined-detection/v1',
+      reportId: createEntryId('combined'),
+      trackId,
+      isDetected,
+      summaryText: `combined ${fusion.combinedScore.toFixed(2)} (${input.analyses.length} детектора, agreement ${fusion.agreement.toFixed(2)})`,
+      payload: {
+        combinedScore: fusion.combinedScore,
+        agreement: fusion.agreement,
+        perDetector: input.analyses.map((a) => ({
+          handle: a.handle,
+          kind: a.kind,
+          confidence: a.detection.confidence,
+          detected: a.detection.detected,
+        })),
+        trackHandle: input.trackHandle,
+      },
+    });
+    this.combinedReportCache.set(idempotencyKey, payload);
+    scenarioChainLog('report', 'combined-built', {
+      reportId: payload.reportId,
+      reporter: reporterRef.handle,
+      combinedScore: fusion.combinedScore.toFixed(4),
+      analyses: input.analyses.length,
+      track: input.trackHandle,
+    });
+    return payload;
   }
 
   /** basn-1 (#323): AudioSampleRef[] окно → DSP-ансамбль (EnsembleProducer) → EnsembleAnalysisRef. */
