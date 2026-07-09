@@ -54,6 +54,10 @@ import {
   isMakeDetectionFusionNodeKind,
 } from '../graph/make-detection-fusion-node.js';
 import {
+  MAKE_ENSEMBLE_ANALYSIS_SAMPLES_HANDLE,
+  isMakeEnsembleAnalysisNodeKind,
+} from '../graph/make-ensemble-analysis-node.js';
+import {
   BRANCH_ON_DETECTION_DETECTED_HANDLE,
   BRANCH_ON_DETECTION_FUSION_HANDLE,
   BRANCH_ON_DETECTION_NOT_DETECTED_HANDLE,
@@ -82,6 +86,7 @@ import type { ReportRuntimeStore } from './report-runtime-store.js';
 import type { TrackRuntimeStore } from './track-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import type { DetectionFusionRuntimeStore } from './fusion-runtime-store.js';
+import type { EnsembleAnalysisRuntimeStore } from './ensemble-runtime-store.js';
 import { resolveRefListMembers } from './resolve-ref-list.js';
 import { resolveInput, type ResolveInputContext } from './resolve-input.js';
 import { augmentResolveContextForFunctionCall } from './function-call-resolve.js';
@@ -119,6 +124,8 @@ export interface BlockExecutionInput {
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
   /** basn-2: value DetectionFusion от MakeDetectionFusion. */
   readonly fusionStore?: DetectionFusionRuntimeStore;
+  /** basn-1: EnsembleAnalysisRef от MakeEnsembleAnalysis. */
+  readonly ensembleStore?: EnsembleAnalysisRuntimeStore;
   /** v0.7: RecordingSliceRef от StopRecording. */
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
   /** AP v1: async job registry. */
@@ -195,6 +202,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     trackStore,
     analysisStore,
     fusionStore,
+    ensembleStore,
     recordingSliceStore,
     asyncJobStore,
     promiseRuntimeStore,
@@ -960,6 +968,45 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     return { lastDetection: detection, stopRequested: false };
   }
 
+  if (isMakeEnsembleAnalysisNodeKind(node.nodeKind)) {
+    if (variableStore === undefined || resolveContext === undefined || ensembleStore === undefined) {
+      throw new Error(
+        'make-ensemble-analysis requires variableStore, resolveContext and ensembleStore',
+      );
+    }
+    const listRef = resolveInput(
+      subgraph,
+      variableStore.getAll(),
+      node.id,
+      MAKE_ENSEMBLE_ANALYSIS_SAMPLES_HANDLE,
+      resolveContext,
+    );
+    const sampleRefs = resolveRefListMembers(listRef, 'AudioSampleRefList', collectStore);
+    if (sampleRefs.length === 0) {
+      throw new Error(
+        `MakeEnsembleAnalysis "${node.id}": empty AudioSampleRefList on port "${MAKE_ENSEMBLE_ANALYSIS_SAMPLES_HANDLE}"`,
+      );
+    }
+    let analysisHandle: string | null = null;
+    let detected = false;
+    if (host.makeEnsembleAnalysisFromSampleRefs !== undefined) {
+      const result = await host.makeEnsembleAnalysisFromSampleRefs(node.id, sampleRefs);
+      if (result !== null) {
+        const analysisRef = ensembleStore.setNodeAnalysis(node.id, result.analysisId, result.detection);
+        analysisHandle = analysisRef.handle;
+        detected = result.detection.detected;
+      }
+    }
+    host.log('make-ensemble-analysis', {
+      nodeId: node.id,
+      branch,
+      sampleCount: sampleRefs.length,
+      analysis: analysisHandle,
+      detected,
+    });
+    return { lastDetection, stopRequested: false };
+  }
+
   if (isMakeDetectionFusionNodeKind(node.nodeKind)) {
     if (
       variableStore === undefined ||
@@ -991,14 +1038,17 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
         sources.push({ name: port, family: 'unknown', confidence: 0, isDrone: false, present: false });
         continue;
       }
-      const detection = analysisStore.getDetectionByHandle(ref.handle);
+      const detection =
+        ref.kind === 'EnsembleAnalysisRef'
+          ? ensembleStore?.getDetectionByHandle(ref.handle) ?? null
+          : analysisStore.getDetectionByHandle(ref.handle);
       if (detection === null) {
         sources.push({ name: ref.handle, family: 'unknown', confidence: 0, isDrone: false, present: false });
         continue;
       }
       sources.push({
         name: ref.handle,
-        // basn-1 добавит нейро/ансамбль-семейства; trends-анализ — DSP.
+        // trends-анализ — DSP-семейство; ансамбль (basn-1) — метка ensemble.
         family: ref.kind === 'FftTrendAnalysisRef' ? 'dsp' : 'ensemble',
         confidence: detection.confidence,
         isDrone: detection.isDrone ?? detection.detected,

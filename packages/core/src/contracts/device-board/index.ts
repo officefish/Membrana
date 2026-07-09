@@ -113,6 +113,8 @@ export {
   formatReportRefHandle,
   formatTrackRefHandle,
   formatFftTrendAnalysisRefHandle,
+  ENSEMBLE_ANALYSIS_REF_HANDLE_PREFIX,
+  formatEnsembleAnalysisRefHandle,
   createScenarioReportPayload,
   isScenarioReportPayload,
 } from './scenario-report.js';

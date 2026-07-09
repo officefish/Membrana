@@ -62,6 +62,10 @@ import {
   MAKE_DETECTION_FUSION_OUT_HANDLE,
   isMakeDetectionFusionNodeKind,
 } from '../graph/make-detection-fusion-node.js';
+import {
+  MAKE_ENSEMBLE_ANALYSIS_OUT_HANDLE,
+  isMakeEnsembleAnalysisNodeKind,
+} from '../graph/make-ensemble-analysis-node.js';
 import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
 import {
   ASYNC_PROMISE_REF_HANDLE,
@@ -129,6 +133,8 @@ export interface ResolveInputContext {
   readonly getFftTrendAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** basn-2: value DetectionFusion последнего MakeDetectionFusion узла. */
   readonly getDetectionFusionValue?: (nodeId: string) => ScenarioVariableValue | null;
+  /** basn-1: EnsembleAnalysisRef последнего MakeEnsembleAnalysis узла. */
+  readonly getEnsembleAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** AP v1: PromiseRef от Start Async Job. */
@@ -352,6 +358,10 @@ function invalidRecordingSliceRef(): ScenarioReferenceValue {
 
 function invalidFftTrendAnalysisRef(): ScenarioReferenceValue {
   return { kind: 'FftTrendAnalysisRef', handle: null, valid: false };
+}
+
+function invalidEnsembleAnalysisRef(): ScenarioReferenceValue {
+  return { kind: 'EnsembleAnalysisRef', handle: null, valid: false };
 }
 
 /** Fusion ещё не считался: пустой value (score 0, present 0). */
@@ -824,6 +834,20 @@ export function resolveNodeOutput(
       return invalidFftTrendAnalysisRef();
     }
     return resolver(node.id) ?? invalidFftTrendAnalysisRef();
+  }
+
+  if (isMakeEnsembleAnalysisNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_ENSEMBLE_ANALYSIS_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-ensemble-analysis output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getEnsembleAnalysisRef;
+    if (resolver === undefined) {
+      return invalidEnsembleAnalysisRef();
+    }
+    return resolver(node.id) ?? invalidEnsembleAnalysisRef();
   }
 
   if (isMakeDetectionFusionNodeKind(node.nodeKind)) {

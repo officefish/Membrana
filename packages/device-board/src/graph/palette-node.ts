@@ -17,6 +17,7 @@ import { makeTrackNodePins } from './make-track-node.js';
 import { makeFftTrendsAnalysisNodePins } from './make-fft-trends-analysis-node.js';
 import { makeDetectionFusionNodePins } from './make-detection-fusion-node.js';
 import { branchOnDetectionNodePins } from './branch-on-detection-node.js';
+import { makeEnsembleAnalysisNodePins } from './make-ensemble-analysis-node.js';
 import { stopRuntimeNodePins } from './stop-runtime-node.js';
 import { pauseRuntimeNodePins } from './pause-runtime-node.js';
 import { sequenceNodePins } from './sequence-node.js';
@@ -130,6 +131,7 @@ export const V04_PALETTE_NODE_KINDS = [
   'make-fft-trends-policy',
   'make-track',
   'make-fft-trends-analysis',
+  'make-ensemble-analysis',
   'make-detection-fusion',
   'get-journal',
   'get-reporter',
@@ -169,6 +171,7 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'make-fft-trends-policy': 'MakeFftTrendsPolicy',
   'make-track': 'MakeTrack',
   'make-fft-trends-analysis': 'MakeFftTrendsAnalysis',
+  'make-ensemble-analysis': 'MakeEnsembleAnalysis',
   'make-detection-fusion': 'MakeDetectionFusion',
   'branch-on-detection': 'BranchOnDetection',
   'get-journal': 'GetJournal',
@@ -308,6 +311,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return makeTrackNodePins();
     case 'make-fft-trends-analysis':
       return makeFftTrendsAnalysisNodePins();
+    case 'make-ensemble-analysis':
+      return makeEnsembleAnalysisNodePins();
     case 'make-detection-fusion':
       return makeDetectionFusionNodePins();
     case 'branch-on-detection':

@@ -44,6 +44,7 @@ describe('palette-node (DBR5)', () => {
       'make-fft-trends-policy',
       'make-track',
       'make-fft-trends-analysis',
+      'make-ensemble-analysis',
       'make-detection-fusion',
       'get-journal',
       'get-reporter',

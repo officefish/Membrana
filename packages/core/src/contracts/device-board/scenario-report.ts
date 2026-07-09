@@ -38,6 +38,9 @@ export const TRACK_REF_HANDLE_PREFIX = 'track' as const;
 /** Префикс handle для FftTrendAnalysisRef. */
 export const FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX = 'analysis' as const;
 
+/** basn-1: префикс handle для EnsembleAnalysisRef. */
+export const ENSEMBLE_ANALYSIS_REF_HANDLE_PREFIX = 'ensemble-analysis' as const;
+
 /** Type guard для известных schema (non-exhaustive allowlist). */
 export function isKnownScenarioReportSchema(value: string): value is ScenarioReportSchema {
   return (SCENARIO_REPORT_SCHEMAS as readonly string[]).includes(value);
@@ -56,6 +59,11 @@ export function formatTrackRefHandle(trackId: string): string {
 /** Создаёт канонический handle FftTrendAnalysisRef. */
 export function formatFftTrendAnalysisRefHandle(analysisId: string): string {
   return `${FFT_TREND_ANALYSIS_REF_HANDLE_PREFIX}:${analysisId}`;
+}
+
+/** basn-1: создаёт канонический handle EnsembleAnalysisRef. */
+export function formatEnsembleAnalysisRefHandle(analysisId: string): string {
+  return `${ENSEMBLE_ANALYSIS_REF_HANDLE_PREFIX}:${analysisId}`;
 }
 
 /** Создаёт payload отчёта с обязательными полями. */
