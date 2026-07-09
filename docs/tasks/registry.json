@@ -12739,7 +12739,7 @@
       "githubIssue": 330,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "vesnin",
@@ -12747,7 +12747,9 @@
         "rodchenko",
         "dynin"
       ],
-      "archivedAt": null
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "Эпик закрыт: mdr-1 (PR #331, 5 node pages + cookbook + docs.json, LGTM), mdr-2 (PR #332, editor-страницы под текущий UX, LGTM), mdr-3 (verify OK, RAG archive-контур defer, деплой-аудит). ГЛАВНАЯ НАХОДКА: аккаунт Mintlify (membrana.mintlify.app) = отдельный репозиторий mintlify-community/docs-membrana-d6be932a, НЕ синхронизирован с apps/docs; detection-контент доставлен PR https://github.com/mintlify-community/docs-membrana-d6be932a/pull/1; выбор источника правды (reconnect на apps/docs vs вести Mintlify-репо) — отдельное решение владельца",
+      "githubIssueClosedAt": null
     },
     {
       "id": "mdr-1-detection-node-pages",
@@ -12794,7 +12796,7 @@
       "githubIssue": 330,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "vesnin",
@@ -12804,7 +12806,9 @@
         "mdr-1-detection-node-pages",
         "mdr-2-editor-pages-refresh"
       ],
-      "archivedAt": null
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "docs:lint OK (51 pages) + catalog:verify-client OK; RAG: operative smoke query находит свежие термины, archive-контур (apps/docs mdx) DEFER — требует OPENAI_API_KEY; деплой-аудит: аккаунт Mintlify = ОТДЕЛЬНЫЙ репозиторий mintlify-community/docs-membrana-d6be932a (англ. реструктуризация, '37 файлов' ~2026-06-25), разошёлся с apps/docs; detection-контент доставлен туда аддитивным PR #1 (5 node pages + cookbook + palette index через Admin MCP), merge PR = решение владельца",
+      "githubIssueClosedAt": null
     }
   ]
 }
