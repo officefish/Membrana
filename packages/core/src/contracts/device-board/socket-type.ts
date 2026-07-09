@@ -51,6 +51,8 @@ export const SOCKET_TYPES = [
   'DetectionAnalysisRef',
   /** basn-2: value-результат fusion (combinedScore, agreement) — снимок, не ссылка. */
   'DetectionFusion',
+  /** basn-4: тренд «дистанции» alarm-loop; invalid при trend=lost (выход через is-valid). */
+  'ProximityRef',
 ] as const;
 
 /** Имя типа сокета signal graph. */
@@ -84,6 +86,7 @@ export const REFERENCE_SOCKET_TYPES = [
   'PromiseRef',
   'EnsembleAnalysisRef',
   'DetectionAnalysisRef',
+  'ProximityRef',
 ] as const satisfies readonly SocketType[];
 
 /**

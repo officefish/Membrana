@@ -296,6 +296,7 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
       bridge.analyzeFftTrendsFromFrameRefs(nodeId, refs, policy),
     makeEnsembleAnalysisFromSampleRefs: (nodeId, refs) =>
       bridge.makeEnsembleAnalysisFromSampleRefs(nodeId, refs),
+    evaluateProximityTrend: (nodeId, input) => bridge.evaluateProximityTrend(nodeId, input),
     makeReportFromTrack: (reporterRef, trackRef) =>
       bridge.makeReportFromTrack(reporterRef, trackRef),
     makeReportFromAnalysis: (reporterRef, analysisRef) =>
@@ -317,6 +318,7 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
     subscribeScenarioTraceBuffer,
     log: (message, context) => {
       if (message === 'scenario-run-start') {
+        bridge.resetProximityHistory();
         clearScenarioTraceBuffer();
         resetScenarioTraceContext();
         const id = typeof context?.runId === 'string' ? context.runId : null;

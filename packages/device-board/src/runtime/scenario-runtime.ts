@@ -12,6 +12,7 @@ import { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
 import { DetectionFusionRuntimeStore } from './fusion-runtime-store.js';
 import { EnsembleAnalysisRuntimeStore } from './ensemble-runtime-store.js';
+import { ProximityRuntimeStore } from './proximity-runtime-store.js';
 import { AsyncJobStore } from './async-job-store.js';
 import { PromiseRuntimeStore } from './promise-runtime-store.js';
 import { wireAsyncResolvedDispatch } from './async-resolved-dispatch.js';
@@ -123,6 +124,7 @@ export class ScenarioRuntime {
   private readonly analysisStore = new FftTrendAnalysisRuntimeStore();
   private readonly fusionStore = new DetectionFusionRuntimeStore();
   private readonly ensembleStore = new EnsembleAnalysisRuntimeStore();
+  private readonly proximityStore = new ProximityRuntimeStore();
 
   private readonly asyncJobStore = new AsyncJobStore();
 
@@ -222,6 +224,7 @@ export class ScenarioRuntime {
     this.analysisStore.resetAll();
     this.fusionStore.resetAll();
     this.ensembleStore.resetAll();
+    this.proximityStore.resetAll();
     this.asyncJobStore.clear();
     this.promiseRuntimeStore.resetAll();
     this.host.resetCollectorSessions?.();
@@ -251,6 +254,7 @@ export class ScenarioRuntime {
     this.analysisStore.resetAll();
     this.fusionStore.resetAll();
     this.ensembleStore.resetAll();
+    this.proximityStore.resetAll();
     this.asyncJobStore.clear();
     this.promiseRuntimeStore.resetAll();
     this.host.resetCollectorSessions?.();
@@ -520,10 +524,13 @@ export class ScenarioRuntime {
     const ensemble: Pick<ResolveInputContext, 'getEnsembleAnalysisRef'> = {
       getEnsembleAnalysisRef: (nodeId) => this.ensembleStore.getAnalysisRef(nodeId),
     };
+    const proximity: Pick<ResolveInputContext, 'getProximityRef'> = {
+      getProximityRef: (nodeId) => this.proximityStore.getProximityRef(nodeId),
+    };
     const promise: Pick<ResolveInputContext, 'getPromiseRef'> = {
       getPromiseRef: (nodeId) => this.promiseRuntimeStore.getPromiseRef(nodeId),
     };
-    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis, ...fusion, ...ensemble, ...promise };
+    const merged = { ...audio, ...print, ...collect, ...reporter, ...report, ...track, ...recordingSlice, ...analysis, ...fusion, ...ensemble, ...proximity, ...promise };
     if (Object.keys(merged).length === 0) {
       return context;
     }
@@ -649,6 +656,7 @@ export class ScenarioRuntime {
       analysisStore: this.analysisStore,
       fusionStore: this.fusionStore,
       ensembleStore: this.ensembleStore,
+      proximityStore: this.proximityStore,
       recordingSliceStore: this.recordingSliceStore,
       asyncJobStore: this.asyncJobStore,
       promiseRuntimeStore: this.promiseRuntimeStore,

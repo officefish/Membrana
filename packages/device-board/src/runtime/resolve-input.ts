@@ -66,6 +66,10 @@ import {
   MAKE_ENSEMBLE_ANALYSIS_OUT_HANDLE,
   isMakeEnsembleAnalysisNodeKind,
 } from '../graph/make-ensemble-analysis-node.js';
+import {
+  MAKE_PROXIMITY_TREND_OUT_HANDLE,
+  isMakeProximityTrendNodeKind,
+} from '../graph/make-proximity-trend-node.js';
 import { MAKE_TRACK_OUT_HANDLE, isMakeTrackNodeKind } from '../graph/make-track-node.js';
 import {
   ASYNC_PROMISE_REF_HANDLE,
@@ -135,6 +139,8 @@ export interface ResolveInputContext {
   readonly getDetectionFusionValue?: (nodeId: string) => ScenarioVariableValue | null;
   /** basn-1: EnsembleAnalysisRef последнего MakeEnsembleAnalysis узла. */
   readonly getEnsembleAnalysisRef?: (nodeId: string) => ScenarioReferenceValue | null;
+  /** basn-4: ProximityRef последнего MakeProximityTrend узла (lost → invalid). */
+  readonly getProximityRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** Последний batch ref Collect-узла после flush (DBC3). */
   readonly getCollectBatchRef?: (nodeId: string) => ScenarioReferenceValue | null;
   /** AP v1: PromiseRef от Start Async Job. */
@@ -358,6 +364,10 @@ function invalidRecordingSliceRef(): ScenarioReferenceValue {
 
 function invalidFftTrendAnalysisRef(): ScenarioReferenceValue {
   return { kind: 'FftTrendAnalysisRef', handle: null, valid: false };
+}
+
+function invalidProximityRef(): ScenarioReferenceValue {
+  return { kind: 'ProximityRef', handle: null, valid: false };
 }
 
 function invalidEnsembleAnalysisRef(): ScenarioReferenceValue {
@@ -834,6 +844,20 @@ export function resolveNodeOutput(
       return invalidFftTrendAnalysisRef();
     }
     return resolver(node.id) ?? invalidFftTrendAnalysisRef();
+  }
+
+  if (isMakeProximityTrendNodeKind(node.nodeKind)) {
+    if (outputPort !== MAKE_PROXIMITY_TREND_OUT_HANDLE) {
+      throw new ResolveInputError(
+        'unsupported-source',
+        `Unknown make-proximity-trend output: ${outputPort}`,
+      );
+    }
+    const resolver = context.getProximityRef;
+    if (resolver === undefined) {
+      return invalidProximityRef();
+    }
+    return resolver(node.id) ?? invalidProximityRef();
   }
 
   if (isMakeEnsembleAnalysisNodeKind(node.nodeKind)) {

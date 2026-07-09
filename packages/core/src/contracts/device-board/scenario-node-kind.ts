@@ -83,6 +83,8 @@ export const SCENARIO_NODE_KINDS = [
   'branch-on-detection',
   /** basn-1 (#323): второй детектор — DSP-ансамбль через host → EnsembleAnalysisRef. */
   'make-ensemble-analysis',
+  /** basn-4 (#323): тренд «дистанции» (host-store) → ProximityRef; lost → invalid. */
+  'make-proximity-trend',
 ] as const;
 
 /** Вид узла scenario graph. */
