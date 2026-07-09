@@ -26,6 +26,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-consilium`](./membrana-consilium/SKILL.md) | `yarn consilium`, архитектурный спор, ≥20 реплик |
 | [`membrana-team-evening-feedback`](./membrana-team-evening-feedback/SKILL.md) | `yarn team-evening-feedback`, вечерняя ретроспектива, `ritual:evening` |
 | [`membrana-night-sprint`](./membrana-night-sprint/SKILL.md) | `night:open`, Night Build, handoff |
+| [`membrana-worktree`](./membrana-worktree/SKILL.md) | отдельный worktree, параллельная сессия, разведи сессии, `git worktree add` |
 | [`membrana-rag-operator`](./membrana-rag-operator/SKILL.md) | `yarn rag:index`, `rag:query` (**stub** until RAG in main) |
 | [`membrana-detector-benchmark`](./membrana-detector-benchmark/SKILL.md) | `benchmark:detectors`, calibration (**stub** partial) |
 | [`membrana-mcp-workstation`](./membrana-mcp-workstation/SKILL.md) | `mcp:phase-*`, `mcp:verify-bootstrap` (**stub** partial) |
