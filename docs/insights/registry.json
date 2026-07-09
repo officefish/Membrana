@@ -371,6 +371,17 @@
       "weight": 7.4,
       "createdAt": "2026-07-08",
       "tags": []
+    },
+    {
+      "id": "insight-team-stack-watch",
+      "title": "Начитанная виртуальная команда: досье персон + фоновый stack-watch за новинками стека",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 6.6,
+      "createdAt": "2026-07-09",
+      "tags": []
     }
   ]
 }
