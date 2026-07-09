@@ -179,6 +179,8 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `deploy-image-tag-default` | S: cabinet:deploy:image:prod — дефолт тега main вместо latest (latest = старый релизный образ → откат прода 09.07) | S | — | — |
+| `pr-ship-no-commit` | S: pr:ship --no-commit — one-shot флоу для уже закоммиченных веток | S | — | — |
 
 ---
 

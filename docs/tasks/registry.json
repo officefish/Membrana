@@ -12809,6 +12809,32 @@
       "archivedAt": "2026-07-09",
       "archiveNotes": "docs:lint OK (51 pages) + catalog:verify-client OK; RAG: operative smoke query находит свежие термины, archive-контур (apps/docs mdx) DEFER — требует OPENAI_API_KEY; деплой-аудит: аккаунт Mintlify = ОТДЕЛЬНЫЙ репозиторий mintlify-community/docs-membrana-d6be932a (англ. реструктуризация, '37 файлов' ~2026-06-25), разошёлся с apps/docs; detection-контент доставлен туда аддитивным PR #1 (5 node pages + cookbook + palette index через Admin MCP), merge PR = решение владельца",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "deploy-image-tag-default",
+      "title": "S: cabinet:deploy:image:prod — дефолт тега main вместо latest (latest = старый релизный образ → откат прода 09.07)",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "dynin",
+      "notes": "Ретроспектива 09.07: дефолт latest молча откатил прод (cabinet-images пушит latest только на релиз-теги cabinet-v*, main-пуш тегирует main/sha-*). Фикс: DEFAULT tag main в _ssh-cabinet-deploy-image.mjs ЛИБО обязательный явный CABINET_IMAGE_TAG (fail без него). + строка в docs. См. память project-cabinet-deploy-traps ловушка 3."
+    },
+    {
+      "id": "pr-ship-no-commit",
+      "title": "S: pr:ship --no-commit — one-shot флоу для уже закоммиченных веток",
+      "promptPath": null,
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "leadPersona": "ozhegov",
+      "notes": "Ретроспектива 09.07: pr:ship содержит git commit без варианта пропуска — при готовых коммитах флоу неприменим (дважды за день обходили руками push→PR→merge). Добавить --no-commit (skip commit step, гард: есть unpushed коммиты) + unit в pr-ship.test.mjs."
     }
   ]
 }
