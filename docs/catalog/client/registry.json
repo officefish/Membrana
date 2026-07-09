@@ -22,6 +22,7 @@
         "mic-buffer-recorder",
         "mic-live-drone-analysis",
         "vdr-validation",
+        "mic-combined-detection",
         "mic-proximity-alarm"
       ],
       "services": [
@@ -320,6 +321,17 @@
         "vdr-hg2-mic-validation-plugin"
       ],
       "parentModuleId": "microphone"
+    },
+    {
+      "id": "mic-combined-detection",
+      "kind": "plugin",
+      "name": "Combined-детекция (спектр→fusion)",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/mic-combined-detection.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/mic-combined-detection/micCombinedDetectionPlugin.ts"
+      }
     },
     {
       "id": "mic-proximity-alarm",

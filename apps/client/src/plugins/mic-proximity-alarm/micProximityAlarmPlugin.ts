@@ -7,6 +7,7 @@ import {
 } from '@membrana/fft-analyzer-service';
 
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
+import { combinedDetectionState } from '../mic-combined-detection';
 
 import { micProximityPluginState } from './micProximityPluginState';
 import {
@@ -25,8 +26,9 @@ import {
  * lifecycle: подписка на кадры движка и обновление singleton-состояния.
  *
  * Аудио берётся ТОЛЬКО через engine (LiveSampler поверх shared MediaStream из
- * microphoneStreamHub) — без прямого Web Audio. combinedScore пока нет живого
- * продюсера (каркас E) → 0, тревога неактивна; оживёт с combined-плагином.
+ * microphoneStreamHub) — без прямого Web Audio. combinedScore читается из живого
+ * combined-продюсера (mic-combined-detection) через combinedDetectionState; пока
+ * продюсер не активен — 0 и тревога неактивна.
  *
  * См. microphone-stream-viz как эталон lifecycle-контракта.
  */
@@ -67,9 +69,12 @@ export function createMicProximityAlarmPlugin(): Plugin<MicProximityAlarmPluginC
         const config = getConfig();
         const loudness = frameLoudness(frame.samples);
         const { trend, ready } = tracker.next(loudness);
-        // combinedScore: живого продюсера нет (каркас E) → 0, тревога неактивна.
-        const combinedScore = 0;
-        const hasCombinedSource = false;
+        // combinedScore из живого combined-продюсера (mic-combined-detection) через
+        // shared-store: fusion-ядро питает тревогу, а не сырая громкость. Пока
+        // продюсер не активен (плагин выключен) — combinedDetectionState.live=false → 0.
+        const combined = combinedDetectionState.getSnapshot();
+        const hasCombinedSource = combined.live;
+        const combinedScore = hasCombinedSource ? combined.smoothedScore : 0;
         const alarm = evaluateProximityAlarm(
           { combinedScore, trend },
           { scoreThreshold: config.scoreThreshold },

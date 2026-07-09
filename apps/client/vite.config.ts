@@ -92,6 +92,12 @@ export default defineConfig(({ mode }) => {
             import.meta.url,
           ),
         ),
+        '@membrana/detection-ensemble-service': fileURLToPath(
+          new URL(
+            '../../packages/services/detection-ensemble-service/src/index.ts',
+            import.meta.url,
+          ),
+        ),
         // ВАЖНО: assets-подпуть ПЕРЕД пакетным алиасом — vite матчит алиасы
         // по префиксу в порядке объявления; иначе `assets/...?url` переписался
         // бы в `src/index.ts/assets/...`.
