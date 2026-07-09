@@ -1,0 +1,50 @@
+---
+title: MakeProximityTrend
+description: Тренд «дистанции» (ближе / дальше / lost) — условие жизни alarm-loop.
+---
+
+# MakeProximityTrend
+
+«Дистанция» alarm-loop: по сериям громкости и `combinedScore` хост классифицирует
+тренд **ближе / дальше / lost**. Выход `ProximityRef` становится **невалидным при
+`trend = 'lost'`** (N промахов combinedScore подряд) — на этом строится выход из
+alarm-ветки.
+
+## Pins
+
+| | Handle | Тип |
+|---|--------|-----|
+| in | `fusion` | DetectionFusion (score-гейт для детекции 'lost') |
+| out | `proximity` | ProximityRef (valid=false при 'lost') |
+
+## Runtime
+
+Чистый классификатор `classifyProximityTrend` живёт в core; stateful-накопление серий
+(громкость, combinedScore) — на **хосте** per nodeId, история сбрасывается на каждом
+Пуске. Узел stateless.
+
+Громкость — грубая мера сцены, не координата и не расстояние; тренд ближе/дальше
+судится по половинам окна громкости.
+
+## Preconditions
+
+- Живой поток и работающий fusion в alarm-ветке: узел вызывается на каждом тике
+  alarm-loop.
+
+## Anti-patterns
+
+- Искать отдельный branch-узел для proximity — его нет осознанно. Выход из alarm-loop
+  собирается композицией: `proximity` → `is-valid` → true = `loop-repeat` (тревога
+  живёт), false = выход из alarm-ветки.
+
+## Minimal graph
+
+```text
+MakeDetectionFusion → fusion ─► MakeProximityTrend → proximity ─► isValid
+                                                       true ─► LoopRepeat (alarm живёт)
+                                                       false ─► выход из alarm-ветки
+```
+
+## Code
+
+`make-proximity-trend-node.ts` · `runtime/proximity-node-executor.test.ts`

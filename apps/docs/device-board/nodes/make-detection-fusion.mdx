@@ -1,0 +1,50 @@
+---
+title: MakeDetectionFusion
+description: 2–4 детекционных анализа → value DetectionFusion (combinedScore, agreement).
+---
+
+# MakeDetectionFusion
+
+Слияние 2–4 детекционных анализов в одно value `DetectionFusion`
+(`combinedScore`, `agreement`). Считает чистое ядро `fuseDetectorConfidences`
+(`@membrana/core`) — host не нужен.
+
+## Pins
+
+| | Handle | Тип |
+|---|--------|-----|
+| in | `analysis-1`, `analysis-2` | DetectionAnalysisRef (обязательные) |
+| in | `analysis-3`, `analysis-4` | DetectionAnalysisRef (опциональные) |
+| out | `fusion` | DetectionFusion (value) |
+
+`DetectionAnalysisRef` — обобщённый тип: принимает `FftTrendAnalysisRef`
+**или** `EnsembleAnalysisRef`. Число входов настраивается на узле (2–4).
+
+## Runtime
+
+`combinedScore` — взвешенное среднее **сырых confidence** подключённых анализов, не
+бинарный OR. Согласие детекторов даёт высокий score, расхождение — середину;
+`agreement` выводится отдельным полем. Молчащий/невалидный вход не ломает узел —
+он исключается из среднего (`present: false`).
+
+Выход — value, не ref: у результата слияния нет собственного времени жизни на хосте.
+
+## Preconditions
+
+- Минимум два подключённых анализа (`analysis-1`, `analysis-2`).
+
+## Anti-patterns
+
+- Ветвиться по «сырому» confidence одного детектора мимо fusion — теряется agreement
+  и калибровка порога.
+
+## Minimal graph
+
+```text
+MakeFftTrendsAnalysis → analysis-1 ─► MakeDetectionFusion → fusion ─► BranchOnDetection
+MakeEnsembleAnalysis  → analysis-2 ─┘
+```
+
+## Code
+
+`make-detection-fusion-node.ts` · `runtime/fusion-node-executor.test.ts` · `runtime/fusion-runtime-store.ts`

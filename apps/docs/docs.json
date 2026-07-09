@@ -34,7 +34,8 @@
       "pages": [
         "device-board/cookbooks/on-start-to-main",
         "device-board/cookbooks/collect-to-terminal",
-        "device-board/cookbooks/journal-reporter-v06"
+        "device-board/cookbooks/journal-reporter-v06",
+        "device-board/cookbooks/detection-alarm-chain"
       ]
     },
     {
@@ -91,6 +92,16 @@
         "device-board/nodes/make-report-from-track",
         "device-board/nodes/make-report-from-analysis",
         "device-board/nodes/publish-report"
+      ]
+    },
+    {
+      "group": "Nodes — detection & alarm",
+      "pages": [
+        "device-board/nodes/make-ensemble-analysis",
+        "device-board/nodes/make-detection-fusion",
+        "device-board/nodes/branch-on-detection",
+        "device-board/nodes/make-proximity-trend",
+        "device-board/nodes/make-combined-report"
       ]
     },
     {

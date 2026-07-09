@@ -39,6 +39,19 @@ description: Полная палитра v0.4 (V04_PALETTE_NODE_KINDS) и сис
 | `make-report-from-analysis` | MakeReportFromAnalysis | [страница](/device-board/nodes/make-report-from-analysis) |
 | `publish-report` | PublishReport | [страница](/device-board/nodes/publish-report) |
 
+## Detection & alarm (basn, 2026-07)
+
+Полный детекционный сценарий: два детектора → fusion → branch → alarm-loop с
+«дистанцией» → единый отчёт. Cookbook: [Detection + alarm-loop](/device-board/cookbooks/detection-alarm-chain).
+
+| nodeKind | Label | Docs |
+|----------|-------|------|
+| `make-ensemble-analysis` | MakeEnsembleAnalysis | [страница](/device-board/nodes/make-ensemble-analysis) |
+| `make-detection-fusion` | MakeDetectionFusion | [страница](/device-board/nodes/make-detection-fusion) |
+| `branch-on-detection` | BranchOnDetection | [страница](/device-board/nodes/branch-on-detection) |
+| `make-proximity-trend` | MakeProximityTrend | [страница](/device-board/nodes/make-proximity-trend) |
+| `make-combined-report` | MakeCombinedReport | [страница](/device-board/nodes/make-combined-report) |
+
 ## System nodes
 
 | nodeKind | Назначение | Docs |

@@ -1,0 +1,52 @@
+---
+title: MakeCombinedReport
+description: 2 анализа + трек → единый ReportRef (schema combined-detection/v1), идемпотентно.
+---
+
+# MakeCombinedReport
+
+Синхронный конструктор **единого** отчёта детекции: два анализа (trends + ensemble) +
+записанный трек → `ReportRef` (schema `combined-detection/v1`). Публикация — отдельным
+узлом [PublishReport](/device-board/nodes/publish-report).
+
+## Pins
+
+| | Handle | Тип |
+|---|--------|-----|
+| in | `reporter` | ReporterRef |
+| in | `analysis-1`, `analysis-2` | DetectionAnalysisRef (trends / ensemble) |
+| in | `track` | TrackRef |
+| out | `report` | ReportRef |
+
+## Runtime
+
+Узел конструирует отчёт синхронно; тяжёлую упаковку/выгрузку host-runtime запускает как
+async job (`report-build`, существующий канал start-async-job) — рантайм не блокируется.
+
+**Идемпотентность:** повторный exec с теми же входами возвращает **тот же** отчёт
+(хэш входов на хосте) — alarm-loop не плодит дубли.
+
+## Preconditions
+
+- `ReporterRef` scoped к тому же journal, что и последующий `PublishReport`.
+- `TrackRef` от [MakeTrack](/device-board/nodes/make-track) — завершённая запись.
+
+## Anti-patterns
+
+- Ставить узел на каждый тик alarm-loop «для надёжности» — идемпотентность спасёт от
+  дублей, но упаковка всё равно нагружает host; конструируйте отчёт на осмысленной
+  границе (например, по выходу из alarm-ветки).
+- Ждать от узла публикации: без `PublishReport` отчёт остаётся in-memory.
+
+## Minimal graph
+
+```text
+GetReporter → reporter ─► MakeCombinedReport → report ─► PublishReport
+MakeFftTrendsAnalysis → analysis-1 ─┤
+MakeEnsembleAnalysis  → analysis-2 ─┤
+MakeTrack → track ──────────────────┘
+```
+
+## Code
+
+`make-combined-report-node.ts` · `runtime/combined-report-executor.test.ts`

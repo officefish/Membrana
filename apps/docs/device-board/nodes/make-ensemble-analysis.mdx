@@ -1,0 +1,45 @@
+---
+title: MakeEnsembleAnalysis
+description: Второй детектор — DSP-ансамбль на окне сэмплов (host) → EnsembleAnalysisRef.
+---
+
+# MakeEnsembleAnalysis
+
+Второй (независимый от trends-FFT) детектор: DSP-ансамбль **harmonic / cepstral /
+spectral-flux** исполняется хостом на окне от `CollectSamples`. Пара к
+[MakeFftTrendsAnalysis](/device-board/nodes/make-fft-trends-analysis) для
+[MakeDetectionFusion](/device-board/nodes/make-detection-fusion).
+
+## Pins
+
+| | Handle | Тип |
+|---|--------|-----|
+| in | `samples` | AudioSampleRefList (окно от CollectSamples) |
+| out | `analysis` | EnsembleAnalysisRef |
+
+## Runtime
+
+На exec host-мост (`makeEnsembleAnalysisFromSampleRefs` → `EnsembleProducer` из
+`@membrana/detection-ensemble-service` на стороне клиента) прогоняет ансамбль на окне и
+кладёт `EnsembleAnalysisRef` в runtime store. Узел stateless, device-board сервисы
+не импортирует.
+
+## Preconditions
+
+- Непустой batch от `CollectSamples`: пустой `AudioSampleRefList` останавливает сценарий
+  ошибкой (как MakeFftTrendsAnalysis).
+
+## Anti-patterns
+
+- Подавать сырые сэмплы мимо `CollectSamples` — узел ждёт накопленное окно.
+
+## Minimal graph
+
+```text
+CollectSamples → samples ─► MakeEnsembleAnalysis → analysis (EnsembleAnalysisRef)
+                                                        └─► MakeDetectionFusion
+```
+
+## Code
+
+`make-ensemble-analysis-node.ts` · `runtime/ensemble-node-executor.test.ts`

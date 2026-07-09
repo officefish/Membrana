@@ -138,6 +138,7 @@ yarn workspace @membrana/device-board test
 
 | Дата | Изменение |
 |------|-----------|
+| 2026-07-09 | detection & alarm узлы basn (#323): 5 nodeKind (`make-ensemble-analysis`, `make-detection-fusion`, `branch-on-detection`, `make-proximity-trend`, `make-combined-report`); Mintlify группа «Nodes — detection & alarm» + cookbook `detection-alarm-chain` (mdr-1, #330) |
 | 2026-06-23 | **stable** (U10 D1): user workspace §22, `DeviceBoardLauncher`, Mintlify `user-workspace.mdx` |
 | 2026-06-22 | **stable** (D3 docs sprint): edit model §21, Mintlify editor links, UX table |
 | 2026-06-17 | draft catalog (MC-2); ссылка на `db-doc-v04-mvp` |
