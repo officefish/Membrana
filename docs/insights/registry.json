@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-08",
+  "updatedAt": "2026-07-09",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -368,7 +368,7 @@
       "source": "user",
       "sprintPhase": null,
       "horizon": null,
-      "weight": null,
+      "weight": 7.4,
       "createdAt": "2026-07-08",
       "tags": []
     }

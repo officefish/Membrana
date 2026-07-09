@@ -4,10 +4,10 @@
   "status": "adopted",
   "source": "user",
   "horizon": null,
-  "weight": null,
+  "weight": 7.4,
   "createdAt": "2026-07-08",
-  "researchedAt": null,
-  "reviewedAt": null,
-  "closedAt": "2026-07-08",
+  "researchedAt": "2026-07-09",
+  "reviewedAt": "2026-07-09",
+  "closedAt": "2026-07-09",
   "tags": []
 }

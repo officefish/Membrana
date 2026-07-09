@@ -3,10 +3,12 @@
 | Поле | Значение |
 |------|----------|
 | **ID** | `insight-hermes-liaison-agent` |
-| **Статус** | adopted (форсайт-консилиум 2026-07-08) |
+| **Статус** | adopted · вес **7.4/10** (research 2026-07-09 + review команды 2026-07-09) |
 | **Источник** | user |
 | **Создан** | 2026-07-08 |
 | **Консилиум** | [`docs/seanses/hermes-liaison-agent-2026-07-08.md`](../../seanses/hermes-liaison-agent-2026-07-08.md) (24 реплики, LGTM Teamlead) |
+| **Research** | [`RESEARCH.md`](./RESEARCH.md) — Perplexity Q1–Q3 (cross-session handoff patterns; детерминированный сбор vs LLM) |
+| **Review** | [`REVIEW.md`](./REVIEW.md) — 5 ролей, средний **7.4**; Teamlead → adopted, следующий шаг = task-промпт M (владелец Dynin) |
 
 ---
 
