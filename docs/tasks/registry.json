@@ -12775,7 +12775,7 @@
       "githubIssue": 330,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "vesnin",
@@ -12783,7 +12783,9 @@
         "rodchenko"
       ],
       "epicId": "mintlify-docs-refresh",
-      "archivedAt": null
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #332; review LGTM b8bf1b010efb; PR #332 merged 2026-07-09T17:51:55Z (a673360e497e1379bd9cd26e7acf1d4aa4e6272b)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "mdr-3-verify-rag-publish",
