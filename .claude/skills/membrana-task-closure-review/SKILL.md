@@ -48,6 +48,10 @@ and [`TASK_CLOSURE_REVIEW_PROMPT.md`](../../../docs/prompts/TASK_CLOSURE_REVIEW_
 
 ## Safety
 
+- Pass the FULL DoD evidence set in `--check` on the FIRST run (turbo lint+typecheck+test
+  for touched packages, check:boundaries, verify:wire-sync, client typecheck as applicable):
+  the review artifact is IMMUTABLE per SHA — недобор evidence = BLOCK, чинится только новым
+  SHA и повторным ревью (прецеденты 2026-07-09: detection-ensemble-service, basn-1).
 - Never reuse LGTM after SHA or diff-scope changes.
 - Never infer merge, Issue closure, tests, or remote state.
 - Never use branch-only acceptance without explicit user authorization.

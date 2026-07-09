@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  claudeProjectSlug,
+  memoryPathCandidates,
   renderBrief,
   stripMetadata,
   selectActiveCards,
@@ -122,4 +124,27 @@ test('extractHeadings: `#` внутри code-fence НЕ считается за�
 test('byCodePoint: детерминированный порядок (не локале-зависимый), дефис значим', () => {
   assert.deepEqual(['db-h1c', 'db-h1b', 'dbh1'].sort(byCodePoint), ['db-h1b', 'db-h1c', 'dbh1']);
   assert.equal(byCodePoint('a', 'a'), 0);
+});
+
+test('claudeProjectSlug: путь Windows → слаг Claude Code (детерминированно)', () => {
+  assert.equal(
+    claudeProjectSlug('C:\\Users\\user190825\\practice\\Membrana'),
+    'c--Users-user190825-practice-Membrana',
+  );
+  assert.equal(claudeProjectSlug('/home/dev/membrana'), '-home-dev-membrana');
+});
+
+test('memoryPathCandidates: приоритет env → авто-память Claude → legacy корень', () => {
+  const withEnv = memoryPathCandidates({
+    repoRoot: 'C:\\repo',
+    home: 'C:\\home',
+    env: { HERMES_MEMORY_PATH: 'custom/MEMORY.md' },
+  });
+  assert.equal(withEnv.length, 3);
+  assert.ok(withEnv[0].includes('custom'));
+  assert.ok(withEnv[1].includes('.claude'));
+  assert.ok(withEnv[1].includes('c--repo'));
+  const noEnv = memoryPathCandidates({ repoRoot: 'C:\\repo', home: 'C:\\home', env: {} });
+  assert.equal(noEnv.length, 2);
+  assert.ok(noEnv[0].includes('.claude'));
 });

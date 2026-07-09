@@ -30,6 +30,13 @@ Rules:
 - Commit `docs/seanses/team-evening-feedback-<date>.md` after a successful run.
 - Do not skip silently — if blocked, tell the user explicitly and offer `--dry` fallback.
 
+## Parallel sessions
+
+**Второй и последующие агенты — всегда в отдельном worktree** (`membrana-worktree`),
+не в основном дереве: параллельные сессии в одном worktree коллизят (инцидент
+2026-07-09 — чужая сессия переключила ветку; вынужденная сериализация работы).
+Коммитить строго свои файлы поимённо, никогда `git add -A` при параллельной работе.
+
 ## CLI
 
 ```bash
