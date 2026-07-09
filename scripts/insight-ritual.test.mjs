@@ -52,6 +52,28 @@ describe('insight-ritual', () => {
     assert.match(queries[0].query, /Operator smoke/);
   });
 
+  it('buildResearchQueries prefers explicit Q-section over title', () => {
+    // Заголовок «Hermes» Perplexity путал с брендом — берём доменные вопросы автора.
+    const md = [
+      '# INSIGHT: Hermes — вестник',
+      '',
+      '## Вопросы для research (Q1–Q3)',
+      '',
+      '1. **Landscape:** как решают cross-session handoff?',
+      '2. **Fit:** детерминированный сбор или LLM-обобщение?',
+      '',
+      '## Связи',
+      '',
+      '- прочее',
+    ].join('\n');
+    const queries = buildResearchQueries(md);
+    assert.equal(queries.length, 2);
+    assert.equal(queries[0].key, 'Q1');
+    assert.match(queries[0].query, /Landscape: как решают cross-session handoff\?/);
+    assert.doesNotMatch(queries[0].query, /Hermes|вестник/); // заголовок не протёк в запрос
+    assert.doesNotMatch(queries[1].query, /## Связи/); // терминатор секции сработал
+  });
+
   it('formatInsightsWeeklyBlock filters by weight', () => {
     const root = mkdtempSync(join(tmpdir(), 'membrana-week-'));
     try {

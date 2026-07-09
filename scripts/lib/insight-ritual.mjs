@@ -3,6 +3,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { fetch as undiciFetch, ProxyAgent, Agent } from 'undici';
 
 export const REGULATION_PATH = 'docs/prompts/INSIGHT_REGULATION.md';
 export const REVIEW_PROMPT_PATH = 'docs/prompts/INSIGHT_REVIEW_PROMPT.md';
@@ -91,8 +92,41 @@ export function createInsight(repoRoot, input) {
   return { id, dir };
 }
 
+/**
+ * Явные Q1–Q3 из секции «Вопросы для research» INSIGHT.md, если она есть.
+ * Заголовок инсайта — плохой запрос: «Hermes — вестник-лиазон» Perplexity понимает
+ * как модный дом Hermès / бога Гермеса. Автор пишет доменно-конкретные вопросы —
+ * их и надо слать в поиск.
+ * @param {string} insightMd
+ */
+function parseResearchQuestions(insightMd) {
+  // Терминатор — следующий заголовок H2 или конец файла. НЕ `\n*$` c флагом `m`:
+  // между заголовком секции и списком есть пустая строка, и `$` (multiline) матчит
+  // её конец сразу → пустой захват.
+  const section = insightMd.match(
+    /##\s+Вопросы для research[^\n]*\n([\s\S]*?)(?=\n##\s|$)/,
+  );
+  if (!section) return [];
+  const items = [];
+  const re = /^\s*(\d+)\.\s+(?:\*\*(.+?):\*\*\s*)?(.+)$/gm;
+  let m;
+  while ((m = re.exec(section[1])) !== null) {
+    const label = (m[2] ?? '').trim();
+    const text = m[3].replace(/\*\*/g, '').trim();
+    items.push({
+      key: `Q${m[1]}`,
+      label: label || `Q${m[1]}`,
+      query: label ? `${label}: ${text}` : text,
+    });
+  }
+  return items;
+}
+
 /** @param {string} insightMd */
 export function buildResearchQueries(insightMd) {
+  const explicit = parseResearchQuestions(insightMd);
+  if (explicit.length > 0) return explicit;
+
   const titleMatch = insightMd.match(/^#\s+INSIGHT:\s*(.+)$/m);
   const title = titleMatch?.[1]?.trim() ?? 'Membrana insight topic';
   return [
@@ -114,24 +148,53 @@ export function buildResearchQueries(insightMd) {
   ];
 }
 
+/**
+ * Прокси для исходящих HTTP (proxy-aware окружение Membrana, ср. `scripts/_anthropic-env.mjs`).
+ * Голый глобальный `fetch` игнорирует HTTPS_PROXY → «fetch failed» за прокси; используем
+ * undici c ProxyAgent, как в anthropicPost.
+ */
+function perplexityProxyUrl() {
+  return (
+    process.env.HTTPS_PROXY?.trim() ||
+    process.env.HTTP_PROXY?.trim() ||
+    process.env.PERPLEXITY_HTTPS_PROXY?.trim() ||
+    ''
+  );
+}
+
 /** @param {string} apiKey @param {string} query */
 export async function perplexityAsk(apiKey, query) {
-  const response = await fetch('https://api.perplexity.ai/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'sonar',
-      messages: [{ role: 'user', content: query }],
-    }),
-  });
+  const proxy = perplexityProxyUrl();
+  const dispatcher = proxy
+    ? new ProxyAgent({ uri: proxy, connectTimeout: 60_000 })
+    : new Agent({ connectTimeout: 60_000 });
+  let response;
+  let text;
+  try {
+    response = await undiciFetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'sonar',
+        messages: [{ role: 'user', content: query }],
+      }),
+      dispatcher,
+    });
+    text = await response.text();
+  } finally {
+    try {
+      await dispatcher.close();
+    } catch {
+      /* ignore */
+    }
+  }
   if (!response.ok) {
-    const text = await response.text();
     throw new Error(`Perplexity HTTP ${response.status}: ${text.slice(0, 400)}`);
   }
-  const data = await response.json();
+  const data = JSON.parse(text);
   const content = data.choices?.[0]?.message?.content;
   if (typeof content !== 'string' || content.trim() === '') {
     throw new Error('Perplexity returned empty content');

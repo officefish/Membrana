@@ -12558,6 +12558,25 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": []
+    },
+    {
+      "id": "hermes-brief",
+      "title": "Hermes brief: детерминированный yarn hermes:brief — сборщик состояния сессии (6 источников)",
+      "promptPath": "docs/prompts/HERMES_BRIEF_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-09",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "insightId": "insight-hermes-liaison-agent",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Переход инсайт→спринт (см. insight-hermes-liaison-agent, adopted, вес 7.4/10). Первый шаг форсайт-горизонта. Scope: scripts/hermes-brief.mjs + yarn hermes:brief + юнит-тест детерминизма + .claude/agents/hermes.md. Запреты: LLM-резюме, паковщик handoff, оркестратор, UI-панель."
     }
   ]
 }

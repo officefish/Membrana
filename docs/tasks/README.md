@@ -169,6 +169,17 @@
 | `csp-4-shared-card` | csp-4: шареная презентационная карточка сценария (device-board) | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#305](https://github.com/officefish/Membrana/issues/305) |
 | `csp-5-cabinet-ui` | csp-5: кабинет — карточный список Пользовательские|Системные + tariff-бейджи | M | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#306](https://github.com/officefish/Membrana/issues/306) |
 | `csp-6-smoke-docs` | csp-6: smoke узел↔кабинет + docs | S | [`CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md`](../docs/prompts/CABINET_SCENARIO_PICKER_SYSTEM_EPIC_PROMPT.md) | [#307](https://github.com/officefish/Membrana/issues/307) |
+| `agent-tooling-night-build` | Night Build: инструменты агента — pr:ship, build:affected, wire-sync, хуки, хелперы, скиллы | L | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-0-gate` | NB0: gate — scoped CI baseline + заморозка конвенций (кода нет) | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-1-gitignore-review` | NB1: .gitignore ревью-артефакта uncommitted-code-review.md | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-2-pr-ship` | NB2: yarn pr:ship (ветка+commit+PR+merge+sync, dry-run default, synthetic-тест) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-3-build-affected` | NB3: yarn build:affected (пересборка dist изменённых @membrana, kill stale-dist) | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-4-verify-wire-sync` | NB4: yarn verify:wire-sync (core↔bg-cabinet CJS wire синхрон) + pre-push | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-5-hooks` | NB5: scoped pre-push typecheck + commit-msg хук (трейлер+conventional) | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `hermes-brief` | Hermes brief: детерминированный yarn hermes:brief — сборщик состояния сессии (6 источников) | M | [`HERMES_BRIEF_PROMPT.md`](../docs/prompts/HERMES_BRIEF_PROMPT.md) | — |
 
 ---
 
@@ -678,4 +689,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-08.*
+*Файл обновлён автоматически: 2026-07-09.*

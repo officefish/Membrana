@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06",
+  "updatedAt": "2026-07-09",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -359,6 +359,17 @@
       "horizon": null,
       "weight": 4,
       "createdAt": "2026-07-06",
+      "tags": []
+    },
+    {
+      "id": "insight-hermes-liaison-agent",
+      "title": "Hermes — вестник-лиазон между сессиями",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 7.4,
+      "createdAt": "2026-07-08",
       "tags": []
     }
   ]
