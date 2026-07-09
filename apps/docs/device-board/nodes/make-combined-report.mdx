@@ -18,6 +18,10 @@ description: 2 анализа + трек → единый ReportRef (schema comb
 | in | `track` | TrackRef |
 | out | `report` | ReportRef |
 
+В отличие от [MakeDetectionFusion](/device-board/nodes/make-detection-fusion)
+(2–4 входа, настраивается), здесь **ровно два** фиксированных входа анализов —
+по одному на каждый детектор цепочки (trends + ensemble).
+
 ## Runtime
 
 Узел конструирует отчёт синхронно; тяжёлую упаковку/выгрузку host-runtime запускает как
