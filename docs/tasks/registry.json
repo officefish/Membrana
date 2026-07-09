@@ -12624,14 +12624,17 @@
       "githubIssue": 320,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-09",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "Задача 3 плана дня 09.07. Вариант B (решение команды): апстрим parseHealthPongPayload в core; scripts/generate-wire-contract.mjs (конкат 6 core-файлов, strip внутренних импортов, дедуп идентичных приватных хелперов, fail на неидентичных, баннер GENERATED); node-realtime-wire.ts = checked-in generated; verify:wire-sync → freshness-check (генерируй+байтово сравни, уже в pre-push). Out of scope: dual-build core (вариант A), изменение самого контракта."
+      "notes": "Задача 3 плана дня 09.07. Вариант B (решение команды): апстрим parseHealthPongPayload в core; scripts/generate-wire-contract.mjs (конкат 6 core-файлов, strip внутренних импортов, дедуп идентичных приватных хелперов, fail на неидентичных, баннер GENERATED); node-realtime-wire.ts = checked-in generated; verify:wire-sync → freshness-check (генерируй+байтово сравни, уже в pre-push). Out of scope: dual-build core (вариант A), изменение самого контракта.",
+      "archivedAt": "2026-07-09",
+      "archiveNotes": "PR #321; review LGTM 59df295ba875; PR #321 merged 2026-07-09T14:10:38Z (0573b3ee7a9112e822f76a88e9b4f1039fac9a53)",
+      "githubIssueClosedAt": null
     }
   ]
 }
