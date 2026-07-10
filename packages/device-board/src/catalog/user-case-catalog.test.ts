@@ -8,10 +8,10 @@ import {
   resetDefaultUserCaseCatalogService,
 } from './user-case-catalog.js';
 
-const ASYNC_V2_IDS = [
-  'usercase-mvp-microphone-alpha-async-v2',
-  'usercase-mvp-microphone-beta-async-v2',
-  'usercase-mvp-microphone-gamma-async-v2',
+const DETECTION_ALARM_IDS = [
+  'usercase-detection-alarm-alpha',
+  'usercase-detection-alarm-beta',
+  'usercase-detection-alarm-gamma',
 ] as const;
 
 const FREE_TIER_IDS = [
@@ -26,14 +26,14 @@ describe('UserCaseCatalogService', () => {
     resetDefaultUserCaseCatalogService();
   });
 
-  it('lists bundled MVP + FREE-tier scaffold + competition async-v2 community forks', () => {
+  it('lists bundled MVP + FREE-tier scaffold + detection-alarm community forks (comp 5b)', () => {
     const catalog = new UserCaseCatalogService();
-    // 1 MVP + 4 FREE + 3 async-v2 + 1 detection-alarm-beta (comp-detection-alarm-2026-07-10)
-    expect(catalog.size).toBe(9);
+    // 1 MVP + 4 FREE + 3 detection-alarm (comp-detection-alarm-2026-07-10, Phase 5b)
+    expect(catalog.size).toBe(8);
     const summaries = catalog.listSummaries();
     expect(summaries[0]?.id).toBe('usercase-mvp-microphone');
     expect(summaries[0]?.tier).toBe('bundled');
-    for (const id of ASYNC_V2_IDS) {
+    for (const id of DETECTION_ALARM_IDS) {
       const entry = summaries.find((s) => s.id === id);
       expect(entry?.tier).toBe('community');
     }
@@ -79,22 +79,23 @@ describe('UserCaseCatalogService', () => {
     }
   });
 
-  it('loadDocument works for published async-v2 competition forks', () => {
+  it('loadDocument works for published detection-alarm competition forks', () => {
     const catalog = new UserCaseCatalogService();
-    for (const id of ASYNC_V2_IDS) {
+    for (const id of DETECTION_ALARM_IDS) {
       const document = catalog.loadDocument(id);
       expect(document).not.toBeNull();
       const parsed = parseDeviceScenarioDocument(document);
       expect(parsed.ok, id).toBe(true);
       if (parsed.ok) {
-        expect(parsed.value.meta?.competitionBase).toBe('v2.0-async');
+        // Phase 5b (comp-detection-alarm): непустой граф полной цепочки задания.
+        expect(parsed.value.scenario.loops.main.nodes.length, id).toBeGreaterThan(0);
       }
     }
   });
 
   it('listForDeviceKind filters by deviceKind', () => {
     const catalog = new UserCaseCatalogService();
-    expect(catalog.listForDeviceKind('microphone')).toHaveLength(9);
+    expect(catalog.listForDeviceKind('microphone')).toHaveLength(8);
     expect(catalog.listForDeviceKind('playback')).toHaveLength(0);
   });
 
