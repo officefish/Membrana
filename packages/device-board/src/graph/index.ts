@@ -386,6 +386,13 @@ export {
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';
 export {
+  DETECTION_ALARM_GAMMA_JOURNAL_VARIABLE_ID,
+  DETECTION_ALARM_GAMMA_NODE_IDS,
+  DETECTION_ALARM_GAMMA_USER_CASE_ID,
+  buildDetectionAlarmGammaDocument,
+  getDetectionAlarmGammaDocument,
+} from './default-usercase-detection-alarm-gamma.js';
+export {
   isUserOwnedDeviceScenarioDocument,
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,

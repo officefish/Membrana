@@ -1,0 +1,17 @@
+{
+  "sprintId": "comp-detection-alarm-2026-07-10",
+  "publishedAt": "2026-07-10",
+  "mode": "manual-consolidation (Phase 5b, координатор; team-документы — TS-модули, не JSON-паки)",
+  "replaced": [
+    "usercase-mvp-microphone-alpha-async-v2",
+    "usercase-mvp-microphone-beta-async-v2",
+    "usercase-mvp-microphone-gamma-async-v2"
+  ],
+  "replacedPreservedIn": "archived-competition-user-case-entries.ts",
+  "published": [
+    { "id": "usercase-detection-alarm-alpha", "team": "alpha", "sourceTag": "comp-comp-detection-alarm-2026-07-10-alpha-final" },
+    { "id": "usercase-detection-alarm-beta", "team": "beta", "sourceTag": "comp-comp-detection-alarm-2026-07-10-beta-final", "winner": true },
+    { "id": "usercase-detection-alarm-gamma", "team": "gamma", "sourceTag": "comp-comp-detection-alarm-2026-07-10-gamma-final" }
+  ],
+  "tier": "community"
+}
