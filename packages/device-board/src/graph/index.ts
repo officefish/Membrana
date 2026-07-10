@@ -386,6 +386,13 @@ export {
   needsRecordingGateBootstrapMigration,
 } from './default-usercase-mvp-microphone.js';
 export {
+  DETECTION_ALARM_ALPHA_JOURNAL_VARIABLE_ID,
+  DETECTION_ALARM_ALPHA_THRESHOLD,
+  USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT,
+  getDetectionAlarmAlphaDocument,
+  resolveDetectionAlarmAlphaDocument,
+} from './usercase-detection-alarm-alpha.js';
+export {
   isUserOwnedDeviceScenarioDocument,
   shouldMigrateMicrophoneScenarioToBundledMvp,
   stampUserWorkspaceDocument,

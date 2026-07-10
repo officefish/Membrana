@@ -26,9 +26,9 @@ describe('UserCaseCatalogService', () => {
     resetDefaultUserCaseCatalogService();
   });
 
-  it('lists bundled MVP + FREE-tier scaffold + competition async-v2 community forks', () => {
+  it('lists bundled MVP + FREE-tier scaffold + competition community forks', () => {
     const catalog = new UserCaseCatalogService();
-    expect(catalog.size).toBe(8);
+    expect(catalog.size).toBe(9);
     const summaries = catalog.listSummaries();
     expect(summaries[0]?.id).toBe('usercase-mvp-microphone');
     expect(summaries[0]?.tier).toBe('bundled');
@@ -36,6 +36,10 @@ describe('UserCaseCatalogService', () => {
       const entry = summaries.find((s) => s.id === id);
       expect(entry?.tier).toBe('community');
     }
+    // comp-detection-alarm-2026-07-10: Team Alpha fork (полный детекционный UC).
+    const detectionAlarmAlpha = summaries.find((s) => s.id === 'usercase-detection-alarm-alpha');
+    expect(detectionAlarmAlpha?.tier).toBe('community');
+    expect(detectionAlarmAlpha?.deviceKind).toBe('microphone');
     expect(summaries.some((entry) => entry.id === 'usercase-mvp-microphone-beta')).toBe(false);
   });
 
@@ -93,7 +97,7 @@ describe('UserCaseCatalogService', () => {
 
   it('listForDeviceKind filters by deviceKind', () => {
     const catalog = new UserCaseCatalogService();
-    expect(catalog.listForDeviceKind('microphone')).toHaveLength(8);
+    expect(catalog.listForDeviceKind('microphone')).toHaveLength(9);
     expect(catalog.listForDeviceKind('playback')).toHaveLength(0);
   });
 

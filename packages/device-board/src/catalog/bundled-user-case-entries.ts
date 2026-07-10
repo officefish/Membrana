@@ -1,6 +1,7 @@
 import type { UserCaseCatalogEntry } from './user-case-catalog-types.js';
 import { getDefaultMvpMicrophoneDocument } from '../graph/default-usercase-mvp-microphone.js';
 import { COMMUNITY_COMPETITION_USER_CASE_ENTRIES } from './community-competition-user-case-entries.js';
+import { DETECTION_ALARM_COMPETITION_USER_CASE_ENTRIES } from './detection-alarm-competition-user-case-entries.js';
 import { FREE_TIER_USER_CASE_ENTRIES } from './free-tier-user-case-entries.js';
 
 /**
@@ -34,4 +35,5 @@ export const BUNDLED_USER_CASE_ENTRIES: readonly UserCaseCatalogEntry[] = [
   },
   ...FREE_TIER_USER_CASE_ENTRIES,
   ...COMMUNITY_COMPETITION_USER_CASE_ENTRIES,
+  ...DETECTION_ALARM_COMPETITION_USER_CASE_ENTRIES,
 ];
