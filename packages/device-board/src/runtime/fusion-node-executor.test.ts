@@ -1,9 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { ScenarioSubgraph } from '@membrana/core';
 
 import { executeScenarioBlock } from './block-executor.js';
 import { createStubScenarioRuntimeHost } from './host.js';
 import { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { DetectionFusionRuntimeStore } from './fusion-runtime-store.js';
 import { ScenarioVariableStore } from './variable-store.js';
 import type { ScenarioDetectionResult } from './types.js';
@@ -155,10 +156,6 @@ describe('executeScenarioBlock make-detection-fusion (basn-2)', () => {
 
 describe('fusion → lastDetection (консилиум #340, т.2)', () => {
   it('combined выше порога → lastDetection detected с DRONE_FUSION (вход в alarm по fusion)', async () => {
-    const producer = [
-      { name: 'trends', family: 'dsp' as const, detection: { detected: true, confidence: 0.9, isDrone: true } },
-    ];
-    void producer;
     const host = createStubScenarioRuntimeHost({});
     const analysisStore = new FftTrendAnalysisRuntimeStore();
     const fusionStore = new DetectionFusionRuntimeStore();
@@ -216,5 +213,95 @@ describe('fusion → lastDetection (консилиум #340, т.2)', () => {
     });
     expect(result.lastDetection?.detected).toBe(false);
     expect(result.lastDetection?.templateId).toBeUndefined();
+  });
+});
+
+describe('порог fusion→lastDetection из branch-узла + legacy fallback (#340 P1)', () => {
+  it('порог берётся из связанного branch-on-detection (0.55): combined 0.52 → not detected', async () => {
+    const host = createStubScenarioRuntimeHost({});
+    const analysisStore = new FftTrendAnalysisRuntimeStore();
+    const fusionStore = new DetectionFusionRuntimeStore();
+    analysisStore.setNodeAnalysis('an-1', 'a1', { detected: true, confidence: 0.62, isDrone: true });
+    analysisStore.setNodeAnalysis('an-2', 'a2', { detected: false, confidence: 0.42, isDrone: false });
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        { id: 'an-1', nodeKind: 'make-fft-trends-analysis', blockKind: 'custom', label: 'A1' },
+        { id: 'an-2', nodeKind: 'make-fft-trends-analysis', blockKind: 'custom', label: 'A2' },
+        { id: 'fusion-1', nodeKind: 'make-detection-fusion', blockKind: 'custom', label: 'F' },
+        { id: 'branch-1', nodeKind: 'branch-on-detection', blockKind: 'custom', label: 'B', detectionThreshold: 0.55 },
+      ],
+      edges: [
+        { id: 'e1', kind: 'data', source: 'an-1', sourceHandle: 'analysis', target: 'fusion-1', targetHandle: 'analysis-1', dataType: 'DetectionAnalysisRef' },
+        { id: 'e2', kind: 'data', source: 'an-2', sourceHandle: 'analysis', target: 'fusion-1', targetHandle: 'analysis-2', dataType: 'DetectionAnalysisRef' },
+        { id: 'e3', kind: 'data', source: 'fusion-1', sourceHandle: 'fusion', target: 'branch-1', targetHandle: 'fusion', dataType: 'DetectionFusion' },
+      ],
+    };
+    const node = subgraph.nodes.find((n) => n.id === 'fusion-1');
+    if (node === undefined) throw new Error('missing');
+    const result = await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore: new ScenarioVariableStore(),
+      analysisStore,
+      fusionStore,
+      resolveContext: {
+        getFftTrendAnalysisRef: (nodeId) => analysisStore.getAnalysisRef(nodeId),
+      },
+    });
+    // combined = (0.62+0.42)/2 = 0.52: выше дефолта 0.5, но НИЖЕ порога branch 0.55.
+    expect(result.lastDetection?.confidence).toBeCloseTo(0.52, 5);
+    expect(result.lastDetection?.detected).toBe(false); // рассинхрона с branch нет
+  });
+
+  it('legacy fallback: граф без fusion — trends остаётся писателем lastDetection', async () => {
+    const analyzeFftTrendsFromFrameRefs = vi.fn(async () => ({
+      analysisId: 'legacy-1',
+      detection: { detected: true, confidence: 0.9, isDrone: true, templateId: 'DRONE_TIGHT' },
+    }));
+    const host = createStubScenarioRuntimeHost({ analyzeFftTrendsFromFrameRefs });
+    const collectStore = new CollectRuntimeStore();
+    const analysisStore = new FftTrendAnalysisRuntimeStore();
+    collectStore.setLastBatch('cf-1', [{ kind: 'FftFrameRef', handle: 'f-1', valid: true }], 'FftFrameRefList');
+    const analyserRef = { kind: 'SpectralAnalyserRef' as const, handle: 'sa-1', valid: true };
+    const subgraph: ScenarioSubgraph = {
+      nodes: [
+        { id: 'vg-a', nodeKind: 'variable-get', blockKind: 'custom', label: 'analyser', variableId: 'var-a' },
+        { id: 'cf-1', nodeKind: 'collect-fft-frames', blockKind: 'custom', label: 'Collect' },
+        { id: 'an-1', nodeKind: 'make-fft-trends-analysis', blockKind: 'custom', label: 'Trends' },
+      ],
+      edges: [
+        { id: 'e1', kind: 'data', source: 'vg-a', sourceHandle: 'value', target: 'an-1', targetHandle: 'analyser', dataType: 'SpectralAnalyserRef' },
+        { id: 'e2', kind: 'data', source: 'cf-1', sourceHandle: 'batches', target: 'an-1', targetHandle: 'frames', dataType: 'FftFrameRefList' },
+      ],
+    };
+    const node = subgraph.nodes.find((n) => n.id === 'an-1');
+    if (node === undefined) throw new Error('missing');
+    const result = await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore: new ScenarioVariableStore([
+        { id: 'var-a', name: 'analyser', type: 'SpectralAnalyserRef', value: analyserRef },
+      ]),
+      collectStore,
+      analysisStore,
+      resolveContext: {
+        getCollectBatchRef: (nodeId) => collectStore.getLastBatchRef(nodeId),
+      },
+    });
+    // Без fusion-узла lastDetection пишет trends — legacy-путь жив (bundled MVP).
+    expect(result.lastDetection?.detected).toBe(true);
+    expect(result.lastDetection?.templateId).toBe('DRONE_TIGHT');
   });
 });

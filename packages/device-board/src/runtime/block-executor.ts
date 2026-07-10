@@ -49,6 +49,7 @@ import {
   MAKE_FFT_TRENDS_FRAMES_HANDLE,
 } from '../graph/make-fft-trends-analysis-node.js';
 import {
+  MAKE_DETECTION_FUSION_OUT_HANDLE,
   clampDetectionFusionInputCount,
   detectionFusionAnalysisHandle,
   isMakeDetectionFusionNodeKind,
@@ -1158,6 +1159,24 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     return { lastDetection, stopRequested: false };
   }
 
+  /**
+   * Порог detected для fusion→lastDetection (#340 P1): НЕ хардкод — берётся из
+   * branch-on-detection узла, подключённого к fusion-выходу В ЭТОМ ЖЕ подграфе
+   * (graph-local связь, не runtime→топология). Нет связанного branch → DEFAULT.
+   */
+  function resolveFusionDetectedThreshold(sg: ScenarioSubgraph, fusionNodeId: string): number {
+    const edge = sg.edges.find(
+      (e) => e.source === fusionNodeId && e.sourceHandle === MAKE_DETECTION_FUSION_OUT_HANDLE,
+    );
+    if (edge !== undefined) {
+      const target = sg.nodes.find((n) => n.id === edge.target);
+      if (target !== undefined && isBranchOnDetectionNodeKind(target.nodeKind)) {
+        return clampDetectionThreshold(target.detectionThreshold);
+      }
+    }
+    return DEFAULT_DETECTION_THRESHOLD;
+  }
+
   if (isMakeDetectionFusionNodeKind(node.nodeKind)) {
     if (
       variableStore === undefined ||
@@ -1218,8 +1237,9 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     // templateId с DRONE-префиксом — соглашение legacy detection-front (isDroneDetection).
     // Порядок exec гарантирует: fusion исполняется после анализаторов и перекрывает их запись;
     // в графах без fusion-узла работает legacy fallback (trends → lastDetection) как раньше.
+    const detectedThreshold = resolveFusionDetectedThreshold(subgraph, node.id);
     const combinedDetected =
-      fusionValue.presentCount > 0 && fusionValue.combinedScore >= DEFAULT_DETECTION_THRESHOLD;
+      fusionValue.presentCount > 0 && fusionValue.combinedScore >= detectedThreshold;
     const combinedDetection: ScenarioDetectionResult = {
       detected: combinedDetected,
       confidence: fusionValue.combinedScore,
