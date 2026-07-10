@@ -179,6 +179,7 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `comp-findings-fixes` | Фиксы семантики рантайма по находкам Competition Sprint (kind в invalid-ref, fusion→lastDetection, молчащий пустой batch) | M | [`comp-findings-fixes-2026-07-10.md`](../docs/seanses/comp-findings-fixes-2026-07-10.md) | [#340](https://github.com/officefish/Membrana/issues/340) |
 
 ---
 
