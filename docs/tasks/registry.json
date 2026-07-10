@@ -12853,6 +12853,22 @@
       "notes": "3 teams alpha/beta/gamma; winner merge; Phase 5b заменяет прошлые async-v2 сценарии в пикере (community). Основание: эпик #323 (палитра готова). baseBranch main (techies68 мертва).",
       "archivedAt": "2026-07-10",
       "archiveNotes": "PR #337 (winner beta, 213.5) + #338 (wiring) + #339 (Phase 5b: 3 сценария в пикере вместо async-v2); consilium+scorecard+winner в docs; 2 платформенные находки закрыты"
+    },
+    {
+      "id": "comp-findings-fixes",
+      "title": "Фиксы семантики рантайма по находкам Competition Sprint (kind в invalid-ref, fusion→lastDetection, молчащий пустой batch)",
+      "promptPath": "docs/seanses/comp-findings-fixes-2026-07-10.md",
+      "githubIssue": 340,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-10",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Консилиум 21 реплика ДО кода (гейт соблюдён). Три решения: invalid-ref несёт целевой kind (закрывает type-mismatch до flush И пустые окна); fusion единственный писатель lastDetection (вход в alarm по combined, legacy fallback); анализаторы не бросают на пустоте. + CONCEPT alpha/gamma в docs. Перед живым тестом трёх сценариев владельцем."
     }
   ]
 }
