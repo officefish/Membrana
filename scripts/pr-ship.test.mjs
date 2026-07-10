@@ -45,3 +45,19 @@ test('planPrShip: ff-sync через origin/base, не голый pull', () => {
   const ff = steps.find((s) => s.label === 'sync-ff');
   assert.deepEqual(ff.args, ['merge', '--ff-only', 'origin/main']);
 });
+
+test('planPrShip --no-commit: шаг commit пропущен, флоу начинается с push', () => {
+  const { steps } = planPrShip({ type: 'fix', message: 'готовые коммиты', commit: false });
+  const labels = steps.map((s) => s.label);
+  assert.ok(!labels.includes('commit'), 'commit-шага быть не должно');
+  assert.equal(labels[0], 'push');
+  assert.ok(labels.includes('pr-create'));
+  assert.ok(labels.includes('merge'));
+});
+
+test('planPrShip --no-commit + --branch → ошибка (несовместимы)', () => {
+  assert.throws(
+    () => planPrShip({ type: 'fix', message: 'x', commit: false, branch: 'feat/x' }),
+    /--no-commit несовместим с --branch/,
+  );
+});

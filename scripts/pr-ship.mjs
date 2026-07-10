@@ -10,6 +10,7 @@
  *   yarn pr:ship --type feat --scope core --message "..." [--issue 123] [--branch feat/x]
  *   yarn pr:ship ... --execute            # реально выполнить
  *   yarn pr:ship ... --no-merge           # только PR, без squash-merge
+ *   yarn pr:ship ... --no-commit          # коммиты уже готовы: push → PR → merge (без commit/branch)
  *
  * Логика планирования (planPrShip) — чистая и покрыта тестом; CLI лишь исполняет/печатает.
  */
@@ -18,12 +19,18 @@ import { execFileSync } from 'node:child_process';
 const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
 
 /**
- * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean}} opts
+ * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean,commit?:boolean}} opts
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[]}}
  */
 export function planPrShip(opts) {
-  const { type, scope, message, issue, branch, base = 'main', merge = true } = opts;
+  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true } = opts;
   if (!type || !message) throw new Error('pr:ship: --type и --message обязательны');
+  // --no-commit (ретроспектива 2026-07-09): коммиты уже готовы на ветке —
+  // шаги branch/commit пропускаются, флоу начинается с push. Ветку с готовыми
+  // коммитами создавать через pr:ship бессмысленно → branch и no-commit несовместимы.
+  if (!commit && branch) {
+    throw new Error('pr:ship: --no-commit несовместим с --branch (коммиты уже на существующей ветке)');
+  }
   const title = `${type}${scope ? `(${scope})` : ''}: ${message}`;
   const closes = issue ? `Closes #${issue}\n` : '';
   const commitBody = `${title}\n\n${closes}${TRAILER}`;
@@ -31,7 +38,7 @@ export function planPrShip(opts) {
   /** @type {{label:string,cmd:string,args:string[]}[]} */
   const steps = [];
   if (branch) steps.push({ label: 'branch', cmd: 'git', args: ['checkout', '-b', branch] });
-  steps.push({ label: 'commit', cmd: 'git', args: ['commit', '-m', commitBody] });
+  if (commit) steps.push({ label: 'commit', cmd: 'git', args: ['commit', '-m', commitBody] });
   steps.push({ label: 'push', cmd: 'git', args: ['push', '-u', 'origin', 'HEAD'] });
   steps.push({
     label: 'pr-create',
@@ -59,6 +66,7 @@ function parseArgs(argv) {
     else if (a === '--branch') o.branch = next();
     else if (a === '--base') o.base = next();
     else if (a === '--no-merge') o.merge = false;
+    else if (a === '--no-commit') o.commit = false;
     else if (a === '--execute') o.execute = true;
   }
   return o;
