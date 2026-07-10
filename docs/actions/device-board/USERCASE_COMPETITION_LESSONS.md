@@ -1,6 +1,7 @@
 # UserCase Competition — дневник недочётов и профилактика
 
 > Живой документ для агентов и команды. Читать **перед** programmatic collapse, fork UserCase и sprint packaging.
+> Workflow ведения: скилл `membrana-usercase-lessons` (Cursor/Claude/OpenCode).
 >
 > **Sprint `comp-mvp-packaging-2026-06-21`:** closed — все три fork Run-green; победитель не merged.  
 > **Sprint `comp-detection-alarm-2026-07-10`:** closed — winner Beta merged (#337); находки L24–L28; live Run владельцем — pending.  
