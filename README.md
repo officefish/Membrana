@@ -2,7 +2,7 @@
 
 Модульная TypeScript-монорепо: полевой клиент, личный кабинет, аудио-анализ и обнаружение дронов на узле.
 
-> **Стратегический контекст:** конечная цель — распределённая сеть пространственной разведки нижнего неба (обнаружение и трекинг дронов в заданном квадрате). См. [`WHITE_PAPER.md`](./WHITE_PAPER.md).  
+> **Стратегический контекст:** конечная цель — распределённая сеть пространственной разведки нижнего неба (обнаружение и трекинг дронов в заданном квадрате). См. [`WHITE_PAPER.md`](./WHITE_PAPER.md).
 > **Платформа:** веб-кабинет, pairing узлов, data-plane — [`docs/MEMBRANE_PLATFORM.md`](./docs/MEMBRANE_PLATFORM.md).
 
 ## Архитектура
@@ -50,6 +50,7 @@ yarn install
 
 # Полевой клиент (Vite, http://localhost:5173)
 yarn workspace @membrana/client dev
+# $env:BROWSER='none'; yarn workspace @membrana/client dev
 
 # Личный кабинет (SPA)
 yarn cabinet:app:dev
@@ -70,10 +71,10 @@ yarn check:boundaries
 
 ### Фоновые серверы (опционально)
 
-| Сервер | Команда | Порт | Назначение |
-|--------|---------|------|------------|
-| office | `yarn office:dev` | 3000 | Claude, Linear, GitHub |
-| media | `yarn media:db:up` → `yarn media:migrate` → `yarn media:dev` | 3010 | Sample library, trends |
+| Сервер  | Команда                                                            | Порт | Назначение              |
+| ------- | ------------------------------------------------------------------ | ---- | ----------------------- |
+| office  | `yarn office:dev`                                                  | 3000 | Claude, Linear, GitHub  |
+| media   | `yarn media:db:up` → `yarn media:migrate` → `yarn media:dev`       | 3010 | Sample library, trends  |
 | cabinet | `yarn cabinet:db:up` → `yarn cabinet:migrate` → `yarn cabinet:dev` | 3020 | Auth, мембраны, pairing |
 
 Подробнее: [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md). Клиент работает без `.env` и без серверов (localStorage / IndexedDB).
@@ -82,13 +83,13 @@ yarn check:boundaries
 
 Подробный регламент: **[`docs/DEVELOPER_RHYTHM.md`](./docs/DEVELOPER_RHYTHM.md)**.
 
-| Когда | Что запустить |
-|-------|----------------|
-| **Утро** | `yarn morning-care` → `yarn plan:day` → `yarn standup` → **`yarn main-day-issue`** (учитывает вчерашний `DAILY_CODE_REVIEW.md`) |
-| **Вечер** | **`yarn archive:daily-day`** → **`yarn code-review`** → `yarn task:archive <id>` → `yarn save-code-review` → `yarn task:close-github` |
-| **Неделя** | `yarn analyzers:research:week` → `yarn plan:week` |
-| **По ситуации** | `yarn consilium "…"` (консенсус всех ролей), `yarn ask <persona> …` (совет одной роли) |
-| **Триаж issues** | `yarn issues:audit --manifest docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json` |
+| Когда            | Что запустить                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Утро**         | `yarn morning-care` → `yarn plan:day` → `yarn standup` → **`yarn main-day-issue`** (учитывает вчерашний `DAILY_CODE_REVIEW.md`)       |
+| **Вечер**        | **`yarn archive:daily-day`** → **`yarn code-review`** → `yarn task:archive <id>` → `yarn save-code-review` → `yarn task:close-github` |
+| **Неделя**       | `yarn analyzers:research:week` → `yarn plan:week`                                                                                     |
+| **По ситуации**  | `yarn consilium "…"` (консенсус всех ролей), `yarn ask <persona> …` (совет одной роли)                                                |
+| **Триаж issues** | `yarn issues:audit --manifest docs/issues/manifests/github-issues-audit-YYYY-MM-DD.json`                                              |
 
 Для скриптов с Claude нужен `ANTHROPIC_API_KEY` в `.env`. Утро: `yarn ritual:day`. Вечер: `yarn ritual:evening` (архив плана/стендапа/фокуса → code-review → team-evening-feedback в `docs/seanses/`). Code-review **не** утром. Фокус дня: `docs/MAIN_DAY_ISSUE.md`. Архив: [`docs/archive/README.md`](./docs/archive/README.md).
 
@@ -108,14 +109,14 @@ yarn workspaces foreach -A run build
 
 ## Структура пакетов
 
-| Слой | Пакеты | Зависимости |
-|------|--------|-------------|
-| **Core** | `@membrana/core` | — |
-| **Client libs** | `@membrana/agenda`, `@membrana/device-board` | `@membrana/core` |
-| **Shared libs** | `packages/libs/*` (`audioDataViz`, `detector-report`, `journal-report-views`) | по пакету |
-| **Services** | `packages/services/*` — foundation + analyzer | см. [`packages/services/README.md`](./packages/services/README.md) |
-| **Background** | `background-office`, `background-media`, `background-cabinet` | NestJS, см. [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md) |
-| **Apps** | `@membrana/client`, `@membrana/cabinet`, `@membrana/membrana-studio` | зависят от libs/services по сценарию |
+| Слой            | Пакеты                                                                        | Зависимости                                                              |
+| --------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Core**        | `@membrana/core`                                                              | —                                                                        |
+| **Client libs** | `@membrana/agenda`, `@membrana/device-board`                                  | `@membrana/core`                                                         |
+| **Shared libs** | `packages/libs/*` (`audioDataViz`, `detector-report`, `journal-report-views`) | по пакету                                                                |
+| **Services**    | `packages/services/*` — foundation + analyzer                                 | см. [`packages/services/README.md`](./packages/services/README.md)       |
+| **Background**  | `background-office`, `background-media`, `background-cabinet`                 | NestJS, см. [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md) |
+| **Apps**        | `@membrana/client`, `@membrana/cabinet`, `@membrana/membrana-studio`          | зависят от libs/services по сценарию                                     |
 
 ## Инструменты разработки
 
@@ -134,11 +135,11 @@ yarn workspaces foreach -A run build
 
 Два слоя: **нормативные** документы в `docs/` (архитектура, ритм, agent catalog) и **продуктовый** сайт Mintlify в `apps/docs/` (операторская и developer-документация; сейчас в основном **device-board** MVP — узлы, редактор, cookbooks, concepts). Регламент sync: [`docs/DOCUMENTATION_WORKFLOW.md`](./docs/DOCUMENTATION_WORKFLOW.md).
 
-| Куда | Что |
-|------|-----|
-| [`docs/README.md`](./docs/README.md) | Навигация по нормативным документам (агенты, архитектура, CONTRIBUTING) |
-| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | Границы пакетов, плагины, аудио-слои |
-| [`docs/MEMBRANE_PLATFORM.md`](./docs/MEMBRANE_PLATFORM.md) | Кабинет, pairing, SKU (web / Studio / Device) |
-| [`packages/services/README.md`](./packages/services/README.md) | Каталог сервисов и детекторов |
-| [`apps/docs/`](./apps/docs/README.md) | **Mintlify** — device-board (node reference, editor UX, cookbooks); preview: `yarn docs:dev` → http://localhost:3333 |
-| Каждый пакет | Свой `README.md` с API и примерами |
+| Куда                                                           | Что                                                                                                                  |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`docs/README.md`](./docs/README.md)                           | Навигация по нормативным документам (агенты, архитектура, CONTRIBUTING)                                              |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)               | Границы пакетов, плагины, аудио-слои                                                                                 |
+| [`docs/MEMBRANE_PLATFORM.md`](./docs/MEMBRANE_PLATFORM.md)     | Кабинет, pairing, SKU (web / Studio / Device)                                                                        |
+| [`packages/services/README.md`](./packages/services/README.md) | Каталог сервисов и детекторов                                                                                        |
+| [`apps/docs/`](./apps/docs/README.md)                          | **Mintlify** — device-board (node reference, editor UX, cookbooks); preview: `yarn docs:dev` → http://localhost:3333 |
+| Каждый пакет                                                   | Свой `README.md` с API и примерами                                                                                   |
