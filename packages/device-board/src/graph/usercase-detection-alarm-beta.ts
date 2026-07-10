@@ -139,6 +139,22 @@ function event(source: string, target: string): ScenarioGraphEdge {
 }
 
 /**
+ * Нетипизированное data-ребро для presence-гейта `is-valid` (пин `value`
+ * принимает любой тип): до первого flush collect-store отдаёт invalid-ref
+ * дефолтного вида — типизированное ребро бросило бы type-mismatch вместо
+ * честного false. Тип проверяет типизированное ребро потребителя (trends),
+ * которое исполняется только на true-ветке гейта (CONCEPT B8).
+ */
+function dataUntyped(
+  source: string,
+  sourceHandle: string,
+  target: string,
+  targetHandle: string,
+): ScenarioGraphEdge {
+  return { kind: 'data', source, sourceHandle, target, targetHandle };
+}
+
+/**
  * Main: MVP-цепочка до MakeFftTrendsAnalysis сохранена; report-секция MVP
  * (make-report-from-analysis/track + оба publish) заменяется detection-цепочкой.
  */
@@ -298,7 +314,7 @@ function buildAlarmLoop(): MutableSubgraph {
     data(BETA_ALARM.device, 'device', BETA_ALARM.analyser, 'device', 'DeviceRef'),
     data(BETA_ALARM.analyser, 'analyser', BETA_ALARM.collectFrames, 'analyser', 'SpectralAnalyserRef'),
     data(BETA_ALARM.analyser, 'analyser', BETA_ALARM.flush, 'analyser', 'SpectralAnalyserRef'),
-    data(BETA_ALARM.flush, 'frames', BETA_ALARM.framesGate, 'value', 'FftFrameRefList'),
+    dataUntyped(BETA_ALARM.flush, 'frames', BETA_ALARM.framesGate, 'value'),
     data(BETA_ALARM.flush, 'frames', BETA_ALARM.trends, 'frames', 'FftFrameRefList'),
     data(BETA_ALARM.analyser, 'analyser', BETA_ALARM.trends, 'analyser', 'SpectralAnalyserRef'),
     data(BETA_ALARM.trendsPolicy, 'policy', BETA_ALARM.trends, 'policy', 'FftTrendsPolicy'),
