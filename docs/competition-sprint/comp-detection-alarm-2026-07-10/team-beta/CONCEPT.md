@@ -164,5 +164,10 @@ alarm onTick ─▶ GetAudioStream ─▶ GetSample ─▶ GetFFTFrame ─▶ Co
 ## Implementation (обновляется по фазам)
 
 - [x] Phase 1 — CONCEPT (этот файл).
-- [ ] 2α — builder документа + catalog entry + структурные тесты (отметка «done @ commit» появится здесь).
+- [x] **2α done @ commit `f9d52b59`** — builder `usercase-detection-alarm-beta.ts` (деривация
+  MVP: main detection-цепочка ensemble→fusion(2)→branch(0.55)→combined→report-build async;
+  alarm — proximity-композиция с гейтами B7/B8), catalog entry tier `community`,
+  17 структурных тестов (валидность + нулевые ошибки validateUserCaseDocument, полная цепочка,
+  policy-значения, lost-путь без ∞, гидратация). Scoped CI device-board зелёный:
+  **667 tests pass** (650 baseline + 17), lint/typecheck OK.
 - [ ] 2β — runtime-smoke + карточка в пикере + полный scoped CI + тег final.
