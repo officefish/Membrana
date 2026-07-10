@@ -12871,7 +12871,7 @@
       "notes": "Консилиум 21 реплика ДО кода (гейт соблюдён). Три решения: invalid-ref несёт целевой kind (закрывает type-mismatch до flush И пустые окна); fusion единственный писатель lastDetection (вход в alarm по combined, legacy fallback); анализаторы не бросают на пустоте. + CONCEPT alpha/gamma в docs. Перед живым тестом трёх сценариев владельцем.",
       "archivedAt": "2026-07-10",
       "archiveNotes": "PR #341; review LGTM 41e1025e1293; PR #341 merged 2026-07-10T11:32:38Z (e099db47363b1128e23dfa140bbdee626369b84b)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-10"
     },
     {
       "id": "night-triage-routine-pilot",
