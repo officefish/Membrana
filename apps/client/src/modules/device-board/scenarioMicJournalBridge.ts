@@ -1363,7 +1363,12 @@ export class ScenarioMicJournalBridge {
       paired: pairing !== null,
     });
 
-    if (parsed.scope === 'server' && mode === 'paired' && pairing !== null) {
+    if (
+      parsed.scope === 'server' &&
+      mode === 'paired' &&
+      pairing !== null &&
+      getDefaultLiveJournalService().getSnapshot().storageMode !== 'remote-server'
+    ) {
       scenarioChainLog('journal', 'reconfigure-for-server', {
         mediaApiUrl: pairing.mediaApiUrl,
         deviceId: pairing.deviceId,

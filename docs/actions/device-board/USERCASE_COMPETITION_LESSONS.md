@@ -497,6 +497,37 @@ sequence-then-skip thenIndex: 0,1 · make-track/slice-start OK inside gate
 
 ---
 
+### L34 — publish-report подменял сингтон журнала под подписчиками UI
+
+**Симптом (gamma live, runId `bf0a3922`):** цепочка отработала до конца, `publish-done` в лог есть — а панель журнала на борде пуста; владелец: «записей нет».
+
+**Что:** `publishReport` (server-scope) звал `reconfigureJournalFromConnection` → `configureDefaultLiveJournalService` создавал **новый инстанс** `LiveJournalService`. `useLiveJournal` мемоизирует инстанс при маунте — панель осталась подписанной на старый, репорт ушёл в новый. Бонус: перецепка на каждый publish стоила ~1.7 с латентности (tick 72→89).
+
+**Fix (#347):** `LiveJournalService.replaceBackend` — смена storage НА МЕСТЕ (инстанс и подписки живут); `configureDefaultLiveJournalService` переиспользует инстанс; в `publishReport` гард `storageMode !== 'remote-server'` — не перецеплять уже подключённый server-backend.
+
+**Профилактика:**
+
+- [x] Unit: подписчик переживает `replaceBackend` и видит записи после смены
+- [ ] Новый глобальный сервис с React-подпиской → сингтон обязан быть стабильным (мутировать внутренности, не подменять ссылку)
+
+---
+
+### L35 — Gamma: latent-рестарт записи гонится со StopRecording → одноразовая детекция
+
+**Симптом (gamma live, runId `bf0a3922`):** детекционная цепочка сработала ровно один раз (tick 46) за 218 тиков; после `stop-recording` ни одного `start-recording` до конца рана — окно больше не наполняется, сценарий мёртв.
+
+**Что:** `g-restartrec` висел на `then-1` sequence (latent) — срабатывал, пока запись ещё шла (`start-recording-idempotent` no-op), а затем `g-stoprec`/`g-stoprec-quiet` из then-0 останавливали запись навсегда. Latent-ветки НЕ упорядочены между собой — «рестарт после стопа» через then-N не выражается.
+
+**Fix (#347):** рестарт перенесён в хвост ОБЕИХ веток решения (`g-upload → g-restartrec`, `g-stoprec-quiet → g-restartrec`); `thenCount: 2 → 1`. Alpha уже так устроена; у Beta записи нет.
+
+**Профилактика:**
+
+- [x] Smoke gamma: рестарт из хвостов веток, then-1 отсутствует
+- [ ] Ревью сценария: каждый `stop-recording` в цикле обязан иметь exec-путь к `start-recording` ПОСЛЕ себя; порядок между latent-ветками не гарантирован
+- [ ] Alpha live Run: проверить рестарт после detected-пути (у неё restart из `seq exec-out` — та же гонка возможна)
+
+---
+
 ## Чеклист live Run трёх сценариев (comp-detection-alarm, перед sign-off владельца)
 
 ```text

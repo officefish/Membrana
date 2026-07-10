@@ -106,8 +106,12 @@ describe('default-usercase-detection-alarm-gamma (документ)', () => {
     expect(hasData(main, IDS.makeTrack, IDS.uploadJob, 'track')).toBe(true);
     const upload = main.nodes.find((node) => node.id === IDS.uploadJob);
     expect(upload?.asyncJobConfig?.jobKind).toBe('track-upload');
-    // Рестарт окна записи на then-1, итерация завершается через exec-out → ∞
-    expect(hasExec(main, IDS.sequence, IDS.restartRecording, 'then-1')).toBe(true);
+    // Рестарт окна записи — хвост ОБЕИХ веток решения (после стопов), НЕ then-N:
+    // latent-рестарт успевал no-op'нуться до StopRecording → одноразовая детекция
+    // (live-тест 2026-07-10, run bf0a3922)
+    expect(hasExec(main, IDS.uploadJob, IDS.restartRecording)).toBe(true);
+    expect(hasExec(main, IDS.stopRecordingQuiet, IDS.restartRecording)).toBe(true);
+    expect(hasExec(main, IDS.sequence, IDS.restartRecording, 'then-1')).toBe(false);
     expect(hasExec(main, IDS.sequence, IDS.mainLoopRepeat, 'exec-out')).toBe(true);
   });
 

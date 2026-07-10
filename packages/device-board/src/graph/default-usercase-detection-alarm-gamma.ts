@@ -231,7 +231,7 @@ function buildMainSubgraph(): ScenarioSubgraph {
       recordingPolicy: RECORDING_POLICY,
     }),
     n('g-seq', 'sequence', 'Sequence: окно готово', 2160, 160, {
-      sequenceConfig: { thenCount: 2, parallelAsync: false, latentThen: true },
+      sequenceConfig: { thenCount: 1, parallelAsync: false, latentThen: true },
     }),
     n('main-infinity', 'loop-repeat', '∞', 2500, 160, { system: true }),
     // Два детектора → слияние → решение (③)
@@ -255,7 +255,10 @@ function buildMainSubgraph(): ScenarioSubgraph {
       asyncJobConfig: { jobKind: 'track-upload' },
     }),
     n('g-stoprec-quiet', 'stop-recording', 'StopRecording (тихое окно)', 4200, 40, async),
-    // Рестарт окна записи (then-1)
+    // Рестарт окна записи — хвост ОБЕИХ веток решения. Нельзя запускать его
+    // latent-веткой then-N: он успевает отработать no-op'ом, пока запись ещё
+    // идёт, а затем StopRecording убивает её навсегда — сценарий детектирует
+    // ровно один раз (live-тест 2026-07-10, run bf0a3922).
     n('g-restartrec', 'start-recording', 'StartRecording: рестарт окна', 2500, 400, async),
     // Детачед async-хвост: отчёт после загрузки трека (⑤)
     n('g-resolved', 'on-async-resolved', 'OnAsyncResolved: трек загружен', 5560, -560, async),
@@ -306,8 +309,9 @@ function buildMainSubgraph(): ScenarioSubgraph {
     exec('g-stoprec', 'g-track'),
     exec('g-track', 'g-upload'),
     exec('g-branch', 'g-stoprec-quiet', 'not-detected'),
-    // then-1: рестарт записи, затем новая итерация
-    exec('g-seq', 'g-restartrec', 'then-1'),
+    // Рестарт записи — после стопов, из хвоста каждой ветки решения
+    exec('g-upload', 'g-restartrec'),
+    exec('g-stoprec-quiet', 'g-restartrec'),
     exec('g-seq', 'main-infinity', 'exec-out'),
     // Детачед-хвост: отчёт после resolve загрузки
     evt('g-resolved', 'g-print-track'),
