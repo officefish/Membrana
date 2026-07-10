@@ -1,0 +1,122 @@
+активных всего: 162
+ghost: 9
+  ghost · neural-tier-1b-contract · issue #47
+  ghost · real-dataset-live-calibration · issue #47
+  ghost · sample-library-drone-detection · issue #47
+  ghost · single-node-detection-first · issue #47
+  ghost · sld3-dsp-detectors-free-v1 · issue #47
+  ghost · sld4-stage-gate-calibration · issue #47
+  ghost · vdr-hard-gate · issue #47
+  ghost · vdr-hg3-trends-benchmark · issue #47
+  ghost · vdr-hg4-hard-gate-report · issue #47
+orphan: 110
+  orphan · agent-tooling-night-build
+  orphan · cabinet-scenario-picker-system
+  orphan · cg2-two-tier-test-gate
+  orphan · cg3-flaky-metrics-week
+  orphan · cg4-ci-testing-docs
+  orphan · ci-gate-stabilization
+  orphan · comp-packaging-catalog-2026-06-25
+  orphan · db-ap-r1-core-contracts
+  orphan · db-ap-r10-agenda-async-hub
+  orphan · db-ap-r11-observability-tests
+  orphan · db-ap-r12-docs-signoff
+  orphan · db-ap-r2-core-sequence-latent
+  orphan · db-ap-r3-async-job-store
+  orphan · db-ap-r4-sequence-latent-runtime
+  orphan · db-ap-r5-promise-nodes-editor
+  orphan · db-ap-r6-promise-nodes-executor
+  orphan · db-ap-r7-host-bridge-jobs
+  orphan · db-ap-r8-detached-event-dispatch
+  orphan · db-ap-r9-mvp-graph-v2
+  orphan · db-doc-v04-mvp
+  orphan · db-h1b-board-shell
+  orphan · db-h1c-graph-serialize
+  orphan · db-h2a-json-import
+  orphan · db-h2b-scenario-runtime
+  orphan · db-h2c-mic-journal
+  orphan · db-h2d-cabinet-sync
+  orphan · db-h3a-trigger-stop
+  orphan · db-h3b-trigger-disconnect
+  orphan · db-h3c-subgraph
+  orphan · db-h4-alarm-close
+  orphan · db-p3-a1-usercase-catalog-service
+  orphan · db-p3-a2-runtime-validators
+  orphan · db-p3-a3-competition-restrictions
+  orphan · db-post-usercase-roadmap
+  orphan · db-sf-0-canon
+  orphan · db-sf-1-core-contracts
+  orphan · db-sf-2-gateway-board
+  orphan · db-sf-3-cabinet-lease-api
+  orphan · db-sf-4-client-follower
+  orphan · db-sf-5-board-flags-ui
+  orphan · db-sf-6-nodes-runtime
+  orphan · db-sf-7-last-track-preview
+  orphan · db-sf-8-tests-smoke
+  orphan · db-sf-9-docs-sync
+  orphan · db3h-s2-cabinet-host
+  orphan · db3h-s4-microphone-detectors
+  orphan · db3h-s5-desktop-logging
+  orphan · device-board-hackathon-1
+  orphan · device-board-phase-3
+  orphan · device-board-server-first
+  orphan · device-board-three-hosts-2026-06-26
+  orphan · fv1-s2-closeout
+  orphan · live-parallel-detection-sprint
+  orphan · lp1-mic-drone-stream-modes
+  orphan · lp1b-drone-detailed-report-server
+  orphan · lp2-fft-plugins-journal-sink
+  orphan · lp3-track-import-backpressure
+  orphan · lp4-parallel-detection-smoke
+  orphan · lp5-journal-report-renderers
+  orphan · media-library-a3-mic-recorder
+  orphan · media-library-a4-sample-player
+  orphan · membrane-node-runtime-remote
+  orphan · mp7b-rt0-contract
+  orphan · mp7b-rt1-gateway
+  orphan · mp7b-rt2-client-runtime
+  orphan · mp7b-rt3-mode
+  orphan · mp7b-rt4-multinode-schema
+  orphan · mp7b-rt5-cabinet-nodes
+  orphan · mp7b-rt6-board-ux
+  orphan · mp7b-rt7-prod-hardening
+  orphan · nb-at-0-gate
+  orphan · nb-at-1-gitignore-review
+  orphan · nb-at-2-pr-ship
+  orphan · nb-at-3-build-affected
+  orphan · nb-at-4-verify-wire-sync
+  orphan · nb-at-5-hooks
+  orphan · nb-at-6-helpers
+  orphan · nb-at-7-bookkeeping-gitctx
+  orphan · nb-at-8-docs-skills
+  orphan · nb-vlr-0-gate
+  orphan · nb-vlr-1-labels-export-ui
+  orphan · nb-vlr-2-labels-merge-script
+  orphan · nb-vlr-3-library-label-filter
+  orphan · nb-vlr-4-docs
+  orphan · neural-free-tier-dataset-report
+  orphan · oc-proxy-s0-research-isolation
+  orphan · oc-proxy-s1-opencode-install
+  orphan · oc-proxy-s2-freemodel-keys
+  orphan · oc-proxy-s3-llm-proxy-script
+  orphan · oc-proxy-s4-opencode-config
+  orphan · opencode-proxy-sprint-2026-06-25
+  orphan · partner-tutorials
+  orphan · pcb-d2-multinode
+  orphan · pt-0-tutorial-template
+  orphan · pt-1-read-facts-sheet
+  orphan · pt-2-first-output-v01-endtoend
+  orphan · pt-3-honest-tech-storytelling
+  orphan · rag-dual-circuit-v1
+  orphan · rag-r6-closure
+  orphan · rag-r7-optional
+  orphan · sca-manual-smoke
+  orphan · studio-capture-adaptation
+  orphan · tech-debt-2026-07
+  orphan · ucv2-0-spec-lgtm
+  orphan · ucv2-1-graph-collapse
+  orphan · ucv2-2-freeze-async-tracks
+  orphan · ucv2-3-pack-verify
+  orphan · ucv2-4-operator-signoff
+  orphan · usercase-mvp-v2-groups-async
+  orphan · vdr-label-roundtrip-night-build

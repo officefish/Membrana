@@ -12872,6 +12872,23 @@
       "archivedAt": "2026-07-10",
       "archiveNotes": "PR #341; review LGTM 41e1025e1293; PR #341 merged 2026-07-10T11:32:38Z (e099db47363b1128e23dfa140bbdee626369b84b)",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "night-triage-routine-pilot",
+      "title": "Пилот routine «Ночной триаж реестра»: Claude Code Routine вместо самодельной ночной обвязки (ghost/orphan/stale, отчёт + draft PR)",
+      "promptPath": "docs/prompts/NIGHT_TRIAGE_ROUTINE_PROMPT.md",
+      "githubIssue": 344,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-10",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "Консилиум 25 реплик ДО кода — GO с условиями (docs/seanses/night-triage-routine-2026-07-10.md): N=14 не канон (dwell-time в отчёт), daily draft PR, секрет-гейт блокирующий, детерминизм-критерий, issues:audit = эталон приёмки не CI-гейт. Бриф: docs/day-sprint/night-triage-routine-2026-07-10/SPRINT_BRIEF.md. Стоп-условие: preview недоступен / квота — заморозка + INSIGHT."
     }
   ]
 }
