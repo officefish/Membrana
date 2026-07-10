@@ -740,6 +740,21 @@ export class ScenarioMicJournalBridge {
   async startAsyncJob(input: StartAsyncJobBridgeInput): Promise<void> {
     const { promiseId, kind, correlation, trackRef, asyncJobStore } = input;
 
+    if (kind === 'report-build') {
+      // comp follow-up (#336, Pre-vote п.2): combined-отчёт уже синхронно
+      // сконструирован make-combined-report (идемпотентно по хэшу входов);
+      // job — точка детача тяжёлой упаковки. Резолвим после микротаска —
+      // итерация main loop не блокируется, on-async-resolved получает событие.
+      await Promise.resolve();
+      asyncJobStore.resolve(promiseId);
+      scenarioChainLog('async-job', 'resolved', {
+        promiseId,
+        kind,
+        reason: 'report-build-detached',
+      });
+      return;
+    }
+
     if (kind !== 'track-upload') {
       asyncJobStore.reject(promiseId, `unsupported-async-job-kind:${kind}`);
       scenarioChainLog('async-job', 'rejected', {

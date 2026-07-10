@@ -7,6 +7,9 @@ import type { ReportRuntimeStore } from './report-runtime-store.js';
 import type { TrackRuntimeStore } from './track-runtime-store.js';
 import type { RecordingSliceRuntimeStore } from './recording-slice-runtime-store.js';
 import type { FftTrendAnalysisRuntimeStore } from './analysis-runtime-store.js';
+import type { DetectionFusionRuntimeStore } from './fusion-runtime-store.js';
+import type { EnsembleAnalysisRuntimeStore } from './ensemble-runtime-store.js';
+import type { ProximityRuntimeStore } from './proximity-runtime-store.js';
 import type { AsyncJobStore } from './async-job-store.js';
 import type { PromiseRuntimeStore } from './promise-runtime-store.js';
 import { dispatchCollectEventBranches } from './event-dispatch.js';
@@ -47,6 +50,12 @@ export interface ExecSubgraphOptions {
   readonly trackStore?: TrackRuntimeStore;
   /** v0.6: FftTrendAnalysisRef от NewFftTrendsAnalysis. */
   readonly analysisStore?: FftTrendAnalysisRuntimeStore;
+  /** basn-2: value DetectionFusion от MakeDetectionFusion (comp follow-up: wiring). */
+  readonly fusionStore?: DetectionFusionRuntimeStore;
+  /** basn-1: EnsembleAnalysisRef от MakeEnsembleAnalysis. */
+  readonly ensembleStore?: EnsembleAnalysisRuntimeStore;
+  /** basn-4: ProximityRef от MakeProximityTrend. */
+  readonly proximityStore?: ProximityRuntimeStore;
   /** v0.7: RecordingSliceRef от StopRecording. */
   readonly recordingSliceStore?: RecordingSliceRuntimeStore;
   /** v0.7: ждать снятия пользовательской паузы. */
@@ -198,6 +207,9 @@ export async function runSubgraphOnce(
       reportStore: options.reportStore,
       trackStore: options.trackStore,
       analysisStore: options.analysisStore,
+      fusionStore: options.fusionStore,
+      ensembleStore: options.ensembleStore,
+      proximityStore: options.proximityStore,
       recordingSliceStore: options.recordingSliceStore,
       asyncJobStore: options.asyncJobStore,
       promiseRuntimeStore: options.promiseRuntimeStore,
