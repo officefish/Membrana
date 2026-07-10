@@ -12847,10 +12847,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "competition-sprint",
       "createdAt": "2026-07-10",
-      "notes": "3 teams alpha/beta/gamma; winner merge; Phase 5b заменяет прошлые async-v2 сценарии в пикере (community). Основание: эпик #323 (палитра готова). baseBranch main (techies68 мертва)."
+      "notes": "3 teams alpha/beta/gamma; winner merge; Phase 5b заменяет прошлые async-v2 сценарии в пикере (community). Основание: эпик #323 (палитра готова). baseBranch main (techies68 мертва).",
+      "archivedAt": "2026-07-10",
+      "archiveNotes": "PR #337 (winner beta, 213.5) + #338 (wiring) + #339 (Phase 5b: 3 сценария в пикере вместо async-v2); consilium+scorecard+winner в docs; 2 платформенные находки закрыты"
     }
   ]
 }
