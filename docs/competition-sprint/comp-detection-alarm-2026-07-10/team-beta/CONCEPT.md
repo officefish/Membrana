@@ -170,4 +170,19 @@ alarm onTick ─▶ GetAudioStream ─▶ GetSample ─▶ GetFFTFrame ─▶ Co
   17 структурных тестов (валидность + нулевые ошибки validateUserCaseDocument, полная цепочка,
   policy-значения, lost-путь без ∞, гидратация). Scoped CI device-board зелёный:
   **667 tests pass** (650 baseline + 17), lint/typecheck OK.
-- [ ] 2β — runtime-smoke + карточка в пикере + полный scoped CI + тег final.
+- [x] **2β done @ commit `1ce3c687`** — runtime-smoke на подграфах документа
+  (`runtime/usercase-detection-alarm-beta-smoke.test.ts`, 7 тестов по образцу эпик-smoke #323):
+  detected-путь (fusion 0.8 → detected → combined-отчёт с reporter+2 анализа+трек →
+  report-build job pending + PromiseRef → publish в журнал), крайние случаи B3 (порог 0.55
+  строгий: 0.545 → not-detected, ровно 0.55 → detected), пустой fusion (presentCount 0 →
+  not-detected без throw), B5 (идемпотентность: повтор combined → тот же handle/reportId),
+  B8 (frames-гейт: пустое окно → false-ветка сразу в proximity), B6 (alarm-fusion trends-only:
+  presentCount 1, combinedScore = trends), B7 (approaching → valid → true-ветка в ∞;
+  lost → invalid → false-ветка, от print «lost» exec-рёбер нет). Находка фазы: ребро
+  presence-гейта сделано нетипизированным — до первого flush collect-store отдаёт invalid-ref
+  дефолтного вида, типизированное ребро бросало type-mismatch вместо честного false.
+  Карточка в пикере: клиентский пикер читает `getDefaultUserCaseCatalogService` — entry
+  `usercase-detection-alarm-beta` (tier community, badge «Sprint») виден автоматически;
+  каталог-тесты 8→9. Полный scoped CI зелёный: **device-board 674 tests**
+  (650 baseline + 24 новых), **client 287 tests**, lint/typecheck OK (25 turbo-tasks).
+  Тег: `comp-comp-detection-alarm-2026-07-10-beta-final`.
