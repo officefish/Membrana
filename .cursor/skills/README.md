@@ -17,6 +17,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-service-scaffold`](./membrana-service-scaffold/SKILL.md) | `/service`, new `@membrana/*-service` |
 | [`membrana-device-board-edit`](./membrana-device-board-edit/SKILL.md) | device-board edit, undo, branch navigation, RevertPolicy |
 | [`membrana-docs-sync`](./membrana-docs-sync/SKILL.md) | Mintlify, catalog, `docs:lint`, RAG index ritual |
+| [`membrana-usercase-lessons`](./membrana-usercase-lessons/SKILL.md) | журнал недочётов сценариев: читать ДО сборки UserCase, L-записи при отладке Run, live-Run чеклист |
 | [`membrana-usercase-generation`](./membrana-usercase-generation/SKILL.md) | usercase pack, collapse, `node scripts/usercase.mjs` |
 | [`membrana-competition-packaging`](./membrana-competition-packaging/SKILL.md) | `comp:publish-catalog`, post-sprint picker, operator debug |
 | [`membrana-insight`](./membrana-insight/SKILL.md) | `yarn insight:*`, strategic ideas, Perplexity cascade, weekly weight |
