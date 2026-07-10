@@ -18,9 +18,9 @@ import type {
 } from './types.js';
 
 export class LiveJournalService {
-  private readonly backend: IJournalStorageBackend;
+  private backend: IJournalStorageBackend;
 
-  private readonly config: LiveJournalConfig;
+  private config: LiveJournalConfig;
 
   private listeners = new Set<() => void>();
 
@@ -60,6 +60,23 @@ export class LiveJournalService {
 
   async init(): Promise<void> {
     await this.refresh();
+  }
+
+  /**
+   * Смена storage-backend НА МЕСТЕ: подписчики (useLiveJournal и др.) держат
+   * ссылку на инстанс, поэтому подмена сингтона целиком делает их слепыми к
+   * новым записям (live-тест gamma 2026-07-10, run bf0a3922: publish-report
+   * ушёл в новый инстанс, панель журнала борда осталась на старом).
+   */
+  replaceBackend(backend: IJournalStorageBackend, config?: Partial<LiveJournalConfig>): void {
+    this.backend = backend;
+    this.config = { ...DEFAULT_LIVE_JOURNAL_CONFIG, ...config };
+    this.snapshot = {
+      items: [],
+      storageMode: backend.getStorageMode(),
+      version: this.version,
+    };
+    this.emit();
   }
 
   async refresh(): Promise<void> {
@@ -121,7 +138,11 @@ export function configureDefaultLiveJournalService(
   backend: IJournalStorageBackend,
   config?: Partial<LiveJournalConfig>,
 ): LiveJournalService {
-  defaultService = createLiveJournalService(backend, config);
+  if (defaultService === null) {
+    defaultService = createLiveJournalService(backend, config);
+  } else {
+    defaultService.replaceBackend(backend, config);
+  }
   return defaultService;
 }
 

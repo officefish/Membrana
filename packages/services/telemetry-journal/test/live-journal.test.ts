@@ -115,6 +115,28 @@ describe('LiveJournalService', () => {
     expect(service.listFiltered('detections')).toHaveLength(1);
   });
 
+  it('replaceBackend меняет storage на месте — подписчик видит записи после смены (live-тест gamma 2026-07-10)', async () => {
+    const service = createLiveJournalService(createMemoryJournalStorageBackend());
+    await service.init();
+
+    let notified = 0;
+    service.subscribe(() => {
+      notified += 1;
+    });
+
+    // Аналог reconfigure-for-server из publish-report: backend меняется,
+    // инстанс (и подписка UI-панели) обязан пережить смену.
+    service.replaceBackend(createMemoryJournalStorageBackend());
+    expect(notified).toBeGreaterThan(0);
+    expect(service.getSnapshot().items).toHaveLength(0);
+
+    const before = notified;
+    const track = await service.appendTrack(sampleTrackInput('track-after-swap'));
+    expect(track?.kind).toBe('track');
+    expect(service.getSnapshot().items).toHaveLength(1);
+    expect(notified).toBeGreaterThan(before);
+  });
+
   it('clearByFilter removes the active subset without cascade (JE5)', async () => {
     const service = createLiveJournalService(createMemoryJournalStorageBackend());
     await service.init();
