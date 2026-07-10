@@ -152,3 +152,69 @@ describe('executeScenarioBlock make-detection-fusion (basn-2)', () => {
     expect(pulled?.combinedScore).toBeCloseTo(0.6, 5);
   });
 });
+
+describe('fusion → lastDetection (консилиум #340, т.2)', () => {
+  it('combined выше порога → lastDetection detected с DRONE_FUSION (вход в alarm по fusion)', async () => {
+    const producer = [
+      { name: 'trends', family: 'dsp' as const, detection: { detected: true, confidence: 0.9, isDrone: true } },
+    ];
+    void producer;
+    const host = createStubScenarioRuntimeHost({});
+    const analysisStore = new FftTrendAnalysisRuntimeStore();
+    const fusionStore = new DetectionFusionRuntimeStore();
+    analysisStore.setNodeAnalysis('an-1', 'a1', { detected: true, confidence: 0.9, isDrone: true });
+    analysisStore.setNodeAnalysis('an-2', 'a2', { detected: true, confidence: 0.7, isDrone: true });
+    const subgraph = buildFusionSubgraph('fusion-1');
+    const node = subgraph.nodes.find((n) => n.id === 'fusion-1');
+    if (node === undefined) throw new Error('missing');
+    const result = await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: null,
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore: new ScenarioVariableStore(),
+      analysisStore,
+      fusionStore,
+      resolveContext: {
+        getFftTrendAnalysisRef: (nodeId) => analysisStore.getAnalysisRef(nodeId),
+      },
+    });
+    expect(result.lastDetection?.detected).toBe(true);
+    expect(result.lastDetection?.confidence).toBeCloseTo(0.8, 5);
+    expect(result.lastDetection?.templateId).toBe('DRONE_FUSION');
+  });
+
+  it('combined ниже порога → lastDetection not detected (alarm не стартует от trends-соло)', async () => {
+    const host = createStubScenarioRuntimeHost({});
+    const analysisStore = new FftTrendAnalysisRuntimeStore();
+    const fusionStore = new DetectionFusionRuntimeStore();
+    // trends-соло кричит 0.9, но ансамбль молчит → combined 0.45 < 0.5.
+    analysisStore.setNodeAnalysis('an-1', 'a1', { detected: true, confidence: 0.9, isDrone: true });
+    analysisStore.setNodeAnalysis('an-2', 'a2', { detected: false, confidence: 0.0, isDrone: false });
+    const subgraph = buildFusionSubgraph('fusion-1');
+    const node = subgraph.nodes.find((n) => n.id === 'fusion-1');
+    if (node === undefined) throw new Error('missing');
+    const result = await executeScenarioBlock({
+      host,
+      signal: new AbortController().signal,
+      branch: 'main',
+      subgraph,
+      node,
+      lastDetection: { detected: true, confidence: 0.9, isDrone: true, templateId: 'DRONE_TIGHT' },
+      defaultChunkDurationMs: 5000,
+      functions: [],
+      variableStore: new ScenarioVariableStore(),
+      analysisStore,
+      fusionStore,
+      resolveContext: {
+        getFftTrendAnalysisRef: (nodeId) => analysisStore.getAnalysisRef(nodeId),
+      },
+    });
+    expect(result.lastDetection?.detected).toBe(false);
+    expect(result.lastDetection?.templateId).toBeUndefined();
+  });
+});

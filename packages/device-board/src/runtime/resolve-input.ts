@@ -917,7 +917,11 @@ export function resolveNodeOutput(
     if (resolver === undefined) {
       return invalidAudioSampleRefList();
     }
-    return resolver(node.id) ?? invalidAudioSampleRefList();
+    const ref = resolver(node.id) ?? invalidAudioSampleRefList();
+    // Консилиум comp-findings (#340): kind — свойство топологии; до первого flush
+    // store не знает тип батча → invalid-ref коэрсится к каноничному kind узла,
+    // чтобы типизированное ребро не бросало type-mismatch на холодном старте.
+    return ref.valid ? ref : { ...ref, kind: 'AudioSampleRefList' };
   }
 
   if (node.nodeKind === 'collect-fft-frames') {
@@ -931,7 +935,9 @@ export function resolveNodeOutput(
     if (resolver === undefined) {
       return invalidFftFrameRefList();
     }
-    return resolver(node.id) ?? invalidFftFrameRefList();
+    const ref = resolver(node.id) ?? invalidFftFrameRefList();
+    // См. коммент в collect-samples: invalid-ref всегда несёт целевой kind (#340).
+    return ref.valid ? ref : { ...ref, kind: 'FftFrameRefList' };
   }
 
   if (node.nodeKind === 'flush-spectral-analyser') {

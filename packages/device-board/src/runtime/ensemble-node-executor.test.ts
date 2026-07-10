@@ -79,14 +79,14 @@ describe('executeScenarioBlock make-ensemble-analysis (basn-1)', () => {
     );
   });
 
-  it('пустой batch → throw (контракт как у MakeFftTrendsAnalysis)', async () => {
+  it('пустой batch → молчащий skip, exec продолжается (#340: transient холодного старта)', async () => {
     const host = createStubScenarioRuntimeHost({});
     const collectStore = new CollectRuntimeStore();
     const subgraph = buildEnsembleSubgraph();
     const node = subgraph.nodes.find((n) => n.id === 'ens-1');
     if (node === undefined) throw new Error('node missing');
-    await expect(
-      executeScenarioBlock({
+    const ensembleStore = new EnsembleAnalysisRuntimeStore();
+    await executeScenarioBlock({
         host,
         signal: new AbortController().signal,
         branch: 'main',
@@ -97,12 +97,15 @@ describe('executeScenarioBlock make-ensemble-analysis (basn-1)', () => {
         functions: [],
         variableStore: new ScenarioVariableStore(),
         collectStore,
-        ensembleStore: new EnsembleAnalysisRuntimeStore(),
+        ensembleStore,
         resolveContext: {
           getCollectBatchRef: (nodeId) => collectStore.getLastBatchRef(nodeId),
         },
-      }),
-    ).rejects.toThrow(/empty AudioSampleRefList/);
+      });
+    // Store не тронут: ref остаётся invalid с целевым kind.
+    const ref = ensembleStore.getAnalysisRef('ens-1');
+    expect(ref.valid).toBe(false);
+    expect(ref.kind).toBe('EnsembleAnalysisRef');
   });
 
   it('fusion сливает trends + ensemble (интеграция basn-1 ↔ basn-2)', async () => {

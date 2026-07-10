@@ -845,3 +845,35 @@ describe('variable-set runtime integration (DBR4)', () => {
     expect(value.enabledTemplateKeys).toEqual(['DRONE_TIGHT']);
   });
 });
+
+describe('collect invalid-ref несёт целевой kind (консилиум #340, т.1)', () => {
+  it('collect-fft-frames до первого flush: типизированное ребро НЕ бросает type-mismatch', () => {
+    const subgraph = {
+      nodes: [
+        { id: 'cf-1', nodeKind: 'collect-fft-frames' as const, blockKind: 'custom' as const, label: 'CollectF' },
+        { id: 'gate-1', nodeKind: 'is-valid' as const, blockKind: 'custom' as const, label: 'Gate' },
+      ],
+      edges: [
+        {
+          id: 'd1',
+          kind: 'data' as const,
+          source: 'cf-1',
+          sourceHandle: 'batches',
+          target: 'gate-1',
+          targetHandle: 'value',
+          dataType: 'FftFrameRefList' as const,
+        },
+      ],
+    };
+    // Store до flush отдаёт invalid-ref дефолтного вида (AudioSampleRefList) — репро находки Beta.
+    const preFlushRef = { kind: 'AudioSampleRefList' as const, handle: null, valid: false };
+    const value = resolveInput(subgraph, [], 'gate-1', 'value', {
+      getCollectBatchRef: () => preFlushRef,
+    });
+    expect(value).not.toBeNull();
+    if (value !== null && 'valid' in value) {
+      expect(value.valid).toBe(false);
+      expect(value.kind).toBe('FftFrameRefList'); // коэрсия к каноничному kind узла
+    }
+  });
+});

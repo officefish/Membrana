@@ -72,6 +72,7 @@ import {
   BRANCH_ON_DETECTION_DETECTED_HANDLE,
   BRANCH_ON_DETECTION_FUSION_HANDLE,
   BRANCH_ON_DETECTION_NOT_DETECTED_HANDLE,
+  DEFAULT_DETECTION_THRESHOLD,
   clampDetectionThreshold,
   isBranchOnDetectionNodeKind,
 } from '../graph/branch-on-detection-node.js';
@@ -950,9 +951,10 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     );
     const frameRefs = resolveRefListMembers(listRef, 'FftFrameRefList', collectStore);
     if (frameRefs.length === 0) {
-      throw new Error(
-        `MakeFftTrendsAnalysis "${node.id}": empty FftFrameRefList on port "${MAKE_FFT_TRENDS_FRAMES_HANDLE}"`,
-      );
+      // Консилиум #340: пустое окно — transient холодного старта (n=0), не ошибка.
+      // Молчащий анализ: store не пишем (ref остаётся invalid с целевым kind), exec продолжается.
+      host.log('make-fft-trends-analysis', { nodeId: node.id, branch, skipReason: 'empty-window' });
+      return { lastDetection, stopRequested: false };
     }
     let detection = lastDetection;
     let analysisHandle: string | null = null;
@@ -998,9 +1000,9 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     );
     const sampleRefs = resolveRefListMembers(listRef, 'AudioSampleRefList', collectStore);
     if (sampleRefs.length === 0) {
-      throw new Error(
-        `MakeEnsembleAnalysis "${node.id}": empty AudioSampleRefList on port "${MAKE_ENSEMBLE_ANALYSIS_SAMPLES_HANDLE}"`,
-      );
+      // Консилиум #340: пустое окно → молчащий анализ (см. make-fft-trends-analysis).
+      host.log('make-ensemble-analysis', { nodeId: node.id, branch, skipReason: 'empty-window' });
+      return { lastDetection, stopRequested: false };
     }
     let analysisHandle: string | null = null;
     let detected = false;
@@ -1211,6 +1213,19 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       presentCount: fusion.presentCount,
     });
     fusionStore.setNodeFusion(node.id, fusionValue);
+    // Консилиум #340 (т.2): fusion — единственный писатель lastDetection. Combined-результат
+    // течёт в detection-front (вход в alarm по fusion, не по trends-соло; дух ND3).
+    // templateId с DRONE-префиксом — соглашение legacy detection-front (isDroneDetection).
+    // Порядок exec гарантирует: fusion исполняется после анализаторов и перекрывает их запись;
+    // в графах без fusion-узла работает legacy fallback (trends → lastDetection) как раньше.
+    const combinedDetected =
+      fusionValue.presentCount > 0 && fusionValue.combinedScore >= DEFAULT_DETECTION_THRESHOLD;
+    const combinedDetection: ScenarioDetectionResult = {
+      detected: combinedDetected,
+      confidence: fusionValue.combinedScore,
+      isDrone: combinedDetected,
+      ...(combinedDetected ? { templateId: 'DRONE_FUSION' } : {}),
+    };
     host.log('make-detection-fusion', {
       nodeId: node.id,
       branch,
@@ -1218,8 +1233,9 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       presentCount: fusionValue.presentCount,
       combinedScore: fusionValue.combinedScore,
       agreement: fusionValue.agreement,
+      lastDetectionDetected: combinedDetected,
     });
-    return { lastDetection, stopRequested: false };
+    return { lastDetection: combinedDetection, stopRequested: false };
   }
 
   if (isBranchOnDetectionNodeKind(node.nodeKind)) {
