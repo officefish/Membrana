@@ -1,12 +1,14 @@
 import type { UserCaseCatalogEntry } from './user-case-catalog-types.js';
 import { getDefaultMvpMicrophoneDocument } from '../graph/default-usercase-mvp-microphone.js';
 import { COMMUNITY_COMPETITION_USER_CASE_ENTRIES } from './community-competition-user-case-entries.js';
+import { DETECTION_ALARM_COMPETITION_USER_CASE_ENTRIES } from './detection-alarm-competition-user-case-entries.js';
 import { FREE_TIER_USER_CASE_ENTRIES } from './free-tier-user-case-entries.js';
 
 /**
  * Active bundled UserCase entries (runtime catalog picker).
  * FREE-tier scaffold: `free-tier-user-case-entries.ts` (Задача E, каркас 3+1 UC).
- * Competition forks: `community-competition-user-case-entries.ts` (yarn comp:publish-catalog).
+ * Competition forks: `community-competition-user-case-entries.ts` (yarn comp:publish-catalog),
+ * `detection-alarm-competition-user-case-entries.ts` (comp-detection-alarm-2026-07-10).
  * Historical loaders: `archived-competition-user-case-entries.ts`.
  */
 export const BUNDLED_USER_CASE_ENTRIES: readonly UserCaseCatalogEntry[] = [
@@ -34,4 +36,5 @@ export const BUNDLED_USER_CASE_ENTRIES: readonly UserCaseCatalogEntry[] = [
   },
   ...FREE_TIER_USER_CASE_ENTRIES,
   ...COMMUNITY_COMPETITION_USER_CASE_ENTRIES,
+  ...DETECTION_ALARM_COMPETITION_USER_CASE_ENTRIES,
 ];
