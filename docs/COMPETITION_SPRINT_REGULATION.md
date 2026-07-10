@@ -410,6 +410,7 @@ Brief: `<BRIEF_PATH>`.
 Ветка: **только** `comp/<SPRINT_ID>/<TEAM>`. Merge-base: см. `docs/COMPETITION_SPRINT_ACTIVE.md`.
 
 ## Hard rules
+- ПЕРЕД сборкой сценария прочитай журнал недочётов `docs/actions/device-board/USERCASE_COMPETITION_LESSONS.md` (L1–…) — там симптомы/корни/фиксы двух прошлых соревнований; новые находки Run дописывай туда же (симптом → корень → фикс → профилактика).
 - Не читай и не копируй код из веток других команд до Phase 3.
 - Не импортируй из `dist/`; Web Audio только через `@membrana/audio-engine-service`.
 - Не регистрируй модули через store напрямую — только `MembranaRegistry`.

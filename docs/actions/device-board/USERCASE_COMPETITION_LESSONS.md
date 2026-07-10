@@ -3,6 +3,7 @@
 > Живой документ для агентов и команды. Читать **перед** programmatic collapse, fork UserCase и sprint packaging.
 >
 > **Sprint `comp-mvp-packaging-2026-06-21`:** closed — все три fork Run-green; победитель не merged.  
+> **Sprint `comp-detection-alarm-2026-07-10`:** closed — winner Beta merged (#337); находки L24–L28; live Run владельцем — pending.  
 > **Agent prompt:** [`docs/prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md`](../prompts/DEVICE_BOARD_USERCASE_GENERATION_PROMPT.md)  
 > **Regulation:** [`USERCASE_GENERATION_REGULATION.md`](./USERCASE_GENERATION_REGULATION.md)  
 > **Studio host (STx):** [`STUDIO_HOST_LESSONS.md`](./STUDIO_HOST_LESSONS.md) · контракт: [`STUDIO_HOST_BRIDGE_CONTRACT.md`](../STUDIO_HOST_BRIDGE_CONTRACT.md)  
@@ -355,6 +356,86 @@ sequence-then-skip thenIndex: 0,1 · make-track/slice-start OK inside gate
 - [x] Pack test: sequence `then-0` → `StartAsyncJob`
 - [ ] Run logs: `async-job-start` / `[media] upload-ok` после gate-true
 - [ ] Серверный journal: tracks появляются (часто 1–3 тика после publish trends)
+
+---
+
+### L24 — Runtime: exec-subgraph не пробрасывал basn-stores (comp-detection-alarm)
+
+**Симптом (все команды, unit vs live, 2026-07-10):** runtime-smoke на `executeScenarioBlock` зелёный, но живой Run бросил бы `make-detection-fusion requires ... fusionStore` — `runSubgraphOnce`/function-call не передавали fusion/ensemble/proximity stores (нашла Beta, CONCEPT §Risks).
+
+**Fix (#338):** проброс трёх store в `exec-subgraph.ts` + function-call ветке `block-executor`.
+
+**Профилактика:**
+
+- [x] Новый runtime-store → grep ВСЕ точки `executeScenarioBlock(` и `runSubgraphOnce(` — проброс везде
+- [ ] Smoke новых узлов гонять и через `runSubgraphOnce`, не только прямой executor
+
+---
+
+### L25 — Host: startAsyncJob принимал только track-upload (report-build reject)
+
+**Симптом (gamma, live, 2026-07-10):** `async-job rejected unsupported-async-job-kind:report-build` — smoke на stub-host проходил, живой клиент реджектил (нашла Gamma, ADR G5 — detached-обход через промис трека).
+
+**Fix (#338):** `scenarioMicJournalBridge.startAsyncJob` — report-build = детач-resolve после микротаска (main loop не блокируется).
+
+**Профилактика:**
+
+- [x] Новый `ScenarioAsyncJobKind` → проверять клиентский host, не только stub
+- [ ] В DoD сценариев с async: chain-log без rejected-jobs на живом Run
+
+---
+
+### L26 — Collect invalid-ref дефолтного kind до первого flush → type-mismatch
+
+**Симптом (beta, 2026-07-10):** типизированное ребро от collect-fft-frames batch-выхода бросало `type-mismatch` на холодном старте — store до flush отдавал `kind: AudioSampleRefList` по дефолту; команды обходили нетипизированными рёбрами (костыль).
+
+**Fix (#341):** `resolveNodeOutput` коэрсит invalid-ref к каноничному kind узла; сквозной инвариант «invalid-ref всегда несёт целевой kind» (консилиум comp-findings т.1).
+
+**Профилактика:**
+
+- [x] Unit: типизированное ребро от collect до flush → invalid с целевым kind, без throw
+- [ ] Новые ref-источники: invalid-состояние обязано нести целевой kind
+
+---
+
+### L27 — Вход в alarm-loop по trends-соло вопреки fusion
+
+**Симптом (2026-07-10):** runtime detection-front переключал main→alarm по `lastDetection` от trends-СОЛО (legacy D0); branch-on-detection с combined-порогом на вход в alarm не влиял — тревога стартовала вопреки ансамблю (дух ND3 нарушен).
+
+**Fix (#341):** fusion — единственный писатель lastDetection (combined → front); порог detected — из связанного branch-узла ГРАФА (`resolveFusionDetectedThreshold`, не хардкод, не runtime→топология); legacy fallback в графах без fusion. NB: реализация «фикс-порог 0.5 внутри fusion» была поймана closure-review как BLOCK — рассинхрон с branch-порогом сценариев (Beta 0.55).
+
+**Профилактика:**
+
+- [x] Unit: порог branch 0.55 / combined 0.52 → not detected (рассинхрона нет)
+- [x] Unit: граф без fusion → trends пишет lastDetection (fallback жив)
+
+---
+
+### L28 — Анализаторы бросали на пустом окне холодного старта
+
+**Симптом (2026-07-10):** `MakeEnsembleAnalysis/MakeFftTrendsAnalysis: empty ...List` — сценарий умирал в первые тики, пока collect не наполнился (n=0 — transient холодного старта, не ошибка).
+
+**Fix (#341):** молчащий skip (`skipReason: empty-window` в лог, store не пишется, ref остаётся invalid с целевым kind, exec продолжается); throw — только для реального мусора (NaN/неверный kind).
+
+**Профилактика:**
+
+- [x] Unit: пустой batch → skip, ref invalid с kind, exec идёт дальше
+- [ ] Live Run: первые тики без красного экрана; `empty-window` в логе — норма
+
+---
+
+## Чеклист live Run трёх сценариев (comp-detection-alarm, перед sign-off владельца)
+
+```text
+[ ] Пикер: Alpha / Beta·winner / Gamma видны (community), Apply работает
+[ ] Пуск: первые тики живут (empty-window в логе — ок, красного экрана нет)
+[ ] Дрон-звук ≥15 c: branch → detected; трек пишется; combined-отчёт в журнале
+[ ] chain-log: ноль rejected async-jobs (report-build детачится)
+[ ] Тревога живёт (ближе/дальше); вход в alarm СИНХРОНЕН порогу branch-узла
+[ ] Тишина ≥15 c: proximity lost → выход из alarm → main продолжает
+[ ] yarn logs:parse: gate-true > 0, публикации не блокировали тики
+[ ] Новые находки → сюда же (симптом → корень → фикс → профилактика)
+```
 
 ---
 
