@@ -2,23 +2,14 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `closed` |
-| **sprintId** | `comp-mvp-async-v2-2026-06-25` |
-| **brief** | [`COMPETITION_SPRINT_BRIEF.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/COMPETITION_SPRINT_BRIEF.md) |
-| **closure** | [`CLOSURE.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/CLOSURE.md) |
-| **winner** | Team **Beta** · [`WINNER.md`](./competition-sprint/comp-mvp-async-v2-2026-06-25/WINNER.md) |
-| **closedAt** | 2026-06-25 |
-| **registry** | archived · `comp-mvp-async-v2-2026-06-25` |
+| sprintId | comp-detection-alarm-2026-07-10 |
+| brief | docs/competition-sprint/comp-detection-alarm-2026-07-10/COMPETITION_SPRINT_BRIEF.md |
+| issue | #336 |
+| baseBranch | main |
+| BASE_SHA | a901b7286c679b433f644b93e74945909b3fb35f |
+| teams | alpha, beta, gamma |
+| phase | 1 |
+| openedAt | 2026-07-10T05:34:12Z |
 
-## Summary
-
-Async v2 packaging sprint на bundled `v2.0-async`. Winner: **Beta** (203.5). Bundled MVP **не** заменён.
-
-**Follow-up:** [`COMPETITION_PACKAGING_ACTIVE.md`](./COMPETITION_PACKAGING_ACTIVE.md) — catalog publish + operator debug.
-
-## Previous (archived)
-
-| sprintId | Статус |
-|----------|--------|
-| `comp-mvp-packaging-2026-06-21` | closed |
-| `comp-mvp-async-v2-2026-06-25` | closed |
+Правила: изоляция веток hard (merge между командами = DQ); ritual/main-day-issue
+приостановлены до closure; scoped CI и doc-fix на main по LGTM — разрешены.
