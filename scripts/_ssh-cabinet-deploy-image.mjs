@@ -15,7 +15,8 @@
  *
  * Env (.env в корне репо или переменные окружения):
  *   BACKGROUND_MEDIA_IPV4, BACKGROUND_MEDIA_PASSWORD — доступ к VPS (как у media).
- *   CABINET_IMAGE_TAG    — тег образа: cabinet-vX.Y.Z (релиз) или sha-<short>. Default: latest.
+ *   CABINET_IMAGE_TAG    — тег образа: cabinet-vX.Y.Z (релиз), sha-<short> или main. Default: main
+ *                          (НЕ latest: latest пушится только на релиз-теги — откат прода 2026-07-09).
  *   CABINET_API_IMAGE / CABINET_WEB_IMAGE — имена образов (пусто → дефолты compose-оверлея).
  *   CABINET_GIT_BRANCH   — ветка для синка compose/Caddy на VPS. Default: main.
  *
@@ -186,7 +187,20 @@ echo "CABINET IMAGE DEPLOY OK (tag: ${imageTag})"
   };
 }
 
+/**
+ * Резолв тега образа (deploy-image-tag-default, ретроспектива 2026-07-09).
+ *
+ * Дефолт — `main`, НЕ `latest`: workflow cabinet-images.yml пушит `latest`
+ * только на релиз-теги `cabinet-v*`, а каждый push в main тегируется `main` /
+ * `sha-<short>`. Дефолт `latest` 2026-07-09 молча выкатил СТАРЫЙ релизный
+ * образ и откатил прод. Явный `CABINET_IMAGE_TAG` (env или .env) — приоритет.
+ */
+export function resolveCabinetImageTag({ env = process.env, envFileGet = () => '' } = {}) {
+  return env.CABINET_IMAGE_TAG || envFileGet('CABINET_IMAGE_TAG') || 'main';
+}
+
 /** Записать JSON-сводку в deploy-artifacts/ и вернуть путь. */
+
 export function writeDeploySummary(summary, { kind = 'deploy' } = {}) {
   const dir = resolve(root, 'deploy-artifacts');
   mkdirSync(dir, { recursive: true });
@@ -200,7 +214,7 @@ async function main() {
   const get = readEnvFile();
   const branch =
     process.env.CABINET_GIT_BRANCH || get('CABINET_GIT_BRANCH') || get('GIT_BRANCH') || 'main';
-  const imageTag = process.env.CABINET_IMAGE_TAG || get('CABINET_IMAGE_TAG') || 'latest';
+  const imageTag = resolveCabinetImageTag({ env: process.env, envFileGet: get });
   const apiImage = process.env.CABINET_API_IMAGE || get('CABINET_API_IMAGE') || '';
   const webImage = process.env.CABINET_WEB_IMAGE || get('CABINET_WEB_IMAGE') || '';
   const host = get('BACKGROUND_MEDIA_IPV4');
