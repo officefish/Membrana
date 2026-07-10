@@ -165,5 +165,10 @@ onDisconnect:       Event → journal1 := GetJournal(device)
 
 ## Implementation
 
-- 2α: pending
+- **2α done @ commit `0b0752a9`** — документ `usercase-detection-alarm-alpha.ts`
+  (6 веток, functionCount 0, mirror-Fusion A3, 6 актов-групп), catalog entry
+  `usercase-detection-alarm-alpha` (community) в bundled-каталоге, тест графа
+  (8 тестов: parse + `validateUserCaseDocument`, порёберная магистраль ①–⑥,
+  alarm-композиция A3/A6, каталог, читаемость групп). Scoped CI device-board:
+  lint ✅ typecheck ✅ test ✅ — 137 files, **658 tests** (baseline 650 не сломан).
 - 2β: pending
