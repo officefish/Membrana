@@ -425,6 +425,78 @@ sequence-then-skip thenIndex: 0,1 · make-track/slice-start OK inside gate
 
 ---
 
+### L29 — Клиент стирает валидный ключ на session_expired
+
+**Симптом (live, 2026-07-10):** рестарт dev-сервера → перезагрузка страницы → клиент в onboarding «ключ никогда не вводился», хотя кабинет показывает «сопряжён, оффлайн» (ключ валиден).
+
+**Что:** `usePairStatusMonitor` на `session_expired` зовёт `handlePairingInvalid` → `writePersisted({mode:null, pairing:null})` — стирает pairing из localStorage. Истёкшая СЕССИЯ трактуется как отзыв КЛЮЧА; правильная реакция — re-auth сохранённым ключом.
+
+**Fix:** pending (поведенческая правка link-store — отдельная задача).
+
+**Профилактика:**
+
+- [ ] Unit: session_expired → re-handshake ключом, storage не трогается; wipe только на revoked/expired ключа
+
+---
+
+### L30 — Кабинет не видит перепривязку узла без F5
+
+**Симптом (live, 2026-07-10):** раздел «Узлы» показывает «ключ отозван»; клиент вводит валидный ключ, узел online — карточка кабинета не меняется до ручной перезагрузки страницы.
+
+**Что:** статус ключа/сопряжения читается один раз при загрузке (REST-снапшот); карточка не подписана на realtime-события (`node.online` / pairing-status push).
+
+**Fix:** pending (подписка карточки узла на realtime или рефетч по node.online).
+
+**Профилактика:**
+
+- [ ] Новые статус-поля узла в кабинете → сразу решать: снапшот или подписка
+
+---
+
+### L31 — Latent Then-ветки глотали исключения молча
+
+**Симптом (gamma live, runId `6442bbed`/`21a7fb2f`):** сценарий «ничего не пишет в журнал», нулевая диагностика; latent-ветка с детекционной цепочкой умирала без следа.
+
+**Что:** `exec-sequence.ts` — `Promise.all(pending).catch(() => {})`; исключение из `executeScenarioBlock` внутри latent-ветки исчезало бесследно. Отладка вслепую.
+
+**Fix (fix/latent-dispatch-stores):** per-branch rejection-хендлер → chain-log `sequence-latent-then-error` (nodeId, thenIndex, startNodeId, message).
+
+**Профилактика:**
+
+- [x] Unit: ошибка latent-ветки → `sequence-latent-then-error` в логе
+- [ ] Любой новый detached/фоновый раннер — rejection-лог обязателен с первого дня
+
+---
+
+### L32 — Gamma: collect-samples никогда не флашится → ensemble вечно пуст
+
+**Симптом (gamma live, оба runId):** `collect-samples flushed: false` все 144/160 тиков; окно сэмплов не формируется — ensemble всегда empty-window, fusion деградирует до trends-соло.
+
+**Что:** flush для samples в графе Gamma не наступает (у FFT-кадров есть g-flush-узел; у сэмплов — только session-append). Требует решения на уровне сценария/семантики collect (касается и Alpha/Beta — проверить их входы ensemble).
+
+**Fix:** pending — дизайн-вопрос «как ensemble получает окно вживую» (кандидат на мини-консилиум).
+
+**Профилактика:**
+
+- [ ] Smoke сценариев с ensemble: assert flushed:true для его входа в первые N тиков live Run
+
+---
+
+### L33 — Wiring #338 неполный: event-dispatch без basn-stores (корень «gamma молчит»)
+
+**Симптом (gamma live, runId `21a7fb2f`):** exec latent-ветки обрывается на `node-enter g-ensemble` без единого лога; fusion/branch не вызываются; журнал пуст.
+
+**Что:** `event-dispatch.ts` (`runEventBranchFromNode`) — четвёртая точка вызова `executeScenarioBlock` с ручной копией параметров: fusion/ensemble/proximity stores НЕ пробрасывались → ensemble бросал `requires ensembleStore` → L31 глотал. Профилактика L24 («grep ВСЕ точки executeScenarioBlock») была написана — и не выполнена в #338 самим автором.
+
+**Fix (fix/latent-dispatch-stores):** проброс трёх store в event-dispatch; регрессия: ensemble в latent-ветке через runEventBranchFromNode работает (empty-window skip).
+
+**Профилактика:**
+
+- [x] Unit: runEventBranchFromNode + ensemble → skip, не смерть ветки
+- [x] L24-чекбокс «grep все точки» — выполнен по всем 4 сайтам (exec-subgraph, block-executor fn-call, event-dispatch; async-resolved-dispatch идёт через event-dispatch)
+
+---
+
 ## Чеклист live Run трёх сценариев (comp-detection-alarm, перед sign-off владельца)
 
 ```text

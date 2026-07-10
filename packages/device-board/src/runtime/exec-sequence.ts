@@ -142,15 +142,29 @@ async function runSequenceLatent(
       options,
       callbacks,
       initialDetection,
-    ).then((detection) => {
-      host.log('sequence-latent-then-done', {
-        nodeId: sequenceNodeId,
-        thenIndex: index,
-        startNodeId: startId,
-        branch: options.branch,
-      });
-      return detection;
-    });
+    ).then(
+      (detection) => {
+        host.log('sequence-latent-then-done', {
+          nodeId: sequenceNodeId,
+          thenIndex: index,
+          startNodeId: startId,
+          branch: options.branch,
+        });
+        return detection;
+      },
+      (error: unknown) => {
+        // L31 (#340 live-тест): смерть latent-ветки ОБЯЗАНА быть видимой —
+        // молчаливый swallow ослеплял отладку сценариев (gamma, run 21a7fb2f).
+        host.log('sequence-latent-then-error', {
+          nodeId: sequenceNodeId,
+          thenIndex: index,
+          startNodeId: startId,
+          branch: options.branch,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        return null;
+      },
+    );
     pending.push(branchPromise);
   }
   if (pending.length > 0) {
