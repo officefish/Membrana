@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "taskId": "basn-1-ensemble-analysis",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feature/basn-1-ensemble-analysis",
+  "currentCommitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+  "reviewedCommitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/basn-1-ensemble-analysis/36d0872265a220fc48efe9a8e2053466281df847-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 326,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/326"
+  },
+  "scope": {
+    "baseRef": "main",
+    "files": [
+      "apps/client/src/modules/device-board/createScenarioRuntimeHost.ts",
+      "apps/client/src/modules/device-board/scenarioMicJournalBridge.ts",
+      "packages/core/src/contracts/device-board/index.ts",
+      "packages/core/src/contracts/device-board/scenario-node-kind.ts",
+      "packages/core/src/contracts/device-board/scenario-report.ts",
+      "packages/device-board/src/graph/make-ensemble-analysis-node.ts",
+      "packages/device-board/src/graph/palette-node.test.ts",
+      "packages/device-board/src/graph/palette-node.ts",
+      "packages/device-board/src/runtime/block-executor.ts",
+      "packages/device-board/src/runtime/ensemble-node-executor.test.ts",
+      "packages/device-board/src/runtime/ensemble-runtime-store.ts",
+      "packages/device-board/src/runtime/host.ts",
+      "packages/device-board/src/runtime/resolve-input.ts",
+      "packages/device-board/src/runtime/scenario-runtime.ts",
+      "packages/device-board/src/types/board-ui.test.ts",
+      "packages/device-board/src/types/board-ui.ts"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/core",
+      "packages/device-board"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+        "checkedAt": "2026-07-09T16:30:54.858Z",
+        "note": ""
+      },
+      {
+        "command": "yarn turbo run lint typecheck test --filter=@membrana/core --filter=@membrana/device-board && yarn check:boundaries && yarn verify:wire-sync && yarn turbo run typecheck --filter=@membrana/client",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+        "checkedAt": "2026-07-09T16:31:27.929Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+        "checkedAt": "2026-07-09T16:30:20Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/29033643269/job/86172728946"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+        "checkedAt": "2026-07-09T16:30:23Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29033643255/job/86172728421"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+        "checkedAt": "2026-07-09T16:30:24Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29033643192/job/86172727868"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "36d0872265a220fc48efe9a8e2053466281df847",
+        "checkedAt": "2026-07-09T16:30:23Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29033643162/job/86172727662"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #326 merged 2026-07-09T16:32:37Z (41f791ce28c8295d6cf71363d07ca20c233e8d79)"
+  },
+  "createdAt": "2026-07-09T15:49:42.455Z",
+  "updatedAt": "2026-07-09T16:32:49.578Z"
+}

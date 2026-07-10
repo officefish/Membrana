@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "taskId": "basn-2-detection-fusion",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feature/basn-nodes",
+  "currentCommitSha": "6c747979803712d7a9499e3a346d8f5f54d34844",
+  "reviewedCommitSha": "6c747979803712d7a9499e3a346d8f5f54d34844",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/basn-2-detection-fusion/6c747979803712d7a9499e3a346d8f5f54d34844-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 324,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/324"
+  },
+  "scope": {
+    "baseRef": "main",
+    "files": [
+      "docs/prompts/BOARD_ALARM_SCENARIO_NODES_EPIC_PROMPT.md",
+      "docs/seanses/board-alarm-scenario-nodes-2026-07-09.md",
+      "docs/tasks/README.md",
+      "docs/tasks/registry.json",
+      "packages/core/src/contracts/device-board/index.ts",
+      "packages/core/src/contracts/device-board/scenario-graph.ts",
+      "packages/core/src/contracts/device-board/scenario-node-kind.ts",
+      "packages/core/src/contracts/device-board/scenario-variables.ts",
+      "packages/core/src/contracts/device-board/socket-type.ts",
+      "packages/device-board/src/graph/board-node-data.ts",
+      "packages/device-board/src/graph/make-detection-fusion-node.test.ts",
+      "packages/device-board/src/graph/make-detection-fusion-node.ts",
+      "packages/device-board/src/graph/palette-node.test.ts",
+      "packages/device-board/src/graph/palette-node.ts",
+      "packages/device-board/src/runtime/analysis-runtime-store.ts",
+      "packages/device-board/src/runtime/block-executor.ts",
+      "packages/device-board/src/runtime/fusion-node-executor.test.ts",
+      "packages/device-board/src/runtime/fusion-runtime-store.ts",
+      "packages/device-board/src/runtime/reference-validity.ts",
+      "packages/device-board/src/runtime/resolve-input.ts",
+      "packages/device-board/src/runtime/scenario-runtime.ts",
+      "packages/device-board/src/types/board-ui.test.ts",
+      "packages/device-board/src/types/board-ui.ts"
+    ],
+    "packages": [
+      "packages/core",
+      "packages/device-board"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "6c747979803712d7a9499e3a346d8f5f54d34844",
+        "checkedAt": "2026-07-09T15:18:32.300Z",
+        "note": ""
+      },
+      {
+        "command": "yarn turbo run lint typecheck test --filter=@membrana/core --filter=@membrana/device-board && yarn check:boundaries && yarn verify:wire-sync && yarn turbo run typecheck --filter=@membrana/client",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "6c747979803712d7a9499e3a346d8f5f54d34844",
+        "checkedAt": "2026-07-09T15:18:39.891Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "6c747979803712d7a9499e3a346d8f5f54d34844",
+        "checkedAt": "2026-07-09T15:18:17Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29028940897/job/86156184141"
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "6c747979803712d7a9499e3a346d8f5f54d34844",
+        "checkedAt": "2026-07-09T15:18:13Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/29028940361/job/86156182856"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "6c747979803712d7a9499e3a346d8f5f54d34844",
+        "checkedAt": "2026-07-09T15:18:18Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29028940467/job/86156182588"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #324 merged 2026-07-09T15:19:30Z (e0001d80b00017977cc19d37b7aa669527432ed1)"
+  },
+  "createdAt": "2026-07-09T15:18:29.831Z",
+  "updatedAt": "2026-07-09T15:19:42.504Z"
+}

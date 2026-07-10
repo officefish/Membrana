@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "taskId": "mdr-1-detection-node-pages",
+  "state": "archived",
+  "tier": "T1",
+  "reviewMode": "standard",
+  "branch": "feature/mdr-1-detection-node-pages",
+  "currentCommitSha": "e352fb0c8637bfbf4186a665e6146ae7aa5a1134",
+  "reviewedCommitSha": "e352fb0c8637bfbf4186a665e6146ae7aa5a1134",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/mdr-1-detection-node-pages/e352fb0c8637bfbf4186a665e6146ae7aa5a1134-review.md",
+  "github": {
+    "issue": 330,
+    "pullRequest": 331,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/331"
+  },
+  "scope": {
+    "baseRef": "main",
+    "files": [
+      "apps/docs/device-board/cookbooks/detection-alarm-chain.mdx",
+      "apps/docs/device-board/nodes/branch-on-detection.mdx",
+      "apps/docs/device-board/nodes/index.mdx",
+      "apps/docs/device-board/nodes/make-combined-report.mdx",
+      "apps/docs/device-board/nodes/make-detection-fusion.mdx",
+      "apps/docs/device-board/nodes/make-ensemble-analysis.mdx",
+      "apps/docs/device-board/nodes/make-proximity-trend.mdx",
+      "apps/docs/docs.json",
+      "docs/catalog/client/prompts/modules/device-board.md"
+    ],
+    "packages": [
+      "apps/docs"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "e352fb0c8637bfbf4186a665e6146ae7aa5a1134",
+        "checkedAt": "2026-07-09T17:40:30.968Z",
+        "note": ""
+      },
+      {
+        "command": "yarn docs:lint",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "e352fb0c8637bfbf4186a665e6146ae7aa5a1134",
+        "checkedAt": "2026-07-09T17:40:32.503Z",
+        "note": ""
+      },
+      {
+        "command": "yarn catalog:verify-client",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "e352fb0c8637bfbf4186a665e6146ae7aa5a1134",
+        "checkedAt": "2026-07-09T17:40:33.403Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "e352fb0c8637bfbf4186a665e6146ae7aa5a1134",
+        "checkedAt": "2026-07-09T17:40:10Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/29037855823/job/86187269159"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #331 merged 2026-07-09T17:41:31Z (b82553cf1101cff9655ace3bc509182724c3b2af)"
+  },
+  "createdAt": "2026-07-09T17:37:34.069Z",
+  "updatedAt": "2026-07-09T17:42:07.991Z"
+}

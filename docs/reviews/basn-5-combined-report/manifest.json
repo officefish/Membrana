@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "taskId": "basn-5-combined-report",
+  "state": "archived",
+  "tier": "T2",
+  "reviewMode": "standard",
+  "branch": "feature/basn-5-combined-report",
+  "currentCommitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+  "reviewedCommitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+  "verdict": "LGTM",
+  "reviewArtifact": "docs/reviews/basn-5-combined-report/6a592ab652f510d358bfeef0fb529f54f341ff85-review.md",
+  "github": {
+    "issue": null,
+    "pullRequest": 328,
+    "remoteState": "open",
+    "url": "https://github.com/officefish/Membrana/pull/328"
+  },
+  "scope": {
+    "baseRef": "main",
+    "files": [
+      "apps/client/src/modules/device-board/createScenarioRuntimeHost.ts",
+      "apps/client/src/modules/device-board/scenarioMicJournalBridge.ts",
+      "packages/core/src/contracts/device-board/scenario-node-kind.ts",
+      "packages/core/src/contracts/device-board/scenario-report.ts",
+      "packages/device-board/src/graph/make-combined-report-node.ts",
+      "packages/device-board/src/graph/palette-node.test.ts",
+      "packages/device-board/src/graph/palette-node.ts",
+      "packages/device-board/src/runtime/block-executor.ts",
+      "packages/device-board/src/runtime/combined-report-executor.test.ts",
+      "packages/device-board/src/runtime/host.ts",
+      "packages/device-board/src/runtime/resolve-input.ts",
+      "packages/device-board/src/types/board-ui.test.ts",
+      "packages/device-board/src/types/board-ui.ts"
+    ],
+    "packages": [
+      "apps/client",
+      "packages/core",
+      "packages/device-board"
+    ]
+  },
+  "evidence": {
+    "hasUnresolvedP0P1": false,
+    "checks": [
+      {
+        "command": "git diff --check",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+        "checkedAt": "2026-07-09T17:01:35.290Z",
+        "note": ""
+      },
+      {
+        "command": "yarn turbo run lint typecheck test --filter=@membrana/core --filter=@membrana/device-board && yarn check:boundaries && yarn verify:wire-sync && yarn turbo run typecheck --filter=@membrana/client",
+        "status": "pass",
+        "exitCode": 0,
+        "commitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+        "checkedAt": "2026-07-09T17:01:44.504Z",
+        "note": ""
+      },
+      {
+        "command": "github-check:optional-review",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+        "checkedAt": "2026-07-09T17:01:10Z",
+        "note": "skipped · https://github.com/officefish/Membrana/actions/runs/29035535450/job/86179316674"
+      },
+      {
+        "command": "github-check:Lint, typecheck, test, build",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+        "checkedAt": "2026-07-09T17:01:15Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29035535490/job/86179316347"
+      },
+      {
+        "command": "github-check:Turbo unit tests",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+        "checkedAt": "2026-07-09T17:01:13Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29035535427/job/86179316160"
+      },
+      {
+        "command": "github-check:Decide if studio affected",
+        "status": "skipped",
+        "exitCode": null,
+        "commitSha": "6a592ab652f510d358bfeef0fb529f54f341ff85",
+        "checkedAt": "2026-07-09T17:01:15Z",
+        "note": "https://github.com/officefish/Membrana/actions/runs/29035535411/job/86179316100"
+      }
+    ]
+  },
+  "reviewersStatus": {
+    "vesnin": "approved",
+    "ozhegov": "pending"
+  },
+  "completion": {
+    "mode": "merged",
+    "evidence": "PR #328 merged 2026-07-09T17:02:45Z (1485483e39c8d303d62f7fc2d894ef97d7527661)"
+  },
+  "createdAt": "2026-07-09T17:01:32.999Z",
+  "updatedAt": "2026-07-09T17:03:00.180Z"
+}
