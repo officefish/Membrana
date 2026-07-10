@@ -171,4 +171,18 @@ onDisconnect:       Event → journal1 := GetJournal(device)
   (8 тестов: parse + `validateUserCaseDocument`, порёберная магистраль ①–⑥,
   alarm-композиция A3/A6, каталог, читаемость групп). Scoped CI device-board:
   lint ✅ typecheck ✅ test ✅ — 137 files, **658 tests** (baseline 650 не сломан).
-- 2β: pending
+- **2β done @ commit `f6191b7e`** — runtime-smoke
+  `src/runtime/usercase-detection-alarm-alpha-smoke.test.ts` (6 тестов) на РЕАЛЬНЫХ
+  подграфах документа по образцу эпик-smoke: detected-путь (fusion 0.8 → branch detected
+  → combined-report c обоими анализами и треком, reporter — по реальной цепочке
+  journal1 → GetReporter), контрпример (слабый ансамбль → 0.5 < 0.55 → not-detected →
+  рестарт, отчёт не строится), async (report-build job pending — магистраль не ждёт;
+  resolve → OnAsyncResolved ⇒ PublishReport по event-ребру документа; идемпотентность A4:
+  1 отчёт = 1 публикация), alarm approaching → valid → «Цель рядом» → ∞ (A3 подтверждён:
+  proximity-host получил combinedScore 0.8 из main-fusion через mirror-узел), lost →
+  invalid → is-valid false = выход (false-ветка не ведёт в ∞, A6), detection-front
+  поднимается DRONE_TIGHT из policy документа. Карточка в пикере — клиентский
+  `useUserCaseCatalog` читает bundled-каталог без изменений client-кода.
+  Полный scoped CI (25 tasks): device-board lint ✅ typecheck ✅ test ✅ — 138 files,
+  **664 tests** (baseline 650 не сломан); client lint ✅ typecheck ✅ test ✅ —
+  77 files, **287 tests**. Тег: `comp-comp-detection-alarm-2026-07-10-alpha-final`.
