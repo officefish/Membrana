@@ -28,7 +28,8 @@ describe('UserCaseCatalogService', () => {
 
   it('lists bundled MVP + FREE-tier scaffold + competition async-v2 community forks', () => {
     const catalog = new UserCaseCatalogService();
-    expect(catalog.size).toBe(8);
+    // 1 MVP + 4 FREE + 3 async-v2 + 1 detection-alarm-beta (comp-detection-alarm-2026-07-10)
+    expect(catalog.size).toBe(9);
     const summaries = catalog.listSummaries();
     expect(summaries[0]?.id).toBe('usercase-mvp-microphone');
     expect(summaries[0]?.tier).toBe('bundled');
@@ -93,8 +94,26 @@ describe('UserCaseCatalogService', () => {
 
   it('listForDeviceKind filters by deviceKind', () => {
     const catalog = new UserCaseCatalogService();
-    expect(catalog.listForDeviceKind('microphone')).toHaveLength(8);
+    expect(catalog.listForDeviceKind('microphone')).toHaveLength(9);
     expect(catalog.listForDeviceKind('playback')).toHaveLength(0);
+  });
+
+  it('detection-alarm-beta (comp-detection-alarm-2026-07-10): карточка community, валидный документ', () => {
+    const catalog = new UserCaseCatalogService();
+    const summary = catalog.getSummary('usercase-detection-alarm-beta');
+    expect(summary?.tier).toBe('community');
+    expect(summary?.deviceKind).toBe('microphone');
+    expect(summary?.title).toContain('Beta');
+    // Честность описания: DSP-ансамбль, не нейро.
+    expect(summary?.description ?? '').not.toMatch(/нейро|yamnet|neural/i);
+    const document = catalog.loadDocument('usercase-detection-alarm-beta');
+    expect(document).not.toBeNull();
+    const parsed = parseDeviceScenarioDocument(document);
+    expect(parsed.ok).toBe(true);
+    if (parsed.ok) {
+      expect(parsed.value.scenario.loops.main.nodes.length).toBeGreaterThan(0);
+      expect(parsed.value.scenario.loops.alarm.nodes.length).toBeGreaterThan(0);
+    }
   });
 
   it('loadDocument returns null for archived v1 competition alpha', () => {
