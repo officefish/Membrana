@@ -179,6 +179,8 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
+| `night-triage-routine-pilot` | Пилот routine «Ночной триаж реестра»: Claude Code Routine вместо самодельной ночной обвязки (ghost/orphan/stale, отчёт + draft PR) | M | [`NIGHT_TRIAGE_ROUTINE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_ROUTINE_PROMPT.md) | [#344](https://github.com/officefish/Membrana/issues/344) |
+| `office-vds-migration` | Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM3) | M | [`OFFICE_VDS_MIGRATION_PROMPT.md`](../docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md) | [#349](https://github.com/officefish/Membrana/issues/349) |
 
 ---
 
@@ -189,7 +191,7 @@
 | `deploy-image-tag-default` | S: cabinet:deploy:image:prod — дефолт тега main вместо latest (latest = старый релизный образ → откат прода 09.07) | 2026-07-10 | — | — | [карточка](./archive/deploy-image-tag-default.md) |
 | `pr-ship-no-commit` | S: pr:ship --no-commit — one-shot флоу для уже закоммиченных веток | 2026-07-10 | — | — | [карточка](./archive/pr-ship-no-commit.md) |
 | `comp-detection-alarm` | Competition Sprint: полный детекционный UserCase на basn-палитре (alpha/beta/gamma) | 2026-07-10 | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-detection-alarm-2026-07-10/COMPETITION_SPRINT_BRIEF.md) | — | [карточка](./archive/comp-detection-alarm.md) |
-| `comp-findings-fixes` | Фиксы семантики рантайма по находкам Competition Sprint (kind в invalid-ref, fusion→lastDetection, молчащий пустой batch) | 2026-07-10 | [`comp-findings-fixes-2026-07-10.md`](../docs/seanses/comp-findings-fixes-2026-07-10.md) | #340 (Issue открыт) | [карточка](./archive/comp-findings-fixes.md) |
+| `comp-findings-fixes` | Фиксы семантики рантайма по находкам Competition Sprint (kind в invalid-ref, fusion→lastDetection, молчащий пустой batch) | 2026-07-10 | [`comp-findings-fixes-2026-07-10.md`](../docs/seanses/comp-findings-fixes-2026-07-10.md) | #340 | [карточка](./archive/comp-findings-fixes.md) |
 | `hermes-brief` | Hermes brief: детерминированный yarn hermes:brief — сборщик состояния сессии (6 источников) | 2026-07-09 | [`HERMES_BRIEF_PROMPT.md`](../docs/prompts/HERMES_BRIEF_PROMPT.md) | — | [карточка](./archive/hermes-brief.md) |
 | `detection-ensemble-service` | Combined-продюсер: detection-ensemble-service питает combinedScore из fusion-ядра (DSP-детекторы на окне; yamnet при model-provider) | 2026-07-09 | [`DETECTION_ENSEMBLE_SERVICE_PROMPT.md`](../docs/prompts/DETECTION_ENSEMBLE_SERVICE_PROMPT.md) | — | [карточка](./archive/detection-ensemble-service.md) |
 | `cabinet-node-card-track-scenario` | Node card: сценарная ячейка под треком (collapsible) + waveform-оформление трека (как в библиотеке семплов) | 2026-07-09 | [`CABINET_NODE_CARD_TRACK_SCENARIO_PROMPT.md`](../docs/prompts/CABINET_NODE_CARD_TRACK_SCENARIO_PROMPT.md) | #318 | [карточка](./archive/cabinet-node-card-track-scenario.md) |
@@ -706,4 +708,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-10.*
+*Файл обновлён автоматически: 2026-07-11.*
