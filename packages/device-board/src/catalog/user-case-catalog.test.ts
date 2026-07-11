@@ -3,10 +3,37 @@ import { describe, expect, it, afterEach } from 'vitest';
 import { parseDeviceScenarioDocument } from '@membrana/core';
 
 import {
+  SCENARIO_ALARM_ENTRY,
+  SCENARIO_INITIAL_ENTRY,
+  SCENARIO_MAIN_ENTRY,
+} from '../graph/index.js';
+import {
   UserCaseCatalogService,
   getDefaultUserCaseCatalogService,
   resetDefaultUserCaseCatalogService,
 } from './user-case-catalog.js';
+
+/**
+ * NB6 (tooling-retro): точки входа сценария обязаны совпадать с каноническими
+ * SCENARIO_*_ENTRY — иначе pre-run validation не находит узлы, сценарий не стартует
+ * (L36: Alpha названа alpha-* → не запускалась). Гард ловит это ДО живого прогона.
+ */
+function canonicalEntryViolations(scenario) {
+  const checks = [
+    ['loops.main.entry', scenario?.loops?.main?.entry, SCENARIO_MAIN_ENTRY],
+    ['loops.alarm.entry', scenario?.loops?.alarm?.entry, SCENARIO_ALARM_ENTRY],
+    ['initial.entry', scenario?.initial?.entry, SCENARIO_INITIAL_ENTRY],
+  ];
+  return checks
+    .filter(([, actual, expected]) => actual !== undefined && actual !== expected)
+    .map(([field, actual, expected]) => `${field}: '${actual}' ≠ канон '${expected}'`);
+}
+
+function loadScenario(catalog, id) {
+  const parsed = parseDeviceScenarioDocument(catalog.loadDocument(id));
+  if (!parsed.ok) throw new Error(`parse failed: ${id}`);
+  return parsed.value.scenario;
+}
 
 const DETECTION_ALARM_IDS = [
   'usercase-detection-alarm-alpha',
@@ -131,5 +158,23 @@ describe('UserCaseCatalogService', () => {
   it('getEntry returns null for unknown id', () => {
     const catalog = new UserCaseCatalogService();
     expect(catalog.getEntry('usercase-unknown')).toBeNull();
+  });
+
+  // NB6: entry-точки Beta/Gamma канонические → pre-run стартует.
+  it('detection-alarm Beta/Gamma: точки входа канонические (SCENARIO_*_ENTRY, L36-гард)', () => {
+    const catalog = new UserCaseCatalogService();
+    for (const id of ['usercase-detection-alarm-beta', 'usercase-detection-alarm-gamma']) {
+      const violations = canonicalEntryViolations(loadScenario(catalog, id));
+      expect(violations, `${id}: ${violations.join(' · ')}`).toEqual([]);
+    }
+  });
+
+  // NB6: Alpha сейчас нарушает канон (L36) — документируем известную поломку.
+  // Когда Alpha починят (завтрашняя сценарная переделка) — тест покраснеет:
+  // сигнал перенести Alpha в предыдущий тест и удалить этот.
+  it('detection-alarm Alpha: ИЗВЕСТНАЯ L36-поломка — entry-id не канонические (удалить после фикса)', () => {
+    const catalog = new UserCaseCatalogService();
+    const violations = canonicalEntryViolations(loadScenario(catalog, 'usercase-detection-alarm-alpha'));
+    expect(violations.length, 'Alpha починена? перенеси в Beta/Gamma-тест и удали этот').toBeGreaterThan(0);
   });
 });
