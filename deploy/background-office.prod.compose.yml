@@ -13,6 +13,11 @@ name: membrana-office
 services:
   office-api:
     restart: unless-stopped
+    # Сборка через сеть хоста: на MSK-VDS (#349) docker-bridge NAT блэкхолит
+    # крупные TLS-пакеты к Cloudflare (repo.yarnpkg.com), хост же ходит туда
+    # напрямую. host-network на этапе build обходит кривой bridge.
+    build:
+      network: host
     # !override: bind API to localhost only (Caddy terminates TLS in O3)
     ports: !override
       - '127.0.0.1:${OFFICE_PORT:-3000}:3000'

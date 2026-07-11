@@ -29,6 +29,8 @@ packages/libs
 !packages/libs/journal-report-views
 !packages/libs/journal-report-views/**
 packages/services
+!packages/services/rag
+!packages/services/rag/**
 !packages/services/media-library
 !packages/services/media-library/**
 !packages/services/audio-engine
@@ -46,6 +48,8 @@ packages/services
 !packages/services/detectors
 !packages/services/detectors/**
 packages/background-office
+!packages/background-office
+!packages/background-office/**
 docs
 scripts
 node_modules

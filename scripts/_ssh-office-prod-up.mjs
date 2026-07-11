@@ -29,6 +29,7 @@ const tarArgs = [
   'docs/WHITE_PAPER.md',
   'docs/ARCHITECTURE.md',
   'docs/SERVICES.md',
+  'packages/services/rag',
   'packages/background-office',
   'deploy/background-office.prod.compose.yml',
   'deploy/office-stack.sh',
