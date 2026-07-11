@@ -104,3 +104,47 @@ index.ts:35 [INFO] [device-board] main-tick-done {runId: 'zzzz9999', tick: 3, br
   const analysis = analyzeClientLogs(parseLogText(multi));
   assert.equal(analysis.selectedRunId, 'zzzz9999');
 });
+
+// NB1 (tooling-retro): detection-alarm (basn) — живой прогон с дроном.
+const FIXTURE_DETECTION_ALARM = `
+index.ts:35 [INFO] [device-board] scenario-run-start {runId: 'basn0001', branch: 'main', linked: true}
+index.ts:35 [INFO] [device-board] main-tick-start {runId: 'basn0001', tick: 1, branch: 'main'}
+index.ts:35 [INFO] [device-board] main-tick-done {runId: 'basn0001', tick: 1, branch: 'main', detected: false, confidence: null}
+index.ts:35 [INFO] [device-board] main-tick-start {runId: 'basn0001', tick: 30, branch: 'main'}
+index.ts:35 [INFO] [device-board][report] combined-built {runId: 'basn0001', tick: 30, branch: 'main', reportId: 'c-1'}
+index.ts:35 [INFO] [device-board] make-detection-fusion {runId: 'basn0001', tick: 30, branch: 'main', presentCount: 2, combinedScore: 0.71}
+index.ts:35 [INFO] [device-board] node-enter {runId: 'basn0001', tick: 30, branch: 'main', nodeId: 'beta-main-print-detected', nodeKind: 'print'}
+index.ts:35 [INFO] [device-board] main-tick-done {runId: 'basn0001', tick: 30, branch: 'main', detected: true, confidence: 0.71}
+index.ts:35 [INFO] [device-board] main → alarm (loop-transition-policy) {runId: 'basn0001', combinedScore: 0.71}
+index.ts:35 [INFO] [device-board] main-tick-done {runId: 'basn0001', tick: 31, branch: 'alarm', detected: true, confidence: 0.68}
+index.ts:35 [INFO] [device-board] alarm → main (quiet enough) {runId: 'basn0001', rawLevel: 0.01}
+`;
+
+test('detection-alarm section: combinedScore>0, detected, alarm by score', () => {
+  const analysis = analyzeClientLogs(parseLogText(FIXTURE_DETECTION_ALARM));
+  const run = analysis.runs[0];
+  const da = run.detectionAlarm;
+  assert.equal(da.present, true);
+  assert.equal(da.confidencePositive, true);
+  assert.equal(da.maxConfidence, 0.71);
+  assert.equal(da.detectedTicks >= 1, true);
+  assert.equal(da.combinedBuilt, 1);
+  assert.equal(da.alarmEnterPolicy, 1);
+  assert.equal(da.alarmTicks, 1);
+  assert.equal(da.alarmExit, 1);
+  assert.equal(da.alarmByScore, true);
+});
+
+test('detection-alarm section absent on non-basn (MVP) fixture', () => {
+  const analysis = analyzeClientLogs(parseLogText(FIXTURE));
+  assert.equal(analysis.runs[0].detectionAlarm.present, false);
+  const report = formatAnalysisReport(analysis);
+  assert.doesNotMatch(report, /detection-alarm \(basn\)/);
+});
+
+test('detection-alarm report renders PASS lines', () => {
+  const report = formatAnalysisReport(analyzeClientLogs(parseLogText(FIXTURE_DETECTION_ALARM)));
+  assert.match(report, /detection-alarm \(basn\)/);
+  assert.match(report, /confidence>0.*PASS/);
+  assert.match(report, /alarm по combinedScore>=0\.5: PASS/);
+});

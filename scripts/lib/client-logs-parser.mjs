@@ -25,6 +25,9 @@ const REASON_RE = /reason:\s*'([^']+)'/;
 const WINDOW_SEC_RE = /windowSec:\s*(\d+)/;
 const ELAPSED_MS_RE = /elapsedMs:\s*(\d+)/;
 const PROMISE_ID_RE = /promiseId:\s*'([^']+)'/;
+// NB1: detection-alarm (basn) маркеры.
+const COMBINED_SCORE_RE = /combinedScore:\s*([\d.]+)/;
+const CONFIDENCE_RE = /confidence:\s*([\d.]+)/;
 
 /**
  * @param {string} line
@@ -260,6 +263,34 @@ export function summarizeRun(allEvents, runId) {
     };
   });
 
+  // NB1 (tooling-retro): секция detection-alarm (basn). Старые smoke-шаблоны врут на
+  // basn-сценариях; здесь — реальные маркеры combined/branch/alarm.
+  const fusionEvents = filterMessage(events, 'make-detection-fusion');
+  const fusionScores = fusionEvents
+    .map((event) => Number(COMBINED_SCORE_RE.exec(event.payload)?.[1] ?? NaN))
+    .filter((value) => !Number.isNaN(value));
+  const maxCombinedScore = fusionScores.length > 0 ? Math.max(...fusionScores) : null;
+  const combinedBuilt = filterPayload(events, '[report] combined-built');
+  // node-enter в detected-путь (print-detected), не определение узла.
+  const branchDetected = events.filter(
+    (event) => event.message === 'node-enter' && /print-detected/.test(event.payload),
+  );
+  // Вход в alarm: новый (policy), legacy (detection front), ручной.
+  // Матчим по payload — message парсится как первый токен ('main'), не вся строка.
+  const alarmEnterPolicy = events.filter((event) => event.payload.includes('main → alarm (loop-transition-policy)'));
+  const alarmEnterFront = events.filter((event) => event.payload.includes('main → alarm (detection front)'));
+  const alarmEnterManual = events.filter((event) => event.payload.includes('main → alarm (manual override)'));
+  const alarmExit = events.filter((event) => /alarm → main/.test(event.message) || /alarm → main/.test(event.payload));
+  const alarmTicks = mainTickDone.filter((event) => /branch:\s*'alarm'/.test(event.payload));
+  // per-tick detected/confidence из main-tick-done
+  const detectedTicks = mainTickDone.filter((event) => /detected:\s*true/.test(event.payload));
+  const confidences = mainTickDone
+    .map((event) => Number(CONFIDENCE_RE.exec(event.payload)?.[1] ?? NaN))
+    .filter((value) => !Number.isNaN(value));
+  const maxConfidence = confidences.length > 0 ? Math.max(...confidences) : null;
+  const hasDetectionAlarm =
+    fusionEvents.length > 0 || combinedBuilt.length > 0 || alarmEnterPolicy.length > 0;
+
   return {
     runId,
     onStart: {
@@ -328,6 +359,28 @@ export function summarizeRun(allEvents, runId) {
         trendsDone.length >= 2 &&
         publishDone.length >= 2 &&
         maxTick >= 60,
+    },
+    detectionAlarm: {
+      present: hasDetectionAlarm,
+      fusionEvents: fusionEvents.length,
+      maxCombinedScore,
+      combinedBuilt: combinedBuilt.length,
+      detectedTicks: detectedTicks.length,
+      maxConfidence,
+      branchDetected: branchDetected.length,
+      alarmEnterPolicy: alarmEnterPolicy.length,
+      alarmEnterFront: alarmEnterFront.length,
+      alarmEnterManual: alarmEnterManual.length,
+      alarmTicks: alarmTicks.length,
+      alarmExit: alarmExit.length,
+      // Живой S2 подтверждён, если confidence из main-tick-done > 0 (=combinedScore при
+      // наличии fusion, Фаза A; combinedScore в make-detection-fusion схлопнут в дампе).
+      confidencePositive: (maxConfidence ?? 0) > 0,
+      // Вход в alarm по combinedScore>=0.5: детекция была И alarm стартовал.
+      alarmByScore:
+        (maxConfidence ?? 0) >= 0.5 &&
+        detectedTicks.length > 0 &&
+        alarmEnterPolicy.length + alarmEnterFront.length > 0,
     },
     smokeV20Async: {
       hasAsyncPipeline,
@@ -425,6 +478,29 @@ export function formatAnalysisReport(analysis) {
     }
     if (run.anomalies.length > 0) {
       lines.push(`anomalies: ${run.anomalies.join(' · ')}`);
+    }
+    if (run.detectionAlarm.present) {
+      const da = run.detectionAlarm;
+      lines.push('');
+      lines.push('detection-alarm (basn):');
+      lines.push(
+        `  confidence>0 (ансамбль считал вживую): ${da.confidencePositive ? 'PASS' : 'FAIL'} (max confidence=${da.maxConfidence ?? '—'}, fusion×${da.fusionEvents}, combined-built×${da.combinedBuilt})`,
+      );
+      lines.push(
+        `  detected тиков: ${da.detectedTicks}`,
+      );
+      lines.push(
+        `  branch→detected: ${da.branchDetected} · вход alarm: policy×${da.alarmEnterPolicy} front×${da.alarmEnterFront} manual×${da.alarmEnterManual}`,
+      );
+      lines.push(
+        `  alarm-тиков: ${da.alarmTicks} · выходов alarm→main: ${da.alarmExit}`,
+      );
+      lines.push(
+        `  alarm по combinedScore>=0.5: ${da.alarmByScore ? 'PASS' : 'FAIL'}`,
+      );
+      lines.push(
+        '  (NB: smoke MVP/v2.0 ниже — старые trends-шаблоны, для detection-alarm их FAIL по trends/fn-1 = несовпадение шаблона, не баг)',
+      );
     }
     lines.push('');
     lines.push('smoke MVP microphone:');
