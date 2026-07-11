@@ -24,6 +24,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-insight-to-sprint`](./membrana-insight-to-sprint/SKILL.md) | adopted инсайт → спринт: task-промпт, реестр `insightId`, точка входа новой сессии |
 | [`membrana-client-logs-parsing`](./membrana-client-logs-parsing/SKILL.md) | «читай лог», `yarn logs:parse`, gate-true / reports vs tracks |
 | [`membrana-background-servers`](./membrana-background-servers/SKILL.md) | background-office vs media vs cabinet |
+| [`membrana-office-vds-deploy`](./membrana-office-vds-deploy/SKILL.md) | деплой office на MSK-VDS office.mmbrn.tech, фильтр сети / SSH виснет / LE timeout / build 429 / rag-контекст, OM3 |
 | [`membrana-consilium`](./membrana-consilium/SKILL.md) | `yarn consilium`, архитектурный спор, ≥20 реплик |
 | [`membrana-team-evening-feedback`](./membrana-team-evening-feedback/SKILL.md) | `yarn team-evening-feedback`, вечерняя ретроспектива, `ritual:evening` |
 | [`membrana-night-sprint`](./membrana-night-sprint/SKILL.md) | `night:open`, Night Build, handoff |
