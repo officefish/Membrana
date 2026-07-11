@@ -12936,10 +12936,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-11",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-11",
+      "archiveNotes": "Night Build tooling-retro: NB1-NB6 смёржены (#362-#367) — logs:parse basn, net:diag, code-review --staged, close-github tolerance, ADR skill, entry-id гард",
       "sprintKind": "night-build",
       "leadPersona": "ozhegov",
       "supportPersonas": [

@@ -181,6 +181,7 @@
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `night-triage-routine-pilot` | Пилот routine «Ночной триаж реестра»: Claude Code Routine вместо самодельной ночной обвязки (ghost/orphan/stale, отчёт + draft PR) | M | [`NIGHT_TRIAGE_ROUTINE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_ROUTINE_PROMPT.md) | [#344](https://github.com/officefish/Membrana/issues/344) |
 | `office-vds-migration` | Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM3) | M | [`OFFICE_VDS_MIGRATION_PROMPT.md`](../docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md) | [#349](https://github.com/officefish/Membrana/issues/349) |
+| `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`LOOP_SWITCH_CONTROL_ADR.md`](../docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
 
 ---
 
@@ -188,6 +189,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `tooling-retro-2026-07-11` | Night Build: tooling-retro — 6 фаз тулинга по итогам сессии 2026-07-11 (logs:parse basn, net:diag, code-review --staged, task:close-github tolerance, ADR skill, entry-id pack-test) | 2026-07-11 | [`TOOLING_RETRO_NIGHT_2026_07_11_PROMPT.md`](../docs/prompts/TOOLING_RETRO_NIGHT_2026_07_11_PROMPT.md) | — | [карточка](./archive/tooling-retro-2026-07-11.md) |
 | `deploy-image-tag-default` | S: cabinet:deploy:image:prod — дефолт тега main вместо latest (latest = старый релизный образ → откат прода 09.07) | 2026-07-10 | — | — | [карточка](./archive/deploy-image-tag-default.md) |
 | `pr-ship-no-commit` | S: pr:ship --no-commit — one-shot флоу для уже закоммиченных веток | 2026-07-10 | — | — | [карточка](./archive/pr-ship-no-commit.md) |
 | `comp-detection-alarm` | Competition Sprint: полный детекционный UserCase на basn-палитре (alpha/beta/gamma) | 2026-07-10 | [`COMPETITION_SPRINT_BRIEF.md`](../docs/competition-sprint/comp-detection-alarm-2026-07-10/COMPETITION_SPRINT_BRIEF.md) | — | [карточка](./archive/comp-detection-alarm.md) |

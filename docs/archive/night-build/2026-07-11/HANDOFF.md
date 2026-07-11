@@ -1,3 +1,24 @@
+# Night Build handoff — 2026-07-11
+
+> Epic: `tooling-retro-2026-07-11`
+> Закрыто: `2026-07-11T20:19:13.009Z` (`yarn night:close`)
+> Промпт: `docs/prompts/TOOLING_RETRO_NIGHT_2026_07_11_PROMPT.md`
+
+## Для утреннего standup
+
+1. Прочитать лог ниже и решить: **merge** `night/tooling-retro-2026-07-11-2026-07-11` → `techies68` | **continue night** | **rollback**.
+2. `yarn ritual:day` — учесть блокеры в `MAIN_DAY_ISSUE`.
+3. После merge PR: `yarn task:archive cabinet-mp4-nb*` по фазам.
+
+## Рекомендуемые команды
+
+```bash
+git log --oneline -10
+yarn turbo run lint typecheck test build --continue
+```
+
+## Лог ночи
+
 # Night Build log
 
 ## Open — 2026-06-14T18:06:19.233Z
@@ -171,3 +192,21 @@
 ## Checkpoint NB6 — 2026-07-11T20:18:11.498Z
 - Status: **pass**
 - Note: entry-id гард 12/12, ловит L36 до живого прогона
+
+
+---
+
+## Шаблон итога (заполнить вручную или агентом)
+
+| Фаза | Статус | PR / commit |
+|------|--------|-------------|
+| NB0 | pending / done / deferred | |
+| NB1 | pending / done / deferred | |
+| NB2 | pending / done / deferred | |
+| NB3 | pending / done / deferred | |
+
+**Блокеры:**
+
+- …
+
+**LGTM Vesnin:** pending
