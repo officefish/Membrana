@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
@@ -91,7 +91,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     };
   }, [service]);
 
-  const samples = snapshot.samplesByCollection[selectedId] ?? [];
+  const samples = useMemo(
+    () => snapshot.samplesByCollection[selectedId] ?? [],
+    [snapshot.samplesByCollection, selectedId],
+  );
   const selected = snapshot.collections.find((c) => c.id === selectedId);
   // NB3: фильтр по метке + прогресс разметки (HG1-UX).
   const filteredSamples =
