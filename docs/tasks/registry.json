@@ -12889,6 +12889,25 @@
         "ozhegov"
       ],
       "notes": "Консилиум 25 реплик ДО кода — GO с условиями (docs/seanses/night-triage-routine-2026-07-10.md): N=14 не канон (dwell-time в отчёт), daily draft PR, секрет-гейт блокирующий, детерминизм-критерий, issues:audit = эталон приёмки не CI-гейт. Бриф: docs/day-sprint/night-triage-routine-2026-07-10/SPRINT_BRIEF.md. Стоп-условие: preview недоступен / квота — заморозка + INSIGHT."
+    },
+    {
+      "id": "office-vds-migration",
+      "title": "Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM3)",
+      "promptPath": "docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md",
+      "githubIssue": 349,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-07-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "sprintKind": "day-sprint",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "rodchenko"
+      ],
+      "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM2 блокирован до получения IP/пароля/домена в .env. Fly night-hunt не затрагивается."
     }
   ]
 }
