@@ -229,7 +229,8 @@
     "logs:parse:shell": "node scripts/parse-studio-shell-log.mjs",
     "logs:parse:studio": "node scripts/parse-client-logs.mjs --file logs/apps/studio/logs.txt",
     "desktop:support-collect": "node scripts/desktop-support-collect.mjs",
-    "usercase": "node scripts/usercase.mjs"
+    "usercase": "node scripts/usercase.mjs",
+    "net:diag": "node scripts/net-diag.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
