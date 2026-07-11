@@ -12928,6 +12928,24 @@
         "vesnin"
       ],
       "notes": "Спека: консилиум docs/seanses/detection-alarm-loop-switch-2026-07-11.md (#355, тема1) + ADR docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md (#356, Р1/Р2/Р3). Фазы: A ядро темы1 (fusion combinedScore→lastDetection, front, loop-transition-policy гистерезис0.15/debounce3, порог branch-on-detection/0.5, пустое окно молчащий skip), B effectiveLoop-sync+canSwitchMode-гейтинг+read-only индикатор, C pure GetMicrophone/GetAudioStream, D Alpha entry-id L36. mode-решение: normal|alarm intent + effectiveLoop, без auto. 703 базовых теста зелёные, сценарии в пикере не менять (только платформа). Завтра — переделка сценариев под новшества."
+    },
+    {
+      "id": "tooling-retro-2026-07-11",
+      "title": "Night Build: tooling-retro — 6 фаз тулинга по итогам сессии 2026-07-11 (logs:parse basn, net:diag, code-review --staged, task:close-github tolerance, ADR skill, entry-id pack-test)",
+      "promptPath": "docs/prompts/TOOLING_RETRO_NIGHT_2026_07_11_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-07-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "sprintKind": "night-build",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "NB1 logs:parse detection-alarm шаблон (combinedScore/branch-on-detection/alarm/detected+confidence по тикам); NB2 yarn net:diag <ip> батарея (TCP-banner, DF-ping малый/крупный, tracert, ssh-vvv) → 00-summary бандл; NB3 code-review --staged (ревью только staged, убрать stash-пляску); NB4 task:close-github skip-missing archive-cards с варнингом; NB5 ADR скилл+шаблон (лёгкая запись решения ниже консилиум-гейта) + заметка в консилиум про эхо агенды; NB6 pack-тест entry-точки == SCENARIO_*_ENTRY (L36-гард). Все S-тулинг, без core-изменений. База main."
     }
   ]
 }

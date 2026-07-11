@@ -142,3 +142,8 @@
 ## Checkpoint NB8 — 2026-07-08T17:43:08.861Z
 - Status: **pass**
 - Note: AGENTS tooling doc + ship/doctor skills
+
+## Re-open — 2026-07-11T19:10:01.851Z
+- Epic: `tooling-retro-2026-07-11`
+- Continue: no
+
