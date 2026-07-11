@@ -2,7 +2,17 @@ import type { DeviceScenarioDocument, ScenarioGraphNode, ScenarioSubgraph, Scena
 import { createStringValue } from '@membrana/core';
 
 import { ALARM_LOOP_PAUSE_MS } from './alarm-constants.js';
-import { isDetectionFrontEdge } from './detection-front.js';
+import {
+  advanceLoopTransition,
+  DEFAULT_LOOP_TRANSITION_POLICY,
+  INITIAL_LOOP_TRANSITION_STATE,
+  type LoopTransitionPolicy,
+  type LoopTransitionState,
+} from './loop-transition-policy.js';
+import {
+  clampDetectionThreshold,
+  isBranchOnDetectionNodeKind,
+} from '../graph/branch-on-detection-node.js';
 import { runSubgraphOnce } from './exec-subgraph.js';
 import { CollectRuntimeStore } from './collect-runtime-store.js';
 import { ReporterRuntimeStore } from './reporter-runtime-store.js';
@@ -25,7 +35,6 @@ import { isReferenceValid } from './reference-validity.js';
 import {
   createIdleScenarioRuntimeState,
   runtimeBranchToHandlerBranch,
-  type ScenarioDetectionResult,
   type ScenarioRuntimeBranch,
   type ScenarioRuntimeState,
   type ScenarioStopReason,
@@ -144,6 +153,13 @@ export class ScenarioRuntime {
 
   /** Источник истины ручного режима (MP7b RT3). Переживает load/start. */
   private mode: RuntimeMode = 'normal';
+
+  /**
+   * Состояние политики входа main→alarm (консилиум detection-alarm-loop-switch, вариант A):
+   * платформа владеет ВХОДОМ по combinedScore (гистерезис/debounce), выход — за узлами
+   * alarm-лупа сценария (evaluate-sound-level / proximity). Сбрасывается в load().
+   */
+  private loopTransitionState: LoopTransitionState = INITIAL_LOOP_TRANSITION_STATE;
 
   private scenarioStartedAtMs: number | null = null;
 
@@ -716,7 +732,8 @@ export class ScenarioRuntime {
       });
 
       let mainIteration = 0;
-      let previousMainDetection: ScenarioDetectionResult | null = null;
+      const loopEntryPolicy = this.resolveLoopEntryPolicy(document.scenario.loops.main);
+      this.loopTransitionState = INITIAL_LOOP_TRANSITION_STATE;
 
       this.host.log('scenario-run-start', {
         runId: this.runId,
@@ -768,8 +785,8 @@ export class ScenarioRuntime {
             signal,
             'manual',
           );
-          // После выхода из override пересобираем базовую детекцию.
-          previousMainDetection = null;
+          // После снятия override — свежий старт политики входа (без залипания).
+          this.loopTransitionState = INITIAL_LOOP_TRANSITION_STATE;
           continue;
         }
 
@@ -816,9 +833,24 @@ export class ScenarioRuntime {
           elapsedMs: mainTickElapsedMs,
         });
 
-        // Авто detection-front работает только в normal-режиме.
-        if (this.mode === 'normal' && isDetectionFrontEdge(previousMainDetection, lastDetection)) {
-          this.host.log('main → alarm (detection front)', {
+        // Вход в alarm — по loop-transition-policy (combinedScore + гистерезис/debounce),
+        // а не по соло-templateId (консилиум detection-alarm-loop-switch, вариант A).
+        // Выход из alarm остаётся за узлами alarm-лупа сценария.
+        // `confidence` = combinedScore, когда в графе есть make-detection-fusion
+        // (fusion — последний писатель lastDetection, #340/#341); без fusion — соло-confidence
+        // (legacy fallback). В обоих случаях это метрика, по которой резолвится тот же порог.
+        const wasInAlarm = this.loopTransitionState.inAlarm;
+        this.loopTransitionState = advanceLoopTransition(
+          this.loopTransitionState,
+          {
+            score: lastDetection?.confidence ?? 0,
+            present: lastDetection !== null,
+          },
+          loopEntryPolicy,
+        );
+        if (this.mode === 'normal' && !wasInAlarm && this.loopTransitionState.inAlarm) {
+          this.host.log('main → alarm (loop-transition-policy)', {
+            combinedScore: lastDetection?.confidence ?? null,
             templateId: lastDetection?.templateId,
           });
           await this.runAlarmLoop(
@@ -827,9 +859,10 @@ export class ScenarioRuntime {
             signal,
             'auto',
           );
+          // Выход из alarm-лупа (по узлам сценария) → сброс политики: следующий
+          // вход требует нового пересечения порога, без немедленного повторного входа.
+          this.loopTransitionState = INITIAL_LOOP_TRANSITION_STATE;
         }
-
-        previousMainDetection = lastDetection;
 
         if (this.loopTickPauseMs > 0) {
           try {
@@ -873,8 +906,26 @@ export class ScenarioRuntime {
   }
 
   /**
+   * Порог входа loop-transition-policy = порог `branch-on-detection` main-графа
+   * (единый источник и для ветвления, и для лупа; консилиум), дефолт 0.5 при отсутствии узла.
+   */
+  private resolveLoopEntryPolicy(mainSubgraph: ScenarioSubgraph): LoopTransitionPolicy {
+    const branchNode = mainSubgraph.nodes.find((node) =>
+      isBranchOnDetectionNodeKind(node.nodeKind),
+    );
+    if (branchNode === undefined) {
+      return DEFAULT_LOOP_TRANSITION_POLICY;
+    }
+    return {
+      ...DEFAULT_LOOP_TRANSITION_POLICY,
+      enterThreshold: clampDetectionThreshold(branchNode.detectionThreshold),
+    };
+  }
+
+  /**
    * Alarm-loop. `trigger`:
-   *  - `auto` — вход по detection-front в normal-режиме; выход по тишине.
+   *  - `auto` — вход по loop-transition-policy (combinedScore) в normal-режиме; выход по узлам
+   *    alarm-лупа сценария (evaluate-sound-level / proximity — вариант A консилиума).
    *  - `manual` — ручной override (`setMode('alarm')`); держится, пока режим `alarm`,
    *    выход немедленно при `setMode('normal')` (без проверки уровня).
    * В любом триггере: пока `mode === 'alarm'`, alarm удерживается независимо от уровня.
