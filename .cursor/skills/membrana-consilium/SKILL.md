@@ -35,6 +35,15 @@ Output: `docs/seanses/<topic-slug>.md` (or `docs/discussions/` per script).
 
 - GitHub Issue / task prompt / PR LGTM.
 
+## Agenda drift (lesson 2026-07-11)
+
+`yarn consilium` on a familiar domain tends to drift into the usual narrative and NOT
+address the brief's specific points. Prevention: **number the contentious points** and in
+the question explicitly demand an echo of each point with a verdict. If a run leaves points
+uncovered — do not pass the protocol off as the answer; re-run with a tighter brief, OR (if
+the topic is below the gate) record via `membrana-adr` instead of a full consilium. Precedent:
+loop-switch (#355) — consilium drifted twice, 3 topics moved to an ADR (#356).
+
 ## Output
 
 Path to saved seans; 3-bullet consensus summary for user.
