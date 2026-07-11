@@ -781,6 +781,14 @@ const DeviceBoardShellInner: React.FC<{
     graph.syncStatus !== 'saving' &&
     graph.syncStatus !== 'loading';
   const mode = graph.mode;
+  // ADR loop-switch Р1/Р2: тумблер отражает ФАКТИЧЕСКИЙ активный луп (activeBranch при run,
+  // ручной intent до старта); заблокирован под жёстким захватом (allowFieldSetMode=false).
+  const effectiveActiveAlarm = graph.runtimeState.isRunning
+    ? graph.runtimeState.activeBranch === 'alarm'
+    : mode === 'alarm';
+  const modeToggleDisabled =
+    !graph.runtimeState.isRunning ||
+    (graph.serverFirstFlags != null && !graph.serverFirstFlags.allowFieldSetMode);
   const isSaving = graph.syncStatus === 'saving';
   const isCanvasReadOnly = scenarioEditFlags.isCanvasStructureReadOnly;
 
@@ -1622,28 +1630,32 @@ const DeviceBoardShellInner: React.FC<{
                   onStop={() => graph.stopScenario('user')}
                 />
 
+              {/* ADR loop-switch Р1: тумблер отражает ФАКТИЧЕСКИЙ активный луп
+                  (activeBranch) — авто-вход по detection тоже подсвечивает «Тревога»;
+                  клик пишет ручной intent (setMode). Р2: под жёстким захватом заблокирован
+                  (allowFieldSetMode=false), но показывает фактический луп (наблюдение). */}
               <div role="group" aria-label="Режим" className="join">
                 <button
                   type="button"
-                  aria-pressed={mode === 'normal'}
-                  className={`btn btn-sm join-item ${mode === 'normal' ? 'btn-info' : 'btn-ghost'}`}
+                  aria-pressed={!effectiveActiveAlarm}
+                  className={`btn btn-sm join-item ${!effectiveActiveAlarm ? 'btn-info' : 'btn-ghost'}`}
                   onClick={() => graph.setMode('normal')}
-                  disabled={!graph.runtimeState.isRunning}
+                  disabled={modeToggleDisabled}
                 >
                   Обычный
                 </button>
                 <button
                   type="button"
-                  aria-pressed={mode === 'alarm'}
-                  className={`btn btn-sm join-item ${mode === 'alarm' ? 'btn-warning' : 'btn-ghost'}`}
+                  aria-pressed={effectiveActiveAlarm}
+                  className={`btn btn-sm join-item ${effectiveActiveAlarm ? 'btn-warning' : 'btn-ghost'}`}
                   onClick={() => graph.setMode('alarm')}
-                  disabled={!graph.runtimeState.isRunning}
+                  disabled={modeToggleDisabled}
                 >
                   Тревога
                 </button>
               </div>
               <span className="sr-only" role="status" aria-live="polite">
-                Режим: {mode === 'alarm' ? 'тревога' : 'обычный'}
+                Режим: {effectiveActiveAlarm ? 'тревога' : 'обычный'}
                 {traceCopyStatus !== null ? `. ${traceCopyStatus}` : ''}
               </span>
             </>
