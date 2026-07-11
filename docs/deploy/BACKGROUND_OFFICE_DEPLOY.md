@@ -16,7 +16,7 @@
 | `deploy/background-office.prod.compose.yml` | prod override (`127.0.0.1:3000`) |
 | `deploy/generate-office-env.sh` | генерация `/etc/membrana/office.env` |
 | `deploy/office-stack.sh` | `build` / `up` / `down` / `ps` / `logs` на VPS |
-| `deploy/Caddyfile.office.membrana.space` | Caddy site block (O3) |
+| `deploy/Caddyfile.office.template` | Caddy site block (O3), домен из `OFFICE_DOMAIN` |
 | `scripts/_ssh-office-tls-setup.mjs` | установка/проверка TLS |
 | `scripts/_ssh-office-smoke.mjs` | приёмка O4 (health, webhook, API) |
 | `scripts/_ssh-office-show-token.mjs` | показать `API_INTERNAL_TOKEN` с VPS |
@@ -28,20 +28,27 @@
 
 ## 1. Данные для сеанса
 
+Параметры сеанса берутся из корневого `.env` (значений в git нет):
+
 ```
-VPS_HOST=72.56.27.58
+VPS_HOST=$BACKGROUND_OFFICE_IPV4
 SSH_USER=root
-DOMAIN=office.membrana.space
-GIT_BRANCH=techies68
+DOMAIN=$OFFICE_DOMAIN        # office.<домен>
+GIT_BRANCH=main
 ```
 
-Секреты интеграций (`ANTHROPIC_API_KEY`, `LINEAR_*`, `GITHUB_TOKEN`) — в `/etc/membrana/office.env` на VPS, **отдельно** от `media.env`.
+> **Миграция #349 (2026-07-11):** office переезжает с общего VPS `72.56.27.58`
+> (`office.membrana.space`, prod 2026-06-13 … cutover) на **выделенный VDS** с новым
+> доменом. Старый инстанс гасится после cutover (OM3). Ветка `techies68` мертва —
+> деплой только с `main`.
+
+Секреты интеграций (`ANTHROPIC_API_KEY`, `LINEAR_*`, `GITHUB_TOKEN`) — в `/etc/membrana/office.env` на VDS.
 
 Локальные SSH-хелперы (читают `.env`, пароль не коммитить):
 
 ```bash
 node scripts/_ssh-office-check.mjs
-node scripts/_ssh-office-prod-up.mjs   # sync O1+O2 артефактов и up на VPS
+node scripts/_ssh-office-prod-up.mjs   # sync O1+O2 артефактов и up на VDS
 node scripts/_ssh-office-tls-setup.mjs # O3: Caddy site block
 node scripts/_ssh-office-tls-setup.mjs --check-dns
 node scripts/_ssh-office-smoke.mjs     # O4: prod smoke
@@ -49,32 +56,33 @@ node scripts/_ssh-office-smoke.mjs     # O4: prod smoke
 
 | `.env` ключ | Назначение |
 |-------------|------------|
-| `BACKGROUND_MEDIA_IPV4` или `BACKGROUND_OFFICE_IPV4` | IP VPS (`72.56.27.58`) |
-| `BACKGROUND_MEDIA_PASSWORD` или `BACKGROUND_OFFICE_PASSWORD` | root SSH |
-| `OFFICE_DOMAIN` | опционально, default `office.membrana.space` |
+| `BACKGROUND_OFFICE_IPV4` | IP VDS office — **обязателен** (fallback на `BACKGROUND_MEDIA_*` удалён, #349) |
+| `BACKGROUND_OFFICE_PASSWORD` | root SSH — **обязателен** |
+| `OFFICE_DOMAIN` | **обязателен** — дефолт удалён, протухший домен целился бы в старый прод |
 
-## 2. Требования к VPS
+## 2. Требования к VDS
 
 | Параметр | Значение |
 |----------|----------|
-| Хост / IP | см. §1 (тот же VPS, что `background-media`) |
+| Профиль | выделенный VDS: 2 vCPU / 4 GB RAM / 40–60 GB NVMe (запас под RAG-контур T3) |
 | SSH user | `root` |
-| DNS (O3) | `office.membrana.space` → A-record `72.56.27.58` |
+| DNS (O3) | `$OFFICE_DOMAIN` → A-record на IP VDS |
 | Docker | Engine 24+ + Compose v2 |
-| Stateful storage | **не нужен** (office stateless) |
+| Stateful storage | **не нужен** (office stateless; диск — запас под будущий RAG) |
 | Порты | API `127.0.0.1:3000` (не публичный); наружу **443** через Caddy (O3) |
 
-Office и media — **разные** compose-проекты (`membrana-office` / `membrana-media`), **разные** env-файлы.
+До миграции office соседствовал с media на одном VPS; на выделенном VDS compose-проект
+один — `membrana-office`.
 
 ---
 
 ## 3. Подготовка сервера (один раз)
 
-Предполагается, что media уже развёрнут (Docker, git clone в `/root/membrana`). Дополнительно:
+На свежем VDS: установить Docker Engine 24+ / Compose v2, `git clone` репо в `/root/membrana`. Затем:
 
 ```bash
 cd /root/membrana
-git pull origin techies68
+git pull origin main
 
 chmod +x deploy/generate-office-env.sh deploy/office-stack.sh
 
@@ -98,7 +106,7 @@ curl -s http://127.0.0.1:3000/health
 ```
 
 **Проверено (O2):** `2026-06-12` — `membrana-office-office-api-1` **healthy**, bind `127.0.0.1:3000`, 5 prompt files loaded.  
-С Windows (до push в `techies68`): `node scripts/_ssh-office-prod-up.mjs` — tarball исходников + build/up на VPS.
+С Windows (до push в `main`): `node scripts/_ssh-office-prod-up.mjs` — tarball исходников + build/up на VDS.
 
 Альтернатива без скрипта:
 
@@ -129,7 +137,7 @@ Office использует **тот же** Caddy на VPS, что и media — 
 
 Caddy выпустит Let's Encrypt-сертификат, когда DNS укажет на VPS:
 
-1. В панели DNS: **A** `office` → `72.56.27.58` (или `office.membrana.space` → `72.56.27.58`).
+1. В панели DNS: **A** `office` → IP VDS (`$BACKGROUND_OFFICE_IPV4`).
 2. Дождаться пропагации. Проверка:
 
 ```bash
@@ -151,7 +159,7 @@ sudo systemctl reload caddy
 curl -s https://office.membrana.space/health
 ```
 
-Конфиг в репозитории: [`deploy/Caddyfile.office.membrana.space`](../../deploy/Caddyfile.office.membrana.space).
+Конфиг в репозитории: [`deploy/Caddyfile.office.template`](../../deploy/Caddyfile.office.template) — домен подставляется из `OFFICE_DOMAIN` скриптом tls-setup.
 
 ### 5b. Ручной сертификат
 
@@ -160,9 +168,10 @@ curl -s https://office.membrana.space/health
 ### 5c. Legacy (ручная установка Caddyfile)
 
 ```bash
-sudo cp deploy/Caddyfile.office.membrana.space /etc/caddy/Caddyfile.d/office.caddy
+# отрендерить шаблон вручную (обычно это делает _ssh-office-tls-setup.mjs)
+sed "s/{{OFFICE_DOMAIN}}/$OFFICE_DOMAIN/" deploy/Caddyfile.office.template | sudo tee /etc/caddy/Caddyfile.d/office.caddy
 sudo systemctl reload caddy
-curl -s https://office.membrana.space/health
+curl -s "https://$OFFICE_DOMAIN/health"
 ```
 
 ---

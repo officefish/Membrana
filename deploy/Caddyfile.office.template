@@ -1,0 +1,15 @@
+# Caddy v2 — production site block for @membrana/background-office
+# Template: {{OFFICE_DOMAIN}} подставляется из корневого .env (OFFICE_DOMAIN)
+# скриптом scripts/_ssh-office-tls-setup.mjs → /etc/caddy/Caddyfile.d/office.caddy
+# TLS: automatic Let's Encrypt (needs DNS A → VDS, ports 80+443 open)
+
+{{OFFICE_DOMAIN}} {
+	encode gzip
+	reverse_proxy 127.0.0.1:3000
+}
+
+# Optional: restrict /docs in production (Swagger)
+# @swagger path /docs*
+# handle @swagger {
+# 	respond "Not found" 404
+# }

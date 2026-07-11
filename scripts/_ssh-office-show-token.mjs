@@ -6,19 +6,13 @@
  *   node scripts/_ssh-office-show-token.mjs
  *   node scripts/_ssh-office-show-token.mjs --quiet
  *
- * Requires BACKGROUND_OFFICE_* or BACKGROUND_MEDIA_* in .env.
+ * Requires BACKGROUND_OFFICE_IPV4/PASSWORD + OFFICE_DOMAIN in .env (#349).
  */
-import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Client } from 'ssh2';
-import { getOfficeSshConfig } from './_ssh-office-config.mjs';
+import { getOfficeSshConfig, getOfficeDomain } from './_ssh-office-config.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const quiet = process.argv.includes('--quiet');
-const envText = readFileSync(resolve(root, '.env'), 'utf8');
-const get = (key) => envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
-const domain = get('OFFICE_DOMAIN') || 'office.membrana.space';
+const domain = getOfficeDomain();
 
 const cmd = `grep '^API_INTERNAL_TOKEN=' /etc/membrana/office.env | cut -d= -f2-`;
 

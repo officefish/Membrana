@@ -55,7 +55,7 @@ fly secrets set -a membrana-office-night-hunt \
   NIGHT_HUNT_ENABLED=true \
   OPENROUTER_API_KEY="<openrouter>" \
   OPENROUTER_MODEL=anthropic/claude-haiku-4.5 \
-  NIGHT_HUNT_BASE_BRANCH=techies68
+  NIGHT_HUNT_BASE_BRANCH=main
 ```
 
 `ANTHROPIC_*` и `LINEAR_*` обязательны для zod-схемы office v0.1 даже если Night Hunt использует только OpenRouter.
