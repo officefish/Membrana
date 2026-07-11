@@ -7,17 +7,11 @@
  *   node scripts/_ssh-office-smoke.mjs
  *   node scripts/_ssh-office-smoke.mjs --external   # also curl from this machine
  */
-import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Client } from 'ssh2';
-import { getOfficeSshConfig } from './_ssh-office-config.mjs';
+import { getOfficeSshConfig, getOfficeDomain } from './_ssh-office-config.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const external = process.argv.includes('--external');
-const envText = readFileSync(resolve(root, '.env'), 'utf8');
-const get = (key) => envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
-const domain = get('OFFICE_DOMAIN') || 'office.membrana.space';
+const domain = getOfficeDomain();
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail

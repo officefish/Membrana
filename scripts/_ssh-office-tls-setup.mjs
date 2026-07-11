@@ -1,34 +1,32 @@
 #!/usr/bin/env node
 /**
- * Install Caddy reverse proxy for office.membrana.space → 127.0.0.1:3000.
- * TLS: Let's Encrypt (default) once DNS A-record points to VPS.
- * Coexists with media.caddy on the same Caddy instance.
+ * Install Caddy reverse proxy for $OFFICE_DOMAIN → 127.0.0.1:3000.
+ * TLS: Let's Encrypt (default) once DNS A-record points to VDS.
+ * Site block рендерится из deploy/Caddyfile.office.template.
  *
  * Usage:
  *   node scripts/_ssh-office-tls-setup.mjs
  *   node scripts/_ssh-office-tls-setup.mjs --check-dns
  *
- * Env (.env, not committed):
- *   BACKGROUND_OFFICE_IPV4 or BACKGROUND_MEDIA_IPV4
- *   BACKGROUND_OFFICE_PASSWORD or BACKGROUND_MEDIA_PASSWORD
- *   OFFICE_DOMAIN=office.membrana.space   (optional)
+ * Env (.env, not committed) — все обязательны (#349):
+ *   BACKGROUND_OFFICE_IPV4, BACKGROUND_OFFICE_PASSWORD, OFFICE_DOMAIN
  */
 import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { Client } from 'ssh2';
-import { getOfficeSshConfig } from './_ssh-office-config.mjs';
+import {
+  getOfficeSshConfig,
+  getOfficeDomain,
+  renderOfficeCaddyfile,
+  repoRoot,
+} from './_ssh-office-config.mjs';
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const envText = readFileSync(resolve(root, '.env'), 'utf8');
-const get = (key) => envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
-
-const domain = get('OFFICE_DOMAIN') || 'office.membrana.space';
+const domain = getOfficeDomain();
 const mode = process.argv.includes('--check-dns') ? 'check-dns' : 'setup';
 
-const caddyfile = readFileSync(
-  resolve(root, 'deploy/Caddyfile.office.membrana.space'),
-  'utf8',
+const caddyfile = renderOfficeCaddyfile(
+  readFileSync(resolve(repoRoot, 'deploy/Caddyfile.office.template'), 'utf8'),
+  domain,
 ).replace(/^#.*\n/gm, '').trim();
 
 const remoteScripts = {

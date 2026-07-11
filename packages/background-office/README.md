@@ -78,7 +78,7 @@ Smoke VPS: `node scripts/_ssh-office-smoke.mjs` (если скрипт есть 
 | Health | `GET /health` (без токена) |
 | Env | `/etc/membrana/office.env` (mode `600`, не в git) |
 | Compose | `deploy/office-stack.sh` + `deploy/background-office.prod.compose.yml` |
-| TLS | Caddy + Let's Encrypt (`deploy/Caddyfile.office.membrana.space`) |
+| TLS | Caddy + Let's Encrypt (`deploy/Caddyfile.office.template`, домен из `OFFICE_DOMAIN`) |
 | Linear webhook | `POST https://office.membrana.space/webhooks/linear` |
 
 ### Секреты на VPS (`/etc/membrana/office.env`)

@@ -91,7 +91,7 @@ fly secrets set -a membrana-office-night-hunt \
   NIGHT_HUNT_ENABLED=true \
   OPENROUTER_API_KEY="<из .env.llm-proxy>" \
   OPENROUTER_MODEL=anthropic/claude-haiku-4.5 \
-  NIGHT_HUNT_BASE_BRANCH=techies68
+  NIGHT_HUNT_BASE_BRANCH=main
 ```
 
 | Переменная | Для Night Hunt | Примечание |
@@ -181,7 +181,7 @@ Repo secrets: `OFFICE_URL`, `OFFICE_API_TOKEN` → workflow `.github/workflows/n
    NIGHT_HUNT_ENABLED=true
    OPENROUTER_API_KEY=...
    OPENROUTER_MODEL=anthropic/claude-haiku-4.5
-   NIGHT_HUNT_BASE_BRANCH=techies68
+   NIGHT_HUNT_BASE_BRANCH=main
    ```
    И **`GITHUB_TOKEN` с repo write**, если на VPS был только read.
 
