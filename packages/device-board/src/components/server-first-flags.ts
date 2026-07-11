@@ -120,7 +120,9 @@ export function resolveServerFirstFlags(input: ServerFirstFlagsInput): ServerFir
       blockLocalRun: mode === 'hard',
       allowFieldPause: false,
       allowFieldStop: true,
-      allowFieldSetMode: false,
+      // ADR loop-switch Р2: мягкий захват — оператор переключает режим main↔alarm;
+      // жёсткий — строго наблюдение (тумблер заблокирован).
+      allowFieldSetMode: mode !== 'hard',
       hideFieldRuntimeControls: false,
       blockStructureEdit: true,
     };

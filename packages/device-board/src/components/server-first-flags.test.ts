@@ -58,7 +58,7 @@ describe('resolveServerFirstFlags', () => {
     expect(flags.allowFieldStop).toBe(false);
   });
 
-  it('capture v2 soft: run/stop разрешены, edit/пауза заблокированы, controls видимы (CT5)', () => {
+  it('capture v2 soft: run/stop/setMode разрешены, edit/пауза заблокированы, controls видимы (CT5 + ADR loop-switch Р2)', () => {
     const flags = resolveServerFirstFlags({
       deviceId,
       editLease: null,
@@ -71,7 +71,7 @@ describe('resolveServerFirstFlags', () => {
     expect(flags.blockLocalRun).toBe(false);
     expect(flags.allowFieldStop).toBe(true);
     expect(flags.allowFieldPause).toBe(false);
-    expect(flags.allowFieldSetMode).toBe(false);
+    expect(flags.allowFieldSetMode).toBe(true); // ADR loop-switch Р2: soft разрешает переключение режима
     expect(flags.blockStructureEdit).toBe(true);
     expect(flags.hideFieldRuntimeControls).toBe(false);
   });
@@ -88,6 +88,7 @@ describe('resolveServerFirstFlags', () => {
     expect(flags.captureMode).toBe('hard');
     expect(flags.blockLocalRun).toBe(true);
     expect(flags.allowFieldStop).toBe(true);
+    expect(flags.allowFieldSetMode).toBe(false); // ADR loop-switch Р2: hard — только наблюдение
     expect(flags.captureConnectionLost).toBe(true);
     expect(flags.hideFieldRuntimeControls).toBe(false);
   });
