@@ -93,6 +93,12 @@ for (const t of pending) {
 }
 
 if (opts.dryRun) {
+  // NB4: показать, у каких задач нет archive-карточки — они будут пропущены (не ошибка).
+  const missing = pending.filter((t) => !existsSync(archiveCardPath(t)));
+  if (missing.length > 0) {
+    console.log(`\nБез archive-карточки (будут ПРОПУЩЕНЫ, не ошибка): ${missing.length}`);
+    for (const t of missing) console.log(`  ⚠ ${t.id}`);
+  }
   console.log('\n--dry-run: gh не вызывается.');
   process.exit(0);
 }
@@ -104,14 +110,18 @@ if (!hasGh()) {
 }
 
 const today = new Date().toISOString().slice(0, 10);
+const strict = process.argv.includes('--strict');
 let ok = 0;
 let fail = 0;
+let skipped = 0;
 
 for (const task of pending) {
   const cardPath = archiveCardPath(task);
   if (!existsSync(cardPath)) {
-    console.error(`\n[${task.id}] нет карточки: ${cardPath}`);
-    fail++;
+    // NB4 (tooling-retro): отсутствие archive-карточки у старых задач — не hard-fail,
+    // а skip с варнингом, чтобы не рвать вечерний ритуал. --strict вернёт старое поведение.
+    console.warn(`\n[${task.id}] SKIP: нет карточки ${cardPath} (старая задача до генерации карточек)`);
+    skipped++;
     continue;
   }
 
@@ -132,6 +142,16 @@ for (const task of pending) {
 }
 
 saveRegistry(registry);
-console.log(`\nГотово: ${ok} закрыто, ${fail} ошибок. registry.json обновлён.`);
+console.log(
+  `\nГотово: ${ok} закрыто, ${fail} ошибок, ${skipped} пропущено (нет карточки). registry.json обновлён.`,
+);
+if (skipped > 0) {
+  console.log(
+    `  ${skipped} задач без archive-карточки пропущены (не ошибка). ` +
+      `Для чистки: сгенерировать карточки или архивировать вручную. --strict — падать на пропусках.`,
+  );
+}
 
-process.exit(fail > 0 ? 1 : 0);
+// Skip (нет карточки) — не hard-fail (не рвёт ритуал). Реальные gh-ошибки — fail.
+// --strict возвращает старое поведение (падать и на пропусках).
+process.exit(fail > 0 || (strict && skipped > 0) ? 1 : 0);
