@@ -25,6 +25,7 @@ Modes (one of):
   --pr <N>      Pull request #N diff + metadata
   --branch <B>  git diff origin/main...<B> (default base: origin/main)
   --uncommitted git diff HEAD (staged + unstaged)
+  --staged      git diff --cached (только staged — ровно будущий коммит)
 
 Options:
   --full        Extended context-collector (daily mode only)
@@ -81,6 +82,10 @@ export function parseCodeReviewCli(argv) {
     }
     if (arg === '--uncommitted') {
       mode = 'uncommitted';
+      continue;
+    }
+    if (arg === '--staged') {
+      mode = 'staged';
       continue;
     }
     if (arg === '--base') {
@@ -176,6 +181,23 @@ export function collectReviewContext(opts) {
       kind: 'uncommitted',
       text: trimText(
         `${taskBlock}## PR size hint\n\n~${lines} changed lines (target ≤400)\n\n## git diff --stat HEAD\n\n${stat}\n\n## git diff HEAD\n\n${diff || '(нет изменений)'}`,
+        MAX_DIFF_CHARS,
+        'diff',
+      ),
+    };
+  }
+
+  if (opts.mode === 'staged') {
+    // Только staged (git diff --cached) — ревью ровно того, что пойдёт в коммит;
+    // без шума незакоммиченных daily-доков (NB3 tooling-retro).
+    const diff = runGit(['diff', '--cached']);
+    const stat = runGit(['diff', '--cached', '--stat']);
+    const lines = estimateChangedLines(stat);
+    const taskBlock = appendTaskContext('staged');
+    return {
+      kind: 'staged',
+      text: trimText(
+        `${taskBlock}## PR size hint (staged only)\n\n~${lines} changed lines (target ≤400)\n\n## git diff --cached --stat\n\n${stat}\n\n## git diff --cached\n\n${diff || '(нет staged-изменений — git add сначала)'}`,
         MAX_DIFF_CHARS,
         'diff',
       ),

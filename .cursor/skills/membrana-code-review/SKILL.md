@@ -35,9 +35,14 @@ description: >-
 | PR before merge | `yarn code-review:pr -- <N>` | `docs/discussions/pr-<N>-code-review.md` |
 | Branch | `node scripts/code-review.mjs --branch <name>` | `docs/discussions/branch-<slug>-code-review.md` |
 | Uncommitted | `node scripts/code-review.mjs --uncommitted` | `docs/discussions/uncommitted-code-review.md` |
+| Staged only | `node scripts/code-review.mjs --staged` | `docs/discussions/uncommitted-code-review.md` |
 | No API (Ollama) | `yarn local-code-review` | `DAILY_CODE_REVIEW.md` (daily only) |
 
 Options: `--no-rag`, `--out <path>`, `--base origin/main` (with `--branch`).
+
+**`--staged` vs `--uncommitted`:** `--uncommitted` = `git diff HEAD` (staged+unstaged, тянет
+незакоммиченные daily-доки → ложный «oversized/split»). `--staged` = `git diff --cached` —
+ревью ровно того, что пойдёт в коммит, без шума. Перед `pr:ship` предпочтительнее `--staged`.
 
 PR/branch modes inject `docs/MAIN_DAY_ISSUE.md` and `docs/CURRENT_TASK.md` when present.
 
