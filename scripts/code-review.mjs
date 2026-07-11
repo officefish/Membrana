@@ -9,7 +9,8 @@
  *   yarn code-review:full
  *   yarn code-review:pr -- 140
  *   node scripts/code-review.mjs --branch feat/foo
- *   node scripts/code-review.mjs --uncommitted
+ *   node scripts/code-review.mjs --uncommitted   (git diff HEAD: staged+unstaged)
+ *   node scripts/code-review.mjs --staged        (git diff --cached: только staged)
  */
 import { resolve } from 'node:path';
 import { collectRepositoryContext } from './context-collector.mjs';

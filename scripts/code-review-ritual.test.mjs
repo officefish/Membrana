@@ -27,6 +27,15 @@ test('parseCodeReviewCli branch requires name', () => {
   assert.throws(() => parseCodeReviewCli(['--branch']), /ветку/);
 });
 
+test('parseCodeReviewCli staged mode (NB3)', () => {
+  const cli = parseCodeReviewCli(['--staged']);
+  assert.equal(cli.mode, 'staged');
+});
+
+test('parseCodeReviewCli uncommitted mode', () => {
+  assert.equal(parseCodeReviewCli(['--uncommitted']).mode, 'uncommitted');
+});
+
 test('defaultOutputPath pr', () => {
   const p = defaultOutputPath({ mode: 'pr', pr: '140' });
   assert.match(p, /pr-140-code-review\.md$/);
