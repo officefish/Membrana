@@ -12908,6 +12908,26 @@
         "rodchenko"
       ],
       "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM2 блокирован до получения IP/пароля/домена в .env. Fly night-hunt не затрагивается."
+    },
+    {
+      "id": "detection-alarm-loop-refactor",
+      "title": "Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36",
+      "promptPath": "docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "createdAt": "2026-07-11",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "sprintKind": "day-sprint",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko",
+        "vesnin"
+      ],
+      "notes": "Спека: консилиум docs/seanses/detection-alarm-loop-switch-2026-07-11.md (#355, тема1) + ADR docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md (#356, Р1/Р2/Р3). Фазы: A ядро темы1 (fusion combinedScore→lastDetection, front, loop-transition-policy гистерезис0.15/debounce3, порог branch-on-detection/0.5, пустое окно молчащий skip), B effectiveLoop-sync+canSwitchMode-гейтинг+read-only индикатор, C pure GetMicrophone/GetAudioStream, D Alpha entry-id L36. mode-решение: normal|alarm intent + effectiveLoop, без auto. 703 базовых теста зелёные, сценарии в пикере не менять (только платформа). Завтра — переделка сценариев под новшества."
     }
   ]
 }
