@@ -474,11 +474,11 @@ sequence-then-skip thenIndex: 0,1 · make-track/slice-start OK inside gate
 
 **Что:** flush для samples в графе Gamma не наступает (у FFT-кадров есть g-flush-узел; у сэмплов — только session-append). Требует решения на уровне сценария/семантики collect (касается и Alpha/Beta — проверить их входы ensemble).
 
-**Fix:** pending — дизайн-вопрос «как ensemble получает окно вживую» (кандидат на мини-консилиум).
+**Fix:** РЕШЕНО на пост-#347 топологии. Live Gamma (runId `1cb8f62c`, 2026-07-11): `collect-samples flushed: true` наступает каждое окно (тики 10/20/30/…/130 — граница 5 с при тике 0.5 с). Окно сэмплов наполняется, ensemble получает батч.
 
 **Профилактика:**
 
-- [ ] Smoke сценариев с ensemble: assert flushed:true для его входа в первые N тиков live Run
+- [x] Smoke сценариев с ensemble: assert flushed:true для его входа в первые N тиков live Run — подтверждено live (1cb8f62c: flush каждые 10 тиков)
 
 ---
 
@@ -523,8 +523,25 @@ sequence-then-skip thenIndex: 0,1 · make-track/slice-start OK inside gate
 **Профилактика:**
 
 - [x] Smoke gamma: рестарт из хвостов веток, then-1 отсутствует
+- [x] **Live-подтверждено (runId `1cb8f62c`, 2026-07-11):** `sequence-latent-dispatch-done branchCount: 1` (не 2 — then-1 нет), запись рестартует `g-stoprec → g-restartrec` из хвоста ветки на тиках 28/71/115 (не одноразово, 3× за 138 тиков). L34 тоже снят: отчёты+треки пишутся в журнал (владелец подтвердил визуально + publish-done 3 / upload-ok 3).
 - [ ] Ревью сценария: каждый `stop-recording` в цикле обязан иметь exec-путь к `start-recording` ПОСЛЕ себя; порядок между latent-ветками не гарантирован
-- [ ] Alpha live Run: проверить рестарт после detected-пути (у неё restart из `seq exec-out` — та же гонка возможна)
+- [ ] Alpha live Run: проверить рестарт после detected-пути — ЗАБЛОКИРОВАНО L36 (Alpha не стартует), в консилиум
+
+---
+
+### L36 — Alpha не стартует: точки входа названы `alpha-*` вместо канонических
+
+**Симптом (alpha live, 2026-07-11, лог пуст — без runId):** Apply Alpha → pre-run validation ошибка, рантайм не запускается, в `logs/apps/client/logs.txt` ноль записей. Warnings (задвоены — основной граф + подграф): «Точка входа не найдена среди нод» для `initial-event`, `on-connect-event`, `main-on-tick`, `alarm-on-tick`, `on-stop-event`, `on-disconnect-event`.
+
+**Что:** канонические id точек входа заданы константами в `initial-board-state.ts` (`SCENARIO_INITIAL_ENTRY='initial-event'`, `SCENARIO_ON_CONNECT_ENTRY='on-connect-event'`, `SCENARIO_MAIN_ENTRY='main-on-tick'`, `SCENARIO_ALARM_ENTRY='alarm-on-tick'`, `SCENARIO_ON_STOP_ENTRY='on-stop-event'`, on-disconnect). Beta работает, потому что деривация из bundled MVP-канона байт-в-байт → наследует канонические id (`BETA_ALARM.entry='alarm-on-tick'`). Alpha собрана НЕ как деривация MVP, а вручную, и назвала событийные узлы `alpha-onstart-event`/`alpha-onconnect-event`/`alpha-main-on-tick`/`alpha-alarm-on-tick`/`alpha-onstop-event`/`alpha-ondisc-event` → ни один не совпал с ожидаемым контрактом → все 6 точек входа «не найдены».
+
+**Fix:** pending (решение владельца 2026-07-11). Кандидат: переименовать 6 событийных узлов Alpha в канонические id (+ перегенерировать pack) ИЛИ пересобрать Alpha как деривацию MVP-канона (подход Beta). Мелкий, но меняет топологию сценария → по регламенту usercase-generation, не на лету.
+
+**Профилактика:**
+
+- [ ] catalog/pack-тест: event-точки входа сценария обязаны совпадать с `SCENARIO_*_ENTRY` из `initial-board-state.ts` (assert по id) — ловит до живого Run
+- [ ] Competition-сценарии деривировать из bundled MVP-канона (наследование entry-id), не собирать событийную обвязку вручную
+- [ ] Gamma перед прогоном проверить на ту же болезнь (её id-конвенция — `g-*`; entry-узлы могли уехать так же)
 
 ---
 
