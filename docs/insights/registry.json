@@ -404,6 +404,17 @@
       "weight": null,
       "createdAt": "2026-07-12",
       "tags": []
+    },
+    {
+      "id": "insight-persona-persistent-memory",
+      "title": "Персистентная память и непрерывность виртуальных персон",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 5.4,
+      "createdAt": "2026-07-12",
+      "tags": []
     }
   ]
 }
