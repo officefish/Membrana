@@ -6,15 +6,17 @@
       "promptPath": "docs/prompts/NIGHT_HUNT_OFFICE_REAL_PROMPT.md",
       "githubIssue": 390,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-12",
-      "archivedAt": null,
+      "archivedAt": "2026-07-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
-      "notes": "Повтор рецепта night-triage (#380): night-hunt на OpenRouter (гео-блок из РФ, fetch не видит media-прокси) → свап на ClaudeService (native Anthropic через HTTPS_PROXY=media/NL). +baseBranch techies68→main. Деплой на office 176.124.218.4, enable NIGHT_HUNT_ENABLED, приёмка. Fly night-hunt не затрагиваем."
+      "notes": "Повтор рецепта night-triage (#380): night-hunt на OpenRouter (гео-блок из РФ, fetch не видит media-прокси) → свап на ClaudeService (native Anthropic через HTTPS_PROXY=media/NL). +baseBranch techies68→main. Деплой на office 176.124.218.4, enable NIGHT_HUNT_ENABLED, приёмка. Fly night-hunt не затрагиваем.",
+      "archiveNotes": "NH1-NH3 done 2026-07-12: night-hunt боевой на office (Claude через media-прокси, 3 job → PR #392/#393/#394, cron живёт).",
+      "githubIssueClosedAt": null
     },
     {
       "id": "night-triage-office",
