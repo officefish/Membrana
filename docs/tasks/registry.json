@@ -12897,17 +12897,18 @@
       "githubIssue": 349,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-11",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-12",
+      "archiveNotes": "OM4 завершён 2026-07-12: office мигрирован на Timeweb-VDS 176.124.218.4 / office.mmbrn.tech (prod LE cert), Linear cutover подтверждён живьём (DRU-139→200), GitHub secrets, старый office на 72.56.27.58 погашен. Блок ТСПУ был IP-specific — смена IP решила, KZ→fallback.",
       "sprintKind": "day-sprint",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin",
         "rodchenko"
       ],
-      "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM1 параметризация done (#351), OM2 build+туннель done (#352). ПИВОТ 2026-07-12: московский Timeweb VDS (94.141.162.3 / server 8347521) фундаментально режется ТСПУ на магистрали (подтверждено саппортом Timeweb) → OM4 релокация office на non-RU (Казахстан). OM4-A смена IP опциональна/параллельна; OM4-B/C/D = провижн KZ + деплой канона O1-O4 + cutover. Дедлайн 15-е. Fly night-hunt не затрагивается."
+      "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM1 параметризация done (#351), OM2 build+туннель done (#352). ПИВОТ 2026-07-12: московский Timeweb VDS (94.141.162.3 / server 8347521) фундаментально режется ТСПУ на магистрали (подтверждено саппортом Timeweb) → OM4 релокация office на non-RU (Казахстан). OM4-A смена IP опциональна/параллельна; OM4-B/C/D = провижн KZ + деплой канона O1-O4 + cutover. Дедлайн 15-е. Fly night-hunt не затрагивается.",
+      "githubIssueClosedAt": null
     },
     {
       "id": "detection-alarm-loop-refactor",
