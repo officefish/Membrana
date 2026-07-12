@@ -15,7 +15,7 @@
         "ozhegov",
         "vesnin"
       ],
-      "notes": "Консилиум nightly-agents-platform 2026-07-12 (LGTM). Пакет @membrana/drift-anchor: чистая computeDrift (вердикт) + LLM только аннотирует. Якорь-A структурный (снимок поверх hermes:brief), Якорь-B поведенческий (golden drone → combinedScore vs baseline — на критическом пути детекции). baseline.json версионируется, автоперезапись запрещена. DA0 (ядро+тесты) done."
+      "notes": "2 консилиума (nightly-agents-platform + drift-anchor-triggers, LGTM). DA0 computeDrift + DA1 структурный якорь + DA2 golden drone combinedScore + DA3-код раннер — СМЁРЖЕНЫ (#398-401). Консилиум-2 разрешил frozen-image развилку: «поведенческий» = 2 явления — code-anchor (дрейф кода детектора, golden-корпус const) → CI-гейт (блок merge); data-anchor (дрейф данных, детектор const) → серверное расписание frozen-image (background-media/NL, warning); scheduled-code-anchor (пересборка из main → «прод≠main») → сервер раз в сутки. Единый контракт DriftAnchorRecord в core. Новые фазы DA4 (scheduled-code-anchor) + DA5 (расхождение-алерт + UI-панель). Anti-fetish: серверное по существу, CI нативно в GH Actions."
     },
     {
       "id": "night-hunt-office-real",
