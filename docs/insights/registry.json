@@ -393,6 +393,17 @@
       "weight": null,
       "createdAt": "2026-07-12",
       "tags": []
+    },
+    {
+      "id": "insight-explicit-loop-switch-nodes",
+      "title": "Явные palette-узлы перехода лупов main↔alarm (vs рантайм-контракт)",
+      "status": "deferred",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-12",
+      "tags": []
     }
   ]
 }
