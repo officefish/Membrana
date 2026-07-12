@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "night-hunt-office-real",
+      "title": "Night Hunt по-настоящему на office: Claude через media-прокси, фикс ветки, enable (NH1-NH3)",
+      "promptPath": "docs/prompts/NIGHT_HUNT_OFFICE_REAL_PROMPT.md",
+      "githubIssue": 390,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-12",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Повтор рецепта night-triage (#380): night-hunt на OpenRouter (гео-блок из РФ, fetch не видит media-прокси) → свап на ClaudeService (native Anthropic через HTTPS_PROXY=media/NL). +baseBranch techies68→main. Деплой на office 176.124.218.4, enable NIGHT_HUNT_ENABLED, приёмка. Fly night-hunt не затрагиваем."
+    },
+    {
       "id": "night-triage-office",
       "title": "Night Triage on office: детерминированный триаж реестра (перенос с claude.ai/code Routine, NT1-NT5)",
       "promptPath": "docs/prompts/NIGHT_TRIAGE_OFFICE_PROMPT.md",

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { ClaudeModule } from '../claude/claude.module';
 import { GithubModule } from '../github/github.module';
-import { OpenRouterModule } from '../openrouter/openrouter.module';
 import { NightHuntController } from './night-hunt.controller';
 import { NightHuntScheduler } from './night-hunt.scheduler';
 import { NightHuntService } from './night-hunt.service';
 
 @Module({
-  imports: [GithubModule, OpenRouterModule],
+  imports: [GithubModule, ClaudeModule],
   controllers: [NightHuntController],
   providers: [NightHuntService, NightHuntScheduler],
   exports: [NightHuntService],

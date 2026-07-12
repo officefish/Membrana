@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
+import { ClaudeService } from '../claude/claude.service';
 import { GithubService } from '../github/github.service';
-import { OpenRouterService } from '../openrouter/openrouter.service';
 import {
   type NightHuntJobId,
   getNightHuntJob,
@@ -25,15 +25,15 @@ export class NightHuntService {
   constructor(
     @Inject(APP_CONFIG) private readonly config: AppConfig,
     private readonly github: GithubService,
-    private readonly openRouter: OpenRouterService,
+    private readonly claude: ClaudeService,
   ) {}
 
   isEnabled(): boolean {
-    return this.config.NIGHT_HUNT_ENABLED === true && this.openRouter.isConfigured();
+    return this.config.NIGHT_HUNT_ENABLED === true && Boolean(this.config.ANTHROPIC_API_KEY?.trim());
   }
 
   baseBranch(): string {
-    return this.config.NIGHT_HUNT_BASE_BRANCH?.trim() || 'techies68';
+    return this.config.NIGHT_HUNT_BASE_BRANCH?.trim() || 'main';
   }
 
   async runJob(jobId: NightHuntJobId): Promise<{
@@ -58,7 +58,7 @@ export class NightHuntService {
     try {
       const context = await this.gatherContext(jobId);
       const prompt = this.buildPrompt(jobId, context, week);
-      const report = await this.openRouter.chat(prompt, 4_096);
+      const report = (await this.claude.askWithUserText(prompt)).text;
       const body = this.wrapReport(report, jobId, week);
 
       const prResult = await this.github.createPullRequestWithFile({
