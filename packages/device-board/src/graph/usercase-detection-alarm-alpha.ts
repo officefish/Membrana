@@ -84,10 +84,10 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
   scenario: {
     // ── onStart: микрофон → поток → запись 5 c (bootstrap) ────────────────
     initial: {
-      entry: 'alpha-onstart-event',
+      entry: 'initial-event',
       nodes: [
         {
-          id: 'alpha-onstart-event',
+          id: 'initial-event',
           label: 'On start',
           system: true,
           nodeKind: 'event',
@@ -135,12 +135,12 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
         },
       ],
       edges: [
-        { kind: 'exec', source: 'alpha-onstart-event', sourceHandle: 'exec-out', target: 'alpha-init-mic', targetHandle: 'exec-in' },
-        { kind: 'data', source: 'alpha-onstart-event', sourceHandle: 'device', target: 'alpha-init-mic', targetHandle: 'device', dataType: 'DeviceRef' },
+        { kind: 'exec', source: 'initial-event', sourceHandle: 'exec-out', target: 'alpha-init-mic', targetHandle: 'exec-in' },
+        { kind: 'data', source: 'initial-event', sourceHandle: 'device', target: 'alpha-init-mic', targetHandle: 'device', dataType: 'DeviceRef' },
         { kind: 'exec', source: 'alpha-init-mic', sourceHandle: 'exec-out', target: 'alpha-init-stream', targetHandle: 'exec-in' },
         { kind: 'data', source: 'alpha-init-mic', sourceHandle: 'microphone', target: 'alpha-init-stream', targetHandle: 'microphone', dataType: 'MicrophoneRef' },
         { kind: 'exec', source: 'alpha-init-stream', sourceHandle: 'exec-out', target: 'alpha-init-recorder', targetHandle: 'exec-in' },
-        { kind: 'data', source: 'alpha-onstart-event', sourceHandle: 'device', target: 'alpha-init-recorder', targetHandle: 'device', dataType: 'DeviceRef' },
+        { kind: 'data', source: 'initial-event', sourceHandle: 'device', target: 'alpha-init-recorder', targetHandle: 'device', dataType: 'DeviceRef' },
         { kind: 'exec', source: 'alpha-init-recorder', sourceHandle: 'exec-out', target: 'alpha-init-start-rec', targetHandle: 'exec-in' },
         { kind: 'data', source: 'alpha-init-recorder', sourceHandle: 'recorder', target: 'alpha-init-start-rec', targetHandle: 'recorder', dataType: 'RecorderRef' },
         { kind: 'data', source: 'alpha-init-stream', sourceHandle: 'stream', target: 'alpha-init-start-rec', targetHandle: 'stream', dataType: 'AudioStreamRef' },
@@ -149,10 +149,10 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
     },
     // ── onConnect: журнал — сервер или локально ───────────────────────────
     onConnect: {
-      entry: 'alpha-onconnect-event',
+      entry: 'on-connect-event',
       nodes: [
         {
-          id: 'alpha-onconnect-event',
+          id: 'on-connect-event',
           label: 'On connect',
           system: true,
           nodeKind: 'event',
@@ -199,12 +199,12 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
         },
       ],
       edges: [
-        { kind: 'exec', source: 'alpha-onconnect-event', sourceHandle: 'exec-out', target: 'alpha-conn-server-valid', targetHandle: 'exec-in' },
-        { kind: 'data', source: 'alpha-onconnect-event', sourceHandle: 'server', target: 'alpha-conn-server-valid', targetHandle: 'value', dataType: 'ServerRef' },
-        { kind: 'data', source: 'alpha-onconnect-event', sourceHandle: 'server', target: 'alpha-conn-journal-server', targetHandle: 'server', dataType: 'ServerRef' },
+        { kind: 'exec', source: 'on-connect-event', sourceHandle: 'exec-out', target: 'alpha-conn-server-valid', targetHandle: 'exec-in' },
+        { kind: 'data', source: 'on-connect-event', sourceHandle: 'server', target: 'alpha-conn-server-valid', targetHandle: 'value', dataType: 'ServerRef' },
+        { kind: 'data', source: 'on-connect-event', sourceHandle: 'server', target: 'alpha-conn-journal-server', targetHandle: 'server', dataType: 'ServerRef' },
         { kind: 'exec', source: 'alpha-conn-server-valid', sourceHandle: 'exec-true-out', target: 'alpha-conn-set-journal-server', targetHandle: 'exec-in' },
         { kind: 'data', source: 'alpha-conn-journal-server', sourceHandle: 'journal', target: 'alpha-conn-set-journal-server', targetHandle: 'value', dataType: 'JournalRef' },
-        { kind: 'data', source: 'alpha-onconnect-event', sourceHandle: 'device', target: 'alpha-conn-journal-device', targetHandle: 'device', dataType: 'DeviceRef' },
+        { kind: 'data', source: 'on-connect-event', sourceHandle: 'device', target: 'alpha-conn-journal-device', targetHandle: 'device', dataType: 'DeviceRef' },
         { kind: 'exec', source: 'alpha-conn-server-valid', sourceHandle: 'exec-false-out', target: 'alpha-conn-set-journal-device', targetHandle: 'exec-in' },
         { kind: 'data', source: 'alpha-conn-journal-device', sourceHandle: 'journal', target: 'alpha-conn-set-journal-device', targetHandle: 'value', dataType: 'JournalRef' },
       ],
@@ -212,10 +212,10 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
     loops: {
       // ── main: акты ①–⑥, одна exec-магистраль слева направо ──────────────
       main: {
-        entry: 'alpha-main-on-tick',
+        entry: 'main-on-tick',
         nodes: [
           {
-            id: 'alpha-main-on-tick',
+            id: 'main-on-tick',
             label: 'onTick',
             system: true,
             nodeKind: 'event',
@@ -463,7 +463,7 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
         ],
         edges: [
           // exec-магистраль ①
-          { kind: 'exec', source: 'alpha-main-on-tick', sourceHandle: 'exec-out', target: 'alpha-main-mic', targetHandle: 'exec-in' },
+          { kind: 'exec', source: 'main-on-tick', sourceHandle: 'exec-out', target: 'alpha-main-mic', targetHandle: 'exec-in' },
           { kind: 'exec', source: 'alpha-main-mic', sourceHandle: 'exec-out', target: 'alpha-main-stream', targetHandle: 'exec-in' },
           { kind: 'exec', source: 'alpha-main-stream', sourceHandle: 'exec-out', target: 'alpha-main-sample', targetHandle: 'exec-in' },
           { kind: 'exec', source: 'alpha-main-sample', sourceHandle: 'exec-out', target: 'alpha-main-fft', targetHandle: 'exec-in' },
@@ -536,10 +536,10 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
       },
       // ── alarm: proximity → is-valid (false = lost = выход) → loop-repeat ─
       alarm: {
-        entry: 'alpha-alarm-on-tick',
+        entry: 'alarm-on-tick',
         nodes: [
           {
-            id: 'alpha-alarm-on-tick',
+            id: 'alarm-on-tick',
             label: 'onTick',
             system: true,
             nodeKind: 'event',
@@ -594,7 +594,7 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
           },
         ],
         edges: [
-          { kind: 'exec', source: 'alpha-alarm-on-tick', sourceHandle: 'exec-out', target: 'alpha-alarm-prox', targetHandle: 'exec-in' },
+          { kind: 'exec', source: 'alarm-on-tick', sourceHandle: 'exec-out', target: 'alpha-alarm-prox', targetHandle: 'exec-in' },
           { kind: 'data', source: 'alpha-main-fusion', sourceHandle: 'fusion', target: 'alpha-alarm-prox', targetHandle: 'fusion', dataType: 'DetectionFusion' },
           { kind: 'exec', source: 'alpha-alarm-prox', sourceHandle: 'exec-out', target: 'alpha-alarm-valid', targetHandle: 'exec-in' },
           { kind: 'data', source: 'alpha-alarm-prox', sourceHandle: 'proximity', target: 'alpha-alarm-valid', targetHandle: 'value', dataType: 'ProximityRef' },
@@ -608,10 +608,10 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
     triggers: {
       // ── onStop: гасим поток ───────────────────────────────────────────────
       onStop: {
-        entry: 'alpha-onstop-event',
+        entry: 'on-stop-event',
         nodes: [
           {
-            id: 'alpha-onstop-event',
+            id: 'on-stop-event',
             label: 'On stop',
             system: true,
             nodeKind: 'event',
@@ -635,18 +635,18 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
           },
         ],
         edges: [
-          { kind: 'exec', source: 'alpha-onstop-event', sourceHandle: 'exec-out', target: 'alpha-stop-mic', targetHandle: 'exec-in' },
-          { kind: 'data', source: 'alpha-onstop-event', sourceHandle: 'device', target: 'alpha-stop-mic', targetHandle: 'device', dataType: 'DeviceRef' },
+          { kind: 'exec', source: 'on-stop-event', sourceHandle: 'exec-out', target: 'alpha-stop-mic', targetHandle: 'exec-in' },
+          { kind: 'data', source: 'on-stop-event', sourceHandle: 'device', target: 'alpha-stop-mic', targetHandle: 'device', dataType: 'DeviceRef' },
           { kind: 'exec', source: 'alpha-stop-mic', sourceHandle: 'exec-out', target: 'alpha-stop-streaming', targetHandle: 'exec-in' },
           { kind: 'data', source: 'alpha-stop-mic', sourceHandle: 'microphone', target: 'alpha-stop-streaming', targetHandle: 'microphone', dataType: 'MicrophoneRef' },
         ],
       },
       // ── onDisconnect: журнал → локальный ─────────────────────────────────
       onDisconnect: {
-        entry: 'alpha-ondisc-event',
+        entry: 'on-disconnect-event',
         nodes: [
           {
-            id: 'alpha-ondisc-event',
+            id: 'on-disconnect-event',
             label: 'On disconnect',
             system: true,
             nodeKind: 'event',
@@ -671,8 +671,8 @@ export const USERCASE_DETECTION_ALARM_ALPHA_DOCUMENT: DeviceScenarioDocument = {
           },
         ],
         edges: [
-          { kind: 'exec', source: 'alpha-ondisc-event', sourceHandle: 'exec-out', target: 'alpha-disc-set-journal', targetHandle: 'exec-in' },
-          { kind: 'data', source: 'alpha-ondisc-event', sourceHandle: 'device', target: 'alpha-disc-journal', targetHandle: 'device', dataType: 'DeviceRef' },
+          { kind: 'exec', source: 'on-disconnect-event', sourceHandle: 'exec-out', target: 'alpha-disc-set-journal', targetHandle: 'exec-in' },
+          { kind: 'data', source: 'on-disconnect-event', sourceHandle: 'device', target: 'alpha-disc-journal', targetHandle: 'device', dataType: 'DeviceRef' },
           { kind: 'data', source: 'alpha-disc-journal', sourceHandle: 'journal', target: 'alpha-disc-set-journal', targetHandle: 'value', dataType: 'JournalRef' },
         ],
       },

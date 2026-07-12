@@ -160,21 +160,13 @@ describe('UserCaseCatalogService', () => {
     expect(catalog.getEntry('usercase-unknown')).toBeNull();
   });
 
-  // NB6: entry-точки Beta/Gamma канонические → pre-run стартует.
-  it('detection-alarm Beta/Gamma: точки входа канонические (SCENARIO_*_ENTRY, L36-гард)', () => {
+  // NB6 (L36-гард): точки входа всех detection-alarm сценариев канонические
+  // (SCENARIO_*_ENTRY) → pre-run стартует. Alpha починена в фазе D loop-refactor.
+  it('detection-alarm Alpha/Beta/Gamma: точки входа канонические (SCENARIO_*_ENTRY, L36-гард)', () => {
     const catalog = new UserCaseCatalogService();
-    for (const id of ['usercase-detection-alarm-beta', 'usercase-detection-alarm-gamma']) {
+    for (const id of DETECTION_ALARM_IDS) {
       const violations = canonicalEntryViolations(loadScenario(catalog, id));
       expect(violations, `${id}: ${violations.join(' · ')}`).toEqual([]);
     }
-  });
-
-  // NB6: Alpha сейчас нарушает канон (L36) — документируем известную поломку.
-  // Когда Alpha починят (завтрашняя сценарная переделка) — тест покраснеет:
-  // сигнал перенести Alpha в предыдущий тест и удалить этот.
-  it('detection-alarm Alpha: ИЗВЕСТНАЯ L36-поломка — entry-id не канонические (удалить после фикса)', () => {
-    const catalog = new UserCaseCatalogService();
-    const violations = canonicalEntryViolations(loadScenario(catalog, 'usercase-detection-alarm-alpha'));
-    expect(violations.length, 'Alpha починена? перенеси в Beta/Gamma-тест и удали этот').toBeGreaterThan(0);
   });
 });
