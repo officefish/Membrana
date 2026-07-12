@@ -12892,7 +12892,7 @@
     },
     {
       "id": "office-vds-migration",
-      "title": "Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM3)",
+      "title": "Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM4, пивот на KZ)",
       "promptPath": "docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md",
       "githubIssue": 349,
       "linearId": null,
@@ -12907,7 +12907,7 @@
         "vesnin",
         "rodchenko"
       ],
-      "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM2 блокирован до получения IP/пароля/домена в .env. Fly night-hunt не затрагивается."
+      "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM1 параметризация done (#351), OM2 build+туннель done (#352). ПИВОТ 2026-07-12: московский Timeweb VDS (94.141.162.3 / server 8347521) фундаментально режется ТСПУ на магистрали (подтверждено саппортом Timeweb) → OM4 релокация office на non-RU (Казахстан). OM4-A смена IP опциональна/параллельна; OM4-B/C/D = провижн KZ + деплой канона O1-O4 + cutover. Дедлайн 15-е. Fly night-hunt не затрагивается."
     },
     {
       "id": "detection-alarm-loop-refactor",
