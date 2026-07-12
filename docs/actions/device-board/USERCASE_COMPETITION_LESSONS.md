@@ -535,13 +535,13 @@ sequence-then-skip thenIndex: 0,1 · make-track/slice-start OK inside gate
 
 **Что:** канонические id точек входа заданы константами в `initial-board-state.ts` (`SCENARIO_INITIAL_ENTRY='initial-event'`, `SCENARIO_ON_CONNECT_ENTRY='on-connect-event'`, `SCENARIO_MAIN_ENTRY='main-on-tick'`, `SCENARIO_ALARM_ENTRY='alarm-on-tick'`, `SCENARIO_ON_STOP_ENTRY='on-stop-event'`, on-disconnect). Beta работает, потому что деривация из bundled MVP-канона байт-в-байт → наследует канонические id (`BETA_ALARM.entry='alarm-on-tick'`). Alpha собрана НЕ как деривация MVP, а вручную, и назвала событийные узлы `alpha-onstart-event`/`alpha-onconnect-event`/`alpha-main-on-tick`/`alpha-alarm-on-tick`/`alpha-onstop-event`/`alpha-ondisc-event` → ни один не совпал с ожидаемым контрактом → все 6 точек входа «не найдены».
 
-**Fix:** pending (решение владельца 2026-07-11). Кандидат: переименовать 6 событийных узлов Alpha в канонические id (+ перегенерировать pack) ИЛИ пересобрать Alpha как деривацию MVP-канона (подход Beta). Мелкий, но меняет топологию сценария → по регламенту usercase-generation, не на лету.
+**Fix (2026-07-12, фаза D loop-refactor):** переименованы 6 событийных entry-узлов Alpha `alpha-*` → канон (`initial-event`/`on-connect-event`/`main-on-tick`/`alarm-on-tick`/`on-stop-event`/`on-disconnect-event`) во всех вхождениях (id/entry/exec-source). Alpha — ручной исходник `usercase-detection-alarm-alpha.ts` (без generated), правка исходника чинит каталог напрямую. device-board typecheck+test зелёные; entry-id гард (NB6) теперь покрывает Alpha/Beta/Gamma.
 
 **Профилактика:**
 
-- [ ] catalog/pack-тест: event-точки входа сценария обязаны совпадать с `SCENARIO_*_ENTRY` из `initial-board-state.ts` (assert по id) — ловит до живого Run
+- [x] catalog/pack-тест: event-точки входа сценария обязаны совпадать с `SCENARIO_*_ENTRY` (NB6, `user-case-catalog.test.ts`, #367) — ловит до живого Run
 - [ ] Competition-сценарии деривировать из bundled MVP-канона (наследование entry-id), не собирать событийную обвязку вручную
-- [ ] Gamma перед прогоном проверить на ту же болезнь (её id-конвенция — `g-*`; entry-узлы могли уехать так же)
+- [x] Gamma проверена — entry-узлы канонические (не страдала L36)
 
 ---
 
