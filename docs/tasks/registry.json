@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "night-triage-office",
+      "title": "Night Triage on office: детерминированный триаж реестра (перенос с claude.ai/code Routine, NT1-NT5)",
+      "promptPath": "docs/prompts/NIGHT_TRIAGE_OFFICE_PROMPT.md",
+      "githubIssue": 380,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-12",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Решение владельца 2026-07-12: детерминированное TS-ядро (ghost/orphan/stale) + LLM-нарратив (OpenRouter, graceful). Модуль night-triage в background-office по паттерну night-hunt. Наследует #344/INSIGHT_2026-07-10 (облачный пилот заморожен — нет канала ошибок). Инварианты консилиума night-triage-routine-2026-07-10 обязательны. Деплой на новый office-VDS 176.124.218.4."
+    },
+    {
       "id": "rt-day-report-script",
       "title": "RT DAY-REPORT: скрипт yarn rt:day-report — анализ дня по git + transitions",
       "promptPath": "docs/prompts/RT_DAY_REPORT_PROMPT.md",
