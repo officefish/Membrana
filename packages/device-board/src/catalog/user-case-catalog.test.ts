@@ -81,7 +81,7 @@ describe('UserCaseCatalogService', () => {
     expect(FREE_TIER_IDS).toHaveLength(4);
   });
 
-  it('FREE-tier scaffold loadDocument mounts a valid (empty) device-scenario v2', () => {
+  it('FREE-tier loadDocument mounts a valid device-scenario v2 (scaffold или combined)', () => {
     const catalog = new UserCaseCatalogService();
     for (const id of FREE_TIER_IDS) {
       const document = catalog.loadDocument(id);
@@ -118,6 +118,18 @@ describe('UserCaseCatalogService', () => {
         expect(parsed.value.scenario.loops.main.nodes.length, id).toBeGreaterThan(0);
       }
     }
+  });
+
+  // S2 combined UC (консилиум s2-combined-uc-dsp): FREE combined-alarm — непустой
+  // DSP combined-alarm граф (fusion+alarm-loop), не заглушка; канонические entry.
+  it('S2: usercase-free-combined-alarm — непустой DSP combined-alarm граф, не scaffold', () => {
+    const catalog = new UserCaseCatalogService();
+    const scenario = loadScenario(catalog, 'usercase-free-combined-alarm');
+    expect(scenario.loops.main.nodes.length).toBeGreaterThan(0);
+    expect(scenario.loops.alarm.nodes.length).toBeGreaterThan(0);
+    const mainKinds = scenario.loops.main.nodes.map((node) => node.nodeKind);
+    expect(mainKinds, 'DSP fusion присутствует').toContain('make-detection-fusion');
+    expect(canonicalEntryViolations(scenario), 'entry канонические').toEqual([]);
   });
 
   it('listForDeviceKind filters by deviceKind', () => {
