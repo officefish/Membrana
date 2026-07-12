@@ -1,0 +1,32 @@
+{
+  "name": "@membrana/drift-anchor",
+  "version": "0.1.0",
+  "description": "Детерминированный якорь против агентного дрейфа: computeDrift(baseline, current, thresholds) → MorningDriftDigest. Чистое ядро без I/O/сети/LLM (консилиум nightly-agents-platform 2026-07-12). Раннер и Claude-аннотация — снаружи.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  }
+}
