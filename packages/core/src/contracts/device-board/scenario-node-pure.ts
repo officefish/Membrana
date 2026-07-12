@@ -37,18 +37,40 @@ export const PURE_ELIGIBLE_SCENARIO_NODE_KINDS = [
   'get-spectral-analyser',
 ] as const satisfies readonly ScenarioNodeKind[];
 
-export type PureEligibleScenarioNodeKind = (typeof PURE_ELIGIBLE_SCENARIO_NODE_KINDS)[number];
+/**
+ * Eligible getters с **DEFAULT IMPURE** (ADR 0002): `get-microphone` / `get-audio-stream`
+ * приобретают устройство/поток через host side-effect (`getUserMedia`/permission), поэтому
+ * по умолчанию остаются на exec-цепочке. Тумблер pure доступен — осознанный opt-in автора
+ * (приобрести ref один раз в initial, дальше раздавать по data-edge). Per-tick host-I/O
+ * (`get-sample`/`get-fft-frame`) остаётся locked-impure.
+ */
+export const PURE_ELIGIBLE_DEFAULT_IMPURE_SCENARIO_NODE_KINDS = [
+  'get-microphone',
+  'get-audio-stream',
+] as const satisfies readonly ScenarioNodeKind[];
 
-/** Default `pure` для PURE_ELIGIBLE kinds, когда поле отсутствует в JSON. */
+export type PureEligibleScenarioNodeKind =
+  | (typeof PURE_ELIGIBLE_SCENARIO_NODE_KINDS)[number]
+  | (typeof PURE_ELIGIBLE_DEFAULT_IMPURE_SCENARIO_NODE_KINDS)[number];
+
+/** Default `pure` для default-pure eligible kinds, когда поле отсутствует в JSON. */
 export const DEFAULT_PURE_ELIGIBLE = true as const;
+
+/**
+ * Default `pure` для конкретного eligible kind: default-impure getters → `false`,
+ * остальные eligible → `DEFAULT_PURE_ELIGIBLE`.
+ */
+export function resolveDefaultPureForEligibleKind(kind: string): boolean {
+  return (PURE_ELIGIBLE_DEFAULT_IMPURE_SCENARIO_NODE_KINDS as readonly string[]).includes(kind)
+    ? false
+    : DEFAULT_PURE_ELIGIBLE;
+}
 
 /**
  * Узлы, для которых `pure: true` запрещён (host I/O, side-effect, exec-only).
  * Значение `pure` на узле принудительно сбрасывается в `false` при hydrate.
  */
 export const PURE_LOCKED_IMPURE_SCENARIO_NODE_KINDS = [
-  'get-microphone',
-  'get-audio-stream',
   'get-sample',
   'get-fft-frame',
   'collect-samples',
@@ -77,9 +99,12 @@ export function isConstructorAlwaysPureScenarioNodeKind(
   return (CONSTRUCTOR_ALWAYS_PURE_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
 }
 
-/** True, если getter поддерживает toggle Pure ↔ Impure. */
+/** True, если getter поддерживает toggle Pure ↔ Impure (оба eligible-списка). */
 export function isPureEligibleScenarioNodeKind(value: string): value is PureEligibleScenarioNodeKind {
-  return (PURE_ELIGIBLE_SCENARIO_NODE_KINDS as readonly string[]).includes(value);
+  return (
+    (PURE_ELIGIBLE_SCENARIO_NODE_KINDS as readonly string[]).includes(value) ||
+    (PURE_ELIGIBLE_DEFAULT_IMPURE_SCENARIO_NODE_KINDS as readonly string[]).includes(value)
+  );
 }
 
 /** True, если узел всегда impure (`pure: true` игнорируется). */
@@ -116,7 +141,7 @@ export function resolveScenarioGraphNodePure(
     return false;
   }
   if (isPureEligibleScenarioNodeKind(kind)) {
-    return node.pure ?? DEFAULT_PURE_ELIGIBLE;
+    return node.pure ?? resolveDefaultPureForEligibleKind(kind);
   }
   return false;
 }
@@ -144,11 +169,9 @@ export function normalizeScenarioGraphNodePure<T extends ScenarioGraphNode>(node
   }
 
   if (isPureEligibleScenarioNodeKind(kind)) {
-    if (effective === DEFAULT_PURE_ELIGIBLE) {
-      if (node.pure === undefined || node.pure === DEFAULT_PURE_ELIGIBLE) {
-        const { pure: _omit, ...rest } = node;
-        return rest as T;
-      }
+    if (effective === resolveDefaultPureForEligibleKind(kind)) {
+      const { pure: _omit, ...rest } = node;
+      return rest as T;
     }
     return { ...node, pure: effective } as T;
   }

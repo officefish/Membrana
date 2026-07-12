@@ -431,7 +431,12 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     expect(isConstructorAlwaysPureScenarioNodeKind('make-recording-policy')).toBe(true);
     expect(isPureEligibleScenarioNodeKind('variable-get')).toBe(true);
     expect(isPureEligibleScenarioNodeKind('get-recorder')).toBe(true);
-    expect(isPureLockedImpureScenarioNodeKind('get-audio-stream')).toBe(true);
+    // ADR 0002: get-microphone/get-audio-stream — eligible (toggle), НЕ locked-impure.
+    expect(isPureEligibleScenarioNodeKind('get-audio-stream')).toBe(true);
+    expect(isPureEligibleScenarioNodeKind('get-microphone')).toBe(true);
+    expect(isPureLockedImpureScenarioNodeKind('get-audio-stream')).toBe(false);
+    expect(isPureLockedImpureScenarioNodeKind('get-microphone')).toBe(false);
+    expect(isPureLockedImpureScenarioNodeKind('get-sample')).toBe(true);
     expect(isPureLockedImpureScenarioNodeKind('get-recorder')).toBe(false);
     expect(isPureLockedImpureScenarioNodeKind('get-spectral-analyser')).toBe(false);
     expect(isPureLockedImpureScenarioNodeKind('make-track')).toBe(true);
@@ -448,8 +453,13 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     expect(
       resolveScenarioGraphNodePure({ nodeKind: 'make-recording-policy', pure: false }),
     ).toBe(true);
+    // ADR 0002: default-impure eligible — default false, но honors pure:true opt-in.
+    expect(resolveScenarioGraphNodePure({ nodeKind: 'get-audio-stream' })).toBe(false);
     expect(
       resolveScenarioGraphNodePure({ nodeKind: 'get-audio-stream', pure: true }),
+    ).toBe(true);
+    expect(
+      resolveScenarioGraphNodePure({ nodeKind: 'get-microphone', pure: false }),
     ).toBe(false);
     expect(resolveScenarioGraphNodePure({ nodeKind: 'get-recorder' })).toBe(DEFAULT_PURE_ELIGIBLE);
     expect(
@@ -461,6 +471,7 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     expect(isScenarioNodePureFieldApplicable('variable-get')).toBe(true);
     expect(isScenarioNodePureFieldApplicable('get-journal')).toBe(true);
     expect(isScenarioNodePureFieldApplicable('get-recorder')).toBe(true);
+    expect(isScenarioNodePureFieldApplicable('get-audio-stream')).toBe(true);
     expect(isScenarioNodePureFieldApplicable('print')).toBe(false);
   });
 
@@ -488,12 +499,25 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     });
     expect(policyForced.pure).toBe(true);
 
-    const hostStrip = normalizeScenarioGraphNodePure({
+    // ADR 0002: default-impure eligible — pure:true (opt-in) СОХРАНЯЕТСЯ...
+    const streamPureOptIn = normalizeScenarioGraphNodePure({
       ...baseNode,
       nodeKind: 'get-audio-stream',
       pure: true,
     });
-    expect(hostStrip).not.toHaveProperty('pure');
+    expect(streamPureOptIn.pure).toBe(true);
+    // ...а default (impure) стрипается для чистого JSON.
+    const streamDefault = normalizeScenarioGraphNodePure({
+      ...baseNode,
+      nodeKind: 'get-microphone',
+    });
+    expect(streamDefault).not.toHaveProperty('pure');
+    const streamImpureExplicit = normalizeScenarioGraphNodePure({
+      ...baseNode,
+      nodeKind: 'get-microphone',
+      pure: false,
+    });
+    expect(streamImpureExplicit).not.toHaveProperty('pure');
   });
 
   it('resolveScenarioGraphNodeSupportsAsync applies defaults and pure allowance', () => {
@@ -568,7 +592,8 @@ describe('device-board pure getters v0.9 contracts (G0)', () => {
     const nodes = parsed.value.scenario.loops.main.nodes;
     expect(nodes[0]).not.toHaveProperty('pure');
     expect(nodes[1]?.pure).toBe(true);
-    expect(nodes[2]).not.toHaveProperty('pure');
+    // ADR 0002: get-audio-stream pure:true (opt-in) больше не стрипается.
+    expect(nodes[2]?.pure).toBe(true);
   });
 
   it('normalizeScenarioFunctionPins places exec pin first on input and output', () => {
