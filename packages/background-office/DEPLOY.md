@@ -27,7 +27,9 @@ flowchart LR
 | Площадка | URL (пример) | Роль сейчас | Обязательна? |
 |----------|--------------|-------------|--------------|
 | **Fly.io** | `https://membrana-office-night-hunt.fly.dev` | Night Hunt (cron → OpenRouter → PR) | Для NH2 пилота — **да** |
-| **VPS** | `https://office.membrana.space` | Prod: Claude, Linear, webhooks, RAG | Для ритуалов / интеграций — **да** |
+| **VDS** | `https://office.mmbrn.tech` | Prod: Claude, Linear, webhooks, RAG | Для ритуалов / интеграций — **да** |
+
+> Prod переехал 2026-07-12 (OM4, #349): выделенный Timeweb-VDS `176.124.218.4`, домен `office.mmbrn.tech`. Старый `office.membrana.space` на общем VPS `72.56.27.58` погашен. Смена IP сняла магистральный ТСПУ-фильтр (был IP-specific); KZ-релокация — задокументированный fallback.
 
 **Не смешивать секреты в git.** Fly: `fly secrets`. VPS: `/etc/membrana/office.env`. Локально: `.env` + `packages/background-office/.env`.
 
