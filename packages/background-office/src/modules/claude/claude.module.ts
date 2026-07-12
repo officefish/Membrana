@@ -10,5 +10,6 @@ import { LinearModule } from '../linear/linear.module';
   imports: [GithubModule, LinearModule],
   providers: [ClaudeService, PersonaLoaderService, PersonaAskService],
   controllers: [ClaudeController],
+  exports: [ClaudeService],
 })
 export class ClaudeModule {}

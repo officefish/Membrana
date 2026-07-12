@@ -2,8 +2,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
+import { ClaudeService } from '../claude/claude.service';
 import { GithubService } from '../github/github.service';
-import { OpenRouterService } from '../openrouter/openrouter.service';
 import {
   buildTriageSnapshot,
   DEFAULT_STALE_THRESHOLD_DAYS,
@@ -32,7 +32,7 @@ export class NightTriageService {
   constructor(
     @Inject(APP_CONFIG) private readonly config: AppConfig,
     private readonly github: GithubService,
-    private readonly openRouter: OpenRouterService,
+    private readonly claude: ClaudeService,
   ) {}
 
   isEnabled(): boolean {
@@ -76,11 +76,11 @@ export class NightTriageService {
       const snapshot = buildTriageSnapshot(tasks, new Map(), now, this.staleThresholdDays());
       let report = renderTriageReport(snapshot, { date });
 
-      // Нарратив опционален и graceful — таблицы неизменны.
-      if (this.openRouter.isConfigured()) {
+      // Нарратив опционален и graceful — таблицы неизменны. Родной Anthropic (ClaudeService).
+      if (this.config.ANTHROPIC_API_KEY?.trim()) {
         try {
-          const narrative = await this.openRouter.chat(buildNarrativePrompt(snapshot), 1_024);
-          report = insertNarrative(report, narrative);
+          const resp = await this.claude.askWithUserText(buildNarrativePrompt(snapshot));
+          report = insertNarrative(report, resp.text);
         } catch (err) {
           this.logger.warn(
             { reason: err instanceof Error ? err.message : String(err) },
