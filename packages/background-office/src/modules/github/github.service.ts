@@ -132,6 +132,12 @@ export class GithubService {
     filePath: string;
     content: string;
     labels?: string[];
+    /** Открыть PR как draft (по умолчанию false). */
+    draft?: boolean;
+    /** Метка для дедупа открытых PR (по умолчанию 'night-hunt'). */
+    dedupLabel?: string;
+    /** Сообщение коммита (по умолчанию chore(night-hunt): <title>). */
+    commitMessage?: string;
   }): Promise<{ prUrl: string; branch: string; created: boolean } | { skipped: true; reason: string }> {
     const octokit = await this.getOctokit();
     const branch = `${opts.branchPrefix}-${Date.now()}`;
@@ -140,7 +146,7 @@ export class GithubService {
       owner: this.owner,
       repo: this.repo,
       state: 'open',
-      labels: 'night-hunt',
+      labels: opts.dedupLabel ?? 'night-hunt',
       per_page: 20,
     });
     const dup = openByLabel.data.find(
@@ -183,7 +189,7 @@ export class GithubService {
       owner: this.owner,
       repo: this.repo,
       path: opts.filePath,
-      message: `chore(night-hunt): ${opts.title}`,
+      message: opts.commitMessage ?? `chore(night-hunt): ${opts.title}`,
       content: Buffer.from(opts.content, 'utf8').toString('base64'),
       branch,
       sha: fileSha,
@@ -196,6 +202,7 @@ export class GithubService {
       head: branch,
       base: opts.baseBranch,
       body: opts.body,
+      draft: opts.draft ?? false,
     });
 
     for (const label of opts.labels ?? []) {
