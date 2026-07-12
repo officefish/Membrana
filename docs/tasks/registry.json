@@ -33,7 +33,7 @@
       ],
       "notes": "Повтор рецепта night-triage (#380): night-hunt на OpenRouter (гео-блок из РФ, fetch не видит media-прокси) → свап на ClaudeService (native Anthropic через HTTPS_PROXY=media/NL). +baseBranch techies68→main. Деплой на office 176.124.218.4, enable NIGHT_HUNT_ENABLED, приёмка. Fly night-hunt не затрагиваем.",
       "archiveNotes": "NH1-NH3 done 2026-07-12: night-hunt боевой на office (Claude через media-прокси, 3 job → PR #392/#393/#394, cron живёт).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-12"
     },
     {
       "id": "night-triage-office",
@@ -52,7 +52,7 @@
       ],
       "notes": "Решение владельца 2026-07-12: детерминированное TS-ядро (ghost/orphan/stale) + LLM-нарратив (OpenRouter, graceful). Модуль night-triage в background-office по паттерну night-hunt. Наследует #344/INSIGHT_2026-07-10 (облачный пилот заморожен — нет канала ошибок). Инварианты консилиума night-triage-routine-2026-07-10 обязательны. Деплой на новый office-VDS 176.124.218.4.",
       "archiveNotes": "NT1-NT5 done 2026-07-12: детерминированный триаж + LLM-нарратив (media/NL прокси обходит гео-блок) на office, автономный draft PR #388, cron 02:30 МСК.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-12"
     },
     {
       "id": "rt-day-report-script",
@@ -12962,7 +12962,7 @@
         "rodchenko"
       ],
       "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM1 параметризация done (#351), OM2 build+туннель done (#352). ПИВОТ 2026-07-12: московский Timeweb VDS (94.141.162.3 / server 8347521) фундаментально режется ТСПУ на магистрали (подтверждено саппортом Timeweb) → OM4 релокация office на non-RU (Казахстан). OM4-A смена IP опциональна/параллельна; OM4-B/C/D = провижн KZ + деплой канона O1-O4 + cutover. Дедлайн 15-е. Fly night-hunt не затрагивается.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-12"
     },
     {
       "id": "detection-alarm-loop-refactor",
