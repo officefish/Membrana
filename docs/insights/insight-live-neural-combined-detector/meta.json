@@ -1,0 +1,13 @@
+{
+  "id": "insight-live-neural-combined-detector",
+  "title": "Живой нейро-combined детектор (эшелон-2-live): yamnet в combinedScore",
+  "status": "deferred",
+  "source": "user",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "2026-07-12",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": "2026-07-12",
+  "tags": []
+}

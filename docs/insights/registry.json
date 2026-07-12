@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-09",
+  "updatedAt": "2026-07-12",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -381,6 +381,17 @@
       "horizon": null,
       "weight": 6.6,
       "createdAt": "2026-07-09",
+      "tags": []
+    },
+    {
+      "id": "insight-live-neural-combined-detector",
+      "title": "Живой нейро-combined детектор (эшелон-2-live): yamnet в combinedScore",
+      "status": "deferred",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-12",
       "tags": []
     }
   ]
