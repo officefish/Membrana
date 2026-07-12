@@ -37,3 +37,25 @@
 - [ ] LGTM Teamlead по границам + ARCHITECTURE.md (§1, §1a-1e).
 
 Связано: [[night-triage-office]], [[night-hunt-office-real]] (тот же office/прокси-контур).
+
+---
+
+## ПЕРЕСМОТР — консилиум-2 `drift-anchor-triggers-2026-07-12.md` (LGTM Vesnin)
+
+Развилка деплоя DA3 (frozen-image не ловит дрейф детекторного кода) разрешена: **«поведенческий якорь» = ДВА разных явления**, ловятся в разных местах.
+
+| Якорь | Определение | Место | Порог |
+|-------|-------------|-------|-------|
+| **code-anchor** | `input=const` (golden-корпус `free-v1`), код детектора меняется → дрейф КОДА. Это текущий DA2 (golden combinedScore). | **CI-гейт** (PR в `packages/services/detectors/*` → прогон корпуса → регресс F1>ε **блокит merge**). GitHub Actions. | жёсткий (блок) |
+| **data-anchor** | `detector=const` (frozen-image), вход меняется → дрейф ДАННЫХ. | **Серверное расписание** ночью на frozen-image (`background-media`, NL). Лог `detectorVersion`+`imageFrozenAt`. | мягкий (warning) |
+| **scheduled-code-anchor** | пересборка детекторов из `main` + прогон корпуса → «прод разошёлся с main». | сервер, раз в сутки / по событию деплоя вне CI. | жёсткий |
+
+- Единый контракт **`DriftAnchorRecord`** в `@membrana/core`: `anchorKind: 'data'|'code'`, `anchorSource: 'ci'|'schedule'`, `detectorVersion`, `imageFrozenAt`, `delta`, `verdict`. Три producer'а через журнал, **без прямых импортов**.
+- Алерт **«Прод ≠ main»** при расхождении code-anchor(CI) ↔ scheduled-code-anchor (danger, иконка+текст).
+- Anti-fetish: серверное только там, где по существу (детерминированные детекторные прогоны + данные в media/NL); CI-гейт нативно в GitHub Actions, не форсим на сервер.
+
+**Новые фазы:**
+- **DA4** — scheduled-code-anchor: джоб пересборки детекторов из `main` + прогон корпуса (ресурс-бюджет: раз в сутки, не каждую ночь) + `DriftAnchorRecord`-контракт в core.
+- **DA5** — расхождение-алерт «Прод ≠ main» + UI-панель «Дрейф-якоря» в кабинете (три строки code/CI · code/schedule · data/schedule, возраст baseline, danger-строка, `tabular-nums`, `aria-live`, DESIGN.md).
+
+**Реструктуризация уже сделанного:** DA2 (golden drone → combinedScore) переезжает из «поведенческого якоря вообще» в **code-anchor → CI-гейт**; DA3-раннер остаётся для структурного якоря (DA1) на серверном расписании.
