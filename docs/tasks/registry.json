@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "drift-anchor-contour",
+      "title": "Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4)",
+      "promptPath": "docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md",
+      "githubIssue": 396,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-12",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Консилиум nightly-agents-platform 2026-07-12 (LGTM). Пакет @membrana/drift-anchor: чистая computeDrift (вердикт) + LLM только аннотирует. Якорь-A структурный (снимок поверх hermes:brief), Якорь-B поведенческий (golden drone → combinedScore vs baseline — на критическом пути детекции). baseline.json версионируется, автоперезапись запрещена. DA0 (ядро+тесты) done."
+    },
+    {
       "id": "night-hunt-office-real",
       "title": "Night Hunt по-настоящему на office: Claude через media-прокси, фикс ветки, enable (NH1-NH3)",
       "promptPath": "docs/prompts/NIGHT_HUNT_OFFICE_REAL_PROMPT.md",
