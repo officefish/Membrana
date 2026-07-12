@@ -1,0 +1,25 @@
+{
+  "takenAt": "BASELINE",
+  "components": [
+    {
+      "id": "registry-active-ids",
+      "kind": "structural",
+      "value": "32cb6f4d185db2c8"
+    },
+    {
+      "id": "dependency-graph",
+      "kind": "structural",
+      "value": "44a7d6ae186870e8"
+    },
+    {
+      "id": "role-prompts",
+      "kind": "structural",
+      "value": "50662f3845ce4e6e"
+    },
+    {
+      "id": "architecture-canon",
+      "kind": "structural",
+      "value": "bf7d9b1c67e6b5cc"
+    }
+  ]
+}
