@@ -70,8 +70,10 @@ export {
 export {
   CONSTRUCTOR_ALWAYS_PURE_SCENARIO_NODE_KINDS,
   PURE_ELIGIBLE_SCENARIO_NODE_KINDS,
+  PURE_ELIGIBLE_DEFAULT_IMPURE_SCENARIO_NODE_KINDS,
   PURE_LOCKED_IMPURE_SCENARIO_NODE_KINDS,
   DEFAULT_PURE_ELIGIBLE,
+  resolveDefaultPureForEligibleKind,
   type ConstructorAlwaysPureScenarioNodeKind,
   type PureEligibleScenarioNodeKind,
   type PureLockedImpureScenarioNodeKind,
