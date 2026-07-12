@@ -22,6 +22,8 @@ function makeService(over: {
     NIGHT_TRIAGE_ENABLED: over.enabled ?? true,
     NIGHT_TRIAGE_BASE_BRANCH: 'main',
     NIGHT_TRIAGE_STALE_DAYS: '14',
+    // ANTHROPIC_API_KEY присутствует только когда включён нарратив
+    ANTHROPIC_API_KEY: over.llm ? 'sk-ant-test' : undefined,
   } as unknown as AppConfig;
   const createPR =
     over.createPR ??
@@ -30,11 +32,11 @@ function makeService(over: {
     fetchTextFile: vi.fn(async () => (over.registry === undefined ? REGISTRY : over.registry)),
     createPullRequestWithFile: createPR,
   } as never;
-  const openRouter = {
-    isConfigured: () => over.llm ?? false,
-    chat: over.chat ?? vi.fn(async () => 'нарратив'),
+  const chatFn = over.chat ?? (async () => 'нарратив');
+  const claude = {
+    askWithUserText: vi.fn(async () => ({ text: await chatFn(), model: 'claude', stop_reason: 'end_turn' })),
   } as never;
-  return { svc: new NightTriageService(config, github, openRouter), createPR };
+  return { svc: new NightTriageService(config, github, claude), createPR };
 }
 
 const NOW = new Date('2026-07-12T00:00:00Z');
