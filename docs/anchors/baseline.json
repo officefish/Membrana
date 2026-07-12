@@ -20,6 +20,26 @@
       "id": "architecture-canon",
       "kind": "structural",
       "value": "bf7d9b1c67e6b5cc"
+    },
+    {
+      "id": "combinedScore:drone-golden",
+      "kind": "behavioral",
+      "value": 0.9136
+    },
+    {
+      "id": "detector:harmonic:drone-golden",
+      "kind": "behavioral",
+      "value": 0.7443
+    },
+    {
+      "id": "detector:cepstral:drone-golden",
+      "kind": "behavioral",
+      "value": 1
+    },
+    {
+      "id": "detector:spectral-flux:drone-golden",
+      "kind": "behavioral",
+      "value": 0.9965
     }
   ]
 }
