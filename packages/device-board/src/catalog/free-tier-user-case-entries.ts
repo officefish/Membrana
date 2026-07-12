@@ -1,5 +1,6 @@
 import { createEmptyDeviceScenarioDocument } from '@membrana/core';
 
+import { getFreeCombinedAlarmDocument } from '../graph/usercase-free-combined-alarm.js';
 import type { UserCaseCatalogEntry } from './user-case-catalog-types.js';
 
 /**
@@ -54,11 +55,18 @@ export const FREE_TIER_USER_CASE_ENTRIES: readonly UserCaseCatalogEntry[] = [
       'Заготовка FREE-UC: zero-shot нейро-детектор yamnet по треку. Граф добавляется содержимым.',
   },
   {
-    // «+1» лайнапа: combined UC поверх fusion-ядра (fuseDetectorConfidences) + alarm-loop.
+    // «+1» лайнапа: combined UC (DSP fusion) поверх loop-transition-policy (#357).
+    // S2 keystone — консилиум s2-combined-uc-dsp (вариант A). Базовый граф = проверенная
+    // Beta-пара (trends+ensemble → fusion → branch → combined + alarm-loop), из
+    // зарегистрированных basn-узлов. Нейро отложено (insight-live-neural-combined-detector).
     ...FREE_SCAFFOLD_BASE,
+    branchCount: 2,
     id: 'usercase-free-combined-alarm',
-    title: 'FREE · Combined + alarm-loop: слияние спектр+нейро (каркас)',
+    title: 'FREE · Combined + alarm-loop (DSP fusion)',
     description:
-      'Заготовка FREE-UC (+1): слияние сырых confidence trends+yamnet (combined score) и alarm-loop «ближе/дальше». Граф и combined-плагин — содержимое.',
+      'Слияние сырых confidence спектральных детекторов (trends + ensemble) в combinedScore, ' +
+      'вход в тревогу по combinedScore ≥ 0.5 и alarm-loop «ближе/дальше» (proximity). ' +
+      'DSP-fusion (нейро-модальность — отдельный шаг).',
+    loadDocument: getFreeCombinedAlarmDocument,
   },
 ];
