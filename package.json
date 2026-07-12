@@ -105,6 +105,7 @@
     "drift:snapshot": "node scripts/drift-anchor-snapshot.mjs",
     "drift:baseline": "node scripts/drift-anchor-snapshot.mjs --write-baseline",
     "drift:behavioral": "node scripts/drift-anchor-behavioral.mjs",
+    "drift:run": "node scripts/drift-anchor-run.mjs",
     "analyzers:research:week": "node scripts/analyzers-research-week.mjs",
     "analyzers:research:week:dry": "node scripts/analyzers-research-week.mjs --dry-run",
     "ask": "node scripts/ask-persona.mjs",

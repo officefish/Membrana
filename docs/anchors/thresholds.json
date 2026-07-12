@@ -1,0 +1,5 @@
+{
+  "epsilon1": 0.05,
+  "epsilon2": 0.2,
+  "_note": "Пороги behavioral-дрейфа (консилиум nightly-agents-platform): delta>epsilon1 → drift, delta>epsilon2 → broken. Меняются осознанно (сам порог не должен дрейфовать). Structural — бинарно (изменён/нет)."
+}
