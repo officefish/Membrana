@@ -25,6 +25,13 @@ export const envSchema = z.object({
   OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_MODEL: z.string().optional(),
   NIGHT_HUNT_BASE_BRANCH: z.string().optional(),
+  /** Night Triage: детерминированный триаж реестра → draft PR (#380) */
+  NIGHT_TRIAGE_ENABLED: z
+    .string()
+    .optional()
+    .transform((v) => v === 'true' || v === '1'),
+  NIGHT_TRIAGE_BASE_BRANCH: z.string().optional(),
+  NIGHT_TRIAGE_STALE_DAYS: z.string().optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;
