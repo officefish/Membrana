@@ -24,6 +24,9 @@ export const envSchema = z.object({
     .transform((v) => v === 'true' || v === '1'),
   OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_MODEL: z.string().optional(),
+  /** DeepSeek direct: fallback-канал нарратива ночных агентов (ADR 0005) */
+  DEEPSEEK_API_KEY: z.string().optional(),
+  DEEPSEEK_MODEL: z.string().optional(),
   NIGHT_HUNT_BASE_BRANCH: z.string().optional(),
   /** Night Triage: детерминированный триаж реестра → draft PR (#380) */
   NIGHT_TRIAGE_ENABLED: z
