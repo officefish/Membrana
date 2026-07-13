@@ -2,40 +2,41 @@
 
 > **Буфер** — при конфликте проигрывает [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и реестру.
 
-## live-neural-combined-fusion (2026-07-13)
+## UI-панель «Дрейф-якоря» — финал эпика #396 (2026-07-14)
 
-**Мандат владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE** — DSP-only combined (#372)
-недостаточен для выпуска. Отменяет точку 3 консилиума `s2-combined-uc-dsp`; остальные границы
-консилиума в силе. Критпуть FREE: **этот спринт → S2 live-smoke (гейт) → S3 упаковка UC**.
+**Решения владельца 2026-07-13 (вечерний бриф):**
 
-**Трек:** `live-neural-combined-fusion` (M, Issue #415, из инсайта
-`insight-live-neural-combined-detector`, adopted решением владельца)
+1. UI-панель — **завтра**, свежей сессией (не в марафоне 13.07).
+2. Размещение: **владелец поднял архитектурную развилку** — возможно НЕ в кабинете,
+   а **отдельный операторский UI** (например, поддомен `panel.mmbrn.tech`).
+   ⚠️ **Это консилиум-гейт ДО кода**: новая UI-поверхность/приложение (кабинет vs
+   отдельный panel-app) — вопрос границ, деплоя, auth. НЕ начинать компонент, пока
+   консилиум не вынес вердикт по месту.
+3. Эпик #396 после панели — **закрыть** (`task:archive drift-anchor-contour`);
+   полевой data-anchor по реальным записям → backlog **#420** (privacy-развилка,
+   не начинать без отдельного консилиума + LGTM владельца).
 
 ### Старт (вставить в начало новой сессии)
 
 ```text
-Следуй docs/prompts/TASK_PROMPT_WORKFLOW.md и промпту:
-docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md (блок «Промпт целиком»).
+Следуй docs/prompts/TASK_PROMPT_WORKFLOW.md. Эпик #396, финальная фаза: UI-панель
+«Дрейф-якоря». Шаг 0 (ОБЯЗАТЕЛЬНО ДО КОДА): yarn consilium --save-as drift-panel-placement
+— развилка «кабинет vs отдельный операторский UI (panel.mmbrn.tech)» (поднял владелец
+2026-07-13). Затем реализация по вердикту. Контекст: memory project_drift_anchor_contour,
+ADR 0004 (транспорт готов и жив).
 ```
 
-### Scope (кратко — канон в промпте)
+### Что уже готово (не переделывать)
 
-- yamnet → `createCombinedStreamDetectors()` (`apps/client/src/plugins/mic-combined-detection/`)
-  через готовый `loadYamnetBrowserModel` (офлайн-бандл) — одна точка питает клиент И device-board мост
-- Graceful DSP-only деградация с **видимой** меткой (молчаливая — запрещена)
-- Честная метка «спектр+нейро» в панели/карточке S2 UC
-- Перф-замер инференса на живом каденсе (p50/p95, документировать)
-- **Запрещено:** новые узлы палитры, правка ядра #357 / make-detection-fusion,
-  сетевые загрузки модели, прямые импорты между детекторами
+- Данные: `GET https://office.mmbrn.tech/v1/drift-anchor/digest` — публичный, живой,
+  отдаёт записи `code:schedule` + `data:schedule` (+ `code:ci` после первого PR в detectors).
+- Чистая математика: `evaluateProdMainDivergence` (@membrana/core) — danger-строка
+  «Прод ≠ main» считается на потребителе, office — тупой транспорт (ADR 0004).
+- Требования консилиума drift-anchor-triggers к самой панели: 3 строки
+  (code/CI · code/schedule · data/schedule), возраст baseline/записи, danger-строка
+  иконка+текст (не только цвет), `tabular-nums`, `aria-live="polite"`, DESIGN.md.
+- Устаревание после редеплоя office ВИДИМО (takenAt): «нет свежей записи» ≠ «ok».
 
-### Команды
-
-```bash
-yarn turbo run test --filter=@membrana/client --filter=@membrana/detection-ensemble-service
-yarn catalog:verify-client
-```
-
-**Инсайт:** [`insight-live-neural-combined-detector`](./insights/insight-live-neural-combined-detector/INSIGHT.md)
-**Промпт:** [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](./prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md)
-**Консилиум-границы:** [`seanses/s2-combined-uc-dsp-2026-07-12.md`](./seanses/s2-combined-uc-dsp-2026-07-12.md) (точка 3 отменена владельцем)
-**Реестр:** `id: live-neural-combined-fusion` (`status: active`, `insightId: insight-live-neural-combined-detector`)
+**Реестр:** `id: drift-anchor-contour` (эпик #396, финальная фаза)
+**ADR:** [`0004-drift-anchor-journal-transport.md`](./adr/0004-drift-anchor-journal-transport.md) (ACCEPTED, E2E жив)
+**Backlog после закрытия:** #420 (полевой data-anchor, privacy)
