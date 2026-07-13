@@ -49,6 +49,11 @@ docs/discussions/mcp-tier0.generated.json
 # RAG (@membrana/rag-service) — LanceDB index + hash manifest (local only)
 .membrana/rag/
 
+# Closure-review артефакты (manifest + <sha>-review.md) — локальные рабочие файлы
+# процесса закрытия, НЕ часть публичного контракта репо (консилиум
+# agent-tooling-friction 2026-07-13, ti-1). Историю чужих ревью не тянем в PR.
+docs/reviews/*/
+
 # Редакторы
 .idea/
 *.swp
