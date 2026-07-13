@@ -51,9 +51,9 @@ export * from './device-board/index.js';
 export * from './node-realtime/index.js';
 export * from './runtime-version.js';
 export {
-  buildCodeAnchorRecord,
+  buildAnchorRecord,
   evaluateProdMainDivergence,
-  type CodeAnchorMeta,
+  type AnchorRecordMeta,
   type DriftAnchorKind,
   type DriftAnchorRecord,
   type DriftAnchorSource,

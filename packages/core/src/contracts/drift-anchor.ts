@@ -47,11 +47,14 @@ export interface DriftAnchorRecord {
   readonly metrics: Readonly<Record<string, number>>;
 }
 
-/** Контекст producer'а для сборки code-anchor записи (всё, что не выводится из метрик). */
-export interface CodeAnchorMeta {
+/** Контекст producer'а для сборки записи якоря (всё, что не выводится из метрик). */
+export interface AnchorRecordMeta {
+  readonly anchorKind: DriftAnchorKind;
   readonly anchorSource: DriftAnchorSource;
   readonly detectorVersion: string;
   readonly takenAt: string;
+  /** Момент заморозки входа (для честного data-anchor с реальным frozen-image). null, если не применимо. */
+  readonly imageFrozenAt?: string | null;
 }
 
 /** Округление метрик до 4 знаков — против float-шума, как в golden-якоре DA2. */
@@ -60,26 +63,29 @@ function round4(value: number): number {
 }
 
 /**
- * Собрать code-anchor запись: сравнение F1 текущего прогона корпуса с baseline.
+ * Собрать запись якоря: сравнение F1 текущего прогона с baseline — общая математика
+ * для code-anchor (input=const, код меняется, CI-гейт, жёсткий порог) И data-anchor
+ * (детектор=const, вход меняется, серверное расписание, мягкий/warning порог —
+ * ЖЁСТКОСТЬ порога решает потребитель по `meta.anchorKind`, не эта функция: она
+ * лишь считает delta/verdict, семантику «блокирует ли это что-то» несёт вызывающий).
  *
  * Семантика направленная — якорь ловит только РЕГРЕСС (падение F1); рост метрики
- * дрейфом не считается. Жёсткий порог консилиума: регресс > epsilon → 'broken'
- * (блок merge в CI-гейте); регресс в пределах epsilon → 'drift' (виден, не блокит);
- * детектор исчез из прогона → 'broken'. Новые детекторы попадают в metrics,
- * но baseline для них не изобретается.
+ * дрейфом не считается. delta > epsilon → 'broken'; регресс в пределах epsilon →
+ * 'drift' (виден); детектор исчез из прогона → 'broken'. Новые детекторы попадают
+ * в metrics, но baseline для них не изобретается.
  *
  * Чистая: без I/O/времени; детерминирована (корпус детерминирован — подтверждено
  * повторным прогоном v0.2: метрики совпадают до знака).
  *
  * Fail-closed (ADR 0003): пустой baseline, нечисловые значения метрик или порога →
- * 'broken' — блокирующий merge якорь не имеет права тихо пройти на мусорном входе
- * (NaN в сравнениях иначе даёт false и «зелёный» гейт).
+ * 'broken' — якорь не имеет права тихо пройти на мусорном входе (NaN в сравнениях
+ * иначе даёт false и «зелёный» гейт).
  */
-export function buildCodeAnchorRecord(
+export function buildAnchorRecord(
   baselineF1: Readonly<Record<string, number>>,
   currentF1: Readonly<Record<string, number>>,
   epsilon: number,
-  meta: CodeAnchorMeta,
+  meta: AnchorRecordMeta,
 ): DriftAnchorRecord {
   let maxRegression = 0;
   let missing = false;
@@ -114,10 +120,10 @@ export function buildCodeAnchorRecord(
   }
 
   return {
-    anchorKind: 'code',
+    anchorKind: meta.anchorKind,
     anchorSource: meta.anchorSource,
     detectorVersion: meta.detectorVersion,
-    imageFrozenAt: null,
+    imageFrozenAt: meta.imageFrozenAt ?? null,
     delta,
     verdict,
     takenAt: meta.takenAt,

@@ -106,6 +106,20 @@ Exit 2 (broken) виден в cron-логе. Записи журнала: `docs/
 не только повтором на одной машине). Cron установлен (`systemctl is-active cron` → active),
 первый автозапуск — 00:15 UTC / 03:15 МСК.
 
+**data-anchor (ADR 0004, владелец 2026-07-13):** тот же прогон дополнительно тянет
+`__tariff_dataset__` с background-media (canary-устройство, `docs/anchors/data-anchor-canary-device.json`)
+и сравнивает F1 с тем же baseline — целостность провижининга, не реальный акустический дрейф
+(осознанное сужение владельцем). Требует **дополнительной строки** в `$OFFICE_TOKEN_FILE`
+(`/etc/membrana/office.env`):
+
+```bash
+echo 'MEDIA_API_TOKEN=<тот же токен, что VITE_MEDIA_API_TOKEN в корневом .env>' >> /etc/membrana/office.env
+```
+
+Без этой строки `office-drift-code-cron.sh` пропускает data-anchor (optional, лог-строка,
+не падает). Живой прогон 2026-07-13 против прод-media (`https://media.membrana.space`) дал
+`verdict=ok, delta=0, samples=120/120` — провизионированный корпус byte-идентичен git-канону.
+
 ## 6. Границы
 
 - Обходной туннель — **админ-only**. Продовый публичный трафик обязан идти напрямую.

@@ -76,7 +76,7 @@ const TEMPLATE_MATCH_DIST = join(
 const CURATED_TEMPLATES_JSON = join(DEFAULT_DATASET_DIR, 'curated-drone-templates.json');
 const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
 
-const DSP_DETECTORS = [
+export const DSP_DETECTORS = [
   {
     name: 'harmonic',
     dist: join(ROOT, 'packages', 'services', 'detectors', 'harmonic', 'dist', 'index.js'),
@@ -110,7 +110,13 @@ async function ensureBuilt(distPath, label) {
   }
 }
 
-async function runDetector(manifestSamples, spec, datasetDir) {
+/**
+ * Reused by `drift-anchor-data.mjs` (data-anchor producer, ADR 0004): гоняет
+ * тот же детектор на произвольном `{id,path,label}[]` (напр. сэмплы, скачанные
+ * с background-media __tariff_dataset__ во временный каталог) — сигнатура
+ * не завязана на канонический v0.2 манифест.
+ */
+export async function runDetector(manifestSamples, spec, datasetDir) {
   await ensureBuilt(spec.dist, spec.label);
   const { analyzeSample } = await import(pathToFileURL(DETECTOR_BASE_DIST).href);
   const mod = await import(pathToFileURL(spec.dist).href);
@@ -165,7 +171,7 @@ async function runDetector(manifestSamples, spec, datasetDir) {
   };
 }
 
-async function runTemplateMatch(manifestSamples, datasetDir) {
+export async function runTemplateMatch(manifestSamples, datasetDir) {
   await ensureBuilt(TEMPLATE_MATCH_DIST, 'template-match-detector');
   const mod = await import(pathToFileURL(TEMPLATE_MATCH_DIST).href);
 
@@ -241,7 +247,7 @@ const YAMNET_NODE_DIST = join(
  * нарезает фреймы 0.96 с, clip-score = среднее). warmUp до замера — latencyMs
  * детектора не включает одноразовую загрузку графа.
  */
-async function runYamnet(manifestSamples, datasetDir) {
+export async function runYamnet(manifestSamples, datasetDir) {
   await ensureBuilt(YAMNET_NODE_DIST, 'yamnet-detector (dist/node.js)');
   const mod = await import(pathToFileURL(YAMNET_NODE_DIST).href);
   const detector = mod.createYamnetDetectorNode();
@@ -394,7 +400,12 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Guard обязателен: с 2026-07-13 файл ещё и БИБЛИОТЕКА (drift-anchor-data.mjs импортирует
+// runDetector/runTemplateMatch/runYamnet/DSP_DETECTORS) — без guard любой import.mjs, а не
+// только прямой запуск, тихо перезаписывал бы канонический DETECTOR_BENCHMARK.md.
+if (process.argv[1]?.endsWith('benchmark-detectors.mjs')) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
