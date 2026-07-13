@@ -62,6 +62,23 @@ docs/prompts/TELEGRAM_ALLY_REPORTS_PROMPT.md (блок «Промпт целик
 спринтом llm-providers-unblock (#424/#425) в worktree Membrana-openrouter; app.module.ts
 конфликт разрешать после их мёржа (мёржи 2026-07-13 вечер: конфликт разрешён, оба модуля в app.module).
 
+**ИТОГ 13.07: спринт ЗАКРЫТ** (PR #431 + hotfix 0291f954, архив). E2E живой: оба дайджеста
+доставлены в группу (sent=true). Памятка союзника: `docs/comms/ALLY_PRIMER.md` + артефакт.
+
+### Второй трек на 2026-07-14: дайджесты v2 (#434, решение владельца 13.07 вечер)
+
+Выжимка остаётся технической, но подробной; пояснения о проекте вшиты в каждый отчёт
+«мелкими буквами» = **expandable blockquote** в Telegram-HTML; источник шапки — **.md в
+docs/comms/** (краткая версия ALLY_PRIMER), бот конвертирует md→Telegram-HTML. Совсем
+убирать пояснения нельзя — «фоновая реклама». S/M-задача, канон модуля уже есть (#428).
+
+```text
+Следуй docs/prompts/TASK_PROMPT_WORKFLOW.md. Задача #434: telegram-дайджесты v2 —
+md-шапка пояснений (blockquote expandable) + подробная фактура day/evening.
+Контекст: memory telegram-ally-reports, scripts/telegram-ritual-digest.mjs,
+modules/telegram, docs/comms/ALLY_PRIMER.md. Не смешивать с LLM-пересказом (отдельно).
+```
+
 ---
 
 ## Второй трек: итоги дня 2026-07-13 (оба спринта закрыты)
