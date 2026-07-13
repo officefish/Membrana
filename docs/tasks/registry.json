@@ -1,6 +1,40 @@
 {
   "tasks": [
     {
+      "id": "night-narrative-deepseek-fallback",
+      "title": "DeepSeek direct API — fallback нарратива ночных агентов (обход OpenRouter 403)",
+      "promptPath": "docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md",
+      "githubIssue": 424,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-13",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Канон готов (модуль-близнец openrouter, OpenAI-совместимый direct API, доступен с office без прокси) → консилиум не нужен, шаг 0 = ADR цепочки OpenRouter→DeepSeek→graceful. Запреты: не менять детерминированные таблицы триажа, без LLM-роутера-пакета (YAGNI), без прокси-логики в модуле. Owner-гейт: DEEPSEEK_API_KEY (живой ран; код/тесты от ключа не зависят). Закрывает хвост #380 «нарратив пропускается»."
+    },
+    {
+      "id": "rag-archive-embeddings-unblock",
+      "title": "RAG archive: второй embeddings-провайдер по существующему контракту (разблокировка useLongTerm)",
+      "promptPath": "docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md",
+      "githubIssue": 425,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-13",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Контракт RagEmbeddingProvider='openai'|'voyage' уже существует, voyage-эмбеддер не реализован; альтернатива — OPENAI_BASE_URL + совместимый endpoint (Jina/Cohere-compat) без кода. Развилка A/B решается по доступному ключу + geo-проверке с office. Запреты: не менять тип провайдера и публичные контракты rag, не трогать operative-контур и потребителей scripts, без новых сторов (pgvector = фаза 3 persona-memory). Owner-гейт: ключ Voyage/Jina/Cohere."
+    },
+    {
       "id": "persona-memory-phase1",
       "title": "Persona Memory фаза 1: детерминированный журнал субъектного опыта персоны + инъекция за флагом (пилот Dynin)",
       "promptPath": "docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md",
