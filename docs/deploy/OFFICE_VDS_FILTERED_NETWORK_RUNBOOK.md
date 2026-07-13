@@ -76,17 +76,35 @@ NAT на этом канале душит крупные TLS-пакеты к Clo
 
 ```bash
 # однократная установка на office (новый IP 176.124.218.4, data-path чист):
-apt-get install -y git nodejs npm && corepack enable          # node >= 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt-get install -y nodejs && corepack enable && corepack prepare yarn@4.5.0 --activate
 mkdir -p /opt/membrana-drift && cd /opt/membrana-drift
 git clone https://github.com/officefish/Membrana.git
-cd Membrana && corepack yarn install --immutable              # при таймаутах к Cloudflare — см. §3
-# крон (03:15 МСК, после night-triage 02:30; раз в сутки — ресурсный бюджет #404):
-crontab -l | { cat; echo '15 0 * * * /opt/membrana-drift/Membrana/deploy/office-drift-code-cron.sh >> /var/log/membrana-drift-code.log 2>&1'; } | crontab -
+cd Membrana && yarn install --immutable                       # см. swap-ловушку ниже; сеть чиста, см. §3
+crontab -l 2>/dev/null | { cat; echo '15 0 * * * /opt/membrana-drift/Membrana/deploy/office-drift-code-cron.sh >> /var/log/membrana-drift-code.log 2>&1'; } | crontab -
 ```
+
+**Ловушка (2026-07-13): `yarn install` на голом хосте убит OOM (exit 137).** VDS — 3.8 GiB RAM,
+`swapon --show` пуст (докер-контейнеры это скрывают, голый node-процесс — нет). Фикс —
+разовый 2 GiB swapfile **до** `yarn install`, персистентно (переживает ребут):
+
+```bash
+fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+```
+
+После свопа install прошёл штатно (717 пакетов, ~3.5 мин, exit 0). `cpu-features@0.0.10`
+(нативный опциональный модуль `ssh2`, build-only) падает на этом хосте — не блокер, детекторный
+путь его не использует.
 
 Джоб: [`deploy/office-drift-code-cron.sh`](../../deploy/office-drift-code-cron.sh) —
 `git reset --hard origin/main` → `yarn install --immutable` → `yarn drift:code:schedule`.
 Exit 2 (broken) виден в cron-логе. Записи журнала: `docs/reports/drift-anchor/records/` (клона).
+
+**Живая проверка 2026-07-13:** ручной прогон на office дал `verdict=ok, delta=0` — F1 всех
+5 детекторов **совпали с локальным прогоном до знака** (детерминизм подтверждён на другом хосте,
+не только повтором на одной машине). Cron установлен (`systemctl is-active cron` → active),
+первый автозапуск — 00:15 UTC / 03:15 МСК.
 
 ## 6. Границы
 
