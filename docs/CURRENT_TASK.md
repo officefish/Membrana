@@ -40,3 +40,24 @@ ADR 0004 (транспорт готов и жив).
 **Реестр:** `id: drift-anchor-contour` (эпик #396, финальная фаза)
 **ADR:** [`0004-drift-anchor-journal-transport.md`](./adr/0004-drift-anchor-journal-transport.md) (ACCEPTED, E2E жив)
 **Backlog после закрытия:** #420 (полевой data-anchor, privacy)
+
+---
+
+## Второй трек: Persona Memory фаза 1 (owner override 2026-07-13)
+
+Инсайт `insight-persona-persistent-memory` (adopted 5.4) отправлен в разработку
+решением владельца (вес <6.0 — осознанный override, зафиксирован в meta.json).
+Спринт `persona-memory-phase1` зарегистрирован (lead dynin). Отдельная сессия /
+отдельный worktree — не смешивать с drift-panel.
+
+### Старт (вставить в начало новой сессии)
+
+```text
+Следуй docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md (реестр: persona-memory-phase1).
+Фаза 1 инсайта insight-persona-persistent-memory: детерминированный extractor
+(docs/seanses/*-PROTOCOL.md + docs/insights/*/REVIEW.md → docs/virtual-team/memory/dynin.md,
+provenance+дата), токен-бюджет <5K, plain Markdown БЕЗ векторов и БЕЗ LLM в экстракции,
+инъекция в yarn ask/consilium за флагом (default off), человек-гейт на запись.
+Эталон — hermes-brief (PR #316). Merge только после LGTM Vesnin.
+Scope review НЕ переоткрывать; фазы 2-3 — см. секцию «Фазы» в INSIGHT.md.
+```
