@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "persona-memory-phase1",
+      "title": "Persona Memory фаза 1: детерминированный журнал субъектного опыта персоны + инъекция за флагом (пилот Dynin)",
+      "promptPath": "docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-13",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "insightId": "insight-persona-persistent-memory",
+      "notes": "Переход инсайт→спринт (insight-persona-persistent-memory, adopted 5.4; старт при весе <6.0 - owner override 2026-07-13, зафиксирован в meta.json). Scope = «Следующий шаг» Teamlead из REVIEW.md дословно: детерминированный extractor (seanses+REVIEW → docs/virtual-team/memory/dynin.md, provenance+дата), токен-бюджет <5K, plain Markdown без векторов, инъекция в yarn ask/consilium за флагом, человек-гейт на запись. Запреты: LLM в экстракции, вектора/embeddings, калибровка (фаза 2), изменение PROMPT_*.md, автономные действия персоны, UI-вьюер. Merge после LGTM Vesnin. Паттерн-эталон hermes-brief (PR #316)."
+    },
+    {
       "id": "live-neural-combined-fusion",
       "title": "yamnet в живом combinedScore: fusion спектр+нейро для FREE",
       "promptPath": "docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md",
