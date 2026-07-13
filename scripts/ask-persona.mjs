@@ -41,6 +41,7 @@ import {
   retrieveRagContext,
   shouldUsePersonaRag,
 } from './lib/rag-ritual.mjs';
+import { readPersonaMemory, personaMemoryPath } from './lib/persona-memory.mjs';
 
 // ---------------------------------------------------------------------------
 // Персонажи. Чтобы добавить нового — пиши сюда + создавай PROMPT_*.md.
@@ -74,6 +75,7 @@ const MAX_WHITE_PAPER_CHARS = 30_000;
 const MAX_ARCH_CHARS = 6_000;
 const MAX_TICKET_CHARS = 20_000;
 const MAX_TASK_TEXT_CHARS = 8_000;
+const MAX_MEMORY_CHARS = 20_000; // страховка поверх токен-бюджета extractor'а (<5K токенов)
 
 const DISCUSSIONS_DIR = 'docs/discussions';
 
@@ -102,6 +104,9 @@ Options:
   --no-context              Не подгружать WHITE_PAPER / ARCHITECTURE / SERVICES.
   --rag                     Подмешать RAG (operative) по вопросу.
   --no-rag                  Отключить RAG (в т.ч. для vesnin/ozhegov).
+  --with-memory             Подмешать журнал субъектного опыта персоны
+                            (docs/virtual-team/memory/<persona>.md), по умолчанию ВЫКЛ.
+                            Эквивалент: PERSONA_MEMORY_INJECT=1.
   --help, -h                Эта справка.
 
 Среда:
@@ -126,9 +131,12 @@ function parseArgs(argv) {
   let noContext = false;
   let noRag = false;
   let enableRag = false;
+  // Инъекция журнала персоны — строго opt-in (флаг или env), review 2026-07-12.
+  let withMemory = process.env.PERSONA_MEMORY_INJECT === '1';
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
+    if (arg === '--with-memory') { withMemory = true; continue; }
     if (arg === '--task') { task = argv[++i] ?? ''; continue; }
     if (arg.startsWith('--task=')) { task = arg.slice('--task='.length); continue; }
     if (arg === '--ticket-file') { ticketFile = argv[++i] ?? ''; continue; }
@@ -165,7 +173,7 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { persona, question, task, ticketFile, ghIssue, saveAs, noSave, noContext, noRag, enableRag };
+  return { persona, question, task, ticketFile, ghIssue, saveAs, noSave, noContext, noRag, enableRag, withMemory };
 }
 
 // ---------------------------------------------------------------------------
@@ -253,11 +261,12 @@ function formatGhIssueAsTicket(issue) {
 // ---------------------------------------------------------------------------
 // Сборка промпта
 
-function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueData, ragBlock = '' }) {
+function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueData, ragBlock = '', withMemory = false }) {
   const cwd = process.cwd();
   const personaCfg = PERSONAS[persona];
 
   const personaPrompt = readBounded(resolve(cwd, personaCfg.promptFile), MAX_PROMPT_CHARS);
+  const memoryBlock = withMemory ? readPersonaMemory(persona, { cwd, maxChars: MAX_MEMORY_CHARS }) : null;
 
   let ticketBlock = '';
   let ticketSourceLabel = '';
@@ -294,6 +303,19 @@ function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueDa
     personaPrompt,
     '',
   );
+
+  if (memoryBlock) {
+    parts.push(
+      '---',
+      `## Журнал субъектного опыта персоны (${personaMemoryPath(persona)})`,
+      '',
+      'Это ТВОИ прошлые позиции/голоса с provenance-ссылками. Опирайся на них и ссылайся',
+      'на источник; если сегодняшние данные противоречат прошлой позиции — скажи это явно.',
+      '',
+      memoryBlock,
+      '',
+    );
+  }
 
   if (!noContext) {
     if (strategicContext) {
