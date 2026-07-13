@@ -131,3 +131,6 @@ docs/discussions/uncommitted-code-review.md
 
 # Артефакт yarn hermes:brief (генерируемый снимок состояния сессии, перезаписывается)
 docs/HERMES_BRIEF.md
+
+# Журнал drift-anchor (DA3 дайджесты + DA4/DA5 записи якорей) — локальный артефакт хоста (office/CI), не для репо
+docs/reports/drift-anchor/

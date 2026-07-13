@@ -34,17 +34,21 @@ const DEFAULT_MANIFEST_PATH = join(DEFAULT_DATASET_DIR, 'manifest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
 
 function parseArgs(argv) {
-  const options = { manifestPath: DEFAULT_MANIFEST_PATH, originLabels: false };
+  const options = { manifestPath: DEFAULT_MANIFEST_PATH, originLabels: false, reportPath: null };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--manifest' && argv[i + 1]) {
       options.manifestPath = resolve(ROOT, argv[++i]);
     } else if (argv[i] === '--origin-labels') {
       options.originLabels = true;
+    } else if (argv[i] === '--report' && argv[i + 1]) {
+      // drift-anchor code-anchor (#404): отчёт в сторону, канонические
+      // reports/latest.json и DETECTOR_BENCHMARK.md НЕ трогаются.
+      options.reportPath = resolve(ROOT, argv[++i]);
     }
   }
   // Канонический MD патчится ТОЛЬКО дефолтным (v0.2) прогоном по операторским меткам.
   options.isCanonicalRun =
-    options.manifestPath === DEFAULT_MANIFEST_PATH && !options.originLabels;
+    options.manifestPath === DEFAULT_MANIFEST_PATH && !options.originLabels && !options.reportPath;
   return options;
 }
 
@@ -301,7 +305,7 @@ const SCAFFOLD_DETECTORS = [
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const datasetDir = dirname(options.manifestPath);
-  const reportJson = join(datasetDir, 'reports', 'latest.json');
+  const reportJson = options.reportPath ?? join(datasetDir, 'reports', 'latest.json');
   await ensureBuilt(DETECTOR_BASE_DIST, 'detector-base');
 
   const manifest = JSON.parse(await readFile(options.manifestPath, 'utf8'));

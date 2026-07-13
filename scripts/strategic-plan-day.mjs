@@ -32,4 +32,5 @@ await runStrategicPlan({
   commandName: `yarn plan:day${full ? ' --full' : ''}`,
   full,
   includeDetectionPriorities: true,
+  includeDriftDigest: true,
 });

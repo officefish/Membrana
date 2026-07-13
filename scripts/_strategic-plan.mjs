@@ -28,6 +28,7 @@ import {
   buildDetectionPlanningContextSection,
   readFftMetricsPotentialAndLimits,
 } from './lib/detection-planning-priorities.mjs';
+import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
 import { formatInsightsWeeklyBlock } from './lib/insight-ritual.mjs';
 
 const MAX_BUFFER = 12 * 1024 * 1024;
@@ -201,6 +202,8 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName, includeDetect
  * @property {boolean} [includeDetectionPriorities] Подключать ли FFT_METRICS_POTENTIAL_AND_LIMITS
  *                                    и правила планирования детекции (дневной + недельный план).
  * @property {boolean} [includeInsights] Подключать ли активные инсайты (docs/insights/registry.json).
+ * @property {boolean} [includeDriftDigest] Дописывать ли read-only дрейф-секцию из последнего
+ *                                    DRIFT_*.json (DA5; только дневной план).
  */
 
 /**
@@ -391,6 +394,12 @@ export async function runStrategicPlan(options) {
         if (!out) out = JSON.stringify(parts, null, 2);
       } catch {
         out = text;
+      }
+      if (options.includeDriftDigest) {
+        // DA5: read-only дрейф-секция из последнего DRIFT_*.json (DA3-раннер).
+        // Детерминированный рендер, не LLM; graceful — без дайджеста секции нет.
+        const driftSection = buildDriftSectionFromDisk(process.cwd());
+        if (driftSection) out = `${out}\n\n---\n\n${driftSection}`;
       }
       writePlanFile({
         outputPath: options.outputPath,
