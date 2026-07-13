@@ -34,9 +34,9 @@ const SMOOTHING_TIME_CONSTANT = 0.75;
 export function createMicCombinedDetectionPlugin(): Plugin<MicCombinedDetectionPluginConfig> {
   return {
     id: MIC_COMBINED_DETECTION_PLUGIN_ID,
-    name: 'Combined-детекция (спектр→fusion)',
+    name: 'Combined-детекция (спектр+нейро→fusion)',
     description:
-      'combinedScore из fusion-ядра: DSP-детекторы на окне живого потока → взвешенное среднее сырого confidence. Источник тревоги для alarm-loop.',
+      'combinedScore из fusion-ядра: DSP-детекторы + yamnet (нейро, fallback спектр) на окне живого потока → взвешенное среднее сырого confidence. Источник тревоги для alarm-loop.',
     version: '1.0.0',
     active: false,
     config: { ...defaultMicCombinedDetectionConfig },
