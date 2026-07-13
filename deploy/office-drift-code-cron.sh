@@ -38,7 +38,35 @@ code=$?
 set -e
 if [ "$code" -ne 0 ]; then
   echo "[drift-code] ALERT: exit $code (2 = broken / «Прод ≠ main», см. лог выше)"
-  exit "$code"
+fi
+
+# Push ПЕРЕД финальным exit — особенно на broken запись должна долететь до office
+# (иначе digest молчит о самом важном событии). Скрипт всё равно завершится кодом
+# исходного verdict ниже.
+echo "[drift-code] push запись в background-office (ADR 0004, наблюдаемость — не гейт)"
+# Тот же хост, что office-api контейнер (bind 127.0.0.1:3000, deploy/background-office.prod.compose.yml)
+# → loopback, не публичный office.mmbrn.tech. Токен — из /etc/membrana/office.env (тот же
+# root, что деплоит office-api; НЕ копируем секрет в git-клон, читаем на месте).
+OFFICE_TOKEN_FILE="${MEMBRANA_OFFICE_ENV_FILE:-/etc/membrana/office.env}"
+OFFICE_URL="${MEMBRANA_OFFICE_URL:-http://127.0.0.1:3000}"
+RECORD="$REPO_DIR/docs/reports/drift-anchor/records/code-schedule-latest.json"
+if [ ! -f "$OFFICE_TOKEN_FILE" ]; then
+  echo "[drift-code] нет $OFFICE_TOKEN_FILE — push пропущен (optional)"
+elif [ ! -f "$RECORD" ]; then
+  echo "[drift-code] нет $RECORD — push пропущен (optional)"
+else
+  # Snip возможные кавычки вокруг значения (KEY="value" / KEY='value' в .env-файлах).
+  TOKEN=$(grep -m1 '^API_INTERNAL_TOKEN=' "$OFFICE_TOKEN_FILE" | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+  if [ -z "$TOKEN" ]; then
+    echo "[drift-code] API_INTERNAL_TOKEN пуст в $OFFICE_TOKEN_FILE — push пропущен (optional)"
+  else
+    curl -fsS -X POST "${OFFICE_URL%/}/v1/drift-anchor/records" \
+      -H "X-Membrana-Token: ${TOKEN}" -H "Content-Type: application/json" \
+      --data-binary "@${RECORD}" --max-time 15 \
+      && echo "[drift-code] push OK" \
+      || echo "[drift-code] push failed (optional, non-blocking)"
+  fi
 fi
 
 echo "[drift-code] $(date -u +%FT%TZ) done"
+exit "$code"

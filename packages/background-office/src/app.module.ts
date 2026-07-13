@@ -7,6 +7,7 @@ import { ClaudeModule } from './modules/claude/claude.module';
 import { LinearModule } from './modules/linear/linear.module';
 import { RagModule } from './modules/rag/rag.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module';
+import { DriftAnchorModule } from './modules/drift-anchor/drift-anchor.module';
 import { NightHuntModule } from './modules/night-hunt/night-hunt.module';
 import { NightTriageModule } from './modules/night-triage/night-triage.module';
 import { HealthController } from './health.controller';
@@ -49,6 +50,7 @@ const testImports =
     WebhooksModule,
     NightHuntModule,
     NightTriageModule,
+    DriftAnchorModule,
   ],
   controllers: [HealthController],
 })
