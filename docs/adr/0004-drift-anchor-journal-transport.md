@@ -116,6 +116,17 @@ POST — `ApiTokenGuard` (producer'ы), GET — либо открыт, либо 
 - [ ] Тесты границ: office-модуль не импортирует из detectors/drift-anchor пакетов напрямую (только тип из `@membrana/core`).
 - [ ] LGTM владельца по auth-модели GET (Р3) — открытый эндпоинт или кабинет-прокси.
 
+## Живая проверка (2026-07-13, конец-в-конец на office)
+
+Модуль реализован (PR #418), задеплоен на office (`docker compose ... build && up -d`,
+образ пересобран из `main` 88d515e), cron-клон обновлён. Полная цепочка подтверждена
+реальным прогоном: `office-drift-code-cron.sh` → сборка+корпус → `code-anchor(schedule)
+verdict=ok` → `POST /v1/drift-anchor/records` с токеном из `/etc/membrana/office.env`
+→ `{"ok":true}` → запись видна в `GET /v1/drift-anchor/digest` **и локально
+(127.0.0.1:3000), и публично (`https://office.mmbrn.tech/v1/drift-anchor/digest`)**.
+`POST` без токена по-прежнему требует `ApiTokenGuard` (не тестировался заново здесь —
+покрыт `drift-anchor.controller.ts` guard + service/DTO unit-тестами, 13 тестов).
+
 ## Out of scope / открытые задачи
 
 - **data-anchor джоб** на `background-media` (frozen-image, warning-семантика) — отдельный producer, тот же push-паттерн, не в этом ADR.
