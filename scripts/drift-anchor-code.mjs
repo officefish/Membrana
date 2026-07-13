@@ -78,7 +78,8 @@ function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8').replace(/^﻿/, ''));
 }
 
-function detectorVersion() {
+/** Reused by drift-anchor-data.mjs — оба producer'а должны определять версию одинаково. */
+export function detectorVersion() {
   return execFileSync(
     'git',
     ['log', '-1', '--format=%H', '--', ...DETECTOR_VERSION_PATHS],
@@ -115,8 +116,9 @@ async function main() {
     throw new Error('codeAnchorEpsilonF1 отсутствует в docs/anchors/thresholds.json');
   }
 
-  const { buildCodeAnchorRecord } = await import(pathToFileURL(CORE_DIST).href);
-  const record = buildCodeAnchorRecord(baseline.f1, currentF1, epsilon, {
+  const { buildAnchorRecord } = await import(pathToFileURL(CORE_DIST).href);
+  const record = buildAnchorRecord(baseline.f1, currentF1, epsilon, {
+    anchorKind: 'code',
     anchorSource: options.source,
     detectorVersion: detectorVersion(),
     takenAt: new Date().toISOString(),

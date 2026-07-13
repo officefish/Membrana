@@ -1,0 +1,8 @@
+{
+  "deviceId": "aab7a2f8-8c7f-4217-8f18-c126a7fcf97b",
+  "name": "drift-anchor-data-canary",
+  "kind": "microphone",
+  "registeredAt": "2026-07-13T09:37:39.077Z",
+  "collectionId": "__tariff_dataset__",
+  "_note": "Служебное устройство background-media (прод, https://media.membrana.space), НЕ реальный пользователь. Единственная роль — держать провизионированный __tariff_dataset__ (120 WAV free-v1) для data-anchor producer'а (scripts/drift-anchor-data.mjs, ADR 0004). Владелец выбрал ТОЛЬКО системный курируемый корпус (не реальные записи пользователей) — см. решение 2026-07-13: 'безопасно, но не настоящий data-drift', это осознанный компромисс (см. producer-скрипт для честной формулировки, что именно ловит этот якорь — целостность провижининга каталога, не акустический дрейф поля)."
+}
