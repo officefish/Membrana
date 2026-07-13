@@ -6,16 +6,18 @@
       "promptPath": "docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md",
       "githubIssue": 424,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-13",
-      "archivedAt": null,
+      "archivedAt": "2026-07-13",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
-      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Канон готов (модуль-близнец openrouter, OpenAI-совместимый direct API, доступен с office без прокси) → консилиум не нужен, шаг 0 = ADR цепочки OpenRouter→DeepSeek→graceful. Запреты: не менять детерминированные таблицы триажа, без LLM-роутера-пакета (YAGNI), без прокси-логики в модуле. Owner-гейт: DEEPSEEK_API_KEY (живой ран; код/тесты от ключа не зависят). Закрывает хвост #380 «нарратив пропускается»."
+      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Канон готов (модуль-близнец openrouter, OpenAI-совместимый direct API, доступен с office без прокси) → консилиум не нужен, шаг 0 = ADR цепочки OpenRouter→DeepSeek→graceful. Запреты: не менять детерминированные таблицы триажа, без LLM-роутера-пакета (YAGNI), без прокси-логики в модуле. Owner-гейт: DEEPSEEK_API_KEY (живой ран; код/тесты от ключа не зависят). Закрывает хвост #380 «нарратив пропускается».",
+      "archiveNotes": "review LGTM a7b248e6df59; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "rag-archive-embeddings-unblock",
@@ -23,16 +25,18 @@
       "promptPath": "docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md",
       "githubIssue": 425,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-13",
-      "archivedAt": null,
+      "archivedAt": "2026-07-13",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
-      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Контракт RagEmbeddingProvider='openai'|'voyage' уже существует, voyage-эмбеддер не реализован; альтернатива — OPENAI_BASE_URL + совместимый endpoint (Jina/Cohere-compat) без кода. Развилка A/B решается по доступному ключу + geo-проверке с office. Запреты: не менять тип провайдера и публичные контракты rag, не трогать operative-контур и потребителей scripts, без новых сторов (pgvector = фаза 3 persona-memory). Owner-гейт: ключ Voyage/Jina/Cohere."
+      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Контракт RagEmbeddingProvider='openai'|'voyage' уже существует, voyage-эмбеддер не реализован; альтернатива — OPENAI_BASE_URL + совместимый endpoint (Jina/Cohere-compat) без кода. Развилка A/B решается по доступному ключу + geo-проверке с office. Запреты: не менять тип провайдера и публичные контракты rag, не трогать operative-контур и потребителей scripts, без новых сторов (pgvector = фаза 3 persona-memory). Owner-гейт: ключ Voyage/Jina/Cohere.",
+      "archiveNotes": "review LGTM 0c0fe52d05d6; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "persona-memory-phase1",
