@@ -13078,6 +13078,25 @@
         "vesnin"
       ],
       "notes": "NB1 logs:parse detection-alarm шаблон (combinedScore/branch-on-detection/alarm/detected+confidence по тикам); NB2 yarn net:diag <ip> батарея (TCP-banner, DF-ping малый/крупный, tracert, ssh-vvv) → 00-summary бандл; NB3 code-review --staged (ревью только staged, убрать stash-пляску); NB4 task:close-github skip-missing archive-cards с варнингом; NB5 ADR скилл+шаблон (лёгкая запись решения ниже консилиум-гейта) + заметка в консилиум про эхо агенды; NB6 pack-тест entry-точки == SCENARIO_*_ENTRY (L36-гард). Все S-тулинг, без core-изменений. База main."
+    },
+    {
+      "id": "telegram-ally-reports",
+      "title": "Telegram-бот для союзников: дайджесты дневного и вечернего ритуалов в приватную группу (modules/telegram в office, push-ingest)",
+      "promptPath": "docs/prompts/TELEGRAM_ALLY_REPORTS_PROMPT.md",
+      "githubIssue": 428,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "createdAt": "2026-07-13",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin",
+        "rodchenko"
+      ],
+      "insightId": "insight-telegram-work-reports",
+      "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа."
     }
   ]
 }

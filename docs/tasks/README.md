@@ -183,6 +183,7 @@
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `night-triage-routine-pilot` | Пилот routine «Ночной триаж реестра»: Claude Code Routine вместо самодельной ночной обвязки (ghost/orphan/stale, отчёт + draft PR) | M | [`NIGHT_TRIAGE_ROUTINE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_ROUTINE_PROMPT.md) | [#344](https://github.com/officefish/Membrana/issues/344) |
 | `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`LOOP_SWITCH_CONTROL_ADR.md`](../docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
+| `telegram-ally-reports` | Telegram-бот для союзников: дайджесты дневного и вечернего ритуалов в приватную группу (modules/telegram в office, push-ingest) | M | [`TELEGRAM_ALLY_REPORTS_PROMPT.md`](../docs/prompts/TELEGRAM_ALLY_REPORTS_PROMPT.md) | [#428](https://github.com/officefish/Membrana/issues/428) |
 
 ---
 

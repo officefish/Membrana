@@ -3,7 +3,8 @@
 | Поле | Значение |
 |------|----------|
 | **ID** | `insight-telegram-work-reports` |
-| **Статус** | draft |
+| **Статус** | adopted (вес 4.0; owner override 2026-07-13 — в работу) |
+| **Спринт** | → `telegram-ally-reports` (Issue #428, [`TELEGRAM_ALLY_REPORTS_PROMPT.md`](../../prompts/TELEGRAM_ALLY_REPORTS_PROMPT.md)) |
 | **Источник** | user |
 | **Создан** | 2026-07-06 |
 

@@ -26,6 +26,9 @@ const INTEGRATION_KEYS = [
   'GITHUB_REPO',
 ];
 
+/** Опциональные ключи (#428 telegram): синкаются только если заданы в корневом .env. */
+const OPTIONAL_INTEGRATION_KEYS = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_ALLY_CHAT_ID'];
+
 const LOCAL_DEV_KEYS = [
   'PORT',
   'NODE_ENV',
@@ -64,7 +67,10 @@ function writePackageEnv(relPath, keys, root, header) {
   console.log(`Updated ${relPath}`);
 }
 
-function writeDockerEnv(relPath, root) {
+function writeDockerEnv(relPath, root, optionalKeys) {
+  const optionalBlock = optionalKeys.length
+    ? `\n${optionalKeys.map((k) => `${k}=${root.get(k)}`).join('\n')}\n`
+    : '';
   const content = `# Docker Compose — synced from root .env (do not commit secrets)
 # Regenerate: node scripts/_sync-office-env-from-root.mjs
 
@@ -84,15 +90,16 @@ LINEAR_WEBHOOK_SECRET=${root.get('LINEAR_WEBHOOK_SECRET')}
 GITHUB_TOKEN=${root.get('GITHUB_TOKEN')}
 GITHUB_OWNER=${root.get('GITHUB_OWNER')}
 GITHUB_REPO=${root.get('GITHUB_REPO')}
-`;
+${optionalBlock}`;
   const path = resolve(repoRoot, relPath);
   writeFileSync(path, content, 'utf8');
   console.log(`Updated ${relPath}`);
 }
 
-function syncRemote(root) {
+function syncRemote(root, optionalKeys) {
+  const keys = [...INTEGRATION_KEYS, ...optionalKeys];
   const payload = Buffer.from(
-    JSON.stringify(Object.fromEntries(INTEGRATION_KEYS.map((k) => [k, root.get(k)]))),
+    JSON.stringify(Object.fromEntries(keys.map((k) => [k, root.get(k)]))),
   ).toString('base64');
 
   const remoteScript = `#!/bin/bash
@@ -181,21 +188,23 @@ const root = parseEnv(rootText);
 requireKeys(root, INTEGRATION_KEYS);
 requireKeys(root, ['API_INTERNAL_TOKEN', 'GITHUB_OWNER', 'GITHUB_REPO']);
 
+const presentOptionalKeys = OPTIONAL_INTEGRATION_KEYS.filter((k) => root.get(k)?.trim());
+
 console.log('Syncing office env from root .env ...\n');
 
 writePackageEnv(
   'packages/background-office/.env',
-  LOCAL_DEV_KEYS,
+  [...LOCAL_DEV_KEYS, ...presentOptionalKeys],
   root,
   '# Synced from repo root .env — local dev (yarn office:dev)',
 );
 
-writeDockerEnv('packages/background-office/.env.docker', root);
+writeDockerEnv('packages/background-office/.env.docker', root, presentOptionalKeys);
 
 if (!noRemote) {
   const { host, username } = getOfficeSshConfig();
   console.log(`\nRemote: ${username}@${host}`);
-  await syncRemote(root);
+  await syncRemote(root, presentOptionalKeys);
 }
 
 console.log('\nDone.');
