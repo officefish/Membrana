@@ -1,0 +1,14 @@
+{
+  "datasetVersion": "v2",
+  "manifestPath": "data/detectors-benchmark/v0.2/manifest.json",
+  "sampleCount": 120,
+  "recordedAt": "2026-07-13",
+  "f1": {
+    "harmonic": 0.5325,
+    "cepstral": 0.6667,
+    "spectral-flux": 0.6047,
+    "template-match": 0.7714,
+    "yamnet": 0.8029
+  },
+  "_note": "Baseline code-anchor (консилиум drift-anchor-triggers #404): F1 детекторов на эталонном корпусе free-v1 (v0.2, test-split 120, операторские метки). Прогон детерминирован (подтверждено повтором 2026-07-13: метрики совпали до знака). Перезапись ТОЛЬКО осознанным коммитом + LGTM, как golden-файл. Значения = data/detectors-benchmark/v0.2/reports/latest.json, округление 4 знака."
+}

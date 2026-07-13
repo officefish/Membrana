@@ -1,5 +1,7 @@
 {
   "epsilon1": 0.05,
   "epsilon2": 0.2,
-  "_note": "Пороги behavioral-дрейфа (консилиум nightly-agents-platform): delta>epsilon1 → drift, delta>epsilon2 → broken. Меняются осознанно (сам порог не должен дрейфовать). Structural — бинарно (изменён/нет)."
+  "codeAnchorEpsilonF1": 0.01,
+  "prodMainEpsilonF1": 0.005,
+  "_note": "Пороги behavioral-дрейфа (консилиум nightly-agents-platform): delta>epsilon1 → drift, delta>epsilon2 → broken. Меняются осознанно (сам порог не должен дрейфовать). Structural — бинарно (изменён/нет). codeAnchorEpsilonF1 — жёсткий порог code-anchor (#404): регресс F1 на корпусе > ε блокирует merge; предварительная калибровка (корпус детерминирован, шума нет — ε задаёт допустимый регресс, финальная калибровка за Математиком). prodMainEpsilonF1 — порог алерта «Прод ≠ main» (сверка ci↔schedule на одной версии кода: любое расхождение подозрительно, порог минимальный)."
 }

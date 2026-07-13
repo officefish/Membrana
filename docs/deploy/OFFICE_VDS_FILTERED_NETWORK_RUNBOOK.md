@@ -68,7 +68,27 @@ NAT на этом канале душит крупные TLS-пакеты к Clo
 4. Гашение старого: `./deploy/office-stack.sh down` (проект `membrana-office` на 72.56.27.58) + снять `office.caddy` (media/кабинет **не трогать**).
 5. Откатить диагностические твики на VDS: docker `daemon.json` mtu, eth0 mtu, iptables MSS-clamp, порт 2222 — если сеть починена, они не нужны.
 
-## 5. Границы
+## 5. scheduled-code-anchor (DA4, #404) — ежесуточный дрейф-джоб на хосте
+
+Пересборка детекторов из `main` + прогон корпуса free-v1 → `DriftAnchorRecord(source=schedule)`;
+ловит «Прод ≠ main» в паре с CI-записью. **Не** в docker-образе office-приложения —
+отдельный полный клон монорепы на хосте (server-first, решение владельца 2026-07-12).
+
+```bash
+# однократная установка на office (новый IP 176.124.218.4, data-path чист):
+apt-get install -y git nodejs npm && corepack enable          # node >= 20
+mkdir -p /opt/membrana-drift && cd /opt/membrana-drift
+git clone https://github.com/officefish/Membrana.git
+cd Membrana && corepack yarn install --immutable              # при таймаутах к Cloudflare — см. §3
+# крон (03:15 МСК, после night-triage 02:30; раз в сутки — ресурсный бюджет #404):
+crontab -l | { cat; echo '15 0 * * * /opt/membrana-drift/Membrana/deploy/office-drift-code-cron.sh >> /var/log/membrana-drift-code.log 2>&1'; } | crontab -
+```
+
+Джоб: [`deploy/office-drift-code-cron.sh`](../../deploy/office-drift-code-cron.sh) —
+`git reset --hard origin/main` → `yarn install --immutable` → `yarn drift:code:schedule`.
+Exit 2 (broken) виден в cron-логе. Записи журнала: `docs/reports/drift-anchor/records/` (клона).
+
+## 6. Границы
 
 - Обходной туннель — **админ-only**. Продовый публичный трафик обязан идти напрямую.
 - `_ssh-office-tunnel-*` / `_ssh-media-*` скрипты — одноразовые, gitignored, локальные.

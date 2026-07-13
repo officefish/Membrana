@@ -1,0 +1,79 @@
+# Code-anchor CI-гейт (DA4, консилиум drift-anchor-triggers #404, эпик #396).
+#
+# PR, меняющий детекторный код, обязан прогнать эталонный корпус free-v1 (120 сэмплов,
+# операторские метки) и сравниться с docs/anchors/corpus-baseline.json. Регресс F1 > ε
+# (docs/anchors/thresholds.json → codeAnchorEpsilonF1) — ЖЁСТКИЙ блок merge.
+# Прогон детерминирован (подтверждено 2026-07-13: повтор совпадает до знака).
+#
+# Anti-fetish (#404): CI-гейт живёт нативно в GitHub Actions; серверные якоря
+# (data-anchor, scheduled-code-anchor) — отдельные джобы на расписании, не здесь.
+# Осознанное изменение метрик = коммит нового corpus-baseline.json в том же PR + LGTM.
+
+name: Detector drift gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/services/detectors/**'
+      - 'packages/services/detection-ensemble-service/**'
+      - 'data/detectors-benchmark/v0.2/**'
+      - 'docs/anchors/corpus-baseline.json'
+      - 'docs/anchors/thresholds.json'
+      - 'scripts/benchmark-detectors.mjs'
+      - 'scripts/drift-anchor-code.mjs'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  code-anchor:
+    name: Corpus free-v1 vs baseline (блок при регрессе F1 > ε)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # detectorVersion записи = последний коммит по детекторным путям
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Не использовать cache: yarn в setup-node — на раннере это Yarn 1 и ломает шаг до Corepack.
+      - name: Enable Corepack (Yarn 4 из packageManager)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+          echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> "$GITHUB_ENV"
+
+      - name: Yarn Berry cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.YARN_CACHE_FOLDER }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Code-anchor — сборка детекторов + корпус + сверка с baseline
+        run: yarn drift:code
+
+      - name: Upload DriftAnchorRecord (журнал якоря)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-anchor-record-ci
+          path: docs/reports/drift-anchor/records/
+          if-no-files-found: ignore
+          retention-days: 30

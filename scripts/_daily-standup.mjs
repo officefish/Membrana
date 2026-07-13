@@ -29,6 +29,7 @@ import {
   buildDetectionPlanningConstraintsBullets,
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
 } from './lib/detection-planning-priorities.mjs';
+import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
 import {
   STANDUP_RAG_QUERY,
   formatRagContextBlock,
@@ -497,6 +498,12 @@ export async function runDailyStandup(options) {
         if (!out) out = JSON.stringify(json?.content ?? [], null, 2);
       } catch {
         out = text;
+      }
+      {
+        // DA5: read-only дрейф-секция из последнего DRIFT_*.json (DA3-раннер).
+        // Детерминированный рендер, не LLM; graceful — без дайджеста секции нет.
+        const driftSection = buildDriftSectionFromDisk(process.cwd());
+        if (driftSection) out = `${out}\n\n---\n\n${driftSection}`;
       }
       writeStandupFile({
         outputPath: options.outputPath,
