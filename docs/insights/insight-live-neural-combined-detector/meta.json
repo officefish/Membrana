@@ -1,13 +1,15 @@
 {
   "id": "insight-live-neural-combined-detector",
   "title": "Живой нейро-combined детектор (эшелон-2-live): yamnet в combinedScore",
-  "status": "deferred",
+  "status": "adopted",
   "source": "user",
   "horizon": null,
   "weight": null,
   "createdAt": "2026-07-12",
   "researchedAt": null,
   "reviewedAt": null,
-  "closedAt": "2026-07-12",
+  "closedAt": null,
+  "adoptedAt": "2026-07-13",
+  "adoptionNote": "deferred снят ПРЯМЫМ решением владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE-тарифа (DSP-only combined #372 недостаточен для выпуска). Классический research/review-цикл заменён мандатом владельца; спецификация = INSIGHT scope + консилиум s2-combined-uc-dsp (границы) + разведка сессии 2026-07-13.",
   "tags": []
 }

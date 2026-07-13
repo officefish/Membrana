@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
+| `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `real-dataset-live-calibration` | Real dataset v0.2: библиотеки → анализ → live matching → journal parity (неделя) | L | [`REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md`](../docs/prompts/REAL_DATASET_LIVE_CALIBRATION_WEEK_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | M | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../docs/prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — |
@@ -188,9 +190,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `night-hunt-office-real` | Night Hunt по-настоящему на office: Claude через media-прокси, фикс ветки, enable (NH1-NH3) | 2026-07-12 | [`NIGHT_HUNT_OFFICE_REAL_PROMPT.md`](../docs/prompts/NIGHT_HUNT_OFFICE_REAL_PROMPT.md) | #390 (Issue открыт) | [карточка](./archive/night-hunt-office-real.md) |
-| `night-triage-office` | Night Triage on office: детерминированный триаж реестра (перенос с claude.ai/code Routine, NT1-NT5) | 2026-07-12 | [`NIGHT_TRIAGE_OFFICE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_OFFICE_PROMPT.md) | #380 (Issue открыт) | [карточка](./archive/night-triage-office.md) |
-| `office-vds-migration` | Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM4, пивот на KZ) | 2026-07-12 | [`OFFICE_VDS_MIGRATION_PROMPT.md`](../docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md) | #349 (Issue открыт) | [карточка](./archive/office-vds-migration.md) |
+| `night-hunt-office-real` | Night Hunt по-настоящему на office: Claude через media-прокси, фикс ветки, enable (NH1-NH3) | 2026-07-12 | [`NIGHT_HUNT_OFFICE_REAL_PROMPT.md`](../docs/prompts/NIGHT_HUNT_OFFICE_REAL_PROMPT.md) | #390 | [карточка](./archive/night-hunt-office-real.md) |
+| `night-triage-office` | Night Triage on office: детерминированный триаж реестра (перенос с claude.ai/code Routine, NT1-NT5) | 2026-07-12 | [`NIGHT_TRIAGE_OFFICE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_OFFICE_PROMPT.md) | #380 | [карточка](./archive/night-triage-office.md) |
+| `office-vds-migration` | Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM4, пивот на KZ) | 2026-07-12 | [`OFFICE_VDS_MIGRATION_PROMPT.md`](../docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md) | #349 | [карточка](./archive/office-vds-migration.md) |
 | `tooling-retro-2026-07-11` | Night Build: tooling-retro — 6 фаз тулинга по итогам сессии 2026-07-11 (logs:parse basn, net:diag, code-review --staged, task:close-github tolerance, ADR skill, entry-id pack-test) | 2026-07-11 | [`TOOLING_RETRO_NIGHT_2026_07_11_PROMPT.md`](../docs/prompts/TOOLING_RETRO_NIGHT_2026_07_11_PROMPT.md) | — | [карточка](./archive/tooling-retro-2026-07-11.md) |
 | `deploy-image-tag-default` | S: cabinet:deploy:image:prod — дефолт тега main вместо latest (latest = старый релизный образ → откат прода 09.07) | 2026-07-10 | — | — | [карточка](./archive/deploy-image-tag-default.md) |
 | `pr-ship-no-commit` | S: pr:ship --no-commit — one-shot флоу для уже закоммиченных веток | 2026-07-10 | — | — | [карточка](./archive/pr-ship-no-commit.md) |
@@ -712,4 +714,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-12.*
+*Файл обновлён автоматически: 2026-07-13.*

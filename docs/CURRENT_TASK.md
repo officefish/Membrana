@@ -2,44 +2,40 @@
 
 > **Буфер** — при конфликте проигрывает [`MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) и реестру.
 
-## Параллельный enabler-трек (2026-07-09)
+## live-neural-combined-fusion (2026-07-13)
 
-> ⚠️ **Магистраль дня — НЕ это.** Канон дня (`MAIN_DAY_ISSUE.md`) = **combined-продюсер**
-> (`detection-ensemble-service`). `hermes-brief` — **параллельный ops/tooling-трек**, ведётся
-> в **отдельной выделенной сессии**. Если эта сессия открыта под Hermes (стартовая строка ниже) —
-> работай **только** по `HERMES_BRIEF_PROMPT.md`, продуктовую магистраль (combined) **не трогай**.
+**Мандат владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE** — DSP-only combined (#372)
+недостаточен для выпуска. Отменяет точку 3 консилиума `s2-combined-uc-dsp`; остальные границы
+консилиума в силе. Критпуть FREE: **этот спринт → S2 live-smoke (гейт) → S3 упаковка UC**.
 
-**Трек:** `hermes-brief` (переход из инсайта `insight-hermes-liaison-agent`, enabler, вес 7.4)
-
-### Фокус
-
-**Hermes brief** — детерминированный `yarn hermes:brief`, собирающий состояние сессии из
-**6 источников** в `docs/HERMES_BRIEF.md`. Первый шаг adopted-инсайта (вес 7.4/10). Функция
-ритма, не 6-я роль; бриф дескриптивный. Владелец — Математик (Dynin).
+**Трек:** `live-neural-combined-fusion` (M, Issue #415, из инсайта
+`insight-live-neural-combined-detector`, adopted решением владельца)
 
 ### Старт (вставить в начало новой сессии)
 
 ```text
 Следуй docs/prompts/TASK_PROMPT_WORKFLOW.md и промпту:
-docs/prompts/HERMES_BRIEF_PROMPT.md (блок «Промпт целиком»).
+docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md (блок «Промпт целиком»).
 ```
 
 ### Scope (кратко — канон в промпте)
 
-- `scripts/hermes-brief.mjs` (переиспользует `scripts/lib/git-day-context.mjs`) + `yarn hermes:brief`
-- `docs/HERMES_BRIEF.md` — иерархия «Сейчас» → «Контекст» → «Метаданные» (hash+timestamp)
-- `scripts/hermes-brief.test.mjs` — детерминизм + fallback + сортировка (в `test:scripts`)
-- тонкий read-only `.claude/agents/hermes.md`
-- **Запрещено:** LLM-резюме, паковщик handoff, оркестратор, UI-панель, переписывание `plan:day`/`standup`
+- yamnet → `createCombinedStreamDetectors()` (`apps/client/src/plugins/mic-combined-detection/`)
+  через готовый `loadYamnetBrowserModel` (офлайн-бандл) — одна точка питает клиент И device-board мост
+- Graceful DSP-only деградация с **видимой** меткой (молчаливая — запрещена)
+- Честная метка «спектр+нейро» в панели/карточке S2 UC
+- Перф-замер инференса на живом каденсе (p50/p95, документировать)
+- **Запрещено:** новые узлы палитры, правка ядра #357 / make-detection-fusion,
+  сетевые загрузки модели, прямые импорты между детекторами
 
 ### Команды
 
 ```bash
-yarn hermes:brief && sed -n '1,40p' docs/HERMES_BRIEF.md
-node --test scripts/hermes-brief.test.mjs
+yarn turbo run test --filter=@membrana/client --filter=@membrana/detection-ensemble-service
+yarn catalog:verify-client
 ```
 
-**Инсайт:** [`insight-hermes-liaison-agent`](./insights/insight-hermes-liaison-agent/INSIGHT.md) (adopted, 7.4/10)
-**Промпт:** [`HERMES_BRIEF_PROMPT.md`](./prompts/HERMES_BRIEF_PROMPT.md)
-**Консилиум:** [`seanses/hermes-liaison-agent-2026-07-08.md`](./seanses/hermes-liaison-agent-2026-07-08.md)
-**Реестр:** `id: hermes-brief` (`status: active`, `insightId: insight-hermes-liaison-agent`)
+**Инсайт:** [`insight-live-neural-combined-detector`](./insights/insight-live-neural-combined-detector/INSIGHT.md)
+**Промпт:** [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](./prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md)
+**Консилиум-границы:** [`seanses/s2-combined-uc-dsp-2026-07-12.md`](./seanses/s2-combined-uc-dsp-2026-07-12.md) (точка 3 отменена владельцем)
+**Реестр:** `id: live-neural-combined-fusion` (`status: active`, `insightId: insight-live-neural-combined-detector`)

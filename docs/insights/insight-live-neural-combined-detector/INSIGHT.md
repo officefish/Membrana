@@ -3,9 +3,10 @@
 | Поле | Значение |
 |------|----------|
 | **ID** | `insight-live-neural-combined-detector` |
-| **Статус** | deferred |
+| **Статус** | adopted (deferred снят решением владельца 2026-07-13: нейро-fusion обязателен для FREE) |
 | **Источник** | user |
 | **Создан** | 2026-07-12 |
+| **Спринт** | → `live-neural-combined-fusion` (2026-07-13) |
 
 ---
 

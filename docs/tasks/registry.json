@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "live-neural-combined-fusion",
+      "title": "yamnet в живом combinedScore: fusion спектр+нейро для FREE",
+      "promptPath": "docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md",
+      "githubIssue": 415,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-13",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin",
+        "ozhegov",
+        "rodchenko",
+        "vesnin"
+      ],
+      "insightId": "insight-live-neural-combined-detector",
+      "notes": "Мандат владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE — отменяет точку 3 (DSP-only) консилиума s2-combined-uc-dsp; остальные вердикты (топология, границы, единое окно, не трогать #357/make-detection-fusion, без новых узлов палитры) В СИЛЕ. Разведка: весь путь готов — createCombinedStreamDetectors (питает клиент + scenarioMicJournalBridge:1236) + loadYamnetBrowserModel (офлайн-бандл) + createYamnetDetector({modelProvider}). Работа = соединение + graceful DSP-only деградация с видимой меткой + метка «спектр+нейро» + перф-замер. Критпуть FREE: этот спринт → S2 live-smoke (гейт) → S3 упаковка."
+    },
+    {
       "id": "drift-anchor-contour",
       "title": "Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4)",
       "promptPath": "docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md",
