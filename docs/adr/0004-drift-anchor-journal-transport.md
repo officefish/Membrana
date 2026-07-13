@@ -149,8 +149,16 @@ verdict=ok` → `POST /v1/drift-anchor/records` с токеном из `/etc/mem
 `GET .../samples/:id/blob`) — без прямого доступа к БД/blob-хранилищу, без нового кода на
 стороне media. `imageFrozenAt: null` — образ намеренно не заморожен (честно задокументировано,
 не выдаётся за полную реализацию исходного замысла). Порог — `dataAnchorEpsilonF1` (мягкий,
-warning-only, никогда ничего не блокирует). Живой прогон против прод-media дал
-`verdict=ok, delta=0, samples=120/120` — провизионированный корпус byte-идентичен канону.
+warning-only, никогда ничего не блокирует).
+
+**Живая проверка на реальной инфраструктуре (2026-07-13):** `office-drift-code-cron.sh`
+обновлён (оба якоря в одном прогоне — один `yarn install`/`detectors:build`), `MEDIA_API_TOKEN`
+провизионирован в `/etc/membrana/office.env`, дрифт-клон обновлён на office. Полный прогон
+дал `code:schedule verdict=ok` + `data:schedule verdict=ok, delta=0, samples=120/120` —
+провизионированный на прод-media корпус byte-идентичен git-канону. Оба POST'а прошли,
+**`GET https://office.mmbrn.tech/v1/drift-anchor/digest` публично отдаёт обе записи**
+(records: 2) без изменений на стороне office-кода — подтверждает, что транспорт ADR 0004
+масштабируется на нового producer'а без нового office-модуля.
 
 ## Out of scope / открытые задачи
 
