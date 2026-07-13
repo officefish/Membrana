@@ -1,0 +1,34 @@
+import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { ApiTokenGuard } from '../../common/guards/api-token.guard';
+import { ritualDigestSchema } from './ritual-digest.dto';
+import { formatRitualDigest } from './telegram-format';
+import { TelegramClient } from './telegram.client';
+
+/**
+ * Приём дайджеста ритуала (#428): локальный скрипт `telegram-ritual-digest.mjs`
+ * PUSH'ит payload сюда, office форматирует и шлёт в приватную группу союзников.
+ * Fire-and-forget: неудача отправки не роняет запрос (`sent: false`).
+ */
+@ApiTags('telegram')
+@Controller('v1/telegram')
+export class TelegramController {
+  constructor(private readonly telegram: TelegramClient) {}
+
+  @Post('ritual-digest')
+  @UseGuards(ApiTokenGuard)
+  @ApiBearerAuth('X-Membrana-Token')
+  @ApiOperation({ summary: 'Ingest a ritual digest (day/evening) and post it to the ally group' })
+  @ApiResponse({ status: 200, description: 'Digest accepted (sent=false if telegram unavailable)' })
+  @ApiResponse({ status: 400, description: 'Invalid digest shape' })
+  @ApiResponse({ status: 401, description: 'Missing or invalid API token' })
+  async ingest(@Body() raw: unknown): Promise<{ ok: true; sent: boolean }> {
+    const parsed = ritualDigestSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw new BadRequestException(parsed.error.flatten());
+    }
+    const sent = await this.telegram.sendMessage(formatRitualDigest(parsed.data));
+    return { ok: true, sent };
+  }
+}

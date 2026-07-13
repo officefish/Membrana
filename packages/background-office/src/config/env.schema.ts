@@ -25,6 +25,9 @@ export const envSchema = z.object({
   OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_MODEL: z.string().optional(),
   NIGHT_HUNT_BASE_BRANCH: z.string().optional(),
+  /** Telegram ally reports (#428): дайджесты ритуалов в приватную группу союзников */
+  TELEGRAM_BOT_TOKEN: z.string().optional(),
+  TELEGRAM_ALLY_CHAT_ID: z.string().optional(),
   /** Night Triage: детерминированный триаж реестра → draft PR (#380) */
   NIGHT_TRIAGE_ENABLED: z
     .string()
