@@ -43,30 +43,14 @@ ADR 0004 (транспорт готов и жив).
 
 ---
 
-## Второй трек: llm-providers-unblock — 2 карточки (2026-07-13)
+## Второй трек: итоги дня 2026-07-13 (оба спринта закрыты)
 
-Persona Memory фаза 1 **ЗАКРЫТА** (PR #422/#423, задача заархивирована; проверка
-пилота = включить `--with-memory` на ближайшем консилиуме, напр. drift-panel-placement).
-
-Новый спринт по итогам разбора инференс-провайдеров (LGTM владельца, консилиум
-не требуется — исполнение по готовому канону; отдельная сессия/worktree):
-
-### Старт карточки #424 (вставить в начало новой сессии)
-
-```text
-Следуй docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md
-(реестр: night-narrative-deepseek-fallback, Issue #424). Шаг 0 — ADR цепочки
-OpenRouter→DeepSeek→graceful. Модуль-близнец openrouter в background-office,
-детерминированные таблицы триажа НЕ трогать. Owner-гейт: DEEPSEEK_API_KEY
-(живой ран; код/тесты без ключа).
-```
-
-### Старт карточки #425 (вставить в начало новой сессии)
-
-```text
-Следуй docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md
-(реестр: rag-archive-embeddings-unblock, Issue #425). Развилка A (voyage-эмбеддер
-по существующему контракту) / B (OPENAI_BASE_URL + Jina/Cohere-compat без кода) —
-решить по доступному ключу + geo-проверке с office. Контракты пакета rag НЕ менять.
-Owner-гейт: ключ провайдера.
-```
+1. **Persona Memory фаза 1** — ЗАКРЫТА (PR #422/#423). Проверка пилота = включить
+   `--with-memory` на ближайшем консилиуме (напр. drift-panel-placement).
+2. **llm-providers-unblock** — ЗАКРЫТ (PR #426, bf6f7fb0; ревью LGTM ×2, задачи
+   заархивированы). **Хвосты на владельце (комментарии в #424/#425):**
+   - #424: пополнить баланс DeepSeek → DEEPSEEK_API_KEY на office → живой ран
+     триажа (метка «канал: deepseek»).
+   - #425: платёжный метод Voyage (бесплатные 200M токенов сохраняются) →
+     `RAG_EMBEDDING_PROVIDER=voyage yarn rag:index` → непустой RAG-блок в
+     consilium/ask. Локально нужен HTTPS_PROXY (DPI режет прямой Node-хендшейк).
