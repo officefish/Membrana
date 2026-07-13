@@ -240,6 +240,11 @@ Device (deviceId)
 | README office | [`packages/background-office/README.md`](../packages/background-office/README.md) |
 | README media | [`packages/background-media/README.md`](../packages/background-media/README.md) |
 
+**Норма тестов office:** тестовое окружение НЕ наследует прокси-переменные из шелла
+(`test/setup-env.ts` их удаляет — undici читает env в обход мока `global.fetch`);
+прокси-зависимый тест объявляет env локально через `vi.stubEnv` (консилиум
+agent-tooling-friction, 2026-07-13).
+
 ---
 
 ## Задачи и история решений
