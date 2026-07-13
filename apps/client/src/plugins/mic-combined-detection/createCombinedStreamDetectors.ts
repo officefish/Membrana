@@ -20,8 +20,14 @@ import {
   DEFAULT_CONFIDENCE_THRESHOLD as FLUX_THRESHOLD,
   DEFAULT_FFT_SIZE as FLUX_FFT_SIZE,
 } from '@membrana/spectral-flux-detector-service';
+import { createYamnetDetector } from '@membrana/yamnet-detector-service';
 
+// Разделяемый инфра-хелпер загрузки бандленных весов (без состояния плагина) —
+// cross-plugin импорт по прецеденту CALIBRATED_SAMPLE_OPTIONS ниже, не связь плагин↔плагин.
+import { loadYamnetBrowserModel } from '@/plugins/neural-drone-analyzer/yamnetBrowserModel';
 import { CALIBRATED_SAMPLE_OPTIONS } from '@/plugins/sample-library-drone-analysis/detectorCalibrationPreset';
+
+import { wrapNeuralWithTtl } from './neuralTtlDetector';
 
 /**
  * Адаптер: базовый DSP-детектор → `DroneDetector`, чей `detect(window)` гоняет
@@ -54,11 +60,16 @@ function toWindowDetector(base: DroneDetector): DroneDetector {
 }
 
 /**
- * Живые детекторы для combined-продюсера. Сейчас — DSP-семейство (harmonic /
- * cepstral / spectral-flux), которое уже работает вживую в клиенте без загрузки
- * моделей. Нейро (yamnet) добавляется в этот список, когда подключён его
- * model-provider — combinedScore тогда сливает DSP↔нейро (ND3, слабо
- * коррелированные профили ошибок).
+ * Живые детекторы для combined-продюсера: DSP-семейство (harmonic / cepstral /
+ * spectral-flux) + нейро yamnet (мандат владельца 2026-07-13, консилиум
+ * live-neural-combined-fusion) — combinedScore сливает DSP↔нейро (ND3, слабо
+ * коррелированные профили ошибок). Одна точка: этот список питает и клиентский
+ * плагин, и device-board мост (scenarioMicJournalBridge → EnsembleProducer).
+ *
+ * yamnet НЕ оборачивается в toWindowDetector: у него собственный ресемпл 16 кГц
+ * и оконность модели. Вес — равный (1, вердикт точки 2); каденс — реже DSP через
+ * wrapNeuralWithTtl (точка 3); отказ модели → present:false, ансамбль живёт
+ * DSP-only (graceful EnsembleProducer), деградация видна меткой модальностей.
  */
 export function createCombinedStreamDetectors(): DroneDetector[] {
   return [
@@ -79,6 +90,9 @@ export function createCombinedStreamDetectors(): DroneDetector[] {
         confidenceThreshold: FLUX_THRESHOLD,
         fftSize: FLUX_FFT_SIZE,
       }),
+    ),
+    wrapNeuralWithTtl(
+      createYamnetDetector({ modelProvider: loadYamnetBrowserModel }),
     ),
   ];
 }

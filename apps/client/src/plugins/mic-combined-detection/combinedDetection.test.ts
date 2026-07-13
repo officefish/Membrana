@@ -72,12 +72,13 @@ describe('combinedDetectionState', () => {
 // ---------- детекторы ----------
 
 describe('createCombinedStreamDetectors', () => {
-  it('возвращает 3 DSP-детектора (harmonic/cepstral/spectral-flux)', () => {
+  it('возвращает 3 DSP + yamnet (нейро, мандат владельца 2026-07-13)', () => {
     const detectors = createCombinedStreamDetectors();
     expect(detectors.map((d) => d.name).sort()).toEqual(
-      ['cepstral', 'harmonic', 'spectral-flux'],
+      ['cepstral', 'harmonic', 'spectral-flux', 'yamnet'],
     );
-    expect(detectors.every((d) => d.family === 'dsp')).toBe(true);
+    expect(detectors.filter((d) => d.family === 'dsp')).toHaveLength(3);
+    expect(detectors.find((d) => d.name === 'yamnet')?.family).toBe('neural');
   });
 });
 
@@ -99,7 +100,7 @@ function syntheticDroneWindow(): AudioWindow {
 }
 
 describe('EnsembleProducer + createCombinedStreamDetectors (реальный DSP-путь)', () => {
-  it('combinedScore конечный в [0..1], все 3 детектора присутствуют', async () => {
+  it('combinedScore конечный в [0..1]; DSP присутствуют, ансамбль жив без модели (graceful)', async () => {
     const producer = new EnsembleProducer(createCombinedStreamDetectors(), {
       smoothing: 1,
     });
@@ -108,8 +109,12 @@ describe('EnsembleProducer + createCombinedStreamDetectors (реальный DSP
     expect(Number.isFinite(result.combinedScore)).toBe(true);
     expect(result.combinedScore).toBeGreaterThanOrEqual(0);
     expect(result.combinedScore).toBeLessThanOrEqual(1);
-    expect(result.presentCount).toBe(3);
-    expect(result.perSource).toHaveLength(3);
+    // В headless-тесте весов модели нет (fetch недоступен) → yamnet молчит
+    // (present:false), но 3 DSP работают — ровно graceful-сценарий консилиума.
+    expect(result.presentCount).toBeGreaterThanOrEqual(3);
+    expect(result.perSource).toHaveLength(4);
+    const dsp = result.perSource.filter((s) => s.family === 'dsp');
+    expect(dsp.every((s) => s.present)).toBe(true);
     // smoothing=1 → сглаженный равен мгновенному.
     expect(result.smoothedScore).toBeCloseTo(result.combinedScore, 5);
   });

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { modalitiesLabel, resolveModalities } from './modalities';
 import { useMicCombinedDetection } from './useMicCombinedDetection';
 
 export interface MicCombinedDetectionPanelProps {
@@ -11,11 +12,26 @@ export const MicCombinedDetectionPanel: React.FC<MicCombinedDetectionPanelProps>
     useMicCombinedDetection();
   const scorePercent = Math.min(100, Math.round(smoothedScore * 100));
   const agreementPercent = Math.min(100, Math.round(agreement * 100));
+  const modalities = resolveModalities(perSource);
 
   return (
     <div className="rounded-box border border-primary/30 bg-base-200/30 p-4 space-y-4">
       <div>
-        <h3 className="text-sm font-semibold text-base-content">Combined-детекция</h3>
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-base-content">Combined-детекция</h3>
+          {live && (
+            // Метка по availability источников (TTL), не по тику — не мигает на
+            // субдискретизации нейро; деградация до «спектр» видима (консилиум, точка 4).
+            <span
+              className={`badge badge-sm ${
+                modalities === 'dsp+neural' ? 'badge-info' : 'badge-ghost'
+              }`}
+              aria-live="polite"
+            >
+              {modalitiesLabel(modalities)}
+            </span>
+          )}
+        </div>
         <p className="text-xs text-base-content/60 mt-0.5">
           <strong>combinedScore</strong> — взвешенное среднее сырого confidence детекторов
           (fusion-ядро), а не бинарный OR. Источник тревоги для alarm-loop.
