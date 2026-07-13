@@ -5,7 +5,7 @@
  * приватную telegram-группу союзников (push-ingest, как drift-anchor / ADR 0004).
  *
  * Usage:
- *   node scripts/telegram-ritual-digest.mjs --kind day|evening [--dry-run]
+ *   node scripts/telegram-ritual-digest.mjs --kind day|evening [--dry-run] [--allow-stale]
  *
  * Graceful ВСЕГДА (exit 0): нет артефакта / нет API_INTERNAL_TOKEN / office
  * недоступен → warn и выход, ритуал не блокируется. Source of truth — артефакты
@@ -53,6 +53,15 @@ function buildPayload() {
 
 const payload = buildPayload();
 if (!payload) skip(`не удалось извлечь дайджест (${kind}) из артефакта ритуала`);
+
+// Свежесть: вечерний team-evening-feedback за СЕГОДНЯ появляется после хвоста
+// ritual:evening — устаревший артефакт не шлём (иначе группа получит вчерашние
+// итоги как сегодняшние). Повторный запуск после feedback / --allow-stale.
+const now = new Date();
+const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+if (!dryRun && !argv.includes('--allow-stale') && payload.date !== today) {
+  skip(`артефакт за ${payload.date}, сегодня ${today} (не шлём устаревшее; --allow-stale для отправки)`);
+}
 
 if (dryRun) {
   console.log(JSON.stringify(payload, null, 2));
