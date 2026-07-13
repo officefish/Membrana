@@ -69,6 +69,28 @@ jobs:
       - name: Code-anchor — сборка детекторов + корпус + сверка с baseline
         run: yarn drift:code
 
+      - name: Push запись в background-office (ADR 0004, наблюдаемость — гейт НЕ зависит от этого шага)
+        if: always()
+        continue-on-error: true
+        env:
+          OFFICE_URL: ${{ secrets.OFFICE_URL }}
+          OFFICE_API_TOKEN: ${{ secrets.OFFICE_API_TOKEN }}
+        run: |
+          if [ -z "$OFFICE_URL" ] || [ -z "$OFFICE_API_TOKEN" ]; then
+            echo "OFFICE_URL/OFFICE_API_TOKEN not set (напр. PR из форка) — skip (optional)"
+            exit 0
+          fi
+          RECORD=docs/reports/drift-anchor/records/code-ci-latest.json
+          if [ ! -f "$RECORD" ]; then
+            echo "нет $RECORD (yarn drift:code упал до записи) — skip"
+            exit 0
+          fi
+          curl -fsS -X POST "${OFFICE_URL%/}/v1/drift-anchor/records" \
+            -H "X-Membrana-Token: ${OFFICE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data-binary "@${RECORD}" \
+            --max-time 30 || echo "push to office failed (optional, non-blocking)"
+
       - name: Upload DriftAnchorRecord (журнал якоря)
         if: always()
         uses: actions/upload-artifact@v4
