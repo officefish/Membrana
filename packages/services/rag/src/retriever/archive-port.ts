@@ -1,5 +1,5 @@
 import type { RagConfig } from '../config.js';
-import { createOpenAiEmbedder } from '../embed/openai-embedder.js';
+import { createEmbedder } from '../embed/factory.js';
 import { createLanceDbStore } from '../store/lancedb-store.js';
 import type { RAGFragment, RAGOptions } from '../types.js';
 import { scoreArchiveFragment } from './dual-retriever.js';
@@ -29,7 +29,7 @@ export function createLanceDbArchivePort(repoRoot: string, config: RagConfig): R
       options: RAGOptions,
       cfg: RagConfig,
     ): Promise<RAGFragment[]> {
-      const embedder = createOpenAiEmbedder(cfg);
+      const embedder = createEmbedder(cfg);
       const [queryVector] = await embedder.embedTexts([query]);
       if (!queryVector) {
         throw new Error('Failed to embed query');
