@@ -1,3 +1,12 @@
+<!--
+  archive-role: archive-snapshot
+  archive-day: 2026-07-13
+  archived-at: 2026-07-13T19:12:43.581Z
+  source: docs/STRATEGIC_PLAN_DAY.md
+  canonical: docs/STRATEGIC_PLAN_DAY.md (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
 <!-- Сгенерировано: 2026-07-13T04:04:07.443Z (yarn plan:day) -->
 <!-- Период: последние сутки (since="1 day ago"); горизонт: следующий день -->
 <!-- Источник цели: WHITE_PAPER.md -->

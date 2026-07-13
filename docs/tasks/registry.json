@@ -17,7 +17,7 @@
       ],
       "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Канон готов (модуль-близнец openrouter, OpenAI-совместимый direct API, доступен с office без прокси) → консилиум не нужен, шаг 0 = ADR цепочки OpenRouter→DeepSeek→graceful. Запреты: не менять детерминированные таблицы триажа, без LLM-роутера-пакета (YAGNI), без прокси-логики в модуле. Owner-гейт: DEEPSEEK_API_KEY (живой ран; код/тесты от ключа не зависят). Закрывает хвост #380 «нарратив пропускается».",
       "archiveNotes": "review LGTM a7b248e6df59; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-13"
     },
     {
       "id": "rag-archive-embeddings-unblock",
@@ -36,7 +36,7 @@
       ],
       "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Контракт RagEmbeddingProvider='openai'|'voyage' уже существует, voyage-эмбеддер не реализован; альтернатива — OPENAI_BASE_URL + совместимый endpoint (Jina/Cohere-compat) без кода. Развилка A/B решается по доступному ключу + geo-проверке с office. Запреты: не менять тип провайдера и публичные контракты rag, не трогать operative-контур и потребителей scripts, без новых сторов (pgvector = фаза 3 persona-memory). Owner-гейт: ключ Voyage/Jina/Cohere.",
       "archiveNotes": "review LGTM 0c0fe52d05d6; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-13"
     },
     {
       "id": "persona-memory-phase1",
@@ -13086,9 +13086,9 @@
       "githubIssue": 428,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-13",
-      "archivedAt": null,
+      "archivedAt": "2026-07-13",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin",
@@ -13096,7 +13096,9 @@
         "rodchenko"
       ],
       "insightId": "insight-telegram-work-reports",
-      "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа."
+      "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа.",
+      "archiveNotes": "PR #431 (squash 3124d6d2 side) + hotfix 0291f954 (proxy-aware client, OFFICE_API_TOKEN). E2E smoke 2026-07-13: day+evening дайджесты доставлены в приватную группу (sent=true), контур ritual→office→telegram живой. Остаток: фаза 2 LLM-пересказ (после владельческих хвостов #424/#425).",
+      "githubIssueClosedAt": null
     }
   ]
 }

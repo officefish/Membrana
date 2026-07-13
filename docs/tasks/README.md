@@ -183,7 +183,6 @@
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `night-triage-routine-pilot` | Пилот routine «Ночной триаж реестра»: Claude Code Routine вместо самодельной ночной обвязки (ghost/orphan/stale, отчёт + draft PR) | M | [`NIGHT_TRIAGE_ROUTINE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_ROUTINE_PROMPT.md) | [#344](https://github.com/officefish/Membrana/issues/344) |
 | `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`LOOP_SWITCH_CONTROL_ADR.md`](../docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
-| `telegram-ally-reports` | Telegram-бот для союзников: дайджесты дневного и вечернего ритуалов в приватную группу (modules/telegram в office, push-ingest) | M | [`TELEGRAM_ALLY_REPORTS_PROMPT.md`](../docs/prompts/TELEGRAM_ALLY_REPORTS_PROMPT.md) | [#428](https://github.com/officefish/Membrana/issues/428) |
 
 ---
 
@@ -191,9 +190,10 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `night-narrative-deepseek-fallback` | DeepSeek direct API — fallback нарратива ночных агентов (обход OpenRouter 403) | 2026-07-13 | [`NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md`](../docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md) | #424 (Issue открыт) | [карточка](./archive/night-narrative-deepseek-fallback.md) |
-| `rag-archive-embeddings-unblock` | RAG archive: второй embeddings-провайдер по существующему контракту (разблокировка useLongTerm) | 2026-07-13 | [`RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md`](../docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md) | #425 (Issue открыт) | [карточка](./archive/rag-archive-embeddings-unblock.md) |
+| `night-narrative-deepseek-fallback` | DeepSeek direct API — fallback нарратива ночных агентов (обход OpenRouter 403) | 2026-07-13 | [`NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md`](../docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md) | #424 | [карточка](./archive/night-narrative-deepseek-fallback.md) |
+| `rag-archive-embeddings-unblock` | RAG archive: второй embeddings-провайдер по существующему контракту (разблокировка useLongTerm) | 2026-07-13 | [`RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md`](../docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md) | #425 | [карточка](./archive/rag-archive-embeddings-unblock.md) |
 | `persona-memory-phase1` | Persona Memory фаза 1: детерминированный журнал субъектного опыта персоны + инъекция за флагом (пилот Dynin) | 2026-07-13 | [`PERSONA_MEMORY_PHASE1_PROMPT.md`](../docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md) | — | [карточка](./archive/persona-memory-phase1.md) |
+| `telegram-ally-reports` | Telegram-бот для союзников: дайджесты дневного и вечернего ритуалов в приватную группу (modules/telegram в office, push-ingest) | 2026-07-13 | [`TELEGRAM_ALLY_REPORTS_PROMPT.md`](../docs/prompts/TELEGRAM_ALLY_REPORTS_PROMPT.md) | #428 (Issue открыт) | [карточка](./archive/telegram-ally-reports.md) |
 | `night-hunt-office-real` | Night Hunt по-настоящему на office: Claude через media-прокси, фикс ветки, enable (NH1-NH3) | 2026-07-12 | [`NIGHT_HUNT_OFFICE_REAL_PROMPT.md`](../docs/prompts/NIGHT_HUNT_OFFICE_REAL_PROMPT.md) | #390 | [карточка](./archive/night-hunt-office-real.md) |
 | `night-triage-office` | Night Triage on office: детерминированный триаж реестра (перенос с claude.ai/code Routine, NT1-NT5) | 2026-07-12 | [`NIGHT_TRIAGE_OFFICE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_OFFICE_PROMPT.md) | #380 | [карточка](./archive/night-triage-office.md) |
 | `office-vds-migration` | Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM4, пивот на KZ) | 2026-07-12 | [`OFFICE_VDS_MIGRATION_PROMPT.md`](../docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md) | #349 | [карточка](./archive/office-vds-migration.md) |
