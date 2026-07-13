@@ -6,17 +6,18 @@
       "promptPath": "docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md",
       "githubIssue": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-13",
-      "archivedAt": null,
+      "archivedAt": "2026-07-13",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "insightId": "insight-persona-persistent-memory",
-      "notes": "Переход инсайт→спринт (insight-persona-persistent-memory, adopted 5.4; старт при весе <6.0 - owner override 2026-07-13, зафиксирован в meta.json). Scope = «Следующий шаг» Teamlead из REVIEW.md дословно: детерминированный extractor (seanses+REVIEW → docs/virtual-team/memory/dynin.md, provenance+дата), токен-бюджет <5K, plain Markdown без векторов, инъекция в yarn ask/consilium за флагом, человек-гейт на запись. Запреты: LLM в экстракции, вектора/embeddings, калибровка (фаза 2), изменение PROMPT_*.md, автономные действия персоны, UI-вьюер. Merge после LGTM Vesnin. Паттерн-эталон hermes-brief (PR #316)."
+      "notes": "Переход инсайт→спринт (insight-persona-persistent-memory, adopted 5.4; старт при весе <6.0 - owner override 2026-07-13, зафиксирован в meta.json). Scope = «Следующий шаг» Teamlead из REVIEW.md дословно: детерминированный extractor (seanses+REVIEW → docs/virtual-team/memory/dynin.md, provenance+дата), токен-бюджет <5K, plain Markdown без векторов, инъекция в yarn ask/consilium за флагом, человек-гейт на запись. Запреты: LLM в экстракции, вектора/embeddings, калибровка (фаза 2), изменение PROMPT_*.md, автономные действия персоны, UI-вьюер. Merge после LGTM Vesnin. Паттерн-эталон hermes-brief (PR #316).",
+      "archiveNotes": "review LGTM 0aa683a6e3ba; PR #422 merged 2026-07-13T14:24:17Z (bd0b0564e5d878650b50ac06bb3792aea95ab31b)"
     },
     {
       "id": "live-neural-combined-fusion",
