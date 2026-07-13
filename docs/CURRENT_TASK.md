@@ -43,21 +43,30 @@ ADR 0004 (транспорт готов и жив).
 
 ---
 
-## Второй трек: Persona Memory фаза 1 (owner override 2026-07-13)
+## Второй трек: llm-providers-unblock — 2 карточки (2026-07-13)
 
-Инсайт `insight-persona-persistent-memory` (adopted 5.4) отправлен в разработку
-решением владельца (вес <6.0 — осознанный override, зафиксирован в meta.json).
-Спринт `persona-memory-phase1` зарегистрирован (lead dynin). Отдельная сессия /
-отдельный worktree — не смешивать с drift-panel.
+Persona Memory фаза 1 **ЗАКРЫТА** (PR #422/#423, задача заархивирована; проверка
+пилота = включить `--with-memory` на ближайшем консилиуме, напр. drift-panel-placement).
 
-### Старт (вставить в начало новой сессии)
+Новый спринт по итогам разбора инференс-провайдеров (LGTM владельца, консилиум
+не требуется — исполнение по готовому канону; отдельная сессия/worktree):
+
+### Старт карточки #424 (вставить в начало новой сессии)
 
 ```text
-Следуй docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md (реестр: persona-memory-phase1).
-Фаза 1 инсайта insight-persona-persistent-memory: детерминированный extractor
-(docs/seanses/*-PROTOCOL.md + docs/insights/*/REVIEW.md → docs/virtual-team/memory/dynin.md,
-provenance+дата), токен-бюджет <5K, plain Markdown БЕЗ векторов и БЕЗ LLM в экстракции,
-инъекция в yarn ask/consilium за флагом (default off), человек-гейт на запись.
-Эталон — hermes-brief (PR #316). Merge только после LGTM Vesnin.
-Scope review НЕ переоткрывать; фазы 2-3 — см. секцию «Фазы» в INSIGHT.md.
+Следуй docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md
+(реестр: night-narrative-deepseek-fallback, Issue #424). Шаг 0 — ADR цепочки
+OpenRouter→DeepSeek→graceful. Модуль-близнец openrouter в background-office,
+детерминированные таблицы триажа НЕ трогать. Owner-гейт: DEEPSEEK_API_KEY
+(живой ран; код/тесты без ключа).
+```
+
+### Старт карточки #425 (вставить в начало новой сессии)
+
+```text
+Следуй docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md
+(реестр: rag-archive-embeddings-unblock, Issue #425). Развилка A (voyage-эмбеддер
+по существующему контракту) / B (OPENAI_BASE_URL + Jina/Cohere-compat без кода) —
+решить по доступному ключу + geo-проверке с office. Контракты пакета rag НЕ менять.
+Owner-гейт: ключ провайдера.
 ```

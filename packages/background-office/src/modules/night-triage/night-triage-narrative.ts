@@ -57,11 +57,20 @@ export function buildNarrativePrompt(snapshot: TriageSnapshot): string {
   ].join('\n');
 }
 
-/** Вставляет раздел нарратива перед первой таблицей. Пустой нарратив → отчёт без изменений. */
-export function insertNarrative(reportMd: string, narrative: string | null | undefined): string {
+/**
+ * Вставляет раздел нарратива перед первой таблицей. Пустой нарратив → отчёт без изменений.
+ * `provider` — метка канала (ADR 0005: claude|deepseek); смена метки в отчётах — ранний
+ * сигнал деградации первичного канала, оператор не должен гадать.
+ */
+export function insertNarrative(
+  reportMd: string,
+  narrative: string | null | undefined,
+  provider?: string,
+): string {
   const trimmed = narrative?.trim();
   if (!trimmed) return reportMd;
-  const section = `${SECTION_HEADING}\n\n> _Сгенерировано LLM поверх детерминированного среза; таблицы ниже — источник истины._\n\n${trimmed}\n\n`;
+  const providerLabel = provider?.trim() ? ` (канал: ${provider.trim()})` : '';
+  const section = `${SECTION_HEADING}\n\n> _Сгенерировано LLM поверх детерминированного среза${providerLabel}; таблицы ниже — источник истины._\n\n${trimmed}\n\n`;
   const marker = '\n## ';
   const idx = reportMd.indexOf(marker);
   if (idx === -1) {

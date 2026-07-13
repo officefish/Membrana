@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import { ClaudeService } from '../claude/claude.service';
+import { DeepSeekService } from '../deepseek/deepseek.service';
 import { GithubService } from '../github/github.service';
 import {
   type NightHuntJobId,
@@ -26,10 +27,30 @@ export class NightHuntService {
     @Inject(APP_CONFIG) private readonly config: AppConfig,
     private readonly github: GithubService,
     private readonly claude: ClaudeService,
+    private readonly deepseek: DeepSeekService,
   ) {}
 
   isEnabled(): boolean {
-    return this.config.NIGHT_HUNT_ENABLED === true && Boolean(this.config.ANTHROPIC_API_KEY?.trim());
+    const hasLlm = Boolean(this.config.ANTHROPIC_API_KEY?.trim()) || this.deepseek.isConfigured();
+    return this.config.NIGHT_HUNT_ENABLED === true && hasLlm;
+  }
+
+  /** Цепочка провайдеров отчёта (ADR 0005): Claude → DeepSeek(direct). Оба упали → throw (ран skipped). */
+  private async generateReport(prompt: string): Promise<{ text: string; provider: string }> {
+    if (this.config.ANTHROPIC_API_KEY?.trim()) {
+      try {
+        return { text: (await this.claude.askWithUserText(prompt)).text, provider: 'claude' };
+      } catch (err) {
+        this.logger.warn(
+          { reason: err instanceof Error ? err.message : String(err) },
+          'night-hunt report: claude failed, trying deepseek',
+        );
+      }
+    }
+    if (this.deepseek.isConfigured()) {
+      return { text: await this.deepseek.chat(prompt), provider: 'deepseek' };
+    }
+    throw new Error('night-hunt: no LLM provider available (claude failed, deepseek not configured)');
   }
 
   baseBranch(): string {
@@ -44,7 +65,7 @@ export class NightHuntService {
     filePath?: string;
   }> {
     if (!this.isEnabled()) {
-      return { ok: true, skipped: true, reason: 'night-hunt disabled or no OPENROUTER_API_KEY' };
+      return { ok: true, skipped: true, reason: 'night-hunt disabled or no LLM provider (ANTHROPIC/DEEPSEEK)' };
     }
 
     const job = getNightHuntJob(jobId);
@@ -58,8 +79,8 @@ export class NightHuntService {
     try {
       const context = await this.gatherContext(jobId);
       const prompt = this.buildPrompt(jobId, context, week);
-      const report = (await this.claude.askWithUserText(prompt)).text;
-      const body = this.wrapReport(report, jobId, week);
+      const generated = await this.generateReport(prompt);
+      const body = this.wrapReport(generated.text, jobId, week, generated.provider);
 
       const prResult = await this.github.createPullRequestWithFile({
         branchPrefix: `night-hunt/${job.outputSlug}`,
@@ -96,7 +117,7 @@ export class NightHuntService {
     }
   }
 
-  private wrapReport(report: string, jobId: string, week: string): string {
+  private wrapReport(report: string, jobId: string, week: string, provider: string): string {
     const stamp = new Date().toISOString();
     return [
       `# Night Hunt: ${jobId}`,
@@ -105,7 +126,7 @@ export class NightHuntService {
       `|------|----------|`,
       `| Week | ${week} |`,
       `| Generated (UTC) | ${stamp} |`,
-      `| Channel | OpenRouter proxy |`,
+      `| Channel | ${provider} |`,
       '',
       '---',
       '',
