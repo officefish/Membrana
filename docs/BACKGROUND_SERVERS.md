@@ -50,7 +50,7 @@ flowchart LR
 
 | Пакет | Порт (dev) | Prod URL | Stateful? | Назначение |
 |-------|------------|----------|-----------|------------|
-| **`@membrana/background-office`** | 3000 | `https://office.membrana.space` | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4). Скрипты `yarn ask`, CI, dev-tools. |
+| **`@membrana/background-office`** | 3000 | `https://office.membrana.space` | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4), **push-ingest observability/telemetry** (drift-anchor, ADR 0004 — см. ниже). Скрипты `yarn ask`, CI, dev-tools. |
 | **`@membrana/background-media`** | 3010 | `https://media.membrana.space` | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент); v2 эпика #67 — scope по **`membraneId`**. Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
 | **`@membrana/background-cabinet`** *(план)* | 3020 | `https://cabinet.membrana.space` | **Да** | **Identity + domain:** users (login/password), membranes, nodes, access keys (TTL enum), tariffs, telemetry metadata. SPA: `apps/cabinet` → `cabinet.membrana.space`. |
 
@@ -106,6 +106,26 @@ flowchart LR
 | Несинхронный index | Оперативный circuit (BM25) работает без LanceDB; archive → 503 с явным сообщением |
 
 **Клиент (`apps/client`)** в v1 **не** ходит на `/api/rag/query` напрямую — только скрипты ритуалов / consilium через office или локальный `yarn rag:query`.
+
+### Push-ingest паттерн: observability/telemetry в `background-office` (прецедент ADR 0004)
+
+Producer'ы вне office (CI-джобы, серверные cron-скрипты) иногда должны довести
+детерминированный результат прогона (метрика/вердикт — не пользовательские данные)
+до продуктовой поверхности (UI кабинета) через office как транспорт. Паттерн
+подтверждён живым деплоем 2026-07-13 (drift-anchor, [`ADR 0004`](./adr/0004-drift-anchor-journal-transport.md),
+модуль `packages/background-office/src/modules/drift-anchor/`):
+
+| Правило | Обоснование |
+|---------|-------------|
+| Producer POST'ит **готовый JSON**; office НЕ импортирует его тип из `packages/*` | сохраняет «автономность от монорепо-клиента» (см. выше); office объявляет **локальный** zod-DTO (structurally совпадающий, без workspace-зависимости) — как `commentSchema` в `linear.controller.ts` |
+| Хранение — **in-memory** (последняя запись на ключ), без файлов/Prisma | office — stateless (см. таблицу выше, нет `volumes:` ни в одном compose); после редеплоя store пуст до следующего прогона producer'а — это **видимо** через таймстемп записи, не тихая деградация |
+| `POST /v1/<модуль>/records` — под `ApiTokenGuard`, как остальные `/v1/*` | producer доверенный (CI-секрет из `secrets.OFFICE_API_TOKEN` / серверный cron с доступом к `API_INTERNAL_TOKEN` на хосте) |
+| `GET /v1/<модуль>/digest` — публичный **без токена**, ТОЛЬКО если данные не секретны | `X-Membrana-Token` нельзя класть в клиентский бандл; решается по существу на ревью (для drift-anchor — метрики уже публичны в `DETECTOR_BENCHMARK.md`), не по умолчанию |
+| Бизнес-логика над данными (сравнение, вердикт) — на стороне **потребителя** (клиент/кабинет), не в office | office остаётся тупым транспортом; чистые функции живут там, где `@membrana/core` уже легальная зависимость |
+
+Когда паттерн повторится **≥3 раза** — заводить консилиум о типизированном wire-контракте
+для office-ingest (риск расхождения локальных DTO с core-типами без компиляционной связи
+между ними растёт с числом копий).
 
 **Различие HTTP-адаптеров (намеренное):**
 
@@ -190,6 +210,7 @@ Device (deviceId)
 | Вопрос | Куда |
 |--------|------|
 | Новый внешний API или webhook? | `background-office` (новый Nest-модуль) |
+| Push-результат CI/cron-джоба нужно показать в UI? | `background-office` — push-ingest паттерн (локальный DTO, in-memory, см. выше) |
 | Пользовательское аудио (wav/mp3/flac/ogg) / коллекция / export manifest? | `background-media` |
 | Пользовательский шаблон trends (JSON)? | `background-media` (не office) |
 | Login, мембрана, узел, ключ доступа (TTL)? | `background-cabinet` + `apps/cabinet` |
@@ -230,6 +251,7 @@ Device (deviceId)
 | Консилиум 2026-06-11 | [`seanses/background-media-v1-consilium-2026-06-11.md`](./seanses/background-media-v1-consilium-2026-06-11.md) |
 | Membrane Platform (эпик) | [#67](https://github.com/officefish/Membrana/issues/67), [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md), prod-smoke [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md) |
 | Журнал office v0.1 | [`discussions/background-office-v0.1.md`](./discussions/background-office-v0.1.md) |
+| Push-ingest паттерн (drift-anchor) | [`ADR 0004`](./adr/0004-drift-anchor-journal-transport.md), эпик `drift-anchor-contour` [#396](https://github.com/officefish/Membrana/issues/396) |
 
 ---
 
