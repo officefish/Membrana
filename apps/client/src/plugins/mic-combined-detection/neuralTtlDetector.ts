@@ -53,6 +53,12 @@ export function wrapNeuralWithTtl(
         try {
           lastResult = await detector.detect(window);
           lastSuccessAt = now();
+          // Перф-замер #416: только реальные инференсы (кэш-ответы не логируются).
+          // console.debug = verbose-уровень, в прод-консоли скрыт по умолчанию;
+          // p50/p95 снимаются руками из DevTools за ~3 мин живой сессии.
+          console.debug(
+            `[drift-perf] ${detector.name} inference ${lastResult.latencyMs.toFixed(1)}ms`,
+          );
           return lastResult;
         } catch (error) {
           // Транзиентный отказ опроса НЕ роняет модальность мгновенно: свежий
