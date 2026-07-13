@@ -60,4 +60,19 @@ docs/prompts/TELEGRAM_ALLY_REPORTS_PROMPT.md (блок «Промпт целик
 **Owner-гейты до smoke:** BotFather-токен, приватная группа + бот, chat_id, env на office VDS.
 **Коллизия-гард:** не трогать провайдер-модули office (openrouter/deepseek/rag) — заняты
 спринтом llm-providers-unblock (#424/#425) в worktree Membrana-openrouter; app.module.ts
-конфликт разрешать после их мёржа.
+конфликт разрешать после их мёржа (мёржи 2026-07-13 вечер: конфликт разрешён, оба модуля в app.module).
+
+---
+
+## Второй трек: итоги дня 2026-07-13 (оба спринта закрыты)
+
+1. **Persona Memory фаза 1** — ЗАКРЫТА (PR #422/#423). Проверка пилота = включить
+   `--with-memory` на ближайшем консилиуме (напр. drift-panel-placement).
+2. **llm-providers-unblock** — ЗАКРЫТ (PR #426, bf6f7fb0; ревью LGTM ×2, задачи
+   заархивированы). **Хвосты на владельце (комментарии в #424/#425):**
+   - #424: пополнить баланс DeepSeek → DEEPSEEK_API_KEY на office → живой ран
+     триажа (метка «канал: deepseek»).
+   - #425: платёжный метод Voyage (бесплатные 200M токенов сохраняются) →
+     `RAG_EMBEDDING_PROVIDER=voyage yarn rag:index` → непустой RAG-блок в
+     consilium/ask. Локально нужен HTTPS_PROXY (DPI режет прямой Node-хендшейк).
+>>>>>>> origin/main

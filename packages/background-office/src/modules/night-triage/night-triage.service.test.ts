@@ -16,6 +16,8 @@ function makeService(over: {
   registry?: string | null;
   llm?: boolean;
   chat?: () => Promise<string>;
+  deepseekConfigured?: boolean;
+  deepseekChat?: () => Promise<string>;
   createPR?: ReturnType<typeof vi.fn>;
 }) {
   const config = {
@@ -33,10 +35,14 @@ function makeService(over: {
     createPullRequestWithFile: createPR,
   } as never;
   const chatFn = over.chat ?? (async () => 'нарратив');
-  const claude = {
-    askWithUserText: vi.fn(async () => ({ text: await chatFn(), model: 'claude', stop_reason: 'end_turn' })),
+  const claudeAsk = vi.fn(async () => ({ text: await chatFn(), model: 'claude', stop_reason: 'end_turn' }));
+  const claude = { askWithUserText: claudeAsk } as never;
+  const deepseekChat = vi.fn(async () => (over.deepseekChat ? await over.deepseekChat() : 'ds-нарратив'));
+  const deepseek = {
+    isConfigured: vi.fn(() => over.deepseekConfigured ?? false),
+    chat: deepseekChat,
   } as never;
-  return { svc: new NightTriageService(config, github, claude), createPR };
+  return { svc: new NightTriageService(config, github, claude, deepseek), createPR, claudeAsk, deepseekChat };
 }
 
 const NOW = new Date('2026-07-12T00:00:00Z');
@@ -67,22 +73,55 @@ describe('NightTriageService.run', () => {
     expect(opts.content).toContain('## Ghost (1)');
   });
 
-  it('LLM сконфигурирован → нарратив вставлен', async () => {
-    const { svc, createPR } = makeService({ llm: true, chat: vi.fn(async () => 'Долг сосредоточен в orphan.') });
+  it('LLM сконфигурирован → нарратив вставлен с меткой канала claude, deepseek не вызывается', async () => {
+    const { svc, createPR, deepseekChat } = makeService({
+      llm: true,
+      deepseekConfigured: true,
+      chat: vi.fn(async () => 'Долг сосредоточен в orphan.'),
+    });
     await svc.run(NOW);
     expect(createPR.mock.calls[0][0].content).toContain('## Обзор (LLM-нарратив)');
     expect(createPR.mock.calls[0][0].content).toContain('Долг сосредоточен в orphan.');
+    expect(createPR.mock.calls[0][0].content).toContain('(канал: claude)');
+    expect(deepseekChat).not.toHaveBeenCalled();
   });
 
-  it('LLM падает → graceful, отчёт всё равно с таблицами', async () => {
+  it('claude падает + deepseek сконфигурирован → нарратив с меткой deepseek (ADR 0005)', async () => {
     const chat = vi.fn(async () => {
-      throw new Error('llm down');
+      throw new Error('claude down');
     });
-    const { svc, createPR } = makeService({ llm: true, chat });
+    const { svc, createPR } = makeService({
+      llm: true,
+      chat,
+      deepseekConfigured: true,
+      deepseekChat: async () => 'Fallback-обзор от DeepSeek.',
+    });
+    const r = await svc.run(NOW);
+    expect(r.ok).toBe(true);
+    expect(createPR.mock.calls[0][0].content).toContain('Fallback-обзор от DeepSeek.');
+    expect(createPR.mock.calls[0][0].content).toContain('(канал: deepseek)');
+  });
+
+  it('оба канала падают → graceful, отчёт всё равно с таблицами', async () => {
+    const boom = async (): Promise<string> => {
+      throw new Error('llm down');
+    };
+    const { svc, createPR } = makeService({ llm: true, chat: boom, deepseekConfigured: true, deepseekChat: boom });
     const r = await svc.run(NOW);
     expect(r.ok).toBe(true);
     expect(createPR.mock.calls[0][0].content).not.toContain('## Обзор (LLM-нарратив)');
     expect(createPR.mock.calls[0][0].content).toContain('## Ghost (1)');
+  });
+
+  it('claude без ключа + deepseek сконфигурирован → нарратив сразу от deepseek', async () => {
+    const { svc, createPR, claudeAsk } = makeService({
+      llm: false,
+      deepseekConfigured: true,
+      deepseekChat: async () => 'Обзор от DeepSeek без Claude.',
+    });
+    await svc.run(NOW);
+    expect(claudeAsk).not.toHaveBeenCalled();
+    expect(createPR.mock.calls[0][0].content).toContain('(канал: deepseek)');
   });
 
   it('секрет в отчёте → блок, PR не создаётся', async () => {

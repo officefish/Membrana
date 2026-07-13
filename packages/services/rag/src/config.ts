@@ -72,9 +72,15 @@ export function loadRagConfig(env: NodeJS.ProcessEnv = process.env): RagConfig {
   const legacyOperativeThreshold = env.RAG_OBSIDIAN_RELEVANCE_THRESHOLD;
   const legacyMinCount = env.RAG_MIN_OBSIDIAN_COUNT;
 
+  const embeddingProvider = parseEmbeddingProvider(env.RAG_EMBEDDING_PROVIDER);
+  // Дефолт модели зависит от провайдера: openai-дефолт text-embedding-3-small
+  // бессмыслен для voyage. Явный RAG_EMBEDDING_MODEL всегда побеждает.
+  const defaultEmbeddingModel =
+    embeddingProvider === 'voyage' ? 'voyage-3.5-lite' : DEFAULTS.embeddingModel;
+
   return {
-    embeddingProvider: parseEmbeddingProvider(env.RAG_EMBEDDING_PROVIDER),
-    embeddingModel: env.RAG_EMBEDDING_MODEL?.trim() || DEFAULTS.embeddingModel,
+    embeddingProvider,
+    embeddingModel: env.RAG_EMBEDDING_MODEL?.trim() || defaultEmbeddingModel,
     openaiBaseUrl: env.OPENAI_BASE_URL?.trim().replace(/\/$/, '') || DEFAULTS.openaiBaseUrl,
     vectorStore: parseVectorStore(env.RAG_VECTOR_STORE),
     lanceDbPath: env.RAG_LANCEDB_PATH?.trim() || DEFAULTS.lanceDbPath,

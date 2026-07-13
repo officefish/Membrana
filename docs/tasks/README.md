@@ -191,6 +191,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `night-narrative-deepseek-fallback` | DeepSeek direct API — fallback нарратива ночных агентов (обход OpenRouter 403) | 2026-07-13 | [`NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md`](../docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md) | #424 (Issue открыт) | [карточка](./archive/night-narrative-deepseek-fallback.md) |
+| `rag-archive-embeddings-unblock` | RAG archive: второй embeddings-провайдер по существующему контракту (разблокировка useLongTerm) | 2026-07-13 | [`RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md`](../docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md) | #425 (Issue открыт) | [карточка](./archive/rag-archive-embeddings-unblock.md) |
+| `persona-memory-phase1` | Persona Memory фаза 1: детерминированный журнал субъектного опыта персоны + инъекция за флагом (пилот Dynin) | 2026-07-13 | [`PERSONA_MEMORY_PHASE1_PROMPT.md`](../docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md) | — | [карточка](./archive/persona-memory-phase1.md) |
 | `night-hunt-office-real` | Night Hunt по-настоящему на office: Claude через media-прокси, фикс ветки, enable (NH1-NH3) | 2026-07-12 | [`NIGHT_HUNT_OFFICE_REAL_PROMPT.md`](../docs/prompts/NIGHT_HUNT_OFFICE_REAL_PROMPT.md) | #390 | [карточка](./archive/night-hunt-office-real.md) |
 | `night-triage-office` | Night Triage on office: детерминированный триаж реестра (перенос с claude.ai/code Routine, NT1-NT5) | 2026-07-12 | [`NIGHT_TRIAGE_OFFICE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_OFFICE_PROMPT.md) | #380 | [карточка](./archive/night-triage-office.md) |
 | `office-vds-migration` | Office VDS Migration: переезд background-office на выделенный VDS с новым доменом (OM1-OM4, пивот на KZ) | 2026-07-12 | [`OFFICE_VDS_MIGRATION_PROMPT.md`](../docs/prompts/OFFICE_VDS_MIGRATION_PROMPT.md) | #349 | [карточка](./archive/office-vds-migration.md) |

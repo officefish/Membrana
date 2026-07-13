@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
 import { ClaudeService } from '../claude/claude.service';
+import { DeepSeekService } from '../deepseek/deepseek.service';
 import { GithubService } from '../github/github.service';
 import {
   buildTriageSnapshot,
@@ -33,7 +34,38 @@ export class NightTriageService {
     @Inject(APP_CONFIG) private readonly config: AppConfig,
     private readonly github: GithubService,
     private readonly claude: ClaudeService,
+    private readonly deepseek: DeepSeekService,
   ) {}
+
+  /**
+   * Цепочка провайдеров нарратива (ADR 0005): Claude → DeepSeek(direct) → null.
+   * Порядок фиксирован в коде; null = оба канала недоступны, отчёт остаётся
+   * детерминированным без раздела (graceful, как раньше).
+   */
+  private async generateNarrative(prompt: string): Promise<{ text: string; provider: string } | null> {
+    if (this.config.ANTHROPIC_API_KEY?.trim()) {
+      try {
+        const resp = await this.claude.askWithUserText(prompt);
+        return { text: resp.text, provider: 'claude' };
+      } catch (err) {
+        this.logger.warn(
+          { reason: err instanceof Error ? err.message : String(err) },
+          'night-triage narrative: claude failed, trying deepseek',
+        );
+      }
+    }
+    if (this.deepseek.isConfigured()) {
+      try {
+        return { text: await this.deepseek.chat(prompt), provider: 'deepseek' };
+      } catch (err) {
+        this.logger.warn(
+          { reason: err instanceof Error ? err.message : String(err) },
+          'night-triage narrative: deepseek failed (graceful)',
+        );
+      }
+    }
+    return null;
+  }
 
   isEnabled(): boolean {
     return this.config.NIGHT_TRIAGE_ENABLED === true;
@@ -76,17 +108,10 @@ export class NightTriageService {
       const snapshot = buildTriageSnapshot(tasks, new Map(), now, this.staleThresholdDays());
       let report = renderTriageReport(snapshot, { date });
 
-      // Нарратив опционален и graceful — таблицы неизменны. Родной Anthropic (ClaudeService).
-      if (this.config.ANTHROPIC_API_KEY?.trim()) {
-        try {
-          const resp = await this.claude.askWithUserText(buildNarrativePrompt(snapshot));
-          report = insertNarrative(report, resp.text);
-        } catch (err) {
-          this.logger.warn(
-            { reason: err instanceof Error ? err.message : String(err) },
-            'night-triage narrative failed (graceful)',
-          );
-        }
+      // Нарратив опционален и graceful — таблицы неизменны. Цепочка ADR 0005.
+      const narrative = await this.generateNarrative(buildNarrativePrompt(snapshot));
+      if (narrative) {
+        report = insertNarrative(report, narrative.text, narrative.provider);
       }
 
       // Блокирующий секрет-гейт перед push.

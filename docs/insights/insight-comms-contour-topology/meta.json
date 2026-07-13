@@ -9,5 +9,6 @@
   "researchedAt": null,
   "reviewedAt": null,
   "closedAt": "2026-07-05",
+  "sprintPhase": "comms-contour-environment",
   "tags": ["comms", "topology", "monorepo", "boundaries", "isolation", "single-source-of-truth", "architecture"]
 }

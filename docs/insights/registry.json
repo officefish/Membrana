@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-12",
+  "updatedAt": "2026-07-13",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -336,7 +336,7 @@
       "title": "Контур внешних коммуникаций: изоляция по записи, не по чтению (Вариант A)",
       "status": "adopted",
       "source": "user",
-      "sprintPhase": null,
+      "sprintPhase": "comms-contour-environment",
       "horizon": "week",
       "weight": 8.6,
       "createdAt": "2026-07-05",
@@ -366,7 +366,7 @@
       "title": "Hermes — вестник-лиазон между сессиями",
       "status": "adopted",
       "source": "user",
-      "sprintPhase": null,
+      "sprintPhase": "hermes-brief",
       "horizon": null,
       "weight": 7.4,
       "createdAt": "2026-07-08",
@@ -386,9 +386,9 @@
     {
       "id": "insight-live-neural-combined-detector",
       "title": "Живой нейро-combined детектор (эшелон-2-live): yamnet в combinedScore",
-      "status": "deferred",
+      "status": "adopted",
       "source": "user",
-      "sprintPhase": null,
+      "sprintPhase": "live-neural-combined-fusion",
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-12",
@@ -410,11 +410,15 @@
       "title": "Персистентная память и непрерывность виртуальных персон",
       "status": "adopted",
       "source": "user",
-      "sprintPhase": null,
-      "horizon": null,
+      "sprintPhase": "persona-memory-phase1",
+      "horizon": "month",
       "weight": 5.4,
       "createdAt": "2026-07-12",
-      "tags": []
+      "tags": [
+        "virtual-team",
+        "memory",
+        "infra"
+      ]
     }
   ]
 }

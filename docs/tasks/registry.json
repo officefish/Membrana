@@ -1,6 +1,63 @@
 {
   "tasks": [
     {
+      "id": "night-narrative-deepseek-fallback",
+      "title": "DeepSeek direct API — fallback нарратива ночных агентов (обход OpenRouter 403)",
+      "promptPath": "docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md",
+      "githubIssue": 424,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-13",
+      "archivedAt": "2026-07-13",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Канон готов (модуль-близнец openrouter, OpenAI-совместимый direct API, доступен с office без прокси) → консилиум не нужен, шаг 0 = ADR цепочки OpenRouter→DeepSeek→graceful. Запреты: не менять детерминированные таблицы триажа, без LLM-роутера-пакета (YAGNI), без прокси-логики в модуле. Owner-гейт: DEEPSEEK_API_KEY (живой ран; код/тесты от ключа не зависят). Закрывает хвост #380 «нарратив пропускается».",
+      "archiveNotes": "review LGTM a7b248e6df59; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rag-archive-embeddings-unblock",
+      "title": "RAG archive: второй embeddings-провайдер по существующему контракту (разблокировка useLongTerm)",
+      "promptPath": "docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md",
+      "githubIssue": 425,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-13",
+      "archivedAt": "2026-07-13",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Контракт RagEmbeddingProvider='openai'|'voyage' уже существует, voyage-эмбеддер не реализован; альтернатива — OPENAI_BASE_URL + совместимый endpoint (Jina/Cohere-compat) без кода. Развилка A/B решается по доступному ключу + geo-проверке с office. Запреты: не менять тип провайдера и публичные контракты rag, не трогать operative-контур и потребителей scripts, без новых сторов (pgvector = фаза 3 persona-memory). Owner-гейт: ключ Voyage/Jina/Cohere.",
+      "archiveNotes": "review LGTM 0c0fe52d05d6; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "persona-memory-phase1",
+      "title": "Persona Memory фаза 1: детерминированный журнал субъектного опыта персоны + инъекция за флагом (пилот Dynin)",
+      "promptPath": "docs/prompts/PERSONA_MEMORY_PHASE1_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-13",
+      "archivedAt": "2026-07-13",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "insightId": "insight-persona-persistent-memory",
+      "notes": "Переход инсайт→спринт (insight-persona-persistent-memory, adopted 5.4; старт при весе <6.0 - owner override 2026-07-13, зафиксирован в meta.json). Scope = «Следующий шаг» Teamlead из REVIEW.md дословно: детерминированный extractor (seanses+REVIEW → docs/virtual-team/memory/dynin.md, provenance+дата), токен-бюджет <5K, plain Markdown без векторов, инъекция в yarn ask/consilium за флагом, человек-гейт на запись. Запреты: LLM в экстракции, вектора/embeddings, калибровка (фаза 2), изменение PROMPT_*.md, автономные действия персоны, UI-вьюер. Merge после LGTM Vesnin. Паттерн-эталон hermes-brief (PR #316).",
+      "archiveNotes": "review LGTM 0aa683a6e3ba; PR #422 merged 2026-07-13T14:24:17Z (bd0b0564e5d878650b50ac06bb3792aea95ab31b)"
+    },
+    {
       "id": "live-neural-combined-fusion",
       "title": "yamnet в живом combinedScore: fusion спектр+нейро для FREE",
       "promptPath": "docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md",
