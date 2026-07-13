@@ -69,8 +69,10 @@ if (dryRun) {
 }
 
 loadDotEnv();
-const token = process.env.API_INTERNAL_TOKEN?.trim();
-if (!token) skip('нет API_INTERNAL_TOKEN в .env/окружении');
+// OFFICE_API_TOKEN = токен office VDS (/etc/membrana/office.env, при синке не
+// перезаписывается и может отличаться от локального API_INTERNAL_TOKEN).
+const token = process.env.OFFICE_API_TOKEN?.trim() || process.env.API_INTERNAL_TOKEN?.trim();
+if (!token) skip('нет OFFICE_API_TOKEN/API_INTERNAL_TOKEN в .env/окружении');
 const base = (process.env.OFFICE_BASE_URL?.trim() || 'https://office.mmbrn.tech').replace(/\/+$/, '');
 
 try {
