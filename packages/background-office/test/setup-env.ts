@@ -19,3 +19,5 @@ process.env.GITHUB_TOKEN = 'test-github-token';
 process.env.GITHUB_OWNER = 'officefish';
 process.env.GITHUB_REPO = 'Membrana';
 process.env.PANEL_SESSION_SECRET = 'test-panel-session-secret';
+// PU1 (#463): store партнёров — во временный каталог, не в /var/lib хост-машины.
+process.env.PANEL_USERS_STORE_PATH = `${process.env.TEMP ?? process.env.TMPDIR ?? '/tmp'}/panel-users-e2e-${process.pid}.json`;

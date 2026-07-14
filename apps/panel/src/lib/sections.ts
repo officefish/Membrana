@@ -13,6 +13,12 @@ export interface PanelSection {
   minRole: PanelRole;
 }
 
+/**
+ * Уровень доступа раздела — UX-гейт рабочего места, НЕ security-граница:
+ * данные бордов публичны (артефакты лежат в открытом репо), скрытие ссылки
+ * защитой не является (консилиум detector-compare-board-2026-07-14, развилка 4).
+ * Серверные /v1-ручки гейтит office.
+ */
 export const PANEL_SECTIONS: readonly PanelSection[] = [
   {
     id: 'ally-digest',

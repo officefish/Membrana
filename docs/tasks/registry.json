@@ -1,16 +1,78 @@
 {
   "tasks": [
     {
+      "id": "agent-tooling-friction-2",
+      "title": "agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship)",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md",
+      "githubIssue": 469,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "По итогам сессии 2026-07-14 (4 ручных closure-цикла, 3 чат-протокола без валидации, 2 конфликта registry, коллизия скоупа #452/#454, 3 инцидента PS 5.1, разнобой credit-ошибок). Консилиум-гейт: docs/seanses/agent-tooling-friction-2-2026-07-14.md (22 реплики) + research Perplexity x3. Форма #433: зонтик, независимые ti, порядок дешевле-дороже ti-6-5-7-4-3-2-1, мёрж по готовности. Ключевые решения: ship = ОБЁРТКА над lib-runner (SHA из gh pr view mergeCommit, база = родитель, чеки на detached при ушедшем main, fail-closed); register = регенерация вставки вместо ручного merge, формат registry НЕ меняется; neighbors = только чтение сигналов, координационный файл НЕ вводится; secretary-file = валидатор канона чистыми функциями, фикстуры - живые протоколы 14.07. Запреты: не переписывать lib/task-closure-review.mjs, не менять формат registry (task-archive-storage), не печатать секреты, ship не деплоит.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "cowork-format-regulation",
+      "title": "Cowork Sprint: регламент формата — 3 изолированных блока одной разработки, поздняя стыковка, интеграция адаптерами",
+      "promptPath": "docs/COWORK_SPRINT_REGULATION.md",
+      "githubIssue": 464,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-14",
+      "archivedAt": "2026-07-14",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "Идея владельца 2026-07-14. Консилиум-гейт: docs/seanses/cowork-sprint-format-2026-07-14.md (20 реплик; первый с памятью 5 персон default-on). Решения: событийный гейт интеграции ready(A)∧ready(B)∧ready(C)∨deadline; односторонние EXPECTATIONS + исполняемые стабы в своей зоне (договариваться об интерфейсах до Interface Consilium запрещено); резка brief по естественным швам с пустым пересечением файловых зон; интеграция адаптерами в отдельной ветке (блоки не переписываются, ведёт координатор); жюри/скоринга/победителя нет — мёржатся все три блока. Артефакты: регламент + cowork:open + скилл membrana-cowork (3 среды). Follow-up: cowork:phase/close.",
+      "archiveNotes": "PR #465; review LGTM 04695297d862; PR #465 merged 2026-07-14T16:53:39Z (04695297d862329d46db797c12368214a74dfb4c)",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "qc-panel-boards",
+      "title": "qc-panel-boards: drift-борд + навигация shell в панели (QC1; detector-compare уступлен #452)",
+      "promptPath": "docs/prompts/QC_PANEL_BOARDS_PROMPT.md",
+      "githubIssue": 454,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-14",
+      "archivedAt": "2026-07-14",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Консилиум-гейт: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). СКОУП СУЖЕН 14.07: QC2 (борд detector-compare + office-модуль benchmark) уступлен задаче panel-detector-compare-board #452 — её консилиум (detector-compare-board-2026-07-14, видение владельца: per-sample таблица, прослушивание, waveform, попапы, фильтр расхождений; вердикт «office не трогаем», статический артефакт экспортёра) предметнее и новее; office-модуль benchmark из ветки удалён до мёржа. Остаток: QC1 drift-борд (читает публичный /v1/drift-anchor/digest, происхождение чисел, prod-main сравнение) + открываемые карточки shell (нужны и борду #452).",
+      "archiveNotes": "PR #455; review LGTM 9b9ced6de860; PR #455 merged 2026-07-14T14:40:18Z (a35615ccecb2268cfbfa00a52311ba2866a28dc5)",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "panel-detector-compare-board",
       "title": "Борд detector-compare: таблица trends DRONE_TIGHT vs yamnet в панели (магистраль 14.07)",
       "promptPath": "docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md",
       "githubIssue": 452,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "parentEpic": "office-panel-contour",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "rodchenko",
@@ -18,7 +80,9 @@
         "ozhegov",
         "vesnin"
       ],
-      "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git."
+      "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git.",
+      "archiveNotes": "PR #457; review LGTM 09921c24f473; PR #457 merged 2026-07-14T15:31:21Z (44bac65827e4edef914277249f5840e280b4869a)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "persona-memory-all-personas",
@@ -27,16 +91,16 @@
       "githubIssue": 451,
       "insightId": "insight-persona-persistent-memory",
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Решение владельца 2026-07-14 по итогам суточного пилота (боевое применение: консилиум quality-control-contour). Экстрактор уже параметризован — нового кода экстракции нет; человек-гейт: 4 журнала отдельными diff + importance.json за владельцем. --with-memory default ТОЛЬКО в consilium (+--no-memory), ask не трогать. Гард суммарной инъекции 25K. Вне магистрали FREE. Запреты: фазы 2/3 и слои 2-3 субъектности не трогать.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #461; review LGTM 2f9dd5218631; PR #461 merged 2026-07-14T16:14:01Z (d452582ddf2b194ee6c9ed6f485590490a21ca09)",
       "githubIssueClosedAt": null
     },
     {
@@ -13291,6 +13355,89 @@
       "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа.",
       "archiveNotes": "PR #431 (squash 3124d6d2 side) + hotfix 0291f954 (proxy-aware client, OFFICE_API_TOKEN). E2E smoke 2026-07-13: day+evening дайджесты доставлены в приватную группу (sent=true), контур ritual→office→telegram живой. Остаток: фаза 2 LLM-пересказ (после владельческих хвостов #424/#425).",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "panel-partner-access",
+      "title": "Epic: партнёрский доступ по промокоду + owner-раздел «Пользователи» (PU1-PU3)",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": 463,
+      "status": "active",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "size": "L",
+      "sprintKind": "epic",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/panel-promo-access-2026-07-14.md (7 развилок, Perplexity x2; сгенерирован координатором по подписке — API исчерпан, канон соблюдён). Вердикты: entitlements поверх ролей (ally + grants[], wildcard *); НОВЫЙ ADR 0005 — JSON-store на docker volume (0004 не правим), store=истина/cookie=кэш+permVersion-эпоха в /me; промокоды серверные отзываемые (base32x16, чеканка только из owner-UI); Q3: 5/час/IP, no-store, 404 не-owner, реестр никогда в git. Запреты: SQLite/Prisma, новая роль, секрет в браузере, email/OAuth партнёров, миграция старых invite."
+    },
+    {
+      "id": "pu1-panel-users-office",
+      "title": "PU1: office-модуль panel-users — ADR 0005, JSON-store на volume, register + admin-ручки, эпоха в /me, контракт-тест",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "status": "archived",
+      "createdAt": "2026-07-14",
+      "archivedAt": "2026-07-14",
+      "archiveNotes": "PR #466; review LGTM 684f95bbfcfb; PR #466 merged 2026-07-14T17:03:15Z (dbf53f3df12e353ef709f67f18d92c88e81344ac)",
+      "githubIssueClosedAt": null,
+      "size": "M",
+      "sprintKind": "epic",
+      "parentEpic": "panel-partner-access",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin",
+        "kuryokhin"
+      ],
+      "notes": "Фаза 1 эпика #463. DoD: ADR 0005 до кода; store атомарная запись + in-memory кэш + видимая деградация; POST /v1/panel/register (rate-limit 5/час/IP, ошибки без причин); /v1/panel/admin/* за owner-guard (404 не-owner); volume в base+prod compose; инвентарный контракт-тест ручек; живой смоук на VDS (файл пережил редеплой, снятая галочка видна в /me); бэкап-строка в runbook."
+    },
+    {
+      "id": "pu2-panel-promo-registration",
+      "title": "PU2: панель — форма «Регистрация по промокоду» на welcome + grants в клиентском гейте карточек (включая *)",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "status": "archived",
+      "createdAt": "2026-07-14",
+      "archivedAt": "2026-07-14",
+      "archiveNotes": "PR #470; review LGTM 05cfd5fe5e82; PR #470 merged 2026-07-14T18:03:25Z (a7fc2f4d56df13cf70df2de2f0384af414bd1ea4)",
+      "githubIssueClosedAt": null,
+      "size": "M",
+      "sprintKind": "epic",
+      "parentEpic": "panel-partner-access",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Фаза 2, старт после merge PU1 (контракт ручек). Ноль новых зависимостей панели."
+    },
+    {
+      "id": "pu3-panel-users-admin-board",
+      "title": "PU3: owner-раздел «Пользователи» — матрица трёх состояний, чеканка/revoke кодов, аудит-хвост, деплой",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "status": "active",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "size": "M",
+      "sprintKind": "epic",
+      "parentEpic": "panel-partner-access",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin",
+        "vesnin"
+      ],
+      "notes": "Фаза 3. Код показывается один раз (<dialog> + копировать); verify:tailwind-coverage; смоук партнёрского сценария конец-в-конец; бэкап-строка."
     }
   ]
 }

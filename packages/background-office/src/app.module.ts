@@ -11,6 +11,7 @@ import { DriftAnchorModule } from './modules/drift-anchor/drift-anchor.module';
 import { NightHuntModule } from './modules/night-hunt/night-hunt.module';
 import { NightTriageModule } from './modules/night-triage/night-triage.module';
 import { PanelAuthModule } from './modules/panel-auth/panel-auth.module';
+import { PanelUsersModule } from './modules/panel-users/panel-users.module';
 import { TelegramModule } from './modules/telegram/telegram.module';
 import { HealthController } from './health.controller';
 import type { AppConfig } from './config/env.schema';
@@ -55,6 +56,7 @@ const testImports =
     DriftAnchorModule,
     TelegramModule,
     PanelAuthModule,
+    PanelUsersModule,
   ],
   controllers: [HealthController],
 })

@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -22,7 +23,7 @@ import {
   type PanelIdentity,
   type RateLimiter,
 } from './panel-auth-core';
-import { PANEL_MIN_ROLE_KEY } from './panel-auth.decorators';
+import { PANEL_DENY_AS_404_KEY, PANEL_MIN_ROLE_KEY } from './panel-auth.decorators';
 
 export interface PanelRequest extends Request {
   panelIdentity?: PanelIdentity;
@@ -89,6 +90,14 @@ export class PanelAuthGuard implements CanActivate {
     );
 
     if (allowed) return true;
+    // PU1 (#463, Q3): admin-ручки не подтверждают существование не-owner'у.
+    const denyAs404 = this.reflector.getAllAndOverride<unknown>(PANEL_DENY_AS_404_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (denyAs404 === true) {
+      throw new NotFoundException();
+    }
     if (identity.role === 'public') {
       throw new UnauthorizedException('panel: authentication required');
     }
