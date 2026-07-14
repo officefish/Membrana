@@ -1,5 +1,13 @@
 import 'reflect-metadata';
 
+// НОРМА (консилиум agent-tooling-friction 2026-07-13, ti-3): тестовое окружение
+// НЕ наследует прокси из шелла — undici ProxyAgent читает эти переменные В ОБХОД
+// мока global.fetch, и e2e ложно краснеют у любого, кто сидит за прокси.
+// Прокси-зависимый тест объявляет env ЛОКАЛЬНО (vi.stubEnv) и снимает в afterEach.
+for (const name of ['HTTPS_PROXY', 'HTTP_PROXY', 'https_proxy', 'http_proxy']) {
+  delete process.env[name];
+}
+
 process.env.NODE_ENV = 'test';
 process.env.PORT = '3100';
 process.env.LOG_LEVEL = 'error';

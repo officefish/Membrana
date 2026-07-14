@@ -26,6 +26,12 @@ taskId + currentCommitSha + branch + githubIssue? + pullRequest?
 Review, сделанный для другого SHA или task id, недействителен. Manifest хранится в
 `docs/reviews/<task-id>/manifest.json`; immutable review — рядом как `<sha>-review.md`.
 
+**Норма хранения (консилиум agent-tooling-friction, 2026-07-13, ti-1):** содержимое
+`docs/reviews/*/` — локальные рабочие артефакты процесса закрытия, в git НЕ
+коммитятся (`.gitignore`), в PR не входят и публичным контрактом не являются.
+Доказательство ревью в истории — вердикт/SHA в `archiveNotes` карточки реестра и
+отчёте Issue, не сами файлы.
+
 ## State machine
 
 | State | Meaning | Allowed next |

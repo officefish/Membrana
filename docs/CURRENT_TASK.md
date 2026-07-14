@@ -92,4 +92,22 @@ modules/telegram, docs/comms/ALLY_PRIMER.md. Не смешивать с LLM-пе
    - #425: платёжный метод Voyage (бесплатные 200M токенов сохраняются) →
      `RAG_EMBEDDING_PROVIDER=voyage yarn rag:index` → непустой RAG-блок в
      consilium/ask. Локально нужен HTTPS_PROXY (DPI режет прямой Node-хендшейк).
->>>>>>> origin/main
+
+---
+
+## Спринт agent-tooling-friction (#433, зарегистрирован 2026-07-13, консилиум пройден)
+
+4 независимые задачи против трения агентских сессий; порядок ti-1→ti-3→ti-2→ti-4.
+Протокол: docs/seanses/agent-tooling-friction-2026-07-13.md. Ведётся в worktree
+Membrana-openrouter (ветка feat/agent-tooling-friction).
+
+### Старт (вставить в начало новой сессии)
+
+```text
+Следуй docs/prompts/AGENT_TOOLING_FRICTION_PROMPT.md (реестр: agent-tooling-friction,
+Issue #433). Спор НЕ переоткрывать — решения в протоколе консилиума
+agent-tooling-friction-2026-07-13. Порядок ti-1→ti-3→ti-2→ti-4, мерж по готовности.
+```
+
+**Очередь после (решения владельца):** task-archive-storage (7.6) сразу после
+пополнения Voyage; slide-fullscreen — фича следующего тарифа, не брать.
