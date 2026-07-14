@@ -2,10 +2,19 @@ import { canAccess, ROLE_LABELS, type PanelRole } from '@/lib/roles';
 import type { PanelSection } from '@/lib/sections';
 
 /**
- * Карточка раздела (OP3): бейдж уровня словом (не только цветом — DESIGN.md),
- * замок на недоступном. Содержимое разделов — фазы после эпика.
+ * Карточка раздела (OP3 + #454): бейдж уровня словом (не только цветом —
+ * DESIGN.md), замок на недоступном. Раздел с контентом открывается кнопкой;
+ * без контента — честная пометка «в разработке».
  */
-export function SectionCard({ section, role }: { section: PanelSection; role: PanelRole }) {
+export function SectionCard({
+  section,
+  role,
+  onOpen,
+}: {
+  section: PanelSection;
+  role: PanelRole;
+  onOpen?: () => void;
+}) {
   const unlocked = canAccess(role, section.minRole);
   return (
     <article
@@ -20,7 +29,19 @@ export function SectionCard({ section, role }: { section: PanelSection; role: Pa
           </span>
         </div>
         <p className="text-sm text-base-content/70">{section.description}</p>
-        {unlocked && (
+        {unlocked && onOpen && (
+          <div className="card-actions justify-end">
+            <button
+              type="button"
+              className="btn btn-primary btn-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+              onClick={onOpen}
+              aria-label={`Открыть раздел «${section.title}»`}
+            >
+              Открыть
+            </button>
+          </div>
+        )}
+        {unlocked && !onOpen && (
           <p className="text-xs text-base-content/50">Раздел в разработке — появится после каркаса.</p>
         )}
       </div>
