@@ -1,7 +1,7 @@
 import { useState, type ComponentType } from 'react';
 
 import { usePanelAuth } from '@/context/PanelAuthContext';
-import { canAccess, ROLE_LABELS } from '@/lib/roles';
+import { canAccessSection, ROLE_LABELS, type PanelRole } from '@/lib/roles';
 import { PANEL_SECTIONS, type PanelSection } from '@/lib/sections';
 import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
@@ -73,7 +73,8 @@ export function SectionShell() {
                 key={s.id}
                 section={s}
                 role={identity.role}
-                onOpen={hasBoard(s, identity.role) ? () => setOpenId(s.id) : undefined}
+                grants={identity.grants}
+                onOpen={hasBoard(s, identity.role, identity.grants) ? () => setOpenId(s.id) : undefined}
               />
             ))}
           </section>
@@ -83,6 +84,7 @@ export function SectionShell() {
   );
 }
 
-function hasBoard(section: PanelSection, role: Parameters<typeof canAccess>[0]): boolean {
-  return Boolean(SECTION_BOARDS[section.id]) && canAccess(role, section.minRole);
+function hasBoard(section: PanelSection, role: PanelRole, grants: readonly string[]): boolean {
+  // PU2 (#463): единый предикат — роль ≥ уровня ИЛИ партнёрский грант.
+  return Boolean(SECTION_BOARDS[section.id]) && canAccessSection(role, grants, section.minRole, section.id);
 }

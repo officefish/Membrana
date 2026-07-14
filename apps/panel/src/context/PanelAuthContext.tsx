@@ -13,6 +13,7 @@ import {
   logout as logoutRequest,
   PUBLIC_IDENTITY,
   redeemInvite,
+  registerWithPromo,
   type PanelIdentity,
 } from '@/lib/authApi';
 
@@ -23,6 +24,8 @@ interface PanelAuthValue {
   /** Человеческий текст последней ошибки входа; null = ошибки нет. */
   error: string | null;
   loginWithInvite: (code: string) => Promise<void>;
+  /** PU2 (#463): регистрация партнёра по промокоду (код + имя). */
+  registerPartner: (code: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -60,6 +63,16 @@ export function PanelAuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const registerPartner = useCallback(async (code: string, name: string) => {
+    setError(null);
+    try {
+      setIdentity(await registerWithPromo(code, name));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не получилось зарегистрироваться.');
+      throw e;
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await logoutRequest();
@@ -69,8 +82,8 @@ export function PanelAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ identity, loading, error, loginWithInvite, logout }),
-    [identity, loading, error, loginWithInvite, logout],
+    () => ({ identity, loading, error, loginWithInvite, registerPartner, logout }),
+    [identity, loading, error, loginWithInvite, registerPartner, logout],
   );
 
   return <PanelAuthContext.Provider value={value}>{children}</PanelAuthContext.Provider>;

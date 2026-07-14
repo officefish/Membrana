@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { canAccess, isPanelRole, ROLE_LABELS, ROLE_ORDER } from './roles';
+import {
+  canAccess,
+  canAccessSection,
+  grantsAllowSection,
+  isPanelRole,
+  ROLE_LABELS,
+  ROLE_ORDER,
+} from './roles';
 import { PANEL_SECTIONS } from './sections';
 
 describe('roles (клиентское зеркало OP2)', () => {
@@ -20,6 +27,28 @@ describe('roles (клиентское зеркало OP2)', () => {
   it('isPanelRole отбрасывает мусор', () => {
     expect(isPanelRole('operator')).toBe(true);
     expect(isPanelRole('root')).toBe(false);
+  });
+});
+
+describe('гранты партнёров (PU2, #463)', () => {
+  it("grantsAllowSection: точный грант и wildcard '*'; пусто/undefined — нет", () => {
+    expect(grantsAllowSection(['detector-compare'], 'detector-compare')).toBe(true);
+    expect(grantsAllowSection(['detector-compare'], 'drift-anchors')).toBe(false);
+    expect(grantsAllowSection(['*'], 'любой-будущий-раздел')).toBe(true);
+    expect(grantsAllowSection([], 'detector-compare')).toBe(false);
+    expect(grantsAllowSection(undefined, 'detector-compare')).toBe(false);
+  });
+
+  it('canAccessSection: роль ≥ уровня ИЛИ грант; owner-разделы грантом не открываются только при отсутствии гранта', () => {
+    // союзник без грантов не видит operator-раздел…
+    expect(canAccessSection('ally', [], 'operator', 'detector-compare')).toBe(false);
+    // …а с грантом (или wildcard) — видит.
+    expect(canAccessSection('ally', ['detector-compare'], 'operator', 'detector-compare')).toBe(true);
+    expect(canAccessSection('ally', ['*'], 'operator', 'detector-compare')).toBe(true);
+    // роль работает независимо от грантов.
+    expect(canAccessSection('operator', [], 'operator', 'detector-compare')).toBe(true);
+    // public без грантов не видит ничего гейтированного.
+    expect(canAccessSection('public', [], 'ally', 'ally-digest')).toBe(false);
   });
 });
 
