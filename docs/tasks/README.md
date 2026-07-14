@@ -185,6 +185,10 @@
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `night-triage-routine-pilot` | Пилот routine «Ночной триаж реестра»: Claude Code Routine вместо самодельной ночной обвязки (ghost/orphan/stale, отчёт + draft PR) | M | [`NIGHT_TRIAGE_ROUTINE_PROMPT.md`](../docs/prompts/NIGHT_TRIAGE_ROUTINE_PROMPT.md) | [#344](https://github.com/officefish/Membrana/issues/344) |
 | `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`LOOP_SWITCH_CONTROL_ADR.md`](../docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
+| `panel-partner-access` | Epic: партнёрский доступ по промокоду + owner-раздел «Пользователи» (PU1-PU3) | L | [`PANEL_PARTNER_ACCESS_EPIC_PROMPT.md`](../docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md) | [#463](https://github.com/officefish/Membrana/issues/463) |
+| `pu1-panel-users-office` | PU1: office-модуль panel-users — ADR 0005, JSON-store на volume, register + admin-ручки, эпоха в /me, контракт-тест | M | [`PANEL_PARTNER_ACCESS_EPIC_PROMPT.md`](../docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md) | [#463](https://github.com/officefish/Membrana/issues/463) |
+| `pu2-panel-promo-registration` | PU2: панель — форма «Регистрация по промокоду» на welcome + grants в клиентском гейте карточек (включая *) | M | [`PANEL_PARTNER_ACCESS_EPIC_PROMPT.md`](../docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md) | [#463](https://github.com/officefish/Membrana/issues/463) |
+| `pu3-panel-users-admin-board` | PU3: owner-раздел «Пользователи» — матрица трёх состояний, чеканка/revoke кодов, аудит-хвост, деплой | M | [`PANEL_PARTNER_ACCESS_EPIC_PROMPT.md`](../docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md) | [#463](https://github.com/officefish/Membrana/issues/463) |
 
 ---
 
