@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 34 из 72 кандидатов (бюджет <5000 токенов).
+Записей: 34 из 73 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-14 · голос · insight-office-panel-qa-section
 
@@ -24,6 +24,12 @@
 > Форма (a) — новый `apps/panel` — ложится в граф чисто: `apps/*` уже 7 приложений, turbo дёшев, изоляция по comms-прецеденту (CC1-CC9) — норма, а не украшательство. Секция в кабинете (b) создала бы синоним-слой: две аудитории под одним публичным API кабинета, связанность растёт. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/office-panel-contour-2026-07-14.md#reply-1`
+
+### 2026-07-14 · позиция · panel-promo-access
+
+> Начну с болевой точки — развилка 2, потому что она держит все остальные. ADR 0004 Р2 фиксирует office как stateless сознательно: drift-журнал терпит потерю при редеплое (producer перезальёт). Но реестр пользователей — НЕ восстановимые данные: партнёр зарегистрировался, owner […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/panel-promo-access-2026-07-14.md#reply-1`
 
 ### 2026-07-14 · позиция · quality-control-contour
 
@@ -204,9 +210,3 @@
 > Упорядочу архитектуру. OQ1: контракт presence — предлагаю **новый тип сообщения** `presence.snapshot: { onlineDeviceIds: string[] }`, отправляемый **один раз** при `registerCabinet`, отдельно от stream `presence.nodeOnline/Offline`. Это чище, чем N событий одного типа, и […] _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/pairing-lifecycle-2026-07-04.md#reply-1`
-
-### 2026-07-04 · позиция · presence-capture-board
-
-> Логирование — хорошо, но это касается моей зоны: node-realtime-service.ts, authenticateNode, registerNode. Я в полной мере согласен логировать эти три события с лог-уровнем `info` по ним всегда, `error` при auth-fail. **Но ключевой вопрос OQ1:** нужно ли **асинхронно** […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/presence-capture-board-2026-07-04.md#reply-1`

@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 35 из 72 кандидатов (бюджет <5000 токенов).
+Записей: 35 из 73 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-14 · голос · insight-office-panel-qa-section
 
@@ -24,6 +24,12 @@
 > Принимаю форму (a) как решение владельца, research-дефолт (b) не переубеждает — разные аудитории плюс изоляция закрывают вопрос. Этим **вердиктом разрешаю развилку drift-panel-placement #396**: дрейф-борд и trends-таблица живут в `apps/panel`, не в кабинете. Панель — отдельное […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/office-panel-contour-2026-07-14.md#reply-1`
+
+### 2026-07-14 · позиция · panel-promo-access
+
+> Зафиксирую промежуточно, чтобы дискуссия не расползлась. (1) **Entitlements поверх ролей**: identity = {role, sub, grants[]}, партнёр = ally + grants, wildcard '*' допустим, роль лестницы не размывается — принято. (2) **Персистентность вводим новым ADR 0005**, области не […] _(реплик в сеансе: 3)_
+
+— источник: `docs/seanses/panel-promo-access-2026-07-14.md#reply-1`
 
 ### 2026-07-14 · позиция · quality-control-contour
 
@@ -198,12 +204,6 @@
 > Vesnin. Оценка артефактов: `STRATEGIC_PLAN_DAY` и `MAIN_DAY_ISSUE` были детально проработаны (DRONE_TIGHT v0.3, VDR hard-gate, контракты), но **разошлись с фактической работой дня** — утренний канон целил в детекцию/benchmark, а по git весь день ушёл на закрытие эпика […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-07-05.md#reply-1`
-
-### 2026-07-04 · позиция · pairing-lifecycle
-
-> Структурщик прав — двухслойная presence (in-memory + lastSeenAt для восстановления) избегает полной потери состояния. Но это усложнение. Стандартное решение в SPA — Redis presence или Postgres listen; у нас есть in-memory, достаточно для MVP. OQ3 про `pairedKeyId` при revoke: […] _(реплик в сеансе: 3)_
-
-— источник: `docs/seanses/pairing-lifecycle-2026-07-04.md#reply-1`
 
 ### 2026-06-28 · голос · insight-sessions-archive
 
