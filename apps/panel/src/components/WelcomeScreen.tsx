@@ -11,9 +11,12 @@ import { SectionCard } from './SectionCard';
  * вход вторичен. Состояния error/загрузки — с первого коммита.
  */
 export function WelcomeScreen() {
-  const { error, loginWithInvite } = usePanelAuth();
+  const { error, loginWithInvite, registerPartner } = usePanelAuth();
   const [code, setCode] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoName, setPromoName] = useState('');
+  const [registering, setRegistering] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -25,6 +28,20 @@ export function WelcomeScreen() {
       /* текст ошибки уже в контексте */
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  /** PU2 (#463): регистрация партнёра по промокоду — код + имя. */
+  async function onRegister(e: FormEvent) {
+    e.preventDefault();
+    if (!promoCode.trim() || !promoName.trim() || registering) return;
+    setRegistering(true);
+    try {
+      await registerPartner(promoCode.trim(), promoName.trim());
+    } catch {
+      /* текст ошибки уже в контексте */
+    } finally {
+      setRegistering(false);
     }
   }
 
@@ -68,6 +85,44 @@ export function WelcomeScreen() {
                 aria-label="Войти по коду приглашения"
               >
                 {submitting ? <span className="loading loading-spinner loading-sm" /> : 'Войти'}
+              </button>
+            </div>
+          </form>
+
+          <div className="divider my-0 text-xs text-base-content/50">или</div>
+
+          <form onSubmit={onRegister} className="flex flex-col gap-2">
+            <label className="label p-0" htmlFor="promo-code">
+              <span className="label-text">Регистрация по промокоду (для партнёров)</span>
+            </label>
+            <input
+              id="promo-code"
+              className="input input-bordered w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+              placeholder="промокод"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              autoComplete="off"
+            />
+            <label className="sr-only" htmlFor="promo-name">
+              Как вас называть
+            </label>
+            <div className="join w-full">
+              <input
+                id="promo-name"
+                className="input input-bordered join-item w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                placeholder="как вас называть"
+                value={promoName}
+                onChange={(e) => setPromoName(e.target.value)}
+                autoComplete="name"
+                maxLength={64}
+              />
+              <button
+                type="submit"
+                className="btn btn-primary join-item"
+                disabled={!promoCode.trim() || !promoName.trim() || registering}
+                aria-label="Зарегистрироваться по промокоду"
+              >
+                {registering ? <span className="loading loading-spinner loading-sm" /> : 'Регистрация'}
               </button>
             </div>
           </form>

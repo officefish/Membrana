@@ -1,21 +1,24 @@
-import { canAccess, ROLE_LABELS, type PanelRole } from '@/lib/roles';
+import { canAccessSection, ROLE_LABELS, type PanelRole } from '@/lib/roles';
 import type { PanelSection } from '@/lib/sections';
 
 /**
- * Карточка раздела (OP3 + #454): бейдж уровня словом (не только цветом —
- * DESIGN.md), замок на недоступном. Раздел с контентом открывается кнопкой;
- * без контента — честная пометка «в разработке».
+ * Карточка раздела (OP3 + #454 + PU2 #463): бейдж уровня словом (не только
+ * цветом — DESIGN.md), замок на недоступном. Доступ — единый предикат: роль
+ * ≥ уровня ИЛИ партнёрский грант на раздел ('*' = все). Раздел с контентом
+ * открывается кнопкой; без контента — честная пометка «в разработке».
  */
 export function SectionCard({
   section,
   role,
+  grants,
   onOpen,
 }: {
   section: PanelSection;
   role: PanelRole;
+  grants?: readonly string[];
   onOpen?: () => void;
 }) {
-  const unlocked = canAccess(role, section.minRole);
+  const unlocked = canAccessSection(role, grants, section.minRole, section.id);
   return (
     <article
       className={`card bg-base-200 border border-base-content/10 ${unlocked ? '' : 'opacity-60'}`}
