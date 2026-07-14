@@ -190,6 +190,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `telegram-digests-v2` | Telegram-дайджесты v2: вшитая md-шапка пояснений (expandable blockquote) + подробная фактура day/evening отчётов | 2026-07-14 | [`TELEGRAM_DIGESTS_V2_PROMPT.md`](../docs/prompts/TELEGRAM_DIGESTS_V2_PROMPT.md) | #434 (Issue открыт) | [карточка](./archive/telegram-digests-v2.md) |
 | `agent-tooling-friction` | agent-tooling-friction: 4 инструмента против трения агентских сессий (ti-1 gitignore ревью-артефактов, ti-3 proxy-чистка vitest office, ti-2 insight:drift, ti-4 llm:probe) | 2026-07-14 | [`AGENT_TOOLING_FRICTION_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_PROMPT.md) | #433 (Issue открыт) | [карточка](./archive/agent-tooling-friction.md) |
 | `night-narrative-deepseek-fallback` | DeepSeek direct API — fallback нарратива ночных агентов (обход OpenRouter 403) | 2026-07-13 | [`NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md`](../docs/prompts/NIGHT_NARRATIVE_DEEPSEEK_FALLBACK_PROMPT.md) | #424 | [карточка](./archive/night-narrative-deepseek-fallback.md) |
 | `rag-archive-embeddings-unblock` | RAG archive: второй embeddings-провайдер по существующему контракту (разблокировка useLongTerm) | 2026-07-13 | [`RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md`](../docs/prompts/RAG_ARCHIVE_EMBEDDINGS_UNBLOCK_PROMPT.md) | #425 | [карточка](./archive/rag-archive-embeddings-unblock.md) |
