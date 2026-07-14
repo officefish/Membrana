@@ -43,16 +43,18 @@
       "promptPath": "docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md",
       "githubIssue": 438,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "parentEpic": "office-panel-contour",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
-      ]
+      ],
+      "archiveNotes": "review LGTM c1a93588c64d; PR #442 merged (d724c027bb38b6cb23cd9a935f46c915725d7de0)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "op3-panel-welcome-shell",
