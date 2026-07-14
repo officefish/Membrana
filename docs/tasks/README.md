@@ -19,10 +19,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `agent-tooling-friction-2` | agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship) | M | [`AGENT_TOOLING_FRICTION_2_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md) | [#469](https://github.com/officefish/Membrana/issues/469) |
-<<<<<<< Updated upstream
-=======
-| `office-panel-contour` | Epic: office-panel — подготовительный клиент panel.mmbrn.tech (OP1-OP5: scaffold, auth-уровни, welcome/shell, деплой, hardening) | L | [`OFFICE_PANEL_CONTOUR_PROMPT.md`](../docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md) | [#438](https://github.com/officefish/Membrana/issues/438) |
->>>>>>> Stashed changes
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
