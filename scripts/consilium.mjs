@@ -26,8 +26,11 @@ import {
 import {
   CONSILIUM_PROMPT_FILE,
   CONSILIUM_ROLES,
+  estimateMemoryTokens,
   formatRoleOrderLine,
+  MEMORY_TOKENS_GUARD,
   resolveSeansePath,
+  resolveWithMemory,
   shuffleRoles,
 } from './lib/consilium-paths.mjs';
 import {
@@ -79,9 +82,11 @@ Options:
   --seed <N>             Воспроизводимый порядок ролей.
   --no-context           Не подгружать ARCHITECTURE / DESIGN / SERVICES.
   --no-rag               Не подмешивать RAG archive (по умолчанию useLongTerm).
-  --with-memory          Подмешать журналы субъектного опыта персон
-                         (docs/virtual-team/memory/*.md), по умолчанию ВЫКЛ.
-                         Эквивалент: PERSONA_MEMORY_INJECT=1.
+  --with-memory          Журналы субъектного опыта персон (docs/virtual-team/
+                         memory/*.md) — в консилиуме ВКЛЮЧЕНЫ ПО УМОЛЧАНИЮ
+                         (#451, фаза 1.5); флаг сохранён для совместимости.
+  --no-memory            Выключить журналы для этого запуска.
+                         Эквивалент: PERSONA_MEMORY_INJECT=0.
   --no-save              Только stdout.
   --dry-run              Собрать промпт, не вызывать API.
   --help, -h             Справка.
@@ -106,12 +111,13 @@ function parseArgs(argv) {
   let noRag = false;
   let noSave = false;
   let dryRun = false;
-  // Инъекция журналов персон — строго opt-in (review insight-persona-persistent-memory).
-  let withMemory = process.env.PERSONA_MEMORY_INJECT === '1';
+  // #451 (фаза 1.5): в КОНСИЛИУМЕ память персон включена по умолчанию —
+  // решение владельца 2026-07-14 по итогам пилота; в `yarn ask` остаётся opt-in.
+  let withMemory = resolveWithMemory(argv, process.env);
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (arg === '--with-memory') { withMemory = true; continue; }
+    if (arg === '--with-memory' || arg === '--no-memory') { continue; }
     if (arg === '--save-as') { saveAs = argv[++i] ?? ''; continue; }
     if (arg.startsWith('--save-as=')) { saveAs = arg.slice('--save-as='.length); continue; }
     if (arg === '--gh-issue') { ghIssue = argv[++i] ?? ''; continue; }
@@ -244,13 +250,23 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
 
   if (withMemory) {
     const memoryParts = [];
+    let memoryChars = 0;
+    let memoryCount = 0;
     for (const role of CONSILIUM_ROLES) {
       const slug = CONSILIUM_ROLE_KEY_TO_SLUG[role.key];
       const memory = slug ? readPersonaMemory(slug, { cwd, maxChars: MAX_MEMORY_CHARS_PER_ROLE }) : null;
       if (memory) {
         memoryParts.push(`### ${role.label} (${personaMemoryPath(slug)})`, '', memory, '');
+        memoryChars += memory.length;
+        memoryCount += 1;
       }
     }
+    // #451: видимость инъекции + гард суммарного бюджета (25K токенов).
+    const memoryTokens = estimateMemoryTokens(memoryChars);
+    console.error(
+      `[consilium] память персон: ${memoryCount} журналов, ~${memoryTokens} токенов` +
+        (memoryTokens > MEMORY_TOKENS_GUARD ? ` — ПРЕВЫШЕН гард ${MEMORY_TOKENS_GUARD}` : ''),
+    );
     if (memoryParts.length) {
       parts.push(
         '---',
