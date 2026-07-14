@@ -49,16 +49,16 @@
       "githubIssue": 451,
       "insightId": "insight-persona-persistent-memory",
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Решение владельца 2026-07-14 по итогам суточного пилота (боевое применение: консилиум quality-control-contour). Экстрактор уже параметризован — нового кода экстракции нет; человек-гейт: 4 журнала отдельными diff + importance.json за владельцем. --with-memory default ТОЛЬКО в consilium (+--no-memory), ask не трогать. Гард суммарной инъекции 25K. Вне магистрали FREE. Запреты: фазы 2/3 и слои 2-3 субъектности не трогать.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #461; review LGTM 2f9dd5218631; PR #461 merged 2026-07-14T16:14:01Z (d452582ddf2b194ee6c9ed6f485590490a21ca09)",
       "githubIssueClosedAt": null
     },
     {
