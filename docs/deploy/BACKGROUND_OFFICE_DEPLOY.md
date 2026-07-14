@@ -299,6 +299,26 @@ curl -s "https://office.membrana.space/v1/linear/issue/MEM-60" \
 
 ---
 
+## panel-users store (PU1, #463, ADR 0005) — единственные невоспроизводимые данные office
+
+Реестр партнёров панели живёт в volume `panel-users-data`
+(`/var/lib/membrana-office/panel-users.json`) — office больше НЕ полностью
+stateless (область ослабления зафиксирована ADR 0005; остальное — по-прежнему
+in-memory). После каждого значимого изменения (новые пользователи/коды):
+
+```bash
+# Бэкап реестра (файл НЕ в git и не восстановим иначе):
+ssh root@176.124.218.4 "docker compose -f /root/membrana/packages/background-office/docker-compose.yml -f /root/membrana/deploy/background-office.prod.compose.yml cp office-api:/var/lib/membrana-office/panel-users.json /root/backup/panel-users-$(date +%F).json"
+```
+
+**Красная кнопка** (утечка session-cookie/секрета): смена `PANEL_SESSION_SECRET`
+в `/etc/membrana/office.env` + пересоздание контейнера гасит ВСЕ панельные сессии
+(операторов, союзников и партнёров); реестр и промокоды при этом сохраняются —
+партнёры входят заново по тем же кодам, если у кода остались использования, иначе
+owner перевыпускает коды из раздела «Пользователи».
+
+---
+
 ## Prod URL
 
 ```

@@ -35,6 +35,8 @@ export const envSchema = z.object({
   PANEL_GITHUB_ALLOWLIST: z.string().optional(),
   PANEL_PUBLIC_URL: z.string().optional(),
   PANEL_RATE_LIMIT_PER_MIN: z.string().optional(),
+  /** PU1 (#463, ADR 0005): путь JSON-store реестра партнёров (docker volume) */
+  PANEL_USERS_STORE_PATH: z.string().optional(),
   NIGHT_HUNT_BASE_BRANCH: z.string().optional(),
   /** Telegram ally reports (#428): дайджесты ритуалов в приватную группу союзников */
   TELEGRAM_BOT_TOKEN: z.string().optional(),

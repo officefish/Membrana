@@ -1,4 +1,5 @@
-# Локальный/staging стек: office API (stateless, без PostgreSQL).
+# Локальный/staging стек: office API (без PostgreSQL; единственный персистентный
+# стейт — panel-users volume, ADR 0005).
 # Из корня репозитория:
 #   cp packages/background-office/.env.docker.example packages/background-office/.env.docker
 #   yarn office:docker:up
@@ -28,6 +29,10 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-docker-placeholder}
       GITHUB_OWNER: ${GITHUB_OWNER:-officefish}
       GITHUB_REPO: ${GITHUB_REPO:-Membrana}
+    # PU1 (#463, ADR 0005): реестр партнёров панели — единственные
+    # невоспроизводимые данные office; без volume пропадут при редеплое.
+    volumes:
+      - panel-users-data:/var/lib/membrana-office
     healthcheck:
       test:
         [
@@ -40,3 +45,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+
+volumes:
+  panel-users-data:

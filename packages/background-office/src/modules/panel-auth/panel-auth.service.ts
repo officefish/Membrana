@@ -5,6 +5,7 @@ import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
 import {
   buildGithubAuthorizeUrl,
+  mintPartnerSessionToken,
   mintSessionToken,
   PANEL_SESSION_TTL_SEC,
   parseAllowlist,
@@ -80,6 +81,17 @@ export class PanelAuthService {
       this.now() + PANEL_SESSION_TTL_SEC,
     );
     return { token, role: 'ally' };
+  }
+
+  /** PU1 (#463): сессия зарегистрированного партнёра (ally + гранты + эпоха). */
+  mintPartnerSession(userId: string, grants: readonly string[], permVersion: number): string {
+    return mintPartnerSessionToken(
+      this.sessionSecret(),
+      `user:${userId}`,
+      grants,
+      permVersion,
+      this.now() + PANEL_SESSION_TTL_SEC,
+    );
   }
 
   mintOauthState(): string {
