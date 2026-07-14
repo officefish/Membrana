@@ -43,6 +43,7 @@ import {
   personaMemoryPath,
   readPersonaMemory,
 } from './lib/persona-memory.mjs';
+import { validateProtocol } from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
 const MAX_VIRTUAL_TEAM_CHARS = 8_000;
@@ -87,6 +88,9 @@ Options:
                          (#451, фаза 1.5); флаг сохранён для совместимости.
   --no-memory            Выключить журналы для этого запуска.
                          Эквивалент: PERSONA_MEMORY_INJECT=0.
+  --secretary-file <md>  Оффлайн-канал (#469 ti-2): протокол написан в IDE-чате,
+                         API не вызывается. Валидирует канон (реплики/роли/итог),
+                         оборачивает метаданными (канал secretary), кладёт в seanses.
   --no-save              Только stdout.
   --dry-run              Собрать промпт, не вызывать API.
   --help, -h             Справка.
@@ -111,6 +115,7 @@ function parseArgs(argv) {
   let noRag = false;
   let noSave = false;
   let dryRun = false;
+  let secretaryFile = '';
   // #451 (фаза 1.5): в КОНСИЛИУМЕ память персон включена по умолчанию —
   // решение владельца 2026-07-14 по итогам пилота; в `yarn ask` остаётся opt-in.
   let withMemory = resolveWithMemory(argv, process.env);
@@ -132,11 +137,13 @@ function parseArgs(argv) {
     if (arg === '--no-rag') { noRag = true; continue; }
     if (arg === '--no-save') { noSave = true; continue; }
     if (arg === '--dry-run') { dryRun = true; continue; }
+    if (arg === '--secretary-file') { secretaryFile = argv[++i] ?? ''; continue; }
+    if (arg.startsWith('--secretary-file=')) { secretaryFile = arg.slice('--secretary-file='.length); continue; }
     rest.push(arg);
   }
 
   const question = rest.join(' ').trim();
-  if (!question) {
+  if (!question && !secretaryFile) {
     console.error('Не задан вопрос. Пример: yarn consilium "нужен ли пакет X?"');
     process.exit(1);
   }
@@ -149,7 +156,7 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { question, saveAs, ghIssue, topicFile, seed, minReplies, noContext, noRag, noSave, dryRun, withMemory };
+  return { question, saveAs, ghIssue, topicFile, seed, minReplies, noContext, noRag, noSave, dryRun, withMemory, secretaryFile };
 }
 
 function readBounded(absPath, maxChars, optional = false) {
@@ -349,10 +356,54 @@ function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFil
   return meta.join('\n');
 }
 
+/**
+ * Оффлайн-канал протокола (#469 ti-2): валидировать канон готового md,
+ * обернуть метаданными (канал secretary), сохранить в seanses. Без API.
+ */
+function runSecretaryFile(cli, cwd) {
+  const srcAbs = resolve(cwd, cli.secretaryFile);
+  if (!existsSync(srcAbs)) {
+    console.error(`Файл не найден: ${cli.secretaryFile}`);
+    process.exit(1);
+  }
+  const body = readFileSync(srcAbs, 'utf8');
+  const { ok, problems, stats } = validateProtocol(body, {
+    kind: 'consilium',
+    minReplies: cli.minReplies,
+  });
+  if (!ok) {
+    console.error(`Протокол не прошёл канон консилиума (${problems.length}):`);
+    for (const p of problems) console.error(`  - ${p}`);
+    process.exit(1);
+  }
+  console.error(`→ канон OK: реплик ${stats.total}, все ${Object.keys(stats.counts).length} ролей высказались`);
+
+  if (!cli.saveAs) {
+    console.error('--secretary-file требует --save-as <slug> (имя протокола в seanses).');
+    process.exit(1);
+  }
+  const relPath = resolveSeansePath({ cwd, saveAs: cli.saveAs, question: cli.saveAs });
+  const absPath = resolve(cwd, relPath);
+  const header = [
+    '<!-- канал: secretary (offline, #469 ti-2) — протокол написан в IDE-чате, LLM не вызывался -->',
+    `<!-- валидация канона: реплик ${stats.total}, роли ${Object.entries(stats.counts).map(([r, n]) => `${r}:${n}`).join(' ')} -->`,
+    '',
+  ].join('\n');
+  mkdirSync(resolve(cwd, 'docs/seanses'), { recursive: true });
+  writeFileSync(absPath, header + body.trim() + '\n', 'utf8');
+  console.log(`→ протокол (secretary): ${relPath}`);
+}
+
 async function main() {
   loadDotEnv();
   const cli = parseArgs(process.argv.slice(2));
   const cwd = process.cwd();
+
+  // #469 ti-2: оффлайн-канал — протокол написан в IDE-чате (LLM недоступен).
+  if (cli.secretaryFile) {
+    runSecretaryFile(cli, cwd);
+    return;
+  }
 
   const orderedRoles = shuffleRoles(CONSILIUM_ROLES, cli.seed);
   if (process.stderr.isTTY) {
