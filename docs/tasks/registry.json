@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "persona-memory-all-personas",
+      "title": "persona-memory: журналы всех 5 персон + memory-by-default в консилиумах (фаза 1.5)",
+      "promptPath": "docs/prompts/PERSONA_MEMORY_ALL_PERSONAS_PROMPT.md",
+      "githubIssue": 451,
+      "insightId": "insight-persona-persistent-memory",
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Решение владельца 2026-07-14 по итогам суточного пилота (боевое применение: консилиум quality-control-contour). Экстрактор уже параметризован — нового кода экстракции нет; человек-гейт: 4 журнала отдельными diff + importance.json за владельцем. --with-memory default ТОЛЬКО в consilium (+--no-memory), ask не трогать. Гард суммарной инъекции 25K. Вне магистрали FREE. Запреты: фазы 2/3 и слои 2-3 субъектности не трогать.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "office-panel-contour",
       "title": "Epic: office-panel — подготовительный клиент panel.mmbrn.tech (OP1-OP5: scaffold, auth-уровни, welcome/shell, деплой, hardening)",
       "promptPath": "docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md",
