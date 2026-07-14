@@ -1,4 +1,4 @@
-﻿# Epic Prompt: free-v1 Sound Catalog
+# Epic Prompt: free-v1 Sound Catalog
 
 **GitHub Issue:** [#205](https://github.com/officefish/Membrana/issues/205)  
 **Создан:** 2026-06-30 · **Волна:** W1 · **Lead:** Vesnin

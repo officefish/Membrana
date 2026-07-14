@@ -1,4 +1,4 @@
-﻿# OPEN: backlog-cleanup-s1 — аудит и закрытие Queue A
+# OPEN: backlog-cleanup-s1 — аудит и закрытие Queue A
 
 | Поле | Значение |
 |------|----------|

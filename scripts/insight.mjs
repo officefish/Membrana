@@ -10,7 +10,14 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { anthropicPost, defaultModel, getAnthropicKey, loadDotEnv } from './_anthropic-env.mjs';
+import {
+  anthropicPost,
+  CREDIT_FALLBACKS,
+  defaultModel,
+  getAnthropicKey,
+  isCreditExhausted,
+  loadDotEnv,
+} from './_anthropic-env.mjs';
 import {
   REVIEW_PROMPT_PATH,
   VIRTUAL_TEAM_PATH,
@@ -133,6 +140,7 @@ try {
       },
     );
     if (!ok) {
+      if (isCreditExhausted(responseText)) console.error(`\n${CREDIT_FALLBACKS}\n`);
       throw new Error(`Anthropic HTTP ${status}: ${responseText.slice(0, 300)}`);
     }
     const json = JSON.parse(responseText);

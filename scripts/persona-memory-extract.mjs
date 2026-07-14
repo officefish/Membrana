@@ -295,47 +295,62 @@ export function buildJournal(slug, { repoRoot = REPO_ROOT } = {}) {
 
 // ─── CLI ─────────────────────────────────────────────────────────────────────────
 
-function main() {
-  const argv = process.argv.slice(2);
-  const flags = new Set(argv.filter((a) => a.startsWith('--')));
-  const slug = (argv.find((a) => !a.startsWith('--')) ?? '').toLowerCase();
-
-  if (flags.has('--help') || flags.has('-h') || !slug) {
-    console.log(`Usage: yarn persona:memory <persona> [--check | --stdout]
-
-Персоны: ${Object.keys(PERSONA_ROLE_LABELS).sort(byCodePoint).join(', ')}
-  --check    не писать; сравнить с ${MEMORY_DIR}/<persona>.md, exit 3 при расхождении
-  --stdout   напечатать журнал в stdout, файл не трогать`);
-    process.exit(slug ? 0 : 1);
-  }
-
-  let journal;
-  try {
-    journal = buildJournal(slug);
-  } catch (e) {
-    console.error(e.message);
-    process.exit(1);
-  }
-
+/** Один слаг: 0 = ок/записано, 3 = дрейф при --check. Ошибки сборки бросают. */
+function runForSlug(slug, flags) {
+  const journal = buildJournal(slug);
   const outRel = personaMemoryPath(slug);
   const outAbs = path.join(REPO_ROOT, outRel);
 
   if (flags.has('--stdout')) {
     console.log(journal);
-    return;
+    return 0;
   }
   if (flags.has('--check')) {
     const existing = existsSync(outAbs) ? readFileSync(outAbs, 'utf8') : null;
     if (existing === journal) {
       console.log(`OK: ${outRel} соответствует пересборке (идемпотентно).`);
-      return;
+      return 0;
     }
     console.error(`DRIFT: ${outRel} ${existing == null ? 'отсутствует' : 'отличается от пересборки'} — запусти yarn persona:memory ${slug}.`);
-    process.exit(3);
+    return 3;
   }
   mkdirSync(path.dirname(outAbs), { recursive: true });
   writeFileSync(outAbs, journal, 'utf8');
   console.log(`persona-memory → ${outRel}`);
+  return 0;
+}
+
+function main() {
+  const argv = process.argv.slice(2);
+  const flags = new Set(argv.filter((a) => a.startsWith('--')));
+  const slug = (argv.find((a) => !a.startsWith('--')) ?? '').toLowerCase();
+
+  if (flags.has('--help') || flags.has('-h') || (!slug && !flags.has('--all'))) {
+    console.log(`Usage: yarn persona:memory <persona>|--all [--check | --stdout]
+
+Персоны: ${Object.keys(PERSONA_ROLE_LABELS).sort(byCodePoint).join(', ')}
+  --all      все персоны разом (#469 ti-5; --stdout с --all не сочетается)
+  --check    не писать; сравнить с ${MEMORY_DIR}/<persona>.md, exit 3 при расхождении
+  --stdout   напечатать журнал в stdout, файл не трогать`);
+    process.exit(slug || flags.has('--all') ? 0 : 1);
+  }
+
+  const slugs = flags.has('--all') ? Object.keys(PERSONA_ROLE_LABELS).sort(byCodePoint) : [slug];
+  if (flags.has('--all') && flags.has('--stdout')) {
+    console.error('--all со --stdout не сочетается (пять журналов в один поток).');
+    process.exit(1);
+  }
+
+  let exitCode = 0;
+  for (const s of slugs) {
+    try {
+      exitCode = Math.max(exitCode, runForSlug(s, flags));
+    } catch (e) {
+      console.error(e.message);
+      process.exit(1);
+    }
+  }
+  if (exitCode !== 0) process.exit(exitCode);
 }
 
 if (import.meta.url === `file://${process.argv[1]}` || fileURLToPath(import.meta.url) === process.argv[1]) {
