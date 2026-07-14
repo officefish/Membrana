@@ -16,7 +16,11 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadDotEnv } from './_anthropic-env.mjs';
-import { extractDayDigest, extractEveningDigest } from './lib/ritual-digest-extract.mjs';
+import {
+  extractDayDigest,
+  extractDigestHeader,
+  extractEveningDigest,
+} from './lib/ritual-digest-extract.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -53,6 +57,22 @@ function buildPayload() {
 
 const payload = buildPayload();
 if (!payload) skip(`не удалось извлечь дайджест (${kind}) из артефакта ритуала`);
+
+// Шапка-пояснение (#434): свёрнутый blockquote в каждом отчёте. Источник —
+// md в docs/comms (редактируется без кода). Graceful: нет файла/маркеров или
+// шапка раздулась сверх лимита DTO → отчёт уходит без неё.
+const PRIMER_MD_LIMIT = 3000;
+const headerPath = join(repoRoot, 'docs', 'comms', 'ALLY_DIGEST_HEADER.md');
+if (existsSync(headerPath)) {
+  const primerMd = extractDigestHeader(readFileSync(headerPath, 'utf8'));
+  if (primerMd && primerMd.length <= PRIMER_MD_LIMIT) {
+    payload.primerMd = primerMd;
+  } else if (primerMd) {
+    console.warn(
+      `[telegram-digest] шапка ALLY_DIGEST_HEADER.md длиннее ${PRIMER_MD_LIMIT} символов — отчёт уйдёт без шапки`,
+    );
+  }
+}
 
 // Свежесть: вечерний team-evening-feedback за СЕГОДНЯ появляется после хвоста
 // ritual:evening — устаревший артефакт не шлём (иначе группа получит вчерашние

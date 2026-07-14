@@ -90,6 +90,26 @@
       "supportPersonas": ["vesnin"]
     },
     {
+      "id": "telegram-digests-v2",
+      "title": "Telegram-дайджесты v2: вшитая md-шапка пояснений (expandable blockquote) + подробная фактура day/evening отчётов",
+      "promptPath": "docs/prompts/TELEGRAM_DIGESTS_V2_PROMPT.md",
+      "githubIssue": 434,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko",
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "Решение владельца 2026-07-13 (вечер), консилиум не нужен — исполнение по канону #428. Шапка-пояснение: источник docs/comms/ALLY_DIGEST_HEADER.md → payload.primerMd → office конвертирует md→Telegram-HTML (чистая функция, без зависимостей) и вшивает <blockquote expandable>. Фактура: день — полные блоки задач; вечер — треки дня по ролям + вердикт + оценка + что дальше. Клэмп 4096. Graceful: нет шапки → отчёт без неё. Запреты канона #428 действуют (stateless office, без двустороннего бота, LLM-пересказ — отдельная фаза).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "agent-tooling-friction",
       "title": "agent-tooling-friction: 4 инструмента против трения агентских сессий (ti-1 gitignore ревью-артефактов, ti-3 proxy-чистка vitest office, ti-2 insight:drift, ti-4 llm:probe)",
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_PROMPT.md",

@@ -53,16 +53,17 @@ export function extractDayDigest(text) {
   const headline = boxBlock(box, '⚡');
   if (!headline) return null;
 
-  // «Задача N (…): …» с продолжениями до конца предложения ('.'/';').
+  // «Задача N (…): …» — полный блок до следующей задачи/секции (#434: фактура
+  // с «что даст», а не первое предложение).
   const points = [];
   for (let i = 0; i < box.length; i++) {
-    const m = box[i].match(/^Задача\s+\d+\s*(?:\([^)]*\))?:\s*(.*)$/);
+    const m = box[i].match(/^Задача\s+[\wА-Яа-я]+\s*(?:\([^)]*\))?:\s*(.*)$/);
     if (!m) continue;
     const parts = [m[1]];
     let j = i;
-    while (!/[.;]\s*$/.test(parts[parts.length - 1]) && j + 1 < box.length) {
+    while (j + 1 < box.length) {
       const next = box[j + 1];
-      if (next === '' || /^Задача\s+\d+/.test(next) || next.includes('🎯')) break;
+      if (next === '' || /^Задача\s+[\wА-Яа-я]+/.test(next) || /[🎯🟢📦🚫⚡]/u.test(next)) break;
       parts.push(next);
       j += 1;
     }
@@ -109,11 +110,65 @@ export function extractEveningDigest(text) {
     }
   }
 
+  const tracks = extractEveningTracks(text);
+
   return {
     kind: 'evening',
     date,
     headline,
     points: points.slice(0, 6),
     ...(teamScore ? { teamScore } : {}),
+    ...(tracks.length > 0 ? { tracks } : {}),
   };
+}
+
+const EVENING_ROLES = ['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'];
+
+/** Первые sentences предложений, жёсткий предел maxChars (детерминированно). */
+function firstSentences(text, sentences, maxChars) {
+  const parts = text.split(/(?<=\.)\s+/).slice(0, sentences);
+  const joined = collapseSpaces(parts.join(' '));
+  return joined.length <= maxChars ? joined : `${joined.slice(0, maxChars - 1).trimEnd()}…`;
+}
+
+/**
+ * «Треки дня» (#434): по каждой роли из team-evening-feedback — выжимка её
+ * блока «Итоги дня:» (первые два предложения). Роль без блока пропускается.
+ */
+export function extractEveningTracks(text) {
+  const lines = text.split(/\r?\n/);
+  const tracks = [];
+  for (const role of EVENING_ROLES) {
+    const start = lines.findIndex((l) => l.trim().startsWith(`[${role}]:`));
+    if (start === -1) continue;
+    const block = [];
+    for (let i = start; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (i > start && (/^\[/.test(line) || line.startsWith('###'))) break;
+      block.push(line);
+    }
+    const from = block.findIndex((l) => l.startsWith('Итоги дня:'));
+    if (from === -1) continue;
+    const summaryLines = [];
+    for (let i = from; i < block.length; i++) {
+      const line = block[i];
+      if (i > from && (line === '' || /^(На завтра|Полезность дня|Оценка артефактов):/.test(line))) break;
+      summaryLines.push(i === from ? line.replace(/^Итоги дня:\s*/, '') : line);
+    }
+    const summary = firstSentences(stripInlineMd(summaryLines.join(' ')), 2, 240);
+    if (summary) tracks.push(`${role}: ${summary}`);
+  }
+  return tracks.slice(0, 8);
+}
+
+/**
+ * Шапка-пояснение дайджеста (#434): содержимое между маркерами
+ * `<!-- digest-header:start -->` / `<!-- digest-header:end -->` файла
+ * docs/comms/ALLY_DIGEST_HEADER.md. Нет маркеров/пусто → null (graceful,
+ * отчёт уходит без шапки).
+ */
+export function extractDigestHeader(text) {
+  const m = text.match(/<!--\s*digest-header:start\s*-->([\s\S]*?)<!--\s*digest-header:end\s*-->/);
+  const body = m?.[1]?.trim();
+  return body ? body : null;
 }
