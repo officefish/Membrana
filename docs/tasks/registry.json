@@ -99,15 +99,17 @@
       "promptPath": "docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md",
       "githubIssue": 438,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "parentEpic": "office-panel-contour",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "archiveNotes": "review LGTM 21fe3fbfe93e; PR #449 merged (9085d85ca1ec9a6eac4c6cadc19cc057131c0c47)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "telegram-digests-v2",
