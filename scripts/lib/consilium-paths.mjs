@@ -59,3 +59,24 @@ export function resolveSeansePath({ cwd, saveAs, question, date = new Date() }) 
 export function formatRoleOrderLine(orderedRoles) {
   return orderedRoles.map((r) => r.label).join(' → ');
 }
+
+/**
+ * Память персон в консилиуме (#451, фаза 1.5): default ON; выключение —
+ * `--no-memory` или `PERSONA_MEMORY_INJECT=0`; `--with-memory` сохранён для
+ * совместимости (и перебивает env-выключение как более явный сигнал).
+ * В `yarn ask` память остаётся opt-in — эта функция только для консилиума.
+ */
+export function resolveWithMemory(argv, env = {}) {
+  if (argv.includes('--no-memory')) return false;
+  if (argv.includes('--with-memory')) return true;
+  if (env.PERSONA_MEMORY_INJECT === '0') return false;
+  return true;
+}
+
+/** Гард суммарной инъекции журналов в консилиум, токенов (#451). */
+export const MEMORY_TOKENS_GUARD = 25_000;
+
+/** Оценка токенов инъекции (~4 символа/токен). */
+export function estimateMemoryTokens(totalChars) {
+  return Math.round(totalChars / 4);
+}
