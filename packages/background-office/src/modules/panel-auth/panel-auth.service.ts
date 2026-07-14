@@ -6,6 +6,7 @@ import type { AppConfig } from '../../config/env.schema';
 import {
   buildGithubAuthorizeUrl,
   mintSessionToken,
+  PANEL_SESSION_TTL_SEC,
   parseAllowlist,
   signPayload,
   verifyInviteCode,
@@ -13,7 +14,6 @@ import {
   type PanelRole,
 } from './panel-auth-core';
 
-const SESSION_TTL_SEC = 30 * 24 * 60 * 60; // 30 дней
 const STATE_TTL_SEC = 10 * 60;
 
 export interface GithubUser {
@@ -77,7 +77,7 @@ export class PanelAuthService {
       this.sessionSecret(),
       'ally',
       `invite:${invite.label}`,
-      this.now() + SESSION_TTL_SEC,
+      this.now() + PANEL_SESSION_TTL_SEC,
     );
     return { token, role: 'ally' };
   }
@@ -108,7 +108,7 @@ export class PanelAuthService {
       this.sessionSecret(),
       role,
       `github:${user.id}:${user.login}`,
-      this.now() + SESSION_TTL_SEC,
+      this.now() + PANEL_SESSION_TTL_SEC,
     );
   }
 
@@ -125,11 +125,24 @@ export class PanelAuthService {
         }),
         signal: AbortSignal.timeout(20_000),
       });
-      const tokenJson = (await tokenRes.json()) as { access_token?: string };
+      const tokenJson = (await tokenRes.json()) as {
+        access_token?: string;
+        token_type?: string;
+        scope?: string;
+      };
       const accessToken = tokenJson.access_token;
       if (!tokenRes.ok || !accessToken) {
         this.logger.warn({ status: tokenRes.status }, 'panel-auth: github token exchange failed');
         return null;
+      }
+      // OP5 (P2 ревью OP2): фиксируем ожидаемый тип токена; неожиданный scope
+      // логируем — расширение прав OAuth App должно быть осознанным решением.
+      if (tokenJson.token_type && tokenJson.token_type.toLowerCase() !== 'bearer') {
+        this.logger.warn({ tokenType: tokenJson.token_type }, 'panel-auth: unexpected token_type');
+        return null;
+      }
+      if (tokenJson.scope && !tokenJson.scope.split(',').includes('read:user')) {
+        this.logger.warn({ scope: tokenJson.scope }, 'panel-auth: unexpected oauth scope');
       }
       const userRes = await fetch('https://api.github.com/user', {
         headers: {

@@ -102,6 +102,25 @@ describe('cookie и identity', () => {
   });
 });
 
+describe('rate-limit: скользящее окно + ключ клиента (OP5)', () => {
+  it('лимит в окне; окно скользит; ключи независимы', async () => {
+    const { createSlidingWindowLimiter } = await import('./panel-auth-core');
+    const limiter = createSlidingWindowLimiter(2, 1000);
+    expect(limiter.hit('a', 0)).toBe(true);
+    expect(limiter.hit('a', 100)).toBe(true);
+    expect(limiter.hit('a', 200)).toBe(false); // 3-й в окне
+    expect(limiter.hit('b', 200)).toBe(true); // другой клиент не задет
+    expect(limiter.hit('a', 1201)).toBe(true); // первый (t=0) выпал из окна
+  });
+
+  it('clientKey: первый XFF (его ставит Caddy), иначе адрес сокета', async () => {
+    const { clientKey } = await import('./panel-auth-core');
+    expect(clientKey('203.0.113.7, 10.0.0.1', '127.0.0.1')).toBe('203.0.113.7');
+    expect(clientKey(undefined, '10.1.2.3')).toBe('10.1.2.3');
+    expect(clientKey('', undefined)).toBe('unknown');
+  });
+});
+
 describe('allowlist и authorize-url', () => {
   it('parseAllowlist: только operator/owner, мусор игнорируется, битый JSON → пусто', () => {
     const map = parseAllowlist('{"1":"owner","2":"operator","3":"ally","4":"root"}');

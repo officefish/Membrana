@@ -34,6 +34,7 @@ export const envSchema = z.object({
   PANEL_GITHUB_CLIENT_SECRET: z.string().optional(),
   PANEL_GITHUB_ALLOWLIST: z.string().optional(),
   PANEL_PUBLIC_URL: z.string().optional(),
+  PANEL_RATE_LIMIT_PER_MIN: z.string().optional(),
   NIGHT_HUNT_BASE_BRANCH: z.string().optional(),
   /** Telegram ally reports (#428): дайджесты ритуалов в приватную группу союзников */
   TELEGRAM_BOT_TOKEN: z.string().optional(),
