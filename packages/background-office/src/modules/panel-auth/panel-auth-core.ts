@@ -42,6 +42,10 @@ export interface SignedPayload {
   role?: PanelRole;
   sub?: string;
   label?: string;
+  /** PU1 (#463): снапшот грантов партнёра — id разделов, '*' = все. */
+  grants?: string[];
+  /** PU1: permVersion-эпоха прав; /me сверяет со store (ADR 0005). */
+  pv?: number;
   /** unix-секунды истечения */
   exp: number;
 }
@@ -93,9 +97,31 @@ export function mintSessionToken(secret: string, role: PanelRole, sub: string, e
   return signPayload(secret, { kind: 'session', role, sub, exp: expSec });
 }
 
+/** PU1 (#463): сессия зарегистрированного партнёра — ally + снапшот грантов + эпоха. */
+export function mintPartnerSessionToken(
+  secret: string,
+  sub: string,
+  grants: readonly string[],
+  permVersion: number,
+  expSec: number,
+): string {
+  return signPayload(secret, {
+    kind: 'session',
+    role: 'ally',
+    sub,
+    grants: [...grants],
+    pv: permVersion,
+    exp: expSec,
+  });
+}
+
 export interface PanelIdentity {
   role: PanelRole;
   sub: string | null;
+  /** Снапшот грантов из cookie (кэш отображения; истина — store, ADR 0005). */
+  grants?: string[];
+  /** Эпоха прав из cookie; undefined = не партнёрская сессия. */
+  pv?: number;
 }
 
 export const PUBLIC_IDENTITY: PanelIdentity = { role: 'public', sub: null };
@@ -121,7 +147,12 @@ export function resolveIdentity(
   if (!token) return PUBLIC_IDENTITY;
   const payload = verifyPayload(secret, token, nowSec);
   if (!payload || payload.kind !== 'session' || !isPanelRole(payload.role)) return PUBLIC_IDENTITY;
-  return { role: payload.role, sub: payload.sub ?? null };
+  return {
+    role: payload.role,
+    sub: payload.sub ?? null,
+    grants: Array.isArray(payload.grants) ? payload.grants.filter((g) => typeof g === 'string') : undefined,
+    pv: typeof payload.pv === 'number' ? payload.pv : undefined,
+  };
 }
 
 /** Set-Cookie строка: httpOnly + SameSite (консилиум: НЕ localStorage; лёгкий CSRF для read-only). */

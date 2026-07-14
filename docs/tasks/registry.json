@@ -13332,6 +13332,89 @@
       "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа.",
       "archiveNotes": "PR #431 (squash 3124d6d2 side) + hotfix 0291f954 (proxy-aware client, OFFICE_API_TOKEN). E2E smoke 2026-07-13: day+evening дайджесты доставлены в приватную группу (sent=true), контур ritual→office→telegram живой. Остаток: фаза 2 LLM-пересказ (после владельческих хвостов #424/#425).",
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "panel-partner-access",
+      "title": "Epic: партнёрский доступ по промокоду + owner-раздел «Пользователи» (PU1-PU3)",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": 463,
+      "status": "active",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "size": "L",
+      "sprintKind": "epic",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/panel-promo-access-2026-07-14.md (7 развилок, Perplexity x2; сгенерирован координатором по подписке — API исчерпан, канон соблюдён). Вердикты: entitlements поверх ролей (ally + grants[], wildcard *); НОВЫЙ ADR 0005 — JSON-store на docker volume (0004 не правим), store=истина/cookie=кэш+permVersion-эпоха в /me; промокоды серверные отзываемые (base32x16, чеканка только из owner-UI); Q3: 5/час/IP, no-store, 404 не-owner, реестр никогда в git. Запреты: SQLite/Prisma, новая роль, секрет в браузере, email/OAuth партнёров, миграция старых invite."
+    },
+    {
+      "id": "pu1-panel-users-office",
+      "title": "PU1: office-модуль panel-users — ADR 0005, JSON-store на volume, register + admin-ручки, эпоха в /me, контракт-тест",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": 463,
+      "status": "active",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "size": "M",
+      "sprintKind": "epic",
+      "parentEpic": "panel-partner-access",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin",
+        "kuryokhin"
+      ],
+      "notes": "Фаза 1 эпика #463. DoD: ADR 0005 до кода; store атомарная запись + in-memory кэш + видимая деградация; POST /v1/panel/register (rate-limit 5/час/IP, ошибки без причин); /v1/panel/admin/* за owner-guard (404 не-owner); volume в base+prod compose; инвентарный контракт-тест ручек; живой смоук на VDS (файл пережил редеплой, снятая галочка видна в /me); бэкап-строка в runbook."
+    },
+    {
+      "id": "pu2-panel-promo-registration",
+      "title": "PU2: панель — форма «Регистрация по промокоду» на welcome + grants в клиентском гейте карточек (включая *)",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": 463,
+      "status": "active",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "size": "M",
+      "sprintKind": "epic",
+      "parentEpic": "panel-partner-access",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Фаза 2, старт после merge PU1 (контракт ручек). Ноль новых зависимостей панели."
+    },
+    {
+      "id": "pu3-panel-users-admin-board",
+      "title": "PU3: owner-раздел «Пользователи» — матрица трёх состояний, чеканка/revoke кодов, аудит-хвост, деплой",
+      "promptPath": "docs/prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md",
+      "githubIssue": 463,
+      "status": "active",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "size": "M",
+      "sprintKind": "epic",
+      "parentEpic": "panel-partner-access",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin",
+        "vesnin"
+      ],
+      "notes": "Фаза 3. Код показывается один раз (<dialog> + копировать); verify:tailwind-coverage; смоук партнёрского сценария конец-в-конец; бэкап-строка."
     }
   ]
 }
