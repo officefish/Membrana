@@ -27,6 +27,13 @@ export const envSchema = z.object({
   /** DeepSeek direct: fallback-канал нарратива ночных агентов (ADR 0005) */
   DEEPSEEK_API_KEY: z.string().optional(),
   DEEPSEEK_MODEL: z.string().optional(),
+  /** Panel auth (OP2, эпик #438): stateless-авторизация панели panel.mmbrn.tech */
+  PANEL_SESSION_SECRET: z.string().optional(),
+  PANEL_INVITE_SECRET: z.string().optional(),
+  PANEL_GITHUB_CLIENT_ID: z.string().optional(),
+  PANEL_GITHUB_CLIENT_SECRET: z.string().optional(),
+  PANEL_GITHUB_ALLOWLIST: z.string().optional(),
+  PANEL_PUBLIC_URL: z.string().optional(),
   NIGHT_HUNT_BASE_BRANCH: z.string().optional(),
   /** Telegram ally reports (#428): дайджесты ритуалов в приватную группу союзников */
   TELEGRAM_BOT_TOKEN: z.string().optional(),
