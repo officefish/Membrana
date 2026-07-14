@@ -14,15 +14,11 @@ export interface PanelSection {
 }
 
 /**
- * Реализованные разделы: id → hash-роут. Уровень доступа раздела — UX-гейт
- * рабочего места, НЕ security-граница: данные разделов публичны (артефакты
- * лежат в открытом репо), скрытие ссылки защитой не является (консилиум
- * detector-compare-board-2026-07-14, развилка 4).
+ * Уровень доступа раздела — UX-гейт рабочего места, НЕ security-граница:
+ * данные бордов публичны (артефакты лежат в открытом репо), скрытие ссылки
+ * защитой не является (консилиум detector-compare-board-2026-07-14, развилка 4).
+ * Серверные /v1-ручки гейтит office.
  */
-export const SECTION_ROUTES: Readonly<Record<string, string>> = {
-  'detector-compare': '#/detector-compare',
-};
-
 export const PANEL_SECTIONS: readonly PanelSection[] = [
   {
     id: 'ally-digest',

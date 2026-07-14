@@ -133,13 +133,10 @@ export function DetectorCompareSection() {
   return (
     <section aria-label="Сравнение детекторов trends и yamnet">
       <header className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-semibold">Детекторы: trends (DRONE_TIGHT) vs yamnet</h2>
-          <p className="text-sm text-base-content/60">
-            Корпус {report.corpus.name} · {report.corpus.sampleCount} треков · прогон{' '}
-            {new Date(report.generatedAt).toLocaleDateString('ru-RU')}
-          </p>
-        </div>
+        <p className="text-sm text-base-content/60">
+          Корпус {report.corpus.name} · {report.corpus.sampleCount} треков · прогон{' '}
+          {new Date(report.generatedAt).toLocaleDateString('ru-RU')}
+        </p>
         <SummaryHeader report={report} />
       </header>
 

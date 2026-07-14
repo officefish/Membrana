@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `panel-detector-compare-board` | Борд detector-compare: таблица trends DRONE_TIGHT vs yamnet в панели (магистраль 14.07) | M | [`PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md`](../docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md) | [#452](https://github.com/officefish/Membrana/issues/452) |
+| `persona-memory-all-personas` | persona-memory: журналы всех 5 персон + memory-by-default в консилиумах (фаза 1.5) | S | [`PERSONA_MEMORY_ALL_PERSONAS_PROMPT.md`](../docs/prompts/PERSONA_MEMORY_ALL_PERSONAS_PROMPT.md) | [#451](https://github.com/officefish/Membrana/issues/451) |
 | `office-panel-contour` | Epic: office-panel — подготовительный клиент panel.mmbrn.tech (OP1-OP5: scaffold, auth-уровни, welcome/shell, деплой, hardening) | L | [`OFFICE_PANEL_CONTOUR_PROMPT.md`](../docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md) | [#438](https://github.com/officefish/Membrana/issues/438) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |

@@ -108,16 +108,39 @@ proxy-чистка тестов office.
 
 ---
 
-## Эпик office-panel (#438, зарегистрирован 2026-07-14, консилиум пройден)
+## Эпик office-panel (#438) — ВСЕ 5 ФАЗ ЗАКРЫТЫ 2026-07-14
 
-Подготовительный клиент office на **panel.mmbrn.tech**: welcome (public) + auth
-с уровнями public/ally/operator/owner + shell разделов + деплой + hardening.
-Протокол: docs/seanses/office-panel-contour-2026-07-14.md (25 реплик, research ×3).
-Вердикт заодно разрешил drift-panel-placement (#396): борды → apps/panel.
-Child-карточки: op1-panel-scaffold → op2-panel-auth → op3-panel-welcome-shell →
-op4-panel-deploy → op5-panel-api-hardening.
+OP1 scaffold → OP2 auth → OP3 welcome/shell → OP4 деплой-комплект → OP5 hardening
+(PR #440–#450). Эпик-карточка active до живого деплоя. **Хвост (owner):** DNS
+`panel.mmbrn.tech → 176.124.218.4` → `yarn panel:dns-gate --expect 176.124.218.4`
+[go] → секреты PANEL_* + GitHub OAuth App → docs/deploy/PANEL_DEPLOY.md → smoke →
+`task:archive office-panel-contour`. ⚠️ Баланс Anthropic исчерпан 14.07 —
+consilium/ask/авторевью на fallback до пополнения.
 
-### Старт фазы (вставить в начало новой сессии)
+---
+
+## Борд detector-compare (#452, магистраль 14.07) — ГОТОВ К СТАРТУ
+
+Таблица trends DRONE_TIGHT vs yamnet в панели. Консилиум-гейт пройден
+(docs/seanses/detector-compare-board-2026-07-14.md, 6 развилок). Карточка
+`panel-detector-compare-board` (M, parentEpic office-panel-contour).
+
+### Старт (вставить в начало новой сессии)
+
+```text
+Следуй docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md (реестр:
+panel-detector-compare-board, Issue #452). Вердикты консилиума
+detector-compare-board-2026-07-14 НЕ переоткрывать. Порядок: экспортёр
+(scripts/detector-compare-export.mjs на инфраструктуре benchmark:detectors,
+снапшот-тесты) → docs/reports/detector-compare/latest.json в git → UI-раздел
+detector-compare в apps/panel (mini-waveform локально, попап <dialog>, фильтры
+все/дрон/не-дрон/расхождения, сортировка по уверенности, сводка P/R/F1/FPR).
+Запреты: live-вычисления, office/detectors/* не трогать, без новых зависимостей
+панели, без LLM, аудио-бандл вне git. Прогон требует yarn detectors:build.
+Closure review при пустом API — fallback --review-file (tier из манифеста).
+```
+
+### Старт фазы эпика (архив, фазы закрыты)
 
 ```text
 Следуй docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md (эпик office-panel-contour,
