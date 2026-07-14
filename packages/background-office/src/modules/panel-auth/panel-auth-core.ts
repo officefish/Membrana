@@ -86,6 +86,9 @@ export function verifyInviteCode(secret: string, code: string, nowSec: number): 
 
 export const PANEL_SESSION_COOKIE = 'membrana_panel_session';
 
+/** Единый TTL сессии (OP5: константа жила дублем в контроллере и сервисе — P2 ревью OP2). */
+export const PANEL_SESSION_TTL_SEC = 30 * 24 * 60 * 60;
+
 export function mintSessionToken(secret: string, role: PanelRole, sub: string, expSec: number): string {
   return signPayload(secret, { kind: 'session', role, sub, exp: expSec });
 }
@@ -160,6 +163,45 @@ export function parseAllowlist(jsonText: string | undefined): Map<string, PanelR
     if (role === 'operator' || role === 'owner') map.set(String(id), role);
   }
   return map;
+}
+
+// ─── rate-limit: скользящее окно (OP5, Q3-чеклист) ────────────────────────────────
+
+/**
+ * Чистый in-memory лимитер: не персистентность (office остаётся stateless по
+ * ADR 0004 — при рестарте окно обнуляется, это ок для anti-scraping, не биллинг).
+ */
+export interface RateLimiter {
+  /** true = запрос разрешён; false = превышение окна. */
+  hit(key: string, nowMs: number): boolean;
+}
+
+export function createSlidingWindowLimiter(maxPerWindow: number, windowMs: number): RateLimiter {
+  const buckets = new Map<string, number[]>();
+  return {
+    hit(key: string, nowMs: number): boolean {
+      const cutoff = nowMs - windowMs;
+      const prev = (buckets.get(key) ?? []).filter((t) => t > cutoff);
+      if (prev.length >= maxPerWindow) {
+        buckets.set(key, prev);
+        return false;
+      }
+      prev.push(nowMs);
+      buckets.set(key, prev);
+      return true;
+    },
+  };
+}
+
+/**
+ * Ключ клиента за реверс-прокси: первый адрес X-Forwarded-For (его ставит Caddy),
+ * иначе адрес сокета. Panel-API всегда за Caddy — без XFF все были бы 127.0.0.1.
+ */
+export function clientKey(xffHeader: string | undefined, remoteAddr: string | undefined): string {
+  const first = String(xffHeader ?? '')
+    .split(',')[0]
+    ?.trim();
+  return first || remoteAddr || 'unknown';
 }
 
 // ─── GitHub OAuth (чистые части; HTTP — в сервисе) ────────────────────────────────

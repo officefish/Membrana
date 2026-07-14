@@ -23,17 +23,30 @@ class Handlers {
   bareRoute() {}
 }
 
-function makeContext(handlerName: keyof Handlers, cookie?: string): ExecutionContext {
+function makeContext(
+  handlerName: keyof Handlers,
+  cookie?: string,
+  over: { ip?: string; headers?: Record<string, string>; onHeader?: (k: string, v: string) => void } = {},
+): ExecutionContext {
   const handler = Handlers.prototype[handlerName];
   return {
     getHandler: () => handler,
     getClass: () => Handlers,
-    switchToHttp: () => ({ getRequest: () => ({ headers: { cookie } }) }),
+    switchToHttp: () => ({
+      getRequest: () => ({
+        headers: { cookie, ...(over.headers ?? {}) },
+        ip: over.ip ?? '127.0.0.1',
+        path: '/v1/panel/test',
+      }),
+      getResponse: () => ({
+        setHeader: over.onHeader ?? (() => undefined),
+      }),
+    }),
   } as unknown as ExecutionContext;
 }
 
-function makeGuard() {
-  return new PanelAuthGuard(new Reflector(), { PANEL_SESSION_SECRET: SECRET } as AppConfig);
+function makeGuard(config: Partial<AppConfig> = { PANEL_SESSION_SECRET: SECRET }) {
+  return new PanelAuthGuard(new Reflector(), config as AppConfig);
 }
 
 function cookieFor(role: PanelRole): string {
@@ -78,5 +91,39 @@ describe('PanelAuthGuard (default-deny, консилиум OP2)', () => {
     expect(() => guard.canActivate(makeContext('allyRoute', cookieFor('owner')))).toThrow(
       UnauthorizedException,
     );
+  });
+
+  it('OP5: каждый панельный ответ получает Cache-Control: no-store (включая отказ)', () => {
+    const headers: Record<string, string> = {};
+    const onHeader = (k: string, v: string) => {
+      headers[k] = v;
+    };
+    makeGuard().canActivate(makeContext('publicRoute', undefined, { onHeader }));
+    expect(headers['Cache-Control']).toBe('no-store');
+
+    const denied: Record<string, string> = {};
+    expect(() =>
+      makeGuard().canActivate(
+        makeContext('bareRoute', undefined, { onHeader: (k, v) => (denied[k] = v) }),
+      ),
+    ).toThrow(ForbiddenException);
+    expect(denied['Cache-Control']).toBe('no-store');
+  });
+
+  it('OP5: rate-limit — 429 при превышении окна, ключи клиентов независимы (XFF)', () => {
+    const guard = makeGuard({ PANEL_SESSION_SECRET: SECRET, PANEL_RATE_LIMIT_PER_MIN: '2' });
+    const ctx = (ip: string) =>
+      makeContext('publicRoute', undefined, { headers: { 'x-forwarded-for': ip } });
+    expect(guard.canActivate(ctx('203.0.113.7'))).toBe(true);
+    expect(guard.canActivate(ctx('203.0.113.7'))).toBe(true);
+    let status = 0;
+    try {
+      guard.canActivate(ctx('203.0.113.7'));
+    } catch (e) {
+      status = (e as { getStatus: () => number }).getStatus();
+    }
+    expect(status).toBe(429);
+    // другой клиент не задет
+    expect(guard.canActivate(ctx('198.51.100.1'))).toBe(true);
   });
 });

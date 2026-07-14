@@ -14,17 +14,19 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 
-import { clearSessionCookieString, sessionCookieString } from './panel-auth-core';
+import {
+  clearSessionCookieString,
+  PANEL_SESSION_TTL_SEC,
+  sessionCookieString,
+} from './panel-auth-core';
 import { MinRole, PanelPublic } from './panel-auth.decorators';
 import { PanelAuthGuard, type PanelRequest } from './panel-auth.guard';
 import { PanelAuthService } from './panel-auth.service';
 
-const SESSION_TTL_SEC = 30 * 24 * 60 * 60;
-
 /**
  * Auth-ручки панели (OP2). Все уровни ЯВНЫЕ (@PanelPublic/@MinRole) — guard
- * отклоняет неаннотированные ручки (default-deny). JSON-ответы не кэшируются
- * (Q3): Cache-Control no-store ставится точечно здесь; сквозной hardening — OP5.
+ * отклоняет неаннотированные ручки (default-deny); он же (OP5) ставит
+ * Cache-Control: no-store, ведёт аудит и режет rate-limit на всё панельное.
  */
 @Controller('v1/panel/auth')
 @UseGuards(PanelAuthGuard)
@@ -32,15 +34,10 @@ export class PanelAuthController {
   // Явный @Inject — vitest-транспиляция не эмитит design:paramtypes (см. guard).
   constructor(@Inject(PanelAuthService) private readonly service: PanelAuthService) {}
 
-  private noStore(res: Response): void {
-    res.setHeader('Cache-Control', 'no-store');
-  }
-
   /** Кто я: роль текущей cookie (public — честный ответ, не ошибка). */
   @Get('me')
   @PanelPublic()
-  me(@Req() req: PanelRequest, @Res({ passthrough: true }) res: Response) {
-    this.noStore(res);
+  me(@Req() req: PanelRequest) {
     const identity = req.panelIdentity ?? { role: 'public', sub: null };
     return { role: identity.role, sub: identity.sub };
   }
@@ -49,7 +46,6 @@ export class PanelAuthController {
   @Post('invite')
   @PanelPublic()
   invite(@Body() body: { code?: string }, @Res({ passthrough: true }) res: Response) {
-    this.noStore(res);
     if (!this.service.isConfigured()) {
       throw new ServiceUnavailableException('panel auth is not configured');
     }
@@ -59,7 +55,7 @@ export class PanelAuthController {
     if (!session) throw new ForbiddenException('invalid or expired invite code');
     res.setHeader(
       'Set-Cookie',
-      sessionCookieString(session.token, SESSION_TTL_SEC, this.service.cookieSecure()),
+      sessionCookieString(session.token, PANEL_SESSION_TTL_SEC, this.service.cookieSecure()),
     );
     return { ok: true, role: session.role };
   }
@@ -97,7 +93,7 @@ export class PanelAuthController {
       'Set-Cookie',
       sessionCookieString(
         this.service.mintSessionForGithub(user, role),
-        SESSION_TTL_SEC,
+        PANEL_SESSION_TTL_SEC,
         this.service.cookieSecure(),
       ),
     );
@@ -108,7 +104,6 @@ export class PanelAuthController {
   @Post('logout')
   @PanelPublic()
   logout(@Res({ passthrough: true }) res: Response) {
-    this.noStore(res);
     res.setHeader('Set-Cookie', clearSessionCookieString(this.service.cookieSecure()));
     return { ok: true };
   }
@@ -116,8 +111,7 @@ export class PanelAuthController {
   /** Смоук уровней: ручка видна только оператору+ (использует default-deny контур). */
   @Get('whoami-operator')
   @MinRole('operator')
-  whoamiOperator(@Req() req: PanelRequest, @Res({ passthrough: true }) res: Response) {
-    this.noStore(res);
+  whoamiOperator(@Req() req: PanelRequest) {
     return { ok: true, role: req.panelIdentity?.role ?? null };
   }
 }
