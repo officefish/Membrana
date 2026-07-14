@@ -38,4 +38,10 @@ export const PANEL_SECTIONS: readonly PanelSection[] = [
     description: 'Сравнение классического анализа звука и нейросети на одних данных.',
     minRole: 'operator',
   },
+  {
+    id: 'panel-users',
+    title: 'Пользователи',
+    description: 'Партнёры, их доступ к разделам и промокоды — управление владельцем.',
+    minRole: 'owner',
+  },
 ] as const;
