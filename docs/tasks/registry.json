@@ -25,13 +25,17 @@
       "promptPath": "docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md",
       "githubIssue": 438,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "parentEpic": "office-panel-contour",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "ozhegov",
-      "supportPersonas": ["vesnin"]
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "archiveNotes": "review LGTM 3c7fca716f57; PR #440 merged (4835fc605369186784afd5642e39f60ce3b469eb)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "op2-panel-auth",
@@ -45,7 +49,10 @@
       "createdAt": "2026-07-14",
       "archivedAt": null,
       "leadPersona": "dynin",
-      "supportPersonas": ["ozhegov", "vesnin"]
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ]
     },
     {
       "id": "op3-panel-welcome-shell",
@@ -59,7 +66,9 @@
       "createdAt": "2026-07-14",
       "archivedAt": null,
       "leadPersona": "rodchenko",
-      "supportPersonas": ["vesnin"]
+      "supportPersonas": [
+        "vesnin"
+      ]
     },
     {
       "id": "op4-panel-deploy",
@@ -73,7 +82,10 @@
       "createdAt": "2026-07-14",
       "archivedAt": null,
       "leadPersona": "dynin",
-      "supportPersonas": ["kuryokhin", "vesnin"]
+      "supportPersonas": [
+        "kuryokhin",
+        "vesnin"
+      ]
     },
     {
       "id": "op5-panel-api-hardening",
@@ -87,7 +99,9 @@
       "createdAt": "2026-07-14",
       "archivedAt": null,
       "leadPersona": "dynin",
-      "supportPersonas": ["vesnin"]
+      "supportPersonas": [
+        "vesnin"
+      ]
     },
     {
       "id": "telegram-digests-v2",
