@@ -41,3 +41,36 @@ export function mdToTelegramHtml(md: string): string {
 export function renderExpandablePrimer(primerMd: string): string {
   return `<blockquote expandable>${mdToTelegramHtml(primerMd)}</blockquote>`;
 }
+
+/** Незакрытые парные теги усечённого фрагмента, в порядке закрытия. */
+function unclosedTags(html: string): string[] {
+  const open: string[] = [];
+  for (const m of html.matchAll(/<(\/?)([a-z]+)(?:\s[^>]*)?>/g)) {
+    const tag = m[2];
+    if (!tag) continue;
+    if (m[1]) {
+      if (open[open.length - 1] === tag) open.pop();
+    } else {
+      open.push(tag);
+    }
+  }
+  return open.reverse();
+}
+
+/**
+ * Жёсткое усечение под лимит Telegram: без обрыва тега И с дозакрытием парных
+ * тегов — parse_mode HTML отклоняет всё сообщение при незакрытом теге.
+ */
+export function clampTelegramHtml(html: string, limit: number): string {
+  if (html.length <= limit) return html;
+  let budget = limit - 1; // минус '…'
+  for (;;) {
+    const cut = html.slice(0, budget).replace(/<[^>]*$/, '').trimEnd();
+    const closers = unclosedTags(cut)
+      .map((tag) => `</${tag}>`)
+      .join('');
+    const result = `${cut}…${closers}`;
+    if (result.length <= limit) return result;
+    budget -= result.length - limit;
+  }
+}
