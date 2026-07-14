@@ -61,4 +61,3 @@ describe('compareProdMain', () => {
     expect(compareProdMain([ci, dataOnly])).toEqual({ state: 'insufficient' });
   });
 });
-

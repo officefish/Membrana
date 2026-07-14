@@ -6,10 +6,10 @@
       "promptPath": "docs/prompts/QC_PANEL_BOARDS_PROMPT.md",
       "githubIssue": 454,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov",
@@ -17,7 +17,7 @@
         "vesnin"
       ],
       "notes": "Консилиум-гейт: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). СКОУП СУЖЕН 14.07: QC2 (борд detector-compare + office-модуль benchmark) уступлен задаче panel-detector-compare-board #452 — её консилиум (detector-compare-board-2026-07-14, видение владельца: per-sample таблица, прослушивание, waveform, попапы, фильтр расхождений; вердикт «office не трогаем», статический артефакт экспортёра) предметнее и новее; office-модуль benchmark из ветки удалён до мёржа. Остаток: QC1 drift-борд (читает публичный /v1/drift-anchor/digest, происхождение чисел, prod-main сравнение) + открываемые карточки shell (нужны и борду #452).",
-      "archiveNotes": null,
+      "archiveNotes": "PR #455; review LGTM 9b9ced6de860; PR #455 merged 2026-07-14T14:40:18Z (a35615ccecb2268cfbfa00a52311ba2866a28dc5)",
       "githubIssueClosedAt": null
     },
     {
