@@ -109,8 +109,34 @@ export function defaultModel() {
   return process.env.ANTHROPIC_MODEL?.trim() || 'claude-haiku-4-5-20251001';
 }
 
+/**
+ * Кредит исчерпан? (#469 ti-7) Распознаём по телу ответа — Anthropic шлёт 400
+ * с «credit balance is too low». Экспорт ради тестов.
+ */
+export function isCreditExhausted(bodyText) {
+  return /credit balance is too low/i.test(String(bodyText ?? ''));
+}
+
+/**
+ * Единая подсказка фолбэка при исчерпанном кредите (#469 ti-7): каждый
+ * LLM-инструмент имеет оффлайн-путь — говорим какой, одинаковой строкой.
+ */
+export const CREDIT_FALLBACKS = [
+  'Anthropic без кредита — работаем фолбэками (пополнение: console.anthropic.com → Plans & Billing):',
+  '  consilium            → протокол в IDE-чате, затем yarn consilium --secretary-file <md>  (ti-2 #469)',
+  '  insight review       → ревью в IDE-чате по INSIGHT_REVIEW_PROMPT, REVIEW.md руками',
+  '  code-review          → node scripts/code-review.mjs заменить ревью в IDE-чате (формат membrana-code-review)',
+  '  task:review:run      → --review-file <md> (ревью по TASK_CLOSURE_REVIEW_PROMPT, checks остаются)',
+  '  team-evening-feedback→ yarn team-evening-feedback:dry (контекст без LLM-оценок)',
+].join('\n');
+
 export function printAnthropicHttpError(status, bodyText) {
   console.error(`HTTP ${status}:`, bodyText);
+  if (isCreditExhausted(bodyText)) {
+    console.error('');
+    console.error(CREDIT_FALLBACKS);
+    console.error('');
+  }
   if (status === 403) {
     console.error('');
     console.error(
