@@ -1,0 +1,34 @@
+{
+  "name": "@membrana/panel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Membrana panel — операторская витрина office (panel.mmbrn.tech): welcome, разделы по уровням доступа (OP1: scaffold).",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.app .tsbuildinfo.node",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.12.10",
+    "eslint": "^8.57.0",
+    "postcss": "^8.4.39",
+    "rimraf": "^5.0.0",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.4.0",
+    "vite": "^5.3.0",
+    "vitest": "^1.4.0"
+  }
+}

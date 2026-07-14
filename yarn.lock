@@ -2777,6 +2777,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@membrana/panel@workspace:apps/panel":
+  version: 0.0.0-use.local
+  resolution: "@membrana/panel@workspace:apps/panel"
+  dependencies:
+    "@types/react": "npm:^18.3.3"
+    "@types/react-dom": "npm:^18.3.0"
+    "@vitejs/plugin-react": "npm:^4.3.1"
+    autoprefixer: "npm:^10.4.19"
+    daisyui: "npm:^4.12.10"
+    eslint: "npm:^8.57.0"
+    postcss: "npm:^8.4.39"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    rimraf: "npm:^5.0.0"
+    tailwindcss: "npm:^3.4.6"
+    typescript: "npm:^5.4.0"
+    vite: "npm:^5.3.0"
+    vitest: "npm:^1.4.0"
+  languageName: unknown
+  linkType: soft
+
 "@membrana/rag-service@workspace:*, @membrana/rag-service@workspace:packages/services/rag":
   version: 0.0.0-use.local
   resolution: "@membrana/rag-service@workspace:packages/services/rag"
