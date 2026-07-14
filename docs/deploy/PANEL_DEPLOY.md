@@ -92,3 +92,7 @@ yarn detector:compare:export --audio-out /tmp/compare-audio && scp -r /tmp/compa
 - Выпускать LE без `panel:dns-gate` = [go] — повторение ожога OM4-C.
 - Открывать office-api наружу напрямую (bind остаётся 127.0.0.1; наружу только Caddy).
 - Класть dist внутрь контейнера office — панель обновляется независимо от API.
+- **Доверять правам после scp с Windows** (живой урок 2026-07-14, деплой #457):
+  OpenSSH-scp создаёт каталоги с `700` — caddy (не root) не читает, `try_files`
+  молча отдаёт index.html вместо статики (ломаются и /assets). После scp всегда:
+  `ssh root@176.124.218.4 "chmod -R a+rX /opt/membrana-panel/dist"`.
