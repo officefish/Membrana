@@ -187,6 +187,7 @@ export function DetectorCompareSection() {
         samples={visibleSamples}
         playingId={playingId}
         onPlayingChange={setPlayingId}
+        onTrackEnded={(id) => setPlayingId((prev) => (prev === id ? null : prev))}
         onDetails={(sample, detector) => setDetails({ sample, detector })}
       />
 

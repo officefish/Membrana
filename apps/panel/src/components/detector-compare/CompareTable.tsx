@@ -94,11 +94,15 @@ function CompareRow({
   sample,
   playing,
   onPlayingChange,
+  onTrackEnded,
   onDetails,
 }: {
   sample: CompareSample;
   playing: boolean;
   onPlayingChange: (id: string | null) => void;
+  /** Отдельно от onPlayingChange: onended вытесненного трека прилетает ПОСЛЕ
+   *  старта нового — сбрасывать playingId можно только если он ещё наш. */
+  onTrackEnded: (id: string) => void;
   onDetails: (sample: CompareSample, detector: DetectorKey) => void;
 }) {
   const [buffer, setBuffer] = useState<AudioBuffer | null>(null);
@@ -116,7 +120,7 @@ function CompareRow({
       setAudioError(null);
       const loaded = buffer ?? (await loadAudioBuffer(sample.id, `/compare-audio/${sample.id}.wav`));
       setBuffer(loaded);
-      playBuffer(sample.id, loaded, () => onPlayingChange(null));
+      playBuffer(sample.id, loaded, () => onTrackEnded(sample.id));
       onPlayingChange(sample.id);
     } catch (error) {
       setAudioError(error instanceof Error ? error.message : 'Не удалось воспроизвести трек');
@@ -166,11 +170,13 @@ export function CompareTable({
   samples,
   playingId,
   onPlayingChange,
+  onTrackEnded,
   onDetails,
 }: {
   samples: readonly CompareSample[];
   playingId: string | null;
   onPlayingChange: (id: string | null) => void;
+  onTrackEnded: (id: string) => void;
   onDetails: (sample: CompareSample, detector: DetectorKey) => void;
 }) {
   if (samples.length === 0) {
@@ -194,6 +200,7 @@ export function CompareTable({
               sample={s}
               playing={playingId === s.id}
               onPlayingChange={onPlayingChange}
+              onTrackEnded={onTrackEnded}
               onDetails={onDetails}
             />
           ))}
