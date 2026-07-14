@@ -26,11 +26,11 @@
       "promptPath": "docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md",
       "githubIssue": 452,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "parentEpic": "office-panel-contour",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "rodchenko",
@@ -38,7 +38,9 @@
         "ozhegov",
         "vesnin"
       ],
-      "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git."
+      "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git.",
+      "archiveNotes": "PR #457; review LGTM 09921c24f473; PR #457 merged 2026-07-14T15:31:21Z (44bac65827e4edef914277249f5840e280b4869a)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "persona-memory-all-personas",
