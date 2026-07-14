@@ -3,7 +3,6 @@ import { useState, type ComponentType } from 'react';
 import { usePanelAuth } from '@/context/PanelAuthContext';
 import { canAccess, ROLE_LABELS } from '@/lib/roles';
 import { PANEL_SECTIONS, type PanelSection } from '@/lib/sections';
-import { DetectorCompareBoard } from './DetectorCompareBoard';
 import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
 
@@ -13,10 +12,9 @@ import { SectionCard } from './SectionCard';
  * router — одна страница, кнопка «назад»). Разделы без контента — заглушки.
  */
 
-/** Борды-потребители каркаса (#454). Нет записи — раздел ещё заглушка. */
+/** Борды-потребители каркаса. Нет записи — раздел ещё заглушка (detector-compare — #452). */
 const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'drift-anchors': DriftAnchorsBoard,
-  'detector-compare': DetectorCompareBoard,
 };
 
 export function SectionShell() {

@@ -1,6 +1,14 @@
-# Промпт: qc-panel-boards — борды контроля качества в панели (drift-якоря + detector-compare)
+# Промпт: qc-panel-boards — drift-борд + навигация shell в панели (QC1)
 
-> **Task-промпт для агента-разработчика.** Размер: **M**. Один PR.
+> **СКОУП СУЖЕН 2026-07-14:** QC2 (борд detector-compare + office-модуль benchmark +
+> `yarn benchmark:push`) **уступлен задаче `panel-detector-compare-board` #452** — её
+> консилиум [`detector-compare-board-2026-07-14.md`](../seanses/detector-compare-board-2026-07-14.md)
+> (видение владельца: per-sample таблица с прослушиванием/waveform/попапами/фильтром
+> расхождений; вердикт «office не трогаем», статический артефакт экспортёра) предметнее
+> и новее. Office-модуль benchmark удалён из ветки до мёржа. Действует QC1 + обвязка
+> панели; раздел QC2 ниже — исторический контекст.
+
+> **Task-промпт для агента-разработчика.** Размер: **S** (после сужения). Один PR.
 > Реестр: `id` = `qc-panel-boards`. Issue: [#454](https://github.com/officefish/Membrana/issues/454).
 > Консилиум-гейт пройден: [`quality-control-contour-2026-07-14.md`](../seanses/quality-control-contour-2026-07-14.md)
 > (+ каркас: [`office-panel-contour-2026-07-14.md`](../seanses/office-panel-contour-2026-07-14.md), эпик #438 OP1–OP5 закрыт).

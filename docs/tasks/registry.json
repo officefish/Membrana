@@ -2,10 +2,10 @@
   "tasks": [
     {
       "id": "qc-panel-boards",
-      "title": "qc-panel-boards: борды контроля качества в панели — drift-якоря + detector-compare (потребители каркаса #438)",
+      "title": "qc-panel-boards: drift-борд + навигация shell в панели (QC1; detector-compare уступлен #452)",
       "promptPath": "docs/prompts/QC_PANEL_BOARDS_PROMPT.md",
       "githubIssue": 454,
-      "size": "M",
+      "size": "S",
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-14",
@@ -16,9 +16,29 @@
         "dynin",
         "vesnin"
       ],
-      "notes": "Консилиум-гейт пройден: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). QC1 drift-борд читает существующий публичный digest; QC2 = office-модуль benchmark (push-ingest ADR 0004, GET за @MinRole operator через PanelAuthGuard OP5) + yarn benchmark:push + панельная таблица. Инварианты: каждое число с происхождением (generatedAt/datasetVersion/detectorVersion); агрегаты без perSample (Q3); office stateless. Коллизия-гард: НЕ трогать docs/DETECTOR_BENCHMARK.md, data/detectors-benchmark/**, scripts/benchmark-detectors.mjs — зона Задачи A в соседнем worktree.",
+      "notes": "Консилиум-гейт: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). СКОУП СУЖЕН 14.07: QC2 (борд detector-compare + office-модуль benchmark) уступлен задаче panel-detector-compare-board #452 — её консилиум (detector-compare-board-2026-07-14, видение владельца: per-sample таблица, прослушивание, waveform, попапы, фильтр расхождений; вердикт «office не трогаем», статический артефакт экспортёра) предметнее и новее; office-модуль benchmark из ветки удалён до мёржа. Остаток: QC1 drift-борд (читает публичный /v1/drift-anchor/digest, происхождение чисел, prod-main сравнение) + открываемые карточки shell (нужны и борду #452).",
       "archiveNotes": null,
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "panel-detector-compare-board",
+      "title": "Борд detector-compare: таблица trends DRONE_TIGHT vs yamnet в панели (магистраль 14.07)",
+      "promptPath": "docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md",
+      "githubIssue": 452,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "parentEpic": "office-panel-contour",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko",
+        "kuryokhin",
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git."
     },
     {
       "id": "persona-memory-all-personas",

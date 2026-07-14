@@ -1,7 +1,8 @@
 /**
- * Чистая математика/форматтеры бордов контроля качества (#454, консилиум
- * quality-control-contour): типы данных office, FPR, проценты, возраст записи,
- * сравнение prod↔main. Всё тестируемо без сети и DOM.
+ * Чистая математика/форматтеры drift-борда (#454, консилиум
+ * quality-control-contour): типы записей office, возраст, сравнение prod↔main.
+ * Всё тестируемо без сети и DOM. Борд detector-compare — задача #452 со своим
+ * артефактом (консилиум detector-compare-board-2026-07-14), сюда не тянуть.
  */
 
 // ── drift-anchor (GET /v1/drift-anchor/digest, public) ──
@@ -64,52 +65,3 @@ export function compareProdMain(records: DriftAnchorRecord[]): ProdMainCompariso
     : { state: 'diverged', ci: ci.detectorVersion, schedule: schedule.detectorVersion };
 }
 
-// ── benchmark (GET /v1/benchmark/summary, operator+) ──
-
-export interface DetectorMetrics {
-  tp: number;
-  fp: number;
-  fn: number;
-  tn: number;
-  precision: number;
-  recall: number;
-  f1: number;
-  latencyP50Ms?: number;
-  latencyP95Ms?: number;
-}
-
-export interface BenchmarkDetector {
-  name: string;
-  family: string;
-  status: string;
-  metrics?: DetectorMetrics;
-}
-
-export interface BenchmarkSummary {
-  report: {
-    generatedAt: string;
-    datasetVersion: string;
-    sampleCount: number;
-    detectors: BenchmarkDetector[];
-  };
-  ingestedAt: string;
-}
-
-/** FPR = FP / (FP + TN); нет негативов → null (не 0 — честность важнее красоты). */
-export function fpr(m: Pick<DetectorMetrics, 'fp' | 'tn'>): number | null {
-  const negatives = m.fp + m.tn;
-  return negatives > 0 ? m.fp / negatives : null;
-}
-
-/** Доля → проценты с одним знаком: 0.714 → «71.4%»; null → «—». */
-export function pct(value: number | null | undefined): string {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? `${(value * 100).toFixed(1)}%`
-    : '—';
-}
-
-/** ISO-дата происхождения в компактном виде: «2026-07-06 13:16 UTC». */
-export function provenanceStamp(iso: string): string {
-  const m = iso.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
-  return m ? `${m[1]} ${m[2]} UTC` : iso;
-}

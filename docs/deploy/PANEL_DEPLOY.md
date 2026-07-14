@@ -18,6 +18,22 @@
 3. Office-api на VDS обновлён до версии с модулем panel-auth (обычный редеплой
    по [`BACKGROUND_OFFICE_DEPLOY.md`](./BACKGROUND_OFFICE_DEPLOY.md)).
 
+## Быстрый путь (скрипт, живой прогон 2026-07-14)
+
+```bash
+yarn panel:dns-gate --expect 176.124.218.4         # обязателен: [go]
+yarn turbo run build --filter=@membrana/panel
+node scripts/_ssh-panel-deploy.mjs                  # секреты+статика+Caddy (см. шапку скрипта)
+# если PANEL_* добавились впервые — пересоздать office-контейнер:
+#   ssh → cd /root/membrana && ./deploy/office-stack.sh up   (env читается при создании!)
+yarn panel:invite --label smoke --days 1            # код → вход на витрине → роль «союзник»
+```
+
+Скрипт генерирует `PANEL_SESSION_SECRET`/`PANEL_INVITE_SECRET` (в локальный `.env`
+и `/etc/membrana/office.env`, значения не печатает), НЕ трогает `PANEL_GITHUB_*`
+(OAuth App создаёт владелец) и добавляет import Caddyfile.d только если его нет
+в ЛЮБОЙ форме (живой урок: двойной import → «ambiguous site definition»).
+
 ## Шаги
 
 ### 1. DNS-гейт (обязателен ДО выпуска сертификата)

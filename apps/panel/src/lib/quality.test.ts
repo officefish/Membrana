@@ -4,9 +4,6 @@ import {
   ageLabel,
   anchorLabel,
   compareProdMain,
-  fpr,
-  pct,
-  provenanceStamp,
   VERDICT_LABELS,
   type DriftAnchorRecord,
 } from './quality';
@@ -65,21 +62,3 @@ describe('compareProdMain', () => {
   });
 });
 
-describe('fpr / pct / provenanceStamp', () => {
-  it('FPR из матрицы; отсутствие негативов → null, не 0', () => {
-    expect(fpr({ fp: 22, tn: 38 })).toBeCloseTo(22 / 60, 10);
-    expect(fpr({ fp: 0, tn: 0 })).toBeNull();
-  });
-
-  it('pct: один знак, null/NaN → «—»', () => {
-    expect(pct(0.7142857)).toBe('71.4%');
-    expect(pct(1)).toBe('100.0%');
-    expect(pct(null)).toBe('—');
-    expect(pct(Number.NaN)).toBe('—');
-  });
-
-  it('provenanceStamp: компактная метка; нераспознанное — как есть', () => {
-    expect(provenanceStamp('2026-07-06T13:16:57.973Z')).toBe('2026-07-06 13:16 UTC');
-    expect(provenanceStamp('v2-run')).toBe('v2-run');
-  });
-});
