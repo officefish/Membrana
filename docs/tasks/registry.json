@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "qc-panel-boards",
+      "title": "qc-panel-boards: борды контроля качества в панели — drift-якоря + detector-compare (потребители каркаса #438)",
+      "promptPath": "docs/prompts/QC_PANEL_BOARDS_PROMPT.md",
+      "githubIssue": 454,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Консилиум-гейт пройден: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). QC1 drift-борд читает существующий публичный digest; QC2 = office-модуль benchmark (push-ingest ADR 0004, GET за @MinRole operator через PanelAuthGuard OP5) + yarn benchmark:push + панельная таблица. Инварианты: каждое число с происхождением (generatedAt/datasetVersion/detectorVersion); агрегаты без perSample (Q3); office stateless. Коллизия-гард: НЕ трогать docs/DETECTOR_BENCHMARK.md, data/detectors-benchmark/**, scripts/benchmark-detectors.mjs — зона Задачи A в соседнем worktree.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "persona-memory-all-personas",
       "title": "persona-memory: журналы всех 5 персон + memory-by-default в консилиумах (фаза 1.5)",
       "promptPath": "docs/prompts/PERSONA_MEMORY_ALL_PERSONAS_PROMPT.md",
