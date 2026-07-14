@@ -1,0 +1,33 @@
+# Caddy v2 — production site block for panel.mmbrn.tech (OP4, эпик #438)
+# Template: {{PANEL_DOMAIN}} подставляется из корневого .env (PANEL_DOMAIN)
+# → /etc/caddy/Caddyfile.d/panel.caddy (рядом с office.caddy).
+# TLS: Let's Encrypt — выпускать ТОЛЬКО после `yarn panel:dns-gate` = [go]
+# (урок OM4-C: ретраи на устаревшем DNS сжигают LE rate-limit).
+
+{{PANEL_DOMAIN}} {
+	encode gzip
+
+	# JSON API office — только /v1/* (консилиум: панель бьёт в существующий
+	# office, отдельного бэкенда нет). no-store страхует от кэша на пути
+	# (Q3-чеклист; на auth-ответах заголовок ставит и сам office).
+	handle /v1/* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:3000
+	}
+
+	# Служебные пути office наружу через панель не отдаём (Q3: блок /debug|/metrics).
+	handle /debug* {
+		respond "Not found" 404
+	}
+	handle /metrics* {
+		respond "Not found" 404
+	}
+
+	# SPA: статика из turbo-сборки apps/panel (rsync → /opt/membrana-panel/dist),
+	# fallback на index.html для client-side путей.
+	handle {
+		root * /opt/membrana-panel/dist
+		try_files {path} /index.html
+		file_server
+	}
+}
