@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { mdToTelegramHtml, renderExpandablePrimer } from './telegram-md';
+import { clampTelegramHtml, mdToTelegramHtml, renderExpandablePrimer } from './telegram-md';
 
 describe('mdToTelegramHtml', () => {
   it('bold / italic / ссылка / код', () => {
@@ -55,5 +55,26 @@ describe('renderExpandablePrimer', () => {
     expect(renderExpandablePrimer('**Membrana** — сеть «ушей»')).toBe(
       '<blockquote expandable><b>Membrana</b> — сеть «ушей»</blockquote>',
     );
+  });
+});
+
+describe('clampTelegramHtml', () => {
+  it('короткий текст не трогает', () => {
+    expect(clampTelegramHtml('<b>ок</b>', 100)).toBe('<b>ок</b>');
+  });
+
+  it('срез внутри парного тега дозакрывает тег (parse_mode HTML отклоняет незакрытые)', () => {
+    const html = `а <b>${'ж'.repeat(50)}</b>`;
+    const out = clampTelegramHtml(html, 20);
+    expect(out.length).toBeLessThanOrEqual(20);
+    expect(out).toBe(`а <b>${'ж'.repeat(10)}…</b>`);
+  });
+
+  it('вложенные теги закрываются в правильном порядке, частично открытый тег снят', () => {
+    const html = `<blockquote expandable><b>${'ж'.repeat(80)}</b> хвост <i>x</i></blockquote>`;
+    const out = clampTelegramHtml(html, 60);
+    expect(out.length).toBeLessThanOrEqual(60);
+    expect(out.endsWith('…</b></blockquote>')).toBe(true);
+    expect(out).not.toMatch(/<[^>]*$/);
   });
 });
