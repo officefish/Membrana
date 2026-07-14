@@ -1,4 +1,4 @@
-﻿# CLOSURE: backlog-cleanup-s1
+# CLOSURE: backlog-cleanup-s1
 
 **Closed:** 2026-06-30  
 **Issue:** [#214](https://github.com/officefish/Membrana/issues/214)  
