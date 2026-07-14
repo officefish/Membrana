@@ -1,5 +1,6 @@
+import type { AllyMessageDto } from './ally-message.dto';
 import type { RitualDigestDto } from './ritual-digest.dto';
-import { renderExpandablePrimer } from './telegram-md';
+import { clampTelegramHtml, mdToTelegramHtml, renderExpandablePrimer } from './telegram-md';
 
 /**
  * Чистые функции «вёрстки» telegram-сообщений (канон REVIEW инсайта
@@ -79,8 +80,16 @@ function renderClamped(parts: MessageParts): string {
       withPrimer = false;
       continue;
     }
-    return text.slice(0, TELEGRAM_MESSAGE_LIMIT - 1).replace(/<[^>]*$/, '') + '…';
+    return clampTelegramHtml(text, TELEGRAM_MESSAGE_LIMIT);
   }
+}
+
+/**
+ * «Ласточка»: разовое свободное сообщение союзникам по команде владельца.
+ * Текст — md-подмножество конвертера; никакой обвязки заголовком/секциями.
+ */
+export function formatAllyMessage(message: AllyMessageDto): string {
+  return clampTelegramHtml(mdToTelegramHtml(message.text), TELEGRAM_MESSAGE_LIMIT);
 }
 
 export function formatDayDigest(digest: RitualDigestDto): string {

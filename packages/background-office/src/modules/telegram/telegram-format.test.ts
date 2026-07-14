@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { RitualDigestDto } from './ritual-digest.dto';
 import {
   escapeTelegramHtml,
+  formatAllyMessage,
   formatDateRu,
   formatDayDigest,
   formatEveningDigest,
@@ -146,6 +147,21 @@ describe('клэмп 4096 (#434)', () => {
     const text = formatDayDigest(
       digest({ headline: 'а'.repeat(5000), primerMd: '**x**'.repeat(1) }),
     );
+    expect(text.length).toBeLessThanOrEqual(TELEGRAM_MESSAGE_LIMIT);
+    expect(text.endsWith('…')).toBe(true);
+    expect(text).not.toMatch(/<[^>]*$/);
+  });
+});
+
+describe('formatAllyMessage («ласточка»)', () => {
+  it('конвертирует md и не добавляет обвязку', () => {
+    expect(formatAllyMessage({ text: '**Новость**: pilot *запущен*' })).toBe(
+      '<b>Новость</b>: pilot <i>запущен</i>',
+    );
+  });
+
+  it('длинный текст клэмпится под лимит без обрыва тегов', () => {
+    const text = formatAllyMessage({ text: `**x** ${'ф'.repeat(4096)}` });
     expect(text.length).toBeLessThanOrEqual(TELEGRAM_MESSAGE_LIMIT);
     expect(text.endsWith('…')).toBe(true);
     expect(text).not.toMatch(/<[^>]*$/);
