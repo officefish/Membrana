@@ -22,6 +22,17 @@ export const ritualDigestSchema = z.object({
   teamScore: z.string().optional(),
   /** Один короткий технический хвост вторым слоем (магистраль/детали). */
   techFooter: z.string().optional(),
+  /**
+   * Вечер (#434): треки дня — что реально сделано, по одной строке на роль/трек.
+   * Даёт подробную фактуру между вердиктом и «что дальше».
+   */
+  tracks: z.array(z.string().min(1)).max(8).optional(),
+  /**
+   * Сырой md шапки-пояснения (#434) из docs/comms/ALLY_DIGEST_HEADER.md.
+   * Office конвертирует в Telegram-HTML и вшивает <blockquote expandable>;
+   * поле отсутствует → отчёт уходит без шапки (graceful).
+   */
+  primerMd: z.string().min(1).max(3000).optional(),
 });
 
 export type RitualDigestDto = z.infer<typeof ritualDigestSchema>;

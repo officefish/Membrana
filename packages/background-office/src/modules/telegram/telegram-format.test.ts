@@ -7,6 +7,7 @@ import {
   formatDayDigest,
   formatEveningDigest,
   formatRitualDigest,
+  TELEGRAM_MESSAGE_LIMIT,
 } from './telegram-format';
 
 function digest(over: Partial<RitualDigestDto> = {}): RitualDigestDto {
@@ -86,5 +87,67 @@ describe('formatRitualDigest', () => {
   it('диспетчеризует по kind', () => {
     expect(formatRitualDigest(digest({ kind: 'day' }))).toContain('план на');
     expect(formatRitualDigest(digest({ kind: 'evening' }))).toContain('итоги дня');
+  });
+});
+
+describe('шапка-пояснение v2 (#434)', () => {
+  it('primerMd вшивается expandable blockquote после заголовка', () => {
+    const text = formatDayDigest(
+      digest({ primerMd: '**Membrana** — сеть «ушей»; [памятка](https://example.com)' }),
+    );
+    const lines = text.split('\n');
+    expect(lines[2]).toBe(
+      '<blockquote expandable><b>Membrana</b> — сеть «ушей»; <a href="https://example.com">памятка</a></blockquote>',
+    );
+  });
+
+  it('без primerMd blockquote отсутствует (graceful)', () => {
+    expect(formatDayDigest(digest())).not.toContain('<blockquote');
+    expect(formatEveningDigest(digest({ kind: 'evening' }))).not.toContain('<blockquote');
+  });
+});
+
+describe('треки дня v2 (#434)', () => {
+  it('вечер: секция «Треки дня» между вердиктом и «Что дальше»', () => {
+    const text = formatEveningDigest(
+      digest({
+        kind: 'evening',
+        tracks: ['Teamlead: контур качества замкнут', 'Математик: таблица не начата'],
+        points: ['Собрать таблицу сравнения'],
+      }),
+    );
+    expect(text).toContain('Треки дня:\n• Teamlead: контур качества замкнут\n• Математик: таблица не начата');
+    expect(text.indexOf('Треки дня:')).toBeLessThan(text.indexOf('Что дальше:'));
+  });
+
+  it('день секцию треков не рендерит', () => {
+    expect(formatDayDigest(digest({ tracks: ['не должно попасть'] }))).not.toContain('Треки дня:');
+  });
+});
+
+describe('клэмп 4096 (#434)', () => {
+  it('булиты усечены с хвоста, сообщение в лимите, шапка сохранена', () => {
+    const fat = 'ф'.repeat(400);
+    const text = formatEveningDigest(
+      digest({
+        kind: 'evening',
+        primerMd: '**Membrana** — сеть «ушей»',
+        tracks: Array.from({ length: 8 }, (_, i) => `трек ${i + 1}: ${fat}`),
+        points: Array.from({ length: 8 }, (_, i) => `шаг ${i + 1}: ${fat}`),
+      }),
+    );
+    expect(text.length).toBeLessThanOrEqual(TELEGRAM_MESSAGE_LIMIT);
+    expect(text).toContain('<blockquote expandable>');
+    expect(text).toContain('• трек 1:');
+    expect(text).not.toContain('• шаг 8:');
+  });
+
+  it('крайний случай: даже без булитов и шапки текст не превышает лимит и не рвёт теги', () => {
+    const text = formatDayDigest(
+      digest({ headline: 'а'.repeat(5000), primerMd: '**x**'.repeat(1) }),
+    );
+    expect(text.length).toBeLessThanOrEqual(TELEGRAM_MESSAGE_LIMIT);
+    expect(text.endsWith('…')).toBe(true);
+    expect(text).not.toMatch(/<[^>]*$/);
   });
 });
