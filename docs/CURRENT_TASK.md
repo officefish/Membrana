@@ -16,14 +16,19 @@
    полевой data-anchor по реальным записям → backlog **#420** (privacy-развилка,
    не начинать без отдельного консилиума + LGTM владельца).
 
+**✅ РАЗВИЛКА РАЗРЕШЕНА 2026-07-14** консилиумом office-panel-contour (25 реплик):
+борды живут в **`apps/panel`** (panel.mmbrn.tech), НЕ в кабинете. Шаг 0 больше не
+нужен. Drift-борд теперь = потребитель каркаса эпика #438 (OP1–OP5) — делать ПОСЛЕ
+scaffold+auth или параллельно от заглушки раздела.
+
 ### Старт (вставить в начало новой сессии)
 
 ```text
 Следуй docs/prompts/TASK_PROMPT_WORKFLOW.md. Эпик #396, финальная фаза: UI-панель
-«Дрейф-якоря». Шаг 0 (ОБЯЗАТЕЛЬНО ДО КОДА): yarn consilium --save-as drift-panel-placement
-— развилка «кабинет vs отдельный операторский UI (panel.mmbrn.tech)» (поднял владелец
-2026-07-13). Затем реализация по вердикту. Контекст: memory project_drift_anchor_contour,
-ADR 0004 (транспорт готов и жив).
+«Дрейф-якоря» — размещение РЕШЕНО (консилиум office-panel-contour-2026-07-14):
+apps/panel (эпик #438). Реализация борда по требованиям drift-anchor-triggers
+(3 строки якорей, danger «Прод ≠ main» иконка+текст, tabular-nums, aria-live).
+Контекст: memory project_drift_anchor_contour, ADR 0004.
 ```
 
 ### Что уже готово (не переделывать)
@@ -95,18 +100,30 @@ modules/telegram, docs/comms/ALLY_PRIMER.md. Не смешивать с LLM-пе
 
 ---
 
-## Спринт agent-tooling-friction (#433, зарегистрирован 2026-07-13, консилиум пройден)
+## Спринт agent-tooling-friction (#433) — ЗАКРЫТ 2026-07-14
 
-4 независимые задачи против трения агентских сессий; порядок ti-1→ti-3→ti-2→ti-4.
-Протокол: docs/seanses/agent-tooling-friction-2026-07-13.md. Ведётся в worktree
-Membrana-openrouter (ветка feat/agent-tooling-friction).
+PR #436 (+CI-фикс fd1a39f6), closure LGTM, архив. Инструменты в main:
+`yarn insight:drift` (в ritual:evening), `yarn llm:probe`, gitignore ревью-артефактов,
+proxy-чистка тестов office.
 
-### Старт (вставить в начало новой сессии)
+---
+
+## Эпик office-panel (#438, зарегистрирован 2026-07-14, консилиум пройден)
+
+Подготовительный клиент office на **panel.mmbrn.tech**: welcome (public) + auth
+с уровнями public/ally/operator/owner + shell разделов + деплой + hardening.
+Протокол: docs/seanses/office-panel-contour-2026-07-14.md (25 реплик, research ×3).
+Вердикт заодно разрешил drift-panel-placement (#396): борды → apps/panel.
+Child-карточки: op1-panel-scaffold → op2-panel-auth → op3-panel-welcome-shell →
+op4-panel-deploy → op5-panel-api-hardening.
+
+### Старт фазы (вставить в начало новой сессии)
 
 ```text
-Следуй docs/prompts/AGENT_TOOLING_FRICTION_PROMPT.md (реестр: agent-tooling-friction,
-Issue #433). Спор НЕ переоткрывать — решения в протоколе консилиума
-agent-tooling-friction-2026-07-13. Порядок ti-1→ti-3→ti-2→ti-4, мерж по готовности.
+Следуй docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md (эпик office-panel-contour,
+Issue #438, реестр op1..op5). Решения консилиума office-panel-contour-2026-07-14
+НЕ переоткрывать. Порядок OP1→OP2→OP3→OP4→OP5, мерж по готовности фазы.
+Owner-гейты: DNS A-запись panel.mmbrn.tech, GitHub OAuth App, HMAC-secret.
 ```
 
 **Очередь после (решения владельца):** task-archive-storage (7.6) сразу после
