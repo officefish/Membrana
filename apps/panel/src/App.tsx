@@ -1,18 +1,24 @@
-import { PANEL_TITLE } from '@/lib/appMeta';
+import { PanelAuthProvider, usePanelAuth } from '@/context/PanelAuthContext';
+import { SectionShell } from '@/components/SectionShell';
+import { WelcomeScreen } from '@/components/WelcomeScreen';
 
-/**
- * OP1 — каркас-заглушка. Настоящее welcome-окно (язык ALLY_PRIMER, DESIGN.md,
- * состояния login/error/loading) — OP3; разделы и уровни доступа — OP2/OP3.
- */
+/** Loading-состояние первого /me — честное, не пустой экран (DESIGN.md/OP3). */
+function Gate() {
+  const { identity, loading } = usePanelAuth();
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center" aria-busy="true">
+        <span className="loading loading-spinner loading-lg text-primary" aria-label="Загрузка" />
+      </main>
+    );
+  }
+  return identity.role === 'public' ? <WelcomeScreen /> : <SectionShell />;
+}
+
 export default function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <section className="text-center">
-        <h1 className="text-2xl font-semibold text-base-content">{PANEL_TITLE}</h1>
-        <p className="mt-2 text-base-content/70">
-          Каркас операторской витрины office (эпик #438, фаза OP1).
-        </p>
-      </section>
-    </main>
+    <PanelAuthProvider>
+      <Gate />
+    </PanelAuthProvider>
   );
 }
