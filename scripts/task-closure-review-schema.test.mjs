@@ -5,8 +5,8 @@ import { test } from 'node:test';
 const readJson = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 
 const schema = readJson('../docs/schemas/task-closure-review.schema.json');
-const pending = readJson('../docs/reviews/examples/review-pending.json');
-const lgtm = readJson('../docs/reviews/examples/lgtm.json');
+const pending = readJson('../docs/schemas/examples/review-pending.json');
+const lgtm = readJson('../docs/schemas/examples/lgtm.json');
 const SHA_RE = /^[0-9a-f]{40}$/;
 
 function validateCoreInvariants(manifest) {
