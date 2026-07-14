@@ -64,4 +64,3 @@ export function compareProdMain(records: DriftAnchorRecord[]): ProdMainCompariso
     ? { state: 'match', detectorVersion: ci.detectorVersion }
     : { state: 'diverged', ci: ci.detectorVersion, schedule: schedule.detectorVersion };
 }
-
