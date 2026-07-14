@@ -1,0 +1,20 @@
+{
+  "id": "insight-office-panel-qa-section",
+  "title": "QA-раздел в панели офиса: накапливать вопросы союзников и ответы команды",
+  "status": "adopted",
+  "source": "user",
+  "horizon": "month",
+  "weight": 6.4,
+  "createdAt": "2026-07-14",
+  "researchedAt": "2026-07-14",
+  "reviewedAt": "2026-07-14",
+  "closedAt": "2026-07-14",
+  "tags": [
+    "comms",
+    "office-panel",
+    "faq",
+    "docs-as-code",
+    "allies",
+    "telegram-swallow"
+  ]
+}

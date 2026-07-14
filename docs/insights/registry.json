@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-13",
+  "updatedAt": "2026-07-14",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -418,6 +418,24 @@
         "virtual-team",
         "memory",
         "infra"
+      ]
+    },
+    {
+      "id": "insight-office-panel-qa-section",
+      "title": "QA-раздел в панели офиса: накапливать вопросы союзников и ответы команды",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": "month",
+      "weight": 6.4,
+      "createdAt": "2026-07-14",
+      "tags": [
+        "comms",
+        "office-panel",
+        "faq",
+        "docs-as-code",
+        "allies",
+        "telegram-swallow"
       ]
     }
   ]
