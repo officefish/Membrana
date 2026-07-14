@@ -18,3 +18,4 @@ process.env.LINEAR_WEBHOOK_SECRET = 'test-webhook-secret';
 process.env.GITHUB_TOKEN = 'test-github-token';
 process.env.GITHUB_OWNER = 'officefish';
 process.env.GITHUB_REPO = 'Membrana';
+process.env.PANEL_SESSION_SECRET = 'test-panel-session-secret';
