@@ -50,6 +50,12 @@ describe('гранты партнёров (PU2, #463)', () => {
     // public без грантов не видит ничего гейтированного.
     expect(canAccessSection('public', [], 'ally', 'ally-digest')).toBe(false);
   });
+
+  it('owner-разделы грантами НЕ открываются — даже wildcard (консилиум Р1)', () => {
+    expect(canAccessSection('ally', ['*'], 'owner', 'panel-users')).toBe(false);
+    expect(canAccessSection('ally', ['panel-users'], 'owner', 'panel-users')).toBe(false);
+    expect(canAccessSection('owner', [], 'owner', 'panel-users')).toBe(true);
+  });
 });
 
 describe('sections (заглушки OP3)', () => {

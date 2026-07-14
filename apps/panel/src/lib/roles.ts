@@ -33,14 +33,19 @@ export function grantsAllowSection(
   return Boolean(grants && (grants.includes('*') || grants.includes(sectionId)));
 }
 
-/** Единый предикат видимости раздела: роль ≥ minRole ИЛИ грант на раздел. */
+/**
+ * Единый предикат видимости раздела: роль ≥ minRole ИЛИ грант на раздел.
+ * Owner-разделы грантами НЕ открываются (в т.ч. wildcard) — лестница ролей
+ * не размывается (консилиум Р1); их API и так гейтится ролью на сервере.
+ */
 export function canAccessSection(
   role: PanelRole,
   grants: readonly string[] | undefined,
   minRole: PanelRole,
   sectionId: string,
 ): boolean {
-  return canAccess(role, minRole) || grantsAllowSection(grants, sectionId);
+  if (canAccess(role, minRole)) return true;
+  return minRole !== 'owner' && grantsAllowSection(grants, sectionId);
 }
 
 /** Человеческие подписи уровней (язык ALLY_PRIMER — без жаргона). */
