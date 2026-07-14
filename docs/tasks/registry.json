@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "panel-detector-compare-board",
+      "title": "Борд detector-compare: таблица trends DRONE_TIGHT vs yamnet в панели (магистраль 14.07)",
+      "promptPath": "docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md",
+      "githubIssue": 452,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "parentEpic": "office-panel-contour",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "rodchenko",
+        "kuryokhin",
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git."
+    },
+    {
       "id": "persona-memory-all-personas",
       "title": "persona-memory: журналы всех 5 персон + memory-by-default в консилиумах (фаза 1.5)",
       "promptPath": "docs/prompts/PERSONA_MEMORY_ALL_PERSONAS_PROMPT.md",
