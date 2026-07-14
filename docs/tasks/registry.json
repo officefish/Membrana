@@ -6,10 +6,10 @@
       "promptPath": "docs/COWORK_SPRINT_REGULATION.md",
       "githubIssue": 464,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
@@ -18,7 +18,7 @@
         "kuryokhin"
       ],
       "notes": "Идея владельца 2026-07-14. Консилиум-гейт: docs/seanses/cowork-sprint-format-2026-07-14.md (20 реплик; первый с памятью 5 персон default-on). Решения: событийный гейт интеграции ready(A)∧ready(B)∧ready(C)∨deadline; односторонние EXPECTATIONS + исполняемые стабы в своей зоне (договариваться об интерфейсах до Interface Consilium запрещено); резка brief по естественным швам с пустым пересечением файловых зон; интеграция адаптерами в отдельной ветке (блоки не переписываются, ведёт координатор); жюри/скоринга/победителя нет — мёржатся все три блока. Артефакты: регламент + cowork:open + скилл membrana-cowork (3 среды). Follow-up: cowork:phase/close.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #465; review LGTM 04695297d862; PR #465 merged 2026-07-14T16:53:39Z (04695297d862329d46db797c12368214a74dfb4c)",
       "githubIssueClosedAt": null
     },
     {

@@ -191,6 +191,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `cowork-format-regulation` | Cowork Sprint: регламент формата — 3 изолированных блока одной разработки, поздняя стыковка, интеграция адаптерами | 2026-07-14 | [`COWORK_SPRINT_REGULATION.md`](../docs/COWORK_SPRINT_REGULATION.md) | #464 (Issue открыт) | [карточка](./archive/cowork-format-regulation.md) |
 | `qc-panel-boards` | qc-panel-boards: drift-борд + навигация shell в панели (QC1; detector-compare уступлен #452) | 2026-07-14 | [`QC_PANEL_BOARDS_PROMPT.md`](../docs/prompts/QC_PANEL_BOARDS_PROMPT.md) | #454 (Issue открыт) | [карточка](./archive/qc-panel-boards.md) |
 | `panel-detector-compare-board` | Борд detector-compare: таблица trends DRONE_TIGHT vs yamnet в панели (магистраль 14.07) | 2026-07-14 | [`PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md`](../docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md) | #452 (Issue открыт) | [карточка](./archive/panel-detector-compare-board.md) |
 | `persona-memory-all-personas` | persona-memory: журналы всех 5 персон + memory-by-default в консилиумах (фаза 1.5) | 2026-07-14 | [`PERSONA_MEMORY_ALL_PERSONAS_PROMPT.md`](../docs/prompts/PERSONA_MEMORY_ALL_PERSONAS_PROMPT.md) | #451 (Issue открыт) | [карточка](./archive/persona-memory-all-personas.md) |
