@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "agent-tooling-friction-2",
+      "title": "agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship)",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md",
+      "githubIssue": 469,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-14",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "По итогам сессии 2026-07-14 (4 ручных closure-цикла, 3 чат-протокола без валидации, 2 конфликта registry, коллизия скоупа #452/#454, 3 инцидента PS 5.1, разнобой credit-ошибок). Консилиум-гейт: docs/seanses/agent-tooling-friction-2-2026-07-14.md (22 реплики) + research Perplexity x3. Форма #433: зонтик, независимые ti, порядок дешевле-дороже ti-6-5-7-4-3-2-1, мёрж по готовности. Ключевые решения: ship = ОБЁРТКА над lib-runner (SHA из gh pr view mergeCommit, база = родитель, чеки на detached при ушедшем main, fail-closed); register = регенерация вставки вместо ручного merge, формат registry НЕ меняется; neighbors = только чтение сигналов, координационный файл НЕ вводится; secretary-file = валидатор канона чистыми функциями, фикстуры - живые протоколы 14.07. Запреты: не переписывать lib/task-closure-review.mjs, не менять формат registry (task-archive-storage), не печатать секреты, ship не деплоит.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-format-regulation",
       "title": "Cowork Sprint: регламент формата — 3 изолированных блока одной разработки, поздняя стыковка, интеграция адаптерами",
       "promptPath": "docs/COWORK_SPRINT_REGULATION.md",
