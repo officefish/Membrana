@@ -6,6 +6,7 @@ import { PANEL_SECTIONS, type PanelSection } from '@/lib/sections';
 import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
 import { DetectorCompareSection } from './detector-compare/DetectorCompareSection';
+import { PanelUsersBoard } from './panel-users/PanelUsersBoard';
 
 /**
  * Shell авторизованного пользователя (OP3 + #454): навбар с ролью словом +
@@ -17,10 +18,11 @@ import { DetectorCompareSection } from './detector-compare/DetectorCompareSectio
 const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'drift-anchors': DriftAnchorsBoard,
   'detector-compare': DetectorCompareSection,
+  'panel-users': PanelUsersBoard,
 };
 
-/** Широкие борды: таблице сравнения тесно в max-w-3xl. */
-const WIDE_SECTIONS = new Set(['detector-compare']);
+/** Широкие борды: таблицам сравнения и матрице грантов тесно в max-w-3xl. */
+const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users']);
 
 export function SectionShell() {
   const { identity, logout } = usePanelAuth();
