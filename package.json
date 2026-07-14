@@ -123,6 +123,7 @@
     "insight": "node scripts/insight.mjs",
     "insight:drift": "node scripts/insight-drift.mjs",
     "llm:probe": "node scripts/llm-probe.mjs",
+    "panel:invite": "node scripts/panel-invite.mjs",
     "insight:help": "node scripts/insight.mjs help",
     "rag:query": "node scripts/rag-query.mjs",
     "rag:index": "yarn workspace @membrana/rag-service build && yarn workspace @membrana/rag-service run index -- --full",
