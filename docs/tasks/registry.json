@@ -6,17 +6,19 @@
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_PROMPT.md",
       "githubIssue": 433,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-13",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "rodchenko",
         "vesnin"
       ],
-      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/agent-tooling-friction-2026-07-13.md (24 реплики). Форма: один M-спринт-зонтик, 4 НЕЗАВИСИМЫЕ задачи, мерж по готовности, порядок ti-1→ti-3→ti-2→ti-4 (дешевле→дороже). Решения: ревью-артефакты — .gitignore docs/reviews/*/ (НЕ логика в скрипте); proxy-чистка всех форм переменных в setup-env + норма; insight:drift — hermes-паттерн, вызов из ritual:evening, 3 кейса 2026-07-13 как регресс-фикстуры; llm:probe — direct+via-proxy, классы ошибок (DPI/гео/баланс/ключ/сеть), ключи маскируются. Запреты: без межпакетных зависимостей, без auto-exclude в task-closure-review.mjs, без печати ключей/записи .env. Out of scope: worktree-бутстрап, pr:ship --worktree, хвосты #424/#425."
+      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/agent-tooling-friction-2026-07-13.md (24 реплики). Форма: один M-спринт-зонтик, 4 НЕЗАВИСИМЫЕ задачи, мерж по готовности, порядок ti-1→ti-3→ti-2→ti-4 (дешевле→дороже). Решения: ревью-артефакты — .gitignore docs/reviews/*/ (НЕ логика в скрипте); proxy-чистка всех форм переменных в setup-env + норма; insight:drift — hermes-паттерн, вызов из ritual:evening, 3 кейса 2026-07-13 как регресс-фикстуры; llm:probe — direct+via-proxy, классы ошибок (DPI/гео/баланс/ключ/сеть), ключи маскируются. Запреты: без межпакетных зависимостей, без auto-exclude в task-closure-review.mjs, без печати ключей/записи .env. Out of scope: worktree-бутстрап, pr:ship --worktree, хвосты #424/#425.",
+      "archiveNotes": "PR #436; review LGTM fd1a39f6cf1f; PR #436 merged 2026-07-14T04:16:25Z (d8fe05db776c6692b18593ae466bcc6ea4130d14)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "night-narrative-deepseek-fallback",
