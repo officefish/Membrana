@@ -45,10 +45,10 @@
       "promptPath": "docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md",
       "githubIssue": 438,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-14",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
@@ -56,7 +56,9 @@
         "rodchenko",
         "kuryokhin"
       ],
-      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/office-panel-contour-2026-07-14.md (25 реплик, research Perplexity x3, --with-memory пилот). Вердикты: apps/panel отдельный SPA (стек кабинета) на panel.mmbrn.tech — ЗАОДНО разрешена развилка drift-panel-placement #396 (борды живут в panel); auth при stateless office: operator/owner=GitHub OAuth+allowlist-файл, ally=HMAC invite-код без БД, public=welcome; httpOnly cookie, default-deny+@Public; digest остаётся публичным; Caddy site-block + reverse_proxy /v1/*, LE только после DNS-гейта (урок OM4-C). Запреты: cabinet internals/auth, persisted-учётки на office, общий статический токен, localStorage, борды/LLM/мутации вне эпика. Owner-гейты: DNS A-запись, GitHub OAuth App, HMAC-secret + ally-коды."
+      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/office-panel-contour-2026-07-14.md (25 реплик, research Perplexity x3, --with-memory пилот). Вердикты: apps/panel отдельный SPA (стек кабинета) на panel.mmbrn.tech — ЗАОДНО разрешена развилка drift-panel-placement #396 (борды живут в panel); auth при stateless office: operator/owner=GitHub OAuth+allowlist-файл, ally=HMAC invite-код без БД, public=welcome; httpOnly cookie, default-deny+@Public; digest остаётся публичным; Caddy site-block + reverse_proxy /v1/*, LE только после DNS-гейта (урок OM4-C). Запреты: cabinet internals/auth, persisted-учётки на office, общий статический токен, localStorage, борды/LLM/мутации вне эпика. Owner-гейты: DNS A-запись, GitHub OAuth App, HMAC-secret + ally-коды.",
+      "archiveNotes": "Эпик закрыт целиком 2026-07-14: OP1-OP5 смёржены (PR #440-#450, closure LGTM каждой фазы), панель ЖИВАЯ на https://panel.mmbrn.tech (LE после dns-gate [go]); live-подтверждения: ally-вход по invite-коду (201->cookie->ally, operator-ручка 403, no-store), GitHub OAuth owner-вход подтверждён владельцем 14.07 (302->authorize->allowlist->owner). Секреты PANEL_* в office.env; деплой-скрипт scripts/_ssh-panel-deploy.mjs + runbook PANEL_DEPLOY.md. Потребители каркаса: борд detector-compare (#452, в работе) и drift-борд (#396).",
+      "githubIssueClosedAt": null
     },
     {
       "id": "op1-panel-scaffold",
