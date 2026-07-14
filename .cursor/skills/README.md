@@ -29,6 +29,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-consilium`](./membrana-consilium/SKILL.md) | `yarn consilium`, архитектурный спор, ≥20 реплик |
 | [`membrana-adr`](./membrana-adr/SKILL.md) | ADR — лёгкая запись решения ниже консилиум-гейта, `docs/adr/` |
 | [`membrana-team-evening-feedback`](./membrana-team-evening-feedback/SKILL.md) | `yarn team-evening-feedback`, вечерняя ретроспектива, `ritual:evening` |
+| [`membrana-telegram-swallow`](./membrana-telegram-swallow/SKILL.md) | «ласточка», «отправь союзникам», `yarn telegram:swallow` — разовое сообщение в группу по команде владельца; mirrored to Claude/Codex |
 | [`membrana-night-sprint`](./membrana-night-sprint/SKILL.md) | `night:open`, Night Build, handoff |
 | [`membrana-worktree`](./membrana-worktree/SKILL.md) | отдельный worktree, параллельная сессия, разведи сессии, `git worktree add` |
 | [`membrana-rag-operator`](./membrana-rag-operator/SKILL.md) | `yarn rag:index`, `rag:query` (**stub** until RAG in main) |

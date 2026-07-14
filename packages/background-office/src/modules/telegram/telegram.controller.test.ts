@@ -48,3 +48,34 @@ describe('TelegramController.ingest', () => {
     expect(sentTexts).toHaveLength(0);
   });
 });
+
+describe('TelegramController.allyMessage («ласточка»)', () => {
+  it('md-текст конвертируется и уходит как есть, без обвязки дайджеста', async () => {
+    const { client, sentTexts } = fakeClient();
+    const res = await new TelegramController(client).allyMessage({
+      text: '**Короткая новость** для союзников: смотрите [страницу](https://example.com).',
+    });
+    expect(res).toEqual({ ok: true, sent: true });
+    expect(sentTexts[0]).toBe(
+      '<b>Короткая новость</b> для союзников: смотрите <a href="https://example.com">страницу</a>.',
+    );
+    expect(sentTexts[0]).not.toContain('Membrana — план');
+  });
+
+  it('пустой/невалидный текст → BadRequest, отправки нет', async () => {
+    const { client, sentTexts } = fakeClient();
+    await expect(new TelegramController(client).allyMessage({ text: '' })).rejects.toThrow(
+      BadRequestException,
+    );
+    await expect(new TelegramController(client).allyMessage({})).rejects.toThrow(
+      BadRequestException,
+    );
+    expect(sentTexts).toHaveLength(0);
+  });
+
+  it('fire-and-forget: неудача отправки не роняет запрос', async () => {
+    const { client } = fakeClient(false);
+    const res = await new TelegramController(client).allyMessage({ text: 'проверка связи' });
+    expect(res).toEqual({ ok: true, sent: false });
+  });
+});

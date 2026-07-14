@@ -41,3 +41,9 @@ export function mdToTelegramHtml(md: string): string {
 export function renderExpandablePrimer(primerMd: string): string {
   return `<blockquote expandable>${mdToTelegramHtml(primerMd)}</blockquote>`;
 }
+
+/** Жёсткое усечение под лимит Telegram без обрыва HTML-тега. */
+export function clampTelegramHtml(html: string, limit: number): string {
+  if (html.length <= limit) return html;
+  return `${html.slice(0, limit - 1).replace(/<[^>]*$/, '').trimEnd()}…`;
+}
