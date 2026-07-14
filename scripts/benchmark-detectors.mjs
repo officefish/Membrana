@@ -63,7 +63,9 @@ function applyOriginLabels(samples) {
       : entry,
   );
 }
-const TEMPLATE_MATCH_DIST = join(
+// Экспортируются для detector-compare-export.mjs (#452): один источник путей
+// dist и curated-шаблонов, чтобы сравнение гоняло РОВНО ту же конфигурацию.
+export const TEMPLATE_MATCH_DIST = join(
   ROOT,
   'packages',
   'services',
@@ -73,7 +75,7 @@ const TEMPLATE_MATCH_DIST = join(
   'index.js',
 );
 // Шаблоны — конфиг детектора, не корпус: всегда из канонического v0.2.
-const CURATED_TEMPLATES_JSON = join(DEFAULT_DATASET_DIR, 'curated-drone-templates.json');
+export const CURATED_TEMPLATES_JSON = join(DEFAULT_DATASET_DIR, 'curated-drone-templates.json');
 const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
 
 export const DSP_DETECTORS = [
@@ -100,7 +102,7 @@ export const DSP_DETECTORS = [
   },
 ];
 
-async function ensureBuilt(distPath, label) {
+export async function ensureBuilt(distPath, label) {
   try {
     await access(distPath);
   } catch {
@@ -171,19 +173,25 @@ export async function runDetector(manifestSamples, spec, datasetDir) {
   };
 }
 
+/**
+ * Curated-шаблоны DRONE_TIGHT из канонического v0.2 (fallback — дефолт пакета).
+ * Reused by detector-compare-export.mjs — сравнение обязано использовать те же
+ * шаблоны, что канонический бенчмарк.
+ */
+export async function readCuratedDroneTemplates(mod) {
+  try {
+    return JSON.parse(await readFile(CURATED_TEMPLATES_JSON, 'utf8'));
+  } catch {
+    return mod.DEFAULT_CURATED_DRONE_TEMPLATES;
+  }
+}
+
 export async function runTemplateMatch(manifestSamples, datasetDir) {
   await ensureBuilt(TEMPLATE_MATCH_DIST, 'template-match-detector');
   const mod = await import(pathToFileURL(TEMPLATE_MATCH_DIST).href);
 
-  let curatedDrone = mod.DEFAULT_CURATED_DRONE_TEMPLATES;
-  try {
-    curatedDrone = JSON.parse(await readFile(CURATED_TEMPLATES_JSON, 'utf8'));
-  } catch {
-    // use package default
-  }
-
   const detector = mod.createTemplateMatchDetector({
-    templates: mod.resolveTemplateMatchCatalog(curatedDrone),
+    templates: mod.resolveTemplateMatchCatalog(await readCuratedDroneTemplates(mod)),
   });
 
   /** @type {{ id: string; truthDrone: boolean; predDrone: boolean; maxConfidence: number }[]} */
@@ -231,7 +239,7 @@ export async function runTemplateMatch(manifestSamples, datasetDir) {
   };
 }
 
-const YAMNET_NODE_DIST = join(
+export const YAMNET_NODE_DIST = join(
   ROOT,
   'packages',
   'services',
@@ -303,6 +311,19 @@ export async function runYamnet(manifestSamples, datasetDir) {
   };
 }
 
+/**
+ * Отбор сэмплов канонического прогона: только curated-метки, test-split при
+ * наличии. Reused by detector-compare-export.mjs — тот же корпус, что бенчмарк.
+ */
+export function selectBenchmarkSamples(samples) {
+  const curated = filterCuratedSamples(samples);
+  const withSplit = curated.filter((s) => s.split === 'test');
+  return {
+    testSamples: withSplit.length > 0 ? withSplit : curated,
+    skippedUnlabeled: samples.length - curated.length,
+  };
+}
+
 const SCAFFOLD_DETECTORS = [
   { name: 'clap', family: 'neural', status: 'scaffold' },
   { name: 'agentic-claude', family: 'agentic', status: 'scaffold' },
@@ -318,10 +339,7 @@ async function main() {
   const effectiveSamples = options.originLabels
     ? applyOriginLabels(manifest.samples)
     : manifest.samples;
-  const curated = filterCuratedSamples(effectiveSamples);
-  const withSplit = curated.filter((s) => s.split === 'test');
-  const testSamples = withSplit.length > 0 ? withSplit : curated;
-  const skippedUnlabeled = effectiveSamples.length - curated.length;
+  const { testSamples, skippedUnlabeled } = selectBenchmarkSamples(effectiveSamples);
   if (skippedUnlabeled > 0) {
     console.log(`Skipping ${skippedUnlabeled} unlabeled samples`);
   }

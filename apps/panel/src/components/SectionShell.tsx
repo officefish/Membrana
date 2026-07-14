@@ -5,6 +5,7 @@ import { canAccess, ROLE_LABELS } from '@/lib/roles';
 import { PANEL_SECTIONS, type PanelSection } from '@/lib/sections';
 import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
+import { DetectorCompareSection } from './detector-compare/DetectorCompareSection';
 
 /**
  * Shell авторизованного пользователя (OP3 + #454): навбар с ролью словом +
@@ -12,10 +13,14 @@ import { SectionCard } from './SectionCard';
  * router — одна страница, кнопка «назад»). Разделы без контента — заглушки.
  */
 
-/** Борды-потребители каркаса. Нет записи — раздел ещё заглушка (detector-compare — #452). */
+/** Борды-потребители каркаса. Нет записи — раздел ещё заглушка. */
 const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'drift-anchors': DriftAnchorsBoard,
+  'detector-compare': DetectorCompareSection,
 };
+
+/** Широкие борды: таблице сравнения тесно в max-w-3xl. */
+const WIDE_SECTIONS = new Set(['detector-compare']);
 
 export function SectionShell() {
   const { identity, logout } = usePanelAuth();
@@ -45,7 +50,7 @@ export function SectionShell() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-3xl px-4 py-8">
+      <main className={`mx-auto px-4 py-8 ${open && WIDE_SECTIONS.has(open.id) ? 'max-w-6xl' : 'max-w-3xl'}`}>
         {open && OpenBoard ? (
           <section aria-label={`Раздел «${open.title}»`} className="space-y-4">
             <div className="flex items-center gap-3">
