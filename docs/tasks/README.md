@@ -193,6 +193,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `qc-panel-boards` | qc-panel-boards: drift-борд + навигация shell в панели (QC1; detector-compare уступлен #452) | 2026-07-14 | [`QC_PANEL_BOARDS_PROMPT.md`](../docs/prompts/QC_PANEL_BOARDS_PROMPT.md) | #454 (Issue открыт) | [карточка](./archive/qc-panel-boards.md) |
 | `op1-panel-scaffold` | OP1: scaffold apps/panel — SPA по стеку кабинета, turbo, без cabinet internals | 2026-07-14 | [`OFFICE_PANEL_CONTOUR_PROMPT.md`](../docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md) | #438 (Issue открыт) | [карточка](./archive/op1-panel-scaffold.md) |
 | `op2-panel-auth` | OP2: auth-контур — предикат canAccess (public<ally<operator<owner), GitHub OAuth+allowlist, HMAC invite, httpOnly cookie, default-deny | 2026-07-14 | [`OFFICE_PANEL_CONTOUR_PROMPT.md`](../docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md) | #438 (Issue открыт) | [карточка](./archive/op2-panel-auth.md) |
 | `op3-panel-welcome-shell` | OP3: welcome-окно (public, язык ALLY_PRIMER) + shell разделов с бейджами уровней; состояния login/error/loading; a11y | 2026-07-14 | [`OFFICE_PANEL_CONTOUR_PROMPT.md`](../docs/prompts/OFFICE_PANEL_CONTOUR_PROMPT.md) | #438 (Issue открыт) | [карточка](./archive/op3-panel-welcome-shell.md) |
