@@ -12,13 +12,18 @@
  * Usage:
  *   yarn task:register --id <slug> --title "…" --size M [--issue N] [--kind day-sprint]
  *                      [--lead vesnin] [--support a,b] [--insight <id>] [--notes "…"]
- *                      [--prompt docs/prompts/X.md] [--push]
+ *                      [--prompt docs/prompts/X.md] [--research] [--push]
+ *
+ * --research (#514): в промпт кладётся заготовка секции «Вопросы для research».
+ * Вопросы формулирует агент из контекста спринта, затем `yarn research <id>`
+ * шлёт их в Perplexity. Флаг опт-ин: три рана на «расскажи про X вообще» — не ресёрч.
  */
 import { execSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { researchSectionStub } from './lib/deep-research.mjs';
 import {
   buildTaskEntry,
   insertTaskAtFront,
@@ -40,6 +45,7 @@ export function parseRegisterArgs(argv) {
     const val = eq ? eq[1] : argv[i + 1];
     if (!key) continue;
     if (key === 'push') { out.push = true; continue; }
+    if (key === 'research') { out.research = true; continue; }
     if (!eq) i++;
     if (key === 'support') out.support = val.split(',').map((s) => s.trim()).filter(Boolean);
     else out[key] = val;
@@ -91,8 +97,14 @@ if (isMain) {
     try {
       const template = readFileSync(resolve(root, 'docs/prompts/TASK_PROMPT_TEMPLATE.md'), 'utf8');
       mkdirSync(dirname(promptAbs), { recursive: true });
-      writeFileSync(promptAbs, renderTaskPromptStub(template, entry), 'utf8');
+      // --research (#514): к заготовке промпта добавляется секция вопросов —
+      // её заполняет агент из контекста, затем `yarn research <id>` шлёт их.
+      const stub = renderTaskPromptStub(template, entry);
+      writeFileSync(promptAbs, cli.research ? stub + researchSectionStub(entry) : stub, 'utf8');
       console.log(`Промпт-заготовка: ${entry.promptPath} — ЗАПОЛНИТЬ до кода`);
+      if (cli.research) {
+        console.log(`Deep research: заполни «Вопросы для research» → yarn research ${entry.id}`);
+      }
     } catch (e) {
       // Не роняем регистрацию: карточка уже записана, заготовку можно дописать руками.
       console.error(`Заготовка промпта не создана (${entry.promptPath}): ${e.message}`);

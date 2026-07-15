@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "deep-research-sprint-flag",
+      "title": "deep-research: скилл + флаг --research для старта спринта",
+      "promptPath": "docs/prompts/DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md",
+      "githubIssue": 516,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Строится на починенном #402: парсер резал многострочные вопросы, в Perplexity уходил обрывок (инцидент 12.07 — ответ про благотворительность), скрипт молча печатал успех. Машинерия не дублируется: тот же парсер/гард/каскад инсайтов читает промпт задачи. Флаг опт-ин; вопросы формулирует агент из контекста. Имя скилла с префиксом membrana- : deep-research занято встроенным скиллом Claude.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "hot-repo-flow",
       "title": "hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью",
       "promptPath": "docs/prompts/HOT_REPO_FLOW_PROMPT.md",
