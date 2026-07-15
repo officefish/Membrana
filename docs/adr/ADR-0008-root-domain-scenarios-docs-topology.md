@@ -49,16 +49,23 @@ office) ИЛИ докам понадобится auth/приватность —
 (CNAME → Mintlify) вместо subpath. **Инвариант:** пока subpath — доки ПУБЛИЧНЫ.
 
 ## Definition of Done (реализация docs-cutover)
-- [ ] **Owner-гейт:** DNS apex `membrana.space` → cabinet-VPS (ALIAS/CNAME-flattening).
-- [ ] Mintlify dashboard: base path `/scenarios/docs` + custom domain.
-- [ ] **Egress-preflight** с cabinet-VPS: `curl` к origin Mintlify (до cutover).
-- [ ] Caddy root-блок по рецепту Р1; `/scenarios/docs/*` до `/`.
+- [x] ~~DNS apex~~ — **уже есть**: `A @ membrana.space → 72.56.27.58` (продуктовый
+  VPS, там же cabinet+media). A-запись, ALIAS/flattening НЕ нужен. DNS корня не менять.
+- [ ] Cleanup DNS: удалить устаревшую `A office → 72.56.27.58` (office на `office.mmbrn.tech`).
+- [ ] Mintlify dashboard: base path `/scenarios/docs` + custom domain `membrana.space`.
+- [ ] **Egress-preflight** с 72.56.27.58: `curl` к origin Mintlify (до cutover).
+- [ ] Caddy site-блок `membrana.space` на 72.56.27.58: `/scenarios/docs/*` (proxy, Р1)
+  ДО `/` (лендинг, Р3) + `/downloads` (статика инсталляторов, решение владельца).
 - [ ] Live-валидация: ассеты/canonical под subpath не уехали в корень; POST-аналитика жива.
 
 ## Out of scope
 - Маркет `/scenarios/` (будущее). Лендинг Р3 — **отдельная карточка** `product-landing`.
-- Переезд media (`media.mmbrn.tech`? — решение владельца), чистка `office.membrana.space`.
-- Хостинг download-артефактов десктопа (GitHub Releases / VPS) — owner-вопрос для лендинга.
+
+## Решено владельцем (2026-07-15)
+- **media остаётся** на `media.membrana.space` (user-facing медиа/треки; будущий S3 — рано).
+- **Download-артефакты десктопа → `membrana.space/downloads`** (статика на 72.56.27.58,
+  хендлер root-блока). Ссылки загрузки лендинга (Р3) ведут туда.
+- **DNS apex уже настроен** (`A @ → 72.56.27.58`); чистка устаревшей `A office`.
 
 ## Ссылки
 - Консилиум: `docs/seanses/root-domain-topology-scenarios-docs-2026-07-15.md`

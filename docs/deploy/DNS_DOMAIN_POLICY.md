@@ -29,9 +29,25 @@
 | `cabinet.membrana.space` | `@membrana/cabinet` (клиентский кабинет) | ✅ |
 | `cabinet-api.membrana.space` | cabinet API | ✅ |
 | `media.membrana.space` | `@membrana/background-media` — медиафайлы, в т.ч. **пользовательские треки** | ✅ **остаётся** (решение владельца 2026-07-15: media = реально media, user-facing; НЕ фон) |
-| `www.membrana.space` / корень | лендинг | 🔜 планируется (роадмап: лендинг → кабинет + скачать десктоп) |
-| `membrana.space/scenarios/` | community-маркет пользовательских сценариев | 🔮 будущее |
-| `membrana.space/scenarios/docs` | документация (сейчас Mintlify) | 🎯 желаемое (консилиум по хостингу) |
+| `membrana.space` (apex, `@`) + `www` | лендинг + root-Caddy (docs-proxy, downloads) | 🔜 A-запись УЖЕ есть; нужен Caddy-блок |
+| `membrana.space/scenarios/docs` | документация (Mintlify subpath-proxy, ADR-0008) | 🎯 |
+| `membrana.space/downloads` | инсталляторы клиентов (десктоп Studio) — статика | 🔜 (решение владельца 2026-07-15) |
+| `membrana.space/scenarios/` | community-маркет сценариев | 🔮 будущее |
+
+### Текущие DNS-записи (reg.ru, ns1/ns2.reg.ru) — @2026-07-15
+
+| Запись | Значение | Комментарий |
+|--------|----------|-------------|
+| `A @` (apex) | `72.56.27.58` | ✅ **корень уже указывает на продуктовый VPS** (A-запись, ALIAS не нужен) |
+| `A cabinet` | `72.56.27.58` | ✅ |
+| `A media` | `72.56.27.58` | ✅ |
+| `A www` | `72.56.27.58` | ✅ |
+| `A office` | `72.56.27.58` | ⚠️ **УСТАРЕЛА** — office переехал на `office.mmbrn.tech` (176.124.218.4); удалить |
+
+**Ключевое:** `72.56.27.58` = продуктовый VPS (cabinet + media + postgres; office
+с него снят при миграции #349, media/cabinet не тронуты). Apex `membrana.space` уже
+резолвится сюда → **DNS для корня менять НЕ надо**, остаётся добавить Caddy site-блок
+`membrana.space` на 72.56.27.58 (лендинг `/` + `/scenarios/docs` proxy + `/downloads`).
 
 ### Устаревшее (почистить)
 | Артефакт | Причина |
