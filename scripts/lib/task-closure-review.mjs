@@ -248,12 +248,16 @@ export function buildTaskClosureReviewPrompt({
 export function hasP0P1Blockers(p0p1Line) {
   const line = String(p0p1Line ?? '').trim();
   if (!line) return false;
-  // Без `\b`: в JS он определён по ASCII, поэтому после кириллического «нет»
-  // границы слова НЕТ вообще, и отрицание не распознавалось. Лукахед на
-  // «дальше не буква и не цифра» работает и для «—», и для «нет», и для «none».
-  return !/^(?:[—–-]|(?:none|нет|no|n\/a|н\/д|отсутствуют|не выявлено|не найдено)(?![\p{L}\p{N}]))/iu.test(
-    line,
-  );
+
+  // Тире засчитывается ТОЛЬКО одиноко: «- гонка в сторе» — это markdown-пункт с
+  // настоящим блокером, а не отрицание. Иначе гард стал бы fail-open и пропустил
+  // бы P0 в LGTM — хуже исходного бага.
+  if (/^[—–-]$/u.test(line)) return false;
+
+  // Словесное отрицание может нести пояснение: «нет (P1 из ревью OP5 закрыт)».
+  // Без `\b`: в JS он определён по ASCII, после кириллического «нет» границы слова
+  // нет вовсе. Лукахед «дальше не буква и не цифра» работает и для «нет», и для «none».
+  return !/^(?:none|нет|no|n\/a|н\/д|отсутствуют|не выявлено|не найдено)(?![\p{L}\p{N}])/iu.test(line);
 }
 
 export function parseTeamleadReview(body, expectedTaskId, expectedCommitSha, expectedTier) {
