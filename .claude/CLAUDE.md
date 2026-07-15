@@ -30,6 +30,26 @@ Rules:
 - Commit `docs/seanses/team-evening-feedback-<date>.md` after a successful run.
 - Do not skip silently — if blocked, tell the user explicitly and offer `--dry` fallback.
 
+## Mandatory: Partner digest (ласточка) — утром И вечером
+
+**Партнёрский ритуал-дайджест — обязательство, не best-effort.** Дважды в день в
+приватную группу союзников уходит выжимка: утром план (`--kind day`), вечером итоги
+(`--kind evening`). Дайджест **детерминирован** (кредит НЕ нужен), но читает артефакт
+ритуала, поэтому запускать его надо **ПОСЛЕ** появления артефакта:
+
+- Утро — после `docs/MAIN_DAY_ISSUE.md`: `yarn telegram:digest:day`
+- Вечер — после `docs/seanses/team-evening-feedback-<date>.md`: `yarn telegram:digest:evening`
+
+Rules:
+- Шаг в цепочке `ritual:day/evening` обёрнут `|| true` (не блокирует ритуал) —
+  **это best-effort, НЕ подтверждение.** Обязательство — запустить дайджест явно
+  ПОСЛЕ артефакта и **убедиться в `sent=true`**.
+- В fallback-режиме (кредит пуст) артефакт создаётся вручную → цепочечный дайджест
+  пропускается («нет артефакта»); тогда запустить явно после написания артефакта.
+- Office транзиентно таймаутит (`office недоступен`) — **повторить** (проверить
+  `https://office.mmbrn.tech/health`), не оставлять партнёров без дайджеста.
+- Не скипать молча — если office мёртв, сказать владельцу.
+
 ## Parallel sessions
 
 **Второй и последующие агенты — всегда в отдельном worktree** (`membrana-worktree`),
