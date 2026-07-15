@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "pc2-periodic-window-gate",
+      "title": "PC-2: узел is-window-elapsed — периодический гейт окна без рекордера (спектр перестаёт тащить рекордер как часы)",
+      "promptPath": "docs/prompts/PC2_PERIODIC_WINDOW_GATE_PROMPT.md",
+      "githubIssue": 493,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Фаза PC-2 спринта palette-clarity-nodes #493. Консилиум pc2-periodic-window-gate-2026-07-15 (22 реплики): НОВЫЙ узел is-window-elapsed (periodic-гейт по host-часам, вход windowMs, выходы exec true/false, per-node окно, БЕЗ RecorderRef) — не обобщение is-recording-window-full. Граница: onTick=pacing, is-window-elapsed=гейт. Реализация: SCENARIO_NODE_KINDS + host-хук + пересборка usercase-free-spectrum-live. OUT: alarm-loop, долг collectorConfig.windowSec (F2 path-specific). Старт реализации — LGTM владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "repo-clean",
       "title": "repo-clean: yarn repo:clean — классификация веток по состоянию PR + гарды (персона-ветки, worktree, незапушенное) + чистка 93 мёртвых веток и 4 worktree",
       "promptPath": "docs/prompts/REPO_CLEAN_PROMPT.md",
