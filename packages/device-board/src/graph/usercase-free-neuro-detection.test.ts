@@ -291,21 +291,27 @@ describe('usercase-free-neuro-detection (Cowork Phase 2)', () => {
     expect(main.edges.some((e) => e.kind === 'exec' && e.source === NEURO_MAIN.printUnavailable)).toBe(false);
   });
 
-  it('N1 нейро-отчёт: MakeCombinedReport(reporter + нейро-анализ + трек), analysis-2 молчит', () => {
+  it('ADR-0006 нейро-отчёт: MakeReportFromAnalysis(reporter + один нейро-анализ), НЕ combined', () => {
+    // Честный узел одиночного детектора, а не MakeCombinedReport (узел не врёт «combined»).
+    expect(nodeById(main, NEURO_MAIN.report).nodeKind).toBe('make-report-from-analysis');
     for (const [handle, source] of [
       ['reporter', MVP_MAIN_ANCHORS.getReporter],
-      ['analysis-1', NEURO_MAIN.ensemble],
-      ['track', MVP_MAIN_ANCHORS.makeTrack],
+      ['analysis', NEURO_MAIN.ensemble],
     ] as const) {
       expect(
         findEdge(main, { kind: 'data', source, target: NEURO_MAIN.report, targetHandle: handle }),
         handle,
       ).toBeDefined();
     }
-    // модальность одна → второй вход анализа не подключён by design
-    expect(
-      main.edges.some((e) => e.kind === 'data' && e.target === NEURO_MAIN.report && e.targetHandle === 'analysis-2'),
-    ).toBe(false);
+    // Одиночный отчётник: ни второго анализа (combined-вход), ни трека.
+    for (const absent of ['analysis-1', 'analysis-2', 'track'] as const) {
+      expect(
+        main.edges.some((e) => e.kind === 'data' && e.target === NEURO_MAIN.report && e.targetHandle === absent),
+        absent,
+      ).toBe(false);
+    }
+    // Во всём графе нет узла make-combined-report (нейро-одиночка его больше не носит).
+    expect(main.nodes.some((n) => n.nodeKind === 'make-combined-report')).toBe(false);
   });
 
   it('L25: публикация нейро-отчёта — detached через report-build job', () => {

@@ -166,8 +166,8 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
     // ── Честный fallback: модель ответила? (N2) ──
     node(NEURO_MAIN.modelGate, 'is-valid', 'isValid (нейро-модель ответила?)', 2008, -760),
     node(NEURO_MAIN.printUnavailable, 'print', 'Print: ⚠️ нейро-модель недоступна', 2344, -616),
-    // ── Нейро-отчёт: sync-конструктор + report-build async job ──
-    node(NEURO_MAIN.report, 'make-combined-report', 'MakeCombinedReport (нейро-отчёт)', 2344, -880, asyncCapable),
+    // ── Нейро-отчёт: одиночный детектор (ADR-0006 — не combined, одна модальность) ──
+    node(NEURO_MAIN.report, 'make-report-from-analysis', 'MakeReportFromAnalysis (нейро-отчёт)', 2344, -880, asyncCapable),
     node(NEURO_MAIN.reportJob, 'start-async-job', 'StartAsyncJob (report-build)', 2680, -880, {
       ...asyncCapable,
       asyncJobConfig: { jobKind: 'report-build' },
@@ -201,10 +201,11 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
     data(MVP_MAIN_ANCHORS.collectSamples, 'batches', NEURO_MAIN.ensemble, 'samples', 'AudioSampleRefList'),
     // гейт модели — нетипизированное ребро (N2)
     dataUntyped(NEURO_MAIN.ensemble, 'analysis', NEURO_MAIN.modelGate, 'value'),
-    // data: нейро-отчёт (reporter + нейро-анализ + трек); analysis-2 молчит by design (N1)
+    // data: нейро-отчёт одиночного детектора (ADR-0006): reporter + один нейро-анализ.
+    // Вход `analysis` обобщённый (DetectionAnalysisRef) — принимает EnsembleAnalysisRef.
+    // Ни analysis-2, ни track: одна модальность, честный отчёт без «combined».
     data(MVP_MAIN_ANCHORS.getReporter, 'reporter', NEURO_MAIN.report, 'reporter', 'ReporterRef'),
-    data(NEURO_MAIN.ensemble, 'analysis', NEURO_MAIN.report, 'analysis-1', 'DetectionAnalysisRef'),
-    data(MVP_MAIN_ANCHORS.makeTrack, 'track', NEURO_MAIN.report, 'track', 'TrackRef'),
+    data(NEURO_MAIN.ensemble, 'analysis', NEURO_MAIN.report, 'analysis', 'DetectionAnalysisRef'),
     // data: async publish
     data(NEURO_MAIN.reportJob, 'promise', NEURO_MAIN.onReportBuilt, 'promise', 'PromiseRef'),
     data(MVP_MAIN_ANCHORS.journalVarGet, 'value', NEURO_MAIN.publishNeuro, 'journal', 'JournalRef'),
@@ -257,9 +258,9 @@ function transformCommentGroups(
       ],
       frameColor: { preset: 'secondary' },
       description:
-        'Отчёт (нейро-анализ + трек) создаётся sync-конструктором и публикуется detached ' +
-        'через report-build job — main loop не ждёт. Вход analysis-2 молчит by design: ' +
-        'модальность одна. Дубли исключены: host кэширует по хэшу входов.',
+        'Отчёт ОДИНОЧНОГО нейро-детектора (ADR-0006): MakeReportFromAnalysis, не ' +
+        'MakeCombinedReport — модальность одна, узел не врёт «combined». Публикуется ' +
+        'detached через report-build job (main loop не ждёт). Схема neuro-detection/v1.',
     },
   ];
   return [...kept, ...neuroGroups];

@@ -25,4 +25,5 @@
 
 | ADR | Дата | Статус | Тема |
 |-----|------|--------|------|
+| [ADR-0006](./ADR-0006-single-detector-report-node.md) | 2026-07-15 | DRAFT | PC-1: отчёт одиночного детектора — расширить `make-report-from-analysis` до `DetectionAnalysisRef`, не вводить новый узел |
 | [loop-switch-control](../actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | 2026-07-11 | DRAFT | Переключение лупов main↔alarm: тумблер/захват/узлы (пример формата; исторически вне `docs/adr/`) |

@@ -13,6 +13,8 @@ export const SCENARIO_REPORT_SCHEMAS = [
   'trends-fft/v0.1',
   /** basn-5: единый combined-отчёт (2 анализа + трек + fusion). */
   'combined-detection/v1',
+  /** ADR-0006 PC-1: отчёт одиночного нейро-детектора (одна модальность, без combined). */
+  'neuro-detection/v1',
 ] as const;
 
 export type ScenarioReportSchema = (typeof SCENARIO_REPORT_SCHEMAS)[number];

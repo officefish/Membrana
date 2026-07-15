@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "pc1-single-detector-report",
+      "title": "PC-1: отчёт одиночного детектора — make-report-from-analysis принимает DetectionAnalysisRef (ADR-0006), нейро-FREE-граф без combined-отчёта",
+      "promptPath": "docs/prompts/PC1_SINGLE_DETECTOR_REPORT_PROMPT.md",
+      "githubIssue": 493,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin",
+        "rodchenko",
+        "dynin"
+      ],
+      "notes": "Фаза PC-1 спринта palette-clarity-nodes #493. ADR-0006 (DRAFT). Вариант A: расширить make-report-from-analysis до DetectionAnalysisRef (не новый узел — B был бы консилиум-гейт). Аддитивный ensemble-путь в рантайме (trend-путь не трогаем, нулевой риск), новый host-хук makeReportFromEnsembleAnalysis, честный отчёт neuro-detection/v1 без combined. Нейро-FREE-граф переходит с make-combined-report на make-report-from-analysis. Кросс-пакет: core socket + device-board executor + host + client bridge + graph.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "batch-collection-run-contour",
       "title": "batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл)",
       "promptPath": "docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md",
