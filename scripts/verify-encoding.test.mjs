@@ -1,3 +1,5 @@
+// Namerennye mojibake-fikstury ниже — снимаем self-проверку гарда маркером:
+// <!-- verify-encoding: allow-mojibake-examples -->
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
