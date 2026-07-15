@@ -18,6 +18,9 @@ import {
   loadDotEnv,
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
+// Занятость ветки соседним worktree уже решена в pr:ship (#476 п.2) — берём оттуда,
+// а не пишем второй раз: разъехались бы, как разъехались бы pr:land и pr:ship.
+import { isBaseHeldElsewhere, otherWorktreeBranches } from './pr-ship.mjs';
 
 function parseArgs(argv) {
   const noAnthropic = argv.includes('--no-anthropic');
@@ -264,6 +267,21 @@ function ensureWorkBranch(cwd, branchName) {
       return { ok: true, detail: `уже на ${branchName}, ${pull.detail}` };
     }
     return { ok: false, detail: `на ${branchName}, но pull не удался` };
+  }
+
+  // Ветку держит соседний worktree — checkout невозможен физически (одна ветка не
+  // может быть в двух деревьях), и это норма при параллельных сессиях (канон
+  // membrana-worktree), а не сбой. Раньше ритуал рвался здесь на ровном месте:
+  // при параллельной работе main почти всегда занят соседом (#515 п.2, живой
+  // случай 15.07). Проверяем ДО checkout, а не ловим текст ошибки git: он
+  // локализуем и контрактом не является.
+  const heldBy = otherWorktreeBranches();
+  if (isBaseHeldElsewhere(branchName, heldBy)) {
+    return {
+      ok: false,
+      skipped: true,
+      detail: `${branchName} держит другой worktree (параллельная сессия) — остаёмся на ${current || '(detached)'}`,
+    };
   }
 
   let dirty = false;
