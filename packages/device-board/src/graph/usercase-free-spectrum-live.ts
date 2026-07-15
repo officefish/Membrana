@@ -16,9 +16,9 @@ import { DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT } from './default-usercase-mvp
  *
  * Деривация MVP-канона (а не ручная сборка — урок L36: Alpha не стартовала из-за
  * неканонических entry-id). Из `DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT` берётся
- * байт-в-байт ВСЁ, кроме главного лупа: bootstrap, onConnect-журнал, teardown,
- * функции fn-1/fn-3, переменные, signalGraph и alarm (в каноне alarm — уже пустая
- * заглушка `alarm-on-tick → ∞`, поэтому «без alarm-loop» = ничего не делать).
+ * байт-в-байт onConnect-журнал, teardown, функция fn-3 (GetAudioStream), переменные,
+ * signalGraph и alarm (в каноне alarm — уже пустая заглушка `alarm-on-tick → ∞`,
+ * поэтому «без alarm-loop» = ничего не делать). Bootstrap и главный луп деривируются.
  *
  * Main = MVP-main минус трековая ветвь (CollectSamples → MakeTrack → async
  * track-upload → MakeReportFromTrack → PublishReport): трек — модальность соседнего
@@ -26,8 +26,17 @@ import { DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT } from './default-usercase-mvp
  * MVP-каноне нет, они появляются только в combined-деривации.
  *
  * Main: onTick → fn-3(GetAudioStream) → GetSample → GetFFTFrame → CollectFftFrames
- * → IsWindowElapsed(4 c, host-clock) → Sequence[stop | flush → isValid → trends → isValid
- * → MakeReportFromAnalysis → PublishReport → Print | restart] → ∞.
+ * → IsWindowElapsed(4 c, host-clock) → Sequence[flush → isValid → trends → isValid
+ * → MakeReportFromAnalysis → PublishReport → Print | restartStream] → ∞.
+ *
+ * PC-2c (владелец 2026-07-15): аудиопоток (StartStreaming / GetAudioStream) —
+ * ТРАНСЛЯЦИЯ звука, а не ЗАПИСЬ трека (StartRecording / StopRecording). Трек в спектр-
+ * графе уже снят при декомпозиции (MakeTrack нет), поэтому StartRecording/StopRecording
+ * крутили сессию записи вхолостую (slice питал только снятый MakeTrack) → устарели и вычтены из ЭТОГО
+ * графа: наблюдению нужен только поток → FFT → отчёт, БЕЗ записи. Вычтено в трёх местах —
+ * bootstrap-вызов StartRecording, Sequence-then StopRecording и рестарт-вызов
+ * StartRecording; функция fn-1 (StartRecording) больше не зовётся → удалена целиком.
+ * Узлы палитры start-/stop-recording живут в других графах (backward-compat) — не трогаются.
  *
  * PC-2b (консилиум pc2b-spectrum-window-rebuild 2026-07-15): владелец времени лупа —
  * периодический is-window-elapsed по host-часам, а не «рекордер как часы». Спектр
@@ -72,6 +81,23 @@ export const REMOVED_MVP_WINDOW_CLOCK_NODE_IDS = [
 ] as const;
 
 /**
+ * Узлы записи MVP-main, снятые деривацией PC-2c: поток ≠ запись. Slice StopRecording
+ * питал ТОЛЬКО MakeTrack, снятый при декомпозиции трека, — потребителя не осталось,
+ * сессия записи крутилась вхолостую.
+ *
+ * ВНИМАНИЕ: только для main. Bootstrap-вызов записи (fn-1-block в initial) снимает
+ * `transformInitialBootstrap`, определение функции fn-1 — фильтр в build (нигде не зовётся).
+ */
+export const REMOVED_MVP_RECORDING_NODE_IDS = [
+  /** StopRecording (Sequence then-0) — slice не подключён, звук не выгружается. */
+  'node-stop-recording-mqmod4yf-35',
+  /** StartRecording::fn-1 в рестарт-цепочке — рестарт перезапускает ПОТОК, не запись. */
+  'fn-1-block',
+  /** GetDevice, питавший device-пин только StartRecording-рестарта — иначе сирота. */
+  'node-device-global-mqs5ibg8-126',
+] as const;
+
+/**
  * Опорные узлы MVP-main, сохраняемые байт-в-байт: спектральная цепочка,
  * stop-секция сессии и report-секция анализа.
  */
@@ -84,12 +110,9 @@ export const MVP_MAIN_ANCHORS = {
   sample: 'node-get-sample-mqs2mt0a-165',
   frame: 'node-get-fft-frame-mqs3h75e-166',
   collectFrames: 'node-collect-fft-frames-mqs3hhnu-167',
-  /** StopRecording остаётся якорем: Sequence then-0 гасит сессию записи (звук не выгружается). */
-  stopRecording: 'node-stop-recording-mqmod4yf-35',
   sequence: 'node-sequence-gate-v20-async',
-  /** Рестарт окна (L35: у каждого stop есть exec-путь к start после себя). */
+  /** Рестарт ПОТОКА после отчёта (PC-2c: запись не перезапускается — трека нет). */
   restartStreamFn: 'fn-3-block-2',
-  restartRecordingFn: 'fn-1-block',
   flush: 'node-flush-spectral-analyser-mqs6tcs6-172',
   trendsPolicy: 'node-make-fft-trends-policy-mqs6wrpr-175',
   trendsAnalysis: 'node-make-fft-trends-analysis-mqs6vdme-174',
@@ -138,8 +161,8 @@ export const SPECTRUM_LIVE_TRENDS_POLICY = {
   enabledTemplateKeys: ['DRONE_TIGHT', 'WIND', 'QUIET', 'TRAFFIC', 'BIRDS', 'VOICE'],
 } as const;
 
-/** Sequence после переиндексации: stop | наблюдение | рестарт (было 4 с треком). */
-export const SPECTRUM_LIVE_SEQUENCE_THEN_COUNT = 3;
+/** Sequence после переиндексации: наблюдение | рестарт потока (было 4 — с треком и записью). */
+export const SPECTRUM_LIVE_SEQUENCE_THEN_COUNT = 2;
 
 type MutableSubgraph = {
   entry: string;
@@ -207,6 +230,7 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
   const removed = new Set<string>([
     ...REMOVED_MVP_TRACK_NODE_IDS,
     ...REMOVED_MVP_WINDOW_CLOCK_NODE_IDS,
+    ...REMOVED_MVP_RECORDING_NODE_IDS,
   ]);
 
   const keptNodes = main.nodes
@@ -219,7 +243,7 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
           fftTrendsPolicy: { ...n.fftTrendsPolicy, ...SPECTRUM_LIVE_TRENDS_POLICY },
         } satisfies ScenarioGraphNode;
       }
-      // Sequence: трековая then-ветвь выброшена → 4 → 3 (переиндексация ниже).
+      // Sequence: трековая then-ветвь и StopRecording выброшены → 4 → 2 (переиндексация ниже).
       if (n.id === MVP_MAIN_ANCHORS.sequence && n.sequenceConfig !== undefined) {
         return {
           ...n,
@@ -266,10 +290,11 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
     exec(SPECTRUM_LIVE_MAIN.windowElapsed, MVP_MAIN_ANCHORS.sequence, 'exec-true-out'),
     exec(SPECTRUM_LIVE_MAIN.windowElapsed, MVP_MAIN_ANCHORS.infinity, 'exec-false-out'),
 
-    // Sequence после переиндексации (была then-1 = MakeTrack — выброшена).
-    exec(MVP_MAIN_ANCHORS.sequence, MVP_MAIN_ANCHORS.stopRecording, 'then-0'),
-    exec(MVP_MAIN_ANCHORS.sequence, MVP_MAIN_ANCHORS.flush, 'then-1'),
-    exec(MVP_MAIN_ANCHORS.sequence, MVP_MAIN_ANCHORS.restartStreamFn, 'then-2'),
+    // Sequence после переиндексации PC-2c: сняты then-0 StopRecording и then-1 MakeTrack;
+    // остаются наблюдение (flush) и рестарт потока, contiguous — без дыры then (L35).
+    // Рестарт на последней (latent) then-1, как и в каноне: рестарт всегда хвост Sequence.
+    exec(MVP_MAIN_ANCHORS.sequence, MVP_MAIN_ANCHORS.flush, 'then-0'),
+    exec(MVP_MAIN_ANCHORS.sequence, MVP_MAIN_ANCHORS.restartStreamFn, 'then-1'),
     exec(MVP_MAIN_ANCHORS.sequence, MVP_MAIN_ANCHORS.infinity, 'exec-out'),
 
     // Наблюдение: flush → гейт пустого окна → тренды → гейт анализа → отчёт.
@@ -304,11 +329,28 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
   };
 }
 
+/**
+ * Bootstrap (initial): снять вызов StartRecording (PC-2c). В каноне цепочка bootstrap —
+ * GetMicrophone → StartStreaming → fn-1(StartRecording), причём fn-1-block здесь ХВОСТ
+ * (exec-out нет — StartRecording ничего не звал дальше). Поэтому «перевесить на следующий
+ * за fn-1 узел» нечего: узел записи и все его рёбра (1 exec + 2 data) просто снимаются,
+ * StartStreaming остаётся хвостом bootstrap — поток продолжает жить БЕЗ записи.
+ */
+function transformInitialBootstrap(initial: ScenarioSubgraph): ScenarioSubgraph {
+  const recordingCall = 'fn-1-block';
+  return {
+    ...initial,
+    nodes: initial.nodes.filter((n) => n.id !== recordingCall),
+    edges: initial.edges.filter((e) => e.source !== recordingCall && e.target !== recordingCall),
+  };
+}
+
 /** Comment groups: MVP-группы без вычтенных узлов + группы блока. */
 function transformCommentGroups(groups: readonly ScenarioCommentGroup[]): ScenarioCommentGroup[] {
   const removed = new Set<string>([
     ...REMOVED_MVP_TRACK_NODE_IDS,
     ...REMOVED_MVP_WINDOW_CLOCK_NODE_IDS,
+    ...REMOVED_MVP_RECORDING_NODE_IDS,
   ]);
   const kept = groups.filter((group) => !group.nodeIds.some((id) => removed.has(id)));
   const spectrumGroups: ScenarioCommentGroup[] = [
@@ -317,12 +359,12 @@ function transformCommentGroups(groups: readonly ScenarioCommentGroup[]): Scenar
       branch: 'main',
       title: 'Окно наблюдения (host-часы, без записи)',
       rect: { x: -320, y: -880, width: 900, height: 400 },
-      nodeIds: [SPECTRUM_LIVE_MAIN.windowElapsed, MVP_MAIN_ANCHORS.stopRecording, MVP_MAIN_ANCHORS.sequence],
+      nodeIds: [SPECTRUM_LIVE_MAIN.windowElapsed, MVP_MAIN_ANCHORS.sequence],
       frameColor: { preset: 'secondary' },
       description:
         'Периодическое окно наблюдения 4 c по host-часам (IsWindowElapsed) — без записи и без ' +
-        'рекордера: наблюдению нужно ОКНО кадров, а не трек. StopRecording в then-0 лишь гасит ' +
-        'сессию записи, звук никуда не выгружается — slice намеренно не подключён.',
+        'рекордера: наблюдению нужно ОКНО кадров, а не трек. Sequence раскрывает цикл наблюдения ' +
+        '(flush → анализ → отчёт) и перезапуск ПОТОКА — запись (StartRecording/StopRecording) снята (PC-2c).',
     },
     {
       id: 'spectrum-live-group-observation',
@@ -350,9 +392,10 @@ function transformCommentGroups(groups: readonly ScenarioCommentGroup[]): Scenar
 function buildFreeSpectrumLiveDocument(): DeviceScenarioDocument {
   const base = structuredClone(DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT) as DeviceScenarioDocument;
 
-  // initial / onConnect / triggers / functions / variables / signalGraph / alarm —
-  // канон байт-в-байт. Alarm в MVP уже пуст (alarm-on-tick → ∞): «без alarm-loop»
-  // выполняется тем, что мы его не трогаем.
+  // onConnect / triggers / variables / signalGraph / alarm — канон байт-в-байт. Alarm в
+  // MVP уже пуст (alarm-on-tick → ∞): «без alarm-loop» = мы его не трогаем. Bootstrap,
+  // main и functions деривируются: PC-2c снимает запись во всех трёх местах, а функция
+  // fn-1 (StartRecording) больше не зовётся ни из bootstrap, ни из рестарта → удаляется.
   return {
     ...base,
     meta: {
@@ -361,6 +404,8 @@ function buildFreeSpectrumLiveDocument(): DeviceScenarioDocument {
     },
     scenario: {
       ...base.scenario,
+      initial: transformInitialBootstrap(base.scenario.initial),
+      functions: base.scenario.functions.filter((fn) => fn.id !== 'fn-1'),
       loops: {
         ...base.scenario.loops,
         main: transformMainLoop(base.scenario.loops.main),
