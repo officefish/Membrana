@@ -388,10 +388,11 @@ Score(team) = \sum_{jury} \sum_{criterion} weight_c \times score_{team,jury,c}
 
 | Команда | Действие |
 |---------|----------|
-| `yarn comp:open --id <sprint-id>` | Brief check, ACTIVE.md, BASE_SHA, напоминание создать 3 ветки |
-| `yarn comp:phase --id <sprint-id> --set 2a` | Обновить phase в ACTIVE |
-| `yarn comp:score --id <sprint-id> --dry` | Проверить SCORECARD arithmetic |
-| `yarn comp:close --id <sprint-id>` | WINNER required, archive ACTIVE → `docs/archive/competition-sprint/<date>/` |
+| `yarn comp:open --id <sprint-id>` | **Реализовано.** Brief check, ACTIVE.md, BASE_SHA, напоминание создать 3 ветки |
+| `yarn comp:publish-catalog` | **Реализовано.** Публикация каталога победителя (см. `membrana-competition-packaging`) |
+| `yarn comp:phase --id <sprint-id> --set 2a` | **Не реализовано (бэклог).** Обновить phase в ACTIVE — сейчас правится руками |
+| `yarn comp:score --id <sprint-id> --dry` | **Не реализовано (бэклог).** Проверить SCORECARD arithmetic — сейчас вручную |
+| `yarn comp:close --id <sprint-id>` | **Не реализовано (бэклог).** WINNER + archive ACTIVE → `docs/archive/competition-sprint/<date>/` — сейчас вручную |
 
 *(Скрипты — follow-up; регламент valid без них.)*
 

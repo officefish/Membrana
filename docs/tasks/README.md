@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `docs-canon-drift` | docs-canon-drift: канон обещает то, чего нет — §7а персона-веток, 4 расхождения в регламентах, гард docs:verify-canon | S | [`DOCS_CANON_DRIFT_PROMPT.md`](../docs/prompts/DOCS_CANON_DRIFT_PROMPT.md) | [#497](https://github.com/officefish/Membrana/issues/497) |
 | `batch-collection-run-contour` | batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл) | L | [`BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](../docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) | [#494](https://github.com/officefish/Membrana/issues/494) |
 | `palette-clarity-nodes` | palette-clarity-nodes: узлы наглядности FREE-графов (PC-1 отчёт одиночного детектора вес ADR, PC-2 периодический гейт без рекордера вес консилиума) | L | [`PALETTE_CLARITY_NODES_PROMPT.md`](../docs/prompts/PALETTE_CLARITY_NODES_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |

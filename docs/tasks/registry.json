@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "docs-canon-drift",
+      "title": "docs-canon-drift: канон обещает то, чего нет — §7а персона-веток, 4 расхождения в регламентах, гард docs:verify-canon",
+      "promptPath": "docs/prompts/DOCS_CANON_DRIFT_PROMPT.md",
+      "githubIssue": 497,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "Побочный результат ревизии #492. Диагноз: не «доки отстали», а канон, который не был правдой — спорные команды НИКОГДА не существовали (0 коммитов по git log -S). Персонажи как роли живы (leadPersona в каждой карточке, ролевое ревью), мёртв только ветковый механизм §7а: 1 PR из 330 (#132), vesnin нет нигде (404), dynin только локально. Разбор по случаям дал 2 ложных срабатывания аудита: REMOTE_NIGHT_CODER — проектный бриф (показывает предлагаемые записи package.json), VDR_VALIDATION_SCOPE_BRIEF сам пишет «не существуют». Отсюда требование к гарду: уважать честные пометки (не существует/Запланировано/optional) и НЕ сканировать архивы — их правка = фальсификация истории. Out of scope: реализация comp:phase/score/close и insight:research/review (отдельные спринты), оживление веткового механизма (консилиум).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "batch-collection-run-contour",
       "title": "batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл)",
       "promptPath": "docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md",
