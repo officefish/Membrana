@@ -20,6 +20,7 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 import {
   archiveCardPath,
   extractGithubIssueReport,
+  findEpicIssueCollisions,
   listPendingGithubClose,
   loadRegistry,
   saveRegistry,
@@ -81,6 +82,27 @@ loadDotEnv(repoRoot);
 
 const registry = loadRegistry();
 const pending = listPendingGithubClose(registry);
+
+// Ретро #485 п.5: фаза с githubIssue эпика закрыла бы Issue ВСЕГО эпика. Такие
+// задачи в очередь не попадают (listPendingGithubClose) — но молчать о них нельзя,
+// иначе поле так и останется битым и всплывёт на следующем эпике.
+const blocked = findEpicIssueCollisions(registry).filter(
+  (t) => t.status === 'archived' && !t.githubIssueClosedAt,
+);
+if (blocked.length > 0) {
+  console.warn(`\n⚠ Не закрываю ${blocked.length}: фаза носит githubIssue своего эпика.`);
+  console.warn('  Закрытие оборвало бы весь эпик, а не фазу. Почините поле в registry.json:');
+  console.warn('  githubIssue фазы → null (если своего Issue нет) либо номер СВОЕГО Issue.');
+  const byEpic = new Map();
+  for (const t of blocked) {
+    if (!byEpic.has(t.parentEpic)) byEpic.set(t.parentEpic, []);
+    byEpic.get(t.parentEpic).push(t.id);
+  }
+  for (const [epic, ids] of byEpic) {
+    console.warn(`    • эпик ${epic} (#${registry.tasks.find((t) => t.id === epic)?.githubIssue}): ${ids.join(', ')}`);
+  }
+  console.warn('');
+}
 
 if (pending.length === 0) {
   console.log('Очередь пуста: нет архивных задач с открытым GitHub Issue.');
