@@ -8,7 +8,6 @@ import {
 } from '@membrana/core';
 
 import { DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT } from './default-usercase-mvp-microphone.generated.js';
-import { stampCompetitionDocumentMeta } from './execution-policy.js';
 
 /**
  * Block `neuro-detection` · Cowork Sprint `cowork-free-fragment-usercases` (#487) —
@@ -289,7 +288,12 @@ function buildFreeNeuroDetectionDocument(): DeviceScenarioDocument {
     },
   };
 
-  return stampCompetitionDocumentMeta(document);
+  // Адаптер интеграции (INTERFACE_CONTRACT §5): FREE-шаблоны НЕ несут
+  // competition-meta — `executionPolicy: 'competition'` включил бы
+  // `isCompetitionStructureLocked` и заблокировал delete/collapse/paste у
+  // бесплатного пользователя, что противоречит смыслу FREE. Блок наследовал штамп
+  // из приёма Beta; вердикт консилиума Phase 3 — не штамповать (как spectrum/sample).
+  return document;
 }
 
 let cachedDocument: DeviceScenarioDocument | null = null;

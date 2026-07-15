@@ -87,7 +87,10 @@ describe('usercase-free-neuro-detection (Cowork Phase 2)', () => {
     expect(document.deviceKind).toBe('microphone');
     expect(main.nodes.length).toBeGreaterThan(0);
     expect(document.meta?.title).toBe('FREE · Нейро-детекция (yamnet)');
-    expect(document.meta?.executionPolicy).toBe('competition');
+    // Адаптер интеграции (INTERFACE_CONTRACT §5): FREE-шаблон НЕ competition —
+    // иначе isCompetitionStructureLocked заблокировал бы правку структуры у
+    // бесплатного пользователя. Гард против регресса штампа.
+    expect(document.meta?.executionPolicy).not.toBe('competition');
   });
 
   it('чистая валидация документа — ноль ошибок (links, structure, parameters)', () => {
