@@ -1,15 +1,57 @@
 {
   "tasks": [
     {
+      "id": "batch-collection-run-contour",
+      "title": "batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл)",
+      "promptPath": "docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md",
+      "githubIssue": 494,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin",
+        "dynin",
+        "rodchenko",
+        "vesnin"
+      ],
+      "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15 (СТ-3). НЕ узел, а эпик: коллекция ломает live-модель исполнения (источник = сохранённый набор, итерация for-each, batch vs live). Новые core-контракты: SampleCollectionRef, узел-источник, итератор for-each-sample, устройство collection, batch-рантайм. ГЕЙТ СТАРТА: пост-FREE — семантически принадлежит валидации на реальных данных (следующий жизненный цикл, НЕ гейт перед отгрузкой FREE, инвариант владельца). Зарегистрирован чтобы не потерять; старт по решению владельца. Возможный мостик get-collection-sample (1 сэмпл как AudioSampleRef в live-граф) — только если кейс потребует, не превентивно.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "palette-clarity-nodes",
+      "title": "palette-clarity-nodes: узлы наглядности FREE-графов (PC-1 отчёт одиночного детектора вес ADR, PC-2 периодический гейт без рекордера вес консилиума)",
+      "promptPath": "docs/prompts/PALETTE_CLARITY_NODES_PROMPT.md",
+      "githubIssue": 493,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin",
+        "rodchenko",
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15. Fast-follow после отгрузки FREE (#489/#490) — течи наглядности не блокер. PC-1 первой (нейро-одиночка носит combined-отчёт; расширить make-report-from-analysis до DetectionAnalysisRef vs новый make-detection-report; ADR с UI-ролью). PC-2 второй (нет периодического гейта без рекордера, spectrum юзает is-recording-window-full как таймер; новый владелец времени is-window-elapsed + чинит декоративный collectorConfig.windowSec; полный консилиум). Каждая задача — своя фазовая карточка при старте. Out of scope: узлы коллекции = эпик batch-collection-run-contour #494. Гейт старта: отгрузка FREE.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-free-fragment-usercases",
       "title": "Cowork Sprint: три фрагментарных UserCase FREE (спектр / нейро / записи)",
       "promptPath": "docs/prompts/COWORK_FREE_FRAGMENT_USERCASES_PROMPT.md",
       "githubIssue": 487,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "cowork-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
