@@ -109,6 +109,61 @@ export function validateTaskId(id) {
   }
 }
 
+const TASK_SIZES = ['S', 'M', 'L'];
+const SPRINT_KINDS = ['day-sprint', 'epic', 'night-build', 'competition-sprint', 'cowork-sprint'];
+
+/**
+ * Собрать нормализованную запись карточки из полей CLI (#469 ti-3).
+ * Валидирует по схеме карточки; поля-константы задаёт как task:archive-совместимые.
+ * @param {object} input
+ * @returns {TaskEntry}
+ */
+export function buildTaskEntry(input, today) {
+  validateTaskId(input.id);
+  if (!input.title?.trim()) throw new Error('Пустой --title.');
+  if (!TASK_SIZES.includes(input.size)) {
+    throw new Error(`Некорректный --size "${input.size}": ${TASK_SIZES.join('/')}.`);
+  }
+  const kind = input.kind ?? 'day-sprint';
+  if (!SPRINT_KINDS.includes(kind)) {
+    throw new Error(`Некорректный --kind "${kind}": ${SPRINT_KINDS.join('/')}.`);
+  }
+  if (input.issue != null && !Number.isInteger(Number(input.issue))) {
+    throw new Error(`Некорректный --issue "${input.issue}": целое число.`);
+  }
+  const entry = {
+    id: input.id,
+    title: input.title.trim(),
+    promptPath: input.promptPath ?? `docs/prompts/${input.id.replace(/-/g, '_').toUpperCase()}_PROMPT.md`,
+    githubIssue: input.issue != null ? Number(input.issue) : null,
+    size: input.size,
+    status: 'active',
+    sprintKind: kind,
+    createdAt: today,
+    archivedAt: null,
+    leadPersona: input.lead ?? null,
+    supportPersonas: input.support ?? [],
+    notes: input.notes ?? '',
+    archiveNotes: null,
+    githubIssueClosedAt: null,
+  };
+  if (input.insight) entry.insightId = input.insight;
+  return entry;
+}
+
+/**
+ * Детерминированная вставка карточки в НАЧАЛО tasks[] (конвенция «свежие сверху»).
+ * НЕ мутирует вход; дубль id — ошибка. Формат registry не меняется (#469 запрет).
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ * @param {TaskEntry} entry
+ */
+export function insertTaskAtFront(registry, entry) {
+  if (registry.tasks.some((t) => t.id === entry.id)) {
+    throw new Error(`Карточка "${entry.id}" уже есть в реестре.`);
+  }
+  return { ...registry, tasks: [entry, ...registry.tasks] };
+}
+
 /**
  * @param {TaskEntry} task
  * @param {string} [cwd]
