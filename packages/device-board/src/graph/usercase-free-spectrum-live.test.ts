@@ -9,6 +9,7 @@ import {
 import {
   FREE_SPECTRUM_LIVE_USER_CASE_ID,
   MVP_MAIN_ANCHORS,
+  REMOVED_MVP_RECORDING_NODE_IDS,
   REMOVED_MVP_TRACK_NODE_IDS,
   REMOVED_MVP_WINDOW_CLOCK_NODE_IDS,
   SPECTRUM_LIVE_EXPECTED_TICK_MS,
@@ -103,12 +104,67 @@ describe('usercase-free-spectrum-live (Phase 2)', () => {
   });
 
   it('деривация MVP: bootstrap/onConnect/teardown/функции/переменные сохранены', () => {
-    expect(document.scenario.initial.nodes.some((n) => n.id === 'fn-1-block')).toBe(true);
+    // PC-2c: bootstrap-вызов StartRecording (fn-1-block) снят, StartStreaming — хвост потока.
+    expect(document.scenario.initial.nodes.some((n) => n.id === 'fn-1-block')).toBe(false);
+    expect(document.scenario.initial.nodes.some((n) => n.nodeKind === 'start-streaming')).toBe(true);
+    // bootstrap не оставил висячих рёбер на снятый узел записи
+    expect(
+      document.scenario.initial.edges.some((e) => e.source === 'fn-1-block' || e.target === 'fn-1-block'),
+    ).toBe(false);
     expect(document.scenario.onConnect.nodes.length).toBeGreaterThan(0);
     expect(document.scenario.triggers.onStop.nodes.length).toBeGreaterThan(0);
     expect(document.scenario.triggers.onDisconnect.nodes.length).toBeGreaterThan(0);
-    expect(document.scenario.functions.map((fn) => fn.id).sort()).toEqual(['fn-1', 'fn-3']);
+    // fn-1 (StartRecording) удалена — не зовётся; остаётся только fn-3 (GetAudioStream).
+    expect(document.scenario.functions.map((fn) => fn.id).sort()).toEqual(['fn-3']);
     expect(document.scenario.variables.some((v) => v.type === 'JournalRef')).toBe(true);
+  });
+
+  // ── PC-2c: полная развязка наблюдения от ЗАПИСИ ──
+  it('PC-2c: ни start-recording, ни stop-recording ни в одной ветви и функции', () => {
+    const branches: ScenarioSubgraph[] = [
+      document.scenario.initial,
+      document.scenario.onConnect,
+      main,
+      alarm,
+      document.scenario.triggers.onStop,
+      document.scenario.triggers.onDisconnect,
+    ];
+    const graphs = [...branches, ...document.scenario.functions];
+    for (const graph of graphs) {
+      for (const n of graph.nodes) {
+        expect(
+          ['start-recording', 'stop-recording'].includes(n.nodeKind ?? ''),
+          `${graph.entry}:${n.id}`,
+        ).toBe(false);
+      }
+    }
+    // Удалённые id записи отсутствуют в main вместе с их рёбрами (0 висячих/сирот).
+    for (const removedId of REMOVED_MVP_RECORDING_NODE_IDS) {
+      expect(main.nodes.some((n) => n.id === removedId), removedId).toBe(false);
+      expect(
+        main.edges.some((e) => e.source === removedId || e.target === removedId),
+        removedId,
+      ).toBe(false);
+    }
+  });
+
+  // Мутация-проба не вхолостую: вернём stop-recording узел — инвариант «нет записи» краснеет.
+  it('мутация-проба: возврат stop-recording узла нарушает инвариант «нет записи» — КРАСНОЕ', () => {
+    const mutated = structuredClone(getFreeSpectrumLiveDocument());
+    mutated.scenario.loops.main.nodes.push({
+      id: 'mut-stop-recording',
+      blockKind: 'custom',
+      nodeKind: 'stop-recording',
+      label: 'StopRecording',
+      position: { x: 0, y: 0 },
+      supportsAsync: true,
+    });
+    const hasRecording = mutated.scenario.loops.main.nodes.some(
+      (n) => n.nodeKind === 'stop-recording' || n.nodeKind === 'start-recording',
+    );
+    expect(hasRecording).toBe(true);
+    // Инвариант держится ТОЛЬКО на нетронутом документе:
+    expect(main.nodes.some((n) => n.nodeKind === 'stop-recording' || n.nodeKind === 'start-recording')).toBe(false);
   });
 
   // ── Состав ветвей: живой луп ровно один ──
@@ -202,8 +258,6 @@ describe('usercase-free-spectrum-live (Phase 2)', () => {
         (e) => e.target === SPECTRUM_LIVE_MAIN.windowElapsed && e.kind === 'data',
       ),
     ).toBe(false);
-    // StopRecording не выгружает slice — трек не создаётся
-    expect(main.edges.some((e) => e.source === MVP_MAIN_ANCHORS.stopRecording && e.kind === 'data')).toBe(false);
   });
 
   // ── PC-2b: рекордер-часы вычтены как узлы + рёбра ──
@@ -255,14 +309,13 @@ describe('usercase-free-spectrum-live (Phase 2)', () => {
     expect(result.errors.some((e) => e.code === 'block-missing-target')).toBe(true);
   });
 
-  it('main: Sequence переиндексирован в 3 then — stop | наблюдение | рестарт', () => {
+  it('main: Sequence переиндексирован в 2 then — наблюдение | рестарт (запись снята)', () => {
     expect(nodeById(main, MVP_MAIN_ANCHORS.sequence).sequenceConfig?.thenCount).toBe(
       SPECTRUM_LIVE_SEQUENCE_THEN_COUNT,
     );
     for (const [handle, target] of [
-      ['then-0', MVP_MAIN_ANCHORS.stopRecording],
-      ['then-1', MVP_MAIN_ANCHORS.flush],
-      ['then-2', MVP_MAIN_ANCHORS.restartStreamFn],
+      ['then-0', MVP_MAIN_ANCHORS.flush],
+      ['then-1', MVP_MAIN_ANCHORS.restartStreamFn],
       ['exec-out', MVP_MAIN_ANCHORS.infinity],
     ] as const) {
       expect(
@@ -270,19 +323,31 @@ describe('usercase-free-spectrum-live (Phase 2)', () => {
         handle,
       ).toBeDefined();
     }
-    // then-3 больше нет (была трековая ветвь)
-    expect(main.edges.some((e) => e.source === MVP_MAIN_ANCHORS.sequence && e.sourceHandle === 'then-3')).toBe(false);
+    // then-2/then-3 больше нет (сняты StopRecording и трековая ветвь); дыры then нет (L35 sequence-then-skip)
+    for (const handle of ['then-2', 'then-3'] as const) {
+      expect(main.edges.some((e) => e.source === MVP_MAIN_ANCHORS.sequence && e.sourceHandle === handle), handle).toBe(false);
+    }
+    // ни один then Sequence не ведёт в stop-recording
+    expect(main.nodes.some((n) => n.nodeKind === 'stop-recording')).toBe(false);
   });
 
-  // L35: каждый stop-recording обязан иметь exec-путь к start-recording после себя
-  it('main: рестарт окна сохранён (L35) — fn-3-block-2 → fn-1-block', () => {
+  // PC-2c: рестарт перезапускает ПОТОК (не запись); целостность Sequence сохранена (L35)
+  it('main: рестарт потока сохранён (PC-2c) — Sequence then-1 → restartStream, без StartRecording', () => {
+    // restartStreamFn достижим от Sequence и остаётся хвостом рестарта
     expect(
       findEdge(main, {
         kind: 'exec',
-        source: MVP_MAIN_ANCHORS.restartStreamFn,
-        target: MVP_MAIN_ANCHORS.restartRecordingFn,
+        source: MVP_MAIN_ANCHORS.sequence,
+        sourceHandle: 'then-1',
+        target: MVP_MAIN_ANCHORS.restartStreamFn,
       }),
     ).toBeDefined();
+    expect(main.nodes.some((n) => n.id === MVP_MAIN_ANCHORS.restartStreamFn)).toBe(true);
+    // рестарт больше не зовёт StartRecording: fn-1-block снят, у restartStream нет исходящего exec
+    expect(main.nodes.some((n) => n.id === 'fn-1-block')).toBe(false);
+    expect(
+      main.edges.some((e) => e.kind === 'exec' && e.source === MVP_MAIN_ANCHORS.restartStreamFn),
+    ).toBe(false);
   });
 
   it('main: наблюдение — flush → гейт кадров → тренды → гейт анализа → отчёт → publish → print', () => {
@@ -369,7 +434,7 @@ describe('usercase-free-spectrum-live (Phase 2)', () => {
       tier: 'bundled',
       layoutProfile: 'exec-lr-v1',
       branchCount: 1,
-      functionCount: 2,
+      functionCount: 1,
     } as const;
 
     expect(document.deviceKind).toBe(expectedCatalogEntry.deviceKind);
