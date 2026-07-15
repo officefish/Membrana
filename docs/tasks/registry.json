@@ -47,17 +47,17 @@
       "promptPath": "docs/prompts/DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md",
       "githubIssue": 516,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
       "notes": "Строится на починенном #402: парсер резал многострочные вопросы, в Perplexity уходил обрывок (инцидент 12.07 — ответ про благотворительность), скрипт молча печатал успех. Машинерия не дублируется: тот же парсер/гард/каскад инсайтов читает промпт задачи. Флаг опт-ин; вопросы формулирует агент из контекста. Имя скилла с префиксом membrana- : deep-research занято встроенным скиллом Claude.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #518; review LGTM 604363b97aea; PR #518 merged 2026-07-15T15:22:33Z (1234867fb614ef08395c8c26a7601bcc897cb382)",
       "githubIssueClosedAt": null
     },
     {
