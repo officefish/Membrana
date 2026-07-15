@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-14",
+  "updatedAt": "2026-07-15",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -437,6 +437,17 @@
         "allies",
         "telegram-swallow"
       ]
+    },
+    {
+      "id": "insight-registry-epic-issue-full-cleanup",
+      "title": "Полная чистка реестра: 189 фаз носят githubIssue своего эпика",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-15",
+      "tags": []
     }
   ]
 }

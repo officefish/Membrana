@@ -10,11 +10,12 @@
  *   yarn repo:clean --execute       # удалить локальные ветки
  *   yarn repo:clean --execute --remote     # + удалить ветки на origin
  *   yarn repo:clean --execute --worktrees  # + убрать worktree архивных спринтов
+ *   yarn repo:clean --report clean.txt      # отчёт целиком на диск
  *
  * Ничего не удаляется молча: всё пропущенное печатается с причиной.
  */
 import { execFileSync, execSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,11 +31,35 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REPO = 'officefish/Membrana';
 
 export function parseCli(argv) {
+  const reportIndex = argv.indexOf('--report');
   return {
     execute: argv.includes('--execute'),
     remote: argv.includes('--remote'),
     worktrees: argv.includes('--worktrees'),
+    // `--report <файл>`: отчёт целиком на диск. Живой случай 2026-07-15 — прогон
+    // ушёл через `| tail -18`, текст двух ошибок потерялся, причину пришлось
+    // восстанавливать по состоянию диска. Консоль обрезают, файл — нет.
+    report: reportIndex > -1 ? argv[reportIndex + 1] : null,
     help: argv.includes('--help') || argv.includes('-h'),
+  };
+}
+
+/**
+ * Пишет в консоль И копит строки для файла-отчёта. Ошибки идут в stderr, но в
+ * отчёт попадают в общем потоке — иначе файл терял бы ровно то, ради чего заведён.
+ */
+export function createReporter() {
+  const lines = [];
+  return {
+    lines,
+    log(text = '') {
+      lines.push(String(text));
+      console.log(text);
+    },
+    error(text = '') {
+      lines.push(String(text));
+      console.error(text);
+    },
   };
 }
 
@@ -92,15 +117,15 @@ function aheadOfMain(branch) {
   }
 }
 
-function report(title, groups) {
-  console.log(`\n${title}`);
+function report(out, title, groups) {
+  out.log(`\n${title}`);
   if (groups.size === 0) {
-    console.log('  —');
+    out.log('  —');
     return;
   }
   for (const [reason, names] of [...groups].sort((a, b) => b[1].length - a[1].length)) {
-    console.log(`  ${names.length.toString().padStart(3)} · ${reason}`);
-    if (names.length <= 12) for (const n of names) console.log(`        ${n}`);
+    out.log(`  ${names.length.toString().padStart(3)} · ${reason}`);
+    if (names.length <= 12) for (const n of names) out.log(`        ${n}`);
   }
 }
 
@@ -113,13 +138,15 @@ function main() {
   --execute     удалить локальные мёртвые ветки
   --remote      вместе с --execute: удалить их и на origin
   --worktrees   вместе с --execute: убрать worktree архивных спринтов
+  --report <файл>  сохранить отчёт целиком (консоль обрезают пайпом, файл — нет)
 
   Мертва = ветка с PR в состоянии MERGED или CLOSED. Всё остальное
   (открытый PR, нет PR, персона-ветка, занята worktree) — остаётся.`);
     return;
   }
 
-  console.log('repo-clean · источник истины — состояние PR (squash-мёрж делает git branch --merged слепым)');
+  const out = createReporter();
+  out.log('repo-clean · источник истины — состояние PR (squash-мёрж делает git branch --merged слепым)');
   const prs = fetchPrs();
   const prByBranch = latestPrByBranch(prs);
   const currentBranch = git(['branch', '--show-current']);
@@ -133,7 +160,7 @@ function main() {
       .map((b) => b.replace(/^origin\//, '')),
   );
 
-  console.log(`PR: ${prs.length} · ветка сессии: ${currentBranch} · worktree занимают ${wtBranches.size} веток`);
+  out.log(`PR: ${prs.length} · ветка сессии: ${currentBranch} · worktree занимают ${wtBranches.size} веток`);
 
   // ─── локальные ветки ────────────────────────────────────────────────────────────
   const locals = gitLines(['branch', '--format=%(refname:short)']);
@@ -145,8 +172,8 @@ function main() {
     ),
   );
   const localDead = localDecisions.filter((d) => d.delete);
-  report(`Локальные ветки (${locals.length}) — УДАЛИТЬ ${localDead.length}:`, groupByReason(localDead));
-  report('Локальные — оставить:', groupByReason(localDecisions.filter((d) => !d.delete)));
+  report(out, `Локальные ветки (${locals.length}) — УДАЛИТЬ ${localDead.length}:`, groupByReason(localDead));
+  report(out, 'Локальные — оставить:', groupByReason(localDecisions.filter((d) => !d.delete)));
 
   // ─── удалённые ветки ────────────────────────────────────────────────────────────
   const remotes = [...remoteSet].filter((b) => b !== 'main');
@@ -157,8 +184,8 @@ function main() {
     }),
   );
   const remoteDead = remoteDecisions.filter((d) => d.delete);
-  report(`Удалённые ветки (${remotes.length}) — УДАЛИТЬ ${remoteDead.length}:`, groupByReason(remoteDead));
-  report('Удалённые — оставить:', groupByReason(remoteDecisions.filter((d) => !d.delete)));
+  report(out, `Удалённые ветки (${remotes.length}) — УДАЛИТЬ ${remoteDead.length}:`, groupByReason(remoteDead));
+  report(out, 'Удалённые — оставить:', groupByReason(remoteDecisions.filter((d) => !d.delete)));
 
   // ─── worktree ───────────────────────────────────────────────────────────────────
   const wts = listWorktrees().map((wt, index) => {
@@ -176,11 +203,12 @@ function main() {
     );
   });
   const wtDead = wts.filter((w) => w.remove);
-  report(`Worktree (${wts.length}) — УБРАТЬ ${wtDead.length}:`, groupByReason(wtDead));
-  report('Worktree — оставить:', groupByReason(wts.filter((w) => !w.remove)));
+  report(out, `Worktree (${wts.length}) — УБРАТЬ ${wtDead.length}:`, groupByReason(wtDead));
+  report(out, 'Worktree — оставить:', groupByReason(wts.filter((w) => !w.remove)));
 
   if (!cli.execute) {
-    console.log('\ndry-run: ничего не тронуто. Реально удалить — --execute [--remote] [--worktrees].');
+    out.log('\ndry-run: ничего не тронуто. Реально удалить — --execute [--remote] [--worktrees].');
+    writeReport(cli, out);
     return;
   }
 
@@ -205,12 +233,12 @@ function main() {
         }
       }
       if (ok && !existsSync(w.path)) {
-        console.log(`  worktree removed: ${w.path}`);
+        out.log(`  worktree removed: ${w.path}`);
         removed++;
         continue;
       }
       // Каталог пережил удаление — сказать об этом прямо, а не прятать за prune.
-      console.error(
+      out.error(
         `  worktree ОСТАЛСЯ НА ДИСКЕ: ${w.path}\n` +
           '      git-запись снята, файлы нет (Windows держит node_modules). Убрать вручную.',
       );
@@ -223,10 +251,10 @@ function main() {
       // -D, а не -d: при squash-мёрже git не считает ветку влитой и -d откажет.
       // Право на удаление даёт состояние PR, а не git-предки.
       git(['branch', '-D', d.name]);
-      console.log(`  local deleted: ${d.name} (${d.reason})`);
+      out.log(`  local deleted: ${d.name} (${d.reason})`);
       removed++;
     } catch (e) {
-      console.error(`  local FAIL ${d.name}: ${e.message.split('\n')[0]}`);
+      out.error(`  local FAIL ${d.name}: ${e.message.split('\n')[0]}`);
       failed++;
     }
   }
@@ -235,17 +263,33 @@ function main() {
     for (const d of remoteDead) {
       try {
         git(['push', 'origin', '--delete', d.name]);
-        console.log(`  remote deleted: ${d.name} (${d.reason})`);
+        out.log(`  remote deleted: ${d.name} (${d.reason})`);
         removed++;
       } catch (e) {
-        console.error(`  remote FAIL ${d.name}: ${e.message.split('\n')[0]}`);
+        out.error(`  remote FAIL ${d.name}: ${e.message.split('\n')[0]}`);
         failed++;
       }
     }
   }
 
-  console.log(`\nГотово: убрано ${removed}, ошибок ${failed}.`);
+  out.log(`\nГотово: убрано ${removed}, ошибок ${failed}.`);
+  writeReport(cli, out);
   if (failed > 0) process.exitCode = 1;
+}
+
+/**
+ * Сохранить отчёт целиком. Пишется и в dry-run, и после `--execute`: разбирать
+ * потом приходится именно упавший прогон. Провал записи не роняет саму чистку —
+ * она уже сделана, терять её из-за отчёта нельзя.
+ */
+function writeReport(cli, out) {
+  if (!cli.report) return;
+  try {
+    writeFileSync(resolve(process.cwd(), cli.report), out.lines.join('\n') + '\n', 'utf8');
+    console.log(`\nОтчёт: ${cli.report}`);
+  } catch (e) {
+    console.error(`\nОтчёт не записан (${cli.report}): ${e.message}`);
+  }
 }
 
 // Гард запуска: без него импорт из теста полез бы в gh и git.

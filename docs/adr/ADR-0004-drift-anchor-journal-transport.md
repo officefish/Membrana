@@ -168,6 +168,6 @@ warning-only, никогда ничего не блокирует).
 
 ## Ссылки
 
-- ADR 0003: [`0003-drift-anchor-record-in-core.md`](./0003-drift-anchor-record-in-core.md) — контракт `DriftAnchorRecord`.
+- ADR 0003: [`ADR-0003-drift-anchor-record-in-core.md`](./ADR-0003-drift-anchor-record-in-core.md) — контракт `DriftAnchorRecord`.
 - Консилиум-2 drift-anchor-triggers: [`drift-anchor-triggers-2026-07-12.md`](../seanses/drift-anchor-triggers-2026-07-12.md) — исходное назначение DA5 (UI-панель).
 - `BACKGROUND_SERVERS.md` §«Новый внешний API или webhook» — канон размещения в office.

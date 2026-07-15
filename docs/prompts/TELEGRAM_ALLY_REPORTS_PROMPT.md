@@ -34,7 +34,7 @@ POST-ит payload в office, office — тупой транспорт наруж
 | [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли, порядок работы |
 | [`insight-telegram-work-reports/REVIEW.md`](../insights/insight-telegram-work-reports/REVIEW.md) | Канон архитектуры и запреты (проголосованы) |
 | [`docs/BACKGROUND_SERVERS.md`](../BACKGROUND_SERVERS.md) | Границы office (stateless) |
-| [`docs/adr/0004-drift-anchor-journal-transport.md`](../adr/0004-drift-anchor-journal-transport.md) | Образец push-ingest: локальный cron → POST → office |
+| [`docs/adr/ADR-0004-drift-anchor-journal-transport.md`](../adr/ADR-0004-drift-anchor-journal-transport.md) | Образец push-ingest: локальный cron → POST → office |
 | `packages/background-office/src/modules/{github,linear,webhooks,drift-anchor}` | Образцы outbound/ingest-модулей NestJS |
 | `.cursor/skills/membrana-office-vds-deploy/SKILL.md` | Деплой office на VDS 176.124.218.4 |
 

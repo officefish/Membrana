@@ -68,5 +68,5 @@ Rate-limit регистрации 5/час/IP поверх общего пане
 ## Ссылки
 
 - Консилиум: [`panel-promo-access-2026-07-14.md`](../seanses/panel-promo-access-2026-07-14.md)
-- ADR 0004 (stateless-канон, не правится): [`0004-drift-anchor-journal-transport.md`](./0004-drift-anchor-journal-transport.md)
+- ADR 0004 (stateless-канон, не правится): [`ADR-0004-drift-anchor-journal-transport.md`](./ADR-0004-drift-anchor-journal-transport.md)
 - Эпик: Issue #463, промпт [`PANEL_PARTNER_ACCESS_EPIC_PROMPT.md`](../prompts/PANEL_PARTNER_ACCESS_EPIC_PROMPT.md)

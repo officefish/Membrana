@@ -112,7 +112,7 @@ flowchart LR
 Producer'ы вне office (CI-джобы, серверные cron-скрипты) иногда должны довести
 детерминированный результат прогона (метрика/вердикт — не пользовательские данные)
 до продуктовой поверхности (UI кабинета) через office как транспорт. Паттерн
-подтверждён живым деплоем 2026-07-13 (drift-anchor, [`ADR 0004`](./adr/0004-drift-anchor-journal-transport.md),
+подтверждён живым деплоем 2026-07-13 (drift-anchor, [`ADR 0004`](./adr/ADR-0004-drift-anchor-journal-transport.md),
 модуль `packages/background-office/src/modules/drift-anchor/`):
 
 | Правило | Обоснование |
@@ -256,7 +256,7 @@ agent-tooling-friction, 2026-07-13).
 | Консилиум 2026-06-11 | [`seanses/background-media-v1-consilium-2026-06-11.md`](./seanses/background-media-v1-consilium-2026-06-11.md) |
 | Membrane Platform (эпик) | [#67](https://github.com/officefish/Membrana/issues/67), [`MEMBRANE_PLATFORM.md`](./MEMBRANE_PLATFORM.md), prod-smoke [`deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md) |
 | Журнал office v0.1 | [`discussions/background-office-v0.1.md`](./discussions/background-office-v0.1.md) |
-| Push-ingest паттерн (drift-anchor) | [`ADR 0004`](./adr/0004-drift-anchor-journal-transport.md), эпик `drift-anchor-contour` [#396](https://github.com/officefish/Membrana/issues/396) |
+| Push-ingest паттерн (drift-anchor) | [`ADR 0004`](./adr/ADR-0004-drift-anchor-journal-transport.md), эпик `drift-anchor-contour` [#396](https://github.com/officefish/Membrana/issues/396) |
 
 ---
 

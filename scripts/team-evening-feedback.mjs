@@ -148,4 +148,9 @@ try {
   exitCode = 1;
 }
 
-process.exit(exitCode);
+// exitCode, а не process.exit(): обрыв процесса при живых сокетах от HTTP-вызова роняет
+// libuv на Windows ассертом UV_HANDLE_CLOSING и подменяет код возврата на 127 (см.
+// code-review.mjs — тот же класс). Для этого шага цена особенно высока: team-evening-feedback
+// обязателен в конце дня по CLAUDE.md и штатно упирается в «Anthropic без кредита» —
+// честная единица отличает «нет кредита» от «скрипт сломался».
+process.exitCode = exitCode;

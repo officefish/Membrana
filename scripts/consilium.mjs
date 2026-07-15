@@ -481,7 +481,11 @@ async function main() {
     );
     if (!ok) {
       printAnthropicHttpError(status, text);
-      process.exit(1);
+      // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
+      // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
+      // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
+      process.exitCode = 1;
+      return;
     }
     const json = JSON.parse(text);
     const parts = json?.content ?? [];
@@ -489,7 +493,9 @@ async function main() {
     if (!answer) answer = JSON.stringify(parts, null, 2);
   } catch (e) {
     console.error(e);
-    process.exit(1);
+    // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.
+    process.exitCode = 1;
+    return;
   }
 
   console.log(answer);
@@ -509,7 +515,6 @@ async function main() {
     console.error(`→ протокол: ${relPath}`);
   }
 
-  await new Promise((r) => setTimeout(r, 150));
 }
 
 main();

@@ -16,7 +16,7 @@ import {
   latestPrByBranch,
   makeArchivedSprintPredicate,
 } from './lib/repo-clean.mjs';
-import { parseCli } from './repo-clean.mjs';
+import { createReporter, parseCli } from './repo-clean.mjs';
 
 const prs = (...list) => latestPrByBranch(list);
 
@@ -179,4 +179,33 @@ test('CLI: dry-run по умолчанию — удаление только п�
   assert.equal(parseCli(['--execute', '--remote']).remote, true);
   assert.equal(parseCli(['--execute', '--worktrees']).worktrees, true);
   assert.equal(parseCli(['--remote']).execute, false, '--remote без --execute не удаляет');
+});
+
+test('CLI: --report берёт путь следующим аргументом', () => {
+  assert.equal(parseCli([]).report, null);
+  assert.equal(parseCli(['--report', 'clean.txt']).report, 'clean.txt');
+  assert.equal(parseCli(['--execute', '--report', 'out/clean.txt']).report, 'out/clean.txt');
+  // --report без пути — не путь, а undefined: писать в файл «undefined» нельзя.
+  assert.equal(parseCli(['--report']).report, undefined);
+});
+
+test('createReporter копит строки и печатает; stderr тоже попадает в отчёт', () => {
+  const logs = [];
+  const errs = [];
+  const origLog = console.log;
+  const origErr = console.error;
+  console.log = (t) => logs.push(t);
+  console.error = (t) => errs.push(t);
+  try {
+    const out = createReporter();
+    out.log('строка');
+    out.error('ошибка');
+    // Ошибка обязана быть в файле: из-за её потери под пайпом флаг и появился.
+    assert.deepEqual(out.lines, ['строка', 'ошибка']);
+    assert.deepEqual(logs, ['строка']);
+    assert.deepEqual(errs, ['ошибка']);
+  } finally {
+    console.log = origLog;
+    console.error = origErr;
+  }
 });
