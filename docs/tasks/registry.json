@@ -20,6 +20,27 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "pc2b-spectrum-window-rebuild",
+      "title": "PC-2b: пересборка usercase-free-spectrum-live на is-window-elapsed (спектр перестаёт тащить рекордер как часы)",
+      "promptPath": "docs/prompts/PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md",
+      "githubIssue": 493,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko",
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Фаза PC-2b спринта palette-clarity-nodes #493 (продуктовый, максимальное качество: консилиум+research+делегирование+адверсариальная верификация). Свап (scout ground truth): снять windowFull(is-recording-window-full)+recorderClock(get-recorder-168), поставить is-window-elapsed(windowMs из консилиума), перевесить true→sequence/false→infinity, collectFrames→is-window-elapsed, recorder-ребро не восстанавливать. PC-2a узел merged #505. Фазы: research(Dynin)→консилиум→impl(Kuryokhin)→adversarial verify→teamlead. Backward-compat: is-recording-window-full не трогать. OUT: collectorConfig.windowSec (F2), alarm.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "pc2-periodic-window-gate",
       "title": "PC-2: узел is-window-elapsed — периодический гейт окна без рекордера (спектр перестаёт тащить рекордер как часы)",
       "promptPath": "docs/prompts/PC2_PERIODIC_WINDOW_GATE_PROMPT.md",
