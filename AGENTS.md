@@ -56,10 +56,24 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Дождаться зелёного CI → напечатать команду деплоя (не запускает) | `yarn deploy:when-green` |
 | Оффлайн Prisma-миграция (diff HEAD↔рабочая схема) | `yarn prisma:migration --name X [--schema <path>]` |
 | Архив карточек с закрытыми GH-иссью | `yarn tasks:archive-closed [--execute]` |
+| Команда на office-VDS | `yarn office:ssh 'docker ps'` (**без `--`**: yarn 4 съедает его сам) |
+| Локальный `.sh` на office-VDS (CRLF снимается сам) | `yarn vds:run ./scratch/check.sh [arg...]` |
+| Прод-смоук панели с owner-cookie | `node scripts/_ssh-panel-smoke.mjs --read-only` (без флага — пишет в прод-стор) |
 
 **Хуки** (`.githooks/`, авто через `prepare` → `core.hooksPath`): `pre-push` = catalog:verify-client + verify:wire-sync + affected typecheck (пропуск `SKIP_PREPUSH=1`); `commit-msg` = conventional-заголовок (блок) + Co-Authored-By трейлер (warn), пропуск `SKIP_COMMIT_MSG=1`.
 
 **Скиллы:** `membrana-ship` (add-A → code-review → pr:ship), `membrana-tooling-doctor` (health-check tooling). Общий «работа за сегодня» — `scripts/lib/git-day-context.mjs` (без --author-фильтра).
+
+#### Windows-сессия (PowerShell 5.1) — канон
+
+Владелец работает на Windows; PS 5.1 ломает то, что в bash проходит молча. Живые эпизоды 14–15.07:
+
+- **`node -e` с JSON, `$(...)`, кавычками или переносами — только файлом в scratchpad**, не инлайном. PS-парсер съедает JSON-литерал (`register-epic` → `Unexpected token ':'`) и распознаёт `$(grep …)` как cmdlet (`send-swallow`). Однострочный `node -e` без спецсимволов — можно.
+- **Here-string `@'…'@` — это PowerShell, а не bash.** В bash-инструменте он приезжает как литерал `@` и `commit-msg`-хук отбивает заголовок (живой случай 15.07). В bash — heredoc `<<'EOF'`.
+- **PS 5.1 не знает `&&` / `||`** (parser error) — цепочка через `;` + `if ($?) { … }`.
+- **Не редиректить stderr натива (`2>&1`)**: PS 5.1 заворачивает строки в `NativeCommandError` и `$?` становится `$false` при exit 0 — зелёный шаг выглядит красным.
+- **`process.exit()` в скриптах — не использовать, только `process.exitCode`**: обрыв процесса с недописанным pipe-stdout роняет libuv ассертом `UV_HANDLE_CLOSING` и подменяет код возврата на **127** (поймано на `_ssh-panel-smoke`, тот же симптом у `code-review.mjs`).
+- **Файлы для VDS пишутся с CRLF** — bash падает на `$'\r': command not found`. `yarn vds:run` снимает CRLF сам; при ручном scp — `sed -i 's/\r$//'`.
 
 ### OpenCode operator commands
 
