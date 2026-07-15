@@ -1,6 +1,7 @@
 import { type DeviceScenarioDocument } from '@membrana/core';
 
 import { getDetectionAlarmBetaDocument } from './usercase-detection-alarm-beta.js';
+import { stripCompetitionDocumentMeta } from './execution-policy.js';
 
 /**
  * FREE-tier «+1» UserCase: combined-детекция + alarm-loop (**DSP fusion**).
@@ -17,7 +18,18 @@ import { getDetectionAlarmBetaDocument } from './usercase-detection-alarm-beta.j
  * Отличие от community-пресета Beta — уровень каталога (bundled FREE-шаблон против
  * именованного competition-форка); базовый документ v1 намеренно берёт проверенный
  * Beta-граф, дальнейшая FREE-специализация — в S3-упаковке.
+ *
+ * Meta: competition-штамп Beta СНИМАЕТСЯ (`stripCompetitionDocumentMeta`). FREE-UC
+ * не competition-форк, а `executionPolicy: 'competition'` включил бы
+ * `isCompetitionStructureLocked` и заблокировал правку структуры бесплатного
+ * сценария (баг FREE-лайнапа, cowork #487 RETROSPECTIVE). Донор Beta не мутируется —
+ * снятие клонирует meta; competition-каталог использует Beta напрямую и штамп сохраняет.
  */
+let cachedDocument: DeviceScenarioDocument | null = null;
+
 export function getFreeCombinedAlarmDocument(): DeviceScenarioDocument {
-  return getDetectionAlarmBetaDocument();
+  if (cachedDocument === null) {
+    cachedDocument = stripCompetitionDocumentMeta(getDetectionAlarmBetaDocument());
+  }
+  return cachedDocument;
 }

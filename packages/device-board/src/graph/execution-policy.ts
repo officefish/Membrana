@@ -67,3 +67,25 @@ export function stampCompetitionDocumentMeta(
 export function isCompetitionStructureLocked(meta: DeviceScenarioMeta | undefined): boolean {
   return resolveCompetitionExecutionPolicy(meta) !== null;
 }
+
+/**
+ * Removes competition meta from a document (idempotent) — inverse of
+ * {@link stampCompetitionDocumentMeta}. FREE-tier шаблоны, дериватированные из
+ * competition-форков (напр. combined-alarm из Beta), не должны наследовать
+ * `executionPolicy: 'competition'`: это включило бы `isCompetitionStructureLocked`
+ * и заблокировало правку структуры у бесплатного пользователя. Клонирует meta,
+ * общий кэш документа-донора не мутирует.
+ */
+export function stripCompetitionDocumentMeta(
+  document: DeviceScenarioDocument,
+): DeviceScenarioDocument {
+  if (document.meta?.executionPolicy !== 'competition') {
+    return document;
+  }
+  const { isCompetitionTemplate, executionPolicy, competitionTimeoutSec, ...restMeta } =
+    document.meta;
+  void isCompetitionTemplate;
+  void executionPolicy;
+  void competitionTimeoutSec;
+  return { ...document, meta: restMeta };
+}
