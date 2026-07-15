@@ -1129,10 +1129,15 @@ export class ScenarioMicJournalBridge {
     return result;
   }
 
-  /** basn-4: сброс истории proximity + кэша combined-отчётов (scenario-run-start). */
+  /**
+   * Сброс per-run состояния на scenario-run-start: история proximity + кэш
+   * combined-отчётов + окна is-window-elapsed (PC-2 — новый ран стартует окна
+   * заново, иначе первый гейт нового рана сработал бы по протухшей точке отсчёта).
+   */
   resetProximityHistory(): void {
     this.proximityHistory.clear();
     this.combinedReportCache.clear();
+    this.windowElapsedStartMs.clear();
   }
 
   /**

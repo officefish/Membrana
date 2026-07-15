@@ -67,6 +67,21 @@ describe('scenarioMicJournalBridge — is-window-elapsed периодическ�
     }
   });
 
+  it('resetProximityHistory (scenario-run-start) сбрасывает окно — новый ран стартует заново', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-15T00:00:00Z'));
+    try {
+      const bridge = createScenarioMicJournalBridge();
+      expect(bridge.isWindowElapsed('n', 1000)).toBe(false);
+      vi.advanceTimersByTime(2000);
+      // Без сброса окно бы сработало; сброс run-start обнуляет точку отсчёта.
+      bridge.resetProximityHistory();
+      expect(bridge.isWindowElapsed('n', 1000)).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('окна независимы per-node', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-07-15T00:00:00Z'));
