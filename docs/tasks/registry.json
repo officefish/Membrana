@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "pc2-periodic-window-gate",
+      "title": "PC-2: узел is-window-elapsed — периодический гейт окна без рекордера (спектр перестаёт тащить рекордер как часы)",
+      "promptPath": "docs/prompts/PC2_PERIODIC_WINDOW_GATE_PROMPT.md",
+      "githubIssue": 493,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Фаза PC-2 спринта palette-clarity-nodes #493. Консилиум pc2-periodic-window-gate-2026-07-15 (22 реплики, вердикт): НОВЫЙ узел is-window-elapsed (чистый periodic-гейт по host-часам, вход windowMs читается рантаймом, выходы exec true/false, per-node состояние окна, БЕЗ RecorderRef) — не обобщение is-recording-window-full (наглядность > компактности, без невидимых режимов). Граница с тиком: onTick=pacing лупа, is-window-elapsed=гейт-потребитель (записать в контракт). Реализация: SCENARIO_NODE_KINDS + host-хук поверх существующих часов лупа + пересборка usercase-free-spectrum-live (снять get-recorder+is-recording-window-full как часы). Живой Run=сборка не детекция. OUT OF SCOPE: alarm-loop (свой onTick by design), долг collectorConfig.windowSec в collect-fft-frames (F2 path-specific, отдельная карточка), обратная совместимость держится (старый узел остаётся). Гейт узла палитры пройден консилиумом; старт реализации — LGTM владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "pc1-single-detector-report",
       "title": "PC-1: отчёт одиночного детектора — make-report-from-analysis принимает DetectionAnalysisRef (ADR-0006), нейро-FREE-граф без combined-отчёта",
       "promptPath": "docs/prompts/PC1_SINGLE_DETECTOR_REPORT_PROMPT.md",

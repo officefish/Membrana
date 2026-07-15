@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `pc2-periodic-window-gate` | PC-2: узел is-window-elapsed — периодический гейт окна без рекордера (спектр перестаёт тащить рекордер как часы) | M | [`PC2_PERIODIC_WINDOW_GATE_PROMPT.md`](../docs/prompts/PC2_PERIODIC_WINDOW_GATE_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `pc1-single-detector-report` | PC-1: отчёт одиночного детектора — make-report-from-analysis принимает DetectionAnalysisRef (ADR-0006), нейро-FREE-граф без combined-отчёта | M | [`PC1_SINGLE_DETECTOR_REPORT_PROMPT.md`](../docs/prompts/PC1_SINGLE_DETECTOR_REPORT_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `batch-collection-run-contour` | batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл) | L | [`BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](../docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) | [#494](https://github.com/officefish/Membrana/issues/494) |
 | `palette-clarity-nodes` | palette-clarity-nodes: узлы наглядности FREE-графов (PC-1 отчёт одиночного детектора вес ADR, PC-2 периодический гейт без рекордера вес консилиума) | L | [`PALETTE_CLARITY_NODES_PROMPT.md`](../docs/prompts/PALETTE_CLARITY_NODES_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
