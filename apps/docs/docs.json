@@ -79,6 +79,7 @@
         "device-board/nodes/start-recording",
         "device-board/nodes/stop-recording",
         "device-board/nodes/is-recording-window-full",
+        "device-board/nodes/is-window-elapsed",
         "device-board/nodes/make-track",
         "device-board/nodes/make-fft-trends-policy",
         "device-board/nodes/make-fft-trends-analysis"
