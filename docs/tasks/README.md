@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | M | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | [#510](https://github.com/officefish/Membrana/issues/510) |
 | `pc2c-spectrum-recording-decouple` | PC-2c: полная развязка спектр-наблюдения от записи (StartRecording/StopRecording устарели — трек не производится) | M | [`PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md`](../docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |
@@ -194,6 +193,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | 2026-07-15 | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | #510 (Issue открыт) | [карточка](./archive/hot-repo-flow.md) |
 | `canon-tooling-debt` | canon-tooling-debt: ADR-гигиена, 26 живых фаз реестра, --report для repo:clean, libuv в горячих скриптах | 2026-07-15 | [`CANON_TOOLING_DEBT_PROMPT.md`](../docs/prompts/CANON_TOOLING_DEBT_PROMPT.md) | #504 (Issue открыт) | [карточка](./archive/canon-tooling-debt.md) |
 | `pc2b-spectrum-window-rebuild` | PC-2b: пересборка usercase-free-spectrum-live на is-window-elapsed (спектр перестаёт тащить рекордер как часы) | 2026-07-15 | [`PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md`](../docs/prompts/PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md) | #493 (Issue открыт) | [карточка](./archive/pc2b-spectrum-window-rebuild.md) |
 | `pc2-periodic-window-gate` | PC-2: узел is-window-elapsed — периодический гейт окна без рекордера (спектр перестаёт тащить рекордер как часы) | 2026-07-15 | [`PC2_PERIODIC_WINDOW_GATE_PROMPT.md`](../docs/prompts/PC2_PERIODIC_WINDOW_GATE_PROMPT.md) | #493 (Issue открыт) | [карточка](./archive/pc2-periodic-window-gate.md) |
