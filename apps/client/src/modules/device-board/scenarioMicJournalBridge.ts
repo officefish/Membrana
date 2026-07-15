@@ -1346,10 +1346,13 @@ export class ScenarioMicJournalBridge {
   ): Promise<ScenarioReportPayload | null> {
     const { detection } = input;
     const isDetected = detection.isDrone ?? detection.detected;
+    // Синтетический trackId выводится из reportId (паттерн trendsFftSyntheticTrackId):
+    // у нейро-отчёта нет реального трека, но журналу нужен непустой стабильный id.
+    const reportId = createEntryId('neuro');
     const payload = createScenarioReportPayload({
       schema: 'neuro-detection/v1',
-      reportId: createEntryId('neuro'),
-      trackId: `neuro-detection:${input.handle}`,
+      reportId,
+      trackId: `neuro-detection:${reportId}`,
       isDetected,
       summaryText: `нейро ${detection.confidence.toFixed(2)}${isDetected ? ' (дрон)' : ''}`,
       payload: {
