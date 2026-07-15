@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "pc2c-spectrum-recording-decouple",
+      "title": "PC-2c: полная развязка спектр-наблюдения от записи (StartRecording/StopRecording устарели — трек не производится)",
+      "promptPath": "docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md",
+      "githubIssue": 493,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin",
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Уточнение владельца 2026-07-15: аудиопоток(StartStreaming/GetAudioStream)=трансляция != запись трека(StartRecording/StopRecording). MakeTrack в спектре снят → трек не производится → узлы устарели. Scout: поток независим от записи; развязка многоветочная (bootstrap StartStreaming→fn-1, main then-0 StopRecording, рестарт restartRecordingFn), риск L35. Backward-compat: start/stop-recording узлы НЕ трогать (др. графы). Границы: только usercase-free-spectrum-live+тест, is-window-elapsed(PC-2b) не регрессировать.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "canon-tooling-debt",
       "title": "canon-tooling-debt: ADR-гигиена, 26 живых фаз реестра, --report для repo:clean, libuv в горячих скриптах",
       "promptPath": "docs/prompts/CANON_TOOLING_DEBT_PROMPT.md",
@@ -25,10 +46,10 @@
       "promptPath": "docs/prompts/PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md",
       "githubIssue": 493,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "dynin",
@@ -46,10 +67,10 @@
       "promptPath": "docs/prompts/PC2_PERIODIC_WINDOW_GATE_PROMPT.md",
       "githubIssue": 493,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov",
