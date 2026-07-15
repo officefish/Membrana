@@ -997,6 +997,27 @@ onTick → isValid(mic) → GetAudioStream → isValid(stream)
 
 Плюс: `make-track`, `make-fft-trends-analysis`, `make-report-from-analysis`, `publish-report`.
 
+#### Узел v0.10: `is-window-elapsed` — периодический гейт БЕЗ рекордера (PC-2, 2026-07)
+
+Консилиум `pc2-periodic-window-gate` (2026-07-15): для наблюдательных сценариев
+периодизация окна не должна требовать рекордера. `is-recording-window-full` держит
+`RecorderRef` на входе — то есть спектральное наблюдение вынуждено было заводить
+запись **только как часы**. Введён отдельный узел-владелец времени:
+
+| nodeKind | Входы | Выходы | Отличие от `is-recording-window-full` |
+|----------|-------|--------|----------------------------------------|
+| `is-window-elapsed` | exec, `windowMs` (Integer, nullable) | exec-true / exec-false | БЕЗ `RecorderRef`: чистый гейт по host-часам |
+
+Природа — polling-гейт в лупе (true/false по факту), НЕ event-таймер. Граница с
+тиком: `onTick`/`waitUntilNextLoopTick` = pacing лупа (как часто крутится);
+`is-window-elapsed` = гейт-потребитель (накопилось ли окно). Окно периодическое,
+самосбрасывающееся: host держит per-node точку отсчёта, при `elapsed >= windowMs`
+→ true + сброс. Величина `windowElapsedMs` (поле узла, рантайм читает; провод
+`windowMs` перекрывает) связана с субсэмплером трендов инвариантом
+`windowMs / tick >= measurementsCount` — кодифицирован тестом-гардом (иначе тихий
+`insufficient-subsample`). `is-recording-window-full` **не заменён** — остаётся для
+сценариев, где запись реально нужна.
+
 #### Узлы v0.7 (reference)
 
 | nodeKind | Входы | Выходы |
@@ -1114,6 +1135,16 @@ Backend routing — **host** (`resolveJournalBackend`): device scope → electro
 - `get-journal`, `get-reporter`
 - `make-report-from-track`, `make-report-from-analysis` (два node kind, не один переключатель)
 - `publish-report`
+
+**Обновление контракта `make-report-from-analysis` (ADR-0006, PC-1, 2026-07-15):**
+вход `analysis` расширен `FftTrendAnalysisRef` → обобщённый **`DetectionAnalysisRef`**
+(санкц. union basn: `FftTrendAnalysisRef | EnsembleAnalysisRef`). Узел строит отчёт
+по ОДНОМУ детектору любой модальности — спектральному ИЛИ нейро. Схема отчёта по
+источнику: `trends-fft/v0.1` (спектр) или `neuro-detection/v1` (нейро, host-хук
+`makeReportFromEnsembleAnalysis`). Причина: нейро-одиночка не должен носить
+`make-combined-report` («combined»-отчёт при одной модальности — ложь холста);
+имя «MakeReportFromAnalysis» уже родовое, новый узел не вводится. Обратная
+совместимость: union шире прежнего, сохранённые графы валидны.
 
 ### 17.3 Канонический граф
 
