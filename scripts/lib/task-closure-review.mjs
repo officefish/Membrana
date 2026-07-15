@@ -233,6 +233,33 @@ export function buildTaskClosureReviewPrompt({
   ].join('\n');
 }
 
+/**
+ * Есть ли блокеры в строке `P0/P1:` (контракт: нумерованный список или «—»).
+ *
+ * Решает ПЕРВЫЙ токен строки, а не наличие слова «P1» где-то в прозе: ревью
+ * «P0/P1: нет (P1 из OP5 закрыт)» — это LGTM, а раньше давало ложный BLOCK и
+ * лишний цикл closure (живой случай 2026-07-14, ретро #485 п.4).
+ *
+ * Fail-closed: всё, что не начинается с явного отрицания, считается блокером —
+ * пропустить настоящий P0 в LGTM хуже, чем переспросить формулировку.
+ *
+ * @param {string} p0p1Line — содержимое строки после «P0/P1:»
+ */
+export function hasP0P1Blockers(p0p1Line) {
+  const line = String(p0p1Line ?? '').trim();
+  if (!line) return false;
+
+  // Тире засчитывается ТОЛЬКО одиноко: «- гонка в сторе» — это markdown-пункт с
+  // настоящим блокером, а не отрицание. Иначе гард стал бы fail-open и пропустил
+  // бы P0 в LGTM — хуже исходного бага.
+  if (/^[—–-]$/u.test(line)) return false;
+
+  // Словесное отрицание может нести пояснение: «нет (P1 из ревью OP5 закрыт)».
+  // Без `\b`: в JS он определён по ASCII, после кириллического «нет» границы слова
+  // нет вовсе. Лукахед «дальше не буква и не цифра» работает и для «нет», и для «none».
+  return !/^(?:none|нет|no|n\/a|н\/д|отсутствуют|не выявлено|не найдено)(?![\p{L}\p{N}])/iu.test(line);
+}
+
 export function parseTeamleadReview(body, expectedTaskId, expectedCommitSha, expectedTier) {
   const tier = body.match(/^Tier:\s*(T0|T1|T2)\s*$/mu)?.[1];
   const task = body.match(/^Task:\s*(\S+)\s*$/mu)?.[1];
@@ -246,7 +273,7 @@ export function parseTeamleadReview(body, expectedTaskId, expectedCommitSha, exp
   if (task !== expectedTaskId) throw new Error(`Review task mismatch: ${task}`);
   if (commit !== expectedCommitSha) throw new Error(`Review SHA mismatch: ${commit}`);
   if (expectedTier && tier !== expectedTier) throw new Error(`Review tier mismatch: ${tier}`);
-  const hasBlockers = !/^(?:—|-|none)$/iu.test(p0p1);
+  const hasBlockers = hasP0P1Blockers(p0p1);
   if (verdict === 'LGTM' && hasBlockers) throw new Error('LGTM несовместим с P0/P1');
   if (verdict === 'BLOCK' && !hasBlockers) throw new Error('BLOCK требует описанный P0/P1');
   if (verdict === 'LGTM' && readiness === 'needs_fix') {

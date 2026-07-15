@@ -9,6 +9,7 @@ import {
   buildTaskClosureReviewPrompt,
   detectReviewTier,
   finalizeReviewManifest,
+  hasP0P1Blockers,
   hasSufficientReviewEvidence,
   loadReviewManifest,
   manifestPath,
@@ -246,6 +247,43 @@ test('LGTM cannot contain unresolved P0/P1 text', () => {
     ),
     /LGTM несовместим/,
   );
+});
+
+// ─── ретро #485 п.4: гард решает по первому токену, а не по слову «P1» в прозе ────
+
+test('hasP0P1Blockers: отрицание в начале строки — блокеров нет', () => {
+  for (const line of ['—', '–', '-', 'none', 'None', 'нет', 'НЕТ', 'no', 'n/a', 'отсутствуют', 'не выявлено']) {
+    assert.equal(hasP0P1Blockers(line), false, `«${line}» — это отсутствие блокеров`);
+  }
+});
+
+test('hasP0P1Blockers: слово «P1» в прозе после отрицания не делает блокер', () => {
+  // Живой ложный BLOCK 2026-07-14: формулировка ниже стоила лишнего closure-цикла.
+  assert.equal(hasP0P1Blockers('нет (P1 из ревью OP5 закрыт)'), false);
+  assert.equal(hasP0P1Blockers('нет — P1 прошлого ревью снят'), false);
+});
+
+test('hasP0P1Blockers: настоящие блокеры ловятся (fail-closed)', () => {
+  assert.equal(hasP0P1Blockers('1. Hidden blocker'), true);
+  assert.equal(hasP0P1Blockers('P1 — гонка в сторе'), true);
+  // Неизвестная формулировка → считаем блокером: пропустить P0 хуже, чем переспросить.
+  assert.equal(hasP0P1Blockers('см. комментарии в PR'), true);
+});
+
+test('hasP0P1Blockers: тире засчитывается только одиноко (не markdown-пункт)', () => {
+  assert.equal(hasP0P1Blockers('—'), false);
+  // Это блокер в виде списка, а не отрицание: гард обязан остаться fail-closed.
+  assert.equal(hasP0P1Blockers('- гонка в сторе'), true);
+  assert.equal(hasP0P1Blockers('— P1 в runtime'), true);
+});
+
+test('LGTM с «P0/P1: нет (P1 из OP5 закрыт)» больше не даёт ложный BLOCK', () => {
+  const reviewed = applyTeamleadReview(
+    withEvidence(prepare()),
+    lgtmBody.replace('P0/P1: —', 'P0/P1: нет (P1 из ревью OP5 закрыт)'),
+  );
+  assert.equal(reviewed.verdict, 'LGTM');
+  assert.equal(reviewed.evidence.hasUnresolvedP0P1, false);
 });
 
 test('BLOCK transition records unresolved blocker state', () => {

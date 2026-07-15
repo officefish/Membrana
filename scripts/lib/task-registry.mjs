@@ -62,10 +62,36 @@ export function listArchived(registry) {
   return registry.tasks.filter((t) => t.status === 'archived');
 }
 
-/** Архивные задачи с Issue, которые ещё не закрыты на GitHub. */
+/**
+ * Фазы, ошибочно носящие githubIssue СВОЕГО эпика (ретро #485 п.5).
+ *
+ * Такая фаза при архивации закрывает Issue всего эпика: task:close-github идёт по
+ * githubIssue задачи и не смотрит, чей это Issue. Это не гипотеза — в реестре
+ * видно, как #131 и #144 закрылись в одну и ту же секунду 2026-06-30T11:49:58Z.
+ * У фазы без своего Issue githubIssue обязан быть null.
+ *
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ */
+export function findEpicIssueCollisions(registry) {
+  const byId = new Map(registry.tasks.map((t) => [t.id, t]));
+  return registry.tasks.filter((t) => {
+    if (!t.parentEpic || t.githubIssue == null) return false;
+    const epic = byId.get(t.parentEpic);
+    return Boolean(epic && epic.githubIssue != null && epic.githubIssue === t.githubIssue);
+  });
+}
+
+/**
+ * Архивные задачи с Issue, которые ещё не закрыты на GitHub.
+ *
+ * Фазы с Issue эпика исключены намеренно (см. findEpicIssueCollisions): молча
+ * закрыть чужой эпик хуже, чем не закрыть ничего. task:close-github показывает их
+ * отдельным списком, чтобы человек занулил поле или завёл фазе свой Issue.
+ */
 export function listPendingGithubClose(registry) {
+  const collisions = new Set(findEpicIssueCollisions(registry).map((t) => t.id));
   return listArchived(registry).filter(
-    (t) => t.githubIssue != null && !t.githubIssueClosedAt,
+    (t) => t.githubIssue != null && !t.githubIssueClosedAt && !collisions.has(t.id),
   );
 }
 

@@ -187,7 +187,9 @@ git push -u origin vesnin
 
 ### VPS deploy (SSH-скрипты)
 
-Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`. Для prod штатное значение ветки — `main`; переопределение ветки допускается только для диагностического hotfix с явным отчётом и последующим merge обратно в `main`.
+Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. **Внимание:** `.gitignore` глушит `scripts/_ssh-*.mjs` (одноразовые debug-скрипты), поэтому переиспользуемый хелпер входит в коммит только через `git add -f scripts/_ssh-<name>.mjs` — иначе молча не попадёт в PR. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`.
+
+Разовую команду или свой `.sh` на office-VDS не нужно оформлять новым скриптом — есть генерик: `yarn office:ssh '<команда>'` и `yarn vds:run <локальный.sh> [arg...]` (снимает CRLF, заливает, выполняет, убирает за собой). Для media-хоста — `node scripts/_ssh-media-exec.mjs '<команда>'`. Для prod штатное значение ветки — `main`; переопределение ветки допускается только для диагностического hotfix с явным отчётом и последующим merge обратно в `main`.
 
 | Команда | Назначение |
 |---------|------------|
@@ -202,6 +204,9 @@ git push -u origin vesnin
 | `yarn cabinet:mp3:post-deploy` | Patch `cabinet.env` (CLIENT_CORS, MEDIA_API_*) |
 | `yarn cabinet:mp6:prod` | Prod regression MP1–MP5 (one session) |
 | `yarn cabinet:mp7:prod` | MP7: MP1–MP5 + WebSocket journal/mic-live smoke |
+| `yarn office:ssh '<cmd>'` / `yarn vds:run <файл.sh>` | Разовая команда / локальный скрипт на office-VDS |
+| `node scripts/_ssh-panel-deploy.mjs [--audio <dir>]` | Деплой панели: права под caddy + сохранение wav-бандла |
+| `node scripts/_ssh-panel-smoke.mjs --read-only` | Прод-смоук панели owner-cookie (без флага — пишет в стор) |
 
 Подробно: [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md), [`docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
 
