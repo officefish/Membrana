@@ -50,7 +50,19 @@ function connect(config) {
  */
 function endConnection(conn) {
   return new Promise((resolvePromise) => {
-    conn.on('close', resolvePromise);
+    // Страховка от вечного ожидания: если сервер закрыл соединение сам, ssh2 уже
+    // отдал 'close', и второго события на end() не будет — без таймера скрипт
+    // висел бы молча (хуже, чем падение).
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolvePromise();
+    };
+    const timer = setTimeout(finish, 5_000);
+    timer.unref?.();
+    conn.on('close', finish);
     conn.end();
   });
 }
@@ -165,22 +177,22 @@ if (process.argv[1]?.endsWith('_ssh-office-exec.mjs')) {
   const target = scriptMode ? argv[1] : argv[0];
   if (!target) {
     console.error(USAGE);
-    process.exit(1);
+    // exitCode везде, а не process.exit(): обрыв процесса с недописанным
+    // pipe-stdout роняет libuv на Windows ассертом (код 127 поверх настоящего).
+    process.exitCode = 1;
+  } else {
+    const { host, port } = getOfficeSshConfig();
+    console.error(`[office-exec] ${host}:${port} ${scriptMode ? `script ${target}` : 'command'}`);
+
+    // Код удалённой команды пробрасывается наружу как есть.
+    const run = scriptMode ? runScriptOnOffice(target, argv.slice(2)) : runOnOffice(target);
+    run
+      .then((code) => {
+        process.exitCode = code;
+      })
+      .catch((e) => {
+        console.error('SSH ERR', e.message);
+        process.exitCode = 1;
+      });
   }
-
-  const { host, port } = getOfficeSshConfig();
-  console.error(`[office-exec] ${host}:${port} ${scriptMode ? `script ${target}` : 'command'}`);
-
-  // exitCode, а не process.exit(): см. коммент в endConnection — обрыв процесса с
-  // недописанным pipe-stdout роняет libuv на Windows ассертом (код 127 поверх
-  // настоящего кода возврата). Код удалённой команды пробрасывается наружу как есть.
-  const run = scriptMode ? runScriptOnOffice(target, argv.slice(2)) : runOnOffice(target);
-  run
-    .then((code) => {
-      process.exitCode = code;
-    })
-    .catch((e) => {
-      console.error('SSH ERR', e.message);
-      process.exitCode = 1;
-    });
 }
