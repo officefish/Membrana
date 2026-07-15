@@ -1,85 +1,21 @@
 {
   "tasks": [
     {
-      "id": "pc1-single-detector-report",
-      "title": "PC-1: отчёт одиночного детектора — make-report-from-analysis принимает DetectionAnalysisRef (ADR-0006), нейро-FREE-граф без combined-отчёта",
-      "promptPath": "docs/prompts/PC1_SINGLE_DETECTOR_REPORT_PROMPT.md",
-      "githubIssue": 493,
-      "size": "M",
+      "id": "repo-clean",
+      "title": "repo-clean: yarn repo:clean — классификация веток по состоянию PR + гарды (персона-ветки, worktree, незапушенное) + чистка 93 мёртвых веток и 4 worktree",
+      "promptPath": "docs/prompts/REPO_CLEAN_PROMPT.md",
+      "githubIssue": 492,
+      "size": "S",
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
       "archivedAt": null,
-      "leadPersona": "ozhegov",
+      "leadPersona": "dynin",
       "supportPersonas": [
-        "kuryokhin",
-        "rodchenko",
-        "dynin"
+        "vesnin",
+        "ozhegov"
       ],
-      "notes": "Фаза PC-1 спринта palette-clarity-nodes #493. ADR-0006 (DRAFT). Вариант A: расширить make-report-from-analysis до DetectionAnalysisRef (не новый узел — B был бы консилиум-гейт). Аддитивный ensemble-путь в рантайме (trend-путь не трогаем, нулевой риск), новый host-хук makeReportFromEnsembleAnalysis, честный отчёт neuro-detection/v1 без combined. Нейро-FREE-граф переходит с make-combined-report на make-report-from-analysis. Кросс-пакет: core socket + device-board executor + host + client bridge + graph.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "batch-collection-run-contour",
-      "title": "batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл)",
-      "promptPath": "docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md",
-      "githubIssue": 494,
-      "size": "L",
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-15",
-      "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "kuryokhin",
-        "dynin",
-        "rodchenko",
-        "vesnin"
-      ],
-      "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15 (СТ-3). НЕ узел, а эпик: коллекция ломает live-модель исполнения (источник = сохранённый набор, итерация for-each, batch vs live). Новые core-контракты: SampleCollectionRef, узел-источник, итератор for-each-sample, устройство collection, batch-рантайм. ГЕЙТ СТАРТА: пост-FREE — семантически принадлежит валидации на реальных данных (следующий жизненный цикл, НЕ гейт перед отгрузкой FREE, инвариант владельца). Зарегистрирован чтобы не потерять; старт по решению владельца. Возможный мостик get-collection-sample (1 сэмпл как AudioSampleRef в live-граф) — только если кейс потребует, не превентивно.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "palette-clarity-nodes",
-      "title": "palette-clarity-nodes: узлы наглядности FREE-графов (PC-1 отчёт одиночного детектора вес ADR, PC-2 периодический гейт без рекордера вес консилиума)",
-      "promptPath": "docs/prompts/PALETTE_CLARITY_NODES_PROMPT.md",
-      "githubIssue": 493,
-      "size": "L",
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-15",
-      "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "kuryokhin",
-        "rodchenko",
-        "dynin",
-        "vesnin"
-      ],
-      "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15. Fast-follow после отгрузки FREE (#489/#490) — течи наглядности не блокер. PC-1 первой (нейро-одиночка носит combined-отчёт; расширить make-report-from-analysis до DetectionAnalysisRef vs новый make-detection-report; ADR с UI-ролью). PC-2 второй (нет периодического гейта без рекордера, spectrum юзает is-recording-window-full как таймер; новый владелец времени is-window-elapsed + чинит декоративный collectorConfig.windowSec; полный консилиум). Каждая задача — своя фазовая карточка при старте. Out of scope: узлы коллекции = эпик batch-collection-run-contour #494. Гейт старта: отгрузка FREE.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "cowork-free-fragment-usercases",
-      "title": "Cowork Sprint: три фрагментарных UserCase FREE (спектр / нейро / записи)",
-      "promptPath": "docs/prompts/COWORK_FREE_FRAGMENT_USERCASES_PROMPT.md",
-      "githubIssue": 487,
-      "size": "L",
-      "status": "archived",
-      "sprintKind": "cowork-sprint",
-      "createdAt": "2026-07-15",
-      "archivedAt": "2026-07-15",
-      "leadPersona": "vesnin",
-      "supportPersonas": [
-        "ozhegov",
-        "rodchenko",
-        "kuryokhin",
-        "dynin"
-      ],
-      "notes": "3 блока spectrum-live/neuro-detection/sample-recording; изоляция до Interface Consilium; мёржатся все три, победителя нет. Первый Cowork Sprint (формат #464). Каркас 3+1 уже в free-tier-user-case-entries.ts — блоки наливают содержимое в заготовки, loadDocument переключается на интеграции. Constraints: новых узлов палитры НЕ вводить, combined UC не трогать (донор топологии), живой Run = проверка сборки не детекции, живой дрон НЕ гейт перед отгрузкой. Кредит Anthropic пуст → Interface Consilium через --secretary-file.",
+      "notes": "Ревизия 2026-07-15: открытых PR всего 3 (все живые) — чистить нечего; мусор в ветках. Корень: squash-мёрж делает git branch --merged слепым (видит 9 влитых из 42 реально мёртвых), поэтому классификация только по состоянию PR на GitHub. Гарды обязательны: персона-ветки канон TASKS_MANAGEMENT §7а (vesnin/ozhegov/boyarskiy/dynin), ветки в worktree, незапушенное с уникальными коммитами (живой случай chore/ritual-day-0715 — 4 коммита сегодня только локально, утренний ритуал соседней сессии). Worktree: удалять только archived-спринты с чистым деревом; cowork #487 и главное дерево соседней сессии НЕ трогать. dry-run по умолчанию. Out of scope: 8 локальных веток без PR с уникальными коммитами (codex/* 8-9 коммитов) — удаление безвозвратно, разбор владельцем отдельно.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
@@ -13540,6 +13476,89 @@
         "vesnin"
       ],
       "notes": "Фаза 3. Код показывается один раз (<dialog> + копировать); verify:tailwind-coverage; смоук партнёрского сценария конец-в-конец; бэкап-строка."
+    },
+    {
+      "id": "pc1-single-detector-report",
+      "title": "PC-1: отчёт одиночного детектора — make-report-from-analysis принимает DetectionAnalysisRef (ADR-0006), нейро-FREE-граф без combined-отчёта",
+      "promptPath": "docs/prompts/PC1_SINGLE_DETECTOR_REPORT_PROMPT.md",
+      "githubIssue": 493,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin",
+        "rodchenko",
+        "dynin"
+      ],
+      "notes": "Фаза PC-1 спринта palette-clarity-nodes #493. ADR-0006 (DRAFT). Вариант A: расширить make-report-from-analysis до DetectionAnalysisRef (не новый узел — B был бы консилиум-гейт). Аддитивный ensemble-путь в рантайме (trend-путь не трогаем, нулевой риск), новый host-хук makeReportFromEnsembleAnalysis, честный отчёт neuro-detection/v1 без combined. Нейро-FREE-граф переходит с make-combined-report на make-report-from-analysis. Кросс-пакет: core socket + device-board executor + host + client bridge + graph.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "batch-collection-run-contour",
+      "title": "batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл)",
+      "promptPath": "docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md",
+      "githubIssue": 494,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin",
+        "dynin",
+        "rodchenko",
+        "vesnin"
+      ],
+      "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15 (СТ-3). НЕ узел, а эпик: коллекция ломает live-модель исполнения (источник = сохранённый набор, итерация for-each, batch vs live). Новые core-контракты: SampleCollectionRef, узел-источник, итератор for-each-sample, устройство collection, batch-рантайм. ГЕЙТ СТАРТА: пост-FREE — семантически принадлежит валидации на реальных данных (следующий жизненный цикл, НЕ гейт перед отгрузкой FREE, инвариант владельца). Зарегистрирован чтобы не потерять; старт по решению владельца. Возможный мостик get-collection-sample (1 сэмпл как AudioSampleRef в live-граф) — только если кейс потребует, не превентивно.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "palette-clarity-nodes",
+      "title": "palette-clarity-nodes: узлы наглядности FREE-графов (PC-1 отчёт одиночного детектора вес ADR, PC-2 периодический гейт без рекордера вес консилиума)",
+      "promptPath": "docs/prompts/PALETTE_CLARITY_NODES_PROMPT.md",
+      "githubIssue": 493,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin",
+        "rodchenko",
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15. Fast-follow после отгрузки FREE (#489/#490) — течи наглядности не блокер. PC-1 первой (нейро-одиночка носит combined-отчёт; расширить make-report-from-analysis до DetectionAnalysisRef vs новый make-detection-report; ADR с UI-ролью). PC-2 второй (нет периодического гейта без рекордера, spectrum юзает is-recording-window-full как таймер; новый владелец времени is-window-elapsed + чинит декоративный collectorConfig.windowSec; полный консилиум). Каждая задача — своя фазовая карточка при старте. Out of scope: узлы коллекции = эпик batch-collection-run-contour #494. Гейт старта: отгрузка FREE.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "cowork-free-fragment-usercases",
+      "title": "Cowork Sprint: три фрагментарных UserCase FREE (спектр / нейро / записи)",
+      "promptPath": "docs/prompts/COWORK_FREE_FRAGMENT_USERCASES_PROMPT.md",
+      "githubIssue": 487,
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": "2026-07-15",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "kuryokhin",
+        "dynin"
+      ],
+      "notes": "3 блока spectrum-live/neuro-detection/sample-recording; изоляция до Interface Consilium; мёржатся все три, победителя нет. Первый Cowork Sprint (формат #464). Каркас 3+1 уже в free-tier-user-case-entries.ts — блоки наливают содержимое в заготовки, loadDocument переключается на интеграции. Constraints: новых узлов палитры НЕ вводить, combined UC не трогать (донор топологии), живой Run = проверка сборки не детекции, живой дрон НЕ гейт перед отгрузкой. Кредит Anthropic пуст → Interface Consilium через --secretary-file.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
     }
   ]
 }
