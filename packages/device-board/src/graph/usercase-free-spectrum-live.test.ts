@@ -10,9 +10,12 @@ import {
   FREE_SPECTRUM_LIVE_USER_CASE_ID,
   MVP_MAIN_ANCHORS,
   REMOVED_MVP_TRACK_NODE_IDS,
+  REMOVED_MVP_WINDOW_CLOCK_NODE_IDS,
+  SPECTRUM_LIVE_EXPECTED_TICK_MS,
   SPECTRUM_LIVE_MAIN,
   SPECTRUM_LIVE_SEQUENCE_THEN_COUNT,
   SPECTRUM_LIVE_TRENDS_POLICY,
+  SPECTRUM_LIVE_WINDOW_MS,
   getFreeSpectrumLiveDocument,
 } from './usercase-free-spectrum-live.js';
 import { validateUserCaseDocument } from '../runtime/validators/validate-user-case-document.js';
@@ -158,40 +161,98 @@ describe('usercase-free-spectrum-live (Phase 2)', () => {
     }
   });
 
-  it('main: часы окна — CollectFftFrames → IsRecordingWindowFull, false → ∞', () => {
+  // ── PC-2b: часы окна свапнуты на is-window-elapsed (host-clock, без рекордера) ──
+  it('main: окно наблюдения — CollectFftFrames → IsWindowElapsed; true → Sequence, false → ∞', () => {
+    // Ровно один is-window-elapsed
+    const iwe = main.nodes.filter((n) => n.nodeKind === 'is-window-elapsed');
+    expect(iwe).toHaveLength(1);
+    expect(iwe[0]?.id).toBe(SPECTRUM_LIVE_MAIN.windowElapsed);
+    expect(iwe[0]?.windowElapsedMs).toBe(SPECTRUM_LIVE_WINDOW_MS);
+
     expect(
       findEdge(main, {
         kind: 'exec',
         source: MVP_MAIN_ANCHORS.collectFrames,
-        target: MVP_MAIN_ANCHORS.windowFull,
+        target: SPECTRUM_LIVE_MAIN.windowElapsed,
       }),
     ).toBeDefined();
     expect(
       findEdge(main, {
         kind: 'exec',
-        source: MVP_MAIN_ANCHORS.windowFull,
-        sourceHandle: 'exec-false-out',
-        target: MVP_MAIN_ANCHORS.infinity,
-      }),
-    ).toBeDefined();
-    expect(
-      findEdge(main, {
-        kind: 'exec',
-        source: MVP_MAIN_ANCHORS.windowFull,
+        source: SPECTRUM_LIVE_MAIN.windowElapsed,
         sourceHandle: 'exec-true-out',
         target: MVP_MAIN_ANCHORS.sequence,
       }),
     ).toBeDefined();
-    // Рекордер-часы питают гейт; трек не создаётся — slice StopRecording не потребляется
     expect(
       findEdge(main, {
-        kind: 'data',
-        source: MVP_MAIN_ANCHORS.recorderClock,
-        target: MVP_MAIN_ANCHORS.windowFull,
-        targetHandle: 'recorder',
+        kind: 'exec',
+        source: SPECTRUM_LIVE_MAIN.windowElapsed,
+        sourceHandle: 'exec-false-out',
+        target: MVP_MAIN_ANCHORS.infinity,
       }),
     ).toBeDefined();
+    // Спектр больше не тащит рекордер-часы: ни get-recorder, ни is-recording-window-full
+    for (const kind of ['get-recorder', 'is-recording-window-full']) {
+      expect(main.nodes.some((n) => n.nodeKind === kind), kind).toBe(false);
+    }
+    // is-window-elapsed не имеет data-провода recorder (владелец времени — host-часы)
+    expect(
+      main.edges.some(
+        (e) => e.target === SPECTRUM_LIVE_MAIN.windowElapsed && e.kind === 'data',
+      ),
+    ).toBe(false);
+    // StopRecording не выгружает slice — трек не создаётся
     expect(main.edges.some((e) => e.source === MVP_MAIN_ANCHORS.stopRecording && e.kind === 'data')).toBe(false);
+  });
+
+  // ── PC-2b: рекордер-часы вычтены как узлы + рёбра ──
+  it('часы «рекордер как таймер» вычтены: узлы и их рёбра удалены', () => {
+    for (const removedId of REMOVED_MVP_WINDOW_CLOCK_NODE_IDS) {
+      expect(main.nodes.some((n) => n.id === removedId), removedId).toBe(false);
+      expect(
+        main.edges.some((e) => e.source === removedId || e.target === removedId),
+        removedId,
+      ).toBe(false);
+    }
+  });
+
+  // ── PC-2b гард-инвариант (СЕРДЦЕ консилиума): окно ≥ measurementsCount кадров ──
+  it('гард: windowElapsedMs / tick ≥ measurementsCount (защита от L11 insufficient-subsample)', () => {
+    // читаем ИЗ СОБРАННОГО документа, не из констант
+    const iwe = nodeById(main, SPECTRUM_LIVE_MAIN.windowElapsed);
+    const policy = nodeById(main, MVP_MAIN_ANCHORS.trendsPolicy).fftTrendsPolicy;
+    const windowElapsedMs = iwe.windowElapsedMs;
+    const measurementsCount = policy?.measurementsCount;
+    expect(windowElapsedMs, 'windowElapsedMs узла').toBeDefined();
+    expect(measurementsCount, 'measurementsCount policy').toBeDefined();
+    const framesPerWindow = (windowElapsedMs ?? 0) / SPECTRUM_LIVE_EXPECTED_TICK_MS;
+    expect(
+      framesPerWindow,
+      `окно ${windowElapsedMs} мс / тик ${SPECTRUM_LIVE_EXPECTED_TICK_MS} мс = ${framesPerWindow} кадров < ${measurementsCount}`,
+    ).toBeGreaterThanOrEqual(measurementsCount ?? 0);
+  });
+
+  // Гард не вхолостую: заниженное окно роняет инвариант (мутация-проба величины).
+  it('гард-проба: windowMs=2000 при tick 500 даёт 4 кадра < measurementsCount(5) — КРАСНОЕ', () => {
+    const mutatedWindowMs = 2000;
+    expect(mutatedWindowMs / SPECTRUM_LIVE_EXPECTED_TICK_MS).toBeLessThan(
+      SPECTRUM_LIVE_TRENDS_POLICY.measurementsCount,
+    );
+  });
+
+  // Мутация-проба структуры: битый target ребра iwe→Sequence ловит валидатор.
+  it('мутация-проба: битое ребро IsWindowElapsed→Sequence ловится валидатором — КРАСНОЕ', () => {
+    const mutated = structuredClone(getFreeSpectrumLiveDocument());
+    const mutatedMain = mutated.scenario.loops.main;
+    const trueEdge = mutatedMain.edges.find(
+      (e) => e.source === SPECTRUM_LIVE_MAIN.windowElapsed && e.sourceHandle === 'exec-true-out',
+    );
+    expect(trueEdge, 'ребро iwe→Sequence существует до мутации').toBeDefined();
+    trueEdge!.target = 'node-does-not-exist';
+    const result = validateUserCaseDocument(mutated);
+    expect(result.errors.length).toBeGreaterThan(0);
+    expect(result.errors.some((e) => e.code === 'block-missing-target')).toBe(true);
   });
 
   it('main: Sequence переиндексирован в 3 then — stop | наблюдение | рестарт', () => {
@@ -282,18 +343,21 @@ describe('usercase-free-spectrum-live (Phase 2)', () => {
   });
 
   // CONCEPT §5: measurementsCount ≤ кадров за окно, иначе insufficient-subsample (L11)
-  it('main: policy наблюдения — 5 измерений (≤ ≈10 кадров за окно 5 c), шаг 500 мс', () => {
+  it('main: policy наблюдения — 5 измерений (≤ ≈8 кадров за окно 4 c), шаг 500 мс', () => {
     const policy = nodeById(main, MVP_MAIN_ANCHORS.trendsPolicy).fftTrendsPolicy;
     expect(policy?.measurementsCount).toBe(SPECTRUM_LIVE_TRENDS_POLICY.measurementsCount);
-    expect(policy?.measurementsCount).toBeLessThanOrEqual(10);
+    // ≤ кадров за окно наблюдения (windowMs / tick) — тот же инвариант, что гард-тест
+    expect(policy?.measurementsCount).toBeLessThanOrEqual(
+      SPECTRUM_LIVE_WINDOW_MS / SPECTRUM_LIVE_EXPECTED_TICK_MS,
+    );
     expect(policy?.intervalMs).toBe(SPECTRUM_LIVE_TRENDS_POLICY.intervalMs);
     expect(policy?.minConfidence).toBe(0.55);
     expect(policy?.minRms).toBe(0.02);
     expect(policy?.enabledTemplateKeys).toContain('DRONE_TIGHT');
-    // Окно трендов не длиннее окна часов (5 c): (5-1)×500 мс = 2 c
+    // Окно трендов не длиннее окна наблюдения (4 c): (5-1)×500 мс = 2 c
     const spanMs =
       ((policy?.measurementsCount ?? 0) - 1) * (policy?.intervalMs ?? 0);
-    expect(spanMs).toBeLessThanOrEqual(5000);
+    expect(spanMs).toBeLessThanOrEqual(SPECTRUM_LIVE_WINDOW_MS);
   });
 
   // Стаб карточки каталога: общий free-tier-user-case-entries.ts в изолированной

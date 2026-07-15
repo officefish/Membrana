@@ -26,11 +26,13 @@ import { DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT } from './default-usercase-mvp
  * MVP-каноне нет, они появляются только в combined-деривации.
  *
  * Main: onTick → fn-3(GetAudioStream) → GetSample → GetFFTFrame → CollectFftFrames
- * → IsRecordingWindowFull(5 c) → Sequence[stop | flush → isValid → trends → isValid
+ * → IsWindowElapsed(4 c, host-clock) → Sequence[stop | flush → isValid → trends → isValid
  * → MakeReportFromAnalysis → PublishReport → Print | restart] → ∞.
  *
- * Обоснование решений — team-spectrum-live/CONCEPT.md (§4 «рекордер как часы»,
- * §5 policy-значения).
+ * PC-2b (консилиум pc2b-spectrum-window-rebuild 2026-07-15): владелец времени лупа —
+ * периодический is-window-elapsed по host-часам, а не «рекордер как часы». Спектр
+ * больше не тащит get-recorder / is-recording-window-full: наблюдению нужно ОКНО, а
+ * не запись. Обоснование решений — team-spectrum-live/CONCEPT.md (§5 policy-значения).
  */
 
 /** Id UserCase каталога (запись-заготовка живёт в free-tier-user-case-entries.ts). */
@@ -58,8 +60,20 @@ export const REMOVED_MVP_TRACK_NODE_IDS = [
 ] as const;
 
 /**
+ * Узлы «рекордер как часы» MVP-main, снятые деривацией PC-2b: наблюдательное окно
+ * теперь держит is-window-elapsed по host-часам. Их KEPT-рёбра (windowFull→sequence,
+ * windowFull→∞, recorderClock→windowFull) отпадают авто по `removed.has`.
+ */
+export const REMOVED_MVP_WINDOW_CLOCK_NODE_IDS = [
+  /** IsRecordingWindowFull — заменён на периодический is-window-elapsed (без записи). */
+  'node-is-recording-window-full-mqmo40ie-32',
+  /** GetRecorder-часы — is-window-elapsed не тянет RecorderRef. */
+  'node-get-recorder-mqs3ir02-168',
+] as const;
+
+/**
  * Опорные узлы MVP-main, сохраняемые байт-в-байт: спектральная цепочка,
- * часы окна и report-секция анализа.
+ * stop-секция сессии и report-секция анализа.
  */
 export const MVP_MAIN_ANCHORS = {
   /** Точка входа лупа — канон SCENARIO_MAIN_ENTRY (L36). */
@@ -70,9 +84,7 @@ export const MVP_MAIN_ANCHORS = {
   sample: 'node-get-sample-mqs2mt0a-165',
   frame: 'node-get-fft-frame-mqs3h75e-166',
   collectFrames: 'node-collect-fft-frames-mqs3hhnu-167',
-  /** Часы окна: recorder + host-clock гейт (CONCEPT §4). */
-  recorderClock: 'node-get-recorder-mqs3ir02-168',
-  windowFull: 'node-is-recording-window-full-mqmo40ie-32',
+  /** StopRecording остаётся якорем: Sequence then-0 гасит сессию записи (звук не выгружается). */
   stopRecording: 'node-stop-recording-mqmod4yf-35',
   sequence: 'node-sequence-gate-v20-async',
   /** Рестарт окна (L35: у каждого stop есть exec-путь к start после себя). */
@@ -85,8 +97,20 @@ export const MVP_MAIN_ANCHORS = {
   publishReport: 'node-publish-report-mqma49xv-35',
 } as const;
 
+/**
+ * Окно наблюдения is-window-elapsed по host-часам (PC-2b): владелец времени лупа
+ * вместо рекордера-как-часов.
+ *
+ * кадров = windowMs / tick ≈ 8 при tick 500; инвариант ≥ measurementsCount(5) — гард в тесте.
+ */
+export const SPECTRUM_LIVE_WINDOW_MS = 4000;
+/** Живой каденс тика ~500 мс (L32) — знаменатель инварианта окна (гард в тесте). */
+export const SPECTRUM_LIVE_EXPECTED_TICK_MS = 500;
+
 /** Id новых узлов блока (только виды из SCENARIO_NODE_KINDS). */
 export const SPECTRUM_LIVE_MAIN = {
+  /** Периодическое окно наблюдения по host-часам (PC-2b, замена рекордера-как-часам). */
+  windowElapsed: 'spectrum-live-window-elapsed',
   /** Гейт пустого окна (L28): холодный старт → skip, не смерть ветки. */
   framesGate: 'spectrum-live-frames-gate',
   /** Гейт insufficient-subsample (L11): нет анализа → не публиковать пустой отчёт. */
@@ -100,9 +124,10 @@ export const SPECTRUM_LIVE_MAIN = {
  * `measurementsCount` — ЖЁСТКОЕ требование субсэмплера: кадров в batch должно быть
  * не меньше, иначе `analyzeTrendsFromFftFrames` вернёт null («insufficient-subsample»,
  * L11). Кадров в batch = тиков за окно (очередь анализатора — FIFO, flush осушает
- * её целиком). Живой каденс тика ~500 мс (L32) ⇒ окно 5 c даёт ≈10 кадров ⇒ 5 —
- * запас ×2. `intervalMs` на порог НЕ влияет, только на выбор слотов: 4×500 мс = 2 c
- * самых свежих кадров. Остальные поля — канон MVP.
+ * её целиком). Живой каденс тика ~500 мс (L32) ⇒ окно 4 c даёт ≈8 кадров ⇒ 5 —
+ * запас (инвариант windowMs / tick ≥ measurementsCount — гард в тесте). `intervalMs`
+ * на порог НЕ влияет, только на выбор слотов: 4×500 мс = 2 c самых свежих кадров.
+ * Остальные поля — канон MVP.
  */
 export const SPECTRUM_LIVE_TRENDS_POLICY = {
   detectionMode: 'auto',
@@ -179,7 +204,10 @@ function dataUntyped(
  * вычтена; наблюдение защищено двумя is-valid гейтами (L28 / L11).
  */
 function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
-  const removed = new Set<string>(REMOVED_MVP_TRACK_NODE_IDS);
+  const removed = new Set<string>([
+    ...REMOVED_MVP_TRACK_NODE_IDS,
+    ...REMOVED_MVP_WINDOW_CLOCK_NODE_IDS,
+  ]);
 
   const keptNodes = main.nodes
     .filter((n) => !removed.has(n.id))
@@ -215,6 +243,15 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
   );
 
   const newNodes: ScenarioGraphNode[] = [
+    // Часы окна БЕЗ рекордера (PC-2b): периодический гейт по host-часам, окно 4 c.
+    node(
+      SPECTRUM_LIVE_MAIN.windowElapsed,
+      'is-window-elapsed',
+      'IsWindowElapsed (окно наблюдения 4 c)',
+      240,
+      -760,
+      { windowElapsedMs: SPECTRUM_LIVE_WINDOW_MS },
+    ),
     node(SPECTRUM_LIVE_MAIN.framesGate, 'is-valid', 'isValid (кадры есть?)', 640, -760),
     node(SPECTRUM_LIVE_MAIN.analysisGate, 'is-valid', 'isValid (анализ получился?)', 2360, -760),
     node(SPECTRUM_LIVE_MAIN.printObservation, 'print', 'Print: спектр-отчёт', 3240, -760, {
@@ -223,8 +260,11 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
   ];
 
   const newEdges: ScenarioGraphEdge[] = [
-    // Часы окна: кадр собран → проверить, набралось ли окно (CollectSamples вычтен).
-    exec(MVP_MAIN_ANCHORS.collectFrames, MVP_MAIN_ANCHORS.windowFull),
+    // Часы окна без рекордера (PC-2b): кадр собран → набралось ли окно наблюдения 4 c.
+    exec(MVP_MAIN_ANCHORS.collectFrames, SPECTRUM_LIVE_MAIN.windowElapsed),
+    // Семантика ровно как у windowFull: окно набралось → цикл наблюдения; ещё нет → следующий тик.
+    exec(SPECTRUM_LIVE_MAIN.windowElapsed, MVP_MAIN_ANCHORS.sequence, 'exec-true-out'),
+    exec(SPECTRUM_LIVE_MAIN.windowElapsed, MVP_MAIN_ANCHORS.infinity, 'exec-false-out'),
 
     // Sequence после переиндексации (была then-1 = MakeTrack — выброшена).
     exec(MVP_MAIN_ANCHORS.sequence, MVP_MAIN_ANCHORS.stopRecording, 'then-0'),
@@ -266,20 +306,23 @@ function transformMainLoop(main: ScenarioSubgraph): MutableSubgraph {
 
 /** Comment groups: MVP-группы без вычтенных узлов + группы блока. */
 function transformCommentGroups(groups: readonly ScenarioCommentGroup[]): ScenarioCommentGroup[] {
-  const removed = new Set<string>(REMOVED_MVP_TRACK_NODE_IDS);
+  const removed = new Set<string>([
+    ...REMOVED_MVP_TRACK_NODE_IDS,
+    ...REMOVED_MVP_WINDOW_CLOCK_NODE_IDS,
+  ]);
   const kept = groups.filter((group) => !group.nodeIds.some((id) => removed.has(id)));
   const spectrumGroups: ScenarioCommentGroup[] = [
     {
       id: 'spectrum-live-group-window-clock',
       branch: 'main',
-      title: 'Часы окна (запись как таймер)',
+      title: 'Окно наблюдения (host-часы, без записи)',
       rect: { x: -320, y: -880, width: 900, height: 400 },
-      nodeIds: [MVP_MAIN_ANCHORS.windowFull, MVP_MAIN_ANCHORS.stopRecording, MVP_MAIN_ANCHORS.sequence],
+      nodeIds: [SPECTRUM_LIVE_MAIN.windowElapsed, MVP_MAIN_ANCHORS.stopRecording, MVP_MAIN_ANCHORS.sequence],
       frameColor: { preset: 'secondary' },
       description:
-        'Спектру нужно ОКНО кадров, а периодического гейта без рекордера в палитре нет: ' +
-        'IsRecordingWindowFull (5 c, host-clock) работает здесь как таймер. Трек не создаётся, ' +
-        'звук никуда не выгружается — slice от StopRecording намеренно не подключён.',
+        'Периодическое окно наблюдения 4 c по host-часам (IsWindowElapsed) — без записи и без ' +
+        'рекордера: наблюдению нужно ОКНО кадров, а не трек. StopRecording в then-0 лишь гасит ' +
+        'сессию записи, звук никуда не выгружается — slice намеренно не подключён.',
     },
     {
       id: 'spectrum-live-group-observation',
