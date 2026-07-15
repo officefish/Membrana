@@ -56,6 +56,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Дождаться зелёного CI → напечатать команду деплоя (не запускает) | `yarn deploy:when-green` |
 | Оффлайн Prisma-миграция (diff HEAD↔рабочая схема) | `yarn prisma:migration --name X [--schema <path>]` |
 | Архив карточек с закрытыми GH-иссью | `yarn tasks:archive-closed [--execute]` |
+| Чистка мёртвых веток/worktree | `yarn repo:clean` (dry-run; `--execute [--remote] [--worktrees]`) |
 | Команда на office-VDS | `yarn office:ssh 'docker ps'` (**без `--`**: yarn 4 съедает его сам) |
 | Локальный `.sh` на office-VDS (CRLF снимается сам) | `yarn vds:run ./scratch/check.sh [arg...]` |
 | Прод-смоук панели с owner-cookie | `node scripts/_ssh-panel-smoke.mjs --read-only` (без флага — пишет в прод-стор) |
@@ -63,6 +64,18 @@ All standard dev commands are documented in the root `README.md` and `package.js
 **Хуки** (`.githooks/`, авто через `prepare` → `core.hooksPath`): `pre-push` = catalog:verify-client + verify:wire-sync + affected typecheck (пропуск `SKIP_PREPUSH=1`); `commit-msg` = conventional-заголовок (блок) + Co-Authored-By трейлер (warn), пропуск `SKIP_COMMIT_MSG=1`.
 
 **Скиллы:** `membrana-ship` (add-A → code-review → pr:ship), `membrana-tooling-doctor` (health-check tooling). Общий «работа за сегодня» — `scripts/lib/git-day-context.mjs` (без --author-фильтра).
+
+#### Ветки: `git branch --merged` здесь врёт (#492)
+
+PR мёржатся **squash** → коммиты ветки не становятся предками `main`, и `git branch --merged`
+их не видит: на замере 2026-07-15 он признал влитыми **9** удалённых веток из **42** реально
+мёртвых. Не чистить по нему и не судить по нему о «невлитой работе» — источник истины
+только состояние PR (`yarn repo:clean`). По той же причине удаление идёт через `git branch -D`,
+а не `-d`: `-d` откажет на squash-мёрженной ветке.
+
+Никогда не удалять: **персона-ветки** (`vesnin`, `ozhegov`, `boyarskiy`, `dynin` — канон
+[`TASKS_MANAGEMENT.md` §7а](docs/TASKS_MANAGEMENT.md), живут между задачами, старый коммит
+≠ заброшенность) и ветки без PR, которых нет на `origin` (единственная копия работы).
 
 #### Windows-сессия (PowerShell 5.1) — канон
 
