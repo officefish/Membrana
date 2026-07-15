@@ -171,3 +171,28 @@
 ## Checkpoint NB6 — 2026-07-11T20:18:11.498Z
 - Status: **pass**
 - Note: entry-id гард 12/12, ловит L36 до живого прогона
+
+---
+
+# Night Build: graphify-public-graph (2026-07-15)
+> `yarn night:checkpoint` unavailable in this worktree (no node_modules / no active night build) — logged manually.
+
+## Checkpoint NB0 — 2026-07-15 (installation)
+- Status: **pass**
+- Note: graphifyy 0.9.16 via `uv tool install graphifyy` (CLI graphify+graphify-mcp). Research versions v0.5.0/v8 both wrong. Real code-only path: `graphify extract <path> --code-only`. Flags --exclude-private/--scope do NOT exist; real exclude = .graphifyignore + .gitignore.
+
+## Checkpoint NB1 — 2026-07-15 (code-only run)
+- Status: **pass**
+- Note: `graphify extract . --code-only` on repo root. 2067 code files, 216 docs skipped, 0 LLM (no API key). graph.json 13415 nodes/29010 edges/695 communities. graph.html REFUSED (>5000 node viz limit) → scoped packages/core run (477 nodes) produced graph.html.
+
+## Checkpoint NB2 — 2026-07-15 (metrics)
+- Status: **pass**
+- Note: function-level YES (~5129 fn nodes, calls/method/indirect_call/extends/inherits). 12574 code + 841 concept(deps). Token cost 0/0. Full graph busts tool 5000 limit + consilium ~2000 readability threshold; only per-family scope renders/reads.
+
+## Checkpoint NB3 — 2026-07-15 (leak audit)
+- Status: **pass**
+- Note: CLEAN of secrets/private. 0 nodes from docs/seanses/discussions/virtual-team/data/prd; 0 .env; 5 "secret" hits = symbol names not values; 0 persona/owner names. Hygiene: absolute path incl. Windows user `user190825` embedded in node ids (1672x in scoped html) — normalize before public deploy. graph.html loads vis-network from unpkg CDN (not self-contained).
+
+## Checkpoint NB4 — 2026-07-15 (handoff)
+- Status: **pass**
+- Note: Recommendation = do NOT deploy now; rework if pursued (scope per family + id/username sanitize + DESIGN.md theme + vendor vis-network). HANDOFF at docs/archive/night-build/2026-07-15/HANDOFF.md. No push/PR/deploy. Blocker: none.

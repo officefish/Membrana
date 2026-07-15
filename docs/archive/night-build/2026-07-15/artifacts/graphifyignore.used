@@ -1,0 +1,30 @@
+# Graphify spike scope (night/graphify-public-graph-2026-07-15) — CODE-ONLY, zero-leak.
+# Defense-in-depth: `graphify extract --code-only` already skips doc/pdf/image files,
+# but we also hard-exclude every non-code / private directory here.
+
+# Private docs / consilia / persona memory / discussions — MUST NOT be parsed
+docs/
+prd/
+
+# Data / datasets / logs / deploy artifacts / secrets
+data/
+datasets/
+deploy-artifacts/
+deploy/
+logs/
+.env
+.env.*
+**/.env
+**/.env.*
+ssl/
+
+# Build / deps / vcs
+node_modules/
+dist/
+dist-demo/
+build/
+.turbo/
+.git/
+coverage/
+graphify-out/
+.graphify-spike/
