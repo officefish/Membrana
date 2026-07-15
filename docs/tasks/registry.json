@@ -25,10 +25,10 @@
       "promptPath": "docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md",
       "githubIssue": 493,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko",
@@ -37,7 +37,7 @@
         "vesnin"
       ],
       "notes": "Уточнение владельца 2026-07-15: аудиопоток(StartStreaming/GetAudioStream)=трансляция != запись трека(StartRecording/StopRecording). MakeTrack в спектре снят → трек не производится → узлы устарели. Scout: поток независим от записи; развязка многоветочная (bootstrap StartStreaming→fn-1, main then-0 StopRecording, рестарт restartRecordingFn), риск L35. Backward-compat: start/stop-recording узлы НЕ трогать (др. графы). Границы: только usercase-free-spectrum-live+тест, is-window-elapsed(PC-2b) не регрессировать.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #511 merged squash d46f0e1b; Teamlead LGTM + адверсариальная верификация PASS 10/10 (docs/reviews/pc2c-spectrum-recording-decouple-teamlead.md). Снята запись из 3 мест, fn-1 удалена, сирота GetDevice убран. device-board 808. CI-флейк Prisma background-cabinet перезапущен зелёным.",
       "githubIssueClosedAt": null
     },
     {
