@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "repo-clean",
+      "title": "repo-clean: yarn repo:clean — классификация веток по состоянию PR + гарды (персона-ветки, worktree, незапушенное) + чистка 93 мёртвых веток и 4 worktree",
+      "promptPath": "docs/prompts/REPO_CLEAN_PROMPT.md",
+      "githubIssue": 492,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "Ревизия 2026-07-15: открытых PR всего 3 (все живые) — чистить нечего; мусор в ветках. Корень: squash-мёрж делает git branch --merged слепым (видит 9 влитых из 42 реально мёртвых), поэтому классификация только по состоянию PR на GitHub. Гарды обязательны: персона-ветки канон TASKS_MANAGEMENT §7а (vesnin/ozhegov/boyarskiy/dynin), ветки в worktree, незапушенное с уникальными коммитами (живой случай chore/ritual-day-0715 — 4 коммита сегодня только локально, утренний ритуал соседней сессии). Worktree: удалять только archived-спринты с чистым деревом; cowork #487 и главное дерево соседней сессии НЕ трогать. dry-run по умолчанию. Out of scope: 8 локальных веток без PR с уникальными коммитами (codex/* 8-9 коммитов) — удаление безвозвратно, разбор владельцем отдельно.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "vds-panel-tooling",
       "title": "vds-panel-tooling: 6 инструментов против трения Windows-сессии с VDS/панелью (ti-1 office:ssh/vds:run генерик-exec, ti-2 chmod+audio panel-deploy, ti-3 panel-smoke с owner-cookie, ti-4 ложный красный task:review:run, ti-5 гард githubIssue эпика, ti-6 Windows-канон)",
       "promptPath": "docs/prompts/VDS_PANEL_TOOLING_PROMPT.md",
