@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `batch-collection-run-contour` | batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл) | L | [`BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](../docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) | [#494](https://github.com/officefish/Membrana/issues/494) |
+| `palette-clarity-nodes` | palette-clarity-nodes: узлы наглядности FREE-графов (PC-1 отчёт одиночного детектора вес ADR, PC-2 периодический гейт без рекордера вес консилиума) | L | [`PALETTE_CLARITY_NODES_PROMPT.md`](../docs/prompts/PALETTE_CLARITY_NODES_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
