@@ -48,10 +48,10 @@
       "promptPath": "docs/prompts/COWORK_FREE_FRAGMENT_USERCASES_PROMPT.md",
       "githubIssue": 487,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "cowork-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
