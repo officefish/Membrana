@@ -21,6 +21,7 @@
 |----------|--------|--------|
 | `office.mmbrn.tech` | `@membrana/background-office` (VDS 176.124.218.4, Caddy+LE) | ✅ актуален |
 | `panel.mmbrn.tech` | office panel (эпик #438) | ✅ актуален |
+| `graphify.mmbrn.tech` | публичный код-граф монорепо (Graphify, статика graph.html) — тех-прозрачность | 🔜 решение владельца 2026-07-15 (спайк → деплой, карточка graphify-public-graph) |
 | `other.mmbrn.tech` | (уточнить назначение) | ❓ |
 
 ### `membrana.space` — продукт
