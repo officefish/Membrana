@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `agent-tooling-friction-2` | agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship) | M | [`AGENT_TOOLING_FRICTION_2_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md) | [#469](https://github.com/officefish/Membrana/issues/469) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
@@ -191,6 +190,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `agent-tooling-friction-2` | agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship) | 2026-07-15 | [`AGENT_TOOLING_FRICTION_2_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md) | #469 (Issue открыт) | [карточка](./archive/agent-tooling-friction-2.md) |
 | `cowork-format-regulation` | Cowork Sprint: регламент формата — 3 изолированных блока одной разработки, поздняя стыковка, интеграция адаптерами | 2026-07-14 | [`COWORK_SPRINT_REGULATION.md`](../docs/COWORK_SPRINT_REGULATION.md) | #464 (Issue открыт) | [карточка](./archive/cowork-format-regulation.md) |
 | `qc-panel-boards` | qc-panel-boards: drift-борд + навигация shell в панели (QC1; detector-compare уступлен #452) | 2026-07-14 | [`QC_PANEL_BOARDS_PROMPT.md`](../docs/prompts/QC_PANEL_BOARDS_PROMPT.md) | #454 (Issue открыт) | [карточка](./archive/qc-panel-boards.md) |
 | `panel-detector-compare-board` | Борд detector-compare: таблица trends DRONE_TIGHT vs yamnet в панели (магистраль 14.07) | 2026-07-14 | [`PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md`](../docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md) | #452 (Issue открыт) | [карточка](./archive/panel-detector-compare-board.md) |
@@ -735,4 +735,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-14.*
+*Файл обновлён автоматически: 2026-07-15.*
