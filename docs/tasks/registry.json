@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "cowork-free-fragment-usercases",
+      "title": "Cowork Sprint: три фрагментарных UserCase FREE (спектр / нейро / записи)",
+      "promptPath": "docs/prompts/COWORK_FREE_FRAGMENT_USERCASES_PROMPT.md",
+      "githubIssue": 487,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "kuryokhin",
+        "dynin"
+      ],
+      "notes": "3 блока spectrum-live/neuro-detection/sample-recording; изоляция до Interface Consilium; мёржатся все три, победителя нет. Первый Cowork Sprint (формат #464). Каркас 3+1 уже в free-tier-user-case-entries.ts — блоки наливают содержимое в заготовки, loadDocument переключается на интеграции. Constraints: новых узлов палитры НЕ вводить, combined UC не трогать (донор топологии), живой Run = проверка сборки не детекции, живой дрон НЕ гейт перед отгрузкой. Кредит Anthropic пуст → Interface Consilium через --secretary-file.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "vds-panel-tooling",
       "title": "vds-panel-tooling: 6 инструментов против трения Windows-сессии с VDS/панелью (ti-1 office:ssh/vds:run генерик-exec, ti-2 chmod+audio panel-deploy, ti-3 panel-smoke с owner-cookie, ti-4 ложный красный task:review:run, ti-5 гард githubIssue эпика, ti-6 Windows-канон)",
       "promptPath": "docs/prompts/VDS_PANEL_TOOLING_PROMPT.md",
