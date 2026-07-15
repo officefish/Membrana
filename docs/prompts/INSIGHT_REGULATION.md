@@ -59,11 +59,11 @@ draft → researched → reviewed → adopted | deferred | rejected
 
 ## Research — каскад Perplexity
 
-При `yarn insight:research <id>` (или агент по skill):
+При `yarn insight research <id>` (или агент по skill):
 
 1. **Скрипт + `PERPLEXITY_API_KEY`** в корневом `.env` — HTTP API Perplexity (`pplx-…`).
 2. **Cursor MCP Perplexity** — если (1) недоступен: агент выполняет те же 3 запроса через MCP и дописывает `RESEARCH.md`.
-3. **Ручной fallback** — `yarn insight:research <id> --dry-run` печатает запросы; человек вставляет ответы в `RESEARCH.md`.
+3. **Ручной fallback** — `yarn insight research <id> --dry-run` печатает запросы; человек вставляет ответы в `RESEARCH.md`.
 
 Шаблон запросов (генерируется из `INSIGHT.md`):
 
@@ -77,7 +77,7 @@ draft → researched → reviewed → adopted | deferred | rejected
 
 ## Review — оценка команды
 
-`yarn insight:review <id>` — Anthropic API, пять ролей из [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md).
+`yarn insight review <id>` — Anthropic API, пять ролей из [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md).
 
 Каждая роль обязана дать:
 
@@ -105,8 +105,8 @@ yarn insight close <id> --status adopted|deferred|rejected [--weight N]
 
 Требования API:
 
-- `insight:review` — `ANTHROPIC_API_KEY` (как `yarn standup`)
-- `insight:research` — `PERPLEXITY_API_KEY` или MCP / ручной fallback
+- `yarn insight review` — `ANTHROPIC_API_KEY` (как `yarn standup`)
+- `yarn insight research` — `PERPLEXITY_API_KEY` или MCP / ручной fallback
 
 ---
 
