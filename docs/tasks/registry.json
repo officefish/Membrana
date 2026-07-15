@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "graphify-public-graph",
+      "title": "graphify-public-graph: публичный код-граф монорепо через Graphify на graphify.mmbrn.tech (спайк → деплой)",
+      "promptPath": "docs/prompts/GRAPHIFY_PUBLIC_GRAPH_PROMPT.md",
+      "githubIssue": 0,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin",
+        "rodchenko",
+        "vesnin"
+      ],
+      "notes": "Решение владельца 2026-07-15: завести Graphify (Graphify-Labs/graphify, MIT, tree-sitter+LLM код→knowledge-graph, self-host MCP+HTTP, graph.html force-directed) как ПУБЛИЧНЫЙ код-граф — визуальное доказательство субстанции монорепо. Домен: владелец сказал graphify.membrana.tech → УТОЧНИТЬ (вероятно graphify.mmbrn.tech — инфра-домен, код-граф это тех-прозрачность не продукт; по DNS_DOMAIN_POLICY). НЕ замена Research-Tree (тот = семантическая карта/рассказ, Graphify = граф кода/доказательство — разные жанры, дополняют). Фазы: (1) СПАЙК — прогнать graphify по репо СКОУП только код + apps/docs (НЕ приватные доки/числа/переписки — утечка!), посмотреть graph.html + оценить вау/leakage; (2) при ok — статик-деплой graph.html через Caddy file_server (паттерн ADR-0008, как лендинг/downloads), поддомен на инфра-VPS. Взвесить: пересечение с codebase-memory-mcp (внутренне дублирует; ценность Graphify = публичный визуал), LLM-стоимость doc-извлечения (код-парсинг локальный), курируемый Research-Tree vs авто-Graphify. Инвариант: приватное не публиковать.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "detector-metrics-characterization",
       "title": "detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex",
       "promptPath": "docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md",

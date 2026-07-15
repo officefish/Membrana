@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `graphify-public-graph` | graphify-public-graph: публичный код-граф монорепо через Graphify на graphify.mmbrn.tech (спайк → деплой) | M | [`GRAPHIFY_PUBLIC_GRAPH_PROMPT.md`](../docs/prompts/GRAPHIFY_PUBLIC_GRAPH_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `detector-metrics-characterization` | detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex | L | [`DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md`](../docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `product-landing` | product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов) | M | [`PRODUCT_LANDING_PROMPT.md`](../docs/prompts/PRODUCT_LANDING_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `root-domain-scenarios-docs` | root-domain-scenarios-docs: доки на membrana.space/scenarios/docs (Mintlify subpath-proxy) + root-Caddy на cabinet-VPS | M | [`ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md`](../docs/prompts/ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
