@@ -24,6 +24,9 @@ description: >-
 
 ## Start (before first commit on M/L)
 
+0. **`yarn neighbors`** — сверить пересечение СКОУПА (не только файлов) с соседними
+   сессиями: свежие коммиты main, открытые PR, active-карточки за сегодня, свежие
+   ветки (#469 ti-4; урок коллизии #452/#454).
 1. Confirm `id` in [`docs/tasks/registry.json`](../../../docs/tasks/registry.json) — `status: active`.
 2. Read full task prompt `docs/prompts/*_PROMPT.md` — block **«Промпт целиком»**.
 3. Read [`docs/MAIN_DAY_ISSUE.md`](../../../docs/MAIN_DAY_ISSUE.md) if day work.

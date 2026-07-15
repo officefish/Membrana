@@ -78,3 +78,5 @@ One-shot после squash-мёржа, **обёртка** над `lib/task-closu
 - [ ] Каждый ti: тесты в `test:scripts`, вывод «статус словом» без ANSI.
 - [ ] `yarn test:scripts` и `yarn docs:lint` зелёные после каждого мёржа.
 - [ ] Отчёт в Issue #469; closure review LGTM на финальный SHA.
+
+<!-- verify-encoding: allow-mojibake-examples -->
