@@ -28,6 +28,7 @@
 |---------------|--------|--------|
 | `cabinet.membrana.space` | `@membrana/cabinet` (клиентский кабинет) | ✅ |
 | `cabinet-api.membrana.space` | cabinet API | ✅ |
+| `media.membrana.space` | `@membrana/background-media` — медиафайлы, в т.ч. **пользовательские треки** | ✅ **остаётся** (решение владельца 2026-07-15: media = реально media, user-facing; НЕ фон) |
 | `www.membrana.space` / корень | лендинг | 🔜 планируется (роадмап: лендинг → кабинет + скачать десктоп) |
 | `membrana.space/scenarios/` | community-маркет пользовательских сценариев | 🔮 будущее |
 | `membrana.space/scenarios/docs` | документация (сейчас Mintlify) | 🎯 желаемое (консилиум по хостингу) |
@@ -36,13 +37,17 @@
 | Артефакт | Причина |
 |----------|---------|
 | `office.membrana.space` (ссылки, `Caddyfile.office.template`) | office переехал на `mmbrn.tech` |
-| `deploy/Caddyfile.media.membrana.space`, `Caddyfile.panel.template` | сверить с фактическим размещением (см. открытые вопросы) |
+| `Caddyfile.panel.template` (в контексте membrana.space) | panel переехал на `panel.mmbrn.tech` |
+
+`Caddyfile.media.membrana.space` — **актуален** (media остаётся на product-домене, см. ниже).
 
 ## Открытые вопросы (решение владельца / консилиум)
 
-1. **`media.membrana.space` (background-media)** — по принципу «фон → mmbrn.tech»
-   это кандидат на переезд `media.mmbrn.tech`. Но media отдаёт сэмплы клиенту
-   (частично user-facing?). Решить: остаётся на product-домене или переезжает.
+1. ~~`media.membrana.space` — переезд на `mmbrn.tech`?~~ **РЕШЕНО (владелец 2026-07-15):
+   media ОСТАЁТСЯ на `membrana.space`.** media = реально медиафайлы, включая
+   пользовательские треки → это user-facing контент, а не фоновая инфра, принцип
+   разделения к нему не применяется. Возможный будущий переезд на S3/CDN (Amazon и
+   подобные) — рано обсуждать, НЕ сейчас.
 2. **Корень `membrana.space`** сейчас **не обслуживается** (только поддомены; Caddy
    root-блока нет). Лендинг + `/scenarios/*` требуют корневого сервера — прежде
    чем `/scenarios/docs` станет достижим.
