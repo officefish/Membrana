@@ -285,14 +285,40 @@ export function parseTeamleadReview(body, expectedTaskId, expectedCommitSha, exp
   return { tier, task, commit, verdict, readiness, p0p1 };
 }
 
-export function hasSufficientReviewEvidence(manifest) {
+/**
+ * Почему evidence недостаточно — текстом, а не булевым «нет».
+ *
+ * Отказ назывался «недостаточно evidence для tier» и указывал на tier, хотя
+ * причина обычно в конкретном упавшем чеке: 15.07 LGTM отклонён из-за
+ * `git diff --check` (хвостовые пробелы в выжимке Perplexity), и корень пришлось
+ * искать в manifest.json глазами — модель ревью при этом дала LGTM (#515,
+ * трение A). Причина коду известна в момент отказа: печатаем её, а не прячем.
+ *
+ * @returns {string} причина; пустая строка — evidence достаточно
+ */
+export function explainReviewEvidenceGap(manifest) {
   const current = manifest.evidence.checks.filter(
     (check) => check.commitSha === manifest.currentCommitSha,
   );
-  if (current.some((check) => check.status === 'fail' || check.status === 'stale')) return false;
+  const sha = manifest.currentCommitSha.slice(0, 12);
+  const broken = current.filter((check) => check.status === 'fail' || check.status === 'stale');
+  if (broken.length > 0) {
+    const list = broken.map((check) => `${check.command} — ${check.status}`).join('; ');
+    return `чеки не прошли на ${sha}: ${list}`;
+  }
   const passed = current.filter((check) => check.status === 'pass');
-  if (manifest.tier === 'T0') return passed.length >= 1;
-  return passed.length >= 2 && passed.some((check) => check.command !== 'git diff --check');
+  const need = manifest.tier === 'T0' ? 1 : 2;
+  if (passed.length < need) {
+    return `для ${manifest.tier} нужно ≥${need} пройденных чеков на ${sha}, есть ${passed.length}`;
+  }
+  if (manifest.tier !== 'T0' && !passed.some((check) => check.command !== 'git diff --check')) {
+    return `для ${manifest.tier} одного \`git diff --check\` мало — нужен содержательный чек (тесты/линт/сборка)`;
+  }
+  return '';
+}
+
+export function hasSufficientReviewEvidence(manifest) {
+  return explainReviewEvidenceGap(manifest) === '';
 }
 
 const NON_BLOCKING_CONCLUSIONS = new Set(['skipped', 'neutral', 'cancelled']);
@@ -326,8 +352,11 @@ export function applyTeamleadReview(manifest, body, now = new Date().toISOString
     manifest.currentCommitSha,
     manifest.tier,
   );
-  if (parsed.verdict === 'LGTM' && !hasSufficientReviewEvidence(manifest)) {
-    throw new Error('LGTM отклонён: недостаточно evidence для tier');
+  if (parsed.verdict === 'LGTM') {
+    const gap = explainReviewEvidenceGap(manifest);
+    // Ревью дало LGTM — значит отказ здесь про evidence, а не про код. Называем
+    // конкретный чек: иначе следующая сессия идёт читать manifest.json руками.
+    if (gap) throw new Error(`LGTM отклонён: недостаточно evidence — ${gap}`);
   }
   const artifact = reviewArtifactPath(manifest.taskId, manifest.currentCommitSha);
   const approved = parsed.verdict === 'LGTM';

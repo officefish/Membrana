@@ -8,6 +8,7 @@ import {
   applyTeamleadReview,
   buildTaskClosureReviewPrompt,
   detectReviewTier,
+  explainReviewEvidenceGap,
   finalizeReviewManifest,
   hasP0P1Blockers,
   hasSufficientReviewEvidence,
@@ -230,6 +231,57 @@ test('LGTM is rejected when T1 evidence has only diff check', () => {
     () => applyTeamleadReview(withEvidence(prepare(), 1), lgtmBody),
     /недостаточно evidence/,
   );
+});
+
+// ─── отказ обязан называть причину, а не указывать на tier (#515, трение A) ───────
+
+/** Манифест с одним упавшим чеком поверх прошедших. */
+function withFailedCheck(manifest, command = 'git diff --check', note = '') {
+  const base = withEvidence(manifest);
+  return {
+    ...base,
+    evidence: {
+      ...base.evidence,
+      checks: base.evidence.checks.map((check) =>
+        check.command === command ? { ...check, status: 'fail', exitCode: 2, note } : check,
+      ),
+    },
+  };
+}
+
+test('отказ называет упавший чек, а не tier (живой случай 15.07)', () => {
+  // Модель ревью дала LGTM; гейт отклонил из-за хвостовых пробелов в выжимке.
+  // Прежний текст «недостаточно evidence для tier» уводил в сторону: корень
+  // пришлось искать в manifest.json глазами.
+  const manifest = withFailedCheck(prepare(), 'git diff --check', 'trailing whitespace');
+  assert.equal(hasSufficientReviewEvidence(manifest), false);
+  const gap = explainReviewEvidenceGap(manifest);
+  assert.match(gap, /git diff --check/u, 'имя чека обязано быть в причине');
+  assert.match(gap, /fail/u);
+  assert.throws(() => applyTeamleadReview(manifest, lgtmBody), /git diff --check/u);
+});
+
+test('stale-чек тоже назван поимённо', () => {
+  const base = withEvidence(prepare());
+  const manifest = {
+    ...base,
+    evidence: {
+      ...base.evidence,
+      checks: base.evidence.checks.map((c) => (c.command === 'yarn test' ? { ...c, status: 'stale' } : c)),
+    },
+  };
+  assert.match(explainReviewEvidenceGap(manifest), /yarn test — stale/u);
+});
+
+test('нехватка чеков объясняется числом, а не «tier»', () => {
+  const gap = explainReviewEvidenceGap(withEvidence(prepare(), 1));
+  assert.match(gap, /T1/u);
+  assert.match(gap, /одного `git diff --check` мало|нужно ≥2/u);
+});
+
+test('достаточный evidence → причины нет', () => {
+  assert.equal(explainReviewEvidenceGap(withEvidence(prepare())), '');
+  assert.equal(hasSufficientReviewEvidence(withEvidence(prepare())), true);
 });
 
 test('review tier must match manifest tier', () => {

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { isBaseHeldElsewhere, planPrShip } from './pr-ship.mjs';
+import { isBaseHeldElsewhere, otherWorktreeBranches, planPrShip } from './pr-ship.mjs';
 
 test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   const { title, commitBody, steps } = planPrShip({
@@ -101,4 +101,58 @@ test('isBaseHeldElsewhere — предикат по списку чужих ве
   assert.equal(isBaseHeldElsewhere('main', ['main']), true);
   assert.equal(isBaseHeldElsewhere('main', ['feat/x']), false);
   assert.equal(isBaseHeldElsewhere('main', []), false);
+});
+
+// ─── otherWorktreeBranches: парсер porcelain ──────────────────────────────────────
+// От него зависит и pr:ship, и утренний ритуал (#515 п.2): если он молча вернёт
+// пусто, оба снова пойдут в заведомо падающий `git checkout main`.
+
+/** Фейковый git: porcelain + toplevel текущего дерева. */
+const fakeGit = (porcelain, toplevel) => (_cmd, args) =>
+  args[0] === 'rev-parse' ? `${toplevel}\n` : porcelain;
+
+const PORCELAIN = [
+  'worktree C:/Users/dev/practice/Membrana',
+  'HEAD 95f1f03b65b9be7f2fa71f08d43eda9f431a590c',
+  'branch refs/heads/docs/dns-domain-policy',
+  '',
+  'worktree C:/Users/dev/practice/Membrana-detector-compare',
+  'HEAD cc7e70c329db644ea81680a09ba6704ee15b8d4a',
+  'branch refs/heads/main',
+  '',
+  'worktree C:/Users/dev/practice/Membrana-openrouter',
+  'HEAD 845bcde02708c5059c2eb09fcb9e0fd980f6c549',
+  'branch refs/heads/chore/tooling-xs-pair',
+  '',
+].join('\n');
+
+test('otherWorktreeBranches: своё дерево исключено, чужие ветки видны', () => {
+  const branches = otherWorktreeBranches(
+    fakeGit(PORCELAIN, 'C:/Users/dev/practice/Membrana-openrouter'),
+  );
+  assert.deepEqual(branches, ['docs/dns-domain-policy', 'main']);
+  assert.equal(isBaseHeldElsewhere('main', branches), true);
+});
+
+test('otherWorktreeBranches: свой main не считается занятым (иначе checkout пропускался бы зря)', () => {
+  const branches = otherWorktreeBranches(
+    fakeGit(PORCELAIN, 'C:/Users/dev/practice/Membrana-detector-compare'),
+  );
+  assert.ok(!branches.includes('main'), 'main держит ТЕКУЩЕЕ дерево — не чужое');
+  assert.equal(isBaseHeldElsewhere('main', branches), false);
+});
+
+test('otherWorktreeBranches: Windows — обратные слэши и регистр диска не ломают сравнение', () => {
+  // git печатает C:/..., а rev-parse под Git Bash может отдать иной регистр/слэши.
+  const branches = otherWorktreeBranches(
+    fakeGit(PORCELAIN, 'c:\\Users\\dev\\practice\\Membrana-openrouter'),
+  );
+  assert.ok(!branches.includes('chore/tooling-xs-pair'), 'своё дерево должно быть исключено');
+});
+
+test('otherWorktreeBranches: git недоступен → пусто, а не падение', () => {
+  const branches = otherWorktreeBranches(() => {
+    throw new Error('git not found');
+  });
+  assert.deepEqual(branches, []);
 });
