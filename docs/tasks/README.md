@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `canon-tooling-debt` | canon-tooling-debt: ADR-гигиена, 26 живых фаз реестра, --report для repo:clean, libuv в горячих скриптах | S | [`CANON_TOOLING_DEBT_PROMPT.md`](../docs/prompts/CANON_TOOLING_DEBT_PROMPT.md) | [#504](https://github.com/officefish/Membrana/issues/504) |
 | `pc2b-spectrum-window-rebuild` | PC-2b: пересборка usercase-free-spectrum-live на is-window-elapsed (спектр перестаёт тащить рекордер как часы) | M | [`PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md`](../docs/prompts/PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `pc2-periodic-window-gate` | PC-2: узел is-window-elapsed — периодический гейт окна без рекордера (спектр перестаёт тащить рекордер как часы) | M | [`PC2_PERIODIC_WINDOW_GATE_PROMPT.md`](../docs/prompts/PC2_PERIODIC_WINDOW_GATE_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
@@ -195,6 +194,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `canon-tooling-debt` | canon-tooling-debt: ADR-гигиена, 26 живых фаз реестра, --report для repo:clean, libuv в горячих скриптах | 2026-07-15 | [`CANON_TOOLING_DEBT_PROMPT.md`](../docs/prompts/CANON_TOOLING_DEBT_PROMPT.md) | #504 (Issue открыт) | [карточка](./archive/canon-tooling-debt.md) |
 | `repo-clean` | repo-clean: yarn repo:clean — классификация веток по состоянию PR + гарды (персона-ветки, worktree, незапушенное) + чистка 93 мёртвых веток и 4 worktree | 2026-07-15 | [`REPO_CLEAN_PROMPT.md`](../docs/prompts/REPO_CLEAN_PROMPT.md) | #492 (Issue открыт) | [карточка](./archive/repo-clean.md) |
 | `vds-panel-tooling` | vds-panel-tooling: 6 инструментов против трения Windows-сессии с VDS/панелью (ti-1 office:ssh/vds:run генерик-exec, ti-2 chmod+audio panel-deploy, ti-3 panel-smoke с owner-cookie, ti-4 ложный красный task:review:run, ti-5 гард githubIssue эпика, ti-6 Windows-канон) | 2026-07-15 | [`VDS_PANEL_TOOLING_PROMPT.md`](../docs/prompts/VDS_PANEL_TOOLING_PROMPT.md) | #485 (Issue открыт) | [карточка](./archive/vds-panel-tooling.md) |
 | `agent-tooling-friction-2` | agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship) | 2026-07-15 | [`AGENT_TOOLING_FRICTION_2_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md) | #469 (Issue открыт) | [карточка](./archive/agent-tooling-friction-2.md) |
