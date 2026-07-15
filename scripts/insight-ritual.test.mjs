@@ -8,6 +8,7 @@ import {
   buildResearchQueries,
   collectInsightsForWeeklyPlan,
   createInsight,
+  findTruncatedQueries,
   formatInsightsWeeklyBlock,
   normalizeInsightId,
   readRegistry,
@@ -69,7 +70,12 @@ describe('insight-ritual', () => {
     const queries = buildResearchQueries(md);
     assert.equal(queries.length, 2);
     assert.equal(queries[0].key, 'Q1');
-    assert.match(queries[0].query, /Landscape: как решают cross-session handoff\?/);
+    assert.equal(queries[0].query, 'как решают cross-session handoff?');
+    // Метка — заголовок для НАС, в запрос не уходит: «Fit (Membrana): …» заставлял
+    // поиск искать продукт «Membrana» → ответ про мембранную ткань (15.07). Тот же
+    // класс, что «Hermes» в заголовке, только на уровне метки.
+    assert.equal(queries[0].label, 'Landscape');
+    assert.doesNotMatch(queries[0].query, /Landscape:/);
     assert.doesNotMatch(queries[0].query, /Hermes|вестник/); // заголовок не протёк в запрос
     assert.doesNotMatch(queries[1].query, /## Связи/); // терминатор секции сработал
   });
@@ -95,5 +101,75 @@ describe('insight-ritual', () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+});
+
+// ─── #402: многострочные вопросы не режутся, мусор не уходит молча ────────────────
+
+describe('research questions (#402)', () => {
+  /** Живой формат INSIGHT.md: вопросы переносятся по строкам markdown-вёрсткой. */
+  const insightMd = [
+    '# INSIGHT: Тест',
+    '',
+    '## Вопросы для research (Q1–Q3)',
+    '',
+    '1. **Landscape:** как трекеры (Linear/Jira/GitHub Projects,',
+    '   changesets) связывают подзадачу с родительским тикетом — отдельное поле',
+    '   `parent` vs переиспользование номера?',
+    '2. **Fit (Membrana):** правка служебного поля в 163 архивных карточках — это',
+    '   починка данных или переписывание истории?',
+    '3. **Risk:** что ломается, если обнулить `githubIssue` у архивной фазы —',
+    '   теряется ли связь с эпиком?',
+    '',
+    '## Следующая секция',
+    '',
+    'не должна попасть в вопросы',
+  ].join('\n');
+
+  it('многострочный вопрос собирается целиком, а не до первой строки', () => {
+    const qs = buildResearchQueries(insightMd);
+    assert.equal(qs.length, 3);
+    // Прежняя версия рвала здесь: «…(Linear/Jira/GitHub Projects,» → Perplexity
+    // ответил про благотворительные пожертвования в США (инцидент 2026-07-12).
+    assert.match(qs[0].query, /changesets\) связывают подзадачу/u);
+    assert.match(qs[0].query, /переиспользование номера\?$/u);
+    assert.equal(qs[0].label, 'Landscape');
+  });
+
+  it('следующая H2-секция не затекает в последний вопрос', () => {
+    const qs = buildResearchQueries(insightMd);
+    assert.doesNotMatch(qs[2].query, /Следующая секция|не должна попасть/u);
+    assert.match(qs[2].query, /теряется ли связь с эпиком\?$/u);
+  });
+
+  it('переносы строк склеиваются в один пробел (вёрстка ≠ смысл)', () => {
+    for (const q of buildResearchQueries(insightMd)) {
+      assert.doesNotMatch(q.query, /\n/u);
+      assert.doesNotMatch(q.query, / {2,}/u);
+    }
+  });
+
+  it('findTruncatedQueries ловит обрыв на скобке — тот самый случай', () => {
+    const bad = findTruncatedQueries([
+      { key: 'Q1', label: 'Landscape', query: 'Landscape: как трекеры (Linear/Jira/GitHub Projects,' },
+    ]);
+    assert.equal(bad.length, 1);
+    assert.match(bad[0].reason, /скобка|обрыв/u);
+  });
+
+  it('findTruncatedQueries ловит хвостовую запятую и слишком короткий запрос', () => {
+    assert.equal(
+      findTruncatedQueries([{ key: 'Q2', label: 'x', query: 'x: нормальный длинный вопрос про что-то,' }]).length,
+      1,
+    );
+    assert.equal(findTruncatedQueries([{ key: 'Q3', label: 'x', query: 'x: коротко' }]).length, 1);
+  });
+
+  it('целый вопрос гард пропускает', () => {
+    assert.deepEqual(
+      findTruncatedQueries(buildResearchQueries(insightMd)),
+      [],
+      'починенный парсер не должен спотыкаться о собственный вывод',
+    );
   });
 });
