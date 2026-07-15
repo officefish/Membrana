@@ -56,10 +56,20 @@
 Ночной субагент работает в **отдельном worktree** (ветка `night/<id>-<date>`),
 чтобы не коллизить с параллельными сессиями ([[feedback_parallel_session_worktrees]]).
 
+### Р7 — Scoped auto-yes, а не глобальный bypass
+Чтобы владелец реально отошёл от компьютера, ночной агент запускается с
+**авто-подтверждением на командной поверхности ночи** (`Bash(git *)`, `Bash(yarn *)`,
+Edit/Write в репо, `night:*`/`turbo`/`docs:lint`) — через `permissions.allow`.
+**НЕ** глобальный `--dangerously-skip-permissions`: инварианты Р2/Р3 держит
+**механический deny-лист**, а не добросовестность агента. В `permissions.deny`:
+`*:deploy:prod`, `git push --force*`, SSH на прод, правки `packages/core/**`. Так
+«отойти от компьютера» = auto-yes на рутине при жёстком запрете опасного.
+
 ## Definition of Done
 - [ ] `NIGHT_SPRINT_REGULATION.md`: секция «Делегированное исполнение» (Р1–Р6 + шаблон промпта ночного агента).
 - [ ] Скилл `membrana-night-sprint`: lifecycle с шагом делегирования + как спавнить ночного агента (background + worktree + epic-prompt + checkpoints + HANDOFF).
 - [ ] Гардрейл Р3/Р4 явно: human-in-loop → владельцу; утренняя верификация HANDOFF.
+- [ ] Р7: пресет `permissions.allow`/`deny` для ночного агента (allow командной поверхности ночи, deny прод/force/core).
 
 ## Out of scope
 - Helper-скрипт сборки промпта ночного агента из карточки+консилиума — **future** (сегодня промпт собирается вручную; референс показал, что это работает).
