@@ -6,17 +6,17 @@
       "promptPath": "docs/prompts/HOT_REPO_FLOW_PROMPT.md",
       "githubIssue": 510,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "Хвост #476 по решению владельца: взято только измеренное эпизодами, гипотезы (mojibake-гейт, ветко-гард, Tier из манифеста — 0 эпизодов) сознательно не берём. ti-1 merge-driver: 10 эпизодов за 12-15.07; цена не время, а тихая потеря работы — 15.07 разрешение 'main за базу' молча откатило правку 26 карточек (ti-2 #504), заметил только по инварианту после слияния; алгоритм написан вручную 4 раза в одноразовых скриптах. Требование: честный 3-way, обе стороны правили по-разному → конфликт человеку, никакого 'сторона побеждает'. ti-2: pr-ship.mjs:50 делает git checkout base — в worktree падает; параллельные сессии норма (канон membrana-worktree), ff-sync там пропускать, а не чинить; чиним pr:ship, не заводим близнеца pr:land. ti-3: task:register выводит promptPath, файла нет, task:review:run читает безусловно → closure падает (2 эпизода 15.07). ti-4: норма 'слить main и дописать всё ДО prepare' — правило неизменяемости по SHA стоило 2 циклов CI.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #512; review LGTM 63f6a19a5375; PR #512 merged 2026-07-15T13:28:40Z (abc422af99dda08531fa50d0bda2426938513fbe)",
       "githubIssueClosedAt": null
     },
     {
