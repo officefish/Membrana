@@ -70,7 +70,12 @@ describe('insight-ritual', () => {
     const queries = buildResearchQueries(md);
     assert.equal(queries.length, 2);
     assert.equal(queries[0].key, 'Q1');
-    assert.match(queries[0].query, /Landscape: как решают cross-session handoff\?/);
+    assert.equal(queries[0].query, 'как решают cross-session handoff?');
+    // Метка — заголовок для НАС, в запрос не уходит: «Fit (Membrana): …» заставлял
+    // поиск искать продукт «Membrana» → ответ про мембранную ткань (15.07). Тот же
+    // класс, что «Hermes» в заголовке, только на уровне метки.
+    assert.equal(queries[0].label, 'Landscape');
+    assert.doesNotMatch(queries[0].query, /Landscape:/);
     assert.doesNotMatch(queries[0].query, /Hermes|вестник/); // заголовок не протёк в запрос
     assert.doesNotMatch(queries[1].query, /## Связи/); // терминатор секции сработал
   });
@@ -168,4 +173,3 @@ describe('research questions (#402)', () => {
     );
   });
 });
-

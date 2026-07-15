@@ -125,10 +125,15 @@ export function parseResearchQuestions(insightMd) {
     const label = (labelled?.[1] ?? '').trim();
     const text = (labelled?.[2] ?? raw).replace(/\*\*/g, '').trim();
     if (!text) continue;
+    // В запрос уходит ТОЛЬКО текст вопроса, без метки. Метка — заголовок для нас;
+    // поисковику она вредна: «Fit (Membrana): …» заставляет искать продукт с таким
+    // названием, и 2026-07-15 Perplexity честно ответил про мембранную ткань для
+    // одежды, SAFe Kanban и culture fit при найме. Тот же тихий класс, что #402:
+    // ран потрачен, ответ бессмысленный, скрипт доволен.
     items.push({
       key: `Q${m[1]}`,
       label: label || `Q${m[1]}`,
-      query: label ? `${label}: ${text}` : text,
+      query: text,
     });
   }
   return items;
@@ -152,7 +157,7 @@ export function findTruncatedQueries(queries) {
       bad.push({ key: q.key, reason: `слишком короткий (${text.length} симв.)` });
       continue;
     }
-    // Оборвано на открытой скобке/кавычке — ровно случай «(Linear/Jira/GitHub Projects,».
+    // Оборвано на незакрытой круглой скобке — ровно случай «(Linear/Jira/GitHub Projects,».
     const opens = (text.match(/\(/g) ?? []).length;
     const closes = (text.match(/\)/g) ?? []).length;
     if (opens > closes) {

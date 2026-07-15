@@ -49,6 +49,45 @@ export function researchSectionStub(task) {
   ].join('\n');
 }
 
+/**
+ * Похоже ли, что поиск не нашёл тему (гард на ВЫХОД).
+ *
+ * Гарды входа (#402) ловят обрывок, но не спасают от осмысленно заданного вопроса,
+ * по которому поисковик ничего не знает: 2026-07-15 ответ на Q2 был «не содержат
+ * информации… мембранная ткань для одежды… SAFe Kanban», и он молча лёг в артефакт
+ * как валидная выжимка. Тихий сбой класса #402, только на другом конце трубы.
+ *
+ * Эвристика намеренно грубая: она не решает за человека, а помечает секцию
+ * подозрительной — «прочитай глазами». Ложное срабатывание дешевле пропуска.
+ */
+export function looksUnanswered(answer) {
+  const a = String(answer).toLowerCase();
+  const markers = [
+    'не содержат информации',
+    'не содержит информации',
+    'не найдено',
+    'не относятся к',
+    'ошибка в названии',
+    'no information',
+    'not found',
+    'could not find',
+    'no relevant',
+  ];
+  return markers.some((m) => a.includes(m));
+}
+
+/**
+ * Иероглифы посреди русского/английского ответа — брак генерации.
+ *
+ * Perplexity подмешивает CJK в русский текст: «面试 кандидата», «以下条件а» (оба
+ * прогона 2026-07-15). Это не наш баг, но он ложится в артефакт и читается как
+ * нормальный текст. Помечаем, а не чиним: решает человек.
+ */
+export function looksGarbled(answer) {
+  const cjk = String(answer).match(/[぀-ヿ一-鿿]/gu);
+  return (cjk?.length ?? 0) > 0;
+}
+
 /** Есть ли в тексте заполненная секция вопросов (а не плейсхолдеры заготовки). */
 export function hasFilledResearchQuestions(md) {
   const queries = parseResearchQuestions(md);
@@ -87,9 +126,26 @@ export async function runDeepResearch(input) {
   }
 
   const sections = [];
+  const suspect = [];
   for (const item of queries) {
     const answer = await perplexityAsk(input.apiKey, item.query);
-    sections.push(`## ${item.key} — ${item.label}\n\n**Запрос:** ${item.query}\n\n**Выжимка:**\n\n${answer}\n`);
+    const reasons = [];
+    if (looksUnanswered(answer)) {
+      reasons.push(
+        '**Похоже, поиск не нашёл тему** — выжимка может быть не по делу. ' +
+          'Переформулируй вопрос без внутренних имён проекта и прогони снова.',
+      );
+    }
+    if (looksGarbled(answer)) {
+      reasons.push('**Иероглифы в тексте** — брак генерации модели; читать особенно внимательно.');
+    }
+    if (reasons.length > 0) suspect.push(item.key);
+    // Подозрительная секция помечается ПРЯМО В АРТЕФАКТЕ: иначе мусор ложится
+    // неотличимо от нормального ответа и уезжает в PR (живой случай 15.07).
+    const warn = reasons.length > 0 ? `\n${reasons.map((r) => `> ⚠ ${r}`).join('\n')}\n` : '';
+    sections.push(
+      `## ${item.key} — ${item.label}${warn}\n\n**Запрос:** ${item.query}\n\n**Выжимка:**\n\n${answer}\n`,
+    );
   }
   const header = [
     `# RESEARCH: ${input.title ?? 'задача'}`,
@@ -98,7 +154,7 @@ export async function runDeepResearch(input) {
     '> Выжимка — вход для решения, а не решение: проверяй утверждения по нашему коду.',
     '',
   ].join('\n');
-  return { mode: 'perplexity-api', queries, markdown: `${header}${sections.join('\n')}` };
+  return { mode: 'perplexity-api', queries, suspect, markdown: `${header}${sections.join('\n')}` };
 }
 
 /** Записать выжимку, создав каталог. */

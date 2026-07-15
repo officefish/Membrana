@@ -9,6 +9,7 @@ import { test } from 'node:test';
 
 import {
   hasFilledResearchQuestions,
+  looksUnanswered,
   researchPath,
   researchSectionStub,
   runDeepResearch,
@@ -100,4 +101,24 @@ test('CLI: id и --dry-run', () => {
   assert.equal(parseResearchCli(['my-sprint', '--dry-run']).dryRun, true);
   assert.equal(parseResearchCli(['--help']).help, true);
   assert.equal(parseResearchCli([]).id, undefined);
+});
+
+// ─── гард на ВЫХОД: поиск не нашёл тему (живой случай 15.07) ──────────────────────
+
+test('looksUnanswered ловит ответ «поиск ничего не нашёл»', () => {
+  // Живой Q2 15.07: метка «Fit (Membrana)» ушла в запрос → Perplexity искал продукт
+  // и ответил про мембранную ткань, SAFe Kanban и culture fit при найме.
+  assert.equal(
+    looksUnanswered('Предоставленные поисковые результаты **не содержат информации** по теме «Fit (Membrana)»'),
+    true,
+  );
+  assert.equal(looksUnanswered('Ссылки [3] и [4] посвящены мембранной ткани и не относятся к IT'), true);
+  assert.equal(looksUnanswered('No relevant information found for this query'), true);
+});
+
+test('looksUnanswered не срабатывает на нормальную выжимку', () => {
+  assert.equal(
+    looksUnanswered('В 2025–2026 сформировался паттерн Planner–Search–Synthesis, где поисковые LLM [1][3]…'),
+    false,
+  );
 });
