@@ -14,8 +14,22 @@ description: >-
 ## Lifecycle
 
 ```
-yarn ritual:evening → night:open → agent NB0…NBn → night:checkpoint → night:close → morning merge
+yarn ritual:evening → night:open → ДЕЛЕГИРОВАТЬ фоновому субагенту (NB0…NBn + checkpoint + close + HANDOFF) → morning: верифицировать HANDOFF → merge
 ```
+
+## Delegated execution (default, ADR-0009)
+
+Фазы NB0…NBn исполняет **делегированный фоновый субагент**, а не координатор. После
+`night:open` спавни субагент (`run_in_background`, `isolation: worktree`) с
+epic-промптом; он автономно проходит фазы, чекпойнтит, пишет HANDOFF. Координатор
+получает уведомление и **верифицирует HANDOFF утром** (не мёржит вслепую).
+
+Гардрейлы: **Р2** промпт эпика = контракт (фазы+DoD+жёсткие инварианты+вердикт
+консилиума/ADR); **Р3** human-in-loop (визуальная оценка, живой смоук) → владельцу,
+не фабриковать; **Р4** утром адверсариальная верификация кода, честный негатив =
+валидный исход; **Р5** один субагент = один ограниченный эпик, шире → несколько
+делегатов/Workflow; **Р6** worktree обязателен. Шаблон промпта ночного агента — в
+`docs/NIGHT_SPRINT_REGULATION.md` §Делегированное исполнение.
 
 ## Commands
 
@@ -37,7 +51,7 @@ yarn night:close --id <epic-id>
 
 1. Evening ritual done (min. code-review archived).
 2. Epic in registry with `sprintKind: "night-build"`.
-3. Branch: `night/<epic-id>-<YYYY-MM-DD>` from **`techies68`**.
+3. Branch: `night/<epic-id>-<YYYY-MM-DD>` from **`origin/main`** (techies68 мертва).
 
 ## Forbidden in Night Build
 

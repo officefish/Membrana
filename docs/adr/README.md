@@ -28,6 +28,7 @@
 
 | ADR | Дата | Статус | Тема |
 |-----|------|--------|------|
+| [ADR-0009](./ADR-0009-night-sprint-delegated-execution.md) | 2026-07-15 | ACCEPTED | Ночной спринт исполняет делегированный фоновый субагент в изолированном worktree (Р1 делегирование по умолчанию · Р2 промпт=контракт · Р3 human-in-loop владельцу · Р4 утренняя верификация HANDOFF · Р5 масштаб · Р6 изоляция) |
 | [ADR-0008](./ADR-0008-root-domain-scenarios-docs-topology.md) | 2026-07-15 | ACCEPTED | Топология корня membrana.space: docs на /scenarios/docs (Mintlify subpath-proxy, доки публичны) + лендинг + /downloads; VPS 72.56.27.58; план-B subdomain спящий |
 | [ADR-0007](./ADR-0007-night-narrative-provider-chain.md) | 2026-07-13 | ACCEPTED | Нарратив ночных агентов: цепочка провайдеров Claude → DeepSeek(direct) → graceful-пропуск (перенумерован из 0005, #504) |
 | [ADR-0006](./ADR-0006-single-detector-report-node.md) | 2026-07-15 | ACCEPTED | PC-1: отчёт одиночного детектора — расширить `make-report-from-analysis` до `DetectionAnalysisRef`, не вводить новый узел |
