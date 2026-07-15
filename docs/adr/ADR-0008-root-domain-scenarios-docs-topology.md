@@ -1,7 +1,10 @@
 # ADR-0008 — Топология корня membrana.space: docs на /scenarios/docs (Mintlify subpath-proxy) + лендинг
 
-> **Статус:** DRAFT · 2026-07-15
-> **merge файла ≠ принятие решения** пока DRAFT — действует после LGTM владельца + owner-гейтов (DNS).
+> **Статус:** ACCEPTED · 2026-07-15
+> Все owner-гейты подтверждены владельцем 2026-07-15: apex уже настроен (`A @ →
+> 72.56.27.58`), **доки ПУБЛИЧНЫ** (subpath-путь, план B спящий), downloads →
+> `/downloads`, media остаётся. Старт реализации — по слову владельца (карточки
+> `root-domain-scenarios-docs` + `product-landing`).
 
 ## Контекст
 
@@ -43,10 +46,12 @@ Mintlify НЕ нужна. **Границы:** контент доков (`apps/d
 Хостинг — статика (`file_server`) на cabinet-VPS. Бренд — `docs/comms/canon/BRAND_TOKENS.md`.
 До готовности — временная заглушка/редирект на `/` (не голый 404).
 
-### Р4 — План B (fallback, явно)
-Если egress cabinet-VPS к `*.mintlify.site` заблокирован (ловушка ТСПУ/DPI, как
-office) ИЛИ докам понадобится auth/приватность — **subdomain `docs.membrana.space`**
-(CNAME → Mintlify) вместо subpath. **Инвариант:** пока subpath — доки ПУБЛИЧНЫ.
+### Р4 — План B (fallback, СПЯЩИЙ)
+**Владелец подтвердил: доки публичны (2026-07-15)** → идём subpath-путём, план B
+не активен. Возврат к плану B — **subdomain `docs.membrana.space`** (CNAME →
+Mintlify) — только если: (а) egress с 72.56.27.58 к `*.mintlify.site` окажется
+заблокирован (ловушка ТСПУ/DPI, как office), ИЛИ (б) продукт когда-то захочет
+приватные доки за тарифом. **Инвариант subpath: доки ПУБЛИЧНЫ.**
 
 ## Definition of Done (реализация docs-cutover)
 - [x] ~~DNS apex~~ — **уже есть**: `A @ membrana.space → 72.56.27.58` (продуктовый

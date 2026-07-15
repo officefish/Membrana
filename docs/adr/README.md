@@ -28,7 +28,7 @@
 
 | ADR | Дата | Статус | Тема |
 |-----|------|--------|------|
-| [ADR-0008](./ADR-0008-root-domain-scenarios-docs-topology.md) | 2026-07-15 | DRAFT | Топология корня membrana.space: docs на /scenarios/docs (Mintlify subpath-proxy) + лендинг; cabinet-VPS; план-B subdomain |
+| [ADR-0008](./ADR-0008-root-domain-scenarios-docs-topology.md) | 2026-07-15 | ACCEPTED | Топология корня membrana.space: docs на /scenarios/docs (Mintlify subpath-proxy, доки публичны) + лендинг + /downloads; VPS 72.56.27.58; план-B subdomain спящий |
 | [ADR-0007](./ADR-0007-night-narrative-provider-chain.md) | 2026-07-13 | ACCEPTED | Нарратив ночных агентов: цепочка провайдеров Claude → DeepSeek(direct) → graceful-пропуск (перенумерован из 0005, #504) |
 | [ADR-0006](./ADR-0006-single-detector-report-node.md) | 2026-07-15 | ACCEPTED | PC-1: отчёт одиночного детектора — расширить `make-report-from-analysis` до `DetectionAnalysisRef`, не вводить новый узел |
 | [ADR-0005](./ADR-0005-panel-users-store.md) | 2026-07-14 | ACCEPTED | panel-users store: первый персистентный стейт office (реестр партнёров панели) |
