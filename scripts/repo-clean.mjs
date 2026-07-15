@@ -189,17 +189,33 @@ function main() {
   let failed = 0;
 
   if (cli.worktrees) {
+    // prune ДО удалений — убрать записи о деревьях, которых уже нет на диске.
+    // После удалений он опасен: маскирует упавший remove (git забывает worktree,
+    // а каталог остаётся). Живой случай на Windows — два осиротевших каталога по 1.5 ГБ.
+    git(['worktree', 'prune']);
     for (const w of wtDead) {
-      try {
-        git(['worktree', 'remove', w.path]);
+      let ok = false;
+      for (const args of [['worktree', 'remove', w.path], ['worktree', 'remove', '--force', w.path]]) {
+        try {
+          git(args);
+          ok = true;
+          break;
+        } catch {
+          /* пробуем --force: на Windows remove падает о блокировки в node_modules */
+        }
+      }
+      if (ok && !existsSync(w.path)) {
         console.log(`  worktree removed: ${w.path}`);
         removed++;
-      } catch (e) {
-        console.error(`  worktree FAIL ${w.path}: ${e.message.split('\n')[0]}`);
-        failed++;
+        continue;
       }
+      // Каталог пережил удаление — сказать об этом прямо, а не прятать за prune.
+      console.error(
+        `  worktree ОСТАЛСЯ НА ДИСКЕ: ${w.path}\n` +
+          '      git-запись снята, файлы нет (Windows держит node_modules). Убрать вручную.',
+      );
+      failed++;
     }
-    git(['worktree', 'prune']);
   }
 
   for (const d of localDead) {
