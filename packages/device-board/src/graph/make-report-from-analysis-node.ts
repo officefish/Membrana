@@ -4,15 +4,17 @@ import type { BoardFlowNodeData, BoardSocketPin } from './board-node-data.js';
 import { isBoardFlowNodeData } from './board-node-data.js';
 
 /**
- * MakeReportFromAnalysis — ReporterRef + FftTrendAnalysisRef → ReportRef.
- * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §17
+ * MakeReportFromAnalysis — ReporterRef + DetectionAnalysisRef → ReportRef.
+ * Вход `analysis` — обобщённый (ADR-0006): принимает FftTrendAnalysisRef (спектр)
+ * ИЛИ EnsembleAnalysisRef (нейро). Отчёт по ОДНОМУ детектору любой модальности.
+ * @see packages/device-board/DEVICE_BOARD_CONCEPT.md §17 · docs/adr/ADR-0006-single-detector-report-node.md
  */
 export const MAKE_REPORT_FROM_ANALYSIS_NODE_KIND = 'make-report-from-analysis' as const;
 
 /** Data-вход ReporterRef. */
 export const MAKE_REPORT_FROM_ANALYSIS_REPORTER_HANDLE = 'reporter' as const;
 
-/** Data-вход FftTrendAnalysisRef. */
+/** Data-вход DetectionAnalysisRef (union: FftTrendAnalysisRef | EnsembleAnalysisRef). */
 export const MAKE_REPORT_FROM_ANALYSIS_ANALYSIS_HANDLE = 'analysis' as const;
 
 /** Data-выход ReportRef. */
@@ -37,7 +39,7 @@ export function makeReportFromAnalysisNodePins(): {
       {
         name: MAKE_REPORT_FROM_ANALYSIS_ANALYSIS_HANDLE,
         kind: 'data',
-        socketType: 'FftTrendAnalysisRef',
+        socketType: 'DetectionAnalysisRef',
       },
     ],
     outputs: [

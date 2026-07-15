@@ -173,6 +173,18 @@ export interface ScenarioRuntimeHost {
     reporterRef: ScenarioReferenceValue,
     analysisRef: ScenarioReferenceValue,
   ) => Promise<ScenarioReportPayload | null>;
+  /**
+   * ADR-0006 PC-1: отчёт одиночного НЕЙРО-детектора (EnsembleAnalysisRef).
+   * Детекция резолвится исполнителем из ensembleStore и передаётся сюда. Честный
+   * одиночный отчёт (схема neuro-detection/v1) — БЕЗ «combined» (одна модальность).
+   */
+  readonly makeReportFromEnsembleAnalysis?: (
+    reporterRef: ScenarioReferenceValue,
+    input: {
+      readonly handle: string;
+      readonly detection: ScenarioDetectionResult;
+    },
+  ) => Promise<ScenarioReportPayload | null>;
   /** v0.6 DBJ4: append ScenarioReportPayload в journal по JournalRef scope. */
   readonly publishReport?: (
     journalRef: ScenarioReferenceValue,
@@ -397,6 +409,21 @@ export function createStubScenarioRuntimeHost(
           trackId: 'trends-fft:stub:stub-report-analysis',
           isDetected: false,
           payload: { report: { schema: 'trends-fft/v0.1', reportId: 'stub-report-analysis' } },
+        };
+      }),
+    makeReportFromEnsembleAnalysis:
+      overrides.makeReportFromEnsembleAnalysis ??
+      (async (reporterRef, input) => {
+        log('makeReportFromEnsembleAnalysis', {
+          reporter: reporterRef.handle,
+          analysis: input.handle,
+        });
+        return {
+          schema: 'neuro-detection/v1',
+          reportId: 'stub-report-neuro',
+          trackId: 'neuro-detection:stub:stub-report-neuro',
+          isDetected: input.detection.isDrone ?? input.detection.detected,
+          payload: { report: { schema: 'neuro-detection/v1', reportId: 'stub-report-neuro' } },
         };
       }),
     publishReport:
