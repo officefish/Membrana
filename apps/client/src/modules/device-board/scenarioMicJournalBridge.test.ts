@@ -18,6 +18,33 @@ vi.mock('@/plugins/mic-buffer-recorder/clipRecorder', () => ({
   })),
 }));
 
+describe('scenarioMicJournalBridge — нейро-отчёт одиночного детектора (ADR-0006 PC-1)', () => {
+  const reporterRef = createReferenceValue('ReporterRef', 'reporter:dev-1');
+
+  it('строит честный отчёт neuro-detection/v1 без слова «combined»', async () => {
+    const bridge = createScenarioMicJournalBridge();
+    const payload = await bridge.makeReportFromEnsembleAnalysis(reporterRef, {
+      handle: 'ensemble-analysis:a-1',
+      detection: { detected: true, confidence: 0.82, isDrone: true },
+    });
+    expect(payload).not.toBeNull();
+    expect(payload?.schema).toBe('neuro-detection/v1');
+    expect(payload?.isDetected).toBe(true);
+    // Наглядность (Rodchenko): summary одиночной модальности НЕ содержит «combined».
+    expect(payload?.summaryText ?? '').not.toMatch(/combined/i);
+    expect(payload?.summaryText ?? '').toContain('нейро');
+  });
+
+  it('isDetected следует детекции (нет дрона → false)', async () => {
+    const bridge = createScenarioMicJournalBridge();
+    const payload = await bridge.makeReportFromEnsembleAnalysis(reporterRef, {
+      handle: 'ensemble-analysis:a-2',
+      detection: { detected: false, confidence: 0.1, isDrone: false },
+    });
+    expect(payload?.isDetected).toBe(false);
+  });
+});
+
 describe('scenarioMicJournalBridge collector sessions (DBC2)', () => {
   it('exposes stable recorder and analyser session refs per deviceHandle', () => {
     const bridge = createScenarioMicJournalBridge();

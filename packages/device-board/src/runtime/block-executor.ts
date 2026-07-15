@@ -507,10 +507,33 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       isReferenceValid(analysisRef) &&
       host.makeReportFromAnalysis !== undefined
     ) {
+      // Спектральный путь — без изменений (ADR-0006 Р2: trend-путь не трогаем).
       const payload = await host.makeReportFromAnalysis(reporterRef, analysisRef);
       if (payload !== null) {
         reportStore.setNodeReport(node.id, payload);
         reportId = payload.reportId;
+      }
+    } else if (
+      reporterRef !== null &&
+      reporterRef.kind === 'ReporterRef' &&
+      isReferenceValid(reporterRef) &&
+      analysisRef !== null &&
+      analysisRef.kind === 'EnsembleAnalysisRef' &&
+      isReferenceValid(analysisRef) &&
+      analysisRef.handle !== null &&
+      host.makeReportFromEnsembleAnalysis !== undefined
+    ) {
+      // Нейро-путь (ADR-0006 Р2): детекция из ensembleStore → честный одиночный отчёт.
+      const detection = ensembleStore?.getDetectionByHandle(analysisRef.handle) ?? null;
+      if (detection !== null) {
+        const payload = await host.makeReportFromEnsembleAnalysis(reporterRef, {
+          handle: analysisRef.handle,
+          detection,
+        });
+        if (payload !== null) {
+          reportStore.setNodeReport(node.id, payload);
+          reportId = payload.reportId;
+        }
       }
     }
     host.log('make-report-from-analysis', {
@@ -518,7 +541,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       branch,
       analysis:
         analysisRef !== null &&
-        analysisRef.kind === 'FftTrendAnalysisRef' &&
+        (analysisRef.kind === 'FftTrendAnalysisRef' || analysisRef.kind === 'EnsembleAnalysisRef') &&
         isReferenceValid(analysisRef)
           ? analysisRef.handle
           : null,

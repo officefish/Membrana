@@ -1335,6 +1335,44 @@ export class ScenarioMicJournalBridge {
     return payload;
   }
 
+  /**
+   * ADR-0006 PC-1: честный отчёт одиночного НЕЙРО-детектора (EnsembleAnalysisRef).
+   * Детекция резолвится исполнителем из ensembleStore и приходит готовой. Схема
+   * `neuro-detection/v1`, summary БЕЗ слова «combined» — одна модальность.
+   */
+  async makeReportFromEnsembleAnalysis(
+    _reporterRef: ScenarioReferenceValue,
+    input: { readonly handle: string; readonly detection: ScenarioDetectionResult },
+  ): Promise<ScenarioReportPayload | null> {
+    const { detection } = input;
+    const isDetected = detection.isDrone ?? detection.detected;
+    // Синтетический trackId выводится из reportId (паттерн trendsFftSyntheticTrackId):
+    // у нейро-отчёта нет реального трека, но журналу нужен непустой стабильный id.
+    const reportId = createEntryId('neuro');
+    const payload = createScenarioReportPayload({
+      schema: 'neuro-detection/v1',
+      reportId,
+      trackId: `neuro-detection:${reportId}`,
+      isDetected,
+      summaryText: `нейро ${detection.confidence.toFixed(2)}${isDetected ? ' (дрон)' : ''}`,
+      payload: {
+        confidence: detection.confidence,
+        detected: detection.detected,
+        isDrone: detection.isDrone ?? null,
+        soundClass: detection.soundClass ?? null,
+        analysisHandle: input.handle,
+      },
+    });
+    scenarioChainLog('report', 'neuro-report-done', {
+      analysisHandle: input.handle,
+      reportId: payload.reportId,
+      schema: payload.schema,
+      isDetected: payload.isDetected,
+      summaryText: payload.summaryText,
+    });
+    return payload;
+  }
+
   /** v0.6 DBJ4: append ScenarioReportPayload в LiveJournal по JournalRef scope. */
   async publishReport(
     journalRef: ScenarioReferenceValue,

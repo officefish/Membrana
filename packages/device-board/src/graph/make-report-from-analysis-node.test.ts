@@ -10,14 +10,15 @@ import {
 import { deserializeScenarioSubgraph, serializeScenarioSubgraph } from './serialize-scenario-subgraph.js';
 
 describe('make-report-from-analysis-node (DBJ3)', () => {
-  it('defines exec + ReporterRef + FftTrendAnalysisRef in and exec + ReportRef out', () => {
+  it('defines exec + ReporterRef + DetectionAnalysisRef in and exec + ReportRef out', () => {
     const pins = makeReportFromAnalysisNodePins();
     expect(
       pins.inputs.find((pin) => pin.name === MAKE_REPORT_FROM_ANALYSIS_REPORTER_HANDLE)?.socketType,
     ).toBe('ReporterRef');
+    // ADR-0006: обобщённый вход — принимает FftTrendAnalysisRef (спектр) ИЛИ EnsembleAnalysisRef (нейро).
     expect(
       pins.inputs.find((pin) => pin.name === MAKE_REPORT_FROM_ANALYSIS_ANALYSIS_HANDLE)?.socketType,
-    ).toBe('FftTrendAnalysisRef');
+    ).toBe('DetectionAnalysisRef');
     expect(
       pins.outputs.find((pin) => pin.name === MAKE_REPORT_FROM_ANALYSIS_OUT_HANDLE)?.socketType,
     ).toBe('ReportRef');
