@@ -28,6 +28,10 @@ import { makeFftTrendsPolicyNodePins } from './make-fft-trends-policy-node.js';
 import { startRecordingNodePins } from './start-recording-node.js';
 import { stopRecordingNodePins } from './stop-recording-node.js';
 import { isRecordingWindowFullNodePins } from './is-recording-window-full-node.js';
+import {
+  DEFAULT_WINDOW_ELAPSED_MS,
+  isWindowElapsedNodePins,
+} from './is-window-elapsed-node.js';
 import { flushSpectralAnalyserNodePins } from './flush-spectral-analyser-node.js';
 import {
   awaitPromiseNodePins,
@@ -128,6 +132,7 @@ export const V04_PALETTE_NODE_KINDS = [
   'start-recording',
   'stop-recording',
   'is-recording-window-full',
+  'is-window-elapsed',
   'flush-spectral-analyser',
   'make-recording-policy',
   'make-fft-trends-policy',
@@ -170,6 +175,7 @@ const V04_PALETTE_LABEL: Record<V04PaletteNodeKind, string> = {
   'start-recording': 'StartRecording',
   'stop-recording': 'StopRecording',
   'is-recording-window-full': 'IsRecordingWindowFull',
+  'is-window-elapsed': 'IsWindowElapsed',
   'flush-spectral-analyser': 'FlushSpectralAnalyser',
   'make-recording-policy': 'MakeRecordingPolicy',
   'make-fft-trends-policy': 'MakeFftTrendsPolicy',
@@ -307,6 +313,8 @@ export function paletteNodePins(nodeKind: V04PaletteNodeKind): {
       return stopRecordingNodePins();
     case 'is-recording-window-full':
       return isRecordingWindowFullNodePins();
+    case 'is-window-elapsed':
+      return isWindowElapsedNodePins();
     case 'flush-spectral-analyser':
       return flushSpectralAnalyserNodePins();
     case 'make-recording-policy':
@@ -349,6 +357,7 @@ export interface CreatePaletteBoardNodeOptions {
   readonly fftTrendsPolicy?: BoardFlowNodeData['fftTrendsPolicy'];
   readonly sequenceConfig?: BoardFlowNodeData['sequenceConfig'];
   readonly asyncJobConfig?: BoardFlowNodeData['asyncJobConfig'];
+  readonly windowElapsedMs?: BoardFlowNodeData['windowElapsedMs'];
 }
 
 let paletteNodeSeq = 0;
@@ -409,6 +418,9 @@ export function createPaletteBoardNode(
             ...options.recordingPolicy,
           },
         }
+      : {}),
+    ...(nodeKind === 'is-window-elapsed'
+      ? { windowElapsedMs: options.windowElapsedMs ?? DEFAULT_WINDOW_ELAPSED_MS }
       : {}),
     ...(nodeKind === 'make-fft-trends-policy'
       ? {

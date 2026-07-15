@@ -39,6 +39,7 @@ describe('palette-node (DBR5)', () => {
       'start-recording',
       'stop-recording',
       'is-recording-window-full',
+      'is-window-elapsed',
       'flush-spectral-analyser',
       'make-recording-policy',
       'make-fft-trends-policy',

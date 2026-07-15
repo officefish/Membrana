@@ -260,6 +260,9 @@ export class ScenarioMicJournalBridge {
 
   private readonly fftTrendAnalyses = new Map<string, TrendsFftReport>();
 
+  /** PC-2: per-node точка отсчёта периодического окна (is-window-elapsed), мс. */
+  private readonly windowElapsedStartMs = new Map<string, number>();
+
   private readonly collectorRegistry: DeviceCollectorRegistry = createDeviceCollectorRegistry();
 
   private readonly continuousPcmByDevice = new Map<string, ScenarioContinuousPcmBuffer>();
@@ -1373,6 +1376,25 @@ export class ScenarioMicJournalBridge {
     return payload;
   }
 
+  /**
+   * PC-2 (is-window-elapsed): периодический гейт окна по host-часам БЕЗ рекордера.
+   * Первый вызов на nodeId стартует окно (false); при elapsed >= windowMs → true +
+   * сброс окна (самосбрасывающееся, периодическое). Владелец времени — host-часы.
+   */
+  isWindowElapsed(nodeId: string, windowMs: number): boolean {
+    const now = Date.now();
+    const startedAt = this.windowElapsedStartMs.get(nodeId);
+    if (startedAt === undefined) {
+      this.windowElapsedStartMs.set(nodeId, now);
+      return false;
+    }
+    if (now - startedAt >= windowMs) {
+      this.windowElapsedStartMs.set(nodeId, now);
+      return true;
+    }
+    return false;
+  }
+
   /** v0.6 DBJ4: append ScenarioReportPayload в LiveJournal по JournalRef scope. */
   async publishReport(
     journalRef: ScenarioReferenceValue,
@@ -1516,6 +1538,7 @@ export class ScenarioMicJournalBridge {
     this.audioSamplePayloads.clear();
     this.fftFrameByNode.clear();
     this.fftFramePayloads.clear();
+    this.windowElapsedStartMs.clear();
     this.collectorRegistry.resetAll();
     scenarioChainLog('stream', 'stopAudioStreaming', { handle: this.audioStreamHandle });
   }

@@ -50,6 +50,8 @@ export interface BoardFlowNodeData extends Record<string, unknown> {
   readonly detectionFusionInputCount?: number;
   /** basn-3: для BranchOnDetection — порог combinedScore (0..1, default 0.5). */
   readonly detectionThreshold?: number;
+  /** PC-2: для IsWindowElapsed — размер периодического окна в мс (host-часы). */
+  readonly windowElapsedMs?: number;
   /** Sequence: Then count + parallel async. */
   readonly sequenceConfig?: ScenarioSequenceConfig;
   /** AP v1: jobKind / await timeout для promise orchestration nodes. */
