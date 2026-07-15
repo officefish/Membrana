@@ -6,17 +6,17 @@
       "promptPath": "docs/prompts/CANON_TOOLING_DEBT_PROMPT.md",
       "githubIssue": 504,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
       "notes": "Зонтик из 4 независимых ti по разбору бэклога 2026-07-15 (решение владельца, форма #433/#469/#485). ti-1 ADR: дубль 0005 — симптом; реестр содержал 2 записи из 7, именование разъехалось (0002-... против ADR-0006-...); механизм вчера объявлен каноном вместо ветки vesnin (#499), нельзя оставлять заброшенным. 0005 оставлен за panel-users (на него ссылается код roles.ts, деплой-док и эпик-промпт PU1), night-narrative → ADR-0007. ti-2: 26 живых фаз-носителей githubIssue эпика → null (прецедент #468); 163 архивных — история, вынесены в insight-registry-epic-issue-full-cleanup. ti-3: --report для repo:clean (потерял текст ошибок под | tail). ti-4 libuv: измерением установлено, что рвёт НЕ stdout вообще, а выход при живых сетевых сокетах — help-пути не падают (3 прогона), падают выходы после HTTP. Найден костыль sleep(150) в code-review, стоявший ТОЛЬКО на успешном пути — потому и падал путь ошибки. Починены code-review, team-evening-feedback (обязателен по CLAUDE.md, штатно упирается в пустой кредит), consilium, ask-persona; все 4 проверены живьём: 127 → 1.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #506; review LGTM 922a7cb88db9; PR #506 merged 2026-07-15T11:22:39Z (6ec72b6c99cb09290387c1b154e260e85247ba42)",
       "githubIssueClosedAt": null
     },
     {
