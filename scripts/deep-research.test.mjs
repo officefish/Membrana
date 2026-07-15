@@ -9,10 +9,12 @@ import { test } from 'node:test';
 
 import {
   hasFilledResearchQuestions,
+  looksGarbled,
   looksUnanswered,
   researchPath,
   researchSectionStub,
   runDeepResearch,
+  stripTrailingWs,
 } from './lib/deep-research.mjs';
 import { parseResearchCli } from './research.mjs';
 
@@ -121,4 +123,39 @@ test('looksUnanswered не срабатывает на нормальную вы
     looksUnanswered('В 2025–2026 сформировался паттерн Planner–Search–Synthesis, где поисковые LLM [1][3]…'),
     false,
   );
+});
+
+// ─── гард на ВЫХОД: иероглифы в ответе ───────────────────────────────────────────
+
+test('looksGarbled ловит CJK посреди русского текста (брак генерации 15.07)', () => {
+  assert.equal(looksGarbled('Модель оценивает 面试 кандидата по нескольким критериям'), true);
+  assert.equal(looksGarbled('Подходит при 以下条件а выполнении'), true);
+});
+
+test('looksGarbled не срабатывает на обычный русско-английский ответ', () => {
+  assert.equal(looksGarbled('Используется MCP (Model Context Protocol) для вызова внешних функций [3]'), false);
+});
+
+// ─── хвостовые пробелы: артефакт обязан проходить `git diff --check` ──────────────
+
+test('stripTrailingWs убирает хвостовые пробелы, не трогая содержимое строк', () => {
+  assert.equal(stripTrailingWs('абзац с хвостом  \nвторой\tстрокой\t\nтретий'), 'абзац с хвостом\nвторой\tстрокой\nтретий');
+  assert.equal(stripTrailingWs('внутренние   пробелы целы'), 'внутренние   пробелы целы');
+});
+
+test('выжимка Perplexity ложится в артефакт без хвостовых пробелов (#516)', async () => {
+  // Иначе `git diff --check` валит evidence closure-ревью и LGTM невозможен.
+  const md = withQuestions(
+    '**Landscape:** какие практики сложились в 2025-2026 для внесения внешнего ресёрча в цикл разработки?',
+    '**Fit (Membrana):** по каким признакам решают, что внешний ресёрч нужен маленькой команде с агентами?',
+    '**Risk:** чем рискует команда, принимая выжимку поисковой LLM как вход для архитектурного решения?',
+  );
+  const res = await runDeepResearch({
+    sourceMd: md,
+    apiKey: 'k',
+    title: 'тест',
+    ask: async () => 'ответ с хвостом  \nи второй строкой   ',
+  });
+  assert.equal(res.mode, 'perplexity-api');
+  assert.equal(/[ \t]+$/mu.test(res.markdown), false);
 });

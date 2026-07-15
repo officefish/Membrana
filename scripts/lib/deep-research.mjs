@@ -88,6 +88,18 @@ export function looksGarbled(answer) {
   return (cjk?.length ?? 0) > 0;
 }
 
+/**
+ * Убрать хвостовые пробелы в строках ответа.
+ *
+ * Perplexity ставит их в концах абзацев, а `git diff --check` — часть evidence
+ * closure-ревью: артефакт с ними не даёт LGTM (живой случай 15.07, #516).
+ * Чиним на генерации, а не руками в .md: иначе ловушка вернётся на следующем
+ * `yarn research`, и уже без подсказки, откуда она.
+ */
+export function stripTrailingWs(text) {
+  return String(text).replace(/[ \t]+$/gmu, '');
+}
+
 /** Есть ли в тексте заполненная секция вопросов (а не плейсхолдеры заготовки). */
 export function hasFilledResearchQuestions(md) {
   const queries = parseResearchQuestions(md);
@@ -99,7 +111,11 @@ export function hasFilledResearchQuestions(md) {
 /**
  * Прогнать ресёрч по markdown-источнику.
  *
- * @param {{ sourceMd: string, apiKey?: string, dryRun?: boolean, title?: string }} input
+ * `ask` — шов для тестов: без него ветка сборки артефакта проверяется только
+ * живым раном, и брак выхода виден лишь глазами постфактум (так и уехал #516).
+ *
+ * @param {{ sourceMd: string, apiKey?: string, dryRun?: boolean, title?: string,
+ *   ask?: (apiKey: string, query: string) => Promise<string> }} input
  * @returns {Promise<{ mode: string, queries: object[], markdown?: string }>}
  */
 export async function runDeepResearch(input) {
@@ -128,7 +144,7 @@ export async function runDeepResearch(input) {
   const sections = [];
   const suspect = [];
   for (const item of queries) {
-    const answer = await perplexityAsk(input.apiKey, item.query);
+    const answer = stripTrailingWs(await (input.ask ?? perplexityAsk)(input.apiKey, item.query));
     const reasons = [];
     if (looksUnanswered(answer)) {
       reasons.push(
