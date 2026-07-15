@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "detector-metrics-characterization",
+      "title": "detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex",
+      "promptPath": "docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md",
+      "githubIssue": 0,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "kuryokhin",
+        "vesnin"
+      ],
+      "notes": "Консилиум alex-critics-detector-characterization (реальная команда, 20 реплик). Ответ на спарринг Alex Chechekin: заказчик спросит паспорт детектора (ROC AUC + Pd-vs-SNR). Вердикт: ROC AUC ДА считаем сейчас на free-v1 (ранговый AUC + bootstrap-CI 95%, ROC/PR, EER, operating points, детерминированно); Pd-vs-SNR НЕТ на курированном корпусе (нет размеченной оси SNR — иначе самообман против hard-gate), синтетический SNR-sweep отложен в Фазу 2 с дисклеймером 'оценка сверху не полевые'. НОВЫЙ пакет @membrana/detection-metrics-service (чистые функции на core, детекторы не импортируют); офлайн-скрипт benchmark:detectors → detection-metrics-v1.json (provenance lab-offline, corpusVersion free-v1, size 120); панель apps/panel Контроль качества карточка-отчёт с БЕЙДЖОМ происхождения (несущий, не тултип); ссылка на тот же корпус что detector-compare-board (клик AUC → 120 звуков → послушать); экспорт PNG/CSV/Drive = плейсхолдер. Суть ответа: не 'посчитай сам', а 'вот цифра, вот на чём, вот послушай'.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "product-landing",
       "title": "product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов)",
       "promptPath": "docs/prompts/PRODUCT_LANDING_PROMPT.md",
