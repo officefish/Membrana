@@ -1,6 +1,47 @@
 {
   "tasks": [
     {
+      "id": "product-landing",
+      "title": "product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов)",
+      "promptPath": "docs/prompts/PRODUCT_LANDING_PROMPT.md",
+      "githubIssue": 0,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin",
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Ближний трек (поправка владельца 2026-07-15): продуктовая страница membrana.space/ — описание (акустическая разведка/детекция дрона) + CTA регистрация (→cabinet.membrana.space) + загрузка клиентов (десктоп Studio-инсталлятор + веб-кабинет). Статика file_server на cabinet-VPS, один root-Caddy-блок с docs (ADR-0008 Р3). Бренд docs/comms/canon/BRAND_TOKENS.md. Owner-вопрос: где хостятся download-артефакты десктопа (GitHub Releases/VPS). До готовности — заглушка/редирект на /.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "root-domain-scenarios-docs",
+      "title": "root-domain-scenarios-docs: доки на membrana.space/scenarios/docs (Mintlify subpath-proxy) + root-Caddy на cabinet-VPS",
+      "promptPath": "docs/prompts/ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md",
+      "githubIssue": 0,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin",
+        "rodchenko",
+        "vesnin"
+      ],
+      "notes": "Консилиум root-domain-topology-scenarios-docs (20 реплик) + ADR-0008 (DRAFT) + research. Docs = Mintlify subpath через Caddy reverse-proxy (без миграции): handle_path /scenarios/docs/* reverse_proxy <sub>.mintlify.site, Origin set/Host strip/POST/no-cache. Root-Caddy на cabinet-VPS, спроектирован на 2 хендлера (docs + лендинг /). Owner-гейты: DNS apex membrana.space→cabinet-VPS, доки ПУБЛИЧНЫ (иначе план B subdomain docs.membrana.space), egress-preflight к mintlify.site (ловушка ТСПУ). Инвариант: доки публичны. OUT: маркет /scenarios/, лендинг (отдельная карточка), media-переезд.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "hot-repo-flow",
       "title": "hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью",
       "promptPath": "docs/prompts/HOT_REPO_FLOW_PROMPT.md",

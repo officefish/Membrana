@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `product-landing` | product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов) | M | [`PRODUCT_LANDING_PROMPT.md`](../docs/prompts/PRODUCT_LANDING_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
+| `root-domain-scenarios-docs` | root-domain-scenarios-docs: доки на membrana.space/scenarios/docs (Mintlify subpath-proxy) + root-Caddy на cabinet-VPS | M | [`ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md`](../docs/prompts/ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |
 | `single-node-detection-first` | Single-Node Detection First: пересмотр дорожной карты и scaffolding детекторов | L | [`SINGLE_NODE_DETECTION_FIRST_PROMPT.md`](../docs/prompts/SINGLE_NODE_DETECTION_FIRST_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
