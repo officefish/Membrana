@@ -127,6 +127,8 @@
     "insight:drift": "node scripts/insight-drift.mjs",
     "llm:probe": "node scripts/llm-probe.mjs",
     "telegram:swallow": "node scripts/telegram-swallow.mjs",
+    "telegram:digest:day": "node scripts/telegram-ritual-digest.mjs --kind day",
+    "telegram:digest:evening": "node scripts/telegram-ritual-digest.mjs --kind evening",
     "panel:invite": "node scripts/panel-invite.mjs",
     "panel:dns-gate": "node scripts/panel-dns-gate.mjs",
     "insight:help": "node scripts/insight.mjs help",
