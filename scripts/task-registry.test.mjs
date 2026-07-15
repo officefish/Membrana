@@ -9,6 +9,7 @@ import {
   findTask,
   listPendingGithubClose,
   loadRegistry,
+  renderTaskPromptStub,
   renderTasksReadme,
   saveRegistry,
   validateTaskId,
@@ -207,5 +208,38 @@ describe('task-registry', () => {
     assert.match(md, /done-one/);
     assert.match(md, /Активные задачи/);
     assert.match(md, /Архив/);
+  });
+});
+
+// ─── #476 п.5: task:register создаёт заготовку промпта ────────────────────────────
+
+describe('renderTaskPromptStub', () => {
+  const template = [
+    '# Промпт: <краткое название задачи>',
+    '> Скопируй блок. Размер задачи: **S | M | L**.',
+    '> Реестр: `id` = `<slug>` в registry.',
+    '**GitHub Issue:** #<номер> (после создания).',
+    '## Проблема / наблюдение',
+    '<!-- Что заметили в эпике, продукте или архитектуре? -->',
+  ].join('\n');
+
+  it('подставляет заголовок, размер, id и Issue', () => {
+    const md = renderTaskPromptStub(template, {
+      id: 'hot-repo-flow',
+      title: 'hot-repo-flow: merge-driver + pr:ship',
+      size: 'M',
+      githubIssue: 510,
+    });
+    assert.match(md, /^# Промпт: hot-repo-flow: merge-driver \+ pr:ship$/mu);
+    assert.match(md, /Размер задачи: \*\*M\*\*/u);
+    assert.match(md, /`id` = `hot-repo-flow`/u);
+    assert.match(md, /issues\/510/u);
+    assert.match(md, /ЗАГОТОВКА, созданная yarn task:register/u);
+  });
+
+  it('без Issue — честная пометка, а не «#undefined»', () => {
+    const md = renderTaskPromptStub(template, { id: 'x', title: 'X', size: 'S', githubIssue: null });
+    assert.match(md, /\*\*GitHub Issue:\*\* — \(не заведён\)/u);
+    assert.doesNotMatch(md, /undefined|null/u);
   });
 });

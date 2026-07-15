@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | M | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | [#510](https://github.com/officefish/Membrana/issues/510) |
 | `pc2c-spectrum-recording-decouple` | PC-2c: полная развязка спектр-наблюдения от записи (StartRecording/StopRecording устарели — трек не производится) | M | [`PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md`](../docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md) | [#493](https://github.com/officefish/Membrana/issues/493) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |

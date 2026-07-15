@@ -47,3 +47,13 @@ Dockerfile text eol=lf
 *.flac  binary
 *.zip   binary
 *.gz    binary
+
+# Реестр задач: карточки вставляются в ГОЛОВУ, поэтому две ветки почти всегда
+# конфликтуют на одних строках (10 эпизодов ручного разбора за 12–15.07).
+# Драйвер сливает трёхсторонне и НЕ угадывает: правку обеих сторон отдаёт человеку.
+# Регистрируется `yarn prepare` (git config merge.registry-union.driver).
+docs/tasks/registry.json merge=registry-union
+
+# README реестра — генерируемый (yarn task:sync-readme). Сливать его текстом
+# бессмысленно: после мёржа он пересобирается из registry.json.
+docs/tasks/README.md merge=ours

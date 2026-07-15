@@ -19,8 +19,44 @@ import { execFileSync } from 'node:child_process';
 const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
 
 /**
- * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean,commit?:boolean}} opts
- * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[]}}
+ * Занята ли base-ветка ДРУГИМ worktree.
+ *
+ * `git checkout main` из worktree, где main держит соседнее дерево, падает —
+ * одна ветка не может быть в двух worktree. Параллельные сессии у нас норма
+ * (канон membrana-worktree), поэтому ff-sync там надо не чинить, а пропускать:
+ * своё дерево на base не переключить, и это не ошибка.
+ *
+ * @param {string} base
+ * @param {string[]} worktreeBranches — ветки всех worktree, КРОМЕ текущего
+ */
+export function isBaseHeldElsewhere(base, worktreeBranches = []) {
+  return worktreeBranches.includes(base);
+}
+
+/** Ветки чужих worktree (текущий исключён). Пусто, если git недоступен. */
+export function otherWorktreeBranches(run = execFileSync) {
+  try {
+    const porcelain = String(run('git', ['worktree', 'list', '--porcelain'], { encoding: 'utf8' }));
+    const current = String(run('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' })).trim();
+    const out = [];
+    let path = null;
+    for (const line of porcelain.split('\n')) {
+      if (line.startsWith('worktree ')) path = line.slice('worktree '.length).trim();
+      else if (line.startsWith('branch ')) {
+        const branch = line.replace('branch refs/heads/', '').trim();
+        const samePath = path && path.replace(/\\/g, '/').toLowerCase() === current.replace(/\\/g, '/').toLowerCase();
+        if (!samePath) out.push(branch);
+      }
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean,commit?:boolean,worktreeBranches?:string[]}} opts
+ * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
   const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true } = opts;
@@ -45,13 +81,22 @@ export function planPrShip(opts) {
     cmd: 'gh',
     args: ['pr', 'create', '--base', base, '--title', title, '--body', closes ? closes.trim() : title],
   });
+  let skippedSync;
   if (merge) {
     steps.push({ label: 'merge', cmd: 'gh', args: ['pr', 'merge', '--squash', '--delete-branch'] });
-    steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base] });
-    steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
-    steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`] });
+    if (isBaseHeldElsewhere(base, opts.worktreeBranches)) {
+      // Ветку base держит соседний worktree — checkout сюда невозможен, и это норма
+      // при параллельных сессиях (канон membrana-worktree). Обновляем только
+      // origin/<base>, чтобы локальные сверки видели свежий main; своё дерево не трогаем.
+      steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
+      skippedSync = `ff-sync пропущен: ветку ${base} держит другой worktree (параллельная сессия)`;
+    } else {
+      steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base] });
+      steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
+      steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`] });
+    }
   }
-  return { title, commitBody, steps };
+  return { title, commitBody, steps, skippedSync };
 }
 
 function parseArgs(argv) {
@@ -74,7 +119,11 @@ function parseArgs(argv) {
 
 function main() {
   const opts = parseArgs(process.argv);
-  const { title, steps } = planPrShip(opts);
+  // Ветки соседних worktree решают, возможен ли ff-sync (см. isBaseHeldElsewhere).
+  const { title, steps, skippedSync } = planPrShip({
+    ...opts,
+    worktreeBranches: otherWorktreeBranches(),
+  });
 
   // Гуард: без --branch коммит идёт в текущую ветку; запрет коммитить прямо в base.
   const current = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim();
@@ -83,6 +132,7 @@ function main() {
   }
 
   console.log(`pr:ship${opts.execute ? '' : ' [DRY-RUN]'}: ${title}`);
+  if (skippedSync) console.log(`  ⚠ ${skippedSync}`);
   for (const s of steps) {
     const printable = `${s.cmd} ${s.args.map((a) => (a.includes('\n') || a.includes(' ') ? JSON.stringify(a) : a)).join(' ')}`;
     if (!opts.execute) {
