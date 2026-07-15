@@ -98,7 +98,7 @@
       ],
       "notes": "Уточнение владельца 2026-07-15: аудиопоток(StartStreaming/GetAudioStream)=трансляция != запись трека(StartRecording/StopRecording). MakeTrack в спектре снят → трек не производится → узлы устарели. Scout: поток независим от записи; развязка многоветочная (bootstrap StartStreaming→fn-1, main then-0 StopRecording, рестарт restartRecordingFn), риск L35. Backward-compat: start/stop-recording узлы НЕ трогать (др. графы). Границы: только usercase-free-spectrum-live+тест, is-window-elapsed(PC-2b) не регрессировать.",
       "archiveNotes": "PR #511 merged squash d46f0e1b; Teamlead LGTM + адверсариальная верификация PASS 10/10 (docs/reviews/pc2c-spectrum-recording-decouple-teamlead.md). Снята запись из 3 мест, fn-1 удалена, сирота GetDevice убран. device-board 808. CI-флейк Prisma background-cabinet перезапущен зелёным.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "canon-tooling-debt",
@@ -117,7 +117,7 @@
       ],
       "notes": "Зонтик из 4 независимых ti по разбору бэклога 2026-07-15 (решение владельца, форма #433/#469/#485). ti-1 ADR: дубль 0005 — симптом; реестр содержал 2 записи из 7, именование разъехалось (0002-... против ADR-0006-...); механизм вчера объявлен каноном вместо ветки vesnin (#499), нельзя оставлять заброшенным. 0005 оставлен за panel-users (на него ссылается код roles.ts, деплой-док и эпик-промпт PU1), night-narrative → ADR-0007. ti-2: 26 живых фаз-носителей githubIssue эпика → null (прецедент #468); 163 архивных — история, вынесены в insight-registry-epic-issue-full-cleanup. ti-3: --report для repo:clean (потерял текст ошибок под | tail). ti-4 libuv: измерением установлено, что рвёт НЕ stdout вообще, а выход при живых сетевых сокетах — help-пути не падают (3 прогона), падают выходы после HTTP. Найден костыль sleep(150) в code-review, стоявший ТОЛЬКО на успешном пути — потому и падал путь ошибки. Починены code-review, team-evening-feedback (обязателен по CLAUDE.md, штатно упирается в пустой кредит), consilium, ask-persona; все 4 проверены живьём: 127 → 1.",
       "archiveNotes": "PR #506; review LGTM 922a7cb88db9; PR #506 merged 2026-07-15T11:22:39Z (6ec72b6c99cb09290387c1b154e260e85247ba42)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "pc2b-spectrum-window-rebuild",
@@ -138,7 +138,7 @@
       ],
       "notes": "Фаза PC-2b спринта palette-clarity-nodes #493 (продуктовый, максимальное качество: консилиум+research+делегирование+адверсариальная верификация). Свап (scout ground truth): снять windowFull(is-recording-window-full)+recorderClock(get-recorder-168), поставить is-window-elapsed(windowMs из консилиума), перевесить true→sequence/false→infinity, collectFrames→is-window-elapsed, recorder-ребро не восстанавливать. PC-2a узел merged #505. Фазы: research(Dynin)→консилиум→impl(Kuryokhin)→adversarial verify→teamlead. Backward-compat: is-recording-window-full не трогать. OUT: collectorConfig.windowSec (F2), alarm.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "pc2-periodic-window-gate",
@@ -159,7 +159,7 @@
       ],
       "notes": "Фаза PC-2 спринта palette-clarity-nodes #493. Консилиум pc2-periodic-window-gate-2026-07-15 (22 реплики): НОВЫЙ узел is-window-elapsed (periodic-гейт по host-часам, вход windowMs, выходы exec true/false, per-node окно, БЕЗ RecorderRef) — не обобщение is-recording-window-full. Граница: onTick=pacing, is-window-elapsed=гейт. Реализация: SCENARIO_NODE_KINDS + host-хук + пересборка usercase-free-spectrum-live. OUT: alarm-loop, долг collectorConfig.windowSec (F2 path-specific). Старт реализации — LGTM владельца.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "repo-clean",
@@ -178,7 +178,7 @@
       ],
       "notes": "Ревизия 2026-07-15: открытых PR всего 3 (все живые) — чистить нечего; мусор в ветках. Корень: squash-мёрж делает git branch --merged слепым (видит 9 влитых из 42 реально мёртвых), поэтому классификация только по состоянию PR на GitHub. Гарды обязательны: персона-ветки канон TASKS_MANAGEMENT §7а (vesnin/ozhegov/boyarskiy/dynin), ветки в worktree, незапушенное с уникальными коммитами (живой случай chore/ritual-day-0715 — 4 коммита сегодня только локально, утренний ритуал соседней сессии). Worktree: удалять только archived-спринты с чистым деревом; cowork #487 и главное дерево соседней сессии НЕ трогать. dry-run по умолчанию. Out of scope: 8 локальных веток без PR с уникальными коммитами (codex/* 8-9 коммитов) — удаление безвозвратно, разбор владельцем отдельно.",
       "archiveNotes": "PR #496; review LGTM 3ef844490f43; PR #496 merged 2026-07-15T07:54:04Z (ea48829745eb929c73ec2c0a6c81294e4b23d178)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "vds-panel-tooling",
@@ -197,7 +197,7 @@
       ],
       "notes": "ВСЕ 6 пунктов ретро #485 (githubIssue привязан только после того, как взят весь ишью — до этого стоял null, чтобы task:close-github не закрыл #485 по трём пунктам из шести; это ровно баг ti-5). ti-4/5/6 добиты во второй половине сессии 2026-07-15. ti-5 оказался крупнее заявленного: в реестре не 3, а 189 фаз носят githubIssue своего эпика, 33 из них были в очереди закрытия и оборвали бы эпики #438/#131/#147/#144/#176/#172; #131 и #144 закрыты в одну секунду 2026-06-30T11:49:58Z — механизм уже срабатывал. Гард стоит в listPendingGithubClose + громкий список в task:close-github. Исходные пункты 1-3 ретро #485 (сессия 2026-07-14: 4 повтора CRLF/scp/chmod-танца, chmod-баг 700 -> caddy отдаёт index.html вместо статики, 3 инлайн-переписывания owner-cookie). Консилиум не нужен: механика по готовому канону _ssh-* (прецедент #433/#469). githubIssue НАМЕРЕННО не привязан: #485 несёт 6 пунктов, берём 3 — привязка закрыла бы весь ишью на вечернем ритуале (это ровно баг п.5 того же ретро). Прецедент exec: scripts/_ssh-media-exec.mjs; конфиг: scripts/_ssh-office-config.mjs. Закрывает также п.3 ретро #476 (office:ssh).",
       "archiveNotes": "PR #488; review LGTM 28bb38886cef; PR #488 merged 2026-07-15T05:30:29Z (be91b1d29c98a532106085c7ade826f4f1607179)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "agent-tooling-friction-2",
@@ -218,7 +218,7 @@
       ],
       "notes": "По итогам сессии 2026-07-14 (4 ручных closure-цикла, 3 чат-протокола без валидации, 2 конфликта registry, коллизия скоупа #452/#454, 3 инцидента PS 5.1, разнобой credit-ошибок). Консилиум-гейт: docs/seanses/agent-tooling-friction-2-2026-07-14.md (22 реплики) + research Perplexity x3. Форма #433: зонтик, независимые ti, порядок дешевле-дороже ti-6-5-7-4-3-2-1, мёрж по готовности. Ключевые решения: ship = ОБЁРТКА над lib-runner (SHA из gh pr view mergeCommit, база = родитель, чеки на detached при ушедшем main, fail-closed); register = регенерация вставки вместо ручного merge, формат registry НЕ меняется; neighbors = только чтение сигналов, координационный файл НЕ вводится; secretary-file = валидатор канона чистыми функциями, фикстуры - живые протоколы 14.07. Запреты: не переписывать lib/task-closure-review.mjs, не менять формат registry (task-archive-storage), не печатать секреты, ship не деплоит.",
       "archiveNotes": "PR #484; review LGTM 10dc5b6494b4; PR #484 merged 2026-07-15T02:50:44Z (10dc5b6494b4a26b1aebc0f47bc126b576f126ba)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "cowork-format-regulation",
@@ -239,7 +239,7 @@
       ],
       "notes": "Идея владельца 2026-07-14. Консилиум-гейт: docs/seanses/cowork-sprint-format-2026-07-14.md (20 реплик; первый с памятью 5 персон default-on). Решения: событийный гейт интеграции ready(A)∧ready(B)∧ready(C)∨deadline; односторонние EXPECTATIONS + исполняемые стабы в своей зоне (договариваться об интерфейсах до Interface Consilium запрещено); резка brief по естественным швам с пустым пересечением файловых зон; интеграция адаптерами в отдельной ветке (блоки не переписываются, ведёт координатор); жюри/скоринга/победителя нет — мёржатся все три блока. Артефакты: регламент + cowork:open + скилл membrana-cowork (3 среды). Follow-up: cowork:phase/close.",
       "archiveNotes": "PR #465; review LGTM 04695297d862; PR #465 merged 2026-07-14T16:53:39Z (04695297d862329d46db797c12368214a74dfb4c)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "qc-panel-boards",
@@ -259,7 +259,7 @@
       ],
       "notes": "Консилиум-гейт: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). СКОУП СУЖЕН 14.07: QC2 (борд detector-compare + office-модуль benchmark) уступлен задаче panel-detector-compare-board #452 — её консилиум (detector-compare-board-2026-07-14, видение владельца: per-sample таблица, прослушивание, waveform, попапы, фильтр расхождений; вердикт «office не трогаем», статический артефакт экспортёра) предметнее и новее; office-модуль benchmark из ветки удалён до мёржа. Остаток: QC1 drift-борд (читает публичный /v1/drift-anchor/digest, происхождение чисел, prod-main сравнение) + открываемые карточки shell (нужны и борду #452).",
       "archiveNotes": "PR #455; review LGTM 9b9ced6de860; PR #455 merged 2026-07-14T14:40:18Z (a35615ccecb2268cfbfa00a52311ba2866a28dc5)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "panel-detector-compare-board",
@@ -281,7 +281,7 @@
       ],
       "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git.",
       "archiveNotes": "PR #457; review LGTM 09921c24f473; PR #457 merged 2026-07-14T15:31:21Z (44bac65827e4edef914277249f5840e280b4869a)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "persona-memory-all-personas",
@@ -300,7 +300,7 @@
       ],
       "notes": "Решение владельца 2026-07-14 по итогам суточного пилота (боевое применение: консилиум quality-control-contour). Экстрактор уже параметризован — нового кода экстракции нет; человек-гейт: 4 журнала отдельными diff + importance.json за владельцем. --with-memory default ТОЛЬКО в consilium (+--no-memory), ask не трогать. Гард суммарной инъекции 25K. Вне магистрали FREE. Запреты: фазы 2/3 и слои 2-3 субъектности не трогать.",
       "archiveNotes": "PR #461; review LGTM 2f9dd5218631; PR #461 merged 2026-07-14T16:14:01Z (d452582ddf2b194ee6c9ed6f485590490a21ca09)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "office-panel-contour",
@@ -321,7 +321,7 @@
       ],
       "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/office-panel-contour-2026-07-14.md (25 реплик, research Perplexity x3, --with-memory пилот). Вердикты: apps/panel отдельный SPA (стек кабинета) на panel.mmbrn.tech — ЗАОДНО разрешена развилка drift-panel-placement #396 (борды живут в panel); auth при stateless office: operator/owner=GitHub OAuth+allowlist-файл, ally=HMAC invite-код без БД, public=welcome; httpOnly cookie, default-deny+@Public; digest остаётся публичным; Caddy site-block + reverse_proxy /v1/*, LE только после DNS-гейта (урок OM4-C). Запреты: cabinet internals/auth, persisted-учётки на office, общий статический токен, localStorage, борды/LLM/мутации вне эпика. Owner-гейты: DNS A-запись, GitHub OAuth App, HMAC-secret + ally-коды.",
       "archiveNotes": "Эпик закрыт целиком 2026-07-14: OP1-OP5 смёржены (PR #440-#450, closure LGTM каждой фазы), панель ЖИВАЯ на https://panel.mmbrn.tech (LE после dns-gate [go]); live-подтверждения: ally-вход по invite-коду (201->cookie->ally, operator-ручка 403, no-store), GitHub OAuth owner-вход подтверждён владельцем 14.07 (302->authorize->allowlist->owner). Секреты PANEL_* в office.env; деплой-скрипт scripts/_ssh-panel-deploy.mjs + runbook PANEL_DEPLOY.md. Потребители каркаса: борд detector-compare (#452, в работе) и drift-борд (#396).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "op1-panel-scaffold",
@@ -433,7 +433,7 @@
       ],
       "notes": "Решение владельца 2026-07-13 (вечер), консилиум не нужен — исполнение по канону #428. Шапка-пояснение: источник docs/comms/ALLY_DIGEST_HEADER.md → payload.primerMd → office конвертирует md→Telegram-HTML (чистая функция, без зависимостей) и вшивает <blockquote expandable>. Фактура: день — полные блоки задач; вечер — треки дня по ролям + вердикт + оценка + что дальше. Клэмп 4096. Graceful: нет шапки → отчёт без неё. Запреты канона #428 действуют (stateless office, без двустороннего бота, LLM-пересказ — отдельная фаза).",
       "archiveNotes": "PR #437; review LGTM b2c7e0faf6a1; PR #437 merged 2026-07-14T05:18:42Z (e9f30ebb8f78c4140f40ef4db848608315f8d4e0)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "agent-tooling-friction",
@@ -453,7 +453,7 @@
       ],
       "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/agent-tooling-friction-2026-07-13.md (24 реплики). Форма: один M-спринт-зонтик, 4 НЕЗАВИСИМЫЕ задачи, мерж по готовности, порядок ti-1→ti-3→ti-2→ti-4 (дешевле→дороже). Решения: ревью-артефакты — .gitignore docs/reviews/*/ (НЕ логика в скрипте); proxy-чистка всех форм переменных в setup-env + норма; insight:drift — hermes-паттерн, вызов из ritual:evening, 3 кейса 2026-07-13 как регресс-фикстуры; llm:probe — direct+via-proxy, классы ошибок (DPI/гео/баланс/ключ/сеть), ключи маскируются. Запреты: без межпакетных зависимостей, без auto-exclude в task-closure-review.mjs, без печати ключей/записи .env. Out of scope: worktree-бутстрап, pr:ship --worktree, хвосты #424/#425.",
       "archiveNotes": "PR #436; review LGTM fd1a39f6cf1f; PR #436 merged 2026-07-14T04:16:25Z (d8fe05db776c6692b18593ae466bcc6ea4130d14)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "night-narrative-deepseek-fallback",
@@ -13553,7 +13553,7 @@
       "insightId": "insight-telegram-work-reports",
       "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа.",
       "archiveNotes": "PR #431 (squash 3124d6d2 side) + hotfix 0291f954 (proxy-aware client, OFFICE_API_TOKEN). E2E smoke 2026-07-13: day+evening дайджесты доставлены в приватную группу (sent=true), контур ritual→office→telegram живой. Остаток: фаза 2 LLM-пересказ (после владельческих хвостов #424/#425).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "panel-partner-access",
@@ -13564,7 +13564,7 @@
       "createdAt": "2026-07-14",
       "archivedAt": "2026-07-14",
       "archiveNotes": "PU1 #466 (office panel-users + ADR 0005), PU2 #470 (регистрация+гранты), PU3 #473 (owner-раздел). Все фазы LGTM T1/T2, живые смоуки на VDS/проде зелёные. Партнёрский сценарий работает конец-в-конец.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-15",
       "size": "L",
       "sprintKind": "epic",
       "leadPersona": "vesnin",
@@ -13656,7 +13656,7 @@
       ],
       "notes": "Фаза PC-1 спринта palette-clarity-nodes #493. ADR-0006 (DRAFT). Вариант A: расширить make-report-from-analysis до DetectionAnalysisRef (не новый узел — B был бы консилиум-гейт). Аддитивный ensemble-путь в рантайме (trend-путь не трогаем, нулевой риск), новый host-хук makeReportFromEnsembleAnalysis, честный отчёт neuro-detection/v1 без combined. Нейро-FREE-граф переходит с make-combined-report на make-report-from-analysis. Кросс-пакет: core socket + device-board executor + host + client bridge + graph.",
       "archiveNotes": "PR #498 merged squash cf7c8d423f50; Teamlead LGTM offline (docs/reviews/pc1-single-detector-report-teamlead.md); ADR-0006 ACCEPTED. CI: core 138 + device-board 793 + client 297.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "batch-collection-run-contour",
@@ -13719,7 +13719,7 @@
       ],
       "notes": "3 блока spectrum-live/neuro-detection/sample-recording; изоляция до Interface Consilium; мёржатся все три, победителя нет. Первый Cowork Sprint (формат #464). Каркас 3+1 уже в free-tier-user-case-entries.ts — блоки наливают содержимое в заготовки, loadDocument переключается на интеграции. Constraints: новых узлов палитры НЕ вводить, combined UC не трогать (донор топологии), живой Run = проверка сборки не детекции, живой дрон НЕ гейт перед отгрузкой. Кредит Anthropic пуст → Interface Consilium через --secretary-file.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     },
     {
       "id": "docs-canon-drift",
@@ -13738,7 +13738,7 @@
       ],
       "notes": "Побочный результат ревизии #492. Диагноз: не «доки отстали», а канон, который не был правдой — спорные команды НИКОГДА не существовали (0 коммитов по git log -S). Персонажи как роли живы (leadPersona в каждой карточке, ролевое ревью), мёртв только ветковый механизм §7а: 1 PR из 330 (#132), vesnin нет нигде (404), dynin только локально. Разбор по случаям дал 2 ложных срабатывания аудита: REMOTE_NIGHT_CODER — проектный бриф (показывает предлагаемые записи package.json), VDR_VALIDATION_SCOPE_BRIEF сам пишет «не существуют». Отсюда требование к гарду: уважать честные пометки (не существует/Запланировано/optional) и НЕ сканировать архивы — их правка = фальсификация истории. Out of scope: реализация comp:phase/score/close и insight:research/review (отдельные спринты), оживление веткового механизма (консилиум).",
       "archiveNotes": "PR #499; review LGTM 1b9243237a15; PR #499 merged 2026-07-15T08:35:56Z (f0d39173b9026b4ecdb130febdf20697574ba389)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15"
     }
   ]
 }
