@@ -15,13 +15,15 @@
  *                      [--prompt docs/prompts/X.md] [--push]
  */
 import { execSync } from 'node:child_process';
-import { dirname, join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
   buildTaskEntry,
   insertTaskAtFront,
   loadRegistry,
+  renderTaskPromptStub,
   saveRegistry,
   syncTasksReadme,
 } from './lib/task-registry.mjs';
@@ -78,6 +80,24 @@ if (isMain) {
   }
 
   console.log(`task:register → ${entry.id} (#${entry.githubIssue ?? '—'}, ${entry.size}, ${entry.sprintKind}) вставлена в начало реестра`);
+
+  // Заготовка промпта (#476 п.5): карточка несёт promptPath, а файла не было —
+  // task:review:run читает его безусловно и closure review падал (2 раза 15.07).
+  // Существующий файл не трогаем: там может быть живая постановка.
+  const promptAbs = resolve(root, entry.promptPath);
+  if (existsSync(promptAbs)) {
+    console.log(`Промпт уже есть: ${entry.promptPath}`);
+  } else {
+    try {
+      const template = readFileSync(resolve(root, 'docs/prompts/TASK_PROMPT_TEMPLATE.md'), 'utf8');
+      mkdirSync(dirname(promptAbs), { recursive: true });
+      writeFileSync(promptAbs, renderTaskPromptStub(template, entry), 'utf8');
+      console.log(`Промпт-заготовка: ${entry.promptPath} — ЗАПОЛНИТЬ до кода`);
+    } catch (e) {
+      // Не роняем регистрацию: карточка уже записана, заготовку можно дописать руками.
+      console.error(`Заготовка промпта не создана (${entry.promptPath}): ${e.message}`);
+    }
+  }
 
   // insight:drift-чек (если карточка ссылается на инсайт — реестры должны сойтись).
   try {

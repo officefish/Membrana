@@ -183,6 +183,34 @@ export function buildTaskEntry(input, today) {
  * @param {{ version: number, tasks: TaskEntry[] }} registry
  * @param {TaskEntry} entry
  */
+/**
+ * Заготовка task-промпта из шаблона (#476 п.5).
+ *
+ * Зачем: `buildTaskEntry` выводит `promptPath` из id, но файла не создаёт, а
+ * `task:review:run` читает его БЕЗУСЛОВНО — closure review падает на ровном месте.
+ * 2026-07-15 это случилось дважды за сессию, оба раза в момент закрытия задачи.
+ *
+ * Заготовка не заменяет постановку: она лишь не даёт гейту упасть и подсказывает,
+ * что заполнить. Существующий файл НЕ трогаем — там может быть живая постановка.
+ *
+ * @param {string} template — текст TASK_PROMPT_TEMPLATE.md
+ * @param {{id:string,title:string,size:string,githubIssue?:number|null}} task
+ */
+export function renderTaskPromptStub(template, task) {
+  const issue = task.githubIssue
+    ? `[#${task.githubIssue}](https://github.com/officefish/Membrana/issues/${task.githubIssue})`
+    : '— (не заведён)';
+  return template
+    .replace('# Промпт: <краткое название задачи>', `# Промпт: ${task.title}`)
+    .replace('Размер задачи: **S | M | L**.', `Размер задачи: **${task.size}**.`)
+    .replace('`id` = `<slug>`', `\`id\` = \`${task.id}\``)
+    .replace('**GitHub Issue:** #<номер> (после создания).', `**GitHub Issue:** ${issue}`)
+    .replace(
+      '<!-- Что заметили в эпике, продукте или архитектуре? -->',
+      '<!-- ЗАГОТОВКА, созданная yarn task:register. Заполнить до кода. -->',
+    );
+}
+
 export function insertTaskAtFront(registry, entry) {
   if (registry.tasks.some((t) => t.id === entry.id)) {
     throw new Error(`Карточка "${entry.id}" уже есть в реестре.`);

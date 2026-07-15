@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { planPrShip } from './pr-ship.mjs';
+import { isBaseHeldElsewhere, planPrShip } from './pr-ship.mjs';
 
 test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   const { title, commitBody, steps } = planPrShip({
@@ -60,4 +60,45 @@ test('planPrShip --no-commit + --branch → ошибка (несовместим
     () => planPrShip({ type: 'fix', message: 'x', commit: false, branch: 'feat/x' }),
     /--no-commit несовместим с --branch/,
   );
+});
+
+// ─── worktree: ff-sync невозможен, если base держит соседнее дерево (#476 п.2) ─────
+
+test('base занят другим worktree → sync-checkout не планируется', () => {
+  // Живое: pr:ship падал в worktree на `git checkout main` — main держит соседняя
+  // сессия. Одна ветка не может быть в двух worktree, это норма, а не ошибка.
+  const { steps, skippedSync } = planPrShip({
+    type: 'feat',
+    message: 'x',
+    worktreeBranches: ['main', 'chore/palette-clarity-setup'],
+  });
+  const labels = steps.map((s) => s.label);
+  assert.ok(!labels.includes('sync-checkout'), 'checkout в занятую ветку не планируем');
+  assert.ok(!labels.includes('sync-ff'), 'ff-merge в чужое дерево бессмыслен');
+  assert.ok(labels.includes('sync-fetch'), 'origin/main обновить всё равно нужно');
+  assert.match(skippedSync, /другой worktree/);
+});
+
+test('base свободен → полный ff-sync как раньше', () => {
+  const { steps, skippedSync } = planPrShip({
+    type: 'feat',
+    message: 'x',
+    worktreeBranches: ['feat/other'],
+  });
+  assert.deepEqual(
+    steps.map((s) => s.label),
+    ['commit', 'push', 'pr-create', 'merge', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+  );
+  assert.equal(skippedSync, undefined);
+});
+
+test('без сведений о worktree поведение прежнее (обратная совместимость)', () => {
+  const { steps } = planPrShip({ type: 'feat', message: 'x' });
+  assert.ok(steps.map((s) => s.label).includes('sync-checkout'));
+});
+
+test('isBaseHeldElsewhere — предикат по списку чужих веток', () => {
+  assert.equal(isBaseHeldElsewhere('main', ['main']), true);
+  assert.equal(isBaseHeldElsewhere('main', ['feat/x']), false);
+  assert.equal(isBaseHeldElsewhere('main', []), false);
 });
