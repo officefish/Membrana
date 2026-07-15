@@ -32,7 +32,7 @@ import { DEFAULT_USERCASE_MVP_MICROPHONE_DOCUMENT } from './default-usercase-mvp
  * PC-2c (владелец 2026-07-15): аудиопоток (StartStreaming / GetAudioStream) —
  * ТРАНСЛЯЦИЯ звука, а не ЗАПИСЬ трека (StartRecording / StopRecording). Трек в спектр-
  * графе уже снят при декомпозиции (MakeTrack нет), поэтому StartRecording/StopRecording
- * крутили сессию записи вхолостую (slice не подключён) → устарели и вычтены из ЭТОГО
+ * крутили сессию записи вхолостую (slice питал только снятый MakeTrack) → устарели и вычтены из ЭТОГО
  * графа: наблюдению нужен только поток → FFT → отчёт, БЕЗ записи. Вычтено в трёх местах —
  * bootstrap-вызов StartRecording, Sequence-then StopRecording и рестарт-вызов
  * StartRecording; функция fn-1 (StartRecording) больше не зовётся → удалена целиком.
@@ -81,8 +81,9 @@ export const REMOVED_MVP_WINDOW_CLOCK_NODE_IDS = [
 ] as const;
 
 /**
- * Узлы записи MVP-main, снятые деривацией PC-2c: поток ≠ запись. Трек уже снят, slice
- * StopRecording никуда не выгружался — сессия записи крутилась вхолостую.
+ * Узлы записи MVP-main, снятые деривацией PC-2c: поток ≠ запись. Slice StopRecording
+ * питал ТОЛЬКО MakeTrack, снятый при декомпозиции трека, — потребителя не осталось,
+ * сессия записи крутилась вхолостую.
  *
  * ВНИМАНИЕ: только для main. Bootstrap-вызов записи (fn-1-block в initial) снимает
  * `transformInitialBootstrap`, определение функции fn-1 — фильтр в build (нигде не зовётся).
