@@ -6,17 +6,17 @@
       "promptPath": "docs/prompts/REPO_CLEAN_PROMPT.md",
       "githubIssue": 492,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "Ревизия 2026-07-15: открытых PR всего 3 (все живые) — чистить нечего; мусор в ветках. Корень: squash-мёрж делает git branch --merged слепым (видит 9 влитых из 42 реально мёртвых), поэтому классификация только по состоянию PR на GitHub. Гарды обязательны: персона-ветки канон TASKS_MANAGEMENT §7а (vesnin/ozhegov/boyarskiy/dynin), ветки в worktree, незапушенное с уникальными коммитами (живой случай chore/ritual-day-0715 — 4 коммита сегодня только локально, утренний ритуал соседней сессии). Worktree: удалять только archived-спринты с чистым деревом; cowork #487 и главное дерево соседней сессии НЕ трогать. dry-run по умолчанию. Out of scope: 8 локальных веток без PR с уникальными коммитами (codex/* 8-9 коммитов) — удаление безвозвратно, разбор владельцем отдельно.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #496; review LGTM 3ef844490f43; PR #496 merged 2026-07-15T07:54:04Z (ea48829745eb929c73ec2c0a6c81294e4b23d178)",
       "githubIssueClosedAt": null
     },
     {
