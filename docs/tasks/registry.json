@@ -13483,10 +13483,10 @@
       "promptPath": "docs/prompts/PC1_SINGLE_DETECTOR_REPORT_PROMPT.md",
       "githubIssue": 493,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "kuryokhin",
@@ -13494,7 +13494,7 @@
         "dynin"
       ],
       "notes": "Фаза PC-1 спринта palette-clarity-nodes #493. ADR-0006 (DRAFT). Вариант A: расширить make-report-from-analysis до DetectionAnalysisRef (не новый узел — B был бы консилиум-гейт). Аддитивный ensemble-путь в рантайме (trend-путь не трогаем, нулевой риск), новый host-хук makeReportFromEnsembleAnalysis, честный отчёт neuro-detection/v1 без combined. Нейро-FREE-граф переходит с make-combined-report на make-report-from-analysis. Кросс-пакет: core socket + device-board executor + host + client bridge + graph.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #498 merged squash cf7c8d423f50; Teamlead LGTM offline (docs/reviews/pc1-single-detector-report-teamlead.md); ADR-0006 ACCEPTED. CI: core 138 + device-board 793 + client 297.",
       "githubIssueClosedAt": null
     },
     {
