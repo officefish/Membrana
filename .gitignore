@@ -70,7 +70,12 @@ packages/services/detectors/**/src/*.js.map
 packages/services/detectors/**/src/*.d.ts
 packages/services/detectors/**/src/*.d.ts.map
 
-# Локальные SSH/debug-скрипты и вывод (не коммитить)
+# Локальные SSH/debug-скрипты и вывод (не коммитить).
+# ВНИМАНИЕ: паттерн ловит и переиспользуемые хелперы — все существующие
+# scripts/_ssh-*.mjs трекаются, потому что были добавлены через `git add -f`.
+# Новый _ssh-скрипт, который должен жить в репо, коммитить только так:
+#   git add -f scripts/_ssh-<name>.mjs
+# иначе он молча не войдёт в коммит (ретро #476 п.7).
 scripts/_ssh-*.mjs
 scripts/_*-out.txt
 

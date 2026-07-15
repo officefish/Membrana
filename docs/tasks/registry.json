@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "vds-panel-tooling",
+      "title": "vds-panel-tooling: 3 инструмента против трения Windows-сессии с VDS/панелью (ti-1 office:ssh/vds:run генерик-exec, ti-2 chmod-фикс panel-deploy, ti-3 panel-smoke с owner-cookie)",
+      "promptPath": "docs/prompts/VDS_PANEL_TOOLING_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-15",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Пункты 1-3 ретро #485 (сессия 2026-07-14: 4 повтора CRLF/scp/chmod-танца, chmod-баг 700 -> caddy отдаёт index.html вместо статики, 3 инлайн-переписывания owner-cookie). Консилиум не нужен: механика по готовому канону _ssh-* (прецедент #433/#469). githubIssue НАМЕРЕННО не привязан: #485 несёт 6 пунктов, берём 3 — привязка закрыла бы весь ишью на вечернем ритуале (это ровно баг п.5 того же ретро). Прецедент exec: scripts/_ssh-media-exec.mjs; конфиг: scripts/_ssh-office-config.mjs. Закрывает также п.3 ретро #476 (office:ssh).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "agent-tooling-friction-2",
       "title": "agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship)",
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md",
