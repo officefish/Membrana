@@ -6,17 +6,17 @@
       "promptPath": "docs/prompts/VDS_PANEL_TOOLING_PROMPT.md",
       "githubIssue": 485,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-15",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "notes": "ВСЕ 6 пунктов ретро #485 (githubIssue привязан только после того, как взят весь ишью — до этого стоял null, чтобы task:close-github не закрыл #485 по трём пунктам из шести; это ровно баг ti-5). ti-4/5/6 добиты во второй половине сессии 2026-07-15. ti-5 оказался крупнее заявленного: в реестре не 3, а 189 фаз носят githubIssue своего эпика, 33 из них были в очереди закрытия и оборвали бы эпики #438/#131/#147/#144/#176/#172; #131 и #144 закрыты в одну секунду 2026-06-30T11:49:58Z — механизм уже срабатывал. Гард стоит в listPendingGithubClose + громкий список в task:close-github. Исходные пункты 1-3 ретро #485 (сессия 2026-07-14: 4 повтора CRLF/scp/chmod-танца, chmod-баг 700 -> caddy отдаёт index.html вместо статики, 3 инлайн-переписывания owner-cookie). Консилиум не нужен: механика по готовому канону _ssh-* (прецедент #433/#469). githubIssue НАМЕРЕННО не привязан: #485 несёт 6 пунктов, берём 3 — привязка закрыла бы весь ишью на вечернем ритуале (это ровно баг п.5 того же ретро). Прецедент exec: scripts/_ssh-media-exec.mjs; конфиг: scripts/_ssh-office-config.mjs. Закрывает также п.3 ретро #476 (office:ssh).",
-      "archiveNotes": null,
+      "archiveNotes": "PR #488; review LGTM 28bb38886cef; PR #488 merged 2026-07-15T05:30:29Z (be91b1d29c98a532106085c7ade826f4f1607179)",
       "githubIssueClosedAt": null
     },
     {
