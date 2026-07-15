@@ -87,6 +87,12 @@ export const SCENARIO_NODE_KINDS = [
   'make-proximity-trend',
   /** basn-5 (#323): 2 анализа + трек → единый ReportRef (sync-конструктор). */
   'make-combined-report',
+  /**
+   * PC-2 (консилиум pc2-periodic-window-gate 2026-07-15): периодический гейт окна
+   * по host-часам, БЕЗ RecorderRef. Владелец времени наблюдательного лупа —
+   * альтернатива рекордеру-как-часам. Ветки exec true/false как у is-valid.
+   */
+  'is-window-elapsed',
 ] as const;
 
 /** Вид узла scenario graph. */

@@ -304,6 +304,7 @@ export function createScenarioRuntimeHost(): ScenarioRuntimeHost {
       bridge.makeReportFromAnalysis(reporterRef, analysisRef),
     makeReportFromEnsembleAnalysis: (reporterRef, input) =>
       bridge.makeReportFromEnsembleAnalysis(reporterRef, input),
+    isWindowElapsed: (nodeId, windowMs) => bridge.isWindowElapsed(nodeId, windowMs),
     publishReport: (journalRef, payload) => bridge.publishReport(journalRef, payload),
     startAsyncJob: (input) => bridge.startAsyncJob(input),
     writeJournal: (event) => bridge.writeJournal(event),

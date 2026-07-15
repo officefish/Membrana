@@ -86,6 +86,12 @@ export interface ScenarioGraphNode {
   readonly detectionFusionInputCount?: number;
   /** basn-3: BranchOnDetection — порог combinedScore (0..1, default 0.5). */
   readonly detectionThreshold?: number;
+  /**
+   * PC-2 (консилиум pc2-periodic-window-gate): IsWindowElapsed — размер
+   * периодического окна в мс (host-часы, БЕЗ рекордера). Рантайм читает это поле
+   * (если нет провода windowMs). Владелец времени наблюдательного лупа.
+   */
+  readonly windowElapsedMs?: number;
   /** Sequence node: Then count + parallel async mode. */
   readonly sequenceConfig?: ScenarioSequenceConfig;
   /** AP v1: jobKind / await timeout для promise orchestration nodes. */

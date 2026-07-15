@@ -213,6 +213,17 @@ export {
 } from './is-recording-window-full-node.js';
 export type { CreateIsRecordingWindowFullBoardNodeOptions } from './is-recording-window-full-node.js';
 export {
+  createIsWindowElapsedBoardNode,
+  isWindowElapsedNodePins,
+  IS_WINDOW_ELAPSED_NODE_KIND,
+  IS_WINDOW_ELAPSED_WINDOW_MS_HANDLE,
+  IS_WINDOW_ELAPSED_TRUE_HANDLE,
+  IS_WINDOW_ELAPSED_FALSE_HANDLE,
+  DEFAULT_WINDOW_ELAPSED_MS,
+  isIsWindowElapsedNode,
+} from './is-window-elapsed-node.js';
+export type { CreateIsWindowElapsedBoardNodeOptions } from './is-window-elapsed-node.js';
+export {
   createFlushSpectralAnalyserBoardNode,
   flushSpectralAnalyserNodePins,
   FLUSH_SPECTRAL_ANALYSER_NODE_KIND,

@@ -152,6 +152,12 @@ export interface ScenarioRuntimeHost {
   readonly getRecorderElapsedSec?: (deviceHandle: string) => number;
   /** v0.7: gate host clock. */
   readonly isRecorderWindowFull?: (deviceHandle: string, windowSec: number) => boolean;
+  /**
+   * PC-2: периодический гейт окна по host-часам БЕЗ рекордера. Host держит
+   * per-node точку отсчёта: первый вызов стартует окно (false); при elapsed >=
+   * windowMs → true + сброс окна (периодическое, самосбрасывающееся).
+   */
+  readonly isWindowElapsed?: (nodeId: string, windowMs: number) => boolean;
   /** v0.7: MakeTrack из RecordingSliceRef (StopRecording path). */
   readonly createTrackFromRecordingSliceRef?: (
     nodeId: string,
@@ -354,6 +360,7 @@ export function createStubScenarioRuntimeHost(
       }),
     getRecorderElapsedSec: overrides.getRecorderElapsedSec ?? (() => 0),
     isRecorderWindowFull: overrides.isRecorderWindowFull ?? (() => false),
+    isWindowElapsed: overrides.isWindowElapsed ?? (() => false),
     createTrackFromRecordingSliceRef:
       overrides.createTrackFromRecordingSliceRef ??
       (async (nodeId, sliceRef) => {
