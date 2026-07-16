@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `standup-charge-redesign` | DAILY_STANDUP как настоящий стендап: дисциплина+честность+код-стайл и раскрытие сильных сторон персон | M | [`STANDUP_CHARGE_REDESIGN_PROMPT.md`](../docs/prompts/STANDUP_CHARGE_REDESIGN_PROMPT.md) | — |
 | `board-host-parity-registry` | Epic: @membrana/client-board-registry — паритет палитры борда на client/cabinet/electron | L | [`BOARD_HOST_PARITY_REGISTRY_PROMPT.md`](../docs/prompts/BOARD_HOST_PARITY_REGISTRY_PROMPT.md) | — |
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | S | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — |
 | `rt-9-code-review-freshness` | RT-9: гвард свежести code-review — критичный сбой не молчит | S | [`RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md`](../docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md) | — |
