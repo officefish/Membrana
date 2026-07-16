@@ -44,26 +44,37 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 
-### Agent tooling (night-build `agent-tooling`, 2026-07-08)
+### Agent tooling
 
-Скрипты/хуки, ускоряющие агентский цикл (эпик `agent-tooling-night-build`):
+**Инвентарь — не здесь: `yarn tooling:overview`.** Он генерируется из `package.json`,
+`.cursor/skills/README.md`, экспортов `scripts/lib/*.mjs` и `.githooks/` — всегда свеж.
 
-| Задача | Команда |
-|--------|---------|
-| One-shot PR-флоу (ветка→commit→PR→squash-merge→ff-sync) | `yarn pr:ship --type feat --scope core -m "..." [--issue N] [--branch x]` (default `--dry-run`; `--execute` — реально) |
-| Пересобрать dist изменённых пакетов (убить stale-dist) | `yarn build:affected` |
-| Сверить wire-контракт core ↔ background-cabinet CJS | `yarn verify:wire-sync` (в pre-push) |
-| Дождаться зелёного CI → напечатать команду деплоя (не запускает) | `yarn deploy:when-green` |
-| Оффлайн Prisma-миграция (diff HEAD↔рабочая схема) | `yarn prisma:migration --name X [--schema <path>]` |
-| Архив карточек с закрытыми GH-иссью | `yarn tasks:archive-closed [--execute]` |
-| Чистка мёртвых веток/worktree | `yarn repo:clean` (dry-run; `--execute [--remote] [--worktrees]`) |
-| Команда на office-VDS | `yarn office:ssh 'docker ps'` (**без `--`**: yarn 4 съедает его сам) |
-| Локальный `.sh` на office-VDS (CRLF снимается сам) | `yarn vds:run ./scratch/check.sh [arg...]` |
-| Прод-смоук панели с owner-cookie | `node scripts/_ssh-panel-smoke.mjs --read-only` (без флага — пишет в прод-стор) |
+> **Почему не списком (#554 TF-6).** Здесь стоял рукописный снимок с датой
+> «2026-07-08»: **11 команд из 253** живых. Не было `neighbors`, `research`,
+> `consilium`, `task:register`, `task:review:*`, `insight`. Агент читал его как факт и
+> за одну сессию (16.07) **пять раз написал заново существующее** — в том числе
+> самописный grep про worktree вместо `yarn neighbors`, и **этот grep соврал**.
+> Та же болезнь, что у `detection-planning-priorities.mjs`: снимок от 06.07 звал
+> писать `fuseDetectorConfidences`, слитый 13.07. Рукой инвентарь не ведём.
 
 **Хуки** (`.githooks/`, авто через `prepare` → `core.hooksPath`): `pre-push` = catalog:verify-client + verify:wire-sync + affected typecheck (пропуск `SKIP_PREPUSH=1`); `commit-msg` = conventional-заголовок (блок) + Co-Authored-By трейлер (warn), пропуск `SKIP_COMMIT_MSG=1`.
 
-**Скиллы:** `membrana-ship` (add-A → code-review → pr:ship), `membrana-tooling-doctor` (health-check tooling). Общий «работа за сегодня» — `scripts/lib/git-day-context.mjs` (без --author-фильтра).
+#### Грабли — пишутся руками (генератор их не добудет)
+
+Обязательство обновлять раздел — скилл `membrana-tooling-needs`. Только то, что **врёт
+или кусает**, а не «что существует».
+
+| Грабля | Как кусает |
+|--------|------------|
+| `yarn office:ssh 'docker ps'` | **Без `--`**: yarn 4 съедает его сам |
+| `yarn code-review:pr 543` | **Без `--`** по той же причине: с `--` уходило `pr="--"` (починено TF-2 — теперь внятный отказ) |
+| `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
+| `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
+| Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
+| Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07 |
+| Новый `scripts/_ssh-*.mjs` | Под gitignore — только `git add -f`, иначе молча не войдёт в коммит (#476 п.7) |
+
+**Общий «работа за сегодня»** — `scripts/lib/git-day-context.mjs` (без `--author`-фильтра).
 
 #### Ветки: `git branch --merged` здесь врёт (#492)
 
