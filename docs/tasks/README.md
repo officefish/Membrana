@@ -20,7 +20,6 @@
 |----|----------|--------|--------|--------|
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | S | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — |
 | `rt-9-code-review-freshness` | RT-9: гвард свежести code-review — критичный сбой не молчит | S | [`RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md`](../docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md) | — |
-| `rt-8-code-review-sees-code` | RT-8: daily-ревью видит код дня, а не остаток рабочего дерева | M | [`RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md`](../docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md) | — |
 | `rt-7-priorities-from-registry` | RT-7: приоритеты планирования из реестра, а не хардкод-текстом | M | [`RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md`](../docs/prompts/RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md) | — |
 | `rt-6-consilium-integrity` | RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки | S | [`RT_6_CONSILIUM_INTEGRITY_PROMPT.md`](../docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md) | — |
 | `rt-5-pr-land` | RT-5: task:pr-land + норма «доверяй union-драйверу» | M | [`RT_5_PR_LAND_PROMPT.md`](../docs/prompts/RT_5_PR_LAND_PROMPT.md) | — |
@@ -213,6 +212,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `rt-8-code-review-sees-code` | RT-8: daily-ревью видит код дня, а не остаток рабочего дерева | 2026-07-16 | [`RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md`](../docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md) | — | [карточка](./archive/rt-8-code-review-sees-code.md) |
 | `deep-research-sprint-flag` | deep-research: скилл + флаг --research для старта спринта | 2026-07-15 | [`DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md`](../docs/prompts/DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md) | #516 (Issue открыт) | [карточка](./archive/deep-research-sprint-flag.md) |
 | `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | 2026-07-15 | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | #510 (Issue открыт) | [карточка](./archive/hot-repo-flow.md) |
 | `pc2c-spectrum-recording-decouple` | PC-2c: полная развязка спектр-наблюдения от записи (StartRecording/StopRecording устарели — трек не производится) | 2026-07-15 | [`PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md`](../docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md) | #493 | [карточка](./archive/pc2c-spectrum-recording-decouple.md) |

@@ -44,17 +44,17 @@
       "promptPath": "docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md",
       "githubIssue": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-16",
-      "archivedAt": null,
+      "archivedAt": "2026-07-16",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "notes": "Эпик ritual-trust-contour (#539). Расследование code-review-honesty-report-2026-07-16: daily-ревью структурно слепо к коду — collectRepositoryContext не обходит дерево исходников (самодокумент 206-207), git diff --name-status на чистом после коммитов дереве пуст, appendTaskContext для daily не вызывается (слеп и к задаче). Живой случай 15.07: день крупных слияний → вердикт T0 docs-only «Runtime не затронут», ушёл в MAIN_DAY_ISSUE 16.07 как ✅ Вход в Фазу 0. Ревью по запросу (--pr/--branch/--uncommitted) честное — полный дифф, не трогать. Фикс: daily получает дифф слитых за сутки коммитов (todaysCommits уже есть) вместо рабочего дерева; гвард свежести (|| true глотает сбой, гварда даты нет — родня rt-5); тест на слепоту (PG3-урок: поведение, ломающее смысл, невидимо для набора). Тот же корень, что rt-7 (вход из метаданных, не из состояния) и rt-1 (замкнуть контур достоверности).",
-      "archiveNotes": null,
+      "archiveNotes": "Реализация смёржена ec6e4637 (PR #543). LGTM через code-review:pr (closure-review не прошёл по размеру — docs-протоколы >80k, это B3/#539). accepted-branch-only по сути: код в main, тимлид LGTM получен. Живой прогон 16 коммитов, golden-регресс 15.07.",
       "githubIssueClosedAt": null
     },
     {
