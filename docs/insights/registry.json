@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-15",
+  "updatedAt": "2026-07-16",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -447,6 +447,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-15",
+      "tags": []
+    },
+    {
+      "id": "insight-truth-tokens-owner-facts",
+      "title": "Токены правды: владельческие факты как источник истины для ритуала",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-16",
       "tags": []
     }
   ]
