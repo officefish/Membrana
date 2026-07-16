@@ -27,6 +27,33 @@ export function canAccess(actual: PanelRole, required: PanelRole): boolean {
   return ROLE_ORDER[actual] >= ROLE_ORDER[required];
 }
 
+/**
+ * Грант открывает раздел (PU2 #463, консилиум panel-promo-access Р1): '*' = все.
+ * Серверное зеркало клиентского `grantsAllowSection` — офис остаётся арбитром.
+ */
+export function grantsAllowSection(
+  grants: readonly string[] | undefined,
+  sectionId: string,
+): boolean {
+  return Boolean(grants && (grants.includes('*') || grants.includes(sectionId)));
+}
+
+/**
+ * Единый предикат доступа к разделу — server source of truth для маршрут-моста
+ * (консилиум graphify-research-tree: «единственный арбитр — гейт панели, реестр
+ * секций + canAccess»). Роль ≥ minRole ИЛИ грант на раздел; owner-разделы
+ * грантами НЕ открываются (в т.ч. wildcard) — лестница ролей не размывается.
+ */
+export function canAccessSection(
+  role: PanelRole,
+  grants: readonly string[] | undefined,
+  minRole: PanelRole,
+  sectionId: string,
+): boolean {
+  if (canAccess(role, minRole)) return true;
+  return minRole !== 'owner' && grantsAllowSection(grants, sectionId);
+}
+
 // ─── подписанные токены (base64url(payload).base64url(hmac)) ─────────────────────
 
 function b64url(buf: Buffer): string {
