@@ -36,6 +36,16 @@
 		file_server
 	}
 
+	# GRP3: мост research-tree (тот же гейт-механизм, grant:research-tree).
+	handle_path /panel/section/research-tree/* {
+		forward_auth 127.0.0.1:3000 {
+			uri /v1/panel/gate/research-tree
+		}
+		header Cache-Control "no-store"
+		root * /opt/membrana-research-tree
+		file_server
+	}
+
 	# SPA: статика из turbo-сборки apps/panel (rsync → /opt/membrana-panel/dist),
 	# fallback на index.html для client-side путей.
 	handle {

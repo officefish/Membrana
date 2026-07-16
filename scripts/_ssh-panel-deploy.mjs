@@ -63,6 +63,20 @@ if (graphifyFlagIndex > -1 && (!graphifyDir || !existsSync(graphifyDir))) {
 const graphifyTarPath = graphifyDir ? join(tmpdir(), `panel-graphify-${Date.now()}.tgz`) : undefined;
 const remoteGraphifyTar = '/tmp/panel-graphify.tgz';
 
+/**
+ * `--research-tree <dir>` — залить статику блок-артефакта research-tree (мост
+ * /panel/section/research-tree/*, GRP3) в /opt/membrana-research-tree. Каталог —
+ * turbo-сборка apps/demos/Research-Tree/dist (vite base './').
+ */
+const rtreeFlagIndex = process.argv.indexOf('--research-tree');
+const rtreeDir = rtreeFlagIndex > -1 ? process.argv[rtreeFlagIndex + 1] : undefined;
+if (rtreeFlagIndex > -1 && (!rtreeDir || !existsSync(rtreeDir))) {
+  console.error('[fail] --research-tree требует существующий каталог: --research-tree apps/demos/Research-Tree/dist');
+  process.exit(1);
+}
+const rtreeTarPath = rtreeDir ? join(tmpdir(), `panel-rtree-${Date.now()}.tgz`) : undefined;
+const remoteRtreeTar = '/tmp/panel-rtree.tgz';
+
 function envGet(envText, key) {
   return envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
 }
@@ -133,6 +147,11 @@ if (audioDir) {
 if (graphifyDir) {
   console.log(`Packing graphify static from ${graphifyDir}...`);
   execSync(`tar --force-local -czf "${graphifyTarPath}" -C "${graphifyDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
+}
+
+if (rtreeDir) {
+  console.log(`Packing research-tree static from ${rtreeDir}...`);
+  execSync(`tar --force-local -czf "${rtreeTarPath}" -C "${rtreeDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
 }
 
 const caddyfile = renderPanelCaddyfile();
@@ -213,6 +232,22 @@ else
   echo "  graphify нет ни на проде, ни локально — мост отдаст 404 (--graphify <dir>)"
 fi
 
+echo "=== [2c/4] статика research-tree (маршрут-мост /panel/section/research-tree) ==="
+RTREE_UPLOADED=${rtreeDir ? '1' : '0'}
+if [ "\$RTREE_UPLOADED" = "1" ] && [ -f ${remoteRtreeTar} ]; then
+  mkdir -p /opt/membrana-research-tree
+  rm -rf /opt/membrana-research-tree/*
+  tar -xzf ${remoteRtreeTar} -C /opt/membrana-research-tree
+  chmod a+rX /opt/membrana-research-tree
+  chmod -R a+rX /opt/membrana-research-tree
+  rm -f ${remoteRtreeTar}
+  echo "  research-tree залит (\$(ls /opt/membrana-research-tree | wc -l) файлов)"
+elif [ -d /opt/membrana-research-tree ]; then
+  echo "  research-tree не передан — оставляю уже лежащий (\$(ls /opt/membrana-research-tree 2>/dev/null | wc -l) файлов)"
+else
+  echo "  research-tree нет ни на проде, ни локально — мост отдаст 404 (--research-tree <dir>)"
+fi
+
 echo "=== [3/4] caddy site-block ==="
 mkdir -p /etc/caddy/Caddyfile.d
 cat > /etc/caddy/Caddyfile.d/panel.caddy <<'CADDY_EOF'
@@ -250,6 +285,10 @@ function runDeploy() {
             console.log('Uploading graphify static tarball...');
             await sftpPut(conn, graphifyTarPath, remoteGraphifyTar);
           }
+          if (rtreeTarPath) {
+            console.log('Uploading research-tree static tarball...');
+            await sftpPut(conn, rtreeTarPath, remoteRtreeTar);
+          }
           await execBash(conn, remoteScript);
           clearTimeout(timeout);
           conn.end();
@@ -271,7 +310,7 @@ try {
   await runDeploy();
   console.log('\nPanel deploy OK. Дальше: node scripts/_ssh-office-prod-up.mjs (office с panel-auth).');
 } finally {
-  for (const path of [tarPath, audioTarPath, graphifyTarPath]) {
+  for (const path of [tarPath, audioTarPath, graphifyTarPath, rtreeTarPath]) {
     if (!path) continue;
     try {
       unlinkSync(path);
