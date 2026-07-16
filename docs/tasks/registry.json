@@ -141,16 +141,16 @@
       "promptPath": "docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md",
       "githubIssue": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-16",
-      "archivedAt": null,
+      "archivedAt": "2026-07-16",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Эпик #539, #515 п.5. Два трения: (1) протокол отклонялся дважды на формате реплик, ошибка «роль не высказалась» не подсказала корень — тот же класс, что «недостаточно evidence для tier» (починено в fdc05d05: отказ называет упавший чек); (2) ЖИВОЙ инцидент 16.07 — первый консилиум обошёл 2 вопроса повестки из 7 МОЛЧА, включая тему владельца (экстракты сессий); пришлось созывать второй. Валидатор должен ловить: повестка из N вопросов → каждый получил хотя бы одну реплику, иначе протокол неполон.",
-      "archiveNotes": null,
+      "archiveNotes": "Реализовано и смёржено e0379b39 (PR #549): findUncoveredAgendaItems + protocolBody + unknownBracketLabels; встроено в consilium.mjs (живой прогон — warn, secretary — жёстко). ДЕФЕКТ известен и вынесен: #558 — ложное срабатывание, гейт не отличает «обсудили без метки» от «уронили молча» (проверка построена без контракта, обязывающего проставлять ID; экстрактор захватывает не-повестку). Владелец: чинить после эпика. До фикса вывод читать как «ID не проставлены», не как «вопросы уронены».",
       "githubIssueClosedAt": null
     },
     {
@@ -250,16 +250,16 @@
       "promptPath": "docs/prompts/RT_0_GATE_PROMPT.md",
       "githubIssue": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-16",
-      "archivedAt": null,
+      "archivedAt": "2026-07-16",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Эпик ritual-trust-contour (#539). Первый шаг: проверить, что из состава эпика УЖЕ сделано — по коду, не по issue-статусам. Ровно тот сбой, против которого эпик строится. Снятые пункты убрать из эпика с обоснованием. Проверить, что инструмент не пишется второй раз (урок 15.07: isBaseHeldElsewhere уже существовал в pr:ship).",
-      "archiveNotes": null,
+      "archiveNotes": "Сверка выполнена 16.07 по КОДУ в origin/main, не по статусам. Таблица «уже сделано» эпика подтверждена целиком (6/6): probeAssertion, extractIssueMentions, StalenessWarning, dedupeByOrigin, isBaseHeldElsewhere в morning-care, explainReviewEvidenceGap. НАЙДЕНО РАСХОЖДЕНИЕ: rt-6 числился active при коде в main (e0379b39) — ровно класс, ради которого эпик заведён; архивирован с пометкой дефекта #558. Состав промпта был устаревшим: 8 подзадач против 11 в реестре — добавлены rt-8 (сделан), rt-9, rt-10; порядок обновлён. Смежное вне эпика: B3 d6e4fb7e, TF-1..TF-7 a672384e. Инструментов заново не писал.",
       "githubIssueClosedAt": null
     },
     {
