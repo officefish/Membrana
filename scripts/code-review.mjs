@@ -15,6 +15,11 @@
 import { resolve } from 'node:path';
 import { collectRepositoryContext } from './context-collector.mjs';
 import {
+  collectDayWorkDiff,
+  formatDayReviewHeader,
+  formatDayWorkContext,
+} from './lib/day-work-diff.mjs';
+import {
   buildCodeReviewUserMessage,
   collectReviewContext,
   defaultOutputPath,
@@ -68,8 +73,20 @@ const regulation = readRequiredFile(REGULATION_PATH);
 const virtualTeam = readRequiredFile(VIRTUAL_TEAM_PATH);
 
 let contextBlock = '';
+let dayWorkHeader = '';
 if (cli.mode === 'daily') {
-  contextBlock = collectRepositoryContext({ full: cli.full });
+  // rt-8 (#539): daily ревьюит КОД ДНЯ (дифф коммитов), а не остаток рабочего дерева.
+  // Расследование 16.07: раньше смотрел на чистое после коммитов дерево и объявлял
+  // «T0 docs-only». collectRepositoryContext сохранён — но как ГИГИЕНА (untracked,
+  // тест/линт), а не как предмет ревью. Решение консилиума code-review-honesty-refactor.
+  const dayWork = collectDayWorkDiff();
+  dayWorkHeader = formatDayReviewHeader(dayWork);
+  const hygiene = collectRepositoryContext({ full: cli.full });
+  contextBlock =
+    '## Работа дня (дифф коммитов, сегментировано по PR — предмет ревью)\n\n' +
+    formatDayWorkContext(dayWork) +
+    '\n\n---\n\n## Гигиена рабочего дерева (untracked, тест/линт — не предмет ревью)\n\n' +
+    hygiene;
 } else {
   const ctx = collectReviewContext(cli);
   contextBlock = ctx.text;
@@ -127,9 +144,15 @@ try {
     } catch {
       out = text;
     }
+    // Честная шапка в САМ артефакт: режим/precision/период — машиночитаемо downstream
+    // (standup, main-day-issue), не зависит от формулировок LLM. Конец молчаливому
+    // «T0 docs-only» — если ревьюился остаток дерева, это будет видно в шапке.
+    const finalBody = dayWorkHeader
+      ? `> Контур ревью (rt-8):\n${dayWorkHeader.split('\n').map((l) => `> ${l}`).join('\n')}\n\n---\n\n${out}`
+      : out;
     writeReviewMarkdown({
       path: outputPath,
-      body: out,
+      body: finalBody,
       meta: { mode: cli.mode, full: cli.full, pr: cli.pr },
     });
     console.log(out);
