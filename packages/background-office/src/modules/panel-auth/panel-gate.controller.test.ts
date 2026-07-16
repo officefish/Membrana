@@ -74,9 +74,17 @@ describe('PanelGateController — forward_auth маршрут-моста', () =>
     expect(gate('graphify', identityFrom(token))).toBe(403);
   });
 
+  it('research-tree грант-гейт: grant:research-tree (или *) открывает, grant:graphify — нет', () => {
+    expect(gate('research-tree', identityFrom(mintSessionToken(SECRET, 'owner', 'x', NOW + 3600)))).toBe(204);
+    expect(gate('research-tree', identityFrom(mintPartnerSessionToken(SECRET, 'u:1', ['research-tree'], 1, NOW + 3600)))).toBe(204);
+    expect(gate('research-tree', identityFrom(mintPartnerSessionToken(SECRET, 'u:2', ['*'], 1, NOW + 3600)))).toBe(204);
+    expect(gate('research-tree', identityFrom(mintPartnerSessionToken(SECRET, 'u:3', ['graphify'], 1, NOW + 3600)))).toBe(403);
+    expect(gate('research-tree', identityFrom(undefined))).toBe(403);
+  });
+
   it('раздел не под мостом → 404 (даже owner)', () => {
     const token = mintSessionToken(SECRET, 'owner', 'x', NOW + 3600);
-    expect(gate('research-tree', identityFrom(token))).toBe(404);
-    expect(gate('nonsense', identityFrom(undefined))).toBe(404);
+    expect(gate('nonsense', identityFrom(token))).toBe(404);
+    expect(gate('unknown-section', identityFrom(undefined))).toBe(404);
   });
 });

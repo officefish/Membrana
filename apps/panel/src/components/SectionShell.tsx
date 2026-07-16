@@ -8,6 +8,7 @@ import { SectionCard } from './SectionCard';
 import { DetectorCompareSection } from './detector-compare/DetectorCompareSection';
 import { GraphifyBoard } from './graphify/GraphifyBoard';
 import { PanelUsersBoard } from './panel-users/PanelUsersBoard';
+import { ResearchTreeBoard } from './research-tree/ResearchTreeBoard';
 
 /**
  * Shell авторизованного пользователя (OP3 + #454): навбар с ролью словом +
@@ -21,10 +22,11 @@ const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'detector-compare': DetectorCompareSection,
   'panel-users': PanelUsersBoard,
   graphify: GraphifyBoard,
+  'research-tree': ResearchTreeBoard,
 };
 
-/** Широкие борды: таблицам сравнения, матрице грантов и графу тесно в max-w-3xl. */
-const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users', 'graphify']);
+/** Широкие борды: таблицам сравнения, матрице грантов и графам тесно в max-w-3xl. */
+const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users', 'graphify', 'research-tree']);
 
 export function SectionShell() {
   const { identity, logout } = usePanelAuth();
