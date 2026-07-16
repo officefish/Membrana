@@ -24,6 +24,18 @@ import {
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
 
+/**
+ * Каталоги ревью-артефактов, исключаемые из exact-диффа closure-ревью (B3, #539).
+ * Протоколы консилиумов, выжимки research, артефакты код-ревью — процесс, не
+ * предмет ревью; на эпик-контуре они пробивали лимит 80k и роняли ревью (#543).
+ */
+export const CLOSURE_DIFF_EXCLUDES = [
+  'docs/seanses',
+  'docs/tasks/research',
+  'docs/discussions',
+  'docs/reviews',
+];
+
 export function parseTaskClosureReviewCli(argv) {
   if (argv.includes('--help') || argv.includes('-h')) return { help: true };
   const command = argv[0] ?? '';
@@ -209,7 +221,19 @@ async function runReview(cli) {
   const taskPrompt = readFileSync(resolve(process.cwd(), task.promptPath), 'utf8');
   const regulation = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_REGULATION.md'), 'utf8');
   const teamleadPrompt = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_PROMPT.md'), 'utf8');
-  const diff = git(['diff', '--no-ext-diff', manifest.scope.baseRef, manifest.currentCommitSha]);
+  // B3 (#539): ревью-артефакты (протоколы консилиумов, выжимки research, артефакты
+  // код-ревью) — это ПРОЦЕСС, не предмет closure-ревью. На эпик-контуре
+  // (расследование+research+консилиум+код) они раздували exact-дифф за 80k и роняли
+  // ревью (rt-8/#543). Исключаем их из диффа — код-предмет ревьюится, протоколы нет.
+  const diff = git([
+    'diff',
+    '--no-ext-diff',
+    manifest.scope.baseRef,
+    manifest.currentCommitSha,
+    '--',
+    '.',
+    ...CLOSURE_DIFF_EXCLUDES.map((p) => `:(exclude)${p}`),
+  ]);
   if (cli.dryRun) {
     const prompt = buildTaskClosureReviewPrompt({ manifest, task, taskPrompt, regulation, teamleadPrompt, diff });
     console.log(`Task: ${manifest.taskId}`);
