@@ -1,7 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { isBaseHeldElsewhere, otherWorktreeBranches, planPrShip } from './pr-ship.mjs';
+import {
+  extractIssueMentions,
+  isBaseHeldElsewhere,
+  otherWorktreeBranches,
+  planPrShip,
+} from './pr-ship.mjs';
 
 test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   const { title, commitBody, steps } = planPrShip({
@@ -101,6 +106,47 @@ test('isBaseHeldElsewhere — предикат по списку чужих ве
   assert.equal(isBaseHeldElsewhere('main', ['main']), true);
   assert.equal(isBaseHeldElsewhere('main', ['feat/x']), false);
   assert.equal(isBaseHeldElsewhere('main', []), false);
+});
+
+// ─── гейт closing keyword: «(#N)» ≠ Closes #N ─────────────────────────────────────
+
+test('extractIssueMentions находит упоминания, включая живой заголовок PR #417', () => {
+  assert.deepEqual(extractIssueMentions('feat(client): yamnet (#415, консилиум 2026-07-13)'), [415]);
+  assert.deepEqual(extractIssueMentions('fix: правка #1 и #22'), [1, 22]);
+  assert.deepEqual(extractIssueMentions('chore: без упоминаний'), []);
+});
+
+test('упоминание #N без --issue → отказ (живой случай PR #417 → #415 висел open)', () => {
+  // Тело PR #417 = копия заголовка со «(#415)»; issue остался open при слитом коде,
+  // и ритуал 16.07 назначил переписать существующее ядро.
+  assert.throws(
+    () => planPrShip({ type: 'feat', scope: 'client', message: 'yamnet в живом combined (#415)' }),
+    /#415.*--issue не задан|НЕ закрывает issue/su,
+  );
+});
+
+test('--issue закрывает issue: Closes попадает в тело, отказа нет', () => {
+  const { commitBody } = planPrShip({
+    type: 'feat',
+    scope: 'client',
+    message: 'yamnet в живом combined (#415)',
+    issue: 415,
+  });
+  assert.match(commitBody, /Closes #415/u);
+});
+
+test('--allow-mention разрешает намеренную ссылку без закрытия', () => {
+  const { commitBody } = planPrShip({
+    type: 'docs',
+    message: 'разбор инцидента (#415)',
+    allowMentionWithoutClose: true,
+  });
+  assert.ok(!/Closes/u.test(commitBody), 'намеренная ссылка не закрывает issue');
+});
+
+test('заголовок без #N — поведение прежнее (обратная совместимость)', () => {
+  const { title } = planPrShip({ type: 'feat', message: 'x' });
+  assert.equal(title, 'feat: x');
 });
 
 // ─── otherWorktreeBranches: парсер porcelain ──────────────────────────────────────
