@@ -43,7 +43,7 @@ import {
   personaMemoryPath,
   readPersonaMemory,
 } from './lib/persona-memory.mjs';
-import { findUncoveredAgendaItems, validateProtocol } from './lib/protocol-validator.mjs';
+import { extractAgendaIds, findUncoveredAgendaItems, validateProtocol } from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
 const MAX_VIRTUAL_TEAM_CHARS = 8_000;
@@ -405,6 +405,26 @@ async function main() {
   if (cli.secretaryFile) {
     runSecretaryFile(cli, cwd);
     return;
+  }
+
+  // TF-5 (#554): предупредить ДО траты рана, если повестка без ID-меток — гейт
+  // полноты (rt-6) на такой повестке молчит, то есть декоративен. Две повестки
+  // 16.07 были прозаичными, и оба консилиума молча уронили по вопросу.
+  if (cli.topicFile) {
+    try {
+      const agendaIds = extractAgendaIds(readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true));
+      if (agendaIds.length === 0) {
+        console.error(
+          '\n⚠ Повестка без ID-меток вопросов (rt-6 гейт полноты не сработает).\n' +
+            '  Помечай вопросы жирным ID: **A1 — …**, **B2 — …**, **Q3 — …**\n' +
+            '  Иначе пропуск вопроса останется незамеченным — паттерн 16.07 (3 консилиума подряд).\n',
+        );
+      } else {
+        console.error(`→ повестка: ${agendaIds.length} вопрос(ов) под гейтом rt-6 (${agendaIds.join(', ')})`);
+      }
+    } catch {
+      // Повестка нечитаема — не мешаем прогону, это забота readBounded ниже.
+    }
   }
 
   const orderedRoles = shuffleRoles(CONSILIUM_ROLES, cli.seed);

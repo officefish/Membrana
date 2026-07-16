@@ -139,6 +139,12 @@ __pycache__/
 # Артефакт code-review --uncommitted (перезаписывается каждым прогоном → autostash-трение)
 docs/discussions/uncommitted-code-review.md
 
+# Артефакты code-review --pr/--branch (TF-3, #554): генерируются на каждое ревью и
+# падали untracked — 16.07 после трёх PR-ревью пришлось git add поимённо, чтобы их
+# не втянуть. Ревью-артефакт — процесс, а не исходник (тот же класс, что docs/reviews/).
+docs/discussions/pr-*-code-review.md
+docs/discussions/branch-*-code-review.md
+
 # Артефакт yarn hermes:brief (генерируемый снимок состояния сессии, перезаписывается)
 docs/HERMES_BRIEF.md
 
