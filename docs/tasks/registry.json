@@ -405,7 +405,7 @@
       "id": "detector-metrics-characterization",
       "title": "detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex",
       "promptPath": "docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md",
-      "githubIssue": 0,
+      "githubIssue": 565,
       "size": "L",
       "status": "active",
       "sprintKind": "day-sprint",
