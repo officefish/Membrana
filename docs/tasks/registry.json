@@ -126,7 +126,7 @@
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "Эпик #539, #515 п.1 (высший payoff), #476. Union-драйвер УЖЕ есть и зарегистрирован (merge.registry-union.driver, .gitattributes). Остаток: gh pr merge серверный драйвер не видит → PR всегда CONFLICTING; лечится локальным git merge origin/main. ПРОВЕРЕНО живьём 16.07: драйвер разрулил реестр сам. НО хук commit-msg отклоняет merge-коммиты («Not committing merge») — норма упирается в хук, обход SKIP_COMMIT_MSG=1 подсказывает сам хук. Сначала проверить гипотезу #515: не хватит ли НОРМЫ вместо третьей обёртки рядом с pr:ship.",
+      "notes": "Эпик #539, #515 п.1 (высший payoff), #476. Union-драйвер УЖЕ есть и зарегистрирован (merge.registry-union.driver, .gitattributes). Остаток: gh pr merge серверный драйвер не видит → PR всегда CONFLICTING; лечится локальным git merge origin/main. ПРОВЕРЕНО живьём 16.07: драйвер разрулил реестр сам. СНЯТО (TF-1, #554): «хук отклоняет merge-коммиты» — ЛОЖНАЯ находка, не чинить. Хук освобождает Merge* (проверено прогоном); ломало собственное -m «merge: ...» строчными. Норма: мёржить БЕЗ -m, дать git сгенерировать Merge branch. Сначала проверить гипотезу #515: не хватит ли НОРМЫ вместо третьей обёртки рядом с pr:ship.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
