@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Membrana — акустическое наблюдение</title>
+<meta name="description" content="Membrana — система акустического наблюдения: детекция и анализ звуковой обстановки. Настольный клиент, документация, кабинет.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://membrana.space/">
+<style>
+  /* Бренд-токены: docs/comms/canon/BRAND_TOKENS.md
+     База — графит / тёмно-синий / серый; ОДИН приглушённый акцент. Без эмодзи. */
+  :root {
+    --graphite-900: #1E2226;
+    --graphite-700: #2E353B;
+    --navy-800: #16233E;
+    --navy-600: #24406B;
+    --gray-500: #6B7480;
+    --gray-200: #E3E6E9;
+    --accent: #4A9E9A;
+    --paper: #F7F8F9;
+
+    --bg: var(--paper);
+    --surface: #FFFFFF;
+    --border: var(--gray-200);
+    --text: var(--graphite-900);
+    --text-dim: var(--gray-500);
+    --link: var(--navy-600);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: var(--graphite-900);
+      --surface: var(--graphite-700);
+      --border: #3C444B;
+      --text: var(--paper);
+      --text-dim: #9AA3AE;
+      --link: #7FA6DC;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 3rem;
+  }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+  h1 {
+    font-family: Manrope, Inter, sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 2.75rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 0.5rem;
+  }
+  .mark { color: var(--accent); }
+  .tagline { color: var(--text-dim); font-size: 1.0625rem; margin: 0; max-width: 34rem; }
+
+  .note {
+    margin: 2rem 0 0;
+    padding: 0.75rem 1rem;
+    border-left: 2px solid var(--accent);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 0.9375rem;
+  }
+
+  ul.links { list-style: none; padding: 0; margin: 2.5rem 0 0; display: grid; gap: 1rem; }
+  a.card {
+    display: block;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  a.card:hover, a.card:focus-visible {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    a.card { transition: none; }
+    a.card:hover, a.card:focus-visible { transform: none; }
+  }
+  .card-title {
+    font-family: Manrope, Inter, sans-serif;
+    font-weight: 600;
+    font-size: 1.0625rem;
+    margin: 0 0 0.25rem;
+  }
+  .card-desc { color: var(--text-dim); font-size: 0.9375rem; margin: 0; }
+  .card-meta {
+    font-family: "IBM Plex Sans", ui-monospace, monospace;
+    font-size: 0.8125rem;
+    color: var(--text-dim);
+    margin: 0.5rem 0 0;
+  }
+
+  footer {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.875rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  footer a { color: var(--link); }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Membrana<span class="mark">.</span></h1>
+    <p class="tagline">
+      Система акустического наблюдения: детекция и анализ звуковой обстановки
+      в реальном времени. Сценарии собираются на визуальной доске устройства.
+    </p>
+  </header>
+
+  <p class="note">
+    Ранняя версия. Продукт в стадии полевых испытаний — не коммерческая сборка.
+  </p>
+
+  <ul class="links">
+    <li>
+      <a class="card" href="/downloads">
+        <p class="card-title">Загрузить настольный клиент</p>
+        <p class="card-desc">Membrana Studio — полевой клиент: микрофон, доска устройства, журнал, библиотека сэмплов.</p>
+        <p class="card-meta">Windows · установщик</p>
+      </a>
+    </li>
+    <li>
+      <a class="card" href="https://membrana.mintlify.app/device-board/overview">
+        <p class="card-title">Документация доски устройства</p>
+        <p class="card-desc">Обзор, архитектура, узлы, сценарии и рецепты сборки.</p>
+        <p class="card-meta">docs</p>
+      </a>
+    </li>
+    <li>
+      <a class="card" href="https://cabinet.membrana.space">
+        <p class="card-title">Кабинет — регистрация</p>
+        <p class="card-desc">Учётная запись, привязка устройств, просмотр сценариев и журнала с сервера.</p>
+        <p class="card-meta">cabinet.membrana.space</p>
+      </a>
+    </li>
+  </ul>
+
+  <footer>
+    <span>Membrana · июль 2026</span>
+    <a href="https://membrana.mintlify.app/">Документация</a>
+  </footer>
+</main>
+</body>
+</html>

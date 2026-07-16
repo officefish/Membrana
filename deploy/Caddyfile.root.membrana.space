@@ -1,0 +1,61 @@
+# Caddy v2 — root site block for membrana.space (apex + www).
+# ADR-0008 Р2/Р3: один site-блок на продуктовом VPS 72.56.27.58 (там же cabinet + media).
+#
+# Copy to VPS: /etc/caddy/Caddyfile.d/root.caddy
+# Install via:  node scripts/_ssh-root-site-setup.mjs
+# TLS: автоматический Let's Encrypt (A @ и A www → 72.56.27.58 уже есть).
+#
+# Порядок хендлеров важен: /scenarios/docs/* матчится ДО / (ADR-0008 Р2).
+
+membrana.space {
+	encode gzip
+
+	# --- Р1: docs — Mintlify subpath-proxy -------------------------------------
+	# ВЫКЛЮЧЕН до тех пор, пока в дашборде Mintlify не выставлен base path
+	# /scenarios/docs (owner-действие).
+	#
+	# Почему нельзя включить сейчас: base path не настроен — origin отдаёт 404 на
+	# /scenarios/docs. Если вместо этого стрипать префикс (handle_path), Mintlify
+	# вернёт HTML с АБСОЛЮТНЫМИ ссылками (/introduction, /device-board/overview) и
+	# ассетами /mintlify-assets/* — они уедут в корень membrana.space, навигация
+	# развалится после первого клика. Поэтому до base path страница `/` ведёт на
+	# доки прямой ссылкой.
+	#
+	# Проверено 2026-07-16 с самого VPS: egress к Mintlify ЖИВ (200 за 0.31s),
+	# блока ТСПУ нет → план B (subdomain docs.membrana.space) остаётся спящим.
+	#
+	# После включения base path — раскомментировать, `caddy validate`, reload,
+	# затем live-проверить: ассеты и canonical не уехали в корень, POST-аналитика жива.
+	#
+	# handle /scenarios/docs/* {
+	# 	reverse_proxy https://membrana.mintlify.app {
+	# 		header_up Host membrana.mintlify.app
+	# 		header_up Origin https://membrana.mintlify.app
+	# 		header_up X-Real-IP {remote_host}
+	# 	}
+	# }
+	#
+	# handle /mintlify-assets/* {
+	# 	reverse_proxy https://membrana.mintlify.app {
+	# 		header_up Host membrana.mintlify.app
+	# 	}
+	# }
+
+	# --- downloads: инсталляторы клиентов (ADR-0008, решение владельца) --------
+	handle /downloads* {
+		root * /var/www/membrana
+		file_server browse
+	}
+
+	# --- Р3: корень — минимальная страница ------------------------------------
+	# Полный лендинг — карточка product-landing; сейчас минимум: загрузки,
+	# документация борда, регистрация в кабинете.
+	handle {
+		root * /var/www/membrana/root
+		file_server
+	}
+}
+
+www.membrana.space {
+	redir https://membrana.space{uri} permanent
+}

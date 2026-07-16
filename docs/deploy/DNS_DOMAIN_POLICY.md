@@ -29,9 +29,9 @@
 | `cabinet.membrana.space` | `@membrana/cabinet` (клиентский кабинет) | ✅ |
 | `cabinet-api.membrana.space` | cabinet API | ✅ |
 | `media.membrana.space` | `@membrana/background-media` — медиафайлы, в т.ч. **пользовательские треки** | ✅ **остаётся** (решение владельца 2026-07-15: media = реально media, user-facing; НЕ фон) |
-| `membrana.space` (apex, `@`) + `www` | лендинг + root-Caddy (docs-proxy, downloads) | 🔜 A-запись УЖЕ есть; нужен Caddy-блок |
-| `membrana.space/scenarios/docs` | документация (Mintlify subpath-proxy, ADR-0008) | 🎯 |
-| `membrana.space/downloads` | инсталляторы клиентов (десктоп Studio) — статика | 🔜 (решение владельца 2026-07-15) |
+| `membrana.space` (apex, `@`) + `www` | root-Caddy: минимальная страница + `/downloads`; `www` → 301 на apex | ✅ **живёт с 2026-07-16** (`deploy/Caddyfile.root.membrana.space`, TLS/LE выпущен) |
+| `membrana.space/scenarios/docs` | документация (Mintlify subpath-proxy, ADR-0008) | ⏸ **ждёт owner-действия**: base path `/scenarios/docs` в дашборде Mintlify. Блок proxy написан и закомментирован; egress к Mintlify с VPS проверен 2026-07-16 (200 за 0.12s) — плана B не требуется. До настройки страница ведёт на доки прямой ссылкой (`membrana.mintlify.app/device-board/overview`) |
+| `membrana.space/downloads` | инсталляторы клиентов (десктоп Studio) — статика | ✅ **живёт с 2026-07-16**: `/var/www/membrana/downloads`, `Membrana-Studio-Setup-0.1.0.exe` (131.4 МБ), range-запросы работают |
 | `membrana.space/scenarios/` | community-маркет сценариев | 🔮 будущее |
 
 ### Текущие DNS-записи (reg.ru, ns1/ns2.reg.ru) — @2026-07-15
@@ -64,9 +64,12 @@
    пользовательские треки → это user-facing контент, а не фоновая инфра, принцип
    разделения к нему не применяется. Возможный будущий переезд на S3/CDN (Amazon и
    подобные) — рано обсуждать, НЕ сейчас.
-2. **Корень `membrana.space`** сейчас **не обслуживается** (только поддомены; Caddy
-   root-блока нет). Лендинг + `/scenarios/*` требуют корневого сервера — прежде
-   чем `/scenarios/docs` станет достижим.
+2. ~~**Корень `membrana.space`** не обслуживается~~ **РЕШЕНО 2026-07-16:** root-Caddy
+   поднят (`deploy/Caddyfile.root.membrana.space`, установка —
+   `node scripts/_ssh-root-site-setup.mjs --execute`). Отдаёт минимальную страницу
+   (загрузки / документация борда / регистрация в кабинете) и `/downloads`.
+   Полный лендинг — карточка `product-landing`. Остаток по докам: base path в
+   дашборде Mintlify (owner), затем раскомментировать proxy-блок.
 3. **Хостинг документации** на `membrana.space/scenarios/docs` — **консилиум по
    топологии корня**. Research (2026-07-15) поправил ранний пессимизм: Mintlify
    **штатно поддерживает subpath** (дашборд «Host at» + base path), через
