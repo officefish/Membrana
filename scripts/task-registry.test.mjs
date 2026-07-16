@@ -5,6 +5,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  buildTaskEntry,
   findEpicIssueCollisions,
   findTask,
   listPendingGithubClose,
@@ -241,5 +242,37 @@ describe('renderTaskPromptStub', () => {
     const md = renderTaskPromptStub(template, { id: 'x', title: 'X', size: 'S', githubIssue: null });
     assert.match(md, /\*\*GitHub Issue:\*\* — \(не заведён\)/u);
     assert.doesNotMatch(md, /undefined|null/u);
+  });
+
+  // T1 (#548): --prompt и --parent-epic реально применяются, а не игнорируются.
+  it('buildTaskEntry: --prompt → promptPath (не дефолтный id-путь)', () => {
+    const e = buildTaskEntry(
+      { id: 'my-epic', title: 'E', size: 'L', prompt: 'docs/prompts/SHARED_EPIC_PROMPT.md' },
+      '2026-07-16',
+    );
+    assert.equal(e.promptPath, 'docs/prompts/SHARED_EPIC_PROMPT.md');
+  });
+
+  it('buildTaskEntry: promptPath имеет приоритет над prompt; иначе дефолт из id', () => {
+    assert.equal(
+      buildTaskEntry({ id: 'x-y', title: 'T', size: 'S', promptPath: 'a.md', prompt: 'b.md' }, '2026-07-16').promptPath,
+      'a.md',
+    );
+    assert.equal(
+      buildTaskEntry({ id: 'x-y', title: 'T', size: 'S' }, '2026-07-16').promptPath,
+      'docs/prompts/X_Y_PROMPT.md',
+    );
+  });
+
+  it('buildTaskEntry: --parent-epic/--parent → parentEpic; без него поля нет', () => {
+    assert.equal(
+      buildTaskEntry({ id: 'ph1', title: 'P', size: 'M', 'parent-epic': 'my-epic' }, '2026-07-16').parentEpic,
+      'my-epic',
+    );
+    assert.equal(
+      buildTaskEntry({ id: 'ph1', title: 'P', size: 'M', parent: 'my-epic' }, '2026-07-16').parentEpic,
+      'my-epic',
+    );
+    assert.ok(!('parentEpic' in buildTaskEntry({ id: 'ph1', title: 'P', size: 'M' }, '2026-07-16')));
   });
 });
