@@ -61,7 +61,7 @@ const isMain = process.argv[1]?.endsWith('task-register.mjs');
 if (isMain) {
   const cli = parseRegisterArgs(process.argv.slice(2));
   if (!cli.id || !cli.title || !cli.size) {
-    console.error('Usage: yarn task:register --id <slug> --title "…" --size S|M|L [--issue N] [--kind …] [--lead …] [--support a,b] [--insight …] [--notes …] [--prompt …] [--push]');
+    console.error('Usage: yarn task:register --id <slug> --title "…" --size S|M|L [--issue N] [--kind …] [--lead …] [--support a,b] [--insight …] [--notes …] [--prompt <path>] [--parent-epic <id>] [--push]');
     process.exit(1);
   }
 
