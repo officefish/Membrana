@@ -6,6 +6,7 @@ import { PANEL_SECTIONS, type PanelSection } from '@/lib/sections';
 import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
 import { DetectorCompareSection } from './detector-compare/DetectorCompareSection';
+import { GraphifyBoard } from './graphify/GraphifyBoard';
 import { PanelUsersBoard } from './panel-users/PanelUsersBoard';
 
 /**
@@ -19,10 +20,11 @@ const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'drift-anchors': DriftAnchorsBoard,
   'detector-compare': DetectorCompareSection,
   'panel-users': PanelUsersBoard,
+  graphify: GraphifyBoard,
 };
 
-/** Широкие борды: таблицам сравнения и матрице грантов тесно в max-w-3xl. */
-const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users']);
+/** Широкие борды: таблицам сравнения, матрице грантов и графу тесно в max-w-3xl. */
+const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users', 'graphify']);
 
 export function SectionShell() {
   const { identity, logout } = usePanelAuth();

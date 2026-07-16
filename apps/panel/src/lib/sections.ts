@@ -44,4 +44,13 @@ export const PANEL_SECTIONS: readonly PanelSection[] = [
     description: 'Партнёры, их доступ к разделам и промокоды — управление владельцем.',
     minRole: 'owner',
   },
+  {
+    id: 'graphify',
+    title: 'Граф кода',
+    description: 'Карта зависимостей кода по семействам — как устроен проект внутри.',
+    // GRP1: admin-preview, owner-only; GRP2 понизит до grant:graphify (техпартнёры).
+    // Реальный гейт — маршрут-мост /panel/section/graphify/* (office forward_auth),
+    // не только UX-скрытие карточки.
+    minRole: 'owner',
+  },
 ] as const;
