@@ -1302,7 +1302,7 @@
       ],
       "leadPersona": "dynin",
       "supportPersonas": [
-        "musician",
+        "kuryokhin",
         "ozhegov"
       ],
       "freezeStatus": "deferred",
@@ -1490,7 +1490,7 @@
       "createdAt": "2026-06-10",
       "archivedAt": null,
       "archiveNotes": null,
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko"
       ]
@@ -1506,7 +1506,7 @@
       "createdAt": "2026-06-10",
       "archivedAt": null,
       "archiveNotes": null,
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko",
         "ozhegov"
@@ -2665,7 +2665,7 @@
       "status": "active",
       "parentEpic": "live-parallel-detection-sprint",
       "createdAt": "2026-06-16",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "dynin"
       ],
@@ -2713,7 +2713,7 @@
       "notes": "FFT plugins remain opt-in (active: false)",
       "leadPersona": "dynin",
       "supportPersonas": [
-        "musician"
+        "kuryokhin"
       ],
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
@@ -2759,7 +2759,7 @@
       "notes": "docs/LIVE_PARALLEL_DETECTION.md; streamWindowCollector SLO test; paired smoke checklist",
       "leadPersona": "dynin",
       "supportPersonas": [
-        "musician",
+        "kuryokhin",
         "ozhegov"
       ],
       "freezeStatus": "deferred",
@@ -3554,7 +3554,7 @@
       "notes": "Brief v0.5; interview 35/35 closed. Branch vesnin / hackathon/device-board-1-2026-06-17.",
       "leadPersona": "vesnin",
       "supportPersonas": [
-        "musician",
+        "kuryokhin",
         "ozhegov"
       ]
     },
@@ -3685,7 +3685,7 @@
       "notes": "Lead: Ozhegov. Day H2.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
-        "musician"
+        "kuryokhin"
       ]
     },
     {
@@ -3706,7 +3706,7 @@
         "db-h2b-scenario-runtime"
       ],
       "notes": "Lead: Музыкант. Real mic smoke. Day H2.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
@@ -3755,7 +3755,7 @@
       "notes": "Lead: Ozhegov. Day H3.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
-        "musician"
+        "kuryokhin"
       ]
     },
     {
@@ -3778,7 +3778,7 @@
       "notes": "Lead: Ozhegov. Day H3.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
-        "musician"
+        "kuryokhin"
       ]
     },
     {
@@ -3801,7 +3801,7 @@
       "notes": "Lead: Ozhegov. Day H3.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
-        "musician"
+        "kuryokhin"
       ]
     },
     {
@@ -3824,7 +3824,7 @@
         "db-h2c-mic-journal"
       ],
       "notes": "Lead: Vesnin / Музыкант. Alarm mandatory D1. Day H4.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "vesnin"
       ]
@@ -3948,7 +3948,7 @@
         "membrane-node-realtime-nr3-client-journal"
       ],
       "notes": "Lead: Музыкант. modules/microphone.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
       ]
@@ -4076,7 +4076,7 @@
         "mp7b-rt1-gateway"
       ],
       "notes": "Lead: Ozhegov + Музыкант. apps/client, audio-engine host.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
       ]
@@ -4617,7 +4617,7 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko",
-        "musician"
+        "kuryokhin"
       ],
       "strategicWave": "W0"
     },
@@ -4662,7 +4662,7 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko",
-        "musician"
+        "kuryokhin"
       ],
       "strategicWave": "W0"
     },
@@ -4686,7 +4686,7 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko",
-        "musician"
+        "kuryokhin"
       ],
       "strategicWave": "W0"
     },
@@ -4710,7 +4710,7 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko",
-        "musician"
+        "kuryokhin"
       ],
       "strategicWave": "W0"
     },
@@ -5637,7 +5637,7 @@
       ],
       "notes": "Lead: Vesnin. Graph nodes for §16.5 MVP; Issue #133.",
       "githubIssueClosedAt": "2026-06-30",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
       ],
@@ -5732,7 +5732,7 @@
       ],
       "notes": "Partial: main-v07.json + Publish exec-out + smoke started; quality blocked on R5 parity.",
       "githubIssueClosedAt": "2026-06-30",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
       ],
@@ -8218,7 +8218,7 @@
       "supportPersonas": [
         "ozhegov",
         "dynin",
-        "musician",
+        "kuryokhin",
         "rodchenko"
       ]
     },
@@ -8304,7 +8304,7 @@
         "db-p3-a2-runtime-validators"
       ],
       "notes": "Lead: Kuryokhin + Rodchenko. meta.executionPolicy, background-media templates, readOnly + timeout UI.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko",
         "ozhegov"
@@ -8328,7 +8328,7 @@
       "supportPersonas": [
         "ozhegov",
         "dynin",
-        "musician",
+        "kuryokhin",
         "rodchenko"
       ]
     },
@@ -8398,7 +8398,7 @@
       "supportPersonas": [
         "ozhegov",
         "dynin",
-        "musician",
+        "kuryokhin",
         "rodchenko"
       ]
     },
@@ -8471,7 +8471,7 @@
       "supportPersonas": [
         "ozhegov",
         "dynin",
-        "musician",
+        "kuryokhin",
         "rodchenko"
       ]
     },
@@ -8816,7 +8816,7 @@
       "supportPersonas": [
         "ozhegov",
         "dynin",
-        "musician",
+        "kuryokhin",
         "rodchenko"
       ],
       "archivedAt": "2026-06-24",
@@ -11078,7 +11078,7 @@
       "supportPersonas": [
         "ozhegov",
         "dynin",
-        "musician"
+        "kuryokhin"
       ],
       "githubIssueClosedAt": "2026-06-30"
     },
@@ -11119,7 +11119,7 @@
       "supportPersonas": [
         "ozhegov",
         "dynin",
-        "musician",
+        "kuryokhin",
         "rodchenko"
       ]
     },
@@ -11154,7 +11154,7 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "Reconcile (night fv1-s2-closeout NB1): контент смержен PR #217, архивная карточка создана #218 (commit 8c36c69), но status не был переключён. Заброшенный review_pending манифест замещён ручным bookkeeping #218.",
       "notes": "Классы: SILENCE, WIND, BIRDS, SPEECH, MACHINE_HUM (приоритет), GUNSHOT. Perplexity: источники датасетов.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
@@ -11347,7 +11347,7 @@
         "db-ct-1-core-contracts"
       ],
       "notes": "Инвариант: без permission-проверок в audio-engine. Вытеснение = stop{fadeOutMs:200}; emergency = 0.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "dynin"
       ]
@@ -11456,7 +11456,7 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
-        "musician"
+        "kuryokhin"
       ]
     },
     {
@@ -11477,7 +11477,7 @@
       "notes": "manifest: data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json. Sign-off в DATASET_CURATION.md секция «Пилот hard-gate». Фильтр/счётчик — toggle в toolbar (Rodchenko, ~2ч). 2026-07-03: код готов (PR #233 LGTM, копим merge). РАЗМЕТКА+intra-rater отложены до оборудования (~2026-07-17). GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03.",
       "leadPersona": "dynin",
       "supportPersonas": [
-        "musician",
+        "kuryokhin",
         "rodchenko"
       ],
       "githubIssueClosedAt": null
@@ -11500,7 +11500,7 @@
       "notes": "Требование владельца 2026-07-03: эксперименты в продукте как плагин микрофона. MembranaRegistry, звук только audio-engine (guard-скилл), catalog prompt, DESIGN-токены, a11y. Скрипты остаются каноном метрик. GH #47 сознательно НЕ закрываем (остаётся для neural wave / эпика vdr-hard-gate) — снято из очереди close-github 2026-07-03.",
       "leadPersona": "rodchenko",
       "supportPersonas": [
-        "musician",
+        "kuryokhin",
         "ozhegov"
       ],
       "githubIssueClosedAt": null
@@ -11523,7 +11523,7 @@
       "notes": "yarn benchmark:detectors на vdr-hard-gate-pilot; расхождение скрипт-плагин <= погрешности. BLOCKED операторской истиной до ~2026-07-17; программно допустим только предварительный прогон по originLabel (не gate). 2026-07-03: механика merged (PR #235, LGTM 4d4e3a9) + fix регрессии template-match (fv1-s3): canon v0.2 F1 77.1; preliminary пилота (origin-labels) F1 63.4. Остаток: финальный прогон на операторских метках после разметки.",
       "leadPersona": "dynin",
       "supportPersonas": [
-        "musician"
+        "kuryokhin"
       ]
     },
     {
@@ -11673,7 +11673,7 @@
         "sca-s5-delivery-version"
       ],
       "notes": "DEFERRED до оборудования (~2026-07-17): оператор недоступен. Итоги — в smoke-runbook §Studio manual; слуховая проверка fade — Kuryokhin.",
-      "leadPersona": "musician",
+      "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko",
         "dynin"
