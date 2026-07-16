@@ -1,6 +1,44 @@
 {
   "tasks": [
     {
+      "id": "rt-10-review-precision-degradation",
+      "title": "RT-10: честный режим precision — exact vs working-tree",
+      "promptPath": "docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko"
+      ],
+      "notes": "Эпик #539, консилиум rt8-loose-ends (A2, следующая волна). Реализация rt-8 схлопнула precision в всегда-exact; консилиум проектировал два режима. precision = diffAvailable ? 'exact' : 'working-tree', детерминированно из успеха деривации; working-tree ≠ «плохо», означает «менее точно, знай». UI-контракт (Rodchenko): badge не только цветом + строка «дифф недоступен, показано текущее дерево». Регистрация до кода — канон lifecycle (недоделка без карточки = призрак).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-9-code-review-freshness",
+      "title": "RT-9: гвард свежести code-review — критичный сбой не молчит",
+      "promptPath": "docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ],
+      "notes": "Эпик #539, консилиум rt8-loose-ends. Находка 5 расследования: || true в ritual:evening глотает сбой code-review (15.07 фолбэк без кредита отдал 127, незамечено), downstream не проверяет дату DAILY_CODE_REVIEW.md. Фикс: isFresh(artifact)=dateOf(artifact)===today, dateOf из фронтматтера (не mtime — недетерминирован при checkout), today инъекцией параметром. NON_CRITICAL_STEPS явным массивом — всё вне списка теряет || true и падает громко. downstream (standup/main-day-issue) проверяет свежесть на входе, падает явно с читаемым «устарел на N дн», не голый 127. Тест обоих путей: свежий проходит, вчерашний падает. Родня rt-5.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "rt-8-code-review-sees-code",
       "title": "RT-8: daily-ревью видит код дня, а не остаток рабочего дерева",
       "promptPath": "docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md",
