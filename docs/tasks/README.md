@@ -18,6 +18,11 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `grp4-graphify-gated` | GRP4 (условная): graphify за grant:graphify — только после #529 + 3 условий очереди | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `grp3-research-tree-gated` | GRP3: research-tree за grant:research-tree + git-time-travel офлайн-снапшот, presentation-порт | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `grp2-grants-owner-matrix` | GRP2: два гранта (research-tree/graphify) + owner-матрица/промокоды, empty-state | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `grp1-route-bridge-sections` | GRP1: маршрут-мост + реестр секций панели + ADR топологии + контракт-тест подписи×гранта | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `graphify-research-tree-panel-sections` | Epic: graphify + research-tree как разделы панели за гейтом (GRP1-4) | L | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
 | `main-day-probe-gate` | Препроцессор-гейт посылок MAIN_DAY_ISSUE: маркер в коде первичен, Issue вторичен | M | [`MAIN_DAY_PROBE_GATE_PROMPT.md`](../docs/prompts/MAIN_DAY_PROBE_GATE_PROMPT.md) | [#533](https://github.com/officefish/Membrana/issues/533) |
 | `detector-metrics-characterization` | detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex | L | [`DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md`](../docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `product-landing` | product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов) | M | [`PRODUCT_LANDING_PROMPT.md`](../docs/prompts/PRODUCT_LANDING_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
