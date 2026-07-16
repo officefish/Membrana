@@ -18,7 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `board-host-parity-registry` | Epic: @membrana/client-board-registry — паритет палитры борда на client/cabinet/electron | L | [`BOARD_HOST_PARITY_REGISTRY_PROMPT.md`](../docs/prompts/BOARD_HOST_PARITY_REGISTRY_PROMPT.md) | — |
+| `membrana-device-build-profile` | Epic: Membrana Device — профиль сборки apps/client с единственным модулем борда | M | [`MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md`](../docs/prompts/MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md) | — |
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | S | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — |
 | `rt-9-code-review-freshness` | RT-9: гвард свежести code-review — критичный сбой не молчит | S | [`RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md`](../docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md) | — |
 | `rt-7-priorities-from-registry` | RT-7: приоритеты планирования из реестра, а не хардкод-текстом | M | [`RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md`](../docs/prompts/RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md) | — |

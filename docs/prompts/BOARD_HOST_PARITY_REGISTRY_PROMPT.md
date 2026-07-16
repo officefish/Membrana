@@ -1,41 +1,40 @@
-# Эпик: @membrana/client-board-registry — паритет палитры борда
+# ⛔ ОТМЕНЁН — эпик `@membrana/client-board-registry` (паритет палитры борда)
 
-> Размер **L** (3 M-фазы = 3 PR). Консилиум-гейт пройден:
-> [`device-board-host-parity-shared-modules-2026-07-16`](../seanses/device-board-host-parity-shared-modules-2026-07-16.md).
-> Канон решения: [ADR-0011](../adr/ADR-0011-client-board-registry-layer.md) (контракт, границы, DoD).
-> **Спор НЕ переоткрывать.**
+> **НЕ ИСПОЛНЯТЬ.** Заведён и отменён 16.07.2026 в тот же день.
+> Канон: [ADR-0012](../adr/ADR-0012-membrana-device-build-profile.md) (заменяет
+> [ADR-0011](../adr/ADR-0011-client-board-registry-layer.md)).
+> Действующая карточка: [`MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md`](./MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md).
 
-## Проблема
+## Почему отменён
 
-Кабинет и electron-студия не зовут `registerClientModules()` → борд у них без 16 клиентских
-plugin-узлов (плагины в `apps/client/src/plugins/*`, недоступны другим хостам). Отлаживали
-только песочницу client. Нужен паритет палитры на всех трёх хостах.
+Эпик (BHP1-3: скаффолд пакета → физперенос 16 плагинов → bootstrap хостов) чинил проблему,
+которой нет. Проверка кода 16.07:
 
-## Инварианты (ADR-0011)
+1. **Палитра борда не собирается из плагинов.** Это захардкоженный `V04_PALETTE_NODE_KINDS`
+   (39 узлов) в `packages/device-board/src/graph/palette-node.ts:110`. Пакет зависит только от
+   `@membrana/core`, `@xyflow/react`, dagre — от `@membrana/agenda` **не зависит**, реестр
+   спросить физически не может. Кабинет импортирует `DeviceBoardShell` напрямую
+   (`apps/cabinet/src/pages/DeviceBoardPage.tsx:5`) → **палитра у него уже та же**.
+2. **16 плагинов узлов борда не объявляют** — это панели сайдбара модулей `microphone` (11) и
+   `sample-library` (5), доставляемые через `renderPluginSidebarDetails`. Их перенос не добавил
+   бы кабинету ни одного узла.
+3. **Electron-студия — не третий хост.** `scripts/studio-build.mjs:42-46` собирает
+   `@membrana/client` и копирует `apps/client/dist` → `client-dist`, который грузится
+   `loadFile()`. Studio = apps/client, паритет по построению; отдельного bootstrap, куда звать
+   `mountBoardPalette`, не существует.
 
-- Новый пакет `@membrana/client-board-registry` (регистрационный слой, НЕ device-board/сервис).
-- `declareBoardPalette(): PluginDescriptor[]` (чистая) + `mountBoardPalette(registry, palette, {runtime})`.
-- Board-state контроллер **host-side**, инжектится (`runtime`); кабинет без mic-рантайма.
-- Паритет: все 16 плагинов на трёх хостах; mic-узел без потока — видимый бейдж, не падение.
-- Границы: зависит от `agenda` + `*-service`, НЕ от `apps/*`; `device-board` core-only не тронут.
+Верным было наблюдение, что `registerClientModules()` в кабинете не зовётся (греп пуст) —
+но вывод «значит борд кабинета без plugin-узлов» неверен: «базовые узлы пакета» и есть полная
+палитра из 39 штук.
 
-## Фазы (3 коммита миграции = 3 PR)
+## Что вместо
 
-1. **BHP1 — скаффолд + контракт** (аддитивно, ничего не ломает):
-   `packages/client-board-registry` (composite tsconfig, lib-build); `PluginDescriptor` +
-   `declareBoardPalette` + `mountBoardPalette` + инвариант-тест-харнесс. Плагины ещё в client.
-2. **BHP2 — физперенос** плагинов `apps/client/src/plugins/*` → пакет; `registerClientModules`
-   client переписан через `mountBoardPalette` (паритет client сохранён; `grep 'src/plugins/'` пуст).
-3. **BHP3 — bootstrap хостов**: cabinet + electron зовут `mountBoardPalette` с host `runtime`;
-   тест-инвариант паритета на хост; smoke (нет роста `AudioContext`); чистка.
+Реальная цель (слово владельца 16.07) — лёгкая настолка «только борд»: pairing + список
+юзеркейсов + борд; урезанный **профиль сборки** `apps/client` с единственным модулем борда.
+Пакета для этого не нужно — см. новый промпт и ADR-0012.
 
-## Порядок ролей
+## Урок
 
-Vesnin (гейты/LGTM) · Ozhegov (пакет/контракт/границы, BHP1-2) · Dynin (инвариант-тест) ·
-Rodchenko (bootstrap хостов, mic-деградация UI, BHP3) · Kuryokhin (smoke AudioContext, паритет).
-
-## DoD — см. ADR-0011.
-
-## Связь
-Магистраль после разведки §5 (S2 закрыт): борд-паритет — часть «борд в кабинете/electron» из
-трёх задач до выпуска (+ landing + downloads). Отдельно: верификация захвата устройства cabinet.
+Консилиум (25 реплик) и ADR прошли гейт, но факты под решением кодом не проверялись —
+постановка выглядела железной и была готова к исполнению. Грунтовка кодом (канон ADR, шаг 2)
+силой процедуры не заменяется.
