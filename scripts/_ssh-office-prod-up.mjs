@@ -15,6 +15,9 @@ const remoteTar = '/tmp/office-src.tgz';
 
 const tarArgs = [
   'tar',
+  // Windows tmpdir даёт путь с диском (C:\…); GNU tar принимает двоеточие за
+  // `host:file` (rsh) → --force-local трактует архив как локальный файл.
+  '--force-local',
   '--exclude=packages/background-office/node_modules',
   '--exclude=packages/background-office/dist',
   '--exclude=packages/background-office/.env.docker',
