@@ -49,6 +49,20 @@ if (audioDir && !existsSync(audioDir)) {
 const audioTarPath = audioDir ? join(tmpdir(), `panel-compare-audio-${Date.now()}.tgz`) : undefined;
 const remoteAudioTar = '/tmp/panel-compare-audio.tgz';
 
+/**
+ * `--graphify <dir>` — залить статику блок-артефакта graphify (маршрут-мост
+ * /panel/section/graphify/*, GRP1/ADR-0010) в /opt/membrana-graphify. Каталог
+ * готовит перегон Graphify по семействам (per-family GRAPH_TREE.html + index).
+ */
+const graphifyFlagIndex = process.argv.indexOf('--graphify');
+const graphifyDir = graphifyFlagIndex > -1 ? process.argv[graphifyFlagIndex + 1] : undefined;
+if (graphifyFlagIndex > -1 && (!graphifyDir || !existsSync(graphifyDir))) {
+  console.error('[fail] --graphify требует существующий каталог: --graphify /path/to/graphify-site');
+  process.exit(1);
+}
+const graphifyTarPath = graphifyDir ? join(tmpdir(), `panel-graphify-${Date.now()}.tgz`) : undefined;
+const remoteGraphifyTar = '/tmp/panel-graphify.tgz';
+
 function envGet(envText, key) {
   return envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
 }
@@ -106,12 +120,19 @@ console.log(
     `PANEL_INVITE_SECRET ${invite.created ? 'сгенерирован' : 'из .env'} (значения не печатаются)`,
 );
 
+// --force-local: Windows tmpdir даёт путь с диском (C:\…), GNU tar иначе примет
+// двоеточие за host:file (rsh) и упадёт (как в _ssh-office-prod-up).
 console.log('Packing panel dist...');
-execSync(`tar -czf "${tarPath}" -C "${DIST_DIR}" .`, { cwd: repoRoot, stdio: 'inherit' });
+execSync(`tar --force-local -czf "${tarPath}" -C "${DIST_DIR}" .`, { cwd: repoRoot, stdio: 'inherit' });
 
 if (audioDir) {
   console.log(`Packing compare-audio from ${audioDir}...`);
-  execSync(`tar -czf "${audioTarPath}" -C "${audioDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
+  execSync(`tar --force-local -czf "${audioTarPath}" -C "${audioDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
+}
+
+if (graphifyDir) {
+  console.log(`Packing graphify static from ${graphifyDir}...`);
+  execSync(`tar --force-local -czf "${graphifyTarPath}" -C "${graphifyDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
 }
 
 const caddyfile = renderPanelCaddyfile();
@@ -176,6 +197,22 @@ echo "  права: \$(stat -c %a /opt/membrana-panel/dist) на dist, реку�
 
 ls /opt/membrana-panel/dist | head -5
 
+echo "=== [2b/4] статика graphify (маршрут-мост /panel/section/graphify) ==="
+GRAPHIFY_UPLOADED=${graphifyDir ? '1' : '0'}
+if [ "\$GRAPHIFY_UPLOADED" = "1" ] && [ -f ${remoteGraphifyTar} ]; then
+  mkdir -p /opt/membrana-graphify
+  rm -rf /opt/membrana-graphify/*
+  tar -xzf ${remoteGraphifyTar} -C /opt/membrana-graphify
+  chmod a+rX /opt/membrana-graphify
+  chmod -R a+rX /opt/membrana-graphify
+  rm -f ${remoteGraphifyTar}
+  echo "  graphify залит (\$(ls /opt/membrana-graphify | wc -l) файлов)"
+elif [ -d /opt/membrana-graphify ]; then
+  echo "  graphify не передан — оставляю уже лежащий (\$(ls /opt/membrana-graphify 2>/dev/null | wc -l) файлов)"
+else
+  echo "  graphify нет ни на проде, ни локально — мост отдаст 404 (--graphify <dir>)"
+fi
+
 echo "=== [3/4] caddy site-block ==="
 mkdir -p /etc/caddy/Caddyfile.d
 cat > /etc/caddy/Caddyfile.d/panel.caddy <<'CADDY_EOF'
@@ -209,6 +246,10 @@ function runDeploy() {
             console.log('Uploading compare-audio tarball...');
             await sftpPut(conn, audioTarPath, remoteAudioTar);
           }
+          if (graphifyTarPath) {
+            console.log('Uploading graphify static tarball...');
+            await sftpPut(conn, graphifyTarPath, remoteGraphifyTar);
+          }
           await execBash(conn, remoteScript);
           clearTimeout(timeout);
           conn.end();
@@ -230,7 +271,7 @@ try {
   await runDeploy();
   console.log('\nPanel deploy OK. Дальше: node scripts/_ssh-office-prod-up.mjs (office с panel-auth).');
 } finally {
-  for (const path of [tarPath, audioTarPath]) {
+  for (const path of [tarPath, audioTarPath, graphifyTarPath]) {
     if (!path) continue;
     try {
       unlinkSync(path);
