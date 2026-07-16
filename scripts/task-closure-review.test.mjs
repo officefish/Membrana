@@ -21,7 +21,7 @@ import {
   saveReviewManifest,
   writeReviewArtifact,
 } from './lib/task-closure-review.mjs';
-import { parseTaskClosureReviewCli } from './task-closure-review.mjs';
+import { CLOSURE_DIFF_EXCLUDES, parseTaskClosureReviewCli } from './task-closure-review.mjs';
 
 const SHA_A = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const SHA_B = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
@@ -436,4 +436,15 @@ test('review-file fallback does not require provider-sized diff', () => {
   );
   // The CLI intentionally bypasses prompt construction when --review-file is supplied.
   assert.equal(parseTaskClosureReviewCli(['run', '--id', task.id, '--review-file', 'review.md']).reviewFile, 'review.md');
+});
+
+// ─── B3 (#539): ревью-артефакты вне exact-диффа ───────────────────────────────────
+
+test('CLOSURE_DIFF_EXCLUDES исключает протоколы процесса, не код и не промпты', () => {
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/seanses'), 'протоколы консилиумов');
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/tasks/research'), 'выжимки research');
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/discussions'), 'артефакты код-ревью');
+  // Код и промпты задач ДОЛЖНЫ ревьюиться — не в списке исключений.
+  assert.ok(!CLOSURE_DIFF_EXCLUDES.some((p) => p.startsWith('scripts')), 'код ревьюится');
+  assert.ok(!CLOSURE_DIFF_EXCLUDES.includes('docs/prompts'), 'промпты задач ревьюятся');
 });
