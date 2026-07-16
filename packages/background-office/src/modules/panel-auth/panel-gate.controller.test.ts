@@ -42,20 +42,21 @@ function gate(sectionId: string, identity: PanelIdentity): number {
 }
 
 describe('PanelGateController — forward_auth маршрут-моста', () => {
-  it('owner с валидной подписью → 204 (allow)', () => {
-    const token = mintSessionToken(SECRET, 'owner', 'gh:1', NOW + 3600);
-    expect(gate('graphify', identityFrom(token))).toBe(204);
+  it('owner/operator с валидной подписью → 204 (роль ≥ operator)', () => {
+    expect(gate('graphify', identityFrom(mintSessionToken(SECRET, 'owner', 'gh:1', NOW + 3600)))).toBe(204);
+    expect(gate('graphify', identityFrom(mintSessionToken(SECRET, 'operator', 'gh:2', NOW + 3600)))).toBe(204);
   });
 
-  it('graphify owner-only: operator/ally/public → 403', () => {
-    expect(gate('graphify', identityFrom(mintSessionToken(SECRET, 'operator', 'x', NOW + 3600)))).toBe(403);
+  it('graphify грант-гейт: плейн-ally/public → 403', () => {
     expect(gate('graphify', identityFrom(mintSessionToken(SECRET, 'ally', 'x', NOW + 3600)))).toBe(403);
     expect(gate('graphify', identityFrom(undefined))).toBe(403);
   });
 
-  it('grant graphify НЕ открывает owner-раздел (лестница ролей не размывается)', () => {
-    const token = mintPartnerSessionToken(SECRET, 'user:1', ['graphify', '*'], 1, NOW + 3600);
-    expect(gate('graphify', identityFrom(token))).toBe(403);
+  it('grant:graphify (или *) открывает graphify техпартнёру (ally + грант)', () => {
+    expect(gate('graphify', identityFrom(mintPartnerSessionToken(SECRET, 'user:1', ['graphify'], 1, NOW + 3600)))).toBe(204);
+    expect(gate('graphify', identityFrom(mintPartnerSessionToken(SECRET, 'user:2', ['*'], 1, NOW + 3600)))).toBe(204);
+    // грант на другой раздел не открывает graphify
+    expect(gate('graphify', identityFrom(mintPartnerSessionToken(SECRET, 'user:3', ['research-tree'], 1, NOW + 3600)))).toBe(403);
   });
 
   it('битая подпись → identity public → 403', () => {

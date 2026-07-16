@@ -71,16 +71,24 @@ export function SectionShell() {
             <OpenBoard />
           </section>
         ) : (
-          <section aria-label="Разделы панели" className="grid gap-3 sm:grid-cols-2">
-            {PANEL_SECTIONS.map((s) => (
-              <SectionCard
-                key={s.id}
-                section={s}
-                role={identity.role}
-                grants={identity.grants}
-                onOpen={hasBoard(s, identity.role, identity.grants) ? () => setOpenId(s.id) : undefined}
-              />
-            ))}
+          <section aria-label="Разделы панели" className="space-y-4">
+            {!PANEL_SECTIONS.some((s) => hasBoard(s, identity.role, identity.grants)) && (
+              <p className="rounded-lg border border-base-content/10 bg-base-200 px-4 py-3 text-sm text-base-content/70">
+                Доступ выдаётся по разделам. Пока открытых разделов нет — как только
+                владелец откроет доступ (галочкой или промокодом), они появятся здесь.
+              </p>
+            )}
+            <div className="grid gap-3 sm:grid-cols-2">
+              {PANEL_SECTIONS.map((s) => (
+                <SectionCard
+                  key={s.id}
+                  section={s}
+                  role={identity.role}
+                  grants={identity.grants}
+                  onOpen={hasBoard(s, identity.role, identity.grants) ? () => setOpenId(s.id) : undefined}
+                />
+              ))}
+            </div>
           </section>
         )}
       </main>

@@ -8,8 +8,9 @@ import type { PanelRole } from './panel-auth-core';
  * Caddy делает `forward_auth` на `/v1/panel/gate/<id>`; office здесь решает, кто
  * вправе. Роли в конфиге прокси нет — только здесь.
  *
- * GRP1: graphify — owner-only (admin preview). GRP2 понизит до грант-гейта
- * (`grant:graphify` техпартнёрам) и добавит `research-tree` (`grant:research-tree`).
+ * GRP2: graphify — грант-гейт (`minRole: operator` → техпартнёр `ally + grant:graphify`
+ * видит; плейн-ally нет; operator+/owner по роли). `research-tree` появится в GRP3
+ * вместе со своим мостом (`grant:research-tree`, инвесторам).
  */
 export interface BridgeGatedSection {
   /** Минимальная роль; owner-разделы грантами не открываются (canAccessSection). */
@@ -17,5 +18,5 @@ export interface BridgeGatedSection {
 }
 
 export const BRIDGE_GATED_SECTIONS: Readonly<Record<string, BridgeGatedSection>> = {
-  graphify: { minRole: 'owner' },
+  graphify: { minRole: 'operator' },
 };
