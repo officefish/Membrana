@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `agent-tooling-friction-3` | agent-tooling-friction-3: 5 фиксов трения сессии + мета-документы (инвентарь тулинга протух) | M | [`AGENT_TOOLING_FRICTION_3_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_3_PROMPT.md) | [#554](https://github.com/officefish/Membrana/issues/554) |
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | S | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — |
 | `rt-9-code-review-freshness` | RT-9: гвард свежести code-review — критичный сбой не молчит | S | [`RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md`](../docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md) | — |
 | `rt-7-priorities-from-registry` | RT-7: приоритеты планирования из реестра, а не хардкод-текстом | M | [`RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md`](../docs/prompts/RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md) | — |
