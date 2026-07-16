@@ -28,6 +28,7 @@
 
 | ADR | Дата | Статус | Тема |
 |-----|------|--------|------|
+| [ADR-0011](./ADR-0011-client-board-registry-layer.md) | 2026-07-16 | ACCEPTED | `@membrana/client-board-registry` — регистрационный слой палитры борда: `declareBoardPalette()`+`mountBoardPalette(registry,palette,{runtime})`, плагины переезжают из apps/client, паритет на client/cabinet/electron; board-state host-side инжектится; mic-рантайм в кабинет не тащим |
 | [ADR-0010](./ADR-0010-panel-route-bridge-gated-sections.md) | 2026-07-16 | ACCEPTED | Маршрут-мост панели `/panel/section/<id>/*` за `forward_auth` office: graphify/research-tree — гейтнутые разделы `panel.mmbrn.tech` (не поддомены); office единственный арбитр (`canAccessSection`), реальная security-граница; панель iframe'ит, не импортирует блоки (GRP1) |
 | [ADR-0009](./ADR-0009-night-sprint-delegated-execution.md) | 2026-07-15 | ACCEPTED | Ночной спринт исполняет делегированный фоновый субагент в изолированном worktree (Р1 делегирование по умолчанию · Р2 промпт=контракт · Р3 human-in-loop владельцу · Р4 утренняя верификация HANDOFF · Р5 масштаб · Р6 изоляция) |
 | [ADR-0008](./ADR-0008-root-domain-scenarios-docs-topology.md) | 2026-07-15 | ACCEPTED | Топология корня membrana.space: docs на /scenarios/docs (Mintlify subpath-proxy, доки публичны) + лендинг + /downloads; VPS 72.56.27.58; план-B subdomain спящий |
