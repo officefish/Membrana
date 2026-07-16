@@ -19,16 +19,15 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `agent-tooling-friction-3` | agent-tooling-friction-3: 5 фиксов трения сессии + мета-документы (инвентарь тулинга протух) | M | [`AGENT_TOOLING_FRICTION_3_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_3_PROMPT.md) | [#554](https://github.com/officefish/Membrana/issues/554) |
+| `membrana-device-build-profile` | Epic: Membrana Device — профиль сборки apps/client с единственным модулем борда | M | [`MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md`](../docs/prompts/MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md) | — |
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | S | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — |
 | `rt-9-code-review-freshness` | RT-9: гвард свежести code-review — критичный сбой не молчит | S | [`RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md`](../docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md) | — |
 | `rt-7-priorities-from-registry` | RT-7: приоритеты планирования из реестра, а не хардкод-текстом | M | [`RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md`](../docs/prompts/RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md) | — |
-| `rt-6-consilium-integrity` | RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки | S | [`RT_6_CONSILIUM_INTEGRITY_PROMPT.md`](../docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md) | — |
 | `rt-5-pr-land` | RT-5: task:pr-land + норма «доверяй union-драйверу» | M | [`RT_5_PR_LAND_PROMPT.md`](../docs/prompts/RT_5_PR_LAND_PROMPT.md) | — |
 | `rt-4-closure-chain` | RT-4: closure-цепочка — promptPath из реестра + finalize против нормы bookkeeping | M | [`RT_4_CLOSURE_CHAIN_PROMPT.md`](../docs/prompts/RT_4_CLOSURE_CHAIN_PROMPT.md) | — |
 | `rt-3-closure-integrity` | RT-3: целостность закрытия issue в обе стороны | M | [`RT_3_CLOSURE_INTEGRITY_PROMPT.md`](../docs/prompts/RT_3_CLOSURE_INTEGRITY_PROMPT.md) | — |
 | `rt-2-session-extracts` | RT-2: экстракты сессий агентов как свидетельство (не источник истины) | M | [`RT_2_SESSION_EXTRACTS_PROMPT.md`](../docs/prompts/RT_2_SESSION_EXTRACTS_PROMPT.md) | [#537](https://github.com/officefish/Membrana/issues/537) |
 | `rt-1-manifest-generator` | RT-1: генератор пишет манифест посылок и источников сам | M | [`RT_1_MANIFEST_GENERATOR_PROMPT.md`](../docs/prompts/RT_1_MANIFEST_GENERATOR_PROMPT.md) | — |
-| `rt-0-gate` | RT-0: гейт эпика — сверить сделанное с деревом, а не с таблицей | S | [`RT_0_GATE_PROMPT.md`](../docs/prompts/RT_0_GATE_PROMPT.md) | — |
 | `ritual-trust-contour` | Эпик: достоверность контура планирования и закрытия — код первичен, документы вторичны | L | [`RITUAL_TRUST_CONTOUR_PROMPT.md`](../docs/prompts/RITUAL_TRUST_CONTOUR_PROMPT.md) | [#539](https://github.com/officefish/Membrana/issues/539) |
 | `grp4-graphify-gated` | GRP4 (условная): graphify за grant:graphify — только после #529 + 3 условий очереди | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
 | `grp3-research-tree-gated` | GRP3: research-tree за grant:research-tree + git-time-travel офлайн-снапшот, presentation-порт | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
@@ -214,6 +213,8 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `rt-8-code-review-sees-code` | RT-8: daily-ревью видит код дня, а не остаток рабочего дерева | 2026-07-16 | [`RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md`](../docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md) | — | [карточка](./archive/rt-8-code-review-sees-code.md) |
+| `rt-6-consilium-integrity` | RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки | 2026-07-16 | [`RT_6_CONSILIUM_INTEGRITY_PROMPT.md`](../docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md) | — | [карточка](./archive/rt-6-consilium-integrity.md) |
+| `rt-0-gate` | RT-0: гейт эпика — сверить сделанное с деревом, а не с таблицей | 2026-07-16 | [`RT_0_GATE_PROMPT.md`](../docs/prompts/RT_0_GATE_PROMPT.md) | — | [карточка](./archive/rt-0-gate.md) |
 | `deep-research-sprint-flag` | deep-research: скилл + флаг --research для старта спринта | 2026-07-15 | [`DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md`](../docs/prompts/DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md) | #516 (Issue открыт) | [карточка](./archive/deep-research-sprint-flag.md) |
 | `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | 2026-07-15 | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | #510 (Issue открыт) | [карточка](./archive/hot-repo-flow.md) |
 | `pc2c-spectrum-recording-decouple` | PC-2c: полная развязка спектр-наблюдения от записи (StartRecording/StopRecording устарели — трек не производится) | 2026-07-15 | [`PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md`](../docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md) | #493 | [карточка](./archive/pc2c-spectrum-recording-decouple.md) |
