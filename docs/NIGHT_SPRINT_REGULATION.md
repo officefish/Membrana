@@ -131,10 +131,11 @@ Append в `docs/NIGHT_BUILD_LOG.md`:
 поэтому его логично отдать субагенту, освободив координатора. Механика
 `night:open`/`checkpoint`/`close` при этом не меняется — меняется только КТО жмёт.
 
-**Поток:** координатор делает `night:open` → **спавнит фоновый субагент**
-(`run_in_background`, `isolation: worktree`) с epic-промптом → субагент автономно
-проходит NB0…NBn, чекпойнтит, пишет HANDOFF → координатор получает уведомление и
-**верифицирует HANDOFF утром**.
+**Поток:** координатор делает `night:open` → **`yarn always-yes:on`** (scoped
+auto-yes, Р7) → **спавнит фоновый субагент** (`run_in_background`,
+`isolation: worktree`) с epic-промптом → субагент **наследует профиль разрешений
+координатора** и автономно проходит NB0…NBn, чекпойнтит, пишет HANDOFF →
+координатор получает уведомление, **верифицирует HANDOFF утром** → `yarn always-yes:off`.
 
 Гардрейлы (Р1–Р6 ADR-0009):
 
@@ -148,25 +149,18 @@ Append в `docs/NIGHT_BUILD_LOG.md`:
 | **Р6** | **Изоляция обязательна** — worktree, ветка `night/<id>-<date>`; не коллизить с параллельными сессиями. |
 | **Р7** | **Scoped auto-yes, не глобальный bypass.** Чтобы владелец реально отошёл — авто-подтверждение на командной поверхности ночи (`permissions.allow`), но опасное держит **механический** `permissions.deny`, НЕ `--dangerously-skip-permissions`. |
 
-**Пресет разрешений ночного агента** (`.claude/settings.json` или `settings.local.json`):
+**Пресет разрешений** — скилл [`membrana-always-yes`](../.cursor/skills/membrana-always-yes/SKILL.md)
+(`yarn always-yes:on|off|status`, реализация `scripts/always-yes.mjs`). Вливает в
+локальный `.claude/settings.local.json` широкий `allow` рабочей поверхности
+(`Bash(git *)`/`Bash(yarn *)`/`Bash(npx turbo *)`/`Bash(node *)`/`Edit`/`Write`) и
+жёсткий `deny` на прод-деплой (перечислен явными префиксами — ведущие wildcard
+`Bash(*x*)` в Claude Code ненадёжны), force-push, `git reset --hard`, `ssh`,
+`task:close-github`, `Edit/Write(packages/core/**)`.
 
-```jsonc
-{
-  "permissions": {
-    "allow": [
-      "Bash(git *)", "Bash(yarn *)", "Bash(npx turbo *)",
-      "Edit", "Write"
-    ],
-    "deny": [
-      "Bash(*deploy:prod*)", "Bash(git push --force*)", "Bash(ssh *)",
-      "Edit(packages/core/**)", "Write(packages/core/**)"
-    ]
-  }
-}
-```
-
-> Deny-лист — это Р2/Р3 инварианты как барьер тула, а не текст в промпте. Прод,
-> force-push, SSH и правки `@membrana/core` невозможны даже при авто-yes на рутине.
+> Deny-лист — это Р2/Р3 инварианты как барьер тула, а не текст в промпте: `deny` >
+> `allow` во всех режимах Claude Code. Прод, force-push, SSH и правки `@membrana/core`
+> невозможны даже при авто-yes на рутине. Backstop, не единственная гарантия —
+> основной гард ночи остаётся Р2 (жёсткие инварианты промпта).
 
 **Шаблон промпта ночного агента** (передаётся при спавне субагента):
 
@@ -237,6 +231,7 @@ Human-in-loop шаги (визуальная оценка, живой смоук
 
 ## Версия
 
+- **v1.2** (2026-07-16) — Р7 оформлен скиллом [`membrana-always-yes`](../.cursor/skills/membrana-always-yes/SKILL.md) (`yarn always-yes:on|off`): scoped auto-yes включён по умолчанию в делегированном ночном спринте (субагент наследует профиль), явно — в дневном.
 - **v1.1** (2026-07-15) — секция «Делегированное исполнение» (ADR-0009): фазы NB0…NBn исполняет фоновый субагент в worktree, гардрейлы Р1–Р7 (вкл. scoped auto-yes), шаблон промпта ночного агента и пресет `permissions`.
 - **v1.0** (2026-06-14) — регламент, команды `night:*`, эпик cabinet MP4 hardening.
 
