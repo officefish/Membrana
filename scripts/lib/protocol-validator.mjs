@@ -20,6 +20,67 @@ export function countRoleReplies(md, roleLabels = MEMBRANA_ROLE_LABELS) {
   return counts;
 }
 
+/**
+ * Метки `[…]:` в начале строк, НЕ совпавшие ни с одной известной ролью.
+ *
+ * rt-6: инцидент 16.07 — протокол пришёл в формате `[Имя · Роль]:` вместо
+ * `[Роль — Имя]:`. countRoleReplies никого не распознал → «роль не высказалась»
+ * ×5, что уводило от корня (роли ГОВОРИЛИ, формат метки другой). Эта функция даёт
+ * гейту материал для внятной подсказки вместо ложного «все молчат».
+ */
+export function unknownBracketLabels(md, roleLabels = MEMBRANA_ROLE_LABELS) {
+  const known = new Set(roleLabels);
+  const out = [];
+  for (const line of md.split(/\r?\n/)) {
+    const m = line.match(/^\s*\[([^\]]+?)\]\s*:/u);
+    if (!m) continue;
+    const label = m[1].trim();
+    // `[Роль — Имя]` — известная форма: сверяем ЛЕВУЮ часть до тире.
+    const roleHead = label.split(/\s+—/u)[0].trim();
+    if (!known.has(roleHead) && !out.includes(label)) out.push(label);
+  }
+  return out;
+}
+
+/**
+ * ID вопросов повестки из topic-файла: жирные метки `**A1`, `**B2`, `**Q3`.
+ *
+ * Конвенция rt-6: вопрос повестки помечается ID вида «буква(ы)+цифры», жирным.
+ * Сегодня повестки уже так и размечались (A1/A2/A3, B1–B3, C1, Q1–Q6).
+ */
+export function extractAgendaIds(topicMd) {
+  const ids = [];
+  for (const m of String(topicMd ?? '').matchAll(/\*\*([A-ZА-Я]{1,2}\d+)\b/gu)) {
+    if (!ids.includes(m[1])) ids.push(m[1]);
+  }
+  return ids;
+}
+
+/**
+ * Тело протокола — реплики и итог, БЕЗ эхо-заголовка с вопросом.
+ *
+ * Ключ детектора: ID повестки встречаются в эхе `**Вопрос:**` (его вставляет сам
+ * прогон), и наивный grep дал бы ложное «покрыто». Реальное покрытие — только если
+ * ID назван в РЕПЛИКЕ или ИТОГЕ. Отсекаем всё до первой реплики `[Роль]:`.
+ */
+export function protocolBody(protocolMd) {
+  const lines = String(protocolMd ?? '').split(/\r?\n/);
+  const firstReply = lines.findIndex((l) => /^\s*\[[^\]]+\]\s*:/u.test(l));
+  return firstReply === -1 ? '' : lines.slice(firstReply).join('\n');
+}
+
+/**
+ * Вопросы повестки, НЕ покрытые протоколом (ID есть в topic, нет в теле протокола).
+ *
+ * Ровно тот сбой, что повторился ТРИЖДЫ за 16.07: консилиум расходился на первых
+ * вопросах и молча ронял остальные. Здесь он становится машинным вердиктом.
+ */
+export function findUncoveredAgendaItems(topicMd, protocolMd) {
+  const ids = extractAgendaIds(topicMd);
+  const body = protocolBody(protocolMd);
+  return ids.filter((id) => !new RegExp(`\\b${id}\\b`, 'u').test(body));
+}
+
 /** Таблица «Роль | … | /10» инсайт-ревью → {scores[], average, declared}. */
 export function parseVotingTable(md) {
   const scores = [];
@@ -43,14 +104,36 @@ export function parseVotingTable(md) {
  * балл сходится с заявленным ±0.1).
  * @returns {{ ok: boolean, problems: string[], stats: object }}
  */
-export function validateProtocol(md, { kind = 'consilium', minReplies = 20, roleLabels = MEMBRANA_ROLE_LABELS } = {}) {
+export function validateProtocol(
+  md,
+  { kind = 'consilium', minReplies = 20, roleLabels = MEMBRANA_ROLE_LABELS, agenda = null } = {},
+) {
   const problems = [];
   const counts = countRoleReplies(md, roleLabels);
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
 
   // (3) каждая роль ≥1 реплики (обе формы протокола)
-  for (const [role, n] of Object.entries(counts)) {
-    if (n === 0) problems.push(`роль «${role}» не высказалась ни разу`);
+  const silent = Object.entries(counts).filter(([, n]) => n === 0);
+  const unknown = unknownBracketLabels(md, roleLabels);
+  for (const [role] of silent) {
+    problems.push(`роль «${role}» не высказалась ни разу`);
+  }
+  // rt-6 подсказка: если роли «молчат», но есть нераспознанные метки — корень в
+  // ФОРМАТЕ, а не в молчании (инцидент 16.07: `[Имя · Роль]` вместо `[Роль — Имя]`).
+  if (silent.length > 0 && unknown.length > 0) {
+    problems.push(
+      `возможно, формат меток неверный — не распознаны: ${unknown.slice(0, 3).map((l) => `[${l}]`).join(', ')}. ` +
+        'Канон: `[Роль — Имя]:` в начале строки',
+    );
+  }
+
+  // rt-6 полнота повестки: каждый ID вопроса обязан быть назван в реплике/итоге.
+  // Ловит сбой, повторившийся трижды 16.07 — консилиум молча ронял часть повестки.
+  if (agenda) {
+    const uncovered = findUncoveredAgendaItems(agenda, md);
+    if (uncovered.length > 0) {
+      problems.push(`повестка не покрыта: ${uncovered.join(', ')} — ни одной реплики/строки итога`);
+    }
   }
 
   if (kind === 'insight-review') {
