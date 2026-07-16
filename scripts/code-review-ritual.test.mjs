@@ -66,3 +66,22 @@ test('appendTaskContext includes MAIN_DAY_ISSUE when present', () => {
   const block = appendTaskContext('pr');
   assert.match(block, /MAIN_DAY_ISSUE/);
 });
+
+// ─── TF-2 (#554): --pr обязан быть числом ─────────────────────────────────────────
+
+test('--pr с «--» → внятный отказ, а не мусор в gh', () => {
+  // Живой случай 16.07: `yarn code-review:pr -- 543` → argv [--pr, --, 543] →
+  // pr="--" уходил в gh → «accepts at most 1 arg(s), received 4». Звал напрямую.
+  assert.throws(() => parseCodeReviewCli(['--pr', '--', '543']), /--pr должен быть числом/u);
+  assert.throws(() => parseCodeReviewCli(['--pr', 'abc']), /--pr должен быть числом/u);
+});
+
+test('--pr с числом работает; подсказка про `--` в тексте отказа', () => {
+  assert.equal(parseCodeReviewCli(['--pr', '543']).pr, '543');
+  try {
+    parseCodeReviewCli(['--pr', '--', '543']);
+    assert.fail('должен был отказать');
+  } catch (e) {
+    assert.match(e.message, /без `--`/u, 'отказ подсказывает корень');
+  }
+});
