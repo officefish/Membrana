@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `rt-8-code-review-sees-code` | RT-8: daily-ревью видит код дня, а не остаток рабочего дерева | M | [`RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md`](../docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md) | — |
 | `rt-7-priorities-from-registry` | RT-7: приоритеты планирования из реестра, а не хардкод-текстом | M | [`RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md`](../docs/prompts/RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md) | — |
 | `rt-6-consilium-integrity` | RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки | S | [`RT_6_CONSILIUM_INTEGRITY_PROMPT.md`](../docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md) | — |
 | `rt-5-pr-land` | RT-5: task:pr-land + норма «доверяй union-драйверу» | M | [`RT_5_PR_LAND_PROMPT.md`](../docs/prompts/RT_5_PR_LAND_PROMPT.md) | — |
@@ -27,6 +28,11 @@
 | `rt-1-manifest-generator` | RT-1: генератор пишет манифест посылок и источников сам | M | [`RT_1_MANIFEST_GENERATOR_PROMPT.md`](../docs/prompts/RT_1_MANIFEST_GENERATOR_PROMPT.md) | — |
 | `rt-0-gate` | RT-0: гейт эпика — сверить сделанное с деревом, а не с таблицей | S | [`RT_0_GATE_PROMPT.md`](../docs/prompts/RT_0_GATE_PROMPT.md) | — |
 | `ritual-trust-contour` | Эпик: достоверность контура планирования и закрытия — код первичен, документы вторичны | L | [`RITUAL_TRUST_CONTOUR_PROMPT.md`](../docs/prompts/RITUAL_TRUST_CONTOUR_PROMPT.md) | [#539](https://github.com/officefish/Membrana/issues/539) |
+| `grp4-graphify-gated` | GRP4 (условная): graphify за grant:graphify — только после #529 + 3 условий очереди | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `grp3-research-tree-gated` | GRP3: research-tree за grant:research-tree + git-time-travel офлайн-снапшот, presentation-порт | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `grp2-grants-owner-matrix` | GRP2: два гранта (research-tree/graphify) + owner-матрица/промокоды, empty-state | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `grp1-route-bridge-sections` | GRP1: маршрут-мост + реестр секций панели + ADR топологии + контракт-тест подписи×гранта | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
+| `graphify-research-tree-panel-sections` | Epic: graphify + research-tree как разделы панели за гейтом (GRP1-4) | L | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
 | `main-day-probe-gate` | Препроцессор-гейт посылок MAIN_DAY_ISSUE: маркер в коде первичен, Issue вторичен | M | [`MAIN_DAY_PROBE_GATE_PROMPT.md`](../docs/prompts/MAIN_DAY_PROBE_GATE_PROMPT.md) | [#533](https://github.com/officefish/Membrana/issues/533) |
 | `detector-metrics-characterization` | detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex | L | [`DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md`](../docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `product-landing` | product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов) | M | [`PRODUCT_LANDING_PROMPT.md`](../docs/prompts/PRODUCT_LANDING_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |

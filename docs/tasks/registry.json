@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "rt-8-code-review-sees-code",
+      "title": "RT-8: daily-ревью видит код дня, а не остаток рабочего дерева",
+      "promptPath": "docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Эпик ritual-trust-contour (#539). Расследование code-review-honesty-report-2026-07-16: daily-ревью структурно слепо к коду — collectRepositoryContext не обходит дерево исходников (самодокумент 206-207), git diff --name-status на чистом после коммитов дереве пуст, appendTaskContext для daily не вызывается (слеп и к задаче). Живой случай 15.07: день крупных слияний → вердикт T0 docs-only «Runtime не затронут», ушёл в MAIN_DAY_ISSUE 16.07 как ✅ Вход в Фазу 0. Ревью по запросу (--pr/--branch/--uncommitted) честное — полный дифф, не трогать. Фикс: daily получает дифф слитых за сутки коммитов (todaysCommits уже есть) вместо рабочего дерева; гвард свежести (|| true глотает сбой, гварда даты нет — родня rt-5); тест на слепоту (PG3-урок: поведение, ломающее смысл, невидимо для набора). Тот же корень, что rt-7 (вход из метаданных, не из состояния) и rt-1 (замкнуть контур достоверности).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "rt-7-priorities-from-registry",
       "title": "RT-7: приоритеты планирования из реестра, а не хардкод-текстом",
       "promptPath": "docs/prompts/RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md",
