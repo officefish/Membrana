@@ -444,6 +444,7 @@ test('CLOSURE_DIFF_EXCLUDES исключает протоколы процесс
   assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/seanses'), 'протоколы консилиумов');
   assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/tasks/research'), 'выжимки research');
   assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/discussions'), 'артефакты код-ревью');
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/reviews'), 'артефакты closure-ревью');
   // Код и промпты задач ДОЛЖНЫ ревьюиться — не в списке исключений.
   assert.ok(!CLOSURE_DIFF_EXCLUDES.some((p) => p.startsWith('scripts')), 'код ревьюится');
   assert.ok(!CLOSURE_DIFF_EXCLUDES.includes('docs/prompts'), 'промпты задач ревьюятся');
