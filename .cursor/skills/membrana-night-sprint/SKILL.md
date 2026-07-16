@@ -20,9 +20,12 @@ yarn ritual:evening → night:open → ДЕЛЕГИРОВАТЬ фоновому
 ## Delegated execution (default, ADR-0009)
 
 Фазы NB0…NBn исполняет **делегированный фоновый субагент**, а не координатор. После
-`night:open` спавни субагент (`run_in_background`, `isolation: worktree`) с
-epic-промптом; он автономно проходит фазы, чекпойнтит, пишет HANDOFF. Координатор
-получает уведомление и **верифицирует HANDOFF утром** (не мёржит вслепую).
+`night:open` → **`yarn always-yes:on`** (scoped auto-yes, Р7; скилл
+[`membrana-always-yes`](../membrana-always-yes/SKILL.md)) → спавни субагент
+(`run_in_background`, `isolation: worktree`) с epic-промптом; он **наследует профиль
+разрешений** и автономно проходит фазы, чекпойнтит, пишет HANDOFF. Координатор
+получает уведомление, **верифицирует HANDOFF утром** (не мёржит вслепую), затем
+`yarn always-yes:off`.
 
 Гардрейлы: **Р2** промпт эпика = контракт (фазы+DoD+жёсткие инварианты+вердикт
 консилиума/ADR); **Р3** human-in-loop (визуальная оценка, живой смоук) → владельцу,
