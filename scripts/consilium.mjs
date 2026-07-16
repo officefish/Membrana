@@ -43,7 +43,7 @@ import {
   personaMemoryPath,
   readPersonaMemory,
 } from './lib/persona-memory.mjs';
-import { validateProtocol } from './lib/protocol-validator.mjs';
+import { findUncoveredAgendaItems, validateProtocol } from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
 const MAX_VIRTUAL_TEAM_CHARS = 8_000;
@@ -367,9 +367,11 @@ function runSecretaryFile(cli, cwd) {
     process.exit(1);
   }
   const body = readFileSync(srcAbs, 'utf8');
+  const agendaMd = cli.topicFile ? readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true) : null;
   const { ok, problems, stats } = validateProtocol(body, {
     kind: 'consilium',
     minReplies: cli.minReplies,
+    agenda: agendaMd || null,
   });
   if (!ok) {
     console.error(`Протокол не прошёл канон консилиума (${problems.length}):`);
@@ -513,6 +515,27 @@ async function main() {
     });
     writeFileSync(absPath, fileBody, 'utf8');
     console.error(`→ протокол: ${relPath}`);
+
+    // rt-6 (#539): гейт полноты повестки. Три консилиума 16.07 молча уронили часть
+    // вопросов; ронять готовый (оплаченный) протокол нельзя, но пропуск обязан быть
+    // ВИДЕН — иначе паттерн повторяется незамеченным. Проверяем при наличии повестки.
+    if (cli.topicFile) {
+      try {
+        const agenda = readFileSync(resolve(cwd, cli.topicFile), 'utf8');
+        const uncovered = findUncoveredAgendaItems(agenda, answer);
+        if (uncovered.length > 0) {
+          console.error(
+            `\n⚠ ПОВЕСТКА НЕ ПОКРЫТА (rt-6): ${uncovered.join(', ')} — ни одной реплики/строки итога.\n` +
+              '  Консилиум склонен расходиться на первых вопросах и ронять остальные (паттерн 16.07).\n' +
+              '  Допроси команду по пропущенным ID или зафиксируй их явным «не готово к решению».',
+          );
+        } else {
+          console.error('→ rt-6: повестка покрыта полностью.');
+        }
+      } catch {
+        // Повестка без ID-меток или нечитаема — гейт не мешает, просто молчит.
+      }
+    }
   }
 
 }
