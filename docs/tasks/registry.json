@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "board-host-parity-registry",
+      "title": "Epic: @membrana/client-board-registry — паритет палитры борда на client/cabinet/electron",
+      "promptPath": "docs/prompts/BOARD_HOST_PARITY_REGISTRY_PROMPT.md",
+      "githubIssue": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "Консилиум device-board-host-parity-shared-modules-2026-07-16 (25 реплик) + ADR-0011. Кабинет/electron не зовут registerClientModules → палитра без 16 клиентских плагин-узлов. Вынос в @membrana/client-board-registry: declareBoardPalette()+mountBoardPalette(registry,palette,{runtime}); плагины переезжают из apps/client; board-state host-side инжектится (кабинет без mic-рантайма); паритет все 16 на трёх хостах, mic-деградация видимым бейджем. Миграция 3 коммита: скаффолд+контракт → физперенос → bootstrap хостов+инвариант-тест. Диагноз разведки §5: S2 закрыт, магистраль = борд/landing/downloads.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "rt-10-review-precision-degradation",
       "title": "RT-10: честный режим precision — exact vs working-tree",
       "promptPath": "docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md",
