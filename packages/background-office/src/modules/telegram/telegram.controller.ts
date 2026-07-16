@@ -29,7 +29,13 @@ export class TelegramController {
     if (!parsed.success) {
       throw new BadRequestException(parsed.error.flatten());
     }
-    const sent = await this.telegram.sendMessage(formatRitualDigest(parsed.data));
+    const digest = parsed.data;
+    const sent = await this.telegram.sendMessage(formatRitualDigest(digest));
+    // Вложение — отдельным сообщением после тезисного текста (ALLY_DIGEST_FORMAT.md).
+    // Fire-and-forget: неудача вложения не влияет на `sent` основного дайджеста.
+    if (digest.documentMd && digest.documentName) {
+      await this.telegram.sendDocument(digest.documentName, digest.documentMd);
+    }
     return { ok: true, sent };
   }
 

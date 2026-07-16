@@ -62,8 +62,15 @@
 Edit/Write в репо, `night:*`/`turbo`/`docs:lint`) — через `permissions.allow`.
 **НЕ** глобальный `--dangerously-skip-permissions`: инварианты Р2/Р3 держит
 **механический deny-лист**, а не добросовестность агента. В `permissions.deny`:
-`*:deploy:prod`, `git push --force*`, SSH на прод, правки `packages/core/**`. Так
-«отойти от компьютера» = auto-yes на рутине при жёстком запрете опасного.
+прод-деплой (явные префиксы — ведущие wildcard в Claude Code ненадёжны),
+`git push --force*`, `git reset --hard`, SSH, `task:close-github`, правки
+`packages/core/**`. Так «отойти от компьютера» = auto-yes на рутине при жёстком
+запрете опасного.
+
+> **Реализация (2026-07-16):** скилл [`membrana-always-yes`](../../.cursor/skills/membrana-always-yes/SKILL.md)
+> + `yarn always-yes:on|off|status` (`scripts/always-yes.mjs`). Профиль вливается в
+> локальный `.claude/settings.local.json`; `deny` > `allow` во всех режимах Claude
+> Code; делегированный ночной субагент наследует профиль координатора.
 
 ## Definition of Done
 - [ ] `NIGHT_SPRINT_REGULATION.md`: секция «Делегированное исполнение» (Р1–Р6 + шаблон промпта ночного агента).

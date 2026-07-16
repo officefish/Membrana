@@ -33,6 +33,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-telegram-swallow`](./membrana-telegram-swallow/SKILL.md) | «ласточка», «отправь союзникам», `yarn telegram:swallow` — разовое сообщение в группу по команде владельца; mirrored to Claude/Codex |
 | [`membrana-cowork`](./membrana-cowork/SKILL.md) | коворк, `yarn cowork:open` — 3 изолированных блока одной разработки → Interface Consilium → интеграция адаптерами; mirrored to Claude/Codex |
 | [`membrana-night-sprint`](./membrana-night-sprint/SKILL.md) | `night:open`, Night Build, handoff |
+| [`membrana-always-yes`](./membrana-always-yes/SKILL.md) | `yarn always-yes:on\|off`, scoped auto-yes (ADR-0009 Р7), «отойти от компьютера», default в ночном спринте |
 | [`membrana-worktree`](./membrana-worktree/SKILL.md) | отдельный worktree, параллельная сессия, разведи сессии, `git worktree add` |
 | [`membrana-rag-operator`](./membrana-rag-operator/SKILL.md) | `yarn rag:index`, `rag:query` (**stub** until RAG in main) |
 | [`membrana-detector-benchmark`](./membrana-detector-benchmark/SKILL.md) | `benchmark:detectors`, calibration (**stub** partial) |
