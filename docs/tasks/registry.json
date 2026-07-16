@@ -1,6 +1,171 @@
 {
   "tasks": [
     {
+      "id": "rt-7-priorities-from-registry",
+      "title": "RT-7: приоритеты планирования из реестра, а не хардкод-текстом",
+      "promptPath": "docs/prompts/RT_7_PRIORITIES_FROM_REGISTRY_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Эпик #539, полное решение корня 3. detection-planning-priorities.mjs — статический markdown, замороженный на 06.07, подключён к ТРЁМ шагам ритуала (standup, plan:day, main-day-issue): одна строка «магистраль = S2 combined UC (fusion) → S3 упаковка (3+1)» дала и «fusion», и «три каркаса» 16.07, хотя S2 слит 13.07. Сейчас закрыто XS: дата снимка + предупреждение о протухании в промпт (fdc05d05). Полное: генерировать этап магистрали из реестра/форсайта, а не писать рукой. Форсайт 06.07 (строки 67-70) предсказал этот дрейф и предложил «отдельную небольшую задачу» — её не завели, за 10 дней выросло из «зашита детекция» в «зашит устаревший этап».",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-6-consilium-integrity",
+      "title": "RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки",
+      "promptPath": "docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Эпик #539, #515 п.5. Два трения: (1) протокол отклонялся дважды на формате реплик, ошибка «роль не высказалась» не подсказала корень — тот же класс, что «недостаточно evidence для tier» (починено в fdc05d05: отказ называет упавший чек); (2) ЖИВОЙ инцидент 16.07 — первый консилиум обошёл 2 вопроса повестки из 7 МОЛЧА, включая тему владельца (экстракты сессий); пришлось созывать второй. Валидатор должен ловить: повестка из N вопросов → каждый получил хотя бы одну реплику, иначе протокол неполон.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-5-pr-land",
+      "title": "RT-5: task:pr-land + норма «доверяй union-драйверу»",
+      "promptPath": "docs/prompts/RT_5_PR_LAND_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Эпик #539, #515 п.1 (высший payoff), #476. Union-драйвер УЖЕ есть и зарегистрирован (merge.registry-union.driver, .gitattributes). Остаток: gh pr merge серверный драйвер не видит → PR всегда CONFLICTING; лечится локальным git merge origin/main. ПРОВЕРЕНО живьём 16.07: драйвер разрулил реестр сам. НО хук commit-msg отклоняет merge-коммиты («Not committing merge») — норма упирается в хук, обход SKIP_COMMIT_MSG=1 подсказывает сам хук. Сначала проверить гипотезу #515: не хватит ли НОРМЫ вместо третьей обёртки рядом с pr:ship.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-4-closure-chain",
+      "title": "RT-4: closure-цепочка — promptPath из реестра + finalize против нормы bookkeeping",
+      "promptPath": "docs/prompts/RT_4_CLOSURE_CHAIN_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Эпик #539. Два трения: (1) #515 п.3 — task:review:ship искал промпт по имени вместо registry.promptPath (task-closure-review.mjs:208 использует task.promptPath, корень в связке ship→run/prepare не доразобран); (2) трение B 15.07 — finalize требует HEAD == reviewed SHA, а норма требует bookkeeping-ветку от свежего main; после squash-мёржа reviewed SHA не HEAD нигде, кроме feature-ветки. Обходил: finalize на старой ветке + stash-порт реестра. Либо --ref задокументировать, либо порядок в TASK_CLOSURE_REGULATION.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-3-closure-integrity",
+      "title": "RT-3: целостность закрытия issue в обе стороны",
+      "promptPath": "docs/prompts/RT_3_CLOSURE_INTEGRITY_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Эпик #539. Два ЗЕРКАЛЬНЫХ живых сбоя: (1) PR #417 дал «(#415)» вместо Closes → issue висел open при слитом коде 3 дня → план 16.07 назначил переписать готовое ядро; (2) PR #521 дал «Closes #515 частично» → GitHub игнорирует «частично» и закрыл issue целиком → 4 из 5 трений #515 считаются сделанными, хотя живы. Гейт на забытый Closes уже есть (pr:ship, fdc05d05); нужен гейт на ложное закрытие + сверка «слитые PR ↔ открытые issues» (issues:audit работает по РУЧНОМУ манифесту, автоматически не ловит).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-2-session-extracts",
+      "title": "RT-2: экстракты сессий агентов как свидетельство (не источник истины)",
+      "promptPath": "docs/prompts/RT_2_SESSION_EXTRACTS_PROMPT.md",
+      "githubIssue": 537,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ],
+      "notes": "Эпик #539. Консилиум ritual-inputs-echo-and-extracts: класс — СВИДЕТЕЛЬСТВО (гипотеза-для-сверки), маркер в коде остаётся первичным. Сессия знает намерение, а не результат: «я слил yamnet» ≠ «yamnet в main». Новый вход ~/.claude/projects/*.jsonl в существующий persona-memory-extract (114 jsonl не используются), БЕЗ второго экстрактора. night-triage-secret-scan ДО дистилляции, фрагмент с секретом выбрасывается. origin = sha(fragment) → общий dedupeByOrigin, пересказ снимка не станет вторым голосом. В репо только дистиллят, сырьё локально.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-1-manifest-generator",
+      "title": "RT-1: генератор пишет манифест посылок и источников сам",
+      "promptPath": "docs/prompts/RT_1_MANIFEST_GENERATOR_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Эпик #539. Замыкает контур main-day-probe: сейчас docs/tasks/main-day-assertions.json заполняется рукой, генератор лишь ОБЯЗАН требовать маркеры (PG5 #533). Нет манифеста → гейт молчит и возвращает 0, то есть контур разомкнут. Демонстрация: план 16.07 должен был бы сам выдать манифест с обеими ложными посылками.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "rt-0-gate",
+      "title": "RT-0: гейт эпика — сверить сделанное с деревом, а не с таблицей",
+      "promptPath": "docs/prompts/RT_0_GATE_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Эпик ritual-trust-contour (#539). Первый шаг: проверить, что из состава эпика УЖЕ сделано — по коду, не по issue-статусам. Ровно тот сбой, против которого эпик строится. Снятые пункты убрать из эпика с обоснованием. Проверить, что инструмент не пишется второй раз (урок 15.07: isBaseHeldElsewhere уже существовал в pr:ship).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ritual-trust-contour",
+      "title": "Эпик: достоверность контура планирования и закрытия — код первичен, документы вторичны",
+      "promptPath": "docs/prompts/RITUAL_TRUST_CONTOUR_PROMPT.md",
+      "githubIssue": 539,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov",
+        "rodchenko"
+      ],
+      "notes": "Упаковка требований 15-16.07: два консилиума (main-day-issue-accuracy, ritual-inputs-echo-and-extracts), разбор дрейфа MAIN_DAY_ISSUE, тулинг-ретро #515 (закрыт ошибочно — 4 из 5 трений живы), живые трения сессий. Класс проблемы: контур верит документам о работе вместо работы, в ОБЕ стороны — issue висит open при слитом коде (#415), issue закрывается при несделанной работе (#515 через «Closes частично»), снимок приоритетов замерзает и звучит как консенсус. Уже сделано (fdc05d05, PR #538, 4237473b): препроцессор-гейт, closing-keyword гейт, протухание снимка, originHash/dedupeByOrigin. Норма эпика: живая демонстрация на прецеденте обязательна — PG3 #533 показала, что гейт врал при 12 зелёных тестах. После FREE.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "main-day-probe-gate",
       "title": "Препроцессор-гейт посылок MAIN_DAY_ISSUE: маркер в коде первичен, Issue вторичен",
       "promptPath": "docs/prompts/MAIN_DAY_PROBE_GATE_PROMPT.md",
