@@ -11,12 +11,20 @@ import {
   TELEGRAM_MESSAGE_LIMIT,
 } from './telegram-format';
 
-function digest(over: Partial<RitualDigestDto> = {}): RitualDigestDto {
+function dayDigest(over: Partial<RitualDigestDto> = {}): RitualDigestDto {
   return {
     kind: 'day',
-    date: '2026-07-13',
-    headline: 'Сегодня команда занимается панелью наблюдения за качеством.',
-    points: [],
+    date: '2026-07-16',
+    headline: 'Последний день перед дедлайном FREE — разведка, вердикт, старт в коде.',
+    ...over,
+  };
+}
+
+function eveningDigest(over: Partial<RitualDigestDto> = {}): RitualDigestDto {
+  return {
+    kind: 'evening',
+    date: '2026-07-16',
+    headline: 'День продуктивный: магистраль стартовала в коде.',
     ...over,
   };
 }
@@ -29,7 +37,7 @@ describe('escapeTelegramHtml', () => {
 
 describe('formatDateRu', () => {
   it('ISO → русский формат', () => {
-    expect(formatDateRu('2026-07-13')).toBe('13.07.2026');
+    expect(formatDateRu('2026-07-16')).toBe('16.07.2026');
   });
 
   it('нераспознанное — как есть', () => {
@@ -38,63 +46,75 @@ describe('formatDateRu', () => {
 });
 
 describe('formatDayDigest', () => {
-  it('заголовок с датой + headline; без пустых секций', () => {
-    const text = formatDayDigest(digest());
-    expect(text).toContain('<b>Membrana — план на 13.07.2026</b>');
-    expect(text).toContain('панелью наблюдения');
-    expect(text).not.toContain('Сегодня в работе:');
-    expect(text).not.toContain('<i>');
+  it('центральная задача под меткой; заголовок с датой', () => {
+    const text = formatDayDigest(dayDigest());
+    expect(text).toContain('<b>Membrana — план на 16.07.2026</b>');
+    expect(text).toContain('<b>🎯 Центральная задача дня:</b>');
+    expect(text).toContain('разведка, вердикт, старт в коде');
   });
 
-  it('булиты и технический хвост', () => {
+  it('высокий приоритет и перспективы — булиты; критерий вечера — хвост', () => {
     const text = formatDayDigest(
-      digest({
-        points: ['Первая задача', 'Вторая задача'],
-        techFooter: 'Магистраль: контур DA4/DA5',
+      dayDigest({
+        highPriority: ['live-neural fusion (#415)', 'merge-driver реестра (#476)'],
+        perspective: ['batch-collection (#494)'],
+        eveningCriterion: 'Магистраль стартовала в коде, дерево чистое',
       }),
     );
-    expect(text).toContain('Сегодня в работе:\n• Первая задача\n• Вторая задача');
-    expect(text).toContain('<i>Магистраль: контур DA4/DA5</i>');
+    expect(text).toContain('<b>⬆️ Высокий приоритет:</b>\n• live-neural fusion (#415)\n• merge-driver реестра (#476)');
+    expect(text).toContain('<b>🔭 Перспективные направления:</b>\n• batch-collection (#494)');
+    expect(text).toContain('<b>🌙 Критерий вечера:</b>\nМагистраль стартовала в коде, дерево чистое');
+  });
+
+  it('пустые секции не рендерятся', () => {
+    const text = formatDayDigest(dayDigest());
+    expect(text).not.toContain('Высокий приоритет');
+    expect(text).not.toContain('Перспективные');
+    expect(text).not.toContain('Критерий вечера');
   });
 
   it('контент экранируется', () => {
-    const text = formatDayDigest(digest({ headline: 'score < 0.5 && ok' }));
+    const text = formatDayDigest(dayDigest({ headline: 'score < 0.5 && ok' }));
     expect(text).toContain('score &lt; 0.5 &amp;&amp; ok');
   });
 });
 
 describe('formatEveningDigest', () => {
-  it('итоги дня: заголовок, оценка команды, «что дальше»', () => {
+  it('вердикт, три секции итогов, оценка команды', () => {
     const text = formatEveningDigest(
-      digest({
-        kind: 'evening',
-        headline: 'День продуктивный: главная цель достигнута.',
-        teamScore: '7.4/10',
-        points: ['Довести панель качества'],
+      eveningDigest({
+        converged: ['fusion-узел стартовал', 'разведка §5 закрыта'],
+        notConverged: ['UC-документы не тронуты'],
+        unexpected: ['починка CI-флейка'],
+        teamScore: '7.8/10',
       }),
     );
-    expect(text).toContain('<b>Membrana — итоги дня 13.07.2026</b>');
-    expect(text).toContain('Команда оценивает полезность дня: 7.4/10.');
-    expect(text).toContain('Что дальше:\n• Довести панель качества');
+    expect(text).toContain('<b>Membrana — итоги дня 16.07.2026</b>');
+    expect(text).toContain('магистраль стартовала');
+    expect(text).toContain('<b>✅ Сошлось:</b>\n• fusion-узел стартовал\n• разведка §5 закрыта');
+    expect(text).toContain('<b>⚠️ Не сошлось / перенесено:</b>\n• UC-документы не тронуты');
+    expect(text).toContain('<b>🎲 Неожиданно всплыло:</b>\n• починка CI-флейка');
+    expect(text).toContain('Команда оценивает полезность дня: 7.8/10.');
   });
 
-  it('без teamScore строка оценки не рендерится', () => {
-    const text = formatEveningDigest(digest({ kind: 'evening' }));
+  it('без teamScore строка оценки не рендерится; пустые секции опускаются', () => {
+    const text = formatEveningDigest(eveningDigest());
     expect(text).not.toContain('полезность дня');
+    expect(text).not.toContain('Сошлось');
   });
 });
 
 describe('formatRitualDigest', () => {
   it('диспетчеризует по kind', () => {
-    expect(formatRitualDigest(digest({ kind: 'day' }))).toContain('план на');
-    expect(formatRitualDigest(digest({ kind: 'evening' }))).toContain('итоги дня');
+    expect(formatRitualDigest(dayDigest())).toContain('план на');
+    expect(formatRitualDigest(eveningDigest())).toContain('итоги дня');
   });
 });
 
-describe('шапка-пояснение v2 (#434)', () => {
+describe('шапка-пояснение (#434)', () => {
   it('primerMd вшивается expandable blockquote после заголовка', () => {
     const text = formatDayDigest(
-      digest({ primerMd: '**Membrana** — сеть «ушей»; [памятка](https://example.com)' }),
+      dayDigest({ primerMd: '**Membrana** — сеть «ушей»; [памятка](https://example.com)' }),
     );
     const lines = text.split('\n');
     expect(lines[2]).toBe(
@@ -103,49 +123,31 @@ describe('шапка-пояснение v2 (#434)', () => {
   });
 
   it('без primerMd blockquote отсутствует (graceful)', () => {
-    expect(formatDayDigest(digest())).not.toContain('<blockquote');
-    expect(formatEveningDigest(digest({ kind: 'evening' }))).not.toContain('<blockquote');
+    expect(formatDayDigest(dayDigest())).not.toContain('<blockquote');
+    expect(formatEveningDigest(eveningDigest())).not.toContain('<blockquote');
   });
 });
 
-describe('треки дня v2 (#434)', () => {
-  it('вечер: секция «Треки дня» между вердиктом и «Что дальше»', () => {
-    const text = formatEveningDigest(
-      digest({
-        kind: 'evening',
-        tracks: ['Teamlead: контур качества замкнут', 'Математик: таблица не начата'],
-        points: ['Собрать таблицу сравнения'],
-      }),
-    );
-    expect(text).toContain('Треки дня:\n• Teamlead: контур качества замкнут\n• Математик: таблица не начата');
-    expect(text.indexOf('Треки дня:')).toBeLessThan(text.indexOf('Что дальше:'));
-  });
-
-  it('день секцию треков не рендерит', () => {
-    expect(formatDayDigest(digest({ tracks: ['не должно попасть'] }))).not.toContain('Треки дня:');
-  });
-});
-
-describe('клэмп 4096 (#434)', () => {
+describe('клэмп 4096', () => {
   it('булиты усечены с хвоста, сообщение в лимите, шапка сохранена', () => {
     const fat = 'ф'.repeat(400);
     const text = formatEveningDigest(
-      digest({
-        kind: 'evening',
+      eveningDigest({
         primerMd: '**Membrana** — сеть «ушей»',
-        tracks: Array.from({ length: 8 }, (_, i) => `трек ${i + 1}: ${fat}`),
-        points: Array.from({ length: 8 }, (_, i) => `шаг ${i + 1}: ${fat}`),
+        converged: Array.from({ length: 5 }, (_, i) => `сошлось ${i + 1}: ${fat}`),
+        notConverged: Array.from({ length: 5 }, (_, i) => `не сошлось ${i + 1}: ${fat}`),
+        unexpected: Array.from({ length: 5 }, (_, i) => `неожиданно ${i + 1}: ${fat}`),
       }),
     );
     expect(text.length).toBeLessThanOrEqual(TELEGRAM_MESSAGE_LIMIT);
     expect(text).toContain('<blockquote expandable>');
-    expect(text).toContain('• трек 1:');
-    expect(text).not.toContain('• шаг 8:');
+    expect(text).toContain('• сошлось 1:');
+    expect(text).not.toContain('• неожиданно 5:');
   });
 
   it('крайний случай: даже без булитов и шапки текст не превышает лимит и не рвёт теги', () => {
     const text = formatDayDigest(
-      digest({ headline: 'а'.repeat(5000), primerMd: '**x**'.repeat(1) }),
+      dayDigest({ headline: 'а'.repeat(5000), primerMd: '**x**' }),
     );
     expect(text.length).toBeLessThanOrEqual(TELEGRAM_MESSAGE_LIMIT);
     expect(text.endsWith('…')).toBe(true);

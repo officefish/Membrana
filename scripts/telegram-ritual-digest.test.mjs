@@ -5,60 +5,58 @@ import {
   extractDayDigest,
   extractDigestHeader,
   extractEveningDigest,
-  extractEveningTracks,
   stripInlineMd,
 } from './lib/ritual-digest-extract.mjs';
 
 const DAY_FIXTURE = `<!-- Сгенерировано -->
 
-# MAIN_DAY_ISSUE — 2026-07-13
-
-**Дата:** 2026-07-13 | **Координатор:** Vesnin
+# MAIN_DAY_ISSUE — 2026-07-16
 
 \`\`\`
 ┌──────────────────────────────────────────────┐
+│ ⚡ РАЗВЕДКА §5 → ВЕРДИКТ → СТАРТ В КОДЕ       │
 │                                              │
-│ ⚡ ЗАМКНУТЬ КОНТУР КАЧЕСТВА                  │
-│    + СТАРТ ПРОДУКТОВОЙ ПОЛОСЫ                │
-│                                              │
-│    Вчера — ядро контура готово.              │
-│                                              │
-│    Задача 1 (DA4, M): логика триггеров       │
-│      чистой функцией; graceful при           │
-│      недоступном канале.                     │
-│    Задача 2 (DA5, S): утренняя секция        │
-│      дайджеста, тест на рендер.              │
-│                                              │
-│ 🎯 Магистраль: процессный контур             │
-│    (DA4/DA5, эпик #396).                     │
-│                                              │
+│ 🎯 Критерий вечера: магистраль стартовала в  │
+│    коде, рабочее дерево чистое.              │
 └──────────────────────────────────────────────┘
 \`\`\`
+
+**Одна фраза дня:** последний день перед дедлайном FREE — сначала **разведка §5**,
+затем однозначный **вердикт**, и в тот же день **старт магистрали в коде**.
+
+## 🔗 Issues в скоупе
+
+| Приоритет | Issues |
+|-----------|--------|
+| **Магистраль / критпуть FREE** | #415 (live-neural fusion) |
+| **Долг (side-слот при простое)** | #476 п.1 (merge-driver реестра), #407 (pr:ship устойчивость) |
+| **Отложено (пост-FREE)** | #494 (batch-collection), #420 (полевой data-anchor, privacy-гейт) |
+| **Отложено (долг)** | #236, #197, #196 |
+
+---
 `;
 
 const EVENING_FIXTURE = `<!-- Сгенерировано -->
 
-# Team Evening Feedback — 2026-07-12
+# Team Evening Feedback — 2026-07-16
 
-[Teamlead]: Vesnin. Полезность дня: 8/10
+**Средний балл команды:** 7.8/10
 
-### Голосование за полезность дня
+### Итоги против плана
 
-| Роль | Балл /10 |
-|------|----------|
-| Teamlead | 8 |
+**Сошлось:**
+- fusion-узел стартовал в коде
+- разведка §5 закрыта
 
-**Средний балл команды:** 7.4/10
+**Не сошлось / перенесено:**
+- UC-документы не тронуты
 
-### Сводка предложений на завтра
-
-1. **Зафиксировать контур качества как магистраль дня** с самого утра — не допустить расхождения (Teamlead).
-2. **Вернуть отложенную таблицу объяснимости** \`trends\` vs yamnet (Математик).
+**Неожиданно всплыло:**
+- починка CI-флейка
 
 ### Резюме Teamlead
 
-- **Соответствие стратегии дня:** частично.
-- **Вердикт дня:** День продуктивный, но со сдвигом фокуса: главная цель закрыта (**#372**), энергия ушла в новый контур \`drift-anchor\`.
+- **Вердикт дня:** День продуктивный: магистраль стартовала в коде.
 `;
 
 test('stripInlineMd снимает жирный/код/ссылки', () => {
@@ -68,116 +66,75 @@ test('stripInlineMd снимает жирный/код/ссылки', () => {
   );
 });
 
-test('extractDayDigest: дата, ⚡-заголовок, задачи с продолжениями, магистраль', () => {
+test('extractDayDigest: центральная фраза, приоритет, перспективы, критерий', () => {
   const d = extractDayDigest(DAY_FIXTURE);
   assert.equal(d.kind, 'day');
-  assert.equal(d.date, '2026-07-13');
-  assert.equal(d.headline, 'ЗАМКНУТЬ КОНТУР КАЧЕСТВА + СТАРТ ПРОДУКТОВОЙ ПОЛОСЫ');
-  assert.deepEqual(d.points, [
-    'логика триггеров чистой функцией; graceful при недоступном канале',
-    'утренняя секция дайджеста, тест на рендер',
+  assert.equal(d.date, '2026-07-16');
+  assert.equal(
+    d.headline,
+    'последний день перед дедлайном FREE — сначала разведка §5, затем однозначный вердикт, и в тот же день старт магистрали в коде',
+  );
+  assert.deepEqual(d.highPriority, [
+    'live-neural fusion (#415)',
+    'merge-driver реестра (#476)',
+    'pr:ship устойчивость (#407)',
   ]);
-  assert.equal(d.techFooter, 'Магистраль: процессный контур (DA4/DA5, эпик #396).');
+  assert.deepEqual(d.perspective, [
+    'batch-collection (#494)',
+    'полевой data-anchor, privacy-гейт (#420)',
+  ]);
+  assert.equal(d.eveningCriterion, 'магистраль стартовала в коде, рабочее дерево чистое');
+});
+
+test('extractDayDigest: фолбэк headline на ⚡ при отсутствии «Одной фразы»', () => {
+  const noPhrase = `# MAIN_DAY_ISSUE — 2026-07-16
+
+\`\`\`
+┌────────────────────┐
+│ ⚡ СТАРТ МАГИСТРАЛИ │
+└────────────────────┘
+\`\`\`
+`;
+  assert.equal(extractDayDigest(noPhrase).headline, 'СТАРТ МАГИСТРАЛИ');
 });
 
 test('extractDayDigest: нераспознанный артефакт → null (graceful)', () => {
   assert.equal(extractDayDigest(''), null);
-  assert.equal(extractDayDigest('# MAIN_DAY_ISSUE — 2026-07-13\nбез бокса'), null);
+  assert.equal(extractDayDigest('# MAIN_DAY_ISSUE — 2026-07-16\nбез бокса'), null);
 });
 
-test('extractEveningDigest: дата, вердикт без markdown, балл, предложения', () => {
+test('extractEveningDigest: вердикт, балл, три секции итогов', () => {
   const d = extractEveningDigest(EVENING_FIXTURE);
   assert.equal(d.kind, 'evening');
-  assert.equal(d.date, '2026-07-12');
-  assert.equal(d.teamScore, '7.4/10');
+  assert.equal(d.date, '2026-07-16');
+  assert.equal(d.teamScore, '7.8/10');
   assert.ok(d.headline.startsWith('День продуктивный'));
   assert.ok(!d.headline.includes('**'), 'markdown снят');
-  assert.deepEqual(d.points, [
-    'Зафиксировать контур качества как магистраль дня',
-    'Вернуть отложенную таблицу объяснимости',
-  ]);
+  assert.deepEqual(d.converged, ['fusion-узел стартовал в коде', 'разведка §5 закрыта']);
+  assert.deepEqual(d.notConverged, ['UC-документы не тронуты']);
+  assert.deepEqual(d.unexpected, ['починка CI-флейка']);
 });
 
-test('extractEveningDigest: без вердикта — фолбэк-headline, без даты — null', () => {
-  const noVerdict = extractEveningDigest('# Team Evening Feedback — 2026-07-12\n');
-  assert.ok(noVerdict.headline.includes('Вечерний ритуал завершён'));
-  assert.equal(extractEveningDigest('нет даты'), null);
-});
+test('extractEveningDigest: без секции «Итоги против плана» — секции опущены (graceful)', () => {
+  const bare = `# Team Evening Feedback — 2026-07-16
 
-// ─── v2 (#434): полные блоки задач дня, треки вечера, шапка-пояснение ───
-
-const DAY_FIXTURE_V2 = `# MAIN_DAY_ISSUE — 2026-07-14
-
-\`\`\`
-┌──────────────────────────────────────────────┐
-│                                              │
-│ ⚡ ВЕРНУТЬ БАЛАНС К ПРОДУКТУ                 │
-│                                              │
-│    Задача A (M): сводная таблица двух        │
-│      распознавателей на общем наборе.        │
-│      Явно назвать основной и бэкап.          │
-│      Что даст: обоснованный выбор для        │
-│      шлюза качества.                         │
-│    Задача B (S): перф-замер нейро-канала.    │
-│                                              │
-│ 🎯 Магистраль: продукт FREE.                 │
-│                                              │
-└──────────────────────────────────────────────┘
-\`\`\`
-`;
-
-test('extractDayDigest v2: полный блок задачи (несколько предложений, «что даст»)', () => {
-  const d = extractDayDigest(DAY_FIXTURE_V2);
-  assert.equal(d.points.length, 2);
-  assert.equal(
-    d.points[0],
-    'сводная таблица двух распознавателей на общем наборе. Явно назвать основной и бэкап. Что даст: обоснованный выбор для шлюза качества',
-  );
-  assert.equal(d.points[1], 'перф-замер нейро-канала');
-});
-
-const EVENING_FIXTURE_V2 = `# Team Evening Feedback — 2026-07-13
-
-[Teamlead]: Vesnin.
-Оценка артефактов: планы были согласованы.
-Итоги дня: реально сдвинулось много, но **не по утреннему плану**. Закоммичены: контур качества и живой канал отчётов.
-На завтра: вернуть фокус.
-Полезность дня: 8/10
-
-[Математик]: Dynin.
-Оценка артефактов: мандат был ясен.
-Итоги дня: по магистральной задаче следов нет — таблица не собрана. Зато косвенно затронута математика слияния. Третье предложение не должно попасть.
-Полезность дня: 6/10
-
-### Голосование за полезность дня
-
-**Средний балл команды:** 7.4/10
-
-### Сводка предложений на завтра
-
-1. **Вернуть фокус к продукту** (Teamlead).
+**Средний балл команды:** 8.0/10
 
 ### Резюме Teamlead
 
-- **Вердикт дня:** День продуктивный, но дрейфующий.
+- **Вердикт дня:** Ровный день.
 `;
-
-test('extractEveningTracks: выжимка «Итоги дня» по ролям, 2 предложения, без markdown', () => {
-  const tracks = extractEveningTracks(EVENING_FIXTURE_V2);
-  assert.equal(tracks.length, 2);
-  assert.equal(
-    tracks[0],
-    'Teamlead: реально сдвинулось много, но не по утреннему плану. Закоммичены: контур качества и живой канал отчётов.',
-  );
-  assert.ok(tracks[1].startsWith('Математик: по магистральной задаче следов нет'));
-  assert.ok(!tracks[1].includes('Третье предложение'));
+  const d = extractEveningDigest(bare);
+  assert.equal(d.converged, undefined);
+  assert.equal(d.notConverged, undefined);
+  assert.equal(d.unexpected, undefined);
+  assert.ok(d.headline.startsWith('Ровный день'));
 });
 
-test('extractEveningDigest v2: tracks попадают в payload; без «Итоги дня» поле отсутствует', () => {
-  const d = extractEveningDigest(EVENING_FIXTURE_V2);
-  assert.equal(d.tracks.length, 2);
-  const old = extractEveningDigest(EVENING_FIXTURE);
-  assert.equal(old.tracks, undefined);
+test('extractEveningDigest: без вердикта — фолбэк-headline, без даты — null', () => {
+  const noVerdict = extractEveningDigest('# Team Evening Feedback — 2026-07-16\n');
+  assert.ok(noVerdict.headline.includes('Вечерний ритуал завершён'));
+  assert.equal(extractEveningDigest('нет даты'), null);
 });
 
 test('extractDigestHeader: содержимое между маркерами; без маркеров/пусто → null', () => {

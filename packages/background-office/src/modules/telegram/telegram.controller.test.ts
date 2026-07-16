@@ -6,21 +6,26 @@ import type { TelegramClient } from './telegram.client';
 
 function fakeClient(sendResult = true) {
   const sentTexts: string[] = [];
+  const sentDocs: { name: string; content: string }[] = [];
   const client = {
     enabled: true,
     sendMessage: async (text: string) => {
       sentTexts.push(text);
       return sendResult;
     },
+    sendDocument: async (name: string, content: string) => {
+      sentDocs.push({ name, content });
+      return sendResult;
+    },
   } as unknown as TelegramClient;
-  return { client, sentTexts };
+  return { client, sentTexts, sentDocs };
 }
 
 const validPayload = {
   kind: 'evening',
   date: '2026-07-13',
   headline: 'День закрыт: главная цель достигнута.',
-  points: ['Завтра — панель качества'],
+  converged: ['Панель качества доведена'],
   teamScore: '7.4/10',
 };
 
@@ -46,6 +51,27 @@ describe('TelegramController.ingest', () => {
       new TelegramController(client).ingest({ kind: 'night', date: '2026-07-13' }),
     ).rejects.toThrow(BadRequestException);
     expect(sentTexts).toHaveLength(0);
+  });
+
+  it('вложение уходит отдельным документом после текста', async () => {
+    const { client, sentTexts, sentDocs } = fakeClient();
+    await new TelegramController(client).ingest({
+      kind: 'day',
+      date: '2026-07-16',
+      headline: 'Центральная задача дня.',
+      documentMd: '# MAIN_DAY_ISSUE\n\nдетали дня',
+      documentName: 'MAIN_DAY_ISSUE-16.07.md',
+    });
+    expect(sentTexts).toHaveLength(1);
+    expect(sentDocs).toEqual([
+      { name: 'MAIN_DAY_ISSUE-16.07.md', content: '# MAIN_DAY_ISSUE\n\nдетали дня' },
+    ]);
+  });
+
+  it('без documentMd вложение не отправляется', async () => {
+    const { client, sentDocs } = fakeClient();
+    await new TelegramController(client).ingest(validPayload);
+    expect(sentDocs).toHaveLength(0);
   });
 });
 

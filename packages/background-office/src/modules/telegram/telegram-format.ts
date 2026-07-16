@@ -4,13 +4,13 @@ import { clampTelegramHtml, mdToTelegramHtml, renderExpandablePrimer } from './t
 
 /**
  * Чистые функции «вёрстки» telegram-сообщений (канон REVIEW инсайта
- * insight-telegram-work-reports): единый лаконичный формат — заголовок + булиты,
- * без эмодзи-шума, тестируемы без сети. parse_mode = HTML, поэтому экранируем
+ * insight-telegram-work-reports). parse_mode = HTML, поэтому экранируем
  * только & < > (Bot API HTML style).
  *
- * v2 (#434): свёрнутая шапка-пояснение (<blockquote expandable>, источник —
- * docs/comms/ALLY_DIGEST_HEADER.md через payload.primerMd), секция «Треки дня»
- * вечером и детерминированный клэмп под лимит Telegram 4096.
+ * v3 (ALLY_DIGEST_FORMAT.md): тезисная фиксированная структура —
+ *   день:  центральная задача → высокий приоритет → перспективы → критерий вечера;
+ *   вечер: вердикт → сошлось / не сошлось / неожиданно → оценка.
+ * Детали уходят вложенным файлом (см. TelegramClient.sendDocument), не текстом.
  */
 export const TELEGRAM_MESSAGE_LIMIT = 4096;
 
@@ -32,10 +32,14 @@ interface MessageSection {
 interface MessageParts {
   title: string;
   primerMd?: string;
+  /** Метка-заголовок над headline, например «🎯 Центральная задача дня:». */
+  leadLabel?: string;
   headline: string;
-  scoreLine?: string;
   sections: MessageSection[];
-  techFooter?: string;
+  scoreLine?: string;
+  /** Хвостовая метка + текст, например «🌙 Критерий вечера:» + фраза. */
+  footerLabel?: string;
+  footerText?: string;
 }
 
 function render(parts: MessageParts, withPrimer: boolean): string {
@@ -43,19 +47,22 @@ function render(parts: MessageParts, withPrimer: boolean): string {
   if (withPrimer && parts.primerMd) {
     lines.push(renderExpandablePrimer(parts.primerMd), '');
   }
-  lines.push(escapeTelegramHtml(parts.headline));
-  if (parts.scoreLine) {
-    lines.push('', escapeTelegramHtml(parts.scoreLine));
+  if (parts.leadLabel) {
+    lines.push(`<b>${escapeTelegramHtml(parts.leadLabel)}</b>`);
   }
+  lines.push(escapeTelegramHtml(parts.headline));
   for (const section of parts.sections) {
     if (section.items.length === 0) continue;
-    lines.push('', escapeTelegramHtml(section.title));
+    lines.push('', `<b>${escapeTelegramHtml(section.title)}</b>`);
     for (const item of section.items) {
       lines.push(`• ${escapeTelegramHtml(item)}`);
     }
   }
-  if (parts.techFooter) {
-    lines.push('', `<i>${escapeTelegramHtml(parts.techFooter)}</i>`);
+  if (parts.scoreLine) {
+    lines.push('', escapeTelegramHtml(parts.scoreLine));
+  }
+  if (parts.footerLabel && parts.footerText) {
+    lines.push('', `<b>${escapeTelegramHtml(parts.footerLabel)}</b>`, escapeTelegramHtml(parts.footerText));
   }
   return lines.join('\n');
 }
@@ -63,7 +70,8 @@ function render(parts: MessageParts, withPrimer: boolean): string {
 /**
  * Детерминированный клэмп под лимит Telegram: сначала снимаем булиты с хвоста
  * (последняя секция — первой), затем шапку-пояснение, в самом конце — жёсткое
- * усечение без обрыва HTML-тега.
+ * усечение без обрыва HTML-тега. Тезисный формат + вынос деталей в файл делают
+ * срабатывание клэмпа редким.
  */
 function renderClamped(parts: MessageParts): string {
   const sections = parts.sections.map((s) => ({ ...s, items: [...s.items] }));
@@ -96,9 +104,15 @@ export function formatDayDigest(digest: RitualDigestDto): string {
   return renderClamped({
     title: `Membrana — план на ${formatDateRu(digest.date)}`,
     primerMd: digest.primerMd,
+    leadLabel: '🎯 Центральная задача дня:',
     headline: digest.headline,
-    sections: [{ title: 'Сегодня в работе:', items: digest.points }],
-    techFooter: digest.techFooter,
+    sections: [
+      { title: '⬆️ Высокий приоритет:', items: digest.highPriority ?? [] },
+      { title: '🔭 Перспективные направления:', items: digest.perspective ?? [] },
+    ],
+    ...(digest.eveningCriterion
+      ? { footerLabel: '🌙 Критерий вечера:', footerText: digest.eveningCriterion }
+      : {}),
   });
 }
 
@@ -107,14 +121,14 @@ export function formatEveningDigest(digest: RitualDigestDto): string {
     title: `Membrana — итоги дня ${formatDateRu(digest.date)}`,
     primerMd: digest.primerMd,
     headline: digest.headline,
+    sections: [
+      { title: '✅ Сошлось:', items: digest.converged ?? [] },
+      { title: '⚠️ Не сошлось / перенесено:', items: digest.notConverged ?? [] },
+      { title: '🎲 Неожиданно всплыло:', items: digest.unexpected ?? [] },
+    ],
     scoreLine: digest.teamScore
       ? `Команда оценивает полезность дня: ${digest.teamScore}.`
       : undefined,
-    sections: [
-      { title: 'Треки дня:', items: digest.tracks ?? [] },
-      { title: 'Что дальше:', items: digest.points },
-    ],
-    techFooter: digest.techFooter,
   });
 }
 

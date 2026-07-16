@@ -1,8 +1,12 @@
 /**
  * Детерминированное извлечение payload дайджеста ритуала для telegram-группы
  * союзников (#428) из артефактов ритма:
- *   - день:  docs/MAIN_DAY_ISSUE.md (ASCII-бокс фокуса дня);
- *   - вечер: docs/seanses/team-evening-feedback-<date>.md (вердикт + предложения).
+ *   - день:  docs/MAIN_DAY_ISSUE.md (ASCII-бокс фокуса + таблица «Issues в скоупе»);
+ *   - вечер: docs/seanses/team-evening-feedback-<date>.md (вердикт + итоги против плана).
+ *
+ * v3 (ALLY_DIGEST_FORMAT.md): тезисная структура.
+ *   день:  центральная задача · высокий приоритет · перспективы · критерий вечера;
+ *   вечер: вердикт · сошлось · не сошлось · неожиданно · оценка.
  *
  * Чистые функции text → payload | null (null = артефакт не распознан, скрипт
  * гасится graceful). Форматирование сообщения живёт в office
@@ -32,13 +36,54 @@ function boxLines(text) {
   return lines;
 }
 
-/** Блок соседних непустых строк бокса, начиная с строки-маркера. */
+/** Блок соседних непустых строк бокса, начиная со строки-маркера. */
 function boxBlock(box, marker) {
   const start = box.findIndex((l) => l.includes(marker));
   if (start === -1) return null;
   const parts = [];
   for (let i = start; i < box.length && box[i] !== ''; i++) parts.push(box[i]);
   return collapseSpaces(parts.join(' ').replaceAll(marker, ''));
+}
+
+/**
+ * Тезис из ячейки таблицы Issues: `#476 п.1 (merge-driver реестра)` →
+ * `merge-driver реестра (#476)`. Номер выносим в хвост, описание из скобок.
+ */
+function cleanIssueItem(raw) {
+  const m = collapseSpaces(raw).match(/^#(\d+)\b\s*(.*)$/);
+  if (!m) return collapseSpaces(raw);
+  const num = m[1];
+  const rest = m[2];
+  const paren = rest.match(/\(([^)]+)\)/);
+  let desc = (paren ? paren[1] : rest).replace(/^п\.\d+\s*/, '').trim();
+  desc = desc.replace(/[.,;]\s*$/, '');
+  return desc ? `${desc} (#${num})` : `#${num}`;
+}
+
+/** Разбить ячейку `#a (..), #b (..)` на отдельные issue-тезисы. */
+function splitIssueCell(cell) {
+  const raw = cell.match(/#\d+[^#]*/g);
+  const source = raw && raw.length > 0 ? raw : cell.split(/\s*[;,]\s*/);
+  return source.map((s) => cleanIssueItem(s.replace(/[;,]\s*$/, ''))).filter(Boolean);
+}
+
+/**
+ * Таблица «## 🔗 Issues в скоупе» → [{ label, items }]. Строки-заголовок и
+ * разделитель отбрасываются. Пусто, если секции нет.
+ */
+function extractIssuesTable(text) {
+  const section = text.split(/##\s*[^\n]*Issues в скоупе/)[1]?.split(/\n##\s/)[0];
+  if (!section) return [];
+  const rows = [];
+  for (const line of section.split(/\r?\n/)) {
+    const m = line.match(/^\|(.+?)\|(.+?)\|\s*$/);
+    if (!m) continue;
+    const label = stripInlineMd(m[1].trim());
+    const cell = m[2].trim();
+    if (!label || /^-+$/.test(label) || /^приоритет$/i.test(label)) continue;
+    rows.push({ label, items: splitIssueCell(cell) });
+  }
+  return rows;
 }
 
 /**
@@ -50,35 +95,51 @@ export function extractDayDigest(text) {
   const box = boxLines(text);
   if (!date || box.length === 0) return null;
 
-  const headline = boxBlock(box, '⚡');
+  // Центральная задача: «Одна фраза дня» (простой язык) с фолбэком на ⚡-заголовок.
+  const phrase = text.match(/\*\*Одна фраза дня:\*\*\s*([\s\S]*?)(?:\n\n|\n---|\n##)/)?.[1];
+  const headline = phrase
+    ? stripInlineMd(collapseSpaces(phrase)).replace(/[.;]\s*$/, '')
+    : boxBlock(box, '⚡');
   if (!headline) return null;
 
-  // «Задача N (…): …» — полный блок до следующей задачи/секции (#434: фактура
-  // с «что даст», а не первое предложение).
-  const points = [];
-  for (let i = 0; i < box.length; i++) {
-    const m = box[i].match(/^Задача\s+[\wА-Яа-я]+\s*(?:\([^)]*\))?:\s*(.*)$/);
-    if (!m) continue;
-    const parts = [m[1]];
-    let j = i;
-    while (j + 1 < box.length) {
-      const next = box[j + 1];
-      if (next === '' || /^Задача\s+[\wА-Яа-я]+/.test(next) || /[🎯🟢📦🚫⚡]/u.test(next)) break;
-      parts.push(next);
-      j += 1;
+  const rows = extractIssuesTable(text);
+  const highPriority = [];
+  const perspective = [];
+  for (const { label, items } of rows) {
+    if (/отложено/i.test(label)) {
+      if (/пост/i.test(label)) perspective.push(...items);
+      continue; // «Отложено (долг)» — длинный бэклог, в дайджест не идёт
     }
-    points.push(collapseSpaces(parts.join(' ')).replace(/[.;]\s*$/, ''));
-    i = j;
+    if (/магистраль|критпуть|side/i.test(label)) highPriority.push(...items);
   }
 
-  const techFooter = boxBlock(box, '🎯');
+  // Критерий вечера: строка «🎯 Критерий вечера: …» из бокса.
+  const criterionBlock = boxBlock(box, '🎯');
+  const eveningCriterion = criterionBlock
+    ? collapseSpaces(criterionBlock.replace(/^Критерий вечера:\s*/i, '')).replace(/[.;]\s*$/, '')
+    : null;
+
   return {
     kind: 'day',
     date,
     headline,
-    points: points.slice(0, 8),
-    ...(techFooter ? { techFooter } : {}),
+    ...(highPriority.length > 0 ? { highPriority: highPriority.slice(0, 4) } : {}),
+    ...(perspective.length > 0 ? { perspective: perspective.slice(0, 4) } : {}),
+    ...(eveningCriterion ? { eveningCriterion } : {}),
   };
+}
+
+/** Булиты `- …` под жирной меткой `**<label>:**` до следующей метки/секции. */
+function bulletsUnder(text, label) {
+  const re = new RegExp(`\\*\\*${label}[^*]*\\*\\*\\s*\\n([\\s\\S]*?)(?:\\n\\s*\\*\\*|\\n###|\\n##|$)`, 'i');
+  const block = text.match(re)?.[1];
+  if (!block) return [];
+  const items = [];
+  for (const line of block.split(/\r?\n/)) {
+    const m = line.trim().match(/^[-•]\s+(.*)$/);
+    if (m) items.push(collapseSpaces(stripInlineMd(m[1])).replace(/[.;]\s*$/, ''));
+  }
+  return items;
 }
 
 /**
@@ -96,69 +157,23 @@ export function extractEveningDigest(text) {
     .find((l) => /^-\s*\*\*Вердикт дня:\*\*/.test(l.trim()));
   const headline = verdictLine
     ? stripInlineMd(verdictLine.trim().replace(/^-\s*\*\*Вердикт дня:\*\*\s*/, ''))
-    : 'Вечерний ритуал завершён; подробности — в отчёте команды.';
+    : 'Вечерний ритуал завершён; подробности — в приложенном отчёте.';
 
-  // «Сводка предложений на завтра»: нумерованные пункты, берём жирную суть.
-  const points = [];
-  const summary = text.split(/###\s*Сводка предложений на завтра/)[1]?.split(/\n###\s/)[0];
-  if (summary) {
-    for (const line of summary.split(/\r?\n/)) {
-      const m = line.trim().match(/^\d+\.\s+(.*)$/);
-      if (!m) continue;
-      const bold = m[1].match(/\*\*(.+?)\*\*/)?.[1] ?? m[1];
-      points.push(collapseSpaces(stripInlineMd(bold)).replace(/[.:]\s*$/, ''));
-    }
-  }
-
-  const tracks = extractEveningTracks(text);
+  // «### Итоги против плана»: три размеченных подсписка (ALLY_DIGEST_FORMAT.md).
+  const outcome = text.split(/###\s*Итоги против плана/)[1]?.split(/\n###\s/)[0] ?? '';
+  const converged = bulletsUnder(outcome, 'Сошлось');
+  const notConverged = bulletsUnder(outcome, 'Не сошлось');
+  const unexpected = bulletsUnder(outcome, 'Неожиданно');
 
   return {
     kind: 'evening',
     date,
     headline,
-    points: points.slice(0, 6),
+    ...(converged.length > 0 ? { converged: converged.slice(0, 4) } : {}),
+    ...(notConverged.length > 0 ? { notConverged: notConverged.slice(0, 4) } : {}),
+    ...(unexpected.length > 0 ? { unexpected: unexpected.slice(0, 4) } : {}),
     ...(teamScore ? { teamScore } : {}),
-    ...(tracks.length > 0 ? { tracks } : {}),
   };
-}
-
-const EVENING_ROLES = ['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'];
-
-/** Первые sentences предложений, жёсткий предел maxChars (детерминированно). */
-function firstSentences(text, sentences, maxChars) {
-  const parts = text.split(/(?<=\.)\s+/).slice(0, sentences);
-  const joined = collapseSpaces(parts.join(' '));
-  return joined.length <= maxChars ? joined : `${joined.slice(0, maxChars - 1).trimEnd()}…`;
-}
-
-/**
- * «Треки дня» (#434): по каждой роли из team-evening-feedback — выжимка её
- * блока «Итоги дня:» (первые два предложения). Роль без блока пропускается.
- */
-export function extractEveningTracks(text) {
-  const lines = text.split(/\r?\n/);
-  const tracks = [];
-  for (const role of EVENING_ROLES) {
-    const start = lines.findIndex((l) => l.trim().startsWith(`[${role}]:`));
-    if (start === -1) continue;
-    const block = [];
-    for (let i = start; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (i > start && (/^\[/.test(line) || line.startsWith('###'))) break;
-      block.push(line);
-    }
-    const from = block.findIndex((l) => l.startsWith('Итоги дня:'));
-    if (from === -1) continue;
-    const summaryLines = [];
-    for (let i = from; i < block.length; i++) {
-      const line = block[i];
-      if (i > from && (line === '' || /^(На завтра|Полезность дня|Оценка артефактов):/.test(line))) break;
-      summaryLines.push(i === from ? line.replace(/^Итоги дня:\s*/, '') : line);
-    }
-    const summary = firstSentences(stripInlineMd(summaryLines.join(' ')), 2, 240);
-    if (summary) tracks.push(`${role}: ${summary}`);
-  }
-  return tracks.slice(0, 8);
 }
 
 /**

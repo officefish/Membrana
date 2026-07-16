@@ -58,6 +58,26 @@ function buildPayload() {
 const payload = buildPayload();
 if (!payload) skip(`не удалось извлечь дайджест (${kind}) из артефакта ритуала`);
 
+// Вложение-файл (ALLY_DIGEST_FORMAT.md): полный md-артефакт дня отдельным
+// документом после тезисного текста. День — MAIN_DAY_ISSUE, вечер — code-review.
+// Graceful: файла нет / больше лимита DTO → уходит только текст.
+const DOCUMENT_MD_LIMIT = 100_000;
+function attachDocument() {
+  const rel = kind === 'day' ? 'docs/MAIN_DAY_ISSUE.md' : 'docs/DAILY_CODE_REVIEW.md';
+  const abs = join(repoRoot, rel);
+  if (!existsSync(abs)) return;
+  const content = readFileSync(abs, 'utf8');
+  if (!content.trim() || content.length > DOCUMENT_MD_LIMIT) {
+    console.warn(`[telegram-digest] ${rel} пуст/больше ${DOCUMENT_MD_LIMIT} — уходит без вложения`);
+    return;
+  }
+  const d = payload.date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const stem = kind === 'day' ? 'MAIN_DAY_ISSUE' : 'DAILY_CODE_REVIEW';
+  payload.documentMd = content;
+  payload.documentName = d ? `${stem}-${d[3]}.${d[2]}.md` : `${stem}.md`;
+}
+attachDocument();
+
 // Шапка-пояснение (#434): свёрнутый blockquote в каждом отчёте. Источник —
 // md в docs/comms (редактируется без кода). Graceful: нет файла/маркеров или
 // шапка раздулась сверх лимита DTO → отчёт уходит без неё.
