@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "agent-tooling-friction-3",
+      "title": "agent-tooling-friction-3: 5 фиксов трения сессии + мета-документы (инвентарь тулинга протух)",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_3_PROMPT.md",
+      "githubIssue": 554,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Третья итерация после #433/#469. Ретро тулинга сессии 16.07, только evidence-эпизоды. Корневая находка: AGENTS.md §Agent tooling датирован 08.07 и содержит 11 команд из 253 живых — я читал устаревший снимок и 5 раз писал заново существующее (вместо yarn neighbors написал ручной grep, он соврал). Та же болезнь, что у MAIN_DAY_ISSUE — рукописный снимок как факт; родня rt-7 (#539). Состав: TF-1 снять ЛОЖНОЕ «хук ломает merge» (мой баг в 3 местах, хук освобождает Merge*, проверено) — первым, иначе rt-5 чинит несуществующее; TF-2 валидация --pr (паттерн есть в task-closure-review); TF-3 gitignore pr-*-code-review; TF-4 archive-task --dry-run (молча заархивировал rt-8); TF-5 consilium warn до траты рана при повестке без ID (дыра в моём же rt-6); TF-6 инвентарь на ГЕНЕРАЦИЮ из package.json/skills/lib/githooks; TF-7 норма в скилл tooling-needs — обновлять грабли-раздел. Раскол TF-6/TF-7: генерируется инвентарь (253 рукой не удержать), пишется руками+обязательство только грабли (инсайт не генерится). Консилиум не нужен — канон готов, прецедент #433/#469.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "membrana-device-build-profile",
       "title": "Epic: Membrana Device — профиль сборки apps/client с единственным модулем борда",
       "promptPath": "docs/prompts/MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md",
@@ -128,7 +147,7 @@
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "Эпик #539, #515 п.1 (высший payoff), #476. Union-драйвер УЖЕ есть и зарегистрирован (merge.registry-union.driver, .gitattributes). Остаток: gh pr merge серверный драйвер не видит → PR всегда CONFLICTING; лечится локальным git merge origin/main. ПРОВЕРЕНО живьём 16.07: драйвер разрулил реестр сам. НО хук commit-msg отклоняет merge-коммиты («Not committing merge») — норма упирается в хук, обход SKIP_COMMIT_MSG=1 подсказывает сам хук. Сначала проверить гипотезу #515: не хватит ли НОРМЫ вместо третьей обёртки рядом с pr:ship.",
+      "notes": "Эпик #539, #515 п.1 (высший payoff), #476. Union-драйвер УЖЕ есть и зарегистрирован (merge.registry-union.driver, .gitattributes). Остаток: gh pr merge серверный драйвер не видит → PR всегда CONFLICTING; лечится локальным git merge origin/main. ПРОВЕРЕНО живьём 16.07: драйвер разрулил реестр сам. СНЯТО (TF-1, #554): «хук отклоняет merge-коммиты» — ЛОЖНАЯ находка, не чинить. Хук освобождает Merge* (проверено прогоном); ломало собственное -m «merge: ...» строчными. Норма: мёржить БЕЗ -m, дать git сгенерировать Merge branch. Сначала проверить гипотезу #515: не хватит ли НОРМЫ вместо третьей обёртки рядом с pr:ship.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
