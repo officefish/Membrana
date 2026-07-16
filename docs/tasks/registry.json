@@ -1,6 +1,105 @@
 {
   "tasks": [
     {
+      "id": "grp4-graphify-gated",
+      "title": "GRP4 (условная): graphify за grant:graphify — только после #529 + 3 условий очереди",
+      "promptPath": "docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "notes": "Фаза 4, УСЛОВНАЯ. graphify за гейт только по закрытии #529 И: (1) cold-load<=3с, (2) сборка не тянет исходники graphify в граф зависимостей apps/panel, (3) #529 закрыт. Тот же маршрут-мост под grant:graphify.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "graphify-research-tree-panel-sections"
+    },
+    {
+      "id": "grp3-research-tree-gated",
+      "title": "GRP3: research-tree за grant:research-tree + git-time-travel офлайн-снапшот, presentation-порт",
+      "promptPath": "docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin",
+        "dynin"
+      ],
+      "notes": "Фаза 3. research-tree как самостоятельный артефакт через мост под grant:research-tree; git-time-travel на офлайн-построенном снапшот-индексе (JSON, прод-git в рантайме не читается); рамка мгновенно + skeleton/aria-busy, cold-load <=3с; presentation как заменяемый порт под будущий дизайн-эпик (инвариант 'живой мозг').",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "graphify-research-tree-panel-sections"
+    },
+    {
+      "id": "grp2-grants-owner-matrix",
+      "title": "GRP2: два гранта (research-tree/graphify) + owner-матрица/промокоды, empty-state",
+      "promptPath": "docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Фаза 2. grant:research-tree + grant:graphify в реестре секций; owner-матрица #463 PU3 показывает новые разделы; промокоды с этими грантами; empty-state 'грантов ноль' — строка-манифест; тесты предиката и /me; 0 новых зав-тей.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "graphify-research-tree-panel-sections"
+    },
+    {
+      "id": "grp1-route-bridge-sections",
+      "title": "GRP1: маршрут-мост + реестр секций панели + ADR топологии + контракт-тест подписи×гранта",
+      "promptPath": "docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "kuryokhin",
+        "vesnin"
+      ],
+      "notes": "Фаза 1 эпика graphify-research-tree-panel-sections. ADR (расширение ADR-0008): panel.mmbrn.tech несёт разделы за гейтом. Реестр секций {id,minRole,grants,render:мост}; мост /panel/section/<id>/* отдаёт статику только при HMAC-cookie+grant-id (ролей в прокси нет); контракт-тест валидная/невалидная подпись × наличие/отсутствие гранта; линт границ импортов panel<->блоки.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "graphify-research-tree-panel-sections"
+    },
+    {
+      "id": "graphify-research-tree-panel-sections",
+      "title": "Epic: graphify + research-tree как разделы панели за гейтом (GRP1-4)",
+      "promptPath": "docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "Под-эпик к panel-partner-access #463. Консилиум graphify-research-tree-panel-sections-2026-07-16 (25 реплик): блоки=независимые SPA за маршрут-мостом (без импортов panel<->блоки); 2 гранта research-tree/graphify поверх canAccess #463, БЕЗ новой роли; тир=комбинация грантов; git-time-travel офлайн-снапшот; graphify за гейт только после #529+3 условий; визуал сменный (живой мозг=будущий дизайн-эпик).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "main-day-probe-gate",
       "title": "Препроцессор-гейт посылок MAIN_DAY_ISSUE: маркер в коде первичен, Issue вторичен",
       "promptPath": "docs/prompts/MAIN_DAY_PROBE_GATE_PROMPT.md",
