@@ -261,8 +261,12 @@ systemctl reload caddy
 
 echo "=== [4/4] ожидание LE + smoke ==="
 sleep 20
-curl -fsS --max-time 30 -o /dev/null -w 'https://${PANEL_DOMAIN} -> HTTP %{http_code}\\n' https://${PANEL_DOMAIN}/ || echo "HTTPS ещё прогревается (LE может занять до минуты)"
+HTTP_CODE=\$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 https://${PANEL_DOMAIN}/ || echo 000)
+echo "https://${PANEL_DOMAIN} -> HTTP \$HTTP_CODE"
 rm -f ${remoteTar}
+# T4 (#548): единая машиночитаемая сводка ПОСЛЕДНЕЙ строкой — переживает обрезку лога
+# (tail), не нужен ручной remote-grep для верификации выкладки.
+echo "[deploy-summary] panel=ok graphify=\$([ -d /opt/membrana-graphify ] && ls /opt/membrana-graphify | wc -l || echo 0) research-tree=\$([ -d /opt/membrana-research-tree ] && ls /opt/membrana-research-tree | wc -l || echo 0) caddy=reloaded https=\$HTTP_CODE"
 `;
 
 function runDeploy() {

@@ -157,10 +157,17 @@ export function buildTaskEntry(input, today) {
   if (input.issue != null && !Number.isInteger(Number(input.issue))) {
     throw new Error(`Некорректный --issue "${input.issue}": целое число.`);
   }
+  // T1 (#548): CLI-флаг --prompt парсер кладёт в input.prompt, а не promptPath —
+  // раньше значение игнорилось и карточка получала дефолтный id-путь. Принимаем оба.
+  const promptPath =
+    input.promptPath ?? input.prompt ?? `docs/prompts/${input.id.replace(/-/g, '_').toUpperCase()}_PROMPT.md`;
+  // T1: --parent-epic / --parent → parentEpic (раньше не поддерживалось вовсе →
+  // фазы приходилось хэнд-фиксить node-скриптом).
+  const parentEpic = input.parentEpic ?? input['parent-epic'] ?? input.parent ?? null;
   const entry = {
     id: input.id,
     title: input.title.trim(),
-    promptPath: input.promptPath ?? `docs/prompts/${input.id.replace(/-/g, '_').toUpperCase()}_PROMPT.md`,
+    promptPath,
     githubIssue: input.issue != null ? Number(input.issue) : null,
     size: input.size,
     status: 'active',
@@ -173,6 +180,7 @@ export function buildTaskEntry(input, today) {
     archiveNotes: null,
     githubIssueClosedAt: null,
   };
+  if (parentEpic) entry.parentEpic = parentEpic;
   if (input.insight) entry.insightId = input.insight;
   return entry;
 }
