@@ -1,7 +1,7 @@
 /**
  * MS5 prod-smoke for Membrana Studio: build artifacts + cabinet health + optional MP7.
  */
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
@@ -50,6 +50,64 @@ export function findNsisInstaller(releaseDir) {
 }
 
 /**
+ * Файлы client-dist, попадающие в инсталлятор (index.html + assets).
+ *
+ * @param {string} clientDistDir
+ */
+export function clientDistFiles(clientDistDir) {
+  /** @type {string[]} */
+  const out = [];
+  const index = resolve(clientDistDir, 'index.html');
+  if (existsSync(index)) out.push(index);
+  const assetsDir = resolve(clientDistDir, 'assets');
+  if (existsSync(assetsDir)) {
+    for (const name of readdirSync(assetsDir)) out.push(resolve(assetsDir, name));
+  }
+  return out;
+}
+
+/**
+ * Самая свежая mtime среди существующих путей, мс. null — если ни одного нет.
+ *
+ * @param {string[]} paths
+ */
+export function newestMtimeMs(paths) {
+  /** @type {number|null} */
+  let newest = null;
+  for (const path of paths) {
+    if (!existsSync(path)) continue;
+    const { mtimeMs } = statSync(path);
+    if (newest === null || mtimeMs > newest) newest = mtimeMs;
+  }
+  return newest;
+}
+
+/**
+ * Свежесть инсталлятора относительно сборки, которую он упаковывает.
+ *
+ * Гейт существования (`findNsisInstaller`) зелёный на артефакте любой давности:
+ * пересобрали client-dist, забыли `yarn studio:package` — смоук молчит, а прод
+ * (`membrana.space/downloads`) раздаёт прошлую сборку. Инвариант: .exe не старше
+ * своих входов.
+ *
+ * Абсолютного порога возраста намеренно НЕТ: инсталлятор, совпадающий со своими
+ * входами, актуален независимо от даты — устаревание задаёт сборка, не календарь.
+ *
+ * @param {{ installerMtimeMs: number|null, inputs?: {label: string, mtimeMs: number|null}[] }} args
+ * @returns {{ verdict: 'fresh'|'stale'|'missing', staleAgainst: string[] }}
+ */
+export function assessInstallerFreshness({ installerMtimeMs, inputs = [] }) {
+  if (installerMtimeMs === null || installerMtimeMs === undefined) {
+    return { verdict: 'missing', staleAgainst: [] };
+  }
+  const staleAgainst = inputs
+    .filter((input) => input.mtimeMs !== null && input.mtimeMs !== undefined)
+    .filter((input) => input.mtimeMs > installerMtimeMs)
+    .map((input) => input.label);
+  return { verdict: staleAgainst.length > 0 ? 'stale' : 'fresh', staleAgainst };
+}
+
+/**
  * @param {{ root?: string; runMp7?: boolean; fetchImpl?: typeof fetch }} [options]
  */
 export async function runStudioMs5ProdSmoke(options = {}) {
@@ -75,6 +133,26 @@ export async function runStudioMs5ProdSmoke(options = {}) {
 
   const installer = findNsisInstaller(paths.releaseDir);
   mark('nsis-installer', installer !== null, installer ?? 'run yarn studio:package first');
+
+  if (installer === null) {
+    // Отсутствие уже провалено выше — не считаем одну поломку дважды.
+    console.log('[ms5-smoke] nsis-installer-fresh: SKIP (инсталлятора нет)');
+  } else {
+    const freshness = assessInstallerFreshness({
+      installerMtimeMs: newestMtimeMs([installer]),
+      inputs: [
+        { label: 'dist/main.js', mtimeMs: newestMtimeMs([paths.mainJs]) },
+        { label: 'client-dist', mtimeMs: newestMtimeMs(clientDistFiles(paths.clientDist)) },
+      ],
+    });
+    mark(
+      'nsis-installer-fresh',
+      freshness.verdict === 'fresh',
+      freshness.verdict === 'stale'
+        ? `.exe старше входов: ${freshness.staleAgainst.join(', ')} — пересобери yarn studio:package`
+        : 'не старше dist/main.js и client-dist',
+    );
+  }
 
   try {
     const res = await fetchImpl(`${CABINET_PROD_URL}/health`);
