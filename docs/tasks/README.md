@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `main-day-probe-gate` | Препроцессор-гейт посылок MAIN_DAY_ISSUE: маркер в коде первичен, Issue вторичен | M | [`MAIN_DAY_PROBE_GATE_PROMPT.md`](../docs/prompts/MAIN_DAY_PROBE_GATE_PROMPT.md) | [#533](https://github.com/officefish/Membrana/issues/533) |
 | `detector-metrics-characterization` | detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex | L | [`DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md`](../docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `product-landing` | product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов) | M | [`PRODUCT_LANDING_PROMPT.md`](../docs/prompts/PRODUCT_LANDING_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `root-domain-scenarios-docs` | root-domain-scenarios-docs: доки на membrana.space/scenarios/docs (Mintlify subpath-proxy) + root-Caddy на cabinet-VPS | M | [`ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md`](../docs/prompts/ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
@@ -751,4 +752,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-15.*
+*Файл обновлён автоматически: 2026-07-16.*

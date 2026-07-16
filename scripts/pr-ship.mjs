@@ -55,7 +55,21 @@ export function otherWorktreeBranches(run = execFileSync) {
 }
 
 /**
- * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean,commit?:boolean,worktreeBranches?:string[]}} opts
+ * Упоминания `#N` в тексте.
+ *
+ * `(#415)` в заголовке — ССЫЛКА, а не closing keyword: GitHub закрывает issue
+ * только по Closes/Fixes/Resolves. Живой случай — PR #417 (13.07): заголовок
+ * «…метка модальностей (#415…)», тело = копия заголовка, код слит, #415 остался
+ * open. Утренний ритуал читает open как «работа не сделана» и 16.07 назначил
+ * магистралью переписать уже существующее ядро `fuseDetectorConfidences`
+ * (разбор: docs/seanses/main-day-issue-drift-report-2026-07-16.md).
+ */
+export function extractIssueMentions(text) {
+  return [...String(text ?? '').matchAll(/#(\d+)/gu)].map((m) => Number(m[1]));
+}
+
+/**
+ * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean,commit?:boolean,worktreeBranches?:string[],allowMentionWithoutClose?:boolean}} opts
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
@@ -68,6 +82,17 @@ export function planPrShip(opts) {
     throw new Error('pr:ship: --no-commit несовместим с --branch (коммиты уже на существующей ветке)');
   }
   const title = `${type}${scope ? `(${scope})` : ''}: ${message}`;
+  // Гейт корня 1: упомянул issue в заголовке — либо закрывай (--issue), либо
+  // скажи явно, что не закрываешь (--allow-mention). Молчаливое «(#N)» уже
+  // стоило дня планирования 16.07.
+  const mentioned = extractIssueMentions(title);
+  if (!issue && mentioned.length > 0 && opts.allowMentionWithoutClose !== true) {
+    throw new Error(
+      `pr:ship: заголовок упоминает #${mentioned.join(', #')}, но --issue не задан — ` +
+        '«(#N)» НЕ закрывает issue (нужен Closes). Добавь --issue N либо --allow-mention, ' +
+        'если ссылка намеренная.',
+    );
+  }
   const closes = issue ? `Closes #${issue}\n` : '';
   const commitBody = `${title}\n\n${closes}${TRAILER}`;
 
@@ -112,6 +137,7 @@ function parseArgs(argv) {
     else if (a === '--base') o.base = next();
     else if (a === '--no-merge') o.merge = false;
     else if (a === '--no-commit') o.commit = false;
+    else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--execute') o.execute = true;
   }
   return o;

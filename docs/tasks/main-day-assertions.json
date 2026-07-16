@@ -1,0 +1,17 @@
+{
+  "//": "Посылки развилки MAIN_DAY_ISSUE — вход гейта `yarn main-day-probe` (#533).",
+  "//generator": "Пока заполняется рукой при спорной развилке; разметка генератором — фаза PG5.",
+  "//semantics": "Каждая посылка утверждает ОТСУТСТВИЕ работы. Найденный маркер её опровергает → violated.",
+  "//case": "Ниже — реальная развилка 16.07: обе посылки пали, план звал переписать готовое ядро.",
+  "assertions": [
+    {
+      "claim": "Ветка A: fusion в коде ещё не живёт — написать чистую функцию объединения confidence",
+      "marker": { "kind": "symbol", "value": "fuseDetectorConfidences" },
+      "issue": 415
+    },
+    {
+      "claim": "Ветка B: три пустых UC-каркаса — налить спектр/нейро/библиотеку",
+      "marker": { "kind": "file", "value": "packages/device-board/src/graph/usercase-free-spectrum-live.ts" }
+    }
+  ]
+}

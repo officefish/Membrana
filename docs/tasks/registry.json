@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "main-day-probe-gate",
+      "title": "Препроцессор-гейт посылок MAIN_DAY_ISSUE: маркер в коде первичен, Issue вторичен",
+      "promptPath": "docs/prompts/MAIN_DAY_PROBE_GATE_PROMPT.md",
+      "githubIssue": 533,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-16",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "vesnin"
+      ],
+      "notes": "Консилиум main-day-issue-accuracy-2026-07-16 (25 реплик, LGTM). Повод — разбор main-day-issue-drift-report-2026-07-16: план 16.07 назначил магистралью написать fuseDetectorConfidences, слитый 13.07 (#415 висел open — PR #417 дал «(#415)» вместо Closes). Read-only гейт: exists(symbol) + issue.state, расхождение → violated как НАХОДКА (реестр протух), автопочинка запрещена. Эталон структуры — evaluateProdMainDivergence (#413): чистое ядро + тонкая обвязка, exit 0/2, текст а не только цвет, graceful «нет данных ≠ алерт». XS по корням 1 и 3 уже в PR #532. Фазы PG0-PG5.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "detector-metrics-characterization",
       "title": "detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex",
       "promptPath": "docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md",
