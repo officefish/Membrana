@@ -1,154 +1,143 @@
-<!-- Сгенерировано: 2026-07-14T04:03:26.176Z (yarn standup) -->
+<!-- Сгенерировано: 2026-07-16T05:00:09.295Z (yarn standup) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
-<!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (24), packages/temp (0 файлов) -->
+<!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (22), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
 
-# 🗓 Ежедневный стендап виртуальной команды Membrana — 2026-07-14
+# 🗓 Ежедневный стендап виртуальной команды Membrana — 2026-07-16
 
 **Координатор:** Vesnin (Teamlead)
-**Источники:** STRATEGIC_PLAN_DAY (14.07), DAILY_CODE_REVIEW (13.07 вечер, T0), MAIN_DAY_ISSUE (13.07), CURRENT_TASK (буфер), FFT_METRICS §6 (#84), открытые GitHub Issues (gh CLI), packages/temp (0), RAG operative
+**Источники:** STRATEGIC_PLAN_DAY (16.07), DAILY_CODE_REVIEW (15.07 вечер, T0), MAIN_DAY_ISSUE (15.07, канон упаковки FREE), CURRENT_TASK (буфер), FFT_METRICS §6 (#84), открытые GitHub Issues (22, gh CLI), packages/temp (0), RAG operative
 
 ---
 
-## Входные артефакты — актуальность
+## Резюме дня
 
-| Источник | Свежесть | Что берём |
-|----------|----------|-----------|
-| STRATEGIC_PLAN_DAY.md | ✅ свежий (14.07) | Магистраль = **объяснимость fusion** (Задача A) + **перф-замер yamnet** (Задача B) + **S3 combined UC** (Задача C); side D/E (spec-preserve, долг смоуков) |
-| DAILY_CODE_REVIEW.md | ✅ вечер 13.07 | **T0**, CI зелёный (test 56/56, lint 35/35). Diff = docs-only. Незакоммиченный `docs/reviews/tdoa-localizer-spec-s1/` — отдельным коммитом |
-| MAIN_DAY_ISSUE.md | ⚠️ вчерашний (13.07) | Контекст: DA4/DA5 замкнуты, S3-старт. **Перевыпустить на 14.07** — фокус сместился: эпик #396 закрывается, магистраль = fusion-объяснимость + продукт |
-| CURRENT_TASK.md | 🔸 буфер | Два новых трека: UI-панель дрейфа (#396 финал, **консилиум-гейт** `drift-panel-placement`) + telegram v2 (#434). `hermes-brief` — отдельная сессия |
-| FFT_METRICS §6 (#84) | ✅ канон | Эшелон 0 исчерпан → **не** запускать «Этап 1.A / benchmark 3 DSP» |
-| GitHub Issues (открыты) | ✅ актуально | #434, #433 (agent-tooling), #420 (privacy-backlog), #416/#415 (fusion-perf), #411/#410/#409/#408/#407 (tooling-friction), #402, #396, #236, #197–195 (intern), #187, #57 |
-| packages/temp | — (0) | Набросков нет — ничего не подмешиваем |
-| RAG operative | ✅ | Подтверждает непрерывность магистрали (12→13→14.07): drift-anchor → продукт |
+Главный фокус — **продуктовая магистраль FREE перед дедлайном ~17.07**: либо старт **S2 combined UC (fusion спектр+нейро + alarm-loop)** по STRATEGIC_PLAN_DAY, либо, если считать S2 уже слитым (#416 closed), **наполнение трёх фрагментарных UC-каркасов** (спектр/нейро/библиотека) пересборкой существующих узлов. Первый шаг обязателен — **разведка §5**: восстановить точное состояние S2 из `registry.json` + `foresight-2026-07-06.md`, снять противоречие между планом и MAIN_DAY_ISSUE. Главный риск — **1 день до дедлайна FREE, а продуктовый шаг в коде под вопросом**; вчера сутки ушли в тулинг/инфру. Критерий успеха к вечеру: **разведка закрыта, магистраль однозначно определена и стартовала в коде** (fusion-узел ИЛИ первый непустой UC-документ), рабочее дерево чистое.
 
 ---
 
-## Вчера (13.07) — что закрыто
+## Входные артефакты
 
-- **Telegram-спринт `#428`** — ЗАКРЫТ (PR #431 + hotfix `0291f954`). E2E живой, оба дайджеста доставлены (sent=true). Памятка `docs/comms/ALLY_PRIMER.md`.
-- **`llm-providers-unblock` (#424/#425/#426)** — ЗАКРЫТ (bf6f7fb0, LGTM ×2). Хвосты — на владельце (баланс DeepSeek, платёжный метод Voyage).
-- **Persona Memory фаза 1 (#422/#423)** — ЗАКРЫТА. Пилот = `--with-memory` на ближайшем консилиуме.
-- **drift-anchor DA0-DA3 + DA4/DA5 контур (#396)** — ядро + процессный контур замкнуты. Осталась UI-панель (финал эпика).
-- **yamnet live-fusion (#415/#417/#416)** — в prod-бенчмарке, F1 0.803; DEV-лог `latencyMs` добавлен.
-
----
-
-## Позиция на дорожной карте
-
-Между **Этапом 1.B** (нейро-эшелон на одном узле, yamnet в prod) и **продуктовой финализацией FREE** (дедлайн ~17.07). Многоузловые этапы 2–7 (TDOA/localizer/tracker/transport) — **заморожены** до hard-gate на VDR-корпусе.
-
-**Риск дня:** доля инфра-коммитов за сутки заметно выше продуктовых (S2/S3) при дедлайне FREE через ~3 дня. Сегодня баланс возвращается к продукту.
+| Источник | Актуальность | Что берём сегодня |
+|----------|--------------|-------------------|
+| STRATEGIC_PLAN_DAY.md | ✅ свежий (16.07) | Магистраль = **S2 combined UC (fusion + alarm-loop)**; разведка §5 обязательна; анти-приоритеты §6; риск дедлайна §7 |
+| DAILY_CODE_REVIEW.md | ✅ вечер 15.07 | **T0**, CI зелёный (test 57/57, lint 36/36), diff docs-only. Проверить статус `docs/archive/night-hunt/2026-07-15/` — закоммитить осознанно или очистить |
+| MAIN_DAY_ISSUE.md | ⚠️ вчерашний (15.07, fallback) | Альт-трактовка: S2 слит (#416), остаток = **упаковка 3 UC-каркасов**. Снять противоречие с планом в разведке — что именно магистраль |
+| CURRENT_TASK.md | 🔸 буфер | Шум прошлых спринтов (drift-panel, telegram, office-panel — закрыты). Магистраль не трогать. #452 detector-compare — не сегодня |
+| FFT_METRICS §6 (#84) | ✅ канон | Эшелон 0 исчерпан → **не** «Этап 1.A / benchmark 3 DSP»; продакшн — trends DRONE_TIGHT |
+| GitHub Issues (открыто 22) | ✅ актуально | #415 (live-neural fusion — критпуть FREE), #494 (batch — пост-FREE), #476/#407–#411 (tooling-долг), #396/#420 (drift), #236/#197/#196/#195/#187, #57/#34/#33/#27/#10/#8/#7 (math/ui-долг) |
+| packages/temp | — (0, каталог отсутствует) | Набросков нет — ничего не подмешиваем |
+| RAG operative | ✅ | Подтверждает непрерывность магистрали S2→drift→упаковка (13→16.07) |
 
 ---
 
-## 🎯 Магистраль дня — три задачи + side
+## Порядок работы
 
-### Задача A (M) — Сводная таблица trends `DRONE_TIGHT` vs yamnet на общем `val`
-```
-[Teamlead]:    Форма решения принята. Одна таблица «основной vs объяснимый бэкап»
-               на held-out val — вход в hard-gate. БЕЗ повторного тюнинга DSP (#84 §6).
-[Структурщик]: —
-[Математик]:   Ведёт. recall/precision/FPR/F1 обеих конфигураций в одной шкале на
-               одном val-срезе. Отразить слабую корреляцию профилей ошибок (заметка ND3).
-               Явно назвать «основной для hard-gate» / «объяснимый бэкап» + обоснование.
-[Музыкант]:    —
-[Верстальщик]: —
+Магистраль FREE — цепочка эвристики №1 (фича с UI+звуком), но **разведка ставится нулевым шагом**:
 
-Итоговый артефакт: секция в DETECTOR_BENCHMARK.md (таблица + вердикт).
-Definition of Done: одна таблица на общем val; назван основной/бэкап с обоснованием;
-   отражена слабая корреляция DSP/нейро; без повторного тюнинга порогов; LGTM Teamlead.
-```
-
-### Задача B (S) — Перф-замер p95 yamnet-инференса в live combined
-```
-[Teamlead]:    Закрывает перф-долг §2 (Этап 1.A: p95 < 100 ms для нейро-канала). Мандат #416.
-[Структурщик]: —
-[Математик]:   —
-[Музыкант]:    Ведёт. Снять p50/p95 из DEV-лога latencyMs (#416) на живом каденсе
-               (windowSec 2с, опрос нейро раз в 6с) с реальным микрофоном (headless не в счёт).
-               При непопадании в каденс — снижать pollIntervalMs нейро, НЕ DSP.
-[Верстальщик]: Поддержка: UI-метка модальностей («спектр+нейро» / graceful DSP-only).
-
-Итоговый артефакт: цифра p50/p95 в DETECTOR_BENCHMARK.md или LIVE_DETECTION_UI.md.
-Definition of Done: p95 снят на репрезентативном живом прогоне; зафиксирован; если >
-   бюджета — follow-up на pollIntervalMs; тесты плагина зелёные. Удобно совместить с S2 live-smoke.
-```
-
-### Задача C (M) — Продвижение S2 combined UC к упаковке (шаг к S3)
-```
-[Teamlead]:    Магистраль продукта. combined UC (спектр+нейро + alarm-loop «ближе/дальше»
-               по громкости) как готовый FREE UserCase. Границы + LGTM за мной.
-[Структурщик]: Границы пакетов: UC через MembranaRegistry (lazy-module, §1c ARCHITECTURE),
-               fusion — на уровне СЦЕНАРИЯ, не внутри analyzer-сервиса. Ядро device-board не трогать.
-[Математик]:   —
-[Музыкант]:    По fusion-контракту: alarm-loop поверх fusion-выхода, сырой confidence
-               yamnet (не бинарный вердикт).
-[Верстальщик]: Ведёт. Карточка UC в device-board-каталоге; регистрация в free-tier-user-case-entries.ts.
-
-Итоговый артефакт: combined UC зарегистрирован + карточка в device-board-каталоге.
-Definition of Done: alarm-loop «ближе/дальше» поверх fusion; UC через MembranaRegistry;
-   карточка в каталоге; сырой confidence yamnet; LGTM Teamlead. Прогнать catalog:verify-client.
-```
-
-### Side-слот (P2, только при остатке ёмкости)
-
-- **Задача D (S)** — пометить `docs/reviews/tdoa-localizer-spec-s1/` как `@stage 2 / preserved / за hard-gate`; закоммитить отдельным осмысленным коммитом (не в daily-снимок). Ведёт: Структурщик + Teamlead.
-- **Задача E (S)** — зафиксировать долг живых смоуков DeepSeek/voyage (баланс/rate-limit) в `CURRENT_TASK`/реестре; подтвердить graceful fallback; VDR-железо ~17.07 явно помечено «не блокер FREE». Ведёт: Teamlead + Структурщик.
+**Vesnin (разведка §5 + вердикт «S2 vs упаковка»)** → **Kuryokhin** (fusion-узел / детекторная ветка графа) ∥ **Rodchenko** (UC-карточка/каталог) → **Ozhegov** (границы пакетов, device-board интеграция) → **Vesnin (LGTM)**. Консилиум по #415 не нужен — контракт зафиксирован мандатом владельца.
 
 ---
 
-## 🟢 ФАЗА 0 — блокирующая гигиена (перед магистралью)
+## [Teamlead]
 
-1. Закоммитить незакоммиченные docs (daily-снимок + `branch-feat-telegram-ally-reports-code-review.md`) — до вечернего `archive:daily-day`.
-2. `docs/reviews/tdoa-localizer-spec-s1/` — **отдельным** коммитом (не смешивать с daily-снимком, вердикт Структурщика 13.07).
-3. `yarn turbo run lint typecheck test --filter=@membrana/client` (зелёный якорь плагинов fusion).
-4. `yarn docs:lint` (новые md: branch-review + tdoa-spec).
-5. Нет `.txt` в корне (гигиена рабочего дерева).
-6. `yarn catalog:verify-client` (для Задачи C).
+**Стратегический фокус.** День решающий: до дедлайна FREE ~17.07 остаётся ~1 день. Первое действие — **разведка §5 STRATEGIC_PLAN_DAY** (не код): прочитать `foresight-2026-07-06.md`, найти карточку S2 в `registry.json` (`combined`/`fusion`/`s2`/`alarm`), проверить статус `neural-drone-analyzer`/yamnet-confidence в графе device-board. Снять противоречие плана (S2 не начат) и MAIN_DAY_ISSUE (S2 слит #416 → упаковка). **Мой предварительный вердикт:** #415 (`live-neural-combined-fusion`) — прямой мандат владельца и критпуть FREE; если fusion в коде ещё не живёт — это магистраль дня. Если fusion уже слит — переключаемся на наполнение трёх UC-каркасов.
 
-**Ответ:** Ozhegov + Rodchenko.
+**LGTM-границы.** Fusion-логика графа — в `device-board`; детекторы остаются сервисами `packages/services/detectors/*`; **горизонтальных зависимостей между сервисами не вводить** (ARCHITECTURE §1a/1e). Fusion берёт **сырой confidence yamnet, не бинарный вердикт** (заметка ND3). Без LGTM слияния нет.
 
----
+**Не делаем сегодня (анти-приоритеты §6):** ❌ «Этап 1.A / unified benchmark 3 DSP» (FFT_METRICS §6 — потолок зафиксирован); ❌ повторный тюнинг порогов DSP без новых данных; ❌ переизобретение yamnet (#266/#268 готовы); ⚠️ тулинг-гигиена как магистраль — вчера её было достаточно, при дедлайне приоритет продукту; ❌ 🚫 **новых узлов палитры не делать** (слово владельца) — только пересборка существующих basn-узлов. ❄️ **Живой дрон — не гейт перед отгрузкой FREE**, а её смысл (полевые испытания = следующий жизненный цикл).
 
-## ⚠️ Отдельные сессии (НЕ в марафоне дня)
+**Приоритизация Issues.**
+- **В скоупе дня:** #415 (live-neural fusion — магистраль/критпуть FREE).
+- **Пост-FREE, не начинать:** #494 (batch-collection), #420 (полевой data-anchor, privacy-гейт).
+- **Долг (side-слот при простое магистрали):** #476 п.1 merge-driver реестра, #407–#411 (session-friction) — не в ущерб S2.
+- **Отложено:** #236 (tray-стоп), #197/#196/#195 (intern), #187 (proxy-perf), #57 (template-editor), #34/#33/#27/#10/#8/#7 (math/ui/test-долг).
 
-- **UI-панель «Дрейф-якоря» (#396 финал):** свежей сессией. Шаг 0 **обязателен** — `yarn consilium --save-as drift-panel-placement` (развилка «кабинет vs отдельный panel-app `panel.mmbrn.tech`», поднял владелец). **НЕ начинать компонент до вердикта консилиума.** Удобно проверить пилот persona-memory (`--with-memory`).
-- **Telegram v2 (#434):** md-шапка (expandable blockquote) + подробная фактура — отдельная S/M-сессия, канон модуля #428 уже есть.
-- **`hermes-brief`:** только отдельная сессия, магистраль не трогать.
+**Детекция.** Магистраль по FFT — только trends `DRONE_TIGHT` (95%/30%, go) + fusion с yamnet-confidence (эшелон 2). Рост качества — за счёт validated data или нейро, не за счёт нового DSP-тюнинга.
 
 ---
 
-## 🚫 Что НЕ делаем сегодня
+## [Структурщик]
 
-- **НЕ** повторный unified benchmark harmonic/cepstral/spectral-flux на free-v1 — потолок эшелона 0 зафиксирован (#84 §6). Задача A — БЕЗ нового DSP-прогона.
-- **НЕ** начинаем реализацию `tdoa-service` / `localizer-service` / `tracker-service` / `transport-service` — Этапы 2–7 заморожены (WHITE_PAPER §8). Спека — только preserved-пометка (Задача D).
-- **НЕ** переизобретаем yamnet/нейро-детектор — уже в prod (#415/#417, F1 0.803).
-- **НЕ** гонимся за precision hard-gate 85/90 на free-v1 — проверяется на VDR-корпусе (~17.07).
-- **НЕ** трогаем ядро device-board при упаковке UC (Задача C).
-- **НЕ** начинаем UI-панель дрейфа и полевой data-anchor (#420) без консилиума + LGTM владельца.
+**Ozhegov.** Фаза 0 (блокирующая гигиена перед кодом): `yarn neighbors` (проверить коллизии worktree/main), `yarn catalog:verify-client` (каталог UC — предмет дня), `yarn turbo run lint typecheck test --filter=@membrana/device-board`. Разобрать untracked из dev-review: `docs/archive/night-hunt/2026-07-15/`, `docs/comms/drafts/alex-response-swallow.md`, `docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md` — закоммитить осознанно или очистить (чистое дерево перед deploy-preflight).
+
+При интеграции fusion — контроль границ: `device-board` потребляет confidence yamnet через **публичное API детектор-сервиса**, не через прямой импорт внутренностей. Никаких горизонтальных связей `detectors/harmonic ↔ detectors/cepstral ↔ neural`. Если увижу прямой импорт между плагинами/сервисами — верну с пометкой `нарушена слабая связанность`. `detection-metrics-service` (заведён #524) — оставить вне скоупа S2, не тянуть в fusion сегодня.
 
 ---
 
-## 🚫 Ключевой инвариант
+## [Математик]
 
-Fusion trends+yamnet живёт на уровне **сценария**, НЕ внутри analyzer-сервиса. `drift-anchor` остаётся чистым пакетом. Провайдеры (deepseek/voyage) инкапсулированы в `background-office` с локальным DTO (ADR 0004: три инварианта push-ingest — держать при повторе паттерна). analyzer не зависит от analyzer; сервисы не зависят от `apps/client`.
+**Dynin.** Fusion-объединение confidence — **чистая функция**: вход — `{ spectralConfidence, yamnetConfidence, rms }`, выход — `combinedScore` + метка источника; без side-эффектов, без фреймворков. Не бинарный OR — взвешенное/калиброванное объединение (профили ошибок DSP/нейро слабо коррелированы, ND3). Alarm-loop «ближе/дальше» — производная от RMS-тренда (RMS уже считается в `fft-analyzer`, не дублировать ядро).
 
----
-
-## ✅ Проверки в конце дня
-
-- **Задача A:** таблица на общем `val` в `DETECTOR_BENCHMARK.md`, явный вердикт «основной / объяснимый бэкап»; LGTM Teamlead.
-- **Задача B:** p95 yamnet измерен и записан; если > бюджета — follow-up на `pollIntervalMs`; тесты плагина зелёные.
-- **Задача C:** combined UC с alarm-loop зарегистрирован через `MembranaRegistry`, карточка видна в каталоге, fusion = сырой confidence; `catalog:verify-client` зелёный.
-- **Задача D (если делали):** spec помечена preserved/@stage 2, закоммичена отдельным коммитом; untracked очищены.
-- **Задача E (если делали):** долг смоуков зафиксирован; graceful fallback подтверждён; VDR ~17.07 = «не блокер FREE».
-- **Границы:** ни один новый код не нарушает граф зависимостей `ARCHITECTURE.md`/`SERVICES.md`; проверено на code-review.
+Math-долг (#10, #34) — **не сегодня**, но помню: fft-analyzer чистая математика без тестов — риск при любой правке ядра детекции. Держать в фоне, поднять после FREE. FFT edge cases (#34) — тем же пакетом.
 
 ---
 
-**Одна фраза дня:** вчера **замкнули процессный контур drift-anchor (DA4/DA5) и закрыли три спринта** (telegram, llm-providers, persona-memory), сегодня **возвращаем баланс к продукту** — объяснимость fusion (таблица trends vs yamnet, Задача A) + перф-замер yamnet (B) + упаковка S3 combined UC (C); UI-панель дрейфа и telegram v2 — отдельными сессиями через консилиум-гейт, без нового DSP-тюнинга и без Этапа 2.
+## [Музыкант]
+
+**Kuryokhin.** Веду детекторную ветку графа (по вердикту разведки). Форму fusion-узла и alarm-loop согласовать с Vesnin (1–2 абзаца + список модулей) **до существенного кода** — правило взаимодействия. yamnet-confidence достаётся из `neural-drone-analyzer` (проверить точку стыковки в device-board — разведка §5.4). Не менять алгоритмы детекторов без Математика; не дублировать мат-ядро.
+
+**Поток audio-engine.** `sampleRate` **не фиксируется** (48 kHz desktop / 44.1 kHz часть macOS — берётся из `AudioContext.sampleRate`, FFT_METRICS §Mic). Fusion и alarm-loop масштабируются по фактическому `frame.sampleRate`, не по «целевым» 48 kHz. Полевые сэмплы (реальные записи) — **следующий жизненный цикл** (#420), не гейт FREE.
+
+---
+
+## [Верстальщик]
+
+**Rodchenko.** Веду UC-карточку/каталог по DESIGN.md (параллельно Kuryokhin). Форму карточки согласовать с Vesnin до кода. Каталожный контракт: `yarn catalog:verify-client` зелёный после правок. Никакой бизнес-логики/Web Audio в JSX — только презентация; fusion-логика живёт в device-board-графе.
+
+**packages/temp:** каталог отсутствует (0 набросков) — **переносить нечего**. Анти-паттерн: не тащить в JSX прямые вызовы аудио или device-board-внутренностей. Untracked `alex-response-swallow.md` (comms-черновик) — не UI, оставить Структурщику на разбор.
+
+---
+
+## План на сегодня
+
+| Блок | Размер | Задача | DoD | Issues |
+|------|--------|--------|-----|--------|
+| Разведка §5 | S | Прочитать `foresight-2026-07-06.md`, найти карточку S2 в registry, проверить статус yamnet-confidence в графе | Вынесен вердикт «S2 fusion vs наполнение UC-каркасов»; точка стыковки yamnet задокументирована | #415 |
+| Фаза 0 гигиена | S | `neighbors` + `catalog:verify-client` + `turbo lint/typecheck/test --filter=device-board`; разобрать 3 untracked + night-hunt | CI зелёный; рабочее дерево чистое (осознанный коммит либо очистка) | — |
+| Fusion-узел (магистраль A) | M | Проектирование + impl fusion-узла: сырой yamnet-confidence + спектр → combinedScore в графе device-board | Чистая функция объединения + тест; graceful DSP-only с видимой меткой; без горизонтальных зависимостей | #415 |
+| Alarm-loop | M | Механика «ближе/дальше» по RMS-тренду в графе | Реагирует на изменение RMS; метка «спектр+нейро»; перф на живом каденсе | #415 |
+| UC-карточка | M | Карточка/каталог combined UC по DESIGN.md | `catalog:verify-client` зелёный; a11y; без логики в JSX | #415 |
+| Долг (side) | S | При простое магистрали: #476 п.1 merge-driver реестра ИЛИ #407 pr:ship устойчивость | 1 tooling-долг закрыт PR — только не в ущерб S2 | #476/#407 |
+
+---
+
+## Матрица Issues ↔ задачи дня
+
+| Задача дня | GitHub Issues |
+|------------|---------------|
+| Разведка §5 + вердикт магистрали | #415 |
+| Фаза 0 гигиена / чистое дерево | — |
+| Fusion-узел (combinedScore) | #415 |
+| Alarm-loop «ближе/дальше» | #415 |
+| UC-карточка/каталог | #415 |
+| Долг (side-слот, при простое) | #476, #407 |
+| **Отложено (пост-FREE)** | #494, #420 |
+| **Отложено (долг)** | #236, #197, #196, #195, #187, #57, #34, #33, #27, #10, #8, #7, #396, #408–#411 |
+
+---
+
+## Итоговый артефакт
+
+- `docs/STRATEGIC_PLAN_DAY.md` — фиксация вердикта разведки (S2 fusion vs наполнение UC).
+- `packages/device-board/src/**` — fusion-узел (объединение confidence) + alarm-loop в графе combined UC.
+- `packages/services/detectors/neural/**` или существующий сервис — точка выдачи сырого yamnet-confidence (если нужна доработка API).
+- Чистая функция объединения + тест (рядом с fusion-логикой).
+- UC-карточка/каталог (`packages/device-board/src/catalog/**` или `apps/client`), DESIGN.md.
+- Разбор untracked: `docs/archive/night-hunt/2026-07-15/`, `docs/comms/drafts/alex-response-swallow.md`, `docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md`.
+
+---
+
+## Definition of Done (день)
+
+- [ ] Разведка §5 закрыта: вердикт «S2 fusion vs наполнение UC-каркасов» вынесен и зафиксирован.
+- [ ] Точка стыковки yamnet-confidence в графе device-board найдена и задокументирована.
+- [ ] Фаза 0 пройдена: `neighbors` + `catalog:verify-client` + `turbo lint/typecheck/test --filter=device-board` зелёные.
+- [ ] Рабочее дерево чистое: 3 untracked + night-hunt закоммичены осознанно либо очищены.
+- [ ] Магистраль стартовала в коде: fusion-узел (сырой yamnet-confidence, не бинарный OR) ИЛИ первый непустой UC-документ.
+- [ ] Fusion — чистая функция объединения confidence + тест; graceful DSP-only с видимой меткой.
+- [ ] Без горизонтальных зависимостей между сервисами/плагинами (ARCHITECTURE §1a/1e); Teamlead LGTM.
+- [ ] Не запускались анти-приоритеты: benchmark 3 DSP, тюнинг порогов, новые узлы палитры, живой-дрон-гейт.
 
 ---
 
