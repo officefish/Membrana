@@ -9,8 +9,12 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
+  countIndependentSources,
+  dedupeByOrigin,
+  formatOriginSummary,
   formatProbeReport,
   hasViolatedAssertion,
+  originHash,
   probeAssertion,
   probeAssertions,
 } from './lib/main-day-probe.mjs';
@@ -139,6 +143,80 @@ test('CLI: --assertions и --json', () => {
   assert.equal(parseMainDayProbeArgs(['--assertions', 'x.json']).assertions, 'x.json');
   assert.equal(parseMainDayProbeArgs(['--json']).json, true);
   assert.equal(parseMainDayProbeArgs([]).assertions, 'docs/tasks/main-day-assertions.json');
+});
+
+// ─── эхо-камера: голоса считаются по первоисточникам ──────────────────────────────
+// Консилиум ritual-inputs-echo-and-extracts: источники, производные от одного снимка,
+// коррелированы полностью — их суммарный вес равен весу одного (диагноз Музыканта:
+// та же болезнь, что коррелированность детекторов в ансамбле).
+
+/** Реальная таблица «Почему это магистраль» 16.07: три строки, один первоисточник. */
+const ECHO_16_07 = [
+  {
+    claim: 'STRATEGIC_PLAN_DAY (16.07): магистраль = S2 combined UC',
+    origin: 'detection-planning-priorities.mjs@2026-07-06',
+  },
+  {
+    claim: 'Форсайт 2026-07-06: S2 первый в цепочке',
+    origin: 'detection-planning-priorities.mjs@2026-07-06',
+  },
+  {
+    claim: 'DAILY_STANDUP (16.07): магистраль = S2',
+    origin: 'detection-planning-priorities.mjs@2026-07-06',
+  },
+];
+
+test('originHash детерминирован и различает первоисточники', () => {
+  assert.equal(originHash('a@1'), originHash('a@1'), 'одинаковый вход → тот же хэш');
+  assert.notEqual(originHash('a@1'), originHash('a@2'), 'другая ревизия → другой источник');
+  assert.equal(originHash('a@1').length, 7);
+  assert.equal(originHash(''), '0000000', 'пустой источник не роняет');
+  assert.equal(originHash(undefined), '0000000');
+});
+
+test('эхо-камера 16.07: три строки таблицы → ОДИН независимый источник', () => {
+  assert.equal(countIndependentSources(ECHO_16_07), 1, '«консенсус» был отражением одного снимка');
+  const deduped = dedupeByOrigin(ECHO_16_07);
+  assert.equal(deduped.length, 1);
+  assert.equal(deduped[0].reflections, 3, 'три отражения одного первоисточника');
+});
+
+test('несогласный голос из ДРУГОГО первоисточника считается отдельно', () => {
+  // Вчерашний MAIN_DAY_ISSUE опирался на факт мёржа — независимый источник,
+  // и он был единственным правым. Дедуп обязан его сохранить.
+  const withDissent = [
+    ...ECHO_16_07,
+    { claim: 'MAIN_DAY_ISSUE (15.07): S2 слит, остаток — упаковка', origin: 'git-merge-fact@5e42c937' },
+  ];
+  assert.equal(countIndependentSources(withDissent), 2, 'эхо + независимый факт = два голоса, не четыре');
+});
+
+test('dedupeByOrigin сохраняет порядок: первое вхождение выигрывает', () => {
+  const deduped = dedupeByOrigin([
+    { claim: 'первый', origin: 'x@1' },
+    { claim: 'второй', origin: 'y@1' },
+    { claim: 'третий', origin: 'x@1' },
+  ]);
+  assert.deepEqual(deduped.map((d) => d.claim), ['первый', 'второй']);
+  assert.equal(deduped[0].reflections, 2);
+});
+
+test('formatOriginSummary помечает эхо ТЕКСТОМ, а не цветом', () => {
+  const summary = formatOriginSummary(ECHO_16_07);
+  assert.match(summary, /подтверждена 1 независимыми источниками/u);
+  assert.match(summary, /строк в таблице: 3/u, 'разрыв 1 против 3 обязан быть виден');
+  assert.match(summary, /1 источник, 3 отражений/u);
+});
+
+test('формат без эха не кричит', () => {
+  const summary = formatOriginSummary([{ claim: 'a', origin: 'x@1' }, { claim: 'b', origin: 'y@1' }]);
+  assert.match(summary, /2 независимыми/u);
+  assert.doesNotMatch(summary, /ЭХО/u);
+});
+
+test('пустой список источников — честная строка', () => {
+  assert.match(formatOriginSummary([]), /источников нет/u);
+  assert.equal(countIndependentSources([]), 0);
 });
 
 // ─── формат отчёта (Rodchenko) ────────────────────────────────────────────────────

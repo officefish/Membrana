@@ -24,7 +24,13 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { formatProbeReport, hasViolatedAssertion, probeAssertions } from './lib/main-day-probe.mjs';
+import {
+  dedupeByOrigin,
+  formatOriginSummary,
+  formatProbeReport,
+  hasViolatedAssertion,
+  probeAssertions,
+} from './lib/main-day-probe.mjs';
 
 export const DEFAULT_ASSERTIONS_REL = 'docs/tasks/main-day-assertions.json';
 
@@ -140,9 +146,10 @@ function main() {
   }
 
   let assertions;
+  let parsedManifest = null;
   try {
-    const parsed = JSON.parse(readFileSync(path, 'utf8'));
-    assertions = Array.isArray(parsed) ? parsed : (parsed?.assertions ?? []);
+    parsedManifest = JSON.parse(readFileSync(path, 'utf8'));
+    assertions = Array.isArray(parsedManifest) ? parsedManifest : (parsedManifest?.assertions ?? []);
   } catch (error) {
     console.error(`main-day-probe: манифест не читается: ${error?.message ?? error}`);
     return 2;
@@ -153,11 +160,19 @@ function main() {
     assertions.map((assertion) => ({ assertion, evidence: collectEvidence(assertion, cwd, sha) })),
   );
 
+  // Источники обоснования — отдельный список: голоса считаются по различным
+  // первоисточникам, а не по строкам таблицы (эхо-камера 16.07: три строки = один
+  // снимок от 06.07, и план счёл это консенсусом).
+  const sources = Array.isArray(parsedManifest?.sources) ? parsedManifest.sources : [];
+
   if (cli.json) {
-    console.log(JSON.stringify({ sha, results }, null, 2));
+    console.log(JSON.stringify({ sha, results, sources: dedupeByOrigin(sources) }, null, 2));
   } else {
     console.log('\n--- посылки MAIN_DAY_ISSUE ---\n');
     console.log(formatProbeReport(results));
+    if (sources.length > 0) {
+      console.log(`\n--- источники обоснования ---\n\n${formatOriginSummary(sources)}`);
+    }
     const stale = results.filter((r) => r.staleRegistry);
     if (stale.length > 0) {
       console.log(

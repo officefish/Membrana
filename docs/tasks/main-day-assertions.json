@@ -13,5 +13,25 @@
       "claim": "Ветка B: три пустых UC-каркаса — налить спектр/нейро/библиотеку",
       "marker": { "kind": "file", "value": "packages/device-board/src/graph/usercase-free-spectrum-live.ts" }
     }
+  ],
+  "//sources": "Источники обоснования магистрали. Голоса считаются по РАЗЛИЧНЫМ origin, а не по строкам.",
+  "//echo": "Ниже — реальная таблица «Почему это магистраль» 16.07: три строки, один снимок от 06.07.",
+  "sources": [
+    {
+      "claim": "STRATEGIC_PLAN_DAY (16.07): магистраль = S2 combined UC (fusion + alarm-loop)",
+      "origin": "detection-planning-priorities.mjs@2026-07-06"
+    },
+    {
+      "claim": "Форсайт 2026-07-06: S2 первый в цепочке S2→S3→S4→S5",
+      "origin": "detection-planning-priorities.mjs@2026-07-06"
+    },
+    {
+      "claim": "DAILY_STANDUP (16.07): магистраль = S2 combined UC",
+      "origin": "detection-planning-priorities.mjs@2026-07-06"
+    },
+    {
+      "claim": "MAIN_DAY_ISSUE (15.07): S2 слит (#416), остаток — упаковка UC-каркасов",
+      "origin": "git-merge-fact@5e42c937"
+    }
   ]
 }
