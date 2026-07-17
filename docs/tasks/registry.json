@@ -32,7 +32,7 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "notes": "Слой 3. Аудит M0: скретчпад субагента лежит по пути с sessionId ПРЕДСЕДАТЕЛЯ — предложенный enforcement (сверка sessionId) для этой топологии сломан по конструкции. Аудитор пометил вероятным, не доказанным. Вопрос ужесточён: не «как сверять», а «возможна ли независимость вообще». dependsOn: [mf6]",
+      "notes": "Слой 3. Аудит M0: скретчпад субагента лежит по пути с sessionId ПРЕДСЕДАТЕЛЯ — предложенный enforcement (сверка sessionId) для этой топологии сломан по конструкции. Аудитор пометил вероятным, не доказанным. Вопрос ужесточён: не «как сверять», а «возможна ли независимость вообще».",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -49,7 +49,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "Слой 3 (лист). dependsOn: [mf1]",
+      "notes": "Слой 3 (лист).",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -66,7 +66,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "Слой 2. dependsOn: [mf3]",
+      "notes": "Слой 2.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -83,7 +83,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "Слой 2. dependsOn: [mf2]",
+      "notes": "Слой 2.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -100,7 +100,7 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "notes": "Слой 2. Два worktree не могут держать одну ветку; кандидат — аудитор читает ref (git show), а не дерево. Повод не теоретический: 17.07 основное дерево переключили под работающим агентом. dependsOn: [mf2]",
+      "notes": "Слой 2. Два worktree не могут держать одну ветку; кандидат — аудитор читает ref (git show), а не дерево. Повод не теоретический: 17.07 основное дерево переключили под работающим агентом.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -117,7 +117,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "Слой 1, ГРАНИЦА зоны: пунктирный внешний узел, зависит от эпика truth-graph-contour. Владелец 17.07: привязка графа правды к консилиумам — отдельный консилиум. dependsOn: [mf1]",
+      "notes": "Слой 1, ГРАНИЦА зоны: пунктирный внешний узел, зависит от эпика truth-graph-contour. Владелец 17.07: привязка графа правды к консилиумам — отдельный консилиум.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -134,7 +134,7 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "notes": "Слой 1, «почти-корень». rt-6 грепает ЯРЛЫК, а не ищет вердикт — ложное срабатывание на первом же прогоне (эрратум к S-M2). dependsOn: [mf1]",
+      "notes": "Слой 1, «почти-корень». rt-6 грепает ЯРЛЫК, а не ищет вердикт — ложное срабатывание на первом же прогоне (эрратум к S-M2).",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -151,7 +151,7 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "notes": "Слой 1. Teamlead на M0 пометил кандидатом на слияние с носителем (mf1) — пометка не попала в итоговую таблицу, зафиксирована аудитором (находка D). dependsOn: [mf1]",
+      "notes": "Слой 1. Teamlead на M0 пометил кандидатом на слияние с носителем (mf1) — пометка не попала в итоговую таблицу, зафиксирована аудитором (находка D).",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -168,7 +168,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "Слой 1. Cowork плодит три (команды пишут код параллельно); заседание производит вердикты, M1..Mn последовательны по DAG. dependsOn: [mf1]",
+      "notes": "Слой 1. Cowork плодит три (команды пишут код параллельно); заседание производит вердикты, M1..Mn последовательны по DAG.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
@@ -185,7 +185,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "Слой 0 — ФУНДАМЕНТ по вердикту M0, единогласно 4 роли. Исход может обнулить остальные девять. Председатель ставил этот кандидат десятым; команда — первым. Родня вопросу, уронённому 17.07 («свести с ADR или разделить»). dependsOn: []",
+      "notes": "Слой 0 — ФУНДАМЕНТ по вердикту M0, единогласно 4 роли. Исход может обнулить остальные девять. Председатель ставил этот кандидат десятым; команда — первым. Родня вопросу, уронённому 17.07 («свести с ADR или разделить»).",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "meeting-format"
