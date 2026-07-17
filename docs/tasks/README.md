@@ -18,6 +18,20 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `scripts-boundary-container` | Граница scripts/: контейнер для ритуала — пакет, регламент, реестр | M | [`SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md`](../docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md) | — |
+| `truth-graph-contour` | Граф правды: архитектура, реестр зависимых процессов, охлаждение сессии, инструменты редактирования | L | [`TRUTH_GRAPH_CONTOUR_PROMPT.md`](../docs/prompts/TRUTH_GRAPH_CONTOUR_PROMPT.md) | [#576](https://github.com/officefish/Membrana/issues/576) |
+| `mf10-teeth-sm5` | Зубы S-M5: возможна ли независимость аудитора-субагента | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf9-auditor-readonly` | Чем обеспечена read-only природа аудитора | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf8-sprint-kind` | Нужен ли sprintKind: meeting | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf7-active-guard` | ACTIVE-guard: одно заседание за раз или несколько | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf6-auditor-worktree` | Нужен ли аудитору worktree | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf5-echo-rule` | Правило про лишнюю посылку в двух копиях на разных ветках | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf4-teeth-sm2` | Зубы S-M2: чем мерить наличие вердикта | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf3-commands-vs-flag` | Нужны ли команды open/next/audit или хватит флага --meeting | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf2-branch-count` | Сколько веток нужно заседанию | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `mf1-format-carrier` | Q-носитель: формат = 5-й регламент или секция в membrana-consilium | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `meeting-format` | Формат Заседания: структура, дорожная карта, зубы, аудитор | L | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
+| `ally-swallow-editorial-gate` | Ласточки партнёрам: формулировка Ожеговым + явное одобрение владельца + память после отправки | M | [`ALLY_SWALLOW_EDITORIAL_GATE_PROMPT.md`](../docs/prompts/ALLY_SWALLOW_EDITORIAL_GATE_PROMPT.md) | [#569](https://github.com/officefish/Membrana/issues/569) |
 | `agent-tooling-friction-3` | agent-tooling-friction-3: 5 фиксов трения сессии + мета-документы (инвентарь тулинга протух) | M | [`AGENT_TOOLING_FRICTION_3_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_3_PROMPT.md) | [#554](https://github.com/officefish/Membrana/issues/554) |
 | `membrana-device-build-profile` | Epic: Membrana Device — профиль сборки apps/client с единственным модулем борда | M | [`MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md`](../docs/prompts/MEMBRANA_DEVICE_BUILD_PROFILE_PROMPT.md) | — |
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | S | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../docs/prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — |
@@ -35,7 +49,7 @@
 | `grp1-route-bridge-sections` | GRP1: маршрут-мост + реестр секций панели + ADR топологии + контракт-тест подписи×гранта | M | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
 | `graphify-research-tree-panel-sections` | Epic: graphify + research-tree как разделы панели за гейтом (GRP1-4) | L | [`GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md`](../docs/prompts/GRAPHIFY_RESEARCH_TREE_PANEL_SECTIONS_EPIC_PROMPT.md) | — |
 | `main-day-probe-gate` | Препроцессор-гейт посылок MAIN_DAY_ISSUE: маркер в коде первичен, Issue вторичен | M | [`MAIN_DAY_PROBE_GATE_PROMPT.md`](../docs/prompts/MAIN_DAY_PROBE_GATE_PROMPT.md) | [#533](https://github.com/officefish/Membrana/issues/533) |
-| `detector-metrics-characterization` | detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex | L | [`DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md`](../docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
+| `detector-metrics-characterization` | detector-metrics-characterization: паспорт детектора (ROC/AUC/CI/EER) в Контроле качества — ответ на спарринг Alex | L | [`DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md`](../docs/prompts/DETECTOR_METRICS_CHARACTERIZATION_PROMPT.md) | [#565](https://github.com/officefish/Membrana/issues/565) |
 | `product-landing` | product-landing: лендинг membrana.space/ (описание продукта + CTA регистрация→кабинет + загрузка клиентов) | M | [`PRODUCT_LANDING_PROMPT.md`](../docs/prompts/PRODUCT_LANDING_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `root-domain-scenarios-docs` | root-domain-scenarios-docs: доки на membrana.space/scenarios/docs (Mintlify subpath-proxy) + root-Caddy на cabinet-VPS | M | [`ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md`](../docs/prompts/ROOT_DOMAIN_SCENARIOS_DOCS_PROMPT.md) | [#0](https://github.com/officefish/Membrana/issues/0) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
@@ -217,7 +231,7 @@
 | `rt-6-consilium-integrity` | RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки | 2026-07-16 | [`RT_6_CONSILIUM_INTEGRITY_PROMPT.md`](../docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md) | — | [карточка](./archive/rt-6-consilium-integrity.md) |
 | `rt-0-gate` | RT-0: гейт эпика — сверить сделанное с деревом, а не с таблицей | 2026-07-16 | [`RT_0_GATE_PROMPT.md`](../docs/prompts/RT_0_GATE_PROMPT.md) | — | [карточка](./archive/rt-0-gate.md) |
 | `deep-research-sprint-flag` | deep-research: скилл + флаг --research для старта спринта | 2026-07-15 | [`DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md`](../docs/prompts/DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md) | #516 (Issue открыт) | [карточка](./archive/deep-research-sprint-flag.md) |
-| `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | 2026-07-15 | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | #510 (Issue открыт) | [карточка](./archive/hot-repo-flow.md) |
+| `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | 2026-07-15 | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | #510 | [карточка](./archive/hot-repo-flow.md) |
 | `pc2c-spectrum-recording-decouple` | PC-2c: полная развязка спектр-наблюдения от записи (StartRecording/StopRecording устарели — трек не производится) | 2026-07-15 | [`PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md`](../docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md) | #493 | [карточка](./archive/pc2c-spectrum-recording-decouple.md) |
 | `canon-tooling-debt` | canon-tooling-debt: ADR-гигиена, 26 живых фаз реестра, --report для repo:clean, libuv в горячих скриптах | 2026-07-15 | [`CANON_TOOLING_DEBT_PROMPT.md`](../docs/prompts/CANON_TOOLING_DEBT_PROMPT.md) | #504 | [карточка](./archive/canon-tooling-debt.md) |
 | `pc2b-spectrum-window-rebuild` | PC-2b: пересборка usercase-free-spectrum-live на is-window-elapsed (спектр перестаёт тащить рекордер как часы) | 2026-07-15 | [`PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md`](../docs/prompts/PC2B_SPECTRUM_WINDOW_REBUILD_PROMPT.md) | #493 | [карточка](./archive/pc2b-spectrum-window-rebuild.md) |
@@ -772,4 +786,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-16.*
+*Файл обновлён автоматически: 2026-07-17.*

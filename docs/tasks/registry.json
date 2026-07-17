@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "scripts-boundary-container",
+      "title": "Граница scripts/: контейнер для ритуала — пакет, регламент, реестр",
+      "promptPath": "docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-17",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "216 скриптов / 36669 строк вне workspace. Остров 0/0 (проверено парсингом 352 файлов). НЕ линтуется: yarn lint = turbo run lint по workspace, scripts/ не workspace; в .eslintrc.cjs нет override для .mjs — прямой прогон не парсит ни одного файла. НЕ типизируется: tsconfig нет. test:scripts ведётся рукой — 4 теста-сироты (anthropic-env, meeting-agenda, meeting-walk, net-diag). Ни одно правило границ не имеет корня в scripts/. Здесь живёт весь ритуал. Формат разбора: заседание (S-M1 отклонил повестку из 6 вопросов до прогона).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "ritual-trust-contour"
+    },
+    {
       "id": "truth-graph-contour",
       "title": "Граф правды: архитектура, реестр зависимых процессов, охлаждение сессии, инструменты редактирования",
       "promptPath": "docs/prompts/TRUTH_GRAPH_CONTOUR_PROMPT.md",
