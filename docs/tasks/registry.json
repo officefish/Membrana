@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "strategy-day-generator",
+      "title": "Генератор стратегии дня: горизонт вместо списка задач",
+      "promptPath": "docs/prompts/STRATEGY_DAY_GENERATOR_PROMPT.md",
+      "githubIssue": 592,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-17",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin",
+        "rodchenko"
+      ],
+      "notes": "ЭПИК. Собран из пяти вердиктов консилиума 17.07 (Q1 stop-doing, Q2 horizon=веха d/dt=0, Q3 утро+вырезать nextDay, Q4b pickTopic+nightYield, Q5 collectHorizonInputs+дедуп origin-hash) и трёх решений владельца, закрывших дыры Q5: своевременность = веха близко И область молчит (отвергнуто 'логи трогали' — инвертирует замысел); дикого слота в ночи нет, ночь 100% derived, дикое приходит утром само; отсутствующий вход помечать (вывод агента, не команды). Расследование: из семи задуманных функций работает одна — порядок запуска. Находка Q5: канал includeAnalyzersResearch не оборван заморозкой, а НИКОГДА не работал — крон 9 падений подряд с 18.05, артефакта нет нигде, ключ на месте, readBoundedFile->null->молча дальше. Кода нет.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "truth-graph-contour",
       "title": "Граф правды: архитектура, реестр зависимых процессов, охлаждение сессии, инструменты редактирования",
       "promptPath": "docs/prompts/TRUTH_GRAPH_CONTOUR_PROMPT.md",
