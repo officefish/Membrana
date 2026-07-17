@@ -503,6 +503,17 @@
       "weight": null,
       "createdAt": "2026-07-16",
       "tags": []
+    },
+    {
+      "id": "insight-weekly-antipattern-audit-bestiary",
+      "title": "Недельный аудит антипаттернов — бестиарий, детекторы, охотник-который-сам-не-молчун",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-17",
+      "tags": []
     }
   ]
 }
