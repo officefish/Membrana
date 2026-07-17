@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "visor-mpvs-integration",
+      "title": "ВИЗОР-МПВС (эффектор C-UAS от Дениса) — актуальность и интеграция",
+      "promptPath": "docs/prompts/VISOR_MPVS_INTEGRATION_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "deferred",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-17",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "kuryokhin",
+        "dynin"
+      ],
+      "notes": " [17.07] deferred по вердикту консилиума: кода не порождает, сопряжение отложено до пеленга (σ≤0.6°) и gate 1→2. См. insight-effector-cue-integration.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "scripts-boundary-container",
       "title": "Граница scripts/: контейнер для ритуала — пакет, регламент, реестр",
       "promptPath": "docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md",
