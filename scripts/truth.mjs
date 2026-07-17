@@ -31,6 +31,7 @@ import {
   affectedSubscribers,
   buildGraph,
   evidenceKind,
+  evidenceLabel,
   checkInvariants,
   computeStale,
   hasError,
@@ -108,27 +109,9 @@ function report(graph, manifest, violations, stale) {
   const staleIds = new Set(stale.map((s) => s.id));
   for (const t of graph.tokens) {
     const holds = t.parents?.length ? t.parents.join(' + ') : (t.revocation?.kind === 'owner' ? 'слове владельца' : t.revocation?.kind ?? '—');
-    // Колонка обязана мерить ТЕМ ЖЕ, чем гейт I7, — иначе дисплей врёт против
-    // гейта в одном выводе. 17.07 именно так и было: evidenceKind() первым делом
-    // смотрит source.utterance, а эта колонка про указатели не знала вовсе и
-    // печатала «доказательства нет» про 13 из 14 владельческих токенов — включая
-    // те, что автор инструмента сам же и подкрепил. Два места считали одно и то
-    // же и разъехались: эхо-механизм, против которого весь реестр и заведён.
-    const preds = usedPredicates(graph, t);
-    const kind = evidenceKind(graph, t);
-    const ev =
-      kind === 'utterance'
-        ? `указатель на реплику @${t.source.utterance.timestamp?.slice(0, 10) ?? t.source.date ?? '?'}`
-        : kind === 'predicate'
-          ? `команда ×${preds.length} @${preds[0].def?.verified ?? '?'}`
-          : kind === 'probe'
-            ? `проба @${t.probe.verified}`
-            : // Чистая дедукция: доказательство — сами посылки, они уже в колонке
-              // «держится на». Писать про такой токен «доказательства нет» — та же
-              // ложь дисплея, только для выведенного класса.
-              t.class === 'derived' && t.parents?.length
-              ? `дедукция из ${t.parents.length} посыл(ок)`
-              : 'ТОЛЬКО ДАТА — доказательства нет';
+    // Метка живёт в ядре рядом с evidenceKind и меряет им же — иначе дисплей
+    // разойдётся с гейтом, как 17.07 (13 из 14 токенов).
+    const ev = evidenceLabel(graph, t);
     const mark = t.status !== 'active' ? ` [${t.status}]` : staleIds.has(t.id) ? ' [ПРОТУХ]' : '';
     lines.push(`${pad(t.id + mark, 46)}${pad(t.class === 'owner' ? 'владелец' : 'вывод', 10)}${pad(holds, 34)}${ev}`);
   }
