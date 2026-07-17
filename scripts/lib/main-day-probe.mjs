@@ -125,72 +125,22 @@ export function hasViolatedAssertion(results) {
   return (results ?? []).some((r) => r?.verdict === 'violated');
 }
 
-/**
- * Отпечаток ПЕРВОИСТОЧНИКА свидетельства (консилиум `ritual-inputs-echo-and-extracts`).
- *
- * Эхо-камера 16.07: `detection-planning-priorities.mjs` (снимок от 06.07) подключён
- * к трём шагам ритуала — standup, plan:day, main-day-issue. Одна замороженная строка
- * прозвучала в таблице «Почему это магистраль» как три независимые галочки, и план
- * счёл это консенсусом. Единственный несогласный голос — вчерашний MAIN_DAY_ISSUE,
- * опиравшийся на факт мёржа, — оказался единственным правым и был отброшен.
- *
- * Диагноз Музыканта: это ровно коррелированность детекторов в ансамбле. yamnet
- * ценен не точностью, а тем, что ошибается НЕ ТАМ ЖЕ, где DSP (ND3). Источники,
- * производные от одного снимка, коррелированы полностью — их суммарный вес равен
- * весу ОДНОГО. Поэтому голоса считаются по различным первоисточникам, а не по
- * числу строк в таблице.
- *
- * Хэш намеренно НЕ криптографический: нужен стабильный дешёвый идентификатор
- * происхождения, а не защита от подделки. Формат `<источник>@<ревизия>`.
- *
- * @param {string} origin первоисточник, напр. 'detection-planning-priorities.mjs@2026-07-06'
- * @returns {string} 7-символьный short-hash
- */
-export function originHash(origin) {
-  const text = String(origin ?? '').trim();
-  if (text === '') return '0000000';
-  // FNV-1a 32-бит: детерминированный, без зависимостей, одинаковый вход → тот же хэш.
-  let h = 0x811c9dc5;
-  for (let i = 0; i < text.length; i += 1) {
-    h ^= text.charCodeAt(i);
-    h = Math.imul(h, 0x01000193) >>> 0;
-  }
-  return h.toString(16).padStart(8, '0').slice(0, 7);
-}
+
+
 
 /**
- * Схлопнуть свидетельства с общим первоисточником.
- *
- * Три отражения одного снимка — ОДИН голос, а не три. Порядок сохраняется:
- * первое вхождение выигрывает, остальные считаются отражениями.
- *
- * @param {readonly {origin?: string}[]} evidence
- * @returns {readonly ({origin?: string, originHash: string, reflections: number})[]}
+ * Эхо-примитивы ПЕРЕЕХАЛИ в ядро графа правды (эпик #576, рефактор 17.07): агент написал
+ * там вторую реализацию того же, не грепнув репозиторий — ровно то, за что эпик и ругает
+ * проект. Направление зависимости по решению консилиума: пробник на ядро, не наоборот.
+ * Ре-экспорт сохранён — импортёры (main-day-probe.mjs, его тесты) не задеты.
  */
-export function dedupeByOrigin(evidence) {
-  /** @type {Map<string, any>} */
-  const byOrigin = new Map();
-  for (const item of evidence ?? []) {
-    const hash = originHash(item?.origin);
-    const seen = byOrigin.get(hash);
-    if (seen) {
-      seen.reflections += 1;
-      continue;
-    }
-    byOrigin.set(hash, { ...item, originHash: hash, reflections: 1 });
-  }
-  return [...byOrigin.values()];
-}
+import { countIndependentSources, dedupeByOrigin, originHash } from './truth-graph.mjs';
 
-/**
- * Сколько НЕЗАВИСИМЫХ источников подтверждают магистраль.
- *
- * Считает различные первоисточники, а не строки: 16.07 три строки таблицы дали бы
- * `1`, и «консенсус» рассыпался бы до того, как план назначил работу.
- */
-export function countIndependentSources(evidence) {
-  return dedupeByOrigin(evidence).length;
-}
+// Реэкспорт для импортёров (main-day-probe.mjs, тесты). Отдельной строкой, а не
+// `export … from`: та форма НЕ вводит имена в локальную область — formatOriginSummary
+// ниже зовёт dedupeByOrigin у себя и падал бы ReferenceError (поймано живым прогоном
+// 17.07; тесты формата тоже покраснели).
+export { countIndependentSources, dedupeByOrigin, originHash };
 
 /**
  * Строка о происхождении для таблицы «Почему это магистраль».

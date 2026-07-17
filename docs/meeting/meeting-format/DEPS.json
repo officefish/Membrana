@@ -1,0 +1,31 @@
+{
+  "id": "meeting-format",
+  "note": "ТОЛЬКО рёбра зависимостей. Фазы, их статус, лид, промпт и Issue живут в docs/tasks/registry.json (parentEpic: meeting-format) — там 505 карточек под 88 эпиками, и второй трекер заводить нельзя. Здесь лежит единственное, чего в карточке нет: у неё 14 полей, поля зависимостей среди них ни одного. Прогресс НЕ хранится нигде — он вычисляется из status карточек (yarn meeting:status).",
+  "source": {
+    "kind": "m0-verdict",
+    "protocol": "docs/seanses/meeting-format-m0-order-2026-07-17.md",
+    "form": "слоёный DAG (топосортировка), 21 реплика, 5 ролей"
+  },
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-17",
+    "verbatim": "Да, как есть",
+    "scope": "Порядок из вердикта M0 без правок: корень mf1-format-carrier, далее слои по DAG. Ратифицирован ПОРЯДОК — не существо вопросов и не судьба регламента: mf1 вправе обнулить формат целиком, это законный исход.",
+    "note": "Слово владельца в сессии b8de7ae1 на прямой вопрос с вариантами. Председатель ратификацию за владельца не подписывал: поле оставалось null, пока владелец не сказал."
+  },
+  "edges": {
+    "mf1-format-carrier": [],
+    "mf2-branch-count": ["mf1-format-carrier"],
+    "mf3-commands-vs-flag": ["mf1-format-carrier"],
+    "mf4-teeth-sm2": ["mf1-format-carrier"],
+    "mf5-echo-rule": ["mf1-format-carrier"],
+    "mf6-auditor-worktree": ["mf2-branch-count"],
+    "mf7-active-guard": ["mf2-branch-count"],
+    "mf8-sprint-kind": ["mf3-commands-vs-flag"],
+    "mf9-auditor-readonly": ["mf1-format-carrier"],
+    "mf10-teeth-sm5": ["mf6-auditor-worktree"]
+  },
+  "external": {
+    "mf5-echo-rule": "truth-graph-contour"
+  }
+}

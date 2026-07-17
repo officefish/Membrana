@@ -5,7 +5,61 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 34 из 76 кандидатов (бюджет <5000 токенов).
+Записей: 33 из 85 кандидатов (бюджет <5000 токенов).
+
+### 2026-07-16 · позиция · code-review-honesty-refactor
+
+> Формализую, что значит «работа дня», иначе останется вкусовым. Вход ревью — детерминированное множество коммитов `C = {c : merged_at ∈ [day_start, day_end)}`, дифф = `git diff <base>..<head>` где `base` — родитель первого коммита периода, `head` — последний. Это чистая функция […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/code-review-honesty-refactor-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · device-board-host-parity-shared-modules
+
+> Зафиксирую задачу численно, чтобы не спорить о словах. Есть множество плагинов P (|P| = 16), функция регистрации `register: (Registry, Plugin[]) → void`, и два хоста H = {client, cabinet, electron}. Сейчас `register` вызывается только для client, то есть палитра кабинета = […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/device-board-host-parity-shared-modules-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · graphify-research-tree-panel-sections
+
+> Поддержу численно. `canAccess` уже определён как монотонная функция на полном порядке `public < ally < operator < owner` — мы это зафиксировали в `office-panel-contour` и уточнили грантами в `panel-promo-access`: `identity = {role, sub, grants[]}`, доступ = `role ≥ […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/graphify-research-tree-panel-sections-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · main-day-issue-accuracy
+
+> Согласен, и это формализуется одной величиной. У нас есть детерминированный факт: `git log --all -S fuseDetectorConfidences` даёт коммит `5e42c937` от 13.07. Это **проверяемый предикат** `exists(symbol, tree) → bool`, в отличие от `issue.state`, который меняется вручную и потому […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/main-day-issue-accuracy-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · ritual-inputs-echo-and-extracts
+
+> Дам оба формально. Эхо-камера: у каждого свидетельства есть **origin-hash** — хеш первоисточника факта. Снимок `detection-planning-priorities.mjs` от 06.07 → origin = `sha(файл@коммит)`. Три строки таблицы с одинаковым origin-hash — это `n=1`, не `n=3`. Дедуп — тривиальная […] _(реплик в сеансе: 3)_
+
+— источник: `docs/seanses/ritual-inputs-echo-and-extracts-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · rt8-loose-ends
+
+> Согласен со Структурщиком, и формализую A1 численно. Гвард свежести — это чистая функция: `isFresh(artifact) = (dateOf(artifact) === today)`, где `dateOf` берётся из фронтматтера `DAILY_CODE_REVIEW.md`, а не из mtime файла (mtime недетерминирован при checkout). Downstream не […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/rt8-loose-ends-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · standup-charge
+
+> Начну с фактов, а не с настроения. Сейчас стендап — детерминированная функция `synth(5 docs) → 5 секций`, вход берётся из ролевых промптов, а не из состояния мира. «Заряжающее собрание» без измеримого входа — это украшение. Но у нас есть измеримый вход: 5 журналов `memory/*.md` […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/standup-charge-2026-07-16.md#reply-1`
+
+### 2026-07-15 · позиция · alex-critics-detector-characterization
+
+> Численно разделяю ровно так же. ROC AUC — считается **сейчас и честно**: каждый детектор уже отдаёт score ∈ [0,1] (Sergey это подтвердил — «70% дрон, 30% птицы»), корпус free-v1 размечен (drone / not-drone). `auc = P(score(drone) > score(not-drone))` — это ранговая статистика […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/alex-critics-detector-characterization-2026-07-15.md#reply-1`
+
+### 2026-07-15 · позиция · team-evening-feedback
+
+> Итоги дня: Величину окна наблюдения взяли не с потолка — обосновали исследованием и защитили тестом-гардом, который реально падает при поломке. Каждое «работает» проверено: адверсариальная верификация дважды ловила по-настоящему, вставляя поддельные узлы и убеждаясь, что тесты […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-15.md#reply-1`
 
 ### 2026-07-14 · голос · insight-office-panel-qa-section
 
@@ -150,63 +204,3 @@
 > Уточню по существу. `fuseDetectorConfidences` в core — чистая функция, вход: массив уверенностей + веса, выход: `combinedScore`. Это делает **выход fusion value-типом** естественным: `DetectionFusion` = `{ combinedScore, perDetector, threshold? }` — вычислимая величина без […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/board-alarm-scenario-nodes-2026-07-09.md#reply-1`
-
-### 2026-07-09 · позиция · team-evening-feedback
-
-> День на моей магистрали — ядро замкнуто. Оценка артефактов: план чётко отделил «что питает fusion» (combined-продюсер) от «самого fusion» (вчерашний `fuseDetectorConfidences`) — эта дисциплина не дала переизобрести слияние. FFT_METRICS §6 удержал команду от бессмысленного […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-09.md#reply-1`
-
-### 2026-07-08 · позиция · hermes-liaison-agent
-
-> Поддержу численно. Брифинг — это **чистая функция** от состояния репозитория: вход — набор источников (HANDOFF.md, registry.json, `gh pr list`, MAIN_DAY_ISSUE, git-day-context), выход — детерминированный markdown. Никакого скрытого состояния, воспроизводимо при фиксированном […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/hermes-liaison-agent-2026-07-08.md#reply-1`
-
-### 2026-07-08 · позиция · team-evening-feedback
-
-> Dynin. Оценка артефактов: MAIN_DAY_ISSUE был для меня максимально конкретен: сигнатура fusion (сырой confidence, не бинарный OR — заметка ND3), 3 сценария unit-тестов, требование combined-точки в бенчмарке. Это лучший вид ТЗ — воспроизводимый. Расхождение план↔факт (code-review […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-08.md#reply-1`
-
-### 2026-07-07 · позиция · team-evening-feedback
-
-> Dynin **Оценка артефактов дня:** Для меня утренний канон был предельно конкретен: чистая функция слияния `{trendsConfidence, yamnetConfidence(raw)} → combinedScore`, unit-тесты на согласованный/расходящийся вердикт, никакого бинарного OR (обоснование ND3 про слабую корреляцию […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-07.md#reply-1`
-
-### 2026-07-06 · голос · insight-telegram-work-reports
-
-> внедрять: Да (приватный канал + env-токен) · этап: after-MVP · оценка: 4/10 — С точки зрения secops (моя вторичная зона) — ключевой пункт: bot token как секрет. Хранить в env `background-office`, не в GitHub Actions secret, если публикатор — сам office (единая точка). Приватный канал обязателен: dev-отчётность = внутренний контент (имена веток, […]
-
-— источник: `docs/insights/insight-telegram-work-reports/REVIEW.md#vote`
-
-### 2026-07-06 · позиция · partner-tutorials-design
-
-> Прежде чем спорить о красоте, зафиксируем измеримое. Партнёр — нетехническая роль, значит метрика успеха туториала: время до первого успешного действия (time-to-first-success) и доля шагов, выполненных без обращения за помощью. Предлагаю 2–3 туториала, но каждый — с явным […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/partner-tutorials-design-2026-07-06.md#reply-1`
-
-### 2026-07-06 · позиция · team-evening-feedback
-
-> Dynin **Оценка артефактов:** Я был назначен ведущим дня под задачи A/B (`DRONE_TIGHT` + benchmark v0.3). Числовые контракты в `MAIN_DAY_ISSUE` были образцовые (centroid 2900–4300, spectral 0.3/temporal 0.7, recall/FPR 95%/30%). Но день пошёл по нейро-ветке — и это, честно […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-06.md#reply-1`
-
-### 2026-07-05 · голос · insight-comms-contour-topology
-
-> внедрять: Да, `S=0 / M≈0` доминирует · этап: Сейчас · оценка: 9/10
-
-— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
-
-### 2026-07-05 · позиция · comms-contour-topology
-
-> Readonly-зеркало — это частичное решение. Вопрос в том, что попадает в зеркало. Если мы экспортируем только описания компонентов, это работает. Но если контур опирается на код (инспекция `src/components/Button.tsx` для понимания пропсов), то зеркало должно включать сам исходник […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/comms-contour-topology-2026-07-05.md#reply-1`
-
-### 2026-07-05 · позиция · comms-contour-topology-opus
-
-> Сформулирую критерий §5 как функцию стоимости, чтобы решать численно, а не «на глаз». Пусть `C = S + M`, где `S` — поверхность синхронизации канона (число рукотворных шагов на цикл обновления), `M` — поверхность обслуживания инфраструктуры. Живое чтение — это `S = 0` по […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/comms-contour-topology-opus-2026-07-05.md#reply-1`

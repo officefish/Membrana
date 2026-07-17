@@ -5,7 +5,61 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 34 из 76 кандидатов (бюджет <5000 токенов).
+Записей: 34 из 85 кандидатов (бюджет <5000 токенов).
+
+### 2026-07-16 · позиция · code-review-honesty-refactor
+
+> Начну с термина, иначе спор поплывёт. «Code-review» у нас — омоним двух разных лемм: **ревью-по-запросу** (`--pr`/`--branch`/`--uncommitted`) — честное, получает полный дифф; и **daily-ревью** — читает `collectRepositoryContext`, который по самодокументу «не обходит дерево […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/code-review-honesty-refactor-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · device-board-host-parity-shared-modules
+
+> Это развилка о границах, и здесь легко нарушить норму. Плагины сейчас в `apps/client/src/plugins/*` — они импортируют клиентские хуки, `@membrana/*`-сервисы и, вероятно, engine. Прямой перенос в `@membrana/device-board` **запрещён**: пакет по `ARCHITECTURE.md` зависит только от […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/device-board-host-parity-shared-modules-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · graphify-research-tree-panel-sections
+
+> Начну с термина, иначе спор поплывёт. «Раздел панели» — это словарная статья с полями `{id, minRole, grants[], render}`. Оба блока обязаны стать такими статьями. Но у меня жёсткий вопрос по хостингу: `apps/demos/Research-Tree` и `graphify` — это сейчас *чужие приложения*, а не […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/graphify-research-tree-panel-sections-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · main-day-issue-accuracy
+
+> Зафиксирую термин, иначе спор поплывёт. Проблема не в «плохом плане», а в **источнике истины для состояния кода**. MAIN_DAY_ISSUE опирался на статус GitHub Issue (#415 open) как на прокси реального состояния кода — а это два разных словаря. Issue open ≠ «работа не сделана»: […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/main-day-issue-accuracy-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · ritual-inputs-echo-and-extracts
+
+> Начну с терминов, иначе оба вопроса поплывут. «Экстракт сессии» и «источник планирования» — разные леммы. Сессия агента (jsonl в `~/.claude/projects/`) — это **свидетельство о работе**, а не решение о работе. Мы уже решили 16.07: маркер в коде первичен. Значит экстракт сессии — […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/ritual-inputs-echo-and-extracts-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · rt8-loose-ends
+
+> Точно, и это терминологическая ошибка, а не процессная. `|| true` — не «не роняй ритуал», а «этот шаг некритичен». У нас два разных класса шагов слиплись в один словарь. A1 — это про гвард свежести: downstream (standup, main-day-issue) читает `DAILY_CODE_REVIEW.md` как источник, […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/rt8-loose-ends-2026-07-16.md#reply-1`
+
+### 2026-07-16 · позиция · standup-charge
+
+> Зафиксирую термины, иначе спор поплывёт. «Стендап» сейчас — это **синтезатор** (read-only сборка доков), а замысел владельца просит два разных смысла: (1) *норма* — дисциплина/этика/код-стайл, (2) *роутинг талантов* — кто на какую задачу. Это две леммы, не одна. Норма — […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/standup-charge-2026-07-16.md#reply-1`
+
+### 2026-07-15 · позиция · alex-critics-detector-characterization
+
+> Сначала термины, иначе спор поплывёт. «ROC AUC» — характеристика **бинарного обнаружителя** на размеченном корпусе: это чистая функция `roc(scores[], labels[]) → {curve, auc}`. Это лемма Математика, живёт в `@membrana/core` или в новом чистом модуле метрик, НЕ в детекторах и НЕ […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/alex-critics-detector-characterization-2026-07-15.md#reply-1`
+
+### 2026-07-15 · позиция · team-evening-feedback
+
+> Итоги дня: Границы держались весь день. Новый узел-часы введён аддитивно, старый не тронут — ничего чужого не сломалось. Коворк доказал чистоту резки: три блока слились без единого конфликта. Топология корня domена решена по готовому рецепту, без изобретений. На завтра: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-15.md#reply-1`
 
 ### 2026-07-14 · голос · insight-office-panel-qa-section
 
@@ -151,62 +205,8 @@
 
 — источник: `docs/seanses/board-alarm-scenario-nodes-2026-07-09.md#reply-1`
 
-### 2026-07-09 · позиция · team-evening-feedback
+### 2026-06-28 · голос · insight-sessions-archive
 
-> Границы пакетов сегодня — образцовый день. Оценка артефактов: план и стендап корректно назначили мне корень wire-дублирования (Задача 3) как приоритет — и это оказалось правильным вложением, а не «долгом ради долга». `MAIN_DAY_ISSUE` держал DoD «только core+audio-engine» для […]
+> внедрять: да · этап: квартал · оценка: 8/10
 
-— источник: `docs/seanses/team-evening-feedback-2026-07-09.md#reply-1`
-
-### 2026-07-08 · позиция · hermes-liaison-agent
-
-> Терминологически наведу порядок. «Hermes» как **агент** и «hermes:brief» как **скрипт** — два разных смысла одного слова, и это опасно. Предлагаю зафиксировать: `hermes:brief` — это **утилита сбора** (`scripts/hermes-brief.mjs`), лемма «сборщик брифа». Отдельный агент […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/hermes-liaison-agent-2026-07-08.md#reply-1`
-
-### 2026-07-08 · позиция · team-evening-feedback
-
-> Ozhegov. Оценка артефактов: MAIN_DAY_ISSUE чётко расставил границы («fusion в core/client, НЕ в detectors/*»), и по факту diff это соблюдено: `detection-fusion.ts` лежит в `packages/core/src/contracts/`, а не внутри детекторов. Регламент границ отработал; code-review подтвердил […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-08.md#reply-1`
-
-### 2026-07-07 · позиция · team-evening-feedback
-
-> Ozhegov **Оценка артефактов дня:** Документы были точны в границах: fusion-контракт явно предписан в `@membrana/core`, а не внутри `detectors/*` (`check:boundaries`), device-board — только от core. Это правильная дисциплина. Расхождение: план вёл в core/детекторы, а фактическая […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-07.md#reply-1`
-
-### 2026-07-06 · голос · insight-telegram-work-reports
-
-> внедрять: Да · этап: after-MVP · оценка: 5/10 — Архитектурно чисто. `modules/telegram` = тонкий outbound-адаптер: `TelegramClient` (Bot API, токен/chat_id из env) + `TelegramNotifier` (шаблоны сообщений) + подписка на существующий `modules/webhooks` (GitHub merge event) и один POST-endpoint для вечерней сводки. Никаких прямых […]
-
-— источник: `docs/insights/insight-telegram-work-reports/REVIEW.md#vote`
-
-### 2026-07-06 · позиция · partner-tutorials-design
-
-> Стоп на терминах. «Туториал» — это лемма, у неё должно быть одно определение в контуре. Предлагаю: туториал = пошаговый сценарий одной задачи партнёра, живущий в `apps/comms-studio/` (или его `docs/`), выводящий артефакты только в `out/`. Он **не импортирует** ничего из […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/partner-tutorials-design-2026-07-06.md#reply-1`
-
-### 2026-07-06 · позиция · team-evening-feedback
-
-> Ozhegov **Оценка артефактов:** Документы дня ставили мне чёткую роль — стеречь границы `detectors/*` в задачах A/D/E. По факту работа ушла в другие пакеты, но границы там соблюдены не хуже. `MAIN_DAY_ISSUE` оказался нерелевантен фактическому diff — это минус согласованности, но […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-06.md#reply-1`
-
-### 2026-07-05 · голос · insight-comms-contour-topology
-
-> внедрять: Да, leaf + `check:boundaries` · этап: Сейчас · оценка: 9/10
-
-— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
-
-### 2026-07-05 · позиция · comms-contour-topology
-
-> Изоляция внутри монорепо — это не вопрос тулинга, это вопрос дисциплины и явной граничной политики. У нас уже есть `yarn check:boundaries` для запрета входящих рёбер в новые пакеты; мы можем добавить явное правило: `apps/comms-studio` (или `docs/comms-contour`) — leaf-ноль, от […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/comms-contour-topology-2026-07-05.md#reply-1`
-
-### 2026-07-05 · позиция · comms-contour-topology-opus
-
-> Начну с определения, иначе спор расплывётся. «Контур communications» — это leaf-пакет графа: ноль исходящих рёбер к нему, много входящих рёбер от него (он читает канон). Инвариант «сток, не исток» на языке графа зависимостей — это `indegree(comms) = 0` для продуктовых пакетов. У […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/comms-contour-topology-opus-2026-07-05.md#reply-1`
+— источник: `docs/insights/insight-sessions-archive/REVIEW.md#vote`
