@@ -2,36 +2,48 @@
   "//": "Посылки развилки MAIN_DAY_ISSUE — вход гейта `yarn main-day-probe` (#533).",
   "//generator": "Пока заполняется рукой при спорной развилке; разметка генератором — фаза PG5.",
   "//semantics": "Каждая посылка утверждает ОТСУТСТВИЕ работы. Найденный маркер её опровергает → violated.",
-  "//case": "Ниже — реальная развилка 16.07: обе посылки пали, план звал переписать готовое ядро.",
+  "//date": "Развилка 17.07. Посылки взяты ИЗ ГРАФА ПРАВДЫ (docs/truth/registry.json), а не из снимка detection-planning-priorities.mjs@06.07: тот замороженный текст 16.07 дал ложную магистраль, и пробник роняет его посылки до сих пор (см. archivedFork).",
+  "//link": "Магистраль дня — токен magistral-17-07-truth-graph; первое в ней — токен graph-first-step-572-dropped. Оба владельческие: невыводимы, подкреплены указателями на реплики владельца (sessionId+uuid). Это ровно та связка, ради которой заводился реестр: у генератора НЕ БЫЛО валидного источника магистрали, а снимок 06.07 предлагал фантом.",
   "assertions": [
     {
-      "claim": "Ветка A: fusion в коде ещё не живёт — написать чистую функцию объединения confidence",
-      "marker": { "kind": "symbol", "value": "fuseDetectorConfidences" },
-      "issue": 415
+      "claim": "Пять вопросов, уронённых консилиумом 16.07 (C1 гейты позже факта · C2 протухший снимок · B1 `|| true` · B2 свежесть вложения · D1/D2 форма ночи), не разобраны",
+      "marker": { "kind": "file", "value": "docs/seanses/ritual-repair-night-dropped-2026-07-17.md" },
+      "issue": 572
     },
     {
-      "claim": "Ветка B: три пустых UC-каркаса — налить спектр/нейро/библиотеку",
-      "marker": { "kind": "file", "value": "packages/device-board/src/graph/usercase-free-spectrum-live.ts" }
+      "claim": "C1 не починен: в цепочке ritual:day гейт main-day-probe стоит ПОСЛЕ генератора main-day-issue — план проверяется постфактум",
+      "marker": { "kind": "file", "value": "scripts/main-day-gate.mjs" }
     }
   ],
   "//sources": "Источники обоснования магистрали. Голоса считаются по РАЗЛИЧНЫМ origin, а не по строкам.",
-  "//echo": "Ниже — реальная таблица «Почему это магистраль» 16.07: три строки, один снимок от 06.07.",
+  "//echo-today": "Сегодня источник ОДИН и он первичный — прямое слово владельца с указателем на реплику. Ноль отражений: магистраль не пересказана снимком, а названа. Сравни с archivedFork: четыре строки, один снимок, три отражения.",
   "sources": [
     {
-      "claim": "STRATEGIC_PLAN_DAY (16.07): магистраль = S2 combined UC (fusion + alarm-loop)",
-      "origin": "detection-planning-priorities.mjs@2026-07-06"
-    },
-    {
-      "claim": "Форсайт 2026-07-06: S2 первый в цепочке S2→S3→S4→S5",
-      "origin": "detection-planning-priorities.mjs@2026-07-06"
-    },
-    {
-      "claim": "DAILY_STANDUP (16.07): магистраль = S2 combined UC",
-      "origin": "detection-planning-priorities.mjs@2026-07-06"
-    },
-    {
-      "claim": "MAIN_DAY_ISSUE (15.07): S2 слит (#416), остаток — упаковка UC-каркасов",
-      "origin": "git-merge-fact@5e42c937"
+      "claim": "Владелец 17.07: магистраль — достроить контур доверия (граф правды); первое в нём — пять уронённых вопросов #572",
+      "origin": "owner-utterance@c4f02fcb/05075aba"
     }
-  ]
+  ],
+  "//archive": "ВЕЩДОК, НЕ СТИРАТЬ. Реальная развилка 16.07: обе посылки пали, план звал переписать готовое ядро fuseDetectorConfidences (слито 13.07, PR #417). Таблица «Почему это магистраль» показывала 4 строки как консенсус независимых источников — на деле один снимок detection-planning-priorities.mjs@2026-07-06, отражённый трижды. Разбор: docs/seanses/main-day-issue-drift-report-2026-07-16.md. Хранится по append-only дисциплине: живой канон правим, историю не переписываем.",
+  "archivedFork": {
+    "date": "2026-07-16",
+    "assertions": [
+      {
+        "claim": "Ветка A: fusion в коде ещё не живёт — написать чистую функцию объединения confidence",
+        "marker": { "kind": "symbol", "value": "fuseDetectorConfidences" },
+        "issue": 415,
+        "verdict": "ПОСЫЛКА НАРУШЕНА — символ существует, issue #415 closed"
+      },
+      {
+        "claim": "Ветка B: три пустых UC-каркаса — налить спектр/нейро/библиотеку",
+        "marker": { "kind": "file", "value": "packages/device-board/src/graph/usercase-free-spectrum-live.ts" },
+        "verdict": "ПОСЫЛКА НАРУШЕНА — файл существует (436 строк)"
+      }
+    ],
+    "sources": [
+      { "claim": "STRATEGIC_PLAN_DAY (16.07): магистраль = S2 combined UC (fusion + alarm-loop)", "origin": "detection-planning-priorities.mjs@2026-07-06" },
+      { "claim": "Форсайт 2026-07-06: S2 первый в цепочке S2→S3→S4→S5", "origin": "detection-planning-priorities.mjs@2026-07-06" },
+      { "claim": "DAILY_STANDUP (16.07): магистраль = S2 combined UC", "origin": "detection-planning-priorities.mjs@2026-07-06" },
+      { "claim": "MAIN_DAY_ISSUE (15.07): S2 слит (#416), остаток — упаковка UC-каркасов", "origin": "git-merge-fact@5e42c937" }
+    ]
+  }
 }
