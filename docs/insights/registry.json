@@ -459,6 +459,17 @@
       "weight": null,
       "createdAt": "2026-07-16",
       "tags": []
+    },
+    {
+      "id": "insight-evening-ritual-three-fuel-documents",
+      "title": "Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-17",
+      "tags": []
     }
   ]
 }
