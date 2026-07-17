@@ -48,6 +48,7 @@ import {
   findUncoveredAgendaItems,
   validateProtocol,
   meetingAgendaProblem,
+  reconcileReplyCount,
 } from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
@@ -402,7 +403,11 @@ function runSecretaryFile(cli, cwd) {
     '',
   ].join('\n');
   mkdirSync(resolve(cwd, 'docs/seanses'), { recursive: true });
-  writeFileSync(absPath, header + body.trim() + '\n', 'utf8');
+  const secReconciled = reconcileReplyCount(body);
+  if (secReconciled.corrected) {
+    console.error(`→ футер реплик исправлен: «${secReconciled.stated}» → факт ${secReconciled.total}`);
+  }
+  writeFileSync(absPath, header + secReconciled.md.trim() + '\n', 'utf8');
   console.log(`→ протокол (secretary): ${relPath}`);
 }
 
@@ -554,6 +559,14 @@ async function main() {
     process.exitCode = 1;
     return;
   }
+
+  // Сверить прозаический футер «Реплик в диалоге: N» с фактом (модель порой врёт;
+  // 17.07 M0: 21 против фактических 20). Приводим к детерминированному числу.
+  const reconciled = reconcileReplyCount(answer);
+  if (reconciled.corrected) {
+    console.error(`→ футер реплик исправлен: модель «${reconciled.stated}» → факт ${reconciled.total}`);
+  }
+  answer = reconciled.md;
 
   console.log(answer);
 
