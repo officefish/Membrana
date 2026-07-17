@@ -31,9 +31,8 @@ await runStrategicPlan({
   outputPath: resolve(process.cwd(), 'docs/STRATEGIC_PLAN_WEEK.md'),
   commandName: `yarn plan:week${full ? ' --full' : ''}`,
   full,
-  // Недельный план учитывает свежий радар аналайзеров из docs/WEEKLY_ANALYZERS_RESEARCH.md.
-  // Дневной план — нет (см. strategic-plan-day.mjs).
-  includeAnalyzersResearch: true,
   includeDetectionPriorities: true,
-  includeInsights: true,
+  // #592 S4/Q5: флаги includeInsights/includeAnalyzersResearch УБРАНЫ из тела недельной.
+  // Каналы инсайтов и ресёрча теперь читает горизонт (scripts/lib/strategy-channels.mjs)
+  // как ОДИН читатель, параметрами — а не hardcode в замороженной недельной.
 });

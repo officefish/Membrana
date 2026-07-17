@@ -249,6 +249,10 @@ export async function runStrategicPlan(options) {
   const architecture = readBoundedFile(archPath, MAX_ARCH_CHARS) ?? '(docs/ARCHITECTURE.md не найден)';
   const services = readBoundedFile(servicesPath, MAX_ARCH_CHARS) ?? '(docs/SERVICES.md не найден)';
 
+  // #592 S4: ниже — ПРЕЖНИЙ ридер каналов инсайтов/аналайзеров, вытесненный горизонтом
+  // (scripts/lib/strategy-channels.mjs — «один читатель», Q5). Ни один вызыватель больше
+  // не передаёт includeInsights/includeAnalyzersResearch → блоки инертны; оставлены
+  // guarded, чтобы не трогать замороженный LLM-движок недельной сверх нужды.
   let analyzersResearch = null;
   if (options.includeAnalyzersResearch) {
     const researchPath = resolve(process.cwd(), 'docs/WEEKLY_ANALYZERS_RESEARCH.md');
