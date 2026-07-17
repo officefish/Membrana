@@ -6,7 +6,7 @@
       "promptPath": "docs/prompts/VISOR_MPVS_INTEGRATION_PROMPT.md",
       "githubIssue": null,
       "size": "M",
-      "status": "active",
+      "status": "deferred",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-17",
       "archivedAt": null,
@@ -15,7 +15,7 @@
         "kuryokhin",
         "dynin"
       ],
-      "notes": "",
+      "notes": " [17.07] deferred по вердикту консилиума: кода не порождает, сопряжение отложено до пеленга (σ≤0.6°) и gate 1→2. См. insight-effector-cue-integration.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
