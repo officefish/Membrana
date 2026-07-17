@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `truth-graph-contour` | Граф правды: архитектура, реестр зависимых процессов, охлаждение сессии, инструменты редактирования | L | [`TRUTH_GRAPH_CONTOUR_PROMPT.md`](../docs/prompts/TRUTH_GRAPH_CONTOUR_PROMPT.md) | [#576](https://github.com/officefish/Membrana/issues/576) |
 | `ally-swallow-editorial-gate` | Ласточки партнёрам: формулировка Ожеговым + явное одобрение владельца + память после отправки | M | [`ALLY_SWALLOW_EDITORIAL_GATE_PROMPT.md`](../docs/prompts/ALLY_SWALLOW_EDITORIAL_GATE_PROMPT.md) | [#569](https://github.com/officefish/Membrana/issues/569) |
 | `standup-charge-redesign` | DAILY_STANDUP как настоящий стендап: дисциплина+честность+код-стайл и раскрытие сильных сторон персон | M | [`STANDUP_CHARGE_REDESIGN_PROMPT.md`](../docs/prompts/STANDUP_CHARGE_REDESIGN_PROMPT.md) | — |
 | `agent-tooling-friction-3` | agent-tooling-friction-3: 5 фиксов трения сессии + мета-документы (инвентарь тулинга протух) | M | [`AGENT_TOOLING_FRICTION_3_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_3_PROMPT.md) | [#554](https://github.com/officefish/Membrana/issues/554) |
@@ -773,4 +774,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-16.*
+*Файл обновлён автоматически: 2026-07-17.*
