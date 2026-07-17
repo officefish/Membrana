@@ -47,7 +47,7 @@ import {
   extractAgendaIds,
   findUncoveredAgendaItems,
   validateProtocol,
-  zasedanieAgendaProblem,
+  meetingAgendaProblem,
 } from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
@@ -114,7 +114,7 @@ function parseArgs(argv) {
   let saveAs = '';
   let ghIssue = '';
   let topicFile = '';
-  let zasedanie = '';
+  let meeting = '';
   let seed;
   let minReplies = MIN_REPLIES_DEFAULT;
   let noContext = false;
@@ -135,10 +135,10 @@ function parseArgs(argv) {
     if (arg.startsWith('--gh-issue=')) { ghIssue = arg.slice('--gh-issue='.length); continue; }
     if (arg === '--topic-file') { topicFile = argv[++i] ?? ''; continue; }
     if (arg.startsWith('--topic-file=')) { topicFile = arg.slice('--topic-file='.length); continue; }
-    // ЗАСЕДАНИЕ (docs/ZASEDANIE_REGULATION.md): включает S-Z1 — ровно один вопрос.
+    // ЗАСЕДАНИЕ (docs/MEETING_REGULATION.md): включает S-M1 — ровно один вопрос.
     // Обычный консилиум вправе быть многовопросным, поэтому правило под флагом.
-    if (arg === '--zasedanie') { zasedanie = argv[++i] ?? ''; continue; }
-    if (arg.startsWith('--zasedanie=')) { zasedanie = arg.slice('--zasedanie='.length); continue; }
+    if (arg === '--meeting') { meeting = argv[++i] ?? ''; continue; }
+    if (arg.startsWith('--meeting=')) { meeting = arg.slice('--meeting='.length); continue; }
     if (arg === '--seed') { seed = Number(argv[++i]); continue; }
     if (arg.startsWith('--seed=')) { seed = Number(arg.slice('--seed='.length)); continue; }
     if (arg === '--min-replies') { minReplies = Number(argv[++i]); continue; }
@@ -166,7 +166,7 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { question, saveAs, ghIssue, topicFile, zasedanie, seed, minReplies, noContext, noRag, noSave, dryRun, withMemory, secretaryFile };
+  return { question, saveAs, ghIssue, topicFile, meeting, seed, minReplies, noContext, noRag, noSave, dryRun, withMemory, secretaryFile };
 }
 
 function readBounded(absPath, maxChars, optional = false) {
@@ -438,25 +438,25 @@ async function main() {
     }
   }
 
-  // S-Z1 (docs/ZASEDANIE_REGULATION.md): в заседании повестка несёт ровно один вопрос —
+  // S-M1 (docs/MEETING_REGULATION.md): в заседании повестка несёт ровно один вопрос —
   // иначе ОТКАЗ до прогона. Счётчик выше существовал и раньше: 17.07 он честно напечатал
   // «10 вопросов» и пропустил прогон, который уронил центральный. Информация была на
   // экране, останавливать её было нечему — здесь у неё зубы.
   //
   // НАМЕРЕННО вне try/catch выше: гейт, который глушится catch'ем, — это `|| true`,
-  // то есть отсутствие гейта. Нечитаемая повестка при --zasedanie обязана ронять прогон,
+  // то есть отсутствие гейта. Нечитаемая повестка при --meeting обязана ронять прогон,
   // а не пропускать его молча.
-  if (cli.zasedanie) {
+  if (cli.meeting) {
     const problem = cli.topicFile
-      ? zasedanieAgendaProblem(readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true))
+      ? meetingAgendaProblem(readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true))
       : 'заседание без --topic-file: нечего проверять на один вопрос';
     if (problem) {
       console.error(
-        `\n✗ S-Z1 — заседание «${cli.zasedanie}»: ${problem}.\n` +
+        `\n✗ S-M1 — заседание «${cli.meeting}»: ${problem}.\n` +
           '  Один вопрос — одно заседание: тогда «уронили молча» не существует,\n' +
-          '  вердикт либо есть, либо заседания не было (S-Z2).\n' +
-          '  Разбей повестку и созывай по одному в порядке из З0.\n' +
-          '  Регламент: docs/ZASEDANIE_REGULATION.md\n',
+          '  вердикт либо есть, либо заседания не было (S-M2).\n' +
+          '  Разбей повестку и созывай по одному в порядке из M0.\n' +
+          '  Регламент: docs/MEETING_REGULATION.md\n',
       );
       process.exit(2);
     }
