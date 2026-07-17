@@ -83,6 +83,11 @@ export const RULES = [
     // маршрут-мост, presentation блока сменный. До 17.07 инвариант держался ТОЛЬКО
     // комментарием в шапке GraphifyBoard/ResearchTreeBoard — P1 ревью 16.07 требовал
     // убедиться, что линт границ реально в CI; его там не было.
+    //
+    // ИЗВЕСТНАЯ ШИРОТА (ревью 17.07): `@membrana/research-tree` матчит по префиксу —
+    // ловит и `-demo` (намеренно), и любой будущий `@membrana/research-tree-*`.
+    // Сейчас легальных суффиксных пакетов нет. Появится shared (`-utils`) — сузить
+    // до точного списка блоков, а не ослаблять правило.
     id: 'panel-no-block-source-imports',
     roots: ['apps/panel/src'],
     patterns: [
