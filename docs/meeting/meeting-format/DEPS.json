@@ -1,0 +1,26 @@
+{
+  "id": "meeting-format",
+  "note": "ТОЛЬКО рёбра зависимостей. Фазы, их статус, лид, промпт и Issue живут в docs/tasks/registry.json (parentEpic: meeting-format) — там 505 карточек под 88 эпиками, и второй трекер заводить нельзя. Здесь лежит единственное, чего в карточке нет: у неё 14 полей, поля зависимостей среди них ни одного. Прогресс НЕ хранится нигде — он вычисляется из status карточек (yarn meeting:status).",
+  "source": {
+    "kind": "m0-verdict",
+    "protocol": "docs/seanses/meeting-format-m0-order-2026-07-17.md",
+    "form": "слоёный DAG (топосортировка), 21 реплика, 5 ролей"
+  },
+  "ratification": null,
+  "ratificationNote": "ПРЕДЛОЖЕНИЕ, не карта. Пока ratification === null, обход кричит, что порядок остаётся назначенным председателем — ровно тот механизм, против которого формат заведён (17.07 председатель поставил корень десятым, команда единогласно — первым). Ратифицирует ВЛАДЕЛЕЦ: заполнить { by, at, note }.",
+  "edges": {
+    "mf1-format-carrier": [],
+    "mf2-branch-count": ["mf1-format-carrier"],
+    "mf3-commands-vs-flag": ["mf1-format-carrier"],
+    "mf4-teeth-sm2": ["mf1-format-carrier"],
+    "mf5-echo-rule": ["mf1-format-carrier"],
+    "mf6-auditor-worktree": ["mf2-branch-count"],
+    "mf7-active-guard": ["mf2-branch-count"],
+    "mf8-sprint-kind": ["mf3-commands-vs-flag"],
+    "mf9-auditor-readonly": ["mf1-format-carrier"],
+    "mf10-teeth-sm5": ["mf6-auditor-worktree"]
+  },
+  "external": {
+    "mf5-echo-rule": "truth-graph-contour"
+  }
+}

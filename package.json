@@ -272,7 +272,8 @@
     "net:diag": "node scripts/net-diag.mjs",
     "repo:clean": "node scripts/repo-clean.mjs",
     "docs:verify-canon": "node scripts/verify-docs-canon.mjs",
-    "research": "node scripts/research.mjs"
+    "research": "node scripts/research.mjs",
+    "meeting:status": "node scripts/meeting-status.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
