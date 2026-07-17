@@ -44,6 +44,14 @@ uncovered — do not pass the protocol off as the answer; re-run with a tighter 
 the topic is below the gate) record via `membrana-adr` instead of a full consilium. Precedent:
 loop-switch (#355) — consilium drifted twice, 3 topics moved to an ADR (#356).
 
+> **Эта профилактика исполнена 17.07 и не удержала.** Повестку пронумеровали 1–10 —
+> консилиум всё равно уронил центральный вопрос (слово `ADR` в протоколе встречается один
+> раз, в вопросе самого агента; 25 реплик его не заметили). Значит дело не в памяти агента:
+> нумерация лечит забывчивость, а не расхождение. Эскалация — **заседание**: один вопрос
+> на прогон, ронять нечего. См. [`membrana-zasedanie`](../membrana-zasedanie/SKILL.md) ·
+> [`docs/ZASEDANIE_REGULATION.md`](../../../docs/ZASEDANIE_REGULATION.md).
+> Многовопросная повестка законна здесь, но не под `--zasedanie` (S-Z1).
+
 ## Output
 
 Path to saved seans; 3-bullet consensus summary for user.
