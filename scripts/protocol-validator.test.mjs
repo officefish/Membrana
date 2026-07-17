@@ -175,3 +175,33 @@ test('reconcileReplyCount: нет футера — md не меняется', as
   assert.equal(r.corrected, false);
   assert.equal(r.md, md);
 });
+
+// ── hasVerdictSection (NB3 ночь 17.07, rt-6 честный) ────────────────────────────
+
+test('hasVerdictSection: секция итогового решения распознаётся', async () => {
+  const { hasVerdictSection } = await import('./lib/protocol-validator.mjs');
+  const md = '[Математик]: раз.\n\n## Итоговое решение консилиума\n\n| Вопрос | Решение |';
+  assert.equal(hasVerdictSection(md), true);
+});
+
+test('hasVerdictSection: вердикт/Definition of Done распознаётся', async () => {
+  const { hasVerdictSection } = await import('./lib/protocol-validator.mjs');
+  assert.equal(hasVerdictSection('[Teamlead]: ...\n### Вердикт: LGTM'), true);
+  assert.equal(hasVerdictSection('[Teamlead]: ...\n## Definition of Done (день)'), true);
+});
+
+test('hasVerdictSection: без секции вердикта — false (вопросы могли быть уронены)', async () => {
+  const { hasVerdictSection } = await import('./lib/protocol-validator.mjs');
+  const md = '[Математик]: раз.\n[Структурщик]: два.\n[Музыкант]: три.';
+  assert.equal(hasVerdictSection(md), false);
+});
+
+test('NB3 связка: метки нет, но вердикт есть → случай «отвечено без метки», не «уронено»', async () => {
+  const { findUncoveredAgendaItems, hasVerdictSection } = await import('./lib/protocol-validator.mjs');
+  // Повестка с V1..V2, протокол отвечает по сути в таблице БЕЗ меток V1/V2 (кейс ВИЗОР 17.07)
+  const topic = '**V1 — первый вопрос?**\n**V2 — второй вопрос?**';
+  const protocol = '[Математик]: разобрали оба.\n\n## Итоговое решение консилиума\n| Тема | Решение |\n| интеграция | нет |';
+  const uncovered = findUncoveredAgendaItems(topic, protocol);
+  assert.deepEqual(uncovered, ['V1', 'V2'], 'метки действительно не проставлены');
+  assert.equal(hasVerdictSection(protocol), true, 'но секция вердикта есть → не «уронено»');
+});
