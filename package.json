@@ -118,7 +118,7 @@
     "night:close": "node scripts/night-build-close.mjs",
     "night:checkpoint": "node scripts/night-build-checkpoint.mjs",
     "hermes:brief": "node scripts/hermes-brief.mjs",
-    "ritual:day:no-api": "node scripts/morning-care.mjs --no-anthropic && node scripts/daily-standup.mjs --dry-run && node scripts/main-day-issue.mjs --allow-missing-standup",
+    "ritual:day:no-api": "node scripts/morning-care.mjs --no-anthropic && node scripts/daily-standup.mjs --dry-run && node scripts/main-day-probe.mjs && node scripts/main-day-issue.mjs --allow-missing-standup",
     "drift:snapshot": "node scripts/drift-anchor-snapshot.mjs",
     "drift:baseline": "node scripts/drift-anchor-snapshot.mjs --write-baseline",
     "drift:behavioral": "node scripts/drift-anchor-behavioral.mjs",
