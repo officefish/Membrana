@@ -31,6 +31,7 @@ import {
   affectedSubscribers,
   buildGraph,
   evidenceKind,
+  evidenceLabel,
   checkInvariants,
   computeStale,
   hasError,
@@ -108,12 +109,9 @@ function report(graph, manifest, violations, stale) {
   const staleIds = new Set(stale.map((s) => s.id));
   for (const t of graph.tokens) {
     const holds = t.parents?.length ? t.parents.join(' + ') : (t.revocation?.kind === 'owner' ? 'слове владельца' : t.revocation?.kind ?? '—');
-    const preds = usedPredicates(graph, t);
-    const ev = preds.length > 0
-      ? `команда ×${preds.length} @${preds[0].def?.verified ?? '?'}`
-      : t.probe
-        ? `проба @${t.probe.verified}`
-        : 'ТОЛЬКО ДАТА — доказательства нет';
+    // Метка живёт в ядре рядом с evidenceKind и меряет им же — иначе дисплей
+    // разойдётся с гейтом, как 17.07 (13 из 14 токенов).
+    const ev = evidenceLabel(graph, t);
     const mark = t.status !== 'active' ? ` [${t.status}]` : staleIds.has(t.id) ? ' [ПРОТУХ]' : '';
     lines.push(`${pad(t.id + mark, 46)}${pad(t.class === 'owner' ? 'владелец' : 'вывод', 10)}${pad(holds, 34)}${ev}`);
   }
