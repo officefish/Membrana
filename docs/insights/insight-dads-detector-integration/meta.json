@@ -1,13 +1,13 @@
 {
   "id": "insight-dads-detector-integration",
   "title": "Интеграция внешнего датасета DADS (Антон) в контур детекторов",
-  "status": "draft",
+  "status": "adopted",
   "source": "user",
   "horizon": null,
-  "weight": null,
+  "weight": 7.4,
   "createdAt": "2026-07-17",
-  "researchedAt": null,
-  "reviewedAt": null,
-  "closedAt": null,
+  "researchedAt": "2026-07-17",
+  "reviewedAt": "2026-07-17",
+  "closedAt": "2026-07-17",
   "tags": []
 }
