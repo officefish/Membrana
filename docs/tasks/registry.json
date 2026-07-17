@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "visor-mpvs-integration",
+      "title": "ВИЗОР-МПВС (эффектор C-UAS от Дениса) — актуальность и интеграция",
+      "promptPath": "docs/prompts/VISOR_MPVS_INTEGRATION_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-17",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "kuryokhin",
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "scripts-boundary-container",
       "title": "Граница scripts/: контейнер для ритуала — пакет, регламент, реестр",
       "promptPath": "docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md",

@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `visor-mpvs-integration` | ВИЗОР-МПВС (эффектор C-UAS от Дениса) — актуальность и интеграция | M | [`VISOR_MPVS_INTEGRATION_PROMPT.md`](../docs/prompts/VISOR_MPVS_INTEGRATION_PROMPT.md) | — |
 | `scripts-boundary-container` | Граница scripts/: контейнер для ритуала — пакет, регламент, реестр | M | [`SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md`](../docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md) | — |
 | `truth-graph-contour` | Граф правды: архитектура, реестр зависимых процессов, охлаждение сессии, инструменты редактирования | L | [`TRUTH_GRAPH_CONTOUR_PROMPT.md`](../docs/prompts/TRUTH_GRAPH_CONTOUR_PROMPT.md) | [#576](https://github.com/officefish/Membrana/issues/576) |
 | `mf10-teeth-sm5` | Зубы S-M5: возможна ли независимость аудитора-субагента | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
