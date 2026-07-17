@@ -437,6 +437,39 @@
         "allies",
         "telegram-swallow"
       ]
+    },
+    {
+      "id": "insight-registry-epic-issue-full-cleanup",
+      "title": "Полная чистка реестра: 189 фаз носят githubIssue своего эпика",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-15",
+      "tags": []
+    },
+    {
+      "id": "insight-truth-tokens-owner-facts",
+      "title": "Токены правды: владельческие факты как источник истины для ритуала",
+      "status": "researched",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-16",
+      "tags": []
+    },
+    {
+      "id": "insight-dads-detector-integration",
+      "title": "Интеграция внешнего датасета DADS (Антон) в контур детекторов",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 7.4,
+      "createdAt": "2026-07-17",
+      "tags": []
     }
   ]
 }
