@@ -3,6 +3,50 @@
   "updatedAt": "2026-07-17",
   "insights": [
     {
+      "id": "insight-evening-ritual-three-fuel-documents",
+      "title": "Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-ozhegov-lens-speech-purity-skill",
+      "title": "Линза Ожегова — кроссагентский скилл верификации ЧИСТОТЫ РЕЧИ (не грамотности)",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-dads-detector-integration",
+      "title": "Интеграция внешнего датасета DADS (Антон) в контур детекторов",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 7.4,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-effector-cue-integration",
+      "title": "Сопряжение с внешним эффектором C-UAS (ВИЗОР-МПВС, запрос Дениса)",
+      "status": "deferred",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 2.4,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
       "id": "insight-operator-smoke-ci-gate",
       "title": "Operator smoke как pre-merge CI gate для async-v2 UserCase",
       "status": "adopted",
@@ -458,28 +502,6 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-16",
-      "tags": []
-    },
-    {
-      "id": "insight-evening-ritual-three-fuel-documents",
-      "title": "Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному",
-      "status": "draft",
-      "source": "user",
-      "sprintPhase": null,
-      "horizon": null,
-      "weight": null,
-      "createdAt": "2026-07-17",
-      "tags": []
-    },
-    {
-      "id": "insight-ozhegov-lens-speech-purity-skill",
-      "title": "Линза Ожегова — кроссагентский скилл верификации ЧИСТОТЫ РЕЧИ (не грамотности)",
-      "status": "draft",
-      "source": "user",
-      "sprintPhase": null,
-      "horizon": null,
-      "weight": null,
-      "createdAt": "2026-07-17",
       "tags": []
     }
   ]

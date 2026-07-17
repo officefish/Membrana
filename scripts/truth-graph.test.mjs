@@ -1,9 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   affectedSubscribers,
   buildGraph,
+  evidenceLabel,
   checkAcyclic,
   checkDecorrelation,
   checkDerivedIntegrity,
@@ -465,4 +467,77 @@ test('buildGraph: пустой реестр не падает', () => {
   assert.deepEqual(checkInvariants(g), []);
   assert.deepEqual(radiusOfBreak(g, 'нет-такого'), []);
   assert.equal(independentPremises(g, 'нет-такого'), 0);
+});
+
+// --- evidenceLabel: дисплей обязан мерить тем же, чем гейт I7 -----------------
+// Повод: 17.07 метка считалась в колонке truth.mjs отдельно и не знала про
+// указатели на волеизъявление — гейт молчал, а таблица про те же 13 из 14
+// владельческих токенов печатала «доказательства нет». Тесты фиксируют ветвление,
+// чтобы порядок веток нельзя было поменять молча.
+
+test('evidenceLabel: указатель на реплику признаётся доказательством', () => {
+  const g = buildGraph({
+    tokens: [{ id: 'a', class: 'owner', parents: [], status: 'active',
+      source: { kind: 'owner', date: '2026-07-17', utterance: { sessionId: 's', uuid: 'u', timestamp: '2026-07-17T09:00:00Z' } } }],
+  });
+  assert.match(evidenceLabel(g, g.byId.get('a')), /указатель на реплику @2026-07-17/u);
+});
+
+test('evidenceLabel: клик слабее свободного текста (пространство выбора агентское)', () => {
+  // Регресс 17.07: при вынесении метки в ядро различие клик/слово чуть не потерялось.
+  // morning_crystallization помечает клики так — метка обязана это показывать.
+  const g = buildGraph({
+    tokens: [
+      { id: 'click', class: 'owner', parents: [], status: 'active',
+        source: { kind: 'owner', date: '2026-07-17', utterance: { sessionId: 's', uuid: 'u', timestamp: '2026-07-17T09:00:00Z', kind: 'click' } } },
+      { id: 'word', class: 'owner', parents: [], status: 'active',
+        source: { kind: 'owner', date: '2026-07-17', utterance: { sessionId: 's', uuid: 'v', timestamp: '2026-07-17T09:00:00Z', kind: 'free-text' } } },
+    ],
+  });
+  assert.match(evidenceLabel(g, g.byId.get('click')), /слабее/u);
+  assert.doesNotMatch(evidenceLabel(g, g.byId.get('word')), /слабее/u);
+});
+
+test('evidenceLabel: чистая дедукция — не «доказательства нет»', () => {
+  const g = buildGraph({
+    tokens: [
+      { id: 'p1', class: 'owner', parents: [], status: 'active', source: { kind: 'owner', date: '2026-07-17', utterance: { sessionId: 's', uuid: 'u1' } } },
+      { id: 'p2', class: 'owner', parents: [], status: 'active', source: { kind: 'owner', date: '2026-07-17', utterance: { sessionId: 's', uuid: 'u2' } } },
+      { id: 'd', class: 'derived', parents: ['p1', 'p2'], status: 'active', source: { kind: 'deduction', premisesUsed: ['p1', 'p2'] } },
+    ],
+  });
+  assert.equal(evidenceLabel(g, g.byId.get('d')), 'дедукция из 2 посыл(ок)');
+});
+
+test('evidenceLabel: derived С предикатом до ветки дедукции НЕ доходит', () => {
+  // Ревью #590 заподозрило, что счётчик «дедукция из N» занижает посылки у
+  // derived-с-предикатом. Опровергнуто: такой токен перехватывает ветка predicate.
+  const g = buildGraph({
+    tokens: [
+      { id: 'p', class: 'owner', parents: [], status: 'active', source: { kind: 'owner', date: '2026-07-17', utterance: { sessionId: 's', uuid: 'u' } } },
+      { id: 'd', class: 'derived', parents: ['p'], status: 'active',
+        source: { kind: 'deduction', premisesUsed: ['p', 'predicate:x'] },
+        predicates: [{ id: 'x', cmd: 'true', expect: 'ok', verified: '2026-07-17', touches: ['f.js'], cost: 'мс' }] },
+    ],
+  });
+  assert.match(evidenceLabel(g, g.byId.get('d')), /команда ×1/u);
+});
+
+test('evidenceLabel: владельческий без указателя и пробы — честное «нет»', () => {
+  const g = buildGraph({ tokens: [{ id: 'a', class: 'owner', parents: [], status: 'active', source: { kind: 'owner', date: '2026-07-17' } }] });
+  assert.match(evidenceLabel(g, g.byId.get('a')), /ТОЛЬКО ДАТА/u);
+});
+
+test('evidenceLabel: метка согласована с evidenceKind на всех токенах реестра', () => {
+  // Гейт против дубля: если кто-то поменяет порядок веток в одном месте,
+  // рассинхрон вылезет здесь, а не в проде через 13 токенов.
+  const g = buildGraph(JSON.parse(readFileSync(new URL('../docs/truth/registry.json', import.meta.url), 'utf8')));
+  for (const t of g.tokens) {
+    const kind = evidenceKind(g, t);
+    const label = evidenceLabel(g, t);
+    if (kind === 'utterance') assert.match(label, /указатель/u, t.id);
+    else if (kind === 'predicate') assert.match(label, /команда ×/u, t.id);
+    else if (kind === 'probe') assert.match(label, /проба @/u, t.id);
+    else if (t.class === 'owner') assert.match(label, /ТОЛЬКО ДАТА/u, t.id);
+  }
 });

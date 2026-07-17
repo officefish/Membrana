@@ -1,0 +1,13 @@
+{
+  "id": "insight-effector-cue-integration",
+  "title": "Сопряжение с внешним эффектором C-UAS (ВИЗОР-МПВС, запрос Дениса)",
+  "status": "deferred",
+  "source": "user",
+  "horizon": null,
+  "weight": 2.4,
+  "createdAt": "2026-07-17",
+  "researchedAt": null,
+  "reviewedAt": "2026-07-17",
+  "closedAt": "2026-07-17",
+  "tags": []
+}
