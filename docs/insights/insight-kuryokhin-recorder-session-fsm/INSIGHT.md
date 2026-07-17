@@ -9,7 +9,7 @@
 
 ---
 
-## Проблема / наблюдение (Курехин)
+## Проблема / наблюдение (Курёхин)
 
 L18: clip recorder не re-arm после `StopRecording` при активной session. Логика recorder/clip/mic journal размазана по `scenarioMicJournalBridge` без **явного FSM**. Каждый новый async path (upload, detached drone) добавляет edge-case.
 
