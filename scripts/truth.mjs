@@ -75,7 +75,7 @@ const pad = (s, n) => String(s ?? '').padEnd(n).slice(0, n);
  * Читаемый вид. Первым блоком — радиус поражения и задетые подписчики: владелец должен
  * увидеть ЦЕНУ раньше, чем список токенов (решение консилиума).
  */
-function report(graph, manifest, violations, stale) {
+export function report(graph, manifest, violations, stale) {
   const lines = [];
   const brokenIds = [...new Set([...violations.filter((v) => v.severity === 'error').map((v) => v.id), ...stale.map((s) => s.id)])];
   const affected = affectedSubscribers(graph, manifest, brokenIds);
@@ -109,11 +109,24 @@ function report(graph, manifest, violations, stale) {
   for (const t of graph.tokens) {
     const holds = t.parents?.length ? t.parents.join(' + ') : (t.revocation?.kind === 'owner' ? 'слове владельца' : t.revocation?.kind ?? '—');
     const preds = usedPredicates(graph, t);
-    const ev = preds.length > 0
-      ? `команда ×${preds.length} @${preds[0].def?.verified ?? '?'}`
-      : t.probe
-        ? `проба @${t.probe.verified}`
-        : 'ТОЛЬКО ДАТА — доказательства нет';
+    // Классифицирует ТОЛЬКО evidenceKind — единственный источник правды об этом.
+    // 17.07: таблица считала сама и не знала про utterance → все 21 токена с указателем
+    // печатались как «доказательства нет», пока I7 честно молчал. Экран врал о проверке,
+    // которую сам же требует. Расхождение экрана с логикой = дубль логики, не опечатка.
+    const ev = { utterance: () => {
+      const u = t.source.utterance;
+      return u.kind === 'click'
+        ? `клик @${String(u.timestamp).slice(0, 10)} — слабее: варианты агентские`
+        : `слово @${String(u.timestamp).slice(0, 10)}`;
+    },
+      predicate: () => `команда ×${preds.length} @${preds[0].def?.verified ?? '?'}`,
+      probe: () => `проба @${t.probe.verified}`,
+    }[evidenceKind(graph, t)]?.()
+      // Вывод не доказывают — он валиден или нет; истина приходит от родителей
+      // (канон: наследует min(родителей), умирает с любым из них). Печатать ему
+      // «доказательств нет» рядом с колонкой, где перечислены родители, — то же
+      // враньё экрана, только этажом ниже.
+      ?? (t.class === 'derived' && t.parents?.length ? 'наследует от родителей' : 'ТОЛЬКО ДАТА — доказательства нет');
     const mark = t.status !== 'active' ? ` [${t.status}]` : staleIds.has(t.id) ? ' [ПРОТУХ]' : '';
     lines.push(`${pad(t.id + mark, 46)}${pad(t.class === 'owner' ? 'владелец' : 'вывод', 10)}${pad(holds, 34)}${ev}`);
   }
