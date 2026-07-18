@@ -1,0 +1,112 @@
+{
+  "//": "Манифест шагов ВЕЧЕРНЕЙ цепочки ritual:evening — исполняемый источник истины (спринт ritual-step-manifest-sf, вердикт scripts-boundary-m0-order-2026-07-17). Утренний владельческий workflow — в docs/tasks/morning-ritual-steps.json (#605): там ДРУГАЯ популяция шагов (акты диалога владельца), не дубль этого файла.",
+  "//axes": "Две ОРТОГОНАЛЬНЫЕ оси на шаге. criticality (ось S: чем грозит падение) — critical|noncritical, ПО УМОЛЧАНИЮ critical, некритичность объявляется явно и с причиной. kind (ось #605: кто решает) — mechanic|gate, барьер canAdvance строит #605, здесь поле заполняется, но не исполняется.",
+  "//merge": "Слияние с morning-ritual-steps.json — ПОСЛЕ архивации #605 (L, active на 18.07). Сливать в полёте — коллизия с живым спринтом. Два файла здесь не дубль: пересечение популяций пусто.",
+  "//gate": "consumes[] — датированные входы шага. Перед чтением каждого: isFresh(artifact, {today, upstreamStatus}) из scripts/lib/artifact-freshness.mjs. Несвежий вход = стоп с читаемым объяснением, а не тихое чтение вчерашнего.",
+  "version": 1,
+  "chain": "evening",
+  "command": "yarn ritual:evening",
+  "steps": [
+    {
+      "id": "archive-night-hunt",
+      "script": "scripts/archive-night-hunt-artifacts.mjs",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "label": "Архивация night-hunt отчётов",
+      "consumes": [],
+      "produces": ["docs/archive/night-hunt/<date>/"]
+    },
+    {
+      "id": "archive-daily-day",
+      "script": "scripts/archive-daily-day-artifacts.mjs",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "label": "Снимок утренних артефактов дня",
+      "//": "Идёт ДО code-review сознательно: утром артефакты перезапишутся. Потеря снимка = потеря дня.",
+      "consumes": ["docs/MAIN_DAY_ISSUE.md", "docs/DAILY_STANDUP.md", "docs/STRATEGIC_PLAN_DAY.md"],
+      "produces": ["docs/archive/daily-day/<date>/"]
+    },
+    {
+      "id": "truth-cool",
+      "script": "scripts/truth.mjs cool",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "label": "Остывание графа правды",
+      "//": "Ничего не чинит сам (запрет #533) — автопочинка скрыла бы находку, ради которой гейт строится.",
+      "consumes": [],
+      "produces": ["docs/tasks/truth-registry.json"]
+    },
+    {
+      "id": "rag-index",
+      "script": "scripts/rag-evening-index.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Сам себя объявляет non-blocking в докстринге: без OPENAI_API_KEY деградирует в skip. НАХОДКА 18.07: в цепочке стоял БЕЗ || true — намерение и цепочка разошлись; ось criticality разводит их явно.",
+      "label": "Инкрементальный RAG-индекс",
+      "consumes": [],
+      "produces": ["rag index"]
+    },
+    {
+      "id": "persona-memory",
+      "script": "scripts/persona-memory-extract.mjs --all",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Дистилляция журнала персон из уже существующих артефактов — производный слой. Сбой не теряет первоисточник (docs/seanses на месте), прогон повторим завтра.",
+      "label": "Дистилляция памяти персон",
+      "consumes": ["docs/seanses/"],
+      "produces": ["docs/personas/*/MEMORY.md"]
+    },
+    {
+      "id": "insight-drift",
+      "script": "scripts/insight-drift.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Крест-скан-РЕПОРТЕР: сообщает о расхождениях реестров, ничего не меняет. Сбой скана не портит данные. ОДНАКО его находки обязаны быть видимы — некритичность шага НЕ означает, что его вывод можно проглотить.",
+      "label": "Дрейф реестра инсайтов",
+      "consumes": ["docs/insights/", "docs/tasks/registry.json"],
+      "produces": ["отчёт в stdout"]
+    },
+    {
+      "id": "code-review",
+      "script": "scripts/code-review.mjs",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "//incident": "БЫЛ || true. Это и есть инцидент rt-9: 15.07 фолбэк без кредита отдал exit 127, никто не заметил, downstream заархивировал вчерашний отчёт под сегодняшней датой. Ось S возвращает шагу зубы.",
+      "label": "Ревью кода дня",
+      "consumes": [],
+      "produces": ["docs/DAILY_CODE_REVIEW.md"]
+    },
+    {
+      "id": "archive-code-review",
+      "script": "scripts/archive-daily-code-review.mjs",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "//gate": "НЕСУЩЕЕ РЕБРО S→F. Читает выход code-review. Если code-review не 'ok' — архивировать нечего: заархивированный вчерашний отчёт под сегодняшней меткой и есть инцидент. isFresh обязателен ПЕРЕД копированием.",
+      "label": "Архивация отчёта ревью",
+      "consumes": ["docs/DAILY_CODE_REVIEW.md"],
+      "consumesFrom": { "docs/DAILY_CODE_REVIEW.md": "code-review" },
+      "produces": ["docs/archive/daily-code-review/"]
+    },
+    {
+      "id": "evening-tail",
+      "script": "scripts/ritual-evening-tail.mjs",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "//": "Внутри — task:close-github + team-evening-feedback. Второе объявлено обязательством процесса в .claude/CLAUDE.md («не опция»), значит шаг критичен.",
+      "label": "Хвост вечера: закрытие Issues + team evening feedback",
+      "consumes": ["docs/DAILY_STANDUP.md", "docs/STRATEGIC_PLAN_DAY.md", "docs/DAILY_CODE_REVIEW.md"],
+      "produces": ["docs/seanses/team-evening-feedback-<date>.md"]
+    },
+    {
+      "id": "telegram-digest",
+      "script": "scripts/telegram-ritual-digest.mjs --kind evening",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Цепочечный прогон — best-effort по .claude/CLAUDE.md: office транзиентно таймаутит, ронять из-за этого весь вечер нельзя. ВАЖНО: некритичность ЗДЕСЬ не снимает обязательства — дайджест запускается ЯВНО после появления артефакта и владелец убеждается в sent=true. Цепочечный || true никогда не был подтверждением отправки.",
+      "label": "Партнёрский дайджест (ласточка) — вечерний",
+      "consumes": ["docs/seanses/team-evening-feedback-<date>.md"],
+      "consumesFrom": { "docs/seanses/team-evening-feedback-<date>.md": "evening-tail" },
+      "produces": ["сообщение в приватную группу союзников"]
+    }
+  ]
+}
