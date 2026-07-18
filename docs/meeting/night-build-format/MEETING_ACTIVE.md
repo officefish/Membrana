@@ -12,7 +12,7 @@
 | Фаза | Вопрос | Статус | Протокол |
 | --- | --- | --- | --- |
 | **M0** | O1 — порядок (DAG) 5 доработок | ✅ вердикт (run2) | `night-build-format-m0-order-run2-clean-2026-07-18.md` (25 реплик) |
-| M1 | кандидат 3 — guardrails first | ✅ вердикт + правка регламента применена | `night-build-format-m1-guardrails-2026-07-18.md` (25 реплик, Teamlead LGTM) |
+| M1 | кандидат 3 — guardrails first | ✅ вердикт + правка регламента + **ратифицирован + аудит 5/5** | `night-build-format-m1-guardrails-2026-07-18.md` (20 реплик, Teamlead LGTM) |
 | M2 | кандидат 2 — гранулярность/каденс | ⏳ после M1 | — |
 | M3 | кандидат 1 — edit-class taxonomy | ⏳ после M2 | — |
 
