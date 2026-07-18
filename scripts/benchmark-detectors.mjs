@@ -16,14 +16,7 @@ import { access, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import {
-  confusionFromPairs,
-  f1Score,
-  precision,
-  recall,
-  sortNumbers,
-  percentile,
-} from './lib/benchmark-metrics.mjs';
+import { detectorMetrics, sortNumbers } from './lib/benchmark-metrics.mjs';
 import { patchDetectorBenchmarkMd } from './lib/benchmark-report-md.mjs';
 import { loadCalibrationPreset } from './lib/calibration-preset.mjs';
 import { filterCuratedSamples } from './lib/manifest-labels.mjs';
@@ -168,30 +161,13 @@ export async function runDetector(manifestSamples, spec, datasetDir, sampleOptio
     allLatencies.push(...frameLatenciesMs);
   }
 
-  const pairs = perSample.map((s) => ({
-    truthDrone: s.truthDrone,
-    predDrone: s.predDrone,
-  }));
-  const { tp, fp, fn, tn } = confusionFromPairs(pairs);
-  const prec = precision(tp, fp);
-  const rec = recall(tp, fn);
   const sortedLat = sortNumbers(allLatencies);
 
   return {
     name: spec.name,
     family: 'dsp',
     status: 'benchmarked',
-    metrics: {
-      tp,
-      fp,
-      fn,
-      tn,
-      precision: prec,
-      recall: rec,
-      f1: f1Score(prec, rec),
-      latencyP50Ms: percentile(sortedLat, 50),
-      latencyP95Ms: percentile(sortedLat, 95),
-    },
+    metrics: detectorMetrics(perSample, sortedLat),
     perSample,
   };
 }
@@ -234,30 +210,13 @@ export async function runTemplateMatch(manifestSamples, datasetDir) {
     allLatencies.push(verdict.latencyMsTotal);
   }
 
-  const pairs = perSample.map((s) => ({
-    truthDrone: s.truthDrone,
-    predDrone: s.predDrone,
-  }));
-  const { tp, fp, fn, tn } = confusionFromPairs(pairs);
-  const prec = precision(tp, fp);
-  const rec = recall(tp, fn);
   const sortedLat = sortNumbers(allLatencies);
 
   return {
     name: 'template-match',
     family: 'dsp',
     status: 'benchmarked',
-    metrics: {
-      tp,
-      fp,
-      fn,
-      tn,
-      precision: prec,
-      recall: rec,
-      f1: f1Score(prec, rec),
-      latencyP50Ms: percentile(sortedLat, 50),
-      latencyP95Ms: percentile(sortedLat, 95),
-    },
+    metrics: detectorMetrics(perSample, sortedLat),
     perSample,
   };
 }
@@ -306,30 +265,13 @@ export async function runYamnet(manifestSamples, datasetDir) {
     allLatencies.push(result.latencyMs);
   }
 
-  const pairs = perSample.map((s) => ({
-    truthDrone: s.truthDrone,
-    predDrone: s.predDrone,
-  }));
-  const { tp, fp, fn, tn } = confusionFromPairs(pairs);
-  const prec = precision(tp, fp);
-  const rec = recall(tp, fn);
   const sortedLat = sortNumbers(allLatencies);
 
   return {
     name: 'yamnet',
     family: 'neural',
     status: 'benchmarked',
-    metrics: {
-      tp,
-      fp,
-      fn,
-      tn,
-      precision: prec,
-      recall: rec,
-      f1: f1Score(prec, rec),
-      latencyP50Ms: percentile(sortedLat, 50),
-      latencyP95Ms: percentile(sortedLat, 95),
-    },
+    metrics: detectorMetrics(perSample, sortedLat),
     perSample,
   };
 }
