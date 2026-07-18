@@ -66,6 +66,79 @@ export function auditRegistry(tasks, issues) {
   return { archive, cancelled, manual, umbrellas };
 }
 
+/**
+ * Состояние иссью, восстановленное ИЗ РЕЕСТРА — тот же контракт, что даёт `gh`.
+ *
+ * Ради чего (#620, вердикт DA1): пока состояние закрытия жило только в сети, `audit(x)`
+ * зависел от момента вызова, а не от содержимого коммита — воспроизводимости бит-в-бит
+ * не существовало. С заполненным `githubIssueClosedAt` аудит считается по срезу репозитория.
+ *
+ * Карточки без `githubIssueClosedAt` сюда НЕ попадают: «поля нет» — это «не знаю», а не
+ * «открыта». Пустая запись безопаснее ложного OPEN, потому что неизвестная иссью просто
+ * не становится кандидатом (см. тест «нет данных ≠ закрыта»).
+ */
+export function issuesFromRegistry(tasks) {
+  const issues = new Map();
+  for (const t of tasks) {
+    const n = Number(t.githubIssue);
+    if (!(n > 0) || t.githubIssueClosedAt == null) continue;
+    issues.set(n, {
+      state: 'CLOSED',
+      stateReason: t.githubIssueStateReason ?? 'COMPLETED',
+      closedAt: t.githubIssueClosedAt,
+    });
+  }
+  return issues;
+}
+
+/**
+ * Единственные два состояния закрытия, которые различает GitHub. Полнота enum важна:
+ * потеря `NOT_PLANNED` слила бы «отменено» с «сделано» — запрет вердикта H1.
+ */
+export const ISSUE_STATE_REASONS = ['COMPLETED', 'NOT_PLANNED'];
+
+/**
+ * ПЛАН синхронизации состояния иссью — чистая функция, решение отделено от записи.
+ *
+ * Вынесено из тела скрипта по замечанию ревью 18.07: пока решение жило внутри цикла с
+ * записью на диск, его нельзя было ни проверить тестом, ни увидеть в diff — ревьюер
+ * обоснованно назвал это слепой зоной провенанса.
+ *
+ * ВАЖНО про «сдвиг даты назад». Перезапись более ранней датой — не потеря факта, а
+ * ИСПРАВЛЕНИЕ: `task:close-github` писал дату СВОЕГО ПРОГОНА, а GitHub отдаёт момент
+ * реального закрытия, обычно на 1–2 дня раньше. Замер 18.07: 121 из 319 дат разъезжались.
+ * Источник истины здесь ровно один — `closedAt` от `gh`; локальное значение авторитетом
+ * не считается, поэтому downgrade разрешён сознательно и покрыт тестом.
+ *
+ * @param {object[]} tasks карточки реестра
+ * @param {Map<number, {state: string, stateReason?: string, closedAt?: string}>} issues
+ * @returns {{updates: Array<{task: object, closedAt: string|null, stateReason: string|null, kind: 'closed'|'reopened'}>}}
+ */
+export function planIssueStateSync(tasks, issues) {
+  const updates = [];
+  for (const task of tasks) {
+    const n = Number(task.githubIssue);
+    if (!(n > 0)) continue; // нет иссью — нечего синхронизировать (дата взяться неоткуда)
+    const issue = issues.get(n);
+    if (!issue) continue; // нет данных ≠ закрыта: карточку не трогаем
+
+    if (issue.state === 'CLOSED') {
+      const closedAt = (issue.closedAt ?? '').slice(0, 10) || null;
+      // Неизвестный/отсутствующий reason → COMPLETED: молчание не означает «отменено».
+      const raw = issue.stateReason ?? 'COMPLETED';
+      const stateReason = ISSUE_STATE_REASONS.includes(raw) ? raw : 'COMPLETED';
+      if (task.githubIssueClosedAt !== closedAt || task.githubIssueStateReason !== stateReason) {
+        updates.push({ task, closedAt, stateReason, kind: 'closed' });
+      }
+    } else if (task.githubIssueClosedAt != null) {
+      // Иссью переоткрыли: снимаем дату, иначе реестр врёт «закрыто» и офлайн-аудит
+      // предложит архивацию живой работы. Синхронизация двусторонняя, не только «вперёд».
+      updates.push({ task, closedAt: null, stateReason: null, kind: 'reopened' });
+    }
+  }
+  return { updates };
+}
+
 /** Систематические дефекты реестра — находки уровня схемы, а не отдельных карточек. */
 export function registryDefects(tasks) {
   const defects = [];
@@ -77,7 +150,8 @@ export function registryDefects(tasks) {
   if (active.length > 0 && withClosedAt === 0) {
     defects.push(
       `поле githubIssueClosedAt не заполнено ни у одной из ${active.length} active-карточек с иссью — ` +
-        'состояние закрытия недоступно офлайн, аудит не воспроизводим по коммиту',
+        'состояние закрытия недоступно офлайн, аудит не воспроизводим по коммиту. ' +
+        'Чинится: yarn tasks:sync-issues',
     );
   }
 

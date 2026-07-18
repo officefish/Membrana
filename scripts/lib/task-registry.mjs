@@ -20,7 +20,8 @@ export const ARCHIVE_DIR_REL = 'docs/tasks/archive';
  * @property {string} createdAt
  * @property {string | null} archivedAt
  * @property {string | null} archiveNotes
- * @property {string | null} [githubIssueClosedAt] ISO date; null — Issue ещё не закрыт на GitHub (очередь вечернего скрипта)
+ * @property {string | null} [githubIssueClosedAt] ISO date; null — Issue ещё не закрыт на GitHub. Пишут: `task:close-github` (те, что закрывает сам) и `tasks:sync-issues` (закрытые на GitHub любым путём, #620)
+ * @property {string | null} [githubIssueStateReason] COMPLETED | NOT_PLANNED — «сделано» vs «отменено»; архив один, история разная (вердикт H1)
  */
 
 /** @param {string} [cwd] */
