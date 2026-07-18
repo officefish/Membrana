@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "morning-ritual-regulation",
+      "title": "Регламент утреннего ритуала + фоновый агент (барьер против проглоченного гейта)",
+      "promptPath": "docs/prompts/MORNING_RITUAL_REGULATION.md",
+      "githubIssue": 605,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin",
+        "rodchenko"
+      ],
+      "notes": "ЭПИК. Вердикт консилиума 18.07 (morning-ritual-regulation-background-agent). Барьер canAdvance = mechanic OR (gate AND hasDecision): фон структурно не проходит гейт без решения владельца. СДЕЛАНО спринт 18.07 (4 фазы, в main): Ф1 ядро+манифест+тест-инвариант перебором; Ф2 раннер+витрина+мостик+провенанс; Ф3 фоновый агент контракт+проба вживую (вскрыла дефект эхо MAIN_DAY_ISSUE, исправлен на сверку с кодом); Ф4 цикл recordDecision+--decide (застыл->решение->продвижение, 11/11 тестов). ОСТАТОК: Ф5 оркестратор ritual:day (ломающее, слово владельца); Ф6 витрина-UI (apps/, Rodchenko). Проба фонового агента подтвердила параллельность+барьер+ловлю собственной ошибки фона. Смежно: три адресата документов, находки утра morning-findings-2026-07-18, контейнер линз.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "night-build-format-v2",
       "title": "Формат night-build: доработка по трению ночи 17.07 (заседание)",
       "promptPath": "docs/prompts/NIGHT_BUILD_FORMAT_V2_PROMPT.md",

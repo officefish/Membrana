@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `morning-ritual-regulation` | Регламент утреннего ритуала + фоновый агент (барьер против проглоченного гейта) | L | [`MORNING_RITUAL_REGULATION.md`](../docs/prompts/MORNING_RITUAL_REGULATION.md) | [#605](https://github.com/officefish/Membrana/issues/605) |
 | `night-build-format-v2` | Формат night-build: доработка по трению ночи 17.07 (заседание) | M | [`NIGHT_BUILD_FORMAT_V2_PROMPT.md`](../docs/prompts/NIGHT_BUILD_FORMAT_V2_PROMPT.md) | — |
 | `strategy-day-generator` | Генератор стратегии дня: горизонт вместо списка задач | L | [`STRATEGY_DAY_GENERATOR_PROMPT.md`](../docs/prompts/STRATEGY_DAY_GENERATOR_PROMPT.md) | [#592](https://github.com/officefish/Membrana/issues/592) |
 | `scripts-boundary-container` | Граница scripts/: контейнер для ритуала — пакет, регламент, реестр | M | [`SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md`](../docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md) | — |
