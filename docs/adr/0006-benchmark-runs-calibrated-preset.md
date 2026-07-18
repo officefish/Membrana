@@ -1,7 +1,7 @@
 # ADR-0006 — Прогон бенчмарка исполняет калиброванный пресет; владелец истины — JSON калибратора
 
-> **Статус:** DRAFT · 2026-07-18
-> **merge файла ≠ принятие решения** пока статус DRAFT — решения действуют после LGTM владельца.
+> **Статус:** ACCEPTED · 2026-07-18 (LGTM владельца)
+> Решения Р1–Р3 действуют. Замена — только через новый ADR со статусом SUPERSEDED-by-ADR-MMMM.
 
 ## Контекст
 
@@ -30,7 +30,7 @@
 ## Наблюдаемое состояние (подтверждено кодом)
 
 | Факт | Где (файл:строка @ 2026-07-18) |
-|------|--------------------------------|
+| --- | --- |
 | Бенчмарк создаёт детекторы **дефолтами пакетов**; в `analyzeSample` передаётся только `fftSize` | `scripts/benchmark-detectors.mjs:125-136` |
 | Бенчмарк **не читает пресет вовсе** — ни одного вхождения `preset`/`calibration-preset` | `scripts/benchmark-detectors.mjs` (грep, 0 совпадений) |
 | Боевая поверхность (плагины модуля микрофон) подмешивает пресет | `apps/client/src/plugins/mic-live-drone-analysis/analyzeStreamDetectors.ts:28,79`; `analyzeSampleDetectorsBrief.ts:31,68`; `apps/client/src/plugins/mic-combined-detection/createCombinedStreamDetectors.ts:28,40` |
