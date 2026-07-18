@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-14",
+  "updatedAt": "2026-07-18",
   "insights": [
     {
       "id": "insight-operator-smoke-ci-gate",
@@ -469,6 +469,17 @@
       "horizon": null,
       "weight": 7.4,
       "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-own-field-corpus-single-spec",
+      "title": "Собственный полевой корпус: спецификация трека и ежедневная рутина сбора",
+      "status": "researched",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-18",
       "tags": []
     }
   ]
