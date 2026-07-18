@@ -87,3 +87,25 @@ test('проверка 5 при untracked даёт НЕЧЕМ, а не FAIL — 
   assert.equal(c.status, 'НЕЧЕМ');
   assert.equal(r.violations, 0, 'отсутствие зубов ≠ нарушение');
 });
+
+// ─── проверка 6: обход инструмента (#616, вариант A) ────────────────────────────
+
+test('#616: протокол после отсечки без пометки канала → FAIL (записан мимо инструмента)', () => {
+  const { checks } = auditMeeting(state({ protocols: [{ file: 'm1-2026-07-20.md', md: goodProtocol('B1') }] }));
+  const c6 = checks.filter((c) => c.n === 6);
+  assert.equal(c6.length, 1);
+  assert.equal(c6[0].status, 'FAIL');
+  assert.match(c6[0].note, /мимо consilium\.mjs/u);
+});
+
+test('#616: протокол с пометкой канала → PASS (гейт посылок отработал при записи)', () => {
+  const stamped = `<!-- канал: llm — протокол произведён yarn consilium -->\n${goodProtocol('B1')}`;
+  const { checks } = auditMeeting(state({ protocols: [{ file: 'm1-2026-07-20.md', md: stamped }] }));
+  assert.equal(checks.filter((c) => c.n === 6)[0].status, 'PASS');
+});
+
+test('#616: протоколы ДО отсечки не судятся задним числом', () => {
+  // Ретроактивность запрещена тем же принципом, что и добор посылок задним числом.
+  const { checks } = auditMeeting(state({ protocols: [{ file: 'm1-2026-07-18.md', md: goodProtocol('B1') }] }));
+  assert.equal(checks.filter((c) => c.n === 6).length, 0, 'старые протоколы вне правила');
+});

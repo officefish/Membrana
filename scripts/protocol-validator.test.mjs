@@ -227,3 +227,30 @@ test('NB3 связка: метки нет, но вердикт есть → сл
   assert.deepEqual(uncovered, ['V1', 'V2'], 'метки действительно не проставлены');
   assert.equal(hasVerdictSection(protocol), true, 'но секция вердикта есть → не «уронено»');
 });
+
+// ─── validateProtocol meeting-режим: посылки обязательны ДО записи (#616) ────────
+
+test('#616: заседание без секции посылок не проходит канон (гейт при записи)', async () => {
+  const { validateProtocol } = await import('./lib/protocol-validator.mjs');
+  const body = Array.from({ length: 20 }, (_, i) =>
+    `[${['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 5]}]: реплика ${i}`,
+  ).join('\n');
+  const md = `| Поле | Значение |\n\n${body}\n## Итоговое решение\nконсенсус`;
+
+  const asMeeting = validateProtocol(md, { meeting: true });
+  assert.equal(asMeeting.ok, false, 'заседание обязано назвать основание');
+  assert.ok(asMeeting.problems.some((p) => /список.*посылок/iu.test(p)), 'причина названа');
+
+  // Обычный консилиум вправе не иметь секции посылок — правило только для заседаний.
+  assert.equal(validateProtocol(md, { meeting: false }).ok, true);
+});
+
+test('#616: заседание с посылками и чистым DoD проходит', async () => {
+  const { validateProtocol } = await import('./lib/protocol-validator.mjs');
+  const body = Array.from({ length: 20 }, (_, i) =>
+    `[${['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 5]}]: реплика ${i}`,
+  ).join('\n');
+  const md = `| Поле | Значение |\n\n${body}\n## Итоговое решение\n\n**Полный список посылок вердикта:**\n1. Вход из предшественника.\n\n**Definition of Done:**\n- своё обязательство\n`;
+  const r = validateProtocol(md, { meeting: true, siblingIds: ['F1', 'H1'] });
+  assert.equal(r.ok, true, r.problems.join('; '));
+});

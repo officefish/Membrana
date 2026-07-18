@@ -267,11 +267,27 @@ export function parseVotingTable(md) {
  * `notes` — наблюдения БЕЗ права отказа (#619). Отдельный канал нужен затем, чтобы
  * слабый сигнал не подмешивался к `problems` и не ронял прогон: смешение этих двух
  * и дало три ложных красных на заседании 18.07.
+ *
+ * `meeting` (#616, вариант A) — протокол ЗАСЕДАНИЯ: к канону добавляются структурные
+ * проверки вердикта, и «нет секции посылок» становится ОТКАЗОМ, а не замечанием
+ * постфактум. Почему при записи: комната устроена выносить суждение, а не
+ * реконструировать основание — спрошенная о посылках после прогона, она их
+ * правдоподобно сочиняет (M2″ 18.07: 8 уверенных посылок ЧУЖОГО вердикта). Момент,
+ * когда основание ещё можно назвать честно, — сам прогон; поэтому гейт обязан стоять
+ * до появления вердикта в файле, а не после.
+ *
  * @returns {{ ok: boolean, problems: string[], notes: string[], stats: object }}
  */
 export function validateProtocol(
   md,
-  { kind = 'consilium', minReplies = 20, roleLabels = MEMBRANA_ROLE_LABELS, agenda = null } = {},
+  {
+    kind = 'consilium',
+    minReplies = 20,
+    roleLabels = MEMBRANA_ROLE_LABELS,
+    agenda = null,
+    meeting = false,
+    siblingIds = [],
+  } = {},
 ) {
   const problems = [];
   const notes = [];
@@ -346,5 +362,11 @@ export function validateProtocol(
   if (!/итоговое решение|консенсус|## итог/iu.test(md)) {
     problems.push('нет секции итогового решения / консенсуса');
   }
+
+  // (5) заседание: структура вердикта с зубами — посылки обязательны ДО записи (#616).
+  if (meeting) {
+    problems.push(...meetingVerdictProblems(md, siblingIds));
+  }
+
   return { ok: problems.length === 0, problems, notes, stats: { counts, total } };
 }
