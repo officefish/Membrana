@@ -103,6 +103,20 @@ export const DetectorScoreboardPanel: React.FC<DetectorScoreboardPanelProps> = (
           </table>
         </div>
 
+        <div className="text-xs">
+          <div className="font-medium mb-1">Ступени обучения — ещё не измерены</div>
+          <p className="opacity-70 mb-1">
+            Показаны пустыми намеренно: «не измерено» не то же самое, что «измерено плохо».
+          </p>
+          <ul className="opacity-70 space-y-0.5">
+            {PENDING_LADDER.map((step) => (
+              <li key={step.trainSize} className="tabular-nums">
+                обучение на {step.trainSize} — {step.blockedBy}
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className="text-xs opacity-70 space-y-1">
           {SCOREBOARD_ROWS.filter((r) => r.caveat).map((r) => (
             <p key={r.detector}>
