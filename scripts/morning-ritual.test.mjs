@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-import { canAdvance, hasDecision, advanceFrontier, ritualStatus, renderStatus, bridgeMessage } from './lib/morning-ritual.mjs';
+import { canAdvance, hasDecision, advanceFrontier, ritualStatus, renderStatus, bridgeMessage, recordDecision } from './lib/morning-ritual.mjs';
 
 const STEPS = JSON.parse(readFileSync(new URL('../docs/tasks/morning-ritual-steps.json', import.meta.url))).steps;
 
@@ -93,6 +93,22 @@ test('renderStatus: активный гейт помечен «ЖДЁТ РЕШЕ
   assert.match(out, /ЖДЁТ РЕШЕНИЯ/u, 'застрявший гейт обязан кричать в витрине');
   assert.match(out, /✓/u); // есть пройденные механические
   assert.match(out, /ЗАСТЫЛ на гейте/u);
+});
+
+test('recordDecision: чистая (не мутирует), пустое решение бросает, цикл продвигает фронтир', () => {
+  const s0 = { decisions: {} };
+  const firstGate = STEPS.find((s) => s.kind === 'gate');
+  // пустое решение — тихая дыра, бросаем
+  assert.throws(() => recordDecision(firstGate.id, '', s0), /пустое решение/u);
+  assert.throws(() => recordDecision(firstGate.id, null, s0), /пустое решение/u);
+  // запись не мутирует исходное состояние
+  const s1 = recordDecision(firstGate.id, 'да', s0);
+  assert.deepEqual(s0, { decisions: {} }, 'recordDecision не должна мутировать вход');
+  assert.equal(s1.decisions[firstGate.id], 'да');
+  // фронтир сдвинулся за решённый гейт
+  const before = advanceFrontier(STEPS, s0).advanced;
+  const after = advanceFrontier(STEPS, s1).advanced;
+  assert.ok(after > before, 'после решения гейта фон продвигается дальше');
 });
 
 test('bridgeMessage: озвучивает гейт в диалог; пусто когда всё пройдено', () => {

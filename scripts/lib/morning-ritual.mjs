@@ -80,6 +80,22 @@ export function ritualStatus(steps, state) {
   }));
 }
 
+/**
+ * Записать РЕШЕНИЕ владельца по гейту. Чистая: возвращает НОВОЕ состояние, не мутирует.
+ * Решение должно быть непустым (см. hasDecision). Записать пустое — ошибка (гейт остался
+ * бы открыт, а выглядел решённым): бросаем, чтобы не создать тихую дыру.
+ * @param {string} stepId
+ * @param {unknown} value  непустое: строка выбора / true / false (явное «нет» — тоже решение)
+ * @param {State} state
+ * @returns {State}
+ */
+export function recordDecision(stepId, value, state) {
+  if (value === null || value === undefined || value === '') {
+    throw new Error(`recordDecision(${stepId}): пустое решение не записывается — гейт остался бы открытым под видом решённого`);
+  }
+  return { ...state, decisions: { ...(state?.decisions ?? {}), [stepId]: value } };
+}
+
 const GLYPH = { done: '✓', 'active-gate': '⏸', disabled: '·' };
 
 /**

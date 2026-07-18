@@ -17,11 +17,11 @@
  * Владелец/ведущий агент пишет туда решение по гейту — тогда фон продвигается дальше.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { advanceFrontier, renderStatus, bridgeMessage, ritualStatus } from './lib/morning-ritual.mjs';
+import { advanceFrontier, renderStatus, bridgeMessage, ritualStatus, recordDecision } from './lib/morning-ritual.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const MANIFEST_REL = 'docs/tasks/morning-ritual-steps.json';
@@ -54,10 +54,26 @@ function main() {
   const args = process.argv.slice(2);
   const doAdvance = args.includes('--advance');
   const asJson = args.includes('--json');
+  const decideIdx = args.indexOf('--decide');
 
   const steps = readJson(MANIFEST_REL, { steps: [] }).steps ?? [];
-  const state = readJson(STATE_REL, { decisions: {} });
+  let state = readJson(STATE_REL, { decisions: {} });
   const rev = originHash();
+
+  // --decide <gateId> <value>: записать РЕШЕНИЕ владельца по гейту (гейт проходит только
+  // после явной записи — не молча). Это owner-действие: вызывается ведущим агентом ТОЛЬКО
+  // по слову владельца, не фоном.
+  if (decideIdx !== -1) {
+    const gateId = args[decideIdx + 1];
+    const value = args.slice(decideIdx + 2).join(' ') || 'решено';
+    const step = steps.find((s) => s.id === gateId);
+    if (!step) { console.error(`--decide: нет шага «${gateId}» в манифесте`); process.exitCode = 1; return; }
+    if (step.kind !== 'gate') { console.error(`--decide: «${gateId}» не gate (${step.kind}) — механику решать не нужно`); process.exitCode = 1; return; }
+    state = recordDecision(gateId, value, state);
+    writeFileSync(resolve(root, STATE_REL), JSON.stringify(state, null, 2) + '\n', 'utf8');
+    console.log(`Решение записано: ${gateId} = «${value}». Фон продвинется на следующем прогоне.`);
+    return;
+  }
 
   const { advanced, blockedAt, blockedReason } = advanceFrontier(steps, state);
 
