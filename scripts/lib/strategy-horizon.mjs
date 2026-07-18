@@ -111,13 +111,27 @@ export function horizonSince(horizon, now, windowDays = DEFAULT_STALE_WINDOW_DAY
  * Внутренние идентификаторы, не имеющие смысла для внешнего поиска. Каждый — повод
  * ОТКЛОНИТЬ вопрос: перед Perplexity его надо переформулировать в мирочитаемый.
  */
+/**
+ * Аббревиатуры, законные во ВНЕШНЕМ вопросе, хотя по форме неотличимые от метки
+ * повестки (буквы+цифра). Без этого списка правило «метка заседания» отклонило бы
+ * `MP3`/`H264` — а для проекта про звук это ровно те слова, ради которых сон и
+ * задаётся. Ошибка здесь дорогая в обе стороны, поэтому исключения названы поимённо.
+ */
+const EXTERNAL_ACRONYMS = new Set(['MP3', 'MP4', 'MP2', 'H264', 'H265', 'G711', 'G722', 'AAC3', 'PS4', 'PS5']);
+
 const INTERNAL_JARGON = [
   { re: /\bADR[-\s]?\d+\b/iu, what: 'ссылка на ADR' },
   { re: /\bADR\b/u, what: 'аббревиатура ADR' },
   { re: /@membrana\/[a-z0-9-]+/iu, what: 'имя внутреннего пакета' },
   { re: /(?:^|\s)#\d+\b/u, what: 'номер issue/PR' },
   { re: /\b\w+-\d{2}-\d{2}-\w[\w-]*\b/u, what: 'id кристалла/сессии с датой' },
-  { re: /\b[A-Za-z_]+\.(?:mjs|ts|tsx|js|json)\b/u, what: 'путь к файлу репозитория' },
+  { re: /\b[A-Za-z_]+\.(?:mjs|ts|tsx|js|json|md)\b/u, what: 'путь к файлу репозитория' },
+  // #599: три класса, которые утекли наружу 18.07 (Perplexity вернул ЕГРЮЛ на вопрос
+  // с внутренним жаргоном). Аудит дня 18.07 подтвердил утечку живым прогоном:
+  // externalizeQuery('MAIN_DAY_ISSUE') возвращал ok=true.
+  { re: /\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b/u, what: 'имя документа/константы (CAPS_SNAKE)' },
+  { re: /\b[a-z][a-z0-9-]*:[a-z][a-z0-9-]*\b/u, what: 'имя yarn-скрипта/ритуала' },
+  { re: /\b[A-Z]{1,2}\d{1,2}′?\b/u, what: 'метка вопроса повестки/вердикта' },
 ];
 // ЗАМЕЧЕНО: голый внутренний слаг без даты (`graph-first-step-572`) НЕ детектируется —
 // он неотличим от обычных слов. Ночной контур (S6) обязан внешним делать текст ПОСЫЛКИ
@@ -131,16 +145,30 @@ const INTERNAL_JARGON = [
  * @param {string} query
  * @returns {{ok: true, query: string} | {ok: false, reason: string, offending: string[]}}
  */
-export function externalizeQuery(query) {
+export function externalizeQuery(query, { internalNames = [] } = {}) {
   const text = String(query ?? '').trim();
   if (text === '') {
     return { ok: false, reason: 'externalizeQuery: пустой вопрос — нечего проверять сном', offending: [] };
   }
   /** @type {string[]} */
   const offending = [];
+
+  // Имена скриптов репозитория (`main-day-issue`) по форме неотличимы от законных
+  // английских связок `end-to-end`, `state-of-the-art`, `signal-to-noise` — правило
+  // «kebab из N сегментов» отклоняло бы их и убивало нормальные внешние вопросы.
+  // Поэтому список не угадывается по форме, а приходит СЛОВАРЁМ от вызывающего.
+  for (const name of internalNames) {
+    const n = String(name ?? '').trim();
+    if (n.length < 3) continue;
+    const re = new RegExp(`(?<![\\w-])${n.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}(?![\\w-])`, 'iu');
+    if (re.test(text)) offending.push(`имя скрипта/документа репозитория: «${n}»`);
+  }
   for (const { re, what } of INTERNAL_JARGON) {
     const m = text.match(re);
-    if (m) offending.push(`${what}: «${m[0].trim()}»`);
+    if (!m) continue;
+    // Законная внешняя аббревиатура по форме совпала с меткой повестки — не жаргон.
+    if (EXTERNAL_ACRONYMS.has(m[0].trim().toUpperCase())) continue;
+    offending.push(`${what}: «${m[0].trim()}»`);
   }
   if (offending.length > 0) {
     return {

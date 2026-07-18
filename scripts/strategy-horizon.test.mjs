@@ -70,6 +70,46 @@ test('externalizeQuery: жаргон (ADR, имя пакета) — явный F
   }
 });
 
+test('#599: четыре класса из критерия приёмки отклоняются (утечка 18.07)', () => {
+  // Живой прогон аудита 18.07: externalizeQuery('MAIN_DAY_ISSUE') возвращал ok=true,
+  // и вопрос с жаргоном ушёл наружу — Perplexity вернул ЕГРЮЛ.
+  const cases = [
+    ['MAIN_DAY_ISSUE', 'CAPS_SNAKE — имя документа'],
+    ['Что в DAILY_CODE_REVIEW.md?', 'имя документа с расширением'],
+    ['Стоит ли чинить ritual:day?', 'имя yarn-скрипта'],
+    ['Верен ли вердикт C1?', 'метка вопроса повестки'],
+    ['Верен ли вердикт M2′?', 'метка со штрихом'],
+  ];
+  for (const [q, why] of cases) {
+    const r = externalizeQuery(q);
+    assert.equal(r.ok, false, `должен отклонить (${why}): ${q}`);
+    assert.ok(r.offending.length > 0, 'нарушение названо, а не молча');
+  }
+});
+
+test('#599: законные внешние аббревиатуры НЕ отклоняются (MP3/H264 против метки)', () => {
+  // Правило «буквы+цифра» по форме совпадает с меткой повестки; без allowlist гвард
+  // убил бы ровно те слова, ради которых сон и задаётся в проекте про звук.
+  for (const q of ['MP3 или FLAC для архива звука?', 'Кодек H264 с дрона — что в 2025?']) {
+    assert.equal(externalizeQuery(q).ok, true, `ложное отклонение: ${q}`);
+  }
+});
+
+test('#599: имя скрипта ловится словарём, английские связки — нет', () => {
+  const names = ['main-day-issue', 'night-research', 'tasks-audit'];
+  assert.equal(externalizeQuery('Читает ли main-day-issue граф?', { internalNames: names }).ok, false);
+
+  // Ключевая причина, по которой список приходит словарём, а не правилом по форме:
+  // kebab-эвристика отклоняла бы законные исследовательские связки.
+  const legit = [
+    'Какие end-to-end подходы к акустической детекции БПЛА?',
+    'Что такое state-of-the-art в signal-to-noise для микрофонных решёток?',
+  ];
+  for (const q of legit) {
+    assert.equal(externalizeQuery(q, { internalNames: names }).ok, true, `ложное отклонение: ${q}`);
+  }
+});
+
 test('externalizeQuery: мирочитаемый вопрос проходит', () => {
   const r = externalizeQuery('Отличают ли CNN-классификаторы дрон от птицы по спектру 2025?');
   assert.equal(r.ok, true);

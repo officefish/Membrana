@@ -79,7 +79,7 @@ test('nightYield: adopted/(adopted+void) за окно; pending не в знам
   const now = '2026-07-17T12:00:00Z';
   const arts = [
     { status: 'adopted', date: '2026-07-16' },
-    { status: 'void', date: '2026-07-15' },
+    { status: 'void', date: '2026-07-15', ttl: 14 },
     { status: 'void', date: '2026-07-14' },
     { status: 'pending', date: '2026-07-16' }, // не считается
     { status: 'adopted', date: '2026-06-01' }, // вне окна 14д
@@ -93,4 +93,44 @@ test('nightYield: adopted/(adopted+void) за окно; pending не в знам
 test('nightYield: пустой знаменатель → null (не 0/0)', () => {
   const y = nightYield([{ status: 'pending', date: '2026-07-17' }], { now: '2026-07-17T12:00:00Z' });
   assert.equal(y.yield, null);
+});
+
+// ─── effectiveStatus: честный срок вместо вечного pending (#598) ────────────────
+
+test('effectiveStatus: pending переживший TTL → void, свежий остаётся pending', async () => {
+  const { effectiveStatus } = await import('./lib/night-research.mjs');
+  const now = Date.parse('2026-07-18');
+  assert.equal(effectiveStatus({ status: 'pending', date: '2026-06-01', ttl: 14 }, now), 'void');
+  assert.equal(effectiveStatus({ status: 'pending', date: '2026-07-17', ttl: 14 }, now), 'pending');
+});
+
+test('effectiveStatus: окончательные статусы не переписываются сроком', async () => {
+  const { effectiveStatus } = await import('./lib/night-research.mjs');
+  const now = Date.parse('2026-07-18');
+  for (const s of ['adopted', 'rejected', 'void']) {
+    assert.equal(effectiveStatus({ status: s, date: '2026-01-01', ttl: 14 }, now), s);
+  }
+});
+
+test('effectiveStatus: без даты/с битым ttl срок не выдумывается', async () => {
+  const { effectiveStatus } = await import('./lib/night-research.mjs');
+  const now = Date.parse('2026-07-18');
+  assert.equal(effectiveStatus({ status: 'pending', date: null, ttl: 14 }, now), 'pending');
+  assert.equal(effectiveStatus({ status: 'pending', date: '2026-01-01', ttl: 0 }, now), 'pending');
+});
+
+test('#598: метрика способна показать провал — знаменатель больше не равен adopted', async () => {
+  const { nightYield } = await import('./lib/night-research.mjs');
+  // Три просроченных pending и один adopted. До фикса void=0 → yield=100%: метрика
+  // структурно не умела сообщить о плохой ночи.
+  const artifacts = [
+    { status: 'adopted', date: '2026-07-16', ttl: 14 },
+    { status: 'pending', date: '2026-07-10', ttl: 3 },
+    { status: 'pending', date: '2026-07-10', ttl: 3 },
+    { status: 'pending', date: '2026-07-10', ttl: 3 },
+  ];
+  const y = nightYield(artifacts, { now: '2026-07-18', windowDays: 30 });
+  assert.equal(y.void, 3, 'просроченные считаются void');
+  assert.equal(y.adopted, 1);
+  assert.equal(y.yield, 0.25, 'выхлоп 25%, а не ложные 100%');
 });
