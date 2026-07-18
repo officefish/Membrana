@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 
-import { blockedInputs, criticalityOf, stepStatus, isBlocking, explainStatus, validateManifest } from './lib/step-status.mjs';
+import { blockedInputs, criticalityOf, stepStatus, isBlocking, isFinding, explainStatus, validateManifest } from './lib/step-status.mjs';
 
 const MANIFEST = JSON.parse(readFileSync(new URL('../docs/tasks/evening-ritual-steps.json', import.meta.url), 'utf8'));
 const STEPS = MANIFEST.steps;
@@ -39,6 +39,47 @@ test('stepStatus: некритичный сбой НЕ превращается 
   const status = stepStatus(non, { exitCode: 1 });
   assert.notEqual(status, 'ok');
   assert.equal(status, 'skipped-noncritical');
+});
+
+test('НАХОДКА ≠ СБОЙ: репортёрский код возврата даёт ok, а не провал', () => {
+  // Регрессия, найденная живым прогоном 18.07: бинарная модель называла
+  // найденный дрейф «пропущенным некритичным» — ложь о шаге.
+  const drift = { id: 'insight-drift', criticality: 'noncritical', findingExitCodes: [3] };
+
+  assert.equal(stepStatus(drift, { exitCode: 3 }), 'ok', 'exit 3 = дрейф НАЙДЕН, шаг отработал');
+  assert.equal(isFinding(drift, { exitCode: 3 }), true);
+
+  // exit 1 у того же шага — настоящая ошибка, не находка.
+  assert.equal(stepStatus(drift, { exitCode: 1 }), 'skipped-noncritical');
+  assert.equal(isFinding(drift, { exitCode: 1 }), false);
+});
+
+test('НАХОДКА: критичный репортёр тоже не падает от своего кода находки', () => {
+  const truth = { id: 'truth-cool', criticality: 'critical', findingExitCodes: [2] };
+  assert.equal(stepStatus(truth, { exitCode: 2 }), 'ok', 'граф нарушен — находка, не поломка скрипта');
+  assert.equal(stepStatus(truth, { exitCode: 1 }), 'failed-critical', 'настоящая ошибка остаётся критичной');
+});
+
+test('НАХОДКА: чистый ноль — не находка; не запускался — не находка', () => {
+  const drift = { id: 'd', findingExitCodes: [3] };
+  assert.equal(isFinding(drift, { exitCode: 0 }), false);
+  assert.equal(isFinding(drift, { ran: false }), false);
+  assert.equal(isFinding({ id: 'x' }, { exitCode: 3 }), false, 'без объявления кодов — не находка');
+});
+
+test('explainStatus: находка помечена отдельно от чистого ok', () => {
+  const drift = { id: 'd', label: 'дрейф', findingExitCodes: [3] };
+  const msg = explainStatus(drift, 'ok', { exitCode: 3 });
+  assert.match(msg, /ЕСТЬ НАХОДКИ/u);
+  assert.match(msg, /не сбой/u);
+  assert.doesNotMatch(explainStatus(drift, 'ok', { exitCode: 0 }), /НАХОДКИ/u);
+});
+
+test('манифест вечера: коды-находки объявлены там, где семантика небинарна', () => {
+  const drift = STEPS.find((s) => s.id === 'insight-drift');
+  const truth = STEPS.find((s) => s.id === 'truth-cool');
+  assert.deepEqual(drift.findingExitCodes, [3]);
+  assert.deepEqual(truth.findingExitCodes, [2]);
 });
 
 test('isBlocking: цепочку останавливает только failed-critical', () => {

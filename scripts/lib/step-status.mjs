@@ -32,6 +32,31 @@ export function criticalityOf(step) {
 }
 
 /**
+ * НАХОДКА, а не сбой. Часть шагов — репортёры: у них ненулевой код означает
+ * «я отработал и МНЕ ЕСТЬ ЧТО СКАЗАТЬ», а не «я сломался».
+ *   • insight-drift: exit 3 = найден дрейф реестров (exit 1 = настоящая ошибка)
+ *   • truth cool:    exit 2 = граф правды нарушен, процессы заблокированы
+ *
+ * Найдено ЖИВЫМ ПРОГОНОМ 18.07, не рассуждением: бинарная модель
+ * «exit 0 → ok, иначе провал» объявляла успешный отчёт «пропущенным некритичным»
+ * с формулировкой «выход НЕ считается входом» — прямая ложь о шаге. Под `|| true`
+ * этого не было видно вовсе: там любой код превращался в ноль.
+ *
+ * Находка НЕ понижает статус до провала и НЕ повышает до молчаливого ok:
+ * статус остаётся `ok` (шаг сделал свою работу, его выход — валидный вход), но
+ * раннер обязан предъявить находку отдельно и громко.
+ *
+ * @param {Step} step
+ * @param {Outcome} outcome
+ * @returns {boolean}
+ */
+export function isFinding(step, outcome) {
+  const codes = Array.isArray(step?.findingExitCodes) ? step.findingExitCodes : [];
+  const code = outcome?.exitCode ?? null;
+  return outcome?.ran !== false && code !== null && codes.includes(code);
+}
+
+/**
  * СТАТУС ШАГА — детерминированный, три значения, без «наверное прошло».
  *
  * ok                   — отработал (exit 0).
@@ -52,6 +77,7 @@ export function stepStatus(step, outcome) {
   const code = outcome?.exitCode ?? null;
 
   if (ran && code === 0) return 'ok';
+  if (isFinding(step, outcome)) return 'ok'; // репортёр отработал; находка — не сбой
   return criticalityOf(step) === 'noncritical' ? 'skipped-noncritical' : 'failed-critical';
 }
 
@@ -75,6 +101,9 @@ export function explainStatus(step, status, outcome) {
   const name = step?.label ? `${step.id} (${step.label})` : (step?.id ?? '<без id>');
   const code = outcome?.exitCode ?? null;
 
+  if (status === 'ok' && isFinding(step, outcome)) {
+    return `⚑ ${name}: отработал и ЕСТЬ НАХОДКИ (exit ${code}) — это не сбой, читать вывод выше`;
+  }
   if (status === 'ok') return `✓ ${name}`;
   if (status === 'skipped-noncritical') {
     const why = outcome?.ran === false ? 'не запускался' : `упал (exit ${code ?? '?'})`;
