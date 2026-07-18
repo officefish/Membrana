@@ -100,9 +100,37 @@ export class SpectralFluxTracker {
   }
 }
 
-/** Процент энергии в нижней 1/10 спектра. */
-export function lowEnergyPercent(magnitudes: Float32Array): number {
-  const lowBands = Math.max(1, Math.floor(magnitudes.length * 0.1));
+/**
+ * Верхняя граница «низкой» полосы дрона — в ГЕРЦАХ, не в долях спектра.
+ *
+ * 2400 Гц подобраны так, чтобы на каноническом 48 kHz результат совпал с прежней
+ * «нижней 1/10» бит в бит: `2 × 2400 / 48000 = 0.1` при любом fftSize.
+ */
+export const LOW_BAND_MAX_HZ = 2400;
+
+/** Частота, под которую калиброван эшелон 0 — умолчание старой сигнатуры. */
+const CALIBRATION_SAMPLE_RATE = 48_000;
+
+/**
+ * Процент энергии в низкой полосе (0…{@link LOW_BAND_MAX_HZ}).
+ *
+ * Раньше полоса задавалась долей БИНОВ («нижняя 1/10») и потому означала
+ * 0–2400 Гц на 48 kHz, но 0–800 Гц на 16 kHz. Порог `LOW_BAND_TARGET_PERCENT`
+ * калиброван под первую полосу — значит на 16 kHz та же константа задавала
+ * ДРУГОЙ физический вопрос: не деградация метрики, а подмена признака.
+ * Пересчёт из герц делает вопрос одинаковым на любой частоте.
+ *
+ * На 48 kHz поведение НЕ меняется (см. подбор константы) — правка безопасна для
+ * калибровки эшелона 0 и полезна сама по себе, вне интеграции внешних корпусов.
+ */
+export function lowEnergyPercent(
+  magnitudes: Float32Array,
+  sampleRate: number = CALIBRATION_SAMPLE_RATE,
+): number {
+  // magnitudes — половина спектра (fftSize/2), поэтому полосу в бины переводит
+  // отношение 2·Гц/sampleRate, а не Гц/sampleRate.
+  const bandFraction = (2 * LOW_BAND_MAX_HZ) / sampleRate;
+  const lowBands = Math.max(1, Math.floor(magnitudes.length * bandFraction));
   let low = 0;
   let total = 0;
   for (let i = 0; i < magnitudes.length; i++) {

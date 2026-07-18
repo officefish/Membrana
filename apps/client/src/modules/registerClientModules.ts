@@ -13,6 +13,7 @@ import { createSampleLibraryFftThresholdTestPlugin } from '../plugins/sample-lib
 import { createTrendsFftSampleAnalyzerPlugin } from '../plugins/trends-fft-sample-analyzer';
 import { createNeuralDroneAnalyzerPlugin } from '../plugins/neural-drone-analyzer';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
+import { createMicDetectorScoreboardPlugin } from '../plugins/mic-detector-scoreboard';
 import { createTrendsFftAnalyzerPlugin } from '../plugins/trends-fft-analyzer';
 import { createVdrValidationPlugin } from '../plugins/vdr-validation';
 
@@ -177,6 +178,7 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createTrendsFftAnalyzerPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicBufferRecorderPlugin());
   MembranaRegistry.registerPlugin('microphone', createMicLiveDroneAnalysisPlugin());
+  MembranaRegistry.registerPlugin('microphone', createMicDetectorScoreboardPlugin());
   // Магистраль S2: combined-продюсер — combinedScore из fusion-ядра (питает alarm-loop).
   MembranaRegistry.registerPlugin('microphone', createMicCombinedDetectionPlugin());
   // Задача B: alarm-loop «ближе/дальше» — тренд громкости + порог тревоги по combinedScore.
