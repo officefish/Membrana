@@ -8,6 +8,7 @@
 | **Создан** | 2026-07-18 |
 | **Research** | 2026-07-18 — [`RESEARCH.md`](./RESEARCH.md), английские формулировки после провала русских |
 | **Review** | 2026-07-18 — [`REVIEW.md`](./REVIEW.md), 5 ролей, средний 7.0 |
+| **Носитель** | карточка research-query-hygiene; спека-схема — отдельным промптом по резюме Teamlead |
 | **Закрыт** | 2026-07-18 (`yarn insight close --status adopted --weight 7.0`) |
 
 Вход: [`dads-lab-report-2026-07-18.md`](../../tasks/research/dads-lab-report-2026-07-18.md),
