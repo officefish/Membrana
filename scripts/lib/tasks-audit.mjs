@@ -28,7 +28,9 @@ const NOT_PLANNED = 'NOT_PLANNED';
  * @returns {{archive: object[], cancelled: object[], manual: object[], umbrellas: Map<number, object[]>}}
  */
 export function auditRegistry(tasks, issues) {
-  const active = tasks.filter((t) => t.status === 'active' && t.githubIssue != null);
+  // `Number(...) > 0` вместо `!= null`: в реестре встречается `githubIssue: 0` как
+  // заглушка, а нечисловое дало бы NaN-корзину. Замечание Структурщика на ревью 18.07.
+  const active = tasks.filter((t) => t.status === 'active' && Number(t.githubIssue) > 0);
 
   // Кандидаты: active + иссью закрыта. Это ГИПОТЕЗА (слой L1).
   const candidates = active.filter((t) => issues.get(Number(t.githubIssue))?.state === 'CLOSED');
