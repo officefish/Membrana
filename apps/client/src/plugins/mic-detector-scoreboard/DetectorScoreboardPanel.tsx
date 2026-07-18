@@ -103,8 +103,10 @@ export const DetectorScoreboardPanel: React.FC<DetectorScoreboardPanelProps> = (
           </table>
         </div>
 
-        <div className="text-xs">
-          <div className="font-medium mb-1">Ступени обучения — ещё не измерены</div>
+        <section className="text-xs" aria-labelledby="scoreboard-pending-ladder">
+          <h4 id="scoreboard-pending-ladder" className="font-medium mb-1">
+            Ступени обучения — ещё не измерены
+          </h4>
           <p className="opacity-70 mb-1">
             Показаны пустыми намеренно: «не измерено» не то же самое, что «измерено плохо».
           </p>
@@ -115,7 +117,7 @@ export const DetectorScoreboardPanel: React.FC<DetectorScoreboardPanelProps> = (
               </li>
             ))}
           </ul>
-        </div>
+        </section>
 
         <div className="text-xs opacity-70 space-y-1">
           {SCOREBOARD_ROWS.filter((r) => r.caveat).map((r) => (
