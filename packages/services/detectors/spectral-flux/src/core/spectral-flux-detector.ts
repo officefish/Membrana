@@ -37,7 +37,9 @@ export class SpectralFluxDetector implements DroneDetector {
     const prepared = prepareFftSamples(window.samples, fftSize);
     const magnitudes = this.fft.computeMagnitudes(prepared);
     const flux = this.fluxTracker.next(magnitudes);
-    const lowPct = lowEnergyPercent(magnitudes);
+    // Частота берётся из окна, а не из конфига: полоса низа задана в герцах и
+    // обязана означать одно и то же на 48 kHz и на 16 kHz.
+    const lowPct = lowEnergyPercent(magnitudes, window.sampleRate);
     const spectrum = classifySpectralFluxFrame(
       flux,
       lowPct,

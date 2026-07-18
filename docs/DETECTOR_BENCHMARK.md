@@ -30,7 +30,7 @@
 
 <!-- BENCHMARK:auto:start -->
 
-> **Автогенерация:** `yarn benchmark:detectors` · 2026-07-18T12:29:47.440Z
+> **Автогенерация:** `yarn benchmark:detectors` · 2026-07-18T12:50:46.880Z
 > **Датасет:** v2 · ВЕСЬ корпус (test-split отсутствует): 120 файлов
 > **Конфигурация:** боевая (`data/detectors-benchmark/v0.2/calibration-preset.json`) — калиброваны: cepstral, harmonic, spectral-flux
 > **⚠ Внимание:** цифры получены НЕ на тестовом сплите — корпус содержит train-сэмплы.
@@ -42,12 +42,13 @@
 | harmonic | dsp | 41 | 53 | 19 | 7 | 43.6% | 68.3% | 53.2% | 0.1 | 0.2 | benchmarked |
 | cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.2 | 0.4 | benchmarked |
 | spectral-flux | dsp | 43 | 47 | 17 | 13 | 47.8% | 71.7% | 57.3% | 0.1 | 0.2 | benchmarked |
-| template-match | dsp | 54 | 26 | 6 | 34 | 67.5% | 90.0% | 77.1% | 1.3 | 2.0 | benchmarked |
-| yamnet | neural | 55 | 22 | 5 | 38 | 71.4% | 91.7% | 80.3% | 98.6 | 145.3 | benchmarked |
+| template-match | dsp | 54 | 26 | 6 | 34 | 67.5% | 90.0% | 77.1% | 1.5 | 2.7 | benchmarked |
+| yamnet | neural | 55 | 22 | 5 | 38 | 71.4% | 91.7% | 80.3% | 103.2 | 149.0 | benchmarked |
 | clap | neural | — | — | — | — | — | — | — | — | — | scaffold |
 | agentic-claude | agentic | — | — | — | — | — | — | — | — | — | scaffold |
 
 <!-- BENCHMARK:auto:end -->
+
 
 
 ### Заметка по stage-gate (template-match → DRONE_TIGHT)
