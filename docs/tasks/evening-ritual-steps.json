@@ -14,7 +14,9 @@
       "criticality": "critical",
       "label": "Архивация night-hunt отчётов",
       "consumes": [],
-      "produces": ["docs/archive/night-hunt/<date>/"]
+      "produces": [
+        "docs/archive/night-hunt/<date>/"
+      ]
     },
     {
       "id": "archive-daily-day",
@@ -23,8 +25,14 @@
       "criticality": "critical",
       "label": "Снимок утренних артефактов дня",
       "//": "Идёт ДО code-review сознательно: утром артефакты перезапишутся. Потеря снимка = потеря дня.",
-      "consumes": ["docs/MAIN_DAY_ISSUE.md", "docs/DAILY_STANDUP.md", "docs/STRATEGIC_PLAN_DAY.md"],
-      "produces": ["docs/archive/daily-day/<date>/"]
+      "consumes": [
+        "docs/MAIN_DAY_ISSUE.md",
+        "docs/DAILY_STANDUP.md",
+        "docs/STRATEGIC_PLAN_DAY.md"
+      ],
+      "produces": [
+        "docs/archive/daily-day/<date>/"
+      ]
     },
     {
       "id": "truth-cool",
@@ -34,7 +42,9 @@
       "label": "Остывание графа правды",
       "//": "Ничего не чинит сам (запрет #533) — автопочинка скрыла бы находку, ради которой гейт строится.",
       "consumes": [],
-      "produces": ["docs/tasks/truth-registry.json"]
+      "produces": [
+        "docs/tasks/truth-registry.json"
+      ]
     },
     {
       "id": "rag-index",
@@ -44,7 +54,9 @@
       "whyNoncritical": "Сам себя объявляет non-blocking в докстринге: без OPENAI_API_KEY деградирует в skip. НАХОДКА 18.07: в цепочке стоял БЕЗ || true — намерение и цепочка разошлись; ось criticality разводит их явно.",
       "label": "Инкрементальный RAG-индекс",
       "consumes": [],
-      "produces": ["rag index"]
+      "produces": [
+        "rag index"
+      ]
     },
     {
       "id": "persona-memory",
@@ -53,8 +65,12 @@
       "criticality": "noncritical",
       "whyNoncritical": "Дистилляция журнала персон из уже существующих артефактов — производный слой. Сбой не теряет первоисточник (docs/seanses на месте), прогон повторим завтра.",
       "label": "Дистилляция памяти персон",
-      "consumes": ["docs/seanses/"],
-      "produces": ["docs/personas/*/MEMORY.md"]
+      "consumes": [
+        "docs/seanses/"
+      ],
+      "produces": [
+        "docs/personas/*/MEMORY.md"
+      ]
     },
     {
       "id": "insight-drift",
@@ -63,8 +79,13 @@
       "criticality": "noncritical",
       "whyNoncritical": "Крест-скан-РЕПОРТЕР: сообщает о расхождениях реестров, ничего не меняет. Сбой скана не портит данные. ОДНАКО его находки обязаны быть видимы — некритичность шага НЕ означает, что его вывод можно проглотить.",
       "label": "Дрейф реестра инсайтов",
-      "consumes": ["docs/insights/", "docs/tasks/registry.json"],
-      "produces": ["отчёт в stdout"]
+      "consumes": [
+        "docs/insights/",
+        "docs/tasks/registry.json"
+      ],
+      "produces": [
+        "отчёт в stdout"
+      ]
     },
     {
       "id": "code-review",
@@ -74,7 +95,9 @@
       "//incident": "БЫЛ || true. Это и есть инцидент rt-9: 15.07 фолбэк без кредита отдал exit 127, никто не заметил, downstream заархивировал вчерашний отчёт под сегодняшней датой. Ось S возвращает шагу зубы.",
       "label": "Ревью кода дня",
       "consumes": [],
-      "produces": ["docs/DAILY_CODE_REVIEW.md"]
+      "produces": [
+        "docs/DAILY_CODE_REVIEW.md"
+      ]
     },
     {
       "id": "archive-code-review",
@@ -83,9 +106,15 @@
       "criticality": "critical",
       "//gate": "НЕСУЩЕЕ РЕБРО S→F. Читает выход code-review. Если code-review не 'ok' — архивировать нечего: заархивированный вчерашний отчёт под сегодняшней меткой и есть инцидент. isFresh обязателен ПЕРЕД копированием.",
       "label": "Архивация отчёта ревью",
-      "consumes": ["docs/DAILY_CODE_REVIEW.md"],
-      "consumesFrom": { "docs/DAILY_CODE_REVIEW.md": "code-review" },
-      "produces": ["docs/archive/daily-code-review/"]
+      "consumes": [
+        "docs/DAILY_CODE_REVIEW.md"
+      ],
+      "consumesFrom": {
+        "docs/DAILY_CODE_REVIEW.md": "code-review"
+      },
+      "produces": [
+        "docs/archive/daily-code-review/"
+      ]
     },
     {
       "id": "evening-tail",
@@ -94,8 +123,14 @@
       "criticality": "critical",
       "//": "Внутри — task:close-github + team-evening-feedback. Второе объявлено обязательством процесса в .claude/CLAUDE.md («не опция»), значит шаг критичен.",
       "label": "Хвост вечера: закрытие Issues + team evening feedback",
-      "consumes": ["docs/DAILY_STANDUP.md", "docs/STRATEGIC_PLAN_DAY.md", "docs/DAILY_CODE_REVIEW.md"],
-      "produces": ["docs/seanses/team-evening-feedback-<date>.md"]
+      "consumes": [
+        "docs/DAILY_STANDUP.md",
+        "docs/STRATEGIC_PLAN_DAY.md",
+        "docs/DAILY_CODE_REVIEW.md"
+      ],
+      "produces": [
+        "docs/seanses/team-evening-feedback-<date>.md"
+      ]
     },
     {
       "id": "telegram-digest",
@@ -104,9 +139,16 @@
       "criticality": "noncritical",
       "whyNoncritical": "Цепочечный прогон — best-effort по .claude/CLAUDE.md: office транзиентно таймаутит, ронять из-за этого весь вечер нельзя. ВАЖНО: некритичность ЗДЕСЬ не снимает обязательства — дайджест запускается ЯВНО после появления артефакта и владелец убеждается в sent=true. Цепочечный || true никогда не был подтверждением отправки.",
       "label": "Партнёрский дайджест (ласточка) — вечерний",
-      "consumes": ["docs/seanses/team-evening-feedback-<date>.md"],
-      "consumesFrom": { "docs/seanses/team-evening-feedback-<date>.md": "evening-tail" },
-      "produces": ["сообщение в приватную группу союзников"]
+      "consumes": [
+        "docs/seanses/team-evening-feedback-<date>.md"
+      ],
+      "consumesFrom": {
+        "docs/seanses/team-evening-feedback-<date>.md": "evening-tail"
+      },
+      "produces": [
+        "сообщение в приватную группу союзников"
+      ]
     }
-  ]
+  ],
+  "//rollback": "Ручной откат (ДАННЫЕ, не исполняемый дубль — исполняемая копия старой цепочки протухла бы и вернула || true на критичный code-review, что и поймал гард 18.07). Прежняя шелл-цепочка была: node scripts/archive-night-hunt-artifacts.mjs && node scripts/archive-daily-day-artifacts.mjs && node scripts/truth.mjs cool && node scripts/rag-evening-index.mjs && (node scripts/persona-memory-extract.mjs --all || true) && (node scripts/insight-drift.mjs || true) && (node scripts/code-review.mjs || true) && (node scripts/archive-daily-code-review.mjs || true) && node scripts/ritual-evening-tail.mjs && (node scripts/telegram-ritual-digest.mjs --kind evening || true) — но возвращать её как есть НЕЛЬЗЯ: || true на code-review и есть инцидент. При отказе раннера запускать шаги поимённо по steps[] ниже."
 }

@@ -84,6 +84,31 @@ export function explainStatus(step, status, outcome) {
 }
 
 /**
+ * ГЕЙТ НА СТЫКЕ: какие объявленные входы шага испорчены — их производитель
+ * отработал не `ok`.
+ *
+ * Блокирующее ребро — ТОЛЬКО `consumesFrom` (артефакт → шаг-производитель).
+ * Поле `consumes` информационное: шаг может читать артефакт, не становясь его
+ * заложником. Разница несущая, и она из канона: team-evening-feedback читает
+ * DAILY_CODE_REVIEW, но обязан идти даже при упавшем ревью
+ * («feedback is independent», .claude/CLAUDE.md) — поэтому у него consumes есть,
+ * а consumesFrom нет. Объявлять зависимость порядком строк в шелл-цепочке было
+ * нельзя: `&&` делает заложниками всех подряд.
+ *
+ * @param {{consumesFrom?: Record<string,string>}} step
+ * @param {Record<string, StepStatus>} statuses  статусы уже отработавших шагов
+ * @returns {{artifact:string, producer:string, status:StepStatus}[]}
+ */
+export function blockedInputs(step, statuses) {
+  const out = [];
+  for (const [artifact, producer] of Object.entries(step?.consumesFrom ?? {})) {
+    const status = statuses?.[producer];
+    if (status && status !== 'ok') out.push({ artifact, producer, status });
+  }
+  return out;
+}
+
+/**
  * ГАРД манифеста: у каждого шага есть id, и некритичность объявлена осознанно.
  * Ловит две болезни разом — сирот (шаг цепочки без записи) и молчаливый дефолт.
  * @param {Step[]} steps
