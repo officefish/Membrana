@@ -12,7 +12,7 @@
  *
  * Требуется ANTHROPIC_API_KEY в .env. Промпт: docs/prompts/CONSILIUM_PROMPT.md
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
@@ -47,6 +47,7 @@ import {
   extractAgendaIds,
   findUncoveredAgendaItems,
   hasVerdictSection,
+  meetingVerdictProblems,
   validateProtocol,
   meetingAgendaProblem,
   reconcileReplyCount,
@@ -609,6 +610,41 @@ async function main() {
         }
       } catch {
         // Повестка без ID-меток или нечитаема — гейт не мешает, просто молчит.
+      }
+    }
+
+    // ID вопросов СОСЕДНИХ комнат заседания: их появление в DoD = колонизация.
+    const meetingSiblingIds = (root, meetingId, ownTopicFile) => {
+      try {
+        const dir = resolve(root, 'docs', 'meeting', meetingId);
+        const own = ownTopicFile ? resolve(root, ownTopicFile) : '';
+        const ids = new Set();
+        for (const f of readdirSync(dir).filter((x) => /-topic\.md$/u.test(x))) {
+          const full = resolve(dir, f);
+          if (full === own) continue;
+          for (const id of extractAgendaIds(readFileSync(full, 'utf8'))) ids.add(id);
+        }
+        return [...ids];
+      } catch {
+        return [];
+      }
+    };
+
+    // Структура вердикта — ПРЯМО В ЭТОМ ПРОГОНЕ, а не отдельной командой потом.
+    // 18.07 гейт `meeting:audit` поймал «нет секции посылок» в M2 уже постфактум, а
+    // добор задним числом (M2″) провалился: комната назвала посылки ЧУЖОГО вердикта.
+    // Значит момент, когда основание ещё можно назвать, — это сам прогон.
+    if (cli.meeting) {
+      const siblings = meetingSiblingIds(cwd, cli.meeting, cli.topicFile);
+      const problems = meetingVerdictProblems(answer, siblings);
+      if (problems.length > 0) {
+        console.error(
+          `\n⚠ структура вердикта (${problems.length}):\n` +
+            problems.map((p) => `  ✖ ${p}`).join('\n') +
+            '\n  Вердикт на неназванном фундаменте нельзя ни отозвать каскадом, ни проверить.',
+        );
+      } else {
+        console.error('→ структура вердикта: посылки названы, чужих комнат в DoD нет.');
       }
     }
   }

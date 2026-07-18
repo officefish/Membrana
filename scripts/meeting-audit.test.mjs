@@ -17,7 +17,8 @@ const goodProtocol = (id) => `${head}[Teamlead]: Вердикт по ${id}.
 `;
 
 const state = (over = {}) => ({
-  topics: [{ file: 'M1-topic.md', md: '**B1 — вопрос?**\n\nпроза без ID\n' }],
+  // Повестка обязана требовать посылки (контракт расширен 18.07 после провала M2″).
+  topics: [{ file: 'M1-topic.md', md: '**B1 — вопрос?**\n\nпроза без ID\n\nПолный список посылок обязателен.\n' }],
   protocols: [{ file: 'm1.md', md: goodProtocol('B1') }],
   untracked: [],
   ...over,

@@ -137,9 +137,17 @@ export function hasVerdictSection(protocolMd) {
  */
 export function meetingAgendaProblem(topicMd) {
   const ids = extractAgendaIds(topicMd);
-  if (ids.length === 1) return '';
   if (ids.length === 0) return 'повестка без ID-вопроса — вердикту не на чем встать';
-  return `повестка несёт ${ids.length} вопрос(ов) (${ids.join(', ')}) — заседание разбирает ровно один`;
+  if (ids.length > 1) {
+    return `повестка несёт ${ids.length} вопрос(ов) (${ids.join(', ')}) — заседание разбирает ровно один`;
+  }
+  // Повестка обязана ТРЕБОВАТЬ посылки. Добор задним числом провалился (M2″ 18.07:
+  // комната назвала посылки ЧУЖОГО вердикта) — значит основание называется в тот же
+  // прогон, что и вердикт, либо не называется никогда. Отказ до прогона дешевле.
+  if (!/список\s+посылок|посылк\w*\s+обязат/iu.test(String(topicMd ?? ''))) {
+    return 'повестка не требует списка посылок — вердикт встанет на неназванном фундаменте';
+  }
+  return '';
 }
 
 /**
@@ -227,6 +235,7 @@ export function meetingVerdictProblems(protocolMd, siblingIds = []) {
 
   return problems;
 }
+
 
 /** Таблица «Роль | … | /10» инсайт-ревью → {scores[], average, declared}. */
 export function parseVotingTable(md) {
