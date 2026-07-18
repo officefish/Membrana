@@ -47,7 +47,7 @@
 | M1′ | D1 — объём `dayPlan` (переоткрытие B) | ✅ вердикт есть, **фактура разобрана** | [m1s-dayplan-scope](../../seanses/evening-auditor-m1s-dayplan-scope-2026-07-18.md) |
 | M2 | H — гипотеза против вердикта | ⚠️ вердикт есть, **посылки не названы** | [m2-hypothesis-verdict](../../seanses/evening-auditor-m2-hypothesis-verdict-2026-07-18.md) |
 | M2″ | H2 — добор посылок H1 | ❌ **не состоялось** (S-M2): ответ о другом вердикте | [m2s-premises](../../seanses/evening-auditor-m2s-premises-2026-07-18.md) |
-| M2′ | Da — поля воспроизводимости | ⏳ после B (∥ H) | — |
+| M2′ | DA1 — воспроизводимость | ⚠️ вердикт есть, посылки не названы (гейт поймал В ПРОГОНЕ) | [m2p-reproducibility](../../seanses/evening-auditor-m2p-reproducibility-2026-07-18.md) |
 | M3 | T — триггер потребления | ⏳ после B, желательно после H | — |
 | M4 | F — форма генератора | ⏳ сток | — |
 | — | Db — битый тулинг | вне очереди, tooling-карточка | — |
