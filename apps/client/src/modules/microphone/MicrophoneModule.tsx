@@ -47,6 +47,10 @@ import {
   MicStreamVizPluginPanel,
 } from '../../plugins/microphone-stream-viz';
 import {
+  DetectorScoreboardPanel,
+  MIC_DETECTOR_SCOREBOARD_PLUGIN_ID,
+} from '@/plugins/mic-detector-scoreboard';
+import {
   TRENDS_FFT_ANALYZER_PLUGIN_ID,
   TrendsFftAnalyzerPanel,
 } from '../../plugins/trends-fft-analyzer';
@@ -290,6 +294,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(HARMONIC_DETECTOR_VIZ_PLUGIN_ID) && (
           <HarmonicDetectorVizPanel moduleId={module.id} />
+        )}
+
+        {activeIds.includes(MIC_DETECTOR_SCOREBOARD_PLUGIN_ID) && (
+          <DetectorScoreboardPanel moduleId={module.id} />
         )}
 
         {activeIds.includes(TRENDS_FFT_ANALYZER_PLUGIN_ID) && (
